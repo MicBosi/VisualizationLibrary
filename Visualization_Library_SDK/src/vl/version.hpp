@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#define VL_Build 1000
+#define VL_Build 1010
 #define VL_Major 2010
 #define VL_Minor 6
 #define VL_Version 0x201006
