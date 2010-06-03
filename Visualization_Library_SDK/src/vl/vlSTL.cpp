@@ -39,6 +39,7 @@
 #include <vl/Effect.hpp>
 #include <vl/Actor.hpp>
 #include <vl/LoadWriterManager.hpp>
+#include <stdio.h>
 
 using namespace vl;
 //-----------------------------------------------------------------------------

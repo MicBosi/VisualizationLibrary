@@ -41,6 +41,7 @@
 #include <vl/Actor.hpp>
 #include <string>
 #include <vector>
+#include <stdio.h>
 
 using namespace vl;
 
