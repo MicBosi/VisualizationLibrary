@@ -34,6 +34,7 @@
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
 #include <zlib.h>
+#include <stdio.h>
 
 using namespace vl;
 

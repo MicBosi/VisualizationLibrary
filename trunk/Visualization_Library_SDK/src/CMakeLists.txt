@@ -89,6 +89,7 @@ SET(VL_SRC
   vl/Terrain.cpp
   vl/Tessellator.cpp
   vl/Text.cpp
+  vl/TextStream.cpp
   vl/Texture.cpp
   vl/Time.cpp
   vl/TrackballManipulator.cpp

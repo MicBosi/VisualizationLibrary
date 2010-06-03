@@ -127,7 +127,7 @@ namespace vl
     void insert(int index, T* obj) { mVector.insert(mVector.begin() + index, obj); }
     void erase(const T* data)
     {
-      std::vector< ref<T> >::iterator it = std::find(mVector.begin(), mVector.end(), data);
+      typename std::vector< ref<T> >::iterator it = std::find(mVector.begin(), mVector.end(), data);
       if (it != mVector.end())
         mVector.erase(it);
     }

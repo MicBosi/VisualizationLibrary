@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vl/DiskFile.hpp>
+#include <stdio.h>
 
 #if defined(__APPLE__)
   #define fseeko64 fseeko
