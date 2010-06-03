@@ -1,0 +1,302 @@
+/**************************************************************************************/
+/*                                                                                    */
+/*  Visualization Library                                                             */
+/*  http://www.visualizationlibrary.com                                               */
+/*                                                                                    */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  All rights reserved.                                                              */
+/*                                                                                    */
+/*  Redistribution and use in source and binary forms, with or without modification,  */
+/*  are permitted provided that the following conditions are met:                     */
+/*                                                                                    */
+/*  - Redistributions of source code must retain the above copyright notice, this     */
+/*  list of conditions and the following disclaimer.                                  */
+/*                                                                                    */
+/*  - Redistributions in binary form must reproduce the above copyright notice, this  */
+/*  list of conditions and the following disclaimer in the documentation and/or       */
+/*  other materials provided with the distribution.                                   */
+/*                                                                                    */
+/*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND   */
+/*  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED     */
+/*  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE            */
+/*  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR  */
+/*  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES    */
+/*  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;      */
+/*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON    */
+/*  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT           */
+/*  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS     */
+/*  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                      */
+/*                                                                                    */
+/**************************************************************************************/
+
+#include <vl/EdgeExtractor.hpp>
+#include <vl/Rendering.hpp>
+#include <vl/SceneManager.hpp>
+#include <vl/RenderQueue.hpp>
+#include <vl/Log.hpp>
+#include <vl/Array.hpp>
+#include <vl/Geometry.hpp>
+
+using namespace vl;
+
+//-----------------------------------------------------------------------------
+void EdgeExtractor::addEdge(std::set<EdgeExtractor::Edge>& edges, const EdgeExtractor::Edge& e, const fvec3& n)
+{
+  std::set<EdgeExtractor::Edge>::iterator it = edges.find(e);
+  if (it != edges.end())
+  {
+    VL_CHECK(!it->normal1().isNull())
+    if (mWarnNonManifold && !it->normal2().isNull())
+      vl::Log::error("EdgeExtractor: non-manifold mesh detected!\n");
+    #ifdef _MSC_VER
+      it->setNormal2(n);
+    #else 
+      // Linux has different, less efficient implementation of std::set
+      EdgeExtractor::Edge edge = e;
+      edge.setNormal1(it->normal1());
+      edge.setNormal2(n);
+      edges.erase( it );
+      edges.insert(edge);
+    #endif
+  }
+  else
+  {
+    VL_CHECK(!n.isNull());
+    EdgeExtractor::Edge edge = e;
+    edge.setNormal1(n);
+    edges.insert(edge);
+  }
+}
+//-----------------------------------------------------------------------------
+//! Extracts the edges from the given Geometry and appends them to edges().
+//! The given geometry must have a vertex array of format ArrayFVec3.
+void EdgeExtractor::extractEdges(Geometry* geom)
+{
+  ArrayFVec3* verts = dynamic_cast<ArrayFVec3*>(geom->vertexArray());
+  std::set<Edge> edges;
+  if (!verts)
+  {
+    vl::Log::error("EdgeExtractor::extractEdges(geom): 'geom' must have a vertex array of type ArrayFVec3.\n");
+    return;
+  }
+  for(int iprim=0; iprim<geom->primitives()->size(); ++iprim)
+  {
+    Primitives* prim = geom->primitives()->at(iprim);
+    if (prim->primitiveType() == PT_QUAD_STRIP)
+    {
+      /*
+      a    c    e
+      |  / |  / |
+      | /  | /  |
+      b    d    f
+      */
+      for(unsigned i=0; i<prim->indexCount()-3; i+=2)
+      {
+        size_t a = prim->index(i+0);
+        size_t b = prim->index(i+1);
+        size_t c = prim->index(i+2);
+        size_t d = prim->index(i+3);
+        // compute normal
+        fvec3 v0 = verts->at(a);
+        fvec3 v1 = verts->at(b) - v0;
+        fvec3 v2 = verts->at(c) - v0;
+        fvec3 n = cross(v1,v2).normalize();
+        if (n.isNull())
+          continue;
+        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
+        addEdge(edges, Edge( verts->at(a), verts->at(c) ), n );
+        addEdge(edges, Edge( verts->at(b), verts->at(d) ), n );
+        addEdge(edges, Edge( verts->at(c), verts->at(d) ), n );
+      }
+    }
+    else
+    if (prim->primitiveType() == PT_TRIANGLE_STRIP)
+    {
+      for(unsigned i=0; i<prim->indexCount()-2; ++i)
+      {
+        size_t a = prim->index(i+0);
+        size_t b = prim->index(i+1);
+        size_t c = prim->index(i+2);
+        // compute normal
+        fvec3 v0 = verts->at(a);
+        fvec3 v1 = verts->at(b) - v0;
+        fvec3 v2 = verts->at(c) - v0;
+        fvec3 n = cross(v1,v2).normalize();
+        if (n.isNull())
+          continue;
+        if (i%2) n = -n;
+        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
+        addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
+        addEdge(edges, Edge( verts->at(c), verts->at(a) ), n );
+      }
+    }
+    else
+    if (prim->primitiveType() == PT_POLYGON)
+    {
+      // compute normal
+      fvec3 v0 = verts->at(prim->index(0));
+      fvec3 v1 = verts->at(prim->index(1)) - v0;
+      fvec3 v2 = verts->at(prim->index(2)) - v0;
+      fvec3 n = cross(v1,v2).normalize();
+      if (n.isNull())
+        continue;
+      for(unsigned i=0; i<prim->indexCount(); ++i)
+      {
+        size_t a = prim->index(i);
+        size_t b = prim->index( (i+1)%prim->indexCount() );
+        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
+      }
+    }
+    else
+    if (prim->primitiveType() == PT_TRIANGLES)
+    {
+      for(unsigned i=0; i<prim->indexCount(); i+=3)
+      {
+        size_t a = prim->index(i+0);
+        size_t b = prim->index(i+1);
+        size_t c = prim->index(i+2);
+        if (a == b || b == c || c == a)
+          continue;
+        // compute normal
+        fvec3 v0 = verts->at(a);
+        fvec3 v1 = verts->at(b) - v0;
+        fvec3 v2 = verts->at(c) - v0;
+        fvec3 n = cross(v1,v2).normalize();
+        if (n.isNull())
+          continue;
+        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
+        addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
+        addEdge(edges, Edge( verts->at(c), verts->at(a) ), n );
+      }
+    }
+    else
+    if (prim->primitiveType() == PT_TRIANGLE_FAN)
+    {
+      size_t a = prim->index(0);
+      fvec3 v0 = verts->at(a);
+      for(unsigned i=1; i<prim->indexCount()-1; ++i)
+      {
+        size_t b = prim->index(i);
+        size_t c = prim->index(i+1);
+        // compute normal
+        fvec3 v1 = verts->at(b) - v0;
+        fvec3 v2 = verts->at(c) - v0;
+        fvec3 n = cross(v1,v2).normalize();
+        if (n.isNull())
+          continue;
+        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
+        addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
+        addEdge(edges, Edge( verts->at(c), verts->at(a) ), n );
+      }
+    }
+    else
+    if (prim->primitiveType() == PT_QUADS)
+    {
+      for(unsigned i=0; i<prim->indexCount(); i+=4)
+      {
+        size_t a = prim->index(i+0);
+        size_t b = prim->index(i+1);
+        size_t c = prim->index(i+2);
+        size_t d = prim->index(i+3);
+        fvec3 v0 = verts->at(a);
+        fvec3 v1 = verts->at(b) - v0;
+        fvec3 v2 = verts->at(c) - v0;
+        fvec3 n = cross(v1,v2).normalize();
+        if (n.isNull())
+          continue;
+        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
+        addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
+        addEdge(edges, Edge( verts->at(c), verts->at(d) ), n );
+        addEdge(edges, Edge( verts->at(d), verts->at(a) ), n );
+      }
+    }
+  }
+
+  for(std::set<Edge>::iterator it = edges.begin(); it != edges.end(); ++it)
+  {
+    Edge e = *it;
+    // boundary edge
+    if (e.normal2().isNull())
+      e.setIsCrease(true);
+    else
+    // crease edge
+    {
+      float cos1 = dot(e.normal1(), e.normal2());
+      cos1 = vl::clamp(cos1,-1.0f,+1.0f);
+      // return value in the interval [0,pi] radians
+      float a1 = acos(cos1) / fPi * 180.0f;
+      if( a1 > creaseAngle() )
+        e.setIsCrease(true);
+    }
+    mEdges.push_back(e);
+  }
+}
+//-----------------------------------------------------------------------------
+ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
+{
+  ref<Geometry> geom = new Geometry;
+  geom->setColorArray(vlut::black);
+  geom->setVBOEnabled(false);
+  ref<ArrayFVec3> vert_array = new ArrayFVec3;
+  geom->setVertexArray(vert_array.get());
+  #ifdef SHOW_NORMALS
+    vert_array->resize(edges().size()*6);
+  #else
+    vert_array->resize(edges().size()*2);
+  #endif
+  for(unsigned i=0; i<edges().size(); ++i)
+  {
+    vert_array->at(i*2+0) = edges()[i].vertex1();
+    vert_array->at(i*2+1) = edges()[i].vertex2();
+  }
+  #ifdef SHOW_NORMALS
+    int start = edges().size()*2;
+    for(unsigned i=0; i<edges().size(); ++i)
+    {
+      fvec3 v = (edges()[i].vertex1() + edges()[i].vertex2()) * 0.5f;
+      vert_array->at(start+i*2+0) = v;
+      vert_array->at(start+i*2+1) = v + edges()[i].normal1()*0.25f;
+    }
+    start = edges().size()*4;
+    for(unsigned i=0; i<edges().size(); ++i)
+    {
+      fvec3 v = (edges()[i].vertex1() + edges()[i].vertex2()) * 0.5f;
+      vert_array->at(start+i*2+0) = v;
+      vert_array->at(start+i*2+1) = v + edges()[i].normal2()*0.25f;
+    }
+  #endif
+  geom->primitives()->push_back( new vl::DrawArrays(vl::PT_LINES,0,vert_array->size()) );
+  return geom;
+}
+//-----------------------------------------------------------------------------
+bool EdgeExtractor::extractEdges(Actor* actor)
+{
+  Geometry* geom = dynamic_cast<Geometry*>(actor->lod(0).get());
+  if (geom)
+    extractEdges(geom);
+  return geom != NULL;
+}
+//-----------------------------------------------------------------------------
+void EdgeExtractor::extractEdges(ActorCollection* actors)
+{
+  for(int i=0; i<actors->size(); ++i)
+  {
+    Geometry* geom = dynamic_cast<Geometry*>(actors->at(i)->lod(0).get());
+    if (geom)
+      extractEdges(geom);
+  }
+}
+//-----------------------------------------------------------------------------
+void EdgeExtractor::extractEdges(SceneManager* scene_manager)
+{
+  ref<ActorCollection> actors = new ActorCollection;
+  scene_manager->appendActors(*actors);
+  extractEdges(actors.get());
+}
+//-----------------------------------------------------------------------------
+void EdgeExtractor::extractEdges(Rendering* rendering)
+{
+  for(int i=0; i<rendering->sceneManagers()->size(); ++i)
+    extractEdges(rendering->sceneManagers()->at(i));
+}
+//-----------------------------------------------------------------------------

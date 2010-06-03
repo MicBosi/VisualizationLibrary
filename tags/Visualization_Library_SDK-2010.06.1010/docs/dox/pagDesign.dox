@@ -1,0 +1,94 @@
+/**
+
+	\page pagDesign Visualization Library Architecture
+	
+	<div class="featuretitle">Introduction</div>
+	
+	Visualization Library's architecture provides the programmer with a flexible and efficient framework to develop any kind of 3D graphics and visualization applications. In fact, even if Visualization Library was born with mainly scientific applications in mind, its modular architecture is perfectly suitable to develop high-performance applications such as next-generation games. It is not a surprise after all if we consider the fact that VL was designed to natively support technologies such as OpenGL Shading Language, geometry shaders, occlusion culling, framebuffer objects, vertex buffer objects, multiple render targets, multiple rendering, post processing etc. Not to mention more traditional features like hierachical frustum culling, geometry LOD, effect LOD, multipassing, hierachical transforms...
+	
+	The paragraphs below briefly describe the interaction among the most important Visualization Library classes. This will give you a general idea of how VL works and how the main classes collaborate with each another.
+	
+	<div class="featuretitle">Visualization Library Singleton</div>
+	
+	The vl::VisualizationLibrary class is used to globally initialize, access and shutdown all the most important Visualization Library's components. As shown in the picture below, each instance of Visualization Library provides the following components:
+	
+	- A vl::KeyValues object: used to conveniently pass key/value pairs across the application.
+	- A vl::FileSystem object: used to locate and retrieve files and directories on all the registered vl::VirtualDirectory[s].
+	- A vl::LoadWriterManager object: is used to register, manage and use all the vl::ResourceLoadWriter[s] which allow Visualization Library to load and save various file formats.
+	- A vl::FontManager object: used to query vl::Font objects to be used with one or multiple shared OpenGL contexts. This is provided for convenience. Your application can instantiate and use its own vl::FontManager. This is mandatory if you are using multiple non-shared OpenGL contexts. In this case you should use a different vl::FontManager for each context.
+	- A pointer to vl::RenderingAbstract: the entry point of the rendering pipeline. This can point to a single vl::Rendering object or to a hierarchy of renderings (vl::RenderingTree) or to a custom rendering objects performing post processing etc. This is provided for convenience. Your application can instantiate and use its own set of rendering objects and arrange them in the most appropriate way. By default the returned vl::RenderingAbstract is actually a vl::Rendering.
+	
+	\image html design-vl.png
+	
+	<div class="featuretitle">Actors</div>
+	
+	The vl::Actor class associates three kinds of information:
+	
+	-# \a "what to render"
+	-# \a "where to render"
+	-# \a "how to render"
+	
+	The vl::Renderable class defines \a "what to render". \n
+	The vl::Transform class defines \a "where to render". \n
+	The vl::Effect class defines \a "how to render". \n
+	
+	As shown in the picture, a vl::Actor can render different things for each level of detail.
+	
+	The vl::Effect class can render for each level of detail a different set of rendering passes, each of which is defined by a vl::Shader 
+	which contains the actual render states to be used.
+	
+	\image html design-actor.png
+	
+	<div class="featuretitle">ShaderNode Trees</div>
+	
+	The vl::ShaderNode class is a high-level service provided by Visualization Library to conveniently manage and arrange large 
+	hierachies of shaders. Each vl::ShaderNode manages and is bound to a single vl::Shader. This kind of service is similar to what
+	a typical \a scene-graph-oriented engine provides but here you are not required to use it. You can use it for a subset of your shaders and not for others.
+	Visualization Library gives you total control over \a when the shader hierarchy is updated, as opposed to most of the \a scene-graph-oriented engines that are forced 
+	to continuously traverse and update the whole hierarchy!
+	
+	\image html design-shadernode.png
+	
+	<div class="featuretitle">Transform Trees</div>
+	
+	A vl::Transform defines a model transformation matrix. Transforms can be arranged in one or more hierachies to 
+	represent hierarchical transformations. Each vl::Actor can reference one vl::Transform (or none) and each vl::Transform can be referenced
+	by multiple Actors. The vl::Rendering class defines a transform hierarchy that is updated before every rendering. This way if you have a set 
+	of animated objects you can put their transform in this hierarchy, while non animated objects can remain in an external hierarchy that is 
+	updated only when necessary. 
+	
+	Compared to a typical \a scene-graph-oriented architecture Visualization Library has the following advantages:
+	
+	-# An object does not need to be part of the rendering transform tree to be part of the rendering.
+	-# During the rendering you do not need to traverse the whole transform hierarchy but only the ones that are animated, saving a considerable
+	   amount of time when dealing with a large number of objects.
+	-# You have the freedom to choose if a transform should be continuously and automatically updated before each rendering or not.
+	
+	\image html design-transform.png
+	
+	<div class="featuretitle">Rendering</div>
+	
+	The vl::Rendering class collects all the information necessary to perform a single rendering:
+	
+	-# vl::Camera: defines the point of view of the rendering, the viewport and the projection.
+	-# vl::RenderTarget: defines the OpenGL surface used for the rendering. It can be the normal OpenGL framebuffer, 
+	   a framebuffer object (possibly a texture), a pbuffer for offscreen rendering etc. Each rendering target belongs to an OpenGL context.
+	-# A set of vl::SceneManager objects: a scene manager contains a set of Actors and implements a specific spatial organization algorithm used to accelerate visibility/culling, picking, intersection/collision computations etc.
+	-# A set of vl::RenderingCallback objects: called at the beginning and at the end of a rendering to perform user-specific actions.
+	-# vl::Renderer: performs the actual rendering.
+	
+	As you can see Visualization Library can seamlessly use multiple scene managers, each of which can implement 
+	its own visibility and spatial organization algorithm. You can for example implement a PVS or portal-based scene manager and just drop it 
+	in the vl::Rendering! Visualization Library provides out-of-the-box the following scene managers: two BVH (bounding volume hierarchy) scene managers (a KdTree based scene manager that can efficiently replace quadtrees and octrees and a generic hierachical tree based scene manager) and a portal based scene manager especially useful for highly occluded environments.
+	
+	Visualization Library allows you to combine multiple renderings by organizing them in a powerful and simple to use tree layout, for more information see vl::RenderingTree.
+	
+	\image html design-rendering.png
+	
+	<div class="featuretitle">Rendering Queue</div>
+	
+	Below is a simplified view of Visualization Library internal rendering pipeline, from hidden surface removal to rendering.
+	
+	\image html design-renderqueue.png
+	
+*/
