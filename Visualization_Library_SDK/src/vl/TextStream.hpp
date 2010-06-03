@@ -163,26 +163,9 @@ namespace vl
       return !line.empty();
     }
 
-    bool readInt(int& i, bool hex=false)
-    {
-      bool ok = readStdString(mTmpStdStr);
-      if (mTmpStdStr.empty())
-        return false;
-      if (hex)
-        sscanf(mTmpStdStr.c_str(), "%x", &i);
-      else
-        i = atoi(mTmpStdStr.c_str());
-      return ok;
-    }
+    bool readInt(int& i, bool hex=false);
 
-    bool readDouble(double& d)
-    {
-      bool ok = readStdString(mTmpStdStr);
-      if (mTmpStdStr.empty())
-        return false;
-      d = atof( mTmpStdStr.c_str() );
-      return ok;
-    }
+    bool readDouble(double& d);
 
     bool readString(String& token)
     {

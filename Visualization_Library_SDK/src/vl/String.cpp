@@ -36,6 +36,7 @@
 #include <vl/FileSystem.hpp>
 #include <vl/VirtualFile.hpp>
 #include <vl/VisualizationLibrary.hpp>
+#include <stdio.h>
 
 using namespace vl;
 
@@ -845,6 +846,7 @@ String String::fromAscii(const char* str, int size)
     if( ascii[i] < 128 )
       s.mString->push_back( ascii[i] );
     else
+
       s.mString->push_back( L'?' );
   }
   /*s.mString->push_back(0);*/
