@@ -38,6 +38,7 @@
 #include <vl/Scissor.hpp>
 #include <vl/Texture.hpp>
 #include <vl/Image.hpp>
+#include <stdio.h>
 
 using namespace vlMolecule;
 using namespace vl;
