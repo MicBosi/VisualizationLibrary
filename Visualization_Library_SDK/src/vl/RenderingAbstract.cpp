@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vl/RenderingAbstract.hpp>
+#include <vl/RenderingCallback.hpp>
 
 using namespace vl;
 

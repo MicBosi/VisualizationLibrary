@@ -29,86 +29,77 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef EdgeUpdateCallback_INCLUDE_ONCE
-#define EdgeUpdateCallback_INCLUDE_ONCE
+#ifndef EnableSet_INCLUDE_ONCE
+#define EnableSet_INCLUDE_ONCE
 
-#include <vl/Actor.hpp>
-#include <vl/EdgeExtractor.hpp>
-#include <vl/Geometry.hpp>
+#include <vl/Object.hpp>
+#include <vl/vlnamespace.hpp>
+#include <vector>
 
 namespace vl
 {
-  //! The EdgeUpdateCallback class updates at every frame the edges of an Actor for the purpose of edge-enhancement.
-  //! \sa EdgeExtractor
-  class EdgeUpdateCallback: public ActorRenderingCallback
+  /**
+   * A set of enables managed by Shader.
+   * This class substitutes for the most part the OpenGL functions glEnable() and glDisable().
+   *
+   * \sa Shader, Effect, Actor
+  */
+  class EnableSet: public Object
   {
   public:
-    virtual const char* className() { return "EdgeUpdateCallback"; }
-    EdgeUpdateCallback(): mShowCreases(true) 
-    {
-      #ifndef NDEBUG
-        mName = className();
-      #endif
-    }
-    EdgeUpdateCallback(const std::vector<EdgeExtractor::Edge>& edge): mEdges(edge), mShowCreases(false) 
+    EnableSet(): mBlendingEnabled(false)
     {
       #ifndef NDEBUG
         mName = className();
       #endif
     }
 
-    //! If \p true only the edges forming the silhouette of an object will be rendered.
-    void setShowCreases(bool sonly) { mShowCreases = sonly; }
-    //! If \p true only the edges forming the silhouette of an object will be rendered.
-    bool showCreases() const { return mShowCreases; }
+    virtual const char* className() { return "EnableSet"; }
 
-    virtual void operator()(const Camera* cam, Actor* act, Renderable* renderable, const Shader*, int pass)
+    // enable getter and setters
+
+    void enable(EEnable capability)
     {
-      if (pass != 0)
-        return;
+      if (capability == EN_BLEND)
+        mBlendingEnabled = true;
+      for(unsigned i=0; i<mEnables.size(); ++i)
+        if (mEnables[i] == capability)
+          return;
+      mEnables.push_back( capability );
+    }
 
-      fmat4 vmat = (fmat4)cam->viewMatrix();
-      if (act->transform())
-        vmat = vmat * (fmat4)act->transform()->worldMatrix();
-      fmat4 nmat = vmat.as3x3();
-      nmat = nmat.inverse().transpose();
-
-      ref<Geometry>         geom = dynamic_cast<Geometry*>(renderable);
-      ref<ArrayFVec3> vert_array = dynamic_cast<ArrayFVec3*>(geom->vertexArray());
-      // VL_CHECK(vert_array->size() == edges().size()*2);
-      for(unsigned i=0; i<edges().size(); ++i)
+    void disable(EEnable capability)
+    {
+      if (capability == EN_BLEND)
+        mBlendingEnabled = false;
+      for(unsigned i=0; i<mEnables.size(); ++i)
       {
-        bool insert_edge = edges()[i].isCrease() && showCreases();
-        if (!insert_edge)
+        if (mEnables[i] == capability)
         {
-          fvec3 v1 = vmat * edges()[i].vertex1();
-          fvec3 v2 = vmat * edges()[i].vertex2();
-          fvec3 v  = ((v1+v2) * 0.5f).normalize();
-          fvec3 n1 = nmat * edges()[i].normal1();
-          fvec3 n2 = nmat * edges()[i].normal2();
-          insert_edge = dot(n1, v) * dot(n2, v) < 0;
-        }
-        if ( insert_edge )
-        {
-          vert_array->at(i*2+0) = edges()[i].vertex1();
-          vert_array->at(i*2+1) = edges()[i].vertex2();
-        }
-        else
-        {
-          // degenerate
-          vert_array->at(i*2+0) = vert_array->at(i*2+1);
+          mEnables.erase( mEnables.begin() + i );
+          return;
         }
       }
     }
 
-    const std::vector<EdgeExtractor::Edge>& edges() const { return mEdges; }
-    std::vector<EdgeExtractor::Edge>& edges() { return mEdges; }
+    const std::vector<EEnable>& enables() const { return mEnables; }
 
-  private:
-    std::vector<EdgeExtractor::Edge> mEdges;
-    bool mShowCreases;
+    int isEnabled(EEnable capability) const
+    {
+      for(unsigned i=0; i<mEnables.size(); ++i)
+        if (mEnables[i] == capability)
+          return true;
+      return false;
+    }
+
+    void disableAll() { mEnables.clear(); mBlendingEnabled=false; }
+
+    bool blendingEnabled() const { return mBlendingEnabled; }
+
+  protected:
+    std::vector<EEnable> mEnables;
+    bool mBlendingEnabled;
   };
-
 }
 
 #endif

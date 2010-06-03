@@ -33,6 +33,7 @@
 #include "vl/Rendering.hpp"
 #include "vl/RenderingTree.hpp"
 #include "vl/SceneManager.hpp"
+#include "vl/Light.hpp"
 
 class App_RenderToTextureClassic: public BaseDemo
 {

@@ -29,86 +29,109 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef EdgeUpdateCallback_INCLUDE_ONCE
-#define EdgeUpdateCallback_INCLUDE_ONCE
+#ifndef UniformSet_INCLUDE_ONCE
+#define UniformSet_INCLUDE_ONCE
 
-#include <vl/Actor.hpp>
-#include <vl/EdgeExtractor.hpp>
-#include <vl/Geometry.hpp>
+#include <vl/Object.hpp>
+#include <vl/Uniform.hpp>
 
 namespace vl
 {
-  //! The EdgeUpdateCallback class updates at every frame the edges of an Actor for the purpose of edge-enhancement.
-  //! \sa EdgeExtractor
-  class EdgeUpdateCallback: public ActorRenderingCallback
+  //------------------------------------------------------------------------------
+  // UniformSet
+  //------------------------------------------------------------------------------
+  /**
+   * A set of Uniform objects managed by a Shader.
+   *
+   * \sa 
+   * Shader, Effect, Actor
+  */
+  class UniformSet: public Object
   {
   public:
-    virtual const char* className() { return "EdgeUpdateCallback"; }
-    EdgeUpdateCallback(): mShowCreases(true) 
+    virtual const char* className() { return "UniformSet"; }
+    UniformSet()
     {
       #ifndef NDEBUG
-        mName = className();
-      #endif
-    }
-    EdgeUpdateCallback(const std::vector<EdgeExtractor::Edge>& edge): mEdges(edge), mShowCreases(false) 
-    {
-      #ifndef NDEBUG
-        mName = className();
+        mName = "UniformSet";
       #endif
     }
 
-    //! If \p true only the edges forming the silhouette of an object will be rendered.
-    void setShowCreases(bool sonly) { mShowCreases = sonly; }
-    //! If \p true only the edges forming the silhouette of an object will be rendered.
-    bool showCreases() const { return mShowCreases; }
+    // uniform getters and setters
 
-    virtual void operator()(const Camera* cam, Actor* act, Renderable* renderable, const Shader*, int pass)
-    {
-      if (pass != 0)
+    void setUniform(Uniform* uniform, bool check_for_doubles = true) 
+    { 
+      VL_CHECK(uniform)
+      if (uniform == NULL)
         return;
-
-      fmat4 vmat = (fmat4)cam->viewMatrix();
-      if (act->transform())
-        vmat = vmat * (fmat4)act->transform()->worldMatrix();
-      fmat4 nmat = vmat.as3x3();
-      nmat = nmat.inverse().transpose();
-
-      ref<Geometry>         geom = dynamic_cast<Geometry*>(renderable);
-      ref<ArrayFVec3> vert_array = dynamic_cast<ArrayFVec3*>(geom->vertexArray());
-      // VL_CHECK(vert_array->size() == edges().size()*2);
-      for(unsigned i=0; i<edges().size(); ++i)
+      if ( check_for_doubles )
       {
-        bool insert_edge = edges()[i].isCrease() && showCreases();
-        if (!insert_edge)
+        for(unsigned i=0; i<mUniforms.size(); ++i)
         {
-          fvec3 v1 = vmat * edges()[i].vertex1();
-          fvec3 v2 = vmat * edges()[i].vertex2();
-          fvec3 v  = ((v1+v2) * 0.5f).normalize();
-          fvec3 n1 = nmat * edges()[i].normal1();
-          fvec3 n2 = nmat * edges()[i].normal2();
-          insert_edge = dot(n1, v) * dot(n2, v) < 0;
-        }
-        if ( insert_edge )
-        {
-          vert_array->at(i*2+0) = edges()[i].vertex1();
-          vert_array->at(i*2+1) = edges()[i].vertex2();
-        }
-        else
-        {
-          // degenerate
-          vert_array->at(i*2+0) = vert_array->at(i*2+1);
+          if (mUniforms[i]->name() == uniform->name())
+          {
+            mUniforms[i] = uniform;
+            return;
+          }
         }
       }
+      mUniforms.push_back( uniform );
     }
 
-    const std::vector<EdgeExtractor::Edge>& edges() const { return mEdges; }
-    std::vector<EdgeExtractor::Edge>& edges() { return mEdges; }
+    const std::vector< ref<Uniform> >& uniforms() const { return mUniforms; }
 
-  private:
-    std::vector<EdgeExtractor::Edge> mEdges;
-    bool mShowCreases;
+    void eraseUniform(const std::string& name) 
+    { 
+      for(unsigned i=0; i<mUniforms.size(); ++i)
+        if (mUniforms[i]->name() == name)
+        {
+          mUniforms.erase( mUniforms.begin() + i );
+          return;
+        }
+    }
+
+    void eraseUniform(const Uniform* uniform) 
+    { 
+      for(unsigned i=0; i<mUniforms.size(); ++i)
+        if (mUniforms[i] == uniform)
+        {
+          mUniforms.erase( mUniforms.begin() + i );
+          return;
+        }
+    }
+
+    void eraseAllUniforms() { mUniforms.clear(); }
+
+    Uniform* gocUniform(const std::string& name)
+    { 
+      for(unsigned i=0; i<mUniforms.size(); ++i)
+        if (mUniforms[i]->name() == name)
+          return mUniforms[i].get();
+      ref<Uniform> uniform = new Uniform;
+      uniform->setName( name );
+      mUniforms.push_back(uniform);
+      return uniform.get();
+    }
+
+    Uniform* getUniform(const std::string& name)
+    { 
+      for(unsigned i=0; i<mUniforms.size(); ++i)
+        if (mUniforms[i]->name() == name)
+          return mUniforms[i].get();
+      return NULL;
+    }
+
+    const Uniform* getUniform(const std::string& name) const
+    { 
+      for(unsigned i=0; i<mUniforms.size(); ++i)
+        if (mUniforms[i]->name() == name)
+          return mUniforms[i].get();
+      return NULL;
+    }
+
+  protected:
+    std::vector< ref<Uniform> > mUniforms;
   };
-
 }
 
 #endif

@@ -32,7 +32,6 @@
 #ifndef Renderer_INCLUDE_ONCE
 #define Renderer_INCLUDE_ONCE
 
-#include <vl/RenderQueue.hpp>
 #include <vl/Camera.hpp>
 #include <vl/Renderable.hpp>
 #include <vl/Shader.hpp>
@@ -44,6 +43,8 @@
 
 namespace vl
 {
+  class RenderQueue;
+
   /**
    * The Renderer class executes the actual rendering on the given RenderQueue.
    *
@@ -60,10 +61,10 @@ namespace vl
     void setCollectStatistics(bool on) { mCollectStatistics = on; }
     bool collectStatistics() const { return mCollectStatistics; }
 
-    int renderedRenderablesCount() const { return mRenderedRenderableCount; }
-    int renderedTrianglesCount() const { return mRenderedTriangleCount; }
-    int renderedLinesCount() const { return mRenderedLineCount; }
-    int renderedPointsCount() const { return mRenderedPointCount; }
+    size_t renderedRenderablesCount() const { return mRenderedRenderableCount; }
+    size_t renderedTrianglesCount() const { return mRenderedTriangleCount; }
+    size_t renderedLinesCount() const { return mRenderedLineCount; }
+    size_t renderedPointsCount() const { return mRenderedPointCount; }
 
     void applyEnables( const EnableSet* prev, const EnableSet* cur );
     void applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera );
@@ -90,10 +91,10 @@ namespace vl
 
   protected:
     bool mCollectStatistics;
-    int mRenderedRenderableCount;
-    int mRenderedTriangleCount;
-    int mRenderedLineCount;
-    int mRenderedPointCount;
+    size_t mRenderedRenderableCount;
+    size_t mRenderedTriangleCount;
+    size_t mRenderedLineCount;
+    size_t mRenderedPointCount;
 
     // table
 

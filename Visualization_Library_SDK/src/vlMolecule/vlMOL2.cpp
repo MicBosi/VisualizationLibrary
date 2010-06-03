@@ -34,6 +34,10 @@
 #include <vlMolecule/Molecule.hpp>
 #include <vlMolecule/RingExtractor.hpp>
 #include <vl/TextStream.hpp>
+#include <vl/Effect.hpp>
+#include <vl/Scissor.hpp>
+#include <vl/Texture.hpp>
+#include <vl/Image.hpp>
 
 using namespace vlMolecule;
 using namespace vl;
@@ -63,7 +67,7 @@ namespace
 
     // parse structure name
     text_stream.readLine(line);
-    structure->setMoleculeName( vl::String::trimStdString(line) );
+    structure->setMoleculeName( vl::String::trimStdString(line).c_str() );
 
     // skip lines until atom coordinates start
     while(text_stream.readLine(line) && !strstr(line.c_str(), "@<TRIPOS>ATOM")) { /*skip lines*/ }

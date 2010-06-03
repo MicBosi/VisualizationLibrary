@@ -31,6 +31,8 @@
 
 #include "vl/BlitFramebuffer.hpp"
 #include "vl/SceneManager.hpp"
+#include "vl/GLSL.hpp"
+#include "vl/Light.hpp"
 
 class App_FBO_MRT_GLSL: public BaseDemo
 {

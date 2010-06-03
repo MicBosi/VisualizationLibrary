@@ -69,14 +69,14 @@ namespace
 //-----------------------------------------------------------------------------
 ref<ActorKdTree> ActorKdTree::kdtreeFromNonLeafyActors(int max_depth, float minimum_volume)
 {
-  Collection<Actor> acts;
+  ActorCollection acts;
   harvestNonLeafActors(acts);
   ref<ActorKdTree> newtree = new ActorKdTree;
   newtree->compileKdTree(acts, max_depth, minimum_volume);
   return newtree;
 }
 //-----------------------------------------------------------------------------
-void ActorKdTree::harvestNonLeafActors(Collection<Actor>& acts)
+void ActorKdTree::harvestNonLeafActors(ActorCollection& acts)
 {
   VL_CHECK( (actors()->size() && (mChildN == 0 && mChildP == 0)) || !(mChildN == 0 && mChildP == 0) );
 
@@ -91,7 +91,7 @@ void ActorKdTree::harvestNonLeafActors(Collection<Actor>& acts)
   if(mChildP) childP()->harvestNonLeafActors( acts );
 }
 //-----------------------------------------------------------------------------
-void ActorKdTree::computeLocalAABB(const Collection<Actor>& acts)
+void ActorKdTree::computeLocalAABB(const ActorCollection& acts)
 {
   mAABB.setNull();
   for(int i=0; i<(int)acts.size(); ++i)
@@ -101,7 +101,7 @@ void ActorKdTree::computeLocalAABB(const Collection<Actor>& acts)
   }
 }
 //-----------------------------------------------------------------------------
-void ActorKdTree::compileKdTree(Collection<Actor>& acts, int max_depth, float minimum_volume)
+void ActorKdTree::compileKdTree(ActorCollection& acts, int max_depth, float minimum_volume)
 {
   int counter = 0;
   prepareActors(acts);
@@ -110,7 +110,7 @@ void ActorKdTree::compileKdTree(Collection<Actor>& acts, int max_depth, float mi
 //-----------------------------------------------------------------------------
 void ActorKdTree::compileKdTree(int max_depth, float minimum_volume)
 {
-  Collection<Actor> acts;
+  ActorCollection acts;
   appendActors(acts);
   compileKdTree(acts, max_depth, minimum_volume);
 }
@@ -140,8 +140,8 @@ void ActorKdTree::compileTree_internal(ActorCollection& acts, int& counter, int 
     return;
   }
 
-  Collection<Actor> actorsN;
-  Collection<Actor> actorsP;
+  ActorCollection actorsN;
+  ActorCollection actorsP;
   actorsN.reserve(acts.size());
   actorsP.reserve(acts.size());
 
@@ -172,7 +172,7 @@ void ActorKdTree::compileTree_internal(ActorCollection& acts, int& counter, int 
 
 }
 //-----------------------------------------------------------------------------
-int ActorKdTree::scorePlane(const Plane& plane, const Collection<Actor>& acts)
+int ActorKdTree::scorePlane(const Plane& plane, const ActorCollection& acts)
 {
   int cN=0, cC=0, cP=0;
   for(int i=0; i<(int)acts.size(); ++i)
@@ -189,7 +189,7 @@ int ActorKdTree::scorePlane(const Plane& plane, const Collection<Actor>& acts)
 }
 //-----------------------------------------------------------------------------
 //! Finds the best plane among different x/y/z orientation in order to divide the given list of actors included in the given AABB.
-bool ActorKdTree::findBestPlane(Plane& plane, int& counter, Collection<Actor>& acts)
+bool ActorKdTree::findBestPlane(Plane& plane, int& counter, ActorCollection& acts)
 {
   int median = (int)acts.size() / 2;
   if (counter%3 == 0)

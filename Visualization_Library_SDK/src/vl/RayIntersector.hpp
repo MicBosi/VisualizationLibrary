@@ -37,6 +37,7 @@
 #include <vl/Geometry.hpp>
 #include <vl/Vector4.hpp>
 #include <vl/Matrix4.hpp>
+#include <vl/Frustum.hpp>
 
 namespace vl
 {

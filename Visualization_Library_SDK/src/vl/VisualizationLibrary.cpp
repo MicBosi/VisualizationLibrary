@@ -36,6 +36,8 @@
 #include <vl/Time.hpp>
 #include <vl/Log.hpp>
 #include <vl/Rendering.hpp> 
+#include <vl/RenderQueue.hpp>
+#include <vl/SceneManager.hpp>
 #include <vl/FileSystem.hpp>
 #include <vl/FontManager.hpp>
 #include <vl/DiskDirectory.hpp>

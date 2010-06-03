@@ -34,13 +34,10 @@
 
 #include <vl/String.hpp>
 #include <vl/Vector4.hpp>
-#include <vl/vlnamespace.hpp>
 #include <vl/Image.hpp>
 
 namespace vl
 {
-  class Image;
-
   //------------------------------------------------------------------------------
   // TexParameter
   //------------------------------------------------------------------------------

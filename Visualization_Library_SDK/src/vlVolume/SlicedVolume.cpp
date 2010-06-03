@@ -30,6 +30,8 @@
 /**************************************************************************************/
 
 #include <vlVolume/SlicedVolume.hpp>
+#include <vl/GLSL.hpp>
+#include <vl/Camera.hpp>
 #include <vl/Time.hpp>
 
 using namespace vl;

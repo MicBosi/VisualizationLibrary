@@ -32,11 +32,15 @@
 #ifndef SceneManager_INCLUDE_ONCE
 #define SceneManager_INCLUDE_ONCE
 
-#include <vl/Actor.hpp>
-#include <vl/Camera.hpp>
+#include <vl/Object.hpp>
+#include <vl/Sphere.hpp>
 
 namespace vl
 {
+  class Actor;
+  class ActorCollection;
+  class Camera;
+
 //-------------------------------------------------------------------------------------------------------------------------------------------
 // SceneManager
 //-------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,10 +108,9 @@ namespace vl
     void setEnableMask(unsigned int enabled) { mEnableMask = enabled; }
     unsigned int enableMask() const { return mEnableMask; }
     //! Returns \p true if \p "a->enableMask() & enableMask()) != 0"
-    bool isEnabled(Actor*a) { return (a->enableMask() & enableMask()) != 0; }
+    bool isEnabled(Actor*a) const;
 
   protected:
-    // ref<ActorCollection> mActors;
     Sphere mSphere;
     AABB mAABB;
     unsigned int mEnableMask;

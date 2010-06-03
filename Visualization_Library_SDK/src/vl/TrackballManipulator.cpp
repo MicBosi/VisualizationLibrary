@@ -34,6 +34,7 @@
 #include <vl/Actor.hpp>
 #include <vl/SceneManager.hpp>
 #include <vl/Rendering.hpp>
+#include <vl/RenderQueue.hpp>
 
 using namespace vl;
 

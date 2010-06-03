@@ -29,86 +29,58 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef EdgeUpdateCallback_INCLUDE_ONCE
-#define EdgeUpdateCallback_INCLUDE_ONCE
+#ifndef RenderStateSet_INCLUDE_ONCE
+#define RenderStateSet_INCLUDE_ONCE
 
-#include <vl/Actor.hpp>
-#include <vl/EdgeExtractor.hpp>
-#include <vl/Geometry.hpp>
+#include <vl/Object.hpp>
+#include <vl/vlnamespace.hpp>
+#include <vector>
 
 namespace vl
 {
-  //! The EdgeUpdateCallback class updates at every frame the edges of an Actor for the purpose of edge-enhancement.
-  //! \sa EdgeExtractor
-  class EdgeUpdateCallback: public ActorRenderingCallback
+  class GLSLProgram;
+  class RenderState;
+
+  /**
+   * A set of RenderState objects managed by a Shader.
+   *
+   * \sa Shader, Effect, Actor
+  */
+  class RenderStateSet: public Object
   {
   public:
-    virtual const char* className() { return "EdgeUpdateCallback"; }
-    EdgeUpdateCallback(): mShowCreases(true) 
+    RenderStateSet(): mGLSLProgram(NULL)
     {
       #ifndef NDEBUG
         mName = className();
       #endif
     }
-    EdgeUpdateCallback(const std::vector<EdgeExtractor::Edge>& edge): mEdges(edge), mShowCreases(false) 
-    {
-      #ifndef NDEBUG
-        mName = className();
-      #endif
-    }
+    virtual const char* className() { return "RenderStateSet"; }
 
-    //! If \p true only the edges forming the silhouette of an object will be rendered.
-    void setShowCreases(bool sonly) { mShowCreases = sonly; }
-    //! If \p true only the edges forming the silhouette of an object will be rendered.
-    bool showCreases() const { return mShowCreases; }
+    // renderstates getters and setters
 
-    virtual void operator()(const Camera* cam, Actor* act, Renderable* renderable, const Shader*, int pass)
-    {
-      if (pass != 0)
-        return;
+    void setRenderState(RenderState* renderstate);
 
-      fmat4 vmat = (fmat4)cam->viewMatrix();
-      if (act->transform())
-        vmat = vmat * (fmat4)act->transform()->worldMatrix();
-      fmat4 nmat = vmat.as3x3();
-      nmat = nmat.inverse().transpose();
+    RenderState* renderState( ERenderState type );
 
-      ref<Geometry>         geom = dynamic_cast<Geometry*>(renderable);
-      ref<ArrayFVec3> vert_array = dynamic_cast<ArrayFVec3*>(geom->vertexArray());
-      // VL_CHECK(vert_array->size() == edges().size()*2);
-      for(unsigned i=0; i<edges().size(); ++i)
-      {
-        bool insert_edge = edges()[i].isCrease() && showCreases();
-        if (!insert_edge)
-        {
-          fvec3 v1 = vmat * edges()[i].vertex1();
-          fvec3 v2 = vmat * edges()[i].vertex2();
-          fvec3 v  = ((v1+v2) * 0.5f).normalize();
-          fvec3 n1 = nmat * edges()[i].normal1();
-          fvec3 n2 = nmat * edges()[i].normal2();
-          insert_edge = dot(n1, v) * dot(n2, v) < 0;
-        }
-        if ( insert_edge )
-        {
-          vert_array->at(i*2+0) = edges()[i].vertex1();
-          vert_array->at(i*2+1) = edges()[i].vertex2();
-        }
-        else
-        {
-          // degenerate
-          vert_array->at(i*2+0) = vert_array->at(i*2+1);
-        }
-      }
-    }
+    const RenderState* renderState( ERenderState type ) const;
 
-    const std::vector<EdgeExtractor::Edge>& edges() const { return mEdges; }
-    std::vector<EdgeExtractor::Edge>& edges() { return mEdges; }
+    const std::vector< ref<RenderState> >& renderStates() const { return mRenderStates; }
 
-  private:
-    std::vector<EdgeExtractor::Edge> mEdges;
-    bool mShowCreases;
+    void eraseRenderState(ERenderState type);
+
+    void eraseAllRenderStates() { mRenderStates.clear(); mGLSLProgram = NULL; }
+    
+    //! Returns the GLSLProgram associated to a RenderStateSet (if any)
+    const GLSLProgram* glslProgram() const { return mGLSLProgram; }
+
+    //! Returns the GLSLProgram associated to a RenderStateSet (if any)
+    GLSLProgram* glslProgram() { return mGLSLProgram; }
+
+  protected:
+    std::vector< ref<RenderState> > mRenderStates;
+    GLSLProgram* mGLSLProgram;
   };
-
 }
 
 #endif

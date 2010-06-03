@@ -32,18 +32,22 @@
 #ifndef Shader_INCLUDE_ONCE
 #define Shader_INCLUDE_ONCE
 
-#include <vl/Object.hpp>
-#include <vl/Light.hpp>
-#include <vl/ClipPlane.hpp>
-#include <vl/Texture.hpp>
-#include <vl/GLSL.hpp>
-#include <vl/Uniform.hpp>
-#include <vl/Scissor.hpp>
+#include <vl/RenderState.hpp>
+#include <vl/RenderStateSet.hpp>
+#include <vl/EnableSet.hpp>
+#include <vl/UniformSet.hpp>
+#include <vl/Vector4.hpp>
+#include <vl/Matrix4.hpp>
 #include <vector>
-#include <bitset>
+#include <vl/Texture.hpp>
+#include <vl/RenderStateSet.hpp>
+#include <vl/RenderStateSet.hpp>
+#include <vl/Scissor.hpp>
 
 namespace vl
 {
+  class Light;
+  class ClipPlane;
   //------------------------------------------------------------------------------
   // PixelTransfer
   //------------------------------------------------------------------------------
@@ -1283,152 +1287,17 @@ namespace vl
     virtual void disable() const;
     virtual void enable()  const;
 
-    virtual void initResources()
-    {
-      // creates the texture if not yet created
-      if (texture() && texture()->setupParams())
-        texture()->createTexture();
-    }
+    virtual void initResources();
 
     void setTexture(Texture* texture) { mTexture = texture; }
     Texture* texture() { return mTexture.get(); }
     const Texture* texture() const { return mTexture.get(); }
 
-    bool hasTexture() const { return mTexture && mTexture->handle(); }
+    bool hasTexture() const;
 
   protected:
     ref<Texture> mTexture;
   };
-  //------------------------------------------------------------------------------
-  /**
-   * A set of RenderState objects managed by a Shader.
-   *
-   * \sa Shader, Effect, Actor
-  */
-  class RenderStateSet: public Object
-  {
-  public:
-    RenderStateSet(): mGLSLProgram(NULL)
-    {
-      #ifndef NDEBUG
-        mName = "RenderStateSet";
-      #endif
-    }
-    virtual const char* className() { return "RenderStateSet"; }
-
-    // renderstates getters and setters
-
-    void setRenderState(RenderState* renderstate)
-    {
-      if (renderstate == NULL)
-        return;
-      if (renderstate->type() == RS_GLSLProgram)
-        mGLSLProgram = dynamic_cast<GLSLProgram*>(renderstate);
-      for(unsigned i=0; i<mRenderStates.size(); ++i)
-        if (mRenderStates[i]->type() == renderstate->type())
-        {
-          mRenderStates[i] = renderstate;
-          return;
-        }
-      mRenderStates.push_back( renderstate );
-    }
-    RenderState* renderState( ERenderState type )
-    {
-      for(unsigned i=0; i<mRenderStates.size(); ++i)
-        if ( mRenderStates[i]->type() == type )
-          return mRenderStates[i].get();
-      return NULL;
-    }
-    const RenderState* renderState( ERenderState type ) const
-    {
-      for(unsigned i=0; i<mRenderStates.size(); ++i)
-        if ( mRenderStates[i]->type() == type )
-          return mRenderStates[i].get();
-      return NULL;
-    }
-    const std::vector< ref<RenderState> >& renderStates() const { return mRenderStates; }
-    void eraseRenderState(ERenderState type)
-    {
-      if (type == RS_GLSLProgram)
-        mGLSLProgram = NULL;
-      for(unsigned i=0; i<mRenderStates.size(); ++i)
-        if (mRenderStates[i]->type() == type)
-        {
-          mRenderStates.erase(mRenderStates.begin() + i);
-          return;
-        }
-    }
-    void eraseAllRenderStates() { mRenderStates.clear(); mGLSLProgram = NULL; }
-    
-    //! Returns the GLSLProgram associated to a RenderStateSet (if any)
-    const GLSLProgram* glslProgram() const { return mGLSLProgram; }
-    //! Returns the GLSLProgram associated to a RenderStateSet (if any)
-    GLSLProgram* glslProgram() { return mGLSLProgram; }
-
-  protected:
-    std::vector< ref<RenderState> > mRenderStates;
-    GLSLProgram* mGLSLProgram;
-  };
-  //------------------------------------------------------------------------------
-  /**
-   * A set of enables managed by Shader.
-   * This class substitutes for the most part the OpenGL functions glEnable() and glDisable().
-   *
-   * \sa Shader, Effect, Actor
-  */
-  class EnableSet: public Object
-  {
-  public:
-    EnableSet(): mBlendingEnabled(false)
-    {
-      #ifndef NDEBUG
-        mName = "EnableSet";
-      #endif
-    }
-
-    virtual const char* className() { return "EnableSet"; }
-
-    // enable getter and setters
-
-    void enable(EEnable capability)
-    {
-      if (capability == EN_BLEND)
-        mBlendingEnabled = true;
-      for(unsigned i=0; i<mEnables.size(); ++i)
-        if (mEnables[i] == capability)
-          return;
-      mEnables.push_back( capability );
-    }
-    void disable(EEnable capability)
-    {
-      if (capability == EN_BLEND)
-        mBlendingEnabled = false;
-      for(unsigned i=0; i<mEnables.size(); ++i)
-      {
-        if (mEnables[i] == capability)
-        {
-          mEnables.erase( mEnables.begin() + i );
-          return;
-        }
-      }
-    }
-    const std::vector<EEnable>& enables() const { return mEnables; }
-    int isEnabled(EEnable capability) const
-    {
-      for(unsigned i=0; i<mEnables.size(); ++i)
-        if (mEnables[i] == capability)
-          return true;
-      return false;
-    }
-    void disableAll() { mEnables.clear(); mBlendingEnabled=false; }
-    bool blendingEnabled() const { return mBlendingEnabled; }
-
-  protected:
-    std::vector<EEnable> mEnables;
-    bool mBlendingEnabled;
-  };
-  //------------------------------------------------------------------------------
-  // class UniformSet defined in GLSL.hpp
   //------------------------------------------------------------------------------
   // Shader
   //------------------------------------------------------------------------------
@@ -1459,8 +1328,8 @@ namespace vl
     // state getters
 
     GLSLProgram* gocGLSLProgram();
-    const GLSLProgram* getGLSLProgram() const { return dynamic_cast<const GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); }
-    GLSLProgram* getGLSLProgram() { return dynamic_cast<GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); }
+    const GLSLProgram* getGLSLProgram() const;
+    GLSLProgram* getGLSLProgram();
 
     PixelTransfer* gocPixelTransfer();
     const PixelTransfer* getPixelTransfer() const { return dynamic_cast<const PixelTransfer*>( getRenderStateSet()->renderState( RS_PixelTransfer) ); }
@@ -1577,12 +1446,12 @@ namespace vl
     // indexed render states
 
     Light* gocLight(int light_index);
-    const Light* getLight(int light_index) const { return dynamic_cast<const Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
-    Light* getLight(int light_index) { return dynamic_cast<Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
+    const Light* getLight(int light_index) const;
+    Light* getLight(int light_index);
 
     ClipPlane* gocClipPlane(int plane_index);
-    const ClipPlane* getClipPlane(int plane_index) const { return dynamic_cast<const ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
-    ClipPlane* getClipPlane(int plane_index) { return dynamic_cast<ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
+    const ClipPlane* getClipPlane(int plane_index) const;
+    ClipPlane* getClipPlane(int plane_index);
 
     TextureUnit* gocTextureUnit(int unit_index);
     const TextureUnit* getTextureUnit(int unit_index) const { return dynamic_cast<const TextureUnit*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureUnit0+unit_index) ) ); }
@@ -1744,14 +1613,7 @@ namespace vl
     //! Used internally.
     Real lastUpdateTime() const { return mLastUpdateTime; }
 
-    void initResources()
-    {
-      if (getRenderStateSet())
-      {
-        for(unsigned i=0; i<getRenderStateSet()->renderStates().size(); ++i)
-          getRenderStateSet()->renderStates()[i]->initResources();
-      }
-    }
+    void initResources();
 
   protected:
     Real mLastUpdateTime;
