@@ -30,7 +30,9 @@
 /**************************************************************************************/
 
 #include <vl/Rendering.hpp>
+#include <vl/Renderer.hpp>
 #include <vl/SceneManager.hpp>
+#include <vl/RenderQueue.hpp>
 
 using namespace vl;
 

@@ -32,6 +32,7 @@
 #include <vl/SceneManagerPortals.hpp>
 #include <vl/Geometry.hpp>
 #include <vl/Say.hpp>
+#include <vl/Camera.hpp>
 
 using namespace vl;
 

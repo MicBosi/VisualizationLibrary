@@ -32,6 +32,10 @@
 #include <vl/EdgeExtractor.hpp>
 #include <vl/Rendering.hpp>
 #include <vl/SceneManager.hpp>
+#include <vl/RenderQueue.hpp>
+#include <vl/Log.hpp>
+#include <vl/Array.hpp>
+#include <vl/Geometry.hpp>
 
 using namespace vl;
 
@@ -88,10 +92,10 @@ void EdgeExtractor::extractEdges(Geometry* geom)
       */
       for(unsigned i=0; i<prim->indexCount()-3; i+=2)
       {
-        int a = prim->index(i+0);
-        int b = prim->index(i+1);
-        int c = prim->index(i+2);
-        int d = prim->index(i+3);
+        size_t a = prim->index(i+0);
+        size_t b = prim->index(i+1);
+        size_t c = prim->index(i+2);
+        size_t d = prim->index(i+3);
         // compute normal
         fvec3 v0 = verts->at(a);
         fvec3 v1 = verts->at(b) - v0;
@@ -110,9 +114,9 @@ void EdgeExtractor::extractEdges(Geometry* geom)
     {
       for(unsigned i=0; i<prim->indexCount()-2; ++i)
       {
-        int a = prim->index(i+0);
-        int b = prim->index(i+1);
-        int c = prim->index(i+2);
+        size_t a = prim->index(i+0);
+        size_t b = prim->index(i+1);
+        size_t c = prim->index(i+2);
         // compute normal
         fvec3 v0 = verts->at(a);
         fvec3 v1 = verts->at(b) - v0;
@@ -138,8 +142,8 @@ void EdgeExtractor::extractEdges(Geometry* geom)
         continue;
       for(unsigned i=0; i<prim->indexCount(); ++i)
       {
-        int a = prim->index(i);
-        int b = prim->index( (i+1)%prim->indexCount() );
+        size_t a = prim->index(i);
+        size_t b = prim->index( (i+1)%prim->indexCount() );
         addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
       }
     }
@@ -148,9 +152,9 @@ void EdgeExtractor::extractEdges(Geometry* geom)
     {
       for(unsigned i=0; i<prim->indexCount(); i+=3)
       {
-        int a = prim->index(i+0);
-        int b = prim->index(i+1);
-        int c = prim->index(i+2);
+        size_t a = prim->index(i+0);
+        size_t b = prim->index(i+1);
+        size_t c = prim->index(i+2);
         if (a == b || b == c || c == a)
           continue;
         // compute normal
@@ -168,12 +172,12 @@ void EdgeExtractor::extractEdges(Geometry* geom)
     else
     if (prim->primitiveType() == PT_TRIANGLE_FAN)
     {
-      int a = prim->index(0);
+      size_t a = prim->index(0);
       fvec3 v0 = verts->at(a);
       for(unsigned i=1; i<prim->indexCount()-1; ++i)
       {
-        int b = prim->index(i);
-        int c = prim->index(i+1);
+        size_t b = prim->index(i);
+        size_t c = prim->index(i+1);
         // compute normal
         fvec3 v1 = verts->at(b) - v0;
         fvec3 v2 = verts->at(c) - v0;
@@ -190,10 +194,10 @@ void EdgeExtractor::extractEdges(Geometry* geom)
     {
       for(unsigned i=0; i<prim->indexCount(); i+=4)
       {
-        int a = prim->index(i+0);
-        int b = prim->index(i+1);
-        int c = prim->index(i+2);
-        int d = prim->index(i+3);
+        size_t a = prim->index(i+0);
+        size_t b = prim->index(i+1);
+        size_t c = prim->index(i+2);
+        size_t d = prim->index(i+3);
         fvec3 v0 = verts->at(a);
         fvec3 v1 = verts->at(b) - v0;
         fvec3 v2 = verts->at(c) - v0;

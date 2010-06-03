@@ -33,6 +33,7 @@
 #include <vl/Actor.hpp>
 #include <vl/Effect.hpp>
 #include <vl/Geometry.hpp>
+#include <vl/GLSL.hpp>
 #include <vlut/GeometryPrimitives.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>

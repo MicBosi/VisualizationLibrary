@@ -118,7 +118,7 @@ namespace vl
       return -1;
     }
 
-    unsigned childrenCount() const { return mNodes.size(); }
+    size_t childrenCount() const { return mNodes.size(); }
 
     ShaderNode* child(unsigned i) { return mNodes[i].get(); }
     const ShaderNode* child(unsigned i) const { return mNodes[i].get(); }

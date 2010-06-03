@@ -30,6 +30,8 @@
 /**************************************************************************************/
 
 #include "vl/VisualizationLibrary.hpp"
+#include "vl/Light.hpp"
+#include "vl/ClipPlane.hpp"
 
 class App_ClipPlanes: public BaseDemo
 {

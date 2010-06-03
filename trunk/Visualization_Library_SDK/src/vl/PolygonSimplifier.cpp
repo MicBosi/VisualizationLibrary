@@ -124,7 +124,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
   {
     if (geom->primitives()->at(i)->primitiveType() == PT_TRIANGLES)
     {
-      for(unsigned j=0; j<geom->primitives()->at(i)->indexCount(); ++j)
+      for(size_t j=0; j<geom->primitives()->at(i)->indexCount(); ++j)
         indices.push_back( geom->primitives()->at(i)->index(j) );
     }
     else

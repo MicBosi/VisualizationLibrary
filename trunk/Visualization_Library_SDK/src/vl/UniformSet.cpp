@@ -29,27 +29,6 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/Effect.hpp>
-#include <vl/Renderable.hpp>
-#include <vl/Camera.hpp>
-#include <vl/Texture.hpp>
-#include <vl/Scissor.hpp>
-#include <vl/Image.hpp>
+#include <vl/UniformSet.hpp>
 
 using namespace vl;
-
-//-----------------------------------------------------------------------------
-// Effect
-//-----------------------------------------------------------------------------
-int Effect::evaluateLOD(Actor* actor, Camera* camera)
-{
-  if(mLODEvaluator)
-  {
-    int lod = mLODEvaluator->evaluate(actor, camera);
-    VL_CHECK( lod < VL_MAX_EFFECT_LOD )
-    VL_CHECK( lod >= 0 )
-    return lod;
-  }
-  else
-    return 0;
-}

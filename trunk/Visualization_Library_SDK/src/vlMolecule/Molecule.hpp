@@ -39,6 +39,7 @@
 #include <vl/Actor.hpp>
 #include <vl/ActorTree.hpp>
 #include <vl/Text.hpp>
+#include <vl/String.hpp>
 
 namespace vlMolecule
 {
@@ -71,8 +72,8 @@ namespace vlMolecule
 
     void reset();
 
-    void setMoleculeName(const std::string& name) { mMoleculeName = name; }
-    const std::string moleculeName() const { return mMoleculeName; }
+    void setMoleculeName(const vl::String& name) { mMoleculeName = name; }
+    const vl::String moleculeName() const { return mMoleculeName; }
 
     unsigned int id() const { return mId; }
     void setId(unsigned int id) { mId = id; }
@@ -221,7 +222,7 @@ namespace vlMolecule
     std::vector< vl::ref<Atom> > mAtoms;
     std::vector< vl::ref<Bond> > mBonds;
     std::vector< std::vector< vl::ref<Atom> > > mCycles; 
-    std::string mMoleculeName;
+    vl::String mMoleculeName;
     vl::ref<vl::KeyValues> mTags;
     vl::ref<vl::Text> mAtomLabelTemplate;
     vl::ref<vl::Effect> mAtomLabelEffect;

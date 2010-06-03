@@ -150,7 +150,7 @@ public:
     effect->shader()->enable(vl::EN_BLEND);
     sceneManager()->tree()->addActor(mText.get(), effect.get());
   }
-
+ 
   /* loads a MOL2 file when it is dropped in the window */
   void fileDroppedEvent(const std::vector<vl::String>& files)
   {
@@ -162,6 +162,13 @@ public:
 
     /* adjust the camera position to nicely see the scene, it also position the rotation pivot to the center of the molecule */
     trackball()->adjustView( vl::VisualizationLibrary::rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
+
+    for(size_t i=0; i<mMolecules.size(); ++i)
+    {
+      vl::String msg;
+      msg = "New molecule: " + mMolecules[i]->moleculeName() + " - " + vl::String::fromInt(mMolecules[i]->atomCount()) + " atoms\n";
+      vl::Log::print(msg);
+    }
   }
 
   /* user controls to change the molecule (if we loaded a multi-MOL2 file) and the style */
@@ -185,7 +192,7 @@ public:
   /* updates the text on top of the window with the current molecule name and style */
   void updateText()
   {
-    vl::String msg = mMolecules[mCurrentMolecule]->moleculeName().c_str();
+    vl::String msg = mMolecules[mCurrentMolecule]->moleculeName();
     msg += vl::Say(" (%n/%n)") << mCurrentMolecule+1 << mMolecules.size();
     if (mCurrentStyle == 0)
       msg += " - Wireframe";

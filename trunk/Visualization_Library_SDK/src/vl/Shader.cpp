@@ -30,7 +30,11 @@
 /**************************************************************************************/
 
 #include <vl/Shader.hpp>
-#include <vl/OpenGL.hpp>
+#include <vl/GLSL.hpp>
+#include <vl/Light.hpp>
+#include <vl/ClipPlane.hpp>
+#include <vl/Texture.hpp>
+#include <vl/Scissor.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
 
@@ -49,6 +53,25 @@ Shader::Shader()
 //------------------------------------------------------------------------------
 Shader::~Shader()
 {
+}
+//------------------------------------------------------------------------------
+void Shader::initResources()
+{
+  if (getRenderStateSet())
+  {
+    for(unsigned i=0; i<getRenderStateSet()->renderStates().size(); ++i)
+      getRenderStateSet()->renderStates()[i]->initResources();
+  }
+}
+//------------------------------------------------------------------------------
+const GLSLProgram* Shader::getGLSLProgram() const 
+{ 
+  return dynamic_cast<const GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
+}
+//------------------------------------------------------------------------------
+GLSLProgram* Shader::getGLSLProgram() 
+{ 
+  return dynamic_cast<GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
 }
 //------------------------------------------------------------------------------
 // state getters
@@ -131,7 +154,15 @@ SampleCoverage* Shader::gocSampleCoverage() { GET_OR_CREATE(SampleCoverage) }
 //------------------------------------------------------------------------------
 Light* Shader::gocLight(int light_index) { GET_OR_CREATE_IDX(Light, light_index) }
 //------------------------------------------------------------------------------
+const Light* Shader::getLight(int light_index) const { return dynamic_cast<const Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
+//------------------------------------------------------------------------------
+Light* Shader::getLight(int light_index) { return dynamic_cast<Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
+//------------------------------------------------------------------------------
 ClipPlane* Shader::gocClipPlane(int plane_index) { GET_OR_CREATE_IDX(ClipPlane, plane_index) }
+//------------------------------------------------------------------------------
+const ClipPlane* Shader::getClipPlane(int plane_index) const { return dynamic_cast<const ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
+//------------------------------------------------------------------------------
+ClipPlane* Shader::getClipPlane(int plane_index) { return dynamic_cast<ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
 //------------------------------------------------------------------------------
 TextureUnit* Shader::gocTextureUnit(int unit_index) { GET_OR_CREATE_IDX(TextureUnit, unit_index) }
 //------------------------------------------------------------------------------
@@ -837,6 +868,18 @@ void TexGen::apply(const Camera*) const
 //-----------------------------------------------------------------------------
 // TextureUnit
 //-----------------------------------------------------------------------------
+bool TextureUnit::hasTexture() const 
+{ 
+  return mTexture && mTexture->handle(); 
+}
+//------------------------------------------------------------------------------
+void TextureUnit::initResources()
+{
+  // creates the texture if not yet created
+  if (texture() && texture()->setupParams())
+    texture()->createTexture();
+}
+//------------------------------------------------------------------------------
 void TextureUnit::apply(const Camera*) const
 {
   VL_CHECK(textureUnit()  < VL_MAX_TEXTURE_UNIT_COUNT)

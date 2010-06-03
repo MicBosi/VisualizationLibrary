@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vl/ActorTreeAbstract.hpp>
+#include <vl/Camera.hpp>
 
 using namespace vl;
 

@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vlVolume/VolumePlot.hpp>
+#include <vl/Light.hpp>
 #include <vl/SceneManager.hpp>
 #include <vl/FontManager.hpp>
 #include <vl/VisualizationLibrary.hpp>

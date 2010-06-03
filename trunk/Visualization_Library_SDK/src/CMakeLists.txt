@@ -81,6 +81,8 @@ SET(VL_SRC
   vl/Rendering.cpp
   vl/RenderingAbstract.cpp
   vl/RenderingTree.cpp
+  vl/RenderStateSet.cpp
+  vl/UniformSet.cpp
   vl/Say.cpp
   vl/SceneManager.cpp
   vl/Shader.cpp
@@ -186,6 +188,9 @@ set(VL_INC
   vl/RenderingAbstract.hpp
   vl/RenderingTree.hpp
   vl/RenderingCallback.hpp
+  vl/RenderStateSet.hpp
+  vl/EnableSet.hpp
+  vl/UniformSet.hpp
   vl/ResourceDatabase.hpp
   vl/ResourceLoadWriter.hpp
   vl/Say.hpp

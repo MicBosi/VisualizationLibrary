@@ -33,11 +33,18 @@
 #define Rendering_INCLUDE_ONCE
 
 #include <vl/RenderingAbstract.hpp>
+#include <vl/RenderQueueSorter.hpp>
+#include <vl/Actor.hpp>
+#include <vl/RenderQueue.hpp>
 #include <vl/Renderer.hpp>
+#include <vl/RenderTarget.hpp>
+#include <vl/Camera.hpp>
+#include <vl/Transform.hpp>
+#include <vl/Collection.hpp>
+#include <vl/SceneManager.hpp>
 
 namespace vl
 {
-  class SceneManager;
   /** The Rendering class collects all the information to perform the rendering of a scene.
   The Rendering class performs the following steps:
   -# activates the appropriate OpenGLContext
@@ -172,6 +179,7 @@ namespace vl
     ref<Camera> mCamera;
     ref<Transform> mTransform;
     ref<Collection<SceneManager> > mSceneManagers;
+    ref<SceneManager> mPippoBaudo;
 
     EClearFlags mClearFlags;
 

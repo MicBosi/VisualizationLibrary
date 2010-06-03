@@ -62,14 +62,14 @@ namespace vl
         ++mSizeMP;
         if ( mSizeMP > (int)mListMP.size() )
           mListMP.push_back( new RenderToken );
-        return mListMP.back().get();
+        return mListMP[mSizeMP-1].get();
       }
       else
       {
         ++mSize;
         if ( mSize > (int)mList.size() )
           mList.push_back( new RenderToken );
-        return mList.back().get();
+        return mList[mSize-1].get();
       }
     }
 

@@ -30,11 +30,10 @@
 /**************************************************************************************/
 
 #include <vl/GLSL.hpp>
-#include <vl/Log.hpp>
-#include <vl/Say.hpp>
-#include <vl/Uniform.hpp>
 #include <vl/VisualizationLibrary.hpp>
 #include <vl/VirtualFile.hpp>
+#include <vl/Log.hpp>
+#include <vl/Say.hpp>
 
 using namespace vl;
 
@@ -251,7 +250,7 @@ bool GLSLProgram::attachShader(GLSLShader* shader)
 //-----------------------------------------------------------------------------
 void GLSLProgram::detachAllShaders()
 {
-  for(unsigned i=mShaders.size(); i-- ;)
+  for(size_t i=mShaders.size(); i-- ;)
     detachShader(mShaders[i].get());
 }
 //-----------------------------------------------------------------------------

@@ -32,11 +32,13 @@
 #ifndef RenderingAbstract_INCLUDE_ONCE
 #define RenderingAbstract_INCLUDE_ONCE
 
-#include <vl/RenderingCallback.hpp>
 #include <vl/Collection.hpp>
+#include <vl/vlnamespace.hpp>
 
 namespace vl
 {
+  class RenderingCallback;
+
   //! The RenderingAbstract class implements the abstract rendering interface.
   class RenderingAbstract: public Object
   {

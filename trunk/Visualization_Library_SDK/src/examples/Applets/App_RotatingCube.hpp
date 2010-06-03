@@ -38,6 +38,7 @@
 #include "vl/Actor.hpp"
 #include "vl/Effect.hpp"
 #include "vl/Time.hpp"
+#include "vl/Light.hpp"
 
 class App_RotatingCube: public vlut::Applet
 {
