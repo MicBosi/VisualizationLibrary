@@ -32,6 +32,7 @@
 #include <vlut/Applet.hpp>
 #include <vl/VisualizationLibrary.hpp>
 #include <vl/SceneManager.hpp>
+#include <vl/RenderQueue.hpp>
 #include <vl/Time.hpp>
 #include <vl/Say.hpp>
 #include <vl/Log.hpp>

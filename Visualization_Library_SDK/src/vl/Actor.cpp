@@ -30,8 +30,6 @@
 /**************************************************************************************/
 
 #include <vl/Actor.hpp>
-#include <vl/Effect.hpp>
-#include <vl/Camera.hpp>
 
 using namespace vl;
 
@@ -107,4 +105,25 @@ void Actor::computeBounds()
     mBoundsUpdateTick = lod(0)->boundsUpdateTick();
   }
 }
+//-----------------------------------------------------------------------------
+void Actor::setUniform(Uniform* uniform) 
+{ 
+  if (!uniformSet()) 
+    setUniformSet(new UniformSet); 
+  uniformSet()->setUniform(uniform); 
+}
+//-----------------------------------------------------------------------------
+const std::vector< ref<Uniform> >& Actor::uniforms() const { return uniformSet()->uniforms(); }
+//-----------------------------------------------------------------------------
+void Actor::eraseUniform(const std::string& name) { uniformSet()->eraseUniform(name); }
+//-----------------------------------------------------------------------------
+void Actor::eraseUniform(const Uniform* uniform) { uniformSet()->eraseUniform(uniform); }
+//-----------------------------------------------------------------------------
+void Actor::eraseAllUniforms() { uniformSet()->eraseAllUniforms(); }
+//-----------------------------------------------------------------------------
+Uniform* Actor::gocUniform(const std::string& name) { return uniformSet()->gocUniform(name); }
+//-----------------------------------------------------------------------------
+Uniform* Actor::getUniform(const std::string& name) { return uniformSet()->getUniform(name); }
+//-----------------------------------------------------------------------------
+const Uniform* Actor::getUniform(const std::string& name) const { return uniformSet()->getUniform(name); }
 //-----------------------------------------------------------------------------

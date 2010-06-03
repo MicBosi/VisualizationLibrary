@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vl/MorphingActor.hpp>
+#include <vl/GLSL.hpp>
 
 using namespace vl;
 

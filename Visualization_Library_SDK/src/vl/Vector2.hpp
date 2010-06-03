@@ -35,6 +35,22 @@
 #include <vl/OpenGL.hpp>
 #include <cmath>
 
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
+#ifdef dot
+#undef dot
+#endif
+
+#ifdef cross
+#undef cross
+#endif
+
 namespace vl
 {
   // trigonometric constants
@@ -281,6 +297,113 @@ namespace vl
     //! Defined as: \p 'typedef \p fvec2 \p vec2'. See also \ref VL_PIPELINE_PRECISION.
     typedef fvec2 vec2;
   #endif
+
+  inline float dot(const fvec2& v1, const fvec2& v2) { return v1.x()*v2.x() + v1.y()*v2.y(); }
+  inline double dot(const dvec2& v1, const dvec2& v2) { return v1.x()*v2.x() + v1.y()*v2.y(); }
+  inline float dot(const ivec2& v1, const ivec2& v2) { return (float)(v1.x()*v2.x() + v1.y()*v2.y()); }
+  inline float dot(const uvec2& v1, const uvec2& v2) { return (float)(v1.x()*v2.x() + v1.y()*v2.y()); }
+
+  inline float min(float a, float b) { return a < b ? a : b; }
+  inline double min(double a, double b) { return a < b ? a : b; }
+  inline int min(int a, int b) { return a < b ? a : b; }
+  inline unsigned int min(unsigned int a, unsigned int b) { return a < b ? a : b; }
+  inline float max(float a, float b) { return a > b ? a : b; }
+  inline double max(double a, double b) { return a > b ? a : b; }
+  inline int max(int a, int b) { return a > b ? a : b; }
+  inline unsigned int max(unsigned int a, unsigned int b) { return a > b ? a : b; }
+  inline float clamp(float x, float minval, float maxval) { return min(max(x,minval),maxval); }
+  inline double clamp(double x, double minval, double maxval) { return min(max(x,minval),maxval); }
+  inline int clamp(int x, int minval, int maxval) { return min(max(x,minval),maxval); }
+  inline unsigned int clamp(unsigned int x, unsigned int minval, unsigned int maxval) { return min(max(x,minval),maxval); }
+
+  inline fvec2 min(const fvec2& a, const fvec2& b)
+  {
+    return fvec2( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y());
+  }
+  inline fvec2 min(const fvec2& a, float b)
+  {
+    return fvec2( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b);
+  }
+  inline dvec2 min(const dvec2& a, const dvec2& b)
+  {
+    return dvec2( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y());
+  }
+  inline dvec2 min(const dvec2& a, double b)
+  {
+    return dvec2( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b);
+  }
+  inline ivec2 min(const ivec2& a, const ivec2& b)
+  {
+    return ivec2( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y());
+  }
+  inline ivec2 min(const ivec2& a, int b)
+  {
+    return ivec2( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b);
+  }
+  inline uvec2 min(const uvec2& a, const uvec2& b)
+  {
+    return uvec2( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y());
+  }
+  inline uvec2 min(const uvec2& a, unsigned int b)
+  {
+    return uvec2( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b);
+  }
+  inline fvec2 max(const fvec2& a, const fvec2& b)
+  {
+    return fvec2( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y());
+  }
+  inline fvec2 max(const fvec2& a, float b)
+  {
+    return fvec2( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b);
+  }
+  inline dvec2 max(const dvec2& a, const dvec2& b)
+  {
+    return dvec2( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y());
+  }
+  inline dvec2 max(const dvec2& a, double b)
+  {
+    return dvec2( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b);
+  }
+  inline ivec2 max(const ivec2& a, const ivec2& b)
+  {
+    return ivec2( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y());
+  }
+  inline ivec2 max(const ivec2& a, int b)
+  {
+    return ivec2( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b);
+  }
+  inline uvec2 max(const uvec2& a, const uvec2& b)
+  {
+    return uvec2( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y());
+  }
+  inline uvec2 max(const uvec2& a, unsigned int b)
+  {
+    return uvec2( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b);
+  }
+  inline fvec2 clamp(const fvec2& x, float minval, float maxval) { return min(max(x,minval),maxval); }
+  inline fvec2 clamp(const fvec2& x, const fvec2& minval, const fvec2& maxval) { return min(max(x,minval),maxval); }
+  inline dvec2 clamp(const dvec2& x, double minval, double maxval) { return min(max(x,minval),maxval); }
+  inline dvec2 clamp(const dvec2& x, const dvec2& minval, const dvec2& maxval) { return min(max(x,minval),maxval); }
+  inline ivec2 clamp(const ivec2& x, int minval, int maxval) { return min(max(x,minval),maxval); }
+  inline ivec2 clamp(const ivec2& x, const ivec2& minval, const ivec2& maxval) { return min(max(x,minval),maxval); }
+  inline uvec2 clamp(const uvec2& x, unsigned int minval, unsigned int maxval) { return min(max(x,minval),maxval); }
+  inline uvec2 clamp(const uvec2& x, const uvec2& minval, const uvec2& maxval) { return min(max(x,minval),maxval); }
 }
 
 #endif

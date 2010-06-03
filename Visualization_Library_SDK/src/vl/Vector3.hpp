@@ -253,6 +253,134 @@ namespace vl
     //! Defined as: \p 'typedef \p fvec3 \p vec3'. See also \ref VL_PIPELINE_PRECISION.
     typedef fvec3 vec3;
   #endif
+
+  inline float dot(const fvec3& v1, const fvec3& v2) { return v1.x()*v2.x() + v1.y()*v2.y() + v1.z()*v2.z(); }
+  inline double dot(const dvec3& v1, const dvec3& v2) { return v1.x()*v2.x() + v1.y()*v2.y() + v1.z()*v2.z(); }
+  inline float dot(const ivec3& v1, const ivec3& v2) { return (float)(v1.x()*v2.x() + v1.y()*v2.y() + v1.z()*v2.z()); }
+  inline float dot(const uvec3& v1, const uvec3& v2) { return (float)(v1.x()*v2.x() + v1.y()*v2.y() + v1.z()*v2.z()); }
+
+  inline fvec3 cross(const fvec3& v1, const fvec3& v2)
+  {
+    fvec3 t;
+    t.x() = v1.y()*v2.z() - v1.z()*v2.y() ;
+    t.y() = v1.z()*v2.x() - v1.x()*v2.z() ;
+    t.z() = v1.x()*v2.y() - v1.y()*v2.x() ;
+    return t;
+  }
+
+  inline dvec3 cross(const dvec3& v1, const dvec3& v2)
+  {
+    dvec3 t;
+    t.x() = v1.y()*v2.z() - v1.z()*v2.y() ;
+    t.y() = v1.z()*v2.x() - v1.x()*v2.z() ;
+    t.z() = v1.x()*v2.y() - v1.y()*v2.x() ;
+    return t;
+  }
+
+  inline fvec3 min(const fvec3& a, const fvec3& b)
+  {
+    return fvec3( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y(),
+      a.z() < b.z() ? a.z() : b.z() );
+  }
+  inline fvec3 min(const fvec3& a, float b)
+  {
+    return fvec3( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b,
+      a.z() < b ? a.z() : b );
+  }
+  inline dvec3 min(const dvec3& a, const dvec3& b)
+  {
+    return dvec3( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y(),
+      a.z() < b.z() ? a.z() : b.z() );
+  }
+  inline dvec3 min(const dvec3& a, double b)
+  {
+    return dvec3( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b,
+      a.z() < b ? a.z() : b );
+  }
+  inline ivec3 min(const ivec3& a, const ivec3& b)
+  {
+    return ivec3( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y(),
+      a.z() < b.z() ? a.z() : b.z() );
+  }
+  inline ivec3 min(const ivec3& a, int b)
+  {
+    return ivec3( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b,
+      a.z() < b ? a.z() : b );
+  }
+  inline uvec3 min(const uvec3& a, const uvec3& b)
+  {
+    return uvec3( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y(),
+      a.z() < b.z() ? a.z() : b.z() );
+  }
+  inline uvec3 min(const uvec3& a, unsigned int b)
+  {
+    return uvec3( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b,
+      a.z() < b ? a.z() : b );
+  }
+  inline fvec3 max(const fvec3& a, const fvec3& b)
+  {
+    return fvec3( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y(),
+      a.z() > b.z() ? a.z() : b.z() );
+  }
+  inline fvec3 max(const fvec3& a, float b)
+  {
+    return fvec3( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b,
+      a.z() > b ? a.z() : b );
+  }
+  inline dvec3 max(const dvec3& a, const dvec3& b)
+  {
+    return dvec3( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y(),
+      a.z() > b.z() ? a.z() : b.z() );
+  }
+  inline dvec3 max(const dvec3& a, double b)
+  {
+    return dvec3( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b,
+      a.z() > b ? a.z() : b );
+  }
+  inline ivec3 max(const ivec3& a, const ivec3& b)
+  {
+    return ivec3( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y(),
+      a.z() > b.z() ? a.z() : b.z() );
+  }
+  inline ivec3 max(const ivec3& a, int b)
+  {
+    return ivec3( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b,
+      a.z() > b ? a.z() : b );
+  }
+  inline uvec3 max(const uvec3& a, const uvec3& b)
+  {
+    return uvec3( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y(),
+      a.z() > b.z() ? a.z() : b.z() );
+  }
+  inline uvec3 max(const uvec3& a, unsigned int b)
+  {
+    return uvec3( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b,
+      a.z() > b ? a.z() : b );
+  }
+  inline fvec3 clamp(const fvec3& x, float minval, float maxval) { return min(max(x,minval),maxval); }
+  inline fvec3 clamp(const fvec3& x, const fvec3& minval, const fvec3& maxval) { return min(max(x,minval),maxval); }
+  inline ivec3 clamp(const ivec3& x, const ivec3& minval, const ivec3& maxval) { return min(max(x,minval),maxval); }
+  inline dvec3 clamp(const dvec3& x, double minval, double maxval) { return min(max(x,minval),maxval); }
+  inline dvec3 clamp(const dvec3& x, const dvec3& minval, const dvec3& maxval) { return min(max(x,minval),maxval); }
+  inline ivec3 clamp(const ivec3& x, int minval, int maxval) { return min(max(x,minval),maxval); }
+  inline uvec3 clamp(const uvec3& x, unsigned int minval, unsigned int maxval) { return min(max(x,minval),maxval); }
+  inline uvec3 clamp(const uvec3& x, const uvec3& minval, const uvec3& maxval) { return min(max(x,minval),maxval); }
 }
 
 #endif

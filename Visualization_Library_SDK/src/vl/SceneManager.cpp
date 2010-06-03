@@ -30,6 +30,12 @@
 /**************************************************************************************/
 
 #include <vl/SceneManager.hpp>
+#include <vl/Actor.hpp>
+#include <vl/Camera.hpp>
+#include <vl/Effect.hpp>
+#include <vl/Scissor.hpp>
+#include <vl/Texture.hpp>
+#include <vl/Image.hpp>
 
 using namespace vl;
 
@@ -75,5 +81,10 @@ void SceneManager::computeBounds()
   setBoundingSphere(sphere);
 
   setBoundsDirty(false);
+}
+//-----------------------------------------------------------------------------
+bool SceneManager::isEnabled(Actor*a) const 
+{ 
+  return (a->enableMask() & enableMask()) != 0; 
 }
 //-----------------------------------------------------------------------------

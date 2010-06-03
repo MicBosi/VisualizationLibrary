@@ -37,6 +37,7 @@
 #include <vl/Vector3.hpp>
 #include <vl/SceneManager.hpp>
 #include <vl/Log.hpp>
+#include <vl/Frustum.hpp>
 
 namespace vl
 {

@@ -32,15 +32,18 @@
 #ifndef EdgeExtractor_INCLUDE_ONCE
 #define EdgeExtractor_INCLUDE_ONCE
 
-#include <vl/Geometry.hpp>
-#include <vl/Renderer.hpp>
+#include <vl/Object.hpp>
+#include <vl/Vector3.hpp>
 #include <vector>
+#include <set>
 
 namespace vl
 {
   class SceneManager;
   class Rendering;
   class Actor;
+  class ActorCollection;
+  class Geometry;
 
   /** The EdgeExtractor class extracts the edges from one or more Geometry objects.
 

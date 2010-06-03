@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vl/EdgeRenderer.hpp>
+#include <vl/RenderQueue.hpp>
 
 using namespace vl;
 

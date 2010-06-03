@@ -32,23 +32,18 @@
 #ifndef Actor_INCLUDE_ONCE
 #define Actor_INCLUDE_ONCE
 
-#include <vl/Renderable.hpp>
-#include <vl/LODEvaluator.hpp>
-#include <vl/Uniform.hpp>
-#include <vl/Effect.hpp>
 #include <vl/Collection.hpp>
+#include <vl/Sphere.hpp>
+#include <vl/AABB.hpp>
+#include <vl/Effect.hpp>
+#include <vl/Renderable.hpp>
+#include <vl/Transform.hpp>
+#include <vl/LODEvaluator.hpp>
+#include <vl/UniformSet.hpp>
 #include <vl/Scissor.hpp>
 
 namespace vl
 {
-  class GLSLProgram;
-  // class Effect;
-  class Transform;
-  class Renderable;
-  class LODEvaluator;
-  class Actor;
-  class Renderable;
-
   //------------------------------------------------------------------------------
   // ActorRenderingCallback
   //------------------------------------------------------------------------------
@@ -254,47 +249,49 @@ namespace vl
      \remarks
      This function performs a 'setUniformSet(new UniformSet)' if uniformSet() is NULL.
     */
-    void setUniform(Uniform* uniform) { if (!uniformSet()) setUniformSet(new UniformSet); uniformSet()->setUniform(uniform); }
+    void setUniform(Uniform* uniform);
 
     /** Equivalent to uniformSet()->uniforms()
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function.
     */
-    const std::vector< ref<Uniform> >& uniforms() const { return uniformSet()->uniforms(); }
+    const std::vector< ref<Uniform> >& uniforms() const;
 
     /** Equivalent to uniformSet()->eraseUniform(name)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function.
     */
-    void eraseUniform(const std::string& name) { uniformSet()->eraseUniform(name); }
+    void eraseUniform(const std::string& name);
 
     /** Equivalent to uniformSet()->eraseUniform(uniform)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function.
     */
-    void eraseUniform(const Uniform* uniform) { uniformSet()->eraseUniform(uniform); }
+    void eraseUniform(const Uniform* uniform);
 
     /** Equivalent to uniformSet()->eraseAllUniforms()
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function.
     */
-    void eraseAllUniforms() { uniformSet()->eraseAllUniforms(); }
+    void eraseAllUniforms();
 
     /** Equivalent to uniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function.
     */
-    Uniform* gocUniform(const std::string& name) { return uniformSet()->gocUniform(name); }
+    Uniform* gocUniform(const std::string& name);
+
     /** Equivalent to uniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function.
     */
-    Uniform* getUniform(const std::string& name) { return uniformSet()->getUniform(name); }
+    Uniform* getUniform(const std::string& name);
+    
     /** Equivalent to uniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function.
     */
-    const Uniform* getUniform(const std::string& name) const { return uniformSet()->getUniform(name); }
+    const Uniform* getUniform(const std::string& name) const;
 
     /** Installs a new UniformSet
      \sa
@@ -401,7 +398,7 @@ namespace vl
     unsigned mOcclusionQueryTick;
   };
   //---------------------------------------------------------------------------
-  typedef Collection<Actor> ActorCollection;
+  class ActorCollection: public Collection<Actor> {};
   //---------------------------------------------------------------------------
 }
 

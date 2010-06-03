@@ -101,7 +101,7 @@ namespace vl
       if (pos == mVector.end())
         return -1;
       else
-        return pos - mVector.begin();
+        return (int)(pos - mVector.begin());
     }
     void shrink()
     {

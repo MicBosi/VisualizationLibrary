@@ -32,6 +32,7 @@
 #include <vlMolecule/Molecule.hpp>
 #include <vlut/GeometryPrimitives.hpp>
 #include <vl/Text.hpp>
+#include <vl/Light.hpp>
 
 using namespace vl;
 using namespace vlut;

@@ -32,15 +32,15 @@
 #ifndef GLSL_INCLUDE_ONCE
 #define GLSL_INCLUDE_ONCE
 
-#include <vl/Uniform.hpp>
+#include <vl/UniformSet.hpp>
 #include <vl/GLSLmath.hpp>
-#include <vl/Object.hpp>
 #include <vl/RenderState.hpp>
 #include <vl/String.hpp>
 
 namespace vl
 {
   class Uniform;
+
   //------------------------------------------------------------------------------
   // GLSLShader
   //------------------------------------------------------------------------------

@@ -30,10 +30,13 @@
 /**************************************************************************************/
 
 #include <vl/Renderer.hpp>
+#include <vl/RenderQueue.hpp>
 #include <vl/Effect.hpp>
 #include <vl/Transform.hpp>
 #include <vl/checks.hpp>
-#include <vl/OpenGL.hpp>
+#include <vl/GLSL.hpp>
+#include <vl/Light.hpp>
+#include <vl/ClipPlane.hpp>
 #include <vl/Time.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>

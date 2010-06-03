@@ -279,6 +279,132 @@ namespace vl
     //! Defined as: \p 'typedef \p fvec4 \p vec4'. See also \ref VL_PIPELINE_PRECISION.
     typedef fvec4 vec4;
   #endif
+
+  inline float dot(const fvec4& v1, const fvec4& v2) { return v1.x()*v2.x() + v1.y()*v2.y() + v1.z()*v2.z() + v1.w()*v2.w(); }
+  inline double dot(const dvec4& v1, const dvec4& v2) { return v1.x()*v2.x() + v1.y()*v2.y() + v1.z()*v2.z() + v1.w()*v2.w(); }
+  inline float dot(const ivec4& v1, const ivec4& v2) { return (float)(v1.x()*v2.x() + v1.y()*v2.y() + v1.z()*v2.z() + v1.w()*v2.w()); }
+  inline float dot(const uvec4& v1, const uvec4& v2) { return (float)(v1.x()*v2.x() + v1.y()*v2.y() + v1.z()*v2.z() + v1.w()*v2.w()); }
+
+  inline fvec4 min(const fvec4& a, const fvec4& b)
+  {
+    return fvec4( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y(),
+      a.z() < b.z() ? a.z() : b.z(),
+      a.w() < b.w() ? a.w() : b.w() );
+  }
+  inline fvec4 min(const fvec4& a, float b)
+  {
+    return fvec4( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b,
+      a.z() < b ? a.z() : b,
+      a.w() < b ? a.w() : b );
+  }
+  inline dvec4 min(const dvec4& a, const dvec4& b)
+  {
+    return dvec4( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y(),
+      a.z() < b.z() ? a.z() : b.z(),
+      a.w() < b.w() ? a.w() : b.w() );
+  }
+  inline dvec4 min(const dvec4& a, double b)
+  {
+    return dvec4( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b,
+      a.z() < b ? a.z() : b,
+      a.w() < b ? a.w() : b );
+  }
+  inline ivec4 min(const ivec4& a, const ivec4& b)
+  {
+    return ivec4( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y(),
+      a.z() < b.z() ? a.z() : b.z(),
+      a.w() < b.w() ? a.w() : b.w() );
+  }
+  inline ivec4 min(const ivec4& a, int b)
+  {
+    return ivec4( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b,
+      a.z() < b ? a.z() : b,
+      a.w() < b ? a.w() : b );
+  }
+  inline uvec4 min(const uvec4& a, const uvec4& b)
+  {
+    return uvec4( a.x() < b.x() ? a.x() : b.x(),
+      a.y() < b.y() ? a.y() : b.y(),
+      a.z() < b.z() ? a.z() : b.z(),
+      a.w() < b.w() ? a.w() : b.w() );
+  }
+  inline uvec4 min(const uvec4& a, unsigned int b)
+  {
+    return uvec4( a.x() < b ? a.x() : b,
+      a.y() < b ? a.y() : b,
+      a.z() < b ? a.z() : b,
+      a.w() < b ? a.w() : b );
+  }
+  inline fvec4 max(const fvec4& a, const fvec4& b)
+  {
+    return fvec4( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y(),
+      a.z() > b.z() ? a.z() : b.z(),
+      a.w() > b.w() ? a.w() : b.w() );
+  }
+  inline fvec4 max(const fvec4& a, float b)
+  {
+    return fvec4( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b,
+      a.z() > b ? a.z() : b,
+      a.w() > b ? a.w() : b );
+  }
+  inline dvec4 max(const dvec4& a, const dvec4& b)
+  {
+    return dvec4( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y(),
+      a.z() > b.z() ? a.z() : b.z(),
+      a.w() > b.w() ? a.w() : b.w() );
+  }
+  inline dvec4 max(const dvec4& a, double b)
+  {
+    return dvec4( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b,
+      a.z() > b ? a.z() : b,
+      a.w() > b ? a.w() : b );
+  }
+  inline ivec4 max(const ivec4& a, const ivec4& b)
+  {
+    return ivec4( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y(),
+      a.z() > b.z() ? a.z() : b.z(),
+      a.w() > b.w() ? a.w() : b.w() );
+  }
+  inline ivec4 max(const ivec4& a, int b)
+  {
+    return ivec4( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b,
+      a.z() > b ? a.z() : b,
+      a.w() > b ? a.w() : b );
+  }
+  inline uvec4 max(const uvec4& a, const uvec4& b)
+  {
+    return uvec4( a.x() > b.x() ? a.x() : b.x(),
+      a.y() > b.y() ? a.y() : b.y(),
+      a.z() > b.z() ? a.z() : b.z(),
+      a.w() > b.w() ? a.w() : b.w() );
+  }
+  inline uvec4 max(const uvec4& a, unsigned int b)
+  {
+    return uvec4( a.x() > b ? a.x() : b,
+      a.y() > b ? a.y() : b,
+      a.z() > b ? a.z() : b,
+      a.w() > b ? a.w() : b );
+  }
+  inline fvec4 clamp(const fvec4& x, float minval, float maxval) { return min(max(x,minval),maxval); }
+  inline fvec4 clamp(const fvec4& x, const fvec4& minval, const fvec4& maxval) { return min(max(x,minval),maxval); }
+  inline dvec4 clamp(const dvec4& x, double minval, double maxval) { return min(max(x,minval),maxval); }
+  inline dvec4 clamp(const dvec4& x, const dvec4& minval, const dvec4& maxval) { return min(max(x,minval),maxval); }
+  inline ivec4 clamp(const ivec4& x, int minval, int maxval) { return min(max(x,minval),maxval); }
+  inline ivec4 clamp(const ivec4& x, const ivec4& minval, const ivec4& maxval) { return min(max(x,minval),maxval); }
+  inline uvec4 clamp(const uvec4& x, unsigned int minval, unsigned int maxval) { return min(max(x,minval),maxval); }
+  inline uvec4 clamp(const uvec4& x, const uvec4& minval, const uvec4& maxval) { return min(max(x,minval),maxval); }
 }
 
 #endif

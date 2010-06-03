@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include "vl/Billboard.hpp"
+#include "vl/Light.hpp"
 #include "BaseDemo.hpp"
 #include <time.h>
 

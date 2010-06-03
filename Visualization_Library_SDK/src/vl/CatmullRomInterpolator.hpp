@@ -91,7 +91,7 @@ namespace vl
     T computePoint(float t) const
     {
       VL_CHECK(mCatmullRomSpline.size() >= 4)
-      int size = mCatmullRomSpline.size()-2;
+      size_t size = mCatmullRomSpline.size()-2;
       t = vl::clamp(t, 0.0f, 1.0f);
       if (t == 0.0f)
         return mCatmullRomSpline[1];
