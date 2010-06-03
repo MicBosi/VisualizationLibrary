@@ -37,6 +37,7 @@
 #include <vl/VirtualFile.hpp>
 #include <vl/Image.hpp>
 #include <vl/TextStream.hpp>
+#include <stdio.h>
 
 using namespace vl;
 
