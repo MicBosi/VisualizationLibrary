@@ -34,12 +34,12 @@
 
 #include <vl/OpenGLContext.hpp>
 #include <vl/Time.hpp>
-#include "wx/frame.h"
-#include "wx/glcanvas.h"
-#include "wx/timer.h"
-#include "wx/dcclient.h"
-#include "wx/image.h"
-#include "wx/app.h"
+#include <wx/frame.h>
+#include <wx/glcanvas.h>
+#include <wx/timer.h>
+#include <wx/dcclient.h>
+#include <wx/image.h>
+#include <wx/app.h>
 
 #if !wxUSE_GLCANVAS
   #error "OpenGL required: set wxUSE_GLCANVAS to 1 and rebuild the library"
