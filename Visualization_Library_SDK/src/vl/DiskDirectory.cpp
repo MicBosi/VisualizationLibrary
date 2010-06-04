@@ -36,7 +36,7 @@
 #if defined(__GNUG__)
   #include <sys/types.h>
   #include <dirent.h>
-  #if defined(__APPLE__)
+  #if defined(__APPLE__) || (__FreeBSD__)
     #define dirent64 dirent
     #define readdir64_r readdir_r
   #endif
