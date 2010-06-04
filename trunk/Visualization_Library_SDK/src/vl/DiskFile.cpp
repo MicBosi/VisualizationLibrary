@@ -32,7 +32,7 @@
 #include <vl/DiskFile.hpp>
 #include <stdio.h>
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) || (__FreeBSD__)
   #define fseeko64 fseeko
 #endif
 
