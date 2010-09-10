@@ -112,7 +112,7 @@ namespace vlWin32
 
     vl::ivec2 mNormPosit;
     vl::ivec2 mNormSize;
-    unsigned  mNormFlags;
+    unsigned int mNormFlags;
   };
 }
 //-----------------------------------------------------------------------------

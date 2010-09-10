@@ -184,7 +184,7 @@ namespace vlQt4
       if (info.fullscreen())
         setFullscreen(true);
 
-      initExtensions();
+      initGLContext();
 
       return true;
     }

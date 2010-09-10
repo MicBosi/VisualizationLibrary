@@ -87,7 +87,7 @@ bool GLUTWindow::initGLUTWindow(const vl::String& title, const vl::OpenGLContext
 
   glutSetWindow( handle() );
 
-  initExtensions();
+  initGLContext();
   // dispatchInitEvent();
 
   setVSyncEnabled(info.vSync());
@@ -729,8 +729,6 @@ void GLUTWindow::glut_reshape_func(int w, int h)
   if (win->mInited == false)
   {
     win->mInited = true;
-    /*// OpenGL extensions initialization
-    win->initExtensions();*/
     win->dispatchInitEvent();
   }
 

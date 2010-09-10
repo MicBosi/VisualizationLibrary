@@ -80,7 +80,7 @@ void Win32Context::setSize(int w, int h)
   if (hwnd())
   {
     RECT windowRect = { 0, 0, w, h };
-    AdjustWindowRectEx(&windowRect, GetWindowLongPtr(hwnd(), GWL_STYLE), 0, GetWindowLongPtr(hwnd(), GWL_EXSTYLE) );
+    AdjustWindowRectEx(&windowRect, (DWORD)GetWindowLongPtr(hwnd(), GWL_STYLE), 0, (DWORD)GetWindowLongPtr(hwnd(), GWL_EXSTYLE) );
     // computes the actual window based on the client dimensions
     int cx = windowRect.right  - windowRect.left;
     int cy = windowRect.bottom - windowRect.top;
@@ -195,7 +195,7 @@ bool Win32Context::setFullscreen(bool fullscreen_on)
     devmode.dmBitsPerPel = openglContextInfo().bitsPerPixel();					  
 	  devmode.dmFields		 |= DM_BITSPERPEL;
 
-    mNormFlags = GetWindowLongPtr(hwnd(), GWL_STYLE);
+    mNormFlags = (unsigned int)GetWindowLongPtr(hwnd(), GWL_STYLE);
     mNormPosit = position();
     mNormSize  = size();
 
@@ -205,7 +205,7 @@ bool Win32Context::setFullscreen(bool fullscreen_on)
       {
         RECT windowRect = { 0, 0, devmode.dmPelsWidth, devmode.dmPelsHeight };
         /*mStyle = */SetWindowLongPtr(hwnd(), GWL_STYLE, WS_POPUP | WS_VISIBLE );
-        AdjustWindowRectEx(&windowRect, GetWindowLongPtr(hwnd(), GWL_STYLE), 0, GetWindowLongPtr(hwnd(), GWL_EXSTYLE) );
+        AdjustWindowRectEx(&windowRect, (DWORD)GetWindowLongPtr(hwnd(), GWL_STYLE), 0, (DWORD)GetWindowLongPtr(hwnd(), GWL_EXSTYLE) );
         SetWindowPos(hwnd(), HWND_TOP, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, SWP_FRAMECHANGED );
         break;
       }
@@ -288,7 +288,7 @@ bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::
     return false;
   }
   wglMakeCurrent(mHDC, mHGLRC);
-  initExtensions();
+  initGLContext();
 
   if (fmt.multisample() && !WGLEW_ARB_multisample)
     vl::Log::error("WGL_ARB_multisample not supported.\n");

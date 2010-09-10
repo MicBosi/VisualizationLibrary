@@ -119,7 +119,8 @@ namespace vl
     virtual const char* className() { return "OpenGLContext"; }
 
     //! Constructor.
-    OpenGLContext(int w=0, int h=0): mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false)
+    OpenGLContext(int w=0, int h=0): mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false),
+      mHasDoubleBuffer(false), mIsInitialized(false)
     {
       #ifndef NDEBUG
         mName = className();
@@ -139,7 +140,7 @@ namespace vl
     }
 
     //! Initializes the supported OpenGL extensions.
-    void initExtensions(bool log=true);
+    void initGLContext(bool log=true);
 
     //! Logs some information about the OpenGL context
     void logOpenGLInfo();
@@ -382,17 +383,23 @@ namespace vl
     //! For internal use only
     void keyRelease(EKey key) { mKeyboard.erase(key); }
 
+    bool hasDoubleBuffer() const { return mHasDoubleBuffer; }
+
+    bool isInitialized() const { return mIsInitialized; }
+
   protected:
     ref<RenderTarget> mRenderTarget;
     std::vector< ref<FBORenderTarget> > mFBORenderTarget;
     std::vector< ref<UIEventListener> > mEventListeners;
     std::set<EKey> mKeyboard;
     OpenGLContextFormat mGLContextInfo;
+    int mTextureUnitCount;
     bool mMouseVisible;
     bool mContinuousUpdate;
     bool mIgnoreNextMouseMoveEvent;
     bool mFullscreen;
-    int mTextureUnitCount;
+    bool mHasDoubleBuffer;
+    bool mIsInitialized;
   };
   // ----------------------------------------------------------------------------
 }

@@ -56,7 +56,7 @@ namespace vl
       #ifndef NDEBUG
         mName = className();
       #endif
-      setDrawBuffers(RDB_BACK_LEFT);
+      setDrawBuffer(RDB_BACK_LEFT);
     }
 
   public:
@@ -87,38 +87,34 @@ namespace vl
 
     void checkDrawBuffers() const;
 
-    void setDrawBuffers(EReadDrawBuffer render_buffer)
+    void setDrawBuffer(EReadDrawBuffer draw_buffer)
     {
-      std::vector< EReadDrawBuffer > render_buffers;
-      render_buffers.push_back(render_buffer);
-      setDrawBuffers(render_buffers);
+      mDrawBuffers.clear();
+      mDrawBuffers.push_back(draw_buffer);
     }
-    void setDrawBuffers(EReadDrawBuffer render_buffer1, EReadDrawBuffer render_buffer2)
+    void setDrawBuffers(EReadDrawBuffer draw_buffer1, EReadDrawBuffer draw_buffer2)
     {
-      std::vector< EReadDrawBuffer > render_buffers;
-      render_buffers.push_back(render_buffer1);
-      render_buffers.push_back(render_buffer2);
-      setDrawBuffers(render_buffers);
+      mDrawBuffers.clear();
+      mDrawBuffers.push_back(draw_buffer1);
+      mDrawBuffers.push_back(draw_buffer2);
     }
-    void setDrawBuffers(EReadDrawBuffer render_buffer1, EReadDrawBuffer render_buffer2, EReadDrawBuffer render_buffer3)
+    void setDrawBuffers(EReadDrawBuffer draw_buffer1, EReadDrawBuffer draw_buffer2, EReadDrawBuffer draw_buffer3)
     {
-      std::vector< EReadDrawBuffer > render_buffers;
-      render_buffers.push_back(render_buffer1);
-      render_buffers.push_back(render_buffer2);
-      render_buffers.push_back(render_buffer3);
-      setDrawBuffers(render_buffers);
+      mDrawBuffers.clear();
+      mDrawBuffers.push_back(draw_buffer1);
+      mDrawBuffers.push_back(draw_buffer2);
+      mDrawBuffers.push_back(draw_buffer3);
     }
-    void setDrawBuffers(EReadDrawBuffer render_buffer1, EReadDrawBuffer render_buffer2, EReadDrawBuffer render_buffer3, EReadDrawBuffer render_buffer4)
+    void setDrawBuffers(EReadDrawBuffer draw_buffer1, EReadDrawBuffer draw_buffer2, EReadDrawBuffer draw_buffer3, EReadDrawBuffer draw_buffer4)
     {
-      std::vector< EReadDrawBuffer > render_buffers;
-      render_buffers.push_back(render_buffer1);
-      render_buffers.push_back(render_buffer2);
-      render_buffers.push_back(render_buffer3);
-      render_buffers.push_back(render_buffer4);
-      setDrawBuffers(render_buffers);
+      mDrawBuffers.clear();
+      mDrawBuffers.push_back(draw_buffer1);
+      mDrawBuffers.push_back(draw_buffer2);
+      mDrawBuffers.push_back(draw_buffer3);
+      mDrawBuffers.push_back(draw_buffer4);
     }
-    void setDrawBuffers(const std::vector< EReadDrawBuffer >& render_buffers) { mDrawBuffers = render_buffers; }
-    const std::vector< EReadDrawBuffer >& renderBuffers() { return mDrawBuffers; }
+    void setDrawBuffers(const std::vector< EReadDrawBuffer >& draw_buffers) { mDrawBuffers = draw_buffers; }
+    const std::vector< EReadDrawBuffer >& drawBuffers() { return mDrawBuffers; }
 
   protected:
     std::vector< EReadDrawBuffer > mDrawBuffers;

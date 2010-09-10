@@ -160,7 +160,8 @@ void Applet::runEvent()
   vl::VisualizationLibrary::rendering()->render();
 
   // show rendering
-  openglContext()->swapBuffers();
+  if( openglContext()->hasDoubleBuffer() )
+    openglContext()->swapBuffers();
 }
 //-----------------------------------------------------------------------------
 void Applet::resizeEvent(int /*w*/, int /*h*/)

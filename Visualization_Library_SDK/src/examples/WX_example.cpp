@@ -113,7 +113,7 @@ bool MyApp::OnInit()
   /* show the window */
   frame->Show();
   /* THE ORDER IS IMPORTANT IMPORTANT */
-  vl_gl_canvas->initExtensions();
+  vl_gl_canvas->initGLContext();
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   vl_gl_canvas->addEventListener(applet.get());
   vl_gl_canvas->dispatchInitEvent();
