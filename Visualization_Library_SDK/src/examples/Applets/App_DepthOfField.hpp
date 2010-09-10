@@ -203,7 +203,7 @@ namespace vl
       mFBORenderTarget = fbo_rt; 
       mFBORenderTarget->addDepthAttachment( mFBODepthAttachment.get() );
       mFBORenderTarget->addTextureAttachment( AP_COLOR_ATTACHMENT0, mFBOTextureAttachment.get() );
-      mFBORenderTarget->setDrawBuffers( RDB_COLOR_ATTACHMENT0 );
+      mFBORenderTarget->setDrawBuffer( RDB_COLOR_ATTACHMENT0 );
     }
     FBORenderTarget* fboRenderTarget() { return mFBORenderTarget.get(); }
     const FBORenderTarget* fboRenderTarget() const { return mFBORenderTarget.get(); }

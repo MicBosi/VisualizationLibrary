@@ -134,12 +134,18 @@ void RenderTarget::bindDrawBuffers() const
   if (mDrawBuffers.size() > 1 && (GLEW_ARB_draw_buffers||GLEW_VERSION_2_0))
   {
     glDrawBuffers( (GLsizei)mDrawBuffers.size(), (const GLenum*)&mDrawBuffers[0] );
-    VL_CHECK_OGL()
+    VL_CHECK_OGL() // If you are using RDB_BACK_LEFT/RIGHT make sure sure you have a double buffered gl context.
+                   // Otherwise use RenderTarget::setDrawBuffer(RDB_FRONT_LEFT).
   }
   else
   {
     glDrawBuffer( mDrawBuffers[0] );
-    VL_CHECK_OGL()
+    VL_CHECK_OGL() // If you are using RDB_BACK_LEFT/RIGHT make sure sure you have a double buffered gl context.
+                   // Otherwise use RenderTarget::setDrawBuffer(RDB_FRONT_LEFT).
+    if ( mDrawBuffers.size() > 1 )
+    {
+      Log::error( "RenderTarget::bindDrawBuffers() error:\nglDrawBuffers() not supported by the current OpenGL driver. GL_ARB_draw_buffers or OpenGL 2.0 required.\n" );
+    }
   }
 }
 //-----------------------------------------------------------------------------

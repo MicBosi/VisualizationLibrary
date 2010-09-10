@@ -130,7 +130,7 @@ public:
       texture2 = NULL; // just for clarity
       vl::ref<vl::FBOTexture2DAttachment> fbotexture1 = new vl::FBOTexture2DAttachment(texture1.get(), 0, vl::T2DT_TEXTURE_2D);
       fborendertarget->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbotexture1.get() );
-      mRTT_Rendering->renderTarget()->setDrawBuffers( vl::RDB_COLOR_ATTACHMENT0 );
+      mRTT_Rendering->renderTarget()->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
     }
     else
     /* FBO render to texture MRT (multiple render target) */
@@ -185,7 +185,7 @@ public:
       fborendertarget->addColorAttachment( vl::AP_COLOR_ATTACHMENT0, fbocolor.get() );
       vl::ref<vl::CopyTexSubImage2D> copytex = new vl::CopyTexSubImage2D(0, 0,0, 0,0, fbo_size,fbo_size, texture1.get(), vl::T2DT_TEXTURE_2D, vl::RDB_COLOR_ATTACHMENT0);
       mRTT_Rendering->renderingCallbacks()->push_back(copytex.get());
-      mRTT_Rendering->renderTarget()->setDrawBuffers(vl::RDB_COLOR_ATTACHMENT0);
+      mRTT_Rendering->renderTarget()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
     }
     else
     /* FBO framebuffer blit/multisample */
@@ -201,7 +201,7 @@ public:
       vl::ref<vl::FBOColorBufferAttachment> fbocolor = new vl::FBOColorBufferAttachment(vl::CBF_RGBA);
       fbocolor->setSamples(2);
       fborendertarget->addColorAttachment( vl::AP_COLOR_ATTACHMENT0, fbocolor.get() );
-      mRTT_Rendering->renderTarget()->setDrawBuffers(vl::RDB_COLOR_ATTACHMENT0);
+      mRTT_Rendering->renderTarget()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
 
       // create a new FBO with 'texture1' as its color attachment
 

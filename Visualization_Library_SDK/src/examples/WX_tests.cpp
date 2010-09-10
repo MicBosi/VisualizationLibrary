@@ -99,7 +99,7 @@ public:
 
     frame->Show();
     /* THE ORDER IS IMPORTANT */
-    mWXWin->initExtensions();
+    mWXWin->initGLContext();
     setupApplet(program, mWXWin, secs, bk_color, eye, center);
     mWXWin->dispatchInitEvent();
     /* these must be done after the window is visible */

@@ -338,8 +338,16 @@ void Rendering::resetStates()
 
   VL_glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0); VL_CHECK_OGL();
 
-  glDrawBuffer(GL_BACK); VL_CHECK_OGL();
-  glReadBuffer(GL_BACK); VL_CHECK_OGL();
+  if ( renderTarget()->openglContext()->hasDoubleBuffer() )
+  {
+    glDrawBuffer(GL_BACK); VL_CHECK_OGL();
+    glReadBuffer(GL_BACK); VL_CHECK_OGL();
+  }
+  else
+  {
+    glDrawBuffer(GL_FRONT); VL_CHECK_OGL();
+    glReadBuffer(GL_FRONT); VL_CHECK_OGL();
+  }
 
   renderer()->resetEnables(); VL_CHECK_OGL()
   renderer()->resetRenderStates(); VL_CHECK_OGL()
