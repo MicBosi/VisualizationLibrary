@@ -263,7 +263,7 @@ bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFo
   }
 
   // OpenGL extensions initialization
-  initExtensions();
+  initGLContext();
 
   dispatchInitEvent();
   dispatchResizeEvent(width, height);

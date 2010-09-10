@@ -242,7 +242,7 @@ bool CGLContext::initCGLContext(const vl::String& title, CGLContextObj& context,
     key_translation_map[ key_translation_vec[i] ] = (vl::EKey)key_translation_vec[i+1];
    
   // OpenGL extensions initialization
-  initExtensions(true);
+  initGLContext(true);
 
   dispatchInitEvent();
   dispatchResizeEvent(width, height);

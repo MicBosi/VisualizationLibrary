@@ -120,7 +120,7 @@ bool OpenGLContext::vsyncEnabled() const
 #endif
 }
 //-----------------------------------------------------------------------------
-void OpenGLContext::initExtensions(bool log)
+void OpenGLContext::initGLContext(bool log)
 {
   makeCurrent();
 
@@ -142,12 +142,23 @@ void OpenGLContext::initExtensions(bool log)
   if (GLEW_ARB_multitexture||GLEW_VERSION_1_3)
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &mTextureUnitCount);
   mTextureUnitCount = mTextureUnitCount < VL_MAX_TEXTURE_UNIT_COUNT ? mTextureUnitCount : VL_MAX_TEXTURE_UNIT_COUNT;
+
+  VL_CHECK_OGL();
+
+  // test for double buffer availability
+  glDrawBuffer(GL_BACK); 
+  if ( glGetError() )
+    mHasDoubleBuffer = false;
+  else
+    mHasDoubleBuffer = true;
+
+  mIsInitialized = true;
 }
 //-----------------------------------------------------------------------------
 bool OpenGLContext::isExtensionSupported(const char* ext_name)
 {
   makeCurrent();
-  int len = strlen(ext_name);
+  size_t len = strlen(ext_name);
   const char* ext = (const char*)glGetString(GL_EXTENSIONS);
   const char* ext_end = ext + strlen(ext);
 
