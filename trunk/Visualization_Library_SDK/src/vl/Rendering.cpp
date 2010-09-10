@@ -332,6 +332,9 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 //------------------------------------------------------------------------------
 void Rendering::resetStates()
 {
+  // Check that the OpenGL state is clear.
+  // If this fails use VL_CHECK_OGL to make sure your application does not generate OpenGL errors.
+  // See also glGetError() -> http://www.opengl.org/sdk/docs/man/xhtml/glGetError.xml
   VL_CHECK_OGL();
 
   glRenderMode(GL_RENDER); VL_CHECK_OGL();
