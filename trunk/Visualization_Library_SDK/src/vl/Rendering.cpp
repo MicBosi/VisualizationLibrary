@@ -480,10 +480,6 @@ void Rendering::resetStates()
     glDisable(GL_MINMAX); VL_CHECK_OGL()
   }
 
-  gluOrtho2D(1,2,3,4);
-
   VL_CHECK_OGL();
-
-  // fixme
 }
 //------------------------------------------------------------------------------
