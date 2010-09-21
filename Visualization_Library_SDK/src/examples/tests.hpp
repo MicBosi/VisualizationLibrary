@@ -42,6 +42,7 @@
 #include "Applets/App_FBO_MRT_GLSL.hpp"
 #include "Applets/App_GeometryInstancing.hpp"
 #include "Applets/App_GLSL.hpp"
+#include "Applets/App_GLSL_Bumpmapping.hpp"
 #include "Applets/App_GLSLImageProcessing.hpp"
 #include "Applets/App_Lights.hpp"
 #include "Applets/App_Fractals.hpp"
@@ -149,6 +150,7 @@ public:
       { "Text - Multilingual", new App_TextRendering(3), 10, 10, 512, 512, vlut::gold, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
       { "Text - The Solar System", new App_TextRendering(4), 10, 10, 512, 512, vlut::black, vl::vec3(0,35,40), vl::vec3(0,0,0) }, 
       { "GLSL", new App_GLSL, 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,7), vl::vec3(0,0,0) }, 
+      { "GLSL Bump Mapping", new App_GLSL_Bumpmapping, 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
       { "GLSL Image Processing", new App_GLSLImageProcessing, 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
       { "Legacy Render To Texture", new App_RenderToTextureClassic, 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
       { "FBO Render To Texture", new App_FBO_MRT_GLSL(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
@@ -177,9 +179,9 @@ public:
       { "Occlusion Culling", new App_OcclusionCulling, 10,10, 512, 512, vlut::gray, vl::vec3(0,25,575), vl::vec3(0,0,0) },
       { "Bezier Patches", new App_BezierSurfaces, 10,10, 512, 512, vlut::black, vl::vec3(4.5f,5,13), vl::vec3(4.5f,0,0) },
       { "Picking", new App_Picking, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
-      //// stubs:
-      //{ "Serialization", new App_Serialization, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
-      //{ "Depth Of Field", new App_DepthOfField, 10,10, 512, 512, vlut::black, vl::vec3(0,5,100), vl::vec3(0,0,0) },
+      // stubs:
+      { "Serialization", new App_Serialization, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
+      { "Depth Of Field", new App_DepthOfField, 10,10, 512, 512, vlut::black, vl::vec3(0,5,100), vl::vec3(0,0,0) },
     };
 
     int test_count = int( sizeof(tests)/sizeof(TestEntry) );
