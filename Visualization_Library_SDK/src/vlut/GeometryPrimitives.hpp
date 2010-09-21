@@ -46,8 +46,8 @@ namespace vlut
   vl::ref<vl::Geometry> makeCylinder( const vl::vec3& origin, vl::Real diameter=1, vl::Real height=1, int phi=20, int theta=2, bool top=true, bool bottom=true );
   //! Creates a uv sphere
   vl::ref<vl::Geometry> makeUVSphere( const vl::vec3& origin, vl::Real diameter=1, int phi=20, int theta=20 );
-  //! Creates torus
-  vl::ref<vl::Geometry> makeTorus( const vl::vec3& origin, vl::Real diameter=1, vl::Real thickness=0.2, int phi=10, int theta=10 );
+  //! Creates torus. This function generates also appropriate normals.
+  vl::ref<vl::Geometry> makeTorus( const vl::vec3& origin, vl::Real diameter=1, vl::Real thickness=0.2, int phi=10, int theta=10, float tex_coords = 0.0f );
   //! Creates a cone
   vl::ref<vl::Geometry> makeCone( const vl::vec3& origin, vl::Real diameter=1, vl::Real height=1, int phi=10, bool bottom=true );
   //! Creates a pyramid

@@ -298,7 +298,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness, int phi, int theta )
+ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness, int phi, int theta, float tex_coords )
 {
   ref<Geometry> geom = new Geometry;
   geom->setName("Torus");
@@ -307,22 +307,43 @@ ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness
   thickness /= 2.0f;
   const Real radius = diameter / 2.0f - thickness;
 
+  // vertices
   ref<ArrayFVec3> vert3 = new ArrayFVec3;
   geom->setVertexArray(vert3.get());
+  vert3->resize( (phi+1) * (theta+1) );
 
-  vert3->resize( phi * theta );
-  int vect_idx = 0;
-  for(int i=0; i<theta; ++i)
+  // normals
+  ref<ArrayFVec3> norm3 = new ArrayFVec3;
+  geom->setNormalArray(norm3.get());
+  norm3->resize( (phi+1) * (theta+1) );
+
+  // texture coordinates
+  ref<ArrayFVec2> texc2 = new ArrayFVec2;
+  if (tex_coords)
   {
-    for(int j=0; j<phi; ++j)
+    geom->setTexCoordArray(0,texc2.get());
+    texc2->resize( (phi+1) * (theta+1) );
+  }
+
+  int vect_idx = 0;
+  for(int i=0; i<theta+1; ++i)
+  {
+    for(int j=0; j<phi+1; ++j)
     {
       vec3 v(thickness, 0, 0);
       vec3 o(radius, 0, 0);
       v = mat4::rotation(360.0f/phi*j,0,1,0) * v;
       v = mat4::rotation(360.0f/theta*i,0,0,1) * v;
       o = mat4::rotation(360.0f/theta*i,0,0,1) * o;
-      // vert3->push_back( (fvec3)(v + o + origin) );
-      vert3->at(vect_idx++) = (fvec3)(v + o + origin);
+
+      if (tex_coords)
+        texc2->at(vect_idx) = fvec2((float)i/theta,(float)j/phi) * tex_coords;
+
+      vert3->at(vect_idx) = (fvec3)(v + o + origin);
+
+      norm3->at(vect_idx) = v.normalize();
+
+      ++vect_idx;
     }
   }
 
@@ -335,11 +356,11 @@ ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness
   {
     for(int j=0; j<phi; ++j)
     {
-      int i1 = (i+1) % theta;
-      polys->indices()->at(idx++) = phi*i +(j+0)%phi;
-      polys->indices()->at(idx++) = phi*i +(j+1)%phi;
-      polys->indices()->at(idx++) = phi*i1+(j+1)%phi;
-      polys->indices()->at(idx++) = phi*i1+(j+0)%phi;
+      int i1 = i+1;
+      polys->indices()->at(idx++) = (phi+1)*i +(j+0);
+      polys->indices()->at(idx++) = (phi+1)*i +(j+1);
+      polys->indices()->at(idx++) = (phi+1)*i1+(j+1);
+      polys->indices()->at(idx++) = (phi+1)*i1+(j+0);
     }
   }
 
