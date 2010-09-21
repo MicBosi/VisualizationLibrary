@@ -74,6 +74,7 @@ SET(VL_SRC
   vl/PixelLODEvaluator.cpp
   vl/Plane.cpp
   vl/PolygonSimplifier.cpp
+  vl/Primitives.cpp
   vl/SceneManagerPortals.cpp
   vl/RayIntersector.cpp
   vl/RenderTarget.cpp
