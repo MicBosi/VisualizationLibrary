@@ -1163,3 +1163,77 @@ void Geometry::colorizePrimitives()
   }
 }
 //-----------------------------------------------------------------------------
+void Geometry::computeTangentSpace(
+  size_t vert_count, 
+  const fvec3 *vertex, 
+  const fvec3* normal,
+  const fvec2 *texcoord, 
+  const Primitives* primitives,
+  fvec3 *tangent, 
+  fvec3 *bitangent )
+{
+    std::vector<fvec3> tan1;
+    std::vector<fvec3> tan2;
+    tan1.resize(vert_count);
+    tan2.resize(vert_count);
+    
+    size_t tri_count = primitives->triangleCount() / primitives->instances();
+    for ( size_t a = 0; a < tri_count; ++a )
+    {
+        unsigned int tri[3];
+        primitives->getTriangle( a, tri );
+
+        VL_CHECK(tri[0] < vert_count );
+        VL_CHECK(tri[1] < vert_count );
+        VL_CHECK(tri[2] < vert_count );
+        
+        const fvec3& v1 = vertex[tri[0]];
+        const fvec3& v2 = vertex[tri[1]];
+        const fvec3& v3 = vertex[tri[2]];
+        
+        const fvec2& w1 = texcoord[tri[0]];
+        const fvec2& w2 = texcoord[tri[1]];
+        const fvec2& w3 = texcoord[tri[2]];
+        
+        float x1 = v2.x() - v1.x();
+        float x2 = v3.x() - v1.x();
+        float y1 = v2.y() - v1.y();
+        float y2 = v3.y() - v1.y();
+        float z1 = v2.z() - v1.z();
+        float z2 = v3.z() - v1.z();
+        
+        float s1 = w2.x() - w1.x();
+        float s2 = w3.x() - w1.x();
+        float t1 = w2.y() - w1.y();
+        float t2 = w3.y() - w1.y();
+        
+        float r = 1.0F / (s1 * t2 - s2 * t1);
+        fvec3 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+        fvec3 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+
+        tan1[tri[0]] += sdir;
+        tan1[tri[1]] += sdir;
+        tan1[tri[2]] += sdir;
+
+        tan2[tri[0]] += tdir;
+        tan2[tri[1]] += tdir;
+        tan2[tri[2]] += tdir;
+    }
+
+    for ( size_t a = 0; a < vert_count; a++)
+    {
+        const fvec3& n = normal[a];
+        const fvec3& t = tan1[a];
+
+        // Gram-Schmidt orthogonalize
+        tangent[a] = (t - n * dot(n, t)).normalize();
+
+        if ( bitangent )
+        {
+          // Calculate handedness
+          float w = (dot(cross(n, t), tan2[a]) < 0.0F) ? -1.0F : 1.0F;
+          bitangent[a] = cross( n, tangent[a] ) * w;
+        }
+    }
+}
+//-----------------------------------------------------------------------------

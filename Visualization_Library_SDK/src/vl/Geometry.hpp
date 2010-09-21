@@ -224,6 +224,26 @@ namespace vl
     //! Updates the vertex buffer objects
     void updateVBOs();
 
+  //! Computes the tangent (and optionally bitangent) vectors used to form a TBN matrix to be used for bumpmapping.
+  //! @param vert_count The number of elements stored in @a vertex, @a normal, @a texcoord, @a tangent and @a bitangent.
+  //! @param vertex Array containing the vertex positions.
+  //! @param normal Array containing the normals of the vertices.
+  //! @param texcoord Array containing the 2d texture coordinates of the bumpmap.
+  //! @param primitives The triangles, quads etc. defining the geometry of the object.
+  //! @param tangent [out] Returns the tangent vector of the vertices. This parameter is mandatory.
+  //! @param bitangent [out] Returns the bitangent vector of the vertics. This parameter can be NULL.
+  // Based on:
+  // Lengyel, Eric. “Computing Tangent Space Basis Vectors for an Arbitrary Mesh”. Terathon Software 3D Graphics Library, 2001. 
+  // http://www.terathon.com/code/tangent.html
+  static void computeTangentSpace(
+    size_t vert_count, 
+    const vl::fvec3 *vertex, 
+    const vl::fvec3* normal,
+    const vl::fvec2 *texcoord, 
+    const vl::Primitives* primitives,
+    vl::fvec3 *tangent, 
+    vl::fvec3 *bitangent );
+
   private:
     // standard arrays
     ref<ArrayAbstract> mVertexArray;
