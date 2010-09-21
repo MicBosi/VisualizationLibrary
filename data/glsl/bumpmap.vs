@@ -7,7 +7,7 @@ void main(void)
 
  vec3 bitangent = cross( gl_Normal, tangent  );
  
- vec3 v = light_obj_space_pos-gl_Vertex;
+ vec3 v = light_obj_space_pos.xyz-gl_Vertex.xyz;
  L.x = dot( tangent,   v );
  L.y = dot( bitangent, v );
  L.z = dot( gl_Normal, v );
