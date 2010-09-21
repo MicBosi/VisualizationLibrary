@@ -185,31 +185,6 @@ void OpenGLContext::logOpenGLInfo()
 
   if (VL_VERBOSITY_LEVEL >= 1)
   {
-    if (GLEW_VERSION_3_0)
-      Log::print("OpenGL 3.0 detected\n");
-    else
-    if (GLEW_VERSION_2_1)
-      Log::print("OpenGL 2.1 detected\n");
-    else
-    if (GLEW_VERSION_2_0)
-      Log::print("OpenGL 2.0 detected\n");
-    else
-    if (GLEW_VERSION_1_5)
-      Log::print("OpenGL 1.5 detected\n");
-    else
-    if (GLEW_VERSION_1_4)
-      Log::print("OpenGL 1.4 detected\n");
-    else
-    if (GLEW_VERSION_1_3)
-      Log::print("OpenGL 1.3 detected\n");
-    else
-    if (GLEW_VERSION_1_2)
-      Log::print("OpenGL 1.2 detected\n");
-    else
-    if (GLEW_VERSION_1_1)
-      Log::print("OpenGL 1.1 detected\n");
-    else
-      Log::print("Unknown OpenGL version supported\n");
     Log::print( Say("GL_VERSION = %s\n") << glGetString(GL_VERSION) );
     Log::print( Say("GL_VENDOR = %s\n") << glGetString(GL_VENDOR) );
     Log::print( Say("GL_RENDERER = %s\n") << glGetString(GL_RENDERER) );
