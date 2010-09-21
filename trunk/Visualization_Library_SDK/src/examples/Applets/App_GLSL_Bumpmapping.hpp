@@ -84,9 +84,9 @@ public:
     glsl->setUniform( light_obj_space_pos.get() );
 
     vl::ref<vl::ArrayFVec3> tangent = new vl::ArrayFVec3;
-    vl::ref<vl::ArrayFVec3> bitangent = new vl::ArrayFVec3;
+    // vl::ref<vl::ArrayFVec3> bitangent = new vl::ArrayFVec3;
     tangent->resize( model->vertexArray()->size() );
-    bitangent->resize( model->vertexArray()->size() );
+    // bitangent->resize( model->vertexArray()->size() );
 
     VL_CHECK( model->primitives()->at(0)->primitiveType() == vl::PT_QUADS );
     // tessellate torus quads
@@ -116,7 +116,7 @@ public:
       triangle += 3;
     }
 
-    ComputeTangentSpace(
+    computeTangentSpace(
       model->vertexArray()->size(), 
       (vl::fvec3*)model->vertexArray()->ptr(), 
       (vl::fvec3*)model->normalArray()->ptr(), 
@@ -124,13 +124,13 @@ public:
       model->primitives()->at(0)->triangleCount(),
       &index_buffer.front(),
       tangent->begin(), 
-      bitangent->begin() );
+      NULL/*bitangent->begin()*/ );
 
     glsl->linkProgram();
     int tangent_idx = glsl->getAttribLocation("tangent");
-    int bitangent_idx = glsl->getAttribLocation("bitangent");
+    // int bitangent_idx = glsl->getAttribLocation("bitangent");
     model->setVertexAttributeArray(tangent_idx, false, false, tangent.get() );
-    model->setVertexAttributeArray(bitangent_idx, false, false, bitangent.get() );
+    // model->setVertexAttributeArray(bitangent_idx, false, false, bitangent.get() );
 
     /*
     // visualize tangent space
@@ -190,7 +190,7 @@ public:
   // Based on:
   // Lengyel, Eric. “Computing Tangent Space Basis Vectors for an Arbitrary Mesh”. Terathon Software 3D Graphics Library, 2001. 
   // http://www.terathon.com/code/tangent.html
-  void ComputeTangentSpace( 
+  void computeTangentSpace( 
     size_t vert_count, 
     const vl::fvec3 *vertex, 
     const vl::fvec3* normal,
@@ -256,11 +256,12 @@ public:
           // Gram-Schmidt orthogonalize
           tangent[a] = (t - n * vl::dot(n, t)).normalize();
 
-          // fixme???
-          // Calculate handedness
-          float w = (vl::dot(vl::cross(n, t), tan2[a]) < 0.0F) ? -1.0F : 1.0F;
-
-          bitangent[a] = vl::cross( n, tangent[a] ) * w;
+          if ( bitangent )
+          {
+            // Calculate handedness
+            float w = (vl::dot(vl::cross(n, t), tan2[a]) < 0.0F) ? -1.0F : 1.0F;
+            bitangent[a] = vl::cross( n, tangent[a] ) * w;
+          }
       }
   }
 
