@@ -29,69 +29,83 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef DrawCommand_INCLUDE_ONCE
-#define DrawCommand_INCLUDE_ONCE
+#include <vl/Primitives.hpp>
 
-#include <vl/Object.hpp>
-#include <vl/Array.hpp>
+using namespace vl;
 
-namespace vl 
+void Primitives::getTriangle( size_t tri_index, unsigned int* out_triangle ) const
 {
-  //------------------------------------------------------------------------------
-  // Primitives
-  //------------------------------------------------------------------------------
-  /**
-   * This is the base class of DrawElements and DrawArrays which respectively wrap
-   * the OpenGL functions glDrawElements() and glDrawArrays().
-  */
-  class Primitives: public Object
+  // initialize NULL triangle
+  if ( out_triangle )
   {
-  public:
-    Primitives(): mType(PT_TRIANGLES), mInstances(1), mEnabled(true) {}
+    out_triangle[0] = (unsigned int)-1;
+    out_triangle[1] = (unsigned int)-1;
+    out_triangle[2] = (unsigned int)-1;
+  }
 
-    virtual const char* className() { return "Primitives"; }
+  if( !out_triangle || tri_index < 0 || tri_index >= triangleCount() / instances() )
+  {
+    // error!
+    VL_TRAP();
+    return;
+  }
 
-    virtual ~Primitives() {}
-    void setPrimitiveType(EPrimitiveType type) { mType = type; }
-    EPrimitiveType primitiveType() const { return mType; }
+  switch( primitiveType() )
+  {
+  case PT_TRIANGLES:
+    out_triangle[0] = index( tri_index * 3 );
+    out_triangle[1] = index( tri_index * 3 + 1 );
+    out_triangle[2] = index( tri_index * 3 + 2 );
+    break;;
 
-    virtual void render(bool use_vbo = true) const = 0;
-    virtual ref<Primitives> clone() const = 0;
+  case PT_TRIANGLE_STRIP:
+  case PT_QUAD_STRIP:
+    if (tri_index & 1)
+    {
+      // odd
+      out_triangle[0] = index( tri_index );
+      out_triangle[1] = index( tri_index + 1 );
+      out_triangle[2] = index( tri_index + 2 );
+    }
+    else
+    {
+      // even
+      out_triangle[0] = index( tri_index );
+      out_triangle[1] = index( tri_index + 2 );
+      out_triangle[2] = index( tri_index + 1 );
+    }
+    break;;
 
-    virtual void deleteVBOs() = 0;
-    virtual void updateVBOs(bool discard_local_data = false)  = 0;
-    virtual unsigned int handle() const = 0;
+  case PT_POLYGON:
+  case PT_TRIANGLE_FAN:
+      out_triangle[0] = index( 0 );
+      out_triangle[1] = index( tri_index + 1 );
+      out_triangle[2] = index( tri_index + 2 );
+    break;;
 
-    virtual size_t indexCount() const = 0;
-    virtual size_t index(int i) const = 0;
+  case PT_QUADS:
+    // 1-----2
+    // | T0 /|
+    // |  /  |
+    // |/ T1 |
+    // 0-----3
+    if ( tri_index & 1 )
+    {
+      // odd
+      out_triangle[0] = index( tri_index * 2 );
+      out_triangle[1] = index( tri_index * 2 + 1 );
+      out_triangle[2] = index( tri_index * 2 - 2);
+    }
+    else
+    {
+      // even
+      out_triangle[0] = index( tri_index * 2 );
+      out_triangle[1] = index( tri_index * 2 + 1 );
+      out_triangle[2] = index( tri_index * 2 + 2);
+    }
+    break;;
 
-    virtual size_t triangleCount() const = 0;
-    virtual size_t lineCount() const = 0;
-    virtual size_t pointCount() const = 0;
-    //! Supported only by DrawElements
-    virtual void sortTriangles() {}
-
-    size_t instances() const { return mInstances; }
-    void setInstances(size_t instances) { mInstances = instances; }
-
-    void setEnabled(bool enable) { mEnabled = enable; }
-    bool isEnabled() const { return mEnabled; }
-
-    //! Returns in 'out_triangle' the indices of the index-th triangle or '(unsigned int)-1' if
-    //! an error occurred (unsupported primitive type, indices out of bounds, NULL pointers).
-    //! This function is useful when you want to treat an arbitrary primitive type as if it was made of
-    //! triangles, for example for tessellation purposes or geometry processing.
-    //! The supported primitive types are: PT_TRIANGLES, PT_TRIANGLE_STRIP, PT_TRIANGLE_FAN, PT_POLYGON
-    //! PT_QUADS and PT_QUAD_STRIP.
-    //! @param tri_index The index of the triangle whose info we want to retrieve.
-    //! @return out_triangle The 3 indices forming the requested triangle.
-    void getTriangle( size_t tri_index, unsigned int* out_triangle ) const;
-
-  protected:
-      EPrimitiveType mType;
-      size_t mInstances;
-      bool mEnabled;
-  };
+  default:
+    return;
+  }
 }
-
-#endif
