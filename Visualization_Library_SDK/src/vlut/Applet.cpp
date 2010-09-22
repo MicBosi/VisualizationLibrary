@@ -162,6 +162,8 @@ void Applet::runEvent()
   // show rendering
   if( openglContext()->hasDoubleBuffer() )
     openglContext()->swapBuffers();
+
+  VL_CHECK_OGL();
 }
 //-----------------------------------------------------------------------------
 void Applet::resizeEvent(int /*w*/, int /*h*/)
