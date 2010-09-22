@@ -242,6 +242,20 @@ void ObjLoader::loadObjMaterials(VirtualFile* input, std::vector<ObjMaterial>& m
         materials.back().setKs(col);
       }
       else
+      if (line.startsWith("Ke"))
+      {
+        fvec3 col;
+        col.r() = (float)line.field(' ', 1).toDouble();
+        col.g() = (float)line.field(' ', 2).toDouble();
+        col.b() = (float)line.field(' ', 3).toDouble();
+        materials.back().setKe(col);
+      }
+      else
+      if (line.startsWith("Tf"))
+      {
+        // skip transmission filter
+      }
+      else
       if (line.startsWith("Ni"))
       {
         materials.back().setNi(line.field(' ', 1).toFloat());
@@ -681,12 +695,14 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
       // add the Material to the ResourceDatabase
       res_db->resources().push_back(effect->shader()->gocMaterial());
       // setup the material
-      fvec4 diffuse  = fvec4( obj_mat->kd(), obj_mat->tr() );
-      fvec4 ambient  = fvec4( obj_mat->ka(), obj_mat->tr() );
-      fvec4 specular = fvec4( obj_mat->ks(), obj_mat->tr() );
+      fvec4 diffuse  = fvec4( obj_mat->kd(), 1.0f - obj_mat->tr() );
+      fvec4 ambient  = fvec4( obj_mat->ka(), 1.0f - obj_mat->tr() );
+      fvec4 specular = fvec4( obj_mat->ks(), 1.0f - obj_mat->tr() );
+      fvec4 emission = fvec4( obj_mat->ke(), 1.0f - obj_mat->tr() );
       effect->shader()->gocMaterial()->setDiffuse( diffuse );
       effect->shader()->gocMaterial()->setAmbient( ambient );
       effect->shader()->gocMaterial()->setSpecular( specular );
+      effect->shader()->gocMaterial()->setEmission( emission );
       effect->shader()->gocMaterial()->setShininess( obj_mat->ns());
       // setup transparency
       if (obj_mat->tr() < 1.0f)

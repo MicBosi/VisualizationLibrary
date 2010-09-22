@@ -196,6 +196,8 @@ namespace vl
     const fvec3& kd() const { return mKd; }
     //! Ks - specular color
     const fvec3& ks() const { return mKs; }
+    //! Ke - emissive color
+    const fvec3& ke() const { return mKe; }
     //! Tr/d - transparency
     float tr() const { return mTr; }
     //! Ns - specular exponent
@@ -227,6 +229,8 @@ namespace vl
     void setKd(const fvec3& kd) { mKd = kd; }
     //! Ks - specular color
     void setKs(const fvec3& ks) { mKs = ks; }
+    //! Ke - emissive color
+    void setKe(const fvec3& ke) { mKe = ke; }
     //! Tr/d - transparency
     void setTr(float tr) { mTr = tr; }
     //! Ns - specular exponent
@@ -259,6 +263,8 @@ namespace vl
     fvec3 mKd;
     //! Ks - specular color
     fvec3 mKs;
+    //! Ke - emissive color
+    fvec3 mKe;
     //! Tr/d - transparency
     float mTr;
     //! Ns - specular exponent
