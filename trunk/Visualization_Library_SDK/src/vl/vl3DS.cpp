@@ -46,6 +46,59 @@
 
 using namespace vl;
 
+#define ID_3D_EDITOR_CHUNK 0x3D3D
+#define ID_MAIN_CHUNK 0x4D4D
+#define ID_3DS_VERSION 0x0002
+#define ID_OBJECT_BLOCK 0x4000
+#define ID_MATERIAL_BLOCK 0xAFFF
+#define ID_COLOR_F 0x0010
+#define ID_COLOR_24 0x0011
+#define ID_LIN_COLOR_24 0x0012
+#define ID_LIN_COLOR_F 0x0013
+#define ID_INT_PERCENTAGE 0x0030
+#define ID_FLOAT_PERCENTAGE 0x0031
+#define ID_MATERIAL_NAME 0xA000
+#define ID_MAT_AMBIENT 0xA010
+#define ID_MAT_DIFFUSE 0xA020
+#define ID_MAT_SPECULAR 0xA030
+#define ID_MAT_SHININESS_PERCENT 0xA040
+#define ID_MAT_SHININESS_STRENGTH_PERCENT 0xA041
+#define ID_MAT_TRANSPARENCY 0xA050
+#define ID_MAT_TWO_SIDE 0xA081
+#define ID_MAT_TEXMAP 0xA200
+#define ID_MAT_TEXMAP2 0xA33A
+#define ID_MAT_MAPNAME 0xA300
+#define ID_MAT_MAP_TILING 0xA351
+#define ID_MAT_USCALE 0xA354
+#define ID_MAT_VSCALE 0xA356
+#define ID_MAT_UOFFSET 0xA358
+#define ID_MAT_VOFFSET 0xA35A
+#define ID_MAT_MAP_ROTATION 0xA35C
+#define ID_TRIANGULAR_MESH 0x4100
+#define ID_LOCAL_COORDS_SYSTEM 0x4160
+#define ID_MAPPING_COORDS 0x4140
+#define ID_SMOOTHING_GROUP_LIST 0x4150
+#define ID_FACE_MATERIAL_LIST 0x4130
+#define ID_FACE_LIST 0x4120
+#define ID_VERTEX_LIST 0x4110
+#define ID_HIERARCHY 0x4F00
+#define ID_PARENT_OBJECT 0x4F10
+#define ID_PIVOT_OBJECT 0x4F20
+#define ID_PIVOT_LIMITS 0x4F30
+#define ID_PIVOT_ORDER 0x4F40
+#define ID_XLATE_RANGE 0x4F50
+
+#define ID_KEYFRAMER_CHUNK 0xB000
+  #define ID_KEYF_OBJDES 0xB002 // Mesh Information Block
+    #define ID_KEYF_OBJHIERARCH 0xB010 // Object Name And Hierarchy
+    #define ID_KEYF_OBJPIVOT 0xB013 // Object Pivot Point
+    #define ID_KEYF_POSITION_TRACK 0xB020 // Position Track + Pivot
+    #define ID_KEYF_ROTATION_TRACK 0xB021 // Rotation Track
+    #define ID_KEYF_SCALE_TRACK 0xB022 // Scale Track
+    #define ID_KEYF_NODE_ID 0xB030 // Node ID
+  #define ID_KEY_SPOTLIGHT_NODE_TAG 0xB007 // Spot Light Information Block
+  #define ID_KEY_FRAMES_START_END 0xB008 // Frames (Start and End)
+
 //-----------------------------------------------------------------------------
 // A3DSLoader
 //-----------------------------------------------------------------------------
@@ -121,7 +174,7 @@ bool A3DSLoader::skipChunk()
   return !mCorrupted;
 }
 //-----------------------------------------------------------------------------
-void A3DSLoader::read0x3D3D()
+void A3DSLoader::read_3D_EDITOR_CHUNK()
 {
   long long chunk_end = (int)mInputFile->position() + mChunkLen - 6;
   if ( chunk_end > mInputFile->size() )
@@ -133,20 +186,18 @@ void A3DSLoader::read0x3D3D()
     chunk_end = mInputFile->size();
   }
 
-  // unsigned int id = mChunkId;
-
   while(mInputFile->position() < chunk_end && !mCorrupted)
   {
     readChunk();
 
     switch(mChunkId)
     {
-    case 0x4000:
-      read0x4000();
+    case ID_OBJECT_BLOCK:
+      read_OBJECT_BLOCK();
     break;
 
-    case 0xAFFF:
-      read0xAFFF();
+    case ID_MATERIAL_BLOCK:
+      read_MATERIAL_BLOCK();
     break;
 
     default:
@@ -173,18 +224,18 @@ fvec3 A3DSLoader::readColChunk()
     readChunk();
     switch(mChunkId)
     {
-    case 0x0010:
+    case ID_COLOR_F:
       color = readColFloat3();
     break;
-    case 0x0011:
+    case ID_COLOR_24:
       color = readColByte3();
     break;
     // skip gamma byte
-    case 0x0012:
+    case ID_LIN_COLOR_24:
       readColByte3();
     break;
     // skip gamma float
-    case 0x0013:
+    case ID_LIN_COLOR_F:
       readColFloat3();
     break;
     }
@@ -198,10 +249,10 @@ float A3DSLoader::readPercentChunk()
   float perc=0;
   switch(mChunkId)
   {
-  case 0x0030:
+  case ID_INT_PERCENTAGE:
     perc = readWordPercent();
   break;
-  case 0x0031:
+  case ID_FLOAT_PERCENTAGE:
     perc = readFloatPercent();
   break;
   }
@@ -209,7 +260,7 @@ float A3DSLoader::readPercentChunk()
 }
 //-----------------------------------------------------------------------------
 // materials
-void A3DSLoader::read0xAFFF()
+void A3DSLoader::read_MATERIAL_BLOCK()
 {
   long long chunk_end = (int)mInputFile->position() + mChunkLen - 6;
   if ( chunk_end > mInputFile->size() )
@@ -231,61 +282,61 @@ void A3DSLoader::read0xAFFF()
 
     switch(mChunkId)
     {
-    // A3DSMaterial name
-    case 0xA000:
+    // Material name
+    case ID_MATERIAL_NAME:
     {
       mat.mMaterialName = readLine();
     }
     break;
     // Ambient color
-    case 0xA010:
+    case ID_MAT_AMBIENT:
     {
       mat.mAmbient = readColChunk();
     }
     break;
     // Diffuse color
-    case 0xA020:
+    case ID_MAT_DIFFUSE:
     {
       mat.mDiffuse = readColChunk();
     }
     break;
     // Specular color
-    case 0xA030:
+    case ID_MAT_SPECULAR:
     {
       mat.mSpecular = readColChunk();
     }
     break;
     // Shininess percent
-    case 0xA040:
+    case ID_MAT_SHININESS_PERCENT:
     {
       mat.mShininess = readPercentChunk();
     }
     break;
     // Shininess strength percent
-    case 0xA041:
+    case ID_MAT_SHININESS_STRENGTH_PERCENT:
     {
       mat.mShininessStrength = readPercentChunk();
     }
     break;
     // Transparency percent
-    case 0xA050:
+    case ID_MAT_TRANSPARENCY:
     {
       mat.mTransparency = readPercentChunk();
     }
     break;
     // Double sided material
-    case 0xA081:
+    case ID_MAT_TWO_SIDE:
     {
       mat.mDoubleSided = true;
     }
-    // A3DSTexture map 1
-    case 0xA200:
+    // Texture map 1
+    case ID_MAT_TEXMAP:
     {
       mat.mTexture1 = readMapChunk();
     }
     break;
-    // A3DSTexture map 2
-    case 0xA33A:
+    // Texture map 2
+    case ID_MAT_TEXMAP2:
     {
       mat.mTexture2 = readMapChunk();
     }
@@ -322,7 +373,7 @@ A3DSTexture A3DSLoader::readMapChunk()
     switch(mChunkId)
     {
     // Map filename
-    case 0xA300:
+    case ID_MAT_MAPNAME:
     {
       tex.mFileName = readLine();
       // locate the actual file
@@ -333,7 +384,7 @@ A3DSTexture A3DSLoader::readMapChunk()
     }
     break;
     // Map options
-    case 0xA351:
+    case ID_MAT_MAP_TILING:
     {
       unsigned short flags = mInputFile->readUInt16();
       int bit[10] = { flags&(1<<0), flags&(1<<1), flags&(1<<2), flags&(1<<3),
@@ -350,32 +401,32 @@ A3DSTexture A3DSLoader::readMapChunk()
       tex.mOpt_rgb_tint         = bit[9]?true:false;
     }
     break;
-    // V scale
-    case 0xA354:
-    {
-      tex.mVScale = mInputFile->readFloat();
-    }
-    break;
     // U scale
-    case 0xA356:
+    case ID_MAT_USCALE:
     {
       tex.mUScale = mInputFile->readFloat();
     }
     break;
+    // V scale
+    case ID_MAT_VSCALE:
+    {
+      tex.mVScale = mInputFile->readFloat();
+    }
+    break;
     // U offset
-    case 0xA358:
+    case ID_MAT_UOFFSET:
     {
       tex.mUOffset = mInputFile->readFloat();
     }
     break;
     // V offset
-    case 0xA35A:
+    case ID_MAT_VOFFSET:
     {
       tex.mVOffset = mInputFile->readFloat();
     }
     break;
     // rotation
-    case 0xA35C:
+    case ID_MAT_MAP_ROTATION:
     {
       tex.mRotation = mInputFile->readFloat();
     }
@@ -387,8 +438,8 @@ A3DSTexture A3DSLoader::readMapChunk()
   return tex;
 }
 //-----------------------------------------------------------------------------
-// A3DSObject Block
-void A3DSLoader::read0x4000()
+// Object Block
+void A3DSLoader::read_OBJECT_BLOCK()
 {
   long long chunk_end = (int)mInputFile->position() + mChunkLen - 6;
   if ( chunk_end > mInputFile->size() )
@@ -403,7 +454,7 @@ void A3DSLoader::read0x4000()
   // unsigned int id = mChunkId;
 
   mObjects.push_back( A3DSObject() );
-  mObjects.back().mMaterialName = readLine();
+  mObjects.back().mObjName = readLine();
 
   while(mInputFile->position() < chunk_end && !mCorrupted)
   {
@@ -411,9 +462,10 @@ void A3DSLoader::read0x4000()
 
     switch(mChunkId)
     {
-    case 0x4100:
-      read0x4100();
+    case ID_TRIANGULAR_MESH:
+      read_TRIANGULAR_MESH();
     break;
+
     default:
       // Reject lights and cameras
       mObjects.pop_back();
@@ -423,7 +475,7 @@ void A3DSLoader::read0x4000()
 }
 //-----------------------------------------------------------------------------
 // Triangular mesh
-void A3DSLoader::read0x4100()
+void A3DSLoader::read_TRIANGULAR_MESH()
 {
   long long chunk_end = (int)mInputFile->position() + mChunkLen - 6;
   if ( chunk_end > mInputFile->size() )
@@ -444,7 +496,7 @@ void A3DSLoader::read0x4100()
     switch(mChunkId)
     {
     // Vertices list
-    case 0x4110:
+    case ID_VERTEX_LIST:
     {
       unsigned short vertc = mInputFile->readUInt16();
       if (!vertc)
@@ -463,7 +515,7 @@ void A3DSLoader::read0x4100()
     }
     break;
     // Faces description
-    case 0x4120:
+    case ID_FACE_LIST:
     {
       unsigned short facec= mInputFile->readUInt16();
       if (!facec)
@@ -492,7 +544,7 @@ void A3DSLoader::read0x4100()
     }
     break;
     // Face material list
-    case 0x4130:
+    case ID_FACE_MATERIAL_LIST:
     {
       String name = readLine();
       unsigned short facec = mInputFile->readUInt16();
@@ -513,7 +565,7 @@ void A3DSLoader::read0x4100()
     }
     break;
     // Smoothing group list
-    case 0x4150:
+    case ID_SMOOTHING_GROUP_LIST:
     {
       #if 1
         if (mObjects.back().mFaceList.empty())
@@ -530,7 +582,7 @@ void A3DSLoader::read0x4100()
     }
     break;
     // Mapping coordinates
-    case 0x4140:
+    case ID_MAPPING_COORDS:
     {
       unsigned short vertc = mInputFile->readUInt16();
       if(!vertc)
@@ -554,7 +606,7 @@ void A3DSLoader::read0x4100()
     }
     break;
     // Local coordinates
-    case 0x4160:
+    case ID_LOCAL_COORDS_SYSTEM:
     {
       fmat4 m;
 
@@ -571,11 +623,7 @@ void A3DSLoader::read0x4100()
       mObjects.back().mCoordSystem = m;
     }
     break;
-    //// A3DSObject color in editor
-    //case 0x4165:
-    //  {
-    //  }
-    //break;
+
     default:
       skipChunk();
     }
@@ -594,7 +642,7 @@ bool A3DSLoader::parse3DS( VirtualFile* file )
 
   // Main 3DS Chunk
   readChunk();
-  if (mChunkId == 0x4D4D)
+  if (mChunkId == ID_MAIN_CHUNK)
     readChunk();
   else
   {
@@ -607,15 +655,16 @@ bool A3DSLoader::parse3DS( VirtualFile* file )
     // Inside main
     switch(mChunkId)
     {
-    case 0x0002: // 3DS Version
+    case ID_3DS_VERSION: // 3DS Version
     {
       /*unsigned int version =*/ mInputFile->readUInt32();
     }
     break;
 
-    case 0x3D3D: // 3D Editor
+    // 3D Editor
+    case ID_3D_EDITOR_CHUNK: 
     {
-      read0x3D3D();
+      read_3D_EDITOR_CHUNK();
     }
     break;
 
@@ -701,8 +750,8 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
 
       ref<Geometry> geom = new Geometry;
       ref<Actor>    act  = new Actor(geom.get());
-      geom->setName( loader.mObjects[iobj].mMaterialName.toStdString() );
-      act ->setName( loader.mObjects[iobj].mMaterialName.toStdString() );
+      geom->setName( loader.mObjects[iobj].mObjName.toStdString() );
+      act ->setName( loader.mObjects[iobj].mObjName.toStdString() );
 
       // builds the vertex sets: a vertex belongs to a single group
 
