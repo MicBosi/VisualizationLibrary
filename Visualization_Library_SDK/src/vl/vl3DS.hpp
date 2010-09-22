@@ -188,7 +188,7 @@ namespace vl
   class A3DSObject
   {
   public:
-    String mMaterialName;
+    String mObjName;
     std::vector<A3DSVertex> mVertices;
     std::vector<A3DSTriFace> mFaceList;
     std::vector<A3DSMaterialFaceMapping> mMatFaceMap;
@@ -213,13 +213,13 @@ namespace vl
     float readFloatPercent();
     void readChunk();
     bool skipChunk();
-    void read0x3D3D();
+    void read_3D_EDITOR_CHUNK();
     fvec3 readColChunk();
     float readPercentChunk();
-    void read0xAFFF();
+    void read_MATERIAL_BLOCK();
     A3DSTexture readMapChunk();
-    void read0x4000();
-    void read0x4100();
+    void read_OBJECT_BLOCK();
+    void read_TRIANGULAR_MESH();
 
   public:
     std::vector<A3DSObject> mObjects;
