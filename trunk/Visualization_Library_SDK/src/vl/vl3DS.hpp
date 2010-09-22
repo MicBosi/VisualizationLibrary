@@ -193,7 +193,6 @@ namespace vl
     std::vector<A3DSTriFace> mFaceList;
     std::vector<A3DSMaterialFaceMapping> mMatFaceMap;
     fmat4 mCoordSystem;
-    fvec3 mPivotPoint;
   };
 //-----------------------------------------------------------------------------
   /**
