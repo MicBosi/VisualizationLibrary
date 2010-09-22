@@ -779,8 +779,7 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
 
       // matrix
 
-      // in the 3ds files the coordinates are already transformed in world space
-      // we have some problems when the objects have pivot points.
+      // we still have problems when the pivots are not centered on the object
 
       // dump materials
 
