@@ -84,6 +84,11 @@ Rendering& Rendering::operator=(const Rendering& other)
 void Rendering::render()
 {
   VL_CHECK_OGL();
+  VL_CHECK(camera());
+  VL_CHECK(camera()->viewport());
+  VL_CHECK(renderer());
+  VL_CHECK(renderTarget());
+  VL_CHECK(renderTarget()->openglContext());
 
   if ( enableMask() == 0 )
     return;
@@ -91,48 +96,58 @@ void Rendering::render()
   if (sceneManagers()->empty())
     return;
 
+  if (!camera())
+    return;
+
+  if (!camera()->viewport())
+    return;
+
+  if (!renderer())
+    return;
+
+  if (!renderTarget())
+    return;
+
+  if (!renderTarget()->openglContext())
+    return;
+
   // bind the OpenGL context
 
-  if (renderer() && renderTarget())
-    renderer()->setOpenGLContext(renderTarget()->openglContext());
+  renderer()->setOpenGLContext(renderTarget()->openglContext());
 
   // activate OpenGL context
 
-  if (renderTarget() && renderTarget()->openglContext())
-  {
-    renderTarget()->openglContext()->makeCurrent();
+  renderTarget()->openglContext()->makeCurrent();
 
-    // render states shield
-    resetStates(); // must be called glPushAttrib() to be safe with FBO
-    glPushAttrib(GL_ALL_ATTRIB_BITS); VL_CHECK_OGL();
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS); VL_CHECK_OGL();
-  }
+  // render states ]shield[
+
+  resetStates(); // must be called glPushAttrib() to be safe with FBO
+  glPushAttrib(GL_ALL_ATTRIB_BITS); VL_CHECK_OGL();
+  glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS); VL_CHECK_OGL();
 
   // pre rendering callback
 
   dispatchRenderingCallbacks(RC_PreRendering);
 
-  // render target (note: and OpenGL context can have multiple rendering targets!)
+  // render target (note: an OpenGL context can have multiple rendering targets!)
 
-  if (renderTarget())
-    renderTarget()->activate();
+  renderTarget()->activate();
 
   // transform
 
-  if ( transform() != NULL )
+  if (transform() != NULL)
     transform()->computeWorldMatrixRecursive( camera() );
 
   // camera transform update (can be redundant)
 
-  if (camera() && camera()->followedTransform())
+  if (camera()->followedTransform())
     camera()->setInverseViewMatrix( camera()->followedTransform()->worldMatrix() );
 
   VL_CHECK_OGL()
 
   // culling & actor queue filling
 
-  if (camera())
-    camera()->computeFrustumPlanes();
+  camera()->computeFrustumPlanes();
 
   actorQueue()->clear();
   for(int i=0; i<sceneManagers()->size(); ++i)
@@ -155,7 +170,7 @@ void Rendering::render()
   }
 
   // collect near/far clipping planes optimization information
-  if (camera() && camera()->nearFarClippingPlanesOptimized())
+  if (camera()->nearFarClippingPlanesOptimized())
   {
     Sphere world_bounding_sphere;
     for(int i=0; i<actorQueue()->size(); ++i)
@@ -165,12 +180,9 @@ void Rendering::render()
 
   // camera and viewport activation: needs to be done after the near/far clipping planes optimization
 
-  if (camera() && camera()->viewport())
-  {
-    camera()->viewport()->setClearFlags(clearFlags());
-    camera()->viewport()->activate();
-    camera()->activate();
-  }
+  camera()->viewport()->setClearFlags(clearFlags());
+  camera()->viewport()->activate();
+  camera()->activate();
 
   // render queue filling
 
@@ -185,21 +197,17 @@ void Rendering::render()
 
   // render the queue
 
-  if (renderer() && camera())
-    renderer()->render( renderQueue(), camera() );
+  renderer()->render( renderQueue(), camera() );
 
   // post rendering callback
 
   dispatchRenderingCallbacks(RC_PostRendering);
 
-  // render states shield
+  // render states ]shield[
 
-  if (renderTarget() && renderTarget()->openglContext())
-  {
-    resetStates(); // must be called glPopAttrib() to be safe with FBO
-    glPopAttrib(); VL_CHECK_OGL();
-    glPopClientAttrib(); VL_CHECK_OGL();
-  }
+  resetStates(); // must be called glPopAttrib() to be safe with FBO
+  glPopAttrib(); VL_CHECK_OGL();
+  glPopClientAttrib(); VL_CHECK_OGL();
 
   VL_CHECK_OGL()
 }
@@ -283,9 +291,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
       Shader* shader = effect->lod(effect_lod)->at(ipass);
 
-      // make sure the EnableSet and RenderStateSet exists
-
-      // fixme
+      // fixme? make sure the EnableSet and RenderStateSet exists
       shader->gocEnableSet();
       shader->gocRenderStateSet();
 
