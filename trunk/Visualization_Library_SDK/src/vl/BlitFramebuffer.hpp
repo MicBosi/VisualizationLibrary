@@ -47,7 +47,7 @@ namespace vl
     BlitFramebuffer()
     {
       #ifndef NDEBUG
-        mName = "BlitFramebuffer";
+        mObjectName = className();
       #endif
       setSrcRect(0,0,640,480);
       setDstRect(0,0,640,480);

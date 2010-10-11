@@ -38,7 +38,7 @@ using namespace vl;
 ActorTreeAbstract::ActorTreeAbstract()
 {
   #ifndef NDEBUG
-    mName = "ActorTreeAbstract";
+    mObjectName = className();
   #endif
   mActors.setAutomaticDelete(false);
   mParent = NULL;

@@ -134,7 +134,7 @@ namespace vl
     EdgeExtractor(): mCreaseAngle(45.0f), mWarnNonManifold(false)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 

@@ -180,8 +180,8 @@ public:
       { "Bezier Patches", new App_BezierSurfaces, 10,10, 512, 512, vlut::black, vl::vec3(4.5f,5,13), vl::vec3(4.5f,0,0) },
       { "Picking", new App_Picking, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
       // stubs:
-      { "Serialization", new App_Serialization, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
-      { "Depth Of Field", new App_DepthOfField, 10,10, 512, 512, vlut::black, vl::vec3(0,5,100), vl::vec3(0,0,0) },
+      // { "Serialization", new App_Serialization, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
+      // { "Depth Of Field", new App_DepthOfField, 10,10, 512, 512, vlut::black, vl::vec3(0,5,100), vl::vec3(0,0,0) },
     };
 
     int test_count = int( sizeof(tests)/sizeof(TestEntry) );

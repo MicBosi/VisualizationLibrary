@@ -59,7 +59,7 @@ namespace vl
     GLBufferObject()
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mHandle = 0;
       mUsage = GBU_STATIC_DRAW;
@@ -69,7 +69,7 @@ namespace vl
     GLBufferObject(const GLBufferObject& other): Buffer(other)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mHandle = 0;
       mUsage = GBU_STATIC_DRAW;

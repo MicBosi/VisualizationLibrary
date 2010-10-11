@@ -43,7 +43,7 @@ using namespace vl;
 GLSLShader::GLSLShader(EShaderType type, const String& source)
 {
   #ifndef NDEBUG
-    mName = "GLSLShader";
+    mObjectName = className();
   #endif
   mType = type;
   mHandle = 0;
@@ -65,7 +65,10 @@ void GLSLShader::setSource( const std::string& source )
 void GLSLShader::setSource( const String& source )
 {
   if (vl::locateFile(source))
+  {
     setSource(vl::String::loadText(source).toStdString());
+    setObjectName( source.toStdString() );
+  }
   else
     setSource( source.toStdString() );
 }
@@ -100,12 +103,12 @@ bool GLSLShader::compile()
       mCompiled = true;
       #ifndef NDEBUG
       if (!infoLog().empty())
-        Log::info( Say("%s\n%s\n\n") << name().c_str() << infoLog() );
+        Log::info( Say("%s\n%s\n\n") << objectName().c_str() << infoLog() );
       #endif
     }
     else
     {
-      Log::error( Say("\nShader compilation error: '%s':\n\n") << name().c_str() );
+      Log::error( Say("\nShader compilation error: '%s':\n\n") << objectName().c_str() );
       Log::print( Say("SOURCE:\n%s\n\n") << mSource.c_str() );
       Log::print( Say("LOG:\n%s\n\n") << infoLog() );
       VL_TRAP()
@@ -174,7 +177,7 @@ void GLSLShader::deleteShader()
 GLSLProgram::GLSLProgram()
 {
   #ifndef NDEBUG
-    mName = "GLSLProgram";
+    mObjectName = className();
   #endif
   mScheduleLink = true;
   mHandle = 0;
@@ -344,7 +347,7 @@ bool GLSLProgram::linkProgram(bool force_relink)
     if(!linked())
     {
       Log::error("GLSLProgram::linkProgram() failed:\n");
-      Log::print("Name: '"+String(name().c_str()) + "'\n");
+      Log::print("Name: '"+String(objectName().c_str()) + "'\n");
       Log::print( Say("Log:\n%s\n") << infoLog() );
       VL_TRAP()
       return false;
@@ -476,8 +479,7 @@ void GLSLProgram::apply(const Camera*) const
 //-----------------------------------------------------------------------------
 void GLSLProgram::initResources()
 {
-  linkProgram();
-  if (linked())
+  if (linkProgram())
   {
     glUseProgram(handle());
     applyUniformSet(uniformSet());
@@ -495,7 +497,7 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     return false;
   if (!linked())
     return false;
-  if (handle() == 0)
+  if (!handle())
     return false;
 
   #ifndef NDEBUG
@@ -529,6 +531,7 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     }
 
     // finally transmits the uniform
+    // note: we don't perform delta binding per-uniform variable at the moment!
 
     VL_CHECK_OGL();
     switch(uniform->mType)

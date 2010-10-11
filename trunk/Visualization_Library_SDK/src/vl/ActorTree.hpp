@@ -66,7 +66,7 @@ namespace vl
     ActorTree()
     {
       #ifndef NDEBUG
-        mName = "ActorTree";
+        mObjectName = className();
       #endif
     }
 

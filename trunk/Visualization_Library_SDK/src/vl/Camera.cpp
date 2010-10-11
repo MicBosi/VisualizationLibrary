@@ -41,11 +41,13 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // Camera
 //-----------------------------------------------------------------------------
-Camera::Camera(const std::string& name)
+Camera::Camera()
 {
+  #ifndef NDEBUG
+    mObjectName = className();
+  #endif
   mFrustum.planes().resize(6);
   mNearFarClippingPlanesOptimized = false;
-  mName = name;
   mActive = true;
   mFOV = 60.0;
   mNearPlane = (Real)0.05;

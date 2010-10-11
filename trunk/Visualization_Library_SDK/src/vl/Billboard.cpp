@@ -41,7 +41,7 @@ Billboard::Billboard()
   setNormal(vec3(0,0,1));
   mType = BT_SphericalBillboard;
   #ifndef NDEBUG
-    mName = className();
+    mObjectName = className();
   #endif
 }
 //-----------------------------------------------------------------------------
