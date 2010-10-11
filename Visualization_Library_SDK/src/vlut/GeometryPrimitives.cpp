@@ -42,7 +42,7 @@ using namespace vlut;
 ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real radius, int detail, bool remove_doubles)
 {
   ref<Geometry> geom = new Geometry;
-  geom->setName("Icosphere");
+  geom->setObjectName("Icosphere");
 
   ref<ArrayFVec3> coords = new ArrayFVec3;
   ref<ArrayFVec3> norms = new ArrayFVec3;
@@ -143,7 +143,7 @@ ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real radius, int detail, bool
 ref<Geometry> vlut::makeUVSphere( const vec3& origin, Real diameter, int phi, int theta)
 {
   ref<Geometry> geom = new Geometry;
-  geom->setName("UVSphere");
+  geom->setObjectName("UVSphere");
 
   diameter = diameter / 2.0f;
   ref<ArrayFVec3> vert3 = new ArrayFVec3;
@@ -211,7 +211,7 @@ ref<Geometry> vlut::makeUVSphere( const vec3& origin, Real diameter, int phi, in
 ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height, int phi, int theta, bool top, bool bottom)
 {
   ref<Geometry> geom = new Geometry;
-  geom->setName("Cylinder");
+  geom->setObjectName("Cylinder");
 
   diameter = diameter / 2;
   height = height / 2;
@@ -301,7 +301,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
 ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness, int phi, int theta, float tex_coords )
 {
   ref<Geometry> geom = new Geometry;
-  geom->setName("Torus");
+  geom->setObjectName("Torus");
 
   // create vertices
   thickness /= 2.0f;
@@ -390,7 +390,7 @@ ref<Geometry> vlut::makeBox( const vec3& origin, Real xside, Real yside, Real zs
   */
 
   ref<Geometry> geom = new Geometry;
-  geom->setName("Box");
+  geom->setObjectName("Box");
 
   ref<ArrayFVec3> vert3 = new ArrayFVec3;
   ref<ArrayFVec2> texc2 = new ArrayFVec2;
@@ -440,7 +440,7 @@ ref<Geometry> vlut::makeBox( const vec3& origin, Real xside, Real yside, Real zs
 ref<Geometry> vlut::makePyramid( const vec3& origin, Real side, Real height)
 {
   ref<Geometry> geom = new Geometry;
-  geom->setName("Pyramid");
+  geom->setObjectName("Pyramid");
 
   ref<ArrayFVec3> vert3 = new ArrayFVec3;
   geom->setVertexArray(vert3.get());
@@ -473,7 +473,7 @@ ref<Geometry> vlut::makePyramid( const vec3& origin, Real side, Real height)
 ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, int phi, bool bottom)
 {
   ref<Geometry> geom = new Geometry;
-  geom->setName("Cone");
+  geom->setObjectName("Cone");
 
   ref<ArrayFVec3> vert3 = new ArrayFVec3;
   geom->setVertexArray( vert3.get() );
@@ -529,7 +529,7 @@ ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, in
 ref<Geometry> vlut::makeGrid( const vec3& origin, Real xside, Real zside, int x, int z, bool gen_texcoords, fvec2 uv0, fvec2 uv1)
 {
   ref<Geometry> geom = new Geometry;
-  geom->setName("Grid");
+  geom->setObjectName("Grid");
 
   ref<ArrayFVec3> vert3 = new ArrayFVec3;
   ref<ArrayFVec2> text2 = new ArrayFVec2;
@@ -588,7 +588,7 @@ ref<Geometry> vlut::makeGrid( const vec3& origin, Real xside, Real zside, int x,
 ref<Geometry> vlut::makePoints( const std::vector< vec3>& pos, const fvec4& color )
 {
   ref<Geometry> geom = new Geometry;
-  geom->setName("Points");
+  geom->setObjectName("Points");
 
   ref<ArrayFVec3> vert3 = new ArrayFVec3;
   ref<ArrayFVec4> col4 = new ArrayFVec4;
@@ -612,7 +612,7 @@ ref<Geometry> vlut::makePoints( const std::vector< vec3>& pos, const fvec4& colo
 ref<Geometry> vlut::makeIcosahedron( const vec3& origin, Real diameter )
 {
   ref<Geometry> geom = new Geometry;
-  geom->setName("Icosahedron");
+  geom->setObjectName("Icosahedron");
 
   ref<ArrayFVec3> vert3 = new ArrayFVec3;
   geom->setVertexArray(vert3.get());
@@ -660,7 +660,7 @@ ref<Geometry> vlut::makeIcosahedron( const vec3& origin, Real diameter )
 ref<Geometry> vlut::makeCircle( vec3 origin, Real radius, int slices )
 {
   ref< Geometry > geom = new Geometry;
-  geom->setName("Circle");
+  geom->setObjectName("Circle");
 
   ref< ArrayFVec3 > points = new ArrayFVec3;
   geom->setVertexArray(points.get());
@@ -682,7 +682,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
   float height2 = height / 2.0f;
 
   ref<Geometry> geom = new Geometry;
-  geom->setName("Capsule");
+  geom->setObjectName("Capsule");
 
   ref<ArrayFVec3> vert_array = new ArrayFVec3;
   ref<ArrayFVec4> colr_array = new ArrayFVec4;

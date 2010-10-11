@@ -207,7 +207,7 @@ void ObjLoader::loadObjMaterials(VirtualFile* input, std::vector<ObjMaterial>& m
       if (line.startsWith("newmtl"))
       {
         materials.push_back(ObjMaterial());
-        materials.back().setName( line.field(' ', 1).toStdString() );
+        materials.back().setObjectName( line.field(' ', 1).toStdString() );
       }
       else
       if (line.startsWith("Ns"))
@@ -405,7 +405,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
       if (starts_new_geom)
       {
         cur_mesh = new ObjMesh;
-        cur_mesh->setName(object_name);
+        cur_mesh->setObjectName(object_name);
         mMeshes.push_back( cur_mesh );
         starts_new_geom = false;
         cur_mesh->setMaterial(cur_material.get());
@@ -643,7 +643,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
         loadObjMaterials(vfile.get(), mats);
         // updates the material library
         for(unsigned i=0;i<mats.size(); ++i)
-          mMaterials[mats[i].name()] = new ObjMaterial(mats[i]);
+          mMaterials[mats[i].objectName()] = new ObjMaterial(mats[i]);
       }
       else
       {
@@ -691,7 +691,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
     if (obj_mat)
     {
       // sets the name
-      effect->shader()->gocMaterial()->setName(obj_mat->name());
+      effect->shader()->gocMaterial()->setObjectName(obj_mat->objectName());
       // add the Material to the ResourceDatabase
       res_db->resources().push_back(effect->shader()->gocMaterial());
       // setup the material
@@ -843,7 +843,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
     ref<Geometry> geom = new Geometry;
     res_db->resources().push_back(geom);
 
-    geom->setName(mMeshes[imesh]->name());
+    geom->setObjectName(mMeshes[imesh]->objectName());
     geom->setVertexArray( v_coords.get() );
     if ( mMeshes[imesh]->faceNormalIndex().size() )
       geom->setNormalArray( n_coords.get() );
@@ -869,7 +869,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
 
     ref<Actor> actor = new Actor(geom.get(),NULL);
     res_db->resources().push_back(actor);
-    actor->setName(mMeshes[imesh]->name());
+    actor->setObjectName(mMeshes[imesh]->objectName());
     actor->setEffect(effect.get());
   }
 

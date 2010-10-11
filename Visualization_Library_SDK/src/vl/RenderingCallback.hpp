@@ -56,7 +56,7 @@ namespace vl
     RenderingCallback(): mRank(0.0f), mRemoveAfterCall(false)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 

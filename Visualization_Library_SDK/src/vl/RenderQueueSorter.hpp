@@ -49,7 +49,7 @@ namespace vl
     RenderQueueSorter()
     {
       #ifndef NDEBUG
-        mName = "RenderQueueSorter";
+        mObjectName = className();
       #endif
     }
     virtual bool operator()(const RenderToken* a, const RenderToken* b) const = 0;
@@ -68,7 +68,7 @@ namespace vl
     RenderQueueSorterByShader()
     {
       #ifndef NDEBUG
-        mName = "RenderQueueSorterByShader";
+        mObjectName = className();
       #endif
     }
     virtual bool mightNeedZCameraDistance() const { return false; }
@@ -90,7 +90,7 @@ namespace vl
     RenderQueueSorterByRenderable()
     {
       #ifndef NDEBUG
-        mName = "RenderQueueSorterByRenderable";
+        mObjectName = className();
       #endif
     }
     virtual bool mightNeedZCameraDistance() const { return false; }
@@ -111,7 +111,7 @@ namespace vl
     RenderQueueSorterBasic()
     {
       #ifndef NDEBUG
-        mName = "RenderQueueSorterBasic";
+        mObjectName = className();
       #endif
     }
     virtual bool confirmZCameraDistanceNeed(const RenderToken*) const { return false; }
@@ -156,7 +156,7 @@ namespace vl
     RenderQueueSorterStandard(): mDepthSortMode(AlphaDepthSort)
     {
       #ifndef NDEBUG
-        mName = "RenderQueueSorterStandard";
+        mObjectName = className();
       #endif
     }
 
@@ -239,7 +239,7 @@ namespace vl
     RenderQueueSorterOcclusion()
     {
       #ifndef NDEBUG
-        mName = "RenderQueueSorterOcclusion";
+        mObjectName = className();
       #endif
     }
 
@@ -304,7 +304,7 @@ namespace vl
     {
     {
       #ifndef NDEBUG
-        mName = "RenderQueueSorterAggressive";
+        mObjectName = className();
       #endif
     }
     }

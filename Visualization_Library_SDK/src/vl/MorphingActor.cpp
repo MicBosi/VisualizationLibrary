@@ -102,7 +102,7 @@ void MorphingCallback::operator()(const Camera*, Actor* actor, Renderable*, cons
 MorphingActor::MorphingActor()
 {
   #ifndef NDEBUG
-    mName = "MorphingActor";
+    mObjectName = className();
   #endif
 
   renderingCallbacks()->push_back( new MorphingCallback );
@@ -135,10 +135,10 @@ void MorphingActor::init(ResourceDatabase* res_db)
   for(unsigned i=0; i<res_db->count<ArrayAbstract>(); ++i)
   {
     ArrayFVec3* buffer = dynamic_cast<ArrayFVec3*>(res_db->get<ArrayAbstract>(i));
-    if (buffer && buffer->name() == "vertex_frame")
+    if (buffer && buffer->objectName() == "vertex_frame")
       mVertexFrames.push_back(buffer);
     else
-    if (buffer && buffer->name() == "normal_frame")
+    if (buffer && buffer->objectName() == "normal_frame")
       mNormalFrames.push_back(buffer);
   }
 

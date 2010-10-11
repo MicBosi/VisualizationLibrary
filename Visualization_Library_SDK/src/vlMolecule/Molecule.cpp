@@ -44,7 +44,7 @@ Molecule::Molecule():
   mAtomLabelEffect(new vl::Effect)
 { 
   #ifndef NDEBUG
-    mName = className();
+    mObjectName = className();
   #endif
   mAtomLabelEffect->shader()->enable(vl::EN_BLEND);
   reset(); 

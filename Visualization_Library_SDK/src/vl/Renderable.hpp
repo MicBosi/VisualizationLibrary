@@ -57,7 +57,7 @@ namespace vl
     Renderable(const Renderable& other): Object(other)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 

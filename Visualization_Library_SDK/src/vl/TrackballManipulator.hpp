@@ -64,7 +64,7 @@ namespace vl
       mRotationSpeed(1.0f),        mTranslationSpeed(1.0f),          mZoomSpeed(1.0f)
     {
       #ifndef NDEBUG
-        mName = "TrackballManipulator";
+        mObjectName = className();
       #endif
     }
 

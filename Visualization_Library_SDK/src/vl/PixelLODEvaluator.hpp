@@ -53,7 +53,7 @@ namespace vl
     PixelLODEvaluator() 
     {
       #ifndef NDEBUG
-        mName = "PixelLODEvaluator";
+        mObjectName = className();
       #endif
     }
 

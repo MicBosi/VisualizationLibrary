@@ -46,7 +46,7 @@ Rendering::Rendering():
   mShaderAnimationEnabled(true)
 {
   #ifndef NDEBUG
-    mName = "Rendering";
+    mObjectName = className();
   #endif
   mRenderQueueSorter  = new RenderQueueSorterStandard;
   mActorQueue         = new ActorCollection;

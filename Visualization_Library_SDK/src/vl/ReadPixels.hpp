@@ -73,7 +73,7 @@ namespace vl
       mStoreInPixelBufferObject(false)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 
@@ -87,7 +87,7 @@ namespace vl
       mStoreInPixelBufferObject( store_in_pbo )
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 

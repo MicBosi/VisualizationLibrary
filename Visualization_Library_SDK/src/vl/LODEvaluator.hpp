@@ -53,7 +53,7 @@ namespace vl
     LODEvaluator()
     {
       #ifndef NDEBUG
-        mName = "LODEvaluator";
+        mObjectName = className();
       #endif
     }
     virtual int evaluate(Actor* actor, Camera* camera) = 0;

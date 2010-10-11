@@ -43,7 +43,7 @@ using namespace vl;
 Light::Light(int light_index)
 {
   #ifndef NDEBUG
-    mName = "Light";
+    mObjectName = className();
   #endif
   if (light_index<0 && light_index>7)
     Log::error( Say("Light index %n out of range. The light index must be between 0 and 7.\n") << light_index );

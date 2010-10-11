@@ -54,7 +54,7 @@ namespace vl
     RayIntersection(): mActor(NULL), mDistance(0.0f) 
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 
@@ -93,7 +93,7 @@ namespace vl
     RayIntersectionGeometry(): mGeometry(NULL), mPrimitives(NULL), mPrimitiveIndex(-1) 
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 
@@ -134,7 +134,7 @@ namespace vl
     RayIntersector()
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mActors = new ActorCollection;
     }
