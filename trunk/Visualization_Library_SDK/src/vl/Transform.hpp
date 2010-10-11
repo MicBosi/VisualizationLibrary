@@ -59,14 +59,14 @@ namespace vl
     Transform(): mParent(NULL), mWorldMatrixUpdateTick(0), mAssumeIdentityWorldMatrix(false) 
     { 
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
     Transform(const mat4& matrix): mParent(NULL), mAssumeIdentityWorldMatrix(false) 
     { 
       setLocalMatrix(matrix); 
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
     virtual ~Transform();

@@ -54,7 +54,7 @@ namespace vl
     RenderTarget(OpenGLContext* ctx, int w, int h): mWidth(w), mHeight(h), mOpenGLContext(ctx)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       setDrawBuffer(RDB_BACK_LEFT);
     }

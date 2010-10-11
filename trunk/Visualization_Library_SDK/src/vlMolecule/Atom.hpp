@@ -56,7 +56,7 @@ namespace vlMolecule
     Atom()
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mId       = 0;
       mAtomType = AT_Unknown;

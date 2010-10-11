@@ -62,7 +62,7 @@ namespace vl
     PixelTransfer()
     {
       #ifndef NDEBUG
-        mName = "PixelTransfer";
+        mObjectName = className();
       #endif
       mMapColor    = false;
       mMapStencil  = false;
@@ -211,7 +211,7 @@ namespace vl
             mPolygonSmoothHint(HM_DONT_CARE), mFogHint(HM_DONT_CARE), mGenerateMipmapHint(HM_DONT_CARE)
     {
       #ifndef NDEBUG
-        mName = "Hint";
+        mObjectName = className();
       #endif
     }
 
@@ -256,7 +256,7 @@ namespace vl
     CullFace(EPolygonFace cullface=PF_BACK): mFaceMode(cullface)
     {
       #ifndef NDEBUG
-        mName = "CullFace";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "CullFace"; }
@@ -280,7 +280,7 @@ namespace vl
     FrontFace(EFrontFace frontface=FF_CCW): mFrontFace(frontface)
     {
       #ifndef NDEBUG
-        mName = "FrontFace";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "FrontFace"; }
@@ -304,7 +304,7 @@ namespace vl
     DepthFunc(EFunction depthfunc=FU_LESS): mDepthFunc(depthfunc)
     {
       #ifndef NDEBUG
-        mName = "DepthFunc";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "DepthFunc"; }
@@ -328,7 +328,7 @@ namespace vl
     DepthMask(bool depthmask=true): mDepthMask(depthmask)
     {
       #ifndef NDEBUG
-        mName = "DepthMask";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "DepthMask"; }
@@ -352,7 +352,7 @@ namespace vl
     PolygonMode(EPolygonMode frontface=PM_FILL, EPolygonMode backface=PM_FILL): mFrontFace(frontface), mBackFace(backface)
     {
       #ifndef NDEBUG
-        mName = "PolygonMode";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "PlygonMode"; }
@@ -380,7 +380,7 @@ namespace vl
     ShadeModel(EShadeModel shademodel=SM_SMOOTH): mShadeModel(shademodel)
     {
       #ifndef NDEBUG
-        mName = "ShadeModel";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "ShadeModel"; }
@@ -405,7 +405,7 @@ namespace vl
       mSrcRGB(src_rgb), mDstRGB(dst_rgb), mSrcAlpha(src_alpha), mDstAlpha(dst_alpha)
     {
       #ifndef NDEBUG
-        mName = "BlendFunc";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "BlendFunc"; }
@@ -443,7 +443,7 @@ namespace vl
     BlendEquation(EBlendEquation mode_rgb=BE_FUNC_ADD, EBlendEquation mode_alpha=BE_FUNC_ADD): mModeRGB(mode_rgb), mModeAlpha(mode_alpha)
     {
       #ifndef NDEBUG
-        mName = "BlendEquation";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "BlendEquation"; }
@@ -471,7 +471,7 @@ namespace vl
     SampleCoverage(GLclampf value=1.0f, bool invert=false): mValue(value), mInvert(invert)
     {
       #ifndef NDEBUG
-        mName = "SampleCoverage";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "SampleCoverage"; }
@@ -499,7 +499,7 @@ namespace vl
     AlphaFunc(EFunction alphafunc=FU_ALWAYS, float refvalue=0): mRefValue(refvalue), mAlphaFunc(alphafunc)
     {
       #ifndef NDEBUG
-        mName = "AlphaFunc";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "AlphaFunc"; }
@@ -599,7 +599,7 @@ namespace vl
     LightModel(): mAmbientColor(0.2f,0.2f,0.2f,1.0f), mColorControl(CC_SINGLE_COLOR), mLocalViewer(false), mTwoSide(false)
     {
       #ifndef NDEBUG
-        mName = "LightModel";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "LightModel"; }
@@ -633,7 +633,7 @@ namespace vl
       mColor(color), mMode(mode), mDensity(density), mStart(start), mEnd(end)
     {
       #ifndef NDEBUG
-        mName = "Fog";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "Fog"; }
@@ -670,7 +670,7 @@ namespace vl
     PolygonOffset(): mFactor(0.0f), mUnits(0.0f)
     {
       #ifndef NDEBUG
-        mName = "PolygonOffset";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "PolygonOffset"; }
@@ -699,7 +699,7 @@ namespace vl
     LogicOp(ELogicOp logicop=LO_COPY): mLogicOp(logicop)
     {
       #ifndef NDEBUG
-        mName = "LogicOp";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "LogicOp"; }
@@ -723,13 +723,13 @@ namespace vl
     DepthRange(): mZNear(0), mZFar(1.0f)
     {
       #ifndef NDEBUG
-        mName = "DepthRange";
+        mObjectName = className();
       #endif
     }
     DepthRange(float znear, float zfar): mZNear(znear), mZFar(zfar)
     {
       #ifndef NDEBUG
-        mName = "DepthRange";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "DepthRange"; }
@@ -757,7 +757,7 @@ namespace vl
     LineWidth(float linewidth=1.0f): mLineWidth(linewidth)
     {
       #ifndef NDEBUG
-        mName = "LineWidth";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "LineWidth"; }
@@ -781,7 +781,7 @@ namespace vl
     PointSize(float pointsize=1.0f): mPointSize(pointsize)
     {
       #ifndef NDEBUG
-        mName = "PointSize";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "PointSize"; }
@@ -825,7 +825,7 @@ namespace vl
     LineStipple(int factor=1, GLushort pattern=~(GLushort)0): mFactor(factor), mPattern(pattern)
     {
       #ifndef NDEBUG
-        mName = "LineStipple";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "LineStipple"; }
@@ -854,7 +854,7 @@ namespace vl
       mDistanceAttenuation(distanceattenuation), mSizeMin(sizemin), mSizeMax(sizemax), mFadeThresholdSize(fadethresholdsize)
     {
       #ifndef NDEBUG
-        mName = "PointParameter";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "PointParameter"; }
@@ -893,7 +893,7 @@ namespace vl
         mMask_Front(mask),         mMask_Back(mask)
     {
       #ifndef NDEBUG
-        mName = "StencilFunc";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "StencilFunc"; }
@@ -946,7 +946,7 @@ namespace vl
         mDpPass_Front(dppass), mDpPass_Back(dppass)
     {
       #ifndef NDEBUG
-        mName = "StencilOp";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "StencilOp"; }
@@ -996,7 +996,7 @@ namespace vl
     StencilMask(unsigned int mask=~(unsigned int)0): mMask_Front(mask), mMask_Back(mask)
     {
       #ifndef NDEBUG
-        mName = "StencilMask";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "StencilMask"; }
@@ -1028,7 +1028,7 @@ namespace vl
     BlendColor(fvec4 blendcolor=fvec4(0,0,0,0)): mBlendColor(blendcolor)
     {
       #ifndef NDEBUG
-        mName = "BlendColor";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "BlendColor"; }
@@ -1052,7 +1052,7 @@ namespace vl
     ColorMask(bool red=true, bool green=true, bool blue=true, bool alpha=true): mRed(red), mGreen(green), mBlue(blue), mAlpha(alpha)
     {
       #ifndef NDEBUG
-        mName = "ColorMask";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "ColorMask"; }
@@ -1277,7 +1277,7 @@ namespace vl
     TextureUnit(int texunit)
     {
       #ifndef NDEBUG
-        mName = "TextureUnit";
+        mObjectName = className();
       #endif
       mTextureUnit = texunit;
     }

@@ -53,7 +53,7 @@ namespace vl
     UniformSet()
     {
       #ifndef NDEBUG
-        mName = "UniformSet";
+        mObjectName = className();
       #endif
     }
 

@@ -288,13 +288,13 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
 
   for(unsigned i=0; i<vertex_frames.size(); ++i)
   {
-    vertex_frames[i]->setName("vertex_frame");
+    vertex_frames[i]->setObjectName("vertex_frame");
     res_db->resources().push_back(vertex_frames[i].get());
   }
 
   for(unsigned i=0; i<normal_frames.size(); ++i)
   {
-    normal_frames[i]->setName("normal_frame");
+    normal_frames[i]->setObjectName("normal_frame");
     res_db->resources().push_back(normal_frames[i].get());
   }
 

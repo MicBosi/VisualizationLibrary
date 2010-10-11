@@ -46,7 +46,7 @@ using namespace vl;
 Shader::Shader()
 {
   #ifndef NDEBUG
-    mName = "Shader";
+    mObjectName = className();
   #endif
   mLastUpdateTime = 0.0;
 }
@@ -303,7 +303,7 @@ void AlphaFunc::apply(const Camera*) const
 Material::Material()
 {
   #ifndef NDEBUG
-    mName = "Material";
+    mObjectName = className();
   #endif
   mFrontAmbient = fvec4(0.2f, 0.2f, 0.2f, 1.0f);
   mFrontDiffuse = fvec4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -458,7 +458,7 @@ void PointSize::apply(const Camera*) const
 PolygonStipple::PolygonStipple()
 {
   #ifndef NDEBUG
-    mName = "PolygonStipple";
+    mObjectName = className();
   #endif
   memset(mMask, 0xFF, sizeof(unsigned char)*32*32/8);
 }
@@ -466,7 +466,7 @@ PolygonStipple::PolygonStipple()
 PolygonStipple::PolygonStipple(const unsigned char* mask)
 {
   #ifndef NDEBUG
-    mName = "PolygonStipple";
+    mObjectName = className();
   #endif
   set(mask);
 }
@@ -569,7 +569,7 @@ void SampleCoverage::apply(const Camera*) const
 TexParameter::TexParameter()
 {
   #ifndef NDEBUG
-    mName = "TexParameter";
+    mObjectName = className();
   #endif
   mDirty = true;
   setMinFilter(TPF_LINEAR);
@@ -673,7 +673,7 @@ void TexParameter::apply(ETextureDimension dimension)
 TexEnv::TexEnv(int texunit)
 {
   #ifndef NDEBUG
-    mName = "TexEnv";
+    mObjectName = className();
   #endif
 
   mTextureUnit = texunit;
@@ -776,7 +776,7 @@ void TexEnv::apply(const Camera*) const
 TexGen::TexGen(int texunit)
 {
   #ifndef NDEBUG
-    mName = "TexGen";
+    mObjectName = className();
   #endif
   mTextureUnit  = texunit;
   mEyePlaneS    = fvec4(1,0,0,0);

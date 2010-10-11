@@ -52,13 +52,13 @@ namespace vl
     Plane( Real o=0.0f, vec3 n=vec3(0,0,0) ): mNormal(n), mOrigin(o) 
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
     Plane( const vec3& o, const vec3& n ) 
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mNormal = n;
       mOrigin = dot(o, n);

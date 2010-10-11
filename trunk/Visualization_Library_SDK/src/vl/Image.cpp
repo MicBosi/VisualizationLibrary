@@ -56,7 +56,7 @@ Image::~Image()
 Image::Image()
 {
   #ifndef NDEBUG
-    mName = "Image";
+    mObjectName = className();
   #endif
   mPixels = new GLBufferObject;
   clear();
@@ -65,11 +65,11 @@ Image::Image()
 Image::Image(const String& path)
 {
   #ifndef NDEBUG
-    mName = "Image";
+    mObjectName = className();
   #endif
   mPixels = new GLBufferObject;
   clear();
-  setName(path.toStdString());
+  setObjectName(path.toStdString());
   ref<Image> img = loadImage(path);
   if (!img)
     return;
@@ -91,7 +91,7 @@ Image::Image(int x, int y, int z, int bytealign, EImageFormat format, EImageType
   mWidth(x), mHeight(y), mDepth(z), mPitch(0), mByteAlign(1), mFormat(format), mType(type), mIsCubemap(false)
 {
   #ifndef NDEBUG
-    mName = "Image";
+    mObjectName = className();
   #endif
   mPixels = new GLBufferObject;
   setByteAlignment(bytealign);
@@ -342,7 +342,7 @@ String Image::print() const
   "pitch  = %n\n"
   "bytealign = %n\n"
   )
-  << name().c_str()
+  << objectName().c_str()
   << width()
   << height()
   << depth()
@@ -657,7 +657,7 @@ void Image::clear()
 {
   mPixels->clear();
   mMipmaps.clear();
-  mName.clear();
+  mObjectName.clear();
   mWidth = 0;
   mHeight = 0;
   mDepth = 0;
@@ -670,7 +670,7 @@ void Image::clear()
 //-----------------------------------------------------------------------------
 Image& Image::operator=(const Image& other)
 {
-  setName(name());
+  setObjectName(other.objectName());
 
   // deep copy of the pixels
   *mPixels = *other.mPixels;
@@ -1218,7 +1218,7 @@ ref<Image> vl::loadImage( VirtualFile* file )
   file->close();
 
   if (img)
-    img->setName( file->path().toStdString() );
+    img->setObjectName( file->path().toStdString() );
 
   return img;
 }
@@ -1333,7 +1333,7 @@ ref<Image> vl::Image::convertType(EImageType new_type) const
   }
 
   ref<Image> img = new Image;
-  img->setName( name() );
+  img->setObjectName( objectName() );
   img->setFormat(format());
   img->setType(new_type);
   img->setWidth(width());
@@ -1749,7 +1749,7 @@ ref<Image> vl::Image::convertFormat(EImageFormat new_format) const
   }
 
   ref<Image> img = new Image;
-  img->setName( name() );
+  img->setObjectName( objectName() );
   img->setFormat(new_format);
   img->setType(type());
   img->setWidth(width());

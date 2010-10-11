@@ -49,7 +49,7 @@ namespace vl
     RenderQueue(): mSize(0), mSizeMP(0)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 

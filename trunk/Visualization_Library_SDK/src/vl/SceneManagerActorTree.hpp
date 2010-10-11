@@ -57,7 +57,7 @@ namespace vl
     SceneManagerActorTree()
     { 
       #ifndef NDEBUG
-        mName = "SceneManagerActorTree";
+        mObjectName = className();
       #endif
       mBoundingVolumeTree = new ActorTree;
     }

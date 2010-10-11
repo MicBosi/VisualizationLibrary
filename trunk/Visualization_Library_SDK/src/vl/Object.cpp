@@ -49,7 +49,7 @@ Object::~Object()
     "Object '%s' is being deleted having still %n references! Pissible causes:\n"
     "- illegal use of the 'delete' operator on an Object. Use ref<> instead.\n"
     "- explicit call to Object::incReference().\n"
-    ) << mName << mReferenceCount );
+    ) << mObjectName << mReferenceCount );
 
 #if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
   debug_living_objects()->erase(this);

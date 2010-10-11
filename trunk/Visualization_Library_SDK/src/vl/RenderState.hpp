@@ -53,7 +53,7 @@ namespace vl
     RenderState() 
     {
       #ifndef NDEBUG
-        mName = "RenderState";
+        mObjectName = className();
       #endif
       mTextureUnit = 0;
     }

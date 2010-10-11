@@ -52,7 +52,7 @@ Texture::Texture(int width, ETextureFormat format, bool border)
 {
   VL_CHECK_OGL()
   #ifndef NDEBUG
-    mName = "Texture";
+    mObjectName = className();
   #endif
   mTexParameter = new TexParameter;
   setDimension(TD_TEXTURE_1D);
@@ -72,7 +72,7 @@ Texture::Texture(int width, int height, ETextureFormat format, bool border)
 {
   VL_CHECK_OGL()
   #ifndef NDEBUG
-    mName = "Texture";
+    mObjectName = className();
   #endif
   mTexParameter = new TexParameter;
   setDimension(TD_TEXTURE_2D);
@@ -92,7 +92,7 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
 {
   VL_CHECK_OGL()
   #ifndef NDEBUG
-    mName = "Texture";
+    mObjectName = className();
   #endif
   mTexParameter = new TexParameter;
   setDimension(TD_TEXTURE_3D);
@@ -117,7 +117,7 @@ Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border
   mHandle(0), mFormat(format), mDimension(TD_TEXTURE_2D), mWidth(0), mHeight(0), mDepth(0), mBorder(border), mHasMipmaps(false)
 {
   #ifndef NDEBUG
-    mName = "Texture";
+    mObjectName = className();
   #endif
   mTexParameter = new TexParameter;
 
@@ -141,7 +141,7 @@ Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps ,
   mHandle(0), mFormat(format), mDimension(TD_TEXTURE_2D), mWidth(0), mHeight(0), mDepth(0), mBorder(border), mHasMipmaps(false)
 {
   #ifndef NDEBUG
-    mName = "Texture";
+    mObjectName = className();
   #endif
   mTexParameter = new TexParameter;
 
@@ -167,7 +167,7 @@ Texture::Texture():
   mHandle(0), mFormat(TF_RGBA), mDimension(TD_TEXTURE_2D), mWidth(0), mHeight(0), mDepth(0), mBorder(false), mHasMipmaps(false)
 {
   #ifndef NDEBUG
-    mName = "Texture";
+    mObjectName = className();
   #endif
   mTexParameter = new TexParameter;
 }
@@ -374,7 +374,7 @@ bool Texture::createTexture()
     }
   }
 
-  setName( image->name() );
+  setObjectName( image->objectName() );
 
   int xsize = image->width();
   int ysize = image->height();

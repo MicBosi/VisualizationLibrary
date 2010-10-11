@@ -95,13 +95,23 @@ namespace vl
     Uniform(): mType(NONE)
     {
       #ifndef NDEBUG
-        mName = "Uniform";
+        mObjectName = className();
       #endif
     }
     Uniform(const std::string& name): mType(NONE) 
     {
+      #ifndef NDEBUG
+        mObjectName = className();
+      #endif
       mName = name;
     }
+
+    //! Returns the name of the uniform variable
+    const std::string& name() const { return mName; }
+    //! Returns the name of the uniform variable
+    std::string& name() { return mName; }
+    //! Sets the name of the uniform variable
+    void setName(const std::string& name) { mName = name; }
 
     // array setters
 
@@ -238,6 +248,7 @@ namespace vl
     void initInt(int count)   { mFloatData.clear(); mIntData.resize(count); mUIntData.clear(); }
     void initUInt(int count)  { mFloatData.clear(); mIntData.clear(); mUIntData.resize(count); }
 
+    std::string mName;
     std::vector<float> mFloatData;
     std::vector<int>   mIntData;
     std::vector<unsigned int> mUIntData;

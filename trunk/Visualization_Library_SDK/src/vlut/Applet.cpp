@@ -44,7 +44,7 @@ using namespace vl;
 Applet::Applet()
 {
   #ifndef NDEBUG
-    mName = className();
+    mObjectName = className();
   #endif
   mFrameCount = 0;
   mStartTime  = Time::currentTime();
