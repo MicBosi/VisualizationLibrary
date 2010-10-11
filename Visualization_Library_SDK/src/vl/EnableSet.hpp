@@ -50,7 +50,7 @@ namespace vl
     EnableSet(): mBlendingEnabled(false)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 

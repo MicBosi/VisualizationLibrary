@@ -61,7 +61,7 @@ namespace vl
     ShaderSequence(Shader* pass1=NULL, Shader* pass2=NULL, Shader* pass3=NULL, Shader* pass4=NULL )
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       if (pass1)
         push_back(pass1);
@@ -100,7 +100,7 @@ namespace vl
     Effect() 
     { 
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mEnableMask = 0xFFFFFFFF;
       //clear(); 

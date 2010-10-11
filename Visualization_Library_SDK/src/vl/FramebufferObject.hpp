@@ -149,7 +149,7 @@ namespace vl
     FBOColorBufferAttachment(EColorBufferFormat type)
     {
       #ifndef NDEBUG
-        setName("FBOColorBufferAttachment");
+        mObjectName = className();
       #endif
       mType = type;
     }
@@ -178,7 +178,7 @@ namespace vl
     FBODepthBufferAttachment(EDepthType type)
     {
       #ifndef NDEBUG
-        setName("FBODepthBufferAttachment");
+        mObjectName = className();
       #endif
       mType = type;
     }
@@ -207,7 +207,7 @@ namespace vl
     FBOStencilBufferAttachment(EStencilType type)
     {
       #ifndef NDEBUG
-        setName("FBOStencilBufferAttachment");
+        mObjectName = className();
       #endif
       mType = type;
     }
@@ -236,7 +236,7 @@ namespace vl
     FBODepthStencilBufferAttachment(EDepthStencilType type)
     {
       #ifndef NDEBUG
-        setName("FBODepthStencilBufferAttachment");
+        mObjectName = className();
       #endif
       mType = type;
     }
@@ -265,7 +265,7 @@ namespace vl
     FBOTexture1DAttachment(Texture* texture, int level)
     {
       #ifndef NDEBUG
-        setName("FBOTexture1DAttachment");
+        mObjectName = className();
       #endif
       mLevel      = level;
       mTexture    = texture;
@@ -295,7 +295,7 @@ namespace vl
     FBOTexture2DAttachment(Texture* texture, int level, ETex2DTarget target)
     {
       #ifndef NDEBUG
-        setName("FBOTexture2DAttachment");
+        mObjectName = className();
       #endif
       mLevel      = level;
       mTexture    = texture;
@@ -329,7 +329,7 @@ namespace vl
     FBOTextureAttachment(Texture* texture, int level)
     {
       #ifndef NDEBUG
-        setName("FBOTextureAttachment");
+        mObjectName = className();
       #endif
       mLevel      = level;
       mTexture    = texture;
@@ -358,7 +358,7 @@ namespace vl
     FBOTexture3DAttachment(Texture* texture, int mipmap_level, int layer)
     {
       #ifndef NDEBUG
-        setName("FBOTexture3DAttachment");
+        mObjectName = className();
       #endif
       mTexture = texture;
       mLayer   = layer;
@@ -392,7 +392,7 @@ namespace vl
     FBOTextureLayerAttachment(Texture* texture, int mipmap_level, int layer)
     {
       #ifndef NDEBUG
-        setName("FBOTextureLayerAttachment");
+        mObjectName = className();
       #endif
       mTexture = texture;
       mLayer   = layer;
@@ -440,7 +440,7 @@ namespace vl
     FBORenderTarget(OpenGLContext* ctx, int w, int h): RenderTarget(ctx, w, h), mHandle(0)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 

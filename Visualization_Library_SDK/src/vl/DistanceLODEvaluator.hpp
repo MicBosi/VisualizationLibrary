@@ -53,7 +53,7 @@ namespace vl
     DistanceLODEvaluator() 
     {
       #ifndef NDEBUG
-        mName = "DistanceLODEvaluator";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "DistanceLODEvaluator"; }

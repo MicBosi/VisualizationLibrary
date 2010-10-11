@@ -52,7 +52,7 @@ namespace vl
     ClipPlane(int plane_index, Real o=0.0f, vec3 n=vec3(0,0,0))
     { 
       #ifndef NDEBUG
-        mName = "ClipPlane";
+        mObjectName = className();
       #endif
       mPlaneIndex = plane_index;
       mPlane.setNormal(n); 
@@ -62,7 +62,7 @@ namespace vl
     ClipPlane(int plane_index, const vec3& o, const vec3& n)
     {
       #ifndef NDEBUG
-        mName = "ClipPlane";
+        mObjectName = className();
       #endif
       mPlaneIndex = plane_index;
       mPlane.setNormal(n); 

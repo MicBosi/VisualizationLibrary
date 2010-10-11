@@ -60,7 +60,7 @@ namespace vl
     ActorKdTree()
     {
       #ifndef NDEBUG
-        mName = "ActorKdTree";
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "ActorKdTree"; }

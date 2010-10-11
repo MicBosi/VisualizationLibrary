@@ -53,14 +53,14 @@ namespace vl
     Collection(const std::vector< ref<T> >& vector)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mVector = vector;
     }
     Collection()
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
     Collection& operator=(const std::vector< ref<T> >& vector)

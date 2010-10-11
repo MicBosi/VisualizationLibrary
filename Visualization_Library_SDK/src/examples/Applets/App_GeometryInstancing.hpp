@@ -92,7 +92,7 @@ public:
 
     vl::ref<vl::Geometry> box_set = vlut::makeBox( vl::vec3(0,0,0), 2, 2, 2, false);
     box_set->computeNormals();
-    box_set->setName("Box Set");
+    box_set->setObjectName("Box Set");
     box_set->setColorArray(vlut::white);
 
     /* setting multiple instances is as easy as calling this function! */
@@ -142,7 +142,7 @@ public:
 
     /* shows bounding box */
     vl::ref<vl::Geometry> box = vlut::makeBox( box_set->boundingBox() );
-    box->setName("Wire box");
+    box->setObjectName("Wire box");
     box->setColorArray(vlut::red);
     box->computeNormals();
     sceneManager()->tree()->addActor( box.get(), box_fx.get() );
