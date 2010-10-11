@@ -63,7 +63,7 @@ namespace vl
     ArrayAbstract()
     { 
       #ifndef NDEBUG
-        mName = "ArrayAbstract";
+        mObjectName = className();
       #endif
       mBufferGPU = new GLBufferObject;
       mVBODirty = true;

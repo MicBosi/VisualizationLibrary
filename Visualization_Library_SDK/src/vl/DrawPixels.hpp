@@ -84,6 +84,8 @@ namespace vl
       Pixels& operator=(const Pixels& other) ;
       ~Pixels();
 
+      virtual const char* className() { return "Pixels"; }
+
       const ivec2& position() const { return mPosition; }
       const ivec2& start() const { return mStart; }
       const ivec2& size() const { return mSize; }

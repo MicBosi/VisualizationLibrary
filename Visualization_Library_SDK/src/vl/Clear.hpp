@@ -73,7 +73,7 @@ namespace vl
              mClearColorBuffer(false), mClearDepthBuffer(false), mClearStencilBuffer(false)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       // no scissor box by default
       mScissorBox[0] = 0;

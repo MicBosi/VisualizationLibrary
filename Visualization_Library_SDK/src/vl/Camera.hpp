@@ -57,7 +57,7 @@ namespace vl
     virtual const char* className() { return "Camera"; }
 
     //! Constructor.
-    Camera(const std::string& name="Camera");
+    Camera();
 
     /**
      * Initializes the GL_PROJECTION and GL_MODELVIEW matrices according to the 

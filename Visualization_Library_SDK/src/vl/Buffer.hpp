@@ -57,7 +57,7 @@ namespace vl
     Buffer()
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mPtr = NULL;
       mByteCount = 0;
@@ -67,7 +67,7 @@ namespace vl
     Buffer(const Buffer& other): Object(other)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mPtr = NULL;
       mByteCount = 0;

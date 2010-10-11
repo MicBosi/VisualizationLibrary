@@ -84,7 +84,7 @@ namespace vl
     DrawElements(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
     {
       #ifndef NDEBUG
-        mName = "DrawElements";
+        mObjectName = className();
       #endif
       mType        = primitive;
       mInstances   = instances;

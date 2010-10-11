@@ -78,7 +78,7 @@ Glyph::~Glyph()
 Font::Font()
 {
   #ifndef NDEBUG
-    mName = className();
+    mObjectName = className();
   #endif
   mHeight  = 0;
   mFT_Face = NULL;
@@ -89,7 +89,7 @@ Font::Font()
 Font::Font(const String& font_file, int size)
 {
   #ifndef NDEBUG
-    mName = className();
+    mObjectName = className();
   #endif
   mHeight  = 0;
   mFT_Face = NULL;

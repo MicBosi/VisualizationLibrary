@@ -51,7 +51,7 @@ namespace vl
     DrawArrays(): mStart(0), mCount(0) 
     { 
       #ifndef NDEBUG
-        mName = "DrawArrays";
+        mObjectName = className();
       #endif
       mType      = PT_TRIANGLES;
       mInstances = 1;
@@ -60,7 +60,7 @@ namespace vl
       : mStart(start), mCount(count)
     { 
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mInstances = instances;
       mType = primitive;

@@ -58,7 +58,7 @@ void func()
 Geometry::Geometry()
 {
   #ifndef NDEBUG
-    mName = "Geometry";
+    mObjectName = className();
   #endif
   mVertexAttributeArrays.setAutomaticDelete(false);
   mTexCoordArrays.setAutomaticDelete(false);

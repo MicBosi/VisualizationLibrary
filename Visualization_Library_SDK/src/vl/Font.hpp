@@ -56,7 +56,7 @@ namespace vl
     Glyph(const Glyph& other): Object(other)  
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
     void operator=(const Glyph&){}
@@ -133,7 +133,7 @@ namespace vl
     Font(const Font& other): Object(other)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
     //! Constructor.

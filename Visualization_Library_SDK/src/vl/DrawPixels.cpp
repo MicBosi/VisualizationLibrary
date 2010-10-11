@@ -42,7 +42,7 @@ using namespace vl;
 DrawPixels::Pixels::Pixels()
 {
   #ifndef NDEBUG
-    mName = "Pixels";
+    mObjectName = className();
   #endif
   mAlign = AlignBottom | AlignLeft;
 }
@@ -50,7 +50,7 @@ DrawPixels::Pixels::Pixels()
 DrawPixels::Pixels::Pixels(Image* img, int scrx, int scry, int startx, int starty, int width, int height, int alignment)
 {
   #ifndef NDEBUG
-    mName = "Pixels";
+    mObjectName = className();
   #endif
 
   mAlign = alignment;
@@ -70,7 +70,7 @@ DrawPixels::Pixels::Pixels(Image* img, int scrx, int scry, int startx, int start
 DrawPixels::Pixels::Pixels(const Pixels& other): Object(other)
 {
   #ifndef NDEBUG
-    mName = "Pixels";
+    mObjectName = className();
   #endif
 
   *this = other;

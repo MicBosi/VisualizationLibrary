@@ -131,7 +131,7 @@ namespace vl
       mTransformUpdateTick(-1), mBoundsUpdateTick(-1), mEnableMask(0xFFFFFFFF), mOcclusionQuery(0), mIsOccludee(true), mOcclusionQueryTick(0xFFFFFFFF)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mRenderingCallbacks.setAutomaticDelete(false);
       lod(0) = renderable;

@@ -128,7 +128,7 @@ namespace vl
     DepthSortCallback()
     {
       #ifndef NDEBUG
-        mName = "DepthSortCallback";
+        mObjectName = className();
       #endif
       mEyeSpaceVerts = new ArrayFVec3;
       setSortMode(SM_SortBackToFront);

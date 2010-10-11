@@ -72,7 +72,7 @@ public:
       mIntersectionPoint->computeWorldMatrix();
 
       // print the name of the picked object
-      vl::Log::print( vl::Say("Intersections detected = %n (%s).\n") << intersector.intersections().size() << intersector.intersections()[0]->actor()->name() );
+      vl::Log::print( vl::Say("Intersections detected = %n (%s).\n") << intersector.intersections().size() << intersector.intersections()[0]->actor()->objectName() );
     }
     else
       vl::Log::print("No intersections detected.\n");
@@ -98,7 +98,7 @@ public:
     {
       vl::ref<vl::Geometry> geom = randomObject();
       vl::Actor* act = sceneManager()->tree()->addActor( geom.get(), fx.get(), new vl::Transform );
-      act->setName(geom->name());
+      act->setObjectName(geom->objectName());
       act->transform()->translate(x*displace, y*displace, z*displace);
       act->transform()->computeWorldMatrix();
     }
