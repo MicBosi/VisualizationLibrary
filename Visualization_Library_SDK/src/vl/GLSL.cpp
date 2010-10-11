@@ -99,6 +99,7 @@ bool GLSLShader::compile()
     {
       mCompiled = true;
       #ifndef NDEBUG
+      if (!infoLog().empty())
         Log::info( Say("%s\n%s\n\n") << name().c_str() << infoLog() );
       #endif
     }
@@ -484,20 +485,18 @@ void GLSLProgram::initResources()
   }
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
+bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 {
+  VL_CHECK_OGL();
   VL_WARN(GLEW_ARB_shading_language_100)
   if (!GLEW_ARB_shading_language_100)
-    return;
-
-  VL_CHECK_OGL();
-
+    return false;
   if(!uniforms)
-    return;
+    return false;
   if (!linked())
-    return;
+    return false;
   if (handle() == 0)
-    return;
+    return false;
 
   #ifndef NDEBUG
     int current_glsl_program = -1;
@@ -505,26 +504,29 @@ void GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     VL_CHECK(current_glsl_program == (int)handle())
   #endif
 
-  for(int i=0; i<(int)uniforms->uniforms().size(); ++i)
+  for(int i=0, count=uniforms->uniforms().size(); i<count; ++i)
   {
     Uniform* uniform = uniforms->uniforms()[i].get();
 
     #if 1
       std::map<std::string, int>::const_iterator it = mUniformLocation.find(uniform->name());
-      int location = it != mUniformLocation.end() ? it->second : -1;
+      int location = it == mUniformLocation.end() ? -1 : it->second ;
     #else
+      // for benchmarking purposes
       int location = glGetUniformLocation(handle(), uniform->name().c_str());
     #endif
 
     if (location == -1)
-      vl::Log::error( vl::Say("Uniform '%s' not found.\n") << uniform->name() );
-
-    // Check the following:
-    // (1) did you mispell the uniform variable name in your GLSL program?
-    // (2) is the uniform variable declared but not used in your GLSL program?
-    VL_CHECK(location != -1)
-    if (location == -1)
-      return;
+    {
+      // Check the following:
+      // (1) Is the uniform variable declared but not used in your GLSL program?
+      // (2) Double-check the spelling of the uniform variable name.
+      vl::Log::error( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
+                              "Is the uniform variable declared but not used in your GLSL program?\n"
+                              "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
+      VL_TRAP();
+      return false;
+    }
 
     // finally transmits the uniform
 
@@ -558,12 +560,14 @@ void GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
       case Uniform::UT_Mat4x3: glUniformMatrix4x3fv(location, uniform->count(), GL_FALSE, &uniform->mFloatData[0]); VL_CHECK_OGL(); break;
 
       default:
-        // Probably you added a uniform to a shader or actor but you forgot to specify it's data!
-        VL_TRAP()
+        // Probably you added a uniform to a Shader or Actor but you forgot to specify it's data!
+        vl::Log::error( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' does not contain any data!\n") << uniform->name() );
+        VL_TRAP();
         break;
     }
   }
   VL_CHECK_OGL();
+  return true;
 }
 //-----------------------------------------------------------------------------
 void GLSLProgram::bindFragDataLocation(int color_number, const std::string& name)
