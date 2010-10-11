@@ -303,7 +303,7 @@ namespace vl
      * Applies a set of uniforms to the currently bound GLSL program.
      * This function expects the GLSLProgram to be already bound, see useProgram().
     */
-    void applyUniformSet(const UniformSet* uniforms) const;
+    bool applyUniformSet(const UniformSet* uniforms) const;
 
     /**
      * Returns the binding index of the uniform with the given name.
