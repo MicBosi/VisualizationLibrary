@@ -107,7 +107,8 @@ namespace vl
     GLSLVertexShader(const String& source=String()): GLSLShader(ST_VERTEX_SHADER, source)
     {
       #ifndef NDEBUG
-        mName = "GLSLVertexShader";
+        if (mObjectName.empty())
+          mObjectName = className();
       #endif
     }
     virtual const char* className() { return "GLSLVertexShader"; }
@@ -125,7 +126,8 @@ namespace vl
     GLSLFragmentShader(const String& source=String()): GLSLShader(ST_FRAGMENT_SHADER, source)
     {
       #ifndef NDEBUG
-        mName = "GLSLFragmentShader";
+        if (mObjectName.empty())
+          mObjectName = className();
       #endif
     }
     virtual const char* className() { return "GLSLFragmentShader"; }
@@ -143,7 +145,8 @@ namespace vl
     GLSLGeometryShader(const String& source=String()): GLSLShader(ST_GEOMETRY_SHADER, source)
     {
       #ifndef NDEBUG
-        mName = "GLSLGeometryShader";
+        if (mObjectName.empty())
+          mObjectName = className();
       #endif
     }
     virtual const char* className() { return "GLSLGeometryShader"; }

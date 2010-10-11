@@ -82,7 +82,7 @@ namespace vl
       mReferenceCount = 0;
       mAutomaticDelete = true;
       #ifndef NDEBUG
-        mName = "Object";
+        mObjectName = className();
       #endif
       #if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
         debug_living_objects()->insert(this);
@@ -93,7 +93,7 @@ namespace vl
     Object(const Object& other)
     {
       // copy the name only
-      mName = other.mName;
+      mObjectName = other.mObjectName;
       // mMutex, mReferenceCount and mAutomaticDelete are not copiable.
       mMutex = NULL;
       mReferenceCount  = 0;
@@ -108,13 +108,13 @@ namespace vl
     Object& operator=(const Object& other) 
     { 
       /* mMutex, mReferenceCount and mAutomaticDelete is not copied */ 
-      mName = other.mName; 
+      mObjectName = other.mObjectName; 
       return *this; 
     }
 
-    const std::string& name() const { return mName; }
+    const std::string& objectName() const { return mObjectName; }
     
-    void setName(const std::string& name) { mName = name; }
+    void setObjectName(const std::string& name) { mObjectName = name; }
 
     //! Set the mutex used to protect the reference counting of this object across multiple threads.
     void setMutex(VirtualMutex* mutex) { mMutex = mutex; }
@@ -179,7 +179,7 @@ namespace vl
 
   protected:
     virtual ~Object();
-    std::string mName;
+    std::string mObjectName;
 
     VirtualMutex* mMutex;
     int mReferenceCount;

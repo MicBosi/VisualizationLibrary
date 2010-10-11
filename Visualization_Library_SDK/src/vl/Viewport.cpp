@@ -41,7 +41,7 @@ using namespace vl;
 Viewport::Viewport()
 {
   #ifndef NDEBUG
-    mName = "Viewport";
+    mObjectName = className();
   #endif
   mX = 0;
   mY = 0;
@@ -57,7 +57,7 @@ Viewport::Viewport()
 Viewport::Viewport(int x, int y, int w, int h)
 {
   #ifndef NDEBUG
-    mName = "Viewport";
+    mObjectName = className();
   #endif
   mX = x;
   mY = y;

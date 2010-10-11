@@ -54,7 +54,7 @@ namespace
 Renderer::Renderer()
 {
   #ifndef NDEBUG
-    mName = "Renderer";
+    mObjectName = className();
   #endif
 
   mOcclusionQueryTickPrev  = 0;

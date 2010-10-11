@@ -56,7 +56,7 @@ namespace vl
       mBorderEnabled(false), mBackgroundEnabled(false), mOutlineEnabled(false), mShadowEnabled(false), mKerningEnabled(true) 
     {
       #ifndef NDEBUG
-        mName = "Text";
+        mObjectName = className();
       #endif
     }
 

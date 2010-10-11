@@ -77,7 +77,7 @@ namespace
 Time::Time()
 {
   #ifndef NDEBUG
-    mName = "Time";
+    mObjectName = className();
   #endif
 
   for(int i=0; i<VL_MAX_TIMERS; ++i)

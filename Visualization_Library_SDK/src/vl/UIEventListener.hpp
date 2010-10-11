@@ -62,7 +62,7 @@ namespace vl
     UIEventListener(): mOpenGLContext(NULL), mRank(0), mEnabled(true) 
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
     virtual ~UIEventListener() {}

@@ -67,7 +67,7 @@ namespace vlMolecule
     Bond(): mColor( 1.0f,1.0f,1.0f,1.0f ), mRadius(0.10f), mAtom1(NULL), mAtom2(NULL), mType(BT_Single), mId(0), mVisible(true), mUseAtomColors(true) 
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
     Bond(const Bond& other): vl::Object(other) { *this = other; }

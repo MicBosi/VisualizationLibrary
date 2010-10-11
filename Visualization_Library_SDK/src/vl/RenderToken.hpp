@@ -51,7 +51,7 @@ namespace vl
     RenderToken(): mNextPass(NULL), mActor(NULL), mShader(NULL), mEffectRenderRank(0), mCameraDistance(0.0)
     {
       #ifndef NDEBUG
-        mName = "RenderToken";
+        mObjectName = className();
       #endif
     }
     const RenderToken* mNextPass;

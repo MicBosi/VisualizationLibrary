@@ -402,7 +402,7 @@ ref<Image> vl::loadJPG(VirtualFile* file)
   }
 
   ref<Image> img = new Image;
-  img->setName(file->path().toStdString());
+  img->setObjectName(file->path().toStdString());
 
   struct jpeg_decompress_struct cinfo;
 

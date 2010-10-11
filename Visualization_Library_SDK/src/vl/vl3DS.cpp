@@ -706,7 +706,7 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
   ref<Effect> default_effect = new Effect;
   res_db->resources().push_back(default_effect.get());
 
-  default_effect->setName("3ds default effect");
+  default_effect->setObjectName("3ds default effect");
   default_effect->shader()->enable(EN_DEPTH_TEST);
   /*default_effect->shader()->gocLightModel()->setTwoSide(true);*/
   /* default_effect->shader()->disable(EN_CULL_FACE); */
@@ -750,8 +750,8 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
 
       ref<Geometry> geom = new Geometry;
       ref<Actor>    act  = new Actor(geom.get());
-      geom->setName( loader.mObjects[iobj].mObjName.toStdString() );
-      act ->setName( loader.mObjects[iobj].mObjName.toStdString() );
+      geom->setObjectName( loader.mObjects[iobj].mObjName.toStdString() );
+      act ->setObjectName( loader.mObjects[iobj].mObjName.toStdString() );
 
       // builds the vertex sets: a vertex belongs to a single group
 
@@ -840,7 +840,7 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
           mat_map[mat_name] = new Effect;
           res_db->resources().push_back(mat_map[mat_name].get());
 
-          mat_map[mat_name]->setName(mat_name.toStdString());
+          mat_map[mat_name]->setObjectName(mat_name.toStdString());
 
           float alpha = 1.0f - loader.mMaterials[mat_index].mTransparency;
           fvec4 ambient( loader.mMaterials[mat_index].mAmbient.r(), loader.mMaterials[mat_index].mAmbient.g(), loader.mMaterials[mat_index].mAmbient.b(), alpha );

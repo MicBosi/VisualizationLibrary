@@ -123,7 +123,7 @@ namespace vl
       mHasDoubleBuffer(false), mIsInitialized(false)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
       mRenderTarget = new RenderTarget(this, w, h);
     }

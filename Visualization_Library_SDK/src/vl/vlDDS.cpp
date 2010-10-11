@@ -247,7 +247,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
   }
 
   ref<Image> img = new Image;
-  img->setName( file->path().toStdString() );
+  img->setObjectName( file->path().toStdString() );
 
   char signature[4];
   // fread(signature, 1, 4, fin);
@@ -365,7 +365,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
   for(int i=0; i<mipmaps; ++i)
   {
     image.push_back( new Image );
-    image.back()->setName(file->path().toStdString());
+    image.back()->setObjectName(file->path().toStdString());
   }
 
   //  char ptr[] = {

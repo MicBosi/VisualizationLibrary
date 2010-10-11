@@ -59,7 +59,7 @@ namespace vl
     Log()
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
 

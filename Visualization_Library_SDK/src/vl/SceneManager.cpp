@@ -43,7 +43,7 @@ using namespace vl;
 SceneManager::SceneManager()
 {
   #ifndef NDEBUG
-    mName = "SceneManager";
+    mObjectName = className();
   #endif
   // mActors = new ActorCollection;
   mBoundsDirty = true;

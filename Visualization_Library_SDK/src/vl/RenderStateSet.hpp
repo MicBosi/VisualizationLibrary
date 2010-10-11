@@ -52,7 +52,7 @@ namespace vl
     RenderStateSet(): mGLSLProgram(NULL)
     {
       #ifndef NDEBUG
-        mName = className();
+        mObjectName = className();
       #endif
     }
     virtual const char* className() { return "RenderStateSet"; }
