@@ -46,7 +46,7 @@ public:
 
     // camera setup
 
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setNearFarClippingPlanesOptimized(false);
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
     // reset view matrix to I
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );

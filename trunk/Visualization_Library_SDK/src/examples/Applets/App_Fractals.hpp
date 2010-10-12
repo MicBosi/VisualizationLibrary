@@ -181,7 +181,7 @@ public:
     sceneManager()->tree()->addActor( geom.get(), effect.get() );
 
     // camera setup
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setNearFarClippingPlanesOptimized(false);
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionMatrix( vl::mat4() );
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4() );
 
