@@ -112,7 +112,6 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
   // transform
   const Transform* cur_transform = NULL;
-  camera->applyViewMatrix();
 
   /* some OpenGL drivers (ATI) require this instead of the more general (and mathematically correct) viewMatrix() */
   mat4 view_matrix = camera->viewMatrix();
@@ -159,32 +158,12 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
     // --------------- transform ---------------
 
-    // delta-setup for modelview matrix for the object
-    if ( tok->mActor->transform() != cur_transform )
-    {
-      cur_transform = tok->mActor->transform();
-
-      if ( cur_transform )
-      {
-        #if 0
-          glMatrixMode(GL_MODELVIEW);
-          VL_glLoadMatrix( view_matrix.ptr() );
-          VL_glMultMatrix( cur_transform->worldMatrix().ptr() );
-        #else
-          // should guarantee better precision
-          glMatrixMode(GL_MODELVIEW);
-          VL_glLoadMatrix( (view_matrix * cur_transform->worldMatrix() ).ptr() );
-        #endif
-      }
-      else
-      {
-        glMatrixMode(GL_MODELVIEW);
-        VL_glLoadMatrix( view_matrix.ptr() );
-      }
-    }
+    // ...
 
     // --------------- occlusion culling ---------------
 
+    // fixme - occlusion culling disabled for now until the transition to the new architecture is finalized.
+    /*
     bool occluded = false;
     if ( occlusionCullingEnabled() && !tok->mActor->boundingBox().isInside(eye) )
     {
@@ -254,6 +233,7 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
     // skip occluded object
     if (occluded)
       continue;
+    */
 
     VL_CHECK_OGL()
 
@@ -317,6 +297,47 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
         // nota che questo e' updatato solo quando e' != NULL ed ha handle()
         cur_glsl_program = tok->mShader->glslProgram();
+      }
+
+      // mic fixme
+      // Apply proj/view/obj matrices to the current GLSLProgram including the 0 one!
+
+      /* Issues:
+      - Dobbiamo uploadare le 3 matrici solo una volta per frame per ogni GLSLProgram!
+      - Dobbiamo farlo qui' dentro perche' il multi-passing puo' specificare GLSL programs diversi.
+      - Il meccanismo deve permettere di minimizzare i cambi di transform sia NULL che non quando sono uguali.
+      */
+
+      // ... function object ...
+      // (*applyMatrices)( cur_glsl_program, camera, transform );
+
+      camera->applyProjMatrix();
+      ... questo interferisce con quello sotto perche cancella le trasformazioni cachate degli oggetti!!!
+      camera->applyViewMatrix();
+
+      // ...
+      // delta-setup for modelview matrix for the object
+      if ( tok->mActor->transform() != cur_transform )
+      {
+        cur_transform = tok->mActor->transform();
+
+        if ( cur_transform )
+        {
+          #if 0
+            glMatrixMode(GL_MODELVIEW);
+            VL_glLoadMatrix( view_matrix.ptr() );
+            VL_glMultMatrix( cur_transform->worldMatrix().ptr() );
+          #else
+            // should guarantee better precision & sends less data to the GPU
+            glMatrixMode(GL_MODELVIEW);
+            VL_glLoadMatrix( (view_matrix * cur_transform->worldMatrix() ).ptr() );
+          #endif
+        }
+        else
+        {
+          glMatrixMode(GL_MODELVIEW);
+          VL_glLoadMatrix( view_matrix.ptr() );
+        }
       }
 
       VL_CHECK_OGL()
