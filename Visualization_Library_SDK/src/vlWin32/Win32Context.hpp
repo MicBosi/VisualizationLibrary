@@ -103,10 +103,22 @@ namespace vlWin32
     //! Calls the PostQuitMessage(0) function (Win32 API).
     void quitApplication();
 
+    //! Context attributes used when creating an OpenGL 3.x / 4.x context. 
+    //! The flags must be the ones specified by http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt
+    const std::vector<int>& contextAttribs() const { return mContextAttribs; }
+    //! Context attributes used when creating an OpenGL 3.x / 4.x context. 
+    //! The flags must be the ones specified by http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt
+    std::vector<int>& contextAttribs() { return mContextAttribs; }
+    //! Context attributes used when creating an OpenGL 3.x / 4.x context. 
+    //! The flags must be the ones specified by http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt
+    void setContextAttribs(const int* attribs);
+
   protected:
     bool init(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height);
 
   protected:
+    std::vector<int> mContextAttribs;
+
     HDC   mHDC;
     HGLRC mHGLRC;
 

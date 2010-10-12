@@ -279,8 +279,21 @@ bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::
     return false;
   }
 
-  // OpenGL rendering context
-  mHGLRC = wglCreateContext(mHDC);
+  // OpenGL rendering context creation
+
+  if (wglCreateContextAttribsARB && mContextAttribs.size() > 1)
+  {
+    // must be 0-terminated list
+    VL_CHECK(mContextAttribs.back() == 0);
+    // Creates an OpenGL 3.x / 4.x context with the specified attributes.
+    mHGLRC = wglCreateContextAttribsARB(mHDC, 0, &mContextAttribs[0]);
+  }
+  else
+  {
+    // Creates default OpenGL context
+    mHGLRC = wglCreateContext(mHDC);
+  }
+
   if (!mHGLRC)
   {
     MessageBox(NULL, L"OpenGL rendering context creation failed.", L"Visualization Library Error", MB_OK);
@@ -309,3 +322,12 @@ bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::
   
   return true;
 }
+//-----------------------------------------------------------------------------
+void Win32Context::setContextAttribs(const int* attribs)
+{
+  mContextAttribs.clear();
+  for( ; *attribs; ++attribs )
+    mContextAttribs.push_back(*attribs);
+  mContextAttribs.push_back(0);
+}
+//-----------------------------------------------------------------------------
