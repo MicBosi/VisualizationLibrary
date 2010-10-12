@@ -47,7 +47,6 @@ Camera::Camera()
     mObjectName = className();
   #endif
   mFrustum.planes().resize(6);
-  mNearFarClippingPlanesOptimized = false;
   mActive = true;
   mFOV = 60.0;
   mNearPlane = (Real)0.05;
@@ -78,6 +77,13 @@ void Camera::applyModelViewMatrix(const mat4& model_matrix) const
 #endif
 }
 //-----------------------------------------------------------------------------
+void Camera::applyProjMatrix() const
+{
+  // projection matrix
+  glMatrixMode( GL_PROJECTION );
+  VL_glLoadMatrix( projectionMatrix().ptr() );
+}
+//-----------------------------------------------------------------------------
 void Camera::applyViewMatrix() const
 {
   /* some OpenGL drivers (ATI) require this instead of the more general (and mathematically correct) viewMatrix() */
@@ -90,14 +96,14 @@ void Camera::applyViewMatrix() const
   VL_glLoadMatrix( viewm.ptr() );
 }
 //-----------------------------------------------------------------------------
-void Camera::activate()
+void Camera::computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphere)
 {
   // near/far clipping planes optimization
-  if (nearFarClippingPlanesOptimized() && !sceneBoundingSphere().isNull())
+  if (!scene_bounding_sphere.isNull())
   {
     // compute the sphere in camera coordinates
     Sphere camera_sphere;
-    sceneBoundingSphere().transformed(camera_sphere, viewMatrix());
+    scene_bounding_sphere.transformed(camera_sphere, viewMatrix());
     #undef far  // chi e' il marrano?
     #undef near // chi e' il marrano?
     Real far  = -(camera_sphere.center().z() - camera_sphere.radius() * (Real)1.01);
@@ -114,17 +120,7 @@ void Camera::activate()
     // supports only perspective projection matrices
     mat4 projm = mat4::perspective(fov(), aspectRatio(), near, far);
     setProjectionMatrix( projm );
-    // printf("near -> far == %f -> %f\n", (float)near, (float)far);
   }
-
-  // activation
-
-  // projection matrix
-  glMatrixMode( GL_PROJECTION );
-  VL_glLoadMatrix( projectionMatrix().ptr() );
-
-  // view matrix
-  applyViewMatrix();
 }
 //-----------------------------------------------------------------------------
 void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias)
@@ -166,16 +162,6 @@ void Camera::computeFrustumPlanes()
   mat4 viewproj = projectionMatrix() * viewMatrix();
   // frustum plane extraction
   extractPlanes( &mFrustum.planes()[0], viewproj );
-  // if near/far clipping planes optimization is on fix the near/far culling planes
-  if (nearFarClippingPlanesOptimized())
-  {
-    Real onear = dot(inverseViewMatrix().getZ(),  inverseViewMatrix().getT() - inverseViewMatrix().getZ() * nearPlane() );
-    Real ofar  = dot(-inverseViewMatrix().getZ(), inverseViewMatrix().getT() - inverseViewMatrix().getZ() * farPlane() );
-    // near plane
-    mFrustum.planes()[4] = Plane(onear, inverseViewMatrix().getZ());
-    // far plane
-    mFrustum.planes()[5] = Plane(ofar, -inverseViewMatrix().getZ());
-  }
 }
 //-----------------------------------------------------------------------------
 void Camera::setProjectionAsFrustum(Real left, Real right, Real bottom, Real top, Real near, Real far)
