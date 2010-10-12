@@ -165,6 +165,11 @@ namespace vl
     /** Whether OpenGL resources such as textures and GLSL programs should be automatically initialized before the rendering takes place. */
     bool automaticResourceInit() const { return mAutomaticResourceInit; }
 
+    /** Returns whether near/far planes optimization is enabled. */
+    bool nearFarClippingPlanesOptimized() const { return mNearFarClippingPlanesOptimized; }
+    /** Enabled/disables near/far planes optimization */
+    void setNearFarClippingPlanesOptimized(bool enabled) { mNearFarClippingPlanesOptimized = enabled; }
+
   protected:
     void fillRenderQueue( ActorCollection* actor_list );
     ActorCollection* actorQueue() { return mActorQueue.get(); }
@@ -188,6 +193,7 @@ namespace vl
     bool mEvaluateLOD;
     bool mActorAnimationEnabled;
     bool mShaderAnimationEnabled;
+    bool mNearFarClippingPlanesOptimized;
   };
 }
 
