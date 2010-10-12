@@ -60,16 +60,21 @@ namespace vl
     Camera();
 
     /**
-     * Initializes the GL_PROJECTION and GL_MODELVIEW matrices according to the 
-     * Camera's projection and view matrix and computes the frustum planes.
+     * The near and far clipping planes are adjusted to fit the provided \p scene_bounding_sphere.
+     * Optimizing the near and far clipping planes 
+     * results in an optimized usage of the z-buffer with the consequence of minimizing possible 
+     * z-fighting artifacts, thus enhancing the rendering quality.
+     * \note Optimizing the near and far clipping planes might slightly slow down the rendering performances if the scene contains several thousands of objects.
+     * \note At the moment the near and far clipping planes optimization is available only when using a 
+     * perspective projection matrix set up by setProjectionAsPerspective().
     */
-    void activate();
+    void computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphere);
 
     /**
      * Computes the Camera's frustum planes in world space.
      * If nearFarClippingPlanesOptimized() == true the near and far culling planes distances 
      * are respectively set to nearPlane() and farPlane()
-     */
+    */
     void computeFrustumPlanes();
 
     /** 
@@ -81,6 +86,11 @@ namespace vl
      * Loads the GL_MODELVIEW matrix with the Camera's view matrix.
     */
     void applyViewMatrix() const;
+
+    /** 
+     * Loads the GL_PROJECTION matrix with the Camera's projection matrix.
+    */
+    void applyProjMatrix() const;
 
     void setActive(bool active) { mActive = active; }
     bool active() const { return mActive; }
@@ -225,43 +235,6 @@ namespace vl
     Frustum computeRayFrustum(int winx, int winy);
 
     /**
-     * Enables the optimization of the near and far clipping planes.
-     * If the optimization is enabled the near and far clipping planes are adjusted to fit the
-     * sphere returned by sceneBoundingSphere(). Optimizing the near and far clipping planes 
-     * results in an optimized usage of the z-buffer with the consequence of minimizing possible 
-     * z-fighting artifacts and enhancing the rendering quality.
-     * \sa setSceneBoundingSphere()
-     * \note Optimizing the near and far clipping planes can slightly slow down the rendering performances.
-     * \note At the moment the near and far clipping planes optimization is available only when using a 
-     * perspective projection matrix and not for orthographic projection matrices.
-    */
-    void setNearFarClippingPlanesOptimized(bool enable) { mNearFarClippingPlanesOptimized = enable; }
-
-    /**
-     * Set to true if the optimization of the near and far clipping planes is enabled.
-     * If the optimization is enabled the near and far clipping planes are adjusted to fit the
-     * sphere returned by sceneBoundingSphere(). Optimizing the near and far clipping planes 
-     * results in an optimized usage of the z-buffer with the consequence of minimizing possible 
-     * z-fighting artifacts and enhancing the rendering quality.
-     * \sa setSceneBoundingSphere()
-     * \note Optimizing the near and far clipping planes might slightly slow down the rendering performances if the scene contains several thousands of objects.
-     * \note At the moment the near and far clipping planes optimization is available only when using a 
-     * perspective projection matrix set up by setProjectionAsPerspective().
-    */
-    bool nearFarClippingPlanesOptimized() const { return mNearFarClippingPlanesOptimized; }
-
-    /**
-     * The bounding sphere of the scene used to optimize the near and far clipping planes.
-     * \sa setNearFarClippingPlanesOptimized()
-    */
-    void setSceneBoundingSphere(const Sphere& sphere) { mSceneBoundingSphere = sphere; }
-    /**
-     * The bounding sphere of the scene used to optimize the near and far clipping planes.
-     * \sa setNearFarClippingPlanesOptimized()
-    */
-    const Sphere& sceneBoundingSphere() const { return mSceneBoundingSphere; }
-
-    /**
      * Adjusts the camera position so that the given aabb can be properly viewed.
      * \param aabb The AABB (in world coords) that should be visible from the newly computed camera position.
      * \param dir The direction (in world coords) along which the camera should be displaced to view the given AABB.
@@ -280,9 +253,7 @@ namespace vl
     Real mFOV;
     Real mNearPlane;
     Real mFarPlane;
-    Sphere mSceneBoundingSphere;
     bool mActive;
-    bool mNearFarClippingPlanesOptimized;
   };
 }
 
