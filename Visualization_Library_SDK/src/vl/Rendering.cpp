@@ -43,7 +43,8 @@ Rendering::Rendering():
   mCullingEnabled(true),
   mEvaluateLOD(true),
   mActorAnimationEnabled(true),
-  mShaderAnimationEnabled(true)
+  mShaderAnimationEnabled(true),
+  mNearFarClippingPlanesOptimized(false)
 {
   #ifndef NDEBUG
     mObjectName = className();
@@ -68,6 +69,7 @@ Rendering& Rendering::operator=(const Rendering& other)
   mEvaluateLOD              = other.mEvaluateLOD;
   mActorAnimationEnabled    = other.mActorAnimationEnabled;
   mShaderAnimationEnabled   = other.mShaderAnimationEnabled;
+  mNearFarClippingPlanesOptimized = other.mNearFarClippingPlanesOptimized;
 
   mRenderTarget        = other.mRenderTarget;
   mRenderQueueSorter   = other.mRenderQueueSorter;
@@ -170,19 +172,27 @@ void Rendering::render()
   }
 
   // collect near/far clipping planes optimization information
-  if (camera()->nearFarClippingPlanesOptimized())
+  if (nearFarClippingPlanesOptimized())
   {
     Sphere world_bounding_sphere;
     for(int i=0; i<actorQueue()->size(); ++i)
       world_bounding_sphere += actorQueue()->at(i)->boundingSphere();
-    camera()->setSceneBoundingSphere(world_bounding_sphere);
+
+    // compute the optimized
+    camera()->computeNearFarOptimizedProjMatrix(world_bounding_sphere);
+
+    // recompute frustum planes to account for new near/far values
+    camera()->computeFrustumPlanes();
   }
 
   // camera and viewport activation: needs to be done after the near/far clipping planes optimization
 
   camera()->viewport()->setClearFlags(clearFlags());
   camera()->viewport()->activate();
-  camera()->activate();
+  // mic fixme
+  // ... disattiva di qua ... riattiva di la ... fallo funziona ...
+  camera()->applyProjMatrix();
+  camera()->applyViewMatrix();
 
   // render queue filling
 
