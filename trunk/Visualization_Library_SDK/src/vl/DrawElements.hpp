@@ -379,7 +379,7 @@ namespace vl
       #ifndef NDEBUG
       if (instances() != 1)
         vl::Log::error("DrawRangeElements does not support multi instancing!\n");
-      VL_CHECK((instances() == 1)
+        VL_CHECK(instances() == 1);
       #endif
 
       // primitive restart enable
