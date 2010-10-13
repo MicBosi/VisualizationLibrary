@@ -208,6 +208,11 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("%s: Pixel Buffer Object\n") << (GLEW_ARB_pixel_buffer_object ? "OK" : "NO"));
     Log::print( Say("%s: Framebuffer Object\n") << (GLEW_EXT_framebuffer_object ? "OK" : "NO"));
     Log::print( Say("%s: GLSL 1.0\n") << (GLEW_ARB_shading_language_100 ? "OK" : "NO"));
+    GLint max_elements_vertices=0, max_elements_indices=0;
+    glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_elements_vertices);
+    glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_elements_indices );
+    Log::print( Say("GL_MAX_ELEMENTS_VERTICES = %n\n") << max_elements_vertices );
+    Log::print( Say("GL_MAX_ELEMENTS_INDICES  = %n\n") << max_elements_indices  );
     int max_vertex_attribs = 0;
     if (GLEW_ARB_shading_language_100)
       glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &max_vertex_attribs);    
