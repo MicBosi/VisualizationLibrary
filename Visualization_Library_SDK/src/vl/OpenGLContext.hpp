@@ -35,11 +35,14 @@
 #include <vl/Object.hpp>
 #include <vl/UIEventListener.hpp>
 #include <vl/FramebufferObject.hpp> // RenderTarget and FBORenderTarget
+#include <vl/RenderState.hpp>
 #include <vector>
 #include <set>
 
 namespace vl
 {
+  class EnableSet;
+  class RenderStateSet;
   //-----------------------------------------------------------------------------
   // OpenGLContextFormat
   //-----------------------------------------------------------------------------
@@ -119,14 +122,7 @@ namespace vl
     virtual const char* className() { return "OpenGLContext"; }
 
     //! Constructor.
-    OpenGLContext(int w=0, int h=0): mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false),
-      mHasDoubleBuffer(false), mIsInitialized(false)
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-      mRenderTarget = new RenderTarget(this, w, h);
-    }
+    OpenGLContext(int w=0, int h=0);
 
     /** Destructor.
      *  Dispatches also destroyEvent() to its event listeners.
@@ -387,6 +383,13 @@ namespace vl
 
     bool isInitialized() const { return mIsInitialized; }
 
+    // mic fixme: da rivedere se alcune sono da togliere
+    void setupDefaultRenderStates();
+    void applyEnables( const EnableSet* prev, const EnableSet* cur );
+    void applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera );
+    void resetEnables();
+    void resetRenderStates();
+
   protected:
     ref<RenderTarget> mRenderTarget;
     std::vector< ref<FBORenderTarget> > mFBORenderTarget;
@@ -400,6 +403,16 @@ namespace vl
     bool mFullscreen;
     bool mHasDoubleBuffer;
     bool mIsInitialized;
+
+    // RENDER STATES
+    // state table
+    int mEnableTable[EN_EnableCount];
+    int mRenderStateTable[RS_COUNT];
+    // current state
+    bool mCurrentEnable[EN_EnableCount];
+    const RenderState* mCurrentRenderState[RS_COUNT];
+    // default render states
+    ref<RenderState> mDefaultRenderStates[RS_COUNT];
   };
   // ----------------------------------------------------------------------------
 }
