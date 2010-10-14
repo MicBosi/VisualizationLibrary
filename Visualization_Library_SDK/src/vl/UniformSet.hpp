@@ -59,75 +59,21 @@ namespace vl
 
     // uniform getters and setters
 
-    void setUniform(Uniform* uniform, bool check_for_doubles = true) 
-    { 
-      VL_CHECK(uniform)
-      if (uniform == NULL)
-        return;
-      if ( check_for_doubles )
-      {
-        for(unsigned i=0; i<mUniforms.size(); ++i)
-        {
-          if (mUniforms[i]->name() == uniform->name())
-          {
-            mUniforms[i] = uniform;
-            return;
-          }
-        }
-      }
-      mUniforms.push_back( uniform );
-    }
+    void setUniform(Uniform* uniform, bool check_for_doubles = true) ;
 
     const std::vector< ref<Uniform> >& uniforms() const { return mUniforms; }
 
-    void eraseUniform(const std::string& name) 
-    { 
-      for(unsigned i=0; i<mUniforms.size(); ++i)
-        if (mUniforms[i]->name() == name)
-        {
-          mUniforms.erase( mUniforms.begin() + i );
-          return;
-        }
-    }
+    void eraseUniform(const std::string& name) ;
 
-    void eraseUniform(const Uniform* uniform) 
-    { 
-      for(unsigned i=0; i<mUniforms.size(); ++i)
-        if (mUniforms[i] == uniform)
-        {
-          mUniforms.erase( mUniforms.begin() + i );
-          return;
-        }
-    }
+    void eraseUniform(const Uniform* uniform) ;
 
     void eraseAllUniforms() { mUniforms.clear(); }
 
-    Uniform* gocUniform(const std::string& name)
-    { 
-      for(unsigned i=0; i<mUniforms.size(); ++i)
-        if (mUniforms[i]->name() == name)
-          return mUniforms[i].get();
-      ref<Uniform> uniform = new Uniform;
-      uniform->setName( name );
-      mUniforms.push_back(uniform);
-      return uniform.get();
-    }
+    Uniform* gocUniform(const std::string& name);
 
-    Uniform* getUniform(const std::string& name)
-    { 
-      for(unsigned i=0; i<mUniforms.size(); ++i)
-        if (mUniforms[i]->name() == name)
-          return mUniforms[i].get();
-      return NULL;
-    }
+    Uniform* getUniform(const std::string& name);
 
-    const Uniform* getUniform(const std::string& name) const
-    { 
-      for(unsigned i=0; i<mUniforms.size(); ++i)
-        if (mUniforms[i]->name() == name)
-          return mUniforms[i].get();
-      return NULL;
-    }
+    const Uniform* getUniform(const std::string& name) const;
 
   protected:
     std::vector< ref<Uniform> > mUniforms;

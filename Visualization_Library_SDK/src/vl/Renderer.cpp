@@ -69,6 +69,8 @@ Renderer::Renderer()
 
   setupDefaultRenderStates();
 
+  mProjViewTranfCallback = new ProjViewTranfCallbackStandard;
+
   // just for debugging purposes
   memset( mCurrentRenderState, 0xFF, sizeof(mCurrentRenderState[0]) * RS_COUNT );
   memset( mRenderStateTable,   0xFF, sizeof(int)                    * RS_COUNT );
@@ -85,6 +87,28 @@ Renderer::Renderer()
 //------------------------------------------------------------------------------
 void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 {
+  struct ShaderInfo
+  {
+  public:
+    ShaderInfo(): mTransform(NULL), mShaderUniformSet(NULL), mActorUniformSet(NULL) {}
+    bool operator<(const ShaderInfo& other) const
+    {
+      if (mTransform != other.mTransform)
+        return mTransform < other.mTransform;
+      else
+      if ( mShaderUniformSet != other.mShaderUniformSet ) 
+        return mShaderUniformSet < other.mShaderUniformSet;
+      else
+        return mActorUniformSet < other.mActorUniformSet;
+    }
+
+    const Transform* mTransform;
+    const UniformSet* mShaderUniformSet;
+    const UniformSet* mActorUniformSet;
+  };
+
+  std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
+
   VL_CHECK_OGL()
 
   mRenderedRenderableCount = 0;
@@ -94,12 +118,9 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
   // --------------- rendering ---------------
 
-  // state sets
+  // non GLSLProgram state sets
   const RenderStateSet* cur_render_state_set = NULL;
   const EnableSet* cur_enable_set = NULL;
-  const UniformSet* cur_effect_uniform_set = NULL;
-  const UniformSet* cur_actor_uniform_set = NULL;
-  const GLSLProgram* cur_glsl_program = NULL;
   const Scissor* cur_scissor = NULL;
 
   // scissor the viewport by default: needed for points and lines sice they are not clipped against the viewport
@@ -110,23 +131,12 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
     glDisable(GL_SCISSOR_TEST);
   #endif
 
-  // transform
-  const Transform* cur_transform = NULL;
+  /* camera/eye position (mic fixme) */
+  // vec3 eye = camera->inverseViewMatrix().getT();
 
-  /* some OpenGL drivers (ATI) require this instead of the more general (and mathematically correct) viewMatrix() */
-  mat4 view_matrix = camera->viewMatrix();
-  view_matrix.e(0,3) = 0.0;
-  view_matrix.e(1,3) = 0.0;
-  view_matrix.e(2,3) = 0.0;
-  view_matrix.e(3,3) = 1.0;
-
-  /* camera/eye position */
-  vec3 eye = camera->inverseViewMatrix().getT();
-
-  /* current occlusion query tick */
-
-  mOcclusionQueryTickPrev = mOcclusionQueryTick;
-  mOcclusionQueryTick     = g_OcclusionQueryMasterTick++;
+  /* current occlusion query tick (mic fixme) */
+  // mOcclusionQueryTickPrev = mOcclusionQueryTick;
+  // mOcclusionQueryTick     = g_OcclusionQueryMasterTick++;
 
   for(int itok=0; itok < render_queue->size(); ++itok)
   {
@@ -155,10 +165,6 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
         #endif
       }
     }
-
-    // --------------- transform ---------------
-
-    // ...
 
     // --------------- occlusion culling ---------------
 
@@ -270,79 +276,99 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
           VL_TRAP()
         }
       #endif
-      
-      VL_CHECK_OGL()
 
-      // Uniforms
 
-      if ( tok->mShader->glslProgram() && tok->mShader->glslProgram()->handle() )
-      {
-        // the user must not make the effect's and actor's uniforms collide!
-
-        // effect's uniform set
-        if ( tok->mShader->getUniformSet() && tok->mShader->uniforms().size() )
-          if ( cur_glsl_program != tok->mShader->glslProgram() || cur_effect_uniform_set != tok->mShader->getUniformSet() )
-          {
-            tok->mShader->getRenderStateSet()->glslProgram()->applyUniformSet( tok->mShader->getUniformSet() );
-            cur_effect_uniform_set = tok->mShader->getUniformSet();
-          }
-
-        // actor's uniform set
-        if ( tok->mActor->uniformSet() && tok->mActor->uniforms().size() )
-          if ( cur_glsl_program != tok->mShader->glslProgram() || cur_actor_uniform_set != tok->mActor->uniformSet() )
-          {
-            tok->mShader->getRenderStateSet()->glslProgram()->applyUniformSet( tok->mActor->uniformSet() );
-            cur_actor_uniform_set = tok->mActor->uniformSet();
-          }
-
-        // nota che questo e' updatato solo quando e' != NULL ed ha handle()
-        cur_glsl_program = tok->mShader->glslProgram();
-      }
-
-      // mic fixme
-      // Apply proj/view/obj matrices to the current GLSLProgram including the 0 one!
-
-      /* Issues:
-      - Dobbiamo uploadare le 3 matrici solo una volta per frame per ogni GLSLProgram!
-      - Dobbiamo farlo qui' dentro perche' il multi-passing puo' specificare GLSL programs diversi.
-      - Il meccanismo deve permettere di minimizzare i cambi di transform sia NULL che non quando sono uguali.
-      */
-
-      // ... function object ...
-      // (*applyMatrices)( cur_glsl_program, camera, transform );
-
-      camera->applyProjMatrix();
-      ... questo interferisce con quello sotto perche cancella le trasformazioni cachate degli oggetti!!!
-      camera->applyViewMatrix();
-
-      // ...
-      // delta-setup for modelview matrix for the object
-      if ( tok->mActor->transform() != cur_transform )
-      {
-        cur_transform = tok->mActor->transform();
-
-        if ( cur_transform )
-        {
-          #if 0
-            glMatrixMode(GL_MODELVIEW);
-            VL_glLoadMatrix( view_matrix.ptr() );
-            VL_glMultMatrix( cur_transform->worldMatrix().ptr() );
-          #else
-            // should guarantee better precision & sends less data to the GPU
-            glMatrixMode(GL_MODELVIEW);
-            VL_glLoadMatrix( (view_matrix * cur_transform->worldMatrix() ).ptr() );
-          #endif
-        }
-        else
-        {
-          glMatrixMode(GL_MODELVIEW);
-          VL_glLoadMatrix( view_matrix.ptr() );
-        }
-      }
+      // --------------- GLSLProgram setup ---------------
 
       VL_CHECK_OGL()
 
-      // *** Actor's prerender callback *** done after GLSLProgam has been bound
+      // current transform
+      const Transform*   cur_transform          = tok->mActor->transform(); 
+      const GLSLProgram* cur_glsl_program       = NULL; // NULL == fixed function pipeline
+      const UniformSet*  cur_shader_uniform_set = NULL;
+      const UniformSet*  cur_actor_uniform_set  = NULL;
+      // make sure we update these things only if there is a valid GLSLProgram
+      if (tok->mShader->glslProgram() && tok->mShader->glslProgram()->handle())
+      {
+        cur_glsl_program       = tok->mShader->glslProgram();
+        cur_shader_uniform_set = tok->mShader->getUniformSet();
+        cur_actor_uniform_set  = tok->mActor->uniformSet();
+        // consider them NULL if they are empty
+        if (cur_shader_uniform_set && cur_shader_uniform_set->uniforms().empty())
+          cur_shader_uniform_set = NULL;
+        if (cur_actor_uniform_set  && cur_actor_uniform_set ->uniforms().empty())
+          cur_actor_uniform_set = NULL;
+      } 
+
+      // is it the first update we do overall? (ie this is the first object rendered)
+      bool is_first_overall = glslprogram_map.empty();
+      bool update_su = false; // update shader uniforms
+      bool update_au = false; // update actor uniforms
+      bool update_tr = false; // update transform
+      ShaderInfo* shader_info = NULL;
+      // retrieve the state of this GLSLProgram (including the NULL one)
+      std::map<const GLSLProgram*, ShaderInfo>::iterator shader_info_it = glslprogram_map.find(cur_glsl_program);
+      bool is_first_use = false;
+      if ( shader_info_it == glslprogram_map.end() )
+      {
+        // create a new shader-info entry
+        shader_info = &glslprogram_map[cur_glsl_program];
+        // update_tr = true; not needed since is_first_use overrides it.
+        update_su = cur_shader_uniform_set != NULL ? true : false;
+        update_au = cur_actor_uniform_set  != NULL ? true : false;
+        // is it the first update to this GLSLProgram? Yes.
+        is_first_use = true;
+      }
+      else
+      {
+        shader_info = &shader_info_it->second;      
+        // check for differences
+        update_tr = shader_info->mTransform        != cur_transform;
+        update_su = shader_info->mShaderUniformSet != cur_shader_uniform_set && cur_shader_uniform_set;
+        update_au = shader_info->mActorUniformSet  != cur_actor_uniform_set  && cur_actor_uniform_set;
+      }
+
+      // update shader-info structure
+      shader_info->mTransform        = cur_transform;
+      shader_info->mShaderUniformSet = cur_shader_uniform_set;
+      shader_info->mActorUniformSet  = cur_actor_uniform_set;
+
+      // fixme?
+      // theoretically we can optimize further caching the last GLSLProgram used and it's shader-info and if 
+      // the new one is the same as the old one we can avoid looking up in the map. The gain should be minimal
+      // and the code would get further clutterd.
+
+      // --- update proj, view and transform matrices ---
+
+      if (is_first_use) // note: 'is_first_overall' implies 'is_first_use'
+        projViewTransfCallback()->programFirstUse(this, cur_glsl_program, cur_transform, camera, is_first_overall);
+      else
+      if (update_tr)
+        projViewTransfCallback()->programTransfChange(this, cur_glsl_program, cur_transform, camera);
+
+      // --- uniforms ---
+
+      // note: the user must not make the shader's and actor's uniforms collide!
+
+      // shader uniform set
+      if ( update_su )
+      {
+        VL_CHECK( cur_shader_uniform_set && cur_shader_uniform_set->uniforms().size() );
+        VL_CHECK( tok->mShader->getRenderStateSet()->glslProgram() && tok->mShader->getRenderStateSet()->glslProgram()->handle() )
+        tok->mShader->getRenderStateSet()->glslProgram()->applyUniformSet( cur_shader_uniform_set );
+      }
+
+      // actor uniform set
+      if ( update_au )
+      {
+        VL_CHECK( cur_actor_uniform_set && cur_actor_uniform_set->uniforms().size() );
+        VL_CHECK( tok->mShader->getRenderStateSet()->glslProgram() && tok->mShader->getRenderStateSet()->glslProgram()->handle() )
+        tok->mShader->getRenderStateSet()->glslProgram()->applyUniformSet( cur_actor_uniform_set );
+      }
+
+      VL_CHECK_OGL()
+
+      // --- Actor's prerender callback --- done after GLSLProgam has been bound and setup
       tok->mActor->executeRenderingCallbacks( camera, tok->mRenderable, tok->mShader, ipass );
 
       VL_CHECK_OGL()
@@ -359,7 +385,7 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
         mRenderedPointCount    += tok->mRenderable->pointCount();
       }
 
-      // contract:
+      // contract (fixme: to be changed for vertex-array and elem-array lazy bind):
       // 1 - all vertex arrays and VBOs are disabled before calling render()
       // 2 - all vertex arrays and VBOs are disabled after  calling render()
 
@@ -636,5 +662,52 @@ void Renderer::resetEnables()
     glDisable( TranslateEnable[i] );
   // clears errors due to unsupported enable flags
   while( glGetError() ) {}
+}
+//-----------------------------------------------------------------------------
+void ProjViewTranfCallbackStandard::programFirstUse(const Renderer*, const GLSLProgram*, const Transform* transform, const Camera* camera, bool first_overall)
+{
+  if (mLastTransform != transform || first_overall)
+  {
+    if ( transform )
+    {
+      glMatrixMode(GL_MODELVIEW);
+      VL_glLoadMatrix( (camera->viewMatrix() * transform->worldMatrix() ).ptr() );
+    }
+    else
+    {
+      glMatrixMode(GL_MODELVIEW);
+      VL_glLoadMatrix( camera->viewMatrix().ptr() );
+    }
+  }
+
+  // set the projection matrix only once per rendering
+  if (first_overall)
+  {
+    glMatrixMode(GL_PROJECTION);
+    VL_glLoadMatrix( (camera->projectionMatrix() ).ptr() );
+  }
+
+  // update last transform
+  mLastTransform = transform;
+}
+//-----------------------------------------------------------------------------
+void ProjViewTranfCallbackStandard::programTransfChange(const Renderer*, const GLSLProgram*, const Transform* transform, const Camera* camera)
+{
+  if (mLastTransform != transform)
+  {
+    if ( transform )
+    {
+      glMatrixMode(GL_MODELVIEW);
+      VL_glLoadMatrix( (camera->viewMatrix() * transform->worldMatrix() ).ptr() );
+    }
+    else
+    {
+      glMatrixMode(GL_MODELVIEW);
+      VL_glLoadMatrix( camera->viewMatrix().ptr() );
+    }
+  }
+
+  // update last transform
+  mLastTransform = transform;
 }
 //-----------------------------------------------------------------------------

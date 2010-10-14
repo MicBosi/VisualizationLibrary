@@ -44,6 +44,39 @@
 namespace vl
 {
   class RenderQueue;
+  class Renderer;
+
+  /** Vitual class used as a callback to update the state of the \p projection, \p view and \p transform matrices of a GLSLProgram or fixed function pipeline. */
+  class ProjViewTranfCallback: public Object
+  {
+  public:
+    /** This function is called whenever a new GLSLProgram (or a NULL one) is being activated for the first time in the current rendering.
+     * \param caller The Renderer object calling this function.
+     * \param glsl The GLSLProgram being activated. If NULL the fixed function pipeline is being activated.
+     * \param transform The transform of the current Actor being rendered.
+     * \param camera The Camera used for the rendering from which you can retrieve the projection and view matrices.
+     * \param first_overall If \p true it means that the rendering has just started. Useful if you want to initialized your callback object.
+     */
+    virtual void programFirstUse(const Renderer* caller, const GLSLProgram* glsl, const Transform* transform, const Camera* camera, bool first_overall) = 0;
+    /** This function is called whenever the Transform changes with respect to the current GLSLProgram (including the NULL one).
+     * \param caller The Renderer object calling this function.
+     * \param glsl The GLSLProgram being activated. If NULL the fixed function pipeline is being activated.
+     * \param transform The transform of the current Actor being rendered.
+     * \param camera The Camera used for the rendering from which you can retrieve the projection and view matrices.
+     */
+    virtual void programTransfChange(const Renderer* caller, const GLSLProgram* glsl, const Transform* transform, const Camera* camera) = 0;
+  };
+
+  //! Updates the GL_MODELVIEW and GL_PROJECTION matrices of the fixed function pipeline.
+  class ProjViewTranfCallbackStandard: public ProjViewTranfCallback
+  {
+  public:
+    ProjViewTranfCallbackStandard(): mLastTransform(NULL) {}
+    virtual void programFirstUse(const Renderer*, const GLSLProgram* glsl, const Transform*, const Camera*, bool first_overall );
+    virtual void programTransfChange(const Renderer*, const GLSLProgram* glsl, const Transform*, const Camera* );
+  private:
+    const Transform* mLastTransform;
+  };
 
   /**
    * The Renderer class executes the actual rendering on the given RenderQueue.
@@ -89,6 +122,10 @@ namespace vl
     /** The number of pixels visible for an actor to be considered occluded (default = 0) */
     int occlusionThreshold() const { return mOcclusionThreshold; }
 
+    void setProjViewTransfCallback(ProjViewTranfCallbackStandard* callback) { mProjViewTranfCallback = callback; }
+    const ProjViewTranfCallbackStandard* projViewTransfCallback() const { return mProjViewTranfCallback.get(); }
+    ProjViewTranfCallbackStandard* projViewTransfCallback() { return mProjViewTranfCallback.get(); }
+
   protected:
     bool mCollectStatistics;
     size_t mRenderedRenderableCount;
@@ -119,6 +156,8 @@ namespace vl
     int mOcclusionThreshold;
     unsigned mOcclusionQueryTick;
     unsigned mOcclusionQueryTickPrev;
+
+    ref<ProjViewTranfCallbackStandard> mProjViewTranfCallback;
   };
   //------------------------------------------------------------------------------
 }
