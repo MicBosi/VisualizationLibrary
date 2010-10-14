@@ -50,7 +50,8 @@ namespace vl
   class ProjViewTranfCallback: public Object
   {
   public:
-    /** This function is called whenever a new GLSLProgram (or a NULL one) is being activated for the first time in the current rendering.
+    /** This function is called whenever a new GLSLProgram (or the NULL one, i.e. the fixed function pipeline) is being activated for the first time in the current rendering.
+     * This callback is most useful to initialize the GLSLProgram with the current projection and view matrices, besides the current Actor's transform.
      * \param caller The Renderer object calling this function.
      * \param glsl The GLSLProgram being activated. If NULL the fixed function pipeline is being activated.
      * \param transform The transform of the current Actor being rendered.
@@ -58,7 +59,8 @@ namespace vl
      * \param first_overall If \p true it means that the rendering has just started. Useful if you want to initialized your callback object.
      */
     virtual void programFirstUse(const Renderer* caller, const GLSLProgram* glsl, const Transform* transform, const Camera* camera, bool first_overall) = 0;
-    /** This function is called whenever the Transform changes with respect to the current GLSLProgram (including the NULL one).
+    /** This function is called whenever the Transform changes with respect to the current GLSLProgram (including the NULL one, i.e. the fixed function pipeline).
+     * This callback is most useful to update the GLSLProgram with the current Actor's transform matrix.
      * \param caller The Renderer object calling this function.
      * \param glsl The GLSLProgram being activated. If NULL the fixed function pipeline is being activated.
      * \param transform The transform of the current Actor being rendered.
@@ -67,7 +69,10 @@ namespace vl
     virtual void programTransfChange(const Renderer* caller, const GLSLProgram* glsl, const Transform* transform, const Camera* camera) = 0;
   };
 
-  //! Updates the GL_MODELVIEW and GL_PROJECTION matrices of the fixed function pipeline.
+  //! Updates the GL_MODELVIEW and GL_PROJECTION matrices of the fixed function pipeline in an optimized manner.
+  //! You usually want to install this callback if the fixed fuction pipeline is available, even when using GLSL shaders.
+  //! In fact the GL_MODELVIEW and GL_PROJECTION matrices are visible from all the GLSL shaders, thus requiring fewer matrix updates
+  //! compared to being forced to send projection, view and transform matrix to every single GLSLProgram at least once during the rendering!
   class ProjViewTranfCallbackStandard: public ProjViewTranfCallback
   {
   public:
