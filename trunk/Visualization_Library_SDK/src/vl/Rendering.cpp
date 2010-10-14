@@ -189,10 +189,6 @@ void Rendering::render()
 
   camera()->viewport()->setClearFlags(clearFlags());
   camera()->viewport()->activate();
-  // mic fixme
-  // ... disattiva di qua ... riattiva di la ... fallo funziona ...
-  camera()->applyProjMatrix();
-  camera()->applyViewMatrix();
 
   // render queue filling
 

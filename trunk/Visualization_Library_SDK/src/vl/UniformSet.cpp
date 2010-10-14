@@ -32,3 +32,71 @@
 #include <vl/UniformSet.hpp>
 
 using namespace vl;
+
+//-----------------------------------------------------------------------------
+void UniformSet::setUniform(Uniform* uniform, bool check_for_doubles) 
+{ 
+  VL_CHECK(uniform)
+  if (uniform == NULL)
+    return;
+  if ( check_for_doubles )
+  {
+    for(unsigned i=0; i<mUniforms.size(); ++i)
+    {
+      if (mUniforms[i]->name() == uniform->name())
+      {
+        mUniforms[i] = uniform;
+        return;
+      }
+    }
+  }
+  mUniforms.push_back( uniform );
+}
+//-----------------------------------------------------------------------------
+void UniformSet::eraseUniform(const std::string& name) 
+{ 
+  for(unsigned i=0; i<mUniforms.size(); ++i)
+    if (mUniforms[i]->name() == name)
+    {
+      mUniforms.erase( mUniforms.begin() + i );
+      return;
+    }
+}
+//-----------------------------------------------------------------------------
+void UniformSet::eraseUniform(const Uniform* uniform) 
+{ 
+  for(unsigned i=0; i<mUniforms.size(); ++i)
+    if (mUniforms[i] == uniform)
+    {
+      mUniforms.erase( mUniforms.begin() + i );
+      return;
+    }
+}
+//-----------------------------------------------------------------------------
+Uniform* UniformSet::gocUniform(const std::string& name)
+{ 
+  for(unsigned i=0; i<mUniforms.size(); ++i)
+    if (mUniforms[i]->name() == name)
+      return mUniforms[i].get();
+  ref<Uniform> uniform = new Uniform;
+  uniform->setName( name );
+  mUniforms.push_back(uniform);
+  return uniform.get();
+}
+//-----------------------------------------------------------------------------
+Uniform* UniformSet::getUniform(const std::string& name)
+{ 
+  for(unsigned i=0; i<mUniforms.size(); ++i)
+    if (mUniforms[i]->name() == name)
+      return mUniforms[i].get();
+  return NULL;
+}
+//-----------------------------------------------------------------------------
+const Uniform* UniformSet::getUniform(const std::string& name) const
+{ 
+  for(unsigned i=0; i<mUniforms.size(); ++i)
+    if (mUniforms[i]->name() == name)
+      return mUniforms[i].get();
+  return NULL;
+}
+//-----------------------------------------------------------------------------
