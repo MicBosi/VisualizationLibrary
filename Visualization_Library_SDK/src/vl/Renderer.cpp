@@ -277,7 +277,6 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
         }
       #endif
 
-
       // --------------- GLSLProgram setup ---------------
 
       VL_CHECK_OGL()
