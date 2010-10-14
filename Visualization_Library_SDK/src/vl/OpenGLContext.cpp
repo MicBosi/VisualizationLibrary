@@ -75,8 +75,6 @@ mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), 
   #endif
   mRenderTarget = new RenderTarget(this, w, h);
 
-  // mix fixme: questo lo facciamo poi quando abbiamo inizializzato veramente il contesto.
-  setupDefaultRenderStates();
   // just for debugging purposes
   memset( mCurrentRenderState, 0xFF, sizeof(mCurrentRenderState[0]) * RS_COUNT );
   memset( mRenderStateTable,   0xFF, sizeof(int)                    * RS_COUNT );
@@ -144,6 +142,8 @@ bool OpenGLContext::vsyncEnabled() const
 //-----------------------------------------------------------------------------
 void OpenGLContext::initGLContext(bool log)
 {
+  mIsInitialized = false;
+
   makeCurrent();
 
   // init glew for each rendering context
@@ -152,6 +152,10 @@ void OpenGLContext::initGLContext(bool log)
   {
     fprintf(stderr, "Error calling glewInit(): %s\n", glewGetErrorString(err));
     VL_TRAP()
+  }
+  else
+  {
+    mIsInitialized = true;
   }
 
   if (log)
@@ -174,7 +178,7 @@ void OpenGLContext::initGLContext(bool log)
   else
     mHasDoubleBuffer = true;
 
-  mIsInitialized = true;
+  setupDefaultRenderStates();
 }
 //-----------------------------------------------------------------------------
 bool OpenGLContext::isExtensionSupported(const char* ext_name)
@@ -409,6 +413,8 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
       {
         mRenderStateTable[prev->renderStates()[i]->type()] = 0;
         mCurrentRenderState[prev->renderStates()[i]->type()] = mDefaultRenderStates[prev->renderStates()[i]->type()].get();
+        // if this fails you are using a render state that is not supported by the current OpenGL implementation (too old or Core profile)
+        VL_CHECK(mCurrentRenderState[prev->renderStates()[i]->type()]);
         mDefaultRenderStates[prev->renderStates()[i]->type()]->disable();
         mDefaultRenderStates[prev->renderStates()[i]->type()]->apply(NULL);
       }
@@ -427,13 +433,9 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
     if ( mCurrentRenderState[cur->renderStates()[i]->type()] != cur->renderStates()[i] )
     {
       mCurrentRenderState[cur->renderStates()[i]->type()] = cur->renderStates()[i].get();
-      if (cur->renderStates()[i]->textureUnit() < textureUnitCount())
-      {
-        cur->renderStates()[i]->enable();
-        cur->renderStates()[i]->apply(camera);
-      }
-      /*else
-        Log::error( Say("Render state error: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << cur->renderStates()[i]->textureUnit() << textureUnitCount()-1);*/
+      VL_CHECK(cur->renderStates()[i]);
+      cur->renderStates()[i]->enable();
+      cur->renderStates()[i]->apply(camera);
     }
   }
 }
@@ -488,28 +490,39 @@ void OpenGLContext::setupDefaultRenderStates()
 
   for(unsigned int i=0; i<VL_MAX_TEXTURE_UNIT_COUNT; ++i)
   {
-    mDefaultRenderStates[RS_TextureUnit0   + i] = new TextureUnit(i);
-    mDefaultRenderStates[RS_TexGen0        + i] = new TexGen(i);
-    mDefaultRenderStates[RS_TexEnv0        + i] = new TexEnv(i);
-    mDefaultRenderStates[RS_TextureMatrix0 + i] = new TextureMatrix(i);
+    if (i < textureUnitCount())
+    {
+      mDefaultRenderStates[RS_TextureUnit0   + i] = new TextureUnit(i);
+      mDefaultRenderStates[RS_TexGen0        + i] = new TexGen(i);
+      mDefaultRenderStates[RS_TexEnv0        + i] = new TexEnv(i);
+      mDefaultRenderStates[RS_TextureMatrix0 + i] = new TextureMatrix(i);
+    }
+    else
+    {
+      mDefaultRenderStates[RS_TextureUnit0   + i] = NULL;
+      mDefaultRenderStates[RS_TexGen0        + i] = NULL;
+      mDefaultRenderStates[RS_TexEnv0        + i] = NULL;
+      mDefaultRenderStates[RS_TextureMatrix0 + i] = NULL;
+    }
   }
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::resetRenderStates()
 {
+  VL_CHECK_OGL();
   memset( mCurrentRenderState, 0, sizeof(mCurrentRenderState[0]) * RS_COUNT );
   memset( mRenderStateTable,   0, sizeof(int)                    * RS_COUNT );
   // render states
   for( unsigned i=0; i<RS_COUNT; ++i )
   {
-    if ( mDefaultRenderStates[i]->textureUnit() < textureUnitCount() )
+    // the empty ones are the ones that are not supported by the current OpenGL implementation (too old or Core profile)
+    if (mDefaultRenderStates[i])
     {
        mDefaultRenderStates[i]->disable();
        mDefaultRenderStates[i]->apply(NULL);
     }
-    /*else
-      don't issue any error message here*/
   }
+  VL_CHECK_OGL();
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::resetEnables()

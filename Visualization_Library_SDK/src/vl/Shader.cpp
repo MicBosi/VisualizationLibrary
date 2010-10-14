@@ -899,7 +899,10 @@ void TextureUnit::disable() const
     if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
       glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &max_texture);
     if (textureUnit() > max_texture-1)
+    {
       Log::error( Say("TextureUnit: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << textureUnit() << max_texture-1 );
+      VL_TRAP();
+    }
   #endif
   VL_CHECK_OGL();
   VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );

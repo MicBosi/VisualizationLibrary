@@ -1081,7 +1081,7 @@ namespace vl
    *
    * \sa Shader, TextureUnit, Texture, TexGen, TexParameter, Effect, Actor
   */
-  class TextureMatrix: public RenderState
+  class TextureMatrix: public TextureState
   {
   public:
     virtual const char* className() { return "TextureMatrix"; }
@@ -1123,7 +1123,7 @@ namespace vl
    *
    * \sa Shader, TextureUnit, Texture, TexGen, TexParameter, Effect, Actor
   */
-  class TexEnv: public RenderState
+  class TexEnv: public TextureState
   {
   public:
     TexEnv(int texunit);
@@ -1210,7 +1210,7 @@ namespace vl
    *
    * \sa Shader, TextureUnit, Texture, TexGen, TexParameter, Effect, Actor
   */
-  class TexGen: public RenderState
+  class TexGen: public TextureState
   {
   public:
     TexGen(int texunit);
@@ -1270,7 +1270,7 @@ namespace vl
    *
    * \sa Texture, TexParameter, Shader, TextureMatrix, TexEnv, TexGen, Effect, Actor
   */
-  class TextureUnit: public RenderState
+  class TextureUnit: public TextureState
   {
   public:
     virtual const char* className() { return "TextureUnit"; }

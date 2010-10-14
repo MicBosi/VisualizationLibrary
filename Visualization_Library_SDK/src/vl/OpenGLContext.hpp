@@ -384,7 +384,6 @@ namespace vl
     bool isInitialized() const { return mIsInitialized; }
 
     // mic fixme: da rivedere se alcune sono da togliere
-    void setupDefaultRenderStates();
     void applyEnables( const EnableSet* prev, const EnableSet* cur );
     void applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera );
     void resetEnables();
@@ -413,6 +412,9 @@ namespace vl
     const RenderState* mCurrentRenderState[RS_COUNT];
     // default render states
     ref<RenderState> mDefaultRenderStates[RS_COUNT];
+
+  private:
+    void setupDefaultRenderStates();
   };
   // ----------------------------------------------------------------------------
 }
