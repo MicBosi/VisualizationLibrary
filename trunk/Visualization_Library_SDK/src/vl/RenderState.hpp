@@ -55,22 +55,39 @@ namespace vl
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mTextureUnit = 0;
     }
-    virtual ~RenderState() {}
     virtual ERenderState type() const { return RS_NONE; }
     virtual void apply(const Camera*) const = 0;
     virtual void disable() const {}
     virtual void enable()  const {}
     // used by GLSLProgram to link the program and by TextureUnit to create the texture
     virtual void initResources() {}
-    // used by texture-unit-related render states
+  };
+  //------------------------------------------------------------------------------
+  // TextureState
+  //------------------------------------------------------------------------------
+  /**
+   * Base class for the OpenGL texture state wrapper classes.
+   *
+   * \sa Shader, Effect, Actor, RenderState
+  */
+  class TextureState: public RenderState
+  {
+  public:
+    virtual const char* className() { return "TextureState"; }
+    TextureState() 
+    {
+      #ifndef NDEBUG
+        mObjectName = className();
+      #endif
+      mTextureUnit = 0;
+    }
     int textureUnit() const { return mTextureUnit; }
-    // used by texture-unit-related render states
     void setUnitIndex(int unit_index) { mTextureUnit = unit_index; }
   protected:
     int mTextureUnit;
   };
+
 }
 
 #endif
