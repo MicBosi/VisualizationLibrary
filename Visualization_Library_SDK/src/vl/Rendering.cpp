@@ -364,8 +364,9 @@ void Rendering::resetStates()
     glReadBuffer(GL_FRONT); VL_CHECK_OGL();
   }
 
-  renderer()->resetEnables(); VL_CHECK_OGL()
-  renderer()->resetRenderStates(); VL_CHECK_OGL()
+  // mic fixme: c'e' proprio bisogno di fare tutta sta caciara?
+  renderTarget()->openglContext()->resetEnables(); VL_CHECK_OGL()
+  renderTarget()->openglContext()->resetRenderStates(); VL_CHECK_OGL()
 
   glNormal3f(1.0f,1.0f,1.0f); VL_CHECK_OGL()
   glColor4f(1.0f,1.0f,1.0f,1.0f); VL_CHECK_OGL()

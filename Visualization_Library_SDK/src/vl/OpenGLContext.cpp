@@ -31,6 +31,10 @@
 
 #include <vl/OpenGLContext.hpp>
 #include <vl/OpenGL.hpp>
+#include <vl/Shader.hpp>
+#include <vl/GLSL.hpp>
+#include <vl/Light.hpp>
+#include <vl/ClipPlane.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
 #include <algorithm>
@@ -62,6 +66,24 @@ int UIEventListener::rank() const
 OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 //-----------------------------------------------------------------------------
 // OpenGLContext
+//-----------------------------------------------------------------------------
+OpenGLContext::OpenGLContext(int w, int h): 
+mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false), mHasDoubleBuffer(false), mIsInitialized(false)
+{
+  #ifndef NDEBUG
+    mObjectName = className();
+  #endif
+  mRenderTarget = new RenderTarget(this, w, h);
+
+  // mix fixme: questo lo facciamo poi quando abbiamo inizializzato veramente il contesto.
+  setupDefaultRenderStates();
+  // just for debugging purposes
+  memset( mCurrentRenderState, 0xFF, sizeof(mCurrentRenderState[0]) * RS_COUNT );
+  memset( mRenderStateTable,   0xFF, sizeof(int)                    * RS_COUNT );
+  memset( mCurrentEnable,      0xFF, sizeof(mCurrentEnable[0])      * EN_EnableCount );
+  memset( mEnableTable,        0xFF, sizeof(int)                    * EN_EnableCount );
+
+}
 //-----------------------------------------------------------------------------
 void OpenGLContext::sortEventListeners()
 {
@@ -237,5 +259,266 @@ void OpenGLContext::logOpenGLInfo()
     }
     Log::print("\n");
   }
+}
+//------------------------------------------------------------------------------
+namespace
+{
+  const GLenum TranslateEnable[] =
+  {
+    GL_ALPHA_TEST,
+    GL_BLEND,
+    GL_COLOR_LOGIC_OP,
+    GL_LIGHTING,
+    GL_COLOR_SUM,
+    GL_CULL_FACE,
+    GL_DEPTH_TEST,
+    GL_FOG,
+    GL_LINE_SMOOTH,
+    GL_LINE_STIPPLE,
+    GL_POLYGON_STIPPLE,
+    GL_NORMALIZE,
+    GL_POINT_SMOOTH,
+    GL_POINT_SPRITE,
+    GL_POLYGON_SMOOTH,
+    GL_POLYGON_OFFSET_FILL,
+    GL_POLYGON_OFFSET_LINE,
+    GL_POLYGON_OFFSET_POINT,
+    GL_RESCALE_NORMAL,
+    GL_STENCIL_TEST,
+    GL_VERTEX_PROGRAM_POINT_SIZE,
+    GL_VERTEX_PROGRAM_TWO_SIDE,
+
+    // multisampling
+    GL_MULTISAMPLE,
+    GL_SAMPLE_ALPHA_TO_COVERAGE,
+    GL_SAMPLE_ALPHA_TO_ONE,
+    GL_SAMPLE_COVERAGE
+  };
+
+  #ifndef NDEBUG
+  const char* TranslateEnableString[] =
+  {
+    "EN_ALPHA_TEST",
+    "EN_BLEND",
+    "EN_COLOR_LOGIC_OP",
+    "EN_LIGHTING",
+    "EN_COLOR_SUM",
+    "EN_CULL_FACE",
+    "EN_DEPTH_TEST",
+    "EN_FOG ",
+    "EN_LINE_SMOOTH",
+    "EN_LINE_STIPPLE",
+    "EN_POLYGON_STIPPLE",
+    "EN_NORMALIZE",
+    "EN_POINT_SMOOTH",
+    "EN_POINT_SPRITE",
+    "EN_POLYGON_SMOOTH",
+    "EN_POLYGON_OFFSET_FILL",
+    "EN_POLYGON_OFFSET_LINE",
+    "EN_POLYGON_OFFSET_POINT",
+    "EN_RESCALE_NORMAL",
+    "EN_STENCIL_TEST",
+    "EN_VERTEX_PROGRAM_POINT_SIZE",
+    "EN_VERTEX_PROGRAM_TWO_SIDE",
+
+    // multisampling
+    "EN_MULTISAMPLE",
+    "EN_SAMPLE_ALPHA_TO_COVERAGE",
+    "EN_SAMPLE_ALPHA_TO_ONE",
+    "EN_SAMPLE_COVERAGE"
+  };
+  #endif
+}
+//------------------------------------------------------------------------------
+void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
+{
+  VL_CHECK_OGL()
+  VL_CHECK(cur)
+  if (prev == NULL)
+    memset( mEnableTable, 0, sizeof(int) * EN_EnableCount );
+
+  // iterate current: increment
+
+  for( unsigned i=0; i<cur->enables().size(); ++i )
+    mEnableTable[cur->enables()[i]] |= 2;
+
+  // iterate on prev: reset to default only if it won't be overwritten by cur
+
+  if (prev)
+  {
+    for( unsigned i=0; i<prev->enables().size(); ++i )
+    {
+      if ( mEnableTable[prev->enables()[i]] == 1 )
+      {
+        mEnableTable[prev->enables()[i]] = 0;
+        mCurrentEnable[prev->enables()[i]] = false;
+        glDisable( TranslateEnable[prev->enables()[i]] );
+        #ifndef NDEBUG
+          if (glGetError() != GL_NO_ERROR)
+          {
+            Log::error( Say("An unsupported enum has been disabled: %s.\n") << TranslateEnableString[prev->enables()[i]]);
+            VL_TRAP()
+          }
+        #endif
+      }
+    }
+  }
+  else
+  {
+    memset(mCurrentEnable, 0, sizeof(mCurrentEnable[0])*EN_EnableCount);
+  }
+
+  // iterate current: apply only if needed
+
+  for( unsigned i=0; i<cur->enables().size(); ++i )
+  {
+    mEnableTable[cur->enables()[i]] = 1;
+    if ( !mCurrentEnable[cur->enables()[i]] )
+    {
+      glEnable( TranslateEnable[cur->enables()[i]] );
+      mCurrentEnable[ cur->enables()[i] ] = true;
+      #ifndef NDEBUG
+        if (glGetError() != GL_NO_ERROR)
+        {
+          Log::error( Say("An unsupported enum has been enabled: %s.\n") << TranslateEnableString[cur->enables()[i]]);
+          VL_TRAP()
+        }
+      #endif
+    }
+  }
+}
+//------------------------------------------------------------------------------
+void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera )
+{
+  VL_CHECK(cur)
+  if (prev == NULL)
+    memset( mRenderStateTable, 0, sizeof(int) * RS_COUNT );
+
+  // iterate current: increment
+
+  for( unsigned i=0; i<cur->renderStates().size(); ++i )
+    mRenderStateTable[cur->renderStates()[i]->type()] |= 2;
+
+  // iterate on prev: reset to default only if it won't be overwritten by cur
+
+  if (prev)
+  {
+    for( unsigned i=0; i<prev->renderStates().size(); ++i )
+    {
+      if ( mRenderStateTable[prev->renderStates()[i]->type()] == 1 )
+      {
+        mRenderStateTable[prev->renderStates()[i]->type()] = 0;
+        mCurrentRenderState[prev->renderStates()[i]->type()] = mDefaultRenderStates[prev->renderStates()[i]->type()].get();
+        mDefaultRenderStates[prev->renderStates()[i]->type()]->disable();
+        mDefaultRenderStates[prev->renderStates()[i]->type()]->apply(NULL);
+      }
+    }
+  }
+  else
+  {
+    memset(mCurrentRenderState, 0, sizeof(mCurrentRenderState[0])*RS_COUNT);
+  }
+
+  // iterate current: apply only if needed
+
+  for( unsigned i=0; i<cur->renderStates().size(); ++i )
+  {
+    mRenderStateTable[cur->renderStates()[i]->type()] = 1;
+    if ( mCurrentRenderState[cur->renderStates()[i]->type()] != cur->renderStates()[i] )
+    {
+      mCurrentRenderState[cur->renderStates()[i]->type()] = cur->renderStates()[i].get();
+      if (cur->renderStates()[i]->textureUnit() < textureUnitCount())
+      {
+        cur->renderStates()[i]->enable();
+        cur->renderStates()[i]->apply(camera);
+      }
+      /*else
+        Log::error( Say("Render state error: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << cur->renderStates()[i]->textureUnit() << textureUnitCount()-1);*/
+    }
+  }
+}
+//------------------------------------------------------------------------------
+void OpenGLContext::setupDefaultRenderStates()
+{
+  mDefaultRenderStates[RS_AlphaFunc] = new AlphaFunc;
+  mDefaultRenderStates[RS_BlendColor] = new BlendColor;
+  mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
+  mDefaultRenderStates[RS_BlendFunc] = new BlendFunc;
+  mDefaultRenderStates[RS_ColorMask] = new ColorMask;
+  mDefaultRenderStates[RS_CullFace] = new CullFace;
+  mDefaultRenderStates[RS_DepthFunc] = new DepthFunc;
+  mDefaultRenderStates[RS_DepthMask] = new DepthMask;
+  mDefaultRenderStates[RS_DepthRange] = new DepthRange;
+  mDefaultRenderStates[RS_Fog] = new Fog;
+  mDefaultRenderStates[RS_FrontFace] = new FrontFace;
+  mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
+  mDefaultRenderStates[RS_Hint] = new Hint;
+  mDefaultRenderStates[RS_LightModel] = new LightModel;
+  mDefaultRenderStates[RS_LineStipple] = new LineStipple;
+  mDefaultRenderStates[RS_LineWidth] = new LineWidth;
+  mDefaultRenderStates[RS_LogicOp] = new LogicOp;
+  mDefaultRenderStates[RS_Material] = new Material;
+  mDefaultRenderStates[RS_PixelTransfer] = new PixelTransfer;
+  mDefaultRenderStates[RS_PointParameter] = new PointParameter;
+  mDefaultRenderStates[RS_PointSize] = new PointSize;
+  mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
+  mDefaultRenderStates[RS_PolygonStipple] = new PolygonStipple;
+  mDefaultRenderStates[RS_SampleCoverage] = new SampleCoverage;
+  mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
+  mDefaultRenderStates[RS_StencilFunc] = new StencilFunc;
+  mDefaultRenderStates[RS_StencilMask] = new StencilMask;
+  mDefaultRenderStates[RS_StencilOp] = new StencilOp;
+  mDefaultRenderStates[RS_GLSLProgram] = new GLSLProgram;
+
+  mDefaultRenderStates[RS_Light0] = new Light(0);
+  mDefaultRenderStates[RS_Light1] = new Light(1);
+  mDefaultRenderStates[RS_Light2] = new Light(2);
+  mDefaultRenderStates[RS_Light3] = new Light(3);
+  mDefaultRenderStates[RS_Light4] = new Light(4);
+  mDefaultRenderStates[RS_Light5] = new Light(5);
+  mDefaultRenderStates[RS_Light6] = new Light(6);
+  mDefaultRenderStates[RS_Light7] = new Light(7);
+
+  mDefaultRenderStates[RS_ClipPlane0] = new ClipPlane(0);
+  mDefaultRenderStates[RS_ClipPlane1] = new ClipPlane(1);
+  mDefaultRenderStates[RS_ClipPlane2] = new ClipPlane(2);
+  mDefaultRenderStates[RS_ClipPlane3] = new ClipPlane(3);
+  mDefaultRenderStates[RS_ClipPlane4] = new ClipPlane(4);
+  mDefaultRenderStates[RS_ClipPlane5] = new ClipPlane(5);
+
+  for(unsigned int i=0; i<VL_MAX_TEXTURE_UNIT_COUNT; ++i)
+  {
+    mDefaultRenderStates[RS_TextureUnit0   + i] = new TextureUnit(i);
+    mDefaultRenderStates[RS_TexGen0        + i] = new TexGen(i);
+    mDefaultRenderStates[RS_TexEnv0        + i] = new TexEnv(i);
+    mDefaultRenderStates[RS_TextureMatrix0 + i] = new TextureMatrix(i);
+  }
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::resetRenderStates()
+{
+  memset( mCurrentRenderState, 0, sizeof(mCurrentRenderState[0]) * RS_COUNT );
+  memset( mRenderStateTable,   0, sizeof(int)                    * RS_COUNT );
+  // render states
+  for( unsigned i=0; i<RS_COUNT; ++i )
+  {
+    if ( mDefaultRenderStates[i]->textureUnit() < textureUnitCount() )
+    {
+       mDefaultRenderStates[i]->disable();
+       mDefaultRenderStates[i]->apply(NULL);
+    }
+    /*else
+      don't issue any error message here*/
+  }
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::resetEnables()
+{
+  memset( mCurrentEnable, 0, sizeof(mCurrentEnable[0]) * EN_EnableCount );
+  memset( mEnableTable,   0, sizeof(int)               * EN_EnableCount );
+  for( unsigned i=0; i<EN_EnableCount; ++i )
+    glDisable( TranslateEnable[i] );
+  // clears errors due to unsupported enable flags
+  while( glGetError() ) {}
 }
 //-----------------------------------------------------------------------------

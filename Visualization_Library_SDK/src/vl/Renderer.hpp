@@ -104,14 +104,9 @@ namespace vl
     size_t renderedLinesCount() const { return mRenderedLineCount; }
     size_t renderedPointsCount() const { return mRenderedPointCount; }
 
-    void applyEnables( const EnableSet* prev, const EnableSet* cur );
-    void applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera );
-
+    OpenGLContext* openglContext() { return mOpenGLContext; }
     const OpenGLContext* openglContext() const { return mOpenGLContext; }
-    void setOpenGLContext(const OpenGLContext* ogl_context) { mOpenGLContext = ogl_context; }
-
-    void resetEnables();
-    void resetRenderStates();
+    void setOpenGLContext(OpenGLContext* ogl_context) { mOpenGLContext = ogl_context; }
 
     /** Whether occlusion culling is enabled or not.
     See also \ref pagGuideOcclusionCulling "OpenGL-Accelerated Occlusion Culling Tutorial".
@@ -138,22 +133,7 @@ namespace vl
     size_t mRenderedLineCount;
     size_t mRenderedPointCount;
 
-    // table
-
-    int mEnableTable[EN_EnableCount];
-    int mRenderStateTable[RS_COUNT];
-
-    // current state
-
-    bool mCurrentEnable[EN_EnableCount];
-    const RenderState* mCurrentRenderState[RS_COUNT];
-    std::map< String, Uniform* > mCurrentUniform;
-
-    // default render states
-    ref<RenderState> mDefaultRenderStates[RS_COUNT];
-    void setupDefaultRenderStates();
-
-    const OpenGLContext* mOpenGLContext;
+    OpenGLContext* mOpenGLContext;
 
     bool mOcclusionCullingEnabled;
     // shader used to render proxy shapes during occlusion cull tests
