@@ -39,6 +39,8 @@ void EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera)
 {
   updateActorCache(render_queue);
 
+  camera->applyProjMatrix();
+
   // solid
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
