@@ -382,12 +382,18 @@ namespace vl
     bool hasDoubleBuffer() const { return mHasDoubleBuffer; }
 
     bool isInitialized() const { return mIsInitialized; }
+    bool isCompatible() const { return mIsCompatible; }
+
+    // --- render states management ---
 
     // mic fixme: da rivedere se alcune sono da togliere
     void applyEnables( const EnableSet* prev, const EnableSet* cur );
     void applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera );
     void resetEnables();
     void resetRenderStates();
+    /** Resets the OpenGL rendering states */
+    void resetContextStates();
+
 
   protected:
     ref<RenderTarget> mRenderTarget;
@@ -402,6 +408,7 @@ namespace vl
     bool mFullscreen;
     bool mHasDoubleBuffer;
     bool mIsInitialized;
+    bool mIsCompatible;
 
     // RENDER STATES
     // state table
