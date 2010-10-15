@@ -84,9 +84,6 @@ namespace vl
     */
     virtual void render();
 
-    /** Resets the OpenGL rendering states */
-    void resetStates();
-
     /** The RenderQueueSorter used to perform the sorting of the objects to be rendered, if NULL no sorting is performed. */
     void setRenderQueueSorter(RenderQueueSorter* render_queue_sorter) { mRenderQueueSorter = render_queue_sorter; }
     /** The RenderQueueSorter used to perform the sorting of the objects to be rendered, if NULL no sorting is performed. */

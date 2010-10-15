@@ -568,9 +568,6 @@ void SampleCoverage::apply(const Camera*) const
 //------------------------------------------------------------------------------
 TexParameter::TexParameter()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
   mDirty = true;
   setMinFilter(TPF_LINEAR);
   setMagFilter(TPF_LINEAR);
@@ -606,7 +603,7 @@ void TexParameter::setMagFilter(ETexParamFilter magfilter)
   }
 }
 //------------------------------------------------------------------------------
-void TexParameter::apply(ETextureDimension dimension)
+void TexParameter::apply(ETextureDimension dimension) const
 {
   VL_CHECK_OGL()
 
@@ -892,8 +889,13 @@ void TextureUnit::apply(const Camera*) const
 //-----------------------------------------------------------------------------
 void TextureUnit::disable() const
 {
+
+  // --- here we disable all the texture targets ---
+
   VL_CHECK_OGL();
+  // check that is not a crazy number.
   VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNIT_COUNT)
+  // check that the current OpenGL implementation supports this many texture units
   #ifndef NDEBUG
     int max_texture = 1;
     if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
@@ -904,50 +906,47 @@ void TextureUnit::disable() const
       VL_TRAP();
     }
   #endif
+
   VL_CHECK_OGL();
+
+  // activate the appropriate texture unit
   VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_CHECK_OGL();
 
   glDisable( GL_TEXTURE_1D );
-  /*glBindTexture( GL_TEXTURE_1D, 0 );*/
-
   glDisable( GL_TEXTURE_2D );
-  /*glBindTexture( GL_TEXTURE_2D, 0 );*/
 
-  if (GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle/*TODO:||GLEW_VERSION_3_1*/)
+  if (GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle||GLEW_VERSION_3_1)
   {
     glDisable( GL_TEXTURE_RECTANGLE_ARB );
-    /*glBindTexture( GL_TEXTURE_RECTANGLE_ARB, 0 );*/
-  }
-
-  if (GLEW_EXT_texture_array||GLEW_VERSION_3_0)
-  {
-    // no need to enable/disable since is not available in the fixed function pipeline
-    /*glDisable( GL_TEXTURE_1D_ARRAY_EXT );
-    glDisable( GL_TEXTURE_2D_ARRAY_EXT );*/
-    glBindTexture( GL_TEXTURE_1D_ARRAY_EXT, 0 );
-    glBindTexture( GL_TEXTURE_2D_ARRAY_EXT, 0 );
   }
 
   if (GLEW_VERSION_1_2)
   {
     glDisable( GL_TEXTURE_3D_EXT );
-    /*glBindTexture( GL_TEXTURE_3D_EXT, 0 );*/
   }
 
   if (GLEW_VERSION_1_3||GLEW_ARB_texture_cube_map)
   {
     glDisable( GL_TEXTURE_CUBE_MAP );
-    /*glBindTexture( GL_TEXTURE_CUBE_MAP, 0 );*/
   }
+
+  // not part of the fixed function pipeline
+  //glDisable( GL_TEXTURE_1D_ARRAY_EXT );
+  //glDisable( GL_TEXTURE_2D_ARRAY_EXT );
+
 }
 //-----------------------------------------------------------------------------
 void TextureUnit::enable()  const
 {
   VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNIT_COUNT)
 
-  /* calls glActiveTexture() and disables all the texture targets */
+  // disable all the texture entries: when two textures are enabled one after another on the same 
+  // texture unit the disable() function is not called since the enable() of the new one is supposed
+  // to override all the settings of the old (as with all the other render states), but we don't know
+  // which texture entry was used previously so we disable all of them. This makes the code simple
+  // and more robust to be used with user's opengl code.
   disable();
 
   if( hasTexture() )
@@ -990,7 +989,7 @@ void TextureUnit::enable()  const
   else
   {
     #ifndef NDEBUG
-      Log::error("Invalid texture.\n");
+      Log::error("TextureUnit::enable() error: NULL texture!\n");
     #endif
   }
 }
@@ -1000,7 +999,7 @@ void TextureMatrix::apply(const Camera* camera) const
   VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNIT_COUNT)
   #ifndef NDEBUG
     int max_texture = 1;
-    if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
+    if (GLEW_VERSION_1_3||GLEW_ARB_multitexture||GLEW_VERSION_3_0)
       glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &max_texture);
     if (textureUnit() > max_texture-1)
       Log::error( Say("TextureMatrix: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << textureUnit() << max_texture-1 );

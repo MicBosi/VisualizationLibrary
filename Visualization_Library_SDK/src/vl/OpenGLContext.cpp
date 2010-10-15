@@ -68,7 +68,7 @@ OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 // OpenGLContext
 //-----------------------------------------------------------------------------
 OpenGLContext::OpenGLContext(int w, int h): 
-mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false), mHasDoubleBuffer(false), mIsInitialized(false)
+mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false), mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false)
 {
   #ifndef NDEBUG
     mObjectName = className();
@@ -143,6 +143,7 @@ bool OpenGLContext::vsyncEnabled() const
 void OpenGLContext::initGLContext(bool log)
 {
   mIsInitialized = false;
+  mIsCompatible  = false;
 
   makeCurrent();
 
@@ -156,6 +157,7 @@ void OpenGLContext::initGLContext(bool log)
   else
   {
     mIsInitialized = true;
+    mIsCompatible  = GLEW_VERSION_1_1 == GL_TRUE;
   }
 
   if (log)
@@ -534,4 +536,157 @@ void OpenGLContext::resetEnables()
   // clears errors due to unsupported enable flags
   while( glGetError() ) {}
 }
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+void OpenGLContext::resetContextStates()
+{
+  // Check that the OpenGL state is clear.
+  // If this fails use VL_CHECK_OGL to make sure your application does not generate OpenGL errors.
+  // See also glGetError() -> http://www.opengl.org/sdk/docs/man/xhtml/glGetError.xml
+  VL_CHECK_OGL();
+
+  glRenderMode(GL_RENDER); VL_CHECK_OGL();
+
+  VL_glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0); VL_CHECK_OGL();
+
+  if ( renderTarget()->openglContext()->hasDoubleBuffer() )
+  {
+    glDrawBuffer(GL_BACK); VL_CHECK_OGL();
+    glReadBuffer(GL_BACK); VL_CHECK_OGL();
+  }
+  else
+  {
+    glDrawBuffer(GL_FRONT); VL_CHECK_OGL();
+    glReadBuffer(GL_FRONT); VL_CHECK_OGL();
+  }
+
+  // mic fixme: c'e' proprio bisogno di fare tutta sta caciara?
+  renderTarget()->openglContext()->resetEnables(); VL_CHECK_OGL()
+  renderTarget()->openglContext()->resetRenderStates(); VL_CHECK_OGL()
+
+  glNormal3f(1.0f,1.0f,1.0f); VL_CHECK_OGL()
+  glColor4f(1.0f,1.0f,1.0f,1.0f); VL_CHECK_OGL()
+  VL_glSecondaryColor3f(1.0f,1.0f,1.0f); VL_CHECK_OGL()
+
+  glMatrixMode(GL_MODELVIEW); VL_CHECK_OGL()
+  glLoadIdentity(); VL_CHECK_OGL()
+  glMatrixMode(GL_PROJECTION); VL_CHECK_OGL()
+  glLoadIdentity(); VL_CHECK_OGL()
+
+  int max_texture = 1;
+  if (GLEW_VERSION_1_3 || GLEW_ARB_multitexture)
+  {
+    glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &max_texture); VL_CHECK_OGL()
+  }
+  for(int i=0; i<max_texture; ++i)
+  {
+    VL_glActiveTexture(GL_TEXTURE0+i); VL_CHECK_OGL()
+    VL_glClientActiveTexture(GL_TEXTURE0+i); VL_CHECK_OGL()
+
+    glTexCoord3f(0,0,0); VL_CHECK_OGL()
+    
+    glMatrixMode(GL_TEXTURE); VL_CHECK_OGL()
+    glLoadIdentity(); VL_CHECK_OGL()
+
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL()
+    glDisable( GL_TEXTURE_1D ); VL_CHECK_OGL()
+    glBindTexture( GL_TEXTURE_1D, 0 ); VL_CHECK_OGL()
+    glDisable( GL_TEXTURE_2D ); VL_CHECK_OGL()
+    glBindTexture( GL_TEXTURE_2D, 0 ); VL_CHECK_OGL()
+    if (GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle/*TODO:||GLEW_VERSION_3_1*/)
+    {
+      glDisable( GL_TEXTURE_RECTANGLE_ARB ); VL_CHECK_OGL()
+      glBindTexture( GL_TEXTURE_RECTANGLE_ARB, 0 ); VL_CHECK_OGL()
+    }
+    if (GLEW_EXT_texture_array||GLEW_VERSION_3_0)
+    {
+      // no need to enable/disable since is not available in the fixed function pipeline
+      /*glDisable( GL_TEXTURE_1D_ARRAY_EXT );
+      glDisable( GL_TEXTURE_2D_ARRAY_EXT );*/
+      glBindTexture( GL_TEXTURE_1D_ARRAY_EXT, 0 ); VL_CHECK_OGL()
+      glBindTexture( GL_TEXTURE_2D_ARRAY_EXT, 0 ); VL_CHECK_OGL()
+    }
+    if (GLEW_VERSION_1_2)
+    {
+      glDisable( GL_TEXTURE_3D ); VL_CHECK_OGL()
+      glBindTexture( GL_TEXTURE_3D, 0 ); VL_CHECK_OGL()
+    }
+    if (GLEW_VERSION_1_3||GLEW_ARB_texture_cube_map)
+    {
+      glDisable( GL_TEXTURE_CUBE_MAP ); VL_CHECK_OGL()
+      glBindTexture( GL_TEXTURE_CUBE_MAP, 0 ); VL_CHECK_OGL()
+    }
+
+    // glTexGen
+    // glTexEnv
+  }
+
+  VL_glActiveTexture(GL_TEXTURE0); VL_CHECK_OGL()
+  VL_glClientActiveTexture(GL_TEXTURE0); VL_CHECK_OGL()
+
+  glMatrixMode(GL_MODELVIEW); VL_CHECK_OGL()
+
+  glDisable(GL_TEXTURE_GEN_S); VL_CHECK_OGL()
+  glDisable(GL_TEXTURE_GEN_T); VL_CHECK_OGL()
+  glDisable(GL_TEXTURE_GEN_R); VL_CHECK_OGL()
+  glDisable(GL_TEXTURE_GEN_Q); VL_CHECK_OGL()
+
+  glDisable(GL_COLOR_MATERIAL); VL_CHECK_OGL()
+
+  glDisable(GL_SCISSOR_TEST); VL_CHECK_OGL()
+
+  if (GLEW_VERSION_1_4||GLEW_EXT_fog_coord)
+    glDisableClientState(GL_FOG_COORD_ARRAY); 
+  VL_CHECK_OGL()
+
+  if (GLEW_VERSION_1_4||GLEW_EXT_secondary_color)
+    glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
+  VL_CHECK_OGL()
+
+  glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL()
+  glDisableClientState(GL_EDGE_FLAG_ARRAY); VL_CHECK_OGL()
+  glDisableClientState(GL_INDEX_ARRAY); VL_CHECK_OGL()
+  glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL()
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL()
+  glDisableClientState(GL_VERTEX_ARRAY ); VL_CHECK_OGL()
+
+  VL_glBindBuffer(GL_ARRAY_BUFFER,0); VL_CHECK_OGL()
+  VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0); VL_CHECK_OGL()
+
+  if (GLEW_VERSION_2_1||GLEW_ARB_pixel_buffer_object)
+  {
+    VL_glBindBuffer(GL_PIXEL_PACK_BUFFER,0); VL_CHECK_OGL()
+    VL_glBindBuffer(GL_PIXEL_UNPACK_BUFFER,0); VL_CHECK_OGL()
+  }
+
+  // glPixelStore
+
+  glPixelStorei(GL_PACK_SWAP_BYTES, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_PACK_LSB_FIRST, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_PACK_ROW_LENGTH, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_PACK_SKIP_ROWS, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_PACK_SKIP_PIXELS, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_PACK_ALIGNMENT, 4); VL_CHECK_OGL()
+  glPixelStorei(GL_UNPACK_SWAP_BYTES, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_UNPACK_LSB_FIRST, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_UNPACK_SKIP_ROWS, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0); VL_CHECK_OGL()
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4); VL_CHECK_OGL()
+  if (GLEW_VERSION_1_2)
+  {
+    glPixelStorei(GL_PACK_IMAGE_HEIGHT, 0); VL_CHECK_OGL()
+    glPixelStorei(GL_PACK_SKIP_IMAGES, 0); VL_CHECK_OGL()
+    glPixelStorei(GL_UNPACK_IMAGE_HEIGHT, 0); VL_CHECK_OGL()
+    glPixelStorei(GL_UNPACK_SKIP_IMAGES, 0); VL_CHECK_OGL()
+  }
+
+  glPixelZoom(1.0f, 1.0f); VL_CHECK_OGL()
+
+  if (GLEW_ARB_imaging)
+  {
+    glDisable(GL_HISTOGRAM); VL_CHECK_OGL()
+    glDisable(GL_MINMAX); VL_CHECK_OGL()
+  }
+
+  VL_CHECK_OGL();
+}//-----------------------------------------------------------------------------

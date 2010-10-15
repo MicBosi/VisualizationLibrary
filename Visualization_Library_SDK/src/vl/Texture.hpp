@@ -57,13 +57,13 @@ namespace vl
    * - Effect
    * - Actor
   */
-  class TexParameter: public Object
+  class TexParameter
   {
   public:
     TexParameter();
     virtual const char* className() { return "TexParameter"; }
 
-    void apply(ETextureDimension dimension);
+    void apply(ETextureDimension dimension) const;
 
     ETexParamFilter minFilter() const { return mMinFilter; }
     ETexParamFilter magFilter() const { return mMagfilter; }
@@ -104,7 +104,7 @@ namespace vl
     float mAnisotropy;
     bool mGenerateMipmap;
 
-    bool mDirty;
+    mutable bool mDirty;
   };
   //------------------------------------------------------------------------------
   // Texture
@@ -179,7 +179,8 @@ namespace vl
     Texture();
     virtual ~Texture();
 
-    TexParameter* getTexParameter() const { return mTexParameter.get(); }
+    TexParameter* getTexParameter() { return &mTexParameter; }
+    const TexParameter* getTexParameter() const { return &mTexParameter; }
 
     //! Performs the actual creation of the texture.
     //! \sa
@@ -322,7 +323,7 @@ namespace vl
 
   protected:
     unsigned int mHandle;
-    ref<TexParameter> mTexParameter;
+    TexParameter mTexParameter;
     ref<SetupParams> mSetupParams;
     ETextureFormat mFormat;
     ETextureDimension mDimension;
