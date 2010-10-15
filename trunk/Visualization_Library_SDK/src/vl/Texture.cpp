@@ -54,7 +54,6 @@ Texture::Texture(int width, ETextureFormat format, bool border)
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mTexParameter = new TexParameter;
   setDimension(TD_TEXTURE_1D);
   setInternalFormat(format);
   setBorder(border);
@@ -74,7 +73,6 @@ Texture::Texture(int width, int height, ETextureFormat format, bool border)
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mTexParameter = new TexParameter;
   setDimension(TD_TEXTURE_2D);
   setInternalFormat(format);
   setBorder(border);
@@ -94,7 +92,6 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mTexParameter = new TexParameter;
   setDimension(TD_TEXTURE_3D);
   setInternalFormat(format);
   setBorder(border);
@@ -119,7 +116,6 @@ Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mTexParameter = new TexParameter;
 
   if (image && image->isValid())
   {
@@ -143,7 +139,6 @@ Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps ,
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mTexParameter = new TexParameter;
 
   ref<Image> image = vl::loadImage(image_path);
 
@@ -169,7 +164,6 @@ Texture::Texture():
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mTexParameter = new TexParameter;
 }
 //-----------------------------------------------------------------------------
 bool Texture::isValid() const
