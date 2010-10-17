@@ -71,45 +71,51 @@ namespace vl
 
     virtual const char* className() { return "ClipPlane"; }
 
-    virtual void disable() const { VL_CHECK(planeIndex()>=0 && planeIndex()<6); glDisable(GL_CLIP_PLANE0 + planeIndex()); }
-    virtual void enable () const { VL_CHECK(planeIndex()>=0 && planeIndex()<6); glEnable (GL_CLIP_PLANE0 + planeIndex()); }
-
     virtual ERenderState type() const { return (ERenderState)(RS_ClipPlane0 + planeIndex()); }
-    virtual void apply(const Camera* camera) const
-    // void applyClipPlane(const mat4& mat, int index = -1)
+
+    virtual void apply(const Camera* camera, OpenGLContext*) const
     {
-      VL_CHECK(planeIndex()>=0 && planeIndex()<6); 
+      VL_CHECK(planeIndex()>=0 && planeIndex()<6);
       // we do our own transformations
 
-      glMatrixMode(GL_MODELVIEW);
-      glPushMatrix();
+      if (camera)
+      {
+        glEnable(GL_CLIP_PLANE0 + planeIndex());
 
-      glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
 
-      mat4 mat;
-      if ( followedTransform() )
-        mat = camera->viewMatrix() * followedTransform()->worldMatrix();
+        glLoadIdentity();
 
-      vec3 pt1 = mPlane.normal() * mPlane.origin();
+        mat4 mat;
+        if ( followedTransform() )
+          mat = camera->viewMatrix() * followedTransform()->worldMatrix();
+
+        vec3 pt1 = mPlane.normal() * mPlane.origin();
         vec3 pt2 = mPlane.normal() * mPlane.origin() + mPlane.normal();
 
-      pt1 = mat * pt1;
-      pt2 = mat * pt2;
+        pt1 = mat * pt1;
+        pt2 = mat * pt2;
 
-      vec3 n = pt2 - pt1;
-      Real orig = dot(n, pt1);
+        vec3 n = pt2 - pt1;
+        Real orig = dot(n, pt1);
 
-      double equation[] = 
+        double equation[] = 
+        {
+          (double)n.x(),
+          (double)n.y(),
+          (double)n.z(),
+          -(double)orig
+        };
+
+        glClipPlane(GL_CLIP_PLANE0 + planeIndex(), equation);
+
+        glPopMatrix();
+      }
+      else
       {
-        (double)n.x(),
-        (double)n.y(),
-        (double)n.z(),
-        -(double)orig
-      };
-
-      glClipPlane(GL_CLIP_PLANE0 + planeIndex(), equation);
-
-      glPopMatrix();
+        glDisable(GL_CLIP_PLANE0 + planeIndex());
+      }
     }
 
     void followTransform(Transform* transform) { mFollowedTransform = transform; }
