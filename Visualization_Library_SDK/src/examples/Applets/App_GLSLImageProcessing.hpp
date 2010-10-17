@@ -46,9 +46,9 @@ public:
 
   virtual void initEvent()
   {
-    if (!GLEW_ARB_shading_language_100)
+    if (!(GLEW_ARB_shading_language_100||GLEW_VERSION_3_0))
     {
-      vl::Log::error("GLEW_ARB_shading_language_100 not supported.\n");
+      vl::Log::error("OpenGL Shading Language not supported.\n");
       vl::Time::sleep(3000);
       exit(1);
     }
