@@ -100,7 +100,7 @@ namespace vl
 
     virtual ERenderState type() const { return RS_PixelTransfer; }
 
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     bool mapColor() const { return mMapColor; }
     bool mapStencil() const { return mMapStencil; }
@@ -219,7 +219,7 @@ namespace vl
 
     virtual ERenderState type() const { return RS_Hint; }
 
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     void setPerspectiveCorrectionHint(EHintMode mode) { mPerspectiveCorrectionHint = mode; }
     void setPolygonSmoohtHint(EHintMode mode) { mPolygonSmoothHint = mode; }
@@ -261,7 +261,7 @@ namespace vl
     }
     virtual const char* className() { return "CullFace"; }
     virtual ERenderState type() const { return RS_CullFace; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonFace facemode) { mFaceMode = facemode; }
     EPolygonFace faceMode() const { return mFaceMode; }
   protected:
@@ -285,7 +285,7 @@ namespace vl
     }
     virtual const char* className() { return "FrontFace"; }
     virtual ERenderState type() const { return RS_FrontFace; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EFrontFace frontface) { mFrontFace = frontface; }
     EFrontFace frontFace() const { return mFrontFace; }
   protected:
@@ -309,7 +309,7 @@ namespace vl
     }
     virtual const char* className() { return "DepthFunc"; }
     virtual ERenderState type() const { return RS_DepthFunc; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EFunction depthfunc) { mDepthFunc = depthfunc; }
     EFunction depthFunc() const { return mDepthFunc; }
   protected:
@@ -333,7 +333,7 @@ namespace vl
     }
     virtual const char* className() { return "DepthMask"; }
     virtual ERenderState type() const { return RS_DepthMask; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(bool depthmask) { mDepthMask = depthmask; }
     bool depthMask() const { return mDepthMask; }
   protected:
@@ -357,7 +357,7 @@ namespace vl
     }
     virtual const char* className() { return "PlygonMode"; }
     virtual ERenderState type() const { return RS_PolygonMode; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonMode frontface, EPolygonMode backface) { mFrontFace = frontface; mBackFace = backface; }
     void setFrontFace(EPolygonMode frontface) { mFrontFace = frontface; }
     void setBackFace(EPolygonMode backface) { mBackFace = backface; }
@@ -385,7 +385,7 @@ namespace vl
     }
     virtual const char* className() { return "ShadeModel"; }
     virtual ERenderState type() const { return RS_ShadeModel; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EShadeModel shademodel) { mShadeModel = shademodel; }
     EShadeModel shadeModel() const { return mShadeModel; }
   protected:
@@ -411,7 +411,7 @@ namespace vl
     virtual const char* className() { return "BlendFunc"; }
     virtual ERenderState type() const { return RS_BlendFunc; }
     // if glBlendFuncSeparate is not supported uses RGB factor for both RGB and Alpha
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EBlendFactor src_rgb, EBlendFactor dst_rgb, EBlendFactor src_alpha, EBlendFactor dst_alpha) { mSrcRGB = src_rgb; mSrcAlpha = src_alpha; mDstRGB = dst_rgb; mDstAlpha = dst_alpha; }
     void set(EBlendFactor src_rgba, EBlendFactor dst_rgba) { mSrcRGB = src_rgba; mSrcAlpha = src_rgba; mDstRGB = dst_rgba; mDstAlpha = dst_rgba; }
     void setSrcRGB(EBlendFactor factor) { mSrcRGB = factor; }
@@ -449,7 +449,7 @@ namespace vl
     virtual const char* className() { return "BlendEquation"; }
     virtual ERenderState type() const { return RS_BlendEquation; }
     // if glBlendEquationSeparate is not supported uses RGB mode for both RGB and Alpha
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EBlendEquation mode_rgba) { mModeRGB = mode_rgba; mModeAlpha = mode_rgba; }
     void set(EBlendEquation mode_rgb, EBlendEquation mode_alpha) { mModeRGB = mode_rgb; mModeAlpha = mode_alpha; }
     EBlendEquation modeRGB() const { return mModeRGB; }
@@ -476,7 +476,7 @@ namespace vl
     }
     virtual const char* className() { return "SampleCoverage"; }
     virtual ERenderState type() const { return RS_SampleCoverage; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(GLclampf value, bool invert) { mValue = value; mInvert = invert; }
     void setValue(GLclampf value) { mValue = value; }
     void setInvert(bool invert) { mInvert = invert; }
@@ -504,7 +504,7 @@ namespace vl
     }
     virtual const char* className() { return "AlphaFunc"; }
     virtual ERenderState type() const { return RS_AlphaFunc; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EFunction alphafunc, float ref_value) { mAlphaFunc = alphafunc; mRefValue = ref_value; }
     EFunction alphaFunc() const { return mAlphaFunc; }
     float refValue() const { return mRefValue; }
@@ -525,7 +525,7 @@ namespace vl
     Material();
     virtual const char* className() { return "Material"; }
     virtual ERenderState type() const { return RS_Material; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     void setTransparency(float alpha);
     void setFrontTransparency(float alpha);
@@ -604,7 +604,7 @@ namespace vl
     }
     virtual const char* className() { return "LightModel"; }
     virtual ERenderState type() const { return RS_LightModel; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void setLocalViewer(bool localviewer) { mLocalViewer = localviewer; }
     void setTwoSide(bool twoside) { mTwoSide = twoside; }
     void setColorControl(EColorControl colorcontrol) { mColorControl = colorcontrol; }
@@ -638,7 +638,7 @@ namespace vl
     }
     virtual const char* className() { return "Fog"; }
     virtual ERenderState type() const { return RS_Fog; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EFogMode mode, fvec4 color, float density, float start, float end) { mColor = color; mMode = mode; mDensity = density; mStart = start; mEnd = end; }
     void setColor(fvec4 color) { mColor = color; }
     void setMode(EFogMode mode) { mMode = mode; }
@@ -676,7 +676,7 @@ namespace vl
     virtual const char* className() { return "PolygonOffset"; }
     virtual ERenderState type() const { return RS_PolygonOffset; }
     PolygonOffset(float factor, float units): mFactor(factor), mUnits(units) {}
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(float factor, float units) { mFactor = factor; mUnits = units; }
     void setFactor(float factor) { mFactor = factor; }
     void setUnits(float units) { mUnits = units; }
@@ -704,7 +704,7 @@ namespace vl
     }
     virtual const char* className() { return "LogicOp"; }
     virtual ERenderState type() const { return RS_LogicOp; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(ELogicOp logicop) { mLogicOp = logicop; }
     ELogicOp logicOp() const { return mLogicOp; }
   protected:
@@ -734,7 +734,7 @@ namespace vl
     }
     virtual const char* className() { return "DepthRange"; }
     virtual ERenderState type() const { return RS_DepthRange; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(float znear, float zfar) { mZNear = znear; mZFar = zfar; }
     void setZNear(float znear) { mZNear = znear; }
     void setZFar(float zfar) { mZFar = zfar; }
@@ -762,7 +762,7 @@ namespace vl
     }
     virtual const char* className() { return "LineWidth"; }
     virtual ERenderState type() const { return RS_LineWidth; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(float linewidth) { mLineWidth = linewidth; }
     float lineWidth() const { return mLineWidth; }
   protected:
@@ -786,7 +786,7 @@ namespace vl
     }
     virtual const char* className() { return "PointSize"; }
     virtual ERenderState type() const { return RS_PointSize; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(float pointsize) { mPointSize = pointsize; }
     float pointSize() const { return mPointSize; }
   protected:
@@ -806,7 +806,7 @@ namespace vl
     PolygonStipple(const unsigned char* mask);
     virtual const char* className() { return "PolygonStipple"; }
     virtual ERenderState type() const { return RS_PolygonStipple; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(const unsigned char* mask);
     const unsigned char* mask() const { return mMask; }
   protected:
@@ -830,7 +830,7 @@ namespace vl
     }
     virtual const char* className() { return "LineStipple"; }
     virtual ERenderState type() const { return RS_LineStipple; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(int factor, GLushort pattern) { mFactor = factor; mPattern = pattern; }
     void setFactor(int factor) { mFactor = factor; }
     void setPattern(GLushort pattern) { mPattern = pattern; }
@@ -859,7 +859,7 @@ namespace vl
     }
     virtual const char* className() { return "PointParameter"; }
     virtual ERenderState type() const { return RS_PointParameter; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(float sizemin, float sizemax, float fadethresholdsize, fvec3 distanceattenuation) { mDistanceAttenuation = distanceattenuation; mSizeMin = sizemin; mSizeMax = sizemax; mFadeThresholdSize = fadethresholdsize; }
     void setDistanceAttenuation(fvec3 attenuation) { mDistanceAttenuation = attenuation; }
     void setSizeMin(float sizemin) { mSizeMin = sizemin; }
@@ -898,7 +898,7 @@ namespace vl
     }
     virtual const char* className() { return "StencilFunc"; }
     virtual ERenderState type() const { return RS_StencilFunc; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonFace face, EFunction function, int refvalue, unsigned int mask) 
     { 
       if (face == PF_FRONT || face == PF_FRONT_AND_BACK)
@@ -951,7 +951,7 @@ namespace vl
     }
     virtual const char* className() { return "StencilOp"; }
     virtual ERenderState type() const { return RS_StencilOp; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonFace face, EStencilOp sfail, EStencilOp dpfail, EStencilOp dppass) 
     { 
       if (face == PF_FRONT || face == PF_FRONT_AND_BACK)
@@ -1001,7 +1001,7 @@ namespace vl
     }
     virtual const char* className() { return "StencilMask"; }
     virtual ERenderState type() const { return RS_StencilMask; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonFace face, unsigned int mask) 
     { 
       if (face == PF_FRONT || face == PF_FRONT_AND_BACK)
@@ -1033,7 +1033,7 @@ namespace vl
     }
     virtual const char* className() { return "BlendColor"; }
     virtual ERenderState type() const { return RS_BlendColor; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(fvec4 blendcolor) { mBlendColor = blendcolor; }
     fvec4 blendColor() const { return mBlendColor; }
   protected:
@@ -1057,7 +1057,7 @@ namespace vl
     }
     virtual const char* className() { return "ColorMask"; }
     virtual ERenderState type() const { return RS_ColorMask; }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
     void set(bool red, bool green, bool blue, bool alpha) { mRed = red; mGreen = green; mBlue = blue; mAlpha = alpha; }
     void setRed(bool red) { mRed = red; }
     void setGreen(bool green) { mGreen = green; }
@@ -1087,7 +1087,7 @@ namespace vl
     virtual const char* className() { return "TextureMatrix"; }
     TextureMatrix(int texunit) { mTextureUnit=texunit; mUseCameraRotationInverse = false; }
     virtual ERenderState type() const { return (ERenderState)(RS_TextureMatrix0 + mTextureUnit); }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     const mat4& matrix() const { return mMatrix; }
     const TextureMatrix& setMatrix(const mat4& matrix)
@@ -1129,7 +1129,7 @@ namespace vl
     TexEnv(int texunit);
     virtual const char* className() { return "TexEnv"; }
     virtual ERenderState type() const { return (ERenderState)(RS_TexEnv0 + mTextureUnit); }
-    virtual void apply(const Camera*) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     void setMode(ETexEnvMode mode) { mMode = mode; }
     ETexEnvMode mode() const { return mMode; }
@@ -1217,8 +1217,7 @@ namespace vl
     virtual const char* className() { return "TexGen"; }
 
     virtual ERenderState type() const { return (ERenderState)(RS_TexGen0 + mTextureUnit); }
-    virtual void apply(const Camera*) const;
-    // void apply(bool s, bool t, bool r, bool q) const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     void setEyePlaneS(fvec4 plane) { mEyePlaneS = plane; }
     void setObjectPlaneS(fvec4 plane) { mObjectPlaneS = plane; }
@@ -1283,9 +1282,7 @@ namespace vl
     }
 
     virtual ERenderState type() const { return (ERenderState)(RS_TextureUnit0 + textureUnit()); }
-    virtual void apply(const Camera*) const;
-    virtual void disable() const;
-    virtual void enable()  const;
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     virtual void initResources();
 
