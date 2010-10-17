@@ -196,9 +196,16 @@ void VisualizationLibrary::init()
   logger()->setLogFile( envVars()->value("VL_LOGFILE_PATH") );
   Log::setLogger( logger() );
 
-  Log::print("**********************************\n");
-  Log::print("*  VisualizationLibrary::init()  *\n");
-  Log::print("**********************************\n");
+#if defined(_MSC_VER)
+  std::string compiler = "MSVC";
+#elif defined(__GNUG__)
+  std::string compiler = "GCC";
+#else
+  std::string compiler = "UNKNOWN";
+#endif
+
+  Time time;
+  Log::print( Say("Visualization Library v%n.%n.%n\%s - %s - %s compiler.\n\n") << VL_Major << VL_Minor << VL_Build << __DATE__ << __TIME__ << compiler );
 
   FT_Error error = FT_Init_FreeType( &VisualizationLibraryInstance::singleton()->mFreeTypeLibrary );
   if ( error )
