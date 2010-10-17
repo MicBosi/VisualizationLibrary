@@ -212,7 +212,7 @@ namespace vl
     bool useProgram() const;
 
     //! Calls useProgram()
-    void apply(const Camera*) const;
+    void apply(const Camera*, OpenGLContext* ctx) const;
 
     //! Calls linkProgram() and applyes this program's uniforms.
     //! \sa setUniform() setUniformSet() uniformSet()
@@ -256,8 +256,8 @@ namespace vl
     //! \note The program must be linked before calling this function.
     int getAttribLocation(const char* name) const
     {
-      VL_WARN(GLEW_ARB_shading_language_100)
-      if (!GLEW_ARB_shading_language_100)
+      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
         return -1;
       VL_CHECK(handle())
       VL_CHECK(linked())
@@ -313,8 +313,8 @@ namespace vl
     */
     int getUniformLocation(const std::string& name) const
     {
-      VL_WARN(GLEW_ARB_shading_language_100)
-      if (!GLEW_ARB_shading_language_100)
+      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
         return -1;
       VL_CHECK(linked())
       VL_CHECK(handle())
@@ -332,8 +332,8 @@ namespace vl
     //! Equivalent to glGetUniformfv(handle(), location, params)
     void getUniformfv(int location, float* params) const
     {
-      VL_WARN(GLEW_ARB_shading_language_100)
-      if (!GLEW_ARB_shading_language_100)
+      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
@@ -344,8 +344,8 @@ namespace vl
     //! Equivalent to glGetUniformiv(handle(), location, params)
     void getUniformiv(int location, int* params) const
     {
-      VL_WARN(GLEW_ARB_shading_language_100)
-      if (!GLEW_ARB_shading_language_100)
+      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
