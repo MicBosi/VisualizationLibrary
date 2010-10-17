@@ -135,9 +135,14 @@ namespace vl
 
     OpenGLContext* mOpenGLContext;
 
+    // used to reset the OpenGL states & enables at the end of the rendering.
+    vl::ref<EnableSet> mDummyEnables;
+    vl::ref<RenderStateSet> mDummyStateSet;
+
     bool mOcclusionCullingEnabled;
+    // mic fixme
     // shader used to render proxy shapes during occlusion cull tests
-    ref<Shader> mOcclusionShader;
+    // ref<Shader> mOcclusionShader;
     int mOcclusionThreshold;
     unsigned mOcclusionQueryTick;
     unsigned mOcclusionQueryTickPrev;
