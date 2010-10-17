@@ -58,7 +58,6 @@ void EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera)
   if (smoothLines())
   {
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_LINE_SMOOTH);
   }
   renderLines(camera);
@@ -72,7 +71,6 @@ void EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera)
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_LINE_STIPPLE);
   glDisable(GL_BLEND);
-  glBlendFunc(GL_ONE, GL_ZERO);
   glLineWidth(1.0f);
 }
 //-----------------------------------------------------------------------------
