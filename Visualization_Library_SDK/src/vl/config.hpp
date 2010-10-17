@@ -125,7 +125,7 @@
  * - minimum = 1
  * - maximum = OpenGL implementation dependent
  */
-#define VL_MAX_TEXTURE_UNIT_COUNT 16
+#define VL_MAX_TEXTURE_UNITS 16
 
 
 /**
