@@ -392,6 +392,7 @@ namespace vl
 
   typedef enum 
   { 
+    TD_TEXTURE_UNKNOWN = 0,
     TD_TEXTURE_1D = GL_TEXTURE_1D, 
     TD_TEXTURE_2D = GL_TEXTURE_2D, 
     TD_TEXTURE_3D = GL_TEXTURE_3D, 
@@ -710,6 +711,15 @@ namespace vl
     EN_VERTEX_PROGRAM_POINT_SIZE, //!< If enabled, and a vertex shader is active, then the derived point size is taken from the (potentially clipped) shader builtin \p gl_PointSize and clamped to the implementation-dependent point size range|
     EN_VERTEX_PROGRAM_TWO_SIDE, //!< If enabled, and a vertex shader is active, it specifies that the GL will choose between front and back colors based on the polygon's face direction of which the vertex being shaded is a part; It has no effect on points or lines.
 
+    // OpenGL 3
+    EN_TEXTURE_CUBE_MAP_SEAMLESS,
+    EN_GL_CLIP_DISTANCE0,
+    EN_GL_CLIP_DISTANCE1,
+    EN_GL_CLIP_DISTANCE2,
+    EN_GL_CLIP_DISTANCE3,
+    EN_GL_CLIP_DISTANCE4,
+    EN_GL_CLIP_DISTANCE5,
+
     // multisampling
     EN_MULTISAMPLE, //!< If enabled, use multiple fragment samples in computing the final color of a pixel, see also SampleCoverage.
     EN_SAMPLE_ALPHA_TO_COVERAGE, //!< If enabled, compute a temporary coverage value where each bit is determined by the alpha value at the corresponding sample location; The temporary coverage value is then ANDed with the fragment coverage value.
@@ -849,16 +859,16 @@ namespace vl
     RS_TextureUnit0,
     /* ... */
 
-    RS_TexGen0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNIT_COUNT*1,
+    RS_TexGen0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS*1,
     /* ... */
 
-    RS_TexEnv0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNIT_COUNT*2,
+    RS_TexEnv0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS*2,
     /* ... */
 
-    RS_TextureMatrix0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNIT_COUNT*3,
+    RS_TextureMatrix0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS*3,
     /* ... */
 
-    RS_COUNT = RS_TextureUnit0 + VL_MAX_TEXTURE_UNIT_COUNT*4,
+    RS_COUNT = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS*4,
     RS_NONE,
 
   } ERenderState;
