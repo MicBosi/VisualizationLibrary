@@ -55,10 +55,8 @@ namespace vl
     virtual const char* className() { return "Light"; }
 
     virtual ERenderState type() const { return (ERenderState)(RS_Light0 + lightIndex()); }
-    virtual void apply(const Camera*) const;
 
-    virtual void disable() const { glDisable(GL_LIGHT0 + lightIndex()); }
-    virtual void enable () const { glEnable (GL_LIGHT0 + lightIndex()); }
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     void setAmbient(const fvec4& ambientcolor) { mAmbient = ambientcolor; }
     const fvec4& ambient() const { return mAmbient; }

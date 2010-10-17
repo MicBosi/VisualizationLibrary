@@ -70,47 +70,56 @@ void Light::setLightIndex(int light_index)
   mLightIndex = light_index; 
 }
 //------------------------------------------------------------------------------
-void Light::apply(const Camera* camera) const
+void Light::apply(const Camera* camera, OpenGLContext* ctx) const
 {
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
+  if (camera)
+  {
+    glEnable (GL_LIGHT0 + lightIndex());
 
-  // follows the given node
-  if ( followedTransform() )
-    camera->applyModelViewMatrix( followedTransform()->worldMatrix() );
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+
+    // follows the given node
+    if ( followedTransform() )
+      camera->applyModelViewMatrix( followedTransform()->worldMatrix() );
+    else
+    {
+      // follows the camera
+      /*glMatrixMode(GL_MODELVIEW);*/
+      glLoadIdentity();
+    }
+
+    glLightfv(GL_LIGHT0+lightIndex(), GL_AMBIENT,  mAmbient.ptr());
+    glLightfv(GL_LIGHT0+lightIndex(), GL_DIFFUSE,  mDiffuse.ptr());
+    glLightfv(GL_LIGHT0+lightIndex(), GL_SPECULAR, mSpecular.ptr());
+    glLightfv(GL_LIGHT0+lightIndex(), GL_POSITION, mPosition.ptr());
+
+    glLightf(GL_LIGHT0+lightIndex(), GL_SPOT_CUTOFF, mSpotCutoff);
+
+    // if its a spot light
+    if (mSpotCutoff != 180.0f) 
+    {
+      VL_CHECK(mSpotCutoff>=0.0f && mSpotCutoff<=90.0f);
+      glLightfv(GL_LIGHT0+lightIndex(), GL_SPOT_DIRECTION, mSpotDirection.ptr());
+      glLightf(GL_LIGHT0+lightIndex(), GL_SPOT_EXPONENT, mSpotExponent);
+    }
+
+    // if positional or spot light compute the attenuation factors, that is
+    // attenuation is useless of directional lights.
+    if (mSpotCutoff != 180.0f || mPosition.w() != 0)
+    {
+      glLightf(GL_LIGHT0+lightIndex(), GL_CONSTANT_ATTENUATION, mConstantAttenuation);
+      glLightf(GL_LIGHT0+lightIndex(), GL_LINEAR_ATTENUATION, mLinearAttenuation);
+      glLightf(GL_LIGHT0+lightIndex(), GL_QUADRATIC_ATTENUATION, mQuadraticAttenuation);
+    }
+
+    /*glMatrixMode(GL_MODELVIEW);*/
+    glPopMatrix();
+  }
   else
   {
-    // follows the camera
-    /*glMatrixMode(GL_MODELVIEW);*/
-    glLoadIdentity();
+    glDisable(GL_LIGHT0 + lightIndex());
   }
-
-  glLightfv(GL_LIGHT0+lightIndex(), GL_AMBIENT,  mAmbient.ptr());
-  glLightfv(GL_LIGHT0+lightIndex(), GL_DIFFUSE,  mDiffuse.ptr());
-  glLightfv(GL_LIGHT0+lightIndex(), GL_SPECULAR, mSpecular.ptr());
-  glLightfv(GL_LIGHT0+lightIndex(), GL_POSITION, mPosition.ptr());
-
-  glLightf(GL_LIGHT0+lightIndex(), GL_SPOT_CUTOFF, mSpotCutoff);
-
-  // if its a spot light
-  if (mSpotCutoff != 180.0f) 
-  {
-    VL_CHECK(mSpotCutoff>=0.0f && mSpotCutoff<=90.0f);
-    glLightfv(GL_LIGHT0+lightIndex(), GL_SPOT_DIRECTION, mSpotDirection.ptr());
-    glLightf(GL_LIGHT0+lightIndex(), GL_SPOT_EXPONENT, mSpotExponent);
-  }
-
-  // if positional or spot light compute the attenuation factors, that is
-  // attenuation is useless of directional lights.
-  if (mSpotCutoff != 180.0f || mPosition.w() != 0)
-  {
-    glLightf(GL_LIGHT0+lightIndex(), GL_CONSTANT_ATTENUATION, mConstantAttenuation);
-    glLightf(GL_LIGHT0+lightIndex(), GL_LINEAR_ATTENUATION, mLinearAttenuation);
-    glLightf(GL_LIGHT0+lightIndex(), GL_QUADRATIC_ATTENUATION, mQuadraticAttenuation);
-  }
-
-  /*glMatrixMode(GL_MODELVIEW);*/
-  glPopMatrix();
 }
 //------------------------------------------------------------------------------
 void Light::followTransform(Transform* transform) 
