@@ -75,8 +75,8 @@ void GLSLShader::setSource( const String& source )
 //-----------------------------------------------------------------------------
 bool GLSLShader::compile()
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
 
   if (!mCompiled)
@@ -120,8 +120,8 @@ bool GLSLShader::compile()
 //-----------------------------------------------------------------------------
 bool GLSLShader::compileStatus() const
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
   VL_CHECK(handle())
 
@@ -132,9 +132,9 @@ bool GLSLShader::compileStatus() const
 //-----------------------------------------------------------------------------
 String GLSLShader::infoLog() const
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
-    return "GLEW_ARB_shading_language_100 not supported.\n";
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
+    return "OpenGL Shading Language not supported.\n";
   VL_CHECK(handle())
 
   int max_length = 0;
@@ -148,8 +148,8 @@ String GLSLShader::infoLog() const
 //-----------------------------------------------------------------------------
 void GLSLShader::createShader()
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return;
   if (!handle())
   {
@@ -161,8 +161,8 @@ void GLSLShader::createShader()
 //------------------------------------------------------------------------------
 void GLSLShader::deleteShader()
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return;
   if (handle())
   {
@@ -194,8 +194,8 @@ GLSLProgram::~GLSLProgram()
 //-----------------------------------------------------------------------------
 void GLSLProgram::createProgram()
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return;
   if (handle() == 0)
   {
@@ -208,8 +208,8 @@ void GLSLProgram::createProgram()
 //-----------------------------------------------------------------------------
 void GLSLProgram::deleteProgram()
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return;
   if(handle())
   {
@@ -221,8 +221,8 @@ void GLSLProgram::deleteProgram()
 //-----------------------------------------------------------------------------
 bool GLSLProgram::attachShader(GLSLShader* shader)
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
   scheduleRelinking();
 
@@ -261,8 +261,8 @@ void GLSLProgram::detachAllShaders()
 // detaching a shader that has not been attached is allowed, and is a No-Op
 bool GLSLProgram::detachShader(GLSLShader* shader)
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
   if (!handle() || !shader->handle())
     return false;
@@ -293,8 +293,8 @@ void GLSLProgram::scheduleRelinking()
 //-----------------------------------------------------------------------------
 bool GLSLProgram::linkProgram(bool force_relink)
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
   VL_CHECK_OGL();
 
@@ -381,8 +381,8 @@ bool GLSLProgram::linkProgram(bool force_relink)
 //-----------------------------------------------------------------------------
 bool GLSLProgram::linkStatus() const
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
   VL_CHECK(handle()) // no shaders attached
 
@@ -395,9 +395,9 @@ bool GLSLProgram::linkStatus() const
 //-----------------------------------------------------------------------------
 String GLSLProgram::infoLog() const
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
-    return "GLEW_ARB_shading_language_100 not supported.\n";
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
+    return "OpenGL Shading Language not supported.\n";
   VL_CHECK(handle()) // no shaders attached
 
   if (handle() == 0)
@@ -413,8 +413,8 @@ String GLSLProgram::infoLog() const
 //-----------------------------------------------------------------------------
 bool GLSLProgram::validateProgram() const
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
   VL_CHECK(handle()) // no shaders attached
 
@@ -429,7 +429,7 @@ bool GLSLProgram::validateProgram() const
 //-----------------------------------------------------------------------------
 void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name)
 {
-  VL_CHECK(GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
 
   createProgram();
   scheduleRelinking();
@@ -438,8 +438,8 @@ void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name
 //-----------------------------------------------------------------------------
 int GLSLProgram::maxVertexAttributes()
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return 0;
 
   int max = 0;
@@ -449,8 +449,8 @@ int GLSLProgram::maxVertexAttributes()
 //-----------------------------------------------------------------------------
 bool GLSLProgram::useProgram() const
 {
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
   VL_CHECK(handle())
   VL_CHECK(linked())
@@ -466,9 +466,9 @@ bool GLSLProgram::useProgram() const
   return true;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::apply(const Camera*) const
+void GLSLProgram::apply(const Camera*, OpenGLContext* ctx) const
 {
-  if(GLEW_ARB_shading_language_100)
+  if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
   {
     if ( handle() )
       useProgram();
@@ -490,8 +490,8 @@ void GLSLProgram::initResources()
 bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 {
   VL_CHECK_OGL();
-  VL_WARN(GLEW_ARB_shading_language_100)
-  if (!GLEW_ARB_shading_language_100)
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
   if(!uniforms)
     return false;
