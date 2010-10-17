@@ -295,6 +295,7 @@ Win32Window* Win32Window::getWindow(HWND hWnd)
 //-----------------------------------------------------------------------------
 void Win32Window::destroy()
 {
+  Win32Context::destroy();
   /*dispatchDestroyEvent();*/
   destroyWindow();
 }
@@ -735,6 +736,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
         vl::Log::print( vl::Say("  double buffer = %s\n")  << (pfd.dwFlags & PFD_DOUBLEBUFFER ? "Yes" : "No") );
         vl::Log::print( vl::Say("  stereo        = %s\n")  << (pfd.dwFlags & PFD_STEREO ? "Yes" : "No") );
         vl::Log::print( vl::Say("  samples       = %n\n")  << samples );
+        vl::Log::print("\n");
       #endif
     }
   }
