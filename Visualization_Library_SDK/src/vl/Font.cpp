@@ -326,6 +326,7 @@ Glyph* Font::glyph(int character)
       unsigned int texhdl;
       glGenTextures( 1, &texhdl );
       glyph->setTextureHandle(texhdl);
+      VL_glActiveTexture(GL_TEXTURE0);
       glBindTexture( GL_TEXTURE_2D, glyph->textureHandle() );
 
       int texsize[] = { 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 0 };
@@ -438,6 +439,7 @@ Glyph* Font::glyph(int character)
       }
 
       VL_CHECK_OGL();
+      glBindTexture( GL_TEXTURE_2D, 0 );
     }
 
     glyph->setAdvance( fvec2( (float)mFT_Face->glyph->advance.x / 64.0f, (float)mFT_Face->glyph->advance.y / 64.0f ) );
