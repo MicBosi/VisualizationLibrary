@@ -73,10 +73,8 @@
 #include "Applets/App_Molecules.hpp"
 #include "Applets/App_EdgeRendering.hpp"
 #include "Applets/App_PortalCulling.hpp"
-#include "Applets/App_DepthOfField.hpp"
 #include "Applets/App_OcclusionCulling.hpp"
 #include "Applets/App_BezierSurfaces.hpp"
-#include "Applets/App_Serialization.hpp"
 #include "Applets/App_Picking.hpp"
 
 // win32 console for sdtout output
