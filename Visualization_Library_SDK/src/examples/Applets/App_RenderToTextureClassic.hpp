@@ -88,11 +88,6 @@ public:
     bindManipulators( mMainRendering.get() );
   }
 
-  //void resizeEvent(int, int)
-  //{
-  //  // ... don't resize the viewports
-  //}
-
   void addCube(vl::Texture* texture)
   {
     vl::ref<vl::Effect> effect = new vl::Effect;
