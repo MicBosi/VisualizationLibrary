@@ -38,6 +38,7 @@
 namespace vl
 {
   class Camera;
+  class OpenGLContext;
   //------------------------------------------------------------------------------
   // RenderState
   //------------------------------------------------------------------------------
@@ -57,9 +58,10 @@ namespace vl
       #endif
     }
     virtual ERenderState type() const { return RS_NONE; }
-    virtual void apply(const Camera*) const = 0;
-    virtual void disable() const {}
-    virtual void enable()  const {}
+
+    /** The parameter cameara is NULL if we are disabling the state, non-NULL if we are enabling it. */
+    virtual void apply(const Camera* camera, OpenGLContext* ctx) const = 0;
+
     // used by GLSLProgram to link the program and by TextureUnit to create the texture
     virtual void initResources() {}
   };
@@ -75,12 +77,11 @@ namespace vl
   {
   public:
     virtual const char* className() { return "TextureState"; }
-    TextureState() 
+    TextureState(): mTextureUnit(0)
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mTextureUnit = 0;
     }
     int textureUnit() const { return mTextureUnit; }
     void setUnitIndex(int unit_index) { mTextureUnit = unit_index; }
