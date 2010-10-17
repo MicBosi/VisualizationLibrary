@@ -69,15 +69,19 @@ Renderer::Renderer()
 
   mProjViewTranfCallback = new ProjViewTranfCallbackStandard;
 
+  mDummyEnables  = new EnableSet;
+  mDummyStateSet = new RenderStateSet;
+
   // occlusion culling shader
-  mOcclusionShader = new Shader;
-  mOcclusionShader->gocDepthMask()->set(false);
-  mOcclusionShader->gocColorMask()->set(false,false,false,false);
-  mOcclusionShader->enable(vl::EN_CULL_FACE);
-  mOcclusionShader->enable(vl::EN_DEPTH_TEST);
+  // mic fixme
+  //mOcclusionShader = new Shader;
+  //mOcclusionShader->gocDepthMask()->set(false);
+  //mOcclusionShader->gocColorMask()->set(false,false,false,false);
+  //mOcclusionShader->enable(vl::EN_CULL_FACE);
+  //mOcclusionShader->enable(vl::EN_DEPTH_TEST);
 }
 //------------------------------------------------------------------------------
-void Renderer::render(const RenderQueue* render_queue, Camera* camera)
+namespace
 {
   struct ShaderInfo
   {
@@ -98,7 +102,10 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
     const UniformSet* mShaderUniformSet;
     const UniformSet* mActorUniformSet;
   };
-
+}
+//------------------------------------------------------------------------------
+void Renderer::render(const RenderQueue* render_queue, Camera* camera)
+{
   std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
 
   VL_CHECK_OGL()
@@ -160,12 +167,25 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
     // --------------- occlusion culling ---------------
 
-    // fixme - occlusion culling disabled for now until the transition to the new architecture is finalized.
+    // mic fixme - occlusion culling disabled for now until the transition to the new architecture is finalized.
+
+    // New Occlusion Culling System: occludee devono essere messi in un rendering a parte e renderizzati
+    // con un unico occlusion-shader, this way: 
+    // 1) occluder rendering(normal shader)
+    // 2) occludee rendering(occlusion shader)
+    // 3) occludee rendering(normal shader) if previous occlusion query returns the object is visible
+    // nota che i passi 1, 2, 3 non e' per-actor, ma prima si renderizzano tutti gli occluders, poi tutti i 
+    // candidati occludee con occluder shader, poi di nuovo tutti gli occludee non occlusi con il loro shader normale.
+
+    // ... forse si dovrebbero sintetizzare dei RenderToken al volo ... 
+    // ... lasciare l'utente definire degli OcclusionQueryGeometry  ...
+    // ... quando l'occludee e' renderizzato l'occlusion query va fatta prima di settare shaders, states etc.
+
     /*
     bool occluded = false;
     if ( occlusionCullingEnabled() && !tok->mActor->boundingBox().isInside(eye) )
     {
-      VL_WARN(GLEW_ARB_occlusion_query || GLEW_VERSION_1_5)
+      VL_CHECK(GLEW_ARB_occlusion_query || GLEW_VERSION_1_5 || GLEW_VERSION_3_0)
 
       if ( tok->mActor->occlusionQuery() && tok->mActor->occlusionQueryTick() == mOcclusionQueryTickPrev )
       {
@@ -331,11 +351,15 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
       // --- update proj, view and transform matrices ---
 
+      VL_CHECK_OGL()
+
       if (is_first_use) // note: 'is_first_overall' implies 'is_first_use'
         projViewTransfCallback()->programFirstUse(this, cur_glsl_program, cur_transform, camera, is_first_overall);
       else
       if (update_tr)
         projViewTransfCallback()->programTransfChange(this, cur_glsl_program, cur_transform, camera);
+
+      VL_CHECK_OGL()
 
       // --- uniforms ---
 
@@ -348,6 +372,8 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
         VL_CHECK( tok->mShader->getRenderStateSet()->glslProgram() && tok->mShader->getRenderStateSet()->glslProgram()->handle() )
         tok->mShader->getRenderStateSet()->glslProgram()->applyUniformSet( cur_shader_uniform_set );
       }
+
+      VL_CHECK_OGL()
 
       // actor uniform set
       if ( update_au )
@@ -390,6 +416,12 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
       VL_CHECK_OGL()
     }
   }
+
+  // clear enables
+  openglContext()->applyEnables(cur_enable_set, mDummyEnables.get() );
+
+  // clear render states
+  openglContext()->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), camera );
 
   glDisable(GL_SCISSOR_TEST);
 }
