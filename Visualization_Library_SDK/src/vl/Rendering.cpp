@@ -124,9 +124,6 @@ void Rendering::render()
   // render states ]shield[
 
   renderTarget()->openglContext()->resetContextStates(); 
-  // must be called glPushAttrib() to be safe with FBO
-  glPushAttrib(GL_ALL_ATTRIB_BITS); VL_CHECK_OGL();
-  glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS); VL_CHECK_OGL();
 
   // pre rendering callback
 
@@ -213,10 +210,6 @@ void Rendering::render()
   // render states ]shield[
 
   renderTarget()->openglContext()->resetContextStates(); 
-  // must be called glPopAttrib() to be safe with FBO
-  // mic fixme: remove these if possible!
-  glPopAttrib(); VL_CHECK_OGL();
-  glPopClientAttrib(); VL_CHECK_OGL();
 
   VL_CHECK_OGL()
 }
