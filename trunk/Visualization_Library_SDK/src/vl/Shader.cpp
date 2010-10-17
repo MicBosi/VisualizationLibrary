@@ -35,6 +35,7 @@
 #include <vl/ClipPlane.hpp>
 #include <vl/Texture.hpp>
 #include <vl/Scissor.hpp>
+#include <vl/OpenGLContext.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
 
@@ -174,7 +175,7 @@ TextureMatrix* Shader::gocTextureMatrix(int unit_index) { GET_OR_CREATE_IDX(Text
 //------------------------------------------------------------------------------
 // PixelTransfer
 //------------------------------------------------------------------------------
-void PixelTransfer::apply(const Camera*) const
+void PixelTransfer::apply(const Camera*, OpenGLContext*) const
 {
   glPixelTransferi(GL_MAP_COLOR, mapColor() ? GL_TRUE : GL_FALSE);
   glPixelTransferi(GL_MAP_STENCIL, mapStencil() ? GL_TRUE : GL_FALSE);
@@ -215,7 +216,7 @@ void PixelTransfer::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // Hint
 //------------------------------------------------------------------------------
-void Hint::apply(const Camera*) const
+void Hint::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL()
   glHint( GL_PERSPECTIVE_CORRECTION_HINT, mPerspectiveCorrectionHint );
@@ -230,35 +231,35 @@ void Hint::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // CullFace
 //------------------------------------------------------------------------------
-void CullFace::apply(const Camera*) const
+void CullFace::apply(const Camera*, OpenGLContext*) const
 {
   glCullFace(mFaceMode); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // FrontFace
 //------------------------------------------------------------------------------
-void FrontFace::apply(const Camera*) const
+void FrontFace::apply(const Camera*, OpenGLContext*) const
 {
   glFrontFace(mFrontFace); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // DepthFunc
 //------------------------------------------------------------------------------
-void DepthFunc::apply(const Camera*) const
+void DepthFunc::apply(const Camera*, OpenGLContext*) const
 {
   glDepthFunc(mDepthFunc); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // DepthMask
 //------------------------------------------------------------------------------
-void DepthMask::apply(const Camera*) const
+void DepthMask::apply(const Camera*, OpenGLContext*) const
 {
   glDepthMask(mDepthMask?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PolygonMode
 //------------------------------------------------------------------------------
-void PolygonMode::apply(const Camera*) const
+void PolygonMode::apply(const Camera*, OpenGLContext*) const
 {
   glPolygonMode(GL_FRONT, mFrontFace); VL_CHECK_OGL()
   glPolygonMode(GL_BACK, mBackFace); VL_CHECK_OGL()
@@ -266,14 +267,14 @@ void PolygonMode::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // ShadeModel
 //------------------------------------------------------------------------------
-void ShadeModel::apply(const Camera*) const
+void ShadeModel::apply(const Camera*, OpenGLContext*) const
 {
   glShadeModel(mShadeModel); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // BlendFunc
 //------------------------------------------------------------------------------
-void BlendFunc::apply(const Camera*) const
+void BlendFunc::apply(const Camera*, OpenGLContext*) const
 {
   if (GLEW_VERSION_1_4||GLEW_EXT_blend_func_separate)
     { VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL() }
@@ -283,7 +284,7 @@ void BlendFunc::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // BlendEquation
 //------------------------------------------------------------------------------
-void BlendEquation::apply(const Camera*) const
+void BlendEquation::apply(const Camera*, OpenGLContext*) const
 {
   if (GLEW_VERSION_2_0||GLEW_EXT_blend_equation_separate)
     { VL_glBlendEquationSeparate(mModeRGB, mModeAlpha); VL_CHECK_OGL() }
@@ -293,7 +294,7 @@ void BlendEquation::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // AlphaFunc
 //------------------------------------------------------------------------------
-void AlphaFunc::apply(const Camera*) const
+void AlphaFunc::apply(const Camera*, OpenGLContext*) const
 {
   glAlphaFunc(mAlphaFunc, mRefValue); VL_CHECK_OGL()
 }
@@ -372,7 +373,7 @@ void Material::setFlatColor(const fvec4& color)
   setBackFlatColor(color);
 }
 //------------------------------------------------------------------------------
-void Material::apply(const Camera*) const
+void Material::apply(const Camera*, OpenGLContext*) const
 {
   if (mColorMaterialEnabled)
   {
@@ -397,7 +398,7 @@ void Material::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // LightModel
 //------------------------------------------------------------------------------
-void LightModel::apply(const Camera*) const
+void LightModel::apply(const Camera*, OpenGLContext*) const
 {
   if (GLEW_VERSION_1_2||GLEW_EXT_separate_specular_color)
     { glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, mColorControl); VL_CHECK_OGL() }
@@ -409,7 +410,7 @@ void LightModel::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // Fog
 //------------------------------------------------------------------------------
-void Fog::apply(const Camera*) const
+void Fog::apply(const Camera*, OpenGLContext*) const
 {
   glFogi(GL_FOG_MODE, mMode); VL_CHECK_OGL()
   glFogfv(GL_FOG_COLOR, mColor.ptr()); VL_CHECK_OGL()
@@ -420,35 +421,35 @@ void Fog::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // PolygonOffset
 //------------------------------------------------------------------------------
-void PolygonOffset::apply(const Camera*) const
+void PolygonOffset::apply(const Camera*, OpenGLContext*) const
 {
   glPolygonOffset(mFactor, mUnits); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // LogicOp
 //------------------------------------------------------------------------------
-void LogicOp::apply(const Camera*) const
+void LogicOp::apply(const Camera*, OpenGLContext*) const
 {
   glLogicOp(mLogicOp); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // DepthRange
 //------------------------------------------------------------------------------
-void DepthRange::apply(const Camera*) const
+void DepthRange::apply(const Camera*, OpenGLContext*) const
 {
   glDepthRange(mZNear, mZFar); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // LineWidth
 //------------------------------------------------------------------------------
-void LineWidth::apply(const Camera*) const
+void LineWidth::apply(const Camera*, OpenGLContext*) const
 {
   glLineWidth(mLineWidth); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PointSize
 //------------------------------------------------------------------------------
-void PointSize::apply(const Camera*) const
+void PointSize::apply(const Camera*, OpenGLContext*) const
 {
   glPointSize(mPointSize); VL_CHECK_OGL()
 }
@@ -476,21 +477,21 @@ void PolygonStipple::set(const unsigned char* mask)
   memcpy(mMask, mask, sizeof(unsigned char)*32*32/8);
 }
 //------------------------------------------------------------------------------
-void PolygonStipple::apply(const Camera*) const
+void PolygonStipple::apply(const Camera*, OpenGLContext*) const
 {
   glPolygonStipple(mask()); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // LineStipple
 //------------------------------------------------------------------------------
-void LineStipple::apply(const Camera*) const
+void LineStipple::apply(const Camera*, OpenGLContext*) const
 {
   glLineStipple(mFactor, mPattern); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PointParameter
 //------------------------------------------------------------------------------
-void PointParameter::apply(const Camera*) const
+void PointParameter::apply(const Camera*, OpenGLContext*) const
 {
   VL_glPointParameterf(GL_POINT_SIZE_MIN, mSizeMin); VL_CHECK_OGL()
   VL_glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
@@ -500,7 +501,7 @@ void PointParameter::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // StencilFunc
 //------------------------------------------------------------------------------
-void StencilFunc::apply(const Camera*) const
+void StencilFunc::apply(const Camera*, OpenGLContext*) const
 {
   if(GLEW_VERSION_2_0)
   {
@@ -515,7 +516,7 @@ void StencilFunc::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // StencilOp
 //------------------------------------------------------------------------------
-void StencilOp::apply(const Camera*) const
+void StencilOp::apply(const Camera*, OpenGLContext*) const
 {
   if(GLEW_VERSION_2_0)
   {
@@ -530,7 +531,7 @@ void StencilOp::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // StencilMask
 //------------------------------------------------------------------------------
-void StencilMask::apply(const Camera*) const
+void StencilMask::apply(const Camera*, OpenGLContext*) const
 {
   if(GLEW_VERSION_2_0)
   {
@@ -545,21 +546,21 @@ void StencilMask::apply(const Camera*) const
 //------------------------------------------------------------------------------
 // BlendColor
 //------------------------------------------------------------------------------
-void BlendColor::apply(const Camera*) const
+void BlendColor::apply(const Camera*, OpenGLContext*) const
 {
   VL_glBlendColor(mBlendColor.r(), mBlendColor.g(), mBlendColor.b(), mBlendColor.a()); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // ColorMask
 //------------------------------------------------------------------------------
-void ColorMask::apply(const Camera*) const
+void ColorMask::apply(const Camera*, OpenGLContext*) const
 {
   glColorMask(mRed?GL_TRUE:GL_FALSE, mGreen?GL_TRUE:GL_FALSE, mBlue?GL_TRUE:GL_FALSE, mAlpha?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // SampleCoverage
 //------------------------------------------------------------------------------
-void SampleCoverage::apply(const Camera*) const
+void SampleCoverage::apply(const Camera*, OpenGLContext*) const
 {
   VL_glSampleCoverage(mValue, mInvert?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
@@ -664,6 +665,24 @@ void TexParameter::apply(ETextureDimension dimension) const
 
   VL_CHECK_OGL()
 }
+namespace
+{
+  bool checkTextureUnit(const char* str, int unit)
+  {
+    int max_texture = 1;
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_texture);
+    else
+    if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
+      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_texture);
+    if (unit > max_texture-1)
+    {
+      Log::error( Say("%s error: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << str << unit << max_texture-1 );
+      return false;
+    }
+    return true;
+  }
+}
 //------------------------------------------------------------------------------
 // TexEnv
 //------------------------------------------------------------------------------
@@ -700,18 +719,12 @@ TexEnv::TexEnv(int texunit)
   mPointSpriteCoordReplace = false;
 }
 //------------------------------------------------------------------------------
-void TexEnv::apply(const Camera*) const
+void TexEnv::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL()
+  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
+  VL_CHECK(checkTextureUnit("TexEnv::apply",textureUnit()));
 
-  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNIT_COUNT)
-  #ifndef NDEBUG
-    int max_texture = 1;
-    if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
-      glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &max_texture);
-    if (textureUnit() > max_texture-1)
-      Log::error( Say("TexEnv: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << textureUnit() << max_texture-1 );
-  #endif
   VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_CHECK_OGL();
@@ -790,20 +803,15 @@ TexGen::TexGen(int texunit)
   mGenModeQ = TGM_DISABLED;
 }
 //-----------------------------------------------------------------------------
-void TexGen::apply(const Camera*) const
+void TexGen::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL();
 
   if (genModeS() || genModeT() || genModeR() || genModeQ())
   {
-    VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNIT_COUNT)
-    #ifndef NDEBUG
-      int max_texture = 1;
-      if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &max_texture);
-      if (textureUnit() > max_texture-1)
-        Log::error( Say("TexGen: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << textureUnit() << max_texture-1 );
-    #endif
+    VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
+    VL_CHECK(checkTextureUnit("TexGen::apply",textureUnit()));
+
     VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
     // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
     VL_CHECK_OGL();
@@ -863,6 +871,24 @@ void TexGen::apply(const Camera*) const
   VL_CHECK_OGL();
 }
 //-----------------------------------------------------------------------------
+// TextureMatrix
+//-----------------------------------------------------------------------------
+void TextureMatrix::apply(const Camera* camera, OpenGLContext*) const
+{
+  VL_CHECK_OGL();
+  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS);
+  VL_CHECK(checkTextureUnit("TextureMatrix::apply",textureUnit()));
+
+  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
+  // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
+  VL_CHECK_OGL();
+  glMatrixMode(GL_TEXTURE);
+  if (useCameraRotationInverse())
+    VL_glLoadMatrix( (matrix()*camera->inverseViewMatrix().as3x3()).ptr() );
+  else
+    VL_glLoadMatrix( matrix().ptr() );
+}
+//-----------------------------------------------------------------------------
 // TextureUnit
 //-----------------------------------------------------------------------------
 bool TextureUnit::hasTexture() const 
@@ -877,140 +903,90 @@ void TextureUnit::initResources()
     texture()->createTexture();
 }
 //------------------------------------------------------------------------------
-void TextureUnit::apply(const Camera*) const
+void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
 {
-  VL_CHECK(textureUnit()  < VL_MAX_TEXTURE_UNIT_COUNT)
-
-  // texture parameters
-
-  if ( texture() && texture()->getTexParameter()->dirty() )
-    texture()->getTexParameter()->apply( texture()->dimension() );
-}
-//-----------------------------------------------------------------------------
-void TextureUnit::disable() const
-{
-
-  // --- here we disable all the texture targets ---
-
   VL_CHECK_OGL();
-  // check that is not a crazy number.
-  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNIT_COUNT)
-  // check that the current OpenGL implementation supports this many texture units
-  #ifndef NDEBUG
-    int max_texture = 1;
-    if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
-      glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &max_texture);
-    if (textureUnit() > max_texture-1)
-    {
-      Log::error( Say("TextureUnit: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << textureUnit() << max_texture-1 );
-      VL_TRAP();
-    }
-  #endif
-
-  VL_CHECK_OGL();
+  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
+  VL_CHECK(checkTextureUnit("TextureUnit::apply",textureUnit()));
 
   // activate the appropriate texture unit
-  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
-  // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
-  VL_CHECK_OGL();
+  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() ); VL_CHECK_OGL()
 
-  glDisable( GL_TEXTURE_1D );
-  glDisable( GL_TEXTURE_2D );
-
-  if (GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle||GLEW_VERSION_3_1)
+  // disable and unbind previous active texture target on this texture unit.
+  vl::ETextureDimension prev_tex_target = ctx->texUnitBinding( textureUnit() );
+  if (prev_tex_target)
   {
-    glDisable( GL_TEXTURE_RECTANGLE_ARB );
-  }
+    // this is not strictly necessary, it also avoids interaction witht FBOs etc.
+    glBindTexture( prev_tex_target, 0 ); VL_CHECK_OGL()
 
-  if (GLEW_VERSION_1_2)
-  {
-    glDisable( GL_TEXTURE_3D_EXT );
-  }
-
-  if (GLEW_VERSION_1_3||GLEW_ARB_texture_cube_map)
-  {
-    glDisable( GL_TEXTURE_CUBE_MAP );
-  }
-
-  // not part of the fixed function pipeline
-  //glDisable( GL_TEXTURE_1D_ARRAY_EXT );
-  //glDisable( GL_TEXTURE_2D_ARRAY_EXT );
-
-}
-//-----------------------------------------------------------------------------
-void TextureUnit::enable()  const
-{
-  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNIT_COUNT)
-
-  // disable all the texture entries: when two textures are enabled one after another on the same 
-  // texture unit the disable() function is not called since the enable() of the new one is supposed
-  // to override all the settings of the old (as with all the other render states), but we don't know
-  // which texture entry was used previously so we disable all of them. This makes the code simple
-  // and more robust to be used with user's opengl code.
-  disable();
-
-  if( hasTexture() )
-  {
-    #ifndef NDEBUG
-      if ( !texture()->hasMipMaps() && texture()->getTexParameter())
+    /* GL_TEXTURE_1D_ARRAY and GL_TEXTURE_2D_ARRAY are not supported by the OpenGL fixed function pipeline */
+    if (ctx->isCompatible())
+    {
+      switch(prev_tex_target)
       {
-        switch(texture()->getTexParameter()->minFilter())
-        {
-          default:
+        case TD_TEXTURE_1D_ARRAY:
+        case TD_TEXTURE_2D_ARRAY:
           break;
-
-          case TPF_LINEAR_MIPMAP_LINEAR:
-          case TPF_LINEAR_MIPMAP_NEAREST:
-          case TPF_NEAREST_MIPMAP_LINEAR:
-          case TPF_NEAREST_MIPMAP_NEAREST:
-          {
-            Log::bug("Requested mipmapping texture filtering on a Texture without mipmaps.\n");
-            VL_TRAP()
-            break;
-          }
-        }
+        default:
+          glDisable( prev_tex_target ); VL_CHECK_OGL()
       }
+    }
+  }
+
+  if (camera)
+  {
+    // if we request mipmapped filtering then we must have a mip-mapped texture.
+    #ifndef NDEBUG
+    if ( !texture()->hasMipMaps() )
+    {
+      switch(texture()->getTexParameter()->minFilter())
+      {
+        case TPF_LINEAR_MIPMAP_LINEAR:
+        case TPF_LINEAR_MIPMAP_NEAREST:
+        case TPF_NEAREST_MIPMAP_LINEAR:
+        case TPF_NEAREST_MIPMAP_NEAREST:
+        {
+          Log::bug( vl::Say("TextureUnit::apply() error: requested mipmapping texture filtering on a Texture with no mipmaps! (%s)\n") << texture()->objectName() );
+          VL_TRAP()
+          break;
+        }
+
+        default:
+          break;
+      }
+    }
     #endif
 
-    /* GL_TEXTURE_1D_ARRAY and GL_TEXTURE_2D_ARRAY are not supported in the OpenGL fixed function pipeline */
-    switch(texture()->dimension())
+    if( !hasTexture() )
     {
-      case TD_TEXTURE_1D_ARRAY:
-      case TD_TEXTURE_2D_ARRAY:
-        break;
-      default:
-        glEnable( texture()->dimension() );
+      Log::error( Say("TextureUnit::apply() error: null texture! (%s) \n") << texture()->objectName() );
+      VL_TRAP();
+      return;
     }
 
-    glBindTexture( texture()->dimension(), texture()->handle() );
+    // bind the texture
+    glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
 
-    VL_CHECK_OGL()
+    // enable the texture
+    if (ctx->isCompatible())
+    {
+      /* GL_TEXTURE_1D_ARRAY and GL_TEXTURE_2D_ARRAY are not supported by the OpenGL fixed function pipeline */
+      switch(texture()->dimension())
+      {
+        case TD_TEXTURE_1D_ARRAY:
+        case TD_TEXTURE_2D_ARRAY:
+          break;
+        default:
+          glEnable( texture()->dimension() ); VL_CHECK_OGL()
+      }
+    }
+
+    // track currently used texture target
+    ctx->setTexUnitBinding( textureUnit(), texture()->dimension() );
+
+    // texture parameters
+    if ( texture()->getTexParameter()->dirty() )
+      texture()->getTexParameter()->apply( texture()->dimension() );
   }
-  else
-  {
-    #ifndef NDEBUG
-      Log::error("TextureUnit::enable() error: NULL texture!\n");
-    #endif
-  }
-}
-//-----------------------------------------------------------------------------
-void TextureMatrix::apply(const Camera* camera) const
-{
-  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNIT_COUNT)
-  #ifndef NDEBUG
-    int max_texture = 1;
-    if (GLEW_VERSION_1_3||GLEW_ARB_multitexture||GLEW_VERSION_3_0)
-      glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &max_texture);
-    if (textureUnit() > max_texture-1)
-      Log::error( Say("TextureMatrix: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << textureUnit() << max_texture-1 );
-  #endif
-  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
-  // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
-  VL_CHECK_OGL();
-  glMatrixMode(GL_TEXTURE);
-  if (useCameraRotationInverse())
-    VL_glLoadMatrix( (matrix()*camera->inverseViewMatrix().as3x3()).ptr() );
-  else
-    VL_glLoadMatrix( matrix().ptr() );
 }
 //-----------------------------------------------------------------------------
