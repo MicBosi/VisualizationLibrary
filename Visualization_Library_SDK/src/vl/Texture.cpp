@@ -65,6 +65,7 @@ Texture::Texture(int width, ETextureFormat format, bool border)
   glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
   int brd = border?2:0;
   glTexImage1D( dimension(), 0, format+brd, width, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
+  glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 Texture::Texture(int width, int height, ETextureFormat format, bool border)
@@ -84,6 +85,7 @@ Texture::Texture(int width, int height, ETextureFormat format, bool border)
   glBindTexture(dimension(), mHandle); VL_CHECK_OGL()
   int brd = border?2:0;
   glTexImage2D(dimension(), 0, format, width+brd, height+brd, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
+  glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 Texture::Texture(int width, int height, int depth, ETextureFormat format, bool border)
@@ -105,6 +107,7 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
     glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
     int brd = border?2:0;
     glTexImage3D( dimension(), 0, format, width+brd, height+brd, depth+brd, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
+    glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
   }
   else
     Log::error("3D textures require OpenGL 1.2\n");
@@ -759,8 +762,11 @@ bool Texture::createTexture()
     }
   }
 
-  // restore default GL_UNPACK_ALIGNMENT
+  // the new VL policy requires a clean state.
 
+  glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
+
+  // restore default GL_UNPACK_ALIGNMENT
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4); VL_CHECK_OGL()
   return true;
 }
