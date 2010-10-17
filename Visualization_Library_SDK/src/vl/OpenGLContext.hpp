@@ -192,7 +192,7 @@ namespace vl
     virtual void quitApplication() {}
 
     // This function should be appropriately reimplemented in all the subclasses of OpenGLContext.
-    virtual void destroy() { }
+    virtual void destroy() { destroyAllFBORenderTargets(); }
 
     virtual void update() {}
 
@@ -364,7 +364,7 @@ namespace vl
           temp_clients[i]->fileDroppedEvent(files);
     }
     
-    // this value is clamped to VL_MAX_TEXTURE_UNIT_COUNT
+    // this value is clamped to VL_MAX_TEXTURE_UNITS
     int textureUnitCount() const { return mTextureUnitCount; }
 
     //! Returns the std::set containing the currently pressed keys
@@ -386,14 +386,26 @@ namespace vl
 
     // --- render states management ---
 
-    // mic fixme: da rivedere se alcune sono da togliere
+    // mic fixme: da rivedere se alcune sono da togliere + documenta
     void applyEnables( const EnableSet* prev, const EnableSet* cur );
     void applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera );
     void resetEnables();
     void resetRenderStates();
     /** Resets the OpenGL rendering states */
     void resetContextStates();
+    bool checkIsCleanState() const;
 
+    void setTexUnitBinding(int unit, ETextureDimension target) 
+    { 
+      VL_CHECK(unit <= VL_MAX_TEXTURE_UNITS);
+      mTexUnitBinding[unit] = target; 
+    }
+
+    ETextureDimension texUnitBinding(int unit) const
+    {
+      VL_CHECK(unit <= VL_MAX_TEXTURE_UNITS);
+      return mTexUnitBinding[unit]; 
+    }
 
   protected:
     ref<RenderTarget> mRenderTarget;
@@ -402,6 +414,8 @@ namespace vl
     std::set<EKey> mKeyboard;
     OpenGLContextFormat mGLContextInfo;
     int mTextureUnitCount;
+    int mMajorVersion;
+    int mMinorVersion;
     bool mMouseVisible;
     bool mContinuousUpdate;
     bool mIgnoreNextMouseMoveEvent;
@@ -419,6 +433,9 @@ namespace vl
     const RenderState* mCurrentRenderState[RS_COUNT];
     // default render states
     ref<RenderState> mDefaultRenderStates[RS_COUNT];
+
+    // for each texture unit tells which target has been bound last.
+    ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];
 
   private:
     void setupDefaultRenderStates();
