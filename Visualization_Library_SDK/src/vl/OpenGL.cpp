@@ -39,6 +39,10 @@ void VL_glBindBuffer( GLenum target, GLuint buffer )
   else
   if (GLEW_ARB_vertex_buffer_object)
     glBindBufferARB(target,buffer);
+  else
+  {
+    VL_CHECK( buffer == 0 );
+  }
 }
 
 void VL_glGenBuffers( GLsizei n, GLuint * buffers)
@@ -48,6 +52,8 @@ void VL_glGenBuffers( GLsizei n, GLuint * buffers)
   else
   if (GLEW_ARB_vertex_buffer_object)
     glGenBuffersARB( n, buffers);
+  else
+    VL_TRAP();
 }
 
 void VL_glDeleteBuffers( GLsizei n, const GLuint * buffers)
@@ -57,6 +63,8 @@ void VL_glDeleteBuffers( GLsizei n, const GLuint * buffers)
   else
   if (GLEW_ARB_vertex_buffer_object)
     glDeleteBuffersARB( n, buffers);
+  else
+    VL_TRAP();
 }
 
 void VL_glBufferData( GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage)
@@ -66,6 +74,8 @@ void VL_glBufferData( GLenum target, GLsizeiptr size, const GLvoid * data, GLenu
   else
   if (GLEW_ARB_vertex_buffer_object)
     glBufferDataARB( target, size, data, usage);
+  else
+    VL_TRAP();
 }
 
 void VL_glBufferSubData( GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid * data)
@@ -75,6 +85,8 @@ void VL_glBufferSubData( GLenum target, GLintptr offset, GLsizeiptr size, const 
   else
   if (GLEW_ARB_vertex_buffer_object)
     glBufferSubDataARB( target, offset, size, data);
+  else
+    VL_TRAP();
 }
 
 void* VL_glMapBuffer( GLenum target, GLenum access)
@@ -84,6 +96,8 @@ void* VL_glMapBuffer( GLenum target, GLenum access)
   else
   if (GLEW_ARB_vertex_buffer_object)
     return glMapBufferARB( target, access);
+  else
+    VL_TRAP();
   return NULL;
 }
 
@@ -94,6 +108,8 @@ GLboolean VL_glUnmapBuffer(GLenum target)
   else
   if (GLEW_ARB_vertex_buffer_object)
     return glUnmapBufferARB( target );
+  else
+    VL_TRAP();
   return GL_FALSE;
 }
 //-----------------------------------------------------------------------------
@@ -104,6 +120,8 @@ void VL_glSecondaryColor3f(float r, float g, float b)
   else
   if(GLEW_EXT_secondary_color)
     glSecondaryColor3fEXT(r,g,b);
+  else
+    VL_TRAP();
 }
 
 void VL_glSecondaryColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
@@ -113,6 +131,8 @@ void VL_glSecondaryColorPointer( GLint size, GLenum type, GLsizei stride, const 
   else
   if(GLEW_EXT_secondary_color)
     glSecondaryColorPointerEXT(size, type, stride, (GLvoid*)pointer);
+  else
+    VL_TRAP();
 }
 //-----------------------------------------------------------------------------
 void VL_glFogCoordPointer( GLenum type, GLsizei stride, GLvoid* pointer )
@@ -122,6 +142,8 @@ void VL_glFogCoordPointer( GLenum type, GLsizei stride, GLvoid* pointer )
   else
   if (GLEW_EXT_fog_coord)
     glFogCoordPointerEXT(type,stride,pointer);
+  else
+    VL_TRAP();
 }
 //-----------------------------------------------------------------------------
 void VL_glEnableVertexAttribArray( GLuint index )
@@ -131,6 +153,8 @@ void VL_glEnableVertexAttribArray( GLuint index )
   else
   if (GLEW_ARB_vertex_program)
     glEnableVertexAttribArrayARB(index);
+  else
+    VL_TRAP();
 }
 
 void VL_glDisableVertexAttribArray( GLuint index )
@@ -140,6 +164,8 @@ void VL_glDisableVertexAttribArray( GLuint index )
   else
   if (GLEW_ARB_vertex_program)
     glDisableVertexAttribArrayARB(index);
+  else
+    VL_TRAP();
 }
 
 //-----------------------------------------------------------------------------
@@ -151,6 +177,8 @@ void VL_glVertexAttribPointer( GLuint index, GLint size, GLenum type, GLboolean 
   else
   if (GLEW_ARB_vertex_program)
     glVertexAttribPointerARB(index, size, type, normalized, stride, pointer);
+  else
+    VL_TRAP();
 }
 
 void VL_glVertexAttribIPointer(GLuint name, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
@@ -160,6 +188,8 @@ void VL_glVertexAttribIPointer(GLuint name, GLint size, GLenum type, GLsizei str
   else
   if (GLEW_EXT_gpu_shader4)
     glVertexAttribIPointerEXT(name, size, type, stride, pointer);
+  else
+    VL_TRAP();
 }
 //-----------------------------------------------------------------------------
 void VL_glClientActiveTexture(GLenum texture)
@@ -169,6 +199,10 @@ void VL_glClientActiveTexture(GLenum texture)
   else
   if (GLEW_ARB_multitexture)
     glClientActiveTextureARB(texture);
+  else
+  {
+    VL_CHECK(texture == GL_TEXTURE0);
+  }
 }
 
 void VL_glActiveTexture(GLenum texture)
@@ -178,6 +212,10 @@ void VL_glActiveTexture(GLenum texture)
   else
   if (GLEW_ARB_multitexture)
     glActiveTextureARB(texture);
+  else
+  {
+    VL_CHECK(texture == GL_TEXTURE0);
+  }
 }
 //-----------------------------------------------------------------------------
 void VL_glBlendFuncSeparate( GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
@@ -187,6 +225,8 @@ void VL_glBlendFuncSeparate( GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLen
   else
   if (GLEW_EXT_blend_func_separate)
     glBlendFuncSeparateEXT( srcRGB, dstRGB, srcAlpha, dstAlpha);
+  else
+    VL_TRAP();
 }
 
 void VL_glBlendEquationSeparate( GLenum modeRGB, GLenum modeAlpha)
@@ -196,6 +236,8 @@ void VL_glBlendEquationSeparate( GLenum modeRGB, GLenum modeAlpha)
   else
   if(GLEW_EXT_blend_equation_separate)
     glBlendEquationSeparateEXT(modeRGB, modeAlpha);
+  else
+    VL_TRAP();
 }
 
 
@@ -206,6 +248,8 @@ void VL_glBlendEquation(GLenum mode)
   else
   if (GLEW_EXT_blend_minmax)
     glBlendEquationEXT(mode);
+  else
+    VL_TRAP();
 }
 
 void VL_glBlendColor( GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
@@ -215,6 +259,8 @@ void VL_glBlendColor( GLclampf red, GLclampf green, GLclampf blue, GLclampf alph
   else
   if (GLEW_EXT_blend_color)
     glBlendColorEXT(red,green,blue,alpha);
+  else
+    VL_TRAP();
 }
 
 //-----------------------------------------------------------------------------
@@ -228,6 +274,8 @@ void VL_glPointParameterfv( GLenum pname, const GLfloat* params)
   else
   if (GLEW_EXT_point_parameters)
     glPointParameterfvEXT(pname,(GLfloat*)params);
+  else
+    VL_TRAP();
 }
 
 void VL_glPointParameterf( GLenum pname, GLfloat param)
@@ -240,12 +288,16 @@ void VL_glPointParameterf( GLenum pname, GLfloat param)
   else
   if (GLEW_EXT_point_parameters)
     glPointParameterfEXT(pname,param);
+  else
+    VL_TRAP();
 }
 //-----------------------------------------------------------------------------
 void VL_glStencilFuncSeparate( GLenum face, GLenum func, GLint ref, GLuint mask)
 {
   if ( GLEW_VERSION_2_0 )
     glStencilFuncSeparate( face, func, ref, mask );
+  else
+    VL_TRAP();
   // NOT SUPPORTED
   // see http://www.opengl.org/registry/specs/ATI/separate_stencil.txt
   /*else
@@ -257,6 +309,8 @@ void VL_glStencilOpSeparate( GLenum face, GLenum sfail, GLenum dpfail, GLenum dp
 {
   if ( GLEW_VERSION_2_0 )
     glStencilOpSeparate( face, sfail, dpfail, dppass );
+  else
+    VL_TRAP();
   // NOT SUPPORTED
   // see http://www.opengl.org/registry/specs/ATI/separate_stencil.txt
   /*else
@@ -271,6 +325,8 @@ void VL_glSampleCoverage( GLclampf value, GLboolean invert)
   else
   if (GLEW_ARB_multisample)
     glSampleCoverageARB(value,invert);  
+  else
+    VL_TRAP();
 }
 //-----------------------------------------------------------------------------
 void VL_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
@@ -280,6 +336,8 @@ void VL_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
   else
   if (GLEW_EXT_framebuffer_object)
     glBindRenderbufferEXT(target, renderbuffer);
+  else
+    VL_TRAP();
 }
 void VL_glDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
 {
@@ -288,6 +346,8 @@ void VL_glDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
   else
   if (GLEW_EXT_framebuffer_object)
     glDeleteRenderbuffersEXT(n, renderbuffers);
+  else
+    VL_TRAP();
 }
 void VL_glGenRenderbuffers(GLsizei n, GLuint *renderbuffers)
 {
@@ -296,6 +356,8 @@ void VL_glGenRenderbuffers(GLsizei n, GLuint *renderbuffers)
   else
   if (GLEW_EXT_framebuffer_object)
     glGenRenderbuffersEXT(n, renderbuffers);
+  else
+    VL_TRAP();
 }
 void VL_glRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
 {
@@ -304,6 +366,8 @@ void VL_glRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei widt
   else
   if (GLEW_EXT_framebuffer_object)
     glRenderbufferStorageEXT(target, internalformat, width, height);
+  else
+    VL_TRAP();
 }
 void VL_glGetRenderbufferParameteriv(GLenum target, GLenum pname, GLint *params)
 {
@@ -312,6 +376,8 @@ void VL_glGetRenderbufferParameteriv(GLenum target, GLenum pname, GLint *params)
   else
   if (GLEW_EXT_framebuffer_object)
     glGetRenderbufferParameterivEXT(target, pname, params);
+  else
+    VL_TRAP();
 }
 GLboolean VL_glIsFramebuffer(GLuint framebuffer)
 {
@@ -320,6 +386,8 @@ GLboolean VL_glIsFramebuffer(GLuint framebuffer)
   else
   if (GLEW_EXT_framebuffer_object)
     return glIsFramebufferEXT(framebuffer);
+  else
+    VL_TRAP();
   return GL_FALSE;
 }
 void VL_glBindFramebuffer(GLenum target, GLuint framebuffer)
@@ -329,6 +397,10 @@ void VL_glBindFramebuffer(GLenum target, GLuint framebuffer)
   else
   if (GLEW_EXT_framebuffer_object)
     glBindFramebufferEXT(target, framebuffer);
+  else
+  {
+    VL_CHECK(framebuffer == 0);
+  }
 }
 void VL_glDeleteFramebuffers(GLsizei n, const GLuint *framebuffers)
 {
@@ -337,6 +409,8 @@ void VL_glDeleteFramebuffers(GLsizei n, const GLuint *framebuffers)
   else
   if (GLEW_EXT_framebuffer_object)
     glDeleteFramebuffersEXT(n, framebuffers);
+  else
+    VL_TRAP();
 }
 void VL_glGenFramebuffers(GLsizei n, GLuint *framebuffers)
 {
@@ -345,6 +419,8 @@ void VL_glGenFramebuffers(GLsizei n, GLuint *framebuffers)
   else
   if (GLEW_EXT_framebuffer_object)
     glGenFramebuffersEXT(n, framebuffers);
+  else
+    VL_TRAP();
 }
 GLenum VL_glCheckFramebufferStatus(GLenum target)
 {
@@ -353,6 +429,8 @@ GLenum VL_glCheckFramebufferStatus(GLenum target)
   else
   if (GLEW_EXT_framebuffer_object)
     return glCheckFramebufferStatusEXT(target);
+  else
+    VL_TRAP();
 
   return GL_FRAMEBUFFER_UNSUPPORTED;
 }
@@ -363,6 +441,8 @@ void VL_glFramebufferTexture1D(GLenum target, GLenum attachment, GLenum textarge
   else
   if (GLEW_EXT_framebuffer_object)
     glFramebufferTexture1DEXT(target, attachment, textarget, texture, level);
+  else
+    VL_TRAP();
 }
 void VL_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 {
@@ -371,6 +451,8 @@ void VL_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarge
   else
   if (GLEW_EXT_framebuffer_object)
     glFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
+  else
+    VL_TRAP();
 }
 void VL_glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
 {
@@ -379,6 +461,8 @@ void VL_glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarge
   else
   if (GLEW_EXT_framebuffer_object)
     glFramebufferTexture3DEXT(target, attachment, textarget, texture, level, zoffset);
+  else
+    VL_TRAP();
 }
 void VL_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
 {
@@ -387,6 +471,8 @@ void VL_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum rende
   else
   if (GLEW_EXT_framebuffer_object)
     glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, renderbuffer);
+  else
+    VL_TRAP();
 }
 void VL_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint *params)
 {
@@ -395,6 +481,8 @@ void VL_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, 
   else
   if (GLEW_EXT_framebuffer_object)
     glGetFramebufferAttachmentParameterivEXT(target,attachment,pname,params);
+  else
+    VL_TRAP();
 }
 void VL_glGenerateMipmap(GLenum target)
 {
@@ -403,6 +491,8 @@ void VL_glGenerateMipmap(GLenum target)
   else
   if (GLEW_EXT_framebuffer_object)
     glGenerateMipmapEXT(target);
+  else
+    VL_TRAP();
 }
 void VL_glFramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLint level)
 {
@@ -412,6 +502,8 @@ void VL_glFramebufferTexture(GLenum target, GLenum attachment, GLuint texture, G
   else
   if (GLEW_EXT_geometry_shader4)
     glFramebufferTextureEXT(target,attachment,texture,level);
+  else
+    VL_TRAP();
 }
 void VL_glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
 {
@@ -424,6 +516,8 @@ void VL_glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint textu
   else
   if (GLEW_EXT_geometry_shader4||GLEW_EXT_texture_array)
     glFramebufferTextureLayerEXT(target, attachment, texture, level, layer);
+  else
+    VL_TRAP();
 }
 void VL_glRenderbufferStorageMultisample( GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height )
 {
@@ -432,6 +526,8 @@ void VL_glRenderbufferStorageMultisample( GLenum target, GLsizei samples, GLenum
   else
   if (GLEW_EXT_framebuffer_multisample)
     glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
+  else
+    VL_TRAP();
 }
 void VL_glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
 {
@@ -440,6 +536,8 @@ void VL_glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GL
   else
   if (GLEW_EXT_framebuffer_blit)
     glBlitFramebufferEXT(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+  else
+    VL_TRAP();
 }
 
 //-----------------------------------------------------------------------------
@@ -451,6 +549,8 @@ void VL_glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const G
   else
   if (GLEW_EXT_draw_instanced)
     glDrawElementsInstancedEXT(mode, count, type, indices, primcount);
+  else
+    VL_TRAP();
 }
 
 void VL_glDrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei primcount)
@@ -461,6 +561,8 @@ void VL_glDrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei p
   else
   if (GLEW_EXT_draw_instanced)
     glDrawArraysInstancedEXT(mode, first, count, primcount);
+  else
+    VL_TRAP();
 }
 //-----------------------------------------------------------------------------
 void VL_glProgramParameteri(GLuint program, GLenum pname, GLint value)
@@ -470,6 +572,8 @@ void VL_glProgramParameteri(GLuint program, GLenum pname, GLint value)
   else
   if (GLEW_EXT_geometry_shader4)
     glProgramParameteriEXT(program, pname, value);
+  else
+    VL_TRAP();
 }
 
 void VL_glBindFragDataLocation(GLuint program, GLuint colorNumber, const GLchar *name)
@@ -479,6 +583,8 @@ void VL_glBindFragDataLocation(GLuint program, GLuint colorNumber, const GLchar 
   else
   if (GLEW_EXT_gpu_shader4)
     glBindFragDataLocationEXT(program, colorNumber, name);
+  else
+    VL_TRAP();
 }
 
 void VL_glUniform1uiv(GLint location, GLsizei count, const GLuint *value)
@@ -488,6 +594,8 @@ void VL_glUniform1uiv(GLint location, GLsizei count, const GLuint *value)
   else
   if (GLEW_EXT_gpu_shader4)
     glUniform1uivEXT(location, count, value);
+  else
+    VL_TRAP();
 }
 void VL_glUniform2uiv(GLint location, GLsizei count, const GLuint *value)
 {
@@ -496,6 +604,8 @@ void VL_glUniform2uiv(GLint location, GLsizei count, const GLuint *value)
   else
   if (GLEW_EXT_gpu_shader4)
     glUniform2uivEXT(location, count, value);
+  else
+    VL_TRAP();
 }
 void VL_glUniform3uiv(GLint location, GLsizei count, const GLuint *value)
 {
@@ -504,6 +614,8 @@ void VL_glUniform3uiv(GLint location, GLsizei count, const GLuint *value)
   else
   if (GLEW_EXT_gpu_shader4)
     glUniform3uivEXT(location, count, value);
+  else
+    VL_TRAP();
 }
 void VL_glUniform4uiv(GLint location, GLsizei count, const GLuint *value)
 {
@@ -512,4 +624,6 @@ void VL_glUniform4uiv(GLint location, GLsizei count, const GLuint *value)
   else
   if (GLEW_EXT_gpu_shader4)
     glUniform4uivEXT(location, count, value);
+  else
+    VL_TRAP();
 }
