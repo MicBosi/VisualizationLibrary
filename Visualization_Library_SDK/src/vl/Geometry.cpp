@@ -67,7 +67,7 @@ Geometry::Geometry()
 }
 Geometry::~Geometry()
 {
-  if (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5)
+  if (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
     deleteVBOs();
 }
 //-----------------------------------------------------------------------------
@@ -248,7 +248,7 @@ void Geometry::setTexCoordArray(int tex_unit, ArrayAbstract* data)
                       data->glType() == GL_SHORT  ||
                       data->glType() == GL_INT) );
 
-  VL_CHECK(tex_unit<VL_MAX_TEXTURE_UNIT_COUNT);
+  VL_CHECK(tex_unit<VL_MAX_TEXTURE_UNITS);
 
   for(int i=0; i<mTexCoordArrays.size(); ++i)
   {
@@ -520,7 +520,7 @@ void Geometry::computeNormals()
 //-----------------------------------------------------------------------------
 void Geometry::deleteVBOs()
 {
-  if (!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5))
+  if (!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
     return;
 
   for(int i=0; i<(int)primitives()->size(); ++i)
@@ -546,7 +546,7 @@ void Geometry::updateVBOs(bool discard_local_data)
 {
   setVBODirty(false);
 
-  if (!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5))
+  if (!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
     return;
 
   if (mVertexArray)
@@ -576,18 +576,20 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
     return;
 
   // check vbo is enabled and supported - when VBOs are enabled they are used where available otherwise the local buffers are used.
-  bool vbo_on = (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5) && vboEnabled() && !displayListEnabled();
+  bool vbo_on = (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0) && vboEnabled() && !displayListEnabled();
 
   // check if there is data to render
 
   if ( !mVertexArray->gpuBuffer()->handle() && !mVertexArray->size() )
     return;
 
+  bool vert_on           = false;
   bool normal_on         = false;
   bool color_on          = false;
   GLboolean sec_color_on = false;
   GLboolean fog_on       = false;
 
+  vert_on      |= mVertexArray && mVertexArray->size();
   normal_on    |= mNormalArray && mNormalArray->size();
   color_on     |= mColorArray && mColorArray->size();
   sec_color_on |= mSecondaryColorArray && mSecondaryColorArray->size();
@@ -595,6 +597,7 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
 
   if (vbo_on)
   {
+    vert_on      |= mVertexArray && mVertexArray->gpuBuffer() && mVertexArray->gpuBuffer()->handle();
     normal_on    |= mNormalArray && mNormalArray->gpuBuffer() && mNormalArray->gpuBuffer()->handle();
     color_on     |= mColorArray && mColorArray->gpuBuffer() && mColorArray->gpuBuffer()->handle();
     sec_color_on |= mSecondaryColorArray && mSecondaryColorArray->gpuBuffer() && mSecondaryColorArray->gpuBuffer()->handle();
@@ -606,7 +609,7 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
 
   // setup pointers, default is local memory pointer
 
-  unsigned char* vertex_pointer    = mVertexArray       ? mVertexArray->gpuBuffer()->ptr() : 0;
+  unsigned char* vertex_pointer    = mVertexArray         ? mVertexArray->gpuBuffer()->ptr() : 0;
   unsigned char* normal_pointer    = mNormalArray         ? mNormalArray->ptr() : 0;
   unsigned char* color_pointer     = mColorArray          ? mColorArray->ptr() : 0;
   unsigned char* sec_color_pointer = mSecondaryColorArray ? mSecondaryColorArray->ptr() : 0;
@@ -630,24 +633,23 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
 
   VL_CHECK_OGL()
 
-  VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-
   // vertex position
-
-  if (vbo_on && mVertexArray->gpuBuffer()->handle())
+  if (vert_on)
   {
-    VL_glBindBuffer( GL_ARRAY_BUFFER, mVertexArray->gpuBuffer()->handle() );
-    vertex_pointer = 0;
+    if (vbo_on && mVertexArray->gpuBuffer()->handle())
+    {
+      VL_glBindBuffer( GL_ARRAY_BUFFER, mVertexArray->gpuBuffer()->handle() ); VL_CHECK_OGL();
+      vertex_pointer = 0;
+    }
+    else
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexPointer( mVertexArray->glSize(), mVertexArray->glType(), /*mVertexArray->stride()*/0, vertex_pointer /*+ mVertexArray->offset()*/ ); VL_CHECK_OGL();
+    glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
   }
-  glVertexPointer( mVertexArray->glSize(), mVertexArray->glType(), /*mVertexArray->stride()*/0, vertex_pointer /*+ mVertexArray->offset()*/ );
-  glEnableClientState(GL_VERTEX_ARRAY);
-
-  if(vbo_on && mVertexArray && mVertexArray->gpuBuffer()->handle())
-    VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // custom vertex attributes
 
-  VL_CHECK_OGL()
+  VL_CHECK_OGL();
 
   for(int i=0; i<vertexAttributeArrays()->size(); ++i)
   {
@@ -660,11 +662,13 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
       VL_glBindBuffer( GL_ARRAY_BUFFER, data->gpuBuffer()->handle() );
       attrib_pointer = 0;
     }
+    else
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     VL_CHECK((int)vertexAttributeArrays()->at(i)->attribIndex() != -1)
     if ( vertexAttributeArrays()->at(i)->pureInteger() )
     {
-      VL_WARN(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0)
+      VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0)
       VL_glVertexAttribIPointer( vertexAttributeArrays()->at(i)->attribIndex(), data->glSize(), data->glType(), /*vertexAttributeArrays()->at(i)->data()->stride()*/0, attrib_pointer /*+ vertexAttributeArrays()->at(i)->data()->offset()*/ );
       VL_glEnableVertexAttribArray( vertexAttributeArrays()->at(i)->attribIndex() );
     }
@@ -674,8 +678,6 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
       VL_glEnableVertexAttribArray( vertexAttributeArrays()->at(i)->attribIndex() );
     }
 
-    if(vbo_on && data && data->gpuBuffer()->handle())
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
   }
 
   // standard vertex attributes
@@ -689,15 +691,16 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
       VL_glBindBuffer( GL_ARRAY_BUFFER, mNormalArray->gpuBuffer()->handle() );
       normal_pointer = 0;
     }
+    else
+    {
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
     VL_CHECK(mNormalArray->glSize() == 3);
     glNormalPointer( mNormalArray->glType(), /*mNormalArray->stride()*/0, normal_pointer /*+ mNormalArray->offset()*/ );
     glEnableClientState(GL_NORMAL_ARRAY);
   }
   /*else
     glNormal3f(0,1,0);*/
-
-  if(vbo_on && mNormalArray && mNormalArray->gpuBuffer()->handle())
-    VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   VL_CHECK_OGL()
 
@@ -708,14 +711,15 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
       VL_glBindBuffer( GL_ARRAY_BUFFER, mColorArray->gpuBuffer()->handle() );
       color_pointer = 0;
     }
+    else
+    {
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
     glColorPointer( mColorArray->glSize(), mColorArray->glType(), 0/*mColorArray->stride()*/, color_pointer /*+ mColorArray->offset()*/ );
     glEnableClientState(GL_COLOR_ARRAY);
   }
   else
     glColor4fv(mColorArrayConstant.ptr());
-
-  if(vbo_on && mColorArray && mColorArray->gpuBuffer()->handle())
-    VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   VL_CHECK_OGL()
 
@@ -726,6 +730,10 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
       VL_glBindBuffer(GL_ARRAY_BUFFER, mSecondaryColorArray->gpuBuffer()->handle() );
       sec_color_pointer = 0;
     }
+    else
+    {
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
     VL_glSecondaryColorPointer( mSecondaryColorArray->glSize(), mSecondaryColorArray->glType(), 0/* mSecondaryColorArray->stride()*/, sec_color_pointer /*+ mSecondaryColorArray->offset()*/ );
     glEnableClientState(GL_SECONDARY_COLOR_ARRAY);
   }
@@ -734,15 +742,16 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
 
   VL_CHECK_OGL()
 
-  if(vbo_on && mSecondaryColorArray && mSecondaryColorArray->gpuBuffer()->handle())
-    VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-
   if (fog_on)
   {
     if (vbo_on && mFogCoordArray->gpuBuffer()->handle())
     {
       VL_glBindBuffer(GL_ARRAY_BUFFER, mFogCoordArray->gpuBuffer()->handle() );
       fog_pointer = 0;
+    }
+    else
+    {
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     VL_CHECK(mFogCoordArray->glSize() == 1);
     VL_glFogCoordPointer( mFogCoordArray->glType(), 0/*mFogCoordArray->stride()*/, fog_pointer /*+ mFogCoordArray->offset()*/ );
@@ -752,8 +761,8 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
   if (GLEW_VERSION_1_4)
     glFogCoordf(0);*/
 
-  if(vbo_on && mFogCoordArray && mFogCoordArray->gpuBuffer()->handle())
-    VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+  //if(vbo_on && mFogCoordArray && mFogCoordArray->gpuBuffer()->handle())
+  //  VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   VL_CHECK_OGL()
 
@@ -770,7 +779,7 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
     #endif
 
     /*VL_CHECK(mTexCoordArrays[i]->mTextureUnit < opengl_context->textureUnitCount())*/
-    VL_CHECK(mTexCoordArrays[i]->mTextureUnit < VL_MAX_TEXTURE_UNIT_COUNT)    
+    VL_CHECK(mTexCoordArrays[i]->mTextureUnit < VL_MAX_TEXTURE_UNITS)    
 
     unsigned char* tex_pointer = mTexCoordArrays[i]->mTexCoordArray->ptr();
 
@@ -781,12 +790,13 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
       VL_glBindBuffer(GL_ARRAY_BUFFER, mTexCoordArrays[i]->mTexCoordArray->gpuBuffer()->handle());
       tex_pointer = 0;
     }
+    else
+    {
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
 
     glTexCoordPointer(mTexCoordArrays[i]->mTexCoordArray->glSize(), mTexCoordArrays[i]->mTexCoordArray->glType(), 0/*mTexCoordArrays[i]->mTexCoordArray->stride()*/, tex_pointer /*+ mTexCoordArrays[i]->mTexCoordArray->offset()*/ );
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    if(vbo_on && mTexCoordArrays[i]->mTexCoordArray && mTexCoordArrays[i]->mTexCoordArray->gpuBuffer()->handle())
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
   }
 
   VL_CHECK_OGL()
@@ -828,7 +838,8 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   }
 
-  VL_CHECK_OGL()
+  // disable eventual VBO still attached
+  VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 //-----------------------------------------------------------------------------
 void Geometry::transform(const mat4& m, bool normalize)
@@ -1030,7 +1041,7 @@ void Geometry::regenerateVertices(const std::vector<size_t>& map_new_to_old)
   if (fogCoordArray())
     setFogCoordArray( mapper.regenerate( fogCoordArray(), map_new_to_old ).get() );
 
-  for(int itex=0; itex<VL_MAX_TEXTURE_UNIT_COUNT; ++itex)
+  for(int itex=0; itex<VL_MAX_TEXTURE_UNITS; ++itex)
     if (texCoordArray(itex))
       setTexCoordArray( itex, mapper.regenerate( texCoordArray(itex), map_new_to_old ).get() );
 
