@@ -152,10 +152,6 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
     return;
   }
 
-  VL_glActiveTexture( GL_TEXTURE0 );
-  bool texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D) == GL_TRUE;
-  glEnable(GL_TEXTURE_2D);
-
   int viewport[] = {0,0,0,0};
   glGetIntegerv(GL_VIEWPORT, viewport);
   VL_CHECK_OGL()
@@ -200,8 +196,10 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
   fvec2 pen(0,0);
 
   float texc[] = { 0,0,0,0,0,0,0,0 };
-  glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+  VL_glActiveTexture( GL_TEXTURE0 );
   VL_glClientActiveTexture( GL_TEXTURE0 );
+  glEnable(GL_TEXTURE_2D);
+  glEnableClientState( GL_TEXTURE_COORD_ARRAY );
   glTexCoordPointer(2, GL_FLOAT, 0, texc);
 
   fvec4 cols[] = { color, color, color, color};
@@ -563,12 +561,11 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
     glPopMatrix(); VL_CHECK_OGL()
   }
 
-  if(!texture_2d_enabled)
-    glDisable(GL_TEXTURE_2D);
+  glDisable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D,0);
 }
 //-----------------------------------------------------------------------------
-// returns the raw bounding box of the string, i.e. without alignment, margin
-// and matrix transform
+// returns the raw bounding box of the string, i.e. without alignment, margin and matrix transform.
 AABB Text::rawboundingRect(const String& text) const
 {
   AABB aabb;
