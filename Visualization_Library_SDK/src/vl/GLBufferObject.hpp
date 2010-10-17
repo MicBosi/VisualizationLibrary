@@ -115,8 +115,8 @@ namespace vl
 
     void createGLBufferObject()
     {
-      VL_WARN(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5)
-      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5))
+      VL_CHECK(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
+      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
         return;
       if (handle() == 0)
       {
@@ -173,8 +173,8 @@ namespace vl
     void setBufferData( int byte_count, const GLvoid* data, EGLBufferUsage usage )
     {
       VL_CHECK_OGL();
-      VL_WARN(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5)
-      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5))
+      VL_CHECK(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
+      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
         return;
       if (!data || !byte_count)
         return;
@@ -190,8 +190,8 @@ namespace vl
 
     void setBufferSubData( GLintptr offset, int byte_count, const GLvoid* data )
     {
-      VL_WARN(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5)
-      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5))
+      VL_CHECK(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
+      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
         return;
       createGLBufferObject();
       // we use the GL_ARRAY_BUFFER slot to send the data for no special reason
@@ -204,8 +204,8 @@ namespace vl
     // you must unmapGPUBuffer before using the GPU Buffer again
     void* mapGPUBuffer(EGLBufferAccess access)
     {
-      VL_WARN(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5)
-      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5))
+      VL_CHECK(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
+      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
         return NULL;
       createGLBufferObject(); VL_CHECK_OGL();
       VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
@@ -225,8 +225,8 @@ namespace vl
     // data store become undefined."
     bool unmapGPUBuffer()
     {
-      VL_WARN(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5)
-      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5))
+      VL_CHECK(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
+      if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
         return false;
       VL_CHECK_OGL();
       createGLBufferObject();

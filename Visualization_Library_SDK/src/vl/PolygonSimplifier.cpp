@@ -93,7 +93,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
     problem |= geom->colorArray() != NULL;
     problem |= geom->secondaryColorArray() != NULL;
     problem |= geom->fogCoordArray() != NULL;
-    for( int i=0; i<VL_MAX_TEXTURE_UNIT_COUNT; ++i)
+    for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
       problem |= geom->texCoordArray(i) != NULL;
     problem |= geom->vertexAttributeArrays()->size() != 0;
     if (problem)
@@ -155,7 +155,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
   geom->setColorArray(NULL);
   geom->setSecondaryColorArray(NULL);
   geom->setFogCoordArray(NULL);
-  for( int i=0; i<VL_MAX_TEXTURE_UNIT_COUNT; ++i)
+  for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
     geom->setTexCoordArray(i, NULL);
   geom->vertexAttributeArrays()->clear();
 
