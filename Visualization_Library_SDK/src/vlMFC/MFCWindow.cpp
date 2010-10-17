@@ -117,6 +117,7 @@ bool MFCWindow::initMFCWindow(CWnd* parent, MFCWindow* share_context, const vl::
 //-----------------------------------------------------------------------------
 void MFCWindow::destroy()
 {
+  vlWin32::Win32Context::destroy();
   destroyWindow();
   /*dispatchDestroyEvent();*/
 }
