@@ -79,7 +79,7 @@ namespace vl
     {
       VL_CHECK_OGL()
       // the base render target is the framebuffer 0, that is, the normal OpenGL buffers
-      VL_glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+      VL_glBindFramebuffer(GL_FRAMEBUFFER, 0);
       VL_CHECK_OGL()
     }
 

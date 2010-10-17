@@ -81,7 +81,7 @@ namespace vl
           mAttribs.push_back(geom->secondaryColorArray());
         if (geom->fogCoordArray())
           mAttribs.push_back(geom->fogCoordArray());
-        for(int i=0; i<VL_MAX_TEXTURE_UNIT_COUNT; ++i)
+        for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
           if (geom->texCoordArray(i))
             mAttribs.push_back(geom->texCoordArray(i));
         for(int i=0; i<geom->vertexAttributeArrays()->size(); ++i)
