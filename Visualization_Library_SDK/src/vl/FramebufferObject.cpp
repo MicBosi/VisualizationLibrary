@@ -171,7 +171,7 @@ void FBORenderTarget::printFramebufferError(GLenum status) const
 //-----------------------------------------------------------------------------
 void FBORenderTarget::addColorAttachment(EAttachmentPoint color_attachment, FBOAttachmentAbstract* attachment)
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   removeAttachment(color_attachment);
@@ -181,7 +181,7 @@ void FBORenderTarget::addColorAttachment(EAttachmentPoint color_attachment, FBOA
 //-----------------------------------------------------------------------------
 void FBORenderTarget::addTextureAttachment(EAttachmentPoint color_attachment, FBOAttachmentAbstract* attachment)
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   removeAttachment(color_attachment);
@@ -191,7 +191,7 @@ void FBORenderTarget::addTextureAttachment(EAttachmentPoint color_attachment, FB
 //-----------------------------------------------------------------------------
 void FBORenderTarget::addDepthAttachment(FBOAttachmentAbstract* attachment)
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   removeAttachment(AP_DEPTH_ATTACHMENT);
@@ -201,7 +201,7 @@ void FBORenderTarget::addDepthAttachment(FBOAttachmentAbstract* attachment)
 //-----------------------------------------------------------------------------
 void FBORenderTarget::addStencilAttachment(FBOAttachmentAbstract* attachment)
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   removeAttachment(AP_STENCIL_ATTACHMENT);
@@ -211,7 +211,7 @@ void FBORenderTarget::addStencilAttachment(FBOAttachmentAbstract* attachment)
 //-----------------------------------------------------------------------------
 void FBORenderTarget::removeAttachment(FBOAttachmentAbstract* attachment)
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   // collect for all the attachment points
@@ -230,7 +230,7 @@ void FBORenderTarget::removeAttachment(EAttachmentPoint attach_point)
 {
   VL_CHECK(vl::VisualizationLibrary::initialized())
 
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   if (handle())
@@ -254,7 +254,7 @@ void FBORenderTarget::removeAttachment(EAttachmentPoint attach_point)
 //-----------------------------------------------------------------------------
 void FBORenderTarget::removeAllAttachments()
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   // look for all the attachment points
@@ -270,7 +270,8 @@ void FBORenderTarget::removeAllAttachments()
 //-----------------------------------------------------------------------------
 void FBOTexture1DAttachment::bindAttachment(int w, int h, EAttachmentPoint attach_point)
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK_OGL()
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   VL_CHECK(texture())
@@ -285,11 +286,13 @@ void FBOTexture1DAttachment::bindAttachment(int w, int h, EAttachmentPoint attac
   glBindTexture( texture()->dimension(), texture()->handle() );
   glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR );
   glBindTexture( texture()->dimension(), 0 );
+  VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void FBOTexture2DAttachment::bindAttachment(int w, int h, EAttachmentPoint attach_point)
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK_OGL()
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   VL_CHECK_OGL()
@@ -313,13 +316,13 @@ void FBOTexture2DAttachment::bindAttachment(int w, int h, EAttachmentPoint attac
   glBindTexture( texture()->dimension(), texture()->handle() );
   glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR );
   glBindTexture( texture()->dimension(), 0 );
-
   VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void FBOTextureAttachment::bindAttachment(int /*w*/, int /*h*/, EAttachmentPoint attach_point)
 {
-  VL_WARN(GLEW_NV_geometry_shader4||GLEW_ARB_geometry_shader4)
+  VL_CHECK_OGL()
+  VL_CHECK(GLEW_NV_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_VERSION_3_0)
   VL_CHECK_OGL()
   VL_CHECK(texture())
   VL_CHECK(texture()->handle())
@@ -330,13 +333,13 @@ void FBOTextureAttachment::bindAttachment(int /*w*/, int /*h*/, EAttachmentPoint
   glBindTexture( texture()->dimension(), texture()->handle() );
   glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR );
   glBindTexture( texture()->dimension(), 0 );
-
   VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void FBOTexture3DAttachment::bindAttachment(int w, int h, EAttachmentPoint attach_point)
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK_OGL()
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   VL_CHECK_OGL()
@@ -353,14 +356,14 @@ void FBOTexture3DAttachment::bindAttachment(int w, int h, EAttachmentPoint attac
   glBindTexture(texture()->dimension(), texture()->handle());
   glTexParameteri(texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glBindTexture(texture()->dimension(), 0);
-
   VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void FBOTextureLayerAttachment::bindAttachment(int /*w*/, int /*h*/, EAttachmentPoint attach_point)
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
-  VL_WARN(GLEW_EXT_texture_array||GLEW_NV_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_EXT_geometry_shader4)
+  VL_CHECK_OGL()
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK(GLEW_EXT_texture_array||GLEW_NV_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_EXT_geometry_shader4)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   if(!(GLEW_EXT_texture_array||GLEW_NV_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_EXT_geometry_shader4))
@@ -380,7 +383,6 @@ void FBOTextureLayerAttachment::bindAttachment(int /*w*/, int /*h*/, EAttachment
   glBindTexture(texture()->dimension(), texture()->handle());
   glTexParameteri(texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glBindTexture(texture()->dimension(), 0);
-
   VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
@@ -393,7 +395,8 @@ void FBOAttachmentAbstract::destroy()
 //-----------------------------------------------------------------------------
 void FBORenderbufferAttachment::create()
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK_OGL()
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   if ( !mHandle )
@@ -405,7 +408,8 @@ void FBORenderbufferAttachment::create()
 //-----------------------------------------------------------------------------
 void FBORenderbufferAttachment::destroy()
 {
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK_OGL()
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   FBOAttachmentAbstract::destroy();
@@ -420,8 +424,8 @@ void FBORenderbufferAttachment::destroy()
 //-----------------------------------------------------------------------------
 void FBORenderbufferAttachment::initStorage(int w, int h)
 {
-  VL_CHECK(handle());
   VL_CHECK_OGL()
+  VL_CHECK(handle());
   if (w == 0 || h == 0)
     destroy();
 
@@ -431,18 +435,21 @@ void FBORenderbufferAttachment::initStorage(int w, int h)
     mHeight = h;
     VL_glBindRenderbuffer(GL_RENDERBUFFER, handle());
     if (GLEW_VERSION_3_0||GLEW_ARB_framebuffer_object||GLEW_EXT_framebuffer_multisample)
-      VL_glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples(), internalType(), width(), height());
+    {
+      VL_glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples(), internalType(), width(), height()); VL_CHECK_OGL()
+    }
     else
-      VL_glRenderbufferStorage(GL_RENDERBUFFER, internalType(), width(), height());
-    VL_glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    {
+      VL_glRenderbufferStorage(GL_RENDERBUFFER, internalType(), width(), height()); VL_CHECK_OGL()
+    }
+    VL_glBindRenderbuffer(GL_RENDERBUFFER, 0); VL_CHECK_OGL()
   }
-  VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void FBORenderbufferAttachment::internalBindAttachment(int w, int h, int attach_point)
 {
   VL_CHECK_OGL()
-  VL_WARN(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
+  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
     return;
   VL_CHECK(w)
@@ -456,7 +463,6 @@ void FBORenderbufferAttachment::internalBindAttachment(int w, int h, int attach_
     initStorage(actual_w, actual_h);
     mReallocateRenderbuffer = false;
   }
-  VL_glFramebufferRenderbuffer( GL_FRAMEBUFFER, attach_point, GL_RENDERBUFFER, handle() );
-  VL_CHECK_OGL()
+  VL_glFramebufferRenderbuffer( GL_FRAMEBUFFER, attach_point, GL_RENDERBUFFER, handle() ); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
