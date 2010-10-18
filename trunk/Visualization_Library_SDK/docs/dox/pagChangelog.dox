@@ -2,6 +2,36 @@
 
    \page pagChangelog Changelog
 
+	 <div class="featuretitle">Visualization Library 2010.10.1099</div>
+
+	 - <b>New rendering core architecture</b>:
+		- greatly improved support to OpenGL 3.x
+		- more scalable GLSL programs and uniforms management.
+		- smarter and quicker render states management.
+		- quicker texture unit management.
+		- minimized per-rendering overhead.
+		- much more polished OpenGL context management.
+		- quicker OpenGL context reset.
+		- added several extra sanity check.
+	 - <i>Occusion culling temporarily disabled.</i>
+	 - New Primitive vl::DrawRangeElements.
+	 - Added support to Primitive Restart.
+	 - OpenGL 3.x / 4.x context creation support for Win32 and MFC bindings.
+	 - OpenGL 3.x clipping distance and seam-less cube-maps support.
+	 - vl::Geometry improvements: OpenGL 3.x support and quicker buffer binding.
+	 - Win32 and MFC windows release automatically FBOs on context destruction.
+	 - Enforced well defined policy for VL_gl* function usage.
+     - Enhanced .OBJ file format support.
+	 - Added getTriangle() function to tessellate into triangles arbitrary primitive types.
+	 - Added bitangent space computing utility function.
+	 - GLSL bumpmapping example.
+	 - makeTorus() function enhanced to compute proper normals and texture coordinates.
+	 - Update to GLEW 1.5.6
+	 - Fixed support to single-buffered OpenGL contexts.
+	 - DiskFile and DiskDirectory support for BSD.
+	 - Fixed wxWidgets header include.
+	 - Several other minor bug fixes and improvements.
+
 	 <div class="featuretitle">Visualization Library 2010.06.1000</div>
 	 
 	 - <b>Visualization Library released under the Simplified BSD License!</b>

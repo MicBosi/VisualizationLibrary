@@ -140,7 +140,7 @@ namespace vl
     vl::ref<RenderStateSet> mDummyStateSet;
 
     bool mOcclusionCullingEnabled;
-    // mic fixme
+    // mic fixme: occlusion culling temporarily disabled
     // shader used to render proxy shapes during occlusion cull tests
     // ref<Shader> mOcclusionShader;
     int mOcclusionThreshold;
