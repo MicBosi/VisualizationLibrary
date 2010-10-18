@@ -338,150 +338,150 @@ namespace vl
    *
    * \sa DrawElementsUInt, DrawElementsUShort, DrawElementsUByte, DrawRangeElementsUInt, DrawRangeElementsUShort, DrawRangeElementsUByte, DrawArrays, Geometry, Actor
   */
-  //template <typename index_type, GLenum Tgltype, class arr_type>
-  //class DrawRangeElements: public DrawElements<index_type, Tgltype, arr_type>
-  //{
-  //public:
-  //  DrawRangeElements(EPrimitiveType primitive = PT_TRIANGLES, GLuint start = ~(GLuint)0, GLuint end = 0)
-  //  {
-  //    #ifndef NDEBUG
-  //      mObjectName = className();
-  //    #endif
-  //    mType = primitive;
-  //    // start/end range
-  //    mStart = start;
-  //    mEnd   = end;
-  //  }
-  //  virtual const char* className() { return "DrawRangeElements"; }
+  template <typename index_type, GLenum Tgltype, class arr_type>
+  class DrawRangeElements: public DrawElements<index_type, Tgltype, arr_type>
+  {
+  public:
+    DrawRangeElements(EPrimitiveType primitive = PT_TRIANGLES, GLuint start = ~(GLuint)0, GLuint end = 0)
+    {
+      #ifndef NDEBUG
+        this->mObjectName = className();
+      #endif
+      this->mType = primitive;
+      // start/end range
+      mStart = start;
+      mEnd   = end;
+    }
+    virtual const char* className() { return "DrawRangeElements"; }
 
-  //  virtual ref<Primitives> clone() const 
-  //  { 
-  //    ref<DrawRangeElements> de = new DrawRangeElements( primitiveType(), (int)instances() );
-  //    if (indices()->size())
-  //    {
-  //      de->indices()->resize( indices()->size() );
-  //      memcpy( de->indices()->ptr(), indices()->ptr(), indices()->bytesUsed() );
-  //    }
-  //    de->setPrimitiveRestartEnabled( primitiveRestartEnabled());
-  //    de->setPrimitiveRestartIndex( primitiveRestartIndex());
-  //    return de;
-  //  }
+    virtual ref<Primitives> clone() const 
+    { 
+      ref<DrawRangeElements> de = new DrawRangeElements( this->primitiveType(), (int)this->instances() );
+      if (this->indices()->size())
+      {
+        de->indices()->resize( this->indices()->size() );
+        memcpy( de->indices()->ptr(), this->indices()->ptr(), this->indices()->bytesUsed() );
+      }
+      de->setPrimitiveRestartEnabled( this->primitiveRestartEnabled());
+      de->setPrimitiveRestartIndex( this->primitiveRestartIndex());
+      return de;
+    }
 
-  //  virtual void render(bool use_vbo) const
-  //  {
-  //    VL_CHECK(mEnd >= mStart);
-  //    VL_CHECK(!use_vbo || (use_vbo && (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)))
-  //    use_vbo &= GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indexCountGPU();
-  //    if ( !use_vbo && !indexCount() )
-  //      return;
+    virtual void render(bool use_vbo) const
+    {
+      VL_CHECK(mEnd >= mStart);
+      VL_CHECK(!use_vbo || (use_vbo && (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)))
+      use_vbo &= GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indexCountGPU();
+      if ( !use_vbo && !this->indexCount() )
+        return;
 
-  //    #ifndef NDEBUG
-  //    if (instances() != 1)
-  //      vl::Log::error("DrawRangeElements does not support multi instancing!\n");
-  //      VL_CHECK(instances() == 1);
-  //    #endif
+      #ifndef NDEBUG
+      if (this->instances() != 1)
+        vl::Log::error("DrawRangeElements does not support multi instancing!\n");
+        VL_CHECK(this->instances() == 1);
+      #endif
 
-  //    // primitive restart enable
+      // primitive restart enable
 
-  //    if(primitiveRestartEnabled())
-  //    {
-  //      if (glPrimitiveRestartIndex)
-  //      {
-  //        glEnable(GL_PRIMITIVE_RESTART);
-  //        glPrimitiveRestartIndex(primitiveRestartIndex());
-  //      }
-  //      else
-  //      if (glPrimitiveRestartIndexNV)
-  //      {
-  //        glEnable(GL_PRIMITIVE_RESTART_NV);
-  //        glPrimitiveRestartIndexNV(primitiveRestartIndex());
-  //      }
-  //      else
-  //      {
-  //        vl::Log::error("DrawRangeElements error: primitive restart not supported by this OpenGL implementation!\n");
-  //        VL_TRAP();
-  //        return;
-  //      }
-  //    }
+      if(this->primitiveRestartEnabled())
+      {
+        if (glPrimitiveRestartIndex)
+        {
+          glEnable(GL_PRIMITIVE_RESTART);
+          glPrimitiveRestartIndex(this->primitiveRestartIndex());
+        }
+        else
+        if (glPrimitiveRestartIndexNV)
+        {
+          glEnable(GL_PRIMITIVE_RESTART_NV);
+          glPrimitiveRestartIndexNV(this->primitiveRestartIndex());
+        }
+        else
+        {
+          vl::Log::error("DrawRangeElements error: primitive restart not supported by this OpenGL implementation!\n");
+          VL_TRAP();
+          return;
+        }
+      }
 
-  //    const GLvoid* ptr = indices()->gpuBuffer()->ptr();
+      const GLvoid* ptr = this->indices()->gpuBuffer()->ptr();
 
-  //    VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+      VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-  //    if (use_vbo && indices()->gpuBuffer()->handle())
-  //    {
-  //      VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
-  //      ptr = 0;
-  //    }
+      if (use_vbo && this->indices()->gpuBuffer()->handle())
+      {
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indices()->gpuBuffer()->handle());
+        ptr = 0;
+      }
 
-  //    // No multi instancing supported by glDrawRangeElements
-  //    glDrawRangeElements( primitiveType(), mStart, mEnd, use_vbo ? (GLsizei)indexCountGPU() : (GLsizei)indexCount(), indices()->glType(), ptr );
+      // No multi instancing supported by glDrawRangeElements
+      glDrawRangeElements( this->primitiveType(), mStart, mEnd, use_vbo ? (GLsizei)this->indexCountGPU() : (GLsizei)this->indexCount(), this->indices()->glType(), ptr );
 
-  //    // primitive restart disable
+      // primitive restart disable
 
-  //    if(primitiveRestartEnabled())
-  //    {
-  //      if (glPrimitiveRestartIndex)
-  //        glDisable(GL_PRIMITIVE_RESTART);
-  //      else
-  //      if (glPrimitiveRestartIndexNV)
-  //        glDisable(GL_PRIMITIVE_RESTART_NV);
-  //    }
+      if(this->primitiveRestartEnabled())
+      {
+        if (glPrimitiveRestartIndex)
+          glDisable(GL_PRIMITIVE_RESTART);
+        else
+        if (glPrimitiveRestartIndexNV)
+          glDisable(GL_PRIMITIVE_RESTART_NV);
+      }
 
-  //    if (use_vbo && indices() && indices()->gpuBuffer()->handle())
-  //      VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
-  //  }
+      if (use_vbo && this->indices() && this->indices()->gpuBuffer()->handle())
+        VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+    }
 
-  //  //! Automatically computes the start/end values from the current indices.
-  //  void computeRange()
-  //  {
-  //    if (indexCount() == 0)
-  //    {
-  //      mStart = (GLuint)-1;
-  //      mEnd   =  0;
-  //      return;
-  //    }
-  //    mStart = (GLuint)index(0);
-  //    mEnd   = (GLuint)index(0);
-  //    for(int i=0; i<indexCount(); ++i)
-  //    {
-  //      GLuint idx = (GLuint)index(i);
-  //      // ignore primitive restart special index.
-  //      if ( primitiveRestartEnabled() && primitiveRestartIndex() == idx )
-  //        continue;
-  //      if (idx<mStart)
-  //        mStart = idx;
-  //      if (idx>mEnd)
-  //        mEnd = idx;
-  //    }
+    //! Automatically computes the start/end values from the current indices.
+    void computeRange()
+    {
+      if (this->indexCount() == 0)
+      {
+        mStart = (GLuint)-1;
+        mEnd   =  0;
+        return;
+      }
+      mStart = (GLuint)this->index(0);
+      mEnd   = (GLuint)this->index(0);
+      for(int i=0; i<this->indexCount(); ++i)
+      {
+        GLuint idx = (GLuint)this->index(i);
+        // ignore primitive restart special index.
+        if ( this->primitiveRestartEnabled() && this->primitiveRestartIndex() == idx )
+          continue;
+        if (idx<mStart)
+          mStart = idx;
+        if (idx>mEnd)
+          mEnd = idx;
+      }
 
-  //  }
+    }
 
-  //  //! Sets the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
-  //  void setStart(GLuint start) { mStart = start; }
-  //  //! Returns the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
-  //  GLuint start() const { return mStart; }
-  //  //! Sets the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
-  //  void setEnd(GLuint end) { mEnd = end; }
-  //  //! Sets the end index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
-  //  GLuint end() const { return mEnd; }
+    //! Sets the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
+    void setStart(GLuint start) { mStart = start; }
+    //! Returns the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
+    GLuint start() const { return mStart; }
+    //! Sets the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
+    void setEnd(GLuint end) { mEnd = end; }
+    //! Sets the end index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
+    GLuint end() const { return mEnd; }
 
-  //protected:
-  //  GLuint mStart;
-  //  GLuint mEnd;
-  //};
-  ////------------------------------------------------------------------------------
-  //// typedefs
-  ////------------------------------------------------------------------------------
-  ////! A DrawRangeElements using indices of type \p GLuint.
-  //typedef DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt> DrawRangeElementsUInt;
-  ////------------------------------------------------------------------------------
-  ////! A DrawRangeElements using indices of type \p GLushort.
-  //typedef DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort> DrawRangeElementsUShort;
-  ////------------------------------------------------------------------------------
-  ////! A DrawRangeElements using indices of type \p GLubyte.
-  //typedef DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte> DrawRangeElementsUByte;
-  ////------------------------------------------------------------------------------
+  protected:
+    GLuint mStart;
+    GLuint mEnd;
+  };
+  //------------------------------------------------------------------------------
+  // typedefs
+  //------------------------------------------------------------------------------
+  //! A DrawRangeElements using indices of type \p GLuint.
+  typedef DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt> DrawRangeElementsUInt;
+  //------------------------------------------------------------------------------
+  //! A DrawRangeElements using indices of type \p GLushort.
+  typedef DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort> DrawRangeElementsUShort;
+  //------------------------------------------------------------------------------
+  //! A DrawRangeElements using indices of type \p GLubyte.
+  typedef DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte> DrawRangeElementsUByte;
+  //------------------------------------------------------------------------------
 }
 
 #endif
