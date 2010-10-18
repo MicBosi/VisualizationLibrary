@@ -386,12 +386,11 @@ namespace vl
 
     // --- render states management ---
 
-    // mic fixme: da rivedere se alcune sono da togliere + documenta
+    // mic fixme: documenta clean state policy -> articolo?
     void applyEnables( const EnableSet* prev, const EnableSet* cur );
     void applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera );
     void resetEnables();
     void resetRenderStates();
-    /** Resets the OpenGL rendering states */
     void resetContextStates();
     bool checkIsCleanState() const;
 

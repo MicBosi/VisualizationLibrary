@@ -177,9 +177,9 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
     // nota che i passi 1, 2, 3 non e' per-actor, ma prima si renderizzano tutti gli occluders, poi tutti i 
     // candidati occludee con occluder shader, poi di nuovo tutti gli occludee non occlusi con il loro shader normale.
 
-    // ... forse si dovrebbero sintetizzare dei RenderToken al volo ... 
-    // ... lasciare l'utente definire degli OcclusionQueryGeometry  ...
-    // ... quando l'occludee e' renderizzato l'occlusion query va fatta prima di settare shaders, states etc.
+    // ? forse si dovrebbero sintetizzare dei RenderToken al volo ?
+    // ? lasciare l'utente definire degli OcclusionQueryGeometry  ?
+    // ? quando l'occludee e' renderizzato l'occlusion query va fatta prima di settare shaders, states etc. ?
 
     /*
     bool occluded = false;
