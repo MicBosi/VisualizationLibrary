@@ -341,7 +341,7 @@
  - Win32 GUI bindings: better support for fullscreen mode, support for top and child windows, many fixes and improvements.
    
 
-	<div class="featuretitle">Visualization Library Alpha 2.1 (12th Jan 2009)</div>   
+	<div class="featuretitle">Visualization Library Alpha 2.1</div>   
 
  - VBO usage and creation bug fixes.
  - GLSLProgram and GLSLShader documentation and pointers to the reference manual.
@@ -361,7 +361,7 @@
  - texture SetupParams more flexible and documented.
  - removed deprecated math classes and tests.
 
-	<div class="featuretitle">Visualization Library Alpha 2 (6th Jan 2009)</div>   
+	<div class="featuretitle">Visualization Library Alpha 2</div>   
 
  - faster and lighter rendering architecture (deprecated scene-graph system).
  - Unicode String class.
@@ -374,7 +374,7 @@
  - CMake building system.
  - Documentation updates.
 
-	<div class="featuretitle">Visualization Library Alpha 1 (7th May 2008)</div>   
+	<div class="featuretitle">Visualization Library Alpha 1</div>
 
  - KdTree.
  - OpenGL 1.1 - 2.1 support.
@@ -387,4 +387,8 @@
  - 3DS, PLY, AC3D, MD2 importers.
  - GLUT and SDL bindings.
 
- */
+	<div class="featuretitle">...once upon a time, somewhere around September 2007</div>
+	
+ - Got fed up of uber-scene-graph-oriented, bloated, undocumented, Inventor-clone 3d libraries and started schetching on paper a few concept designs for what was initially supposed to be a bare-bone OpenGL middleware...
+
+*/
