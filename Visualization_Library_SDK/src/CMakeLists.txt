@@ -41,9 +41,13 @@ SET(VL_SRC
   vl/BezierSurface.cpp
   vl/Billboard.cpp
   vl/Camera.cpp
+  vl/ClipPlane.cpp
   vl/DiskDirectory.cpp
   vl/DiskFile.cpp
   vl/DoubleVertexRemover.cpp
+  vl/DrawElements.cpp
+  vl/DrawRangeElements.cpp
+  vl/MultiDrawElements.cpp
   vl/DrawPixels.cpp
   vl/EdgeExtractor.cpp
   vl/EdgeRenderer.cpp
@@ -393,7 +397,7 @@ set(VL_APPLETS_INC
   examples/Applets/BaseDemo.hpp
 )
 
-source_group(vlapplets FILES ${VL_APPLETS_INC})
+source_group(applets FILES ${VL_APPLETS_INC})
 source_group(vl FILES ${VL_INC} ${VL_SRC})
 source_group(vlut FILES ${VLUT_INC} ${VLUT_SRC})
 source_group(vlVG FILES ${VLVG_INC})
