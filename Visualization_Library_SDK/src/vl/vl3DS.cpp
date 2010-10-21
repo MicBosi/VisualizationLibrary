@@ -119,8 +119,8 @@ fvec3 A3DSLoader::readColByte3()
 {
   fvec3 c;
   c.r() = mInputFile->readUByte() / 255.0f;
-  c.g() = mInputFile->readUByte() / 255.0f;;
-  c.b() = mInputFile->readUByte() / 255.0f;;
+  c.g() = mInputFile->readUByte() / 255.0f;
+  c.b() = mInputFile->readUByte() / 255.0f;
   return c;
 }
 //-----------------------------------------------------------------------------
@@ -676,7 +676,7 @@ bool A3DSLoader::parse3DS( VirtualFile* file )
   while( !mInputFile->endOfFile() && !mCorrupted );
 
   mInputFile->close();
-  return !mCorrupted ;
+  return !mCorrupted;
 }
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::load3DS(const String& path)

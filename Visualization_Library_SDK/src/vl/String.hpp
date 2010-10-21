@@ -455,7 +455,7 @@ namespace vl
       createData();
 
       int i=0;
-      for( ; other[i] && i<length(); ++i)
+      for(; other[i] && i<length(); ++i)
         if ( (*mString)[i] != (wchar_t)other[i] )
           return false;
       return i == length() && other[i] == 0;
@@ -466,7 +466,7 @@ namespace vl
       createData();
 
       int i=0;
-      for( ; other[i] && i<length(); ++i)
+      for(; other[i] && i<length(); ++i)
         if ( (*mString)[i] != other[i] )
           return false;
       return i == length() && other[i] == 0;

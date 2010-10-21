@@ -205,7 +205,7 @@ void VisualizationLibrary::init()
 #endif
 
   Time time;
-  Log::print( Say("Visualization Library v%n.%n.%n\%s - %s - %s compiler.\n\n") << VL_Major << VL_Minor << VL_Build << __DATE__ << __TIME__ << compiler );
+  Log::print( Say("Visualization Library v%n.%n.%n\n%s - %s - %s compiler.\n\n") << VL_Major << VL_Minor << VL_Build << __DATE__ << __TIME__ << compiler );
 
   FT_Error error = FT_Init_FreeType( &VisualizationLibraryInstance::singleton()->mFreeTypeLibrary );
   if ( error )

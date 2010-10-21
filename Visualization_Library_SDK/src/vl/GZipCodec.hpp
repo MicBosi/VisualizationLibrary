@@ -116,7 +116,7 @@ namespace vl
     int mCompressionLevel;
     ref<VirtualFile> mStream;
     long long mReadBytes;
-    long long mWrittenBytes;;
+    long long mWrittenBytes;
     bool mWarnOnSeek;
 
     z_stream_s* mZStream;

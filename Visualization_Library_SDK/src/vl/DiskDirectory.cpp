@@ -153,7 +153,7 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
           if (name != L"." && name != L"..")
             dirs.push_back( path() + '/' + name );
         }
-      } while( FindNextFile(hFind, &FindFileData) != 0 ) ;
+      } while( FindNextFile(hFind, &FindFileData) != 0 );
 
       DWORD dwError = GetLastError();
       FindClose(hFind);

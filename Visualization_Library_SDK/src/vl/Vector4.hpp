@@ -213,7 +213,7 @@ namespace vl
     }
     bool operator==(const Vector4& other) const
     {
-      return x() == other.x() && y() == other.y() && z() == other.z() && w() == other.w() ;
+      return x() == other.x() && y() == other.y() && z() == other.z() && w() == other.w();
     }
     bool operator!=(const Vector4& other) const
     {

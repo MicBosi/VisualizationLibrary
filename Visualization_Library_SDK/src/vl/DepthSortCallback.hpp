@@ -165,7 +165,7 @@ namespace vl
       // computes eye-space vertex positions
       fmat4 m;
       if (actor->transform())
-        m = (fmat4)(cam->viewMatrix() * actor->transform()->worldMatrix()) ;
+        m = (fmat4)(cam->viewMatrix() * actor->transform()->worldMatrix());
       else
         m = (fmat4)cam->viewMatrix();
       mEyeSpaceVerts->resize( verts->size() );

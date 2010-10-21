@@ -183,7 +183,7 @@ public:
     {
       float t = (float)i/(size-1);
       extrusion.positionPath()[i].y() = (t - 0.5f)*width;
-      float a = t * vl::fPi*2.0f*freq - vl::fPi/4.0f ;
+      float a = t * vl::fPi*2.0f*freq - vl::fPi/4.0f;
       float s = ::sin( t*vl::fPi/2.0f );
       s = 5.0f*s + 0.5f*(1.0f-s);
       extrusion.positionPath()[i].x() = ::sin(a)*s;
