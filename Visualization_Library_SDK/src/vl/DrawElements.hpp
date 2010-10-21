@@ -82,6 +82,8 @@ namespace vl
     };
 
   public:
+    virtual const char* className() { return "DrawElements"; }
+
     DrawElements(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
     {
       #ifndef NDEBUG
@@ -93,18 +95,21 @@ namespace vl
       mPrimitiveRestartIndex   = ~(index_type)0;
       mPrimitiveRestartEnabled = false;
     }
-    virtual const char* className() { return "DrawElements"; }
+
+    DrawElements& operator=(const DrawElements& other)
+    {
+      Primitives::operator=(other);
+      *indices() = *other.indices();
+      mInstances = other.mInstances;
+      mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
+      mPrimitiveRestartIndex   = other.mPrimitiveRestartIndex;
+      return *this;
+    }
 
     virtual ref<Primitives> clone() const 
     { 
-      ref<DrawElements> de = new DrawElements( primitiveType(), (int)instances() );
-      if (indices()->size())
-      {
-        de->indices()->resize( indices()->size() );
-        memcpy( de->indices()->ptr(), indices()->ptr(), indices()->bytesUsed() );
-      }
-      de->setPrimitiveRestartEnabled( primitiveRestartEnabled());
-      de->setPrimitiveRestartIndex( primitiveRestartIndex());
+      ref<DrawElements> de = new DrawElements;
+      *de = *this;
       return de;
     }
 
@@ -138,12 +143,12 @@ namespace vl
       indices()->gpuBuffer()->resize(0);
     }
 
-    //! Returns the number of triangles contained in this primitive set.
-    //! \note This function returns 0 if primitive restart is enabled.
-    size_t triangleCount() const
+    /** Returns the number of triangles contained in this primitive set.
+      * \note This function returns -1 if primitive restart is enabled. */
+    int triangleCount() const
     {
       if (primitiveRestartEnabled())
-        return 0;
+        return -1;
 
       size_t count = indexCount();
       if (count == 0)
@@ -156,21 +161,21 @@ namespace vl
       case PT_LINE_STRIP: return 0;
       case PT_TRIANGLES: return (count / 3) * instances();
       case PT_TRIANGLE_STRIP: return (count - 2) * instances();
-      case PT_TRIANGLE_FAN: return (count - 2) * instances();;
-      case PT_QUADS: return (count / 4 * 2) * instances();;
-      case PT_QUAD_STRIP: return ( (count - 2) / 2 ) * 2 * instances();;
-      case PT_POLYGON: return (count - 2) * instances();;
+      case PT_TRIANGLE_FAN: return (count - 2) * instances();
+      case PT_QUADS: return (count / 4 * 2) * instances();
+      case PT_QUAD_STRIP: return ( (count - 2) / 2 ) * 2 * instances();
+      case PT_POLYGON: return (count - 2) * instances();
       default:
         return 0;
       }
     }
 
-    //! Returns the number of lines contained in this primitive set.
-    //! \note This function returns 0 if primitive restart is enabled.
-    size_t lineCount() const 
+    /** Returns the number of lines contained in this primitive set.
+      * \note This function returns -1 if primitive restart is enabled. */
+    int lineCount() const 
     {
       if (primitiveRestartEnabled())
-        return 0;
+        return -1;
 
       size_t count = indexCount();
       if (count == 0)
@@ -185,12 +190,12 @@ namespace vl
       }
     }
 
-    //! Returns the number of points contained in this primitive set.
-    //! \note This function returns 0 if primitive restart is enabled.
-    size_t pointCount() const
+    /** Returns the number of points contained in this primitive set.
+      * \note This function returns -1 if primitive restart is enabled. */
+    int pointCount() const
     {
       if (primitiveRestartEnabled())
-        return 0;
+        return -1;
 
       size_t count = indexCount();
       if (count == 0)
@@ -203,8 +208,8 @@ namespace vl
       }
     }
 
-    //! Tries to sort the triangles in a GPU-cache friendly manner.
-    //! \note This function does nothing if primitive restart is enabled.
+    /** Tries to sort the triangles in a GPU-cache friendly manner.
+      * \note This function does nothing if primitive restart is enabled. */
     virtual void sortTriangles()
     {
       if (primitiveRestartEnabled())
@@ -227,16 +232,15 @@ namespace vl
         return;
 
       // primitive restart enable
-
       if(primitiveRestartEnabled())
       {
-        if (glPrimitiveRestartIndex)
+        if(GLEW_VERSION_3_1)
         {
           glEnable(GL_PRIMITIVE_RESTART);
           glPrimitiveRestartIndex(primitiveRestartIndex());
         }
         else
-        if (glPrimitiveRestartIndexNV)
+        if(GLEW_NV_primitive_restart)
         {
           glEnable(GL_PRIMITIVE_RESTART_NV);
           glPrimitiveRestartIndexNV(primitiveRestartIndex());
@@ -251,13 +255,13 @@ namespace vl
 
       const GLvoid* ptr = indices()->gpuBuffer()->ptr();
 
-      VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
       if (use_vbo && indices()->gpuBuffer()->handle())
       {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
         ptr = 0;
       }
+      else
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
       if ( instances() > 1 && (GLEW_ARB_draw_instanced||GLEW_EXT_draw_instanced) )
         VL_glDrawElementsInstanced( primitiveType(), use_vbo ? (GLsizei)indexCountGPU() : (GLsizei)indexCount(), indices()->glType(), ptr, (GLsizei)instances() );
@@ -268,10 +272,10 @@ namespace vl
 
       if(primitiveRestartEnabled())
       {
-        if (glPrimitiveRestartIndex)
+        if(GLEW_VERSION_3_1)
           glDisable(GL_PRIMITIVE_RESTART);
         else
-        if (glPrimitiveRestartIndexNV)
+        if(GLEW_NV_primitive_restart)
           glDisable(GL_PRIMITIVE_RESTART_NV);
       }
 
@@ -289,42 +293,323 @@ namespace vl
         }
       #endif
 
-      if (use_vbo && indices() && indices()->gpuBuffer()->handle())
+      if (use_vbo && this->indices()->gpuBuffer()->handle())
         VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     }
 
-    //! Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types.
+    /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
     GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
-    //! Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types.
+    /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
     void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
 
-    //! Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt
+    /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
-    //! Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt
-    //! \note Functions like triangleCount(), lineCount(), pointCount() and sortTriangles() should not be used when primitive restart is enabled.
+    /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt
+      * \note Functions like triangleCount(), lineCount(), pointCount() and sortTriangles() should not be used when primitive restart is enabled. */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
+    // mic fixme
+    size_t instances() const { return mInstances; }
+    void setInstances(size_t instances) { mInstances = instances; }
 
   protected:
     ref< arr_type > mIndexBuffer;
+    size_t mInstances;
     GLuint mPrimitiveRestartIndex;
     bool mPrimitiveRestartEnabled;
   };
   //------------------------------------------------------------------------------
   // typedefs
   //------------------------------------------------------------------------------
-  //! A DrawElements using indices of type \p GLuint.
+  /** A DrawElements using indices of type \p GLuint. */
   typedef DrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt> DrawElementsUInt;
   //------------------------------------------------------------------------------
-  //! A DrawElements using indices of type \p GLushort.
+  /** A DrawElements using indices of type \p GLushort. */
   typedef DrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort> DrawElementsUShort;
   //------------------------------------------------------------------------------
-  //! A DrawElements using indices of type \p GLubyte.
+  /** A DrawElements using indices of type \p GLubyte. */
   typedef DrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte> DrawElementsUByte;
   //------------------------------------------------------------------------------
 
 
-  // mic fixme: currently does not compile under GCC
+  //------------------------------------------------------------------------------
+  // MultiDrawElements
+  //------------------------------------------------------------------------------
+  /** 
+   * Wrapper for the OpenGL function glMultiDrawElements(), see also http://www.opengl.org/sdk/docs/man/xhtml/glMultiDrawElements.xml for more information.
+   * mic fixme
+   *
+  */
+  template <typename index_type, GLenum Tgltype, class arr_type>
+  class MultiDrawElements: public Primitives
+  {
+  public:
+    virtual const char* className() { return "MultiDrawElements"; }
+
+    MultiDrawElements(EPrimitiveType primitive = PT_TRIANGLES)
+    {
+      #ifndef NDEBUG
+        mObjectName = className();
+      #endif
+      mType        = primitive;
+      mIndexBuffer = new arr_type;
+      mPrimitiveRestartIndex   = ~(index_type)0;
+      mPrimitiveRestartEnabled = false;
+    }
+
+    MultiDrawElements& operator=(const MultiDrawElements& other)
+    {
+      Primitives::operator=(other);
+      *indices() = *other.indices();
+      mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
+      mPrimitiveRestartIndex   = other.mPrimitiveRestartIndex;
+      setCountVector(other.mCountVector);
+      return *this;
+    }
+
+    virtual ref<Primitives> clone() const 
+    { 
+      ref<MultiDrawElements> de = new MultiDrawElements;
+      *de = *this;
+      return de;
+    }
+
+    virtual unsigned int handle() const { return indices()->gpuBuffer()->handle(); }
+
+    void setPrimitiveType(EPrimitiveType type) { mType = type; }
+
+    EPrimitiveType primitiveType() const { return mType; }
+
+    virtual size_t indexCount() const { return indices()->size(); }
+
+    virtual size_t indexCountGPU() const { return indices()->sizeGPU(); }
+
+    virtual size_t index(int i) const { return (int)indices()->at(i); }
+
+    arr_type* indices() { return mIndexBuffer.get(); }
+    const arr_type* indices() const { return mIndexBuffer.get(); }
+
+    virtual void updateVBOs(bool discard_local_data = false)
+    {
+      indices()->updateVBO(discard_local_data);
+    }
+
+    virtual void deleteVBOs()
+    {
+      indices()->gpuBuffer()->deleteGLBufferObject();
+    }
+
+    virtual void clearLocalBuffer()
+    {
+      indices()->gpuBuffer()->resize(0);
+    }
+
+    /** Returns the number of triangles contained in this primitive set.
+      * \note This function returns -1 if primitive restart is enabled. */
+    int triangleCount() const
+    {
+      if (primitiveRestartEnabled())
+        return -1;
+
+      int total_count = 0;
+      for(size_t i=0; i<mCountVector.size(); ++i)
+      {
+        size_t count = mCountVector[i];
+        switch( mType )
+        {
+          case PT_TRIANGLES: total_count += (count / 3);
+          case PT_TRIANGLE_STRIP: total_count += (count - 2);
+          case PT_TRIANGLE_FAN: total_count += (count - 2);
+          case PT_QUADS: total_count += (count / 4 * 2);
+          case PT_QUAD_STRIP: total_count += ( (count - 2) / 2 ) * 2;
+          case PT_POLYGON: total_count += (count - 2);
+          case PT_POINTS:
+          case PT_LINES:
+          case PT_LINE_LOOP:
+          case PT_LINE_STRIP:
+          default:
+            break;
+        }
+      }
+
+      return total_count;
+    }
+
+    /** Returns the number of lines contained in this primitive set.
+      * \note This function returns -1 if primitive restart is enabled. */
+    int lineCount() const 
+    {
+      if (primitiveRestartEnabled())
+        return -1;
+
+      int total_count = 0;
+      for(size_t i=0; i<mCountVector.size(); ++i)
+      {
+        size_t count = mCountVector[i];
+        switch( mType )
+        {
+          case PT_LINES:      total_count += count / 2;
+          case PT_LINE_LOOP:  total_count += count;
+          case PT_LINE_STRIP: total_count += count - 1;
+          default:
+            break;
+        }
+      }
+
+      return total_count;
+    }
+
+    /** Returns the number of points contained in this primitive set.
+      * \note This function returns -1 if primitive restart is enabled. */
+    int pointCount() const
+    {
+      if (primitiveRestartEnabled())
+        return -1;
+
+      int total_count = 0;
+      for(size_t i=0; i<mCountVector.size(); ++i)
+      {
+        size_t count = mCountVector[i];
+        switch( mType )
+        {
+        case PT_POINTS: total_count += count;
+        default:
+          break;
+        }
+      }
+
+      return total_count;
+    }
+
+    virtual void render(bool use_vbo) const
+    {
+      VL_CHECK(!use_vbo || (use_vbo && (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)))
+      use_vbo &= GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indexCountGPU();
+      if ( !use_vbo && !indexCount() )
+        return;
+
+      // primitive restart enable
+      if(primitiveRestartEnabled())
+      {
+        if(GLEW_VERSION_3_1)
+        {
+          glEnable(GL_PRIMITIVE_RESTART);
+          glPrimitiveRestartIndex(primitiveRestartIndex());
+        }
+        else
+        if(GLEW_NV_primitive_restart)
+        {
+          glEnable(GL_PRIMITIVE_RESTART_NV);
+          glPrimitiveRestartIndexNV(primitiveRestartIndex());
+        }
+        else
+        {
+          vl::Log::error("MultiDrawElements error: primitive restart not supported by this OpenGL implementation!\n");
+          VL_TRAP();
+          return;
+        }
+      }
+
+      if (use_vbo && indices()->gpuBuffer()->handle())
+      {
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
+      }
+      else
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+      if (use_vbo)
+      {
+        glMultiDrawElements( 
+          primitiveType(), 
+          (GLsizei*)&mCountVector[0], 
+          indices()->glType(), 
+          (const GLvoid**)&mNULLPointerVector[0], mCountVector.size() 
+        );
+      }
+      else
+      {
+        glMultiDrawElements( 
+          primitiveType(), 
+          (GLsizei*)&mCountVector[0], 
+          indices()->glType(), 
+          (const GLvoid**)&mPointerVector[0], mCountVector.size() 
+        );
+      }
+
+      // primitive restart disable
+      if(primitiveRestartEnabled())
+      {
+        if(GLEW_VERSION_3_1)
+          glDisable(GL_PRIMITIVE_RESTART);
+        else
+        if(GLEW_NV_primitive_restart)
+          glDisable(GL_PRIMITIVE_RESTART_NV);
+      }
+
+      if (use_vbo && this->indices()->gpuBuffer()->handle())
+        VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+    }
+
+    /** Sets the vector defining the length of each primitive and automatically computes the pointer 
+      * vectors used to exectue glMultiDrawElements(). */
+    void setCountVector(const std::vector<GLsizei>& vcount)
+    {
+      mCountVector = vcount;
+
+      // set all to null: used when VBO is active.
+      mNULLPointerVector.resize( vcount.size() );
+
+      // used when VBOs are not active.
+      mPointerVector.clear();
+      const index_type* ptr = (const index_type*)indices()->gpuBuffer()->ptr();
+      for(size_t i=0; i<vcount.size(); ++i)
+      {
+        mPointerVector.push_back(ptr);
+        ptr += vcount[i];
+      }
+      VL_CHECK( ptr - (const index_type*)indices()->gpuBuffer()->ptr() <= indexCount() );
+    }
+
+    /** The count vector used as 'count' parameter of glMultiDrawElements. */
+    const std::vector<unsigned int>& countVector() const { return mCountVector; }
+
+    /** The pointer vector used as 'indices' parameter of glMultiDrawElements. */
+    const std::vector<index_type*>& pointerVector() const { return mPointerVector; }
+
+    /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
+    GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
+    /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
+    void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
+
+    /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
+    bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
+    /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt
+      * \note Functions like triangleCount(), lineCount(), pointCount() and sortTriangles() should not be used when primitive restart is enabled. */
+    void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
+
+  protected:
+    ref< arr_type > mIndexBuffer;
+    GLuint mPrimitiveRestartIndex;
+    bool mPrimitiveRestartEnabled;
+
+    std::vector<GLsizei>           mCountVector;
+    std::vector<const index_type*> mPointerVector;
+    std::vector<const index_type*> mNULLPointerVector;
+  };
+  //------------------------------------------------------------------------------
+  // typedefs
+  //------------------------------------------------------------------------------
+  /** A MultiDrawElements using indices of type \p GLuint. */
+  typedef MultiDrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt> MultiDrawElementsUInt;
+  //------------------------------------------------------------------------------
+  /** A MultiDrawElements using indices of type \p GLushort. */
+  typedef MultiDrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort> MultiDrawElementsUShort;
+  //------------------------------------------------------------------------------
+  /** A MultiDrawElements using indices of type \p GLubyte. */
+  typedef MultiDrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte> MultiDrawElementsUByte;
+  //------------------------------------------------------------------------------
+
+
   //------------------------------------------------------------------------------
   // DrawRangeElements
   //------------------------------------------------------------------------------
@@ -339,6 +624,15 @@ namespace vl
    * \sa DrawElementsUInt, DrawElementsUShort, DrawElementsUByte, DrawRangeElementsUInt, DrawRangeElementsUShort, DrawRangeElementsUByte, DrawArrays, Geometry, Actor
   */
   template <typename index_type, GLenum Tgltype, class arr_type>
+  // fixme: should derive from Primitives!
+  // fixme: mettere in files separati!
+  // Tabellina DrawElems/DrawRange/MultiDraw v.s. Instancing/Restart/BaseVertex
+  // Rivedere le operazioni di rendering
+  // Rivedere gli operator=
+  // Rivedere chi deriva da chi
+  // Rivedere inizializzazione costruttori
+  // Test che controlla se point/lines/triangle counts funzionano su tutti e tre.
+  // Updata da 0 la documentazione delle 3 classi.
   class DrawRangeElements: public DrawElements<index_type, Tgltype, arr_type>
   {
   public:
@@ -354,16 +648,19 @@ namespace vl
     }
     virtual const char* className() { return "DrawRangeElements"; }
 
+    DrawRangeElements& operator=(const DrawRangeElements& other)
+    {
+      // mic fixme: from Primitives
+      DrawElements<index_type, Tgltype, arr_type>::operator=(other);
+      mStart = other.mStart;
+      mEnd   = other.mEnd;
+      return *this;
+    }
+
     virtual ref<Primitives> clone() const 
     { 
-      ref<DrawRangeElements> de = new DrawRangeElements( this->primitiveType(), (int)this->instances() );
-      if (this->indices()->size())
-      {
-        de->indices()->resize( this->indices()->size() );
-        memcpy( de->indices()->ptr(), this->indices()->ptr(), this->indices()->bytesUsed() );
-      }
-      de->setPrimitiveRestartEnabled( this->primitiveRestartEnabled());
-      de->setPrimitiveRestartIndex( this->primitiveRestartIndex());
+      ref<DrawRangeElements> de = new DrawRangeElements;
+      *de = *this;
       return de;
     }
 
@@ -382,16 +679,15 @@ namespace vl
       #endif
 
       // primitive restart enable
-
       if(this->primitiveRestartEnabled())
       {
-        if (glPrimitiveRestartIndex)
+        if (GLEW_VERSION_3_1)
         {
           glEnable(GL_PRIMITIVE_RESTART);
           glPrimitiveRestartIndex(this->primitiveRestartIndex());
         }
         else
-        if (glPrimitiveRestartIndexNV)
+        if (GL_NV_primitive_restart)
         {
           glEnable(GL_PRIMITIVE_RESTART_NV);
           glPrimitiveRestartIndexNV(this->primitiveRestartIndex());
@@ -406,33 +702,36 @@ namespace vl
 
       const GLvoid* ptr = this->indices()->gpuBuffer()->ptr();
 
-      VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
       if (use_vbo && this->indices()->gpuBuffer()->handle())
       {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indices()->gpuBuffer()->handle());
         ptr = 0;
       }
+      else
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-      // No multi instancing supported by glDrawRangeElements
+      // no multi instancing supported by glDrawRangeElements
       glDrawRangeElements( this->primitiveType(), mStart, mEnd, use_vbo ? (GLsizei)this->indexCountGPU() : (GLsizei)this->indexCount(), this->indices()->glType(), ptr );
 
       // primitive restart disable
-
       if(this->primitiveRestartEnabled())
       {
-        if (glPrimitiveRestartIndex)
+        if (GLEW_VERSION_3_1)
           glDisable(GL_PRIMITIVE_RESTART);
         else
-        if (glPrimitiveRestartIndexNV)
+        if (GL_NV_primitive_restart)
           glDisable(GL_PRIMITIVE_RESTART_NV);
+        else
+        {
+          VL_TRAP();
+        }
       }
 
-      if (use_vbo && this->indices() && this->indices()->gpuBuffer()->handle())
+      if (use_vbo && this->indices()->gpuBuffer()->handle())
         VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     }
 
-    //! Automatically computes the start/end values from the current indices.
+    /** Automatically computes the start/end values from the current indices. */
     void computeRange()
     {
       if (this->indexCount() == 0)
@@ -457,13 +756,13 @@ namespace vl
 
     }
 
-    //! Sets the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
+    /** Sets the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml */
     void setStart(GLuint start) { mStart = start; }
-    //! Returns the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
+    /** Returns the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml */
     GLuint start() const { return mStart; }
-    //! Sets the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
+    /** Sets the start index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml */
     void setEnd(GLuint end) { mEnd = end; }
-    //! Sets the end index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml
+    /** Sets the end index of the range to be drawn. See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawRangeElements.xml */
     GLuint end() const { return mEnd; }
 
   protected:
@@ -473,13 +772,13 @@ namespace vl
   //------------------------------------------------------------------------------
   // typedefs
   //------------------------------------------------------------------------------
-  //! A DrawRangeElements using indices of type \p GLuint.
+  /** A DrawRangeElements using indices of type \p GLuint. */
   typedef DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt> DrawRangeElementsUInt;
   //------------------------------------------------------------------------------
-  //! A DrawRangeElements using indices of type \p GLushort.
+  /** A DrawRangeElements using indices of type \p GLushort. */
   typedef DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort> DrawRangeElementsUShort;
   //------------------------------------------------------------------------------
-  //! A DrawRangeElements using indices of type \p GLubyte.
+  /** A DrawRangeElements using indices of type \p GLubyte. */
   typedef DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte> DrawRangeElementsUByte;
   //------------------------------------------------------------------------------
 }

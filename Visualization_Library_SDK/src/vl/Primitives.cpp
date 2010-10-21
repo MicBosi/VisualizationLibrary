@@ -56,7 +56,7 @@ void Primitives::getTriangle( size_t tri_index, unsigned int* out_triangle ) con
     out_triangle[0] = index( tri_index * 3 );
     out_triangle[1] = index( tri_index * 3 + 1 );
     out_triangle[2] = index( tri_index * 3 + 2 );
-    break;;
+    break;
 
   case PT_TRIANGLE_STRIP:
   case PT_QUAD_STRIP:
@@ -74,14 +74,14 @@ void Primitives::getTriangle( size_t tri_index, unsigned int* out_triangle ) con
       out_triangle[1] = index( tri_index + 2 );
       out_triangle[2] = index( tri_index + 1 );
     }
-    break;;
+    break;
 
   case PT_POLYGON:
   case PT_TRIANGLE_FAN:
       out_triangle[0] = index( 0 );
       out_triangle[1] = index( tri_index + 1 );
       out_triangle[2] = index( tri_index + 2 );
-    break;;
+    break;
 
   case PT_QUADS:
     // 1-----2
@@ -103,7 +103,7 @@ void Primitives::getTriangle( size_t tri_index, unsigned int* out_triangle ) con
       out_triangle[1] = index( tri_index * 2 + 1 );
       out_triangle[2] = index( tri_index * 2 + 2);
     }
-    break;;
+    break;
 
   default:
     return;
