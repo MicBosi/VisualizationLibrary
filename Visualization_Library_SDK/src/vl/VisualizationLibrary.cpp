@@ -130,6 +130,7 @@ class VisualizationLibraryInstance: public Object
     mFileSystem        = new FileSystem;
     mLoadWriterManager = new LoadWriterManager;
     mStandardLogger    = new StandardLog;
+    mGlobalSettings    = new GlobalSettings;
     mEnvVars           = new KeyValues;
     mCertificate       = "[Visualization Library BSD License]";
     mInitialized       = false;
@@ -149,6 +150,7 @@ public:
   ref<FontManager> mFontManager;
   ref<FileSystem>  mFileSystem;
   ref<StandardLog> mStandardLogger;
+  ref<GlobalSettings> mGlobalSettings;
   ref<KeyValues>   mEnvVars;
   std::string      mVersionString;
   const char* mCertificate;
@@ -165,6 +167,8 @@ void VisualizationLibrary::setRendering(RenderingAbstract* rendering) { Visualiz
 void* VisualizationLibrary::freeTypeLibrary()        { return VisualizationLibraryInstance::singleton()->mFreeTypeLibrary; }
 //------------------------------------------------------------------------------
 StandardLog* VisualizationLibrary::logger()          { return VisualizationLibraryInstance::singleton()->mStandardLogger.get(); }
+//------------------------------------------------------------------------------
+GlobalSettings* VisualizationLibrary::globalSettings() { return VisualizationLibraryInstance::singleton()->mGlobalSettings.get(); }
 //------------------------------------------------------------------------------
 const char* VisualizationLibrary::versionString()    { return VisualizationLibraryInstance::singleton()->mVersionString.c_str(); }
 //------------------------------------------------------------------------------
@@ -291,6 +295,7 @@ void VisualizationLibrary::shutdown()
   VisualizationLibraryInstance::singleton()->mLoadWriterManager = NULL;  
   // others
   VisualizationLibraryInstance::singleton()->mEnvVars = NULL;
+  // say goodbye even to the logger!
   Log::print("**************************************\n");
   Log::print("*  VisualizationLibrary::shutdown()  *\n");
   Log::print("**************************************\n");
