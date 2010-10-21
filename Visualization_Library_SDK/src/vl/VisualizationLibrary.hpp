@@ -45,6 +45,57 @@ namespace vl
   class LoadWriterManager;
   class RenderingAbstract;
 
+  //! Global application settings controlling how Visualization Library behaves.
+  class GlobalSettings: public Object
+  {
+  public:
+    typedef enum { 
+      VERBOSITY_ERROR,  //!<< Outputs critical and runtime error messages.
+      VERBOSITY_NORMAL, //!<< Outputs normal information messages, plus all error messages.
+      VERBOSITY_DEBUG   //!<< Outputs extra information messages useful for debugging, plus all normal and error messages.
+    } EVerbosityLevel;
+
+  public:
+    GlobalSettings()
+    {
+      // mic fixme:
+      // - These settings are overridden by environment variables.
+      // - Documenta env vars su articolo: Configuring VL
+      // - ApplyGlobalSettings() funciton?
+      // - Alla fine non sono tutti global settings i componenti di VL?
+      // - Testa double precision pipeline.
+      mDataDirectory   = "../data";
+      mLogFile         = "log.txt";
+      #ifndef NDEBUG
+        mVerbosityLevel  = VERBOSITY_NORMAL;
+        mCheckCleanState = true;
+      #else
+        mVerbosityLevel  = VERBOSITY_ERROR;
+        mCheckCleanState = false;
+      #endif
+    }
+
+    const String& dataDirectory() const { return mDataDirectory; }
+    // mic fixme: settare questa variabile deve avere un riscontro immediato su loadFile() & co.
+    void setDataDirectory(const String& data_dir) { mDataDirectory = data_dir; }
+
+    const String& logFile() const { return mLogFile; }
+    // mic fixme: settare questa variabile deve avere un riscontro immediato sul logging.
+    void setLogFile(const String& data_dir) { mLogFile = data_dir; }
+
+    bool checkCleanState() const { return mCheckCleanState; }
+    void setCheckcleanState(bool check_clean) { mCheckCleanState = check_clean; }
+
+    EVerbosityLevel verbosityLevel() const { return mVerbosityLevel; }
+    void setVerbosityLevel(EVerbosityLevel verb_level) { mVerbosityLevel = verb_level; }
+
+  protected:
+    String mDataDirectory; // mic fixme: inizializzato da environment variable
+    String mLogFile;       // mic fixme: inizializzato da environment variable
+    EVerbosityLevel mVerbosityLevel;
+    bool mCheckCleanState;
+  };
+
   //! Used to initialize/shutdown VisualizationLibrary and to access important global data.
   class VisualizationLibrary
   {
@@ -81,6 +132,9 @@ namespace vl
     //! Returns the default Log object.
     static StandardLog* logger();
 
+    //! Returns the global settings of VL.
+    static GlobalSettings* globalSettings();
+
     //! For internal use only
     static void* freeTypeLibrary();
 
@@ -89,7 +143,7 @@ namespace vl
     static void initEnvVars();
   };
 
-  //! Shows a console window that displays the standard output. This function is to be used only under Windows.
+  //! Shows a console window that displays the standard output. This function is meant to be used only under Windows.
   void showWin32Console();
 }
 
