@@ -196,7 +196,7 @@ int String::findBackwards(const String& str) const
     for(int i = length() - str.length()+1; i--; )
     {
       int j=0;
-      for( ; j<str.length(); ++j)
+      for(; j<str.length(); ++j)
       {
         if ( str[j] != (*mString)[i+j] )
           break;

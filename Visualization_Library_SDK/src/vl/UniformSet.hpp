@@ -59,13 +59,13 @@ namespace vl
 
     // uniform getters and setters
 
-    void setUniform(Uniform* uniform, bool check_for_doubles = true) ;
+    void setUniform(Uniform* uniform, bool check_for_doubles = true);
 
     const std::vector< ref<Uniform> >& uniforms() const { return mUniforms; }
 
-    void eraseUniform(const std::string& name) ;
+    void eraseUniform(const std::string& name);
 
-    void eraseUniform(const Uniform* uniform) ;
+    void eraseUniform(const Uniform* uniform);
 
     void eraseAllUniforms() { mUniforms.clear(); }
 

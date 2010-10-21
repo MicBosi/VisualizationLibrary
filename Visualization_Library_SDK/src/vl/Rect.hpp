@@ -139,7 +139,7 @@ namespace vl
         return mHeight < other.mHeight;
       else
       if (mY != other.mY)
-        return mY < other.mY ;
+        return mY < other.mY;
       else
         return false;
     }

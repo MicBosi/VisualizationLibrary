@@ -104,22 +104,22 @@ namespace vl
     //-----------------------------------------------------------------------------
     Vector3<scalar_type> getX() const
     {
-      return Vector3<scalar_type>(mVec[0].x(), mVec[0].y(), mVec[0].z()) ;
+      return Vector3<scalar_type>(mVec[0].x(), mVec[0].y(), mVec[0].z());
     }
     //-----------------------------------------------------------------------------
     Vector3<scalar_type> getY() const
     {
-      return Vector3<scalar_type>(mVec[1].x(), mVec[1].y(), mVec[1].z()) ;
+      return Vector3<scalar_type>(mVec[1].x(), mVec[1].y(), mVec[1].z());
     }
     //-----------------------------------------------------------------------------
     Vector3<scalar_type> getZ() const
     {
-      return Vector3<scalar_type>(mVec[2].x(), mVec[2].y(), mVec[2].z()) ;
+      return Vector3<scalar_type>(mVec[2].x(), mVec[2].y(), mVec[2].z());
     }
     //-----------------------------------------------------------------------------
     Vector3<scalar_type> getT() const
     {
-      return Vector3<scalar_type>(mVec[3].x(), mVec[3].y(), mVec[3].z()) ;
+      return Vector3<scalar_type>(mVec[3].x(), mVec[3].y(), mVec[3].z());
     }
     //-----------------------------------------------------------------------------
     Matrix4& setX(const Vector3<scalar_type>& v) 
@@ -840,7 +840,7 @@ namespace vl
     rot.e(0,0) = (scalar_type)((one_c * xx) + c ); rot.e(0,1) = (scalar_type)((one_c * xy) + zs); rot.e(0,2) = (scalar_type)((one_c * zx) - ys);
     rot.e(1,0) = (scalar_type)((one_c * xy) - zs); rot.e(1,1) = (scalar_type)((one_c * yy) + c ); rot.e(1,2) = (scalar_type)((one_c * yz) + xs);
     rot.e(2,0) = (scalar_type)((one_c * zx) + ys); rot.e(2,1) = (scalar_type)((one_c * yz) - xs); rot.e(2,2) = (scalar_type)((one_c * zz) + c );
-    return rot ;
+    return rot;
   }
   //-----------------------------------------------------------------------------
   template<typename scalar_type>
@@ -911,7 +911,7 @@ namespace vl
       }
 
       for (i=0; i<4; ++i) {
-        if (i!=k) m[i][k]/=( -pvt_val) ;
+        if (i!=k) m[i][k]/=( -pvt_val);
       }
 
       for (i=0; i<4; ++i) 

@@ -183,7 +183,7 @@ ref<Image> vl::loadBMP( VirtualFile* file )
       }
 
       int pad_bytes = (4 - (img->width() * 1) % 4) % 4;
-      int datasize = (img->width() * 1 + pad_bytes) * img->height() ;
+      int datasize = (img->width() * 1 + pad_bytes) * img->height();
 
       // 8bpp uncompressed
 
@@ -216,7 +216,7 @@ ref<Image> vl::loadBMP( VirtualFile* file )
       // usato solo se 24 bits.
       int pad_bytes = (4 - (img->width() * 3) % 4) % 4;
       // fa prima se lo si legge tutto insieme.
-      int datasize = bih.BitCount() == 32 ? img->width() * img->height() * 4 : (img->width() * 3 + pad_bytes) * img->height() ;
+      int datasize = bih.BitCount() == 32 ? img->width() * img->height() * 4 : (img->width() * 3 + pad_bytes) * img->height();
       int rd = (int)file->read(img->pixels(), datasize);
       if( rd < datasize )
       {

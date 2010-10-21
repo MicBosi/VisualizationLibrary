@@ -442,9 +442,9 @@ String Say::parse( const Say& pset ) const
 
           switch(p.type)
           {
-          case SayArg::FLOAT64:   out += format(p.float64, base, field, decimals, align, fill, plus, ch, eur) ; break;
-          case SayArg::SLONGLONG: out += format(p.slonglong, base, field, decimals, align, fill, plus, ch, eur) ; break;
-          case SayArg::ULONGLONG: out += format(p.ulonglong, base, field, decimals, align, fill, plus, ch, eur) ; break;
+          case SayArg::FLOAT64:   out += format(p.float64, base, field, decimals, align, fill, plus, ch, eur); break;
+          case SayArg::SLONGLONG: out += format(p.slonglong, base, field, decimals, align, fill, plus, ch, eur); break;
+          case SayArg::ULONGLONG: out += format(p.ulonglong, base, field, decimals, align, fill, plus, ch, eur); break;
           default: 
             out += " !!! wrong argument type for '%n' !!! ";
             break;

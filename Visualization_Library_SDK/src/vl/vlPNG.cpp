@@ -476,7 +476,7 @@ bool vl::savePNG(const Image* src, VirtualFile* fout, int compression)
       case IF_RGBA:            color = PNG_COLOR_TYPE_RGB_ALPHA; break;
       case IF_ALPHA:           
       case IF_LUMINANCE:       color = PNG_COLOR_TYPE_GRAY; break;
-      case IF_LUMINANCE_ALPHA: color = PNG_COLOR_TYPE_GRAY_ALPHA ; break;
+      case IF_LUMINANCE_ALPHA: color = PNG_COLOR_TYPE_GRAY_ALPHA; break;
       default: 
         return false;
   }

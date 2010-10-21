@@ -118,7 +118,7 @@ namespace vl
       bool operator==(const Edge& other) const
       {
         return (vertex1() == other.vertex1() && vertex2() == other.vertex2()) ||
-               (vertex1() == other.vertex2() && vertex2() == other.vertex1()) ;
+               (vertex1() == other.vertex2() && vertex2() == other.vertex1());
       }
 
     protected:

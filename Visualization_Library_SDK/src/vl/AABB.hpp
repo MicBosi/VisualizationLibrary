@@ -105,12 +105,12 @@ namespace vl
         return;
       }
 
-      if ( mMax.x() < v.x() ) mMax.x() = v.x() ;
-      if ( mMax.y() < v.y() ) mMax.y() = v.y() ;
-      if ( mMax.z() < v.z() ) mMax.z() = v.z() ;
-      if ( mMin.x() > v.x() ) mMin.x() = v.x() ;
-      if ( mMin.y() > v.y() ) mMin.y() = v.y() ;
-      if ( mMin.z() > v.z() ) mMin.z() = v.z() ;
+      if ( mMax.x() < v.x() ) mMax.x() = v.x();
+      if ( mMax.y() < v.y() ) mMax.y() = v.y();
+      if ( mMax.z() < v.z() ) mMax.z() = v.z();
+      if ( mMin.x() > v.x() ) mMin.x() = v.x();
+      if ( mMin.y() > v.y() ) mMin.y() = v.y();
+      if ( mMin.z() > v.z() ) mMin.z() = v.z();
     }
     void transformed(AABB& aabb, const mat4& mat) const 
     {

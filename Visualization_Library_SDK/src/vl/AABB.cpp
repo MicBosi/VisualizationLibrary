@@ -129,7 +129,7 @@ bool AABB::isInside(const vec3& v) const
 {
   return v.x() >= minCorner().x() && v.x() <= maxCorner().x() &&
          v.y() >= minCorner().y() && v.y() <= maxCorner().y() &&
-         v.z() >= minCorner().z() && v.z() <= maxCorner().z() ;
+         v.z() >= minCorner().z() && v.z() <= maxCorner().z();
 }
 //-----------------------------------------------------------------------------
 void AABB::addPoint(const vec3& v, Real radius) 

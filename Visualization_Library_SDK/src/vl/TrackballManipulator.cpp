@@ -142,7 +142,7 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
     float t = (y-mMouseStart.y()) / 200.0f;
     t *= zoomSpeed();
     Real distance = (mStartCameraPos - mPivot).length();
-    vec3 camera_pos = mStartCameraPos - camera()->inverseViewMatrix().getZ()*t*distance ;
+    vec3 camera_pos = mStartCameraPos - camera()->inverseViewMatrix().getZ()*t*distance;
     mat4 m = camera()->inverseViewMatrix();
     m.setT(camera_pos);
     camera()->setInverseViewMatrix(m);

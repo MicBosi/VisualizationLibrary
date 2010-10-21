@@ -181,7 +181,7 @@ GLSLProgram::GLSLProgram()
   #endif
   mScheduleLink = true;
   mHandle = 0;
-  mGeometryVerticesOut = 0;;
+  mGeometryVerticesOut = 0;
   mGeometryInputType   = GIT_TRIANGLES;
   mGeometryOutputType  = GOT_TRIANGLE_STRIP;
 }
@@ -254,7 +254,7 @@ bool GLSLProgram::attachShader(GLSLShader* shader)
 //-----------------------------------------------------------------------------
 void GLSLProgram::detachAllShaders()
 {
-  for(size_t i=mShaders.size(); i-- ;)
+  for(size_t i=mShaders.size(); i--;)
     detachShader(mShaders[i].get());
 }
 //-----------------------------------------------------------------------------
@@ -512,7 +512,7 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 
     #if 1
       std::map<std::string, int>::const_iterator it = mUniformLocation.find(uniform->name());
-      int location = it == mUniformLocation.end() ? -1 : it->second ;
+      int location = it == mUniformLocation.end() ? -1 : it->second;
     #else
       // for benchmarking purposes
       int location = glGetUniformLocation(handle(), uniform->name().c_str());

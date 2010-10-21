@@ -100,9 +100,9 @@ namespace vl
     */
     virtual void computeBounds_Implementation();
 
-    size_t triangleCount() const;
-    size_t lineCount() const;
-    size_t pointCount() const;
+    int triangleCount() const;
+    int lineCount() const;
+    int pointCount() const;
 
     /**
      * Computes the normals in a "smooth" way, i.e. averaging the normals of those 

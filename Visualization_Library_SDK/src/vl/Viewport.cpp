@@ -75,8 +75,8 @@ void Viewport::activate() const
   VL_CHECK_OGL()
 
   // viewport
-  int x = mX ;
-  int y = mY ;
+  int x = mX;
+  int y = mY;
   int w = mWidth;
   int h = mHeight;
 

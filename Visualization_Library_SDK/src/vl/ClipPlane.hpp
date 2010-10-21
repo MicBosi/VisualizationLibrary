@@ -42,91 +42,39 @@ namespace vl
   // ClipPlane
   //-----------------------------------------------------------------------------
   /**
-   * Wraps the OpenGL function glClipPlane().
+   * Wraps the OpenGL function glClipPlane(). See also http://www.opengl.org/sdk/docs/man/xhtml/glClipPlane.xml
    *
    * \sa Shader, Effect, Actor
   */
   class ClipPlane: public RenderState
   {
   public:
-    ClipPlane(int plane_index, Real o=0.0f, vec3 n=vec3(0,0,0))
-    { 
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-      mPlaneIndex = plane_index;
-      mPlane.setNormal(n); 
-      mPlane.setOrigin(o); 
-    }
-
-    ClipPlane(int plane_index, const vec3& o, const vec3& n)
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-      mPlaneIndex = plane_index;
-      mPlane.setNormal(n); 
-      mPlane.setOrigin(dot(o, n)); 
-    }
-
     virtual const char* className() { return "ClipPlane"; }
-
+    /** Constructor. */
+    ClipPlane(int plane_index, Real o=0.0f, vec3 n=vec3(0,0,0));
+    /** Constructor. */
+    ClipPlane(int plane_index, const vec3& o, const vec3& n);
+    /** Returns RS_ClipPlane0 + planeIndex() */
     virtual ERenderState type() const { return (ERenderState)(RS_ClipPlane0 + planeIndex()); }
-
-    virtual void apply(const Camera* camera, OpenGLContext*) const
-    {
-      VL_CHECK(planeIndex()>=0 && planeIndex()<6);
-      // we do our own transformations
-
-      if (camera)
-      {
-        glEnable(GL_CLIP_PLANE0 + planeIndex());
-
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-
-        glLoadIdentity();
-
-        mat4 mat;
-        if ( followedTransform() )
-          mat = camera->viewMatrix() * followedTransform()->worldMatrix();
-
-        vec3 pt1 = mPlane.normal() * mPlane.origin();
-        vec3 pt2 = mPlane.normal() * mPlane.origin() + mPlane.normal();
-
-        pt1 = mat * pt1;
-        pt2 = mat * pt2;
-
-        vec3 n = pt2 - pt1;
-        Real orig = dot(n, pt1);
-
-        double equation[] = 
-        {
-          (double)n.x(),
-          (double)n.y(),
-          (double)n.z(),
-          -(double)orig
-        };
-
-        glClipPlane(GL_CLIP_PLANE0 + planeIndex(), equation);
-
-        glPopMatrix();
-      }
-      else
-      {
-        glDisable(GL_CLIP_PLANE0 + planeIndex());
-      }
-    }
-
+    /** Applies the light render states. */
+    virtual void apply(const Camera* camera, OpenGLContext*) const;
+    /** Attach the light to a vl::Transform. */
     void followTransform(Transform* transform) { mFollowedTransform = transform; }
-
+    /** Returns the vl::Transform to which the Light is attached. */
     Transform* followedTransform() { return mFollowedTransform.get(); }
+    /** Returns the vl::Transform to which the Light is attached. */
     const Transform* followedTransform() const { return mFollowedTransform.get(); }
-
+    /** Defines the index of the plane this ClipPlane applies.
+      * OpenGL supports up to 6 custom clip planes at the same time thus the index must be
+      * a number between 0 and 5. */
     void setPlaneIndex(int plane_index) { mPlaneIndex = plane_index; }
+    /** Returns the index of the plane this ClipPlane applies.
+      * OpenGL supports up to 6 custom clip planes at the same time thus the index will be
+      * a number between 0 and 5. */
     int planeIndex() const { return mPlaneIndex; }
-
+    /** Returns the actual plane used to perform the clipping. */
     const Plane& plane() const { return mPlane; }
+    /** Defines the actual plane used to perform the clipping. */
     void setPlane(const Plane& plane) { mPlane = plane; }
 
   protected:

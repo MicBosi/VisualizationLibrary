@@ -75,7 +75,7 @@ namespace vl
     virtual const ActorTreeAbstract* child(int i) const { return mChildren[i].get(); }
 
     void addChild(ActorTreeAbstract* node);
-    void setChild(int i, ActorTreeAbstract* node) ;
+    void setChild(int i, ActorTreeAbstract* node);
     void eraseChild(int i, int count=1);
     void eraseAllChildren();
 

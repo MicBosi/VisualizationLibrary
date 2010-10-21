@@ -56,7 +56,7 @@ namespace vl
 
   #else
 
-    #define VL_CHECK_OGL( ) ;
+    #define VL_CHECK_OGL( );
 
   #endif
 }
