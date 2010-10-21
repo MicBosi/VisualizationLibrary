@@ -67,7 +67,19 @@ namespace vl
     }
     virtual const char* className() { return "DrawArrays"; }
 
-    virtual ref<Primitives> clone() const { return new DrawArrays( primitiveType(), (int)start(), (int)count(), (int)instances() ); }
+    DrawArrays& operator=(const DrawArrays& other)
+    {
+      Primitives::operator=(other);
+      mStart     = other.mStart;
+      mCount     = other.mCount;
+      mInstances = other.mInstances;
+      return *this;
+    }
+
+    virtual ref<Primitives> clone() const 
+    { 
+      return new DrawArrays( primitiveType(), (int)start(), (int)count(), (int)instances() ); 
+    }
 
     virtual void deleteVBOs() {}
     virtual void updateVBOs(bool) {}
@@ -75,7 +87,7 @@ namespace vl
     virtual size_t indexCount() const { return count(); }
     virtual size_t index(int i) const { return start() + i; }
 
-    size_t triangleCount() const
+    int triangleCount() const
     {
       switch( mType )
       {
@@ -94,7 +106,7 @@ namespace vl
       }
     }
 
-    size_t lineCount() const
+    int lineCount() const
     {
       switch( mType )
       {
@@ -106,7 +118,7 @@ namespace vl
       }
     }
 
-    size_t pointCount() const
+    int pointCount() const
     {
       switch( mType )
       {
@@ -150,9 +162,14 @@ namespace vl
     //! returns the number of vertices to be rendered.
     size_t count() const { return mCount; }
 
+    // mic fixme
+    size_t instances() const { return mInstances; }
+    void setInstances(size_t instances) { mInstances = instances; }
+
     protected:
       size_t mStart;
       size_t mCount;
+      size_t mInstances;
   };
 
 }

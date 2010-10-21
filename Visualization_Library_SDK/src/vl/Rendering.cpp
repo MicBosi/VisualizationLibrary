@@ -160,7 +160,7 @@ void Rendering::render()
           sceneManagers()->at(i)->computeBounds();
         // try to cull the scene with both bsphere and bbox
         bool visible = !camera()->frustum().cull(sceneManagers()->at(i)->boundingSphere()) && 
-                       !camera()->frustum().cull(sceneManagers()->at(i)->boundingBox())    ;
+                       !camera()->frustum().cull(sceneManagers()->at(i)->boundingBox());
         if ( visible )
             sceneManagers()->at(i)->appendVisibleActors( *actorQueue(), camera() );
       }

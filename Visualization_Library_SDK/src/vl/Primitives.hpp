@@ -47,11 +47,17 @@ namespace vl
   class Primitives: public Object
   {
   public:
-    Primitives(): mType(PT_TRIANGLES), mInstances(1), mEnabled(true) {}
+    Primitives(): mType(PT_TRIANGLES), mEnabled(true) {}
 
     virtual const char* className() { return "Primitives"; }
 
-    virtual ~Primitives() {}
+    Primitives& operator=(const Primitives& other)
+    {
+      mType      = other.mType;
+      mEnabled   = other.mEnabled;
+      return *this;
+    }
+
     void setPrimitiveType(EPrimitiveType type) { mType = type; }
     EPrimitiveType primitiveType() const { return mType; }
 
@@ -65,14 +71,11 @@ namespace vl
     virtual size_t indexCount() const = 0;
     virtual size_t index(int i) const = 0;
 
-    virtual size_t triangleCount() const = 0;
-    virtual size_t lineCount() const = 0;
-    virtual size_t pointCount() const = 0;
+    virtual int triangleCount() const = 0;
+    virtual int lineCount() const = 0;
+    virtual int pointCount() const = 0;
     //! Supported only by DrawElements
     virtual void sortTriangles() {}
-
-    size_t instances() const { return mInstances; }
-    void setInstances(size_t instances) { mInstances = instances; }
 
     void setEnabled(bool enable) { mEnabled = enable; }
     bool isEnabled() const { return mEnabled; }
@@ -89,7 +92,6 @@ namespace vl
 
   protected:
       EPrimitiveType mType;
-      size_t mInstances;
       bool mEnabled;
   };
 }
