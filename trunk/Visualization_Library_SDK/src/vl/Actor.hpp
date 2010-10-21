@@ -168,7 +168,7 @@ namespace vl
     const Effect* effect() const { return mEffect.get(); }
 
     /** Returns the bounding sphere that contains this Actor taking into consideration also its Transform. */
-    const Sphere& boundingSphere() const { return mSphere ; }
+    const Sphere& boundingSphere() const { return mSphere; }
 
     /** Returns the bounding box that contains this Actor taking into consideration also its Transform. */
     const AABB& boundingBox() const { return mAABB; }

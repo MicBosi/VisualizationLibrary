@@ -124,7 +124,7 @@ void Font::setSize(int size)
 {
   if(mSize != size)
   {
-    mSize = size ;
+    mSize = size;
     // removes all the cached glyphs
     mGlyphMap.clear();
   }
@@ -452,7 +452,7 @@ void Font::setSmooth(bool smooth)
 {
   mSmooth = smooth;
   std::map<int, ref<Glyph> >::iterator it = mGlyphMap.begin();
-  for( ; it != mGlyphMap.end(); ++it )
+  for(; it != mGlyphMap.end(); ++it )
   {
     const ref<Glyph>& glyph = it->second;
     if (glyph->textureHandle() == 0)

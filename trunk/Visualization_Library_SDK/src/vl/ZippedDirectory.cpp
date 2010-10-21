@@ -123,7 +123,7 @@ bool ZippedDirectory::init()
   }
 
   for( unsigned int local_file_header_signature = 0;
-       zip->read(&local_file_header_signature, 4) && local_file_header_signature == 0x04034b50 ;
+       zip->read(&local_file_header_signature, 4) && local_file_header_signature == 0x04034b50;
        local_file_header_signature = 0 )
   {
     // creates and fills a new ZippedFileInfo and a new ZippedFile

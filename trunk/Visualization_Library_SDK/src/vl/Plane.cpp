@@ -70,7 +70,7 @@ int Plane::classify(const AABB& aabb) const
   Real const NEPS = -0.0001f;
   Real const PEPS = +0.0001f;
 
-  for(int i=0 ;i<8; ++i)
+  for(int i=0;i<8; ++i)
   {
     if ( distance(corner[i]) < NEPS ) 
       left++;

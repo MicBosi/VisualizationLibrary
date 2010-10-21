@@ -130,7 +130,7 @@ public:
       ->convertType(vl::IT_UNSIGNED_BYTE)
       ->convertType(vl::IT_UNSIGNED_SHORT)
       ->convertType(vl::IT_UNSIGNED_INT)
-      ;
+     ;
     #endif
 
     // check image format conversion
@@ -140,7 +140,7 @@ public:
         ->convertFormat(vl::IF_BGRA)
         ->convertFormat(vl::IF_RGBA)
         ->convertFormat(vl::IF_LUMINANCE_ALPHA)
-      ;
+     ;
     #endif
 
     // test image nearest sampling IF_LUMINANCE_ALPHA/IT_UNSIGNED_INT

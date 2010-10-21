@@ -98,7 +98,7 @@ namespace
     for(int i=0; i<size; ++i)
     {
       unsigned char r = (px8[1] << 1) & ~0x03;
-      unsigned char g = ((px8[1] << 6) | (px8[0] >> 2)) & ~0x03;;
+      unsigned char g = ((px8[1] << 6) | (px8[0] >> 2)) & ~0x03;
       unsigned char b = (px8[0] << 3) & ~0x03;
       // photoshop sets it to zero
       // int a = (px8[1] & 0x80) ? 0xFF : 0;

@@ -1539,17 +1539,17 @@ namespace vl
 
   // --------------- faceforward ---------------
 
-  inline float faceforward(float N, float I, float Nref) { if ( dot(Nref,I) < 0 ) return N ; else return -N; }
-  inline fvec2 faceforward(const fvec2& N, const fvec2& I, const fvec2& Nref) { if ( dot(Nref,I) < 0 ) return N ; else return -N; }
-  inline fvec3 faceforward(const fvec3& N, const fvec3& I, const fvec3& Nref) { if ( dot(Nref,I) < 0 ) return N ; else return -N; }
-  inline fvec4 faceforward(const fvec4& N, const fvec4& I, const fvec4& Nref) { if ( dot(Nref,I) < 0 ) return N ; else return -N; }
+  inline float faceforward(float N, float I, float Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
+  inline fvec2 faceforward(const fvec2& N, const fvec2& I, const fvec2& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
+  inline fvec3 faceforward(const fvec3& N, const fvec3& I, const fvec3& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
+  inline fvec4 faceforward(const fvec4& N, const fvec4& I, const fvec4& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
 
   // ...........................................
 
-  inline double faceforward(double N, double I, double Nref) { if ( dot(Nref,I) < 0 ) return N ; else return -N; }
-  inline dvec2 faceforward(const dvec2& N, const dvec2& I, const dvec2& Nref) { if ( dot(Nref,I) < 0 ) return N ; else return -N; }
-  inline dvec3 faceforward(const dvec3& N, const dvec3& I, const dvec3& Nref) { if ( dot(Nref,I) < 0 ) return N ; else return -N; }
-  inline dvec4 faceforward(const dvec4& N, const dvec4& I, const dvec4& Nref) { if ( dot(Nref,I) < 0 ) return N ; else return -N; }
+  inline double faceforward(double N, double I, double Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
+  inline dvec2 faceforward(const dvec2& N, const dvec2& I, const dvec2& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
+  inline dvec3 faceforward(const dvec3& N, const dvec3& I, const dvec3& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
+  inline dvec4 faceforward(const dvec4& N, const dvec4& I, const dvec4& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
 
   // --------------- reflect ----------------
 

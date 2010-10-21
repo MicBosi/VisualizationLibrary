@@ -126,9 +126,9 @@ namespace vl
       setDisplayListDirty(false);
     }
 
-    virtual size_t triangleCount() const { return 0; }
-    virtual size_t lineCount() const { return 0; }
-    virtual size_t pointCount() const { return 0; }
+    virtual int triangleCount() const { return 0; }
+    virtual int lineCount() const { return 0; }
+    virtual int pointCount() const { return 0; }
 
   protected:
     virtual void computeBounds_Implementation() = 0;

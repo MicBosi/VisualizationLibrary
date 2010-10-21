@@ -81,7 +81,7 @@ namespace vl
       */
       Pixels(Image* img, int scrx, int scry, int startx=0, int starty=0, int width=-1, int height=-1, int alignment = AlignBottom | AlignLeft);
       Pixels(const Pixels& other);
-      Pixels& operator=(const Pixels& other) ;
+      Pixels& operator=(const Pixels& other);
       ~Pixels();
 
       virtual const char* className() { return "Pixels"; }
@@ -111,7 +111,7 @@ namespace vl
 
       void deletePixelBufferObject();
 
-      bool hasPixelBufferObject() const ;
+      bool hasPixelBufferObject() const;
 
     protected:
       ref<Image> mImage;
@@ -121,7 +121,7 @@ namespace vl
       int mAlign;
     };
 
-    DrawPixels() ;
+    DrawPixels();
 
     virtual const char* className() { return "DrawPixels"; }
 
@@ -149,7 +149,7 @@ namespace vl
     //! generates PBOs only for Pixels objects without a PBO handle
     bool generatePixelBufferObjects(EGLBufferUsage usage, bool discard_local_storage);
 
-    void setUsePixelBufferObject(bool use_pbo) ;
+    void setUsePixelBufferObject(bool use_pbo);
 
     bool usePixelBufferObject() const { return mUsePixelBufferObject; }
 
