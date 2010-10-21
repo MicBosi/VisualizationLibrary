@@ -364,6 +364,7 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
       // --- uniforms ---
 
       // note: the user must not make the shader's and actor's uniforms collide!
+      VL_CHECK( !openglContext()->areUniformsColliding(cur_shader_uniform_set, cur_actor_uniform_set) );
 
       // shader uniform set
       if ( update_su )

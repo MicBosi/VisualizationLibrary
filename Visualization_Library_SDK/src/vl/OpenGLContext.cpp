@@ -274,7 +274,7 @@ void OpenGLContext::logOpenGLInfo()
       Log::print("\nExtensions:\n");
       if (GLEW_VERSION_3_0)
       {
-        for( int i=0; ; ++i )
+        for( int i=0;; ++i )
         {
           const GLubyte* str = glGetStringi(GL_EXTENSIONS,i);
           if (!str)
@@ -288,7 +288,7 @@ void OpenGLContext::logOpenGLInfo()
         const char* ext_str = (const char*)glGetString(GL_EXTENSIONS);
         VL_CHECK(ext_str);
         sstream << ext_str;
-        for( std::string ext; true ; )
+        for( std::string ext; true; )
         {
           sstream >> ext;
           if (sstream.eof())
@@ -955,6 +955,27 @@ bool OpenGLContext::checkIsCleanState() const
 
   VL_CHECK_OGL();
   return true;
+}
+//-----------------------------------------------------------------------------
+bool OpenGLContext::areUniformsColliding(const UniformSet* u1, const UniformSet* u2)
+{
+  // compile the map
+  std::set<std::string> name_set;
+  for( size_t i=0; i<u1->uniforms().size(); ++i )
+    name_set.insert( u1->uniforms()[i]->name() );
+
+  bool ok = false;
+  // check the map
+  for( size_t j=0; j<u2->uniforms().size(); ++j )
+    if ( name_set.find( u2->uniforms()[j]->name() ) != name_set.end() )
+    {
+      vl::Log::error( Say("Uniform name collision detected!"
+                          "Actor and Shader uniforms share uniform name '%s'!\n") 
+                          << u2->uniforms()[j]->name() );
+      ok = true;
+    }
+
+  return ok;
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::resetContextStates()
