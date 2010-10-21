@@ -43,6 +43,7 @@ namespace vl
 {
   class EnableSet;
   class RenderStateSet;
+  class UniformSet;
   //-----------------------------------------------------------------------------
   // OpenGLContextFormat
   //-----------------------------------------------------------------------------
@@ -393,6 +394,9 @@ namespace vl
     void resetRenderStates();
     void resetContextStates();
     bool checkIsCleanState() const;
+    static bool areUniformsColliding(const UniformSet* u1, const UniformSet* u2);
+    int openglVersionMajorNumber() const { return mMajorVersion; }
+    int openglVersionMinorNumber() const { return mMinorVersion; }
 
     void setTexUnitBinding(int unit, ETextureDimension target) 
     { 
