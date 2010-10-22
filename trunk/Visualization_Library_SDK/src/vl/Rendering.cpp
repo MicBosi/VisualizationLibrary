@@ -33,6 +33,7 @@
 #include <vl/Renderer.hpp>
 #include <vl/SceneManager.hpp>
 #include <vl/RenderQueue.hpp>
+#include <vl/GLSL.hpp>
 
 using namespace vl;
 
@@ -293,14 +294,6 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
       Shader* shader = effect->lod(effect_lod)->at(ipass);
 
-      // fixme? make sure the EnableSet and RenderStateSet exists
-      shader->gocEnableSet();
-      shader->gocRenderStateSet();
-
-      // links GLSLPrograms and create requested textures
-      if (automaticResourceInit())
-        shader->initResources();
-
       // --------------- fill render token ---------------
 
       // create a render token
@@ -327,11 +320,51 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
           {
             // update
             shader->update( camera(), updateTime() );
-            // note that we set it after having called update
-            shader->setLastUpdateTime( updateTime() );
           }
         }
       }
+
+      // mic fixme ? make sure the EnableSet and RenderStateSet exists
+      /* shader->gocEnableSet();
+      shader->gocRenderStateSet(); */
+
+      // mic fixme: check that current update time is different from the previous one.
+      #ifndef NDEBUG
+        static Real last_update = 0;
+        VL_CHECK( last_update != updateTime() )
+        last_update = updateTime();
+      #endif
+
+      // note the condition is != and not <
+      if ( automaticResourceInit() && shader->lastUpdateTime() != updateTime() )
+      {
+        // link GLSLProgram
+        shader->glslProgram()->linkProgram();
+        VL_CHECK( shader->glslProgram()->linked() );
+
+        // lazy texture creation
+        if ( shader->gocRenderStateSet() )
+        {
+          const std::vector< ref<RenderState> >& states = shader->gocRenderStateSet()->renderStates();
+          for( size_t i=0; i<states.size(); ++i )
+          {
+            if (states[i]->type() >= RS_TextureUnit0 && states[i]->type() < RS_TextureUnit0+VL_MAX_TEXTURE_UNITS)
+            {
+              TextureUnit* tex_unit = dynamic_cast<TextureUnit*>( states[i].get() );
+              VL_CHECK(tex_unit);
+              if (tex_unit)
+              {
+                if (tex_unit->texture() && tex_unit->texture()->setupParams())
+                  tex_unit->texture()->createTexture();
+              }
+            }
+          }
+          
+        }
+      }
+
+      // note: used for both GLSLProgram & Texture initialization and also Shader::update()
+      shader->setLastUpdateTime( updateTime() );
 
       tok->mEffectRenderRank = effect->renderRank();
     }
