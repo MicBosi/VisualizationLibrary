@@ -291,6 +291,8 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
       // --------------- GLSLProgram setup ---------------
 
+      VL_CHECK( tok->mShader->glslProgram()->linked() );
+
       VL_CHECK_OGL()
 
       // current transform
@@ -366,12 +368,18 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
       // note: the user must not make the shader's and actor's uniforms collide!
       VL_CHECK( !openglContext()->areUniformsColliding(cur_shader_uniform_set, cur_actor_uniform_set) );
 
+      // 'static' uniform set: update only once per rendering, if present.
+      if (is_first_use && cur_glsl_program->uniformSet())
+      {
+        cur_glsl_program->applyUniformSet(cur_glsl_program->uniformSet());
+      }
+
       // shader uniform set
       if ( update_su )
       {
         VL_CHECK( cur_shader_uniform_set && cur_shader_uniform_set->uniforms().size() );
         VL_CHECK( tok->mShader->getRenderStateSet()->glslProgram() && tok->mShader->getRenderStateSet()->glslProgram()->handle() )
-        tok->mShader->getRenderStateSet()->glslProgram()->applyUniformSet( cur_shader_uniform_set );
+        cur_glsl_program->applyUniformSet( cur_shader_uniform_set );
       }
 
       VL_CHECK_OGL()
@@ -381,7 +389,7 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
       {
         VL_CHECK( cur_actor_uniform_set && cur_actor_uniform_set->uniforms().size() );
         VL_CHECK( tok->mShader->getRenderStateSet()->glslProgram() && tok->mShader->getRenderStateSet()->glslProgram()->handle() )
-        tok->mShader->getRenderStateSet()->glslProgram()->applyUniformSet( cur_actor_uniform_set );
+        cur_glsl_program->applyUniformSet( cur_actor_uniform_set );
       }
 
       VL_CHECK_OGL()

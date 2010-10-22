@@ -338,6 +338,13 @@ bool GLSLProgram::linkProgram(bool force_relink)
       }
     }
 
+    // automatically binds the specified attributes to the desired values
+
+    for( std::map<std::string, int>::iterator it = mAttribLocation.begin(); it != mAttribLocation.end(); ++it)
+    {
+      glBindAttribLocation(handle(),it->second,it->first.c_str());
+    }
+
     // link the program
 
     glLinkProgram(handle()); VL_CHECK_OGL();
@@ -466,7 +473,7 @@ bool GLSLProgram::useProgram() const
   return true;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::apply(const Camera*, OpenGLContext* ctx) const
+void GLSLProgram::apply(const Camera*, OpenGLContext*) const
 {
   if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
   {
@@ -474,16 +481,6 @@ void GLSLProgram::apply(const Camera*, OpenGLContext* ctx) const
       useProgram();
     else
       glUseProgram(0);
-  }
-}
-//-----------------------------------------------------------------------------
-void GLSLProgram::initResources()
-{
-  if (linkProgram())
-  {
-    glUseProgram(handle());
-    applyUniformSet(uniformSet());
-    glUseProgram(0);
   }
 }
 //-----------------------------------------------------------------------------
@@ -506,7 +503,7 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     VL_CHECK(current_glsl_program == (int)handle())
   #endif
 
-  for(int i=0, count=uniforms->uniforms().size(); i<count; ++i)
+  for(size_t i=0, count=uniforms->uniforms().size(); i<count; ++i)
   {
     Uniform* uniform = uniforms->uniforms()[i].get();
 

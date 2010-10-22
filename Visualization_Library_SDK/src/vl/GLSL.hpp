@@ -158,10 +158,21 @@ namespace vl
    * Wraps a GLSL program to which you can bind vertex, fragment and geometry shaders.
    *
    * \par Uniforms
-   * You have 3 ways to set the value of a uniform:
+   * You have 4 ways to set the value of a uniform:
    * -# call useProgram() to activate the GLSLProgram and directly call glUniform* (see also getUniformLocation()).
-   * -# add a Uniform to the Actor's UniformSet, see Actor::uniformSet()
-   * -# add a Uniform to the Actor's Shader UniformSet, see Shader::uniformSet()
+   * -# add a Uniform to the GLSLProgram UniformSet, see vl::GLSLProgram::uniformSet()
+   * -# add a Uniform to the Actor's UniformSet, see vl::Actor::uniformSet()
+   * -# add a Uniform to the Actor's Shader UniformSet, see vl::Shader::uniformSet()
+   *
+   * \par Attribute Location Bindings
+   * In order to explicity specify which attribute index should be bound to which attribute name you can do one of the following.
+   * -# call glBindAttribLocation() with the appropriate GLSLProgram::handle(). This is the most low level way of doing it.
+   * -# call bindAttribLocation() as you would do normally with glBindAttribLocation() but with the difference the you don't need to specify the GLSL program handle.
+   * -# create a list of attribute name/indices that will be automatically bound whenever the GLSLProgram is linked. In order to do so you can use the following functions 
+   *    setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), addAutomaticAttribLocation(), removeAutomaticAttribLocation().
+   *
+   * Note that for option #1 and #2 you need to relink the GLSLProgram in order for the changes to take effect (linkProgram(force_relink=true)). 
+   * Option #3 automatically schedules a re-link of the GLSL program. See also http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml
    *
    * \remarks
    * The Uniforms defined in the Actor and the ones defined in the Shader must not
@@ -214,10 +225,6 @@ namespace vl
     //! Calls useProgram()
     void apply(const Camera*, OpenGLContext* ctx) const;
 
-    //! Calls linkProgram() and applyes this program's uniforms.
-    //! \sa setUniform() setUniformSet() uniformSet()
-    virtual void initResources();
-
     //! Links the GLSLProgram calling glLinkProgram(handle()) only if the program needs to be linked.
     //! \sa
     //! - http://www.opengl.org/sdk/docs/man/xhtml/glLinkProgram.xml
@@ -249,8 +256,35 @@ namespace vl
     //! Returns true if the validation of this GLSL program is succesful, see also http://www.opengl.org/sdk/docs/man/xhtml/glValidateProgram.xml for more information.
     bool validateProgram() const;
 
-    //! Equivalent to glBindAttribLocation(handle(), index, name.c_str())
+    /** Equivalent to glBindAttribLocation(handle(), index, name.c_str())
+      * \sa setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), 
+      *     removeAutomaticAttribLocation(), addAutomaticAttribLocation() */
     void bindAttribLocation(unsigned int index, const std::string& name);
+
+    /** Adds an attribute name / index pair to the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
+    * \sa setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), 
+    *     bindAttribLocation(), removeAutomaticAttribLocation() */
+    void addAutomaticAttribLocation(const char* attr_name, int attr_index) { mAttribLocation[attr_name] = attr_index; mScheduleLink = true; }
+
+    /** Removes an attribute from the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
+    * \sa setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), 
+    *     bindAttribLocation(), addAutomaticAttribLocation() */
+    void removeAutomaticAttribLocation(const char* attr_name) { mAttribLocation.erase(attr_name); mScheduleLink = true; }
+
+    /** Defines which \p attribute should be automatically bound to which \p attribute \p index at GLSL program linking time. Calling this function will schedule a re-linking of the GLSL program.
+    * \sa automaticAttribLocations(), clearAutomaticAttribLocations(), 
+    *     bindAttribLocation(), removeAutomaticAttribLocation(), addAutomaticAttribLocation() */
+    void setAutomaticAttribLocations(const std::map<std::string, int>& attrib_bindings) { mAttribLocation = attrib_bindings; mScheduleLink = true; }
+
+    /** Returns which \p attribute name should be automatically bound to which \p attribute \p index at GLSL program linking time.
+    * \sa setAutomaticAttribLocations(), clearAutomaticAttribLocations(), 
+    *     bindAttribLocation(), removeAutomaticAttribLocation(), addAutomaticAttribLocation() */
+    const std::map<std::string, int>& automaticAttribLocations() const { return  mAttribLocation; }
+
+    /** Clears the automatic attribute location binding list. See also setAutomaticAttribLocations() and automaticAttribLocations().
+    * \sa setAutomaticAttribLocations(), automaticAttribLocations(), 
+    *     bindAttribLocation(), removeAutomaticAttribLocation(), addAutomaticAttribLocation() */
+    void clearAutomaticAttribLocations() { mAttribLocation.clear(); }
 
     //! Eqivalento to glGetAttribLocation(handle(), name).
     //! \note The program must be linked before calling this function.
@@ -375,30 +409,33 @@ namespace vl
     void getUniform(const std::string& name, ivec3& vec) const { getUniform(getUniformLocation(name), vec); }
     void getUniform(const std::string& name, ivec4& vec) const { getUniform(getUniformLocation(name), vec); }
 
-    //! Returns a GLSLProgram's 'static' UniformSet.
-    //! \sa See setUniform() for more information about 'static' Uniforms and Uniform management.
+    // mic fixme: documenta la differenza tra vari tipi di Uniforms, "see also" tutte le funzioni sotto, documenta il fatto che non devono esserci collisioni.
+    // collision check tra Actor/Shader/Static: specificare l'errore da function parameter.
+
+    //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
     UniformSet* uniformSet() { return mUniformSet.get(); }
-    //! Returns a GLSLProgram's 'static' UniformSet.
-    //! \sa See setUniform() for more information about 'static' Uniforms and Uniform management.
+    //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
     const UniformSet* uniformSet() const { return mUniformSet.get(); }
-    //! Sets a GLSLProgram's 'static' UniformSet.
-    //! \sa See setUniform() for more information about 'static' Uniforms and Uniform management.
+    //! Sets a GLSLProgram's \p static UniformSet.
     void setUniformSet(UniformSet* uniforms) { mUniformSet = uniforms; }
-    //! Sets a GLSLProgram's 'static' Uniform.
-    //! This is an utility function, it is equivalent to:
-    //! \code 
-    //! if (!uniformSet()) setUniformSet(new UniformSet); uniformSet()->setUniform(uniform);
-    //! \endcode
+    //! Utility function using uniformSet(). Adds a Uniform to this program's \p static uniform set.
     void setUniform(Uniform* uniform) { if (!uniformSet()) setUniformSet(new UniformSet); uniformSet()->setUniform(uniform); }
-    //! Returns the specified Uniform. Returns NULL if there isn't such a Uniform
+    //! Utility function using uniformSet(). Returns the specified Uniform. Returns NULL if there isn't such a Uniform
     Uniform* getUniform(const std::string& name) { if (!uniformSet()) return NULL; return uniformSet()->getUniform(name); }
-    //! Gets or creates the specified Uniform.
+    //! Utility function using uniformSet(). Gets or creates the specified Uniform.
     Uniform* gocUniform(const std::string& name) { if (!uniformSet()) setUniformSet(new UniformSet); return uniformSet()->gocUniform(name); }
+    //! Utility function using uniformSet(). Erases the specified uniform.
+    void eraseUniform(const std::string& name) { if(uniformSet()) uniformSet()->eraseUniform(name); }
+    //! Utility function using uniformSet(). Erases the specified uniform.
+    void eraseUniform(const Uniform* uniform) { if(uniformSet()) uniformSet()->eraseUniform(uniform); }
+    //! Utility function using uniformSet(). Erases all the uniforms.
+    void eraseAllUniforms() { if(uniformSet()) uniformSet()->eraseAllUniforms(); }
 
   protected:
     std::vector< ref<GLSLShader> > mShaders;
     std::map<std::string, int> mFragDataLocation;
     std::map<std::string, int> mUniformLocation;
+    std::map<std::string, int> mAttribLocation;
     ref<UniformSet> mUniformSet;
     unsigned int mHandle;
     bool mScheduleLink;
