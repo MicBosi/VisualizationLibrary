@@ -56,15 +56,6 @@ Shader::~Shader()
 {
 }
 //------------------------------------------------------------------------------
-void Shader::initResources()
-{
-  if (getRenderStateSet())
-  {
-    for(unsigned i=0; i<getRenderStateSet()->renderStates().size(); ++i)
-      getRenderStateSet()->renderStates()[i]->initResources();
-  }
-}
-//------------------------------------------------------------------------------
 const GLSLProgram* Shader::getGLSLProgram() const 
 { 
   return dynamic_cast<const GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
@@ -894,13 +885,6 @@ void TextureMatrix::apply(const Camera* camera, OpenGLContext*) const
 bool TextureUnit::hasTexture() const 
 { 
   return mTexture && mTexture->handle(); 
-}
-//------------------------------------------------------------------------------
-void TextureUnit::initResources()
-{
-  // creates the texture if not yet created
-  if (texture() && texture()->setupParams())
-    texture()->createTexture();
 }
 //------------------------------------------------------------------------------
 void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
