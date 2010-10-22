@@ -1284,8 +1284,6 @@ namespace vl
     virtual ERenderState type() const { return (ERenderState)(RS_TextureUnit0 + textureUnit()); }
     virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
-    virtual void initResources();
-
     void setTexture(Texture* texture) { mTexture = texture; }
     Texture* texture() { return mTexture.get(); }
     const Texture* texture() const { return mTexture.get(); }
@@ -1609,8 +1607,6 @@ namespace vl
     void setLastUpdateTime(Real time) { mLastUpdateTime = time; }
     //! Used internally.
     Real lastUpdateTime() const { return mLastUpdateTime; }
-
-    void initResources();
 
   protected:
     Real mLastUpdateTime;

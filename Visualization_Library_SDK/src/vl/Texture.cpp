@@ -354,6 +354,7 @@ bool Texture::createTexture()
     if (!setupParams()->imagePath().empty())
       image = loadImage(setupParams()->imagePath());
 
+  // uninstall setup parameters
   mSetupParams = NULL;
 
   if (image.get() == NULL || !image->isValid() || image->pixels() == NULL)
