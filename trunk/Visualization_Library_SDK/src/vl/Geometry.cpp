@@ -140,7 +140,7 @@ ref<Geometry> Geometry::shallowCopy()
   return geom;
 }
 //-----------------------------------------------------------------------------
-size_t Geometry::triangleCount() const
+int Geometry::triangleCount() const
 {
   size_t count = 0;
   for(int i=0; i<(int)primitives()->size(); ++i)
@@ -149,7 +149,7 @@ size_t Geometry::triangleCount() const
   return count;
 }
 //-----------------------------------------------------------------------------
-size_t Geometry::lineCount() const
+int Geometry::lineCount() const
 {
   size_t count = 0;
   for(int i=0; i<(int)primitives()->size(); ++i)
@@ -158,7 +158,7 @@ size_t Geometry::lineCount() const
   return count;
 }
 //-----------------------------------------------------------------------------
-size_t Geometry::pointCount() const
+int Geometry::pointCount() const
 {
   size_t count = 0;
   for(int i=0; i<(int)primitives()->size(); ++i)
