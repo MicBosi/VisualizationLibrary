@@ -125,7 +125,7 @@ Real Time::currentTime()
     if (has_timer)
     {
       QueryPerformanceCounter( &PerformanceCount );
-      return (Real)((double)PerformanceCount.QuadPart/Frequency.QuadPart  - mStartTime);
+      return (Real)PerformanceCount.QuadPart/Frequency.QuadPart  - mStartTime;
     }
     else
     {
