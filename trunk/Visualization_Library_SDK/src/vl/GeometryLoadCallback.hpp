@@ -88,7 +88,7 @@ namespace vl
           TriangleStripGenerator().stripfy(geom[i].get(), 22, true, false, true);
 
         if (convertToDrawArrays())
-          geom[i]->convertPrimitivesToDrawArrays();
+          geom[i]->convertDrawElementsToDrawArrays();
 
         geom[i]->setDisplayListEnabled(useDisplayLists());
         geom[i]->setVBOEnabled(useVBOs());
