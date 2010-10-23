@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/DrawRangeElements.hpp>
+#include <vl/MultiDrawElements.hpp>
 
 using namespace vl;
 
