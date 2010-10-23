@@ -291,7 +291,7 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
       // --------------- GLSLProgram setup ---------------
 
-      VL_CHECK( tok->mShader->glslProgram()->linked() );
+      VL_CHECK( !tok->mShader->glslProgram() || tok->mShader->glslProgram()->linked() );
 
       VL_CHECK_OGL()
 
@@ -369,7 +369,7 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
       VL_CHECK( !openglContext()->areUniformsColliding(cur_shader_uniform_set, cur_actor_uniform_set) );
 
       // 'static' uniform set: update only once per rendering, if present.
-      if (is_first_use && cur_glsl_program->uniformSet())
+      if (is_first_use && cur_glsl_program && cur_glsl_program->uniformSet())
       {
         cur_glsl_program->applyUniformSet(cur_glsl_program->uniformSet());
       }
