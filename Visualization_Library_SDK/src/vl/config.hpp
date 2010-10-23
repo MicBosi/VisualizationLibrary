@@ -72,12 +72,6 @@
 
 
 /**
- * Verbosity level
- */
-#define VL_VERBOSITY_LEVEL 2
-
-
-/**
  * This define is used to set Visualization Library's pipeline precision.
  *
  * - 1 = use floating point single precision pipeline
