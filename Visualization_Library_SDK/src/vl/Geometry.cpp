@@ -1049,7 +1049,7 @@ void Geometry::regenerateVertices(const std::vector<size_t>& map_new_to_old)
     vertexAttributeArrays()->at(i)->setData( mapper.regenerate(vertexAttributeArrays()->at(i)->data(), map_new_to_old ).get() );
 }
 //-----------------------------------------------------------------------------
-void Geometry::convertPrimitivesToDrawArrays()
+void Geometry::convertDrawElementsToDrawArrays()
 {
   // generate mapping 
   std::vector<size_t> map_new_to_old;
@@ -1062,8 +1062,12 @@ void Geometry::convertPrimitivesToDrawArrays()
     for(unsigned int idx=0; idx<primitives()->at(i)->indexCount(); ++idx)
       map_new_to_old.push_back( primitives()->at(i)->index(idx) );
 
+    DrawElementsBase* draw_elems = dynamic_cast<DrawElementsBase*>(primitives()->at(i));
+    if (!draw_elems)
+      continue;
+
     // substitute with DrawArrays
-    ref<DrawArrays> da = new vl::DrawArrays( primitives()->at(i)->primitiveType(), start, primitives()->at(i)->indexCount(), primitives()->at(i)->instances() );
+    ref<DrawArrays> da = new vl::DrawArrays( draw_elems->primitiveType(), start, draw_elems->indexCount(), draw_elems->instances() );
     primitives()->erase(i,1);
     primitives()->push_back(da.get());
   }
@@ -1188,7 +1192,7 @@ void Geometry::computeTangentSpace(
     tan1.resize(vert_count);
     tan2.resize(vert_count);
     
-    size_t tri_count = primitives->triangleCount() / primitives->instances();
+    size_t tri_count = primitives->triangleCount();
     for ( size_t a = 0; a < tri_count; ++a )
     {
         unsigned int tri[3];
