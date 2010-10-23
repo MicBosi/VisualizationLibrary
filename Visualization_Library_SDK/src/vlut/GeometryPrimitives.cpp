@@ -890,15 +890,3 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
   return geom;
 }
 //-----------------------------------------------------------------------------
-// mic fixme
-void foolish_michele()
-{
-  DrawRangeElementsUInt().clone();
-  DrawElementsUInt().clone();
-  std::vector<GLsizei> counts;
-  MultiDrawElementsUInt().setCountVector(counts);
-  MultiDrawElementsUInt().render(true);
-  MultiDrawElementsUInt().triangleCount();
-  MultiDrawElementsUInt().lineCount();
-  MultiDrawElementsUInt().pointCount();
-}
