@@ -33,8 +33,10 @@
 
 using namespace vl;
 
-void Primitives::getTriangle( size_t tri_index, unsigned int* out_triangle ) const
+bool Primitives::getTriangle_internal( size_t tri_index, unsigned int* out_triangle ) const
 {
+  VL_CHECK(out_triangle)
+
   // initialize NULL triangle
   if ( out_triangle )
   {
@@ -43,11 +45,13 @@ void Primitives::getTriangle( size_t tri_index, unsigned int* out_triangle ) con
     out_triangle[2] = (unsigned int)-1;
   }
 
-  if( !out_triangle || tri_index < 0 || tri_index >= triangleCount() / instances() )
+  // -1 means the primitive does not support the triangleCount() function.
+  VL_CHECK( triangleCount() >= 0 )
+  if( !out_triangle || (int)tri_index >= triangleCount() )
   {
     // error!
     VL_TRAP();
-    return;
+    return false;
   }
 
   switch( primitiveType() )
@@ -106,6 +110,8 @@ void Primitives::getTriangle( size_t tri_index, unsigned int* out_triangle ) con
     break;
 
   default:
-    return;
+    return false;
   }
+  
+  return true;
 }
