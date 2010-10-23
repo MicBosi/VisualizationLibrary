@@ -29,6 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+#include <vl/VisualizationLibrary.hpp>
 #include <vl/OpenGLContext.hpp>
 #include <vl/OpenGL.hpp>
 #include <vl/Shader.hpp>
@@ -230,7 +231,7 @@ void OpenGLContext::logOpenGLInfo()
 {
   makeCurrent();
 
-  if (VL_VERBOSITY_LEVEL >= 1)
+  if (VisualizationLibrary::globalSettings()->verbosityLevel() >= GlobalSettings::VERBOSITY_NORMAL)
   {
     Log::print( Say("GL_VERSION = %s\n") << glGetString(GL_VERSION) );
     Log::print( Say("GL_VENDOR = %s\n") << glGetString(GL_VENDOR) );
@@ -269,7 +270,7 @@ void OpenGLContext::logOpenGLInfo()
       glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &max_vertex_attribs);    
     Log::print( Say("GL_MAX_VERTEX_ATTRIBS: %n\n")<<max_vertex_attribs);
 
-    if (VL_VERBOSITY_LEVEL >= 2)
+    if (VisualizationLibrary::globalSettings()->verbosityLevel() >= GlobalSettings::VERBOSITY_DEBUG)
     {
       Log::print("\nExtensions:\n");
       if (GLEW_VERSION_3_0)
@@ -288,7 +289,7 @@ void OpenGLContext::logOpenGLInfo()
         const char* ext_str = (const char*)glGetString(GL_EXTENSIONS);
         VL_CHECK(ext_str);
         sstream << ext_str;
-        for( std::string ext; true; )
+        for( std::string ext; sstream.eof(); )
         {
           sstream >> ext;
           if (sstream.eof())
@@ -645,7 +646,7 @@ void OpenGLContext::resetEnables()
   memset( mEnableTable,   0, sizeof(mEnableTable)   );
 }
 //------------------------------------------------------------------------------
-bool OpenGLContext::checkIsCleanState(bool verbose) const
+bool OpenGLContext::isCleanState(bool verbose) const
 {
   struct contract {
     contract()  { VL_CHECK_OGL(); }
@@ -664,7 +665,7 @@ bool OpenGLContext::checkIsCleanState(bool verbose) const
     if (glGetError() == GL_NO_ERROR && enabled)
     {
 	    if (verbose)
-		    vl::Log::error( Say("Capability %n was enabled!\n") << TranslateEnable[i] );
+		    vl::Log::error( Say("Capability %s was enabled!\n") << TranslateEnableString[i] );
       VL_TRAP();
       ok = false;
     }
@@ -1041,6 +1042,10 @@ bool OpenGLContext::checkIsCleanState(bool verbose) const
 //-----------------------------------------------------------------------------
 bool OpenGLContext::areUniformsColliding(const UniformSet* u1, const UniformSet* u2)
 {
+  // mic fixme: test it
+  if (!u1 || !u2)
+    return false;
+
   // compile the map
   std::set<std::string> name_set;
   for( size_t i=0; i<u1->uniforms().size(); ++i )
@@ -1051,9 +1056,7 @@ bool OpenGLContext::areUniformsColliding(const UniformSet* u1, const UniformSet*
   for( size_t j=0; j<u2->uniforms().size(); ++j )
     if ( name_set.find( u2->uniforms()[j]->name() ) != name_set.end() )
     {
-      vl::Log::error( Say("Uniform name collision detected!"
-                          "Actor and Shader uniforms share uniform name '%s'!\n") 
-                          << u2->uniforms()[j]->name() );
+      vl::Log::error( Say("Uniform name collision detected: %s\n") << u2->uniforms()[j]->name() );
       ok = true;
     }
 
@@ -1067,8 +1070,11 @@ void OpenGLContext::resetContextStates()
   // See also glGetError() -> http://www.opengl.org/sdk/docs/man/xhtml/glGetError.xml
   VL_CHECK_OGL();
 
-  // mic fixme: far dipendere da global settings
-  VL_CHECK( checkIsCleanState(true) );
+  if (VisualizationLibrary::globalSettings()->checkCleanState() && !isCleanState(true))
+  {
+    VL_TRAP();
+    return;
+  }
 
   VL_glBindFramebuffer(GL_FRAMEBUFFER, 0); VL_CHECK_OGL();
 
