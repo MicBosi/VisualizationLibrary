@@ -543,7 +543,9 @@ void VL_glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GL
 //-----------------------------------------------------------------------------
 void VL_glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount)
 {
-  // TODO: support OpenGL 3.1
+  if (GLEW_VERSION_3_1)
+    glDrawElementsInstanced(mode, count, type, indices, primcount);
+  else
   if (GLEW_ARB_draw_instanced)
     glDrawElementsInstancedARB(mode, count, type, indices, primcount);
   else
@@ -553,9 +555,35 @@ void VL_glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const G
     VL_TRAP();
 }
 
+void VL_glDrawElementsInstancedBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount, int basevertex)
+{
+  if (GLEW_VERSION_3_2)
+    glDrawElementsInstancedBaseVertex(mode, count, type, indices, primcount, basevertex);
+  else
+    VL_TRAP();
+}
+
+void VL_glDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, int basevertex)
+{
+  if (GLEW_VERSION_3_2 || GLEW_ARB_draw_elements_base_vertex)
+    glDrawElementsBaseVertex(mode, count, type, (void*)indices, basevertex);
+  else
+    VL_TRAP();
+}
+
+void VL_glDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices, int basevertex)
+{
+  if (GLEW_VERSION_3_2 || GLEW_ARB_draw_elements_base_vertex)
+    glDrawRangeElementsBaseVertex(mode, start, end, count, type, (void*)indices, basevertex);
+  else
+    VL_TRAP();
+}
+
 void VL_glDrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei primcount)
 {
-  // TODO: support OpenGL 3.1
+  if (GLEW_VERSION_3_1)
+    glDrawArraysInstanced(mode, first, count, primcount);
+  else
   if (GLEW_ARB_draw_instanced)
     glDrawArraysInstancedARB(mode, first, count, primcount);
   else
