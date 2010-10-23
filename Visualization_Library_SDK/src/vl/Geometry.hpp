@@ -206,7 +206,7 @@ namespace vl
     void mergeTriangleStrips();
 
     //! Converts all the Primitives objects bound to a Geometry into DrawArrays.
-    void convertPrimitivesToDrawArrays();
+    void convertDrawElementsToDrawArrays();
 
     //! Sorts the vertices of the geometry to maximize vertex-cache coherency.
     //! This function will work only if all the Primitives are DrawElements.
