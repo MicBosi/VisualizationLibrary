@@ -119,6 +119,9 @@ void VL_glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GL
 
 void VL_glDrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei primcount);
 void VL_glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount);
+void VL_glDrawElementsInstancedBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount, int basevertex);
+void VL_glDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, int basevertex);
+void VL_glDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices, int basevertex);
 
 void VL_glProgramParameteri(GLuint program, GLenum pname, GLint value);
 void VL_glBindFragDataLocation(GLuint program, GLuint colorNumber, const GLchar *name);
