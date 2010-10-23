@@ -304,7 +304,7 @@ public:
 
       if (mOptConvertToDrawArrays)
       {
-        geom->convertPrimitivesToDrawArrays();
+        geom->convertDrawElementsToDrawArrays();
         vl::Log::print("Convert to DrawArrays.\n");
       }
 
