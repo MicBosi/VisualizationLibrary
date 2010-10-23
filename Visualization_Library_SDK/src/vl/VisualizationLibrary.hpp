@@ -58,14 +58,6 @@ namespace vl
   public:
     GlobalSettings()
     {
-      // mic fixme:
-      // - These settings are overridden by environment variables.
-      // - Documenta env vars su articolo: Configuring VL
-      // - ApplyGlobalSettings() funciton?
-      // - Alla fine non sono tutti global settings i componenti di VL?
-      // - Testa double precision pipeline.
-      mDataDirectory   = "../data";
-      mLogFile         = "log.txt";
       #ifndef NDEBUG
         mVerbosityLevel  = VERBOSITY_NORMAL;
         mCheckCleanState = true;
@@ -75,14 +67,6 @@ namespace vl
       #endif
     }
 
-    const String& dataDirectory() const { return mDataDirectory; }
-    // mic fixme: settare questa variabile deve avere un riscontro immediato su loadFile() & co.
-    void setDataDirectory(const String& data_dir) { mDataDirectory = data_dir; }
-
-    const String& logFile() const { return mLogFile; }
-    // mic fixme: settare questa variabile deve avere un riscontro immediato sul logging.
-    void setLogFile(const String& data_dir) { mLogFile = data_dir; }
-
     bool checkCleanState() const { return mCheckCleanState; }
     void setCheckcleanState(bool check_clean) { mCheckCleanState = check_clean; }
 
@@ -90,8 +74,6 @@ namespace vl
     void setVerbosityLevel(EVerbosityLevel verb_level) { mVerbosityLevel = verb_level; }
 
   protected:
-    String mDataDirectory; // mic fixme: inizializzato da environment variable
-    String mLogFile;       // mic fixme: inizializzato da environment variable
     EVerbosityLevel mVerbosityLevel;
     bool mCheckCleanState;
   };
