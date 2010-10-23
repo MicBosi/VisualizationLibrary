@@ -95,12 +95,12 @@ namespace vl
       case PT_LINES: return 0;
       case PT_LINE_LOOP: return 0;
       case PT_LINE_STRIP: return 0;
-      case PT_TRIANGLES: return (mCount / 3) * instances();
-      case PT_TRIANGLE_STRIP: return (mCount - 2) * instances();
-      case PT_TRIANGLE_FAN: return (mCount - 2) * instances();
-      case PT_QUADS: return (mCount / 4 * 2) * instances();
-      case PT_QUAD_STRIP: return ( (mCount - 2) / 2 ) * 2 * instances();
-      case PT_POLYGON: return (mCount - 2) * instances();
+      case PT_TRIANGLES: return mCount / 3;
+      case PT_TRIANGLE_STRIP: return mCount - 2;
+      case PT_TRIANGLE_FAN: return mCount - 2;
+      case PT_QUADS: return mCount / 4 * 2;
+      case PT_QUAD_STRIP: return ( (mCount - 2) / 2 ) * 2;
+      case PT_POLYGON: return mCount - 2;
       default:
         return 0;
       }
@@ -110,9 +110,9 @@ namespace vl
     {
       switch( mType )
       {
-      case PT_LINES: return (mCount / 2) * instances();
-      case PT_LINE_LOOP: return (mCount) * instances();
-      case PT_LINE_STRIP: return (mCount - 1) * instances();
+      case PT_LINES: return mCount / 2;
+      case PT_LINE_LOOP: return mCount;
+      case PT_LINE_STRIP: return mCount - 1;
       default:
         return 0;
       }
@@ -126,6 +126,11 @@ namespace vl
       default:
         return 0;
       }
+    }
+
+    virtual bool getTriangle( size_t tri_index, unsigned int* out_triangle ) const
+    {
+      return getTriangle_internal(tri_index, out_triangle);
     }
 
     virtual void render(bool) const
@@ -162,9 +167,11 @@ namespace vl
     //! returns the number of vertices to be rendered.
     size_t count() const { return mCount; }
 
-    // mic fixme
-    size_t instances() const { return mInstances; }
+    //! Sets the number of instances for this set of primitives.
     void setInstances(size_t instances) { mInstances = instances; }
+
+    //! Returns the number of instances for this set of primitives.
+    size_t instances() const { return mInstances; }
 
     protected:
       size_t mStart;
