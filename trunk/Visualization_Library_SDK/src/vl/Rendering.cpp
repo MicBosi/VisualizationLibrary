@@ -328,19 +328,24 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
       /* shader->gocEnableSet();
       shader->gocRenderStateSet(); */
 
-      // mic fixme: check that current update time is different from the previous one.
+      // check that current update time is different from the previous one.
       #ifndef NDEBUG
-        static Real last_update = 0;
+        // mic fixme: this fails
+        /*static Real last_update = 0;
         VL_CHECK( last_update != updateTime() )
-        last_update = updateTime();
+        last_update = updateTime();*/
       #endif
 
+      // mic fixme: dovremmo usare un updateTick invece?
       // note the condition is != and not <
       if ( automaticResourceInit() && shader->lastUpdateTime() != updateTime() )
       {
         // link GLSLProgram
-        shader->glslProgram()->linkProgram();
-        VL_CHECK( shader->glslProgram()->linked() );
+        if (shader->glslProgram())
+        {
+          shader->glslProgram()->linkProgram();
+          VL_CHECK( shader->glslProgram()->linked() );
+        }
 
         // lazy texture creation
         if ( shader->gocRenderStateSet() )
