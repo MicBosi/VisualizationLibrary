@@ -217,7 +217,7 @@ ref<Geometry> Extrusion::extrude()
   }
 
   if (!smooth())
-    geom->convertPrimitivesToDrawArrays();
+    geom->convertDrawElementsToDrawArrays();
 
   geom->computeNormals();
 
