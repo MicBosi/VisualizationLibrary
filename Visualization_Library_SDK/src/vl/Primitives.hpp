@@ -47,9 +47,9 @@ namespace vl
   class Primitives: public Object
   {
   public:
-    Primitives(): mType(PT_TRIANGLES), mEnabled(true) {}
-
     virtual const char* className() { return "Primitives"; }
+
+    Primitives(): mType(PT_TRIANGLES), mEnabled(true) {}
 
     Primitives& operator=(const Primitives& other)
     {
@@ -74,21 +74,27 @@ namespace vl
     virtual int triangleCount() const = 0;
     virtual int lineCount() const = 0;
     virtual int pointCount() const = 0;
-    //! Supported only by DrawElements
+
+    //! Supported only by DrawElements and DrawRangeElements
+    // this also does not work when primitive restart is enabled.
     virtual void sortTriangles() {}
 
     void setEnabled(bool enable) { mEnabled = enable; }
     bool isEnabled() const { return mEnabled; }
 
-    //! Returns in 'out_triangle' the indices of the index-th triangle or '(unsigned int)-1' if
-    //! an error occurred (unsupported primitive type, indices out of bounds, NULL pointers).
+    //! Fills \p out_triangle with the indices of the index-th triangle.
+    //! Returns \p true on success or \p false if the function fails. You should not call this function
+    //! in conjunction with primitive restart or with MultiDrawElements*.
     //! This function is useful when you want to treat an arbitrary primitive type as if it was made of
     //! triangles, for example for tessellation purposes or geometry processing.
     //! The supported primitive types are: PT_TRIANGLES, PT_TRIANGLE_STRIP, PT_TRIANGLE_FAN, PT_POLYGON
     //! PT_QUADS and PT_QUAD_STRIP.
     //! @param tri_index The index of the triangle whose info we want to retrieve.
-    //! @return out_triangle The 3 indices forming the requested triangle.
-    void getTriangle( size_t tri_index, unsigned int* out_triangle ) const;
+    //! @param out_triangle Filled with the 3 indices forming the requested triangle. Thus it must point to a buffer of at least 3 elements.
+    virtual bool getTriangle( size_t tri_index, unsigned int* out_triangle ) const = 0;
+  
+  protected:
+    bool getTriangle_internal( size_t tri_index, unsigned int* out_triangle ) const;
 
   protected:
       EPrimitiveType mType;
