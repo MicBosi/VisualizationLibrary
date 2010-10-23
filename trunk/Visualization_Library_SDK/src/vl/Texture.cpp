@@ -62,10 +62,17 @@ Texture::Texture(int width, ETextureFormat format, bool border)
   setDepth(0);
   mHasMipmaps = false;
   glGenTextures( 1, &mHandle ); VL_CHECK_OGL() VL_CHECK(handle())
-  glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
-  int brd = border?2:0;
-  glTexImage1D( dimension(), 0, format+brd, width, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
-  glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
+  if(mHandle)
+  {
+    glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
+    int brd = border?2:0;
+    glTexImage1D( dimension(), 0, format+brd, width, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
+    glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
+  }
+  else
+  {
+    Log::error("1D texture creation failed!\n");
+  }
 }
 //-----------------------------------------------------------------------------
 Texture::Texture(int width, int height, ETextureFormat format, bool border)
@@ -82,10 +89,17 @@ Texture::Texture(int width, int height, ETextureFormat format, bool border)
   setDepth(0);
   mHasMipmaps = false;
   glGenTextures(1, &mHandle); VL_CHECK_OGL() VL_CHECK(handle())
-  glBindTexture(dimension(), mHandle); VL_CHECK_OGL()
-  int brd = border?2:0;
-  glTexImage2D(dimension(), 0, format, width+brd, height+brd, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
-  glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
+  if(mHandle)
+  {
+    glBindTexture(dimension(), mHandle); VL_CHECK_OGL()
+    int brd = border?2:0;
+    glTexImage2D(dimension(), 0, format, width+brd, height+brd, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
+    glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
+  }
+  else
+  {
+    Log::error("2D texture creation failed!\n");
+  }
 }
 //-----------------------------------------------------------------------------
 Texture::Texture(int width, int height, int depth, ETextureFormat format, bool border)
@@ -101,16 +115,24 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
   setHeight(height);
   setDepth(depth);
   mHasMipmaps = false;
-  if (GLEW_VERSION_1_2)
+  if (!GLEW_VERSION_1_2)
+    Log::error("3D textures require OpenGL 1.2\n");
+  else
   {
     glGenTextures( 1, &mHandle ); VL_CHECK_OGL() VL_CHECK(handle())
-    glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
-    int brd = border?2:0;
-    glTexImage3D( dimension(), 0, format, width+brd, height+brd, depth+brd, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
-    glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
+    if(mHandle)
+    {
+      glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
+      int brd = border?2:0;
+      glTexImage3D( dimension(), 0, format, width+brd, height+brd, depth+brd, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
+      glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
+    }
+    else
+    {
+      Log::error("2D texture creation failed!\n");
+    }
   }
-  else
-    Log::error("3D textures require OpenGL 1.2\n");
+
 }
 //-----------------------------------------------------------------------------
 Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border):
@@ -403,6 +425,13 @@ bool Texture::createTexture()
 
   if (mHandle == 0)
     glGenTextures( 1, &mHandle );
+  if (!mHandle)
+  {
+    Log::error("Texture::createTexture(): texture creation failed!\n");
+    VL_CHECK_OGL()
+    VL_CHECK(0);
+    return false;
+  }
   glBindTexture( dimension(), mHandle );
 
   int is_compressed = (format == (int)image->format()) && isCompressedFormat(format);
