@@ -164,7 +164,10 @@ namespace vl
 
     /** Returns whether near/far planes optimization is enabled. */
     bool nearFarClippingPlanesOptimized() const { return mNearFarClippingPlanesOptimized; }
-    /** Enabled/disables near/far planes optimization */
+    /** Enabled/disables near/far planes optimization. When enabled, the automatic near/far clipping planes optimization
+      * modifies the projection matrix of the current camera to minimize z-fighting artifacts. If later you disable
+      * this feature you might want to recompute the original projection matrix of the camera using the method 
+      * vl::Camera::setProjectionAsPerspective(). */
     void setNearFarClippingPlanesOptimized(bool enabled) { mNearFarClippingPlanesOptimized = enabled; }
 
   protected:

@@ -53,12 +53,12 @@ public:
     // bind the Transform with the transform tree of the rendring pipeline 
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mCubeTransform.get() );
 
-    float fsize = 5000;
+    float fsize = 2500;
     // create the cube's Geometry and compute its normals to support lighting 
-    vl::ref<vl::Geometry> cube1 = vlut::makeBox( vl::vec3(0,0,0), fsize, fsize, fsize );
-    cube1->computeNormals();
-    vl::ref<vl::Geometry> cube2 = vlut::makeBox( vl::vec3(0,0,0), fsize*1.001f, fsize*1.001f, fsize*1.001f );
-    cube2->computeNormals();
+    vl::ref<vl::Geometry> ball1 = vlut::makeIcosphere( vl::vec3(0,0,0), fsize, 2, false );
+    ball1->computeNormals();
+    vl::ref<vl::Geometry> ball2 = vlut::makeIcosphere( vl::vec3(0,0,0), fsize*1.001f, 2, false );
+    ball2->computeNormals();
 
     // setup the effect1 to be used to render the cube 
     vl::ref<vl::Effect> effect1 = new vl::Effect;
@@ -88,8 +88,8 @@ public:
     vl::ref<vl::SceneManagerActorTree> scene_manager = new vl::SceneManagerActorTree;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back(scene_manager.get());
     // add the cube to the scene using the previously defined effect and transform 
-    scene_manager->tree()->addActor( cube1.get(), effect1.get(), mCubeTransform.get()  );
-    scene_manager->tree()->addActor( cube2.get(), effect2.get(), mCubeTransform.get()  );
+    scene_manager->tree()->addActor( ball1.get(), effect1.get(), mCubeTransform.get()  );
+    scene_manager->tree()->addActor( ball2.get(), effect2.get(), mCubeTransform.get()  );
     scene_manager->computeBounds();
 
     trackball()->adjustView( vl::VisualizationLibrary::rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
@@ -104,12 +104,13 @@ public:
     mCubeTransform->setLocalMatrix( matrix );
 
     // periodically toggle near/far optimization
-    if ( sin( vl::Time::currentTime() * 3.14159265 / 4 ) > 0 )
+    if ( sin( vl::Time::currentTime() * 3.14159265 / 2 ) > 0 )
       vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(true);
     else
     {
       vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsPerspective();
+      // restore default perspective near/far values
+      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsPerspective(60.0f, 0.5f, 10000.0f);
     }
   }
 

@@ -36,6 +36,9 @@
 #include <vl/Say.hpp>
 #include <vl/RenderingCallback.hpp>
 
+#undef near
+#undef far
+
 using namespace vl;
 
 //-----------------------------------------------------------------------------
@@ -104,22 +107,19 @@ void Camera::computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphe
     // compute the sphere in camera coordinates
     Sphere camera_sphere;
     scene_bounding_sphere.transformed(camera_sphere, viewMatrix());
-    #undef far  // chi e' il marrano?
-    #undef near // chi e' il marrano?
-    Real far  = -(camera_sphere.center().z() - camera_sphere.radius() * (Real)1.01);
-    Real near = -(camera_sphere.center().z() + camera_sphere.radius() * (Real)1.01);
+    mNearPlane = -(camera_sphere.center().z() + camera_sphere.radius() * (Real)1.01);
+    mFarPlane  = -(camera_sphere.center().z() - camera_sphere.radius() * (Real)1.01);
     #if 0
       far  = max(far,  (Real)1.0e-5);
       near = max(near, (Real)1.0e-6);
     #else
       // prevents z-thrashing when very large objects are zoomed a lot
       Real ratio = camera_sphere.radius() * (Real)2.01 / (Real)2000.0;
-      far  = max(far,  ratio*2);
-      near = max(near, ratio*1);
+      mNearPlane = max(mNearPlane, ratio*1);
+      mFarPlane  = max(mFarPlane,  ratio*2);
     #endif
     // supports only perspective projection matrices
-    mat4 projm = mat4::perspective(fov(), aspectRatio(), near, far);
-    setProjectionMatrix( projm );
+    setProjectionAsPerspective();
   }
 }
 //-----------------------------------------------------------------------------
@@ -161,6 +161,7 @@ void Camera::computeFrustumPlanes()
   // build modelview matrix
   mat4 viewproj = projectionMatrix() * viewMatrix();
   // frustum plane extraction
+  mFrustum.planes().resize(6);
   extractPlanes( &mFrustum.planes()[0], viewproj );
 }
 //-----------------------------------------------------------------------------
