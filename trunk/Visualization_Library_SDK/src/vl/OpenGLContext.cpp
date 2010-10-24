@@ -233,6 +233,7 @@ void OpenGLContext::logOpenGLInfo()
 
   if (VisualizationLibrary::globalSettings()->verbosityLevel() >= GlobalSettings::VERBOSITY_NORMAL)
   {
+    Log::print(" --- OpenGL Info ---\n");
     Log::print( Say("GL_VERSION = %s\n") << glGetString(GL_VERSION) );
     Log::print( Say("GL_VENDOR = %s\n") << glGetString(GL_VENDOR) );
     Log::print( Say("GL_RENDERER = %s\n") << glGetString(GL_RENDERER) );
@@ -270,35 +271,46 @@ void OpenGLContext::logOpenGLInfo()
       glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &max_vertex_attribs);    
     Log::print( Say("GL_MAX_VERTEX_ATTRIBS: %n\n")<<max_vertex_attribs);
 
-    if (VisualizationLibrary::globalSettings()->verbosityLevel() >= GlobalSettings::VERBOSITY_DEBUG)
+    // --- print supported extensions on two columns ---
+
+    Log::print("\n --- OpenGL Extensions --- \n");
+    std::stringstream sstream;
+    std::string ext_str;
+    if (GLEW_VERSION_3_0)
     {
-      Log::print("\nExtensions:\n");
-      if (GLEW_VERSION_3_0)
+      for( int i=0;; ++i )
       {
-        for( int i=0;; ++i )
-        {
-          const GLubyte* str = glGetStringi(GL_EXTENSIONS,i);
-          if (!str)
-            break;
-          Log::print( Say("%s\n") << str );
-        }
-      } 
-      else
-      {
-        std::stringstream sstream;
-        const char* ext_str = (const char*)glGetString(GL_EXTENSIONS);
-        VL_CHECK(ext_str);
-        sstream << ext_str;
-        for( std::string ext; sstream.eof(); )
-        {
-          sstream >> ext;
-          if (sstream.eof())
-            break;
-          Log::print( Say("%s\n") << ext );
-        }
+        const char* str = (const char*)glGetStringi(GL_EXTENSIONS,i);
+        if (!str)
+          break;
+        ext_str += std::string(str) + " ";
       }
+    } 
+    else
+    {
+      VL_CHECK(glGetString(GL_EXTENSIONS));
+      ext_str = (const char*)glGetString(GL_EXTENSIONS);
     }
-    Log::print("\n");
+    sstream << ext_str;
+    std::string ext,line;
+    for( int i=0; !sstream.eof(); ++i )
+    {
+      sstream >> ext;
+      if (sstream.eof())
+        break;
+
+      if (i && i % 2)
+      {
+        line.resize(40,' ');
+        line += ext;
+        Log::print( Say("%s\n") << line );
+        line.clear();
+      }
+      else
+        line = ext;
+    }
+    if (line.length())
+      Log::print( Say("%s\n") << line );
   }
 }
 //------------------------------------------------------------------------------
@@ -344,7 +356,6 @@ namespace
     GL_SAMPLE_COVERAGE
   };
 
-  #ifndef NDEBUG
   const char* TranslateEnableString[] =
   {
     "EN_ALPHA_TEST",
@@ -384,7 +395,6 @@ namespace
     "EN_SAMPLE_ALPHA_TO_ONE",
     "EN_SAMPLE_COVERAGE"
   };
-  #endif
 }
 //------------------------------------------------------------------------------
 void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
@@ -1036,6 +1046,101 @@ bool OpenGLContext::isCleanState(bool verbose) const
     ok = false;
   }
 
+  // buffer object bindings
+
+  GLint buf_bind = 0;
+  if (GLEW_VERSION_1_5)
+  {
+    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buf_bind);
+    if (buf_bind != 0)
+    {
+      if (verbose)
+        vl::Log::error( "GL_ARRAY_BUFFER_BINDING should be 0!\n");
+      VL_TRAP();
+      ok = false;
+    }
+    buf_bind = 0;
+    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buf_bind);
+    if (buf_bind != 0)
+    {
+      if (verbose)
+        vl::Log::error( "GL_ELEMENT_ARRAY_BUFFER_BINDING should be 0!\n");
+      VL_TRAP();
+      ok = false;
+    }
+  }
+  if (GLEW_VERSION_2_1)
+  {
+    buf_bind = 0;
+    glGetIntegerv(GL_PIXEL_PACK_BUFFER_BINDING, &buf_bind);
+    if (buf_bind != 0)
+    {
+      if (verbose)
+        vl::Log::error( "GL_PIXEL_PACK_BUFFER_BINDING should be 0!\n");
+      VL_TRAP();
+      ok = false;
+    }
+    buf_bind = 0;
+    glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &buf_bind);
+    if (buf_bind != 0)
+    {
+      if (verbose)
+        vl::Log::error( "GL_PIXEL_UNPACK_BUFFER_BINDING should be 0!\n");
+      VL_TRAP();
+      ok = false;
+    }
+  }
+  if (GLEW_ARB_uniform_buffer_object)
+  {
+    buf_bind = 0;
+    glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &buf_bind);
+    if (buf_bind != 0)
+    {
+      if (verbose)
+        vl::Log::error( "GL_UNIFORM_BUFFER_BINDING should be 0!\n");
+      VL_TRAP();
+      ok = false;
+    }
+  }
+  if(GLEW_VERSION_3_0)
+  {
+    buf_bind = 0;
+    glGetIntegerv(GL_TRANSFORM_FEEDBACK_BUFFER_BINDING, &buf_bind);
+    if (buf_bind != 0)
+    {
+      if (verbose)
+        vl::Log::error( "GL_TRANSFORM_FEEDBACK_BUFFER_BINDING should be 0!\n");
+      VL_TRAP();
+      ok = false;
+    }
+  }
+  /* mic fixme: GLEW forgot these.
+  glGetIntegerv(GL_COPY_READ_BUFFER_BINDING, &buf_bind);
+  if (buf_bind != 0)
+  {
+    if (verbose)
+      vl::Log::error( "GL_COPY_READ_BUFFER_BINDING should be 0!\n");
+    VL_TRAP();
+    ok = false;
+  }
+  glGetIntegerv(GL_COPY_WRITE_BUFFER_BINDING, &buf_bind);
+  if (buf_bind != 0)
+  {
+    if (verbose)
+      vl::Log::error( "GL_COPY_WRITE_BUFFER_BINDING should be 0!\n");
+    VL_TRAP();
+    ok = false;
+  }
+  glGetIntegerv(GL_TEXTURE_BUFFER_BINDING, &buf_bind);
+  if (buf_bind != 0)
+  {
+    if (verbose)
+      vl::Log::error( "GL_TEXTURE_BUFFER_BINDING should be 0!\n");
+    VL_TRAP();
+    ok = false;
+  }
+  */
+
   VL_CHECK_OGL();
   return ok;
 }
@@ -1070,7 +1175,8 @@ void OpenGLContext::resetContextStates()
   // See also glGetError() -> http://www.opengl.org/sdk/docs/man/xhtml/glGetError.xml
   VL_CHECK_OGL();
 
-  if (VisualizationLibrary::globalSettings()->checkCleanState() && !isCleanState(true))
+  // perform extra OpenGL environment sanity check
+  if (VisualizationLibrary::globalSettings()->checkOpenGLStates() && !isCleanState(true))
   {
     VL_TRAP();
     return;
