@@ -76,6 +76,7 @@
 #include "Applets/App_OcclusionCulling.hpp"
 #include "Applets/App_BezierSurfaces.hpp"
 #include "Applets/App_Picking.hpp"
+#include "Applets/App_NearFarOptimization.hpp"
 
 // win32 console for sdtout output
 #if defined(WIN32) && !defined(NDEBUG)
@@ -122,6 +123,7 @@ public:
     TestEntry tests[] = 
     {
       { "Virtual File System", new App_VirtualFileSystemTest, 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Near/Far Planes Optimization", new App_NearFarOptimization, 10, 10, 512, 512, vlut::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Render Order - Effect & Actor Ranks", new App_RenderOrder(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Render Order - Alpha Z-Sort", new App_RenderOrder(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Render Order - Always Z-Sort", new App_RenderOrder(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 

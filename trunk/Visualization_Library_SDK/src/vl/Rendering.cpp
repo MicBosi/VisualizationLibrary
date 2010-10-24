@@ -325,8 +325,8 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
       }
 
       // mic fixme ? make sure the EnableSet and RenderStateSet exists
-      /* shader->gocEnableSet();
-      shader->gocRenderStateSet(); */
+      /*shader->gocEnableSet();
+      shader->gocRenderStateSet();*/
 
       // check that current update time is different from the previous one.
       #ifndef NDEBUG
