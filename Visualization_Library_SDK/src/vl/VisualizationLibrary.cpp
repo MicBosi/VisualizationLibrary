@@ -197,19 +197,25 @@ bool vl::canWrite(VirtualFile* file)  { return VisualizationLibrary::loadWriterM
 void VisualizationLibrary::init()
 {
   initEnvVars();
-  logger()->setLogFile( envVars()->value("VL_LOGFILE_PATH") );
+  logger()->setLogFile( globalSettings()->defaultLogPath() );
   Log::setLogger( logger() );
 
 #if defined(_MSC_VER)
-  std::string compiler = "MSVC";
+  const char* compiler = "MSVC";
 #elif defined(__GNUG__)
-  std::string compiler = "GCC";
+  const char* compiler = "GCC";
 #else
-  std::string compiler = "UNKNOWN";
+  const char* compiler = "UNKNOWN";
+#endif
+
+#if defined(DEBUG) || !defined(NDEBUG)
+  const char* build_type = "DEBUG";
+#else
+  const char* build_type = "RELEASE";
 #endif
 
   Time time;
-  Log::print( Say("Visualization Library v%n.%n.%n\n%s - %s - %s compiler.\n\n") << VL_Major << VL_Minor << VL_Build << __DATE__ << __TIME__ << compiler );
+  Log::print( Say("Visualization Library v%n.%n.%n\n%s - %s - %s compiler [%s]\n") << VL_Major << VL_Minor << VL_Build << __DATE__ << __TIME__ << compiler << build_type );
 
   FT_Error error = FT_Init_FreeType( &VisualizationLibraryInstance::singleton()->mFreeTypeLibrary );
   if ( error )
@@ -218,14 +224,47 @@ void VisualizationLibrary::init()
     VL_TRAP()
   }
 
-  #ifndef NDEBUG
-    Log::print("Environment variables:\n");
-    envVars()->print();
-    Log::print("\n");
-  #endif
+  Log::print("\n --- Environment ---\n");
+  const char* val = getenv("VL_LOGFILE_PATH");
+  if (val)
+    Log::print( Say("VL_LOGFILE_PATH = %s\n") << val );
+  else
+    Log::print("VL_LOGFILE_PATH <not present>\n");
+
+  val = getenv("VL_DATA_PATH");
+  if (val)
+    Log::print( Say("VL_DATA_PATH = %s\n") << val );
+  else
+    Log::print("VL_DATA_PATH <not present>\n");
+
+  val = getenv("VL_VERBOSITY_LEVEL");
+  if (val)
+    Log::print( Say("VL_VERBOSITY_LEVEL = %s\n") << val );
+  else
+    Log::print("VL_VERBOSITY_LEVEL <not present>\n");
+
+  val = getenv("VL_CHECK_GL_STATES");
+  if (val)
+    Log::print( Say("VL_CHECK_GL_STATES = %s\n") << val );
+  else
+    Log::print("VL_CHECK_GL_STATES <not present>\n");
+
+  Log::print("\n --- Global Settings --- \n");
+  Log::print( Say("Log file  = %s\n") << globalSettings()->defaultLogPath() );
+  Log::print( Say("Data path = %s\n") << globalSettings()->defaultDataPath() );
+  Log::print("Verbosity level = ");
+  switch(globalSettings()->verbosityLevel())
+  {
+    case GlobalSettings::VERBOSITY_ERROR:  Log::print("ERROR\n"); break;
+    case GlobalSettings::VERBOSITY_NORMAL: Log::print("NORMAL\n"); break;
+    case GlobalSettings::VERBOSITY_DEBUG:  Log::print("DEBUG\n"); break;
+  }
+  Log::print( Say("Check OpenGL States = %s\n") << (globalSettings()->checkOpenGLStates()?"YES":"NO") );
+
+  Log::print("\n");
 
   // adds default Visualization Library's data directory
-  fileSystem()->directories()->push_back( new DiskDirectory( VisualizationLibrary::envVars()->value("VL_DATA_PATH") ) );
+  fileSystem()->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
 
   // register I/O plugins
   #if defined(IO_MODULE_JPG)
@@ -311,17 +350,58 @@ void VisualizationLibrary::initEnvVars()
 {
   char* val = NULL;
 
-  val = getenv("VL_DATA_PATH");
-  if (val)
-    envVars()->set("VL_DATA_PATH") = val;
-  else
-    envVars()->set("VL_DATA_PATH") = "../data";
+  // log file
 
   val = getenv("VL_LOGFILE_PATH");
   if (val)
-    envVars()->set("VL_LOGFILE_PATH") = val;
+    globalSettings()->mDefaultLogPath = val;
   else
-    envVars()->set("VL_LOGFILE_PATH") = "log.txt";
+    globalSettings()->mDefaultLogPath = "log.txt";
+
+  // data path
+
+  val = getenv("VL_DATA_PATH");
+  if (val)
+    globalSettings()->mDefaultDataPath = val;
+  else
+    globalSettings()->mDefaultDataPath = "../data";
+
+  // verbosity level
+
+  val = getenv("VL_VERBOSITY_LEVEL");
+  if (val)
+  {
+    if ( String(val).toUpperCase() == "ERROR")
+      globalSettings()->setVerbosityLevel(GlobalSettings::VERBOSITY_ERROR);
+    else
+    if ( String(val).toUpperCase() == "NORMAL")
+      globalSettings()->setVerbosityLevel(GlobalSettings::VERBOSITY_NORMAL);
+    else
+    if ( String(val).toUpperCase() == "DEBUG")
+      globalSettings()->setVerbosityLevel(GlobalSettings::VERBOSITY_DEBUG);
+    else
+    {
+      // no log here yet.
+      fprintf(stderr,"VL_VERBOSITY_LEVEL variable has unknown value %s! Legal values: ERROR, NORMAL, DEBUG\n\n", val);
+    }
+  }
+
+  // opengl state checks
+
+  val = getenv("VL_CHECK_GL_STATES");
+  if (val)
+  {
+    if ( String(val).toUpperCase() == "YES" )
+      globalSettings()->setCheckOpenGLStates(true);
+    else
+    if ( String(val).toUpperCase() == "NO" )
+      globalSettings()->setCheckOpenGLStates(false);
+    else
+    {
+      // no log here yet.
+      fprintf(stderr,"VL_CHECK_GL_STATES variable has unknown value '%s'! Legal values: YES, NO.\n\n", val);
+    }
+  }
 }
 //------------------------------------------------------------------------------
 void vl::showWin32Console()
