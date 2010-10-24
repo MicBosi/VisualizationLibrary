@@ -61,10 +61,10 @@ namespace vl
 
     /**
      * The near and far clipping planes are adjusted to fit the provided \p scene_bounding_sphere.
-     * Optimizing the near and far clipping planes 
-     * results in an optimized usage of the z-buffer with the consequence of minimizing possible 
-     * z-fighting artifacts, thus enhancing the rendering quality.
-     * \note Optimizing the near and far clipping planes might slightly slow down the rendering performances if the scene contains several thousands of objects.
+     * Optimizing the near and far clipping planes results in an optimized usage of the z-buffer with 
+     * the consequence of minimizing possible z-fighting artifacts, thus enhancing the rendering quality.
+     * \note Optimizing the near and far clipping planes might slightly impact the rendering performances 
+     * if the scene contains a huge number of objects.
      * \note At the moment the near and far clipping planes optimization is available only when using a 
      * perspective projection matrix set up by setProjectionAsPerspective().
     */
@@ -118,6 +118,7 @@ namespace vl
 
     void setFrustum(const Frustum& frustum) { mFrustum = frustum; }
     const Frustum& frustum() const { return mFrustum; }
+    Frustum& frustum() { return mFrustum; }
 
     void setViewport(Viewport* viewport) { mViewport = viewport; }
     Viewport* viewport() { return mViewport.get(); }

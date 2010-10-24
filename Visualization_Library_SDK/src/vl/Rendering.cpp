@@ -150,6 +150,15 @@ void Rendering::render()
 
   camera()->computeFrustumPlanes();
 
+  // if near/far clipping planes optimization is enabled don't perform far-culling
+  if (nearFarClippingPlanesOptimized())
+  {
+    // perform only near culling with plane at distance 0
+    camera()->frustum().planes().resize(5);
+    camera()->frustum().planes()[4] = Plane( camera()->inverseViewMatrix().getT(), 
+                                             camera()->inverseViewMatrix().getZ());
+  }
+
   actorQueue()->clear();
   for(int i=0; i<sceneManagers()->size(); ++i)
   {
