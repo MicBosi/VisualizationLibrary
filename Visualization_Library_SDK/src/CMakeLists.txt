@@ -375,6 +375,7 @@ set(VL_APPLETS_INC
   examples/Applets/App_Molecules.hpp
   examples/Applets/App_MorphAnimation.hpp
   examples/Applets/App_MultipleCameras.hpp
+  examples/Applets/App_NearFarOptimization.hpp
   examples/Applets/App_OcclusionCulling.hpp
   examples/Applets/App_Picking.hpp
   examples/Applets/App_PointSplatting.hpp
