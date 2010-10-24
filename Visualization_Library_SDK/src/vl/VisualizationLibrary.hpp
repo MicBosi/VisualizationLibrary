@@ -48,6 +48,7 @@ namespace vl
   //! Global application settings controlling how Visualization Library behaves.
   class GlobalSettings: public Object
   {
+    friend class VisualizationLibrary;
   public:
     typedef enum { 
       VERBOSITY_ERROR,  //!<< Outputs critical and runtime error messages.
@@ -60,22 +61,28 @@ namespace vl
     {
       #ifndef NDEBUG
         mVerbosityLevel  = VERBOSITY_NORMAL;
-        mCheckCleanState = true;
+        mCheckOpenGLStates = true;
       #else
         mVerbosityLevel  = VERBOSITY_ERROR;
-        mCheckCleanState = false;
+        mCheckOpenGLStates = false;
       #endif
     }
 
-    bool checkCleanState() const { return mCheckCleanState; }
-    void setCheckcleanState(bool check_clean) { mCheckCleanState = check_clean; }
+    bool checkOpenGLStates() const { return mCheckOpenGLStates; }
+    void setCheckOpenGLStates(bool check_clean) { mCheckOpenGLStates = check_clean; }
 
     EVerbosityLevel verbosityLevel() const { return mVerbosityLevel; }
     void setVerbosityLevel(EVerbosityLevel verb_level) { mVerbosityLevel = verb_level; }
 
+    const String& defaultLogPath() const { return mDefaultLogPath; }
+
+    const String& defaultDataPath() const { return mDefaultDataPath; }
+
   protected:
     EVerbosityLevel mVerbosityLevel;
-    bool mCheckCleanState;
+    bool mCheckOpenGLStates;
+    String mDefaultLogPath;
+    String mDefaultDataPath;
   };
 
   //! Used to initialize/shutdown VisualizationLibrary and to access important global data.

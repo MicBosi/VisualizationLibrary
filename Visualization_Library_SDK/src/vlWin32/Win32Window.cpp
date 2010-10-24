@@ -727,15 +727,15 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
       // check the returned pixel format
       #ifndef NEDBUG
         DescribePixelFormat(hDC, pixel_format_index, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
-        vl::Log::print("Pixel format:\n");
+        vl::Log::print(" --- Pixel Format ---\n");
         // This one returns "not supported" even when its supported...
         // vl::Log::print( vl::Say("  OpenGL        = %s\n") << (pfd.dwFlags & PFD_SUPPORT_OPENGL ? "Supported" : "Not supported") );
-        vl::Log::print( vl::Say("  RGBA bits     = %n %n %n %n\n") << pfd.cRedBits << pfd.cGreenBits << pfd.cBlueBits << pfd.cAlphaBits);
-        vl::Log::print( vl::Say("  depth bits    = %n\n")  << pfd.cDepthBits );
-        vl::Log::print( vl::Say("  stencil bits  = %n \n") << pfd.cStencilBits);
-        vl::Log::print( vl::Say("  double buffer = %s\n")  << (pfd.dwFlags & PFD_DOUBLEBUFFER ? "Yes" : "No") );
-        vl::Log::print( vl::Say("  stereo        = %s\n")  << (pfd.dwFlags & PFD_STEREO ? "Yes" : "No") );
-        vl::Log::print( vl::Say("  samples       = %n\n")  << samples );
+        vl::Log::print( vl::Say("RGBA Bits     = %n %n %n %n\n") << pfd.cRedBits << pfd.cGreenBits << pfd.cBlueBits << pfd.cAlphaBits);
+        vl::Log::print( vl::Say("Depth Bits    = %n\n")  << pfd.cDepthBits );
+        vl::Log::print( vl::Say("Stencil Bits  = %n \n") << pfd.cStencilBits);
+        vl::Log::print( vl::Say("Double Buffer = %s\n")  << (pfd.dwFlags & PFD_DOUBLEBUFFER ? "Yes" : "No") );
+        vl::Log::print( vl::Say("Stereo        = %s\n")  << (pfd.dwFlags & PFD_STEREO ? "Yes" : "No") );
+        vl::Log::print( vl::Say("Samples       = %n\n")  << samples );
         vl::Log::print("\n");
       #endif
     }
