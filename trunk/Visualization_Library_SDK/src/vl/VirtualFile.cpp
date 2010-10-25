@@ -173,9 +173,9 @@ float VirtualFile::readFloat(bool little_endian_data)
   return data.num;
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readFloat(void* buffer, long long count)
+long long VirtualFile::readFloat(float* buffer, long long count, bool little_endian_data)
 {
-  return read(buffer, sizeof(float)*count);
+  return readSInt32((long*)buffer, sizeof(float)*count, little_endian_data);
 }
 //-----------------------------------------------------------------------------
 double VirtualFile::readDouble(bool little_endian_data)
@@ -203,44 +203,43 @@ double VirtualFile::readDouble(bool little_endian_data)
   return data.num;
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readDouble(void* buffer, long long count)
+long long VirtualFile::readDouble(double* buffer, long long count, bool little_endian_data)
 {
-  return read(buffer, sizeof(double)*count);
+  return readSInt64((long long*)buffer, sizeof(double)*count, little_endian_data);
 }
 //-----------------------------------------------------------------------------
-unsigned char VirtualFile::readUByte()
+unsigned char VirtualFile::readUInt8()
 {
   unsigned char ch = 0;
   read(&ch,sizeof(unsigned char));
   return ch;
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readUByte(void* buffer, long long count)
+long long VirtualFile::readUInt8(unsigned char* buffer, long long count)
 {
   return read(buffer, sizeof(unsigned char)*count);
 }
 //-----------------------------------------------------------------------------
-char VirtualFile::readSByte()
+char VirtualFile::readSInt8()
 {
   char ch = 0;
   read(&ch,sizeof(char));
   return ch;
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readSByte(void* buffer, long long count)
+long long VirtualFile::readSInt8(char* buffer, long long count)
 {
-  return read(buffer, sizeof(char)*count);
+  return read((unsigned char*)buffer, sizeof(char)*count);
 }
 //-----------------------------------------------------------------------------
 unsigned long long VirtualFile::readUInt64(bool little_endian_data)
 {
-  union {
-    unsigned long long num;
-    unsigned char bytes[8];
-  } data;
-  VL_COMPILE_TIME_CHECK( sizeof(data.num) == 8 )
+  unsigned long long num;
+  char* bytes = (char*)&num;
 
-  read(data.bytes, 8);
+  VL_COMPILE_TIME_CHECK( sizeof(num) == 8 )
+
+  read(bytes, 8);
 
   unsigned short bet = 0x00FF;
   bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
@@ -248,24 +247,23 @@ unsigned long long VirtualFile::readUInt64(bool little_endian_data)
   {
     // swap the bytes
     unsigned char tmp;
-    tmp = data.bytes[0]; data.bytes[0] = data.bytes[7]; data.bytes[7] = tmp;
-    tmp = data.bytes[1]; data.bytes[1] = data.bytes[6]; data.bytes[6] = tmp;
-    tmp = data.bytes[2]; data.bytes[2] = data.bytes[5]; data.bytes[5] = tmp;
-    tmp = data.bytes[3]; data.bytes[3] = data.bytes[4]; data.bytes[4] = tmp;
+    tmp = bytes[0]; bytes[0] = bytes[7]; bytes[7] = tmp;
+    tmp = bytes[1]; bytes[1] = bytes[6]; bytes[6] = tmp;
+    tmp = bytes[2]; bytes[2] = bytes[5]; bytes[5] = tmp;
+    tmp = bytes[3]; bytes[3] = bytes[4]; bytes[4] = tmp;
   }
 
-  return data.num;
+  return num;
 }
 //-----------------------------------------------------------------------------
 long long VirtualFile::readSInt64(bool little_endian_data)
 {
-  union {
-    long long num;
-    unsigned char bytes[8];
-  } data;
-  VL_COMPILE_TIME_CHECK( sizeof(data.num) == 8 )
+  long long num;
+  char* bytes = (char*)&num;
 
-  read(data.bytes, 8);
+  VL_COMPILE_TIME_CHECK( sizeof(num) == 8 )
+
+    read(bytes, 8);
 
   unsigned short bet = 0x00FF;
   bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
@@ -273,16 +271,16 @@ long long VirtualFile::readSInt64(bool little_endian_data)
   {
     // swap the bytes
     unsigned char tmp;
-    tmp = data.bytes[0]; data.bytes[0] = data.bytes[7]; data.bytes[7] = tmp;
-    tmp = data.bytes[1]; data.bytes[1] = data.bytes[6]; data.bytes[6] = tmp;
-    tmp = data.bytes[2]; data.bytes[2] = data.bytes[5]; data.bytes[5] = tmp;
-    tmp = data.bytes[3]; data.bytes[3] = data.bytes[4]; data.bytes[4] = tmp;
+    tmp = bytes[0]; bytes[0] = bytes[7]; bytes[7] = tmp;
+    tmp = bytes[1]; bytes[1] = bytes[6]; bytes[6] = tmp;
+    tmp = bytes[2]; bytes[2] = bytes[5]; bytes[5] = tmp;
+    tmp = bytes[3]; bytes[3] = bytes[4]; bytes[4] = tmp;
   }
 
-  return data.num;
+  return num;
 }
 //-----------------------------------------------------------------------------
-unsigned int VirtualFile::readUInt32(bool little_endian_data)
+unsigned long VirtualFile::readUInt32(bool little_endian_data)
 {
   union {
     unsigned int num;
@@ -305,7 +303,7 @@ unsigned int VirtualFile::readUInt32(bool little_endian_data)
   return data.num;
 }
 //-----------------------------------------------------------------------------
-int VirtualFile::readSInt32(bool little_endian_data)
+long VirtualFile::readSInt32(bool little_endian_data)
 {
   union {
     int num;
@@ -373,7 +371,7 @@ short VirtualFile::readSInt16(bool little_endian_data)
   return data.num;
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readUInt64(void* buffer, long long count, bool little_endian_data)
+long long VirtualFile::readUInt64(unsigned long long* buffer, long long count, bool little_endian_data)
 {
   // read
   long long c = read(buffer, count*sizeof(unsigned long long));
@@ -406,12 +404,12 @@ long long VirtualFile::readUInt64(void* buffer, long long count, bool little_end
   return c;
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readSInt64(void* buffer, long long count, bool little_endian_data)
+long long VirtualFile::readSInt64(long long* buffer, long long count, bool little_endian_data)
 {
-  return readUInt64(buffer,count,little_endian_data);
+  return readUInt64((unsigned long long*)buffer,count,little_endian_data);
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readUInt32(void* buffer, long long count, bool little_endian_data)
+long long VirtualFile::readUInt32(unsigned long* buffer, long long count, bool little_endian_data)
 {
   // read
   long long c = read(buffer, count*sizeof(unsigned int));
@@ -438,12 +436,12 @@ long long VirtualFile::readUInt32(void* buffer, long long count, bool little_end
   return c;
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readSInt32(void* buffer, long long count, bool little_endian_data)
+long long VirtualFile::readSInt32(long* buffer, long long count, bool little_endian_data)
 {
-  return readUInt32(buffer,count,little_endian_data);
+  return readUInt32((unsigned long*)buffer,count,little_endian_data);
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readUInt16(void* buffer, long long count, bool little_endian_data)
+long long VirtualFile::readUInt16(unsigned short* buffer, long long count, bool little_endian_data)
 {
   // read
   long long c = read(buffer, count*sizeof(unsigned short));
@@ -466,9 +464,9 @@ long long VirtualFile::readUInt16(void* buffer, long long count, bool little_end
   return c;
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::readSInt16(void* buffer, long long count, bool little_endian_data)
+long long VirtualFile::readSInt16(short* buffer, long long count, bool little_endian_data)
 {
-  return readUInt16(buffer,count,little_endian_data);
+  return readUInt16((unsigned short*)buffer,count,little_endian_data);
 }
 //-----------------------------------------------------------------------------
 long long VirtualFile::writeUInt32(unsigned long data, bool little_endian)
@@ -485,7 +483,7 @@ long long VirtualFile::writeUInt32(unsigned long data, bool little_endian)
     byte[1] = byte[2];
     byte[2] = tmp;
   }
-  return write(byte, 4);
+  return write(byte, sizeof(data));
 }
 //-----------------------------------------------------------------------------
 long long VirtualFile::writeSInt32(long data, bool little_endian)
@@ -502,7 +500,7 @@ long long VirtualFile::writeSInt32(long data, bool little_endian)
     byte[1] = byte[2];
     byte[2] = tmp;
   }
-  return write(byte, 4);
+  return write(byte, sizeof(data));
 }
 //-----------------------------------------------------------------------------
 long long VirtualFile::writeUInt16(unsigned short data, bool little_endian)
@@ -516,7 +514,7 @@ long long VirtualFile::writeUInt16(unsigned short data, bool little_endian)
     byte[0] = byte[1];
     byte[1] = tmp;
   }
-  return write(byte, 2);
+  return write(byte, sizeof(data));
 }
 //-----------------------------------------------------------------------------
 long long VirtualFile::writeSInt16(short data, bool little_endian)
@@ -530,7 +528,7 @@ long long VirtualFile::writeSInt16(short data, bool little_endian)
     byte[0] = byte[1];
     byte[1] = tmp;
   }
-  return write(byte, 2);
+  return write(byte, sizeof(data));
 }
 //-----------------------------------------------------------------------------
 long long VirtualFile::writeUInt8(unsigned char data)
@@ -543,3 +541,205 @@ long long VirtualFile::writeSInt8(char data)
   return write(&data,1);
 }
 //-----------------------------------------------------------------------------
+long long VirtualFile::writeSInt64(long long data, bool little_endian)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  char* byte = (char*)&data;
+  if (little_endian_cpu != little_endian)
+  {
+    // swap the bytes
+    unsigned char tmp;
+    char* bytes = (char*)&data;
+    tmp = bytes[0]; bytes[0] = bytes[7]; bytes[7] = tmp;
+    tmp = bytes[1]; bytes[1] = bytes[6]; bytes[6] = tmp;
+    tmp = bytes[2]; bytes[2] = bytes[5]; bytes[5] = tmp;
+    tmp = bytes[3]; bytes[3] = bytes[4]; bytes[4] = tmp;
+  }
+  return write(byte, sizeof(data));
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeUInt64(unsigned long long data, bool little_endian)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  char* byte = (char*)&data;
+  if (little_endian_cpu != little_endian)
+  {
+    // swap the bytes
+    unsigned char tmp;
+    char* bytes = (char*)&data;
+    tmp = bytes[0]; bytes[0] = bytes[7]; bytes[7] = tmp;
+    tmp = bytes[1]; bytes[1] = bytes[6]; bytes[6] = tmp;
+    tmp = bytes[2]; bytes[2] = bytes[5]; bytes[5] = tmp;
+    tmp = bytes[3]; bytes[3] = bytes[4]; bytes[4] = tmp;
+  }
+  return write(byte, sizeof(data));
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeFloat(float data, bool little_endian)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  char* byte = (char*)&data;
+  if (little_endian_cpu != little_endian)
+  {
+    char tmp = byte[0];
+    byte[0] = byte[3];
+    byte[3] = tmp;
+    tmp = byte[1];
+    byte[1] = byte[2];
+    byte[2] = tmp;
+  }
+  return write(byte, sizeof(data));
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeDouble(double data, bool little_endian)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  char* byte = (char*)&data;
+  if (little_endian_cpu != little_endian)
+  {
+    // swap the bytes
+    unsigned char tmp;
+    char* bytes = (char*)&data;
+    tmp = bytes[0]; bytes[0] = bytes[7]; bytes[7] = tmp;
+    tmp = bytes[1]; bytes[1] = bytes[6]; bytes[6] = tmp;
+    tmp = bytes[2]; bytes[2] = bytes[5]; bytes[5] = tmp;
+    tmp = bytes[3]; bytes[3] = bytes[4]; bytes[4] = tmp;
+  }
+  return write(byte, sizeof(data));
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeDouble(double* buffer, long long count, bool little_endian_data)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  if (little_endian_cpu != little_endian_data)
+  {
+    long long ret = 0;
+    for(long long i=0; i<count; ++i)
+      ret += writeDouble( buffer[i], little_endian_data );
+    return ret;
+  }
+  else
+    return write(buffer,sizeof(buffer[0])*count);
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeFloat(float* buffer, long long count, bool little_endian_data)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  if (little_endian_cpu != little_endian_data)
+  {
+    long long ret = 0;
+    for(long long i=0; i<count; ++i)
+      ret += writeFloat( buffer[i], little_endian_data );
+    return ret;
+  }
+  else
+    return write(buffer,sizeof(buffer[0])*count);
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeUInt64(unsigned long long* buffer, long long count, bool little_endian_data)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  if (little_endian_cpu != little_endian_data)
+  {
+    long long ret = 0;
+    for(long long i=0; i<count; ++i)
+      ret += writeUInt64( buffer[i], little_endian_data );
+    return ret;
+  }
+  else
+    return write(buffer,sizeof(buffer[0])*count);
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeSInt64(long long* buffer, long long count, bool little_endian_data)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  if (little_endian_cpu != little_endian_data)
+  {
+    long long ret = 0;
+    for(long long i=0; i<count; ++i)
+      ret += writeSInt64( buffer[i], little_endian_data );
+    return ret;
+  }
+  else
+    return write(buffer,sizeof(buffer[0])*count);
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeUInt32(unsigned long* buffer, long long count, bool little_endian_data)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  if (little_endian_cpu != little_endian_data)
+  {
+    long long ret = 0;
+    for(long long i=0; i<count; ++i)
+      ret += writeUInt32( buffer[i], little_endian_data );
+    return ret;
+  }
+  else
+    return write(buffer,sizeof(buffer[0])*count);
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeSInt32(long* buffer, long long count, bool little_endian_data)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  if (little_endian_cpu != little_endian_data)
+  {
+    long long ret = 0;
+    for(long long i=0; i<count; ++i)
+      ret += writeSInt32( buffer[i], little_endian_data );
+    return ret;
+  }
+  else
+    return write(buffer,sizeof(buffer[0])*count);
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeUInt16(unsigned short* buffer, long long count, bool little_endian_data)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  if (little_endian_cpu != little_endian_data)
+  {
+    long long ret = 0;
+    for(long long i=0; i<count; ++i)
+      ret += writeUInt16( buffer[i], little_endian_data );
+    return ret;
+  }
+  else
+    return write(buffer,sizeof(buffer[0])*count);
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeSInt16(short* buffer, long long count, bool little_endian_data)
+{
+  unsigned short bet = 0x00FF;
+  bool little_endian_cpu = ((unsigned char*)&bet)[0] == 0xFF;
+  if (little_endian_cpu != little_endian_data)
+  {
+    long long ret = 0;
+    for(long long i=0; i<count; ++i)
+      ret += writeSInt16( buffer[i], little_endian_data );
+    return ret;
+  }
+  else
+    return write(buffer,sizeof(buffer[0])*count);
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeUInt8(unsigned char* buffer, long long count)
+{
+  return write(buffer, count);
+}
+//-----------------------------------------------------------------------------
+long long VirtualFile::writeSInt8(char* buffer, long long count)
+{
+  return write(buffer, count);
+}
+//-----------------------------------------------------------------------------
+// mic fixme todo: 1) fai test completo, 2) ordina funzioni, 3) minimizza implementazione funzioni, 4) documenta funzioni nuove & tutto virtual file
