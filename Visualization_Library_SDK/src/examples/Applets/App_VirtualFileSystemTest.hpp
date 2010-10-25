@@ -60,6 +60,8 @@ public:
 
     bool test_passed = true;
 
+    test_passed &= testDataIO();
+
     test_passed &= testGZipStream();
 
     // install the zipped directory
@@ -207,6 +209,474 @@ public:
       }
     }
     return true;
+  }
+
+  bool testDataIO()
+  {
+    bool ok = true;
+    vl::DiskFile fdata;
+
+    // --- double ---
+    std::vector<double> f64_data_1;
+    std::vector<double> f64_data_2;
+    for(double i=-10; i<=10; ++i)
+      f64_data_1.push_back(i);
+    f64_data_2.resize(f64_data_1.size());
+
+    fdata.open("test_data_io.dat", vl::OM_WriteOnly);
+      fdata.writeDouble(&f64_data_1[0], f64_data_1.size(), true);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readDouble(&f64_data_2[0], f64_data_2.size(), true);
+    fdata.close();
+    ok &= memcmp(&f64_data_1[0], &f64_data_2[0], sizeof(f64_data_1[0])*f64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeDouble(&f64_data_1[0], f64_data_1.size(), false);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readDouble(&f64_data_2[0], f64_data_2.size(), false);
+    fdata.close();
+    ok &= memcmp(&f64_data_1[0], &f64_data_2[0], sizeof(f64_data_1[0])*f64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // --- float ---
+    std::vector<float> f32_data_1;
+    std::vector<float> f32_data_2;
+    for(float i=-10; i<=10; ++i)
+      f32_data_1.push_back(i);
+    f32_data_2.resize(f32_data_1.size());
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeFloat(&f32_data_1[0], f32_data_1.size(), true);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readFloat(&f32_data_2[0], f32_data_2.size(), true);
+    fdata.close();
+    ok &= memcmp(&f32_data_1[0], &f32_data_2[0], sizeof(f32_data_1[0])*f32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeFloat(&f32_data_1[0], f32_data_1.size(), false);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readFloat(&f32_data_2[0], f32_data_2.size(), false);
+    fdata.close();
+    ok &= memcmp(&f32_data_1[0], &f32_data_2[0], sizeof(f32_data_1[0])*f32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // --- unsigned long long ---
+    std::vector<unsigned long long> u64_data_1;
+    std::vector<unsigned long long> u64_data_2;
+    for(unsigned long long i=0; i<=10; ++i)
+      u64_data_1.push_back(i);
+    u64_data_2.resize(u64_data_1.size());
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeUInt64(&u64_data_1[0], u64_data_1.size(), true);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readUInt64(&u64_data_2[0], u64_data_2.size(), true);
+    fdata.close();
+    ok &= memcmp(&u64_data_1[0], &u64_data_2[0], sizeof(u64_data_1[0])*u64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeUInt64(&u64_data_1[0], u64_data_1.size(), false);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readUInt64(&u64_data_2[0], u64_data_2.size(), false);
+    fdata.close();
+    ok &= memcmp(&u64_data_1[0], &u64_data_2[0], sizeof(u64_data_1[0])*u64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // --- signed long long ---
+    std::vector<signed long long> s64_data_1;
+    std::vector<signed long long> s64_data_2;
+    for(signed long long i=-10; i<=10; ++i)
+      s64_data_1.push_back(i);
+    s64_data_2.resize(s64_data_1.size());
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeSInt64(&s64_data_1[0], s64_data_1.size(), true);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readSInt64(&s64_data_2[0], s64_data_2.size(), true);
+    fdata.close();
+    ok &= memcmp(&s64_data_1[0], &s64_data_2[0], sizeof(s64_data_1[0])*s64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeSInt64(&s64_data_1[0], s64_data_1.size(), false);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readSInt64(&s64_data_2[0], s64_data_2.size(), false);
+    fdata.close();
+    ok &= memcmp(&s64_data_1[0], &s64_data_2[0], sizeof(s64_data_1[0])*s64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // --- unsigned long ---
+    std::vector<unsigned long> u32_data_1;
+    std::vector<unsigned long> u32_data_2;
+    for(unsigned long i=0; i<=10; ++i)
+      u32_data_1.push_back(i);
+    u32_data_2.resize(u32_data_1.size());
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeUInt32(&u32_data_1[0], u32_data_1.size(), true);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readUInt32(&u32_data_2[0], u32_data_2.size(), true);
+    fdata.close();
+    ok &= memcmp(&u32_data_1[0], &u32_data_2[0], sizeof(u32_data_1[0])*u32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeUInt32(&u32_data_1[0], u32_data_1.size(), false);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readUInt32(&u32_data_2[0], u32_data_2.size(), false);
+    fdata.close();
+    ok &= memcmp(&u32_data_1[0], &u32_data_2[0], sizeof(u32_data_1[0])*u32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // --- signed long ---
+    std::vector<signed long> s32_data_1;
+    std::vector<signed long> s32_data_2;
+    for(signed long i=-10; i<=10; ++i)
+      s32_data_1.push_back(i);
+    s32_data_2.resize(s32_data_1.size());
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeSInt32(&s32_data_1[0], s32_data_1.size(), true);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readSInt32(&s32_data_2[0], s32_data_2.size(), true);
+    fdata.close();
+    ok &= memcmp(&s32_data_1[0], &s32_data_2[0], sizeof(s32_data_1[0])*s32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeSInt32(&s32_data_1[0], s32_data_1.size(), false);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readSInt32(&s32_data_2[0], s32_data_2.size(), false);
+    fdata.close();
+    ok &= memcmp(&s32_data_1[0], &s32_data_2[0], sizeof(s32_data_1[0])*s32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // --- unsigned short ---
+    std::vector<unsigned short> u16_data_1;
+    std::vector<unsigned short> u16_data_2;
+    for(unsigned short i=0; i<=10; ++i)
+      u16_data_1.push_back(i);
+    u16_data_2.resize(u16_data_1.size());
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeUInt16(&u16_data_1[0], u16_data_1.size(), true);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readUInt16(&u16_data_2[0], u16_data_2.size(), true);
+    fdata.close();
+    ok &= memcmp(&u16_data_1[0], &u16_data_2[0], sizeof(u16_data_1[0])*u16_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeUInt16(&u16_data_1[0], u16_data_1.size(), false);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readUInt16(&u16_data_2[0], u16_data_2.size(), false);
+    fdata.close();
+    ok &= memcmp(&u16_data_1[0], &u16_data_2[0], sizeof(u16_data_1[0])*u16_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // --- signed short ---
+    std::vector<signed short> s16_data_1;
+    std::vector<signed short> s16_data_2;
+    for(signed short i=-10; i<=10; ++i)
+      s16_data_1.push_back(i);
+    s16_data_2.resize(s16_data_1.size());
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeSInt16(&s16_data_1[0], s16_data_1.size(), true);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readSInt16(&s16_data_2[0], s16_data_2.size(), true);
+    fdata.close();
+    ok &= memcmp(&s16_data_1[0], &s16_data_2[0], sizeof(s16_data_1[0])*s16_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeSInt16(&s16_data_1[0], s16_data_1.size(), false);
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readSInt16(&s16_data_2[0], s16_data_2.size(), false);
+    fdata.close();
+    ok &= memcmp(&s16_data_1[0], &s16_data_2[0], sizeof(s16_data_1[0])*s16_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+     // --- unsigned char ---
+    std::vector<unsigned char> u8_data_1;
+    std::vector<unsigned char> u8_data_2;
+    for(unsigned char i=0; i<=10; ++i)
+      u8_data_1.push_back(i);
+    u8_data_2.resize(u8_data_1.size());
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeUInt8(&u8_data_1[0], u8_data_1.size());
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readUInt8(&u8_data_2[0], u8_data_2.size());
+    fdata.close();
+    ok &= memcmp(&u8_data_1[0], &u8_data_2[0], sizeof(u8_data_1[0])*u8_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // --- signed char ---
+    std::vector<char> s8_data_1;
+    std::vector<char> s8_data_2;
+    for(char i=-10; i<=10; ++i)
+      s8_data_1.push_back(i);
+    s8_data_2.resize(s8_data_1.size());
+
+    fdata.open(vl::OM_WriteOnly);
+      fdata.writeSInt8(&s8_data_1[0], s8_data_1.size());
+    fdata.close();
+    fdata.open(vl::OM_ReadOnly);
+      fdata.readSInt8(&s8_data_2[0], s8_data_2.size());
+    fdata.close();
+    ok &= memcmp(&s8_data_1[0], &s8_data_2[0], sizeof(s8_data_1[0])*s8_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // --- single value functions ---
+
+    // f64
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<f64_data_1.size(); ++i)
+      fdata.writeDouble(f64_data_1[i], true);
+    fdata.close();
+    memset(&f64_data_2[0], 0, sizeof(f64_data_2[0])*f64_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<f64_data_1.size(); ++i)
+      f64_data_2[i] = fdata.readDouble(true);
+    fdata.close();
+    ok &= memcmp(&f64_data_1[0], &f64_data_2[0], sizeof(f64_data_1[0])*f64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<f64_data_1.size(); ++i)
+      fdata.writeDouble(f64_data_1[i], false);
+    fdata.close();
+    memset(&f64_data_2[0], 0, sizeof(f64_data_2[0])*f64_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<f64_data_1.size(); ++i)
+      f64_data_2[i] = fdata.readDouble(false);
+    fdata.close();
+    ok &= memcmp(&f64_data_1[0], &f64_data_2[0], sizeof(f64_data_1[0])*f64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // f32
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<f32_data_1.size(); ++i)
+      fdata.writeFloat(f32_data_1[i], true);
+    fdata.close();
+    memset(&f32_data_2[0], 0, sizeof(f32_data_2[0])*f32_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<f32_data_1.size(); ++i)
+      f32_data_2[i] = fdata.readFloat(true);
+    fdata.close();
+    ok &= memcmp(&f32_data_1[0], &f32_data_2[0], sizeof(f32_data_1[0])*f32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<f32_data_1.size(); ++i)
+      fdata.writeFloat(f32_data_1[i], false);
+    fdata.close();
+    memset(&f32_data_2[0], 0, sizeof(f32_data_2[0])*f32_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<f32_data_1.size(); ++i)
+      f32_data_2[i] = fdata.readFloat(false);
+    fdata.close();
+    ok &= memcmp(&f32_data_1[0], &f32_data_2[0], sizeof(f32_data_1[0])*f32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // u64
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<u64_data_1.size(); ++i)
+      fdata.writeUInt64(u64_data_1[i], true);
+    fdata.close();
+    memset(&u64_data_2[0], 0, sizeof(u64_data_2[0])*u64_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<u64_data_1.size(); ++i)
+      u64_data_2[i] = fdata.readUInt64(true);
+    fdata.close();
+    ok &= memcmp(&u64_data_1[0], &u64_data_2[0], sizeof(u64_data_1[0])*u64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<u64_data_1.size(); ++i)
+      fdata.writeUInt64(u64_data_1[i], false);
+    fdata.close();
+    memset(&u64_data_2[0], 0, sizeof(u64_data_2[0])*u64_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<u64_data_1.size(); ++i)
+      u64_data_2[i] = fdata.readUInt64(false);
+    fdata.close();
+    ok &= memcmp(&u64_data_1[0], &u64_data_2[0], sizeof(u64_data_1[0])*u64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // s64
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<s64_data_1.size(); ++i)
+      fdata.writeSInt64(s64_data_1[i], true);
+    fdata.close();
+    memset(&s64_data_2[0], 0, sizeof(s64_data_2[0])*s64_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<s64_data_1.size(); ++i)
+      s64_data_2[i] = fdata.readSInt64(true);
+    fdata.close();
+    ok &= memcmp(&s64_data_1[0], &s64_data_2[0], sizeof(s64_data_1[0])*s64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<s64_data_1.size(); ++i)
+      fdata.writeSInt64(s64_data_1[i], false);
+    fdata.close();
+    memset(&s64_data_2[0], 0, sizeof(s64_data_2[0])*s64_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<s64_data_1.size(); ++i)
+      s64_data_2[i] = fdata.readSInt64(false);
+    fdata.close();
+    ok &= memcmp(&s64_data_1[0], &s64_data_2[0], sizeof(s64_data_1[0])*s64_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // u32
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<u32_data_1.size(); ++i)
+      fdata.writeUInt32(u32_data_1[i], true);
+    fdata.close();
+    memset(&u32_data_2[0], 0, sizeof(u32_data_2[0])*u32_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<u32_data_1.size(); ++i)
+      u32_data_2[i] = fdata.readUInt32(true);
+    fdata.close();
+    ok &= memcmp(&u32_data_1[0], &u32_data_2[0], sizeof(u32_data_1[0])*u32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<u32_data_1.size(); ++i)
+      fdata.writeUInt32(u32_data_1[i], false);
+    fdata.close();
+    memset(&u32_data_2[0], 0, sizeof(u32_data_2[0])*u32_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<u32_data_1.size(); ++i)
+      u32_data_2[i] = fdata.readUInt32(false);
+    fdata.close();
+    ok &= memcmp(&u32_data_1[0], &u32_data_2[0], sizeof(u32_data_1[0])*u32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // s32
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<s32_data_1.size(); ++i)
+      fdata.writeSInt32(s32_data_1[i], true);
+    fdata.close();
+    memset(&s32_data_2[0], 0, sizeof(s32_data_2[0])*s32_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<s32_data_1.size(); ++i)
+      s32_data_2[i] = fdata.readSInt32(true);
+    fdata.close();
+    ok &= memcmp(&s32_data_1[0], &s32_data_2[0], sizeof(s32_data_1[0])*s32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<s32_data_1.size(); ++i)
+      fdata.writeSInt32(s32_data_1[i], false);
+    fdata.close();
+    memset(&s32_data_2[0], 0, sizeof(s32_data_2[0])*s32_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<s32_data_1.size(); ++i)
+      s32_data_2[i] = fdata.readSInt32(false);
+    fdata.close();
+    ok &= memcmp(&s32_data_1[0], &s32_data_2[0], sizeof(s32_data_1[0])*s32_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // u16
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<u16_data_1.size(); ++i)
+      fdata.writeUInt16(u16_data_1[i], true);
+    fdata.close();
+    memset(&u16_data_2[0], 0, sizeof(u16_data_2[0])*u16_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<u16_data_1.size(); ++i)
+      u16_data_2[i] = fdata.readUInt16(true);
+    fdata.close();
+    ok &= memcmp(&u16_data_1[0], &u16_data_2[0], sizeof(u16_data_1[0])*u16_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<u16_data_1.size(); ++i)
+      fdata.writeUInt16(u16_data_1[i], false);
+    fdata.close();
+    memset(&u16_data_2[0], 0, sizeof(u16_data_2[0])*u16_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<u16_data_1.size(); ++i)
+      u16_data_2[i] = fdata.readUInt16(false);
+    fdata.close();
+    ok &= memcmp(&u16_data_1[0], &u16_data_2[0], sizeof(u16_data_1[0])*u16_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // s16
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<s16_data_1.size(); ++i)
+      fdata.writeSInt16(s16_data_1[i], true);
+    fdata.close();
+    memset(&s16_data_2[0], 0, sizeof(s16_data_2[0])*s16_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<s16_data_1.size(); ++i)
+      s16_data_2[i] = fdata.readSInt16(true);
+    fdata.close();
+    ok &= memcmp(&s16_data_1[0], &s16_data_2[0], sizeof(s16_data_1[0])*s16_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<s16_data_1.size(); ++i)
+      fdata.writeSInt16(s16_data_1[i], false);
+    fdata.close();
+    memset(&s16_data_2[0], 0, sizeof(s16_data_2[0])*s16_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<s16_data_1.size(); ++i)
+      s16_data_2[i] = fdata.readSInt16(false);
+    fdata.close();
+    ok &= memcmp(&s16_data_1[0], &s16_data_2[0], sizeof(s16_data_1[0])*s16_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // u8
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<u8_data_1.size(); ++i)
+      fdata.writeUInt8(u8_data_1[i]);
+    fdata.close();
+    memset(&u8_data_2[0], 0, sizeof(u8_data_2[0])*u8_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<u8_data_1.size(); ++i)
+      u8_data_2[i] = fdata.readUInt8();
+    fdata.close();
+    ok &= memcmp(&u8_data_1[0], &u8_data_2[0], sizeof(u8_data_1[0])*u8_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    // s8
+    fdata.open(vl::OM_WriteOnly);
+    for(size_t i=0; i<s8_data_1.size(); ++i)
+      fdata.writeSInt8(s8_data_1[i]);
+    fdata.close();
+    memset(&s8_data_2[0], 0, sizeof(s8_data_2[0])*s8_data_2.size());
+    fdata.open(vl::OM_ReadOnly);
+    for(size_t i=0; i<s8_data_1.size(); ++i)
+      s8_data_2[i] = fdata.readSInt8();
+    fdata.close();
+    ok &= memcmp(&s8_data_1[0], &s8_data_2[0], sizeof(s8_data_1[0])*s8_data_1.size()) == 0;
+    VL_CHECK(ok);
+
+    return ok;
   }
 };
 
