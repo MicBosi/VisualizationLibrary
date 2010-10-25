@@ -238,8 +238,8 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
   if (enableMask() == 0)
     return;
 
-  // double internal_time = Time::currentTime();
   RenderQueue* list = renderQueue();
+  std::set<Shader*> shader_set;
 
   // iterate actor list
 
@@ -329,6 +329,8 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
           {
             // update
             shader->update( camera(), updateTime() );
+            // note that we update it afterwards
+            shader->setLastUpdateTime( updateTime() );
           }
         }
       }
@@ -337,18 +339,10 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
       /*shader->gocEnableSet();
       shader->gocRenderStateSet();*/
 
-      // check that current update time is different from the previous one.
-      #ifndef NDEBUG
-        // mic fixme: this fails
-        /*static Real last_update = 0;
-        VL_CHECK( last_update != updateTime() )
-        last_update = updateTime();*/
-      #endif
-
-      // mic fixme: dovremmo usare un updateTick invece?
-      // note the condition is != and not <
-      if ( automaticResourceInit() && shader->lastUpdateTime() != updateTime() )
+      if ( automaticResourceInit() && shader_set.find(shader) == shader_set.end() )
       {
+        shader_set.insert(shader);
+
         // link GLSLProgram
         if (shader->glslProgram())
         {
@@ -376,9 +370,6 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
           
         }
       }
-
-      // note: used for both GLSLProgram & Texture initialization and also Shader::update()
-      shader->setLastUpdateTime( updateTime() );
 
       tok->mEffectRenderRank = effect->renderRank();
     }

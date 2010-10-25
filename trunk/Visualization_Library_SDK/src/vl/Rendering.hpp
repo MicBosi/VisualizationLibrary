@@ -157,7 +157,9 @@ namespace vl
     void setClearFlags(EClearFlags clear_flags) { mClearFlags = clear_flags; }
     EClearFlags clearFlags() const { return mClearFlags; }
 
-    /** Whether OpenGL resources such as textures and GLSL programs should be automatically initialized before the rendering takes place. */
+    /** Whether OpenGL resources such as textures and GLSL programs should be automatically initialized when first used. 
+      * Enabling this features forces VL to keep track of which resources are used for each rendering, which might slighly impact the 
+      * rendering time, thus to obtain the maximum performances disable this option and manually initialize your textures and GLSL shaders. */
     void setAutomaticResourceInit(bool enable) { mAutomaticResourceInit = enable; }
     /** Whether OpenGL resources such as textures and GLSL programs should be automatically initialized before the rendering takes place. */
     bool automaticResourceInit() const { return mAutomaticResourceInit; }
