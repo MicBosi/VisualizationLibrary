@@ -66,8 +66,8 @@ void PlyLoader::PlyScalar::read(VirtualFile* file, bool le)
 {
   switch(scalarType()) 
   {
-    case PlyChar:   mData.mChar   = file->readSByte(); break;
-    case PlyUChar:  mData.mUChar  = file->readUByte(); break;
+    case PlyChar:   mData.mChar   = file->readSInt8(); break;
+    case PlyUChar:  mData.mUChar  = file->readUInt8(); break;
     case PlyShort:  mData.mShort  = file->readSInt16(le); break;
     case PlyUShort: mData.mUShort = file->readUInt16(le); break;
     case PlyInt:    mData.mInt    = file->readSInt32(le); break;
@@ -182,7 +182,7 @@ void PlyLoader::readElements(VirtualFile* file)
   std::string str;
   do
   {
-    unsigned char ch = file->readUByte();
+    unsigned char ch = file->readUInt8();
     if (ch == '\n' && str == "end_header")
       break;
     if (ch == '\n')

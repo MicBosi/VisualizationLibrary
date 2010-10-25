@@ -117,45 +117,56 @@ namespace vl
 
     //! Loads the entire file in the specified buffer.
     //! Returns the number of bytes read.
-    //! The file must be closed before calling this function.
+    //! The file must be opened before calling this function.
     long long load(void* buffer, long long max=-1);
 
-    float readFloat(bool little_endian_data=true);
-    long long readFloat(void* buffer, long long count);
-
-    double readDouble(bool little_endian_data=true);
-    long long readDouble(void* buffer, long long count);
-
-    unsigned char readUByte();
-    long long readUByte(void* buffer, long long count);
-
-    char readSByte();
-    long long readSByte(void* buffer, long long count);
-
+    // read single entry
+    double             readDouble(bool little_endian_data=true);
+    float              readFloat (bool little_endian_data=true);
     unsigned long long readUInt64(bool little_endian_data=true);
-    long long readUInt64(void* buffer, long long count, bool little_endian_data=true);
+    long long          readSInt64(bool little_endian_data=true);
+    unsigned long      readUInt32(bool little_endian_data=true);
+    long               readSInt32(bool little_endian_data=true);
+    unsigned short     readUInt16(bool little_endian_data=true);
+    short              readSInt16(bool little_endian_data=true);
+    unsigned char      readUInt8();
+    char               readSInt8();
 
-    long long readSInt64(bool little_endian_data=true);
-    long long readSInt64(void* buffer, long long count, bool little_endian_data=true);
+    // read multiple entries
+    long long readDouble(double*             buffer, long long count, bool little_endian_data=true);
+    long long readFloat (float*              buffer, long long count, bool little_endian_data=true);
+    long long readUInt64(unsigned long long* buffer, long long count, bool little_endian_data=true);
+    long long readSInt64(long long*          buffer, long long count, bool little_endian_data=true);
+    long long readUInt32(unsigned long*      buffer, long long count, bool little_endian_data=true);
+    long long readSInt32(long*               buffer, long long count, bool little_endian_data=true);
+    long long readUInt16(unsigned short*     buffer, long long count, bool little_endian_data=true);
+    long long readSInt16(short*              buffer, long long count, bool little_endian_data=true);
+    long long readUInt8 (unsigned char*      buffer, long long count);
+    long long readSInt8 (char*               buffer, long long count);
 
-    unsigned int readUInt32(bool little_endian_data=true);
-    long long readUInt32(void* buffer, long long count, bool little_endian_data=true);
+    // write single entry
+    long long writeDouble(double             data, bool little_endian_data=true);
+    long long writeFloat (float              data, bool little_endian_data=true);
+    long long writeUInt64(unsigned long long data, bool little_endian_data=true);
+    long long writeSInt64(long long          data, bool little_endian_data=true);
+    long long writeUInt32(unsigned long      data, bool little_endian_data=true);
+    long long writeSInt32(long               data, bool little_endian_data=true);
+    long long writeUInt16(unsigned short     data, bool little_endian_data=true);
+    long long writeSInt16(short              data, bool little_endian_data=true);
+    long long writeUInt8 (unsigned char      data);
+    long long writeSInt8 (char               data);
 
-    int readSInt32(bool little_endian_data=true);
-    long long readSInt32(void* buffer, long long count, bool little_endian_data=true);
-
-    unsigned short readUInt16(bool little_endian_data=true);
-    long long readUInt16(void* buffer, long long count, bool little_endian_data=true);
-
-    short readSInt16(bool little_endian_data=true);
-    long long readSInt16(void* buffer, long long count, bool little_endian_data=true);
-
-    long long writeUInt32(unsigned long data, bool little_endian=true);
-    long long writeUInt16(unsigned short data, bool little_endian=true);
-    long long writeUInt8(unsigned char data);
-    long long writeSInt32(long data, bool little_endian=true);
-    long long writeSInt16(short data, bool little_endian=true);
-    long long writeSInt8(char data);
+    // write multiple entries
+    long long writeDouble(double*             buffer, long long count, bool little_endian_data=true);
+    long long writeFloat (float*              buffer, long long count, bool little_endian_data=true);
+    long long writeUInt64(unsigned long long* buffer, long long count, bool little_endian_data=true);
+    long long writeSInt64(long long*          buffer, long long count, bool little_endian_data=true);
+    long long writeUInt32(unsigned long*      buffer, long long count, bool little_endian_data=true);
+    long long writeSInt32(long*               buffer, long long count, bool little_endian_data=true);
+    long long writeUInt16(unsigned short*     buffer, long long count, bool little_endian_data=true);
+    long long writeSInt16(short*              buffer, long long count, bool little_endian_data=true);
+    long long writeUInt8 (unsigned char*      buffer, long long count);
+    long long writeSInt8 (char*               buffer, long long count);
 
   protected:
     virtual long long read_Implementation(void* buffer, long long byte_count) = 0;
