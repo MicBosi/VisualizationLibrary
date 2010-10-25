@@ -118,9 +118,9 @@ fvec3 A3DSLoader::readVec3()
 fvec3 A3DSLoader::readColByte3()
 {
   fvec3 c;
-  c.r() = mInputFile->readUByte() / 255.0f;
-  c.g() = mInputFile->readUByte() / 255.0f;
-  c.b() = mInputFile->readUByte() / 255.0f;
+  c.r() = mInputFile->readUInt8() / 255.0f;
+  c.g() = mInputFile->readUInt8() / 255.0f;
+  c.b() = mInputFile->readUInt8() / 255.0f;
   return c;
 }
 //-----------------------------------------------------------------------------
@@ -138,7 +138,7 @@ String A3DSLoader::readLine()
   std::vector<unsigned char> str;
   unsigned char b;
   do {
-    b= mInputFile->readUByte();
+    b= mInputFile->readUInt8();
     str.push_back(b);
   } while(b);
 
@@ -570,7 +570,7 @@ void A3DSLoader::read_TRIANGULAR_MESH()
       #if 1
         if (mObjects.back().mFaceList.empty())
           break;
-        std::vector<unsigned int> group;
+        std::vector<unsigned long> group;
         group.resize(mObjects.back().mFaceList.size());
         mInputFile->readUInt32(&group[0], group.size());
         for(unsigned short i=0; i<mObjects.back().mFaceList.size(); ++i)
