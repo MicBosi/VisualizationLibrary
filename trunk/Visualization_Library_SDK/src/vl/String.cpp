@@ -247,6 +247,20 @@ namespace
   }
 }
 //-----------------------------------------------------------------------------
+int String::findInLargeText(const String& substr, int start) const
+{
+  // createData();
+  if (empty())
+    return -1;
+
+  if ( substr.length() > length() || start >= length() || substr.empty() || empty() )
+    return -1;
+  {
+    int pos = String_Quick_Search( &(*substr.mString)[0], substr.length(), &(*mString)[0]+start, length()-start );
+    return pos >= 0 ? pos + start : pos;
+  }
+}
+//-----------------------------------------------------------------------------
 int String::find(const String& substr, int start) const
 {
   // createData();
@@ -256,10 +270,6 @@ int String::find(const String& substr, int start) const
   if ( substr.length() > length() || start >= length() || substr.empty() || empty() )
     return -1;
   {
-#if 1
-    int pos = String_Quick_Search( &(*substr.mString)[0], substr.length(), &(*mString)[0]+start, length()-start );
-    return pos >= 0 ? pos + start : pos;
-#else
     int max = length() - substr.length();
     for(int i=start; i<=max; ++i)
     {
@@ -273,7 +283,6 @@ int String::find(const String& substr, int start) const
         return i;
     }
     return -1;
-#endif
   }
 }
 //-----------------------------------------------------------------------------

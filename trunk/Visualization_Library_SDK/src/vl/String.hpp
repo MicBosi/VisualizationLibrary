@@ -244,16 +244,20 @@ namespace vl
     //! Prepends \p count characters \p ch to another String.
     String& prepend(wchar_t ch, int count);
 
-    //! Searches for the specified character \p ch starting at position \p start and returns the index of the first occurence or -1 if no occurrence was found.
+    //! Searches for the specified character \p ch starting at position \p start and returns the index of the first occurrence or -1 if no occurrence was found.
     int find(wchar_t ch, int start=0) const;
 
-    //! Searches for the specified String \p substr starting at position \p start and returns the index of the first occurence or -1 if no occurrence was found.
-    int find(const String& str, int start=0) const;
+    //! Searches for the specified string \p substr starting at position \p start and returns the index of the first occurrence or -1 if no occurrence was found.
+    int find(const String& substr, int start=0) const;
 
-    //! Searches for the specified character \ch starting from the end of the string and returns the index of the first occurence or -1 if no occurrence was found.
+    //! Searches for the specified string \p substr starting at position \p start and returns the index of the first occurrence or -1 if no occurrence was found.
+    //! This function can be substantially quicker that find() when searching in large texts but it can be slower than find() for small ones.
+    int findInLargeText(const String& substr, int start=0) const;
+
+    //! Searches for the specified character \ch starting from the end of the string and returns the index of the first occurrence or -1 if no occurrence was found.
     int findBackwards(wchar_t ch) const;
 
-    //! Searches for the specified String \ch str from the end of the string and returns the index of the first occurence or -1 if no occurrence was found.
+    //! Searches for the specified String \ch str from the end of the string and returns the index of the first occurrence or -1 if no occurrence was found.
     int findBackwards(const String& str) const;
 
     //! Returns true if a String contains the specified character.
