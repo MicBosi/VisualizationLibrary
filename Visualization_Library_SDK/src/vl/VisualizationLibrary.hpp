@@ -51,6 +51,7 @@ namespace vl
     friend class VisualizationLibrary;
   public:
     typedef enum { 
+      VERBOSITY_SILENT, //!<< No log information is generated.
       VERBOSITY_ERROR,  //!<< Outputs critical and runtime error messages.
       VERBOSITY_NORMAL, //!<< Outputs normal information messages, plus all error messages.
       VERBOSITY_DEBUG   //!<< Outputs extra information messages useful for debugging, plus all normal and error messages.
