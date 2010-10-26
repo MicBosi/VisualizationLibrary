@@ -206,22 +206,65 @@ void VisualizationLibrary::init()
   logger()->setLogFile( globalSettings()->defaultLogPath() );
   Log::setLogger( logger() );
 
-#if defined(_MSC_VER)
-  const char* compiler = "MSVC";
-#elif defined(__GNUG__)
-  const char* compiler = "GCC";
-#else
-  const char* compiler = "UNKNOWN";
-#endif
+  if (globalSettings()->verbosityLevel())
+  {
+    #if defined(_MSC_VER)
+      const char* compiler = "MSVC";
+    #elif defined(__GNUG__)
+      const char* compiler = "GCC";
+    #else
+      const char* compiler = "UNKNOWN";
+    #endif
 
-#if defined(DEBUG) || !defined(NDEBUG)
-  const char* build_type = "DEBUG";
-#else
-  const char* build_type = "RELEASE";
-#endif
+    #if defined(DEBUG) || !defined(NDEBUG)
+      const char* build_type = "DEBUG";
+    #else
+      const char* build_type = "RELEASE";
+    #endif
 
-  Time time;
-  Log::print( Say("Visualization Library v%n.%n.%n\n%s - %s - %s compiler [%s]\n") << VL_Major << VL_Minor << VL_Build << __DATE__ << __TIME__ << compiler << build_type );
+    Time time;
+    Log::print( Say("Visualization Library v%n.%n.%n\n%s - %s - %s compiler [%s]\n") << VL_Major << VL_Minor << VL_Build << __DATE__ << __TIME__ << compiler << build_type );
+
+    Log::print("\n --- Environment ---\n");
+    const char* val = getenv("VL_LOGFILE_PATH");
+    if (val)
+      Log::print( Say("VL_LOGFILE_PATH = %s\n") << val );
+    else
+      Log::print("VL_LOGFILE_PATH <not present>\n");
+
+    val = getenv("VL_DATA_PATH");
+    if (val)
+      Log::print( Say("VL_DATA_PATH = %s\n") << val );
+    else
+      Log::print("VL_DATA_PATH <not present>\n");
+
+    val = getenv("VL_VERBOSITY_LEVEL");
+    if (val)
+      Log::print( Say("VL_VERBOSITY_LEVEL = %s\n") << val );
+    else
+      Log::print("VL_VERBOSITY_LEVEL <not present>\n");
+
+    val = getenv("VL_CHECK_GL_STATES");
+    if (val)
+      Log::print( Say("VL_CHECK_GL_STATES = %s\n") << val );
+    else
+      Log::print("VL_CHECK_GL_STATES <not present>\n");
+
+    Log::print("\n --- Global Settings --- \n");
+    Log::print( Say("Log file  = %s\n") << globalSettings()->defaultLogPath() );
+    Log::print( Say("Data path = %s\n") << globalSettings()->defaultDataPath() );
+    Log::print("Verbosity level = ");
+    switch(globalSettings()->verbosityLevel())
+    {
+      /*case GlobalSettings::VERBOSITY_SILENT: Log::print("SILENT\n"); break;*/
+      case GlobalSettings::VERBOSITY_ERROR:  Log::print("ERROR\n"); break;
+      case GlobalSettings::VERBOSITY_NORMAL: Log::print("NORMAL\n"); break;
+      case GlobalSettings::VERBOSITY_DEBUG:  Log::print("DEBUG\n"); break;
+    }
+    Log::print( Say("Check OpenGL States = %s\n") << (globalSettings()->checkOpenGLStates()?"YES":"NO") );
+
+    Log::print("\n");
+  }
 
   FT_Error error = FT_Init_FreeType( &VisualizationLibraryInstance::singleton()->mFreeTypeLibrary );
   if ( error )
@@ -229,45 +272,6 @@ void VisualizationLibrary::init()
     Log::error("An error occurred during FreeType library initialization!\n");
     VL_TRAP()
   }
-
-  Log::print("\n --- Environment ---\n");
-  const char* val = getenv("VL_LOGFILE_PATH");
-  if (val)
-    Log::print( Say("VL_LOGFILE_PATH = %s\n") << val );
-  else
-    Log::print("VL_LOGFILE_PATH <not present>\n");
-
-  val = getenv("VL_DATA_PATH");
-  if (val)
-    Log::print( Say("VL_DATA_PATH = %s\n") << val );
-  else
-    Log::print("VL_DATA_PATH <not present>\n");
-
-  val = getenv("VL_VERBOSITY_LEVEL");
-  if (val)
-    Log::print( Say("VL_VERBOSITY_LEVEL = %s\n") << val );
-  else
-    Log::print("VL_VERBOSITY_LEVEL <not present>\n");
-
-  val = getenv("VL_CHECK_GL_STATES");
-  if (val)
-    Log::print( Say("VL_CHECK_GL_STATES = %s\n") << val );
-  else
-    Log::print("VL_CHECK_GL_STATES <not present>\n");
-
-  Log::print("\n --- Global Settings --- \n");
-  Log::print( Say("Log file  = %s\n") << globalSettings()->defaultLogPath() );
-  Log::print( Say("Data path = %s\n") << globalSettings()->defaultDataPath() );
-  Log::print("Verbosity level = ");
-  switch(globalSettings()->verbosityLevel())
-  {
-    case GlobalSettings::VERBOSITY_ERROR:  Log::print("ERROR\n"); break;
-    case GlobalSettings::VERBOSITY_NORMAL: Log::print("NORMAL\n"); break;
-    case GlobalSettings::VERBOSITY_DEBUG:  Log::print("DEBUG\n"); break;
-  }
-  Log::print( Say("Check OpenGL States = %s\n") << (globalSettings()->checkOpenGLStates()?"YES":"NO") );
-
-  Log::print("\n");
 
   // adds default Visualization Library's data directory
   fileSystem()->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
@@ -341,9 +345,10 @@ void VisualizationLibrary::shutdown()
   // others
   VisualizationLibraryInstance::singleton()->mEnvVars = NULL;
   // say goodbye even to the logger!
-  Log::print("**************************************\n");
-  Log::print("*  VisualizationLibrary::shutdown()  *\n");
-  Log::print("**************************************\n");
+  if (globalSettings()->verbosityLevel())
+  {
+    Log::print("Visualization Library shutdown.\n");
+  }
   VisualizationLibraryInstance::singleton()->mStandardLogger = NULL;
 
   // delete VisualizationLibraryInstance singleton
@@ -377,6 +382,9 @@ void VisualizationLibrary::initEnvVars()
   val = getenv("VL_VERBOSITY_LEVEL");
   if (val)
   {
+    if ( String(val).toUpperCase() == "SILENT")
+      globalSettings()->setVerbosityLevel(GlobalSettings::VERBOSITY_SILENT);
+    else
     if ( String(val).toUpperCase() == "ERROR")
       globalSettings()->setVerbosityLevel(GlobalSettings::VERBOSITY_ERROR);
     else
@@ -388,7 +396,7 @@ void VisualizationLibrary::initEnvVars()
     else
     {
       // no log here yet.
-      fprintf(stderr,"VL_VERBOSITY_LEVEL variable has unknown value %s! Legal values: ERROR, NORMAL, DEBUG\n\n", val);
+      fprintf(stderr,"VL_VERBOSITY_LEVEL variable has unknown value %s! Legal values: SILENT, ERROR, NORMAL, DEBUG\n\n", val);
     }
   }
 
