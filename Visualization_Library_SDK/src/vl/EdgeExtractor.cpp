@@ -285,7 +285,7 @@ void EdgeExtractor::extractEdges(ActorCollection* actors)
 void EdgeExtractor::extractEdges(SceneManager* scene_manager)
 {
   ref<ActorCollection> actors = new ActorCollection;
-  scene_manager->appendActors(*actors);
+  scene_manager->extractActors(*actors);
   extractEdges(actors.get());
 }
 //-----------------------------------------------------------------------------

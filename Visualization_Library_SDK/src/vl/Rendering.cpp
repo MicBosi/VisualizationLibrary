@@ -172,10 +172,10 @@ void Rendering::render()
         bool visible = !camera()->frustum().cull(sceneManagers()->at(i)->boundingSphere()) && 
                        !camera()->frustum().cull(sceneManagers()->at(i)->boundingBox());
         if ( visible )
-            sceneManagers()->at(i)->appendVisibleActors( *actorQueue(), camera() );
+            sceneManagers()->at(i)->extractVisibleActors( *actorQueue(), camera() );
       }
       else
-        sceneManagers()->at(i)->appendActors( *actorQueue() );
+        sceneManagers()->at(i)->extractActors( *actorQueue() );
     }
   }
 

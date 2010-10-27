@@ -64,19 +64,19 @@ namespace vl
     //! Returns the tree used by the scene manager.
     T* tree() { return mBoundingVolumeTree.get(); }
 
-    virtual void appendVisibleActors(ActorCollection& list, const Camera* camera)
+    virtual void extractVisibleActors(ActorCollection& list, const Camera* camera)
     {
       // extracts Actor[s] from the hierarchical volume tree
       if (cullingEnabled())
-        tree()->appendVisibleActors(list, camera, enableMask());
+        tree()->extractVisibleActors(list, camera, enableMask());
       else
-        appendActors(list);
+        extractActors(list);
     }
 
-    virtual void appendActors(ActorCollection& list)
+    virtual void extractActors(ActorCollection& list)
     {
       // extracts Actor[s] from the hierarchical volume tree
-      tree()->appendActors(list);
+      tree()->extractActors(list);
     }
 
   protected:

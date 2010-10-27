@@ -54,7 +54,7 @@ SceneManager::SceneManager()
 void SceneManager::computeBounds()
 {
   ActorCollection actors;
-  appendActors(actors);
+  extractActors(actors);
 
   AABB bbox;
   bbox.setNull();

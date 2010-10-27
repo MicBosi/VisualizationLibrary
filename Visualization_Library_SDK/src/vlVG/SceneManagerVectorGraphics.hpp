@@ -75,16 +75,16 @@ namespace vlVG
     //! Returns the rendering rank start value used during the rendering of the VectorGraphics objects. See setActorRenderRankStart() for more information.
     int actorRenderRankStart() const { return mActorRenderRankStart; }
 
-    virtual void appendVisibleActors(vl::ActorCollection& queue, const vl::Camera*)
+    virtual void extractVisibleActors(vl::ActorCollection& queue, const vl::Camera*)
     {
       if (cullingEnabled())
         // FIXME: implement 2d culling?
-        appendActors(queue);
+        extractActors(queue);
       else
-        appendActors(queue);
+        extractActors(queue);
     }
 
-    virtual void appendActors(vl::ActorCollection& queue)
+    virtual void extractActors(vl::ActorCollection& queue)
     {
       int actor_rank = mActorRenderRankStart;
       for(int i=0; i<vectorGraphicObjects()->size(); ++i)
