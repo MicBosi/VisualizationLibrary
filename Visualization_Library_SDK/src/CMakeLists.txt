@@ -351,54 +351,6 @@ set(VLMOLECULE_SRC
   vlMolecule/chem_database.cpp
 )
 
-set(VL_APPLETS_INC
-  examples/Applets/App_BezierSurfaces.hpp
-  examples/Applets/App_Billboards.hpp
-  examples/Applets/App_ClipPlanes.hpp
-  examples/Applets/App_CullingBenchmark.hpp
-  examples/Applets/App_Deformer.hpp
-  examples/Applets/App_DrawPixels.hpp
-  examples/Applets/App_EdgeRendering.hpp
-  examples/Applets/App_Extrusion.hpp
-  examples/Applets/App_FBO_MRT_GLSL.hpp
-  examples/Applets/App_Fractals.hpp
-  examples/Applets/App_GeometryInstancing.hpp
-  examples/Applets/App_GLSL.hpp
-  examples/Applets/App_GLSLImageProcessing.hpp
-  examples/Applets/App_GLSL_Bumpmapping.hpp
-  examples/Applets/App_ImageFunctions.hpp
-  examples/Applets/App_Interpolators.hpp
-  examples/Applets/App_KdTreeView.hpp
-  examples/Applets/App_Lights.hpp
-  examples/Applets/App_MarchingCubes.hpp
-  examples/Applets/App_ModelProfiler.hpp
-  examples/Applets/App_Molecules.hpp
-  examples/Applets/App_MorphAnimation.hpp
-  examples/Applets/App_MultipleCameras.hpp
-  examples/Applets/App_NearFarOptimization.hpp
-  examples/Applets/App_OcclusionCulling.hpp
-  examples/Applets/App_Picking.hpp
-  examples/Applets/App_PointSplatting.hpp
-  examples/Applets/App_PolyDepthSorting.hpp
-  examples/Applets/App_PolygonReduction.hpp
-  examples/Applets/App_PortalCulling.hpp
-  examples/Applets/App_RenderOrder.hpp
-  examples/Applets/App_RenderToTextureClassic.hpp
-  examples/Applets/App_RotatingCube.hpp
-  examples/Applets/App_ScatterPlot3D.hpp
-  examples/Applets/App_ShaderLOD.hpp
-  examples/Applets/App_Terrain.hpp
-  examples/Applets/App_Tessellator.hpp
-  examples/Applets/App_TextRendering.hpp
-  examples/Applets/App_Texturing.hpp
-  examples/Applets/App_Transforms.hpp
-  examples/Applets/App_VectorGraphics.hpp
-  examples/Applets/App_VirtualFileSystemTest.hpp
-  examples/Applets/App_VolumeRendering.hpp
-  examples/Applets/BaseDemo.hpp
-)
-
-source_group(applets FILES ${VL_APPLETS_INC})
 source_group(vl FILES ${VL_INC} ${VL_SRC})
 source_group(vlut FILES ${VLUT_INC} ${VLUT_SRC})
 source_group(vlVG FILES ${VLVG_INC})
