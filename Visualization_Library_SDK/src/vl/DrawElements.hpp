@@ -46,17 +46,23 @@ namespace vl
   //------------------------------------------------------------------------------
   /**
    * Base interface for all DrawElements* sub classes.
-   */
+   * Implements the index-type-independent interface of the class. That is you can cast to DrawElementsBase*
+   * and access its members without needing to know whether the actual class is a 
+   * vl::DrawElementsUInt, vl::DrawElementsUShort or vl::DrawElementsUByte. */
   class DrawElementsBase: public Primitives
   {
   public:
-    /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
+    /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
+      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
     GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
-    /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
+
+    /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 
+      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
     void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
 
     /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
+
     /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt
       * \note Functions like triangleCount(), lineCount(), pointCount() and sortTriangles() should not be used when primitive restart is enabled. */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
@@ -72,6 +78,7 @@ namespace vl
       * For more information see also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawElementsBaseVertex.xml
       */
     void setBaseVertex(int base_vertex) { mBaseVertex = base_vertex; }
+
     /** Returns the currently used base vertex.
       * For more information see also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawElementsBaseVertex.xml */
     int  baseVertex() const { return mBaseVertex; }
@@ -86,17 +93,27 @@ namespace vl
   // DrawElements
   //------------------------------------------------------------------------------
   /** 
-   * Wrapper for the OpenGL function glDrawElements(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDrawElements.xml for more information.
+   * Wrapper for the OpenGL function glDrawElements(). See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawElements.xml for more information.
    *
-   * DrawElements is the template base of vl::DrawElementsUInt, vl::DrawElementsUShort, vl::DrawElementsUByte.
-   * DrawArrays and DrawElements are used by Geometry to define a set of primitives to be rendered (Geometry::primitives()).
-   * DrawArrays and DrawElements supports all the OpenGL primitive types. Geometry multi instancing is also supported, see the functions setInstances() and instances() (requires OpenGL 3.1).
-   * The indices of a DrawElement are stored in a GLBufferObject and thus can be stored locally or on the GPU. 
+   * Features supported: 
+   * - <b>multi instancing</b>: YES 
+   * - <b>base vertex</b>: YES
+   * - <b>primitive restart</b>: YES
+   *
+   * Use the functions setInstances() and instances() to use the <b>multi instancing</b> functionality.
+   * (requires OpenGL 3.1). For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+   *
+   * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to use the <b>primitive 
+   * restart</b> functionality (requires OpenGL 3.1). For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml
+   *
+   * Use the function setBaseVertex() with a non zero argument to use the <b>base vertex</b> functionality. 
+   * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glDrawElementsBaseVertex.xml
+   *
+   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::primitives().
+   * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
    * To gain direct access to the GLBufferObject use the indices() function.
-   * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to access the primitive restart functionality (requires OpenGL 3.1)
    *
-   * \sa DrawElementsUInt, DrawElementsUShort, DrawElementsUByte, DrawRangeElementsUInt, DrawRangeElementsUShort, DrawRangeElementsUByte, DrawArrays, Geometry, Actor
-  */
+   * \sa Primitives, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
   template <typename index_type, GLenum Tgltype, class arr_type>
   class DrawElements: public DrawElementsBase
   {
@@ -133,12 +150,12 @@ namespace vl
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mType        = primitive;
-      mInstances   = instances;
-      mIndexBuffer = new arr_type;
-      mPrimitiveRestartIndex   = ~(index_type)0;
+      mType                    = primitive;
+      mInstances               = instances;
+      mIndexBuffer             = new arr_type;
+      mPrimitiveRestartIndex   = index_type(~0);
       mPrimitiveRestartEnabled = false;
-      mBaseVertex = 0;
+      mBaseVertex              = 0;
     }
 
     DrawElements& operator=(const DrawElements& other)
@@ -165,8 +182,18 @@ namespace vl
 
     virtual size_t indexCountGPU() const { return indices()->sizeGPU(); }
 
-    /** The index returned include the baseVertex(). */
-    virtual size_t index(int i) const { return (int)indices()->at(i) + mBaseVertex; }
+    /** The index returned include the baseVertex() (with the exception of the primitive restart index). 
+      * \note The function DrawElements::index() returns an index that does not include the base vertex. 
+      * \sa DrawRangeElements::index()
+      */
+    virtual size_t index(int i) const 
+    { 
+      size_t idx = indices()->at(i);
+      if (primitiveRestartEnabled() && idx == primitiveRestartIndex())
+        return primitiveRestartIndex();
+      else
+        return  idx + mBaseVertex; 
+    }
 
     arr_type* indices() { return mIndexBuffer.get(); }
 
@@ -367,15 +394,30 @@ namespace vl
   //------------------------------------------------------------------------------
   // typedefs
   //------------------------------------------------------------------------------
-  /** A DrawElements using indices of type \p GLuint. */
-  typedef DrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt> DrawElementsUInt;
+  /** See DrawElements. A DrawElements using indices of type \p GLuint. */
+  class DrawElementsUInt:  public DrawElements<GLuint,    GL_UNSIGNED_INT, ArrayUInt>
+  {
+  public:
+    DrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
+    :DrawElements(primitive, instances) {}
+  };
   //------------------------------------------------------------------------------
-  /** A DrawElements using indices of type \p GLushort. */
-  typedef DrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort> DrawElementsUShort;
+  /** See DrawElements. A DrawElements using indices of type \p GLushort. */
+  class DrawElementsUShort: public DrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>
+  {
+  public:
+    DrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
+    :DrawElements(primitive, instances) {}
+  };
   //------------------------------------------------------------------------------
-  /** A DrawElements using indices of type \p GLubyte. */
-  typedef DrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte> DrawElementsUByte;
-  //------------------------------------------------------------------------------
+  /** See DrawElements. A DrawElements using indices of type \p GLubyte. */
+  class DrawElementsUByte:  public DrawElements<GLubyte,  GL_UNSIGNED_BYTE, ArrayUByte>
+  {
+  public:
+    DrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
+    :DrawElements(primitive, instances) {}
+  };
+   //------------------------------------------------------------------------------
 }
 
 #endif
