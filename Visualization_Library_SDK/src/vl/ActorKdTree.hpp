@@ -99,7 +99,7 @@ namespace vl
    * Inserts an Actor in the ActorKdTree node hierarchy.
    * Note that the Actor is likely to be inserted in a node whose bounding volume does not surround the Actor's bounding volume.
    * For this reason after you inserted one or more Actor[s] in the ActorKdTree you should call computeAABB() on the root node of 
-   * the ActorKdTree. Inserting and removing Actor[s] is an expensive operation and produces a ActorKdTree that is 
+   * the ActorKdTree. Inserting and removing Actor[s] is an expensive operation and produces an ActorKdTree that is 
    * less balanced than the one you would get by recompiling the whole ActorKdTree from scratch.
    *
    * \return

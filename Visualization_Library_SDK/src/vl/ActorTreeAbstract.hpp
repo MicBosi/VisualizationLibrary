@@ -84,7 +84,7 @@ namespace vl
     /**
      * Extracts all the Actor[s] contained in th ActorTree hierarchy and appends them to the given ActorCollection.
      */
-    void appendActors(ActorCollection& list);
+    void extractActors(ActorCollection& list);
 
     /**
      * Extracts the enabled and visible Actor[s] contained in th ActorTree hierarchy and appends them to the given ActorCollection.
@@ -92,7 +92,7 @@ namespace vl
      * the single Actor[s] contained in the nodes that could not be culled.
      * See also Actor::enableMask()
      */
-    void appendVisibleActors(ActorCollection& list, const Camera* camera, unsigned enable_mask=0xFFFFFFFF);
+    void extractVisibleActors(ActorCollection& list, const Camera* camera, unsigned enable_mask=0xFFFFFFFF);
 
     /**
      * Removes the given Actor from the ActorTreeAbstract.

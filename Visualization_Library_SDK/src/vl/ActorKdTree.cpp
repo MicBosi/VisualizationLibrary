@@ -111,7 +111,7 @@ void ActorKdTree::compileKdTree(ActorCollection& acts, int max_depth, float mini
 void ActorKdTree::compileKdTree(int max_depth, float minimum_volume)
 {
   ActorCollection acts;
-  appendActors(acts);
+  extractActors(acts);
   compileKdTree(acts, max_depth, minimum_volume);
 }
 //-----------------------------------------------------------------------------

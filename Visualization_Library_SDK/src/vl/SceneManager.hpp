@@ -57,7 +57,7 @@ namespace vl
    * thus wasting computational resources.
    *
    * In order to implement your own scene manager you will have to dirive from the SceneManager class and provide an appropriate
-   * implementation for the following methods: appendVisibleActors(), appendActors().
+   * implementation for the following methods: extractVisibleActors(), extractActors().
    * 
    * \sa
    * - ActorKdTree
@@ -77,10 +77,10 @@ namespace vl
 
     //! Performs frustum culling and appends the enabled and visible Actor[s] to the given ActorCollection.
     //! See also enableMask(), Actor::enableMask()
-    virtual void appendVisibleActors(ActorCollection& list, const Camera* camera)= 0;
+    virtual void extractVisibleActors(ActorCollection& list, const Camera* camera)= 0;
 
     //! Appends all the Actor[s] contained in the scene manager without performing frustum culling or checking enable masks.
-    virtual void appendActors(ActorCollection& list) = 0;
+    virtual void extractActors(ActorCollection& list) = 0;
 
     //! Computes the bounding box and bounding sphere of the scene manager and of all the Actor[s] contained in the SceneManager.
     virtual void computeBounds();

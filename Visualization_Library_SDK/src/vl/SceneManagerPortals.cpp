@@ -122,20 +122,20 @@ void SceneManagerPortals::renderPortal(Portal* portal)
   }
 }
 //-----------------------------------------------------------------------------
-void SceneManagerPortals::appendActors(ActorCollection& list)
+void SceneManagerPortals::extractActors(ActorCollection& list)
 {
   for(unsigned i=0; i<mSectors.size(); ++i)
     for(int j=0; j<mSectors[i]->actors()->size(); ++j)
       list.push_back( mSectors[i]->actors()->at(j) );
 }
 //-----------------------------------------------------------------------------
-void SceneManagerPortals::appendVisibleActors(ActorCollection& list, const Camera* camera)
+void SceneManagerPortals::extractVisibleActors(ActorCollection& list, const Camera* camera)
 {
   if (cullingEnabled())
   {
     Sector* start = computeStartingSector(camera);
     if (!start)
-      appendActors(list);
+      extractActors(list);
     else
     {
       ++mVisitTick;
@@ -155,7 +155,7 @@ void SceneManagerPortals::appendVisibleActors(ActorCollection& list, const Camer
     }
   }
   else
-    appendActors(list);
+    extractActors(list);
 }
 //-----------------------------------------------------------------------------
 void SceneManagerPortals::visitSector(Sector* prev, Sector* sector, const vec3& eye, const Camera* camera)

@@ -179,9 +179,9 @@ namespace vl
     SceneManagerPortals(): mExternalSector(new Sector), mVisitTick(1), mShowPortals(false) {}
 
     //! Appends to the given list all the Actor[s] contained in the scene regardless of their visibility.
-    void appendActors(ActorCollection& list);
+    void extractActors(ActorCollection& list);
     //! Appends to the given list all the visible Actor[s] using the portal culling algorithm.
-    void appendVisibleActors(ActorCollection& list, const Camera* camera);
+    void extractVisibleActors(ActorCollection& list, const Camera* camera);
 
     //! The Sectors that are part of the scene.
     std::vector< ref<Sector> >& sectors() { return mSectors; }
