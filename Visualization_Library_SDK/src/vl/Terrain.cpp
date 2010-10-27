@@ -329,5 +329,5 @@ void Terrain::init()
   }
 
   shaderNode()->updateHierachy();
-  tree()->compileKdTree(mChunks);
+  tree()->buildKdTree(mChunks);
 }
