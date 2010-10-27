@@ -87,7 +87,11 @@ namespace vl
 
     virtual size_t indexCountGPU() const { return indices()->sizeGPU(); }
 
-    virtual size_t index(int i) const { return (int)indices()->at(i); }
+    /** The index returned does not include the the base vertex. */
+    virtual size_t index(int i) const 
+    { 
+      return indices()->at(i);
+    }
 
     arr_type* indices() { return mIndexBuffer.get(); }
     const arr_type* indices() const { return mIndexBuffer.get(); }
@@ -220,31 +224,34 @@ namespace vl
         }
       }
 
+      GLvoid **indices_ptr = (GLvoid**)&mPointerVector[0];
       if (use_vbo && indices()->gpuBuffer()->handle())
       {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
+        indices_ptr = (GLvoid**)&mNULLPointerVector[0];
       }
       else
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-      if (use_vbo)
+      if (baseVertices().size())
       {
-        glMultiDrawElements( 
-          primitiveType(), 
-          (GLsizei*)&mCountVector[0], 
-          indices()->glType(), 
-          (const GLvoid**)&mNULLPointerVector[0], mCountVector.size() 
-        );
+        VL_CHECK( baseVertices().size() == pointerVector().size() )
+        VL_CHECK( baseVertices().size() == countVector().size() )
+        if (GLEW_ARB_draw_elements_base_vertex || GLEW_VERSION_3_1)
+          glMultiDrawElementsBaseVertex( 
+            primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), indices_ptr, mCountVector.size(), (GLint*)&mBaseVertices[0] 
+          );
+        else
+        {
+          vl::Log::error("MultiDrawElements::render(): glMultiDrawElementsBaseVertex() not supported!\n"
+            "OpenGL 3.1 or GL_ARB_draw_elements_base_vertex extension required.\n"
+          );
+        }
       }
       else
-      {
         glMultiDrawElements( 
-          primitiveType(), 
-          (GLsizei*)&mCountVector[0], 
-          indices()->glType(), 
-          (const GLvoid**)&mPointerVector[0], mCountVector.size() 
+          primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), (const GLvoid**)indices_ptr, mCountVector.size() 
         );
-      }
 
       // primitive restart disable
       if(primitiveRestartEnabled())
@@ -281,10 +288,10 @@ namespace vl
     }
 
     /** The count vector used as 'count' parameter of glMultiDrawElements. */
-    const std::vector<unsigned int>& countVector() const { return mCountVector; }
+    const std::vector<GLsizei>& countVector() const { return mCountVector; }
 
     /** The pointer vector used as 'indices' parameter of glMultiDrawElements. */
-    const std::vector<index_type*>& pointerVector() const { return mPointerVector; }
+    const std::vector<const index_type*>& pointerVector() const { return mPointerVector; }
 
     /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
     GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
@@ -298,6 +305,15 @@ namespace vl
       * \note Functions like triangleCount(), lineCount(), pointCount() and sortTriangles() should not be used when primitive restart is enabled. */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
+    /** Returns the list of base vertices, one for each primitive. This will enable the use 
+      * of glMultiDrawElementsBaseVertex() to render a set of primitives. 
+      * See also http://www.opengl.org/sdk/docs/man3/xhtml/glMultiDrawElementsBaseVertex.xml */
+    void setBaseVertices(const std::vector<GLint>& base_verts) { mBaseVertices = base_verts; }
+    /** Returns the list of base vertices, one for each primitive. */
+    const std::vector<GLint>& baseVertices() const { return mBaseVertices; }
+    /** Returns the list of base vertices, one for each primitive. */
+    std::vector<GLint>& baseVertices() { return mBaseVertices; }
+
   protected:
     ref< arr_type > mIndexBuffer;
     GLuint mPrimitiveRestartIndex;
@@ -306,6 +322,7 @@ namespace vl
     std::vector<GLsizei>           mCountVector;
     std::vector<const index_type*> mPointerVector;
     std::vector<const index_type*> mNULLPointerVector;
+    std::vector<GLint> mBaseVertices;
   };
   //------------------------------------------------------------------------------
   // typedefs
