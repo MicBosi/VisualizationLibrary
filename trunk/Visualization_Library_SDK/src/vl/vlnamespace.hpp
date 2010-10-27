@@ -1095,6 +1095,14 @@ namespace vl
     TW_TESS_WINDING_NEGATIVE    = GLU_TESS_WINDING_NEGATIVE,
     TW_TESS_WINDING_ABS_GEQ_TWO = GLU_TESS_WINDING_ABS_GEQ_TWO
   } ETessellationWinding;
+
+  typedef enum { 
+    VEL_VERBOSITY_SILENT, //!<< No log information is generated.
+    VEL_VERBOSITY_ERROR,  //!<< Outputs critical and runtime error messages.
+    VEL_VERBOSITY_NORMAL, //!<< Outputs normal information messages, plus all error messages.
+    VEL_VERBOSITY_DEBUG   //!<< Outputs extra information messages useful for debugging, plus all normal and error messages.
+  } EVerbosityLevel;
+
 }
 
 
