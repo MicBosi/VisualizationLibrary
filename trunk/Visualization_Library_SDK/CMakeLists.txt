@@ -281,6 +281,9 @@ endif(GUI_COCOA_SUPPORT)
 
 add_subdirectory("src/examples")
 
+add_subdirectory("docs")
+add_subdirectory("src/examples/applets")
+
 #install(FILES "bin/Win32_Tests.bat" DESTINATION bin)
 #install(DIRECTORY "docs" DESTINATION ".")
 install(FILES "LICENSE.TXT" "README.TXT" DESTINATION ".")
