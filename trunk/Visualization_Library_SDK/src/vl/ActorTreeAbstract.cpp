@@ -63,16 +63,16 @@ void ActorTreeAbstract::computeAABB()
   mAABB = aabb;
 }
 //-----------------------------------------------------------------------------
-void ActorTreeAbstract::appendActors(ActorCollection& list)
+void ActorTreeAbstract::extractActors(ActorCollection& list)
 {
   for(int i=0; i<actors()->size(); ++i)
     list.push_back(actors()->at(i));
   for(int i=0; i<childrenCount(); ++i)
     if (child(i))
-      child(i)->appendActors(list);
+      child(i)->extractActors(list);
 }
 //-----------------------------------------------------------------------------
-void ActorTreeAbstract::appendVisibleActors(ActorCollection& list, const Camera* camera, unsigned enable_mask)
+void ActorTreeAbstract::extractVisibleActors(ActorCollection& list, const Camera* camera, unsigned enable_mask)
 {
   // try to cull the whole node
   if ( !camera->frustum().cull(aabb()) )
@@ -90,7 +90,7 @@ void ActorTreeAbstract::appendVisibleActors(ActorCollection& list, const Camera*
     }
     for(int i=0; i<childrenCount(); ++i)
       if (child(i))
-        child(i)->appendVisibleActors(list, camera);
+        child(i)->extractVisibleActors(list, camera);
   }
 }
 //-----------------------------------------------------------------------------

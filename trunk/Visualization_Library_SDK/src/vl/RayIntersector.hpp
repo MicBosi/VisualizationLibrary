@@ -167,7 +167,7 @@ namespace vl
       * This is an utility function equivalent to:
       * \code
       * intersector->actors()->clear();
-      * scene_manager->appendActors( *intersector->actors() );
+      * scene_manager->extractActors( *intersector->actors() );
       * intersector->setRay(ray);
       * intersector->intersect();
       * \endcode
