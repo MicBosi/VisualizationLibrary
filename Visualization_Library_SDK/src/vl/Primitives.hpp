@@ -40,10 +40,10 @@ namespace vl
   //------------------------------------------------------------------------------
   // Primitives
   //------------------------------------------------------------------------------
-  /**
-   * This is the base class of DrawElements and DrawArrays which respectively wrap
-   * the OpenGL functions glDrawElements() and glDrawArrays().
-  */
+  /** The base class of DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays 
+   * which are used by Geometry to define a set of primitives to be rendered, see Geometry::primitives().
+   *
+   * \sa DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
   class Primitives: public Object
   {
   public:

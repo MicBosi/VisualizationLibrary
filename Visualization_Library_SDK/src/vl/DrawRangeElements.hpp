@@ -46,7 +46,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /**
    * Base interface for all DrawRangeElements* sub classes.
-   */
+   * Implements the index-type-independent interface of the class. That is you can cast to DrawRangeElementsBase*
+   * and access its members without needing to know whether the actual class is a 
+   * vl::DrawRangeElementsUInt, vl::DrawRangeElementsUShort or vl::DrawRangeElementsUByte. */
   class DrawRangeElementsBase: public Primitives
   {
   public:
@@ -96,8 +98,24 @@ namespace vl
   // DrawRangeElements
   //------------------------------------------------------------------------------
   /** 
-    * Wrapper for the OpenGL function glDrawRangeElements(), see also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElements.xml for more information.
-    */
+    * Wrapper for the OpenGL function glDrawRangeElements(). See also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElements.xml for more information.
+   *
+   * Features supported: 
+   * - <b>multi instancing</b>: NO 
+   * - <b>base vertex</b>: YES
+   * - <b>primitive restart</b>: YES
+   *
+   * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to use the <b>primitive 
+   * restart</b> functionality (requires OpenGL 3.1). For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml
+   *
+   * Use the function setBaseVertex() to use the <b>base vertex</b> functionality. 
+   * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElementsBaseVertex.xml
+   *
+   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::primitives().
+   * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
+   * To gain direct access to the GLBufferObject use the indices() function.
+   *
+   * \sa Primitives, DrawElements, MultiDrawElements, DrawArrays, Geometry, Actor */
   template <typename index_type, GLenum Tgltype, class arr_type>
   class DrawRangeElements: public DrawRangeElementsBase
   {
@@ -129,7 +147,7 @@ namespace vl
   public:
     virtual const char* className() { return "DrawRangeElements"; }
 
-    DrawRangeElements(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=~(index_type)0)
+    DrawRangeElements(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=index_type(~0))
     {
       #ifndef NDEBUG
         mObjectName = className();
@@ -138,7 +156,7 @@ namespace vl
       mRangeStart              = r_start;
       mRangeEnd                = r_end;
       mIndexBuffer             = new arr_type;
-      mPrimitiveRestartIndex   = ~(index_type)0;
+      mPrimitiveRestartIndex   = index_type(~0);
       mPrimitiveRestartEnabled = false;
       mBaseVertex              = 0;
     }
@@ -168,8 +186,18 @@ namespace vl
 
     virtual size_t indexCountGPU() const { return indices()->sizeGPU(); }
 
-    /** The index returned include the baseVertex(). */
-    virtual size_t index(int i) const { return (int)indices()->at(i) + mBaseVertex; }
+    /** The index returned include the baseVertex() (with the exception of the primitive restart index). 
+      * \note The function DrawRangeElements::index() returns an index that does not include the base vertex. 
+      * \sa DrawElements::index()
+      */
+    virtual size_t index(int i) const 
+    { 
+      size_t idx = indices()->at(i);
+      if (primitiveRestartEnabled() && idx == primitiveRestartIndex())
+        return primitiveRestartIndex();
+      else
+        return  idx + mBaseVertex; 
+    }
 
     arr_type* indices() { return mIndexBuffer.get(); }
 
@@ -361,14 +389,29 @@ namespace vl
   //------------------------------------------------------------------------------
   // typedefs
   //------------------------------------------------------------------------------
-  /** A DrawRangeElements using indices of type \p GLuint. */
-  typedef DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt> DrawRangeElementsUInt;
+  /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLuint. */
+  class DrawRangeElementsUInt: public DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>
+  {
+  public:
+    DrawRangeElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLuint(~0))
+    :DrawRangeElements(primitive, r_start, r_end) {}
+  };
   //------------------------------------------------------------------------------
-  /** A DrawRangeElements using indices of type \p GLushort. */
-  typedef DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort> DrawRangeElementsUShort;
+  /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLushort. */
+  class DrawRangeElementsUShort: public DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>
+  {
+  public:
+    DrawRangeElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLushort(~0))
+    :DrawRangeElements(primitive, r_start, r_end) {}
+  };
   //------------------------------------------------------------------------------
-  /** A DrawRangeElements using indices of type \p GLubyte. */
-  typedef DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte> DrawRangeElementsUByte;
+  /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLubyte. */
+  class DrawRangeElementsUByte: public DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>
+  {
+  public:
+    DrawRangeElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLubyte(~0))
+    :DrawRangeElements(primitive, r_start, r_end) {}
+  };
   //------------------------------------------------------------------------------
 }
 
