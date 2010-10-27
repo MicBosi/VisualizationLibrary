@@ -72,7 +72,7 @@ ref<ActorKdTree> ActorKdTree::kdtreeFromNonLeafyActors(int max_depth, float mini
   ActorCollection acts;
   harvestNonLeafActors(acts);
   ref<ActorKdTree> newtree = new ActorKdTree;
-  newtree->compileKdTree(acts, max_depth, minimum_volume);
+  newtree->buildKdTree(acts, max_depth, minimum_volume);
   return newtree;
 }
 //-----------------------------------------------------------------------------
@@ -101,18 +101,18 @@ void ActorKdTree::computeLocalAABB(const ActorCollection& acts)
   }
 }
 //-----------------------------------------------------------------------------
-void ActorKdTree::compileKdTree(ActorCollection& acts, int max_depth, float minimum_volume)
+void ActorKdTree::buildKdTree(ActorCollection& acts, int max_depth, float minimum_volume)
 {
   int counter = 0;
   prepareActors(acts);
   compileTree_internal(acts, counter, max_depth, minimum_volume);
 }
 //-----------------------------------------------------------------------------
-void ActorKdTree::compileKdTree(int max_depth, float minimum_volume)
+void ActorKdTree::rebuildKdTree(int max_depth, float minimum_volume)
 {
   ActorCollection acts;
   extractActors(acts);
-  compileKdTree(acts, max_depth, minimum_volume);
+  buildKdTree(acts, max_depth, minimum_volume);
 }
 //-----------------------------------------------------------------------------
 void ActorKdTree::compileTree_internal(ActorCollection& acts, int& counter, int max_depth, float minimum_volume)

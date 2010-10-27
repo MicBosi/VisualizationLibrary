@@ -56,7 +56,7 @@ public:
     /*
     // specify the Actor[s] to be tested
     intersector.actors()->clear();
-    sceneManager()->appendActors( *intersector.actors() );
+    sceneManager()->extractActors( *intersector.actors() );
     // set the intersecting ray
     intersector.setRay(ray);
     // run intersection test

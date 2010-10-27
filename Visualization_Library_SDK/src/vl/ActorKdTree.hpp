@@ -76,11 +76,11 @@ namespace vl
    * process around 22.000 objects/sec.
    * \note This method calls prepareActors() before computing the KdTree.
    */
-  void compileKdTree(ActorCollection& actors, int max_depth=100, float minimum_volume=0);
+  void buildKdTree(ActorCollection& actors, int max_depth=100, float minimum_volume=0);
 
   //! Builds a ActorKdTree with the Actor[s] contained in the tree.
   //! \note This method calls prepareActors() before computing the KdTree.
-  void compileKdTree(int max_depth=100, float minimum_volume=0);
+  void rebuildKdTree(int max_depth=100, float minimum_volume=0);
 
   //! Returns the splitting plane used to divide its two child nodes
   const Plane& plane() const { return mPlane; }
