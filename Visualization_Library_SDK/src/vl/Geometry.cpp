@@ -74,15 +74,22 @@ Geometry::~Geometry()
 void Geometry::computeBounds_Implementation()
 {
   // empty
-  if(!mVertexArray)
+  if( mVertexArray )
+  {
+    setBoundingBox( vertexArray()->computeBoundingBox() );
+    setBoundingSphere( vertexArray()->computeBoundingSphere() );
+  }
+  else
+  if ( findVertexAttribute(0) && findVertexAttribute(0)->data() )
+  {
+    setBoundingBox( findVertexAttribute(0)->data()->computeBoundingBox() );
+    setBoundingSphere( findVertexAttribute(0)->data()->computeBoundingSphere() );
+  }
+  else
   {
     setBoundingBox( AABB() );
     setBoundingSphere( Sphere() );
-    return;
   }
-
-  setBoundingBox( vertexArray()->computeBoundingBox() );
-  setBoundingSphere( vertexArray()->computeBoundingSphere() );
 }
 //-----------------------------------------------------------------------------
 ref<Geometry> Geometry::deepCopy() const
