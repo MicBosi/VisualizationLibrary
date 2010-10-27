@@ -172,12 +172,11 @@ namespace vl
    *    setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), addAutomaticAttribLocation(), removeAutomaticAttribLocation().
    *
    * Note that for option #1 and #2 you need to relink the GLSLProgram in order for the changes to take effect (linkProgram(force_relink=true)). 
-   * Option #3 automatically schedules a re-link of the GLSL program. See also http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml
+   * Option #2 and #3 automatically schedule a re-link of the GLSL program. See also http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml
    *
    * \remarks
-   * The Uniforms defined in the Actor and the ones defined in the Shader must not
-   * overlap, that is, an Actor must  not define Uniforms present in the Shader and
-   * vice versa.
+   * The Uniforms defined in the Actor, in the Shader and in the GLSLProgram must not
+   * overlap, that is, an Uniform name must belong to one and only one of them.
    *
    * \sa
    * - GLSLVertexShader
@@ -256,7 +255,8 @@ namespace vl
     //! Returns true if the validation of this GLSL program is succesful, see also http://www.opengl.org/sdk/docs/man/xhtml/glValidateProgram.xml for more information.
     bool validateProgram() const;
 
-    /** Equivalent to glBindAttribLocation(handle(), index, name.c_str())
+    /** Equivalent to glBindAttribLocation(handle(), index, name.c_str()) with the difference that this function will automatically create a GLSL program if none is present
+      * and it will schedule a re-link since the new specified bindings take effect after linking the GLSL program.
       * \sa setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), 
       *     removeAutomaticAttribLocation(), addAutomaticAttribLocation() */
     void bindAttribLocation(unsigned int index, const std::string& name);
