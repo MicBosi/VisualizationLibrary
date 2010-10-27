@@ -37,23 +37,22 @@
 namespace vl
 {
   //------------------------------------------------------------------------------
-  typedef enum 
-  { 
-    LogNormal,  //!< Default logging level.
-    LogDebug,   //!< Information useful for the programmer.
-    LogInfo,    //!< Information userful for the end user.
-    LogWarning, //!< Information about situations that might lead to errors.
-    LogError,   //!< Information about a run-time error: file not found, out of memory etc.
-    LogBug      //!< Information about a programming error: wrong parameter initialization, division by zero etc.
-  } ELogLevel;
+  // Log
   //-----------------------------------------------------------------------------
-  // Log: a simple class to manage logs
-  //-----------------------------------------------------------------------------
-  /**
-   * The Log class is the abstract base class used to generate logging data.
-  */
+  /** Utility class to generate logs. */
   class Log: public Object
   {
+  protected:
+    typedef enum 
+    { 
+      LogBug,
+      LogError,
+      LogWarning,
+      LogNormal,
+      LogInfo,
+      LogDebug,
+    } ELogLevel;
+
   public:
     virtual const char* className() { return "Log"; }
     Log()
@@ -63,27 +62,58 @@ namespace vl
       #endif
     }
 
+  protected:
+    virtual void printImplementation(ELogLevel level, const String& message) = 0;
+
+    // ---  statics ---
+
+  public:
+    /** Installs a new logger. Set this to NULL to disable logging. */
     static void setLogger(Log* logger) { mLogger = logger; }
+
+    /** Returns the currently installed logger. */
     static Log* logger() { return mLogger.get(); }
 
-    static void print(ELogLevel level, const String& log);
-    static void print(const String& log);
-    static void debug(const String& log);
-    static void info(const String& log);
-    static void warning(const String& log);
-    static void error(const String& log);
-    static void bug(const String& log);
+    /** Logs the specified string regardless of the current verbosity level. */
+    static void force_print(const String& message);
+    
+    /* Logs the specified message.
+     * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_NORMAL */
+    static void print(const String& message);
+    
+    /** The string "info: " is prepended to the \p message. 
+      * Use this function to provide extra information useful to the end user.
+      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_NORMAL */
+    static void info(const String& message);
+    
+    /** The string "debug: " is prepended to the \p message. 
+      * Use this function to provide information information useful to the programmer.
+      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_DEBUG */
+    static void debug(const String& message);
+    
+    /** The string "warning: " is prepended to the \p message. 
+      * Use this function to provide information about situations that might lead to errors or loss of data.
+      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_ERROR */
+    static void warning(const String& message);
+    
+    /** The string "error: " is prepended to the \p message. 
+      * Use this function to provide information about a run-time error: file not found, out of memory etc.
+      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_ERROR */
+    static void error(const String& message);
+    
+    /** The string "bug: " is prepended to the \p message. 
+      * Use this function to provide information about a critical programming error: wrong parameter initialization, division by zero, imminent crash etc.
+      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_ERROR */
+    static void bug(const String& message);
 
   protected:
+    static void print(ELogLevel level, const String& message);
     static ref<Log> mLogger;
-    virtual void printImplementation(ELogLevel level, const String& log) = 0;
   };
   //-----------------------------------------------------------------------------
   // StandardLog
   //-----------------------------------------------------------------------------
-  /**
-   * The StandardLog class outputs the log messages on the stdout device and optionally also on a specified file.
-  */
+  /** The StandardLog class outputs the log messages on the stdout device and optionally also on a specified file. */
   class StandardLog: public Log
   {
   public:
@@ -91,7 +121,7 @@ namespace vl
     void setLogFile(const String& file) { mLogFile = file; }
     const String& logFile() const { return mLogFile; }
   protected:
-    virtual void printImplementation(ELogLevel level, const String& log);
+    virtual void printImplementation(ELogLevel level, const String& message);
     String mLogFile;
   };
 }
