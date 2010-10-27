@@ -34,6 +34,8 @@
 
 #include <vl/Primitives.hpp>
 #include <vl/Array.hpp>
+#include <vl/Log.hpp>
+#include <vl/Say.hpp>
 #include <algorithm>
 
 namespace vl
