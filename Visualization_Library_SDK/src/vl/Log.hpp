@@ -78,32 +78,32 @@ namespace vl
     static void force_print(const String& message);
     
     /* Logs the specified message.
-     * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_NORMAL */
+     * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_NORMAL */
     static void print(const String& message);
     
     /** The string "info: " is prepended to the \p message. 
       * Use this function to provide extra information useful to the end user.
-      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_NORMAL */
+      * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_NORMAL */
     static void info(const String& message);
     
     /** The string "debug: " is prepended to the \p message. 
       * Use this function to provide information information useful to the programmer.
-      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_DEBUG */
+      * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_DEBUG */
     static void debug(const String& message);
     
     /** The string "warning: " is prepended to the \p message. 
       * Use this function to provide information about situations that might lead to errors or loss of data.
-      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_ERROR */
+      * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_ERROR */
     static void warning(const String& message);
     
     /** The string "error: " is prepended to the \p message. 
       * Use this function to provide information about a run-time error: file not found, out of memory etc.
-      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_ERROR */
+      * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_ERROR */
     static void error(const String& message);
     
     /** The string "bug: " is prepended to the \p message. 
       * Use this function to provide information about a critical programming error: wrong parameter initialization, division by zero, imminent crash etc.
-      * \note Log generated only if verbosity level >= GlobalSettings::VERBOSITY_ERROR */
+      * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_ERROR */
     static void bug(const String& message);
 
   protected:

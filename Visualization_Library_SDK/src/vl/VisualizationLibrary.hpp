@@ -46,22 +46,14 @@ namespace vl
   class RenderingAbstract;
 
   //! Global application settings controlling how Visualization Library behaves.
-  class GlobalSettings: public Object
+  class Settings: public Object
   {
     friend class VisualizationLibrary;
   public:
-    typedef enum { 
-      VERBOSITY_SILENT, //!<< No log information is generated.
-      VERBOSITY_ERROR,  //!<< Outputs critical and runtime error messages.
-      VERBOSITY_NORMAL, //!<< Outputs normal information messages, plus all error messages.
-      VERBOSITY_DEBUG   //!<< Outputs extra information messages useful for debugging, plus all normal and error messages.
-    } EVerbosityLevel;
-
-  public:
-    GlobalSettings()
+    Settings()
     {
       #ifndef NDEBUG
-        mVerbosityLevel  = VERBOSITY_NORMAL;
+        mVerbosityLevel  = vl::VEL_VERBOSITY_NORMAL;
         mCheckOpenGLStates = true;
       #else
         mVerbosityLevel  = VERBOSITY_ERROR;
@@ -123,7 +115,7 @@ namespace vl
     static StandardLog* logger();
 
     //! Returns the global settings of VL.
-    static GlobalSettings* globalSettings();
+    static Settings* settings();
 
     //! For internal use only
     static void* freeTypeLibrary();

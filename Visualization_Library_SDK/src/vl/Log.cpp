@@ -43,24 +43,24 @@ ref<Log> Log::mLogger;
 //-----------------------------------------------------------------------------
 void Log::print(ELogLevel level, const String& log)
 {
-  GlobalSettings::EVerbosityLevel verbosity = VisualizationLibrary::globalSettings()->verbosityLevel();
-  if (mLogger && verbosity != GlobalSettings::VERBOSITY_SILENT)
+  EVerbosityLevel verbosity = VisualizationLibrary::settings()->verbosityLevel();
+  if (mLogger && verbosity != vl::VEL_VERBOSITY_SILENT)
   {
     switch(level)
     {
     case LogBug:
     case LogError:
     case LogWarning:
-      if (verbosity >= GlobalSettings::VERBOSITY_ERROR)
+      if (verbosity >= vl::VEL_VERBOSITY_ERROR)
         mLogger->printImplementation(level, log);
       break;
     case LogNormal:
     case LogInfo:
-      if (verbosity >= GlobalSettings::VERBOSITY_NORMAL)
+      if (verbosity >= vl::VEL_VERBOSITY_NORMAL)
         mLogger->printImplementation(level, log);
       break;
     case LogDebug:
-      if (verbosity >= GlobalSettings::VERBOSITY_DEBUG)
+      if (verbosity >= vl::VEL_VERBOSITY_DEBUG)
         mLogger->printImplementation(level, log);
       break;
     }

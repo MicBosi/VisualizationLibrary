@@ -136,7 +136,7 @@ class VisualizationLibraryInstance: public Object
     mFileSystem        = new FileSystem;
     mLoadWriterManager = new LoadWriterManager;
     mStandardLogger    = new StandardLog;
-    mGlobalSettings    = new GlobalSettings;
+    mGlobalSettings    = new Settings;
     mEnvVars           = new KeyValues;
     mCertificate       = "[Visualization Library BSD License]";
     mInitialized       = false;
@@ -156,7 +156,7 @@ public:
   ref<FontManager> mFontManager;
   ref<FileSystem>  mFileSystem;
   ref<StandardLog> mStandardLogger;
-  ref<GlobalSettings> mGlobalSettings;
+  ref<Settings> mGlobalSettings;
   ref<KeyValues>   mEnvVars;
   std::string      mVersionString;
   const char* mCertificate;
@@ -174,7 +174,7 @@ void* VisualizationLibrary::freeTypeLibrary()        { return VisualizationLibra
 //------------------------------------------------------------------------------
 StandardLog* VisualizationLibrary::logger()          { return VisualizationLibraryInstance::singleton()->mStandardLogger.get(); }
 //------------------------------------------------------------------------------
-GlobalSettings* VisualizationLibrary::globalSettings() { return VisualizationLibraryInstance::singleton()->mGlobalSettings.get(); }
+Settings* VisualizationLibrary::settings() { return VisualizationLibraryInstance::singleton()->mGlobalSettings.get(); }
 //------------------------------------------------------------------------------
 const char* VisualizationLibrary::versionString()    { return VisualizationLibraryInstance::singleton()->mVersionString.c_str(); }
 //------------------------------------------------------------------------------
@@ -203,10 +203,10 @@ bool vl::canWrite(VirtualFile* file)  { return VisualizationLibrary::loadWriterM
 void VisualizationLibrary::init()
 {
   initEnvVars();
-  logger()->setLogFile( globalSettings()->defaultLogPath() );
+  logger()->setLogFile( settings()->defaultLogPath() );
   Log::setLogger( logger() );
 
-  if (globalSettings()->verbosityLevel())
+  if (settings()->verbosityLevel())
   {
     #if defined(_MSC_VER)
       const char* compiler = "MSVC";
@@ -251,17 +251,17 @@ void VisualizationLibrary::init()
       Log::print("VL_CHECK_GL_STATES <not present>\n");
 
     Log::print("\n --- Global Settings --- \n");
-    Log::print( Say("Log file  = %s\n") << globalSettings()->defaultLogPath() );
-    Log::print( Say("Data path = %s\n") << globalSettings()->defaultDataPath() );
+    Log::print( Say("Log file  = %s\n") << settings()->defaultLogPath() );
+    Log::print( Say("Data path = %s\n") << settings()->defaultDataPath() );
     Log::print("Verbosity level = ");
-    switch(globalSettings()->verbosityLevel())
+    switch(settings()->verbosityLevel())
     {
-      /*case GlobalSettings::VERBOSITY_SILENT: Log::print("SILENT\n"); break;*/
-      case GlobalSettings::VERBOSITY_ERROR:  Log::print("ERROR\n"); break;
-      case GlobalSettings::VERBOSITY_NORMAL: Log::print("NORMAL\n"); break;
-      case GlobalSettings::VERBOSITY_DEBUG:  Log::print("DEBUG\n"); break;
+      /*case vl::VEL_VERBOSITY_SILENT: Log::print("SILENT\n"); break;*/
+      case vl::VEL_VERBOSITY_ERROR:  Log::print("ERROR\n"); break;
+      case vl::VEL_VERBOSITY_NORMAL: Log::print("NORMAL\n"); break;
+      case vl::VEL_VERBOSITY_DEBUG:  Log::print("DEBUG\n"); break;
     }
-    Log::print( Say("Check OpenGL States = %s\n") << (globalSettings()->checkOpenGLStates()?"YES":"NO") );
+    Log::print( Say("Check OpenGL States = %s\n") << (settings()->checkOpenGLStates()?"YES":"NO") );
 
     Log::print("\n");
   }
@@ -274,7 +274,7 @@ void VisualizationLibrary::init()
   }
 
   // adds default Visualization Library's data directory
-  fileSystem()->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
+  fileSystem()->directories()->push_back( new DiskDirectory( settings()->defaultDataPath() ) );
 
   // register I/O plugins
   #if defined(IO_MODULE_JPG)
@@ -345,7 +345,7 @@ void VisualizationLibrary::shutdown()
   // others
   VisualizationLibraryInstance::singleton()->mEnvVars = NULL;
   // say goodbye even to the logger!
-  if (globalSettings()->verbosityLevel())
+  if (settings()->verbosityLevel())
   {
     Log::print("Visualization Library shutdown.\n");
   }
@@ -365,17 +365,17 @@ void VisualizationLibrary::initEnvVars()
 
   val = getenv("VL_LOGFILE_PATH");
   if (val)
-    globalSettings()->mDefaultLogPath = val;
+    settings()->mDefaultLogPath = val;
   else
-    globalSettings()->mDefaultLogPath = "log.txt";
+    settings()->mDefaultLogPath = "log.txt";
 
   // data path
 
   val = getenv("VL_DATA_PATH");
   if (val)
-    globalSettings()->mDefaultDataPath = val;
+    settings()->mDefaultDataPath = val;
   else
-    globalSettings()->mDefaultDataPath = "../data";
+    settings()->mDefaultDataPath = "../data";
 
   // verbosity level
 
@@ -383,16 +383,16 @@ void VisualizationLibrary::initEnvVars()
   if (val)
   {
     if ( String(val).toUpperCase() == "SILENT")
-      globalSettings()->setVerbosityLevel(GlobalSettings::VERBOSITY_SILENT);
+      settings()->setVerbosityLevel(vl::VEL_VERBOSITY_SILENT);
     else
     if ( String(val).toUpperCase() == "ERROR")
-      globalSettings()->setVerbosityLevel(GlobalSettings::VERBOSITY_ERROR);
+      settings()->setVerbosityLevel(vl::VEL_VERBOSITY_ERROR);
     else
     if ( String(val).toUpperCase() == "NORMAL")
-      globalSettings()->setVerbosityLevel(GlobalSettings::VERBOSITY_NORMAL);
+      settings()->setVerbosityLevel(vl::VEL_VERBOSITY_NORMAL);
     else
     if ( String(val).toUpperCase() == "DEBUG")
-      globalSettings()->setVerbosityLevel(GlobalSettings::VERBOSITY_DEBUG);
+      settings()->setVerbosityLevel(vl::VEL_VERBOSITY_DEBUG);
     else
     {
       // no log here yet.
@@ -406,10 +406,10 @@ void VisualizationLibrary::initEnvVars()
   if (val)
   {
     if ( String(val).toUpperCase() == "YES" )
-      globalSettings()->setCheckOpenGLStates(true);
+      settings()->setCheckOpenGLStates(true);
     else
     if ( String(val).toUpperCase() == "NO" )
-      globalSettings()->setCheckOpenGLStates(false);
+      settings()->setCheckOpenGLStates(false);
     else
     {
       // no log here yet.

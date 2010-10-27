@@ -231,7 +231,7 @@ void OpenGLContext::logOpenGLInfo()
 {
   makeCurrent();
 
-  if (VisualizationLibrary::globalSettings()->verbosityLevel() >= GlobalSettings::VERBOSITY_NORMAL)
+  if (VisualizationLibrary::settings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
   {
     Log::print(" --- OpenGL Info ---\n");
     Log::print( Say("GL_VERSION = %s\n") << glGetString(GL_VERSION) );
@@ -311,6 +311,7 @@ void OpenGLContext::logOpenGLInfo()
     }
     if (line.length())
       Log::print( Say("%s\n") << line );
+    Log::print("\n");
   }
 }
 //------------------------------------------------------------------------------
@@ -1176,7 +1177,7 @@ void OpenGLContext::resetContextStates()
   VL_CHECK_OGL();
 
   // perform extra OpenGL environment sanity check
-  if (VisualizationLibrary::globalSettings()->checkOpenGLStates() && !isCleanState(true))
+  if (VisualizationLibrary::settings()->checkOpenGLStates() && !isCleanState(true))
   {
     VL_TRAP();
     return;
