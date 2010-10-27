@@ -43,11 +43,33 @@ ref<Log> Log::mLogger;
 //-----------------------------------------------------------------------------
 void Log::print(ELogLevel level, const String& log)
 {
-  if (mLogger)
-    mLogger->printImplementation(level, log);
+  GlobalSettings::EVerbosityLevel verbosity = VisualizationLibrary::globalSettings()->verbosityLevel();
+  if (mLogger && verbosity != GlobalSettings::VERBOSITY_SILENT)
+  {
+    switch(level)
+    {
+    case LogBug:
+    case LogError:
+    case LogWarning:
+      if (verbosity >= GlobalSettings::VERBOSITY_ERROR)
+        mLogger->printImplementation(level, log);
+      break;
+    case LogNormal:
+    case LogInfo:
+      if (verbosity >= GlobalSettings::VERBOSITY_NORMAL)
+        mLogger->printImplementation(level, log);
+      break;
+    case LogDebug:
+      if (verbosity >= GlobalSettings::VERBOSITY_DEBUG)
+        mLogger->printImplementation(level, log);
+      break;
+    }
+  }
 }
 //-----------------------------------------------------------------------------
-void Log::print(const String& log) { if (mLogger) mLogger->printImplementation(LogNormal, log); }
+void Log::force_print(const String& log) { if (mLogger) mLogger->printImplementation(LogNormal, log); }
+//-----------------------------------------------------------------------------
+void Log::print(const String& log) { print(LogNormal, log); }
 //-----------------------------------------------------------------------------
 void Log::debug(const String& log) { print(LogDebug, log); }
 //-----------------------------------------------------------------------------
@@ -82,9 +104,12 @@ void StandardLog::printImplementation(ELogLevel level, const String& in_log)
 
   if (!logFile().empty())
   {
-    FILE*fout = fopen( logFile().toStdString().c_str(),"at" ); 
-    fprintf( fout, "%s", log.toStdString().c_str() ); 
-    fclose( fout );
+    FILE*fout = fopen( logFile().toStdString().c_str(), "at" );
+    if (fout)
+    {
+      fprintf( fout, "%s", log.toStdString().c_str() ); 
+      fclose( fout );
+    }
   }
 }
 //-----------------------------------------------------------------------------
