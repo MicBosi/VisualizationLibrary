@@ -41,14 +41,86 @@
 namespace vl
 {
   //------------------------------------------------------------------------------
+  // MultiDrawElementsBase
+  //------------------------------------------------------------------------------
+  /**
+   * Base interface for all MultiDrawElements* sub classes.
+   * Implements the index-type-independent interface of the class. That is you can cast to MultiDrawElementsBase*
+   * and access its members without needing to know whether the actual class is a 
+   * vl::MultiDrawElementsUInt, vl::MultiDrawElementsUShort or vl::MultiDrawElementsUByte. */
+  class MultiDrawElementsBase: public Primitives
+  {
+  public:
+    /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
+      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
+    GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
+
+    /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 
+      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
+    void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
+
+    /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
+    bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
+    
+    /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt
+      * \note Functions like triangleCount(), lineCount(), pointCount() and sortTriangles() should not be used when primitive restart is enabled. */
+    void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
+
+    /** Sets the vector defining the length of each primitive and automatically computes the pointer 
+      * vectors used to exectue glMultiDrawElements(). */
+    void setCountVector(const std::vector<GLsizei>& vcount)
+    {
+      mCountVector = vcount;
+      compute_pointer_vector();
+    }
+
+    /** The count vector used as 'count' parameter of glMultiDrawElements. */
+    const std::vector<GLsizei>& countVector() const { return mCountVector; }
+
+    /** Returns the list of base vertices, one for each primitive. This will enable the use 
+      * of glMultiDrawElementsBaseVertex() to render a set of primitives. 
+      * See also http://www.opengl.org/sdk/docs/man3/xhtml/glMultiDrawElementsBaseVertex.xml */
+    void setBaseVertices(const std::vector<GLint>& base_verts) { mBaseVertices = base_verts; }
+
+    /** Returns the list of base vertices, one for each primitive. */
+    const std::vector<GLint>& baseVertices() const { return mBaseVertices; }
+
+    /** Returns the list of base vertices, one for each primitive. */
+    std::vector<GLint>& baseVertices() { return mBaseVertices; }
+
+  protected:
+    virtual void compute_pointer_vector() = 0;
+
+  protected:
+    GLuint mPrimitiveRestartIndex;
+    bool mPrimitiveRestartEnabled;
+    std::vector<GLsizei> mCountVector;
+    std::vector<GLint>   mBaseVertices;
+  };
+  //------------------------------------------------------------------------------
   // MultiDrawElements
   //------------------------------------------------------------------------------
   /** 
-   * Wrapper for the OpenGL function glMultiDrawElements(), see also http://www.opengl.org/sdk/docs/man/xhtml/glMultiDrawElements.xml for more information.
+   * Wrapper for the OpenGL function glMultiDrawElements(). See also http://www.opengl.org/sdk/docs/man/xhtml/glMultiDrawElements.xml for more information. 
    *
-  */
+   * Features supported: 
+   * - <b>multi instancing</b>: NO 
+   * - <b>base vertex</b>: YES
+   * - <b>primitive restart</b>: YES
+   *
+   * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to use the <b>primitive 
+   * restart</b> functionality (requires OpenGL 3.1). For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml
+   *
+   * Use the function setBaseVertices() to use the <b>base vertex</b> functionality. 
+   * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glMultiDrawElementsBaseVertex.xml
+   *
+   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::primitives().
+   * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
+   * To gain direct access to the GLBufferObject use the indices() function.
+   *
+   * \sa Primitives, DrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
   template <typename index_type, GLenum Tgltype, class arr_type>
-  class MultiDrawElements: public Primitives
+  class MultiDrawElements: public MultiDrawElementsBase
   {
   public:
     virtual const char* className() { return "MultiDrawElements"; }
@@ -60,7 +132,7 @@ namespace vl
       #endif
       mType                    = primitive;
       mIndexBuffer             = new arr_type;
-      mPrimitiveRestartIndex   = ~(index_type)0;
+      mPrimitiveRestartIndex   = index_type(~0);
       mPrimitiveRestartEnabled = false;
     }
 
@@ -87,7 +159,9 @@ namespace vl
 
     virtual size_t indexCountGPU() const { return indices()->sizeGPU(); }
 
-    /** The index returned does not include the the base vertex. */
+    /** The index returned does not include the the base vertex. 
+      * \note The functions DrawElements::index() and DrawRangeElements::index() do return the 
+      * index including the base vertex (with the exception of the primitive restart index). */
     virtual size_t index(int i) const 
     { 
       return indices()->at(i);
@@ -267,74 +341,58 @@ namespace vl
         VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     }
 
-    /** Sets the vector defining the length of each primitive and automatically computes the pointer 
-      * vectors used to exectue glMultiDrawElements(). */
-    void setCountVector(const std::vector<GLsizei>& vcount)
-    {
-      mCountVector = vcount;
+    /** The pointer vector used as 'indices' parameter of glMultiDrawElements. */
+    const std::vector<const index_type*>& pointerVector() const { return mPointerVector; }
 
+  protected:
+    void compute_pointer_vector()
+    {
       // set all to null: used when VBO is active.
-      mNULLPointerVector.resize( vcount.size() );
+      mNULLPointerVector.resize( mCountVector.size() );
 
       // used when VBOs are not active.
       mPointerVector.clear();
       const index_type* ptr = (const index_type*)indices()->gpuBuffer()->ptr();
-      for(size_t i=0; i<vcount.size(); ++i)
+      for(size_t i=0; i<mCountVector.size(); ++i)
       {
         mPointerVector.push_back(ptr);
-        ptr += vcount[i];
+        ptr += mCountVector[i];
       }
-      VL_CHECK( ptr - (const index_type*)indices()->gpuBuffer()->ptr() <= indexCount() );
+      VL_CHECK( ptr - (const index_type*)indices()->gpuBuffer()->ptr() <= (int)indexCount() );
     }
 
-    /** The count vector used as 'count' parameter of glMultiDrawElements. */
-    const std::vector<GLsizei>& countVector() const { return mCountVector; }
-
-    /** The pointer vector used as 'indices' parameter of glMultiDrawElements. */
-    const std::vector<const index_type*>& pointerVector() const { return mPointerVector; }
-
-    /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
-    GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
-    /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
-    void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
-
-    /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
-    bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
-    
-    /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt
-      * \note Functions like triangleCount(), lineCount(), pointCount() and sortTriangles() should not be used when primitive restart is enabled. */
-    void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
-
-    /** Returns the list of base vertices, one for each primitive. This will enable the use 
-      * of glMultiDrawElementsBaseVertex() to render a set of primitives. 
-      * See also http://www.opengl.org/sdk/docs/man3/xhtml/glMultiDrawElementsBaseVertex.xml */
-    void setBaseVertices(const std::vector<GLint>& base_verts) { mBaseVertices = base_verts; }
-    /** Returns the list of base vertices, one for each primitive. */
-    const std::vector<GLint>& baseVertices() const { return mBaseVertices; }
-    /** Returns the list of base vertices, one for each primitive. */
-    std::vector<GLint>& baseVertices() { return mBaseVertices; }
 
   protected:
     ref< arr_type > mIndexBuffer;
-    GLuint mPrimitiveRestartIndex;
-    bool mPrimitiveRestartEnabled;
-
-    std::vector<GLsizei>           mCountVector;
     std::vector<const index_type*> mPointerVector;
     std::vector<const index_type*> mNULLPointerVector;
-    std::vector<GLint> mBaseVertices;
   };
   //------------------------------------------------------------------------------
   // typedefs
   //------------------------------------------------------------------------------
-  /** A MultiDrawElements using indices of type \p GLuint. */
-  typedef MultiDrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt> MultiDrawElementsUInt;
+  /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLuint. */
+  class MultiDrawElementsUInt:  public MultiDrawElements<GLuint,    GL_UNSIGNED_INT, ArrayUInt>
+  {
+  public:
+    MultiDrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES)
+    :MultiDrawElements(primitive) {}
+  };
   //------------------------------------------------------------------------------
-  /** A MultiDrawElements using indices of type \p GLushort. */
-  typedef MultiDrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort> MultiDrawElementsUShort;
+  /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLushort. */
+  class MultiDrawElementsUShort: public MultiDrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>
+  {
+  public:
+    MultiDrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES)
+    :MultiDrawElements(primitive) {}
+  };
   //------------------------------------------------------------------------------
-  /** A MultiDrawElements using indices of type \p GLubyte. */
-  typedef MultiDrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte> MultiDrawElementsUByte;
+  /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLubyte. */
+  class MultiDrawElementsUByte:  public MultiDrawElements<GLubyte,  GL_UNSIGNED_BYTE, ArrayUByte>
+  {
+  public:
+    MultiDrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES)
+    :MultiDrawElements(primitive) {}
+  };
   //------------------------------------------------------------------------------
 }
 
