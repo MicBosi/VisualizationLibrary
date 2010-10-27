@@ -175,7 +175,7 @@ public:
     }
 
     /* compile ActorKdTree */
-    mSceneKdTree->tree()->compileKdTree(actors);
+    mSceneKdTree->tree()->buildKdTree(actors);
 
     updateKdTreeView();
   }

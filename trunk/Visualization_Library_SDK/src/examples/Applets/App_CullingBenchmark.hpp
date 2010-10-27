@@ -71,7 +71,7 @@ public:
       vl::Time timer;
       timer.start();
       vl::Log::print("KdTree compilation in progres...\n");
-      mSceneKdTree->tree()->compileKdTree(mActors);
+      mSceneKdTree->tree()->buildKdTree(mActors);
       mSceneKdTree->setBoundsDirty(true);
       vl::Log::print( vl::Say("KdTree compilation time: %.1n, %.1n obj/s\n") << timer.elapsed() << mActors.size() / timer.elapsed() );
 
