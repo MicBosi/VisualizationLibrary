@@ -77,6 +77,7 @@
 #include "Applets/App_BezierSurfaces.hpp"
 #include "Applets/App_Picking.hpp"
 #include "Applets/App_NearFarOptimization.hpp"
+#include "Applets/App_EffectOverride.hpp"
 
 // win32 console for sdtout output
 #if defined(WIN32) && !defined(NDEBUG)
@@ -124,6 +125,7 @@ public:
     {
       { "Virtual File System", new App_VirtualFileSystemTest, 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
       { "Near/Far Planes Optimization", new App_NearFarOptimization, 10, 10, 512, 512, vlut::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
+      { "Effect Override", new App_EffectOverride, 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Render Order - Effect & Actor Ranks", new App_RenderOrder(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Render Order - Alpha Z-Sort", new App_RenderOrder(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Render Order - Always Z-Sort", new App_RenderOrder(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
@@ -179,9 +181,6 @@ public:
       { "Occlusion Culling", new App_OcclusionCulling, 10,10, 512, 512, vlut::gray, vl::vec3(0,25,575), vl::vec3(0,0,0) },
       { "Bezier Patches", new App_BezierSurfaces, 10,10, 512, 512, vlut::black, vl::vec3(4.5f,5,13), vl::vec3(4.5f,0,0) },
       { "Picking", new App_Picking, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
-      // stubs:
-      // { "Serialization", new App_Serialization, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
-      // { "Depth Of Field", new App_DepthOfField, 10,10, 512, 512, vlut::black, vl::vec3(0,5,100), vl::vec3(0,0,0) },
     };
 
     int test_count = int( sizeof(tests)/sizeof(TestEntry) );
