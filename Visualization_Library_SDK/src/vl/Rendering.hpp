@@ -172,6 +172,12 @@ namespace vl
       * vl::Camera::setProjectionAsPerspective(). */
     void setNearFarClippingPlanesOptimized(bool enabled) { mNearFarClippingPlanesOptimized = enabled; }
 
+    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: Actors::enableMask() & bitmask != 0. */
+    const std::vector< std::pair<unsigned int, ref<Effect> > >& effectOverrideMask() const { return mEffectOverrideMask; }
+
+    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: Actors::enableMask() & bitmask != 0. */
+    std::vector< std::pair<unsigned int, ref<Effect> > >& effectOverrideMask() { return mEffectOverrideMask; }
+
   protected:
     void fillRenderQueue( ActorCollection* actor_list );
     ActorCollection* actorQueue() { return mActorQueue.get(); }
@@ -186,7 +192,7 @@ namespace vl
     ref<Camera> mCamera;
     ref<Transform> mTransform;
     ref<Collection<SceneManager> > mSceneManagers;
-    ref<SceneManager> mPippoBaudo;
+    std::vector< std::pair<unsigned int, ref<Effect> > > mEffectOverrideMask;
 
     EClearFlags mClearFlags;
 

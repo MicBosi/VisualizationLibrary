@@ -234,10 +234,10 @@ namespace vl
     bool linkStatus() const;
 
     //! Returns true if the program has been succesfully linked.
-    bool linked() const { return !mScheduleLink; }
+    bool linked() const { return handle() && !mScheduleLink; }
 
     //! Schedules a relink of the GLSL program.
-    void scheduleRelinking();
+    void scheduleRelinking() { mScheduleLink = true; }
 
     /**
      * Attaches the GLSLShader to this GLSLProgram

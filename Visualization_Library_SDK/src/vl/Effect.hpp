@@ -157,7 +157,7 @@ namespace vl
     unsigned int enableMask() const { return mEnableMask; }
 
     /** If a LODEvaluator is installed computes the effect LOD to be used otherwise returns 0. */
-    int evaluateLOD(Actor* actor, Camera* camera);
+    int evaluateLOD(Actor* actor, Camera* camera) const;
 
   protected:
     ref<ShaderSequence> mLODShaders[VL_MAX_EFFECT_LOD];
