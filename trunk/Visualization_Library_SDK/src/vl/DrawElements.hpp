@@ -395,11 +395,11 @@ namespace vl
   // typedefs
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLuint. */
-  class DrawElementsUInt:  public DrawElements<GLuint,    GL_UNSIGNED_INT, ArrayUInt>
+  class DrawElementsUInt:  public DrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>
   {
   public:
     DrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements(primitive, instances) {}
+    :DrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>(primitive, instances) {}
   };
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLushort. */
@@ -407,15 +407,15 @@ namespace vl
   {
   public:
     DrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements(primitive, instances) {}
+    :DrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>(primitive, instances) {}
   };
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLubyte. */
-  class DrawElementsUByte:  public DrawElements<GLubyte,  GL_UNSIGNED_BYTE, ArrayUByte>
+  class DrawElementsUByte:  public DrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>
   {
   public:
     DrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements(primitive, instances) {}
+    :DrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>(primitive, instances) {}
   };
    //------------------------------------------------------------------------------
 }

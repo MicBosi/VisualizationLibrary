@@ -396,7 +396,7 @@ namespace vl
   {
   public:
     DrawRangeElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLuint(~0))
-    :DrawRangeElements(primitive, r_start, r_end) {}
+    :DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>(primitive, r_start, r_end) {}
   };
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLushort. */
@@ -404,7 +404,7 @@ namespace vl
   {
   public:
     DrawRangeElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLushort(~0))
-    :DrawRangeElements(primitive, r_start, r_end) {}
+    :DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>(primitive, r_start, r_end) {}
   };
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLubyte. */
@@ -412,7 +412,7 @@ namespace vl
   {
   public:
     DrawRangeElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLubyte(~0))
-    :DrawRangeElements(primitive, r_start, r_end) {}
+    :DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>(primitive, r_start, r_end) {}
   };
   //------------------------------------------------------------------------------
 }
