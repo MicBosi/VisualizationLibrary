@@ -104,8 +104,8 @@ namespace vl
     virtual void updateVBOs(bool /*discard_local_data*/) {}
 
     //! Destroyes the VBO (VertexBufferObjects) associated to this Geometry attributes.
-    //! If 'clear_primitives' all the VBOs associated the Primitives objects are also deleted.
-    //! \note This function does not touch the local (non GPU) data stored in the buffers associated to the vertex attributes and Primitives.
+    //! If 'clear_primitives' all the VBOs associated the DrawCall objects are also deleted.
+    //! \note This function does not touch the local (non GPU) data stored in the buffers associated to the vertex attributes and DrawCall.
     virtual void deleteVBOs() {}
 
     void deleteDisplayList() 

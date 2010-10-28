@@ -111,12 +111,12 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
     texc_array->resize(detail()*detail()*patch_count);
   }
 
-  ref<DrawElementsUInt> de = primitives()->size() == 1 ? dynamic_cast<DrawElementsUInt*>(primitives()->at(0)) : NULL;
+  ref<DrawElementsUInt> de = drawCalls()->size() == 1 ? dynamic_cast<DrawElementsUInt*>(drawCalls()->at(0)) : NULL;
   if (!de)
   {
-    primitives()->clear();
+    drawCalls()->clear();
     de = new DrawElementsUInt(PT_QUADS);
-    primitives()->push_back(de.get());
+    drawCalls()->push_back(de.get());
   }
   de->indices()->resize((detail()-1)*(detail()-1)*4*patch_count);
 

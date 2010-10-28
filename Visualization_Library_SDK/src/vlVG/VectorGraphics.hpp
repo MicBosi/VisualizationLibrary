@@ -357,7 +357,7 @@ namespace vlVG
         geom->setTexCoordArray(0, tex_array.get());
       }
       // issue the primitive
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_LINES, 0, ln.size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINES, 0, ln.size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }
@@ -369,7 +369,7 @@ namespace vlVG
       // generate texture coords
       generateLinearTexCoords(geom.get());
       // issue the primitive
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_LINE_STRIP, 0, ln.size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_STRIP, 0, ln.size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }
@@ -381,7 +381,7 @@ namespace vlVG
       // generate texture coords
       generateLinearTexCoords(geom.get());
       // issue the primitive
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, ln.size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, ln.size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }
@@ -393,7 +393,7 @@ namespace vlVG
       // generate texture coords
       generatePlanarTexCoords(geom.get(), poly);
       // issue the primitive
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_POLYGON, 0, poly.size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_POLYGON, 0, poly.size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }
@@ -405,7 +405,7 @@ namespace vlVG
       // generate texture coords
       generatePlanarTexCoords(geom.get(), triangles);
       // issue the primitive
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_TRIANGLES, 0, triangles.size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLES, 0, triangles.size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }
@@ -417,7 +417,7 @@ namespace vlVG
       // generate texture coords
       generatePlanarTexCoords(geom.get(), fan);
       // issue the primitive
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_TRIANGLE_FAN, 0, fan.size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLE_FAN, 0, fan.size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }
@@ -429,7 +429,7 @@ namespace vlVG
       // generate texture coords
       generatePlanarTexCoords(geom.get(), strip);
       // issue the primitive
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_TRIANGLE_STRIP, 0, strip.size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLE_STRIP, 0, strip.size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }
@@ -441,7 +441,7 @@ namespace vlVG
       // generate texture coords
       generateQuadsTexCoords(geom.get(), quads);
       // issue the primitive
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_QUADS, 0, quads.size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_QUADS, 0, quads.size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }
@@ -453,7 +453,7 @@ namespace vlVG
       // generate texture coords
       generatePlanarTexCoords(geom.get(), quad_strip);
       // issue the primitive
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_QUAD_STRIP, 0, quad_strip.size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_QUAD_STRIP, 0, quad_strip.size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }
@@ -484,7 +484,7 @@ namespace vlVG
       // generate geometry
       vl::ref< vl::Geometry > geom = new vl::Geometry;
       geom->setVertexArray(pos_array.get());
-      geom->primitives()->push_back( new vl::DrawArrays(vl::PT_POINTS, 0, pos_array->size()) );
+      geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_POINTS, 0, pos_array->size()) );
       // add the actor
       return addActor( new vl::Actor(geom.get(), currentEffect(), NULL) );
     }

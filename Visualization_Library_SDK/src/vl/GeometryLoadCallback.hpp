@@ -130,9 +130,9 @@ namespace vl
     //! Convert mesh into a set of triangle strips if possible
     bool stripfy() const { return mStripfy; }
 
-    //! Converts the Geometry Primitives into DrawArrays. Useful in conjuction with \p setStripfy(true).
+    //! Converts the Geometry DrawCall into DrawArrays. Useful in conjuction with \p setStripfy(true).
     bool convertToDrawArrays() const { return mConvertToDrawArrays; }
-    //! Converts the Geometry Primitives into DrawArrays. Useful in conjuction with \p setStripfy(true).
+    //! Converts the Geometry DrawCall into DrawArrays. Useful in conjuction with \p setStripfy(true).
     void setConvertToDrawArrays(bool on) { mConvertToDrawArrays = on; }
 
     //! Enable display lists usage (overrides VBOs)

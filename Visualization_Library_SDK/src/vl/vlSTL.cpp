@@ -76,7 +76,7 @@ ref<ResourceDatabase> STLLoader::loadBinary(VirtualFile* file)
   normals->resize(tri_count*3);
   ref<DrawArrays> de = new DrawArrays(PT_TRIANGLES,0,tri_count*3);
   ref<Geometry> geom = new Geometry;
-  geom->primitives()->push_back(de.get());
+  geom->drawCalls()->push_back(de.get());
   geom->setVertexArray(verts.get());
   geom->setNormalArray(normals.get());
 
@@ -157,7 +157,7 @@ ref<ResourceDatabase> STLLoader::loadAscii(VirtualFile* file)
   memcpy(vertices->ptr(), &verts[0], sizeof(verts[0])*verts.size());
   ref<DrawArrays> de = new DrawArrays(PT_TRIANGLES,0,verts.size());
   ref<Geometry> geom = new Geometry;
-  geom->primitives()->push_back(de.get());
+  geom->drawCalls()->push_back(de.get());
   geom->setVertexArray(vertices.get());
   geom->setNormalArray(normals.get());
 

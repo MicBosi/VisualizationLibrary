@@ -201,8 +201,8 @@ public:
         for(int q=0; q<4*9; ++q)
           quads[q] += istart;
         memcpy(de->indices()->ptr(), quads, sizeof(quads));
-        geom->primitives()->push_back(de.get());
-        geom->primitives()->push_back(da.get());
+        geom->drawCalls()->push_back(de.get());
+        geom->drawCalls()->push_back(da.get());
       }
     }
 

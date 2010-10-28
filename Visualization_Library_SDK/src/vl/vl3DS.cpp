@@ -821,7 +821,7 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
       // dump indices
 
       ref<DrawElementsUInt> polys = new DrawElementsUInt;
-      geom->primitives()->push_back( polys.get() );
+      geom->drawCalls()->push_back( polys.get() );
       polys->indices()->resize( index_buffer.size() );
       VL_CHECK( polys->indices()->bytesUsed() == sizeof(index_buffer[0]) * index_buffer.size() )
       memcpy(polys->indices()->ptr(), &index_buffer[0], polys->indices()->bytesUsed());

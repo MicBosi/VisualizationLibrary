@@ -120,12 +120,12 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
 
   // merge all triangles in a single DrawElementsUInt
   ref<DrawElementsUInt> pint = new DrawElementsUInt(PT_TRIANGLES, 1);
-  for(int i=0; i<geom->primitives()->size(); ++i)
+  for(int i=0; i<geom->drawCalls()->size(); ++i)
   {
-    if (geom->primitives()->at(i)->primitiveType() == PT_TRIANGLES)
+    if (geom->drawCalls()->at(i)->primitiveType() == PT_TRIANGLES)
     {
-      for(size_t j=0; j<geom->primitives()->at(i)->indexCount(); ++j)
-        indices.push_back( geom->primitives()->at(i)->index(j) );
+      for(size_t j=0; j<geom->drawCalls()->at(i)->indexCount(); ++j)
+        indices.push_back( geom->drawCalls()->at(i)->index(j) );
     }
     else
     {
@@ -147,8 +147,8 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
 
   // install draw call
 
-  geom->primitives()->clear();
-  geom->primitives()->push_back(pint.get());
+  geom->drawCalls()->clear();
+  geom->drawCalls()->push_back(pint.get());
 
   // clear up other vertex arrays
   geom->setNormalArray(NULL);

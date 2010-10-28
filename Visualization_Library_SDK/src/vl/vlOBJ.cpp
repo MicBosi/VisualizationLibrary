@@ -849,7 +849,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
       geom->setNormalArray( n_coords.get() );
     if ( mMeshes[imesh]->faceTexCoordIndex().size() )
       geom->setTexCoordArray(0, t_coords2.get() );
-    geom->primitives()->push_back( new DrawArrays(PT_TRIANGLES, 0, tri_verts_count) );
+    geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLES, 0, tri_verts_count) );
 
     // Material/Effect
 

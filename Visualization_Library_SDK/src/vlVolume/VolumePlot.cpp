@@ -120,8 +120,8 @@ void VolumePlot::compute(const Function& func, float threshold)
 
   mIsosurfaceGeometry->setVertexArray(mc.mVertsArray.get());
   mIsosurfaceGeometry->setNormalArray(mc.mNormsArray.get());
-  mIsosurfaceGeometry->primitives()->clear();
-  mIsosurfaceGeometry->primitives()->push_back(mc.mDrawElements.get());
+  mIsosurfaceGeometry->drawCalls()->clear();
+  mIsosurfaceGeometry->drawCalls()->push_back(mc.mDrawElements.get());
 
   mIsosurfaceActor->lod(0) = mIsosurfaceGeometry.get();
   mIsosurfaceActor->setEffect(mIsosurfaceEffect.get());
