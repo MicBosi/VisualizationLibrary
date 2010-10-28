@@ -94,7 +94,7 @@ public:
       (vl::fvec3*)model->vertexArray()->ptr(), 
       (vl::fvec3*)model->normalArray()->ptr(), 
       (vl::fvec2*)model->texCoordArray(0)->ptr(),
-      model->primitives()->at(0),
+      model->drawCalls()->at(0),
       tangent->begin(), 
       NULL );
 
@@ -146,7 +146,7 @@ public:
     vl::ref<vl::Geometry> NTBGeom = new vl::Geometry;
     NTBGeom->setVertexArray( ntb_verts.get() );
     NTBGeom->setColorArray( ntb_cols.get() );
-    NTBGeom->primitives()->push_back( new vl::DrawArrays(vl::PT_LINES, 0, ntb_verts->size() ) );
+    NTBGeom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINES, 0, ntb_verts->size() ) );
     sceneManager()->tree()->addActor( NTBGeom.get(), effect.get(), mTransform.get() );
   }
 

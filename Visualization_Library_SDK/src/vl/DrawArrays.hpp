@@ -32,7 +32,7 @@
 #ifndef DrawArrays_INCLUDE_DEFINE
 #define DrawArrays_INCLUDE_DEFINE
 
-#include <vl/Primitives.hpp>
+#include <vl/DrawCall.hpp>
 
 namespace vl
 {
@@ -42,10 +42,10 @@ namespace vl
   /**
    * Wraps the OpenGL function glDrawArrays(). See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawArrays.xml for more information.
    *
-   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::primitives().
+   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
    *
-   * \sa Primitives, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
-  class DrawArrays: public Primitives
+   * \sa DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
+  class DrawArrays: public DrawCall
   {
   public:
     DrawArrays(): mStart(0), mCount(0) 
@@ -69,14 +69,14 @@ namespace vl
 
     DrawArrays& operator=(const DrawArrays& other)
     {
-      Primitives::operator=(other);
+      DrawCall::operator=(other);
       mStart     = other.mStart;
       mCount     = other.mCount;
       mInstances = other.mInstances;
       return *this;
     }
 
-    virtual ref<Primitives> clone() const 
+    virtual ref<DrawCall> clone() const 
     { 
       return new DrawArrays( primitiveType(), (int)start(), (int)count(), (int)instances() ); 
     }

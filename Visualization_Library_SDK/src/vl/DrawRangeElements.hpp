@@ -32,7 +32,7 @@
 #ifndef DrawRangeElements_INCLUDE_ONCE
 #define DrawRangeElements_INCLUDE_ONCE
 
-#include <vl/Primitives.hpp>
+#include <vl/DrawCall.hpp>
 #include <vl/Array.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
@@ -49,7 +49,7 @@ namespace vl
    * Implements the index-type-independent interface of the class. That is you can cast to DrawRangeElementsBase*
    * and access its members without needing to know whether the actual class is a 
    * vl::DrawRangeElementsUInt, vl::DrawRangeElementsUShort or vl::DrawRangeElementsUByte. */
-  class DrawRangeElementsBase: public Primitives
+  class DrawRangeElementsBase: public DrawCall
   {
   public:
     /** Sets the range start. See also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElements.xml */
@@ -111,11 +111,11 @@ namespace vl
    * Use the function setBaseVertex() to use the <b>base vertex</b> functionality. 
    * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElementsBaseVertex.xml
    *
-   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::primitives().
+   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
    * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
    * To gain direct access to the GLBufferObject use the indices() function.
    *
-   * \sa Primitives, DrawElements, MultiDrawElements, DrawArrays, Geometry, Actor */
+   * \sa DrawCall, DrawElements, MultiDrawElements, DrawArrays, Geometry, Actor */
   template <typename index_type, GLenum Tgltype, class arr_type>
   class DrawRangeElements: public DrawRangeElementsBase
   {
@@ -173,7 +173,7 @@ namespace vl
       return *this;
     }
 
-    virtual ref<Primitives> clone() const 
+    virtual ref<DrawCall> clone() const 
     { 
       ref<DrawRangeElements> de = new DrawRangeElements;
       *de = *this;

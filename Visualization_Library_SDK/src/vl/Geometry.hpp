@@ -177,11 +177,11 @@ namespace vl
     VertexAttributeArray* findVertexAttribute(unsigned int name);
     void eraseVertexAttributeByName(unsigned int name);
 
-    //! Returns the list of Primitives objects bound to a Geometry
-    Collection<Primitives>* primitives() { return &mPrimitives; }
+    //! Returns the list of DrawCall objects bound to a Geometry
+    Collection<DrawCall>* drawCalls() { return &mDrawCalls; }
 
-    //! Returns the list of Primitives objects bound to a Geometry
-    const Collection<Primitives>* primitives() const { return &mPrimitives; }
+    //! Returns the list of DrawCall objects bound to a Geometry
+    const Collection<DrawCall>* drawCalls() const { return &mDrawCalls; }
 
     void updateVBOs(bool discard_local_data=false);
 
@@ -205,18 +205,18 @@ namespace vl
     //! Merges the PT_TRIANGLE_STRIP Primitive objects into one single PT_TRIANGLE_STRIP DrawElements.
     void mergeTriangleStrips();
 
-    //! Converts all the Primitives objects bound to a Geometry into DrawArrays.
+    //! Converts all the DrawCall objects bound to a Geometry into DrawArrays.
     void convertDrawElementsToDrawArrays();
 
     //! Sorts the vertices of the geometry to maximize vertex-cache coherency.
-    //! This function will work only if all the Primitives are DrawElements.
-    //! \returns true if all the Primitives are DrawElements and the sorting took place.
+    //! This function will work only if all the DrawCall are DrawElements.
+    //! \returns true if all the DrawCall are DrawElements and the sorting took place.
     bool sortVertices();
 
     //! Calls DrawElements::sortTriangles().
     void sortTriangles();
 
-    //! Assigns a random color to each vertex of each Primitives object. If a vertex is shared among more than one Primitives object its color is undefined.
+    //! Assigns a random color to each vertex of each DrawCall object. If a vertex is shared among more than one DrawCall object its color is undefined.
     void colorizePrimitives();
 
     void regenerateVertices(const std::vector<size_t>& map_new_to_old);
@@ -240,7 +240,7 @@ namespace vl
     const vl::fvec3 *vertex, 
     const vl::fvec3* normal,
     const vl::fvec2 *texcoord, 
-    const vl::Primitives* primitives,
+    const vl::DrawCall* primitives,
     vl::fvec3 *tangent, 
     vl::fvec3 *bitangent );
 
@@ -260,7 +260,7 @@ namespace vl
     Collection<VertexAttributeArray> mVertexAttributeArrays;
 
     // render calls
-    Collection<Primitives> mPrimitives;
+    Collection<DrawCall> mDrawCalls;
   };
   //------------------------------------------------------------------------------
 }

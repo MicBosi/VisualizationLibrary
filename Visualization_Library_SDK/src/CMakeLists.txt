@@ -78,7 +78,7 @@ SET(VL_SRC
   vl/PixelLODEvaluator.cpp
   vl/Plane.cpp
   vl/PolygonSimplifier.cpp
-  vl/Primitives.cpp
+  vl/DrawCall.cpp
   vl/SceneManagerPortals.cpp
   vl/RayIntersector.cpp
   vl/RenderTarget.cpp
@@ -135,7 +135,7 @@ set(VL_INC
   vl/DistanceLODEvaluator.hpp
   vl/DoubleVertexRemover.hpp
   vl/DrawArrays.hpp
-  vl/Primitives.hpp
+  vl/DrawCall.hpp
   vl/DrawElements.hpp
   vl/DrawPixels.hpp
   vl/EdgeExtractor.hpp

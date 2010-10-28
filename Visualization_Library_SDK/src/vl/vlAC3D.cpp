@@ -499,7 +499,7 @@ ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)
     ref<ArrayFVec3> verts = new ArrayFVec3;
     ref<ArrayFVec2> uv    = new ArrayFVec2;
     ref<DrawElementsUInt> polys = new DrawElementsUInt;
-    geom->primitives()->push_back( polys.get() );
+    geom->drawCalls()->push_back( polys.get() );
     geom->setVertexArray( verts.get() );
     geom->setTexCoordArray(0, uv.get());
     act->lod(0) = geom.get();

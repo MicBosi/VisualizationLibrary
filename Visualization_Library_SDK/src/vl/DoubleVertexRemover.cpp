@@ -194,17 +194,17 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
 
   geom->regenerateVertices(mMapNewToOld);
 
-  // regenerate Primitives
+  // regenerate DrawCall
 
-  std::vector< ref<Primitives> > draw_cmd;
-  for(int idraw=0; idraw<geom->primitives()->size(); ++idraw)
-    draw_cmd.push_back( geom->primitives()->at(idraw) );
-  geom->primitives()->clear();
+  std::vector< ref<DrawCall> > draw_cmd;
+  for(int idraw=0; idraw<geom->drawCalls()->size(); ++idraw)
+    draw_cmd.push_back( geom->drawCalls()->at(idraw) );
+  geom->drawCalls()->clear();
 
   for(unsigned idraw=0; idraw<draw_cmd.size(); ++idraw)
   {
     ref<DrawElementsUInt> tris = new DrawElementsUInt( draw_cmd[idraw]->primitiveType() );
-    geom->primitives()->push_back(tris.get());
+    geom->drawCalls()->push_back(tris.get());
     const int idx_count = draw_cmd[idraw]->indexCount();
     tris->indices()->resize(idx_count);
     for(int i=0; i<idx_count; ++i)

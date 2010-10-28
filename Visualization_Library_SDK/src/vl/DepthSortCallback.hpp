@@ -59,7 +59,7 @@ namespace vl
    *
    * - The sorting is based on the position of the vertices as specified by Geometry::vertexArray() and for obvious
    * reasons cannot take into consideration transformations made in the vertex shader or in the geometry shader.
-   * - The sorting is performed on a per Primitives basis. For example, if a Geometry has 2 Primitives A and B bound to it, 
+   * - The sorting is performed on a per DrawCall basis. For example, if a Geometry has 2 DrawCall A and B bound to it, 
    *   then the polygons, lines or points of A will alway be rendered before the ones specified by B.
    *
    * \sa \ref pagGuidePolygonDepthSorting "Transparency and Polygon Depth Sorting Tutorial"
@@ -175,11 +175,11 @@ namespace vl
 
       geometry->setVBODirty(true);
 
-      for(int idraw=0; idraw<geometry->primitives()->size(); ++idraw)
+      for(int idraw=0; idraw<geometry->drawCalls()->size(); ++idraw)
       {
-        ref<DrawElementsUInt>   polys_uint   = dynamic_cast<DrawElementsUInt*>  (geometry->primitives()->at(idraw));
-        ref<DrawElementsUShort> polys_ushort = dynamic_cast<DrawElementsUShort*>(geometry->primitives()->at(idraw));
-        ref<DrawElementsUByte>  polys_ubyte  = dynamic_cast<DrawElementsUByte*> (geometry->primitives()->at(idraw));
+        ref<DrawElementsUInt>   polys_uint   = dynamic_cast<DrawElementsUInt*>  (geometry->drawCalls()->at(idraw));
+        ref<DrawElementsUShort> polys_ushort = dynamic_cast<DrawElementsUShort*>(geometry->drawCalls()->at(idraw));
+        ref<DrawElementsUByte>  polys_ubyte  = dynamic_cast<DrawElementsUByte*> (geometry->drawCalls()->at(idraw));
 
         if (polys_uint)
           sort<unsigned int,DrawElementsUInt>(polys_uint.get(), mSortedPointsUInt, mSortedLinesUInt, mSortedTrianglesUInt, mSortedQuadsUInt);

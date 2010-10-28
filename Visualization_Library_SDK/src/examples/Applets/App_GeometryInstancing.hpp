@@ -98,7 +98,7 @@ public:
     box_set->setColorArray(vlut::white);
 
     /* setting multiple instances is as easy as calling this function! */
-    vl::DrawArrays* draw_arrays = dynamic_cast<vl::DrawArrays*>( box_set->primitives()->at(0) );
+    vl::DrawArrays* draw_arrays = dynamic_cast<vl::DrawArrays*>( box_set->drawCalls()->at(0) );
     VL_CHECK(draw_arrays)
     draw_arrays->setInstances(100);
 

@@ -303,8 +303,8 @@ public:
     geom->setVertexArray( vert_array.get() );
     *vert_array = ctrl_points;
     geom->setColorArray(color);
-    geom->primitives()->push_back(new vl::DrawArrays(vl::PT_LINE_STRIP, 0, vert_array->size())); // lines
-    geom->primitives()->push_back(new vl::DrawArrays(vl::PT_POINTS,     0, vert_array->size())); // points
+    geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_LINE_STRIP, 0, vert_array->size())); // lines
+    geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_POINTS,     0, vert_array->size())); // points
 
     // setup simple effect
     vl::ref<vl::Effect> effect = new vl::Effect;

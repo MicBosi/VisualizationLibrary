@@ -29,11 +29,11 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/Primitives.hpp>
+#include <vl/DrawCall.hpp>
 
 using namespace vl;
 
-bool Primitives::getTriangle_internal( size_t tri_index, unsigned int* out_triangle ) const
+bool DrawCall::getTriangle_internal( size_t tri_index, unsigned int* out_triangle ) const
 {
   VL_CHECK(out_triangle)
 

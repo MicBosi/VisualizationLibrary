@@ -323,9 +323,9 @@ void SlicedVolume::update(int /*lod*/, Camera* camera, Real /*cur_t*/)
     #endif
   }
 
-  mGeometry->primitives()->clear();
+  mGeometry->drawCalls()->clear();
   ref<DrawArrays> da = new DrawArrays(vl::PT_TRIANGLES, 0, polygons.size());
-  mGeometry->primitives()->push_back( da.get() );
+  mGeometry->drawCalls()->push_back( da.get() );
   ref<ArrayFVec3> vertex_array = new ArrayFVec3;
   ref<ArrayFVec3> texcoo_array = new ArrayFVec3;
   vertex_array->resize(polygons.size());

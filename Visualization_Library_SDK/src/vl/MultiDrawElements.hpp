@@ -32,7 +32,7 @@
 #ifndef MultiDrawElements_INCLUDE_ONCE
 #define MultiDrawElements_INCLUDE_ONCE
 
-#include <vl/Primitives.hpp>
+#include <vl/DrawCall.hpp>
 #include <vl/Array.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
@@ -48,7 +48,7 @@ namespace vl
    * Implements the index-type-independent interface of the class. That is you can cast to MultiDrawElementsBase*
    * and access its members without needing to know whether the actual class is a 
    * vl::MultiDrawElementsUInt, vl::MultiDrawElementsUShort or vl::MultiDrawElementsUByte. */
-  class MultiDrawElementsBase: public Primitives
+  class MultiDrawElementsBase: public DrawCall
   {
   public:
     /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
@@ -114,11 +114,11 @@ namespace vl
    * Use the function setBaseVertices() to use the <b>base vertex</b> functionality. 
    * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glMultiDrawElementsBaseVertex.xml
    *
-   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::primitives().
+   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
    * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
    * To gain direct access to the GLBufferObject use the indices() function.
    *
-   * \sa Primitives, DrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
+   * \sa DrawCall, DrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
   template <typename index_type, GLenum Tgltype, class arr_type>
   class MultiDrawElements: public MultiDrawElementsBase
   {
@@ -138,7 +138,7 @@ namespace vl
 
     MultiDrawElements& operator=(const MultiDrawElements& other)
     {
-      Primitives::operator=(other);
+      DrawCall::operator=(other);
       *indices() = *other.indices();
       mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
       mPrimitiveRestartIndex   = other.mPrimitiveRestartIndex;
@@ -146,7 +146,7 @@ namespace vl
       return *this;
     }
 
-    virtual ref<Primitives> clone() const 
+    virtual ref<DrawCall> clone() const 
     { 
       ref<MultiDrawElements> de = new MultiDrawElements;
       *de = *this;

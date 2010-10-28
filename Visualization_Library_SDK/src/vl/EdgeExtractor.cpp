@@ -74,9 +74,9 @@ void EdgeExtractor::extractEdges(Geometry* geom)
     vl::Log::error("EdgeExtractor::extractEdges(geom): 'geom' must have a vertex array of type ArrayFVec3.\n");
     return;
   }
-  for(int iprim=0; iprim<geom->primitives()->size(); ++iprim)
+  for(int iprim=0; iprim<geom->drawCalls()->size(); ++iprim)
   {
-    Primitives* prim = geom->primitives()->at(iprim);
+    DrawCall* prim = geom->drawCalls()->at(iprim);
     if (prim->primitiveType() == PT_QUAD_STRIP)
     {
       /*
@@ -260,7 +260,7 @@ ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
       vert_array->at(start+i*2+1) = v + edges()[i].normal2()*0.25f;
     }
   #endif
-  geom->primitives()->push_back( new vl::DrawArrays(vl::PT_LINES,0,vert_array->size()) );
+  geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINES,0,vert_array->size()) );
   return geom;
 }
 //-----------------------------------------------------------------------------

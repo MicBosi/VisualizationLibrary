@@ -32,7 +32,7 @@
 #ifndef DrawElements_INCLUDE_ONCE
 #define DrawElements_INCLUDE_ONCE
 
-#include <vl/Primitives.hpp>
+#include <vl/DrawCall.hpp>
 #include <vl/Array.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
@@ -49,7 +49,7 @@ namespace vl
    * Implements the index-type-independent interface of the class. That is you can cast to DrawElementsBase*
    * and access its members without needing to know whether the actual class is a 
    * vl::DrawElementsUInt, vl::DrawElementsUShort or vl::DrawElementsUByte. */
-  class DrawElementsBase: public Primitives
+  class DrawElementsBase: public DrawCall
   {
   public:
     /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
@@ -109,11 +109,11 @@ namespace vl
    * Use the function setBaseVertex() with a non zero argument to use the <b>base vertex</b> functionality. 
    * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glDrawElementsBaseVertex.xml
    *
-   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::primitives().
+   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
    * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
    * To gain direct access to the GLBufferObject use the indices() function.
    *
-   * \sa Primitives, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
+   * \sa DrawCall, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
   template <typename index_type, GLenum Tgltype, class arr_type>
   class DrawElements: public DrawElementsBase
   {
@@ -169,7 +169,7 @@ namespace vl
       return *this;
     }
 
-    virtual ref<Primitives> clone() const 
+    virtual ref<DrawCall> clone() const 
     { 
       ref<DrawElements> de = new DrawElements;
       *de = *this;
