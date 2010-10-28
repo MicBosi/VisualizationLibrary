@@ -42,6 +42,7 @@ set(VL_APPLETS
   App_Deformer.hpp
   App_DrawPixels.hpp
   App_EdgeRendering.hpp
+  App_EffectOverride.hpp
   App_Extrusion.hpp
   App_FBO_MRT_GLSL.hpp
   App_Fractals.hpp

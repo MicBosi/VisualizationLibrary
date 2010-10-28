@@ -249,14 +249,22 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
     VL_CHECK(actor->lod(0))
 
-    if ( !isEnabled(actor->enableMask()) || !isEnabled(actor->effect()->enableMask()) )
+    if ( !isEnabled(actor->enableMask()) )
       continue;
 
     // update the Actor's bounds
     actor->computeBounds();
 
-    Effect* effect = actor->effect();
+    const Effect* effect = actor->effect();
     VL_CHECK(effect)
+
+    // effect override
+    for(size_t i=0; i<mEffectOverrideMask.size(); ++i)
+      if (mEffectOverrideMask[i].first & actor->enableMask())
+        effect = mEffectOverrideMask[i].second.get();
+
+    if ( !isEnabled(effect->enableMask()) )
+      continue;
 
     // --------------- LOD evaluation ---------------
 
