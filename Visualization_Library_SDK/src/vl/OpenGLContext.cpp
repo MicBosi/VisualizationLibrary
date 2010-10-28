@@ -1143,6 +1143,18 @@ bool OpenGLContext::isCleanState(bool verbose) const
   }
   */
 
+  // check viewport
+  GLint viewport[4] = {0,0,0,0};
+  glGetIntegerv(GL_VIEWPORT, viewport);
+  if (viewport[2] * viewport[3] == 1)
+  {
+    if (verbose)
+      vl::Log::error( "Viewport dimension is 1 pixel!\n"
+      "Did you forget to call camera()->viewport()->setWidth()/setHeight() upon window resize event?\n");
+    VL_TRAP();
+    ok = false;
+  }
+
   VL_CHECK_OGL();
   return ok;
 }
