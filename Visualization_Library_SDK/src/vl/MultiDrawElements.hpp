@@ -52,11 +52,11 @@ namespace vl
   {
   public:
     /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
-      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
+      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
     GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
 
     /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 
-      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint types. */
+      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
     void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
 
     /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
