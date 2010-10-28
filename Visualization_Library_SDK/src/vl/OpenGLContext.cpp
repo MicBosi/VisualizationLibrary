@@ -70,8 +70,9 @@ OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 // OpenGLContext
 //-----------------------------------------------------------------------------
 OpenGLContext::OpenGLContext(int w, int h): 
+mTextureUnitCount(0), mMajorVersion(0), mMinorVersion(0),
 mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false), 
-mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false), mMajorVersion(0), mMinorVersion(0)
+mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false)
 {
   #ifndef NDEBUG
     mObjectName = className();
