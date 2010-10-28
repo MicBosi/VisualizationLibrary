@@ -286,11 +286,6 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
     return false;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::scheduleRelinking()
-{
-  mScheduleLink = true;
-}
-//-----------------------------------------------------------------------------
 bool GLSLProgram::linkProgram(bool force_relink)
 {
   VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )

@@ -119,6 +119,7 @@ namespace vl
   {
   public:
     virtual const char* className() { return "Actor"; }
+
     /** Constructor.
     \param renderable A Renderable defining the Actor's LOD level #0
     \param effect The Effect to be used by the Actor
@@ -238,9 +239,12 @@ namespace vl
     /** For internal use only. */
     Real lastUpdateTime() const { return mLastUpdateTime; }
 
-    /** The enable mask of an Actor defines whether the actor should be rendered or not depending on the Rendering::enableMask(). */
+    /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not 
+      * depending on the Rendering::enableMask() but it can also be used for user-specific tasks. */
     void setEnableMask(unsigned int mask) { mEnableMask = mask; }
-    /** The enable mask of an Actor defines whether the actor should be rendered or not depending on the Rendering::enableMask(). */
+
+    /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not 
+      * depending on the Rendering::enableMask() but it can also be used for user-specific tasks. */
     unsigned int enableMask() const { return mEnableMask; }
 
     // uniforms methods

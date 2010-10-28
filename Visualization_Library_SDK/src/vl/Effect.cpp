@@ -41,7 +41,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // Effect
 //-----------------------------------------------------------------------------
-int Effect::evaluateLOD(Actor* actor, Camera* camera)
+int Effect::evaluateLOD(Actor* actor, Camera* camera) const 
 {
   if(mLODEvaluator)
   {
