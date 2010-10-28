@@ -4,6 +4,27 @@
 
 	 <div class="featuretitle">Visualization Library 2010.10.1107</div>
 
+	- <b>API CHANGES</b>
+		- Primitives class renamed <b>DrawCall</b>.
+		- Geometry::primitives() renamed <b>Geometry::drawCalls()</b>.
+		- GlobalSettings renamed <b>Settings</b>.
+		- GlobalSettings::VERBOSITY_* renamed <b>vl::VEL_VERBOSITY_*</b>.
+		- appendActors() renamed <b>extractActors()</b>.
+		- appendVisibleActors() renamed <b>extractVisibleActors()</b>.
+		- compileKdTree() renamed <b>buildKdTree()</b> and <b>rebuildKdTree()</b>.
+	- Draw calls: support to <b>glMultiDrawElementsBaseVertex()</b>, draw call documentation refreshed, fixed default primitive restart index, finalized draw call class inheritance layout.
+	- <b>Effect override mechanics</b> in Rendering class.
+	- New App_EffectOverride demo test.
+	- VirtualFile read/write utility function complete set for type U/S-Int64/32/16/8, Float and Double, both little- and big-endian.
+	- Log class: enforced verbosity level, documentation refreshed.
+	- Geometry bounding box can now be computed from generic vertex attribute #0 if vertex array is not present.
+	- Added silent verbosity level.
+	- vl::String::findInLargeText() function added.
+	- Check for 1 pixel viewport before rendering.
+	- GCC compilation fixes.
+
+	 <div class="featuretitle">Visualization Library 2010.10.1107</div>
+
 	- Near/far plane optimization enhanced implementation + App_NearFarOptimization.hpp test added
 	- Global settings for verbosity level & opengl state check
 	- Nicer log info

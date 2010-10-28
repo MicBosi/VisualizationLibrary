@@ -15,8 +15,8 @@
  
 	<div class="featuretitle">Downloads</div>
 
-	- <a target=_blank href="http://www.visualizationlibrary.com/downloads.php">Download page</a>
 	- \subpage pagChangelog "Changelog"
+	- <a target=_blank href="http://www.visualizationlibrary.com/downloads.php">Download page</a>
  
 	<div class="featuretitle">Getting Started</div>
 
