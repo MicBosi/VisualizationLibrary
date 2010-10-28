@@ -72,9 +72,9 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
   {
     fmat4 matrix = act->transform() ? (fmat4)act->transform()->worldMatrix() : fmat4();
 
-    for(int i=0; i<geom->primitives()->size(); ++i)
+    for(int i=0; i<geom->drawCalls()->size(); ++i)
     {
-      Primitives* prim = geom->primitives()->at(i);
+      DrawCall* prim = geom->drawCalls()->at(i);
       if (prim->primitiveType() == vl::PT_TRIANGLES)
       {
         for(unsigned itri=0; itri<prim->indexCount(); itri+=3)
@@ -184,9 +184,9 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
   {
     dmat4 matrix = act->transform() ? (dmat4)act->transform()->worldMatrix() : dmat4();
 
-    for(int i=0; i<geom->primitives()->size(); ++i)
+    for(int i=0; i<geom->drawCalls()->size(); ++i)
     {
-      Primitives* prim = geom->primitives()->at(i);
+      DrawCall* prim = geom->drawCalls()->at(i);
       if (prim->primitiveType() == vl::PT_TRIANGLES)
       {
         for(unsigned itri=0; itri<prim->indexCount(); itri+=3)
@@ -294,7 +294,7 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
 }
 //-----------------------------------------------------------------------------
 template<class T>
-void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, Actor* act, Geometry* geom, Primitives* prim, int prim_idx)
+void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, Actor* act, Geometry* geom, DrawCall* prim, int prim_idx)
 {
   T v1 = b-a;
   T v2 = c-a;
@@ -325,7 +325,7 @@ void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, Actor
 }
 //-----------------------------------------------------------------------------
 template<class T>
-void RayIntersector::intersectPolygon(const std::vector<T>& polygon, Actor* act, Geometry* geom, Primitives* prim)
+void RayIntersector::intersectPolygon(const std::vector<T>& polygon, Actor* act, Geometry* geom, DrawCall* prim)
 {
   T v1 = polygon[1]-polygon[0];
   T v2 = polygon[2]-polygon[0];
@@ -356,7 +356,7 @@ void RayIntersector::intersectPolygon(const std::vector<T>& polygon, Actor* act,
 }
 //-----------------------------------------------------------------------------
 template<class T>
-void RayIntersector::intersectQuad(const T& a, const T& b, const T& c, const T& d, Actor* act, Geometry* geom, Primitives* prim, int prim_idx)
+void RayIntersector::intersectQuad(const T& a, const T& b, const T& c, const T& d, Actor* act, Geometry* geom, DrawCall* prim, int prim_idx)
 {
   T v1 = b-a;
   T v2 = c-a;

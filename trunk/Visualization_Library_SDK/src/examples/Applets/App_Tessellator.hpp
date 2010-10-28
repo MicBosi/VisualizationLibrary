@@ -118,7 +118,7 @@ public:
     // Fill the vertex array with the tessellated triangles
     *vert_array = tess.tessellatedTris();
     // Add the primitive description
-    tess_poly->primitives()->push_back( new vl::DrawArrays(vl::PT_TRIANGLES,0,vert_array->size()) );
+    tess_poly->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLES,0,vert_array->size()) );
 
     // Bind the created Geometry to the star Actor
     mStar1->lod(0) = tess_poly.get();

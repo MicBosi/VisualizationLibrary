@@ -7,7 +7,7 @@
 	- Near/far plane optimization enhanced implementation + App_NearFarOptimization.hpp test added
 	- Global settings for verbosity level & opengl state check
 	- Nicer log info
-	- Work continued (and still in progress...) on vl::Primitives and subclasses: DrawElements, MultiDrawElements, DrawRangeElements. Support (where possible) for multi instancing, base vertex, primitive restart.
+	- Work continued (and still in progress...) on vl::DrawCall and subclasses: DrawElements, MultiDrawElements, DrawRangeElements. Support (where possible) for multi instancing, base vertex, primitive restart.
 	- New automatic GLSL attribute location binding mechanism
 	- Reviewed & more efficient automatic GLSL 'static' uniform update
 	- Various GLSL related documentation updates

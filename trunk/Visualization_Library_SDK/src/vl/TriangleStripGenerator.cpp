@@ -45,7 +45,7 @@ using namespace vl;
 
 namespace
 {
-  void fillIndices(std::vector<unsigned int>& indices, const Primitives* dc, bool substitute_quads)
+  void fillIndices(std::vector<unsigned int>& indices, const DrawCall* dc, bool substitute_quads)
   {
     indices.clear();
     switch(dc->primitiveType())
@@ -113,9 +113,9 @@ void TriangleStripGenerator::stripfy(Geometry* geom, int cache_size, bool merge_
     dvr.removeDoubles(geom);
   }
 
-  for( int idraw=geom->primitives()->size(); idraw--; )
+  for( int idraw=geom->drawCalls()->size(); idraw--; )
   {
-    Primitives* dc = geom->primitives()->at(idraw);
+    DrawCall* dc = geom->drawCalls()->at(idraw);
 
     triangle_stripper::indices indices;
 
@@ -134,7 +134,7 @@ void TriangleStripGenerator::stripfy(Geometry* geom, int cache_size, bool merge_
     // install new strip
     if (out.size())
     {
-      geom->primitives()->erase(idraw,1);
+      geom->drawCalls()->erase(idraw,1);
       algo2_strip.reserve(indices.size());
       for(unsigned s=0; s<out.size(); ++s)
       {
@@ -147,7 +147,7 @@ void TriangleStripGenerator::stripfy(Geometry* geom, int cache_size, bool merge_
           ref<DrawElementsUInt> draw_elems = new DrawElementsUInt(PT_TRIANGLE_STRIP);
           draw_elems->indices()->resize(algo2_strip.size());
           memcpy(draw_elems->indices()->ptr(), &algo2_strip[0], sizeof(unsigned int)*algo2_strip.size());
-          geom->primitives()->push_back(draw_elems.get());
+          geom->drawCalls()->push_back(draw_elems.get());
         }
         else // TRIANGLES
         {
@@ -158,7 +158,7 @@ void TriangleStripGenerator::stripfy(Geometry* geom, int cache_size, bool merge_
           ref<DrawElementsUInt> draw_elems = new DrawElementsUInt(PT_TRIANGLES);
           draw_elems->indices()->resize(algo2_tris.size());
           memcpy(draw_elems->indices()->ptr(), &algo2_tris[0], sizeof(unsigned int)*algo2_tris.size());
-          geom->primitives()->push_back(draw_elems.get());
+          geom->drawCalls()->push_back(draw_elems.get());
         }
       }
     }

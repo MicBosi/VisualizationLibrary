@@ -253,7 +253,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 			</td>
 			<td valign=top>
 				- vl::DrawArrays
-				- vl::Geometry::primitives()
+				- vl::Geometry::drawCalls()
 			</td>
 		</tr>
 *******************************************************************************
@@ -265,7 +265,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 			</td>
 			<td valign=top>
 				- vl::DrawElements
-				- vl::Geometry::primitives()
+				- vl::Geometry::drawCalls()
 			</td>
 		</tr>
 *******************************************************************************

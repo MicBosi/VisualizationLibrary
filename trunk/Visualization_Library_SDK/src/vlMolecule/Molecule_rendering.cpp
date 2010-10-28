@@ -288,7 +288,7 @@ void Molecule::wireframeStyle()
   }
   *points = pt;
   *colors = cols;
-  geom->primitives()->push_back(new vl::DrawArrays(vl::PT_LINES,0,points->size()));
+  geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_LINES,0,points->size()));
 
   ref<Effect> fx = new Effect;
   fx->shader()->enable(vl::EN_DEPTH_TEST);
@@ -453,7 +453,7 @@ void Molecule::generateRings()
     }
     *points = pt;
     *colors = cols;
-    geom->primitives()->push_back(new vl::DrawArrays(vl::PT_LINES,0,points->size()));
+    geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_LINES,0,points->size()));
 
     ref<Effect> fx = new Effect;
     fx->shader()->enable(vl::EN_DEPTH_TEST);

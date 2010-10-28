@@ -207,9 +207,9 @@ public:
     geom->setVertexArray( vert_array.get() );
     *vert_array = ctrl_points;
     geom->setColorArray(color);
-    geom->primitives()->push_back(new vl::DrawArrays(loop ? vl::PT_LINE_LOOP : vl::PT_LINE_STRIP, 0, vert_array->size()));
+    geom->drawCalls()->push_back(new vl::DrawArrays(loop ? vl::PT_LINE_LOOP : vl::PT_LINE_STRIP, 0, vert_array->size()));
     if (points) 
-      geom->primitives()->push_back(new vl::DrawArrays(vl::PT_POINTS, 0, vert_array->size()));
+      geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_POINTS, 0, vert_array->size()));
 
     // adds the geometry to the scene
     return sceneManager()->tree()->addActor( geom.get(), effect.get(), NULL );

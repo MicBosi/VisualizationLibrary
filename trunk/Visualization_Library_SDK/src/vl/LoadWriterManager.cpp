@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vl/Actor.hpp>
-#include <vl/Primitives.hpp>
+#include <vl/DrawCall.hpp>
 #include <vl/Geometry.hpp>
 #include <vl/LoadWriterManager.hpp>
 #include <vl/Log.hpp>

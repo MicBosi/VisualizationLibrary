@@ -38,20 +38,20 @@
 namespace vl 
 {
   //------------------------------------------------------------------------------
-  // Primitives
+  // DrawCall
   //------------------------------------------------------------------------------
   /** The base class of DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays 
-   * which are used by Geometry to define a set of primitives to be rendered, see Geometry::primitives().
+   * which are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
    *
    * \sa DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
-  class Primitives: public Object
+  class DrawCall: public Object
   {
   public:
-    virtual const char* className() { return "Primitives"; }
+    virtual const char* className() { return "DrawCall"; }
 
-    Primitives(): mType(PT_TRIANGLES), mEnabled(true) {}
+    DrawCall(): mType(PT_TRIANGLES), mEnabled(true) {}
 
-    Primitives& operator=(const Primitives& other)
+    DrawCall& operator=(const DrawCall& other)
     {
       mType      = other.mType;
       mEnabled   = other.mEnabled;
@@ -62,7 +62,7 @@ namespace vl
     EPrimitiveType primitiveType() const { return mType; }
 
     virtual void render(bool use_vbo = true) const = 0;
-    virtual ref<Primitives> clone() const = 0;
+    virtual ref<DrawCall> clone() const = 0;
 
     virtual void deleteVBOs() = 0;
     virtual void updateVBOs(bool discard_local_data = false)  = 0;

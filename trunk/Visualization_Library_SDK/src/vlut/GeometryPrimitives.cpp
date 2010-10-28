@@ -127,7 +127,7 @@ ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real radius, int detail, bool
 
   geom->setVertexArray(coords.get());
   geom->setNormalArray(norms.get());
-  geom->primitives()->push_back(polys.get());
+  geom->drawCalls()->push_back(polys.get());
 
   geom->shrinkDrawElements();
 
@@ -170,7 +170,7 @@ ref<Geometry> vlut::makeUVSphere( const vec3& origin, Real diameter, int phi, in
 
   ref<DrawElementsUInt> quads = new DrawElementsUInt( PT_QUADS );
   quads->indices()->resize( (theta-1)*phi*4 );
-  geom->primitives()->push_back(quads.get());
+  geom->drawCalls()->push_back(quads.get());
   int idx = 0;
   for(int i=0; i<theta-1; ++i)
   {
@@ -187,7 +187,7 @@ ref<Geometry> vlut::makeUVSphere( const vec3& origin, Real diameter, int phi, in
 
   ref<DrawElementsUInt> tris = new DrawElementsUInt( PT_TRIANGLES );
   tris->indices()->resize( phi*3 + phi*3 );
-  geom->primitives()->push_back(tris.get());
+  geom->drawCalls()->push_back(tris.get());
   idx = 0;
   // top fan
   for(int j=0; j<phi; ++j)
@@ -235,7 +235,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
 
   ref<DrawElementsUInt> quads = new DrawElementsUInt( PT_QUADS );
   quads->indices()->resize( (theta-1)*phi*4 );
-  geom->primitives()->push_back(quads.get());
+  geom->drawCalls()->push_back(quads.get());
   int idx = 0;
   for(int i=0; i<theta-1; ++i)
   {
@@ -254,7 +254,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
   {
     ref<DrawElementsUInt> tris = new DrawElementsUInt( PT_TRIANGLE_FAN );
     tris->indices()->resize( phi+2 );
-    geom->primitives()->push_back(tris.get());
+    geom->drawCalls()->push_back(tris.get());
     idx = 0;
 
     int fan_center = vert_idx;
@@ -276,7 +276,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
   {
     ref<DrawElementsUInt> tris = new DrawElementsUInt( PT_TRIANGLE_FAN );
     tris->indices()->resize( phi+2 );
-    geom->primitives()->push_back(tris.get());
+    geom->drawCalls()->push_back(tris.get());
     idx = 0;
 
     int fan_center = vert_idx;
@@ -348,7 +348,7 @@ ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness
   }
 
   ref<DrawElementsUInt> polys = new DrawElementsUInt( PT_QUADS );
-  geom->primitives()->push_back(polys.get());
+  geom->drawCalls()->push_back(polys.get());
   int idx = 0;
   polys->indices()->resize( theta * phi * 4 );
   // create indices
@@ -411,7 +411,7 @@ ref<Geometry> vlut::makeBox( const vec3& origin, Real xside, Real yside, Real zs
   fvec3 a7( (fvec3)(vec3(+x,-y,-z) + origin) );
 
   ref<DrawArrays> polys = new DrawArrays(PT_QUADS, 0, 24);
-  geom->primitives()->push_back( polys.get() );
+  geom->drawCalls()->push_back( polys.get() );
 
   vert3->resize( 24  );
 
@@ -456,7 +456,7 @@ ref<Geometry> vlut::makePyramid( const vec3& origin, Real side, Real height)
   fvec3 a4( (fvec3)(vec3(+x,+0,-z) + origin) );
 
   ref<DrawArrays> polys = new DrawArrays(PT_TRIANGLES, 0, 6*3);
-  geom->primitives()->push_back( polys.get() );
+  geom->drawCalls()->push_back( polys.get() );
 
   vert3->resize(6*3);
 
@@ -494,7 +494,7 @@ ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, in
   // top fan
   ref<DrawElementsUInt> top_fan = new DrawElementsUInt(PT_TRIANGLE_FAN);
   top_fan->indices()->resize(phi+2);
-  geom->primitives()->push_back(top_fan.get());
+  geom->drawCalls()->push_back(top_fan.get());
   int idx = 0;
   top_fan->indices()->at(idx++) = 0;
   for(int j=0; j<phi+1; ++j)
@@ -514,7 +514,7 @@ ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, in
 
     ref<DrawElementsUInt> bottom_fan = new DrawElementsUInt(PT_TRIANGLE_FAN);
     bottom_fan->indices()->resize(phi+2);
-    geom->primitives()->push_back(bottom_fan.get());
+    geom->drawCalls()->push_back(bottom_fan.get());
     idx = 0;
     bottom_fan->indices()->at(idx++) = fan_center;
     for(int j=0; j<phi+1; ++j)
@@ -566,7 +566,7 @@ ref<Geometry> vlut::makeGrid( const vec3& origin, Real xside, Real zside, int x,
 
   // create indices
   ref<DrawElementsUInt> polys = new DrawElementsUInt(PT_TRIANGLES);
-  geom->primitives()->push_back(polys.get());
+  geom->drawCalls()->push_back(polys.get());
   int idx = 0;
   polys->indices()->resize( (z-1)*(x-1)*6 );
   for(int i=0; i<z-1; ++i)
@@ -603,7 +603,7 @@ ref<Geometry> vlut::makePoints( const std::vector< vec3>& pos, const fvec4& colo
     col4->at(i)  = color;
   }
 
-  geom->primitives()->push_back( new DrawArrays(PT_POINTS, 0, vert3->size() ));
+  geom->drawCalls()->push_back( new DrawArrays(PT_POINTS, 0, vert3->size() ));
 
   geom->shrinkDrawElements();
   return geom;
@@ -649,7 +649,7 @@ ref<Geometry> vlut::makeIcosahedron( const vec3& origin, Real diameter )
   };
 
   ref<DrawElementsUInt> polys = new DrawElementsUInt;
-  geom->primitives()->push_back(polys.get());
+  geom->drawCalls()->push_back(polys.get());
   polys->indices()->resize(20*3);
   memcpy(polys->indices()->ptr(), faces, sizeof(int)*20*3);
 
@@ -671,7 +671,7 @@ ref<Geometry> vlut::makeCircle( vec3 origin, Real radius, int slices )
     vec3 v = mat4::rotation(t,0,1,0) * vec3(radius,0,0) + origin;
     points->at(i) = (fvec3)v;
   }
-  geom->primitives()->push_back( new DrawArrays(PT_LINE_LOOP, 0, points->size()) );
+  geom->drawCalls()->push_back( new DrawArrays(PT_LINE_LOOP, 0, points->size()) );
 
   geom->shrinkDrawElements();
   return geom;
@@ -719,8 +719,8 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
     }
     ref<DrawElementsUInt> de_up = new DrawElementsUInt(PT_QUADS);
     ref<DrawElementsUInt> de_lo = new DrawElementsUInt(PT_QUADS);
-    geom->primitives()->push_back(de_up.get());
-    geom->primitives()->push_back(de_lo.get());
+    geom->drawCalls()->push_back(de_up.get());
+    geom->drawCalls()->push_back(de_lo.get());
     de_up->indices()->resize(segments*4);
     de_lo->indices()->resize(segments*4);
     int upup = segments*0;
@@ -744,7 +744,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
   else
   {
     ref<DrawElementsUInt> de_up = new DrawElementsUInt(PT_QUADS);
-    geom->primitives()->push_back(de_up.get());
+    geom->drawCalls()->push_back(de_up.get());
     de_up->indices()->resize(segments*4);
     int upup = segments*0;
     int uplo = segments*1;
@@ -777,7 +777,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
       cols.push_back(top_col);
     }
     ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
-    geom->primitives()->push_back(de.get());
+    geom->drawCalls()->push_back(de.get());
     de->indices()->resize(segments);
     for(int i=0,j=segments; j--; ++i)
       de->indices()->at(j) = start + i;
@@ -793,7 +793,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
       cols.push_back(bottom_col);
     }
     ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
-    geom->primitives()->push_back(de.get());
+    geom->drawCalls()->push_back(de.get());
     de->indices()->resize(segments);
     for(int i=0; i<segments; ++i)
       de->indices()->at(i) = start + i;
@@ -818,7 +818,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
     cols.push_back(top_col);
 
     ref<DrawElementsUInt> de_quads = new DrawElementsUInt(PT_QUADS);
-    geom->primitives()->push_back(de_quads.get());
+    geom->drawCalls()->push_back(de_quads.get());
     de_quads->indices()->resize(segments*(segments2-1)*4);
     for(int j=0,idx=0; j<segments2-1; ++j)
     {
@@ -835,7 +835,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
     }
 
     ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
-    geom->primitives()->push_back(de.get());
+    geom->drawCalls()->push_back(de.get());
     de->indices()->resize(segments+2);
     de->indices()->at(0) = (GLuint)verts.size()-1;
     for(int i=0; i<segments+1; ++i)
@@ -860,7 +860,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
     cols.push_back(bottom_col);
 
     ref<DrawElementsUInt> de_quads = new DrawElementsUInt(PT_QUADS);
-    geom->primitives()->push_back(de_quads.get());
+    geom->drawCalls()->push_back(de_quads.get());
     de_quads->indices()->resize(segments*(segments2-1)*4);
     for(int j=0,idx=0; j<segments2-1; ++j)
     {
@@ -877,7 +877,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
     }
 
     ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
-    geom->primitives()->push_back(de.get());
+    geom->drawCalls()->push_back(de.get());
     de->indices()->resize(segments+2);
     de->indices()->at(0) = (GLuint)verts.size()-1;
     for(int i=0; i<segments+1; ++i)

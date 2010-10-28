@@ -261,8 +261,8 @@ public:
       if (mOptSortTriangles)
       {
         vl::Log::print("Triangle sorting.\n");
-        for(int i=0; i<geom->primitives()->size(); ++i)
-          geom->primitives()->at(i)->sortTriangles();
+        for(int i=0; i<geom->drawCalls()->size(); ++i)
+          geom->drawCalls()->at(i)->sortTriangles();
       }
 
       if (mOptStripfy1)
@@ -327,12 +327,12 @@ public:
           geom->colorizePrimitives();
       }
 
-      orig_primitives += it->second->primitives()->size();
-      resu_primitives += geom->primitives()->size();
-      for(int iprim=0; iprim<it->second->primitives()->size(); ++iprim)
-        orig_indices += it->second->primitives()->at(iprim)->indexCount();
-      for(int iprim=0; iprim<geom->primitives()->size(); ++iprim)
-        resu_indices += geom->primitives()->at(iprim)->indexCount();
+      orig_primitives += it->second->drawCalls()->size();
+      resu_primitives += geom->drawCalls()->size();
+      for(int iprim=0; iprim<it->second->drawCalls()->size(); ++iprim)
+        orig_indices += it->second->drawCalls()->at(iprim)->indexCount();
+      for(int iprim=0; iprim<geom->drawCalls()->size(); ++iprim)
+        resu_indices += geom->drawCalls()->at(iprim)->indexCount();
       orig_vertices += it->second->vertexArray()->size();
       resu_vertices += geom->vertexArray()->size();
     }
