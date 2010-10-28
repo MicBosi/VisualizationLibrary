@@ -1,0 +1,13 @@
+/**
+
+	\page pagGuideClipping Clipping Planes Tutorial
+
+	This tutorial shows how to use clipping, planes, how to animate them and how to use them with multipassing rendering.
+	
+	\image html pagGuideClipping.jpg
+	
+	[From \p App_ClipPlanes.hpp]
+	\dontinclude App_ClipPlanes.hpp
+	\skip class
+	\until // Have fun!
+*/
