@@ -91,11 +91,13 @@ namespace vl
   */
   class Effect: public Object
   {
-    // fixme
+    // mic fixme: well define these
     Effect(const Effect&): Object() {}
     Effect& operator=(const Effect&) { return *this; }
+
   public:
     virtual const char* className() { return "Effect"; }
+
     /** Constructor. */
     Effect() 
     { 
@@ -103,38 +105,36 @@ namespace vl
         mObjectName = className();
       #endif
       mEnableMask = 0xFFFFFFFF;
-      //clear(); 
       mRenderRank = 0;
+      mActiveLod  = 0;
       mLODShaders[0] = new ShaderSequence(new Shader);
     }
-    /** Destructor. */
-    ~Effect() {}
 
     /** Modifies the rendering rank of an Actor.
-     The rendering rank affects the order in which an Actor is rendered, the greater the rank the later the Actor is rendered. The default render rank is zero.
-
-     To know more about rendering order please see \ref pagGuideRenderOrder "Rendering Order".
-
-     \sa Actor::setRenderRank(), Actor::setRenderBlock()
-    */
+      * The rendering rank affects the order in which an Actor is rendered, the greater the rank the later the Actor is rendered. The default render rank is zero.
+      *
+      * To know more about rendering order please see \ref pagGuideRenderOrder "Rendering Order".
+      *
+      * \sa Actor::setRenderRank(), Actor::setRenderBlock() */
     void setRenderRank(int rank) { mRenderRank = rank; }
 
     /** Returns the rendering rank of an Effect. */
     int renderRank() const { return mRenderRank; }
 
     /** Returns the ShaderSequence representing the specified LOD level.
-    \note lod_index must be < VL_MAX_EFFECT_LOD
-    */
+      * \note It must be: 0 <= \p lod_level < VL_MAX_EFFECT_LOD. */
     const ref<ShaderSequence>& lod(int lod_level) const { return mLODShaders[lod_level]; }
+    
     /** Returns the ShaderSequence representing the specified LOD level.
-    \note lod_index must be < VL_MAX_EFFECT_LOD
-    */
+      * \note It must be: 0 <= \p lod_level < VL_MAX_EFFECT_LOD. */
     ref<ShaderSequence>& lod(int lod_level) { return mLODShaders[lod_level]; }
 
     /** Utility function, same as \p 'lod(lodi)->at(pass);' */
     Shader* shader(int lodi=0, int pass=0) { return lod(lodi)->at(pass); }
+    
     /** Utility function, same as \p 'lod(lodi)->at(pass);' */
     const Shader* shader(int lodi=0, int pass=0) const { return lod(lodi)->at(pass); }
+    
     /** Utility function, same as \p 'lod(lodi) = new ShaderSequence(shader1,shader2,shader3,shader4);' */
     void setLOD(int lodi, Shader* shader1, Shader* shader2=NULL, Shader* shader3=NULL, Shader* shader4=NULL) 
     { 
@@ -153,15 +153,28 @@ namespace vl
 
     /** The enable mask of an Actor's Effect defines whether the actor should be rendered or not depending on the Rendering::enableMask(). */
     void setEnableMask(unsigned int mask) { mEnableMask = mask; }
+
     /** The enable mask of an Actor's Effect defines whether the actor should be rendered or not depending on the Rendering::enableMask(). */
     unsigned int enableMask() const { return mEnableMask; }
 
     /** If a LODEvaluator is installed computes the effect LOD to be used otherwise returns 0. */
-    int evaluateLOD(Actor* actor, Camera* camera) const;
+    int evaluateLOD(Actor* actor, Camera* camera);
+
+    /** Sets the lod to be used for rendering. It must be: 0 <= lod < VL_MAX_EFFECT_LOD. */
+    void setActiveLod(int lod) 
+    { 
+      VL_CHECK( lod < VL_MAX_EFFECT_LOD )
+      VL_CHECK( lod >= 0 )
+      mActiveLod = lod; 
+    }
+
+    /** Returns the lod to be used for rendering. */
+    int activeLod() const { return mActiveLod; }
 
   protected:
     ref<ShaderSequence> mLODShaders[VL_MAX_EFFECT_LOD];
     ref<LODEvaluator> mLODEvaluator;
+    int mActiveLod;
     int mRenderRank;
     unsigned int mEnableMask;
   };

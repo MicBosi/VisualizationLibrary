@@ -41,15 +41,16 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // Effect
 //-----------------------------------------------------------------------------
-int Effect::evaluateLOD(Actor* actor, Camera* camera) const 
+int Effect::evaluateLOD(Actor* actor, Camera* camera) 
 {
   if(mLODEvaluator)
   {
-    int lod = mLODEvaluator->evaluate(actor, camera);
-    VL_CHECK( lod < VL_MAX_EFFECT_LOD )
-    VL_CHECK( lod >= 0 )
-    return lod;
+    mActiveLod = mLODEvaluator->evaluate(actor, camera);
   }
-  else
-    return 0;
+
+  VL_CHECK( mActiveLod < VL_MAX_EFFECT_LOD )
+  VL_CHECK( mActiveLod >= 0 )
+
+  return mActiveLod;
 }
+//-----------------------------------------------------------------------------
