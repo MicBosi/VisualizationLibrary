@@ -262,6 +262,7 @@ void VisualizationLibrary::init()
       case vl::VEL_VERBOSITY_DEBUG:  Log::print("DEBUG\n"); break;
     }
     Log::print( Say("Check OpenGL States = %s\n") << (settings()->checkOpenGLStates()?"YES":"NO") );
+    Log::print( Say("Check Transform Siblings = %s\n") << (settings()->checkTransformSiblings()?"YES":"NO") );
 
     Log::print("\n");
   }
