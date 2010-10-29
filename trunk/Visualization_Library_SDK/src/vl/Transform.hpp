@@ -44,85 +44,175 @@ namespace vl
   //------------------------------------------------------------------------------
   // Transform
   //------------------------------------------------------------------------------
-  /**
-   * Implements a 4x4 matrix transform usually used to define the position and 
-   * orientation of an Actor.
-   *
-   * Transforms can be linked together to create a tree-like hierarchy.
-   *
-   * \sa Actor, Effect, Renderable, Geometry
-  */
+  /** Implements a 4x4 matrix transform used to define the position and orientation of an Actor.
+    *
+    * Transforms can be linked together to create a tree-like hierarchy.
+    *
+    * \par Optimizing Your Transforms
+    *
+    * - Don't use them unless strictly necessary: if an Actor uses an I (identity) transform you do not need one, just call \p vl::Actor::setTransform(NULL).
+    *
+    * - Don't create Transform hierarchies if not needed. Just call setLocalAndWorldMatrix() per-Transform if you have a set of parent-less Transforms.
+    *
+    * - If the root of a hierarchy is an I (identity) transform, let VL know it by calling \p setAssumeIdentityWorldMatrix(true). This will save
+    *   unnecessary matrix multiplications since multiplying by an identity matrix has no effect.
+    *
+    * - Call computeWorldMatrix() / computeWorldMatrixRecursive() not at each frame but only if the local matrix has actually changed.
+    *
+    * - Do not add a Transform hierarchy to vl::Rendering::transform() if such Transforms are not animated every frame, 
+    *   this will cause VL unnecessarily update the Transforms at each frame.
+    *
+    * - Remember: VL does not require your Actors to have a Transform or such Transforms to be part of any hierarchy, it just expect that the 
+    *   worldMatrix() of an Actor's Transform (if it has any) is up to date at rendering time. How and when they are updated can be fine 
+    *   tuned by the user according to the specific application needs.
+    *
+    * \sa setLocalAndWorldMatrix(), setAssumeIdentityWorldMatrix(), Rendering::transform()
+    * \sa Actor, Rendering, Effect, Renderable, Geometry */
   class Transform: public Object
   {
   public:
     virtual const char* className() { return "Transform"; }
+
+    /** Constructor. */
     Transform(): mParent(NULL), mWorldMatrixUpdateTick(0), mAssumeIdentityWorldMatrix(false) 
     { 
       #ifndef NDEBUG
         mObjectName = className();
       #endif
     }
+
+    /** Constructor. The \p matrix parameter is used to set both the local and world matrix. */
     Transform(const mat4& matrix): mParent(NULL), mAssumeIdentityWorldMatrix(false) 
     { 
-      setLocalMatrix(matrix); 
+      setLocalMatrix(matrix);
+      setWorldMatrix(matrix);
       #ifndef NDEBUG
         mObjectName = className();
       #endif
     }
-    virtual ~Transform();
 
+    /** Returns the children Transforms. */
+    const std::vector< ref<Transform> >& children() const { return mChildren; }
+
+    /** Adds a child transform. */
     void addChild(Transform* child);
-    void setChild(int index, Transform* child);
-    int childCount() const;
-    Transform* child(int i);
-    Transform* lastChild();
-    void eraseChild(Transform* child);
-    void eraseChildren(int index, int count);
-    void eraseAllChildren();
+    
+    /** Adds \p count children transforms. */
+    void addChildren(Transform* const *, size_t count);
+    
+    /** Adds \p count children transforms. */
+    void addChildren(const ref<Transform>*, size_t count);
+    
+    /** Adds the specified \p children transforms. */
+    void addChildren(const std::vector< Transform* >& children);
+    
+    /** Adds the specified \p children transforms. */
+    void addChildren(const std::vector< ref<Transform> >& children);
 
+    /** Minimizes the amount of memory used to store the children Transforms. */
+    void shrink();
+
+    /** Minimizes recursively the amount of memory used to store the children Transforms. */
+    void shrinkRecursive();
+
+    /** Sets the \p index-th child. */
+    void setChild(int index, Transform* child);
+    
+    /** Returns the number of children a Transform has. */
+    int childCount() const;
+    
+    /** Returns the i-th child Transform. */
+    Transform* child(int i);
+    
+    /** Returns the last child. */
+    Transform* lastChild();
+    
+    /** Removes the given \p child Transform. */
+    void eraseChild(Transform* child);
+    
+    /** Removes \p count children Transforms starting at position \p index. */
+    void eraseChildren(int index, int count);
+    
+    /** Removes all the children of a Transform. */
+    void eraseAllChildren();
+    
+    /** Removes all the children of a Transform recursively descending the hierachy. */
     void eraseAllChildrenRecursive();
 
+    /** Returns the parent of a Transform. */
     const Transform* parent() const { return mParent; }
+    
+    /** Returns the parent of a Transform. */
     Transform* parent() { return mParent; }
+    
+    /** Returns the matrix computed concatenating this Transform's local matrix with its parents' local matrices. */
     mat4 getComputedWorldMatrix();
 
-    //! Sets the local matrix. After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive()
-    void setLocalMatrix(const mat4& matrix);
-    //! Returns the local matrix
+    /** Returns the local matrix. */
     const mat4& localMatrix() const;
 
-    //! Utility function equivalent to \p setLocalMatrix( mat4::translation(x,y,z)*localMatrix() )
+    /** Sets the local matrix. 
+      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
+    void setLocalMatrix(const mat4& matrix);
+    
+    /** Utility function equivalent to \p setLocalMatrix( mat4::translation(x,y,z)*localMatrix() ).
+      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void translate(Real x, Real y, Real z);
-    //! Utility function equivalent to \p setLocalMatrix( mat4::translation(t)*localMatrix() )
+    
+    /** Utility function equivalent to \p setLocalMatrix( mat4::translation(t)*localMatrix() ).
+      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void translate(const vec3& t);
-    //! Utility function equivalent to \p setLocalMatrix( mat4::scaling(x,y,z)*localMatrix() )
+    
+    /** Utility function equivalent to \p setLocalMatrix( mat4::scaling(x,y,z)*localMatrix() ).
+      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void scale(Real x, Real y, Real z);
-    //! Utility function equivalent to \p setLocalMatrix( mat4::rotation(degrees,x,y,z)*localMatrix() )
+    
+    /** Utility function equivalent to \p setLocalMatrix( mat4::rotation(degrees,x,y,z)*localMatrix() ).
+      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void rotate(Real degrees, Real x, Real y, Real z);
-    //! Utility function equivalent to \p setLocalMatrix( mat4::rotation(from,to)*localMatrix() )
+    
+    /** Utility function equivalent to \p setLocalMatrix( mat4::rotation(from,to)*localMatrix() ).
+      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void rotate(const vec3& from, const vec3& to);
 
+    /** Sets both the local and the world matrices.
+      * This function is useful to quickly set those Transforms that do not have a parent, for which
+      * is equivalent to: \p setLocalMatrix(matrix); \p computeWorldMatrix(NULL); */
+    void setLocalAndWorldMatrix(const mat4& matrix)
+    { 
+      mLocalMatrix = matrix;
+      setWorldMatrix(matrix);
+    }
+
+    /** Computes the world matrix by concatenating the parent's world matrix with this' local matrix. */
     virtual void computeWorldMatrix(Camera* camera=NULL);
+
+    /** Computes the world matrix by concatenating the parent's world matrix with this' local matrix, recursively descending to the children. */
     void computeWorldMatrixRecursive(Camera* camera=NULL);
+
+    /** Returns the world matrix used for rendering. */
     const mat4& worldMatrix() const;
+
+    /** Returns the internal update tick used to avoid unnecessary computations. The world matrix thick 
+      * gets incremented every time the setWorldMatrix() or setLocalAndWorldMatrix() functions are called. */
     long long worldMatrixUpdateTick() const { return mWorldMatrixUpdateTick; }
 
-    /**
-     * If set to true the world matrix of this transform will always be considered and identity.
-     *
-     * Is usually used to save calculations for top Transforms with many sub-Transforms.
-    */
-    void setAlwaysIdentityWorldMatrix(bool assume_I) { mAssumeIdentityWorldMatrix = assume_I; }
+    /** If set to true the world matrix of this transform will always be considered and identity.
+      * Is usually used to save calculations for top Transforms with many sub-Transforms. */
+    void setAssumeIdentityWorldMatrix(bool assume_I) { mAssumeIdentityWorldMatrix = assume_I; }
 
-    /**
-     * If set to true the world matrix of this transform will always be considered and identity.
-     *
-     * Is usually used to save calculations for top Transforms with many sub-Transforms.
-    */
-    bool alwaysIdentityWorldMatrix() { return mAssumeIdentityWorldMatrix; }
+    /** If set to true the world matrix of this transform will always be considered and identity.
+      * Is usually used to save calculations for top Transforms with many sub-Transforms. */
+    bool assumeIdentityWorldMatrix() { return mAssumeIdentityWorldMatrix; }
+
+    /** Checks whether there are duplicated entries in the Transform's children list. */
+    bool hasDuplicatedChildren() const;
+
+    /** Normally you should not use directly this function, call it only if you are sure you cannot do otherwise. 
+      * Calling this function will also increment the worldMatrixUpdateTick(). */
+    void setWorldMatrix(const mat4& matrix);
 
   protected:
-    void setWorldMatrix(const mat4& matrix);
     mat4 mWorldMatrix; 
     mat4 mLocalMatrix;
     std::vector< ref<Transform> > mChildren;

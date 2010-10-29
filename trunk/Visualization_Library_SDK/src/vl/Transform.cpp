@@ -30,17 +30,16 @@
 /**************************************************************************************/
 
 #include <vl/Transform.hpp>
+#include <vl/VisualizationLibrary.hpp>
+#include <vl/Log.hpp>
 #include <vl/Camera.hpp>
 #include <algorithm>
+#include <set>
 
 using namespace vl;
 
 //-----------------------------------------------------------------------------
 // Transform
-//-----------------------------------------------------------------------------
-Transform::~Transform()
-{
-}
 //-----------------------------------------------------------------------------
 int Transform::childCount() const 
 { 
@@ -60,6 +59,7 @@ Transform* Transform::lastChild()
 //-----------------------------------------------------------------------------
 void Transform::setChild(int index, Transform* child)
 {
+  VL_CHECK(child)
   VL_CHECK( index < (int)mChildren.size() )
   mChildren[index]->mParent = NULL;
   mChildren[index] = child;
@@ -70,9 +70,69 @@ void Transform::addChild(Transform* child)
 {
   VL_CHECK(child != NULL)
   VL_CHECK(child->mParent == NULL)
-  VL_CHECK(std::find(mChildren.begin(), mChildren.end(), child) == mChildren.end());
+
   mChildren.push_back(child);
   child->mParent = this;
+
+  if (VisualizationLibrary::settings()->checkTransformSiblings())
+    if (hasDuplicatedChildren())
+      vl::Log::error("Transform::addChild(): detected duplicated children.\n");
+}
+//-----------------------------------------------------------------------------
+void Transform::addChildren(const std::vector< Transform* >& children)
+{
+  if (children.size())
+    addChildren( &children[0], children.size() );
+}
+//-----------------------------------------------------------------------------
+void Transform::addChildren(const std::vector< ref<Transform> >& children)
+{
+  if (children.size())
+    addChildren( &children[0], children.size() );
+}
+//-----------------------------------------------------------------------------
+void Transform::addChildren(const ref<Transform>* children, size_t count)
+{
+  VL_CHECK(children != NULL)
+
+  if (count)
+  {
+    size_t insert_point = mChildren.size();
+    mChildren.resize(mChildren.size() + count);
+    vl::ref<Transform>* ptr = &mChildren[insert_point];
+    for(size_t i=0; i<count; ++i, ++ptr)
+    {
+      VL_CHECK(children[i]->mParent == NULL);
+      children[i]->mParent = this;
+      (*ptr) = children[i];
+    }
+
+    if (VisualizationLibrary::settings()->checkTransformSiblings())
+      if (hasDuplicatedChildren())
+        vl::Log::error("Transform::addChildren(): detected duplicated children.\n");
+  }
+}
+//-----------------------------------------------------------------------------
+void Transform::addChildren(Transform* const * children, size_t count)
+{
+  VL_CHECK(children != NULL)
+
+  if (count)
+  {
+    size_t insert_point = mChildren.size();
+    mChildren.resize(mChildren.size() + count);
+    vl::ref<Transform>* ptr = &mChildren[insert_point];
+    for(size_t i=0; i<count; ++i, ++ptr)
+    {
+      VL_CHECK(children[i]->mParent == NULL);
+      children[i]->mParent = this;
+      (*ptr) = children[i];
+    }
+
+    if (VisualizationLibrary::settings()->checkTransformSiblings())
+      if (hasDuplicatedChildren())
+        vl::Log::error("Transform::addChildren(): detected duplicated children.\n");
+  }
 }
 //-----------------------------------------------------------------------------
 void Transform::eraseChild(Transform* child)
@@ -120,18 +180,18 @@ void Transform::eraseAllChildrenRecursive()
 //-----------------------------------------------------------------------------
 void Transform::computeWorldMatrix(Camera*)
 {
-  if( alwaysIdentityWorldMatrix() )
+  if( assumeIdentityWorldMatrix() )
   {
     setWorldMatrix(mat4()); 
   }
   else
-  /* top Transforms are usually alwaysIdentityWorldMatrix() == true for performance reasons */
-  if( parent() && !parent()->alwaysIdentityWorldMatrix() )
+  /* top Transforms are usually assumeIdentityWorldMatrix() == true for performance reasons */
+  if( parent() && !parent()->assumeIdentityWorldMatrix() )
   {
     setWorldMatrix( parent()->worldMatrix() * localMatrix() );
   }
   else
-    setWorldMatrix(localMatrix());
+    setWorldMatrix( localMatrix() );
 }
 //-----------------------------------------------------------------------------
 void Transform::setWorldMatrix(const mat4& matrix) 
@@ -192,7 +252,6 @@ void Transform::rotate(const vec3& from, const vec3& to)
   setLocalMatrix( mat4::rotation(from,to)*localMatrix() );
 }
 //-----------------------------------------------------------------------------
-//! Returns the matrix computed concatenating this transform's matrix with its parents'.
 mat4 Transform::getComputedWorldMatrix()
 {
   mat4 world = localMatrix();
@@ -212,5 +271,25 @@ void Transform::computeWorldMatrixRecursive(Camera* camera)
     mChildren[i]->computeWorldMatrixRecursive(camera);
 }
 //-----------------------------------------------------------------------------
+bool Transform::hasDuplicatedChildren() const
+{
+  std::set<const Transform*> tr_set;
+  for(size_t i=0; i<mChildren.size(); ++i)
+    tr_set.insert(mChildren[i].get());
 
-
+  return tr_set.size() != mChildren.size();
+}
+//-----------------------------------------------------------------------------
+void Transform::shrink()
+{
+  std::vector< ref<Transform> > tmp (mChildren);
+  mChildren.swap(tmp);
+}
+//-----------------------------------------------------------------------------
+void Transform::shrinkRecursive()
+{
+  shrink();
+  for(size_t i=0; i<mChildren.size(); ++i)
+    mChildren[i]->shrinkRecursive();
+}
+//-----------------------------------------------------------------------------
