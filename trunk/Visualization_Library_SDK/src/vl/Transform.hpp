@@ -115,6 +115,12 @@ namespace vl
     /** Minimizes recursively the amount of memory used to store the children Transforms. */
     void shrinkRecursive();
 
+    /** Reserves space for \p count children. This function is very useful when you need to add one by one a large number of children transforms. 
+      * \note This function does not affect the number of children, it only reallocates the buffer used to store them 
+      * so that it's large enough to \p eventually contain \p count of them. This will make subsequent calls to addChild() quicker
+      * as fewer or no reallocations of the buffer will be needed. */
+    void reserveChildren(size_t count) { mChildren.reserve(count); }
+
     /** Sets the \p index-th child. */
     void setChild(int index, Transform* child);
     
