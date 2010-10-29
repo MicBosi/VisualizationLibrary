@@ -41,7 +41,7 @@ namespace vlut
   typedef enum { CC_FlatCap, CC_RoundedCap, CC_NoCap } ECapsuleCap;
 
   //! Creates a sphere by iteratively subdividing an icosahedron.
-  vl::ref<vl::Geometry> makeIcosphere( const vl::vec3& pos, vl::Real radius=1, int detail=2, bool remove_doubles = true );
+  vl::ref<vl::Geometry> makeIcosphere( const vl::vec3& pos, vl::Real diameter=1, int detail=2, bool remove_doubles = true );
   //! Creates a cylinder
   vl::ref<vl::Geometry> makeCylinder( const vl::vec3& origin, vl::Real diameter=1, vl::Real height=1, int phi=20, int theta=2, bool top=true, bool bottom=true );
   //! Creates a uv sphere
