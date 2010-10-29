@@ -71,6 +71,7 @@ set(VL_APPLETS
   App_RotatingCube.hpp
   App_ScatterPlot3D.hpp
   App_ShaderLOD.hpp
+  App_ShaderOverride.hpp
   App_Terrain.hpp
   App_Tessellator.hpp
   App_TextRendering.hpp
