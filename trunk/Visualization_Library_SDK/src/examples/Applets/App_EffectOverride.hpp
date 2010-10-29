@@ -48,10 +48,12 @@ class App_EffectOverride: public BaseDemo
     BaseDemo::initEvent();
 
     mRendering1 = new vl::Rendering;
-    *mRendering1 = *(vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
     mRendering2  = new vl::Rendering;
+    *mRendering1 = *(vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
     *mRendering2  = *(vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
-    mRendering2->setClearFlags(vl::CF_CLEAR_DEPTH);
+    // create its own copy of the renderer
+    mRendering2->setRenderer( new vl::Renderer );
+    mRendering2->renderer()->setClearFlags(vl::CF_CLEAR_DEPTH);
 
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
     vl::VisualizationLibrary::setRendering(render_tree.get());
@@ -86,37 +88,31 @@ class App_EffectOverride: public BaseDemo
     vl::Actor* cube2 = scene_manager->tree()->addActor( cube.get(), effect.get(), mCubeTransform2.get() );
     vl::Actor* cube3 = scene_manager->tree()->addActor( cube.get(), effect.get(), mCubeTransform3.get() );
 
-    cube1->setEnableMask(0x01);
-    cube2->setEnableMask(0x02);
-    cube3->setEnableMask(0x04);
-
     vl::ref<vl::Effect> fx1 = new vl::Effect;
-    fx1->shader()->setRenderState( new vl::Light(0) );
     fx1->shader()->enable(vl::EN_LIGHTING);
     fx1->shader()->gocMaterial()->setFlatColor(vlut::red);
     fx1->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
     fx1->shader()->gocLineWidth()->set(2.5f);
 
     vl::ref<vl::Effect> fx2 = new vl::Effect;
-    fx2->shader()->setRenderState( new vl::Light(0) );
     fx2->shader()->enable(vl::EN_LIGHTING);
     fx2->shader()->gocMaterial()->setFlatColor(vlut::green);
     fx2->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
     fx2->shader()->gocLineWidth()->set(2.5f);
 
     vl::ref<vl::Effect> fx3 = new vl::Effect;
-    fx3->shader()->setRenderState( new vl::Light(0) );
     fx3->shader()->enable(vl::EN_LIGHTING);
     fx3->shader()->gocMaterial()->setFlatColor(vlut::blue);
     fx3->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
     fx3->shader()->gocLineWidth()->set(2.5f);
 
-    std::pair< unsigned int,vl::ref<vl::Effect> > override1(0x01, fx1.get());
-    std::pair< unsigned int,vl::ref<vl::Effect> > override2(0x02, fx2.get());
-    std::pair< unsigned int,vl::ref<vl::Effect> > override3(0x04, fx3.get());
-    mRendering2->effectOverrideMask().push_back( override1 );
-    mRendering2->effectOverrideMask().push_back( override2 );
-    mRendering2->effectOverrideMask().push_back( override3 );
+    mRendering2->effectOverrideMask()[0x01] = fx1;
+    mRendering2->effectOverrideMask()[0x02] = fx2;
+    mRendering2->effectOverrideMask()[0x04] = fx3;
+
+    cube1->setEnableMask(0x01);
+    cube2->setEnableMask(0x02);
+    cube3->setEnableMask(0x04);
   }
 
   virtual void run()
