@@ -250,7 +250,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
     // update the Actor's bounds
     actor->computeBounds();
 
-    const Effect* effect = actor->effect();
+    Effect* effect = actor->effect();
     VL_CHECK(effect)
 
     // effect override

@@ -1312,14 +1312,15 @@ namespace vl
   */
   class Shader: public Object
   {
-    Shader(const Shader&): Object() {}
-
   public:
     virtual const char* className() { return "Shader"; }
 
     /** Constructor. */
     Shader();
     
+    /** Copy constructor. Calls \p operator=(other). */
+    Shader(const Shader& other): Object(other) { operator=(other); }
+
     /** Destructor */
     virtual ~Shader();
 
