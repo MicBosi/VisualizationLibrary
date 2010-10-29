@@ -1,5 +1,4 @@
 /**
-
 	\page pagContributing Contributing to Visualization Library
 
 	There are several ways to become a contributor of Visualization Library:
@@ -15,8 +14,5 @@
 	
 	\par Why contributing?
 	
-	First of all because Visualization Library is your favourite 3D graphics library! :) Secondly, helping the development of Visualization Library ensures that the features you are interested in are well supported and tested. Third, substantial contributors are listed in the credits page and are rewarded with extra support, special discounts or even free professional licenses.
-	
-	To have access to the latest releases of VL directly from our Subversion repository or for more information please contact \p info@visualizationlibrary.com.
-
-	*/
+	Remember, by helping the development of Visualization Library is the most effective way to make sure the features you are interested in get further developed, supported and tested, because they are used and reviewed by potentially several other VL users!
+*/
