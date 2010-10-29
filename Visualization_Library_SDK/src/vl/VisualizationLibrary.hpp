@@ -55,25 +55,54 @@ namespace vl
       #ifndef NDEBUG
         mVerbosityLevel  = vl::VEL_VERBOSITY_NORMAL;
         mCheckOpenGLStates = true;
+        mCheckTransformSiblings = true;
       #else
         mVerbosityLevel  = vl::VEL_VERBOSITY_ERROR;
         mCheckOpenGLStates = false;
+        mCheckTransformSiblings = false;
       #endif
     }
 
-    bool checkOpenGLStates() const { return mCheckOpenGLStates; }
+    /** If \p true VL checks at the beginning of each rendering that the OpenGL states are
+      * clean and ready to be used by VL. If the test fails it can mean that either there 
+      * is a bug in VL or that the user did not restore the OpenGL states to a VL friendly
+      * state after modifying them.
+      * \note This can slow down the rendering. Enabled by default in DEBUG mode only. */
     void setCheckOpenGLStates(bool check_clean) { mCheckOpenGLStates = check_clean; }
 
-    EVerbosityLevel verbosityLevel() const { return mVerbosityLevel; }
+    /** If \p true VL checks at the beginning of each rendering that the OpenGL states are
+      * clean and ready to be used by VL. If the test fails it can mean that either there 
+      * is a bug in VL or that the user did not restore the OpenGL states to a VL friendly
+      * state after modifying them.
+      * \note This can slow down the rendering. Enabled by default in DEBUG mode only. */
+    bool checkOpenGLStates() const { return mCheckOpenGLStates; }
+
+    /** If \p true VL checks that there are no duplicates in a Transform children list. 
+      * \note This can slow down considerably the insertion of new child Transforms. 
+      * Enabled by default in DEBUG mode only. */
+    bool setCheckTransformSiblings(bool check_on) { mCheckTransformSiblings = check_on; }
+
+    /** If \p true VL checks that there are no duplicates in a Transform children list. 
+      * \note This can slow down considerably the insertion of new child Transforms. 
+      * Enabled by default in DEBUG mode only. */
+    bool checkTransformSiblings() const { return mCheckTransformSiblings; }
+
+    /** The verbosity level of VL. This applies to all the logs generated via vl::Log::*. */
     void setVerbosityLevel(EVerbosityLevel verb_level) { mVerbosityLevel = verb_level; }
 
+    /** The verbosity level of VL. This applies to all the logs generated via vl::Log::*. */
+    EVerbosityLevel verbosityLevel() const { return mVerbosityLevel; }
+
+    /** The path of the default log file. */
     const String& defaultLogPath() const { return mDefaultLogPath; }
 
+    /** The path of the default data directory. */
     const String& defaultDataPath() const { return mDefaultDataPath; }
 
   protected:
     EVerbosityLevel mVerbosityLevel;
     bool mCheckOpenGLStates;
+    bool mCheckTransformSiblings;
     String mDefaultLogPath;
     String mDefaultDataPath;
   };
