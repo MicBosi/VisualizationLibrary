@@ -94,7 +94,10 @@ namespace vl
     virtual const char* className() { return "Renderer"; }
     Renderer();
     virtual ~Renderer() {}
-    virtual void render(const RenderQueue* render_queue, Camera* camera);
+    
+    /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
+      * Renderer's implementation of this function always returns \p in_render_queue. */
+    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera);
 
     void setCollectStatistics(bool on) { mCollectStatistics = on; }
     bool collectStatistics() const { return mCollectStatistics; }
@@ -126,6 +129,22 @@ namespace vl
     const ProjViewTranfCallbackStandard* projViewTransfCallback() const { return mProjViewTranfCallback.get(); }
     ProjViewTranfCallbackStandard* projViewTransfCallback() { return mProjViewTranfCallback.get(); }
 
+    /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
+    const std::map<unsigned int, ref<Shader> >& shaderOverrideMask() const { return mShaderOverrideMask; }
+
+    /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
+    std::map<unsigned int, ref<Shader> >& shaderOverrideMask() { return mShaderOverrideMask; }
+
+    void setClearFlags(EClearFlags clear_flags) { mClearFlags = clear_flags; }
+
+    EClearFlags clearFlags() const { return mClearFlags; }
+
+    void setEnableMask(unsigned int mask) { mEnableMask = mask; }
+
+    unsigned int enableMask() const { return mEnableMask; }
+
+    bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
+
   protected:
     bool mCollectStatistics;
     size_t mRenderedRenderableCount;
@@ -133,11 +152,16 @@ namespace vl
     size_t mRenderedLineCount;
     size_t mRenderedPointCount;
 
+    EClearFlags mClearFlags;
+    unsigned int mEnableMask;
+
     OpenGLContext* mOpenGLContext;
 
     // used to reset the OpenGL states & enables at the end of the rendering.
     vl::ref<EnableSet> mDummyEnables;
     vl::ref<RenderStateSet> mDummyStateSet;
+
+    std::map<unsigned int, ref<Shader> > mShaderOverrideMask;
 
     bool mOcclusionCullingEnabled;
     // mic fixme: occlusion culling temporarily disabled

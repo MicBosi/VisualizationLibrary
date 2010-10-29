@@ -57,6 +57,17 @@ public:
 
     setupApplet(applet, win32_window.get(), secs, bk_color, eye, center);
 
+    /* Used to test OpenGL 3.3 Core Profile
+    int attribs[] =
+    {
+        WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+        WGL_CONTEXT_MINOR_VERSION_ARB, 3, 
+        // WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+        WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+        0
+    };
+    win32_window->setContextAttribs(attribs); */
+
     /* Initialize the OpenGL context and window properties */
     win32_window->initWin32Window(NULL, NULL, title, format, x, y, width, height );
 

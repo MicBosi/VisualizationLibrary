@@ -57,6 +57,9 @@ Renderer::Renderer()
     mObjectName = className();
   #endif
 
+  mClearFlags = CF_CLEAR_COLOR_DEPTH;
+  mEnableMask = 0xFFFFFFFF;
+
   mOcclusionQueryTickPrev  = 0;
   mOcclusionQueryTick      = 0;
   mOcclusionThreshold      = 0;
@@ -104,16 +107,26 @@ namespace
   };
 }
 //------------------------------------------------------------------------------
-void Renderer::render(const RenderQueue* render_queue, Camera* camera)
+const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* camera)
 {
-  std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
-
   VL_CHECK_OGL()
+
+  std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
 
   mRenderedRenderableCount = 0;
   mRenderedTriangleCount  = 0;
   mRenderedLineCount = 0;
   mRenderedPointCount = 0;
+
+  // skip if renderer is disabled
+
+  if (enableMask() == 0)
+    return render_queue;
+
+  // --------------- viewport activation --------------- 
+
+  camera->viewport()->setClearFlags(clearFlags());
+  camera->viewport()->activate();
 
   // --------------- rendering ---------------
 
@@ -139,13 +152,17 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
   for(int itok=0; itok < render_queue->size(); ++itok)
   {
-    const RenderToken* tok = render_queue->at(itok);
+    const RenderToken* tok   = render_queue->at(itok);
+    Actor* actor = tok->mActor;
+
+    if ( !isEnabled(actor->enableMask()) )
+      continue;
 
     VL_CHECK(tok);
 
     // --------------- Actor's scissor ---------------
 
-    const Scissor* scissor = tok->mActor->scissor() ? tok->mActor->scissor() : tok->mShader->scissor();
+    const Scissor* scissor = actor->scissor() ? actor->scissor() : tok->mShader->scissor();
     if (cur_scissor != scissor)
     {
       cur_scissor = scissor;
@@ -183,32 +200,32 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
     /*
     bool occluded = false;
-    if ( occlusionCullingEnabled() && !tok->mActor->boundingBox().isInside(eye) )
+    if ( occlusionCullingEnabled() && !actor->boundingBox().isInside(eye) )
     {
       VL_CHECK(GLEW_ARB_occlusion_query || GLEW_VERSION_1_5 || GLEW_VERSION_3_0)
 
-      if ( tok->mActor->occlusionQuery() && tok->mActor->occlusionQueryTick() == mOcclusionQueryTickPrev )
+      if ( actor->occlusionQuery() && actor->occlusionQueryTick() == mOcclusionQueryTickPrev )
       {
         #if 0
           GLint ready = GL_FALSE;
-          glGetQueryObjectiv(tok->mActor->occlusionQuery(),GL_QUERY_RESULT_AVAILABLE,&ready); VL_CHECK_OGL();
+          glGetQueryObjectiv(actor->occlusionQuery(),GL_QUERY_RESULT_AVAILABLE,&ready); VL_CHECK_OGL();
           if (ready == GL_FALSE)
             vl::Log::error("Occlusion culling query not yet available.\n");
         #endif
         // a few benchmarks say that even if it is not ready it is convenient to flush the OpenGL pipeline at this point
         GLint pixels = 0;
-        glGetQueryObjectiv(tok->mActor->occlusionQuery(),GL_QUERY_RESULT,&pixels); VL_CHECK_OGL();
+        glGetQueryObjectiv(actor->occlusionQuery(),GL_QUERY_RESULT,&pixels); VL_CHECK_OGL();
         // object is occluded
         if (pixels <= occlusionThreshold())
           occluded = true;
       }
 
       // if occludee -> perform occlusion test to be used for the next frame
-      if (tok->mActor->isOccludee())
+      if (actor->isOccludee())
       {
         // register occlusion query tick
 
-        tok->mActor->setOcclusionQueryTick(mOcclusionQueryTick);
+        actor->setOcclusionQueryTick(mOcclusionQueryTick);
 
         // activate occlusion culling shader
 
@@ -239,8 +256,8 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
         // glColor3f(1.0f,1.0f,1.0f);
         glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
         glVertexPointer(3, GL_FLOAT, 0, verts); VL_CHECK_OGL();
-          tok->mActor->createOcclusionQuery(); VL_CHECK_OGL();
-          glBeginQuery(GL_SAMPLES_PASSED, tok->mActor->occlusionQuery()); VL_CHECK_OGL();
+          actor->createOcclusionQuery(); VL_CHECK_OGL();
+          glBeginQuery(GL_SAMPLES_PASSED, actor->occlusionQuery()); VL_CHECK_OGL();
           glDrawElements(GL_QUADS, 6*4, GL_UNSIGNED_INT, quads); VL_CHECK_OGL();
           glEndQuery(GL_SAMPLES_PASSED); VL_CHECK_OGL();
         glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
@@ -258,27 +275,38 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
     // multipassing
     for( int ipass=0; tok != NULL; tok = tok->mNextPass, ++ipass )
     {
+      VL_CHECK_OGL()
 
       // --------------- shader setup ---------------
 
-      VL_CHECK_OGL()
+      const Shader* shader = tok->mShader;
+
+      // shader override
+
+      for( std::map< unsigned int, ref<Shader> >::const_iterator eom_it = mShaderOverrideMask.begin(); 
+        eom_it != mShaderOverrideMask.end();
+        ++eom_it )
+      {
+        if (eom_it->first & actor->enableMask())
+          shader = eom_it->second.get();
+      }
 
       // shader's render states
 
-      if ( cur_render_state_set != tok->mShader->getRenderStateSet() )
+      if ( cur_render_state_set != shader->getRenderStateSet() )
       {
-        openglContext()->applyRenderStates(cur_render_state_set, tok->mShader->getRenderStateSet(), camera );
-        cur_render_state_set = tok->mShader->getRenderStateSet();
+        openglContext()->applyRenderStates(cur_render_state_set, shader->getRenderStateSet(), camera );
+        cur_render_state_set = shader->getRenderStateSet();
       }
 
       VL_CHECK_OGL()
 
       // shader's enables
 
-      if ( cur_enable_set != tok->mShader->getEnableSet() )
+      if ( cur_enable_set != shader->getEnableSet() )
       {
-        openglContext()->applyEnables(cur_enable_set, tok->mShader->getEnableSet() );
-        cur_enable_set = tok->mShader->getEnableSet();
+        openglContext()->applyEnables(cur_enable_set, shader->getEnableSet() );
+        cur_enable_set = shader->getEnableSet();
       }
 
       #ifndef NDEBUG
@@ -291,21 +319,21 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
 
       // --------------- GLSLProgram setup ---------------
 
-      VL_CHECK( !tok->mShader->glslProgram() || tok->mShader->glslProgram()->linked() );
+      VL_CHECK( !shader->glslProgram() || shader->glslProgram()->linked() );
 
       VL_CHECK_OGL()
 
       // current transform
-      const Transform*   cur_transform          = tok->mActor->transform(); 
+      const Transform*   cur_transform          = actor->transform(); 
       const GLSLProgram* cur_glsl_program       = NULL; // NULL == fixed function pipeline
       const UniformSet*  cur_shader_uniform_set = NULL;
       const UniformSet*  cur_actor_uniform_set  = NULL;
       // make sure we update these things only if there is a valid GLSLProgram
-      if (tok->mShader->glslProgram() && tok->mShader->glslProgram()->handle())
+      if (shader->glslProgram() && shader->glslProgram()->handle())
       {
-        cur_glsl_program       = tok->mShader->glslProgram();
-        cur_shader_uniform_set = tok->mShader->getUniformSet();
-        cur_actor_uniform_set  = tok->mActor->uniformSet();
+        cur_glsl_program       = shader->glslProgram();
+        cur_shader_uniform_set = shader->getUniformSet();
+        cur_actor_uniform_set  = actor->uniformSet();
         // consider them NULL if they are empty
         if (cur_shader_uniform_set && cur_shader_uniform_set->uniforms().empty())
           cur_shader_uniform_set = NULL;
@@ -378,7 +406,7 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
       if ( update_su )
       {
         VL_CHECK( cur_shader_uniform_set && cur_shader_uniform_set->uniforms().size() );
-        VL_CHECK( tok->mShader->getRenderStateSet()->glslProgram() && tok->mShader->getRenderStateSet()->glslProgram()->handle() )
+        VL_CHECK( shader->getRenderStateSet()->glslProgram() && shader->getRenderStateSet()->glslProgram()->handle() )
         cur_glsl_program->applyUniformSet( cur_shader_uniform_set );
       }
 
@@ -388,14 +416,14 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
       if ( update_au )
       {
         VL_CHECK( cur_actor_uniform_set && cur_actor_uniform_set->uniforms().size() );
-        VL_CHECK( tok->mShader->getRenderStateSet()->glslProgram() && tok->mShader->getRenderStateSet()->glslProgram()->handle() )
+        VL_CHECK( shader->getRenderStateSet()->glslProgram() && shader->getRenderStateSet()->glslProgram()->handle() )
         cur_glsl_program->applyUniformSet( cur_actor_uniform_set );
       }
 
       VL_CHECK_OGL()
 
       // --- Actor's prerender callback --- done after GLSLProgam has been bound and setup
-      tok->mActor->executeRenderingCallbacks( camera, tok->mRenderable, tok->mShader, ipass );
+      actor->executeRenderingCallbacks( camera, tok->mRenderable, shader, ipass );
 
       VL_CHECK_OGL()
 
@@ -420,9 +448,13 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
       if (tok->mRenderable->displayListEnabled())
         glCallList( tok->mRenderable->displayList() );
       else
-        tok->mRenderable->render( tok->mActor, openglContext(), camera );
+        tok->mRenderable->render( actor, openglContext(), camera );
 
       VL_CHECK_OGL()
+
+      // if shader is overridden it does not make sense to perform multipassing so we break the loop here.
+      if (shader != tok->mShader)
+        break;
     }
   }
 
@@ -433,6 +465,8 @@ void Renderer::render(const RenderQueue* render_queue, Camera* camera)
   openglContext()->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), camera );
 
   glDisable(GL_SCISSOR_TEST);
+
+  return render_queue;
 }
 //-----------------------------------------------------------------------------
 void ProjViewTranfCallbackStandard::programFirstUse(const Renderer*, const GLSLProgram*, const Transform* transform, const Camera* camera, bool first_overall)

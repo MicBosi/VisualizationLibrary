@@ -89,12 +89,38 @@ namespace vl
     /** The RenderQueueSorter used to perform the sorting of the objects to be rendered, if NULL no sorting is performed. */
     RenderQueueSorter* renderQueueSorter() { return mRenderQueueSorter.get(); }
 
-    /** The Renderer object used to perform the actual rendering of the scene. */
-    void setRenderer(Renderer* renderer) { mRenderer = renderer; }
-    /** The Renderer object used to perform the actual rendering of the scene. */
-    const Renderer* renderer() const { return mRenderer.get(); }
-    /** The Renderer object used to perform the actual rendering of the scene. */
-    Renderer* renderer() { return mRenderer.get(); }
+    /** The list of Renderers used to perform the rendering. 
+      * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation. */
+    const std::vector< ref<Renderer> >& renderers() const { return mRenderers; }
+
+    /** The list of Renderers used to perform the rendering. 
+      * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation. */
+    std::vector< ref<Renderer> >& renderers() { return mRenderers; }
+
+    /** Uitlity function: clears the renderers() list and adds the specified one. */
+    void setRenderer(Renderer* renderer) 
+    {
+      renderers().clear();
+      renderers().push_back(renderer);
+    }
+
+    /** Utility function: returns the first renderer installed or NULL if none is found. */
+    const Renderer* renderer() const
+    {
+      if (renderers().empty())
+        return NULL;
+      else
+        return renderers()[0].get();
+    }
+
+    /** Utility function: returns the first renderer installed or NULL if none is found. */
+    Renderer* renderer()
+    {
+      if (renderers().empty())
+        return NULL;
+      else
+        return renderers()[0].get();
+    }
 
     /** The Camera that defines the point of view and viewport to be used when rendering the scene. */
     void setCamera(Camera* camera) { mCamera = camera; }
@@ -115,11 +141,16 @@ namespace vl
     /** The RenderTarget on which the rendering is performed. */
     RenderTarget* renderTarget() { return mRenderTarget.get(); }
 
-    /** The root of the Transform tree updated at every rendering frame. */
+    /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information 
+      * about how and when using it see the documentation of Transform. */
     void setTransform(Transform* transform) { mTransform = transform; }
-    /** The root of the Transform tree updated at every rendering frame. */
+    
+    /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information 
+      * about how and when using it see the documentation of Transform. */
     const Transform* transform() const { return mTransform.get(); }
-    /** The root of the Transform tree updated at every rendering frame. */
+    
+    /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information 
+      * about how and when using it see the documentation of Transform. */
     Transform* transform() { return mTransform.get(); }
 
     /** Whether the Level-Of-Detail should be evaluated or not. When disabled lod #0 is used. */
@@ -154,9 +185,6 @@ namespace vl
     /** Whether the installed SceneManager[s] should perform Actor culling or not in order to maximize the rendering performances. */
     bool cullingEnabled() const { return mCullingEnabled; }
 
-    void setClearFlags(EClearFlags clear_flags) { mClearFlags = clear_flags; }
-    EClearFlags clearFlags() const { return mClearFlags; }
-
     /** Whether OpenGL resources such as textures and GLSL programs should be automatically initialized when first used. 
       * Enabling this features forces VL to keep track of which resources are used for each rendering, which might slighly impact the 
       * rendering time, thus to obtain the maximum performances disable this option and manually initialize your textures and GLSL shaders. */
@@ -172,11 +200,11 @@ namespace vl
       * vl::Camera::setProjectionAsPerspective(). */
     void setNearFarClippingPlanesOptimized(bool enabled) { mNearFarClippingPlanesOptimized = enabled; }
 
-    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: Actors::enableMask() & bitmask != 0. */
-    const std::vector< std::pair<unsigned int, ref<Effect> > >& effectOverrideMask() const { return mEffectOverrideMask; }
+    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
+    const std::map<unsigned int, ref<Effect> >& effectOverrideMask() const { return mEffectOverrideMask; }
 
-    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: Actors::enableMask() & bitmask != 0. */
-    std::vector< std::pair<unsigned int, ref<Effect> > >& effectOverrideMask() { return mEffectOverrideMask; }
+    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
+    std::map<unsigned int, ref<Effect> >& effectOverrideMask() { return mEffectOverrideMask; }
 
   protected:
     void fillRenderQueue( ActorCollection* actor_list );
@@ -187,14 +215,12 @@ namespace vl
     ref<RenderQueueSorter> mRenderQueueSorter;
     ref<ActorCollection> mActorQueue;
     ref<RenderQueue> mRenderQueue;
-    ref<Renderer> mRenderer;
+    std::vector< ref<Renderer> > mRenderers;
     ref<RenderTarget> mRenderTarget;
     ref<Camera> mCamera;
     ref<Transform> mTransform;
     ref<Collection<SceneManager> > mSceneManagers;
-    std::vector< std::pair<unsigned int, ref<Effect> > > mEffectOverrideMask;
-
-    EClearFlags mClearFlags;
+    std::map<unsigned int, ref<Effect> > mEffectOverrideMask;
 
     bool mAutomaticResourceInit;
     bool mCullingEnabled;
