@@ -80,7 +80,7 @@ namespace vl
     /** If \p true VL checks that there are no duplicates in a Transform children list. 
       * \note This can slow down considerably the insertion of new child Transforms. 
       * Enabled by default in DEBUG mode only. */
-    bool setCheckTransformSiblings(bool check_on) { mCheckTransformSiblings = check_on; }
+    void setCheckTransformSiblings(bool check_on) { mCheckTransformSiblings = check_on; }
 
     /** If \p true VL checks that there are no duplicates in a Transform children list. 
       * \note This can slow down considerably the insertion of new child Transforms. 
