@@ -56,7 +56,7 @@ namespace vl
       mType      = PT_TRIANGLES;
       mInstances = 1;
     }
-    DrawArrays(EPrimitiveType primitive, int start, size_t count, size_t instances=1)
+    DrawArrays(EPrimitiveType primitive, int start, int count, int instances=1)
       : mStart(start), mCount(count)
     { 
       #ifndef NDEBUG
@@ -156,27 +156,27 @@ namespace vl
     }
 
     //! sets the starting vertex for the rendering.
-    void setStart(size_t start) { mStart = start; }
+    void setStart(int start) { mStart = start; }
 
     //! returns the starting vertex for the rendering.
-    size_t start() const { return mStart; }
+    int start() const { return mStart; }
 
     //! sets the number of vertices to be rendered.
-    void setCount(size_t count) { mCount = count; }
+    void setCount(int count) { mCount = count; }
 
     //! returns the number of vertices to be rendered.
-    size_t count() const { return mCount; }
+    int count() const { return mCount; }
 
     //! Sets the number of instances for this set of primitives.
-    void setInstances(size_t instances) { mInstances = instances; }
+    void setInstances(int instances) { mInstances = instances; }
 
     //! Returns the number of instances for this set of primitives.
-    size_t instances() const { return mInstances; }
+    int instances() const { return mInstances; }
 
     protected:
-      size_t mStart;
-      size_t mCount;
-      size_t mInstances;
+      int mStart;
+      int mCount;
+      int mInstances;
   };
 
 }
