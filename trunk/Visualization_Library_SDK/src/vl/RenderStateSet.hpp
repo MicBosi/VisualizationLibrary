@@ -41,11 +41,8 @@ namespace vl
   class GLSLProgram;
   class RenderState;
 
-  /**
-   * A set of RenderState objects managed by a Shader.
-   *
-   * \sa Shader, Effect, Actor
-  */
+  /** A set of RenderState objects managed by a Shader.
+    * \sa Shader, Effect, Actor */
   class RenderStateSet: public Object
   {
   public:

@@ -68,10 +68,10 @@ namespace vl
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
     /** Sets the number of instances for this set of primitives. */
-    void setInstances(size_t instances) { mInstances = instances; }
+    void setInstances(int instances) { mInstances = instances; }
 
     /** Returns the number of instances for this set of primitives. */
-    size_t instances() const { return mInstances; }
+    int instances() const { return mInstances; }
 
     /** If base_vertx is != 0 glDrawElementsBaseVertex/glDrawElementsInstancedBaseVertex will be used instead of their non *BaseVertx counterparts. 
       * Note that using base_vertx != requires OpenGL 3.2 or higher or ARB_draw_elements_base_vertex. 
@@ -84,7 +84,7 @@ namespace vl
     int  baseVertex() const { return mBaseVertex; }
 
   protected:
-    size_t mInstances;
+    int mInstances;
     GLuint mPrimitiveRestartIndex;
     bool mPrimitiveRestartEnabled;
     int  mBaseVertex;
@@ -221,9 +221,9 @@ namespace vl
       if (primitiveRestartEnabled())
         return -1;
 
-      size_t count = indexCount();
+      int count = (int)indexCount();
       if (count == 0)
-        count = indices()->sizeGPU();
+        count = (int)indices()->sizeGPU();
       switch( mType )
       {
       case PT_POINTS: return 0;
@@ -248,9 +248,9 @@ namespace vl
       if (primitiveRestartEnabled())
         return -1;
 
-      size_t count = indexCount();
+      int count = (int)indexCount();
       if (count == 0)
-        count = indices()->sizeGPU();
+        count = (int)indices()->sizeGPU();
       switch( mType )
       {
       case PT_LINES: return count / 2;
@@ -268,9 +268,9 @@ namespace vl
       if (primitiveRestartEnabled())
         return -1;
 
-      size_t count = indexCount();
+      int count = (int)indexCount();
       if (count == 0)
-        count = indices()->sizeGPU();
+        count = (int)indices()->sizeGPU();
       switch( mType )
       {
       case PT_POINTS: return count;
