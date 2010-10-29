@@ -33,6 +33,7 @@
 #define Log_INCLUDE_ONCE
 
 #include <vl/String.hpp>
+#include <fstream>
 
 namespace vl
 {
@@ -118,11 +119,13 @@ namespace vl
   {
   public:
     virtual const char* className() { return "StandardLog"; }
-    void setLogFile(const String& file) { mLogFile = file; }
+    void setLogFile(const String& file);
     const String& logFile() const { return mLogFile; }
+
   protected:
     virtual void printImplementation(ELogLevel level, const String& message);
     String mLogFile;
+    std::ofstream mFile;
   };
 }
 

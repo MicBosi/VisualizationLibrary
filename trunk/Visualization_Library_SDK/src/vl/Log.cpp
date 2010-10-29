@@ -83,6 +83,17 @@ void Log::bug(const String& log) { print(LogBug, log); }
 //-----------------------------------------------------------------------------
 // StandardLog
 //-----------------------------------------------------------------------------
+void StandardLog::setLogFile(const String& file) 
+{ 
+  mLogFile = file; 
+
+  if (mFile.is_open())
+    mFile.close();
+
+  if (!file.empty())
+    mFile.open(file.toStdString().c_str());
+}
+//-----------------------------------------------------------------------------
 void StandardLog::printImplementation(ELogLevel level, const String& in_log)
 {
   if (in_log.empty())
@@ -100,16 +111,10 @@ void StandardLog::printImplementation(ELogLevel level, const String& in_log)
     case LogBug:     log = "bug: "     + log; break;
   }
 
-  fprintf( stdout,"%s", log.toStdString().c_str() );
+  std::string stdstr = log.toStdString();
+  fprintf( stdout, "%s", stdstr.c_str() );
 
-  if (!logFile().empty())
-  {
-    FILE*fout = fopen( logFile().toStdString().c_str(), "at" );
-    if (fout)
-    {
-      fprintf( fout, "%s", log.toStdString().c_str() ); 
-      fclose( fout );
-    }
-  }
+  if (mFile.is_open())
+    mFile << stdstr << std::flush;
 }
 //-----------------------------------------------------------------------------
