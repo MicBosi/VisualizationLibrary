@@ -57,7 +57,7 @@ void Billboard::setPosition(const vec3& pos)
 //-----------------------------------------------------------------------------
 void Billboard::computeWorldMatrix(Camera* camera)
 {
-  if( alwaysIdentityWorldMatrix() )
+  if( assumeIdentityWorldMatrix() )
   {
     setWorldMatrix( mat4() ); 
   }
@@ -70,7 +70,7 @@ void Billboard::computeWorldMatrix(Camera* camera)
   {
     mat4 world_mat;
     vec3 pos = position();
-    if (parent() && !parent()->alwaysIdentityWorldMatrix())
+    if (parent() && !parent()->assumeIdentityWorldMatrix())
       pos = parent()->worldMatrix() * pos;
     if ( type() == BT_SphericalBillboard )
     {
