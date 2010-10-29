@@ -43,12 +43,14 @@ void RenderStateSet::setRenderState(RenderState* renderstate)
   if (renderstate->type() == RS_GLSLProgram)
     mGLSLProgram = dynamic_cast<GLSLProgram*>(renderstate);
   for(unsigned i=0; i<mRenderStates.size(); ++i)
+  {
     if (mRenderStates[i]->type() == renderstate->type())
     {
       mRenderStates[i] = renderstate;
       return;
     }
-    mRenderStates.push_back( renderstate );
+  }
+  mRenderStates.push_back( renderstate );
 }
 //------------------------------------------------------------------------------
 RenderState* RenderStateSet::renderState( ERenderState type )
