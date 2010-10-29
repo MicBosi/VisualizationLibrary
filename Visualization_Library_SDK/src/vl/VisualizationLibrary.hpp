@@ -56,7 +56,7 @@ namespace vl
         mVerbosityLevel  = vl::VEL_VERBOSITY_NORMAL;
         mCheckOpenGLStates = true;
       #else
-        mVerbosityLevel  = VERBOSITY_ERROR;
+        mVerbosityLevel  = vl::VEL_VERBOSITY_ERROR;
         mCheckOpenGLStates = false;
       #endif
     }
