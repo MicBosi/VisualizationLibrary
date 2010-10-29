@@ -2,7 +2,7 @@
 
    \page pagChangelog Changelog
 
-	 <div class="featuretitle">Visualization Library 2010.10.1107</div>
+	 <div class="featuretitle">Visualization Library 2010.10.1111</div>
 
 	- <b>API CHANGES</b>
 		- Primitives class renamed <b>DrawCall</b>.
