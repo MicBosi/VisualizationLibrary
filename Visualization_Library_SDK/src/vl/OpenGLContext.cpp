@@ -1143,6 +1143,7 @@ bool OpenGLContext::isCleanState(bool verbose) const
   }
   */
 
+  #if 0
   // check viewport
   GLint viewport[4] = {0,0,0,0};
   glGetIntegerv(GL_VIEWPORT, viewport);
@@ -1154,6 +1155,7 @@ bool OpenGLContext::isCleanState(bool verbose) const
     VL_TRAP();
     ok = false;
   }
+  #endif
 
   VL_CHECK_OGL();
   return ok;

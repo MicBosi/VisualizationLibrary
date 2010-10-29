@@ -35,8 +35,18 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-void EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera)
+const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera)
 {
+  if (enableMask() == 0)
+    return render_queue;
+
+  // --------------- viewport activation --------------- 
+
+  camera->viewport()->setClearFlags(clearFlags());
+  camera->viewport()->activate();
+
+  // update actor cache
+
   updateActorCache(render_queue);
 
   camera->applyProjMatrix();
@@ -72,6 +82,8 @@ void EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera)
   glDisable(GL_LINE_STIPPLE);
   glDisable(GL_BLEND);
   glLineWidth(1.0f);
+
+  return render_queue;
 }
 //-----------------------------------------------------------------------------
 void EdgeRenderer::renderSolids(Camera* camera)
@@ -230,7 +242,11 @@ void EdgeRenderer::updateActorCache(const RenderQueue* render_queue)
 {
   mVisibleActors.clear();
   for(int i=0; i<render_queue->size(); ++i)
+  {
+    if ( !isEnabled(render_queue->at(i)->mActor->enableMask()) )
+      continue;
     mVisibleActors[render_queue->at(i)->mActor] = declareActor(render_queue->at(i)->mActor);
+  }
 }
 //-----------------------------------------------------------------------------
 
