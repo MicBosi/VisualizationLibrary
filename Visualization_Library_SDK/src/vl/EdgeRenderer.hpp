@@ -70,7 +70,7 @@ namespace vl
       #endif
     }
 
-    void render(const RenderQueue* render_queue, Camera* camera);
+    const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera);
 
     //! Generates and caches all the information needed to render the edges of the given Actor using the specified color.
     WFInfo* declareActor(Actor* act, const fvec4& color);

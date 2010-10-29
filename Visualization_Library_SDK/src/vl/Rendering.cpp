@@ -39,7 +39,6 @@ using namespace vl;
 
 //------------------------------------------------------------------------------
 Rendering::Rendering():
-  mClearFlags(CF_CLEAR_COLOR_DEPTH),
   mAutomaticResourceInit(true),
   mCullingEnabled(true),
   mEvaluateLOD(true),
@@ -54,16 +53,15 @@ Rendering::Rendering():
   mActorQueue         = new ActorCollection;
   mRenderQueue        = new RenderQueue;
   mSceneManagers      = new Collection<SceneManager>;
-  mRenderer           = new Renderer;
   mCamera             = new Camera;
   mTransform          = new Transform;
+  mRenderers.push_back( new Renderer );
 }
 //------------------------------------------------------------------------------
 Rendering& Rendering::operator=(const Rendering& other)
 {
   RenderingAbstract::operator=(other);
 
-  mClearFlags               = other.mClearFlags;
   mEnableMask               = other.mEnableMask;
   mAutomaticResourceInit    = other.mAutomaticResourceInit;
   mCullingEnabled    = other.mCullingEnabled;
@@ -77,7 +75,7 @@ Rendering& Rendering::operator=(const Rendering& other)
   /*mActorQueue        = other.mActorQueue;*/
   /*mRenderQueue       = other.mRenderQueue;*/
   *mSceneManagers      = *other.mSceneManagers;
-  mRenderer            = other.mRenderer;
+  mRenderers           = other.mRenderers;
   mCamera              = other.mCamera;
   mTransform           = other.mTransform;
 
@@ -89,7 +87,6 @@ void Rendering::render()
   VL_CHECK_OGL();
   VL_CHECK(camera());
   VL_CHECK(camera()->viewport());
-  VL_CHECK(renderer());
   VL_CHECK(renderTarget());
   VL_CHECK(renderTarget()->openglContext());
 
@@ -105,18 +102,11 @@ void Rendering::render()
   if (!camera()->viewport())
     return;
 
-  if (!renderer())
-    return;
-
   if (!renderTarget())
     return;
 
   if (!renderTarget()->openglContext())
     return;
-
-  // bind the OpenGL context
-
-  renderer()->setOpenGLContext(renderTarget()->openglContext());
 
   // activate OpenGL context
 
@@ -193,11 +183,6 @@ void Rendering::render()
     camera()->computeFrustumPlanes();
   }
 
-  // camera and viewport activation: needs to be done after the near/far clipping planes optimization
-
-  camera()->viewport()->setClearFlags(clearFlags());
-  camera()->viewport()->activate();
-
   // render queue filling
 
   renderQueue()->clear();
@@ -209,9 +194,19 @@ void Rendering::render()
   if (renderQueueSorter())
     renderQueue()->sort( renderQueueSorter(), camera() );
 
-  // render the queue
+  // --- RENDER THE QUEUE: loop through the renderers, feeding the output of one as input for the next ---
 
-  renderer()->render( renderQueue(), camera() );
+  const RenderQueue* render_queue = renderQueue();
+  for(size_t i=0; i<renderers().size(); ++i)
+  {
+    if (renderers()[i])
+    {
+      // bind the OpenGL context
+      renderers()[i]->setOpenGLContext(renderTarget()->openglContext());
+      // loop the rendering
+      render_queue = renderers()[i]->render( render_queue, camera() );
+    }
+  }
 
   // post rendering callback
 
@@ -259,9 +254,14 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
     VL_CHECK(effect)
 
     // effect override
-    for(size_t i=0; i<mEffectOverrideMask.size(); ++i)
-      if (mEffectOverrideMask[i].first & actor->enableMask())
-        effect = mEffectOverrideMask[i].second.get();
+    
+    for( std::map< unsigned int, ref<Effect> >::const_iterator eom_it = mEffectOverrideMask.begin(); 
+         eom_it != mEffectOverrideMask.end(); 
+         ++eom_it )
+    {
+      if (eom_it->first & actor->enableMask())
+        effect = eom_it->second.get();
+    }
 
     if ( !isEnabled(effect->enableMask()) )
       continue;
