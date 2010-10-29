@@ -1313,17 +1313,65 @@ namespace vl
   class Shader: public Object
   {
     Shader(const Shader&): Object() {}
-    void operator=(const Shader&) {}
+
   public:
+    virtual const char* className() { return "Shader"; }
+
+    /** Constructor. */
     Shader();
+    
+    /** Destructor */
     virtual ~Shader();
 
-    virtual const char* className() { return "Shader"; }
+    /** Copy RenderStates, Enables, Uniforms and Scissor from another Shader. 
+      * Note that the destination Shader still keeps its own copy of the RenderStateSet, EnableSet and UniformSet objects. */
+    Shader& operator=(const Shader& other) 
+    {
+      Object::operator=(other);
+
+      // we don't copy the update time
+      // mLastUpdateTime = other.mLastUpdateTime;
+
+      if (other.mRenderStateSet.get())
+      {
+        if (mRenderStateSet.get() == NULL)
+          mRenderStateSet = new RenderStateSet;
+        *mRenderStateSet = *other.mRenderStateSet;
+      }
+      else
+        mRenderStateSet = NULL;
+
+      if (other.mEnableSet.get())
+      {
+        if (mEnableSet.get() == NULL)
+          mEnableSet = new EnableSet;
+        *mEnableSet = *other.mEnableSet;
+      }
+      else
+        mEnableSet = NULL;
+
+      if (other.mUniformSet.get())
+      {
+        if (mUniformSet.get() == NULL)
+          mUniformSet = new UniformSet;
+        *mUniformSet = *other.mUniformSet;
+      }
+      else
+        mUniformSet = NULL;
+
+      mScissor        = other.mScissor;
+      return *this;
+    }
 
     // state getters
 
+    /** Gets or creates a GLSLProgram and returns it. */
     GLSLProgram* gocGLSLProgram();
+
+    /** Returns a GLSLProgram if it exists or NULL otherwise. */
     const GLSLProgram* getGLSLProgram() const;
+
+    /** Returns a GLSLProgram if it exists or NULL otherwise. */
     GLSLProgram* getGLSLProgram();
 
     PixelTransfer* gocPixelTransfer();
@@ -1519,6 +1567,7 @@ namespace vl
     RenderStateSet* gocRenderStateSet() { if (!mRenderStateSet) mRenderStateSet = new RenderStateSet; return mRenderStateSet.get(); }
     RenderStateSet* getRenderStateSet() { return mRenderStateSet.get(); }
     const RenderStateSet* getRenderStateSet() const { return mRenderStateSet.get(); }
+    
     /**
      * Returns the UniformSet installed (creating it if no UniformSet has been installed)
      * \sa
@@ -1530,6 +1579,7 @@ namespace vl
      * - getUniform()
     */
     UniformSet* gocUniformSet() { if (!mUniformSet) mUniformSet = new UniformSet; return mUniformSet.get(); }
+    
     /**
      * Returns the UniformSet installed
      * \sa
@@ -1541,6 +1591,7 @@ namespace vl
      * - getUniform()
     */
     UniformSet* getUniformSet() { return mUniformSet.get(); }
+    
     /**
      * Returns the UniformSet installed
      * \sa
@@ -1554,7 +1605,9 @@ namespace vl
     const UniformSet* getUniformSet() const { return mUniformSet.get(); }
 
     void setEnableSet(EnableSet* es) { mEnableSet = es; }
+    
     void setRenderStateSet(RenderStateSet* rss) { mRenderStateSet = rss; }
+    
     /**
      * Installs a new UniformSet
      * \sa
@@ -1577,6 +1630,7 @@ namespace vl
      * - Actor::setScissor()
      */
     void setScissor(Scissor* scissor) { mScissor = scissor; }
+    
     /**
      * Returns the Scissor to be used when rendering an Actor.
      * \sa
@@ -1585,6 +1639,7 @@ namespace vl
      * - Actor::setScissor()
      */
     const Scissor* scissor() const { return mScissor.get(); }
+    
     /**
      * Returns the Scissor to be used when rendering an Actor.
      * \sa
@@ -1605,6 +1660,7 @@ namespace vl
 
     //! Used internally.
     void setLastUpdateTime(Real time) { mLastUpdateTime = time; }
+
     //! Used internally.
     Real lastUpdateTime() const { return mLastUpdateTime; }
 
