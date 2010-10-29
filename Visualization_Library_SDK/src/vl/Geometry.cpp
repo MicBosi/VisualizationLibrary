@@ -73,6 +73,10 @@ Geometry::~Geometry()
 //-----------------------------------------------------------------------------
 void Geometry::computeBounds_Implementation()
 {
+  // mic fixme: il bbox deve essere calcolato dalle singole primitive, per evitare
+  // di creare bbox piu' grandi del necessario quando il vertex buffer e' condiviso
+  // da piu' Geometry objects.
+
   // empty
   if( mVertexArray )
   {
