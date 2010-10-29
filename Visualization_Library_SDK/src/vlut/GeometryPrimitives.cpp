@@ -39,7 +39,7 @@ using namespace vlut;
 //-----------------------------------------------------------------------------
 //! \p detail can be between 0 ( = icosahedron) and 8 (extremely detailed sphere)
 //! a value of 2 yelds already very good results.
-ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real radius, int detail, bool remove_doubles)
+ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real diameter, int detail, bool remove_doubles)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Icosphere");
@@ -107,6 +107,8 @@ ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real radius, int detail, bool
   }
 
   // generate sphere vertices and connection information
+
+  Real radius = diameter / 2;
 
   coords->resize( (int)verts.size() );
   norms->resize( (int)verts.size() );
