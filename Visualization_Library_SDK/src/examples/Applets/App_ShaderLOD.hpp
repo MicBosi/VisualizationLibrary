@@ -268,7 +268,7 @@ public:
       wirepass->gocMaterial()->setFlatColor( vlut::green );
 
       vl::ref<vl::Geometry> geom_0;
-      geom_0= vlut::makeIcosphere(vl::vec3(0,0,0), 3, 2);
+      geom_0= vlut::makeIcosphere(vl::vec3(0,0,0), 6, 2);
       geom_0->computeNormals();
       geom_0->setColorArray(vlut::white);
 
@@ -298,20 +298,17 @@ public:
       effect->shader()->setRenderState( light.get() );
 
       vl::ref<vl::Geometry> geom;
-      // geom= vlut::makeTorus(vl::vec3(0,0,0), 5, 1, 40, 40);
-      geom= vlut::makeIcosphere( vl::vec3(0,0,0), 1, 3 );
+      geom= vlut::makeIcosphere( vl::vec3(0,0,0), 2, 3 );
       geom->computeNormals();
       geom->setColorArray(vl::fvec4(0,1,0,1));
 
       vl::ref<vl::Geometry> geom_B;
-      // geom_B= vlut::makeTorus(vl::vec3(0,0,0), 5, 1, 15, 15);
-      geom_B= vlut::makeIcosphere( vl::vec3(0,0,0), 1, 1 );
+      geom_B= vlut::makeIcosphere( vl::vec3(0,0,0), 2, 1 );
       geom_B->computeNormals();
       geom_B->setColorArray(vl::fvec4(1,1,0,1));
 
       vl::ref<vl::Geometry> geom_C;
-      // geom_C= vlut::makeTorus(vl::vec3(0,0,0), 5, 1, 8, 8);
-      geom_C= vlut::makeIcosphere( vl::vec3(0,0,0), 1, 0 );
+      geom_C= vlut::makeIcosphere( vl::vec3(0,0,0), 2, 0 );
       geom_C->computeNormals();
       geom_C->setColorArray(vl::fvec4(1,0,0,1));
 
@@ -390,18 +387,16 @@ public:
       fx1->setLOD( 2, wire_sh.get() );
 
       vl::ref<vl::Geometry> geom_0;
-      geom_0= vlut::makeIcosphere(vl::vec3(0,0,0), 3, 2);
+      geom_0= vlut::makeIcosphere(vl::vec3(0,0,0), 6, 2);
       geom_0->computeNormals();
       geom_0->setColorArray(vlut::white);
 
       vl::ref<vl::Geometry> geom_1;
-      // geom_1= vlut::makeIcosphere(vl::vec3(0,0,0), 3, 1);
       geom_1= vlut::makeBox(vl::vec3(0,0,0), 6,6,6);
       geom_1->computeNormals();
       geom_1->setColorArray(vlut::white);
 
       vl::ref<vl::Geometry> geom_2;
-      // geom_2= vlut::makeIcosphere(vl::vec3(0,0,0), 3, 0);
       geom_2= vlut::makePyramid(vl::vec3(0,0,0), 6, 6);
       geom_2->computeNormals();
       geom_2->setColorArray(vlut::white);
