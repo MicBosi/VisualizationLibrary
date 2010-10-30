@@ -136,6 +136,10 @@ namespace vl
       #endif
       mRenderingCallbacks.setAutomaticDelete(false);
       lod(0) = renderable;
+      // actor user data
+      #if VL_ACTOR_USER_DATA
+      mActorUserData = NULL;
+      #endif
     }
 
     //! Destructor.
@@ -380,6 +384,16 @@ namespace vl
 
     /** For internal use only. */
     unsigned occlusionQueryTick() const { return mOcclusionQueryTick; }
+
+#if VL_ACTOR_USER_DATA
+  public:
+    void* actorUserData() { return mActorUserData; }
+    const void* actorUserData() const { return mActorUserData; }
+    void setActorUserData(void* user_data) { mActorUserData = user_data; }
+
+  private:
+    void* mActorUserData;
+#endif
 
   protected:
     AABB mAABB;
