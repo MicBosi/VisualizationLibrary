@@ -81,6 +81,11 @@ namespace vl
       mMutex = NULL;
       mReferenceCount = 0;
       mAutomaticDelete = true;
+      // user data
+      #if VL_ACTOR_USER_DATA
+      mUserData = NULL;
+      #endif
+      // debug living objects
       #ifndef NDEBUG
         mObjectName = className();
       #endif
@@ -98,6 +103,10 @@ namespace vl
       mMutex = NULL;
       mReferenceCount  = 0;
       mAutomaticDelete = true;
+      // user data
+      #if VL_ACTOR_USER_DATA
+      mUserData = other.mUserData;
+      #endif
       // debug living object
       #if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
         debug_living_objects()->insert(this);
@@ -109,7 +118,11 @@ namespace vl
     { 
       /* mMutex, mReferenceCount and mAutomaticDelete is not copied */ 
       mObjectName = other.mObjectName; 
-      return *this; 
+      // user data
+      #if VL_ACTOR_USER_DATA
+      mUserData = other.mUserData;
+      #endif
+      return *this;
     }
 
     const std::string& objectName() const { return mObjectName; }
