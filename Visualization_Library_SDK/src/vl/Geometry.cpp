@@ -579,7 +579,7 @@ void Geometry::updateVBOs(bool discard_local_data)
     drawCalls()->at(i)->updateVBOs(discard_local_data);
 }
 //-----------------------------------------------------------------------------
-void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const Camera* ) const
+void Geometry::render( const Actor*, const Camera* ) const
 {
   VL_CHECK_OGL()
 
@@ -781,15 +781,6 @@ void Geometry::render( const Actor*, const OpenGLContext* opengl_context, const 
   {
     VL_CHECK(mTexCoordArrays[i]->mTexCoordArray)
 
-    #ifndef NDEBUG
-      if ( !(mTexCoordArrays[i]->mTextureUnit < opengl_context->textureUnitCount()) )
-      {
-        Log::error( Say("Geometry: texture array index #%n not supported. Max texture array index is %n.\n") << mTexCoordArrays[i]->mTextureUnit << opengl_context->textureUnitCount()-1 );
-        continue;
-      }
-    #endif
-
-    /*VL_CHECK(mTexCoordArrays[i]->mTextureUnit < opengl_context->textureUnitCount())*/
     VL_CHECK(mTexCoordArrays[i]->mTextureUnit < VL_MAX_TEXTURE_UNITS)    
 
     unsigned char* tex_pointer = mTexCoordArrays[i]->mTexCoordArray->ptr();

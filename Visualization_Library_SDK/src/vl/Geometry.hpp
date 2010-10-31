@@ -118,7 +118,7 @@ namespace vl
     */
     void computeNormals();
 
-    virtual void render(const Actor*, const OpenGLContext*, const Camera*) const;
+    virtual void render(const Actor*, const Camera*) const;
 
     /**
      * Removes all the previously installed arrays.

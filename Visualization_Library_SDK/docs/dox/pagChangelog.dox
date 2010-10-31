@@ -422,8 +422,11 @@
  - 3DS, PLY, AC3D, MD2 importers.
  - GLUT and SDL bindings.
 
-	<div class="featuretitle">...once upon a time, somewhere around September 2007</div>
+	<div class="featuretitle">June 1986, Visualization Library 1.0 runs on Commodore 128's 8502 Processor!</div>
 	
- - Got fed up of uber-scene-graph-oriented, bloated, undocumented, Inventor-clone 3d libraries and started schetching on paper a few concept designs for what was initially supposed to be a bare-bone OpenGL middleware...
+ - Added support to 80 columns fast mode and sprite editor for accelerated graphics.
+ - Use SID cpu as parallel co-processor.
+ - Full support to BASIC 7.0.
+ - Just kidding :)
 
 */

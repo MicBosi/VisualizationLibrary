@@ -123,7 +123,7 @@ namespace vl
     bool shadowEnabled() const { return mShadowEnabled; }
     void setShadowEnabled(bool shadow) { mShadowEnabled = shadow; }
 
-    virtual void render(const Actor*, const OpenGLContext*, const Camera* camera) const;
+    virtual void render(const Actor*, const Camera* camera) const;
     void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }
     AABB boundingRect() const;
     AABB boundingRect(const String& text) const;
