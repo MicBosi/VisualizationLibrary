@@ -123,6 +123,13 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   if (enableMask() == 0)
     return render_queue;
 
+  OpenGLContext* opengl_context = renderTarget()->openglContext();
+
+  // --------------- render target activation --------------- 
+  // (note: an OpenGL context can have multiple rendering targets!)
+
+  renderTarget()->activate();
+
   // --------------- viewport activation --------------- 
 
   camera->viewport()->setClearFlags(clearFlags());
@@ -295,7 +302,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       if ( cur_render_state_set != shader->getRenderStateSet() )
       {
-        openglContext()->applyRenderStates(cur_render_state_set, shader->getRenderStateSet(), camera );
+        opengl_context->applyRenderStates(cur_render_state_set, shader->getRenderStateSet(), camera );
         cur_render_state_set = shader->getRenderStateSet();
       }
 
@@ -305,7 +312,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       if ( cur_enable_set != shader->getEnableSet() )
       {
-        openglContext()->applyEnables(cur_enable_set, shader->getEnableSet() );
+        opengl_context->applyEnables(cur_enable_set, shader->getEnableSet() );
         cur_enable_set = shader->getEnableSet();
       }
 
@@ -394,7 +401,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       // --- uniforms ---
 
       // note: the user must not make the shader's and actor's uniforms collide!
-      VL_CHECK( !openglContext()->areUniformsColliding(cur_shader_uniform_set, cur_actor_uniform_set) );
+      VL_CHECK( !opengl_context->areUniformsColliding(cur_shader_uniform_set, cur_actor_uniform_set) );
 
       // 'static' uniform set: update only once per rendering, if present.
       if (is_first_use && cur_glsl_program && cur_glsl_program->uniformSet())
@@ -459,10 +466,10 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   }
 
   // clear enables
-  openglContext()->applyEnables(cur_enable_set, mDummyEnables.get() );
+  opengl_context->applyEnables(cur_enable_set, mDummyEnables.get() );
 
   // clear render states
-  openglContext()->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), camera );
+  opengl_context->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), camera );
 
   glDisable(GL_SCISSOR_TEST);
 

@@ -95,6 +95,8 @@ public:
     // rendering but we want to clear the Z-buffer as it is needed by the hidden-line-removal algorithm 
     // implemented by vl::EdgeRenderer.
     mEdgeRenderer->setClearFlags(vl::CF_CLEAR_DEPTH);
+    // target the same opengl window
+    mEdgeRenderer->setRenderTarget(mSolidRenderer->renderTarget());
     // enqueue the EdgeRenderer in the rendering, will be executed after mSolidRenderer
     mRendering->renderers().push_back( mEdgeRenderer.get() );
 
@@ -187,12 +189,12 @@ public:
     }
   }
 
-  void resizeEvent(int /*w*/, int /*h*/)
+  void resizeEvent(int w, int h)
   {
-    // solid rendering: update viewport and projection matrix
-    mRendering->camera()->viewport()->setWidth(mRendering->renderTarget()->width());
-    mRendering->camera()->viewport()->setHeight(mRendering->renderTarget()->height());
-    mRendering->camera()->setProjectionAsPerspective();
+    vl::Camera* camera = mRendering->camera();
+    camera->viewport()->setWidth ( w );
+    camera->viewport()->setHeight( h );
+    camera->setProjectionAsPerspective();
   }
 
   void loadModel(const std::vector<vl::String>& files)

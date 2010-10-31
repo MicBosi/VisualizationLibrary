@@ -107,10 +107,6 @@ namespace vl
     size_t renderedLinesCount() const { return mRenderedLineCount; }
     size_t renderedPointsCount() const { return mRenderedPointCount; }
 
-    OpenGLContext* openglContext() { return mOpenGLContext; }
-    const OpenGLContext* openglContext() const { return mOpenGLContext; }
-    void setOpenGLContext(OpenGLContext* ogl_context) { mOpenGLContext = ogl_context; }
-
     /** Whether occlusion culling is enabled or not.
     See also \ref pagGuideOcclusionCulling "OpenGL-Accelerated Occlusion Culling Tutorial".
     */
@@ -145,6 +141,13 @@ namespace vl
 
     bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
 
+    /** The RenderTarget on which the rendering is performed. */
+    void setRenderTarget(RenderTarget* render_target) { mRenderTarget = render_target; }
+    /** The RenderTarget on which the rendering is performed. */
+    const RenderTarget* renderTarget() const { return mRenderTarget.get(); }
+    /** The RenderTarget on which the rendering is performed. */
+    RenderTarget* renderTarget() { return mRenderTarget.get(); }
+
   protected:
     bool mCollectStatistics;
     size_t mRenderedRenderableCount;
@@ -155,7 +158,7 @@ namespace vl
     EClearFlags mClearFlags;
     unsigned int mEnableMask;
 
-    OpenGLContext* mOpenGLContext;
+    ref<RenderTarget> mRenderTarget;
 
     // used to reset the OpenGL states & enables at the end of the rendering.
     vl::ref<EnableSet> mDummyEnables;

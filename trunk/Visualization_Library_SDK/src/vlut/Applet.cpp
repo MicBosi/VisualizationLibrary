@@ -166,14 +166,16 @@ void Applet::runEvent()
   VL_CHECK_OGL();
 }
 //-----------------------------------------------------------------------------
-void Applet::resizeEvent(int /*w*/, int /*h*/)
+void Applet::resizeEvent(int w, int h)
 {
   // if a simple Rendering is attached as the rendering root than update viewport and projection matrix.
   vl::Rendering* rendering = vl::VisualizationLibrary::rendering()->as<vl::Rendering>();
   if (rendering)
   {
-    rendering->camera()->viewport()->setWidth(rendering->renderTarget()->width());
-    rendering->camera()->viewport()->setHeight(rendering->renderTarget()->height());
+    VL_CHECK( w == rendering->renderer()->renderTarget()->width() );
+    VL_CHECK( h == rendering->renderer()->renderTarget()->height() );
+    rendering->camera()->viewport()->setWidth( w );
+    rendering->camera()->viewport()->setHeight( h );
     rendering->camera()->setProjectionAsPerspective();
   }
 }

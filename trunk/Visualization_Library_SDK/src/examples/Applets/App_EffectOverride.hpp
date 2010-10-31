@@ -47,29 +47,44 @@ class App_EffectOverride: public BaseDemo
   {
     BaseDemo::initEvent();
 
-    mRendering1 = new vl::Rendering;
-    mRendering2  = new vl::Rendering;
-    *mRendering1 = *(vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
-    *mRendering2  = *(vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
-    // create its own copy of the renderer
-    mRendering2->setRenderer( new vl::Renderer );
-    mRendering2->renderer()->setClearFlags(vl::CF_CLEAR_DEPTH);
+    // initialize solid & wire rendering with the default camera, transform root and scene manager.
+    mSolidRendering = new vl::Rendering;
+    mWireRendering  = new vl::Rendering;
+    *mSolidRendering = *(vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
+    *mWireRendering  = *(vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
 
+    // install the render tree that calls our two solid and wire renderings
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
     vl::VisualizationLibrary::setRendering(render_tree.get());
-    render_tree->subRenderings()->push_back(mRendering1.get());
-    render_tree->subRenderings()->push_back(mRendering2.get());
+    render_tree->subRenderings()->push_back(mSolidRendering.get());
+    render_tree->subRenderings()->push_back(mWireRendering.get());
+
+    // this is shared by both solid and wire renderings
+    vl::ref<vl::SceneManagerActorTree> scene_manager = mSolidRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>();
+
+    // initialize wire rendering's Renderer
+
+    // create its own copy of the renderer
+    vl::ref<vl::Renderer> wire_renderer = new vl::Renderer;
+    // don't clear color buffer otherwise we loose the results of the solid renderer
+    wire_renderer->setClearFlags(vl::CF_CLEAR_DEPTH);
+    // target the same OpenGL window
+    wire_renderer->setRenderTarget( mSolidRendering->renderer()->renderTarget() );
+    // install the renderer
+    mWireRendering->setRenderer( wire_renderer.get() );
 
     mCubeTransform1 = new vl::Transform;
     mCubeTransform2 = new vl::Transform;
     mCubeTransform3 = new vl::Transform;
-    mRendering1->transform()->addChild( mCubeTransform1.get() );
-    mRendering1->transform()->addChild( mCubeTransform2.get() );
-    mRendering1->transform()->addChild( mCubeTransform3.get() );
+    mSolidRendering->transform()->addChild( mCubeTransform1.get() );
+    mSolidRendering->transform()->addChild( mCubeTransform2.get() );
+    mSolidRendering->transform()->addChild( mCubeTransform3.get() );
 
-    const vl::Real size = 6;
-    vl::ref<vl::Geometry> cube = vlut::makeBox( vl::vec3(0,0,0), size, size, size);
-    cube->computeNormals();
+    const vl::Real fsize = 8;
+    vl::ref<vl::Geometry> ball = vlut::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
+    ball->computeNormals();
+
+    // setup solid effect
 
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
@@ -80,39 +95,46 @@ class App_EffectOverride: public BaseDemo
     effect->shader()->gocMaterial()->setDiffuse( vlut::gold );
     effect->shader()->gocMaterial()->setTransparency( 0.5f );
 
-    vl::ref<vl::SceneManagerActorTree> scene_manager = new vl::SceneManagerActorTree;
-    mRendering1->sceneManagers()->push_back(scene_manager.get());
-    mRendering2->sceneManagers()->push_back(scene_manager.get());
+    // populate the scene
 
-    vl::Actor* cube1 = scene_manager->tree()->addActor( cube.get(), effect.get(), mCubeTransform1.get() );
-    vl::Actor* cube2 = scene_manager->tree()->addActor( cube.get(), effect.get(), mCubeTransform2.get() );
-    vl::Actor* cube3 = scene_manager->tree()->addActor( cube.get(), effect.get(), mCubeTransform3.get() );
+    vl::Actor* ball1 = scene_manager->tree()->addActor( ball.get(), effect.get(), mCubeTransform1.get() );
+    vl::Actor* ball2 = scene_manager->tree()->addActor( ball.get(), effect.get(), mCubeTransform2.get() );
+    vl::Actor* ball3 = scene_manager->tree()->addActor( ball.get(), effect.get(), mCubeTransform3.get() );
+
+    // setup wire effects
 
     vl::ref<vl::Effect> fx1 = new vl::Effect;
     fx1->shader()->enable(vl::EN_LIGHTING);
     fx1->shader()->gocMaterial()->setFlatColor(vlut::red);
     fx1->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
-    fx1->shader()->gocLineWidth()->set(2.5f);
+    fx1->shader()->gocLineWidth()->set(2.0f);
+    fx1->shader()->enable(vl::EN_CULL_FACE);
 
     vl::ref<vl::Effect> fx2 = new vl::Effect;
     fx2->shader()->enable(vl::EN_LIGHTING);
     fx2->shader()->gocMaterial()->setFlatColor(vlut::green);
     fx2->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
-    fx2->shader()->gocLineWidth()->set(2.5f);
+    fx2->shader()->gocLineWidth()->set(2.0f);
+    fx2->shader()->enable(vl::EN_CULL_FACE);
 
     vl::ref<vl::Effect> fx3 = new vl::Effect;
     fx3->shader()->enable(vl::EN_LIGHTING);
     fx3->shader()->gocMaterial()->setFlatColor(vlut::blue);
     fx3->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
-    fx3->shader()->gocLineWidth()->set(2.5f);
+    fx3->shader()->gocLineWidth()->set(2.0f);
+    fx3->shader()->enable(vl::EN_CULL_FACE);
 
-    mRendering2->effectOverrideMask()[0x01] = fx1;
-    mRendering2->effectOverrideMask()[0x02] = fx2;
-    mRendering2->effectOverrideMask()[0x04] = fx3;
+    // setup the effect override masks
+    // note that we can override the Effect at the vl::Rendering level but
+    // we can also override the single Shader at the vl::Renderer level, see App_ShaderOverride.hpp
 
-    cube1->setEnableMask(0x01);
-    cube2->setEnableMask(0x02);
-    cube3->setEnableMask(0x04);
+    mWireRendering->effectOverrideMask()[0x01] = fx1;
+    mWireRendering->effectOverrideMask()[0x02] = fx2;
+    mWireRendering->effectOverrideMask()[0x04] = fx3;
+
+    ball1->setEnableMask(0x01);
+    ball2->setEnableMask(0x02);
+    ball3->setEnableMask(0x04);
   }
 
   virtual void run()
@@ -135,20 +157,18 @@ class App_EffectOverride: public BaseDemo
     mCubeTransform3->setLocalMatrix( matrix );
   }
 
-  void resizeEvent(int /*w*/, int /*h*/)
+  void resizeEvent(int w, int h)
   {
-    mRendering1->camera()->viewport()->setWidth(mRendering1->renderTarget()->width());
-    mRendering1->camera()->viewport()->setHeight(mRendering1->renderTarget()->height());
-    mRendering1->camera()->setProjectionAsPerspective();
-
-    mRendering2->camera()->viewport()->setWidth(mRendering2->renderTarget()->width());
-    mRendering2->camera()->viewport()->setHeight(mRendering2->renderTarget()->height());
-    mRendering2->camera()->setProjectionAsPerspective();
+    // note that the camera is shared by both the solid and wire rendering.
+    vl::Camera* camera = mSolidRendering->camera();
+    camera->viewport()->setWidth ( w );
+    camera->viewport()->setHeight( h );
+    camera->setProjectionAsPerspective();
   }
 
 protected:
-  vl::ref<vl::Rendering> mRendering1;
-  vl::ref<vl::Rendering> mRendering2;
+  vl::ref<vl::Rendering> mSolidRendering;
+  vl::ref<vl::Rendering> mWireRendering;
   vl::ref<vl::Transform> mCubeTransform1;
   vl::ref<vl::Transform> mCubeTransform2;
   vl::ref<vl::Transform> mCubeTransform3;

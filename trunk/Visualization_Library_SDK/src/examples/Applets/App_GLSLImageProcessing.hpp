@@ -173,7 +173,9 @@ public:
     vl::ref<vl::Uniform> image_height = mGLSLProgram->gocUniform("image_height");
     image_height->setUniform((float)mImage->width());
 
-    resizeEvent( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->width(), vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->height() );
+    int w = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->renderTarget()->width();
+    int h = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->renderTarget()->height();
+    resizeEvent( w, h );
     mTimer.start();
     mTest = 0;
     updateEffect();
@@ -181,13 +183,13 @@ public:
 
   void resizeEvent(int w, int h)
   {
-    BaseDemo::resizeEvent(w,h);
+    vl::Camera* camera = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera();
+    camera->viewport()->setWidth(w);
+    camera->viewport()->setHeight(h);
+    camera->setProjectionAsOrtho2D();
+
     if (mImage)
     {
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
-
       vl::mat4 m;
       m.translate(w/2.0f, h/2.0f, 0.0f);
 
