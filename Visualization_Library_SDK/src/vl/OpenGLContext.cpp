@@ -234,43 +234,68 @@ void OpenGLContext::logOpenGLInfo()
 
   if (VisualizationLibrary::settings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
   {
+    Log::print(" --- GLEW ---\n");
+    Log::print( Say("GLEW version: %s\n\n")<<glewGetString(GLEW_VERSION) );
+
     Log::print(" --- OpenGL Info ---\n");
-    Log::print( Say("GL_VERSION = %s\n") << glGetString(GL_VERSION) );
-    Log::print( Say("GL_VENDOR = %s\n") << glGetString(GL_VENDOR) );
-    Log::print( Say("GL_RENDERER = %s\n") << glGetString(GL_RENDERER) );
+    Log::print( Say("OpenGL version: %s\n") << glGetString(GL_VERSION) );
+    Log::print( Say("OpenGL vendor: %s\n") << glGetString(GL_VENDOR) );
+    Log::print( Say("OpenGL renderer: %s\n") << glGetString(GL_RENDERER) );
     Log::print( Say("OpenGL profile: %s\n") << (isCompatible() ? "Compatible" : "Core") );
     if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
-      Log::print( Say("GL_SHADING_LANGUAGE_VERSION = %s\n")<<glGetString(GL_SHADING_LANGUAGE_VERSION) );
-    Log::print( Say("GLEW_VERSION = %s\n")<<glewGetString(GLEW_VERSION) );
-    int tex_max = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &tex_max);
-    Log::print( Say("Max texture size: %n\n")<<tex_max);
-    tex_max = 1;
+      Log::print( Say("GLSL version: %s\n")<<glGetString(GL_SHADING_LANGUAGE_VERSION) );
+    int max_val = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_val);
+    Log::print( Say("Max texture size: %n\n")<<max_val);
+    max_val = 1;
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_val);
+    Log::print( Say("Texture coords: %n\n") << max_val);
+    max_val = 1;
     if (GLEW_ARB_multitexture||GLEW_VERSION_1_3||GLEW_VERSION_3_0)
-      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &tex_max);
-    Log::print( Say("Texture units: %n\n") << tex_max);
-    tex_max = 1;
-    if (GLEW_ARB_multitexture||GLEW_VERSION_1_3||GLEW_VERSION_3_0)
-      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &tex_max);
-    Log::print( Say("Texture coords: %n\n") << tex_max);
-    tex_max = 0;
+      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val);
+    Log::print( Say("Texture conventional units: %n\n") << max_val);
+    max_val = 1;
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+      glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
+    Log::print( Say("Texture image units: %n\n") << max_val);
+    max_val = 0;
     if (GLEW_ARB_multitexture||GLEW_VERSION_1_3)
-      glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &tex_max);
-    Log::print( Say("%s: Anisotropic Texture Filter ") << (GLEW_EXT_texture_filter_anisotropic? "OK" : "NO") );
-    GLEW_EXT_texture_filter_anisotropic ? Log::print( Say("%nX\n") << tex_max) : Log::print("\n");
-    Log::print( Say("%s: S3 Texture Compression\n") << (GLEW_EXT_texture_compression_s3tc? "OK" : "NO") );
-    Log::print( Say("%s: Vertex Buffer Object\n") << (GLEW_ARB_vertex_buffer_object ? "OK" : "NO"));
-    Log::print( Say("%s: Pixel Buffer Object\n") << (GLEW_ARB_pixel_buffer_object ? "OK" : "NO"));
-    Log::print( Say("%s: Framebuffer Object\n") << (GLEW_EXT_framebuffer_object ? "OK" : "NO"));
-    GLint max_elements_vertices=0, max_elements_indices=0;
-    glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_elements_vertices);
-    glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_elements_indices );
-    Log::print( Say("GL_MAX_ELEMENTS_VERTICES = %n\n") << max_elements_vertices );
-    Log::print( Say("GL_MAX_ELEMENTS_INDICES  = %n\n") << max_elements_indices  );
-    int max_vertex_attribs = 0;
+      glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_val);
+    Log::print( Say("Anisotropic texture filter: %s, ") << (GLEW_EXT_texture_filter_anisotropic? "YES" : "NO") );
+    GLEW_EXT_texture_filter_anisotropic ? Log::print( Say("%nX\n") << max_val) : Log::print("\n");
+    Log::print( Say("S3 Texture Compression: %s\n") << (GLEW_EXT_texture_compression_s3tc? "YES" : "NO") );
+    Log::print( Say("Vertex Buffer Object: %s\n") << (GLEW_ARB_vertex_buffer_object ? "YES" : "NO"));
+    Log::print( Say("Pixel Buffer Object: %s\n") << (GLEW_ARB_pixel_buffer_object ? "YES" : "NO"));
+    Log::print( Say("Framebuffer Object: %s\n") << (GLEW_EXT_framebuffer_object ? "YES" : "NO"));
+    max_val = 0;
     if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
-      glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &max_vertex_attribs);    
-    Log::print( Say("GL_MAX_VERTEX_ATTRIBS: %n\n")<<max_vertex_attribs);
+      glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &max_val);
+    Log::print( Say("Max vertex attributes: %n\n")<<max_val);
+    VL_CHECK_OGL();
+    max_val = 0;
+    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+      glGetIntegerv(GL_MAX_VARYING_FLOATS , &max_val);
+    Log::print( Say("Max varying floats: %n\n")<<max_val);
+    VL_CHECK_OGL();
+    max_val = 0;
+    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS , &max_val);
+    Log::print( Say("Max fragment uniform components: %n\n")<<max_val);
+    VL_CHECK_OGL();
+    max_val = 0;
+    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS , &max_val);
+    Log::print( Say("Max vertex uniform components: %n\n")<<max_val);
+    VL_CHECK_OGL();
+    max_val = 0;
+    if(GLEW_VERSION_1_2||GLEW_VERSION_3_0)
+      glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val);
+    Log::print( Say("Max elements vertices: %n\n") << max_val );
+    max_val = 0;
+    if(GLEW_VERSION_1_2||GLEW_VERSION_3_0)
+      glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val );
+    Log::print( Say("Max elements indices: %n\n") << max_val );
 
     // --- print supported extensions on two columns ---
 
@@ -279,9 +304,11 @@ void OpenGLContext::logOpenGLInfo()
     std::string ext_str;
     if (GLEW_VERSION_3_0)
     {
-      for( int i=0;; ++i )
+      int count = 0;
+      glGetIntegerv(GL_NUM_EXTENSIONS, &count);
+      for( int i=0; i<count; ++i )
       {
-        const char* str = (const char*)glGetStringi(GL_EXTENSIONS,i);
+        const char* str = (const char*)glGetStringi(GL_EXTENSIONS,i); VL_CHECK_OGL();
         if (!str)
           break;
         ext_str += std::string(str) + " ";
@@ -314,6 +341,8 @@ void OpenGLContext::logOpenGLInfo()
       Log::print( Say("%s\n") << line );
     Log::print("\n");
   }
+
+  VL_CHECK_OGL();
 }
 //------------------------------------------------------------------------------
 namespace
