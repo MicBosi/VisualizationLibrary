@@ -94,7 +94,7 @@
  * Useful to glue VL classes to the user's application logic.
  * \note This will add 4 or 8 bytes to each vl::Object instance.
  */
-#define VL_OBJECT_USER_DATA 1
+#define VL_OBJECT_USER_DATA 0
 
 
 /**
@@ -103,7 +103,7 @@
  * Useful to glue VL classes to the user's application logic.
  * \note This will add 4 or 8 bytes to each vl::Actor instance.
  */
-#define VL_ACTOR_USER_DATA 1
+#define VL_ACTOR_USER_DATA 0
 
 
 /**
