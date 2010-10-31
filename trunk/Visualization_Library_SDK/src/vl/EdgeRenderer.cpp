@@ -132,7 +132,7 @@ void EdgeRenderer::renderSolids(Camera* camera)
 
     wfinfo->mEdgeCallback->setShowCreases(showCreases());
     wfinfo->mEdgeCallback->operator()( camera, actor, wfinfo->mGeometry.get(), NULL, 0 );
-    actor->lod(0)->render( actor, openglContext(), camera );
+    actor->lod(0)->render( actor, camera );
   }
 }
 //-----------------------------------------------------------------------------
@@ -181,7 +181,7 @@ void EdgeRenderer::renderLines(Camera* camera)
     }
 
     // note: no rendering callbacks here
-    wfinfo->mGeometry->render( actor, openglContext(), camera );
+    wfinfo->mGeometry->render( actor, camera );
   }
 }
 //-----------------------------------------------------------------------------
