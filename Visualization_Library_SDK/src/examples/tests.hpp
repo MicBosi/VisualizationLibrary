@@ -100,7 +100,7 @@ public:
     /* bind the applet so it receives all the GUI events related to the OpenGLContext */
     oglcontext->addEventListener(applet);
     /* target the window so we can render on it */
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderTarget( oglcontext->renderTarget() );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( oglcontext->renderTarget() );
     /* black background */
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( bk_color );
     /* define the camera position and orientation */

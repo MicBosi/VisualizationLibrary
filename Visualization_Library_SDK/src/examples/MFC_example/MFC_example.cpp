@@ -102,7 +102,7 @@ BOOL MFC_Example::InitInstance()
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   mVLCWin->addEventListener(applet.get());
   /* target the window so we can render on it */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderTarget( mVLCWin->renderTarget() );
+  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( mVLCWin->renderTarget() );
   /* black background */
   vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::black );
   /* define the camera position and orientation */

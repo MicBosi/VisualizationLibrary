@@ -47,7 +47,7 @@ public:
     VL_CHECK_OGL()
 
     // save render target for later
-    vl::ref<vl::RenderTarget> render_target = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderTarget();
+    vl::ref<vl::RenderTarget> render_target = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->renderTarget();
     // install new rendering
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
     vl::VisualizationLibrary::setRendering(render_tree.get());
@@ -57,8 +57,8 @@ public:
     render_tree->subRenderings()->push_back(mMainRendering.get());
     mMainRendering->sceneManagers()->push_back(new vl::SceneManagerActorTree);
     mRTT_Rendering->sceneManagers()->push_back(new vl::SceneManagerActorTree);
-    mMainRendering->setRenderTarget( render_target.get() );
-    mRTT_Rendering ->setRenderTarget( render_target.get() );
+    mMainRendering->renderer()->setRenderTarget( render_target.get() );
+    mRTT_Rendering->renderer()->setRenderTarget( render_target.get() );
 
     mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
     mRTT_Rendering->camera()->viewport()->setX(0);
@@ -183,12 +183,12 @@ public:
     tr_ring5->setLocalMatrix( vl::mat4::rotation(x3, 1,0,0) );
   }
 
-  void resizeEvent(int /*w*/, int /*h*/)
+  void resizeEvent(int w, int h)
   {
-    // solid rendering: update viewport and projection matrix
-    mMainRendering->camera()->viewport()->setWidth(mMainRendering->renderTarget()->width());
-    mMainRendering->camera()->viewport()->setHeight(mMainRendering->renderTarget()->height());
-    mMainRendering->camera()->setProjectionAsPerspective();
+    vl::Camera* camera = mMainRendering->camera();
+    camera->viewport()->setWidth ( w );
+    camera->viewport()->setHeight( h );
+    camera->setProjectionAsPerspective();
   }
 
 protected:
