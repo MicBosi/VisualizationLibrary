@@ -90,11 +90,13 @@ namespace vl
     RenderQueueSorter* renderQueueSorter() { return mRenderQueueSorter.get(); }
 
     /** The list of Renderers used to perform the rendering. 
-      * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation. */
+      * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation. 
+      * \note All the renderers must target the same OpenGL context. */
     const std::vector< ref<Renderer> >& renderers() const { return mRenderers; }
 
     /** The list of Renderers used to perform the rendering. 
-      * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation. */
+      * The output of one Renderer::render() operation will be fed as input for the next Renderer::render() operation.
+      * \note All the renderers must target the same OpenGL context. */
     std::vector< ref<Renderer> >& renderers() { return mRenderers; }
 
     /** Uitlity function: clears the renderers() list and adds the specified one. */
@@ -133,13 +135,6 @@ namespace vl
     Collection<SceneManager>* sceneManagers() { return mSceneManagers.get(); }
     /** Returns the list of SceneManager[s] containing the Actor[s] to be rendered. */
     const Collection<SceneManager>* sceneManagers() const { return mSceneManagers.get(); }
-
-    /** The RenderTarget on which the rendering is performed. */
-    void setRenderTarget(RenderTarget* render_target) { mRenderTarget = render_target; }
-    /** The RenderTarget on which the rendering is performed. */
-    const RenderTarget* renderTarget() const { return mRenderTarget.get(); }
-    /** The RenderTarget on which the rendering is performed. */
-    RenderTarget* renderTarget() { return mRenderTarget.get(); }
 
     /** The root of the Transform tree <b>updated at every rendering frame</b>. For more information 
       * about how and when using it see the documentation of Transform. */
@@ -216,7 +211,6 @@ namespace vl
     ref<ActorCollection> mActorQueue;
     ref<RenderQueue> mRenderQueue;
     std::vector< ref<Renderer> > mRenderers;
-    ref<RenderTarget> mRenderTarget;
     ref<Camera> mCamera;
     ref<Transform> mTransform;
     ref<Collection<SceneManager> > mSceneManagers;

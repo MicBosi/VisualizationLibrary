@@ -34,6 +34,8 @@
 #include <vl/SceneManager.hpp>
 #include <vl/RenderQueue.hpp>
 #include <vl/GLSL.hpp>
+#include <vl/Log.hpp>
+#include <vl/Say.hpp>
 
 using namespace vl;
 
@@ -70,7 +72,6 @@ Rendering& Rendering::operator=(const Rendering& other)
   mShaderAnimationEnabled   = other.mShaderAnimationEnabled;
   mNearFarClippingPlanesOptimized = other.mNearFarClippingPlanesOptimized;
 
-  mRenderTarget        = other.mRenderTarget;
   mRenderQueueSorter   = other.mRenderQueueSorter;
   /*mActorQueue        = other.mActorQueue;*/
   /*mRenderQueue       = other.mRenderQueue;*/
@@ -87,8 +88,27 @@ void Rendering::render()
   VL_CHECK_OGL();
   VL_CHECK(camera());
   VL_CHECK(camera()->viewport());
-  VL_CHECK(renderTarget());
-  VL_CHECK(renderTarget()->openglContext());
+
+  if (renderers().empty())
+  {
+    vl::Log::error("Rendering::render(): no Renderer specified for this Rendering!\n");
+    VL_TRAP();
+    return;
+  }
+
+  if (!renderers()[0]->renderTarget())
+  {
+    vl::Log::error("Rendering::render(): no RendererTarget specified for Renderer #0!\n");
+    VL_TRAP();
+    return;
+  }
+
+  if (!renderers()[0]->renderTarget()->openglContext())
+  {
+    vl::Log::error("Rendering::render(): invalid RenderTarget for Renderer #0, OpenGLContext is NULL!\n");
+    VL_TRAP();
+    return;
+  }
 
   if ( enableMask() == 0 )
     return;
@@ -102,27 +122,21 @@ void Rendering::render()
   if (!camera()->viewport())
     return;
 
-  if (!renderTarget())
-    return;
+  // as stated in the documentation all the renderers must target the same OpenGLContext
 
-  if (!renderTarget()->openglContext())
-    return;
+  OpenGLContext* opengl_context = renderers()[0]->renderTarget()->openglContext();
 
   // activate OpenGL context
 
-  renderTarget()->openglContext()->makeCurrent();
+  opengl_context->makeCurrent();
 
   // render states ]shield[
 
-  renderTarget()->openglContext()->resetContextStates(); 
+  opengl_context->resetContextStates(); 
 
   // pre rendering callback
 
   dispatchRenderingCallbacks(RC_PreRendering);
-
-  // render target (note: an OpenGL context can have multiple rendering targets!)
-
-  renderTarget()->activate();
 
   // transform
 
@@ -201,8 +215,18 @@ void Rendering::render()
   {
     if (renderers()[i])
     {
-      // bind the OpenGL context
-      renderers()[i]->setOpenGLContext(renderTarget()->openglContext());
+      if (renderers()[i]->renderTarget() == NULL)
+      {
+        vl::Log::error( Say("Rendering::render(): no RendererTarget specified for Renderer #n!\n") << i );
+        VL_TRAP();
+        return;
+      }
+      if (renderers()[i]->renderTarget()->openglContext() == NULL)
+      {
+        vl::Log::error( Say("Rendering::render(): invalid RenderTarget for Renderer #0, OpenGLContext is NULL!\n") << i );
+        VL_TRAP();
+        return;
+      }
       // loop the rendering
       render_queue = renderers()[i]->render( render_queue, camera() );
     }
@@ -214,7 +238,7 @@ void Rendering::render()
 
   // render states ]shield[
 
-  renderTarget()->openglContext()->resetContextStates(); 
+  opengl_context->resetContextStates(); 
 
   VL_CHECK_OGL()
 }

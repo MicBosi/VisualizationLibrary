@@ -47,7 +47,11 @@ class App_ShaderOverride: public BaseDemo
   {
     BaseDemo::initEvent();
 
+    // retrieve our vl::Rendering object
+
     mRendering = vl::VisualizationLibrary::rendering()->as<vl::Rendering>();
+
+    // setup transforms
 
     mCubeTransform1 = new vl::Transform;
     mCubeTransform2 = new vl::Transform;
@@ -56,9 +60,13 @@ class App_ShaderOverride: public BaseDemo
     mRendering->transform()->addChild( mCubeTransform2.get() );
     mRendering->transform()->addChild( mCubeTransform3.get() );
 
-    const vl::Real fsize = 9;
-    vl::ref<vl::Geometry> ball = vlut::makeUVSphere( vl::vec3(0,0,0), fsize, 10, 10 );
+    // setup sphere geometry
+
+    const vl::Real fsize = 8;
+    vl::ref<vl::Geometry> ball = vlut::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
     ball->computeNormals();
+
+    // setup solid effect
 
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
@@ -70,28 +78,47 @@ class App_ShaderOverride: public BaseDemo
     effect->shader()->gocMaterial()->setTransparency( 0.5f );
 
     // creates 3 actors and adds them to the scene
+
     vl::Actor* cube1 = sceneManager()->tree()->addActor( ball.get(), effect.get(), mCubeTransform1.get() );
     vl::Actor* cube2 = sceneManager()->tree()->addActor( ball.get(), effect.get(), mCubeTransform2.get() );
     vl::Actor* cube3 = sceneManager()->tree()->addActor( ball.get(), effect.get(), mCubeTransform3.get() );
+
+    // setup three wireframe override-shaders
 
     vl::ref<vl::Shader> sh1 = new vl::Shader;
     vl::ref<vl::Shader> sh2 = new vl::Shader;
     vl::ref<vl::Shader> sh3 = new vl::Shader;
 
+    // common settings
+
     sh1->enable(vl::EN_LIGHTING);
     sh1->enable(vl::EN_CULL_FACE);
     sh1->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
-    sh1->gocCullFace()->set(vl::PF_BACK);
+    sh1->gocLineWidth()->set(2.0f);
 
     // share all the states except for the glMaterial ones
+
     *sh3 = *sh2 = *sh1;
+
+    // assign a different flat material color to each shader
+
     sh1->gocMaterial()->setFlatColor(vlut::red);
     sh2->gocMaterial()->setFlatColor(vlut::green);
     sh3->gocMaterial()->setFlatColor(vlut::blue);
 
+    // setup the renderer that will override the shaders
+
     vl::ref<vl::Renderer> wire_renderer = new vl::Renderer;
+    // keep the color buffer from the solid rendering but clear the depth buffer
     wire_renderer->setClearFlags(vl::CF_DO_NOT_CLEAR);
+    // target the same render target
+    wire_renderer->setRenderTarget( mRendering->renderers()[0]->renderTarget() );
+    // add wireframe renderer
     mRendering->renderers().push_back(wire_renderer.get());
+
+    // setup shader override masks
+    // note that we can override the Shader at the vl::Renderer level but
+    // we can also override the Effect at the vl::Rendering level, see App_EffectOverride.hpp
 
     wire_renderer->shaderOverrideMask()[0x01] = sh1;
     wire_renderer->shaderOverrideMask()[0x02] = sh2;
@@ -100,7 +127,6 @@ class App_ShaderOverride: public BaseDemo
     cube1->setEnableMask(0x01);
     cube2->setEnableMask(0x02);
     cube3->setEnableMask(0x04);
-
   }
 
   virtual void run()
@@ -108,7 +134,7 @@ class App_ShaderOverride: public BaseDemo
     vl::Real degrees = vl::Time::currentTime() * 45.0f;
     vl::mat4 matrix;
     
-    matrix.rotate( degrees, 1,0,0 );
+    matrix.rotate( degrees, 0,1,0 );
     matrix.translate(-10,0,0);
     mCubeTransform1->setLocalMatrix( matrix );
 
@@ -118,16 +144,17 @@ class App_ShaderOverride: public BaseDemo
     mCubeTransform2->setLocalMatrix( matrix );
 
     matrix.setIdentity();
-    matrix.rotate( degrees, 0,0,1 );
+    matrix.rotate( degrees, 0,1,0 );
     matrix.translate(+10,0,0);
     mCubeTransform3->setLocalMatrix( matrix );
   }
 
-  void resizeEvent(int /*w*/, int /*h*/)
+  void resizeEvent(int w, int h)
   {
-    mRendering->camera()->viewport()->setWidth ( mRendering->renderTarget()->width () );
-    mRendering->camera()->viewport()->setHeight( mRendering->renderTarget()->height() );
-    mRendering->camera()->setProjectionAsPerspective();
+    vl::Camera* camera = mRendering->camera();
+    camera->viewport()->setWidth ( w );
+    camera->viewport()->setHeight( h );
+    camera->setProjectionAsPerspective();
   }
 
 protected:

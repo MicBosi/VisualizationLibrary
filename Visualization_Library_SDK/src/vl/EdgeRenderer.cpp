@@ -40,6 +40,11 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   if (enableMask() == 0)
     return render_queue;
 
+  // --------------- render target activation --------------- 
+  // (note: an OpenGL context can have multiple rendering targets!)
+
+  renderTarget()->activate();
+
   // --------------- viewport activation --------------- 
 
   camera->viewport()->setClearFlags(clearFlags());

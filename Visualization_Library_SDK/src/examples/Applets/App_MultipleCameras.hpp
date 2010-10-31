@@ -42,7 +42,7 @@ public:
 
     // save to be used later
     vl::ref<vl::Renderer> renderer = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer();
-    vl::ref<vl::RenderTarget> render_target = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderTarget();
+    vl::ref<vl::RenderTarget> render_target = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->renderTarget();
     // install new rendering tree
     mRenderingTree = new vl::RenderingTree;
     vl::VisualizationLibrary::setRendering(mRenderingTree.get());
@@ -96,7 +96,7 @@ public:
 
     for( int i=0; i<mRenderingTree->subRenderings()->size(); ++i )
     {
-      mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->setRenderTarget( render_target.get() );
+      mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->renderer()->setRenderTarget( render_target.get() );
       mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->setRenderer( renderer.get() );
       mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->setCamera( new vl::Camera );
       mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->setTransform( _tr1.get() );
@@ -155,23 +155,23 @@ public:
     int hw = w/2;
     int hh = h/2;
 
-    mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->renderer()->renderTarget()->setHeight(h);
     mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->camera()->viewport()->set(0,0,hw,hh);
     mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->renderer()->renderTarget()->setHeight(h);
     mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->camera()->viewport()->set(hw,hh,w-hw,h-hh);
     mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->renderer()->renderTarget()->setHeight(h);
     mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->camera()->viewport()->set(0,hh,hw,h-hh);
     mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->renderer()->renderTarget()->setHeight(h);
     mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->camera()->viewport()->set(hw,0,w-hw,hh);
     mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->camera()->setProjectionAsPerspective();
 
@@ -182,7 +182,7 @@ public:
   {
     for( int i=0; i<mRenderingTree->subRenderings()->size(); ++i )
     {
-      int height = mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->renderTarget()->height();
+      int height = mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->renderer()->renderTarget()->height();
       if ( mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->isPointInside(x,y,height) )
       {
         bindManipulators( mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>() );
