@@ -82,7 +82,7 @@ namespace vl
       mScissorBox[3] = -1;
     }
 
-    virtual void render(const Actor*, const OpenGLContext*, const Camera*) const
+    virtual void render(const Actor*, const Camera*) const
     {
       // build buffer bit mask
       GLbitfield mask = 0;

@@ -448,7 +448,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       if (tok->mRenderable->displayListEnabled())
         glCallList( tok->mRenderable->displayList() );
       else
-        tok->mRenderable->render( actor, openglContext(), camera );
+        tok->mRenderable->render( actor, camera );
 
       VL_CHECK_OGL()
 

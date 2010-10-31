@@ -63,17 +63,16 @@ namespace vl
 
   public:
     virtual const char* className() { return "Renderable"; }
+    
+    /** Constructor. */
     Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true), 
     mDisplayListEnabled(false), mDisplayListDirty(true), mVBOEnabled(true), mVBODirty(true) {}
-    virtual ~Renderable() 
-    {
-      deleteDisplayList();
-    }
+    
+    /** Destructor. */
+    virtual ~Renderable() { deleteDisplayList(); }
 
-    /**
-     * Renders the Renderable.
-    */
-    virtual void render(const Actor* actor, const OpenGLContext*, const Camera* camera) const = 0;
+    /** Renders the Renderable. */
+    virtual void render(const Actor* actor, const Camera* camera) const = 0;
 
     long long boundsUpdateTick() const { return mBoundsUpdateTick; }
     void computeBounds() { computeBounds_Implementation(); setBoundsDirty(false); }
@@ -115,12 +114,12 @@ namespace vl
       mDisplayList = 0;
     }
 
-    void compileDisplayList(Actor* act, OpenGLContext* glctx, Camera* camera)
+    void compileDisplayList(Actor* act, Camera* camera)
     {
       if (!displayList())
         setDisplayList( glGenLists(1) );
       glNewList( displayList(), GL_COMPILE );
-        render( act, glctx, camera );
+        render( act, camera );
       glEndList();
       VL_CHECK_OGL();
       setDisplayListDirty(false);

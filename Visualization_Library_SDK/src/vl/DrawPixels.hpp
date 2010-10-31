@@ -133,7 +133,7 @@ namespace vl
      * the bitmaps position will follow the Actor's Transform. 
      * The \p renderer parameter is ignored.
     */
-    void render(const Actor* actor, const OpenGLContext*, const Camera* camera) const;
+    void render(const Actor* actor, const Camera* camera) const;
 
     const Collection<Pixels>* draws() const { return &mDraws; }
     Collection<Pixels>* draws() { return &mDraws; }

@@ -45,7 +45,7 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-void Text::render( const Actor* actor, const OpenGLContext*, const Camera* camera ) const
+void Text::render( const Actor* actor, const Camera* camera ) const
 {
   VL_CHECK(font())
 

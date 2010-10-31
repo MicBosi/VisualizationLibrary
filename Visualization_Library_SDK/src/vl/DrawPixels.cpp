@@ -117,7 +117,7 @@ DrawPixels::DrawPixels()
   mDraws.setAutomaticDelete(false);
 }
 //-----------------------------------------------------------------------------
-void DrawPixels::render(const Actor* actor, const OpenGLContext*, const Camera* camera) const
+void DrawPixels::render(const Actor* actor, const Camera* camera) const
 {
   VL_CHECK_OGL()
 
