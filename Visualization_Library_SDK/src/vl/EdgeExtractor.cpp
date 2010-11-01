@@ -68,12 +68,21 @@ void EdgeExtractor::addEdge(std::set<EdgeExtractor::Edge>& edges, const EdgeExtr
 void EdgeExtractor::extractEdges(Geometry* geom)
 {
   ArrayFVec3* verts = dynamic_cast<ArrayFVec3*>(geom->vertexArray());
+
+  // mic fixme:
+  // here the bottle-neck seems to be the continuous allocation/deallocation and insertion/search time,
+  // maybe a memory-pool-managed hash table would help? see http://home.comcast.net/~bretm/hash/7.html
   std::set<Edge> edges;
   if (!verts)
   {
     vl::Log::error("EdgeExtractor::extractEdges(geom): 'geom' must have a vertex array of type ArrayFVec3.\n");
     return;
   }
+
+  // mic fixme:
+  // this works only for DrawElements and DrawArrays, no primitive restart, no base vertex.
+  // here also we would need a triangle-iterator just like for the tangent space extractor,
+  // and correct per-drawcall geometry bounding box computation.
   for(int iprim=0; iprim<geom->drawCalls()->size(); ++iprim)
   {
     DrawCall* prim = geom->drawCalls()->at(iprim);

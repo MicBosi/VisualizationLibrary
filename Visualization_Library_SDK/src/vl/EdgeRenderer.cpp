@@ -107,7 +107,10 @@ void EdgeRenderer::renderSolids(Camera* camera)
   for( std::map< ref<Actor>, ref<WFInfo> >::iterator it = mVisibleActors.begin(); it != mVisibleActors.end(); ++it)
   {
     Actor* actor = it->first.get();
+    VL_CHECK(actor);
+    VL_CHECK(actor->lod(0));
     const WFInfo* wfinfo = it->second.get();
+    VL_CHECK(wfinfo);
 
     // --------------- transform ---------------
 
@@ -250,7 +253,12 @@ void EdgeRenderer::updateActorCache(const RenderQueue* render_queue)
   {
     if ( !isEnabled(render_queue->at(i)->mActor->enableMask()) )
       continue;
-    mVisibleActors[render_queue->at(i)->mActor] = declareActor(render_queue->at(i)->mActor);
+    // fails for non-Geometry renderables
+    WFInfo* wfinfo = declareActor(render_queue->at(i)->mActor);
+    if (wfinfo)
+    {
+      mVisibleActors[render_queue->at(i)->mActor] = wfinfo;
+    }
   }
 }
 //-----------------------------------------------------------------------------
