@@ -32,7 +32,7 @@
 #include <vl/Log.hpp>
 #include <vl/checks.hpp>
 #include <vl/VisualizationLibrary.hpp>
-#include <cstdio>
+#include <iostream>
 
 using namespace vl;
 
@@ -112,7 +112,7 @@ void StandardLog::printImplementation(ELogLevel level, const String& in_log)
   }
 
   std::string stdstr = log.toStdString();
-  fprintf( stdout, "%s", stdstr.c_str() );
+  std::cout << stdstr << std::flush;
 
   if (mFile.is_open())
     mFile << stdstr << std::flush;
