@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
+#include "vl/OcclusionCullRenderer.hpp"
 
 class App_OcclusionCulling: public BaseDemo
 {
@@ -39,11 +40,26 @@ public:
     BaseDemo::initEvent();
 
     // #######################################################################
-    // # These 2 lines are the only code needed to enable occlusion culling! #
+    // # These 4 lines are the only code needed to enable occlusion culling, #
+    // # no special sorter or render rank/block setup needed!                #
     // #######################################################################
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setOcclusionCullingEnabled(true);
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderQueueSorter(new vl::RenderQueueSorterOcclusion);
 
+    // wraps the regular renderer inside the occlusion renderer
+    vl::Renderer* regular_renderer = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer();
+    // creates our occlusion renderer
+    mOcclusionRenderer = new vl::OcclusionCullRenderer;
+    mOcclusionRenderer->setWrappedRenderer( regular_renderer );
+    // installs the occlusion renderer in place of the regular one
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderer( mOcclusionRenderer.get() );
+
+    // note: to disable occlusion culling just restore the 'regular_renderer' as we do below in 'keyPressEvent()'
+
+    populateScene();
+  }
+
+  /* populates the scene with tree-like actors */
+  void populateScene()
+  {
     /* the rest of the code simply generates a forest of thousands of trees */
 
     /* setup a simple effect to use for all our objects */
@@ -55,15 +71,13 @@ public:
 
     /* the ground under the trees */
     float side = 400;
-    vl::ref<vl::Geometry> ground = vlut::makeGrid(vl::vec3(0,0,0), side*2.0f,side*2.0f, (int)side, (int)side);
+    vl::ref<vl::Geometry> ground = vlut::makeGrid(vl::vec3(0, -1.0f, 0), side*2.1f, side*2.1f, (int)side, (int)side);
     ground->computeNormals();
     ground->setColorArray(vlut::green);
-    vl::Actor* ground_act = sceneManager()->tree()->addActor(ground.get(), fx.get(), NULL);
-    /* assign a render rank of -1 (default is 0) to be sure to render the ground before all the trees */
-    ground_act->setRenderRank(-1);
+    sceneManager()->tree()->addActor(ground.get(), fx.get(), NULL);
 
     /* the red wall in front of the camera */
-    vl::ref<vl::Geometry> wall = vlut::makeBox(vl::vec3(0,25,500), 50,50,1);
+    vl::ref<vl::Geometry> wall = vlut::makeBox(vl::vec3(0,25,500), 50, 50 ,1);
     wall->computeNormals();
     wall->setColorArray(vlut::red);
     sceneManager()->tree()->addActor(wall.get(), fx.get(), NULL);
@@ -72,11 +86,11 @@ public:
     float trunk_h   = 20;
     float trunk_w   = 4;
     /* the tree's branches */
-    vl::ref<vl::Geometry> branches = vlut::makeIcosphere(vl::vec3(0,trunk_h/2.0f,0), 7, 1, false);
+    vl::ref<vl::Geometry> branches = vlut::makeIcosphere(vl::vec3(0,trunk_h/2.0f,0), 14, 2, false);
     branches->computeNormals();
     branches->setColorArray( vlut::green );
     /* the tree's trunk */
-    vl::ref<vl::Geometry> trunk = vlut::makeCylinder(vl::vec3(0,0,0),trunk_w,trunk_h, 35, 35);
+    vl::ref<vl::Geometry> trunk = vlut::makeCylinder(vl::vec3(0,0,0),trunk_w,trunk_h, 50, 50);
     trunk->computeNormals();
     trunk->setColorArray( vlut::gold );
 
@@ -93,6 +107,50 @@ public:
       sceneManager()->tree()->addActor(trunk.get(), fx.get(), tr.get());
       sceneManager()->tree()->addActor(branches.get(), fx.get(), tr.get());
     }
+
+    /* text statistics */
+    mText = new vl::Text;
+    mText->setText("*** N/A ***");
+    mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    mText->setAlignment( vl::AlignLeft | vl::AlignTop );
+    mText->setViewportAlignment( vl::AlignLeft | vl::AlignTop );
+    mText->setTextAlignment(vl::TextAlignLeft);
+    mText->translate(+5,-5,0);
+    mText->setColor(vlut::white);
+    vl::ref<vl::Effect> effect = new vl::Effect;
+    effect->shader()->enable(vl::EN_BLEND);
+    vl::Actor* text_actor = sceneManager()->tree()->addActor(mText.get(), effect.get());
+    text_actor->setOccludee(false);
+
+    /* start stats timer */
+    mTimer.start();
+
+    /* occlusion culling enable flag */
+    mOcclusionCullingOn = true;
+  }
+
+  void updateText()
+  {
+    if (mOcclusionRenderer)
+    {
+      vl::String msg = vl::Say("Occlusion ratio = %.1n%% (%n/%n)\n") 
+        << 100.0f * mOcclusionRenderer->statsOccludedObjects() / mOcclusionRenderer->statsTotalObjects() 
+        << mOcclusionRenderer->statsTotalObjects() - mOcclusionRenderer->statsOccludedObjects() 
+        << mOcclusionRenderer->statsTotalObjects();
+      mText->setText( msg );
+    }
+  }
+
+  void runEvent()
+  {
+    BaseDemo::runEvent();
+
+    /* update text every 0.5 secs */
+    if( mTimer.elapsed() > 0.5f && mOcclusionCullingOn )
+    {
+      updateText();
+      mTimer.start();
+    }
   }
 
   /* spacebar = toggles occlusion culling */
@@ -101,11 +159,24 @@ public:
     BaseDemo::keyPressEvent(ch, key);
     if (key == vl::Key_Space)
     {
-      bool on = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->occlusionCullingEnabled();
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setOcclusionCullingEnabled(!on);
-      vl::Log::print( vl::Say("Occlusion = %s\n") << (vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->occlusionCullingEnabled() ? "On" : "Off") );
+      mOcclusionCullingOn = !mOcclusionCullingOn;
+      if (mOcclusionCullingOn)
+      {
+        vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderer( mOcclusionRenderer.get() );
+      }
+      else
+      {
+        vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderer( mOcclusionRenderer->wrappedRenderer() );
+        mText->setText("Occlusion Culling Off");
+      }
     }
   }
+
+protected:
+  vl::ref<vl::OcclusionCullRenderer> mOcclusionRenderer;
+  bool mOcclusionCullingOn;
+  vl::ref<vl::Text> mText;
+  vl::Time mTimer;
 };
 
 // Have fun!

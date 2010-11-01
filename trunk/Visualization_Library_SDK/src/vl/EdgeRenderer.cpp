@@ -37,6 +37,9 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera)
 {
+  // increment the render tick
+  ++mRenderTick;
+
   if (enableMask() == 0)
     return render_queue;
 

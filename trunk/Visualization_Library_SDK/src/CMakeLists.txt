@@ -72,6 +72,7 @@ SET(VL_SRC
   vl/MemoryFile.cpp
   vl/MorphingActor.cpp
   vl/FileSystem.cpp
+  vl/OcclusionCullRenderer.cpp
   vl/Object.cpp
   vl/OpenGL.cpp
   vl/OpenGLContext.cpp
@@ -172,6 +173,7 @@ set(VL_INC
   vl/FileSystem.hpp
   vl/Object.hpp
   vl/Collection.hpp
+  vl/OcclusionCullRenderer.hpp
   vl/OpenGL.hpp
   vl/OpenGLContext.hpp
   vl/PixelLODEvaluator.hpp
