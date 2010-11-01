@@ -62,20 +62,7 @@ The OpenGL extension \p GL_ARB_occlusion_query allows a program to request if a 
 
 	\par Enabling Occlusion Culling
 
-	Exploiting the huge potential of OpenGL accelerated occlusion culling with Visualization Library is extremely simple provided you pay attention to a few details. 
-	
-	- To enable the occlusion culling you set a simple flag using the method vl::Renderer::setOcclusionCullingEnabled(). This will enable the occlusion culling for all the vl::Actor[s] rendered from then on.
-	- Enabling the occlusion culling though is not enough. In order to maximize its efficiency we need to render the solid (non translucent) objects in front-to-back order, that is, we first render the close ones and then the ones far away to maximize the chance of culling away as many objects as possible. In order to do this we will install a special vl::RenderQueueSorter called vl::RenderQueueSorterOcclusion using the method vl::Rendering::setRenderQueueSorter().
-	
-	\par Large Occluders
-
-In order to be sure to maximize the efficiency of the occlusion culling you want to make sure that large occluders are rendered before all the other objects. In our case for example we assign a rendering rank of -1 to the ground vl::Actor. You should always pay particular attention to very large occluders like the ground vl::Actor in our scene. In fact the vl::RenderQueueSorterOcclusion sorts the vl::Actor[s] based on the distance between the camera and their center. This means that a very large occluder might actually be in front of all the other objects but its center might be further away. Consider for example the image below:
-
-	\image html pagGuideOcclusionCulling_LargeOccluders.png
-
-	The red dot on the left represents the camera, the gray object is a large occluder, the boxes are other objects occluded by the large gray one. As we can see if we simply render the objects in front to back order based on their centers we end up rendering first the red boxes (thus wasting time since they will not be visible!), then the large gray occluder which overdraws the red boxes when rendered on the screen, and then the green boxes (which are actually not rendered thanks to the occlusion culling). With this approach we rendered six boxes (the red ones) which are actually not visible. To optimize this case we would render the gray occluder for first, specifying for it a render rank lower than the boxes' render rank. Remember that the user specified ordering (Actor render rank and render block and Effect render rank) always wins against any eventual automatic sorting performed by a vl::RenderQueueSorter.
-
-	Also keep in mind that the concept of "large occluder" is heavily subjective as a skyscraper seen from 1 Km away is not a good occluder while a matchbox seen from very close can become a very good one!
+	Exploiting the huge potential of OpenGL accelerated occlusion culling with Visualization Library is extremely simple. From vesion 2010.10.1115 VL implements a new occlusion culling mechanism which is much more general and efficient than the previous one. The user no longer has to install a specific render token sorter, pay attention to render rank and render blocks, evaluate large occluders etc. because VL will simply use the whole z-buffer of the preceding rendering to occlude contents of the next one! The new vl::OcclusionCullRenderer class implement an occlusion culling strategy that filters out the objects rendered by a specific vl::Renderer, the usage of the vl::OcclusionCullRenderer class is shown in the example below.
 
 	[From \p App_OcclusionCulling.hpp]
 	\dontinclude App_OcclusionCulling.hpp
