@@ -151,6 +151,9 @@ namespace vl
     /** The RenderTarget on which the rendering is performed. */
     RenderTarget* renderTarget() { return mRenderTarget.get(); }
 
+    /** The current render tick number, equivalent to the number or calls made to the render() method. */
+    unsigned long renderTick() const { return mRenderTick; }
+
   protected:
     bool mCollectStatistics;
     size_t mRenderedRenderableCount;
@@ -170,6 +173,8 @@ namespace vl
     std::map<unsigned int, ref<Shader> > mShaderOverrideMask;
 
     ref<ProjViewTranfCallbackStandard> mProjViewTranfCallback;
+
+    unsigned long mRenderTick;
   };
   //------------------------------------------------------------------------------
 }
