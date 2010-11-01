@@ -43,11 +43,6 @@
 
 using namespace vl;
 
-namespace
-{
-  unsigned g_OcclusionQueryMasterTick = 0;
-}
-
 //------------------------------------------------------------------------------
 // Renderer
 //------------------------------------------------------------------------------
@@ -60,10 +55,6 @@ Renderer::Renderer()
   mClearFlags = CF_CLEAR_COLOR_DEPTH;
   mEnableMask = 0xFFFFFFFF;
 
-  mOcclusionQueryTickPrev  = 0;
-  mOcclusionQueryTick      = 0;
-  mOcclusionThreshold      = 0;
-  mOcclusionCullingEnabled = false;
   mCollectStatistics       = false;
   mRenderedRenderableCount = 0;
   mRenderedTriangleCount   = 0;
@@ -74,14 +65,6 @@ Renderer::Renderer()
 
   mDummyEnables  = new EnableSet;
   mDummyStateSet = new RenderStateSet;
-
-  // occlusion culling shader
-  // mic fixme
-  //mOcclusionShader = new Shader;
-  //mOcclusionShader->gocDepthMask()->set(false);
-  //mOcclusionShader->gocColorMask()->set(false,false,false,false);
-  //mOcclusionShader->enable(vl::EN_CULL_FACE);
-  //mOcclusionShader->enable(vl::EN_DEPTH_TEST);
 }
 //------------------------------------------------------------------------------
 namespace
@@ -135,7 +118,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   camera->viewport()->setClearFlags(clearFlags());
   camera->viewport()->activate();
 
-  // --------------- rendering ---------------
+  // --------------- default scissor ---------------
 
   // non GLSLProgram state sets
   const RenderStateSet* cur_render_state_set = NULL;
@@ -150,22 +133,15 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
     glDisable(GL_SCISSOR_TEST);
   #endif
 
-  /* camera/eye position (mic fixme) */
-  // vec3 eye = camera->inverseViewMatrix().getT();
-
-  /* current occlusion query tick (mic fixme) */
-  // mOcclusionQueryTickPrev = mOcclusionQueryTick;
-  // mOcclusionQueryTick     = g_OcclusionQueryMasterTick++;
+  // --------------- rendering ---------------
 
   for(int itok=0; itok < render_queue->size(); ++itok)
   {
-    const RenderToken* tok   = render_queue->at(itok);
-    Actor* actor = tok->mActor;
+    const RenderToken* tok   = render_queue->at(itok); VL_CHECK(tok);
+    Actor* actor = tok->mActor; VL_CHECK(actor);
 
     if ( !isEnabled(actor->enableMask()) )
       continue;
-
-    VL_CHECK(tok);
 
     // --------------- Actor's scissor ---------------
 
@@ -188,96 +164,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
         #endif
       }
     }
-
-    // --------------- occlusion culling ---------------
-
-    // mic fixme - occlusion culling disabled for now until the transition to the new architecture is finalized.
-
-    // New Occlusion Culling System: occludee devono essere messi in un rendering a parte e renderizzati
-    // con un unico occlusion-shader, this way: 
-    // 1) occluder rendering(normal shader)
-    // 2) occludee rendering(occlusion shader)
-    // 3) occludee rendering(normal shader) if previous occlusion query returns the object is visible
-    // nota che i passi 1, 2, 3 non e' per-actor, ma prima si renderizzano tutti gli occluders, poi tutti i 
-    // candidati occludee con occluder shader, poi di nuovo tutti gli occludee non occlusi con il loro shader normale.
-
-    // ? forse si dovrebbero sintetizzare dei RenderToken al volo ?
-    // ? lasciare l'utente definire degli OcclusionQueryGeometry  ?
-    // ? quando l'occludee e' renderizzato l'occlusion query va fatta prima di settare shaders, states etc. ?
-
-    /*
-    bool occluded = false;
-    if ( occlusionCullingEnabled() && !actor->boundingBox().isInside(eye) )
-    {
-      VL_CHECK(GLEW_ARB_occlusion_query || GLEW_VERSION_1_5 || GLEW_VERSION_3_0)
-
-      if ( actor->occlusionQuery() && actor->occlusionQueryTick() == mOcclusionQueryTickPrev )
-      {
-        #if 0
-          GLint ready = GL_FALSE;
-          glGetQueryObjectiv(actor->occlusionQuery(),GL_QUERY_RESULT_AVAILABLE,&ready); VL_CHECK_OGL();
-          if (ready == GL_FALSE)
-            vl::Log::error("Occlusion culling query not yet available.\n");
-        #endif
-        // a few benchmarks say that even if it is not ready it is convenient to flush the OpenGL pipeline at this point
-        GLint pixels = 0;
-        glGetQueryObjectiv(actor->occlusionQuery(),GL_QUERY_RESULT,&pixels); VL_CHECK_OGL();
-        // object is occluded
-        if (pixels <= occlusionThreshold())
-          occluded = true;
-      }
-
-      // if occludee -> perform occlusion test to be used for the next frame
-      if (actor->isOccludee())
-      {
-        // register occlusion query tick
-
-        actor->setOcclusionQueryTick(mOcclusionQueryTick);
-
-        // activate occlusion culling shader
-
-        applyRenderStates(cur_render_state_set, mOcclusionShader->getRenderStateSet(), camera );
-        cur_render_state_set = mOcclusionShader->getRenderStateSet();
-
-        VL_CHECK_OGL()
-
-        applyEnables(cur_enable_set, mOcclusionShader->getEnableSet() );
-        cur_enable_set = mOcclusionShader->getEnableSet();
-
-        VL_CHECK_OGL()
-
-        // compute Renderable AABB geometry (we are using the currently active Transform)
-        const AABB& aabb = tok->mRenderable->boundingBox();
-        const float verts[] = 
-        {
-          (float)aabb.minCorner().x(), (float)aabb.minCorner().y(), (float)aabb.minCorner().z(),
-          (float)aabb.maxCorner().x(), (float)aabb.minCorner().y(), (float)aabb.minCorner().z(),
-          (float)aabb.maxCorner().x(), (float)aabb.maxCorner().y(), (float)aabb.minCorner().z(),
-          (float)aabb.minCorner().x(), (float)aabb.maxCorner().y(), (float)aabb.minCorner().z(),
-          (float)aabb.minCorner().x(), (float)aabb.minCorner().y(), (float)aabb.maxCorner().z(),
-          (float)aabb.maxCorner().x(), (float)aabb.minCorner().y(), (float)aabb.maxCorner().z(),
-          (float)aabb.maxCorner().x(), (float)aabb.maxCorner().y(), (float)aabb.maxCorner().z(),
-          (float)aabb.minCorner().x(), (float)aabb.maxCorner().y(), (float)aabb.maxCorner().z()
-        };
-        const unsigned quads[] = { 3,2,1,0, 2,6,5,1, 3,7,6,2, 7,3,0,4, 4,0,1,5, 6,7,4,5 };
-        // glColor3f(1.0f,1.0f,1.0f);
-        glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
-        glVertexPointer(3, GL_FLOAT, 0, verts); VL_CHECK_OGL();
-          actor->createOcclusionQuery(); VL_CHECK_OGL();
-          glBeginQuery(GL_SAMPLES_PASSED, actor->occlusionQuery()); VL_CHECK_OGL();
-          glDrawElements(GL_QUADS, 6*4, GL_UNSIGNED_INT, quads); VL_CHECK_OGL();
-          glEndQuery(GL_SAMPLES_PASSED); VL_CHECK_OGL();
-        glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
-        glVertexPointer(3, GL_FLOAT, 0, NULL); VL_CHECK_OGL();
-      }
-    }
-
-    // skip occluded object
-    if (occluded)
-      continue;
-    */
-
-    VL_CHECK_OGL()
 
     // multipassing
     for( int ipass=0; tok != NULL; tok = tok->mNextPass, ++ipass )
