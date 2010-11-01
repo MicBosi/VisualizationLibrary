@@ -2,9 +2,27 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2010.10.1115</div>
+
+	- <b>New vl::OcclusionCullRenderer implementing the new occlusion culling algorithm: 25%-40% more efficient!</b>
+	- <b>Multiple vl::Renderer objects can now be added to a single vl::Rendering in cascade, one feeding the next one!</b>
+	- <b>vl::Shader override mechanics at the vl::Renderer level, see App_ShaderOverride.hpp.</b>
+	- <b>vl::Effect override  mechanics at the vl::Rendering level reviewed, see App_EffectOverride.hpp.</b>
+    - <b>vl::Transform: new methods vl::Transform::addChildren(), vl::Transform::children(), vl::Transform::shrink(), vl::Transform::shrinkRecursive(), vl::Transform::setLocalAndWorldMatrix(), vl::Transform::reserveChildren(), largely improved documentation.</b>
+	- Updated App_OcclusionCulling.hpp and App_EdgeRendering.hpp to use the new features.
+	- API CHANGES 
+		- Removed OpenGLContext parameter from Renderable::render() method.
+		- Removed occlusion culling related methods from vl::Rendering.
+		- RenderTarget management methods moved from vl::Renderer to vl::Rendering.
+		- alwaysIdentityWorldMatrix() renamed assumeIdentityWorldMatrix()
+	- Fixed EdgeRenderer bug when dealing with non-Geometry Renderables.
+	- Added VL_ACTOR_USER_DATA configuration variable to add user data to any vl::Actor.
+	- Fixed VL_OBJECT_USER_DATA bugs.
+	- Several other fixes and improvements.
+
 	 <div class="featuretitle">Visualization Library 2010.10.1111</div>
 
-	- <b>API CHANGES</b>
+	- API CHANGES
 		- Primitives class renamed <b>DrawCall</b>.
 		- Geometry::primitives() renamed <b>Geometry::drawCalls()</b>.
 		- GlobalSettings renamed <b>Settings</b>.
