@@ -46,11 +46,14 @@ namespace vl
   {
   public:
     virtual const char* className() { return "RenderQueue"; }
+
     RenderQueue(): mSize(0), mSizeMP(0)
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
+      mList.reserve(100);
+      mListMP.reserve(100);
     }
 
     RenderToken* at(int i) const { return mList[i].get(); }

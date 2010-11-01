@@ -224,7 +224,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // RenderQueueSorterOcclusion
   //------------------------------------------------------------------------------
-  //! Implements a RenderQueueSorter to be used with occlusion culling.
+  //! Implements a RenderQueueSorter that maximizes the z-buffer test efficiency as much as possible.
   //! Sorts the RenderTokens by:
   //! -# Actor render block
   //! -# Effect render rank

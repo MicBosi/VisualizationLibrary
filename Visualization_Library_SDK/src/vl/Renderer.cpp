@@ -55,6 +55,8 @@ Renderer::Renderer()
   mClearFlags = CF_CLEAR_COLOR_DEPTH;
   mEnableMask = 0xFFFFFFFF;
 
+  mRenderTick = 0;
+
   mCollectStatistics       = false;
   mRenderedRenderableCount = 0;
   mRenderedTriangleCount   = 0;
@@ -93,6 +95,9 @@ namespace
 const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* camera)
 {
   VL_CHECK_OGL()
+
+  // increment the render tick
+  ++mRenderTick;
 
   std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
 
