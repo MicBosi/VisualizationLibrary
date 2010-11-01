@@ -83,16 +83,25 @@ namespace vl
     const Transform* mLastTransform;
   };
 
-  /**
-   * The Renderer class executes the actual rendering on the given RenderQueue.
-   *
-   * \sa Rendering
-  */
-  class Renderer: public Object
+  class RendererAbstract: public Object
+  {
+  public:
+    /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
+      * Renderer's implementation of this function always returns \p in_render_queue. */
+    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera) = 0;
+    virtual const RenderTarget* renderTarget() const = 0;
+    virtual RenderTarget* renderTarget() = 0;
+  };
+
+  /** The Renderer class executes the actual rendering on the given RenderQueue.
+    * \sa Rendering */
+  class Renderer: public RendererAbstract
   {
   public:
     virtual const char* className() { return "Renderer"; }
+    
     Renderer();
+    
     virtual ~Renderer() {}
     
     /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
@@ -100,29 +109,21 @@ namespace vl
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera);
 
     void setCollectStatistics(bool on) { mCollectStatistics = on; }
+    
     bool collectStatistics() const { return mCollectStatistics; }
 
     size_t renderedRenderablesCount() const { return mRenderedRenderableCount; }
+    
     size_t renderedTrianglesCount() const { return mRenderedTriangleCount; }
+    
     size_t renderedLinesCount() const { return mRenderedLineCount; }
+    
     size_t renderedPointsCount() const { return mRenderedPointCount; }
 
-    /** Whether occlusion culling is enabled or not.
-    See also \ref pagGuideOcclusionCulling "OpenGL-Accelerated Occlusion Culling Tutorial".
-    */
-    void setOcclusionCullingEnabled(bool enabled) { mOcclusionCullingEnabled = enabled; }
-    /** Whether occlusion culling is enabled or not.
-    See also \ref pagGuideOcclusionCulling "OpenGL-Accelerated Occlusion Culling Tutorial".
-    */
-    bool occlusionCullingEnabled() const { return mOcclusionCullingEnabled; }
-
-    /** The number of pixels visible for an actor to be considered occluded (default = 0) */
-    void setOcclusionThreshold(int threshold) { mOcclusionThreshold = threshold; }
-    /** The number of pixels visible for an actor to be considered occluded (default = 0) */
-    int occlusionThreshold() const { return mOcclusionThreshold; }
-
     void setProjViewTransfCallback(ProjViewTranfCallbackStandard* callback) { mProjViewTranfCallback = callback; }
+    
     const ProjViewTranfCallbackStandard* projViewTransfCallback() const { return mProjViewTranfCallback.get(); }
+    
     ProjViewTranfCallbackStandard* projViewTransfCallback() { return mProjViewTranfCallback.get(); }
 
     /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
@@ -143,8 +144,10 @@ namespace vl
 
     /** The RenderTarget on which the rendering is performed. */
     void setRenderTarget(RenderTarget* render_target) { mRenderTarget = render_target; }
+
     /** The RenderTarget on which the rendering is performed. */
     const RenderTarget* renderTarget() const { return mRenderTarget.get(); }
+    
     /** The RenderTarget on which the rendering is performed. */
     RenderTarget* renderTarget() { return mRenderTarget.get(); }
 
@@ -165,14 +168,6 @@ namespace vl
     vl::ref<RenderStateSet> mDummyStateSet;
 
     std::map<unsigned int, ref<Shader> > mShaderOverrideMask;
-
-    bool mOcclusionCullingEnabled;
-    // mic fixme: occlusion culling temporarily disabled
-    // shader used to render proxy shapes during occlusion cull tests
-    // ref<Shader> mOcclusionShader;
-    int mOcclusionThreshold;
-    unsigned mOcclusionQueryTick;
-    unsigned mOcclusionQueryTickPrev;
 
     ref<ProjViewTranfCallbackStandard> mProjViewTranfCallback;
   };
