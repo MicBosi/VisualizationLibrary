@@ -217,13 +217,13 @@ void Rendering::render()
     {
       if (renderers()[i]->renderTarget() == NULL)
       {
-        vl::Log::error( Say("Rendering::render(): no RendererTarget specified for Renderer #n!\n") << i );
+        vl::Log::error( Say("Rendering::render(): no RendererTarget specified for Renderer #%n!\n") << i );
         VL_TRAP();
         return;
       }
       if (renderers()[i]->renderTarget()->openglContext() == NULL)
       {
-        vl::Log::error( Say("Rendering::render(): invalid RenderTarget for Renderer #0, OpenGLContext is NULL!\n") << i );
+        vl::Log::error( Say("Rendering::render(): invalid RenderTarget for Renderer #%n, OpenGLContext is NULL!\n") << i );
         VL_TRAP();
         return;
       }
@@ -366,10 +366,6 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
           }
         }
       }
-
-      // mic fixme ? make sure the EnableSet and RenderStateSet exists
-      /*shader->gocEnableSet();
-      shader->gocRenderStateSet();*/
 
       if ( automaticResourceInit() && shader_set.find(shader) == shader_set.end() )
       {
