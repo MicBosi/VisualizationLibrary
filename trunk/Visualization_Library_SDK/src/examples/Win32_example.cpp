@@ -52,23 +52,13 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   format.setStencilBufferBits(8);
   format.setFullscreen(false);
   format.setMultisampleSamples(16);
-  format.setMultisample(true);
+  format.setMultisample(false);
 
   /* create the applet to be run */
   vl::ref<vlut::Applet> applet = new App_RotatingCube;
   applet->initialize();
   /* create a native Win32 window */
   vl::ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
-
-  int attribs[] =
-  {
-    WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-    WGL_CONTEXT_MINOR_VERSION_ARB, 3, 
-    WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-    WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
-    0
-  };
-  win32_window->setContextAttribs(attribs);
 
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   win32_window->addEventListener(applet.get());
