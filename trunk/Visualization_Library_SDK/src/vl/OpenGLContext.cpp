@@ -687,7 +687,7 @@ void OpenGLContext::resetEnables()
   memset( mEnableTable,   0, sizeof(mEnableTable)   );
 }
 //------------------------------------------------------------------------------
-bool OpenGLContext::isCleanState(bool verbose) const
+bool OpenGLContext::isCleanState(bool verbose)
 {
   struct contract {
     contract()  { VL_CHECK_OGL(); }

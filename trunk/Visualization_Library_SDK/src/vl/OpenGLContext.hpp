@@ -393,7 +393,7 @@ namespace vl
     void resetEnables();
     void resetRenderStates();
     void resetContextStates();
-    bool isCleanState(bool verbose) const;
+    static bool isCleanState(bool verbose);
     static bool areUniformsColliding(const UniformSet* u1, const UniformSet* u2);
     int openglVersionMajorNumber() const { return mMajorVersion; }
     int openglVersionMinorNumber() const { return mMinorVersion; }
