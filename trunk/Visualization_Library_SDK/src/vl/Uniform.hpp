@@ -59,38 +59,6 @@ namespace vl
   {
     friend class GLSLProgram;
   public:
-    typedef enum
-    {
-      NONE = 0x0,
-
-      UT_Float,
-      UT_Float2,
-      UT_Float3,
-      UT_Float4,
-
-      UT_Int,
-      UT_Int2,
-      UT_Int3,
-      UT_Int4,
-
-      UT_UInt,
-      UT_UInt2,
-      UT_UInt3,
-      UT_UInt4,
-
-      UT_Mat2,
-      UT_Mat3,
-      UT_Mat4,
-
-      UT_Mat2x3,
-      UT_Mat3x2,
-      UT_Mat2x4,
-      UT_Mat4x2,
-      UT_Mat3x4,
-      UT_Mat4x3,
-    } EUniformType;
-
-  public:
     virtual const char* className() { return "Uniform"; }
     Uniform(): mType(NONE)
     {
@@ -115,33 +83,33 @@ namespace vl
 
     // array setters
 
-    void setUniform1i(int count, const int* value) { initInt(count*1); memcpy(&mIntData[0],value,sizeof(mIntData[0])*mIntData.size()); mType = UT_Int;  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
-    void setUniform2i(int count, const int* value) { initInt(count*2); memcpy(&mIntData[0],value,sizeof(mIntData[0])*mIntData.size()); mType = UT_Int2; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
-    void setUniform3i(int count, const int* value) { initInt(count*3); memcpy(&mIntData[0],value,sizeof(mIntData[0])*mIntData.size()); mType = UT_Int3; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
-    void setUniform4i(int count, const int* value) { initInt(count*4); memcpy(&mIntData[0],value,sizeof(mIntData[0])*mIntData.size()); mType = UT_Int4; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniform1i(int count, const int* value) { initData(count*1); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Int;  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniform2i(int count, const int* value) { initData(count*2); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Int2; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniform3i(int count, const int* value) { initData(count*3); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Int3; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniform4i(int count, const int* value) { initData(count*4); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Int4; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
 
-    void setUniform1ui(int count, const unsigned int* value) { initUInt(count*1); memcpy(&mUIntData[0],value,sizeof(mUIntData[0])*mUIntData.size()); mType = UT_UInt;  VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0); }
-    void setUniform2ui(int count, const unsigned int* value) { initUInt(count*2); memcpy(&mUIntData[0],value,sizeof(mUIntData[0])*mUIntData.size()); mType = UT_UInt2; VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0); }
-    void setUniform3ui(int count, const unsigned int* value) { initUInt(count*3); memcpy(&mUIntData[0],value,sizeof(mUIntData[0])*mUIntData.size()); mType = UT_UInt3; VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0); }
-    void setUniform4ui(int count, const unsigned int* value) { initUInt(count*4); memcpy(&mUIntData[0],value,sizeof(mUIntData[0])*mUIntData.size()); mType = UT_UInt4; VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0); }
+    void setUniform1ui(int count, const unsigned int* value) { initData(count*1); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_UInt;  VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0); }
+    void setUniform2ui(int count, const unsigned int* value) { initData(count*2); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_UInt2; VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0); }
+    void setUniform3ui(int count, const unsigned int* value) { initData(count*3); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_UInt3; VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0); }
+    void setUniform4ui(int count, const unsigned int* value) { initData(count*4); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_UInt4; VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0); }
 
-    void setUniform1f(int count, const float* value) { initFloat(count*1); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Float;  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
-    void setUniform2f(int count, const float* value) { initFloat(count*2); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Float2; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
-    void setUniform3f(int count, const float* value) { initFloat(count*3); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Float3; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
-    void setUniform4f(int count, const float* value) { initFloat(count*4); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Float4; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniform1f(int count, const float* value) { initData(count*1); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Float;  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniform2f(int count, const float* value) { initData(count*2); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Float2; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniform3f(int count, const float* value) { initData(count*3); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Float3; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniform4f(int count, const float* value) { initData(count*4); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Float4; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
 
     // matrix array setters
 
-    void setUniformMatrix2f(int count, const float* value) { initFloat(count*2*2); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Mat2; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
-    void setUniformMatrix3f(int count, const float* value) { initFloat(count*3*3); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Mat3; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
-    void setUniformMatrix4f(int count, const float* value) { initFloat(count*4*4); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Mat4; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniformMatrix2f(int count, const float* value) { initData(count*2*2); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Mat2F; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniformMatrix3f(int count, const float* value) { initData(count*3*3); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Mat3F; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
+    void setUniformMatrix4f(int count, const float* value) { initData(count*4*4); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Mat4F; VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 ); }
 
-    void setUniformMatrix2x3f(int count, const float* value) { initFloat(count*2*3); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Mat2x3; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
-    void setUniformMatrix3x2f(int count, const float* value) { initFloat(count*3*2); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Mat3x2; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
-    void setUniformMatrix2x4f(int count, const float* value) { initFloat(count*2*4); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Mat2x4; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
-    void setUniformMatrix4x2f(int count, const float* value) { initFloat(count*4*2); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Mat4x2; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
-    void setUniformMatrix3x4f(int count, const float* value) { initFloat(count*3*4); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Mat3x4; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
-    void setUniformMatrix4x3f(int count, const float* value) { initFloat(count*4*3); memcpy(&mFloatData[0],value,sizeof(mFloatData[0])*mFloatData.size()); mType = UT_Mat4x3; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
+    void setUniformMatrix2x3f(int count, const float* value) { initData(count*2*3); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Mat2x3F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
+    void setUniformMatrix3x2f(int count, const float* value) { initData(count*3*2); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Mat3x2F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
+    void setUniformMatrix2x4f(int count, const float* value) { initData(count*2*4); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Mat2x4F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
+    void setUniformMatrix4x2f(int count, const float* value) { initData(count*4*2); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Mat4x2F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
+    void setUniformMatrix3x4f(int count, const float* value) { initData(count*3*4); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Mat3x4F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
+    void setUniformMatrix4x3f(int count, const float* value) { initData(count*4*3); memcpy(&mData[0],value,sizeof(mData[0])*mData.size()); mType = UT_Mat4x3F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0); }
 
     // vector/matrix array setters
 
@@ -184,9 +152,9 @@ namespace vl
 
     // getters
 
-    void getUniform(float* value)        { VL_CHECK(type() != NONE); VL_CHECK(mFloatData.size()); memcpy( value, &mFloatData[0], sizeof( mFloatData[0] ) * mFloatData.size() ); }
-    void getUniform(int* value)          { VL_CHECK(type() != NONE); VL_CHECK(mIntData.size());   memcpy( value, &mIntData[0],   sizeof( mIntData[0]   ) * mIntData.size()   ); }
-    void getUniform(unsigned int* value) { VL_CHECK(type() != NONE); VL_CHECK(mUIntData.size());  memcpy( value, &mUIntData[0],  sizeof( mUIntData[0]  ) * mUIntData.size()  ); }
+    void getUniform(float* value)        { VL_CHECK(type() != NONE); VL_CHECK(mData.size()); memcpy( value, &mData[0], sizeof( mData[0] ) * mData.size() ); }
+    void getUniform(int* value)          { VL_CHECK(type() != NONE); VL_CHECK(mData.size());   memcpy( value, &mData[0],   sizeof( mData[0]   ) * mData.size()   ); }
+    void getUniform(unsigned int* value) { VL_CHECK(type() != NONE); VL_CHECK(mData.size());  memcpy( value, &mData[0],  sizeof( mData[0]  ) * mData.size()  ); }
 
     void getUniform(ivec2* value) { getUniform(value->ptr()); }
     void getUniform(ivec3* value) { getUniform(value->ptr()); }
@@ -210,31 +178,31 @@ namespace vl
     {
       switch(mType)
       {
-        case Uniform::UT_Int:  return (int)mIntData.size();      
-        case Uniform::UT_Int2: return (int)mIntData.size() / 2;      
-        case Uniform::UT_Int3: return (int)mIntData.size() / 3;      
-        case Uniform::UT_Int4: return (int)mIntData.size() / 4;
+        case UT_Int:    return (int)mData.size();      
+        case UT_Int2:   return (int)mData.size() / 2;      
+        case UT_Int3:   return (int)mData.size() / 3;      
+        case UT_Int4:   return (int)mData.size() / 4;
 
-        case Uniform::UT_UInt:  return (int)mUIntData.size();      
-        case Uniform::UT_UInt2: return (int)mUIntData.size() / 2;      
-        case Uniform::UT_UInt3: return (int)mUIntData.size() / 3;      
-        case Uniform::UT_UInt4: return (int)mUIntData.size() / 4;
+        case UT_UInt:   return (int)mData.size();      
+        case UT_UInt2:  return (int)mData.size() / 2;      
+        case UT_UInt3:  return (int)mData.size() / 3;      
+        case UT_UInt4:  return (int)mData.size() / 4;
 
-        case Uniform::UT_Float:  return (int)mFloatData.size();
-        case Uniform::UT_Float2: return (int)mFloatData.size() / 2;
-        case Uniform::UT_Float3: return (int)mFloatData.size() / 3;
-        case Uniform::UT_Float4: return (int)mFloatData.size() / 4;      
+        case UT_Float:  return (int)mData.size();
+        case UT_Float2: return (int)mData.size() / 2;
+        case UT_Float3: return (int)mData.size() / 3;
+        case UT_Float4: return (int)mData.size() / 4;      
 
-        case Uniform::UT_Mat2: return (int)mFloatData.size() / (2*2);
-        case Uniform::UT_Mat3: return (int)mFloatData.size() / (3*3);      
-        case Uniform::UT_Mat4: return (int)mFloatData.size() / (4*4);      
+        case UT_Mat2F:   return (int)mData.size() / (2*2);
+        case UT_Mat3F:   return (int)mData.size() / (3*3);      
+        case UT_Mat4F:   return (int)mData.size() / (4*4);      
 
-        case Uniform::UT_Mat2x3: return (int)mFloatData.size() / (2*3);
-        case Uniform::UT_Mat3x2: return (int)mFloatData.size() / (3*2);
-        case Uniform::UT_Mat2x4: return (int)mFloatData.size() / (2*4);
-        case Uniform::UT_Mat4x2: return (int)mFloatData.size() / (4*2);
-        case Uniform::UT_Mat3x4: return (int)mFloatData.size() / (3*4);
-        case Uniform::UT_Mat4x3: return (int)mFloatData.size() / (4*3);
+        case UT_Mat2x3F: return (int)mData.size() / (2*3);
+        case UT_Mat3x2F: return (int)mData.size() / (3*2);
+        case UT_Mat2x4F: return (int)mData.size() / (2*4);
+        case UT_Mat4x2F: return (int)mData.size() / (4*2);
+        case UT_Mat3x4F: return (int)mData.size() / (3*4);
+        case UT_Mat4x3F: return (int)mData.size() / (4*3);
 
         default:
         // never reached
@@ -244,15 +212,15 @@ namespace vl
     }
 
   protected:
-    void initFloat(int count) { mFloatData.resize(count); mIntData.clear(); mUIntData.clear(); }
-    void initInt(int count)   { mFloatData.clear(); mIntData.resize(count); mUIntData.clear(); }
-    void initUInt(int count)  { mFloatData.clear(); mIntData.clear(); mUIntData.resize(count); }
+    VL_COMPILE_TIME_CHECK( sizeof(int) == sizeof(float) );
+    void initData(int count) { mData.resize(count); }
+    float* floatData() { VL_CHECK(!mData.empty()); return (float*)&mData[0]; }
+    int* intData() { VL_CHECK(!mData.empty()); return (int*)&mData[0]; }
+    unsigned int* uintData() { VL_CHECK(!mData.empty()); return (unsigned int*)&mData[0]; }
 
-    std::string mName;
-    std::vector<float> mFloatData;
-    std::vector<int>   mIntData;
-    std::vector<unsigned int> mUIntData;
     EUniformType mType;
+    std::vector<int> mData;
+    std::string mName;
   };
 }
 
