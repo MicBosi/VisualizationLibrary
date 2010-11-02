@@ -1044,6 +1044,20 @@ bool OpenGLContext::isCleanState(bool verbose)
     ok = false;
   }
 
+  GLint max_vert_attribs = 0;
+  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_vert_attribs);
+  for(int i=0; i<max_vert_attribs; ++i)
+  {
+    GLint is_enabled = 0;
+    glGetVertexAttribiv(i, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &is_enabled);
+    if (is_enabled)
+    {
+      vl::Log::error( Say("GL_VERTEX_ATTRIB_ARRAY #%n is enabled!\n") << i );
+      ok = false;
+    }
+  }
+
   if (GLEW_ARB_imaging)
   {
     if (glIsEnabled(GL_HISTOGRAM))
@@ -1191,6 +1205,29 @@ bool OpenGLContext::isCleanState(bool verbose)
     ok = false;
   }
   #endif
+
+  GLboolean write_mask[4];
+  glGetBooleanv(GL_COLOR_WRITEMASK, write_mask);
+  if( !write_mask[0] || !write_mask[1] || !write_mask[2] || !write_mask[3] )
+  {
+    vl::Log::error( "Color write-mask should be glColorMask(GL_TRUE ,GL_TRUE, GL_TRUE, GL_TRUE)!\n" );
+    ok = false; 
+  }
+
+  glGetBooleanv(GL_DEPTH_WRITEMASK, write_mask);
+  if ( !write_mask[0] )
+  {
+    vl::Log::error( "Depth write-mask should be glDepthMask(GL_TRUE)!\n" );
+    ok = false; 
+  }
+
+  GLint poly_mode[2];
+  glGetIntegerv(GL_POLYGON_MODE, poly_mode);
+  if ( poly_mode[0] != GL_FILL || poly_mode[1] != GL_FILL )
+  {
+    vl::Log::error( "Polygon mode should be glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)!\n" );
+    ok = false;
+  }
 
   VL_CHECK_OGL();
   return ok;
