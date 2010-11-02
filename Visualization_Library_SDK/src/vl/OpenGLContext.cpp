@@ -247,7 +247,7 @@ void OpenGLContext::logOpenGLInfo()
     int max_val = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_val);
     Log::print( Say("Max texture size: %n\n")<<max_val);
-    max_val = 1;
+    max_val = 0;
     if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
       glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_val);
     Log::print( Say("Texture coords: %n\n") << max_val);
@@ -255,7 +255,7 @@ void OpenGLContext::logOpenGLInfo()
     if (GLEW_ARB_multitexture||GLEW_VERSION_1_3||GLEW_VERSION_3_0)
       glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val);
     Log::print( Say("Texture conventional units: %n\n") << max_val);
-    max_val = 1;
+    max_val = 0;
     if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
       glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
     Log::print( Say("Texture image units: %n\n") << max_val);
@@ -507,8 +507,14 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
       {
         mRenderStateTable[prev->renderStates()[i]->type()] = 0;
         mCurrentRenderState[prev->renderStates()[i]->type()] = mDefaultRenderStates[prev->renderStates()[i]->type()].get();
+        #ifndef NDEBUG
+        if (!mDefaultRenderStates[prev->renderStates()[i]->type()])
+        {
+          vl::Log::error( Say("Render state type '%s' not supported by this OpenGL implementation!\n") << prev->renderStates()[i]->className() );
+          VL_TRAP()
+        }
+        #endif
         // if this fails you are using a render state that is not supported by the current OpenGL implementation (too old or Core profile)
-        VL_CHECK(mCurrentRenderState[prev->renderStates()[i]->type()]);
         mDefaultRenderStates[prev->renderStates()[i]->type()]->apply(NULL, this); VL_CHECK_OGL()
       }
     }
@@ -537,7 +543,7 @@ void OpenGLContext::setupDefaultRenderStates()
   // initialize to NULL
   memset(mDefaultRenderStates, 0, sizeof(mDefaultRenderStates));
 
-  if ( isCompatible() )
+  if ( isCompatible() ) /* COMPATIBLE profile */
   {
     mDefaultRenderStates[RS_AlphaFunc] = new AlphaFunc;
     if (GLEW_VERSION_1_4||GLEW_EXT_blend_color)
@@ -600,7 +606,7 @@ void OpenGLContext::setupDefaultRenderStates()
       }
     }
   }
-  else
+  else /* CORE profile */
   {
     // mic fixme: fare ordine
     // mDefaultRenderStates[RS_AlphaFunc] = new AlphaFunc;
