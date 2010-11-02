@@ -859,16 +859,16 @@ namespace vl
     RS_TextureUnit0,
     /* ... */
 
-    RS_TexGen0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS*1,
+    RS_TexGen0        = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 1,
     /* ... */
 
-    RS_TexEnv0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS*2,
+    RS_TexEnv0        = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 2,
     /* ... */
 
-    RS_TextureMatrix0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS*3,
+    RS_TextureMatrix0 = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 3,
     /* ... */
 
-    RS_COUNT = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS*4,
+    RS_COUNT          = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 4,
     RS_NONE,
 
   } ERenderState;
@@ -1103,6 +1103,37 @@ namespace vl
     VEL_VERBOSITY_DEBUG   //!<< Outputs extra information messages useful for debugging, plus all normal and error messages.
   } EVerbosityLevel;
 
+  // uniform types
+  typedef enum
+  {
+    NONE = 0x0,
+
+    UT_Float,  //!<< float scalar
+    UT_Float2, //!<< 2 components float vector
+    UT_Float3, //!<< 3 components float vector
+    UT_Float4, //!<< 4 components float vector
+
+    UT_Int,  //!<< int scalar
+    UT_Int2, //!<< 2 components int vector
+    UT_Int3, //!<< 3 components int vector
+    UT_Int4, //!<< 4 components int vector
+
+    UT_UInt,  //!<< unsigned int scalar
+    UT_UInt2, //!<< 2 components unsigned int vector
+    UT_UInt3, //!<< 3 components unsigned int vector
+    UT_UInt4, //!<< 4 components unsigned int vector
+
+    UT_Mat2F,  //!<< 2x2 float matrix
+    UT_Mat3F,  //!<< 3x3 float matrix
+    UT_Mat4F,  //!<< 4x4 float matrix
+
+    UT_Mat2x3F, //!<< 2x3 float matrix
+    UT_Mat3x2F, //!<< 3x2 float matrix
+    UT_Mat2x4F, //!<< 2x4 float matrix
+    UT_Mat4x2F, //!<< 4x2 float matrix
+    UT_Mat3x4F, //!<< 3x4 float matrix
+    UT_Mat4x3F, //!<< 4x3 float matrix
+  } EUniformType;
 }
 
 
