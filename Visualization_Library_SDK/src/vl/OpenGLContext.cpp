@@ -901,7 +901,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
     }
 
-    if (GLEW_VERSION_3_0||GLEW_ARB_texture_multisample)
+    if (GLEW_VERSION_3_2||GLEW_ARB_texture_multisample)
     {
       bound_tex = 0; 
       glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE, &bound_tex);     
