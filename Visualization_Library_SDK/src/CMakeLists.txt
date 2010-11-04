@@ -220,6 +220,7 @@ set(VL_INC
   vl/Time.hpp
   vl/TrackballManipulator.hpp
   vl/Transform.hpp
+  vl/TriangleIterator.hpp
   vl/UIEventListener.hpp
   vl/Uniform.hpp
   vl/Vector4.hpp
