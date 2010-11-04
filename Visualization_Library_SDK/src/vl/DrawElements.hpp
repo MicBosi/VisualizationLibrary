@@ -33,6 +33,7 @@
 #define DrawElements_INCLUDE_ONCE
 
 #include <vl/DrawCall.hpp>
+#include <vl/TriangleIterator.hpp>
 #include <vl/Array.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
@@ -386,6 +387,15 @@ namespace vl
 
       if (use_vbo && this->indices()->gpuBuffer()->handle())
         VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+    }
+
+    TriangleIterator triangles() const
+    {
+      ref< TriangleIteratorIndexed<arr_type> > it = 
+        new TriangleIteratorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(), 
+            baseVertex(), primitiveRestartEnabled(), primitiveRestartIndex() );
+      it->initialize();
+      return TriangleIterator(it.get());
     }
 
   protected:
