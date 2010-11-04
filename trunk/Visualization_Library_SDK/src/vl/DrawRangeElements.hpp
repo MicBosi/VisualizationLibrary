@@ -33,6 +33,7 @@
 #define DrawRangeElements_INCLUDE_ONCE
 
 #include <vl/DrawCall.hpp>
+#include <vl/TriangleIterator.hpp>
 #include <vl/Array.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
@@ -383,6 +384,15 @@ namespace vl
         if ((int)index(i)>mRangeEnd)
           mRangeEnd = index(i);
       }
+    }
+
+    TriangleIterator triangles() const
+    {
+      ref< TriangleIteratorIndexed<arr_type> > it = 
+        new TriangleIteratorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(), 
+            baseVertex(), primitiveRestartEnabled(), primitiveRestartIndex() );
+      it->initialize();
+      return TriangleIterator(it.get());
     }
 
   protected:
