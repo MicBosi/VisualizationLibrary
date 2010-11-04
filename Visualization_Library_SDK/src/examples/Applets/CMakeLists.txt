@@ -41,6 +41,7 @@ set(VL_APPLETS
   App_CullingBenchmark.hpp
   App_Deformer.hpp
   App_DrawPixels.hpp
+  App_DrawCalls.hpp
   App_EdgeRendering.hpp
   App_EffectOverride.hpp
   App_Extrusion.hpp
