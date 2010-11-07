@@ -364,6 +364,20 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
   glDisable(GL_SCISSOR_TEST);
 
+  // default framebuffer and drawbuffer
+  VL_glBindFramebuffer(GL_FRAMEBUFFER, 0); VL_CHECK_OGL();
+
+  if ( opengl_context->hasDoubleBuffer() )
+  {
+    glDrawBuffer(GL_BACK); VL_CHECK_OGL();
+    glReadBuffer(GL_BACK); VL_CHECK_OGL();
+  }
+  else
+  {
+    glDrawBuffer(GL_FRONT); VL_CHECK_OGL();
+    glReadBuffer(GL_FRONT); VL_CHECK_OGL();
+  }
+
   return render_queue;
 }
 //-----------------------------------------------------------------------------
