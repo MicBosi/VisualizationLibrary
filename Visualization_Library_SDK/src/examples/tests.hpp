@@ -79,6 +79,8 @@
 #include "Applets/App_NearFarOptimization.hpp"
 #include "Applets/App_EffectOverride.hpp"
 #include "Applets/App_ShaderOverride.hpp"
+#include "Applets/App_DrawCalls.hpp"
+#include "Applets/App_Primitives.hpp"
 
 // win32 console for sdtout output
 #if defined(WIN32) && !defined(NDEBUG)
@@ -125,6 +127,8 @@ public:
     TestEntry tests[] = 
     {
       { "Virtual File System", new App_VirtualFileSystemTest, 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Primitives", new App_Primitives, 10,10, 512, 512, vlut::white, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+      { "DrawCall Tests", new App_DrawCalls, 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Near/Far Planes Optimization", new App_NearFarOptimization, 10, 10, 512, 512, vlut::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Effect Override", new App_EffectOverride, 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Shader Override", new App_ShaderOverride, 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
