@@ -40,6 +40,7 @@ namespace vl
 //-----------------------------------------------------------------------------
 // TriangleIteratorAbstract
 //-----------------------------------------------------------------------------
+  /** For internal use only. See vl::TriangleIterator instead. */
   class TriangleIteratorAbstract: public Object
   {
   public:
@@ -52,6 +53,7 @@ namespace vl
 //-----------------------------------------------------------------------------
 // TriangleIteratorIndexed
 //-----------------------------------------------------------------------------
+  /** For internal use only. See vl::TriangleIterator instead. */
   template<class TArray>
   class TriangleIteratorIndexed: public TriangleIteratorAbstract
   {
@@ -62,7 +64,6 @@ namespace vl
       mEnd    = 0;
       mA = mB = mC = -1;
       mEven = true;
-      mLastTriFanPoly = true;
       mIndex0 = 0;
       mArray            = idx_array;
       mPrimRestartIndex = prim_restart_idx;
@@ -72,8 +73,6 @@ namespace vl
     }
 
     bool isEnd() const { return mCurrentIndex == mEnd; }
-
-    bool operator==(const TriangleIteratorIndexed& other) { return mCurrentIndex == other.mCurrentIndex; }
 
     virtual int a() const { return mA; }
     virtual int b() const { return mB; }
@@ -90,7 +89,6 @@ namespace vl
       mCurrentIndex = end; // end
       mA = mB = mC = -1;
       mEven = true;
-      mLastTriFanPoly = true;
       mIndex0 = start;
       mEnd    = end;
       if (mArray->size())
@@ -98,6 +96,7 @@ namespace vl
         switch(mPrimType)
         {
         case PT_TRIANGLES:
+          // VL_CHECK( (end-start) % 3 == 0 ) /* primitive restart might screw up this */
           mCurrentIndex = start;
           mA = mArray->at(start+0);
           mB = mArray->at(start+1);
@@ -110,11 +109,6 @@ namespace vl
           mC = mArray->at(start+2);
           break;
         case PT_TRIANGLE_FAN:
-          mCurrentIndex = start + 1;
-          mA = mArray->at(start+0);
-          mB = mArray->at(start+1);
-          mC = mArray->at(start+2);
-          break;
         case PT_POLYGON:
           mCurrentIndex = start + 1;
           mA = mArray->at(start+0);
@@ -122,19 +116,24 @@ namespace vl
           mC = mArray->at(start+2);
           break;
         case PT_QUADS:
+          // VL_CHECK( (end-start) % 4 == 0 ) /* primitive restart might screw up this */
           mCurrentIndex = start;
           mA = mArray->at(start+0);
           mB = mArray->at(start+1);
           mC = mArray->at(start+2);
           break;
         case PT_QUAD_STRIP:
+          // VL_CHECK( (end-start) % 2 == 0 ) /* primitive restart might screw up this */
           mCurrentIndex = start;
           mA = mArray->at(start+0);
           mB = mArray->at(start+1);
           mC = mArray->at(start+2);
           break;
+        default:
+          break;
         }
       }
+
       // if we are not at the end then add base vertices
       if ( mCurrentIndex != mEnd )
       {
@@ -211,49 +210,6 @@ namespace vl
         break;
 
       case PT_TRIANGLE_FAN:
-        mCurrentIndex += 1;
-        if ( mCurrentIndex + 1 >= mEnd )
-        {
-          if (mLastTriFanPoly)
-          {
-            mA = mArray->at(mIndex0);
-            mB = mArray->at(mCurrentIndex);
-            mC = mArray->at(mIndex0 + 1);
-            mLastTriFanPoly = false;
-            mCurrentIndex--;
-          }
-          else
-            mCurrentIndex = mEnd;
-        }
-        else
-        if (isPrimRestart(mCurrentIndex + 1))
-        {
-          if (mLastTriFanPoly)
-          {
-            mA = mArray->at(mIndex0);
-            mB = mArray->at(mCurrentIndex);
-            mC = mArray->at(mIndex0 + 1);
-            mLastTriFanPoly = false;
-            mCurrentIndex--;
-          }
-          else
-          {
-            mLastTriFanPoly = true;
-            mIndex0 = mCurrentIndex + 2;
-            mCurrentIndex = mIndex0 + 1;
-            mA = mArray->at(mIndex0);
-            mB = mArray->at(mCurrentIndex + 0);
-            mC = mArray->at(mCurrentIndex + 1);
-          }
-        }
-        else
-        {
-          mA = mArray->at(mIndex0);
-          mB = mArray->at(mCurrentIndex + 0);
-          mC = mArray->at(mCurrentIndex + 1);
-        }
-        break;
-
       case PT_POLYGON:
         mCurrentIndex += 1;
         if ( mCurrentIndex + 1 >= mEnd )
@@ -309,6 +265,10 @@ namespace vl
           }
         }
         break;
+
+      default:
+        VL_TRAP();
+        break;
       }
 
       // if we are not at the end then add base vertices
@@ -326,6 +286,9 @@ namespace vl
       }
     }
 
+    void setBaseVertex(int base_vert) { mBaseVertex = base_vert; }
+    int baseVertex() const { return mBaseVertex; }
+
   private:
     bool isPrimRestart(int i) const { return mPrimRestartOn && (int)mArray->at(i) == mPrimRestartIndex; }
 
@@ -340,24 +303,207 @@ namespace vl
     int  mPrimRestartIndex;
     bool mPrimRestartOn;
     bool mEven;
-    bool mLastTriFanPoly;
+  };
+//-----------------------------------------------------------------------------
+// TriangleIteratorDirect
+//-----------------------------------------------------------------------------
+  /** For internal use only. See vl::TriangleIterator instead. */
+  class TriangleIteratorDirect: public TriangleIteratorAbstract
+  {
+  public:
+    TriangleIteratorDirect(EPrimitiveType prim_type)
+    {
+      mCurrentIndex = mStart = mEnd = 0;
+      mA = mB = mC = -1;
+      mPrimType = prim_type;
+      mEven = true;
+    }
+
+    bool isEnd() const { return mCurrentIndex == mEnd; }
+
+    virtual int a() const { return mA; }
+    virtual int b() const { return mB; }
+    virtual int c() const { return mC; }
+
+    void initialize(int start, int end)
+    {
+      VL_CHECK(end >= start)
+      mStart = start;
+      mCurrentIndex = mEnd = end;
+      mA = mB = mC = -1;
+      mEven = true;
+      switch(mPrimType)
+      {
+      case PT_TRIANGLES:
+        // VL_CHECK( (end - start) % 3 == 0 ) /* primitive restart might screw up this */
+        mCurrentIndex = start;
+        mA = start + 0;
+        mB = start + 1;
+        mC = start + 2;
+        break;
+      case PT_TRIANGLE_STRIP:
+        mCurrentIndex = start;
+        mA = start + 0;
+        mB = start + 1;
+        mC = start + 2;
+        break;
+      case PT_TRIANGLE_FAN:
+      case PT_POLYGON:
+        mCurrentIndex = start + 1;
+        mA = start + 0;
+        mB = start + 1;
+        mC = start + 2;
+        break;
+      case PT_QUADS:
+        // VL_CHECK( (end - start) % 4 == 0 ) /* primitive restart might screw up this */
+        mCurrentIndex = start;
+        mA = start + 0;
+        mB = start + 1;
+        mC = start + 2;
+        break;
+      case PT_QUAD_STRIP:
+        // VL_CHECK( (end - start) % 2 == 0 ) /* primitive restart might screw up this */
+        mCurrentIndex = start;
+        mA = start + 0;
+        mB = start + 1;
+        mC = start + 2;
+        break;
+      default:
+        break;
+      }
+    }
+
+    bool next()
+    {
+      // reached the end
+      if ( mCurrentIndex == mEnd )
+        return false;
+
+      switch(mPrimType)
+      {
+
+      case PT_TRIANGLES:
+        mCurrentIndex += 3;
+        // check for the end
+        if ( mCurrentIndex >= mEnd )
+          mCurrentIndex = mEnd;
+        else
+        {
+          mA = mCurrentIndex + 0;
+          mB = mCurrentIndex + 1;
+          mC = mCurrentIndex + 2;
+        }
+        break;
+
+      case PT_QUAD_STRIP:
+      case PT_TRIANGLE_STRIP:
+        mCurrentIndex += 1;
+        if ( mCurrentIndex + 2 >= mEnd )
+          mCurrentIndex = mEnd;
+        else
+        {
+          mEven = !mEven;
+          if (mEven)
+          {
+            mA = mCurrentIndex + 0;
+            mB = mCurrentIndex + 1;
+            mC = mCurrentIndex + 2;
+          }
+          else
+          {
+            mA = mCurrentIndex + 0;
+            mB = mCurrentIndex + 2;
+            mC = mCurrentIndex + 1;
+          }
+        }
+        break;
+
+      case PT_TRIANGLE_FAN:
+      case PT_POLYGON:
+        mCurrentIndex += 1;
+        if ( mCurrentIndex + 1 >= mEnd )
+        {
+          mCurrentIndex = mEnd;
+        }
+        else
+        {
+          mA = mStart;
+          mB = mCurrentIndex+0;
+          mC = mCurrentIndex+1;
+        }
+        break;
+
+      case PT_QUADS:
+        mCurrentIndex += 2;
+        if ( mCurrentIndex >= mEnd )
+        {
+          mCurrentIndex = mEnd;
+        }
+        else
+        {
+          mEven = !mEven;
+          if ( mEven )
+          {
+            mA = mCurrentIndex+0;
+            mB = mCurrentIndex+1;
+            mC = mCurrentIndex+2;
+          }
+          else
+          {
+            mA = mCurrentIndex+0;
+            mB = mCurrentIndex+1;
+            mC = mCurrentIndex-2;
+          }
+        }
+        break;
+
+      default:
+        VL_TRAP();
+        break;
+      }
+
+      // if we are not at the end then add base vertices
+      if (mCurrentIndex == mEnd)
+      {
+        mA = mB = mC = -1;
+        return false;
+      }
+      else
+        return true;
+    }
+
+  private:
+    EPrimitiveType mPrimType;
+    int  mA, mB, mC;
+    int  mCurrentIndex;
+    int  mStart;
+    int  mEnd;
+    bool mEven;
   };
 //-----------------------------------------------------------------------------
 // TriangleIterator
 //-----------------------------------------------------------------------------
+  /** Iterator used to extract the indices of every single triangle of a DrawCall 
+    * regardless of the primitive type.
+    * \sa DrawCall::triangles() */
   class TriangleIterator
   {
   public:
     TriangleIterator(TriangleIteratorAbstract* it): mIterator(it) { }
 
+    /** Requires the next triangle. Returns \p false the iterator reached the end of the triangle list. */
     bool next() { return mIterator->next(); }
 
+    /** Returns true if the iterator reached the end of the triangle list. In this case a(), b() and c() return -1. */
     bool isEnd() { return mIterator->isEnd(); }
 
+    /** First index of the triangle. */
     int a() const { return mIterator->a(); }
 
+    /** First index of the triangle. */
     int b() const { return mIterator->b(); }
 
+    /** First index of the triangle. */
     int c() const { return mIterator->c(); }
 
   protected:

@@ -71,111 +71,22 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
   if (vert3f)
   {
     fmat4 matrix = act->transform() ? (fmat4)act->transform()->worldMatrix() : fmat4();
-
     for(int i=0; i<geom->drawCalls()->size(); ++i)
     {
       DrawCall* prim = geom->drawCalls()->at(i);
-      if (prim->primitiveType() == vl::PT_TRIANGLES)
+      int itri = 0;
+      for(TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next(), ++itri)
       {
-        for(unsigned itri=0; itri<prim->indexCount(); itri+=3)
+        fvec3 a = vert3f->at(trit.a());
+        fvec3 b = vert3f->at(trit.b());
+        fvec3 c = vert3f->at(trit.c());
+        if (act->transform())
         {
-          fvec3 a = vert3f->at(prim->index(itri+0));
-          fvec3 b = vert3f->at(prim->index(itri+1));
-          fvec3 c = vert3f->at(prim->index(itri+2));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-          }
-          intersectTriangle(a,b,c, act,geom,prim,itri);
+          a = matrix * a;
+          b = matrix * b;
+          c = matrix * c;
         }
-      }
-      else
-      if (prim->primitiveType() == vl::PT_TRIANGLE_FAN)
-      {
-        for(unsigned itri=1; itri<prim->indexCount()-1; ++itri)
-        {
-          fvec3 a = vert3f->at(prim->index(0));
-          fvec3 b = vert3f->at(prim->index(itri));
-          fvec3 c = vert3f->at(prim->index(itri+1));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-          }
-          intersectTriangle(a,b,c, act,geom,prim,itri);
-        }
-      }
-      else
-      if (prim->primitiveType() == vl::PT_TRIANGLE_STRIP)
-      {
-        for(unsigned itri=0; itri<prim->indexCount()-2; ++itri)
-        {
-          fvec3 a = vert3f->at(prim->index(itri));
-          fvec3 b = vert3f->at(prim->index(itri+1));
-          fvec3 c = vert3f->at(prim->index(itri+2));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-          }
-          intersectTriangle(a,b,c, act,geom,prim,itri);
-        }
-      }
-      else
-      if (prim->primitiveType() == vl::PT_POLYGON)
-      {
-        std::vector<fvec3> polygon;
-        for(unsigned itri=0; itri<prim->indexCount(); ++itri)
-        {
-          fvec3 a = vert3f->at(prim->index(itri));
-          if (act->transform())
-            a = matrix * a;
-          polygon.push_back(a);
-        }
-        VL_CHECK(polygon.size() >= 3)
-        intersectPolygon(polygon, act,geom,prim);
-      }
-      else
-      if (prim->primitiveType() == vl::PT_QUADS)
-      {
-        for(unsigned iquad=0; iquad<prim->indexCount(); iquad+=4)
-        {
-          fvec3 a = vert3f->at(prim->index(iquad+0));
-          fvec3 b = vert3f->at(prim->index(iquad+1));
-          fvec3 c = vert3f->at(prim->index(iquad+2));
-          fvec3 d = vert3f->at(prim->index(iquad+3));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-            d = matrix * d;
-          }
-          intersectQuad(a,b,c,d, act,geom,prim,iquad);
-        }
-      }
-      else
-      if (prim->primitiveType() == vl::PT_QUAD_STRIP)
-      {
-        for(unsigned iquad=0; iquad<prim->indexCount()-3; iquad+=2)
-        {
-          fvec3 a = vert3f->at(prim->index(iquad+0));
-          fvec3 b = vert3f->at(prim->index(iquad+1));
-          fvec3 c = vert3f->at(prim->index(iquad+2));
-          fvec3 d = vert3f->at(prim->index(iquad+3));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-            d = matrix * d;
-          }
-          intersectQuad(a,b,c,d, act,geom,prim,iquad);
-        }
+        intersectTriangle(a, b, c, act, geom, prim, itri);
       }
     }
   }
@@ -183,118 +94,29 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
   if (vert3d)
   {
     dmat4 matrix = act->transform() ? (dmat4)act->transform()->worldMatrix() : dmat4();
-
     for(int i=0; i<geom->drawCalls()->size(); ++i)
     {
       DrawCall* prim = geom->drawCalls()->at(i);
-      if (prim->primitiveType() == vl::PT_TRIANGLES)
+      int itri = 0;
+      for(TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next(), ++itri)
       {
-        for(unsigned itri=0; itri<prim->indexCount(); itri+=3)
+        dvec3 a = vert3d->at(trit.a());
+        dvec3 b = vert3d->at(trit.b());
+        dvec3 c = vert3d->at(trit.c());
+        if (act->transform())
         {
-          dvec3 a = vert3d->at(prim->index(itri+0));
-          dvec3 b = vert3d->at(prim->index(itri+1));
-          dvec3 c = vert3d->at(prim->index(itri+2));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-          }
-          intersectTriangle(a,b,c, act,geom,prim,itri);
+          a = matrix * a;
+          b = matrix * b;
+          c = matrix * c;
         }
-      }
-      else
-      if (prim->primitiveType() == vl::PT_TRIANGLE_FAN)
-      {
-        for(unsigned itri=1; itri<prim->indexCount()-1; ++itri)
-        {
-          dvec3 a = vert3d->at(prim->index(0));
-          dvec3 b = vert3d->at(prim->index(itri));
-          dvec3 c = vert3d->at(prim->index(itri+1));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-          }
-          intersectTriangle(a,b,c, act,geom,prim,itri);
-        }
-      }
-      else
-      if (prim->primitiveType() == vl::PT_TRIANGLE_STRIP)
-      {
-        for(unsigned itri=0; itri<prim->indexCount()-2; ++itri)
-        {
-          dvec3 a = vert3d->at(prim->index(itri));
-          dvec3 b = vert3d->at(prim->index(itri+1));
-          dvec3 c = vert3d->at(prim->index(itri+2));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-          }
-          intersectTriangle(a,b,c, act,geom,prim,itri);
-        }
-      }
-      else
-      if (prim->primitiveType() == vl::PT_POLYGON)
-      {
-        std::vector<dvec3> polygon;
-        for(unsigned itri=0; itri<prim->indexCount(); ++itri)
-        {
-          dvec3 a = vert3d->at(prim->index(itri));
-          if (act->transform())
-            a = matrix * a;
-          polygon.push_back(a);
-        }
-        VL_CHECK(polygon.size() >= 3)
-        intersectPolygon(polygon, act,geom,prim);
-      }
-      else
-      if (prim->primitiveType() == vl::PT_QUADS)
-      {
-        for(unsigned iquad=0; iquad<prim->indexCount(); iquad+=4)
-        {
-          dvec3 a = vert3d->at(prim->index(iquad+0));
-          dvec3 b = vert3d->at(prim->index(iquad+1));
-          dvec3 c = vert3d->at(prim->index(iquad+2));
-          dvec3 d = vert3d->at(prim->index(iquad+3));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-            d = matrix * d;
-          }
-          intersectQuad(a,b,c,d, act,geom,prim,iquad);
-        }
-      }
-      else
-      if (prim->primitiveType() == vl::PT_QUAD_STRIP)
-      {
-        for(unsigned iquad=0; iquad<prim->indexCount()-3; iquad+=2)
-        {
-          dvec3 a = vert3d->at(prim->index(iquad+0));
-          dvec3 b = vert3d->at(prim->index(iquad+1));
-          dvec3 c = vert3d->at(prim->index(iquad+2));
-          dvec3 d = vert3d->at(prim->index(iquad+3));
-          if (act->transform())
-          {
-            a = matrix * a;
-            b = matrix * b;
-            c = matrix * c;
-            d = matrix * d;
-          }
-          intersectQuad(a,b,c,d, act,geom,prim,iquad);
-        }
+        intersectTriangle(a, b, c, act, geom, prim, itri);
       }
     }
   }
 }
 //-----------------------------------------------------------------------------
 template<class T>
-void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, Actor* act, Geometry* geom, DrawCall* prim, int prim_idx)
+void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, Actor* act, Geometry* geom, DrawCall* prim, int tri_idx)
 {
   T v1 = b-a;
   T v2 = c-a;
@@ -316,69 +138,7 @@ void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, Actor
   }
   ref<RayIntersectionGeometry> record = new vl::RayIntersectionGeometry;
   record->setIntersectionPoint( rp );
-  record->setPrimitiveIndex(prim_idx);
-  record->setActor(act);
-  record->setGeometry(geom);
-  record->setPrimitives(prim);
-  record->setDistance( t );
-  mIntersections.push_back(record);
-}
-//-----------------------------------------------------------------------------
-template<class T>
-void RayIntersector::intersectPolygon(const std::vector<T>& polygon, Actor* act, Geometry* geom, DrawCall* prim)
-{
-  T v1 = polygon[1]-polygon[0];
-  T v2 = polygon[2]-polygon[0];
-  T n = cross(v1,v2).normalize();
-  float det = (Real)dot(n,(T)ray().direction());
-  if(det == 0.0f)
-    return;
-  float t = (Real)dot(n, polygon[0]-(T)ray().origin()) / det;
-  if (t<0)
-    return;
-  vec3  rp = ray().origin() + ray().direction()*t;
-  T fp = (T)rp;
-  for(unsigned i=0; i<polygon.size(); ++i)
-  {
-    int i2 = (i+1) % polygon.size();
-    T bi_norm = -cross(polygon[i2]-polygon[i],n).normalize();
-    if (dot(fp-polygon[i],bi_norm) < 0)
-      return;
-  }
-  ref<RayIntersectionGeometry> record = new vl::RayIntersectionGeometry;
-  record->setIntersectionPoint( rp );
-  record->setPrimitiveIndex(0);
-  record->setActor(act);
-  record->setGeometry(geom);
-  record->setPrimitives(prim);
-  record->setDistance( t );
-  mIntersections.push_back(record);
-}
-//-----------------------------------------------------------------------------
-template<class T>
-void RayIntersector::intersectQuad(const T& a, const T& b, const T& c, const T& d, Actor* act, Geometry* geom, DrawCall* prim, int prim_idx)
-{
-  T v1 = b-a;
-  T v2 = c-a;
-  T n = cross(v1,v2).normalize();
-  float det = (Real)dot(n,(T)ray().direction());
-  if(det == 0.0f)
-    return;
-  float t = (Real)dot(n, a-(T)ray().origin()) / det;
-  if (t<0)
-    return;
-  vec3  rp = ray().origin() + ray().direction()*t;
-  T fp = (T)rp;
-  T pts[] = {a,b,c,d,a};
-  for(int i=0; i<4; ++i)
-  {
-    T bi_norm = -cross(pts[i+1]-pts[i],n).normalize();
-    if (dot(fp-pts[i],bi_norm) < 0)
-      return;
-  }
-  ref<RayIntersectionGeometry> record = new vl::RayIntersectionGeometry;
-  record->setIntersectionPoint( rp );
-  record->setPrimitiveIndex(prim_idx);
+  record->setTriangleIndex(tri_idx);
   record->setActor(act);
   record->setGeometry(geom);
   record->setPrimitives(prim);

@@ -117,19 +117,18 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
 
   std::vector<fvec3> verts;
   std::vector<int> indices;
+  indices.reserve(1000);
 
   // merge all triangles in a single DrawElementsUInt
   ref<DrawElementsUInt> pint = new DrawElementsUInt(PT_TRIANGLES, 1);
   for(int i=0; i<geom->drawCalls()->size(); ++i)
   {
-    if (geom->drawCalls()->at(i)->primitiveType() == PT_TRIANGLES)
+    DrawCall* prim = geom->drawCalls()->at(i);
+    for(TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next())
     {
-      for(size_t j=0; j<geom->drawCalls()->at(i)->indexCount(); ++j)
-        indices.push_back( geom->drawCalls()->at(i)->index(j) );
-    }
-    else
-    {
-      Log::error("PolygonSimplifier::simplify() supports only PT_TRIANGLES primitive type!\n");
+      indices.push_back( trit.a() );
+      indices.push_back( trit.b() );
+      indices.push_back( trit.c() );
     }
   }
 

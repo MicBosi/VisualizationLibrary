@@ -34,6 +34,7 @@
 
 #include <vl/DrawCall.hpp>
 #include <vl/Array.hpp>
+#include <vl/TriangleIterator.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
 #include <algorithm>
@@ -341,6 +342,8 @@ namespace vl
         VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     }
 
+    TriangleIterator triangles() const;
+
     /** The pointer vector used as 'indices' parameter of glMultiDrawElements. */
     const std::vector<const index_type*>& pointerVector() const { return mPointerVector; }
 
@@ -393,7 +396,73 @@ namespace vl
     MultiDrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES)
     :MultiDrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>(primitive) {}
   };
-  //------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// TriangleIteratorMulti
+//-----------------------------------------------------------------------------
+  /** For internal use only. See vl::TriangleIterator instead. */
+  template<class TArray>
+  class TriangleIteratorMulti: public TriangleIteratorIndexed<TArray>
+  {
+  public:
+    TriangleIteratorMulti( const MultiDrawElementsBase* mde, TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
+    :TriangleIteratorIndexed<TArray>( idx_array, prim_type, 0, prim_restart_on, prim_restart_idx)
+    {
+      mMultiDrawElems = mde;
+      mStart   = 0;
+      mCurPrim = 0;
+    }
+
+    void initialize()
+    {
+      if ( mMultiDrawElems->baseVertices().size() )
+        TriangleIteratorIndexed<TArray>::setBaseVertex( mMultiDrawElems->baseVertices()[mCurPrim] );
+      int end = mStart + mMultiDrawElems->countVector()[mCurPrim];
+      TriangleIteratorIndexed<TArray>::initialize( mStart, end );
+      // abort if could not initialize (primitive not supported)
+      if ( TriangleIteratorIndexed<TArray>::isEnd() )
+        mCurPrim = (int)mMultiDrawElems->countVector().size()-1;
+    }
+
+    bool next() 
+    { 
+      if ( /*!TriangleIteratorIndexed<TArray>::isEnd() &&*/ TriangleIteratorIndexed<TArray>::next() )
+        return true;
+      else
+      if ( mCurPrim < (int)mMultiDrawElems->countVector().size()-1 )
+      {
+        mStart += mMultiDrawElems->countVector()[mCurPrim];
+        mCurPrim++;
+        initialize();
+        return true;
+      }
+      else
+        return false;
+    }
+
+    bool isEnd() const
+    { 
+      if ( TriangleIteratorIndexed<TArray>::isEnd() && mCurPrim == (int)mMultiDrawElems->countVector().size()-1 )
+        return true;
+      else
+        return false;
+    }
+
+  protected:
+    const MultiDrawElementsBase* mMultiDrawElems;
+    int mCurPrim;
+    int mStart;
+  };
+//-----------------------------------------------------------------------------
+  template <typename index_type, GLenum Tgltype, class arr_type>
+  TriangleIterator MultiDrawElements<index_type, Tgltype, arr_type>::triangles() const
+  {
+    ref< TriangleIteratorMulti<arr_type> > it = 
+      new TriangleIteratorMulti<arr_type>( this, mIndexBuffer.get(), primitiveType(), 
+          primitiveRestartEnabled(), primitiveRestartIndex() );
+    it->initialize();
+    return TriangleIterator(it.get());
+  }
+//-----------------------------------------------------------------------------
 }
 
 #endif
