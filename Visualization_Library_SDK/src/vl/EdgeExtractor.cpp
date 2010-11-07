@@ -79,140 +79,28 @@ void EdgeExtractor::extractEdges(Geometry* geom)
     return;
   }
 
-  // mic fixme:
-  // this works only for DrawElements and DrawArrays, no primitive restart, no base vertex.
-  // here also we would need a triangle-iterator just like for the tangent space extractor,
-  // and correct per-drawcall geometry bounding box computation.
+  // iterate all primitives
   for(int iprim=0; iprim<geom->drawCalls()->size(); ++iprim)
   {
     DrawCall* prim = geom->drawCalls()->at(iprim);
-    if (prim->primitiveType() == PT_QUAD_STRIP)
+    // iterate triangles (if present)
+    for(TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next())
     {
-      /*
-      a    c    e
-      |  / |  / |
-      | /  | /  |
-      b    d    f
-      */
-      for(unsigned i=0; i<prim->indexCount()-3; i+=2)
-      {
-        size_t a = prim->index(i+0);
-        size_t b = prim->index(i+1);
-        size_t c = prim->index(i+2);
-        size_t d = prim->index(i+3);
-        // compute normal
-        fvec3 v0 = verts->at(a);
-        fvec3 v1 = verts->at(b) - v0;
-        fvec3 v2 = verts->at(c) - v0;
-        fvec3 n = cross(v1,v2).normalize();
-        if (n.isNull())
-          continue;
-        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
-        addEdge(edges, Edge( verts->at(a), verts->at(c) ), n );
-        addEdge(edges, Edge( verts->at(b), verts->at(d) ), n );
-        addEdge(edges, Edge( verts->at(c), verts->at(d) ), n );
-      }
-    }
-    else
-    if (prim->primitiveType() == PT_TRIANGLE_STRIP)
-    {
-      for(unsigned i=0; i<prim->indexCount()-2; ++i)
-      {
-        size_t a = prim->index(i+0);
-        size_t b = prim->index(i+1);
-        size_t c = prim->index(i+2);
-        // compute normal
-        fvec3 v0 = verts->at(a);
-        fvec3 v1 = verts->at(b) - v0;
-        fvec3 v2 = verts->at(c) - v0;
-        fvec3 n = cross(v1,v2).normalize();
-        if (n.isNull())
-          continue;
-        if (i%2) n = -n;
-        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
-        addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
-        addEdge(edges, Edge( verts->at(c), verts->at(a) ), n );
-      }
-    }
-    else
-    if (prim->primitiveType() == PT_POLYGON)
-    {
+      size_t a = trit.a();
+      size_t b = trit.b();
+      size_t c = trit.c();
+      if (a == b || b == c || c == a)
+        continue;
       // compute normal
-      fvec3 v0 = verts->at(prim->index(0));
-      fvec3 v1 = verts->at(prim->index(1)) - v0;
-      fvec3 v2 = verts->at(prim->index(2)) - v0;
+      fvec3 v0 = verts->at(a);
+      fvec3 v1 = verts->at(b) - v0;
+      fvec3 v2 = verts->at(c) - v0;
       fvec3 n = cross(v1,v2).normalize();
       if (n.isNull())
         continue;
-      for(unsigned i=0; i<prim->indexCount(); ++i)
-      {
-        size_t a = prim->index(i);
-        size_t b = prim->index( (i+1)%prim->indexCount() );
-        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
-      }
-    }
-    else
-    if (prim->primitiveType() == PT_TRIANGLES)
-    {
-      for(unsigned i=0; i<prim->indexCount(); i+=3)
-      {
-        size_t a = prim->index(i+0);
-        size_t b = prim->index(i+1);
-        size_t c = prim->index(i+2);
-        if (a == b || b == c || c == a)
-          continue;
-        // compute normal
-        fvec3 v0 = verts->at(a);
-        fvec3 v1 = verts->at(b) - v0;
-        fvec3 v2 = verts->at(c) - v0;
-        fvec3 n = cross(v1,v2).normalize();
-        if (n.isNull())
-          continue;
-        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
-        addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
-        addEdge(edges, Edge( verts->at(c), verts->at(a) ), n );
-      }
-    }
-    else
-    if (prim->primitiveType() == PT_TRIANGLE_FAN)
-    {
-      size_t a = prim->index(0);
-      fvec3 v0 = verts->at(a);
-      for(unsigned i=1; i<prim->indexCount()-1; ++i)
-      {
-        size_t b = prim->index(i);
-        size_t c = prim->index(i+1);
-        // compute normal
-        fvec3 v1 = verts->at(b) - v0;
-        fvec3 v2 = verts->at(c) - v0;
-        fvec3 n = cross(v1,v2).normalize();
-        if (n.isNull())
-          continue;
-        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
-        addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
-        addEdge(edges, Edge( verts->at(c), verts->at(a) ), n );
-      }
-    }
-    else
-    if (prim->primitiveType() == PT_QUADS)
-    {
-      for(unsigned i=0; i<prim->indexCount(); i+=4)
-      {
-        size_t a = prim->index(i+0);
-        size_t b = prim->index(i+1);
-        size_t c = prim->index(i+2);
-        size_t d = prim->index(i+3);
-        fvec3 v0 = verts->at(a);
-        fvec3 v1 = verts->at(b) - v0;
-        fvec3 v2 = verts->at(c) - v0;
-        fvec3 n = cross(v1,v2).normalize();
-        if (n.isNull())
-          continue;
-        addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
-        addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
-        addEdge(edges, Edge( verts->at(c), verts->at(d) ), n );
-        addEdge(edges, Edge( verts->at(d), verts->at(a) ), n );
-      }
+      addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
+      addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
+      addEdge(edges, Edge( verts->at(c), verts->at(a) ), n );
     }
   }
 

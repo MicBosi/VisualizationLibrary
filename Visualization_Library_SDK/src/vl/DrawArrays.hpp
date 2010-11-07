@@ -33,6 +33,7 @@
 #define DrawArrays_INCLUDE_DEFINE
 
 #include <vl/DrawCall.hpp>
+#include <vl/TriangleIterator.hpp>
 
 namespace vl
 {
@@ -172,6 +173,13 @@ namespace vl
 
     //! Returns the number of instances for this set of primitives.
     int instances() const { return mInstances; }
+
+    TriangleIterator triangles() const
+    {
+      ref<TriangleIteratorDirect> tid = new TriangleIteratorDirect( primitiveType() );
+      tid->initialize(mStart, mStart+mCount);
+      return TriangleIterator(tid.get());
+    }
 
     protected:
       int mStart;

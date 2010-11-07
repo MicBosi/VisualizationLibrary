@@ -307,218 +307,44 @@ void Geometry::computeNormals()
   }
 
   ArrayAbstract * posarr = vertexArray();
+  // use vertex attribute if present
+  if (!posarr && findVertexAttribute(0))
+    posarr = findVertexAttribute(0)->data();
 
   ref<ArrayFVec3> norm3f = new ArrayFVec3;
-  norm3f->resize( vertexArray()->size() );
+  norm3f->resize( posarr->size() );
   setNormalArray( norm3f.get() );
 
-  for(int i=0; i<(int)mVertexArray->size(); ++i)
+  // zero the normals
+  for(int i=0; i<(int)posarr->size(); ++i)
     (*norm3f)[i] = 0;
 
+  // iterate all draw calls
   for(int prim=0; prim<(int)drawCalls()->size(); prim++)
   {
-    switch( mDrawCalls[prim]->primitiveType() )
+    // iterate all triangles, if present
+    for(TriangleIterator trit = mDrawCalls[prim]->triangles(); !trit.isEnd(); trit.next())
     {
-      default:
-        break;
+      size_t a = trit.a();
+      size_t b = trit.b();
+      size_t c = trit.c();
 
-      case PT_TRIANGLES:
-      {
-        VL_CHECK(mDrawCalls[prim]->indexCount())
-        VL_CHECK(mDrawCalls[prim]->indexCount() >= 3)
+      VL_CHECK( a < posarr->size() )
+      VL_CHECK( b < posarr->size() )
+      VL_CHECK( c < posarr->size() )
 
-        for(int i=0; i<(int)mDrawCalls[prim]->indexCount(); i+=3)
-        {
-          size_t a = mDrawCalls[prim]->index(i+0);
-          size_t b = mDrawCalls[prim]->index(i+1);
-          size_t c = mDrawCalls[prim]->index(i+2);
+      vec3 n, v0, v1, v2;
 
-          VL_CHECK( a < posarr->size() )
-          VL_CHECK( b < posarr->size() )
-          VL_CHECK( c < posarr->size() )
+      v0 = posarr->vectorAsVec4(a).xyz();
+      v1 = posarr->vectorAsVec4(b).xyz() - v0;
+      v2 = posarr->vectorAsVec4(c).xyz() - v0;
 
-          vec3 n, v0, v1, v2;
+      n = cross(v1, v2);
+      n.normalize();
 
-          v0 = posarr->vectorAsVec4(a).xyz();
-          v1 = posarr->vectorAsVec4(b).xyz() - v0;
-          v2 = posarr->vectorAsVec4(c).xyz() - v0;
-
-          n = cross(v1, v2);
-          // VL_CHECK(n.length());
-          n.normalize();
-          // VL_CHECK(n.length());
-
-          VL_CHECK( a < norm3f->size() )
-          VL_CHECK( b < norm3f->size() )
-          VL_CHECK( c < norm3f->size() )
-
-          (*norm3f)[a] += (fvec3)n;
-          (*norm3f)[b] += (fvec3)n;
-          (*norm3f)[c] += (fvec3)n;
-        }
-      }
-      break;
-
-      case PT_QUADS:
-      {
-        VL_CHECK(mDrawCalls[prim]->indexCount() >= 4)
-
-        for(int i=0; i<(int)mDrawCalls[prim]->indexCount(); i+=4)
-        {
-          size_t a = mDrawCalls[prim]->index(i+0);
-          size_t b = mDrawCalls[prim]->index(i+1);
-          size_t c = mDrawCalls[prim]->index(i+2);
-          size_t d = mDrawCalls[prim]->index(i+3);
-
-          VL_CHECK( a < posarr->size() )
-          VL_CHECK( b < posarr->size() )
-          VL_CHECK( c < posarr->size() )
-          VL_CHECK( d < posarr->size() )
-
-          vec3 n, v0, v1, v2;
-
-          // a------b
-          // |      |
-          // |  v0  |
-          // |      |
-          // d------c
-
-          // nicely manage degenerate quads
-
-          v0 = (posarr->vectorAsVec4(a).xyz() + posarr->vectorAsVec4(b).xyz() + posarr->vectorAsVec4(c).xyz() + posarr->vectorAsVec4(d).xyz()) * 0.25f;
-
-          v1 = posarr->vectorAsVec4(a).xyz() - v0;
-          v2 = posarr->vectorAsVec4(b).xyz() - v0;
-          n = cross(v1, v2);
-
-          v1 = posarr->vectorAsVec4(b).xyz() - v0;
-          v2 = posarr->vectorAsVec4(c).xyz() - v0;
-          n += cross(v1, v2);
-
-          v1 = posarr->vectorAsVec4(c).xyz() - v0;
-          v2 = posarr->vectorAsVec4(d).xyz() - v0;
-          n += cross(v1, v2);
-
-          v1 = posarr->vectorAsVec4(d).xyz() - v0;
-          v2 = posarr->vectorAsVec4(a).xyz() - v0;
-          n += cross(v1, v2);
-
-          n.normalize();
-
-          VL_CHECK( a < norm3f->size() )
-          VL_CHECK( b < norm3f->size() )
-          VL_CHECK( c < norm3f->size() )
-          VL_CHECK( d < norm3f->size() )
-
-          (*norm3f)[a] += (fvec3)n;
-          (*norm3f)[b] += (fvec3)n;
-          (*norm3f)[c] += (fvec3)n;
-          (*norm3f)[d] += (fvec3)n;
-        }
-      }
-      break;
-
-      case PT_POLYGON:
-      {
-        VL_CHECK(mDrawCalls[prim]->indexCount() >= 3)
-
-        size_t a = mDrawCalls[prim]->index(0);
-        size_t b = mDrawCalls[prim]->index(1);
-        size_t c = mDrawCalls[prim]->index(2);
-
-        VL_CHECK( a < posarr->size() )
-        VL_CHECK( b < posarr->size() )
-        VL_CHECK( c < posarr->size() )
-
-        vec3 n, v0, v1, v2;
-
-        v0 = posarr->vectorAsVec4(a).xyz();
-        v1 = posarr->vectorAsVec4(b).xyz() - v0;
-        v2 = posarr->vectorAsVec4(c).xyz() - v0;
-
-        n = cross(v1, v2).normalize();
-
-        for(size_t i=0; i<mDrawCalls[prim]->indexCount(); ++i)
-        {
-          VL_CHECK( i < norm3f->size() )
-          (*norm3f)[ mDrawCalls[prim]->index(i) ] += (fvec3)n;
-        }
-      } 
-      break;
-
-      case PT_TRIANGLE_FAN:
-      {
-        VL_CHECK(mDrawCalls[prim]->indexCount() >= 3)
-
-        for(int i=1; i<(int)mDrawCalls[prim]->indexCount()-1; ++i)
-        {
-          size_t a = mDrawCalls[prim]->index(0);
-          size_t b = mDrawCalls[prim]->index(i);
-          size_t c = mDrawCalls[prim]->index(i+1);
-
-          VL_CHECK( a < posarr->size() )
-          VL_CHECK( b < posarr->size() )
-          VL_CHECK( c < posarr->size() )
-
-          vec3 n, v0, v1, v2;
-
-          v0 = posarr->vectorAsVec4(a).xyz();
-          v1 = posarr->vectorAsVec4(b).xyz() - v0;
-          v2 = posarr->vectorAsVec4(c).xyz() - v0;
-
-          n = cross(v1, v2).normalize();
-
-          VL_CHECK( a < norm3f->size() )
-          VL_CHECK( b < norm3f->size() )
-          VL_CHECK( c < norm3f->size() )
-
-          (*norm3f)[a] += (fvec3)n;
-          (*norm3f)[b] += (fvec3)n;
-          (*norm3f)[c] += (fvec3)n;
-        }
-      } 
-      break;
-
-      case PT_QUAD_STRIP:
-      case PT_TRIANGLE_STRIP:
-      {
-        VL_CHECK(mDrawCalls[prim]->indexCount() >= 3)
-
-        for(int i=0; i<(int)mDrawCalls[prim]->indexCount()-2; ++i)
-        {
-          size_t a = mDrawCalls[prim]->index(i);
-          size_t b = mDrawCalls[prim]->index(i+1);
-          size_t c = mDrawCalls[prim]->index(i+2);
-
-          VL_CHECK( a < posarr->size() )
-          VL_CHECK( b < posarr->size() )
-          VL_CHECK( c < posarr->size() )
-
-          // skip degenerate tris
-          if (a == b || a == c || b == c)
-            continue;
-
-          vec3 n, v0, v1, v2;
-
-          v0 = posarr->vectorAsVec4(a).xyz();
-          v1 = posarr->vectorAsVec4(b).xyz() - v0;
-          v2 = posarr->vectorAsVec4(c).xyz() - v0;
-
-          n = cross(v1, v2).normalize();
-
-          if (i%2)
-            n = -n;
-
-          VL_CHECK( a < norm3f->size() )
-          VL_CHECK( b < norm3f->size() )
-          VL_CHECK( c < norm3f->size() )
-
-          (*norm3f)[a] += (fvec3)n;
-          (*norm3f)[b] += (fvec3)n;
-          (*norm3f)[c] += (fvec3)n;
-        }
-      } 
-      break;
+      (*norm3f)[a] += (fvec3)n;
+      (*norm3f)[b] += (fvec3)n;
+      (*norm3f)[c] += (fvec3)n;
     }
   }
 
@@ -1185,72 +1011,70 @@ void Geometry::computeTangentSpace(
   const fvec3 *vertex, 
   const fvec3* normal,
   const fvec2 *texcoord, 
-  const DrawCall* primitives,
+  const DrawCall* prim,
   fvec3 *tangent, 
   fvec3 *bitangent )
 {
-    std::vector<fvec3> tan1;
-    std::vector<fvec3> tan2;
-    tan1.resize(vert_count);
-    tan2.resize(vert_count);
+  std::vector<fvec3> tan1;
+  std::vector<fvec3> tan2;
+  tan1.resize(vert_count);
+  tan2.resize(vert_count);
+  
+  for ( TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next() )
+  {
+    unsigned int tri[] = { trit.a(), trit.b(), trit.c() };
+
+    VL_CHECK(tri[0] < vert_count );
+    VL_CHECK(tri[1] < vert_count );
+    VL_CHECK(tri[2] < vert_count );
     
-    size_t tri_count = primitives->triangleCount();
-    for ( size_t a = 0; a < tri_count; ++a )
+    const fvec3& v1 = vertex[tri[0]];
+    const fvec3& v2 = vertex[tri[1]];
+    const fvec3& v3 = vertex[tri[2]];
+    
+    const fvec2& w1 = texcoord[tri[0]];
+    const fvec2& w2 = texcoord[tri[1]];
+    const fvec2& w3 = texcoord[tri[2]];
+    
+    float x1 = v2.x() - v1.x();
+    float x2 = v3.x() - v1.x();
+    float y1 = v2.y() - v1.y();
+    float y2 = v3.y() - v1.y();
+    float z1 = v2.z() - v1.z();
+    float z2 = v3.z() - v1.z();
+    
+    float s1 = w2.x() - w1.x();
+    float s2 = w3.x() - w1.x();
+    float t1 = w2.y() - w1.y();
+    float t2 = w3.y() - w1.y();
+    
+    float r = 1.0F / (s1 * t2 - s2 * t1);
+    fvec3 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+    fvec3 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+
+    tan1[tri[0]] += sdir;
+    tan1[tri[1]] += sdir;
+    tan1[tri[2]] += sdir;
+
+    tan2[tri[0]] += tdir;
+    tan2[tri[1]] += tdir;
+    tan2[tri[2]] += tdir;
+  }
+
+  for ( size_t a = 0; a < vert_count; a++)
+  {
+    const fvec3& n = normal[a];
+    const fvec3& t = tan1[a];
+
+    // Gram-Schmidt orthogonalize
+    tangent[a] = (t - n * dot(n, t)).normalize();
+
+    if ( bitangent )
     {
-        unsigned int tri[3];
-        primitives->getTriangle( a, tri );
-
-        VL_CHECK(tri[0] < vert_count );
-        VL_CHECK(tri[1] < vert_count );
-        VL_CHECK(tri[2] < vert_count );
-        
-        const fvec3& v1 = vertex[tri[0]];
-        const fvec3& v2 = vertex[tri[1]];
-        const fvec3& v3 = vertex[tri[2]];
-        
-        const fvec2& w1 = texcoord[tri[0]];
-        const fvec2& w2 = texcoord[tri[1]];
-        const fvec2& w3 = texcoord[tri[2]];
-        
-        float x1 = v2.x() - v1.x();
-        float x2 = v3.x() - v1.x();
-        float y1 = v2.y() - v1.y();
-        float y2 = v3.y() - v1.y();
-        float z1 = v2.z() - v1.z();
-        float z2 = v3.z() - v1.z();
-        
-        float s1 = w2.x() - w1.x();
-        float s2 = w3.x() - w1.x();
-        float t1 = w2.y() - w1.y();
-        float t2 = w3.y() - w1.y();
-        
-        float r = 1.0F / (s1 * t2 - s2 * t1);
-        fvec3 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
-        fvec3 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
-
-        tan1[tri[0]] += sdir;
-        tan1[tri[1]] += sdir;
-        tan1[tri[2]] += sdir;
-
-        tan2[tri[0]] += tdir;
-        tan2[tri[1]] += tdir;
-        tan2[tri[2]] += tdir;
+      // Calculate handedness
+      float w = (dot(cross(n, t), tan2[a]) < 0.0F) ? -1.0F : 1.0F;
+      bitangent[a] = cross( n, tangent[a] ) * w;
     }
-
-    for ( size_t a = 0; a < vert_count; a++)
-    {
-        const fvec3& n = normal[a];
-        const fvec3& t = tan1[a];
-
-        // Gram-Schmidt orthogonalize
-        tangent[a] = (t - n * dot(n, t)).normalize();
-
-        if ( bitangent )
-        {
-          // Calculate handedness
-          float w = (dot(cross(n, t), tan2[a]) < 0.0F) ? -1.0F : 1.0F;
-          bitangent[a] = cross( n, tangent[a] ) * w;
-        }
-    }
+  }
 }
 //-----------------------------------------------------------------------------

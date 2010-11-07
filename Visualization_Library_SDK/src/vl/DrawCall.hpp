@@ -32,8 +32,8 @@
 #ifndef DrawCommand_INCLUDE_ONCE
 #define DrawCommand_INCLUDE_ONCE
 
-#include <vl/Object.hpp>
 #include <vl/Array.hpp>
+#include <vl/TriangleIterator.hpp>
 
 namespace vl 
 {
@@ -93,6 +93,8 @@ namespace vl
     //! @param out_triangle Filled with the 3 indices forming the requested triangle. Thus it must point to a buffer of at least 3 elements.
     virtual bool getTriangle( size_t tri_index, unsigned int* out_triangle ) const = 0;
   
+    virtual TriangleIterator triangles() const = 0;
+
   protected:
     bool getTriangle_internal( size_t tri_index, unsigned int* out_triangle ) const;
 

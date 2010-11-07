@@ -84,17 +84,17 @@ namespace vl
   // RayIntersectionGeometry
   //-----------------------------------------------------------------------------
   /** The RayIntersectionGeometry encapsulates all the information relative to a Ray/Actor intersection, 
-      providing also extra information relative to the intersection on the Geometry in use by the Actor.
-   */
+      providing also extra information relative to the intersection on the Geometry in use by the Actor. */
   class RayIntersectionGeometry: public RayIntersection
   {
   public:
     virtual const char* className() { return "RayIntersectionGeometry"; }
-    RayIntersectionGeometry(): mGeometry(NULL), mDrawCalls(NULL), mPrimitiveIndex(-1) 
+    RayIntersectionGeometry(): mGeometry(NULL), mDrawCalls(NULL), mTriangleIndex(-1) 
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
+      memset(mTriangle, 0xFF, sizeof(mTriangle));
     }
 
     //! The intersected Geometry
@@ -106,20 +106,25 @@ namespace vl
     //! The intersected DrawCall
     const DrawCall* drawCalls() const { return mDrawCalls; }
     //! The starting index of the intersected primitive inside drawCalls()
-    int primitiveIndex() const { return mPrimitiveIndex; }
+    int triangleIndex() const { return mTriangleIndex; }
+    //! An int[3] representing the indices of the intersected triangle.
+    int* triangle() const;
 
     //! The intersected Geometry
     void setGeometry(Geometry* g) { mGeometry = g; }
     //! The intersected DrawCall
     void setPrimitives(DrawCall* p) { mDrawCalls = p; }
     //! The starting index of the intersected primitive inside drawCalls()
-    void setPrimitiveIndex(int p_idx) { mPrimitiveIndex = p_idx; }
+    void setTriangleIndex(int t_idx) { mTriangleIndex = t_idx; }
+    //! An int[3] representing the indices of the intersected triangle.
+    void setTriangle(int a, int b, int c) { mTriangle[0] = a; mTriangle[0] = b; mTriangle[0] = c; }
 
   protected:
     vec3 mIntersectionPoint;
     Geometry* mGeometry;
     DrawCall* mDrawCalls;
-    int mPrimitiveIndex;
+    int mTriangleIndex;
+    int mTriangle[3];
     float mDistance;
   };
   //-----------------------------------------------------------------------------
@@ -183,14 +188,6 @@ namespace vl
     // T should be either fvec3-4 or dvec3-4
     template<class T>
     void intersectTriangle(const T& a, const T& b, const T& c, Actor*, Geometry* geom, DrawCall* prim, int prim_idx);
-
-    // T should be either fvec3-4 or dvec3-4
-    template<class T>
-    void intersectPolygon(const std::vector<T>& polygon, Actor*, Geometry* geom, DrawCall* prim);
-
-    // T should be either fvec3-4 or dvec3-4
-    template<class T>
-    void intersectQuad(const T& a, const T& b, const T& c, const T& d, Actor*, Geometry* geom, DrawCall* prim, int prim_idx);
 
   protected:
     Frustum mFrustum;
