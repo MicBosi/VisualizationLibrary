@@ -138,6 +138,8 @@ set(VL_INC
   vl/DrawArrays.hpp
   vl/DrawCall.hpp
   vl/DrawElements.hpp
+  vl/DrawRangeElements.hpp
+  vl/MultiDrawElements.hpp
   vl/DrawPixels.hpp
   vl/EdgeExtractor.hpp
   vl/EdgeRenderer.hpp

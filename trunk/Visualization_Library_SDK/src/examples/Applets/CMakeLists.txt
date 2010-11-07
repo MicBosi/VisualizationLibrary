@@ -67,6 +67,7 @@ set(VL_APPLETS
   App_PolyDepthSorting.hpp
   App_PolygonReduction.hpp
   App_PortalCulling.hpp
+  App_Primitives.hpp
   App_RenderOrder.hpp
   App_RenderToTextureClassic.hpp
   App_RotatingCube.hpp
