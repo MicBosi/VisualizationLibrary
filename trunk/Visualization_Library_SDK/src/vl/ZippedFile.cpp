@@ -161,7 +161,7 @@ namespace
 //-----------------------------------------------------------------------------
   inline int zdecompress(VirtualFile *source, char *dest, unsigned int bytes_to_read)
   {
-    const int CHUNK_SIZE = 128*1024;
+    const unsigned int CHUNK_SIZE = 128*1024;
     int ret;
     unsigned have;
     z_stream strm;
