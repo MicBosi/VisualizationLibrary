@@ -267,7 +267,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
 
     for(size_t ivert=0; ivert<vertex_frames[iframe]->size(); ++ivert)
     {
-      VL_CHECK( (int)remover.mapOldToNew()[ivert] < new_vertex_frame->size() )
+      VL_CHECK( remover.mapOldToNew()[ivert] < new_vertex_frame->size() )
       new_vertex_frame->at( remover.mapOldToNew()[ivert] ) = vertex_frames[iframe]->at(ivert);
     }
     vertex_frames[iframe] = new_vertex_frame;
