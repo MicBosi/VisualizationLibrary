@@ -120,7 +120,7 @@ namespace vl
    * To gain direct access to the GLBufferObject use the indices() function.
    *
    * \sa DrawCall, DrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
-  template <typename index_type, GLenum Tgltype, class arr_type>
+  template <GLenum Tgltype, class arr_type>
   class MultiDrawElements: public MultiDrawElementsBase
   {
   public:
@@ -133,7 +133,7 @@ namespace vl
       #endif
       mType                    = primitive;
       mIndexBuffer             = new arr_type;
-      mPrimitiveRestartIndex   = index_type(~0);
+      mPrimitiveRestartIndex   = typename arr_type::scalar_type(~0);
       mPrimitiveRestartEnabled = false;
     }
 
@@ -345,7 +345,7 @@ namespace vl
     TriangleIterator triangles() const;
 
     /** The pointer vector used as 'indices' parameter of glMultiDrawElements. */
-    const std::vector<const index_type*>& pointerVector() const { return mPointerVector; }
+    const std::vector<const typename arr_type::scalar_type*>& pointerVector() const { return mPointerVector; }
 
   protected:
     void compute_pointer_vector()
@@ -355,46 +355,46 @@ namespace vl
 
       // used when VBOs are not active.
       mPointerVector.clear();
-      const index_type* ptr = (const index_type*)indices()->gpuBuffer()->ptr();
+      const typename arr_type::scalar_type* ptr = (const typename arr_type::scalar_type*)indices()->gpuBuffer()->ptr();
       for(size_t i=0; i<mCountVector.size(); ++i)
       {
         mPointerVector.push_back(ptr);
         ptr += mCountVector[i];
       }
-      VL_CHECK( ptr - (const index_type*)indices()->gpuBuffer()->ptr() <= (int)indexCount() );
+      VL_CHECK( ptr - (const typename arr_type::scalar_type*)indices()->gpuBuffer()->ptr() <= (int)indexCount() );
     }
 
 
   protected:
     ref< arr_type > mIndexBuffer;
-    std::vector<const index_type*> mPointerVector;
-    std::vector<const index_type*> mNULLPointerVector;
+    std::vector<const typename arr_type::scalar_type*> mPointerVector;
+    std::vector<const typename arr_type::scalar_type*> mNULLPointerVector;
   };
   //------------------------------------------------------------------------------
   // typedefs
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLuint. */
-  class MultiDrawElementsUInt: public MultiDrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>
+  class MultiDrawElementsUInt: public MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt>
   {
   public:
     MultiDrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>(primitive) {}
+    :MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt>(primitive) {}
   };
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLushort. */
-  class MultiDrawElementsUShort: public MultiDrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>
+  class MultiDrawElementsUShort: public MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort>
   {
   public:
     MultiDrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>(primitive) {}
+    :MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort>(primitive) {}
   };
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLubyte. */
-  class MultiDrawElementsUByte: public MultiDrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>
+  class MultiDrawElementsUByte: public MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte>
   {
   public:
     MultiDrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>(primitive) {}
+    :MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte>(primitive) {}
   };
 //-----------------------------------------------------------------------------
 // TriangleIteratorMulti
@@ -453,8 +453,8 @@ namespace vl
     int mStart;
   };
 //-----------------------------------------------------------------------------
-  template <typename index_type, GLenum Tgltype, class arr_type>
-  TriangleIterator MultiDrawElements<index_type, Tgltype, arr_type>::triangles() const
+  template <GLenum Tgltype, class arr_type>
+  TriangleIterator MultiDrawElements<Tgltype, arr_type>::triangles() const
   {
     ref< TriangleIteratorMulti<arr_type> > it = 
       new TriangleIteratorMulti<arr_type>( this, mIndexBuffer.get(), primitiveType(), 

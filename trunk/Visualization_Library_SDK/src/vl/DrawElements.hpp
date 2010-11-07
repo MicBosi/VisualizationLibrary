@@ -115,7 +115,7 @@ namespace vl
    * To gain direct access to the GLBufferObject use the indices() function.
    *
    * \sa DrawCall, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
-  template <typename index_type, GLenum Tgltype, class arr_type>
+  template <GLenum Tgltype, class arr_type>
   class DrawElements: public DrawElementsBase
   {
   private:
@@ -124,7 +124,7 @@ namespace vl
     {
     public:
       T ABC[3];
-      bool operator<(const Triangle<index_type>& b) const
+      bool operator<(const Triangle< typename arr_type::scalar_type>& b) const
       {
         if (ABC[0] != b.ABC[0])
           return ABC[0] < b.ABC[0];
@@ -154,7 +154,7 @@ namespace vl
       mType                    = primitive;
       mInstances               = instances;
       mIndexBuffer             = new arr_type;
-      mPrimitiveRestartIndex   = index_type(~0);
+      mPrimitiveRestartIndex   = typename arr_type::scalar_type(~0);
       mPrimitiveRestartEnabled = false;
       mBaseVertex              = 0;
     }
@@ -289,7 +289,7 @@ namespace vl
 
       if (primitiveType() == PT_TRIANGLES)
       {
-        Triangle<index_type>* tri = (Triangle<index_type>*)indices()->ptr();
+        Triangle<typename arr_type::scalar_type>* tri = (Triangle<typename arr_type::scalar_type>*)indices()->ptr();
         for(unsigned i=0; i<indexCount()/3; ++i)
           tri[i].rotate();
         std::sort(tri, tri + indexCount()/3);
@@ -405,27 +405,27 @@ namespace vl
   // typedefs
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLuint. */
-  class DrawElementsUInt:  public DrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>
+  class DrawElementsUInt:  public DrawElements<GL_UNSIGNED_INT, ArrayUInt>
   {
   public:
     DrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>(primitive, instances) {}
+    :DrawElements<GL_UNSIGNED_INT, ArrayUInt>(primitive, instances) {}
   };
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLushort. */
-  class DrawElementsUShort: public DrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>
+  class DrawElementsUShort: public DrawElements<GL_UNSIGNED_SHORT, ArrayUShort>
   {
   public:
     DrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>(primitive, instances) {}
+    :DrawElements<GL_UNSIGNED_SHORT, ArrayUShort>(primitive, instances) {}
   };
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLubyte. */
-  class DrawElementsUByte:  public DrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>
+  class DrawElementsUByte:  public DrawElements<GL_UNSIGNED_BYTE, ArrayUByte>
   {
   public:
     DrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>(primitive, instances) {}
+    :DrawElements<GL_UNSIGNED_BYTE, ArrayUByte>(primitive, instances) {}
   };
    //------------------------------------------------------------------------------
 }
