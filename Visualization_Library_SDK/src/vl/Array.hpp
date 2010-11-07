@@ -168,14 +168,15 @@ namespace vl
    * - vl::ArrayShort, vl::ArraySVec2, vl::ArraySVec3, vl::ArraySVec4
    * - vl::ArrayUShort, vl::ArrayUSVec2, vl::ArrayUSVec3, vl::ArrayUSVec4
   */
-  template <typename vector_type, typename scalar_type, int gl_size, GLenum gl_type>
+  template <typename T_vector_type, typename T_scalar_type, int T_gl_size, GLenum T_gl_type>
   class Array: public ArrayAbstract
   {
   public:
     virtual const char* className() { return "Array"; }
+    typedef T_scalar_type scalar_type;
 
-    virtual size_t glSize() const { return gl_size; }
-    virtual int glType() const { return gl_type; }
+    virtual size_t glSize() const { return T_gl_size; }
+    virtual int glType() const { return T_gl_type; }
 
     virtual ref<ArrayAbstract> clone() const
     {
@@ -195,19 +196,19 @@ namespace vl
     size_t scalarCount() const { return size() * glSize(); }
     size_t scalarCountGPU() const { return sizeGPU() * glSize(); }
     
-    const vector_type* begin() const { return reinterpret_cast<const vector_type*>(ptr()); }
-    vector_type* begin() { return reinterpret_cast<vector_type*>(ptr()); }
+    const T_vector_type* begin() const { return reinterpret_cast<const T_vector_type*>(ptr()); }
+    T_vector_type* begin() { return reinterpret_cast<T_vector_type*>(ptr()); }
     
-    const vector_type* end() const { return (reinterpret_cast<const vector_type*>(ptr()))+size(); }
-    vector_type* end() { return (reinterpret_cast<vector_type*>(ptr()))+size(); }
+    const T_vector_type* end() const { return (reinterpret_cast<const T_vector_type*>(ptr()))+size(); }
+    T_vector_type* end() { return (reinterpret_cast<T_vector_type*>(ptr()))+size(); }
     
-    vector_type& at(size_t i) { VL_CHECK(i<size()); return *(reinterpret_cast<vector_type*>(ptr())+i); }
-    const vector_type& at(size_t i) const { VL_CHECK(i<size()); return *(reinterpret_cast<const vector_type*>(ptr())+i); }
+    T_vector_type& at(size_t i) { VL_CHECK(i<size()); return *(reinterpret_cast<T_vector_type*>(ptr())+i); }
+    const T_vector_type& at(size_t i) const { VL_CHECK(i<size()); return *(reinterpret_cast<const T_vector_type*>(ptr())+i); }
 
-    vector_type& operator[](size_t i) { return at(i); }
-    const vector_type& operator[](size_t i) const { return at(i); }
+    T_vector_type& operator[](size_t i) { return at(i); }
+    const T_vector_type& operator[](size_t i) const { return at(i); }
     
-    virtual size_t bytesPerVector() const { return sizeof(vector_type); }
+    virtual size_t bytesPerVector() const { return sizeof(T_vector_type); }
     
     Sphere computeBoundingSphere() const
     {
@@ -216,8 +217,8 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
-        const scalar_type* pv = reinterpret_cast<const scalar_type*>(&at(i));
-        for( unsigned j=0; j<((0x3321 >> (gl_size-1)*4) & 0x3); ++j )
+        const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(i));
+        for( unsigned j=0; j<((0x3321 >> (T_gl_size-1)*4) & 0x3); ++j )
           v.ptr()[j] = (Real)pv[j];
         aabb += v;
       }
@@ -225,8 +226,8 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
-        const scalar_type* pv = reinterpret_cast<const scalar_type*>(&at(i));
-        for( unsigned j=0; j<((0x3321 >> (gl_size-1)*4) & 0x3); ++j )
+        const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(i));
+        for( unsigned j=0; j<((0x3321 >> (T_gl_size-1)*4) & 0x3); ++j )
           v.ptr()[j] = (Real)pv[j];
         Real r = (v-aabb.center()).length();
         if (r > radius)
@@ -243,8 +244,8 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
-        const scalar_type* pv = reinterpret_cast<const scalar_type*>(&at(i));
-        for( size_t j=0; j<((0x3321 >> (gl_size-1)*4) & 0x3); ++j )
+        const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(i));
+        for( size_t j=0; j<((0x3321 >> (T_gl_size-1)*4) & 0x3); ++j )
           v.ptr()[j] = (Real)pv[j];
         aabb += v;
       }
@@ -256,15 +257,15 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec4 v(0,0,0,1);
-        scalar_type* pv = reinterpret_cast<scalar_type*>(&at(i));
+        T_scalar_type* pv = reinterpret_cast<T_scalar_type*>(&at(i));
         // read
-        for( size_t j=0; j<gl_size; ++j )
+        for( size_t j=0; j<T_gl_size; ++j )
           v.ptr()[j] = (Real)pv[j];
         // transform
         v = m * v;
         // write
-        for( size_t j=0; j<gl_size; ++j )
-          pv[j] = (scalar_type)v.ptr()[j];
+        for( size_t j=0; j<T_gl_size; ++j )
+          pv[j] = (T_scalar_type)v.ptr()[j];
       }
     }
 
@@ -273,38 +274,38 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec4 v(0,0,0,0);
-        scalar_type* pv = reinterpret_cast<scalar_type*>(&at(i));
+        T_scalar_type* pv = reinterpret_cast<T_scalar_type*>(&at(i));
         // read
-        for( size_t j=0; j<gl_size; ++j )
+        for( size_t j=0; j<T_gl_size; ++j )
           v.ptr()[j] = (Real)pv[j];
         // normalize
         v.normalize();
         // write
-        for( unsigned j=0; j<gl_size; ++j )
-          pv[j] = (scalar_type)v.ptr()[j];
+        for( unsigned j=0; j<T_gl_size; ++j )
+          pv[j] = (T_scalar_type)v.ptr()[j];
       }
     }
 
     vec4 vectorAsVec4(size_t vector_index) const
     {
       vec4 v(0,0,0,1);
-      const scalar_type* pv = reinterpret_cast<const scalar_type*>(&at(vector_index));
-      for( size_t j=0; j<gl_size; ++j )
+      const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(vector_index));
+      for( size_t j=0; j<T_gl_size; ++j )
         v.ptr()[j] = (Real)pv[j];
       return v;
     }
 
     int compare(int a, int b) const
     {
-      const scalar_type* pa = reinterpret_cast<const scalar_type*>(&at(a));
-      const scalar_type* pb = reinterpret_cast<const scalar_type*>(&at(b));
-      for( size_t i=0; i<gl_size; ++i )
+      const T_scalar_type* pa = reinterpret_cast<const T_scalar_type*>(&at(a));
+      const T_scalar_type* pb = reinterpret_cast<const T_scalar_type*>(&at(b));
+      for( size_t i=0; i<T_gl_size; ++i )
         if ( pa[i] != pb[i] )
           return pa[i] < pb[i] ? -1 : +1;        
       return 0;
     }
 
-    void operator=(const std::vector<vector_type>& vector)
+    void operator=(const std::vector<T_vector_type>& vector)
     {
       resize(vector.size());
       if (vector.empty())
