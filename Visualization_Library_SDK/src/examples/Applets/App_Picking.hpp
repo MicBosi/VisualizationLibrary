@@ -32,6 +32,7 @@
 #include "BaseDemo.hpp"
 #include "vl/RayIntersector.hpp"
 #include "vl/ReadPixels.hpp"
+#include "vl/Light.hpp"
 
 class App_Picking: public BaseDemo
 {

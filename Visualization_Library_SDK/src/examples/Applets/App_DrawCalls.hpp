@@ -29,9 +29,12 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+// mic fixme: implement and cleaup this demo test
+
 #ifndef App_DrawCalls_INCLUDE_ONCE
 #define App_DrawCalls_INCLUDE_ONCE
 
+#include <vl/MultiDrawElements.hpp>
 #include "vl/DrawRangeElements.hpp"
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
@@ -42,25 +45,48 @@
 #include "vl/Light.hpp"
 #include "vl/RenderingTree.hpp"
 
-namespace vl
-{
-  template<class TArray>
-  class TriangleIteratorMulti: public TriangleIteratorAbstract
-  {
-  public:
-    virtual bool next() = 0;
-    virtual bool isEnd() const = 0;
-    virtual int a() const = 0;
-    virtual int b() const = 0;
-    virtual int c() const = 0;
-  };
-}
-
 class App_DrawCalls: public BaseDemo
 {
   void initEvent()
   {
     BaseDemo::initEvent();
+
+    vl::ref<vl::DrawCall> da = new vl::DrawArrays(vl::PT_LINE_LOOP, 10, 20);
+
+    for( vl::TriangleIterator trit = da->triangles(); !trit.isEnd(); trit.next() ) 
+      printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
+
+    vl::ref<vl::MultiDrawElementsUInt> mdeu32 = new vl::MultiDrawElementsUInt(vl::PT_LINE_LOOP);
+
+    {
+      // int idx[] = { 10,11,12,13, 0xFF, 20,21,22, 30,31,32,33,34, 0xFF, 40,41,42,43, -1 };
+      int idx[] = { 10,11,12,13,  20,21,22,23, 0xFF, 30,31,32,33, -1 };
+      int count = 0;
+      for(int i=0; idx[i] != -1; ++i)
+        ++count;
+      mdeu32->indices()->resize( count );
+      for(int i=0; idx[i] != -1; ++i)
+        mdeu32->indices()->at(i) = idx[i];
+    }
+
+    std::vector<GLint> counts;
+    counts.push_back(4);
+    counts.push_back(9);
+    mdeu32->setCountVector( counts );
+
+    std::vector<GLint> basev;
+    basev.push_back(100);
+    basev.push_back(200);
+    mdeu32->setBaseVertices(basev);
+
+    mdeu32->setPrimitiveRestartEnabled(true);
+    mdeu32->setPrimitiveRestartIndex(0xFF);
+
+    for( vl::TriangleIterator trit = mdeu32->triangles(); !trit.isEnd(); trit.next() ) 
+      printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
+
+    printf("---\n");
+    exit(0);
 
     // fill the index buffer
 
@@ -68,7 +94,6 @@ class App_DrawCalls: public BaseDemo
 
     // int idx[] = { 0,1,2,3,4,5, -1 };
     int idx[] = { 10,11,12,13, 0xFF, 20,21,22,23,24, 0xFF, 30,31,32,33,34, -1 };
-
     int count = 0;
     for(int i=0; idx[i] != -1; ++i)
       ++count;
