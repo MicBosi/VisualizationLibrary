@@ -198,11 +198,11 @@ namespace vl
       if (polys->primitiveType() == PT_QUADS)
       {
         // compute zetas
-        mPrimitiveZ.resize( polys->indexCount() / 4 );
+        mPrimitiveZ.resize( polys->indices()->size() / 4 );
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indexCount(); i+=4, ++iz)
+        for(unsigned iz=0, i=0; i<polys->indices()->size(); i+=4, ++iz)
         {
           int a = polys->indices()->at(i+0);
           int b = polys->indices()->at(i+1);
@@ -219,7 +219,7 @@ namespace vl
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Front_To_Back() );
 
         // regenerate the sorted indices
-        sorted_quads.resize( polys->indexCount() / 4 );
+        sorted_quads.resize( polys->indices()->size() / 4 );
         Quad<T>* tris = (Quad<T>*)polys->indices()->ptr();
         for(unsigned int i=0; i<mPrimitiveZ.size(); ++i)
           sorted_quads[i] = tris[ mPrimitiveZ[i].mPrimitiveIndex ];
@@ -229,11 +229,11 @@ namespace vl
       if (polys->primitiveType() == PT_TRIANGLES)
       {
         // compute zetas
-        mPrimitiveZ.resize( polys->indexCount() / 3 );
+        mPrimitiveZ.resize( polys->indices()->size() / 3 );
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indexCount(); i+=3, ++iz)
+        for(unsigned iz=0, i=0; i<polys->indices()->size(); i+=3, ++iz)
         {
           int a = polys->indices()->at(i+0);
           int b = polys->indices()->at(i+1);
@@ -249,7 +249,7 @@ namespace vl
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Front_To_Back() );
 
         // regenerate the sorted indices
-        sorted_triangles.resize( polys->indexCount() / 3 );
+        sorted_triangles.resize( polys->indices()->size() / 3 );
         Triangle<T>* tris = (Triangle<T>*)polys->indices()->ptr();
         for(unsigned int i=0; i<mPrimitiveZ.size(); ++i)
           sorted_triangles[i] = tris[ mPrimitiveZ[i].mPrimitiveIndex ];
@@ -259,11 +259,11 @@ namespace vl
       if (polys->primitiveType() == PT_LINES)
       {
         // compute zetas
-        mPrimitiveZ.resize( polys->indexCount() / 2 );
+        mPrimitiveZ.resize( polys->indices()->size() / 2 );
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indexCount(); i+=2, ++iz)
+        for(unsigned iz=0, i=0; i<polys->indices()->size(); i+=2, ++iz)
         {
           int a = polys->indices()->at(i+0);
           int b = polys->indices()->at(i+1);
@@ -278,7 +278,7 @@ namespace vl
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Front_To_Back() );
 
         // regenerate the sorted indices
-        sorted_lines.resize( polys->indexCount() / 2 );
+        sorted_lines.resize( polys->indices()->size() / 2 );
         Line<T>* tris = (Line<T>*)polys->indices()->ptr();
         for(unsigned int i=0; i<mPrimitiveZ.size(); ++i)
           sorted_lines[i] = tris[ mPrimitiveZ[i].mPrimitiveIndex ];
@@ -288,11 +288,11 @@ namespace vl
       if (polys->primitiveType() == PT_POINTS)
       {
         // compute zetas
-        mPrimitiveZ.resize( polys->indexCount() );
+        mPrimitiveZ.resize( polys->indices()->size() );
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indexCount(); ++i, ++iz)
+        for(unsigned iz=0, i=0; i<polys->indices()->size(); ++i, ++iz)
         {
           mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[polys->indices()->at(i)].z();
           mPrimitiveZ[iz].mPrimitiveIndex = iz;
@@ -305,7 +305,7 @@ namespace vl
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Front_To_Back() );
 
         // regenerate the sorted indices
-        sorted_points.resize( polys->indexCount() );
+        sorted_points.resize( polys->indices()->size() );
         Point<T>* tris = (Point<T>*)polys->indices()->ptr();
         for(unsigned int i=0; i<mPrimitiveZ.size(); ++i)
           sorted_points[i] = tris[ mPrimitiveZ[i].mPrimitiveIndex ];
