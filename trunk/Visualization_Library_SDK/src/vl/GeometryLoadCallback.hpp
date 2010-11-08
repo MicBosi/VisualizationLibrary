@@ -51,7 +51,6 @@ namespace vl
       mDiscardOriginalNormals = false;
       mComputeNormals  = true;
       mRemoveDoubles   = false;
-      mSortTriangles   = false;
       mSortVertices    = false;
       mStripfy         = false;
       mConvertToDrawArrays = false;
@@ -78,9 +77,6 @@ namespace vl
         if (removeDoubles())
           DoubleVertexRemover().removeDoubles(geom[i].get());
 
-        if (sortTriangles())
-          geom[i]->sortTriangles();
-
         if (sortVertices())
           geom[i]->sortVertices();
 
@@ -88,12 +84,10 @@ namespace vl
           TriangleStripGenerator().stripfy(geom[i].get(), 22, true, false, true);
 
         if (convertToDrawArrays())
-          geom[i]->convertDrawElementsToDrawArrays();
+          geom[i]->convertDrawCallToDrawArrays();
 
         geom[i]->setDisplayListEnabled(useDisplayLists());
         geom[i]->setVBOEnabled(useVBOs());
-
-        geom[i]->shrinkDrawElements();
 
         if (transformGeometry())
           geom[i]->transform(transformMatrix(),true);
@@ -119,11 +113,6 @@ namespace vl
     void setSortVertices(bool on) { mSortVertices = on; }
     //! Sorts the mesh's vertices for better performances
     bool sortVertices() const { return mSortVertices; }
-
-    //! Sorts the mesh's triangles for better performances
-    void setSortTriangles(bool on) { mSortTriangles = on; }
-    //! Sorts the mesh's triangles for better performances
-    bool sortTriangles() const { return mSortTriangles; }
 
     //! Convert mesh into a set of triangle strips if possible
     void setStripfy(bool on) { mStripfy = on; }
@@ -159,7 +148,6 @@ namespace vl
     bool mDiscardOriginalNormals;
     bool mComputeNormals;
     bool mRemoveDoubles;
-    bool mSortTriangles;
     bool mSortVertices;
     bool mStripfy;
     bool mConvertToDrawArrays;
