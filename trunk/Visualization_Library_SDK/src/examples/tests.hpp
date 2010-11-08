@@ -79,8 +79,8 @@
 #include "Applets/App_NearFarOptimization.hpp"
 #include "Applets/App_EffectOverride.hpp"
 #include "Applets/App_ShaderOverride.hpp"
-#include "Applets/App_DrawCalls.hpp"
 #include "Applets/App_Primitives.hpp"
+#include "Applets/App_DrawCalls.hpp"
 
 // win32 console for sdtout output
 #if defined(WIN32) && !defined(NDEBUG)
