@@ -2,6 +2,16 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2010.11.1119</div>
+	
+	- DrawCall: <b>new universal index and triangle iterator mechanics</b>. Now normals computation, edge extraction, ray intersection, tangent space computation, polygon simplification, triangle stripfy... all support all combinations of DrawArrays, DrawElements, MultiDrawElements, DrawRangeElements, primitive restart and base vertex.
+	- Geometry: enhanced bounds computation, tighter and faster.
+	- API CHANGES 
+		- Geometry and DrawCall: removed deprecated triangleCount(), lineCount(), pointCount(), shrinkDrawElements(), sortTriangles(), getTriangle(), methods.
+		- Removed deprecated statistics related methods in Rendering.
+		- DrawCall: removed direct index access API, replaced by index iterator api.
+	- Several other fixes and improvements.
+
 	<div class="featuretitle">Visualization Library 2010.10.1115</div>
 
 	- <b>New vl::OcclusionCullRenderer implementing the new occlusion culling algorithm: 25%-40% more efficient!</b>
