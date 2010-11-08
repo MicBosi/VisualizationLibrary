@@ -273,9 +273,6 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
     vertex_frames[iframe] = new_vertex_frame;
   }
 
-  // uses DrawElementsUShort/UByte when possible
-  geometry->shrinkDrawElements();
-
   // compute normals
   normal_frames.resize( loader.header.numFrames );
   for(int iframe=0; iframe<loader.header.numFrames; iframe++) 
