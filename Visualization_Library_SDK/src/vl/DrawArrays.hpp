@@ -85,54 +85,6 @@ namespace vl
     virtual void deleteVBOs() {}
     virtual void updateVBOs(bool) {}
     virtual unsigned int handle() const { return 0; }
-    virtual size_t indexCount() const { return count(); }
-    virtual size_t index(int i) const { return start() + i; }
-
-    int triangleCount() const
-    {
-      switch( mType )
-      {
-      case PT_POINTS: return 0;
-      case PT_LINES: return 0;
-      case PT_LINE_LOOP: return 0;
-      case PT_LINE_STRIP: return 0;
-      case PT_TRIANGLES: return mCount / 3;
-      case PT_TRIANGLE_STRIP: return mCount - 2;
-      case PT_TRIANGLE_FAN: return mCount - 2;
-      case PT_QUADS: return mCount / 4 * 2;
-      case PT_QUAD_STRIP: return ( (mCount - 2) / 2 ) * 2;
-      case PT_POLYGON: return mCount - 2;
-      default:
-        return 0;
-      }
-    }
-
-    int lineCount() const
-    {
-      switch( mType )
-      {
-      case PT_LINES: return mCount / 2;
-      case PT_LINE_LOOP: return mCount;
-      case PT_LINE_STRIP: return mCount - 1;
-      default:
-        return 0;
-      }
-    }
-
-    int pointCount() const
-    {
-      switch( mType )
-      {
-      case PT_POINTS: return mCount;
-      default:
-        return 0;
-      }
-    }
-
-    virtual bool getTriangle( size_t tri_index, unsigned int* out_triangle ) const
-    {
-      return getTriangle_internal(tri_index, out_triangle);
-    }
 
     virtual void render(bool) const
     {
@@ -174,11 +126,20 @@ namespace vl
     //! Returns the number of instances for this set of primitives.
     int instances() const { return mInstances; }
 
-    TriangleIterator triangles() const
+    TriangleIterator triangleIterator() const
     {
       ref<TriangleIteratorDirect> tid = new TriangleIteratorDirect( primitiveType() );
       tid->initialize(mStart, mStart+mCount);
       return TriangleIterator(tid.get());
+    }
+
+    IndexIterator indexIterator() const
+    {
+      ref<IndexIteratorDrawArrays> iida = new IndexIteratorDrawArrays;
+      iida->initialize( mStart, mCount );
+      IndexIterator iit;
+      iit.initialize( iida.get() );
+      return iit;
     }
 
     protected:
