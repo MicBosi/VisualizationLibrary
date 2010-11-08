@@ -100,10 +100,6 @@ namespace vl
     */
     virtual void computeBounds_Implementation();
 
-    int triangleCount() const;
-    int lineCount() const;
-    int pointCount() const;
-
     /**
      * Computes the normals in a "smooth" way, i.e. averaging the normals of those 
      * polygons that share one or more vertices.
@@ -199,22 +195,16 @@ namespace vl
     */
     void transform(const mat4&matr, bool normalize = true);
 
-    //! Tries to convert DrawElementsUInt in DrawElementsUShort/UByte and DrawElementsUShort in DrawElementsUByte in order to use less memory.
-    void shrinkDrawElements();
-
-    //! Merges the PT_TRIANGLE_STRIP Primitive objects into one single PT_TRIANGLE_STRIP DrawElements.
+    //! Merges all the PT_TRIANGLE_STRIP DrawElementsUInt objects into one single PT_TRIANGLE_STRIP DrawElementsUInt.
     void mergeTriangleStrips();
 
     //! Converts all the DrawCall objects bound to a Geometry into DrawArrays.
-    void convertDrawElementsToDrawArrays();
+    void convertDrawCallToDrawArrays();
 
     //! Sorts the vertices of the geometry to maximize vertex-cache coherency.
     //! This function will work only if all the DrawCall are DrawElements.
     //! \returns true if all the DrawCall are DrawElements and the sorting took place.
     bool sortVertices();
-
-    //! Calls DrawElements::sortTriangles().
-    void sortTriangles();
 
     //! Assigns a random color to each vertex of each DrawCall object. If a vertex is shared among more than one DrawCall object its color is undefined.
     void colorizePrimitives();
