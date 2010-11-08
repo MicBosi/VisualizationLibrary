@@ -158,6 +158,7 @@ set(VL_INC
   vl/GZipCodec.hpp
   vl/KeyValues.hpp
   vl/Image.hpp
+  vl/IndexIterator.hpp
   vl/Interpolator.hpp
   vl/ActorKdTree.hpp
   vl/LODEvaluator.hpp
