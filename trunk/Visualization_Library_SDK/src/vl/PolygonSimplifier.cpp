@@ -124,7 +124,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
   for(int i=0; i<geom->drawCalls()->size(); ++i)
   {
     DrawCall* prim = geom->drawCalls()->at(i);
-    for(TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next())
+    for(TriangleIterator trit = prim->triangleIterator(); !trit.isEnd(); trit.next())
     {
       indices.push_back( trit.a() );
       indices.push_back( trit.b() );
