@@ -73,27 +73,34 @@ Geometry::~Geometry()
 //-----------------------------------------------------------------------------
 void Geometry::computeBounds_Implementation()
 {
-  // mic fixme: il bbox deve essere calcolato dalle singole primitive, per evitare
-  // di creare bbox piu' grandi del necessario quando il vertex buffer e' condiviso
-  // da piu' Geometry objects.
+  const ArrayAbstract* coords = vertexArray();
+  if (!coords && findVertexAttribute(0))
+    coords = findVertexAttribute(0)->data();
 
-  // empty
-  if( mVertexArray )
+  AABB aabb;
+
+  for(int i=0; i<drawCalls()->size(); ++i)
   {
-    setBoundingBox( vertexArray()->computeBoundingBox() );
-    setBoundingSphere( vertexArray()->computeBoundingSphere() );
+    for(IndexIterator iit = drawCalls()->at(i)->indexIterator(); !iit.isEnd(); iit.next())
+    {
+      aabb += coords->vectorAsVec3( iit.index() );
+    }
   }
-  else
-  if ( findVertexAttribute(0) && findVertexAttribute(0)->data() )
+
+  Real radius = 0, r = 0;
+  vec3 center = aabb.center();
+  for(int i=0; i<drawCalls()->size(); ++i)
   {
-    setBoundingBox( findVertexAttribute(0)->data()->computeBoundingBox() );
-    setBoundingSphere( findVertexAttribute(0)->data()->computeBoundingSphere() );
+    for(IndexIterator iit = drawCalls()->at(i)->indexIterator(); !iit.isEnd(); iit.next())
+    {
+      r = (coords->vectorAsVec3(iit.index()) - center).lengthSquared();
+      if (r > radius)
+        radius = r;
+    }
   }
-  else
-  {
-    setBoundingBox( AABB() );
-    setBoundingSphere( Sphere() );
-  }
+
+  setBoundingBox( aabb );
+  setBoundingSphere( Sphere(center, radius) );
 }
 //-----------------------------------------------------------------------------
 ref<Geometry> Geometry::deepCopy() const
@@ -149,33 +156,6 @@ ref<Geometry> Geometry::shallowCopy()
   ref<Geometry> geom = new Geometry;
   geom->operator=(*this);
   return geom;
-}
-//-----------------------------------------------------------------------------
-int Geometry::triangleCount() const
-{
-  size_t count = 0;
-  for(int i=0; i<(int)drawCalls()->size(); ++i)
-    if (drawCalls()->at(i)->isEnabled())
-      count += drawCalls()->at(i)->triangleCount();
-  return count;
-}
-//-----------------------------------------------------------------------------
-int Geometry::lineCount() const
-{
-  size_t count = 0;
-  for(int i=0; i<(int)drawCalls()->size(); ++i)
-    if (drawCalls()->at(i)->isEnabled())
-      count += drawCalls()->at(i)->lineCount();
-  return count;
-}
-//-----------------------------------------------------------------------------
-int Geometry::pointCount() const
-{
-  size_t count = 0;
-  for(int i=0; i<(int)drawCalls()->size(); ++i)
-    if (drawCalls()->at(i)->isEnabled())
-      count += drawCalls()->at(i)->pointCount();
-  return count;
 }
 //-----------------------------------------------------------------------------
 void Geometry::setVertexArray(ArrayAbstract* data)
@@ -307,7 +287,7 @@ void Geometry::computeNormals()
   }
 
   ArrayAbstract * posarr = vertexArray();
-  // use vertex attribute if present
+  // use vertex attribute #0 if present
   if (!posarr && findVertexAttribute(0))
     posarr = findVertexAttribute(0)->data();
 
@@ -323,7 +303,7 @@ void Geometry::computeNormals()
   for(int prim=0; prim<(int)drawCalls()->size(); prim++)
   {
     // iterate all triangles, if present
-    for(TriangleIterator trit = mDrawCalls[prim]->triangles(); !trit.isEnd(); trit.next())
+    for(TriangleIterator trit = mDrawCalls[prim]->triangleIterator(); !trit.isEnd(); trit.next())
     {
       size_t a = trit.a();
       size_t b = trit.b();
@@ -348,11 +328,9 @@ void Geometry::computeNormals()
     }
   }
 
+  // normalize the normals
   for(int i=0; i<(int)norm3f->size(); ++i)
-  {
-    // VL_CHECK((*norm3f)[i].length())
     (*norm3f)[i].normalize();
-  }
 }
 //-----------------------------------------------------------------------------
 void Geometry::deleteVBOs()
@@ -726,96 +704,18 @@ void Geometry::eraseVertexAttributeByName(unsigned int name)
     }
 }
 //-----------------------------------------------------------------------------
-void Geometry::shrinkDrawElements()
-{
-  for(int i=0; i<drawCalls()->size(); ++i)
-  {
-    ref<DrawElementsUInt>   de_uint   = dynamic_cast<DrawElementsUInt*>( drawCalls()->at(i) );
-    ref<DrawElementsUShort> de_ushort = dynamic_cast<DrawElementsUShort*>( drawCalls()->at(i) );
-    size_t max_index = 0;
-    if (de_uint)
-    {
-      for(size_t idx=0; idx<de_uint->indexCount(); ++idx)
-        max_index = de_uint->index(idx) > max_index ? de_uint->index(idx) : max_index;
-
-      if (max_index < 256)
-      {
-        ref<DrawElementsUByte> de_ubyte = new DrawElementsUByte;
-        de_ubyte->setPrimitiveType( de_uint->primitiveType() );
-        de_ubyte->setInstances( de_uint->instances() );
-        de_ubyte->setEnabled( de_uint->isEnabled() );
-        de_ubyte->indices()->resize( de_uint->indexCount() );
-
-        for(size_t idx=0; idx<de_uint->indexCount(); ++idx)
-        {
-          de_ubyte->indices()->at(idx) = (unsigned char)de_uint->index(idx);
-          VL_CHECK( de_ubyte->indices()->at(idx) == de_uint->index(idx))
-          VL_CHECK( de_ubyte->indices()->at(idx) == de_uint->index(idx))
-        }
-        drawCalls()->set( i, de_ubyte.get() );
-      }
-      else
-      if (max_index < 65536)
-      {
-        de_ushort = new DrawElementsUShort;
-        de_ushort->setPrimitiveType( de_uint->primitiveType() );
-        de_ushort->setInstances( de_uint->instances() );
-        de_ushort->setEnabled( de_uint->isEnabled() );
-        de_ushort->indices()->resize( de_uint->indexCount() );
-
-        for(size_t idx=0; idx<de_uint->indexCount(); ++idx)
-        {
-          de_ushort->indices()->at(idx) = (GLushort)de_uint->index(idx);
-          VL_CHECK( de_ushort->indices()->at(idx) == de_uint->index(idx))
-          VL_CHECK( de_ushort->indices()->at(idx) == de_uint->index(idx))
-        }
-        drawCalls()->set( i, de_ushort.get() );
-      }
-    }
-    if (de_ushort)
-    {
-      for(size_t idx=0; idx<de_ushort->indexCount(); ++idx)
-        max_index = de_ushort->index(idx) > max_index ? de_ushort->index(idx) : max_index;
-      if (max_index < 256)
-      {
-        ref<DrawElementsUByte> de_ubyte = new DrawElementsUByte;
-        de_ubyte->setPrimitiveType( de_uint->primitiveType() );
-        de_ubyte->setInstances( de_uint->instances() );
-        de_ubyte->setEnabled( de_uint->isEnabled() );
-        de_ubyte->indices()->resize( de_ushort->indexCount() );
-
-        for(size_t idx=0; idx<de_ushort->indexCount(); ++idx)
-          de_ubyte->indices()->at(idx) = (unsigned char)de_ushort->index(idx);
-        drawCalls()->set( i, de_ubyte.get() );
-      }
-    }
-  }
-}
-//-----------------------------------------------------------------------------
 void Geometry::mergeTriangleStrips()
 {
-  std::vector< ref<DrawCall> > de;
+  std::vector< ref<DrawElementsUInt> > de;
   std::vector<size_t> indices;
 
-  // collect DrawElements
+  // collect DrawElementsUInt
   for(int i=drawCalls()->size(); i--; )
   {
-    ref<DrawElementsUInt>   de_uint   = dynamic_cast<DrawElementsUInt*>( drawCalls()->at(i) );
-    ref<DrawElementsUShort> de_ushort = dynamic_cast<DrawElementsUShort*>( drawCalls()->at(i) );
-    ref<DrawElementsUByte>  de_ubyte  = dynamic_cast<DrawElementsUByte*>( drawCalls()->at(i) );
+    ref<DrawElementsUInt> de_uint = dynamic_cast<DrawElementsUInt*>( drawCalls()->at(i) );
     if (de_uint && de_uint->primitiveType() == PT_TRIANGLE_STRIP)
     {
       de.push_back(de_uint);
-      drawCalls()->erase(i,1);
-    }
-    if (de_ubyte && de_ubyte->primitiveType() == PT_TRIANGLE_STRIP)
-    {
-      de.push_back(de_ubyte);
-      drawCalls()->erase(i,1);
-    }
-    if (de_ushort && de_ushort ->primitiveType() == PT_TRIANGLE_STRIP)
-    {
-      de.push_back(de_ushort);
       drawCalls()->erase(i,1);
     }
   }
@@ -824,20 +724,20 @@ void Geometry::mergeTriangleStrips()
   indices.reserve( vertexArray()->size()*2 );
   for(size_t i=0; i<de.size(); ++i)
   {
-    if (!de[i]->indexCount())
+    if (!de[i]->indices()->size())
       continue;
-    for(size_t j=0; j<de[i]->indexCount(); ++j)
-      indices.push_back(de[i]->index(j));
+    for(size_t j=0; j<de[i]->indices()->size(); ++j)
+      indices.push_back(de[i]->indices()->at(j));
     // odd -> even
-    if ( de[i]->indexCount() % 2 )
+    if ( de[i]->indices()->size() % 2 )
       indices.push_back(indices.back());
     // concatenate next strip inserting degenerate triangles
     if ( i != de.size()-1 )
     {
       indices.push_back(indices.back());
-      indices.push_back(de[i+1]->index(0));
-      indices.push_back(de[i+1]->index(0));
-      indices.push_back(de[i+1]->index(1));
+      indices.push_back(de[i+1]->indices()->at(0));
+      indices.push_back(de[i+1]->indices()->at(0));
+      indices.push_back(de[i+1]->indices()->at(1));
     }
   }
 
@@ -877,36 +777,26 @@ void Geometry::regenerateVertices(const std::vector<size_t>& map_new_to_old)
     vertexAttributeArrays()->at(i)->setData( mapper.regenerate(vertexAttributeArrays()->at(i)->data(), map_new_to_old ).get() );
 }
 //-----------------------------------------------------------------------------
-void Geometry::convertDrawElementsToDrawArrays()
+void Geometry::convertDrawCallToDrawArrays()
 {
   // generate mapping 
   std::vector<size_t> map_new_to_old;
   map_new_to_old.reserve( vertexArray()->size() * 3 );
-  //map_new_to_old.resize(vertexArray()->size());
-  //memset(&map_new_to_old[0],0xFF,sizeof(unsigned int)*map_new_to_old.size());
+
   for(int i=drawCalls()->size(); i--; )
   {
     int start = map_new_to_old.size();
-    for(unsigned int idx=0; idx<drawCalls()->at(i)->indexCount(); ++idx)
-      map_new_to_old.push_back( drawCalls()->at(i)->index(idx) );
-
-    DrawElementsBase* draw_elems = dynamic_cast<DrawElementsBase*>(drawCalls()->at(i));
-    if (!draw_elems)
-      continue;
+    for(IndexIterator it=drawCalls()->at(i)->indexIterator(); !it.isEnd(); it.next())
+      map_new_to_old.push_back(it.index());
+    int count = map_new_to_old.size() - start;
 
     // substitute with DrawArrays
-    ref<DrawArrays> da = new vl::DrawArrays( draw_elems->primitiveType(), start, draw_elems->indexCount(), draw_elems->instances() );
+    ref<DrawArrays> da = new vl::DrawArrays( drawCalls()->at(i)->primitiveType(), start, count, drawCalls()->at(i)->instances() );
     drawCalls()->erase(i,1);
     drawCalls()->push_back(da.get());
   }
 
   regenerateVertices(map_new_to_old);
-}
-//-----------------------------------------------------------------------------
-void Geometry::sortTriangles()
-{
-  for(int i=0; i<drawCalls()->size(); ++i)
-    drawCalls()->at(i)->sortTriangles();
 }
 //-----------------------------------------------------------------------------
 bool Geometry::sortVertices()
@@ -927,18 +817,18 @@ bool Geometry::sortVertices()
     {
       dei = new DrawElementsUInt(des->primitiveType(), des->instances());
       de_uint.push_back(dei);
-      dei->indices()->resize( des->indexCount() );
-      for(unsigned int j=0; j<des->indexCount(); ++j)
-        dei->indices()->at(j) = des->index(j);
+      dei->indices()->resize( des->indices()->size() );
+      for(unsigned int j=0; j<des->indices()->size(); ++j)
+        dei->indices()->at(j) = des->indices()->at(j);
     }
     else
     if(deb)
     {
       dei = new DrawElementsUInt(deb->primitiveType(), deb->instances());
       de_uint.push_back(dei);
-      dei->indices()->resize( deb->indexCount() );
-      for(unsigned int j=0; j<deb->indexCount(); ++j)
-        dei->indices()->at(j) = deb->index(j);
+      dei->indices()->resize( deb->indices()->size() );
+      for(unsigned int j=0; j<deb->indices()->size(); ++j)
+        dei->indices()->at(j) = deb->indices()->at(j);
     }
     else
       return false;
@@ -962,13 +852,13 @@ bool Geometry::sortVertices()
   size_t index = 0;
   for(int i=de_uint.size(); i--; )
   {
-    for(size_t idx=0; idx<de_uint[i]->indexCount(); ++idx)
-      if (!used[de_uint[i]->index(idx)])
+    for(size_t idx=0; idx<de_uint[i]->indices()->size(); ++idx)
+      if (!used[de_uint[i]->indices()->at(idx)])
       {
-        map_new_to_old[index] = de_uint[i]->index(idx);
-        map_old_to_new[de_uint[i]->index(idx)] = index;
+        map_new_to_old[index] = de_uint[i]->indices()->at(idx);
+        map_old_to_new[de_uint[i]->indices()->at(idx)] = index;
         index++;
-        used[de_uint[i]->index(idx)] = 1;
+        used[de_uint[i]->indices()->at(idx)] = 1;
       }
   }
 
@@ -978,7 +868,7 @@ bool Geometry::sortVertices()
   for(size_t i=0; i<de_uint.size(); ++i)
   {
     drawCalls()->push_back(de_uint[i].get());
-    for(size_t j=0; j<de_uint[i]->indexCount(); ++j)
+    for(size_t j=0; j<de_uint[i]->indices()->size(); ++j)
     {
       de_uint[i]->indices()->at(j) = map_old_to_new[de_uint[i]->indices()->at(j)];
     }
@@ -996,13 +886,13 @@ void Geometry::colorizePrimitives()
   for(int i=0; i<drawCalls()->size(); ++i)
   {
     fvec4 c;
-    c.r() = rand()%100 / 100.0f;
-    c.g() = rand()%100 / 100.0f;
-    c.b() = rand()%100 / 100.0f;
+    c.r() = rand()%100 / 99.0f;
+    c.g() = rand()%100 / 99.0f;
+    c.b() = rand()%100 / 99.0f;
     c.a() = 1.0f;
 
-    for(unsigned int j=0; j<drawCalls()->at(i)->indexCount(); ++j)
-      col->at( drawCalls()->at(i)->index(j) ) = c;
+    for(IndexIterator it=drawCalls()->at(i)->indexIterator(); !it.isEnd(); it.next())
+      col->at( it.index() ) = c;
   }
 }
 //-----------------------------------------------------------------------------
@@ -1020,7 +910,7 @@ void Geometry::computeTangentSpace(
   tan1.resize(vert_count);
   tan2.resize(vert_count);
   
-  for ( TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next() )
+  for ( TriangleIterator trit = prim->triangleIterator(); !trit.isEnd(); trit.next() )
   {
     unsigned int tri[] = { trit.a(), trit.b(), trit.c() };
 
