@@ -301,8 +301,7 @@ public:
 
     // stats
     vl::String stats;
-    stats += vl::Say("triangles = %n\n") << mMarchingCubes.mDrawElements->triangleCount();
-    stats += vl::Say("vertices  = %n\n") << mMarchingCubes.mVertsArray->size();
+    stats += vl::Say("vertices = %n\n") << mMarchingCubes.mVertsArray->size();
     vl::Log::print(stats);
 
     return act.get();
@@ -535,7 +534,7 @@ public:
     // run MarchingCubes with timing.
     time.start();
     mMarchingCubes.run(false);
-    vl::Log::print( vl::Say("Marching cubes: time = %.2n, tris = %n, verts = %n\n") << time.elapsed() << mMarchingCubes.mDrawElements->triangleCount() << mMarchingCubes.mVertsArray->size() );
+    vl::Log::print( vl::Say("Marching cubes: time = %.2n, verts = %n\n") << time.elapsed() << mMarchingCubes.mVertsArray->size() );
 
     // setup isosurface geometry, actor and effect
 
@@ -641,7 +640,7 @@ public:
     mMarchingCubes.volumeInfo()->at(0)->setThreshold(mThreshold);
     mMarchingCubes.run(false);
 
-    vl::Log::print( vl::Say("Marching cubes: time = %.2n, tris = %n, verts = %n\n") << time.elapsed() << mMarchingCubes.mDrawElements->triangleCount() << mMarchingCubes.mVertsArray->size() );
+    vl::Log::print( vl::Say("Marching cubes: time = %.2n, verts = %n\n") << time.elapsed() << mMarchingCubes.mVertsArray->size() );
 
     updateText();
 
