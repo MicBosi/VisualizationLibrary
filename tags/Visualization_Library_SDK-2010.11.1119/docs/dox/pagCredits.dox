@@ -1,0 +1,51 @@
+﻿/**
+
+	\page pagCredits Credits
+
+	\par Third party libraries used by Visualization Library
+
+	<table width=500 class="creditstable" border=0 cellspacing=5 cellpadding=5 style="background-color: white">
+		<tr>
+			<th>LIBRARY</th><th>WEBSITE</th>
+		</tr>
+		<tr>
+			<td>GLEW library</td><td>http://glew.sourceforge.net</td>
+		</tr>
+		<tr>
+			<td>FreeType library</td><td>http://www.freetype.org</td>
+		</tr>
+		<tr>
+			<td>zlib library</td><td>http://www.zlib.net</td>
+		</tr>
+		<tr>
+			<td>IJG's libjpeg</td><td>http://www.ijg.org</td>
+		</tr>
+		<tr>
+			<td>libpng library</td><td>http://www.libpng.org</td>
+		</tr>
+		<tr>
+			<td>libtiff library</td><td>http://www.libtiff.org</td>
+		</tr>
+		<tr>
+			<td>GDCM library</td><td>http://sourceforge.net/projects/gdcm</td>
+		</tr>
+	</table>
+
+	\par Developers and Contributors
+	
+	<table width=500 class="creditstable" border=0 cellspacing=5 cellpadding=5 style="background-color: white">
+		<tr>
+			<td>Michele Bosi</td><td>Main developer and project lead.</td>
+		</tr>
+		<tr>
+			<td>Brent Fulgham</td><td>Mac OS X port, Cocoa and MFC bindings.</td>
+		</tr>
+		<tr>
+			<td>Colin Plumb</td><td>MD5 message-digest algorithm.</td>
+		</tr>
+		<tr>
+			<td>Tanguy Fautré</td><td>Triangle stripping algorithm.</td>
+		</tr>
+	</table>
+
+*/
