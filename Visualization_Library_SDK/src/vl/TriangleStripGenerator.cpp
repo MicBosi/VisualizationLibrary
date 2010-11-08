@@ -48,62 +48,27 @@ namespace
   void fillIndices(std::vector<unsigned int>& indices, const DrawCall* dc, bool substitute_quads)
   {
     indices.clear();
-    switch(dc->primitiveType())
+
+    if ( dc->primitiveType() == PT_QUADS && !substitute_quads )
+      return;
+
+    indices.reserve( 1000 );
+
+    for(TriangleIterator trit = dc->triangleIterator(); !trit.isEnd(); trit.next())
     {
-      case PT_TRIANGLES:
+      int a = trit.a();
+      int b = trit.b();
+      int c = trit.c();
+      // skip degenerate triangles
+      if (a != b && b != c)
       {
-        indices.reserve(dc->indexCount());
-        for(unsigned j=0; j<dc->indexCount(); j+=3)
-        {
-          int a = dc->index(j+0);
-          int b = dc->index(j+1);
-          int c = dc->index(j+2);
-          // skip degenerate triangles
-          if (a != b && b != c)
-          {
-            indices.push_back(a);
-            indices.push_back(b);
-            indices.push_back(c);
-          }
-        }
+        indices.push_back(a);
+        indices.push_back(b);
+        indices.push_back(c);
       }
-      break;
-
-      case PT_QUADS:
-      {
-        if (substitute_quads)
-        {
-          indices.reserve(dc->indexCount()/4*6);
-          for(unsigned q=0; q<dc->indexCount(); q+=4)
-          {
-            int a = dc->index(q+0);
-            int b = dc->index(q+1);
-            int c = dc->index(q+2);
-            int d = dc->index(q+3);
-            if (a != b && a != c)
-            {
-              indices.push_back(a);
-              indices.push_back(b);
-              indices.push_back(c);
-            }
-            if (c!=d && d!=a)
-            {
-              indices.push_back(c);
-              indices.push_back(d);
-              indices.push_back(a);
-            }
-          }
-          break;
-        }
-        else
-          return;
-      }
-
-      default:
-        return;
     }
   }
-} // namespace vl
+}
 
 void TriangleStripGenerator::stripfy(Geometry* geom, int cache_size, bool merge_strips, bool remove_doubles, bool substitute_quads)
 {
@@ -166,7 +131,5 @@ void TriangleStripGenerator::stripfy(Geometry* geom, int cache_size, bool merge_
 
   if (merge_strips)
     geom->mergeTriangleStrips();
-
-  geom->shrinkDrawElements();
 }
 
