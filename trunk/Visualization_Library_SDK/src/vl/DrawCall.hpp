@@ -34,6 +34,7 @@
 
 #include <vl/Array.hpp>
 #include <vl/TriangleIterator.hpp>
+#include <vl/IndexIterator.hpp>
 
 namespace vl 
 {
@@ -68,35 +69,29 @@ namespace vl
     virtual void updateVBOs(bool discard_local_data = false)  = 0;
     virtual unsigned int handle() const = 0;
 
-    virtual size_t indexCount() const = 0;
-    virtual size_t index(int i) const = 0;
-
-    virtual int triangleCount() const = 0;
-    virtual int lineCount() const = 0;
-    virtual int pointCount() const = 0;
-
-    //! Supported only by DrawElements and DrawRangeElements
-    // this also does not work when primitive restart is enabled.
-    virtual void sortTriangles() {}
-
     void setEnabled(bool enable) { mEnabled = enable; }
     bool isEnabled() const { return mEnabled; }
 
-    //! Fills \p out_triangle with the indices of the index-th triangle.
-    //! Returns \p true on success or \p false if the function fails. You should not call this function
-    //! in conjunction with primitive restart or with MultiDrawElements*.
-    //! This function is useful when you want to treat an arbitrary primitive type as if it was made of
-    //! triangles, for example for tessellation purposes or geometry processing.
-    //! The supported primitive types are: PT_TRIANGLES, PT_TRIANGLE_STRIP, PT_TRIANGLE_FAN, PT_POLYGON
-    //! PT_QUADS and PT_QUAD_STRIP.
-    //! @param tri_index The index of the triangle whose info we want to retrieve.
-    //! @param out_triangle Filled with the 3 indices forming the requested triangle. Thus it must point to a buffer of at least 3 elements.
-    virtual bool getTriangle( size_t tri_index, unsigned int* out_triangle ) const = 0;
-  
-    virtual TriangleIterator triangles() const = 0;
+    //! Returns a TriangleIterator used to iterate through the triangles of a DrawCall.
+    //! Basically the iterator tesselates in triangles any DrawCall of type: PT_TRIANGLES, PT_TRIANGLE_STRIP
+    //! PT_TRIANGLE_FAN, PT_POLYGON, PT_QUADS, PT_QUAD_STRIP.
+    virtual TriangleIterator triangleIterator() const = 0;
 
-  protected:
-    bool getTriangle_internal( size_t tri_index, unsigned int* out_triangle ) const;
+    //! Returns a IndexIterator used to iterate through the virtual indices of a DrawCall.
+    //! This \note The returned indices already take into account primitive restart and base vertex.
+    virtual IndexIterator indexIterator() const = 0;
+
+    /** Counts the number of virtual indices of a DrawCall. */
+    int countIndices() const
+    {
+      int count = 0;
+      for( IndexIterator it = indexIterator(); !it.isEnd(); it.next() )
+        count++;
+      return count;
+    }
+
+    /** Returns the number of instances for this set of primitives. */
+    virtual int instances() const { return 1; }
 
   protected:
       EPrimitiveType mType;

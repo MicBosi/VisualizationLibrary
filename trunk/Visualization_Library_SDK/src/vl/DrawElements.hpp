@@ -64,8 +64,7 @@ namespace vl
     /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
 
-    /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt
-      * \note Functions like triangleCount(), lineCount(), pointCount() and sortTriangles() should not be used when primitive restart is enabled. */
+    /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
     /** Sets the number of instances for this set of primitives. */
@@ -179,23 +178,6 @@ namespace vl
 
     virtual unsigned int handle() const { return indices()->gpuBuffer()->handle(); }
 
-    virtual size_t indexCount() const { return indices()->size(); }
-
-    virtual size_t indexCountGPU() const { return indices()->sizeGPU(); }
-
-    /** The index returned include the baseVertex() (with the exception of the primitive restart index). 
-      * \note The function DrawElements::index() returns an index that does not include the base vertex. 
-      * \sa DrawRangeElements::index()
-      */
-    virtual size_t index(int i) const 
-    { 
-      size_t idx = indices()->at(i);
-      if (primitiveRestartEnabled() && idx == primitiveRestartIndex())
-        return primitiveRestartIndex();
-      else
-        return  idx + mBaseVertex; 
-    }
-
     arr_type* indices() { return mIndexBuffer.get(); }
 
     const arr_type* indices() const { return mIndexBuffer.get(); }
@@ -215,101 +197,12 @@ namespace vl
       indices()->gpuBuffer()->resize(0);
     }
 
-    /** Returns the number of triangles contained in this primitive set.
-      * \note This function returns -1 if primitive restart is enabled. */
-    int triangleCount() const
-    {
-      if (primitiveRestartEnabled())
-        return -1;
-
-      int count = (int)indexCount();
-      if (count == 0)
-        count = (int)indices()->sizeGPU();
-      switch( mType )
-      {
-      case PT_POINTS: return 0;
-      case PT_LINES: return 0;
-      case PT_LINE_LOOP: return 0;
-      case PT_LINE_STRIP: return 0;
-      case PT_TRIANGLES: return count / 3;
-      case PT_TRIANGLE_STRIP: return count - 2;
-      case PT_TRIANGLE_FAN: return count - 2;
-      case PT_QUADS: return count / 4 * 2;
-      case PT_QUAD_STRIP: return ( (count - 2) / 2 ) * 2;
-      case PT_POLYGON: return count - 2;
-      default:
-        return 0;
-      }
-    }
-
-    /** Returns the number of lines contained in this primitive set.
-      * \note This function returns -1 if primitive restart is enabled. */
-    int lineCount() const 
-    {
-      if (primitiveRestartEnabled())
-        return -1;
-
-      int count = (int)indexCount();
-      if (count == 0)
-        count = (int)indices()->sizeGPU();
-      switch( mType )
-      {
-      case PT_LINES: return count / 2;
-      case PT_LINE_LOOP: return count;
-      case PT_LINE_STRIP: return count - 1;
-      default:
-        return 0;
-      }
-    }
-
-    /** Returns the number of points contained in this primitive set.
-      * \note This function returns -1 if primitive restart is enabled. */
-    int pointCount() const
-    {
-      if (primitiveRestartEnabled())
-        return -1;
-
-      int count = (int)indexCount();
-      if (count == 0)
-        count = (int)indices()->sizeGPU();
-      switch( mType )
-      {
-      case PT_POINTS: return count;
-      default:
-        return 0;
-      }
-    }
-
-    /** Tries to sort the triangles in a GPU-cache friendly manner.
-      * \note This function does nothing if primitive restart is enabled. */
-    virtual void sortTriangles()
-    {
-      if (primitiveRestartEnabled())
-        return;
-
-      if (primitiveType() == PT_TRIANGLES)
-      {
-        Triangle<typename arr_type::scalar_type>* tri = (Triangle<typename arr_type::scalar_type>*)indices()->ptr();
-        for(unsigned i=0; i<indexCount()/3; ++i)
-          tri[i].rotate();
-        std::sort(tri, tri + indexCount()/3);
-      }
-    }
-
-    virtual bool getTriangle( size_t tri_index, unsigned int* out_triangle ) const
-    {
-      if (primitiveRestartEnabled())
-        return false;
-      else
-        return getTriangle_internal(tri_index, out_triangle);
-    }
-
     virtual void render(bool use_vbo) const
     {
       VL_CHECK(mBaseVertex>=0)
       VL_CHECK(!use_vbo || (use_vbo && (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)))
-      use_vbo &= GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indexCountGPU();
-      if ( !use_vbo && !indexCount() )
+      use_vbo &= GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
+      if ( !use_vbo && !indices()->size() )
         return;
 
       // primitive restart enable
@@ -348,16 +241,16 @@ namespace vl
       if (mBaseVertex == 0)
       {
         if ( instances() > 1 && (GLEW_ARB_draw_instanced||GLEW_EXT_draw_instanced) )
-          VL_glDrawElementsInstanced( primitiveType(), use_vbo ? (GLsizei)indexCountGPU() : (GLsizei)indexCount(), indices()->glType(), ptr, (GLsizei)instances() );
+          VL_glDrawElementsInstanced( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, (GLsizei)instances() );
         else
-          glDrawElements( primitiveType(), use_vbo ? (GLsizei)indexCountGPU() : (GLsizei)indexCount(), indices()->glType(), ptr );
+          glDrawElements( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr );
       }
       else
       {
         if ( instances() > 1 && (GLEW_ARB_draw_instanced||GLEW_EXT_draw_instanced) )
-          VL_glDrawElementsInstancedBaseVertex( primitiveType(), use_vbo ? (GLsizei)indexCountGPU() : (GLsizei)indexCount(), indices()->glType(), ptr, (GLsizei)instances(), mBaseVertex );
+          VL_glDrawElementsInstancedBaseVertex( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, (GLsizei)instances(), mBaseVertex );
         else
-          VL_glDrawElementsBaseVertex( primitiveType(), use_vbo ? (GLsizei)indexCountGPU() : (GLsizei)indexCount(), indices()->glType(), ptr, mBaseVertex );
+          VL_glDrawElementsBaseVertex( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, mBaseVertex );
       }
 
       // primitive restart disable
@@ -389,13 +282,22 @@ namespace vl
         VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     }
 
-    TriangleIterator triangles() const
+    TriangleIterator triangleIterator() const
     {
       ref< TriangleIteratorIndexed<arr_type> > it = 
         new TriangleIteratorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(), 
             baseVertex(), primitiveRestartEnabled(), primitiveRestartIndex() );
       it->initialize();
       return TriangleIterator(it.get());
+    }
+
+    IndexIterator indexIterator() const
+    {
+      ref< IndexIteratorElements<arr_type> > iie = new IndexIteratorElements<arr_type>;
+      iie->initialize( mIndexBuffer.get(), NULL, NULL, mBaseVertex, mPrimitiveRestartEnabled, mPrimitiveRestartIndex );
+      IndexIterator iit;
+      iit.initialize( iie.get() );
+      return iit;
     }
 
   protected:
