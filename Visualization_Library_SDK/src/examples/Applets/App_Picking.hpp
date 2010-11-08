@@ -130,7 +130,8 @@ public:
     // random color
     geom->setColorArray( vl::fvec4((float)vl::randomMinMax(0,1), (float)vl::randomMinMax(0,1), (float)vl::randomMinMax(0,1),1.0f) );
     // normals are needed for lighting
-    geom->computeNormals();
+    if (!geom->normalArray())
+      geom->computeNormals();
     return geom;
   }
 
