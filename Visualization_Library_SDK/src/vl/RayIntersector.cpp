@@ -75,7 +75,7 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
     {
       DrawCall* prim = geom->drawCalls()->at(i);
       int itri = 0;
-      for(TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next(), ++itri)
+      for(TriangleIterator trit = prim->triangleIterator(); !trit.isEnd(); trit.next(), ++itri)
       {
         fvec3 a = vert3f->at(trit.a());
         fvec3 b = vert3f->at(trit.b());
@@ -98,7 +98,7 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
     {
       DrawCall* prim = geom->drawCalls()->at(i);
       int itri = 0;
-      for(TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next(), ++itri)
+      for(TriangleIterator trit = prim->triangleIterator(); !trit.isEnd(); trit.next(), ++itri)
       {
         dvec3 a = vert3d->at(trit.a());
         dvec3 b = vert3d->at(trit.b());
