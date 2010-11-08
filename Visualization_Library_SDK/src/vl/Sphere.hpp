@@ -45,14 +45,15 @@ namespace vl
   class Sphere
   {
   public:
-    Sphere()
-    {
-      mRadius = -1;
-    }
-    Sphere(const AABB& aabb)
-    {
-      *this = aabb;
-    }
+    //! Constructor.
+    Sphere(): mRadius(-1) { }
+
+    //! Constructor.
+    Sphere(const vec3& center, Real radius): mCenter(center), mRadius(radius) {}
+
+    //! Constructor.
+    Sphere(const AABB& aabb) { *this = aabb; }
+
     void setNull()  { mRadius =-1.0f; mCenter = vec3(0,0,0); }
     void setPoint() { mRadius = 0.0f; /*mCenter = vec3(0,0,0);*/ }
     bool isNull()  const { return mRadius <  0.0f; }
