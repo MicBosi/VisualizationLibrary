@@ -122,6 +122,9 @@ namespace vl
     //! Returns a vector from the buffer as a \p vec4 value.
     virtual vec4 vectorAsVec4(size_t vector_index) const = 0;
 
+    //! Returns a vector from the buffer as a \p vec3 value.
+    virtual vec3 vectorAsVec3(size_t vector_index) const = 0;
+
     //! Compares two vectors
     virtual int compare(int a, int b) const = 0;
 
@@ -207,45 +210,45 @@ namespace vl
 
     T_vector_type& operator[](size_t i) { return at(i); }
     const T_vector_type& operator[](size_t i) const { return at(i); }
-    
+
     virtual size_t bytesPerVector() const { return sizeof(T_vector_type); }
     
     Sphere computeBoundingSphere() const
     {
-      Sphere sphere;
       AABB aabb;
+      const int count = T_gl_size == 4 ? 3 : T_gl_size;
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
         const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(i));
-        for( unsigned j=0; j<((0x3321 >> (T_gl_size-1)*4) & 0x3); ++j )
+        for( int j=0; j<count; ++j )
           v.ptr()[j] = (Real)pv[j];
         aabb += v;
       }
       Real radius = 0;
+      vec3 center = aabb.center();
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
         const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(i));
-        for( unsigned j=0; j<((0x3321 >> (T_gl_size-1)*4) & 0x3); ++j )
+        for( int j=0; j<count; ++j )
           v.ptr()[j] = (Real)pv[j];
-        Real r = (v-aabb.center()).length();
+        Real r = (v-center).lengthSquared();
         if (r > radius)
           radius = r;
       }
-      sphere.setCenter( aabb.center() );
-      sphere.setRadius( radius );
-      return sphere;
+      return Sphere( center, sqrt(radius) );
     }
 
     AABB computeBoundingBox() const
     { 
       AABB aabb;
+      const int count = T_gl_size == 4 ? 3 : T_gl_size;
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
         const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(i));
-        for( size_t j=0; j<((0x3321 >> (T_gl_size-1)*4) & 0x3); ++j )
+        for( int j=0; j<count; ++j )
           v.ptr()[j] = (Real)pv[j];
         aabb += v;
       }
@@ -291,6 +294,16 @@ namespace vl
       vec4 v(0,0,0,1);
       const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(vector_index));
       for( size_t j=0; j<T_gl_size; ++j )
+        v.ptr()[j] = (Real)pv[j];
+      return v;
+    }
+
+    vec3 vectorAsVec3(size_t vector_index) const
+    {
+      vec3 v;
+      const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(vector_index));
+      const int count = T_gl_size == 4 ? 3 : T_gl_size;
+      for( int j=0; j<count; ++j )
         v.ptr()[j] = (Real)pv[j];
       return v;
     }
