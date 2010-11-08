@@ -131,8 +131,6 @@ ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real diameter, int detail, bo
   geom->setNormalArray(norms.get());
   geom->drawCalls()->push_back(polys.get());
 
-  geom->shrinkDrawElements();
-
   if (remove_doubles)
   {
     DoubleVertexRemover dvr;
@@ -206,7 +204,6 @@ ref<Geometry> vlut::makeUVSphere( const vec3& origin, Real diameter, int phi, in
     tris->indices()->at(idx++) = 1+phi*(theta-1)+(j+0)%phi;
   }
 
-  geom->shrinkDrawElements();
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -296,7 +293,6 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
       tris->indices()->at(idx++) = 1+fan_center+(phi -1 - j%phi);
   }
 
-  geom->shrinkDrawElements();
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -366,7 +362,6 @@ ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness
     }
   }
 
-  geom->shrinkDrawElements();
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -523,7 +518,6 @@ ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, in
       bottom_fan->indices()->at(idx++) = fan_center+1+(phi-1-j%phi);
   }
 
-  geom->shrinkDrawElements();
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -583,7 +577,6 @@ ref<Geometry> vlut::makeGrid( const vec3& origin, Real xside, Real zside, int x,
       polys->indices()->at(idx++) = j+1 + x*(i+1);
     }
 
-  geom->shrinkDrawElements();
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -607,7 +600,6 @@ ref<Geometry> vlut::makePoints( const std::vector< vec3>& pos, const fvec4& colo
 
   geom->drawCalls()->push_back( new DrawArrays(PT_POINTS, 0, vert3->size() ));
 
-  geom->shrinkDrawElements();
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -655,7 +647,6 @@ ref<Geometry> vlut::makeIcosahedron( const vec3& origin, Real diameter )
   polys->indices()->resize(20*3);
   memcpy(polys->indices()->ptr(), faces, sizeof(int)*20*3);
 
-  geom->shrinkDrawElements();
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -675,7 +666,6 @@ ref<Geometry> vlut::makeCircle( vec3 origin, Real radius, int slices )
   }
   geom->drawCalls()->push_back( new DrawArrays(PT_LINE_LOOP, 0, points->size()) );
 
-  geom->shrinkDrawElements();
   return geom;
 }
 //-----------------------------------------------------------------------------
