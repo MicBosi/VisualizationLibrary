@@ -58,7 +58,7 @@ namespace vl
   class TriangleIteratorIndexed: public TriangleIteratorAbstract
   {
   public:
-    TriangleIteratorIndexed(TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, int prim_restart_idx)
+    TriangleIteratorIndexed(TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, unsigned int prim_restart_idx)
     {
       mCurrentIndex = 0;
       mEnd    = 0;
@@ -290,7 +290,7 @@ namespace vl
     int baseVertex() const { return mBaseVertex; }
 
   private:
-    bool isPrimRestart(int i) const { return mPrimRestartOn && (int)mArray->at(i) == mPrimRestartIndex; }
+    bool isPrimRestart(int i) const { return mPrimRestartOn && mArray->at(i) == mPrimRestartIndex; }
 
   private:
     ref<TArray> mArray;
@@ -300,7 +300,7 @@ namespace vl
     int  mIndex0;
     int  mEnd;
     int  mBaseVertex;
-    int  mPrimRestartIndex;
+    unsigned int mPrimRestartIndex;
     bool mPrimRestartOn;
     bool mEven;
   };
@@ -479,6 +479,65 @@ namespace vl
     int  mStart;
     int  mEnd;
     bool mEven;
+  };
+//-----------------------------------------------------------------------------
+// TriangleIteratorMulti
+//-----------------------------------------------------------------------------
+  /** For internal use only. See vl::TriangleIterator instead. */
+  template<class TArray>
+  class TriangleIteratorMulti: public TriangleIteratorIndexed<TArray>
+  {
+  public:
+    TriangleIteratorMulti( const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_count_vector, TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
+    :TriangleIteratorIndexed<TArray>( idx_array, prim_type, 0, prim_restart_on, prim_restart_idx)
+    {
+      mpBaseVertices  = p_base_vertices;
+      mpCountVector   = p_count_vector;
+      mStart   = 0;
+      mCurPrim = 0;
+    }
+
+    void initialize()
+    {
+      VL_CHECK( mpBaseVertices->size() == mpCountVector->size() )
+      if ( (*mpBaseVertices).size() )
+        TriangleIteratorIndexed<TArray>::setBaseVertex( (*mpBaseVertices)[mCurPrim] );
+      int end = mStart + (*mpCountVector)[mCurPrim];
+      TriangleIteratorIndexed<TArray>::initialize( mStart, end );
+      // abort if could not initialize (primitive not supported)
+      if ( TriangleIteratorIndexed<TArray>::isEnd() )
+        mCurPrim = (int)(*mpCountVector).size()-1;
+    }
+
+    bool next() 
+    { 
+      if ( TriangleIteratorIndexed<TArray>::next() )
+        return true;
+      else
+      if ( mCurPrim < (int)(*mpCountVector).size()-1 )
+      {
+        mStart += (*mpCountVector)[mCurPrim];
+        mCurPrim++;
+        initialize();
+        return true;
+      }
+      else
+        return false;
+    }
+
+    bool isEnd() const
+    { 
+      if ( TriangleIteratorIndexed<TArray>::isEnd() && mCurPrim == (int)(*mpCountVector).size()-1 )
+        return true;
+      else
+        return false;
+    }
+
+  protected:
+    const std::vector<GLint>* mpBaseVertices;
+    const std::vector<GLsizei>* mpCountVector;
+    int mCurPrim;
+    int mStart;
   };
 //-----------------------------------------------------------------------------
 // TriangleIterator
