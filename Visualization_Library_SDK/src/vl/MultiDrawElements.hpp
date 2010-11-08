@@ -63,8 +63,7 @@ namespace vl
     /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
     
-    /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt
-      * \note Functions like triangleCount(), lineCount(), pointCount() and sortTriangles() should not be used when primitive restart is enabled. */
+    /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
     /** Sets the vector defining the length of each primitive and automatically computes the pointer 
@@ -156,19 +155,8 @@ namespace vl
 
     virtual unsigned int handle() const { return indices()->gpuBuffer()->handle(); }
 
-    virtual size_t indexCount() const { return indices()->size(); }
-
-    virtual size_t indexCountGPU() const { return indices()->sizeGPU(); }
-
-    /** The index returned does not include the the base vertex. 
-      * \note The functions DrawElements::index() and DrawRangeElements::index() do return the 
-      * index including the base vertex (with the exception of the primitive restart index). */
-    virtual size_t index(int i) const 
-    { 
-      return indices()->at(i);
-    }
-
     arr_type* indices() { return mIndexBuffer.get(); }
+
     const arr_type* indices() const { return mIndexBuffer.get(); }
 
     virtual void updateVBOs(bool discard_local_data = false)
@@ -186,95 +174,12 @@ namespace vl
       indices()->gpuBuffer()->resize(0);
     }
 
-    /** Returns the number of triangles contained in this primitive set.
-      * \note This function returns -1 if primitive restart is enabled. */
-    int triangleCount() const
-    {
-      if (primitiveRestartEnabled())
-        return -1;
-
-      int total_count = 0;
-      for(size_t i=0; i<mCountVector.size(); ++i)
-      {
-        size_t count = mCountVector[i];
-        switch( mType )
-        {
-          case PT_TRIANGLES: total_count += (count / 3);
-          case PT_TRIANGLE_STRIP: total_count += (count - 2);
-          case PT_TRIANGLE_FAN: total_count += (count - 2);
-          case PT_QUADS: total_count += (count / 4 * 2);
-          case PT_QUAD_STRIP: total_count += ( (count - 2) / 2 ) * 2;
-          case PT_POLYGON: total_count += (count - 2);
-          case PT_POINTS:
-          case PT_LINES:
-          case PT_LINE_LOOP:
-          case PT_LINE_STRIP:
-          default:
-            break;
-        }
-      }
-
-      return total_count;
-    }
-
-    /** Returns the number of lines contained in this primitive set.
-      * \note This function returns -1 if primitive restart is enabled. */
-    int lineCount() const 
-    {
-      if (primitiveRestartEnabled())
-        return -1;
-
-      int total_count = 0;
-      for(size_t i=0; i<mCountVector.size(); ++i)
-      {
-        size_t count = mCountVector[i];
-        switch( mType )
-        {
-          case PT_LINES:      total_count += count / 2;
-          case PT_LINE_LOOP:  total_count += count;
-          case PT_LINE_STRIP: total_count += count - 1;
-          default:
-            break;
-        }
-      }
-
-      return total_count;
-    }
-
-    /** Returns the number of points contained in this primitive set.
-      * \note This function returns -1 if primitive restart is enabled. */
-    int pointCount() const
-    {
-      if (primitiveRestartEnabled())
-        return -1;
-
-      int total_count = 0;
-      for(size_t i=0; i<mCountVector.size(); ++i)
-      {
-        size_t count = mCountVector[i];
-        switch( mType )
-        {
-        case PT_POINTS: total_count += count;
-        default:
-          break;
-        }
-      }
-
-      return total_count;
-    }
-
-    /** Returns always false. */
-    virtual bool getTriangle( size_t, unsigned int*) const
-    {
-      return false;
-    }
-
     virtual void render(bool use_vbo) const
     {
       VL_CHECK(GLEW_VERSION_1_4);
       VL_CHECK(!use_vbo || (use_vbo && (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)))
-      use_vbo &= GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indexCountGPU();
-      if ( !use_vbo && !indexCount() )
+      use_vbo &= GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
+      if ( !use_vbo && !indices()->size() )
         return;
 
       // primitive restart enable
@@ -342,7 +247,16 @@ namespace vl
         VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     }
 
-    TriangleIterator triangles() const;
+    TriangleIterator triangleIterator() const;
+
+    IndexIterator indexIterator() const
+    {
+      ref< IndexIteratorElements<arr_type> > iie = new IndexIteratorElements<arr_type>;
+      iie->initialize( mIndexBuffer.get(), &mBaseVertices, &mCountVector, 0, mPrimitiveRestartEnabled, mPrimitiveRestartIndex );
+      IndexIterator iit;
+      iit.initialize( iie.get() );
+      return iit;
+    }
 
     /** The pointer vector used as 'indices' parameter of glMultiDrawElements. */
     const std::vector<const typename arr_type::scalar_type*>& pointerVector() const { return mPointerVector; }
@@ -361,7 +275,7 @@ namespace vl
         mPointerVector.push_back(ptr);
         ptr += mCountVector[i];
       }
-      VL_CHECK( ptr - (const typename arr_type::scalar_type*)indices()->gpuBuffer()->ptr() <= (int)indexCount() );
+      VL_CHECK( ptr - (const typename arr_type::scalar_type*)indices()->gpuBuffer()->ptr() <= (int)indices()->size() );
     }
 
 
@@ -397,67 +311,11 @@ namespace vl
     :MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte>(primitive) {}
   };
 //-----------------------------------------------------------------------------
-// TriangleIteratorMulti
-//-----------------------------------------------------------------------------
-  /** For internal use only. See vl::TriangleIterator instead. */
-  template<class TArray>
-  class TriangleIteratorMulti: public TriangleIteratorIndexed<TArray>
-  {
-  public:
-    TriangleIteratorMulti( const MultiDrawElementsBase* mde, TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
-    :TriangleIteratorIndexed<TArray>( idx_array, prim_type, 0, prim_restart_on, prim_restart_idx)
-    {
-      mMultiDrawElems = mde;
-      mStart   = 0;
-      mCurPrim = 0;
-    }
-
-    void initialize()
-    {
-      if ( mMultiDrawElems->baseVertices().size() )
-        TriangleIteratorIndexed<TArray>::setBaseVertex( mMultiDrawElems->baseVertices()[mCurPrim] );
-      int end = mStart + mMultiDrawElems->countVector()[mCurPrim];
-      TriangleIteratorIndexed<TArray>::initialize( mStart, end );
-      // abort if could not initialize (primitive not supported)
-      if ( TriangleIteratorIndexed<TArray>::isEnd() )
-        mCurPrim = (int)mMultiDrawElems->countVector().size()-1;
-    }
-
-    bool next() 
-    { 
-      if ( /*!TriangleIteratorIndexed<TArray>::isEnd() &&*/ TriangleIteratorIndexed<TArray>::next() )
-        return true;
-      else
-      if ( mCurPrim < (int)mMultiDrawElems->countVector().size()-1 )
-      {
-        mStart += mMultiDrawElems->countVector()[mCurPrim];
-        mCurPrim++;
-        initialize();
-        return true;
-      }
-      else
-        return false;
-    }
-
-    bool isEnd() const
-    { 
-      if ( TriangleIteratorIndexed<TArray>::isEnd() && mCurPrim == (int)mMultiDrawElems->countVector().size()-1 )
-        return true;
-      else
-        return false;
-    }
-
-  protected:
-    const MultiDrawElementsBase* mMultiDrawElems;
-    int mCurPrim;
-    int mStart;
-  };
-//-----------------------------------------------------------------------------
   template <GLenum Tgltype, class arr_type>
-  TriangleIterator MultiDrawElements<Tgltype, arr_type>::triangles() const
+  TriangleIterator MultiDrawElements<Tgltype, arr_type>::triangleIterator() const
   {
     ref< TriangleIteratorMulti<arr_type> > it = 
-      new TriangleIteratorMulti<arr_type>( this, mIndexBuffer.get(), primitiveType(), 
+      new TriangleIteratorMulti<arr_type>( &mBaseVertices, &mCountVector, mIndexBuffer.get(), primitiveType(), 
           primitiveRestartEnabled(), primitiveRestartIndex() );
     it->initialize();
     return TriangleIterator(it.get());
