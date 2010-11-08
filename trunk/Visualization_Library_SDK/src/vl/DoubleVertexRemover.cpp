@@ -205,11 +205,11 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
   {
     ref<DrawElementsUInt> tris = new DrawElementsUInt( draw_cmd[idraw]->primitiveType() );
     geom->drawCalls()->push_back(tris.get());
-    const int idx_count = draw_cmd[idraw]->indexCount();
+    const int idx_count = draw_cmd[idraw]->countIndices();
     tris->indices()->resize(idx_count);
-    for(int i=0; i<idx_count; ++i)
-      tris->indices()->at(i) = mMapOldToNew[draw_cmd[idraw]->index(i)];
-    // tris->sortTriangles();
+    int i=0;
+    for(IndexIterator it = draw_cmd[idraw]->indexIterator(); !it.isEnd(); it.next(), ++i)
+      tris->indices()->at(i) = mMapOldToNew[it.index()];
   }
 
   #if 0
