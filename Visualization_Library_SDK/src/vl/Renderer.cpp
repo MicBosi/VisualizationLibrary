@@ -57,12 +57,6 @@ Renderer::Renderer()
 
   mRenderTick = 0;
 
-  mCollectStatistics       = false;
-  mRenderedRenderableCount = 0;
-  mRenderedTriangleCount   = 0;
-  mRenderedLineCount       = 0;
-  mRenderedPointCount      = 0;
-
   mProjViewTranfCallback = new ProjViewTranfCallbackStandard;
 
   mDummyEnables  = new EnableSet;
@@ -100,11 +94,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   ++mRenderTick;
 
   std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
-
-  mRenderedRenderableCount = 0;
-  mRenderedTriangleCount  = 0;
-  mRenderedLineCount = 0;
-  mRenderedPointCount = 0;
 
   // skip if renderer is disabled
 
@@ -327,16 +316,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       // --------------- Actor rendering ---------------
 
-      // statistics
-
-      if (collectStatistics())
-      {
-        mRenderedRenderableCount++;
-        mRenderedTriangleCount += tok->mRenderable->triangleCount();
-        mRenderedLineCount     += tok->mRenderable->lineCount();
-        mRenderedPointCount    += tok->mRenderable->pointCount();
-      }
-
       // contract (fixme: to be changed for vertex-array and elem-array lazy bind):
       // 1 - all vertex arrays and VBOs are disabled before calling render()
       // 2 - all vertex arrays and VBOs are disabled after  calling render()
@@ -363,20 +342,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   opengl_context->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), camera );
 
   glDisable(GL_SCISSOR_TEST);
-
-  // default framebuffer and drawbuffer
-  VL_glBindFramebuffer(GL_FRAMEBUFFER, 0); VL_CHECK_OGL();
-
-  if ( opengl_context->hasDoubleBuffer() )
-  {
-    glDrawBuffer(GL_BACK); VL_CHECK_OGL();
-    glReadBuffer(GL_BACK); VL_CHECK_OGL();
-  }
-  else
-  {
-    glDrawBuffer(GL_FRONT); VL_CHECK_OGL();
-    glReadBuffer(GL_FRONT); VL_CHECK_OGL();
-  }
 
   return render_queue;
 }
