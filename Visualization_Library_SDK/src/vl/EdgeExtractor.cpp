@@ -71,7 +71,7 @@ void EdgeExtractor::extractEdges(Geometry* geom)
 
   // mic fixme:
   // here the bottle-neck seems to be the continuous allocation/deallocation and insertion/search time,
-  // maybe a memory-pool-managed hash table would help? see http://home.comcast.net/~bretm/hash/7.html
+  // maybe a memory-pool-managed hash table would help?
   std::set<Edge> edges;
   if (!verts)
   {
@@ -84,7 +84,7 @@ void EdgeExtractor::extractEdges(Geometry* geom)
   {
     DrawCall* prim = geom->drawCalls()->at(iprim);
     // iterate triangles (if present)
-    for(TriangleIterator trit = prim->triangles(); !trit.isEnd(); trit.next())
+    for(TriangleIterator trit = prim->triangleIterator(); !trit.isEnd(); trit.next())
     {
       size_t a = trit.a();
       size_t b = trit.b();
