@@ -53,7 +53,6 @@ public:
 
     vl::GeometryLoadCallback* glc = dynamic_cast<vl::GeometryLoadCallback*>(vl::VisualizationLibrary::loadWriterManager()->loadCallbacks()->at(0));
     glc->setUseVBOs(false);
-    glc->setSortTriangles(false);
     glc->setSortVertices(false);
     glc->setComputeNormals(true);
 
@@ -106,12 +105,10 @@ public:
   {
     mOptDoubleFace = false;
     mOptRemoveDoubles = false;
-    mOptSortTriangles = false;
     mOptStripfy1 = false;
     mOptStripfy2 = false;
     mOptMergeTriangleStrips = false;
     mOptSortVertices = false;
-    mOptShrinkDrawElements = false;
     mOptConvertToDrawArrays = false;
     mOptRecomputeNormals = false;
     mOptHighlightStrips = false;
@@ -143,68 +140,58 @@ public:
       } 
       else
       if( y < h / 14 * 3 ) 
-      {
-        mOptSortTriangles = !mOptSortTriangles;
-      } 
-      else
-      if( y < h / 14 * 4 ) 
       { 
         mOptStripfy1 = !mOptStripfy1; 
         if (mOptStripfy1) mOptStripfy2 = false;
         if (mOptStripfy1) mOptRemoveDoubles = true;
       }
       else
-      if( y < h / 14 * 5 ) 
+      if( y < h / 14 * 4 ) 
       {
         mOptStripfy2 = !mOptStripfy2; 
         if (mOptStripfy2) mOptStripfy1 = false;
         if (mOptStripfy2) mOptRemoveDoubles = true;
       }
       else
-      if( y < h / 14 * 6 ) 
+      if( y < h / 14 * 5 ) 
       {
         mOptMergeTriangleStrips = !mOptMergeTriangleStrips; 
       }
       else
-      if( y < h / 14 * 7 ) 
+      if( y < h / 14 * 6 ) 
       {
         mOptSortVertices = !mOptSortVertices; 
       }
       else
-      if( y < h / 14 * 8 ) 
-      {
-        mOptShrinkDrawElements = !mOptShrinkDrawElements; 
-      }
-      else
-      if( y < h / 14 * 9 ) 
+      if( y < h / 14 * 7 ) 
       {
         mOptConvertToDrawArrays = !mOptConvertToDrawArrays; 
       }
       else
-      if( y < h / 14 * 10) 
+      if( y < h / 14 * 8 ) 
       {
         mOptRecomputeNormals = !mOptRecomputeNormals;
       }
       else
-      if( y < h / 14 * 11) 
+      if( y < h / 14 * 9) 
       {
         mOptHighlightStrips = !mOptHighlightStrips;
         mOptConvertToDrawArrays = true;
       }
       else
-      if( y < h / 14 * 12) 
+      if( y < h / 14 * 10) 
       {
         mOptUseVBO = !mOptUseVBO; 
         if (mOptUseVBO) mOptUseDL = false;
       }
       else
-      if( y < h / 14 * 13) 
+      if( y < h / 14 * 11) 
       {
         mOptUseDL = !mOptUseDL;
         if (mOptUseDL) mOptUseVBO = false;
       }
       else
-      if( y < h / 14 * 14) 
+      if( y < h / 14 * 12) 
         applyChanges();
     }
 
@@ -258,13 +245,6 @@ public:
         vl::Log::print( vl::Say("vl::DoubleVertexRemover: %.3ns, ratio:%.3n\n") << timer.elapsed() << (float)geom->vertexArray()->size()/orig_vertc );
       }
 
-      if (mOptSortTriangles)
-      {
-        vl::Log::print("Triangle sorting.\n");
-        for(int i=0; i<geom->drawCalls()->size(); ++i)
-          geom->drawCalls()->at(i)->sortTriangles();
-      }
-
       if (mOptStripfy1)
       {
         timer.start();
@@ -296,15 +276,9 @@ public:
           vl::Log::print("Sort Vertices Not Performed.\n");
       }
 
-      if (mOptShrinkDrawElements)
-      {
-        geom->shrinkDrawElements();
-        vl::Log::print("Shrink DrawElements.\n");
-      }
-
       if (mOptConvertToDrawArrays)
       {
-        geom->convertDrawElementsToDrawArrays();
+        geom->convertDrawCallToDrawArrays();
         vl::Log::print("Convert to DrawArrays.\n");
       }
 
@@ -330,9 +304,9 @@ public:
       orig_primitives += it->second->drawCalls()->size();
       resu_primitives += geom->drawCalls()->size();
       for(int iprim=0; iprim<it->second->drawCalls()->size(); ++iprim)
-        orig_indices += it->second->drawCalls()->at(iprim)->indexCount();
+        orig_indices += it->second->drawCalls()->at(iprim)->countIndices();
       for(int iprim=0; iprim<geom->drawCalls()->size(); ++iprim)
-        resu_indices += geom->drawCalls()->at(iprim)->indexCount();
+        resu_indices += geom->drawCalls()->at(iprim)->countIndices();
       orig_vertices += it->second->vertexArray()->size();
       resu_vertices += geom->vertexArray()->size();
     }
@@ -348,12 +322,10 @@ public:
     mOptions->setText("");
     str += mOptDoubleFace ? "[x]" : "[ ]"; str += " Double Face\n";
     str += mOptRemoveDoubles? "[x]" : "[ ]"; str += " Remove Doubles\n";
-    str += mOptSortTriangles? "[x]" : "[ ]"; str += " Sort Triangles\n";
     str += mOptStripfy1? "[x]" : "[ ]"; str += " Stripfy 0\n";
     str += mOptStripfy2? "[x]" : "[ ]"; str += " Stripfy 24\n";
     str += mOptMergeTriangleStrips? "[x]" : "[ ]"; str += " Merge Triangle Strips\n";
     str += mOptSortVertices? "[x]" : "[ ]"; str += " Sort Vertices\n";
-    str += mOptShrinkDrawElements? "[x]" : "[ ]"; str += " Shrink DrawElements\n";
     str += mOptConvertToDrawArrays? "[x]" : "[ ]"; str += " Convert To DrawArrays\n";
     str += mOptRecomputeNormals ? "[x]" : "[ ]"; str += " Recompute Normals\n";
     str += mOptHighlightStrips ? "[x]" : "[ ]"; str += " Highlight Strips\n";
@@ -404,8 +376,6 @@ public:
 
         if(std::find(mEffects.begin(), mEffects.end(), actor->effect()) == mEffects.end())
           mEffects.push_back(actor->effect());
-
-        vl::Log::print( vl::Say("Actor #%n: Triangles = %n\n") << i << actor->lod(0)->triangleCount() );
 
         actor->effect()->shader()->setRenderState( new vl::Light(0) );
         actor->effect()->shader()->enable(vl::EN_DEPTH_TEST);
@@ -495,12 +465,10 @@ protected:
   // options
   bool mOptDoubleFace;
   bool mOptRemoveDoubles;
-  bool mOptSortTriangles;
   bool mOptStripfy1;
   bool mOptStripfy2;
   bool mOptMergeTriangleStrips;
   bool mOptSortVertices;
-  bool mOptShrinkDrawElements;
   bool mOptConvertToDrawArrays;
   bool mOptRecomputeNormals;
   bool mOptHighlightStrips;
