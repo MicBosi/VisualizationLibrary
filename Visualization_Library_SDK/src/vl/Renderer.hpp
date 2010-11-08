@@ -108,18 +108,6 @@ namespace vl
       * Renderer's implementation of this function always returns \p in_render_queue. */
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera);
 
-    void setCollectStatistics(bool on) { mCollectStatistics = on; }
-    
-    bool collectStatistics() const { return mCollectStatistics; }
-
-    size_t renderedRenderablesCount() const { return mRenderedRenderableCount; }
-    
-    size_t renderedTrianglesCount() const { return mRenderedTriangleCount; }
-    
-    size_t renderedLinesCount() const { return mRenderedLineCount; }
-    
-    size_t renderedPointsCount() const { return mRenderedPointCount; }
-
     void setProjViewTransfCallback(ProjViewTranfCallbackStandard* callback) { mProjViewTranfCallback = callback; }
     
     const ProjViewTranfCallbackStandard* projViewTransfCallback() const { return mProjViewTranfCallback.get(); }
@@ -155,12 +143,6 @@ namespace vl
     unsigned long renderTick() const { return mRenderTick; }
 
   protected:
-    bool mCollectStatistics;
-    size_t mRenderedRenderableCount;
-    size_t mRenderedTriangleCount;
-    size_t mRenderedLineCount;
-    size_t mRenderedPointCount;
-
     EClearFlags mClearFlags;
     unsigned int mEnableMask;
 
