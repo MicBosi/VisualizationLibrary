@@ -1285,7 +1285,7 @@ void OpenGLContext::resetContextStates()
 
   glDisable(GL_SCISSOR_TEST); VL_CHECK_OGL();
 
-  // reset enables & render states
+  // reset internal VL enables & render states tables
   renderTarget()->openglContext()->resetEnables();      VL_CHECK_OGL()
   renderTarget()->openglContext()->resetRenderStates(); VL_CHECK_OGL()
 }
