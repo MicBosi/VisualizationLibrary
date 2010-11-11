@@ -101,7 +101,7 @@ bool MyApp::OnInit()
   };
   vl::ref<vlWXGLCanvas> vl_gl_canvas = new vlWXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
   /* target the window so we can render on it */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderTarget( vl_gl_canvas->renderTarget() );
+  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
   /* black background */
   vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::black );
   /* define the camera position and orientation */

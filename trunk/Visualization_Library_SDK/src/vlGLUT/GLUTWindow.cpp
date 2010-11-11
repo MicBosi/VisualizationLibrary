@@ -96,7 +96,6 @@ bool GLUTWindow::initGLUTWindow(const vl::String& title, const vl::OpenGLContext
   mWinMap[handle()] = this;
 
   glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
-  setName( title.toStdString() );
   initKeymap();
 
   // install callbacks
