@@ -1,0 +1,41 @@
+/**
+
+	\page pagLearning Learning Visualization Library
+	
+	We assume that you already know C++, you know how to compile a program and you have some understanding of linear algebra and geometry.
+	
+	If after reading the \ref pagIntro "Introduction" page you want to know more about Visualization Library's features and design then take a look at the \ref pagKeyFeatures "Features Overview" and \ref pagMainClasses "Grouped Classes and Functions" pages.
+
+	A quick look also at the <a href=annotated.html>Annotated Class List</a> will give you a more detailed idea of the available features. 
+	
+	If you would like to have a visual understanding of Visualization Library's architecture then take a look at the \ref pagDesign "Visualization Library Architecture" page.
+	
+	If you are an OpenGL programmer and want to know how an OpenGL feature maps to Visualization Library (or the other way around) you will find the \ref pagOpenGL "OpenGL vs VL Feature Mapping" page very useful. 
+	
+	Several tutorials and examples are available from the \ref pagGuides "Quick Start Guides" page to get you started with the most important VL programming concepts. 
+	
+	In the \a src/examples/ directory you will also find a set of example applications demonstrating how to implement various techniques using Visualization Library.
+	
+	Do not forget that you can search through the online documentation using the \a Search \a for box on the top-right corner of every page.
+	
+	If you would like to be notified of the latest developments, events and news regarding Visualization Library subscribe to 
+	<a href="http://www.visualizationlibrary.com/newsletter/?p=subscribe&id=1">Visualization Library Newsletter</a>.
+	
+	\par OpenGL Background
+	
+	Since a VL programmer is essentially a C++ OpenGL programmer, some kind of OpenGL background is highly desirable in order to effectively use Visualization Library. 
+	
+	If you are just starting your journey in the 3D graphics realm then the <a target=_blank href="http://www.starstonesoftware.com/OpenGL/">OpenGL SuperBible</a> will provide you with very good theoretical and practical foundations. 
+	
+	More advanced users will absolutely need the <a target=_blank href="http://www.3dshaders.com/home/">OpenGL Shading Language</a> and at the <a target=_blank href="http://www.opengl.org/documentation/red_book/">OpenGL Programmers Guide</a> 6th edition. 
+	
+	You might also want to bookmark the <a target=_blank href="http://www.opengl.org/sdk/docs/man/">OpenGL 2.1 Reference Pages</a> as they are extremely useful for the everyday work.
+	
+	\par GUI Bindings
+	
+	Chances are that you are using a GUI framework that is officially supported by Visualization Library, like \p Win32, \p MFC, \p QT4, \p SDL, \p GLUT and \p Cocoa. 
+	If you would like to see how to use Visualization Library within a particulare GUI framework then take a look at the \p src/examples directory, which contains a set of minimalistic applications that demonstrate how to use VL with several GUI frameworks.
+	
+	Good luck and have fun!
+	
+*/
