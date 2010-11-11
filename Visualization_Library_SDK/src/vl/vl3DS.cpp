@@ -570,7 +570,7 @@ void A3DSLoader::read_TRIANGULAR_MESH()
       #if 1
         if (mObjects.back().mFaceList.empty())
           break;
-        std::vector<unsigned long> group;
+        std::vector<unsigned int> group;
         group.resize(mObjects.back().mFaceList.size());
         mInputFile->readUInt32(&group[0], group.size());
         for(unsigned short i=0; i<mObjects.back().mFaceList.size(); ++i)
