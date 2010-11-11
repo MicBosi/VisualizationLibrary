@@ -110,7 +110,7 @@ using namespace vl;
 VL_COMPILE_TIME_CHECK( sizeof(double)    == 8 )
 VL_COMPILE_TIME_CHECK( sizeof(float)     == 4 )
 VL_COMPILE_TIME_CHECK( sizeof(long long) == 8 )
-VL_COMPILE_TIME_CHECK( sizeof(long)      == 4 )
+VL_COMPILE_TIME_CHECK( sizeof(int)       == 4 )
 VL_COMPILE_TIME_CHECK( sizeof(short)     == 2 )
 VL_COMPILE_TIME_CHECK( sizeof(char)      == 1 )
 VL_COMPILE_TIME_CHECK( sizeof(wchar_t) >= 2 )

@@ -317,8 +317,8 @@ public:
     VL_CHECK(ok);
 
     // --- unsigned long ---
-    std::vector<unsigned long> u32_data_1;
-    std::vector<unsigned long> u32_data_2;
+    std::vector<unsigned int> u32_data_1;
+    std::vector<unsigned int> u32_data_2;
     for(unsigned long i=0; i<=10; ++i)
       u32_data_1.push_back(i);
     u32_data_2.resize(u32_data_1.size());
@@ -342,8 +342,8 @@ public:
     VL_CHECK(ok);
 
     // --- signed long ---
-    std::vector<signed long> s32_data_1;
-    std::vector<signed long> s32_data_2;
+    std::vector<signed int> s32_data_1;
+    std::vector<signed int> s32_data_2;
     for(signed long i=-10; i<=10; ++i)
       s32_data_1.push_back(i);
     s32_data_2.resize(s32_data_1.size());

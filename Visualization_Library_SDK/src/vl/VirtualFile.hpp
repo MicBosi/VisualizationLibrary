@@ -144,9 +144,9 @@ namespace vl
     //! Reads single entry.
     long long          readSInt64(bool little_endian_data=true);
     //! Reads single entry.
-    unsigned long      readUInt32(bool little_endian_data=true);
+    unsigned int       readUInt32(bool little_endian_data=true);
     //! Reads single entry.
-    long               readSInt32(bool little_endian_data=true);
+    int                readSInt32(bool little_endian_data=true);
     //! Reads single entry.
     unsigned short     readUInt16(bool little_endian_data=true);
     //! Reads single entry.
@@ -165,9 +165,9 @@ namespace vl
     //! Reads multiple entries. Returns the number of bytes read.
     long long readSInt64(long long*          buffer, long long count, bool little_endian_data=true);
     //! Reads multiple entries. Returns the number of bytes read.
-    long long readUInt32(unsigned long*      buffer, long long count, bool little_endian_data=true);
+    long long readUInt32(unsigned int*       buffer, long long count, bool little_endian_data=true);
     //! Reads multiple entries. Returns the number of bytes read.
-    long long readSInt32(long*               buffer, long long count, bool little_endian_data=true);
+    long long readSInt32(int*                buffer, long long count, bool little_endian_data=true);
     //! Reads multiple entries. Returns the number of bytes read.
     long long readUInt16(unsigned short*     buffer, long long count, bool little_endian_data=true);
     //! Reads multiple entries. Returns the number of bytes read.
@@ -186,9 +186,9 @@ namespace vl
     //! Writes a single entry. Returns the number of bytes written.
     long long writeSInt64(long long          data, bool little_endian_data=true);
     //! Writes a single entry. Returns the number of bytes written.
-    long long writeUInt32(unsigned long      data, bool little_endian_data=true);
+    long long writeUInt32(unsigned int       data, bool little_endian_data=true);
     //! Writes a single entry. Returns the number of bytes written.
-    long long writeSInt32(long               data, bool little_endian_data=true);
+    long long writeSInt32(int                data, bool little_endian_data=true);
     //! Writes a single entry. Returns the number of bytes written.
     long long writeUInt16(unsigned short     data, bool little_endian_data=true);
     //! Writes a single entry. Returns the number of bytes written.
@@ -207,9 +207,9 @@ namespace vl
     //! Writes multiple entries. Returns the number of bytes written.
     long long writeSInt64(const long long*          buffer, long long count, bool little_endian_data=true);
     //! Writes multiple entries. Returns the number of bytes written.
-    long long writeUInt32(const unsigned long*      buffer, long long count, bool little_endian_data=true);
+    long long writeUInt32(const unsigned int*       buffer, long long count, bool little_endian_data=true);
     //! Writes multiple entries. Returns the number of bytes written.
-    long long writeSInt32(const long*               buffer, long long count, bool little_endian_data=true);
+    long long writeSInt32(const int*                buffer, long long count, bool little_endian_data=true);
     //! Writes multiple entries. Returns the number of bytes written.
     long long writeUInt16(const unsigned short*     buffer, long long count, bool little_endian_data=true);
     //! Writes multiple entries. Returns the number of bytes written.
