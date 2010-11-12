@@ -45,51 +45,73 @@ namespace vl
    * The Matrix2 class is a template class that implements a generic 2x2 matrix, see also vl::dmat2, vl::fmat2, vl::umat2, vl::imat2.
    * \sa Vector4, Vector3, Vector2, Matrix4, Matrix3
    */
-  template<typename scalar_type>
+  template<typename T_scalar_type>
   class Matrix2
   {
   public:
+    typedef T_scalar_type scalar_type;
     //-----------------------------------------------------------------------------
     template<typename T>
     explicit Matrix2(const T& m)
     {
-      e(0,0) = (scalar_type)m.e(0,0); e(0,1) = (scalar_type)m.e(0,1);
-      e(1,0) = (scalar_type)m.e(1,0); e(1,1) = (scalar_type)m.e(1,1);
+      e(0,0) = (T_scalar_type)m.e(0,0); e(0,1) = (T_scalar_type)m.e(0,1);
+      e(1,0) = (T_scalar_type)m.e(1,0); e(1,1) = (T_scalar_type)m.e(1,1);
     }
     //-----------------------------------------------------------------------------
     Matrix2()
     {
-      static const scalar_type I2d[] = { 
-        (scalar_type)1, (scalar_type)0,
-        (scalar_type)0, (scalar_type)1
+      static const T_scalar_type I2d[] = 
+      { 
+        (T_scalar_type)1, (T_scalar_type)0,
+        (T_scalar_type)0, (T_scalar_type)1
       };
-      memcpy( mVec,I2d,sizeof(scalar_type)*4 );
+      memcpy( mVec, I2d, sizeof(T_scalar_type)*4 );
     }
     //-----------------------------------------------------------------------------
-    Matrix2(scalar_type n)
+    Matrix2(T_scalar_type n)
     {
-      static const scalar_type I2d[] = { 
-        (scalar_type)1, (scalar_type)0,
-        (scalar_type)0, (scalar_type)1
+      static const T_scalar_type I2d[] = 
+      { 
+        (T_scalar_type)1, (T_scalar_type)0,
+        (T_scalar_type)0, (T_scalar_type)1
       };
-      memcpy( mVec,I2d,sizeof(scalar_type)*4 );
+      memcpy( mVec, I2d, sizeof(T_scalar_type)*4 );
       e(0,0) = n; e(1,1) = n;
     }
     //-----------------------------------------------------------------------------
-    explicit Matrix2( scalar_type e00, scalar_type e01,
-                    scalar_type e10, scalar_type e11  )
+    explicit Matrix2( T_scalar_type e00, T_scalar_type e01,
+                    T_scalar_type e10, T_scalar_type e11  )
     {
       e(0,0) = e00; e(0,1) = e01;
       e(1,0) = e10; e(1,1) = e11;
     }
     //-----------------------------------------------------------------------------
-    const Vector2<scalar_type>& operator[](unsigned int i) const { VL_CHECK(i<2); return mVec[i]; }
+    Matrix2& fill(T_scalar_type val)
+    {
+      e(0,0) = e(0,1) = 
+      e(1,0) = e(1,1) = val;
+      return *this;
+    }
     //-----------------------------------------------------------------------------
-    Vector2<scalar_type>& operator[](unsigned int i) { VL_CHECK(i<2); return mVec[i]; }
+    T_scalar_type diff(const Matrix2& other)
+    {
+      T_scalar_type err = 0;
+      for(int i=0; i<2; ++i)
+        for(int j=0; j<2; ++j)
+          if ( e(i,j) > other.e(i,j) ) // avoid fabs/abs
+            err += e(i,j) - other.e(i,j);
+          else
+            err += other.e(i,j) - e(i,j);
+      return err;
+    }
+    //-----------------------------------------------------------------------------
+    const Vector2<T_scalar_type>& operator[](unsigned int i) const { VL_CHECK(i<2); return mVec[i]; }
+    //-----------------------------------------------------------------------------
+    Vector2<T_scalar_type>& operator[](unsigned int i) { VL_CHECK(i<2); return mVec[i]; }
     //-----------------------------------------------------------------------------
     bool operator==(const Matrix2& m) const 
     {
-      return memcmp(m.mVec, mVec, sizeof(scalar_type)*4) == 0;
+      return memcmp(m.mVec, mVec, sizeof(T_scalar_type)*4) == 0;
     }
     //-----------------------------------------------------------------------------
     bool operator!=(const Matrix2& m) const 
@@ -99,7 +121,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix2& operator=(const Matrix2& m) 
     {
-      memcpy(mVec, m.mVec, sizeof(scalar_type)*4);
+      memcpy(mVec, m.mVec, sizeof(T_scalar_type)*4);
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -148,7 +170,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2 operator+(scalar_type d) const
+    Matrix2 operator+(T_scalar_type d) const
     {
       Matrix2 t;
       for(int i=0; i<2; ++i)
@@ -158,12 +180,12 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& operator+=(scalar_type d)
+    Matrix2& operator+=(T_scalar_type d)
     {
       return *this = *this + d;
     }
     //-----------------------------------------------------------------------------
-    Matrix2 operator-(scalar_type d) const
+    Matrix2 operator-(T_scalar_type d) const
     {
       Matrix2 t;
       for(int i=0; i<2; ++i)
@@ -173,12 +195,12 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& operator-=(scalar_type d)
+    Matrix2& operator-=(T_scalar_type d)
     {
       return *this = *this - d;
     }
     //-----------------------------------------------------------------------------
-    Matrix2 operator*(scalar_type d) const
+    Matrix2 operator*(T_scalar_type d) const
     {
       Matrix2 t;
       for(int i=0; i<2; ++i)
@@ -188,7 +210,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& operator*=(scalar_type d)
+    Matrix2& operator*=(T_scalar_type d)
     {
       Matrix2 t;
       for(int i=0; i<2; ++i)
@@ -198,9 +220,9 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix2 operator/(scalar_type d) const
+    Matrix2 operator/(T_scalar_type d) const
     {
-      d = (scalar_type)1 / d;
+      d = (T_scalar_type)1 / d;
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
@@ -209,9 +231,9 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& operator/=(scalar_type d)
+    Matrix2& operator/=(T_scalar_type d)
     {
-      d = (scalar_type)1 / d;
+      d = (T_scalar_type)1 / d;
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
@@ -223,15 +245,15 @@ namespace vl
     bool isIdentity() const
     {
       Matrix2 i;
-      return memcmp( ptr(), i.ptr(), sizeof(scalar_type)*4 ) == 0;
+      return memcmp( ptr(), i.ptr(), sizeof(T_scalar_type)*4 ) == 0;
     }
     //-----------------------------------------------------------------------------
-    scalar_type* ptr()
+    T_scalar_type* ptr()
     {
       return &e(0,0);
     }
     //-----------------------------------------------------------------------------
-    const scalar_type* ptr() const
+    const T_scalar_type* ptr() const
     {
       return &e(0,0);
     }
@@ -240,11 +262,26 @@ namespace vl
     {
       Matrix2 m;
       for(int i=0; i<2; ++i)
-        for(int j=0; j<2; ++j) {
-          m.mVec[i][j] = mVec[j][i];
-        }
-      memcpy(mVec, m.mVec, sizeof(scalar_type)*4);
+        for(int j=0; j<2; ++j)
+          m.e(i,j) = e(j,i);
+      memcpy(mVec, m.mVec, sizeof(T_scalar_type)*4);
       return *this;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix2 getTransposed() const
+    {
+      Matrix2 m;
+      for(int i=0; i<2; ++i)
+        for(int j=0; j<2; ++j)
+          m.e(i,j) = e(j,i);
+      return m;
+    }
+    //-----------------------------------------------------------------------------
+    void getTransposed(Matrix2& dest) const
+    {
+      for(int i=0; i<2; ++i)
+        for(int j=0; j<2; ++j)
+          dest.e(i,j) = e(j,i);
     }
     //-----------------------------------------------------------------------------
     bool isNull() const
@@ -261,55 +298,66 @@ namespace vl
       *this = Matrix2();
     }
     //-----------------------------------------------------------------------------
-    Matrix2 inverse(bool *invertible=NULL) const
+    T_scalar_type getInverse(Matrix2& dest) const
     {
-      const scalar_type& a11 = e(0,0); 
-      const scalar_type& a12 = e(0,1); 
-      const scalar_type& a21 = e(1,0); 
-      const scalar_type& a22 = e(1,1); 
-
-      scalar_type DET = a11*a22-a12*a21;
-
-      if (invertible)
+      if (&dest == this)
       {
-        if (DET == 0)
-          *invertible = false;
-        else
-          *invertible = true;
+        Matrix2 tmp;
+        T_scalar_type det = getInverse(tmp);
+        dest = tmp;
+        return det;
       }
-      
-      Matrix2 m(0,0,0,0);
+      else
+      {
+        const T_scalar_type& a11 = e(0,0); 
+        const T_scalar_type& a12 = e(0,1); 
+        const T_scalar_type& a21 = e(1,0); 
+        const T_scalar_type& a22 = e(1,1); 
 
-      if (DET == 0)
-        return m;
+        dest.fill(0);
 
-      m = Matrix2(+a22, -a12, -a21, +a11) / DET;
+        T_scalar_type det = a11*a22-a12*a21;
 
-      return m;
+        if (det != 0)
+          dest = Matrix2(+a22, -a12, -a21, +a11) / det;
+
+        return det;
+      }
     }
     //-----------------------------------------------------------------------------
-    Matrix2& invert(bool *invertible=NULL)
+    Matrix2 getInverse(T_scalar_type *determinant=NULL) const
     {
-      *this = inverse(invertible);
+      Matrix2 tmp;
+      T_scalar_type det = getInverse(tmp);
+      if (determinant)
+        *determinant = det;
+      return tmp;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix2& invert(T_scalar_type *determinant=NULL)
+    {
+      T_scalar_type det = getInverse(*this);
+      if (determinant)
+        *determinant = det;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    const scalar_type& e(int i, int j) const { return mVec[i][j]; }
+    const T_scalar_type& e(int i, int j) const { return mVec[i][j]; }
     //-----------------------------------------------------------------------------
-    scalar_type& e(int i, int j) { return mVec[i][j]; }
+    T_scalar_type& e(int i, int j) { return mVec[i][j]; }
     //-----------------------------------------------------------------------------
 
   protected:
-    Vector2<scalar_type> mVec[2];
+    Vector2<T_scalar_type> mVec[2];
   };
 
   //-----------------------------------------------------------------------------
   // OPERATORS
   //-----------------------------------------------------------------------------
-  template<typename scalar_type>
-  inline Matrix2<scalar_type> operator*(const Matrix2<scalar_type>& m2, const Matrix2<scalar_type>& m1)
+  template<typename T_scalar_type>
+  inline Matrix2<T_scalar_type> operator*(const Matrix2<T_scalar_type>& m2, const Matrix2<T_scalar_type>& m1)
   {
-    Matrix2<scalar_type> t;
+    Matrix2<T_scalar_type> t;
     t.e(0,0) = m1.e(0,0)*m2.e(0,0) + m1.e(0,1)*m2.e(1,0);
     t.e(1,0) = m1.e(1,0)*m2.e(0,0) + m1.e(1,1)*m2.e(1,0);
 
@@ -319,33 +367,33 @@ namespace vl
     return t;
   }
   //-----------------------------------------------------------------------------
-  template<typename scalar_type>
-  inline Matrix2<scalar_type> operator+(scalar_type d, const Matrix2<scalar_type>& m)
+  template<typename T_scalar_type>
+  inline Matrix2<T_scalar_type> operator+(T_scalar_type d, const Matrix2<T_scalar_type>& m)
   {
     return m + d;
   }
   //-----------------------------------------------------------------------------
-  template<typename scalar_type>
-  inline Matrix2<scalar_type> operator*(scalar_type d, const Matrix2<scalar_type>& m)
+  template<typename T_scalar_type>
+  inline Matrix2<T_scalar_type> operator*(T_scalar_type d, const Matrix2<T_scalar_type>& m)
   {
     return m * d;
   }
   //-----------------------------------------------------------------------------
   // post multiplication: matrix * column vector
-  template<typename scalar_type>
-  inline Vector2<scalar_type> operator*(const Matrix2<scalar_type>& m, const Vector2<scalar_type>& v)
+  template<typename T_scalar_type>
+  inline Vector2<T_scalar_type> operator*(const Matrix2<T_scalar_type>& m, const Vector2<T_scalar_type>& v)
   {
-    Vector2<scalar_type> t;
+    Vector2<T_scalar_type> t;
     t.x() = v.x()*m.e(0,0) + v.y()*m.e(1,0);
     t.y() = v.x()*m.e(0,1) + v.y()*m.e(1,1);
     return t;
   }
   //-----------------------------------------------------------------------------
   // pre multiplication: row vector * matrix
-  template<typename scalar_type>
-  inline Vector2<scalar_type> operator*(const Vector2<scalar_type>& v, const Matrix2<scalar_type>& m)
+  template<typename T_scalar_type>
+  inline Vector2<T_scalar_type> operator*(const Vector2<T_scalar_type>& v, const Matrix2<T_scalar_type>& m)
   {
-    Vector2<scalar_type> t;
+    Vector2<T_scalar_type> t;
     t.x() = v.x()*m.e(0,0) + v.y()*m.e(0,1);
     t.y() = v.x()*m.e(1,0) + v.y()*m.e(1,1);
     return t;

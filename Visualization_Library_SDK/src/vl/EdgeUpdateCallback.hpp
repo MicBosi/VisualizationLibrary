@@ -71,7 +71,7 @@ namespace vl
       if (act->transform())
         vmat = vmat * (fmat4)act->transform()->worldMatrix();
       fmat4 nmat = vmat.as3x3();
-      nmat = nmat.inverse().transpose();
+      nmat = nmat.getInverse().transpose();
 
       ref<Geometry>         geom = dynamic_cast<Geometry*>(renderable);
       ref<ArrayFVec3> vert_array = dynamic_cast<ArrayFVec3*>(geom->vertexArray());
