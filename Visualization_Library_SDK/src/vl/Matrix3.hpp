@@ -44,92 +44,115 @@ namespace vl
    * The Matrix3 class is a template class that implements a generic 3x3 matrix, see also vl::dmat3, vl::fmat3, vl::umat3, vl::imat3.
    * \sa Vector4, Vector3, Vector2, Matrix4, Matrix2
    */
-  template<typename scalar_type>
+  template<typename T_scalar_type>
   class Matrix3
   {
   public:
+    typedef T_scalar_type scalar_type;
     //-----------------------------------------------------------------------------
     template<typename T>
     explicit Matrix3(const T& m)
     {
-      e(0,0) = (scalar_type)m.e(0,0); e(0,1) = (scalar_type)m.e(0,1); e(0,2) = (scalar_type)m.e(0,2);
-      e(1,0) = (scalar_type)m.e(1,0); e(1,1) = (scalar_type)m.e(1,1); e(1,2) = (scalar_type)m.e(1,2);
-      e(2,0) = (scalar_type)m.e(2,0); e(2,1) = (scalar_type)m.e(2,1); e(2,2) = (scalar_type)m.e(2,2);
+      e(0,0) = (T_scalar_type)m.e(0,0); e(0,1) = (T_scalar_type)m.e(0,1); e(0,2) = (T_scalar_type)m.e(0,2);
+      e(1,0) = (T_scalar_type)m.e(1,0); e(1,1) = (T_scalar_type)m.e(1,1); e(1,2) = (T_scalar_type)m.e(1,2);
+      e(2,0) = (T_scalar_type)m.e(2,0); e(2,1) = (T_scalar_type)m.e(2,1); e(2,2) = (T_scalar_type)m.e(2,2);
     }
     //-----------------------------------------------------------------------------
     Matrix3()
     {
-      static const scalar_type I3d[] = { 
-        (scalar_type)1, (scalar_type)0, (scalar_type)0,  
-        (scalar_type)0, (scalar_type)1, (scalar_type)0, 
-        (scalar_type)0, (scalar_type)0, (scalar_type)1, 
+      static const T_scalar_type I3d[] = 
+      { 
+        (T_scalar_type)1, (T_scalar_type)0, (T_scalar_type)0,  
+        (T_scalar_type)0, (T_scalar_type)1, (T_scalar_type)0, 
+        (T_scalar_type)0, (T_scalar_type)0, (T_scalar_type)1, 
       };
-      memcpy( mVec,I3d,sizeof(scalar_type)*9 );
+      memcpy( mVec, I3d, sizeof(T_scalar_type)*9 );
     }
     //-----------------------------------------------------------------------------
-    Matrix3(scalar_type n)
+    Matrix3(T_scalar_type n)
     {
-      static const scalar_type I3d[] = { 
-        (scalar_type)1, (scalar_type)0, (scalar_type)0,  
-        (scalar_type)0, (scalar_type)1, (scalar_type)0, 
-        (scalar_type)0, (scalar_type)0, (scalar_type)1, 
+      static const T_scalar_type I3d[] = 
+      { 
+        (T_scalar_type)1, (T_scalar_type)0, (T_scalar_type)0,  
+        (T_scalar_type)0, (T_scalar_type)1, (T_scalar_type)0, 
+        (T_scalar_type)0, (T_scalar_type)0, (T_scalar_type)1, 
       };
-      memcpy( mVec,I3d,sizeof(scalar_type)*9 );
+      memcpy( mVec, I3d, sizeof(T_scalar_type)*9 );
       e(0,0) = n; e(1,1) = n; e(2,2) = n;
     }
     //-----------------------------------------------------------------------------
-    explicit Matrix3( scalar_type e00, scalar_type e01, scalar_type e02,
-                      scalar_type e10, scalar_type e11, scalar_type e12,
-                      scalar_type e20, scalar_type e21, scalar_type e22 )
+    explicit Matrix3( T_scalar_type e00, T_scalar_type e01, T_scalar_type e02,
+                      T_scalar_type e10, T_scalar_type e11, T_scalar_type e12,
+                      T_scalar_type e20, T_scalar_type e21, T_scalar_type e22 )
     {
       e(0,0) = e00; e(0,1) = e01; e(0,2) = e02; 
       e(1,0) = e10; e(1,1) = e11; e(1,2) = e12; 
       e(2,0) = e20; e(2,1) = e21; e(2,2) = e22; 
     }
     //-----------------------------------------------------------------------------
-    const Vector3<scalar_type>& operator[](unsigned int i) const { VL_CHECK(i<3); return mVec[i]; }
-    //-----------------------------------------------------------------------------
-    Vector3<scalar_type>& operator[](unsigned int i) { VL_CHECK(i<3); return mVec[i]; }
-    //-----------------------------------------------------------------------------
-    Vector2<scalar_type> getX() const
+    Matrix3& fill(T_scalar_type val)
     {
-      Vector2<scalar_type> v;
+      e(0,0) = e(0,1) = e(0,2) = 
+      e(1,0) = e(1,1) = e(1,2) = 
+      e(2,0) = e(2,1) = e(2,2) = val;
+      return *this;
+    }
+    //-----------------------------------------------------------------------------
+    T_scalar_type diff(const Matrix3& other)
+    {
+      T_scalar_type err = 0;
+      for(int i=0; i<3; ++i)
+        for(int j=0; j<3; ++j)
+          if ( e(i,j) > other.e(i,j) ) // avoid fabs/abs
+            err += e(i,j) - other.e(i,j);
+          else
+            err += other.e(i,j) - e(i,j);
+      return err;
+    }
+    //-----------------------------------------------------------------------------
+    const Vector3<T_scalar_type>& operator[](unsigned int i) const { VL_CHECK(i<3); return mVec[i]; }
+    //-----------------------------------------------------------------------------
+    Vector3<T_scalar_type>& operator[](unsigned int i) { VL_CHECK(i<3); return mVec[i]; }
+    //-----------------------------------------------------------------------------
+    Vector2<T_scalar_type> getX() const
+    {
+      Vector2<T_scalar_type> v;
       v.x() = e(0,0);
       v.y() = e(0,1);
       return v;
     }
     //-----------------------------------------------------------------------------
-    Vector2<scalar_type> getY() const
+    Vector2<T_scalar_type> getY() const
     {
-      Vector2<scalar_type> v;
+      Vector2<T_scalar_type> v;
       v.x() = e(1,0);
       v.y() = e(1,1);
       return v;
     }
     //-----------------------------------------------------------------------------
-    Vector2<scalar_type> getT() const
+    Vector2<T_scalar_type> getT() const
     {
-      Vector2<scalar_type> v;
+      Vector2<T_scalar_type> v;
       v.x() = e(2,0);
       v.y() = e(2,1);
       return v;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& setX(const Vector2<scalar_type>& v) 
+    Matrix3& setX(const Vector2<T_scalar_type>& v) 
     {
       e(0,0) = v.x();
       e(0,1) = v.y();
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& setY(const Vector2<scalar_type>& v) 
+    Matrix3& setY(const Vector2<T_scalar_type>& v) 
     {
       e(1,0) = v.x();
       e(1,1) = v.y();
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& setT(const Vector2<scalar_type>& v) 
+    Matrix3& setT(const Vector2<T_scalar_type>& v) 
     {
       e(2,0) = v.x();
       e(2,1) = v.y();
@@ -138,7 +161,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     bool operator==(const Matrix3& m) const 
     {
-      return memcmp(m.mVec, mVec, sizeof(scalar_type)*9) == 0;
+      return memcmp(m.mVec, mVec, sizeof(T_scalar_type)*9) == 0;
     }
     //-----------------------------------------------------------------------------
     bool operator!=(const Matrix3& m) const 
@@ -148,7 +171,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix3& operator=(const Matrix3& m) 
     {
-      memcpy(mVec, m.mVec, sizeof(scalar_type)*9);
+      memcpy(mVec, m.mVec, sizeof(T_scalar_type)*9);
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -197,7 +220,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix3 operator+(scalar_type d) const
+    Matrix3 operator+(T_scalar_type d) const
     {
       Matrix3 t;
       for(int i=0; i<3; ++i)
@@ -207,12 +230,12 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& operator+=(scalar_type d)
+    Matrix3& operator+=(T_scalar_type d)
     {
       return *this = *this + d;
     }
     //-----------------------------------------------------------------------------
-    Matrix3 operator-(scalar_type d) const
+    Matrix3 operator-(T_scalar_type d) const
     {
       Matrix3 t;
       for(int i=0; i<3; ++i)
@@ -222,12 +245,12 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& operator-=(scalar_type d)
+    Matrix3& operator-=(T_scalar_type d)
     {
       return *this = *this - d;
     }
     //-----------------------------------------------------------------------------
-    Matrix3 operator*(scalar_type d) const
+    Matrix3 operator*(T_scalar_type d) const
     {
       Matrix3 t;
       for(int i=0; i<3; ++i)
@@ -237,7 +260,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& operator*=(scalar_type d)
+    Matrix3& operator*=(T_scalar_type d)
     {
       Matrix3 t;
       for(int i=0; i<3; ++i)
@@ -247,9 +270,9 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix3 operator/(scalar_type d) const
+    Matrix3 operator/(T_scalar_type d) const
     {
-      d = (scalar_type)1 / d;
+      d = (T_scalar_type)1 / d;
       Matrix3 t;
       for(int i=0; i<3; ++i)
         for(int j=0; j<3; ++j)
@@ -258,9 +281,9 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& operator/=(scalar_type d)
+    Matrix3& operator/=(T_scalar_type d)
     {
-      d = (scalar_type)1 / d;
+      d = (T_scalar_type)1 / d;
       Matrix3 t;
       for(int i=0; i<3; ++i)
         for(int j=0; j<3; ++j)
@@ -272,30 +295,30 @@ namespace vl
     bool isIdentity() const
     {
       Matrix3 i;
-      return memcmp( ptr(), i.ptr(), sizeof(scalar_type)*9 ) == 0;
+      return memcmp( ptr(), i.ptr(), sizeof(T_scalar_type)*9 ) == 0;
     }
     //-----------------------------------------------------------------------------
-    Matrix2<scalar_type> get2x2() const
+    Matrix2<T_scalar_type> get2x2() const
     {
-      Matrix2<scalar_type> t;
+      Matrix2<T_scalar_type> t;
       t.e(0,0) = e(0,0); t.e(0,1) = e(0,1);
       t.e(1,0) = e(1,0); t.e(1,1) = e(1,1);
       return t;
     }
     //-----------------------------------------------------------------------------
     //! This writes only on the upper 2x2 part of the matrix without touching the last row and column. 
-    void set2x2(const Matrix2<scalar_type>& m)
+    void set2x2(const Matrix2<T_scalar_type>& m)
     {
       e(0,0) = m.e(0,0); e(0,1) = m.e(0,1);
       e(1,0) = m.e(1,0); e(1,1) = m.e(1,1);
     }
     //-----------------------------------------------------------------------------
-    scalar_type* ptr()
+    T_scalar_type* ptr()
     {
       return &e(0,0);
     }
     //-----------------------------------------------------------------------------
-    const scalar_type* ptr() const
+    const T_scalar_type* ptr() const
     {
       return &e(0,0);
     }
@@ -304,11 +327,26 @@ namespace vl
     {
       Matrix3 m;
       for(int i=0; i<3; ++i)
-        for(int j=0; j<3; ++j) {
-          m.mVec[i][j] = mVec[j][i];
-        }
-      memcpy(mVec, m.mVec, sizeof(scalar_type)*9);
+        for(int j=0; j<3; ++j)
+          m.e(i,j) = e(j,i);
+      memcpy(mVec, m.mVec, sizeof(T_scalar_type)*9);
       return *this;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix3 getTransposed() const
+    {
+      Matrix3 m;
+      for(int i=0; i<3; ++i)
+        for(int j=0; j<3; ++j)
+          m.e(i,j) = e(j,i);
+      return m;
+    }
+    //-----------------------------------------------------------------------------
+    void getTransposed(Matrix3& dest) const
+    {
+      for(int i=0; i<3; ++i)
+        for(int j=0; j<3; ++j)
+          dest.e(i,j) = e(j,i);
     }
     //-----------------------------------------------------------------------------
     bool isNull() const
@@ -325,32 +363,43 @@ namespace vl
       *this = Matrix3();
     }
     //-----------------------------------------------------------------------------
-    Matrix3 inverse(bool *invertible=NULL) const;
+    T_scalar_type getInverse(Matrix3& dest) const;
     //-----------------------------------------------------------------------------
-    Matrix3& invert(bool *invertible=NULL)
+    Matrix3 getInverse(T_scalar_type *determinant=NULL) const
     {
-      *this = inverse(invertible);
+      Matrix3 tmp;
+      T_scalar_type det = getInverse(tmp);
+      if (determinant)
+        *determinant = det;
+      return tmp;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix3& invert(T_scalar_type *determinant=NULL)
+    {
+      T_scalar_type det = getInverse(*this);
+      if (determinant)
+        *determinant = det;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    const scalar_type& e(int i, int j) const { return mVec[i][j]; }
+    const T_scalar_type& e(int i, int j) const { return mVec[i][j]; }
     //-----------------------------------------------------------------------------
-    scalar_type& e(int i, int j) { return mVec[i][j]; }
+    T_scalar_type& e(int i, int j) { return mVec[i][j]; }
     //-----------------------------------------------------------------------------
-    static Matrix3 rotation( scalar_type degrees );
+    static Matrix3 rotation( T_scalar_type degrees );
     //-----------------------------------------------------------------------------
-    Matrix3& rotate( scalar_type degrees )
+    Matrix3& rotate( T_scalar_type degrees )
     {
       *this = rotation(degrees) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix3 translation( const Vector2<scalar_type>& v )
+    static Matrix3 translation( const Vector2<T_scalar_type>& v )
     {
       return translation( v.x(), v.y() );
     }
     //-----------------------------------------------------------------------------
-    static Matrix3 translation( scalar_type x, scalar_type y )
+    static Matrix3 translation( T_scalar_type x, T_scalar_type y )
     {
       Matrix3 tr;
       tr.e(2,0) = x;
@@ -358,19 +407,19 @@ namespace vl
       return tr;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& translate( scalar_type x, scalar_type y )
+    Matrix3& translate( T_scalar_type x, T_scalar_type y )
     {
       *this = *this * translation(x,y);
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& translate( const Vector2<scalar_type>& v )
+    Matrix3& translate( const Vector2<T_scalar_type>& v )
     {
       *this = translation(v) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix3 scaling( scalar_type x, scalar_type y )
+    static Matrix3 scaling( T_scalar_type x, T_scalar_type y )
     {
       Matrix3 sc;
       sc.e(0,0) = x;
@@ -378,7 +427,7 @@ namespace vl
       return sc;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& scale( scalar_type x, scalar_type y )
+    Matrix3& scale( T_scalar_type x, T_scalar_type y )
     {
       *this = scaling(x,y) * *this;
       return *this;
@@ -386,16 +435,16 @@ namespace vl
     //-----------------------------------------------------------------------------
 
   protected:
-    Vector3<scalar_type> mVec[3];
+    Vector3<T_scalar_type> mVec[3];
   };
 
   //-----------------------------------------------------------------------------
   // OPERATORS
   //-----------------------------------------------------------------------------
-  template<typename scalar_type>
-  inline Matrix3<scalar_type> operator*(const Matrix3<scalar_type>& m2, const Matrix3<scalar_type>& m1)
+  template<typename T_scalar_type>
+  inline Matrix3<T_scalar_type> operator*(const Matrix3<T_scalar_type>& m2, const Matrix3<T_scalar_type>& m1)
   {
-    Matrix3<scalar_type> t;
+    Matrix3<T_scalar_type> t;
     t.e(0,0) = m1.e(0,0)*m2.e(0,0) + m1.e(0,1)*m2.e(1,0) + m1.e(0,2)*m2.e(2,0);
     t.e(1,0) = m1.e(1,0)*m2.e(0,0) + m1.e(1,1)*m2.e(1,0) + m1.e(1,2)*m2.e(2,0);
     t.e(2,0) = m1.e(2,0)*m2.e(0,0) + m1.e(2,1)*m2.e(1,0) + m1.e(2,2)*m2.e(2,0);
@@ -411,23 +460,23 @@ namespace vl
     return t;
   }
   //-----------------------------------------------------------------------------
-  template<typename scalar_type>
-  inline Matrix3<scalar_type> operator+(scalar_type d, const Matrix3<scalar_type>& m)
+  template<typename T_scalar_type>
+  inline Matrix3<T_scalar_type> operator+(T_scalar_type d, const Matrix3<T_scalar_type>& m)
   {
     return m + d;
   }
   //-----------------------------------------------------------------------------
-  template<typename scalar_type>
-  inline Matrix3<scalar_type> operator*(scalar_type d, const Matrix3<scalar_type>& m)
+  template<typename T_scalar_type>
+  inline Matrix3<T_scalar_type> operator*(T_scalar_type d, const Matrix3<T_scalar_type>& m)
   {
     return m * d;
   }
   //-----------------------------------------------------------------------------
   //! Post multiplication: matrix * column vector
-  template<typename scalar_type>
-  inline Vector3<scalar_type> operator*(const Matrix3<scalar_type>& m, const Vector3<scalar_type>& v)
+  template<typename T_scalar_type>
+  inline Vector3<T_scalar_type> operator*(const Matrix3<T_scalar_type>& m, const Vector3<T_scalar_type>& v)
   {
-    Vector3<scalar_type> t;
+    Vector3<T_scalar_type> t;
     t.x() = v.x()*m.e(0,0) + v.y()*m.e(1,0) + v.z()*m.e(2,0);
     t.y() = v.x()*m.e(0,1) + v.y()*m.e(1,1) + v.z()*m.e(2,1);
     t.z() = v.x()*m.e(0,2) + v.y()*m.e(1,2) + v.z()*m.e(2,2);
@@ -435,21 +484,21 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   //! Post multiplication: matrix * column vector
-  //! The incoming vector is considered a Vector3<scalar_type> with the component z = 0
-  template<typename scalar_type>
-  inline Vector2<scalar_type> operator*(const Matrix3<scalar_type>& m, const Vector2<scalar_type>& v)
+  //! The incoming vector is considered a Vector3<T_scalar_type> with the component z = 0
+  template<typename T_scalar_type>
+  inline Vector2<T_scalar_type> operator*(const Matrix3<T_scalar_type>& m, const Vector2<T_scalar_type>& v)
   {
-    Vector2<scalar_type> t;
+    Vector2<T_scalar_type> t;
     t.x() = v.x()*m.e(0,0) + v.y()*m.e(1,0) /*+ 0*m.e(2,0)*/;
     t.y() = v.x()*m.e(0,1) + v.y()*m.e(1,1) /*+ 0*m.e(2,1)*/;
     return t;
   }
   //-----------------------------------------------------------------------------
   //! Pre multiplication: row vector * matrix
-  template<typename scalar_type>
-  inline Vector3<scalar_type> operator*(const Vector3<scalar_type>& v, const Matrix3<scalar_type>& m)
+  template<typename T_scalar_type>
+  inline Vector3<T_scalar_type> operator*(const Vector3<T_scalar_type>& v, const Matrix3<T_scalar_type>& m)
   {
-    Vector3<scalar_type> t;
+    Vector3<T_scalar_type> t;
     t.x() = v.x()*m.e(0,0) + v.y()*m.e(0,1) + v.z()*m.e(0,2);
     t.y() = v.x()*m.e(1,0) + v.y()*m.e(1,1) + v.z()*m.e(1,2);
     t.z() = v.x()*m.e(2,0) + v.y()*m.e(2,1) + v.z()*m.e(2,2);
@@ -457,60 +506,71 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   //! Pre multiplication: row vector * matrix
-  //! The incoming vector is considered a Vector3<scalar_type> with the component z = 0
-  template<typename scalar_type>
-  inline Vector2<scalar_type> operator*(const Vector2<scalar_type>& v, const Matrix3<scalar_type>& m)
+  //! The incoming vector is considered a Vector3<T_scalar_type> with the component z = 0
+  template<typename T_scalar_type>
+  inline Vector2<T_scalar_type> operator*(const Vector2<T_scalar_type>& v, const Matrix3<T_scalar_type>& m)
   {
-    Vector2<scalar_type> t;
+    Vector2<T_scalar_type> t;
     t.x() = v.x()*m.e(0,0) + v.y()*m.e(0,1) /*+ 0*m.e(2,0)*/;
     t.y() = v.x()*m.e(1,0) + v.y()*m.e(1,1) /*+ 0*m.e(2,1)*/;
     return t;
   }
   //-----------------------------------------------------------------------------
-  template<typename scalar_type>
-  Matrix3<scalar_type> Matrix3<scalar_type>::rotation( scalar_type degrees )
+  template<typename T_scalar_type>
+  Matrix3<T_scalar_type> Matrix3<T_scalar_type>::rotation( T_scalar_type degrees )
   {
-    Matrix3<scalar_type> rot;
-    degrees = degrees * (scalar_type)dDEG_TO_RAD;
-    scalar_type s = (scalar_type) sin( degrees );
-    scalar_type c = (scalar_type) cos( degrees );
-    rot.e(0,0) = (scalar_type)c;
-    rot.e(1,1) = (scalar_type)c;
-    rot.e(0,1) = (scalar_type)s;
-    rot.e(1,0) = -(scalar_type)s;
+    Matrix3<T_scalar_type> rot;
+    degrees = degrees * (T_scalar_type)dDEG_TO_RAD;
+    T_scalar_type s = (T_scalar_type) sin( degrees );
+    T_scalar_type c = (T_scalar_type) cos( degrees );
+    rot.e(0,0) = (T_scalar_type)c;
+    rot.e(1,1) = (T_scalar_type)c;
+    rot.e(0,1) = (T_scalar_type)s;
+    rot.e(1,0) = -(T_scalar_type)s;
     return rot;
   }
   //-----------------------------------------------------------------------------
-  template<typename scalar_type>
-  Matrix3<scalar_type> Matrix3<scalar_type>::inverse(bool *invertible) const
+  template<typename T_scalar_type>
+  T_scalar_type Matrix3<T_scalar_type>::getInverse(Matrix3<T_scalar_type>& dest) const
   {
-    const scalar_type& a11 = e(0,0);
-    const scalar_type& a12 = e(0,1);
-    const scalar_type& a13 = e(0,2);
-    const scalar_type& a21 = e(1,0);
-    const scalar_type& a22 = e(1,1);
-    const scalar_type& a23 = e(1,2);
-    const scalar_type& a31 = e(2,0);
-    const scalar_type& a32 = e(2,1);
-    const scalar_type& a33 = e(2,2);
-
-    scalar_type DET = a11*(a33*a22-a32*a23)-a21*(a33*a12-a32*a13)+a31*(a23*a12-a22*a13);
-
-    if (invertible)
+    if (&dest == this)
     {
-      if ( DET == 0 )
-        *invertible = false;
-      else
-        *invertible = true;
+      Matrix3<T_scalar_type> tmp;
+      T_scalar_type det = getInverse(tmp);
+      dest = tmp;
+      return det;
     }
+    else
+    {
+      const T_scalar_type& a11 = e(0,0);
+      const T_scalar_type& a12 = e(0,1);
+      const T_scalar_type& a13 = e(0,2);
+      const T_scalar_type& a21 = e(1,0);
+      const T_scalar_type& a22 = e(1,1);
+      const T_scalar_type& a23 = e(1,2);
+      const T_scalar_type& a31 = e(2,0);
+      const T_scalar_type& a32 = e(2,1);
+      const T_scalar_type& a33 = e(2,2);
 
-    if ( DET == 0 )
-      return Matrix3<scalar_type>(0,0,0,0,0,0,0,0,0);
+      T_scalar_type A = a33*a22-a32*a23;
+      T_scalar_type B = a32*a13-a33*a12;
+      T_scalar_type C = a23*a12-a22*a13;
 
-    return Matrix3<scalar_type>(
-      a33*a22-a32*a23,    -(a33*a12-a32*a13), a23*a12-a22*a13   , 
-      -(a33*a21-a31*a23), a33*a11-a31*a13,    -(a23*a11-a21*a13),
-      a32*a21-a31*a22,    -(a32*a11-a31*a12), a22*a11-a21*a12   ) / DET;
+      T_scalar_type det = a11*(A)+a21*(B)+a31*(C);
+
+      if ( det == 0 )
+      {
+        dest.fill(0);
+      }
+      else
+      {
+        dest = Matrix3<T_scalar_type>( A,               B,               C, 
+                                       a31*a23-a33*a21, a33*a11-a31*a13, a21*a13-a23*a11,
+                                       a32*a21-a31*a22, a31*a12-a32*a11, a22*a11-a21*a12) / det;
+      }
+
+      return det;
+    }
   }
   //-----------------------------------------------------------------------------
 

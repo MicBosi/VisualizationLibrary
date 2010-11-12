@@ -159,14 +159,14 @@ void SlicedVolume::updateUniforms(Camera* camera)
     lpos = ((fmat4)camera->inverseViewMatrix() * light()->position()).xyz();
   // world to object space
   if (transform())
-    lpos = (fmat4)transform()->worldMatrix().inverse() * lpos;
+    lpos = (fmat4)transform()->worldMatrix().getInverse() * lpos;
   glslProgram()->gocUniform("light_position")->setUniform(lpos);
 
   // eye postion
   fvec3 epos = (fvec3)camera->inverseViewMatrix().getT();
   // world to object space
   if (transform())
-    epos = (fmat4)transform()->worldMatrix().inverse() * epos;
+    epos = (fmat4)transform()->worldMatrix().getInverse() * epos;
   glslProgram()->gocUniform("eye_position")->setUniform(epos);
 }
 //-----------------------------------------------------------------------------
@@ -202,7 +202,7 @@ void SlicedVolume::update(int /*lod*/, Camera* camera, Real /*cur_t*/)
   else
     mCache = mat;
 
-  fmat4 imat = mat.inverse();
+  fmat4 imat = mat.getInverse();
 
   fvec3 cube_verts[] =
   {

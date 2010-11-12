@@ -118,10 +118,10 @@ namespace vl
 
       bool analyticSolution(dvec3& v) const
       {
-        bool invertible = false;
+        double det = 0;
         dmat3 m = matrix();
-        dmat3 Ainv = matrix().inverse(&invertible);
-        if (!invertible)
+        dmat3 Ainv = matrix().getInverse(&det); // mic fixme: optimization?
+        if (!det)
           return false;
         v = -(Ainv*vector());
         return true;

@@ -98,8 +98,6 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   if (parms.size()>=2)
     secs = parms[1].toFloat();
 
-  vl::Log::print( vl::Say("Test #%n %.1ns-------------------------------------------------------------\n\n") << test << secs );
-
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
   format.setDoubleBuffer(true);
