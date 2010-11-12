@@ -67,7 +67,7 @@ public:
         mat_array[i].rotate(deg, rot[batch*100+k]);
         mat_array[i].translate(x,y,z);
         mat_array[i] = view * mat_array[i];
-        mat_array_norm[i] = mat_array[i].inverse().transpose().get3x3();
+        mat_array_norm[i] = mat_array[i].getInverse().transpose().get3x3();
       }
 
       // update the uniforms

@@ -49,8 +49,15 @@ public:
     mCatmullRomInterpolator = new vl::CatmullRomInterpolatorFVec3; 
     mTransform1 = new vl::Transform; // will follow linear interpolation
     mTransform2 = new vl::Transform; // will follow Catmull-Rom interpolation
+  }
+
+  void initEvent()
+  {
+    BaseDemo::initEvent();
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
+    showCatmullRomPentagonOpen();
+    showText();
   }
 
   void showCatmullRomPentagonOpen()
@@ -273,13 +280,6 @@ public:
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     sceneManager()->tree()->addActor(text.get(), effect.get());
-  }
-
-  void initEvent()
-  {
-    BaseDemo::initEvent();
-    showCatmullRomPentagonOpen();
-    showText();
   }
 
 protected:

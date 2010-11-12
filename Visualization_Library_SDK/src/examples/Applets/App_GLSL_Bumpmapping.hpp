@@ -157,7 +157,7 @@ public:
     mTransform->computeWorldMatrix();
 
     // world to object space matrix
-    vl::mat4 obj_mat = mTransform->worldMatrix().inverse();
+    vl::mat4 obj_mat = mTransform->worldMatrix().getInverse();
 
     // project camera position from world to object space
     vl::fvec3 camera_pos = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->inverseViewMatrix().getT();

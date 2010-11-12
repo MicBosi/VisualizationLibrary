@@ -84,8 +84,6 @@ int main(int argc, char* args[])
   if (argc>=3)
     secs = String(args[2]).toFloat();
 
-  vl::Log::print( vl::Say("Test #%n %.1ns-------------------------------------------------------------\n\n") << test << secs );
-
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
   format.setDoubleBuffer(true);
