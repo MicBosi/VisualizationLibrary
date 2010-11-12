@@ -257,9 +257,9 @@ bool Camera::unproject(const vec3& win, vec4& out) const
     v.y() = v.y() * 2.0f - 1.0f;
     v.z() = v.z() * 2.0f - 1.0f;
 
-    bool invertible=true;
-    mat4 inverse = (mProjectionMatrix * mViewMatrix).inverse(&invertible);
-    if (!invertible)
+    Real det=0;
+    mat4 inverse = (mProjectionMatrix * mViewMatrix).getInverse(&det); // mic fixme all inverse here
+    if (!det)
       return false;
 
     v = inverse * v;
@@ -272,9 +272,9 @@ bool Camera::unproject(const vec3& win, vec4& out) const
 //-----------------------------------------------------------------------------
 bool Camera::unproject(std::vector<vec3>& win) const
 {
-  bool invertible=true;
-  mat4 inverse = (mProjectionMatrix * mViewMatrix).inverse(&invertible);
-  if (!invertible)
+  Real det=0;
+  mat4 inverse = (mProjectionMatrix * mViewMatrix).getInverse(&det);
+  if (!det)
     return false;
 
   bool ok = true;

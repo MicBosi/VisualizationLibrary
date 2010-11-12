@@ -185,7 +185,7 @@ mat4 TrackballManipulator::trackballRotation(int x, int y)
   alpha = alpha * rotationSpeed();
   vec3 nc =  camera()->inverseViewMatrix().get3x3() * n;
   if (mTransform && mTransform->parent())
-    nc = mTransform->parent()->getComputedWorldMatrix().inverse() * nc;
+    nc = mTransform->parent()->getComputedWorldMatrix().getInverse() * nc;
   nc.normalize();
   return mat4::rotation(alpha*(Real)dRAD_TO_DEG, nc);
 }

@@ -657,7 +657,7 @@ void Geometry::transform(const mat4& m, bool normalize)
   {
     mat4 nmat = m;
     nmat.setT(vec3(0,0,0)); // keep only the upper 3x3
-    nmat = nmat.inverse().transpose();
+    nmat = nmat.getInverse().transpose();
     normalArray()->transform(nmat);
     if (normalize)
       normalArray()->normalize();
