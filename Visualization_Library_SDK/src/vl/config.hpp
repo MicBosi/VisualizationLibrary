@@ -107,6 +107,15 @@
 
 
 /**
+ * Set this to 1 to be able to attach user data to any vl::Transform using the 
+ * "void setTransformUserData(void*)" and "void* transformUserData()" methods. 
+ * Useful to glue Transform objects to the user's application animation engine.
+ * \note This will add 4 or 8 bytes to each vl::Transform instance.
+ */
+#define VL_TRANSFORM_USER_DATA 0
+
+
+/**
  * Enables fast square root computation when using single precision mode.
  *
  * - 0 = disable fast square roots when in single precision floating point pipeline
