@@ -42,10 +42,13 @@ namespace vl
   {
   public:
     virtual const char* className() { return "RenderingTree"; }
+
     //! Constructor.
     RenderingTree();
+    
     //! Copy constructor.
     RenderingTree(const RenderingTree& other): RenderingAbstract(other) { *this = other; } 
+    
     //! Assignment operator.
     RenderingTree& operator=(const RenderingTree& other);
 

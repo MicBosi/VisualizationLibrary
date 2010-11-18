@@ -121,7 +121,7 @@ namespace vl
         }
       }
     }
-    //------------------------------------------------------------------------------
+
     void dispatchOnRendererFinished()
     {
       const Collection<RenderEventCallback>& cb = *mRenderEventCallbacks;
@@ -134,6 +134,7 @@ namespace vl
         }
       }
     }
+
     //! Returns the list of RenderEventCallback objects bound to a Rendering
     Collection<RenderEventCallback>* renderEventCallbacks() { return mRenderEventCallbacks.get(); }
 

@@ -104,11 +104,13 @@ namespace vlVolume
      * Unlike genRGBAVolume(vl::Image* data, vl::Image* trfunc, const vl::fvec3& light_dir, bool alpha_from_data=true) this function does not compute lighting.
      */
     static vl::ref<vl::Image> genRGBAVolume(vl::Image* data, vl::Image* trfunc, bool alpha_from_data=true);
+
   private:
     template<typename data_type, vl::EImageType img_type>
     static vl::ref<vl::Image> genRGBAVolumeT(vl::Image* data, vl::Image* trfunc, const vl::fvec3& light_dir, bool alpha_from_data);
     template<typename data_type, vl::EImageType img_type>
     static vl::ref<vl::Image> genRGBAVolumeT(vl::Image* data, vl::Image* trfunc, bool alpha_from_data);
+
   protected:
     int mSliceCount;
     vl::ref<vl::Geometry> mGeometry;
