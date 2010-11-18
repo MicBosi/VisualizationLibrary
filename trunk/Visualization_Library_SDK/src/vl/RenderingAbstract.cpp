@@ -56,13 +56,15 @@ RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
 //------------------------------------------------------------------------------
 void RenderingAbstract::dispatchRenderingCallbacks(ERenderingCallback reason)
 {
-  // iterate on copy so that can perform callback removal if requested
-  Collection<RenderingCallback> temp = *mRenderingCallbacks;
-  for(int i=0; i<temp.size(); ++i)
+  // iterate on a copy so that we can perform callback removal if requested
+  const Collection<RenderingCallback>& cb = *mRenderingCallbacks;
+  for(int i=0; i<cb.size(); ++i)
   {
-    if (temp[i]->renderingCallback(this, reason) && 
-      temp[i]->removeAfterCall())
-      renderingCallbacks()->erase( temp[i].get() );
+    if ( cb[i]->renderingCallback(this, reason) && cb[i]->removeAfterCall() )
+    {
+      renderingCallbacks()->eraseAt( i );
+      --i;
+    }
   }
 }
 //------------------------------------------------------------------------------
