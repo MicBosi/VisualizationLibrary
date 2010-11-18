@@ -877,12 +877,6 @@ namespace vl
 
   typedef enum
   {
-    RC_PreRendering, //!< The RenderingCallback is being called because a new rendering is going to start.
-    RC_PostRendering  //!< The RenderingCallback is being called because a rendering has just been completed.
-  } ERenderingCallback;
-
-  typedef enum
-  {
     GIT_POINTS              = GL_POINTS, 
     GIT_LINES               = GL_LINES,
     GIT_LINES_ADJACENCY     = GL_LINES_ADJACENCY_EXT, 
