@@ -79,15 +79,21 @@ namespace vl
       #ifndef NDEBUG
         mObjectName = className();
       #endif
+      #if VL_TRANSFORM_USER_DATA 
+        mTransformUserData = NULL;
+      #endif
     }
 
     /** Constructor. The \p matrix parameter is used to set both the local and world matrix. */
     Transform(const mat4& matrix): mParent(NULL), mAssumeIdentityWorldMatrix(false) 
     { 
-      setLocalMatrix(matrix);
-      setWorldMatrix(matrix);
       #ifndef NDEBUG
         mObjectName = className();
+      #endif
+      setLocalMatrix(matrix);
+      setWorldMatrix(matrix);
+      #if VL_TRANSFORM_USER_DATA 
+        mTransformUserData = NULL;
       #endif
     }
 
@@ -217,6 +223,16 @@ namespace vl
     /** Normally you should not use directly this function, call it only if you are sure you cannot do otherwise. 
       * Calling this function will also increment the worldMatrixUpdateTick(). */
     void setWorldMatrix(const mat4& matrix);
+
+#if VL_TRANSFORM_USER_DATA 
+  public:
+    void setTransformUserData(void* data) { mTransformUserData = data; }
+    const void* transformUserData() const { return mTransformUserData; }
+    void* transformUserData() { return mTransformUserData; }
+
+  private:
+    void* mTransformUserData;
+#endif
 
   protected:
     mat4 mWorldMatrix; 
