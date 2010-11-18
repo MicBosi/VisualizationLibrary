@@ -34,7 +34,6 @@
 #include <vl/AABB.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
-#include <vl/RenderingCallback.hpp>
 
 #undef near
 #undef far
