@@ -89,6 +89,45 @@ void Rendering::render()
   VL_CHECK(camera());
   VL_CHECK(camera()->viewport());
 
+  class InOutContract
+  {
+    Rendering* mRendering;
+    OpenGLContext* mOpenGLContext;
+
+  public:
+    InOutContract(Rendering* rendering): mRendering(rendering)
+    {
+      // as stated in the documentation all the renderers must target the same OpenGLContext
+      mOpenGLContext = mRendering->renderers()[0]->renderTarget()->openglContext();
+
+      // activate OpenGL context
+      mOpenGLContext->makeCurrent();
+
+      // render states ]shield[
+      mOpenGLContext->resetContextStates(); 
+
+      // pre rendering callback
+      mRendering->dispatchRenderingCallbacks(RC_PreRendering); 
+
+      // check if the user screwed up something
+      VL_CHECK_OGL()
+    }
+
+    ~InOutContract()
+    {
+      // post rendering callback
+      mRendering->dispatchRenderingCallbacks(RC_PostRendering); 
+
+      // check if the user screwed up something
+      VL_CHECK_OGL()
+
+      // render states ]shield[
+      mOpenGLContext->resetContextStates(); 
+    }
+  };
+
+  InOutContract contract(this);
+
   if (renderers().empty())
   {
     vl::Log::error("Rendering::render(): no Renderer specified for this Rendering!\n");
@@ -121,22 +160,6 @@ void Rendering::render()
 
   if (!camera()->viewport())
     return;
-
-  // as stated in the documentation all the renderers must target the same OpenGLContext
-
-  OpenGLContext* opengl_context = renderers()[0]->renderTarget()->openglContext();
-
-  // activate OpenGL context
-
-  opengl_context->makeCurrent();
-
-  // render states ]shield[
-
-  opengl_context->resetContextStates(); 
-
-  // pre rendering callback
-
-  dispatchRenderingCallbacks(RC_PreRendering);
 
   // transform
 
@@ -219,26 +242,18 @@ void Rendering::render()
       {
         vl::Log::error( Say("Rendering::render(): no RendererTarget specified for Renderer #%n!\n") << i );
         VL_TRAP();
-        return;
+        continue;
       }
       if (renderers()[i]->renderTarget()->openglContext() == NULL)
       {
         vl::Log::error( Say("Rendering::render(): invalid RenderTarget for Renderer #%n, OpenGLContext is NULL!\n") << i );
         VL_TRAP();
-        return;
+        continue;
       }
       // loop the rendering
       render_queue = renderers()[i]->render( render_queue, camera() );
     }
   }
-
-  // post rendering callback
-
-  dispatchRenderingCallbacks(RC_PostRendering);
-
-  // render states ]shield[
-
-  opengl_context->resetContextStates(); 
 
   VL_CHECK_OGL()
 }
