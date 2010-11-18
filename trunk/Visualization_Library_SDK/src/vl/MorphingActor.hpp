@@ -41,12 +41,12 @@ namespace vl
   /**
    * The MorphingCallback class is used by MorphingActor to implement the morphing animation on the GPU
    */
-  class MorphingCallback: public ActorRenderingCallback
+  class MorphingCallback: public ActorRenderEventCallback
   {
   public:
     virtual const char* className() { return "MorphingCallback"; }
 
-    virtual void operator()(const Camera* cam, Actor* actor, Renderable* renderable, const Shader*, int pass);
+    virtual void onActorRenderStarted(Actor* actor, const Camera* cam, Renderable* renderable, const Shader*, int pass);
   };
 
   //-----------------------------------------------------------------------------
