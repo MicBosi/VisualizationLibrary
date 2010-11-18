@@ -157,9 +157,12 @@ void SlicedVolume::updateUniforms(Camera* camera)
     lpos = (fmat4)light()->followedTransform()->worldMatrix() * light()->position().xyz();
   else
     lpos = ((fmat4)camera->inverseViewMatrix() * light()->position()).xyz();
+
   // world to object space
   if (transform())
     lpos = (fmat4)transform()->worldMatrix().getInverse() * lpos;
+  
+  // ... mic fixme ... should use the Actor's uniforms for these
   glslProgram()->gocUniform("light_position")->setUniform(lpos);
 
   // eye postion

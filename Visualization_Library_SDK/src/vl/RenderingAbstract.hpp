@@ -76,6 +76,7 @@ namespace vl
 
     //! The update time of the current rendering frame.
     void setUpdateTime(Real cur_time) { mUpdateTime = cur_time; }
+
     //! The update time of the current rendering frame.
     Real updateTime() const { return mUpdateTime; }
 
