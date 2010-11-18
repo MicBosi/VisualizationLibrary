@@ -435,12 +435,26 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
   if (prev == NULL)
     memset( mEnableTable, 0, sizeof(mEnableTable) );
 
-  // iterate current: increment
+  /* iterate on current */
 
   for( unsigned i=0; i<cur->enables().size(); ++i )
-    mEnableTable[cur->enables()[i]] |= 2;
+  {
+    mEnableTable[cur->enables()[i]] += 1; // 0 -> 1; 1 -> 2;
+    if ( !mCurrentEnable[cur->enables()[i]] )
+    {
+      glEnable( TranslateEnable[cur->enables()[i]] );
+      mCurrentEnable[ cur->enables()[i] ] = true;
+#ifndef NDEBUG
+      if (glGetError() != GL_NO_ERROR)
+      {
+        Log::error( Say("An unsupported enum has been enabled: %s.\n") << TranslateEnableString[cur->enables()[i]]);
+        VL_TRAP()
+      }
+#endif
+    }
+  }
 
-  // iterate on prev: reset to default only if it won't be overwritten by cur
+  /* iterate on prev: reset to default only the unused ones */
 
   if (prev)
   {
@@ -448,7 +462,6 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
     {
       if ( mEnableTable[prev->enables()[i]] == 1 )
       {
-        mEnableTable[prev->enables()[i]] = 0;
         mCurrentEnable[prev->enables()[i]] = false;
         glDisable( TranslateEnable[prev->enables()[i]] ); VL_CHECK_OGL()
         #ifndef NDEBUG
@@ -459,30 +472,12 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
           }
         #endif
       }
+      mEnableTable[prev->enables()[i]] >>= 1; // 1 -> 0; 2 -> 1
     }
   }
   else
   {
     memset(mCurrentEnable, 0, sizeof(mCurrentEnable));
-  }
-
-  // iterate current: apply only if needed
-
-  for( unsigned i=0; i<cur->enables().size(); ++i )
-  {
-    mEnableTable[cur->enables()[i]] = 1;
-    if ( !mCurrentEnable[cur->enables()[i]] )
-    {
-      glEnable( TranslateEnable[cur->enables()[i]] );
-      mCurrentEnable[ cur->enables()[i] ] = true;
-      #ifndef NDEBUG
-        if (glGetError() != GL_NO_ERROR)
-        {
-          Log::error( Say("An unsupported enum has been enabled: %s.\n") << TranslateEnableString[cur->enables()[i]]);
-          VL_TRAP()
-        }
-      #endif
-    }
   }
 }
 //------------------------------------------------------------------------------
@@ -492,12 +487,20 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
   if (prev == NULL)
     memset( mRenderStateTable, 0, sizeof(mRenderStateTable) );
 
-  // iterate current: increment
+  /* iterate on current */
 
   for( unsigned i=0; i<cur->renderStates().size(); ++i )
-    mRenderStateTable[cur->renderStates()[i]->type()] |= 2;
+  {
+    mRenderStateTable[cur->renderStates()[i]->type()] += 1; // 0 -> 1; 1 -> 2;
+    if ( mCurrentRenderState[cur->renderStates()[i]->type()] != cur->renderStates()[i] )
+    {
+      mCurrentRenderState[cur->renderStates()[i]->type()] = cur->renderStates()[i].get();
+      VL_CHECK(cur->renderStates()[i]);      
+      cur->renderStates()[i]->apply(camera, this); VL_CHECK_OGL()
+    }
+  }
 
-  // iterate on prev: reset to default only if it won't be overwritten by cur
+  /* iterate on prev: reset to default only the unused ones */
 
   if (prev)
   {
@@ -505,7 +508,6 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
     {
       if ( mRenderStateTable[prev->renderStates()[i]->type()] == 1 )
       {
-        mRenderStateTable[prev->renderStates()[i]->type()] = 0;
         mCurrentRenderState[prev->renderStates()[i]->type()] = mDefaultRenderStates[prev->renderStates()[i]->type()].get();
         #ifndef NDEBUG
         if (!mDefaultRenderStates[prev->renderStates()[i]->type()])
@@ -517,24 +519,12 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
         // if this fails you are using a render state that is not supported by the current OpenGL implementation (too old or Core profile)
         mDefaultRenderStates[prev->renderStates()[i]->type()]->apply(NULL, this); VL_CHECK_OGL()
       }
+      mRenderStateTable[prev->renderStates()[i]->type()] >>= 1; // 1 -> 0; 2 -> 1;
     }
   }
   else
   {
     memset(mCurrentRenderState, 0, sizeof(mCurrentRenderState));
-  }
-
-  // iterate current: apply only if needed
-
-  for( unsigned i=0; i<cur->renderStates().size(); ++i )
-  {
-    mRenderStateTable[cur->renderStates()[i]->type()] = 1;
-    if ( mCurrentRenderState[cur->renderStates()[i]->type()] != cur->renderStates()[i] )
-    {
-      mCurrentRenderState[cur->renderStates()[i]->type()] = cur->renderStates()[i].get();
-      VL_CHECK(cur->renderStates()[i]);      
-      cur->renderStates()[i]->apply(camera, this); VL_CHECK_OGL()
-    }
   }
 }
 //------------------------------------------------------------------------------
