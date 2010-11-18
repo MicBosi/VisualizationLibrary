@@ -45,46 +45,86 @@
 namespace vl
 {
   //------------------------------------------------------------------------------
-  // ActorRenderingCallback
+  // ActorRenderEventCallback
   //------------------------------------------------------------------------------
-  /** The ActorRenderingCallback class defines a callback object to be executed just before an Actor is 
-  rendered but after the render states are setup.
+  /** The ActorRenderEventCallback class defines a callback object to react to Actor-rendering related events.
 
-  Usually an ActorRenderingCallback is used to perform a per-Actor operation 
-  like changing some attributes of the Actor itself or of the associated Renderable/Geometry 
-  before the rendering takes place. For example you can use an ActorRenderingCallback to setup uniforms, 
-  query and save uniform binding locations, setup appropriate vertex attributes in a Geometry etc.
+  Usually an ActorRenderEventCallback is used to perform a per-Actor operation 
+  like changing some attributes of the Actor itself or of the associated Renderable/Geometry.
   For example the MorphingCallback class is used to aid the rendering of a MorphingActor, while the
   DepthSortCallback class is used to perform per-Actor polygon sorting.
 
-  \note 
-  An ActorRenderingCallback is called once for every rendering pass, ie. if an Actor's Effect specifies three
-  rendering passes the Actor callbacks will be called three times, once for each rendering pass.
-
   \note
-  This function is called once for each pass, after the render states are setup, before the Actor is rendered.
-
-  \note
+  You can manipulate Uniforms within this class, for more information see vl::GLSLProgram documentation.
   If you want to update the state of a Uniform variable from here you can simply call glUniform* since the 
   GLSLProgram (if any) has been already activated by the time this function is called. You can test whether
   the shader has a GLSLProgram bound to it or not by simply testing shader->glslProgram() != NULL. If you
   update a uniform you must ensure that all the Actor[s] using the same GLSLProgram appropriately setup such 
   uniform.
+
+  \note
+  An ActorRenderEventCallback is called once for every rendering pass, ie. if an Actor's Effect specifies three
+  rendering passes the Actor callbacks will be called three times, once for each rendering pass / shader.
+
   \sa
-  - Actor::renderingCallbacks()
-  - Actor::update()
-  */
-  class ActorRenderingCallback: public Object
+  - Actor::renderEventCallbacks()
+  - Actor::update() */
+  class ActorRenderEventCallback: public Object
   {
   public:
-    /** Called upon callback execution.
+    ActorRenderEventCallback(): mEnabled(true) {}
+
+    /** Event generated just before an Actor is rendered but after the render states are ready and setup.
+    Reimplement to react to this event.
     \param cam The camera used for the current rendering.
     \param actor The Actor bound to this rendering callback.
     \param renderable The currently selected Actor LOD.
     \param shader The currently active Shader.
-    \param pass The current Actor[s] rendering pass.
-    */
-    virtual void operator()(const Camera* cam, Actor* actor, Renderable* renderable, const Shader* shader, int pass) = 0;
+    \param pass The current Actor[s] rendering pass. */
+    virtual void onActorRenderStarted(Actor* actor, const Camera* cam, Renderable* renderable, const Shader* shader, int pass) = 0;
+
+    void setEnabled(bool enabled) { mEnabled = enabled; }
+
+    bool isEnabled() const { return mEnabled; }
+
+  protected:
+    bool mEnabled;
+  };
+
+  //------------------------------------------------------------------------------
+  // ActorAnimator
+  //------------------------------------------------------------------------------
+  /** Callback object used to update/animate an Actor.
+  The updateActor() method will be called whenever an actor becomes visible, before
+  rendering it.
+  \note
+  The updateActor() method will be called...
+  - ... after the actor is determined to be visible.
+  - ... only once per frame.
+  - ... before setting up the rendering states.
+  - ... before rendering any Actor, that is, VL first updates 
+  each and every Actor and then renders them. This means that you should
+  not use an ActorAnimator to update data that is shared among multiple actors at the 
+  same time, otherwise the same data will be updated several times, and all the actors
+  using it will use the values resulting from the last update.
+
+  Use vl::ActorRenderEventCallback in such cases as the ActorRenderEventCallback is triggered
+  for each Actor right before it is rendered.
+
+  \sa
+  - Actor::setActorAnimator()
+  - ActorRenderEventCallback
+  - renderEventCallbacks()*/
+  class ActorAnimator: public Object
+  {
+  public:
+    /** Reimplement this function to update/animate an Actor.
+    \param actor the Actor to be updated.
+    \param lod the currently selected \p LOD for the Actor.
+    \param camera the camera used for the current rendering.
+    \param cur_time the current animation time.
+    \sa Actor::setActorAnimator(); */
+    virtual void updateActor(Actor* actor, int lod, Camera* camera, Real cur_time) = 0;
   };
 
   //------------------------------------------------------------------------------
@@ -134,11 +174,11 @@ namespace vl
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mRenderingCallbacks.setAutomaticDelete(false);
+      mRenderEventCallbacks.setAutomaticDelete(false);
       lod(0) = renderable;
       // actor user data
       #if VL_ACTOR_USER_DATA
-      mActorUserData = NULL;
+        mActorUserData = NULL;
       #endif
     }
 
@@ -221,27 +261,20 @@ namespace vl
 
     int evaluateLOD(Camera* camera);
 
-    /** Virtual function used to update or animate an Actor during the rendering.
+    /** Installs the ActorAnimator used to update/animate an Actor (see vl::ActorAnimator documentation). */
+    void setActorAnimator(ActorAnimator* animator) { mActorAnimator = animator; }
 
-     \param lod the LOD (level of detail) currently selected for the rendering.
-     \param camera the camera used for the current rendering.
-     \param cur_t the current animation time.
+    /** Returns the ActorAnimator used to update/animate an Actor (see vl::ActorAnimator documentation). */
+    ActorAnimator* actorAnimator() { return mActorAnimator.get(); }
 
-     \note
-     - is called after the actor resulted to be visible
-     - is called only once per frame
-     - is called before setting up the rendering states
+    /** Returns the ActorAnimator used to update/animate an Actor (see vl::ActorAnimator documentation). */
+    const ActorAnimator* actorAnimator() const { return mActorAnimator.get(); }
 
-     \sa
-     - ActorRenderingCallback
-     - renderingCallbacks()
-    */
-    virtual void update(int /*lod*/, Camera* /*camera*/, Real /*cur_t*/) {}
+    /** Last time an Actor was animated/updated using an actorAnimator(). */
+    Real lastUpdateTime() const { return mLastUpdateTime; }
 
     /** For internal use only. */
     void setLastUpdateTime(Real time) { mLastUpdateTime = time; }
-    /** For internal use only. */
-    Real lastUpdateTime() const { return mLastUpdateTime; }
 
     /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not 
       * depending on the Rendering::enableMask() but it can also be used for user-specific tasks. */
@@ -255,50 +288,42 @@ namespace vl
 
     /** Equivalent to uniformSet()->setUniform(uniform)
      \remarks
-     This function performs a 'setUniformSet(new UniformSet)' if uniformSet() is NULL.
-    */
+     This function performs a 'setUniformSet(new UniformSet)' if uniformSet() is NULL. */
     void setUniform(Uniform* uniform);
 
     /** Equivalent to uniformSet()->uniforms()
      \remarks
-     You must install a UniformSet with setUniformSet() before calling this function.
-    */
+     You must install a UniformSet with setUniformSet() before calling this function. */
     const std::vector< ref<Uniform> >& uniforms() const;
 
     /** Equivalent to uniformSet()->eraseUniform(name)
      \remarks
-     You must install a UniformSet with setUniformSet() before calling this function.
-    */
+     You must install a UniformSet with setUniformSet() before calling this function. */
     void eraseUniform(const std::string& name);
 
     /** Equivalent to uniformSet()->eraseUniform(uniform)
      \remarks
-     You must install a UniformSet with setUniformSet() before calling this function.
-    */
+     You must install a UniformSet with setUniformSet() before calling this function. */
     void eraseUniform(const Uniform* uniform);
 
     /** Equivalent to uniformSet()->eraseAllUniforms()
      \remarks
-     You must install a UniformSet with setUniformSet() before calling this function.
-    */
+     You must install a UniformSet with setUniformSet() before calling this function. */
     void eraseAllUniforms();
 
     /** Equivalent to uniformSet()->getUniform(name, get_mode)
      \remarks
-     You must install a UniformSet with setUniformSet() before calling this function.
-    */
+     You must install a UniformSet with setUniformSet() before calling this function. */
     Uniform* gocUniform(const std::string& name);
 
     /** Equivalent to uniformSet()->getUniform(name, get_mode)
      \remarks
-     You must install a UniformSet with setUniformSet() before calling this function.
-    */
+     You must install a UniformSet with setUniformSet() before calling this function. */
     Uniform* getUniform(const std::string& name);
     
     /** Equivalent to uniformSet()->getUniform(name, get_mode)
      \remarks
-     You must install a UniformSet with setUniformSet() before calling this function.
-    */
+     You must install a UniformSet with setUniformSet() before calling this function. */
     const Uniform* getUniform(const std::string& name) const;
 
     /** Installs a new UniformSet
@@ -308,8 +333,7 @@ namespace vl
      - eraseUniform(const std::string& name)
      - eraseUniform(const Uniform* uniform)
      - eraseAllUniforms()
-     - getUniform()
-    */
+     - getUniform() */
     void setUniformSet(UniformSet* uniforms) { mUniformSet = uniforms; }
 
     /** Returns the UniformSet installed
@@ -323,16 +347,21 @@ namespace vl
     */
     UniformSet* uniformSet() const { return mUniformSet.get(); }
 
-    /** Returns the list of ActorRenderingCallback bound to an Actor. */
-    const Collection<ActorRenderingCallback>* renderingCallbacks() const { return &mRenderingCallbacks; }
-    /** Returns the list of ActorRenderingCallback bound to an Actor. */
-    Collection<ActorRenderingCallback>* renderingCallbacks() { return &mRenderingCallbacks; }
+    /** Returns the list of ActorRenderEventCallback bound to an Actor. */
+    const Collection<ActorRenderEventCallback>* renderEventCallbacks() const { return &mRenderEventCallbacks; }
 
-    /** Calls all the ActorRenderingCallback installed on this Actor. */
-    void executeRenderingCallbacks(const Camera* camera, Renderable* renderable, const Shader* shader, int pass)
+    /** Returns the list of ActorRenderEventCallback bound to an Actor. */
+    Collection<ActorRenderEventCallback>* renderEventCallbacks() { return &mRenderEventCallbacks; }
+
+    /** Calls all the ActorRenderEventCallback installed on this Actor. */
+    void dispatchOnActorRenderStarted(const Camera* camera, Renderable* renderable, const Shader* shader, int pass)
     {
-      for(int i=0; i<renderingCallbacks()->size(); ++i)
-        renderingCallbacks()->at(i)->operator()(camera, this, renderable, shader, pass);
+      for(int i=0; i<renderEventCallbacks()->size(); ++i)
+      {
+        ActorRenderEventCallback& cb = *renderEventCallbacks()->at(i);
+        if (cb.isEnabled())
+          cb.onActorRenderStarted(this, camera, renderable, shader, pass);
+      }
     }
 
     /** Sets the Scissor to be used when rendering an Actor.
@@ -398,14 +427,15 @@ namespace vl
   protected:
     AABB mAABB;
     Sphere mSphere;
-    Real mLastUpdateTime;
     ref<Effect> mEffect;
     ref<Renderable> mRenderables[VL_MAX_ACTOR_LOD];
     ref<Transform> mTransform;
     ref<LODEvaluator> mLODEvaluator;
     ref<UniformSet> mUniformSet;
     ref<Scissor> mScissor;
-    Collection<ActorRenderingCallback> mRenderingCallbacks;
+    ref<ActorAnimator> mActorAnimator; /*mic fixme: remove?*/
+    Real mLastUpdateTime;
+    Collection<ActorRenderEventCallback> mRenderEventCallbacks;
     int mRenderBlock;
     int mRenderRank;
     long long mTransformUpdateTick;
