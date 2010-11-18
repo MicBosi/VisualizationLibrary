@@ -40,21 +40,19 @@ namespace vl
   //-----------------------------------------------------------------------------
   // CopyTexSubImage
   //-----------------------------------------------------------------------------
-  /**
-   * Wrapper class of the OpenGL function glCopyTexSubImage.
-   *
-   * Is the base class of CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D.
-   * Copies a rectangular pixels area from the specified read buffer to the specified portion of the texture.
-   * Can be bound to a Rendering as a RenderingCallback in order to automatically copy 
-   * the result of a rendering into a texture, see Rendering.
-   *
-   * \note
-   * This class supports Frame-Buffer-Objects, 3D textures, cubemaps.
-   *
-   * \sa 
-   * FBORenderTarget, FBOAttachmentAbstract, Rendering, RenderingCallback, CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D
-  */
-  class CopyTexSubImage: public RenderingCallback
+  /** Wrapper class of the OpenGL function glCopyTexSubImage.
+    *
+    * Is the base class of CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D.
+    * Copies a rectangular pixels area from the specified read buffer to the specified portion of the texture.
+    * Can be bound to a Rendering as a RenderEventCallback in order to automatically copy 
+    * the result of a rendering into a texture, see Rendering.
+    *
+    * \note
+    * This class supports Frame-Buffer-Objects, 3D textures, cubemaps.
+    *
+    * \sa 
+    * FBORenderTarget, FBOAttachmentAbstract, Rendering, RenderEventCallback, CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D */
+  class CopyTexSubImage: public RenderEventCallback
   {
   public:
     virtual const char* className() { return "CopyTexSubImage"; }
@@ -68,15 +66,10 @@ namespace vl
     EReadDrawBuffer readBuffer() const { return mReadBuffer; }
     void setReadBuffer(EReadDrawBuffer render_buffer) { mReadBuffer = render_buffer; }
 
-    virtual bool renderingCallback(const RenderingAbstract*, ERenderingCallback reason)
+    virtual bool onRenderingFinished(const RenderingAbstract*)
     {
-      if (reason == RC_PostRendering)
-      {
-        copyPixels();
-        return true;
-      }
-      else
-        return false;
+      copyPixels();
+      return true;
     }
 
     /**
