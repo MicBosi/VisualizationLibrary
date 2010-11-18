@@ -40,68 +40,68 @@ public:
 
   virtual void shutdown() {}
 
-  class MyShader1: public vl::Shader
+  class MyShaderAnimator1: public vl::ShaderAnimator
   {
   public:
-    MyShader1(): mAnimTime(0) {}
-    void update(vl::Camera* , vl::Real cur_time)
+    MyShaderAnimator1(): mAnimTime(0) {}
+    void updateShader(vl::Shader* shader, vl::Camera* , vl::Real cur_time)
     {
       mAnimTime = cur_time;
       float t = (float)(sin( mAnimTime*vl::fPi )+ 1.0f) / 2.0f;
       vl::fvec4 col = vlut::red*t + vlut::blue*(1-t);
-      gocMaterial()->setFrontDiffuse(col);
+      shader->gocMaterial()->setFrontDiffuse(col);
     }
     vl::Real mAnimTime;
   };
 
-  class MyShader2: public vl::Shader
+  class MyShaderAnimator2: public vl::ShaderAnimator
   {
   public:
-    MyShader2(): mAnimTime(0) {}
-    void update(vl::Camera* , vl::Real cur_time)
+    MyShaderAnimator2(): mAnimTime(0) {}
+    void updateShader(vl::Shader* shader, vl::Camera* , vl::Real cur_time)
     {
       mAnimTime = cur_time;
       float t = (float)(sin( mAnimTime*vl::fPi )+ 1.0f) / 2.0f;
       vl::fvec4 col = vlut::yellow*t + vlut::green*(1-t);
-      gocMaterial()->setFrontEmission(col*0.6f);
-      gocMaterial()->setFrontDiffuse(vlut::white*0.4f);
-      gocMaterial()->setFrontAmbient(vlut::black);
-      gocMaterial()->setFrontSpecular(vlut::black);
+      shader->gocMaterial()->setFrontEmission(col*0.6f);
+      shader->gocMaterial()->setFrontDiffuse(vlut::white*0.4f);
+      shader->gocMaterial()->setFrontAmbient(vlut::black);
+      shader->gocMaterial()->setFrontSpecular(vlut::black);
     }
     vl::Real mAnimTime;
   };
 
-  class BlinkShader: public vl::Shader
+  class BlinkShaderAnimator: public vl::ShaderAnimator
   {
   public:
-    void update(vl::Camera*, vl::Real /*cur_time*/)
+    void updateShader(vl::Shader* shader, vl::Camera*, vl::Real /*cur_time*/)
     {
       int c = (int)( vl::Time::currentTime() * 15.0 ) % 2;
       vl::fvec4 color;
       if (c == 0) color = vlut::gold;
       if (c == 1) color = vlut::red;
       // if (c == 2) color = vlut::green;
-      gocMaterial()->setFlatColor( color );
+      shader->gocMaterial()->setFlatColor( color );
     }
   };
 
-  class TexRotShader: public vl::Shader
+  class TexRotShaderAnimator: public vl::ShaderAnimator
   {
   public:
-    void update(vl::Camera*, vl::Real /*cur_time*/)
+    void updateShader(vl::Shader* shader, vl::Camera*, vl::Real /*cur_time*/)
     {
       vl::mat4 mat;
       mat.translate(-0.5,-0.5,0.0f);
       mat.rotate( vl::Time::currentTime() * 90, 0, 0, 1 );
       mat.translate(+0.5,+0.5,0.0f);
-      gocTextureMatrix(1)->setMatrix( mat );
+      shader->gocTextureMatrix(1)->setMatrix( mat );
     }
   };
 
-  class WaveActor: public vl::Actor
+  class WaveActorAnimator: public vl::ActorAnimator
   {
   public:
-    WaveActor()
+    WaveActorAnimator(vl::Actor* actor)
     {
       mAnimTime   = 0;
       mLastUpdate = 0;
@@ -110,11 +110,11 @@ public:
       vl::ref<vl::Geometry> geom;
 
       // LOD 0
-      geom= vlut::makeGrid(vl::vec3(0,0,0),20,20,50,50 );
+      geom = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 50, 50 );
       geom->computeNormals();
       geom->setColorArray(vlut::aqua);
 
-      lod(0) = geom.get();
+      actor->lod(0) = geom.get();
 
       geom->setVBOEnabled(true);
       if (GLEW_ARB_vertex_buffer_object)
@@ -124,10 +124,10 @@ public:
       }
 
       // LOD 1
-      geom= vlut::makeGrid(vl::vec3(0,0,0),20,20,15,15 );
+      geom = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 15, 15 );
       geom->computeNormals();
       geom->setColorArray(vlut::aqua);
-      lod(1) = geom.get();
+      actor->lod(1) = geom.get();
 
       geom->setVBOEnabled(true);
       if (GLEW_ARB_vertex_buffer_object)
@@ -137,10 +137,10 @@ public:
       }
 
       // LOD 2
-      geom= vlut::makeGrid(vl::vec3(0,0,0),20,20,8,8 );
+      geom = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 8, 8 );
       geom->computeNormals();
       geom->setColorArray(vlut::aqua);
-      lod(2) = geom.get();
+      actor->lod(2) = geom.get();
 
       if (GLEW_ARB_vertex_buffer_object)
       {
@@ -149,7 +149,7 @@ public:
       }
     }
 
-    void update(int lodi, vl::Camera* , vl::Real cur_time)
+    void updateActor(vl::Actor* actor, int lodi, vl::Camera* , vl::Real cur_time)
     {
       // the beauty of this function is that in a few lines of code
       // we update 3 different LOD levels over 3 different fps rates
@@ -165,10 +165,10 @@ public:
         mLastUpdatedLod = lodi;
 
         // note: this returns the current LOD geometry
-        vl::ref<vl::Geometry> geom = dynamic_cast<vl::Geometry*>( lod(lodi).get() );
+        vl::ref<vl::Geometry> geom = dynamic_cast<vl::Geometry*>( actor->lod(lodi).get() );
         vl::ref<vl::ArrayFVec3> vecarr3 = dynamic_cast<vl::ArrayFVec3*>( geom->vertexArray() );
         vl::fvec3* vec = (vl::fvec3*)vecarr3->ptr();
-        vl::vec3 center = lod(lodi)->boundingBox().center();
+        vl::vec3 center = actor->lod(lodi)->boundingBox().center();
 
         for(size_t i=0; i<vecarr3->size(); ++i)
         {
@@ -406,7 +406,8 @@ public:
       lod->addDistanceRange(150);
       fx1->setLODEvaluator(lod.get());
 
-      vl::ref<WaveActor> wave_act = new WaveActor;
+      vl::ref<vl::Actor> wave_act = new vl::Actor;
+      wave_act->setActorAnimator( new WaveActorAnimator(wave_act.get()) );
       wave_act->setLODEvaluator(lod.get());
       wave_act->setEffect(fx2.get());
       sceneManager()->tree()->addActor(wave_act.get());
@@ -433,7 +434,8 @@ public:
       vl::ref<vl::Effect> effect = new vl::Effect;
 
       vl::ref<vl::Texture> texture;
-      vl::ref<TexRotShader> tex_rot_shader1 = new TexRotShader;
+      vl::ref<vl::Shader> tex_rot_shader1 = new vl::Shader;
+      tex_rot_shader1->setShaderAnimator( new TexRotShaderAnimator );
       texture = new vl::Texture;
       texture->setupTexture2D("/images/holebox.tif");
       tex_rot_shader1->gocTextureUnit(0)->setTexture( texture.get() );
@@ -443,12 +445,14 @@ public:
       tex_rot_shader1->gocTextureUnit(1)->texture()->getTexParameter()->setWrapS(vl::TPW_REPEAT);
       tex_rot_shader1->gocTextureUnit(1)->texture()->getTexParameter()->setWrapT(vl::TPW_REPEAT);
 
-      vl::ref<TexRotShader> tex_rot_shader2 = new TexRotShader;
+      vl::ref<vl::Shader> tex_rot_shader2 = new vl::Shader;
+      tex_rot_shader2->setShaderAnimator(new TexRotShaderAnimator);
       texture = new vl::Texture;
       texture->setupTexture2D("/images/holebox.tif");
       tex_rot_shader2->gocTextureUnit(0)->setTexture( texture.get() );
 
-      vl::ref<BlinkShader> blink = new BlinkShader;
+      vl::ref<vl::Shader> blink = new vl::Shader;
+      blink->setShaderAnimator(new BlinkShaderAnimator);
       blink->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
       blink->gocFrontFace()->set(vl::FF_CW);
       blink->gocLineWidth()->set(3.0f);
