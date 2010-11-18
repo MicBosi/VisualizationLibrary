@@ -56,7 +56,7 @@ namespace vl
     }
     const RenderToken* mNextPass;
     
-    Actor* mActor; // Actor is non-const as it can be updated by the ActorRenderingCallback
+    Actor* mActor; // Actor is non-const as it can be updated by the ActorRenderEventCallback
     Renderable* mRenderable; // Renderable is non-const because Actor is non-const
     const Shader* mShader;
     int mEffectRenderRank;
