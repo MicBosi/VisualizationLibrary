@@ -80,7 +80,7 @@ public:
     vl::ref<vl::Actor> actor_no_sort = sceneManager()->tree()->addActor( geom_no_sort.get(), effect.get(), mTransform_Left.get() );
     vl::ref<vl::Actor> actor_sort    = sceneManager()->tree()->addActor( geom_sorted.get(),  effect.get(), mTransform_Right.get() );
     /* install the vl::DepthSortCallback that will depth-sort each primitive of the Actor upon rendering */
-    actor_sort->renderingCallbacks()->push_back( new vl::DepthSortCallback );
+    actor_sort->renderEventCallbacks()->push_back( new vl::DepthSortCallback );
 
     /* compute the appropriate offset to be used in updateTransforms() */
     geom_no_sort->computeBounds();

@@ -197,7 +197,7 @@ set(VL_INC
   vl/Rendering.hpp
   vl/RenderingAbstract.hpp
   vl/RenderingTree.hpp
-  vl/RenderingCallback.hpp
+  vl/RenderEventCallback.hpp
   vl/RenderStateSet.hpp
   vl/EnableSet.hpp
   vl/UniformSet.hpp
