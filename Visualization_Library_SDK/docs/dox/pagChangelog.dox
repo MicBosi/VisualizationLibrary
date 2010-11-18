@@ -3,13 +3,15 @@
    \page pagChangelog Changelog
 
 	<div class="featuretitle">Visualization Library 2010.11.1123</div>
+
 	- Fixed texture creation functions.
 	- Improved pre-post condition satisfaction during rendering.
-	- API CHANGE
+	- API CHANGES
 		- Updated texture format naming to reflect latest OpenGL headers.
 		- Matrix4/3/2 new methods: transpose(), getTransposed(), getTransposed(M), invert(), getInverse(), getInverse(M), normalize(len), diff(), fill(); scalar_type typedef; 
 	
 	<div class="featuretitle">Visualization Library 2010.11.1121</div>
+
 	- Fixed compilation under Linux 64 bits.
 	- Fixed compilation of Qt4, GLUT, SDL and WX gui bindings.
 	
