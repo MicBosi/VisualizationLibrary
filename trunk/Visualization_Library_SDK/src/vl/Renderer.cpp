@@ -93,24 +93,26 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   // increment the render tick
   ++mRenderTick;
 
-  std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
+  // --------------- render target activation --------------- 
+  // (note: an OpenGL context can have multiple rendering targets!)
+
+  renderTarget()->activate();
+
+  // --------------- viewport setup --------------- 
+
+  camera->viewport()->setClearFlags(clearFlags());
+  camera->viewport()->activate();
+
+  // --------------- rendering --------------- 
 
   // skip if renderer is disabled
 
   if (enableMask() == 0)
     return render_queue;
 
+  std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
+
   OpenGLContext* opengl_context = renderTarget()->openglContext();
-
-  // --------------- render target activation --------------- 
-  // (note: an OpenGL context can have multiple rendering targets!)
-
-  renderTarget()->activate();
-
-  // --------------- viewport activation --------------- 
-
-  camera->viewport()->setClearFlags(clearFlags());
-  camera->viewport()->activate();
 
   // --------------- default scissor ---------------
 
