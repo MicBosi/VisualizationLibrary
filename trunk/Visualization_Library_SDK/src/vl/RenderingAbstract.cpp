@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vl/RenderingAbstract.hpp>
-#include <vl/RenderingCallback.hpp>
+#include <vl/RenderEventCallback.hpp>
 
 using namespace vl;
 
@@ -39,7 +39,7 @@ RenderingAbstract::RenderingAbstract()
 {
   mUpdateTime = 0.0f;
   mEnableMask = 0xFFFFFFFF;
-  mRenderingCallbacks = new Collection<RenderingCallback>;
+  mRenderEventCallbacks = new Collection<RenderEventCallback>;
 }
 //------------------------------------------------------------------------------
 RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
@@ -48,20 +48,32 @@ RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
 
   mUpdateTime          = other.mUpdateTime;
   mEnableMask          = other.mEnableMask;
-  *mRenderingCallbacks = *other.mRenderingCallbacks;
+  *mRenderEventCallbacks = *other.mRenderEventCallbacks;
 
   return *this;
 }
 //------------------------------------------------------------------------------
-void RenderingAbstract::dispatchRenderingCallbacks(ERenderingCallback reason)
+void RenderingAbstract::dispatchOnRenderingStarted()
 {
-  // iterate on a copy so that we can perform callback removal if requested
-  const Collection<RenderingCallback>& cb = *mRenderingCallbacks;
+  const Collection<RenderEventCallback>& cb = *mRenderEventCallbacks;
   for(int i=0; i<cb.size(); ++i)
   {
-    if ( cb[i]->renderingCallback(this, reason) && cb[i]->removeAfterCall() )
+    if ( cb[i]->isEnabled() && cb[i]->onRenderingStarted(this) && cb[i]->removeAfterCall() )
     {
-      renderingCallbacks()->eraseAt( i );
+      renderEventCallbacks()->eraseAt( i );
+      --i;
+    }
+  }
+}
+//------------------------------------------------------------------------------
+void RenderingAbstract::dispatchOnRenderingFinished()
+{
+  const Collection<RenderEventCallback>& cb = *mRenderEventCallbacks;
+  for(int i=0; i<cb.size(); ++i)
+  {
+    if ( cb[i]->isEnabled() && cb[i]->onRenderingFinished(this) && cb[i]->removeAfterCall() )
+    {
+      renderEventCallbacks()->eraseAt( i );
       --i;
     }
   }
