@@ -158,11 +158,16 @@ namespace vl
    * Wraps a GLSL program to which you can bind vertex, fragment and geometry shaders.
    *
    * \par Uniforms
-   * You have 4 ways to set the value of a uniform:
+   * You have 5 ways to set the value of a uniform:
    * -# call useProgram() to activate the GLSLProgram and directly call glUniform* (see also getUniformLocation()).
-   * -# add a Uniform to the GLSLProgram UniformSet, see vl::GLSLProgram::uniformSet()
-   * -# add a Uniform to the Actor's UniformSet, see vl::Actor::uniformSet()
-   * -# add a Uniform to the Actor's Shader UniformSet, see vl::Shader::uniformSet()
+   * -# add a Uniform to the GLSLProgram UniformSet, see vl::GLSLProgram::uniformSet().
+   * -# add a Uniform to the Actor's UniformSet, see vl::Actor::uniformSet().
+   * -# add a Uniform to the Actor's Shader UniformSet, see vl::Shader::uniformSet().
+   * -# directly update the uniform value from ActorRenderEventCallback::onActorRenderStarted() using the standard glUniform*() OpenGL functions.
+   *    In this case you have to make sure that <i>all</i> the Actors using a given GLSLProgram/Shader write such uniform.
+   *
+   * \remarks
+   * A Uniform must be setup using <i>one and only one</i> of the 5 previously mentioned methods.
    *
    * \par Attribute Location Bindings
    * In order to explicity specify which attribute index should be bound to which attribute name you can do one of the following.
@@ -174,17 +179,13 @@ namespace vl
    * Note that for option #1 and #2 you need to relink the GLSLProgram in order for the changes to take effect (linkProgram(force_relink=true)). 
    * Option #2 and #3 automatically schedule a re-link of the GLSL program. See also http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml
    *
-   * \remarks
-   * The Uniforms defined in the Actor, in the Shader and in the GLSLProgram must not
-   * overlap, that is, an Uniform name must belong to one and only one of them.
-   *
    * \sa
    * - GLSLVertexShader
    * - GLSLFragmentShader
    * - GLSLGeometryShader
    * - Shader
    * - Effect
-   * - Actor::renderingCallbacks()
+   * - Actor::renderEventCallbacks()
   */
   class GLSLProgram: public RenderState
   {
