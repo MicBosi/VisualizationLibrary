@@ -251,7 +251,7 @@ void SlicedVolume::update(int /*lod*/, Camera* camera, Real /*cur_t*/)
   std::vector<fvec3> polygons;
   std::vector<fvec3> polygons_t;
 
-  polygons.  reserve(sliceCount()*5);
+  polygons.reserve(sliceCount()*5);
   polygons_t.reserve(sliceCount()*5);
   float zrange = cube_verts[max_idx].z() - cube_verts[min_idx].z();
   float zstep  = zrange/(sliceCount()+1);

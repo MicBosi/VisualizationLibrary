@@ -83,7 +83,7 @@ namespace vl
       mAutomaticDelete = true;
       // user data
       #if VL_ACTOR_USER_DATA
-      mUserData = NULL;
+        mUserData = NULL;
       #endif
       // debug living objects
       #ifndef NDEBUG
@@ -105,7 +105,7 @@ namespace vl
       mAutomaticDelete = true;
       // user data
       #if VL_ACTOR_USER_DATA
-      mUserData = other.mUserData;
+        mUserData = other.mUserData;
       #endif
       // debug living object
       #if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
@@ -120,7 +120,7 @@ namespace vl
       mObjectName = other.mObjectName; 
       // user data
       #if VL_ACTOR_USER_DATA
-      mUserData = other.mUserData;
+        mUserData = other.mUserData;
       #endif
       return *this;
     }

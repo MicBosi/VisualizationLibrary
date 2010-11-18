@@ -61,7 +61,7 @@ namespace vl
   \par Usage
   - Extract the edges from one or more Geometry objects using one of the extractEdges() methods.
   - Assign the Geometry returned by generateEdgeGeometry() to a new Actor. This geometry will contain the edges previously extracted ready to be rendered.
-  - Assign a new EdgeUpdateCallback to the previously created Actor, using the Actor::renderingCallbacks() method.
+  - Assign a new EdgeUpdateCallback to the previously created Actor, using the Actor::renderEventCallbacks() method.
   - Initialize the previously created EdgeUpdateCallback edges with the edges extracted by the EdgeExtractor, 
     that is, assign EdgeExtractor::edges() to EdgeUpdateCallback::edges().
  
