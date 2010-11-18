@@ -42,7 +42,7 @@
 
 	\par Using the MFC Utility Bindings
 	
-	Complete source: \p src/examples/MFC_example.cpp
+	Complete source: \p src/examples/MFC_example/MFC_example.cpp
 	
 	\dontinclude MFC_example.cpp
 	\skip include

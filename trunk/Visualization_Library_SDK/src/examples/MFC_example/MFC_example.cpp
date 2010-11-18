@@ -125,3 +125,4 @@ BOOL MFC_Example::InitInstance()
 
   return TRUE;
 }
+// Have fun!
