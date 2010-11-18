@@ -143,13 +143,13 @@
 
 	\par Callback objects
 
-	- vl::RenderingCallback
+	- vl::RenderEventCallback
 		- vl::BlitFramebuffer
 		- vl::ReadPixels
 		- vl::CopyTexSubImage1D
 		- vl::CopyTexSubImage2D
 		- vl::CopyTexSubImage3D
-	- vl::ActorRenderingCallback
+	- vl::ActorRenderEventCallback
 		- vl::DepthSortCallback
 		- vl::MorphingCallback
 		- vl::EdgeUpdateCallback
@@ -227,7 +227,7 @@
 	
 	- vl::Time
 	- vl::MorphingActor
-	- vl::ActorRenderingCallback
+	- vl::ActorRenderEventCallback
 	- vl::Interpolator
 	- vl::LinearInterpolator
 	- vl::CatmullRomInterpolator 

@@ -51,7 +51,7 @@ public:
     vl::ref<vl::Image> img = vl::loadImage("/volume/VLTest.dat")->convertFormat(vl::IF_LUMINANCE);
 
     vl::ref<vl::Actor> splat_actor = new vl::Actor;
-    splat_actor->renderingCallbacks()->push_back( new vl::DepthSortCallback );
+    splat_actor->renderEventCallbacks()->push_back( new vl::DepthSortCallback );
     init_LUMINANCE_UBYTE( splat_actor.get(), img.get(), vl::fvec3(10,10,10), 80, 255, TransferRGBA_255() );
 
     vl::ref<vl::Effect> fx = new vl::Effect;
