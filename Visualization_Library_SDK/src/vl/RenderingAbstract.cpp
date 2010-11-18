@@ -52,7 +52,6 @@ RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
 
   return *this;
 }
-
 //------------------------------------------------------------------------------
 void RenderingAbstract::dispatchRenderingCallbacks(ERenderingCallback reason)
 {
