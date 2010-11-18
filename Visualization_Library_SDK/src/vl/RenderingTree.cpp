@@ -51,7 +51,7 @@ void RenderingTree::render()
   if ( enableMask() == 0 )
     return;
 
-  dispatchRenderingCallbacks(RC_PreRendering);
+  dispatchOnRenderingStarted();
   for(int i=0; i<subRenderings()->size(); ++i)
   {
     // dispatch update time
@@ -59,6 +59,6 @@ void RenderingTree::render()
     // render child
     subRenderings()->at(i)->render();
   }
-  dispatchRenderingCallbacks(RC_PostRendering);
+  dispatchOnRenderingFinished();
 }
 //------------------------------------------------------------------------------
