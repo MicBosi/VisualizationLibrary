@@ -47,7 +47,7 @@ OcclusionCullRenderer::OcclusionCullRenderer()
   mCulledRenderQueue = new RenderQueue;
   mOcclusionThreshold      = 0;
 
-  // mic fixme: support GL 3.x CORE
+  // todo: support GL 3.x CORE
   mOcclusionShader = new Shader;
   mOcclusionShader->gocDepthMask()->set(false);
   mOcclusionShader->gocDepthFunc()->set(vl::FU_LEQUAL);
@@ -64,8 +64,42 @@ OcclusionCullRenderer::OcclusionCullRenderer()
 //-----------------------------------------------------------------------------
 const RenderQueue* OcclusionCullRenderer::render(const RenderQueue* in_render_queue, Camera* camera)
 {
-  // increment the render tick
-  ++mRenderTick;
+  // skip if renderer is disabled
+  if (enableMask() == 0)
+    return in_render_queue;
+
+  // enter/exit behavior contract
+
+  class InOutContract 
+  {
+    RendererAbstract* mRenderer;
+
+  public:
+    InOutContract(RendererAbstract* renderer): mRenderer(renderer)
+    {
+      // increment the render tick.
+      mRenderer->incrementRenderTick();
+
+      // dispatch the renderer-started event.
+      mRenderer->dispatchOnRendererStarted();
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+    }
+
+    ~InOutContract()
+    {
+      // dispatch the renderer-finished event
+      mRenderer->dispatchOnRendererFinished();
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+    }
+  };
+
+  InOutContract contract(this);
+
+  // --------------- rendering --------------- 
 
   if (!mWrappedRenderer)
   {
@@ -74,17 +108,18 @@ const RenderQueue* OcclusionCullRenderer::render(const RenderQueue* in_render_qu
     return in_render_queue;
   }
 
-  // mic fixme: we should not even have these
-  // not needed actually
-  // setEnableMask( mWrappedRenderer->enableMask() );
-  // setRenderTarget( mWrappedRenderer->renderTarget() );
-
+  // (1)
   // verify visibility from previous occlusion queries.
   render_pass1( in_render_queue );
+
+  // (2)
   // render only non occluded objects.
   mWrappedRenderer->render( mCulledRenderQueue.get(), camera );
+  
+  // (3)
   // perform occlusion query on all objects.
   render_pass2( in_render_queue, camera );
+  
   // return only the visible, non occluded, objects.
   return mCulledRenderQueue.get();
 }
@@ -92,10 +127,6 @@ const RenderQueue* OcclusionCullRenderer::render(const RenderQueue* in_render_qu
 void OcclusionCullRenderer::setWrappedRenderer(Renderer* renderer) 
 { 
   mWrappedRenderer = renderer; 
-  // mic fixme: we should not even have these
-  // not needed actually
-  // setEnableMask( mWrappedRenderer->enableMask() );
-  // setRenderTarget( mWrappedRenderer->renderTarget() );
 }
 //-----------------------------------------------------------------------------
 const RenderTarget* OcclusionCullRenderer::renderTarget() const
@@ -172,18 +203,18 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
 
   // --------------- render target activation --------------- 
 
-  // keep the currently active render target
+  /* keep the currently active render target */
   // renderTarget()->activate();
 
   // --------------- viewport activation --------------- 
 
-  // don't touch the current viewport
+  /* don't touch the current viewport */
   //camera->viewport()->setClearFlags(vl::CF_DO_NOT_CLEAR);
   //camera->viewport()->activate();
 
   // --------------- default scissor --------------- 
 
-  // scissor the viewport by default: needed for points and lines sice they are not clipped against the viewport
+  // scissor the viewport by default: needed for points and lines since they are not clipped against the viewport.
   #if 1
     glEnable(GL_SCISSOR_TEST);
     glScissor(camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height());
