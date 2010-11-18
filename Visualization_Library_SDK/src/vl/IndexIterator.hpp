@@ -172,7 +172,7 @@ namespace vl
       else
       {
         mIndex = -1;
-        mCurPos = mArray->size();
+        mCurPos = (int)mArray->size();
         return false; 
       }
     }
