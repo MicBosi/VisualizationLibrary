@@ -37,6 +37,7 @@
 #include <vl/Shader.hpp>
 #include <vl/Effect.hpp>
 #include <vl/OpenGLContext.hpp>
+#include <vl/RenderEventCallback.hpp>
 #include <vector>
 #include <map>
 #include <set>
@@ -86,11 +87,78 @@ namespace vl
   class RendererAbstract: public Object
   {
   public:
+    RendererAbstract()
+    {
+      mRenderEventCallbacks = new Collection<RenderEventCallback>;
+      mClearFlags = CF_CLEAR_COLOR_DEPTH;
+      mEnableMask = 0xFFFFFFFF;
+      mRenderTick = 0;
+    }
+
+    RendererAbstract& operator=(const RendererAbstract& other)
+    {
+      *mRenderEventCallbacks = *other.mRenderEventCallbacks;
+      mClearFlags = other.mClearFlags;
+      mEnableMask = other.mEnableMask;
+      /* mRenderTick = other.mRenderTick; */ // render-tick remains local
+    }
+
     /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
       * Renderer's implementation of this function always returns \p in_render_queue. */
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera) = 0;
     virtual const RenderTarget* renderTarget() const = 0;
     virtual RenderTarget* renderTarget() = 0;
+
+    void dispatchOnRendererStarted()
+    {
+      const Collection<RenderEventCallback>& cb = *mRenderEventCallbacks;
+      for(int i=0; i<cb.size(); ++i)
+      {
+        if ( cb[i]->isEnabled() && cb[i]->onRendererStarted(this) && cb[i]->removeAfterCall() )
+        {
+          renderEventCallbacks()->eraseAt( i );
+          --i;
+        }
+      }
+    }
+    //------------------------------------------------------------------------------
+    void dispatchOnRendererFinished()
+    {
+      const Collection<RenderEventCallback>& cb = *mRenderEventCallbacks;
+      for(int i=0; i<cb.size(); ++i)
+      {
+        if ( cb[i]->isEnabled() && cb[i]->onRendererFinished(this) && cb[i]->removeAfterCall() )
+        {
+          renderEventCallbacks()->eraseAt( i );
+          --i;
+        }
+      }
+    }
+    //! Returns the list of RenderEventCallback objects bound to a Rendering
+    Collection<RenderEventCallback>* renderEventCallbacks() { return mRenderEventCallbacks.get(); }
+
+    //! Returns the list of RenderEventCallback objects bound to a Rendering
+    const Collection<RenderEventCallback>* renderEventCallbacks() const { return mRenderEventCallbacks.get(); }
+
+    /** The current render tick number, equivalent to the number or calls made to the render() method. */
+    unsigned long renderTick() const { return mRenderTick; }
+
+    /** Increments the rendering tick count. */
+    void incrementRenderTick() { ++mRenderTick; }
+
+    void setClearFlags(EClearFlags clear_flags) { mClearFlags = clear_flags; }
+
+    EClearFlags clearFlags() const { return mClearFlags; }
+
+    void setEnableMask(unsigned int mask) { mEnableMask = mask; }
+
+    unsigned int enableMask() const { return mEnableMask; }
+
+  protected:
+    ref< Collection<RenderEventCallback> > mRenderEventCallbacks;
+    unsigned long mRenderTick;
+    unsigned int mEnableMask;
+    EClearFlags mClearFlags;
   };
 
   /** The Renderer class executes the actual rendering on the given RenderQueue.
@@ -120,14 +188,6 @@ namespace vl
     /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
     std::map<unsigned int, ref<Shader> >& shaderOverrideMask() { return mShaderOverrideMask; }
 
-    void setClearFlags(EClearFlags clear_flags) { mClearFlags = clear_flags; }
-
-    EClearFlags clearFlags() const { return mClearFlags; }
-
-    void setEnableMask(unsigned int mask) { mEnableMask = mask; }
-
-    unsigned int enableMask() const { return mEnableMask; }
-
     bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
 
     /** The RenderTarget on which the rendering is performed. */
@@ -139,13 +199,7 @@ namespace vl
     /** The RenderTarget on which the rendering is performed. */
     RenderTarget* renderTarget() { return mRenderTarget.get(); }
 
-    /** The current render tick number, equivalent to the number or calls made to the render() method. */
-    unsigned long renderTick() const { return mRenderTick; }
-
   protected:
-    EClearFlags mClearFlags;
-    unsigned int mEnableMask;
-
     ref<RenderTarget> mRenderTarget;
 
     // used to reset the OpenGL states & enables at the end of the rendering.
@@ -155,8 +209,6 @@ namespace vl
     std::map<unsigned int, ref<Shader> > mShaderOverrideMask;
 
     ref<ProjViewTranfCallbackStandard> mProjViewTranfCallback;
-
-    unsigned long mRenderTick;
   };
   //------------------------------------------------------------------------------
 }
