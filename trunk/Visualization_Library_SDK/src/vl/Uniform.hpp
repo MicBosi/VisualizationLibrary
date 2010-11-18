@@ -47,7 +47,7 @@ namespace vl
   // Uniform
   //------------------------------------------------------------------------------
   /**
-   * Wraps an OpenGL Shading Language uniform to be associated to a GLSLProgram
+  * Wraps an OpenGL Shading Language uniform to be associated to a GLSLProgram (see vl::GLSLProgram documentation).
    *
    * \sa
    * - GLSLProgram
