@@ -195,10 +195,9 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       // shader override
 
       for( std::map< unsigned int, ref<Shader> >::const_iterator eom_it = mShaderOverrideMask.begin(); 
-        eom_it != mShaderOverrideMask.end();
-        ++eom_it )
+           eom_it != mShaderOverrideMask.end(); ++eom_it )
       {
-        if (eom_it->first & actor->enableMask())
+        if ( eom_it->first & actor->enableMask() )
           shader = eom_it->second.get();
       }
 
@@ -223,10 +222,18 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       #ifndef NDEBUG
         if (glGetError() != GL_NO_ERROR)
         {
-          Log::error("An unsupported OpenGL glEnable/glDisable mode has been enabled!\n");
+          Log::error("An unsupported OpenGL glEnable/glDisable capability has been enabled!\n");
           VL_TRAP()
         }
       #endif
+
+      // --------------- Actor pre-render callback ---------------
+      // here the user has still the possibility to modify the Actor's uniforms
+      /* mic fixme: document this */
+
+      actor->dispatchOnActorRenderStarted( camera, tok->mRenderable, shader, ipass );
+
+      VL_CHECK_OGL()
 
       // --------------- GLSLProgram setup ---------------
 
@@ -330,12 +337,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
         VL_CHECK( shader->getRenderStateSet()->glslProgram() && shader->getRenderStateSet()->glslProgram()->handle() )
         cur_glsl_program->applyUniformSet( cur_actor_uniform_set );
       }
-
-      VL_CHECK_OGL()
-
-      // --------------- Actor pre-render callback ---------------
-
-      actor->dispatchOnActorRenderStarted( camera, tok->mRenderable, shader, ipass );
 
       VL_CHECK_OGL()
 
