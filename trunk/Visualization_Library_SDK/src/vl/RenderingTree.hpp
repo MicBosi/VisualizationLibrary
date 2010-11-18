@@ -50,10 +50,8 @@ namespace vl
     RenderingTree& operator=(const RenderingTree& other);
 
     //! Recursively calls the render() method of its children.
-    //! @note
-    //! - RC_PreRendering RenderingCallback is issued before the rendering of any children.
-    //! - RC_PostRendering RenderingCallback is issued after the rendering of all the children.
-    //! If enableMask() == 0 then no rendering and no RenderingCallback is generated.
+    //! \note
+    //! If enableMask() == 0 then no rendering is performed and no RenderEventCallback is called.
     virtual void render();
 
     //! The sub-Rendering (or child-Rendering) objects of a Rendering. A sub-Rendering is rendered before it's parent and after its children.
