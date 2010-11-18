@@ -32,16 +32,16 @@
 #ifndef BlitFramebuffer_INCLUDE_ONCE
 #define BlitFramebuffer_INCLUDE_ONCE
 
-#include <vl/RenderingCallback.hpp>
+#include <vl/RenderEventCallback.hpp>
 #include <vl/FramebufferObject.hpp>
 
 namespace vl
 {
   /**
-   * A RenderingCallback that can be used to copy pixels from a framebuffer to another as
+   * A RenderEventCallback that can be used to copy pixels from a framebuffer to another as
    * described in GL_EXT_framebuffer_blit.
   */
-  class BlitFramebuffer: public RenderingCallback
+  class BlitFramebuffer: public RenderEventCallback
   {
   public:
     BlitFramebuffer()
@@ -84,15 +84,10 @@ namespace vl
       }
     }
 
-    virtual bool renderingCallback(const RenderingAbstract*, ERenderingCallback reason)
+    virtual bool onRenderingFinished(const RenderingAbstract*)
     {
-      if (reason == RC_PostRendering)
-      {
-        copyPixels();
-        return true;
-      }
-      else
-        return false;
+      copyPixels();
+      return true;
     }
 
     void setReadFramebuffer(FBORenderTarget* fbo) { mReadFramebuffer = fbo; }
