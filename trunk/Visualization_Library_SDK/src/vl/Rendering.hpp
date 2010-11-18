@@ -48,14 +48,14 @@ namespace vl
   /** The Rendering class collects all the information to perform the rendering of a scene.
   The Rendering class performs the following steps:
   -# activates the appropriate OpenGLContext
-  -# dispatches the RC_PreRendering RenderingCallback[s]
+  -# dispatches the onRenderingStarted() event (see RenderEventCallback class).
   -# activates the RenderTarget's framebuffer and draw buffers
   -# recursively computes the world matrix of the installed Transform hierarchy
   -# setups the Camera transform and the Viewport
   -# extracts all the visible Actor[s] from the installed SceneManager[s]
   -# compiles and sorts the RenderQueue using the installed RenderQueueSorter
   -# uses the installed Renderer to perform the rendering of the RenderQueue
-  -# dispatches the RC_PostRendering RenderingCallback[s]
+  -# dispatches the onRenderingFinished() event (see RenderEventCallback class).
 
   To be included in the rendering an Actor must have an enableMask() and Effect::enableMask() such that
   \p "(Actor::enableMask() & Rendering::enableMask()) != 0" and \p "(Actor::effect()->enableMask() & Rendering::enableMask()) != 0".
@@ -78,10 +78,7 @@ namespace vl
     /** Assignment operator. */
     Rendering& operator=(const Rendering& other);
 
-    /** Executes the rendering.
-    - RC_PreRendering RenderingCallback is issued right before the rendering takes place.
-    - RC_PostRendering RenderingCallback is issued right after the rendering is completed.
-    */
+    /** Executes the rendering. */
     virtual void render();
 
     /** The RenderQueueSorter used to perform the sorting of the objects to be rendered, if NULL no sorting is performed. */
