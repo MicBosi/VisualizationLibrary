@@ -37,35 +37,40 @@
 
 namespace vl
 {
-  class RenderingCallback;
+  class RenderEventCallback;
 
-  //! The RenderingAbstract class implements the abstract rendering interface.
+  //! The RenderingAbstract class is the base of all the rendering related sub-classes.
   class RenderingAbstract: public Object
   {
   public:
     //! Constructor.
     RenderingAbstract();
 
-    //! Executes the rendering.
-    //! - RC_PreRendering RenderingCallback is issued right before the rendering takes place.
-    //! - RC_PostRendering RenderingCallback is issued right after the rendering is completed.
+    /** Executes the rendering. */
     virtual void render() = 0;
 
     RenderingAbstract& operator=(const RenderingAbstract& other);
 
-    //! Triggers the execution of the rendering callbacks with the given reason.
-    void dispatchRenderingCallbacks(ERenderingCallback reason);
-    //! Returns the list of RenderingCallback objects bound to a Rendering
-    Collection<RenderingCallback>* renderingCallbacks() { return mRenderingCallbacks.get(); }
-    //! Returns the list of RenderingCallback objects bound to a Rendering
-    const Collection<RenderingCallback>* renderingCallbacks() const { return mRenderingCallbacks.get(); }
+    /** Calls the RenderEventCallback::onRenderingStarted() method of all the active callback objects.*/
+    void dispatchOnRenderingStarted();
+
+    /** Calls the RenderEventCallback::onRenderingFinished() method of all the active callback objects.*/
+    void dispatchOnRenderingFinished();
+
+    //! Returns the list of RenderEventCallback objects bound to a Rendering
+    Collection<RenderEventCallback>* renderEventCallbacks() { return mRenderEventCallbacks.get(); }
+
+    //! Returns the list of RenderEventCallback objects bound to a Rendering
+    const Collection<RenderEventCallback>* renderEventCallbacks() const { return mRenderEventCallbacks.get(); }
 
     //! The enable mask of the Rendering, used to define wheter the rendering is enabled or not, and which objects should be rendered.
     //! @sa
     //! vl::Actor::setEnableMask()
     void setEnableMask(unsigned int mask) { mEnableMask = mask; }
+    
     //! The enable mask of the Rendering, used to define wheter the rendering is enabled or not, and which objects should be rendered.
     unsigned int enableMask() const { return mEnableMask; }
+    
     //! Utility function equivalent to \p "(mask & mEnableMask) != 0".
     bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
 
@@ -75,7 +80,7 @@ namespace vl
     Real updateTime() const { return mUpdateTime; }
 
   protected:
-    ref< Collection<RenderingCallback> > mRenderingCallbacks;
+    ref< Collection<RenderEventCallback> > mRenderEventCallbacks;
     Real mUpdateTime;
     unsigned int mEnableMask;
   };
