@@ -339,7 +339,7 @@ ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness
 
       vert3->at(vect_idx) = (fvec3)(v + o + origin);
 
-      norm3->at(vect_idx) = v.normalize();
+      norm3->at(vect_idx) = (fvec3)v.normalize();
 
       ++vect_idx;
     }
