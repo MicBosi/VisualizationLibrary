@@ -292,7 +292,7 @@ public:
       // use color array
       fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
       // polygon depth sorting
-      act->renderingCallbacks()->push_back( new vl::DepthSortCallback );
+      act->renderEventCallbacks()->push_back( new vl::DepthSortCallback );
       // binds the marching cubes color array
       geom->setColorArray (mMarchingCubes.mColorArray.get());
     }
