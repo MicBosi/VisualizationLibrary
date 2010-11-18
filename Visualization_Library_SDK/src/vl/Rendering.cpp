@@ -89,6 +89,13 @@ void Rendering::render()
   VL_CHECK(camera());
   VL_CHECK(camera()->viewport());
 
+  // if rendering is disabled skip all.
+
+  if ( enableMask() == 0 )
+    return;
+
+  // enter/exit behavior contract
+
   class InOutContract
   {
     Rendering* mRendering;
@@ -107,18 +114,18 @@ void Rendering::render()
       mOpenGLContext->resetContextStates(); 
 
       // pre rendering callback
-      mRendering->dispatchRenderingCallbacks(RC_PreRendering); 
+      mRendering->dispatchOnRenderingStarted(); 
 
-      // check if the user screwed up something
+      // check user-generated errors.
       VL_CHECK_OGL()
     }
 
     ~InOutContract()
     {
       // post rendering callback
-      mRendering->dispatchRenderingCallbacks(RC_PostRendering); 
+      mRendering->dispatchOnRenderingFinished();
 
-      // check if the user screwed up something
+      // check user-generated errors.
       VL_CHECK_OGL()
 
       // render states ]shield[
@@ -127,6 +134,8 @@ void Rendering::render()
   };
 
   InOutContract contract(this);
+
+  // --------------- rendering --------------- 
 
   if (renderers().empty())
   {
@@ -148,9 +157,6 @@ void Rendering::render()
     VL_TRAP();
     return;
   }
-
-  if ( enableMask() == 0 )
-    return;
 
   if (sceneManagers()->empty())
     return;
@@ -199,7 +205,7 @@ void Rendering::render()
         bool visible = !camera()->frustum().cull(sceneManagers()->at(i)->boundingSphere()) && 
                        !camera()->frustum().cull(sceneManagers()->at(i)->boundingBox());
         if ( visible )
-            sceneManagers()->at(i)->extractVisibleActors( *actorQueue(), camera() );
+          sceneManagers()->at(i)->extractVisibleActors( *actorQueue(), camera() );
       }
       else
         sceneManagers()->at(i)->extractActors( *actorQueue() );
@@ -320,11 +326,13 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
       VL_CHECK(updateTime() >= 0)
       if( updateTime() >= 0 )
       {
-        // note that the condition is != and not <
-        if (actor->lastUpdateTime() != updateTime() )
+        // note that the condition is != as opposed to <
+        if (actor->lastUpdateTime() != updateTime() && actor->actorAnimator() )
         {
-          actor->update( geometry_lod, camera(), updateTime() );
-          // note that we set it after having called update
+          // update
+          actor->actorAnimator()->updateActor( actor, geometry_lod, camera(), updateTime() );
+
+          // note that we update this after
           actor->setLastUpdateTime( updateTime() );
         }
       }
@@ -371,12 +379,13 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
         VL_CHECK(updateTime() >= 0)
         if( updateTime() >= 0 )
         {
-          // note that the condition is != and not <
-          if ( shader->lastUpdateTime() != updateTime() )
+          // note that the condition is != as opposed to <
+          if ( shader->lastUpdateTime() != updateTime() && shader->shaderAnimator() )
           {
             // update
-            shader->update( camera(), updateTime() );
-            // note that we update it afterwards
+            shader->shaderAnimator()->updateShader( shader, camera(), updateTime() );
+
+            // note that we update this after
             shader->setLastUpdateTime( updateTime() );
           }
         }
