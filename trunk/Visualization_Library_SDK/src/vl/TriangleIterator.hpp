@@ -84,7 +84,7 @@ namespace vl
       VL_CHECK( end <= (int)mArray->size() )
 
       if (end == -1)
-        end = mArray->size();
+        end = (int)mArray->size();
 
       mCurrentIndex = end; // end
       mA = mB = mC = -1;
