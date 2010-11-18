@@ -35,7 +35,7 @@
 #include <vl/Camera.hpp>
 #include <vl/Say.hpp>
 #include <vl/Log.hpp>
-#include <vl/RenderingCallback.hpp>
+#include <vl/RenderEventCallback.hpp>
 #include <vl/vlTGA.hpp>
 #include <vl/vlTIFF.hpp>
 #include <vl/vlPNG.hpp>
@@ -48,7 +48,7 @@ namespace vl
   // ReadPixels
   //-----------------------------------------------------------------------------
   /**
-   * A RenderingCallback that copyes a rectangular pixel area from a source 
+   * A RenderEventCallback that copyes a rectangular pixel area from a source 
    * buffer to an Image at the end of a rendering.
    *
    * The actual copy is performed using the function Image::readPixels(). 
@@ -58,9 +58,9 @@ namespace vl
    * \sa
    * - Image
    * - Image::readPixels()
-   * - RenderingCallback
+   * - RenderEventCallback
   */
-  class ReadPixels: public RenderingCallback
+  class ReadPixels: public RenderEventCallback
   {
   public:
     virtual const char* className() { return "ReadPixels"; }
@@ -91,22 +91,17 @@ namespace vl
       #endif
     }
 
-    virtual bool renderingCallback(const RenderingAbstract*, ERenderingCallback reason)
+    virtual bool onRenderingFinished(const RenderingAbstract*)
     {
-      if (reason == RC_PostRendering)
+      if (mImage.get() == NULL)
+        mImage = new Image;
+      mImage->readPixels(mX, mY, mWidth, mHeight, mReadBuffer, storeInPixelBufferObject() );
+      if ( savePath().length() )
       {
-        if (mImage.get() == NULL)
-          mImage = new Image;
-        mImage->readPixels(mX, mY, mWidth, mHeight, mReadBuffer, storeInPixelBufferObject() );
-        if ( savePath().length() )
-        {
-          if (!saveImage(mImage.get(), savePath()))
-            Log::error( Say("ReadPixels: unknown format for file: '%s'\n") << savePath() );
-        }
-        return true;
+        if (!saveImage(mImage.get(), savePath()))
+          Log::error( Say("ReadPixels: unknown format for file: '%s'\n") << savePath() );
       }
-      else
-        return false;
+      return true;
     }
 
     void setup(int x, int y, int width, int height, EReadDrawBuffer read_buffer, bool store_in_pbo)
