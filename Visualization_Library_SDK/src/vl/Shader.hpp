@@ -48,6 +48,7 @@ namespace vl
 {
   class Light;
   class ClipPlane;
+  class Shader;
   //------------------------------------------------------------------------------
   // PixelTransfer
   //------------------------------------------------------------------------------
@@ -1294,6 +1295,23 @@ namespace vl
     ref<Texture> mTexture;
   };
   //------------------------------------------------------------------------------
+  // ShaderAnimator
+  //------------------------------------------------------------------------------
+  /** Callback object used to update/animate a Shader during the rendering. 
+  The updateShader() method will be called whenever a visible object uses the 
+  Shader to which the ShaderAnimator is bound.
+  \sa Shader::setUpdater(); */
+  class ShaderAnimator: public Object
+  {
+  public:
+    /** Reimplement this function to update/animate a Shader.
+    \param shader the Shader to be updated.
+    \param camera the camera used for the current rendering.
+    \param cur_time the current animation time.
+    \sa Shader::setShaderAnimator(); */
+    virtual void updateShader(Shader* shader, Camera* camera, Real cur_time) = 0;
+  };
+  //------------------------------------------------------------------------------
   // Shader
   //------------------------------------------------------------------------------
   /**
@@ -1308,8 +1326,7 @@ namespace vl
    * overlap, that is, an Actor must  not define Uniforms present in the 
    * Shader and vice versa.
    *
-   * \sa Effect, Actor
-  */
+   * \sa Effect, Actor */
   class Shader: public Object
   {
   public:
@@ -1360,7 +1377,8 @@ namespace vl
       else
         mUniformSet = NULL;
 
-      mScissor        = other.mScissor;
+      mScissor = other.mScissor;
+      mShaderAnimator = other.mShaderAnimator;
       return *this;
     }
 
@@ -1650,27 +1668,28 @@ namespace vl
      */
     Scissor* scissor() { return mScissor.get(); }
 
-    // shader update
+    /** Installs the ShaderAnimator used to update/animate a Shader (see vl::ShaderAnimator documentation). */
+    void setShaderAnimator(ShaderAnimator* animator) { mShaderAnimator = animator; }
 
-    /**
-     * Virtual function used to update or animate a Shader during the rendering.
-     * \param camera the camera used for the current rendering.
-     * \param cur_t the current animation time.
-     */
-    virtual void update(Camera* /*camera*/, Real /*cur_t*/) {}
+    /** Returns the ShaderAnimator used to update/animate a Shader (see vl::ShaderAnimator documentation). */
+    ShaderAnimator* shaderAnimator() { return mShaderAnimator.get(); }
+
+    /** Returns the ShaderAnimator used to update/animate a Shader (see vl::ShaderAnimator documentation). */
+    const ShaderAnimator* shaderAnimator() const { return mShaderAnimator.get(); }
+
+    /** Last time this Actor was animated/updated using a shaderAnimator(). */
+    Real lastUpdateTime() const { return mLastUpdateTime; }
 
     //! Used internally.
     void setLastUpdateTime(Real time) { mLastUpdateTime = time; }
 
-    //! Used internally.
-    Real lastUpdateTime() const { return mLastUpdateTime; }
-
   protected:
-    Real mLastUpdateTime;
     ref<RenderStateSet> mRenderStateSet;
     ref<EnableSet> mEnableSet;
     ref<UniformSet> mUniformSet;
     ref<Scissor> mScissor;
+    ref<ShaderAnimator> mShaderAnimator;
+    Real mLastUpdateTime;
   };
 }
 
