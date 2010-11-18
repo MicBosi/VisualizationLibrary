@@ -37,21 +37,50 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera)
 {
-  // increment the render tick
-  ++mRenderTick;
+  // skip if renderer is disabled
 
   if (enableMask() == 0)
     return render_queue;
 
-  // --------------- render target activation --------------- 
-  // (note: an OpenGL context can have multiple rendering targets!)
+  // enter/exit behavior contract
 
-  renderTarget()->activate();
+  class InOutContract 
+  {
+    RendererAbstract* mRenderer;
+  public:
+    InOutContract(RendererAbstract* renderer, Camera* camera): mRenderer(renderer)
+    {
+      // increment the render tick.
+      mRenderer->incrementRenderTick();
 
-  // --------------- viewport activation --------------- 
+      // render-target activation.
+      // note: an OpenGL context can have multiple rendering targets!
+      mRenderer->renderTarget()->activate();
 
-  camera->viewport()->setClearFlags(clearFlags());
-  camera->viewport()->activate();
+      // viewport setup.
+      camera->viewport()->setClearFlags( mRenderer->clearFlags() );
+      camera->viewport()->activate();
+
+      // dispatch the renderer-started event.
+      mRenderer->dispatchOnRendererStarted();
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+    }
+
+    ~InOutContract()
+    {
+      // dispatch the renderer-finished event
+      mRenderer->dispatchOnRendererFinished();
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+    }
+  };
+
+  InOutContract contract(this, camera);
+
+  // --------------- rendering --------------- 
 
   // update actor cache
 
@@ -142,7 +171,7 @@ void EdgeRenderer::renderSolids(Camera* camera)
     }
 
     wfinfo->mEdgeCallback->setShowCreases(showCreases());
-    wfinfo->mEdgeCallback->operator()( camera, actor, wfinfo->mGeometry.get(), NULL, 0 );
+    wfinfo->mEdgeCallback->onActorRenderStarted( actor, camera, wfinfo->mGeometry.get(), NULL, 0 );
     actor->lod(0)->render( actor, camera );
   }
 }
