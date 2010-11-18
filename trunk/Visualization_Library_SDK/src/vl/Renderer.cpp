@@ -52,11 +52,6 @@ Renderer::Renderer()
     mObjectName = className();
   #endif
 
-  mClearFlags = CF_CLEAR_COLOR_DEPTH;
-  mEnableMask = 0xFFFFFFFF;
-
-  mRenderTick = 0;
-
   mProjViewTranfCallback = new ProjViewTranfCallbackStandard;
 
   mDummyEnables  = new EnableSet;
@@ -90,25 +85,52 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 {
   VL_CHECK_OGL()
 
-  // increment the render tick
-  ++mRenderTick;
-
-  // --------------- render target activation --------------- 
-  // (note: an OpenGL context can have multiple rendering targets!)
-
-  renderTarget()->activate();
-
-  // --------------- viewport setup --------------- 
-
-  camera->viewport()->setClearFlags(clearFlags());
-  camera->viewport()->activate();
-
-  // --------------- rendering --------------- 
-
   // skip if renderer is disabled
 
   if (enableMask() == 0)
     return render_queue;
+
+  // enter/exit behavior contract
+
+  class InOutContract 
+  {
+    Renderer* mRenderer;
+  public:
+    InOutContract(Renderer* renderer, Camera* camera): mRenderer(renderer)
+    {
+      // increment the render tick.
+      mRenderer->mRenderTick++;
+
+      // render-target activation.
+      // note: an OpenGL context can have multiple rendering targets!
+      mRenderer->renderTarget()->activate();
+
+      // viewport setup.
+      camera->viewport()->setClearFlags( mRenderer->clearFlags() );
+      camera->viewport()->activate();
+
+      // dispatch the renderer-started event.
+      mRenderer->dispatchOnRendererStarted();
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+    }
+
+    ~InOutContract()
+    {
+      // dispatch the renderer-finished event
+      mRenderer->dispatchOnRendererFinished();
+
+      // check user-generated errors.
+      VL_CHECK_OGL()
+
+      // note: we don't reset the render target here
+    }
+  };
+
+  InOutContract contract(this, camera);
+
+  // --------------- rendering --------------- 
 
   std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
 
@@ -311,14 +333,15 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       VL_CHECK_OGL()
 
-      // --- Actor's prerender callback --- done after GLSLProgam has been bound and setup
-      actor->executeRenderingCallbacks( camera, tok->mRenderable, shader, ipass );
+      // --------------- Actor pre-render callback ---------------
+
+      actor->dispatchOnActorRenderStarted( camera, tok->mRenderable, shader, ipass );
 
       VL_CHECK_OGL()
 
       // --------------- Actor rendering ---------------
 
-      // contract (fixme: to be changed for vertex-array and elem-array lazy bind):
+      // contract (mic fixme: to be changed for vertex-array and elem-array lazy bind):
       // 1 - all vertex arrays and VBOs are disabled before calling render()
       // 2 - all vertex arrays and VBOs are disabled after  calling render()
 
