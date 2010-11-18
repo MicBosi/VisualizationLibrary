@@ -29,51 +29,71 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef RenderingCallback_INCLUDE_ONCE
-#define RenderingCallback_INCLUDE_ONCE
+#ifndef RenderEventCallback_INCLUDE_ONCE
+#define RenderEventCallback_INCLUDE_ONCE
 
 #include <vl/Object.hpp>
 #include <vl/vlnamespace.hpp>
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
-  // RenderingCallback
-  //-----------------------------------------------------------------------------
   class RenderingAbstract;
+  class RendererAbstract;
+  //-----------------------------------------------------------------------------
+  // RenderEventCallback
+  //-----------------------------------------------------------------------------
   /**
-   * An abstract class used to perform operations at the end or at the beginning of a rendering.
-   * Install a callback to react to the following two events: vl::RC_PreRendering and vl::RC_PostRendering.
-   * The callbacks are executed in the same order in which they appear in the vl::Rendering::renderingCallbacks() collection.
-   * For more information see:
-   * - vl::Rendering::renderingCallbacks()
-   * - vl::Rendering
-  */
-  class RenderingCallback: public Object
+   * An abstract class used to react to rendering events. You can bind a callback to both Rendering and Renderer.
+   * The callbacks are executed in the same order in which they appear in the containing collection.
+   * \sa 
+   * - Rendering::renderEventCallbacks() 
+   * - Renderer::renderEventCallbacks().
+   * - vl::RenderingAbstract, vl::Rendering
+   * - vl::RendererAbstract, vl::Renderer */
+  class RenderEventCallback: public Object
   {
   public:
-    virtual const char* className() { return "RenderingCallback"; }
-    RenderingCallback(): mRank(0.0f), mRemoveAfterCall(false)
+    virtual const char* className() { return "RenderEventCallback"; }
+    RenderEventCallback(): mRemoveAfterCall(false), mEnabled(true)
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
     }
 
-    //! Implements the actual code to be executed upon callback activation.
-    //! \return \p true if the callback reacted to the given reason
-    virtual bool renderingCallback(const RenderingAbstract* rendering, ERenderingCallback reason) = 0;
+    /** Reimplement to react to this event.
+      * \return \p true if the callback reacted to the given event. */
+    virtual bool onRenderingStarted(const RenderingAbstract*) { return false; }
+
+    /** Reimplement to react to this event.
+      * \return \p true if the callback reacted to the given event. */
+    virtual bool onRenderingFinished(const RenderingAbstract*) { return false; }
+
+    /** Reimplement to react to this event.
+      * \return \p true if the callback reacted to the given event. */
+    virtual bool onRendererStarted(const RendererAbstract*) { return false; }
+
+    /** Reimplement to react to this event.
+      * \return \p true if the callback reacted to the given event. */
+    virtual bool onRendererFinished(const RendererAbstract*) { return false; }
 
     //! Defines if the callback shall be removed after being executed.
     //! Note that the callback is removed only if the renderingCallback() method returns \p true.
     void setRemoveAfterCall(bool remove) { mRemoveAfterCall = remove; }
+
     //! Defines if the callback shall be removed after being executed.
     //! Note that the callback is removed only if the renderingCallback() method returns \p true.
     bool removeAfterCall() const { return mRemoveAfterCall; }
 
+    /** Enabled/disabled callback. Disabled callbacks won't be notified of any event. */
+    void setEnabled(bool enabled) { mEnabled = enabled; }
+
+    /** Whether the callback is enabled or not. Disabled callbacks won't be notified of any event. */
+    bool isEnabled() const { return mEnabled; }
+
   protected:
-    float mRank;
     bool mRemoveAfterCall;
+    bool mEnabled;
   };
 }
 
