@@ -57,7 +57,7 @@ Example:
   plot.isosurfaceEffect()->shader()->gocMaterial()->setShininess(50.0f);
   plot.isosurfaceEffect()->shader()->gocMaterial()->setDiffuse(vl::fvec4(1.0f,0,0,0.5f));
   plot.isosurfaceEffect()->shader()->enable(vl::EN_BLEND);
-  plot.isosurfaceActor()->renderingCallbacks()->push_back( new vl::DepthSortCallback );
+  plot.isosurfaceActor()->renderEventCallbacks()->push_back( new vl::DepthSortCallback );
   plot.textTemplate()->setColor(vlut::yellow);
   // set the sampling resolution along the x, y and z directions
   plot.setSamplingResolution(vl::ivec3(100,100,100));
