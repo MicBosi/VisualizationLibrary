@@ -38,6 +38,75 @@
 
 using namespace vl;
 
+namespace
+{
+  int getDefFormat(ETextureFormat internal_format)
+  {
+    switch(internal_format)
+    {
+    case TF_DEPTH_STENCIL_EXT:
+    case TF_DEPTH32F_STENCIL8:
+    case TF_DEPTH_COMPONENT:
+    case TF_DEPTH_COMPONENT16:
+    case TF_DEPTH_COMPONENT24:
+    case TF_DEPTH_COMPONENT32:
+    case TF_DEPTH_COMPONENT32F:
+      return GL_DEPTH_COMPONENT;
+
+    case TF_RGBA32UI_EXT:
+    case TF_RGB32UI_EXT:
+    case TF_ALPHA32UI_EXT:
+    case TF_INTENSITY32UI_EXT:
+    case TF_LUMINANCE32UI_EXT:
+    case TF_LUMINANCE_ALPHA32UI_EXT:
+
+    case TF_RGBA16UI_EXT:
+    case TF_RGB16UI_EXT:
+    case TF_ALPHA16UI_EXT:
+    case TF_INTENSITY16UI_EXT:
+    case TF_LUMINANCE16UI_EXT:
+    case TF_LUMINANCE_ALPHA16UI_EXT:
+
+    case TF_RGBA8UI_EXT:
+    case TF_RGB8UI_EXT:
+    case TF_ALPHA8UI_EXT:
+    case TF_INTENSITY8UI_EXT:
+    case TF_LUMINANCE8UI_EXT:
+    case TF_LUMINANCE_ALPHA8UI_EXT:
+
+    case TF_RGBA32I_EXT:
+    case TF_RGB32I_EXT:
+    case TF_ALPHA32I_EXT:
+    case TF_INTENSITY32I_EXT:
+    case TF_LUMINANCE32I_EXT:
+    case TF_LUMINANCE_ALPHA32I_EXT:
+
+    case TF_RGBA16I_EXT:
+    case TF_RGB16I_EXT:
+    case TF_ALPHA16I_EXT:
+    case TF_INTENSITY16I_EXT:
+    case TF_LUMINANCE16I_EXT:
+    case TF_LUMINANCE_ALPHA16I_EXT:
+
+    case TF_RGBA8I_EXT:
+    case TF_RGB8I_EXT:
+    case TF_ALPHA8I_EXT:
+    case TF_INTENSITY8I_EXT:
+    case TF_LUMINANCE8I_EXT:
+    case TF_LUMINANCE_ALPHA8I_EXT:
+      return GL_RED_INTEGER;
+
+    default:
+      return GL_RED;
+    }
+  }
+
+  int getDefType(ETextureFormat internal_format)
+  {
+    return GL_UNSIGNED_BYTE;
+  }
+}
+
 //-----------------------------------------------------------------------------
 // Texture
 //-----------------------------------------------------------------------------
@@ -66,7 +135,7 @@ Texture::Texture(int width, ETextureFormat format, bool border)
   {
     glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
     int brd = border?2:0;
-    glTexImage1D( dimension(), 0, format+brd, width, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
+    glTexImage1D( dimension(), 0, format, width+brd, border?1:0, getDefFormat(format), getDefType(format), NULL); VL_CHECK_OGL()
     glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
   }
   else
@@ -93,7 +162,7 @@ Texture::Texture(int width, int height, ETextureFormat format, bool border)
   {
     glBindTexture(dimension(), mHandle); VL_CHECK_OGL()
     int brd = border?2:0;
-    glTexImage2D(dimension(), 0, format, width+brd, height+brd, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
+    glTexImage2D(dimension(), 0, format, width+brd, height+brd, border?1:0, getDefFormat(format), getDefType(format), NULL); VL_CHECK_OGL()
     glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
   }
   else
@@ -124,7 +193,7 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
     {
       glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
       int brd = border?2:0;
-      glTexImage3D( dimension(), 0, format, width+brd, height+brd, depth+brd, border?1:0, GL_RGBA/*not used*/, GL_UNSIGNED_BYTE/*not used*/, NULL); VL_CHECK_OGL()
+      glTexImage3D( dimension(), 0, format, width+brd, height+brd, depth+brd, border?1:0, getDefFormat(format), getDefType(format), NULL); VL_CHECK_OGL()
       glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
     }
     else
@@ -288,13 +357,12 @@ bool Texture::supports(ETextureDimension texture_dim, ETextureFormat format, boo
   {
     if ( isCompressedFormat(format) )
     {
-      glTexImage2D(GL_PROXY_TEXTURE_CUBE_MAP, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+      glTexImage2D(GL_PROXY_TEXTURE_CUBE_MAP, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, getDefFormat(format), getDefType(format), NULL);
     }
     else
     {
       glTexImage2D(GL_PROXY_TEXTURE_CUBE_MAP, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, image->format(), image->type(), NULL);
     }
-    glTexImage2D(GL_PROXY_TEXTURE_CUBE_MAP, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, image->format(), image->type(), NULL);
     glGetTexLevelParameteriv(GL_PROXY_TEXTURE_CUBE_MAP, 0, GL_TEXTURE_WIDTH, &width);
   }
   else
@@ -302,7 +370,7 @@ bool Texture::supports(ETextureDimension texture_dim, ETextureFormat format, boo
   {
     if ( isCompressedFormat(format) )
     {
-      glTexImage3D(GL_PROXY_TEXTURE_3D, 0, format, xsize + (border?2:0), ysize + (border?2:0), zsize + (border?2:0), border?1:0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+      glTexImage3D(GL_PROXY_TEXTURE_3D, 0, format, xsize + (border?2:0), ysize + (border?2:0), zsize + (border?2:0), border?1:0, getDefFormat(format), getDefType(format), NULL);
     }
     else
     {
@@ -317,7 +385,7 @@ bool Texture::supports(ETextureDimension texture_dim, ETextureFormat format, boo
     {
       if ( isCompressedFormat(format) )
       {
-        glTexImage2D(GL_PROXY_TEXTURE_RECTANGLE_EXT, 0, format, xsize, ysize, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_PROXY_TEXTURE_RECTANGLE_EXT, 0, format, xsize, ysize, 0, getDefFormat(format), getDefType(format), NULL);
       }
       else
       {
@@ -329,7 +397,7 @@ bool Texture::supports(ETextureDimension texture_dim, ETextureFormat format, boo
     {
       if ( isCompressedFormat(format) )
       {
-        glTexImage2D(GL_PROXY_TEXTURE_2D, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_PROXY_TEXTURE_2D, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, getDefFormat(format), getDefType(format), NULL);
       }
       else
       {
@@ -343,7 +411,7 @@ bool Texture::supports(ETextureDimension texture_dim, ETextureFormat format, boo
   {
     if ( isCompressedFormat(format) )
     {
-      glTexImage1D(GL_PROXY_TEXTURE_1D, 0, format, xsize + (border?2:0), border?1:0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+      glTexImage1D(GL_PROXY_TEXTURE_1D, 0, format, xsize + (border?2:0), border?1:0, getDefFormat(format), getDefType(format), NULL);
     }
     else
     {
@@ -443,9 +511,9 @@ bool Texture::createTexture()
 
   // create mip maps
 
-  int gl_generate_mipmap = 0;
+  int generate_mipmap_orig = 0;
   if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
-    glGetTexParameteriv( dimension(), GL_GENERATE_MIPMAP, &gl_generate_mipmap );
+    glGetTexParameteriv( dimension(), GL_GENERATE_MIPMAP, &generate_mipmap_orig );
 
   if ( has_mipmaps && image->mipmaps().empty() ) // generate mipmaps
   {
@@ -461,7 +529,7 @@ bool Texture::createTexture()
           glCompressedTexImage1D( GL_TEXTURE_1D, 0, format, xsize+2*brd, brd, image->requiredMemory(), tex_pixels );
         else
           glTexImage1D( GL_TEXTURE_1D, 0, format, xsize+2*brd, brd, image->format(), image->type(), tex_pixels );
-        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, gl_generate_mipmap);
+        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
         VL_CHECK_OGL()
       }
       // use gluBuild*DMipmaps
@@ -500,7 +568,7 @@ bool Texture::createTexture()
           glCompressedTexImage2D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory(), tex_pixels );
         else
           glTexImage2D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), tex_pixels );
-        glTexParameteri( dimension(), GL_GENERATE_MIPMAP, gl_generate_mipmap );
+        glTexParameteri( dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig );
         VL_CHECK_OGL()
       }
       // use gluBuild*DMipmaps
@@ -546,7 +614,7 @@ bool Texture::createTexture()
           glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsZP() );
           glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsZN() );
         }
-        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, gl_generate_mipmap);
+        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
         VL_CHECK_OGL()
       }
       // use gluBuild2DMipmaps
@@ -582,7 +650,7 @@ bool Texture::createTexture()
           glCompressedTexImage3D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, zsize+2*brd, brd, image->requiredMemory(), tex_pixels );
         else
           glTexImage3D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, zsize+2*brd, brd, image->format(), image->type(), tex_pixels );
-        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, gl_generate_mipmap);
+        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
         VL_CHECK_OGL()
       }
       else
@@ -817,22 +885,22 @@ bool Texture::isCompressedFormat(int format)
     TF_COMPRESSED_RGBA_FXT1_3DFX,
 
     // EXT_texture_compression_s3tc
-    TF_COMPRESSED_RGB_S3TC_DXT1,
-    TF_COMPRESSED_RGBA_S3TC_DXT1,
-    TF_COMPRESSED_RGBA_S3TC_DXT3,
-    TF_COMPRESSED_RGBA_S3TC_DXT5,
+    TF_COMPRESSED_RGB_S3TC_DXT1_EXT,
+    TF_COMPRESSED_RGBA_S3TC_DXT1_EXT,
+    TF_COMPRESSED_RGBA_S3TC_DXT3_EXT,
+    TF_COMPRESSED_RGBA_S3TC_DXT5_EXT,
 
     // GL_EXT_texture_compression_latc
-    TF_COMPRESSED_LUMINANCE_LATC1,
-    TF_COMPRESSED_SIGNED_LUMINANCE_LATC1,
-    TF_COMPRESSED_LUMINANCE_ALPHA_LATC2,
-    TF_COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2,
+    TF_COMPRESSED_LUMINANCE_LATC1_EXT,
+    TF_COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT,
+    TF_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT,
+    TF_COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2_EXT,
 
     // EXT_texture_compression_rgtc
-    TF_COMPRESSED_RED_RGTC1,
-    TF_COMPRESSED_SIGNED_RED_RGTC1,
-    TF_COMPRESSED_RED_GREEN_RGTC2,
-    TF_COMPRESSED_SIGNED_RED_GREEN_RGTC2,
+    TF_COMPRESSED_RED_RGTC1_EXT,
+    TF_COMPRESSED_SIGNED_RED_RGTC1_EXT,
+    TF_COMPRESSED_RED_GREEN_RGTC2_EXT,
+    TF_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT,
 
     0
   };
@@ -845,3 +913,4 @@ bool Texture::isCompressedFormat(int format)
 
   return false;
 }
+
