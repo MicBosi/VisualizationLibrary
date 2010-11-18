@@ -37,7 +37,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // MorphingCallback
 //-----------------------------------------------------------------------------
-void MorphingCallback::operator()(const Camera*, Actor* actor, Renderable*, const Shader* shader, int pass)
+void MorphingCallback::onActorRenderStarted(Actor* actor, const Camera*, Renderable*, const Shader* shader, int pass)
 {
   // perform only on the first pass
   if (pass>0)
@@ -105,7 +105,7 @@ MorphingActor::MorphingActor()
     mObjectName = className();
   #endif
 
-  renderingCallbacks()->push_back( new MorphingCallback );
+  renderEventCallbacks()->push_back( new MorphingCallback );
 
   setAnimation(0,0,0);
   resetGLSLBindings();
