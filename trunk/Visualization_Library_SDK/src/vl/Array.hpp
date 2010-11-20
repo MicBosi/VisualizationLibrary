@@ -129,7 +129,7 @@ namespace vl
     virtual int compare(int a, int b) const = 0;
 
     //! true by default
-    bool vboDirty() const { return mVBODirty; }
+    bool isVBODirty() const { return mVBODirty; }
 
     //! true by default
     void setVBODirty(bool dirty) { mVBODirty = dirty; }
@@ -142,7 +142,7 @@ namespace vl
 
     void updateVBO(bool discard_local_storage=false)
     {
-      if (vboDirty())
+      if (isVBODirty())
       {
         gpuBuffer()->setBufferData(usage(),discard_local_storage);
         setVBODirty(false);
