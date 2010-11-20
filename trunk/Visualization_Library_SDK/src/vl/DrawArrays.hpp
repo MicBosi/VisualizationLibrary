@@ -83,7 +83,7 @@ namespace vl
     }
 
     virtual void deleteVBOs() {}
-    virtual void updateVBOs(bool) {}
+    virtual void updateVBOs(bool,bool) {}
     virtual unsigned int handle() const { return 0; }
 
     virtual void render(bool) const

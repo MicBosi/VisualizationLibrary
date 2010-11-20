@@ -153,6 +153,10 @@ namespace vl
 
     bool usePixelBufferObject() const { return mUsePixelBufferObject; }
 
+    // Renderable interface implementation.
+
+    void updateVBOs(bool,bool) {}
+
   protected:
     Collection<Pixels> mDraws;
     bool mUsePixelBufferObject;

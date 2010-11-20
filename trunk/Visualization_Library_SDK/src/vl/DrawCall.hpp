@@ -66,7 +66,7 @@ namespace vl
     virtual ref<DrawCall> clone() const = 0;
 
     virtual void deleteVBOs() = 0;
-    virtual void updateVBOs(bool discard_local_data = false)  = 0;
+    virtual void updateVBOs(bool discard_local_data=false, bool force_update=false) = 0;
     virtual unsigned int handle() const = 0;
 
     void setEnabled(bool enable) { mEnabled = enable; }
