@@ -35,13 +35,11 @@
 #include <vl/Actor.hpp>
 #include <vl/Geometry.hpp>
 #include <vl/VirtualFile.hpp>
-#include <vl/MorphingActor.hpp>
 #include <vl/ResourceLoadWriter.hpp>
 #include <vl/ResourceDatabase.hpp>
 
 namespace vl
 {
-  class MorphingActor;
 //-----------------------------------------------------------------------------
   ref<ResourceDatabase> loadMD2(const String& path);
   ref<ResourceDatabase> loadMD2(VirtualFile* file);
