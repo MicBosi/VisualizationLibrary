@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef MorphingActor_INCLUDE_ONCE
-#define MorphingActor_INCLUDE_ONCE
+#ifndef MorphingCallback_INCLUDE_ONCE
+#define MorphingCallback_INCLUDE_ONCE
 
 #include <vl/Actor.hpp>
 #include <vl/Geometry.hpp>
@@ -38,32 +38,24 @@
 
 namespace vl
 {
-  /**
-   * The MorphingCallback class is used by MorphingActor to implement the morphing animation on the GPU
-   */
-  class MorphingCallback: public ActorRenderEventCallback
+  /** The MorphingCallback class implements a simple morphing animation mechanism using the 
+      GPU acceleration where available. */
+  class MorphingCallback: public ActorEventCallback
   {
   public:
     virtual const char* className() { return "MorphingCallback"; }
 
-    virtual void onActorRenderStarted(Actor* actor, const Camera* cam, Renderable* renderable, const Shader*, int pass);
-  };
+    MorphingCallback();
 
-  //-----------------------------------------------------------------------------
-  // MorphingActor
-  //-----------------------------------------------------------------------------
-  /**
-   * The MorphingActor class animates a Geometry by interpolating its position and normal array.
-  */
-  class MorphingActor: public Actor
-  {
-    friend class MorphingCallback;
-  public:
-    virtual const char* className() { return "MorphingActor"; }
+    ~MorphingCallback();
 
-    MorphingActor();
+    virtual void onActorRenderStarted(Actor* actor, Real frame_clock, const Camera* cam, Renderable* renderable, const Shader*, int pass);
 
-    /** Initializes a MorphingActor from a ResourceDatabase.
+    virtual void onActorDelete(Actor*) {}
+
+    void bindActor(Actor* actor);
+
+    /** Initializes a MorphingCallback from a ResourceDatabase.
      *
      * The given ResourceDatabase must contain a Geometry with all the desired DrawCalls and vertex attributes setup
      * with the exception of the vertex position array and vertex normal array since they are automatically generated
@@ -77,15 +69,13 @@ namespace vl
 
     void blendFrames(int a, int b, float t);
 
-    virtual void update(int lod, Camera*, Real delta_t);
-
     void setAnimation(int start, int end, float period);
 
     void startAnimation(Real time = -1);
 
     void stopAnimation();
 
-    void initFrom(MorphingActor* morph_act);
+    void initFrom(MorphingCallback* morph_cb);
 
     void resetGLSLBindings();
 
@@ -97,14 +87,13 @@ namespace vl
 
     bool animationStarted() const { return mAnimationStarted; }
 
-  public:
+  protected:
     ref<Geometry> mGeometry;
     ref<ArrayFVec3> mVertices;
     ref<ArrayFVec3> mNormals;
     std::vector< ref<ArrayFVec3> > mVertexFrames;
     std::vector< ref<ArrayFVec3> > mNormalFrames;
 
-  protected:
     Real mLastUpdate;
     Real mElapsedTime;
     Real mAnimationStartTime;
