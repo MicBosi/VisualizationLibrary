@@ -35,7 +35,7 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera)
+const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera, Real frame_clock)
 {
   // skip if renderer is disabled
 
@@ -84,7 +84,18 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
 
   // update actor cache
 
-  updateActorCache(render_queue);
+  mVisibleActors.clear();
+  for(int i=0; i<render_queue->size(); ++i)
+  {
+    if ( !isEnabled(render_queue->at(i)->mActor->enableMask()) )
+      continue;
+    // fails for non-Geometry renderables
+    WFInfo* wfinfo = declareActor(render_queue->at(i)->mActor);
+    if (wfinfo)
+    {
+      mVisibleActors[render_queue->at(i)->mActor] = wfinfo;
+    }
+  }
 
   camera->applyProjMatrix();
 
@@ -94,7 +105,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset( polygonOffsetFactor(), polygonOffsetUnits() );
   glColorMask(0,0,0,0);
-    renderSolids(camera);
+    renderSolids(camera, frame_clock);
   glDisable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset( 0.0f, 0.0f );
   glPolygonOffset(0,0);
@@ -123,18 +134,13 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   return render_queue;
 }
 //-----------------------------------------------------------------------------
-void EdgeRenderer::renderSolids(Camera* camera)
+void EdgeRenderer::renderSolids(Camera* camera, Real frame_clock)
 {
   // transform
   const Transform* cur_transform = NULL;
   camera->applyViewMatrix();
 
-  /* some OpenGL drivers (ATI) require this instead of the more general (and mathematically correct) viewMatrix() */
-  mat4 view_matrix = camera->viewMatrix();
-  view_matrix.e(0,3) = 0.0;
-  view_matrix.e(1,3) = 0.0;
-  view_matrix.e(2,3) = 0.0;
-  view_matrix.e(3,3) = 1.0;
+  const mat4& view_matrix = camera->viewMatrix();
 
   for( std::map< ref<Actor>, ref<WFInfo> >::iterator it = mVisibleActors.begin(); it != mVisibleActors.end(); ++it)
   {
@@ -171,7 +177,7 @@ void EdgeRenderer::renderSolids(Camera* camera)
     }
 
     wfinfo->mEdgeCallback->setShowCreases(showCreases());
-    wfinfo->mEdgeCallback->onActorRenderStarted( actor, camera, wfinfo->mGeometry.get(), NULL, 0 );
+    wfinfo->mEdgeCallback->onActorRenderStarted( actor, frame_clock, camera, wfinfo->mGeometry.get(), NULL, 0 );
     actor->lod(0)->render( actor, camera );
   }
 }
@@ -182,12 +188,7 @@ void EdgeRenderer::renderLines(Camera* camera)
   const Transform* cur_transform = NULL;
   camera->applyViewMatrix();
 
-  /* some OpenGL drivers (ATI) require this instead of the more general (and mathematically correct) viewMatrix() */
-  mat4 view_matrix = camera->viewMatrix();
-  view_matrix.e(0,3) = 0.0f;
-  view_matrix.e(1,3) = 0.0f;
-  view_matrix.e(2,3) = 0.0f;
-  view_matrix.e(3,3) = 1.0f;
+  const mat4& view_matrix = camera->viewMatrix();
 
   for( std::map< ref<Actor>, ref<WFInfo> >::iterator it = mVisibleActors.begin(); it != mVisibleActors.end(); ++it)
   {
@@ -276,22 +277,6 @@ EdgeRenderer::WFInfo* EdgeRenderer::declareActor(Actor* act)
     }
   }
   return NULL;
-}
-//-----------------------------------------------------------------------------
-void EdgeRenderer::updateActorCache(const RenderQueue* render_queue)
-{
-  mVisibleActors.clear();
-  for(int i=0; i<render_queue->size(); ++i)
-  {
-    if ( !isEnabled(render_queue->at(i)->mActor->enableMask()) )
-      continue;
-    // fails for non-Geometry renderables
-    WFInfo* wfinfo = declareActor(render_queue->at(i)->mActor);
-    if (wfinfo)
-    {
-      mVisibleActors[render_queue->at(i)->mActor] = wfinfo;
-    }
-  }
 }
 //-----------------------------------------------------------------------------
 
