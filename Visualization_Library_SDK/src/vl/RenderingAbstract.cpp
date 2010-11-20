@@ -37,7 +37,7 @@ using namespace vl;
 //------------------------------------------------------------------------------
 RenderingAbstract::RenderingAbstract()
 {
-  mUpdateTime = 0.0f;
+  mFrameClock = 0.0f;
   mEnableMask = 0xFFFFFFFF;
   mRenderEventCallbacks = new Collection<RenderEventCallback>;
 }
@@ -46,7 +46,7 @@ RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
 {
   Object::operator=(other);
 
-  mUpdateTime          = other.mUpdateTime;
+  mFrameClock          = other.mFrameClock;
   mEnableMask          = other.mEnableMask;
   *mRenderEventCallbacks = *other.mRenderEventCallbacks;
 
