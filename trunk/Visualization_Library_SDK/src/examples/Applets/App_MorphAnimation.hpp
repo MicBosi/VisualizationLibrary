@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include "vl/vlMD2.hpp"
+#include "vl/MorphingCallback.hpp"
 
 class App_MorphAnimation: public BaseDemo
 {
@@ -37,11 +38,9 @@ class App_MorphAnimation: public BaseDemo
 public:
   App_MorphAnimation(int count): mCount(count) {}
 
-  virtual void shutdown() {}
+  virtual void shutdown() { }
 
-  virtual void run()
-  {
-  }
+  virtual void run() { }
 
   virtual void initEvent()
   {
@@ -55,7 +54,7 @@ public:
     BaseDemo::initEvent();
 
     ghostCamera()->setMovementSpeed(500.0f);
-    bool glsl_vertex_blend = GLEW_ARB_shading_language_100  ? false:false; // anti warning
+    bool glsl_vertex_blend = GLEW_VERSION_2_0 ? true : false;
     const float area_unit  = 1500.0f*1500.0f/2000.0f;
     const float size = sqrt( mCount * area_unit );
 
@@ -76,8 +75,8 @@ public:
 
     vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/3rdparty/pknight/tris.md2");
 
-    vl::ref<vl::MorphingActor> morph_actor = new vl::MorphingActor;
-    morph_actor->init(res_db.get());
+    vl::ref<vl::MorphingCallback> morph_cb1 = new vl::MorphingCallback;
+    morph_cb1->init(res_db.get());
 
     vl::ref<vl::Effect> effect[4] = { new vl::Effect, new vl::Effect, new vl::Effect, new vl::Effect };
     const char* texname[] = { "/3rdparty/pknight/evil.tif", "/3rdparty/pknight/knight.tif", "/3rdparty/pknight/ctf_r.tif", "/3rdparty/pknight/ctf_b.tif" };
@@ -104,25 +103,29 @@ public:
       float z = rand() % RAND_MAX / (float)RAND_MAX - 0.5f;
       x *= size;
       z *= size;
-      vl::ref<vl::MorphingActor> instance = new vl::MorphingActor;
-      instance->setEffect( effect[i%4].get() );
-      sceneManager()->tree()->addActor( instance.get() );
-      instance->initFrom(morph_actor.get());
-      instance->setTransform( new vl::Transform );
-      instance->transform()->setLocalMatrix( vl::mat4::translation(x,-instance->lod(0)->boundingBox().minCorner().y(),z) );
-      instance->transform()->computeWorldMatrix(NULL);
+      vl::ref<vl::Actor> morph_act2 = new vl::Actor;
+      vl::ref<vl::MorphingCallback> morph_cb2 = new vl::MorphingCallback;
+      morph_cb2->bindActor( morph_act2.get() );
+      morph_cb2->initFrom( morph_cb1.get() );
+
+      morph_act2->setEffect( effect[i%4].get() );
+
+      sceneManager()->tree()->addActor( morph_act2.get() );
+      morph_act2->setTransform( new vl::Transform );
+      morph_act2->transform()->setLocalMatrix( vl::mat4::translation(x,-morph_act2->lod(0)->boundingBox().minCorner().y(),z) );
+      morph_act2->transform()->computeWorldMatrix(NULL);
 
       switch(i % 5)
       {
-        case 0: instance->setAnimation(0,   39,  1.5f); break; // stand
-        case 1: instance->setAnimation(40,  45,  1.5f); break; // run
-        case 2: instance->setAnimation(46,  53,  1.5f); break; // attack
-        case 3: instance->setAnimation(112, 122, 1.5f); break; // wave
-        case 4: instance->setAnimation(190, 197, 1.5f); break; // die
+        case 0: morph_cb2->setAnimation(0,   39,  1.5f); break; // stand
+        case 1: morph_cb2->setAnimation(40,  45,  1.5f); break; // run
+        case 2: morph_cb2->setAnimation(46,  53,  1.5f); break; // attack
+        case 3: morph_cb2->setAnimation(112, 122, 1.5f); break; // wave
+        case 4: morph_cb2->setAnimation(190, 197, 1.5f); break; // die
       }
 
-      instance->startAnimation();
-      instance->setGLSLVertexBlendEnabled(glsl_vertex_blend);
+      morph_cb2->startAnimation();
+      morph_cb2->setGLSLVertexBlendEnabled(glsl_vertex_blend);
     }
   }
 };
