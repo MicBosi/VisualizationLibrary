@@ -38,7 +38,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 Actor::~Actor()
 {
-  dispatchOnActorDelte();
+  dispatchOnActorDelete();
   deleteOcclusionQuery();
 }
 //-----------------------------------------------------------------------------
