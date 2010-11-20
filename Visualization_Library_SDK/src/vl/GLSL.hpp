@@ -163,7 +163,7 @@ namespace vl
    * -# add a Uniform to the GLSLProgram UniformSet, see vl::GLSLProgram::uniformSet().
    * -# add a Uniform to the Actor's UniformSet, see vl::Actor::uniformSet().
    * -# add a Uniform to the Actor's Shader UniformSet, see vl::Shader::uniformSet().
-   * -# directly update the uniform value from ActorRenderEventCallback::onActorRenderStarted() using the standard glUniform*() OpenGL functions.
+   * -# directly update the uniform value from ActorEventCallback::onActorRenderStarted() using the standard glUniform*() OpenGL functions.
    *    In this case you have to make sure that <i>all</i> the Actors using a given GLSLProgram/Shader write such uniform.
    *
    * \remarks
