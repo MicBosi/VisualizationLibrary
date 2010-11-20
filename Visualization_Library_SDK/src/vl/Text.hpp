@@ -134,6 +134,10 @@ namespace vl
     void rotate(float degrees, float x, float y, float z);
     void resetMatrix();
 
+    // Renderable interface implementation.
+
+    void updateVBOs(bool,bool) {}
+
   protected:
     void renderText(const Actor*, const Camera* camera, const fvec4& color, const fvec2& offset) const;
     void renderBackground(const Actor* actor, const Camera* camera) const;
