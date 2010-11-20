@@ -64,7 +64,7 @@ namespace vl
    *
    * \sa \ref pagGuidePolygonDepthSorting "Transparency and Polygon Depth Sorting Tutorial"
    */
-  class DepthSortCallback: public ActorRenderEventCallback
+  class DepthSortCallback: public ActorEventCallback
   {
     template<typename T>
     class Point
@@ -137,8 +137,10 @@ namespace vl
       setSortMode(SM_SortBackToFront);
     }
 
+    void onActorDelete(Actor*) {}
+
     //! Performs the actual sorting
-    virtual void onActorRenderStarted(Actor* actor, const Camera* cam, Renderable* renderable, const Shader*, int pass)
+    virtual void onActorRenderStarted(Actor* actor, Real /*frame_clock*/, const Camera* cam, Renderable* renderable, const Shader*, int pass)
     {
       // need to sort only for the first pass
       if (pass > 0)
