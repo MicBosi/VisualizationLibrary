@@ -55,7 +55,6 @@ void Applet::initialize()
 {
   // by default Visualization Library installs a Rendering
   ref<Rendering> rend = vl::VisualizationLibrary::rendering()->as<Rendering>();
-  rend->setActorAnimationEnabled(true);
   rend->setShaderAnimationEnabled(true);
   // attached later: viewport
   // attached later: opengl context
@@ -154,7 +153,7 @@ void Applet::runEvent()
 
   // set frame time for all the rendering
   Real now_time = Time::currentTime();
-  vl::VisualizationLibrary::rendering()->setUpdateTime( now_time );
+  vl::VisualizationLibrary::rendering()->setFrameClock( now_time );
 
   // execute rendering
   vl::VisualizationLibrary::rendering()->render();
