@@ -55,7 +55,7 @@ void RenderingTree::render()
   for(int i=0; i<subRenderings()->size(); ++i)
   {
     // dispatch update time
-    subRenderings()->at(i)->setUpdateTime( updateTime() );
+    subRenderings()->at(i)->setFrameClock( frameClock() );
     // render child
     subRenderings()->at(i)->render();
   }
