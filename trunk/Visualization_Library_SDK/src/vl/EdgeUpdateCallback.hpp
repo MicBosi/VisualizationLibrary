@@ -40,7 +40,7 @@ namespace vl
 {
   //! The EdgeUpdateCallback class updates at every frame the edges of an Actor for the purpose of edge-enhancement.
   //! \sa EdgeExtractor
-  class EdgeUpdateCallback: public ActorRenderEventCallback
+  class EdgeUpdateCallback: public ActorEventCallback
   {
   public:
     virtual const char* className() { return "EdgeUpdateCallback"; }
@@ -62,7 +62,9 @@ namespace vl
     //! If \p true only the edges forming the silhouette of an object will be rendered.
     bool showCreases() const { return mShowCreases; }
 
-    virtual void onActorRenderStarted(Actor* act, const Camera* cam, Renderable* renderable, const Shader*, int pass)
+    virtual void onActorDelete(Actor*) {}
+
+    virtual void onActorRenderStarted(Actor* act, Real /*frame_clock*/, const Camera* cam, Renderable* renderable, const Shader*, int pass)
     {
       if (pass != 0)
         return;
