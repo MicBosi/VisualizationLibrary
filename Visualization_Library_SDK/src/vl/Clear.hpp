@@ -195,6 +195,10 @@ namespace vl
     void setScissorBox(int x, int y, int w, int h)     { mScissorBox[0] = x; mScissorBox[1] = y; mScissorBox[2] = w; mScissorBox[3] = h; }
     void getScissorBox(int& x, int& y, int& w, int& h) { x = mScissorBox[0]; y = mScissorBox[1]; w = mScissorBox[2]; h = mScissorBox[3]; }
 
+    // Renderable interface implementation.
+
+    void updateVBOs(bool,bool) {}
+
   protected:
     virtual void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }
 
