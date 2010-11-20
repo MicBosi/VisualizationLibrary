@@ -67,8 +67,6 @@ Geometry::Geometry()
 }
 Geometry::~Geometry()
 {
-  if (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
-    deleteVBOs();
 }
 //-----------------------------------------------------------------------------
 void Geometry::computeBounds_Implementation()
@@ -106,10 +104,16 @@ void Geometry::computeBounds_Implementation()
 ref<Geometry> Geometry::deepCopy() const
 {
   ref<Geometry> geom = new Geometry;
+  deepCopy(geom.get());
+  return geom;
+}
+//-----------------------------------------------------------------------------
+void Geometry::deepCopy(Geometry* geom) const
+{
   // copy the base class Renderable
   geom->Renderable::operator=(*this);
   // copy Geometry
-  geom->mVertexArray       = mVertexArray       ? mVertexArray->clone().get()       : NULL;
+  geom->mVertexArray         = mVertexArray         ? mVertexArray->clone().get()         : NULL;
   geom->mNormalArray         = mNormalArray         ? mNormalArray->clone().get()         : NULL;
   geom->mColorArray          = mColorArray          ? mColorArray->clone().get()          : NULL;
   geom->mSecondaryColorArray = mSecondaryColorArray ? mSecondaryColorArray->clone().get() : NULL;
@@ -122,16 +126,15 @@ ref<Geometry> Geometry::deepCopy() const
   for(int i=0; i<mVertexAttributeArrays.size(); ++i)
   {
     geom->mVertexAttributeArrays[i] = new VertexAttributeArray;
-    geom->mVertexAttributeArrays[i]->setNormalize( mVertexAttributeArrays[i]->normalize() );
-    geom->mVertexAttributeArrays[i]->setPureInteger( mVertexAttributeArrays[i]->pureInteger() );
     geom->mVertexAttributeArrays[i]->setAttribIndex( mVertexAttributeArrays[i]->attribIndex() );
     geom->mVertexAttributeArrays[i]->setData( geom->mVertexAttributeArrays[i]->data() ? geom->mVertexAttributeArrays[i]->data()->clone().get() : NULL );
+    geom->mVertexAttributeArrays[i]->setNormalize( mVertexAttributeArrays[i]->normalize() );
+    geom->mVertexAttributeArrays[i]->setPureInteger( mVertexAttributeArrays[i]->pureInteger() );
   }
   // primitives
   for(int i=0; i<mDrawCalls.size(); ++i)
     geom->mDrawCalls.push_back( mDrawCalls[i]->clone().get() );
   geom->mColorArrayConstant = mColorArrayConstant;
-  return geom;
 }
 //-----------------------------------------------------------------------------
 Geometry& Geometry::operator=(const Geometry& other)
@@ -156,6 +159,11 @@ ref<Geometry> Geometry::shallowCopy()
   ref<Geometry> geom = new Geometry;
   geom->operator=(*this);
   return geom;
+}
+//-----------------------------------------------------------------------------
+void Geometry::shallowCopy(Geometry* geom)
+{
+  geom->operator=(*this);
 }
 //-----------------------------------------------------------------------------
 void Geometry::setVertexArray(ArrayAbstract* data)
@@ -340,47 +348,64 @@ void Geometry::deleteVBOs()
 
   for(int i=0; i<(int)drawCalls()->size(); ++i)
     drawCalls()->at(i)->deleteVBOs();
+
   if (mVertexArray)
     mVertexArray->gpuBuffer()->deleteGLBufferObject();
+  
   if (mNormalArray)
     mNormalArray->gpuBuffer()->deleteGLBufferObject();
+  
   if (mColorArray)
     mColorArray->gpuBuffer()->deleteGLBufferObject();
+  
   if (mSecondaryColorArray)
     mSecondaryColorArray->gpuBuffer()->deleteGLBufferObject();
+  
   if (mFogCoordArray)
     mFogCoordArray->gpuBuffer()->deleteGLBufferObject();
+  
   for (int i=0; i<mTexCoordArrays.size(); ++i)
     mTexCoordArrays[i]->mTexCoordArray->gpuBuffer()->deleteGLBufferObject();
+  
   for(int i=0; i<vertexAttributeArrays()->size(); ++i)
     if ( vertexAttributeArrays()->at(i)->data() )
       vertexAttributeArrays()->at(i)->data()->gpuBuffer()->deleteGLBufferObject();
 }
 //-----------------------------------------------------------------------------
-void Geometry::updateVBOs(bool discard_local_data)
+void Geometry::updateVBOs(bool discard_local_data, bool force_update)
 {
   setVBODirty(false);
 
   if (!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
     return;
 
-  if (mVertexArray)
+  if ( mVertexArray && (mVertexArray->isVBODirty() || force_update) )
     mVertexArray->updateVBO(discard_local_data);
-  if (mNormalArray)
+  
+  if ( mNormalArray && (mNormalArray->isVBODirty() || force_update) )
     mNormalArray->updateVBO(discard_local_data);
-  if (mColorArray)
+  
+  if ( mColorArray && (mColorArray->isVBODirty() || force_update) )
     mColorArray->updateVBO(discard_local_data);
-  if (mSecondaryColorArray)
+  
+  if ( mSecondaryColorArray && (mSecondaryColorArray->isVBODirty() || force_update) )
     mSecondaryColorArray->updateVBO(discard_local_data);
-  if (mFogCoordArray)
+  
+  if ( mFogCoordArray && (mFogCoordArray->isVBODirty() || force_update) )
     mFogCoordArray->updateVBO(discard_local_data);
+  
   for(int i=0; i<mTexCoordArrays.size(); ++i)
-    mTexCoordArrays[i]->mTexCoordArray->updateVBO(discard_local_data);
+  {
+    if ( mTexCoordArrays[i]->mTexCoordArray->isVBODirty() || force_update )
+      mTexCoordArrays[i]->mTexCoordArray->updateVBO(discard_local_data);
+  }
+  
   for(int i=0; i<vertexAttributeArrays()->size(); ++i)
-    if ( vertexAttributeArrays()->at(i)->data() )
+    if ( vertexAttributeArrays()->at(i)->data() && (vertexAttributeArrays()->at(i)->data()->isVBODirty() || force_update) )
       vertexAttributeArrays()->at(i)->data()->updateVBO(discard_local_data);
+
   for(int i=0; i<drawCalls()->size(); ++i)
-    drawCalls()->at(i)->updateVBOs(discard_local_data);
+    drawCalls()->at(i)->updateVBOs(discard_local_data, force_update);
 }
 //-----------------------------------------------------------------------------
 void Geometry::render( const Actor*, const Camera* ) const
@@ -492,7 +517,6 @@ void Geometry::render( const Actor*, const Camera* ) const
       VL_glVertexAttribPointer( vertexAttributeArrays()->at(i)->attribIndex(), data->glSize(), data->glType(), vertexAttributeArrays()->at(i)->normalize(), /*vertexAttributeArrays()->at(i)->data()->stride()*/0, attrib_pointer /*+ vertexAttributeArrays()->at(i)->data()->offset()*/ );
       VL_glEnableVertexAttribArray( vertexAttributeArrays()->at(i)->attribIndex() );
     }
-
   }
 
   // standard vertex attributes
