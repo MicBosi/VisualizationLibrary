@@ -44,7 +44,6 @@ Rendering::Rendering():
   mAutomaticResourceInit(true),
   mCullingEnabled(true),
   mEvaluateLOD(true),
-  mActorAnimationEnabled(true),
   mShaderAnimationEnabled(true),
   mNearFarClippingPlanesOptimized(false)
 {
@@ -68,7 +67,6 @@ Rendering& Rendering::operator=(const Rendering& other)
   mAutomaticResourceInit    = other.mAutomaticResourceInit;
   mCullingEnabled    = other.mCullingEnabled;
   mEvaluateLOD              = other.mEvaluateLOD;
-  mActorAnimationEnabled    = other.mActorAnimationEnabled;
   mShaderAnimationEnabled   = other.mShaderAnimationEnabled;
   mNearFarClippingPlanesOptimized = other.mNearFarClippingPlanesOptimized;
 
@@ -197,7 +195,7 @@ void Rendering::render()
   {
     if ( isEnabled(sceneManagers()->at(i)->enableMask()) )
     {
-      if (cullingEnabled())
+      if (cullingEnabled() && sceneManagers()->at(i)->cullingEnabled())
       {
         if (sceneManagers()->at(i)->boundsDirty())
           sceneManagers()->at(i)->computeBounds();
@@ -257,7 +255,7 @@ void Rendering::render()
         continue;
       }
       // loop the rendering
-      render_queue = renderers()[i]->render( render_queue, camera() );
+      render_queue = renderers()[i]->render( render_queue, camera(), frameClock() );
     }
   }
 
@@ -319,25 +317,6 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
     if ( evaluateLOD() )
       geometry_lod = actor->evaluateLOD( camera() );
 
-    // --------------- Actor update ---------------
-
-    if ( actorAnimationEnabled() )
-    {
-      VL_CHECK(updateTime() >= 0)
-      if( updateTime() >= 0 )
-      {
-        // note that the condition is != as opposed to <
-        if (actor->lastUpdateTime() != updateTime() && actor->actorAnimator() )
-        {
-          // update
-          actor->actorAnimator()->updateActor( actor, geometry_lod, camera(), updateTime() );
-
-          // note that we update this after
-          actor->setLastUpdateTime( updateTime() );
-        }
-      }
-    }
-
     // --------------- Display List ---------------
 
     if ( actor->lod(geometry_lod)->displayListEnabled() && (!actor->lod(geometry_lod)->displayList()||actor->lod(geometry_lod)->displayListDirty()) )
@@ -345,8 +324,8 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
     // --------------- Update VBOs ---------------
 
-    if ( actor->lod(geometry_lod)->vboEnabled() && actor->lod(geometry_lod)->vboDirty() && !actor->lod(geometry_lod)->displayListEnabled() )
-      actor->lod(geometry_lod)->updateVBOs(false);
+    if ( actor->lod(geometry_lod)->vboEnabled() && actor->lod(geometry_lod)->isVBODirty() && !actor->lod(geometry_lod)->displayListEnabled() )
+      actor->lod(geometry_lod)->updateVBOs(false,false);
 
     // --------------- M U L T I   P A S S I N G ---------------
 
@@ -376,17 +355,17 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
       if ( shaderAnimationEnabled() )
       {
-        VL_CHECK(updateTime() >= 0)
-        if( updateTime() >= 0 )
+        VL_CHECK(frameClock() >= 0)
+        if( frameClock() >= 0 )
         {
           // note that the condition is != as opposed to <
-          if ( shader->lastUpdateTime() != updateTime() && shader->shaderAnimator() )
+          if ( shader->lastUpdateTime() != frameClock() && shader->shaderAnimator() )
           {
             // update
-            shader->shaderAnimator()->updateShader( shader, camera(), updateTime() );
+            shader->shaderAnimator()->updateShader( shader, camera(), frameClock() );
 
             // note that we update this after
-            shader->setLastUpdateTime( updateTime() );
+            shader->setLastUpdateTime( frameClock() );
           }
         }
       }
