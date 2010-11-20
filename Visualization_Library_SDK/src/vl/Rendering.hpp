@@ -150,17 +150,6 @@ namespace vl
     /** Whether the Level-Of-Detail should be evaluated or not. When disabled lod #0 is used. */
     bool evaluateLOD() const { return mEvaluateLOD; }
 
-    /** Whether Actor::update() should be called or not. 
-    \note
-    Only visible Actor[s] are updated.
-    */
-    void setActorAnimationEnabled(bool animate_actors) { mActorAnimationEnabled = animate_actors; }
-    /** Whether Actor::update() should be called or not. 
-    \note
-    Only visible Actor[s] are updated.
-    */
-    bool actorAnimationEnabled() const { return mActorAnimationEnabled; }
-
     /** Whether Shader::update() should be called or not. 
     \note
     Only Shader[s] belonging to visible Actor[s] are updated.
@@ -216,7 +205,6 @@ namespace vl
     bool mAutomaticResourceInit;
     bool mCullingEnabled;
     bool mEvaluateLOD;
-    bool mActorAnimationEnabled;
     bool mShaderAnimationEnabled;
     bool mNearFarClippingPlanesOptimized;
   };
