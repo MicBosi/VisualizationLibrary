@@ -75,14 +75,14 @@ namespace vl
     bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
 
     //! The update time of the current rendering frame.
-    void setUpdateTime(Real cur_time) { mUpdateTime = cur_time; }
+    void setFrameClock(Real cur_time) { mFrameClock = cur_time; }
 
     //! The update time of the current rendering frame.
-    Real updateTime() const { return mUpdateTime; }
+    Real frameClock() const { return mFrameClock; }
 
   protected:
     ref< Collection<RenderEventCallback> > mRenderEventCallbacks;
-    Real mUpdateTime;
+    Real mFrameClock;
     unsigned int mEnableMask;
   };
 }
