@@ -81,7 +81,7 @@ namespace
   };
 }
 //------------------------------------------------------------------------------
-const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* camera)
+const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* camera, Real frame_clock)
 {
   VL_CHECK_OGL()
 
@@ -231,7 +231,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       // here the user has still the possibility to modify the Actor's uniforms
       /* mic fixme: document this */
 
-      actor->dispatchOnActorRenderStarted( camera, tok->mRenderable, shader, ipass );
+      actor->dispatchOnActorRenderStarted( frame_clock, camera, tok->mRenderable, shader, ipass );
 
       VL_CHECK_OGL()
 
