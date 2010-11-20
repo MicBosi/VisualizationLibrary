@@ -62,7 +62,7 @@ OcclusionCullRenderer::OcclusionCullRenderer()
   // mOcclusionShader->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
 }
 //-----------------------------------------------------------------------------
-const RenderQueue* OcclusionCullRenderer::render(const RenderQueue* in_render_queue, Camera* camera)
+const RenderQueue* OcclusionCullRenderer::render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock)
 {
   // skip if renderer is disabled
   if (enableMask() == 0)
@@ -114,7 +114,7 @@ const RenderQueue* OcclusionCullRenderer::render(const RenderQueue* in_render_qu
 
   // (2)
   // render only non occluded objects.
-  mWrappedRenderer->render( mCulledRenderQueue.get(), camera );
+  mWrappedRenderer->render( mCulledRenderQueue.get(), camera, frame_clock );
   
   // (3)
   // perform occlusion query on all objects.
