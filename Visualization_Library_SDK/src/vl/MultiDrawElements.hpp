@@ -159,9 +159,10 @@ namespace vl
 
     const arr_type* indices() const { return mIndexBuffer.get(); }
 
-    virtual void updateVBOs(bool discard_local_data = false)
+    virtual void updateVBOs(bool discard_local_data=false, bool force_update=false)
     {
-      indices()->updateVBO(discard_local_data);
+      if (indices()->isVBODirty() || force_update)
+        indices()->updateVBO(discard_local_data);
     }
 
     virtual void deleteVBOs()
