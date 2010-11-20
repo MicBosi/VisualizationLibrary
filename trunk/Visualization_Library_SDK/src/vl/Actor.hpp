@@ -45,43 +45,49 @@
 namespace vl
 {
   //------------------------------------------------------------------------------
-  // ActorRenderEventCallback
+  // ActorEventCallback
   //------------------------------------------------------------------------------
-  /** The ActorRenderEventCallback class defines a callback object to react to Actor-rendering related events.
+  /** The ActorEventCallback class defines a callback object to react to Actor-related events.
 
-  Usually an ActorRenderEventCallback is used to perform a per-Actor operation 
+  Usually an ActorEventCallback is used to perform a per-Actor operation 
   like changing some attributes of the Actor itself or of the associated Renderable/Geometry.
-  For example the MorphingCallback class is used to aid the rendering of a MorphingActor, while the
+  For example the MorphingCallback class is used to aid the rendering of a MorphingCallback, while the
   DepthSortCallback class is used to perform per-Actor polygon sorting.
 
   \note
   You can manipulate Uniforms within this class, for more information see vl::GLSLProgram documentation.
   If you want to update the state of a Uniform variable from here you can simply call glUniform* since the 
-  GLSLProgram (if any) has been already activated by the time this function is called. You can test whether
-  the shader has a GLSLProgram bound to it or not by simply testing shader->glslProgram() != NULL. If you
-  update a uniform you must ensure that all the Actor[s] using the same GLSLProgram appropriately setup such 
-  uniform.
+  GLSLProgram (if any) has been already activated by the time this function is called. 
+  You can also modify the Actor's uniforms using the Actor's uniform manipulation routines Actor::setUniform()
+  Actor::getUniform() etc.
+  
+  You can test whether the shader has a GLSLProgram bound to it or not by simply testing 
+  shader->glslProgram() != NULL. If you update a uniform you must ensure that all the Actor[s] using the same 
+  GLSLProgram appropriately setup such uniform.
 
   \note
-  An ActorRenderEventCallback is called once for every rendering pass, ie. if an Actor's Effect specifies three
+  An ActorEventCallback::onActorRenderStarted() is called once for every rendering pass, ie. if an Actor's Effect specifies three
   rendering passes the Actor callbacks will be called three times, once for each rendering pass / shader.
 
   \sa
-  - Actor::renderEventCallbacks()
-  - Actor::update() */
-  class ActorRenderEventCallback: public Object
+  - Actor::actorEventCallbacks() */
+  class ActorEventCallback: public Object
   {
   public:
-    ActorRenderEventCallback(): mEnabled(true) {}
+    ActorEventCallback(): mEnabled(true) {}
 
     /** Event generated just before an Actor is rendered but after the render states are ready and setup.
     Reimplement to react to this event.
-    \param cam The camera used for the current rendering.
     \param actor The Actor bound to this rendering callback.
+    \param frame_clock The current rendering frame time, usually used for animation purposes.
+    \param cam The camera used for the current rendering.
     \param renderable The currently selected Actor LOD.
     \param shader The currently active Shader.
     \param pass The current Actor[s] rendering pass. */
-    virtual void onActorRenderStarted(Actor* actor, const Camera* cam, Renderable* renderable, const Shader* shader, int pass) = 0;
+    virtual void onActorRenderStarted(Actor* actor, Real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass) = 0;
+
+    /** Event notifying that an Actor is being deleted. */
+    virtual void onActorDelete(Actor* actor) = 0;
 
     void setEnabled(bool enabled) { mEnabled = enabled; }
 
@@ -89,42 +95,6 @@ namespace vl
 
   protected:
     bool mEnabled;
-  };
-
-  //------------------------------------------------------------------------------
-  // ActorAnimator
-  //------------------------------------------------------------------------------
-  /** Callback object used to update/animate an Actor.
-  The updateActor() method will be called whenever an actor becomes visible, before
-  rendering it.
-  \note
-  The updateActor() method will be called...
-  - ... after the actor is determined to be visible.
-  - ... only once per frame.
-  - ... before setting up the rendering states.
-  - ... before rendering any Actor, that is, VL first updates 
-  each and every Actor and then renders them. This means that you should
-  not use an ActorAnimator to update data that is shared among multiple actors at the 
-  same time, otherwise the same data will be updated several times, and all the actors
-  using it will use the values resulting from the last update.
-
-  Use vl::ActorRenderEventCallback in such cases as the ActorRenderEventCallback is triggered
-  for each Actor right before it is rendered.
-
-  \sa
-  - Actor::setActorAnimator()
-  - ActorRenderEventCallback
-  - renderEventCallbacks()*/
-  class ActorAnimator: public Object
-  {
-  public:
-    /** Reimplement this function to update/animate an Actor.
-    \param actor the Actor to be updated.
-    \param lod the currently selected \p LOD for the Actor.
-    \param camera the camera used for the current rendering.
-    \param cur_time the current animation time.
-    \sa Actor::setActorAnimator(); */
-    virtual void updateActor(Actor* actor, int lod, Camera* camera, Real cur_time) = 0;
   };
 
   //------------------------------------------------------------------------------
@@ -168,13 +138,13 @@ namespace vl
     \param rank The rendering rank to which the Actor belongs
     */
     Actor(Renderable* renderable = NULL, Effect* effect = NULL, Transform* transform = NULL, int block = 0, int rank = 0):
-      mLastUpdateTime(0.0), mEffect(effect), mTransform(transform), mRenderBlock(block), mRenderRank(rank),
+      mEffect(effect), mTransform(transform), mRenderBlock(block), mRenderRank(rank),
       mTransformUpdateTick(-1), mBoundsUpdateTick(-1), mEnableMask(0xFFFFFFFF), mOcclusionQuery(0), mIsOccludee(true), mOcclusionQueryTick(0xFFFFFFFF)
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mRenderEventCallbacks.setAutomaticDelete(false);
+      mActorEventCallbacks.setAutomaticDelete(false);
       lod(0) = renderable;
       // actor user data
       #if VL_ACTOR_USER_DATA
@@ -261,21 +231,6 @@ namespace vl
 
     int evaluateLOD(Camera* camera);
 
-    /** Installs the ActorAnimator used to update/animate an Actor (see vl::ActorAnimator documentation). */
-    void setActorAnimator(ActorAnimator* animator) { mActorAnimator = animator; }
-
-    /** Returns the ActorAnimator used to update/animate an Actor (see vl::ActorAnimator documentation). */
-    ActorAnimator* actorAnimator() { return mActorAnimator.get(); }
-
-    /** Returns the ActorAnimator used to update/animate an Actor (see vl::ActorAnimator documentation). */
-    const ActorAnimator* actorAnimator() const { return mActorAnimator.get(); }
-
-    /** Last time an Actor was animated/updated using an actorAnimator(). */
-    Real lastUpdateTime() const { return mLastUpdateTime; }
-
-    /** For internal use only. */
-    void setLastUpdateTime(Real time) { mLastUpdateTime = time; }
-
     /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not 
       * depending on the Rendering::enableMask() but it can also be used for user-specific tasks. */
     void setEnableMask(unsigned int mask) { mEnableMask = mask; }
@@ -347,20 +302,30 @@ namespace vl
     */
     UniformSet* uniformSet() const { return mUniformSet.get(); }
 
-    /** Returns the list of ActorRenderEventCallback bound to an Actor. */
-    const Collection<ActorRenderEventCallback>* renderEventCallbacks() const { return &mRenderEventCallbacks; }
+    /** Returns the list of ActorEventCallback bound to an Actor. */
+    const Collection<ActorEventCallback>* actorEventCallbacks() const { return &mActorEventCallbacks; }
 
-    /** Returns the list of ActorRenderEventCallback bound to an Actor. */
-    Collection<ActorRenderEventCallback>* renderEventCallbacks() { return &mRenderEventCallbacks; }
+    /** Returns the list of ActorEventCallback bound to an Actor. */
+    Collection<ActorEventCallback>* actorEventCallbacks() { return &mActorEventCallbacks; }
 
-    /** Calls all the ActorRenderEventCallback installed on this Actor. */
-    void dispatchOnActorRenderStarted(const Camera* camera, Renderable* renderable, const Shader* shader, int pass)
+    /** Calls all the onActorRenderStarted() of all the ActorEventCallback installed on this Actor. */
+    void dispatchOnActorRenderStarted( Real frame_clock, const Camera* camera, Renderable* renderable, const Shader* shader, int pass)
     {
-      for(int i=0; i<renderEventCallbacks()->size(); ++i)
+      for(int i=0; i<actorEventCallbacks()->size(); ++i)
       {
-        ActorRenderEventCallback& cb = *renderEventCallbacks()->at(i);
+        ActorEventCallback& cb = *actorEventCallbacks()->at(i);
         if (cb.isEnabled())
-          cb.onActorRenderStarted(this, camera, renderable, shader, pass);
+          cb.onActorRenderStarted(this, frame_clock, camera, renderable, shader, pass);
+      }
+    }
+
+    /** Calls all the onActorDelete() of all the ActorEventCallback installed on this Actor. */
+    void dispatchOnActorDelete()
+    {
+      for(int i=0; i<actorEventCallbacks()->size(); ++i)
+      {
+        ActorEventCallback& cb = *actorEventCallbacks()->at(i);
+        cb.onActorDelete(this);
       }
     }
 
@@ -433,9 +398,7 @@ namespace vl
     ref<LODEvaluator> mLODEvaluator;
     ref<UniformSet> mUniformSet;
     ref<Scissor> mScissor;
-    ref<ActorAnimator> mActorAnimator; /*mic fixme: remove?*/
-    Real mLastUpdateTime;
-    Collection<ActorRenderEventCallback> mRenderEventCallbacks;
+    Collection<ActorEventCallback> mActorEventCallbacks;
     int mRenderBlock;
     int mRenderRank;
     long long mTransformUpdateTick;
