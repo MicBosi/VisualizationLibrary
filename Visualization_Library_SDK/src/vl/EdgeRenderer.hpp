@@ -70,7 +70,7 @@ namespace vl
       #endif
     }
 
-    const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera);
+    const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock);
 
     //! Generates and caches all the information needed to render the edges of the given Actor using the specified color.
     WFInfo* declareActor(Actor* act, const fvec4& color);
@@ -127,8 +127,7 @@ namespace vl
     float polygonOffsetUnits() const  { return mPolygonOffsetUnits;  }
 
   protected:
-    void updateActorCache(const RenderQueue* render_queue);
-    void renderSolids(Camera* camera);
+    void renderSolids(Camera* camera, Real frame_clock);
     void renderLines(Camera* camera);
 
   protected:
