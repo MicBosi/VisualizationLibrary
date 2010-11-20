@@ -98,14 +98,14 @@ public:
     }
   };
 
-  class WaveActorAnimator: public vl::ActorAnimator
+  class WaveActorAnimator: public vl::ActorEventCallback
   {
   public:
     WaveActorAnimator(vl::Actor* actor)
     {
       mAnimTime   = 0;
       mLastUpdate = 0;
-      mLastUpdatedLod = -1;
+      mLastUpdatedLod = NULL;
 
       vl::ref<vl::Geometry> geom;
 
@@ -149,26 +149,31 @@ public:
       }
     }
 
-    void updateActor(vl::Actor* actor, int lodi, vl::Camera* , vl::Real cur_time)
+    virtual void onActorDelete(vl::Actor*) { }
+
+    virtual void onActorRenderStarted(vl::Actor* actor, vl::Real frame_clock, const vl::Camera* cam, vl::Renderable* renderable, const vl::Shader* shader, int pass)
     {
+      if (pass > 0)
+        return;
+
       // the beauty of this function is that in a few lines of code
       // we update 3 different LOD levels over 3 different fps rates
 
-      mAnimTime = cur_time;
+      mAnimTime = frame_clock;
 
       // fps rate also follows the LOD
-      vl::Real fps = ( 30.0f - lodi * 10.0f );
+      const vl::Real fps = 30.0f;
 
-      if ( cur_time - mLastUpdate > 1.0f/fps || mLastUpdatedLod != lodi )
+      if ( frame_clock - mLastUpdate > 1.0f/fps || mLastUpdatedLod != renderable )
       {
-        mLastUpdate = cur_time;
-        mLastUpdatedLod = lodi;
+        mLastUpdate = frame_clock;
+        mLastUpdatedLod = renderable;
 
         // note: this returns the current LOD geometry
-        vl::ref<vl::Geometry> geom = dynamic_cast<vl::Geometry*>( actor->lod(lodi).get() );
+        vl::ref<vl::Geometry> geom = dynamic_cast<vl::Geometry*>( renderable );
         vl::ref<vl::ArrayFVec3> vecarr3 = dynamic_cast<vl::ArrayFVec3*>( geom->vertexArray() );
         vl::fvec3* vec = (vl::fvec3*)vecarr3->ptr();
-        vl::vec3 center = actor->lod(lodi)->boundingBox().center();
+        vl::vec3 center = renderable->boundingBox().center();
 
         for(size_t i=0; i<vecarr3->size(); ++i)
         {
@@ -189,7 +194,7 @@ public:
   protected:
     vl::Real mAnimTime;
     vl::Real mLastUpdate;
-    int mLastUpdatedLod;
+    vl::Renderable* mLastUpdatedLod;
   };
 
   void run()
@@ -407,7 +412,7 @@ public:
       fx1->setLODEvaluator(lod.get());
 
       vl::ref<vl::Actor> wave_act = new vl::Actor;
-      wave_act->setActorAnimator( new WaveActorAnimator(wave_act.get()) );
+      wave_act->actorEventCallbacks()->push_back( new WaveActorAnimator(wave_act.get()) );
       wave_act->setLODEvaluator(lod.get());
       wave_act->setEffect(fx2.get());
       sceneManager()->tree()->addActor(wave_act.get());

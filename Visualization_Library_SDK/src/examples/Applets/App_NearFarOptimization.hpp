@@ -84,13 +84,10 @@ public:
     // "gocMaterial" stands for "get-or-create Material"
     effect2->shader()->gocMaterial()->setDiffuse( vlut::gold );
 
-    // install our scene manager, we use the SceneManagerActorTree which is the most generic
-    vl::ref<vl::SceneManagerActorTree> scene_manager = new vl::SceneManagerActorTree;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back(scene_manager.get());
     // add the cube to the scene using the previously defined effect and transform 
-    scene_manager->tree()->addActor( ball1.get(), effect1.get(), mCubeTransform.get()  );
-    scene_manager->tree()->addActor( ball2.get(), effect2.get(), mCubeTransform.get()  );
-    scene_manager->computeBounds();
+    sceneManager()->tree()->addActor( ball1.get(), effect1.get(), mCubeTransform.get()  );
+    sceneManager()->tree()->addActor( ball2.get(), effect2.get(), mCubeTransform.get()  );
+    sceneManager()->computeBounds();
 
     trackball()->adjustView( vl::VisualizationLibrary::rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
   }
