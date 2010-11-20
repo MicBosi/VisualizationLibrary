@@ -47,6 +47,9 @@ namespace vl
   class RenderQueue;
   class Renderer;
 
+  //-----------------------------------------------------------------------------
+  // ProjViewTranfCallback
+  //-----------------------------------------------------------------------------
   /** Vitual class used as a callback to update the state of the \p projection, \p view and \p transform matrices of a GLSLProgram or fixed function pipeline. */
   class ProjViewTranfCallback: public Object
   {
@@ -70,6 +73,9 @@ namespace vl
     virtual void programTransfChange(const Renderer* caller, const GLSLProgram* glsl, const Transform* transform, const Camera* camera) = 0;
   };
 
+  //-----------------------------------------------------------------------------
+  // ProjViewTranfCallbackStandard
+  //-----------------------------------------------------------------------------
   //! Updates the GL_MODELVIEW and GL_PROJECTION matrices of the fixed function pipeline in an optimized manner.
   //! You usually want to install this callback if the fixed fuction pipeline is available, even when using GLSL shaders.
   //! In fact the GL_MODELVIEW and GL_PROJECTION matrices are visible from all the GLSL shaders, thus requiring fewer matrix updates
@@ -84,6 +90,9 @@ namespace vl
     const Transform* mLastTransform;
   };
 
+  //-----------------------------------------------------------------------------
+  // RendererAbstract
+  //-----------------------------------------------------------------------------
   class RendererAbstract: public Object
   {
   public:
@@ -93,6 +102,7 @@ namespace vl
       mClearFlags = CF_CLEAR_COLOR_DEPTH;
       mEnableMask = 0xFFFFFFFF;
       mRenderTick = 0;
+      mFrameClock = 0;
     }
 
     RendererAbstract& operator=(const RendererAbstract& other)
@@ -101,11 +111,12 @@ namespace vl
       mClearFlags = other.mClearFlags;
       mEnableMask = other.mEnableMask;
       /* mRenderTick = other.mRenderTick; */ // render-tick remains local
+      /* mFrameClock = other.mFrameClock; */ // update time remains local
     }
 
     /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
       * Renderer's implementation of this function always returns \p in_render_queue. */
-    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera) = 0;
+    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock) = 0;
     virtual const RenderTarget* renderTarget() const = 0;
     virtual RenderTarget* renderTarget() = 0;
 
@@ -155,13 +166,21 @@ namespace vl
 
     unsigned int enableMask() const { return mEnableMask; }
 
+    void setFrameClock(Real t) { mFrameClock = t; }
+
+    Real frameClock() const { return mFrameClock; }
+
   protected:
     ref< Collection<RenderEventCallback> > mRenderEventCallbacks;
     unsigned long mRenderTick;
     unsigned int mEnableMask;
     EClearFlags mClearFlags;
+    Real mFrameClock;
   };
 
+  //-----------------------------------------------------------------------------
+  // Renderer
+  //-----------------------------------------------------------------------------
   /** The Renderer class executes the actual rendering on the given RenderQueue.
     * \sa Rendering */
   class Renderer: public RendererAbstract
@@ -175,7 +194,7 @@ namespace vl
     
     /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
       * Renderer's implementation of this function always returns \p in_render_queue. */
-    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera);
+    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock);
 
     void setProjViewTransfCallback(ProjViewTranfCallbackStandard* callback) { mProjViewTranfCallback = callback; }
     
