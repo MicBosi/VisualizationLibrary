@@ -149,7 +149,7 @@
 		- vl::CopyTexSubImage1D
 		- vl::CopyTexSubImage2D
 		- vl::CopyTexSubImage3D
-	- vl::ActorRenderEventCallback
+	- vl::ActorEventCallback
 		- vl::DepthSortCallback
 		- vl::MorphingCallback
 		- vl::EdgeUpdateCallback
@@ -226,13 +226,12 @@
 	\par Animation
 	
 	- vl::Time
-	- vl::MorphingActor
-	- vl::ActorRenderEventCallback
+	- vl::ActorEventCallback
+	- vl::ShaderAnimator
+	- vl::MorphingCallback
 	- vl::Interpolator
 	- vl::LinearInterpolator
 	- vl::CatmullRomInterpolator 
-	- vl::Shader::update()
-	- vl::Actor::update()
 
 	\par User interaction
 
