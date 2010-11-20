@@ -73,24 +73,35 @@ namespace vl
       const GLBufferObject* gpuBuffer() const { return mTexCoordArray->gpuBuffer(); }
       GLBufferObject* gpuBuffer() { return mTexCoordArray->gpuBuffer(); }
     };
+
   public:
     virtual const char* className() { return "Geometry"; }
+    
     /** Constructor. */
     Geometry();
+
     /** Destructor. */
     virtual ~Geometry();
 
     /**
      * Performs a shallow copy (as opposed to a deep copy) of the specified Geometry.
-     * \sa deepCopy()
-    */
+     * \sa deepCopy() */
     ref<Geometry> shallowCopy();
 
     /**
+     * Performs a shallow copy (as opposed to a deep copy) of the specified Geometry.
+     * \sa deepCopy() */
+    void shallowCopy(Geometry*);
+
+    /**
      * Performs a deep copy (as opposed to a shallow copy) of the specified Geometry.
-     * \sa shallowCopy()
-    */
+     * \sa shallowCopy() */
     ref<Geometry> deepCopy() const;
+
+    /**
+     * Performs a deep copy (as opposed to a shallow copy) of the specified Geometry.
+     * \sa shallowCopy() */
+    void deepCopy(Geometry* ) const;
 
     //! Performs a shallowCopy() of the Geometry
     Geometry& operator=(const Geometry& other);
@@ -179,7 +190,7 @@ namespace vl
     //! Returns the list of DrawCall objects bound to a Geometry
     const Collection<DrawCall>* drawCalls() const { return &mDrawCalls; }
 
-    void updateVBOs(bool discard_local_data=false);
+    void updateVBOs(bool discard_local_data=false, bool force_update=false);
 
     void deleteVBOs();
 
@@ -210,9 +221,6 @@ namespace vl
     void colorizePrimitives();
 
     void regenerateVertices(const std::vector<size_t>& map_new_to_old);
-
-    //! Updates the vertex buffer objects
-    void updateVBOs();
 
   //! Computes the tangent (and optionally bitangent) vectors used to form a TBN matrix to be used for bumpmapping.
   //! @param vert_count The number of elements stored in @a vertex, @a normal, @a texcoord, @a tangent and @a bitangent.
