@@ -95,12 +95,12 @@ namespace vl
     bool vboEnabled() const { return mVBOEnabled; }
     void setVBOEnabled(bool enabled) { mVBOEnabled = enabled; }
 
-    bool vboDirty() const { return mVBODirty; }
+    bool isVBODirty() const { return mVBODirty; }
     void setVBODirty(bool dirty) { mVBODirty = dirty; }
 
     //! Uploads the data stored in the local buffers on the GPU memory.
     //! If 'discard_local_data' is set to \p true the memory used by the local buffers is released.
-    virtual void updateVBOs(bool /*discard_local_data*/) {}
+    virtual void updateVBOs(bool discard_local_data, bool force_update) = 0;
 
     //! Destroyes the VBO (VertexBufferObjects) associated to this Geometry attributes.
     //! If 'clear_primitives' all the VBOs associated the DrawCall objects are also deleted.
