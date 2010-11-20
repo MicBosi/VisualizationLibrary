@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/MorphingActor.hpp>
+#include <vl/MorphingCallback.hpp>
 #include <vl/GLSL.hpp>
 
 using namespace vl;
@@ -37,76 +37,13 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // MorphingCallback
 //-----------------------------------------------------------------------------
-void MorphingCallback::onActorRenderStarted(Actor* actor, const Camera*, Renderable*, const Shader* shader, int pass)
-{
-  // perform only on the first pass
-  if (pass>0)
-    return;
-
-  MorphingActor* morph_act = dynamic_cast<MorphingActor*>(actor);
-
-  VL_CHECK(morph_act)
-
-  if (!morph_act->mAnimationStarted)
-    return;
-
-  VL_CHECK(morph_act->mFrame1 != -1)
-  VL_CHECK(morph_act->mLastUpdate != -1)
-  if (morph_act->mLastUpdate == -1 || morph_act->mFrame1 == -1)
-    return;
-
-  const GLSLProgram* glslprogram = shader->glslProgram();
-
-  if (!glslprogram)
-    return;
-
-  // from here you can change uniforms or query uniform binding location
-
-  if ( morph_act->glslVertexBlendEnabled() )
-  {
-    // vertex/normals frame 1
-    morph_act->mGeometry->setVertexArray( morph_act->mVertexFrames[morph_act->mFrame1].get() );
-    morph_act->mGeometry->setNormalArray(   morph_act->mNormalFrames[morph_act->mFrame1].get() );
-
-    #if 1 // faster method:
-
-      // vertex attrib and uniform animation
-      if (morph_act->mVertex2_Binding == -1)
-        morph_act->mVertex2_Binding = glslprogram->getAttribLocation("vertex2");
-
-      if (morph_act->mNormal2_Binding == -1)
-        morph_act->mNormal2_Binding = glslprogram->getAttribLocation("normal2");
-
-      if (morph_act->mAnim_t_Binding  == -1)
-        morph_act->mAnim_t_Binding = glslprogram->getUniformLocation("anim_t");
-
-      // vertex/normals frame 2
-      morph_act->mGeometry->setVertexAttributeArray( morph_act->mVertex2_Binding, false, false, morph_act->mVertexFrames[morph_act->mFrame2].get() );
-      morph_act->mGeometry->setVertexAttributeArray( morph_act->mNormal2_Binding, false, false, morph_act->mNormalFrames[morph_act->mFrame2].get() );
-      // frame interpolation ratio
-      glUniform1fv(morph_act->mAnim_t_Binding, 1, &morph_act->mAnim_t);
-
-    #else // slower but simpler method:
-
-      // vertex/normals frame 2
-      morph_act->mGeometry->setVertexAttributeArray( glslprogram->getAttribLocation("vertex2"), false, false, morph_act->mVertexFrames[morph_act->mFrame2].get() );
-      morph_act->mGeometry->setVertexAttributeArray( glslprogram->getAttribLocation("normal2"), false, false, morph_act->mNormalFrames[morph_act->mFrame2].get() );
-      // frame interpolation ratio
-      glUniform1fv(glslprogram->getUniformLocation("anim_t"), 1, &morph_act->mAnim_t);
-    #endif
-  }
-}
-//-----------------------------------------------------------------------------
-// MorphingActor
-//-----------------------------------------------------------------------------
-MorphingActor::MorphingActor()
+MorphingCallback::MorphingCallback()
 {
   #ifndef NDEBUG
     mObjectName = className();
   #endif
 
-  renderEventCallbacks()->push_back( new MorphingCallback );
-
+  mGeometry = new Geometry;
   setAnimation(0,0,0);
   resetGLSLBindings();
   setGLSLVertexBlendEnabled(false);
@@ -117,46 +54,159 @@ MorphingActor::MorphingActor()
   mLastUpdate = -1;
 }
 //-----------------------------------------------------------------------------
-void MorphingActor::init(ResourceDatabase* res_db)
+MorphingCallback::~MorphingCallback()
+{
+}
+//-----------------------------------------------------------------------------
+void MorphingCallback::onActorRenderStarted(Actor*, Real frame_clock, const Camera*, Renderable*, const Shader* shader, int pass)
+{
+  // perform only on the first pass
+  if (pass>0)
+    return;
+
+  if (!mAnimationStarted)
+    return;
+
+  mElapsedTime = frame_clock - mAnimationStartTime;
+  // 30 fps update using the CPU vertex blending or continuous update if using the GPU
+  bool do_update = mLastUpdate == -1 || (mElapsedTime - mLastUpdate) > 1.0f/30.0f || glslVertexBlendEnabled();
+  if ( do_update )
+  {
+    mLastUpdate = mElapsedTime;
+    Real ft = mElapsedTime / mAnimationPeriod;
+    ft = ft - (int)ft;
+    int frame_count = mAnimationEnd - mAnimationStart + 1;
+    mAnim_t  = (float)(ft * frame_count - (int)(ft * frame_count));
+    mFrame1 = (int)(ft * frame_count);
+    mFrame2 = (mFrame1 + 1) % frame_count;
+    mFrame1 += mAnimationStart;
+    mFrame2 += mAnimationStart;
+    VL_CHECK(mFrame1 >= 0)
+    VL_CHECK(mLastUpdate>=0)
+  }
+
+  VL_CHECK(mFrame1 != -1)
+  VL_CHECK(mLastUpdate != -1)
+
+  if (mLastUpdate == -1 || mFrame1 == -1)
+    return;
+
+  const GLSLProgram* glslprogram = shader->glslProgram();
+
+  // from here you can change uniforms or query uniform binding location
+
+  if ( glslVertexBlendEnabled() && glslprogram )
+  {
+    // vertex/normals frame 1
+    mGeometry->setVertexArray( mVertexFrames[mFrame1].get() );
+    mGeometry->setNormalArray( mNormalFrames[mFrame1].get() );
+
+    if (!mVertexFrames[mFrame1]->gpuBuffer()->handle())
+      mVertexFrames[mFrame1]->updateVBO();
+
+    if (!mVertexFrames[mFrame2]->gpuBuffer()->handle())
+      mVertexFrames[mFrame2]->updateVBO();
+
+    if (!mNormalFrames[mFrame1]->gpuBuffer()->handle())
+      mNormalFrames[mFrame1]->updateVBO();
+
+    if (!mNormalFrames[mFrame2]->gpuBuffer()->handle())
+      mNormalFrames[mFrame2]->updateVBO();
+
+    VL_CHECK( mVertexFrames[mFrame1]->gpuBuffer()->handle() )
+    VL_CHECK( mVertexFrames[mFrame2]->gpuBuffer()->handle() )
+    VL_CHECK( mNormalFrames[mFrame1]->gpuBuffer()->handle() )
+    VL_CHECK( mNormalFrames[mFrame2]->gpuBuffer()->handle() )
+
+    #if 1 // faster method:
+
+      // vertex attrib and uniform animation
+      if (mVertex2_Binding == -1)
+        mVertex2_Binding = glslprogram->getAttribLocation("vertex2");
+
+      if (mNormal2_Binding == -1)
+        mNormal2_Binding = glslprogram->getAttribLocation("normal2");
+
+      if (mAnim_t_Binding  == -1)
+        mAnim_t_Binding = glslprogram->getUniformLocation("anim_t");
+
+      // vertex/normals frame 2
+      mGeometry->setVertexAttributeArray( mVertex2_Binding, false, false, mVertexFrames[mFrame2].get() );
+      mGeometry->setVertexAttributeArray( mNormal2_Binding, false, false, mNormalFrames[mFrame2].get() );
+      // frame interpolation ratio
+      glUniform1fv(mAnim_t_Binding, 1, &mAnim_t);
+
+    #else // slower but simpler method:
+
+      // vertex/normals frame 2
+      mGeometry->setVertexAttributeArray( glslprogram->getAttribLocation("vertex2"), false, false, mVertexFrames[mFrame2].get() );
+      mGeometry->setVertexAttributeArray( glslprogram->getAttribLocation("normal2"), false, false, mNormalFrames[mFrame2].get() );
+      // frame interpolation ratio
+      glUniform1fv(glslprogram->getUniformLocation("anim_t"), 1, &mAnim_t);
+    #endif
+  }
+  else
+  if ( do_update )
+  {
+    if (mGeometry->vertexArray() == NULL)
+      mGeometry->setVertexArray(mVertices.get());
+
+    if (mGeometry->normalArray() == NULL)
+      mGeometry->setNormalArray(mNormals.get());
+
+    blendFrames(mFrame1, mFrame2, mAnim_t);
+  }
+}
+//-----------------------------------------------------------------------------
+void MorphingCallback::bindActor(Actor* actor)
+{
+  actor->actorEventCallbacks()->push_back( this );
+  actor->lod(0) = mGeometry;
+}
+//-----------------------------------------------------------------------------
+void MorphingCallback::init(ResourceDatabase* res_db)
 {
   if (res_db->count<Geometry>() == 0)
     return;
 
   Geometry* geometry = res_db->get<Geometry>(0);
-  mGeometry = geometry->shallowCopy();
+  geometry->shallowCopy( mGeometry.get() );
   mVertices = new ArrayFVec3;
   mNormals  = new ArrayFVec3;
-  lod(0)    = mGeometry.get();
 
   // setup Geometry vertex attributes
 
   // copy vertex frames
 
-  for(unsigned i=0; i<res_db->count<ArrayAbstract>(); ++i)
+  for(unsigned i=0, count=res_db->count<ArrayAbstract>(); i<count; ++i)
   {
     ArrayFVec3* buffer = dynamic_cast<ArrayFVec3*>(res_db->get<ArrayAbstract>(i));
     if (buffer && buffer->objectName() == "vertex_frame")
+    {
       mVertexFrames.push_back(buffer);
+    }
     else
     if (buffer && buffer->objectName() == "normal_frame")
+    {
       mNormalFrames.push_back(buffer);
+    }
   }
 
   if (mVertexFrames.empty())
   {
-    Log::error("MorphingActor::init(): no ArrayFVec3 named 'vertex_frame' found.\n");
+    Log::error("MorphingCallback::init(): no ArrayFVec3 named 'vertex_frame' found.\n");
     return;
   }
 
   if (mNormalFrames.empty())
   {
-    Log::error("MorphingActor::init(): no ArrayFVec3 named 'normal_frame' found.\n");
+    Log::error("MorphingCallback::init(): no ArrayFVec3 named 'normal_frame' found.\n");
     return;
   }
 
   if (mVertexFrames.size() != mNormalFrames.size())
   {
-    Log::error("MorphingActor::init(): vertex frame count differs from normal frame count.\n");
+    Log::error("MorphingCallback::init(): vertex frame count differs from normal frame count.\n");
     return;
   }
 
@@ -166,11 +216,11 @@ void MorphingActor::init(ResourceDatabase* res_db)
   mGeometry->setNormalArray(mNormalFrames[0].get() );
   mGeometry->computeBounds();
 
-  mGeometry->setVertexArray(mVertices.get());
-  mGeometry->setNormalArray(mNormals.get());
+  mGeometry->setVertexArray(NULL);
+  mGeometry->setNormalArray(NULL);
 }
 //-----------------------------------------------------------------------------
-void MorphingActor::blendFrames(int a, int b, float t)
+void MorphingCallback::blendFrames(int a, int b, float t)
 {
   // allocate interpolation buffers
   if (mVertices->size() != mVertexFrames[0]->size() ||
@@ -178,13 +228,6 @@ void MorphingActor::blendFrames(int a, int b, float t)
   {
     mVertices->resize( mVertexFrames[0]->size() );
     mNormals->resize(  mNormalFrames[0]->size() );
-
-    //// create VBOs
-    //if (mGeometry->vboEnabled())
-    //{
-    //  mVertices->gpuBuffer()->setBufferData(GBU_DYNAMIC_DRAW, false);
-    //  mNormals ->gpuBuffer()->setBufferData(GBU_DYNAMIC_DRAW, false);
-    //}
   }
 
   #if 1
@@ -208,34 +251,7 @@ void MorphingActor::blendFrames(int a, int b, float t)
   }
 }
 //-----------------------------------------------------------------------------
-void MorphingActor::update(int /*lod*/, Camera*, Real cur_time)
-{
-  if (!mAnimationStarted)
-    return;
-
-  mElapsedTime = cur_time - mAnimationStartTime;
-  // 30 fps update using the CPU vertex blending or continuous update if using the GPU
-  bool do_update = mLastUpdate == -1 || (mElapsedTime - mLastUpdate) > 1.0f/30.0f || glslVertexBlendEnabled();
-  if ( do_update )
-  {
-    mLastUpdate = mElapsedTime;
-    Real ft = mElapsedTime / mAnimationPeriod;
-    ft = ft - (int)ft;
-
-    int frame_count = mAnimationEnd - mAnimationStart + 1;
-    mAnim_t  = (float)(ft * frame_count - (int)(ft * frame_count));
-    mFrame1 = (int)(ft * frame_count);
-    mFrame2 = (mFrame1 + 1) % frame_count;
-    mFrame1 += mAnimationStart;
-    mFrame2 += mAnimationStart;
-    VL_CHECK(mFrame1 >= 0)
-    VL_CHECK(mLastUpdate>=0)
-    if (!glslVertexBlendEnabled())
-      blendFrames(mFrame1, mFrame2, mAnim_t);
-  }
-}
-//-----------------------------------------------------------------------------
-void MorphingActor::setAnimation(int start, int end, float period)
+void MorphingCallback::setAnimation(int start, int end, float period)
 {
   mFrame1 = -1;
   mFrame2 = -1;
@@ -248,7 +264,7 @@ void MorphingActor::setAnimation(int start, int end, float period)
   mAnimationStarted = false;
 }
 //-----------------------------------------------------------------------------
-void MorphingActor::startAnimation(Real start_time)
+void MorphingCallback::startAnimation(Real start_time)
 {
   mAnimationStarted = true;
   mFrame1 = -1;
@@ -258,46 +274,45 @@ void MorphingActor::startAnimation(Real start_time)
   mAnimationStartTime = start_time;
 }
 //-----------------------------------------------------------------------------
-void MorphingActor::stopAnimation()
+void MorphingCallback::stopAnimation()
 {
   mAnimationStarted = false;
 }
 //-----------------------------------------------------------------------------
-void MorphingActor::initFrom(MorphingActor* morph_act)
+void MorphingCallback::initFrom(MorphingCallback* morph_cb)
 {
   mVertices = new ArrayFVec3;
   mNormals  = new ArrayFVec3;
 
   // copy vertex frames
 
-  mVertexFrames = morph_act->mVertexFrames;
-  mNormalFrames = morph_act->mNormalFrames;
+  mVertexFrames = morph_cb->mVertexFrames;
+  mNormalFrames = morph_cb->mNormalFrames;
 
   #if 0
     // Geometry sharing method: works only wiht GLSL
 
     // we can have a single shared Geometry since our MorphingCallback setups the
     // appropriate position and normal arrays for every Actor just before the rendering!
-    mGeometry = morph_act->mGeometry;
+    mGeometry = morph_cb->mGeometry;
   #else
     // Geometry copy method
-    mGeometry = morph_act->mGeometry->shallowCopy();
+    morph_cb->mGeometry->shallowCopy( mGeometry.get() );
 
     // compute AABB using the first frame
 
-    mGeometry->setVertexArray(morph_act->mVertexFrames[0].get() );
-    mGeometry->setNormalArray(morph_act->mNormalFrames[0].get() );
+    mGeometry->setVertexArray(morph_cb->mVertexFrames[0].get() );
+    mGeometry->setNormalArray(morph_cb->mNormalFrames[0].get() );
     mGeometry->computeBounds();
 
-    mGeometry->setVertexArray(mVertices.get());
-    mGeometry->setNormalArray(mNormals.get());
+    mGeometry->setVertexArray(NULL);
+    mGeometry->setNormalArray(NULL);
   #endif
 
-  lod(0) = mGeometry.get();
   setAnimation(0,0,0);
 }
 //-----------------------------------------------------------------------------
-void MorphingActor::resetGLSLBindings()
+void MorphingCallback::resetGLSLBindings()
 {
   mVertex2_Binding = -1;
   mNormal2_Binding = -1;

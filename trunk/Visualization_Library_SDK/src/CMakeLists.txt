@@ -70,7 +70,7 @@ SET(VL_SRC
   vl/MD5CheckSum.cpp
   vl/MemoryDirectory.cpp
   vl/MemoryFile.cpp
-  vl/MorphingActor.cpp
+  vl/MorphingCallback.cpp
   vl/FileSystem.cpp
   vl/OcclusionCullRenderer.cpp
   vl/Object.cpp
@@ -172,7 +172,7 @@ set(VL_INC
   vl/MD5CheckSum.hpp
   vl/MemoryDirectory.hpp
   vl/MemoryFile.hpp
-  vl/MorphingActor.hpp
+  vl/MorphingCallback.hpp
   vl/FileSystem.hpp
   vl/Object.hpp
   vl/Collection.hpp
