@@ -107,24 +107,21 @@ void Actor::computeBounds()
   }
 }
 //-----------------------------------------------------------------------------
-void Actor::setUniform(Uniform* uniform) 
-{ 
-  if (!uniformSet()) 
-    setUniformSet(new UniformSet); 
-  uniformSet()->setUniform(uniform); 
-}
+void Actor::setUniform(Uniform* uniform) { gocUniformSet()->setUniform(uniform); }
 //-----------------------------------------------------------------------------
-const std::vector< ref<Uniform> >& Actor::uniforms() const { return uniformSet()->uniforms(); }
+const std::vector< ref<Uniform> >& Actor::uniforms() const { return getUniformSet()->uniforms(); }
 //-----------------------------------------------------------------------------
-void Actor::eraseUniform(const std::string& name) { uniformSet()->eraseUniform(name); }
+std::vector< ref<Uniform> >& Actor::uniforms() { return gocUniformSet()->uniforms(); }
 //-----------------------------------------------------------------------------
-void Actor::eraseUniform(const Uniform* uniform) { uniformSet()->eraseUniform(uniform); }
+void Actor::eraseUniform(const std::string& name) { if(getUniformSet()) getUniformSet()->eraseUniform(name); }
 //-----------------------------------------------------------------------------
-void Actor::eraseAllUniforms() { uniformSet()->eraseAllUniforms(); }
+void Actor::eraseUniform(const Uniform* uniform) { if(getUniformSet()) getUniformSet()->eraseUniform(uniform); }
 //-----------------------------------------------------------------------------
-Uniform* Actor::gocUniform(const std::string& name) { return uniformSet()->gocUniform(name); }
+void Actor::eraseAllUniforms() { if(getUniformSet()) getUniformSet()->eraseAllUniforms(); }
 //-----------------------------------------------------------------------------
-Uniform* Actor::getUniform(const std::string& name) { return uniformSet()->getUniform(name); }
+Uniform* Actor::gocUniform(const std::string& name) { return gocUniformSet()->gocUniform(name); }
 //-----------------------------------------------------------------------------
-const Uniform* Actor::getUniform(const std::string& name) const { return uniformSet()->getUniform(name); }
+Uniform* Actor::getUniform(const std::string& name) { if (getUniformSet()) return getUniformSet()->getUniform(name); else return NULL; }
+//-----------------------------------------------------------------------------
+const Uniform* Actor::getUniform(const std::string& name) const { if (getUniformSet()) return getUniformSet()->getUniform(name); else return NULL; }
 //-----------------------------------------------------------------------------

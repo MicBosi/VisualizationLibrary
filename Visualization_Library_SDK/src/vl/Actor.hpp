@@ -241,42 +241,47 @@ namespace vl
 
     // uniforms methods
 
-    /** Equivalent to uniformSet()->setUniform(uniform)
+    /** Equivalent to getUniformSet()->setUniform(uniform)
      \remarks
-     This function performs a 'setUniformSet(new UniformSet)' if uniformSet() is NULL. */
+     This function performs a 'setUniformSet(new UniformSet)' if getUniformSet() is NULL. */
     void setUniform(Uniform* uniform);
 
-    /** Equivalent to uniformSet()->uniforms()
+    /** Equivalent to getUniformSet()->uniforms()
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
     const std::vector< ref<Uniform> >& uniforms() const;
 
-    /** Equivalent to uniformSet()->eraseUniform(name)
+    /** Equivalent to gocUniformSet()->uniforms()
+     \remarks
+     You must install a UniformSet with setUniformSet() before calling this function. */
+    std::vector< ref<Uniform> >& uniforms();
+
+    /** Equivalent to getUniformSet()->eraseUniform(name)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
     void eraseUniform(const std::string& name);
 
-    /** Equivalent to uniformSet()->eraseUniform(uniform)
+    /** Equivalent to getUniformSet()->eraseUniform(uniform)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
     void eraseUniform(const Uniform* uniform);
 
-    /** Equivalent to uniformSet()->eraseAllUniforms()
+    /** Equivalent to getUniformSet()->eraseAllUniforms()
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
     void eraseAllUniforms();
 
-    /** Equivalent to uniformSet()->getUniform(name, get_mode)
+    /** Equivalent to getUniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
     Uniform* gocUniform(const std::string& name);
 
-    /** Equivalent to uniformSet()->getUniform(name, get_mode)
+    /** Equivalent to getUniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
     Uniform* getUniform(const std::string& name);
     
-    /** Equivalent to uniformSet()->getUniform(name, get_mode)
+    /** Equivalent to getUniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
     const Uniform* getUniform(const std::string& name) const;
@@ -291,7 +296,7 @@ namespace vl
      - getUniform() */
     void setUniformSet(UniformSet* uniforms) { mUniformSet = uniforms; }
 
-    /** Returns the UniformSet installed
+    /** Returns the installed UniformSet 
      \sa
      - setUniform()
      - uniforms()
@@ -300,7 +305,29 @@ namespace vl
      - eraseAllUniforms()
      - getUniform()
     */
-    UniformSet* uniformSet() const { return mUniformSet.get(); }
+    const UniformSet* getUniformSet() const { return mUniformSet.get(); }
+    
+    /** Returns the installed UniformSet 
+     \sa
+     - setUniform()
+     - uniforms()
+     - eraseUniform(const std::string& name)
+     - eraseUniform(const Uniform* uniform)
+     - eraseAllUniforms()
+     - getUniform()
+    */
+    UniformSet* getUniformSet() { return mUniformSet.get(); }
+
+    /** Creates and/or returns the installed UniformSet 
+     \sa
+     - setUniform()
+     - uniforms()
+     - eraseUniform(const std::string& name)
+     - eraseUniform(const Uniform* uniform)
+     - eraseAllUniforms()
+     - getUniform()
+    */
+    UniformSet* gocUniformSet() { if (!mUniformSet) mUniformSet = new UniformSet; return mUniformSet.get(); }
 
     /** Returns the list of ActorEventCallback bound to an Actor. */
     const Collection<ActorEventCallback>* actorEventCallbacks() const { return &mActorEventCallbacks; }
