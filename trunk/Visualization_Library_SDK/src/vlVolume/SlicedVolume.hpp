@@ -38,55 +38,63 @@
 
 namespace vlVolume
 {
-  class SlicedVolume: public vl::Actor
+  class SlicedVolume: public vl::ActorEventCallback
   {
   public:
+    
     SlicedVolume();
-    void update(int /*lod*/, vl::Camera* camera, vl::Real /*cur_t*/);
+    
+    void onActorRenderStarted(vl::Actor* actor, vl::Real frame_clock, const vl::Camera* cam, vl::Renderable* renderable, const vl::Shader* shader, int pass);
+
+    void onActorDelete(vl::Actor* ) {}
+
+    void bindActor(vl::Actor*);
+
     //! Updates the uniforms used by the vl::GLSLProgram to render the volume each time the update() function is called.
-    virtual void updateUniforms(vl::Camera* camera);
+    virtual void updateUniforms(const vl::Camera* camera, vl::Actor*);
+    
     //! Defines the number of slices used to render the volume: more slices generate a better rendering.
     void setSliceCount(int count) { mSliceCount = count; }
+    
     //! Returns the number of slices used to render the volume.
     int sliceCount() const { return mSliceCount; }
+    
     //! Returns the vl::Geometry associated to a SlicedVolume actor
     vl::Geometry* geometry() { return mGeometry.get(); }
+    
     //! Returns the vl::Geometry associated to a SlicedVolume actor
     const vl::Geometry* geometry() const { return mGeometry.get(); }
-    //! Returns the vl::Effect associated to a SlicedVolume actor
-    vl::Effect* effect() { return mEffect.get(); }
-    //! Returns the vl::Effect associated to a SlicedVolume actor
-    const vl::Effect* effect() const { return mEffect.get(); }
+    
     //! Defines the dimensions of the box enclosing the volume
     void setBox(const vl::AABB& box);
+    
     //! Defines the dimensions of the box enclosing the volume
     const vl::AABB& box() const { return mBox; }
+    
     //! Returns the texture coordinates assigned to each of the 8 box corners
     const vl::fvec3* texCoords() const { return mTexCoord; }
+    
     //! Returns the texture coordinates assigned to each of the 8 box corners
     vl::fvec3* texCoords() { return mTexCoord; }
+    
     //! Generates a default set of texture coordinates based on the give texture dimensions.
     void generateTextureCoordinates(const vl::ivec3& size);
+    
     //! Generates a default set of texture coordinates based on the give texture dimensions.
     void generateTextureCoordinates(int width, int height, int depth) { generateTextureCoordinates(vl::ivec3(width,height,depth)); }
+    
     //! Defines the image containing the volume to be rendered.
-    void setVolumeImage(vl::Image* volume);
-    //! Returns the 1D image used as transfer function for the volume rendering
-    const vl::Image* transferFunction() const { return mTransferFunction.get(); }
-    //! Returns the 1D image used as transfer function for the volume rendering
-    vl::Image* transferFunction() { return mTransferFunction.get(); }
-    //! Sets the 1D image used as transfer function for the volume rendering. Pass NULL to remove the transfer function.
-    void setTransferFunction(vl::Image* tfunc);
+    void setVolumeImage(vl::Image* volume, vl::Shader* shader);
+    
     //! Returns the light used to illuminate the volume
     const vl::Light* light() const { return mLight.get(); }
+    
     //! Returns the light used to illuminate the volume
     vl::Light* light() { return mLight.get(); }
+    
     //! Defines the light used to illuminate the volume
     void setLight(vl::Light* light) { mLight = light; }
-    //! Returns the GLSL program used for IF_LUMINANCE volume images
-    const vl::GLSLProgram* glslProgram() const { return mGLSLProgram.get(); }
-    //! Returns the GLSL program used for IF_LUMINANCE volume images.
-    vl::GLSLProgram* glslProgram() { return mGLSLProgram.get(); }
+    
     /** Generates an RGBA image that can be passed to setVolumeImage() based on the given data source and transfer function.
      * \param data The vl::Image used as the volume data source. It must have format() equal to IF_LUMINANCE and type() equal to IT_UNSIGNED_BYTE, IT_UNSIGNED_SHORT or IT_UNSIGNED_FLOAT.
      * \param trfunc An 1D vl::Image used as transfer function that is used to assign to each value in \p data an RGBA quadruplets in the new image.
@@ -95,6 +103,7 @@ namespace vlVolume
      * \param alpha_from_data If set to true the \p alpha channel of the generated image will be taken from \p data otherwise from the transfer function.
      */
     static vl::ref<vl::Image> genRGBAVolume(vl::Image* data, vl::Image* trfunc, const vl::fvec3& light_dir, bool alpha_from_data=true);
+    
     /** Generates an RGBA image that can be passed to setVolumeImage() based on the given data source and transfer function.
      * \param data The vl::Image used as the volume data source. It must have format() equal to IF_LUMINANCE and type() equal to IT_UNSIGNED_BYTE, IT_UNSIGNED_SHORT or IT_UNSIGNED_FLOAT.
      * \param trfunc An 1D vl::Image used as transfer function that is used to assign to each value in \p data an RGBA quadruplets in the new image.
@@ -105,22 +114,19 @@ namespace vlVolume
      */
     static vl::ref<vl::Image> genRGBAVolume(vl::Image* data, vl::Image* trfunc, bool alpha_from_data=true);
 
+  protected:
+    int mSliceCount;
+    vl::ref<vl::Geometry> mGeometry;
+    vl::AABB mBox;
+    vl::fmat4 mCache;
+    vl::fvec3 mTexCoord[8];
+    vl::ref<vl::Light> mLight;
+
   private:
     template<typename data_type, vl::EImageType img_type>
     static vl::ref<vl::Image> genRGBAVolumeT(vl::Image* data, vl::Image* trfunc, const vl::fvec3& light_dir, bool alpha_from_data);
     template<typename data_type, vl::EImageType img_type>
     static vl::ref<vl::Image> genRGBAVolumeT(vl::Image* data, vl::Image* trfunc, bool alpha_from_data);
-
-  protected:
-    int mSliceCount;
-    vl::ref<vl::Geometry> mGeometry;
-    vl::ref<vl::Effect>   mEffect;
-    vl::AABB mBox;
-    vl::fmat4 mCache;
-    vl::fvec3 mTexCoord[8];
-    vl::ref<vl::Image> mTransferFunction;
-    vl::ref<vl::Light> mLight;
-    vl::ref<vl::GLSLProgram> mGLSLProgram;
   };
 }
 

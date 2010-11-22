@@ -45,9 +45,18 @@ public:
 
     BaseDemo::initEvent();
 
+    vl::ref<vl::Effect> vol_fx = new vl::Effect;
+    vol_fx->shader()->enable(vl::EN_DEPTH_TEST);
+    vol_fx->shader()->enable(vl::EN_BLEND);
+
+    // default GLSL settings
+    mGLSL = vol_fx->shader()->gocGLSLProgram();
+    mGLSL->attachShader( new vl::GLSLFragmentShader("/glsl/volume_luminance_light.fs") );
+    mGLSL->attachShader( new vl::GLSLVertexShader("/glsl/volume_luminance_light.vs") );
+
     // general test setup
-    mUseGLSL      = GLEW_ARB_shading_language_100 != 0;
-    mDynamicLight = false; // for GLSL mode only
+    mUseGLSL      = GLEW_VERSION_2_0 || GLEW_VERSION_3_0;
+    mDynamicLight = true; // for GLSL mode only
 
     // transform and trackball steup
     mVolumeTr = new vl::Transform;
@@ -56,11 +65,16 @@ public:
 
     // volume
     vl::AABB volume_box( vl::vec3(-10,-10,-10), vl::vec3(+10,+10,+10) );
+    mVolumeAct = new vl::Actor;
+    mVolumeAct->setEffect( vol_fx.get() );
     mSlicedVolume = new vlVolume::SlicedVolume;
-    mSlicedVolume->setTransform(mVolumeTr.get());
+    mSlicedVolume->bindActor(mVolumeAct.get());
+    mSlicedVolume->setSliceCount(1024);
+
+    mVolumeAct->setTransform(mVolumeTr.get());
     mSlicedVolume->setBox(volume_box);
-    mSlicedVolume->setRenderRank(1);
-    sceneManager()->tree()->addActor( mSlicedVolume.get() );
+    mVolumeAct->setRenderRank(1);
+    sceneManager()->tree()->addActor( mVolumeAct.get() );
 
     // volume_box outline
     vl::ref<vl::Effect> fx_box = new vl::Effect;
@@ -99,7 +113,8 @@ public:
     sceneManager()->tree()->addActor(mBiasText.get(), effect.get());
 
     // bias uniform
-    mAlphaBias = mSlicedVolume->glslProgram()->getUniform("val_threshold");
+    mVolumeAct->gocUniform("val_threshold")->setUniform(0.5f);
+    mAlphaBias = mVolumeAct->getUniform("val_threshold");
 
     // update alpha bias text
     mouseWheelEvent(0);
@@ -137,6 +152,7 @@ public:
 
   void setVolume(vl::ref<vl::Image> img)
   {
+    vl::Effect* vol_fx = mVolumeAct->effect();
     if(img->format() == vl::IF_LUMINANCE)
     {
       if (mUseGLSL) // use GLSL
@@ -144,30 +160,42 @@ public:
         vl::Log::info("IF_LUMINANCE image and GLSL supported: lighting and the transfer function will be computed in realtime.\n");
         vl::ref<vl::Image> trfunc = vl::Image::makeColorSpectrum(128, vlut::black, vlut::blue, vlut::green, vlut::yellow, vlut::red);
         // enables GLSL usage
-        mSlicedVolume->setTransferFunction(trfunc.get());
-        mSlicedVolume->setVolumeImage(img.get());
-        mSlicedVolume->effect()->shader()->disable(vl::EN_ALPHA_TEST);
+        // installs GLSLProgram
+        vol_fx->shader()->setRenderState(mGLSL.get());
+        // installs the transfer function as texture #1
+        vol_fx->shader()->gocTextureUnit(1)->setTexture( new vl::Texture( trfunc.get() ) );  
+        mVolumeAct->gocUniform("trfunc_delta")->setUniform(0.5f/trfunc->width());    
+        mVolumeAct->gocUniform("volume_texunit")->setUniform(0);
+        mVolumeAct->gocUniform("trfunc_texunit")->setUniform(1);
+        mSlicedVolume->setVolumeImage(img.get(), vol_fx->shader());
+        vol_fx->shader()->disable(vl::EN_ALPHA_TEST);
       }
       else // precompute transfer function and illumination
       {
         vl::Log::info("IF_LUMINANCE image and GLSL not supported: transfer function and lighting will be precomputed.\n");
         vl::ref<vl::Image> trfunc = vl::Image::makeColorSpectrum(128, vlut::black, vlut::blue, vlut::green, vlut::yellow, vlut::red);
         vl::ref<vl::Image> volume = vlVolume::SlicedVolume::genRGBAVolume(img.get(), trfunc.get(), vl::fvec3(1.0f,1.0f,0.0f));
+        mSlicedVolume->setVolumeImage(volume.get(), vol_fx->shader());
+        vol_fx->shader()->enable(vl::EN_ALPHA_TEST);
+        vol_fx->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 0.3f);
         // disable GLSL usage
-        mSlicedVolume->setTransferFunction(NULL);
-        mSlicedVolume->setVolumeImage(volume.get());
-        mSlicedVolume->effect()->shader()->enable(vl::EN_ALPHA_TEST);
-        mSlicedVolume->effect()->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 0.3f);
+        // remove GLSLProgram
+        vol_fx->shader()->eraseRenderState(vl::RS_GLSLProgram);
+        // remove texture unit #1
+        vol_fx->shader()->eraseRenderState(vl::RS_TextureUnit1);
       }
     }
     else
     {
       vl::Log::info("Non IF_LUMINANCE image: not using GLSL.\n");
       // disable GLSL usage
-      mSlicedVolume->setTransferFunction(NULL);
-      mSlicedVolume->setVolumeImage( img.get() );
-      mSlicedVolume->effect()->shader()->enable(vl::EN_ALPHA_TEST);
-      mSlicedVolume->effect()->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 0.3f);
+      // remove GLSLProgram
+      vol_fx->shader()->eraseRenderState(vl::RS_GLSLProgram);
+      // remove texture unit #1
+      vol_fx->shader()->eraseRenderState(vl::RS_TextureUnit1);
+      mSlicedVolume->setVolumeImage(img.get(), vol_fx->shader());
+      vol_fx->shader()->enable(vl::EN_ALPHA_TEST);
+      vol_fx->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 0.3f);
     }
     
     mAlphaBias->setUniform(0.3f);
@@ -191,7 +219,7 @@ public:
     mAlphaBias->setUniform(alpha);
 
     // used for non GLSL mode volumes
-    mSlicedVolume->effect()->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, alpha);
+    mVolumeAct->effect()->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, alpha);
     
     updateText();
     openglContext()->update();
@@ -212,6 +240,8 @@ public:
     vl::ref<vl::Uniform> mAlphaBias;
     vl::ref<vl::Text> mBiasText;
     vl::ref<vl::Light> mLight;
+    vl::ref<vl::GLSLProgram> mGLSL;
+    vl::ref<vl::Actor> mVolumeAct;
     bool mDynamicLight;
     bool mUseGLSL;
     vl::ref<vlVolume::SlicedVolume> mSlicedVolume;

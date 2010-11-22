@@ -123,24 +123,14 @@ SlicedVolume::SlicedVolume()
 {
   mSliceCount = 1024;
   mGeometry = new Geometry;
-  mEffect   = new Effect;
   mLight    = new Light(0);
-  setEffect(mEffect.get());
-  effect()->shader()->enable(vl::EN_DEPTH_TEST);
-  effect()->shader()->enable(vl::EN_BLEND);
-  lod(0) = mGeometry.get();
+  
   fvec3 texc[] = 
   {
     fvec3(0,0,0), fvec3(1,0,0), fvec3(1,1,0), fvec3(0,1,0),
     fvec3(0,0,1), fvec3(1,0,1), fvec3(1,1,1), fvec3(0,1,1)
   };
   memcpy(mTexCoord, texc, sizeof(texc));
-
-  // default GLSL settings
-  mGLSLProgram = new GLSLProgram;
-  glslProgram()->attachShader( new vl::GLSLFragmentShader("/glsl/volume_luminance_light.fs") );
-  glslProgram()->attachShader( new vl::GLSLVertexShader("/glsl/volume_luminance_light.vs") );
-  glslProgram()->gocUniform("val_threshold")->setUniform(0.5f);
 }
 //-----------------------------------------------------------------------------
 /**
@@ -149,7 +139,7 @@ SlicedVolume::SlicedVolume()
  * - \p light_position Light position in object space, used to compute Blinn-Phong lighting in \p /glsl/volume_luminance_light.fs
  * - \p eye_position Camera position in object space, used to compute Blinn-Phong lighting in \p /glsl/volume_luminance_light.fs
  */
-void SlicedVolume::updateUniforms(Camera* camera)
+void SlicedVolume::updateUniforms(const Camera* camera, Actor* actor)
 {
   // light position
   fvec3 lpos;
@@ -159,18 +149,16 @@ void SlicedVolume::updateUniforms(Camera* camera)
     lpos = ((fmat4)camera->inverseViewMatrix() * light()->position()).xyz();
 
   // world to object space
-  if (transform())
-    lpos = (fmat4)transform()->worldMatrix().getInverse() * lpos;
-  
-  // ... mic fixme ... should use the Actor's uniforms for these
-  glslProgram()->gocUniform("light_position")->setUniform(lpos);
+  if (actor->transform())
+    lpos = (fmat4)actor->transform()->worldMatrix().getInverse() * lpos;
+  actor->gocUniform("light_position")->setUniform(lpos);
 
   // eye postion
   fvec3 epos = (fvec3)camera->inverseViewMatrix().getT();
   // world to object space
-  if (transform())
-    epos = (fmat4)transform()->worldMatrix().getInverse() * epos;
-  glslProgram()->gocUniform("eye_position")->setUniform(epos);
+  if (actor->transform())
+    epos = (fmat4)actor->transform()->worldMatrix().getInverse() * epos;
+  actor->gocUniform("eye_position")->setUniform(epos);
 }
 //-----------------------------------------------------------------------------
 namespace
@@ -185,18 +173,26 @@ namespace
     }
   };
 }
-void SlicedVolume::update(int /*lod*/, Camera* camera, Real /*cur_t*/)
+void SlicedVolume::bindActor(Actor* actor)
 {
+  actor->actorEventCallbacks()->push_back( this );
+  actor->lod(0) = mGeometry;
+}
+void SlicedVolume::onActorRenderStarted(Actor* actor, Real, const Camera* camera, Renderable*, const Shader* shader, int pass)
+{
+  if (pass>0)
+    return;
+
   // setup uniform variables
 
-  if (effect()->shader()->getGLSLProgram() && transferFunction())
-    updateUniforms(camera);
+  if (shader->getGLSLProgram())
+    updateUniforms(camera, actor);
 
   // setup geometry
 
   fmat4 mat;
-  if (transform())
-    mat = (fmat4)(camera->viewMatrix() * transform()->worldMatrix());
+  if (actor->transform())
+    mat = (fmat4)(camera->viewMatrix() * actor->transform()->worldMatrix());
   else
     mat = (fmat4)camera->viewMatrix();
 
@@ -381,47 +377,12 @@ void SlicedVolume::generateTextureCoordinates(const ivec3& size)
 }
 //-----------------------------------------------------------------------------
 //! This function also generates a 3D texture based on the given image and generates an appropriate set of texture coordinates.
-void SlicedVolume::setVolumeImage(Image* img)
+void SlicedVolume::setVolumeImage(Image* img, Shader* shader)
 {
-  effect()->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img ) );
+  shader->gocTextureUnit(0)->setTexture( new vl::Texture( img ) );
   generateTextureCoordinates( img->width(), img->height(), img->depth() );
-  glslProgram()->gocUniform("gradient_delta")->setUniform(fvec3(0.5f/img->width(), 0.5f/img->height(), 0.5f/img->depth()));
-}
-//-----------------------------------------------------------------------------
-/** 
- * Selecting a transfer function != NULL automatically enables the GLSL shader returned by glslProgram(). 
- * Call setTransferFunction(NULL) to disable the GLSL program.
- * Based on the \p img format an appropriate rendering method is selected:
- *
- * - If \p tfunc is NULL then it is assumed that the image set by setVolumeImage() contains already the appropriate colors and alpha values 
- * as a result of a transfer function and/or lighting computations (see genRGBAVolume()). This is the preferred method for 
- * legacy hardware as it does not require GLSL support but can require 4 times more memory and cannot perform realtime-animated lighting. 
- * - If \p tfunc is non-NULL then the image set by setVolumeImage() should have IF_LUMINANCE format() and contains the raw volume data. 
- * A GLSL program is used in order to execute the transfer function and the lighting computations. In this case the tranfer function \p tfunc
- * is used. This method requires GLSL support, needs less memory and can perform realtime-animated Blinn-Phong lighting.
- */
-void SlicedVolume::setTransferFunction(Image* tfunc) 
-{ 
-  mTransferFunction = tfunc; 
-
-  // enables GLSL
-  if (tfunc)
-  {
-    VL_CHECK(tfunc->dimension() == ID_1D) 
-    effect()->shader()->gocTextureUnit(1)->setTexture( new vl::Texture( tfunc ) );  
-    glslProgram()->gocUniform("trfunc_delta")->setUniform(0.5f/mTransferFunction->width());    
-    effect()->shader()->setRenderState( glslProgram() );
-    glslProgram()->gocUniform("volume_texunit")->setUniform(0);
-    glslProgram()->gocUniform("trfunc_texunit")->setUniform(1);
-  }
-  else // disables GLSL
-  {
-    // remove GLSL
-    effect()->shader()->eraseRenderState(glslProgram());
-    // remove texture unit #1
-    if (effect()->shader()->gocTextureUnit(1))
-      effect()->shader()->eraseRenderState(effect()->shader()->gocTextureUnit(1));    
-  }
+  if (shader->getGLSLProgram())
+    shader->getGLSLProgram()->gocUniform("gradient_delta")->setUniform(fvec3(0.5f/img->width(), 0.5f/img->height(), 0.5f/img->depth()));
 }
 //-----------------------------------------------------------------------------
 ref<Image> SlicedVolume::genRGBAVolume(Image* data, Image* trfunc, const fvec3& light_dir, bool alpha_from_data)
@@ -691,6 +652,5 @@ void SlicedVolume::setBox(const AABB& box)
   mCache = 0; 
   mGeometry->setBoundingBox( box );
   mGeometry->setBoundingSphere( box );
-  mGeometry->setBoundsDirty(false);
-  computeBounds();
+  mGeometry->setBoundsDirty(true);
 }
