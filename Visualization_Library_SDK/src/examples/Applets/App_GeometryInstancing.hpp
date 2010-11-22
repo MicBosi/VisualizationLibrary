@@ -128,9 +128,8 @@ public:
 
       #if 1
         // the uniforms must be per actor
-        actor->setUniformSet( new vl::UniformSet );
-        actor->uniformSet()->setUniform( _model_view_matrix[batch].get() );
-        actor->uniformSet()->setUniform( _normal_matrix[batch].get() );
+        actor->gocUniformSet()->setUniform( _model_view_matrix[batch].get() );
+        actor->gocUniformSet()->setUniform( _normal_matrix[batch].get() );
       #else
         // is not coorect to send the uniform per-shader
         fx->shader()->setUniform( _model_view_matrix[batch].get() );

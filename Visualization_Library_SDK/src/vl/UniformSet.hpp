@@ -63,6 +63,8 @@ namespace vl
 
     const std::vector< ref<Uniform> >& uniforms() const { return mUniforms; }
 
+    std::vector< ref<Uniform> >& uniforms() { return mUniforms; }
+
     void eraseUniform(const std::string& name);
 
     void eraseUniform(const Uniform* uniform);
