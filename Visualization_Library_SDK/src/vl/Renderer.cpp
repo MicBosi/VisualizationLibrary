@@ -251,7 +251,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       {
         cur_glsl_program       = shader->glslProgram();
         cur_shader_uniform_set = shader->getUniformSet();
-        cur_actor_uniform_set  = actor->uniformSet();
+        cur_actor_uniform_set  = actor->getUniformSet();
         // consider them NULL if they are empty
         if (cur_shader_uniform_set && cur_shader_uniform_set->uniforms().empty())
           cur_shader_uniform_set = NULL;
