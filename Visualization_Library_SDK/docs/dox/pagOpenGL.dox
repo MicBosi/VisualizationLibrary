@@ -27,18 +27,22 @@
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glCompressedTexImage1D.xml>glCompressedTexImage1D()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glCompressedTexImage2D.xml>glCompressedTexImage2D()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glCompressedTexImage3D.xml>glCompressedTexImage3D()</a>
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glTexParameter.xml>glTexParameter()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glGenTextures.xml>glGenTextures()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glDeleteTextures.xml>glDeleteTextures()</a>
 			</td>
 			<td valign=top>
 				- vl::Texture
-				- vl::Texture::setupTexture1D()
-				- vl::Texture::setupTexture2D()
-				- vl::Texture::setupTexture3D()
-				- vl::Texture::setupTextureCubemap()
-				- vl::Texture::setupTextureRectangle()
-				- vl::Texture::setupTexture1DArray()
-				- vl::Texture::setupTexture2DArray()
+				- vl::Texture::createTexture()
+				- vl::Texture::setMipLevel()
+				- vl::Texture::prepareTexture1D()
+				- vl::Texture::prepareTexture2D()
+				- vl::Texture::prepareTexture3D()
+				- vl::Texture::prepareTextureCubemap()
+				- vl::Texture::prepareTextureRectangle()
+				- vl::Texture::prepareTexture1DArray()
+				- vl::Texture::prepareTexture2DArray()
+				- vl::TexParameter and vl::Texture::getTexParameter()
 				- vl::TextureUnit
 				- vl::Shader::gocTextureUnit()
 			</td>
@@ -51,7 +55,7 @@
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/gluBuild3DMipmaps.xml>gluBuild3DMipmaps()</a>
 			</td>
 			<td valign=top>
-				Mipmaps are automatically generated when requested by the texture constructor or by one of the vl::Texture::setupTexture*() methods.
+				Mipmaps are automatically generated when requested by the texture constructor or by one of the vl::Texture::prepareTexture*() methods.
 				The texture generation uses the hardware acceleration where available otherwise glu is used.
 			</td>
 		</tr>

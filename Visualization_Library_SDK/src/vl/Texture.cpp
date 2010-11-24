@@ -40,7 +40,7 @@ using namespace vl;
 
 namespace
 {
-  int getDefFormat(ETextureFormat internal_format)
+  int getDefaultFormat(ETextureFormat internal_format)
   {
     switch(internal_format)
     {
@@ -101,7 +101,7 @@ namespace
     }
   }
 
-  int getDefType(ETextureFormat internal_format)
+  int getDefaultType(ETextureFormat /*internal_format*/)
   {
     return GL_UNSIGNED_BYTE;
   }
@@ -113,8 +113,20 @@ namespace
 Texture::~Texture()
 {
   if (mHandle)
-  glDeleteTextures(1, &mHandle);
+    glDeleteTextures(1, &mHandle);
+  reset();
+}
+//-----------------------------------------------------------------------------
+void Texture::reset()
+{
+  setDimension(TD_TEXTURE_UNKNOWN);
+  setInternalFormat(TF_UNKNOWN);
+  setBorder(0);
+  setWidth(0);
+  setHeight(0);
+  setDepth(0);
   mHandle = 0;
+  mSetupParams = NULL;
 }
 //-----------------------------------------------------------------------------
 Texture::Texture(int width, ETextureFormat format, bool border)
@@ -123,22 +135,8 @@ Texture::Texture(int width, ETextureFormat format, bool border)
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  setDimension(TD_TEXTURE_1D);
-  setInternalFormat(format);
-  setBorder(border);
-  setWidth(width);
-  setHeight(0);
-  setDepth(0);
-  mHasMipmaps = false;
-  glGenTextures( 1, &mHandle ); VL_CHECK_OGL() VL_CHECK(handle())
-  if(mHandle)
-  {
-    glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
-    int brd = border?2:0;
-    glTexImage1D( dimension(), 0, format, width+brd, border?1:0, getDefFormat(format), getDefType(format), NULL); VL_CHECK_OGL()
-    glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
-  }
-  else
+  reset();
+  if (!createTexture(vl::TD_TEXTURE_1D, format, width, 0, 0, border))
   {
     Log::error("1D texture creation failed!\n");
   }
@@ -150,22 +148,8 @@ Texture::Texture(int width, int height, ETextureFormat format, bool border)
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  setDimension(TD_TEXTURE_2D);
-  setInternalFormat(format);
-  setBorder(border);
-  setWidth(width);
-  setHeight(height);
-  setDepth(0);
-  mHasMipmaps = false;
-  glGenTextures(1, &mHandle); VL_CHECK_OGL() VL_CHECK(handle())
-  if(mHandle)
-  {
-    glBindTexture(dimension(), mHandle); VL_CHECK_OGL()
-    int brd = border?2:0;
-    glTexImage2D(dimension(), 0, format, width+brd, height+brd, border?1:0, getDefFormat(format), getDefType(format), NULL); VL_CHECK_OGL()
-    glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
-  }
-  else
+  reset();
+  if (!createTexture(vl::TD_TEXTURE_2D, format, width, height, 0, border))
   {
     Log::error("2D texture creation failed!\n");
   }
@@ -177,35 +161,15 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  setDimension(TD_TEXTURE_3D);
-  setInternalFormat(format);
-  setBorder(border);
-  setWidth(width);
-  setHeight(height);
-  setDepth(depth);
-  mHasMipmaps = false;
-  if (!GLEW_VERSION_1_2)
-    Log::error("3D textures require OpenGL 1.2\n");
-  else
+  reset();
+  if (!createTexture(vl::TD_TEXTURE_3D, format, width, height, depth, border))
   {
-    glGenTextures( 1, &mHandle ); VL_CHECK_OGL() VL_CHECK(handle())
-    if(mHandle)
-    {
-      glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
-      int brd = border?2:0;
-      glTexImage3D( dimension(), 0, format, width+brd, height+brd, depth+brd, border?1:0, getDefFormat(format), getDefType(format), NULL); VL_CHECK_OGL()
-      glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
-    }
-    else
-    {
-      Log::error("2D texture creation failed!\n");
-    }
+    Log::error("3D texture creation failed!\n");
   }
-
 }
 //-----------------------------------------------------------------------------
 Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border):
-  mHandle(0), mFormat(format), mDimension(TD_TEXTURE_2D), mWidth(0), mHeight(0), mDepth(0), mBorder(border), mHasMipmaps(false)
+  mHandle(0), mFormat(format), mDimension(TD_TEXTURE_UNKNOWN), mWidth(0), mHeight(0), mDepth(0), mBorder(border)
 {
   #ifndef NDEBUG
     mObjectName = className();
@@ -215,10 +179,10 @@ Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border
   {
     switch(image->dimension())
     {
-    case ID_1D:      setupTexture1D(image, format, mipmaps, border); break;
-    case ID_2D:      setupTexture2D(image, format, mipmaps, border); break;
-    case ID_3D:      setupTexture3D(image, format, mipmaps, border); break;
-    case ID_Cubemap: setupTextureCubemap(image, format, mipmaps, border); break;
+    case ID_1D:      prepareTexture1D(image, format, mipmaps, border); break;
+    case ID_2D:      prepareTexture2D(image, format, mipmaps, border); break;
+    case ID_3D:      prepareTexture3D(image, format, mipmaps, border); break;
+    case ID_Cubemap: prepareTextureCubemap(image, format, mipmaps, border); break;
     default:
       break;
     }
@@ -228,7 +192,7 @@ Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border
 }
 //-----------------------------------------------------------------------------
 Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps , bool border):
-  mHandle(0), mFormat(format), mDimension(TD_TEXTURE_2D), mWidth(0), mHeight(0), mDepth(0), mBorder(border), mHasMipmaps(false)
+  mHandle(0), mFormat(format), mDimension(TD_TEXTURE_UNKNOWN), mWidth(0), mHeight(0), mDepth(0), mBorder(border)
 {
   #ifndef NDEBUG
     mObjectName = className();
@@ -240,10 +204,10 @@ Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps ,
   {
     switch(image->dimension())
     {
-    case ID_1D:      setupTexture1D(image.get(), format, mipmaps, border); break;
-    case ID_2D:      setupTexture2D(image.get(), format, mipmaps, border); break;
-    case ID_3D:      setupTexture3D(image.get(), format, mipmaps, border); break;
-    case ID_Cubemap: setupTextureCubemap(image.get(), format, mipmaps, border); break;
+    case ID_1D:      prepareTexture1D(image.get(), format, mipmaps, border); break;
+    case ID_2D:      prepareTexture2D(image.get(), format, mipmaps, border); break;
+    case ID_3D:      prepareTexture3D(image.get(), format, mipmaps, border); break;
+    case ID_Cubemap: prepareTextureCubemap(image.get(), format, mipmaps, border); break;
     default:
       break;
     }
@@ -253,7 +217,7 @@ Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps ,
 }
 //-----------------------------------------------------------------------------
 Texture::Texture():
-  mHandle(0), mFormat(TF_RGBA), mDimension(TD_TEXTURE_2D), mWidth(0), mHeight(0), mDepth(0), mBorder(false), mHasMipmaps(false)
+  mHandle(0), mFormat(TF_UNKNOWN), mDimension(TD_TEXTURE_UNKNOWN), mWidth(0), mHeight(0), mDepth(0), mBorder(false)
 {
   #ifndef NDEBUG
     mObjectName = className();
@@ -262,27 +226,31 @@ Texture::Texture():
 //-----------------------------------------------------------------------------
 bool Texture::isValid() const
 {
-  bool x = mWidth != 0 && mHeight == 0 && mDepth == 0;
-  bool y = mWidth != 0 && mHeight != 0 && mDepth == 0;
-  bool z = mWidth != 0 && mHeight != 0 && mDepth != 0;
-  return handle() != 0 && (x|y|z);
+  bool a = mWidth != 0 && mHeight == 0 && mDepth == 0;
+  bool b = mWidth != 0 && mHeight != 0 && mDepth == 0;
+  bool c = mWidth != 0 && mHeight != 0 && mDepth != 0;
+  return handle() != 0 && (a|b|c);
 }
 //-----------------------------------------------------------------------------
-bool Texture::supports(ETextureDimension texture_dim, ETextureFormat format, bool border, const Image* image, bool verbose)
+bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_format, int mip_level, EImageDimension img_dimension, int w, int h, int d, bool border, bool verbose)
 {
+  VL_CHECK_OGL();
+
+  // clear errors
+
   glGetError();
 
   // cubemaps
 
-  if ( image->isCubemap() )
+  if ( tex_dimension == TD_TEXTURE_CUBE_MAP )
   {
-    if (!GLEW_ARB_texture_cube_map && !GLEW_VERSION_1_3)
+    if (!(GLEW_ARB_texture_cube_map||GLEW_VERSION_1_3||GLEW_VERSION_3_0))
     {
-      if (verbose) Log::error("Texture::createTexture(): texture cubemap not supported.\n");
+      if (verbose) Log::error("Texture::createTexture(): texture cubemap not supported by the current hardware.\n");
       return false;
     }
 
-    if ( image->width() != image->height() )
+    if ( w != h )
     {
       Log::error("Texture::supports(): cubemaps must have square faces.\n");
       return false;
@@ -291,7 +259,7 @@ bool Texture::supports(ETextureDimension texture_dim, ETextureFormat format, boo
 
   // texture arrays
 
-  if ( texture_dim == TD_TEXTURE_1D_ARRAY || texture_dim == TD_TEXTURE_2D_ARRAY )
+  if ( tex_dimension == TD_TEXTURE_1D_ARRAY || tex_dimension == TD_TEXTURE_2D_ARRAY )
   {
     if (border)
     {
@@ -299,133 +267,387 @@ bool Texture::supports(ETextureDimension texture_dim, ETextureFormat format, boo
       return false;
     }
 
-    if ( (image->dimension() != ID_2D && texture_dim == TD_TEXTURE_1D_ARRAY) || ( image->dimension() != ID_3D && texture_dim == TD_TEXTURE_2D_ARRAY ) )
-    {
-      Log::error("Texture::supports(): the image dimensions are not suitable to create a texture array. To create a 1D texture array you need a 2D image and to create a 2D texture array you need a 3D image.\n");
-      return false;
-    }
-
     if(!(GLEW_EXT_texture_array||GLEW_VERSION_3_0))
     {
-      if (verbose) Log::error("Texture::supports(): texture array not supported.\n");
+      if (verbose) Log::error("Texture::supports(): texture array not supported by the current hardware.\n");
       return false;
     }
 
+    if ( img_dimension )
+    {
+      if ( (img_dimension != ID_2D && tex_dimension == TD_TEXTURE_1D_ARRAY) || ( img_dimension != ID_3D && tex_dimension == TD_TEXTURE_2D_ARRAY ) )
+      {
+        Log::error("Texture::supports(): the image dimensions are not suitable to create a texture array. To create a 1D texture array you need a 2D image and to create a 2D texture array you need a 3D image.\n");
+        return false;
+      }
+    }
   }
 
   // texture rectangle
 
-  // TODO: support OpenGL 3.1
-  if (texture_dim == TD_TEXTURE_RECTANGLE)
+  if (tex_dimension == TD_TEXTURE_RECTANGLE)
   {
-    if (!(GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle/*TODO:||GLEW_VERSION_3_1*/))
+    if (!(GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle||GLEW_VERSION_3_1))
     {
-      if (verbose) Log::error("Texture::supports(): texture rectangle not supported.\n");
+      if (verbose) Log::error("Texture::supports(): texture rectangle not supported by the current hardware.\n");
+      return false;
+    }
+
+    if ( mip_level != 0 )
+    {
+      Log::error("Texture::supports(): TD_TEXTURE_RECTANGLE textures do not support mipmapping level other than zero.\n");
       return false;
     }
 
     if (border)
     {
-      Log::error("Texture::supports(): ARB_texture_rectangle extension does not allow textures borders\n");
+      Log::error("Texture::supports(): TD_TEXTURE_RECTANGLE textures do not allow textures borders\n");
       return false;
     }
   }
 
-  // compressed textures
-
-  // if the original is compressed I cannot request a decompressed texture
-  if ( isCompressedFormat(image->format()) && format != (int)image->format() )
-  {
-    Log::error("Texture::supports(): when the source image is compressed the texture format must be of the same type of the image.\n");
-    return false;
-  }
-
-  if (isCompressedFormat(image->format()) && !(GLEW_ARB_texture_compression || GLEW_VERSION_1_3))
-  {
-    if (verbose) Log::error("Texture::createTexture(): texture compression not supported.\n");
-    return false;
-  }
-
   int width = 0;
-  const int xsize = image->width();
-  const int ysize = image->height();
-  const int zsize = image->depth();
 
-  // note: no special checking is done for texture arrays
-
-  if (image->dimension() == ID_Cubemap)
+  if (tex_dimension == TD_TEXTURE_CUBE_MAP)
   {
-    if ( isCompressedFormat(format) )
-    {
-      glTexImage2D(GL_PROXY_TEXTURE_CUBE_MAP, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, getDefFormat(format), getDefType(format), NULL);
-    }
-    else
-    {
-      glTexImage2D(GL_PROXY_TEXTURE_CUBE_MAP, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, image->format(), image->type(), NULL);
-    }
-    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_CUBE_MAP, 0, GL_TEXTURE_WIDTH, &width);
+    glTexImage2D(GL_PROXY_TEXTURE_CUBE_MAP, mip_level, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_CUBE_MAP, mip_level, GL_TEXTURE_WIDTH, &width);
   }
   else
-  if (image->dimension() == ID_3D)
+  if (tex_dimension == TD_TEXTURE_2D_ARRAY)
   {
-    if ( isCompressedFormat(format) )
-    {
-      glTexImage3D(GL_PROXY_TEXTURE_3D, 0, format, xsize + (border?2:0), ysize + (border?2:0), zsize + (border?2:0), border?1:0, getDefFormat(format), getDefType(format), NULL);
-    }
-    else
-    {
-      glTexImage3D(GL_PROXY_TEXTURE_3D, 0, format, xsize + (border?2:0), ysize + (border?2:0), zsize + (border?2:0), border?1:0, image->format(), image->type(), NULL);
-    }
-    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_3D, 0, GL_TEXTURE_WIDTH, &width);
+    glTexImage3D(GL_PROXY_TEXTURE_2D_ARRAY, mip_level, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D_ARRAY, mip_level, GL_TEXTURE_WIDTH, &width);
   }
   else
-  if (image->dimension() == ID_2D)
+  if (tex_dimension == TD_TEXTURE_3D)
   {
-    if (texture_dim == TD_TEXTURE_RECTANGLE)
-    {
-      if ( isCompressedFormat(format) )
-      {
-        glTexImage2D(GL_PROXY_TEXTURE_RECTANGLE_EXT, 0, format, xsize, ysize, 0, getDefFormat(format), getDefType(format), NULL);
-      }
-      else
-      {
-        glTexImage2D(GL_PROXY_TEXTURE_RECTANGLE_EXT, 0, format, xsize, ysize, 0, image->format(), image->type(), NULL);
-      }
-      glGetTexLevelParameteriv(GL_PROXY_TEXTURE_RECTANGLE_EXT, 0, GL_TEXTURE_WIDTH, &width);
-    }
-    else
-    {
-      if ( isCompressedFormat(format) )
-      {
-        glTexImage2D(GL_PROXY_TEXTURE_2D, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, getDefFormat(format), getDefType(format), NULL);
-      }
-      else
-      {
-        glTexImage2D(GL_PROXY_TEXTURE_2D, 0, format, xsize + (border?2:0), ysize + (border?2:0), border?1:0, image->format(), image->type(), NULL);
-      }
-      glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    }
+    glTexImage3D(GL_PROXY_TEXTURE_3D, mip_level, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_3D, mip_level, GL_TEXTURE_WIDTH, &width);
   }
   else
-  if (image->dimension() == ID_1D)
+  if (tex_dimension == TD_TEXTURE_RECTANGLE)
   {
-    if ( isCompressedFormat(format) )
-    {
-      glTexImage1D(GL_PROXY_TEXTURE_1D, 0, format, xsize + (border?2:0), border?1:0, getDefFormat(format), getDefType(format), NULL);
-    }
-    else
-    {
-      glTexImage1D(GL_PROXY_TEXTURE_1D, 0, format, xsize + (border?2:0), border?1:0, image->format(), image->type(), NULL);
-    }
-    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_1D, 0, GL_TEXTURE_WIDTH, &width);
+    glTexImage2D(GL_PROXY_TEXTURE_RECTANGLE, mip_level, tex_format, w, h, 0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_RECTANGLE, mip_level, GL_TEXTURE_WIDTH, &width);
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_1D_ARRAY)
+  {
+    glTexImage2D(GL_PROXY_TEXTURE_1D_ARRAY, mip_level, tex_format, w, h, 0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_1D_ARRAY, mip_level, GL_TEXTURE_WIDTH, &width);
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_2D)
+  {
+    glTexImage2D(GL_PROXY_TEXTURE_2D, mip_level, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, mip_level, GL_TEXTURE_WIDTH, &width);
+  }
+  else
+  if (tex_dimension == TD_TEXTURE_1D)
+  {
+    glTexImage1D(GL_PROXY_TEXTURE_1D, mip_level, tex_format, w + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+    glGetTexLevelParameteriv(GL_PROXY_TEXTURE_1D, mip_level, GL_TEXTURE_WIDTH, &width);
   }
 
   GLenum err = glGetError();
-  bool ok = !err && width != 0;
-  if (!ok && verbose)
-    Log::error( Say("Texture::supports() failed: w=%n h=%n d=%n\n") << image->width() << image->height() << image->depth() );
+  return err == 0 && width != 0;
+}
+//-----------------------------------------------------------------------------
+bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_format, int w, int h, int d, bool border)
+{
+  VL_CHECK_OGL()
 
-  return ok;
+  if (mHandle)
+    return false;
+  else
+  {
+    if ( !supports(tex_dimension , tex_format, 0, ID_None, w, h, d, border, true) )
+    {
+      VL_CHECK_OGL()
+      Log::error("Texture::createTexture(): the format/size requested is not supported.\n");
+      return false;
+    }
+
+    setDimension(tex_dimension);
+    setInternalFormat(tex_format);
+    setWidth(w);
+    setHeight(h);
+    setDepth(d);
+    setBorder(border);
+
+    glGenTextures( 1, &mHandle ); VL_CHECK_OGL();
+
+    if (!mHandle)
+    {
+      Log::error("Texture::createTexture(): texture creation failed!\n"); 
+      VL_TRAP();
+      return false;
+    }
+
+    glBindTexture(tex_dimension, mHandle); VL_CHECK_OGL();
+
+    if (tex_dimension == TD_TEXTURE_CUBE_MAP)
+    {
+      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      VL_CHECK_OGL();
+    }
+    else
+    if (tex_dimension == TD_TEXTURE_2D_ARRAY)
+    {
+      glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      VL_CHECK_OGL();
+    }
+    else
+    if (tex_dimension == TD_TEXTURE_3D)
+    {
+      glTexImage3D(GL_TEXTURE_3D, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      VL_CHECK_OGL();
+    }
+    else
+    if (tex_dimension == TD_TEXTURE_RECTANGLE)
+    {
+      glTexImage2D(GL_TEXTURE_RECTANGLE, 0, tex_format, w, h, 0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      VL_CHECK_OGL();
+    }
+    else
+    if (tex_dimension == TD_TEXTURE_1D_ARRAY)
+    {
+      glTexImage2D(GL_TEXTURE_1D_ARRAY, 0, tex_format, w, h, 0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      VL_CHECK_OGL();
+    }
+    else
+    if (tex_dimension == TD_TEXTURE_2D)
+    {
+      glTexImage2D(GL_TEXTURE_2D, 0, tex_format, w + (border?2:0), h + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      VL_CHECK_OGL();
+    }
+    else
+    if (tex_dimension == TD_TEXTURE_1D)
+    {
+      glTexImage1D(GL_TEXTURE_1D, 0, tex_format, w + (border?2:0), border?1:0, getDefaultFormat(tex_format), getDefaultType(tex_format), NULL);
+      VL_CHECK_OGL();
+    }
+
+    glBindTexture(tex_dimension, 0); VL_CHECK_OGL();
+    return true;
+  }
+}
+//-----------------------------------------------------------------------------
+bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
+{
+  VL_CHECK_OGL()
+
+  if (!mHandle)
+  {
+    Log::error("Texture::setMipLevel(): the format/size requested is not supported.\n");
+    VL_TRAP();
+    return false;
+  }
+
+  if ( !supports(dimension(), internalFormat(), mip_level, img->dimension(), img->width(), img->height(), img->depth(), border(), true) )
+  {
+    VL_CHECK_OGL()
+    Log::error("Texture::setMipLevel(): the format/size requested is not supported.\n");
+    return false;
+  }
+
+  glPixelStorei( GL_UNPACK_ALIGNMENT, img->byteAlignment() ); VL_CHECK_OGL()
+
+  glBindTexture( dimension(), mHandle ); VL_CHECK_OGL()
+
+  int w = width()  + (border()?2:0);
+  int h = height() + (border()?2:0);
+  int d = depth()  + (border()?2:0);
+  int is_compressed = (int)img->format() == (int)internalFormat() && isCompressedFormat( internalFormat() );
+
+  bool use_glu = false;
+  GLint generate_mipmap_orig = GL_FALSE;
+  if ( gen_mipmaps )
+  {
+    if( GLEW_SGIS_generate_mipmap||GLEW_VERSION_1_4||GLEW_VERSION_3_0 )
+    {
+      glGetTexParameteriv( dimension(), GL_GENERATE_MIPMAP, &generate_mipmap_orig ); VL_CHECK_OGL()
+      glTexParameteri(dimension(), GL_GENERATE_MIPMAP, GL_TRUE); VL_CHECK_OGL()
+    }
+    else
+    {
+      if (mip_level > 0) // because GLU regenerates the whole mip-mapping chain
+        Log::error("Texture::setMipLevel(): automatic mipmaps generation for levels below 0 requires OpenGL 1.4 minimum.\n");
+      else
+        use_glu = true;
+
+      #define VL_IS_POW_2(x) ((x != 0) && ((x & (x - 1)) == 0))
+      if ( !VL_IS_POW_2(w) || !VL_IS_POW_2(h) )
+        Log::warning("Texture::setMipLevel(): the image will be rescaled to the nearest upper power of 2.\n");
+    }
+  }
+
+  if ( use_glu && is_compressed )
+  {
+    Log::error("Texture::setMipLevel(): could not generate compressed mipmaps, OpenGL 1.4 required.\n");
+  }
+
+  if ( use_glu && dimension() == TD_TEXTURE_3D )
+  {
+    Log::error("Texture::setMipLevel(): could not generate 3D mipmaps, OpenGL 1.4 required.\n");
+  }
+
+  if (dimension() == TD_TEXTURE_CUBE_MAP)
+  {
+    if (is_compressed)
+    {
+      VL_CHECK( img->requiredMemory() % 6 == 0 );
+      int bytes = img->requiredMemory() / 6;
+      glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, mip_level, internalFormat(), w, h, border()?1:0, bytes, img->pixelsXP());
+      glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, mip_level, internalFormat(), w, h, border()?1:0, bytes, img->pixelsXN());
+      glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, mip_level, internalFormat(), w, h, border()?1:0, bytes, img->pixelsYP());
+      glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, mip_level, internalFormat(), w, h, border()?1:0, bytes, img->pixelsYN());
+      glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, mip_level, internalFormat(), w, h, border()?1:0, bytes, img->pixelsZP());
+      glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, mip_level, internalFormat(), w, h, border()?1:0, bytes, img->pixelsZN());
+      VL_CHECK_OGL()
+    }
+    else
+    {
+      if (use_glu)
+      {
+        gluBuild2DMipmaps(GL_TEXTURE_CUBE_MAP_POSITIVE_X, internalFormat(), w, h, img->format(), img->type(), img->pixelsXP());
+        gluBuild2DMipmaps(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, internalFormat(), w, h, img->format(), img->type(), img->pixelsXN());
+        gluBuild2DMipmaps(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, internalFormat(), w, h, img->format(), img->type(), img->pixelsYP());
+        gluBuild2DMipmaps(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, internalFormat(), w, h, img->format(), img->type(), img->pixelsYN());
+        gluBuild2DMipmaps(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, internalFormat(), w, h, img->format(), img->type(), img->pixelsZP());
+        gluBuild2DMipmaps(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, internalFormat(), w, h, img->format(), img->type(), img->pixelsZN());
+        VL_CHECK_OGL()
+      }
+      else
+      {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, mip_level, internalFormat(), w, h, border()?1:0, img->format(), img->type(), img->pixelsXP());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, mip_level, internalFormat(), w, h, border()?1:0, img->format(), img->type(), img->pixelsXN());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, mip_level, internalFormat(), w, h, border()?1:0, img->format(), img->type(), img->pixelsYP());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, mip_level, internalFormat(), w, h, border()?1:0, img->format(), img->type(), img->pixelsYN());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, mip_level, internalFormat(), w, h, border()?1:0, img->format(), img->type(), img->pixelsZP());
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, mip_level, internalFormat(), w, h, border()?1:0, img->format(), img->type(), img->pixelsZN());
+        VL_CHECK_OGL()
+      }
+    }
+  }
+  else
+  if (dimension() == TD_TEXTURE_2D_ARRAY)
+  {
+    if (is_compressed)
+    {
+      glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
+      VL_CHECK_OGL()
+    }
+    else
+    {
+      glTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
+      VL_CHECK_OGL()
+    }
+  }
+  else
+  if (dimension() == TD_TEXTURE_3D)
+  {
+    if (is_compressed)
+    {
+      glCompressedTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
+      VL_CHECK_OGL()
+    }
+    else
+    {
+      glTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
+      VL_CHECK_OGL()
+    }
+  }
+  else
+  if (dimension() == TD_TEXTURE_RECTANGLE)
+  {
+    if (is_compressed)
+    {
+      glCompressedTexImage2D(GL_TEXTURE_RECTANGLE, mip_level, internalFormat(), width(), height(), 0, img->requiredMemory(), img->pixels());
+      VL_CHECK_OGL()
+    }
+    else
+    {
+      glTexImage2D(GL_TEXTURE_RECTANGLE, mip_level, internalFormat(), width(), height(), 0, img->format(), img->type(), img->pixels());
+      VL_CHECK_OGL()
+    }
+  }
+  else
+  if (dimension() == TD_TEXTURE_1D_ARRAY)
+  {
+    if (is_compressed)
+    {
+      glCompressedTexImage2D(GL_TEXTURE_1D_ARRAY, mip_level, internalFormat(), width(), height(), 0, img->requiredMemory(), img->pixels());
+      VL_CHECK_OGL()
+    }
+    else
+    {
+      glTexImage2D(GL_TEXTURE_1D_ARRAY, mip_level, internalFormat(), width(), height(), 0, img->format(), img->type(), img->pixels());
+      VL_CHECK_OGL()
+    }
+  }
+  else
+  if (dimension() == TD_TEXTURE_2D)
+  {
+    if (is_compressed)
+    {
+      glCompressedTexImage2D(GL_TEXTURE_2D, mip_level, internalFormat(), w, h, border()?1:0, img->requiredMemory(), img->pixels());
+      VL_CHECK_OGL()
+    }
+    else
+    {
+      if (use_glu)
+      {
+        gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat(), w, h, img->format(), img->type(), img->pixels());
+        VL_CHECK_OGL()
+      }
+      else
+      {
+        glTexImage2D(GL_TEXTURE_2D, mip_level, internalFormat(), w, h, border()?1:0, img->format(), img->type(), img->pixels());
+        VL_CHECK_OGL()
+      }
+    }
+  }
+  else
+  if (dimension() == TD_TEXTURE_1D)
+  {
+    if (is_compressed)
+    {
+      glCompressedTexImage1D(GL_TEXTURE_1D, mip_level, internalFormat(), w, border()?1:0, img->requiredMemory(), img->pixels());
+      VL_CHECK_OGL()
+    }
+    else
+    {
+      if (use_glu)
+      {
+        gluBuild1DMipmaps(GL_TEXTURE_1D, internalFormat(), w, img->format(), img->type(), img->pixels());
+        VL_CHECK_OGL()
+      }
+      else
+      {
+        glTexImage1D(GL_TEXTURE_1D, mip_level, internalFormat(), w, border()?1:0, img->format(), img->type(), img->pixels());
+        VL_CHECK_OGL()
+      }
+    }
+  }
+
+  glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
+
+  glPixelStorei( GL_UNPACK_ALIGNMENT, 4 );
+
+  if ( gen_mipmaps && (GLEW_SGIS_generate_mipmap||GLEW_VERSION_1_4||GLEW_VERSION_3_0) )
+  {
+    glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
+    VL_CHECK_OGL()
+  }
+
+  return true;
 }
 //-----------------------------------------------------------------------------
 bool Texture::createTexture()
@@ -435,438 +657,85 @@ bool Texture::createTexture()
   if (!setupParams())
     return false;
 
-  ref<Image> image      = setupParams()->image();
-  ETextureFormat format = setupParams()->format();
-  ETextureDimension dim = setupParams()->dimension();
-  bool has_mipmaps          = setupParams()->hasMipmaps();
-  bool border           = setupParams()->border();
-  if (!image)
-    if (!setupParams()->imagePath().empty())
-      image = loadImage(setupParams()->imagePath());
-
-  // uninstall setup parameters
-  mSetupParams = NULL;
-
-  if (image.get() == NULL || !image->isValid() || image->pixels() == NULL)
+  class InOutCondition
   {
-    Log::error("Texture::createTexture() could not acquire a valid Image.\n");
-    return false;
-  }
-
-  if (dim == TD_TEXTURE_RECTANGLE)
-  {
-    if (has_mipmaps)
+    Texture* mTex;
+  public:
+    InOutCondition(Texture* tex): mTex(tex) {}
+    ~InOutCondition() 
     {
-      Log::error("Texture::createTexture(): ARB_texture_rectangle extension does not allow mipmapped textures\n");
+      // make sure no errors were generated
+      VL_CHECK_OGL()
+      // uninstall setup parameters
+      mTex->mSetupParams = NULL;
+    }
+  };
+
+  InOutCondition in_out_condition(this);
+
+  ETextureFormat tex_format = setupParams()->format();
+  ETextureDimension tex_dimension = setupParams()->dimension();
+  bool gen_mipmaps = setupParams()->genMipmaps();
+  bool border = setupParams()->border();
+  ref<Image> img = setupParams()->image();
+  if ( !img && !setupParams()->imagePath().empty() )
+  {
+    img = loadImage( setupParams()->imagePath() );
+    if (!img)
+    {
+      vl::Log::error( Say("Texture::createTexture(): could not load image file '%s'\n") << setupParams()->imagePath() );
       return false;
     }
   }
 
-  setObjectName( image->objectName() );
-
-  int xsize = image->width();
-  int ysize = image->height();
-  int zsize = image->depth();
-  xsize = xsize > 0 ? xsize : 1;
-  ysize = ysize > 0 ? ysize : 1;
-  zsize = zsize > 0 ? zsize : 1;
-
-  if ( !supports(dim , format, border, image.get()) )
+  int w = setupParams()->width();
+  int h = setupParams()->height();
+  int d = setupParams()->depth();
+  if (img)
   {
-    Log::error("Texture::createTexture(): the format requested is not supported.\n");
-    VL_CHECK_OGL()
-    return false;
+    setObjectName( img->objectName() );
+    w = img->width();
+    h = img->height();
+    d = img->depth();
   }
+  w = w > 0 ? w : 1;
+  h = h > 0 ? h : 1;
+  d = d > 0 ? d : 1;
+
+  if ( !createTexture(tex_dimension, tex_format, w, h, d, border) )
+    return false;
 
   VL_CHECK_OGL()
 
-  unsigned char *tex_pixels = NULL;
-  tex_pixels = (unsigned char*)image->pixels();
-
-  setDimension( dim );
-  setInternalFormat(format);
-  setBorder(border);
-  setWidth(xsize);
-  setHeight(ysize);
-  setDepth(zsize);
-  mHasMipmaps = has_mipmaps;
-
-  if (mHandle == 0)
-    glGenTextures( 1, &mHandle );
-  if (!mHandle)
+  if (img)
   {
-    Log::error("Texture::createTexture(): texture creation failed!\n");
-    VL_CHECK_OGL()
-    VL_CHECK(0);
-    return false;
+    // compile mipmapping levels
+    std::vector<vl::Image*> mipmaps;
+    mipmaps.push_back(img.get());
+    for(int i=0; i<(int)img->mipmaps().size(); ++i)
+      mipmaps.push_back( img->mipmaps()[i].get() );
+
+    bool ok = false;
+
+    if (!gen_mipmaps) // no mipmaps
+      ok = setMipLevel(0, img.get(), false);
+    else 
+    {
+      if (mipmaps.size() > 1) // explicit mipmaps
+      {
+        for(int i=0; i<(int)mipmaps.size(); ++i)
+          ok = setMipLevel(i, mipmaps[i], false);
+      }
+      else // automatic mipmaps generation
+      if (mipmaps.size() == 1)
+      {
+        ok = setMipLevel(0, img.get(), true);
+      }
+    }
+    return ok;
   }
-  glBindTexture( dimension(), mHandle );
-
-  int is_compressed = (format == (int)image->format()) && isCompressedFormat(format);
-  int brd = border ? 1:0;
-
-  glPixelStorei( GL_UNPACK_ALIGNMENT, image->byteAlignment() );
-
-  // defines the general texture without the actual data
-
-  // create mip maps
-
-  int generate_mipmap_orig = 0;
-  if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
-    glGetTexParameteriv( dimension(), GL_GENERATE_MIPMAP, &generate_mipmap_orig );
-
-  if ( has_mipmaps && image->mipmaps().empty() ) // generate mipmaps
-  {
-    switch( dimension() )
-    {
-    case TD_TEXTURE_1D:
-    {
-      // use GL_GENERATE_MIPMAP
-      if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
-      {
-        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, GL_TRUE);
-        if (is_compressed)
-          glCompressedTexImage1D( GL_TEXTURE_1D, 0, format, xsize+2*brd, brd, image->requiredMemory(), tex_pixels );
-        else
-          glTexImage1D( GL_TEXTURE_1D, 0, format, xsize+2*brd, brd, image->format(), image->type(), tex_pixels );
-        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
-        VL_CHECK_OGL()
-      }
-      // use gluBuild*DMipmaps
-      else
-      {
-        if (is_compressed)
-        {
-          Log::bug("Texture::createTexture(): \n"
-                   "GL_GENERATE_MIPMAP not supported: cannot generate mipmaps from a compressed format using gluBuild1DMipmaps. "
-                   "If you are loading the compressed image from a DDS file be sure it includes all the mipmaps. "
-                   "Note that you can still generate mipmapped compressed textures from an uncompressed Image source. \n");
-        }
-        else
-        {
-          // glTexImage1D( GL_TEXTURE_1D, 0, format, xsize+2*brd, brd, image->format(), image->type(), NULL ); VL_CHECK_OGL()
-          gluBuild1DMipmaps( GL_TEXTURE_1D, format, xsize, image->format(), image->type(), tex_pixels  ); 
-          VL_CHECK_OGL()
-        }
-      }
-      break;
-    }
-    case TD_TEXTURE_RECTANGLE:
-    {
-      Log::bug("Texture::createTexture(): \n"
-               "ARB_texture_rectangle extension does not allow mipmapped textures\n");
-      break;
-    }
-    case TD_TEXTURE_1D_ARRAY:
-    case TD_TEXTURE_2D:
-    {
-      // use GL_GENERATE_MIPMAP
-      if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
-      {
-        glTexParameteri( dimension(), GL_GENERATE_MIPMAP, GL_TRUE );
-        if (is_compressed)
-          glCompressedTexImage2D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory(), tex_pixels );
-        else
-          glTexImage2D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), tex_pixels );
-        glTexParameteri( dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig );
-        VL_CHECK_OGL()
-      }
-      // use gluBuild*DMipmaps
-      else
-      {
-        if (is_compressed)
-        {
-          Log::bug("Texture::createTexture(): \n"
-                   "GL_GENERATE_MIPMAP not supported: cannot generate mipmaps from a compressed format using gluBuild2DMipmaps. "
-                   "If you are loading the compressed image from a DDS file be sure it includes all the mipmaps. "
-                   "Note that you can still generate mipmapped compressed textures from an uncompressed Image source. \n");
-        }
-        else
-        {
-          // glTexImage2D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), NULL ); VL_CHECK_OGL()
-          gluBuild2DMipmaps( dimension(), format, xsize, ysize, image->format(), image->type(), tex_pixels  ); 
-          VL_CHECK_OGL()
-        }
-      }
-      break;
-    }
-    case TD_TEXTURE_CUBE_MAP:
-    {
-      // use GL_GENERATE_MIPMAP
-      if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
-      {
-        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, GL_TRUE);
-        if (is_compressed)
-        {
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsXP() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsXN() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsYP() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsYN() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsZP() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsZN() );
-        }
-        else
-        {
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsXP() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsXN() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsYP() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsYN() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsZP() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsZN() );
-        }
-        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
-        VL_CHECK_OGL()
-      }
-      // use gluBuild2DMipmaps
-      else
-      {
-        if (is_compressed)
-        {
-          Log::bug("Texture::createTexture(): \n"
-                   "GL_GENERATE_MIPMAP not supported: cannot generate mipmaps from a compressed format using gluBuild2DMipmaps. "
-                   "If you are loading the compressed image from a DDS file be sure it includes all the mipmaps. "
-                   "Note that you can still generate mipmapped compressed textures from an uncompressed Image source. \n");
-        }
-        else
-        {
-          gluBuild2DMipmaps( GL_TEXTURE_CUBE_MAP_POSITIVE_X, format, xsize, ysize, image->format(), image->type(), image->pixelsXP()  );
-          gluBuild2DMipmaps( GL_TEXTURE_CUBE_MAP_NEGATIVE_X, format, xsize, ysize, image->format(), image->type(), image->pixelsXN() );
-          gluBuild2DMipmaps( GL_TEXTURE_CUBE_MAP_POSITIVE_Y, format, xsize, ysize, image->format(), image->type(), image->pixelsYP() );
-          gluBuild2DMipmaps( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, format, xsize, ysize, image->format(), image->type(), image->pixelsYN() );
-          gluBuild2DMipmaps( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, format, xsize, ysize, image->format(), image->type(), image->pixelsZP() );
-          gluBuild2DMipmaps( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, format, xsize, ysize, image->format(), image->type(), image->pixelsZN() );
-          VL_CHECK_OGL()
-        }
-      }
-      break;
-    }
-    case TD_TEXTURE_2D_ARRAY:
-    case TD_TEXTURE_3D:
-      // use GL_GENERATE_MIPMAP
-      if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
-      {
-        glTexParameteri( dimension(), GL_GENERATE_MIPMAP, GL_TRUE);
-        if (is_compressed)
-          glCompressedTexImage3D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, zsize+2*brd, brd, image->requiredMemory(), tex_pixels );
-        else
-          glTexImage3D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, zsize+2*brd, brd, image->format(), image->type(), tex_pixels );
-        glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
-        VL_CHECK_OGL()
-      }
-      else
-      {
-        Log::bug("Texture::createTexture(): \n"
-                 "GL_GENERATE_MIPMAP not supported: cannot generate mipmaps for a 3d texture. \n"
-                 "If you are loading the image from a DDS file be sure it includes all the mipmaps. \n");
-      }
-      // gluBuild3DMipmaps( dimension(), format, xsize, ysize, zsize, image->format(), image->type(), tex_pixels  ); VL_CHECK_OGL()
-      break;
-    default:
-      VL_TRAP()
-    }
-  }
-  else // use existing mipmaps
-  if ( has_mipmaps && !image->mipmaps().empty() )
-  {
-    switch( dimension() )
-    {
-    case TD_TEXTURE_1D:
-    {
-      // create texture with mipmaps
-      std::vector< ref<Image> > mipmaps = image->mipmaps();
-      mipmaps.insert(mipmaps.begin(), image);
-      for(int i=0; i<(int)mipmaps.size(); ++i)
-      {
-        int width = mipmaps[i]->width();
-        if (is_compressed)
-        {
-          glCompressedTexImage1D( GL_TEXTURE_1D, i, format, width+2*brd, brd, mipmaps[i]->requiredMemory(), mipmaps[i]->pixels() ); VL_CHECK_OGL()
-        }
-        else
-        {
-          glTexImage1D( GL_TEXTURE_1D, i, format, width+2*brd, brd, mipmaps[i]->format(), mipmaps[i]->type(), mipmaps[i]->pixels() ); VL_CHECK_OGL()
-        }
-      }
-      break;
-    }
-    case TD_TEXTURE_RECTANGLE:
-    {
-      Log::bug("Texture::createTexture(): \n"
-               "ARB_texture_rectangle extension does not allow mipmapped textures\n");
-      break;
-    }
-    case TD_TEXTURE_1D_ARRAY:
-    case TD_TEXTURE_2D:
-    {
-      // create texture with mipmaps
-      std::vector< ref<Image> > mipmaps = image->mipmaps();
-      mipmaps.insert(mipmaps.begin(), image);
-      for(int i=0; i<(int)mipmaps.size(); ++i)
-      {
-        int width = mipmaps[i]->width();
-        int height = mipmaps[i]->height();
-        if (is_compressed)
-        {
-          glCompressedTexImage2D( dimension(), i, format, width+2*brd, height+2*brd, brd, mipmaps[i]->requiredMemory(), mipmaps[i]->pixels() ); VL_CHECK_OGL()
-        }
-        else
-        {
-          glTexImage2D( dimension(), i, format, width+2*brd, height+2*brd, brd, mipmaps[i]->format(), mipmaps[i]->type(), mipmaps[i]->pixels() ); VL_CHECK_OGL()
-        }
-      }
-      break;
-    }
-    case TD_TEXTURE_CUBE_MAP:
-    {
-      // create texture with mipmaps
-      std::vector< ref<Image> > mipmaps = image->mipmaps();
-      mipmaps.insert(mipmaps.begin(), image);
-      for(int i_mip=0; i_mip<(int)mipmaps.size(); ++i_mip)
-      {
-        int width = mipmaps[i_mip]->width();
-        int height = mipmaps[i_mip]->height();
-        if (is_compressed)
-        {
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->requiredMemory() / 6, mipmaps[i_mip]->pixelsXP() ); 
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_X, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->requiredMemory() / 6, mipmaps[i_mip]->pixelsXN() ); 
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Y, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->requiredMemory() / 6, mipmaps[i_mip]->pixelsYP() ); 
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->requiredMemory() / 6, mipmaps[i_mip]->pixelsYN() ); 
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->requiredMemory() / 6, mipmaps[i_mip]->pixelsZP() ); 
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->requiredMemory() / 6, mipmaps[i_mip]->pixelsZN() ); 
-        }
-        else
-        {
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->format(), mipmaps[i_mip]->type(), mipmaps[i_mip]->pixelsXP() ); 
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_X, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->format(), mipmaps[i_mip]->type(), mipmaps[i_mip]->pixelsXN() ); 
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Y, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->format(), mipmaps[i_mip]->type(), mipmaps[i_mip]->pixelsYP() ); 
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->format(), mipmaps[i_mip]->type(), mipmaps[i_mip]->pixelsYN() ); 
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->format(), mipmaps[i_mip]->type(), mipmaps[i_mip]->pixelsZP() ); 
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, i_mip, format, width+2*brd, height+2*brd, brd, mipmaps[i_mip]->format(), mipmaps[i_mip]->type(), mipmaps[i_mip]->pixelsZN() ); 
-        }
-        VL_CHECK_OGL()
-      }
-      break;
-    }
-    case TD_TEXTURE_2D_ARRAY:
-    case TD_TEXTURE_3D:
-    {
-      // create texture with mipmaps
-      std::vector< ref<Image> > mipmaps = image->mipmaps();
-      mipmaps.insert(mipmaps.begin(), image);
-      for(int i=0; i<(int)mipmaps.size(); ++i)
-      {
-        int width = mipmaps[i]->width();
-        int height = mipmaps[i]->height();
-        int depth = mipmaps[i]->depth();
-        if (is_compressed)
-        {
-          glCompressedTexImage3D( dimension(), i, format, width+2*brd, height+2*brd, depth+2*brd, brd, mipmaps[i]->requiredMemory(), mipmaps[i]->pixels() ); 
-          VL_CHECK_OGL()
-        }
-        else
-        {
-          glTexImage3D( dimension(), i, format, width+2*brd, height+2*brd, depth+2*brd, brd, mipmaps[i]->format(), mipmaps[i]->type(), mipmaps[i]->pixels() ); 
-          VL_CHECK_OGL()
-        }
-      }
-      break;
-    }
-
-    default:
-      VL_TRAP()
-    }
-  }
-  else // no mipmaps
-  {
-    switch( dimension() )
-    {
-      case TD_TEXTURE_1D:
-      {
-        if (is_compressed)
-        {
-          glCompressedTexImage1D( GL_TEXTURE_1D, 0, format, xsize+2*brd, brd, image->requiredMemory(), image->pixels() ); VL_CHECK_OGL()
-        }
-        else
-        {
-          glTexImage1D( GL_TEXTURE_1D, 0, format, xsize+2*brd, brd, image->format(), image->type(), image->pixels() ); VL_CHECK_OGL()
-        }
-      }
-      break;
-      case TD_TEXTURE_RECTANGLE:
-      {
-        if (is_compressed)
-        {
-          glCompressedTexImage2D( GL_TEXTURE_RECTANGLE_EXT, 0, format, xsize, ysize, 0, image->requiredMemory(), image->pixels() ); VL_CHECK_OGL()
-        }
-        else
-        {
-          glTexImage2D( GL_TEXTURE_RECTANGLE_EXT, 0, format, xsize, ysize, 0, image->format(), image->type(), image->pixels() ); VL_CHECK_OGL()
-        }
-      }
-      break;
-      case TD_TEXTURE_1D_ARRAY:
-      case TD_TEXTURE_2D:
-      {
-        if (is_compressed)
-        {
-          glCompressedTexImage2D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory(), image->pixels() ); VL_CHECK_OGL()
-        }
-        else
-        {
-          glTexImage2D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixels() ); VL_CHECK_OGL()
-        }
-      }
-      break;
-      case TD_TEXTURE_CUBE_MAP:
-      {
-        if (is_compressed)
-        {
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsXP() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsXN() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsYP() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsYN() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsZP() );
-          glCompressedTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->requiredMemory() / 6, image->pixelsZN() );
-        }
-        else
-        {
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsXP() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsXN() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsYP() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsYN() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsZP() );
-          glTexImage2D( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, xsize+2*brd, ysize+2*brd, brd, image->format(), image->type(), image->pixelsZN() );
-        }
-      }
-      break;
-    case TD_TEXTURE_2D_ARRAY:
-    case TD_TEXTURE_3D:
-      {
-        if (is_compressed)
-        {
-          glCompressedTexImage3D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, zsize+2*brd, brd, image->requiredMemory(), image->pixels() ); 
-          VL_CHECK_OGL()
-        }
-        else
-        {
-          glTexImage3D( dimension(), 0, format, xsize+2*brd, ysize+2*brd, zsize+2*brd, brd, image->format(), image->type(), image->pixels() ); 
-          VL_CHECK_OGL()
-        }
-      }
-      break;
-
-      default:
-        VL_TRAP()
-    }
-  }
-
-  // the new VL policy requires a clean state.
-
-  glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
-
-  // restore default GL_UNPACK_ALIGNMENT
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4); VL_CHECK_OGL()
-  return true;
+  else
+    return true;
 }
 //-----------------------------------------------------------------------------
 bool Texture::isCompressedFormat(int format)

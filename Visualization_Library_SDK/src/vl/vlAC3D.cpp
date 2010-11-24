@@ -574,7 +574,7 @@ ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)
       ref<VirtualFile> tex_file = VisualizationLibrary::fileSystem()->locateFile(tex_path,file->path().extractPath());
       if (tex_file)
         tex_path = tex_file->path();
-      texture->setupTexture2D(tex_path);
+      texture->prepareTexture2D(tex_path, TF_RGBA);
       act->effect()->shader()->gocTextureUnit(0)->setTexture( texture.get() );
     }
 
