@@ -367,7 +367,13 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   // clear render states
   opengl_context->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), camera );
 
+  // enabled texture unit #0
+  VL_glActiveTexture( GL_TEXTURE0 );
+  VL_glClientActiveTexture( GL_TEXTURE0 );
+
   glDisable(GL_SCISSOR_TEST);
+
+  VL_CHECK( opengl_context->isCleanState(true) );
 
   return render_queue;
 }
