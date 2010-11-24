@@ -106,7 +106,6 @@ namespace
     return GL_UNSIGNED_BYTE;
   }
 }
-
 //-----------------------------------------------------------------------------
 // Texture
 //-----------------------------------------------------------------------------
@@ -151,7 +150,7 @@ Texture::Texture(int width, int height, ETextureFormat format, bool border)
   reset();
   if (!createTexture(vl::TD_TEXTURE_2D, format, width, height, 0, border))
   {
-    Log::error("2D texture creation failed!\n");
+    Log::error("2D texture constructor failed!\n");
   }
 }
 //-----------------------------------------------------------------------------
@@ -164,16 +163,17 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
   reset();
   if (!createTexture(vl::TD_TEXTURE_3D, format, width, height, depth, border))
   {
-    Log::error("3D texture creation failed!\n");
+    Log::error("3D texture constructor failed!\n");
   }
 }
 //-----------------------------------------------------------------------------
-Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border):
-  mHandle(0), mFormat(format), mDimension(TD_TEXTURE_UNKNOWN), mWidth(0), mHeight(0), mDepth(0), mBorder(border)
+Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border)
 {
   #ifndef NDEBUG
     mObjectName = className();
   #endif
+
+  reset();
 
   if (image && image->isValid())
   {
@@ -186,17 +186,20 @@ Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border
     default:
       break;
     }
+    if( !createTexture() )
+      Log::error("Texture constructor failed!\n");
   }
   else
-    Log::bug("Texture construnctor called with an invalid Image!\n");
+    Log::bug("Texture constructor called with an invalid Image!\n");
 }
 //-----------------------------------------------------------------------------
-Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps , bool border):
-  mHandle(0), mFormat(format), mDimension(TD_TEXTURE_UNKNOWN), mWidth(0), mHeight(0), mDepth(0), mBorder(border)
+Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps , bool border)
 {
   #ifndef NDEBUG
     mObjectName = className();
   #endif
+
+  reset();
 
   ref<Image> image = vl::loadImage(image_path);
 
@@ -211,17 +214,19 @@ Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps ,
     default:
       break;
     }
+    if( !createTexture() )
+      Log::error("Texture constructor failed!\n");
   }
   else
-    Log::bug("Texture construnctor called with an invalid Image!\n");
+    Log::bug("Texture constructor called with an invalid Image!\n");
 }
 //-----------------------------------------------------------------------------
-Texture::Texture():
-  mHandle(0), mFormat(TF_UNKNOWN), mDimension(TD_TEXTURE_UNKNOWN), mWidth(0), mHeight(0), mDepth(0), mBorder(false)
+Texture::Texture()
 {
   #ifndef NDEBUG
     mObjectName = className();
   #endif
+  reset();
 }
 //-----------------------------------------------------------------------------
 bool Texture::isValid() const
@@ -252,7 +257,7 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
 
     if ( w != h )
     {
-      Log::error("Texture::supports(): cubemaps must have square faces.\n");
+      if (verbose) Log::error("Texture::supports(): cubemaps must have square faces.\n");
       return false;
     }
   }
@@ -263,7 +268,7 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
   {
     if (border)
     {
-      Log::error("Texture::supports(): you cannot create a texture array with borders.\n");
+      if (verbose) Log::error("Texture::supports(): you cannot create a texture array with borders.\n");
       return false;
     }
 
@@ -277,7 +282,8 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
     {
       if ( (img_dimension != ID_2D && tex_dimension == TD_TEXTURE_1D_ARRAY) || ( img_dimension != ID_3D && tex_dimension == TD_TEXTURE_2D_ARRAY ) )
       {
-        Log::error("Texture::supports(): the image dimensions are not suitable to create a texture array. To create a 1D texture array you need a 2D image and to create a 2D texture array you need a 3D image.\n");
+        if (verbose) Log::error("Texture::supports(): the image dimensions are not suitable to create a texture array."
+          "To create a 1D texture array you need a 2D image and to create a 2D texture array you need a 3D image.\n");
         return false;
       }
     }
@@ -295,13 +301,13 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
 
     if ( mip_level != 0 )
     {
-      Log::error("Texture::supports(): TD_TEXTURE_RECTANGLE textures do not support mipmapping level other than zero.\n");
+      if (verbose) Log::error("Texture::supports(): TD_TEXTURE_RECTANGLE textures do not support mipmapping level other than zero.\n");
       return false;
     }
 
     if (border)
     {
-      Log::error("Texture::supports(): TD_TEXTURE_RECTANGLE textures do not allow textures borders\n");
+      if (verbose) Log::error("Texture::supports(): TD_TEXTURE_RECTANGLE textures do not allow textures borders\n");
       return false;
     }
   }
@@ -359,22 +365,20 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
   VL_CHECK_OGL()
 
   if (mHandle)
+  {
+    Log::error("Texture::createTexture(): a texture can be created only once!\n");
     return false;
+  }
   else
   {
     if ( !supports(tex_dimension , tex_format, 0, ID_None, w, h, d, border, true) )
     {
       VL_CHECK_OGL()
-      Log::error("Texture::createTexture(): the format/size requested is not supported.\n");
+      Log::error("Texture::createTexture(): the format/size combination requested is not supported.\n");
       return false;
     }
 
-    setDimension(tex_dimension);
-    setInternalFormat(tex_format);
-    setWidth(w);
-    setHeight(h);
-    setDepth(d);
-    setBorder(border);
+    reset();
 
     glGenTextures( 1, &mHandle ); VL_CHECK_OGL();
 
@@ -384,6 +388,13 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
       VL_TRAP();
       return false;
     }
+
+    setDimension(tex_dimension);
+    setInternalFormat(tex_format);
+    setWidth(w);
+    setHeight(h);
+    setDepth(d);
+    setBorder(border);
 
     glBindTexture(tex_dimension, mHandle); VL_CHECK_OGL();
 
@@ -445,7 +456,7 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
 
   if (!mHandle)
   {
-    Log::error("Texture::setMipLevel(): the format/size requested is not supported.\n");
+    Log::error("Texture::setMipLevel(): texture hasn't been created yet, please call createTexture() first!\n");
     VL_TRAP();
     return false;
   }
@@ -453,7 +464,7 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
   if ( !supports(dimension(), internalFormat(), mip_level, img->dimension(), img->width(), img->height(), img->depth(), border(), true) )
   {
     VL_CHECK_OGL()
-    Log::error("Texture::setMipLevel(): the format/size requested is not supported.\n");
+    Log::error("Texture::setMipLevel(): the format/size combination requested is not supported.\n");
     return false;
   }
 
@@ -491,11 +502,13 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
   if ( use_glu && is_compressed )
   {
     Log::error("Texture::setMipLevel(): could not generate compressed mipmaps, OpenGL 1.4 required.\n");
+    use_glu = false;
   }
 
   if ( use_glu && dimension() == TD_TEXTURE_3D )
   {
     Log::error("Texture::setMipLevel(): could not generate 3D mipmaps, OpenGL 1.4 required.\n");
+    use_glu = false;
   }
 
   if (dimension() == TD_TEXTURE_CUBE_MAP)
@@ -637,15 +650,15 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
     }
   }
 
-  glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
-
-  glPixelStorei( GL_UNPACK_ALIGNMENT, 4 );
-
   if ( gen_mipmaps && (GLEW_SGIS_generate_mipmap||GLEW_VERSION_1_4||GLEW_VERSION_3_0) )
   {
     glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
     VL_CHECK_OGL()
   }
+
+  glBindTexture( dimension(), 0 ); VL_CHECK_OGL()
+
+  glPixelStorei( GL_UNPACK_ALIGNMENT, 4 );
 
   return true;
 }
@@ -666,6 +679,7 @@ bool Texture::createTexture()
     {
       // make sure no errors were generated
       VL_CHECK_OGL()
+
       // uninstall setup parameters
       mTex->mSetupParams = NULL;
     }
@@ -698,9 +712,9 @@ bool Texture::createTexture()
     h = img->height();
     d = img->depth();
   }
-  w = w > 0 ? w : 1;
-  h = h > 0 ? h : 1;
-  d = d > 0 ? d : 1;
+  //w = w > 0 ? w : 1;
+  //h = h > 0 ? h : 1;
+  //d = d > 0 ? d : 1;
 
   if ( !createTexture(tex_dimension, tex_format, w, h, d, border) )
     return false;
@@ -782,4 +796,4 @@ bool Texture::isCompressedFormat(int format)
 
   return false;
 }
-
+//-----------------------------------------------------------------------------
