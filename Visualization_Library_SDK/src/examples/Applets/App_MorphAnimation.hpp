@@ -86,7 +86,7 @@ public:
       effect[i]->shader()->enable(vl::EN_LIGHTING);
       effect[i]->shader()->enable(vl::EN_DEPTH_TEST);
       vl::ref<vl::Texture> texture = new vl::Texture;
-      texture->setupTexture2D(texname[i]);
+      texture->prepareTexture2D(texname[i], vl::TF_RGBA);
       effect[i]->shader()->gocTextureUnit(0)->setTexture( texture.get() );
 
       if (glsl_vertex_blend)

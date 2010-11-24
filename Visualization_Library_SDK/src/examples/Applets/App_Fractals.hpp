@@ -93,7 +93,7 @@ public:
     if (key == vl::Key_F9)
     {
       mTextureToggle = !mTextureToggle;
-      mTexture->setupTexture1D( mTextureToggle ? mSpectrum1.get() : mSpectrum2.get(), vl::TF_RGBA, false, false );
+      mTexture->prepareTexture1D( mTextureToggle ? mSpectrum1.get() : mSpectrum2.get(), vl::TF_RGBA, false, false );
     }
     else
     if (key == vl::Key_H)

@@ -442,10 +442,10 @@ public:
       vl::ref<vl::Shader> tex_rot_shader1 = new vl::Shader;
       tex_rot_shader1->setShaderAnimator( new TexRotShaderAnimator );
       texture = new vl::Texture;
-      texture->setupTexture2D("/images/holebox.tif");
+      texture->prepareTexture2D("/images/holebox.tif", vl::TF_RGBA);
       tex_rot_shader1->gocTextureUnit(0)->setTexture( texture.get() );
       texture = new vl::Texture;
-      texture->setupTexture2D("/images/star2.tif");
+      texture->prepareTexture2D("/images/star2.tif", vl::TF_RGBA);
       tex_rot_shader1->gocTextureUnit(1)->setTexture( texture.get() );
       tex_rot_shader1->gocTextureUnit(1)->texture()->getTexParameter()->setWrapS(vl::TPW_REPEAT);
       tex_rot_shader1->gocTextureUnit(1)->texture()->getTexParameter()->setWrapT(vl::TPW_REPEAT);
@@ -453,7 +453,7 @@ public:
       vl::ref<vl::Shader> tex_rot_shader2 = new vl::Shader;
       tex_rot_shader2->setShaderAnimator(new TexRotShaderAnimator);
       texture = new vl::Texture;
-      texture->setupTexture2D("/images/holebox.tif");
+      texture->prepareTexture2D("/images/holebox.tif", vl::TF_RGBA);
       tex_rot_shader2->gocTextureUnit(0)->setTexture( texture.get() );
 
       vl::ref<vl::Shader> blink = new vl::Shader;

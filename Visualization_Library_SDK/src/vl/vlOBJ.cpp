@@ -720,7 +720,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
         ref<VirtualFile> tex_file = VisualizationLibrary::fileSystem()->locateFile(obj_mat->map_Kd().path(),file->path().extractPath());
         if (tex_file)
           tex_path = tex_file->path();
-        texture->setupTexture2D( tex_path );
+        texture->prepareTexture2D( tex_path, TF_RGBA );
         effect->shader()->gocTexEnv(0)->setMode(TEM_DECAL);
         effect->shader()->gocTextureUnit(0)->setTexture( texture.get() );
       }

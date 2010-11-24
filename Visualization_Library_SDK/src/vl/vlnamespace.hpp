@@ -45,6 +45,8 @@ namespace vl
 {
   typedef enum 
   {
+    TF_UNKNOWN = 0,
+
     TF_ALPHA   = GL_ALPHA, 
     TF_ALPHA4  = GL_ALPHA4, 
     TF_ALPHA8  = GL_ALPHA8, 
@@ -399,9 +401,9 @@ namespace vl
     TD_TEXTURE_2D = GL_TEXTURE_2D, 
     TD_TEXTURE_3D = GL_TEXTURE_3D, 
     TD_TEXTURE_CUBE_MAP  = GL_TEXTURE_CUBE_MAP,
-    TD_TEXTURE_RECTANGLE = GL_TEXTURE_RECTANGLE_ARB,
-    TD_TEXTURE_1D_ARRAY  = GL_TEXTURE_1D_ARRAY_EXT, 
-    TD_TEXTURE_2D_ARRAY  = GL_TEXTURE_2D_ARRAY_EXT, 
+    TD_TEXTURE_RECTANGLE = GL_TEXTURE_RECTANGLE,
+    TD_TEXTURE_1D_ARRAY  = GL_TEXTURE_1D_ARRAY, 
+    TD_TEXTURE_2D_ARRAY  = GL_TEXTURE_2D_ARRAY, 
   } ETextureDimension;
 
   typedef enum
@@ -794,11 +796,12 @@ namespace vl
 
   typedef enum
   {
-    ID_Error = 0,
-    ID_1D = 1,
-    ID_2D = 2,
-    ID_3D = 3,
-    ID_Cubemap = 4
+    ID_None,
+    ID_1D,
+    ID_2D,
+    ID_3D,
+    ID_Cubemap,
+    ID_Error
   } EImageDimension;
 
   typedef enum
