@@ -654,3 +654,4 @@ void SlicedVolume::setBox(const AABB& box)
   mGeometry->setBoundingSphere( box );
   mGeometry->setBoundsDirty(true);
 }
+//-----------------------------------------------------------------------------

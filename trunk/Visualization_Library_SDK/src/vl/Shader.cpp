@@ -577,6 +577,7 @@ TexParameter::TexParameter()
 void TexParameter::setMagFilter(ETexParamFilter magfilter) 
 { 
   mDirty = true;
+
   switch(magfilter)
   {
     case TPF_LINEAR:
@@ -660,17 +661,32 @@ namespace
 {
   bool checkTextureUnit(const char* str, int unit)
   {
-    int max_texture = 1;
-    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
-      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_texture);
-    else
+    int max_texture = 1, max_tmp = 0;
+
     if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
-      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_texture);
+    {
+      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL();
+      max_texture = max_tmp > max_texture ? max_tmp : max_texture;
+    }
+
+    if (GLEW_VERSION_2_0)
+    {
+      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL();
+      max_texture = max_tmp > max_texture ? max_tmp : max_texture;
+    }
+
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    {
+      glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
+      max_texture = max_tmp > max_texture ? max_tmp : max_texture;
+    }
+
     if (unit > max_texture-1)
     {
       Log::error( Say("%s error: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << str << unit << max_texture-1 );
       return false;
     }
+
     return true;
   }
 }
@@ -798,15 +814,15 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL();
 
+  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
+  VL_CHECK(checkTextureUnit("TexGen::apply",textureUnit()));
+
+  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
+  // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
+  VL_CHECK_OGL();
+
   if (genModeS() || genModeT() || genModeR() || genModeQ())
   {
-    VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
-    VL_CHECK(checkTextureUnit("TexGen::apply",textureUnit()));
-
-    VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
-    // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
-    VL_CHECK_OGL();
-
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -854,10 +870,20 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
     glPopMatrix();
   }
 
-  if(!genModeS()) glDisable(GL_TEXTURE_GEN_S);
-  if(!genModeT()) glDisable(GL_TEXTURE_GEN_T);
-  if(!genModeR()) glDisable(GL_TEXTURE_GEN_R);
-  if(!genModeQ()) glDisable(GL_TEXTURE_GEN_Q);
+  // these needs to be done here to apply a TexGen which has all components disabled
+  // and to finish up the TexGen which mixed enabled/disabled components.
+
+  if (!genModeS())
+    glDisable(GL_TEXTURE_GEN_S);
+  
+  if (!genModeT())
+    glDisable(GL_TEXTURE_GEN_T);
+  
+  if (!genModeR())
+    glDisable(GL_TEXTURE_GEN_R);
+  
+  if (!genModeQ())
+    glDisable(GL_TEXTURE_GEN_Q);
 
   VL_CHECK_OGL();
 }
@@ -919,28 +945,6 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
 
   if (camera)
   {
-    // if we request mipmapped filtering then we must have a mip-mapped texture.
-    #ifndef NDEBUG
-    if ( !texture()->hasMipMaps() )
-    {
-      switch(texture()->getTexParameter()->minFilter())
-      {
-        case TPF_LINEAR_MIPMAP_LINEAR:
-        case TPF_LINEAR_MIPMAP_NEAREST:
-        case TPF_NEAREST_MIPMAP_LINEAR:
-        case TPF_NEAREST_MIPMAP_NEAREST:
-        {
-          Log::bug( vl::Say("TextureUnit::apply() error: requested mipmapping texture filtering on a Texture with no mipmaps! (%s)\n") << texture()->objectName() );
-          VL_TRAP()
-          break;
-        }
-
-        default:
-          break;
-      }
-    }
-    #endif
-
     if( !hasTexture() )
     {
       Log::error( Say("TextureUnit::apply() error: null texture! (%s) \n") << texture()->objectName() );
@@ -950,6 +954,34 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
 
     // bind the texture
     glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
+
+    // if we request mipmapped filtering then we must have a mip-mapped texture.
+    #ifndef NDEBUG
+    {
+      GLint width = 0;
+      int tex_target = texture()->dimension() == vl::TD_TEXTURE_CUBE_MAP ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : texture()->dimension();
+      glGetTexLevelParameteriv( tex_target, 1, GL_TEXTURE_WIDTH, &width );
+      VL_CHECK_OGL()
+      if ( !width )
+      {
+        switch(texture()->getTexParameter()->minFilter())
+        {
+          case TPF_LINEAR_MIPMAP_LINEAR:
+          case TPF_LINEAR_MIPMAP_NEAREST:
+          case TPF_NEAREST_MIPMAP_LINEAR:
+          case TPF_NEAREST_MIPMAP_NEAREST:
+          {
+            Log::bug( vl::Say("TextureUnit::apply() error: requested mipmapping texture filtering on a Texture with no mipmaps! (%s)\n") << texture()->objectName() );
+            VL_TRAP()
+            break;
+          }
+
+          default:
+            break;
+        }
+      }
+    }
+    #endif
 
     // enable the texture
     if (ctx->isCompatible())

@@ -115,7 +115,7 @@ public:
     if(GLEW_VERSION_1_2||GLEW_EXT_texture3D)
     {
       vl::ref<vl::Texture> texture_3d = new vl::Texture;
-      texture_3d->setupTexture3D( img_volume.get(), vl::TF_RGBA, mMipmappingOn, false );
+      texture_3d->prepareTexture3D( img_volume.get(), vl::TF_RGBA, mMipmappingOn, false );
       fx_3d->shader()->gocTextureUnit(0)->setTexture( texture_3d.get() );
       texture_3d->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
       texture_3d->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
@@ -147,7 +147,7 @@ public:
     if(GLEW_EXT_texture_array||GLEW_VERSION_3_0)
     {
       vl::ref<vl::Texture> texture_2darray = new vl::Texture;
-      texture_2darray->setupTexture2DArray( img_volume.get(), vl::TF_RGBA, mMipmappingOn );
+      texture_2darray->prepareTexture2DArray( img_volume.get(), vl::TF_RGBA, mMipmappingOn );
       fx_2darray->shader()->gocTextureUnit(0)->setTexture( texture_2darray.get() );
       texture_2darray->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
       texture_2darray->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
@@ -184,7 +184,7 @@ public:
     if(GLEW_EXT_texture_array||GLEW_VERSION_3_0)
     {
       vl::ref<vl::Texture> texture_1darray = new vl::Texture;
-      texture_1darray->setupTexture1DArray( img_holebox.get(), vl::TF_RGBA, mMipmappingOn );
+      texture_1darray->prepareTexture1DArray( img_holebox.get(), vl::TF_RGBA, mMipmappingOn );
       fx_1darray->shader()->gocTextureUnit(0)->setTexture( texture_1darray.get() );
       texture_1darray->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
       texture_1darray->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
@@ -215,7 +215,7 @@ public:
     if(GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle/*TODO:||GLEW_VERSION_3_1*/)
     {
       vl::ref<vl::Texture> texture_rect = new vl::Texture;
-      texture_rect->setupTextureRectangle( img_holebox.get(), vl::TF_RGBA );
+      texture_rect->prepareTextureRectangle( img_holebox.get(), vl::TF_RGBA );
       fx_rect->shader()->gocTextureUnit(0)->setTexture( texture_rect.get() );
       // mipmaps not allowed with texture rectangle!
       texture_rect->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
@@ -238,8 +238,7 @@ public:
     vl::ref<vl::Image> img_spheric = vl::loadImage("/images/spheremap_klimt.jpg");
 
     vl::ref<vl::Geometry> torus = vlut::makeTorus(vl::vec3(), 8,3, 40,40);
-    // we need normals in order for GL_SPHERE_MAP to work correctly!
-    torus->computeNormals();
+    // normals already present, needed by GL_SPHERE_MAP to work correctly!
 
     mFXSpheric = new vl::Effect;
     mFXSpheric->shader()->enable(vl::EN_DEPTH_TEST);
@@ -250,7 +249,7 @@ public:
     mFXSpheric->setRenderRank(1);
 
     vl::ref<vl::Texture> texture_spheric = new vl::Texture;
-    texture_spheric->setupTexture2D( img_spheric.get(), vl::TF_RGBA, mMipmappingOn, false );
+    texture_spheric->prepareTexture2D( img_spheric.get(), vl::TF_RGBA, mMipmappingOn, false );
     mFXSpheric->shader()->gocTextureUnit(0)->setTexture( texture_spheric.get() );
     texture_spheric->getTexParameter()->setAnisotropy(16.0);
     texture_spheric->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
@@ -276,8 +275,7 @@ public:
       "/images/cubemap/cubemap05.png");// (z-) front
 
     vl::ref<vl::Geometry> torus = vlut::makeTorus( vl::vec3(), 8,3, 40,40 );
-    // we need normals in order for GL_REFLECTION_MAP to work correctly!
-    torus->computeNormals();
+    // normals already present, needed by GL_SPHERE_MAP to work correctly!
 
     mFXCubic = new vl::Effect;
     mFXCubic->shader()->enable(vl::EN_DEPTH_TEST);
@@ -290,7 +288,7 @@ public:
     if (GLEW_VERSION_1_3||GLEW_ARB_texture_cube_map)
     {
       vl::ref<vl::Texture> texture_cubic = new vl::Texture;
-      texture_cubic->setupTextureCubemap( img_cubemap.get(), vl::TF_RGBA, mMipmappingOn, false );
+      texture_cubic->prepareTextureCubemap( img_cubemap.get(), vl::TF_RGBA, mMipmappingOn, false );
       mFXCubic->shader()->gocTextureUnit(0)->setTexture( texture_cubic.get() );
       texture_cubic->getTexParameter()->setAnisotropy(16.0);
       texture_cubic->getTexParameter()->setMagFilter(vl::TPF_LINEAR);

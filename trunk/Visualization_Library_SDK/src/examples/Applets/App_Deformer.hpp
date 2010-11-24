@@ -73,7 +73,7 @@ public:
     mTexture->getTexParameter()->setWrapT(vl::TPW_CLAMP);
     mTexture->getTexParameter()->setMinFilter(vl::TPF_LINEAR);
     mTexture->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    mTexture->setupTexture2D(mImage.get());
+    mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
     mTextureMatrix = new vl::TextureMatrix(0);
 
     vl::ref<vl::Effect> image_fx = new vl::Effect;
@@ -356,7 +356,7 @@ public:
     if (files[0].endsWith(".dcm"))
       mImage->contrastHounsfieldAuto();
 
-    mTexture->setupTexture2D(mImage.get());
+    mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
 
     // perfectly center the texture texels (see GL_CLAMP documentation)
     vl::mat4 m;

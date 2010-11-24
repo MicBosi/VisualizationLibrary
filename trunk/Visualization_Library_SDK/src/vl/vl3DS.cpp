@@ -867,7 +867,7 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
           if ( !loader.mMaterials[mat_index].mTexture1.mFileName.empty() )
           {
             ref<Texture> texture = new Texture;
-            texture->setupTexture2D(loader.mMaterials[mat_index].mTexture1.mFileName);
+            texture->prepareTexture2D(loader.mMaterials[mat_index].mTexture1.mFileName, TF_RGBA);
             if (loader.mMaterials[mat_index].mTexture1.mOpt_tile)
             {
               texture->getTexParameter()->setWrapS(TPW_REPEAT);

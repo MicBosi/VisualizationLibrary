@@ -66,7 +66,7 @@ public:
 
     // setup texture
     vl::ref<vl::Texture> texture0 = new vl::Texture;
-    texture0->setupTexture2D("images/normalmap.jpg");
+    texture0->prepareTexture2D("images/normalmap.jpg", vl::TF_RGBA);
     effect->shader()->gocTextureUnit(0)->setTexture(texture0.get());
     texture0->getTexParameter()->setAnisotropy(16.0);
     texture0->getTexParameter()->setMagFilter(vl::TPF_LINEAR);

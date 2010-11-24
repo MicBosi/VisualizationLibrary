@@ -88,7 +88,7 @@ public:
     mTexture->getTexParameter()->setWrapT(vl::TPW_CLAMP);
     mTexture->getTexParameter()->setMinFilter(vl::TPF_LINEAR);
     mTexture->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    mTexture->setupTexture2D(mImage.get());
+    mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
     mTextureMatrix = new vl::TextureMatrix(0);
 
     vl::ref<vl::Effect> postproc_fx = new vl::Effect;
@@ -154,7 +154,7 @@ public:
   {
     mImage = vl::loadImage(file);
 
-    mTexture->setupTexture2D(mImage.get());
+    mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
 
     // perfectly center the texture texels (see GL_CLAMP documentation)
     vl::mat4 m;
