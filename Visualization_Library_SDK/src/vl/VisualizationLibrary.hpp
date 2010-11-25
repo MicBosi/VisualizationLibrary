@@ -55,7 +55,7 @@ namespace vl
       #ifndef NDEBUG
         mVerbosityLevel  = vl::VEL_VERBOSITY_NORMAL;
         mCheckOpenGLStates = true;
-        mCheckTransformSiblings = true;
+        mCheckTransformSiblings = false;
       #else
         mVerbosityLevel  = vl::VEL_VERBOSITY_ERROR;
         mCheckOpenGLStates = false;
