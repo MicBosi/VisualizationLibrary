@@ -317,7 +317,7 @@ void MarchingCubes::run(bool generate_colors)
   {
     Volume* vol     = mVolumeInfo.at(ivol)->volume();
     float threshold = mVolumeInfo.at(ivol)->threshold();
-    size_t start = mVerts.size();
+    int start = (int)mVerts.size();
 
     if (vol->dataIsDirty())
       vol->setupInternalData();
@@ -337,7 +337,7 @@ void MarchingCubes::run(bool generate_colors)
     for(unsigned int i=0; i<mCubes.size(); ++i)
       processCube(mCubes[i].x(),mCubes[i].y(),mCubes[i].z(), vol, threshold);
 
-    size_t count = mVerts.size() - start;
+    int count = (int)mVerts.size() - start;
     mVolumeInfo.at(ivol)->setVert0(start);
     mVolumeInfo.at(ivol)->setVertC(count);
 
