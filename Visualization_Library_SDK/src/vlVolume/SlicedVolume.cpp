@@ -323,7 +323,7 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, Real, const Camera* camera
   }
 
   mGeometry->drawCalls()->clear();
-  ref<DrawArrays> da = new DrawArrays(vl::PT_TRIANGLES, 0, polygons.size());
+  ref<DrawArrays> da = new DrawArrays(vl::PT_TRIANGLES, 0, (int)polygons.size());
   mGeometry->drawCalls()->push_back( da.get() );
   ref<ArrayFVec3> vertex_array = new ArrayFVec3;
   ref<ArrayFVec3> texcoo_array = new ArrayFVec3;
