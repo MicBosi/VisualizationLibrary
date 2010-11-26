@@ -45,9 +45,6 @@ SET(VL_SRC
   vl/DiskDirectory.cpp
   vl/DiskFile.cpp
   vl/DoubleVertexRemover.cpp
-  vl/DrawElements.cpp
-  vl/DrawRangeElements.cpp
-  vl/MultiDrawElements.cpp
   vl/DrawPixels.cpp
   vl/EdgeExtractor.cpp
   vl/EdgeRenderer.cpp
@@ -137,9 +134,6 @@ set(VL_INC
   vl/DoubleVertexRemover.hpp
   vl/DrawArrays.hpp
   vl/DrawCall.hpp
-  vl/DrawElements.hpp
-  vl/DrawRangeElements.hpp
-  vl/MultiDrawElements.hpp
   vl/DrawPixels.hpp
   vl/EdgeExtractor.hpp
   vl/EdgeRenderer.hpp
