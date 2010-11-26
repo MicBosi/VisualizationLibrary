@@ -95,7 +95,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
     problem |= geom->fogCoordArray() != NULL;
     for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
       problem |= geom->texCoordArray(i) != NULL;
-    problem |= geom->vertexAttributeArrays()->size() != 0;
+    problem |= geom->vertexAttribArrays()->size() != 0;
     if (problem)
       Log::warning("PolygonSimplifier::simplify() simplifies only the position array of a Geometry, the other attibutes will be discarded.\n");
   #endif
@@ -156,7 +156,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
   geom->setFogCoordArray(NULL);
   for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
     geom->setTexCoordArray(i, NULL);
-  geom->vertexAttributeArrays()->clear();
+  geom->vertexAttribArrays()->clear();
 
   if (verbose())
     Log::print( Say("PolygonSimplifier::simplify() done in %.3ns\n") << timer.elapsed() );

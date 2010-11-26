@@ -104,7 +104,7 @@ public:
 
     vl::ref<vl::Geometry> cube = vlut::makeBox( vl::vec3(0,0,0), 1, 1, 1 );
     cube->computeNormals();
-    cube->setColorArray(vlut::red);
+    cube->setColor(vlut::red);
     mCube = sceneManager()->tree()->addActor(cube.get(), effect.get(), new vl::Transform);
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mCube->transform());
 

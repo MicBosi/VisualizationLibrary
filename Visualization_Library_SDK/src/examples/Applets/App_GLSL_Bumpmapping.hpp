@@ -102,7 +102,7 @@ public:
     mGLSL->linkProgram();
     // note that you need to link the GLSL program before calling this
     int tangent_idx = mGLSL->getAttribLocation("tangent"); VL_CHECK( tangent_idx != -1 );
-    model->setVertexAttributeArray(tangent_idx, false, false, tangent.get() );
+    model->setVertexAttribArray(tangent_idx, false, false, tangent.get() );
 
     // visualize the TBN vectors
     visualizeTangentSpace( model.get(), tangent.get() );

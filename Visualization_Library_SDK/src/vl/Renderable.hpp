@@ -43,6 +43,9 @@ namespace vl
   // Renderable
   //------------------------------------------------------------------------------
   class Actor;
+  class Shader;
+  class Transform;
+  class Camera;
   class OpenGLContext;
   /**
    * An abstract class that represents all the objects that can be rendered.
@@ -72,7 +75,7 @@ namespace vl
     virtual ~Renderable() { deleteDisplayList(); }
 
     /** Renders the Renderable. */
-    virtual void render(const Actor* actor, const Camera* camera) const = 0;
+    virtual void render(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const = 0;
 
     long long boundsUpdateTick() const { return mBoundsUpdateTick; }
     void computeBounds() { computeBounds_Implementation(); setBoundsDirty(false); }
@@ -114,12 +117,12 @@ namespace vl
       mDisplayList = 0;
     }
 
-    void compileDisplayList(Actor* act, Camera* camera)
+    void compileDisplayList(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context)
     {
       if (!displayList())
         setDisplayList( glGenLists(1) );
       glNewList( displayList(), GL_COMPILE );
-        render( act, camera );
+        render( actor, shader, camera, gl_context );
       glEndList();
       VL_CHECK_OGL();
       setDisplayListDirty(false);

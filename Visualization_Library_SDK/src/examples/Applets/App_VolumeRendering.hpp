@@ -81,7 +81,7 @@ public:
     fx_box->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
     fx_box->shader()->enable(vl::EN_DEPTH_TEST);
     vl::ref<vl::Geometry> box_outline = vlut::makeBox(volume_box);
-    box_outline->setColorArray(vlut::red);
+    box_outline->setColor(vlut::red);
     sceneManager()->tree()->addActor( box_outline.get(), fx_box.get(), mVolumeTr.get() );
 
     // light bulb

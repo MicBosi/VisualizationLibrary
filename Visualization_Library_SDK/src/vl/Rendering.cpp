@@ -319,8 +319,11 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
     // --------------- Display List ---------------
 
-    if ( actor->lod(geometry_lod)->displayListEnabled() && (!actor->lod(geometry_lod)->displayList()||actor->lod(geometry_lod)->displayListDirty()) )
-      actor->lod(geometry_lod)->compileDisplayList(actor, camera());
+    if (renderers().size() && renderers()[0]->renderTarget())
+    {
+      if ( actor->lod(geometry_lod)->displayListEnabled() && (!actor->lod(geometry_lod)->displayList()||actor->lod(geometry_lod)->displayListDirty()) )
+        actor->lod(geometry_lod)->compileDisplayList( actor, NULL, camera(), renderers()[0]->renderTarget()->openglContext() );
+    }
 
     // --------------- Update VBOs ---------------
 

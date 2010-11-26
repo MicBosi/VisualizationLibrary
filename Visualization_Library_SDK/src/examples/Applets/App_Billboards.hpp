@@ -89,7 +89,6 @@ public:
   {
     // simple effect to render a star billboard
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->gocTextureUnit(0)->setTexture( new vl::Texture("images/sun.png", vl::TF_RGBA, true) );

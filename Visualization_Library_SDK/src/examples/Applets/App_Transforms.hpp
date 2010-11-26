@@ -73,7 +73,7 @@ public:
 
     vl::ref<vl::Geometry> plane = vlut::makeGrid(vl::vec3(0,0,0), 50,50, 2,2);
     plane->computeNormals();
-    plane->setColorArray(vlut::gray);
+    plane->setColor(vlut::gray);
     sceneManager()->tree()->addActor(plane.get(), effect.get());
 
     /* buttons */
@@ -90,7 +90,7 @@ public:
     vl::ref<vl::Transform> tr;
 
     vl::ref<vl::Geometry> button = vlut::makeCylinder(vl::vec3(0,0.5,0), 1.5, 1);
-    button->setColorArray(vlut::orange);
+    button->setColor(vlut::orange);
     button->computeNormals();
 
     tr = new vl::Transform( vl::mat4::translation(-6,0,10) );
@@ -121,32 +121,32 @@ public:
 
     vl::ref<vl::Geometry>  arm_base = vlut::makeBox(vl::vec3(0,0.5,0), 12, 1, 12);
     arm_base ->computeNormals();
-    arm_base ->setColorArray(vlut::blue);
+    arm_base ->setColor(vlut::blue);
     sceneManager()->tree()->addActor(arm_base.get(), effect.get());
 
     /* robot arms */
 
     vl::ref<vl::Geometry>  arm0    = vlut::makeBox(vl::vec3(0,5,0), 2, 10, 2);
     arm0->computeNormals();
-    arm0->setColorArray(vlut::red);
+    arm0->setColor(vlut::red);
     _arm0_tr = new vl::Transform;
     sceneManager()->tree()->addActor(arm0.get(), effect.get(), _arm0_tr.get());
 
     vl::ref<vl::Geometry>  arm1    = vlut::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm1->computeNormals();
-    arm1->setColorArray(vlut::green);
+    arm1->setColor(vlut::green);
     _arm1_tr = new vl::Transform;
     sceneManager()->tree()->addActor(arm1.get(), effect.get(), _arm1_tr.get());
 
     vl::ref<vl::Geometry>  arm2    = vlut::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm2->computeNormals();
-    arm2->setColorArray(vlut::green);
+    arm2->setColor(vlut::green);
     _arm2_tr = new vl::Transform;
     sceneManager()->tree()->addActor(arm2.get(), effect.get(), _arm2_tr.get());
 
     vl::ref<vl::Geometry>  arm3    = vlut::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm3->computeNormals();
-    arm3->setColorArray(vlut::green);
+    arm3->setColor(vlut::green);
     _arm3_tr = new vl::Transform;
     sceneManager()->tree()->addActor(arm3.get(), effect.get(), _arm3_tr.get());
 
@@ -154,13 +154,13 @@ public:
 
     vl::ref<vl::Geometry>  finger1   = vlut::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
     finger1->computeNormals();
-    finger1->setColorArray(vlut::crimson);
+    finger1->setColor(vlut::crimson);
     _hand1_tr = new vl::Transform;
     sceneManager()->tree()->addActor(finger1.get(), effect.get(), _hand1_tr.get());
 
     vl::ref<vl::Geometry>  finger2   = vlut::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
     finger2->computeNormals();
-    finger2->setColorArray(vlut::crimson);
+    finger2->setColor(vlut::crimson);
     _hand2_tr = new vl::Transform;
     sceneManager()->tree()->addActor(finger2.get(), effect.get(), _hand2_tr.get());
 

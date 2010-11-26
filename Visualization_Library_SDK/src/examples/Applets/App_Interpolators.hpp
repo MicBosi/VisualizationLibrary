@@ -213,7 +213,7 @@ public:
     vl::ref<vl::ArrayFVec3> vert_array = new vl::ArrayFVec3;
     geom->setVertexArray( vert_array.get() );
     *vert_array = ctrl_points;
-    geom->setColorArray(color);
+    geom->setColor(color);
     geom->drawCalls()->push_back(new vl::DrawArrays(loop ? vl::PT_LINE_LOOP : vl::PT_LINE_STRIP, 0, vert_array->size()));
     if (points) 
       geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_POINTS, 0, vert_array->size()));

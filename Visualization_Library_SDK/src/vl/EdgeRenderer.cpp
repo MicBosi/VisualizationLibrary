@@ -131,6 +131,10 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   glDisable(GL_BLEND);
   glLineWidth(1.0f);
 
+  // disable all vertex arrays
+  renderTarget()->openglContext()->bindVAS(NULL, false, true);
+  VL_CHECK( renderTarget()->openglContext()->isCleanState(true) );
+
   return render_queue;
 }
 //-----------------------------------------------------------------------------
@@ -178,7 +182,7 @@ void EdgeRenderer::renderSolids(Camera* camera, Real frame_clock)
 
     wfinfo->mEdgeCallback->setShowCreases(showCreases());
     wfinfo->mEdgeCallback->onActorRenderStarted( actor, frame_clock, camera, wfinfo->mGeometry.get(), NULL, 0 );
-    actor->lod(0)->render( actor, camera );
+    actor->lod(0)->render( actor, NULL, camera, renderTarget()->openglContext() );
   }
 }
 //-----------------------------------------------------------------------------
@@ -222,7 +226,7 @@ void EdgeRenderer::renderLines(Camera* camera)
     }
 
     // note: no rendering callbacks here
-    wfinfo->mGeometry->render( actor, camera );
+    wfinfo->mGeometry->render( actor, NULL, camera, renderTarget()->openglContext() );
   }
 }
 //-----------------------------------------------------------------------------
@@ -231,7 +235,7 @@ EdgeRenderer::WFInfo* EdgeRenderer::declareActor(Actor* act, const fvec4& color)
   std::map< ref<Actor>, ref<WFInfo> >::iterator it = mActorCache.find( act );
   if (it!=mActorCache.end())
   {
-    it->second->mGeometry->setColorArray(color);
+    it->second->mGeometry->setColor(color);
     return it->second.get();
   }
   else
@@ -245,7 +249,7 @@ EdgeRenderer::WFInfo* EdgeRenderer::declareActor(Actor* act, const fvec4& color)
       info->mEdgeCallback = new EdgeUpdateCallback(ee.edges());
       if (info->mGeometry)
       {
-        info->mGeometry->setColorArray(color);
+        info->mGeometry->setColor(color);
         mActorCache[act] = info;
         return info.get();
       }
@@ -270,7 +274,7 @@ EdgeRenderer::WFInfo* EdgeRenderer::declareActor(Actor* act)
       info->mEdgeCallback = new EdgeUpdateCallback(ee.edges());
       if (info->mGeometry)
       {
-        info->mGeometry->setColorArray(mDefaultLineColor);
+        info->mGeometry->setColor(mDefaultLineColor);
         mActorCache[act] = info;
         return info.get();
       }
