@@ -112,7 +112,7 @@ public:
       // LOD 0
       geom = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 50, 50 );
       geom->computeNormals();
-      geom->setColorArray(vlut::aqua);
+      geom->setColor(vlut::aqua);
 
       actor->lod(0) = geom.get();
 
@@ -126,7 +126,7 @@ public:
       // LOD 1
       geom = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 15, 15 );
       geom->computeNormals();
-      geom->setColorArray(vlut::aqua);
+      geom->setColor(vlut::aqua);
       actor->lod(1) = geom.get();
 
       geom->setVBOEnabled(true);
@@ -139,7 +139,7 @@ public:
       // LOD 2
       geom = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 8, 8 );
       geom->computeNormals();
-      geom->setColorArray(vlut::aqua);
+      geom->setColor(vlut::aqua);
       actor->lod(2) = geom.get();
 
       if (GLEW_ARB_vertex_buffer_object)
@@ -151,7 +151,7 @@ public:
 
     virtual void onActorDelete(vl::Actor*) { }
 
-    virtual void onActorRenderStarted(vl::Actor* actor, vl::Real frame_clock, const vl::Camera* cam, vl::Renderable* renderable, const vl::Shader* shader, int pass)
+    virtual void onActorRenderStarted(vl::Actor* actor, vl::Real frame_clock, const vl::Camera* cam, vl::Renderable* renderable, const vl::Shader*, int pass)
     {
       if (pass > 0)
         return;
@@ -275,7 +275,7 @@ public:
       vl::ref<vl::Geometry> geom_0;
       geom_0= vlut::makeIcosphere(vl::vec3(0,0,0), 6, 2);
       geom_0->computeNormals();
-      geom_0->setColorArray(vlut::white);
+      geom_0->setColor(vlut::white);
 
       for(int i=0;i<actor_count; i++)
       {
@@ -305,17 +305,17 @@ public:
       vl::ref<vl::Geometry> geom;
       geom= vlut::makeIcosphere( vl::vec3(0,0,0), 2, 3 );
       geom->computeNormals();
-      geom->setColorArray(vl::fvec4(0,1,0,1));
+      geom->setColor(vl::fvec4(0,1,0,1));
 
       vl::ref<vl::Geometry> geom_B;
       geom_B= vlut::makeIcosphere( vl::vec3(0,0,0), 2, 1 );
       geom_B->computeNormals();
-      geom_B->setColorArray(vl::fvec4(1,1,0,1));
+      geom_B->setColor(vl::fvec4(1,1,0,1));
 
       vl::ref<vl::Geometry> geom_C;
       geom_C= vlut::makeIcosphere( vl::vec3(0,0,0), 2, 0 );
       geom_C->computeNormals();
-      geom_C->setColorArray(vl::fvec4(1,0,0,1));
+      geom_C->setColor(vl::fvec4(1,0,0,1));
 
       vl::ref<vl::LODEvaluator> lod;
 
@@ -394,17 +394,17 @@ public:
       vl::ref<vl::Geometry> geom_0;
       geom_0= vlut::makeIcosphere(vl::vec3(0,0,0), 6, 2);
       geom_0->computeNormals();
-      geom_0->setColorArray(vlut::white);
+      geom_0->setColor(vlut::white);
 
       vl::ref<vl::Geometry> geom_1;
       geom_1= vlut::makeBox(vl::vec3(0,0,0), 6,6,6);
       geom_1->computeNormals();
-      geom_1->setColorArray(vlut::white);
+      geom_1->setColor(vlut::white);
 
       vl::ref<vl::Geometry> geom_2;
       geom_2= vlut::makePyramid(vl::vec3(0,0,0), 6, 6);
       geom_2->computeNormals();
-      geom_2->setColorArray(vlut::white);
+      geom_2->setColor(vlut::white);
 
       vl::ref<vl::DistanceLODEvaluator> lod = new vl::DistanceLODEvaluator;
       lod->addDistanceRange(70);

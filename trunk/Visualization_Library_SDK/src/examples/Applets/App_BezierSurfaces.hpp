@@ -109,7 +109,7 @@ public:
     // Compute the normals as we have lighting activated
     mBezier->computeNormals();
     // Used by the line rendering
-    mBezier->setColorArray(vlut::blue);
+    mBezier->setColor(vlut::blue);
     // Add the Bézier surface to our scene
     sceneManager()->tree()->addActor(mBezier.get(), fx.get(), NULL);
 

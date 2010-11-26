@@ -438,7 +438,7 @@ void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name
   glBindAttribLocation(handle(), index, name.c_str()); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
-int GLSLProgram::maxVertexAttributes()
+int GLSLProgram::maxVertexAttribs()
 {
   VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
   if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )

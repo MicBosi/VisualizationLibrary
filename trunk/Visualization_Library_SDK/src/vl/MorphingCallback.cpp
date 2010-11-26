@@ -131,16 +131,16 @@ void MorphingCallback::onActorRenderStarted(Actor*, Real frame_clock, const Came
         mAnim_t_Binding = glslprogram->getUniformLocation("anim_t");
 
       // vertex/normals frame 2
-      mGeometry->setVertexAttributeArray( mVertex2_Binding, false, false, mVertexFrames[mFrame2].get() );
-      mGeometry->setVertexAttributeArray( mNormal2_Binding, false, false, mNormalFrames[mFrame2].get() );
+      mGeometry->setVertexAttribArray( mVertex2_Binding, false, false, mVertexFrames[mFrame2].get() );
+      mGeometry->setVertexAttribArray( mNormal2_Binding, false, false, mNormalFrames[mFrame2].get() );
       // frame interpolation ratio
       glUniform1fv(mAnim_t_Binding, 1, &mAnim_t);
 
     #else // slower but simpler method:
 
       // vertex/normals frame 2
-      mGeometry->setVertexAttributeArray( glslprogram->getAttribLocation("vertex2"), false, false, mVertexFrames[mFrame2].get() );
-      mGeometry->setVertexAttributeArray( glslprogram->getAttribLocation("normal2"), false, false, mNormalFrames[mFrame2].get() );
+      mGeometry->setVertexAttribArray( glslprogram->getAttribLocation("vertex2"), false, false, mVertexFrames[mFrame2].get() );
+      mGeometry->setVertexAttribArray( glslprogram->getAttribLocation("normal2"), false, false, mNormalFrames[mFrame2].get() );
       // frame interpolation ratio
       glUniform1fv(glslprogram->getUniformLocation("anim_t"), 1, &mAnim_t);
     #endif

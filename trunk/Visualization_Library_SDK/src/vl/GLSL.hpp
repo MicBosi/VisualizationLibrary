@@ -301,7 +301,7 @@ namespace vl
     }
 
     //! Equivalent to glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &max )
-    static int maxVertexAttributes();
+    static int maxVertexAttribs();
 
     //! Returns the number of GLSLShader objects bound to this GLSLProgram
     int shaderCount() const { return (int)mShaders.size(); }

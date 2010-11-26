@@ -160,6 +160,7 @@ set(VL_INC
   vl/Image.hpp
   vl/IndexIterator.hpp
   vl/Interpolator.hpp
+  vl/IVertexAttribSet.hpp
   vl/ActorKdTree.hpp
   vl/LODEvaluator.hpp
   vl/Light.hpp
@@ -229,7 +230,7 @@ set(VL_INC
   vl/Vector4.hpp
   vl/Vector3.hpp
   vl/Vector2.hpp
-  vl/VertexAttributeArray.hpp
+  vl/VertexAttribInfo.hpp
   vl/Viewport.hpp
   vl/VirtualDirectory.hpp
   vl/VirtualFile.hpp

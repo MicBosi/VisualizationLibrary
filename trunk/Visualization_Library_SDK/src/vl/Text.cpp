@@ -45,8 +45,10 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-void Text::render( const Actor* actor, const Camera* camera ) const
+void Text::render(const Actor* actor, const Shader*, const Camera* camera, OpenGLContext* gl_context) const
 {
+  gl_context->bindVAS(NULL, false, false);
+
   VL_CHECK(font())
 
   if (!font() || !font()->mFT_Face)

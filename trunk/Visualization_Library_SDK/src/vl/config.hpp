@@ -139,8 +139,15 @@
  * - minimum = 1
  * - maximum = OpenGL implementation dependent
  */
-#define VL_MAX_TEXTURE_UNITS 16
+#define VL_MAX_TEXTURE_UNITS 6
 
+/**
+ * Maximum number of generic vertex attributes used by a single Geometry.
+ *
+ * - minimum = 1
+ * - maximum = OpenGL implementation dependent
+ */
+#define VL_MAX_GENERIC_VERTEX_ATTRIB 6
 
 /**
  * Enable String copy-on-write mode.
