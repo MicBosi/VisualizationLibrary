@@ -146,7 +146,7 @@ namespace vl
         mFormat     = TF_RGBA;
         mBorder     = false;
         mGenMipmaps = false;
-        mWidth, mHeight, mDepth = 0;
+        mWidth = mHeight = mDepth = 0;
       }
 
       const String& imagePath() const { return mImagePath; }
