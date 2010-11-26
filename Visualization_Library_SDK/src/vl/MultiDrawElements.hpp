@@ -243,9 +243,6 @@ namespace vl
         if(GLEW_NV_primitive_restart)
           glDisable(GL_PRIMITIVE_RESTART_NV);
       }
-
-      if (use_vbo && this->indices()->gpuBuffer()->handle())
-        VL_glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     }
 
     TriangleIterator triangleIterator() const;
