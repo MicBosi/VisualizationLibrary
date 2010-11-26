@@ -112,6 +112,7 @@ namespace vl
       mEnableMask = other.mEnableMask;
       /* mRenderTick = other.mRenderTick; */ // render-tick remains local
       /* mFrameClock = other.mFrameClock; */ // update time remains local
+      return *this;
     }
 
     /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
