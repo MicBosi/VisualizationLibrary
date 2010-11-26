@@ -2,6 +2,31 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2010.11.1125</div>
+
+	- <b>Vertex Attrib Set</b> new mechanics for lazy binding of vertex attribute arrays.
+	- <b>Greatly improved vl::Texture</b>: immediate and lazy empty texture creation, better texture format/size 
+	  combination support check, each mipmap layer can be manipulated individually, updated documentation.
+	- <b>New animation system</b> for vl::Shader and vl::Actor. Removed deprecated virtual method "update()" in 
+	  favor of ShaderAnimator and ActorEventCallback. This way one does not need anymore to subclass Actor or Shader
+	  to implement a specific animation and allows one to change the animation bound to an Actor or Shader very easily.
+	- <b>RenderEvent</b> new class to intercept Renderer and Rendering related events. Much more robust rendering event
+	  triggering and well defined environment contract.
+	- ShaderAnimator can now be enabled/disabled.
+	- Fixed TexGen reset bug.
+	- Enhanced vl::Geometry VBO management.
+	- vl::Geometry::shallowCopy()/deepCopy() reviewed.
+	- Fixed double precision pipeline compilation.
+	- VL_TRANSFORM_USER_DATA compile time configuration variable to enable user data binding to vl::Transform objects.
+	- Added missing texture related render states enums above texture unit #0.
+	- Several other minor improvements and bug fixes.
+	- API CHANGES:
+		- setupTexture*() renamed prepareTexture*(); added new methods createTexture(), setMipLevel() and prepareTexture*() methods for empty textures.
+		- RenderingCallback removed in favor of RenderEventCallback
+		- Shader::update() and Actor::update() removed in favor of ShaderAnimator and ActorEventCallback.
+		- MorphingActor is now MorphingCallback
+		- SlicedVolume is now a subclass of ActorEventCallback and not a subclass of Actor.
+
 	<div class="featuretitle">Visualization Library 2010.11.1123</div>
 
 	- Fixed texture creation functions.
