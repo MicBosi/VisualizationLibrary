@@ -362,7 +362,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
         if( frameClock() >= 0 )
         {
           // note that the condition is != as opposed to <
-          if ( shader->lastUpdateTime() != frameClock() && shader->shaderAnimator() )
+          if ( shader->lastUpdateTime() != frameClock() && shader->shaderAnimator() && shader->shaderAnimator()->isEnabled() )
           {
             // update
             shader->shaderAnimator()->updateShader( shader, camera(), frameClock() );
