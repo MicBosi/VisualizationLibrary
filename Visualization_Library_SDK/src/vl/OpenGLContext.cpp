@@ -1347,11 +1347,84 @@ void OpenGLContext::resetContextStates()
 void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool force)
 {
   // bring opengl to a known state
-  if (force)
-    bindVAS(NULL, false, false);
 
-  if (vas != mCurVAS)
+  if (vas != mCurVAS || force)
   {
+    if (!vas || force)
+    {
+      mCurVAS = NULL;
+
+      // reset all internal states
+
+      for(int i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
+      {
+        mVertexAttrib[i].mEnabled = false; // not used
+        mVertexAttrib[i].mPtr = 0;
+        mVertexAttrib[i].mVBO = 0;
+        mVertexAttrib[i].mState = 0;
+      }
+
+      for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+      {
+        mTexCoordArray[i].mEnabled = false; // not used
+        mTexCoordArray[i].mPtr = 0;
+        mTexCoordArray[i].mVBO = 0;
+        mTexCoordArray[i].mState = 0;
+      }
+
+      mVertexArray.mEnabled = false;
+      mVertexArray.mPtr = 0;
+      mVertexArray.mVBO = 0;
+      mVertexArray.mState = 0; // not used
+
+      mNormalArray.mEnabled = false;
+      mNormalArray.mPtr = 0;
+      mNormalArray.mVBO = 0;
+      mNormalArray.mState = 0; // not used
+
+      mColorArray.mEnabled = false;
+      mColorArray.mPtr = 0;
+      mColorArray.mVBO = 0;
+      mColorArray.mState = 0; // not used
+
+      mSecondaryColorArray.mEnabled = false;
+      mSecondaryColorArray.mPtr = 0;
+      mSecondaryColorArray.mVBO = 0;
+      mSecondaryColorArray.mState = 0; // not used
+
+      mFogArray.mEnabled = false;
+      mFogArray.mPtr = 0;
+      mFogArray.mVBO = 0;
+      mFogArray.mState = 0; // not used
+
+      // reset all gl states
+
+      for(int i=0; i<mMaxVertexAttrib; ++i)
+        VL_glDisableVertexAttribArray(i);
+
+      // iterate backwards so the last active is #0
+      for ( int i=mTextureUnitCount; i--; )
+      {
+        VL_glClientActiveTexture(GL_TEXTURE0 + i);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+      }
+
+      // note this one
+      VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+      glDisableClientState(GL_VERTEX_ARRAY);
+
+      glDisableClientState(GL_NORMAL_ARRAY);
+
+      glDisableClientState(GL_COLOR_ARRAY);
+
+      glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
+
+      glDisableClientState(GL_FOG_COORD_ARRAY);
+    }
+
     if (vas)
     {
       int vbo = 0;
@@ -1666,78 +1739,6 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
       }
 
       VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-    else
-    {
-      // reset all internal states
-
-      for(int i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
-      {
-        mVertexAttrib[i].mEnabled = false; // not used
-        mVertexAttrib[i].mPtr = 0;
-        mVertexAttrib[i].mVBO = 0;
-        mVertexAttrib[i].mState = 0;
-      }
-
-      for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-      {
-        mTexCoordArray[i].mEnabled = false; // not used
-        mTexCoordArray[i].mPtr = 0;
-        mTexCoordArray[i].mVBO = 0;
-        mTexCoordArray[i].mState = 0;
-      }
-
-      mVertexArray.mEnabled = false;
-      mVertexArray.mPtr = 0;
-      mVertexArray.mVBO = 0;
-      mVertexArray.mState = 0; // not used
-
-      mNormalArray.mEnabled = false;
-      mNormalArray.mPtr = 0;
-      mNormalArray.mVBO = 0;
-      mNormalArray.mState = 0; // not used
-
-      mColorArray.mEnabled = false;
-      mColorArray.mPtr = 0;
-      mColorArray.mVBO = 0;
-      mColorArray.mState = 0; // not used
-
-      mSecondaryColorArray.mEnabled = false;
-      mSecondaryColorArray.mPtr = 0;
-      mSecondaryColorArray.mVBO = 0;
-      mSecondaryColorArray.mState = 0; // not used
-
-      mFogArray.mEnabled = false;
-      mFogArray.mPtr = 0;
-      mFogArray.mVBO = 0;
-      mFogArray.mState = 0; // not used
-
-      // reset all gl states
-
-      for(int i=0; i<mMaxVertexAttrib; ++i)
-        VL_glDisableVertexAttribArray(i);
-
-      // iterate backwards so the last active is #0
-      for ( int i=mTextureUnitCount; i--; )
-      {
-        VL_glClientActiveTexture(GL_TEXTURE0 + i);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-      }
-
-      // note this one
-      VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-      glDisableClientState(GL_VERTEX_ARRAY);
-
-      glDisableClientState(GL_NORMAL_ARRAY);
-
-      glDisableClientState(GL_COLOR_ARRAY);
-
-      glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
-
-      glDisableClientState(GL_FOG_COORD_ARRAY);
     }
   }
 
