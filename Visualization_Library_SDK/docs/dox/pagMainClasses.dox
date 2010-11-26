@@ -199,7 +199,7 @@
 	- vl::Geometry::computeNormals()
 	- vl::DrawArrays
 	- vl::DrawElements
-	- vl::VertexAttributeArray
+	- vl::VertexAttribInfo
 	- vl::ArrayAbstract
 	- vl::ArrayFVec4
 	- vl::ArrayAbstract::computeBoundingSphere()

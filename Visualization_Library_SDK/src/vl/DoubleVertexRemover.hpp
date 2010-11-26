@@ -84,8 +84,8 @@ namespace vl
         for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
           if (geom->texCoordArray(i))
             mAttribs.push_back(geom->texCoordArray(i));
-        for(int i=0; i<geom->vertexAttributeArrays()->size(); ++i)
-          mAttribs.push_back(geom->vertexAttributeArrays()->at(i)->data());
+        for(int i=0; i<geom->vertexAttribArrays()->size(); ++i)
+          mAttribs.push_back(geom->vertexAttribArrays()->at(i)->data());
       }
 
       bool operator()(unsigned int a, unsigned int b) const 

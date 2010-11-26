@@ -204,7 +204,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml>glVertexAttribPointer()</a>
 			</td>
 			<td valign=top>
-				- vl::Geometry::setVertexAttributeArray()
+				- vl::Geometry::setVertexAttribArray()
 			</td>
 		</tr>
 *******************************************************************************

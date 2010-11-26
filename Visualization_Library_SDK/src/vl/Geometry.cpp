@@ -60,11 +60,14 @@ Geometry::Geometry()
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mVertexAttributeArrays.setAutomaticDelete(false);
+  mVertexAttribArrays.setAutomaticDelete(false);
   mTexCoordArrays.setAutomaticDelete(false);
   mDrawCalls.setAutomaticDelete(false);
-  mColorArrayConstant = vlut::white;
+  mColor = vlut::white;
+  mSecondaryColor = vlut::white;
+  mNormal = fvec3(0,0,1);
 }
+//-----------------------------------------------------------------------------
 Geometry::~Geometry()
 {
 }
@@ -72,8 +75,8 @@ Geometry::~Geometry()
 void Geometry::computeBounds_Implementation()
 {
   const ArrayAbstract* coords = vertexArray();
-  if (!coords && findVertexAttribute(0))
-    coords = findVertexAttribute(0)->data();
+  if (!coords && vertexAttribInfo(0))
+    coords = vertexAttribInfo(0)->data();
 
   AABB aabb;
 
@@ -122,19 +125,21 @@ void Geometry::deepCopy(Geometry* geom) const
   for(int i=0; i<mTexCoordArrays.size(); ++i)
     geom->mTexCoordArrays[i] = new TextureArray(mTexCoordArrays[i]->mTextureUnit, mTexCoordArrays[i]->mTexCoordArray ? mTexCoordArrays[i]->mTexCoordArray->clone().get() : NULL);
   // custom arrays
-  geom->mVertexAttributeArrays.resize(mVertexAttributeArrays.size());
-  for(int i=0; i<mVertexAttributeArrays.size(); ++i)
+  geom->mVertexAttribArrays.resize(mVertexAttribArrays.size());
+  for(int i=0; i<mVertexAttribArrays.size(); ++i)
   {
-    geom->mVertexAttributeArrays[i] = new VertexAttributeArray;
-    geom->mVertexAttributeArrays[i]->setAttribIndex( mVertexAttributeArrays[i]->attribIndex() );
-    geom->mVertexAttributeArrays[i]->setData( geom->mVertexAttributeArrays[i]->data() ? geom->mVertexAttributeArrays[i]->data()->clone().get() : NULL );
-    geom->mVertexAttributeArrays[i]->setNormalize( mVertexAttributeArrays[i]->normalize() );
-    geom->mVertexAttributeArrays[i]->setPureInteger( mVertexAttributeArrays[i]->pureInteger() );
+    geom->mVertexAttribArrays[i] = new VertexAttribInfo;
+    geom->mVertexAttribArrays[i]->setNormalize( mVertexAttribArrays[i]->normalize() );
+    geom->mVertexAttribArrays[i]->setPureInteger( mVertexAttribArrays[i]->pureInteger() );
+    geom->mVertexAttribArrays[i]->setAttribIndex( mVertexAttribArrays[i]->attribIndex() );
+    geom->mVertexAttribArrays[i]->setData( geom->mVertexAttribArrays[i]->data() ? geom->mVertexAttribArrays[i]->data()->clone().get() : NULL );
   }
   // primitives
   for(int i=0; i<mDrawCalls.size(); ++i)
     geom->mDrawCalls.push_back( mDrawCalls[i]->clone().get() );
-  geom->mColorArrayConstant = mColorArrayConstant;
+  geom->mColor = mColor;
+  geom->mSecondaryColor = mSecondaryColor;
+  geom->mNormal = mNormal;
 }
 //-----------------------------------------------------------------------------
 Geometry& Geometry::operator=(const Geometry& other)
@@ -148,8 +153,10 @@ Geometry& Geometry::operator=(const Geometry& other)
   mSecondaryColorArray = other.mSecondaryColorArray;
   mFogCoordArray = other.mFogCoordArray;
   mTexCoordArrays = other.mTexCoordArrays;
-  mColorArrayConstant = other.mColorArrayConstant;
-  mVertexAttributeArrays = other.mVertexAttributeArrays;
+  mVertexAttribArrays = other.mVertexAttribArrays;
+  mColor = other.mColor;
+  mSecondaryColor = other.mSecondaryColor;
+  mNormal = other.mNormal;
   mDrawCalls = other.mDrawCalls;
   return *this;
 }
@@ -264,12 +271,6 @@ void Geometry::setTexCoordArray(int tex_unit, ArrayAbstract* data)
     mTexCoordArrays.push_back(new TextureArray(tex_unit,data));
 }
 //-----------------------------------------------------------------------------
-void Geometry::setColorArray(const fvec4& col)
-{
-  mColorArrayConstant = col;
-  setColorArray(NULL);
-}
-//-----------------------------------------------------------------------------
 void Geometry::clearArrays(bool clear_draw_calls)
 {
   mVertexArray = NULL;
@@ -278,26 +279,19 @@ void Geometry::clearArrays(bool clear_draw_calls)
   mSecondaryColorArray = NULL;
   mFogCoordArray = NULL;
   mTexCoordArrays.clear();
-
-  mVertexAttributeArrays.clear();
-
+  mVertexAttribArrays.clear();
   if (clear_draw_calls)
     mDrawCalls.clear();
 }
 //-----------------------------------------------------------------------------
 void Geometry::computeNormals()
 {
-  VL_CHECK( mVertexArray.get() )
-  if (!mVertexArray.get() || vertexArray()->size() == 0)
+  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttrib(0);
+  if (!posarr || posarr->size() == 0)
   {
-    Log::warning("Geometry::computeNormals() not performed: no vertices.\n");
+    Log::warning("Geometry::computeNormals() not performed: no vertex coordinate array present!\n");
     return;
   }
-
-  ArrayAbstract * posarr = vertexArray();
-  // use vertex attribute #0 if present
-  if (!posarr && findVertexAttribute(0))
-    posarr = findVertexAttribute(0)->data();
 
   ref<ArrayFVec3> norm3f = new ArrayFVec3;
   norm3f->resize( posarr->size() );
@@ -366,10 +360,10 @@ void Geometry::deleteVBOs()
   
   for (int i=0; i<mTexCoordArrays.size(); ++i)
     mTexCoordArrays[i]->mTexCoordArray->gpuBuffer()->deleteGLBufferObject();
-  
-  for(int i=0; i<vertexAttributeArrays()->size(); ++i)
-    if ( vertexAttributeArrays()->at(i)->data() )
-      vertexAttributeArrays()->at(i)->data()->gpuBuffer()->deleteGLBufferObject();
+
+  for(int i=0; i<vertexAttribArrays()->size(); ++i)
+    if ( vertexAttribArrays()->at(i)->data() )
+      vertexAttribArrays()->at(i)->data()->gpuBuffer()->deleteGLBufferObject();
 }
 //-----------------------------------------------------------------------------
 void Geometry::updateVBOs(bool discard_local_data, bool force_update)
@@ -400,282 +394,51 @@ void Geometry::updateVBOs(bool discard_local_data, bool force_update)
       mTexCoordArrays[i]->mTexCoordArray->updateVBO(discard_local_data);
   }
   
-  for(int i=0; i<vertexAttributeArrays()->size(); ++i)
-    if ( vertexAttributeArrays()->at(i)->data() && (vertexAttributeArrays()->at(i)->data()->isVBODirty() || force_update) )
-      vertexAttributeArrays()->at(i)->data()->updateVBO(discard_local_data);
+  for(int i=0; i<vertexAttribArrays()->size(); ++i)
+    if ( vertexAttribArrays()->at(i)->data() )
+      vertexAttribArrays()->at(i)->data()->updateVBO(discard_local_data);
 
   for(int i=0; i<drawCalls()->size(); ++i)
     drawCalls()->at(i)->updateVBOs(discard_local_data, force_update);
 }
 //-----------------------------------------------------------------------------
-void Geometry::render( const Actor*, const Camera* ) const
+void Geometry::render(const Actor*, const Shader*, const Camera*, OpenGLContext* gl_context) const
 {
   VL_CHECK_OGL()
 
-  if (!mVertexArray)
-    return;
+  // set default normal, color and secondary colors
 
-  // check vbo is enabled and supported - when VBOs are enabled they are used where available otherwise the local buffers are used.
+  if (gl_context->isCompatible())
+  {
+    if (!normalArray())
+      glNormal3fv(mNormal.ptr());
+
+    if (!colorArray())
+      glColor4fv(mColor.ptr());
+
+    if (!secondaryColorArray() && GLEW_VERSION_1_4)
+      glSecondaryColor3fv(mSecondaryColor.ptr());
+  }
+
+  // bind Vertex Attrib Set
+
   bool vbo_on = (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0) && vboEnabled() && !displayListEnabled();
+  gl_context->bindVAS(this, vbo_on, false);
 
-  // check if there is data to render
-
-  if ( !mVertexArray->gpuBuffer()->handle() && !mVertexArray->size() )
-    return;
-
-  bool vert_on           = false;
-  bool normal_on         = false;
-  bool color_on          = false;
-  GLboolean sec_color_on = false;
-  GLboolean fog_on       = false;
-
-  vert_on      |= mVertexArray && mVertexArray->size();
-  normal_on    |= mNormalArray && mNormalArray->size();
-  color_on     |= mColorArray && mColorArray->size();
-  sec_color_on |= mSecondaryColorArray && mSecondaryColorArray->size();
-  fog_on       |= mFogCoordArray && mFogCoordArray->size();
-
-  if (vbo_on)
-  {
-    vert_on      |= mVertexArray && mVertexArray->gpuBuffer() && mVertexArray->gpuBuffer()->handle();
-    normal_on    |= mNormalArray && mNormalArray->gpuBuffer() && mNormalArray->gpuBuffer()->handle();
-    color_on     |= mColorArray && mColorArray->gpuBuffer() && mColorArray->gpuBuffer()->handle();
-    sec_color_on |= mSecondaryColorArray && mSecondaryColorArray->gpuBuffer() && mSecondaryColorArray->gpuBuffer()->handle();
-    fog_on       |= mFogCoordArray && mFogCoordArray->gpuBuffer() && mFogCoordArray->gpuBuffer()->handle();
-  }
-
-  fog_on       &= GLEW_EXT_fog_coord||GLEW_VERSION_1_4;
-  sec_color_on &= GLEW_EXT_secondary_color||GLEW_VERSION_1_4;
-
-  // setup pointers, default is local memory pointer
-
-  unsigned char* vertex_pointer    = mVertexArray         ? mVertexArray->gpuBuffer()->ptr() : 0;
-  unsigned char* normal_pointer    = mNormalArray         ? mNormalArray->ptr() : 0;
-  unsigned char* color_pointer     = mColorArray          ? mColorArray->ptr() : 0;
-  unsigned char* sec_color_pointer = mSecondaryColorArray ? mSecondaryColorArray->ptr() : 0;
-  unsigned char* fog_pointer       = mFogCoordArray       ? mFogCoordArray->ptr() : 0;
-
-  // if vbo_on and VBOs exist then we set the pointers to 0
-
-  if (vbo_on)
-  {
-    if (mVertexArray->gpuBuffer()->handle())
-      vertex_pointer = 0;
-    if (normal_on && mNormalArray->gpuBuffer()->handle())
-      normal_pointer = 0;
-    if (color_on && mColorArray->gpuBuffer()->handle())
-      color_pointer = 0;
-    if (sec_color_on && mSecondaryColorArray->gpuBuffer()->handle())
-      sec_color_pointer = 0;
-    if (fog_on && mFogCoordArray->gpuBuffer()->handle())
-      fog_pointer = 0;
-  }
-
-  VL_CHECK_OGL()
-
-  // vertex position
-  if (vert_on)
-  {
-    if (vbo_on && mVertexArray->gpuBuffer()->handle())
-    {
-      VL_glBindBuffer( GL_ARRAY_BUFFER, mVertexArray->gpuBuffer()->handle() ); VL_CHECK_OGL();
-      vertex_pointer = 0;
-    }
-    else
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glVertexPointer( mVertexArray->glSize(), mVertexArray->glType(), /*mVertexArray->stride()*/0, vertex_pointer /*+ mVertexArray->offset()*/ ); VL_CHECK_OGL();
-    glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
-  }
-
-  // custom vertex attributes
-
-  VL_CHECK_OGL();
-
-  for(int i=0; i<vertexAttributeArrays()->size(); ++i)
-  {
-    ArrayAbstract* data = vertexAttributeArrays()->at(i)->data();
-    VL_CHECK(data->gpuBuffer())
-
-    const unsigned char* attrib_pointer = data->ptr();
-    if (vbo_on && data->gpuBuffer()->handle())
-    {
-      VL_glBindBuffer( GL_ARRAY_BUFFER, data->gpuBuffer()->handle() );
-      attrib_pointer = 0;
-    }
-    else
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    VL_CHECK((int)vertexAttributeArrays()->at(i)->attribIndex() != -1)
-    if ( vertexAttributeArrays()->at(i)->pureInteger() )
-    {
-      VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0)
-      VL_glVertexAttribIPointer( vertexAttributeArrays()->at(i)->attribIndex(), data->glSize(), data->glType(), /*vertexAttributeArrays()->at(i)->data()->stride()*/0, attrib_pointer /*+ vertexAttributeArrays()->at(i)->data()->offset()*/ );
-      VL_glEnableVertexAttribArray( vertexAttributeArrays()->at(i)->attribIndex() );
-    }
-    else
-    {
-      VL_glVertexAttribPointer( vertexAttributeArrays()->at(i)->attribIndex(), data->glSize(), data->glType(), vertexAttributeArrays()->at(i)->normalize(), /*vertexAttributeArrays()->at(i)->data()->stride()*/0, attrib_pointer /*+ vertexAttributeArrays()->at(i)->data()->offset()*/ );
-      VL_glEnableVertexAttribArray( vertexAttributeArrays()->at(i)->attribIndex() );
-    }
-  }
-
-  // standard vertex attributes
-
-  VL_CHECK_OGL()
-
-  if (normal_on)
-  {
-    if (vbo_on && mNormalArray->gpuBuffer()->handle())
-    {
-      VL_glBindBuffer( GL_ARRAY_BUFFER, mNormalArray->gpuBuffer()->handle() );
-      normal_pointer = 0;
-    }
-    else
-    {
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-    VL_CHECK(mNormalArray->glSize() == 3);
-    glNormalPointer( mNormalArray->glType(), /*mNormalArray->stride()*/0, normal_pointer /*+ mNormalArray->offset()*/ );
-    glEnableClientState(GL_NORMAL_ARRAY);
-  }
-  /*else
-    glNormal3f(0,1,0);*/
-
-  VL_CHECK_OGL()
-
-  if (color_on)
-  {
-    if (vbo_on && mColorArray->gpuBuffer()->handle())
-    {
-      VL_glBindBuffer( GL_ARRAY_BUFFER, mColorArray->gpuBuffer()->handle() );
-      color_pointer = 0;
-    }
-    else
-    {
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-    glColorPointer( mColorArray->glSize(), mColorArray->glType(), 0/*mColorArray->stride()*/, color_pointer /*+ mColorArray->offset()*/ );
-    glEnableClientState(GL_COLOR_ARRAY);
-  }
-  else
-    glColor4fv(mColorArrayConstant.ptr());
-
-  VL_CHECK_OGL()
-
-  if (sec_color_on)
-  {
-    if (vbo_on && mSecondaryColorArray->gpuBuffer()->handle())
-    {
-      VL_glBindBuffer(GL_ARRAY_BUFFER, mSecondaryColorArray->gpuBuffer()->handle() );
-      sec_color_pointer = 0;
-    }
-    else
-    {
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-    VL_glSecondaryColorPointer( mSecondaryColorArray->glSize(), mSecondaryColorArray->glType(), 0/* mSecondaryColorArray->stride()*/, sec_color_pointer /*+ mSecondaryColorArray->offset()*/ );
-    glEnableClientState(GL_SECONDARY_COLOR_ARRAY);
-  }
-  /*else
-    VL_glSecondaryColor3f(1,1,1);*/
-
-  VL_CHECK_OGL()
-
-  if (fog_on)
-  {
-    if (vbo_on && mFogCoordArray->gpuBuffer()->handle())
-    {
-      VL_glBindBuffer(GL_ARRAY_BUFFER, mFogCoordArray->gpuBuffer()->handle() );
-      fog_pointer = 0;
-    }
-    else
-    {
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-    VL_CHECK(mFogCoordArray->glSize() == 1);
-    VL_glFogCoordPointer( mFogCoordArray->glType(), 0/*mFogCoordArray->stride()*/, fog_pointer /*+ mFogCoordArray->offset()*/ );
-    glEnableClientState(GL_FOG_COORD_ARRAY);
-  }
-  /*else
-  if (GLEW_VERSION_1_4)
-    glFogCoordf(0);*/
-
-  //if(vbo_on && mFogCoordArray && mFogCoordArray->gpuBuffer()->handle())
-  //  VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  VL_CHECK_OGL()
-
-  for (int i=0; i<mTexCoordArrays.size(); ++i)
-  {
-    VL_CHECK(mTexCoordArrays[i]->mTexCoordArray)
-
-    VL_CHECK(mTexCoordArrays[i]->mTextureUnit < VL_MAX_TEXTURE_UNITS)    
-
-    unsigned char* tex_pointer = mTexCoordArrays[i]->mTexCoordArray->ptr();
-
-    VL_glClientActiveTexture(GL_TEXTURE0 + mTexCoordArrays[i]->mTextureUnit);
-
-    if (vbo_on && mTexCoordArrays[i]->mTexCoordArray->gpuBuffer()->handle())
-    {
-      VL_glBindBuffer(GL_ARRAY_BUFFER, mTexCoordArrays[i]->mTexCoordArray->gpuBuffer()->handle());
-      tex_pointer = 0;
-    }
-    else
-    {
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-
-    glTexCoordPointer(mTexCoordArrays[i]->mTexCoordArray->glSize(), mTexCoordArrays[i]->mTexCoordArray->glType(), 0/*mTexCoordArrays[i]->mTexCoordArray->stride()*/, tex_pointer /*+ mTexCoordArrays[i]->mTexCoordArray->offset()*/ );
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  }
-
-  VL_CHECK_OGL()
-
-  // ==== A C T U A L   D R A W
+  // actual draw
 
   for(int i=0; i<(int)drawCalls()->size(); i++)
     if (drawCalls()->at(i)->isEnabled())
       drawCalls()->at(i)->render( vbo_on );
 
   VL_CHECK_OGL()
-
-  // ==== D I S A B L E   S T A T E S
-
-  glDisableClientState(GL_VERTEX_ARRAY);
-
-  for(int i=0; i<vertexAttributeArrays()->size(); ++i)
-    VL_glDisableVertexAttribArray( vertexAttributeArrays()->at(i)->attribIndex() );
-
-  VL_CHECK_OGL()
-
-  if (normal_on)
-    glDisableClientState(GL_NORMAL_ARRAY);
-
-  if (color_on)
-    glDisableClientState(GL_COLOR_ARRAY);
-
-  if (sec_color_on)
-    glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
-
-  if (fog_on)
-    glDisableClientState(GL_FOG_COORD_ARRAY);
-
-  VL_CHECK_OGL()
-
-  for (int i=0; i<mTexCoordArrays.size(); ++i)
-  {
-    VL_glClientActiveTexture(GL_TEXTURE0 + mTexCoordArrays[i]->mTextureUnit);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  }
-
-  // disable eventual VBO still attached
-  VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 //-----------------------------------------------------------------------------
 void Geometry::transform(const mat4& m, bool normalize)
 {
-  if (vertexArray())
-    vertexArray()->transform(m);
+  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttrib(0);
+  if (posarr)
+    posarr->transform(m);
 
   if (normalArray())
   {
@@ -688,44 +451,67 @@ void Geometry::transform(const mat4& m, bool normalize)
   }
 }
 //-----------------------------------------------------------------------------
-void Geometry::setVertexAttributeArray(const VertexAttributeArray& info)
+void Geometry::setVertexAttribArray(const VertexAttribInfo& info)
 {
-  for(int i=0; i<vertexAttributeArrays()->size(); ++i)
+  for(int i=0; i<vertexAttribArrays()->size(); ++i)
   {
-    VL_CHECK(vertexAttributeArrays()->at(i))
-    if (vertexAttributeArrays()->at(i)->attribIndex() == info.attribIndex())
+    VL_CHECK(vertexAttribArrays()->at(i))
+    if (vertexAttribArrays()->at(i)->attribIndex() == info.attribIndex())
     {
-      *vertexAttributeArrays()->at(i) = info;
+      *vertexAttribArrays()->at(i) = info;
       return;
     }
   }
-  mVertexAttributeArrays.push_back( new VertexAttributeArray(info) );
+  mVertexAttribArrays.push_back( new VertexAttribInfo(info) );
 }
 //-----------------------------------------------------------------------------
-const VertexAttributeArray* Geometry::findVertexAttribute(unsigned int name) const
+const ArrayAbstract* Geometry::vertexAttrib(unsigned int name) const
 {
-  for(int i=0; i<vertexAttributeArrays()->size(); ++i)
-    if (vertexAttributeArrays()->at(i)->attribIndex() == name)
-      return vertexAttributeArrays()->at(i);
+  const VertexAttribInfo* attrib_info = vertexAttribInfo(name);
+  if (attrib_info)
+    return attrib_info->data();
+  else
+    return NULL;
+}
+//-----------------------------------------------------------------------------
+ArrayAbstract* Geometry::vertexAttrib(unsigned int name)
+{
+  VertexAttribInfo* attrib_info = vertexAttribInfo(name);
+  if (attrib_info)
+    return attrib_info->data();
+  else
+    return NULL;
+}
+//-----------------------------------------------------------------------------
+const VertexAttribInfo* Geometry::vertexAttribInfo(unsigned int name) const
+{
+  for(int i=0; i<vertexAttribArrays()->size(); ++i)
+    if (vertexAttribArrays()->at(i)->attribIndex() == name)
+      return vertexAttribArrays()->at(i);
   return NULL;
 }
 //-----------------------------------------------------------------------------
-VertexAttributeArray* Geometry::findVertexAttribute(unsigned int name)
+VertexAttribInfo* Geometry::vertexAttribInfo(unsigned int name)
 {
-  for(int i=0; i<vertexAttributeArrays()->size(); ++i)
-    if (vertexAttributeArrays()->at(i)->attribIndex() == name)
-      return vertexAttributeArrays()->at(i);
+  for(int i=0; i<vertexAttribArrays()->size(); ++i)
+    if (vertexAttribArrays()->at(i)->attribIndex() == name)
+      return vertexAttribArrays()->at(i);
   return NULL;
 }
 //-----------------------------------------------------------------------------
-void Geometry::eraseVertexAttributeByName(unsigned int name)
+ref<VertexAttribInfo> Geometry::eraseVertexAttrib(unsigned int name)
 {
-  for(int i=0; i<vertexAttributeArrays()->size(); ++i)
-    if (vertexAttributeArrays()->at(i)->attribIndex() == name)
+  ref<VertexAttribInfo> vai;
+  for(int i=0; i<vertexAttribArrays()->size(); ++i)
+  {
+    if (vertexAttribArrays()->at(i)->attribIndex() == name)
     {
-      vertexAttributeArrays()->eraseAt(i);
-      return;
+      vai = vertexAttribArrays()->at(i);
+      vertexAttribArrays()->eraseAt(i);
+      return vai;
     }
+  }
+  return NULL;
 }
 //-----------------------------------------------------------------------------
 void Geometry::mergeTriangleStrips()
@@ -797,8 +583,8 @@ void Geometry::regenerateVertices(const std::vector<size_t>& map_new_to_old)
     if (texCoordArray(itex))
       setTexCoordArray( itex, mapper.regenerate( texCoordArray(itex), map_new_to_old ).get() );
 
-  for(int i=0; i<vertexAttributeArrays()->size(); ++i)
-    vertexAttributeArrays()->at(i)->setData( mapper.regenerate(vertexAttributeArrays()->at(i)->data(), map_new_to_old ).get() );
+  for(int i=0; i<vertexAttribArrays()->size(); ++i)
+    vertexAttribArrays()->at(i)->setData( mapper.regenerate(vertexAttribArrays()->at(i)->data(), map_new_to_old ).get() );
 }
 //-----------------------------------------------------------------------------
 void Geometry::convertDrawCallToDrawArrays()
@@ -809,10 +595,10 @@ void Geometry::convertDrawCallToDrawArrays()
 
   for(int i=drawCalls()->size(); i--; )
   {
-    int start = map_new_to_old.size();
+    int start = (int)map_new_to_old.size();
     for(IndexIterator it=drawCalls()->at(i)->indexIterator(); !it.isEnd(); it.next())
       map_new_to_old.push_back(it.index());
-    int count = map_new_to_old.size() - start;
+    int count = (int)map_new_to_old.size() - start;
 
     // substitute with DrawArrays
     ref<DrawArrays> da = new vl::DrawArrays( drawCalls()->at(i)->primitiveType(), start, count, drawCalls()->at(i)->instances() );
@@ -863,18 +649,18 @@ bool Geometry::sortVertices()
   // generate mapping 
   std::vector<size_t> map_new_to_old;
   map_new_to_old.resize( vertexArray()->size() );
-  memset(&map_new_to_old[0], 0xFF, map_new_to_old.size()*sizeof(size_t));
+  memset(&map_new_to_old[0], 0xFF, map_new_to_old.size()*sizeof(map_new_to_old[0]));
 
   std::vector<size_t> map_old_to_new;
   map_old_to_new.resize( vertexArray()->size() );
-  memset(&map_old_to_new[0], 0xFF, map_old_to_new.size()*sizeof(size_t));
+  memset(&map_old_to_new[0], 0xFF, map_old_to_new.size()*sizeof(map_old_to_new[0]));
 
   std::vector<size_t> used;
   used.resize( vertexArray()->size() );
-  memset(&used[0], 0, used.size()*sizeof(size_t));
+  memset(&used[0], 0, used.size()*sizeof(used[0]));
 
   size_t index = 0;
-  for(int i=de_uint.size(); i--; )
+  for(int i=(int)de_uint.size(); i--; )
   {
     for(size_t idx=0; idx<de_uint[i]->indices()->size(); ++idx)
       if (!used[de_uint[i]->indices()->at(idx)])
@@ -894,7 +680,7 @@ bool Geometry::sortVertices()
     drawCalls()->push_back(de_uint[i].get());
     for(size_t j=0; j<de_uint[i]->indices()->size(); ++j)
     {
-      de_uint[i]->indices()->at(j) = map_old_to_new[de_uint[i]->indices()->at(j)];
+      de_uint[i]->indices()->at(j) = (GLuint)map_old_to_new[de_uint[i]->indices()->at(j)];
     }
   }
 

@@ -44,6 +44,9 @@ namespace vl
   class EnableSet;
   class RenderStateSet;
   class UniformSet;
+  class IVertexAttribSet;
+  class ArrayAbstract;
+
   //-----------------------------------------------------------------------------
   // OpenGLContextFormat
   //-----------------------------------------------------------------------------
@@ -410,12 +413,15 @@ namespace vl
       return mTexUnitBinding[unit]; 
     }
 
+    void bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool force);
+
   protected:
     ref<RenderTarget> mRenderTarget;
     std::vector< ref<FBORenderTarget> > mFBORenderTarget;
     std::vector< ref<UIEventListener> > mEventListeners;
     std::set<EKey> mKeyboard;
     OpenGLContextFormat mGLContextInfo;
+    int mMaxVertexAttrib;
     int mTextureUnitCount;
     int mMajorVersion;
     int mMinorVersion;
@@ -439,6 +445,24 @@ namespace vl
 
     // for each texture unit tells which target has been bound last.
     ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];
+
+    // --- VertexAttribSet Management ---
+    const IVertexAttribSet* mCurVAS;
+    struct VertexArrayInfo
+    {
+      VertexArrayInfo(): mVBO(0), mPtr(0), mState(0), mEnabled(false) {}
+      int   mVBO;
+      const unsigned char* mPtr;
+      int mState;
+      bool mEnabled;
+    };
+    VertexArrayInfo mVertexArray;
+    VertexArrayInfo mNormalArray;
+    VertexArrayInfo mColorArray;
+    VertexArrayInfo mSecondaryColorArray;
+    VertexArrayInfo mFogArray;
+    VertexArrayInfo mTexCoordArray[VL_MAX_TEXTURE_UNITS];
+    VertexArrayInfo mVertexAttrib[VL_MAX_GENERIC_VERTEX_ATTRIB];
 
   private:
     void setupDefaultRenderStates();

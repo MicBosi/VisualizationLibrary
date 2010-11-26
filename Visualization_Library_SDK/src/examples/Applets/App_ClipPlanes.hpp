@@ -89,7 +89,7 @@ public:
     plane_fx->shader()->gocLightModel()->setTwoSide(true);
     // add plane actor
     vl::ref<vl::Geometry> plane = vlut::makeGrid( vl::vec3(0,0,0), 4,4, 2,2 );
-    plane->setColorArray(vl::fvec4(1,0,0,0.3f)); // transparent red
+    plane->setColor(vl::fvec4(1,0,0,0.3f)); // transparent red
     sceneManager()->tree()->addActor( plane.get(), plane_fx.get(), mClipTr.get() );
   }
 

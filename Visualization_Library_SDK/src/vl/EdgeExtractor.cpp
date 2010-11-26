@@ -127,7 +127,7 @@ void EdgeExtractor::extractEdges(Geometry* geom)
 ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
 {
   ref<Geometry> geom = new Geometry;
-  geom->setColorArray(vlut::black);
+  geom->setColor(vlut::black);
   geom->setVBOEnabled(false);
   ref<ArrayFVec3> vert_array = new ArrayFVec3;
   geom->setVertexArray(vert_array.get());
@@ -157,7 +157,7 @@ ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
       vert_array->at(start+i*2+1) = v + edges()[i].normal2()*0.25f;
     }
   #endif
-  geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINES,0,vert_array->size()) );
+  geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINES, 0, (int)vert_array->size()) );
   return geom;
 }
 //-----------------------------------------------------------------------------

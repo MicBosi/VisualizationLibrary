@@ -143,7 +143,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   const EnableSet* cur_enable_set = NULL;
   const Scissor* cur_scissor = NULL;
 
-  // scissor the viewport by default: needed for points and lines sice they are not clipped against the viewport
+  // scissor the viewport by default: needed for points and lines since they are not clipped against the viewport
   #if 1
     glEnable(GL_SCISSOR_TEST);
     glScissor(camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height());
@@ -351,7 +351,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       if (tok->mRenderable->displayListEnabled())
         glCallList( tok->mRenderable->displayList() );
       else
-        tok->mRenderable->render( actor, camera );
+        tok->mRenderable->render( actor, shader, camera, opengl_context );
 
       VL_CHECK_OGL()
 
@@ -371,8 +371,11 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   VL_glActiveTexture( GL_TEXTURE0 );
   VL_glClientActiveTexture( GL_TEXTURE0 );
 
+  // disable scissor test
   glDisable(GL_SCISSOR_TEST);
 
+  // disable all vertex arrays
+  opengl_context->bindVAS(NULL, false, false);
   VL_CHECK( opengl_context->isCleanState(true) );
 
   return render_queue;

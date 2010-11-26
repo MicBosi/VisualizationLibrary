@@ -127,6 +127,8 @@ VL_COMPILE_TIME_CHECK( sizeof(Sphere)  == sizeof(Real)*4 )
 class VisualizationLibraryInstance: public Object
 {
   static ref<VisualizationLibraryInstance> mSingleton;
+
+public:
   VisualizationLibraryInstance()
   {
     mFreeTypeLibrary   = NULL;
@@ -141,14 +143,22 @@ class VisualizationLibraryInstance: public Object
     mCertificate       = "[Visualization Library BSD License]";
     mInitialized       = false;
   }
-public:
+
   static VisualizationLibraryInstance* singleton()
   {
-    if(!mSingleton)
+    // mic fixme & restore tests title log.
+    if (!mSingleton)
+    {
+      printf("warning: VisualizationLibraryInstance == NULL!\n");
       mSingleton = new VisualizationLibraryInstance;
+    }
     return mSingleton.get();
   }
-  static void setSingleton(VisualizationLibraryInstance* data) { mSingleton = data; }
+
+  static void setSingleton(VisualizationLibraryInstance* instance) 
+  { 
+    mSingleton = instance; 
+  }
 
   FT_Library       mFreeTypeLibrary;
   ref<RenderingAbstract> mRenderingAbstract;
@@ -202,6 +212,9 @@ bool vl::canWrite(VirtualFile* file)  { return VisualizationLibrary::loadWriterM
 //------------------------------------------------------------------------------
 void VisualizationLibrary::init()
 {
+  // mic fixme
+  // VisualizationLibraryInstance::setSingleton( new VisualizationLibraryInstance );
+
   initEnvVars();
   logger()->setLogFile( settings()->defaultLogPath() );
   Log::setLogger( logger() );
@@ -466,3 +479,214 @@ void vl::log_failed_check(const char* expr, const char* file, int line)
   #endif
 }
 //------------------------------------------------------------------------------
+
+// mic fixme: fai un unit test per le matrici e vettori e quaternioni
+
+#include <ctime>
+bool matrix_test()
+{
+  // srand( time(NULL) ); // mic fixme
+
+  const float eps = 0.001f;
+  const float det_eps = 0.0001f;
+  const int iterations = 10000;
+  const int r1 = 10;
+  const int r2 = r1/2;
+  bool ok = true;
+
+  // mat4
+
+  int effective = 0;
+  float mat4_avg_err = 0;
+  float mat4_max_err = 0;
+  float mat4_min_err = 1.0f;
+  for(int i=0; i<iterations; ++i)
+  {
+    mat4 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+    mat4 m2, tmp = m1;
+    if (i==154)
+      int i = 0; // mic fixme
+    mat4::scalar_type det = m1.getInverse(m2);
+    if ( fabs(det) > det_eps )
+    {
+      ++effective;
+      m1 = m1 * m2;
+      float err = m1.diff( mat4() );
+      mat4_avg_err += err;
+      mat4_max_err = mat4_max_err > err ? mat4_max_err : err;
+      mat4_min_err = mat4_min_err < err ? mat4_min_err : err;
+      ok &= m1.diff( mat4() ) < eps; VL_CHECK( ok );
+    }
+  }
+  mat4_avg_err /= (float)effective;
+  
+  for(int i=0; i<iterations; ++i)
+  {
+    mat4 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    float det = 0;
+    m1 = m1 * m1.getInverse(&det);
+    if ( fabs(det) > det_eps )
+    {
+      float err = m1.diff( mat4() );
+      ok &= m1.diff( mat4() ) < eps; VL_CHECK( ok );
+    }
+  }
+
+  for(int i=0; i<iterations; ++i)
+  {
+    mat4 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    float det = 0;
+    mat4 m2 = m1;
+    m2.invert(&det);
+    if ( fabs(det) > det_eps )
+    {
+      m1 = m1 * m2;
+      float err = m1.diff( mat4() );
+      ok &= m1.diff( mat4() ) < eps; VL_CHECK( ok );
+    }
+  }
+
+  // mat3
+
+  for(int i=0; i<iterations; ++i)
+  {
+    mat3 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    mat3 m2;
+    float det = m1.getInverse(m2);
+    if ( fabs(det) > det_eps )
+    {
+      m1 = m1 * m2;
+      ok &= m1.diff( mat3() ) < eps; VL_CHECK( ok );
+    }
+  }
+
+  for(int i=0; i<iterations; ++i)
+  {
+    mat3 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    float det = 0;
+    m1 = m1 * m1.getInverse(&det);
+    if ( fabs(det) > det_eps )
+    {
+      ok &= m1.diff( mat3() ) < eps; VL_CHECK( ok );
+    }
+  }
+
+  for(int i=0; i<iterations; ++i)
+  {
+    mat3 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    float det = 0;
+    mat3 m2 = m1;
+    m2.invert(&det);
+    if ( fabs(det) > det_eps )
+    {
+      m1 = m1 * m2;
+      ok &= m1.diff( mat3() ) < eps; VL_CHECK( ok );
+    }
+  }
+
+  // mat2
+
+  for(int i=0; i<iterations; ++i)
+  {
+    mat2 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    mat2 m2;
+    float det = m1.getInverse(m2);
+    if ( fabs(det) > det_eps )
+    {
+      m1 = m1 * m2;
+      ok &= m1.diff( mat2() ) < eps; VL_CHECK( ok );
+    }
+  }
+
+  for(int i=0; i<iterations; ++i)
+  {
+    mat2 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    float det = 0;
+    m1 = m1 * m1.getInverse(&det);
+    if ( fabs(det) > det_eps )
+    {
+      ok &= m1.diff( mat2() ) < eps; VL_CHECK( ok );
+    }
+  }
+
+  for(int i=0; i<iterations; ++i)
+  {
+    mat2 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    float det = 0;
+    mat2 m2 = m1;
+    m2.invert(&det);
+    if ( fabs(det) > det_eps )
+    {
+      m1 = m1 * m2;
+      ok &= m1.diff( mat2() ) < eps; VL_CHECK( ok );
+    }
+  }
+
+  // --- transposition
+  {
+    mat4 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), 
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    mat4 m2 = m1.getTransposed();
+    m2.setIdentity();
+    m1.getTransposed(m2);
+    m1.transpose();
+    VL_CHECK( m1.diff(m2) == 0 )
+  }
+
+  {
+    mat3 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1),
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1),
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    mat3 m2 = m1.getTransposed();
+    m2.setIdentity();
+    m1.getTransposed(m2);
+    m1.transpose();
+    VL_CHECK( m1.diff(m2) == 0 )
+  }
+
+  {
+    mat2 m1( r2-(float)(rand()%r1), r2-(float)(rand()%r1),
+             r2-(float)(rand()%r1), r2-(float)(rand()%r1) );
+
+    mat2 m2 = m1.getTransposed();
+    m2.setIdentity();
+    m1.getTransposed(m2);
+    m1.transpose();
+    VL_CHECK( m1.diff(m2) == 0 )
+  }
+
+  return ok;
+}
+
+// mic fixme
+// bool matrix_test_res = matrix_test();

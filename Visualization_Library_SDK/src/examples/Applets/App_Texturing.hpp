@@ -102,7 +102,7 @@ public:
     vl::ref<vl::Image> img_volume = vl::loadImage("/volume/VLTest.dat");
 
     vl::ref<vl::Geometry> quad_3d = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
-    quad_3d->setColorArray(vlut::white);
+    quad_3d->setColor(vlut::white);
     quad_3d->transform( vl::mat4::rotation(90, 1,0,0), false );
 
     mTexCoords_3D = new vl::ArrayFVec3;
@@ -134,7 +134,7 @@ public:
     m2DArraySize = img_volume->depth(); // save this to be used during the animation
 
     vl::ref<vl::Geometry> quad_2darray = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
-    quad_2darray->setColorArray(vlut::white);
+    quad_2darray->setColor(vlut::white);
     quad_2darray->transform( vl::mat4::rotation(90, 1,0,0), false );
 
     mTexCoords_2DArray = new vl::ArrayFVec3;
@@ -171,7 +171,7 @@ public:
 
     // create a grid with img_holebox->height() slices
     vl::ref<vl::Geometry> quad_1darray = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, img_holebox->height() );
-    quad_1darray->setColorArray(vlut::white);
+    quad_1darray->setColor(vlut::white);
     quad_1darray->transform( vl::mat4::rotation(90, 1,0,0), false );
     
     mTexCoords_1DArray = new vl::ArrayFVec2;
@@ -207,7 +207,7 @@ public:
 
     // generate non-normalized uv coordinates, i.e. from <0,0> to <img_holebox->width(),img_holebox->height()>
     vl::ref<vl::Geometry> quad_rect = vlut::makeGrid( vl::vec3(0,0,0), 10.0f, 10.0f, 2, 2, true, vl::fvec2(0,0), vl::fvec2((float)img_holebox->width(),(float)img_holebox->height()) );
-    quad_rect->setColorArray(vlut::white);
+    quad_rect->setColor(vlut::white);
     quad_rect->transform( vl::mat4::rotation(90, 1,0,0), false );
 
     vl::ref<vl::Effect> fx_rect = new vl::Effect;
