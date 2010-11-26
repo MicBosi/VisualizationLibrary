@@ -1304,12 +1304,23 @@ namespace vl
   class ShaderAnimator: public Object
   {
   public:
+    ShaderAnimator(): mEnabled(true) {}
+
     /** Reimplement this function to update/animate a Shader.
     \param shader the Shader to be updated.
     \param camera the camera used for the current rendering.
     \param cur_time the current animation time.
     \sa Shader::setShaderAnimator(); */
     virtual void updateShader(Shader* shader, Camera* camera, Real cur_time) = 0;
+
+    /** Whether the ShaderAnimator is enabled or not. */
+    void setEnabled(bool enable) { mEnabled = enable; }
+
+    /** Whether the ShaderAnimator is enabled or not. */
+    bool isEnabled() const { return mEnabled; }
+
+  protected:
+    bool mEnabled;
   };
   //------------------------------------------------------------------------------
   // Shader
