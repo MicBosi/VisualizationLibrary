@@ -342,10 +342,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       // --------------- Actor rendering ---------------
 
-      // contract (mic fixme: to be changed for vertex-array and elem-array lazy bind):
-      // 1 - all vertex arrays and VBOs are disabled before calling render()
-      // 2 - all vertex arrays and VBOs are disabled after  calling render()
-
       VL_CHECK( !tok->mRenderable->displayListEnabled() || (tok->mRenderable->displayListEnabled() && tok->mRenderable->displayList()) )
 
       if (tok->mRenderable->displayListEnabled())
