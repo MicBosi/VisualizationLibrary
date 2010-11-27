@@ -33,8 +33,6 @@
 #include <vl/GLSL.hpp>
 #include <vl/Light.hpp>
 #include <vl/ClipPlane.hpp>
-#include <vl/Texture.hpp>
-#include <vl/Scissor.hpp>
 #include <vl/OpenGLContext.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
@@ -49,7 +47,7 @@ Shader::Shader()
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mLastUpdateTime = 0.0;
+  mLastUpdateTime = 0;
 }
 //------------------------------------------------------------------------------
 Shader::~Shader()

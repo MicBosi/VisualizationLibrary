@@ -31,6 +31,7 @@
 
 #include <vl/OcclusionCullRenderer.hpp>
 #include <vl/RenderQueue.hpp>
+#include <vl/OpenGLContext.hpp>
 #include <vl/Log.hpp>
 #include <vl/Say.hpp>
 

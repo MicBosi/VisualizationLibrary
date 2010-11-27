@@ -66,7 +66,6 @@ void Applet::initialize()
 
   mFly       = new GhostCameraManipulator;
   mTrackball = new TrackballManipulator;
-  mFly->setRank(0);
   mFly->setEnabled(false);
   mTrackball->setEnabled(true);
 

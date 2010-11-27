@@ -40,9 +40,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   // VertexMapper
   //-----------------------------------------------------------------------------
-  /**
-   * Generates a set of new vertices from the old one
-  */
+  //! Generates a set of new vertices from the old one.
   class VertexMapper: public Object
   {
   public:
@@ -59,10 +57,8 @@ namespace vl
   //-----------------------------------------------------------------------------
   // DoubleVertexRemover
   //-----------------------------------------------------------------------------
-  /**
-   * Removes from a Geometry the vertices with the same attributes. 
-   * As a result also all the DrawArrays prensent in the Geometry are substituted with DrawElements.
-  */
+  //! Removes from a Geometry the vertices with the same attributes. 
+  //! As a result also all the DrawArrays prensent in the Geometry are substituted with DrawElements.
   class DoubleVertexRemover: public VertexMapper
   {
   private:

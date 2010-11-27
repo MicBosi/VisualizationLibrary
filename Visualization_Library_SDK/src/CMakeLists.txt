@@ -76,6 +76,7 @@ SET(VL_SRC
   vl/PixelLODEvaluator.cpp
   vl/Plane.cpp
   vl/PolygonSimplifier.cpp
+  vl/ProjViewTransfCallback.cpp
   vl/DrawCall.cpp
   vl/SceneManagerPortals.cpp
   vl/RayIntersector.cpp
@@ -180,6 +181,7 @@ set(VL_INC
   vl/PixelLODEvaluator.hpp
   vl/Plane.hpp
   vl/PolygonSimplifier.hpp
+  vl/ProjViewTransfCallback.hpp
   vl/SceneManagerPortals.hpp
   vl/Ray.hpp
   vl/RayIntersector.hpp
@@ -192,6 +194,7 @@ set(VL_INC
   vl/RenderToken.hpp
   vl/Renderable.hpp
   vl/Renderer.hpp
+  vl/RendererAbstract.hpp
   vl/Rendering.hpp
   vl/RenderingAbstract.hpp
   vl/RenderingTree.hpp

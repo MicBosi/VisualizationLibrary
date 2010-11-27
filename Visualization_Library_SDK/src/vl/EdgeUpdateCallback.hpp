@@ -35,6 +35,7 @@
 #include <vl/Actor.hpp>
 #include <vl/EdgeExtractor.hpp>
 #include <vl/Geometry.hpp>
+#include <vl/Camera.hpp>
 
 namespace vl
 {
