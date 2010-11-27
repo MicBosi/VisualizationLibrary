@@ -50,7 +50,7 @@ namespace vlVolume
 
     void bindActor(vl::Actor*);
 
-    //! Updates the uniforms used by the vl::GLSLProgram to render the volume each time the update() function is called.
+    //! Updates the uniforms used by the vl::GLSLProgram to render the volume each time the onActorRenderStarted() method is called.
     virtual void updateUniforms(const vl::Camera* camera, vl::Actor*);
     
     //! Defines the number of slices used to render the volume: more slices generate a better rendering.

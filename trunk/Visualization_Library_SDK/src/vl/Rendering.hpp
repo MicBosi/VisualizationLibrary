@@ -65,16 +65,18 @@ namespace vl
   - Renderer
   - Actor
   - Effect
-  - Transform
-  */
+  - Transform */
   class Rendering: public RenderingAbstract
   {
   public:
     virtual const char* className() { return "Rendering"; }
+    
     /** Constructor. */
     Rendering();
+    
     /** Copy constructor. */
     Rendering(const Rendering& other): RenderingAbstract(other) { *this = other; } 
+    
     /** Assignment operator. */
     Rendering& operator=(const Rendering& other);
 
@@ -83,6 +85,7 @@ namespace vl
 
     /** The RenderQueueSorter used to perform the sorting of the objects to be rendered, if NULL no sorting is performed. */
     void setRenderQueueSorter(RenderQueueSorter* render_queue_sorter) { mRenderQueueSorter = render_queue_sorter; }
+    
     /** The RenderQueueSorter used to perform the sorting of the objects to be rendered, if NULL no sorting is performed. */
     RenderQueueSorter* renderQueueSorter() { return mRenderQueueSorter.get(); }
 
@@ -123,13 +126,16 @@ namespace vl
 
     /** The Camera that defines the point of view and viewport to be used when rendering the scene. */
     void setCamera(Camera* camera) { mCamera = camera; }
+    
     /** The Camera that defines the point of view and viewport to be used when rendering the scene. */
     const Camera* camera() const { return mCamera.get(); }
+    
     /** The Camera that defines the point of view and viewport to be used when rendering the scene. */
     Camera* camera() { return mCamera.get(); }
 
     /** Returns the list of SceneManager[s] containing the Actor[s] to be rendered. */
     Collection<SceneManager>* sceneManagers() { return mSceneManagers.get(); }
+    
     /** Returns the list of SceneManager[s] containing the Actor[s] to be rendered. */
     const Collection<SceneManager>* sceneManagers() const { return mSceneManagers.get(); }
 
@@ -147,22 +153,23 @@ namespace vl
 
     /** Whether the Level-Of-Detail should be evaluated or not. When disabled lod #0 is used. */
     void setEvaluateLOD(bool evaluate_lod) { mEvaluateLOD = evaluate_lod; }
+
     /** Whether the Level-Of-Detail should be evaluated or not. When disabled lod #0 is used. */
     bool evaluateLOD() const { return mEvaluateLOD; }
 
-    /** Whether Shader::update() should be called or not. 
+    /** Whether Shader::shaderAnimator()->updateShader() should be called or not. 
     \note
-    Only Shader[s] belonging to visible Actor[s] are updated.
-    */
+    Only Shader[s] belonging to visible Actor[s] are animated. */
     void setShaderAnimationEnabled(bool animate_shaders) { mShaderAnimationEnabled = animate_shaders; }
-    /** Whether Shader::update() should be called or not. 
+
+    /** Whether Shader::shaderAnimator()->updateShader() should be called or not. 
     \note
-    Only Shader[s] belonging to visible Actor[s] are updated.
-    */
+    Only Shader[s] belonging to visible Actor[s] are animated. */
     bool shaderAnimationEnabled() const { return mShaderAnimationEnabled; }
 
     /** Whether the installed SceneManager[s] should perform Actor culling or not in order to maximize the rendering performances. */
     void setCullingEnabled(bool enabled) { mCullingEnabled = enabled; }
+    
     /** Whether the installed SceneManager[s] should perform Actor culling or not in order to maximize the rendering performances. */
     bool cullingEnabled() const { return mCullingEnabled; }
 
@@ -170,11 +177,13 @@ namespace vl
       * Enabling this features forces VL to keep track of which resources are used for each rendering, which might slighly impact the 
       * rendering time, thus to obtain the maximum performances disable this option and manually initialize your textures and GLSL shaders. */
     void setAutomaticResourceInit(bool enable) { mAutomaticResourceInit = enable; }
+    
     /** Whether OpenGL resources such as textures and GLSL programs should be automatically initialized before the rendering takes place. */
     bool automaticResourceInit() const { return mAutomaticResourceInit; }
 
     /** Returns whether near/far planes optimization is enabled. */
     bool nearFarClippingPlanesOptimized() const { return mNearFarClippingPlanesOptimized; }
+    
     /** Enabled/disables near/far planes optimization. When enabled, the automatic near/far clipping planes optimization
       * modifies the projection matrix of the current camera to minimize z-fighting artifacts. If later you disable
       * this feature you might want to recompute the original projection matrix of the camera using the method 

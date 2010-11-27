@@ -59,12 +59,14 @@ namespace vl
   friend class OpenGLContext;
   public:
     virtual const char* className() { return "UIEventListener"; }
-    UIEventListener(): mOpenGLContext(NULL), mRank(0), mEnabled(true) 
+
+    UIEventListener(): mOpenGLContext(NULL), mEnabled(true) 
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
     }
+
     virtual ~UIEventListener() {}
 
     virtual void initEvent() {}
@@ -83,9 +85,6 @@ namespace vl
 
     virtual void openglContextBoundEvent(OpenGLContext*) {}
 
-    void setRank(int rank);
-    int rank() const;
-
     //! Returns the OpenGL context to which this UIEventListener is bound or NULL if no context is bound.
     OpenGLContext* openglContext();
 
@@ -99,11 +98,8 @@ namespace vl
 
     bool isEnabled() const { return mEnabled; }
 
-    bool operator<(const UIEventListener& other) const { return rank() < other.rank(); }
-
   protected:
     OpenGLContext* mOpenGLContext;
-    int mRank;
     bool mEnabled;
   };
 }

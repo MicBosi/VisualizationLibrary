@@ -345,7 +345,7 @@ void MarchingCubes::run(bool generate_colors)
     if (generate_colors)
     {
       mColors.resize( mVerts.size() );
-      for(size_t i=start; i<start+count; ++i)
+      for(int i=start; i<start+count; ++i)
         mColors[i] = mVolumeInfo.at(ivol)->color();
     }
 

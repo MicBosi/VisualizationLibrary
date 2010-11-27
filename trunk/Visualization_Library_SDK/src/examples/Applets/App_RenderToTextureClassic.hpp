@@ -73,7 +73,7 @@ public:
 
     vl::ref<vl::Texture> texture = new vl::Texture( 512, 512, vl::TF_RGBA, false );
     vl::ref<vl::CopyTexSubImage2D> copytex = new vl::CopyTexSubImage2D( 0, 0,0, 0,0, 512,512, texture.get() );
-    mRTT_Rendering->renderEventCallbacks()->push_back( copytex.get() );
+    mRTT_Rendering->onFinishedCallbacks()->push_back( copytex.get() );
 
     mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
 

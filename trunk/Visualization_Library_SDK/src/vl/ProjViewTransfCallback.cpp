@@ -29,54 +29,59 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/RenderingAbstract.hpp>
-#include <vl/RenderEventCallback.hpp>
+#include <vl/ProjViewTransfCallback.hpp>
+#include <vl/Transform.hpp>
+#include <vl/Camera.hpp>
 
 using namespace vl;
 
 //------------------------------------------------------------------------------
-RenderingAbstract::RenderingAbstract()
-{
-  mFrameClock = 0.0f;
-  mEnableMask = 0xFFFFFFFF;
-  mOnStartedCallbacks  = new Collection<RenderEventCallback>;
-  mOnFinishedCallbacks = new Collection<RenderEventCallback>;
-}
+// ProjViewTransfCallbackStandard
 //------------------------------------------------------------------------------
-RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
+void ProjViewTransfCallbackStandard::programFirstUse(const Renderer*, const GLSLProgram*, const Transform* transform, const Camera* camera, bool first_overall)
 {
-  Object::operator=(other);
+  if (mLastTransform != transform || first_overall)
+  {
+    if ( transform )
+    {
+      glMatrixMode(GL_MODELVIEW);
+      VL_glLoadMatrix( (camera->viewMatrix() * transform->worldMatrix() ).ptr() );
+    }
+    else
+    {
+      glMatrixMode(GL_MODELVIEW);
+      VL_glLoadMatrix( camera->viewMatrix().ptr() );
+    }
+  }
 
-  mFrameClock          = other.mFrameClock;
-  mEnableMask          = other.mEnableMask;
-  *mOnStartedCallbacks  = *other.mOnStartedCallbacks;
-  *mOnFinishedCallbacks = *other.mOnFinishedCallbacks;
-  return *this;
-}
-//------------------------------------------------------------------------------
-void RenderingAbstract::dispatchOnRenderingStarted()
-{
-  const Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
-  for(int i=0; i<cb.size(); ++i)
+  // set the projection matrix only once per rendering
+  if (first_overall)
   {
-    if ( cb[i]->isEnabled() && cb[i]->onRenderingStarted(this) && cb[i]->removeAfterCall() )
+    glMatrixMode(GL_PROJECTION);
+    VL_glLoadMatrix( (camera->projectionMatrix() ).ptr() );
+  }
+
+  // update last transform
+  mLastTransform = transform;
+}
+//-----------------------------------------------------------------------------
+void ProjViewTransfCallbackStandard::programTransfChange(const Renderer*, const GLSLProgram*, const Transform* transform, const Camera* camera)
+{
+  if (mLastTransform != transform)
+  {
+    if ( transform )
     {
-      onStartedCallbacks()->eraseAt( i );
-      --i;
+      glMatrixMode(GL_MODELVIEW);
+      VL_glLoadMatrix( (camera->viewMatrix() * transform->worldMatrix() ).ptr() );
+    }
+    else
+    {
+      glMatrixMode(GL_MODELVIEW);
+      VL_glLoadMatrix( camera->viewMatrix().ptr() );
     }
   }
+
+  // update last transform
+  mLastTransform = transform;
 }
-//------------------------------------------------------------------------------
-void RenderingAbstract::dispatchOnRenderingFinished()
-{
-  const Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
-  for(int i=0; i<cb.size(); ++i)
-  {
-    if ( cb[i]->isEnabled() && cb[i]->onRenderingFinished(this) && cb[i]->removeAfterCall() )
-    {
-      onFinishedCallbacks()->eraseAt( i );
-      --i;
-    }
-  }
-}
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------

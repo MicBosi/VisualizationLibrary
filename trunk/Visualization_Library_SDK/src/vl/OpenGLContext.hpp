@@ -436,7 +436,20 @@ namespace vl
     //! Returns \p true if an OpenGLContext provides backwards compatibility to previous OpenGL API versions.
     bool isCompatible() const { return mIsCompatible; }
 
+    //! Returns the OpenGL's driver version's major number.
+    int openglVersionMajorNumber() const { return mMajorVersion; }
+
+    //! Returns the OpenGL's driver version's minor number.
+    int openglVersionMinorNumber() const { return mMinorVersion; }
+
     // --- render states management ---
+
+    //! Activates the specified vertex attribute set - For internal use only.
+    //! \param vas The IVertexAttribSet to be activated. It can be NULL, in which case all vertex attributes are disabled.
+    //! If \p vas is the same as the last activated IVertexAttribSet then no operation is done.
+    //! \param use_vbo Whether vertex-buffer-objects should be used when activating the vertex attributes.
+    //! \param force Binds \p vas even if it was the last to be activated (this is also valid for NULL).
+    void bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool force);
 
     //! Applies an EnableSet to an OpenGLContext - For internal use only.
     void applyEnables( const EnableSet* prev, const EnableSet* cur );
@@ -452,6 +465,23 @@ namespace vl
 
     //! Resets the OpenGL states necessary to begin and finish a rendering. - For internal use only.
     void resetContextStates();
+
+    //! Declares that texture unit \p unit_i is currently bound to the specified texture target. - For internal use only.
+    void setTexUnitBinding(int unit_i, ETextureDimension target) 
+    { 
+      VL_CHECK(unit_i <= VL_MAX_TEXTURE_UNITS);
+      mTexUnitBinding[unit_i] = target; 
+    }
+
+    //! Returnes the texture target currently active for the specified texture unit. - For internal use only.
+    ETextureDimension texUnitBinding(int unit_i) const
+    {
+      VL_CHECK(unit_i <= VL_MAX_TEXTURE_UNITS);
+      return mTexUnitBinding[unit_i]; 
+    }
+
+    //! Returns \p true if the two UniformSet contain at least one Uniform variable with the same name.
+    static bool areUniformsColliding(const UniformSet* u1, const UniformSet* u2);
 
     //! Checks whether the OpenGL state is clean or not.
     //! \par Clean state conditions:
@@ -472,36 +502,6 @@ namespace vl
     //! - Polygon mode should be glPolygonMode(GL_FRONT_AND_BACK, GL_FILL).
     //! - <i>In general all OpenGL render states should be set to their default values.</i>
     static bool isCleanState(bool verbose);
-
-    //! Returns \p true if the two UniformSet contain at least one Uniform variable with the same name.
-    static bool areUniformsColliding(const UniformSet* u1, const UniformSet* u2);
-
-    //! Returns the OpenGL's driver version's major number.
-    int openglVersionMajorNumber() const { return mMajorVersion; }
-
-    //! Returns the OpenGL's driver version's minor number.
-    int openglVersionMinorNumber() const { return mMinorVersion; }
-
-    //! Declares that texture unit \p unit_i is currently bound to the specified texture target. - For internal use only.
-    void setTexUnitBinding(int unit_i, ETextureDimension target) 
-    { 
-      VL_CHECK(unit_i <= VL_MAX_TEXTURE_UNITS);
-      mTexUnitBinding[unit_i] = target; 
-    }
-
-    //! Returnes the texture target currently active for the specified texture unit. - For internal use only.
-    ETextureDimension texUnitBinding(int unit_i) const
-    {
-      VL_CHECK(unit_i <= VL_MAX_TEXTURE_UNITS);
-      return mTexUnitBinding[unit_i]; 
-    }
-
-    //! Activates the specified vertex attribute set - For internal use only.
-    //! \param vas The IVertexAttribSet to be activated. It can be NULL, in which case all vertex attributes are disabled.
-    //! If \p vas is the same as the last activated IVertexAttribSet then no operation is done.
-    //! \param use_vbo Whether vertex-buffer-objects should be used when activating the vertex attributes.
-    //! \param force Binds \p vas even if it was the last to be activated (this is also valid for NULL).
-    void bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool force);
 
   protected:
     ref<RenderTarget> mRenderTarget;

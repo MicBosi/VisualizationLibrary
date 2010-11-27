@@ -31,7 +31,7 @@
 
 #include <vl/DrawPixels.hpp>
 #include <vl/Actor.hpp>
-#include <vl/Renderer.hpp>
+#include <vl/Camera.hpp>
 #include <map>
 
 using namespace vl;

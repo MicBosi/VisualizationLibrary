@@ -30,16 +30,10 @@
 /**************************************************************************************/
 
 #include <vl/Renderer.hpp>
-#include <vl/RenderQueue.hpp>
-#include <vl/Effect.hpp>
-#include <vl/Transform.hpp>
-#include <vl/checks.hpp>
+#include <vl/OpenGLContext.hpp>
 #include <vl/GLSL.hpp>
-#include <vl/Light.hpp>
-#include <vl/ClipPlane.hpp>
-#include <vl/Time.hpp>
+#include <vl/RenderQueue.hpp>
 #include <vl/Log.hpp>
-#include <vl/Say.hpp>
 
 using namespace vl;
 
@@ -52,7 +46,7 @@ Renderer::Renderer()
     mObjectName = className();
   #endif
 
-  mProjViewTranfCallback = new ProjViewTranfCallbackStandard;
+  mProjViewTransfCallback = new ProjViewTransfCallbackStandard;
 
   mDummyEnables  = new EnableSet;
   mDummyStateSet = new RenderStateSet;
@@ -375,52 +369,5 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   VL_CHECK( opengl_context->isCleanState(true) );
 
   return render_queue;
-}
-//-----------------------------------------------------------------------------
-void ProjViewTranfCallbackStandard::programFirstUse(const Renderer*, const GLSLProgram*, const Transform* transform, const Camera* camera, bool first_overall)
-{
-  if (mLastTransform != transform || first_overall)
-  {
-    if ( transform )
-    {
-      glMatrixMode(GL_MODELVIEW);
-      VL_glLoadMatrix( (camera->viewMatrix() * transform->worldMatrix() ).ptr() );
-    }
-    else
-    {
-      glMatrixMode(GL_MODELVIEW);
-      VL_glLoadMatrix( camera->viewMatrix().ptr() );
-    }
-  }
-
-  // set the projection matrix only once per rendering
-  if (first_overall)
-  {
-    glMatrixMode(GL_PROJECTION);
-    VL_glLoadMatrix( (camera->projectionMatrix() ).ptr() );
-  }
-
-  // update last transform
-  mLastTransform = transform;
-}
-//-----------------------------------------------------------------------------
-void ProjViewTranfCallbackStandard::programTransfChange(const Renderer*, const GLSLProgram*, const Transform* transform, const Camera* camera)
-{
-  if (mLastTransform != transform)
-  {
-    if ( transform )
-    {
-      glMatrixMode(GL_MODELVIEW);
-      VL_glLoadMatrix( (camera->viewMatrix() * transform->worldMatrix() ).ptr() );
-    }
-    else
-    {
-      glMatrixMode(GL_MODELVIEW);
-      VL_glLoadMatrix( camera->viewMatrix().ptr() );
-    }
-  }
-
-  // update last transform
-  mLastTransform = transform;
 }
 //-----------------------------------------------------------------------------

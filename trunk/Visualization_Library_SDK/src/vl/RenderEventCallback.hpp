@@ -63,19 +63,19 @@ namespace vl
 
     /** Reimplement to react to this event.
       * \return \p true if the callback reacted to the given event. */
-    virtual bool onRenderingStarted(const RenderingAbstract*) { return false; }
+    virtual bool onRenderingStarted(const RenderingAbstract*) = 0;
 
     /** Reimplement to react to this event.
       * \return \p true if the callback reacted to the given event. */
-    virtual bool onRenderingFinished(const RenderingAbstract*) { return false; }
+    virtual bool onRenderingFinished(const RenderingAbstract*) = 0;
 
     /** Reimplement to react to this event.
       * \return \p true if the callback reacted to the given event. */
-    virtual bool onRendererStarted(const RendererAbstract*) { return false; }
+    virtual bool onRendererStarted(const RendererAbstract*) = 0;
 
     /** Reimplement to react to this event.
       * \return \p true if the callback reacted to the given event. */
-    virtual bool onRendererFinished(const RendererAbstract*) { return false; }
+    virtual bool onRendererFinished(const RendererAbstract*) = 0;
 
     //! Defines if the callback shall be removed after being executed.
     //! Note that the callback is removed only if the renderingCallback() method returns \p true.

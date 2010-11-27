@@ -30,14 +30,9 @@
 /**************************************************************************************/
 
 #include <vl/Text.hpp>
-#include <vl/VisualizationLibrary.hpp> 
-#include <vl/FileSystem.hpp>
-#include <vl/DiskFile.hpp>
-#include <vl/Image.hpp>
-#include <vl/Say.hpp>
-#include <vl/Log.hpp>
+#include <vl/OpenGLContext.hpp>
 #include <vl/Actor.hpp>
-#include <vl/Renderer.hpp>
+#include <vl/Log.hpp>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

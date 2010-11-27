@@ -56,17 +56,18 @@ namespace vl
     void operator=(const FBOAttachmentAbstract&) {}
 
   public:
-    FBOAttachmentAbstract() {}
     virtual const char* className() { return "FBOAttachmentAbstract"; }
+    //! Constructor.
+    FBOAttachmentAbstract() {}
+
+    //! Destructor.
     virtual ~FBOAttachmentAbstract() { destroy(); }
 
     virtual void destroy();
 
-    /**
-     * Binds this renderbuffer to the currently active framebuffer object (GL_FRAMEBUFFER).
+    /** Binds this renderbuffer to the currently active framebuffer object (GL_FRAMEBUFFER).
      * This function also initializes its storage if 'w' and 'h' differ from the renderbuffer's 
-     * current width() and height() and the renderbuffer is not a texture.
-    */
+     * current width() and height() and the renderbuffer is not a texture. */
     virtual void bindAttachment(int w, int h, EAttachmentPoint attach_point)  = 0;
 
     //! Returns an std::set containing the FBORenderTarget that use this FBO attachment

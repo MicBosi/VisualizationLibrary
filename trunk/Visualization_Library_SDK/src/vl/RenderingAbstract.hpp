@@ -57,11 +57,17 @@ namespace vl
     /** Calls the RenderEventCallback::onRenderingFinished() method of all the active callback objects.*/
     void dispatchOnRenderingFinished();
 
-    //! Returns the list of RenderEventCallback objects bound to a Rendering
-    Collection<RenderEventCallback>* renderEventCallbacks() { return mRenderEventCallbacks.get(); }
+    //! Returns the list of RenderEventCallback objects registered to the onRenderingStarted() event notification.
+    Collection<RenderEventCallback>* onStartedCallbacks() { return mOnStartedCallbacks.get(); }
 
-    //! Returns the list of RenderEventCallback objects bound to a Rendering
-    const Collection<RenderEventCallback>* renderEventCallbacks() const { return mRenderEventCallbacks.get(); }
+    //! Returns the list of RenderEventCallback objects registered to the onRenderingStarted() event notification.
+    const Collection<RenderEventCallback>* onStartedCallbacks() const { return mOnStartedCallbacks.get(); }
+
+    //! Returns the list of RenderEventCallback objects registered to the onRenderingFinished() event notification.
+    Collection<RenderEventCallback>* onFinishedCallbacks() { return mOnFinishedCallbacks.get(); }
+
+    //! Returns the list of RenderEventCallback objects registered to the onRenderingFinished() event notification.
+    const Collection<RenderEventCallback>* onFinishedCallbacks() const { return mOnFinishedCallbacks.get(); }
 
     //! The enable mask of the Rendering, used to define wheter the rendering is enabled or not, and which objects should be rendered.
     //! @sa
@@ -81,7 +87,8 @@ namespace vl
     Real frameClock() const { return mFrameClock; }
 
   protected:
-    ref< Collection<RenderEventCallback> > mRenderEventCallbacks;
+    ref< Collection<RenderEventCallback> > mOnStartedCallbacks;
+    ref< Collection<RenderEventCallback> > mOnFinishedCallbacks;
     Real mFrameClock;
     unsigned int mEnableMask;
   };

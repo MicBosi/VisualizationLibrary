@@ -32,153 +32,13 @@
 #ifndef Renderer_INCLUDE_ONCE
 #define Renderer_INCLUDE_ONCE
 
-#include <vl/Camera.hpp>
-#include <vl/Renderable.hpp>
+#include <vl/RendererAbstract.hpp>
+#include <vl/ProjViewTransfCallback.hpp>
 #include <vl/Shader.hpp>
-#include <vl/Effect.hpp>
-#include <vl/OpenGLContext.hpp>
-#include <vl/RenderEventCallback.hpp>
-#include <vector>
 #include <map>
-#include <set>
 
 namespace vl
 {
-  class RenderQueue;
-  class Renderer;
-
-  //-----------------------------------------------------------------------------
-  // ProjViewTranfCallback
-  //-----------------------------------------------------------------------------
-  /** Vitual class used as a callback to update the state of the \p projection, \p view and \p transform matrices of a GLSLProgram or fixed function pipeline. */
-  class ProjViewTranfCallback: public Object
-  {
-  public:
-    /** This function is called whenever a new GLSLProgram (or the NULL one, i.e. the fixed function pipeline) is being activated for the first time in the current rendering.
-     * This callback is most useful to initialize the GLSLProgram with the current projection and view matrices, besides the current Actor's transform.
-     * \param caller The Renderer object calling this function.
-     * \param glsl The GLSLProgram being activated. If NULL the fixed function pipeline is being activated.
-     * \param transform The transform of the current Actor being rendered.
-     * \param camera The Camera used for the rendering from which you can retrieve the projection and view matrices.
-     * \param first_overall If \p true it means that the rendering has just started. Useful if you want to initialized your callback object.
-     */
-    virtual void programFirstUse(const Renderer* caller, const GLSLProgram* glsl, const Transform* transform, const Camera* camera, bool first_overall) = 0;
-    /** This function is called whenever the Transform changes with respect to the current GLSLProgram (including the NULL one, i.e. the fixed function pipeline).
-     * This callback is most useful to update the GLSLProgram with the current Actor's transform matrix.
-     * \param caller The Renderer object calling this function.
-     * \param glsl The GLSLProgram being activated. If NULL the fixed function pipeline is being activated.
-     * \param transform The transform of the current Actor being rendered.
-     * \param camera The Camera used for the rendering from which you can retrieve the projection and view matrices.
-     */
-    virtual void programTransfChange(const Renderer* caller, const GLSLProgram* glsl, const Transform* transform, const Camera* camera) = 0;
-  };
-
-  //-----------------------------------------------------------------------------
-  // ProjViewTranfCallbackStandard
-  //-----------------------------------------------------------------------------
-  //! Updates the GL_MODELVIEW and GL_PROJECTION matrices of the fixed function pipeline in an optimized manner.
-  //! You usually want to install this callback if the fixed fuction pipeline is available, even when using GLSL shaders.
-  //! In fact the GL_MODELVIEW and GL_PROJECTION matrices are visible from all the GLSL shaders, thus requiring fewer matrix updates
-  //! compared to being forced to send projection, view and transform matrix to every single GLSLProgram at least once during the rendering!
-  class ProjViewTranfCallbackStandard: public ProjViewTranfCallback
-  {
-  public:
-    ProjViewTranfCallbackStandard(): mLastTransform(NULL) {}
-    virtual void programFirstUse(const Renderer*, const GLSLProgram* glsl, const Transform*, const Camera*, bool first_overall );
-    virtual void programTransfChange(const Renderer*, const GLSLProgram* glsl, const Transform*, const Camera* );
-  private:
-    const Transform* mLastTransform;
-  };
-
-  //-----------------------------------------------------------------------------
-  // RendererAbstract
-  //-----------------------------------------------------------------------------
-  class RendererAbstract: public Object
-  {
-  public:
-    RendererAbstract()
-    {
-      mRenderEventCallbacks = new Collection<RenderEventCallback>;
-      mClearFlags = CF_CLEAR_COLOR_DEPTH;
-      mEnableMask = 0xFFFFFFFF;
-      mRenderTick = 0;
-      mFrameClock = 0;
-    }
-
-    RendererAbstract& operator=(const RendererAbstract& other)
-    {
-      *mRenderEventCallbacks = *other.mRenderEventCallbacks;
-      mClearFlags = other.mClearFlags;
-      mEnableMask = other.mEnableMask;
-      /* mRenderTick = other.mRenderTick; */ // render-tick remains local
-      /* mFrameClock = other.mFrameClock; */ // update time remains local
-      return *this;
-    }
-
-    /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
-      * Renderer's implementation of this function always returns \p in_render_queue. */
-    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock) = 0;
-    virtual const RenderTarget* renderTarget() const = 0;
-    virtual RenderTarget* renderTarget() = 0;
-
-    void dispatchOnRendererStarted()
-    {
-      const Collection<RenderEventCallback>& cb = *mRenderEventCallbacks;
-      for(int i=0; i<cb.size(); ++i)
-      {
-        if ( cb[i]->isEnabled() && cb[i]->onRendererStarted(this) && cb[i]->removeAfterCall() )
-        {
-          renderEventCallbacks()->eraseAt( i );
-          --i;
-        }
-      }
-    }
-
-    void dispatchOnRendererFinished()
-    {
-      const Collection<RenderEventCallback>& cb = *mRenderEventCallbacks;
-      for(int i=0; i<cb.size(); ++i)
-      {
-        if ( cb[i]->isEnabled() && cb[i]->onRendererFinished(this) && cb[i]->removeAfterCall() )
-        {
-          renderEventCallbacks()->eraseAt( i );
-          --i;
-        }
-      }
-    }
-
-    //! Returns the list of RenderEventCallback objects bound to a Rendering
-    Collection<RenderEventCallback>* renderEventCallbacks() { return mRenderEventCallbacks.get(); }
-
-    //! Returns the list of RenderEventCallback objects bound to a Rendering
-    const Collection<RenderEventCallback>* renderEventCallbacks() const { return mRenderEventCallbacks.get(); }
-
-    /** The current render tick number, equivalent to the number or calls made to the render() method. */
-    unsigned long renderTick() const { return mRenderTick; }
-
-    /** Increments the rendering tick count. */
-    void incrementRenderTick() { ++mRenderTick; }
-
-    void setClearFlags(EClearFlags clear_flags) { mClearFlags = clear_flags; }
-
-    EClearFlags clearFlags() const { return mClearFlags; }
-
-    void setEnableMask(unsigned int mask) { mEnableMask = mask; }
-
-    unsigned int enableMask() const { return mEnableMask; }
-
-    void setFrameClock(Real t) { mFrameClock = t; }
-
-    Real frameClock() const { return mFrameClock; }
-
-  protected:
-    ref< Collection<RenderEventCallback> > mRenderEventCallbacks;
-    unsigned long mRenderTick;
-    unsigned int mEnableMask;
-    EClearFlags mClearFlags;
-    Real mFrameClock;
-  };
-
   //-----------------------------------------------------------------------------
   // Renderer
   //-----------------------------------------------------------------------------
@@ -197,11 +57,11 @@ namespace vl
       * Renderer's implementation of this function always returns \p in_render_queue. */
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock);
 
-    void setProjViewTransfCallback(ProjViewTranfCallbackStandard* callback) { mProjViewTranfCallback = callback; }
+    void setProjViewTransfCallback(ProjViewTransfCallbackStandard* callback) { mProjViewTransfCallback = callback; }
     
-    const ProjViewTranfCallbackStandard* projViewTransfCallback() const { return mProjViewTranfCallback.get(); }
+    const ProjViewTransfCallbackStandard* projViewTransfCallback() const { return mProjViewTransfCallback.get(); }
     
-    ProjViewTranfCallbackStandard* projViewTransfCallback() { return mProjViewTranfCallback.get(); }
+    ProjViewTransfCallbackStandard* projViewTransfCallback() { return mProjViewTransfCallback.get(); }
 
     /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
     const std::map<unsigned int, ref<Shader> >& shaderOverrideMask() const { return mShaderOverrideMask; }
@@ -229,7 +89,7 @@ namespace vl
 
     std::map<unsigned int, ref<Shader> > mShaderOverrideMask;
 
-    ref<ProjViewTranfCallbackStandard> mProjViewTranfCallback;
+    ref<ProjViewTransfCallbackStandard> mProjViewTransfCallback;
   };
   //------------------------------------------------------------------------------
 }

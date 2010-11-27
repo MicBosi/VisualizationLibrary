@@ -31,6 +31,7 @@
 
 #include <vl/EdgeRenderer.hpp>
 #include <vl/RenderQueue.hpp>
+#include <vl/OpenGLContext.hpp>
 
 using namespace vl;
 
