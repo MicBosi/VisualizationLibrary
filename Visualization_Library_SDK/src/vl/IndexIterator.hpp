@@ -43,7 +43,6 @@ namespace vl
   {
   public:
     IndexIteratorAbstract(): mIndex(-1) {}
-
     int index() const { return mIndex; }
     virtual bool isEnd() const = 0;
     virtual bool next() = 0;

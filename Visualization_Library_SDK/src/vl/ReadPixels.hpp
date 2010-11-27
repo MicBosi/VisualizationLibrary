@@ -91,16 +91,27 @@ namespace vl
       #endif
     }
 
+    virtual bool onRenderingStarted(const RenderingAbstract*)
+    {
+      readPixels();
+      return true;
+    }
+
     virtual bool onRenderingFinished(const RenderingAbstract*)
     {
-      if (mImage.get() == NULL)
-        mImage = new Image;
-      mImage->readPixels(mX, mY, mWidth, mHeight, mReadBuffer, storeInPixelBufferObject() );
-      if ( savePath().length() )
-      {
-        if (!saveImage(mImage.get(), savePath()))
-          Log::error( Say("ReadPixels: unknown format for file: '%s'\n") << savePath() );
-      }
+      readPixels();
+      return true;
+    }
+
+    virtual bool onRendererStarted(const RendererAbstract*)
+    {
+      readPixels();
+      return true;
+    }
+
+    virtual bool onRendererFinished(const RendererAbstract*)
+    {
+      readPixels();
       return true;
     }
 
@@ -133,6 +144,19 @@ namespace vl
 
     void setStoreInPixelBufferObject( bool use_pbo ) { mStoreInPixelBufferObject = use_pbo; }
     bool storeInPixelBufferObject() const { return mStoreInPixelBufferObject; }
+
+  protected:
+    void readPixels()
+    {
+      if (mImage.get() == NULL)
+        mImage = new Image;
+      mImage->readPixels(mX, mY, mWidth, mHeight, mReadBuffer, storeInPixelBufferObject() );
+      if ( savePath().length() )
+      {
+        if (!saveImage(mImage.get(), savePath()))
+          Log::error( Say("ReadPixels: unknown format for file: '%s'\n") << savePath() );
+      }
+    }
 
   protected:
     int mX;

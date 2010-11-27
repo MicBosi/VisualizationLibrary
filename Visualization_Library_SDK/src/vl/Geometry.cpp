@@ -29,28 +29,12 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/Matrix4.hpp>
 #include <vl/Geometry.hpp>
-#include <vl/Log.hpp>
-#include <vl/Say.hpp>
-#include <vl/Shader.hpp>
-#include <vl/Renderer.hpp>
-#include <vl/Time.hpp>
+#include <vl/OpenGLContext.hpp>
 #include <vl/DoubleVertexRemover.hpp>
 #include <cmath>
 
 using namespace vl;
-
-void func()
-{
-  bvec4 a;
-  svec4 b;
-  fvec4 c;
-  a = (bvec4)b;
-  a = (bvec4)c;
-  short sh = 1;
-  b = sh * b;
-}
 
 //-----------------------------------------------------------------------------
 // Geometry

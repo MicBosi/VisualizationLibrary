@@ -66,7 +66,25 @@ namespace vl
     EReadDrawBuffer readBuffer() const { return mReadBuffer; }
     void setReadBuffer(EReadDrawBuffer render_buffer) { mReadBuffer = render_buffer; }
 
+    virtual bool onRenderingStarted(const RenderingAbstract*)
+    {
+      copyPixels();
+      return true;
+    }
+
     virtual bool onRenderingFinished(const RenderingAbstract*)
+    {
+      copyPixels();
+      return true;
+    }
+
+    virtual bool onRendererStarted(const RendererAbstract*)
+    {
+      copyPixels();
+      return true;
+    }
+
+    virtual bool onRendererFinished(const RendererAbstract*)
     {
       copyPixels();
       return true;

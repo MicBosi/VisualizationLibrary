@@ -39,8 +39,7 @@
 
 namespace vl
 {
-  /**
-   * Abstract class for all the interpolators.
+  /** Abstract class for all the interpolators.
    *
    * An Interpolator is an object that implements a specific interpolation scheme (linear, Catmull-Rom, Bezier etc.) to interpolate data such as vectors, colors, rotations an so on.
    * Interpolators are very useful for tasks such as animating an object's position and/or rotation, creating a smooth curved line from a set of control points, creating extrusion paths and silhouettes etc.
@@ -49,8 +48,7 @@ namespace vl
    *
    * LinearInterpolator, CatmullRomInterpolator, the \ref pagGuideInterpolators "Interpolators Tutorial" page and the Extrusion class.
    *
-   * \image html pagGuideInterpolators1.png
-   */
+   * \image html pagGuideInterpolators1.png */
   class Interpolator: public vl::Object
   {
   public:

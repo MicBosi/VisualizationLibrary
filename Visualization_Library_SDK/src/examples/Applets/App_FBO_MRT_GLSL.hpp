@@ -164,14 +164,14 @@ public:
       /* screen shot grabbing on attachment 0 */
       vl::ref<vl::ReadPixels> read_pixels_0 = new vl::ReadPixels;
       read_pixels_0->setup( 0, 0, fbo_size, fbo_size, vl::RDB_COLOR_ATTACHMENT0, false );
-      mRTT_Rendering->renderEventCallbacks()->push_back(read_pixels_0.get());
+      mRTT_Rendering->onFinishedCallbacks()->push_back(read_pixels_0.get());
       read_pixels_0->setRemoveAfterCall(true);
       read_pixels_0->setSavePath("MRT-COLOR_ATTACHMENT0.tif");
 
       /* screen shot grabbing on attachment 1 */
       vl::ref<vl::ReadPixels> read_pixels_1 = new vl::ReadPixels;
       read_pixels_1->setup( 0, 0, fbo_size, fbo_size, vl::RDB_COLOR_ATTACHMENT1, false );
-      mRTT_Rendering->renderEventCallbacks()->push_back(read_pixels_1.get());
+      mRTT_Rendering->onFinishedCallbacks()->push_back(read_pixels_1.get());
       read_pixels_1->setRemoveAfterCall(true);
       read_pixels_1->setSavePath("MRT-COLOR_ATTACHMENT1.tif");
     }
@@ -184,7 +184,7 @@ public:
       vl::ref<vl::FBOColorBufferAttachment> fbocolor = new vl::FBOColorBufferAttachment(vl::CBF_RGBA8);
       fborendertarget->addColorAttachment( vl::AP_COLOR_ATTACHMENT0, fbocolor.get() );
       vl::ref<vl::CopyTexSubImage2D> copytex = new vl::CopyTexSubImage2D(0, 0,0, 0,0, fbo_size,fbo_size, texture1.get(), vl::T2DT_TEXTURE_2D, vl::RDB_COLOR_ATTACHMENT0);
-      mRTT_Rendering->renderEventCallbacks()->push_back(copytex.get());
+      mRTT_Rendering->onFinishedCallbacks()->push_back(copytex.get());
       mRTT_Rendering->renderer()->renderTarget()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
     }
     else
@@ -214,7 +214,7 @@ public:
 
       // BlitFramebuffer
       vl::ref<vl::BlitFramebuffer> blit_fbo = new vl::BlitFramebuffer;
-      mRTT_Rendering->renderEventCallbacks()->push_back(blit_fbo.get());
+      mRTT_Rendering->onFinishedCallbacks()->push_back(blit_fbo.get());
       blit_fbo->setLinearFilteringEnabled(false);
       blit_fbo->setBufferMask( vl::BB_COLOR_BUFFER_BIT );
       //the commented part does not work with multisampling enabled

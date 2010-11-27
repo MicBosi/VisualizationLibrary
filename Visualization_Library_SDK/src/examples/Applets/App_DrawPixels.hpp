@@ -39,8 +39,8 @@ public:
   virtual void run()
   {
     vl::ivec2 pos;
-    //pos.x() = openglContext()->size().x() / 2.0;
-    //pos.y() = openglContext()->size().y() / 2.0;
+    //pos.x() = openglContext()->width() / 2.0;
+    //pos.y() = openglContext()->height() / 2.0;
     vl::ivec2 pos1 = pos + vl::ivec2(vl::fvec2(-1,-1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
     vl::ivec2 pos2 = pos + vl::ivec2(vl::fvec2(+1,+1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
     vl::ivec2 pos3 = pos + vl::ivec2(vl::fvec2(+1,-1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
@@ -85,8 +85,8 @@ public:
       vl::ref<vl::DrawPixels::Pixels> pixels = new vl::DrawPixels::Pixels(circle16.get(), 0,0);
       mPoints->draws()->push_back( pixels.get() );
       vl::ivec2 pos;
-      pos.x() = int(openglContext()->size().x() / 2.0 + rand()%300 - 150);
-      pos.y() = int(openglContext()->size().y() / 2.0 + rand()%300 - 150);
+      pos.x() = int(openglContext()->width() / 2.0 + rand()%300 - 150);
+      pos.y() = int(openglContext()->height() / 2.0 + rand()%300 - 150);
       pixels->setPosition(pos);
       pixels->setAlign(vl::AlignHCenter | vl::AlignVCenter);
     }
