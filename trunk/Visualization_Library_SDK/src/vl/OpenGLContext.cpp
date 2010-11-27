@@ -54,18 +54,6 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // UIEventListener
 //-----------------------------------------------------------------------------
-void UIEventListener::setRank(int rank)
-{
-  mRank = rank;
-  if ( openglContext() )
-    openglContext()->sortEventListeners();
-}
-//-----------------------------------------------------------------------------
-int UIEventListener::rank() const
-{
-  return mRank;
-}
-//-----------------------------------------------------------------------------
 OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 //-----------------------------------------------------------------------------
 // OpenGLContext
@@ -90,11 +78,6 @@ mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false), mCurVAS(NU
   memset( mEnableTable,        0xFF, sizeof(mEnableTable) );
 }
 //-----------------------------------------------------------------------------
-void OpenGLContext::sortEventListeners()
-{
-  std::sort(mEventListeners.begin(), mEventListeners.end());
-}
-//-----------------------------------------------------------------------------
 //! \note An \p UIEventListener can be associated only to one OpenGLContext at a time.
 void OpenGLContext::addEventListener(UIEventListener* el)
 {
@@ -102,7 +85,6 @@ void OpenGLContext::addEventListener(UIEventListener* el)
   mEventListeners.push_back(el);
   el->mOpenGLContext = this;
   el->openglContextBoundEvent(this);
-  sortEventListeners();
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::removeEventListener(UIEventListener* el)
@@ -1333,8 +1315,6 @@ void OpenGLContext::resetContextStates()
     glDrawBuffer(GL_FRONT); VL_CHECK_OGL();
     glReadBuffer(GL_FRONT); VL_CHECK_OGL();
   }
-
-  glDisable(GL_SCISSOR_TEST); VL_CHECK_OGL();
 
   // reset internal VL enables & render states tables
   resetEnables();      VL_CHECK_OGL()
