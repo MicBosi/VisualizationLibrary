@@ -133,7 +133,7 @@ void DrawPixels::render(const Actor* actor, const Shader*, const Camera* camera,
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  gluOrtho2D( -0.5, viewport[2]-0.5, -0.5, viewport[3]-0.5 ); VL_CHECK_OGL();
+  glOrtho( -0.5, viewport[2]-0.5, -0.5, viewport[3]-0.5, -1, +1 ); VL_CHECK_OGL();
 
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT); VL_CHECK_OGL();
 
@@ -212,7 +212,8 @@ void DrawPixels::render(const Actor* actor, const Shader*, const Camera* camera,
     if (clip_top < 0)
       clip_top = 0;
 
-    glRasterPos2f( /*0.5f +*/ (float)pos_x + clip_left, /*0.5f +*/ (float)pos_y + clip_bottom);
+    glRasterPos2f( /*0.5f +*/ (float)pos_x + clip_left, /*0.5f +*/ (float)pos_y + clip_bottom );
+
     // clear the current color, texture, normal
     glColor4f(1.0f,1.0f,1.0f,1.0f);
     glNormal3f(0,0,1.0f);
@@ -233,8 +234,7 @@ void DrawPixels::render(const Actor* actor, const Shader*, const Camera* camera,
     }
     else
     {
-      if ( GLEW_ARB_pixel_buffer_object||GLEW_EXT_pixel_buffer_object )
-        VL_glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
+      VL_glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
       glDrawPixels( cmd->mSize.x() -clip_left -clip_right, cmd->mSize.y() -clip_bottom -clip_top, cmd->image()->format(), cmd->image()->type(), cmd->image()->pixels() );
       VL_CHECK_OGL();
     }
@@ -242,8 +242,7 @@ void DrawPixels::render(const Actor* actor, const Shader*, const Camera* camera,
 
   VL_CHECK_OGL();
 
-  if ( (GLEW_ARB_pixel_buffer_object||GLEW_EXT_pixel_buffer_object) )
-    VL_glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
+  VL_glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
 
   VL_CHECK_OGL()
 

@@ -36,92 +36,105 @@ class App_DrawPixels: public BaseDemo
 public:
   virtual void shutdown() {}
 
-  virtual void run()
-  {
-    vl::ivec2 pos;
-    //pos.x() = openglContext()->width() / 2.0;
-    //pos.y() = openglContext()->height() / 2.0;
-    vl::ivec2 pos1 = pos + vl::ivec2(vl::fvec2(-1,-1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
-    vl::ivec2 pos2 = pos + vl::ivec2(vl::fvec2(+1,+1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
-    vl::ivec2 pos3 = pos + vl::ivec2(vl::fvec2(+1,-1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
-    vl::ivec2 pos4 = pos + vl::ivec2(vl::fvec2(-1,+1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
-    mPixels1->setPosition( pos1 );
-    mPixels2->setPosition( pos2 );
-    mPixels3->setPosition( pos3 );
-    mPixels4->setPosition( pos4 );
-
-    vl::mat4 mat = vl::mat4::rotation( (float)vl::Time::currentTime()*45.0f, 1,1,1 );
-    mat.translate( sin(vl::Time::currentTime()*vl::fPi*2.0f/2.0f)*2.0f, 0, 0 );
-    mCube->transform()->setLocalMatrix( mat );
-  }
-
   virtual void initEvent()
   {
     BaseDemo::initEvent();
-    vl::ref<vl::Image> star = new vl::Image("/images/star.png");
+
+    // transform used for the moving cube and star
+
+    vl::ref< vl::Transform > transf = new vl::Transform;
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(transf.get());
+
+    // effect for 2d rendering
+
+    vl::ref<vl::Effect> pixel_fx = new vl::Effect;
+    pixel_fx->shader()->enable(vl::EN_BLEND);
+    pixel_fx->shader()->enable(vl::EN_ALPHA_TEST);
+    pixel_fx->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 0.9f);
+
+    // points rendering
+
     vl::ref<vl::Image> circle16 = new vl::Image("/images/circle16.png");
-    int w = star->width() / 2;
 
-    mStar = new vl::DrawPixels;
     mPoints = new vl::DrawPixels;
-
-    mPixels1 = new vl::DrawPixels::Pixels( star.get(), 0, 0, 0, 0, w, w );
-    mPixels2 = new vl::DrawPixels::Pixels( star.get(), 0, 0, w, w, w, w );
-    mPixels3 = new vl::DrawPixels::Pixels( star.get(), 0, 0, w, 0, w, w);
-    mPixels4 = new vl::DrawPixels::Pixels( star.get(), 0, 0, 0, w, w, w);
-
-    mPixels1->setAlign(vl::AlignRight|vl::AlignTop);
-    mPixels2->setAlign(vl::AlignLeft|vl::AlignBottom);
-    mPixels3->setAlign(vl::AlignLeft|vl::AlignTop);
-    mPixels4->setAlign(vl::AlignRight|vl::AlignBottom);
-
-    mStar->draws()->push_back( mPixels1.get() );
-    mStar->draws()->push_back( mPixels2.get() );
-    mStar->draws()->push_back( mPixels3.get() );
-    mStar->draws()->push_back( mPixels4.get() );
-
     for(int i=0; i<1000; ++i)
     {
       vl::ref<vl::DrawPixels::Pixels> pixels = new vl::DrawPixels::Pixels(circle16.get(), 0,0);
       mPoints->draws()->push_back( pixels.get() );
       vl::ivec2 pos;
-      pos.x() = int(openglContext()->width() / 2.0 + rand()%300 - 150);
+      pos.x() = int(openglContext()->width()  / 2.0 + rand()%300 - 150);
       pos.y() = int(openglContext()->height() / 2.0 + rand()%300 - 150);
       pixels->setPosition(pos);
       pixels->setAlign(vl::AlignHCenter | vl::AlignVCenter);
     }
 
     mPoints->generatePixelBufferObjects(vl::GBU_STATIC_DRAW, true);
+
+    sceneManager()->tree()->addActor( mPoints.get(), pixel_fx.get(), NULL )->setRenderRank(0);
+
+    // split star rendering
+
+    vl::ref<vl::Image> star_img = new vl::Image("/images/star.png");
+
+    int w = star_img->width() / 2;
+    mStar1 = new vl::DrawPixels::Pixels( star_img.get(), 0, 0, 0, 0, w, w );
+    mStar2 = new vl::DrawPixels::Pixels( star_img.get(), 0, 0, w, w, w, w );
+    mStar3 = new vl::DrawPixels::Pixels( star_img.get(), 0, 0, w, 0, w, w);
+    mStar4 = new vl::DrawPixels::Pixels( star_img.get(), 0, 0, 0, w, w, w);
+
+    mStar1->setAlign(vl::AlignRight|vl::AlignTop);
+    mStar2->setAlign(vl::AlignLeft|vl::AlignBottom);
+    mStar3->setAlign(vl::AlignLeft|vl::AlignTop);
+    mStar4->setAlign(vl::AlignRight|vl::AlignBottom);
+
+    mStar = new vl::DrawPixels;
+    mStar->draws()->push_back( mStar1.get() );
+    mStar->draws()->push_back( mStar2.get() );
+    mStar->draws()->push_back( mStar3.get() );
+    mStar->draws()->push_back( mStar4.get() );
+
     mStar->generatePixelBufferObjects(vl::GBU_STATIC_DRAW, true);
 
-    vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->enable(vl::EN_BLEND);
-    effect->shader()->enable(vl::EN_ALPHA_TEST);
-    effect->shader()->enable(vl::EN_DEPTH_TEST);
-    effect->shader()->enable(vl::EN_LIGHTING);
-    effect->shader()->setRenderState( new vl::Light(0) );
-    effect->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 0.9f);
+    sceneManager()->tree()->addActor( mStar.get(), pixel_fx.get(), transf.get() )->setRenderRank(1);
+
+    // moving cube
+
+    vl::ref<vl::Effect> cube_fx = new vl::Effect;
+    cube_fx->shader()->enable(vl::EN_DEPTH_TEST);
+    cube_fx->shader()->enable(vl::EN_LIGHTING);
+    cube_fx->shader()->setRenderState( new vl::Light(0) );
 
     vl::ref<vl::Geometry> cube = vlut::makeBox( vl::vec3(0,0,0), 1, 1, 1 );
     cube->computeNormals();
-    cube->setColor(vlut::red);
-    mCube = sceneManager()->tree()->addActor(cube.get(), effect.get(), new vl::Transform);
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mCube->transform());
+    mCube = sceneManager()->tree()->addActor(cube.get(), cube_fx.get(), transf.get() );
+    mCube->setRenderRank(2); // draw after 2d objects
+  }
 
-    sceneManager()->tree()->addActor( mPoints.get(), effect.get() );
-    vl::Actor* star_act   = sceneManager()->tree()->addActor( mStar.get(),   effect.get() );
-    star_act->setTransform(mCube->transform());
+  virtual void run()
+  {
+    vl::ivec2 pos;
+    vl::ivec2 pos1 = pos + vl::ivec2(vl::fvec2(-1,-1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
+    vl::ivec2 pos2 = pos + vl::ivec2(vl::fvec2(+1,+1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
+    vl::ivec2 pos3 = pos + vl::ivec2(vl::fvec2(+1,-1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
+    vl::ivec2 pos4 = pos + vl::ivec2(vl::fvec2(-1,+1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));
+    mStar1->setPosition( pos1 );
+    mStar2->setPosition( pos2 );
+    mStar3->setPosition( pos3 );
+    mStar4->setPosition( pos4 );
 
+    vl::mat4 mat = vl::mat4::rotation( (float)vl::Time::currentTime()*45.0f, 1,1,1 );
+    mat.translate( sin(vl::Time::currentTime()*vl::fPi*2.0f/2.0f)*2.0f, 0, 0 );
+    mCube->transform()->setLocalMatrix( mat );
   }
 
 protected:
   vl::ref<vl::Actor> mCube;
   vl::ref<vl::DrawPixels> mStar;
   vl::ref<vl::DrawPixels> mPoints;
-  vl::ref<vl::DrawPixels::Pixels> mPixels1;
-  vl::ref<vl::DrawPixels::Pixels> mPixels2;
-  vl::ref<vl::DrawPixels::Pixels> mPixels3;
-  vl::ref<vl::DrawPixels::Pixels> mPixels4;
+  vl::ref<vl::DrawPixels::Pixels> mStar1;
+  vl::ref<vl::DrawPixels::Pixels> mStar2;
+  vl::ref<vl::DrawPixels::Pixels> mStar3;
+  vl::ref<vl::DrawPixels::Pixels> mStar4;
 };
 
 // Have fun!
