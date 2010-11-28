@@ -139,6 +139,9 @@ namespace vlQt4
       setContext(glctx);
 
       initGLContext();
+      
+      mRenderTarget->setWidth(width);
+      mRenderTarget->setHeight(height);
 
       #ifndef NDEBUG
         printf("--------------------------------------------\n");
