@@ -48,9 +48,7 @@ namespace vlQt4
 //-----------------------------------------------------------------------------
 // Qt4Widget
 //-----------------------------------------------------------------------------
-  /**
-   * The Qt4Widget class implements an OpenGLContext using the Trolltech's Qt4 API.
-  */
+  /** The Qt4Widget class implements an OpenGLContext using the Trolltech's Qt4 API. */
   class Qt4Widget: public QGLWidget, public vl::OpenGLContext
   {
     Q_OBJECT
@@ -140,6 +138,8 @@ namespace vlQt4
       /*bool ok = */glctx->create(shareContext);
       setContext(glctx);
 
+      initGLContext();
+
       #ifndef NDEBUG
         printf("--------------------------------------------\n");
         printf("REQUESTED OpenGL Format:\n");
@@ -183,8 +183,6 @@ namespace vlQt4
 
       if (info.fullscreen())
         setFullscreen(true);
-
-      initGLContext();
 
       return true;
     }
