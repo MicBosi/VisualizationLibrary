@@ -71,42 +71,47 @@ namespace vl
       friend class DrawPixels;
 
     public:
+      virtual const char* className() { return "Pixels"; }
+
       Pixels();
-      /**
-       * Constructor.
+      /** Constructor.
        * The parameters 'scrx' and 'scry' define the position of the viewport in pixels where the image has to be placed.
        * If a Transform is attached to the Actor using DrawPixels scrx, scry follow the transform on the screen.
        * The parameters 'startx', 'starty', 'width' and 'height' define the sub-portion of the Image to be rendered.
-       * The parameters 'width' and 'height' can be -1, in this case they will be automatically set so that the Image is shown until the top-right edge.
-      */
+       * The parameters 'width' and 'height' can be -1, in this case they will be automatically set so that the Image is shown until the top-right edge. */
       Pixels(Image* img, int scrx, int scry, int startx=0, int starty=0, int width=-1, int height=-1, int alignment = AlignBottom | AlignLeft);
+
       Pixels(const Pixels& other);
+
       Pixels& operator=(const Pixels& other);
+
       ~Pixels();
 
-      virtual const char* className() { return "Pixels"; }
-
       const ivec2& position() const { return mPosition; }
+
       const ivec2& start() const { return mStart; }
+
       const ivec2& size() const { return mSize; }
 
       void setPosition( const ivec2& position) { mPosition = position; }
+
       void setStart( const ivec2& start) { mStart = start; }
+
       void setSize( const ivec2& size) { mSize = size; }
 
       Image* image() { return mImage.get(); }
+
       const Image* image() const { return mImage.get(); }
 
       int align() const { return mAlign; }
+
       void setAlign(int align) { mAlign = align; }
 
-      /**
-       * Generates a pixel buffer object for the associated Image
+      /** Generates a pixel buffer object for the associated Image
        * calling image()->gpuBuffer()->setBufferData(usage, discard_local_storage);
        *
        * \note
-       * All the Pixels object sharing the same Image will use the Image's PBO
-      */
+       * All the Pixels object sharing the same Image will use the Image's PBO */
       bool generatePixelBufferObject(EGLBufferUsage usage, bool discard_local_storage);
 
       void deletePixelBufferObject();
@@ -120,6 +125,7 @@ namespace vl
       ivec2 mSize;
       int mAlign;
     };
+  public:
 
     DrawPixels();
 
@@ -127,23 +133,20 @@ namespace vl
 
     void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }
 
-    /**
-     * Renders the bitamps.
+    /** Renders the bitamps.
      * If camera != NULL and actor != NULL and actor->transform() != NULL then 
      * the bitmaps position will follow the Actor's Transform. 
-     * The \p renderer parameter is ignored.
-    */
+     * The \p renderer parameter is ignored. */
     void render(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const;
 
     const Collection<Pixels>* draws() const { return &mDraws; }
+    
     Collection<Pixels>* draws() { return &mDraws; }
 
     //! deallocate PBOs
     void deletePixelBufferObjects();
 
-    /**
-     * Iterates on the Pixels objects and sets their Image references to NULL
-    */
+    /** Iterates on the Pixels objects and sets their Image references to NULL */
     void releaseImages();
 
     //! generates PBOs only for Pixels objects without a PBO handle
