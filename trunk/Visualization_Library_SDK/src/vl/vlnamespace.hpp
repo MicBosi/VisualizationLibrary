@@ -738,15 +738,15 @@ namespace vl
 
   typedef enum
   {
-    GBU_STREAM_DRAW = GL_STREAM_DRAW, 
-    GBU_STREAM_READ = GL_STREAM_READ, 
-    GBU_STREAM_COPY = GL_STREAM_COPY, 
-    GBU_STATIC_DRAW = GL_STATIC_DRAW, 
-    GBU_STATIC_READ = GL_STATIC_READ, 
-    GBU_STATIC_COPY = GL_STATIC_COPY, 
-    GBU_DYNAMIC_DRAW = GL_DYNAMIC_DRAW, 
-    GBU_DYNAMIC_READ = GL_DYNAMIC_READ, 
-    GBU_DYNAMIC_COPY = GL_DYNAMIC_COPY
+    GBU_STREAM_DRAW = GL_STREAM_DRAW,   //!< Data is specified once and used at most a few times as the source of drawing and image specification commands.
+    GBU_STREAM_READ = GL_STREAM_READ,   //!< Data is copied once from an OpenGL buffer and is used at most a few times by the application as data values.
+    GBU_STREAM_COPY = GL_STREAM_COPY,   //!< Data is copied once from an OpenGL buffer and is used at most a few times as the source for drawing or image specification commands.
+    GBU_STATIC_DRAW = GL_STATIC_DRAW,   //!< Data is specified once and used many times as the source of drawing or image specification commands.
+    GBU_STATIC_READ = GL_STATIC_READ,   //!< Data is copied once from an OpenGL buffer and is used many times by the application as data values.
+    GBU_STATIC_COPY = GL_STATIC_COPY,   //!< Data is copied once from an OpenGL buffer and is used many times as the source for drawing or image specification commands.
+    GBU_DYNAMIC_DRAW = GL_DYNAMIC_DRAW, //!< Data is specified many times and used many times as the source of drawing and image specification commands.
+    GBU_DYNAMIC_READ = GL_DYNAMIC_READ, //!< Data is copied many times from an OpenGL buffer and is used many times by the application as data values.
+    GBU_DYNAMIC_COPY = GL_DYNAMIC_COPY  //!< Data is copied many times from an OpenGL buffer and is used many times as the source for drawing or image specification commands.
   } EGLBufferUsage;
 
   typedef enum
