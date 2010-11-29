@@ -54,16 +54,16 @@
 	differ only in their build number. An even build number identifies a \a stable \a official release, while an odd build number identifies
 	a \a development \a milestone release. No garbage releases are publicly distributed so even the \a development \a milestone releases are 
 	usually quite stable as they must pass all the regression tests (with the possible exception of some GUI bindings not properly working) and     
-	don't contain known major bugs, but their API might undergo several modifications from one release to another.
+	don't contain known major bugs, however their API might undergo several modifications from one release to another.
      
 	<h2>Does VL support DirectX? Does VL support OpenGL ES?</h2>
 	
-	VL does not support DirectX and most likely will never support. With regard to OpenGL ES 1.x/2.0, VL does not support it yet but there are plans 
-	to	support it in the future and every architecture revision brings always VL closer to this objective.
+	VL does not support DirectX and most likely will never support it. With regard to OpenGL ES 1.x/2.0, VL does not support it yet but there 
+	are plans to support it in the future and every architecture revision brings VL closer and closer to this objective.
 	
-	<h2>What background knowledge is it needed?</h2>
+	<h2>What background knowledge is needed to use VL?</h2>
 	
-	Briefly: familiarity with the C++ language and compilers such as GNU G++ and MS Visual C++. Some OpenGL and linear algebra knowledge is highly 
+	Familiarity with the C++ language and compilers such as GNU G++ and MS Visual C++. Some OpenGL and linear algebra knowledge is highly 
 	beneficial. For more info see \ref pagLearning.
 	
 	<h2>Can VL be used from languages other than C++?</h2>
@@ -76,7 +76,7 @@
      
 	<h2>Where can I download Visualization Library?</h2>
     
-    Simple, here: http://www.visualizationlibrary.com/download.php
+    Here: http://www.visualizationlibrary.com/download.php
      
 	<h2>Are there binary distributions?</h2>
 	
@@ -94,7 +94,10 @@
      
 	<h2>Are there tutorials about VL?</h2>
 	
-	VL comes with a few official tutorials, see \ref pagGuides.
+	VL comes with a few official tutorials, see \ref pagGuides. 
+	
+	As far as I know no user has yet written any tutorials or articles about VL. 
+	I like to think this is because VL is damn easy to use! ;)
 	
 	<h2>Are there books about VL?</h2>
 	
@@ -102,7 +105,7 @@
 	
 	<h2>Where can I get more help</h2>
 	
-	The forum is the right place to ask for help: http://www.visualizationlibrary.com/forum
+	In the forum: http://www.visualizationlibrary.com/forum
 	
 	<hr>
 	<b>BASIC SCENE MANAGEMENT AND SHADING QUESTIONS</b>
@@ -123,6 +126,7 @@
 	<h2>How do I define the vertex color of my objects?</h2>
 
     ... when light is off just set vertex color, and secondary color 
+	
 	... when light is on, set material colors, set vertex colors, and enable vertex-color-material
 	
 	<h2>How do I switch from wire-frame to polygon-fill shading?</h2>
@@ -144,6 +148,7 @@
 	<h2>My transparent objects look weird/wrong, what can I do?</h2>
     
     ... sort objects, sort triangles, draw back facing before front facing polygons
+	
 	... make sure blend func and blend equations are good
      
 	<h2>How do I sort the polygons of my object?</h2>
@@ -157,6 +162,7 @@
 	<h2>Why are my transparent objects rendered as opaque?</h2>
 	
 	... enable blending
+	
 	... make sure blend func and blend equations are good
 	
 	<h2>How do I make my lines less jagged?</h2>
@@ -218,15 +224,21 @@
 	<h2>What GUI framework does VL support?</h2>
     
     ... Win32, MFC, wxWidgets, Qt4, SDL, GLUT
+	
 	... GUI bindings are more utility classes than anything else
+	
 	... Mac OS Carbon & Cocoa support is experimental
+	
 	... Under Mac you can also use QT4, SDL, GLUT, wxWidgets though
      
 	<h2>What file formats can VL read/write?</h2>
 	
 	... state and functionality of each read/write plugin
+	
 	... external libraries might be required
+	
 	... PNG, JPG, TIFF, DDS, TGA, BMP, RAW/DAT, DICOM
+	
 	... 3DS, OBJ, PLY, STL, AC3D, MD2
 	
 	<h2>Can I use VL to render from withing my existing rendering framework?</h2>
@@ -236,11 +248,13 @@
 	<h2>Can I use OpenGL commands with VL?</h2>
 	
 	... option (1): custom Renderable object
+	
 	... option (2): your OGL code; save states; VL render; reset states; your OGL code
 	
 	<h2>My scene shows z-fighting artifacts, how can I eliminate them?</h2> 
 	
 	... use appropriate near/far plane values.
+	
 	... enable automatic near/far optimization.
 	
 	<h2>How can I let my users select objects in the scene?</h2>
@@ -336,14 +350,15 @@
     ... fillme ... 
 	
 	<hr>
-	MATH QUESTIONS
+	<b>MATH QUESTIONS</b>
 	<hr>
 
 	<h2>What is the multiplication order of matrix/vectors/quaternions?</h2>
-	
-	...
 
-	<h2>How do I interpolate two values?</h2>
+    ... fillme ... 
 	
-	...
+	<h2>How do I interpolate two values?</h2>
+
+    ... fillme ... 
+	
 */
