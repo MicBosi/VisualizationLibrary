@@ -42,6 +42,7 @@ SET(VL_DOCUMENTATION
 	dox/pagContributing.dox
 	dox/pagCredits.dox
 	dox/pagDesign.dox
+	dox/pagFAQ.dox
 	dox/pagGuideAntialiasing.dox
 	dox/pagGuideBezierSurfaces.dox
 	dox/pagGuideBillboards.dox
