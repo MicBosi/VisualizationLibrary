@@ -27,6 +27,8 @@
     
     Yes. And again: yes, you don't need to pay a penny, just report proper credit as stated in \ref pagLicensing.
     
+    A link back to Visualization Library's website is also very welcome.
+    
 	<h2>Who is developing Visualization Library?</h2>
     
     Michele Bosi is the principal author of Visualization Library. You can find full credits in \ref pagCredits.
@@ -34,12 +36,12 @@
      
 	<h2>Which operating systems does VL support?</h2>
     
-    VL supports Windows XP, Vista and Windows 7, Linux, MacOS X.
+    VL supports Windows XP, Vista and Windows 7, Linux, Mac OS X.
      
-	<h2>What is the state of Mac OS support?</h2>
+	<h2>What is the state of Mac OS X support?</h2>
     
     Since I cannot personally check the state of VL functionalities under Mac OS this task is left to the users' community.
-	As far as I know there are quite a few users developing MacOS applications using VL, so I am quite confident that it
+	As far as I know there are quite a few users developing Mac OS applications using VL, so I am quite confident that it
 	works even if I don't get regular updates from them. However, usually if there are problems they are minor compilation 
 	fixes which get promptly fixed.
      
@@ -72,8 +74,8 @@
 	
 	<h2>How can I get notified of new VL releases?</h2>
     
-    The most up to date source of information is VL forums and twitter page. See \ref pagLearning for more information.
-     
+    The most up to date source of information is VL forums (http://www.visualizationlibrary.com/forum) and twitter page (http://twitter.com/VizLibrary).
+    
 	<h2>Where can I download Visualization Library?</h2>
     
     Here: http://www.visualizationlibrary.com/download.php
