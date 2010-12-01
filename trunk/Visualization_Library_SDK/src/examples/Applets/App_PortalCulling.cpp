@@ -113,9 +113,9 @@ public:
       { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }
     };
 
-    // ###########################################
+    // ############################################
     // # Install and use our SceneManagerPortals! #
-    // ###########################################
+    // ############################################
     mPortalSceneManager = new vl::SceneManagerPortals;
     mPortalSceneManager->setShowPortals(true);
     // remove all the other scene managers
