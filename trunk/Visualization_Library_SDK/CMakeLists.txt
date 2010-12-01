@@ -61,6 +61,7 @@ include_directories("/Developer/Headers/FlatCarbon")
 endif(APPLE)
 
 set(VISUALIZATIONLIBRARY_NAME "VisualizationLibrary")
+set(VLAPPLETS_NAME "Applets")
 set(VLWIN32_NAME "VLWin32")
 set(VLGLUT_NAME "VLGLUT")
 set(VLSDL_NAME "VLSDL")

@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vl/MorphingCallback.hpp>
+#include <vl/ResourceDatabase.hpp>
 #include <vl/GLSL.hpp>
 
 using namespace vl;
