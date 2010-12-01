@@ -62,11 +62,11 @@ if(GUI_WIN32_EXAMPLES)
 	target_link_libraries(
 		Win32_tests
 		${VLWIN32_NAME}
+		${VLAPPLETS_NAME}
 		${VISUALIZATIONLIBRARY_NAME}
 		${OPENGL_LIBRARIES}
 		${VLFREETYPE_NAME} #FreeTypeLibrary
 		${VL_MODULE_LIBRARIES}
-		${VLAPPLETS_NAME}
 		${VLZLIB_NAME} #ZLibLibrary
 	)
   # Install directives
@@ -105,11 +105,11 @@ if(GUI_WXWIDGETS_EXAMPLES)
 	target_link_libraries(
 		WX_tests
 		${VLWX_NAME}
+		${VLAPPLETS_NAME}
 		${VISUALIZATIONLIBRARY_NAME}
 		${WXWIDGETS_LIBRARIES}
 		${VLFREETYPE_NAME} #FreeTypeLibrary
 		${VL_MODULE_LIBRARIES}
-		${VLAPPLETS_NAME}
 		${VLZLIB_NAME} #ZLibLibrary
 		${OPENGL_LIBRARIES}
 	)
@@ -140,12 +140,12 @@ if(GUI_GLUT_EXAMPLES)
 	target_link_libraries(
 		GLUT_tests
 		${VLGLUT_NAME}
+		${VLAPPLETS_NAME}
 		${VISUALIZATIONLIBRARY_NAME}
 		${GLUT_glut_LIBRARY}
 		${OPENGL_LIBRARIES}
 		${VLFREETYPE_NAME} #FreeTypeLibrary
 		${VL_MODULE_LIBRARIES}
-		${VLAPPLETS_NAME}
 		${VLZLIB_NAME} #ZLibLibrary
 	)
   # Install directives
@@ -178,10 +178,10 @@ if(GUI_SDL_EXAMPLES)
 	target_link_libraries(
 		SDL_tests
 		${VLSDL_NAME}
+		${VLAPPLETS_NAME}
 		${VISUALIZATIONLIBRARY_NAME}
 		${VLFREETYPE_NAME} #FreeTypeLibrary
 		${VL_MODULE_LIBRARIES}
-		${VLAPPLETS_NAME}
 		${VLZLIB_NAME} #ZLibLibrary
 		${MINGW32_LIB}
 		${SDLMAIN_LIBRARY}
@@ -223,11 +223,11 @@ if(GUI_QT4_EXAMPLES)
 	target_link_libraries(
 		Qt4_tests
 		${VLQT4_NAME}
+		${VLAPPLETS_NAME}
 		${VISUALIZATIONLIBRARY_NAME}
 		${OPENGL_LIBRARIES}
 		${VLFREETYPE_NAME} #FreeTypeLibrary
 		${VL_MODULE_LIBRARIES}
-		${VLAPPLETS_NAME}
 		${VLZLIB_NAME} #ZLibLibrary
 		${QT_LIBRARIES}
 	)
@@ -265,11 +265,11 @@ if(GUI_COCOA_EXAMPLES)
 	target_link_libraries(
 		Cocoa_tests
 		${VLCOCOA_NAME}
+		${VLAPPLETS_NAME}
 		${VISUALIZATIONLIBRARY_NAME}
 		${OPENGL_LIBRARIES}
 		${VLFREETYPE_NAME} #FreeTypeLibrary
 		${VL_MODULE_LIBRARIES}
-		${VLAPPLETS_NAME}
 		${VLZLIB_NAME} #ZLibLibrary
 		${APP_KIT}
 		${CORE_VIDEO}
