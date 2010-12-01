@@ -46,8 +46,7 @@ public:
     {
       vl::Log::error("OpenGL Shading Language not supported.\n");
       vl::Time::sleep(3000);
-      openglContext()->quitApplication();
-      return;
+      exit(1);
     }
 
     BaseDemo::initEvent();

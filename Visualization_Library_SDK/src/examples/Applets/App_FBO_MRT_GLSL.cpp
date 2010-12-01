@@ -47,9 +47,6 @@ public:
 
   virtual void run()
   {
-    if (!GLEW_EXT_framebuffer_object && !GLEW_EXT_framebuffer_blit)
-      return;
-
     mX  = vl::Time::currentTime() * 45*2;
     mY  = vl::Time::currentTime() * 45*2.1f;
     mX2 = vl::Time::currentTime() * 45*2.2f;
