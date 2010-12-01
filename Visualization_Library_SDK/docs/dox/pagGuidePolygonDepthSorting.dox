@@ -41,8 +41,8 @@
 	- You need to use vl::DepthSortCallback only when using order-dependent blending (as for the default alpha blending settings). 
 	If for example you are using additive blending you would simply set the depth mask to \p false (vl::DepthMask) and enable the depth test (vl::EN_DEPTH_TEST), but you wouldn't need to perform any sorting.
 
-	[From \p App_PolyDepthSorting.hpp]
-	\dontinclude App_PolyDepthSorting.hpp
+	[From \p App_PolyDepthSorting.cpp]
+	\dontinclude App_PolyDepthSorting.cpp
 	\skip class
 	\until // Have fun!
 */

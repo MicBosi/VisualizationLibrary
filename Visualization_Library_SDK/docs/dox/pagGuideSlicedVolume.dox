@@ -25,8 +25,8 @@
 	</table>
 	</center>
 
-	[From \p App_VolumeRendering.hpp]
-	\dontinclude App_VolumeRendering.hpp
+	[From \p App_VolumeRendering.cpp]
+	\dontinclude App_VolumeRendering.cpp
 	\skip class
 	\until // Have fun!
 */

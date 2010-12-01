@@ -6,8 +6,8 @@
 	
 	\image html pagGuideVectorGraphics.jpg
 	
-	[From \p App_VectorGraphics.hpp]
-	\dontinclude App_VectorGraphics.hpp
+	[From \p App_VectorGraphics.cpp]
+	\dontinclude App_VectorGraphics.cpp
 	\skip class
 	\until // Have fun!
 */

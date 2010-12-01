@@ -31,8 +31,8 @@
 	</table>
 	</center>
 	
-	[From \p App_Molecules.hpp]
-	\dontinclude App_Molecules.hpp
+	[From \p App_Molecules.cpp]
+	\dontinclude App_Molecules.cpp
 	\skip class
 	\until // Have fun!
 */
