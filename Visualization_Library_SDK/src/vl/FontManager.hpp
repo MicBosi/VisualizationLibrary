@@ -32,8 +32,7 @@
 #ifndef FontManager_INCLUDE_ONCE
 #define FontManager_INCLUDE_ONCE
 
-#include <vl/Object.hpp>
-#include <vl/Text.hpp>
+#include <vl/Font.hpp>
 
 namespace vl
 {
@@ -42,8 +41,7 @@ namespace vl
    * - Font
    * - Text
    * - Actor
-   * - VectorGraphics
-   */
+   * - VectorGraphics */
   class FontManager: public Object
   {
   public:

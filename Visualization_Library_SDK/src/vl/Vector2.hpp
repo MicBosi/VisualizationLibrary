@@ -84,20 +84,22 @@ namespace vl
   inline float fast1_inversesqrt(float x)
   {
     float xhalf = 0.5f*x;
-    unsigned int i = *((unsigned int*)&x);
-    i = 0x5f3759df - (i>>1);
-    x = *((float*)&i);
+    union { float f; unsigned int i; } num;
+    num.f = x;
+    num.i = 0x5f3759df - (num.i>>1);
+    x = num.f;
     x = x*(1.5f - xhalf*x*x); // single iteration, very quick, but very poor precision
     return x;
   }
   inline float fast2_inversesqrt(float x)
   {
     float xhalf = 0.5f*x;
-    unsigned int i = *((unsigned int*)&x);
-    i = 0x5f3759df - (i>>1);
-    x = *((float*)&i);
+    union { float f; unsigned int i; } num;
+    num.f = x;
+    num.i = 0x5f3759df - (num.i>>1);
+    x = num.f;
     x = x*(1.5f - xhalf*x*x);
-    x = x*(1.5f - xhalf*x*x); // the trackball shows that one iteration is not enough so we do two
+    x = x*(1.5f - xhalf*x*x); // two iterations, sligthtly better precision
     return x;
   }
   inline float fast_sqrt(float x) { if (x == 0.0f) return 0.0f; else return x * fast2_inversesqrt(x); }

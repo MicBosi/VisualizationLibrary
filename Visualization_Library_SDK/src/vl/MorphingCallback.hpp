@@ -34,10 +34,11 @@
 
 #include <vl/Actor.hpp>
 #include <vl/Geometry.hpp>
-#include <vl/ResourceDatabase.hpp>
 
 namespace vl
 {
+  class ResourceDatabase;
+
   /** The MorphingCallback class implements a simple morphing animation mechanism using the 
       GPU acceleration where available. */
   class MorphingCallback: public ActorEventCallback

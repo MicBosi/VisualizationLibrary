@@ -220,7 +220,7 @@ namespace vl
         VL_CHECK( baseVertices().size() == countVector().size() )
         if (GLEW_ARB_draw_elements_base_vertex || GLEW_VERSION_3_1)
           glMultiDrawElementsBaseVertex( 
-            primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), indices_ptr, mCountVector.size(), (GLint*)&mBaseVertices[0] 
+            primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), indices_ptr, (GLsizei)mCountVector.size(), (GLint*)&mBaseVertices[0] 
           );
         else
         {
@@ -230,9 +230,7 @@ namespace vl
         }
       }
       else
-        glMultiDrawElements( 
-          primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), (const GLvoid**)indices_ptr, mCountVector.size() 
-        );
+        glMultiDrawElements( primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), (const GLvoid**)indices_ptr, (GLsizei)mCountVector.size() );
 
       // primitive restart disable
       if(primitiveRestartEnabled())

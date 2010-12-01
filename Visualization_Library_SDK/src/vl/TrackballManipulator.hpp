@@ -32,17 +32,16 @@
 #ifndef TrackballManipulator_INCLUDE_ONCE
 #define TrackballManipulator_INCLUDE_ONCE
 
-#include <vl/OpenGLContext.hpp>
+#include <vl/UIEventListener.hpp>
 #include <vl/Camera.hpp>
 #include <vl/Vector3.hpp>
-#include <vl/Actor.hpp>
 
 namespace vl
 {
-  class Camera;
   class Transform;
   class Rendering;
   class SceneManager;
+  class ActorCollection;
 
   //------------------------------------------------------------------------------
   //! This class lets you rotate a Camera or a Transform node using a vitual trackball.
@@ -82,15 +81,7 @@ namespace vl
 
     Camera* camera() { return mCamera.get(); }
 
-    void prepareToReconnect()
-    { 
-      mMode = NoMode;
-      if ( openglContext() )
-      {
-        openglContext()->setMouseVisible(true);
-        openglContext()->setContinuousUpdate(false);
-      }
-    }
+    void prepareToReconnect();
 
     //! Sets the center point the camera will rotate around
     void setPivot(vec3 pivot) { mPivot = pivot; }

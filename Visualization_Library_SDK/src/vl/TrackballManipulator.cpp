@@ -30,11 +30,10 @@
 /**************************************************************************************/
 
 #include <vl/TrackballManipulator.hpp>
-#include <vl/Camera.hpp>
+#include <vl/OpenGLContext.hpp>
 #include <vl/Actor.hpp>
 #include <vl/SceneManager.hpp>
 #include <vl/Rendering.hpp>
-#include <vl/RenderQueue.hpp>
 
 using namespace vl;
 
@@ -250,4 +249,13 @@ void TrackballManipulator::adjustView(Rendering* rendering, const vec3& dir, con
   adjustView(actors, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
-
+void TrackballManipulator::prepareToReconnect()
+{ 
+  mMode = NoMode;
+  if ( openglContext() )
+  {
+    openglContext()->setMouseVisible(true);
+    openglContext()->setContinuousUpdate(false);
+  }
+}
+//-----------------------------------------------------------------------------

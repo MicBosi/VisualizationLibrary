@@ -29,67 +29,79 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef App_RotatingCube_INCLUDE_ONCE
-#define App_RotatingCube_INCLUDE_ONCE
+#include "BaseDemo.hpp"
+#include "vlut/Colors.hpp"
+#include "vl/Terrain.hpp"
 
-#include "vlut/Applet.hpp"
-#include "vlut/GeometryPrimitives.hpp"
-#include "vl/SceneManagerActorTree.hpp"
-#include "vl/Rendering.hpp"
-#include "vl/Actor.hpp"
-#include "vl/Effect.hpp"
-#include "vl/Time.hpp"
-#include "vl/Light.hpp"
-
-class App_RotatingCube: public vlut::Applet
+class App_Terrain: public BaseDemo
 {
 public:
   virtual void shutdown() {}
 
-  // called once after the OpenGL window has been opened 
-  void initEvent()
+  virtual void run() {}
+
+  virtual void initEvent()
   {
-    // allocate the Transform 
-    mCubeTransform = new vl::Transform;
-    // bind the Transform with the transform tree of the rendring pipeline 
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mCubeTransform.get() );
+    if (!GLEW_ARB_multitexture)
+    {
+      vl::Log::error("GL_ARB_multitexture required.\n");
+      openglContext()->quitApplication();
+      return;
+    }
+    BaseDemo::initEvent();
 
-    // create the cube's Geometry and compute its normals to support lighting 
-    vl::ref<vl::Geometry> cube = vlut::makeBox( vl::vec3(0,0,0), 10, 10, 10 );
-    cube->computeNormals();
+    ghostCamera()->setMovementSpeed(5);
+    // allocate terrain scene manager
+    vl::ref<vl::Terrain> terrain = new vl::Terrain;
+    // use GLSL?
+    terrain->setUseGLSL(GLEW_ARB_shading_language_100?true:false);
+    // dimensions of the terrain
+    terrain->setWidth(100);
+    terrain->setDepth(100);
+    terrain->setHeight(5.0f);
+    // heightmap texture size used by the GLSL program
+    if (GLEW_ATI_texture_float || GLEW_ARB_texture_float)
+      terrain->setHeightmapTextureFormat(vl::TF_LUMINANCE16F);
+    else
+      terrain->setHeightmapTextureFormat(vl::TF_LUMINANCE);
+    // origin of the terrain
+    terrain->setOrigin(vl::vec3(0,0,0));
+    // define textures
+    terrain->setHeightmapTexture("/images/terrain-h.jpg");
+    terrain->setTerrainTexture("/images/terrain-t.jpg");
+    terrain->setDetailTexture("/images/noise.png");
+    terrain->setDetailRepetitionCount(8);
+    // define shaders to be used to render the terrain
+    terrain->setFragmentShader("/glsl/terrain.fs");
+    terrain->setVertexShader("/glsl/terrain.vs");
+    // initialize the terrain
+    terrain->init();
+    // add the terrain scene manager to the rendering
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back( terrain.get() );
 
-    // setup the effect to be used to render the cube 
-    vl::ref<vl::Effect> effect = new vl::Effect;
-    // enable depth test and lighting 
-    effect->shader()->enable(vl::EN_DEPTH_TEST);
-    // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
-    effect->shader()->setRenderState( new vl::Light(0) );
-    // enable the standard OpenGL lighting 
-    effect->shader()->enable(vl::EN_LIGHTING);
-    // set the front and back material color of the cube 
-    // "gocMaterial" stands for "get-or-create Material"
-    effect->shader()->gocMaterial()->setDiffuse( vlut::crimson );
+    // adds fog if we are not using GLSL but the fixed function pipeline
+    if (!terrain->useGLSL())
+    {
+      // set sky to white
+      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::white);
+      // set fog render state
+      vl::ref<vl::Fog> fog = new vl::Fog;
+      fog->setColor(vlut::white);
+      fog->setDensity(0.045f);
+      fog->setMode(vl::FM_EXP);
+      // install and enable fog
+      terrain->shaderNode()->setRenderState(fog.get());
+      terrain->shaderNode()->setEnable(vl::EN_FOG,true);
+      terrain->shaderNode()->updateHierachy();
+    }
 
-    // install our scene manager, we use the SceneManagerActorTree which is the most generic
-    vl::ref<vl::SceneManagerActorTree> scene_manager = new vl::SceneManagerActorTree;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back(scene_manager.get());
-    // add the cube to the scene using the previously defined effect and transform 
-    scene_manager->tree()->addActor( cube.get(), effect.get(), mCubeTransform.get()  );
+    // for debugging purposes
+    #if 0
+      showBoundingVolumes(1,0);
+    #endif
   }
-
-  // called every frame 
-  virtual void run()
-  {
-    // rotates the cube around the Y axis 45 degrees per second 
-    vl::Real degrees = vl::Time::currentTime() * 45.0f;
-    vl::mat4 matrix = vl::mat4::rotation( degrees, 0,1,0 );
-    mCubeTransform->setLocalMatrix( matrix );
-  }
-
-protected:
-  vl::ref<vl::Transform> mCubeTransform;
 };
 
 // Have fun!
 
-#endif
+BaseDemo* Create_App_Terrain() { return new App_Terrain; }

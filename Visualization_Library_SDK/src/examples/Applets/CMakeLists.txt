@@ -33,57 +33,61 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 PROJECT(Applets)
 
-set(VL_APPLETS
+set(VL_APPLETS_INC
   BaseDemo.hpp
-  App_BezierSurfaces.hpp
-  App_Billboards.hpp
-  App_ClipPlanes.hpp
-  App_CullingBenchmark.hpp
-  App_Deformer.hpp
-  App_DrawPixels.hpp
-  App_DrawCalls.hpp
-  App_EdgeRendering.hpp
-  App_EffectOverride.hpp
-  App_Extrusion.hpp
-  App_FBO_MRT_GLSL.hpp
-  App_Fractals.hpp
-  App_GeometryInstancing.hpp
-  App_GLSL.hpp
-  App_GLSLImageProcessing.hpp
-  App_GLSL_Bumpmapping.hpp
-  App_ImageFunctions.hpp
-  App_Interpolators.hpp
-  App_KdTreeView.hpp
-  App_Lights.hpp
-  App_MarchingCubes.hpp
-  App_ModelProfiler.hpp
-  App_Molecules.hpp
-  App_MorphAnimation.hpp
-  App_MultipleCameras.hpp
-  App_NearFarOptimization.hpp
-  App_OcclusionCulling.hpp
-  App_Picking.hpp
-  App_PointSplatting.hpp
-  App_PolyDepthSorting.hpp
-  App_PolygonReduction.hpp
-  App_PortalCulling.hpp
-  App_Primitives.hpp
-  App_RenderOrder.hpp
-  App_RenderToTextureClassic.hpp
   App_RotatingCube.hpp
-  App_ScatterPlot3D.hpp
-  App_ShaderLOD.hpp
-  App_ShaderOverride.hpp
-  App_Terrain.hpp
-  App_Tessellator.hpp
-  App_TextRendering.hpp
-  App_Texturing.hpp
-  App_Transforms.hpp
-  App_VectorGraphics.hpp
-  App_VirtualFileSystemTest.hpp
-  App_VolumeRendering.hpp
 )
 
-source_group(Applets FILES ${VL_APPLETS})
+set(VL_APPLETS_SRC
+  App_BezierSurfaces.cpp
+  App_Billboards.cpp
+  App_ClipPlanes.cpp
+  App_CullingBenchmark.cpp
+  App_Deformer.cpp
+  App_DrawPixels.cpp
+  App_DrawCalls.cpp
+  App_EdgeRendering.cpp
+  App_EffectOverride.cpp
+  App_Extrusion.cpp
+  App_FBO_MRT_GLSL.cpp
+  App_Fractals.cpp
+  App_GeometryInstancing.cpp
+  App_GLSL.cpp
+  App_GLSLImageProcessing.cpp
+  App_GLSL_Bumpmapping.cpp
+  App_ImageFunctions.cpp
+  App_Interpolators.cpp
+  App_KdTreeView.cpp
+  App_Lights.cpp
+  App_MarchingCubes.cpp
+  App_ModelProfiler.cpp
+  App_Molecules.cpp
+  App_MorphAnimation.cpp
+  App_MultipleCameras.cpp
+  App_NearFarOptimization.cpp
+  App_OcclusionCulling.cpp
+  App_Picking.cpp
+  App_PointSplatting.cpp
+  App_PolyDepthSorting.cpp
+  App_PolygonReduction.cpp
+  App_PortalCulling.cpp
+  App_Primitives.cpp
+  App_RenderOrder.cpp
+  App_RenderToTextureClassic.cpp
+  App_ScatterPlot3D.cpp
+  App_ShaderLOD.cpp
+  App_ShaderOverride.cpp
+  App_Terrain.cpp
+  App_Tessellator.cpp
+  App_TextRendering.cpp
+  App_Texturing.cpp
+  App_Transforms.cpp
+  App_VectorGraphics.cpp
+  App_VirtualFileSystemTest.cpp
+  App_VolumeRendering.cpp
+)
 
-add_custom_target(Applets SOURCES  ${VL_APPLETS})
+add_library(${VLAPPLETS_NAME} STATIC ${VL_APPLETS_INC} ${VL_APPLETS_SRC})
+set_target_properties(${VLAPPLETS_NAME} PROPERTIES DEBUG_POSTFIX "-d")
+set_target_properties(${VLAPPLETS_NAME} PROPERTIES SOVERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
+set_target_properties(${VLAPPLETS_NAME} PROPERTIES VERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")

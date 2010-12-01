@@ -32,12 +32,11 @@
 #ifndef BaseDemo_INCLUDE_ONCE
 #define BaseDemo_INCLUDE_ONCE
 
+#include "vlut/Applet.hpp"
+#include "vl/Rendering.hpp"
+#include "vl/VisualizationLibrary.hpp"
 #include "vl/ReadPixels.hpp"
 #include "vl/Time.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/Geometry.hpp"
-#include "vlut/Applet.hpp"
-#include "vlut/GeometryPrimitives.hpp"
 
 class BaseDemo: public vlut::Applet
 {
@@ -53,7 +52,9 @@ public:
     trackball()->setPivot(vl::vec3(0,0,0));
     trackball()->setTransform(NULL);
   }
+  
   void run() {}
+  
   void shutdown() {}
 
   void keyPressEvent(unsigned short, vl::EKey key)
@@ -96,6 +97,7 @@ public:
   }
 
   const vl::String& applicationName() const { return mApplicationName; }
+
   void setApplicationName(const vl::String& app_name) { mApplicationName = app_name; } 
 
 protected:

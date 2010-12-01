@@ -33,54 +33,56 @@
 #define TEST_PROGRAMS_INCLUDE_ONCE
 
 #include <vl/VisualizationLibrary.hpp>
+#include <vlut/Colors.hpp>
 #include "Applets/BaseDemo.hpp"
-#include "Applets/App_Billboards.hpp"
-#include "Applets/App_RenderToTextureClassic.hpp"
-#include "Applets/App_ClipPlanes.hpp"
-#include "Applets/App_Deformer.hpp"
-#include "Applets/App_DrawPixels.hpp"
-#include "Applets/App_FBO_MRT_GLSL.hpp"
-#include "Applets/App_GeometryInstancing.hpp"
-#include "Applets/App_GLSL.hpp"
-#include "Applets/App_GLSL_Bumpmapping.hpp"
-#include "Applets/App_GLSLImageProcessing.hpp"
-#include "Applets/App_Lights.hpp"
-#include "Applets/App_Fractals.hpp"
-#include "Applets/App_ModelProfiler.hpp"
-#include "Applets/App_MorphAnimation.hpp"
-#include "Applets/App_MultipleCameras.hpp"
-#include "Applets/App_PointSplatting.hpp"
-#include "Applets/App_PolyDepthSorting.hpp"
-#include "Applets/App_PolygonReduction.hpp"
-#include "Applets/App_RenderOrder.hpp"
-#include "Applets/App_RotatingCube.hpp"
-#include "Applets/App_ScatterPlot3D.hpp"
-#include "Applets/App_ShaderLOD.hpp"
-#include "Applets/App_Terrain.hpp"
-#include "Applets/App_TextRendering.hpp"
-#include "Applets/App_ImageFunctions.hpp"
-#include "Applets/App_Texturing.hpp"
-#include "Applets/App_Transforms.hpp"
-#include "Applets/App_VirtualFileSystemTest.hpp"
-#include "Applets/App_VolumeRendering.hpp"
-#include "Applets/App_VectorGraphics.hpp"
-#include "Applets/App_KdTreeView.hpp"
-#include "Applets/App_CullingBenchmark.hpp"
-#include "Applets/App_MarchingCubes.hpp"
-#include "Applets/App_Interpolators.hpp"
-#include "Applets/App_Extrusion.hpp"
-#include "Applets/App_Tessellator.hpp"
-#include "Applets/App_Molecules.hpp"
-#include "Applets/App_EdgeRendering.hpp"
-#include "Applets/App_PortalCulling.hpp"
-#include "Applets/App_OcclusionCulling.hpp"
-#include "Applets/App_BezierSurfaces.hpp"
-#include "Applets/App_Picking.hpp"
-#include "Applets/App_NearFarOptimization.hpp"
-#include "Applets/App_EffectOverride.hpp"
-#include "Applets/App_ShaderOverride.hpp"
-#include "Applets/App_Primitives.hpp"
-#include "Applets/App_DrawCalls.hpp"
+
+BaseDemo* Create_App_Billboards();
+BaseDemo* Create_App_RenderToTextureClassic();
+BaseDemo* Create_App_ClipPlanes();
+BaseDemo* Create_App_Deformer();
+BaseDemo* Create_App_DrawPixels();
+BaseDemo* Create_App_FBO_MRT_GLSL(int);
+BaseDemo* Create_App_GeometryInstancing();
+BaseDemo* Create_App_GLSL();
+BaseDemo* Create_App_GLSL_Bumpmapping();
+BaseDemo* Create_App_GLSLImageProcessing();
+BaseDemo* Create_App_Lights();
+BaseDemo* Create_App_Fractals();
+BaseDemo* Create_App_ModelProfiler();
+BaseDemo* Create_App_MorphAnimation();
+BaseDemo* Create_App_MultipleCameras();
+BaseDemo* Create_App_PointSplatting();
+BaseDemo* Create_App_PolyDepthSorting(const vl::String&);
+BaseDemo* Create_App_PolygonReduction(const vl::String&);
+BaseDemo* Create_App_RenderOrder(int);
+BaseDemo* Create_App_RotatingCube();
+BaseDemo* Create_App_ScatterPlot3D(int);
+BaseDemo* Create_App_ShaderLOD(int);
+BaseDemo* Create_App_Terrain();
+BaseDemo* Create_App_TextRendering(int);
+BaseDemo* Create_App_ImageFunctions();
+BaseDemo* Create_App_Texturing();
+BaseDemo* Create_App_Transforms();
+BaseDemo* Create_App_VirtualFileSystemTest();
+BaseDemo* Create_App_VolumeRendering();
+BaseDemo* Create_App_VectorGraphics();
+BaseDemo* Create_App_KdTreeView();
+BaseDemo* Create_App_CullingBenchmark();
+BaseDemo* Create_App_MarchingCubes();
+BaseDemo* Create_App_Interpolators();
+BaseDemo* Create_App_Extrusion();
+BaseDemo* Create_App_Tessellator();
+BaseDemo* Create_App_Molecules();
+BaseDemo* Create_App_EdgeRendering();
+BaseDemo* Create_App_PortalCulling();
+BaseDemo* Create_App_OcclusionCulling();
+BaseDemo* Create_App_BezierSurfaces();
+BaseDemo* Create_App_Picking();
+BaseDemo* Create_App_NearFarOptimization();
+BaseDemo* Create_App_EffectOverride();
+BaseDemo* Create_App_ShaderOverride();
+BaseDemo* Create_App_Primitives();
+BaseDemo* Create_App_DrawCalls();
 
 // win32 console for sdtout output
 #if defined(WIN32) && !defined(NDEBUG)
@@ -126,67 +128,65 @@ public:
   {
     TestEntry tests[] = 
     {
-      { "Virtual File System", new App_VirtualFileSystemTest, 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "Primitives", new App_Primitives, 10,10, 512, 512, vlut::white, vl::vec3(0,0,20), vl::vec3(0,0,0) },
-      { "DrawCall Tests", new App_DrawCalls, 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
-      { "Near/Far Planes Optimization", new App_NearFarOptimization, 10, 10, 512, 512, vlut::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
-      { "Effect Override", new App_EffectOverride, 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
-      { "Shader Override", new App_ShaderOverride, 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
-      { "Shader Multipassing-LOD-Animation", new App_ShaderLOD(4), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
-      { "Geometry Multipassing-LOD-Animation", new App_ShaderLOD(3), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
-      { "Alpha Multipassing", new App_ShaderLOD(0), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
-      { "Render Order - Effect & Actor Ranks", new App_RenderOrder(0), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
-      { "Render Order - Alpha Z-Sort", new App_RenderOrder(1), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
-      { "Render Order - Always Z-Sort", new App_RenderOrder(2), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
-      { "Render Order - Occlusion Z-Sort", new App_RenderOrder(3), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
-      { "Robot Transform", new App_Transforms, 10, 10, 512, 512, vlut::white, vl::vec3(0,40,60), vl::vec3(0,15,0) }, 
-      { "Billboards", new App_Billboards, 10, 10, 512, 512, vlut::royalblue, vl::vec3(0,1,10), vl::vec3(0,1,0) }, 
-      { "Multiple Cameras", new App_MultipleCameras, 10, 10, 512, 512, vlut::black, vl::vec3(0,10,15), vl::vec3(0,0,0) }, 
-      { "Lights", new App_Lights, 10,10, 512, 512, vlut::black, vl::vec3(-10,10,10), vl::vec3(0,0,0) }, 
-      { "Clipping Planes", new App_ClipPlanes, 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,5), vl::vec3(0,0,0) }, 
-      { "DrawPixels", new App_DrawPixels, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
-      { "Image Functions", new App_ImageFunctions, 10,10, 512, 512, vlut::darkturquoise, vl::vec3(0,0,20), vl::vec3(0,0,0) }, 
-      { "Texturing", new App_Texturing, 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,20), vl::vec3(0,0,0) }, 
-      { "100.000 Scatter Plot", new App_ScatterPlot3D(0), 10, 10, 512, 512, vlut::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) }, 
-      { "100.000 Scatter Plot & PointSprite", new App_ScatterPlot3D(1), 10, 10, 512, 512, vlut::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) }, 
-      { "GPU Morph. Anim. 40", new App_MorphAnimation(40), 10, 10, 512, 512, vlut::black, vl::vec3(0,1000,1500), vl::vec3(0,0,0) }, 
-      { "GPU Morph. Anim. 400", new App_MorphAnimation(400), 10, 10, 512, 512, vlut::black, vl::vec3(0,1000,1500), vl::vec3(0,0,0) }, 
-      { "GPU Morph. Anim. 4000", new App_MorphAnimation(4000), 10, 10, 512, 512, vlut::black, vl::vec3(0,1000,1500), vl::vec3(0,0,0) }, 
-      { "Text - The Raven", new App_TextRendering(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
-      { "Text - Alignment", new App_TextRendering(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
-      { "Text - Rotation", new App_TextRendering(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
-      { "Text - Multilingual", new App_TextRendering(3), 10, 10, 512, 512, vlut::gold, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
-      { "Text - The Solar System", new App_TextRendering(4), 10, 10, 512, 512, vlut::black, vl::vec3(0,35,40), vl::vec3(0,0,0) }, 
-      { "GLSL", new App_GLSL, 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,7), vl::vec3(0,0,0) }, 
-      { "GLSL Bump Mapping", new App_GLSL_Bumpmapping, 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
-      { "GLSL Image Processing", new App_GLSLImageProcessing, 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
-      { "Legacy Render To Texture", new App_RenderToTextureClassic, 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "FBO Render To Texture", new App_FBO_MRT_GLSL(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "FBO Render To Color Buffer And Copy To Texture", new App_FBO_MRT_GLSL(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "FBO Framebuffer Blit/Multisample", new App_FBO_MRT_GLSL(3), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "FBO Render To Texture MRT", new App_FBO_MRT_GLSL(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "Volume Point Splatting", new App_PointSplatting, 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "Geometry Instancing", new App_GeometryInstancing, 10,10, 512, 512, vlut::black, vl::vec3(45/2,60,90), vl::vec3(45/2,45/2,45/2) }, 
-      { "Polygon Depth Sorting", new App_PolyDepthSorting("/models/3ds/monkey.3ds"), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "Polygon Reduction", new App_PolygonReduction("/models/3ds/monkey.3ds"), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "Simple Terrain", new App_Terrain, 10,10, 512, 512, vlut::black, vl::vec3(0,5,0), vl::vec3(0,2,-10) }, 
-      { "Vector Graphics", new App_VectorGraphics, 10,10, 512, 512, vlut::lightgray, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
-      { "Culling Benchmark", new App_CullingBenchmark, 10,10, 512, 512, vlut::black, vl::vec3(0,500,-250), vl::vec3(0,500,-250-1) }, 
-      { "ActorKdTree View", new App_KdTreeView, 10,10, 512, 512, vlut::black, vl::vec3(10,10,-10), vl::vec3(0,0,0) }, 
-      { "Model Profiler", new App_ModelProfiler, 10,10, 640, 480, vlut::skyblue, vl::vec3(0,0,0), vl::vec3(0,0,-1) }, 
-      { "Mandelbrot", new App_Fractals, 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
-      { "Deformer", new App_Deformer, 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
-      { "Marching Cubes", new App_MarchingCubes, 10,10, 512, 512, vlut::black, vl::vec3(0,10,50), vl::vec3(0,0,0) }, 
-      { "Volume View", new App_VolumeRendering, 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "Tessellator", new App_Tessellator, 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
-      { "Extrusion", new App_Extrusion, 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
-      { "Interpolator", new App_Interpolators, 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
-      { "Molecule", new App_Molecules, 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
-      { "Edge Enhancement", new App_EdgeRendering, 10,10, 512, 512, vlut::white, vl::vec3(0,0,20), vl::vec3(0,0,0) },
-      { "Portal Culling", new App_PortalCulling, 10,10, 512, 512, vlut::white, vl::vec3(20*7/2.0f-10,0,20*7/2.0f-10), vl::vec3(20*7/2.0f-10,0,20*7/2.0f-1.0f) },
-      { "Occlusion Culling", new App_OcclusionCulling, 10,10, 512, 512, vlut::gray, vl::vec3(0,25,575), vl::vec3(0,0,0) },
-      { "Bezier Patches", new App_BezierSurfaces, 10,10, 512, 512, vlut::black, vl::vec3(4.5f,5,13), vl::vec3(4.5f,0,0) },
-      { "Picking", new App_Picking, 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
+      { "Virtual File System", Create_App_VirtualFileSystemTest(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Primitives", Create_App_Primitives(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+      { "DrawCall Tests", Create_App_DrawCalls(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
+      { "Near/Far Planes Optimization", Create_App_NearFarOptimization(), 10, 10, 512, 512, vlut::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
+      { "Effect Override", Create_App_EffectOverride(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
+      { "Shader Override", Create_App_ShaderOverride(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
+      { "Shader Multipassing-LOD-Animation", Create_App_ShaderLOD(4), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
+      { "Geometry Multipassing-LOD-Animation", Create_App_ShaderLOD(3), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
+      { "Alpha Multipassing", Create_App_ShaderLOD(0), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
+      { "Render Order - Effect & Actor Ranks", Create_App_RenderOrder(0), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
+      { "Render Order - Alpha Z-Sort", Create_App_RenderOrder(1), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
+      { "Render Order - Always Z-Sort", Create_App_RenderOrder(2), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
+      { "Render Order - Occlusion Z-Sort", Create_App_RenderOrder(3), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
+      { "Robot Transform", Create_App_Transforms(), 10, 10, 512, 512, vlut::white, vl::vec3(0,40,60), vl::vec3(0,15,0) }, 
+      { "Billboards", Create_App_Billboards(), 10, 10, 512, 512, vlut::royalblue, vl::vec3(0,1,10), vl::vec3(0,1,0) }, 
+      { "Multiple Cameras", Create_App_MultipleCameras(), 10, 10, 512, 512, vlut::black, vl::vec3(0,10,15), vl::vec3(0,0,0) }, 
+      { "Lights", Create_App_Lights(), 10,10, 512, 512, vlut::black, vl::vec3(-10,10,10), vl::vec3(0,0,0) }, 
+      { "Clipping Planes", Create_App_ClipPlanes(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,5), vl::vec3(0,0,0) }, 
+      { "DrawPixels", Create_App_DrawPixels(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
+      { "Image Functions", Create_App_ImageFunctions(), 10,10, 512, 512, vlut::darkturquoise, vl::vec3(0,0,20), vl::vec3(0,0,0) }, 
+      { "Texturing", Create_App_Texturing(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,20), vl::vec3(0,0,0) }, 
+      { "100.000 Scatter Plot", Create_App_ScatterPlot3D(0), 10, 10, 512, 512, vlut::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) }, 
+      { "100.000 Scatter Plot & PointSprite", Create_App_ScatterPlot3D(1), 10, 10, 512, 512, vlut::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) }, 
+      { "GPU Morph. Anim. 1000", Create_App_MorphAnimation(), 10, 10, 512, 512, vlut::black, vl::vec3(0,1000,1500), vl::vec3(0,0,0) }, 
+      { "Text - The Raven", Create_App_TextRendering(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
+      { "Text - Alignment", Create_App_TextRendering(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
+      { "Text - Rotation", Create_App_TextRendering(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
+      { "Text - Multilingual", Create_App_TextRendering(3), 10, 10, 512, 512, vlut::gold, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
+      { "Text - The Solar System", Create_App_TextRendering(4), 10, 10, 512, 512, vlut::black, vl::vec3(0,35,40), vl::vec3(0,0,0) }, 
+      { "GLSL", Create_App_GLSL(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,7), vl::vec3(0,0,0) }, 
+      { "GLSL Bump Mapping", Create_App_GLSL_Bumpmapping(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
+      { "GLSL Image Processing", Create_App_GLSLImageProcessing(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
+      { "Legacy Render To Texture", Create_App_RenderToTextureClassic(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "FBO Render To Texture", Create_App_FBO_MRT_GLSL(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "FBO Render To Color Buffer And Copy To Texture", Create_App_FBO_MRT_GLSL(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "FBO Framebuffer Blit/Multisample", Create_App_FBO_MRT_GLSL(3), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "FBO Render To Texture MRT", Create_App_FBO_MRT_GLSL(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "Volume Point Splatting", Create_App_PointSplatting(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Geometry Instancing", Create_App_GeometryInstancing(), 10,10, 512, 512, vlut::black, vl::vec3(45/2,60,90), vl::vec3(45/2,45/2,45/2) }, 
+      { "Polygon Depth Sorting", Create_App_PolyDepthSorting("/models/3ds/monkey.3ds"), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Polygon Reduction", Create_App_PolygonReduction("/models/3ds/monkey.3ds"), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Simple Terrain", Create_App_Terrain(), 10,10, 512, 512, vlut::black, vl::vec3(0,5,0), vl::vec3(0,2,-10) }, 
+      { "Vector Graphics", Create_App_VectorGraphics(), 10,10, 512, 512, vlut::lightgray, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
+      { "Culling Benchmark", Create_App_CullingBenchmark(), 10,10, 512, 512, vlut::black, vl::vec3(0,500,-250), vl::vec3(0,500,-250-1) }, 
+      { "ActorKdTree View", Create_App_KdTreeView(), 10,10, 512, 512, vlut::black, vl::vec3(10,10,-10), vl::vec3(0,0,0) }, 
+      { "Model Profiler", Create_App_ModelProfiler(), 10,10, 640, 480, vlut::skyblue, vl::vec3(0,0,0), vl::vec3(0,0,-1) }, 
+      { "Mandelbrot", Create_App_Fractals(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
+      { "Deformer", Create_App_Deformer(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
+      { "Marching Cubes", Create_App_MarchingCubes(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,50), vl::vec3(0,0,0) }, 
+      { "Volume View", Create_App_VolumeRendering(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Tessellator", Create_App_Tessellator(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+      { "Extrusion", Create_App_Extrusion(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+      { "Interpolator", Create_App_Interpolators(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+      { "Molecule", Create_App_Molecules(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+      { "Edge Enhancement", Create_App_EdgeRendering(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+      { "Portal Culling", Create_App_PortalCulling(), 10,10, 512, 512, vlut::white, vl::vec3(20*7/2.0f-10,0,20*7/2.0f-10), vl::vec3(20*7/2.0f-10,0,20*7/2.0f-1.0f) },
+      { "Occlusion Culling", Create_App_OcclusionCulling(), 10,10, 512, 512, vlut::gray, vl::vec3(0,25,575), vl::vec3(0,0,0) },
+      { "Bezier Patches", Create_App_BezierSurfaces(), 10,10, 512, 512, vlut::black, vl::vec3(4.5f,5,13), vl::vec3(4.5f,0,0) },
+      { "Picking", Create_App_Picking(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
     };
 
     int test_count = int( sizeof(tests)/sizeof(TestEntry) );
