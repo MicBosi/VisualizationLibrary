@@ -75,8 +75,8 @@
 
 For more information see also vl::EdgeExtractor and vl::EdgeRenderer.
 
-	[From \p App_EdgeRendering.hpp]
-	\dontinclude App_EdgeRendering.hpp
+	[From \p App_EdgeRendering.cpp]
+	\dontinclude App_EdgeRendering.cpp
 	\skip class
 	\until // Have fun!
 */

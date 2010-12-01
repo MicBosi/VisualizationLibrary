@@ -21,8 +21,8 @@
 	</table>
 	</center>
 
-	[From \p App_Interpolators.hpp]
-	\dontinclude App_Interpolators.hpp
+	[From \p App_Interpolators.cpp]
+	\dontinclude App_Interpolators.cpp
 	\skip class
 	\until // Have fun!
 */

@@ -6,8 +6,8 @@
 	
 	\image html pagGuideLights.jpg
 
-	[From \p App_Lights.hpp]
-	\dontinclude App_Lights.hpp
+	[From \p App_Lights.cpp]
+	\dontinclude App_Lights.cpp
 	\skip class
 	\until // Have fun!
 */

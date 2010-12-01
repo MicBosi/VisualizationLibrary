@@ -6,8 +6,8 @@
 	
 	\image html pagGuideTessellation.jpg
 	
-	[From \p App_Tessellator.hpp]
-	\dontinclude App_Tessellator.hpp
+	[From \p App_Tessellator.cpp]
+	\dontinclude App_Tessellator.cpp
 	\skip class
 	\until // Have fun!
 */

@@ -19,8 +19,8 @@
 	</table>
 	</center>
 	
-	[From \p App_MarchingCubes.hpp]
-	\dontinclude App_MarchingCubes.hpp
+	[From \p App_MarchingCubes.cpp]
+	\dontinclude App_MarchingCubes.cpp
 	\skip class
 	\until // Have fun!
 */

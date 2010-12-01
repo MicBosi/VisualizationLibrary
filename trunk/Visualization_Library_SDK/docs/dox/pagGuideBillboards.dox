@@ -10,8 +10,8 @@
 
 	The following tutorial implements a simple forest using axis aligned billboards. To make the scene more interesting we will also add stars on the sky using spherical billboards. At the center of the scene we will also put a cube whose transform is a billboard attached to an animated transform tree. This demonstrates how billboards behave when attached to animated transform trees. When running the demo note how the cube keeps facing the camera while following its transform's parent's rotation.
 
-	[From \p App_Billboards.hpp]
-	\dontinclude App_Billboards.hpp
+	[From \p App_Billboards.cpp]
+	\dontinclude App_Billboards.cpp
 	\skip class
 	\until // Have fun!
 */

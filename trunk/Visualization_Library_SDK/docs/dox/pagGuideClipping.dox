@@ -6,8 +6,8 @@
 	
 	\image html pagGuideClipping.jpg
 	
-	[From \p App_ClipPlanes.hpp]
-	\dontinclude App_ClipPlanes.hpp
+	[From \p App_ClipPlanes.cpp]
+	\dontinclude App_ClipPlanes.cpp
 	\skip class
 	\until // Have fun!
 */
