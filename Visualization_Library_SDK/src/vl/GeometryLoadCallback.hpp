@@ -34,7 +34,6 @@
 
 #include <vl/Geometry.hpp>
 #include <vl/TriangleStripGenerator.hpp>
-#include <vl/LoadWriterManager.hpp>
 #include <vl/DoubleVertexRemover.hpp>
 
 namespace vl

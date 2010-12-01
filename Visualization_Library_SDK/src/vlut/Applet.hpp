@@ -35,7 +35,6 @@
 #include <vl/UIEventListener.hpp>
 #include <vl/TrackballManipulator.hpp>
 #include <vl/GhostCameraManipulator.hpp>
-#include <vl/Rendering.hpp>
 #include <vl/SceneManagerActorTree.hpp>
 
 namespace vlut
@@ -45,8 +44,7 @@ namespace vlut
 //-----------------------------------------------------------------------------
   /**
    * The Applet class is an utilitly UIEventListener that features a ghost manipulator, 
-   * trackball manipulator, an FPS counter and a simple rendering pipeline.
-  */
+   * trackball manipulator, an FPS counter and a simple rendering pipeline. */
   class Applet: public vl::UIEventListener
   {
   public:

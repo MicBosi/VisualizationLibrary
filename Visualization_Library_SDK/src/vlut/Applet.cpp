@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vlut/Applet.hpp>
+#include <vl/Rendering.hpp>
 #include <vl/VisualizationLibrary.hpp>
 #include <vl/SceneManager.hpp>
 #include <vl/RenderQueue.hpp>
