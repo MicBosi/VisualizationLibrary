@@ -41,6 +41,7 @@ SET(VL_SRC
   vl/BezierSurface.cpp
   vl/Billboard.cpp
   vl/Camera.cpp
+  vl/Clear.cpp
   vl/ClipPlane.cpp
   vl/DiskDirectory.cpp
   vl/DiskFile.cpp
@@ -326,6 +327,10 @@ set(VLUT_INC
   vlut/Colors.hpp
 )
 
+set(VLVG_SRC
+  vlVG/VectorGraphics.cpp
+)
+
 set(VLVG_INC
   vlVG/SceneManagerVectorGraphics.hpp
   vlVG/VectorGraphics.hpp
@@ -360,7 +365,7 @@ set(VLMOLECULE_SRC
 
 source_group(vl FILES ${VL_INC} ${VL_SRC})
 source_group(vlut FILES ${VLUT_INC} ${VLUT_SRC})
-source_group(vlVG FILES ${VLVG_INC})
+source_group(vlVG FILES ${VLVG_INC} ${VLVG_SRC})
 source_group(vlVolume FILES ${VLVOLUME_INC} ${VLVOLUME_SRC})
 source_group(vlMolecule FILES ${VLMOLECULE_INC} ${VLMOLECULE_SRC})
 
@@ -368,7 +373,7 @@ add_library(${VISUALIZATIONLIBRARY_NAME} STATIC
   ${VL_APPLETS_INC}
   ${VL_SRC} ${VL_INC} 
   ${VLUT_SRC} ${VLUT_INC} 
-  ${VLVG_INC} 
+  ${VLVG_SRC} ${VLVG_INC} 
   ${VLVOLUME_INC} ${VLVOLUME_SRC}
   ${VLMOLECULE_INC} ${VLMOLECULE_SRC}
   )

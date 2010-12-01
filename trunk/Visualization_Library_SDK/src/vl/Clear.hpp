@@ -69,123 +69,29 @@ namespace vl
   {
   public:
     virtual const char* className() { return "Clear"; }
-    Clear(): mClearColorMode(CCM_Float), mClearDepthValue(1.0f), mClearStencilValue(0),
-             mClearColorBuffer(false), mClearDepthBuffer(false), mClearStencilBuffer(false)
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-      // no scissor box by default
-      mScissorBox[0] = 0;
-      mScissorBox[1] = 0;
-      mScissorBox[2] = -1;
-      mScissorBox[3] = -1;
-    }
 
-    virtual void render(const Actor*, const Shader*, const Camera*, OpenGLContext*) const
-    {
-      // build buffer bit mask
-      GLbitfield mask = 0;
-      mask = mask | (mClearColorBuffer   ? GL_COLOR_BUFFER_BIT   : 0);
-      mask = mask | (mClearDepthBuffer   ? GL_DEPTH_BUFFER_BIT   : 0);
-      mask = mask | (mClearStencilBuffer ? GL_STENCIL_BUFFER_BIT : 0);
+    Clear();
 
-      // check for integer texture support
-      if ( (!glClearColorIiEXT || !glClearColorIuiEXT) && (clearColorMode() == CCM_Int || clearColorMode() == CCM_UInt) )
-      {
-        Log::error("Clear::render(): glClearColorIiEXT and glClearColorIuiEXT not supported.\n");
-        return;
-      }
-
-      if (mask)
-      {
-        int viewport[4];
-        glGetIntegerv(GL_VIEWPORT, viewport);
-
-        // save scissor settings
-        GLboolean scissor_on = glIsEnabled(GL_SCISSOR_TEST);
-        int scissor_box_save[4] = {0,0,-1,-1};
-        glGetIntegerv(GL_SCISSOR_BOX, scissor_box_save);
-
-        int scissor_box[4] = {0,0,-1,-1};
-
-        // fit to the viewport
-        if (mScissorBox[2] == -1 || mScissorBox[3] == -1)
-        {
-          scissor_box[0] = viewport[0];
-          scissor_box[1] = viewport[1];
-          scissor_box[2] = viewport[2];
-          scissor_box[3] = viewport[3];
-        }
-        else
-        // scissor box in viewport coords
-        {
-          scissor_box[0] = mScissorBox[0] + viewport[0];
-          scissor_box[1] = mScissorBox[1] + viewport[1];
-          scissor_box[2] = mScissorBox[2];
-          scissor_box[3] = mScissorBox[3];
-        }
-
-        // viewport from x,y,w,h -> x,y,x2,y2
-        viewport[2] = viewport[0] + viewport[2] -1;
-        viewport[3] = viewport[1] + viewport[3] -1;
-        // scissor_box from x,y,w,h -> x,y,x2,y2
-        scissor_box[2] = scissor_box[0] + scissor_box[2] -1;
-        scissor_box[3] = scissor_box[1] + scissor_box[3] -1;
-        // clip scissor box
-        if (scissor_box[0] < viewport[0]) scissor_box[0] = viewport[0];
-        if (scissor_box[1] < viewport[1]) scissor_box[1] = viewport[1];
-        if (scissor_box[2] > viewport[2]) scissor_box[2] = viewport[2];
-        if (scissor_box[3] > viewport[3]) scissor_box[3] = viewport[3];
-        // culling
-        if (scissor_box[0] > scissor_box[2]) 
-          return;
-        if (scissor_box[1] > scissor_box[3]) 
-          return;
-        // scissor_box from x,y,x2,y2 -> x,y,w,h 
-        scissor_box[2] = scissor_box[2] -scissor_box[0] +1;
-        scissor_box[3] = scissor_box[3] -scissor_box[1] +1;
-
-        // enable scissor test
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(scissor_box[0], scissor_box[1], scissor_box[2], scissor_box[3]); VL_CHECK_OGL()
-
-        // defines the clear values
-        if (mClearColorBuffer)
-        {
-          switch(clearColorMode())
-          {
-            case CCM_Float: glClearColor(      mClearColorValue.r(),     mClearColorValue.g(),     mClearColorValue.b(),     mClearColorValue.a());     break;
-            case CCM_Int:   glClearColorIiEXT( mClearColorValueInt.r(),  mClearColorValueInt.g(),  mClearColorValueInt.b(),  mClearColorValueInt.a());  break;
-            case CCM_UInt:  glClearColorIuiEXT(mClearColorValueUInt.r(), mClearColorValueUInt.g(), mClearColorValueUInt.b(), mClearColorValueUInt.a()); break;
-          }
-        }
-        if (mClearDepthBuffer)
-          glClearDepth(mClearDepthValue);
-        if (mClearStencilBuffer)
-          glClearStencil(mClearStencilValue);
-
-        // clear!
-        glClear(mask);
-
-        // restore scissor settings
-        if (!scissor_on)
-          glDisable(GL_SCISSOR_TEST);
-        glScissor(scissor_box_save[0], scissor_box_save[1], scissor_box_save[2], scissor_box_save[3]); VL_CHECK_OGL()
-      }
-    }
+    virtual void render(const Actor*, const Shader*, const Camera*, OpenGLContext*) const;
 
     void setClearColorBuffer(bool clear)   { mClearColorBuffer   = clear; }
+
     void setClearDepthBuffer(bool clear)   { mClearDepthBuffer   = clear; }
+
     void setClearStencilBuffer(bool clear) { mClearStencilBuffer = clear; }
 
     void setClearColorValue(const fvec4& clear_val) { mClearColorValue   = clear_val; }
+    
     void setClearColorValueInt(const ivec4& clear_val) { mClearColorValueInt   = clear_val; }
+    
     void setClearColorValueUInt(const uvec4& clear_val) { mClearColorValueUInt   = clear_val; }
+    
     void setClearDepthValue(float clear_val)        { mClearDepthValue   = clear_val; }
+    
     void setClearStencilValue(int clear_val)      { mClearStencilValue = clear_val; }
 
     void setClearColorMode(EClearColorMode mode) { mClearColorMode = mode; }
+    
     EClearColorMode clearColorMode() const { return mClearColorMode; }
 
     //! Defines which portion of the rendering buffers should be cleared.
@@ -193,6 +99,7 @@ namespace vl
     //! Such area is also clipped against the viewport borders.
     //! If 'w' or 'h' are set to -1 then the whole viewport is cleared.
     void setScissorBox(int x, int y, int w, int h)     { mScissorBox[0] = x; mScissorBox[1] = y; mScissorBox[2] = w; mScissorBox[3] = h; }
+    
     void getScissorBox(int& x, int& y, int& w, int& h) { x = mScissorBox[0]; y = mScissorBox[1]; w = mScissorBox[2]; h = mScissorBox[3]; }
 
     // Renderable interface implementation.
@@ -202,6 +109,7 @@ namespace vl
   protected:
     virtual void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }
 
+  protected:
     fvec4 mClearColorValue;
     ivec4 mClearColorValueInt;
     uvec4 mClearColorValueUInt;
