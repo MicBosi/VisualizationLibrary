@@ -43,8 +43,8 @@
 	
 	Note that to outline even more the benefits of the portal-based hidden surface removal algorithm we will also add several highly detailed spheres to each sector. Pressing <F8> will enable/disable the portal-based culling.
 	
-	[From \p App_PortalCulling.hpp]
-	\dontinclude App_PortalCulling.hpp
+	[From \p App_PortalCulling.cpp]
+	\dontinclude App_PortalCulling.cpp
 	\skip #include
 	\until // Have fun!
 */

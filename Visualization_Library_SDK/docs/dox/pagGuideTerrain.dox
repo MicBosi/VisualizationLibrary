@@ -6,8 +6,8 @@
 	
 	\image html pagGuideTerrain.jpg
 	
-	[From \p App_Terrain.hpp]
-	\dontinclude App_Terrain.hpp
+	[From \p App_Terrain.cpp]
+	\dontinclude App_Terrain.cpp
 	\skip class
 	\until // Have fun!
 */

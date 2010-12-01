@@ -25,8 +25,8 @@ From Wikipedia [<a href="http://en.wikipedia.org/wiki/Bézier_surface">http://en
 
 	As you will se the actual code dealing with the Bezier patches is less than ten lines of code! The majority of the code is dedicated to generate the patch data, to setup the effects, to manage the user input and so on.
 	
-	[From \p App_BezierSurfaces.hpp]
-	\dontinclude App_BezierSurfaces.hpp
+	[From \p App_BezierSurfaces.cpp]
+	\dontinclude App_BezierSurfaces.cpp
 	\skip class
 	\until // Have fun!
 */

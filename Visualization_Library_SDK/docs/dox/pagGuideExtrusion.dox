@@ -22,8 +22,8 @@
 	</table>
 	</center>
 	
-	[From \p App_Extrusion.hpp]
-	\dontinclude App_Extrusion.hpp
+	[From \p App_Extrusion.cpp]
+	\dontinclude App_Extrusion.cpp
 	\skip class
 	\until // Have fun!
 */

@@ -6,7 +6,7 @@
 	
 	"Texturing" is the technique used to apply in various ways an image over the surface of an object. Textures can be used to 
 	change or modify the color, the transparency and even the lighting properties of an object. In this tutorial we will go through the
-	implementation of the texturing test ("src/examples/Applets/App_Texturing.hpp") part of the Visualization Library regression test suite.
+	implementation of the texturing test ("src/examples/Applets/App_Texturing.cpp") part of the Visualization Library regression test suite.
 	This will give us the chance to see how to use several standard and advanced texturing techniques like 2D texturing, multi-texturing, 
 	3D textures, 1D and 2D texture arrays, sphere-mapping and cubemaps environment mapping. We will also see how to use the texture lod bias
 	to simulate opaque reflections.
@@ -25,7 +25,7 @@
 	testing the different texturing technique and reimplementing the virtual functions \p initEvent() and \p run() to initialize and animate
 	our test.
 	
-	\dontinclude App_Texturing.hpp
+	\dontinclude App_Texturing.cpp
 	\skipline class
 	\until public:
 	
