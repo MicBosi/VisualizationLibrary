@@ -45,8 +45,7 @@ namespace vlVG
 //-------------------------------------------------------------------------------------------------------------------------------------------
 // SceneManagerVectorGraphics
 //-------------------------------------------------------------------------------------------------------------------------------------------
-  /**
-   * The SceneManagerVectorGraphics class is a SceneManager that contains VectorGraphics objects.
+  /** The SceneManagerVectorGraphics class is a SceneManager that contains VectorGraphics objects.
    * The VectorGraphics objects are rendered in the order in which they are added to the SceneManagerVectorGraphics.
    * \sa
    * - vl::Actor
@@ -56,8 +55,7 @@ namespace vlVG
    * - vl::SceneManagerBVH
    * - vl::SceneManagerActorKdTree
    * - vl::SceneManagerActorTree
-   * - vl::SceneManagerPortals
-   */
+   * - vl::SceneManagerPortals */
   class SceneManagerVectorGraphics: public vl::SceneManager
   {
   public:
@@ -65,13 +63,12 @@ namespace vlVG
 
     SceneManagerVectorGraphics() { mActorRenderRankStart = 0; mVectorGraphicObjects.setAutomaticDelete(false); }
 
-    /**
-     * Defines the Actor's render rank to be used when extracting them from the scene manager during the rendering.
+    /** Defines the Actor's render rank to be used when extracting them from the scene manager during the rendering.
      * During the rendering when the Actor[s] are extracted they are assigned a progressive render rank starting from
      * rank_start so that they are rendered in the same order in which they were created by their VectorGraphics. Also
-     * the order in which a VectorGraphics is inserted in the SceneManagerVectorGraphics determines the rendering order.
-     */
+     * the order in which a VectorGraphics is inserted in the SceneManagerVectorGraphics determines the rendering order. */
     void setActorRenderRankStart(int rank_start) { mActorRenderRankStart = rank_start; }
+
     //! Returns the rendering rank start value used during the rendering of the VectorGraphics objects. See setActorRenderRankStart() for more information.
     int actorRenderRankStart() const { return mActorRenderRankStart; }
 
@@ -99,6 +96,7 @@ namespace vlVG
 
     //! Returns the list of VectorGraphics objects bound to a SceneManagerVectorGraphics
     vl::Collection<VectorGraphics>* vectorGraphicObjects() { return &mVectorGraphicObjects; }
+
     //! Returns the list of VectorGraphics objects bound to a SceneManagerVectorGraphics
     const vl::Collection<VectorGraphics>* vectorGraphicObjects() const { return &mVectorGraphicObjects; }
 
