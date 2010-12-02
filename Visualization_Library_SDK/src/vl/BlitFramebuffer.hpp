@@ -61,8 +61,15 @@ namespace vl
     {
       if (GLEW_EXT_framebuffer_blit||GLEW_ARB_framebuffer_object)
       {
-        // initializes the source and destination FBOs
         VL_CHECK_OGL()
+
+        // save FBOs
+        GLint read_fbo = 0;
+        GLint draw_fbo = 0;
+        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &read_fbo); VL_CHECK_OGL()
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_fbo); VL_CHECK_OGL()
+
+        // initializes the source and destination FBOs
         readFramebuffer()->bindFramebuffer();
         VL_CHECK_OGL()
         drawFramebuffer()->bindFramebuffer();
@@ -80,6 +87,12 @@ namespace vl
                               mDstRect[0], mDstRect[1], mDstRect[2], mDstRect[3], 
                               mBufferMask,
                               mLinearFilteringEnabled ? GL_LINEAR : GL_NEAREST);
+        VL_CHECK_OGL()
+
+        // restore FBOs
+        VL_glBindFramebuffer( GL_READ_FRAMEBUFFER_EXT, read_fbo );
+        VL_CHECK_OGL()
+        VL_glBindFramebuffer( GL_DRAW_FRAMEBUFFER_EXT, draw_fbo );
         VL_CHECK_OGL()
       }
     }
