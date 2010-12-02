@@ -41,7 +41,7 @@ BaseDemo* Create_App_RenderToTextureClassic();
 BaseDemo* Create_App_ClipPlanes();
 BaseDemo* Create_App_Deformer();
 BaseDemo* Create_App_DrawPixels();
-BaseDemo* Create_App_FBO_MRT_GLSL(int);
+BaseDemo* Create_App_Framebuffer_Object(int);
 BaseDemo* Create_App_GeometryInstancing();
 BaseDemo* Create_App_GLSL();
 BaseDemo* Create_App_GLSL_Bumpmapping();
@@ -161,10 +161,10 @@ public:
       { "GLSL Bump Mapping", Create_App_GLSL_Bumpmapping(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
       { "GLSL Image Processing", Create_App_GLSLImageProcessing(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
       { "Legacy Render To Texture", Create_App_RenderToTextureClassic(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "FBO Render To Texture", Create_App_FBO_MRT_GLSL(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "FBO Render To Color Buffer And Copy To Texture", Create_App_FBO_MRT_GLSL(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "FBO Framebuffer Blit/Multisample", Create_App_FBO_MRT_GLSL(3), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
-      { "FBO Render To Texture MRT", Create_App_FBO_MRT_GLSL(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "FBO Render To Texture", Create_App_Framebuffer_Object(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "FBO Render To Texture MRT", Create_App_Framebuffer_Object(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "FBO Copy To Texture From Color Buffer", Create_App_Framebuffer_Object(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "FBO Framebuffer Blit Multisample", Create_App_Framebuffer_Object(3), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
       { "Volume Point Splatting", Create_App_PointSplatting(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
       { "Geometry Instancing", Create_App_GeometryInstancing(), 10,10, 512, 512, vlut::black, vl::vec3(45/2,60,90), vl::vec3(45/2,45/2,45/2) }, 
       { "Polygon Depth Sorting", Create_App_PolyDepthSorting("/models/3ds/monkey.3ds"), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
