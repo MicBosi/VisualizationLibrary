@@ -49,7 +49,7 @@ set(VL_APPLETS_SRC
   App_EdgeRendering.cpp
   App_EffectOverride.cpp
   App_Extrusion.cpp
-  App_FBO_MRT_GLSL.cpp
+  App_Framebuffer_Object.cpp
   App_Fractals.cpp
   App_GeometryInstancing.cpp
   App_GLSL.cpp
