@@ -37,7 +37,6 @@
 #include "Applets/BaseDemo.hpp"
 
 BaseDemo* Create_App_Billboards();
-BaseDemo* Create_App_RenderToTextureClassic();
 BaseDemo* Create_App_ClipPlanes();
 BaseDemo* Create_App_Deformer();
 BaseDemo* Create_App_DrawPixels();
@@ -160,7 +159,7 @@ public:
       { "GLSL", Create_App_GLSL(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,7), vl::vec3(0,0,0) }, 
       { "GLSL Bump Mapping", Create_App_GLSL_Bumpmapping(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
       { "GLSL Image Processing", Create_App_GLSLImageProcessing(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
-      { "Legacy Render To Texture", Create_App_RenderToTextureClassic(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
+      { "Legacy Render To Texture", Create_App_Framebuffer_Object(4), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
       { "FBO Render To Texture", Create_App_Framebuffer_Object(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
       { "FBO Render To Texture MRT", Create_App_Framebuffer_Object(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
       { "FBO Copy To Texture From Color Buffer", Create_App_Framebuffer_Object(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
