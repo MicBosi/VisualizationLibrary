@@ -443,7 +443,7 @@ namespace vl
   // SampleCoverage
   //------------------------------------------------------------------------------
   /** Wraps the OpenGL function glSampleCoverage(), see also http://www.opengl.org/sdk/docs/man/xhtml/glSampleCoverage.xml for more information.
-   * \sa Shader, Effect, Actor, vl::EN_MULTISAMPLE, vl::EN_SAMPLE_ALPHA_TO_COVERAGE, vl::EN_SAMPLE_ALPHA_TO_ONE, vl::EN_SAMPLE_COVERAGE */
+   * \sa Shader, Effect, Actor, vl::EN_SAMPLE_ALPHA_TO_COVERAGE, vl::EN_SAMPLE_ALPHA_TO_ONE, vl::EN_SAMPLE_COVERAGE */
   class SampleCoverage: public RenderState
   {
   public:

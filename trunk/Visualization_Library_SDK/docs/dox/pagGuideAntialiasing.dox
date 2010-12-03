@@ -64,13 +64,10 @@ When creating your OpenGL context enable multisampling. Doing this using a GUI f
 
 The code above enables 8x multisampling (if your system supports it).  Note that, for example, if you require 8x and your system supports only 4x, VL automatically selects 4x multisampling. Note also that selecting the appropriate pixel format is not an OpenGL issues but is rather a GUI framework issue. For this reason you might need to search through the documentation of your GUI framework (Win32, Qt, wxWidgets etc.) in order to open a multisampling-capable OpenGL rendering context.
 
-Multisampling is basically transparent to the application, once is it enabled, everything becomes antialiased. Note that you can still enable/disable multisample on a per-Shader basis using
-	\code
-   ref<Effect> fx = new Effect;
-   fx->shader()->enable/disable(EN_MULTISAMPLE); // disabled by default, as all the OpenGL enables.
-	\endcode
+Multisampling is basically transparent to the application, once is it enabled, everything becomes antialiased. 
+Note that multisampling is enabled by default. You can enable or disable multisampling using glEnable/glDisable(GL_MULTISAMPLE).
 	
-- Pro: virtually well supported (OpenGL 1.3 upwards); nicely and correctly multisamples everything; just need to set EN_MULTISAMPLE where appropriate; no blending or sorting is needed.
+- Pro: virtually well supported (OpenGL 1.3 upwards); nicely and correctly multisamples everything; no blending or sorting is needed.
 - Cons: slower rendering; can use a consistent amount of GPU memory to store the extra samples; antialiasing quality and support depends on the user's system capability.
 
 For more information on multisampling see http://www.opengl.org/registry/specs/ARB/multisample.txt 
