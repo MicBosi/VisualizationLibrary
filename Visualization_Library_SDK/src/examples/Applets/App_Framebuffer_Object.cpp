@@ -297,11 +297,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a multisampled depth buffer */
-    #if 0
-      vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DT_DEPTH_COMPONENT);
-    #else
-      vl::ref<vl::FBODepthStencilBufferAttachment> fbo_depth_attachm = new vl::FBODepthStencilBufferAttachment(vl::DST_DEPTH32F_STENCIL8);
-    #endif
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DT_DEPTH_COMPONENT);
     fbo_depth_attachm->setSamples(samples);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
