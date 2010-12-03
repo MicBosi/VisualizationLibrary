@@ -73,7 +73,6 @@ set(VL_APPLETS_SRC
   App_PortalCulling.cpp
   App_Primitives.cpp
   App_RenderOrder.cpp
-  App_RenderToTextureClassic.cpp
   App_ScatterPlot3D.cpp
   App_ShaderLOD.cpp
   App_ShaderOverride.cpp
