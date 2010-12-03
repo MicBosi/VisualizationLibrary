@@ -725,7 +725,6 @@ namespace vl
     EN_GL_CLIP_DISTANCE5,
 
     // multisampling
-    EN_MULTISAMPLE, //!< If enabled, use multiple fragment samples in computing the final color of a pixel, see also SampleCoverage.
     EN_SAMPLE_ALPHA_TO_COVERAGE, //!< If enabled, compute a temporary coverage value where each bit is determined by the alpha value at the corresponding sample location; The temporary coverage value is then ANDed with the fragment coverage value.
     EN_SAMPLE_ALPHA_TO_ONE, //!< If enabled, each sample alpha value is replaced by the maximum representable alpha value.
     EN_SAMPLE_COVERAGE, //!< If enabled, the fragment's coverage is ANDed with the temporary coverage value; If GL_SAMPLE_COVERAGE_INVERT is set to GL_TRUE, invert the coverage value, see also SampleCoverage.

@@ -385,7 +385,6 @@ namespace
     GL_CLIP_DISTANCE5,
 
     // multisampling
-    GL_MULTISAMPLE,
     GL_SAMPLE_ALPHA_TO_COVERAGE,
     GL_SAMPLE_ALPHA_TO_ONE,
     GL_SAMPLE_COVERAGE
@@ -425,7 +424,6 @@ namespace
     "EN_GL_CLIP_DISTANCE5",
 
     // multisampling
-    "EN_MULTISAMPLE",
     "EN_SAMPLE_ALPHA_TO_COVERAGE",
     "EN_SAMPLE_ALPHA_TO_ONE",
     "EN_SAMPLE_COVERAGE"
@@ -697,11 +695,9 @@ bool OpenGLContext::isCleanState(bool verbose)
 
   bool ok  = true;
 
-  // everything must be disabled except EN_MULTISAMPLE
+  // everything must be disabled
   for( unsigned i=0; i<EN_EnableCount; ++i )
   {
-    if (i == EN_MULTISAMPLE)
-      continue;
     GLboolean enabled = glIsEnabled( TranslateEnable[i] );
     // const char* name = TranslateEnableString[i];
     if (glGetError() == GL_NO_ERROR && enabled)
