@@ -105,8 +105,8 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   format.setDepthBufferBits(24);
   format.setStencilBufferBits(8);
   format.setFullscreen(false);
-  //format.setMultisampleSamples(8);
-  //format.setMultisample(true);
+  /*format.setMultisampleSamples(8);
+  format.setMultisample(true);*/
 
   TestBatteryWin32 test_battery;
   test_battery.run(test, secs, format);

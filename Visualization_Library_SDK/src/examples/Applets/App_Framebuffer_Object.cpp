@@ -66,6 +66,8 @@ public:
       break;
     case 3: initTest_FBO_Framebuffer_Blit_Multisample(); 
       break;
+    case 4: initTest_RTT_Legacy();
+      break;
     default:
       break;
     }
@@ -340,6 +342,51 @@ public:
 
     addRings(NULL);
     addCube(texture.get(), NULL);
+  }
+
+  void initTest_RTT_Legacy()
+  {
+    // Setup dual rendering
+
+    vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
+    vl::VisualizationLibrary::setRendering(render_tree.get());
+    mMainRendering = new vl::Rendering;
+    mRTT_Rendering = new vl::Rendering;
+    render_tree->subRenderings()->push_back(mRTT_Rendering.get());
+    render_tree->subRenderings()->push_back(mMainRendering.get());
+    mMainRendering->sceneManagers()->push_back(new vl::SceneManagerActorTree);
+    mRTT_Rendering->sceneManagers()->push_back(new vl::SceneManagerActorTree);
+
+    /* both render to the screen */
+    mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
+    mRTT_Rendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
+
+    // Render to texture rendering
+
+    /* setup render-to-texture rendering: render to screen then copies to texture. */
+    mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
+    mRTT_Rendering->camera()->viewport()->set(0, 0, 512, 512);
+    mRTT_Rendering->camera()->setProjectionAsPerspective();
+    vl::mat4 m = vl::mat4::lookAt( vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) );
+    mRTT_Rendering->camera()->setInverseViewMatrix( m );
+
+    /* install copy to texture callback */
+    vl::ref<vl::Texture> texture = new vl::Texture( 512, 512, vl::TF_RGBA, false );
+    vl::ref<vl::CopyTexSubImage2D> copytex = new vl::CopyTexSubImage2D( 0, 0,0, 0,0, 512,512, texture.get() );
+    mRTT_Rendering->onFinishedCallbacks()->push_back( copytex.get() );
+    
+    // Main rendering
+
+    /* setup main rendering */
+    mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
+    mMainRendering->camera()->viewport()->set(0,0,512,512);
+    mMainRendering->camera()->setProjectionAsPerspective();
+    m = vl::mat4::lookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    mMainRendering->camera()->setInverseViewMatrix( m );
+
+    /* populate the scene */
+    addCube(texture.get(), NULL);
+    addRings(NULL);
   }
 
   void addCube(vl::Texture* texture1, vl::Texture* texture2)
