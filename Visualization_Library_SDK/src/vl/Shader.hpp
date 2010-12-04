@@ -1323,6 +1323,12 @@ namespace vl
       return *this;
     }
 
+    /** Equivalent to \p "Shader& operator=(const Shader&)" */
+    Shader& copy(const Shader& other) 
+    {
+      return operator=(other);
+    }
+
     // state getters
 
     /** Gets or creates a GLSLProgram and returns it. */

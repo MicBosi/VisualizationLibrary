@@ -38,19 +38,20 @@ using namespace vl;
 //------------------------------------------------------------------------------
 void RenderStateSet::setRenderState(RenderState* renderstate)
 {
-  if (renderstate == NULL)
-    return;
-  if (renderstate->type() == RS_GLSLProgram)
-    mGLSLProgram = dynamic_cast<GLSLProgram*>(renderstate);
-  for(unsigned i=0; i<mRenderStates.size(); ++i)
+  if (renderstate)
   {
-    if (mRenderStates[i]->type() == renderstate->type())
+    if (renderstate->type() == RS_GLSLProgram)
+      mGLSLProgram = dynamic_cast<GLSLProgram*>(renderstate);
+    for(unsigned i=0; i<mRenderStates.size(); ++i)
     {
-      mRenderStates[i] = renderstate;
-      return;
+      if (mRenderStates[i]->type() == renderstate->type())
+      {
+        mRenderStates[i] = renderstate;
+        return;
+      }
     }
+    mRenderStates.push_back( renderstate );
   }
-  mRenderStates.push_back( renderstate );
 }
 //------------------------------------------------------------------------------
 RenderState* RenderStateSet::renderState( ERenderState type )

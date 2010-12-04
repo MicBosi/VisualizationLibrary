@@ -45,36 +45,9 @@ class App_Framebuffer_Object: public BaseDemo
 public:
   App_Framebuffer_Object(int test): mTestNum(test) {}
 
-  virtual void initEvent()
-  {
-    BaseDemo::initEvent();
-
-    if (!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
-    {
-      vl::Log::error("GL_ARB_framebuffer_object not supported.\n");
-      vl::Time::sleep(3000);
-      exit(1);
-    }
-
-    switch(mTestNum)
-    {
-    case 0: initTest_FBO_Render_To_Texture(); 
-      break;
-    case 1: initTest_FBO_Render_To_Texture_MRT(); 
-      break;
-    case 2: initTest_FBO_Render_To_Color_Buffer_And_Copy_To_Texture(); 
-      break;
-    case 3: initTest_FBO_Framebuffer_Blit_Multisample(); 
-      break;
-    case 4: initTest_RTT_Legacy();
-      break;
-    default:
-      break;
-    }
-
-    bindManipulators( mMainRendering.get() );
-  }
-
+  /*
+  This example demonstates the use of the render-to-texture (RTT) technique using framebuffer objects.
+  */
   void initTest_FBO_Render_To_Texture()
   {
     // Setup dual rendering
@@ -121,10 +94,14 @@ public:
     /* use the opengl window as render target */
     mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
 
+    /* populate the scene */
     addRings(NULL);
     addCube(texture.get(), NULL);
   }
 
+  /*
+  This example demonstates the use of the multiple-render-target tecnique to render on two textures simultaneously.
+  */
   void initTest_FBO_Render_To_Texture_MRT()
   {
     // Setup dual rendering
@@ -159,14 +136,16 @@ public:
     glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
     if (GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0)
     {
-      vl::Log::info("Using glBindFragDataLocation()\n");
+      vl::Log::info("using glBindFragDataLocation()\n");
+      // see fragment shader sources for the details
       glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight_cartoon_mrt2.fs") );
-      glsl->bindFragDataLocation(0, "FragDataOutputA");
-      glsl->bindFragDataLocation(1, "FragDataOutputB");
+      glsl->bindFragDataLocation(0, "FragDataOutputA"); // out varying variable writing on color attachment #0
+      glsl->bindFragDataLocation(1, "FragDataOutputB"); // out varying variable writing on color attachment #1
     }
     else
     {
       vl::Log::info("glBindFragDataLocation() not supported.\n");
+      // see fragment shader sources for the details
       glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight_cartoon_mrt.fs") );
     }
 
@@ -206,10 +185,15 @@ public:
     /* use the opengl window as render target */
     mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
 
+    /* populate the scene */
     addRings(glsl.get());
     addCube(texture1.get(), texture2.get() );
   }
 
+  /*
+  This example shows how to perform off-screen rendering on a color buffer. 
+  The content of the colorbuffer is then copied to a texture using CopyTexSubImage2D.
+  */
   void initTest_FBO_Render_To_Color_Buffer_And_Copy_To_Texture()
   {
     // Setup dual rendering
@@ -260,10 +244,15 @@ public:
     /* use the opengl window as render target */
     mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
 
+    /* populate the scene */
     addRings(NULL);
     addCube(texture.get(), NULL);
   }
 
+  /*
+  This example shows how to perform off-screen rendering on a multisampled color buffer and then copy 
+  the content of such buffer to a non-multisampled texture using the vl:BlitFramebuffer callback object.
+  */
   void initTest_FBO_Framebuffer_Blit_Multisample()
   {
     if (!(GLEW_EXT_framebuffer_multisample||GLEW_EXT_framebuffer_blit||GLEW_VERSION_3_0))
@@ -340,10 +329,17 @@ public:
     /* use the opengl window as render target */
     mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
 
+    /* populate the scene */
     addRings(NULL);
     addCube(texture.get(), NULL);
   }
 
+  /*
+  This example demonstrates how to perform render-to-texture without using framebuffer objects.
+  First the scene with the ring is rendered normally on the screen. The pixels on the screen are then copied to 
+  a texture using the vl::CopyTexSubImage2D callback object. Finally the scene with the cube can be rendered
+  using the previously generated texture.
+  */
   void initTest_RTT_Legacy()
   {
     // Setup dual rendering
@@ -365,7 +361,7 @@ public:
 
     /* setup render-to-texture rendering: render to screen then copies to texture. */
     mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
-    mRTT_Rendering->camera()->viewport()->set(0, 0, 512, 512);
+    mRTT_Rendering->camera()->viewport()->set(0,0,512,512);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::lookAt( vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) );
     mRTT_Rendering->camera()->setInverseViewMatrix( m );
@@ -391,61 +387,58 @@ public:
 
   void addCube(vl::Texture* texture1, vl::Texture* texture2)
   {
-    vl::ref<vl::Effect> effect = new vl::Effect;
     vl::ref<vl::Light> light = new vl::Light(0);
     light->setAmbient( vl::fvec4( .1f, .1f, .1f, 1.0f) );
     light->setSpecular( vl::fvec4( .1f, .1f, .1f, 1.0f) );
-    effect->shader()->setRenderState( light.get() );
-    effect->shader()->enable(vl::EN_LIGHTING);
-    effect->shader()->enable(vl::EN_DEPTH_TEST);
-    effect->shader()->gocLightModel()->setTwoSide(true);
-    // effect->shader()->enable(vl::EN_CULL_FACE);
+    vl::ref<vl::Effect> effect1 = new vl::Effect;
+    effect1->shader()->setRenderState( light.get() );
+    effect1->shader()->gocLightModel()->setTwoSide(true);
+    effect1->shader()->enable(vl::EN_LIGHTING);
+    effect1->shader()->enable(vl::EN_DEPTH_TEST);
+    effect1->shader()->gocTextureUnit(0)->setTexture( texture1 );
+    effect1->shader()->gocTexEnv(0)->setMode(vl::TEM_MODULATE);
 
-    effect->shader()->gocTextureUnit(0)->setTexture( texture1 );
-    effect->shader()->gocTexEnv(0)->setMode(vl::TEM_MODULATE);
-
-    vl::Real size = 50;
-    vl::ref<vl::Geometry> ground;
-    ground= vlut::makeGrid( vl::vec3(0,0,0), size*1.1f, size*1.1f, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
-    ground->computeNormals();
-    vl::ref<vl::Actor> ground_act = new vl::Actor(ground.get());
-    mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( ground_act.get() );
-    ground_act->setEffect(effect.get());
-
-    vl::ref<vl::Geometry> box1;
-    if (texture2)
-      box1= vlut::makeBox( vl::vec3(-7,5,0), 10,10,10);
-    else
-      box1= vlut::makeBox( vl::vec3(0,5,0), 10,10,10);
-    box1->computeNormals();
-
-    vl::ref<vl::Actor> box1_act = new vl::Actor(box1.get());
-    mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( box1_act.get() );
-    box1_act->setEffect(effect.get());
+    // ground plane
+    const vl::Real size = 50;
+    vl::ref<vl::Geometry> ground = vlut::makeGrid( vl::vec3(0,0,0), size, size, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
+    ground->setNormal( vl::fvec3(0,1,0) );
+    mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( ground.get(), effect1.get() );
 
     if (texture2)
     {
+      // box #1
+      vl::ref<vl::Geometry> box1 = vlut::makeBox( vl::vec3(-7,5,0), 10,10,10);
+      box1->computeNormals();
+      mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( box1.get(), effect1.get() );
+
+      // box #2
       vl::ref<vl::Effect> effect2 = new vl::Effect;
-      effect2->shader()->setEnableSet( effect->shader()->gocEnableSet() );
-      effect2->shader()->setRenderState( light.get() );
-      effect2->shader()->gocTextureUnit(0)->setTexture( texture2 );
-      effect2->shader()->gocTexEnv(0)->setMode(vl::TEM_MODULATE);
+      effect2->shader()->copy(*effect1->shader());
+      vl::ref<vl::TextureUnit> texture_unit = new vl::TextureUnit(0);
+      texture_unit->setTexture(texture2);
+      effect2->shader()->setRenderState(texture_unit.get());
 
-      vl::ref<vl::Geometry> box2;
-      box2= vlut::makeBox( vl::vec3(+7,5,0), 10,10,10);
+      vl::ref<vl::Geometry> box2 = vlut::makeBox( vl::vec3(+7,5,0), 10,10,10);
       box2->computeNormals();
-
-      vl::ref<vl::Actor> box2_act = new vl::Actor(box2.get());
-      mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( box2_act.get() );
-      box2_act->setEffect(effect2.get());
+      mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( box2.get(), effect2.get() );
     }
+    else
+    {
+      // box #1
+      vl::ref<vl::Geometry> box1 = vlut::makeBox( vl::vec3(0,5,0), 10,10,10);
+      box1->computeNormals();
+      mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( box1.get(), effect1.get() );
+    }
+
   }
 
-  vl::Actor* addActor(vl::Renderable* renderable, vl::Transform* tr, vl::Effect* eff, vl::Rendering* rendering)
+  // helper function
+  vl::Actor* addActor(vl::Rendering* rendering, vl::Renderable* renderable, vl::Effect* eff, vl::Transform* tr)
   {
     return rendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor(renderable, eff, tr);
   }
 
+  // populates ring scene on mRTT_Rendering
   void addRings(vl::GLSLProgram* glsl)
   {
     vl::ref<vl::Effect> effect = new vl::Effect;
@@ -462,38 +455,64 @@ public:
     mTransfRing1 = new vl::Transform;
     vl::ref<vl::Geometry> ring1;
     ring1 = vlut::makeTorus( vl::vec3(0,0,0), 10,0.5, 20,100);
-    ring1->computeNormals();
-    addActor(ring1.get(), mTransfRing1.get(), effect.get(), mRTT_Rendering.get());
+    addActor(mRTT_Rendering.get(), ring1.get(), effect.get(), mTransfRing1.get());
 
     mTransfRing2 = new vl::Transform;
     vl::ref<vl::Geometry> ring2;
     ring2= vlut::makeTorus( vl::vec3(0,0,0), 9,0.5, 20,100);
-    ring2->computeNormals();
-    addActor(ring2.get(), mTransfRing2.get(), effect.get(), mRTT_Rendering.get());
+    addActor(mRTT_Rendering.get(), ring2.get(), effect.get(), mTransfRing2.get());
 
     mTransfRing3 = new vl::Transform;
     vl::ref<vl::Geometry> ring3;
     ring3= vlut::makeTorus( vl::vec3(0,0,0), 8,0.5, 20,100);
-    ring3->computeNormals();
-    addActor(ring3.get(), mTransfRing3.get(), effect.get(), mRTT_Rendering.get());
+    addActor(mRTT_Rendering.get(), ring3.get(), effect.get(), mTransfRing3.get());
 
     mTransfRing4 = new vl::Transform;
     vl::ref<vl::Geometry> ring4;
     ring4= vlut::makeTorus( vl::vec3(0,0,0), 7,0.5, 20,100);
-    ring4->computeNormals();
-    addActor(ring4.get(), mTransfRing4.get(), effect.get(), mRTT_Rendering.get());
+    addActor(mRTT_Rendering.get(), ring4.get(), effect.get(), mTransfRing4.get());
 
     mTransfRing5 = new vl::Transform;
     vl::ref<vl::Geometry> ring5;
     ring5= vlut::makeTorus( vl::vec3(0,0,0), 6,0.5, 20,100);
-    ring5->computeNormals();
-    addActor(ring5.get(), mTransfRing5.get(), effect.get(), mRTT_Rendering.get());
+    addActor(mRTT_Rendering.get(), ring5.get(), effect.get(), mTransfRing5.get());
 
+    // update transform hierarchy every frame
     mRTT_Rendering->transform()->addChild(mTransfRing1.get());
     mTransfRing1->addChild(mTransfRing2.get());
     mTransfRing2->addChild(mTransfRing3.get());
     mTransfRing3->addChild(mTransfRing4.get());
     mTransfRing4->addChild(mTransfRing5.get());
+  }
+
+  virtual void initEvent()
+  {
+    BaseDemo::initEvent();
+
+    if (!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
+    {
+      vl::Log::error("GL_ARB_framebuffer_object not supported.\n");
+      vl::Time::sleep(3000);
+      exit(1);
+    }
+
+    switch(mTestNum)
+    {
+    case 0: initTest_FBO_Render_To_Texture(); 
+      break;
+    case 1: initTest_FBO_Render_To_Texture_MRT(); 
+      break;
+    case 2: initTest_FBO_Render_To_Color_Buffer_And_Copy_To_Texture(); 
+      break;
+    case 3: initTest_FBO_Framebuffer_Blit_Multisample(); 
+      break;
+    case 4: initTest_RTT_Legacy();
+      break;
+    default:
+      break;
+    }
+
+    bindManipulators( mMainRendering.get() );
   }
 
   void resizeEvent(int w, int h)
