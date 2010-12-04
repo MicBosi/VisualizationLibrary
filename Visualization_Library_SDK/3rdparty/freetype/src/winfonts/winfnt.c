@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType font driver for Windows FNT/FON files                       */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2006, 2007, 2008 by             */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2006, 2007, 2008, 2009, 2010 by */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*  Copyright 2003 Huw D M Davies for Codeweavers                          */
 /*  Copyright 2007 Dmitry Timoshkov for Codeweavers                        */
@@ -23,6 +23,7 @@
 #include FT_INTERNAL_DEBUG_H
 #include FT_INTERNAL_STREAM_H
 #include FT_INTERNAL_OBJECTS_H
+#include FT_TRUETYPE_IDS_H 
 
 #include "winfnt.h"
 #include "fnterrs.h"
@@ -342,7 +343,7 @@
 
         if ( !font_count || !font_offset )
         {
-          FT_TRACE2(( "this file doesn't contain any FNT resources!\n" ));
+          FT_TRACE2(( "this file doesn't contain any FNT resources\n" ));
           error = FNT_Err_Invalid_File_Format;
           goto Exit;
         }
@@ -619,7 +620,7 @@
   }
 
 
-  static FT_UInt
+  static FT_UInt32
   fnt_cmap_char_next( FNT_CMap    cmap,
                       FT_UInt32  *pchar_code )
   {
@@ -802,15 +803,16 @@
 
 
         charmap.encoding    = FT_ENCODING_NONE;
-        charmap.platform_id = 0;
-        charmap.encoding_id = 0;
+        /* initial platform/encoding should indicate unset status? */
+        charmap.platform_id = TT_PLATFORM_APPLE_UNICODE;
+        charmap.encoding_id = TT_APPLE_ID_DEFAULT;
         charmap.face        = root;
 
         if ( font->header.charset == FT_WinFNT_ID_MAC )
         {
           charmap.encoding    = FT_ENCODING_APPLE_ROMAN;
-          charmap.platform_id = 1;
-/*        charmap.encoding_id = 0; */
+          charmap.platform_id = TT_PLATFORM_MACINTOSH;
+/*        charmap.encoding_id = TT_MAC_ID_ROMAN; */
         }
 
         error = FT_CMap_New( fnt_cmap_class,
@@ -833,7 +835,7 @@
 
       if ( font->header.face_name_offset >= font->header.file_size )
       {
-        FT_TRACE2(( "invalid family name offset!\n" ));
+        FT_TRACE2(( "invalid family name offset\n" ));
         error = FNT_Err_Invalid_File_Format;
         goto Fail;
       }
@@ -942,7 +944,7 @@
                   FT_Int32      load_flags )
   {
     FNT_Face    face   = (FNT_Face)FT_SIZE_FACE( size );
-    FNT_Font    font   = face->font;
+    FNT_Font    font;
     FT_Error    error  = FNT_Err_Ok;
     FT_Byte*    p;
     FT_Int      len;
@@ -953,7 +955,15 @@
     FT_UNUSED( load_flags );
 
 
-    if ( !face || !font ||
+    if ( !face )
+    {
+      error = FNT_Err_Invalid_Argument;
+      goto Exit;
+    }
+
+    font = face->font;
+
+    if ( !font ||
          glyph_index >= (FT_UInt)( FT_FACE( face )->num_glyphs ) )
     {
       error = FNT_Err_Invalid_Argument;
@@ -980,7 +990,7 @@
 
     if ( offset >= font->header.file_size )
     {
-      FT_TRACE2(( "invalid FNT offset!\n" ));
+      FT_TRACE2(( "invalid FNT offset\n" ));
       error = FNT_Err_Invalid_File_Format;
       goto Exit;
     }
