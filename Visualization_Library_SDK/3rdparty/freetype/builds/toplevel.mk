@@ -3,7 +3,7 @@
 #
 
 
-# Copyright 1996-2000, 2001, 2003, 2006, 2008, 2009 by
+# Copyright 1996-2000, 2001, 2003, 2006, 2008, 2009, 2010 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -177,9 +177,9 @@ include $(TOP_DIR)/builds/modules.mk
 ifneq ($(findstring distx,$(MAKECMDGOALS)x),)
   FT_H := include/freetype/freetype.h
 
-  major := $(shell sed -n 's/.*FREETYPE_MAJOR.*\([0-9]\+\)/\1/p' < $(FT_H))
-  minor := $(shell sed -n 's/.*FREETYPE_MINOR.*\([0-9]\+\)/\1/p' < $(FT_H))
-  patch := $(shell sed -n 's/.*FREETYPE_PATCH.*\([0-9]\+\)/\1/p' < $(FT_H))
+  major := $(shell sed -n 's/.*FREETYPE_MAJOR[^0-9]*\([0-9]\+\)/\1/p' < $(FT_H))
+  minor := $(shell sed -n 's/.*FREETYPE_MINOR[^0-9]*\([0-9]\+\)/\1/p' < $(FT_H))
+  patch := $(shell sed -n 's/.*FREETYPE_PATCH[^0-9]*\([0-9]\+\)/\1/p' < $(FT_H))
 
   version    := $(major).$(minor).$(patch)
   winversion := $(major)$(minor)$(patch)
@@ -191,14 +191,14 @@ dist:
 	rm -f freetype-$(version).tar.bz2
 	rm -f ft$(winversion).zip
 
-	for d in `find . -wholename '*/CVS' -prune \
+	for d in `find . -wholename '*/.git' -prune \
 	                 -o -type f \
 	                 -o -print` ; do \
 	  mkdir -p tmp/$$d ; \
 	done ;
 
 	currdir=`pwd` ; \
-	for f in `find . -wholename '*/CVS' -prune \
+	for f in `find . -wholename '*/.git' -prune \
 	                 -o -name .cvsignore \
 	                 -o -type d \
 	                 -o -print` ; do \
@@ -230,7 +230,8 @@ dist:
 
 
 # The locations of the latest `config.guess' and `config.sub' versions (from
-# GNU `config' CVS), relative to the `tmp' directory used during `make dist'.
+# GNU `config' git repository), relative to the `tmp' directory used during
+# `make dist'.
 #
 CONFIG_GUESS = ~/git/config/config.guess
 CONFIG_SUB   = ~/git/config/config.sub

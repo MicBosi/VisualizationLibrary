@@ -4,7 +4,8 @@
 /*                                                                         */
 /*    Auxiliary functions for PostScript fonts (body).                     */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 by */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,   */
+/*            2010 by                                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -19,6 +20,7 @@
 #include <ft2build.h>
 #include FT_INTERNAL_POSTSCRIPT_AUX_H
 #include FT_INTERNAL_DEBUG_H
+#include FT_INTERNAL_CALC_H
 
 #include "psobjs.h"
 #include "psconv.h"
@@ -564,8 +566,8 @@
       cur++;
       if ( cur >= limit || *cur != '>' )             /* >> */
       {
-        FT_ERROR(( "ps_parser_skip_PS_token: "
-                   "unexpected closing delimiter `>'\n" ));
+        FT_ERROR(( "ps_parser_skip_PS_token:"
+                   " unexpected closing delimiter `>'\n" ));
         error = PSaux_Err_Invalid_File_Format;
         goto Exit;
       }
@@ -590,9 +592,10 @@
   Exit:
     if ( cur == parser->cursor )
     {
-      FT_ERROR(( "ps_parser_skip_PS_token: "
-                 "current token is `%c', which is self-delimiting "
-                 "but invalid at this point\n",
+      FT_ERROR(( "ps_parser_skip_PS_token:"
+                 " current token is `%c' which is self-delimiting\n"
+                 "                        "
+                 " but invalid at this point\n",
                  *cur ));
 
       error = PSaux_Err_Invalid_File_Format;
@@ -1153,8 +1156,10 @@
           }
           else
           {
-            FT_ERROR(( "ps_parser_load_field: expected a name or string "
-                       "but found token of type %d instead\n",
+            FT_ERROR(( "ps_parser_load_field:"
+                       " expected a name or string\n"
+                       "                     "
+                       " but found token of type %d instead\n",
                        token.type ));
             error = PSaux_Err_Invalid_File_Format;
             goto Exit;
@@ -1191,8 +1196,8 @@
 
           if ( result < 0 )
           {
-            FT_ERROR(( "ps_parser_load_field: "
-                       "expected four integers in bounding box\n" ));
+            FT_ERROR(( "ps_parser_load_field:"
+                       " expected four integers in bounding box\n" ));
             error = PSaux_Err_Invalid_File_Format;
             goto Exit;
           }
@@ -1309,7 +1314,7 @@
   FT_LOCAL_DEF( FT_Error )
   ps_parser_to_bytes( PS_Parser  parser,
                       FT_Byte*   bytes,
-                      FT_Long    max_bytes,
+                      FT_Offset  max_bytes,
                       FT_Long*   pnum_bytes,
                       FT_Bool    delimiters )
   {
@@ -1551,16 +1556,9 @@
       FT_Byte*    control = (FT_Byte*)outline->tags + outline->n_points;
 
 
-      if ( builder->shift )
-      {
-        x >>= 16;
-        y >>= 16;
-      }
-      point->x = x;
-      point->y = y;
+      point->x = FIXED_TO_INT( x );
+      point->y = FIXED_TO_INT( y );
       *control = (FT_Byte)( flag ? FT_CURVE_TAG_ON : FT_CURVE_TAG_CUBIC );
-
-      builder->last = *point;
     }
     outline->n_points++;
   }
@@ -1590,6 +1588,13 @@
     FT_Outline*  outline = builder->current;
     FT_Error     error;
 
+
+    /* this might happen in invalid fonts */
+    if ( !outline )
+    {
+      FT_ERROR(( "t1_builder_add_contour: no outline to add points to\n" ));
+      return PSaux_Err_Invalid_File_Format;
+    }
 
     if ( !builder->load_points )
     {
@@ -1624,7 +1629,7 @@
 
     if ( builder->parse_state == T1_Parse_Have_Path )
       error = PSaux_Err_Ok;
-    else if ( builder->parse_state == T1_Parse_Have_Moveto )
+    else
     {
       builder->parse_state = T1_Parse_Have_Path;
       error = t1_builder_add_contour( builder );
@@ -1668,8 +1673,8 @@
 
     if ( outline->n_contours > 0 )
     {
-      /* Don't add contours only consisting of one point, i.e., */
-      /* check whether begin point and last point are the same. */
+      /* Don't add contours only consisting of one point, i.e.,  */
+      /* check whether the first and the last point is the same. */
       if ( first == outline->n_points - 1 )
       {
         outline->n_contours--;

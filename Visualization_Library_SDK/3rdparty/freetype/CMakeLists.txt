@@ -24,7 +24,7 @@ PROJECT(${VLFREETYPE_NAME})
 
 add_definitions(-D_LIB -D_CRT_SECURE_NO_WARNINGS -DFT2_BUILD_LIBRARY)
 
-add_library(${VLFREETYPE_NAME} STATIC 
+set(VLFREETYPE_SRC
 	src/autofit/autofit.c
 	src/bdf/bdf.c
 	src/cff/cff.c
@@ -61,6 +61,12 @@ add_library(${VLFREETYPE_NAME} STATIC
 	src/type42/type42.c
 	src/winfonts/winfnt.c
 )
+
+if (APPLE)
+	set(VLFREETYPE_SRC	${VLFREETYPE_SRC} src/base/ftmac.c)
+endif(APPLE)
+
+add_library(${VLFREETYPE_NAME} STATIC ${VLFREETYPE_SRC})
 
 set_target_properties(${VLFREETYPE_NAME} PROPERTIES DEBUG_POSTFIX "-d")
 
