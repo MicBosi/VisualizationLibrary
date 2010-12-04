@@ -5,7 +5,8 @@
 /*    Load the basic TrueType tables, i.e., tables that can be either in   */
 /*    TTF or OTF fonts (body).                                             */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 by       */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,   */
+/*            2010 by                                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -77,7 +78,8 @@
     {
       /* For compatibility with Windows, we consider    */
       /* zero-length tables the same as missing tables. */
-      if ( entry->Tag == tag ) {
+      if ( entry->Tag == tag )
+      {
         if ( entry->Length != 0 )
         {
           FT_TRACE4(( "found table.\n" ));
@@ -91,9 +93,9 @@
 
 #ifdef FT_DEBUG_LEVEL_TRACE
     if ( zero_length )
-      FT_TRACE4(( "ignoring empty table!\n" ));
+      FT_TRACE4(( "ignoring empty table\n" ));
     else
-      FT_TRACE4(( "could not find table!\n" ));
+      FT_TRACE4(( "could not find table\n" ));
 #endif
 
     return NULL;
@@ -168,10 +170,10 @@
   check_table_dir( SFNT_Header  sfnt,
                    FT_Stream    stream )
   {
-    FT_Error  error;
-    FT_UInt   nn, valid_entries = 0;
-    FT_UInt   has_head = 0, has_sing = 0, has_meta = 0;
-    FT_ULong  offset = sfnt->offset + 12;
+    FT_Error   error;
+    FT_UShort  nn, valid_entries = 0;
+    FT_UInt    has_head = 0, has_sing = 0, has_meta = 0;
+    FT_ULong   offset = sfnt->offset + 12;
 
     static const FT_Frame_Field  table_dir_entry_fields[] =
     {
@@ -364,7 +366,8 @@
     error = check_table_dir( &sfnt, stream );
     if ( error )
     {
-      FT_TRACE2(( "tt_face_load_font_dir: invalid table directory for TrueType!\n" ));
+      FT_TRACE2(( "tt_face_load_font_dir:"
+                  " invalid table directory for TrueType\n" ));
 
       goto Exit;
     }
@@ -381,6 +384,10 @@
 
     entry = face->dir_tables;
 
+    FT_TRACE2(( "\n"
+                "  tag    offset    length   checksum\n"
+                "  ----------------------------------\n" ));
+
     for ( nn = 0; nn < sfnt.num_tables; nn++ )
     {
       entry->Tag      = FT_GET_TAG4();
@@ -393,13 +400,14 @@
         continue;
       else
       {
-        FT_TRACE2(( "  %c%c%c%c  -  %08lx  -  %08lx\n",
+        FT_TRACE2(( "  %c%c%c%c  %08lx  %08lx  %08lx\n",
                     (FT_Char)( entry->Tag >> 24 ),
                     (FT_Char)( entry->Tag >> 16 ),
                     (FT_Char)( entry->Tag >> 8  ),
                     (FT_Char)( entry->Tag       ),
                     entry->Offset,
-                    entry->Length ));
+                    entry->Length,
+                    entry->CheckSum ));
         entry++;
       }
     }
@@ -677,18 +685,29 @@
       /*      broken fonts like `Keystrokes MT' :-(           */
       /*                                                      */
       /*   We allocate 64 function entries by default when    */
-      /*   the maxFunctionDefs field is null.                 */
+      /*   the maxFunctionDefs value is smaller.              */
 
-      if ( maxProfile->maxFunctionDefs == 0 )
+      if ( maxProfile->maxFunctionDefs < 64 )
         maxProfile->maxFunctionDefs = 64;
 
       /* we add 4 phantom points later */
       if ( maxProfile->maxTwilightPoints > ( 0xFFFFU - 4 ) )
       {
-        FT_ERROR(( "Too much twilight points in `maxp' table;\n" ));
-        FT_ERROR(( "  some glyphs might be rendered incorrectly.\n" ));
+        FT_TRACE0(( "tt_face_load_maxp:"
+                    " too much twilight points in `maxp' table;\n"
+                    "                  "
+                    " some glyphs might be rendered incorrectly\n" ));
 
         maxProfile->maxTwilightPoints = 0xFFFFU - 4;
+      }
+
+      /* we arbitrarily limit recursion to avoid stack exhaustion */
+      if ( maxProfile->maxComponentDepth > 100 )
+      {
+        FT_TRACE0(( "tt_face_load_maxp:"
+                    " abnormally large component depth (%d) set to 100\n",
+                    maxProfile->maxComponentDepth ));
+        maxProfile->maxComponentDepth = 100;
       }
     }
 
@@ -779,7 +798,7 @@
 
     if ( storage_start > storage_limit )
     {
-      FT_ERROR(( "invalid `name' table\n" ));
+      FT_ERROR(( "tt_face_load_name: invalid `name' table\n" ));
       error = SFNT_Err_Name_Table_Missing;
       goto Exit;
     }

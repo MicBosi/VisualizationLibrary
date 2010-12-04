@@ -1,3 +1,186 @@
+======================================================================
+
+CHANGES BETWEEN 2.4.3 and 2.4.4
+
+  I. IMPORTANT BUG FIXES
+
+    - UVS support (TrueType/OpenType cmap format 14) support is fixed.
+      This regression has been introduced in version 2.4.0.
+
+  II. MISCELLANEOUS
+
+    - Detect tricky fonts (e.g. MingLiU)  by the lengths and checksums
+      of Type42-persistent subtables (`cvt ', `fpgm', and `prep') when
+      a TrueType font without family name is given.  The previous fix,
+      introduced in 2.4.3,  was too rigorous,  causing many  subsetted
+      fonts (mainly  from PDF files) displayed badly  because FreeType
+      forced  rendering with  the TrueType bytecode engine  instead of
+      the autohinter.
+
+    - Better support for 64bit platforms.
+
+    - More fixes to improve handling of broken fonts.
+
+
+======================================================================
+
+CHANGES BETWEEN 2.4.2 and 2.4.3
+
+  I. IMPORTANT BUG FIXES
+
+    - Fix rendering of certain cubic, S-shaped arcs.   This regression
+      has been introduced in version 2.4.0.
+
+
+  II. MISCELLANEOUS
+
+    - To  fix  the  above  mentioned  rendering  issue,  a  new spline
+      flattening algorithm  has been  introduced which  speeds up both
+      conic and cubic arcs.
+
+    - Handling of broken fonts has been further improved.
+
+
+======================================================================
+
+CHANGES BETWEEN 2.4.1 and 2.4.2
+
+  I. IMPORTANT BUG FIXES
+
+    - A stack overflow in CFF Type2 CharStrings interpreter is fixed.
+
+    - Handling Type 42 font deallocation was broken; additionally, the
+      library is now more robust against malformed Type 42 fonts.
+
+
+  II. MISCELLANEOUS
+
+    - Two new functions,  `FT_Reference_Library' (in FT_MODULE_H)  and
+      `FT_Reference_Face'  (in  FT_FREETYPE_H),  have  been  added  to
+      simplify life-cycle management.  A counter gets initialized to 1
+      at the  time an  FT_Library (or  FT_Face) structure  is created.
+      The  two  new   functions  increment  the  respective   counter.
+      `FT_Done_Library' and `FT_Done_Face' then only destroy a library
+      or face if the counter is 1, otherwise they simply decrement the
+      counter. 
+
+
+======================================================================
+
+CHANGES BETWEEN 2.4.0 and 2.4.1
+
+  I. IMPORTANT CHANGES
+
+    - A serious bug in the  CFF font module prevented  display of many
+      glyphs in CFF fonts like `MinionPro-Regular.otf'.
+
+
+======================================================================
+
+CHANGES BETWEEN 2.3.12 and 2.4.0
+
+  I. IMPORTANT CHANGES
+
+    - Since May  2010, all  patents  regarding  the TrueType  bytecode
+      interpreter have expired worldwide.  Consequently, we now define
+      TT_CONFIG_OPTION_BYTECODE_INTERPRETER by  default (and  undefine
+      TT_CONFIG_OPTION_UNPATENTED_HINTING).
+
+    - A new function `FT_Library_SetLcdFilterWeights' is available  to
+      adjust the filter weights set by `FT_Library_SetLcdFilter'.
+
+
+  II. MISCELLANEOUS
+
+    - Thanks to many reports from Robert Święcki, FreeType's stability
+      in handling broken or damaged fonts is much improved.
+
+    - Support  for LCD  filter  control has  been  added to  the  demo
+      programs `ftdiff' and `ftview'.
+
+
+======================================================================
+
+CHANGES BETWEEN 2.3.11 and 2.3.12
+
+  I. IMPORTANT CHANGES
+
+    - For  `FT_Open_Face',  new  parameters  are  available  to ignore
+      preferred family names: FT_PARAM_TAG_IGNORE_PREFERRED_FAMILY and
+      FT_PARAM_TAG_IGNORE_PREFERRED_SUBFAMILY.
+
+
+  II. MISCELLANEOUS
+
+    - Support  for  incremental  font  loading  (controlled  with  the
+      FT_CONFIG_OPTION_INCREMENTAL macro) is now active by default.
+
+    - Better support for vertical metrics.
+
+    - Various minor bug fixes.
+
+
+======================================================================
+
+CHANGES BETWEEN 2.3.10 and 2.3.11
+
+  I. IMPORTANT BUG FIXES
+
+    - Version 2.3.10 broke PCF support.
+
+
+======================================================================
+
+CHANGES BETWEEN 2.3.10 and 2.3.9
+
+  I. IMPORTANT BUG FIXES
+
+    - If all  ASCII digits in a  font have the  same (unscaled) width,
+      the autohinter respects this and won't change it.
+
+    - TrueType fonts  are now  rasterized correctly  if the horizontal
+      and vertical resolution differ.
+
+    - Type 1 fonts are now handled with increased precision internally
+      to avoid serious rounding issues if non-integral coordinates are
+      encountered.
+
+    - Horizontally  condensed CFF  fonts (using the font  matrix) were
+      rendered  incorrectly.   This  bug  has  been  introduced  after
+      release 2.3.5.
+
+
+  II. IMPORTANT CHANGES
+
+    - Support for the SFNT cmap 13 table format (as defined by the new
+      OpenType 1.6 specification) has been added.
+
+    - B/W rasterization  of well-hinted TrueType  fonts at small sizes
+      has been greatly improved.
+
+    - Calculation  of  vertical  metrics in  OpenType  fonts has  been
+      improved.
+
+
+  III. MISCELLANEOUS
+
+    - It  is now  possible to  change  the emboldening  factor in  the
+      `ftview' demo program with keys `e' and `E'.
+
+    - It is  now possible  to change the  slant value in  the `ftview'
+      demo program with keys `s' and `S'.
+
+    - The  5-levels  grayscale  mode of  the `ftraster'  module (which
+      FreeType doesn't use by default) was broken since version 2.3.0.
+
+    - Compilation of the  `ftgrays' and `ftraster' modules  was broken
+      in stand-alone mode.
+
+    - Various fixes for compilation on 64bit and 16bit architectures.
+
+
+======================================================================
+
 CHANGES BETWEEN 2.3.9 and 2.3.8
 
   I. IMPORTANT BUG FIXES
@@ -3299,7 +3482,8 @@ Extensions support:
 
 ------------------------------------------------------------------------
 
-Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 by
+Copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
+          2010 by
 David Turner, Robert Wilhelm, and Werner Lemberg.
 
 This  file  is  part  of the  FreeType  project, and may  only be  used,

@@ -4,7 +4,8 @@
 /*                                                                         */
 /*    Type 42 objects manager (body).                                      */
 /*                                                                         */
-/*  Copyright 2002, 2003, 2004, 2005, 2006, 2007, 2008 by Roberto Alameda. */
+/*  Copyright 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009               */
+/*  by Roberto Alameda.                                                    */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
 /*  modified, and distributed under the terms of the FreeType project      */
@@ -19,8 +20,8 @@
 #include "t42parse.h"
 #include "t42error.h"
 #include FT_INTERNAL_DEBUG_H
-#include FT_INTERNAL_STREAM_H
 #include FT_LIST_H
+#include FT_TRUETYPE_IDS_H 
 
 
 #undef  FT_COMPONENT
@@ -70,7 +71,7 @@
 
     if ( !loader.charstrings.init )
     {
-      FT_ERROR(( "T42_Open_Face: no charstrings array in face!\n" ));
+      FT_ERROR(( "T42_Open_Face: no charstrings array in face\n" ));
       error = T42_Err_Invalid_File_Format;
     }
 
@@ -100,8 +101,8 @@
       /* The index is then stored in type1.encoding.char_index, and  */
       /* the name in type1.encoding.char_name                        */
 
-      min_char = +32000;
-      max_char = -32000;
+      min_char = 0;
+      max_char = 0;
 
       charcode = 0;
       for ( ; charcode < loader.encoding_table.max_elems; charcode++ )
@@ -127,13 +128,14 @@
               {
                 if ( charcode < min_char )
                   min_char = charcode;
-                if ( charcode > max_char )
-                  max_char = charcode;
+                if ( charcode >= max_char )
+                  max_char = charcode + 1;
               }
               break;
             }
           }
       }
+
       type1->encoding.code_first = min_char;
       type1->encoding.code_last  = max_char;
       type1->encoding.num_chars  = loader.num_chars;
@@ -329,39 +331,42 @@
         charmap.face = root;
 
         /* first of all, try to synthesize a Unicode charmap */
-        charmap.platform_id = 3;
-        charmap.encoding_id = 1;
+        charmap.platform_id = TT_PLATFORM_MICROSOFT;
+        charmap.encoding_id = TT_MS_ID_UNICODE_CS;
         charmap.encoding    = FT_ENCODING_UNICODE;
 
-        FT_CMap_New( cmap_classes->unicode, NULL, &charmap, NULL );
+        error = FT_CMap_New( cmap_classes->unicode, NULL, &charmap, NULL );
+        if ( error && FT_Err_No_Unicode_Glyph_Name != error )
+          goto Exit;
+        error = FT_Err_Ok;
 
         /* now, generate an Adobe Standard encoding when appropriate */
-        charmap.platform_id = 7;
+        charmap.platform_id = TT_PLATFORM_ADOBE;
         clazz               = NULL;
 
         switch ( type1->encoding_type )
         {
         case T1_ENCODING_TYPE_STANDARD:
           charmap.encoding    = FT_ENCODING_ADOBE_STANDARD;
-          charmap.encoding_id = 0;
+          charmap.encoding_id = TT_ADOBE_ID_STANDARD;
           clazz               = cmap_classes->standard;
           break;
 
         case T1_ENCODING_TYPE_EXPERT:
           charmap.encoding    = FT_ENCODING_ADOBE_EXPERT;
-          charmap.encoding_id = 1;
+          charmap.encoding_id = TT_ADOBE_ID_EXPERT;
           clazz               = cmap_classes->expert;
           break;
 
         case T1_ENCODING_TYPE_ARRAY:
           charmap.encoding    = FT_ENCODING_ADOBE_CUSTOM;
-          charmap.encoding_id = 2;
+          charmap.encoding_id = TT_ADOBE_ID_CUSTOM;
           clazz               = cmap_classes->custom;
           break;
 
         case T1_ENCODING_TYPE_ISOLATIN1:
           charmap.encoding    = FT_ENCODING_ADOBE_LATIN_1;
-          charmap.encoding_id = 3;
+          charmap.encoding_id = TT_ADOBE_ID_LATIN_1;
           clazz               = cmap_classes->unicode;
           break;
 
@@ -370,7 +375,7 @@
         }
 
         if ( clazz )
-          FT_CMap_New( clazz, NULL, &charmap, NULL );
+          error = FT_CMap_New( clazz, NULL, &charmap, NULL );
 
 #if 0
         /* Select default charmap */

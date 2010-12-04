@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    SFNT object management (base).                                       */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 by       */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010 by */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -26,6 +26,7 @@
 #include FT_TRUETYPE_IDS_H
 #include FT_TRUETYPE_TAGS_H
 #include FT_SERVICE_POSTSCRIPT_CMAPS_H
+#include FT_SFNT_NAMES_H
 #include "sferrors.h"
 
 #ifdef TT_CONFIG_OPTION_BDF
@@ -49,9 +50,9 @@
   tt_name_entry_ascii_from_utf16( TT_NameEntry  entry,
                                   FT_Memory     memory )
   {
-    FT_String*  string;
+    FT_String*  string = NULL;
     FT_UInt     len, code, n;
-    FT_Byte*    read = (FT_Byte*)entry->string;
+    FT_Byte*    read   = (FT_Byte*)entry->string;
     FT_Error    error;
 
 
@@ -80,9 +81,9 @@
   tt_name_entry_ascii_from_other( TT_NameEntry  entry,
                                   FT_Memory     memory )
   {
-    FT_String*  string;
+    FT_String*  string = NULL;
     FT_UInt     len, code, n;
-    FT_Byte*    read = (FT_Byte*)entry->string;
+    FT_Byte*    read   = (FT_Byte*)entry->string;
     FT_Error    error;
 
 
@@ -159,7 +160,7 @@
       /* According to the OpenType 1.3 specification, only Microsoft or  */
       /* Apple platform IDs might be used in the `name' table.  The      */
       /* `Unicode' platform is reserved for the `cmap' table, and the    */
-      /* `Iso' one is deprecated.                                        */
+      /* `ISO' one is deprecated.                                        */
       /*                                                                 */
       /* However, the Apple TrueType specification doesn't say the same  */
       /* thing and goes to suggest that all Unicode `name' table entries */
@@ -527,13 +528,27 @@
 #endif
     FT_Bool       has_outline;
     FT_Bool       is_apple_sbit;
+    FT_Bool       ignore_preferred_family = FALSE;
+    FT_Bool       ignore_preferred_subfamily = FALSE;
 
     SFNT_Service  sfnt = (SFNT_Service)face->sfnt;
 
     FT_UNUSED( face_index );
-    FT_UNUSED( num_params );
-    FT_UNUSED( params );
 
+    /* Check parameters */
+    
+    {
+      FT_Int  i;
+
+
+      for ( i = 0; i < num_params; i++ )
+      {
+        if ( params[i].tag == FT_PARAM_TAG_IGNORE_PREFERRED_FAMILY )
+          ignore_preferred_family = TRUE;
+        else if ( params[i].tag == FT_PARAM_TAG_IGNORE_PREFERRED_SUBFAMILY )
+          ignore_preferred_subfamily = TRUE;
+      }
+    }
 
     /* Load tables */
 
@@ -676,9 +691,7 @@
       LOAD_( os2 );
       if ( error )
       {
-        if ( error != SFNT_Err_Table_Missing )
-          goto Exit;
-
+        /* we treat the table as missing if there are any errors */
         face->os2.version = 0xFFFFU;
       }
     }
@@ -722,26 +735,30 @@
     /* Foundation (WPF).  This flag has been introduced in version   */
     /* 1.5 of the OpenType specification (May 2008).                 */
 
+    face->root.family_name = NULL;
+    face->root.style_name  = NULL;
     if ( face->os2.version != 0xFFFFU && face->os2.fsSelection & 256 )
     {
-      GET_NAME( PREFERRED_FAMILY, &face->root.family_name );
+      if ( !ignore_preferred_family )
+        GET_NAME( PREFERRED_FAMILY, &face->root.family_name );
       if ( !face->root.family_name )
         GET_NAME( FONT_FAMILY, &face->root.family_name );
 
-      GET_NAME( PREFERRED_SUBFAMILY, &face->root.style_name );
+      if ( !ignore_preferred_subfamily )
+        GET_NAME( PREFERRED_SUBFAMILY, &face->root.style_name );
       if ( !face->root.style_name )
         GET_NAME( FONT_SUBFAMILY, &face->root.style_name );
     }
     else
     {
       GET_NAME( WWS_FAMILY, &face->root.family_name );
-      if ( !face->root.family_name )
+      if ( !face->root.family_name && !ignore_preferred_family )
         GET_NAME( PREFERRED_FAMILY, &face->root.family_name );
       if ( !face->root.family_name )
         GET_NAME( FONT_FAMILY, &face->root.family_name );
 
       GET_NAME( WWS_SUBFAMILY, &face->root.style_name );
-      if ( !face->root.style_name )
+      if ( !face->root.style_name && !ignore_preferred_subfamily )
         GET_NAME( PREFERRED_SUBFAMILY, &face->root.style_name );
       if ( !face->root.style_name )
         GET_NAME( FONT_SUBFAMILY, &face->root.style_name );
@@ -749,8 +766,8 @@
 
     /* now set up root fields */
     {
-      FT_Face   root  = &face->root;
-      FT_Int32  flags = root->face_flags;
+      FT_Face  root  = &face->root;
+      FT_Long  flags = root->face_flags;
 
 
       /*********************************************************************/
