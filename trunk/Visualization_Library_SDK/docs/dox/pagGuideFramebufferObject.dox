@@ -1,0 +1,15 @@
+/**
+	\page pagGuideFramebufferObject Framebuffer Objects Tutorial
+
+	This tutorial shows how to use framebuffer objects to perform offscreen rendering.
+
+	\image html pagGuideFBO.jpg
+	
+	In this tutorial a scene with a few rotating toruses is rendered to a texture. Such texture is then applied to a cube and a plane in 
+	a second rendering.
+	
+	[From \p App_Framebuffer_Object.cpp]
+	\dontinclude App_Framebuffer_Object.cpp
+	\skip class
+	\until // Have fun!
+*/

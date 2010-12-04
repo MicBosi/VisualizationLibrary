@@ -49,6 +49,7 @@ SET(VL_DOCUMENTATION
 	dox/pagGuideClipping.dox
 	dox/pagGuideEdgeRendering.dox
 	dox/pagGuideExtrusion.dox
+	dox/pagGuideFramebufferObject.dox
 	dox/pagGuideGLSL.dox
 	dox/pagGuideInterpolators.dox
 	dox/pagGuideIO.dox
