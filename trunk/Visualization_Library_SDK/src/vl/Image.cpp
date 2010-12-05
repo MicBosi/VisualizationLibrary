@@ -114,7 +114,7 @@ Image::Image(int x, int y, int z, int bytealign, EImageFormat format, EImageType
 //! are not valid.\n
 //! Invalid type/format combinations are for example:
 //! - OGL_RGB / IT_UNSIGNED_SHORT_4_4_4_4: since here the format has 3 components while the type has 4.
-//! - IF_COMPRESSED_RGB_S3TC_DXT1_EXT / IT_BYTE: since compressed formats require IT_COMPRESSED_TYPE.
+//! - IF_COMPRESSED_RGB_S3TC_DXT1_EXT / IT_BYTE: since compressed formats require IT_IMPLICIT_TYPE.
 bool Image::isValid() const
 {
   // size check
@@ -167,7 +167,7 @@ bool Image::isValid() const
     default:
     break;
 
-    case IT_COMPRESSED_TYPE:
+    case IT_IMPLICIT_TYPE:
     {
       switch(format())
       {
@@ -273,7 +273,7 @@ String Image::printType() const
 {
   std::map<int, const char*> ty;
 
-  ty[IT_COMPRESSED_TYPE] = "IT_COMPRESSED_TYPE";
+  ty[IT_IMPLICIT_TYPE] = "IT_IMPLICIT_TYPE";
   ty[IT_UNSIGNED_BYTE] = "IT_UNSIGNED_BYTE";
   ty[IT_BYTE] = "IT_BYTE";
   ty[IT_UNSIGNED_SHORT] = "IT_UNSIGNED_SHORT";
