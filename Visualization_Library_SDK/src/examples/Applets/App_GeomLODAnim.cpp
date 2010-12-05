@@ -49,10 +49,12 @@ public:
     mLastUpdatedLod = NULL;
 
     vl::ref<vl::Geometry> geom;
+    const float side = 40;
+    const int detail = 60;
 
     // LOD 0
-    geom = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 50, 50 );
-    geom->setColor(vlut::aqua);
+    geom = vlut::makeGrid( vl::vec3(0,0,0), side, side, detail, detail );
+    geom->setColor(vlut::royalblue);
     actor->lod(0) = geom.get();
 
     geom->setVBOEnabled(true);
@@ -62,8 +64,8 @@ public:
     }
 
     // LOD 1
-    geom = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 15, 15 );
-    geom->setColor(vlut::aqua);
+    geom = vlut::makeGrid( vl::vec3(0,0,0), side, side, detail/2, detail/2 );
+    geom->setColor(vlut::green);
     actor->lod(1) = geom.get();
 
     geom->setVBOEnabled(true);
@@ -73,8 +75,8 @@ public:
     }
 
     // LOD 2
-    geom = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 8, 8 );
-    geom->setColor(vlut::aqua);
+    geom = vlut::makeGrid( vl::vec3(0,0,0), side, side, detail/4, detail/4 );
+    geom->setColor(vlut::yellow);
     actor->lod(2) = geom.get();
 
     geom->setVBOEnabled(true);
@@ -87,7 +89,7 @@ public:
   // respond to onActorRenderStarted() event by animating the wave
   virtual void onActorRenderStarted(vl::Actor*, vl::Real frame_clock, const vl::Camera*, vl::Renderable* renderable, const vl::Shader*, int pass)
   {
-    /* the beauty of this function is that in a few lines of code we update 3 different LOD levels  */
+    /* the beauty of this function is that in a few lines of code we update 3 different LOD levels!  */
 
     // update the geometry only the first time it is drawn
     if (pass > 0)
@@ -107,20 +109,22 @@ public:
       vl::fvec3* vec = vecarr3->begin();
       vl::vec3 center = renderable->boundingBox().center();
 
-      float phase = 1.5;
-      float freq  = 1.0;
+      float phi = 0.5;
+      float theta = 1.5;
       for(size_t i=0; i<vecarr3->size(); ++i)
       {
         // flatten to xz plane and compute distance
         vec[i].y() = 0;
         vl::Real d = (vl::vec3(vec[i])-center).length();
-        vec[i].y() = (float)cos( -frame_clock * vl::fPi * freq + d * phase );
+        vec[i].y() = (float)cos( -frame_clock * vl::fPi * theta + d * phi ) * 2.0f;
       }
 
       if (GLEW_ARB_vertex_buffer_object)
       {
         geom->vertexArray()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW, false);
       }
+
+      // when modifying the vertices of a geometry always remember to update the bounding volumes!
       geom->setBoundsDirty(true);
     }
   }
@@ -147,14 +151,15 @@ public:
     const int ring_obj_count = 20;
 
     /* define a LOD evaluator with 3 disance ranges: [0] --- 70 --- 150 --- [inf] */
-    vl::ref<vl::DistanceLODEvaluator> lod = new vl::DistanceLODEvaluator;
-    lod->addDistanceRange(70);
-    lod->addDistanceRange(150);
+    vl::ref<vl::DistanceLODEvaluator> lod_eval = new vl::DistanceLODEvaluator;
+    lod_eval->addDistanceRange(70);
+    lod_eval->addDistanceRange(150);
 
     /* to be used later */
     vl::ref<vl::Light> light = new vl::Light(0);
     vl::ref<vl::Shader> wire_sh = new vl::Shader;
     vl::ref<vl::Shader> fill_sh = new vl::Shader;
+    vl::ref<vl::Shader> wave_sh = new vl::Shader;
 
     /* fill pass */
     fill_sh->enable(vl::EN_DEPTH_TEST);
@@ -176,16 +181,22 @@ public:
     wire_sh->gocPolygonOffset()->set(-1.0f, -1.0f);
     wire_sh->setRenderState( light.get() );
 
+    /* wave pass */
+    wave_sh->enable(vl::EN_BLEND); // for line smoothing
+    wave_sh->enable(vl::EN_LINE_SMOOTH);
+    wave_sh->gocHint()->setLineSmoothHint(vl::HM_NICEST);
+    wave_sh->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+
     /* animated wave actor has a single Effect LOD */
     vl::ref<vl::Effect> wave_fx = new vl::Effect;
-    wave_fx->setLOD( 0, wire_sh.get() );
+    wave_fx->setLOD( 0, wave_sh.get() );
 
     /* add wave actor */
     vl::ref<vl::Actor> wave_act = sceneManager()->tree()->addActor(NULL, wave_fx.get(), NULL);
     /* install actor animation callback. */
     wave_act->actorEventCallbacks()->push_back( new WaveActorAnimator(wave_act.get()) );
     /* install the LOD evaluator */
-    wave_act->setLODEvaluator(lod.get());
+    wave_act->setLODEvaluator(lod_eval.get());
 
     /* effect used by the objects forming a ring around the central wave */
     vl::ref<vl::Effect> ring_fx = new vl::Effect;
@@ -194,7 +205,7 @@ public:
     ring_fx->setLOD( 2, wire_sh.get() ); // LOD 2: pass #1 = wire_sh
     
     /* install the LOD evaluator to be used with the ring objects */
-    ring_fx->setLODEvaluator(lod.get());
+    ring_fx->setLODEvaluator(lod_eval.get());
 
     /* ring element lod #0 */
     vl::ref<vl::Geometry> geom_0 = vlut::makeIcosphere(vl::vec3(0,0,0),10,1);
@@ -227,7 +238,7 @@ public:
       act->lod(2) = geom_2.get();
 
       /* install the LOD evaluator*/
-      act->setLODEvaluator(lod.get());
+      act->setLODEvaluator(lod_eval.get());
     }
   }
 
