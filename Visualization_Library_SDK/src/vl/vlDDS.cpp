@@ -578,13 +578,13 @@ ref<Image> vl::loadDDS(VirtualFile* file)
       d = d == 0 ? 1 : d;
 
       if (image_type == DDS_IMAGE_2D)
-        image[i]->allocate2D(w, h, 1, DXT1, IT_COMPRESSED_TYPE);
+        image[i]->allocate2D(w, h, 1, DXT1, IT_IMPLICIT_TYPE);
       else
       if (image_type == DDS_IMAGE_CUBEMAP)
-        image[i]->allocateCubemap(w, h, 1, DXT1, IT_COMPRESSED_TYPE);
+        image[i]->allocateCubemap(w, h, 1, DXT1, IT_IMPLICIT_TYPE);
       else
       if (image_type == DDS_IMAGE_3D)
-        image[i]->allocate3D(w, h, d, 1, DXT1, IT_COMPRESSED_TYPE);
+        image[i]->allocate3D(w, h, d, 1, DXT1, IT_IMPLICIT_TYPE);
     }
 
     for(int face=0; face<max_face; ++face)
@@ -595,7 +595,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         h = h == 0 ? 1 : h;
         d = d == 0 ? 1 : d;
 
-        int req_mem = Image::requiredMemory( w, h, d, 1, DXT1, IT_COMPRESSED_TYPE, false );
+        int req_mem = Image::requiredMemory( w, h, d, 1, DXT1, IT_IMPLICIT_TYPE, false );
         int offset = req_mem*face;
         // fread(image[i]->pixels() + offset, 1, req_mem, fin);
         file->read(image[i]->pixels() + offset, req_mem);
@@ -612,13 +612,13 @@ ref<Image> vl::loadDDS(VirtualFile* file)
       d = d == 0 ? 1 : d;
 
       if (image_type == DDS_IMAGE_2D)
-        image[i]->allocate2D(w, h, 1, IF_COMPRESSED_RGBA_S3TC_DXT3, IT_COMPRESSED_TYPE);
+        image[i]->allocate2D(w, h, 1, IF_COMPRESSED_RGBA_S3TC_DXT3, IT_IMPLICIT_TYPE);
       else
       if (image_type == DDS_IMAGE_CUBEMAP)
-        image[i]->allocateCubemap(w, h, 1, IF_COMPRESSED_RGBA_S3TC_DXT3, IT_COMPRESSED_TYPE);
+        image[i]->allocateCubemap(w, h, 1, IF_COMPRESSED_RGBA_S3TC_DXT3, IT_IMPLICIT_TYPE);
       else
       if (image_type == DDS_IMAGE_3D)
-        image[i]->allocate3D(w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT3, IT_COMPRESSED_TYPE);
+        image[i]->allocate3D(w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT3, IT_IMPLICIT_TYPE);
     }
 
     for(int face=0; face<max_face; ++face)
@@ -629,7 +629,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         h = h == 0 ? 1 : h;
         d = d == 0 ? 1 : d;
 
-        int req_mem = Image::requiredMemory( w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT3, IT_COMPRESSED_TYPE, false );
+        int req_mem = Image::requiredMemory( w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT3, IT_IMPLICIT_TYPE, false );
         int offset = req_mem*face;
         // fread(image[i]->pixels() + offset, 1, req_mem, fin);
         file->read(image[i]->pixels() + offset, req_mem);
@@ -646,13 +646,13 @@ ref<Image> vl::loadDDS(VirtualFile* file)
       d = d == 0 ? 1 : d;
 
       if (image_type == DDS_IMAGE_2D)
-        image[i]->allocate2D(w, h, 1, IF_COMPRESSED_RGBA_S3TC_DXT5, IT_COMPRESSED_TYPE);
+        image[i]->allocate2D(w, h, 1, IF_COMPRESSED_RGBA_S3TC_DXT5, IT_IMPLICIT_TYPE);
       else
       if (image_type == DDS_IMAGE_CUBEMAP)
-        image[i]->allocateCubemap(w, h, 1, IF_COMPRESSED_RGBA_S3TC_DXT5, IT_COMPRESSED_TYPE);
+        image[i]->allocateCubemap(w, h, 1, IF_COMPRESSED_RGBA_S3TC_DXT5, IT_IMPLICIT_TYPE);
       else
       if (image_type == DDS_IMAGE_3D)
-        image[i]->allocate3D(w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT5, IT_COMPRESSED_TYPE);
+        image[i]->allocate3D(w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT5, IT_IMPLICIT_TYPE);
     }
 
     for(int face=0; face<max_face; ++face)
@@ -663,7 +663,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         h = h == 0 ? 1 : h;
         d = d == 0 ? 1 : d;
 
-        int req_mem = Image::requiredMemory( w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT5, IT_COMPRESSED_TYPE, false );
+        int req_mem = Image::requiredMemory( w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT5, IT_IMPLICIT_TYPE, false );
         int offset = req_mem*face;
         // fread(image[i]->pixels() + offset, 1, req_mem, fin);
         file->read(image[i]->pixels() + offset, req_mem);
