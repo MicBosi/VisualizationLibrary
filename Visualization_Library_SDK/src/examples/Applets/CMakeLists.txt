@@ -74,7 +74,9 @@ set(VL_APPLETS_SRC
   App_Primitives.cpp
   App_RenderOrder.cpp
   App_ScatterPlot3D.cpp
-  App_ShaderLOD.cpp
+  App_ShaderMultiPassLODAnim.cpp
+  App_ShaderMultiPassAlpha.cpp
+  App_GeomLODAnim.cpp
   App_ShaderOverride.cpp
   App_Terrain.cpp
   App_Tessellator.cpp
