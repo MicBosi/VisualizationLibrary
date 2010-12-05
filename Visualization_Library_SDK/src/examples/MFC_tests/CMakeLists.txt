@@ -38,6 +38,7 @@ target_link_libraries(
 	MFC_tests
 	${VLMFC_NAME}
 	${VLWIN32_NAME}
+	${VLAPPLETS_NAME}
 	${VISUALIZATIONLIBRARY_NAME}
 	${OPENGL_LIBRARIES}
 	${VLFREETYPE_NAME} #FreeTypeLibrary
