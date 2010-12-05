@@ -45,6 +45,9 @@ namespace vl
   //-----------------------------------------------------------------------------
   // RendererAbstract
   //-----------------------------------------------------------------------------
+  /** Base class providing all the basic funtionalities of a Renderer. 
+
+  */
   class RendererAbstract: public Object
   {
   public:
@@ -79,6 +82,7 @@ namespace vl
     /** The RenderTarget on which the rendering is performed. */
     virtual RenderTarget* renderTarget() = 0;
 
+    /** Dispatches the onRendererStarted() event to the registered RenderEventCallback objects. */
     void dispatchOnRendererStarted()
     {
       const Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
@@ -92,6 +96,7 @@ namespace vl
       }
     }
 
+    /** Dispatches the onRendererFinished() event to the registered RenderEventCallback objects. */
     void dispatchOnRendererFinished()
     {
       const Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
@@ -123,16 +128,22 @@ namespace vl
     /** Increments the rendering tick count. */
     void incrementRenderTick() { ++mRenderTick; }
 
+    /** The clear flags used to clear the viewport. */
     void setClearFlags(EClearFlags clear_flags) { mClearFlags = clear_flags; }
 
+    /** The clear flags used to clear the viewport. */
     EClearFlags clearFlags() const { return mClearFlags; }
 
+    /** Enable mask used to enable/disable the rendering of matching Actors. */
     void setEnableMask(unsigned int mask) { mEnableMask = mask; }
 
+    /** Enable mask used to enable/disable the rendering of matching Actors. */
     unsigned int enableMask() const { return mEnableMask; }
 
+    /** The current rendring frame time. vl::Renderer passes this value to ActorEventCallback::onActorRenderStarted() */
     void setFrameClock(Real t) { mFrameClock = t; }
 
+    /** The current rendring frame time. vl::Renderer passes this value to ActorEventCallback::onActorRenderStarted() */
     Real frameClock() const { return mFrameClock; }
 
   protected:

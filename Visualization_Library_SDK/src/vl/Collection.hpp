@@ -41,10 +41,8 @@ namespace vl
   //------------------------------------------------------------------------------
   // Collection
   //------------------------------------------------------------------------------
-  /**
-   * Reference counted container that encapsulates the base functionalites of an std::vector<>.
-   * This container can be used only with objects whose classes derive from Object.
-  */
+  /** Reference counted container that encapsulates the base functionalites of an std::vector<>.
+   * This container can be used only with objects whose classes derive from Object. */
   template <typename T>
   class Collection: public Object
   {
