@@ -309,7 +309,7 @@ namespace vl
     IF_DEPTH_STENCIL = GL_DEPTH_STENCIL,
 
     // compressed formats
-    // note: with these format the type must be IT_COMPRESSED_TYPE
+    // note: with these format the type must be IT_IMPLICIT_TYPE
 
     IF_COMPRESSED_RGB_S3TC_DXT1  = GL_COMPRESSED_RGB_S3TC_DXT1_EXT,
     IF_COMPRESSED_RGBA_S3TC_DXT1 = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,
@@ -463,7 +463,7 @@ namespace vl
 
   typedef enum
   {
-    IT_COMPRESSED_TYPE = 0,
+    IT_IMPLICIT_TYPE = 0, //!< The type is implicitly defined by the EImageFormat value, for ex. IF_COMPRESSED_RGB_S3TC_DXT1.
 
     IT_UNSIGNED_BYTE  = GL_UNSIGNED_BYTE,
     IT_BYTE           = GL_BYTE,
