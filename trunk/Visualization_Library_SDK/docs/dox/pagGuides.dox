@@ -322,6 +322,32 @@
  
 ****************************************************************************************
 
+	<table border=0 cellspacing=1 width=100% class="lightborder">
+	<tr>
+		<td width=100 align=left>
+			\image html pagShaderMultipassLODAnim_s.png
+		</td>
+		<td align=left>
+			\subpage pagShaderMultipassLODAnim
+		</td>
+	</tr>
+	</table>
+ 
+****************************************************************************************
+
+	<table border=0 cellspacing=1 width=100% class="lightborder">
+	<tr>
+		<td width=100 align=left>
+			\image html pagGeomLodAnim_s.png
+		</td>
+		<td align=left>
+			\subpage pagGeomLodAnim
+		</td>
+	</tr>
+	</table>
+ 
+****************************************************************************************
+
 	</td></tr></table>
 	</center>
 */

@@ -433,26 +433,28 @@ namespace
 void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
 {
   VL_CHECK_OGL()
-  VL_CHECK(cur)
   if (prev == NULL)
     memset( mEnableTable, 0, sizeof(mEnableTable) );
 
   /* iterate on current */
 
-  for( unsigned i=0; i<cur->enables().size(); ++i )
+  if (cur)
   {
-    mEnableTable[cur->enables()[i]] += 1; // 0 -> 1; 1 -> 2;
-    if ( !mCurrentEnable[cur->enables()[i]] )
+    for( unsigned i=0; i<cur->enables().size(); ++i )
     {
-      glEnable( TranslateEnable[cur->enables()[i]] );
-      mCurrentEnable[ cur->enables()[i] ] = true;
-#ifndef NDEBUG
-      if (glGetError() != GL_NO_ERROR)
+      mEnableTable[cur->enables()[i]] += 1; // 0 -> 1; 1 -> 2;
+      if ( !mCurrentEnable[cur->enables()[i]] )
       {
-        Log::error( Say("An unsupported enum has been enabled: %s.\n") << TranslateEnableString[cur->enables()[i]]);
-        VL_TRAP()
+        glEnable( TranslateEnable[cur->enables()[i]] );
+        mCurrentEnable[ cur->enables()[i] ] = true;
+  #ifndef NDEBUG
+        if (glGetError() != GL_NO_ERROR)
+        {
+          Log::error( Say("An unsupported enum has been enabled: %s.\n") << TranslateEnableString[cur->enables()[i]]);
+          VL_TRAP()
+        }
+  #endif
       }
-#endif
     }
   }
 
@@ -485,20 +487,22 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
 //------------------------------------------------------------------------------
 void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera )
 {
-  VL_CHECK(cur)
   if (prev == NULL)
     memset( mRenderStateTable, 0, sizeof(mRenderStateTable) );
 
   /* iterate on current */
 
-  for( unsigned i=0; i<cur->renderStates().size(); ++i )
+  if (cur)
   {
-    mRenderStateTable[cur->renderStates()[i]->type()] += 1; // 0 -> 1; 1 -> 2;
-    if ( mCurrentRenderState[cur->renderStates()[i]->type()] != cur->renderStates()[i] )
+    for( unsigned i=0; i<cur->renderStates().size(); ++i )
     {
-      mCurrentRenderState[cur->renderStates()[i]->type()] = cur->renderStates()[i].get();
-      VL_CHECK(cur->renderStates()[i]);      
-      cur->renderStates()[i]->apply(camera, this); VL_CHECK_OGL()
+      mRenderStateTable[cur->renderStates()[i]->type()] += 1; // 0 -> 1; 1 -> 2;
+      if ( mCurrentRenderState[cur->renderStates()[i]->type()] != cur->renderStates()[i] )
+      {
+        mCurrentRenderState[cur->renderStates()[i]->type()] = cur->renderStates()[i].get();
+        VL_CHECK(cur->renderStates()[i]);      
+        cur->renderStates()[i]->apply(camera, this); VL_CHECK_OGL()
+      }
     }
   }
 
