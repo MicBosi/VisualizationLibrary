@@ -41,7 +41,7 @@ set_target_properties(${VLQT4_NAME} PROPERTIES VERSION "${VLVERSION_MAJOR}.{VLVE
 # doesn't seem to work
 #if(MSVC)
 #	set_target_properties(${VLQT4_NAME} PROPERTIES COMPILE_FLAGS "/Zc:wchar_t-")
-#endif(MSVC)
+#endif()
 
 install(TARGETS ${VLQT4_NAME}
   RUNTIME DESTINATION bin

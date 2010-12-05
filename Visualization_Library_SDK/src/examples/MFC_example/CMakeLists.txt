@@ -46,9 +46,9 @@ target_link_libraries(
 )
 # Install directives
 install(TARGETS MFC_example
-RUNTIME DESTINATION bin
-LIBRARY DESTINATION lib
-ARCHIVE DESTINATION lib
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
 )
 set_target_properties(MFC_example PROPERTIES COMPILE_FLAGS -D_AFXDLL)
 set_target_properties(MFC_example PROPERTIES LINK_FLAGS /ENTRY:wWinMainCRTStartup)  

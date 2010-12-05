@@ -33,7 +33,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 PROJECT(Documentation)
 
-SET(VL_DOCUMENTATION
+set(VL_DOCUMENTATION
 	Doxyfile
 	dox/mainpage.dox
 	dox/namespaces.dox
