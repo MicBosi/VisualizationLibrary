@@ -121,8 +121,9 @@ namespace vl
     // EXT_packed_float
     TF_11F_G11F_B10F_EXT = GL_R11F_G11F_B10F_EXT,
 
-    // EXT_packed_depth_stencil
-    TF_DEPTH_STENCIL_EXT = GL_DEPTH_STENCIL_EXT,
+    // EXT_packed_depth_stencil / GL_ARB_framebuffer_object
+    TF_DEPTH_STENCIL    = GL_DEPTH_STENCIL,
+    TF_DEPTH24_STENCIL8 = GL_DEPTH24_STENCIL8,
 
     // ARB_depth_buffer_float
     TF_DEPTH_COMPONENT32F = GL_DEPTH_COMPONENT32F,
@@ -207,7 +208,55 @@ namespace vl
     TF_LUMINANCE8I_EXT = GL_LUMINANCE8I_EXT,
     TF_LUMINANCE_ALPHA8I_EXT = GL_LUMINANCE_ALPHA8I_EXT,
 
-  } ETextureFormat;
+    // GL_ARB_texture_rg
+    TF_RED = GL_RED,
+    TF_COMPRESSED_RED = GL_COMPRESSED_RED,
+    TF_COMPRESSED_RG = GL_COMPRESSED_RG,
+    TF_RG = GL_RG,
+    TF_R8 = GL_R8,
+    TF_R16 = GL_R16,
+    TF_RG8 = GL_RG8,
+    TF_RG16 = GL_RG16,
+    TF_R16F = GL_R16F,
+    TF_R32F = GL_R32F,
+    TF_RG16F = GL_RG16F,
+    TF_RG32F = GL_RG32F,
+    TF_R8I = GL_R8I,
+    TF_R8UI = GL_R8UI,
+    TF_R16I = GL_R16I,
+    TF_R16UI = GL_R16UI,
+    TF_R32I = GL_R32I,
+    TF_R32UI = GL_R32UI,
+    TF_RG8I = GL_RG8I,
+    TF_RG8UI = GL_RG8UI,
+    TF_RG16I = GL_RG16I,
+    TF_RG16UI = GL_RG16UI,
+    TF_RG32I = GL_RG32I,
+    TF_RG32UI = GL_RG32UI,
+
+    // sRGB OpenGL 2.1
+    TF_SLUMINANCE_ALPHA = GL_SLUMINANCE_ALPHA,
+    TF_SLUMINANCE8_ALPHA8 = GL_SLUMINANCE8_ALPHA8,
+    TF_SLUMINANCE = GL_SLUMINANCE,
+    TF_SLUMINANCE8 = GL_SLUMINANCE8,
+    TF_COMPRESSED_SLUMINANCE = GL_COMPRESSED_SLUMINANCE,
+    TF_COMPRESSED_SLUMINANCE_ALPHA = GL_COMPRESSED_SLUMINANCE_ALPHA,
+
+    // sRGB OpenGL 2.1 / 3.x
+    TF_SRGB = GL_SRGB,
+    TF_SRGB8 = GL_SRGB8,
+    TF_SRGB_ALPHA = GL_SRGB_ALPHA,
+    TF_SRGB8_ALPHA8 = GL_SRGB8_ALPHA8,
+    TF_COMPRESSED_SRGB = GL_COMPRESSED_SRGB,
+    TF_COMPRESSED_SRGB_ALPHA = GL_COMPRESSED_SRGB_ALPHA,
+
+    // GL_EXT_texture_sRGB compressed formats
+    TF_COMPRESSED_SRGB_S3TC_DXT1_EXT = GL_COMPRESSED_SRGB_S3TC_DXT1_EXT,
+    TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT,
+    TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT,
+    TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT,
+
+} ETextureFormat;
     
   typedef enum
   {
@@ -296,6 +345,8 @@ namespace vl
     IF_RGBA  = GL_RGBA,
     IF_BGR   = GL_BGR,
     IF_BGRA  = GL_BGRA,
+    IF_RG    = GL_RG,
+    IF_RG_INTEGER = GL_RG_INTEGER,
     IF_RED   = GL_RED,
     IF_GREEN = GL_GREEN,
     IF_BLUE  = GL_BLUE,
@@ -305,7 +356,7 @@ namespace vl
     IF_DEPTH_COMPONENT = GL_DEPTH_COMPONENT,
     IF_STENCIL_INDEX   = GL_STENCIL_INDEX,
 
-    // EXT_packed_depth_stencil
+    // EXT_packed_depth_stencil / GL_ARB_framebuffer_object
     IF_DEPTH_STENCIL = GL_DEPTH_STENCIL,
 
     // compressed formats
@@ -429,7 +480,8 @@ namespace vl
   {
     DTM_LUMINANCE = GL_LUMINANCE, 
     DTM_INTENSITY = GL_INTENSITY, 
-    DTM_ALPHA     = GL_ALPHA
+    DTM_ALPHA     = GL_ALPHA,
+    DTM_RED       = GL_RED
   } EDepthTextureMode;
 
   typedef enum
@@ -487,7 +539,7 @@ namespace vl
 
     IT_UNSIGNED_INT_5_9_9_9_REV       = GL_UNSIGNED_INT_5_9_9_9_REV_EXT,     /* EXT_texture_shared_exponent, supports only GL_RGB */
     IT_UNSIGNED_INT_10F_11F_11F_REV   = GL_UNSIGNED_INT_10F_11F_11F_REV_EXT, /* EXT_packed_float, supports only GL_RGB */
-    IT_UNSIGNED_INT_24_8              = GL_UNSIGNED_INT_24_8_EXT,            /* EXT_packed_depth_stencil */
+    IT_UNSIGNED_INT_24_8              = GL_UNSIGNED_INT_24_8,                /* EXT_packed_depth_stencil/GL_ARB_framebuffer_object */
     IT_FLOAT_32_UNSIGNED_INT_24_8_REV = GL_FLOAT_32_UNSIGNED_INT_24_8_REV    /* ARB_depth_buffer_float */
 
   } EImageType;
