@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi, Brent Fulgham                              */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -127,7 +127,7 @@ using namespace vlCGL;
    /* bind the applet so it receives all the GUI events related to the OpenGLContext */
    mCGLContext->addEventListener(applet.get());
    /* target the window so we can render on it */
-   vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderTarget(mCGLContext->renderTarget());
+   vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget(mCGLContext->renderTarget());
    /* black background */
    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::black );
    /* define the camera position and orientation */
