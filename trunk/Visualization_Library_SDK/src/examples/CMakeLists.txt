@@ -38,12 +38,16 @@ include_directories(".")
 if(MINGW)
 	SET(MINGW32_LIB "libmingw32.a")
 	SET(MINGW32_EXTRA_LIB "Winmm.lib")
-endif(MINGW)
+endif()
 
 if(GUI_MFC_EXAMPLES)
 	add_subdirectory("MFC_example")
 	add_subdirectory("MFC_tests")
-endif(GUI_MFC_EXAMPLES)
+endif()
+
+if(${CMAKE_SYSTEM} MATCHES "Darwin")
+	find_library(APP_KIT AppKit)
+endif()
 
 if(GUI_WIN32_EXAMPLES)
 	# Example
@@ -75,7 +79,7 @@ if(GUI_WIN32_EXAMPLES)
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
   )
-endif(GUI_WIN32_EXAMPLES)
+endif()
 
 if(GUI_WXWIDGETS_EXAMPLES)
 	# Example
@@ -83,9 +87,9 @@ if(GUI_WXWIDGETS_EXAMPLES)
 	link_directories(${WXWIDGETS_LIBRARY_DIR})
 	if (WIN32)
 		add_executable(WX_example WIN32 WX_example.cpp Applets/App_RotatingCube.hpp)
-	else(WIN32)
+	else()
 		add_executable(WX_example WX_example.cpp Applets/App_RotatingCube.hpp)
-	endif(WIN32)
+	endif()
 	target_link_libraries(
 		WX_example
 		${VLWX_NAME}
@@ -99,9 +103,9 @@ if(GUI_WXWIDGETS_EXAMPLES)
 	# Tests
 	if (WIN32)
 		add_executable(WX_tests WIN32 WX_tests.cpp)
-	else(WIN32)
+	else()
 		add_executable(WX_tests WX_tests.cpp)
-	endif(WIN32)
+	endif()
 	target_link_libraries(
 		WX_tests
 		${VLWX_NAME}
@@ -119,7 +123,7 @@ if(GUI_WXWIDGETS_EXAMPLES)
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
   )
-endif(GUI_WXWIDGETS_EXAMPLES)
+endif()
 
 if(GUI_GLUT_EXAMPLES)
 	# Example
@@ -134,6 +138,7 @@ if(GUI_GLUT_EXAMPLES)
 		${VLFREETYPE_NAME} #FreeTypeLibrary
 		${VL_MODULE_LIBRARIES}
 		${VLZLIB_NAME} #ZLibLibrary
+		${APP_KIT}
 	)
 	# Tests
 	add_executable(GLUT_tests GLUT_tests.cpp)
@@ -147,6 +152,7 @@ if(GUI_GLUT_EXAMPLES)
 		${VLFREETYPE_NAME} #FreeTypeLibrary
 		${VL_MODULE_LIBRARIES}
 		${VLZLIB_NAME} #ZLibLibrary
+		${APP_KIT}
 	)
   # Install directives
   install(TARGETS GLUT_tests GLUT_example
@@ -157,9 +163,13 @@ if(GUI_GLUT_EXAMPLES)
 endif(GUI_GLUT_EXAMPLES)
 
 if(GUI_SDL_EXAMPLES)
+  # Darwin
+  if( ${CMAKE_SYSTEM} MATCHES "Darwin" )
+      set(SDLMAIN_M_PATH "Specify path to SDLMain.m" CACHE FILEPATH "Path to SDLMain.m")
+  endif()
 	# Example
 	include_directories(${SDL_INCLUDE_DIR})
-	add_executable(SDL_example WIN32 SDL_example.cpp Applets/App_RotatingCube.hpp)
+  add_executable(SDL_example WIN32 SDL_example.cpp Applets/App_RotatingCube.hpp ${SDLMAIN_M_PATH})
 	target_link_libraries(
 		SDL_example
 		${VLSDL_NAME}
@@ -174,7 +184,7 @@ if(GUI_SDL_EXAMPLES)
 		${MINGW32_EXTRA_LIB}
 	)
 	# Tests
-	add_executable(SDL_tests WIN32 SDL_tests.cpp)
+  add_executable(SDL_tests WIN32 SDL_tests.cpp ${SDLMAIN_M_PATH})
 	target_link_libraries(
 		SDL_tests
 		${VLSDL_NAME}
@@ -195,12 +205,11 @@ if(GUI_SDL_EXAMPLES)
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
   )
-endif(GUI_SDL_EXAMPLES)
+endif()
 
 if(GUI_QT4_EXAMPLES)
 	# Example
 	add_executable(Qt4_example WIN32 Qt4_example.cpp Applets/App_RotatingCube.hpp)
-
 	target_link_libraries(
 		Qt4_example
 		${VLQT4_NAME}
@@ -210,6 +219,7 @@ if(GUI_QT4_EXAMPLES)
 		${VL_MODULE_LIBRARIES}
 		${VLZLIB_NAME} #ZLibLibrary
 		${QT_LIBRARIES}
+		${APP_KIT}
 	)
 
 	# Tests
@@ -218,7 +228,7 @@ if(GUI_QT4_EXAMPLES)
 	# doesn't seem to work
 	#if(MSVC)
 	#	set_target_properties(Qt4_tests PROPERTIES COMPILE_FLAGS "/Zc:wchar_t-")
-	#endif(MSVC)
+	#endif()
 
 	target_link_libraries(
 		Qt4_tests
@@ -230,6 +240,7 @@ if(GUI_QT4_EXAMPLES)
 		${VL_MODULE_LIBRARIES}
 		${VLZLIB_NAME} #ZLibLibrary
 		${QT_LIBRARIES}
+		${APP_KIT}
 	)
 
   # Install directives
@@ -238,13 +249,12 @@ if(GUI_QT4_EXAMPLES)
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
   )
-endif(GUI_QT4_EXAMPLES)
+endif()
 
 if(GUI_COCOA_EXAMPLES)
 	# Example
 	add_executable(Cocoa_example Cocoa_example.mm Applets/App_RotatingCube.hpp)
 
-	FIND_LIBRARY(APP_KIT AppKit)
 	FIND_LIBRARY(CORE_VIDEO CoreVideo)
 
 	target_link_libraries(
@@ -281,5 +291,5 @@ if(GUI_COCOA_EXAMPLES)
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
   )
-endif(GUI_COCOA_EXAMPLES)
+endif()
 
