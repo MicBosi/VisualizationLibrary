@@ -39,6 +39,7 @@ namespace vl
 //-----------------------------------------------------------------------------
 // IndexIteratorAbstract
 //-----------------------------------------------------------------------------
+  /** Abstract class used as base for all the index iterators specializations. */
   class IndexIteratorAbstract: public Object
   {
   public:
@@ -53,6 +54,7 @@ namespace vl
 //-----------------------------------------------------------------------------
 // IndexIterator
 //-----------------------------------------------------------------------------
+  /** Wraps a IndexIteratorAbstract to iterate over the indices of a DrawCall. */
   class IndexIterator: public Object
   {
   public:
@@ -67,6 +69,7 @@ namespace vl
 //-----------------------------------------------------------------------------
 // IndexIteratorDrawArrays
 //-----------------------------------------------------------------------------
+  /** Index iterator operating used by DrawArrays. */
   class IndexIteratorDrawArrays: public IndexIteratorAbstract
   {
   public:
@@ -103,6 +106,7 @@ namespace vl
 //-----------------------------------------------------------------------------
 // IndexIteratorElements
 //-----------------------------------------------------------------------------
+  /** Index iterator operating over DrawElements, DrawRangeElements and MultiDrawElements. */
   template<class TArray>
   class IndexIteratorElements: public IndexIteratorAbstract
   {
