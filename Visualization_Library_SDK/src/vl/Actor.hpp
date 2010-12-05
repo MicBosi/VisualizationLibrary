@@ -436,6 +436,7 @@ namespace vl
     unsigned mOcclusionQueryTick;
   };
   //---------------------------------------------------------------------------
+  /** Defined as a simple subclass of Collection<Actor>, see Collection for more information. */
   class ActorCollection: public Collection<Actor> {};
   //---------------------------------------------------------------------------
 }

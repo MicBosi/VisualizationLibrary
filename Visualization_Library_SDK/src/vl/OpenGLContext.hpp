@@ -534,8 +534,7 @@ namespace vl
     // for each texture unit tells which target has been bound last.
     ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];
 
-    // --- VertexAttribSet Management ---
-    const IVertexAttribSet* mCurVAS;
+  private:
     struct VertexArrayInfo
     {
       VertexArrayInfo(): mVBO(0), mPtr(0), mState(0), mEnabled(false) {}
@@ -544,6 +543,9 @@ namespace vl
       int mState;
       bool mEnabled;
     };
+  protected:
+    // --- VertexAttribSet Management ---
+    const IVertexAttribSet* mCurVAS;
     VertexArrayInfo mVertexArray;
     VertexArrayInfo mNormalArray;
     VertexArrayInfo mColorArray;

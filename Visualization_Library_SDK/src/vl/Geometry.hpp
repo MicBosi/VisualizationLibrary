@@ -66,7 +66,7 @@ namespace vl
   */
   class Geometry: public Renderable, public IVertexAttribSet
   {
-  protected:
+  private:
     class TextureArray: public Object
     {
     public:
