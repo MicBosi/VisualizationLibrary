@@ -56,7 +56,9 @@ BaseDemo* Create_App_PolygonReduction(const vl::String&);
 BaseDemo* Create_App_RenderOrder(int);
 BaseDemo* Create_App_RotatingCube();
 BaseDemo* Create_App_ScatterPlot3D(int);
-BaseDemo* Create_App_ShaderLOD(int);
+BaseDemo* Create_App_ShaderMultiPassLODAnim();
+BaseDemo* Create_App_ShaderMultiPassAlpha();
+BaseDemo* Create_App_GeomLODAnim();
 BaseDemo* Create_App_Terrain();
 BaseDemo* Create_App_TextRendering(int);
 BaseDemo* Create_App_ImageFunctions();
@@ -133,9 +135,9 @@ public:
       { "Near/Far Planes Optimization", Create_App_NearFarOptimization(), 10, 10, 512, 512, vlut::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Effect Override", Create_App_EffectOverride(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Shader Override", Create_App_ShaderOverride(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
-      { "Shader Multipassing-LOD-Animation", Create_App_ShaderLOD(4), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
-      { "Geometry Multipassing-LOD-Animation", Create_App_ShaderLOD(3), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
-      { "Alpha Multipassing", Create_App_ShaderLOD(0), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
+      { "Shader Multipass+LOD+Animation", Create_App_ShaderMultiPassLODAnim(), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
+      { "Shader Alpha Multipass", Create_App_ShaderMultiPassAlpha(), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
+      { "Geometry LOD+Animation", Create_App_GeomLODAnim(), 10, 10, 512, 512, vlut::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
       { "Render Order - Effect & Actor Ranks", Create_App_RenderOrder(0), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Render Order - Alpha Z-Sort", Create_App_RenderOrder(1), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Render Order - Always Z-Sort", Create_App_RenderOrder(2), 10, 10, 512, 512, vlut::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
