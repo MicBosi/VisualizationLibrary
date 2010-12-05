@@ -44,7 +44,7 @@ namespace
   {
     switch(internal_format)
     {
-    case TF_DEPTH_STENCIL_EXT:
+    case TF_DEPTH_STENCIL:
     case TF_DEPTH32F_STENCIL8:
     case TF_DEPTH_COMPONENT:
     case TF_DEPTH_COMPONENT16:
