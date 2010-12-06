@@ -482,10 +482,20 @@ void LineStipple::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void PointParameter::apply(const Camera*, OpenGLContext*) const
 {
-  VL_glPointParameterf(GL_POINT_SIZE_MIN, mSizeMin); VL_CHECK_OGL()
-  VL_glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
-  VL_glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
-  VL_glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, (const float*)mDistanceAttenuation.ptr()); VL_CHECK_OGL()
+  if (GLEW_VERSION_1_4)
+  {
+    VL_glPointParameterf(GL_POINT_SIZE_MIN, mSizeMin); VL_CHECK_OGL()
+    VL_glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
+    VL_glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, (const float*)mDistanceAttenuation.ptr()); VL_CHECK_OGL()
+  }
+  if (GLEW_VERSION_1_4||GLEW_VERSION_3_0)
+  {
+    VL_glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
+  }
+  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+  {
+    VL_glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, mPointSpriteCoordOrigin); VL_CHECK_OGL()
+  }
 }
 //------------------------------------------------------------------------------
 // StencilFunc

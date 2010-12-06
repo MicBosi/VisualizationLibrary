@@ -89,6 +89,7 @@ void VL_glBlendColor( GLclampf red, GLclampf green, GLclampf blue, GLclampf alph
 
 void VL_glPointParameterf( GLenum pname, GLfloat param );
 void VL_glPointParameterfv( GLenum pname, const GLfloat* params );
+void VL_glPointParameteri( GLenum pname, GLenum param);
 
 void VL_glStencilFuncSeparate( GLenum face, GLenum func, GLint ref, GLuint mask );
 void VL_glStencilOpSeparate( GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass );
