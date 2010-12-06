@@ -266,7 +266,7 @@ void VL_glBlendColor( GLclampf red, GLclampf green, GLclampf blue, GLclampf alph
 //-----------------------------------------------------------------------------
 void VL_glPointParameterfv( GLenum pname, const GLfloat* params)
 {
-  if (GLEW_VERSION_1_4)
+  if (GLEW_VERSION_1_4||GLEW_VERSION_3_0)
     glPointParameterfv(pname,(GLfloat*)params);
   else
   if (GLEW_ARB_point_parameters)
@@ -280,7 +280,7 @@ void VL_glPointParameterfv( GLenum pname, const GLfloat* params)
 
 void VL_glPointParameterf( GLenum pname, GLfloat param)
 {
-  if (GLEW_VERSION_1_4)
+  if (GLEW_VERSION_1_4||GLEW_VERSION_3_0)
     glPointParameterf(pname,param);
   else
   if (GLEW_ARB_point_parameters)
@@ -288,6 +288,17 @@ void VL_glPointParameterf( GLenum pname, GLfloat param)
   else
   if (GLEW_EXT_point_parameters)
     glPointParameterfEXT(pname,param);
+  else
+    VL_TRAP();
+}
+
+void VL_glPointParameteri( GLenum pname, GLenum param)
+{
+  if (GLEW_VERSION_1_4||GLEW_VERSION_3_0)
+    glPointParameteri(pname,param);
+  else
+  if (GLEW_NV_point_sprite)
+    glPointParameteriNV(pname,param);
   else
     VL_TRAP();
 }

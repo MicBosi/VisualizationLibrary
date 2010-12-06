@@ -806,7 +806,8 @@ namespace vl
   {
   public:
     PointParameter(float sizemin=0, float sizemax=1024.0f, float fadethresholdsize=1.0f, fvec3 distanceattenuation=fvec3(1,0,0)):
-      mDistanceAttenuation(distanceattenuation), mSizeMin(sizemin), mSizeMax(sizemax), mFadeThresholdSize(fadethresholdsize)
+      mDistanceAttenuation(distanceattenuation), mSizeMin(sizemin), mSizeMax(sizemax), mFadeThresholdSize(fadethresholdsize),
+      mPointSpriteCoordOrigin(PPCO_UPPER_LEFT)
     {
       #ifndef NDEBUG
         mObjectName = className();
@@ -824,11 +825,14 @@ namespace vl
     float sizeMin() const { return mSizeMin; }
     float sizeMax() const { return mSizeMax; }
     float fadeThresholdSize() const { return mFadeThresholdSize; }
+    EPointSpriteCoordOrigin pointSpriteCoordOrigin() const { return mPointSpriteCoordOrigin; }
+    void setPointSpriteCoordOrigin(EPointSpriteCoordOrigin orig) { mPointSpriteCoordOrigin = orig; }
   protected:
     fvec3 mDistanceAttenuation;
     float mSizeMin;
     float mSizeMax;
     float mFadeThresholdSize;
+    EPointSpriteCoordOrigin mPointSpriteCoordOrigin;
   };
   //------------------------------------------------------------------------------
   // StencilFunc
