@@ -1244,6 +1244,12 @@ namespace vl
     UT_Mat3x4F, //!<< 3x4 float matrix
     UT_Mat4x3F, //!<< 4x3 float matrix
   } EUniformType;
+
+  typedef enum
+  {
+    PPCO_LOWER_LEFT = GL_LOWER_LEFT,
+    PPCO_UPPER_LEFT = GL_UPPER_LEFT
+  } EPointSpriteCoordOrigin;
 }
 
 
