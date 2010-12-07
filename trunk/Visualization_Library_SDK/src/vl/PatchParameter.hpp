@@ -44,25 +44,17 @@ namespace vl
   {
   public:
     //! Constructor
-    PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(NULL), mPatchDefaultInnerLevel(NULL) {}
+    PatchParameter(): mPatchVertices(0) {}
 
     //! Applies the glPatchParameter values.
-    //! If patchDefaultOuterLevel() is NULL no default outer level will be applied.
-    //! If patchDefaultInnerLevel() is NULL no default inner level will be applied.
     void apply() 
     {
       VL_CHECK(GLEW_ARB_tessellation_shader);
       if (GLEW_ARB_tessellation_shader)
       {
         glPatchParameteri(GL_PATCH_VERTICES, mPatchVertices); VL_CHECK_OGL();
-        if (mPatchDefaultOuterLevel)
-        {
-          glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, mPatchDefaultOuterLevel); VL_CHECK_OGL();
-        }
-        if (mPatchDefaultInnerLevel)
-        {
-          glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, mPatchDefaultInnerLevel); VL_CHECK_OGL();
-        }
+        glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, mPatchDefaultOuterLevel.ptr()); VL_CHECK_OGL();
+        glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, mPatchDefaultInnerLevel.ptr()); VL_CHECK_OGL();
       }
     }
 
@@ -77,26 +69,26 @@ namespace vl
     //! Returns the number of vertices that will be used to make up a single patch primitive. 
     int patchVertices() const { return mPatchVertices; }
 
-    //! Defines the address of an array containing the default outer tessellation level 
-    //! to be used when no tessellation control shader is present.
-    void setPatchDefaultOuterLevel(const float* level) { mPatchDefaultOuterLevel = level; }
+    //! The four floating-point values corresponding to the four outer tessellation levels 
+    //! for each subsequent patch to be used when no tessellation control shader is present.
+    void setPatchDefaultOuterLevel(const fvec4& level) { mPatchDefaultOuterLevel = level; }
     
-    //! Returns the address of an array containing the default outer tessellation level 
-    //! to be used when no tessellation control shader is present.
-    const float* patchDefaultOuterLevel() const { return mPatchDefaultOuterLevel; }
+    //! The four floating-point values corresponding to the four outer tessellation levels 
+    //! for each subsequent patch to be used when no tessellation control shader is present.
+    const fvec4& patchDefaultOuterLevel() const { return mPatchDefaultOuterLevel; }
 
-    //! Defines the address of an array containing the default inner tessellation level 
-    //! to be used when no tessellation control shader is present.
-    void setPatchDefaultInnerLevel(const float* level) { mPatchDefaultInnerLevel = level; }
+    //! The two floating-point values corresponding to the tow inner tessellation levels 
+    //! for each subsequent patch to be used when no tessellation control shader is present.
+    void setPatchDefaultInnerLevel(const fvec2& level) { mPatchDefaultInnerLevel = level; }
     
-    //! Returns the address of an array containing the default inner tessellation level 
-    //! to be used when no tessellation control shader is present.
-    const float* patchDefaultInnerLevel() const { return mPatchDefaultInnerLevel; }
+    //! The two floating-point values corresponding to the tow inner tessellation levels 
+    //! for each subsequent patch to be used when no tessellation control shader is present.
+    const fvec2& patchDefaultInnerLevel() const { return mPatchDefaultInnerLevel; }
 
   protected:
     int mPatchVertices;
-    const float* mPatchDefaultOuterLevel;
-    const float* mPatchDefaultInnerLevel;
+    fvec4 mPatchDefaultOuterLevel;
+    fvec2 mPatchDefaultInnerLevel;
   };
 }
 
