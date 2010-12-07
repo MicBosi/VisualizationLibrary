@@ -35,6 +35,7 @@
 #include <vl/Array.hpp>
 #include <vl/TriangleIterator.hpp>
 #include <vl/IndexIterator.hpp>
+#include <vl/PatchParameter.hpp>
 
 namespace vl 
 {
@@ -93,7 +94,24 @@ namespace vl
     /** Returns the number of instances for this set of primitives. */
     virtual int instances() const { return 1; }
 
+    /** Attach a PatchParameter to a DrawCall to be used when using primitive-type PT_PATCHES */
+    void setPatchParameter(PatchParameter* patch_param) { mPatchParameter = patch_param; }
+
+    /** The PatchParameter attached to a DrawCall to be used when using primitive-type PT_PATCHES */
+    PatchParameter* patchParameter() { return mPatchParameter.get(); }
+
+    /** The PatchParameter attached to a DrawCall to be used when using primitive-type PT_PATCHES */
+    const PatchParameter* patchParameter() const { return mPatchParameter.get(); }
+
   protected:
+    void applyPatchParameters() const
+    {
+      if (mType == PT_PATCHES && mPatchParameter)
+        mPatchParameter->apply();
+    }
+
+  protected:
+      ref<PatchParameter> mPatchParameter;
       EPrimitiveType mType;
       bool mEnabled;
   };

@@ -212,6 +212,9 @@ namespace vl
       if ( !use_vbo && !indices()->size() )
         return;
 
+      // apply patch parameters if any and if using PT_PATCHES
+      applyPatchParameters();
+
       // primitive restart enable
       if(primitiveRestartEnabled())
       {
