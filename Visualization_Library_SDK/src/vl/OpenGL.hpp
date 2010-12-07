@@ -78,6 +78,7 @@ void VL_glDisableVertexAttribArray( GLuint index );
 
 void VL_glVertexAttribPointer( GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer );
 void VL_glVertexAttribIPointer( GLuint name, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer );
+void VL_glVertexAttribLPointer(GLuint name, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer);
 
 void VL_glClientActiveTexture( GLenum texture );
 void VL_glActiveTexture( GLenum texture );

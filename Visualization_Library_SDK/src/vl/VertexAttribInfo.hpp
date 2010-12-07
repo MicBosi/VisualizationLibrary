@@ -41,16 +41,17 @@ namespace vl
   // VertexAttribInfo
   //------------------------------------------------------------------------------
   /**
-   * Implements a generic OpenGL Shading Language vertex attribute to be used with a Geometry.
+   * Implements a generic OpenGL Shading Language vertex attribute to be used with a Geometry, 
+   * see also http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
   */
   class VertexAttribInfo: public Object
   {
   public:
     virtual const char* className() { return "VertexAttribInfo"; }
     
-    VertexAttribInfo(unsigned int location, bool normalize, bool pure_integer, ArrayAbstract* data): mData(data), mAttribIndex(location), mNormalize(normalize), mPureInteger(pure_integer) {}
+    VertexAttribInfo(unsigned int location, bool normalize, EVertexAttribBehavior data_behav, ArrayAbstract* data): mData(data), mAttribIndex(location), mDataBehavior(data_behav), mNormalize(normalize) {}
     
-    VertexAttribInfo(): mAttribIndex((unsigned int)-1), mNormalize(false), mPureInteger(false) {}
+    VertexAttribInfo(): mAttribIndex((unsigned int)-1), mDataBehavior(VAB_NORMAL), mNormalize(false) {}
 
     //! The GPU buffer that stores the data
     ArrayAbstract* data() const { return mData.get(); }
@@ -66,10 +67,11 @@ namespace vl
     //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
     bool normalize() const { return mNormalize; }
     
-    //! If set to true glVertexAttribIPointer() will be used instead of glVertexAttribPointer(). This feature requires GL_EXT_gpu_shader4.
-    //! \sa 
-    //! - http://developer.download.nvidia.com/opengl/specs/GL_EXT_gpu_shader4.txt
-    bool pureInteger() const { return mPureInteger; }
+    //! How the data is interpreted by the OpenGL, see EVertexAttribBehavior.
+    void setDataBehavior(EVertexAttribBehavior behavior) { mDataBehavior = behavior; }
+
+    //! How the data is interpreted by the OpenGL, see EVertexAttribBehavior.
+    EVertexAttribBehavior dataBehavior() const { return mDataBehavior; }
 
     //! The GPU buffer that stores the data
     void setData(ArrayAbstract* data) { mData = data; }
@@ -84,17 +86,12 @@ namespace vl
     //! \sa
     //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
     void setNormalize(bool normalize) { mNormalize = normalize; }
-    
-    //! If set to true glVertexAttribIPointer() will be used instead of glVertexAttribPointer(). This feature requires GL_EXT_gpu_shader4.
-    //! \sa 
-    //! - http://developer.download.nvidia.com/opengl/specs/GL_EXT_gpu_shader4.txt
-    void setPureInteger(bool pure_integer) { mPureInteger = pure_integer; }
 
   protected:
     ref<ArrayAbstract> mData;
     unsigned int mAttribIndex;
+    EVertexAttribBehavior mDataBehavior;
     bool mNormalize;
-    bool mPureInteger;
   };
 }
 
