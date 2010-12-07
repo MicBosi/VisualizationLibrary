@@ -401,6 +401,42 @@ namespace vl
   typedef Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT> ArrayUSVec3;
   //! An array of vl::usvec4
   typedef Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT> ArrayUSVec4;
+
+  //! An array of \p GL_HALF_FLOAT
+  typedef Array<GLushort, GLushort, 1, GL_HALF_FLOAT> ArrayHFloat;
+  //! An array of 2d GL_HALF_FLOAT vectors
+  typedef Array<usvec2,   GLushort, 2, GL_HALF_FLOAT> ArrayHFVec2;
+  //! An array of 3d GL_HALF_FLOAT vectors
+  typedef Array<usvec3,   GLushort, 3, GL_HALF_FLOAT> ArrayHFVec3;
+  //! An array of 4d GL_HALF_FLOAT vectors
+  typedef Array<usvec4,   GLushort, 4, GL_HALF_FLOAT> ArrayHFVec4;
+
+  //! An array of \p GL_FIXED
+  typedef Array<GLuint,GLuint, 1, GL_FIXED> ArrayFixed;
+  //! An array 2d GL_FIXED vectors
+  typedef Array<uvec2, GLuint, 2, GL_FIXED> ArrayFixedVec2;
+  //! An array 3d GL_FIXED vectors
+  typedef Array<uvec3, GLuint, 3, GL_FIXED> ArrayFixedVec3;
+  //! An array 4d GL_FIXED vectors
+  typedef Array<uvec4, GLuint, 4, GL_FIXED> ArrayFixedVec4;
+
+  //! An array of \p GL_INT_2_10_10_10_REV
+  typedef Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV;
+  //! An array of 2d GL_INT_2_10_10_10_REV vectors
+  typedef Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV> ArrayIVec2_2_10_10_10_REV;
+  //! An array of 3d GL_INT_2_10_10_10_REV vectors
+  typedef Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV> ArrayIVec3_2_10_10_10_REV;
+  //! An array of 4d GL_INT_2_10_10_10_REV vectors
+  typedef Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV> ArrayIVec4_2_10_10_10_REV;
+
+  //! An array of \p GL_UNSIGNED_INT_2_10_10_10_REV
+  typedef Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV;
+  //! An array of 2d GL_UNSIGNED_INT_2_10_10_10_REV vectors
+  typedef Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUVec2_2_10_10_10_REV;
+  //! An array of 3d GL_UNSIGNED_INT_2_10_10_10_REV vectors
+  typedef Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUVec3_2_10_10_10_REV;
+  //! An array of 4d GL_UNSIGNED_INT_2_10_10_10_REV vectors
+  typedef Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUVec4_2_10_10_10_REV;
 }
 
 #endif

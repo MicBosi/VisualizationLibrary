@@ -132,8 +132,8 @@ void MorphingCallback::onActorRenderStarted(Actor*, Real frame_clock, const Came
         mAnim_t_Binding = glslprogram->getUniformLocation("anim_t");
 
       // vertex/normals frame 2
-      mGeometry->setVertexAttribArray( mVertex2_Binding, false, false, mVertexFrames[mFrame2].get() );
-      mGeometry->setVertexAttribArray( mNormal2_Binding, false, false, mNormalFrames[mFrame2].get() );
+      mGeometry->setVertexAttribArray( mVertex2_Binding, false, VAB_NORMAL, mVertexFrames[mFrame2].get() );
+      mGeometry->setVertexAttribArray( mNormal2_Binding, false, VAB_NORMAL, mNormalFrames[mFrame2].get() );
       // frame interpolation ratio
       glUniform1fv(mAnim_t_Binding, 1, &mAnim_t);
 

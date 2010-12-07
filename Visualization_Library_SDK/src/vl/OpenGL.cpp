@@ -191,6 +191,17 @@ void VL_glVertexAttribIPointer(GLuint name, GLint size, GLenum type, GLsizei str
   else
     VL_TRAP();
 }
+
+void VL_glVertexAttribLPointer(GLuint name, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+  if(GLEW_ARB_vertex_attrib_64bit)
+    glVertexAttribLPointer(name, size, type, stride, pointer);
+  else
+  if(GLEW_EXT_vertex_attrib_64bit)
+    glVertexAttribLPointerEXT(name, size, type, stride, pointer);
+  else
+    VL_TRAP();
+}
 //-----------------------------------------------------------------------------
 void VL_glClientActiveTexture(GLenum texture)
 {
@@ -310,7 +321,7 @@ void VL_glStencilFuncSeparate( GLenum face, GLenum func, GLint ref, GLuint mask)
   else
     VL_TRAP();
   // NOT SUPPORTED
-  // see http://www.opengl.org/registry/specs/ATI/separate_stencil.txt
+  // see also http://www.opengl.org/registry/specs/ATI/separate_stencil.txt
   /*else
   if ( GLEW_ATI_separate_stencil )
     glStencilFuncSeparateATI( GLenum frontfunc, GLenum backfunc, GLint ref, GLuint mask ) */
@@ -323,7 +334,7 @@ void VL_glStencilOpSeparate( GLenum face, GLenum sfail, GLenum dpfail, GLenum dp
   else
     VL_TRAP();
   // NOT SUPPORTED
-  // see http://www.opengl.org/registry/specs/ATI/separate_stencil.txt
+  // see also http://www.opengl.org/registry/specs/ATI/separate_stencil.txt
   /*else
   if ( GLEW_ATI_separate_stencil )
     glStencilOpSeparateATI( GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass )*/
