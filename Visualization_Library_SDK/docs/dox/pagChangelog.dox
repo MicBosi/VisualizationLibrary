@@ -2,6 +2,22 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2010.12.1127</div>
+
+	- <b>OpenGL 2.x, 3.x and 4.1 support enhanced</b>:
+		- Tessellation shaders (GL_ARB_tessellation_shader)!
+		- Read/write GLSL program binaries (GL_ARB_get_program_binary)!
+		- Pure \a double precision vertex attributes!
+		- New vertex array formats: GL_FIXED, GL_HALF_FLOAT, GL_INT_2_10_10_10_REV, GL_UNSIGNED_INT_2_10_10_10_REV.
+		- New texture formats: GL_EXT_texture_sRGB formats, GL_ARB_texture_rg formats.
+	- Added PointParameter point sprite coordinate origin. Fixed PointParameter support for GL 3.x non backwards compatible profiles.
+	- App_GeomLODAnim and App_ShaderMultiPassLODAnim tests refactored and tutorials.
+	- New framebuffer objects test and tutorial (\p App_Famebuffer_Object.cpp).
+	- Updated to Freetype 2.4.4.
+	- Several other minor bug fixes, enhacements, code cleanup and documentation updates.
+	
+   \page pagChangelog Changelog
+
 	<div class="featuretitle">Visualization Library 2010.11.1125</div>
 
 	- <b>Vertex Attrib Set</b> new mechanics for lazy binding of vertex attribute arrays. Mesured around 5% rendering 

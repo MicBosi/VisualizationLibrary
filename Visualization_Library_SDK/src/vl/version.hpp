@@ -29,6 +29,6 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#define VL_Build 1125
 #define VL_Major 2010
-#define VL_Minor 11
+#define VL_Minor 12
+#define VL_Build 1127
