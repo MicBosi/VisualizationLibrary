@@ -88,6 +88,9 @@ namespace vl
 
     virtual void render(bool) const
     {
+      // apply patch parameters if any and if using PT_PATCHES
+      applyPatchParameters();
+
       if ( instances() > 1 && (GLEW_ARB_draw_instanced||GLEW_EXT_draw_instanced) )
         VL_glDrawArraysInstanced( primitiveType(), (int)start(), (int)count(), (int)instances() );
       else

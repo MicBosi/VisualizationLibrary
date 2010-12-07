@@ -78,7 +78,6 @@ SET(VL_SRC
   vl/Plane.cpp
   vl/PolygonSimplifier.cpp
   vl/ProjViewTransfCallback.cpp
-  vl/DrawCall.cpp
   vl/SceneManagerPortals.cpp
   vl/RayIntersector.cpp
   vl/RenderTarget.cpp
@@ -179,6 +178,7 @@ set(VL_INC
   vl/OcclusionCullRenderer.hpp
   vl/OpenGL.hpp
   vl/OpenGLContext.hpp
+  vl/PatchParameter.hpp
   vl/PixelLODEvaluator.hpp
   vl/Plane.hpp
   vl/PolygonSimplifier.hpp

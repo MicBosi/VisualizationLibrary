@@ -311,6 +311,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glValidateProgram.xml>glValidateProgram()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml>glBindAttribLocation()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glUniform.xml>glUniform()</a>
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glPatchParameter.xml>glPatchParameter()</a>
 			</td>
 			<td valign=top>
 				- vl::GLSLVertexShader, vl::GLSLFragmentShader, vl::GLSLGeometryShader
@@ -323,6 +324,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- vl::GLSLProgram::validateProgram()
 				- vl::GLSLProgram::bindAttribLocation()
 				- vl::Uniform, vl::GLSLProgram::setUniform(), vl::Actor::setUniform(), vl::Shader::setUniform()
+				- vl::PatchParameter
 			</td>
 		</tr>
 *******************************************************************************
