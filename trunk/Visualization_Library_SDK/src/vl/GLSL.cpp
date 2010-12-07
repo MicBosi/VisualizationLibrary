@@ -75,6 +75,7 @@ void GLSLShader::setSource( const String& source )
 //-----------------------------------------------------------------------------
 bool GLSLShader::compile()
 {
+  VL_CHECK_OGL();
   VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
   if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
@@ -109,17 +110,19 @@ bool GLSLShader::compile()
     else
     {
       Log::error( Say("\nShader compilation error: '%s':\n\n") << objectName().c_str() );
-      Log::print( Say("SOURCE:\n%s\n\n") << mSource.c_str() );
-      Log::print( Say("LOG:\n%s\n\n") << infoLog() );
+      Log::print( Say("Source:\n%s\n\n") << mSource.c_str() );
+      Log::print( Say("OpenGL driver log:\n%s\n\n") << infoLog() );
       VL_TRAP()
     }
   }
 
+  VL_CHECK_OGL();
   return mCompiled;
 }
 //-----------------------------------------------------------------------------
 bool GLSLShader::compileStatus() const
 {
+  VL_CHECK_OGL();
   VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
   if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
@@ -127,11 +130,13 @@ bool GLSLShader::compileStatus() const
 
   int status = 0;
   glGetShaderiv(handle(), GL_COMPILE_STATUS, &status);
+  VL_CHECK_OGL();
   return status == GL_TRUE;
 }
 //-----------------------------------------------------------------------------
 String GLSLShader::infoLog() const
 {
+  VL_CHECK_OGL();
   VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
   if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return "OpenGL Shading Language not supported.\n";
@@ -143,11 +148,13 @@ String GLSLShader::infoLog() const
   log_buffer.resize(max_length+1);
   glGetShaderInfoLog(handle(), max_length, NULL, &log_buffer[0]);
   String log_string(&log_buffer[0]);
+  VL_CHECK_OGL();
   return log_string;
 }
 //-----------------------------------------------------------------------------
 void GLSLShader::createShader()
 {
+  VL_CHECK_OGL();
   VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
   if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return;
@@ -157,6 +164,7 @@ void GLSLShader::createShader()
     mCompiled = false;
   }
   VL_CHECK(handle());
+  VL_CHECK_OGL();
 }
 //------------------------------------------------------------------------------
 void GLSLShader::deleteShader()
@@ -184,6 +192,8 @@ GLSLProgram::GLSLProgram()
   mGeometryVerticesOut = 0;
   mGeometryInputType   = GIT_TRIANGLES;
   mGeometryOutputType  = GOT_TRIANGLE_STRIP;
+  mProgramBinaryRetrievableHint = false;
+  mProgramSeparable = false;
 }
 //-----------------------------------------------------------------------------
 GLSLProgram::~GLSLProgram()
@@ -264,6 +274,7 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
   VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
   if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
+
   if (!handle() || !shader->handle())
     return false;
 
@@ -272,7 +283,6 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
   {
     if (mShaders[i] == shader)
     {
-      scheduleRelinking();
       if ( shader->handle() )
         glDetachShader( handle(), shader->handle() ); VL_CHECK_OGL();
       mShaders.erase(mShaders.begin() + i);
@@ -280,18 +290,37 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
     }
   }
 
-  if ( shader->handle() )
-    return true;
-  else
-    return false;
+  return true;
+}
+//-----------------------------------------------------------------------------
+void GLSLProgram::discardAllShaders()
+{
+  VL_CHECK_OGL();
+  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
+    return;
+
+  if (!handle())
+    return;
+
+  for(int i=0; i<(int)mShaders.size(); ++i)
+  {
+    if (mShaders[i]->handle())
+    {
+      glDetachShader( handle(), mShaders[i]->handle() ); VL_CHECK_OGL();
+      mShaders[i]->deleteShader();
+    }
+  }
+
+  mShaders.clear();
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::linkProgram(bool force_relink)
 {
+  VL_CHECK_OGL();
   VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
   if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
     return false;
-  VL_CHECK_OGL();
 
   if (!linked() || force_relink)
   {
@@ -304,41 +333,8 @@ bool GLSLProgram::linkProgram(bool force_relink)
 
     createProgram();
 
-    // fragment shader color number binding
-
-    if (GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0)
-    {
-      std::map<std::string, int>::iterator it = mFragDataLocation.begin();
-      while(it != mFragDataLocation.end())
-      {
-        VL_glBindFragDataLocation( handle(), it->second, it->first.c_str() );
-        ++it;
-      }
-    }
-
-    // geometry shader
-
-    if (GLEW_EXT_geometry_shader4||GLEW_ARB_geometry_shader4)
-    {
-      // if there is at least one geometry shader applies the geometry shader parameters
-      for(unsigned i=0; i<mShaders.size(); ++i)
-      {
-        if (mShaders[i]->type() == ST_GEOMETRY_SHADER)
-        {
-          VL_glProgramParameteri(handle(), GL_GEOMETRY_VERTICES_OUT_EXT, geometryVerticesOut());
-          VL_glProgramParameteri(handle(), GL_GEOMETRY_INPUT_TYPE_EXT,   geometryInputType());
-          VL_glProgramParameteri(handle(), GL_GEOMETRY_OUTPUT_TYPE_EXT,  geometryOutputType());
-          break;
-        }
-      }
-    }
-
-    // automatically binds the specified attributes to the desired values
-
-    for( std::map<std::string, int>::iterator it = mAttribLocation.begin(); it != mAttribLocation.end(); ++it)
-    {
-      glBindAttribLocation(handle(),it->second,it->first.c_str());
-    }
+    // pre-link operations
+    preLink();
 
     // link the program
 
@@ -349,36 +345,93 @@ bool GLSLProgram::linkProgram(bool force_relink)
     if(!linked())
     {
       Log::error("GLSLProgram::linkProgram() failed:\n");
-      Log::print("Name: '"+String(objectName().c_str()) + "'\n");
-      Log::print( Say("Log:\n%s\n") << infoLog() );
+      Log::print("GLSLProgram name: '"+String(objectName().c_str()) + "'\n");
+      Log::print( Say("OpenGL driver log:\n%s\n") << infoLog() );
       VL_TRAP()
       return false;
     }
 
-    // populate uniform binding map
+    // post-link operations
+    postLink();
+  }
 
-    mUniformLocation.clear();
+  return true;
+}
+//-----------------------------------------------------------------------------
+void GLSLProgram::preLink()
+{
+  // fragment shader color number binding
 
-    int uniform_count = 0;
-    glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count);
-    int uniform_len = 0;
-    glGetProgramiv(handle(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniform_len);
-
-    std::vector<char> name;
-    name.resize(uniform_len);
-    if (name.size())
+  if (GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0)
+  {
+    std::map<std::string, int>::iterator it = mFragDataLocation.begin();
+    while(it != mFragDataLocation.end())
     {
-      for(int i=0; i<uniform_count; ++i)
+      VL_glBindFragDataLocation( handle(), it->second, it->first.c_str() );
+      ++it;
+    }
+  }
+
+  // geometry shader - note: this pertains only to OpenGL 3.2 not OpenGL 4.x
+
+  if (GLEW_EXT_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_VERSION_3_2)
+  {
+    // if there is at least one geometry shader applies the geometry shader parameters
+    for(unsigned i=0; i<mShaders.size(); ++i)
+    {
+      if (mShaders[i]->type() == ST_GEOMETRY_SHADER)
       {
-        GLenum type;
-        int size;
-        glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, &name[0]);
-        mUniformLocation[&name[0]] = glGetUniformLocation(handle(), &name[0]);
+        VL_glProgramParameteri(handle(), GL_GEOMETRY_VERTICES_OUT_EXT, geometryVerticesOut());
+        VL_glProgramParameteri(handle(), GL_GEOMETRY_INPUT_TYPE_EXT,   geometryInputType());
+        VL_glProgramParameteri(handle(), GL_GEOMETRY_OUTPUT_TYPE_EXT,  geometryOutputType());
+        break;
       }
     }
   }
 
-  return true;
+  // OpenGL 4 program parameters
+
+  if(GLEW_ARB_get_program_binary)
+  {
+    VL_glProgramParameteri(handle(), GL_PROGRAM_BINARY_RETRIEVABLE_HINT, programBinaryRetrievableHint()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
+  }
+
+  if (GLEW_ARB_separate_shader_objects)
+  {
+    VL_glProgramParameteri(handle(), GL_PROGRAM_SEPARABLE, programSeparable()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
+  }
+
+  // automatically binds the specified attributes to the desired values
+
+  for( std::map<std::string, int>::iterator it = mAttribLocation.begin(); it != mAttribLocation.end(); ++it)
+  {
+    glBindAttribLocation(handle(),it->second,it->first.c_str());
+  }
+}
+//-----------------------------------------------------------------------------
+void GLSLProgram::postLink()
+{
+  // populate uniform binding map
+
+  mUniformLocation.clear();
+
+  int uniform_count = 0;
+  glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count);
+  int uniform_len = 0;
+  glGetProgramiv(handle(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniform_len);
+
+  std::vector<char> name;
+  name.resize(uniform_len);
+  if (name.size())
+  {
+    for(int i=0; i<uniform_count; ++i)
+    {
+      GLenum type;
+      int size;
+      glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, &name[0]);
+      mUniformLocation[&name[0]] = glGetUniformLocation(handle(), &name[0]);
+    }
+  }
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::linkStatus() const
@@ -584,5 +637,69 @@ int GLSLProgram::fragDataLocationBinding(const std::string& name) const
     return it->second;
   else
     return -1;
+}
+//-----------------------------------------------------------------------------
+bool GLSLProgram::getProgramBinary(GLenum& binary_format, std::vector<unsigned char>& binary) const
+{
+  VL_CHECK_OGL();
+  VL_CHECK(GLEW_ARB_get_program_binary)
+  if (!GLEW_ARB_get_program_binary)
+    return false;
+
+  binary.clear();
+  binary_format = (GLenum)-1;
+
+  if (handle())
+  {
+    int status = 0;
+    glGetProgramiv(handle(), GL_LINK_STATUS, &status); VL_CHECK_OGL();
+    if (status == GL_FALSE)
+      return false;
+    GLint length = 0;
+    glGetProgramiv(handle(), GL_PROGRAM_BINARY_LENGTH, &length); VL_CHECK_OGL();
+    if (length)
+    {
+      binary.resize(length);
+      glGetProgramBinary(handle(), length, NULL, &binary_format, &binary[0]); VL_CHECK_OGL();
+    }
+    return true;
+  }
+  else
+    return false;
+}
+//-----------------------------------------------------------------------------
+bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int length)
+{
+  VL_CHECK_OGL();
+  VL_CHECK(GLEW_ARB_get_program_binary)
+  if (!GLEW_ARB_get_program_binary)
+    return false;
+
+  createProgram();
+
+  if (handle())
+  {
+    // pre-link operations
+    preLink();
+    
+    // load glsl program and link
+    glProgramBinary(handle(), binary_format, binary, length); VL_CHECK_OGL();
+    mScheduleLink = !linkStatus();
+    
+    // log error
+    if(!linked() && VisualizationLibrary::settings()->verbosityLevel() == vl::VEL_VERBOSITY_DEBUG)
+    {
+      Log::error("GLSLProgram::programBinary() failed:\n");
+      Log::print("GLSLProgram name: '"+String(objectName().c_str()) + "'\n");
+      Log::print( Say("OpenGL driver log:\n%s\n") << infoLog() );
+    }
+    
+    // post-link operations
+    postLink();
+
+    return linked();
+  }
+  else
+    return false;
 }
 //-----------------------------------------------------------------------------

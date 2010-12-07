@@ -247,8 +247,13 @@ namespace vl
     */
     bool attachShader(GLSLShader* shader);
 
-    //! Removes a GLSLShader from the GLSLShader and schedules a relink of the program, see also http://www.opengl.org/sdk/docs/man/xhtml/glDetachShader.xml for more information.
+    //! Detaches a GLSLShader from the GLSLShader (note: it does NOT schedule a relink of the program), see also http://www.opengl.org/sdk/docs/man/xhtml/glDetachShader.xml for more information.
     bool detachShader(GLSLShader* shader);
+
+    //! Detaches all the shaders and deletes them (note that the GLSL Program remains still valid). 
+    //! Use this function when your GLSL program compiled well, you don't want to re-link or re-compile it and you want to save 
+    //! some memory by discarding unnecessary shaders objects.
+    void discardAllShaders();
 
     //! Returns the info log of this GLSL program using the OpenGL function glGetProgramInfoLog(), see also http://www.opengl.org/sdk/docs/man/xhtml/glGetProgramInfoLog.xml for more information.
     String infoLog() const;
@@ -321,19 +326,77 @@ namespace vl
     // --------------- geometry shader ---------------
 
     //! See GL_ARB_geometry_shader4's GL_GEOMETRY_VERTICES_OUT_EXT
-    void setGeometryVerticesOut(int vertex_count) { scheduleRelinking(); mGeometryVerticesOut = vertex_count; }
+    void setGeometryVerticesOut(int vertex_count) 
+    { 
+      if (mGeometryVerticesOut != vertex_count)
+      {
+        scheduleRelinking(); 
+        mGeometryVerticesOut = vertex_count; 
+      }
+    }
+
     //! See GL_ARB_geometry_shader4's GL_GEOMETRY_VERTICES_OUT_EXT
     int geometryVerticesOut() const { return mGeometryVerticesOut; }
 
     //! See GL_ARB_geometry_shader4's GL_GEOMETRY_INPUT_TYPE_EXT
-    void setGeometryInputType(EGeometryInputType type) { scheduleRelinking(); mGeometryInputType = type; }
+    void setGeometryInputType(EGeometryInputType type) 
+    { 
+      if (mGeometryInputType != type)
+      {
+        scheduleRelinking(); 
+        mGeometryInputType = type; 
+      }
+    }
     //! See GL_ARB_geometry_shader4's GL_GEOMETRY_INPUT_TYPE_EXT
     EGeometryInputType geometryInputType() const { return mGeometryInputType; }
 
     //! See GL_ARB_geometry_shader4's GL_GEOMETRY_OUTPUT_TYPE_EXT
-    void setGeometryOutputType(EGeometryOutputType type) { scheduleRelinking(); mGeometryOutputType = type; }
+    void setGeometryOutputType(EGeometryOutputType type) 
+    { 
+      if (mGeometryOutputType != type)
+      {
+        scheduleRelinking(); 
+        mGeometryOutputType = type; 
+      }
+    }
+    
     //! See GL_ARB_geometry_shader4's GL_GEOMETRY_OUTPUT_TYPE_EXT
     EGeometryOutputType geometryOutputType() const { return mGeometryOutputType; }
+
+    // --------------- GLSL 4.x ---------------
+
+    //! Indicate to the implementation the intention of the application to retrieve the program's binary representation 
+    //! with glGetProgramBinary. The implementation may use this information to store information that may be useful for 
+    //! a future query of the program's binary. See http://www.opengl.org/sdk/docs/man4/xhtml/glProgramParameter.xml
+    void setProgramBinaryRetrievableHint(bool hint) { mProgramBinaryRetrievableHint = hint; }
+    
+    //! Indicate to the implementation the intention of the application to retrieve the program's binary representation 
+    //! with glGetProgramBinary. The implementation may use this information to store information that may be useful for 
+    //! a future query of the program's binary. See http://www.opengl.org/sdk/docs/man4/xhtml/glProgramParameter.xml
+    bool programBinaryRetrievableHint() const { return mProgramBinaryRetrievableHint; }
+
+    //! Indicates whether program can be bound to individual pipeline stages via glUseProgramStages, see also http://www.opengl.org/sdk/docs/man4/xhtml/glProgramParameter.xml
+    //! \note Changing the program-separable attribute will schedule a relink of the GLSL program.
+    void setProgramSeparable(bool separable) 
+    { 
+      if (mProgramSeparable != separable)
+      {
+        scheduleRelinking();
+        mProgramSeparable = separable; 
+      }
+    }
+
+    //! Indicates whether program can be bound to individual pipeline stages via glUseProgramStages, see also http://www.opengl.org/sdk/docs/man4/xhtml/glProgramParameter.xml
+    bool programSeparable() const { return mProgramSeparable; }
+
+    //! glGetProgramBinary wrapper: returns a binary representation of a program object's compiled and linked executable source, see also http://www.opengl.org/sdk/docs/man4/xhtml/glGetProgramBinary.xml
+    bool getProgramBinary(GLenum& binary_format, std::vector<unsigned char>& binary) const;
+
+    //! glProgramBinary wrapper: loads a program object with a program binary, see also http://www.opengl.org/sdk/docs/man4/xhtml/glProgramBinary.xml
+    bool programBinary(GLenum binary_format, const std::vector<unsigned char>& binary) { programBinary(binary_format, &binary[0], binary.size()); }
+
+    //! glProgramBinary wrapper: loads a program object with a program binary, see also http://www.opengl.org/sdk/docs/man4/xhtml/glProgramBinary.xml
+    bool programBinary(GLenum binary_format, const void* binary, int length);
 
     // --------------- uniform variables ---------------
 
@@ -432,6 +495,10 @@ namespace vl
     //! Utility function using uniformSet(). Erases all the uniforms.
     void eraseAllUniforms() { if(uniformSet()) uniformSet()->eraseAllUniforms(); }
 
+  private:
+    void preLink();
+    void postLink();
+
   protected:
     std::vector< ref<GLSLShader> > mShaders;
     std::map<std::string, int> mFragDataLocation;
@@ -440,9 +507,12 @@ namespace vl
     ref<UniformSet> mUniformSet;
     unsigned int mHandle;
     bool mScheduleLink;
+    // glProgramParameter
     int mGeometryVerticesOut;
     EGeometryInputType mGeometryInputType;
     EGeometryOutputType mGeometryOutputType;
+    bool mProgramBinaryRetrievableHint;
+    bool mProgramSeparable;
   };
 }
 

@@ -114,7 +114,7 @@ void Geometry::deepCopy(Geometry* geom) const
   {
     geom->mVertexAttribArrays[i] = new VertexAttribInfo;
     geom->mVertexAttribArrays[i]->setNormalize( mVertexAttribArrays[i]->normalize() );
-    geom->mVertexAttribArrays[i]->setPureInteger( mVertexAttribArrays[i]->pureInteger() );
+    geom->mVertexAttribArrays[i]->setDataBehavior( mVertexAttribArrays[i]->dataBehavior() );
     geom->mVertexAttribArrays[i]->setAttribIndex( mVertexAttribArrays[i]->attribIndex() );
     geom->mVertexAttribArrays[i]->setData( geom->mVertexAttribArrays[i]->data() ? geom->mVertexAttribArrays[i]->data()->clone().get() : NULL );
   }

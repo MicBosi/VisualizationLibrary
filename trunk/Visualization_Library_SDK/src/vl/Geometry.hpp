@@ -276,7 +276,7 @@ namespace vl
       tex_array = mTexCoordArrays[i]->mTexCoordArray.get();
     }
 
-    void setVertexAttribArray(unsigned int attrib_idx, bool normalize, bool pure_integer, ArrayAbstract* data) { setVertexAttribArray(VertexAttribInfo(attrib_idx, normalize, pure_integer, data)); }
+    void setVertexAttribArray(unsigned int attrib_idx, bool normalize, EVertexAttribBehavior data_behav, ArrayAbstract* data) { setVertexAttribArray(VertexAttribInfo(attrib_idx, normalize, data_behav, data)); }
 
     void setVertexAttribArray(const VertexAttribInfo& info);
 

@@ -1612,14 +1612,22 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           mVertexAttrib[idx].mPtr = ptr;
           mVertexAttrib[idx].mVBO = vbo;
           VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
-          if ( info->pureInteger() )
+
+          if ( info->dataBehavior() == VAB_NORMAL )
+          {
+            VL_glVertexAttribPointer( idx, (int)info->data()->glSize(), info->data()->glType(), info->normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
+          }
+          else
+          if ( info->dataBehavior() == VAB_PURE_INTEGER )
           {
             VL_glVertexAttribIPointer( idx, (int)info->data()->glSize(), info->data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
           }
           else
+          if ( info->dataBehavior() == VAB_PURE_DOUBLE )
           {
-            VL_glVertexAttribPointer( idx, (int)info->data()->glSize(), info->data()->glType(), info->normalize(), /*stride*/0, ptr ); VL_CHECK_OGL();
+            VL_glVertexAttribLPointer( idx, (int)info->data()->glSize(), info->data()->glType(), /*stride*/0, ptr ); VL_CHECK_OGL();
           }
+
           // enable if not previously enabled
           if (mVertexAttrib[idx].mState == 1)
           {
