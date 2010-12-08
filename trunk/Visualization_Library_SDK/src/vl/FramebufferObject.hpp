@@ -176,7 +176,7 @@ namespace vl
   class FBODepthBufferAttachment: public FBORenderbufferAttachment
   {
   public:
-    FBODepthBufferAttachment(EDepthType type)
+    FBODepthBufferAttachment(EDepthBufferFormat type)
     {
       #ifndef NDEBUG
         mObjectName = className();
@@ -185,15 +185,15 @@ namespace vl
     }
     virtual const char* className() { return "FBODepthBufferAttachment"; }
     //! Defines the type to specify when allocating the renderbuffer storage. Note that this function schedules a reallocation of the renderbuffer storage.
-    void setType(EDepthType type) { if (type != mType) /* schedules recreation */ mReallocateRenderbuffer = true; mType = type; }
-    EDepthType type() const { return mType; }
+    void setType(EDepthBufferFormat type) { if (type != mType) /* schedules recreation */ mReallocateRenderbuffer = true; mType = type; }
+    EDepthBufferFormat type() const { return mType; }
     void bindAttachment(int w, int h, EAttachmentPoint attach_point) { internalBindAttachment( w, h, attach_point ); }
 
   protected:
     virtual int internalType() { return type(); }
 
   protected:
-    EDepthType mType;
+    EDepthBufferFormat mType;
   };
   //-----------------------------------------------------------------------------
   // FBOStencilBufferAttachment
@@ -205,7 +205,7 @@ namespace vl
   class FBOStencilBufferAttachment: public FBORenderbufferAttachment
   {
   public:
-    FBOStencilBufferAttachment(EStencilType type)
+    FBOStencilBufferAttachment(EStencilBufferFormat type)
     {
       #ifndef NDEBUG
         mObjectName = className();
@@ -214,15 +214,15 @@ namespace vl
     }
     virtual const char* className() { return "FBOStencilBufferAttachment"; }
     //! Defines the type to specify when allocating the renderbuffer storage. Note that this function schedules a reallocation of the renderbuffer storage.
-    void setType(EStencilType type) { if (type != mType) /* schedules recreation */ mReallocateRenderbuffer = true; mType = type; }
-    EStencilType type() const { return mType; }
+    void setType(EStencilBufferFormat type) { if (type != mType) /* schedules recreation */ mReallocateRenderbuffer = true; mType = type; }
+    EStencilBufferFormat type() const { return mType; }
     void bindAttachment(int w, int h, EAttachmentPoint attach_point) { internalBindAttachment( w, h, attach_point ); }
 
   protected:
     virtual int internalType() { return type(); }
 
   protected:
-    EStencilType mType;
+    EStencilBufferFormat mType;
   };
   //-----------------------------------------------------------------------------
   // FBODepthStencilBufferAttachment
@@ -234,7 +234,7 @@ namespace vl
   class FBODepthStencilBufferAttachment: public FBORenderbufferAttachment
   {
   public:
-    FBODepthStencilBufferAttachment(EDepthStencilType type)
+    FBODepthStencilBufferAttachment(EDepthStencilBufferFormat type)
     {
       #ifndef NDEBUG
         mObjectName = className();
@@ -243,15 +243,15 @@ namespace vl
     }
     virtual const char* className() { return "FBODepthStencilBufferAttachment"; }
     //! Defines the type to specify when allocating the renderbuffer storage. Note that this function schedules a reallocation of the renderbuffer storage.
-    void setType(EDepthStencilType type) { if (type != mType) /* schedules recreation */ mReallocateRenderbuffer = true; mType = type; }
-    EDepthStencilType type() const { return mType; }
+    void setType(EDepthStencilBufferFormat type) { if (type != mType) /* schedules recreation */ mReallocateRenderbuffer = true; mType = type; }
+    EDepthStencilBufferFormat type() const { return mType; }
     void bindAttachment(int w, int h, EAttachmentPoint attach_point) { internalBindAttachment( w, h, attach_point ); }
 
   protected:
     virtual int internalType() { return type(); }
 
   protected:
-    EDepthStencilType mType;
+    EDepthStencilBufferFormat mType;
   };
   //-----------------------------------------------------------------------------
   //
