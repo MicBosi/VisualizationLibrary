@@ -45,12 +45,13 @@ namespace
     switch(internal_format)
     {
     case TF_DEPTH_STENCIL:
+    case TF_DEPTH24_STENCIL8:
     case TF_DEPTH32F_STENCIL8:
+    case TF_DEPTH_COMPONENT32F:
     case TF_DEPTH_COMPONENT:
     case TF_DEPTH_COMPONENT16:
     case TF_DEPTH_COMPONENT24:
     case TF_DEPTH_COMPONENT32:
-    case TF_DEPTH_COMPONENT32F:
       return GL_DEPTH_COMPONENT;
 
     case TF_RGBA32UI_EXT:
@@ -94,6 +95,19 @@ namespace
     case TF_INTENSITY8I_EXT:
     case TF_LUMINANCE8I_EXT:
     case TF_LUMINANCE_ALPHA8I_EXT:
+
+    case TF_R8I:
+    case TF_R8UI:
+    case TF_R16I:
+    case TF_R16UI:
+    case TF_R32I:
+    case TF_R32UI:
+    case TF_RG8I:
+    case TF_RG8UI:
+    case TF_RG16I:
+    case TF_RG16UI:
+    case TF_RG32I:
+    case TF_RG32UI:
       return GL_RED_INTEGER;
 
     default:

@@ -74,7 +74,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DT_DEPTH_COMPONENT);
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* use texture as color buffer */
@@ -128,7 +128,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DT_DEPTH_COMPONENT);
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* use a per-pixel-light GLSL shader which renders on two color attachments at the same time */
@@ -220,7 +220,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DT_DEPTH_COMPONENT);
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* bind a normal color buffer as color attachment #0 */
@@ -288,7 +288,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a multisampled depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DT_DEPTH_COMPONENT);
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
     fbo_depth_attachm->setSamples(samples);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
