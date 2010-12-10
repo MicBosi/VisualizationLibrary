@@ -158,6 +158,27 @@ namespace vl
       return exp == 0 && mantissa != 0;
     }
     //---------------------------------------------------------------------------
+    half operator-()
+    {
+      half h = *this;
+      h.bits ^= 1 << 15;
+      return h;
+    }
+    //---------------------------------------------------------------------------
+    static half infinity()
+    {
+      half h;
+      h.bits = HALF_FLOAT_MAX_BIASED_EXP;
+      return h;
+    }
+    //---------------------------------------------------------------------------
+    static half NaN()
+    {
+      half h;
+      h.bits = HALF_FLOAT_MAX_BIASED_EXP | (( 1 << 10) - 1);
+      return h;
+    }
+    //---------------------------------------------------------------------------
     static half convertFloatToHalf(float f)
     {
       unsigned int x = *(unsigned int*)&f;
