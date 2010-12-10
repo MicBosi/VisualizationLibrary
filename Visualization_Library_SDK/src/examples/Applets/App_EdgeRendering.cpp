@@ -69,9 +69,9 @@ public:
     mEdgeRenderer->setSmoothLines(true);
     mEdgeRenderer->setDefaultLineColor(vlut::black);
 
-    // fills mSceneManager with a few actors.
+    // fills the scene with a few actors.
     // the beauty of this system is that you setup your actors ony once in a single scene managers and
-    // they will be rendered twice, first using a normal renderer and then using the wireframe renderer.
+    // they will be rendered twice, first using a normal renderer and then using the edge renderer.
     setupScene();
   }
 
@@ -202,7 +202,7 @@ public:
   void loadModel(const std::vector<vl::String>& files)
   {
     // resets the scene
-    mSceneManager->tree()->actors()->clear();
+    sceneManager()->tree()->actors()->clear();
     // resets the EdgeRenderer cache
     mEdgeRenderer->clearCache();
 
@@ -227,12 +227,12 @@ public:
         actor->effect()->shader()->enable(vl::EN_LIGHTING);
         actor->effect()->shader()->gocLightModel()->setTwoSide(true);
         // add the actor to the scene
-        mSceneManager->tree()->addActor( actor.get() );
+        sceneManager()->tree()->addActor( actor.get() );
       }
     }
 
     // position the camera to nicely see the objects in the scene
-    trackball()->adjustView( mSceneManager.get(), vl::vec3(0,0,1)/*direction*/, vl::vec3(0,1,0)/*up*/, 1.0f/*bias*/ );
+    trackball()->adjustView( sceneManager(), vl::vec3(0,0,1)/*direction*/, vl::vec3(0,1,0)/*up*/, 1.0f/*bias*/ );
   }
 
   // laod the files dropped in the window
@@ -242,7 +242,6 @@ protected:
   vl::ref< vl::Renderer > mSolidRenderer;
   vl::ref< vl::EdgeRenderer > mEdgeRenderer;
   vl::ref<vl::Rendering> mRendering;
-  vl::ref<vl::SceneManagerActorTree> mSceneManager;
 };
 
 // Have fun!
