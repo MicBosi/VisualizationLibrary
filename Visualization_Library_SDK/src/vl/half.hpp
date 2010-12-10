@@ -68,6 +68,16 @@ namespace vl
       return (double)convertHalfToFloat(*this);
     }
 
+    operator int() const
+    {
+      return (int)convertHalfToFloat(*this);
+    }
+
+    operator long long() const
+    {
+      return (long long)convertHalfToFloat(*this);
+    }
+
     half operator+(const half& other) const
     {
       return convertFloatToHalf( convertHalfToFloat(*this) + convertHalfToFloat(other) );
