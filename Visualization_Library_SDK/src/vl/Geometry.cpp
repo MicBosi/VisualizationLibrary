@@ -162,10 +162,6 @@ void Geometry::setVertexArray(ArrayAbstract* data)
   // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual 
   // to see what "size" and "type" are allowed for glVertexPointer
   VL_CHECK( !data || (data->glSize() >=2 && data->glSize()<=4) )
-  VL_CHECK( !data || (data->glType() == GL_SHORT ||
-                      data->glType() == GL_INT   ||
-                      data->glType() == GL_FLOAT ||
-                      data->glType() == GL_DOUBLE) );
 
   mVertexArray = data;
 }

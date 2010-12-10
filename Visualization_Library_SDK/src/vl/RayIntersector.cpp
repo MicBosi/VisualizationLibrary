@@ -68,6 +68,7 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
 {
   ArrayFVec3* vert3f = dynamic_cast<ArrayFVec3*>(geom->vertexArray());
   ArrayDVec3* vert3d = dynamic_cast<ArrayDVec3*>(geom->vertexArray());
+  ArrayHFVec3* vert3h = dynamic_cast<ArrayHFVec3*>(geom->vertexArray());
   if (vert3f)
   {
     fmat4 matrix = act->transform() ? (fmat4)act->transform()->worldMatrix() : fmat4();
@@ -103,6 +104,29 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
         dvec3 a = vert3d->at(trit.a());
         dvec3 b = vert3d->at(trit.b());
         dvec3 c = vert3d->at(trit.c());
+        if (act->transform())
+        {
+          a = matrix * a;
+          b = matrix * b;
+          c = matrix * c;
+        }
+        intersectTriangle(a, b, c, act, geom, prim, itri);
+      }
+    }
+  }
+  else
+  if (vert3h)
+  {
+    fmat4 matrix = act->transform() ? (fmat4)act->transform()->worldMatrix() : fmat4();
+    for(int i=0; i<geom->drawCalls()->size(); ++i)
+    {
+      DrawCall* prim = geom->drawCalls()->at(i);
+      int itri = 0;
+      for(TriangleIterator trit = prim->triangleIterator(); !trit.isEnd(); trit.next(), ++itri)
+      {
+        fvec3 a = (fvec3)vert3h->at(trit.a());
+        fvec3 b = (fvec3)vert3h->at(trit.b());
+        fvec3 c = (fvec3)vert3h->at(trit.c());
         if (act->transform())
         {
           a = matrix * a;
