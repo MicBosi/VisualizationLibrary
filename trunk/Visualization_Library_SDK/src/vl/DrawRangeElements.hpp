@@ -309,27 +309,27 @@ namespace vl
   // typedefs
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLuint. */
-  class DrawRangeElementsUInt: public DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>
+  class DrawRangeElementsUInt: public DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>
   {
   public:
     DrawRangeElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLuint(~0))
-    :DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt>(primitive, r_start, r_end) {}
+    :DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>(primitive, r_start, r_end) {}
   };
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLushort. */
-  class DrawRangeElementsUShort: public DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>
+  class DrawRangeElementsUShort: public DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>
   {
   public:
     DrawRangeElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLushort(~0))
-    :DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort>(primitive, r_start, r_end) {}
+    :DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>(primitive, r_start, r_end) {}
   };
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLubyte. */
-  class DrawRangeElementsUByte: public DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>
+  class DrawRangeElementsUByte: public DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>
   {
   public:
     DrawRangeElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLubyte(~0))
-    :DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte>(primitive, r_start, r_end) {}
+    :DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>(primitive, r_start, r_end) {}
   };
   //------------------------------------------------------------------------------
 }

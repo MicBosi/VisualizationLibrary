@@ -743,10 +743,10 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
       VL_CHECK( sum == (int)mMeshes[imesh]->facePositionIndex().size() )
     #endif
 
-    ref< ArrayFVec3 >   v_coords  = new ArrayFVec3;
-    ref< ArrayFVec3 >   n_coords  = new ArrayFVec3;
+    ref< ArrayFloat3 >   v_coords  = new ArrayFloat3;
+    ref< ArrayFloat3 >   n_coords  = new ArrayFloat3;
     // we support only 2d textures
-    ref< ArrayFVec2 >   t_coords2 = new ArrayFVec2;
+    ref< ArrayFloat2 >   t_coords2 = new ArrayFloat2;
 
     if ( !mMeshes[imesh]->faceNormalIndex().empty() && mMeshes[imesh]->faceNormalIndex().size() != mMeshes[imesh]->facePositionIndex().size() )
     {

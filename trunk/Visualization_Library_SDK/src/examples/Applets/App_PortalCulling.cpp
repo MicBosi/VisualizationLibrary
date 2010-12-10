@@ -165,12 +165,12 @@ public:
     float h1 = room_h       / 3.0f * 2.0f;
     float w2 = room_size_in / 2.0f;
     float h2 = room_h;
-    vl::ref<vl::ArrayFVec3> vert_array;
+    vl::ref<vl::ArrayFloat3> vert_array;
     vl::ref<vl::DrawElementsUInt> de;
 
     // wall 1 b
     vl::ref<vl::Geometry> wall_1_b = new vl::Geometry;
-    vert_array = new vl::ArrayFVec3;
+    vert_array = new vl::ArrayFloat3;
     wall_1_b->setVertexArray(vert_array.get());
     vert_array->resize(8);
     // 1-----------2
@@ -206,7 +206,7 @@ public:
     // wall_1_c
     vl::fvec3 v1c(room_size_out-room_size_in,0,0);
     vl::ref<vl::Geometry> wall_1_c = new vl::Geometry;
-    vert_array = new vl::ArrayFVec3;
+    vert_array = new vl::ArrayFloat3;
     wall_1_c->setVertexArray(vert_array.get());
     vert_array->resize(8);
     // 1-----------2
@@ -245,7 +245,7 @@ public:
 
     // wall 2 b
     vl::ref<vl::Geometry> wall_2_b = new vl::Geometry;
-    vert_array = new vl::ArrayFVec3;
+    vert_array = new vl::ArrayFloat3;
     wall_2_b->setVertexArray(vert_array.get());
     vert_array->resize(8);
     // 1-----------2
@@ -281,7 +281,7 @@ public:
     // wall_2_c
     vl::fvec3 v2c(0,0,room_size_out-room_size_in);
     vl::ref<vl::Geometry> wall_2_c = new vl::Geometry;
-    vert_array = new vl::ArrayFVec3;
+    vert_array = new vl::ArrayFloat3;
     wall_2_c->setVertexArray(vert_array.get());
     vert_array->resize(8);
     // 1-----------2

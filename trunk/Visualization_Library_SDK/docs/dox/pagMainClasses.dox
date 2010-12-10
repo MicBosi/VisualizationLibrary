@@ -5,7 +5,7 @@
 	This are the most important Visualization Library classes and functions divided into groups. 
 	
 	Some items might appear in more than one group. Hovering with the mouse on the name of a class or function will display a tooltip with a brief description.
-	
+
 	\par Math
 	
 	- vl::Real
@@ -201,7 +201,8 @@
 	- vl::DrawElements
 	- vl::VertexAttribInfo
 	- vl::ArrayAbstract
-	- vl::ArrayFVec4
+	- vl::ArrayFloat3, vl::ArrayFloat4 etc.
+	- vl::ArrayHFloat3, vl::ArrayHFloat4 etc.
 	- vl::ArrayAbstract::computeBoundingSphere()
 	- vl::ArrayAbstract::computeBoundingBox()
 	- vl::ArrayAbstract::transform()

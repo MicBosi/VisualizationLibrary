@@ -54,100 +54,100 @@ ref<ArrayAbstract> VertexMapper::regenerate(ArrayAbstract* data, const std::vect
 {
   ref<ArrayAbstract> out_data;
 
-  if ( (out_data = regenerateT<ArrayIVec4>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayInt4>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayIVec3>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayInt3>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayIVec2>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayInt2>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUVec4>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUInt4>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUVec3>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUInt3>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUVec2>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUInt2>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayFVec4>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayFloat4>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayFVec3>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayFloat3>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayFVec2>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayFloat2>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayDVec4>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayDouble4>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayDVec3>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayDouble3>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayDVec2>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayDouble2>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayFloat>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayFloat1>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayDouble>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayDouble1>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUInt>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUInt1>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayInt>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayInt1>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayByte>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayByte1>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayShort>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayShort1>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUByte>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUByte1>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUShort>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUShort1>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUBVec2>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUByte2>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUBVec3>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUByte3>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUBVec4>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUByte4>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayBVec2>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayByte2>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayBVec3>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayByte3>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayBVec4>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayByte4>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArraySVec2>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayShort2>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArraySVec3>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayShort3>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArraySVec4>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayShort4>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUSVec2>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUShort2>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUSVec3>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUShort3>(data, map_new_to_old)) )
     return out_data;
   else
-  if ( (out_data = regenerateT<ArrayUSVec4>(data, map_new_to_old)) )
+  if ( (out_data = regenerateT<ArrayUShort4>(data, map_new_to_old)) )
     return out_data;
 
   return NULL;

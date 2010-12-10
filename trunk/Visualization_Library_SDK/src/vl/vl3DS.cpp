@@ -804,8 +804,8 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
 
       // dump vertices and uv
 
-      ref<ArrayFVec3> vert_interf = new ArrayFVec3;
-      ref<ArrayFVec2> tuvs_interf = new ArrayFVec2;
+      ref<ArrayFloat3> vert_interf = new ArrayFloat3;
+      ref<ArrayFloat2> tuvs_interf = new ArrayFloat2;
       geom->setVertexArray(vert_interf.get());
       geom->setTexCoordArray(0, tuvs_interf.get());
       vert_interf->resize( index_counter );

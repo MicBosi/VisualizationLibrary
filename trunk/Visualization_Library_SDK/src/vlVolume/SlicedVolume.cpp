@@ -325,8 +325,8 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, Real, const Camera* camera
   mGeometry->drawCalls()->clear();
   ref<DrawArrays> da = new DrawArrays(vl::PT_TRIANGLES, 0, (int)polygons.size());
   mGeometry->drawCalls()->push_back( da.get() );
-  ref<ArrayFVec3> vertex_array = new ArrayFVec3;
-  ref<ArrayFVec3> texcoo_array = new ArrayFVec3;
+  ref<ArrayFloat3> vertex_array = new ArrayFloat3;
+  ref<ArrayFloat3> texcoo_array = new ArrayFloat3;
   vertex_array->resize(polygons.size());
   texcoo_array->resize(polygons_t.size());
   VL_CHECK((size_t)vertex_array->gpuBuffer()->bytesUsed() == sizeof(polygons  [0])*polygons.  size());

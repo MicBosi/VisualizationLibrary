@@ -64,10 +64,10 @@ void EdgeExtractor::addEdge(std::set<EdgeExtractor::Edge>& edges, const EdgeExtr
 }
 //-----------------------------------------------------------------------------
 //! Extracts the edges from the given Geometry and appends them to edges().
-//! The given geometry must have a vertex array of format ArrayFVec3.
+//! The given geometry must have a vertex array of format ArrayFloat3.
 void EdgeExtractor::extractEdges(Geometry* geom)
 {
-  ArrayFVec3* verts = dynamic_cast<ArrayFVec3*>(geom->vertexArray());
+  ArrayFloat3* verts = dynamic_cast<ArrayFloat3*>(geom->vertexArray());
 
   // mic fixme:
   // here the bottle-neck seems to be the continuous allocation/deallocation and insertion/search time,
@@ -75,7 +75,7 @@ void EdgeExtractor::extractEdges(Geometry* geom)
   std::set<Edge> edges;
   if (!verts)
   {
-    vl::Log::error("EdgeExtractor::extractEdges(geom): 'geom' must have a vertex array of type ArrayFVec3.\n");
+    vl::Log::error("EdgeExtractor::extractEdges(geom): 'geom' must have a vertex array of type ArrayFloat3.\n");
     return;
   }
 
@@ -129,7 +129,7 @@ ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
   ref<Geometry> geom = new Geometry;
   geom->setColor(vlut::black);
   geom->setVBOEnabled(false);
-  ref<ArrayFVec3> vert_array = new ArrayFVec3;
+  ref<ArrayFloat3> vert_array = new ArrayFloat3;
   geom->setVertexArray(vert_array.get());
   #ifdef SHOW_NORMALS
     vert_array->resize(edges().size()*6);

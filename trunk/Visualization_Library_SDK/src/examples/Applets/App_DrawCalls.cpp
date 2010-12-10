@@ -75,7 +75,7 @@ class App_DrawCalls: public BaseDemo
     //  vert_counts.push_back(5);
     //  vert_counts.push_back(3);
 
-    //vl::ref< vl::IndexIteratorElements<vl::ArrayUInt> > iie = new vl::IndexIteratorElements<vl::ArrayUInt>;
+    //vl::ref< vl::IndexIteratorElements<vl::ArrayUInt1> > iie = new vl::IndexIteratorElements<vl::ArrayUInt1>;
     //// iie->initialize( deu32->indices(), NULL, NULL, deu32->baseVertex(), deu32->primitiveRestartEnabled(), deu32->primitiveRestartIndex() );
     //iie->initialize( deu32->indices(), &base_vertices, &vert_counts, 0, deu32->primitiveRestartEnabled(), deu32->primitiveRestartIndex() );
 
@@ -152,7 +152,7 @@ class App_DrawCalls: public BaseDemo
 
     // initialize the triangle iterator
 
-    vl::TriangleIteratorIndexed<vl::ArrayUInt> it(de_u32->indices(), de_u32->primitiveType(), 10, true, 0xFF );
+    vl::TriangleIteratorIndexed<vl::ArrayUInt1> it(de_u32->indices(), de_u32->primitiveType(), 10, true, 0xFF );
 
     // query the triangle iterator
 

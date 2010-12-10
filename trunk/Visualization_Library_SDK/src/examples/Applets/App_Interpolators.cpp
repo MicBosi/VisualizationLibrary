@@ -212,7 +212,7 @@ public:
 
     // generates the line/points geometry
     vl::ref<vl::Geometry>   geom       = new vl::Geometry;
-    vl::ref<vl::ArrayFVec3> vert_array = new vl::ArrayFVec3;
+    vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     geom->setVertexArray( vert_array.get() );
     *vert_array = ctrl_points;
     geom->setColor(color);

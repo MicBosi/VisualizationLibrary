@@ -62,8 +62,8 @@ namespace vl
      * with the exception of the vertex position array and vertex normal array since they are automatically generated
      * in realtime time during the rendering from the vertex and normal frames specified below.
      * In addition ResourceDatabase must contain:
-     * - N ArrayFVec3 objects named 'vertex_frame' containing the vertex position for every frame
-     * - N ArrayFVec3 objects named 'normal_frame' containing the vertex normal for every frame
+     * - N ArrayFloat3 objects named 'vertex_frame' containing the vertex position for every frame
+     * - N ArrayFloat3 objects named 'normal_frame' containing the vertex normal for every frame
      * where N is the number of animation frames.
     */
     void init(ResourceDatabase* res_db);
@@ -90,10 +90,10 @@ namespace vl
 
   protected:
     ref<Geometry> mGeometry;
-    ref<ArrayFVec3> mVertices;
-    ref<ArrayFVec3> mNormals;
-    std::vector< ref<ArrayFVec3> > mVertexFrames;
-    std::vector< ref<ArrayFVec3> > mNormalFrames;
+    ref<ArrayFloat3> mVertices;
+    ref<ArrayFloat3> mNormals;
+    std::vector< ref<ArrayFloat3> > mVertexFrames;
+    std::vector< ref<ArrayFloat3> > mNormalFrames;
 
     Real mLastUpdate;
     Real mElapsedTime;

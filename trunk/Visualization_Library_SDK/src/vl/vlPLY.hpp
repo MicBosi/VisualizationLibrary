@@ -250,9 +250,9 @@ namespace vl
     bool readHeader(TextStream* line_reader);
   protected:
     std::vector< ref<PlyElement> > mElements;
-    ref<ArrayFVec3>  mVerts;
-    ref<ArrayFVec3>  mNormals;
-    ref<ArrayUBVec4> mColors;
+    ref<ArrayFloat3>  mVerts;
+    ref<ArrayFloat3>  mNormals;
+    ref<ArrayUByte4> mColors;
     std::vector<unsigned int> mIndices;
     int mVertexIndex;
     bool mBinary;
