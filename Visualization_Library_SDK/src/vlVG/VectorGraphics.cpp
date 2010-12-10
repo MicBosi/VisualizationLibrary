@@ -56,7 +56,7 @@ vl::Actor* VectorGraphics::drawLines(const std::vector<vl::dvec2>& ln)
   // generate texture coords
   if (mState.mImage)
   {
-    vl::ref<vl::ArrayFloat> tex_array = new vl::ArrayFloat;
+    vl::ref<vl::ArrayFloat1> tex_array = new vl::ArrayFloat1;
     tex_array->resize(geom->vertexArray()->size());
     float u1 = 1.0f / mState.mImage->width() * 0.5f;
     float u2 = 1.0f - 1.0f / mState.mImage->width() * 0.5f;
@@ -180,7 +180,7 @@ vl::Actor* VectorGraphics::drawPoint(double x, double y)
 vl::Actor* VectorGraphics::drawPoints(const std::vector<vl::dvec2>& pt)
 {
   // transform the points
-  vl::ref<vl::ArrayFVec3> pos_array = new vl::ArrayFVec3;
+  vl::ref<vl::ArrayFloat3> pos_array = new vl::ArrayFloat3;
   pos_array->resize(pt.size());
   // transform done using high precision
   for(unsigned i=0; i<pt.size(); ++i)
@@ -548,7 +548,7 @@ void VectorGraphics::generateQuadsTexCoords(vl::Geometry* geom, const std::vecto
   // generate only if there is an image active
   if (mState.mImage)
   {
-    vl::ref<vl::ArrayFVec2> tex_array = new vl::ArrayFVec2;
+    vl::ref<vl::ArrayFloat2> tex_array = new vl::ArrayFloat2;
     tex_array->resize(geom->vertexArray()->size());
     geom->setTexCoordArray(0, tex_array.get());
     if (mState.mTextureMode == TextureMode_Clamp)
@@ -591,7 +591,7 @@ void VectorGraphics::generatePlanarTexCoords(vl::Geometry* geom, const std::vect
   if (mState.mImage)
   {
     // generate uv coordinates based on the aabb
-    vl::ref<vl::ArrayFVec2> tex_array = new vl::ArrayFVec2;
+    vl::ref<vl::ArrayFloat2> tex_array = new vl::ArrayFloat2;
     tex_array->resize(geom->vertexArray()->size());
     geom->setTexCoordArray(0, tex_array.get());
     if (mState.mTextureMode == TextureMode_Clamp)
@@ -629,7 +629,7 @@ void VectorGraphics::generateLinearTexCoords(vl::Geometry* geom)
 {
   if (mState.mImage)
   {
-    vl::ref<vl::ArrayFloat> tex_array = new vl::ArrayFloat;
+    vl::ref<vl::ArrayFloat1> tex_array = new vl::ArrayFloat1;
     tex_array->resize(geom->vertexArray()->size());
     float u1 = 1.0f / mState.mImage->width() * 0.5f;
     float u2 = 1.0f - 1.0f / mState.mImage->width() * 0.5f;
@@ -646,7 +646,7 @@ void VectorGraphics::generateLinearTexCoords(vl::Geometry* geom)
 vl::ref<vl::Geometry> VectorGraphics::prepareGeometry(const std::vector<vl::dvec2>& ln)
 {
   // transform the lines
-  vl::ref<vl::ArrayFVec3> pos_array = new vl::ArrayFVec3;
+  vl::ref<vl::ArrayFloat3> pos_array = new vl::ArrayFloat3;
   pos_array->resize(ln.size());
   // transform done using high precision
   for(unsigned i=0; i<ln.size(); ++i)

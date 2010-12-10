@@ -339,7 +339,7 @@ public:
                          vl::mat4::translation( -box.center() );
 
       fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( mColorImage.get() ) );
-      vl::ref<vl::ArrayFVec3> tex_array = new vl::ArrayFVec3;
+      vl::ref<vl::ArrayFloat3> tex_array = new vl::ArrayFloat3;
       tex_array->resize( geom->vertexArray()->size() );
       geom->setTexCoordArray(0, tex_array.get());
       for(int i=0; i<tex_array->size(); ++i)
@@ -364,7 +364,7 @@ public:
                        vl::mat4::scaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
                        vl::mat4::translation( -box.center() );
 
-    vl::ref<vl::ArrayFVec4> color_array = new vl::ArrayFVec4;
+    vl::ref<vl::ArrayFloat4> color_array = new vl::ArrayFloat4;
     color_array->resize( geom->vertexArray()->size() );
     geom->setColorArray(color_array.get());
     for(size_t i=0; i<color_array->size(); ++i)

@@ -77,7 +77,7 @@ namespace vl
       nmat = nmat.getInverse().transpose();
 
       ref<Geometry>         geom = dynamic_cast<Geometry*>(renderable);
-      ref<ArrayFVec3> vert_array = dynamic_cast<ArrayFVec3*>(geom->vertexArray());
+      ref<ArrayFloat3> vert_array = dynamic_cast<ArrayFloat3*>(geom->vertexArray());
       // VL_CHECK(vert_array->size() == edges().size()*2);
       for(unsigned i=0; i<edges().size(); ++i)
       {

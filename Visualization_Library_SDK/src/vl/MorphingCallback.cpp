@@ -172,8 +172,8 @@ void MorphingCallback::init(ResourceDatabase* res_db)
 
   Geometry* geometry = res_db->get<Geometry>(0);
   geometry->shallowCopy( mGeometry.get() );
-  mVertices = new ArrayFVec3;
-  mNormals  = new ArrayFVec3;
+  mVertices = new ArrayFloat3;
+  mNormals  = new ArrayFloat3;
 
   // setup Geometry vertex attributes
 
@@ -181,7 +181,7 @@ void MorphingCallback::init(ResourceDatabase* res_db)
 
   for(unsigned i=0, count=res_db->count<ArrayAbstract>(); i<count; ++i)
   {
-    ArrayFVec3* buffer = dynamic_cast<ArrayFVec3*>(res_db->get<ArrayAbstract>(i));
+    ArrayFloat3* buffer = dynamic_cast<ArrayFloat3*>(res_db->get<ArrayAbstract>(i));
     if (buffer && buffer->objectName() == "vertex_frame")
     {
       mVertexFrames.push_back(buffer);
@@ -195,13 +195,13 @@ void MorphingCallback::init(ResourceDatabase* res_db)
 
   if (mVertexFrames.empty())
   {
-    Log::error("MorphingCallback::init(): no ArrayFVec3 named 'vertex_frame' found.\n");
+    Log::error("MorphingCallback::init(): no ArrayFloat3 named 'vertex_frame' found.\n");
     return;
   }
 
   if (mNormalFrames.empty())
   {
-    Log::error("MorphingCallback::init(): no ArrayFVec3 named 'normal_frame' found.\n");
+    Log::error("MorphingCallback::init(): no ArrayFloat3 named 'normal_frame' found.\n");
     return;
   }
 
@@ -282,8 +282,8 @@ void MorphingCallback::stopAnimation()
 //-----------------------------------------------------------------------------
 void MorphingCallback::initFrom(MorphingCallback* morph_cb)
 {
-  mVertices = new ArrayFVec3;
-  mNormals  = new ArrayFVec3;
+  mVertices = new ArrayFloat3;
+  mNormals  = new ArrayFloat3;
 
   // copy vertex frames
 

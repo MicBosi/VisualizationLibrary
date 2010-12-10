@@ -113,7 +113,7 @@ public:
 
     // Create a new Geometry and vertex array with the tessellated triangles
     vl::ref<vl::Geometry> tess_poly = new vl::Geometry;
-    vl::ref<vl::ArrayFVec3> vert_array = new vl::ArrayFVec3;
+    vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     tess_poly->setVertexArray(vert_array.get());
     // Fill the vertex array with the tessellated triangles
     *vert_array = tess.tessellatedTris();

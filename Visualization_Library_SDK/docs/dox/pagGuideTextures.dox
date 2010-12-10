@@ -113,7 +113,7 @@ tex_holebox->prepareTexture2D(img_holebox.get(), vl::TF_RGBA, mMipmappingOn, fal
 	
 	\until transform
 	
-	Since we want to animate the texture coordinates of our plane we manually allocate a vl::ArrayFVec3 to be used as the texture coordinate array for the texture unit #0. We also disable the vertex buffer objects so that any change made locally to our buffer will be immediately visible. If VBO were enabled we would have had to update the VBOs after the animation, this way we make the things a bit less efficient but easyer to follow. The animation of the texture coordinates is done in the run() method (see the sources).
+	Since we want to animate the texture coordinates of our plane we manually allocate a vl::ArrayFloat3 to be used as the texture coordinate array for the texture unit #0. We also disable the vertex buffer objects so that any change made locally to our buffer will be immediately visible. If VBO were enabled we would have had to update the VBOs after the animation, this way we make the things a bit less efficient but easyer to follow. The animation of the texture coordinates is done in the run() method (see the sources).
 	
 	\until setVBOEnabled
 	

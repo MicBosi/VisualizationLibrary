@@ -280,17 +280,17 @@ void PlyLoader::analyzeHeader()
       {
         if (elements()[i]->properties()[j]->name() == "x")
         {
-          mVerts = new ArrayFVec3;
+          mVerts = new ArrayFloat3;
           mVerts->resize( elements()[i]->elemCount() );
         }
         if (elements()[i]->properties()[j]->name() == "nx")
         {
-          mNormals = new ArrayFVec3;
+          mNormals = new ArrayFloat3;
           mNormals->resize( elements()[i]->elemCount() );
         }
         if (elements()[i]->properties()[j]->name() == "red")
         {
-          mColors = new ArrayUBVec4;
+          mColors = new ArrayUByte4;
           mColors->resize( elements()[i]->elemCount() );
           memset(mColors->ptr(), 0xFF, sizeof(mColors->at(0))*mColors->size());
         }

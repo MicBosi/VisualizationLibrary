@@ -496,8 +496,8 @@ ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)
     ref<Geometry> geom = new Geometry;
     geom->setObjectName( loader.meshes[imesh].Name.toStdString() );
 
-    ref<ArrayFVec3> verts = new ArrayFVec3;
-    ref<ArrayFVec2> uv    = new ArrayFVec2;
+    ref<ArrayFloat3> verts = new ArrayFloat3;
+    ref<ArrayFloat2> uv    = new ArrayFloat2;
     ref<DrawElementsUInt> polys = new DrawElementsUInt;
     geom->drawCalls()->push_back( polys.get() );
     geom->setVertexArray( verts.get() );

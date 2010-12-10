@@ -198,19 +198,19 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
   
   // conversion
 
-  std::vector< ref<ArrayFVec3> > vertex_frames;
-  std::vector< ref<ArrayFVec3> > normal_frames;
+  std::vector< ref<ArrayFloat3> > vertex_frames;
+  std::vector< ref<ArrayFloat3> > normal_frames;
 
   // allocate frames
   for(int i=0; i<loader.header.numFrames; ++i)
   {
-    vertex_frames.push_back( new ArrayFVec3 );
+    vertex_frames.push_back( new ArrayFloat3 );
     vertex_frames[i]->resize( 3 * loader.header.numTriangles );
     // normals are computed later
   }
 
   ref<DrawElementsUInt> polygons = new DrawElementsUInt;
-  ref<ArrayFVec2> tex_coords = new ArrayFVec2;
+  ref<ArrayFloat2> tex_coords = new ArrayFloat2;
   tex_coords->resize( 3 * loader.header.numTriangles );
   polygons->indices()->resize( 3 * loader.header.numTriangles );
   geometry->setTexCoordArray(0, tex_coords.get());
@@ -255,14 +255,14 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
   remover.removeDoubles( geometry.get() );
 
   // install the newly created and simplified arrays
-  vertex_frames[0] = dynamic_cast<ArrayFVec3*>(geometry->vertexArray());
-  tex_coords       = dynamic_cast<ArrayFVec2*>(geometry->texCoordArray(0));
+  vertex_frames[0] = dynamic_cast<ArrayFloat3*>(geometry->vertexArray());
+  tex_coords       = dynamic_cast<ArrayFloat2*>(geometry->texCoordArray(0));
   polygons         = dynamic_cast<DrawElementsUInt*>(geometry->drawCalls()->at(0));
 
   // simplify the remaining frames based on the translation table remover.oldToNewIndexMap()
   for(int iframe=1; iframe<loader.header.numFrames; ++iframe)
   {
-    ArrayFVec3* new_vertex_frame = new ArrayFVec3;
+    ArrayFloat3* new_vertex_frame = new ArrayFloat3;
     new_vertex_frame->resize( vertex_frames[0]->size() );
 
     for(size_t ivert=0; ivert<vertex_frames[iframe]->size(); ++ivert)
@@ -279,7 +279,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
   {
     geometry->setVertexArray( vertex_frames[iframe].get() );
     geometry->computeNormals();
-    normal_frames[iframe] = dynamic_cast<ArrayFVec3*>(geometry->normalArray());
+    normal_frames[iframe] = dynamic_cast<ArrayFloat3*>(geometry->normalArray());
     VL_CHECK( normal_frames[iframe] )
   }
 

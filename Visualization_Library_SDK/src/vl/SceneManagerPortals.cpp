@@ -107,7 +107,7 @@ void SceneManagerPortals::renderPortal(Portal* portal)
     portal_fx->shader()->gocLineWidth()->set(2.0f);
 
     vl::ref<vl::Geometry> portal_geom = new vl::Geometry;
-    vl::ref<vl::ArrayFVec3> vert_array = new vl::ArrayFVec3;
+    vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     portal_geom->setVertexArray(vert_array.get());
     portal_geom->setColor(portal_color);
     vert_array->resize(portal->geometry().size());

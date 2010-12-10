@@ -273,7 +273,7 @@ void Geometry::computeNormals()
     return;
   }
 
-  ref<ArrayFVec3> norm3f = new ArrayFVec3;
+  ref<ArrayFloat3> norm3f = new ArrayFloat3;
   norm3f->resize( posarr->size() );
   setNormalArray( norm3f.get() );
 
@@ -669,7 +669,7 @@ bool Geometry::sortVertices()
 //-----------------------------------------------------------------------------
 void Geometry::colorizePrimitives()
 {
-  ref<ArrayFVec4> col = new vl::ArrayFVec4;
+  ref<ArrayFloat4> col = new vl::ArrayFloat4;
   col->resize( vertexArray()->size() );
   setColorArray( col.get() );
 

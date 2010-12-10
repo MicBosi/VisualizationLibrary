@@ -208,9 +208,9 @@ namespace vlVolume
     bool highQualityNormals() const { return mHighQualityNormals; }
 
   public:
-    vl::ref<vl::ArrayFVec3> mVertsArray;
-    vl::ref<vl::ArrayFVec3> mNormsArray;
-    vl::ref<vl::ArrayFVec4> mColorArray;
+    vl::ref<vl::ArrayFloat3> mVertsArray;
+    vl::ref<vl::ArrayFloat3> mNormsArray;
+    vl::ref<vl::ArrayFloat4> mColorArray;
     vl::ref<vl::DrawElementsUInt> mDrawElements;
 
   protected:

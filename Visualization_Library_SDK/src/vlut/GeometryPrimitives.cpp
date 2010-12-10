@@ -44,8 +44,8 @@ ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real diameter, int detail, bo
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Icosphere");
 
-  ref<ArrayFVec3> coords = new ArrayFVec3;
-  ref<ArrayFVec3> norms = new ArrayFVec3;
+  ref<ArrayFloat3> coords = new ArrayFloat3;
+  ref<ArrayFloat3> norms = new ArrayFloat3;
   ref<DrawElementsUInt> polys = new DrawElementsUInt(PT_TRIANGLES);
 
   const Real X = (Real)0.525731112119133606;
@@ -146,7 +146,7 @@ ref<Geometry> vlut::makeUVSphere( const vec3& origin, Real diameter, int phi, in
   geom->setObjectName("UVSphere");
 
   diameter = diameter / 2.0f;
-  ref<ArrayFVec3> vert3 = new ArrayFVec3;
+  ref<ArrayFloat3> vert3 = new ArrayFloat3;
   geom->setVertexArray(vert3.get());
 
   // create vertices
@@ -214,7 +214,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
 
   diameter = diameter / 2;
   height = height / 2;
-  ref<ArrayFVec3> vert3 = new ArrayFVec3;
+  ref<ArrayFloat3> vert3 = new ArrayFloat3;
   geom->setVertexArray(vert3.get());
 
   // create vertices
@@ -306,17 +306,17 @@ ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness
   const Real radius = diameter / 2.0f - thickness;
 
   // vertices
-  ref<ArrayFVec3> vert3 = new ArrayFVec3;
+  ref<ArrayFloat3> vert3 = new ArrayFloat3;
   geom->setVertexArray(vert3.get());
   vert3->resize( (phi+1) * (theta+1) );
 
   // normals
-  ref<ArrayFVec3> norm3 = new ArrayFVec3;
+  ref<ArrayFloat3> norm3 = new ArrayFloat3;
   geom->setNormalArray(norm3.get());
   norm3->resize( (phi+1) * (theta+1) );
 
   // texture coordinates
-  ref<ArrayFVec2> texc2 = new ArrayFVec2;
+  ref<ArrayFloat2> texc2 = new ArrayFloat2;
   if (tex_coords)
   {
     geom->setTexCoordArray(0,texc2.get());
@@ -389,8 +389,8 @@ ref<Geometry> vlut::makeBox( const vec3& origin, Real xside, Real yside, Real zs
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Box");
 
-  ref<ArrayFVec3> vert3 = new ArrayFVec3;
-  ref<ArrayFVec2> texc2 = new ArrayFVec2;
+  ref<ArrayFloat3> vert3 = new ArrayFloat3;
+  ref<ArrayFloat2> texc2 = new ArrayFloat2;
   geom->setVertexArray(vert3.get());
   geom->setTexCoordArray(0, texc2.get());
 
@@ -439,7 +439,7 @@ ref<Geometry> vlut::makePyramid( const vec3& origin, Real side, Real height)
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Pyramid");
 
-  ref<ArrayFVec3> vert3 = new ArrayFVec3;
+  ref<ArrayFloat3> vert3 = new ArrayFloat3;
   geom->setVertexArray(vert3.get());
 
   Real x = side   / 2.0f;
@@ -472,7 +472,7 @@ ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, in
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Cone");
 
-  ref<ArrayFVec3> vert3 = new ArrayFVec3;
+  ref<ArrayFloat3> vert3 = new ArrayFloat3;
   geom->setVertexArray( vert3.get() );
 
   diameter = diameter / 2;
@@ -527,8 +527,8 @@ ref<Geometry> vlut::makeGrid( const vec3& origin, Real xside, Real zside, int x,
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Grid");
 
-  ref<ArrayFVec3> vert3 = new ArrayFVec3;
-  ref<ArrayFVec2> text2 = new ArrayFVec2;
+  ref<ArrayFloat3> vert3 = new ArrayFloat3;
+  ref<ArrayFloat2> text2 = new ArrayFloat2;
   geom->setVertexArray( vert3.get() );
 
   VL_CHECK(x>=2)
@@ -585,8 +585,8 @@ ref<Geometry> vlut::makePoints( const std::vector< vec3>& pos, const fvec4& colo
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Points");
 
-  ref<ArrayFVec3> vert3 = new ArrayFVec3;
-  ref<ArrayFVec4> col4 = new ArrayFVec4;
+  ref<ArrayFloat3> vert3 = new ArrayFloat3;
+  ref<ArrayFloat4> col4 = new ArrayFloat4;
   geom->setVertexArray( vert3.get() );
   geom->setColorArray( col4.get() );
   vert3->resize( (int)pos.size() );
@@ -608,7 +608,7 @@ ref<Geometry> vlut::makeIcosahedron( const vec3& origin, Real diameter )
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Icosahedron");
 
-  ref<ArrayFVec3> vert3 = new ArrayFVec3;
+  ref<ArrayFloat3> vert3 = new ArrayFloat3;
   geom->setVertexArray(vert3.get());
 
   // red book 1.4 p89
@@ -655,7 +655,7 @@ ref<Geometry> vlut::makeCircle( vec3 origin, Real radius, int slices )
   ref< Geometry > geom = new Geometry;
   geom->setObjectName("Circle");
 
-  ref< ArrayFVec3 > points = new ArrayFVec3;
+  ref< ArrayFloat3 > points = new ArrayFloat3;
   geom->setVertexArray(points.get());
   points->resize( slices );
   for(int i=0; i<slices; ++i)
@@ -676,8 +676,8 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Capsule");
 
-  ref<ArrayFVec3> vert_array = new ArrayFVec3;
-  ref<ArrayFVec4> colr_array = new ArrayFVec4;
+  ref<ArrayFloat3> vert_array = new ArrayFloat3;
+  ref<ArrayFloat4> colr_array = new ArrayFloat4;
   geom->setVertexArray(vert_array.get());
   geom->setColorArray (colr_array.get());
   std::vector<fvec3> verts;

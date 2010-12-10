@@ -247,9 +247,9 @@ void Molecule::generateAtomLabels()
 void Molecule::wireframeStyle()
 {
   ref<Geometry> geom = new vl::Geometry;
-  ref<ArrayFVec3> points = new ArrayFVec3;
+  ref<ArrayFloat3> points = new ArrayFloat3;
   geom->setVertexArray(points.get());
-  ref<ArrayFVec4> colors = new ArrayFVec4;
+  ref<ArrayFloat4> colors = new ArrayFloat4;
   geom->setColorArray(colors.get());
   std::vector<fvec3> pt;
   std::vector<fvec4> cols;
@@ -425,9 +425,9 @@ void Molecule::generateRings()
   if (!cycles().empty())
   {
     ref<Geometry> geom = new vl::Geometry;
-    ref<ArrayFVec3> points = new ArrayFVec3;
+    ref<ArrayFloat3> points = new ArrayFloat3;
     geom->setVertexArray(points.get());
-    ref<ArrayFVec4> colors = new ArrayFVec4;
+    ref<ArrayFloat4> colors = new ArrayFloat4;
     geom->setColorArray(colors.get());
     std::vector<fvec3> pt;
     std::vector<fvec4> cols;

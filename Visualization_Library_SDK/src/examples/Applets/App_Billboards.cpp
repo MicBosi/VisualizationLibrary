@@ -143,7 +143,7 @@ public:
     // geometry
     vl::ref<vl::Geometry> quad = new vl::Geometry;
     // quad vertices
-    vl::ref<vl::ArrayFVec3> vert = new vl::ArrayFVec3;
+    vl::ref<vl::ArrayFloat3> vert = new vl::ArrayFloat3;
     vert->resize( 4 );
     quad->setVertexArray(vert.get());
     vert->at(0) = vl::fvec3( -0.5f, -0.5f, 0.0f );
@@ -151,7 +151,7 @@ public:
     vert->at(2) = vl::fvec3( +0.5f, +0.5f, 0.0f );
     vert->at(3) = vl::fvec3( -0.5f, +0.5f, 0.0f );
     // texture coords
-    vl::ref<vl::ArrayFVec2> texc = new vl::ArrayFVec2;
+    vl::ref<vl::ArrayFloat2> texc = new vl::ArrayFloat2;
     texc->resize( 4 );
     quad->setTexCoordArray(0,texc.get());
     texc->at(0) = vl::fvec2( 0.0f, 0.0f );
