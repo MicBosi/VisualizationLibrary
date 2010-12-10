@@ -78,9 +78,20 @@ namespace vl
       return (long long)convertHalfToFloat(*this);
     }
 
+    half& operator=(const half& other)
+    {
+      bits = other.bits;
+      return *this;
+    }
+
     half operator+(const half& other) const
     {
       return convertFloatToHalf( convertHalfToFloat(*this) + convertHalfToFloat(other) );
+    }
+
+    half& operator+=(const half& other)
+    {
+      return *this = convertFloatToHalf( convertHalfToFloat(*this) + convertHalfToFloat(other) );
     }
 
     half operator-(const half& other) const
@@ -88,9 +99,19 @@ namespace vl
       return convertFloatToHalf( convertHalfToFloat(*this) - convertHalfToFloat(other) );
     }
 
+    half& operator-=(const half& other)
+    {
+      return *this = convertFloatToHalf( convertHalfToFloat(*this) - convertHalfToFloat(other) );
+    }
+
     half operator*(const half& other) const
     {
       return convertFloatToHalf( convertHalfToFloat(*this) * convertHalfToFloat(other) );
+    }
+
+    half& operator*=(const half& other)
+    {
+      return *this = convertFloatToHalf( convertHalfToFloat(*this) * convertHalfToFloat(other) );
     }
 
     half operator/(const half& other) const
@@ -98,14 +119,81 @@ namespace vl
       return convertFloatToHalf( convertHalfToFloat(*this) / convertHalfToFloat(other) );
     }
 
+    half& operator/=(const half& other)
+    {
+      return *this = convertFloatToHalf( convertHalfToFloat(*this) / convertHalfToFloat(other) );
+    }
+
+    bool isZero() const
+    {
+      return (bits & ((1 << 15)-1)) == 0;
+    }
+
+    operator bool() const
+    {
+      return !isZero();
+    }
+
     bool operator==(const half& other) const
     {
-      return bits == other.bits;
+      if (isNaN() && other.isNaN())
+        return false;
+      else
+      if (isZero() && other.isZero())
+        return true;
+      else
+        return bits == other.bits;
+    }
+
+    bool operator==(const float& other) const
+    {
+      return operator==( convertFloatToHalf(other) );
+    }
+
+    bool operator==(const double& other) const
+    {
+      return operator==( convertFloatToHalf((float)other) );
+    }
+
+    bool operator==(const int& other) const
+    {
+      return operator==( convertFloatToHalf((float)other) );
+    }
+
+    bool operator==(const long long& other) const
+    {
+      return operator==( convertFloatToHalf((float)other) );
     }
 
     bool operator!=(const half& other) const
     {
-      return bits != other.bits;
+      if (isNaN() && other.isNaN())
+        return false;
+      else
+      if (isZero() && other.isZero())
+        return false;
+      else
+        return bits != other.bits;
+    }
+
+    bool operator!=(const float& other) const
+    {
+      return operator!=( convertFloatToHalf(other) );
+    }
+
+    bool operator!=(const double& other) const
+    {
+      return operator!=( convertFloatToHalf((float)other) );
+    }
+
+    bool operator!=(const int& other) const
+    {
+      return operator!=( convertFloatToHalf((float)other) );
+    }
+
+    bool operator!=(const long long& other) const
+    {
+      return operator!=( convertFloatToHalf((float)other) );
     }
 
     bool operator<(const half& other) const
@@ -118,62 +206,50 @@ namespace vl
       return convertHalfToFloat(*this) < convertHalfToFloat(other);
     }
 
-    //---------------------------------------------------------------------------
-    static void convertDoubleToHalf(const double* d, half* h, int count)
-    {
-      for(int i=0; i<count; ++i)
-        h[i] = convertFloatToHalf((float)d[i]);
-    }
-    //---------------------------------------------------------------------------
-    static void convertHalfToDouble(const half* h, double* d, int count)
-    {
-      for(int i=0; i<count; ++i)
-        d[i] = (double)convertHalfToFloat(h[i]);
-    }
-    //---------------------------------------------------------------------------
-    bool isNan()
+    bool isNaN() const
     {
       unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
       unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
       return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa != 0;
     }
-    //---------------------------------------------------------------------------
-    bool isinf()
+
+    bool isinf() const
     {
       unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
       unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
       return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa == 0;
     }
-    //---------------------------------------------------------------------------
-    bool isinf_pos()
+
+    bool isinf_pos() const
     {
       unsigned int sign = (unsigned int) ( bits >> 15) ;
       unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
       unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
       return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa == 0 && sign == 0;
     }
-    //---------------------------------------------------------------------------
-    bool isinf_neg()
+
+    bool isinf_neg() const
     {
       unsigned int sign = (unsigned int) ( bits >> 15) ;
       unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
       unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
       return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa == 0 && sign == 1;
     }
-    //---------------------------------------------------------------------------
-    bool isdenorm()
+
+    bool isdenorm() const
     {
       unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
       unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
       return exp == 0 && mantissa != 0;
     }
-    //---------------------------------------------------------------------------
-    half operator-()
+
+    half operator-() const
     {
       half h = *this;
       h.bits ^= 1 << 15;
       return h;
     }
+
     //---------------------------------------------------------------------------
     static half infinity()
     {
@@ -187,6 +263,18 @@ namespace vl
       half h;
       h.bits = HALF_FLOAT_MAX_BIASED_EXP | (( 1 << 10) - 1);
       return h;
+    }
+    //---------------------------------------------------------------------------
+    static void convertDoubleToHalf(const double* d, half* h, int count)
+    {
+      for(int i=0; i<count; ++i)
+        h[i] = convertFloatToHalf((float)d[i]);
+    }
+    //---------------------------------------------------------------------------
+    static void convertHalfToDouble(const half* h, double* d, int count)
+    {
+      for(int i=0; i<count; ++i)
+        d[i] = (double)convertHalfToFloat(h[i]);
     }
     //---------------------------------------------------------------------------
     static half convertFloatToHalf(float f)
@@ -380,9 +468,144 @@ namespace vl
     unsigned short bits;
   };
   //-----------------------------------------------------------------------------
+  inline half operator/(float a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a / half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator/(double a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a / half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator/(int a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a / half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator*(float a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a * half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator*(double a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a * half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator*(int a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a * half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator+(float a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a + half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator+(double a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a + half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator+(int a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a + half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator-(float a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a - half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator-(double a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a - half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator-(int a, const half& b)
+  {
+    return half::convertFloatToHalf( (float)a - half::convertHalfToFloat(b) );
+  }
+  //-----------------------------------------------------------------------------
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  //-----------------------------------------------------------------------------
+  inline half operator/(const half& a, float b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) / (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator/(const half& a, double b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) / (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator/(const half& a, int b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) / (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator*(const half& a, float b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) * (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator*(const half& a, double b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) * (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator*(const half& a, int b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) * (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator+(const half& a, float b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) + (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator+(const half& a, double b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) + (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator+(const half& a, int b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) + (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator-(const half& a, float b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) - (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator-(const half& a, double b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) - (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half operator-(const half& a, int b)
+  {
+    return half::convertFloatToHalf( half::convertHalfToFloat(a) - (float)b );
+  }
+  //-----------------------------------------------------------------------------
+  inline half Vector4<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()+(float)w()*(float)w()); }
+  inline half Vector4<half>::lengthSquared() const { return (half)((float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()+(float)w()*(float)w()); }
+
+  inline half Vector3<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()); }
+  inline half Vector3<half>::lengthSquared() const { return (half)((float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()); }
+
+  inline half Vector2<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()); }
+  inline half Vector2<half>::lengthSquared() const { return (half)((float)x()*(float)x()+(float)y()*(float)y()); }
+  //-----------------------------------------------------------------------------
   typedef Vector4<half> hvec4;
   typedef Vector3<half> hvec3;
   typedef Vector2<half> hvec2;
+  //-----------------------------------------------------------------------------
+  typedef Matrix4<half> hmat4;
+  typedef Matrix3<half> hmat3;
+  typedef Matrix2<half> hmat2;
   //-----------------------------------------------------------------------------
 }
 
