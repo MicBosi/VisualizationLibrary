@@ -36,18 +36,7 @@
 
 namespace vl
 {
-  // -15 stored using a single precision bias of 127
-  const unsigned int  HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP = 0x38000000;
-  
-  // max exponent value in single precision that will be converted 
-  // to Inf or Nan when stored as a half-float
-  const unsigned int  HALF_FLOAT_MAX_BIASED_EXP_AS_SINGLE_FP_EXP = 0x47800000;
-  
-  // 255 is the max exponent biased value
-  const unsigned int  FLOAT_MAX_BIASED_EXP = (0xFF << 23) ;
-  const unsigned int  HALF_FLOAT_MAX_BIASED_EXP = (0x1F << 10) ;
-
-  //! Represents an half-precision floating point value
+  //! Represents an half-precision floating point value.
   class half
   {
   public:
@@ -208,38 +197,38 @@ namespace vl
 
     bool isNaN() const
     {
-      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
-      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
+      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) );
+      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP);
       return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa != 0;
     }
 
     bool isinf() const
     {
-      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
-      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
+      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) );
+      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP);
       return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa == 0;
     }
 
     bool isinf_pos() const
     {
-      unsigned int sign = (unsigned int) ( bits >> 15) ;
-      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
-      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
+      unsigned int sign = (unsigned int) ( bits >> 15);
+      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) );
+      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP);
       return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa == 0 && sign == 0;
     }
 
     bool isinf_neg() const
     {
-      unsigned int sign = (unsigned int) ( bits >> 15) ;
-      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
-      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
+      unsigned int sign = (unsigned int) ( bits >> 15);
+      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) );
+      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP);
       return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa == 0 && sign == 1;
     }
 
     bool isdenorm() const
     {
-      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
-      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
+      unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) );
+      unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP);
       return exp == 0 && mantissa != 0;
     }
 
@@ -322,9 +311,9 @@ namespace vl
     static float convertHalfToFloat(const half& h)
     {
       unsigned short hf = h.bits;
-      unsigned int sign = (unsigned int) ( hf >> 15) ;
-      unsigned int mantissa = (unsigned int) (hf & (( 1 << 10) - 1) ) ;
-      unsigned int exp = (unsigned int) (hf & HALF_FLOAT_MAX_BIASED_EXP) ;
+      unsigned int sign = (unsigned int) ( hf >> 15);
+      unsigned int mantissa = (unsigned int) (hf & (( 1 << 10) - 1) );
+      unsigned int exp = (unsigned int) (hf & HALF_FLOAT_MAX_BIASED_EXP);
       unsigned int f;
 
       if (exp == HALF_FLOAT_MAX_BIASED_EXP)
@@ -349,7 +338,7 @@ namespace vl
             // for every leading 0, decrement single precision exponent by 1
             // and shift half-float mantissa value to the left
             mantissa <<= 1;
-            exp -= (1 << 23 ) ;
+            exp -= (1 << 23 );
           }
           // clamp the mantissa to 10-bits
           mantissa &= (( 1 << 10) - 1);
@@ -365,7 +354,7 @@ namespace vl
         exp = ( exp << 13) + HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP;
       }
       f = ( sign << 31) | exp | mantissa;
-      return *((float *) &f) ;
+      return *((float *) &f);
     }
     //---------------------------------------------------------------------------
     static void convertFloatToHalf(const float* f, half* h, int count)
@@ -417,9 +406,9 @@ namespace vl
       for(int i=0; i<count; ++i)
       {
         const unsigned short& hf = h[i].bits;
-        unsigned int sign = (unsigned int) ( hf >> 15) ;
-        unsigned int mantissa = (unsigned int) (hf & (( 1 << 10) - 1) ) ;
-        unsigned int exp = (unsigned int) (hf & HALF_FLOAT_MAX_BIASED_EXP) ;
+        unsigned int sign = (unsigned int) ( hf >> 15);
+        unsigned int mantissa = (unsigned int) (hf & (( 1 << 10) - 1) );
+        unsigned int exp = (unsigned int) (hf & HALF_FLOAT_MAX_BIASED_EXP);
         unsigned int uif;
 
         if (exp == HALF_FLOAT_MAX_BIASED_EXP)
@@ -444,7 +433,7 @@ namespace vl
               // for every leading 0, decrement single precision exponent by 1
               // and shift half-float mantissa value to the left
               mantissa <<= 1;
-              exp -= (1 << 23 ) ;
+              exp -= (1 << 23 );
             }
             // clamp the mantissa to 10-bits
             mantissa &= (( 1 << 10) - 1);
@@ -460,12 +449,25 @@ namespace vl
           exp = ( exp << 13) + HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP;
         }
         uif = ( sign << 31) | exp | mantissa;
-        f[i] =  *((float *) &uif) ;
+        f[i] =  *((float *) &uif);
       }
     }
     //---------------------------------------------------------------------------
   public:
     unsigned short bits;
+
+  private:
+    // -15 stored using a single precision bias of 127
+    static const unsigned int  HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP = 0x38000000;
+    
+    // max exponent value in single precision that will be converted 
+    // to Inf or Nan when stored as a half-float
+    static const unsigned int  HALF_FLOAT_MAX_BIASED_EXP_AS_SINGLE_FP_EXP = 0x47800000;
+    
+    // 255 is the max exponent biased value
+    static const unsigned int  FLOAT_MAX_BIASED_EXP = (0xFF << 23);
+    static const unsigned int  HALF_FLOAT_MAX_BIASED_EXP = (0x1F << 10);
+
   };
   //-----------------------------------------------------------------------------
   inline half operator/(float a, const half& b)
