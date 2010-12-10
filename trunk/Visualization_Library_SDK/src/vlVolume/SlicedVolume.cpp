@@ -381,8 +381,6 @@ void SlicedVolume::setVolumeImage(Image* img, Shader* shader)
 {
   shader->gocTextureUnit(0)->setTexture( new vl::Texture( img ) );
   generateTextureCoordinates( img->width(), img->height(), img->depth() );
-  if (shader->getGLSLProgram())
-    shader->getGLSLProgram()->gocUniform("gradient_delta")->setUniform(fvec3(0.5f/img->width(), 0.5f/img->height(), 0.5f/img->depth()));
 }
 //-----------------------------------------------------------------------------
 ref<Image> SlicedVolume::genRGBAVolume(Image* data, Image* trfunc, const fvec3& light_dir, bool alpha_from_data)

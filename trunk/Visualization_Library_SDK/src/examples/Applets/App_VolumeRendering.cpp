@@ -173,6 +173,8 @@ public:
         mVolumeAct->gocUniform("volume_texunit")->setUniform(0);
         mVolumeAct->gocUniform("trfunc_texunit")->setUniform(1);
         mSlicedVolume->setVolumeImage(img.get(), vol_fx->shader());
+        // volume_luminance_light.fs requires it
+        mGLSL->gocUniform("gradient_delta")->setUniform(fvec3(0.5f/img->width(), 0.5f/img->height(), 0.5f/img->depth()));
         vol_fx->shader()->disable(vl::EN_ALPHA_TEST);
       }
       else // precompute transfer function and illumination
