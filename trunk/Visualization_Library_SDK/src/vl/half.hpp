@@ -125,14 +125,14 @@ namespace vl
     {
       unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
       unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
-      return exp == 31 && mantissa != 0;
+      return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa != 0;
     }
     //---------------------------------------------------------------------------
     bool isinf()
     {
       unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
       unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
-      return exp == 31 && mantissa == 0;
+      return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa == 0;
     }
     //---------------------------------------------------------------------------
     bool isinf_pos()
@@ -140,7 +140,7 @@ namespace vl
       unsigned int sign = (unsigned int) ( bits >> 15) ;
       unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
       unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
-      return exp == 31 && mantissa == 0 && sign == 0;
+      return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa == 0 && sign == 0;
     }
     //---------------------------------------------------------------------------
     bool isinf_neg()
@@ -148,7 +148,7 @@ namespace vl
       unsigned int sign = (unsigned int) ( bits >> 15) ;
       unsigned int mantissa = (unsigned int) (bits & (( 1 << 10) - 1) ) ;
       unsigned int exp = (unsigned int) (bits & HALF_FLOAT_MAX_BIASED_EXP) ;
-      return exp == 31 && mantissa == 0 && sign == 1;
+      return exp == HALF_FLOAT_MAX_BIASED_EXP && mantissa == 0 && sign == 1;
     }
     //---------------------------------------------------------------------------
     bool isdenorm()
