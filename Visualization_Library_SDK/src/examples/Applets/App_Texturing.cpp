@@ -111,7 +111,7 @@ public:
     quad_3d->setColor(vlut::white);
     quad_3d->transform( vl::mat4::rotation(90, 1,0,0), false );
 
-    mTexCoords_3D = new vl::ArrayFVec3;
+    mTexCoords_3D = new vl::ArrayFloat3;
     quad_3d->setTexCoordArray(0, mTexCoords_3D.get());
     mTexCoords_3D->resize( 2*2 );
     quad_3d->setVBOEnabled(false);
@@ -143,7 +143,7 @@ public:
     quad_2darray->setColor(vlut::white);
     quad_2darray->transform( vl::mat4::rotation(90, 1,0,0), false );
 
-    mTexCoords_2DArray = new vl::ArrayFVec3;
+    mTexCoords_2DArray = new vl::ArrayFloat3;
     quad_2darray->setTexCoordArray(0, mTexCoords_2DArray.get());
     mTexCoords_2DArray->resize( 2*2 );
     quad_2darray->setVBOEnabled(false);
@@ -180,7 +180,7 @@ public:
     quad_1darray->setColor(vlut::white);
     quad_1darray->transform( vl::mat4::rotation(90, 1,0,0), false );
     
-    mTexCoords_1DArray = new vl::ArrayFVec2;
+    mTexCoords_1DArray = new vl::ArrayFloat2;
     quad_1darray->setTexCoordArray(0, mTexCoords_1DArray.get());
     mTexCoords_1DArray->resize( 2 * img_holebox->height() );
     quad_1darray->setVBOEnabled(false);
@@ -393,9 +393,9 @@ public:
 protected:
   vl::ref<vl::Transform> mCubeRightTransform;
   vl::ref<vl::Transform> mCubeLeftTransform;
-  vl::ref<vl::ArrayFVec3> mTexCoords_3D;
-  vl::ref<vl::ArrayFVec3> mTexCoords_2DArray;
-  vl::ref<vl::ArrayFVec2> mTexCoords_1DArray;
+  vl::ref<vl::ArrayFloat3> mTexCoords_3D;
+  vl::ref<vl::ArrayFloat3> mTexCoords_2DArray;
+  vl::ref<vl::ArrayFloat2> mTexCoords_1DArray;
   int m1DArraySize;
   int m2DArraySize;
   vl::Actor* mActSpheric;

@@ -46,14 +46,14 @@ namespace vl
    * \sa
    *
    * - vl::Array
-   * - vl::ArrayFloat, vl::ArrayFVec2, vl::ArrayFVec3, vl::ArrayFVec4
-   * - vl::ArrayDouble, vl::ArrayDVec2, vl::ArrayDVec3, vl::ArrayDVec4
-   * - vl::ArrayInt, vl::ArrayIVec2, vl::ArrayIVec3,  vl::ArrayIVec4
-   * - vl::ArrayUInt, vl::ArrayUVec2, vl::ArrayUVec3, vl::ArrayUVec4
-   * - vl::ArrayByte, vl::ArrayBVec2, vl::ArrayBVec3, vl::ArrayBVec4
-   * - vl::ArrayUByte, vl::ArrayUBVec2, vl::ArrayUBVec3, vl::ArrayUBVec4
-   * - vl::ArrayShort, vl::ArraySVec2, vl::ArraySVec3, vl::ArraySVec4
-   * - vl::ArrayUShort, vl::ArrayUSVec2, vl::ArrayUSVec3, vl::ArrayUSVec4
+   * - vl::ArrayFloat1, vl::ArrayFloat2, vl::ArrayFloat3, vl::ArrayFloat4
+   * - vl::ArrayDouble1, vl::ArrayDouble2, vl::ArrayDouble3, vl::ArrayDouble4
+   * - vl::ArrayInt1, vl::ArrayInt2, vl::ArrayInt3,  vl::ArrayInt4
+   * - vl::ArrayUInt1, vl::ArrayUInt2, vl::ArrayUInt3, vl::ArrayUInt4
+   * - vl::ArrayByte1, vl::ArrayByte2, vl::ArrayByte3, vl::ArrayByte4
+   * - vl::ArrayUByte1, vl::ArrayUByte2, vl::ArrayUByte3, vl::ArrayUByte4
+   * - vl::ArrayShort1, vl::ArrayShort2, vl::ArrayShort3, vl::ArrayShort4
+   * - vl::ArrayUShort1, vl::ArrayUShort2, vl::ArrayUShort3, vl::ArrayUShort4
    */
   class ArrayAbstract: public Object
   {
@@ -99,10 +99,10 @@ namespace vl
     //! Returns the amount of memory in bytes used by an array. Equivalent to gpuBuffer()->bytesUsed().
     virtual size_t bytesUsed() const { return gpuBuffer() ? gpuBuffer()->bytesUsed() : 0; }
 
-    //! Returns the number of scalar components for the array, ie 3 for ArrayFVec3, 1 for ArrayUInt etc.
+    //! Returns the number of scalar components for the array, ie 3 for ArrayFloat3, 1 for ArrayUInt1 etc.
     virtual size_t glSize() const = 0;
 
-    //! Returns the OpenGL type for the array, ie GL_FLOAT for ArrayFVec3, GL_UNSIGNED_INT for ArrayUInt etc.
+    //! Returns the OpenGL type for the array, ie GL_FLOAT for ArrayFloat3, GL_UNSIGNED_INT for ArrayUInt1 etc.
     virtual int glType() const = 0;
 
     //! Returns the number of elements of an array
@@ -163,14 +163,18 @@ namespace vl
    * \sa
    *
    * - ArrayAbstract
-   * - vl::ArrayFloat, vl::ArrayFVec2, vl::ArrayFVec3, vl::ArrayFVec4
-   * - vl::ArrayDouble, vl::ArrayDVec2, vl::ArrayDVec3, vl::ArrayDVec4
-   * - vl::ArrayInt, vl::ArrayIVec2, vl::ArrayIVec3,  vl::ArrayIVec4
-   * - vl::ArrayUInt, vl::ArrayUVec2, vl::ArrayUVec3, vl::ArrayUVec4
-   * - vl::ArrayByte, vl::ArrayBVec2, vl::ArrayBVec3, vl::ArrayBVec4
-   * - vl::ArrayUByte, vl::ArrayUBVec2, vl::ArrayUBVec3, vl::ArrayUBVec4
-   * - vl::ArrayShort, vl::ArraySVec2, vl::ArraySVec3, vl::ArraySVec4
-   * - vl::ArrayUShort, vl::ArrayUSVec2, vl::ArrayUSVec3, vl::ArrayUSVec4
+   * - vl::ArrayFloat1, vl::ArrayFloat2, vl::ArrayFloat3, vl::ArrayFloat4
+   * - vl::ArrayDouble1, vl::ArrayDouble2, vl::ArrayDouble3, vl::ArrayDouble4
+   * - vl::ArrayInt1, vl::ArrayInt2, vl::ArrayInt3,  vl::ArrayInt4
+   * - vl::ArrayUInt1, vl::ArrayUInt2, vl::ArrayUInt3, vl::ArrayUInt4
+   * - vl::ArrayByte1, vl::ArrayByte2, vl::ArrayByte3, vl::ArrayByte4
+   * - vl::ArrayUByte1, vl::ArrayUByte2, vl::ArrayUByte3, vl::ArrayUByte4
+   * - vl::ArrayShort1, vl::ArrayShort2, vl::ArrayShort3, vl::ArrayShort4
+   * - vl::ArrayUShort1, vl::ArrayUShort2, vl::ArrayUShort3, vl::ArrayUShort4
+   * - vl::ArrayHFloat1, vl::ArrayHFloat2, vl::ArrayHFloat3, vl::ArrayHFloat4
+   * - vl::ArrayFixed1, vl::ArrayFixed2, vl::ArrayFixed3, vl::ArrayFixed4
+   * - vl::ArrayInt_2_10_10_10_REV1, ArrayInt_2_10_10_10_REV2, ArrayInt_2_10_10_10_REV3, ArrayInt_2_10_10_10_REV4
+   * - vl::ArrayUInt_2_10_10_10_REV1, ArrayUInt_2_10_10_10_REV2, ArrayUInt_2_10_10_10_REV3, ArrayUInt_2_10_10_10_REV4
   */
   template <typename T_vector_type, typename T_scalar_type, int T_gl_size, GLenum T_gl_type>
   class Array: public ArrayAbstract
@@ -332,112 +336,112 @@ namespace vl
 // Array typedefs
 //-----------------------------------------------------------------------------
   //! An array of \p GLfloat
-  typedef Array<GLfloat, GLfloat, 1, GL_FLOAT> ArrayFloat;
+  typedef Array<GLfloat, GLfloat, 1, GL_FLOAT> ArrayFloat1;
   //! An array of vl::fvec2
-  typedef Array<fvec2,   GLfloat, 2, GL_FLOAT> ArrayFVec2;
+  typedef Array<fvec2,   GLfloat, 2, GL_FLOAT> ArrayFloat2;
   //! An array of vl::fvec3
-  typedef Array<fvec3,   GLfloat, 3, GL_FLOAT> ArrayFVec3;
+  typedef Array<fvec3,   GLfloat, 3, GL_FLOAT> ArrayFloat3;
   //! An array of vl::fvec4
-  typedef Array<fvec4,   GLfloat, 4, GL_FLOAT> ArrayFVec4;
+  typedef Array<fvec4,   GLfloat, 4, GL_FLOAT> ArrayFloat4;
 
   //! An array of \p GLdouble
-  typedef Array<GLdouble, GLdouble, 1, GL_DOUBLE> ArrayDouble;
+  typedef Array<GLdouble, GLdouble, 1, GL_DOUBLE> ArrayDouble1;
   //! An array of vl::dvec2
-  typedef Array<dvec2,    GLdouble, 2, GL_DOUBLE> ArrayDVec2;
+  typedef Array<dvec2,    GLdouble, 2, GL_DOUBLE> ArrayDouble2;
   //! An array of vl::dvec3
-  typedef Array<dvec3,    GLdouble, 3, GL_DOUBLE> ArrayDVec3;
+  typedef Array<dvec3,    GLdouble, 3, GL_DOUBLE> ArrayDouble3;
   //! An array of vl::dvec4
-  typedef Array<dvec4,    GLdouble, 4, GL_DOUBLE> ArrayDVec4;
+  typedef Array<dvec4,    GLdouble, 4, GL_DOUBLE> ArrayDouble4;
 
   //! An array of \p GLint
-  typedef Array<GLint, GLint, 1, GL_INT> ArrayInt;
+  typedef Array<GLint, GLint, 1, GL_INT> ArrayInt1;
   //! An array of vl::ivec2
-  typedef Array<ivec2, GLint, 2, GL_INT> ArrayIVec2;
+  typedef Array<ivec2, GLint, 2, GL_INT> ArrayInt2;
   //! An array of vl::ivec3
-  typedef Array<ivec3, GLint, 3, GL_INT> ArrayIVec3;
+  typedef Array<ivec3, GLint, 3, GL_INT> ArrayInt3;
   //! An array of vl::ivec4
-  typedef Array<ivec4, GLint, 4, GL_INT> ArrayIVec4;
+  typedef Array<ivec4, GLint, 4, GL_INT> ArrayInt4;
 
   //! An array of \p GLuint
-  typedef Array<GLuint,GLuint, 1, GL_UNSIGNED_INT> ArrayUInt;
+  typedef Array<GLuint,GLuint, 1, GL_UNSIGNED_INT> ArrayUInt1;
   //! An array of vl::uvec2
-  typedef Array<uvec2, GLuint, 2, GL_UNSIGNED_INT> ArrayUVec2;
+  typedef Array<uvec2, GLuint, 2, GL_UNSIGNED_INT> ArrayUInt2;
   //! An array of vl::uvec3
-  typedef Array<uvec3, GLuint, 3, GL_UNSIGNED_INT> ArrayUVec3;
+  typedef Array<uvec3, GLuint, 3, GL_UNSIGNED_INT> ArrayUInt3;
   //! An array of vl::uvec4
-  typedef Array<uvec4, GLuint, 4, GL_UNSIGNED_INT> ArrayUVec4;
+  typedef Array<uvec4, GLuint, 4, GL_UNSIGNED_INT> ArrayUInt4;
 
   //! An array of \p GLbyte
-  typedef Array<GLbyte, GLbyte, 1, GL_BYTE> ArrayByte;
+  typedef Array<GLbyte, GLbyte, 1, GL_BYTE> ArrayByte1;
   //! An array of vl::bvec2
-  typedef Array<bvec2,  GLbyte, 2, GL_BYTE> ArrayBVec2;
+  typedef Array<bvec2,  GLbyte, 2, GL_BYTE> ArrayByte2;
   //! An array of vl::bvec3
-  typedef Array<bvec3,  GLbyte, 3, GL_BYTE> ArrayBVec3;
+  typedef Array<bvec3,  GLbyte, 3, GL_BYTE> ArrayByte3;
   //! An array of vl::bvec4
-  typedef Array<bvec4,  GLbyte, 4, GL_BYTE> ArrayBVec4;
+  typedef Array<bvec4,  GLbyte, 4, GL_BYTE> ArrayByte4;
 
   //! An array of \p GLubyte
-  typedef Array<GLubyte, GLubyte, 1, GL_UNSIGNED_BYTE> ArrayUByte;
+  typedef Array<GLubyte, GLubyte, 1, GL_UNSIGNED_BYTE> ArrayUByte1;
   //! An array of vl::ubvec2
-  typedef Array<ubvec2,  GLubyte, 2, GL_UNSIGNED_BYTE> ArrayUBVec2;
+  typedef Array<ubvec2,  GLubyte, 2, GL_UNSIGNED_BYTE> ArrayUByte2;
   //! An array of vl::ubvec3
-  typedef Array<ubvec3,  GLubyte, 3, GL_UNSIGNED_BYTE> ArrayUBVec3;
+  typedef Array<ubvec3,  GLubyte, 3, GL_UNSIGNED_BYTE> ArrayUByte3;
   //! An array of vl::ubvec4
-  typedef Array<ubvec4,  GLubyte, 4, GL_UNSIGNED_BYTE> ArrayUBVec4;
+  typedef Array<ubvec4,  GLubyte, 4, GL_UNSIGNED_BYTE> ArrayUByte4;
 
   //! An array of \p GLshort
-  typedef Array<GLshort, GLshort, 1, GL_SHORT> ArrayShort;
+  typedef Array<GLshort, GLshort, 1, GL_SHORT> ArrayShort1;
   //! An array of vl::svec2
-  typedef Array<svec2,   GLshort, 2, GL_SHORT> ArraySVec2;
+  typedef Array<svec2,   GLshort, 2, GL_SHORT> ArrayShort2;
   //! An array of vl::svec3
-  typedef Array<svec3,   GLshort, 3, GL_SHORT> ArraySVec3;
+  typedef Array<svec3,   GLshort, 3, GL_SHORT> ArrayShort3;
   //! An array of vl::svec4
-  typedef Array<svec4,   GLshort, 4, GL_SHORT> ArraySVec4;
+  typedef Array<svec4,   GLshort, 4, GL_SHORT> ArrayShort4;
 
   //! An array of \p GLushort
-  typedef Array<GLushort, GLushort, 1, GL_UNSIGNED_SHORT> ArrayUShort;
+  typedef Array<GLushort, GLushort, 1, GL_UNSIGNED_SHORT> ArrayUShort1;
   //! An array of vl::usvec2
-  typedef Array<usvec2,   GLushort, 2, GL_UNSIGNED_SHORT> ArrayUSVec2;
+  typedef Array<usvec2,   GLushort, 2, GL_UNSIGNED_SHORT> ArrayUShort2;
   //! An array of vl::usvec3
-  typedef Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT> ArrayUSVec3;
+  typedef Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT> ArrayUShort3;
   //! An array of vl::usvec4
-  typedef Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT> ArrayUSVec4;
+  typedef Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT> ArrayUShort4;
 
   //! An array of \p GL_HALF_FLOAT
-  typedef Array<half,  half, 1, GL_HALF_FLOAT> ArrayHFloat;
-  //! An array of 2d GL_HALF_FLOAT vectors
-  typedef Array<hvec2, half, 2, GL_HALF_FLOAT> ArrayHFVec2;
-  //! An array of 3d GL_HALF_FLOAT vectors
-  typedef Array<hvec3, half, 3, GL_HALF_FLOAT> ArrayHFVec3;
-  //! An array of 4d GL_HALF_FLOAT vectors
-  typedef Array<hvec4, half, 4, GL_HALF_FLOAT> ArrayHFVec4;
+  typedef Array<half,  half, 1, GL_HALF_FLOAT> ArrayHFloat1;
+  //! A 2d array of GL_HALF_FLOAT vectors
+  typedef Array<hvec2, half, 2, GL_HALF_FLOAT> ArrayHFloat2;
+  //! A 3d array of GL_HALF_FLOAT vectors
+  typedef Array<hvec3, half, 3, GL_HALF_FLOAT> ArrayHFloat3;
+  //! A 4d array of GL_HALF_FLOAT vectors
+  typedef Array<hvec4, half, 4, GL_HALF_FLOAT> ArrayHFloat4;
 
   //! An array of \p GL_FIXED
-  typedef Array<GLuint,GLuint, 1, GL_FIXED> ArrayFixed;
+  typedef Array<GLuint,GLuint, 1, GL_FIXED> ArrayFixed1;
   //! An array 2d GL_FIXED vectors
-  typedef Array<uvec2, GLuint, 2, GL_FIXED> ArrayFixedVec2;
+  typedef Array<uvec2, GLuint, 2, GL_FIXED> ArrayFixed2;
   //! An array 3d GL_FIXED vectors
-  typedef Array<uvec3, GLuint, 3, GL_FIXED> ArrayFixedVec3;
+  typedef Array<uvec3, GLuint, 3, GL_FIXED> ArrayFixed3;
   //! An array 4d GL_FIXED vectors
-  typedef Array<uvec4, GLuint, 4, GL_FIXED> ArrayFixedVec4;
+  typedef Array<uvec4, GLuint, 4, GL_FIXED> ArrayFixed4;
 
   //! An array of \p GL_INT_2_10_10_10_REV
-  typedef Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV;
-  //! An array of 2d GL_INT_2_10_10_10_REV vectors
-  typedef Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV> ArrayIVec2_2_10_10_10_REV;
-  //! An array of 3d GL_INT_2_10_10_10_REV vectors
-  typedef Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV> ArrayIVec3_2_10_10_10_REV;
-  //! An array of 4d GL_INT_2_10_10_10_REV vectors
-  typedef Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV> ArrayIVec4_2_10_10_10_REV;
+  typedef Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV1;
+  //! A 2d array of GL_INT_2_10_10_10_REV vectors
+  typedef Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV2;
+  //! A 3d array of GL_INT_2_10_10_10_REV vectors
+  typedef Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV3;
+  //! A 4d array of GL_INT_2_10_10_10_REV vectors
+  typedef Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV4;
 
   //! An array of \p GL_UNSIGNED_INT_2_10_10_10_REV
-  typedef Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV;
-  //! An array of 2d GL_UNSIGNED_INT_2_10_10_10_REV vectors
-  typedef Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUVec2_2_10_10_10_REV;
-  //! An array of 3d GL_UNSIGNED_INT_2_10_10_10_REV vectors
-  typedef Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUVec3_2_10_10_10_REV;
-  //! An array of 4d GL_UNSIGNED_INT_2_10_10_10_REV vectors
-  typedef Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUVec4_2_10_10_10_REV;
+  typedef Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV1;
+  //! A 2d array of GL_UNSIGNED_INT_2_10_10_10_REV vectors
+  typedef Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV2;
+  //! A 3d array of GL_UNSIGNED_INT_2_10_10_10_REV vectors
+  typedef Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV3;
+  //! A 4d array of GL_UNSIGNED_INT_2_10_10_10_REV vectors
+  typedef Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV4;
 }
 
 #endif

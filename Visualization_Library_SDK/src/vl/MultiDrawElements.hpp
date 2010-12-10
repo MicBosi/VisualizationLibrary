@@ -287,27 +287,27 @@ namespace vl
   // typedefs
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLuint. */
-  class MultiDrawElementsUInt: public MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt>
+  class MultiDrawElementsUInt: public MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>
   {
   public:
     MultiDrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt>(primitive) {}
+    :MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>(primitive) {}
   };
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLushort. */
-  class MultiDrawElementsUShort: public MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort>
+  class MultiDrawElementsUShort: public MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
   {
   public:
     MultiDrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort>(primitive) {}
+    :MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>(primitive) {}
   };
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLubyte. */
-  class MultiDrawElementsUByte: public MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte>
+  class MultiDrawElementsUByte: public MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
   {
   public:
     MultiDrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte>(primitive) {}
+    :MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>(primitive) {}
   };
 //-----------------------------------------------------------------------------
   template <GLenum Tgltype, class arr_type>

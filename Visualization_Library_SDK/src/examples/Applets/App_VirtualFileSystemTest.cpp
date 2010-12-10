@@ -51,8 +51,8 @@ public:
     BaseDemo::initEvent();
     srand((unsigned int)time(NULL));
 
-    vl::ArrayByte ab1;
-    vl::ArrayByte ab2;
+    vl::ArrayByte1 ab1;
+    vl::ArrayByte1 ab2;
     ab1.resize(33);
     for(size_t i=0; i<ab1.size(); ++i)
       ab1[i] = (GLbyte)(rand() % 256);

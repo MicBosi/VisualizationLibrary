@@ -60,9 +60,9 @@ Pictures from the \ref pagGuideMarchingCubes "Marching Cubes" tutorial.
 //------------------------------------------------------------------------------
 MarchingCubes::MarchingCubes()
 {
-  mVertsArray = new ArrayFVec3;
-  mNormsArray = new ArrayFVec3;
-  mColorArray = new ArrayFVec4;
+  mVertsArray = new ArrayFloat3;
+  mNormsArray = new ArrayFloat3;
+  mColorArray = new ArrayFloat4;
   mDrawElements = new DrawElementsUInt(PT_TRIANGLES);
   mVolumeInfo.setAutomaticDelete(false);
   mHighQualityNormals = true;

@@ -43,7 +43,7 @@ namespace vl
    * 
    * This callback in order to work requires the following conditions:
    * - The Actor must be bound to a Geometry
-   * - The bound Geometry must have a Geometry::vertexArray() of type ArrayFVec3
+   * - The bound Geometry must have a Geometry::vertexArray() of type ArrayFloat3
    * - Sorts only DrawElementsUInt/UShort/UByte objects with primitive type: PT_POINTS, PT_LINES, PT_TRIANGLES, PT_QUADS
    *
    * Despite the fact that the condition list seems to be quite limiting it actually covers the most common usage cases.
@@ -133,7 +133,7 @@ namespace vl
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mEyeSpaceVerts = new ArrayFVec3;
+      mEyeSpaceVerts = new ArrayFloat3;
       setSortMode(SM_SortBackToFront);
     }
 
@@ -162,7 +162,7 @@ namespace vl
 
       geometry->setDisplayListDirty(true);
 
-      ref<ArrayFVec3> verts = dynamic_cast<ArrayFVec3*>(geometry->vertexArray());
+      ref<ArrayFloat3> verts = dynamic_cast<ArrayFloat3*>(geometry->vertexArray());
 
       if (!verts)
         return;
@@ -339,7 +339,7 @@ namespace vl
     void invalidateCache() { mCacheMatrix = vl::mat4(); }
 
   protected:
-    ref<ArrayFVec3> mEyeSpaceVerts;
+    ref<ArrayFloat3> mEyeSpaceVerts;
     std::vector<PrimitiveZ> mPrimitiveZ;
 
     std::vector<PointUInt> mSortedPointsUInt;

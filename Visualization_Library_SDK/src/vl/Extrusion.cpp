@@ -189,13 +189,13 @@ ref<Geometry> Extrusion::extrude()
     tess_top_count = tessellator.tessellatedTris().size();
   }
 
-  ref<ArrayFVec3> vert_array = new ArrayFVec3;
+  ref<ArrayFloat3> vert_array = new ArrayFloat3;
   geom->setVertexArray( vert_array.get() );
   *vert_array = verts;
 
   if (!colorPath().empty())
   {
-    ref<ArrayFVec4> col_array = new ArrayFVec4;
+    ref<ArrayFloat4> col_array = new ArrayFloat4;
     geom->setColorArray(col_array.get());
     col_array->resize(geom->vertexArray()->size());
     int offs = 0;

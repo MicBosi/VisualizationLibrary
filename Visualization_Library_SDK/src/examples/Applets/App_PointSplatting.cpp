@@ -112,16 +112,16 @@ protected:
     }
 
     vl::ref<vl::Geometry> geometry;
-    vl::ref<vl::ArrayFVec3> points;
+    vl::ref<vl::ArrayFloat3> points;
     vl::ref<vl::DrawElementsUInt> draw_elements;
-    vl::ref<vl::ArrayFVec3> eye_space_points;
+    vl::ref<vl::ArrayFloat3> eye_space_points;
 
-    eye_space_points = new vl::ArrayFVec3;
+    eye_space_points = new vl::ArrayFloat3;
     geometry = new vl::Geometry;
-    points = new vl::ArrayFVec3;
-    vl::ref<vl::ArrayFVec3> norms = new vl::ArrayFVec3;
+    points = new vl::ArrayFloat3;
+    vl::ref<vl::ArrayFloat3> norms = new vl::ArrayFloat3;
     draw_elements = new vl::DrawElementsUInt(vl::PT_POINTS);
-    vl::ref<vl::ArrayUBVec4> color = new vl::ArrayUBVec4;
+    vl::ref<vl::ArrayUByte4> color = new vl::ArrayUByte4;
 
     geometry->setVertexArray( points.get() );
     geometry->setNormalArray( norms.get() );

@@ -207,11 +207,11 @@ public:
       }
     }
 
-    vl::ref<vl::ArrayFVec3> vert_array = new vl::ArrayFVec3;
+    vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     geom->setVertexArray(vert_array.get());
     *vert_array = verts;
 
-    vl::ref<vl::ArrayFVec4> cols_array = new vl::ArrayFVec4;
+    vl::ref<vl::ArrayFloat4> cols_array = new vl::ArrayFloat4;
     geom->setColorArray(cols_array.get());
     *cols_array = colos;
 

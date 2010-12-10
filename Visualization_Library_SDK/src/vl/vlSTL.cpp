@@ -70,8 +70,8 @@ ref<ResourceDatabase> STLLoader::loadBinary(VirtualFile* file)
   file->read(header,80);
   unsigned int tri_count = file->readUInt32();
 
-  ref<ArrayFVec3>  verts   = new ArrayFVec3;
-  ref<ArrayFVec3>  normals = new ArrayFVec3;
+  ref<ArrayFloat3>  verts   = new ArrayFloat3;
+  ref<ArrayFloat3>  normals = new ArrayFloat3;
   verts->resize(tri_count*3);
   normals->resize(tri_count*3);
   ref<DrawArrays> de = new DrawArrays(PT_TRIANGLES,0,tri_count*3);
@@ -149,8 +149,8 @@ ref<ResourceDatabase> STLLoader::loadAscii(VirtualFile* file)
     verts.push_back(v[2]);
   }
 
-  ref<ArrayFVec3>  vertices   = new ArrayFVec3;
-  ref<ArrayFVec3>  normals = new ArrayFVec3;
+  ref<ArrayFloat3>  vertices   = new ArrayFloat3;
+  ref<ArrayFloat3>  normals = new ArrayFloat3;
   vertices->resize(verts.size());
   normals->resize(verts.size());
   memcpy(normals ->ptr(), &norms[0], sizeof(norms[0])*norms.size());

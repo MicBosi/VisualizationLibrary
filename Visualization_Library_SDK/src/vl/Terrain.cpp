@@ -149,9 +149,9 @@ void Terrain::init()
   ref<Geometry> terr_tile;
   ref<GLSLProgram> glsl;
 
-  ref<ArrayFVec2> tmap_uv = new ArrayFVec2; // texture map
-  ref<ArrayFVec2> dmap_uv = detail_img ? new ArrayFVec2 : NULL; // detail texture map
-  ref<ArrayFVec2> hmap_uv = new ArrayFVec2; // height map
+  ref<ArrayFloat2> tmap_uv = new ArrayFloat2; // texture map
+  ref<ArrayFloat2> dmap_uv = detail_img ? new ArrayFloat2 : NULL; // detail texture map
+  ref<ArrayFloat2> hmap_uv = new ArrayFloat2; // height map
   tmap_uv->resize( xsize * zsize );
   if(detail_img)
     dmap_uv->resize( xsize * zsize );
@@ -290,7 +290,7 @@ void Terrain::init()
         terr_tile->setTexCoordArray(0, tmap_uv.get());
         terr_tile->setTexCoordArray(1, dmap_uv.get());
 
-        ref<ArrayFVec3> verts = dynamic_cast<ArrayFVec3*>(terr_tile->vertexArray());
+        ref<ArrayFloat3> verts = dynamic_cast<ArrayFloat3*>(terr_tile->vertexArray());
         for(int z=0; z<zsize; ++z)
         {
           for(int x=0; x<xsize; ++x)

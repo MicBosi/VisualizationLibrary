@@ -159,7 +159,7 @@ ref<Geometry> Tessellator::tessellateGeometry(bool append_tessellated_tris)
     return NULL;
 
   ref<Geometry> geom = new Geometry;
-  ref<ArrayFVec3> vert_array = new ArrayFVec3;
+  ref<ArrayFloat3> vert_array = new ArrayFloat3;
   
   *vert_array = mTessellatedTris;
 

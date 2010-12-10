@@ -29,7 +29,7 @@
 
 	This callback in order to work requires the following conditions:
 	- The Actor must be bound to a Geometry
-	- The bound Geometry must have a Geometry::vertexArray() of type ArrayFVec3
+	- The bound Geometry must have a Geometry::vertexArray() of type ArrayFloat3
 	- Sorts only DrawElementsUInt/UShort/UByte objects with primitive type: PT_POINTS, PT_LINES, PT_TRIANGLES, PT_QUADS
 
 	\remarks

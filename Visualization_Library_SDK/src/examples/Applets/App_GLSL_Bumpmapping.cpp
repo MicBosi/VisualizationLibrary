@@ -87,7 +87,7 @@ public:
 
     // compute the tangent vector for each vertex
 
-    vl::ref<vl::ArrayFVec3> tangent = new vl::ArrayFVec3;
+    vl::ref<vl::ArrayFloat3> tangent = new vl::ArrayFloat3;
     tangent->resize( model->vertexArray()->size() );
 
     vl::Geometry::computeTangentSpace(
@@ -109,15 +109,15 @@ public:
     visualizeTangentSpace( model.get(), tangent.get() );
   }
 
-  void visualizeTangentSpace(const vl::Geometry* model, const vl::ArrayFVec3* tangent)
+  void visualizeTangentSpace(const vl::Geometry* model, const vl::ArrayFloat3* tangent)
   {
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_DEPTH_TEST);
 
-    vl::ref<vl::ArrayFVec3> ntb_verts = new vl::ArrayFVec3;
+    vl::ref<vl::ArrayFloat3> ntb_verts = new vl::ArrayFloat3;
     ntb_verts->resize( model->vertexArray()->size() * 6 );
 
-    vl::ref<vl::ArrayFVec4> ntb_cols = new vl::ArrayFVec4;
+    vl::ref<vl::ArrayFloat4> ntb_cols = new vl::ArrayFloat4;
     ntb_cols->resize( model->vertexArray()->size() * 6 );
 
     vl::fvec3* verts = (vl::fvec3*)model->vertexArray()->ptr();

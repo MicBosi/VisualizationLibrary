@@ -50,7 +50,7 @@ namespace vl
   /**
    * The GLBufferObject class is a Buffer that can upload its data on the GPU memory. 
    * \remarks
-   * GLBufferObject is the storage used by ArrayAbstract and subclasses like ArrayFVec3, ArrayUByte4 etc.
+   * GLBufferObject is the storage used by ArrayAbstract and subclasses like ArrayFloat3, ArrayUByte4 etc.
   */
   class GLBufferObject: public Buffer
   {

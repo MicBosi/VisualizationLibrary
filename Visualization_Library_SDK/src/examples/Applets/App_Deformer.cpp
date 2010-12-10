@@ -89,14 +89,14 @@ public:
     mGrid = vlut::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, mSlices, mSlices, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     mGrid->setVBOEnabled(false);
     mGrid->transform(vl::mat4::rotation(-90,1,0,0));
-    mPoints = dynamic_cast<vl::ArrayFVec3*>(mGrid->vertexArray());
+    mPoints = dynamic_cast<vl::ArrayFloat3*>(mGrid->vertexArray());
 
     // save point coordinates for the animation keyframe
-    mPointsRest = new vl::ArrayFVec3;
+    mPointsRest = new vl::ArrayFloat3;
     mPointsRest->resize( mPoints->size() );
     memcpy(mPointsRest->ptr(), mPoints->ptr(), mPoints->bytesUsed());
     // animate points buffer
-    mPointsAnim = new vl::ArrayFVec3;
+    mPointsAnim = new vl::ArrayFloat3;
     mPointsAnim->resize( mPoints->size() );
 
     mTransform = new vl::Transform;
@@ -255,7 +255,7 @@ public:
     updateSelection();
 
     // make a backup of the points for our undo
-    vl::ref<vl::ArrayFVec3> undo_stage = new vl::ArrayFVec3;
+    vl::ref<vl::ArrayFloat3> undo_stage = new vl::ArrayFloat3;
     undo_stage->resize(mSlices*mSlices);
     memcpy(undo_stage->ptr(), mPoints->ptr(), mPoints->bytesUsed());
     mPointsUndo.push_back(undo_stage);
@@ -411,10 +411,10 @@ protected:
   vl::ref<vl::TextureMatrix> mTextureMatrix;
   vl::ref<vl::Transform> mTransform;
   vl::ref<vl::Transform> mCursorTransform;
-  vl::ref<vl::ArrayFVec3> mPoints;
-  vl::ref<vl::ArrayFVec3> mPointsRest;
-  vl::ref<vl::ArrayFVec3> mPointsAnim;
-  std::vector< vl::ref<vl::ArrayFVec3> > mPointsUndo;
+  vl::ref<vl::ArrayFloat3> mPoints;
+  vl::ref<vl::ArrayFloat3> mPointsRest;
+  vl::ref<vl::ArrayFloat3> mPointsAnim;
+  std::vector< vl::ref<vl::ArrayFloat3> > mPointsUndo;
   vl::ref<vl::Geometry> mGrid;
   vl::ref<vl::Text> mText;
   vl::ivec2 mMouseStart;
