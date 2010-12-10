@@ -33,6 +33,7 @@
 #define Array_INCLUDE_ONCE
 
 #include <vl/GLBufferObject.hpp>
+#include <vl/half.hpp>
 #include <vector>
 
 namespace vl
@@ -403,13 +404,13 @@ namespace vl
   typedef Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT> ArrayUSVec4;
 
   //! An array of \p GL_HALF_FLOAT
-  typedef Array<GLushort, GLushort, 1, GL_HALF_FLOAT> ArrayHFloat;
+  typedef Array<half,  half, 1, GL_HALF_FLOAT> ArrayHFloat;
   //! An array of 2d GL_HALF_FLOAT vectors
-  typedef Array<usvec2,   GLushort, 2, GL_HALF_FLOAT> ArrayHFVec2;
+  typedef Array<hvec2, half, 2, GL_HALF_FLOAT> ArrayHFVec2;
   //! An array of 3d GL_HALF_FLOAT vectors
-  typedef Array<usvec3,   GLushort, 3, GL_HALF_FLOAT> ArrayHFVec3;
+  typedef Array<hvec3, half, 3, GL_HALF_FLOAT> ArrayHFVec3;
   //! An array of 4d GL_HALF_FLOAT vectors
-  typedef Array<usvec4,   GLushort, 4, GL_HALF_FLOAT> ArrayHFVec4;
+  typedef Array<hvec4, half, 4, GL_HALF_FLOAT> ArrayHFVec4;
 
   //! An array of \p GL_FIXED
   typedef Array<GLuint,GLuint, 1, GL_FIXED> ArrayFixed;

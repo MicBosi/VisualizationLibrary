@@ -154,6 +154,7 @@ set(VL_INC
   vl/GeometryLoadCallback.hpp
   vl/GhostCameraManipulator.hpp
   vl/GZipCodec.hpp
+  vl/half.hpp
   vl/KeyValues.hpp
   vl/Image.hpp
   vl/IndexIterator.hpp
