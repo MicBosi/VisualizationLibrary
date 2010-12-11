@@ -1879,7 +1879,7 @@ ref<Image> vl::Image::convertFormat(EImageFormat new_format) const
   return img;
 }
 //-----------------------------------------------------------------------------
-fvec4 Image::sampleLinear(double x)
+fvec4 Image::sampleLinear(double x) const
 {
   if (x < 0)
     x = 0;
@@ -1900,7 +1900,7 @@ fvec4 Image::sampleLinear(double x)
   return c11*w11 + c21*w21;
 }
 //-----------------------------------------------------------------------------
-fvec4 Image::sampleLinear(double x, double y)
+fvec4 Image::sampleLinear(double x, double y) const
 {
   int h = height()?height():1;
   if (x < 0)
@@ -1938,7 +1938,7 @@ fvec4 Image::sampleLinear(double x, double y)
   return c11*w11 + c12*w12 + c22*w22 + c21*w21;
 }
 //-----------------------------------------------------------------------------
-fvec4 Image::sampleLinear(double x, double y, double z)
+fvec4 Image::sampleLinear(double x, double y, double z) const
 {
   if (x>width() -1.000001) x = width() -1.000001;
   if (y>height()-1.000001) y = height()-1.000001;
@@ -1972,7 +1972,7 @@ fvec4 Image::sampleLinear(double x, double y, double z)
   return a*(zt1) + b*zt;
 }
 //-----------------------------------------------------------------------------
-fvec4 Image::sample(int x, int y, int z)
+fvec4 Image::sample(int x, int y, int z) const
 {
   VL_CHECK(x<width())
   VL_CHECK(!y || y<height())
@@ -1980,7 +1980,7 @@ fvec4 Image::sample(int x, int y, int z)
 
   // find the start of the line
   int h = height()?height():1;
-  unsigned char* px = pixels() + y*pitch() + h*pitch()*z;
+  const unsigned char* px = pixels() + y*pitch() + h*pitch()*z;
 
   int comp = 0;
   switch(format())

@@ -38,9 +38,9 @@ using namespace vl;
 using namespace vlVolume;
 
 /** \class vlVolume::SlicedVolume
- * An actor encapsulating all the geometry and effects needed to directly render a volume using viewport aligned slices.
+ * A vl::ActorEventCallback used to render a volume using viewport aligned slices.
  *
- * Pictures from the \ref pagGuideSlicedVolume "Volume Rendering" tutorial.
+ * Pictures from: \ref pagGuideSlicedVolume tutorial.
  * <center>
  * <table border=0 cellspacing=0 cellpadding=5>
  * <tr>
@@ -61,61 +61,22 @@ using namespace vlVolume;
  * </tr>
  * </table>
  * </center>
- * Using the SlicedVolume class is extremely simple, see below. See also the App_VolumeRendering.hpp example.
  *
- * By default the constructor installs the following shaders \p /glsl/volume_luminance_light.fs 
- * and \p /glsl/volume_luminance_light.vs and sets the \p val_threshold uniform variable to 0.5f.
+ * Using the SlicedVolume class is very simple, see \a App_VolumeRendering.cpp for a practical example.
  *
- * You can change the GLSLProgram settings in the following way:
- * \code
- * glslProgram()->detachAllShaders();
- * glslProgram()->attachShader( new vl::GLSLFragmentShader("/mypath/my_fragment_shader.fs") );
- * glslProgram()->attachShader( new vl::GLSLVertexShader("/mypath/my_vertex_shader.fs") );
- * glslProgram()->gocUniform("my_uniform")->setUniform(value);
- * \endcode
+ * Basically all SlicedVolume does is to compute the correct texture coordinates and generates on the fly N viewport
+ * aligned slices, where N can be specified by the user with setSliceCount(). Such slices then can be rendered using
+ * a GLSLProgram specified by the user, thus you can achieve virtually any kind of visual effect with it.
  *
- * You can also reimplement the updateUniforms() method to update your own uniform variables before every rendering frame.
+ * The user can reimplement the updateUniforms() method to update his own uniform variables before the volume is rendered.
+ * By default updateUniforms() updates the position of up to 4 lights in object space. Such positions are stored in the
+ * \p "uniform vec3 light_position[4]" variable.
+ * The updateUniforms() method also fills the \p "uniform bool light_enable[4]" variable with a flag marking if the Nth 
+ * light is active or not. These light values are computed based on the lights bound to the current Shader.
+ * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
+ * object space, useful to compute specular highlights etc.
  *
- * \par Using an IF_RGBA volume (no GLSL)
- *
- * \code
- * vl::ref<vlVolume::SlicedVolume> volume = new SlicedVolume;
- * // loads an IF_RGBA volume (no transfer function is needed in this case)
- * vl::ref<vl::Image> rgba_img = vl::loadImage("myvolume.dat"); 
- * // installs the IF_RGBA volume
- * volume->setVolumeImage(rgba_img.get());
- * // disable GLSL shader
- * volume->setTransferFunction(NULL);
- * \endcode
- *
- * \par Generating an IF_RGBA volume from an IF_LUMINANCE volume + transfer function (no GLSL)
- *
- * \code
- * vl::ref<vlVolume::SlicedVolume> volume = new SlicedVolume;
- * // loads an IF_LUMINANCE volume
- * vl::ref<vl::Image> img      = vl::loadImage("myvolume.dat"); 
- * // generates a transfer function
- * vl::ref<vl::Image> trfunc   = vl::Image::makeColorSpectrum(128, vlut::black, vlut::blue, vlut::green, vlut::yellow, vlut::red);
- * // computes an IF_RGBA volume using the transfer function and with lighting
- * vl::ref<vl::Image> rgba_img = vlVolume::SlicedVolume::genRGBAVolume(img.get(), trfunc.get(), vl::fvec3(1.0f,1.0f,0.0f));
- * // installs the IF_RGBA volume
- * volume->setVolumeImage(rgba_img.get());
- * // disable GLSL shader
- * volume->setTransferFunction(NULL);
- * \endcode
- *
- * \par Using IF_LUMINANCE volume + transfer function with GLSL (with dynamic Blinn-Phong lighting)
- *
- * \code
- * vl::ref<vlVolume::SlicedVolume> volume = new SlicedVolume;
- * // generates and install a transfer function to be used with an IF_LUMINANCE volume.
- * vl::ref<vl::Image> trfunc = vl::Image::makeColorSpectrum(128, vlut::black, vlut::blue, vlut::green, vlut::yellow, vlut::red);
- * // setTransferFunction() also enables the GLSL shader
- * volume->setTransferFunction(trfunc.get());
- * // loads and install an IF_LUMINANCE volume.
- * vl::ref<vl::Image> img = vl::loadImage("myvolume.dat");
- * volume->setVolumeImage(img.get());
- * \endcode
+ * For a complete example see: \ref pagGuideSlicedVolume.
  */
 //-----------------------------------------------------------------------------
 //! Constructor.
@@ -123,7 +84,6 @@ SlicedVolume::SlicedVolume()
 {
   mSliceCount = 1024;
   mGeometry = new Geometry;
-  mLight    = new Light(0);
   
   fvec3 texc[] = 
   {
@@ -133,32 +93,51 @@ SlicedVolume::SlicedVolume()
   memcpy(mTexCoord, texc, sizeof(texc));
 }
 //-----------------------------------------------------------------------------
-/**
- * You can reimplement this function in order to setup your own uniform variable for your GLSLProgram.
- * The default implementation of this function updates the following two uniforms:
- * - \p light_position Light position in object space, used to compute Blinn-Phong lighting in \p /glsl/volume_luminance_light.fs
- * - \p eye_position Camera position in object space, used to compute Blinn-Phong lighting in \p /glsl/volume_luminance_light.fs
+/** Reimplement this method to update his own uniform variables of your GLSL program before the volume is rendered.
+ * By default updateUniforms() updates the position of up to 4 lights in object space. Such positions are stored in the
+ * \p "uniform vec3 light_position[4]" variable.
+ * The updateUniforms() method also fills the \p "uniform bool light_enable[4]" variable with a flag marking if the Nth 
+ * light is active or not. These light values are computed based on the lights bound to the current Shader.
+ * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
+ * object space, useful to compute specular highlights etc.
  */
-void SlicedVolume::updateUniforms(const Camera* camera, Actor* actor)
+void SlicedVolume::updateUniforms(vl::Actor*actor, vl::Real, const vl::Camera* camera, vl::Renderable*, const vl::Shader* shader)
 {
-  // light position
-  fvec3 lpos;
-  if (light()->followedTransform())
-    lpos = (fmat4)light()->followedTransform()->worldMatrix() * light()->position().xyz();
-  else
-    lpos = ((fmat4)camera->inverseViewMatrix() * light()->position()).xyz();
+  // computes up to 4 light positions (in object space) and enables
 
-  // world to object space
-  if (actor->transform())
-    lpos = (fmat4)actor->transform()->worldMatrix().getInverse() * lpos;
-  actor->gocUniform("light_position")->setUniform(lpos);
+  int light_enable[4] = { 0,0,0,0 };
+  fvec3 light_position[4];
+
+  for(int i=0; i<4; ++i)
+  {
+    const vl::Light* light = shader->getLight(i);
+    light_enable[i] = light != NULL;
+    if (light)
+    {
+      // light position following transform
+      if (light->followedTransform())
+        light_position[i] = (fmat4)light->followedTransform()->worldMatrix() * light->position().xyz();
+      // light position following camera
+      else
+        light_position[i] = ((fmat4)camera->inverseViewMatrix() * light->position()).xyz();
+
+      // light position in object space
+      if (actor->transform())
+        light_position[i] = (fmat4)actor->transform()->worldMatrix().getInverse() * light_position[i];
+    }
+  }
+
+  actor->gocUniform("light_position")->setUniform(4, light_position);
+  actor->gocUniform("light_enable")->setUniform1i(4, light_enable);
+
+  // compute eye position in object space
 
   // eye postion
-  fvec3 epos = (fvec3)camera->inverseViewMatrix().getT();
+  fvec3 eye = (fvec3)camera->inverseViewMatrix().getT();
   // world to object space
   if (actor->transform())
-    epos = (fmat4)actor->transform()->worldMatrix().getInverse() * epos;
-  actor->gocUniform("eye_position")->setUniform(epos);
+    eye = (fmat4)actor->transform()->worldMatrix().getInverse() * eye;
+  actor->gocUniform("eye_position")->setUniform(eye);
 }
 //-----------------------------------------------------------------------------
 namespace
@@ -173,12 +152,14 @@ namespace
     }
   };
 }
+//-----------------------------------------------------------------------------
 void SlicedVolume::bindActor(Actor* actor)
 {
   actor->actorEventCallbacks()->push_back( this );
   actor->lod(0) = mGeometry;
 }
-void SlicedVolume::onActorRenderStarted(Actor* actor, Real, const Camera* camera, Renderable*, const Shader* shader, int pass)
+//-----------------------------------------------------------------------------
+void SlicedVolume::onActorRenderStarted(Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass)
 {
   if (pass>0)
     return;
@@ -186,10 +167,11 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, Real, const Camera* camera
   // setup uniform variables
 
   if (shader->getGLSLProgram())
-    updateUniforms(camera, actor);
+    updateUniforms(actor, clock, camera, rend, shader);
 
-  // setup geometry
+  // setup geometry: generate viewport aligned slices
 
+  // skip generation is actor and camera did not move
   fmat4 mat;
   if (actor->transform())
     mat = (fmat4)(camera->viewMatrix() * actor->transform()->worldMatrix());
@@ -376,14 +358,16 @@ void SlicedVolume::generateTextureCoordinates(const ivec3& size)
   memcpy(mTexCoord, texc, sizeof(texc));
 }
 //-----------------------------------------------------------------------------
-//! This function also generates a 3D texture based on the given image and generates an appropriate set of texture coordinates.
-void SlicedVolume::setVolumeImage(Image* img, Shader* shader)
+void SlicedVolume::setBox(const AABB& box) 
 {
-  shader->gocTextureUnit(0)->setTexture( new vl::Texture( img ) );
-  generateTextureCoordinates( img->width(), img->height(), img->depth() );
+  mBox = box; 
+  mCache = 0; 
+  mGeometry->setBoundingBox( box );
+  mGeometry->setBoundingSphere( box );
+  mGeometry->setBoundsDirty(true);
 }
 //-----------------------------------------------------------------------------
-ref<Image> SlicedVolume::genRGBAVolume(Image* data, Image* trfunc, const fvec3& light_dir, bool alpha_from_data)
+ref<Image> SlicedVolume::genRGBAVolume(const Image* data, const Image* trfunc, const fvec3& light_dir, bool alpha_from_data)
 {
   ref<Image> img;
 
@@ -401,7 +385,7 @@ ref<Image> SlicedVolume::genRGBAVolume(Image* data, Image* trfunc, const fvec3& 
   return img;
 }
 //-----------------------------------------------------------------------------
-ref<Image> SlicedVolume::genRGBAVolume(Image* data, Image* trfunc, bool alpha_from_data)
+ref<Image> SlicedVolume::genRGBAVolume(const Image* data, const Image* trfunc, bool alpha_from_data)
 {
   ref<Image> img;
 
@@ -420,7 +404,7 @@ ref<Image> SlicedVolume::genRGBAVolume(Image* data, Image* trfunc, bool alpha_fr
 }
 //-----------------------------------------------------------------------------
 template<typename data_type, EImageType img_type>
-ref<Image> SlicedVolume::genRGBAVolumeT(Image* data, Image* trfunc, const fvec3& light_dir, bool alpha_from_data)
+ref<Image> SlicedVolume::genRGBAVolumeT(const Image* data, const Image* trfunc, const fvec3& light_dir, bool alpha_from_data)
 {
   if (!trfunc || !data)
     return NULL;
@@ -472,7 +456,7 @@ ref<Image> SlicedVolume::genRGBAVolumeT(Image* data, Image* trfunc, const fvec3&
   int h = data->height();
   int d = data->depth();
   int pitch = data->pitch();
-  unsigned char* lum_px = data->pixels();
+  const unsigned char* lum_px = data->pixels();
   // generated volume
   ref<Image> volume = new Image( w, h, d, 1, IF_RGBA, IT_UNSIGNED_BYTE );
   ubvec4* rgba_px = (ubvec4*)volume->pixels();
@@ -545,7 +529,7 @@ ref<Image> SlicedVolume::genRGBAVolumeT(Image* data, Image* trfunc, const fvec3&
 }
 //-----------------------------------------------------------------------------
 template<typename data_type, EImageType img_type>
-ref<Image> SlicedVolume::genRGBAVolumeT(Image* data, Image* trfunc, bool alpha_from_data)
+ref<Image> SlicedVolume::genRGBAVolumeT(const Image* data, const Image* trfunc, bool alpha_from_data)
 {
   if (!trfunc || !data)
     return NULL;
@@ -595,7 +579,7 @@ ref<Image> SlicedVolume::genRGBAVolumeT(Image* data, Image* trfunc, bool alpha_f
   int h = data->height();
   int d = data->depth();
   int pitch = data->pitch();
-  unsigned char* lum_px = data->pixels();
+  const unsigned char* lum_px = data->pixels();
   // generated volume
   ref<Image> volume = new Image( w, h, d, 1, IF_RGBA, IT_UNSIGNED_BYTE );
   ubvec4* rgba_px = (ubvec4*)volume->pixels();
@@ -644,12 +628,41 @@ ref<Image> SlicedVolume::genRGBAVolumeT(Image* data, Image* trfunc, bool alpha_f
   return volume;
 }
 //-----------------------------------------------------------------------------
-void SlicedVolume::setBox(const AABB& box) 
+vl::ref<vl::Image> SlicedVolume::genGradientNormals(const vl::Image* img)
 {
-  mBox = box; 
-  mCache = 0; 
-  mGeometry->setBoundingBox( box );
-  mGeometry->setBoundingSphere( box );
-  mGeometry->setBoundsDirty(true);
+  vl::ref<vl::Image> gradient = new Image;
+  gradient->allocate3D(img->width(), img->height(), img->depth(), 1, vl::IF_RGB, vl::IT_FLOAT);
+  fvec3* px = (fvec3*)gradient->pixels();
+  fvec3 A, B;
+  for(int z=0; z<gradient->depth(); ++z)
+  {
+    for(int y=0; y<gradient->height(); ++y)
+    {
+      for(int x=0; x<gradient->width(); ++x)
+      {
+        // clamped coordinates
+        int xp = x+1, xn = x-1;
+        int yp = y+1, yn = y-1;
+        int zp = z+1, zn = z-1;
+        if (xn<0) xn = 0;
+        if (yn<0) yn = 0;
+        if (zn<0) zn = 0;
+        if (xp>img->width() -1) xp = img->width() -1;
+        if (yp>img->height()-1) yp = img->height()-1;
+        if (zp>img->depth() -1) zp = img->depth() -1;
+
+        A.x() = img->sample(xn,y,z).r();
+        B.x() = img->sample(xp,y,z).r();
+        A.y() = img->sample(x,yn,z).r();
+        B.y() = img->sample(x,yp,z).r();
+        A.z() = img->sample(x,y,zn).r();
+        B.z() = img->sample(x,y,zp).r();
+
+        // write normal packed into 0..1 format
+        px[x + img->width()*y + img->width()*img->height()*z] = normalize(A - B) * 0.5f + 0.5f;
+      }
+    }
+  }
+  return gradient;
 }
 //-----------------------------------------------------------------------------
