@@ -260,13 +260,13 @@ namespace vl
     bool contrastHounsfield(float center, float width, float intercept, float range);
 
     //! Performs a sampling on a 1d image using linear filtering.
-    fvec4 sampleLinear(double x);
+    fvec4 sampleLinear(double x) const;
 
     //! Performs a sampling on a 2d image using bilinear filtering.
-    fvec4 sampleLinear(double x, double y);
+    fvec4 sampleLinear(double x, double y) const;
 
     //! Performs a sampling on a 3d image using trilinear filtering.
-    fvec4 sampleLinear(double x, double y, double z);
+    fvec4 sampleLinear(double x, double y, double z) const;
 
     /**
      * Returns the color associated to the specified pixel.
@@ -296,7 +296,7 @@ namespace vl
      * - IF_LUMINANCE_ALPHA
      * - IF_DEPTH_COMPONENT
      */
-    fvec4 sample(int x, int y=0, int z=0);
+    fvec4 sample(int x, int y=0, int z=0) const;
 
     /**
      * Creates a new image containing the specified rectangular pixel area taken from the source image.
