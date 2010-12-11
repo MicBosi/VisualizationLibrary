@@ -124,6 +124,7 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
     if (mTransform)
     {
       mTransform->setLocalMatrix( mat4::translation(mPivot) * trackballRotation(x,y) * mat4::translation(-mPivot) * mStartMatrix );
+      mTransform->computeWorldMatrix();
       mStartMatrix = mTransform->localMatrix();
     }
     else
