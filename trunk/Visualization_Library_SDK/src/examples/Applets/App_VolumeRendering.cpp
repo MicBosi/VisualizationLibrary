@@ -44,7 +44,7 @@ using namespace vl;
 static bool USE_GLSL = true;
 
 /* If enabled, renders the volume using 3 animated lights. Requires USE_GLSL. */
-static bool DYNAMIC_LIGHTS = false; 
+static bool DYNAMIC_LIGHTS = true; 
 
 /* If enabled, a white transfer function is used and 3 colored lights 
    are used to render the volume. Used only if DYNAMIC_LIGHTS is true. */
@@ -52,7 +52,7 @@ static bool COLORED_LIGHTS = true;
 
 /* Use a separate 3d texture with a precomputed gradient to speedup the fragment shader.
    Requires more memory (for the gradient texture) but can speedup the rendering. */
-static bool PRECOMPUTE_GRADIENT = false; // only if USE_GLSL is true
+static bool PRECOMPUTE_GRADIENT = false; // only if USE_GLSL is true.
 
 /* The number of slices used to render the volume, the higher the number the better 
   (and slower) the rendering will be. */
