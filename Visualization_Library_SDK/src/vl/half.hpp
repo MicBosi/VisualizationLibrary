@@ -268,10 +268,11 @@ namespace vl
     //---------------------------------------------------------------------------
     static half convertFloatToHalf(float f)
     {
-      unsigned int x = *(unsigned int*)&f;
-      unsigned int sign = (unsigned short)(x>>31);
-      unsigned int mantissa = x & ((1 << 23)-1);
-      unsigned int exp = x & FLOAT_MAX_BIASED_EXP;
+      union { float f; unsigned int x; } val;
+      val.f = f;
+      unsigned int sign = (unsigned short)(val.x>>31);
+      unsigned int mantissa = val.x & ((1 << 23)-1);
+      unsigned int exp = val.x & FLOAT_MAX_BIASED_EXP;
       typedef unsigned short hfloat;
       half hf;
 
@@ -314,7 +315,6 @@ namespace vl
       unsigned int sign = (unsigned int) ( hf >> 15);
       unsigned int mantissa = (unsigned int) (hf & (( 1 << 10) - 1) );
       unsigned int exp = (unsigned int) (hf & HALF_FLOAT_MAX_BIASED_EXP);
-      unsigned int f;
 
       if (exp == HALF_FLOAT_MAX_BIASED_EXP)
       {
@@ -353,18 +353,20 @@ namespace vl
         // generate single precision biased exponent value
         exp = ( exp << 13) + HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP;
       }
-      f = ( sign << 31) | exp | mantissa;
-      return *((float *) &f);
+      union { float f; unsigned int x; } val;
+      val.x = ( sign << 31) | exp | mantissa;
+      return val.f;
     }
     //---------------------------------------------------------------------------
     static void convertFloatToHalf(const float* f, half* h, int count)
     {
       for(int i=0; i<count; ++i)
       {
-        unsigned int x = *(unsigned int*)(f+i);
-        unsigned int sign = (unsigned short)(x>>31);
-        unsigned int mantissa = x & ((1 << 23)-1);
-        unsigned int exp = x & FLOAT_MAX_BIASED_EXP;
+        union { float f; unsigned int x; } val;
+        val.f = f[i];
+        unsigned int sign = (unsigned short)(val.x>>31);
+        unsigned int mantissa = val.x & ((1 << 23)-1);
+        unsigned int exp = val.x & FLOAT_MAX_BIASED_EXP;
         typedef unsigned short hfloat;
         hfloat& hf = h[i].bits;
 
@@ -409,7 +411,6 @@ namespace vl
         unsigned int sign = (unsigned int) ( hf >> 15);
         unsigned int mantissa = (unsigned int) (hf & (( 1 << 10) - 1) );
         unsigned int exp = (unsigned int) (hf & HALF_FLOAT_MAX_BIASED_EXP);
-        unsigned int uif;
 
         if (exp == HALF_FLOAT_MAX_BIASED_EXP)
         {
@@ -448,8 +449,9 @@ namespace vl
           // generate single precision biased exponent value
           exp = ( exp << 13) + HALF_FLOAT_MIN_BIASED_EXP_AS_SINGLE_FP_EXP;
         }
-        uif = ( sign << 31) | exp | mantissa;
-        f[i] =  *((float *) &uif);
+        union { float f; unsigned int x; } val;
+        val.x = ( sign << 31) | exp | mantissa;
+        f[i] = val.f;
       }
     }
     //---------------------------------------------------------------------------
@@ -592,14 +594,14 @@ namespace vl
     return half::convertFloatToHalf( half::convertHalfToFloat(a) - (float)b );
   }
   //-----------------------------------------------------------------------------
-  inline half Vector4<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()+(float)w()*(float)w()); }
-  inline half Vector4<half>::lengthSquared() const { return (half)((float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()+(float)w()*(float)w()); }
+  template<> inline half Vector4<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()+(float)w()*(float)w()); }
+  template<> inline half Vector4<half>::lengthSquared() const { return (half)((float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()+(float)w()*(float)w()); }
 
-  inline half Vector3<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()); }
-  inline half Vector3<half>::lengthSquared() const { return (half)((float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()); }
+  template<> inline half Vector3<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()); }
+  template<> inline half Vector3<half>::lengthSquared() const { return (half)((float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()); }
 
-  inline half Vector2<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()); }
-  inline half Vector2<half>::lengthSquared() const { return (half)((float)x()*(float)x()+(float)y()*(float)y()); }
+  template<> inline half Vector2<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()); }
+  template<> inline half Vector2<half>::lengthSquared() const { return (half)((float)x()*(float)x()+(float)y()*(float)y()); }
   //-----------------------------------------------------------------------------
   typedef Vector4<half> hvec4;
   typedef Vector3<half> hvec3;
