@@ -297,7 +297,7 @@ namespace vl
     int getAttribLocation(const char* name) const
     {
       VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
         return -1;
       VL_CHECK(handle())
       VL_CHECK(linked())
@@ -393,7 +393,7 @@ namespace vl
     bool getProgramBinary(GLenum& binary_format, std::vector<unsigned char>& binary) const;
 
     //! glProgramBinary wrapper: loads a program object with a program binary, see also http://www.opengl.org/sdk/docs/man4/xhtml/glProgramBinary.xml
-    bool programBinary(GLenum binary_format, const std::vector<unsigned char>& binary) { programBinary(binary_format, &binary[0], binary.size()); }
+    bool programBinary(GLenum binary_format, const std::vector<unsigned char>& binary) { return programBinary(binary_format, &binary[0], binary.size()); }
 
     //! glProgramBinary wrapper: loads a program object with a program binary, see also http://www.opengl.org/sdk/docs/man4/xhtml/glProgramBinary.xml
     bool programBinary(GLenum binary_format, const void* binary, int length);
@@ -412,13 +412,11 @@ namespace vl
     int getUniformLocation(const std::string& name) const
     {
       VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
         return -1;
       VL_CHECK(linked())
-      VL_CHECK(handle())
 
       int location = glGetUniformLocation(handle(), name.c_str());
-      VL_CHECK(location != -1)
       return location;
     }
 
@@ -431,7 +429,7 @@ namespace vl
     void getUniformfv(int location, float* params) const
     {
       VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
@@ -443,7 +441,7 @@ namespace vl
     void getUniformiv(int location, int* params) const
     {
       VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0) )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
