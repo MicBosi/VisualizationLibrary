@@ -362,8 +362,9 @@ namespace vl
 
     AP_DEPTH_ATTACHMENT   = GL_DEPTH_ATTACHMENT,
 
-    AP_STENCIL_ATTACHMENT = GL_STENCIL_ATTACHMENT
+    AP_STENCIL_ATTACHMENT = GL_STENCIL_ATTACHMENT,
 
+    AP_DEPTH_STENCIL_ATTACHMENT = GL_DEPTH_STENCIL_ATTACHMENT,
   } EAttachmentPoint;
 
   //! Color-renderable formats as defined in section 4.4.4 of opengl api specs 4.1
