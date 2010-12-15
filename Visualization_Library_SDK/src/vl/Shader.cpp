@@ -492,7 +492,7 @@ void PointParameter::apply(const Camera*, OpenGLContext*) const
   {
     VL_glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
   }
-  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
   {
     VL_glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, mPointSpriteCoordOrigin); VL_CHECK_OGL()
   }
@@ -683,7 +683,7 @@ namespace
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
     }
 
-    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
     {
       glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;

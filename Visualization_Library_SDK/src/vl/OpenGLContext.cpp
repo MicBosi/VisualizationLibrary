@@ -183,7 +183,7 @@ void OpenGLContext::initGLContext(bool log)
     glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL();
     mTextureUnitCount = max_tmp > mTextureUnitCount ? max_tmp : mTextureUnitCount;
   }
-  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
   {
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
     mTextureUnitCount = max_tmp > mTextureUnitCount ? max_tmp : mTextureUnitCount;
@@ -192,7 +192,7 @@ void OpenGLContext::initGLContext(bool log)
 
   // find max number of vertex attributes
   mMaxVertexAttrib = 0;
-  if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+  if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &mMaxVertexAttrib);
   mMaxVertexAttrib = mMaxVertexAttrib < VL_MAX_GENERIC_VERTEX_ATTRIB ? mMaxVertexAttrib : VL_MAX_GENERIC_VERTEX_ATTRIB;
 
@@ -246,13 +246,13 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("OpenGL vendor: %s\n") << glGetString(GL_VENDOR) );
     Log::print( Say("OpenGL renderer: %s\n") << glGetString(GL_RENDERER) );
     Log::print( Say("OpenGL profile: %s\n") << (isCompatible() ? "Compatible" : "Core") );
-    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
       Log::print( Say("GLSL version: %s\n")<<glGetString(GL_SHADING_LANGUAGE_VERSION) );
     int max_val = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_val);
     Log::print( Say("Max texture size: %n\n")<<max_val);
     max_val = 0;
-    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
       glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_val);
     Log::print( Say("Texture coords: %n\n") << max_val);
     max_val = 1;
@@ -260,7 +260,7 @@ void OpenGLContext::logOpenGLInfo()
       glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val);
     Log::print( Say("Texture conventional units: %n\n") << max_val);
     max_val = 0;
-    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
       glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
     Log::print( Say("Texture image units: %n\n") << max_val);
     max_val = 0;
@@ -273,22 +273,22 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("Pixel Buffer Object: %s\n") << (GLEW_ARB_pixel_buffer_object ? "YES" : "NO"));
     Log::print( Say("Framebuffer Object: %s\n") << (GLEW_EXT_framebuffer_object ? "YES" : "NO"));
     max_val = 0;
-    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
       glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &max_val);
     Log::print( Say("Max vertex attributes: %n\n")<<max_val);
     VL_CHECK_OGL();
     max_val = 0;
-    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
       glGetIntegerv(GL_MAX_VARYING_FLOATS , &max_val);
     Log::print( Say("Max varying floats: %n\n")<<max_val);
     VL_CHECK_OGL();
     max_val = 0;
-    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
       glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS , &max_val);
     Log::print( Say("Max fragment uniform components: %n\n")<<max_val);
     VL_CHECK_OGL();
     max_val = 0;
-    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
       glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS , &max_val);
     Log::print( Say("Max vertex uniform components: %n\n")<<max_val);
     VL_CHECK_OGL();
@@ -778,7 +778,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL();
     coord_count = max_tmp > coord_count ? max_tmp : coord_count;
   }
-  //if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+  //if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
   //{
   //  glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
   //  units_count = max_tmp > coord_count ? max_tmp : coord_count;
@@ -1078,7 +1078,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   }
 
   GLint max_vert_attribs = 0;
-  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_vert_attribs);
   for(int i=0; i<max_vert_attribs; ++i)
   {
