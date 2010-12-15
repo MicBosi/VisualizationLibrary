@@ -65,7 +65,8 @@ BaseDemo* Create_App_ImageFunctions();
 BaseDemo* Create_App_Texturing();
 BaseDemo* Create_App_Transforms();
 BaseDemo* Create_App_VirtualFileSystemTest();
-BaseDemo* Create_App_VolumeRendering();
+BaseDemo* Create_App_VolumeRaycast();
+BaseDemo* Create_App_VolumeSliced();
 BaseDemo* Create_App_VectorGraphics();
 BaseDemo* Create_App_KdTreeView();
 BaseDemo* Create_App_CullingBenchmark();
@@ -177,7 +178,8 @@ public:
       { "Mandelbrot", Create_App_Fractals(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
       { "Deformer", Create_App_Deformer(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
       { "Volume Point Splatting", Create_App_PointSplatting(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "Volume View", Create_App_VolumeRendering(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Volume Sliced", Create_App_VolumeSliced(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Volume Raycast", Create_App_VolumeRaycast(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) },      
       { "Marching Cubes", Create_App_MarchingCubes(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,50), vl::vec3(0,0,0) }, 
       { "Tessellator", Create_App_Tessellator(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
       { "Extrusion", Create_App_Extrusion(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },

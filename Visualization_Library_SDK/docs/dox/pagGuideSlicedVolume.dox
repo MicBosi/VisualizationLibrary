@@ -31,8 +31,8 @@
 	the window any supported volume data to	visualize it at different threshold level. The threshold level can be modified using the mouse 
 	wheel.
 	
-	[From \p App_VolumeRendering.cpp]
-	\dontinclude App_VolumeRendering.cpp
+	[From \p App_VolumeSliced.cpp]
+	\dontinclude App_VolumeSliced.cpp
 	\skip #include
 	\until // Have fun!
 
