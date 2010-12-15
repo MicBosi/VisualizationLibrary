@@ -85,7 +85,8 @@ set(VL_APPLETS_SRC
   App_Transforms.cpp
   App_VectorGraphics.cpp
   App_VirtualFileSystemTest.cpp
-  App_VolumeRendering.cpp
+  App_VolumeSliced.cpp
+  App_VolumeRaycast.cpp
 )
 
 add_library(${VLAPPLETS_NAME} STATIC ${VL_APPLETS_INC} ${VL_APPLETS_SRC})

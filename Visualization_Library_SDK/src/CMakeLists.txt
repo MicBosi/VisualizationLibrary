@@ -341,12 +341,14 @@ set(VLVOLUME_INC
   vlVolume/MarchingCubes.hpp
   vlVolume/SlicedVolume.hpp
   vlVolume/VolumePlot.hpp
+  vlVolume/VolumeUtils.hpp
 )
 
 set(VLVOLUME_SRC
   vlVolume/MarchingCubes.cpp
   vlVolume/SlicedVolume.cpp
   vlVolume/VolumePlot.cpp
+  vlVolume/VolumeUtils.cpp
 )
 
 set(VLMOLECULE_INC
