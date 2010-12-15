@@ -42,6 +42,7 @@ namespace vlVolume
   {
   public:
     
+    //! Constructor.
     SlicedVolume();
     
     void onActorRenderStarted(vl::Actor* actor, vl::Real frame_clock, const vl::Camera* cam, vl::Renderable* renderable, const vl::Shader* shader, int pass);
@@ -84,42 +85,12 @@ namespace vlVolume
     //! Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
     void generateTextureCoordinates(int width, int height, int depth) { generateTextureCoordinates(vl::ivec3(width,height,depth)); }
 
-    /** Generates an RGBA image based on the given data source and transfer function.
-     * \param data The vl::Image used as the volume data source. It must have format() equal to IF_LUMINANCE and type() equal to IT_UNSIGNED_BYTE, IT_UNSIGNED_SHORT or IT_FLOAT.
-     * \param trfunc An 1D vl::Image used as transfer function that is used to assign to each value in \p data an RGBA value in the new image.
-     * The vl::Image pointed by \p trfunc must mast have type() \p IT_UNSIGNED_BYTE and format() \p IF_RGBA.
-     * \param light_dir The direction of the light in object space.
-     * \param alpha_from_data If set to true the \p alpha channel of the generated image will be taken from \p data otherwise from the transfer function. */
-    static vl::ref<vl::Image> genRGBAVolume(const vl::Image* data, const vl::Image* trfunc, const vl::fvec3& light_dir, bool alpha_from_data=true);
-
-    /** Generates an RGBA image based on the given data source and transfer function.
-     * \param data The vl::Image used as the volume data source. It must have format() equal to IF_LUMINANCE and type() equal to IT_UNSIGNED_BYTE, IT_UNSIGNED_SHORT or IT_FLOAT.
-     * \param trfunc An 1D vl::Image used as transfer function that is used to assign to each value in \p data an RGBA value in the new image.
-     * The vl::Image pointed by \p trfunc must mast have type() \p IT_UNSIGNED_BYTE and format() \p IF_RGBA.
-     * \param alpha_from_data If set to true the \p alpha channel of the generated image will be taken from \p data otherwise from the transfer function.
-     *
-     * Unlike genRGBAVolume(vl::Image* data, vl::Image* trfunc, const vl::fvec3& light_dir, bool alpha_from_data=true) this function does not 
-     * compute lighting. */
-    static vl::ref<vl::Image> genRGBAVolume(const vl::Image* data, const vl::Image* trfunc, bool alpha_from_data=true);
-
-    /** Generates an image whose RGB components represent the normals computed from the input image gradient packed into 0..1 range. 
-    * The format of the image is vl::IF_RGB/vl::IT_FLOAT which is equivalent to a 3D grid of vl::fvec3.
-    * The generated image is ready to be used as a texture for normal lookup. 
-    * The original normal can be recomputed as N = (RGB - 0.5)*2.0. */
-    static vl::ref<vl::Image> genGradientNormals(const vl::Image* data);
-
   protected:
     int mSliceCount;
     vl::ref<vl::Geometry> mGeometry;
     vl::AABB mBox;
     vl::fmat4 mCache;
     vl::fvec3 mTexCoord[8];
-
-  private:
-    template<typename data_type, vl::EImageType img_type>
-    static vl::ref<vl::Image> genRGBAVolumeT(const vl::Image* data, const vl::Image* trfunc, const vl::fvec3& light_dir, bool alpha_from_data);
-    template<typename data_type, vl::EImageType img_type>
-    static vl::ref<vl::Image> genRGBAVolumeT(const vl::Image* data, const vl::Image* trfunc, bool alpha_from_data);
   };
 }
 

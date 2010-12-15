@@ -4,7 +4,7 @@
 
 #define LIGHTING_ALPHA_THRESHOLD 0.1
 
-varying vec3 position;  // in object space
+varying vec3 frag_position;  // in object space
 
 uniform sampler3D volume_texunit;
 uniform sampler3D gradient_texunit;
@@ -12,7 +12,7 @@ uniform sampler1D trfunc_texunit;
 uniform float trfunc_delta;
 uniform vec3 light_position[4]; // light positions in object space
 uniform bool light_enable[4];   // light enable flags
-uniform vec3 eye_position;      // in object space
+uniform vec3 eye_position;      // camera position in object space
 uniform float val_threshold;
 uniform vec3 gradient_delta; // for on-the-fly gradient computation
 uniform bool precomputed_gradient; // whether the gradient has been precomputed or not
@@ -25,7 +25,7 @@ vec3 blinn_phong(vec3 N, vec3 V, vec3 L, int light)
 	vec3 Ka = vec3(1.0, 1.0, 1.0);
 	vec3 Kd = vec3(1.0, 1.0, 1.0);
 	vec3 Ks = vec3(1.0, 1.0, 1.0);
-	float shininess = 50;
+	float shininess = 50.0;
 
 	// diffuse coefficient
 	float diff_coeff = max(dot(L,N),0.0);
@@ -37,15 +37,15 @@ vec3 blinn_phong(vec3 N, vec3 V, vec3 L, int light)
 		spec_coeff = 0.0;
 
 	// final lighting model
-	return  Ka * gl_LightSource[light].ambient + 
-			Kd * gl_LightSource[light].diffuse  * diff_coeff + 
-			Ks * gl_LightSource[light].specular * spec_coeff ;
+	return  Ka * gl_LightSource[light].ambient.rgb + 
+			Kd * gl_LightSource[light].diffuse.rgb  * diff_coeff + 
+			Ks * gl_LightSource[light].specular.rgb * spec_coeff ;
 }
 
 void main(void)
 {
 	// sample the LUMINANCE value
-	float val = texture3D(volume_texunit, gl_TexCoord[0].xyz ).x;
+	float val = texture3D(volume_texunit, gl_TexCoord[0].xyz ).r;
 	
 	// all the pixels whose val is less than val_threshold are discarded
 	if (val < val_threshold)
@@ -71,21 +71,21 @@ void main(void)
 		{
 			// on-the-fly gradient computation: slower but requires less memory (no gradient texture required).
 			vec3 sample1, sample2;
-			sample1.x = texture3D(volume_texunit, gl_TexCoord[0].xyz-vec3(gradient_delta.x,0.0,0.0) ).x;
-			sample2.x = texture3D(volume_texunit, gl_TexCoord[0].xyz+vec3(gradient_delta.x,0.0,0.0) ).x;
-			sample1.y = texture3D(volume_texunit, gl_TexCoord[0].xyz-vec3(0.0,gradient_delta.y,0.0) ).x;
-			sample2.y = texture3D(volume_texunit, gl_TexCoord[0].xyz+vec3(0.0,gradient_delta.y,0.0) ).x;
-			sample1.z = texture3D(volume_texunit, gl_TexCoord[0].xyz-vec3(0.0,0.0,gradient_delta.z) ).x;
-			sample2.z = texture3D(volume_texunit, gl_TexCoord[0].xyz+vec3(0.0,0.0,gradient_delta.z) ).x;
+			sample1.x = texture3D(volume_texunit, gl_TexCoord[0].xyz-vec3(gradient_delta.x,0.0,0.0) ).r;
+			sample2.x = texture3D(volume_texunit, gl_TexCoord[0].xyz+vec3(gradient_delta.x,0.0,0.0) ).r;
+			sample1.y = texture3D(volume_texunit, gl_TexCoord[0].xyz-vec3(0.0,gradient_delta.y,0.0) ).r;
+			sample2.y = texture3D(volume_texunit, gl_TexCoord[0].xyz+vec3(0.0,gradient_delta.y,0.0) ).r;
+			sample1.z = texture3D(volume_texunit, gl_TexCoord[0].xyz-vec3(0.0,0.0,gradient_delta.z) ).r;
+			sample2.z = texture3D(volume_texunit, gl_TexCoord[0].xyz+vec3(0.0,0.0,gradient_delta.z) ).r;
 			N  = normalize( sample1 - sample2 );
 		}
 
-		vec3 V  = normalize(eye_position - position);
+		vec3 V  = normalize(eye_position - frag_position);
 		for(int i=0; i<4; ++i)
 		{
 			if (light_enable[i])
 			{
-				vec3 L = normalize(light_position[i] - position);
+				vec3 L = normalize(light_position[i] - frag_position);
 				color_tmp.rgb += color.rgb * blinn_phong(N,V,L,i);
 			}
 		}

@@ -31,6 +31,7 @@
 
 #include "BaseDemo.hpp"
 #include "vlVolume/SlicedVolume.hpp"
+#include "vlVolume/VolumeUtils.hpp"
 #include "vl/Text.hpp"
 #include "vl/FontManager.hpp"
 #include "vl/GLSL.hpp"
@@ -59,7 +60,7 @@ static bool PRECOMPUTE_GRADIENT = false; // only if USE_GLSL is true.
 static const int  SLICE_COUNT = 1000;
 
 /* Our applet used to render and interact with the volume. */
-class App_VolumeRendering: public BaseDemo
+class App_VolumeSliced: public BaseDemo
 {
 public:
 
@@ -133,7 +134,7 @@ public:
       mGLSL->attachShader( new GLSLVertexShader("/glsl/volume_luminance_light.vs") );
     }
 
-    // transform and trackball steup
+    // transform and trackball setup
     mVolumeTr = new Transform;
     trackball()->setTransform( mVolumeTr.get() );
 
@@ -232,7 +233,7 @@ public:
       if (PRECOMPUTE_GRADIENT)
       {
         // note that this can take a while...
-        gradient = vlVolume::SlicedVolume::genGradientNormals(img.get());
+        gradient = vlVolume::genGradientNormals(img.get());
       }
 
       if (USE_GLSL)
@@ -258,7 +259,7 @@ public:
         if (PRECOMPUTE_GRADIENT)
         {
           vol_fx->shader()->gocUniform("precomputed_gradient")->setUniform(1);
-          vol_fx->shader()->gocTextureUnit(2)->setTexture( new Texture( gradient.get(), TF_RGBA, false, false ) );
+          vol_fx->shader()->gocTextureUnit(2)->setTexture( new Texture( gradient.get(), TF_RGBA8, false, false ) );
           vol_fx->shader()->gocUniform("gradient_texunit")->setUniform(2);
         }
         else
@@ -278,7 +279,7 @@ public:
         // generate simple transfer function
         ref<Image> trfunc = Image::makeColorSpectrum(128, vlut::black, vlut::blue, vlut::green, vlut::yellow, vlut::red);
         // precompute volume with transfer function and lighting
-        ref<Image> volume = vlVolume::SlicedVolume::genRGBAVolume(img.get(), trfunc.get(), fvec3(1.0f,1.0f,0.0f));
+        ref<Image> volume = vlVolume::genRGBAVolume(img.get(), trfunc.get(), fvec3(1.0f,1.0f,0.0f));
         vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( volume.get() ) );
         mSlicedVolume->generateTextureCoordinates( volume->width(), volume->height(), volume->depth() );
         vol_fx->shader()->enable(EN_ALPHA_TEST);
@@ -312,7 +313,7 @@ public:
   {
     float alpha = 0.0f;
     mAlphaBias->getUniform(&alpha);
-    alpha += val * 0.01f;
+    alpha += val * 0.002f;
     alpha =  clamp(alpha, 0.0f, 1.0f);
     mAlphaBias->setUniform(alpha);
 
@@ -358,4 +359,4 @@ public:
 
 // Have fun!
 
-BaseDemo* Create_App_VolumeRendering() { return new App_VolumeRendering; }
+BaseDemo* Create_App_VolumeSliced() { return new App_VolumeSliced; }
