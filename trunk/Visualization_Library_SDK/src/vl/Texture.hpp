@@ -217,6 +217,9 @@ namespace vl
     /** The TexParameter object associated to a Texture. */
     const TexParameter* getTexParameter() const { return &mTexParameter; }
 
+    /** Destroyes the texture. */
+    void destroyTexture();
+
     /** Creates a texture using the parameters specified by the last \p prepareTexture*() called. 
     \remarks You can retrieve the currently active texture creation settings using the setupParams() function. 
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this function. */
