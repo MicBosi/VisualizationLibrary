@@ -39,7 +39,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // FBORenderTarget
 //-----------------------------------------------------------------------------
-void FBORenderTarget::bindFramebuffer()
+void FBORenderTarget::bindFramebuffer(EFrameBufferBind target)
 {
   VL_CHECK_OGL()
 
@@ -63,7 +63,7 @@ void FBORenderTarget::bindFramebuffer()
   if (!handle())
     create();
 
-  VL_glBindFramebuffer(GL_FRAMEBUFFER, handle()); VL_CHECK_OGL()
+  VL_glBindFramebuffer(target, handle()); VL_CHECK_OGL()
 
   // init FBO attachments
   std::map< EAttachmentPoint, ref<FBOAttachmentAbstract> >::const_iterator it = mFBOAttachments.begin();
