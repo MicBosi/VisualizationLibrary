@@ -47,7 +47,7 @@
  * 1 = opens a MessageBox on failed check\n
  * 0 = opens a MessageBox on failed check\n
  */
-#define VL_MESSAGEBOX_CHECK 1
+#define VL_MESSAGEBOX_CHECK 0
 
 
 /**

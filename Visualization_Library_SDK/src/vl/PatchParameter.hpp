@@ -44,7 +44,7 @@ namespace vl
   {
   public:
     //! Constructor
-    PatchParameter(): mPatchVertices(0) {}
+    PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(fvec4(4,4,4,4)), mPatchDefaultInnerLevel(fvec2(4,4)) {}
 
     //! Applies the glPatchParameter values.
     void apply() 
