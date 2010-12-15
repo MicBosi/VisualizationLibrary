@@ -53,6 +53,7 @@ namespace vl
       setDstRect(0,0,640,480);
       mBufferMask = 0;
       mLinearFilteringEnabled = false;
+      mReadBuffer = RDB_COLOR_ATTACHMENT0;
     }
     virtual const char* className() { return "BlitFramebuffer"; }
 
@@ -70,19 +71,11 @@ namespace vl
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_fbo); VL_CHECK_OGL()
 
         // initializes the source and destination FBOs
-        readFramebuffer()->bindFramebuffer();
-        VL_CHECK_OGL()
-        drawFramebuffer()->bindFramebuffer();
-        VL_CHECK_OGL()
-
-        VL_CHECK( drawFramebuffer()->handle() )
-        VL_CHECK( readFramebuffer()->handle() )
+        readFramebuffer()->activate(FBB_READ_FRAMEBUFFER); VL_CHECK_OGL()
+        glReadBuffer(mReadBuffer); VL_CHECK_OGL()
+        drawFramebuffer()->activate(FBB_DRAW_FRAMEBUFFER); VL_CHECK_OGL()
 
         // performs the blit
-        VL_glBindFramebuffer( GL_READ_FRAMEBUFFER_EXT, readFramebuffer()->handle() );
-        VL_CHECK_OGL()
-        VL_glBindFramebuffer( GL_DRAW_FRAMEBUFFER_EXT, drawFramebuffer()->handle() );
-        VL_CHECK_OGL()
         VL_glBlitFramebuffer( mSrcRect[0], mSrcRect[1], mSrcRect[2], mSrcRect[3], 
                               mDstRect[0], mDstRect[1], mDstRect[2], mDstRect[3], 
                               mBufferMask,
@@ -121,11 +114,14 @@ namespace vl
       return true;
     }
 
-    void setReadFramebuffer(FBORenderTarget* fbo) { mReadFramebuffer = fbo; }
-    FBORenderTarget* readFramebuffer() const { return mReadFramebuffer.get(); }
+    void setReadFramebuffer(RenderTarget* fbo) { mReadFramebuffer = fbo; }
+    RenderTarget* readFramebuffer() const { return mReadFramebuffer.get(); }
 
-    void setDrawFramebuffer(FBORenderTarget* fbo) { mDrawFramebuffer = fbo; }
-    FBORenderTarget* drawFramebuffer() const { return mDrawFramebuffer.get(); }
+    void setDrawFramebuffer(RenderTarget* fbo) { mDrawFramebuffer = fbo; }
+    RenderTarget* drawFramebuffer() const { return mDrawFramebuffer.get(); }
+
+    void setReadBuffer(EReadDrawBuffer read_buffer) { mReadBuffer = read_buffer; }
+    EReadDrawBuffer readBuffer() const { return mReadBuffer; }
 
     void setSrcRect(int x0, int y0, int x1, int y1)
     {
@@ -154,11 +150,12 @@ namespace vl
     bool linearFilteringEnabled() const { return mLinearFilteringEnabled; }
 
   protected:
-    ref<FBORenderTarget> mReadFramebuffer;
-    ref<FBORenderTarget> mDrawFramebuffer;
+    ref<RenderTarget> mReadFramebuffer;
+    ref<RenderTarget> mDrawFramebuffer;
     int mSrcRect[4];
     int mDstRect[4];
     int mBufferMask;
+    EReadDrawBuffer mReadBuffer;
     bool mLinearFilteringEnabled;
   };
 };

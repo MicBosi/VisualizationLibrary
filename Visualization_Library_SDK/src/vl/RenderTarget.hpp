@@ -68,18 +68,18 @@ namespace vl
     void setWidth(int width) { mWidth = width; }
     void setHeight(int height) { mHeight = height; }
 
-    //! Activates the RenderTarget by calling bindFramebuffer() and setDrawBuffers()
-    void activate()
+    //! Activates the RenderTarget by calling bindFramebuffer() and bindDrawBuffers()
+    void activate(EFrameBufferBind target = FBB_FRAMEBUFFER)
     {
-      bindFramebuffer();
+      bindFramebuffer(target);
       bindDrawBuffers();
     }
 
-    virtual void bindFramebuffer()
+    virtual void bindFramebuffer(EFrameBufferBind target = FBB_FRAMEBUFFER)
     {
       VL_CHECK_OGL()
       // the base render target is the framebuffer 0, that is, the normal OpenGL buffers
-      VL_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      VL_glBindFramebuffer(target, 0);
       VL_CHECK_OGL()
     }
 
@@ -115,6 +115,8 @@ namespace vl
     }
     void setDrawBuffers(const std::vector< EReadDrawBuffer >& draw_buffers) { mDrawBuffers = draw_buffers; }
     const std::vector< EReadDrawBuffer >& drawBuffers() { return mDrawBuffers; }
+
+    virtual unsigned int handle() const { return 0; }
 
   protected:
     std::vector< EReadDrawBuffer > mDrawBuffers;
