@@ -443,6 +443,7 @@ namespace vl
       #ifndef NDEBUG
         mObjectName = className();
       #endif
+      setDrawBuffer(RDB_COLOR_ATTACHMENT0);
     }
 
   public:
@@ -452,7 +453,7 @@ namespace vl
      * Makes the framebuffer the current rendering target calling glBindFramebuffer(GL_FRAMEBUFFER, FBORenderTarget::handle())
      * and initializes all the previously defined attachment points.
     */
-    virtual void bindFramebuffer();
+    virtual void bindFramebuffer(EFrameBufferBind target = FBB_FRAMEBUFFER);
 
     GLenum checkFramebufferStatus();
 
@@ -490,7 +491,7 @@ namespace vl
     void removeAttachment(EAttachmentPoint attach_point);
     void removeAllAttachments();
 
-    unsigned int handle() const { return mHandle; }
+    virtual unsigned int handle() const { return mHandle; }
 
   public:
     std::map< EAttachmentPoint, ref<FBOAttachmentAbstract> > mFBOAttachments;

@@ -573,6 +573,13 @@ namespace vl
 
   typedef enum
   {
+    FBB_FRAMEBUFFER      = GL_FRAMEBUFFER,
+    FBB_DRAW_FRAMEBUFFER = GL_DRAW_FRAMEBUFFER,
+    FBB_READ_FRAMEBUFFER = GL_READ_FRAMEBUFFER,
+  } EFrameBufferBind;
+
+  typedef enum
+  {
     IT_IMPLICIT_TYPE = 0, //!< The type is implicitly defined by the EImageFormat value, for ex. IF_COMPRESSED_RGB_S3TC_DXT1.
 
     IT_UNSIGNED_BYTE  = GL_UNSIGNED_BYTE,
