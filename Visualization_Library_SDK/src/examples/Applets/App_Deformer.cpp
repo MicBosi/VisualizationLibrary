@@ -361,6 +361,7 @@ public:
     if (files[0].endsWith(".dcm"))
       mImage->contrastHounsfieldAuto();
 
+    mTexture->destroyTexture();
     mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
 
     // perfectly center the texture texels (see GL_CLAMP documentation)
