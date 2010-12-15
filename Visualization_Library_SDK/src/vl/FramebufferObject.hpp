@@ -486,6 +486,7 @@ namespace vl
     void addTextureAttachment(EAttachmentPoint color_attachment, FBOAttachmentAbstract* attachment);
     void addDepthAttachment(FBOAttachmentAbstract* attachment);
     void addStencilAttachment(FBOAttachmentAbstract* attachment);
+    void addDepthStencilAttachment(FBOAttachmentAbstract* attachment);
     const std::map< EAttachmentPoint, ref<FBOAttachmentAbstract> >& fboAttachments() const { return mFBOAttachments; }
     void removeAttachment(FBOAttachmentAbstract* attachment);
     void removeAttachment(EAttachmentPoint attach_point);

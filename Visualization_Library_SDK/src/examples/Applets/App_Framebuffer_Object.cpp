@@ -489,7 +489,7 @@ public:
   {
     BaseDemo::initEvent();
 
-    if (!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0))
+    if (!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
     {
       vl::Log::error("GL_ARB_framebuffer_object not supported.\n");
       vl::Time::sleep(3000);
