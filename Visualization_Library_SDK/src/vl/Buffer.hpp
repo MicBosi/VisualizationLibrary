@@ -173,6 +173,7 @@ namespace vl
      */
     void setUserAllocatedBuffer(void* ptr, size_t bytes)
     {
+      clear();
       mPtr = (unsigned char*)ptr;
       mByteCount = bytes;
       mAlignment = 0;
@@ -183,7 +184,8 @@ namespace vl
     { 
       if ( mAllocationMode != mode )
       {
-        mAllocationMode = mode; 
+        clear();
+        mAllocationMode = mode;
         // reset buffer data
         mPtr = 0;
         mByteCount = 0;
