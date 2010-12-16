@@ -254,10 +254,10 @@ namespace vl
     //! This function can be substantially quicker that find() when searching in large texts but it can be slower than find() for small ones.
     int findInLargeText(const String& substr, int start=0) const;
 
-    //! Searches for the specified character \ch starting from the end of the string and returns the index of the first occurrence or -1 if no occurrence was found.
+    //! Searches for the specified character \a chstarting from the end of the string and returns the index of the first occurrence or -1 if no occurrence was found.
     int findBackwards(wchar_t ch) const;
 
-    //! Searches for the specified String \ch str from the end of the string and returns the index of the first occurrence or -1 if no occurrence was found.
+    //! Searches for the specified String \a chstr from the end of the string and returns the index of the first occurrence or -1 if no occurrence was found.
     int findBackwards(const String& str) const;
 
     //! Returns true if a String contains the specified character.

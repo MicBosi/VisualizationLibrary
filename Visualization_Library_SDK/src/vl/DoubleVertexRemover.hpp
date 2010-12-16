@@ -46,8 +46,8 @@ namespace vl
   public:
     virtual const char* className() { return "VertexMapper"; }
     //! Regenerates a new Array based on the given mapping.
-    //! \params data The array to be regenerated
-    //! \params map_new_to_old Specifies the mapping from the old vetices to the new one. The \p i-th vertex of the new vertex array will use the \p map_new_to_old[i]-th vertex of the old array, 
+    //! \param data The array to be regenerated
+    //! \param map_new_to_old Specifies the mapping from the old vetices to the new one. The \p i-th vertex of the new vertex array will use the \p map_new_to_old[i]-th vertex of the old array, 
     //! that is, \p map_new_to_old[i] specifies the \a old vertex to be used to generate the \a new \p i-th vertex.
     ref<ArrayAbstract> regenerate(ArrayAbstract* data, const std::vector<size_t>& map_new_to_old) const;
   private:

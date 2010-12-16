@@ -216,7 +216,7 @@ namespace vl
                    coordinates have the Y axis pointing upwards and origin at the bottom left corner of the window.
         \param out The world coordinates of the projected point.
         \note The \p w coordinate of \p win determines the position of the projected point along the ray passing through \p win. If \p w
-              equals 0 then \p out will lay on the near clipping plane, if \w equals 1 then \p out will lay on the far clipping plane.
+              equals 0 then \p out will lay on the near clipping plane, if \p w equals 1 then \p out will lay on the far clipping plane.
      */
     bool unproject(const vec3& win, vec4& out) const;
 
