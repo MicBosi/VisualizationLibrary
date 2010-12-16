@@ -36,6 +36,7 @@
 #include <vlut/Colors.hpp>
 #include "Applets/BaseDemo.hpp"
 
+BaseDemo* Create_App_BlindTests();
 BaseDemo* Create_App_Billboards();
 BaseDemo* Create_App_ClipPlanes();
 BaseDemo* Create_App_Deformer();
@@ -130,7 +131,8 @@ public:
   {
     TestEntry tests[] = 
     {
-      { "Virtual File System", Create_App_VirtualFileSystemTest(), 10,10, 512, 512, vlut::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Blind Tests", Create_App_BlindTests(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,1), vl::vec3(0,0,0) }, 
+      { "Virtual File System", Create_App_VirtualFileSystemTest(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,1), vl::vec3(0,0,0) }, 
       { "Primitives", Create_App_Primitives(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,20), vl::vec3(0,0,0) },
       { "DrawCall Tests", Create_App_DrawCalls(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Near/Far Planes Optimization", Create_App_NearFarOptimization(), 10, 10, 512, 512, vlut::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
