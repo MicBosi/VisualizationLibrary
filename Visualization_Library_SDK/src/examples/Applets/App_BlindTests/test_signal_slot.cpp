@@ -37,60 +37,61 @@ using namespace vl;
 
 namespace blind_tests
 {
+  class MyClassA: public vl::Object
+  {
+  public:
+    MyClassA(): mValue1(0), mValue2(0) {}
+    ~MyClassA() {}
+
+    void reset() { mValue1 = 0; mValue2 = 0; }
+
+    virtual int event_invocation1(int ev_type, void*)
+    {
+      mValue1 += ev_type + 1;
+      return 0;
+    }
+
+    virtual int event_invocation2(int ev_type, void*)
+    {
+      mValue2 += ev_type + 2;
+      return 0;
+    }
+
+    int mValue1;
+    int mValue2;
+  };
+
+  class MyClassB: public MyClassA
+  {
+  public:
+    virtual int event_invocation1(int ev_type, void*)
+    {
+      mValue1 += ev_type + 10;
+      return 0;
+    }
+
+    virtual int event_invocation2(int ev_type, void*)
+    {
+      mValue2 += ev_type + 20;
+      return 0;
+    }
+  };
+
   bool test_signal_slot()
   {
-    class MyClassA: public Object
-    {
-    public:
-      MyClassA(): mValue1(0), mValue2(0) {}
-
-      void reset() { mValue1 = 0; mValue2 = 0; }
-
-      virtual int event_invocation1(int ev_type, int)
-      {
-        mValue1 += ev_type + 1;
-        return 0;
-      }
-
-      virtual int event_invocation2(int ev_type, int)
-      {
-        mValue2 += ev_type + 2;
-        return 0;
-      }
-
-      int mValue1;
-      int mValue2;
-    };
-
-    class MyClassB: public MyClassA
-    {
-    public:
-      virtual int event_invocation1(int ev_type, int)
-      {
-        mValue1 += ev_type + 10;
-        return 0;
-      }
-
-      virtual int event_invocation2(int ev_type, int)
-      {
-        mValue2 += ev_type + 20;
-        return 0;
-      }
-    };
-
     // this calls B's event_invocation1/2 implementation via A's virtual function!
     ref<MyClassA> A = new MyClassB;
-    Slot2<MyClassA, int, int> slot_a1(A.get(), &MyClassA::event_invocation1);
-    Slot2<MyClassA, int, int>* slot_a2 = new Slot2<MyClassA, int, int>(A.get(), &MyClassA::event_invocation2);
+    Slot2<MyClassA, int, void*> slot_a1(A.get(), &MyClassA::event_invocation1);
+    Slot2<MyClassA, int, void*>* slot_a2 = new Slot2<MyClassA, int, void*>(A.get(), &MyClassA::event_invocation2);
 
     // this calls directly B's event_invocation1/2 implementation.
     ref<MyClassB> B = new MyClassB;
-    Slot2<MyClassA, int, int> slot_b1(B.get(), &MyClassA::event_invocation1);
-    Slot2<MyClassA, int, int> slot_b2(B.get(), &MyClassA::event_invocation2);
+    Slot2<MyClassA, int, void*> slot_b1(B.get(), &MyClassA::event_invocation1);
+    Slot2<MyClassA, int, void*> slot_b2(B.get(), &MyClassA::event_invocation2);
 
     // our signals
-    Signal2<int, int> sigX;
-    Signal2<int, int> sigY;
+    Signal2<int, void*> sigX;
+    Signal2<int, void*> sigY;
 
     sigX.connect(slot_a1);
     sigX.connect(*slot_a2);
@@ -162,7 +163,7 @@ namespace blind_tests
     // test signal destruction and multiple signals
     A->reset();
     B->reset();
-    slot_a2 = new Slot2<MyClassA, int, int>(A.get(), &MyClassA::event_invocation2);
+    slot_a2 = new Slot2<MyClassA, int, void*>(A.get(), &MyClassA::event_invocation2);
     sigX.connect(slot_a1);
     sigX.connect(slot_b1);
     sigX.connect(*slot_a2);
@@ -176,7 +177,7 @@ namespace blind_tests
     sigY.emit_event(200, NULL); VL_CHECK(A->mValue1 == 110); VL_CHECK(A->mValue2 == 120); VL_CHECK(B->mValue1 == 110); VL_CHECK(B->mValue2 == 120);
 
     // change target object and method
-    Slot2<MyClassA, int, int> slot_c(A.get(), &MyClassA::event_invocation2);
+    Slot2<MyClassA, int, void*> slot_c(A.get(), &MyClassA::event_invocation2);
     slot_c.setTargetObject(B.get());
     slot_c.setMethod(&MyClassA::event_invocation1);
 
