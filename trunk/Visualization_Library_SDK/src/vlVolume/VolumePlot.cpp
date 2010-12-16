@@ -103,7 +103,6 @@ VolumePlot::VolumePlot()
 /**
  * \param func The function to be evaluated at each grid point.
  * \param threshold The isovalue of the isosurface passed to the vlVolume::MarcingCubes algorithm.
- * \param sm The vl::SceneManager that will hold the plot.
  */
 void VolumePlot::compute(const Function& func, float threshold)
 {
