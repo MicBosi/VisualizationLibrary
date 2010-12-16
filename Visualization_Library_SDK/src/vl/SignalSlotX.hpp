@@ -39,7 +39,7 @@ class VL_T_SIGNAL_NAME;
 template<VL_T_PAR_TYPENAME>
 class VL_T_BASE_SLOT_NAME
 {
-  template<VL_T_PAR_TYPENAME> friend class VL_T_SIGNAL_NAME;
+  template<VL_T_PAR_TYPENAME2> friend class VL_T_SIGNAL_NAME;
 
   // incoming signals
   std::vector< VL_T_SIGNAL_NAME<VL_T_PAR_FORMAL_LIST>* > m_sigs;
@@ -70,7 +70,7 @@ public:
   VL_T_BASE_SLOT_NAME(): m_rank(0), m_trigger_count(-1) {}
 
   //! Destructor
-  ~VL_T_BASE_SLOT_NAME() { disconnect_all(); }
+  virtual ~VL_T_BASE_SLOT_NAME() { disconnect_all(); }
 
   //! The object targeted by this slot.
   virtual const void* target_object() const  = 0;
@@ -112,7 +112,7 @@ class VL_T_SIGNAL_NAME
   }
 
 public:
-  ~VL_T_SIGNAL_NAME() { disconnect_all(); }
+  virtual ~VL_T_SIGNAL_NAME() { disconnect_all(); }
 
   //! Calls all the connected signals in the order specified by their VL_T_BASE_SLOT_NAME::rank() value.
   //! If a slot returns a value other than 0 the subsequent slots are not called. This mechanism
@@ -126,7 +126,7 @@ public:
     {
       // call only slots with trigger count != 0
       if ( m_slots[i]->m_trigger_count )
-        res = m_slots[i]->event_slot(par1, par2);
+        res = m_slots[i]->event_slot(VL_T_PAR_CALL);
       // if counted trigger count then count down, -1 means infinite trigger count
       if( m_slots[i]->m_trigger_count > 0 )
         m_slots[i]->m_trigger_count--;
@@ -160,7 +160,7 @@ public:
   //! Disconnects a slot to a signal
   void disconnect_slot(const VL_T_BASE_SLOT_NAME<VL_T_PAR_FORMAL_LIST>& slot)
   {
-    std::vector< VL_T_BASE_SLOT_NAME<VL_T_PAR_FORMAL_LIST>* >::iterator it = std::find(m_slots.begin(), m_slots.end(), &slot);
+    typename std::vector< VL_T_BASE_SLOT_NAME<VL_T_PAR_FORMAL_LIST>* >::iterator it = std::find(m_slots.begin(), m_slots.end(), &slot);
     if( it != m_slots.end() )
     {
       (*it)->erase_signal(this);
@@ -227,7 +227,7 @@ public:
   {
     VL_CHECK(m_obj);
     VL_CHECK(m_method);
-    return (m_obj->*m_method)(par1, par2);
+    return (m_obj->*m_method)(VL_T_PAR_CALL);
   }
 
   void setTargetObject(T_class* target) { m_obj = target; }
@@ -241,9 +241,11 @@ private:
 
 //-----------------------------------------------------------------------------
 
-#undef VL_T_PAR_TYPENAME    
+#undef VL_T_PAR_TYPENAME
+#undef VL_T_PAR_TYPENAME2
 #undef VL_T_PAR_FORMAL_LIST
 #undef VL_T_PAR_LIST       
+#undef VL_T_PAR_CALL
 #undef VL_T_SIGNAL_NAME    
 #undef VL_T_BASE_SLOT_NAME 
 #undef VL_T_SLOT_NAME      
