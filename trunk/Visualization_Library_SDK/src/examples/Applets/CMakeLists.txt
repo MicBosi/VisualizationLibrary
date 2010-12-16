@@ -39,6 +39,13 @@ set(VL_APPLETS_INC
 )
 
 set(VL_APPLETS_SRC
+  # blind tests
+
+  App_BlindTests/App_BlindTests.cpp
+  App_BlindTests/test_signal_slot.cpp
+
+  # visive tests and demos
+
   App_BezierSurfaces.cpp
   App_Billboards.cpp
   App_ClipPlanes.cpp
@@ -87,10 +94,6 @@ set(VL_APPLETS_SRC
   App_VirtualFileSystemTest.cpp
   App_VolumeSliced.cpp
   App_VolumeRaycast.cpp
-  
-  #blind tests
-  App_BlindTests/App_BlindTests.cpp
-  App_BlindTests/test_signal_slot.cpp
 )
 
 add_library(${VLAPPLETS_NAME} STATIC ${VL_APPLETS_INC} ${VL_APPLETS_SRC})
