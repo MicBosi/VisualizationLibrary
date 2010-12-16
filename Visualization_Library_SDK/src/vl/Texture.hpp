@@ -231,9 +231,9 @@ namespace vl
 
     /** Copies the texture image to the specified mip-maping level. This function can be useful to 
     specify one by one the mipmapping images or to create texture animation effects.
-    \params mip_level The mip-mapping level to be modified.
-    \params img The Image containing the pixels to be copied into the specified mip-mapping level.
-    \params gen_mipmaps If \p true automatically generates the mip-mapping images for the levels below \p mip_level. 
+    \param mip_level The mip-mapping level to be modified.
+    \param img The Image containing the pixels to be copied into the specified mip-mapping level.
+    \param gen_mipmaps If \p true automatically generates the mip-mapping images for the levels below \p mip_level. 
     \remarks Before calling this function one of the two createTexture() methods must have been called.
     \note The mip-map level is updated immediately therefore an OpenGL context must be active when calling this function. */
     bool setMipLevel(int mip_level, Image* img, bool gen_mipmaps);

@@ -228,7 +228,7 @@
 	<div class="featuretitle">Visualization Library 2009.07 Beta 1</div>
 
 	- Added new classes to perform edge enhancement: vl::EdgeRenderer, vl::EdgeExtractor
-	- Added new \ref pagGuideWireframe "Edge Enhancement and Wireframe Rendering" demo and tutorial.
+	- Added new \ref pagGuideEdgeRendering demo and tutorial.
 	- Added new vl::SceneManagerPortals, a scene manager that implements sector/portal-based occlusion culling.
 	- Added new \ref pagGuidePortals "Portal-Based Culling and Scene Management" demo and tutorial.
 	- Added support OpenGL-accelerated occlusion culling via the \p GL_ARB_occlusion_query extension.
