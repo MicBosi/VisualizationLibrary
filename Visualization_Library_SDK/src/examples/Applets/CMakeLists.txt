@@ -43,6 +43,7 @@ set(VL_APPLETS_SRC
 
   App_BlindTests/App_BlindTests.cpp
   App_BlindTests/test_signal_slot.cpp
+  App_BlindTests/test_uid.cpp
 
   # visive tests and demos
 

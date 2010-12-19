@@ -58,6 +58,7 @@ SET(VL_SRC
   vl/Geometry.cpp
   vl/GhostCameraManipulator.cpp
   vl/GZipCodec.cpp
+  vl/UUID.cpp
   vl/Image.cpp
   vl/Image_Tools.cpp
   vl/ActorKdTree.cpp
@@ -79,6 +80,7 @@ SET(VL_SRC
   vl/PolygonSimplifier.cpp
   vl/ProjViewTransfCallback.cpp
   vl/SceneManagerPortals.cpp
+  vl/Random.cpp
   vl/RayIntersector.cpp
   vl/RenderTarget.cpp
   vl/Renderer.cpp
@@ -154,6 +156,7 @@ set(VL_INC
   vl/GeometryLoadCallback.hpp
   vl/GhostCameraManipulator.hpp
   vl/GZipCodec.hpp
+  vl/UUID.hpp
   vl/half.hpp
   vl/KeyValues.hpp
   vl/Image.hpp
@@ -185,6 +188,7 @@ set(VL_INC
   vl/PolygonSimplifier.hpp
   vl/ProjViewTransfCallback.hpp
   vl/SceneManagerPortals.hpp
+  vl/Random.hpp
   vl/Ray.hpp
   vl/RayIntersector.hpp
   vl/ReadPixels.hpp

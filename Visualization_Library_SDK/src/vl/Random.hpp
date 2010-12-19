@@ -29,71 +29,43 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "../BaseDemo.hpp"
-#include "vl/Text.hpp"
-#include "vl/Time.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/TextStream.hpp"
-#include "vl/Geometry.hpp"
-#include <time.h>
+#ifndef Random_INCLUDE_ONCE
+#define Random_INCLUDE_ONCE
 
-namespace blind_tests
+#include "vl/Object.hpp"
+
+namespace vl
 {
-  bool test_signal_slot();
-  bool test_UID();
+  //! Random number generator.
+  class Random: public Object
+  {
+  public:
+    //! Constructor.
+    Random();
+
+    //! Destructor.
+    virtual ~Random();
+
+    //! Fills the specified buffer with random data generated using the best quality random number 
+    //! generation facilities provided by the operating system. 
+    //! Under Windows (including MinGW) \p CryptGenRandom is used, while under Unix-like operating systems \p /dev/urandom is used.
+    //! If no special random number generation facility is detected the function falls back to standardFillRandom().
+    //! \return This method returns \p false if the function had to fallback to standardFillRandom() otherwise returns \p true.
+    virtual bool fillRandom(void* ptr, size_t bytes) const;
+
+    //! Fills the specified buffer with random data generated using the standard rand() function.
+    //! The method fillRandom() falls back to this function is no other high quality random number generation mechanism is detected.
+    static void standardFillRandom(void* ptr, size_t bytes);
+
+    //! Initializes the standard rand() random number generator using srand() with a reasonably unprobable value,
+    //! based on the current time stamp and memory state.
+    static void standardRandomize();
+
+  private:
+#if defined(_MSC_VER) || defined(__MINGW32__)
+    void* hCryptProv;
+#endif
+  };
 }
 
-using namespace blind_tests;
-using namespace vl;
-
-typedef bool (*TestType)();
-
-struct s_Test
-{
-  TestType mTest;
-  char* mTestName;
-};
-
-s_Test g_Tests[] = { 
-  { test_signal_slot, "Signal Slot" },
-  { test_UID,         "UUID"        },
-  { NULL, NULL }
-};
-
-class App_BlindTests: public BaseDemo
-{
-
-public:
-  virtual void shutdown() {}
-  virtual void run() {}
-  void initEvent()
-  {
-    BaseDemo::initEvent();
-    String msg;
-    Time time;
-
-    for(s_Test* test=g_Tests; test->mTestName; ++test)
-    {
-      time.start();
-      bool ok = test->mTest();
-      String test_msg = Say("Test %s %s (%.2ns)\n") << test->mTestName << (ok?"passed.":"FAILED!") << time.elapsed();
-      msg += test_msg;
-      Log::print( test_msg );
-    }
-
-    // display test pass/failure information
-
-    ref<Text> text = new Text;
-    text->setText( msg );
-    text->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
-    text->setAlignment( AlignLeft | AlignTop );
-    text->setViewportAlignment( AlignLeft | AlignTop );
-    ref<Effect> effect = new Effect;
-    effect->shader()->enable(EN_BLEND);
-    sceneManager()->tree()->addActor(text.get(), effect.get());
-  }
-
-};
-
-BaseDemo* Create_App_BlindTests() { return new App_BlindTests; }
-
+#endif
