@@ -29,7 +29,9 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "BaseDemo.hpp"
+#include "vl/VisualizationLibrary.hpp"
+#include "vl/LoadWriterManager.hpp"
+#include "vl/Effect.hpp"
 #include "vl/ZippedDirectory.hpp"
 #include "vl/Array.hpp"
 #include <vl/DiskFile.hpp>
@@ -41,33 +43,29 @@
 #include "vl/Geometry.hpp"
 #include <time.h>
 
-class App_VirtualFileSystemTest: public BaseDemo
-{
-public:
-  virtual void shutdown() {}
-  virtual void run() {}
-  void initEvent()
-  {
-    BaseDemo::initEvent();
-    srand((unsigned int)time(NULL));
+using namespace vl;
 
-    vl::ArrayByte1 ab1;
-    vl::ArrayByte1 ab2;
-    ab1.resize(33);
-    for(size_t i=0; i<ab1.size(); ++i)
-      ab1[i] = (GLbyte)(rand() % 256);
-    std::sort(ab1.begin(), ab1.end());
-    ab2 = ab1;
-    for(size_t i=0; i<ab2.size(); ++i)
-      printf("%d ", (int)ab2[i]);
+#define CONDITION(cond)                                \
+  if (!(cond))                                         \
+  {                                                    \
+    vl::Log::print( Say("%s %n: condition \""#cond"\" failed.\n") << __FILE__ << __LINE__); \
+    return false;                                      \
+  }
+
+namespace blind_tests
+{
+  bool testDataIO();
+  bool testGZipStream();
+
+  bool test_filesystem()
+  {
+    srand((unsigned int)time(NULL));
 
     // actual test
 
-    bool test_passed = true;
+    CONDITION(testDataIO());
 
-    test_passed &= testDataIO();
-
-    test_passed &= testGZipStream();
+    CONDITION(testGZipStream());
 
     // install the zipped directory
     vl::ref<vl::ZippedDirectory> zdir = new vl::ZippedDirectory("/ztest.zip");
@@ -84,7 +82,7 @@ public:
       int buffer[64];
       memset(buffer,0,sizeof(int)*64);
       vfile->read(buffer, sizeof(int)*64);
-      test_passed &= buffer[0] == pos;
+      CONDITION(buffer[0] == pos)
     }
     vfile->close();
 
@@ -104,8 +102,7 @@ public:
         << zfile->zippedFileInfo()->compressedSize()
         << zfile->size()
         );
-      VL_CHECK(zfile->zippedFileInfo()->crc32() == crc32)
-      test_passed &= zfile->zippedFileInfo()->crc32() == crc32;
+      CONDITION(zfile->zippedFileInfo()->crc32() == crc32)
 
       // check concurrent reading
       if ( zfile->path().endsWith(".gs") || zfile->path().endsWith(".txt") )
@@ -128,8 +125,7 @@ public:
           }
         }
 
-        VL_CHECK(text1 == text2)
-        test_passed &= text1 == text2;
+        CONDITION(text1 == text2)
       }
     }
 
@@ -142,22 +138,11 @@ public:
     vl::Log::print( vl::Say("obj materials  = %n\n") << res_db->count<vl::Material>() );
     vl::Log::print( vl::Say("obj effects    = %n\n") << res_db->count<vl::Effect>() );
 
-    test_passed &= res_db->count<vl::Geometry>() != 0;
-    test_passed &= res_db->count<vl::Material>() != 0;
-    test_passed &= res_db->count<vl::Effect>()   != 0;
+    CONDITION(res_db->count<vl::Geometry>() != 0)    
+    CONDITION(res_db->count<vl::Material>() != 0)
+    CONDITION(res_db->count<vl::Effect>()   != 0)
 
-    // display test pass/failure information
-
-    vl::Log::print(test_passed ? "\n*** test passed ***\n\n" : "\n*** TEST FAILED ***\n\n");
-
-    vl::ref<vl::Text> text = new vl::Text;
-    text->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
-    text->setText(test_passed ? "Virtual File System Test Passed" : "Virtual File System Test FAILED");
-    text->setAlignment( vl::AlignHCenter | vl::AlignVCenter);
-    text->setViewportAlignment( vl::AlignHCenter | vl::AlignVCenter );
-    vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->enable(vl::EN_BLEND);
-    sceneManager()->tree()->addActor(text.get(), effect.get());
+    return true;
   }
 
   bool testGZipStream()
@@ -206,12 +191,7 @@ public:
       vl::MD5CheckSum md5_c = gzip_codec->md5();
       printf("md5 == %s\n", md5_a.toStdString().c_str());
       printf("md5 == %s\n", md5_b.toStdString().c_str());
-      VL_CHECK( md5_a == md5_b )
-      if (md5_a != md5_b)
-      {
-        vl::Time::sleep(2500);
-        return false;
-      }
+      CONDITION( md5_a == md5_b )
     }
     return true;
   }
@@ -683,8 +663,4 @@ public:
 
     return ok;
   }
-};
-
-// Have fun!
-
-BaseDemo* Create_App_VirtualFileSystemTest() { return new App_VirtualFileSystemTest; }
+}

@@ -32,6 +32,7 @@
 #include "vl/SignalSlot.hpp"
 #include "vl/Object.hpp"
 #include "vl/Log.hpp"
+#include "vl/Say.hpp"
 #include "vl/checks.hpp"
 
 using namespace vl;
@@ -39,7 +40,7 @@ using namespace vl;
 #define CONDITION(cond)                                \
   if (!(cond))                                         \
   {                                                    \
-    vl::Log::print("Condition \""#cond"\" failed.\n"); \
+    vl::Log::print( Say("%s %n: condition \""#cond"\" failed.\n") << __FILE__ << __LINE__); \
     return false;                                      \
   }
 
