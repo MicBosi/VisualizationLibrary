@@ -34,6 +34,7 @@
 #include <vl/UUID.hpp>
 #include <vl/Random.hpp>
 #include <vl/checks.hpp>
+#include <cstdio>
 #include <set>
 
 using namespace vl;
