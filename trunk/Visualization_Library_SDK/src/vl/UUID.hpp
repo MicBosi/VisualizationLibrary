@@ -29,71 +29,68 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "../BaseDemo.hpp"
-#include "vl/Text.hpp"
-#include "vl/Time.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/TextStream.hpp"
-#include "vl/Geometry.hpp"
-#include <time.h>
+#ifndef UID_INCLUDE_ONCE
+#define UID_INCLUDE_ONCE
 
-namespace blind_tests
+#include "vl/checks.hpp"
+#include <string>
+
+namespace vl
 {
-  bool test_signal_slot();
-  bool test_UID();
-}
+  class Random;
 
-using namespace blind_tests;
-using namespace vl;
-
-typedef bool (*TestType)();
-
-struct s_Test
-{
-  TestType mTest;
-  char* mTestName;
-};
-
-s_Test g_Tests[] = { 
-  { test_signal_slot, "Signal Slot" },
-  { test_UID,         "UUID"        },
-  { NULL, NULL }
-};
-
-class App_BlindTests: public BaseDemo
-{
-
-public:
-  virtual void shutdown() {}
-  virtual void run() {}
-  void initEvent()
+  //! Simple implementation of a 16 bytes Universally Unique ID based on http://www.ietf.org/rfc/rfc4122.txt
+  class UUID
   {
-    BaseDemo::initEvent();
-    String msg;
-    Time time;
+  public:
+    //! Constructor, by default it is set to all zeros.
+    UUID();
 
-    for(s_Test* test=g_Tests; test->mTestName; ++test)
+    //! Generates a Version 4 UUID as defined by RFC4122 using the specified random number generator.
+    void generateVersion4(const Random& random);
+
+    //! Init the UUID from the specified string which must be at least 38 characters long and must be of the form {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}.
+    bool fromString(const char* guid_str);
+
+    //! Fills a buffer with an ascii representation of the UUID of type {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}.
+    //! \param guid_str must point to a buffer of at least 38 byes; if \p zero_terminate is \p true (default) then it must be at least 39 bytes large.
+    //! \param zero_terminate if \p true the function inserts a trailing 0 at the end of the string, in this case \p guid_str must point to a buffer 39 bytes large at least.
+    void fillString(char* guid_str, bool zero_terminate = true) const;
+
+    //! Fills the given std::string with an ASCII representation of the UUID of type {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}.
+    void toStdString(std::string& guid_str) const;
+
+    //! Returns an std::string jwith an ASCII representation of the UUID of type {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}.
+    std::string toStdString() const;
+
+    bool operator==(const UUID& other) const
     {
-      time.start();
-      bool ok = test->mTest();
-      String test_msg = Say("Test %s %s (%.2ns)\n") << test->mTestName << (ok?"passed.":"FAILED!") << time.elapsed();
-      msg += test_msg;
-      Log::print( test_msg );
+      return memcmp(this, &other, sizeof(*this)) == 0;
     }
 
-    // display test pass/failure information
+    bool operator!=(const UUID& other) const
+    {
+      return memcmp(this, &other, sizeof(*this)) != 0;
+    }
 
-    ref<Text> text = new Text;
-    text->setText( msg );
-    text->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
-    text->setAlignment( AlignLeft | AlignTop );
-    text->setViewportAlignment( AlignLeft | AlignTop );
-    ref<Effect> effect = new Effect;
-    effect->shader()->enable(EN_BLEND);
-    sceneManager()->tree()->addActor(text.get(), effect.get());
-  }
+    bool operator<(const UUID& other) const
+    {
+      return memcmp(this, &other, sizeof(*this)) < 0;
+    }
 
-};
+  public:
+    unsigned int   mTimeLow;
+    unsigned short mTimeMid;
+    unsigned short mTimeHiAndVersion;
+    unsigned char  mClockSeqHiAndReserved;
+    unsigned char  mClockSeqLow;
+    unsigned char  mNode[6];
+  };
+// ----------------------------------------------------------------------------
+  VL_COMPILE_TIME_CHECK(sizeof(UUID) == 16)
+// ----------------------------------------------------------------------------
+}
 
-BaseDemo* Create_App_BlindTests() { return new App_BlindTests; }
+// ----------------------------------------------------------------------------
 
+#endif

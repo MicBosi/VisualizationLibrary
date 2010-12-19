@@ -29,71 +29,90 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "../BaseDemo.hpp"
-#include "vl/Text.hpp"
+#include "vl/Random.hpp"
 #include "vl/Time.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/TextStream.hpp"
-#include "vl/Geometry.hpp"
-#include <time.h>
+#include "vl/Log.hpp"
 
-namespace blind_tests
-{
-  bool test_signal_slot();
-  bool test_UID();
-}
+#if defined(_MSC_VER) || defined(__MINGW32__)
+  #include <windows.h>
+  #include <wincrypt.h>
+  // #include <NTSecAPI.h>
+  // #pragma comment(lib,"Advapi32.lib")
+#endif
 
-using namespace blind_tests;
 using namespace vl;
 
-typedef bool (*TestType)();
-
-struct s_Test
+//-----------------------------------------------------------------------------
+Random::Random()
 {
-  TestType mTest;
-  char* mTestName;
-};
-
-s_Test g_Tests[] = { 
-  { test_signal_slot, "Signal Slot" },
-  { test_UID,         "UUID"        },
-  { NULL, NULL }
-};
-
-class App_BlindTests: public BaseDemo
+  hCryptProv = NULL;
+#if defined(_MSC_VER) || defined(__MINGW32__)
+  if( !CryptAcquireContext( (HCRYPTPROV*)&hCryptProv, NULL, NULL, PROV_RSA_FULL, 0) )
+    hCryptProv = NULL;
+#endif
+}
+//-----------------------------------------------------------------------------
+Random::~Random()
 {
-
-public:
-  virtual void shutdown() {}
-  virtual void run() {}
-  void initEvent()
+#if defined(_MSC_VER) || defined(__MINGW32__)
+  if( hCryptProv  )
+    CryptReleaseContext( (HCRYPTPROV)hCryptProv, 0 );
+#endif
+}
+//-----------------------------------------------------------------------------
+bool Random::fillRandom(void* ptr, size_t bytes) const
+{
+#if defined(_MSC_VER) || defined(__MINGW32__)
+  if( !(hCryptProv && CryptGenRandom( (HCRYPTPROV)hCryptProv, bytes, (BYTE*)ptr)) )
   {
-    BaseDemo::initEvent();
-    String msg;
-    Time time;
-
-    for(s_Test* test=g_Tests; test->mTestName; ++test)
+    standardFillRandom(ptr, bytes);
+    return false;
+  }
+  else
+    return true;
+#elif defined(__GNUG__) && !defined(__MINGW32__)
+  FILE* fin = fopen("/dev/urandom", "rb");
+  if (fin)
+  {
+    if ( fread(ptr, 1, bytes, fin) == bytes )
     {
-      time.start();
-      bool ok = test->mTest();
-      String test_msg = Say("Test %s %s (%.2ns)\n") << test->mTestName << (ok?"passed.":"FAILED!") << time.elapsed();
-      msg += test_msg;
-      Log::print( test_msg );
+      fclose(fin);
+      return true;
     }
-
-    // display test pass/failure information
-
-    ref<Text> text = new Text;
-    text->setText( msg );
-    text->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
-    text->setAlignment( AlignLeft | AlignTop );
-    text->setViewportAlignment( AlignLeft | AlignTop );
-    ref<Effect> effect = new Effect;
-    effect->shader()->enable(EN_BLEND);
-    sceneManager()->tree()->addActor(text.get(), effect.get());
+  }
+  standardFillRandom(ptr, bytes);
+  return false;
+#else
+  standardFillRandom(ptr, bytes);
+  return false;
+#endif
+}
+//-----------------------------------------------------------------------------
+void Random::standardFillRandom(void* ptr, size_t bytes)
+{
+  unsigned char* cptr = (unsigned char*)ptr;
+  memset(cptr, 0, bytes);
+  for (size_t i=0; i<bytes; ++i)
+  {
+    unsigned int r = (unsigned int)rand();
+    cptr[i] ^= (r>>0)  & 0xFF;
+    cptr[i] ^= (r>>8)  & 0xFF;
+    cptr[i] ^= (r>>16) & 0xFF;
+    cptr[i] ^= (r>>12) & 0xFF;
   }
 
-};
-
-BaseDemo* Create_App_BlindTests() { return new App_BlindTests; }
-
+  vl::Log::warning("Random::standardFillRandom() is being used.\n");
+}
+//-----------------------------------------------------------------------------
+void Random::standardRandomize()
+{
+  Time time;
+  int stack_pos = 0;
+  static int static_pos = 0;
+  int* dyn_pos = new int[10]; delete [] dyn_pos;
+  unsigned int rand_start = time.microsecond() ^ time.second() ^ time.minute() ^ time.hour() ^ 
+                            time.dayOfMonth() ^ time.month() ^ time.year() ^ 
+                            (unsigned int)&static_pos ^ (unsigned int)&stack_pos ^ (unsigned int)dyn_pos;
+  srand(rand_start);
+}
+//-----------------------------------------------------------------------------

@@ -29,71 +29,64 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "../BaseDemo.hpp"
-#include "vl/Text.hpp"
-#include "vl/Time.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/TextStream.hpp"
-#include "vl/Geometry.hpp"
-#include <time.h>
+//-----------------------------------------------------------------------------
+
+#include <vl/UUID.hpp>
+#include <vl/Random.hpp>
+#include <vl/checks.hpp>
+#include <set>
+
+using namespace vl;
 
 namespace blind_tests
 {
-  bool test_signal_slot();
-  bool test_UID();
-}
-
-using namespace blind_tests;
-using namespace vl;
-
-typedef bool (*TestType)();
-
-struct s_Test
-{
-  TestType mTest;
-  char* mTestName;
-};
-
-s_Test g_Tests[] = { 
-  { test_signal_slot, "Signal Slot" },
-  { test_UID,         "UUID"        },
-  { NULL, NULL }
-};
-
-class App_BlindTests: public BaseDemo
-{
-
-public:
-  virtual void shutdown() {}
-  virtual void run() {}
-  void initEvent()
+  bool test_UID()
   {
-    BaseDemo::initEvent();
-    String msg;
-    Time time;
+    FILE* fout = NULL; 
+#if 1 // set to 1 to write the uids to a text file.
+    fout = fopen("uid.txt","wt");
+#endif
 
-    for(s_Test* test=g_Tests; test->mTestName; ++test)
+    std::set<vl::UUID> str_set;
+    std::string guid_str, guid_str2;
+    vl::UUID guid, guid2;
+    Random rnd;
+
+    for (size_t x=0; x<100000; x++)
     {
-      time.start();
-      bool ok = test->mTest();
-      String test_msg = Say("Test %s %s (%.2ns)\n") << test->mTestName << (ok?"passed.":"FAILED!") << time.elapsed();
-      msg += test_msg;
-      Log::print( test_msg );
+      guid.generateVersion4(rnd);
+
+      // check that no duplicate exists
+      // VL_CHECK(str_set.find(guid) == str_set.end())
+      if (str_set.find(guid) != str_set.end())
+        return false;
+      str_set.insert(guid);
+
+      // check conversion to and from string
+      guid.toStdString(guid_str);
+      guid2.fromString(guid_str.c_str());
+      // VL_CHECK(guid2 == guid)
+      if (guid2 != guid)
+        return false;
+      guid2.toStdString(guid_str2);
+      // VL_CHECK( guid_str == guid_str2 )
+      if ( guid_str != guid_str2 )
+        return false;
+
+      // write to file
+      if (fout)
+      {
+        fprintf(fout, "%s\n", guid_str.c_str());
+      }
     }
 
-    // display test pass/failure information
+    if (fout)
+    {
+      fclose(fout); fout = NULL;
+    }
 
-    ref<Text> text = new Text;
-    text->setText( msg );
-    text->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
-    text->setAlignment( AlignLeft | AlignTop );
-    text->setViewportAlignment( AlignLeft | AlignTop );
-    ref<Effect> effect = new Effect;
-    effect->shader()->enable(EN_BLEND);
-    sceneManager()->tree()->addActor(text.get(), effect.get());
+    return true;
   }
+}
 
-};
-
-BaseDemo* Create_App_BlindTests() { return new App_BlindTests; }
-
+//-----------------------------------------------------------------------------
