@@ -42,6 +42,8 @@ set(VL_APPLETS_SRC
   # blind tests
 
   App_BlindTests/App_BlindTests.cpp
+  App_BlindTests/test_hfloat.cpp
+  App_BlindTests/test_math.cpp
   App_BlindTests/test_signal_slot.cpp
   App_BlindTests/test_uid.cpp
 
