@@ -29,75 +29,14 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "../BaseDemo.hpp"
-#include "vl/Text.hpp"
-#include "vl/Time.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/TextStream.hpp"
-#include "vl/Geometry.hpp"
-#include <time.h>
+#include "vl/quat.hpp"
+
+using namespace vl;
 
 namespace blind_tests
 {
-  bool test_hfloat();
-  bool test_math();
-  bool test_signal_slot();
-  bool test_UID();
-}
-
-using namespace blind_tests;
-using namespace vl;
-
-typedef bool (*TestType)();
-
-struct s_Test
-{
-  TestType mTest;
-  char* mTestName;
-};
-
-s_Test g_Tests[] = { 
-  { test_hfloat,      "Half Float"  },
-  { test_math,        "Math Various" },
-  { test_signal_slot, "Signal Slot" },
-  { test_UID,         "UUID"        },
-  { NULL, NULL }
-};
-
-class App_BlindTests: public BaseDemo
-{
-
-public:
-  virtual void shutdown() {}
-  virtual void run() {}
-  void initEvent()
+  bool test_math()
   {
-    BaseDemo::initEvent();
-    String msg;
-    Time time;
-
-    for(s_Test* test=g_Tests; test->mTestName; ++test)
-    {
-      time.start();
-      bool ok = test->mTest();
-      String test_msg = Say("[%s] test \"%s\" (%.2ns)\n") << (ok?"Passed":"FAILED") << test->mTestName << time.elapsed();
-      msg += test_msg;
-      Log::print( test_msg );
-    }
-
-    // display test pass/failure information
-
-    ref<Text> text = new Text;
-    text->setText( msg );
-    text->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    text->setAlignment( AlignLeft | AlignTop );
-    text->setViewportAlignment( AlignLeft | AlignTop );
-    ref<Effect> effect = new Effect;
-    effect->shader()->enable(EN_BLEND);
-    sceneManager()->tree()->addActor(text.get(), effect.get());
+    return false;
   }
-
-};
-
-BaseDemo* Create_App_BlindTests() { return new App_BlindTests; }
-
+}

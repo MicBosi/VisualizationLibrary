@@ -32,7 +32,7 @@
 #ifndef HalfFloat_INCLUDE_ONCE
 #define HalfFloat_INCLUDE_ONCE
 
-#include "vl/Vector4.hpp"
+#include "vl/Matrix4.hpp"
 
 namespace vl
 {
@@ -472,126 +472,126 @@ namespace vl
 
   };
   //-----------------------------------------------------------------------------
-  inline half operator/(float a, const half& b)
+  inline float operator/(float a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a / half::convertHalfToFloat(b) );
+    return (float)a / half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator/(double a, const half& b)
+  inline float operator/(double a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a / half::convertHalfToFloat(b) );
+    return (float)a / half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator/(int a, const half& b)
+  inline float operator/(int a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a / half::convertHalfToFloat(b) );
+    return (float)a / half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator*(float a, const half& b)
+  inline float operator*(float a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a * half::convertHalfToFloat(b) );
+    return (float)a * half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator*(double a, const half& b)
+  inline float operator*(double a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a * half::convertHalfToFloat(b) );
+    return (float)a * half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator*(int a, const half& b)
+  inline float operator*(int a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a * half::convertHalfToFloat(b) );
+    return (float)a * half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator+(float a, const half& b)
+  inline float operator+(float a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a + half::convertHalfToFloat(b) );
+    return (float)a + half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator+(double a, const half& b)
+  inline float operator+(double a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a + half::convertHalfToFloat(b) );
+    return (float)a + half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator+(int a, const half& b)
+  inline float operator+(int a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a + half::convertHalfToFloat(b) );
+    return (float)a + half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator-(float a, const half& b)
+  inline float operator-(float a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a - half::convertHalfToFloat(b) );
+    return (float)a - half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator-(double a, const half& b)
+  inline float operator-(double a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a - half::convertHalfToFloat(b) );
+    return (float)a - half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
-  inline half operator-(int a, const half& b)
+  inline float operator-(int a, const half& b)
   {
-    return half::convertFloatToHalf( (float)a - half::convertHalfToFloat(b) );
+    return (float)a - half::convertHalfToFloat(b);
   }
   //-----------------------------------------------------------------------------
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   //-----------------------------------------------------------------------------
-  inline half operator/(const half& a, float b)
+  inline float operator/(const half& a, float b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) / (float)b );
+    return half::convertHalfToFloat(a) / (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator/(const half& a, double b)
+  inline float operator/(const half& a, double b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) / (float)b );
+    return half::convertHalfToFloat(a) / (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator/(const half& a, int b)
+  inline float operator/(const half& a, int b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) / (float)b );
+    return half::convertHalfToFloat(a) / (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator*(const half& a, float b)
+  inline float operator*(const half& a, float b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) * (float)b );
+    return half::convertHalfToFloat(a) * (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator*(const half& a, double b)
+  inline float operator*(const half& a, double b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) * (float)b );
+    return half::convertHalfToFloat(a) * (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator*(const half& a, int b)
+  inline float operator*(const half& a, int b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) * (float)b );
+    return half::convertHalfToFloat(a) * (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator+(const half& a, float b)
+  inline float operator+(const half& a, float b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) + (float)b );
+    return half::convertHalfToFloat(a) + (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator+(const half& a, double b)
+  inline float operator+(const half& a, double b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) + (float)b );
+    return half::convertHalfToFloat(a) + (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator+(const half& a, int b)
+  inline float operator+(const half& a, int b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) + (float)b );
+    return half::convertHalfToFloat(a) + (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator-(const half& a, float b)
+  inline float operator-(const half& a, float b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) - (float)b );
+    return half::convertHalfToFloat(a) - (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator-(const half& a, double b)
+  inline float operator-(const half& a, double b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) - (float)b );
+    return half::convertHalfToFloat(a) - (float)b ;
   }
   //-----------------------------------------------------------------------------
-  inline half operator-(const half& a, int b)
+  inline float operator-(const half& a, int b)
   {
-    return half::convertFloatToHalf( half::convertHalfToFloat(a) - (float)b );
+    return half::convertHalfToFloat(a) - (float)b ;
   }
   //-----------------------------------------------------------------------------
   template<> inline half Vector4<half>::length() const { return (half)::sqrt( (float)x()*(float)x()+(float)y()*(float)y()+(float)z()*(float)z()+(float)w()*(float)w()); }
