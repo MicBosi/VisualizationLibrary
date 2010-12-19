@@ -34,6 +34,7 @@
 
 #include "vl/checks.hpp"
 #include <string>
+#include <string.h>
 
 namespace vl
 {

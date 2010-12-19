@@ -32,6 +32,7 @@
 #include "vl/Random.hpp"
 #include "vl/Time.hpp"
 #include "vl/Log.hpp"
+#include <cstdlib>
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
   #include <windows.h>
@@ -45,8 +46,8 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 Random::Random()
 {
-  hCryptProv = NULL;
 #if defined(_MSC_VER) || defined(__MINGW32__)
+  hCryptProv = NULL;
   if( !CryptAcquireContext( (HCRYPTPROV*)&hCryptProv, NULL, NULL, PROV_RSA_FULL, 0) )
     hCryptProv = NULL;
 #endif
@@ -112,7 +113,7 @@ void Random::standardRandomize()
   int* dyn_pos = new int[10]; delete [] dyn_pos;
   unsigned int rand_start = time.microsecond() ^ time.second() ^ time.minute() ^ time.hour() ^ 
                             time.dayOfMonth() ^ time.month() ^ time.year() ^ 
-                            (unsigned int)&static_pos ^ (unsigned int)&stack_pos ^ (unsigned int)dyn_pos;
+                            (unsigned long long)&static_pos ^ (unsigned long long)&stack_pos ^ (unsigned long long)dyn_pos;
   srand(rand_start);
 }
 //-----------------------------------------------------------------------------
