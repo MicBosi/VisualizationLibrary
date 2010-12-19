@@ -31,9 +31,17 @@
 
 #include "vl/SignalSlot.hpp"
 #include "vl/Object.hpp"
+#include "vl/Log.hpp"
 #include "vl/checks.hpp"
 
 using namespace vl;
+
+#define CONDITION(cond)                                \
+  if (!(cond))                                         \
+  {                                                    \
+    vl::Log::print("Condition \""#cond"\" failed.\n"); \
+    return false;                                      \
+  }
 
 namespace blind_tests
 {
@@ -91,16 +99,16 @@ namespace blind_tests
 
     // our signals
     Signal2<int, void*> sigX;
-    Signal2<int, void*> sigY;
+    Signal2<int, void*>* sigY = new Signal2<int, void*>;
 
     sigX.connect(slot_a1);
     sigX.connect(*slot_a2);
     // test both connected
-    sigX.emit_event(100, NULL); VL_CHECK(A->mValue1 == 110); VL_CHECK(A->mValue2 == 120);
+    sigX.emit_event(100, NULL); CONDITION(A->mValue1 == 110); CONDITION(A->mValue2 == 120);
     // test signal::disconnect_all()
     A->reset();
     sigX.disconnect_all();
-    sigX.emit_event(100, NULL); VL_CHECK(A->mValue1 == 0); VL_CHECK(A->mValue2 == 0);
+    sigX.emit_event(100, NULL); CONDITION(A->mValue1 == 0); CONDITION(A->mValue2 == 0);
     // test signal::disconnect_slot() and idempotent connection
     A->reset();
     sigX.connect(slot_a1);
@@ -108,7 +116,7 @@ namespace blind_tests
     sigX.connect(*slot_a2);
     sigX.connect(*slot_a2);
     sigX.disconnect_slot(slot_a1);
-    sigX.emit_event(100, NULL); VL_CHECK(A->mValue1 == 0); VL_CHECK(A->mValue2 == 120);
+    sigX.emit_event(100, NULL); CONDITION(A->mValue1 == 0); CONDITION(A->mValue2 == 120);
     // test signal::disconnect_object() and idempotent connection
     A->reset();
     B->reset();
@@ -117,7 +125,7 @@ namespace blind_tests
     sigX.connect(*slot_a2);
     sigX.connect(slot_b2);
     sigX.disconnect_object(A.get());
-    sigX.emit_event(100, NULL); VL_CHECK(A->mValue1 == 0); VL_CHECK(A->mValue2 == 0); VL_CHECK(B->mValue1 == 110); VL_CHECK(B->mValue2 == 120);
+    sigX.emit_event(100, NULL); CONDITION(A->mValue1 == 0); CONDITION(A->mValue2 == 0); CONDITION(B->mValue1 == 110); CONDITION(B->mValue2 == 120);
     // test slot::disconnect_signal() and multiple signals
     A->reset();
     B->reset();
@@ -125,13 +133,13 @@ namespace blind_tests
     sigX.connect(slot_b1);
     sigX.connect(*slot_a2);
     sigX.connect(slot_b2);
-    sigY.connect(slot_a1);
-    sigY.connect(slot_b1);
-    sigY.connect(*slot_a2);
-    sigY.connect(slot_b2);
+    sigY->connect(slot_a1);
+    sigY->connect(slot_b1);
+    sigY->connect(*slot_a2);
+    sigY->connect(slot_b2);
     slot_a2->disconnect_signal(&sigX);
-    sigX.emit_event(100, NULL); VL_CHECK(A->mValue1 == 110); VL_CHECK(A->mValue2 == 0); VL_CHECK(B->mValue1 == 110); VL_CHECK(B->mValue2 == 120);
-    sigY.emit_event(200, NULL); VL_CHECK(A->mValue1 == 320); VL_CHECK(A->mValue2 == 220); VL_CHECK(B->mValue1 == 320); VL_CHECK(B->mValue2 == 340);
+    sigX.emit_event(100, NULL); CONDITION(A->mValue1 == 110); CONDITION(A->mValue2 == 0); CONDITION(B->mValue1 == 110); CONDITION(B->mValue2 == 120);
+    sigY->emit_event(200, NULL); CONDITION(A->mValue1 == 320); CONDITION(A->mValue2 == 220); CONDITION(B->mValue1 == 320); CONDITION(B->mValue2 == 340);
     // test slot::disconnect_all and multiple signals
     A->reset();
     B->reset();
@@ -139,13 +147,13 @@ namespace blind_tests
     sigX.connect(slot_b1);
     sigX.connect(*slot_a2);
     sigX.connect(slot_b2);
-    sigY.connect(slot_a1);
-    sigY.connect(slot_b1);
-    sigY.connect(*slot_a2);
-    sigY.connect(slot_b2);
+    sigY->connect(slot_a1);
+    sigY->connect(slot_b1);
+    sigY->connect(*slot_a2);
+    sigY->connect(slot_b2);
     slot_a2->disconnect_all();
-    sigX.emit_event(100, NULL); VL_CHECK(A->mValue1 == 110); VL_CHECK(A->mValue2 == 0); VL_CHECK(B->mValue1 == 110); VL_CHECK(B->mValue2 == 120);
-    sigY.emit_event(200, NULL); VL_CHECK(A->mValue1 == 320); VL_CHECK(A->mValue2 == 0); VL_CHECK(B->mValue1 == 320); VL_CHECK(B->mValue2 == 340);
+    sigX.emit_event(100, NULL); CONDITION(A->mValue1 == 110); CONDITION(A->mValue2 == 0); CONDITION(B->mValue1 == 110); CONDITION(B->mValue2 == 120);
+    sigY->emit_event(200, NULL); CONDITION(A->mValue1 == 320); CONDITION(A->mValue2 == 0); CONDITION(B->mValue1 == 320); CONDITION(B->mValue2 == 340);
     // test slot destruction and multiple signals
     A->reset();
     B->reset();
@@ -153,13 +161,13 @@ namespace blind_tests
     sigX.connect(slot_b1);
     sigX.connect(*slot_a2);
     sigX.connect(slot_b2);
-    sigY.connect(slot_a1);
-    sigY.connect(slot_b1);
-    sigY.connect(*slot_a2);
-    sigY.connect(slot_b2);
+    sigY->connect(slot_a1);
+    sigY->connect(slot_b1);
+    sigY->connect(*slot_a2);
+    sigY->connect(slot_b2);
     delete slot_a2; slot_a2 = NULL;
-    sigX.emit_event(100, NULL); VL_CHECK(A->mValue1 == 110); VL_CHECK(A->mValue2 == 0); VL_CHECK(B->mValue1 == 110); VL_CHECK(B->mValue2 == 120);
-    sigY.emit_event(200, NULL); VL_CHECK(A->mValue1 == 320); VL_CHECK(A->mValue2 == 0); VL_CHECK(B->mValue1 == 320); VL_CHECK(B->mValue2 == 340);
+    sigX.emit_event(100, NULL); CONDITION(A->mValue1 == 110); CONDITION(A->mValue2 == 0); CONDITION(B->mValue1 == 110); CONDITION(B->mValue2 == 120);
+    sigY->emit_event(200, NULL); CONDITION(A->mValue1 == 320); CONDITION(A->mValue2 == 0); CONDITION(B->mValue1 == 320); CONDITION(B->mValue2 == 340);
     // test signal destruction and multiple signals
     A->reset();
     B->reset();
@@ -168,20 +176,18 @@ namespace blind_tests
     sigX.connect(slot_b1);
     sigX.connect(*slot_a2);
     sigX.connect(slot_b2);
-    sigY.connect(slot_a1);
-    sigY.connect(slot_b1);
-    sigY.connect(*slot_a2);
-    sigY.connect(slot_b2);
-    sigY.~Signal2();
-    sigX.emit_event(100, NULL); VL_CHECK(A->mValue1 == 110); VL_CHECK(A->mValue2 == 120); VL_CHECK(B->mValue1 == 110); VL_CHECK(B->mValue2 == 120);
-    sigY.emit_event(200, NULL); VL_CHECK(A->mValue1 == 110); VL_CHECK(A->mValue2 == 120); VL_CHECK(B->mValue1 == 110); VL_CHECK(B->mValue2 == 120);
+    sigY->connect(slot_a1);
+    sigY->connect(slot_b1);
+    sigY->connect(*slot_a2);
+    sigY->connect(slot_b2);
+    delete sigY; sigY = NULL;
+    sigX.emit_event(100, NULL); CONDITION(A->mValue1 == 110); CONDITION(A->mValue2 == 120); CONDITION(B->mValue1 == 110); CONDITION(B->mValue2 == 120);
 
     // change target object and method
     Slot2<MyClassA, int, void*> slot_c(A.get(), &MyClassA::event_invocation2);
     slot_c.setTargetObject(B.get());
     slot_c.setMethod(&MyClassA::event_invocation1);
 
-    // mic fixme: actually return the result of the test
     return true;
   }
 
