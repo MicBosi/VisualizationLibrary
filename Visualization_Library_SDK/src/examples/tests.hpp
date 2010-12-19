@@ -65,7 +65,6 @@ BaseDemo* Create_App_TextRendering(int);
 BaseDemo* Create_App_ImageFunctions();
 BaseDemo* Create_App_Texturing();
 BaseDemo* Create_App_Transforms();
-BaseDemo* Create_App_VirtualFileSystemTest();
 BaseDemo* Create_App_VolumeRaycast();
 BaseDemo* Create_App_VolumeSliced();
 BaseDemo* Create_App_VectorGraphics();
@@ -132,7 +131,6 @@ public:
     TestEntry tests[] = 
     {
       { "Blind Tests", Create_App_BlindTests(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,1), vl::vec3(0,0,0) }, 
-      { "Virtual File System", Create_App_VirtualFileSystemTest(), 10,10, 512, 512, vlut::black, vl::vec3(0,0,1), vl::vec3(0,0,0) }, 
       { "Primitives", Create_App_Primitives(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,20), vl::vec3(0,0,0) },
       { "DrawCall Tests", Create_App_DrawCalls(), 10,10, 512, 512, vlut::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Near/Far Planes Optimization", Create_App_NearFarOptimization(), 10, 10, 512, 512, vlut::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
