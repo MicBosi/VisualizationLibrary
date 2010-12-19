@@ -42,6 +42,7 @@ set(VL_APPLETS_SRC
   # blind tests
 
   App_BlindTests/App_BlindTests.cpp
+  App_BlindTests/test_filesystem.cpp
   App_BlindTests/test_hfloat.cpp
   App_BlindTests/test_math.cpp
   App_BlindTests/test_signal_slot.cpp
@@ -94,7 +95,6 @@ set(VL_APPLETS_SRC
   App_Texturing.cpp
   App_Transforms.cpp
   App_VectorGraphics.cpp
-  App_VirtualFileSystemTest.cpp
   App_VolumeSliced.cpp
   App_VolumeRaycast.cpp
 )

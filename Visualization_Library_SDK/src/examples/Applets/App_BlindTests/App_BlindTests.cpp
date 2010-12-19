@@ -39,6 +39,7 @@
 
 namespace blind_tests
 {
+  bool test_filesystem();
   bool test_hfloat();
   bool test_math();
   bool test_signal_slot();
@@ -57,10 +58,11 @@ struct s_Test
 };
 
 s_Test g_Tests[] = { 
-  { test_hfloat,      "Half Float"  },
-  { test_math,        "Math Various" },
-  { test_signal_slot, "Signal Slot" },
-  { test_UID,         "UUID"        },
+  { test_filesystem,  "Filesystem"   },
+  { test_hfloat,      "Half Float"   },
+  { test_math,        "Math"         },
+  { test_signal_slot, "Signal Slot"  },
+  { test_UID,         "UUID"         },
   { NULL, NULL }
 };
 
