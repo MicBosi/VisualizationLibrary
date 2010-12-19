@@ -29,75 +29,119 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "../BaseDemo.hpp"
-#include "vl/Text.hpp"
-#include "vl/Time.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/TextStream.hpp"
-#include "vl/Geometry.hpp"
-#include <time.h>
+#include "vl/half.hpp"
+#include <limits>
+#include <vector>
+
+using namespace vl;
 
 namespace blind_tests
 {
-  bool test_hfloat();
-  bool test_math();
-  bool test_signal_slot();
-  bool test_UID();
-}
-
-using namespace blind_tests;
-using namespace vl;
-
-typedef bool (*TestType)();
-
-struct s_Test
-{
-  TestType mTest;
-  char* mTestName;
-};
-
-s_Test g_Tests[] = { 
-  { test_hfloat,      "Half Float"  },
-  { test_math,        "Math Various" },
-  { test_signal_slot, "Signal Slot" },
-  { test_UID,         "UUID"        },
-  { NULL, NULL }
-};
-
-class App_BlindTests: public BaseDemo
-{
-
-public:
-  virtual void shutdown() {}
-  virtual void run() {}
-  void initEvent()
+  bool test_hfloat()
   {
-    BaseDemo::initEvent();
-    String msg;
-    Time time;
+    half  ha, hb;
+    ha = 2.0f;
+    hb = 4.0f;
+    float fa = ha, fb;
 
-    for(s_Test* test=g_Tests; test->mTestName; ++test)
+    // basic operations
+    if (fa != 2.0)
+      return false;
+    if (ha * hb != 8.0f)
+      return false;
+    if (ha + hb != 6.0f)
+      return false;
+    if (ha - hb != -2.0f)
+      return false;
+    if (hb / ha != 2.0f)
+      return false;
+
+    // check no loss of precision between 0 and +-(1<<11)
+    for(int i=0; i<=(1<<11); ++i)
     {
-      time.start();
-      bool ok = test->mTest();
-      String test_msg = Say("[%s] test \"%s\" (%.2ns)\n") << (ok?"Passed":"FAILED") << test->mTestName << time.elapsed();
-      msg += test_msg;
-      Log::print( test_msg );
+      ha = +i;
+      hb = -i;
+      int ifa = (int)(float)ha;
+      int ifb = (int)(float)hb;
+      if (ifa != +i)
+        return false;
+      if (ifb != -i)
+        return false;
     }
 
-    // display test pass/failure information
+    // infinity
+    ha =  half::infinity(); fa = ha; ha = fa; fa = ha;
+    hb = -half::infinity(); fb = hb; hb = fb; fb = hb;
+    if ( fa != +std::numeric_limits<float>::infinity())
+      return false;
+    if ( fb != -std::numeric_limits<float>::infinity())
+      return false;
 
-    ref<Text> text = new Text;
-    text->setText( msg );
-    text->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    text->setAlignment( AlignLeft | AlignTop );
-    text->setViewportAlignment( AlignLeft | AlignTop );
-    ref<Effect> effect = new Effect;
-    effect->shader()->enable(EN_BLEND);
-    sceneManager()->tree()->addActor(text.get(), effect.get());
+    ha = 3.14159265f;
+    fa = ha; 
+    if ( ha != fa )
+      return false;
+
+    std::vector<half> hvec;
+    std::vector<float> fvec;
+    const int count = 2000;
+    hvec.resize(count);
+    fvec.resize(count);
+
+    float err = 0;
+
+    // convertHalfToFloat()
+    for (int i=0; i<count; ++i)
+    {
+      float ff = (i-count/2)*3.14159265358979323846f;
+      hvec[i] = ff;
+      err = err > fabs(ff-hvec[i]) ? err : fabs(ff-hvec[i]);
+    }
+    half::convertHalfToFloat(&hvec[0],&fvec[0],hvec.size());
+    for (int i=0; i<count; ++i)
+    {
+      if (hvec[i] != fvec[i])
+        return false;
+    }
+    if (err > 2.0f)
+      return false;
+
+    // convertFloatToHalf()
+    err = 0;
+    hvec.resize(0); hvec.resize(count);
+    for (int i=0; i<count; ++i)
+    {
+      fvec[i] = (i-count/2)*3.14159265358979323846f;
+    }
+    half::convertFloatToHalf(&fvec[0],&hvec[0],hvec.size());
+    for (int i=0; i<count; ++i)
+    {
+      err = err > fabs(fvec[i]-hvec[i]) ? err : fabs(fvec[i]-hvec[i]);
+      if (hvec[i] != fvec[i])
+        return false;
+    }
+    if (err > 2.0f)
+      return false;
+
+    // various compilation and conversion checks for vectors and matrices
+    hvec3 v1, v2(1,2,3), v3(4,5,6);
+    v1 = v2 + v3;
+    v1 = v2 - v3;
+    v1 = v2 * v3;
+    v1 = v2 / v3;
+    half l1 = v1.length();
+    half l2 = v1.lengthSquared();
+    v2 = v1 + (hvec3)fvec3(1,1,1);
+    // hmat4 m = fmat4::rotation( 90, 0, 1, 0 );
+    hmat4 m;
+    m.translate(1,1,1);
+    // m.rotate(90, 0, 1, 0 );
+    m.scale(10,10,10);
+    m = (hmat4)fmat4::rotation( 90, 0, 1, 0 );
+    v1 = m * hvec3(1,0,0);
+    if (v1.x() != 0 || v1.y() != 0 || v1.z() != -1.0f)
+      return false;
+
+    return true;
   }
-
-};
-
-BaseDemo* Create_App_BlindTests() { return new App_BlindTests; }
-
+}
