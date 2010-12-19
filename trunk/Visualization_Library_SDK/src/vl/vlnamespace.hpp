@@ -1288,12 +1288,17 @@ namespace vl
   // uniform types
   typedef enum
   {
-    NONE = 0x0,
+    UT_NONE = 0x0,
 
     UT_Float,  //!<< float scalar
     UT_Float2, //!<< 2 components float vector
     UT_Float3, //!<< 3 components float vector
     UT_Float4, //!<< 4 components float vector
+
+    UT_Double,  //!<< double scalar
+    UT_Double2, //!<< 2 components double vector
+    UT_Double3, //!<< 3 components double vector
+    UT_Double4, //!<< 4 components double vector
 
     UT_Int,  //!<< int scalar
     UT_Int2, //!<< 2 components int vector
@@ -1315,6 +1320,17 @@ namespace vl
     UT_Mat4x2F, //!<< 4x2 float matrix
     UT_Mat3x4F, //!<< 3x4 float matrix
     UT_Mat4x3F, //!<< 4x3 float matrix
+
+    UT_Mat2D,  //!<< 2x2 double matrix
+    UT_Mat3D,  //!<< 3x3 double matrix
+    UT_Mat4D,  //!<< 4x4 double matrix
+
+    UT_Mat2x3D, //!<< 2x3 double matrix
+    UT_Mat3x2D, //!<< 3x2 double matrix
+    UT_Mat2x4D, //!<< 2x4 double matrix
+    UT_Mat4x2D, //!<< 4x2 double matrix
+    UT_Mat3x4D, //!<< 3x4 double matrix
+    UT_Mat4x3D, //!<< 4x3 double matrix
   } EUniformType;
 
   typedef enum
