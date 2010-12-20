@@ -172,8 +172,8 @@ public:
   {
     vl::Real t = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 8.0f ) * 0.5f + 0.5f;
     vl::vec3 eye( 130*t+5, t*20+5, 0 );
-    eye = vl::mat4::rotation( vl::Time::currentTime() * 15.0f, 0, 1, 0 ) * eye;
-    vl::mat4 m = vl::mat4::lookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
+    eye = vl::mat4::getRotation( vl::Time::currentTime() * 15.0f, 0, 1, 0 ) * eye;
+    vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };

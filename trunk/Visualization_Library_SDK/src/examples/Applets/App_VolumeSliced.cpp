@@ -331,13 +331,13 @@ public:
     {
       mat4 mat;
       // light 0 transform.
-      mat = mat4::rotation( Time::currentTime()*43, 0,1,0 ) * mat4::translation(20,20,20);
+      mat = mat4::getRotation( Time::currentTime()*43, 0,1,0 ) * mat4::getTranslation(20,20,20);
       mLight0Tr->setLocalMatrix(mat);
       // light 1 transform.
-      mat = mat4::rotation( Time::currentTime()*47, 0,1,0 ) * mat4::translation(-20,0,0);
+      mat = mat4::getRotation( Time::currentTime()*47, 0,1,0 ) * mat4::getTranslation(-20,0,0);
       mLight1Tr->setLocalMatrix(mat);
       // light 2 transform.
-      mat = mat4::rotation( Time::currentTime()*47, 0,1,0 ) * mat4::translation(+20,0,0);
+      mat = mat4::getRotation( Time::currentTime()*47, 0,1,0 ) * mat4::getTranslation(+20,0,0);
       mLight2Tr->setLocalMatrix(mat);
     }
   }

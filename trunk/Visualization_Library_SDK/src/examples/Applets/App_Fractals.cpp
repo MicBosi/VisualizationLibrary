@@ -183,7 +183,7 @@ public:
 
     /* screen aligned quad */
     vl::ref<vl::Geometry> geom = vlut::makeGrid( vl::vec3(0,0,0), 2, 2, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
-    geom->transform( vl::mat4::rotation( -90, 1,0,0 ) );
+    geom->transform( vl::mat4::getRotation( -90, 1,0,0 ) );
     sceneManager()->tree()->addActor( geom.get(), effect.get() );
 
     // camera setup

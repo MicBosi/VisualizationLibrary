@@ -446,7 +446,7 @@ vl::Actor* VectorGraphics::drawText(vl::Text* text)
 vl::Actor* VectorGraphics::drawText(int x, int y, const vl::String& text, int alignment)
 {
   pushMatrix();
-  mMatrix = vl::dmat4::translation(x,y,0) * mMatrix;
+  mMatrix = vl::dmat4::getTranslation(x,y,0) * mMatrix;
   vl::Actor* act = drawText(text, alignment);
   popMatrix();
   return act;
@@ -483,17 +483,17 @@ vl::Actor* VectorGraphics::drawActorCopy(vl::Actor* actor, vl::Transform* transf
 //-----------------------------------------------------------------------------
 void VectorGraphics::rotate(double deg) 
 { 
-  mMatrix = mMatrix * vl::dmat4::rotation(deg, 0,0,1.0); 
+  mMatrix = mMatrix * vl::dmat4::getRotation(deg, 0,0,1.0); 
 }
 //-----------------------------------------------------------------------------
 void VectorGraphics::translate(double x, double y, double z)
 { 
-  mMatrix = mMatrix * vl::dmat4::translation(x,y,z); 
+  mMatrix = mMatrix * vl::dmat4::getTranslation(x,y,z); 
 }
 //-----------------------------------------------------------------------------
 void VectorGraphics::scale(double x, double y, double z) 
 { 
-  mMatrix = mMatrix * vl::dmat4::scaling(x,y,z); 
+  mMatrix = mMatrix * vl::dmat4::getScaling(x,y,z); 
 }
 //-----------------------------------------------------------------------------
 void VectorGraphics::popMatrix() 

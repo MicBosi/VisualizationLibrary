@@ -181,7 +181,7 @@ namespace vl
      * Equivalent to:
      * \code
      * setProjectionMatrix( 
-     *   mat4::ortho(
+     *   mat4::getOrtho(
      *     offset, (Real)mViewport->width()  + offset,
      *     offset, (Real)mViewport->height() + offset,
      *     nearPlane(), farPlane())
@@ -196,7 +196,7 @@ namespace vl
      * Equivalent to:
      * \code
      * setProjectionMatrix( 
-     *   mat4::ortho(
+     *   mat4::getOrtho(
      *     offset, viewport()->width()  + offset,
      *     offset, viewport()->height() + offset,
      *     -1, +1)

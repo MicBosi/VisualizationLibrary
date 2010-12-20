@@ -109,7 +109,7 @@ public:
 
     vl::ref<vl::Geometry> quad_3d = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
     quad_3d->setColor(vlut::white);
-    quad_3d->transform( vl::mat4::rotation(90, 1,0,0), false );
+    quad_3d->transform( vl::mat4::getRotation(90, 1,0,0), false );
 
     mTexCoords_3D = new vl::ArrayFloat3;
     quad_3d->setTexCoordArray(0, mTexCoords_3D.get());
@@ -130,7 +130,7 @@ public:
       vl::Log::error("Texture 3D not supported.\n");
 
     vl::Actor* act_3d = sceneManager()->tree()->addActor( quad_3d.get(), fx_3d.get(), new vl::Transform );
-    act_3d->transform()->setLocalMatrix( vl::mat4::translation(-6,+6,0) );
+    act_3d->transform()->setLocalMatrix( vl::mat4::getTranslation(-6,+6,0) );
     act_3d->transform()->computeWorldMatrix();
   }
 
@@ -141,7 +141,7 @@ public:
 
     vl::ref<vl::Geometry> quad_2darray = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
     quad_2darray->setColor(vlut::white);
-    quad_2darray->transform( vl::mat4::rotation(90, 1,0,0), false );
+    quad_2darray->transform( vl::mat4::getRotation(90, 1,0,0), false );
 
     mTexCoords_2DArray = new vl::ArrayFloat3;
     quad_2darray->setTexCoordArray(0, mTexCoords_2DArray.get());
@@ -166,7 +166,7 @@ public:
       vl::Log::error("Texture 2d array not supported.\n");
 
     vl::Actor* act_2darray = sceneManager()->tree()->addActor( quad_2darray.get(), fx_2darray.get(), new vl::Transform );
-    act_2darray->transform()->setLocalMatrix( vl::mat4::translation(+6,+6,0) );
+    act_2darray->transform()->setLocalMatrix( vl::mat4::getTranslation(+6,+6,0) );
     act_2darray->transform()->computeWorldMatrix();
   }
 
@@ -178,7 +178,7 @@ public:
     // create a grid with img_holebox->height() slices
     vl::ref<vl::Geometry> quad_1darray = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, img_holebox->height() );
     quad_1darray->setColor(vlut::white);
-    quad_1darray->transform( vl::mat4::rotation(90, 1,0,0), false );
+    quad_1darray->transform( vl::mat4::getRotation(90, 1,0,0), false );
     
     mTexCoords_1DArray = new vl::ArrayFloat2;
     quad_1darray->setTexCoordArray(0, mTexCoords_1DArray.get());
@@ -203,7 +203,7 @@ public:
       vl::Log::error("Texture 1d array not supported.\n");
 
     vl::Actor* act_1darray = sceneManager()->tree()->addActor( quad_1darray.get(), fx_1darray.get(), new vl::Transform );
-    act_1darray->transform()->setLocalMatrix( vl::mat4::translation(+6,-6,0) );
+    act_1darray->transform()->setLocalMatrix( vl::mat4::getTranslation(+6,-6,0) );
     act_1darray->transform()->computeWorldMatrix();
   }
 
@@ -214,7 +214,7 @@ public:
     // generate non-normalized uv coordinates, i.e. from <0,0> to <img_holebox->width(),img_holebox->height()>
     vl::ref<vl::Geometry> quad_rect = vlut::makeGrid( vl::vec3(0,0,0), 10.0f, 10.0f, 2, 2, true, vl::fvec2(0,0), vl::fvec2((float)img_holebox->width(),(float)img_holebox->height()) );
     quad_rect->setColor(vlut::white);
-    quad_rect->transform( vl::mat4::rotation(90, 1,0,0), false );
+    quad_rect->transform( vl::mat4::getRotation(90, 1,0,0), false );
 
     vl::ref<vl::Effect> fx_rect = new vl::Effect;
 
@@ -235,7 +235,7 @@ public:
       vl::Log::error("Texture rectangle not supported.\n");
 
     vl::Actor* act_rect = sceneManager()->tree()->addActor( quad_rect.get(), fx_rect.get(), new vl::Transform );
-    act_rect->transform()->setLocalMatrix( vl::mat4::translation(-6,-6,0) );
+    act_rect->transform()->setLocalMatrix( vl::mat4::getTranslation(-6,-6,0) );
     act_rect->transform()->computeWorldMatrix();
   }
 
@@ -322,8 +322,8 @@ public:
 
     if (GLEW_ARB_multitexture)
     {
-      mCubeRightTransform->setLocalMatrix( vl::mat4::translation(+6,0,0) * vl::mat4::rotation( vl::Time::currentTime()*45, 0, 1, 0) );
-      mCubeLeftTransform ->setLocalMatrix( vl::mat4::translation(-6,0,0) * vl::mat4::rotation( vl::Time::currentTime()*45, 0, 1, 0) );
+      mCubeRightTransform->setLocalMatrix( vl::mat4::getTranslation(+6,0,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
+      mCubeLeftTransform ->setLocalMatrix( vl::mat4::getTranslation(-6,0,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
     }
 
     // 5 seconds period
@@ -354,12 +354,12 @@ public:
 
     // spherical mapped torus rotation
 
-    mActSpheric->transform()->setLocalMatrix( vl::mat4::translation(0,+6,0)*vl::mat4::rotation(45*vl::Time::currentTime(),1,0,0) );
+    mActSpheric->transform()->setLocalMatrix( vl::mat4::getTranslation(0,+6,0)*vl::mat4::getRotation(45*vl::Time::currentTime(),1,0,0) );
     mActSpheric->transform()->computeWorldMatrix();
 
     // cube mapped torus rotation
 
-    mActCubic->transform()->setLocalMatrix( vl::mat4::translation(0,-6,0)*vl::mat4::rotation(45*vl::Time::currentTime(),1,0,0) );
+    mActCubic->transform()->setLocalMatrix( vl::mat4::getTranslation(0,-6,0)*vl::mat4::getRotation(45*vl::Time::currentTime(),1,0,0) );
     mActCubic->transform()->computeWorldMatrix();
   }
 

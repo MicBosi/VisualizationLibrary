@@ -70,7 +70,7 @@ ref<Geometry> Extrusion::extrude()
   std::vector<fvec3> verts;
   verts.resize( silhouette().size() * segments );
 
-  vl::fmat4 m = fmat4::rotation(fvec3(0,1,0),positionPath()[1]-positionPath()[0]);
+  vl::fmat4 m = fmat4::getRotation(fvec3(0,1,0),positionPath()[1]-positionPath()[0]);
 
   // initialize silhouette on the x/z plane
   std::vector<vl::fvec3> projected_sil;
@@ -113,7 +113,7 @@ ref<Geometry> Extrusion::extrude()
     for(unsigned i=1; i<positionPath().size()-1; ++i)
     {
       fvec3 r = (positionPath()[i+1] - positionPath()[i]).normalize();
-      fmat4 mat = vl::fmat4::rotation(rotationPath()[i-1],r);
+      fmat4 mat = vl::fmat4::getRotation(rotationPath()[i-1],r);
       fvec3 c;
       for(int j=0; j<(int)silhouette().size(); ++j)
         c += verts.at(j+silhouette().size()*(i-1));

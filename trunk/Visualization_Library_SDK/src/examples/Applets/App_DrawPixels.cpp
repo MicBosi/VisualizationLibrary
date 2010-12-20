@@ -126,7 +126,7 @@ public:
     mStar3->setPosition( pos3 );
     mStar4->setPosition( pos4 );
 
-    vl::mat4 mat = vl::mat4::rotation( (float)vl::Time::currentTime()*45.0f, 1,1,1 );
+    vl::mat4 mat = vl::mat4::getRotation( (float)vl::Time::currentTime()*45.0f, 1,1,1 );
     mat.translate( sin(vl::Time::currentTime()*vl::fPi*2.0f/2.0f)*2.0f, 0, 0 );
     mCube->transform()->setLocalMatrix( mat );
   }

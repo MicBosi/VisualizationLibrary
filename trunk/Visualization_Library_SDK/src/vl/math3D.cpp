@@ -83,55 +83,55 @@ void vl::extractPlanes( Plane* planes, const mat4& modelviewproj )
   Real d;
 
   // left clipping plane
-  n.x() = modelviewproj[0][3] + modelviewproj[0][0];
-  n.y() = modelviewproj[1][3] + modelviewproj[1][0];
-  n.z() = modelviewproj[2][3] + modelviewproj[2][0];
-  d = modelviewproj[3][3] + modelviewproj[3][0];
+  n.x() = modelviewproj.e(3,0) + modelviewproj.e(0,0);
+  n.y() = modelviewproj.e(3,1) + modelviewproj.e(0,1);
+  n.z() = modelviewproj.e(3,2) + modelviewproj.e(0,2);
+  d = modelviewproj.e(3,3) + modelviewproj.e(0,3);
   d /= n.length();
   n.normalize();
   planes[0] = Plane(d,-n);
 
   // right clipping plane
-  n.x() = modelviewproj[0][3] - modelviewproj[0][0];
-  n.y() = modelviewproj[1][3] - modelviewproj[1][0];
-  n.z() = modelviewproj[2][3] - modelviewproj[2][0];
-  d = modelviewproj[3][3] - modelviewproj[3][0];
+  n.x() = modelviewproj.e(3,0) - modelviewproj.e(0,0);
+  n.y() = modelviewproj.e(3,1) - modelviewproj.e(0,1);
+  n.z() = modelviewproj.e(3,2) - modelviewproj.e(0,2);
+  d = modelviewproj.e(3,3) - modelviewproj.e(0,3);
   d /= n.length();
   n.normalize();
   planes[1] = Plane(d,-n);
 
   // top clipping plane
-  n.x() = modelviewproj[0][3] - modelviewproj[0][1];
-  n.y() = modelviewproj[1][3] - modelviewproj[1][1];
-  n.z() = modelviewproj[2][3] - modelviewproj[2][1];
-  d = modelviewproj[3][3] - modelviewproj[3][1];
+  n.x() = modelviewproj.e(3,0) - modelviewproj.e(1,0);
+  n.y() = modelviewproj.e(3,1) - modelviewproj.e(1,1);
+  n.z() = modelviewproj.e(3,2) - modelviewproj.e(1,2);
+  d = modelviewproj.e(3,3) - modelviewproj.e(1,3);
   d /= n.length();
   n.normalize();
   planes[2] = Plane(d,-n);
 
   // bottom clipping plane
-  n.x() = modelviewproj[0][3] + modelviewproj[0][1];
-  n.y() = modelviewproj[1][3] + modelviewproj[1][1];
-  n.z() = modelviewproj[2][3] + modelviewproj[2][1];
-  d = modelviewproj[3][3] + modelviewproj[3][1];
+  n.x() = modelviewproj.e(3,0) + modelviewproj.e(1,0);
+  n.y() = modelviewproj.e(3,1) + modelviewproj.e(1,1);
+  n.z() = modelviewproj.e(3,2) + modelviewproj.e(1,2);
+  d = modelviewproj.e(3,3) + modelviewproj.e(1,3);
   d /= n.length();
   n.normalize();
   planes[3] = Plane(d,-n);
 
   // near clipping plane
-  n.x() = modelviewproj[0][3] + modelviewproj[0][2];
-  n.y() = modelviewproj[1][3] + modelviewproj[1][2];
-  n.z() = modelviewproj[2][3] + modelviewproj[2][2];
-  d = modelviewproj[3][3] + modelviewproj[3][2];
+  n.x() = modelviewproj.e(3,0) + modelviewproj.e(2,0);
+  n.y() = modelviewproj.e(3,1) + modelviewproj.e(2,1);
+  n.z() = modelviewproj.e(3,2) + modelviewproj.e(2,2);
+  d = modelviewproj.e(3,3) + modelviewproj.e(2,3);
   d /= n.length();
   n.normalize();
   planes[4] = Plane(d,-n);
 
   // far clipping plane
-  n.x() = modelviewproj[0][3] - modelviewproj[0][2];
-  n.y() = modelviewproj[1][3] - modelviewproj[1][2];
-  n.z() = modelviewproj[2][3] - modelviewproj[2][2];
-  d = modelviewproj[3][3] - modelviewproj[3][2];
+  n.x() = modelviewproj.e(3,0) - modelviewproj.e(2,0);
+  n.y() = modelviewproj.e(3,1) - modelviewproj.e(2,1);
+  n.z() = modelviewproj.e(3,2) - modelviewproj.e(2,2);
+  d = modelviewproj.e(3,3) - modelviewproj.e(2,3);
   d /= n.length();
   n.normalize();
   planes[5] = Plane(d,-n);

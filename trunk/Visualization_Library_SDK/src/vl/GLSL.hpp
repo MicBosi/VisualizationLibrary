@@ -393,7 +393,7 @@ namespace vl
     bool getProgramBinary(GLenum& binary_format, std::vector<unsigned char>& binary) const;
 
     //! glProgramBinary wrapper: loads a program object with a program binary, see also http://www.opengl.org/sdk/docs/man4/xhtml/glProgramBinary.xml
-    bool programBinary(GLenum binary_format, const std::vector<unsigned char>& binary) { return programBinary(binary_format, &binary[0], binary.size()); }
+    bool programBinary(GLenum binary_format, const std::vector<unsigned char>& binary) { return programBinary(binary_format, &binary[0], (int)binary.size()); }
 
     //! glProgramBinary wrapper: loads a program object with a program binary, see also http://www.opengl.org/sdk/docs/man4/xhtml/glProgramBinary.xml
     bool programBinary(GLenum binary_format, const void* binary, int length);

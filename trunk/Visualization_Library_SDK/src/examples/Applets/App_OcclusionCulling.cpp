@@ -107,7 +107,7 @@ public:
       float x = (float) i * side / trunk_count;
       float z = (float) j * side / trunk_count;
 
-      vl::ref<vl::Transform> tr = new vl::Transform( vl::mat4::translation(x,trunk_h/2.0f+0.1f,z) );
+      vl::ref<vl::Transform> tr = new vl::Transform( vl::mat4::getTranslation(x,trunk_h/2.0f+0.1f,z) );
       tr->computeWorldMatrix();
       sceneManager()->tree()->addActor(trunk.get(), fx.get(), tr.get());
       sceneManager()->tree()->addActor(branches.get(), fx.get(), tr.get());

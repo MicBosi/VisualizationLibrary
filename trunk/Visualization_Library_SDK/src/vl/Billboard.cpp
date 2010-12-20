@@ -52,7 +52,7 @@ vec3 Billboard::position()
 //-----------------------------------------------------------------------------
 void Billboard::setPosition(const vec3& pos)
 {
-  setLocalMatrix( mat4::translation(pos) );
+  setLocalMatrix( mat4::getTranslation(pos) );
 }
 //-----------------------------------------------------------------------------
 void Billboard::computeWorldMatrix(Camera* camera)
@@ -78,13 +78,13 @@ void Billboard::computeWorldMatrix(Camera* camera)
       world_mat.setZ( (camera->inverseViewMatrix().getT() - pos).normalize() );
       world_mat.setY( camera->inverseViewMatrix().getY() );
       world_mat.setX( cross(world_mat.getY(), world_mat.getZ()) );
-      world_mat = vl::mat4::translation(pos) * world_mat;
+      world_mat = vl::mat4::getTranslation(pos) * world_mat;
 
       // eye directional
       //world_mat.setZ( camera->inverseViewMatrix().getZ() );
       //world_mat.setY( camera->inverseViewMatrix().getY() );
       //world_mat.setX( camera->inverseViewMatrix().getX() );
-      //world_mat = vl::mat4::translation(pos) * world_mat;
+      //world_mat = vl::mat4::getTranslation(pos) * world_mat;
     }
     else
     if ( type() == BT_AxisAlignedBillboard )
@@ -96,7 +96,7 @@ void Billboard::computeWorldMatrix(Camera* camera)
       bill_to_eye = bill_to_eye - axis() * dot(bill_to_eye, axis());
       normal.normalize();
       bill_to_eye.normalize();
-      world_mat = vl::mat4::translation(pos) * mat4::rotation(normal,bill_to_eye);
+      world_mat = vl::mat4::getTranslation(pos) * mat4::getRotation(normal,bill_to_eye);
     }
 
     setWorldMatrix( world_mat ); 
