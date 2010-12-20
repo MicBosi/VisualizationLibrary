@@ -90,7 +90,7 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    T_scalar diff(const Matrix4& other)
+    T_scalar diff(const Matrix4& other) const
     {
       T_scalar err = 0;
       for(int i=0; i<4; ++i)
