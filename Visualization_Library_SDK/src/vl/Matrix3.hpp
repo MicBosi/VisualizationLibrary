@@ -69,9 +69,9 @@ namespace vl
       e(0,0) = e(1,1) = e(2,2) = n;
     }
     //-----------------------------------------------------------------------------
-    explicit Matrix3( T_scalar e00, T_scalar e01, T_scalar e02,
+    explicit Matrix3(T_scalar e00, T_scalar e01, T_scalar e02,
                       T_scalar e10, T_scalar e11, T_scalar e12,
-                      T_scalar e20, T_scalar e21, T_scalar e22 )
+                      T_scalar e20, T_scalar e21, T_scalar e22)
     {
       e(0,0) = e00; e(0,1) = e01; e(0,2) = e02; 
       e(1,0) = e10; e(1,1) = e11; e(1,2) = e12; 
@@ -91,7 +91,7 @@ namespace vl
       T_scalar err = 0;
       for(int i=0; i<3; ++i)
         for(int j=0; j<3; ++j)
-          if ( e(j,i) > other.e(j,i) ) // avoid fabs/abs
+          if (e(j,i) > other.e(j,i)) // avoid fabs/abs
             err += e(j,i) - other.e(j,i);
           else
             err += other.e(j,i) - e(j,i);
@@ -280,7 +280,7 @@ namespace vl
     bool isIdentity() const
     {
       Matrix3 i;
-      return memcmp( ptr(), i.ptr(), sizeof(T_scalar)*9 ) == 0;
+      return memcmp(ptr(), i.ptr(), sizeof(T_scalar)*9) == 0;
     }
     //-----------------------------------------------------------------------------
     Matrix2<T_scalar> get2x2() const
@@ -342,7 +342,7 @@ namespace vl
     {
       for(int i=0; i<3; ++i)
         for(int j=0; j<3; ++j)
-          if( mVec[j][i] != 0 )
+          if(mVec[j][i] != 0)
             return false;
       return true;
     }
@@ -372,7 +372,7 @@ namespace vl
         (T_scalar)0, (T_scalar)1, (T_scalar)0, 
         (T_scalar)0, (T_scalar)0, (T_scalar)1, 
       };
-      memcpy( mVec, I3d, sizeof(T_scalar)*9 );
+      memcpy(mVec, I3d, sizeof(T_scalar)*9);
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -406,50 +406,84 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix3 getRotation( T_scalar degrees );
+    static Matrix3 getRotation(T_scalar degrees);
     //-----------------------------------------------------------------------------
-    Matrix3& rotate( T_scalar degrees )
+    Matrix3& rotate(T_scalar degrees)
     {
       *this = getRotation(degrees) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix3 getTranslation( const Vector2<T_scalar>& v )
+    static Matrix3& getTranslation(Matrix3& out, const Vector2<T_scalar>& v)
     {
-      return getTranslation( v.x(), v.y() );
+      return getTranslation(out, v.x(), v.y());
     }
     //-----------------------------------------------------------------------------
-    static Matrix3 getTranslation( T_scalar x, T_scalar y )
+    static Matrix3 getTranslation(const Vector2<T_scalar>& v)
     {
-      Matrix3 tr;
-      tr.e(0,2) = x;
-      tr.e(1,2) = y;
-      return tr;
+      return getTranslation(v.x(), v.y());
     }
     //-----------------------------------------------------------------------------
-    Matrix3& translate( T_scalar x, T_scalar y )
+    static Matrix3 getTranslation(T_scalar x, T_scalar y)
     {
-      *this = *this * getTranslation(x,y);
+      Matrix3 m;
+      return getTranslation(m, x, y);
+    }
+    //-----------------------------------------------------------------------------
+    static Matrix3& getTranslation(Matrix3& out, T_scalar x, T_scalar y)
+    {
+      out.setIdentity();
+      out.e(0,2) = x;
+      out.e(1,2) = y;
+      return out;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix3& translate(T_scalar x, T_scalar y)
+    {
+      *this = getTranslation(x,y) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix3& translate( const Vector2<T_scalar>& v )
+    Matrix3& translate(const Vector2<T_scalar>& v)
     {
       *this = getTranslation(v) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix3 getScaling( T_scalar x, T_scalar y )
+    static Matrix3& getScaling(Matrix3& out, const Vector2<T_scalar>& v)
     {
-      Matrix3 sc;
-      sc.e(0,0) = x;
-      sc.e(1,1) = y;
-      return sc;
+      return getScaling(out, v.x(), v.y());
     }
     //-----------------------------------------------------------------------------
-    Matrix3& scale( T_scalar x, T_scalar y )
+    static Matrix3 getScaling(const Vector2<T_scalar>& v)
+    {
+      Matrix3 m;
+      return getScaling(m, v.x(), v.y());
+    }
+    //-----------------------------------------------------------------------------
+    static Matrix3 getScaling(T_scalar x, T_scalar y)
+    {
+      Matrix3 m;
+      return getScaling(m, x, y);
+    }
+    //-----------------------------------------------------------------------------
+    static Matrix3& getScaling(Matrix3& out, T_scalar x, T_scalar y)
+    {
+      out.setIdentity();
+      out.e(0,0) = x;
+      out.e(1,1) = y;
+      return out;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix3& scale(T_scalar x, T_scalar y)
     {
       *this = getScaling(x,y) * *this;
+      return *this;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix3& scale(const Vector2<T_scalar>& v)
+    {
+      *this = getScaling(v.x(),v.y()) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -544,12 +578,12 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar>
-  Matrix3<T_scalar> Matrix3<T_scalar>::getRotation( T_scalar degrees )
+  Matrix3<T_scalar> Matrix3<T_scalar>::getRotation(T_scalar degrees)
   {
     Matrix3<T_scalar> rot;
     degrees = degrees * (T_scalar)dDEG_TO_RAD;
-    T_scalar s = (T_scalar) sin( degrees );
-    T_scalar c = (T_scalar) cos( degrees );
+    T_scalar s = (T_scalar) sin(degrees);
+    T_scalar c = (T_scalar) cos(degrees);
     rot.e(0,0) = (T_scalar)c;
     rot.e(1,1) = (T_scalar)c;
     rot.e(1,0) = (T_scalar)s;
@@ -585,13 +619,13 @@ namespace vl
 
       T_scalar det = a11*(A)+a21*(B)+a31*(C);
 
-      if ( det == 0 )
+      if (det == 0)
       {
         dest.fill(0);
       }
       else
       {
-        dest = Matrix3<T_scalar>( A,               B,               C, 
+        dest = Matrix3<T_scalar>(A,               B,               C, 
                                        a31*a23-a33*a21, a33*a11-a31*a13, a21*a13-a23*a11,
                                        a32*a21-a31*a22, a31*a12-a32*a11, a22*a11-a21*a12) / det;
       }
