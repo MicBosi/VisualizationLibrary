@@ -52,7 +52,7 @@ namespace vl
     typedef T_scalar scalar_type;
     //-----------------------------------------------------------------------------
     template<typename T>
-    explicit Matrix2(const T& m)
+    explicit Matrix2(const Matrix2<T>& m)
     {
       e(0,0) = (T_scalar)m.e(0,0); e(1,0) = (T_scalar)m.e(1,0);
       e(0,1) = (T_scalar)m.e(0,1); e(1,1) = (T_scalar)m.e(1,1);
@@ -63,17 +63,17 @@ namespace vl
       setIdentity();
     }
     //-----------------------------------------------------------------------------
-    Matrix2(T_scalar n)
+    explicit Matrix2(T_scalar n)
     {
       setIdentity();
-      e(0,0) = n; e(1,1) = n;
+      e(0,0) = e(1,1) = n;
     }
     //-----------------------------------------------------------------------------
     explicit Matrix2( T_scalar e00, T_scalar e01,
-                    T_scalar e10, T_scalar e11  )
+                      T_scalar e10, T_scalar e11  )
     {
-      e(0,0) = e00; e(1,0) = e01;
-      e(0,1) = e10; e(1,1) = e11;
+      e(0,0) = e00; e(0,1) = e01;
+      e(1,0) = e10; e(1,1) = e11;
     }
     //-----------------------------------------------------------------------------
     Matrix2& fill(T_scalar val)

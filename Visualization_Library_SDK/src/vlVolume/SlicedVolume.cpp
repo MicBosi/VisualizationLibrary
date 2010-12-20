@@ -361,7 +361,7 @@ void SlicedVolume::generateTextureCoordinates(const ivec3& size)
 void SlicedVolume::setBox(const AABB& box) 
 {
   mBox = box; 
-  mCache = 0; 
+  mCache.fill(0);
   mGeometry->setBoundingBox( box );
   mGeometry->setBoundingSphere( box );
   mGeometry->setBoundsDirty(true);
