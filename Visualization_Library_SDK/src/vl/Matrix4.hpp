@@ -70,10 +70,10 @@ namespace vl
       e(0,0) = e(1,1) = e(2,2) = e(3,3) = n; 
     }
     //-----------------------------------------------------------------------------
-    explicit Matrix4( T_scalar e00, T_scalar e01, T_scalar e02, T_scalar e03,
+    explicit Matrix4(T_scalar e00, T_scalar e01, T_scalar e02, T_scalar e03,
                       T_scalar e10, T_scalar e11, T_scalar e12, T_scalar e13,
                       T_scalar e20, T_scalar e21, T_scalar e22, T_scalar e23,
-                      T_scalar e30, T_scalar e31, T_scalar e32, T_scalar e33 )
+                      T_scalar e30, T_scalar e31, T_scalar e32, T_scalar e33)
     {
       e(0,0) = e00; e(0,1) = e01; e(0,2) = e02; e(0,3) = e03;
       e(1,0) = e10; e(1,1) = e11; e(1,2) = e12; e(1,3) = e13;
@@ -95,7 +95,7 @@ namespace vl
       T_scalar err = 0;
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
-          if ( e(j,i) > other.e(j,i) ) // avoid fabs/abs
+          if (e(j,i) > other.e(j,i)) // avoid fabs/abs
             err += e(j,i) - other.e(j,i);
           else
             err += other.e(j,i) - e(j,i);
@@ -293,7 +293,7 @@ namespace vl
     bool isIdentity() const
     {
       Matrix4 i;
-      return memcmp( ptr(), i.ptr(), sizeof(T_scalar)*16 ) == 0;
+      return memcmp(ptr(), i.ptr(), sizeof(T_scalar)*16) == 0;
     }
     //-----------------------------------------------------------------------------
     Matrix4 as3x3() const
@@ -370,7 +370,7 @@ namespace vl
     {
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
-          if( e(i,j) != 0 )
+          if(e(i,j) != 0)
             return false;
       return true;
     }
@@ -401,7 +401,7 @@ namespace vl
         (T_scalar)0, (T_scalar)0, (T_scalar)1, (T_scalar)0, 
         (T_scalar)0, (T_scalar)0, (T_scalar)0, (T_scalar)1 
       };
-      memcpy( mVec, I4d, sizeof(T_scalar)*16 );
+      memcpy(mVec, I4d, sizeof(T_scalar)*16);
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -430,93 +430,100 @@ namespace vl
     Matrix4& invert(T_scalar *determinant=NULL)
     {
       T_scalar det = getInverse(*this);
-      if (determinant )
+      if (determinant)
         *determinant = det;
       return *this;
     }
     //-----------------------------------------------------------------------------
     static Matrix4 getPerspective(T_scalar fovy, T_scalar aspect_ratio, T_scalar znear, T_scalar zfar);
     //-----------------------------------------------------------------------------
-    static Matrix4 getFrustum( T_scalar pleft, T_scalar pright, T_scalar pbottom, T_scalar ptop, T_scalar pnear, T_scalar pfar);
+    static Matrix4 getFrustum(T_scalar pleft, T_scalar pright, T_scalar pbottom, T_scalar ptop, T_scalar pnear, T_scalar pfar);
     //-----------------------------------------------------------------------------
     static Matrix4 getOrtho(T_scalar pleft, T_scalar pright, T_scalar pbottom, T_scalar ptop, T_scalar pnear, T_scalar pfar);
     //-----------------------------------------------------------------------------
     static Matrix4 getOrtho2D(T_scalar pleft, T_scalar pright, T_scalar pbottom, T_scalar ptop);
     //-----------------------------------------------------------------------------
-    static Matrix4 getLookAt( const Vector3<T_scalar>& eye, const Vector3<T_scalar>& look, const Vector3<T_scalar>& up);
+    static Matrix4 getLookAt(const Vector3<T_scalar>& eye, const Vector3<T_scalar>& look, const Vector3<T_scalar>& up);
     //-----------------------------------------------------------------------------
-    void getAsLookAt( Vector3<T_scalar>& eye, Vector3<T_scalar>& look, Vector3<T_scalar>& up, Vector3<T_scalar>& right) const;
+    void getAsLookAt(Vector3<T_scalar>& eye, Vector3<T_scalar>& look, Vector3<T_scalar>& up, Vector3<T_scalar>& right) const;
     //-----------------------------------------------------------------------------
-    static Matrix4 getRotation( T_scalar degrees, T_scalar x, T_scalar y, T_scalar z );
+    void getYXRotationAngles(T_scalar& degrees_y, T_scalar& degrees_x) const;
     //-----------------------------------------------------------------------------
-    static Matrix4 getRotation( T_scalar degrees, const Vector3<T_scalar>& v )
+    static Matrix4& getRotation(Matrix4& out, T_scalar degrees, T_scalar x, T_scalar y, T_scalar z);
+    //-----------------------------------------------------------------------------
+    static Matrix4 getRotation(T_scalar degrees, T_scalar x, T_scalar y, T_scalar z)
     {
-      return getRotation( degrees, v.x(), v.y(), v.z() );
+      Matrix4 m;
+      return getRotation(m, degrees, x, y, z);
     }
     //-----------------------------------------------------------------------------
-    static Matrix4 getRotation( T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2 )
+    static Matrix4 getRotation(T_scalar degrees, const Vector3<T_scalar>& v)
     {
-      return getRotation( degrees1, v1.x(), v1.y(), v1.z() ) * getRotation( degrees2, v2.x(), v2.y(), v2.z() );
+      return getRotation(degrees, v.x(), v.y(), v.z());
     }
     //-----------------------------------------------------------------------------
-    static Matrix4 getRotation( T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2, T_scalar degrees3, const Vector3<T_scalar>& v3 )
+    static Matrix4 getRotation(T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2)
     {
-      return getRotation( degrees1, v1.x(), v1.y(), v1.z() ) * getRotation( degrees2, v2.x(), v2.y(), v2.z() ) * getRotation( degrees3, v3.x(), v3.y(), v3.z() );
+      return getRotation(degrees1, v1.x(), v1.y(), v1.z()) * getRotation(degrees2, v2.x(), v2.y(), v2.z());
     }
     //-----------------------------------------------------------------------------
-    Matrix4& rotate( T_scalar degrees, const Vector3<T_scalar>& v )
+    static Matrix4 getRotation(T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2, T_scalar degrees3, const Vector3<T_scalar>& v3)
     {
-      return rotate( degrees, v.x(), v.y(), v.z() );
+      return getRotation(degrees1, v1.x(), v1.y(), v1.z()) * getRotation(degrees2, v2.x(), v2.y(), v2.z()) * getRotation(degrees3, v3.x(), v3.y(), v3.z());
     }
     //-----------------------------------------------------------------------------
-    Matrix4& rotate( T_scalar degrees, T_scalar x, T_scalar y, T_scalar z )
+    Matrix4& rotate(T_scalar degrees, const Vector3<T_scalar>& v)
+    {
+      return rotate(degrees, v.x(), v.y(), v.z());
+    }
+    //-----------------------------------------------------------------------------
+    Matrix4& rotate(T_scalar degrees, T_scalar x, T_scalar y, T_scalar z)
     {
       *this = getRotation(degrees, x, y, z) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix4& rotate( T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2 )
+    Matrix4& rotate(T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2)
     {
       *this = getRotation(degrees1, v1, degrees2, v2) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    void getYXRotationAngles( T_scalar& degrees_y, T_scalar& degrees_x ) const;
-    //-----------------------------------------------------------------------------
-    Matrix4& rotate( T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2, T_scalar degrees3, const Vector3<T_scalar>& v3 )
+    Matrix4& rotate(T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2, T_scalar degrees3, const Vector3<T_scalar>& v3)
     {
       *this = getRotation(degrees1, v1, degrees2, v2, degrees3, v3) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix4 getRotationXYZ( T_scalar degX, T_scalar degY, T_scalar degZ)
+    static Matrix4 getRotationXYZ(T_scalar degX, T_scalar degY, T_scalar degZ)
     {
       return getRotation(degX, 1,0,0) * getRotation(degY, 0,1,0) * getRotation(degZ, 0,0,1);
     }
     //-----------------------------------------------------------------------------
-    Matrix4& rotateXYZ( T_scalar degX, T_scalar degY, T_scalar degZ )
+    Matrix4& rotateXYZ(T_scalar degX, T_scalar degY, T_scalar degZ)
     {
       *this = getRotationXYZ(degX, degY, degZ) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix4 getRotationZYX( T_scalar degZ, T_scalar degY, T_scalar degX)
+    static Matrix4 getRotationZYX(T_scalar degZ, T_scalar degY, T_scalar degX)
     {
       return getRotation(degZ, 0,0,1) * getRotation(degY, 0,1,0) * getRotation(degX, 1,0,0);
     }
     //-----------------------------------------------------------------------------
-    Matrix4& rotateZYX( T_scalar degZ, T_scalar degY, T_scalar degX )
+    Matrix4& rotateZYX(T_scalar degZ, T_scalar degY, T_scalar degX)
     {
       *this = getRotationZYX(degZ, degY, degX) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix4 getRotation(const Vector4<T_scalar>& from, const Vector4<T_scalar>& to)
-    {
-      return getRotation( from.xyz(), to.xyz() );
-    }
+    static Matrix4& getRotation(Matrix4& out, const Vector3<T_scalar>& from, const Vector3<T_scalar>& to);
     //-----------------------------------------------------------------------------
-    static Matrix4 getRotation(const Vector3<T_scalar>& from, const Vector3<T_scalar>& to);
+    static Matrix4 getRotation(const Vector3<T_scalar>& from, const Vector3<T_scalar>& to)
+    {
+      Matrix4 m;
+      return getRotation(m, from, to);
+    }
     //-----------------------------------------------------------------------------
     Matrix4& rotate(const Vector4<T_scalar>& from, const Vector4<T_scalar>& to)
     {
@@ -530,49 +537,79 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix4 getTranslation( const Vector3<T_scalar>& v )
+    static Matrix4& getTranslation(Matrix4&out, const Vector3<T_scalar>& v)
     {
-      return getTranslation(v.x(), v.y(), v.z());
+      return getTranslation(out, v.x(), v.y(), v.z());
     }
     //-----------------------------------------------------------------------------
-    static Matrix4 getTranslation( T_scalar x, T_scalar y, T_scalar z )
+    static Matrix4 getTranslation(const Vector3<T_scalar>& v)
     {
-      Matrix4 tr;
-      tr.e(0,3) = x;
-      tr.e(1,3) = y;
-      tr.e(2,3) = z;
-      return tr;
+      Matrix4 m;
+      return getTranslation(m, v.x(), v.y(), v.z());
     }
     //-----------------------------------------------------------------------------
-    Matrix4& translate( T_scalar x, T_scalar y, T_scalar z )
+    static Matrix4 getTranslation(T_scalar x, T_scalar y, T_scalar z)
+    {
+      Matrix4 m;
+      return getTranslation(m, x, y, z);
+    }
+    //-----------------------------------------------------------------------------
+    static Matrix4& getTranslation(Matrix4& out, T_scalar x, T_scalar y, T_scalar z)
+    {
+      out.setIdentity();
+      out.e(0,3) = x;
+      out.e(1,3) = y;
+      out.e(2,3) = z;
+      return out;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix4& translate(T_scalar x, T_scalar y, T_scalar z)
     {
       *this = getTranslation(x,y,z) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix4& translate( const Vector3<T_scalar>& v )
+    Matrix4& translate(const Vector3<T_scalar>& v)
     {
       *this = getTranslation(v) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    static Matrix4 getScaling( const Vector3<T_scalar>& v )
+    static Matrix4& getScaling(Matrix4& out, const Vector3<T_scalar>& v)
     {
-      return getScaling( v.x(), v.y(), v.z() );
+      return getScaling(out, v.x(), v.y(), v.z());
     }
     //-----------------------------------------------------------------------------
-    static Matrix4 getScaling( T_scalar x, T_scalar y, T_scalar z )
+    static Matrix4 getScaling(const Vector3<T_scalar>& v)
     {
-      Matrix4 sc;
-      sc.e(0,0) = x;
-      sc.e(1,1) = y;
-      sc.e(2,2) = z;
-      return sc;
+      Matrix4 m;
+      return getScaling(m, v.x(), v.y(), v.z());
     }
     //-----------------------------------------------------------------------------
-    Matrix4& scale( T_scalar x, T_scalar y, T_scalar z )
+    static Matrix4 getScaling(T_scalar x, T_scalar y, T_scalar z)
+    {
+      Matrix4 m;
+      return getScaling(m, x, y, z);
+    }
+    //-----------------------------------------------------------------------------
+    static Matrix4& getScaling(Matrix4& out, T_scalar x, T_scalar y, T_scalar z)
+    {
+      out.setIdentity();
+      out.e(0,0) = x;
+      out.e(1,1) = y;
+      out.e(2,2) = z;
+      return out;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix4& scale(T_scalar x, T_scalar y, T_scalar z)
     {
       *this = getScaling(x,y,z) * *this;
+      return *this;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix4& scale(const Vector3<T_scalar> v)
+    {
+      *this = getScaling(v.x(), v.y(), v.z()) * *this;
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -637,7 +674,7 @@ namespace vl
       v.x()*m.e(1,0) + v.y()*m.e(1,1) + v.z()*m.e(1,2) + v.w()*m.e(1,3),
       v.x()*m.e(2,0) + v.y()*m.e(2,1) + v.z()*m.e(2,2) + v.w()*m.e(2,3),
       v.x()*m.e(3,0) + v.y()*m.e(3,1) + v.z()*m.e(3,2) + v.w()*m.e(3,3)
-    );
+   );
   }
   //-----------------------------------------------------------------------------
   //! Post multiplication: matrix * column vector
@@ -649,7 +686,7 @@ namespace vl
       v.x()*m.e(0,0) + v.y()*m.e(0,1) + v.z()*m.e(0,2) + /*1**/m.e(0,3),
       v.x()*m.e(1,0) + v.y()*m.e(1,1) + v.z()*m.e(1,2) + /*1**/m.e(1,3),
       v.x()*m.e(2,0) + v.y()*m.e(2,1) + v.z()*m.e(2,2) + /*1**/m.e(2,3)
-    );
+   );
   }
   //-----------------------------------------------------------------------------
   //! Post multiplication: matrix * column vector
@@ -660,7 +697,7 @@ namespace vl
     return Vector2<T_scalar>(
       v.x()*m.e(0,0) + v.y()*m.e(0,1) + /*0*m.e(0,2) +*/ /*1**/m.e(0,3),
       v.x()*m.e(1,0) + v.y()*m.e(1,1) + /*0*m.e(1,2) +*/ /*1**/m.e(1,3)
-    );
+   );
   }
   //-----------------------------------------------------------------------------
   //! pre-multiplication: row vector * matrix
@@ -672,7 +709,7 @@ namespace vl
       v.x()*m.e(0,1) + v.y()*m.e(1,1) + v.z()*m.e(2,1) + v.w()*m.e(3,1),
       v.x()*m.e(0,2) + v.y()*m.e(1,2) + v.z()*m.e(2,2) + v.w()*m.e(3,2),
       v.x()*m.e(0,3) + v.y()*m.e(1,3) + v.z()*m.e(2,3) + v.w()*m.e(3,3)
-    );
+   );
   }
   //-----------------------------------------------------------------------------
   //! pre-multiplication: row vector * matrix
@@ -684,7 +721,7 @@ namespace vl
       v.x()*m.e(0,0) + v.y()*m.e(1,0) + v.z()*m.e(2,0) + /*1**/m.e(3,0),
       v.x()*m.e(0,1) + v.y()*m.e(1,1) + v.z()*m.e(2,1) + /*1**/m.e(3,1),
       v.x()*m.e(0,2) + v.y()*m.e(1,2) + v.z()*m.e(2,2) + /*1**/m.e(3,2)
-    );
+   );
   }
   //-----------------------------------------------------------------------------
   //! pre-multiplication: row vector * matrix
@@ -695,11 +732,11 @@ namespace vl
     return Vector2<T_scalar>(
       v.x()*m.e(0,0) + v.y()*m.e(1,0) + /*0*m.e(2,0) +*/ /*1**/m.e(3,0),
       v.x()*m.e(0,1) + v.y()*m.e(1,1) + /*0*m.e(2,1) +*/ /*1**/m.e(3,1)
-    );
+   );
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar>
-  Matrix4<T_scalar> Matrix4<T_scalar>::getLookAt( const Vector3<T_scalar>& eye, const Vector3<T_scalar>& look, const Vector3<T_scalar>& up)
+  Matrix4<T_scalar> Matrix4<T_scalar>::getLookAt(const Vector3<T_scalar>& eye, const Vector3<T_scalar>& look, const Vector3<T_scalar>& up)
   {
     Vector3<T_scalar> y = Vector3<T_scalar>(up).normalize();
     Vector3<T_scalar> z = (eye - look).normalize(); // == -(look-eye)
@@ -717,7 +754,7 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar>
-  void Matrix4<T_scalar>::getAsLookAt( Vector3<T_scalar>& eye, Vector3<T_scalar>& look, Vector3<T_scalar>& up, Vector3<T_scalar>& right) const
+  void Matrix4<T_scalar>::getAsLookAt(Vector3<T_scalar>& eye, Vector3<T_scalar>& look, Vector3<T_scalar>& up, Vector3<T_scalar>& right) const
   {
     eye = getT();
 
@@ -754,7 +791,7 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar>
-  Matrix4<T_scalar> Matrix4<T_scalar>::getFrustum( T_scalar left, T_scalar right, T_scalar bottom, T_scalar top, T_scalar pnear, T_scalar pfar)
+  Matrix4<T_scalar> Matrix4<T_scalar>::getFrustum(T_scalar left, T_scalar right, T_scalar bottom, T_scalar top, T_scalar pnear, T_scalar pfar)
   {
     Matrix4<T_scalar> m;
 
@@ -765,7 +802,7 @@ namespace vl
     T_scalar y =  (((T_scalar)2)*pnear)  / (top-bottom);
     T_scalar a =  (right+left) / (right-left);
     T_scalar b =  (top+bottom) / (top-bottom);
-    T_scalar c = -(pfar+pnear)   / ( pfar-pnear);
+    T_scalar c = -(pfar+pnear)   / (pfar-pnear);
     T_scalar d = -(((T_scalar)2)*pfar*pnear) / (pfar-pnear);
 
     m.e(0,0) = x;  m.e(0,1) = 0;  m.e(0,2) = a;    m.e(0,3) = 0;
@@ -811,19 +848,19 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar>
-  Matrix4<T_scalar> Matrix4<T_scalar>::getRotation( T_scalar degrees, T_scalar x, T_scalar y, T_scalar z )
+  Matrix4<T_scalar>& Matrix4<T_scalar>::getRotation(Matrix4<T_scalar>& out, T_scalar degrees, T_scalar x, T_scalar y, T_scalar z)
   {
-    Matrix4<T_scalar> rot;
+    out.setIdentity();
 
-    if ( degrees == 0 || (x == 0 && y ==0 && z == 0) )
-      return rot;
+    if (degrees == 0 || (x == 0 && y ==0 && z == 0))
+      return out;
       
     degrees = T_scalar(degrees * dDEG_TO_RAD);
 
     T_scalar xx, yy, zz, xy, yz, zx, xs, ys, zs, one_c, s, c;
 
-    s = (T_scalar) sin( degrees );
-    c = (T_scalar) cos( degrees );
+    s = (T_scalar) sin(degrees);
+    c = (T_scalar) cos(degrees);
 
     // simple cases
     if (x == 0) 
@@ -833,37 +870,37 @@ namespace vl
         if (z != 0) 
         {
           // rotate only around z-axis
-          rot.e(0,0) = (T_scalar)c;
-          rot.e(1,1) = (T_scalar)c;
+          out.e(0,0) = (T_scalar)c;
+          out.e(1,1) = (T_scalar)c;
           if (z < 0) 
           {
-            rot.e(1,0) = -(T_scalar)s;
-            rot.e(0,1) = (T_scalar)s;
+            out.e(1,0) = -(T_scalar)s;
+            out.e(0,1) = (T_scalar)s;
           }
           else 
           {
-            rot.e(1,0) = (T_scalar)s;
-            rot.e(0,1) = -(T_scalar)s;
+            out.e(1,0) = (T_scalar)s;
+            out.e(0,1) = -(T_scalar)s;
           }
-          return rot;
+          return out;
         }
       }
       else if (z == 0) 
       {
         // rotate only around y-axis
-        rot.e(0,0) = (T_scalar)c;
-        rot.e(2,2) = (T_scalar)c;
+        out.e(0,0) = (T_scalar)c;
+        out.e(2,2) = (T_scalar)c;
         if (y < 0) 
         {
-          rot.e(2,0) = (T_scalar)s;
-          rot.e(0,2) = -(T_scalar)s;
+          out.e(2,0) = (T_scalar)s;
+          out.e(0,2) = -(T_scalar)s;
         }
         else 
         {
-          rot.e(2,0) = -(T_scalar)s;
-          rot.e(0,2) = (T_scalar)s;
+          out.e(2,0) = -(T_scalar)s;
+          out.e(0,2) = (T_scalar)s;
         }
-        return rot;
+        return out;
       }
     }
     else if (y == 0) 
@@ -871,19 +908,19 @@ namespace vl
       if (z == 0) 
       {
         // rotate only around x-axis
-        rot.e(1,1) = (T_scalar)c;
-        rot.e(2,2) = (T_scalar)c;
+        out.e(1,1) = (T_scalar)c;
+        out.e(2,2) = (T_scalar)c;
         if (x < 0) 
         {
-          rot.e(2,1) = -(T_scalar)s;
-          rot.e(1,2) = (T_scalar)s;
+          out.e(2,1) = -(T_scalar)s;
+          out.e(1,2) = (T_scalar)s;
         }
         else 
         {
-          rot.e(2,1) = (T_scalar)s;
-          rot.e(1,2) = -(T_scalar)s;
+          out.e(2,1) = (T_scalar)s;
+          out.e(1,2) = -(T_scalar)s;
         }
-        return rot;
+        return out;
       }
     }
 
@@ -909,10 +946,10 @@ namespace vl
     zs = z * s;
     one_c = ((T_scalar)1) - c;
 
-    rot.e(0,0) = (T_scalar)((one_c * xx) + c ); rot.e(1,0) = (T_scalar)((one_c * xy) + zs); rot.e(2,0) = (T_scalar)((one_c * zx) - ys);
-    rot.e(0,1) = (T_scalar)((one_c * xy) - zs); rot.e(1,1) = (T_scalar)((one_c * yy) + c ); rot.e(2,1) = (T_scalar)((one_c * yz) + xs);
-    rot.e(0,2) = (T_scalar)((one_c * zx) + ys); rot.e(1,2) = (T_scalar)((one_c * yz) - xs); rot.e(2,2) = (T_scalar)((one_c * zz) + c );
-    return rot;
+    out.e(0,0) = (T_scalar)((one_c * xx) + c); out.e(1,0) = (T_scalar)((one_c * xy) + zs); out.e(2,0) = (T_scalar)((one_c * zx) - ys);
+    out.e(0,1) = (T_scalar)((one_c * xy) - zs); out.e(1,1) = (T_scalar)((one_c * yy) + c); out.e(2,1) = (T_scalar)((one_c * yz) + xs);
+    out.e(0,2) = (T_scalar)((one_c * zx) + ys); out.e(1,2) = (T_scalar)((one_c * yz) - xs); out.e(2,2) = (T_scalar)((one_c * zz) + c);
+    return out;
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar>
@@ -984,7 +1021,7 @@ namespace vl
         }
 
         for (i=0; i<4; ++i) {
-          if (i!=k) dest[i][k]/=( -pvt_val);
+          if (i!=k) dest[i][k]/=(-pvt_val);
         }
 
         for (i=0; i<4; ++i) 
@@ -1032,7 +1069,7 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar>
-  Matrix4<T_scalar> Matrix4<T_scalar>::getRotation(const Vector3<T_scalar>& from, const Vector3<T_scalar>& to)
+  Matrix4<T_scalar>& Matrix4<T_scalar>::getRotation(Matrix4<T_scalar>& out, const Vector3<T_scalar>& from, const Vector3<T_scalar>& to)
   {
     Vector3<T_scalar> a,b;
     a = from;
@@ -1044,8 +1081,8 @@ namespace vl
     Vector3<T_scalar> axis,n2;
     axis = cross(a,b);
     axis.normalize();
-    T_scalar alpha = acos( cosa );
-    return getRotation(alpha*(T_scalar)dRAD_TO_DEG, axis.x(), axis.y(), axis.z());
+    T_scalar alpha = acos(cosa);
+    return getRotation(out, alpha*(T_scalar)dRAD_TO_DEG, axis.x(), axis.y(), axis.z());
   }
   //-----------------------------------------------------------------------------
   //! If this matrix can be represented as \p RY(degrees_y) * \p RX(degrees_x), where 
@@ -1055,7 +1092,7 @@ namespace vl
   //! - -180 <= degrees_y <= 180
   //! - -180 <= degrees_x <= 180 and degrees_x != 90
   template<typename T_scalar>
-  void Matrix4<T_scalar>::getYXRotationAngles( T_scalar& degrees_y, T_scalar& degrees_x ) const
+  void Matrix4<T_scalar>::getYXRotationAngles(T_scalar& degrees_y, T_scalar& degrees_x) const
   {
     Vector3<T_scalar> vx = getX();
     Vector3<T_scalar> vy = getY();
@@ -1067,14 +1104,14 @@ namespace vl
 
     T_scalar kx = dot(vy,Vector3<T_scalar>(0,1,0));
     kx = clamp(kx,-((T_scalar)1),+((T_scalar)1));
-    degrees_x = acos( kx ) * (T_scalar)dRAD_TO_DEG;
-    if( dot(vz, Vector3<T_scalar>(0,1,0)) > 0 )
+    degrees_x = acos(kx) * (T_scalar)dRAD_TO_DEG;
+    if(dot(vz, Vector3<T_scalar>(0,1,0)) > 0)
       degrees_x = -degrees_x;
 
     T_scalar ky = dot(vx, Vector3<T_scalar>(1,0,0));
     ky = clamp(ky,-((T_scalar)1),+((T_scalar)1));
-    degrees_y = acos( ky ) * (T_scalar)dRAD_TO_DEG;
-    if( dot(vz, Vector3<T_scalar>(1,0,0)) < 0 )
+    degrees_y = acos(ky) * (T_scalar)dRAD_TO_DEG;
+    if(dot(vz, Vector3<T_scalar>(1,0,0)) < 0)
       degrees_y = -degrees_y;
     if (fabs(degrees_x) > (T_scalar)90)
       degrees_y = -degrees_y;

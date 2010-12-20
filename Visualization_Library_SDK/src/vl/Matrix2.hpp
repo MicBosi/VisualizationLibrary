@@ -69,8 +69,8 @@ namespace vl
       e(0,0) = e(1,1) = n;
     }
     //-----------------------------------------------------------------------------
-    explicit Matrix2( T_scalar e00, T_scalar e01,
-                      T_scalar e10, T_scalar e11  )
+    explicit Matrix2(T_scalar e00, T_scalar e01,
+                      T_scalar e10, T_scalar e11 )
     {
       e(0,0) = e00; e(0,1) = e01;
       e(1,0) = e10; e(1,1) = e11;
@@ -88,7 +88,7 @@ namespace vl
       T_scalar err = 0;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
-          if ( e(j,i) > other.e(j,i) ) // avoid fabs/abs
+          if (e(j,i) > other.e(j,i)) // avoid fabs/abs
             err += e(j,i) - other.e(j,i);
           else
             err += other.e(j,i) - e(j,i);
@@ -232,7 +232,7 @@ namespace vl
     bool isIdentity() const
     {
       Matrix2 i;
-      return memcmp( ptr(), i.ptr(), sizeof(T_scalar)*4 ) == 0;
+      return memcmp(ptr(), i.ptr(), sizeof(T_scalar)*4) == 0;
     }
     //-----------------------------------------------------------------------------
     T_scalar* ptr()
@@ -279,7 +279,7 @@ namespace vl
     {
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
-          if( mVec[j][i] != 0 )
+          if(mVec[j][i] != 0)
             return false;
       return true;
     }
@@ -308,7 +308,7 @@ namespace vl
         (T_scalar)1, (T_scalar)0,
         (T_scalar)0, (T_scalar)1
       };
-      memcpy( mVec, I2d, sizeof(T_scalar)*4 );
+      memcpy(mVec, I2d, sizeof(T_scalar)*4);
       return *this;
     }
     //-----------------------------------------------------------------------------
