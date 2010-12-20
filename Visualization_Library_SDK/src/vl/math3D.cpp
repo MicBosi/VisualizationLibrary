@@ -33,7 +33,6 @@
 #include <vl/AABB.hpp>
 #include <vl/Vector2.hpp>
 #include <vl/Vector4.hpp>
-#include <vl/quat.hpp>
 #include <vl/Plane.hpp>
 #include <vl/checks.hpp>
 #include <cstdlib>

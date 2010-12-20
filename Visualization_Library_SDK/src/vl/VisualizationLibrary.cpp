@@ -45,7 +45,7 @@
 #include <vl/MemoryDirectory.hpp>
 #include <vl/LoadWriterManager.hpp>
 #include <vl/GeometryLoadCallback.hpp>
-#include <vl/quat.hpp>
+#include <vl/Quaternion.hpp>
 #include <vl/Object.hpp>
 #include <vl/KeyValues.hpp>
 #include <cassert>
