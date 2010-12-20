@@ -175,14 +175,17 @@ namespace vl
       Matrix4 t;
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
-          t[i][j] = e(j,i) + m[i][j];
+          t.e(j,i) = e(j,i) + m.e(j,i);
 
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix4& operator+=(const Matrix4& m)
     {
-      return *this = *this + m;
+      for(int i=0; i<4; ++i)
+        for(int j=0; j<4; ++j)
+          e(j,i) += m.e(i,j);
+      return *this;
     }
     //-----------------------------------------------------------------------------
     Matrix4 operator-(const Matrix4& m) const
@@ -190,14 +193,17 @@ namespace vl
       Matrix4 t;
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
-          t[i][j] = e(j,i) - m[i][j];
+          t.e(j,i) = e(j,i) - m.e(j,i);
 
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix4& operator-=(const Matrix4& m)
     {
-      return *this = *this - m;
+      for(int i=0; i<4; ++i)
+        for(int j=0; j<4; ++j)
+          e(j,i) -= m.e(i,j);
+      return *this;
     }
     //-----------------------------------------------------------------------------
     Matrix4& operator*=(const Matrix4& m)
@@ -210,8 +216,7 @@ namespace vl
       Matrix4 t;
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
-          t[i][j] = -e(j,i);
-
+          t.e(j,i) = -e(j,i);
       return t;
     }
     //-----------------------------------------------------------------------------
@@ -220,14 +225,16 @@ namespace vl
       Matrix4 t;
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
-          t[i][j] = e(j,i) + d;
-
+          t.e(j,i) = e(j,i) + d;
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix4& operator+=(T_scalar d)
     {
-      return *this = *this + d;
+      for(int i=0; i<4; ++i)
+        for(int j=0; j<4; ++j)
+          e(j,i) += d;
+      return *this;
     }
     //-----------------------------------------------------------------------------
     Matrix4 operator-(T_scalar d) const
@@ -235,14 +242,16 @@ namespace vl
       Matrix4 t;
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
-          t[i][j] = e(j,i) - d;
-
+          t.e(j,i) = e(j,i) - d;
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix4& operator-=(T_scalar d)
     {
-      return *this = *this - d;
+      for(int i=0; i<4; ++i)
+        for(int j=0; j<4; ++j)
+          e(j,i) -= d;
+      return *this;
     }
     //-----------------------------------------------------------------------------
     Matrix4 operator*(T_scalar d) const
@@ -250,8 +259,7 @@ namespace vl
       Matrix4 t;
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
-          t[i][j] = e(j,i) * d;
-
+          t.e(j,i) = e(j,i) * d;
       return t;
     }
     //-----------------------------------------------------------------------------
@@ -260,7 +268,6 @@ namespace vl
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
           e(j,i) *= d;
-
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -270,19 +277,16 @@ namespace vl
       Matrix4 t;
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
-          t[i][j] = e(j,i) * d;
-
+          t.e(j,i) = e(j,i) * d;
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix4& operator/=(T_scalar d)
     {
       d = (T_scalar)1 / d;
-      Matrix4 t;
       for(int i=0; i<4; ++i)
         for(int j=0; j<4; ++j)
           e(j,i) *= d;
-
       return *this;
     }
     //-----------------------------------------------------------------------------
