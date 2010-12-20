@@ -173,10 +173,10 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/gluUnProject.xml>gluUnProject()</a>
 			</td>
 			<td valign=top>
-				- vl::dmat4::perspective()
-				- vl::dmat4::frustum()
-				- vl::dmat4::ortho()
-				- vl::dmat4::lookAt()
+				- vl::dmat4::getPerspective()
+				- vl::dmat4::getFrustum()
+				- vl::dmat4::getOrtho()
+				- vl::dmat4::getLookAt()
 				- vl::Camera::setProjectionAsPerspective()
 				- vl::Camera::setProjectionAsFrustum()
 				- vl::Camera::setProjectionAsOrtho()

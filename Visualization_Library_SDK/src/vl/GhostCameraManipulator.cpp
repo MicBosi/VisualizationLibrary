@@ -86,8 +86,8 @@ void GhostCameraManipulator::runEvent()
   Real dt = Time::currentTime() - mLastTime;
   mLastTime = Time::currentTime();
 
-  mat4 m = mat4::translation(mPosition);
-  m *= mat4::rotation( mYDegrees, vec3(0,1,0), mXDegrees, vec3(1,0,0) );
+  mat4 m = mat4::getTranslation(mPosition);
+  m *= mat4::getRotation( mYDegrees, vec3(0,1,0), mXDegrees, vec3(1,0,0) );
   camera()->setInverseViewMatrix(m);
 
   vec3 direction;

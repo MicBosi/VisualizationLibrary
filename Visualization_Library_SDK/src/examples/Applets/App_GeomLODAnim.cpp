@@ -225,8 +225,8 @@ public:
       /* define actor position and add it to the scene */
       vl::ref<vl::Transform> tr = new vl::Transform;
       vl::Real t = 360.0f / ring_obj_count * i;
-      vl::vec3 v = vl::mat4::rotation(t,0,1,0) * vl::vec3(35,0,0);
-      tr->setLocalMatrix( vl::mat4::translation(v) );
+      vl::vec3 v = vl::mat4::getRotation(t,0,1,0) * vl::vec3(35,0,0);
+      tr->setLocalMatrix( vl::mat4::getTranslation(v) );
 
       vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
       
@@ -249,10 +249,10 @@ public:
     vl::Real t = pow((s+1.0f)/2.0f,2);
     vl::Real x = t * 200 + 5;
     vl::vec3 eye( x, 0, 0 );
-    eye = vl::mat4::rotation( vl::Time::currentTime() * 30.0f, 0, 1, 0 ) * eye;
+    eye = vl::mat4::getRotation( vl::Time::currentTime() * 30.0f, 0, 1, 0 ) * eye;
     eye += vl::vec3(0,10+70*t,0);
     vl::mat4 m;
-    m = vl::mat4::lookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
+    m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };

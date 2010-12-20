@@ -144,11 +144,11 @@ public:
   void run()
   {
     // animate the transforms
-    mTransform1->setLocalMatrix( vl::mat4::translation(-2,2,0)  * vl::mat4::rotation( vl::Time::currentTime()*45, 0, 1, 0) );
-    mTransform2->setLocalMatrix( vl::mat4::translation(+2,2,0)  * vl::mat4::rotation( vl::Time::currentTime()*45, 0, 1, 0) );
-    mTransform3->setLocalMatrix( vl::mat4::translation(-2,-2,0) * vl::mat4::rotation( vl::Time::currentTime()*45, 0, 1, 0) );
-    mTransform4->setLocalMatrix( vl::mat4::translation(+2,-2,0) * vl::mat4::rotation( vl::Time::currentTime()*45, 0, 1, 0) );
-    mTransform5->setLocalMatrix( vl::mat4::translation(0,0,0)   * vl::mat4::rotation( vl::Time::currentTime()*45, 0, 1, 0) );
+    mTransform1->setLocalMatrix( vl::mat4::getTranslation(-2,2,0)  * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
+    mTransform2->setLocalMatrix( vl::mat4::getTranslation(+2,2,0)  * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
+    mTransform3->setLocalMatrix( vl::mat4::getTranslation(-2,-2,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
+    mTransform4->setLocalMatrix( vl::mat4::getTranslation(+2,-2,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
+    mTransform5->setLocalMatrix( vl::mat4::getTranslation(0,0,0)   * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
   }
 
   void shutdown() {}

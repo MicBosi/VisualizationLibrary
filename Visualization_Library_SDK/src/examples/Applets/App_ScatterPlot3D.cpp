@@ -45,7 +45,7 @@ public:
   
   void run()
   {
-    _tr->setLocalMatrix(vl::mat4::rotation( vl::Time::currentTime()*45, 0,1,0 ) );
+    _tr->setLocalMatrix(vl::mat4::getRotation( vl::Time::currentTime()*45, 0,1,0 ) );
   }
 
   void initEvent()
@@ -113,27 +113,27 @@ public:
 
     vl::ref<vl::Geometry> axis2 = vlut::makeCylinder( vl::vec3(0,0,0), 10, 360*2 );
     sceneManager()->tree()->addActor( axis2.get(), ax_effect.get(), _tr.get() );
-    axis2->transform( vl::mat4::translation(-360,-360,0) * vl::mat4::rotation(90,1,0,0) );
+    axis2->transform( vl::mat4::getTranslation(-360,-360,0) * vl::mat4::getRotation(90,1,0,0) );
     axis2->computeNormals();
 
     vl::ref<vl::Geometry> axis3 = vlut::makeCylinder( vl::vec3(0,0,0), 10, 360*2 );
     sceneManager()->tree()->addActor( axis3.get(), ax_effect.get(), _tr.get() );
-    axis3->transform( vl::mat4::translation(0,-360,-360) * vl::mat4::rotation(90,0,0,1) );
+    axis3->transform( vl::mat4::getTranslation(0,-360,-360) * vl::mat4::getRotation(90,0,0,1) );
     axis3->computeNormals();
 
     vl::ref<vl::Geometry> top1 = vlut::makeCone( vl::vec3(0,20,0), 20, 40 );
     sceneManager()->tree()->addActor( top1.get(), ax_effect.get(), _tr.get() );
-    top1->transform( vl::mat4::translation(-360,360,-360) );
+    top1->transform( vl::mat4::getTranslation(-360,360,-360) );
     top1->computeNormals();
 
     vl::ref<vl::Geometry> top2 = vlut::makeCone( vl::vec3(0,20,0), 20, 40 );
     sceneManager()->tree()->addActor( top2.get(), ax_effect.get(), _tr.get() );
-    top2->transform( vl::mat4::translation(-360,-360, 360) * vl::mat4::rotation(90,1,0,0) );
+    top2->transform( vl::mat4::getTranslation(-360,-360, 360) * vl::mat4::getRotation(90,1,0,0) );
     top2->computeNormals();
 
     vl::ref<vl::Geometry> top3 = vlut::makeCone( vl::vec3(0,20,0), 20, 40 );
     sceneManager()->tree()->addActor( top3.get(), ax_effect.get(), _tr.get() );
-    top3->transform( vl::mat4::translation(360,-360,-360) * vl::mat4::rotation(90,0,0,-1) );
+    top3->transform( vl::mat4::getTranslation(360,-360,-360) * vl::mat4::getRotation(90,0,0,-1) );
     top3->computeNormals();
   }
 

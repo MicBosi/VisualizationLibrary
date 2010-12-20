@@ -55,7 +55,7 @@ public:
 
     // generate torus, with normals and uv coords
     vl::ref<vl::Geometry> model = vlut::makeTorus( vl::vec3(0,0,0), 10, 2, TORUS_SEGS, TORUS_SEGS, 2.0f );
-    model->transform( vl::mat4::rotation( 45.0f, 1.0f, 1.0f, 0.0f ) );
+    model->transform( vl::mat4::getRotation( 45.0f, 1.0f, 1.0f, 0.0f ) );
 
     // setup effect
     vl::ref<vl::Effect> effect = new vl::Effect;
@@ -154,7 +154,7 @@ public:
   void run() 
   {
     // update the torus tranform
-    mTransform->setLocalMatrix( vl::mat4::rotation( vl::Time::currentTime() * 5.0f, 0, -1, 1 ) );
+    mTransform->setLocalMatrix( vl::mat4::getRotation( vl::Time::currentTime() * 5.0f, 0, -1, 1 ) );
     mTransform->computeWorldMatrix();
 
     // world to object space matrix

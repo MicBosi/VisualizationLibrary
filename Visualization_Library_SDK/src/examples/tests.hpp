@@ -111,7 +111,7 @@ public:
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( bk_color );
     /* define the camera position and orientation */
     vl::vec3 up = vl::vec3(0,1,0);
-    vl::mat4 view_mat = vl::mat4::lookAt(eye, center, up);
+    vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up);
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( view_mat );
   }
 
@@ -153,7 +153,7 @@ public:
       { "Texturing", Create_App_Texturing(), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,20), vl::vec3(0,0,0) }, 
       { "100.000 Scatter Plot", Create_App_ScatterPlot3D(0), 10, 10, 512, 512, vlut::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) }, 
       { "100.000 Scatter Plot & PointSprite", Create_App_ScatterPlot3D(1), 10, 10, 512, 512, vlut::black, vl::vec3(0,500,1200), vl::vec3(0,0,0) }, 
-      { "GPU Morph. Anim. 1000", Create_App_MorphAnimation(), 10, 10, 512, 512, vlut::black, vl::vec3(0,1000,1500), vl::vec3(0,0,0) }, 
+      { "GPU Morph. 1000", Create_App_MorphAnimation(), 10, 10, 512, 512, vlut::black, vl::vec3(0,1000,1500), vl::vec3(0,0,0) }, 
       { "Text - The Raven", Create_App_TextRendering(0), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
       { "Text - Alignment", Create_App_TextRendering(1), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
       { "Text - Rotation", Create_App_TextRendering(2), 10, 10, 512, 512, vlut::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 

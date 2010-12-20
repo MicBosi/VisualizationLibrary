@@ -55,16 +55,16 @@ Camera::Camera()
   mFarPlane  = (Real)10000.0;
   mViewport = new Viewport;
 
-  mProjectionMatrix  = mat4::perspective(fov(), 640.0f/480.0f, nearPlane(), farPlane());
+  mProjectionMatrix  = mat4::getPerspective(fov(), 640.0f/480.0f, nearPlane(), farPlane());
 }
 //-----------------------------------------------------------------------------
 void Camera::applyModelViewMatrix(const mat4& model_matrix) const
 {
   /* some OpenGL drivers (ATI) require this instead of the more general (and mathematically correct) viewMatrix() */
   mat4 viewm = viewMatrix();
-  viewm.e(0,3) = 0.0;
-  viewm.e(1,3) = 0.0;
-  viewm.e(2,3) = 0.0;
+  viewm.e(3,0) = 0.0;
+  viewm.e(3,1) = 0.0;
+  viewm.e(3,2) = 0.0;
   viewm.e(3,3) = 1.0;
 
   glMatrixMode(GL_MODELVIEW);
@@ -90,9 +90,9 @@ void Camera::applyViewMatrix() const
 {
   /* some OpenGL drivers (ATI) require this instead of the more general (and mathematically correct) viewMatrix() */
   mat4 viewm = viewMatrix();
-  viewm.e(0,3) = 0.0;
-  viewm.e(1,3) = 0.0;
-  viewm.e(2,3) = 0.0;
+  viewm.e(3,0) = 0.0;
+  viewm.e(3,1) = 0.0;
+  viewm.e(3,2) = 0.0;
   viewm.e(3,3) = 1.0;
   glMatrixMode(GL_MODELVIEW);
   VL_glLoadMatrix( viewm.ptr() );
@@ -151,7 +151,7 @@ void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real 
       max_t = t;
   }
   Real dist = max_t;
-  mat4 m = mat4::lookAt(center+dir*dist*bias,center,up);
+  mat4 m = mat4::getLookAt(center+dir*dist*bias,center,up);
   setInverseViewMatrix(m);
 }
 //-----------------------------------------------------------------------------
@@ -169,7 +169,7 @@ void Camera::setProjectionAsFrustum(Real left, Real right, Real bottom, Real top
   setFOV(-1);
   setNearPlane(near);
   setFarPlane(far);
-  mProjectionMatrix = mat4::frustum(left, right, bottom, top, near, far);
+  mProjectionMatrix = mat4::getFrustum(left, right, bottom, top, near, far);
 }
 //-----------------------------------------------------------------------------
 void Camera::setProjectionAsPerspective(Real fov, Real near, Real far)
@@ -177,18 +177,18 @@ void Camera::setProjectionAsPerspective(Real fov, Real near, Real far)
   setFOV(fov);
   setNearPlane(near);
   setFarPlane(far);
-  mProjectionMatrix = mat4::perspective(fov, aspectRatio(), near, far);
+  mProjectionMatrix = mat4::getPerspective(fov, aspectRatio(), near, far);
 }
 //-----------------------------------------------------------------------------
 void Camera::setProjectionAsPerspective()
 {
-  mProjectionMatrix = mat4::perspective(fov(), aspectRatio(), nearPlane(), farPlane());
+  mProjectionMatrix = mat4::getPerspective(fov(), aspectRatio(), nearPlane(), farPlane());
 }
 //-----------------------------------------------------------------------------
 void Camera::setProjectionAsOrtho(Real offset)
 {
   setProjectionMatrix( 
-    mat4::ortho(
+    mat4::getOrtho(
       offset, (Real)mViewport->width()  + offset,
       offset, (Real)mViewport->height() + offset,
       nearPlane(), farPlane())
@@ -198,7 +198,7 @@ void Camera::setProjectionAsOrtho(Real offset)
 void Camera::setProjectionAsOrtho2D(Real offset)
 {
   setProjectionMatrix( 
-    mat4::ortho(
+    mat4::getOrtho(
       offset, (Real)mViewport->width()  + offset,
       offset, (Real)mViewport->height() + offset,
       -1, +1)
@@ -207,7 +207,7 @@ void Camera::setProjectionAsOrtho2D(Real offset)
 //-----------------------------------------------------------------------------
 void Camera::setViewMatrixAsLookAt( const vec3& eye, const vec3& center, const vec3& up)
 {
-  mat4 m = mat4::lookAt(eye, center, up);
+  mat4 m = mat4::getLookAt(eye, center, up);
   // this sets both the frame matrix and the view matrix
   setInverseViewMatrix(m);
 }

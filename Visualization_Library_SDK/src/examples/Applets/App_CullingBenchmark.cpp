@@ -128,7 +128,7 @@ public:
     {
       vl::ref<vl::Actor> actor = new vl::Actor(ball.get(),effect.get(),new vl::Transform);
       actors.push_back(actor.get());
-      actor->transform()->setLocalMatrix(vl::mat4::translation(rand()%volume-volume/2.0f, rand()%volume-volume/2.0f, rand()%volume-volume/2.0f));
+      actor->transform()->setLocalMatrix(vl::mat4::getTranslation(rand()%volume-volume/2.0f, rand()%volume-volume/2.0f, rand()%volume-volume/2.0f));
       actor->transform()->computeWorldMatrix();
     }
   }

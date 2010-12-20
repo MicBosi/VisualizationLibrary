@@ -70,9 +70,9 @@ public:
   virtual void run()
   {
     vl::Real degrees = 0;
-    vl::mat4 matrix = vl::mat4::rotation( degrees, 0,1,0 );
-    mTransform_Left->setLocalMatrix( vl::mat4::translation(-10,0,0) * matrix );
-    mTransform_Right->setLocalMatrix(vl::mat4::translation(+10,0,0) *  matrix );
+    vl::mat4 matrix = vl::mat4::getRotation( degrees, 0,1,0 );
+    mTransform_Left->setLocalMatrix( vl::mat4::getTranslation(-10,0,0) * matrix );
+    mTransform_Right->setLocalMatrix(vl::mat4::getTranslation(+10,0,0) *  matrix );
   }
 
   void initEvent()
@@ -127,20 +127,20 @@ public:
     /* center and scale the geometry */
 
     vl::AABB aabb = geom1->boundingBox();
-    geom1->transform( vl::mat4::translation( - aabb.center() ) );
+    geom1->transform( vl::mat4::getTranslation( - aabb.center() ) );
     vl::Real max = aabb.width();
     max = aabb.height() > max ? aabb.height() : max;
     max = aabb.depth() > max ? aabb.depth() : max;
-    geom1->transform( vl::mat4::scaling( vl::vec3(1.0f/max, 1.0f/max, 1.0f/max) * vl::vec3(15,15,15) ) );
+    geom1->transform( vl::mat4::getScaling( vl::vec3(1.0f/max, 1.0f/max, 1.0f/max) * vl::vec3(15,15,15) ) );
     geom1->computeBounds();
     geom1->computeNormals();
 
     aabb = geom2->boundingBox();
-    geom2->transform( vl::mat4::translation( - aabb.center() ) );
+    geom2->transform( vl::mat4::getTranslation( - aabb.center() ) );
     max = aabb.width();
     max = aabb.height() > max ? aabb.height() : max;
     max = aabb.depth() > max ? aabb.depth() : max;
-    geom2->transform( vl::mat4::scaling( vl::vec3(1.0f/max, 1.0f/max, 1.0f/max) * vl::vec3(15,15,15) ) );
+    geom2->transform( vl::mat4::getScaling( vl::vec3(1.0f/max, 1.0f/max, 1.0f/max) * vl::vec3(15,15,15) ) );
     geom2->computeBounds();
     geom2->computeNormals();
   }

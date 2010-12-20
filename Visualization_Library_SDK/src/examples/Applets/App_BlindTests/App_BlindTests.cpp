@@ -58,9 +58,9 @@ struct s_Test
 };
 
 s_Test g_Tests[] = { 
+  { test_math,        "Math"         },
   { test_filesystem,  "Filesystem"   },
   { test_hfloat,      "Half Float"   },
-  { test_math,        "Math"         },
   { test_signal_slot, "Signal Slot"  },
   { test_UID,         "UUID"         },
   { NULL, NULL }

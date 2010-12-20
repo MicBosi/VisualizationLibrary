@@ -155,11 +155,11 @@ public:
 
     vl::ref<vl::Geometry> wall_1_a = vlut::makeGrid(vl::vec3(room_h/2.0f,0,0),room_h,room_size_in,20,20);
     wall_1_a->computeNormals();
-    wall_1_a->transform(vl::mat4::rotation(90,0,0,1));
+    wall_1_a->transform(vl::mat4::getRotation(90,0,0,1));
 
     vl::ref<vl::Geometry> wall_2_a = vlut::makeGrid(vl::vec3(0,0,room_h/2.0f),room_size_in,room_h,20,20);
     wall_2_a->computeNormals();
-    wall_2_a->transform(vl::mat4::rotation(-90,1,0,0));
+    wall_2_a->transform(vl::mat4::getRotation(-90,1,0,0));
 
     float w1 = room_size_in / 6.0f;
     float h1 = room_h       / 3.0f * 2.0f;
@@ -357,14 +357,14 @@ public:
 
           if(map[y][x-1] == 'X') // west door: the two sectors comunicate
           {
-            m = vl::mat4::translation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f,0,0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f,0,0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             // add to the sector
             sector1->actors()->push_back( new vl::Actor(wall_1_b.get(), wall_fx.get(), tr.get()) );
           }
           else
           {
-            m = vl::mat4::translation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f,0,0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f,0,0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             // add to the sector
             sector1->actors()->push_back( new vl::Actor(wall_1_a.get(), wall_fx.get(), tr.get()) );
@@ -372,7 +372,7 @@ public:
 
           if(map[y][x+1] == 'X') // east door: the two sectors comunicate
           {
-            m = vl::mat4::translation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f,0,0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f,0,0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             // add to the sector
             sector1->actors()->push_back( new vl::Actor(wall_1_b.get(), wall_fx.get(), tr.get()) );
@@ -408,27 +408,27 @@ public:
           }
           else
           {
-            m = vl::mat4::translation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f,0,0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f,0,0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_1_a.get(), wall_fx.get(), tr.get()) );
           }
 
           if(map[y-1][x] == 'X') // south door: the two sectors comunicate
           {
-            m = vl::mat4::translation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,-room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,-room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_b.get(), wall_fx.get(), tr.get()) );
           }
           else
           {
-            m = vl::mat4::translation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,-room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,-room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_a.get(), wall_fx.get(), tr.get()) );
           }
 
           if(map[y+1][x] == 'X') // north door: the two sectors comunicate
           {
-            m = vl::mat4::translation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,+room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,+room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_b.get(), wall_fx.get(), tr.get()) );
             sector1->actors()->push_back( new vl::Actor(wall_2_c.get(), wall_fx.get(), tr.get()) );
@@ -464,7 +464,7 @@ public:
           }
           else
           {
-            m = vl::mat4::translation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,+room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,+room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_a.get(), wall_fx.get(), tr.get()) );
           }
@@ -475,7 +475,7 @@ public:
             vl::ref<vl::Transform> tr = new vl::Transform;
             float tx = (rand()%100) / 100.0f * room_size_in - room_size_in / 2.0f;
             float tz = (rand()%100) / 100.0f * room_size_in - room_size_in / 2.0f;
-            m = vl::mat4::translation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(tx,0,tz));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(tx,0,tz));
             tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(sphere.get(), ball_fx.get(), tr.get()) );
           }

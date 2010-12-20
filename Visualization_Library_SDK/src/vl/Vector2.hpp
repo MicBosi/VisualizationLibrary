@@ -108,11 +108,11 @@ namespace vl
    * The Vector2 class is a template class that implements a generic 2 components vector, see also vl::fvec2, vl::dvec2, vl::uvec2, vl::ivec2, vl::svec2, vl::usvec2, vl::bvec2, vl::ubvec2.
    * \sa Vector4, Vector3, Matrix4, Matrix3, Matrix2
    */
-  template<typename T_scalar_type>
+  template<typename T_scalar>
   class Vector2
   {
   public:
-    typedef T_scalar_type scalar_type;
+    typedef T_scalar scalar_type;
     static const int scalar_count = 2;
     Vector2(const Vector2& other) { *this = other; }
     Vector2() { x() = y() = 0; }
@@ -120,36 +120,36 @@ namespace vl
     template<class T>
     explicit Vector2(const T& other)
     {
-      x() = (T_scalar_type)other.x();
-      y() = (T_scalar_type)other.y();
+      x() = (T_scalar)other.x();
+      y() = (T_scalar)other.y();
     }
 
-    explicit Vector2(T_scalar_type x, T_scalar_type y)
+    explicit Vector2(T_scalar x, T_scalar y)
     {
       mScalar[0] = x;
       mScalar[1] = y;
     }
 
-    T_scalar_type* ptr() { return mScalar; }
-    const T_scalar_type* ptr() const { return mScalar; }
+    T_scalar* ptr() { return mScalar; }
+    const T_scalar* ptr() const { return mScalar; }
 
-    const T_scalar_type& x() const { return mScalar[0]; }
-    const T_scalar_type& y() const { return mScalar[1]; }
+    const T_scalar& x() const { return mScalar[0]; }
+    const T_scalar& y() const { return mScalar[1]; }
 
-    T_scalar_type& x() { return mScalar[0]; }
-    T_scalar_type& y() { return mScalar[1]; }
+    T_scalar& x() { return mScalar[0]; }
+    T_scalar& y() { return mScalar[1]; }
 
-    const T_scalar_type& r() const { return mScalar[0]; }
-    const T_scalar_type& g() const { return mScalar[1]; }
+    const T_scalar& r() const { return mScalar[0]; }
+    const T_scalar& g() const { return mScalar[1]; }
 
-    T_scalar_type& r() { return mScalar[0]; }
-    T_scalar_type& g() { return mScalar[1]; }
+    T_scalar& r() { return mScalar[0]; }
+    T_scalar& g() { return mScalar[1]; }
 
-    const T_scalar_type& s() const { return mScalar[0]; }
-    const T_scalar_type& t() const { return mScalar[1]; }
+    const T_scalar& s() const { return mScalar[0]; }
+    const T_scalar& t() const { return mScalar[1]; }
 
-    T_scalar_type& s() { return mScalar[0]; }
-    T_scalar_type& t() { return mScalar[1]; }
+    T_scalar& s() { return mScalar[0]; }
+    T_scalar& t() { return mScalar[1]; }
 
     Vector2 operator+(const Vector2& other) const
     {
@@ -167,19 +167,19 @@ namespace vl
     {
       return Vector2(x()/other.x(), y()/other.y());
     }
-    Vector2 operator+(T_scalar_type val) const
+    Vector2 operator+(T_scalar val) const
     {
       return Vector2(x()+val, y()+val);
     }
-    Vector2 operator-(T_scalar_type val) const
+    Vector2 operator-(T_scalar val) const
     {
       return Vector2(x()-val, y()-val);
     }
-    Vector2 operator*(T_scalar_type val) const
+    Vector2 operator*(T_scalar val) const
     {
       return Vector2(x()*val, y()*val);
     }
-    Vector2 operator/(T_scalar_type val) const
+    Vector2 operator/(T_scalar val) const
     {
       return Vector2(x()/val, y()/val);
     }
@@ -207,22 +207,22 @@ namespace vl
       *this = *this / other;
       return *this;
     }
-    Vector2& operator+=(T_scalar_type val)
+    Vector2& operator+=(T_scalar val)
     {
       *this = *this + val;
       return *this;
     }
-    Vector2& operator-=(T_scalar_type val)
+    Vector2& operator-=(T_scalar val)
     {
       *this = *this - val;
       return *this;
     }
-    Vector2& operator*=(T_scalar_type val)
+    Vector2& operator*=(T_scalar val)
     {
       *this = *this * val;
       return *this;
     }
-    Vector2& operator/=(T_scalar_type val)
+    Vector2& operator/=(T_scalar val)
     {
       *this = *this / val;
       return *this;
@@ -233,7 +233,7 @@ namespace vl
       y() = other.y();
       return *this;
     }
-    Vector2& operator=(T_scalar_type val)
+    Vector2& operator=(T_scalar val)
     {
       x() = y() = val;
       return *this;
@@ -253,23 +253,23 @@ namespace vl
       else
         return y() < other.y();
     }
-    T_scalar_type& operator[](unsigned i) { return mScalar[i]; }
-    const T_scalar_type& operator[](unsigned i) const { return mScalar[i]; }
-    T_scalar_type length() const { return ::sqrt(x()*x()+y()*y()); }
-    T_scalar_type lengthSquared() const { return x()*x()+y()*y(); }
+    T_scalar& operator[](unsigned i) { return mScalar[i]; }
+    const T_scalar& operator[](unsigned i) const { return mScalar[i]; }
+    T_scalar length() const { return ::sqrt(x()*x()+y()*y()); }
+    T_scalar lengthSquared() const { return x()*x()+y()*y(); }
     bool isNull() const { return !x() && !y(); }
-    const Vector2& normalize(T_scalar_type *len=NULL)
+    const Vector2& normalize(T_scalar *len=NULL)
     {
-      T_scalar_type l = length();
+      T_scalar l = length();
       if (len)
         *len = l;
       if (l)
-        *this *= (T_scalar_type)(1.0/l); 
+        *this *= (T_scalar)(1.0/l); 
       return *this; 
     }
 
   protected:
-    T_scalar_type mScalar[scalar_count];
+    T_scalar mScalar[scalar_count];
   };
 
   template<typename T>
