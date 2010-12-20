@@ -116,14 +116,16 @@ namespace vl
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
-          t[i][j] = e(j,i) + m[i][j];
-
+          t.e(j,i) = e(j,i) + m.e(j,i);
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix2& operator+=(const Matrix2& m)
     {
-      return *this = *this + m;
+      for(int i=0; i<2; ++i)
+        for(int j=0; j<2; ++j)
+          e(j,i) += m.e(j,i);
+      return *this;
     }
     //-----------------------------------------------------------------------------
     Matrix2 operator-(const Matrix2& m) const
@@ -131,14 +133,16 @@ namespace vl
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
-          t[i][j] = e(j,i) - m[i][j];
-
+          t.e(j,i) = e(j,i) - m.e(j,i);
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix2& operator-=(const Matrix2& m)
     {
-      return *this = *this - m;
+      for(int i=0; i<2; ++i)
+        for(int j=0; j<2; ++j)
+          e(j,i) -= m.e(j,i);
+      return *this;
     }
     //-----------------------------------------------------------------------------
     Matrix2& operator*=(const Matrix2& m)
@@ -151,8 +155,7 @@ namespace vl
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
-          t[i][j] = -e(j,i);
-
+          t.e(j,i) = -e(j,i);
       return t;
     }
     //-----------------------------------------------------------------------------
@@ -161,14 +164,16 @@ namespace vl
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
-          t[i][j] = e(j,i) + d;
-
+          t.e(j,i) = e(j,i) + d;
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix2& operator+=(T_scalar d)
     {
-      return *this = *this + d;
+      for(int i=0; i<2; ++i)
+        for(int j=0; j<2; ++j)
+          e(j,i) += d;
+      return *this;
     }
     //-----------------------------------------------------------------------------
     Matrix2 operator-(T_scalar d) const
@@ -176,14 +181,16 @@ namespace vl
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
-          t[i][j] = e(j,i) - d;
-
+          t.e(j,i) = e(j,i) - d;
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix2& operator-=(T_scalar d)
     {
-      return *this = *this - d;
+      for(int i=0; i<2; ++i)
+        for(int j=0; j<2; ++j)
+          e(j,i) -= d;
+      return *this;
     }
     //-----------------------------------------------------------------------------
     Matrix2 operator*(T_scalar d) const
@@ -191,18 +198,15 @@ namespace vl
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
-          t[i][j] = e(j,i) * d;
-
+          t.e(j,i) = e(j,i) * d;
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix2& operator*=(T_scalar d)
     {
-      Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
           e(j,i) *= d;
-
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -212,19 +216,16 @@ namespace vl
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
-          t[i][j] = e(j,i) * d;
-
+          t.e(j,i) = e(j,i) * d;
       return t;
     }
     //-----------------------------------------------------------------------------
     Matrix2& operator/=(T_scalar d)
     {
       d = (T_scalar)1 / d;
-      Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
           e(j,i) *= d;
-
       return *this;
     }
     //-----------------------------------------------------------------------------
