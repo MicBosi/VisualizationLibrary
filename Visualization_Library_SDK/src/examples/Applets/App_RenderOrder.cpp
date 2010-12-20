@@ -44,14 +44,14 @@ public:
   {
     if (mTestNumber == 0)
     {
-      mTransform1->setLocalMatrix( vl::mat4::rotation(vl::Time::currentTime()*45,    0, 1, 0 ) );
-      mTransform2->setLocalMatrix( vl::mat4::rotation(vl::Time::currentTime()*45-60, 0, 1, 0 ) );
-      mTransform3->setLocalMatrix( vl::mat4::rotation(vl::Time::currentTime()*45+60, 0, 1, 0 ) );
+      mTransform1->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*45,    0, 1, 0 ) );
+      mTransform2->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*45-60, 0, 1, 0 ) );
+      mTransform3->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*45+60, 0, 1, 0 ) );
     }
     else
     {
-      mTransform1->setLocalMatrix( vl::mat4::rotation(vl::Time::currentTime()*45,    0, 1, 0 ) );
-      mTransform2->setLocalMatrix( vl::mat4::rotation(vl::Time::currentTime()*45+90, 0, 1, 0 ) );
+      mTransform1->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*45,    0, 1, 0 ) );
+      mTransform2->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*45+90, 0, 1, 0 ) );
     }
   }
 

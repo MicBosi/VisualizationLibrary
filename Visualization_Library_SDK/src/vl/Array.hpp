@@ -176,12 +176,12 @@ namespace vl
    * - vl::ArrayInt_2_10_10_10_REV1, ArrayInt_2_10_10_10_REV2, ArrayInt_2_10_10_10_REV3, ArrayInt_2_10_10_10_REV4
    * - vl::ArrayUInt_2_10_10_10_REV1, ArrayUInt_2_10_10_10_REV2, ArrayUInt_2_10_10_10_REV3, ArrayUInt_2_10_10_10_REV4
   */
-  template <typename T_vector_type, typename T_scalar_type, int T_gl_size, GLenum T_gl_type>
+  template <typename T_vector_type, typename T_scalar, int T_gl_size, GLenum T_gl_type>
   class Array: public ArrayAbstract
   {
   public:
     virtual const char* className() { return "Array"; }
-    typedef T_scalar_type scalar_type;
+    typedef T_scalar scalar_type;
 
     virtual size_t glSize() const { return T_gl_size; }
     virtual int glType() const { return T_gl_type; }
@@ -225,7 +225,7 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
-        const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(i));
+        const T_scalar* pv = reinterpret_cast<const T_scalar*>(&at(i));
         for( int j=0; j<count; ++j )
           v.ptr()[j] = (Real)pv[j];
         aabb += v;
@@ -235,7 +235,7 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
-        const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(i));
+        const T_scalar* pv = reinterpret_cast<const T_scalar*>(&at(i));
         for( int j=0; j<count; ++j )
           v.ptr()[j] = (Real)pv[j];
         Real r = (v-center).lengthSquared();
@@ -252,7 +252,7 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
-        const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(i));
+        const T_scalar* pv = reinterpret_cast<const T_scalar*>(&at(i));
         for( int j=0; j<count; ++j )
           v.ptr()[j] = (Real)pv[j];
         aabb += v;
@@ -265,7 +265,7 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec4 v(0,0,0,1);
-        T_scalar_type* pv = reinterpret_cast<T_scalar_type*>(&at(i));
+        T_scalar* pv = reinterpret_cast<T_scalar*>(&at(i));
         // read
         for( size_t j=0; j<T_gl_size; ++j )
           v.ptr()[j] = (Real)pv[j];
@@ -273,7 +273,7 @@ namespace vl
         v = m * v;
         // write
         for( size_t j=0; j<T_gl_size; ++j )
-          pv[j] = (T_scalar_type)v.ptr()[j];
+          pv[j] = (T_scalar)v.ptr()[j];
       }
     }
 
@@ -282,7 +282,7 @@ namespace vl
       for(size_t i=0; i<size(); ++i)
       {
         vec4 v(0,0,0,0);
-        T_scalar_type* pv = reinterpret_cast<T_scalar_type*>(&at(i));
+        T_scalar* pv = reinterpret_cast<T_scalar*>(&at(i));
         // read
         for( size_t j=0; j<T_gl_size; ++j )
           v.ptr()[j] = (Real)pv[j];
@@ -290,14 +290,14 @@ namespace vl
         v.normalize();
         // write
         for( unsigned j=0; j<T_gl_size; ++j )
-          pv[j] = (T_scalar_type)v.ptr()[j];
+          pv[j] = (T_scalar)v.ptr()[j];
       }
     }
 
     vec4 vectorAsVec4(size_t vector_index) const
     {
       vec4 v(0,0,0,1);
-      const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(vector_index));
+      const T_scalar* pv = reinterpret_cast<const T_scalar*>(&at(vector_index));
       for( size_t j=0; j<T_gl_size; ++j )
         v.ptr()[j] = (Real)pv[j];
       return v;
@@ -306,7 +306,7 @@ namespace vl
     vec3 vectorAsVec3(size_t vector_index) const
     {
       vec3 v;
-      const T_scalar_type* pv = reinterpret_cast<const T_scalar_type*>(&at(vector_index));
+      const T_scalar* pv = reinterpret_cast<const T_scalar*>(&at(vector_index));
       const int count = T_gl_size == 4 ? 3 : T_gl_size;
       for( int j=0; j<count; ++j )
         v.ptr()[j] = (Real)pv[j];
@@ -315,8 +315,8 @@ namespace vl
 
     int compare(int a, int b) const
     {
-      const T_scalar_type* pa = reinterpret_cast<const T_scalar_type*>(&at(a));
-      const T_scalar_type* pb = reinterpret_cast<const T_scalar_type*>(&at(b));
+      const T_scalar* pa = reinterpret_cast<const T_scalar*>(&at(a));
+      const T_scalar* pb = reinterpret_cast<const T_scalar*>(&at(b));
       for( size_t i=0; i<T_gl_size; ++i )
         if ( pa[i] != pb[i] )
           return pa[i] < pb[i] ? -1 : +1;        

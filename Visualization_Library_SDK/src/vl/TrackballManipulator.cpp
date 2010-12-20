@@ -123,13 +123,13 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
   {
     if (mTransform)
     {
-      mTransform->setLocalMatrix( mat4::translation(mPivot) * trackballRotation(x,y) * mat4::translation(-mPivot) * mStartMatrix );
+      mTransform->setLocalMatrix( mat4::getTranslation(mPivot) * trackballRotation(x,y) * mat4::getTranslation(-mPivot) * mStartMatrix );
       mTransform->computeWorldMatrix();
       mStartMatrix = mTransform->localMatrix();
     }
     else
     {
-      camera()->setInverseViewMatrix( mat4::translation(mPivot) * trackballRotation(x,y) * mat4::translation(-mPivot) * mStartMatrix );
+      camera()->setInverseViewMatrix( mat4::getTranslation(mPivot) * trackballRotation(x,y) * mat4::getTranslation(-mPivot) * mStartMatrix );
       mStartMatrix = camera()->inverseViewMatrix();
     }
 
@@ -187,7 +187,7 @@ mat4 TrackballManipulator::trackballRotation(int x, int y)
   if (mTransform && mTransform->parent())
     nc = mTransform->parent()->getComputedWorldMatrix().getInverse() * nc;
   nc.normalize();
-  return mat4::rotation(alpha*(Real)dRAD_TO_DEG, nc);
+  return mat4::getRotation(alpha*(Real)dRAD_TO_DEG, nc);
 }
 //-----------------------------------------------------------------------------
 vec3 TrackballManipulator::computeVector(int x, int y)

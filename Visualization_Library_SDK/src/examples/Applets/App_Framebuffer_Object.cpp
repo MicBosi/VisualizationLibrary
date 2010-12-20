@@ -66,7 +66,7 @@ public:
     mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
-    vl::mat4 m = vl::mat4::lookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mRTT_Rendering->camera()->setInverseViewMatrix(m);
 
     /* use a framebuffer object as render target */
@@ -88,7 +88,7 @@ public:
     /* setup camera */
     mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
-    m = vl::mat4::lookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setInverseViewMatrix(m);
 
     /* use the opengl window as render target */
@@ -120,7 +120,7 @@ public:
     mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
-    vl::mat4 m = vl::mat4::lookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mRTT_Rendering->camera()->setInverseViewMatrix(m);
 
     /* use a framebuffer object as render target */
@@ -179,7 +179,7 @@ public:
     /* setup camera */
     mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
-    m = vl::mat4::lookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setInverseViewMatrix(m);
 
     /* use the opengl window as render target */
@@ -212,7 +212,7 @@ public:
     mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
-    vl::mat4 m = vl::mat4::lookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mRTT_Rendering->camera()->setInverseViewMatrix(m);
 
     /* use a framebuffer object as render target */
@@ -238,7 +238,7 @@ public:
     /* setup camera */
     mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
-    m = vl::mat4::lookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setInverseViewMatrix(m);
 
     /* use the opengl window as render target */
@@ -280,7 +280,7 @@ public:
     mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
-    vl::mat4 m = vl::mat4::lookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mRTT_Rendering->camera()->setInverseViewMatrix(m);
 
     /* use a framebuffer object as render target */
@@ -323,7 +323,7 @@ public:
     /* setup camera */
     mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
-    m = vl::mat4::lookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setInverseViewMatrix(m);
 
     /* use the opengl window as render target */
@@ -363,7 +363,7 @@ public:
     mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
     mRTT_Rendering->camera()->viewport()->set(0,0,512,512);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
-    vl::mat4 m = vl::mat4::lookAt( vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) );
+    vl::mat4 m = vl::mat4::getLookAt( vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) );
     mRTT_Rendering->camera()->setInverseViewMatrix( m );
 
     /* install copy to texture callback */
@@ -377,7 +377,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
     mMainRendering->camera()->viewport()->set(0,0,512,512);
     mMainRendering->camera()->setProjectionAsPerspective();
-    m = vl::mat4::lookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
+    m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setInverseViewMatrix( m );
 
     /* populate the scene */
@@ -530,11 +530,11 @@ public:
     mY2 = vl::Time::currentTime() * 45*2.3f;
     mX3 = vl::Time::currentTime() * 45*2.4f;
 
-    mTransfRing1->setLocalMatrix( vl::mat4::rotation(mX,  1,0,0) );
-    mTransfRing2->setLocalMatrix( vl::mat4::rotation(mY,  0,1,0) );
-    mTransfRing3->setLocalMatrix( vl::mat4::rotation(mX2, 1,0,0) );
-    mTransfRing4->setLocalMatrix( vl::mat4::rotation(mY2, 0,1,0) );
-    mTransfRing5->setLocalMatrix( vl::mat4::rotation(mX3, 1,0,0) );
+    mTransfRing1->setLocalMatrix( vl::mat4::getRotation(mX,  1,0,0) );
+    mTransfRing2->setLocalMatrix( vl::mat4::getRotation(mY,  0,1,0) );
+    mTransfRing3->setLocalMatrix( vl::mat4::getRotation(mX2, 1,0,0) );
+    mTransfRing4->setLocalMatrix( vl::mat4::getRotation(mY2, 0,1,0) );
+    mTransfRing5->setLocalMatrix( vl::mat4::getRotation(mX3, 1,0,0) );
   }
 
   virtual void shutdown() {}

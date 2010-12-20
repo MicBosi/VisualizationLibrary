@@ -64,8 +64,8 @@ public:
     effect->shader()->gocTextureUnit(0)->setTexture( new vl::Texture("images/tree.png") );
 
     vl::ref<vl::Geometry> tree = generateQuad();
-    tree->transform( vl::mat4::translation(0,+0.5f,0) );
-    tree->transform( vl::mat4::scaling(1.0f,+2.0f,1.0f) );
+    tree->transform( vl::mat4::getTranslation(0,+0.5f,0) );
+    tree->transform( vl::mat4::getScaling(1.0f,+2.0f,1.0f) );
     tree->computeNormals();
 
     for(int i=0; i<tree_count; i++)
@@ -179,7 +179,7 @@ public:
     vl::ref<vl::Transform> arm2_t = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(arm1_t.get());
     arm1_t->addChild(arm2_t.get());
-    arm2_t->setLocalMatrix(vl::mat4::translation(0.0f,2.0f,0.0f) * vl::mat4::rotation(90,0,0,1) * vl::mat4::translation(0.0f,2.0f,0.0f));
+    arm2_t->setLocalMatrix(vl::mat4::getTranslation(0.0f,2.0f,0.0f) * vl::mat4::getRotation(90,0,0,1) * vl::mat4::getTranslation(0.0f,2.0f,0.0f));
 
     sceneManager()->tree()->addActor( arm_g.get(), effect.get(), arm1_t.get());
     sceneManager()->tree()->addActor( arm_g.get(), effect.get(), arm2_t.get());
@@ -208,8 +208,8 @@ public:
   void run()
   {
     mArm1Transform->setLocalMatrix( 
-      vl::mat4::rotation(vl::Time::currentTime()*45,0,1,0) * 
-      vl::mat4::translation(0.0f,2.0f,0.0f)
+      vl::mat4::getRotation(vl::Time::currentTime()*45,0,1,0) * 
+      vl::mat4::getTranslation(0.0f,2.0f,0.0f)
     );
   }
 

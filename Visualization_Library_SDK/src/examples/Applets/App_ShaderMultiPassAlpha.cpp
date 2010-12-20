@@ -83,8 +83,8 @@ public:
     {
       vl::ref<vl::Transform> tr = new vl::Transform;
       vl::Real t = 360.0f / actor_count * i;
-      vl::vec3 v = vl::mat4::rotation(t, 0,1,0) * vl::vec3(30,0,0);
-      tr->setLocalMatrix( vl::mat4::translation(v) );
+      vl::vec3 v = vl::mat4::getRotation(t, 0,1,0) * vl::vec3(30,0,0);
+      tr->setLocalMatrix( vl::mat4::getTranslation(v) );
       vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
       sceneManager()->tree()->addActor( sphere.get(), sphere_fx.get(), tr.get() );
     }
@@ -94,8 +94,8 @@ public:
   void run()
   {
     vl::vec3 eye( 40, 0, 0 );
-    eye = vl::mat4::rotation( vl::Time::currentTime() * 5.0f, 0, 1, 0 ) * eye;
-    vl::mat4 m = vl::mat4::lookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
+    eye = vl::mat4::getRotation( vl::Time::currentTime() * 5.0f, 0, 1, 0 ) * eye;
+    vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };

@@ -91,7 +91,7 @@ public:
         {
           vl::ref<vl::Actor> actor = new vl::Actor(ball.get(),effect.get(),new vl::Transform);
           actors.push_back(actor.get());
-          vl::mat4 mat = vl::mat4::translation(i*2.0f,0,0);
+          vl::mat4 mat = vl::mat4::getTranslation(i*2.0f,0,0);
           actor->transform()->setLocalMatrix(mat);
           actor->transform()->computeWorldMatrix();
         }
@@ -103,7 +103,7 @@ public:
         {
           vl::ref<vl::Actor> actor = new vl::Actor(ball.get(),effect.get(),new vl::Transform);
           actors.push_back(actor.get());
-          vl::mat4 mat = vl::mat4::translation(0,i*2.0f,0);
+          vl::mat4 mat = vl::mat4::getTranslation(0,i*2.0f,0);
           actor->transform()->setLocalMatrix(mat);
           actor->transform()->computeWorldMatrix();
         }
@@ -115,7 +115,7 @@ public:
         {
           vl::ref<vl::Actor> actor = new vl::Actor(ball.get(),effect.get(),new vl::Transform);
           actors.push_back(actor.get());
-          vl::mat4 mat = vl::mat4::translation(0,0,i*2.0f);
+          vl::mat4 mat = vl::mat4::getTranslation(0,0,i*2.0f);
           actor->transform()->setLocalMatrix(mat);
           actor->transform()->computeWorldMatrix();
         }
@@ -129,7 +129,7 @@ public:
           {
             vl::ref<vl::Actor> actor = new vl::Actor(pyramid.get(),effect.get(),new vl::Transform);
             actors.push_back(actor.get());
-            vl::mat4 mat = vl::mat4::translation(x*2.0f,0,y*2.0f);
+            vl::mat4 mat = vl::mat4::getTranslation(x*2.0f,0,y*2.0f);
             actor->transform()->setLocalMatrix(mat);
             actor->transform()->computeWorldMatrix();
           }
@@ -144,7 +144,7 @@ public:
           {
             vl::ref<vl::Actor> actor = new vl::Actor(pyramid.get(),effect.get(),new vl::Transform);
             actors.push_back(actor.get());
-            vl::mat4 mat = vl::mat4::translation(x*2.0f,y*2.0f,0);
+            vl::mat4 mat = vl::mat4::getTranslation(x*2.0f,y*2.0f,0);
             actor->transform()->setLocalMatrix(mat);
             actor->transform()->computeWorldMatrix();
           }
@@ -159,7 +159,7 @@ public:
           {
             vl::ref<vl::Actor> actor = new vl::Actor(pyramid.get(),effect.get(),new vl::Transform);
             actors.push_back(actor.get());
-            vl::mat4 mat = vl::mat4::translation(0,x*2.0f,y*2.0f);
+            vl::mat4 mat = vl::mat4::getTranslation(0,x*2.0f,y*2.0f);
             actor->transform()->setLocalMatrix(mat);
             actor->transform()->computeWorldMatrix();
           }
@@ -172,7 +172,7 @@ public:
         {
           vl::ref<vl::Actor> actor = new vl::Actor(pyramid.get(),effect.get(),new vl::Transform);
           actors.push_back(actor.get());
-          vl::mat4 mat = vl::mat4::translation(rand()%8-4.0f, rand()%8-4.0f, rand()%8-4.0f);
+          vl::mat4 mat = vl::mat4::getTranslation(rand()%8-4.0f, rand()%8-4.0f, rand()%8-4.0f);
           actor->transform()->setLocalMatrix(mat);
           actor->transform()->computeWorldMatrix();
         }

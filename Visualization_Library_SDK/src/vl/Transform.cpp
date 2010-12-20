@@ -229,27 +229,27 @@ const mat4& Transform::localMatrix() const
 //-----------------------------------------------------------------------------
 void Transform::translate(Real x, Real y, Real z)
 {
-  setLocalMatrix( mat4::translation(x,y,z)*localMatrix() );
+  setLocalMatrix( mat4::getTranslation(x,y,z)*localMatrix() );
 }
 //-----------------------------------------------------------------------------
 void Transform::translate(const vec3& t)
 {
-  setLocalMatrix( mat4::translation(t)*localMatrix() );
+  setLocalMatrix( mat4::getTranslation(t)*localMatrix() );
 }
 //-----------------------------------------------------------------------------
 void Transform::scale(Real x, Real y, Real z)
 {
-  setLocalMatrix( mat4::scaling(x,y,z)*localMatrix() );
+  setLocalMatrix( mat4::getScaling(x,y,z)*localMatrix() );
 }
 //-----------------------------------------------------------------------------
 void Transform::rotate(Real degrees, Real x, Real y, Real z)
 {
-  setLocalMatrix( mat4::rotation(degrees,x,y,z)*localMatrix() );
+  setLocalMatrix( mat4::getRotation(degrees,x,y,z)*localMatrix() );
 }
 //-----------------------------------------------------------------------------
 void Transform::rotate(const vec3& from, const vec3& to)
 {
-  setLocalMatrix( mat4::rotation(from,to)*localMatrix() );
+  setLocalMatrix( mat4::getRotation(from,to)*localMatrix() );
 }
 //-----------------------------------------------------------------------------
 mat4 Transform::getComputedWorldMatrix()

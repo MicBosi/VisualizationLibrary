@@ -134,7 +134,7 @@ public:
     axis.normalize();
     if (axis.isNull())
       return;
-    mTransform->setLocalMatrix( vl::mat4::rotation( vl::Time::currentTime()*120.0f, axis) );
+    mTransform->setLocalMatrix( vl::mat4::getRotation( vl::Time::currentTime()*120.0f, axis) );
     // animate metaballs
     float t = (float)vl::fract( vl::Time::currentTime()*0.05f );
     t = vl::clamp(t, 0.0f, 0.999f);
@@ -251,7 +251,7 @@ public:
   // generates the 2 transparent volumes or a single volume
   vl::Actor* showVolumes(bool test1)
   {
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::translation(0,0,20) );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,20) );
 
     vl::ref<vl::Geometry > geom = new vl::Geometry;
     geom->setVertexArray(mMarchingCubes.mVertsArray.get());
@@ -323,9 +323,9 @@ public:
       vl::AABB box = vol_act->lod(0)->boundingBox();
       // transforms object vertex coordinates to 0..1 cube, this might create a "bleeding color" effect at the very side of the cube.
       // note that to be really precise we should use 1/2N ... 1-1/2N in each direction instead of 0..1.
-      vl::mat4 tex_mat = vl::mat4::translation( vl::vec3(0.5f,0.5f,0.5f) ) * 
-                         vl::mat4::scaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
-                         vl::mat4::translation( -box.center() );
+      vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) * 
+                         vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
+                         vl::mat4::getTranslation( -box.center() );
       fx->shader()->gocTextureMatrix(0)->setMatrix(tex_mat);
     #endif
 
@@ -334,9 +334,9 @@ public:
       // transforms object vertex coordinates to 0..1 cube.
       vol_act->lod(0)->computeBounds();
       vl::AABB box = vol_act->lod(0)->boundingBox();
-      vl::mat4 tex_mat = vl::mat4::translation( vl::vec3(0.5f,0.5f,0.5f) ) * 
-                         vl::mat4::scaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
-                         vl::mat4::translation( -box.center() );
+      vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) * 
+                         vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
+                         vl::mat4::getTranslation( -box.center() );
 
       fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( mColorImage.get() ) );
       vl::ref<vl::ArrayFloat3> tex_array = new vl::ArrayFloat3;
@@ -360,9 +360,9 @@ public:
     // transforms object vertex coordinates to 0..1 cube.
     vol_act->lod(0)->computeBounds();
     vl::AABB box = vol_act->lod(0)->boundingBox();
-    vl::mat4 tex_mat = vl::mat4::translation( vl::vec3(0.5f,0.5f,0.5f) ) * 
-                       vl::mat4::scaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
-                       vl::mat4::translation( -box.center() );
+    vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) * 
+                       vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
+                       vl::mat4::getTranslation( -box.center() );
 
     vl::ref<vl::ArrayFloat4> color_array = new vl::ArrayFloat4;
     color_array->resize( geom->vertexArray()->size() );
@@ -380,7 +380,7 @@ public:
   // Setups the good old metaballs demo!
   vl::Actor* setupMetaballs()
   {
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::translation(0,0,25) );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,25) );
 
     sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor( mTextActor.get() );
@@ -418,7 +418,7 @@ public:
   // Setups the metaballs fountain demo!
   vl::Actor* setupFountain()
   {
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::translation(0,0,25) );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,25) );
 
     sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor( mTextActor.get() );
@@ -482,7 +482,7 @@ public:
     // reset actors and camera
     sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor( mTextActor.get() );
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::lookAt( vl::vec3(5,10,20), vl::vec3(0,0,0), vl::vec3(0,1,0)) );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getLookAt( vl::vec3(5,10,20), vl::vec3(0,0,0), vl::vec3(0,1,0)) );
 
     float range = 5.0f;
     vl::fvec3 min_corner(-range,-range,-range);
@@ -498,7 +498,7 @@ public:
   void loadVolume(vl::ref<vl::Image> vol_img)
   {
     // reset camera
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::translation(0,0,20) );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,20) );
 
     // reset actors
     sceneManager()->tree()->actors()->clear();

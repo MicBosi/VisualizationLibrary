@@ -43,22 +43,22 @@ public:
   virtual void run()
   {
     // rotate arm0
-    mTransfArm0->setLocalMatrix( vl::mat4::rotation(vl::Time::currentTime()*30.0f, 0.0f, 1.0f, 0.0f) );
+    mTransfArm0->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*30.0f, 0.0f, 1.0f, 0.0f) );
 
     // rotate arm1
-    mTransfArm1->setLocalMatrix( vl::mat4::translation(0,10,0)*vl::mat4::rotation( sin(vl::Time::currentTime())*120.0f, 1.0f, 0, 0.0f) );
+    mTransfArm1->setLocalMatrix( vl::mat4::getTranslation(0,10,0)*vl::mat4::getRotation( sin(vl::Time::currentTime())*120.0f, 1.0f, 0, 0.0f) );
 
     // rotate arm2
-    mTransfArm2->setLocalMatrix( vl::mat4::translation(0,10,0)*vl::mat4::rotation( sin(vl::Time::currentTime())*120.0f, 0.0f, 0, 1.0f) );
+    mTransfArm2->setLocalMatrix( vl::mat4::getTranslation(0,10,0)*vl::mat4::getRotation( sin(vl::Time::currentTime())*120.0f, 0.0f, 0, 1.0f) );
 
     // rotate arm3
-    mTransfArm3->setLocalMatrix( vl::mat4::translation(0,10,0)*vl::mat4::rotation( sin(vl::Time::currentTime())*120.0f, -1.0f, 0, 0.0f) );
+    mTransfArm3->setLocalMatrix( vl::mat4::getTranslation(0,10,0)*vl::mat4::getRotation( sin(vl::Time::currentTime())*120.0f, -1.0f, 0, 0.0f) );
 
     // rotate finger1
-    mTransfHand1->setLocalMatrix( vl::mat4::translation(0,10,0)*vl::mat4::rotation( (sin(vl::Time::currentTime()*8.0f)*0.5f+0.5f)*60.0f, 1.0f, 0, 0.0f) );
+    mTransfHand1->setLocalMatrix( vl::mat4::getTranslation(0,10,0)*vl::mat4::getRotation( (sin(vl::Time::currentTime()*8.0f)*0.5f+0.5f)*60.0f, 1.0f, 0, 0.0f) );
 
     // rotate finger2
-    mTransfHand2->setLocalMatrix( vl::mat4::translation(0,10,0)*vl::mat4::rotation( (sin(vl::Time::currentTime()*8.0f)*0.5f+0.5f)*-60.0f, 1.0f, 0, 0.0f) );
+    mTransfHand2->setLocalMatrix( vl::mat4::getTranslation(0,10,0)*vl::mat4::getRotation( (sin(vl::Time::currentTime()*8.0f)*0.5f+0.5f)*-60.0f, 1.0f, 0, 0.0f) );
   }
 
   virtual void initEvent()
@@ -97,27 +97,27 @@ public:
     button->setColor(vlut::orange);
     button->computeNormals();
 
-    tr = new vl::Transform( vl::mat4::translation(-6,0,10) );
+    tr = new vl::Transform( vl::mat4::getTranslation(-6,0,10) );
     tr->computeWorldMatrix(NULL);
     sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
-    tr = new vl::Transform( vl::mat4::translation(-4,0,10) );
+    tr = new vl::Transform( vl::mat4::getTranslation(-4,0,10) );
     tr->computeWorldMatrix(NULL);
     sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
-    tr = new vl::Transform( vl::mat4::translation(-2,0,10) );
+    tr = new vl::Transform( vl::mat4::getTranslation(-2,0,10) );
     tr->computeWorldMatrix(NULL);
     sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
-    tr = new vl::Transform( vl::mat4::translation(+2,0,10) );
+    tr = new vl::Transform( vl::mat4::getTranslation(+2,0,10) );
     tr->computeWorldMatrix(NULL);
     sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
-    tr = new vl::Transform( vl::mat4::translation(+4,0,10) );
+    tr = new vl::Transform( vl::mat4::getTranslation(+4,0,10) );
     tr->computeWorldMatrix(NULL);
     sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
-    tr = new vl::Transform( vl::mat4::translation(+6,0,10) );
+    tr = new vl::Transform( vl::mat4::getTranslation(+6,0,10) );
     tr->computeWorldMatrix(NULL);
     sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 

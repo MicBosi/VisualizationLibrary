@@ -238,7 +238,7 @@ void Molecule::generateAtomLabels()
 {
   for(unsigned i=0; i<atoms().size(); ++i)
   {
-    ref<Transform> tr = new vl::Transform(vl::mat4::translation((vec3)atoms()[i]->coordinates()));
+    ref<Transform> tr = new vl::Transform(vl::mat4::getTranslation((vec3)atoms()[i]->coordinates()));
     transformTree()->addChild(tr.get());
     generateAtomLabel(atoms()[i].get(), tr.get());
   }
@@ -316,7 +316,7 @@ void Molecule::atomsStyle()
       float r = atom(iatom)->radius();
       ref<Geometry> ball = atom_geom_cache.acquireAtomGeometry(r);
       ref<Actor> atom_act = new vl::Actor( ball.get(), fx, new Transform );
-      atom_act->transform()->setLocalMatrix( mat4::translation( (vec3)atom(iatom)->coordinates()) );
+      atom_act->transform()->setLocalMatrix( mat4::getTranslation( (vec3)atom(iatom)->coordinates()) );
       transformTree()->addChild(atom_act->transform());
       actorTree()->actors()->push_back( atom_act.get() );
     }
@@ -336,7 +336,7 @@ void Molecule::ballAndStickStyle()
       float r = atom(iatom)->radius();
       ref<Geometry> ball = atom_geom_cache.acquireAtomGeometry(r);
       ref<Actor> atom_act = new vl::Actor( ball.get(), fx, new Transform );
-      atom_act->transform()->setLocalMatrix( mat4::translation( (vec3)atom(iatom)->coordinates()) );
+      atom_act->transform()->setLocalMatrix( mat4::getTranslation( (vec3)atom(iatom)->coordinates()) );
       transformTree()->addChild(atom_act->transform());
       actorTree()->actors()->push_back( atom_act.get() );
     }
@@ -373,7 +373,7 @@ void Molecule::ballAndStickStyle()
       transformTree()->addChild(bond_act->transform());
       vl::fvec3 center = (b->atom1()->coordinates() + b->atom2()->coordinates()) / 2.0f;
       vl::fvec3 direction = (b->atom2()->coordinates() - b->atom1()->coordinates()).normalize();
-      vl::fmat4 mat = vl::fmat4::translation(center) * vl::fmat4::rotation(fvec3(0,1,0), direction);
+      vl::fmat4 mat = vl::fmat4::getTranslation(center) * vl::fmat4::getRotation(fvec3(0,1,0), direction);
       bond_act->transform()->setLocalMatrix( (mat4)mat );
       actorTree()->actors()->push_back( bond_act.get() );
     }
@@ -413,7 +413,7 @@ void Molecule::sticksStyle()
       transformTree()->addChild(bond_act->transform());
       vl::fvec3 center = (b->atom1()->coordinates() + b->atom2()->coordinates()) / 2.0f;
       vl::fvec3 direction = (b->atom2()->coordinates() - b->atom1()->coordinates()).normalize();
-      vl::fmat4 mat = vl::fmat4::translation(center) * vl::fmat4::rotation(fvec3(0,1,0), direction);
+      vl::fmat4 mat = vl::fmat4::getTranslation(center) * vl::fmat4::getRotation(fvec3(0,1,0), direction);
       bond_act->transform()->setLocalMatrix( (mat4)mat );
       actorTree()->actors()->push_back( bond_act.get() );
     }

@@ -137,10 +137,10 @@ public:
       vl::mat4 m;
       switch(i)
       {
-      case 0: m = vl::mat4::lookAt( vl::vec3(0,1,3.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) ); break;
-      case 1: m = vl::mat4::lookAt( vl::vec3(0,1,3.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) ); break;
-      case 2: m = vl::mat4::lookAt( vl::vec3(3.5,1,0), vl::vec3(0,0,0), vl::vec3(0,1,0) ); break;
-      case 3: m = vl::mat4::lookAt( vl::vec3(0,3.5,0), vl::vec3(0,0,0), vl::vec3(0,0,-1) ); break;
+      case 0: m = vl::mat4::getLookAt( vl::vec3(0,1,3.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) ); break;
+      case 1: m = vl::mat4::getLookAt( vl::vec3(0,1,3.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) ); break;
+      case 2: m = vl::mat4::getLookAt( vl::vec3(3.5,1,0), vl::vec3(0,0,0), vl::vec3(0,1,0) ); break;
+      case 3: m = vl::mat4::getLookAt( vl::vec3(0,3.5,0), vl::vec3(0,0,0), vl::vec3(0,0,-1) ); break;
       }
       mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
     }
@@ -148,7 +148,7 @@ public:
 
   virtual void run()
   {
-    _tr1->setLocalMatrix( vl::mat4::rotation(vl::Time::currentTime()*45,0,1,0) );
+    _tr1->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*45,0,1,0) );
   }
 
   virtual void resizeEvent(int w, int h)

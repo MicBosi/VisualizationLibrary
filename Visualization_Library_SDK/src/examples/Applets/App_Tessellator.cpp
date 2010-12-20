@@ -62,10 +62,10 @@ public:
   void run() 
   {
     // Animation: compute rotation matrix to rotate the small star, 45°/sec rotation.
-    vl::dmat4 m = vl::dmat4::rotation( vl::Time::currentTime()*45, 0,0,1 );
+    vl::dmat4 m = vl::dmat4::getRotation( vl::Time::currentTime()*45, 0,0,1 );
     // Filled star on the left, wireframe star on the right
-    mStar1->transform()->setLocalMatrix( vl::mat4::translation(-4,0,0) );
-    mStar2->transform()->setLocalMatrix( vl::mat4::translation(+4,0,0) );
+    mStar1->transform()->setLocalMatrix( vl::mat4::getTranslation(-4,0,0) );
+    mStar2->transform()->setLocalMatrix( vl::mat4::getTranslation(+4,0,0) );
 
     // Concave and self-intersecting polygons cannot be directly rendered by OpenGL, for this
     // reason in order to render them we have to tessellate them first, i.e. we have to decompose

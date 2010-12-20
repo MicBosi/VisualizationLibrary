@@ -198,7 +198,7 @@ void VolumePlot::setupLabels(const vl::String& format, const vl::fvec3& min_corn
     text->setMatrix( textTemplate()->matrix() );
 
     vl::ref<vl::Actor> text_a = new vl::Actor( text.get(), text_fx.get(), new vl::Transform );
-    text_a->transform()->setLocalMatrix( vl::mat4::translation(coords[i][0],coords[i][1],coords[i][2]) );
+    text_a->transform()->setLocalMatrix( vl::mat4::getTranslation(coords[i][0],coords[i][1],coords[i][2]) );
     if (root_tr)
       root_tr->addChild( text_a->transform() );
     text_a->transform()->computeWorldMatrix();

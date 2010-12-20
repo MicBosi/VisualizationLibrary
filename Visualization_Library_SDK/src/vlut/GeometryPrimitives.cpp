@@ -159,8 +159,8 @@ ref<Geometry> vlut::makeUVSphere( const vec3& origin, Real diameter, int phi, in
     {
       // vec3 v(1*radius,radius - radius*2*((Real)i/(theta-1)),0);
       vec3 v(0,1*diameter,0);
-      v = mat4::rotation(180.0f/(theta+1)*(i+1),0,0,1) * v;
-      v = mat4::rotation(360.0f/phi*j,0,1,0)  * v;
+      v = mat4::getRotation(180.0f/(theta+1)*(i+1),0,0,1) * v;
+      v = mat4::getRotation(360.0f/phi*j,0,1,0)  * v;
       vert3->at(vert_idx++) = (fvec3)(v+origin);
     }
   }
@@ -225,7 +225,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
     for(int j=0; j<phi; ++j)
     {
       vec3 v(1*diameter, 1*height - 2*height*((Real)i/(theta-1)), 0);
-      v = mat4::rotation(360.0f/phi*j,0,1,0) * v;
+      v = mat4::getRotation(360.0f/phi*j,0,1,0) * v;
       vert3->at(vert_idx++) = (fvec3)(v + origin);
     }
   }
@@ -261,7 +261,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
     for(int j=0; j<phi; ++j)
     {
       vec3 v(1*diameter, height, 0);
-      v = mat4::rotation(360.0f/phi*j,0,1,0) * v;
+      v = mat4::getRotation(360.0f/phi*j,0,1,0) * v;
       vert3->at(vert_idx++) = (fvec3)(v + origin);
     }
 
@@ -283,7 +283,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
     for(int j=0; j<phi; ++j)
     {
       vec3 v(1*diameter, - height, 0);
-      v = mat4::rotation(360.0f/phi*j,0,1,0) * v;
+      v = mat4::getRotation(360.0f/phi*j,0,1,0) * v;
       vert3->at(vert_idx++) = (fvec3)(v + origin);
     }
 
@@ -330,9 +330,9 @@ ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness
     {
       vec3 v(thickness, 0, 0);
       vec3 o(radius, 0, 0);
-      v = mat4::rotation(360.0f/phi*j,0,1,0) * v;
-      v = mat4::rotation(360.0f/theta*i,0,0,1) * v;
-      o = mat4::rotation(360.0f/theta*i,0,0,1) * o;
+      v = mat4::getRotation(360.0f/phi*j,0,1,0) * v;
+      v = mat4::getRotation(360.0f/theta*i,0,0,1) * v;
+      o = mat4::getRotation(360.0f/theta*i,0,0,1) * o;
 
       if (tex_coords)
         texc2->at(vect_idx) = fvec2((float)i/theta,(float)j/phi) * tex_coords;
@@ -484,7 +484,7 @@ ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, in
   for(int j=0; j<phi; ++j)
   {
     vec3 v(1*diameter, -height/2.0f, 0);
-    v = mat4::rotation(360.0f/phi*j,0,1,0) * v;
+    v = mat4::getRotation(360.0f/phi*j,0,1,0) * v;
     vert3->at(vert_idx++) = (fvec3)(v + origin);
   }
 
@@ -505,7 +505,7 @@ ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, in
     for(int j=0; j<phi; ++j)
     {
       vec3 v(1*diameter, -height/2.0f, 0);
-      v = mat4::rotation(360.0f/phi*j,0,1,0) * v;
+      v = mat4::getRotation(360.0f/phi*j,0,1,0) * v;
       vert3->at(vert_idx++) = (fvec3)(v + origin);
     }
 
@@ -661,7 +661,7 @@ ref<Geometry> vlut::makeCircle( vec3 origin, Real radius, int slices )
   for(int i=0; i<slices; ++i)
   {
     Real t = 360.0f * i / slices;
-    vec3 v = mat4::rotation(t,0,1,0) * vec3(radius,0,0) + origin;
+    vec3 v = mat4::getRotation(t,0,1,0) * vec3(radius,0,0) + origin;
     points->at(i) = (fvec3)v;
   }
   geom->drawCalls()->push_back( new DrawArrays(PT_LINE_LOOP, 0, points->size()) );
@@ -801,7 +801,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
       {
         float a = (float)i/segments*360;
         fvec3 v(::cos(aj)*radius,::sin(aj)*radius,0);
-        verts.push_back(fmat4::rotation(a,0,1,0) * v + fvec3(0,height2,0));
+        verts.push_back(fmat4::getRotation(a,0,1,0) * v + fvec3(0,height2,0));
         cols.push_back(top_col);
       }
     }
@@ -843,7 +843,7 @@ ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsu
       {
         float a = -(float)i/segments*360;
         fvec3 v(::cos(aj)*radius,-::sin(aj)*radius,0);
-        verts.push_back(fmat4::rotation(a,0,1,0) * v + fvec3(0,-height2,0));
+        verts.push_back(fmat4::getRotation(a,0,1,0) * v + fvec3(0,-height2,0));
         cols.push_back(bottom_col);
       }
     }

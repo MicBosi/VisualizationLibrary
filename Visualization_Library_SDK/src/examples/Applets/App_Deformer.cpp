@@ -88,7 +88,7 @@ public:
 
     mGrid = vlut::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, mSlices, mSlices, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     mGrid->setVBOEnabled(false);
-    mGrid->transform(vl::mat4::rotation(-90,1,0,0));
+    mGrid->transform(vl::mat4::getRotation(-90,1,0,0));
     mPoints = dynamic_cast<vl::ArrayFloat3*>(mGrid->vertexArray());
 
     // save point coordinates for the animation keyframe
@@ -111,7 +111,7 @@ public:
     cursor_fx->shader()->enable(vl::EN_COLOR_LOGIC_OP);
     vl::ref<vl::Geometry> cursor = vlut::makeCircle(vl::vec3(0,0,0), 1.0f);
     
-    cursor->transform(vl::mat4::rotation(-90,1,0,0));
+    cursor->transform(vl::mat4::getRotation(-90,1,0,0));
     mCursorActor = sceneManager()->tree()->addActor(cursor.get(), cursor_fx.get(), mCursorTransform.get());
     // ensure the cursor is rendered over the image (whose render rank is 0 by default)
     mCursorActor->setRenderRank(1);
@@ -391,7 +391,7 @@ public:
     float y_scaling = (float)h / mImage->height();
     float scaling   = x_scaling < y_scaling ? x_scaling : y_scaling;
 
-    m = m * vl::mat4::scaling(scaling*mImage->width(), scaling*mImage->height(), scaling);
+    m = m * vl::mat4::getScaling(scaling*mImage->width(), scaling*mImage->height(), scaling);
     mTransform->setLocalMatrix(m);
     // openglContext()->update();
   }

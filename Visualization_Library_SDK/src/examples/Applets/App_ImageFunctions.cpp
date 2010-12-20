@@ -182,13 +182,13 @@ public:
     }
 
     vl::ref<vl::Geometry> quad = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
-    quad->transform( vl::mat4::rotation(-90, 1,0,0), false );
+    quad->transform( vl::mat4::getRotation(-90, 1,0,0), false );
 
     // (1)
     // transform
     vl::ref<vl::Transform> tr_1 = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_1.get());
-    tr_1->setLocalMatrix(vl::mat4::translation(-5,0,0));
+    tr_1->setLocalMatrix(vl::mat4::getTranslation(-5,0,0));
     // effect
     vl::ref<vl::Effect> fx_1 = new vl::Effect;
     fx_1->shader()->enable(vl::EN_BLEND);
@@ -204,7 +204,7 @@ public:
     // transform
     vl::ref<vl::Transform> tr_2 = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_2.get());
-    tr_2->setLocalMatrix(vl::mat4::translation(+5,0,0));
+    tr_2->setLocalMatrix(vl::mat4::getTranslation(+5,0,0));
     // effect
     vl::ref<vl::Effect> fx_2 = new vl::Effect;
     fx_2->shader()->enable(vl::EN_BLEND);
@@ -220,7 +220,7 @@ public:
     // transform
     vl::ref<vl::Transform> tr_x = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_x.get());
-    tr_x->setLocalMatrix(vl::mat4::translation(-2.5-5,+7.5,0) * vl::mat4::scaling(0.5f,0.5f,1.0f));
+    tr_x->setLocalMatrix(vl::mat4::getTranslation(-2.5-5,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_x = new vl::Effect;
     fx_x->shader()->enable(vl::EN_BLEND);
@@ -236,7 +236,7 @@ public:
     // transform
     vl::ref<vl::Transform> tr_y = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_y.get());
-    tr_y->setLocalMatrix(vl::mat4::translation(-2.5,+7.5,0) * vl::mat4::scaling(0.5f,0.5f,1.0f));
+    tr_y->setLocalMatrix(vl::mat4::getTranslation(-2.5,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_y = new vl::Effect;
     fx_y->shader()->enable(vl::EN_BLEND);
@@ -252,7 +252,7 @@ public:
     // transform
     vl::ref<vl::Transform> tr_z = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_z.get());
-    tr_z->setLocalMatrix(vl::mat4::translation(+2.5,+7.5,0) * vl::mat4::scaling(0.5f,0.5f,1.0f));
+    tr_z->setLocalMatrix(vl::mat4::getTranslation(+2.5,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_z = new vl::Effect;
     fx_z->shader()->enable(vl::EN_BLEND);
@@ -268,7 +268,7 @@ public:
     // transform
     vl::ref<vl::Transform> tr_w = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_w.get());
-    tr_w->setLocalMatrix(vl::mat4::translation(+2.5+5.0,+7.5,0) * vl::mat4::scaling(0.5f,0.5f,1.0f));
+    tr_w->setLocalMatrix(vl::mat4::getTranslation(+2.5+5.0,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_w = new vl::Effect;
     fx_w->shader()->enable(vl::EN_BLEND);
@@ -284,7 +284,7 @@ public:
     // transform
     vl::ref<vl::Transform> tr_a = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_a.get());
-    tr_a->setLocalMatrix(vl::mat4::translation(-2.5-5,-7.5,0) * vl::mat4::scaling(0.5f,0.5f,1.0f));
+    tr_a->setLocalMatrix(vl::mat4::getTranslation(-2.5-5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_a = new vl::Effect;
     fx_a->shader()->enable(vl::EN_BLEND);
@@ -300,7 +300,7 @@ public:
     // transform
     vl::ref<vl::Transform> tr_b = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_b.get());
-    tr_b->setLocalMatrix(vl::mat4::translation(-2.5,-7.5,0) * vl::mat4::scaling(0.5f,0.5f,1.0f));
+    tr_b->setLocalMatrix(vl::mat4::getTranslation(-2.5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_b = new vl::Effect;
     fx_b->shader()->enable(vl::EN_BLEND);
@@ -316,7 +316,7 @@ public:
     // transform
     vl::ref<vl::Transform> tr_c = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_c.get());
-    tr_c->setLocalMatrix(vl::mat4::translation(+2.5,-7.5,0) * vl::mat4::scaling(0.5f,0.5f,1.0f));
+    tr_c->setLocalMatrix(vl::mat4::getTranslation(+2.5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_c = new vl::Effect;
     fx_c->shader()->enable(vl::EN_BLEND);
@@ -332,7 +332,7 @@ public:
     // transform
     vl::ref<vl::Transform> tr_d = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_d.get());
-    tr_d->setLocalMatrix(vl::mat4::translation(+2.5+5,-7.5,0) * vl::mat4::scaling(0.5f,0.5f,1.0f));
+    tr_d->setLocalMatrix(vl::mat4::getTranslation(+2.5+5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_d = new vl::Effect;
     fx_d->shader()->enable(vl::EN_BLEND);

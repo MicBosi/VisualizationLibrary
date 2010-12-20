@@ -110,11 +110,11 @@ public:
     VL_CHECK_OGL()
 
     mGridEffect = vlut::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, 4, 4, true, vl::fvec2(0,0), vl::fvec2(1,1) );
-    mGridEffect->transform(vl::mat4::rotation(-90,1,0,0));
+    mGridEffect->transform(vl::mat4::getRotation(-90,1,0,0));
 
     mGridOriginal = vlut::makeGrid( vl::vec3(0.25f,0,0), 0.5f, 1.0f, 4, 4, true, vl::fvec2(0,0), vl::fvec2(0.5f,1) );
-    mGridOriginal->transform(vl::mat4::rotation(-90,1,0,0));
-    mGridOriginal->texCoordArray(0)->transform( vl::mat4::translation(0.5f, 0,0) );
+    mGridOriginal->transform(vl::mat4::getRotation(-90,1,0,0));
+    mGridOriginal->texCoordArray(0)->transform( vl::mat4::getTranslation(0.5f, 0,0) );
 
     mTransform = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform.get());
@@ -203,7 +203,7 @@ public:
       float y_scaling = (float)h / mImage->height();
       float scaling   = x_scaling < y_scaling ? x_scaling : y_scaling;
 
-      m = m * vl::mat4::scaling(scaling*mImage->width(), scaling*mImage->height(), scaling);
+      m = m * vl::mat4::getScaling(scaling*mImage->width(), scaling*mImage->height(), scaling);
       mTransform->setLocalMatrix(m);
     }
   }

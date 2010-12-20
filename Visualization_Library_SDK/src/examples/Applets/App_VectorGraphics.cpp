@@ -309,7 +309,7 @@ public:
       std::vector<vl::dvec2> star_line_loop;
       for(int i=0; i<5; ++i)
       {
-        vl::dvec3 v = vl::dmat4::rotation(90.0+i*360.0/5.0*2.0 , 0,0,1) * vl::dvec3(50.0,0,0);
+        vl::dvec3 v = vl::dmat4::getRotation(90.0+i*360.0/5.0*2.0 , 0,0,1) * vl::dvec3(50.0,0,0);
         // snap to integer coordinates to avoid aliasing
         v = vl::trunc(v);
         star_line_loop.push_back(v.xy());
@@ -319,8 +319,8 @@ public:
       std::vector<vl::dvec2> star_lines;
       for(int i=0; i<5; ++i)
       {
-        vl::dvec3 v1 = vl::dmat4::rotation(90.0+i*360.0/5.0*2.0 , 0,0,1) * vl::dvec3(50.0,0,0);
-        vl::dvec3 v2 = vl::dmat4::rotation(90.0+((i+1)%5)*360.0/5.0*2.0 , 0,0,1) * vl::dvec3(50.0,0,0);
+        vl::dvec3 v1 = vl::dmat4::getRotation(90.0+i*360.0/5.0*2.0 , 0,0,1) * vl::dvec3(50.0,0,0);
+        vl::dvec3 v2 = vl::dmat4::getRotation(90.0+((i+1)%5)*360.0/5.0*2.0 , 0,0,1) * vl::dvec3(50.0,0,0);
         // snap to integer coordinates to avoid aliasing
         v1 = vl::trunc(v1);
         v2 = vl::trunc(v2);
@@ -360,11 +360,11 @@ public:
       star3->setTransform( new vl::Transform );
       star4->setTransform( new vl::Transform );
       star5->setTransform( new vl::Transform );
-      star1->transform()->setLocalMatrix( vl::mat4::translation(50,50,0) );
-      star2->transform()->setLocalMatrix( vl::mat4::translation(150,50,0) );
-      star3->transform()->setLocalMatrix( vl::mat4::translation(250,50,0) );
-      star4->transform()->setLocalMatrix( vl::mat4::translation(350,50,0) );
-      star5->transform()->setLocalMatrix( vl::mat4::translation(450,50,0) );
+      star1->transform()->setLocalMatrix( vl::mat4::getTranslation(50,50,0) );
+      star2->transform()->setLocalMatrix( vl::mat4::getTranslation(150,50,0) );
+      star3->transform()->setLocalMatrix( vl::mat4::getTranslation(250,50,0) );
+      star4->transform()->setLocalMatrix( vl::mat4::getTranslation(350,50,0) );
+      star5->transform()->setLocalMatrix( vl::mat4::getTranslation(450,50,0) );
       // Since they are not animated we can setup the matrices without binding it to the Rendering's root Transform
       star1->transform()->computeWorldMatrix();
       star2->transform()->computeWorldMatrix();
@@ -377,10 +377,10 @@ public:
 
   virtual void run()
   {
-    vl::mat4 mat = vl::mat4::rotation(vl::Time::currentTime() * 60.0f, 0, 0, 1);
-    mat = vl::mat4::translation(sin(vl::Time::currentTime()*vl::fPi*0.25f)*200.0f,0,0) * mat;
-    mat = vl::mat4::rotation(vl::Time::currentTime() * 5.0f, 0, 0, 1) * mat;
-    mat = vl::mat4::translation(256,256,0) * mat;
+    vl::mat4 mat = vl::mat4::getRotation(vl::Time::currentTime() * 60.0f, 0, 0, 1);
+    mat = vl::mat4::getTranslation(sin(vl::Time::currentTime()*vl::fPi*0.25f)*200.0f,0,0) * mat;
+    mat = vl::mat4::getRotation(vl::Time::currentTime() * 5.0f, 0, 0, 1) * mat;
+    mat = vl::mat4::getTranslation(256,256,0) * mat;
     mRoseTransform->setLocalMatrix(mat);
 
     mat.setIdentity();

@@ -1642,7 +1642,7 @@ namespace vl
     fmat2 t;
     for(int i=0; i<2; ++i)
       for(int j=0; j<2; ++j)
-        t[i][j] = a[i][j] * b[i][j];
+        t.e(j,i) = a.e(j,i) * b.e(j,i);
     return t;
   }
   inline fmat3 matrixCompMult(const fmat3& a, const fmat3& b)
@@ -1650,7 +1650,7 @@ namespace vl
     fmat3 t;
     for(int i=0; i<3; ++i)
       for(int j=0; j<3; ++j)
-        t[i][j] = a[i][j] * b[i][j];
+        t.e(j,i) = a.e(j,i) * b.e(j,i);
     return t;
   }
   inline fmat4 matrixCompMult(const fmat4& a, const fmat4& b)
@@ -1658,7 +1658,7 @@ namespace vl
     fmat4 t;
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
-        t[i][j] = a[i][j] * b[i][j];
+        t.e(j,i) = a.e(j,i) * b.e(j,i);
     return t;
   }
 
@@ -1669,7 +1669,7 @@ namespace vl
     dmat2 t;
     for(int i=0; i<2; ++i)
       for(int j=0; j<2; ++j)
-        t[i][j] = a[i][j] * b[i][j];
+        t.e(j,i) = a.e(j,i) * b.e(j,i);
     return t;
   }
   inline dmat3 matrixCompMult(const dmat3& a, const dmat3& b)
@@ -1677,7 +1677,7 @@ namespace vl
     dmat3 t;
     for(int i=0; i<3; ++i)
       for(int j=0; j<3; ++j)
-        t[i][j] = a[i][j] * b[i][j];
+        t.e(j,i) = a.e(j,i) * b.e(j,i);
     return t;
   }
   inline dmat4 matrixCompMult(const dmat4& a, const dmat4& b)
@@ -1685,7 +1685,7 @@ namespace vl
     dmat4 t;
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
-        t[i][j] = a[i][j] * b[i][j];
+        t.e(j,i) = a.e(j,i) * b.e(j,i);
     return t;
   }
 
@@ -1696,7 +1696,7 @@ namespace vl
     fmat2 m;
     for(int i=0; i<2; ++i)
       for(int j=0; j<2; ++j)
-        m[j][i] = a[i] * b[j];
+        m.e(i,j) = a[i] * b[j];
     return m;
   }
   inline fmat3 outerProduct(const fvec3& a, const fvec3& b)
@@ -1704,7 +1704,7 @@ namespace vl
     fmat3 m;
     for(int i=0; i<3; ++i)
       for(int j=0; j<3; ++j)
-        m[j][i] = a[i] * b[j];
+        m.e(i,j) = a[i] * b[j];
     return m;
   }
   inline fmat4 outerProduct(const fvec4& a, const fvec4& b)
@@ -1712,7 +1712,7 @@ namespace vl
     fmat4 m;
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
-        m[j][i] = a[i] * b[j];
+        m.e(i,j) = a[i] * b[j];
     return m;
   }
 
@@ -1723,7 +1723,7 @@ namespace vl
     dmat2 m;
     for(int i=0; i<2; ++i)
       for(int j=0; j<2; ++j)
-        m[j][i] = a[i] * b[j];
+        m.e(i,j) = a[i] * b[j];
     return m;
   }
   inline dmat3 outerProduct(const dvec3& a, const dvec3& b)
@@ -1731,7 +1731,7 @@ namespace vl
     dmat3 m;
     for(int i=0; i<3; ++i)
       for(int j=0; j<3; ++j)
-        m[j][i] = a[i] * b[j];
+        m.e(i,j) = a[i] * b[j];
     return m;
   }
   inline dmat4 outerProduct(const dvec4& a, const dvec4& b)
@@ -1739,7 +1739,7 @@ namespace vl
     dmat4 m;
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
-        m[j][i] = a[i] * b[j];
+        m.e(i,j) = a[i] * b[j];
     return m;
   }
 
@@ -1750,7 +1750,7 @@ namespace vl
     fmat2 t;
     for(int i=0; i<2; ++i)
       for(int j=0; j<2; ++j)
-        t[i][j] = a[j][i];
+        t.e(j,i) = a.e(i,j);
     return t;
   }
   inline fmat3 transpose(const fmat3& a)
@@ -1758,7 +1758,7 @@ namespace vl
     fmat3 t;
     for(int i=0; i<3; ++i)
       for(int j=0; j<3; ++j)
-        t[i][j] = a[j][i];
+        t.e(j,i) = a.e(i,j);
     return t;
   }
   inline fmat4 transpose(const fmat4& a)
@@ -1766,7 +1766,7 @@ namespace vl
     fmat4 t;
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
-        t[i][j] = a[j][i];
+        t.e(j,i) = a.e(i,j);
     return t;
   }
 
@@ -1777,7 +1777,7 @@ namespace vl
     dmat2 t;
     for(int i=0; i<2; ++i)
       for(int j=0; j<2; ++j)
-        t[i][j] = a[j][i];
+        t.e(j,i) = a.e(i,j);
     return t;
   }
   inline dmat3 transpose(const dmat3& a)
@@ -1785,7 +1785,7 @@ namespace vl
     dmat3 t;
     for(int i=0; i<3; ++i)
       for(int j=0; j<3; ++j)
-        t[i][j] = a[j][i];
+        t.e(j,i) = a.e(i,j);
     return t;
   }
   inline dmat4 transpose(const dmat4& a)
@@ -1793,7 +1793,7 @@ namespace vl
     dmat4 t;
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
-        t[i][j] = a[j][i];
+        t.e(j,i) = a.e(i,j);
     return t;
   }
 

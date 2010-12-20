@@ -116,7 +116,7 @@ public:
 
       sceneManager()->tree()->addActor( morph_act2.get() );
       morph_act2->setTransform( new vl::Transform );
-      morph_act2->transform()->setLocalMatrix( vl::mat4::translation(x,-morph_act2->lod(0)->boundingBox().minCorner().y(),z) );
+      morph_act2->transform()->setLocalMatrix( vl::mat4::getTranslation(x,-morph_act2->lod(0)->boundingBox().minCorner().y(),z) );
       morph_act2->transform()->computeWorldMatrix(NULL);
 
       switch(i % 5)
