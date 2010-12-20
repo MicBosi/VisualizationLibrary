@@ -29,47 +29,10 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vl/Quaternion.hpp"
-#include <set>
+#include <vl/Quaternion.hpp>
+#include <vl/math3D.hpp>
+#include <cmath>
 
 using namespace vl;
 
-namespace blind_tests
-{
-  bool test_math()
-  {
-    // 1) testa tutti i metodi
-    // 2) implementa operator+() basato su operator+=() e non viceversa -> quaternion e anche tutte le altre classi
-
-    // quaternion compilation and functionality tests
-
-
-    std::set<fquat> qset;
-    qset.insert(fquat());
-
-    dquat qd;
-    fquat q1(1,2,3,4), q2( fvec4(1,2,3,4) );
-    fquat q3(q1), q4(1,fvec3(2,3,4));
-    q2 = fvec4(1,2,3,4);
-    fvec4 v1;
-    q1 = q2;
-    q1 = (fquat)qd;
-    v1 = q1 * v1;
-    bool ok = q1 == q2;
-    ok = q1 != q2;
-    q1.setZero();
-    q1.setNoRotation();
-    q1.fromVectors(fvec4(1,2,3,4), fvec4(1,2,3,4));
-    q1.fromMatrix( fmat4::rotation(45, 0, 1, 0) );
-    q1.fromEulerXYZ(10,20,30);
-    q1.fromEulerZYX(10,20,30);
-    q1.fromAxisAngle(90, fvec3(1,2,3));
-    fvec3 v3; float angle = 0;
-    q1.toAxisAngle(v3, angle);
-    fmat4 m1 = q1.toMatrix();
-    v1 = q1.xyzw();
-    q1 = v1;
-
-    return false;
-  }
-}
+//-----------------------------------------------------------------------------

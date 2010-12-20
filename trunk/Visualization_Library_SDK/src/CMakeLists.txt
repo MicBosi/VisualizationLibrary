@@ -109,7 +109,6 @@ SET(VL_SRC
   vl/ZippedDirectory.cpp
   vl/ZippedFile.cpp
   vl/math3D.cpp
-  vl/quat.cpp
 )
 
 set(VL_INC
@@ -246,7 +245,7 @@ set(VL_INC
   vl/checks.hpp
   vl/config.hpp
   vl/math3D.hpp
-  vl/quat.hpp
+  vl/Quaternion.hpp
   vl/version.hpp
   vl/vlnamespace.hpp
 )
