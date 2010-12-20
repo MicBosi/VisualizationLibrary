@@ -274,7 +274,7 @@ namespace vl
     VL_COMPILE_TIME_CHECK( sizeof(int) == sizeof(float) );
     void initData(int count) { mData.resize(count); }
     void initDouble(int count) { mData.resize(count*2); }
-    int singleCount() const { return singleCount(); }
+    int singleCount() const { return (int)mData.size(); }
     int doubleCount() const { VL_CHECK((mData.size() & 0x1) == 0 ); return (int)(mData.size() >> 1); }
     double* doubleData() { VL_CHECK(!mData.empty()); VL_CHECK((mData.size() & 0x1) == 0 ); return (double*)&mData[0]; }
     float* floatData() { VL_CHECK(!mData.empty()); return (float*)&mData[0]; }

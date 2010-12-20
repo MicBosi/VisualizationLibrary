@@ -62,22 +62,20 @@ namespace vl
       mXYZW.w() = (T_scalar_type)quat.xyzw().w();
     }
     //-----------------------------------------------------------------------------
-    template<typename T>
-    explicit Quaternion(T x, T y, T z, T w)
+    explicit Quaternion(T_scalar_type x, T_scalar_type y, T_scalar_type z, T_scalar_type w)
     {
-      mXYZW.x() = (T_scalar_type)x;
-      mXYZW.y() = (T_scalar_type)y;
-      mXYZW.z() = (T_scalar_type)z;
-      mXYZW.w() = (T_scalar_type)w;
+      mXYZW.x() = x;
+      mXYZW.y() = y;
+      mXYZW.z() = z;
+      mXYZW.w() = w;
     }
     //-----------------------------------------------------------------------------
     explicit Quaternion(T_scalar_type degrees, const Vector3<T_scalar_type>& axis)
     {
-      fromAxisAngle(degrees, axis);
+      fromAxisAngle(axis, degrees);
     }
     //-----------------------------------------------------------------------------
-    template<typename T>
-    explicit Quaternion(const Vector4<T>& v)
+    explicit Quaternion(const Vector4<T_scalar_type>& v)
     {
       mXYZW.x() = (T_scalar_type)v.x();
       mXYZW.y() = (T_scalar_type)v.y();
@@ -85,8 +83,16 @@ namespace vl
       mXYZW.w() = (T_scalar_type)v.w();
     }
     //-----------------------------------------------------------------------------
-    template<typename T>
-    Quaternion& operator=(const Vector4<T>& v)
+    Quaternion& operator=(const Quaternion& q)
+    {
+      mXYZW.x() = q.x();
+      mXYZW.y() = q.y();
+      mXYZW.z() = q.z();
+      mXYZW.w() = q.w();
+      return *this;
+    }
+    //-----------------------------------------------------------------------------
+    Quaternion& operator=(const Vector4<T_scalar_type>& v)
     {
       mXYZW.x() = (T_scalar_type)v.x();
       mXYZW.y() = (T_scalar_type)v.y();
@@ -152,10 +158,10 @@ namespace vl
     //-----------------------------------------------------------------------------
     Quaternion& fromEulerZYX(T_scalar_type degZ, T_scalar_type degY, T_scalar_type degX );
     //-----------------------------------------------------------------------------
-    Quaternion& fromAxisAngle(T_scalar_type degrees, const Vector3<T_scalar_type>& axis);
+    Quaternion& fromAxisAngle( const Vector3<T_scalar_type>& axis, T_scalar_type degrees );
     //-----------------------------------------------------------------------------
     //! Expects a unit length quaternion.
-    void toAxisAngle( Vector3<T_scalar_type>& axis, T_scalar_type& angle ) const;
+    void toAxisAngle( Vector3<T_scalar_type>& axis, T_scalar_type& degrees ) const;
     //-----------------------------------------------------------------------------
     //! Expects a unit length quaternion.
     Matrix4<T_scalar_type> toMatrix() const;
@@ -425,7 +431,7 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar_type>
-  Quaternion<T_scalar_type>& Quaternion<T_scalar_type>::fromAxisAngle(T_scalar_type degrees, const Vector3<T_scalar_type>& axis)
+  Quaternion<T_scalar_type>& Quaternion<T_scalar_type>::fromAxisAngle( const Vector3<T_scalar_type>& axis, T_scalar_type degrees )
   {
     degrees *= (T_scalar_type)dDEG_TO_RAD;
     T_scalar_type sa2 = sin(degrees * (T_scalar_type)0.5);
@@ -439,15 +445,24 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar_type>
-  void Quaternion<T_scalar_type>::toAxisAngle( Vector3<T_scalar_type>& axis, T_scalar_type& angle ) const
+  void Quaternion<T_scalar_type>::toAxisAngle( Vector3<T_scalar_type>& axis, T_scalar_type& degrees ) const
   {
-    T_scalar_type iscale = inversesqrt( x()*x() + y()*y() + z()*z() );
-    axis.x() = x() * iscale;
-    axis.y() = y() * iscale;
-    axis.z() = z() * iscale;
-    VL_CHECK(w()>=-1.0 && w()<=+1.0)
-    T_scalar_type tw = clamp(w(),(T_scalar_type)-1.0,(T_scalar_type)+1.0);
-    angle = acos( tw ) * (T_scalar_type)2.0;
+    T_scalar_type iscale = sqrt( x()*x() + y()*y() + z()*z() );
+    if (iscale == 0)
+    {
+      axis = fvec3(0,0,0);
+      degrees = 0;
+    }
+    else
+    {
+      iscale = T_scalar_type(1.0) / iscale;
+      axis.x() = x() * iscale;
+      axis.y() = y() * iscale;
+      axis.z() = z() * iscale;
+      VL_CHECK(w()>=-1.0 && w()<=+1.0)
+      T_scalar_type tw = clamp(w(),(T_scalar_type)-1.0,(T_scalar_type)+1.0);
+      degrees = acos( tw ) * (T_scalar_type)2.0 * (T_scalar_type)dRAD_TO_DEG;
+    }
   }
   //-----------------------------------------------------------------------------
   template<typename T_scalar_type>
@@ -511,18 +526,18 @@ namespace vl
     b = to;
     a.normalize();
     b.normalize();
-    T_scalar_type cosa = vl::dot(a,b);
-    cosa = clamp(cosa, (T_scalar_type)-1.0, (T_scalar_type)+1.0);
-    if (cosa == 0.0)
-      *this = Quaternion<T_scalar_type>().setNoRotation();
-    else
+    Vector3<T_scalar_type> axis = cross(a,b);
+    T_scalar_type len = 0;
+    axis.normalize(&len);
+    if(len)
     {
-      Vector3<T_scalar_type> axis,n2;
-      axis = cross(a,b);
-      axis.normalize();
+      T_scalar_type cosa = vl::dot(a,b);
+      cosa = clamp(cosa, (T_scalar_type)-1.0, (T_scalar_type)+1.0);
       T_scalar_type alpha = acos( cosa );
-      *this = Quaternion<T_scalar_type>().fromAxisAngle(alpha*(T_scalar_type)dDEG_TO_RAD, axis);
+      fromAxisAngle(axis, alpha*(T_scalar_type)dRAD_TO_DEG);
     }
+    else
+      setZero();
     return *this;
   }
   //-----------------------------------------------------------------------------
