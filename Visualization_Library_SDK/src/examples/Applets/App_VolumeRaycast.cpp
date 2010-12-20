@@ -283,7 +283,7 @@ static bool PRECOMPUTE_GRADIENT = false;
 
 /* The sample step used to render the volume, the smaller the number the better
   (and slower) the rendering will be. */
-static const float SAMPLE_STEP = 1.0 / 520;
+static const float SAMPLE_STEP = 1.0f / 520.0f;
 
 /* Our applet used to render and interact with the volume. */
 class App_VolumeRaycast: public BaseDemo
