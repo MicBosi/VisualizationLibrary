@@ -386,7 +386,7 @@ namespace vl
       return *this = multiply(t, *this, m);
     }
     //-----------------------------------------------------------------------------
-    Matrix2& preMultiply(const Matrix2& m2)
+    Matrix2& preMultiply(const Matrix2& m)
     {
       Matrix2<T_scalar> t;
       return *this = multiply(t, m, *this);
