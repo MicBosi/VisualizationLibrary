@@ -208,7 +208,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& operator*=(const Matrix4& m)
     {
-      return *this = *this * m;
+      return postMultiply(m);
     }
     //-----------------------------------------------------------------------------
     Matrix4 operator-() const
@@ -479,20 +479,17 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& rotate(T_scalar degrees, T_scalar x, T_scalar y, T_scalar z)
     {
-      *this = getRotation(degrees, x, y, z) * *this;
-      return *this;
+      return preMultiply(getRotation(degrees, x, y, z));
     }
     //-----------------------------------------------------------------------------
     Matrix4& rotate(T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2)
     {
-      *this = getRotation(degrees1, v1, degrees2, v2) * *this;
-      return *this;
+      return preMultiply(getRotation(degrees1, v1, degrees2, v2));
     }
     //-----------------------------------------------------------------------------
     Matrix4& rotate(T_scalar degrees1, const Vector3<T_scalar>& v1, T_scalar degrees2, const Vector3<T_scalar>& v2, T_scalar degrees3, const Vector3<T_scalar>& v3)
     {
-      *this = getRotation(degrees1, v1, degrees2, v2, degrees3, v3) * *this;
-      return *this;
+      return preMultiply(getRotation(degrees1, v1, degrees2, v2, degrees3, v3));
     }
     //-----------------------------------------------------------------------------
     static Matrix4 getRotationXYZ(T_scalar degX, T_scalar degY, T_scalar degZ)
@@ -502,8 +499,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& rotateXYZ(T_scalar degX, T_scalar degY, T_scalar degZ)
     {
-      *this = getRotationXYZ(degX, degY, degZ) * *this;
-      return *this;
+      return preMultiply(getRotationXYZ(degX, degY, degZ));
     }
     //-----------------------------------------------------------------------------
     static Matrix4 getRotationZYX(T_scalar degZ, T_scalar degY, T_scalar degX)
@@ -513,8 +509,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& rotateZYX(T_scalar degZ, T_scalar degY, T_scalar degX)
     {
-      *this = getRotationZYX(degZ, degY, degX) * *this;
-      return *this;
+      return preMultiply(getRotationZYX(degZ, degY, degX));
     }
     //-----------------------------------------------------------------------------
     static Matrix4& getRotation(Matrix4& out, const Vector3<T_scalar>& from, const Vector3<T_scalar>& to);
@@ -527,14 +522,12 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& rotate(const Vector4<T_scalar>& from, const Vector4<T_scalar>& to)
     {
-      *this = getRotation(from, to) * *this;
-      return *this;
+      return preMultiply(getRotation(from, to));
     }
     //-----------------------------------------------------------------------------
     Matrix4& rotate(const Vector3<T_scalar>& from, const Vector3<T_scalar>& to)
     {
-      *this = getRotation(from, to) * *this;
-      return *this;
+      return preMultiply(getRotation(from, to));
     }
     //-----------------------------------------------------------------------------
     static Matrix4& getTranslation(Matrix4&out, const Vector3<T_scalar>& v)
@@ -565,14 +558,12 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& translate(T_scalar x, T_scalar y, T_scalar z)
     {
-      *this = getTranslation(x,y,z) * *this;
-      return *this;
+      return preMultiply(getTranslation(x,y,z));
     }
     //-----------------------------------------------------------------------------
     Matrix4& translate(const Vector3<T_scalar>& v)
     {
-      *this = getTranslation(v) * *this;
-      return *this;
+      return preMultiply(getTranslation(v));
     }
     //-----------------------------------------------------------------------------
     static Matrix4& getScaling(Matrix4& out, const Vector3<T_scalar>& v)
@@ -603,14 +594,51 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix4& scale(T_scalar x, T_scalar y, T_scalar z)
     {
-      *this = getScaling(x,y,z) * *this;
-      return *this;
+      return preMultiply(getScaling(x,y,z));
     }
     //-----------------------------------------------------------------------------
     Matrix4& scale(const Vector3<T_scalar> v)
     {
-      *this = getScaling(v.x(), v.y(), v.z()) * *this;
-      return *this;
+      return preMultiply(getScaling(v.x(), v.y(), v.z()));
+    }
+    //-----------------------------------------------------------------------------
+    static Matrix4& multiply(Matrix4& out, const Matrix4& p, const Matrix4& q)
+    {
+      VL_CHECK(out.ptr() != p.ptr() && out.ptr() != q.ptr());
+
+      out.e(0,0) = q.e(0,0)*p.e(0,0) + q.e(1,0)*p.e(0,1) + q.e(2,0)*p.e(0,2) + q.e(3,0)*p.e(0,3);
+      out.e(0,1) = q.e(0,1)*p.e(0,0) + q.e(1,1)*p.e(0,1) + q.e(2,1)*p.e(0,2) + q.e(3,1)*p.e(0,3);
+      out.e(0,2) = q.e(0,2)*p.e(0,0) + q.e(1,2)*p.e(0,1) + q.e(2,2)*p.e(0,2) + q.e(3,2)*p.e(0,3);
+      out.e(0,3) = q.e(0,3)*p.e(0,0) + q.e(1,3)*p.e(0,1) + q.e(2,3)*p.e(0,2) + q.e(3,3)*p.e(0,3);
+
+      out.e(1,0) = q.e(0,0)*p.e(1,0) + q.e(1,0)*p.e(1,1) + q.e(2,0)*p.e(1,2) + q.e(3,0)*p.e(1,3);
+      out.e(1,1) = q.e(0,1)*p.e(1,0) + q.e(1,1)*p.e(1,1) + q.e(2,1)*p.e(1,2) + q.e(3,1)*p.e(1,3);
+      out.e(1,2) = q.e(0,2)*p.e(1,0) + q.e(1,2)*p.e(1,1) + q.e(2,2)*p.e(1,2) + q.e(3,2)*p.e(1,3);
+      out.e(1,3) = q.e(0,3)*p.e(1,0) + q.e(1,3)*p.e(1,1) + q.e(2,3)*p.e(1,2) + q.e(3,3)*p.e(1,3);
+
+      out.e(2,0) = q.e(0,0)*p.e(2,0) + q.e(1,0)*p.e(2,1) + q.e(2,0)*p.e(2,2) + q.e(3,0)*p.e(2,3);
+      out.e(2,1) = q.e(0,1)*p.e(2,0) + q.e(1,1)*p.e(2,1) + q.e(2,1)*p.e(2,2) + q.e(3,1)*p.e(2,3);
+      out.e(2,2) = q.e(0,2)*p.e(2,0) + q.e(1,2)*p.e(2,1) + q.e(2,2)*p.e(2,2) + q.e(3,2)*p.e(2,3);
+      out.e(2,3) = q.e(0,3)*p.e(2,0) + q.e(1,3)*p.e(2,1) + q.e(2,3)*p.e(2,2) + q.e(3,3)*p.e(2,3);
+
+      out.e(3,0) = q.e(0,0)*p.e(3,0) + q.e(1,0)*p.e(3,1) + q.e(2,0)*p.e(3,2) + q.e(3,0)*p.e(3,3);
+      out.e(3,1) = q.e(0,1)*p.e(3,0) + q.e(1,1)*p.e(3,1) + q.e(2,1)*p.e(3,2) + q.e(3,1)*p.e(3,3);
+      out.e(3,2) = q.e(0,2)*p.e(3,0) + q.e(1,2)*p.e(3,1) + q.e(2,2)*p.e(3,2) + q.e(3,2)*p.e(3,3);
+      out.e(3,3) = q.e(0,3)*p.e(3,0) + q.e(1,3)*p.e(3,1) + q.e(2,3)*p.e(3,2) + q.e(3,3)*p.e(3,3);
+
+      return out;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix4& postMultiply(const Matrix4& m)
+    {
+      Matrix4<T_scalar> t;
+      return *this = multiply(t, *this, m);
+    }
+    //-----------------------------------------------------------------------------
+    Matrix4& preMultiply(const Matrix4& m)
+    {
+      Matrix4<T_scalar> t;
+      return *this = multiply(t, m, *this);
     }
     //-----------------------------------------------------------------------------
 
@@ -628,28 +656,10 @@ namespace vl
   // OPERATORS
   //-----------------------------------------------------------------------------
   template<typename T_scalar>
-  inline Matrix4<T_scalar> operator*(const Matrix4<T_scalar>& m2, const Matrix4<T_scalar>& m1)
+  inline Matrix4<T_scalar> operator*(const Matrix4<T_scalar>& p, const Matrix4<T_scalar>& q)
   {
     Matrix4<T_scalar> t;
-    t.e(0,0) = m1.e(0,0)*m2.e(0,0) + m1.e(1,0)*m2.e(0,1) + m1.e(2,0)*m2.e(0,2) + m1.e(3,0)*m2.e(0,3);
-    t.e(0,1) = m1.e(0,1)*m2.e(0,0) + m1.e(1,1)*m2.e(0,1) + m1.e(2,1)*m2.e(0,2) + m1.e(3,1)*m2.e(0,3);
-    t.e(0,2) = m1.e(0,2)*m2.e(0,0) + m1.e(1,2)*m2.e(0,1) + m1.e(2,2)*m2.e(0,2) + m1.e(3,2)*m2.e(0,3);
-    t.e(0,3) = m1.e(0,3)*m2.e(0,0) + m1.e(1,3)*m2.e(0,1) + m1.e(2,3)*m2.e(0,2) + m1.e(3,3)*m2.e(0,3);
-
-    t.e(1,0) = m1.e(0,0)*m2.e(1,0) + m1.e(1,0)*m2.e(1,1) + m1.e(2,0)*m2.e(1,2) + m1.e(3,0)*m2.e(1,3);
-    t.e(1,1) = m1.e(0,1)*m2.e(1,0) + m1.e(1,1)*m2.e(1,1) + m1.e(2,1)*m2.e(1,2) + m1.e(3,1)*m2.e(1,3);
-    t.e(1,2) = m1.e(0,2)*m2.e(1,0) + m1.e(1,2)*m2.e(1,1) + m1.e(2,2)*m2.e(1,2) + m1.e(3,2)*m2.e(1,3);
-    t.e(1,3) = m1.e(0,3)*m2.e(1,0) + m1.e(1,3)*m2.e(1,1) + m1.e(2,3)*m2.e(1,2) + m1.e(3,3)*m2.e(1,3);
-
-    t.e(2,0) = m1.e(0,0)*m2.e(2,0) + m1.e(1,0)*m2.e(2,1) + m1.e(2,0)*m2.e(2,2) + m1.e(3,0)*m2.e(2,3);
-    t.e(2,1) = m1.e(0,1)*m2.e(2,0) + m1.e(1,1)*m2.e(2,1) + m1.e(2,1)*m2.e(2,2) + m1.e(3,1)*m2.e(2,3);
-    t.e(2,2) = m1.e(0,2)*m2.e(2,0) + m1.e(1,2)*m2.e(2,1) + m1.e(2,2)*m2.e(2,2) + m1.e(3,2)*m2.e(2,3);
-    t.e(2,3) = m1.e(0,3)*m2.e(2,0) + m1.e(1,3)*m2.e(2,1) + m1.e(2,3)*m2.e(2,2) + m1.e(3,3)*m2.e(2,3);
-
-    t.e(3,0) = m1.e(0,0)*m2.e(3,0) + m1.e(1,0)*m2.e(3,1) + m1.e(2,0)*m2.e(3,2) + m1.e(3,0)*m2.e(3,3);
-    t.e(3,1) = m1.e(0,1)*m2.e(3,0) + m1.e(1,1)*m2.e(3,1) + m1.e(2,1)*m2.e(3,2) + m1.e(3,1)*m2.e(3,3);
-    t.e(3,2) = m1.e(0,2)*m2.e(3,0) + m1.e(1,2)*m2.e(3,1) + m1.e(2,2)*m2.e(3,2) + m1.e(3,2)*m2.e(3,3);
-    t.e(3,3) = m1.e(0,3)*m2.e(3,0) + m1.e(1,3)*m2.e(3,1) + m1.e(2,3)*m2.e(3,2) + m1.e(3,3)*m2.e(3,3);
+    Matrix4<T_scalar>::multiply(t, p, q);
     return t;
   }
   //-----------------------------------------------------------------------------

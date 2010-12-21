@@ -147,7 +147,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix2& operator*=(const Matrix2& m)
     {
-      return *this = *this * m;
+      return postMultiply(m);
     }
     //-----------------------------------------------------------------------------
     Matrix2 operator-() const
@@ -366,6 +366,32 @@ namespace vl
         *determinant = det;
       return *this;
     }
+    //-----------------------------------------------------------------------------
+    static Matrix2& multiply(Matrix2& out, const Matrix2& p, const Matrix2& q)
+    {
+      VL_CHECK(out.ptr() != p.ptr() && out.ptr() != q.ptr());
+
+      out.e(0,0) = q.e(0,0)*p.e(0,0) + q.e(1,0)*p.e(0,1);
+      out.e(0,1) = q.e(0,1)*p.e(0,0) + q.e(1,1)*p.e(0,1);
+
+      out.e(1,0) = q.e(0,0)*p.e(1,0) + q.e(1,0)*p.e(1,1);
+      out.e(1,1) = q.e(0,1)*p.e(1,0) + q.e(1,1)*p.e(1,1);
+
+      return out;
+    }
+    //-----------------------------------------------------------------------------
+    Matrix2& postMultiply(const Matrix2& m)
+    {
+      Matrix2<T_scalar> t;
+      return *this = multiply(t, *this, m);
+    }
+    //-----------------------------------------------------------------------------
+    Matrix2& preMultiply(const Matrix2& m2)
+    {
+      Matrix2<T_scalar> t;
+      return *this = multiply(t, m, *this);
+    }
+    //-----------------------------------------------------------------------------
 
     const T_scalar& e(int i, int j) const { return mVec[j][i]; }
     T_scalar& e(int i, int j) { return mVec[j][i]; }
@@ -382,15 +408,10 @@ namespace vl
   // OPERATORS
   //-----------------------------------------------------------------------------
   template<typename T_scalar>
-  inline Matrix2<T_scalar> operator*(const Matrix2<T_scalar>& m2, const Matrix2<T_scalar>& m1)
+  inline Matrix2<T_scalar> operator*(const Matrix2<T_scalar>& p, const Matrix2<T_scalar>& q)
   {
     Matrix2<T_scalar> t;
-    t.e(0,0) = m1.e(0,0)*m2.e(0,0) + m1.e(1,0)*m2.e(0,1);
-    t.e(0,1) = m1.e(0,1)*m2.e(0,0) + m1.e(1,1)*m2.e(0,1);
-
-    t.e(1,0) = m1.e(0,0)*m2.e(1,0) + m1.e(1,0)*m2.e(1,1);
-    t.e(1,1) = m1.e(0,1)*m2.e(1,0) + m1.e(1,1)*m2.e(1,1);
-
+    Matrix2<T_scalar>::multiply(t, p, q);
     return t;
   }
   //-----------------------------------------------------------------------------
