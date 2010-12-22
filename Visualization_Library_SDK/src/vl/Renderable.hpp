@@ -66,7 +66,7 @@ namespace vl
 
   public:
     virtual const char* className() { return "Renderable"; }
-    
+
     /** Constructor. */
     Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true), 
     mDisplayListEnabled(false), mDisplayListDirty(true), mVBOEnabled(true), mVBODirty(true) {}
@@ -79,11 +79,11 @@ namespace vl
 
     long long boundsUpdateTick() const { return mBoundsUpdateTick; }
     void computeBounds() { computeBounds_Implementation(); setBoundsDirty(false); }
-    void setBoundsDirty(bool dirty) { ++mBoundsUpdateTick; mBoundsDirty = dirty; }
+    void setBoundsDirty(bool dirty) { mBoundsDirty = dirty; }
     bool boundsDirty() const { return mBoundsDirty; }
-    void setBoundingBox( const AABB& aabb ) { mAABB = aabb; setBoundsDirty(false); }
+    void setBoundingBox( const AABB& aabb ) { mAABB = aabb; setBoundsDirty(false); ++mBoundsUpdateTick; }
     const AABB& boundingBox() const { return mAABB; }
-    void setBoundingSphere( const Sphere& sphere) { mSphere = sphere; setBoundsDirty(false); }
+    void setBoundingSphere( const Sphere& sphere) { mSphere = sphere; setBoundsDirty(false); ++mBoundsUpdateTick; }
     const Sphere& boundingSphere() const { return mSphere; }
 
     unsigned int displayList() const { return mDisplayList; }
