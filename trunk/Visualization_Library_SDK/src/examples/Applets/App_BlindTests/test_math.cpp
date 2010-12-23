@@ -160,11 +160,6 @@ namespace blind_tests
     m /= 2.0f;
     CONDITION( m == fmat4(2.0f) );
 
-    // mic fixme:
-    // ricontrolla le varie moltiplicazioni prima di modificare anche Mat2 e Mat3
-    // ricontrolla tutte le funzioni di tutte i tipi di matrici
-    // rivedere implementazione di translate() etc.
-
     return true;
   }
 
@@ -450,6 +445,13 @@ namespace blind_tests
         CONDITION( fabs(alpha - i) < alpha_eps );
       }
     }
+
+    q1 = fquat::getFromAxisAngle(fvec3(1,1,1), 45);
+    q1 = q1 * q1.getInverse();
+    v3 = q1 * fvec3(1,1,1);
+    CONDITION( distance(v3,fvec3(1,1,1)) < 0.001f )
+    v1 = q1 * fvec4(1,1,1,1);
+    CONDITION( distance(v1,fvec4(1,1,1,1)) < 0.001f )
 
     return true;
   }

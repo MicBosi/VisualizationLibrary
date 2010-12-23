@@ -72,7 +72,7 @@ void RenderTarget::checkDrawBuffers() const
   fbo_attachments[GL_COLOR_ATTACHMENT15_EXT] = "GL_COLOR_ATTACHMENT15_EXT"; 
 
   int fbo = 0;
-  if (GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object)
+  if (Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object)
     glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &fbo);
 
   if (fbo)
@@ -131,7 +131,7 @@ void RenderTarget::bindDrawBuffers() const
     checkDrawBuffers();
   #endif
 
-  if (mDrawBuffers.size() > 1 && (GLEW_ARB_draw_buffers||GLEW_VERSION_2_0))
+  if (mDrawBuffers.size() > 1 && (Has_GL_ARB_draw_buffers||Has_GL_VERSION_2_0))
   {
     glDrawBuffers( (GLsizei)mDrawBuffers.size(), (const GLenum*)&mDrawBuffers[0] );
     VL_CHECK_OGL() // If you are using RDB_BACK_LEFT/RIGHT make sure sure you have a double buffered gl context.

@@ -42,7 +42,7 @@ public:
 
   virtual void initEvent()
   {
-    if (!GLEW_ARB_multitexture)
+    if (!vl::Has_GL_ARB_multitexture)
     {
       vl::Log::error("GL_ARB_multitexture required.\n");
       openglContext()->quitApplication();
@@ -54,13 +54,13 @@ public:
     // allocate terrain scene manager
     vl::ref<vl::Terrain> terrain = new vl::Terrain;
     // use GLSL?
-    terrain->setUseGLSL(GLEW_ARB_shading_language_100?true:false);
+    terrain->setUseGLSL(vl::Has_GL_ARB_shading_language_100?true:false);
     // dimensions of the terrain
     terrain->setWidth(100);
     terrain->setDepth(100);
     terrain->setHeight(5.0f);
     // heightmap texture size used by the GLSL program
-    if (GLEW_ATI_texture_float || GLEW_ARB_texture_float)
+    if (vl::Has_GL_ATI_texture_float || vl::Has_GL_ARB_texture_float)
       terrain->setHeightmapTextureFormat(vl::TF_LUMINANCE16F);
     else
       terrain->setHeightmapTextureFormat(vl::TF_LUMINANCE);

@@ -317,7 +317,7 @@ void Geometry::computeNormals()
 //-----------------------------------------------------------------------------
 void Geometry::deleteVBOs()
 {
-  if (!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
+  if (!(Has_GL_ARB_vertex_buffer_object||Has_GL_VERSION_1_5||Has_GL_VERSION_3_0))
     return;
 
   for(int i=0; i<(int)drawCalls()->size(); ++i)
@@ -350,7 +350,7 @@ void Geometry::updateVBOs(bool discard_local_data, bool force_update)
 {
   setVBODirty(false);
 
-  if (!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
+  if (!(Has_GL_ARB_vertex_buffer_object||Has_GL_VERSION_1_5||Has_GL_VERSION_3_0))
     return;
 
   if ( mVertexArray && (mVertexArray->isVBODirty() || force_update) )
@@ -396,13 +396,13 @@ void Geometry::render(const Actor*, const Shader*, const Camera*, OpenGLContext*
     if (!colorArray())
       glColor4fv(mColor.ptr());
 
-    if (!secondaryColorArray() && GLEW_VERSION_1_4)
+    if (!secondaryColorArray() && Has_GL_VERSION_1_4)
       glSecondaryColor3fv(mSecondaryColor.ptr());
   }
 
   // bind Vertex Attrib Set
 
-  bool vbo_on = (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0) && vboEnabled() && !displayListEnabled();
+  bool vbo_on = (Has_GL_ARB_vertex_buffer_object||Has_GL_VERSION_1_5||Has_GL_VERSION_3_0) && vboEnabled() && !displayListEnabled();
   gl_context->bindVAS(this, vbo_on, false);
 
   // actual draw
