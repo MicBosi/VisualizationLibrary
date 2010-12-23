@@ -48,7 +48,7 @@ public:
 
   void initEvent()
   {
-    if (!(GLEW_ARB_shading_language_100||GLEW_VERSION_3_0))
+    if (!(vl::Has_GL_ARB_shading_language_100||vl::Has_GL_VERSION_3_0))
     {
       vl::Log::error("OpenGL Shading Language not supported.\n");
       vl::Time::sleep(3000);
@@ -103,7 +103,7 @@ public:
     effect5->shader()->enable(vl::EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect5.get(), mTransform5.get() );
 
-    if (GLEW_ARB_shading_language_100||GLEW_VERSION_3_0)
+    if (vl::Has_GL_ARB_shading_language_100||vl::Has_GL_VERSION_3_0)
     {
       vl::ref<vl::GLSLProgram> glsl;
 
@@ -123,7 +123,7 @@ public:
       glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
       glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight_interlaced.fs") );
 
-      if (GLEW_NV_geometry_shader4 || GLEW_ARB_geometry_shader4 || GLEW_VERSION_3_2)
+      if (vl::Has_GL_NV_geometry_shader4 || vl::Has_GL_ARB_geometry_shader4 || vl::Has_GL_VERSION_3_2)
       {
         glsl = effect5->shader()->gocGLSLProgram();
         // a vertex shader is always needed when using geometry shaders

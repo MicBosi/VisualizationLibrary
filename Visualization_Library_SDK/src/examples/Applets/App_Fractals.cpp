@@ -145,7 +145,7 @@ public:
 
   void initEvent()
   {
-    if (!(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+    if (!(vl::Has_GL_VERSION_2_0||vl::Has_GL_VERSION_3_0||vl::Has_GL_VERSION_4_0))
     {
       vl::Log::error("OpenGL Shading Language not supported.\n");
       vl::Time::sleep(3000);

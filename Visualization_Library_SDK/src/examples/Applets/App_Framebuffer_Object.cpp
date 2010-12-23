@@ -134,7 +134,7 @@ public:
     /* use a per-pixel-light GLSL shader which renders on two color attachments at the same time */
     vl::ref<vl::GLSLProgram> glsl = new vl::GLSLProgram;
     glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
-    if (GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0)
+    if (vl::Has_GL_EXT_gpu_shader4||vl::Has_GL_VERSION_3_0)
     {
       vl::Log::info("using glBindFragDataLocation()\n");
       // see fragment shader sources for the details
@@ -255,9 +255,9 @@ public:
   */
   void initTest_FBO_Framebuffer_Blit_Multisample()
   {
-    if (!(GLEW_EXT_framebuffer_multisample||GLEW_EXT_framebuffer_blit||GLEW_VERSION_3_0))
+    if (!(vl::Has_GL_EXT_framebuffer_multisample||vl::Has_GL_EXT_framebuffer_blit||vl::Has_GL_VERSION_3_0))
     {
-      vl::Log::error("GL_EXT_framebuffer_multisample or GLEW_EXT_framebuffer_blit not supported.\n");
+      vl::Log::error("GL_EXT_framebuffer_multisample or vl::Has_GL_EXT_framebuffer_blit not supported.\n");
       vl::Time::sleep(3000);
       exit(1);
     }
@@ -489,7 +489,7 @@ public:
   {
     BaseDemo::initEvent();
 
-    if (!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+    if (!(vl::Has_GL_EXT_framebuffer_object||vl::Has_GL_ARB_framebuffer_object||vl::Has_GL_VERSION_3_0||vl::Has_GL_VERSION_4_0))
     {
       vl::Log::error("GL_ARB_framebuffer_object not supported.\n");
       vl::Time::sleep(3000);

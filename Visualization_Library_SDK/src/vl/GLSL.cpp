@@ -76,8 +76,8 @@ void GLSLShader::setSource( const String& source )
 bool GLSLShader::compile()
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return false;
 
   if (!mCompiled)
@@ -123,8 +123,8 @@ bool GLSLShader::compile()
 bool GLSLShader::compileStatus() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return false;
   VL_CHECK(handle())
 
@@ -137,8 +137,8 @@ bool GLSLShader::compileStatus() const
 String GLSLShader::infoLog() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return "OpenGL Shading Language not supported.\n";
   VL_CHECK(handle())
 
@@ -155,8 +155,8 @@ String GLSLShader::infoLog() const
 void GLSLShader::createShader()
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return;
   if (!handle())
   {
@@ -169,8 +169,8 @@ void GLSLShader::createShader()
 //------------------------------------------------------------------------------
 void GLSLShader::deleteShader()
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return;
   if (handle())
   {
@@ -204,8 +204,8 @@ GLSLProgram::~GLSLProgram()
 //-----------------------------------------------------------------------------
 void GLSLProgram::createProgram()
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return;
   if (handle() == 0)
   {
@@ -218,8 +218,8 @@ void GLSLProgram::createProgram()
 //-----------------------------------------------------------------------------
 void GLSLProgram::deleteProgram()
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return;
   if(handle())
   {
@@ -231,8 +231,8 @@ void GLSLProgram::deleteProgram()
 //-----------------------------------------------------------------------------
 bool GLSLProgram::attachShader(GLSLShader* shader)
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return false;
   scheduleRelinking();
 
@@ -271,8 +271,8 @@ void GLSLProgram::detachAllShaders()
 // detaching a shader that has not been attached is allowed, and is a No-Op
 bool GLSLProgram::detachShader(GLSLShader* shader)
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return false;
 
   if (!handle() || !shader->handle())
@@ -296,8 +296,8 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
 void GLSLProgram::discardAllShaders()
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return;
 
   if (!handle())
@@ -318,8 +318,8 @@ void GLSLProgram::discardAllShaders()
 bool GLSLProgram::linkProgram(bool force_relink)
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return false;
 
   if (!linked() || force_relink)
@@ -362,7 +362,7 @@ void GLSLProgram::preLink()
 {
   // fragment shader color number binding
 
-  if (GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0)
+  if (Has_GL_EXT_gpu_shader4||Has_GL_VERSION_3_0)
   {
     std::map<std::string, int>::iterator it = mFragDataLocation.begin();
     while(it != mFragDataLocation.end())
@@ -374,7 +374,7 @@ void GLSLProgram::preLink()
 
   // geometry shader - note: this pertains only to OpenGL 3.2 not OpenGL 4.x
 
-  if (GLEW_EXT_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_VERSION_3_2)
+  if (Has_GL_EXT_geometry_shader4||Has_GL_ARB_geometry_shader4||Has_GL_VERSION_3_2)
   {
     // if there is at least one geometry shader applies the geometry shader parameters
     for(unsigned i=0; i<mShaders.size(); ++i)
@@ -391,12 +391,12 @@ void GLSLProgram::preLink()
 
   // OpenGL 4 program parameters
 
-  if(GLEW_ARB_get_program_binary)
+  if(Has_GL_ARB_get_program_binary)
   {
     VL_glProgramParameteri(handle(), GL_PROGRAM_BINARY_RETRIEVABLE_HINT, programBinaryRetrievableHint()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
 
-  if (GLEW_ARB_separate_shader_objects)
+  if (Has_GL_ARB_separate_shader_objects)
   {
     VL_glProgramParameteri(handle(), GL_PROGRAM_SEPARABLE, programSeparable()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
@@ -436,8 +436,8 @@ void GLSLProgram::postLink()
 //-----------------------------------------------------------------------------
 bool GLSLProgram::linkStatus() const
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return false;
   VL_CHECK(handle()) // no shaders attached
 
@@ -450,8 +450,8 @@ bool GLSLProgram::linkStatus() const
 //-----------------------------------------------------------------------------
 String GLSLProgram::infoLog() const
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return "OpenGL Shading Language not supported.\n";
   VL_CHECK(handle()) // no shaders attached
 
@@ -468,8 +468,8 @@ String GLSLProgram::infoLog() const
 //-----------------------------------------------------------------------------
 bool GLSLProgram::validateProgram() const
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return false;
   VL_CHECK(handle()) // no shaders attached
 
@@ -484,7 +484,7 @@ bool GLSLProgram::validateProgram() const
 //-----------------------------------------------------------------------------
 void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name)
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
 
   createProgram();
   scheduleRelinking();
@@ -493,8 +493,8 @@ void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name
 //-----------------------------------------------------------------------------
 int GLSLProgram::maxVertexAttribs()
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return 0;
 
   int max = 0;
@@ -504,8 +504,8 @@ int GLSLProgram::maxVertexAttribs()
 //-----------------------------------------------------------------------------
 bool GLSLProgram::useProgram() const
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return false;
   VL_CHECK(handle())
   VL_CHECK(linked())
@@ -523,7 +523,7 @@ bool GLSLProgram::useProgram() const
 //-----------------------------------------------------------------------------
 void GLSLProgram::apply(const Camera*, OpenGLContext*) const
 {
-  if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+  if(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
   {
     if ( handle() )
       useProgram();
@@ -535,8 +535,8 @@ void GLSLProgram::apply(const Camera*, OpenGLContext*) const
 bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
+  if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
     return false;
   if(!uniforms)
     return false;
@@ -658,8 +658,8 @@ int GLSLProgram::fragDataLocationBinding(const std::string& name) const
 bool GLSLProgram::getProgramBinary(GLenum& binary_format, std::vector<unsigned char>& binary) const
 {
   VL_CHECK_OGL();
-  VL_CHECK(GLEW_ARB_get_program_binary)
-  if (!GLEW_ARB_get_program_binary)
+  VL_CHECK(Has_GL_ARB_get_program_binary)
+  if (!Has_GL_ARB_get_program_binary)
     return false;
 
   binary.clear();
@@ -687,8 +687,8 @@ bool GLSLProgram::getProgramBinary(GLenum& binary_format, std::vector<unsigned c
 bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int length)
 {
   VL_CHECK_OGL();
-  VL_CHECK(GLEW_ARB_get_program_binary)
-  if (!GLEW_ARB_get_program_binary)
+  VL_CHECK(Has_GL_ARB_get_program_binary)
+  if (!Has_GL_ARB_get_program_binary)
     return false;
 
   createProgram();

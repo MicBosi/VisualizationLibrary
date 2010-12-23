@@ -70,7 +70,7 @@ namespace vl
       e(0,0) = e(1,1) = e(2,2) = e(3,3) = n; 
     }
     //-----------------------------------------------------------------------------
-    explicit Matrix4(T_scalar e00, T_scalar e01, T_scalar e02, T_scalar e03,
+    explicit Matrix4( T_scalar e00, T_scalar e01, T_scalar e02, T_scalar e03,
                       T_scalar e10, T_scalar e11, T_scalar e12, T_scalar e13,
                       T_scalar e20, T_scalar e21, T_scalar e22, T_scalar e23,
                       T_scalar e30, T_scalar e31, T_scalar e32, T_scalar e33)

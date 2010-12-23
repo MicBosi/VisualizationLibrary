@@ -42,7 +42,7 @@ class App_GLSL_Bumpmapping: public BaseDemo
 public:
   void initEvent()
   {
-    if (!(GLEW_ARB_shading_language_100||GLEW_VERSION_3_0))
+    if (!(vl::Has_GL_ARB_shading_language_100||vl::Has_GL_VERSION_3_0))
     {
       vl::Log::error("OpenGL Shading Language not supported.\n");
       vl::Time::sleep(3000);

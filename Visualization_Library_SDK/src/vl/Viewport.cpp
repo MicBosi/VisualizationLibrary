@@ -89,7 +89,7 @@ void Viewport::activate() const
   if (mClearFlags)
   {
     #ifndef NDEBUG
-      if (!GLEW_EXT_texture_integer)
+      if (!Has_GL_EXT_texture_integer)
       {
         switch( clearColorMode() )
         {
