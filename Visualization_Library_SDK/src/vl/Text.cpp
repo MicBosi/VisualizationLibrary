@@ -76,7 +76,7 @@ void Text::render(const Actor* actor, const Shader*, const Camera* camera, OpenG
   int stencil_front_mask=0;
   glGetIntegerv(GL_STENCIL_WRITEMASK, &stencil_front_mask);
   int stencil_back_mask=0;
-  if (GLEW_VERSION_2_0)
+  if (Has_GL_VERSION_2_0)
     glGetIntegerv(GL_STENCIL_BACK_WRITEMASK, &stencil_back_mask);
 
   // background
@@ -123,7 +123,7 @@ void Text::render(const Actor* actor, const Shader*, const Camera* camera, OpenG
 
   // restore the stencil masks
   glStencilMask(stencil_front_mask);
-  if (GLEW_VERSION_2_0)
+  if (Has_GL_VERSION_2_0)
     glStencilMaskSeparate(GL_BACK, stencil_back_mask);
 
   if(light_enabled)

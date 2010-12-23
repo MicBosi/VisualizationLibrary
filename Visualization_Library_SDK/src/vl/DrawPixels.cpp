@@ -277,7 +277,7 @@ void DrawPixels::releaseImages()
 //! generates PBOs only for Pixels objects without a PBO handle
 bool DrawPixels::generatePixelBufferObjects(EGLBufferUsage usage, bool discard_local_storage)
 {
-  if ( !( GLEW_ARB_pixel_buffer_object||GLEW_EXT_pixel_buffer_object ) )
+  if ( !( Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object ) )
     return false;
 
   // generates PBOs if they have an attached Image
@@ -300,7 +300,7 @@ bool DrawPixels::generatePixelBufferObjects(EGLBufferUsage usage, bool discard_l
 //-----------------------------------------------------------------------------
 void DrawPixels::setUsePixelBufferObject(bool use_pbo)
 {
-  if ( (GLEW_ARB_pixel_buffer_object||GLEW_EXT_pixel_buffer_object) )
+  if ( (Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object) )
     mUsePixelBufferObject = use_pbo;
   else
     mUsePixelBufferObject = false;

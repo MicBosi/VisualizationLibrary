@@ -43,7 +43,7 @@ void FBORenderTarget::bindFramebuffer(EFrameBufferBind target)
 {
   VL_CHECK_OGL()
 
-  if (!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  if (!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
   {
     Log::error("FBORenderTarget::bindFramebuffer(): framebuffer object not supported.\n");
     return;
@@ -87,7 +87,7 @@ GLenum FBORenderTarget::checkFramebufferStatus()
 {
   VL_CHECK_OGL()
 
-  if (!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  if (!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
   {
     Log::error("FBORenderTarget::checkFramebufferStatus(): framebuffer object not supported.\n");
     return GL_FRAMEBUFFER_UNSUPPORTED;
@@ -171,8 +171,8 @@ void FBORenderTarget::printFramebufferError(GLenum status) const
 //-----------------------------------------------------------------------------
 void FBORenderTarget::addColorAttachment(EAttachmentPoint color_attachment, FBOAttachmentAbstract* attachment)
 {
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   removeAttachment(color_attachment);
   mFBOAttachments[color_attachment] = attachment;
@@ -181,8 +181,8 @@ void FBORenderTarget::addColorAttachment(EAttachmentPoint color_attachment, FBOA
 //-----------------------------------------------------------------------------
 void FBORenderTarget::addTextureAttachment(EAttachmentPoint color_attachment, FBOAttachmentAbstract* attachment)
 {
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   removeAttachment(color_attachment);
   mFBOAttachments[color_attachment] = attachment;
@@ -191,8 +191,8 @@ void FBORenderTarget::addTextureAttachment(EAttachmentPoint color_attachment, FB
 //-----------------------------------------------------------------------------
 void FBORenderTarget::addDepthAttachment(FBOAttachmentAbstract* attachment)
 {
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   removeAttachment(AP_DEPTH_ATTACHMENT);
   mFBOAttachments[AP_DEPTH_ATTACHMENT] = attachment;
@@ -201,8 +201,8 @@ void FBORenderTarget::addDepthAttachment(FBOAttachmentAbstract* attachment)
 //-----------------------------------------------------------------------------
 void FBORenderTarget::addStencilAttachment(FBOAttachmentAbstract* attachment)
 {
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   removeAttachment(AP_STENCIL_ATTACHMENT);
   mFBOAttachments[AP_STENCIL_ATTACHMENT] = attachment;
@@ -211,8 +211,8 @@ void FBORenderTarget::addStencilAttachment(FBOAttachmentAbstract* attachment)
 //-----------------------------------------------------------------------------
 void FBORenderTarget::addDepthStencilAttachment(FBOAttachmentAbstract* attachment)
 {
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   removeAttachment(AP_DEPTH_STENCIL_ATTACHMENT);
   mFBOAttachments[AP_DEPTH_STENCIL_ATTACHMENT] = attachment;
@@ -221,8 +221,8 @@ void FBORenderTarget::addDepthStencilAttachment(FBOAttachmentAbstract* attachmen
 //-----------------------------------------------------------------------------
 void FBORenderTarget::removeAttachment(FBOAttachmentAbstract* attachment)
 {
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   // collect for all the attachment points
   std::vector<EAttachmentPoint> attachment_points;
@@ -240,8 +240,8 @@ void FBORenderTarget::removeAttachment(EAttachmentPoint attach_point)
 {
   VL_CHECK(vl::VisualizationLibrary::initialized())
 
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   if (handle())
   {
@@ -264,8 +264,8 @@ void FBORenderTarget::removeAttachment(EAttachmentPoint attach_point)
 //-----------------------------------------------------------------------------
 void FBORenderTarget::removeAllAttachments()
 {
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   // look for all the attachment points
   std::vector<EAttachmentPoint> attachment_points;
@@ -281,8 +281,8 @@ void FBORenderTarget::removeAllAttachments()
 void FBOTexture1DAttachment::bindAttachment(int w, int h, EAttachmentPoint attach_point)
 {
   VL_CHECK_OGL()
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   VL_CHECK(texture())
   VL_CHECK(texture()->handle())
@@ -302,8 +302,8 @@ void FBOTexture1DAttachment::bindAttachment(int w, int h, EAttachmentPoint attac
 void FBOTexture2DAttachment::bindAttachment(int w, int h, EAttachmentPoint attach_point)
 {
   VL_CHECK_OGL()
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   VL_CHECK_OGL()
   VL_CHECK(texture())
@@ -332,7 +332,7 @@ void FBOTexture2DAttachment::bindAttachment(int w, int h, EAttachmentPoint attac
 void FBOTextureAttachment::bindAttachment(int /*w*/, int /*h*/, EAttachmentPoint attach_point)
 {
   VL_CHECK_OGL()
-  VL_CHECK(GLEW_NV_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_VERSION_3_0)
+  VL_CHECK(Has_GL_NV_geometry_shader4||Has_GL_ARB_geometry_shader4||Has_GL_VERSION_3_0)
   VL_CHECK_OGL()
   VL_CHECK(texture())
   VL_CHECK(texture()->handle())
@@ -349,8 +349,8 @@ void FBOTextureAttachment::bindAttachment(int /*w*/, int /*h*/, EAttachmentPoint
 void FBOTexture3DAttachment::bindAttachment(int w, int h, EAttachmentPoint attach_point)
 {
   VL_CHECK_OGL()
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   VL_CHECK_OGL()
   VL_CHECK(texture())
@@ -372,14 +372,14 @@ void FBOTexture3DAttachment::bindAttachment(int w, int h, EAttachmentPoint attac
 void FBOTextureLayerAttachment::bindAttachment(int /*w*/, int /*h*/, EAttachmentPoint attach_point)
 {
   VL_CHECK_OGL()
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  VL_CHECK(GLEW_EXT_texture_array||GLEW_NV_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_EXT_geometry_shader4)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  VL_CHECK(Has_GL_EXT_texture_array||Has_GL_NV_geometry_shader4||Has_GL_ARB_geometry_shader4||Has_GL_EXT_geometry_shader4)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
-  if(!(GLEW_EXT_texture_array||GLEW_NV_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_EXT_geometry_shader4))
+  if(!(Has_GL_EXT_texture_array||Has_GL_NV_geometry_shader4||Has_GL_ARB_geometry_shader4||Has_GL_EXT_geometry_shader4))
     return;
   VL_CHECK_OGL()
-  VL_CHECK( GLEW_EXT_texture_array )
+  VL_CHECK( Has_GL_EXT_texture_array )
   VL_CHECK(texture())
   VL_CHECK(texture()->handle())
   VL_CHECK( texture()->dimension() == GL_TEXTURE_2D_ARRAY || texture()->dimension() == GL_TEXTURE_1D_ARRAY )
@@ -406,8 +406,8 @@ void FBOAttachmentAbstract::destroy()
 void FBORenderbufferAttachment::create()
 {
   VL_CHECK_OGL()
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   if ( !mHandle )
   {
@@ -419,8 +419,8 @@ void FBORenderbufferAttachment::create()
 void FBORenderbufferAttachment::destroy()
 {
   VL_CHECK_OGL()
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   FBOAttachmentAbstract::destroy();
   mWidth  = 0;
@@ -444,7 +444,7 @@ void FBORenderbufferAttachment::initStorage(int w, int h)
     mWidth  = w;
     mHeight = h;
     VL_glBindRenderbuffer(GL_RENDERBUFFER, handle());
-    if (GLEW_VERSION_3_0||GLEW_ARB_framebuffer_object||GLEW_EXT_framebuffer_multisample)
+    if (Has_GL_VERSION_3_0||Has_GL_ARB_framebuffer_object||Has_GL_EXT_framebuffer_multisample)
     {
       VL_glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples(), internalType(), width(), height()); VL_CHECK_OGL()
     }
@@ -459,8 +459,8 @@ void FBORenderbufferAttachment::initStorage(int w, int h)
 void FBORenderbufferAttachment::internalBindAttachment(int w, int h, int attach_point)
 {
   VL_CHECK_OGL()
-  VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-  if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+  VL_CHECK(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if(!(Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0))
     return;
   VL_CHECK(w)
   VL_CHECK(h)

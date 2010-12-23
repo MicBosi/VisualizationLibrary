@@ -70,7 +70,7 @@ namespace vl
     /** Constructor. */
     Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true), 
     mDisplayListEnabled(false), mDisplayListDirty(true), mVBOEnabled(true), mVBODirty(true) {}
-    
+
     /** Destructor. */
     virtual ~Renderable() { deleteDisplayList(); }
 

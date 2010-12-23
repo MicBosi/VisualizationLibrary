@@ -74,6 +74,7 @@ SET(VL_SRC
   vl/OcclusionCullRenderer.cpp
   vl/Object.cpp
   vl/OpenGL.cpp
+  vl/OpenGLExt.cpp
   vl/OpenGLContext.cpp
   vl/PixelLODEvaluator.cpp
   vl/Plane.cpp
@@ -180,6 +181,7 @@ set(VL_INC
   vl/Collection.hpp
   vl/OcclusionCullRenderer.hpp
   vl/OpenGL.hpp
+  vl/OpenGLExt.hpp
   vl/OpenGLContext.hpp
   vl/PatchParameter.hpp
   vl/PixelLODEvaluator.hpp

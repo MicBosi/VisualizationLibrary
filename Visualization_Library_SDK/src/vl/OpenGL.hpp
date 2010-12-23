@@ -36,14 +36,25 @@
 
 //-----------------------------------------------------------------------------
 
-#define GLEW_STATIC
-#include "GL/glew.h"
-#ifdef _WIN32
-  #ifndef NOMINMAX
-    #define NOMINMAX
-  #endif
-  #include "GL/wglew.h"
+#if defined(_WIN32) && !defined(NOMINMAX)
+  #define NOMINMAX
+  #include <windows.h>
 #endif
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+// #define GL_GLEXT_PROTOTYPES 1
+#include "GL/glext.h"
+
+#if defined(_WIN32)
+// #  define WGL_WGLEXT_PROTOTYPES 1
+#  include <GL/wglext.h>
+#elif !defined(__APPLE__) || defined(Has_GL_APPLE_GLX)
+// #  define GLX_GLXEXT_PROTOTYPES 1
+#  include <GL/glxext.h>
+#endif
+
+#include "vl/OpenGLExt.hpp"
 
 namespace vl
 {
