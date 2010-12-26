@@ -43,14 +43,11 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-// #define GL_GLEXT_PROTOTYPES 1
 #include "GL/glext.h"
 
 #if defined(_WIN32)
-// #  define WGL_WGLEXT_PROTOTYPES 1
 #  include <GL/wglext.h>
-#elif !defined(__APPLE__) || defined(Has_GL_APPLE_GLX)
-// #  define GLX_GLXEXT_PROTOTYPES 1
+#elif !defined(__APPLE__)
 #  include <GL/glxext.h>
 #endif
 
