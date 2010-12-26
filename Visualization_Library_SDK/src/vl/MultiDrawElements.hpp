@@ -212,7 +212,7 @@ namespace vl
       if (use_vbo && indices()->gpuBuffer()->handle())
       {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
-        indices_ptr = (GLvoid**)&mNULLPointerVector[0];
+        indices_ptr = (const GLvoid**)&mNULLPointerVector[0];
       }
       else
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

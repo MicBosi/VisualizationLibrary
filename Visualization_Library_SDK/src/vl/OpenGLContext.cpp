@@ -133,7 +133,7 @@ void OpenGLContext::initGLContext(bool log)
 
   // init opengl extensions
   const char* err = initOpenGLExtensions();
-  if (err == NULL)
+  if (err != NULL)
   {
     fprintf(stderr, "Error calling initOpenGLExtensions(): %s\n", err);
     VL_TRAP()
