@@ -654,9 +654,9 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
 
   wglMakeCurrent(hDC, hGLRC);
 
-  // init opengl
-  const char* err = initOpenGLExtensions();
-  if (err != NULL)
+  // init glew for each rendering context
+  GLenum err = glewInit();
+  if (GLEW_OK != err)
   {
     if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure during GLEW initialization.", L"Visualization Library error", MB_OK);
     DeleteDC(hDC);
@@ -667,7 +667,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
   // if this is not supported we use the current 'pixel_format_index' returned by ChoosePixelFormat above.
 
   int samples = 0;
-  if(Has_WGL_ARB_pixel_format && fmt.multisample())
+  if(WGLEW_ARB_pixel_format && fmt.multisample())
   {
     float fAttributes[] = { 0, 0 };
     int iAttributes[] =

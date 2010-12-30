@@ -45,7 +45,7 @@ class App_Texturing: public BaseDemo
 public:
   void multitexturing()
   {
-    if (!vl::Has_GL_ARB_multitexture)
+    if (!GLEW_ARB_multitexture)
     {
       vl::Log::error("Multitexturing not supported.\n");
       return;
@@ -118,7 +118,7 @@ public:
 
     vl::ref<vl::Effect> fx_3d = new vl::Effect;
 
-    if(vl::Has_GL_VERSION_1_2||vl::Has_GL_EXT_texture3D)
+    if(GLEW_VERSION_1_2||GLEW_EXT_texture3D)
     {
       vl::ref<vl::Texture> texture_3d = new vl::Texture;
       texture_3d->prepareTexture3D( img_volume.get(), vl::TF_RGBA, mMipmappingOn, false );
@@ -150,7 +150,7 @@ public:
 
     vl::ref<vl::Effect> fx_2darray = new vl::Effect;
 
-    if(vl::Has_GL_EXT_texture_array||vl::Has_GL_VERSION_3_0)
+    if(GLEW_EXT_texture_array||GLEW_VERSION_3_0)
     {
       vl::ref<vl::Texture> texture_2darray = new vl::Texture;
       texture_2darray->prepareTexture2DArray( img_volume.get(), vl::TF_RGBA, mMipmappingOn );
@@ -187,7 +187,7 @@ public:
 
     vl::ref<vl::Effect> fx_1darray = new vl::Effect;
 
-    if(vl::Has_GL_EXT_texture_array||vl::Has_GL_VERSION_3_0)
+    if(GLEW_EXT_texture_array||GLEW_VERSION_3_0)
     {
       vl::ref<vl::Texture> texture_1darray = new vl::Texture;
       texture_1darray->prepareTexture1DArray( img_holebox.get(), vl::TF_RGBA, mMipmappingOn );
@@ -218,7 +218,7 @@ public:
 
     vl::ref<vl::Effect> fx_rect = new vl::Effect;
 
-    if(vl::Has_GL_ARB_texture_rectangle||vl::Has_GL_NV_texture_rectangle||vl::Has_GL_VERSION_3_1)
+    if(GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle/*TODO:||GLEW_VERSION_3_1*/)
     {
       vl::ref<vl::Texture> texture_rect = new vl::Texture;
       texture_rect->prepareTextureRectangle( img_holebox.get(), vl::TF_RGBA );
@@ -291,7 +291,7 @@ public:
     // to ensure the torus is drawn after the textured quads
     mFXCubic->setRenderRank(1);
 
-    if (vl::Has_GL_VERSION_1_3||vl::Has_GL_ARB_texture_cube_map)
+    if (GLEW_VERSION_1_3||GLEW_ARB_texture_cube_map)
     {
       vl::ref<vl::Texture> texture_cubic = new vl::Texture;
       texture_cubic->prepareTextureCubemap( img_cubemap.get(), vl::TF_RGBA, mMipmappingOn, false );
@@ -320,7 +320,7 @@ public:
   {
     // rotating cubes
 
-    if (vl::Has_GL_ARB_multitexture)
+    if (GLEW_ARB_multitexture)
     {
       mCubeRightTransform->setLocalMatrix( vl::mat4::getTranslation(+6,0,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
       mCubeLeftTransform ->setLocalMatrix( vl::mat4::getTranslation(-6,0,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );

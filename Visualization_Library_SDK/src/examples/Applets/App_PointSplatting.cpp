@@ -209,7 +209,7 @@ protected:
     geometry->setDisplayListEnabled(false);
     geometry->setVBOEnabled(true);
 
-    if (vl::Has_GL_ARB_vertex_buffer_object)
+    if (GLEW_ARB_vertex_buffer_object)
     {
       color->gpuBuffer()->setBufferData(vl::GBU_STATIC_DRAW);
       points->gpuBuffer()->setBufferData(vl::GBU_STATIC_DRAW);

@@ -431,7 +431,7 @@ Glyph* Font::glyph(int character)
       }
 
       // sets anisotropy to the maximum supported
-      if (Has_GL_EXT_texture_filter_anisotropic)
+      if (GLEW_EXT_texture_filter_anisotropic)
       {
         float max_anisotropy;
         glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);

@@ -85,49 +85,49 @@ namespace vl
 
     // array setters
 
-    void setUniform1i(int count, const int* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int;  VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform2i(int count, const int* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int2; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform3i(int count, const int* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int3; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform4i(int count, const int* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int4; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
+    void setUniform1i(int count, const int* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int;  VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform2i(int count, const int* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int2; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform3i(int count, const int* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int3; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform4i(int count, const int* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int4; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
 
-    void setUniform1ui(int count, const unsigned int* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt;  VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform2ui(int count, const unsigned int* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt2; VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform3ui(int count, const unsigned int* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt3; VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform4ui(int count, const unsigned int* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt4; VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
+    void setUniform1ui(int count, const unsigned int* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt;  VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform2ui(int count, const unsigned int* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt2; VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform3ui(int count, const unsigned int* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt3; VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform4ui(int count, const unsigned int* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt4; VL_CHECK(GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
 
-    void setUniform1f(int count, const float* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float;  VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform2f(int count, const float* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float2; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform3f(int count, const float* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float3; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform4f(int count, const float* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float4; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
+    void setUniform1f(int count, const float* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float;  VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform2f(int count, const float* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float2; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform3f(int count, const float* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float3; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform4f(int count, const float* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float4; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
 
-    void setUniform1d(int count, const double* value) { initDouble(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double;  VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform2d(int count, const double* value) { initDouble(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double2; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform3d(int count, const double* value) { initDouble(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double3; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniform4d(int count, const double* value) { initDouble(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double4; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
+    void setUniform1d(int count, const double* value) { initDouble(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double;  VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform2d(int count, const double* value) { initDouble(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double2; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform3d(int count, const double* value) { initDouble(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double3; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniform4d(int count, const double* value) { initDouble(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double4; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
 
     // matrix array setters
 
-    void setUniformMatrix2f(int count, const float* value) { initData(count*2*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2F; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix3f(int count, const float* value) { initData(count*3*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3F; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix4f(int count, const float* value) { initData(count*4*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4F; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
+    void setUniformMatrix2f(int count, const float* value) { initData(count*2*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2F; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix3f(int count, const float* value) { initData(count*3*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3F; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix4f(int count, const float* value) { initData(count*4*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4F; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
 
-    void setUniformMatrix2x3f(int count, const float* value) { initData(count*2*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x3F; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix3x2f(int count, const float* value) { initData(count*3*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x2F; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix2x4f(int count, const float* value) { initData(count*2*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x4F; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix4x2f(int count, const float* value) { initData(count*4*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x2F; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix3x4f(int count, const float* value) { initData(count*3*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x4F; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix4x3f(int count, const float* value) { initData(count*4*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x3F; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
+    void setUniformMatrix2x3f(int count, const float* value) { initData(count*2*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x3F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix3x2f(int count, const float* value) { initData(count*3*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x2F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix2x4f(int count, const float* value) { initData(count*2*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x4F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix4x2f(int count, const float* value) { initData(count*4*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x2F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix3x4f(int count, const float* value) { initData(count*3*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x4F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix4x3f(int count, const float* value) { initData(count*4*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x3F; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
 
-    void setUniformMatrix2d(int count, const double* value) { initDouble(count*2*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2D; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix3d(int count, const double* value) { initDouble(count*3*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3D; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix4d(int count, const double* value) { initDouble(count*4*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4D; VL_CHECK(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
+    void setUniformMatrix2d(int count, const double* value) { initDouble(count*2*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2D; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix3d(int count, const double* value) { initDouble(count*3*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3D; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix4d(int count, const double* value) { initDouble(count*4*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4D; VL_CHECK(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
 
-    void setUniformMatrix2x3d(int count, const double* value) { initDouble(count*2*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x3D; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix3x2d(int count, const double* value) { initDouble(count*3*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x2D; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix2x4d(int count, const double* value) { initDouble(count*2*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x4D; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix4x2d(int count, const double* value) { initDouble(count*4*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x2D; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix3x4d(int count, const double* value) { initDouble(count*3*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x4D; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
-    void setUniformMatrix4x3d(int count, const double* value) { initDouble(count*4*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x3D; VL_CHECK(Has_GL_VERSION_2_1||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0); }
+    void setUniformMatrix2x3d(int count, const double* value) { initDouble(count*2*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x3D; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix3x2d(int count, const double* value) { initDouble(count*3*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x2D; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix2x4d(int count, const double* value) { initDouble(count*2*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x4D; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix4x2d(int count, const double* value) { initDouble(count*4*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x2D; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix3x4d(int count, const double* value) { initDouble(count*3*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x4D; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
+    void setUniformMatrix4x3d(int count, const double* value) { initDouble(count*4*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x3D; VL_CHECK(GLEW_VERSION_2_1||GLEW_VERSION_3_0||GLEW_VERSION_4_0); }
 
     // vector/matrix array setters
 

@@ -164,7 +164,7 @@ void OcclusionCullRenderer::render_pass1(const RenderQueue* in_render_queue )
       continue;
 
     bool occluded = false;
-    VL_CHECK(Has_GL_ARB_occlusion_query || Has_GL_VERSION_1_5 || Has_GL_VERSION_3_0)
+    VL_CHECK(GLEW_ARB_occlusion_query || GLEW_VERSION_1_5 || GLEW_VERSION_3_0)
 
     if ( actor->occlusionQuery() && 
          actor->occlusionQueryTick() == mWrappedRenderer->renderTick() && 
@@ -278,7 +278,7 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
 
     if ( !actor->boundingBox().isInside(eye) )
     {
-      VL_CHECK(Has_GL_ARB_occlusion_query || Has_GL_VERSION_1_5 || Has_GL_VERSION_3_0)
+      VL_CHECK(GLEW_ARB_occlusion_query || GLEW_VERSION_1_5 || GLEW_VERSION_3_0)
 
       // if occludee -> perform occlusion test to be used for the next frame
       if (actor->isOccludee())

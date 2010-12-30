@@ -63,7 +63,7 @@ int Actor::evaluateLOD(Camera* camera)
 void Actor::createOcclusionQuery()
 {
   VL_CHECK_OGL();
-  if (!mOcclusionQuery && (Has_GL_ARB_occlusion_query || Has_GL_VERSION_1_5))
+  if (!mOcclusionQuery && (GLEW_ARB_occlusion_query || GLEW_VERSION_1_5))
     glGenQueries(1, &mOcclusionQuery);
   VL_CHECK_OGL();
   VL_CHECK(mOcclusionQuery)
@@ -71,7 +71,7 @@ void Actor::createOcclusionQuery()
 //-----------------------------------------------------------------------------
 void Actor::deleteOcclusionQuery()
 {
-  if(Has_GL_ARB_occlusion_query || Has_GL_VERSION_1_5)
+  if(GLEW_ARB_occlusion_query || GLEW_VERSION_1_5)
   {
     if (mOcclusionQuery)
     {

@@ -296,8 +296,8 @@ namespace vl
     //! \note The program must be linked before calling this function.
     int getAttribLocation(const char* name) const
     {
-      VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
-      if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
+      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
         return -1;
       VL_CHECK(handle())
       VL_CHECK(linked())
@@ -411,8 +411,8 @@ namespace vl
     */
     int getUniformLocation(const std::string& name) const
     {
-      VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
-      if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
+      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
         return -1;
       VL_CHECK(linked())
 
@@ -428,8 +428,8 @@ namespace vl
     //! Equivalent to glGetUniformfv(handle(), location, params)
     void getUniformfv(int location, float* params) const
     {
-      VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
-      if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
+      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
@@ -440,8 +440,8 @@ namespace vl
     //! Equivalent to glGetUniformiv(handle(), location, params)
     void getUniformiv(int location, int* params) const
     {
-      VL_CHECK( Has_GL_VERSION_2_0||Has_GL_VERSION_3_0 )
-      if( !(Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0) )
+      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
