@@ -119,6 +119,7 @@ namespace vl
 
     void compileDisplayList(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context)
     {
+      VL_CHECK_OGL();
       if (!displayList())
         setDisplayList( glGenLists(1) );
       glNewList( displayList(), GL_COMPILE );
