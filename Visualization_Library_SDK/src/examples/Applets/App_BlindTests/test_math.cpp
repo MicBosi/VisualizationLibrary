@@ -126,7 +126,22 @@ namespace blind_tests
     CONDITION( distance(y, fvec3(-1,0,0)) < 0.001f );
     CONDITION( distance(z, fvec3(0,-1,0)) < 0.001f );
 
-    // transposed & identity
+    // transposition
+    for(int i=0; i<4; ++i)
+      for(int j=0; j<4; ++j)
+        m.e(i,j) = rand();
+    fmat4 m2 = m;
+    m2.transpose();
+    for(int i=0; i<4; ++i)
+    {
+      for(int j=0; j<4; ++j)
+      {
+        CONDITION( m2.e(i,j) = m.e(j,i) );
+      }
+    }
+    CONDITION( m2 == m.getTransposed() )
+
+    // misc
     m = fmat4::getRotation( 90, 1,0,0 ) * fmat4::getRotation( 90, 0,0,1 ) * fmat4::getIdentity();
     m = m * m.getTransposed();
     v4 = m * fvec4(1,0,0,1);

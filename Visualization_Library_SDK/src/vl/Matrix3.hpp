@@ -312,7 +312,7 @@ namespace vl
     {
       T_scalar tmp;
       for(int i=0; i<3; ++i)
-        for(int j=0; j<3; ++j)
+        for(int j=i; j<3; ++j)
         {
           tmp = e(j,i);
           e(j,i) = e(i,j);
