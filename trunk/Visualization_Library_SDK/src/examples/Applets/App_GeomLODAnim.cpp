@@ -58,7 +58,7 @@ public:
     actor->lod(0) = geom.get();
 
     geom->setVBOEnabled(true);
-    if (vl::Has_GL_ARB_vertex_buffer_object)
+    if (GLEW_ARB_vertex_buffer_object)
     {
       geom->vertexArray()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW,false);
     }
@@ -69,7 +69,7 @@ public:
     actor->lod(1) = geom.get();
 
     geom->setVBOEnabled(true);
-    if (vl::Has_GL_ARB_vertex_buffer_object)
+    if (GLEW_ARB_vertex_buffer_object)
     {
       geom->vertexArray()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW,false);
     }
@@ -80,7 +80,7 @@ public:
     actor->lod(2) = geom.get();
 
     geom->setVBOEnabled(true);
-    if (vl::Has_GL_ARB_vertex_buffer_object)
+    if (GLEW_ARB_vertex_buffer_object)
     {
       geom->vertexArray()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW,false);
     }
@@ -119,7 +119,7 @@ public:
         vec[i].y() = (float)cos( -frame_clock * vl::fPi * theta + d * phi ) * 2.0f;
       }
 
-      if (vl::Has_GL_ARB_vertex_buffer_object)
+      if (GLEW_ARB_vertex_buffer_object)
       {
         geom->vertexArray()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW, false);
       }

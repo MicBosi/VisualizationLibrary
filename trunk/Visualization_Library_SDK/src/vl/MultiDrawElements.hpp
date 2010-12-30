@@ -177,9 +177,9 @@ namespace vl
 
     virtual void render(bool use_vbo) const
     {
-      VL_CHECK(Has_GL_VERSION_1_4);
-      VL_CHECK(!use_vbo || (use_vbo && (Has_GL_ARB_vertex_buffer_object||Has_GL_VERSION_1_5||Has_GL_VERSION_3_0)))
-      use_vbo &= Has_GL_ARB_vertex_buffer_object||Has_GL_VERSION_1_5||Has_GL_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
+      VL_CHECK(GLEW_VERSION_1_4);
+      VL_CHECK(!use_vbo || (use_vbo && (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)))
+      use_vbo &= GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
       if ( !use_vbo && !indices()->size() )
         return;
 
@@ -189,13 +189,13 @@ namespace vl
       // primitive restart enable
       if(primitiveRestartEnabled())
       {
-        if(Has_GL_VERSION_3_1)
+        if(GLEW_VERSION_3_1)
         {
           glEnable(GL_PRIMITIVE_RESTART);
           glPrimitiveRestartIndex(primitiveRestartIndex());
         }
         else
-        if(Has_GL_NV_primitive_restart)
+        if(GLEW_NV_primitive_restart)
         {
           glEnable(GL_PRIMITIVE_RESTART_NV);
           glPrimitiveRestartIndexNV(primitiveRestartIndex());
@@ -208,11 +208,11 @@ namespace vl
         }
       }
 
-      const GLvoid **indices_ptr = (const GLvoid**)&mPointerVector[0];
+      GLvoid **indices_ptr = (GLvoid**)&mPointerVector[0];
       if (use_vbo && indices()->gpuBuffer()->handle())
       {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
-        indices_ptr = (const GLvoid**)&mNULLPointerVector[0];
+        indices_ptr = (GLvoid**)&mNULLPointerVector[0];
       }
       else
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -221,7 +221,7 @@ namespace vl
       {
         VL_CHECK( baseVertices().size() == pointerVector().size() )
         VL_CHECK( baseVertices().size() == countVector().size() )
-        if (Has_GL_ARB_draw_elements_base_vertex || Has_GL_VERSION_3_1)
+        if (GLEW_ARB_draw_elements_base_vertex || GLEW_VERSION_3_1)
           glMultiDrawElementsBaseVertex( 
             primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), indices_ptr, (GLsizei)mCountVector.size(), (GLint*)&mBaseVertices[0] 
           );
@@ -238,10 +238,10 @@ namespace vl
       // primitive restart disable
       if(primitiveRestartEnabled())
       {
-        if(Has_GL_VERSION_3_1)
+        if(GLEW_VERSION_3_1)
           glDisable(GL_PRIMITIVE_RESTART);
         else
-        if(Has_GL_NV_primitive_restart)
+        if(GLEW_NV_primitive_restart)
           glDisable(GL_PRIMITIVE_RESTART_NV);
       }
     }
