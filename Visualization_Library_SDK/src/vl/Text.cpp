@@ -149,9 +149,7 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
     return;
   }
 
-  int viewport[] = {0,0,0,0};
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  VL_CHECK_OGL()
+  int viewport[] = { camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height() };
 
   if (viewport[2] < 1) viewport[2] = 1;
   if (viewport[3] < 1) viewport[3] = 1;
@@ -694,9 +692,7 @@ AABB Text::rawboundingRect(const String& text) const
 //-----------------------------------------------------------------------------
 void Text::renderBackground(const Actor* actor, const Camera* camera) const
 {
-  int viewport[] = {0,0,0,0};
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  VL_CHECK_OGL()
+  int viewport[] = { camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height() };
 
   if (viewport[2] < 1) viewport[2] = 1;
   if (viewport[3] < 1) viewport[3] = 1;
@@ -752,9 +748,7 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
 //-----------------------------------------------------------------------------
 void Text::renderBorder(const Actor* actor, const Camera* camera) const
 {
-  int viewport[] = {0,0,0,0};
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  VL_CHECK_OGL()
+  int viewport[] = { camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height() };
 
   if (viewport[2] < 1) viewport[2] = 1;
   if (viewport[3] < 1) viewport[3] = 1;
@@ -978,8 +972,7 @@ AABB Text::boundingRectTransformed(vec3& a, vec3& b, vec3& c, vec3& d, const Cam
       camera->project(v,v);
 
       // from screen space to viewport space
-      int viewport[] = {0,0,0,0};
-      glGetIntegerv(GL_VIEWPORT, viewport); VL_CHECK_OGL()
+      int viewport[] = { camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height() };
       v.x() -= viewport[0];
       v.y() -= viewport[1];
 
