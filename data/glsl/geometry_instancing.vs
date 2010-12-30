@@ -1,6 +1,5 @@
 // #version 120
 #extension GL_ARB_draw_instanced: enable
-#extension GL_EXT_draw_instanced: enable
 #extension GL_EXT_gpu_shader4: enable
 uniform mat4 model_view_matrix[100];
 uniform mat3 normal_matrix[100];

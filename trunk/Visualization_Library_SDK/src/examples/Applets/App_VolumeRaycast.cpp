@@ -200,7 +200,7 @@ void RaycastVolume::updateUniforms(vl::Actor*actor, vl::Real, const vl::Camera* 
     // world to object space
     if (actor->transform())
     {
-      look = (fmat4)actor->transform()->worldMatrix().getInverse().getTransposed().getInverse() * look;
+      look = (fmat4)actor->transform()->worldMatrix().getInverse() /*.getTransposed().getInverse()*/ * look;
     }
     actor->gocUniform("eye_look")->setUniform(look);
   }
