@@ -160,6 +160,14 @@ namespace blind_tests
     m /= 2.0f;
     CONDITION( m == fmat4(2.0f) );
 
+    CONDITION( fmat4(1) == fmat4(1) );
+    CONDITION( fmat4(1) != fmat4(2) );
+
+    // mic fixme:
+    // coprire tutte le funzioni di tutti i tipi di matrici.
+    // documentare tutte le funzioni.
+    // GLSLmath implementazione da rifare tutta coi templates.
+
     return true;
   }
 
