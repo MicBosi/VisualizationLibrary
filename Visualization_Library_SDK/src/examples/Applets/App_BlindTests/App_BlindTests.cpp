@@ -91,7 +91,7 @@ public:
 
     ref<Text> text = new Text;
     text->setText( msg );
-    text->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    text->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraSe.ttf", 12) );
     text->setAlignment( AlignLeft | AlignTop );
     text->setViewportAlignment( AlignLeft | AlignTop );
     ref<Effect> effect = new Effect;
