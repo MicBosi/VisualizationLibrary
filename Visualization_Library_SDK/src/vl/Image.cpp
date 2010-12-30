@@ -928,7 +928,7 @@ void Image::readPixels(int x, int y, int w, int h, EReadDrawBuffer read_buffer, 
   glPixelStorei( GL_PACK_SKIP_ROWS,   0);
   glPixelStorei( GL_PACK_SWAP_BYTES,  0);
   glPixelStorei( GL_PACK_LSB_FIRST,   0);
-  if (Has_GL_VERSION_1_2)
+  if (GLEW_VERSION_1_2)
   {
     glPixelStorei( GL_PACK_IMAGE_HEIGHT, 0 );
     glPixelStorei( GL_PACK_SKIP_IMAGES,  0 );
@@ -951,7 +951,7 @@ void Image::readPixels(int x, int y, int w, int h, EReadDrawBuffer read_buffer, 
     }
   #endif
 
-  bool supports_pbo = Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object||Has_GL_VERSION_2_1;
+  bool supports_pbo = GLEW_ARB_pixel_buffer_object||GLEW_EXT_pixel_buffer_object||GLEW_VERSION_2_1;
 
   if (store_in_pixel_buffer_object && supports_pbo)
   {

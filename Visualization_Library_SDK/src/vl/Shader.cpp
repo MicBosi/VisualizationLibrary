@@ -181,7 +181,7 @@ void PixelTransfer::apply(const Camera*, OpenGLContext*) const
   glPixelTransferf(GL_ALPHA_BIAS, alphaBias() ); 
   glPixelTransferf(GL_DEPTH_BIAS, depthBias() );
   VL_CHECK_OGL()
-  if (Has_GL_ARB_imaging)
+  if (GLEW_ARB_imaging)
   {
     glPixelTransferf(GL_POST_COLOR_MATRIX_RED_SCALE, postColorMatrixRedScale() );
     glPixelTransferf(GL_POST_COLOR_MATRIX_GREEN_SCALE, postColorMatrixGreenScale() );
@@ -213,7 +213,7 @@ void Hint::apply(const Camera*, OpenGLContext*) const
   glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint );
   glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint );
   glHint( GL_FOG_HINT, mFogHint );
-  if (Has_GL_SGIS_generate_mipmap || Has_GL_VERSION_1_4)
+  if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
     glHint( GL_GENERATE_MIPMAP_HINT, mGenerateMipmapHint );
   VL_CHECK_OGL()
 }
@@ -265,7 +265,7 @@ void ShadeModel::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void BlendFunc::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_VERSION_1_4||Has_GL_EXT_blend_func_separate)
+  if (GLEW_VERSION_1_4||GLEW_EXT_blend_func_separate)
     { VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL() }
   else
     { glBlendFunc(mSrcRGB, mDstRGB); VL_CHECK_OGL() }// modifies rgb and alpha
@@ -275,7 +275,7 @@ void BlendFunc::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void BlendEquation::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_VERSION_2_0||Has_GL_EXT_blend_equation_separate)
+  if (GLEW_VERSION_2_0||GLEW_EXT_blend_equation_separate)
     { VL_glBlendEquationSeparate(mModeRGB, mModeAlpha); VL_CHECK_OGL() }
   else
     { VL_glBlendEquation(mModeRGB); VL_CHECK_OGL() }
@@ -389,7 +389,7 @@ void Material::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void LightModel::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_VERSION_1_2||Has_GL_EXT_separate_specular_color)
+  if (GLEW_VERSION_1_2||GLEW_EXT_separate_specular_color)
     { glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, mColorControl); VL_CHECK_OGL() }
 
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, mAmbientColor.ptr()); VL_CHECK_OGL()
@@ -482,17 +482,17 @@ void LineStipple::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void PointParameter::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_VERSION_1_4)
+  if (GLEW_VERSION_1_4)
   {
     VL_glPointParameterf(GL_POINT_SIZE_MIN, mSizeMin); VL_CHECK_OGL()
     VL_glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
     VL_glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, (const float*)mDistanceAttenuation.ptr()); VL_CHECK_OGL()
   }
-  if (Has_GL_VERSION_1_4||Has_GL_VERSION_3_0)
+  if (GLEW_VERSION_1_4||GLEW_VERSION_3_0)
   {
     VL_glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
   }
-  if (Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
   {
     VL_glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, mPointSpriteCoordOrigin); VL_CHECK_OGL()
   }
@@ -502,7 +502,7 @@ void PointParameter::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void StencilFunc::apply(const Camera*, OpenGLContext*) const
 {
-  if(Has_GL_VERSION_2_0)
+  if(GLEW_VERSION_2_0)
   {
     VL_glStencilFuncSeparate(GL_FRONT, mFunction_Front, mRefValue_Front, mMask_Front); VL_CHECK_OGL()
     VL_glStencilFuncSeparate(GL_BACK,  mFunction_Back,  mRefValue_Back,  mMask_Back);  VL_CHECK_OGL()
@@ -517,7 +517,7 @@ void StencilFunc::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void StencilOp::apply(const Camera*, OpenGLContext*) const
 {
-  if(Has_GL_VERSION_2_0)
+  if(GLEW_VERSION_2_0)
   {
     VL_glStencilOpSeparate(GL_FRONT, mSFail_Front, mDpFail_Front, mDpPass_Front); VL_CHECK_OGL()
     VL_glStencilOpSeparate(GL_BACK,  mSFail_Back,  mDpFail_Back,  mDpPass_Back);  VL_CHECK_OGL()
@@ -532,7 +532,7 @@ void StencilOp::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void StencilMask::apply(const Camera*, OpenGLContext*) const
 {
-  if(Has_GL_VERSION_2_0)
+  if(GLEW_VERSION_2_0)
   {
     glStencilMaskSeparate(GL_FRONT, mMask_Front); VL_CHECK_OGL()
     glStencilMaskSeparate(GL_BACK,  mMask_Back);  VL_CHECK_OGL()
@@ -622,19 +622,19 @@ void TexParameter::apply(ETextureDimension dimension) const
 
   if (wrapS() == GL_MIRRORED_REPEAT || wrapT() == GL_MIRRORED_REPEAT || wrapR() == GL_MIRRORED_REPEAT)
   {
-    if( !(Has_GL_VERSION_1_4 || Has_GL_ARB_texture_mirrored_repeat || Has_GL_IBM_texture_mirrored_repeat) )
+    if( !(GLEW_VERSION_1_4 || GLEW_ARB_texture_mirrored_repeat || GLEW_IBM_texture_mirrored_repeat) )
       Log::error("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n");
   }
 
   if (wrapS() == GL_CLAMP_TO_EDGE || wrapT() == GL_CLAMP_TO_EDGE || wrapR() == GL_CLAMP_TO_EDGE)
   {
-    if( !(Has_GL_VERSION_1_2 || Has_GL_SGIS_texture_edge_clamp) )
+    if( !(GLEW_VERSION_1_2 || GLEW_EXT_texture_edge_clamp || GLEW_SGIS_texture_edge_clamp) )
       Log::error("GL_CLAMP_TO_EDGE not supported by your OpenGL implementation.\n");
   }
 
   if (wrapS() == GL_CLAMP_TO_BORDER || wrapT() == GL_CLAMP_TO_BORDER || wrapR() == GL_CLAMP_TO_BORDER)
   {
-    if( !(Has_GL_VERSION_1_3 || Has_GL_ARB_texture_border_clamp || Has_GL_SGIS_texture_border_clamp) )
+    if( !(GLEW_VERSION_1_3 || GLEW_ARB_texture_border_clamp || GLEW_SGIS_texture_border_clamp) )
       Log::error("GL_CLAMP_TO_BORDER not supported by your OpenGL implementation.\n");
   }
 #endif
@@ -646,17 +646,17 @@ void TexParameter::apply(ETextureDimension dimension) const
   glTexParameteri(dimension, GL_TEXTURE_MAG_FILTER, magFilter()); VL_CHECK_OGL()
   glTexParameteri(dimension, GL_TEXTURE_WRAP_S, wrapS()); VL_CHECK_OGL()
   glTexParameteri(dimension, GL_TEXTURE_WRAP_T, wrapT()); VL_CHECK_OGL()
-  if (Has_GL_VERSION_1_2) 
+  if (GLEW_VERSION_1_2) 
     glTexParameteri(dimension, GL_TEXTURE_WRAP_R, wrapR()); VL_CHECK_OGL()
 
-  if (Has_GL_EXT_texture_filter_anisotropic)
+  if (GLEW_EXT_texture_filter_anisotropic)
     glTexParameterf( dimension, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy() ); VL_CHECK_OGL()
 
-  if (Has_GL_VERSION_1_4||Has_GL_SGIS_generate_mipmap)
+  if (GLEW_VERSION_1_4||GLEW_SGIS_generate_mipmap)
     if (dimension != TD_TEXTURE_RECTANGLE)
       glTexParameteri(dimension, GL_GENERATE_MIPMAP, generateMipmap() ? GL_TRUE : GL_FALSE); VL_CHECK_OGL()
 
-  if (Has_GL_VERSION_1_4||Has_GL_ARB_shadow)
+  if (GLEW_VERSION_1_4||GLEW_ARB_shadow)
   {
     glTexParameteri(dimension, GL_TEXTURE_COMPARE_MODE, compareMode() ); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_COMPARE_FUNC, compareFunc() ); VL_CHECK_OGL()
@@ -671,19 +671,19 @@ namespace
   {
     int max_texture = 1, max_tmp = 0;
 
-    if (Has_GL_VERSION_1_3||Has_GL_ARB_multitexture)
+    if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
     {
       glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL();
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
     }
 
-    if (Has_GL_VERSION_2_0)
+    if (GLEW_VERSION_2_0)
     {
       glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL();
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
     }
 
-    if (Has_GL_VERSION_2_0||Has_GL_VERSION_3_0||Has_GL_VERSION_4_0)
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
     {
       glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
@@ -754,7 +754,7 @@ void TexEnv::apply(const Camera*, OpenGLContext*) const
 
   // combiner settings
   // red book 1.4 p438
-  if (mode() == TEM_COMBINE && (Has_GL_EXT_texture_env_combine || Has_GL_VERSION_1_3))
+  if (mode() == TEM_COMBINE && (GLEW_EXT_texture_env_combine || GLEW_VERSION_1_3))
   {
     glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE, rgbScale()); VL_CHECK_OGL()
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, combineRGB()); VL_CHECK_OGL()
@@ -782,12 +782,12 @@ void TexEnv::apply(const Camera*, OpenGLContext*) const
   }
 
   // no need to do it if point sprite is disabled but we cannot know it here
-  if (Has_GL_VERSION_2_0||Has_GL_ARB_point_sprite)
+  if (GLEW_VERSION_2_0||GLEW_ARB_point_sprite)
   {
     glTexEnvi( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, mPointSpriteCoordReplace ? GL_TRUE : GL_FALSE ); VL_CHECK_OGL()
   }
 
-  if (Has_GL_VERSION_1_4||Has_GL_EXT_texture_lod_bias)
+  if (GLEW_VERSION_1_4||GLEW_EXT_texture_lod_bias)
   {
     glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, mLodBias); VL_CHECK_OGL()
   }

@@ -254,7 +254,7 @@ void Terrain::init()
         tex_unit1->texture()->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
         tex_unit1->texture()->getTexParameter()->setWrapS(TPW_REPEAT);
         tex_unit1->texture()->getTexParameter()->setWrapT(TPW_REPEAT);
-        if (Has_GL_EXT_texture_filter_anisotropic)
+        if (GLEW_EXT_texture_filter_anisotropic)
         {
           float max = 1.0f;
           glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max);

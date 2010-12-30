@@ -268,7 +268,7 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
 
   if ( tex_dimension == TD_TEXTURE_CUBE_MAP )
   {
-    if (!(Has_GL_ARB_texture_cube_map||Has_GL_VERSION_1_3||Has_GL_VERSION_3_0))
+    if (!(GLEW_ARB_texture_cube_map||GLEW_VERSION_1_3||GLEW_VERSION_3_0))
     {
       if (verbose) Log::error("Texture::createTexture(): texture cubemap not supported by the current hardware.\n");
       return false;
@@ -291,7 +291,7 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
       return false;
     }
 
-    if(!(Has_GL_EXT_texture_array||Has_GL_VERSION_3_0))
+    if(!(GLEW_EXT_texture_array||GLEW_VERSION_3_0))
     {
       if (verbose) Log::error("Texture::supports(): texture array not supported by the current hardware.\n");
       return false;
@@ -312,7 +312,7 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
 
   if (tex_dimension == TD_TEXTURE_RECTANGLE)
   {
-    if (!(Has_GL_ARB_texture_rectangle||Has_GL_NV_texture_rectangle||Has_GL_VERSION_3_1))
+    if (!(GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle||GLEW_VERSION_3_1))
     {
       if (verbose) Log::error("Texture::supports(): texture rectangle not supported by the current hardware.\n");
       return false;
@@ -500,7 +500,7 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
   GLint generate_mipmap_orig = GL_FALSE;
   if ( gen_mipmaps )
   {
-    if( Has_GL_SGIS_generate_mipmap||Has_GL_VERSION_1_4||Has_GL_VERSION_3_0 )
+    if( GLEW_SGIS_generate_mipmap||GLEW_VERSION_1_4||GLEW_VERSION_3_0 )
     {
       glGetTexParameteriv( dimension(), GL_GENERATE_MIPMAP, &generate_mipmap_orig ); VL_CHECK_OGL()
       glTexParameteri(dimension(), GL_GENERATE_MIPMAP, GL_TRUE); VL_CHECK_OGL()
@@ -669,7 +669,7 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
     }
   }
 
-  if ( gen_mipmaps && (Has_GL_SGIS_generate_mipmap||Has_GL_VERSION_1_4||Has_GL_VERSION_3_0) )
+  if ( gen_mipmaps && (GLEW_SGIS_generate_mipmap||GLEW_VERSION_1_4||GLEW_VERSION_3_0) )
   {
     glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
     VL_CHECK_OGL()
