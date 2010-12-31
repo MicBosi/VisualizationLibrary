@@ -3,6 +3,26 @@
    \page pagChangelog Changelog
 
 	<div class="featuretitle">Visualization Library 2010.12.1129</div>
+	
+	- New vl::UUID class implementing version 4 (random based) universally unique IDs.
+	- New vl::Random class to generate high quality random numbers based on OS specific cryptographic facilities.
+	- New experimental signal/slot framework.
+	- New raycasting volume rendering example App_VolumeRaycast.cpp (to be continued).
+	- New \p half class to manipulate half precision floating point data.
+	- OpenGL 4.x:
+		- Double precision uniforms.
+		- Texture and color buffer formats		
+	- API CHANGES:
+		- Streamlined array naming convention: ArrayFloat,ArrayFVec2/3/4 renamed 
+		ArrayFloat1/2/3/4, the same goes with all the other base types.
+		- Reworked matrix and quaternion classes for better performances and more 
+		coherent API.
+	- Updated to GLEW 1.5.7
+	- Blind tests solidified in App_BlindTests.cpp: matrix & quaternions, signal/slots framework, virtual 
+	  filesystem, unique ID generation, half float scalar vector and matrices.
+	- Deferred display list and VBO creation and update.
+	- Enhanced renderable bounds update policy.
+	- Many other minor fixes and enhancements.
 
 	<div class="featuretitle">Visualization Library 2010.12.1127</div>
 
