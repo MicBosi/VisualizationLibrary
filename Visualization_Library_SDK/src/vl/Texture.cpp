@@ -128,6 +128,7 @@ void Texture::destroyTexture()
   if (mHandle)
     glDeleteTextures(1, &mHandle);
   reset();
+  getTexParameter()->mDirty = true;
 }
 //-----------------------------------------------------------------------------
 Texture::~Texture()
