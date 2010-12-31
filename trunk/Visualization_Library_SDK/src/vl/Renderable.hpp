@@ -74,8 +74,43 @@ namespace vl
     /** Destructor. */
     virtual ~Renderable() { deleteDisplayList(); }
 
-    /** Renders the Renderable. */
-    virtual void render(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const = 0;
+    /** Renders the Renderable, compiles the display list and updates VBOs. */
+    void render(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context)
+    {
+      VL_CHECK_OGL();
+      
+      // display list have priority over VBOs
+      if (isDisplayListEnabled())
+      {
+        if ( displayListDirty() )
+        {
+          if ( !displayList() )
+          {
+            setDisplayList( glGenLists(1) ); VL_CHECK_OGL();
+          }
+          VL_CHECK( displayList() );
+          glNewList( displayList(), GL_COMPILE_AND_EXECUTE ); VL_CHECK_OGL();
+            render_Implementation( actor, shader, camera, gl_context ); VL_CHECK_OGL();
+          glEndList(); VL_CHECK_OGL();
+          setDisplayListDirty( false );
+        }
+        else
+        {
+          VL_CHECK( displayList() );
+          glCallList( displayList() );
+        }
+      }
+      else
+      {
+        // update VBOs
+        if (vboEnabled() && isVBODirty())
+          updateVBOs(false,false);
+
+        // render
+        render_Implementation( actor, shader, camera, gl_context ); VL_CHECK_OGL();
+      }
+      VL_CHECK_OGL();
+    }
 
     long long boundsUpdateTick() const { return mBoundsUpdateTick; }
     void computeBounds() { computeBounds_Implementation(); setBoundsDirty(false); }
@@ -89,7 +124,7 @@ namespace vl
     unsigned int displayList() const { return mDisplayList; }
     void setDisplayList(unsigned int disp_list) { mDisplayList = disp_list; }
 
-    bool displayListEnabled() const { return mDisplayListEnabled; }
+    bool isDisplayListEnabled() const { return mDisplayListEnabled; }
     void setDisplayListEnabled(bool enabled) { mDisplayListEnabled = enabled; }
 
     bool displayListDirty() const { return mDisplayListDirty; }
@@ -105,8 +140,7 @@ namespace vl
     //! If 'discard_local_data' is set to \p true the memory used by the local buffers is released.
     virtual void updateVBOs(bool discard_local_data, bool force_update) = 0;
 
-    //! Destroyes the VBO (VertexBufferObjects) associated to this Geometry attributes.
-    //! If 'clear_primitives' all the VBOs associated the DrawCall objects are also deleted.
+    //! Destroyes the VBO (vertex buffer objects) associated to this a Renderable.
     //! \note This function does not touch the local (non GPU) data stored in the buffers associated to the vertex attributes and DrawCall.
     virtual void deleteVBOs() {}
 
@@ -117,20 +151,9 @@ namespace vl
       mDisplayList = 0;
     }
 
-    void compileDisplayList(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context)
-    {
-      VL_CHECK_OGL();
-      if (!displayList())
-        setDisplayList( glGenLists(1) );
-      glNewList( displayList(), GL_COMPILE );
-        render( actor, shader, camera, gl_context );
-      glEndList();
-      VL_CHECK_OGL();
-      setDisplayListDirty(false);
-    }
-
   protected:
     virtual void computeBounds_Implementation() = 0;
+    virtual void render_Implementation(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const = 0;
 
   private:
     long long mBoundsUpdateTick;

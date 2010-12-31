@@ -49,7 +49,7 @@ Clear::Clear(): mClearColorMode(CCM_Float), mClearDepthValue(1.0f), mClearStenci
   mScissorBox[3] = -1;
 }
 //-----------------------------------------------------------------------------
-void Clear::render(const Actor*, const Shader*, const Camera*, OpenGLContext*) const
+void Clear::render_Implementation(const Actor*, const Shader*, const Camera*, OpenGLContext*) const
 {
   // build buffer bit mask
   GLbitfield mask = 0;

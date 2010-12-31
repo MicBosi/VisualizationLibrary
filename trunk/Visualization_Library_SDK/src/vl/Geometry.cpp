@@ -382,7 +382,7 @@ void Geometry::updateVBOs(bool discard_local_data, bool force_update)
     drawCalls()->at(i)->updateVBOs(discard_local_data, force_update);
 }
 //-----------------------------------------------------------------------------
-void Geometry::render(const Actor*, const Shader*, const Camera*, OpenGLContext* gl_context) const
+void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*, OpenGLContext* gl_context) const
 {
   VL_CHECK_OGL()
 
@@ -402,7 +402,7 @@ void Geometry::render(const Actor*, const Shader*, const Camera*, OpenGLContext*
 
   // bind Vertex Attrib Set
 
-  bool vbo_on = (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0) && vboEnabled() && !displayListEnabled();
+  bool vbo_on = (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0) && vboEnabled() && !isDisplayListEnabled();
   gl_context->bindVAS(this, vbo_on, false);
 
   // actual draw
