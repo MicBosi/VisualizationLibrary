@@ -58,6 +58,7 @@ namespace vl
    * - Actor */
   class TexParameter
   {
+    friend class Texture;
   public:
     TexParameter();
     virtual const char* className() { return "TexParameter"; }
