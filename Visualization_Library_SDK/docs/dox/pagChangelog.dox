@@ -2,6 +2,8 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2010.12.1129</div>
+
 	<div class="featuretitle">Visualization Library 2010.12.1127</div>
 
 	- <b>OpenGL 2.x, 3.x and 4.1 support enhanced</b>:
