@@ -109,8 +109,6 @@ namespace vl
     //! Performs a shallowCopy() of the Geometry
     Geometry& operator=(const Geometry& other);
 
-    virtual void render(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const;
-
     //! Returns the list of DrawCall objects bound to a Geometry
     Collection<DrawCall>* drawCalls() { return &mDrawCalls; }
 
@@ -302,6 +300,7 @@ namespace vl
 
   protected:
     virtual void computeBounds_Implementation();
+    virtual void render_Implementation(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const;
 
     // render calls
     Collection<DrawCall> mDrawCalls;

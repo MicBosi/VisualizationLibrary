@@ -336,12 +336,8 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       // --------------- Actor rendering ---------------
 
-      VL_CHECK( !tok->mRenderable->displayListEnabled() || (tok->mRenderable->displayListEnabled() && tok->mRenderable->displayList()) )
-
-      if (tok->mRenderable->displayListEnabled())
-        glCallList( tok->mRenderable->displayList() );
-      else
-        tok->mRenderable->render( actor, shader, camera, opengl_context );
+      // also compiles display lists and updates VBOs if necessary
+      tok->mRenderable->render( actor, shader, camera, opengl_context );
 
       VL_CHECK_OGL()
 

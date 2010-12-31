@@ -72,7 +72,7 @@ namespace vl
 
     Clear();
 
-    virtual void render(const Actor*, const Shader*, const Camera*, OpenGLContext*) const;
+    virtual void render_Implementation(const Actor*, const Shader*, const Camera*, OpenGLContext*) const;
 
     void setClearColorBuffer(bool clear)   { mClearColorBuffer   = clear; }
 
