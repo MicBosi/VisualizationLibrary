@@ -35,21 +35,23 @@
 #include "vl/GLSL.hpp"
 #include "vl/FontManager.hpp"
 
+using namespace vl;
+
 class App_Fractals: public BaseDemo
 {
 public:
   App_Fractals() {}
   virtual void shutdown() {}
 
-  void mouseDownEvent(vl::EMouseButton btn, int x, int y)
+  void mouseDownEvent(EMouseButton btn, int x, int y)
   {
     if (mMode != NoMode)
       return;
     else
-    if (btn == vl::LeftButton)
+    if (btn == LeftButton)
       mMode = TranslateMode;
     else
-    if (btn == vl::RightButton)
+    if (btn == RightButton)
       mMode = ZoomMode;
 
     mMouseStartPos.x() = x;
@@ -59,12 +61,12 @@ public:
     mStartCenter.y()   = mYcenter;
   }
 
-  void mouseUpEvent(vl::EMouseButton btn, int /*x*/, int /*y*/)
+  void mouseUpEvent(EMouseButton btn, int /*x*/, int /*y*/)
   {
-    if (btn == vl::LeftButton && mMode == TranslateMode)
+    if (btn == LeftButton && mMode == TranslateMode)
       mMode = NoMode;
     else
-    if (btn == vl::RightButton && mMode == ZoomMode)
+    if (btn == RightButton && mMode == ZoomMode)
       mMode = NoMode;
   }
 
@@ -81,8 +83,8 @@ public:
     else
     if (mMode == TranslateMode)
     {
-      float deltax = 0.5f * mZoom * (x - mMouseStartPos.x()) / vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->width();
-      float deltay = 0.5f * mZoom * (y - mMouseStartPos.y()) / vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->height();
+      float deltax = 0.5f * mZoom * (x - mMouseStartPos.x()) / VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->width();
+      float deltay = 0.5f * mZoom * (y - mMouseStartPos.y()) / VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->height();
       mXcenter = mStartCenter.x() - deltax;
       mYcenter = mStartCenter.y() + deltay;
       openglContext()->update();
@@ -90,19 +92,19 @@ public:
     updateText();
   }
 
-  void keyPressEvent(unsigned short ch, vl::EKey key)
+  void keyPressEvent(unsigned short ch, EKey key)
   {
     BaseDemo::keyPressEvent(ch, key);
-    if (key == vl::Key_F7)
+    if (key == Key_F7)
       generateAndSaveFractalViaCPU();
     else
-    if (key == vl::Key_F9)
+    if (key == Key_F9)
     {
       mTextureToggle = !mTextureToggle;
-      mTexture->prepareTexture1D( mTextureToggle ? mSpectrum1.get() : mSpectrum2.get(), vl::TF_RGBA, false, false );
+      mTexture->setMipLevel( 0, mTextureToggle ? mSpectrum1.get() : mSpectrum2.get(), false );
     }
     else
-    if (key == vl::Key_H)
+    if (key == Key_H)
       mHelpOn = !mHelpOn;
     updateText();
   }
@@ -110,7 +112,7 @@ public:
   virtual void run()
   {
     mGLSLProgram->useProgram();
-    glUniform1f(mGLSLProgram->getUniformLocation("ColorOffset"), mColorOffset = (float)vl::fract(vl::Time::currentTime() * 0.5) );
+    glUniform1f(mGLSLProgram->getUniformLocation("ColorOffset"), mColorOffset = (float)fract(Time::currentTime() * 0.5) );
     glUniform1f(mGLSLProgram->getUniformLocation("Zoom"),    mZoom);
     glUniform1f(mGLSLProgram->getUniformLocation("Xcenter"), mXcenter);
     glUniform1f(mGLSLProgram->getUniformLocation("Ycenter"), mYcenter);
@@ -131,15 +133,15 @@ public:
         "<Left Button> translates the view\n"
         "<Right Button> zooms the view\n"
       );
-      mText->setAlignment( vl::AlignVCenter | vl::AlignHCenter );
-      mText->setViewportAlignment( vl::AlignVCenter| vl::AlignHCenter );
+      mText->setAlignment( AlignVCenter | AlignHCenter );
+      mText->setViewportAlignment( AlignVCenter| AlignHCenter );
     }
     else
     {
-      vl::String text = vl::Say("coords = %.8n %.8n; zoom = %.7n") << mXcenter << mYcenter << mZoom;
+      String text = Say("coords = %.8n %.8n; zoom = %.7n") << mXcenter << mYcenter << mZoom;
       mText->setText(text);
-      mText->setAlignment( vl::AlignBottom | vl::AlignHCenter );
-      mText->setViewportAlignment( vl::AlignBottom | vl::AlignHCenter );
+      mText->setAlignment( AlignBottom | AlignHCenter );
+      mText->setViewportAlignment( AlignBottom | AlignHCenter );
     }
   }
 
@@ -147,8 +149,8 @@ public:
   {
     if (!(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
     {
-      vl::Log::error("OpenGL Shading Language not supported.\n");
-      vl::Time::sleep(3000);
+      Log::error("OpenGL Shading Language not supported.\n");
+      Time::sleep(3000);
       exit(1);
     }
 
@@ -158,19 +160,19 @@ public:
     mHelpOn = true;
     mTextureToggle = true;
 
-    mText = new vl::Text;
+    mText = new Text;
     mText->setText("Mandelbrot!");
-    mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
-    mText->setMode( vl::Text2D );
+    mText->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
+    mText->setMode( Text2D );
     mText->setColor(vlut::white);
-    mText->setBackgroundColor( vl::fvec4(0,0,0,0.75f) );
+    mText->setBackgroundColor( fvec4(0,0,0,0.75f) );
     mText->setBackgroundEnabled(true);
-    mText->setAlignment( vl::AlignBottom | vl::AlignLeft );
-    mText->setViewportAlignment( vl::AlignBottom | vl::AlignLeft );
+    mText->setAlignment( AlignBottom | AlignLeft );
+    mText->setViewportAlignment( AlignBottom | AlignLeft );
     mText->translate(10,10,0);
-    vl::ref<vl::Effect> text_effect = new vl::Effect;
-    text_effect->shader()->enable(vl::EN_BLEND);
-    vl::Actor* text_actor = sceneManager()->tree()->addActor( mText.get(), text_effect.get() );
+    ref<Effect> text_effect = new Effect;
+    text_effect->shader()->enable(EN_BLEND);
+    Actor* text_actor = sceneManager()->tree()->addActor( mText.get(), text_effect.get() );
     text_actor->setRenderRank(1);
 
     updateText();
@@ -179,17 +181,17 @@ public:
     openglContext()->setContinuousUpdate(true);
 
     /* bind Effect */
-    vl::ref<vl::Effect> effect = new vl::Effect;
+    ref<Effect> effect = new Effect;
 
     /* screen aligned quad */
-    vl::ref<vl::Geometry> geom = vlut::makeGrid( vl::vec3(0,0,0), 2, 2, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
-    geom->transform( vl::mat4::getRotation( -90, 1,0,0 ) );
+    ref<Geometry> geom = vlut::makeGrid( vec3(0,0,0), 2, 2, 2, 2, true, fvec2(0,0), fvec2(1,1) );
+    geom->transform( mat4::getRotation( -90, 1,0,0 ) );
     sceneManager()->tree()->addActor( geom.get(), effect.get() );
 
     // camera setup
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionMatrix( vl::mat4() );
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4() );
+    VisualizationLibrary::rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
+    VisualizationLibrary::rendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4() );
+    VisualizationLibrary::rendering()->as<Rendering>()->camera()->setInverseViewMatrix( mat4() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
@@ -217,32 +219,33 @@ public:
     #endif
 
     // color palette 1
-    std::vector<vl::fvec4> color_range1;
+    std::vector<fvec4> color_range1;
     color_range1.push_back(vlut::red);
     color_range1.push_back(vlut::yellow);
     color_range1.push_back(vlut::green);
     color_range1.push_back(vlut::blue);
     color_range1.push_back(vlut::red);
-    mSpectrum1 = vl::Image::makeColorSpectrum(256,color_range1);
+    mSpectrum1 = Image::makeColorSpectrum(256,color_range1);
 
     // color palette 2
-    std::vector<vl::fvec4> color_range2;
+    std::vector<fvec4> color_range2;
     color_range2.push_back(vlut::yellow);
     color_range2.push_back(vlut::royalblue);
     color_range2.push_back(vlut::yellow);
-    mSpectrum2 = vl::Image::makeColorSpectrum(256,color_range2);
+    mSpectrum2 = Image::makeColorSpectrum(256,color_range2);
 
-    mTexture = new vl::Texture(mSpectrum1.get());
+    mTexture = new Texture;
+    mTexture->prepareTexture1D( mSpectrum1.get(), TF_RGBA, false, false );
+    mTexture->getTexParameter()->setMagFilter(TPF_NEAREST);
+    mTexture->getTexParameter()->setMinFilter(TPF_NEAREST);
     effect->shader()->gocTextureUnit(0)->setTexture( mTexture.get() );
-    effect->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_NEAREST);
-    effect->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_NEAREST);
 
     mGLSLProgram = effect->shader()->gocGLSLProgram();
-    mGLSLProgram->attachShader( new vl::GLSLVertexShader("/glsl/mandelbrot.vs") );
-    mGLSLProgram->attachShader( new vl::GLSLFragmentShader("/glsl/mandelbrot.fs") );
+    mGLSLProgram->attachShader( new GLSLVertexShader("/glsl/mandelbrot.vs") );
+    mGLSLProgram->attachShader( new GLSLFragmentShader("/glsl/mandelbrot.fs") );
     mGLSLProgram->linkProgram();
     mGLSLProgram->useProgram();
-    glUniform1f(mGLSLProgram->getUniformLocation("ColorOffset"), mColorOffset = (float)vl::fract(vl::Time::currentTime() * 0.5) );
+    glUniform1f(mGLSLProgram->getUniformLocation("ColorOffset"), mColorOffset = (float)fract(Time::currentTime() * 0.5) );
     glUniform3f(mGLSLProgram->getUniformLocation("InnerColor"),  0,0,0 );
     glUniform1f(mGLSLProgram->getUniformLocation("Zoom"),    mZoom);
     glUniform1f(mGLSLProgram->getUniformLocation("Xcenter"), mXcenter);
@@ -253,23 +256,23 @@ public:
 
   void resizeEvent(int w, int h)
   {
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
+    VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->setWidth(w);
+    VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->setHeight(h);
   }
 
   void generateAndSaveFractalViaCPU()
   {
     // compute Mandelbrot on the CPU
 
-    vl::Image* spectrum = mTextureToggle ? mSpectrum1.get() : mSpectrum2.get();
+    Image* spectrum = mTextureToggle ? mSpectrum1.get() : mSpectrum2.get();
 
-    int pic_w = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->width();
-    int pic_h = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->height();
+    int pic_w = VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->width();
+    int pic_h = VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->height();
 
-    vl::ref< vl::Image > image = new vl::Image;
-    image->allocate2D(pic_w,pic_h,4,vl::IF_RGBA, vl::IT_UNSIGNED_BYTE);
+    ref< Image > image = new Image;
+    image->allocate2D(pic_w,pic_h,4,IF_RGBA, IT_UNSIGNED_BYTE);
 
-    double t1 = (double)vl::Time::currentTime();
+    double t1 = (double)Time::currentTime();
 
     for(int y=0; y<pic_h; ++y)
     {
@@ -305,7 +308,7 @@ public:
         }
         else
         {
-          int px_s = int(spectrum->width() * vl::fract(iter*0.01f+mColorOffset));
+          int px_s = int(spectrum->width() * fract(iter*0.01f+mColorOffset));
           image->pixels()[x*4 + image->pitch()*y + 0] = spectrum->pixels()[px_s*4 + 0];
           image->pixels()[x*4 + image->pitch()*y + 1] = spectrum->pixels()[px_s*4 + 1];
           image->pixels()[x*4 + image->pitch()*y + 2] = spectrum->pixels()[px_s*4 + 2];
@@ -314,31 +317,31 @@ public:
       }
     }
 
-    double t2 = (double)vl::Time::currentTime();
+    double t2 = (double)Time::currentTime();
 
-    vl::Log::print(vl::Say("CPU mandelbrot fractal generation time = %n\n") << t2-t1);
+    Log::print(Say("CPU mandelbrot fractal generation time = %n\n") << t2-t1);
 
-    vl::saveImage( image.get(), vl::Say("Mandelbrot Fractal %.0n.tif") << vl::Time::currentTime()*10 );
+    saveImage( image.get(), Say("Mandelbrot Fractal %.0n.tif") << Time::currentTime()*10 );
   }
 
 protected:
-  vl::ivec3 mMouseStartPos;
+  ivec3 mMouseStartPos;
   enum { NoMode, TranslateMode, ZoomMode } mMode;
   float    mStartZoom;
-  vl::fvec3 mStartCenter;
+  fvec3 mStartCenter;
   float mColorOffset;
   float mZoom;
   float mXcenter;
   float mYcenter;
   float mMaxIterations;
-  vl::ref<vl::Text> mText;
-  vl::ref<vl::Image> mSpectrum1;
-  vl::ref<vl::Image> mSpectrum2;
+  ref<Text> mText;
+  ref<Image> mSpectrum1;
+  ref<Image> mSpectrum2;
   bool mHelpOn;
   bool mTextureToggle;
-  vl::ref<vl::Texture> mTexture;
+  ref<Texture> mTexture;
 
-  vl::ref<vl::GLSLProgram> mGLSLProgram;
+  ref<GLSLProgram> mGLSLProgram;
 };
 
 // Have fun!
