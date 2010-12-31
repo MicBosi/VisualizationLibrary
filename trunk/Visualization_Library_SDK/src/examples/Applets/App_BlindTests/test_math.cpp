@@ -33,6 +33,7 @@
 #include "vl/Say.hpp"
 #include "vl/Log.hpp"
 #include <set>
+#include <cstdlib>
 
 using namespace vl;
 
