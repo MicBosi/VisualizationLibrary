@@ -137,7 +137,7 @@ namespace vl
      * If camera != NULL and actor != NULL and actor->transform() != NULL then 
      * the bitmaps position will follow the Actor's Transform. 
      * The \p renderer parameter is ignored. */
-    void render(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const;
+    void render_Implementation(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const;
 
     const Collection<Pixels>* draws() const { return &mDraws; }
     

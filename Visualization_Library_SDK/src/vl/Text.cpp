@@ -40,7 +40,7 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-void Text::render(const Actor* actor, const Shader*, const Camera* camera, OpenGLContext* gl_context) const
+void Text::render_Implementation(const Actor* actor, const Shader*, const Camera* camera, OpenGLContext* gl_context) const
 {
   gl_context->bindVAS(NULL, false, false);
 

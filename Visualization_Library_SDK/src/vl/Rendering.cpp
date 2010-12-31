@@ -318,19 +318,6 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
     if ( evaluateLOD() )
       geometry_lod = actor->evaluateLOD( camera() );
 
-    // --------------- Display List ---------------
-
-    if (renderers().size() && renderers()[0]->renderTarget())
-    {
-      if ( actor->lod(geometry_lod)->displayListEnabled() && (!actor->lod(geometry_lod)->displayList()||actor->lod(geometry_lod)->displayListDirty()) )
-        actor->lod(geometry_lod)->compileDisplayList( actor, NULL, camera(), renderers()[0]->renderTarget()->openglContext() );
-    }
-
-    // --------------- Update VBOs ---------------
-
-    if ( actor->lod(geometry_lod)->vboEnabled() && actor->lod(geometry_lod)->isVBODirty() && !actor->lod(geometry_lod)->displayListEnabled() )
-      actor->lod(geometry_lod)->updateVBOs(false,false);
-
     // --------------- M U L T I   P A S S I N G ---------------
 
     RenderToken* prev_pass = NULL;
