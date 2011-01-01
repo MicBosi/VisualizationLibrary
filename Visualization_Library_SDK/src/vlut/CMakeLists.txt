@@ -31,55 +31,32 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-PROJECT(Documentation)
+PROJECT(${VLUT_NAME})
 
-set(VL_DOCUMENTATION
-	dox/mainpage.dox
-	dox/namespaces.dox
-	dox/pagChangelog.dox
-	dox/pagContacts.dox
-	dox/pagContributing.dox
-	dox/pagCredits.dox
-	dox/pagDesign.dox
-	dox/pagFAQ.dox
-	dox/pagGuideAntialiasing.dox
-	dox/pagGuideBezierSurfaces.dox
-	dox/pagGuideBillboards.dox
-	dox/pagGuideClipping.dox
-	dox/pagGuideEdgeRendering.dox
-	dox/pagGuideExtrusion.dox
-	dox/pagGuideFramebufferObject.dox
-	dox/pagGuideGLSL.dox
-	dox/pagGuideInterpolators.dox
-	dox/pagGuideIO.dox
-	dox/pagGuideLights.dox
-	dox/pagGuideMarchingCubes.dox
-	dox/pagGuideMath.dox
-	dox/pagGuideMemory.dox
-	dox/pagGuideMolecule.dox
-	dox/pagGuideOcclusionCulling.dox
-	dox/pagGuidePicking.dox
-	dox/pagGuidePolygonDepthSorting.dox
-	dox/pagGuidePortals.dox
-	dox/pagGuidePrimitives.dox
-	dox/pagGuideRenderOrder.dox
-	dox/pagGuideRotatingCube.dox
-	dox/pagGuides.dox
-	dox/pagGuideSlicedVolume.dox
-	dox/pagGuideTerrain.dox
-	dox/pagGuideTessellation.dox
-	dox/pagGuideText.dox
-	dox/pagGuideTextures.dox
-	dox/pagGuideVectorGraphics.dox
-	dox/pagInstall.dox
-	dox/pagIntro.dox
-	dox/pagKeyFeatures.dox
-	dox/pagLearning.dox
-	dox/pagLicensing.dox
-	dox/pagMainClasses.dox
-	dox/pagOpenGL.dox
+set(VLUT_SRC
+  GeometryPrimitives.cpp
+  Applet.cpp
 )
 
-source_group(dox FILES ${VL_DOCUMENTATION})
+set(VLUT_INC
+  GeometryPrimitives.hpp
+  Applet.hpp
+  Colors.hpp
+)
 
-add_custom_target(Documentation SOURCES Doxyfile ${VL_DOCUMENTATION})
+#source_group(vlut FILES ${VLUT_INC} ${VLUT_SRC})
+
+add_library(${VLUT_NAME} STATIC ${VLUT_SRC} ${VLUT_INC} )
+set_target_properties(${VLUT_NAME} PROPERTIES DEBUG_POSTFIX "-d")
+set_target_properties(${VLUT_NAME} PROPERTIES SOVERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
+set_target_properties(${VLUT_NAME} PROPERTIES VERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
+
+install(TARGETS ${VLUT_NAME}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
+install(FILES ${VLUT_INC}
+  DESTINATION include/vlut
+)

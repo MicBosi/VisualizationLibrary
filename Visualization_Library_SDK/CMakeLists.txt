@@ -60,13 +60,22 @@ if(APPLE)
   include_directories("/Developer/Headers/FlatCarbon")
 endif()
 
-set(VISUALIZATIONLIBRARY_NAME "VisualizationLibrary")
+# mic fixme:
+set(VLCORE_NAME "VLCore")
+set(VLGRAPHICS_NAME "VLGraphics")
+set(VLGEOMETRY_NAME "VLGeometry")
+
+set(VLMOLECULE_NAME "VLMolecule")
+set(VLVOLUME_NAME "VLVolume")
+set(VLVG_NAME "VLVG")
+set(VLUT_NAME "VLUT")
+
 set(VLAPPLETS_NAME "Applets")
 set(VLWIN32_NAME "VLWin32")
 set(VLGLUT_NAME "VLGLUT")
 set(VLSDL_NAME "VLSDL")
 set(VLQT4_NAME "VLQt4")
-set(VLCOCOA_NAME "VLCocoa")
+#set(VLCOCOA_NAME "VLCocoa")
 set(VLMFC_NAME "VLMFC")
 set(VLWX_NAME "VLWX")
 set(VLZLIB_NAME "ZLib")
@@ -87,9 +96,9 @@ option(GUI_SDL_SUPPORT "Build SDL support" OFF)
 option(GUI_GLUT_SUPPORT "Build GLUT support" OFF)
 option(GUI_QT4_SUPPORT "Build QT4 support" OFF)
 option(GUI_WXWIDGETS_SUPPORT "Build wxWidgets support" OFF)
-if(${CMAKE_SYSTEM} MATCHES "Darwin")
-  option(GUI_COCOA_SUPPORT "Build Cocoa support" ON)
-endif()
+#if(${CMAKE_SYSTEM} MATCHES "Darwin")
+#  option(GUI_COCOA_SUPPORT "Build Cocoa support" ON)
+#endif()
 
 if(MSVC)
 	set(WINVER "0x0600" CACHE STRING "WINVER version (see MSDN documentation)")
@@ -189,7 +198,33 @@ if(IO_MODULE_TIFF)
   add_definitions(-DIO_MODULE_TIFF)
 endif()
 
-add_subdirectory("src")
+#VLCore
+add_subdirectory("src/vl")
+
+#VLUT
+option(VL_MODULE_VLUT "Enable VL Utility Library" ON)
+if(VL_MODULE_VLUT)
+	add_subdirectory("src/vlut")
+endif()
+
+#VLVG
+option(VL_MODULE_VLVG "Enable VL Vector Graphics Library" ON)
+if(VL_MODULE_VLVG)
+	add_subdirectory("src/vlVG")
+endif()
+
+#VLMOLECULE
+option(VL_MODULE_MOLECULE "Enable VL Molecule Library" ON)
+if(VL_MODULE_MOLECULE)
+	add_subdirectory("src/vlMolecule")
+endif()
+
+#VLVOLUME
+option(VL_MODULE_VOLUME "Enable VL Volume Library" ON)
+if(VL_MODULE_VOLUME)
+	add_subdirectory("src/vlVolume")
+endif()
+
 add_subdirectory("3rdparty/zlib")
 add_subdirectory("3rdparty/freetype")
 
@@ -275,10 +310,10 @@ if(GUI_QT4_SUPPORT)
   add_subdirectory("src/vlQt4")
 endif()
 
-if(GUI_COCOA_SUPPORT)
-  option(GUI_COCOA_EXAMPLES "Build Cocoa examples" ON)
-  add_subdirectory("src/vlCocoa")
-endif()
+#if(GUI_COCOA_SUPPORT)
+#  option(GUI_COCOA_EXAMPLES "Build Cocoa examples" ON)
+#  add_subdirectory("src/vlCocoa")
+#endif()
 
 add_subdirectory("src/examples")
 
