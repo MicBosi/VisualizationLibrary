@@ -36,38 +36,38 @@
 #include <vlCore/Geometry.hpp>
 #include <vlut/Colors.hpp>
 
-namespace vlut
+namespace vl
 {
   typedef enum { CC_FlatCap, CC_RoundedCap, CC_NoCap } ECapsuleCap;
 
   //! Creates a sphere by iteratively subdividing an icosahedron.
-  vl::ref<vl::Geometry> makeIcosphere( const vl::vec3& pos, vl::Real diameter=1, int detail=2, bool remove_doubles = true );
+  ref<Geometry> makeIcosphere( const vec3& pos, Real diameter=1, int detail=2, bool remove_doubles = true );
   //! Creates a cylinder
-  vl::ref<vl::Geometry> makeCylinder( const vl::vec3& origin, vl::Real diameter=1, vl::Real height=1, int phi=20, int theta=2, bool top=true, bool bottom=true );
+  ref<Geometry> makeCylinder( const vec3& origin, Real diameter=1, Real height=1, int phi=20, int theta=2, bool top=true, bool bottom=true );
   //! Creates a uv sphere
-  vl::ref<vl::Geometry> makeUVSphere( const vl::vec3& origin, vl::Real diameter=1, int phi=20, int theta=20 );
+  ref<Geometry> makeUVSphere( const vec3& origin, Real diameter=1, int phi=20, int theta=20 );
   //! Creates torus. This function generates also appropriate normals.
-  vl::ref<vl::Geometry> makeTorus( const vl::vec3& origin, vl::Real diameter=1, vl::Real thickness=0.2, int phi=10, int theta=10, float tex_coords = 0.0f );
+  ref<Geometry> makeTorus( const vec3& origin, Real diameter=1, Real thickness=0.2, int phi=10, int theta=10, float tex_coords = 0.0f );
   //! Creates a cone
-  vl::ref<vl::Geometry> makeCone( const vl::vec3& origin, vl::Real diameter=1, vl::Real height=1, int phi=10, bool bottom=true );
+  ref<Geometry> makeCone( const vec3& origin, Real diameter=1, Real height=1, int phi=10, bool bottom=true );
   //! Creates a pyramid
-  vl::ref<vl::Geometry> makePyramid( const vl::vec3& origin, vl::Real side=1, vl::Real height=1 );
+  ref<Geometry> makePyramid( const vec3& origin, Real side=1, Real height=1 );
   //! Creates a box
-  vl::ref<vl::Geometry> makeBox( const vl::vec3& origin, vl::Real xside=1, vl::Real yside=1, vl::Real zside=1, bool tex_coords=true );
+  ref<Geometry> makeBox( const vec3& origin, Real xside=1, Real yside=1, Real zside=1, bool tex_coords=true );
   //! Creates a box
-  vl::ref<vl::Geometry> makeBox( const vl::vec3& min, const vl::vec3& max, bool tex_coords=true );
+  ref<Geometry> makeBox( const vec3& min, const vec3& max, bool tex_coords=true );
   //! Creates a box
-  vl::ref<vl::Geometry> makeBox( const vl::AABB& aabb, bool tex_coords=true );
+  ref<Geometry> makeBox( const AABB& aabb, bool tex_coords=true );
   //! Creates a 2D grid
-  vl::ref<vl::Geometry> makeGrid( const vl::vec3& origin, vl::Real xside, vl::Real zside, int x, int z, bool gen_texcoords = false, vl::fvec2 uv0=vl::fvec2(), vl::fvec2 uv1=vl::fvec2());
+  ref<Geometry> makeGrid( const vec3& origin, Real xside, Real zside, int x, int z, bool gen_texcoords = false, fvec2 uv0=fvec2(), fvec2 uv1=fvec2());
   //! Creates an icosahedron
-  vl::ref<vl::Geometry> makeIcosahedron( const vl::vec3& origin, vl::Real diameter );
+  ref<Geometry> makeIcosahedron( const vec3& origin, Real diameter );
   //! Creates a Geometry representing a set of points
-  vl::ref<vl::Geometry> makePoints( const std::vector< vl::vec3 >& pos, const vl::fvec4& color = vlut::white);
+  ref<Geometry> makePoints( const std::vector< vec3 >& pos, const fvec4& color = white);
   //! Creates a 2D circle
-  vl::ref<vl::Geometry> makeCircle( vl::vec3 origin, vl::Real radius, int slices = 60 );
+  ref<Geometry> makeCircle( vec3 origin, Real radius, int slices = 60 );
   //! Creates a 3d capsule with rounded, flat or no caps
-  vl::ref<vl::Geometry> makeCapsule(float radius, float height, int segments, ECapsuleCap top_cap, ECapsuleCap bottom_cap, const vl::fvec4& top_col, const vl::fvec4& bottom_col);
+  ref<Geometry> makeCapsule(float radius, float height, int segments, ECapsuleCap top_cap, ECapsuleCap bottom_cap, const fvec4& top_col, const fvec4& bottom_col);
 }
 
 #endif

@@ -50,7 +50,7 @@ class App_MarchingCubes: public BaseDemo
 // Test 3: isosurface colorize via vertex color.
 // Test 4: animated metaball demo implemented on top of the marching cube algorithm.
 // Test 5: animated fountain based on marching cubes.
-// Test 6: 3D function plotting with vlVolume::VolumePlot
+// Test 6: 3D function plotting with vl::VolumePlot
 //
 {
 public:
@@ -101,7 +101,7 @@ public:
     mText->setViewportAlignment(vl::AlignTop | vl::AlignHCenter);
     mText->setAlignment(vl::AlignTop | vl::AlignHCenter);
     mText->setTextAlignment(vl::TextAlignCenter);
-    mText->setColor(vlut::white);
+    mText->setColor(vl::white);
     mText->setBackgroundColor(vl::fvec4(0,0,0,.75f));
     mText->setBackgroundEnabled(true);
     mText->setText("Marching Cubes Demo");
@@ -270,15 +270,15 @@ public:
     sceneManager()->tree()->addActor(act.get());
     sceneManager()->tree()->addActor( mTextActor.get() );
 
-    vl::ref<vlVolume::Volume> volume = new vlVolume::Volume;
+    vl::ref<vl::Volume> volume = new vl::Volume;
     volume->setup( (float*)mVolumeImage->pixels(), vl::fvec3(-5,-5,-5), vl::fvec3(+5,+5,+5), vl::ivec3(mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth()) );
     
     mMarchingCubes.reset();
-    mMarchingCubes.volumeInfo()->push_back( new vlVolume::VolumeInfo( volume.get(), 0.40f, /*yellow*/vl::fvec4(1, 1, 0, 0.5f)) );
+    mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 0.40f, /*yellow*/vl::fvec4(1, 1, 0, 0.5f)) );
     if (test1)
     {
       // generate second volume
-      mMarchingCubes.volumeInfo()->push_back( new vlVolume::VolumeInfo( volume.get(), 0.50f, /*red*/vl::fvec4(1, 0, 0, 0.5f)) );
+      mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 0.50f, /*red*/vl::fvec4(1, 0, 0, 0.5f)) );
       // enable blend
       fx->shader()->enable(vl::EN_BLEND);
       // use color array
@@ -385,9 +385,9 @@ public:
     sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor( mTextActor.get() );
 
-    vl::ref<vlVolume::Volume> volume = new vlVolume::Volume;
+    vl::ref<vl::Volume> volume = new vl::Volume;
     mMarchingCubes.reset();
-    mMarchingCubes.volumeInfo()->push_back( new vlVolume::VolumeInfo( volume.get(), 400.0f) );
+    mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 400.0f) );
     mMarchingCubes.volumeInfo()->at(0)->volume()->setup( NULL, vl::fvec3(-10,-10,-10), vl::fvec3(+10,+10,+10), vl::ivec3(mMetaballsResolution,mMetaballsResolution,mMetaballsResolution) );
     
     vl::ref<vl::Geometry > geom = new vl::Geometry;
@@ -423,9 +423,9 @@ public:
     sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor( mTextActor.get() );
 
-    vl::ref<vlVolume::Volume> volume = new vlVolume::Volume;
+    vl::ref<vl::Volume> volume = new vl::Volume;
     mMarchingCubes.reset();
-    mMarchingCubes.volumeInfo()->push_back( new vlVolume::VolumeInfo( volume.get(), 400.0f) );
+    mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 400.0f) );
     mMarchingCubes.volumeInfo()->at(0)->volume()->setup( NULL, vl::fvec3(-10,-10,-10), vl::fvec3(+10,+10,+10), vl::ivec3(mMetaballsResolution,mMetaballsResolution,mMetaballsResolution) );
     
     vl::ref<vl::Geometry > geom = new vl::Geometry;
@@ -443,7 +443,7 @@ public:
     fx->shader()->enable(vl::EN_DEPTH_TEST);
     // two side lighting
     fx->shader()->gocLightModel()->setTwoSide(true);
-    fx->shader()->gocMaterial()->setDiffuse(vlut::royalblue);
+    fx->shader()->gocMaterial()->setDiffuse(vl::royalblue);
 
     vl::ref<vl::Actor> act = sceneManager()->tree()->addActor(geom.get(), fx.get(), mTransform.get());
 
@@ -465,7 +465,7 @@ public:
     return act.get();
   }
 
-  class my_func: public vlVolume::VolumePlot::Function
+  class my_func: public vl::VolumePlot::Function
   {
   public:
     virtual float operator()(float x, float y, float z) const
@@ -476,7 +476,7 @@ public:
     }
   };
 
-  // Shows how to use vlVolume::VolumePlot to create a 3D plot.
+  // Shows how to use vl::VolumePlot to create a 3D plot.
   void setup3Dplot()
   {
     // reset actors and camera
@@ -488,7 +488,7 @@ public:
     vl::fvec3 min_corner(-range,-range,-range);
     vl::fvec3 max_corner(+range,+range,+range);
 
-    vlVolume::VolumePlot plot;
+    vl::VolumePlot plot;
     plot.setMinCorner(min_corner);
     plot.setMaxCorner(max_corner);
     plot.compute( my_func(), 0.900f );
@@ -507,7 +507,7 @@ public:
     // convert the image to a one-component float volume
     vol_img = vol_img->convertFormat(vl::IF_LUMINANCE)->convertType(vl::IT_FLOAT);
 
-    vl::ref<vlVolume::Volume> volume = new vlVolume::Volume;
+    vl::ref<vl::Volume> volume = new vl::Volume;
     volume->setup( (float*)vol_img->pixels(), vl::fvec3(-5,-5,-5), vl::fvec3(+5,+5,+5), vl::ivec3(vol_img->width(), vol_img->height(), vol_img->depth()) );
 
     // start timing
@@ -521,7 +521,7 @@ public:
     #endif
 
     mMarchingCubes.reset();
-    mMarchingCubes.volumeInfo()->push_back( new vlVolume::VolumeInfo(volume.get(), mThreshold) );
+    mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo(volume.get(), mThreshold) );
 
     // run MarchingCubes with timing.
     time.start();
@@ -555,7 +555,7 @@ public:
     actor->effect()->shader()->enable(vl::EN_DEPTH_TEST);
     actor->effect()->shader()->enable(vl::EN_LIGHTING);
     actor->effect()->shader()->gocLightModel()->setTwoSide(true);
-    actor->effect()->shader()->gocMaterial()->setBackDiffuse(vlut::green);
+    actor->effect()->shader()->gocMaterial()->setBackDiffuse(vl::green);
 
     // add actor to the scene
     sceneManager()->tree()->addActor( actor.get() );
@@ -679,7 +679,7 @@ protected:
   vl::ref< vl::Actor > mTextActor;
 
   // volume
-  vlVolume::MarchingCubes mMarchingCubes;
+  vl::MarchingCubes mMarchingCubes;
   float mThreshold;
   std::vector<vl::fvec3> mMetaball;
   std::vector<vl::fvec3> mMetaballVelocity;

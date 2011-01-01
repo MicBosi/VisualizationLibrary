@@ -94,7 +94,7 @@ public:
     mEffect->shader()->setRenderState( new vl::Light(0) );
     mEffect->shader()->enable(vl::EN_LIGHTING);
     mEffect->shader()->gocLightModel()->setTwoSide(true);
-    mEffect->shader()->gocMaterial()->setBackDiffuse( vlut::darkgreen );
+    mEffect->shader()->gocMaterial()->setBackDiffuse( vl::darkgreen );
 
     vl::ref<vl::ResourceDatabase> res_db;
     vl::ref<vl::Geometry> geom1, geom2;

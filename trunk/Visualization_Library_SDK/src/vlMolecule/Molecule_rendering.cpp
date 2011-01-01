@@ -35,8 +35,6 @@
 #include <vlCore/Light.hpp>
 
 using namespace vl;
-using namespace vlut;
-using namespace vlMolecule;
 
 //-----------------------------------------------------------------------------
 class EffectCache
@@ -56,10 +54,10 @@ public:
       }
     }
 
-    ref<Effect> fx = new vl::Effect;
-    fx->shader()->enable(vl::EN_DEPTH_TEST);
-    fx->shader()->enable(vl::EN_CULL_FACE);
-    fx->shader()->enable(vl::EN_LIGHTING);
+    ref<Effect> fx = new Effect;
+    fx->shader()->enable(EN_DEPTH_TEST);
+    fx->shader()->enable(EN_CULL_FACE);
+    fx->shader()->enable(EN_LIGHTING);
     fx->shader()->setRenderState(mLight.get());
     fx->shader()->gocMaterial()->setDiffuse(color);
     effects().push_back(fx.get());
@@ -92,7 +90,7 @@ public:
       return it->second.get();
     else
     {
-      ref<Geometry> sphere = vlut::makeIcosphere( vl::vec3(0,0,0), radius, detail() );
+      ref<Geometry> sphere = makeIcosphere( vec3(0,0,0), radius, detail() );
       geometryMap()[radius] = sphere;
       return sphere.get();
     }
@@ -207,7 +205,7 @@ void Molecule::generateAtomLabel(const Atom* atom, Transform* tr)
       atom->visible()             &&
       atom->showAtomName()        )
   {
-    ref<Text> text = new vl::Text;
+    ref<Text> text = new Text;
     // text label
     text->setText( atom->atomName().c_str() );
     // text template style
@@ -229,7 +227,7 @@ void Molecule::generateAtomLabel(const Atom* atom, Transform* tr)
     text->setBackgroundColor( atomLabelTemplate()->backgroundColor() );
     text->setAlignment( atomLabelTemplate()->alignment() );
     // text actor
-    ref<Actor> text_act = new vl::Actor( text.get(), mAtomLabelEffect.get(), tr );
+    ref<Actor> text_act = new Actor( text.get(), mAtomLabelEffect.get(), tr );
     actorTree()->actors()->push_back(text_act.get());
   }
 }
@@ -238,7 +236,7 @@ void Molecule::generateAtomLabels()
 {
   for(unsigned i=0; i<atoms().size(); ++i)
   {
-    ref<Transform> tr = new vl::Transform(vl::mat4::getTranslation((vec3)atoms()[i]->coordinates()));
+    ref<Transform> tr = new Transform(mat4::getTranslation((vec3)atoms()[i]->coordinates()));
     transformTree()->addChild(tr.get());
     generateAtomLabel(atoms()[i].get(), tr.get());
   }
@@ -246,7 +244,7 @@ void Molecule::generateAtomLabels()
 //-----------------------------------------------------------------------------
 void Molecule::wireframeStyle()
 {
-  ref<Geometry> geom = new vl::Geometry;
+  ref<Geometry> geom = new Geometry;
   ref<ArrayFloat3> points = new ArrayFloat3;
   geom->setVertexArray(points.get());
   ref<ArrayFloat4> colors = new ArrayFloat4;
@@ -258,8 +256,8 @@ void Molecule::wireframeStyle()
     Bond* b = bond(ibond);
     if (b->visible() && b->atom1()->visible() && b->atom2()->visible())
     {
-      vl::fvec4 c1 = b->color();
-      vl::fvec4 c2 = b->color();
+      fvec4 c1 = b->color();
+      fvec4 c2 = b->color();
       if (b->useAtomColors())
       {
         c1 = b->atom1()->color();
@@ -288,19 +286,19 @@ void Molecule::wireframeStyle()
   }
   *points = pt;
   *colors = cols;
-  geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_LINES, 0, (int)points->size()));
+  geom->drawCalls()->push_back(new DrawArrays(PT_LINES, 0, (int)points->size()));
 
   ref<Effect> fx = new Effect;
-  fx->shader()->enable(vl::EN_DEPTH_TEST);
+  fx->shader()->enable(EN_DEPTH_TEST);
   if (smoothLines())
   {
-    fx->shader()->enable(vl::EN_BLEND);
-    fx->shader()->enable(vl::EN_LINE_SMOOTH);
+    fx->shader()->enable(EN_BLEND);
+    fx->shader()->enable(EN_LINE_SMOOTH);
   }
   if (lineWidth() != 1.0f)
     fx->shader()->gocLineWidth()->set(lineWidth());
 
-  actorTree()->actors()->push_back( new vl::Actor(geom.get(), fx.get(), NULL) );
+  actorTree()->actors()->push_back( new Actor(geom.get(), fx.get(), NULL) );
 }
 //-----------------------------------------------------------------------------
 void Molecule::atomsStyle()
@@ -315,7 +313,7 @@ void Molecule::atomsStyle()
       Effect* fx = fx_cache.acquireEffect(atom(iatom)->color());
       float r = atom(iatom)->radius();
       ref<Geometry> ball = atom_geom_cache.acquireAtomGeometry(r);
-      ref<Actor> atom_act = new vl::Actor( ball.get(), fx, new Transform );
+      ref<Actor> atom_act = new Actor( ball.get(), fx, new Transform );
       atom_act->transform()->setLocalMatrix( mat4::getTranslation( (vec3)atom(iatom)->coordinates()) );
       transformTree()->addChild(atom_act->transform());
       actorTree()->actors()->push_back( atom_act.get() );
@@ -335,7 +333,7 @@ void Molecule::ballAndStickStyle()
       Effect* fx = fx_cache.acquireEffect(atom(iatom)->color());
       float r = atom(iatom)->radius();
       ref<Geometry> ball = atom_geom_cache.acquireAtomGeometry(r);
-      ref<Actor> atom_act = new vl::Actor( ball.get(), fx, new Transform );
+      ref<Actor> atom_act = new Actor( ball.get(), fx, new Transform );
       atom_act->transform()->setLocalMatrix( mat4::getTranslation( (vec3)atom(iatom)->coordinates()) );
       transformTree()->addChild(atom_act->transform());
       actorTree()->actors()->push_back( atom_act.get() );
@@ -343,13 +341,13 @@ void Molecule::ballAndStickStyle()
   }
 
   ref<Effect> fx = new Effect;
-  fx->shader()->enable(vl::EN_DEPTH_TEST);
-  fx->shader()->enable(vl::EN_CULL_FACE);
+  fx->shader()->enable(EN_DEPTH_TEST);
+  fx->shader()->enable(EN_CULL_FACE);
   fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
   fx->shader()->gocLightModel()->setTwoSide(false);
-  fx->shader()->enable(vl::EN_LIGHTING);
+  fx->shader()->enable(EN_LIGHTING);
   fx->shader()->setRenderState( fx_cache.light() );
-  // fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+  // fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
 
   BondGeometryCache bond_geom_cache;
   bond_geom_cache.setDetail(bondDetail());
@@ -358,8 +356,8 @@ void Molecule::ballAndStickStyle()
     if (bond(ibond)->visible() && bond(ibond)->atom1()->visible() && bond(ibond)->atom2()->visible())
     {
       Bond* b = bond(ibond);
-      vl::fvec4 c1 = b->color();
-      vl::fvec4 c2 = b->color();
+      fvec4 c1 = b->color();
+      fvec4 c2 = b->color();
       if (b->useAtomColors())
       {
         c1 = b->atom1()->color();
@@ -369,11 +367,11 @@ void Molecule::ballAndStickStyle()
       float diam = b->radius()*2.0f;
       bond_geom_cache.setDiameter(diam);
       ref<Geometry> geom = bond_geom_cache.acquireBondGeometry(len,c1,c2,CC_NoCap,CC_NoCap);
-      ref<Actor> bond_act = new vl::Actor( geom.get(), fx.get(), new Transform );
+      ref<Actor> bond_act = new Actor( geom.get(), fx.get(), new Transform );
       transformTree()->addChild(bond_act->transform());
-      vl::fvec3 center = (b->atom1()->coordinates() + b->atom2()->coordinates()) / 2.0f;
-      vl::fvec3 direction = (b->atom2()->coordinates() - b->atom1()->coordinates()).normalize();
-      vl::fmat4 mat = vl::fmat4::getTranslation(center) * vl::fmat4::getRotation(fvec3(0,1,0), direction);
+      fvec3 center = (b->atom1()->coordinates() + b->atom2()->coordinates()) / 2.0f;
+      fvec3 direction = (b->atom2()->coordinates() - b->atom1()->coordinates()).normalize();
+      fmat4 mat = fmat4::getTranslation(center) * fmat4::getRotation(fvec3(0,1,0), direction);
       bond_act->transform()->setLocalMatrix( (mat4)mat );
       actorTree()->actors()->push_back( bond_act.get() );
     }
@@ -383,13 +381,13 @@ void Molecule::ballAndStickStyle()
 void Molecule::sticksStyle()
 {
   ref<Effect> fx = new Effect;
-  fx->shader()->enable(vl::EN_DEPTH_TEST);
-  fx->shader()->enable(vl::EN_CULL_FACE);
+  fx->shader()->enable(EN_DEPTH_TEST);
+  fx->shader()->enable(EN_CULL_FACE);
   fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
   fx->shader()->gocLightModel()->setTwoSide(false);
-  fx->shader()->enable(vl::EN_LIGHTING);
-  fx->shader()->setRenderState( new vl::Light(0) );
-  /*fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);*/
+  fx->shader()->enable(EN_LIGHTING);
+  fx->shader()->setRenderState( new Light(0) );
+  /*fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);*/
 
   BondGeometryCache bond_geom_cache;
   bond_geom_cache.setDetail(bondDetail());
@@ -398,8 +396,8 @@ void Molecule::sticksStyle()
     if (bond(ibond)->visible() && bond(ibond)->atom1()->visible() && bond(ibond)->atom2()->visible())
     {
       Bond* b = bond(ibond);
-      vl::fvec4 c1 = b->color();
-      vl::fvec4 c2 = b->color();
+      fvec4 c1 = b->color();
+      fvec4 c2 = b->color();
       if (b->useAtomColors())
       {
         c1 = b->atom1()->color();
@@ -409,11 +407,11 @@ void Molecule::sticksStyle()
       float diam = b->radius()*2.0f;
       bond_geom_cache.setDiameter(diam);
       ref<Geometry> geom = bond_geom_cache.acquireBondGeometry(len,c1,c2,CC_RoundedCap,CC_RoundedCap);
-      ref<Actor> bond_act = new vl::Actor( geom.get(), fx.get(), new Transform );
+      ref<Actor> bond_act = new Actor( geom.get(), fx.get(), new Transform );
       transformTree()->addChild(bond_act->transform());
-      vl::fvec3 center = (b->atom1()->coordinates() + b->atom2()->coordinates()) / 2.0f;
-      vl::fvec3 direction = (b->atom2()->coordinates() - b->atom1()->coordinates()).normalize();
-      vl::fmat4 mat = vl::fmat4::getTranslation(center) * vl::fmat4::getRotation(fvec3(0,1,0), direction);
+      fvec3 center = (b->atom1()->coordinates() + b->atom2()->coordinates()) / 2.0f;
+      fvec3 direction = (b->atom2()->coordinates() - b->atom1()->coordinates()).normalize();
+      fmat4 mat = fmat4::getTranslation(center) * fmat4::getRotation(fvec3(0,1,0), direction);
       bond_act->transform()->setLocalMatrix( (mat4)mat );
       actorTree()->actors()->push_back( bond_act.get() );
     }
@@ -424,7 +422,7 @@ void Molecule::generateRings()
 {
   if (!cycles().empty())
   {
-    ref<Geometry> geom = new vl::Geometry;
+    ref<Geometry> geom = new Geometry;
     ref<ArrayFloat3> points = new ArrayFloat3;
     geom->setVertexArray(points.get());
     ref<ArrayFloat4> colors = new ArrayFloat4;
@@ -453,12 +451,12 @@ void Molecule::generateRings()
     }
     *points = pt;
     *colors = cols;
-    geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_LINES, 0, (int)points->size()));
+    geom->drawCalls()->push_back(new DrawArrays(PT_LINES, 0, (int)points->size()));
 
     ref<Effect> fx = new Effect;
-    fx->shader()->enable(vl::EN_DEPTH_TEST);
+    fx->shader()->enable(EN_DEPTH_TEST);
 
-    actorTree()->actors()->push_back( new vl::Actor(geom.get(), fx.get(), NULL) );
+    actorTree()->actors()->push_back( new Actor(geom.get(), fx.get(), NULL) );
   }
 }
 //-----------------------------------------------------------------------------

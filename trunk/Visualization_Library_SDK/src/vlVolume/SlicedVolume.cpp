@@ -35,10 +35,9 @@
 #include <vlCore/Time.hpp>
 
 using namespace vl;
-using namespace vlVolume;
 
-/** \class vlVolume::SlicedVolume
- * A vl::ActorEventCallback used to render a volume using viewport aligned slices.
+/** \class SlicedVolume
+ * A ActorEventCallback used to render a volume using viewport aligned slices.
  *
  * Pictures from: \ref pagGuideSlicedVolume tutorial.
  * <center>
@@ -101,7 +100,7 @@ SlicedVolume::SlicedVolume()
  * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
  * object space, useful to compute specular highlights etc.
  */
-void SlicedVolume::updateUniforms(vl::Actor*actor, vl::Real, const vl::Camera* camera, vl::Renderable*, const vl::Shader* shader)
+void SlicedVolume::updateUniforms(Actor*actor, Real, const Camera* camera, Renderable*, const Shader* shader)
 {
   const GLSLProgram* glsl = shader->getGLSLProgram();
 
@@ -114,7 +113,7 @@ void SlicedVolume::updateUniforms(vl::Actor*actor, vl::Real, const vl::Camera* c
 
     for(int i=0; i<4; ++i)
     {
-      const vl::Light* light = shader->getLight(i);
+      const Light* light = shader->getLight(i);
       light_enable[i] = light != NULL;
       if (light)
       {
@@ -313,7 +312,7 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, Real clock, const Camera* 
   }
 
   mGeometry->drawCalls()->clear();
-  ref<DrawArrays> da = new DrawArrays(vl::PT_TRIANGLES, 0, (int)polygons.size());
+  ref<DrawArrays> da = new DrawArrays(PT_TRIANGLES, 0, (int)polygons.size());
   mGeometry->drawCalls()->push_back( da.get() );
   ref<ArrayFloat3> vertex_array = new ArrayFloat3;
   ref<ArrayFloat3> texcoo_array = new ArrayFloat3;

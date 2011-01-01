@@ -55,7 +55,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   format.setMultisample(false);
 
   /* create the applet to be run */
-  vl::ref<vlut::Applet> applet = new App_RotatingCube;
+  vl::ref<vl::Applet> applet = new App_RotatingCube;
   applet->initialize();
   /* create a native Win32 window */
   vl::ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
@@ -65,7 +65,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   /* target the window so we can render on it */
   vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( win32_window->renderTarget() );
   /* black background */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::black );
+  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vl::black );
   /* define the camera position and orientation */
   vl::vec3 eye    = vl::vec3(0,10,35); // camera position
   vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at

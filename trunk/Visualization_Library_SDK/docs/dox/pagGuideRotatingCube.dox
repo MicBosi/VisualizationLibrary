@@ -7,10 +7,10 @@
 	Complete source: \p src/examples/Applets/App_RotatingCube.hpp
 	
 	Visualization Library comes with several utility components to quickly develop applictions under several GUI frameworks. 
-	The vlut::Applet class is an utility class that implements an event-driven application with a default rendering pipeline.
-	Below is a practical examples of how to implement a vlut::Applet that renders a spinning cube and how to use it (unchanged!)
+	The vl::Applet class is an utility class that implements an event-driven application with a default rendering pipeline.
+	Below is a practical examples of how to implement a vl::Applet that renders a spinning cube and how to use it (unchanged!)
 	with \p Win32, \p MFC, \p Qt4, \p SDL and \p GLUT!
-	For more information see vlut::Applet.
+	For more information see vl::Applet.
 	
 	\dontinclude App_RotatingCube.hpp
 	\skip include

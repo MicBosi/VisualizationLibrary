@@ -56,7 +56,7 @@ public:
     mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false) );
     mText->setAlignment(vl::AlignHCenter | vl::AlignTop);
     mText->setViewportAlignment(vl::AlignHCenter | vl::AlignTop);
-    mText->setColor(vlut::white);
+    mText->setColor(vl::white);
     mText->translate(0,-10,0);
     mTextActor = sceneManager()->tree()->addActor(mText.get(), new vl::Effect);
     mTextActor->effect()->shader()->enable(vl::EN_BLEND);
@@ -77,10 +77,10 @@ public:
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->setRenderState( new vl::Light(0) );
 
-    vl::ref<vl::Geometry> ball = vlut::makeUVSphere(vl::vec3(0,0,0),1,20,20);
+    vl::ref<vl::Geometry> ball = vl::makeUVSphere(vl::vec3(0,0,0),1,20,20);
     ball->computeNormals();
 
-    vl::ref<vl::Geometry> pyramid = vlut::makePyramid(vl::vec3(0,0,0),2,2);
+    vl::ref<vl::Geometry> pyramid = vl::makePyramid(vl::vec3(0,0,0),2,2);
     pyramid->computeNormals();
 
     switch(mTestNumber)
@@ -206,8 +206,8 @@ public:
         vl::ref<vl::Effect> effect = new vl::Effect;
         effect->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
         effect->shader()->enable(vl::EN_DEPTH_TEST);
-        vl::ref<vl::Geometry> box = vlut::makeBox(tree->aabb());
-        box->setColor(vlut::gold);
+        vl::ref<vl::Geometry> box = vl::makeBox(tree->aabb());
+        box->setColor(vl::gold);
         sceneManager()->tree()->addActor(box.get(), effect.get());
 
         if (mViewDepth != -1)

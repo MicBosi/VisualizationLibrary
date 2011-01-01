@@ -183,7 +183,7 @@
 			- vl::SceneManagerActorKdTree
 				- vl::Terrain
 		- vl::SceneManagerPortals
-		- vlVG::SceneManagerVectorGraphics
+		- vl::SceneManagerVectorGraphics
 	- vl::ActorTree
 	- vl::ActorKdTree
 	
@@ -211,18 +211,18 @@
 	
 	\par Geometry primitives
 	
-	- vlut::makeIcosphere()
-	- vlut::makeCylinder()
-	- vlut::makeUVSphere()
-	- vlut::makeTorus()
-	- vlut::makeCone()
-	- vlut::makePyramid()
-	- vlut::makeBox()
-	- vlut::makeGrid()
-	- vlut::makeIcosahedron()
-	- vlut::makePoints()
-	- vlut::makeCircle()
-	- vlut::makeCapsule()
+	- vl::makeIcosphere()
+	- vl::makeCylinder()
+	- vl::makeUVSphere()
+	- vl::makeTorus()
+	- vl::makeCone()
+	- vl::makePyramid()
+	- vl::makeBox()
+	- vl::makeGrid()
+	- vl::makeIcosahedron()
+	- vl::makePoints()
+	- vl::makeCircle()
+	- vl::makeCapsule()
 	
 	\par Animation
 	
@@ -243,9 +243,9 @@
 
 	\par Volume Rendering
 
-	- vlVolume::MarchingCubes
-	- vlVolume::SlicedVolume
-	- vlVolume::VolumePlot
+	- vl::MarchingCubes
+	- vl::SlicedVolume
+	- vl::VolumePlot
 
 	\par Rendering enhancement
 
@@ -254,15 +254,15 @@
 
 	\par Vector graphics
 
-	- vlVG::VectorGraphics
-	- vlVG::SceneManagerVectorGraphics
+	- vl::VectorGraphics
+	- vl::SceneManagerVectorGraphics
 
 	\par Molecule Visualization
 
-	- vlMolecule::Molecule
-	- vlMolecule::Atom
-	- vlMolecule::Bond
-	- vlMolecule::RingExtractor
+	- vl::Molecule
+	- vl::Atom
+	- vl::Bond
+	- vl::RingExtractor
 
 	\par GUI bindings
 	

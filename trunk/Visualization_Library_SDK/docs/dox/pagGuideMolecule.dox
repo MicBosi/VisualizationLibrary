@@ -6,11 +6,11 @@
 	
 	\image html pagGuideMolecule.png
 	
-	The vlMolecule module is a simple and minimalistic framework to manipulate and render chemical structures. The vlMolecule::Molecule class is the most important member of the module and represents a molecular structure as a collection of vlMolecule::Atom[s] and vlMolecule::Bond[s]. The vlMolecule::Molecule class allows you to add and remove both atoms and bonds in order to create any kind of molecule. The vlMolecule framework is flexible and intuitive, it allows you for example to set the color, the size, the visibility etc. for each atom and for each bond, it allows you to define the geometrical detail for bonds and atoms, it allows you highlight aromatic rings and much more.
+	The vlMolecule module is a simple and minimalistic framework to manipulate and render chemical structures. The vl::Molecule class is the most important member of the module and represents a molecular structure as a collection of vl::Atom[s] and vl::Bond[s]. The vl::Molecule class allows you to add and remove both atoms and bonds in order to create any kind of molecule. The vlMolecule framework is flexible and intuitive, it allows you for example to set the color, the size, the visibility etc. for each atom and for each bond, it allows you to define the geometrical detail for bonds and atoms, it allows you highlight aromatic rings and much more.
 	
-	The vlMolecule module also provide a comprehensive atom database, in fact using the vlMolecule::atomInfo() function the user can retrieve information like element name, element symbol, atom number, electronegativity, cpk color, various radii etc. for a given atom type (vlMolecule::EAtomType). 
+	The vlMolecule module also provide a comprehensive atom database, in fact using the vl::atomInfo() function the user can retrieve information like element name, element symbol, atom number, electronegativity, cpk color, various radii etc. for a given atom type (vl::EAtomType). 
 	
-	Using the vlMolecule::loadMOL2() function you can also load a MOL2 (or multi-MOL2) file.
+	Using the vl::loadMOL2() function you can also load a MOL2 (or multi-MOL2) file.
 	
 	The example below implements a simple molecule viewer.
 	

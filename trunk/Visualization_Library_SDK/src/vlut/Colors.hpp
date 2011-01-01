@@ -36,11 +36,11 @@
 
 #include <vlCore/Vector4.hpp>
 
-namespace vlut
+namespace vl
 {
-  inline vl::fvec4 makeColor(unsigned int color)
+  inline fvec4 makeColor(unsigned int color)
   {
-    vl::fvec4 c;
+    fvec4 c;
     c.r() = float(((color >> 24) & 0xFF) / 255.0f);
     c.g() = float(((color >> 16) & 0xFF) / 255.0f);
     c.b() = float(((color >>  8) & 0xFF) / 255.0f);
@@ -48,32 +48,32 @@ namespace vlut
     return c;    
   }
 
-  static vl::fvec4 black = makeColor(0x000000FF);
-  static vl::fvec4 white = makeColor(0xFFFFFFFF);
-  static vl::fvec4 red = makeColor(0xFF0000FF);
-  static vl::fvec4 crimson = makeColor(0xDC143CFF);
-  static vl::fvec4 violet = makeColor(0x9400D3FF);
-  static vl::fvec4 orange = makeColor(0xFFA000FF);
-  static vl::fvec4 yellow = makeColor(0xFFFF00FF);
-  static vl::fvec4 gold = makeColor(0xFFD700FF);
-  static vl::fvec4 green = makeColor(0x00FF00FF);
-  static vl::fvec4 lightgreen = makeColor(0x90FF90FF);
-  static vl::fvec4 darkgreen = makeColor(0x006400FF);
-  static vl::fvec4 olivegreen = makeColor(0x556B2FFF);
-  static vl::fvec4 blue = makeColor(0x0000FFFF);
-  static vl::fvec4 darkblue = makeColor(0x00008BFF);
-  static vl::fvec4 royalblue = makeColor(0x4169E1FF);
-  static vl::fvec4 skyblue = makeColor(0x5555FFFF);  
-  static vl::fvec4 midnightblue = makeColor(0x191970FF);
-  static vl::fvec4 fuchsia = makeColor(0xFF00FFFF);
-  static vl::fvec4 aqua = makeColor(0x00FFFFFF);
-  static vl::fvec4 pink = makeColor(0xffb6c1FF);
-  static vl::fvec4 salmonpink = makeColor(0xFF91A4FF);
-  static vl::fvec4 turquoise = makeColor(0x30D5C8FF); 
-  static vl::fvec4 darkturquoise = makeColor(0x008080FF);
-  static vl::fvec4 gray = makeColor(0xA9A9A9FF);
-  static vl::fvec4 lightgray = makeColor(0xD3D3D3FF);
-  static vl::fvec4 darkgray = makeColor(0x808080FF);
+  static fvec4 black = makeColor(0x000000FF);
+  static fvec4 white = makeColor(0xFFFFFFFF);
+  static fvec4 red = makeColor(0xFF0000FF);
+  static fvec4 crimson = makeColor(0xDC143CFF);
+  static fvec4 violet = makeColor(0x9400D3FF);
+  static fvec4 orange = makeColor(0xFFA000FF);
+  static fvec4 yellow = makeColor(0xFFFF00FF);
+  static fvec4 gold = makeColor(0xFFD700FF);
+  static fvec4 green = makeColor(0x00FF00FF);
+  static fvec4 lightgreen = makeColor(0x90FF90FF);
+  static fvec4 darkgreen = makeColor(0x006400FF);
+  static fvec4 olivegreen = makeColor(0x556B2FFF);
+  static fvec4 blue = makeColor(0x0000FFFF);
+  static fvec4 darkblue = makeColor(0x00008BFF);
+  static fvec4 royalblue = makeColor(0x4169E1FF);
+  static fvec4 skyblue = makeColor(0x5555FFFF);  
+  static fvec4 midnightblue = makeColor(0x191970FF);
+  static fvec4 fuchsia = makeColor(0xFF00FFFF);
+  static fvec4 aqua = makeColor(0x00FFFFFF);
+  static fvec4 pink = makeColor(0xffb6c1FF);
+  static fvec4 salmonpink = makeColor(0xFF91A4FF);
+  static fvec4 turquoise = makeColor(0x30D5C8FF); 
+  static fvec4 darkturquoise = makeColor(0x008080FF);
+  static fvec4 gray = makeColor(0xA9A9A9FF);
+  static fvec4 lightgray = makeColor(0xD3D3D3FF);
+  static fvec4 darkgray = makeColor(0x808080FF);
 
 }
 

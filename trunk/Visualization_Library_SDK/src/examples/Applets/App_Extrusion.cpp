@@ -87,7 +87,7 @@ public:
     sceneManager()->tree()->addActor( geom.get(), effect.get(), NULL );
 
     // Utility function that visualizes the extrusion path.
-    showPath(extrusion.positionPath(),vlut::red);
+    showPath(extrusion.positionPath(),vl::red);
   }
 
   // Creates a fancy arch applying rotation and scaling to the extrusion
@@ -160,7 +160,7 @@ public:
     sceneManager()->tree()->addActor( geom.get(), effect.get(), NULL );
 
     // Utility function that visualizes the extrusion path.
-    showPath(extrusion.positionPath(),vlut::red);
+    showPath(extrusion.positionPath(),vl::red);
   }
 
   // Creates a vortex whose section is a flower.
@@ -197,7 +197,7 @@ public:
     for(int i=0; i<size-2; ++i)
     {
       float t = (float)i/(size-2-1);
-      vl::fvec4 c = vlut::yellow*t + vlut::blue*(1.0f-t);
+      vl::fvec4 c = vl::yellow*t + vl::blue*(1.0f-t);
       extrusion.colorPath().push_back(c);
     }
 
@@ -260,7 +260,7 @@ public:
     for(int i=0; i<segments-2; ++i)
     {
       float t = (float)i/(segments-2-1);
-      vl::fvec4 c = vlut::gold * t + vlut::royalblue*(1.0f-t);
+      vl::fvec4 c = vl::gold * t + vl::royalblue*(1.0f-t);
       extrusion.colorPath().push_back(c);
     }
 
@@ -353,7 +353,7 @@ public:
     text->setAlignment( vl::AlignHCenter | vl::AlignTop );
     text->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     text->translate(0,-5,0);
-    text->setColor(vlut::white);
+    text->setColor(vl::white);
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     sceneManager()->tree()->addActor(text.get(), effect.get());

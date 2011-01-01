@@ -44,7 +44,7 @@ public:
     if (mCurrentStyle == 0) // wireframe
     {
       // activate "wireframe" style
-      mMolecules[mCurrentMolecule]->setMoleculeStyle(vlMolecule::MS_Wireframe);
+      mMolecules[mCurrentMolecule]->setMoleculeStyle(vl::MS_Wireframe);
       // colorize the atoms by their CPK color
       mMolecules[mCurrentMolecule]->setCPKAtomColors();
       // define the line width
@@ -56,7 +56,7 @@ public:
     if (mCurrentStyle == 1) // ball & stick
     {
       // activate "ball & stick" style
-      mMolecules[mCurrentMolecule]->setMoleculeStyle(vlMolecule::MS_BallAndStick);
+      mMolecules[mCurrentMolecule]->setMoleculeStyle(vl::MS_BallAndStick);
       // colorize the atoms by their CPK color
       mMolecules[mCurrentMolecule]->setCPKAtomColors();
       // set all the atom radii to 0.30A
@@ -68,7 +68,7 @@ public:
     if (mCurrentStyle == 2) // sticks
     {
       // activate "sticks" style
-      mMolecules[mCurrentMolecule]->setMoleculeStyle(vlMolecule::MS_Sticks);
+      mMolecules[mCurrentMolecule]->setMoleculeStyle(vl::MS_Sticks);
       // colorize the atoms by their CPK color
       mMolecules[mCurrentMolecule]->setCPKAtomColors();
       // set all the bond radii to 0.10A
@@ -78,7 +78,7 @@ public:
     if (mCurrentStyle == 3) // cpk space fill
     {
       // activates "atoms only" style
-      mMolecules[mCurrentMolecule]->setMoleculeStyle(vlMolecule::MS_AtomsOnly);
+      mMolecules[mCurrentMolecule]->setMoleculeStyle(vl::MS_AtomsOnly);
       // colorize the atoms by their CPK color
       mMolecules[mCurrentMolecule]->setCPKAtomColors();
       // set all the atom radii to their van der Waals radii value as returned by atomInfo().
@@ -91,8 +91,8 @@ public:
 
     ... choose the style: font, color, alignment etc.
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setColor(vlut::white);
-    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineColor(vlut::black);
+    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setColor(vl::white);
+    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineColor(vl::black);
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineEnabled(true);
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setAlignment(vl::AlignHCenter|vl::AlignVCenter);
 
@@ -105,18 +105,18 @@ public:
     OTHER COMMON OPERATIONS:
 
     ... aromatic ring settings
-    mMolecules[mCurrentMolecule]->setAromaticRingColor(vlut::red);
-    mMolecules[mCurrentMolecule]->setAromaticBondsColor(vlut::gold);
+    mMolecules[mCurrentMolecule]->setAromaticRingColor(vl::red);
+    mMolecules[mCurrentMolecule]->setAromaticBondsColor(vl::gold);
 
     ... geometrical detail for bonds and atoms
     mMolecules[mCurrentMolecule]->setBondDetail(50);
     mMolecules[mCurrentMolecule]->setAtomDetail(3);
 
     ... toggle visibility by atom type
-    mMolecules[mCurrentMolecule]->setAtomTypeVisible(vlMolecule::AT_Hydrogen, false);
+    mMolecules[mCurrentMolecule]->setAtomTypeVisible(vl::AT_Hydrogen, false);
 
     ... define per-atom color
-    mMolecules[mCurrentMolecule]->atom(4)->setColor(vlut::fuchsia);
+    mMolecules[mCurrentMolecule]->atom(4)->setColor(vl::fuchsia);
 
     ... define per-atom and per-bond visibility
     mMolecules[mCurrentMolecule]->atom(5)->setVisible(false);
@@ -147,7 +147,7 @@ public:
     mText->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     mText->setTextAlignment(vl::TextAlignCenter);
     mText->translate(0,-5,0);
-    mText->setColor(vlut::white);
+    mText->setColor(vl::white);
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     sceneManager()->tree()->addActor(mText.get(), effect.get());
@@ -158,7 +158,7 @@ public:
   {
     mCurrentMolecule = 0;
     /*loads only the first .mol2 file if more are dropped*/
-    vlMolecule::loadMOL2( files[0], mMolecules );
+    vl::loadMOL2( files[0], mMolecules );
     if (!mMolecules.empty())
       updateMolecule();
 
@@ -210,7 +210,7 @@ public:
   }
 
 protected:
-  std::vector< vl::ref<vlMolecule::Molecule> > mMolecules;
+  std::vector< vl::ref<vl::Molecule> > mMolecules;
   int mCurrentMolecule;
   int mCurrentStyle;
   vl::ref<vl::Text> mText;

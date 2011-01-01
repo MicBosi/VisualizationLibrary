@@ -62,7 +62,7 @@ public:
     mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false) );
     mText->setAlignment(vl::AlignHCenter | vl::AlignTop);
     mText->setViewportAlignment(vl::AlignHCenter | vl::AlignTop);
-    mText->setColor(vlut::white);
+    mText->setColor(vl::white);
     mText->translate(0,-10,0);
     vl::Actor* text_act = sceneManager()->tree()->addActor(mText.get(), new vl::Effect);
     text_act->effect()->shader()->enable(vl::EN_BLEND);
@@ -119,7 +119,7 @@ public:
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->setRenderState( new vl::Light(0) );
 
-    vl::ref<vl::Geometry> ball = vlut::makeUVSphere(vl::vec3(0,0,0),1,20,20);
+    vl::ref<vl::Geometry> ball = vl::makeUVSphere(vl::vec3(0,0,0),1,20,20);
     ball->computeNormals();
 
     int volume = 1000;

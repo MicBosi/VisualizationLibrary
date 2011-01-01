@@ -34,7 +34,7 @@
 
 #include <vlCore/Object.hpp>
 
-namespace vlMolecule
+namespace vl
 {
   class Atom;
 
@@ -59,7 +59,7 @@ namespace vlMolecule
    *
    * \image html pagGuideMolecule.png
    */
-  class Bond: public vl::Object
+  class Bond: public Object
   {
   public:
     virtual const char* className() { return "Atom"; }
@@ -70,7 +70,7 @@ namespace vlMolecule
         mObjectName = className();
       #endif
     }
-    Bond(const Bond& other): vl::Object(other) { *this = other; }
+    Bond(const Bond& other): Object(other) { *this = other; }
 
     unsigned int id() const { return mId; }
     void setId(unsigned int id) { mId = id; }
@@ -87,8 +87,8 @@ namespace vlMolecule
     void setVisible(bool visible) { mVisible = visible; }
     bool visible() const { return mVisible; }
 
-    void setColor(const vl::fvec4& color) { mColor = color; }
-    const vl::fvec4& color() const { return mColor; }
+    void setColor(const fvec4& color) { mColor = color; }
+    const fvec4& color() const { return mColor; }
 
     void setUseAtomColors(bool use_atom_color) { mUseAtomColors = use_atom_color; }
     bool useAtomColors() const { return mUseAtomColors; }
@@ -97,7 +97,7 @@ namespace vlMolecule
     void setRadius(float radius) { mRadius = radius; }
 
   protected:
-    vl::fvec4 mColor;
+    fvec4 mColor;
     float mRadius;
 	  Atom* mAtom1;
 	  Atom* mAtom2;

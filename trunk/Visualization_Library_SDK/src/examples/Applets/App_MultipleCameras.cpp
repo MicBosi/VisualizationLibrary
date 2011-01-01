@@ -86,7 +86,7 @@ public:
     wirefx->shader()->enable( vl::EN_BLEND );
     wirefx->shader()->gocLightModel()->setTwoSide(true);
     wirefx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
-    wirefx->shader()->gocMaterial()->setDiffuse( vlut::white );
+    wirefx->shader()->gocMaterial()->setDiffuse( vl::white );
     wirefx->shader()->setRenderState( light.get() );
 
     std::vector< vl::ref<vl::Actor> > moneky_w;
@@ -128,10 +128,10 @@ public:
 
       switch(i)
       {
-      case 0: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::black); break;
-      case 1: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::yellow); break;
-      case 2: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::red); break;
-      case 3: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::green); break;
+      case 0: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::black); break;
+      case 1: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::yellow); break;
+      case 2: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::red); break;
+      case 3: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::green); break;
       }
 
       vl::mat4 m;

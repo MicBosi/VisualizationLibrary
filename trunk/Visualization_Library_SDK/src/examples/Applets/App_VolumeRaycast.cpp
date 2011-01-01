@@ -40,7 +40,7 @@
 
 using namespace vl;
 
-namespace vlVolume
+namespace vl
 {
   class RaycastVolume: public vl::ActorEventCallback
   {
@@ -95,8 +95,6 @@ namespace vlVolume
     vl::ref<ArrayFloat3> mVertCoord;
   };
 }
-
-using namespace vlVolume;
 
 RaycastVolume::RaycastVolume()
 {
@@ -316,9 +314,9 @@ public:
       mLight0->setAmbient(fvec4(0.1f, 0.1f, 0.1f, 1.0f));
       mLight1->setAmbient(fvec4(0.0f, 0.0f, 0.0f, 1.0f));
       mLight2->setAmbient(fvec4(0.0f, 0.0f, 0.0f, 1.0f));
-      mLight0->setDiffuse(vlut::gold);
-      mLight1->setDiffuse(vlut::green);
-      mLight2->setDiffuse(vlut::royalblue);
+      mLight0->setDiffuse(vl::gold);
+      mLight1->setDiffuse(vl::green);
+      mLight2->setDiffuse(vl::royalblue);
     }
 
     // light bulbs
@@ -336,7 +334,7 @@ public:
 
       ref<Effect> fx_bulb = new Effect;
       fx_bulb->shader()->enable(EN_DEPTH_TEST);
-      ref<Geometry> light_bulb = vlut::makeIcosphere(vec3(0,0,0),1,1);
+      ref<Geometry> light_bulb = vl::makeIcosphere(vec3(0,0,0),1,1);
       sceneManager()->tree()->addActor( light_bulb.get(), fx_bulb.get(), mLight0Tr.get() );
       sceneManager()->tree()->addActor( light_bulb.get(), fx_bulb.get(), mLight1Tr.get() );
       sceneManager()->tree()->addActor( light_bulb.get(), fx_bulb.get(), mLight2Tr.get() );
@@ -378,7 +376,7 @@ public:
     sceneManager()->tree()->addActor( mVolumeAct.get() );
 
     // RaycastVolume will generate the actual actor's geometry upon setBox() invocation
-    mRaycastVolume = new vlVolume::RaycastVolume;
+    mRaycastVolume = new vl::RaycastVolume;
     mRaycastVolume->bindActor(mVolumeAct.get());
     AABB volume_box( vec3(-10,-10,-10), vec3(+10,+10,+10) );
     mRaycastVolume->setBox(volume_box);
@@ -387,8 +385,8 @@ public:
     ref<Effect> fx_box = new Effect;
     fx_box->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx_box->shader()->enable(EN_DEPTH_TEST);
-    ref<Geometry> box_outline = vlut::makeBox(volume_box);
-    box_outline->setColor(vlut::red);
+    ref<Geometry> box_outline = vl::makeBox(volume_box);
+    box_outline->setColor(vl::red);
     sceneManager()->tree()->addActor( box_outline.get(), fx_box.get(), mVolumeTr.get() );
 
     // bias text
@@ -399,7 +397,7 @@ public:
     mBiasText->translate(0,5,0);
     mBiasText->setBackgroundEnabled(true);
     mBiasText->setBackgroundColor(fvec4(0,0,0,0.75));
-    mBiasText->setColor(vlut::white);
+    mBiasText->setColor(vl::white);
     ref<Effect> effect = new Effect;
     effect->shader()->enable(EN_BLEND);
     sceneManager()->tree()->addActor(mBiasText.get(), effect.get());
@@ -467,14 +465,14 @@ public:
       if (PRECOMPUTE_GRADIENT)
       {
         // note that this can take a while...
-        gradient = vlVolume::genGradientNormals(img.get());
+        gradient = vl::genGradientNormals(img.get());
       }
 
       ref<Image> trfunc;
       if (COLORED_LIGHTS)
-        trfunc = Image::makeColorSpectrum(128, vlut::white, vlut::white); // let the lights color the volume
+        trfunc = Image::makeColorSpectrum(128, vl::white, vl::white); // let the lights color the volume
       else
-        trfunc = Image::makeColorSpectrum(128, vlut::blue, vlut::royalblue, vlut::green, vlut::yellow, vlut::crimson);
+        trfunc = Image::makeColorSpectrum(128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson);
       // installs GLSLProgram
       vol_fx->shader()->setRenderState(mGLSL.get());
       // install volume image
@@ -570,7 +568,7 @@ public:
     ref<Light> mLight2;
     ref<GLSLProgram> mGLSL;
     ref<Actor> mVolumeAct;
-    ref<vlVolume::RaycastVolume> mRaycastVolume;
+    ref<vl::RaycastVolume> mRaycastVolume;
 };
 
 // Have fun!

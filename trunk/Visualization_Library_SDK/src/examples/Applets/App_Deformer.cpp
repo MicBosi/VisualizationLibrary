@@ -86,7 +86,7 @@ public:
     image_fx->shader()->setRenderState( mTextureMatrix.get() );
     image_fx->shader()->enable(vl::EN_BLEND);
 
-    mGrid = vlut::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, mSlices, mSlices, true, vl::fvec2(0,0), vl::fvec2(1,1) );
+    mGrid = vl::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, mSlices, mSlices, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     mGrid->setVBOEnabled(false);
     mGrid->transform(vl::mat4::getRotation(-90,1,0,0));
     mPoints = dynamic_cast<vl::ArrayFloat3*>(mGrid->vertexArray());
@@ -109,7 +109,7 @@ public:
     vl::ref<vl::Effect> cursor_fx = new vl::Effect;
     cursor_fx->shader()->gocLogicOp()->set(vl::LO_INVERT);
     cursor_fx->shader()->enable(vl::EN_COLOR_LOGIC_OP);
-    vl::ref<vl::Geometry> cursor = vlut::makeCircle(vl::vec3(0,0,0), 1.0f);
+    vl::ref<vl::Geometry> cursor = vl::makeCircle(vl::vec3(0,0,0), 1.0f);
     
     cursor->transform(vl::mat4::getRotation(-90,1,0,0));
     mCursorActor = sceneManager()->tree()->addActor(cursor.get(), cursor_fx.get(), mCursorTransform.get());
@@ -119,7 +119,7 @@ public:
     mText = new vl::Text;
     mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
     mText->translate(0,-5,0);
-    mText->setColor(vlut::white);
+    mText->setColor(vl::white);
     mText->setBackgroundColor(vl::fvec4(0,0,0,.75f));
     mText->setBackgroundEnabled(true);
     mHelpOn = true;

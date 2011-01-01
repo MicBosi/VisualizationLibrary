@@ -52,20 +52,20 @@ public:
     mLightFx->shader()->enable(vl::EN_LIGHTING); /* IMPORTANT! */
     mLightFx->shader()->enable(vl::EN_DEPTH_TEST);
 
-    vl::ref<vl::Geometry> ground = vlut::makeGrid( vl::vec3(0,0,0), 20, 20, 100,100 );
+    vl::ref<vl::Geometry> ground = vl::makeGrid( vl::vec3(0,0,0), 20, 20, 100,100 );
     ground->computeNormals();
     sceneManager()->tree()->addActor(ground.get(), mLightFx.get());
 
     for(int i=0; i<9; ++i)
     {
-      vl::ref<vl::Geometry> pillar = vlut::makeCylinder( vl::vec3(6,2,-4*1.1f + i*1.1f), 1, 4, 100, 100, true, false);
+      vl::ref<vl::Geometry> pillar = vl::makeCylinder( vl::vec3(6,2,-4*1.1f + i*1.1f), 1, 4, 100, 100, true, false);
       pillar->computeNormals();
       sceneManager()->tree()->addActor(pillar.get(), mLightFx.get());
     }
 
     for(int i=0; i<5; ++i)
     {
-      vl::ref<vl::Geometry> pillar = vlut::makeCylinder( vl::vec3(-3,2,-2*1.1f + i*1.1f), 1, 4, 100, 100, true, false);
+      vl::ref<vl::Geometry> pillar = vl::makeCylinder( vl::vec3(-3,2,-2*1.1f + i*1.1f), 1, 4, 100, 100, true, false);
       pillar->computeNormals();
       sceneManager()->tree()->addActor(pillar.get(), mLightFx.get());
     }
@@ -92,11 +92,11 @@ public:
 
     // Define the light diffuse color. 
     // See the OpenGL Programmer's Guide for more details about the OpenGL lighting model and equations.
-    mLight0->setDiffuse(vlut::red);
-    mLight1->setDiffuse(vlut::green);
-    mLight2->setDiffuse(vlut::blue);
-    mLight3->setDiffuse(vlut::white);
-    mLight4->setDiffuse(vlut::white);
+    mLight0->setDiffuse(vl::red);
+    mLight1->setDiffuse(vl::green);
+    mLight2->setDiffuse(vl::blue);
+    mLight3->setDiffuse(vl::white);
+    mLight4->setDiffuse(vl::white);
 
     // Setup lights #0, #1 and #2 as positional lights with constant, linear and quadratic attenuation.
     // Again, see the OpenGL Programmer's Guide for more details about the OpenGL lighting model and equations.
@@ -143,7 +143,7 @@ public:
     mLight4->followTransform(NULL);
 
     // add a white sphere for each light to have a better visual feedback of the light animation.
-    vl::ref<vl::Geometry> bulb = vlut::makeUVSphere(vl::vec3(0,0,0), 0.5f);
+    vl::ref<vl::Geometry> bulb = vl::makeUVSphere(vl::vec3(0,0,0), 0.5f);
     vl::ref<vl::Effect> bulb_fx = new vl::Effect;
     bulb_fx->shader()->enable(vl::EN_DEPTH_TEST);
     sceneManager()->tree()->addActor(bulb.get(), bulb_fx.get(), mLight0_Transform.get());
