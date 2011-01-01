@@ -62,7 +62,7 @@ public:
     clip1_sh->setRenderState( light.get() );
     clip1_sh->enable(vl::EN_LIGHTING);
     clip1_sh->enable(vl::EN_DEPTH_TEST);
-    clip1_sh->gocMaterial()->setBackDiffuse(vlut::yellow);
+    clip1_sh->gocMaterial()->setBackDiffuse(vl::yellow);
     clip1_sh->gocLightModel()->setTwoSide(true);
     // clipping plane 1 setup
     clip1_sh->gocClipPlane(0)->setPlane( vl::Plane(0.2f, vl::vec3(0,+1,0)) );
@@ -71,7 +71,7 @@ public:
     clip2_sh->setRenderState( light.get() );
     clip2_sh->enable(vl::EN_LIGHTING);
     clip2_sh->enable(vl::EN_DEPTH_TEST);
-    clip2_sh->gocMaterial()->setBackDiffuse(vlut::green);
+    clip2_sh->gocMaterial()->setBackDiffuse(vl::green);
     clip2_sh->gocLightModel()->setTwoSide(true);
     // clipping plane 2 setup
     clip2_sh->gocClipPlane(0)->setPlane( vl::Plane(0.2f, vl::vec3(0,-1,0)) );
@@ -91,7 +91,7 @@ public:
     plane_fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
     plane_fx->shader()->gocLightModel()->setTwoSide(true);
     // add plane actor
-    vl::ref<vl::Geometry> plane = vlut::makeGrid( vl::vec3(0,0,0), 4,4, 2,2 );
+    vl::ref<vl::Geometry> plane = vl::makeGrid( vl::vec3(0,0,0), 4,4, 2,2 );
     plane->setColor(vl::fvec4(1,0,0,0.3f)); // transparent red
     sceneManager()->tree()->addActor( plane.get(), plane_fx.get(), mClipTr.get() );
   }

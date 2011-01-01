@@ -45,11 +45,11 @@
 	
 	<div class="featuretitle">Volume Rendering</div>
 	
-	Visualization Library also provides a set of simple and powerful classes to perform volume rendering, isosurface extraction and 3D plots from volume data. The vlVolume::SlicedVolume class implements all the functionalities needed to perform a direct volume rendering with and without OpenGL Shading Language. When the OpenGL Shading Language is used Blinn-Phong lighting and transfer function computations are performed in realtime. The vlVolume::MarchingCubes is a powerful class that uses an efficient implementation of the marching cubes algorithm to extract one or more isosurfaces from one or more volume data. The vlVolume::VolumePlot is an utility class that takes a volume data and automatically extracts the isosurface at the specified threshold and generates a plot with labels.
+	Visualization Library also provides a set of simple and powerful classes to perform volume rendering, isosurface extraction and 3D plots from volume data. The vl::SlicedVolume class implements all the functionalities needed to perform a direct volume rendering with and without OpenGL Shading Language. When the OpenGL Shading Language is used Blinn-Phong lighting and transfer function computations are performed in realtime. The vl::MarchingCubes is a powerful class that uses an efficient implementation of the marching cubes algorithm to extract one or more isosurfaces from one or more volume data. The vl::VolumePlot is an utility class that takes a volume data and automatically extracts the isosurface at the specified threshold and generates a plot with labels.
 	
 	\par Classes
 	
-	vlVolume::SlicedVolume, vlVolume::MarchingCubes, vlVolume::VolumePlot
+	vl::SlicedVolume, vl::MarchingCubes, vl::VolumePlot
 	
 	\par Related Pages
 	
@@ -58,11 +58,11 @@
 	
 	<div class="featuretitle">Hardware Accelerated 2D Vector Graphics</div>
 	
-	The mission of Visualization Library is not only to provide cutting edge technology for 3D graphics application but also to open the world of hardware accelerated 2D graphics for applications like plotting, charting, data mining and many others. The lack of support for hardware accelerated 2D graphics is almost embarrassing and even when such support is claimed, very few times the performances come close to the full potential of modern GPUs. Since Alpha 3.0 Visualization Library enables true hardware accelerated 2D vector graphics via the following simple and intuitive classes: vlVG::VectorGraphics and vlVG::SceneManagerVectorGraphics. Using such classes the developer has full access to standard functionalities like boxes, lines, ellipses, tansforms, clipping etc. but also to advanced features like texturing, point sprites, stencil operations, antialiasing, high quality text rendering and all the blending modes supported by OpenGL! All this using an intuitive interface that optimally generates vl::Actor, vl::Geometry, vl::Shader etc. objects and commands that are rendered at full speed!
+	The mission of Visualization Library is not only to provide cutting edge technology for 3D graphics application but also to open the world of hardware accelerated 2D graphics for applications like plotting, charting, data mining and many others. The lack of support for hardware accelerated 2D graphics is almost embarrassing and even when such support is claimed, very few times the performances come close to the full potential of modern GPUs. Since Alpha 3.0 Visualization Library enables true hardware accelerated 2D vector graphics via the following simple and intuitive classes: vl::VectorGraphics and vl::SceneManagerVectorGraphics. Using such classes the developer has full access to standard functionalities like boxes, lines, ellipses, tansforms, clipping etc. but also to advanced features like texturing, point sprites, stencil operations, antialiasing, high quality text rendering and all the blending modes supported by OpenGL! All this using an intuitive interface that optimally generates vl::Actor, vl::Geometry, vl::Shader etc. objects and commands that are rendered at full speed!
 	
 	\par Classes
 	
-	vlVG::VectorGraphics, vlVG::SceneManagerVectorGraphics
+	vl::VectorGraphics, vl::SceneManagerVectorGraphics
 	
 	\par Related Pages
 	
@@ -250,18 +250,18 @@
 	
 	\par Functions
 	
-	- vlut::makeIcosphere()
-	- vlut::makeCylinder()
-	- vlut::makeUVSphere()
-	- vlut::makeTorus()
-	- vlut::makeCone()
-	- vlut::makePyramid()
-	- vlut::makeBox()
-	- vlut::makeGrid()
-	- vlut::makeIcosahedron()
-	- vlut::makePoints()
-	- vlut::makeCircle()
-	- vlut::makeCapsule()
+	- vl::makeIcosphere()
+	- vl::makeCylinder()
+	- vl::makeUVSphere()
+	- vl::makeTorus()
+	- vl::makeCone()
+	- vl::makePyramid()
+	- vl::makeBox()
+	- vl::makeGrid()
+	- vl::makeIcosahedron()
+	- vl::makePoints()
+	- vl::makeCircle()
+	- vl::makeCapsule()
 
 	\par Related Pages
 	

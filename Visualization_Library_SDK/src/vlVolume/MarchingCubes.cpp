@@ -36,9 +36,8 @@
 #include <vlCore/DoubleVertexRemover.hpp>
 
 using namespace vl;
-using namespace vlVolume;
 
-/** \class vlVolume::MarchingCubes
+/** \class MarchingCubes
 
 Pictures from the \ref pagGuideMarchingCubes "Marching Cubes" tutorial.
 <center>
@@ -311,7 +310,7 @@ void MarchingCubes::run(bool generate_colors)
   mColors.reserve(1024);
   mIndices.reserve(1024);
 
-  /*vl::Time time; time.start();*/
+  /*Time time; time.start();*/
 
   for(int ivol=0; ivol<mVolumeInfo.size(); ++ivol)
   {
@@ -460,7 +459,7 @@ ref<Volume> Volume::downsample() const
   if (h<1) h = 1;
   if (d<1) d = 1;
 
-  vol->setup(NULL, bottomLeft(), topRight(), vl::ivec3(w,h,d));
+  vol->setup(NULL, bottomLeft(), topRight(), ivec3(w,h,d));
 
   for(int z=0; z<d; ++z)
   {

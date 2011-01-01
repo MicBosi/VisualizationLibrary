@@ -41,7 +41,7 @@
 #include "vlCore/Time.hpp"
 #include "vlCore/Light.hpp"
 
-class App_RotatingCube: public vlut::Applet
+class App_RotatingCube: public vl::Applet
 {
 public:
   virtual void shutdown() {}
@@ -55,7 +55,7 @@ public:
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mCubeTransform.get() );
 
     // create the cube's Geometry and compute its normals to support lighting 
-    vl::ref<vl::Geometry> cube = vlut::makeBox( vl::vec3(0,0,0), 10, 10, 10 );
+    vl::ref<vl::Geometry> cube = vl::makeBox( vl::vec3(0,0,0), 10, 10, 10 );
     cube->computeNormals();
 
     // setup the effect to be used to render the cube 
@@ -68,7 +68,7 @@ public:
     effect->shader()->enable(vl::EN_LIGHTING);
     // set the front and back material color of the cube 
     // "gocMaterial" stands for "get-or-create Material"
-    effect->shader()->gocMaterial()->setDiffuse( vlut::crimson );
+    effect->shader()->gocMaterial()->setDiffuse( vl::crimson );
 
     // install our scene manager, we use the SceneManagerActorTree which is the most generic
     vl::ref<vl::SceneManagerActorTree> scene_manager = new vl::SceneManagerActorTree;

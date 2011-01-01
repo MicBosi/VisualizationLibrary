@@ -35,7 +35,7 @@
 #include <vlCore/Vector4.hpp>
 #include <vlCore/String.hpp>
 
-namespace vlMolecule
+namespace vl
 {
   //! Element types.
   typedef enum
@@ -219,9 +219,9 @@ namespace vlMolecule
     //! Returns the atom's van der Waals radius in Angstroms
     double vanDerWaalsRadius() const { return mVanDerWaalsRadius / 100.0; }
     //! Returns the atom's CPK color
-    vl::fvec4 cpkColor() const 
+    fvec4 cpkColor() const 
     {
-      vl::fvec4 c;
+      fvec4 c;
       c.r() = ((mCPKColor >> 16) & 0xFF) / 255.0f;
       c.g() = ((mCPKColor >> 8)  & 0xFF) / 255.0f;
       c.b() =  (mCPKColor        & 0xFF) / 255.0f;
@@ -229,9 +229,9 @@ namespace vlMolecule
       return c; 
     }
     //! Returns the atom's RasMol color
-    vl::fvec4 rasmolColor() const 
+    fvec4 rasmolColor() const 
     {
-      vl::fvec4 c;
+      fvec4 c;
       c.r() = ((mRasMolColor >> 16) & 0xFF) / 255.0f;
       c.g() = ((mRasMolColor >> 8)  & 0xFF) / 255.0f;
       c.b() =  (mRasMolColor        & 0xFF) / 255.0f;

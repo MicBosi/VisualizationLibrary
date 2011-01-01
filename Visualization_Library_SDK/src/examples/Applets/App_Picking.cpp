@@ -107,9 +107,9 @@ public:
 
     // create a uv-sphere used to highlight the intersection point
 
-    vl::ref<vl::Geometry> intersection_point_geom = vlut::makeUVSphere(vl::vec3(0,0,0), 0.1f);
+    vl::ref<vl::Geometry> intersection_point_geom = vl::makeUVSphere(vl::vec3(0,0,0), 0.1f);
     intersection_point_geom->computeNormals();
-    intersection_point_geom->setColor(vlut::green);
+    intersection_point_geom->setColor(vl::green);
     vl::Actor* intersection_point_act = sceneManager()->tree()->addActor( intersection_point_geom.get(), fx.get(), new vl::Transform );
     mIntersectionPoint = intersection_point_act->transform();
   }
@@ -121,12 +121,12 @@ public:
     // random shape
     switch(rand() % 6)
     {
-      case 0: geom = vlut::makeIcosphere(vl::vec3(0,0,0), 1, 2, false); break;
-      case 1: geom = vlut::makeBox(vl::vec3(0,0,0), 1, 1, 1); break;
-      case 2: geom = vlut::makeCone(vl::vec3(0,0,0),1,1); break;
-      case 3: geom = vlut::makeUVSphere(vl::vec3(0,0,0),1); break;
-      case 4: geom = vlut::makeCylinder(vl::vec3(0,0,0),1,1); break;
-      case 5: geom = vlut::makeTorus(vl::vec3(0,0,0),2,0.5f,20,20); break;
+      case 0: geom = vl::makeIcosphere(vl::vec3(0,0,0), 1, 2, false); break;
+      case 1: geom = vl::makeBox(vl::vec3(0,0,0), 1, 1, 1); break;
+      case 2: geom = vl::makeCone(vl::vec3(0,0,0),1,1); break;
+      case 3: geom = vl::makeUVSphere(vl::vec3(0,0,0),1); break;
+      case 4: geom = vl::makeCylinder(vl::vec3(0,0,0),1,1); break;
+      case 5: geom = vl::makeTorus(vl::vec3(0,0,0),2,0.5f,20,20); break;
     }
     // random color
     geom->setColor( vl::fvec4((float)vl::randomMinMax(0,1), (float)vl::randomMinMax(0,1), (float)vl::randomMinMax(0,1),1.0f) );

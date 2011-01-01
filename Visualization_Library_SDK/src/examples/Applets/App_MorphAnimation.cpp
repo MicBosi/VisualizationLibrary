@@ -73,7 +73,7 @@ public:
     // ground
 
     vl::ref<vl::Geometry> ground;
-    ground = vlut::makeGrid( vl::vec3(0,-30,0), size*1.1f, size*1.1f, 20, 20 );
+    ground = vl::makeGrid( vl::vec3(0,-30,0), size*1.1f, size*1.1f, 20, 20 );
     ground->computeNormals();
     sceneManager()->tree()->addActor(ground.get(), ground_fx.get() );
 

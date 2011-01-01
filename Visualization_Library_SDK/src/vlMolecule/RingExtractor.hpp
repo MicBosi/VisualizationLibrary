@@ -38,7 +38,7 @@
 #include <map>
 #include <set>
 
-namespace vlMolecule
+namespace vl
 {
   //! The RingExtractor class traverses a molecule's graph and detects various types of cycles, mainly used for aromatic ring detection.
   class RingExtractor
@@ -70,12 +70,12 @@ namespace vlMolecule
         molecule()->computeAtomAdjacency();
         for(int i=0; i<molecule()->atomCount(); ++i)
           molecule()->atom(i)->setVisited(false);
-        std::vector< vl::ref<Atom> > current_path;
+        std::vector< ref<Atom> > current_path;
         depthFirstVisit( molecule()->atoms()[0].get(), current_path );
       }
     }
 
-    void depthFirstVisit(Atom* atom, std::vector< vl::ref<Atom> >& current_path)
+    void depthFirstVisit(Atom* atom, std::vector< ref<Atom> >& current_path)
     {
       if ( !atom->visited() || current_path.empty())
       {
@@ -94,7 +94,7 @@ namespace vlMolecule
         {
           if ( current_path[i] == atom )
           {
-            std::vector< vl::ref<Atom> > cycle;
+            std::vector< ref<Atom> > cycle;
             for(; i<current_path.size(); ++i)
               cycle.push_back( current_path[i] );
             if (cycle.size() > 2)
@@ -107,7 +107,7 @@ namespace vlMolecule
 
     void keepAromaticCycles()
     {
-      std::vector< std::vector< vl::ref<Atom> > > kept_cycles;
+      std::vector< std::vector< ref<Atom> > > kept_cycles;
       for(unsigned icycle=0; icycle<molecule()->cycles().size(); ++icycle)
       {
         int ok = true;
@@ -134,7 +134,7 @@ namespace vlMolecule
     {
       for(unsigned icycle=0; icycle<molecule()->cycles().size(); ++icycle)
       {
-        std::vector< vl::ref<Atom> >& cycle = molecule()->cycle(icycle);
+        std::vector< ref<Atom> >& cycle = molecule()->cycle(icycle);
         for(unsigned iatom=0; iatom<cycle.size()-1; ++iatom)
         {
           Atom* atom = cycle[iatom].get();
@@ -154,30 +154,30 @@ namespace vlMolecule
 
     void keepPlanarCycles(float epsilon)
     {
-      std::vector< std::vector< vl::ref<Atom> > > kept_cycles;
+      std::vector< std::vector< ref<Atom> > > kept_cycles;
       for(unsigned icycle=0; icycle<molecule()->cycles().size(); ++icycle)
       {
-        vl::AABB aabb;
+        AABB aabb;
         for(unsigned iatom=0; iatom<molecule()->cycle(icycle).size(); ++iatom)
-          aabb += (vl::vec3)molecule()->cycle(icycle)[iatom]->coordinates();
-        vl::fvec3 center = (vl::fvec3)aabb.center();
+          aabb += (vec3)molecule()->cycle(icycle)[iatom]->coordinates();
+        fvec3 center = (fvec3)aabb.center();
 
-        vl::fvec3 normal;
+        fvec3 normal;
         for(unsigned iatom=0; iatom<molecule()->cycle(icycle).size(); ++iatom)
         {
           int iatom2 = (iatom+1) % molecule()->cycle(icycle).size();
           Atom* atom1 = molecule()->cycle(icycle)[iatom].get();
           Atom* atom2 = molecule()->cycle(icycle)[iatom2].get();
-          vl::fvec3 v1 = (atom1->coordinates()-center).normalize();
-          vl::fvec3 v2 = (atom2->coordinates()-center).normalize();
-          normal += vl::cross(v1, v2);
+          fvec3 v1 = (atom1->coordinates()-center).normalize();
+          fvec3 v2 = (atom2->coordinates()-center).normalize();
+          normal += cross(v1, v2);
         }
         normal.normalize();
 
         int ok = true;
         for(unsigned iatom=0; iatom<molecule()->cycle(icycle).size(); ++iatom)
         {
-          vl::fvec3 v1   = molecule()->cycle(icycle)[iatom]->coordinates() - center;
+          fvec3 v1   = molecule()->cycle(icycle)[iatom]->coordinates() - center;
           float dist = dot(normal, v1);
           if (fabs(dist)>epsilon)
           {
@@ -196,16 +196,16 @@ namespace vlMolecule
       for(unsigned icycle=0; icycle<molecule()->cycles().size(); ++icycle)
         std::stable_sort(molecule()->cycle(icycle).begin(), molecule()->cycle(icycle).end());
       std::stable_sort(molecule()->cycles().begin(), molecule()->cycles().end());
-      std::vector< std::vector< vl::ref<Atom> > >::iterator new_end = std::unique(molecule()->cycles().begin(), molecule()->cycles().end());
-      std::vector< std::vector< vl::ref<Atom> > > unique_cycles;
-      for(std::vector< std::vector< vl::ref<Atom> > >::iterator it = molecule()->cycles().begin(); it != new_end; ++it)
+      std::vector< std::vector< ref<Atom> > >::iterator new_end = std::unique(molecule()->cycles().begin(), molecule()->cycles().end());
+      std::vector< std::vector< ref<Atom> > > unique_cycles;
+      for(std::vector< std::vector< ref<Atom> > >::iterator it = molecule()->cycles().begin(); it != new_end; ++it)
         unique_cycles.push_back(*it);
       molecule()->cycles() = unique_cycles;
     }
 
     void keepMinimalCycles()
     {
-      std::vector< std::vector< vl::ref<Atom> > > sub_cycles;
+      std::vector< std::vector< ref<Atom> > > sub_cycles;
 
       std::map<Atom*, bool> my_atom;
       for(unsigned j=0; j<molecule()->atoms().size(); ++j)

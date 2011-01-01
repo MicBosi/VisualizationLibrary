@@ -48,9 +48,9 @@ public:
 
     float fsize = 2500;
     // create the cube's Geometry and compute its normals to support lighting 
-    vl::ref<vl::Geometry> ball1 = vlut::makeIcosphere( vl::vec3(0,0,0), fsize, 2, false );
+    vl::ref<vl::Geometry> ball1 = vl::makeIcosphere( vl::vec3(0,0,0), fsize, 2, false );
     ball1->computeNormals();
-    vl::ref<vl::Geometry> ball2 = vlut::makeIcosphere( vl::vec3(0,0,0), fsize*1.001f, 2, false );
+    vl::ref<vl::Geometry> ball2 = vl::makeIcosphere( vl::vec3(0,0,0), fsize*1.001f, 2, false );
     ball2->computeNormals();
 
     // setup the effect1 to be used to render the cube 
@@ -63,7 +63,7 @@ public:
     effect1->shader()->enable(vl::EN_LIGHTING);
     // set the front and back material color of the cube 
     // "gocMaterial" stands for "get-or-create Material"
-    effect1->shader()->gocMaterial()->setDiffuse( vlut::crimson );
+    effect1->shader()->gocMaterial()->setDiffuse( vl::crimson );
 
     // setup the effect2 to be used to render the cube 
     vl::ref<vl::Effect> effect2 = new vl::Effect;
@@ -75,7 +75,7 @@ public:
     effect2->shader()->enable(vl::EN_LIGHTING);
     // set the front and back material color of the cube 
     // "gocMaterial" stands for "get-or-create Material"
-    effect2->shader()->gocMaterial()->setDiffuse( vlut::gold );
+    effect2->shader()->gocMaterial()->setDiffuse( vl::gold );
 
     // add the cube to the scene using the previously defined effect and transform 
     sceneManager()->tree()->addActor( ball1.get(), effect1.get(), mCubeTransform.get()  );

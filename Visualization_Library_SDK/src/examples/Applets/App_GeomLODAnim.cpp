@@ -53,8 +53,8 @@ public:
     const int detail = 60;
 
     // LOD 0
-    geom = vlut::makeGrid( vl::vec3(0,0,0), side, side, detail, detail );
-    geom->setColor(vlut::royalblue);
+    geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail, detail );
+    geom->setColor(vl::royalblue);
     actor->lod(0) = geom.get();
 
     geom->setVBOEnabled(true);
@@ -64,8 +64,8 @@ public:
     }
 
     // LOD 1
-    geom = vlut::makeGrid( vl::vec3(0,0,0), side, side, detail/2, detail/2 );
-    geom->setColor(vlut::green);
+    geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail/2, detail/2 );
+    geom->setColor(vl::green);
     actor->lod(1) = geom.get();
 
     geom->setVBOEnabled(true);
@@ -75,8 +75,8 @@ public:
     }
 
     // LOD 2
-    geom = vlut::makeGrid( vl::vec3(0,0,0), side, side, detail/4, detail/4 );
-    geom->setColor(vlut::yellow);
+    geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail/4, detail/4 );
+    geom->setColor(vl::yellow);
     actor->lod(2) = geom.get();
 
     geom->setVBOEnabled(true);
@@ -165,7 +165,7 @@ public:
     fill_sh->enable(vl::EN_DEPTH_TEST);
     fill_sh->enable(vl::EN_CULL_FACE);
     fill_sh->enable(vl::EN_LIGHTING);
-    fill_sh->gocMaterial()->setFrontDiffuse( vlut::white );
+    fill_sh->gocMaterial()->setFrontDiffuse( vl::white );
     fill_sh->gocPolygonMode()->set(vl::PM_FILL, vl::PM_FILL); // note this is default
     fill_sh->setRenderState( light.get() );
 
@@ -176,7 +176,7 @@ public:
     wire_sh->enable(vl::EN_LINE_SMOOTH);
     wire_sh->enable(vl::EN_POLYGON_OFFSET_LINE);
     wire_sh->gocHint()->setLineSmoothHint(vl::HM_NICEST);
-    wire_sh->gocMaterial()->setFlatColor( vlut::royalblue );
+    wire_sh->gocMaterial()->setFlatColor( vl::royalblue );
     wire_sh->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
     wire_sh->gocPolygonOffset()->set(-1.0f, -1.0f);
     wire_sh->setRenderState( light.get() );
@@ -208,15 +208,15 @@ public:
     ring_fx->setLODEvaluator(lod_eval.get());
 
     /* ring element lod #0 */
-    vl::ref<vl::Geometry> geom_0 = vlut::makeIcosphere(vl::vec3(0,0,0),10,1);
+    vl::ref<vl::Geometry> geom_0 = vl::makeIcosphere(vl::vec3(0,0,0),10,1);
     geom_0->computeNormals();
 
     /* ring element lod #1 */
-    vl::ref<vl::Geometry> geom_1 = vlut::makeBox(vl::vec3(0,0,0),6,6,6);
+    vl::ref<vl::Geometry> geom_1 = vl::makeBox(vl::vec3(0,0,0),6,6,6);
     geom_1->computeNormals();
 
     /* ring element lod #2 */
-    vl::ref<vl::Geometry> geom_2 = vlut::makePyramid(vl::vec3(0,0,0),6,6);
+    vl::ref<vl::Geometry> geom_2 = vl::makePyramid(vl::vec3(0,0,0),6,6);
     geom_2->computeNormals();
 
     /* generate the ring of objects */

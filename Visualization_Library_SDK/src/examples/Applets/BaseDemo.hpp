@@ -38,7 +38,7 @@
 #include "vlCore/ReadPixels.hpp"
 #include "vlCore/Time.hpp"
 
-class BaseDemo: public vlut::Applet
+class BaseDemo: public vl::Applet
 {
 public:
   BaseDemo()
@@ -74,7 +74,7 @@ public:
 
   void runEvent()
   {
-    vlut::Applet::runEvent();
+    vl::Applet::runEvent();
 
     if ( !mFPSTimer.isStarted() )
       mFPSTimer.start();

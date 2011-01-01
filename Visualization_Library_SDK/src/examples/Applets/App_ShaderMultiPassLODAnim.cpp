@@ -45,9 +45,9 @@ public:
     int c = (int)( cur_time * 15.0 ) % 2;
     vl::fvec4 color;
     if (c == 0) 
-      color = vlut::gold;
+      color = vl::gold;
     else
-      color = vlut::red;
+      color = vl::red;
     shader->gocMaterial()->setFlatColor( color );
   }
 };
@@ -75,7 +75,7 @@ public:
   void updateShader(vl::Shader* shader, vl::Camera* , vl::Real cur_time)
   {
     float t = (float)sin( cur_time*vl::fPi*2.0f )*0.5f + 0.5f;
-    vl::fvec4 col = vlut::red*t + vlut::blue*(1-t);
+    vl::fvec4 col = vl::red*t + vl::blue*(1-t);
     shader->gocMaterial()->setFlatColor(col);
   }
 };
@@ -146,7 +146,7 @@ public:
     effect->setLODEvaluator(lod_eval.get());
 
     // generate template geometry
-    vl::ref<vl::Geometry> box = vlut::makeBox( vl::vec3(0,0,0), 5,5,5);
+    vl::ref<vl::Geometry> box = vl::makeBox( vl::vec3(0,0,0), 5,5,5);
     box->computeNormals();
     // use the same texture coordinates for unit #0 and unit #1
     box->setTexCoordArray(1, box->texCoordArray(0));

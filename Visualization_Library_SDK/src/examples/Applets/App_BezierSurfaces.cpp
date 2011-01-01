@@ -110,7 +110,7 @@ public:
     // Compute the normals as we have lighting activated
     mBezier->computeNormals();
     // Used by the line rendering
-    mBezier->setColor(vlut::blue);
+    mBezier->setColor(vl::blue);
     // Add the Bézier surface to our scene
     sceneManager()->tree()->addActor(mBezier.get(), fx.get(), NULL);
 
@@ -175,25 +175,25 @@ public:
       for(unsigned ix=0; ix<p.size()-3;     ix+=3)
       for(unsigned iy=0; iy<p[ix].size()-3; iy+=3, istart+=16)
       {
-        verts.push_back((vl::fvec3)p[ix+0][iy+0]); colos.push_back(vlut::red);
-        verts.push_back((vl::fvec3)p[ix+0][iy+1]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+0][iy+2]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+0][iy+3]); colos.push_back(vlut::red);
+        verts.push_back((vl::fvec3)p[ix+0][iy+0]); colos.push_back(vl::red);
+        verts.push_back((vl::fvec3)p[ix+0][iy+1]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+0][iy+2]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+0][iy+3]); colos.push_back(vl::red);
 
-        verts.push_back((vl::fvec3)p[ix+1][iy+0]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+1][iy+1]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+1][iy+2]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+1][iy+3]); colos.push_back(vlut::white);
+        verts.push_back((vl::fvec3)p[ix+1][iy+0]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+1][iy+1]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+1][iy+2]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+1][iy+3]); colos.push_back(vl::white);
 
-        verts.push_back((vl::fvec3)p[ix+2][iy+0]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+2][iy+1]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+2][iy+2]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+2][iy+3]); colos.push_back(vlut::white);
+        verts.push_back((vl::fvec3)p[ix+2][iy+0]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+2][iy+1]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+2][iy+2]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+2][iy+3]); colos.push_back(vl::white);
 
-        verts.push_back((vl::fvec3)p[ix+3][iy+0]); colos.push_back(vlut::red);
-        verts.push_back((vl::fvec3)p[ix+3][iy+1]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+3][iy+2]); colos.push_back(vlut::white);
-        verts.push_back((vl::fvec3)p[ix+3][iy+3]); colos.push_back(vlut::red);
+        verts.push_back((vl::fvec3)p[ix+3][iy+0]); colos.push_back(vl::red);
+        verts.push_back((vl::fvec3)p[ix+3][iy+1]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+3][iy+2]); colos.push_back(vl::white);
+        verts.push_back((vl::fvec3)p[ix+3][iy+3]); colos.push_back(vl::red);
 
         vl::ref<vl::DrawArrays> da = new vl::DrawArrays(vl::PT_POINTS,istart,16);
         vl::ref<vl::DrawElementsUInt> de = new vl::DrawElementsUInt(vl::PT_QUADS);

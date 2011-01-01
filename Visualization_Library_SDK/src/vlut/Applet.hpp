@@ -37,7 +37,7 @@
 #include <vlCore/GhostCameraManipulator.hpp>
 #include <vlCore/SceneManagerActorTree.hpp>
 
-namespace vlut
+namespace vl
 {
 //-----------------------------------------------------------------------------
 // Applet
@@ -45,7 +45,7 @@ namespace vlut
   /**
    * The Applet class is an utilitly UIEventListener that features a ghost manipulator, 
    * trackball manipulator, an FPS counter and a simple rendering pipeline. */
-  class Applet: public vl::UIEventListener
+  class Applet: public UIEventListener
   {
   public:
     virtual const char* className() { return "Applet"; }
@@ -54,9 +54,9 @@ namespace vlut
 
     void initialize();
 
-    virtual void openglContextBoundEvent(vl::OpenGLContext* openglContext);
+    virtual void openglContextBoundEvent(OpenGLContext* openglContext);
 
-    void keyReleaseEvent(unsigned short, vl::EKey key);
+    void keyReleaseEvent(unsigned short, EKey key);
 
     virtual void destroyEvent();
 
@@ -64,11 +64,11 @@ namespace vlut
 
     void resizeEvent(int w, int h);
 
-    vl::SceneManagerActorTree* sceneManager() { return mSceneManagerActorTree.get(); }
-    const vl::SceneManagerActorTree* sceneManager() const { return mSceneManagerActorTree.get(); }
+    SceneManagerActorTree* sceneManager() { return mSceneManagerActorTree.get(); }
+    const SceneManagerActorTree* sceneManager() const { return mSceneManagerActorTree.get(); }
 
-    vl::GhostCameraManipulator* ghostCamera() { return mFly.get(); }
-    vl::TrackballManipulator* trackball() { return mTrackball.get(); }
+    GhostCameraManipulator* ghostCamera() { return mFly.get(); }
+    TrackballManipulator* trackball() { return mTrackball.get(); }
 
     double fps() const { return mFPS; }
 
@@ -77,12 +77,12 @@ namespace vlut
     virtual void shutdown()  = 0;
 
   protected:
-    void bindManipulators(vl::Rendering* rendering);
+    void bindManipulators(Rendering* rendering);
 
   protected:
-    vl::ref<vl::GhostCameraManipulator> mFly;
-    vl::ref<vl::TrackballManipulator> mTrackball;
-    vl::ref<vl::SceneManagerActorTree> mSceneManagerActorTree;
+    ref<GhostCameraManipulator> mFly;
+    ref<TrackballManipulator> mTrackball;
+    ref<SceneManagerActorTree> mSceneManagerActorTree;
     int mFrameCount;
     double mStartTime;
     double mFPS;

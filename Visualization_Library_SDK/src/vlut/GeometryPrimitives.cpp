@@ -34,12 +34,11 @@
 #include <vlCore/DoubleVertexRemover.hpp>
 
 using namespace vl;
-using namespace vlut;
 
 //-----------------------------------------------------------------------------
 //! \p detail can be between 0 ( = icosahedron) and 8 (extremely detailed sphere)
 //! a value of 2 yelds already very good results.
-ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real diameter, int detail, bool remove_doubles)
+ref<Geometry> vl::makeIcosphere(const vec3& pos, Real diameter, int detail, bool remove_doubles)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Icosphere");
@@ -140,7 +139,7 @@ ref<Geometry> vlut::makeIcosphere(const vec3& pos, Real diameter, int detail, bo
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeUVSphere( const vec3& origin, Real diameter, int phi, int theta)
+ref<Geometry> vl::makeUVSphere( const vec3& origin, Real diameter, int phi, int theta)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("UVSphere");
@@ -207,7 +206,7 @@ ref<Geometry> vlut::makeUVSphere( const vec3& origin, Real diameter, int phi, in
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height, int phi, int theta, bool top, bool bottom)
+ref<Geometry> vl::makeCylinder( const vec3& origin, Real diameter, Real height, int phi, int theta, bool top, bool bottom)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Cylinder");
@@ -296,7 +295,7 @@ ref<Geometry> vlut::makeCylinder( const vec3& origin, Real diameter, Real height
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness, int phi, int theta, float tex_coords )
+ref<Geometry> vl::makeTorus( const vec3& origin, Real diameter, Real thickness, int phi, int theta, float tex_coords )
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Torus");
@@ -365,17 +364,17 @@ ref<Geometry> vlut::makeTorus( const vec3& origin, Real diameter, Real thickness
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeBox( const AABB& aabb, bool tex_coords )
+ref<Geometry> vl::makeBox( const AABB& aabb, bool tex_coords )
 {
   return makeBox( aabb.minCorner(), aabb.maxCorner(), tex_coords );
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeBox( const vec3& min, const vec3& max, bool tex_coords )
+ref<Geometry> vl::makeBox( const vec3& min, const vec3& max, bool tex_coords )
 {
   return makeBox( (min+max)*0.5, max.x()-min.x(), max.y()-min.y(), max.z()-min.z(), tex_coords );
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeBox( const vec3& origin, Real xside, Real yside, Real zside, bool tex_coords)
+ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zside, bool tex_coords)
 {
   /*
   1--------0 
@@ -434,7 +433,7 @@ ref<Geometry> vlut::makeBox( const vec3& origin, Real xside, Real yside, Real zs
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makePyramid( const vec3& origin, Real side, Real height)
+ref<Geometry> vl::makePyramid( const vec3& origin, Real side, Real height)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Pyramid");
@@ -467,7 +466,7 @@ ref<Geometry> vlut::makePyramid( const vec3& origin, Real side, Real height)
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, int phi, bool bottom)
+ref<Geometry> vl::makeCone( const vec3& origin, Real diameter, Real height, int phi, bool bottom)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Cone");
@@ -522,7 +521,7 @@ ref<Geometry> vlut::makeCone( const vec3& origin, Real diameter, Real height, in
 }
 //-----------------------------------------------------------------------------
 //! \note if tex_coord_scale_u and tex_coord_scale_v are both == 0 no texture coordinate is generated
-ref<Geometry> vlut::makeGrid( const vec3& origin, Real xside, Real zside, int x, int z, bool gen_texcoords, fvec2 uv0, fvec2 uv1)
+ref<Geometry> vl::makeGrid( const vec3& origin, Real xside, Real zside, int x, int z, bool gen_texcoords, fvec2 uv0, fvec2 uv1)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Grid");
@@ -580,7 +579,7 @@ ref<Geometry> vlut::makeGrid( const vec3& origin, Real xside, Real zside, int x,
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makePoints( const std::vector< vec3>& pos, const fvec4& color )
+ref<Geometry> vl::makePoints( const std::vector< vec3>& pos, const fvec4& color )
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Points");
@@ -603,7 +602,7 @@ ref<Geometry> vlut::makePoints( const std::vector< vec3>& pos, const fvec4& colo
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeIcosahedron( const vec3& origin, Real diameter )
+ref<Geometry> vl::makeIcosahedron( const vec3& origin, Real diameter )
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Icosahedron");
@@ -650,7 +649,7 @@ ref<Geometry> vlut::makeIcosahedron( const vec3& origin, Real diameter )
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeCircle( vec3 origin, Real radius, int slices )
+ref<Geometry> vl::makeCircle( vec3 origin, Real radius, int slices )
 {
   ref< Geometry > geom = new Geometry;
   geom->setObjectName("Circle");
@@ -669,7 +668,7 @@ ref<Geometry> vlut::makeCircle( vec3 origin, Real radius, int slices )
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vlut::makeCapsule(float radius, float height, int segments, ECapsuleCap top_cap, ECapsuleCap bottom_cap, const fvec4& top_col, const fvec4& bottom_col)
+ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsuleCap top_cap, ECapsuleCap bottom_cap, const fvec4& top_col, const fvec4& bottom_col)
 {
   float height2 = height / 2.0f;
 

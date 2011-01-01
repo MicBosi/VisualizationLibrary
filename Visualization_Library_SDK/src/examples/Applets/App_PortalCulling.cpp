@@ -132,7 +132,7 @@ public:
     floor_fx->shader()->enable(vl::EN_LIGHTING);
     floor_fx->shader()->gocLight(0);
     floor_fx->shader()->gocLightModel()->setTwoSide(true);
-    floor_fx->shader()->gocMaterial()->setDiffuse(vlut::crimson);
+    floor_fx->shader()->gocMaterial()->setDiffuse(vl::crimson);
     floor_fx->shader()->setRenderState(mPolygonMode.get());
 
     vl::ref<vl::Effect> ceiling_fx = new vl::Effect;
@@ -140,7 +140,7 @@ public:
     ceiling_fx->shader()->enable(vl::EN_LIGHTING);
     ceiling_fx->shader()->gocLight(0);
     ceiling_fx->shader()->gocLightModel()->setTwoSide(true);
-    ceiling_fx->shader()->gocMaterial()->setDiffuse(vlut::gray);
+    ceiling_fx->shader()->gocMaterial()->setDiffuse(vl::gray);
     ceiling_fx->shader()->setRenderState(mPolygonMode.get());
 
     vl::ref<vl::Effect> wall_fx = new vl::Effect;
@@ -148,16 +148,16 @@ public:
     wall_fx->shader()->enable(vl::EN_LIGHTING);
     wall_fx->shader()->gocLight(0)->setLinearAttenuation(0.025f);
     wall_fx->shader()->gocLightModel()->setTwoSide(true);
-    wall_fx->shader()->gocMaterial()->setDiffuse(vlut::gold);
+    wall_fx->shader()->gocMaterial()->setDiffuse(vl::gold);
     wall_fx->shader()->setRenderState(mPolygonMode.get());
 
     // boring code to generate the gometry of various kinds of walls, with out door, with door, with the passage and portal.
 
-    vl::ref<vl::Geometry> wall_1_a = vlut::makeGrid(vl::vec3(room_h/2.0f,0,0),room_h,room_size_in,20,20);
+    vl::ref<vl::Geometry> wall_1_a = vl::makeGrid(vl::vec3(room_h/2.0f,0,0),room_h,room_size_in,20,20);
     wall_1_a->computeNormals();
     wall_1_a->transform(vl::mat4::getRotation(90,0,0,1));
 
-    vl::ref<vl::Geometry> wall_2_a = vlut::makeGrid(vl::vec3(0,0,room_h/2.0f),room_size_in,room_h,20,20);
+    vl::ref<vl::Geometry> wall_2_a = vl::makeGrid(vl::vec3(0,0,room_h/2.0f),room_size_in,room_h,20,20);
     wall_2_a->computeNormals();
     wall_2_a->transform(vl::mat4::getRotation(-90,1,0,0));
 
@@ -319,7 +319,7 @@ public:
     wall_2_c->computeNormals();
 
     // very heavy spheres to be added to the sectors to outline more clearly the advantages of portal-based culling.
-    vl::ref<vl::Geometry> sphere = vlut::makeUVSphere(vl::vec3(0,3,0),1,200,200);
+    vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0,3,0),1,200,200);
     sphere->computeNormals();
     vl::ref<vl::Effect> ball_fx = new vl::Effect;
     ball_fx->shader()->enable(vl::EN_DEPTH_TEST);
@@ -341,12 +341,12 @@ public:
           mPortalSceneManager->sectors().push_back(sector1);
 
           // add floor to the sector/room
-          vl::ref<vl::Geometry> floor = vlut::makeGrid(vl::vec3(x*room_size_out, 0, y*room_size_out), room_size_in, room_size_in, 20, 20);
+          vl::ref<vl::Geometry> floor = vl::makeGrid(vl::vec3(x*room_size_out, 0, y*room_size_out), room_size_in, room_size_in, 20, 20);
           floor->computeNormals();
           sector1->actors()->push_back( new vl::Actor(floor.get(), floor_fx.get(), NULL) );
 
           // add ceiling to the sector/room
-          vl::ref<vl::Geometry> ceiling = vlut::makeGrid(vl::vec3(x*room_size_out, room_h, y*room_size_out), room_size_in, room_size_in, 20, 20);
+          vl::ref<vl::Geometry> ceiling = vl::makeGrid(vl::vec3(x*room_size_out, room_h, y*room_size_out), room_size_in, room_size_in, 20, 20);
           ceiling->computeNormals();
           sector1->actors()->push_back( new vl::Actor(ceiling.get(), ceiling_fx.get(), NULL) );
 

@@ -108,7 +108,7 @@ public:
     cube_fx->shader()->enable(vl::EN_LIGHTING);
     cube_fx->shader()->setRenderState( new vl::Light(0) );
 
-    vl::ref<vl::Geometry> cube = vlut::makeBox( vl::vec3(0,0,0), 1, 1, 1 );
+    vl::ref<vl::Geometry> cube = vl::makeBox( vl::vec3(0,0,0), 1, 1, 1 );
     cube->computeNormals();
     mCube = sceneManager()->tree()->addActor(cube.get(), cube_fx.get(), transf.get() );
     mCube->setRenderRank(2); // draw after 2d objects

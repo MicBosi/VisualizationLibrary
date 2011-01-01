@@ -69,13 +69,13 @@ public:
     vl::ref<vl::Image> circle16_yr = vl::loadImage("/images/circle16.png");
     circle16_yr->substituteColorGreenKey(0xFFFF00,0xFF0000);
     // generate the color spectrums
-    vl::ref<vl::Image> spectrum1 = vl::Image::makeColorSpectrum(128, vlut::blue,  vlut::green, vlut::yellow, vlut::red);
-    vl::ref<vl::Image> spectrum2 = vl::Image::makeColorSpectrum(128, vlut::black, vlut::white, vlut::gray,   vlut::black);
+    vl::ref<vl::Image> spectrum1 = vl::Image::makeColorSpectrum(128, vl::blue,  vl::green, vl::yellow, vl::red);
+    vl::ref<vl::Image> spectrum2 = vl::Image::makeColorSpectrum(128, vl::black, vl::white, vl::gray,   vl::black);
 
     // add a new VectorGraphics to our SceneManagerVectorGraphics
   
-    vl::ref<vlVG::VectorGraphics> vg = new vlVG::VectorGraphics;
-    vl::ref<vlVG::SceneManagerVectorGraphics> vgscene = new vlVG::SceneManagerVectorGraphics;
+    vl::ref<vl::VectorGraphics> vg = new vl::VectorGraphics;
+    vl::ref<vl::SceneManagerVectorGraphics> vgscene = new vl::SceneManagerVectorGraphics;
     vgscene->vectorGraphicObjects()->push_back(vg.get());
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back(vgscene.get());
 
@@ -84,7 +84,7 @@ public:
     vg->startDrawing();
 
       // clear the viewport
-      vg->clearColor(vlut::white);
+      vg->clearColor(vl::white);
 
       // ###### textured quad rendering ######
 
@@ -95,16 +95,16 @@ public:
       vg->pushMatrix();
         // textured quad #1 repeat texturing
         vg->translate(10,110);
-        vg->setTextureMode(vlVG::TextureMode_Repeat);
+        vg->setTextureMode(vl::TextureMode_Repeat);
         vg->fillQuad( 0,0 , pattern->width()*3.0f,pattern->height()*3.0f );
         // textured quad #2 stretch texturing
         vg->translate(100,0);
-        vg->setTextureMode(vlVG::TextureMode_Clamp);
+        vg->setTextureMode(vl::TextureMode_Clamp);
         vg->fillQuad( 0,0 , pattern->width()*3.0f,pattern->height()*3.0f );
         // textured quad #3 stretch texturing
         vg->translate(100,0);
         vg->setImage(spectrum2.get());
-        vg->setTextureMode(vlVG::TextureMode_Clamp);
+        vg->setTextureMode(vl::TextureMode_Clamp);
         vg->fillQuad( 0,0 , pattern->width()*3.0f,pattern->height()*3.0f );
       vg->popMatrix();
 
@@ -112,35 +112,35 @@ public:
 
       vg->setImage(NULL);
       vg->setLineWidth(1.0f);
-      vg->setColor(vlut::black);
+      vg->setColor(vl::black);
       vg->resetMatrix();
       vg->translate(10,250);
 
-      vg->setLineStipple(vlVG::LineStipple_Dash);
+      vg->setLineStipple(vl::LineStipple_Dash);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vlVG::LineStipple_Dash4);
+      vg->setLineStipple(vl::LineStipple_Dash4);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vlVG::LineStipple_Dash8);
+      vg->setLineStipple(vl::LineStipple_Dash8);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vlVG::LineStipple_DashDot);
+      vg->setLineStipple(vl::LineStipple_DashDot);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vlVG::LineStipple_DashDotDot);
+      vg->setLineStipple(vl::LineStipple_DashDotDot);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vlVG::LineStipple_Dot);
+      vg->setLineStipple(vl::LineStipple_Dot);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vlVG::LineStipple_Solid);
+      vg->setLineStipple(vl::LineStipple_Solid);
       vg->drawLine(0,0, 200,0);
 
       vg->resetMatrix();
@@ -194,7 +194,7 @@ public:
       vg->setImage(NULL);
       vg->setPointSize(7);
       vg->setPointSmoothing(true); /* default value */
-      vg->setColor(vlut::crimson);
+      vg->setColor(vl::crimson);
       vg->translate(196,64);
       points.clear();
       for(int i=0; i<100; ++i)
@@ -212,7 +212,7 @@ public:
       vg->setImage(NULL);
       vg->setPointSize(5);
       vg->setPointSmoothing(false);
-      vg->setColor(vlut::green);
+      vg->setColor(vl::green);
       vg->translate(0,-128);
       points.clear();
       for(int i=0; i<100; ++i)
@@ -229,7 +229,7 @@ public:
 
       // reset states
       vg->resetMatrix();
-      vg->setColor(vlut::white);
+      vg->setColor(vl::white);
       vg->setImage(NULL);
 
       // clear the stencil buffer
@@ -265,11 +265,11 @@ public:
       // make sure our matrix is clean
       vg->resetMatrix();
       // render random blue ellipses
-      vg->setColor(vlut::blue);
+      vg->setColor(vl::blue);
       for(int i=0; i<400; ++i)
         vg->drawEllipse(rand()%512,rand()%512 , rand()%20+10,rand()%20+10);
       // renders concentric red circles
-      vg->setColor(vlut::red);
+      vg->setColor(vl::red);
       for(int i=0; i<256/4; ++i)
         vg->drawEllipse(256,256 , i*8,i*8);
 
@@ -278,13 +278,13 @@ public:
 
       // render text following our rotating rose
       vg->setFont("/font/bitstream-vera/Vera.ttf", 14, false);
-      vg->setColor(vlut::black);
+      vg->setColor(vl::black);
       // note that the 2D text is not transformed by mRoseTransform but just follows an idea point transformed by mRoseTransform.
       vg->drawText("Stencil buffer in action here!", vl::AlignHCenter|vl::AlignVCenter)->setTransform(mRoseTransform.get());
 
       // ###### draws a rotated text ###### 
 
-      vg->setColor(vlut::black);
+      vg->setColor(vl::black);
       vg->setFont("/font/bitstream-vera/VeraMono.ttf", 14, true);
       vg->pushMatrix();
       vg->rotate(45);
@@ -330,21 +330,21 @@ public:
 
       // star1
       vg->setLineWidth(4.0f);
-      vg->setColor(vlut::gold);
+      vg->setColor(vl::gold);
       vl::Actor* star1 = vg->drawLineLoop(star_line_loop);
       // star2 - recycle the geometry from star1
       vg->setLineWidth(2.0f);
-      vg->setColor(vlut::red);
+      vg->setColor(vl::red);
       vl::Actor* star2 = vg->drawActorCopy(star1);
       // star3 - recycle the geometry from star1
       vg->setLineWidth(1.0f);
-      vg->setLineStipple(vlVG::LineStipple_DashDotDot);
+      vg->setLineStipple(vl::LineStipple_DashDotDot);
       vl::Actor* star3 = vg->drawActorCopy(star1);
       // star4 - texturing #1
-      vg->setColor(vlut::white); // make sure color is white so that the texture color is not filtered
+      vg->setColor(vl::white); // make sure color is white so that the texture color is not filtered
       vg->setImage(spectrum1.get());
       vg->setLineWidth(2.0f);
-      vg->setLineStipple(vlVG::LineStipple_Solid);
+      vg->setLineStipple(vl::LineStipple_Solid);
       // Here we call drawLineLoop() because we need to create a new geometry instance
       // so that VL can generate appropriate UV texture coordinates that are dependent
       // on the currently active Image.

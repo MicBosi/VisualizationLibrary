@@ -38,7 +38,6 @@
 #include <vlCore/Say.hpp>
 #include <vlCore/Log.hpp>
 
-using namespace vlut;
 using namespace vl;
 
 //-----------------------------------------------------------------------------
@@ -55,14 +54,14 @@ Applet::Applet()
 void Applet::initialize()
 {
   // by default Visualization Library installs a Rendering
-  ref<Rendering> rend = vl::VisualizationLibrary::rendering()->as<Rendering>();
+  ref<Rendering> rend = VisualizationLibrary::rendering()->as<Rendering>();
   rend->setShaderAnimationEnabled(true);
   // attached later: viewport
   // attached later: opengl context
   // attached later: render target
 
-  // installs a vl::SceneManagerActorTree as the default scene manager
-  mSceneManagerActorTree = new vl::SceneManagerActorTree;
+  // installs a SceneManagerActorTree as the default scene manager
+  mSceneManagerActorTree = new SceneManagerActorTree;
   rend->sceneManagers()->push_back(sceneManager());
 
   mFly       = new GhostCameraManipulator;
@@ -153,10 +152,10 @@ void Applet::runEvent()
 
   // set frame time for all the rendering
   Real now_time = Time::currentTime();
-  vl::VisualizationLibrary::rendering()->setFrameClock( now_time );
+  VisualizationLibrary::rendering()->setFrameClock( now_time );
 
   // execute rendering
-  vl::VisualizationLibrary::rendering()->render();
+  VisualizationLibrary::rendering()->render();
 
   // show rendering
   if( openglContext()->hasDoubleBuffer() )
@@ -168,7 +167,7 @@ void Applet::runEvent()
 void Applet::resizeEvent(int w, int h)
 {
   // if a simple Rendering is attached as the rendering root than update viewport and projection matrix.
-  vl::Rendering* rendering = vl::VisualizationLibrary::rendering()->as<vl::Rendering>();
+  Rendering* rendering = VisualizationLibrary::rendering()->as<Rendering>();
   if (rendering)
   {
     VL_CHECK( w == rendering->renderer()->renderTarget()->width() );

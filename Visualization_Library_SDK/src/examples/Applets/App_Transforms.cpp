@@ -75,9 +75,9 @@ public:
 
     /* working desk */
 
-    vl::ref<vl::Geometry> plane = vlut::makeGrid(vl::vec3(0,0,0), 50,50, 2,2);
+    vl::ref<vl::Geometry> plane = vl::makeGrid(vl::vec3(0,0,0), 50,50, 2,2);
     plane->computeNormals();
-    plane->setColor(vlut::gray);
+    plane->setColor(vl::gray);
     sceneManager()->tree()->addActor(plane.get(), effect.get());
 
     /* buttons */
@@ -93,8 +93,8 @@ public:
 
     vl::ref<vl::Transform> tr;
 
-    vl::ref<vl::Geometry> button = vlut::makeCylinder(vl::vec3(0,0.5,0), 1.5, 1);
-    button->setColor(vlut::orange);
+    vl::ref<vl::Geometry> button = vl::makeCylinder(vl::vec3(0,0.5,0), 1.5, 1);
+    button->setColor(vl::orange);
     button->computeNormals();
 
     tr = new vl::Transform( vl::mat4::getTranslation(-6,0,10) );
@@ -123,48 +123,48 @@ public:
 
     /* robot base */
 
-    vl::ref<vl::Geometry>  arm_base = vlut::makeBox(vl::vec3(0,0.5,0), 12, 1, 12);
+    vl::ref<vl::Geometry>  arm_base = vl::makeBox(vl::vec3(0,0.5,0), 12, 1, 12);
     arm_base ->computeNormals();
-    arm_base ->setColor(vlut::blue);
+    arm_base ->setColor(vl::blue);
     sceneManager()->tree()->addActor(arm_base.get(), effect.get());
 
     /* robot arms */
 
-    vl::ref<vl::Geometry>  arm0    = vlut::makeBox(vl::vec3(0,5,0), 2, 10, 2);
+    vl::ref<vl::Geometry>  arm0    = vl::makeBox(vl::vec3(0,5,0), 2, 10, 2);
     arm0->computeNormals();
-    arm0->setColor(vlut::red);
+    arm0->setColor(vl::red);
     mTransfArm0 = new vl::Transform;
     sceneManager()->tree()->addActor(arm0.get(), effect.get(), mTransfArm0.get());
 
-    vl::ref<vl::Geometry>  arm1    = vlut::makeCylinder(vl::vec3(0,5,0), 2, 10);
+    vl::ref<vl::Geometry>  arm1    = vl::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm1->computeNormals();
-    arm1->setColor(vlut::green);
+    arm1->setColor(vl::green);
     mTransfArm1 = new vl::Transform;
     sceneManager()->tree()->addActor(arm1.get(), effect.get(), mTransfArm1.get());
 
-    vl::ref<vl::Geometry>  arm2    = vlut::makeCylinder(vl::vec3(0,5,0), 2, 10);
+    vl::ref<vl::Geometry>  arm2    = vl::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm2->computeNormals();
-    arm2->setColor(vlut::green);
+    arm2->setColor(vl::green);
     mTransfArm2 = new vl::Transform;
     sceneManager()->tree()->addActor(arm2.get(), effect.get(), mTransfArm2.get());
 
-    vl::ref<vl::Geometry>  arm3    = vlut::makeCylinder(vl::vec3(0,5,0), 2, 10);
+    vl::ref<vl::Geometry>  arm3    = vl::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm3->computeNormals();
-    arm3->setColor(vlut::green);
+    arm3->setColor(vl::green);
     mTransfArm3 = new vl::Transform;
     sceneManager()->tree()->addActor(arm3.get(), effect.get(), mTransfArm3.get());
 
     /* robot fingers */
 
-    vl::ref<vl::Geometry>  finger1   = vlut::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
+    vl::ref<vl::Geometry>  finger1   = vl::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
     finger1->computeNormals();
-    finger1->setColor(vlut::crimson);
+    finger1->setColor(vl::crimson);
     mTransfHand1 = new vl::Transform;
     sceneManager()->tree()->addActor(finger1.get(), effect.get(), mTransfHand1.get());
 
-    vl::ref<vl::Geometry>  finger2   = vlut::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
+    vl::ref<vl::Geometry>  finger2   = vl::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
     finger2->computeNormals();
-    finger2->setColor(vlut::crimson);
+    finger2->setColor(vl::crimson);
     mTransfHand2 = new vl::Transform;
     sceneManager()->tree()->addActor(finger2.get(), effect.get(), mTransfHand2.get());
 
