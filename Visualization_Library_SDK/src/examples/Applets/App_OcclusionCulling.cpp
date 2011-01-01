@@ -76,28 +76,28 @@ public:
 
     /* the ground under the trees */
     float side = 400;
-    vl::ref<vl::Geometry> ground = vlut::makeGrid(vl::vec3(0, -1.0f, 0), side*2.1f, side*2.1f, (int)side, (int)side);
+    vl::ref<vl::Geometry> ground = vl::makeGrid(vl::vec3(0, -1.0f, 0), side*2.1f, side*2.1f, (int)side, (int)side);
     ground->computeNormals();
-    ground->setColor(vlut::green);
+    ground->setColor(vl::green);
     sceneManager()->tree()->addActor(ground.get(), fx.get(), NULL);
 
     /* the red wall in front of the camera */
-    vl::ref<vl::Geometry> wall = vlut::makeBox(vl::vec3(0,25,500), 50, 50 ,1);
+    vl::ref<vl::Geometry> wall = vl::makeBox(vl::vec3(0,25,500), 50, 50 ,1);
     wall->computeNormals();
-    wall->setColor(vlut::red);
+    wall->setColor(vl::red);
     sceneManager()->tree()->addActor(wall.get(), fx.get(), NULL);
 
     /* the trees */
     float trunk_h   = 20;
     float trunk_w   = 4;
     /* the tree's branches */
-    vl::ref<vl::Geometry> branches = vlut::makeIcosphere(vl::vec3(0,trunk_h/2.0f,0), 14, 2, false);
+    vl::ref<vl::Geometry> branches = vl::makeIcosphere(vl::vec3(0,trunk_h/2.0f,0), 14, 2, false);
     branches->computeNormals();
-    branches->setColor( vlut::green );
+    branches->setColor( vl::green );
     /* the tree's trunk */
-    vl::ref<vl::Geometry> trunk = vlut::makeCylinder(vl::vec3(0,0,0),trunk_w,trunk_h, 50, 50);
+    vl::ref<vl::Geometry> trunk = vl::makeCylinder(vl::vec3(0,0,0),trunk_w,trunk_h, 50, 50);
     trunk->computeNormals();
-    trunk->setColor( vlut::gold );
+    trunk->setColor( vl::gold );
 
     /* fill our forest with trees! */
     int trunk_count = 20;
@@ -121,7 +121,7 @@ public:
     mText->setViewportAlignment( vl::AlignLeft | vl::AlignTop );
     mText->setTextAlignment(vl::TextAlignLeft);
     mText->translate(+5,-5,0);
-    mText->setColor(vlut::white);
+    mText->setColor(vl::white);
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     vl::Actor* text_actor = sceneManager()->tree()->addActor(mText.get(), effect.get());

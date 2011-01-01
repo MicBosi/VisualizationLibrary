@@ -70,7 +70,7 @@ public:
     // style options
     mEdgeRenderer->setLineWidth(2.0f);
     mEdgeRenderer->setSmoothLines(true);
-    mEdgeRenderer->setDefaultLineColor(vlut::black);
+    mEdgeRenderer->setDefaultLineColor(vl::black);
 
     // fills mSceneManager with a few actors.
     // the beauty of this system is that you setup your actors ony once in a single scene managers and
@@ -90,25 +90,25 @@ public:
     // red material fx
     vl::ref<vl::Effect> red_fx = new vl::Effect;
     red_fx->shader()->setEnableSet(enables.get());
-    red_fx->shader()->gocMaterial()->setDiffuse(vlut::red);
+    red_fx->shader()->gocMaterial()->setDiffuse(vl::red);
     red_fx->shader()->setRenderState(camera_light.get());
 
     // green material fx
     vl::ref<vl::Effect> green_fx = new vl::Effect;
     green_fx->shader()->setEnableSet(enables.get());
-    green_fx->shader()->gocMaterial()->setDiffuse(vlut::green);
+    green_fx->shader()->gocMaterial()->setDiffuse(vl::green);
     green_fx->shader()->setRenderState(camera_light.get());
 
     // blue material fx
     vl::ref<vl::Effect> yellow_fx = new vl::Effect;
     yellow_fx->shader()->setEnableSet(enables.get());
-    yellow_fx->shader()->gocMaterial()->setDiffuse(vlut::yellow);
+    yellow_fx->shader()->gocMaterial()->setDiffuse(vl::yellow);
     yellow_fx->shader()->setRenderState(camera_light.get());
 
     // add box, cylinder, cone actors to the scene
-    vl::ref<vl::Geometry> geom1 = vlut::makeBox     (vl::vec3(-7,0,0),5,5,5);
-    vl::ref<vl::Geometry> geom2 = vlut::makeCylinder(vl::vec3(0,0,0), 5,5, 10,2, true, true);
-    vl::ref<vl::Geometry> geom3 = vlut::makeCone    (vl::vec3(+7,0,0),5,5, 20, true);
+    vl::ref<vl::Geometry> geom1 = vl::makeBox     (vl::vec3(-7,0,0),5,5,5);
+    vl::ref<vl::Geometry> geom2 = vl::makeCylinder(vl::vec3(0,0,0), 5,5, 10,2, true, true);
+    vl::ref<vl::Geometry> geom3 = vl::makeCone    (vl::vec3(+7,0,0),5,5, 20, true);
 
     // needed since we enabled the lighting
     geom1->computeNormals();

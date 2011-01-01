@@ -78,7 +78,7 @@ class App_EffectOverride: public BaseDemo
     mSolidRendering->transform()->addChild( mCubeTransform3.get() );
 
     const vl::Real fsize = 8;
-    vl::ref<vl::Geometry> ball = vlut::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
+    vl::ref<vl::Geometry> ball = vl::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
     ball->computeNormals();
 
     // setup solid effect
@@ -89,7 +89,7 @@ class App_EffectOverride: public BaseDemo
     effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_CULL_FACE);
-    effect->shader()->gocMaterial()->setDiffuse( vlut::gold );
+    effect->shader()->gocMaterial()->setDiffuse( vl::gold );
     effect->shader()->gocMaterial()->setTransparency( 0.5f );
 
     // populate the scene
@@ -102,21 +102,21 @@ class App_EffectOverride: public BaseDemo
 
     vl::ref<vl::Effect> fx1 = new vl::Effect;
     fx1->shader()->enable(vl::EN_LIGHTING);
-    fx1->shader()->gocMaterial()->setFlatColor(vlut::red);
+    fx1->shader()->gocMaterial()->setFlatColor(vl::red);
     fx1->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
     fx1->shader()->gocLineWidth()->set(2.0f);
     fx1->shader()->enable(vl::EN_CULL_FACE);
 
     vl::ref<vl::Effect> fx2 = new vl::Effect;
     fx2->shader()->enable(vl::EN_LIGHTING);
-    fx2->shader()->gocMaterial()->setFlatColor(vlut::green);
+    fx2->shader()->gocMaterial()->setFlatColor(vl::green);
     fx2->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
     fx2->shader()->gocLineWidth()->set(2.0f);
     fx2->shader()->enable(vl::EN_CULL_FACE);
 
     vl::ref<vl::Effect> fx3 = new vl::Effect;
     fx3->shader()->enable(vl::EN_LIGHTING);
-    fx3->shader()->gocMaterial()->setFlatColor(vlut::blue);
+    fx3->shader()->gocMaterial()->setFlatColor(vl::blue);
     fx3->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
     fx3->shader()->gocLineWidth()->set(2.0f);
     fx3->shader()->enable(vl::EN_CULL_FACE);

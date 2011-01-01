@@ -135,7 +135,7 @@ public:
       }
       else
       {
-        effect5->shader()->gocMaterial()->setDiffuse(vlut::red);
+        effect5->shader()->gocMaterial()->setDiffuse(vl::red);
         vl::Log::print("GL_NV_geometry_shader4 not supported.\n");
       }
     }

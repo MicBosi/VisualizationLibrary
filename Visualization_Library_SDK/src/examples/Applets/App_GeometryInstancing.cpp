@@ -96,10 +96,10 @@ public:
       exit(1);
     }
 
-    vl::ref<vl::Geometry> box_set = vlut::makeBox( vl::vec3(0,0,0), 2, 2, 2, false);
+    vl::ref<vl::Geometry> box_set = vl::makeBox( vl::vec3(0,0,0), 2, 2, 2, false);
     box_set->computeNormals();
     box_set->setObjectName("Box Set");
-    box_set->setColor(vlut::white);
+    box_set->setColor(vl::white);
 
     /* setting multiple instances is as easy as calling this function! */
     vl::DrawArrays* draw_arrays = dynamic_cast<vl::DrawArrays*>( box_set->drawCalls()->at(0) );
@@ -148,9 +148,9 @@ public:
     box_fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
 
     /* shows bounding box */
-    vl::ref<vl::Geometry> box = vlut::makeBox( box_set->boundingBox() );
+    vl::ref<vl::Geometry> box = vl::makeBox( box_set->boundingBox() );
     box->setObjectName("Wire box");
-    box->setColor(vlut::red);
+    box->setColor(vl::red);
     box->computeNormals();
     sceneManager()->tree()->addActor( box.get(), box_fx.get() );
 

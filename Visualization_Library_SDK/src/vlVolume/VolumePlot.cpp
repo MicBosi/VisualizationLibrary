@@ -37,30 +37,29 @@
 #include <vlut/GeometryPrimitives.hpp>
 
 using namespace vl;
-using namespace vlVolume;
 
-/** \class vlVolume::VolumePlot
+/** \class VolumePlot
   \image html pagGuideMarchingCubes_1.jpg
 
 Example:
 \code
   float range = 5.0f;
-  vl::fvec3 min_corner(-range,-range,-range);
-  vl::fvec3 max_corner(+range,+range,+range);
+  fvec3 min_corner(-range,-range,-range);
+  fvec3 max_corner(+range,+range,+range);
 
-  vlVolume::VolumePlot plot;
+  VolumePlot plot;
   // set the function sampling space
   plot.setMinCorner(min_corner);
   plot.setMaxCorner(max_corner);
   // set various rendering options
-  plot.isosurfaceEffect()->shader()->gocMaterial()->setSpecular(vlut::white);
+  plot.isosurfaceEffect()->shader()->gocMaterial()->setSpecular(white);
   plot.isosurfaceEffect()->shader()->gocMaterial()->setShininess(50.0f);
-  plot.isosurfaceEffect()->shader()->gocMaterial()->setDiffuse(vl::fvec4(1.0f,0,0,0.5f));
-  plot.isosurfaceEffect()->shader()->enable(vl::EN_BLEND);
-  plot.isosurfaceActor()->renderEventCallbacks()->push_back( new vl::DepthSortCallback );
-  plot.textTemplate()->setColor(vlut::yellow);
+  plot.isosurfaceEffect()->shader()->gocMaterial()->setDiffuse(fvec4(1.0f,0,0,0.5f));
+  plot.isosurfaceEffect()->shader()->enable(EN_BLEND);
+  plot.isosurfaceActor()->renderEventCallbacks()->push_back( new DepthSortCallback );
+  plot.textTemplate()->setColor(yellow);
   // set the sampling resolution along the x, y and z directions
-  plot.setSamplingResolution(vl::ivec3(100,100,100));
+  plot.setSamplingResolution(ivec3(100,100,100));
   // function computation and plot generation
   plot.compute( my_func(), 0.900f );
   sceneManager()->tree()->addChild(plot.actorTreeMulti());
@@ -72,37 +71,37 @@ Example:
 //-----------------------------------------------------------------------------
 VolumePlot::VolumePlot()
 {
-  mActorTreeMulti = new vl::ActorTree;
-  mPlotTransform = new vl::Transform;
-  mIsosurfaceActor = new vl::Actor;
-  mIsosurfaceGeometry = new vl::Geometry;
-  mIsosurfaceEffect = new vl::Effect;
-  mBoxEffect = new vl::Effect;
-  mTextTemplate = new vl::Text;
-  mSamplingResolution = vl::ivec3(64,64,64);
+  mActorTreeMulti = new ActorTree;
+  mPlotTransform = new Transform;
+  mIsosurfaceActor = new Actor;
+  mIsosurfaceGeometry = new Geometry;
+  mIsosurfaceEffect = new Effect;
+  mBoxEffect = new Effect;
+  mTextTemplate = new Text;
+  mSamplingResolution = ivec3(64,64,64);
   mLabelFormat = "(%.2n %.2n %.2n)";
-  mLabelFont = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
-  mMinCorner = vl::fvec3(-1,-1,-1);
-  mMaxCorner = vl::fvec3(+1,+1,+1);
+  mLabelFont = VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
+  mMinCorner = fvec3(-1,-1,-1);
+  mMaxCorner = fvec3(+1,+1,+1);
 
   // defaults
 
-  mIsosurfaceEffect->shader()->setRenderState( new vl::Light(0) );
-  mIsosurfaceEffect->shader()->gocMaterial()->setFrontDiffuse(vlut::red);
-  mIsosurfaceEffect->shader()->gocMaterial()->setBackDiffuse(vlut::green);
-  mIsosurfaceEffect->shader()->enable(vl::EN_LIGHTING);
-  mIsosurfaceEffect->shader()->enable(vl::EN_DEPTH_TEST);
+  mIsosurfaceEffect->shader()->setRenderState( new Light(0) );
+  mIsosurfaceEffect->shader()->gocMaterial()->setFrontDiffuse(red);
+  mIsosurfaceEffect->shader()->gocMaterial()->setBackDiffuse(green);
+  mIsosurfaceEffect->shader()->enable(EN_LIGHTING);
+  mIsosurfaceEffect->shader()->enable(EN_DEPTH_TEST);
   mIsosurfaceEffect->shader()->gocLightModel()->setTwoSide(true);
 
-  mBoxEffect->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
-  mBoxEffect->shader()->enable(vl::EN_DEPTH_TEST);
+  mBoxEffect->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
+  mBoxEffect->shader()->enable(EN_DEPTH_TEST);
 
-  textTemplate()->setColor(vlut::white);
+  textTemplate()->setColor(white);
 }
 //-----------------------------------------------------------------------------
 /**
  * \param func The function to be evaluated at each grid point.
- * \param threshold The isovalue of the isosurface passed to the vlVolume::MarcingCubes algorithm.
+ * \param threshold The isovalue of the isosurface passed to the MarcingCubes algorithm.
  */
 void VolumePlot::compute(const Function& func, float threshold)
 {
@@ -110,12 +109,12 @@ void VolumePlot::compute(const Function& func, float threshold)
   mActors.clear();
 
   // volume_box outline
-  vl::ref<vl::Geometry> box_outline = vlut::makeBox(vl::AABB((vl::vec3)minCorner(),(vl::vec3)maxCorner()));
-  box_outline->setColor(vlut::white);
+  ref<Geometry> box_outline = makeBox(AABB((vec3)minCorner(),(vec3)maxCorner()));
+  box_outline->setColor(white);
 
   // setup isosurface and actors
 
-  vlVolume::MarchingCubes mc;
+  MarchingCubes mc;
 
   mIsosurfaceGeometry->setVertexArray(mc.mVertsArray.get());
   mIsosurfaceGeometry->setNormalArray(mc.mNormsArray.get());
@@ -126,12 +125,12 @@ void VolumePlot::compute(const Function& func, float threshold)
   mIsosurfaceActor->setEffect(mIsosurfaceEffect.get());
   mIsosurfaceActor->setTransform(mPlotTransform.get());
   mActors.push_back(mIsosurfaceActor.get());
-  mActors.push_back( new vl::Actor(box_outline.get(),mBoxEffect.get(),mPlotTransform.get()) );
+  mActors.push_back( new Actor(box_outline.get(),mBoxEffect.get(),mPlotTransform.get()) );
 
-  vl::ref<vlVolume::Volume> volume = new vlVolume::Volume;
+  ref<Volume> volume = new Volume;
   volume->setup( NULL, minCorner(), maxCorner(), mSamplingResolution );
   
-  mc.volumeInfo()->push_back( new vlVolume::VolumeInfo( volume.get(), threshold ) );
+  mc.volumeInfo()->push_back( new VolumeInfo( volume.get(), threshold ) );
 
   evaluateFunction(volume->values(), minCorner(), maxCorner(), func);
 
@@ -145,11 +144,11 @@ void VolumePlot::compute(const Function& func, float threshold)
     actorTreeMulti()->actors()->push_back(mActors[i].get());
 }
 //-----------------------------------------------------------------------------
-void VolumePlot::setupLabels(const vl::String& format, const vl::fvec3& min_corner, const vl::fvec3& max_corner, vl::Font* font, vl::Transform* root_tr)
+void VolumePlot::setupLabels(const String& format, const fvec3& min_corner, const fvec3& max_corner, Font* font, Transform* root_tr)
 {
-  vl::ref< vl::Effect > text_fx = new vl::Effect;
-  text_fx->shader()->enable(vl::EN_BLEND);
-  text_fx->shader()->enable(vl::EN_DEPTH_TEST);
+  ref< Effect > text_fx = new Effect;
+  text_fx->shader()->enable(EN_BLEND);
+  text_fx->shader()->enable(EN_DEPTH_TEST);
 
   float coords[][3] =
   {
@@ -163,25 +162,25 @@ void VolumePlot::setupLabels(const vl::String& format, const vl::fvec3& min_corn
     {min_corner.x(), max_corner.y(), max_corner.z()}
   };
 
-  vl::String coord_label[] = 
+  String coord_label[] = 
   {
-    vl::Say(format) << min_corner.x() << min_corner.y() <<  min_corner.z(),
-    vl::Say(format) << max_corner.x() << min_corner.y() <<  min_corner.z(),
-    vl::Say(format) << max_corner.x() << max_corner.y() <<  min_corner.z(),
-    vl::Say(format) << min_corner.x() << max_corner.y() <<  min_corner.z(),
-    vl::Say(format) << min_corner.x() << min_corner.y() <<  max_corner.z(),
-    vl::Say(format) << max_corner.x() << min_corner.y() <<  max_corner.z(),
-    vl::Say(format) << max_corner.x() << max_corner.y() <<  max_corner.z(),
-    vl::Say(format) << min_corner.x() << max_corner.y() <<  max_corner.z()
+    Say(format) << min_corner.x() << min_corner.y() <<  min_corner.z(),
+    Say(format) << max_corner.x() << min_corner.y() <<  min_corner.z(),
+    Say(format) << max_corner.x() << max_corner.y() <<  min_corner.z(),
+    Say(format) << min_corner.x() << max_corner.y() <<  min_corner.z(),
+    Say(format) << min_corner.x() << min_corner.y() <<  max_corner.z(),
+    Say(format) << max_corner.x() << min_corner.y() <<  max_corner.z(),
+    Say(format) << max_corner.x() << max_corner.y() <<  max_corner.z(),
+    Say(format) << min_corner.x() << max_corner.y() <<  max_corner.z()
   };
 
   for(int i=0; i<8; ++i)
   {
-    vl::ref<vl::Text> text = new vl::Text;
+    ref<Text> text = new Text;
     text->setDisplayListEnabled(false);
     text->setVBOEnabled(false);
     text->setFont( font );
-    text->setAlignment(vl::AlignHCenter| vl::AlignVCenter);
+    text->setAlignment(AlignHCenter| AlignVCenter);
     text->setText(coord_label[i]);
     // template parameters
     text->setColor( textTemplate()->color() );
@@ -197,8 +196,8 @@ void VolumePlot::setupLabels(const vl::String& format, const vl::fvec3& min_corn
     text->setShadowVector( textTemplate()->shadowVector() );
     text->setMatrix( textTemplate()->matrix() );
 
-    vl::ref<vl::Actor> text_a = new vl::Actor( text.get(), text_fx.get(), new vl::Transform );
-    text_a->transform()->setLocalMatrix( vl::mat4::getTranslation(coords[i][0],coords[i][1],coords[i][2]) );
+    ref<Actor> text_a = new Actor( text.get(), text_fx.get(), new Transform );
+    text_a->transform()->setLocalMatrix( mat4::getTranslation(coords[i][0],coords[i][1],coords[i][2]) );
     if (root_tr)
       root_tr->addChild( text_a->transform() );
     text_a->transform()->computeWorldMatrix();
@@ -207,9 +206,9 @@ void VolumePlot::setupLabels(const vl::String& format, const vl::fvec3& min_corn
   }
 }
 //-----------------------------------------------------------------------------
-void VolumePlot::evaluateFunction(float* scalar, const vl::fvec3& min_corner, const vl::fvec3& max_corner, const Function& func)
+void VolumePlot::evaluateFunction(float* scalar, const fvec3& min_corner, const fvec3& max_corner, const Function& func)
 {
-  vl::fvec3 v;
+  fvec3 v;
   int w = mSamplingResolution.x();
   int h = mSamplingResolution.y();
   int d = mSamplingResolution.z();

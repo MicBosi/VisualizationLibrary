@@ -97,7 +97,7 @@ public:
 
     _tr = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(_tr.get());
-    vl::ref<vl::Geometry> points = vlut::makePoints( pointset );
+    vl::ref<vl::Geometry> points = vl::makePoints( pointset );
     sceneManager()->tree()->addActor( points.get(), effect.get(), _tr.get() );
 
     vl::ref<vl::Effect> ax_effect = new vl::Effect;
@@ -105,33 +105,33 @@ public:
     ax_effect->shader()->enable(vl::EN_DEPTH_TEST);
     ax_effect->shader()->enable(vl::EN_CULL_FACE);
     ax_effect->shader()->setRenderState( new vl::Light(0) );
-    ax_effect->shader()->gocMaterial()->setDiffuse(vlut::red);
+    ax_effect->shader()->gocMaterial()->setDiffuse(vl::red);
 
-    vl::ref<vl::Geometry> axis1 = vlut::makeCylinder( vl::vec3(-360,0,-360), 10, 360*2 );
+    vl::ref<vl::Geometry> axis1 = vl::makeCylinder( vl::vec3(-360,0,-360), 10, 360*2 );
     sceneManager()->tree()->addActor( axis1.get(), ax_effect.get(), _tr.get() );
     axis1->computeNormals();
 
-    vl::ref<vl::Geometry> axis2 = vlut::makeCylinder( vl::vec3(0,0,0), 10, 360*2 );
+    vl::ref<vl::Geometry> axis2 = vl::makeCylinder( vl::vec3(0,0,0), 10, 360*2 );
     sceneManager()->tree()->addActor( axis2.get(), ax_effect.get(), _tr.get() );
     axis2->transform( vl::mat4::getTranslation(-360,-360,0) * vl::mat4::getRotation(90,1,0,0) );
     axis2->computeNormals();
 
-    vl::ref<vl::Geometry> axis3 = vlut::makeCylinder( vl::vec3(0,0,0), 10, 360*2 );
+    vl::ref<vl::Geometry> axis3 = vl::makeCylinder( vl::vec3(0,0,0), 10, 360*2 );
     sceneManager()->tree()->addActor( axis3.get(), ax_effect.get(), _tr.get() );
     axis3->transform( vl::mat4::getTranslation(0,-360,-360) * vl::mat4::getRotation(90,0,0,1) );
     axis3->computeNormals();
 
-    vl::ref<vl::Geometry> top1 = vlut::makeCone( vl::vec3(0,20,0), 20, 40 );
+    vl::ref<vl::Geometry> top1 = vl::makeCone( vl::vec3(0,20,0), 20, 40 );
     sceneManager()->tree()->addActor( top1.get(), ax_effect.get(), _tr.get() );
     top1->transform( vl::mat4::getTranslation(-360,360,-360) );
     top1->computeNormals();
 
-    vl::ref<vl::Geometry> top2 = vlut::makeCone( vl::vec3(0,20,0), 20, 40 );
+    vl::ref<vl::Geometry> top2 = vl::makeCone( vl::vec3(0,20,0), 20, 40 );
     sceneManager()->tree()->addActor( top2.get(), ax_effect.get(), _tr.get() );
     top2->transform( vl::mat4::getTranslation(-360,-360, 360) * vl::mat4::getRotation(90,1,0,0) );
     top2->computeNormals();
 
-    vl::ref<vl::Geometry> top3 = vlut::makeCone( vl::vec3(0,20,0), 20, 40 );
+    vl::ref<vl::Geometry> top3 = vl::makeCone( vl::vec3(0,20,0), 20, 40 );
     sceneManager()->tree()->addActor( top3.get(), ax_effect.get(), _tr.get() );
     top3->transform( vl::mat4::getTranslation(360,-360,-360) * vl::mat4::getRotation(90,0,0,-1) );
     top3->computeNormals();

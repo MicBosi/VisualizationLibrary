@@ -61,7 +61,7 @@ public:
     // setup sphere geometry
 
     const vl::Real fsize = 8;
-    vl::ref<vl::Geometry> ball = vlut::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
+    vl::ref<vl::Geometry> ball = vl::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
     ball->computeNormals();
 
     // setup solid effect
@@ -72,7 +72,7 @@ public:
     effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_CULL_FACE);
-    effect->shader()->gocMaterial()->setDiffuse( vlut::gold );
+    effect->shader()->gocMaterial()->setDiffuse( vl::gold );
     effect->shader()->gocMaterial()->setTransparency( 0.5f );
 
     // creates 3 actors and adds them to the scene
@@ -100,9 +100,9 @@ public:
 
     // assign a different flat material color to each shader
 
-    sh1->gocMaterial()->setFlatColor(vlut::red);
-    sh2->gocMaterial()->setFlatColor(vlut::green);
-    sh3->gocMaterial()->setFlatColor(vlut::blue);
+    sh1->gocMaterial()->setFlatColor(vl::red);
+    sh2->gocMaterial()->setFlatColor(vl::green);
+    sh3->gocMaterial()->setFlatColor(vl::blue);
 
     // setup the renderer that will override the shaders
 

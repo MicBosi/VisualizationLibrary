@@ -47,8 +47,8 @@ Geometry::Geometry()
   mVertexAttribArrays.setAutomaticDelete(false);
   mTexCoordArrays.setAutomaticDelete(false);
   mDrawCalls.setAutomaticDelete(false);
-  mColor = vlut::white;
-  mSecondaryColor = vlut::white;
+  mColor = vl::white;
+  mSecondaryColor = vl::white;
   mNormal = fvec3(0,0,1);
 }
 //-----------------------------------------------------------------------------

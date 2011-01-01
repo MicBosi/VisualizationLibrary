@@ -176,7 +176,7 @@ void Terrain::init()
 
   if (useGLSL())
   {
-    terr_tile = vlut::makeGrid( vec3(0,0,0), 1.0f, 1.0f, xsize, zsize);
+    terr_tile = vl::makeGrid( vec3(0,0,0), 1.0f, 1.0f, xsize, zsize);
     terr_tile->setTexCoordArray(0, tmap_uv.get());
     terr_tile->setTexCoordArray(1, dmap_uv.get());
     terr_tile->setTexCoordArray(2, hmap_uv.get());
@@ -286,7 +286,7 @@ void Terrain::init()
 
       if (!useGLSL())
       {
-        terr_tile = vlut::makeGrid( vec3(0,0,0), 1.0f, 1.0f, xsize, zsize);
+        terr_tile = vl::makeGrid( vec3(0,0,0), 1.0f, 1.0f, xsize, zsize);
         terr_tile->setTexCoordArray(0, tmap_uv.get());
         terr_tile->setTexCoordArray(1, dmap_uv.get());
 

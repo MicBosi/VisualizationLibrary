@@ -37,7 +37,7 @@
 #include <vlMolecule/chem_database.hpp>
 #include <vector>
 
-namespace vlMolecule
+namespace vl
 {
   
   /** The Atom class represents an atom to be used with the Molecule class.
@@ -48,7 +48,7 @@ namespace vlMolecule
    *
    * \image html pagGuideMolecule.png
    */
-  class Atom: public vl::Object
+  class Atom: public Object
   {
   public:
     virtual const char* className() { return "Atom"; }
@@ -60,8 +60,8 @@ namespace vlMolecule
       #endif
       mId       = 0;
       mAtomType = AT_Unknown;
-      mCoordinates = vl::fvec3(0,0,0);
-      mColor    = vl::fvec4(1.0f,1.0f,1.0f,1.0f);
+      mCoordinates = fvec3(0,0,0);
+      mColor    = fvec4(1.0f,1.0f,1.0f,1.0f);
       mRadius   = 0.25f;
       mVisited  = false;
       mVisible  = true;
@@ -105,8 +105,8 @@ namespace vlMolecule
     unsigned int id() const { return mId; }
     void setId(unsigned int id) { mId = id; }
 
-    const vl::fvec3& coordinates() const { return mCoordinates; }
-    void setCoordinates(const vl::fvec3& coordinates) { mCoordinates = coordinates; }
+    const fvec3& coordinates() const { return mCoordinates; }
+    void setCoordinates(const fvec3& coordinates) { mCoordinates = coordinates; }
 
     float radius() const { return mRadius; }
     void setRadius(float radius) { mRadius = radius; }
@@ -117,8 +117,8 @@ namespace vlMolecule
     void setAtomName(const std::string& name) { mAtomName = name; }
     const std::string& atomName() const { return mAtomName; }
 
-    const vl::fvec4& color() const { return mColor; }
-    void setColor(const vl::fvec4& color) { mColor = color; }
+    const fvec4& color() const { return mColor; }
+    void setColor(const fvec4& color) { mColor = color; }
 
     bool visible() const { return mVisible; }
     void setVisible(bool visible) { mVisible = visible; }
@@ -129,8 +129,8 @@ namespace vlMolecule
     bool showAtomName() const { return mShowAtomName; }
 
   protected:
-    vl::fvec4 mColor;
-    vl::fvec3 mCoordinates;
+    fvec4 mColor;
+    fvec3 mCoordinates;
     EAtomType mAtomType;
     float mRadius;
     std::vector< Atom* > mAdjacentAtoms;

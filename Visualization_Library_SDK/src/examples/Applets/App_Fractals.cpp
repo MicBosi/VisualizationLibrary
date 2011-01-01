@@ -164,7 +164,7 @@ public:
     mText->setText("Mandelbrot!");
     mText->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
     mText->setMode( Text2D );
-    mText->setColor(vlut::white);
+    mText->setColor(vl::white);
     mText->setBackgroundColor( fvec4(0,0,0,0.75f) );
     mText->setBackgroundEnabled(true);
     mText->setAlignment( AlignBottom | AlignLeft );
@@ -184,7 +184,7 @@ public:
     ref<Effect> effect = new Effect;
 
     /* screen aligned quad */
-    ref<Geometry> geom = vlut::makeGrid( vec3(0,0,0), 2, 2, 2, 2, true, fvec2(0,0), fvec2(1,1) );
+    ref<Geometry> geom = vl::makeGrid( vec3(0,0,0), 2, 2, 2, 2, true, fvec2(0,0), fvec2(1,1) );
     geom->transform( mat4::getRotation( -90, 1,0,0 ) );
     sceneManager()->tree()->addActor( geom.get(), effect.get() );
 
@@ -220,18 +220,18 @@ public:
 
     // color palette 1
     std::vector<fvec4> color_range1;
-    color_range1.push_back(vlut::red);
-    color_range1.push_back(vlut::yellow);
-    color_range1.push_back(vlut::green);
-    color_range1.push_back(vlut::blue);
-    color_range1.push_back(vlut::red);
+    color_range1.push_back(vl::red);
+    color_range1.push_back(vl::yellow);
+    color_range1.push_back(vl::green);
+    color_range1.push_back(vl::blue);
+    color_range1.push_back(vl::red);
     mSpectrum1 = Image::makeColorSpectrum(256,color_range1);
 
     // color palette 2
     std::vector<fvec4> color_range2;
-    color_range2.push_back(vlut::yellow);
-    color_range2.push_back(vlut::royalblue);
-    color_range2.push_back(vlut::yellow);
+    color_range2.push_back(vl::yellow);
+    color_range2.push_back(vl::royalblue);
+    color_range2.push_back(vl::yellow);
     mSpectrum2 = Image::makeColorSpectrum(256,color_range2);
 
     mTexture = new Texture;

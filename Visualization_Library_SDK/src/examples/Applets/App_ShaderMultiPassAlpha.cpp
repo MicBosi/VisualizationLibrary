@@ -73,9 +73,9 @@ public:
     sphere_fx->lod(0)->push_back(wirepass.get());
 
     /* create template sphere */
-    vl::ref<vl::Geometry> sphere = vlut::makeUVSphere(vl::vec3(0,0,0), 6, 10, 10);
+    vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0,0,0), 6, 10, 10);
     sphere->computeNormals();
-    sphere->setColor(vlut::green);
+    sphere->setColor(vl::green);
 
     /* generate a ring of spheres */
     const int actor_count = 20;

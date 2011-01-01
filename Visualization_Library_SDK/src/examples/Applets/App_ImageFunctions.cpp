@@ -181,7 +181,7 @@ public:
       }
     }
 
-    vl::ref<vl::Geometry> quad = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
+    vl::ref<vl::Geometry> quad = vl::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     quad->transform( vl::mat4::getRotation(-90, 1,0,0), false );
 
     // (1)

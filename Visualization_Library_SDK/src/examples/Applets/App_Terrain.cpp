@@ -83,10 +83,10 @@ public:
     if (!terrain->useGLSL())
     {
       // set sky to white
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::white);
+      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::white);
       // set fog render state
       vl::ref<vl::Fog> fog = new vl::Fog;
-      fog->setColor(vlut::white);
+      fog->setColor(vl::white);
       fog->setDensity(0.045f);
       fog->setMode(vl::FM_EXP);
       // install and enable fog

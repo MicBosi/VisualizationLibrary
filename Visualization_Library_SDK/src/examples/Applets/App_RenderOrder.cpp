@@ -68,9 +68,9 @@ public:
     mTransform3 = new vl::Transform;
     vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform3.get());
 
-    vl::ref<vl::Geometry> box    = vlut::makeBox(vl::vec3(0,0,-2), 1,1,1);
-    vl::ref<vl::Geometry> sphere = vlut::makeUVSphere(vl::vec3(0,0,0),0.5f);
-    vl::ref<vl::Geometry> cone   = vlut::makeCone(vl::vec3(0,0,+2), 1, 1, 10, true);
+    vl::ref<vl::Geometry> box    = vl::makeBox(vl::vec3(0,0,-2), 1,1,1);
+    vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0,0,0),0.5f);
+    vl::ref<vl::Geometry> cone   = vl::makeCone(vl::vec3(0,0,+2), 1, 1, 10, true);
     box   ->computeNormals();
     sphere->computeNormals();
     cone  ->computeNormals();
@@ -86,7 +86,7 @@ public:
       red_fx->shader()->enable(vl::EN_CULL_FACE);
       red_fx->shader()->enable(vl::EN_LIGHTING);
       red_fx->shader()->setRenderState( light.get() );
-      red_fx->shader()->gocMaterial()->setDiffuse(vlut::red);
+      red_fx->shader()->gocMaterial()->setDiffuse(vl::red);
       red_fx->setRenderRank(1);
 
       vl::ref<vl::Actor> act;
@@ -102,7 +102,7 @@ public:
       yellow_fx->shader()->enable(vl::EN_CULL_FACE);
       yellow_fx->shader()->enable(vl::EN_LIGHTING);
       yellow_fx->shader()->setRenderState( light.get() );
-      yellow_fx->shader()->gocMaterial()->setDiffuse(vlut::yellow);
+      yellow_fx->shader()->gocMaterial()->setDiffuse(vl::yellow);
       yellow_fx->setRenderRank(2);
 
       act = sceneManager()->tree()->addActor( box.get(),  yellow_fx.get(), mTransform2.get() );
@@ -120,7 +120,7 @@ public:
       transp_fx->shader()->enable(vl::EN_CULL_FACE);
       transp_fx->shader()->enable(vl::EN_LIGHTING);
       transp_fx->shader()->setRenderState( light.get() );
-      transp_fx->shader()->gocMaterial()->setDiffuse(vlut::blue);
+      transp_fx->shader()->gocMaterial()->setDiffuse(vl::blue);
       transp_fx->shader()->gocMaterial()->setTransparency(0.5f);
 
       vl::ref<vl::Actor> act;
@@ -135,7 +135,7 @@ public:
       solid_fx->shader()->enable(vl::EN_CULL_FACE);
       solid_fx->shader()->enable(vl::EN_LIGHTING);
       solid_fx->shader()->setRenderState( light.get() );
-      solid_fx->shader()->gocMaterial()->setDiffuse(vlut::yellow);
+      solid_fx->shader()->gocMaterial()->setDiffuse(vl::yellow);
 
       act = sceneManager()->tree()->addActor( box.get(),  solid_fx.get(), mTransform2.get() );
       act = sceneManager()->tree()->addActor( cone.get(), solid_fx.get(), mTransform2.get() );

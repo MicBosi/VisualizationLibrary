@@ -86,7 +86,7 @@ public:
     mOptions->setMargin(0);
     mOptions->setViewportAlignment(vl::AlignTop | vl::AlignLeft);
     mOptions->setAlignment(vl::AlignTop | vl::AlignLeft);
-    mOptions->setColor(vlut::white);
+    mOptions->setColor(vl::white);
     mOptions->setBackgroundColor(vl::fvec4(0,0,0,.75f));
     mOptions->setBackgroundEnabled(true);
     mOptions->setInterlineSpacing(0);

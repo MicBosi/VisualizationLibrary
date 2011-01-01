@@ -127,7 +127,7 @@ void EdgeExtractor::extractEdges(Geometry* geom)
 ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
 {
   ref<Geometry> geom = new Geometry;
-  geom->setColor(vlut::black);
+  geom->setColor(vl::black);
   geom->setVBOEnabled(false);
   ref<ArrayFloat3> vert_array = new ArrayFloat3;
   geom->setVertexArray(vert_array.get());

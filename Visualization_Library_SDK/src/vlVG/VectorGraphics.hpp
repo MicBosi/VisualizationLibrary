@@ -44,7 +44,7 @@
 #include <vlCore/Geometry.hpp>
 #include <vlCore/FontManager.hpp>
 
-namespace vlVG
+namespace vl
 {
   //! Defines how the texture is applied to the rendering primitive
   typedef enum
@@ -102,7 +102,7 @@ namespace vlVG
    *
    * For more information please refer to the \ref pagGuideVectorGraphics "2D Vector Graphics" page.
    */
-  class VectorGraphics: public vl::Object
+  class VectorGraphics: public Object
   {
   private:
     //------------------------------------------------------------------------- start internal
@@ -110,7 +110,7 @@ namespace vlVG
     class ImageState
     {
     public:
-      ImageState(vl::Image* img, ETextureMode mode): mImage(img), mTextureMode(mode) {}
+      ImageState(Image* img, ETextureMode mode): mImage(img), mTextureMode(mode) {}
 
       bool operator<(const ImageState& other) const
       {
@@ -123,7 +123,7 @@ namespace vlVG
           return false;
       }
     protected:
-      vl::Image* mImage;
+      Image* mImage;
       ETextureMode mTextureMode;
     };
     //------------------------------------------------------------------------- start internal
@@ -133,11 +133,11 @@ namespace vlVG
     public:
       State()
       {
-        mColor         = vlut::white;
+        mColor         = white;
         mPointSize     = 5;
         mImage         = NULL;
         mTextureMode   = TextureMode_Clamp;
-        mLogicOp       = vl::LO_COPY;
+        mLogicOp       = LO_COPY;
         mPointSmoothing= true;
         mLineSmoothing = true;
         mPolygonSmoothing = false;
@@ -146,61 +146,61 @@ namespace vlVG
         memset(mPolyStipple, 0xFF, 32*32/8);
 
         // blend equation
-        mBlendEquationRGB    = vl::BE_FUNC_ADD;
-        mBlendEquationAlpha  = vl::BE_FUNC_ADD;
+        mBlendEquationRGB    = BE_FUNC_ADD;
+        mBlendEquationAlpha  = BE_FUNC_ADD;
         // blend factor
-        mBlendFactorSrcRGB   = vl::BF_SRC_ALPHA;
-        mBlendFactorDstRGB   = vl::BF_ONE_MINUS_SRC_ALPHA;
-        mBlendFactorSrcAlpha = vl::BF_SRC_ALPHA;
-        mBlendFactorDstAlpha = vl::BF_ONE_MINUS_SRC_ALPHA;
+        mBlendFactorSrcRGB   = BF_SRC_ALPHA;
+        mBlendFactorDstRGB   = BF_ONE_MINUS_SRC_ALPHA;
+        mBlendFactorSrcAlpha = BF_SRC_ALPHA;
+        mBlendFactorDstAlpha = BF_ONE_MINUS_SRC_ALPHA;
         // alpha func
         mAlphaFuncRefValue = 0.0f;
-        mAlphaFunc         = vl::FU_ALWAYS;
+        mAlphaFunc         = FU_ALWAYS;
         // font
-        mFont              = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false);
+        mFont              = VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false);
         // masks
         /*mDepthMask   = true;*/
-        mColorMask   = vl::ivec4(1,1,1,1);
+        mColorMask   = ivec4(1,1,1,1);
         // stencil
         mStencilMask = 0xFFFFFFFF;
         mStencilTestEnabled = false;
-        mStencil_SFail  = vl::SO_KEEP;
-        mStencil_SFail  = vl::SO_KEEP;
-        mStencil_DpFail = vl::SO_KEEP;
-        mStencil_Function = vl::FU_ALWAYS;
+        mStencil_SFail  = SO_KEEP;
+        mStencil_SFail  = SO_KEEP;
+        mStencil_DpFail = SO_KEEP;
+        mStencil_Function = FU_ALWAYS;
         mStencil_RefValue = 0;
         mStencil_FunctionMask = ~(unsigned int)0;
       }
 
-      vl::fvec4 mColor;
+      fvec4 mColor;
       int mPointSize;
-      vl::ref<vl::Image> mImage;
+      ref<Image> mImage;
       ETextureMode mTextureMode;
-      vl::ELogicOp mLogicOp;
+      ELogicOp mLogicOp;
       float mLineWidth;
       bool mPointSmoothing;
       bool mLineSmoothing;
       bool mPolygonSmoothing;
       unsigned short mLineStipple;
       unsigned char mPolyStipple[32*32/8];
-      vl::EBlendEquation mBlendEquationRGB;
-      vl::EBlendEquation mBlendEquationAlpha;
-      vl::EBlendFactor mBlendFactorSrcRGB;
-      vl::EBlendFactor mBlendFactorDstRGB;
-      vl::EBlendFactor mBlendFactorSrcAlpha;
-      vl::EBlendFactor mBlendFactorDstAlpha;
+      EBlendEquation mBlendEquationRGB;
+      EBlendEquation mBlendEquationAlpha;
+      EBlendFactor mBlendFactorSrcRGB;
+      EBlendFactor mBlendFactorDstRGB;
+      EBlendFactor mBlendFactorSrcAlpha;
+      EBlendFactor mBlendFactorDstAlpha;
       float mAlphaFuncRefValue;
-      vl::EFunction mAlphaFunc;
-      vl::ref<vl::Font> mFont;
+      EFunction mAlphaFunc;
+      ref<Font> mFont;
       /*bool mDepthMask;*/
-      vl::ivec4 mColorMask;
+      ivec4 mColorMask;
       // stencil
       bool mStencilTestEnabled;
       unsigned int mStencilMask;
-      vl::EStencilOp mStencil_SFail;
-      vl::EStencilOp mStencil_DpFail;
-      vl::EStencilOp mStencil_DpPass;
-      vl::EFunction  mStencil_Function;
+      EStencilOp mStencil_SFail;
+      EStencilOp mStencil_DpFail;
+      EStencilOp mStencil_DpPass;
+      EFunction  mStencil_Function;
       int          mStencil_RefValue;
       unsigned int         mStencil_FunctionMask;
 
@@ -326,58 +326,58 @@ namespace vlVG
     VectorGraphics();
 
     //! Returns the list of Actor[s] generated by a VectorGraphics object.
-    const vl::ActorCollection* actors() const { return &mActors; }
+    const ActorCollection* actors() const { return &mActors; }
 
     //! Returns the list of Actor[s] generated by a VectorGraphics object.
-    vl::ActorCollection* actors() { return &mActors; }
+    ActorCollection* actors() { return &mActors; }
 
     //! Renders a line starting a point <x1,y1> and ending at point <x2,y2>
-    vl::Actor* drawLine(double x1, double y1, double x2, double y2);
+    Actor* drawLine(double x1, double y1, double x2, double y2);
 
-    //! Renders a set of lines. The 'ln' parameter shoud contain N pairs of vl::dvec2. Each pair defines a line segment.
-    vl::Actor* drawLines(const std::vector<vl::dvec2>& ln);
+    //! Renders a set of lines. The 'ln' parameter shoud contain N pairs of dvec2. Each pair defines a line segment.
+    Actor* drawLines(const std::vector<dvec2>& ln);
 
     //! Renders a line passing through the points defined by 'ln'.
-    vl::Actor* drawLineStrip(const std::vector<vl::dvec2>& ln);
+    Actor* drawLineStrip(const std::vector<dvec2>& ln);
 
     //! Renders a closed line passing through the points defined by 'ln'.
-    vl::Actor* drawLineLoop(const std::vector<vl::dvec2>& ln);
+    Actor* drawLineLoop(const std::vector<dvec2>& ln);
 
     //! Renders a convex polygon whose corners are defined by 'poly'
-    vl::Actor* fillPolygon(const std::vector<vl::dvec2>& poly);
+    Actor* fillPolygon(const std::vector<dvec2>& poly);
 
-    //! Renders a set of triangles. The 'triangles' parameters must contain N triplets of vl::dvec2. Each triplet defines a triangle.
-    vl::Actor* fillTriangles(const std::vector<vl::dvec2>& triangles);
+    //! Renders a set of triangles. The 'triangles' parameters must contain N triplets of dvec2. Each triplet defines a triangle.
+    Actor* fillTriangles(const std::vector<dvec2>& triangles);
 
     //! Renders a triangle fan.
-    vl::Actor* fillTriangleFan(const std::vector<vl::dvec2>& fan);
+    Actor* fillTriangleFan(const std::vector<dvec2>& fan);
 
     //! Renders a strip of triangles as defined by the OpenGL primitive GL_TRIANGLE_STRIP.
-    vl::Actor* fillTriangleStrip(const std::vector<vl::dvec2>& strip);
+    Actor* fillTriangleStrip(const std::vector<dvec2>& strip);
 
     //! Renders a set of rectangles as defined by the OpenGL primitive GL_QUADS
-    vl::Actor* fillQuads(const std::vector<vl::dvec2>& quads);
+    Actor* fillQuads(const std::vector<dvec2>& quads);
 
     //! Renders a set of rectangles as defined by the OpenGL primitive GL_QUAD_STRIP
-    vl::Actor* fillQuadStrip(const std::vector<vl::dvec2>& quad_strip);
+    Actor* fillQuadStrip(const std::vector<dvec2>& quad_strip);
 
-    //! Renders a single point. This is only an utility function. If you want to draw many points use drawPoints(const std::vector<vl::dvec2>& pt) instead.
-    vl::Actor* drawPoint(double x, double y);
+    //! Renders a single point. This is only an utility function. If you want to draw many points use drawPoints(const std::vector<dvec2>& pt) instead.
+    Actor* drawPoint(double x, double y);
 
     //! Renders a set of points using the currently set pointSize(), color() and image().
-    vl::Actor* drawPoints(const std::vector<vl::dvec2>& pt);
+    Actor* drawPoints(const std::vector<dvec2>& pt);
 
     //! Renders the outline of an ellipse.
-    vl::Actor* drawEllipse(double origx, double origy, double xaxis, double yaxis, int segments = 64);
+    Actor* drawEllipse(double origx, double origy, double xaxis, double yaxis, int segments = 64);
 
     //! Renders an ellipse.
-    vl::Actor* fillEllipse(double origx, double origy, double xaxis, double yaxis, int segments = 64);
+    Actor* fillEllipse(double origx, double origy, double xaxis, double yaxis, int segments = 64);
 
     //! Utility function that renders the outline of a quad.
-    vl::Actor* drawQuad(double left, double bottom, double right, double top);
+    Actor* drawQuad(double left, double bottom, double right, double top);
 
     //! Utility function that renders a single quad.
-    vl::Actor* fillQuad(double left, double bottom, double right, double top);
+    Actor* fillQuad(double left, double bottom, double right, double top);
 
     /** Starts the drawing process. You have to call this function before calling any of the fill* and draw* functions.
      * This function will erase all the previously generated content of the VectorGraphics. */
@@ -395,10 +395,10 @@ namespace vlVG
     void clear();
 
     //! The current color. Note that the current color also modulates the currently active image.
-    void setColor(const vl::fvec4& color) { mState.mColor = color; }
+    void setColor(const fvec4& color) { mState.mColor = color; }
 
     //! The current color. Note that the current color also modulates the currently active image.
-    const vl::fvec4& color() const { return mState.mColor; }
+    const fvec4& color() const { return mState.mColor; }
 
     //! The current point size
     void setPointSize(int size) { mState.mPointSize = size; }
@@ -407,16 +407,16 @@ namespace vlVG
     int pointSize() const { return mState.mPointSize; }
 
     //! The current image used to texture the rendered objects. Note that the current color also modulates the currently active image.
-    void setImage(vl::Image* image) { mState.mImage = image; }
+    void setImage(Image* image) { mState.mImage = image; }
 
     //! The current image used to texture the rendered objects. Note that the current color also modulates the currently active image.
-    const vl::Image* image() const { return mState.mImage.get(); }
+    const Image* image() const { return mState.mImage.get(); }
 
     //! The current image used to texture the rendered objects. Note that the current color also modulates the currently active image.
-    vl::Image* image() { return mState.mImage.get(); }
+    Image* image() { return mState.mImage.get(); }
 
     //! Utility function equivalent to 'setImage(image); setPointSize(image->width());'
-    void setPoint(vl::Image* image) { setImage(image); setPointSize(image->width()); }
+    void setPoint(Image* image) { setImage(image); setPointSize(image->width()); }
 
     //! The current texture mode
     void setTextureMode(ETextureMode mode) { mState.mTextureMode = mode; }
@@ -425,10 +425,10 @@ namespace vlVG
     ETextureMode textureMode() const { return mState.mTextureMode; }
 
     //! The current logic operation, see also http://www.opengl.org/sdk/docs/man/xhtml/glLogicOp.xml for more information.
-    void setLogicOp(vl::ELogicOp op) { mState.mLogicOp = op; }
+    void setLogicOp(ELogicOp op) { mState.mLogicOp = op; }
 
     //! The current logic operation
-    vl::ELogicOp logicOp() const { return mState.mLogicOp; }
+    ELogicOp logicOp() const { return mState.mLogicOp; }
 
     //! The current line width, see also http://www.opengl.org/sdk/docs/man/xhtml/glLineWidth.xml for more information.
     void setLineWidth(float width) { mState.mLineWidth = width; }
@@ -476,28 +476,28 @@ namespace vlVG
     unsigned char* polygonStipple() { return mState.mPolyStipple; }
 
     //! The current alpha function, see also http://www.opengl.org/sdk/docs/man/xhtml/glAlphaFunc.xml for more information.
-    void setAlphaFunc(vl::EFunction func, float ref_value)   { mState.mAlphaFuncRefValue=ref_value; mState.mAlphaFunc=func; }
+    void setAlphaFunc(EFunction func, float ref_value)   { mState.mAlphaFuncRefValue=ref_value; mState.mAlphaFunc=func; }
 
     //! The current alpha function
-    void getAlphaFunc(vl::EFunction& func, float& ref_value) const { ref_value=mState.mAlphaFuncRefValue; func=mState.mAlphaFunc; }
+    void getAlphaFunc(EFunction& func, float& ref_value) const { ref_value=mState.mAlphaFuncRefValue; func=mState.mAlphaFunc; }
 
     //! The current blending factor, see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendFunc.xml for more information.
-    void setBlendFunc(vl::EBlendFactor src_rgb, vl::EBlendFactor dst_rgb, vl::EBlendFactor src_alpha, vl::EBlendFactor dst_alpha);
+    void setBlendFunc(EBlendFactor src_rgb, EBlendFactor dst_rgb, EBlendFactor src_alpha, EBlendFactor dst_alpha);
 
     //! The current blending factor
-    void getBlendFunc(vl::EBlendFactor& src_rgb, vl::EBlendFactor& dst_rgb, vl::EBlendFactor& src_alpha, vl::EBlendFactor& dst_alpha) const;
+    void getBlendFunc(EBlendFactor& src_rgb, EBlendFactor& dst_rgb, EBlendFactor& src_alpha, EBlendFactor& dst_alpha) const;
 
     //! The current blend equation, see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendEquation.xml for more information.
-    void setBlendEquation( vl::EBlendEquation rgb_eq, vl::EBlendEquation alpha_eq );
+    void setBlendEquation( EBlendEquation rgb_eq, EBlendEquation alpha_eq );
 
     //! The current blend equation.
-    void getBlendEquation( vl::EBlendEquation& rgb_eq, vl::EBlendEquation& alpha_eq ) const;
+    void getBlendEquation( EBlendEquation& rgb_eq, EBlendEquation& alpha_eq ) const;
 
     //! The current color mask, see also http://www.opengl.org/sdk/docs/man/xhtml/glColorMask.xml for more information.
-    void setColorMask(bool r, bool g, bool b, bool a) { mState.mColorMask = vl::ivec4(r?1:0,g?1:0,b?1:0,a?1:0); }
+    void setColorMask(bool r, bool g, bool b, bool a) { mState.mColorMask = ivec4(r?1:0,g?1:0,b?1:0,a?1:0); }
 
     //! The current color mask.
-    const vl::ivec4& colorMask() const { return mState.mColorMask; }
+    const ivec4& colorMask() const { return mState.mColorMask; }
 
     /*void setDetphMask(bool mask) { mState.mDepthMask = mask; }
     bool depthMask() const { return mState.mDepthMask; }*/
@@ -515,28 +515,28 @@ namespace vlVG
     unsigned int stencilMask() const { return mState.mStencilMask; }
 
     //! Current stencil operation, see also http://www.opengl.org/sdk/docs/man/xhtml/glStencilOp.xml for more information.
-    void setStencilOp(vl::EStencilOp sfail, vl::EStencilOp dpfail, vl::EStencilOp dppass);
+    void setStencilOp(EStencilOp sfail, EStencilOp dpfail, EStencilOp dppass);
 
     //! Current stencil operation.
-    void getStencilOp(vl::EStencilOp& sfail, vl::EStencilOp& dpfail, vl::EStencilOp& dppass);
+    void getStencilOp(EStencilOp& sfail, EStencilOp& dpfail, EStencilOp& dppass);
 
     //! The current stencil function, see also http://www.opengl.org/sdk/docs/man/xhtml/glStencilFunc.xml for more information.
-    void setStencilFunc(vl::EFunction func, int refval, unsigned int mask);
+    void setStencilFunc(EFunction func, int refval, unsigned int mask);
 
     //! The current stencil function.
-    void getStencilFunc(vl::EFunction& func, int& refval, unsigned int& mask);
+    void getStencilFunc(EFunction& func, int& refval, unsigned int& mask);
 
     //! Sets the current Font
-    void setFont(const vl::String& name, int size, bool smooth=false) { mState.mFont = vl::VisualizationLibrary::fontManager()->acquireFont(name,size,smooth); }
+    void setFont(const String& name, int size, bool smooth=false) { mState.mFont = VisualizationLibrary::fontManager()->acquireFont(name,size,smooth); }
     
     //! Sets the current Font
-    void setFont(const vl::Font* font) { setFont(font->filePath(),font->size(),font->smooth()); }
+    void setFont(const Font* font) { setFont(font->filePath(),font->size(),font->smooth()); }
     
     //! Sets the default Font
-    void setDefaultFont() { setFont(vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false)); }
+    void setDefaultFont() { setFont(VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false)); }
     
     //! Returns the current Font
-    const vl::Font* font() const { return mState.mFont.get(); }
+    const Font* font() const { return mState.mFont.get(); }
 
     /** Defines the scissor box and enables the scissor test.
      * The parameters are considered in windows coordinates.
@@ -548,7 +548,7 @@ namespace vlVG
     }
 
     /** Returns the currently active Scissor */
-    const vl::Scissor* scissor() const { return mScissor.get(); }
+    const Scissor* scissor() const { return mScissor.get(); }
 
     /** Disables the Scissor test and clipping. */
     void removeScissor()
@@ -560,38 +560,38 @@ namespace vlVG
      * The parameters x y w h define a rectangular area in viewport coordinates that is clipped against the viewport itself.
      * 
      * \note The specified rectangular area is not affected by the current matrix transform. */
-    vl::Actor* clearColor(const vl::fvec4& color, int x=0, int y=0, int w=-1, int h=-1);
+    Actor* clearColor(const fvec4& color, int x=0, int y=0, int w=-1, int h=-1);
 
     /** Clears the specific area of the viewport. 
      * The parameters x y w h define a rectangular area in viewport coordinates that is clipped against the viewport itself.
      *
      * \note The specified rectangular area is not affected by the current matrix transform. */
-    vl::Actor* clearStencil(int clear_val, int x=0, int y=0, int w=-1, int h=-1);
+    Actor* clearStencil(int clear_val, int x=0, int y=0, int w=-1, int h=-1);
 
     //! Draw the specified Text object
-    vl::Actor* drawText(vl::Text* text);
+    Actor* drawText(Text* text);
 
     /** Draws the specified text at the specified position.
      * Note that the current matrix transform affect the final position, rotation and scaling of the text. */
-    vl::Actor* drawText(int x, int y, const vl::String& text, int alignment = vl::AlignBottom|vl::AlignLeft);
+    Actor* drawText(int x, int y, const String& text, int alignment = AlignBottom|AlignLeft);
 
     //! Draws the specified text
-    vl::Actor* drawText(const vl::String& text, int alignment = vl::AlignBottom|vl::AlignLeft);
+    Actor* drawText(const String& text, int alignment = AlignBottom|AlignLeft);
 
     /** Draws the specified Actor with the specified Transform.
      * If keep_effect is set to 'false' or the Actor's Effect is NULL a default Effect is automatically generated.
      * If 'transform' is non NULL it is bound to the Actor. */
-    vl::Actor* drawActor(vl::Actor* actor, vl::Transform* transform=NULL, bool keep_effect=false);
+    Actor* drawActor(Actor* actor, Transform* transform=NULL, bool keep_effect=false);
 
     /** Like drawActor() but instead of drawing the given actor creates a copy of it and draws that. 
      * This function is useful when you want to crate multiple instances of the same geometry. */
-    vl::Actor* drawActorCopy(vl::Actor* actor, vl::Transform* transform=NULL);
+    Actor* drawActorCopy(Actor* actor, Transform* transform=NULL);
 
     //! Returns the current transform matrix
-    const vl::dmat4& matrix() const { return mMatrix; }
+    const dmat4& matrix() const { return mMatrix; }
 
     //! Sets the current transform matrix
-    void setMatrix(const vl::dmat4& matrix) { mMatrix = matrix; }
+    void setMatrix(const dmat4& matrix) { mMatrix = matrix; }
 
     //! Resets the current transform matrix.
     void resetMatrix() { mMatrix.setIdentity(); }
@@ -612,7 +612,7 @@ namespace vlVG
     void popMatrix();
 
     //! Returns the matrix stack.
-    const std::vector<vl::dmat4>& matrixStack() const { return mMatrixStack; }
+    const std::vector<dmat4>& matrixStack() const { return mMatrixStack; }
 
     //! Pushes the current VectorGraphics state (including the matrix state) in the state stack in order to restore it later with popState().
     void pushState();
@@ -631,45 +631,45 @@ namespace vlVG
     void popScissor();
 
     //! Returns the scissor stack.
-    const std::vector< vl::ref<vl::Scissor> >& scissorStack() const { return mScissorStack; }
+    const std::vector< ref<Scissor> >& scissorStack() const { return mScissorStack; }
 
     //! Binds the given Transform to all the Actor[s] that have been generated so far.
-    void setTransform(vl::Transform* transform) { for(int i=0; i<actors()->size(); ++i) actors()->at(i)->setTransform(transform); }
+    void setTransform(Transform* transform) { for(int i=0; i<actors()->size(); ++i) actors()->at(i)->setTransform(transform); }
 
     //! Returns the Effect representing the current VectorGraphic's state.
-    vl::Effect* currentEffect() { return currentEffect(mState); }
+    Effect* currentEffect() { return currentEffect(mState); }
 
   private:
-    void generateQuadsTexCoords(vl::Geometry* geom, const std::vector<vl::dvec2>& points);
+    void generateQuadsTexCoords(Geometry* geom, const std::vector<dvec2>& points);
 
-    void generatePlanarTexCoords(vl::Geometry* geom, const std::vector<vl::dvec2>& points);
+    void generatePlanarTexCoords(Geometry* geom, const std::vector<dvec2>& points);
 
-    void generateLinearTexCoords(vl::Geometry* geom);
+    void generateLinearTexCoords(Geometry* geom);
 
-    vl::ref<vl::Geometry> prepareGeometry(const std::vector<vl::dvec2>& ln);
+    ref<Geometry> prepareGeometry(const std::vector<dvec2>& ln);
 
-    vl::Scissor* resolveScissor(int x, int y, int width, int height);
+    Scissor* resolveScissor(int x, int y, int width, int height);
 
-    vl::Texture* resolveTexture(vl::Image* image);
+    Texture* resolveTexture(Image* image);
 
-    vl::Effect* currentEffect(const State& vgs);
+    Effect* currentEffect(const State& vgs);
 
-    vl::Actor* addActor(vl::Actor* actor) ;
+    Actor* addActor(Actor* actor) ;
 
   private:
     // state-machine state variables
     State mState;
-    vl::dmat4 mMatrix;
-    vl::ref<vl::Scissor> mScissor;
+    dmat4 mMatrix;
+    ref<Scissor> mScissor;
     std::vector<State> mStateStack;
-    std::vector<vl::dmat4> mMatrixStack;
-    std::vector< vl::ref<vl::Scissor> > mScissorStack;
+    std::vector<dmat4> mMatrixStack;
+    std::vector< ref<Scissor> > mScissorStack;
     // state-machine state map
-    std::map<State, vl::ref<vl::Effect> > mVGToEffectMap;
-    std::map<ImageState, vl::ref<vl::Texture> > mImageToTextureMap;
-    std::map<vl::RectI, vl::ref<vl::Scissor> > mRectToScissorMap;
-    vl::ref<vl::Effect> mDefaultEffect;
-    vl::ActorCollection mActors;
+    std::map<State, ref<Effect> > mVGToEffectMap;
+    std::map<ImageState, ref<Texture> > mImageToTextureMap;
+    std::map<RectI, ref<Scissor> > mRectToScissorMap;
+    ref<Effect> mDefaultEffect;
+    ActorCollection mActors;
   };
 //-------------------------------------------------------------------------------------------------------------------------------------------
 }

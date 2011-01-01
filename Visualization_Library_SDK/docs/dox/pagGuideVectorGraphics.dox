@@ -2,7 +2,7 @@
 
 	\page pagGuideVectorGraphics OpenGL-Accelerated 2D Vector Graphics Tutorial
 
-	This tutorial demonstrates how to perform all the most important vector graphics operations using the vlVG::VectorGraphics class.
+	This tutorial demonstrates how to perform all the most important vector graphics operations using the vl::VectorGraphics class.
 	
 	\image html pagGuideVectorGraphics.jpg
 	

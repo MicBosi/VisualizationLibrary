@@ -63,7 +63,7 @@ public:
 
     // RTT rendering
 
-    mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
+    mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
@@ -86,7 +86,7 @@ public:
     // Main rendering
 
     /* setup camera */
-    mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
+    mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setInverseViewMatrix(m);
@@ -117,7 +117,7 @@ public:
 
     // RTT rendering
 
-    mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
+    mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
@@ -177,7 +177,7 @@ public:
     // Main rendering
 
     /* setup camera */
-    mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
+    mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setInverseViewMatrix(m);
@@ -209,7 +209,7 @@ public:
 
     // RTT rendering
 
-    mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
+    mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
@@ -236,7 +236,7 @@ public:
     // Main rendering
 
     /* setup camera */
-    mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
+    mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setInverseViewMatrix(m);
@@ -277,7 +277,7 @@ public:
 
     // RTT rendering
 
-    mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
+    mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
@@ -321,7 +321,7 @@ public:
     // Main rendering
 
     /* setup camera */
-    mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
+    mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setInverseViewMatrix(m);
@@ -360,7 +360,7 @@ public:
     // Render to texture rendering
 
     /* setup render-to-texture rendering: render to screen then copies to texture. */
-    mRTT_Rendering->camera()->viewport()->setClearColor( vlut::crimson );
+    mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0,0,512,512);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt( vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) );
@@ -374,7 +374,7 @@ public:
     // Main rendering
 
     /* setup main rendering */
-    mMainRendering->camera()->viewport()->setClearColor( vlut::midnightblue );
+    mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0,0,512,512);
     mMainRendering->camera()->setProjectionAsPerspective();
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
@@ -400,14 +400,14 @@ public:
 
     // ground plane
     const vl::Real size = 50;
-    vl::ref<vl::Geometry> ground = vlut::makeGrid( vl::vec3(0,0,0), size, size, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
+    vl::ref<vl::Geometry> ground = vl::makeGrid( vl::vec3(0,0,0), size, size, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     ground->setNormal( vl::fvec3(0,1,0) );
     mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( ground.get(), effect1.get() );
 
     if (texture2)
     {
       // box #1
-      vl::ref<vl::Geometry> box1 = vlut::makeBox( vl::vec3(-7,5,0), 10,10,10);
+      vl::ref<vl::Geometry> box1 = vl::makeBox( vl::vec3(-7,5,0), 10,10,10);
       box1->computeNormals();
       mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( box1.get(), effect1.get() );
 
@@ -418,14 +418,14 @@ public:
       texture_unit->setTexture(texture2);
       effect2->shader()->setRenderState(texture_unit.get());
 
-      vl::ref<vl::Geometry> box2 = vlut::makeBox( vl::vec3(+7,5,0), 10,10,10);
+      vl::ref<vl::Geometry> box2 = vl::makeBox( vl::vec3(+7,5,0), 10,10,10);
       box2->computeNormals();
       mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( box2.get(), effect2.get() );
     }
     else
     {
       // box #1
-      vl::ref<vl::Geometry> box1 = vlut::makeBox( vl::vec3(0,5,0), 10,10,10);
+      vl::ref<vl::Geometry> box1 = vl::makeBox( vl::vec3(0,5,0), 10,10,10);
       box1->computeNormals();
       mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( box1.get(), effect1.get() );
     }
@@ -450,31 +450,31 @@ public:
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->enable(vl::EN_CULL_FACE);
-    effect->shader()->gocMaterial()->setDiffuse( vlut::yellow );
+    effect->shader()->gocMaterial()->setDiffuse( vl::yellow );
 
     mTransfRing1 = new vl::Transform;
     vl::ref<vl::Geometry> ring1;
-    ring1 = vlut::makeTorus( vl::vec3(0,0,0), 10,0.5, 20,100);
+    ring1 = vl::makeTorus( vl::vec3(0,0,0), 10,0.5, 20,100);
     addActor(mRTT_Rendering.get(), ring1.get(), effect.get(), mTransfRing1.get());
 
     mTransfRing2 = new vl::Transform;
     vl::ref<vl::Geometry> ring2;
-    ring2= vlut::makeTorus( vl::vec3(0,0,0), 9,0.5, 20,100);
+    ring2= vl::makeTorus( vl::vec3(0,0,0), 9,0.5, 20,100);
     addActor(mRTT_Rendering.get(), ring2.get(), effect.get(), mTransfRing2.get());
 
     mTransfRing3 = new vl::Transform;
     vl::ref<vl::Geometry> ring3;
-    ring3= vlut::makeTorus( vl::vec3(0,0,0), 8,0.5, 20,100);
+    ring3= vl::makeTorus( vl::vec3(0,0,0), 8,0.5, 20,100);
     addActor(mRTT_Rendering.get(), ring3.get(), effect.get(), mTransfRing3.get());
 
     mTransfRing4 = new vl::Transform;
     vl::ref<vl::Geometry> ring4;
-    ring4= vlut::makeTorus( vl::vec3(0,0,0), 7,0.5, 20,100);
+    ring4= vl::makeTorus( vl::vec3(0,0,0), 7,0.5, 20,100);
     addActor(mRTT_Rendering.get(), ring4.get(), effect.get(), mTransfRing4.get());
 
     mTransfRing5 = new vl::Transform;
     vl::ref<vl::Geometry> ring5;
-    ring5= vlut::makeTorus( vl::vec3(0,0,0), 6,0.5, 20,100);
+    ring5= vl::makeTorus( vl::vec3(0,0,0), 6,0.5, 20,100);
     addActor(mRTT_Rendering.get(), ring5.get(), effect.get(), mTransfRing5.get());
 
     // update transform hierarchy every frame
