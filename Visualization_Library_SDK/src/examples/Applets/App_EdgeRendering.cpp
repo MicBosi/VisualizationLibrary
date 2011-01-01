@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/Light.hpp"
-#include "vl/EdgeExtractor.hpp"
-#include "vl/EdgeRenderer.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/EdgeExtractor.hpp"
+#include "vlCore/EdgeRenderer.hpp"
 
 class App_EdgeRendering: public BaseDemo
 {

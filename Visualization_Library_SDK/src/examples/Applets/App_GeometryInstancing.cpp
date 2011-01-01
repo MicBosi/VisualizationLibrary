@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/DrawElements.hpp"
-#include "vl/Light.hpp"
-#include "vl/GLSL.hpp"
+#include "vlCore/DrawElements.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/GLSL.hpp"
 
 class App_GeometryInstancing: public BaseDemo
 {

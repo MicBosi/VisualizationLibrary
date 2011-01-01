@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include "vlWin32/Win32Context.hpp"
-#include "vl/Log.hpp"
+#include "vlCore/Log.hpp"
 
 using namespace vl;
 using namespace vlWin32;

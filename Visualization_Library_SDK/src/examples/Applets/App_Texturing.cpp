@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/Array.hpp"
-#include "vl/Light.hpp"
-#include "vl/GLSL.hpp"
+#include "vlCore/Array.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/GLSL.hpp"
 
 /* 
  * You can find the documentatio for this example in the offical documentation at:

@@ -32,8 +32,8 @@
 #ifndef GeometricalPrimitives_INCLUDE_ONCE
 #define GeometricalPrimitives_INCLUDE_ONCE
 
-#include <vl/Vector4.hpp>
-#include <vl/Geometry.hpp>
+#include <vlCore/Vector4.hpp>
+#include <vlCore/Geometry.hpp>
 #include <vlut/Colors.hpp>
 
 namespace vlut

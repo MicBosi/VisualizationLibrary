@@ -32,8 +32,8 @@
 /* The marching cubes tables are from Cory Bloyd. */
 
 #include <vlVolume/MarchingCubes.hpp>
-#include <vl/Time.hpp>
-#include <vl/DoubleVertexRemover.hpp>
+#include <vlCore/Time.hpp>
+#include <vlCore/DoubleVertexRemover.hpp>
 
 using namespace vl;
 using namespace vlVolume;

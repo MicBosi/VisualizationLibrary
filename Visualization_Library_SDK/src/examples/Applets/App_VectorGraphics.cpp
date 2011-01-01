@@ -33,9 +33,9 @@
 #include "vlut/Colors.hpp"
 #include "vlVG/VectorGraphics.hpp"
 #include "vlVG/SceneManagerVectorGraphics.hpp"
-#include "vl/Geometry.hpp"
-#include "vl/vlPNG.hpp"
-#include "vl/Array.hpp"
+#include "vlCore/Geometry.hpp"
+#include "vlCore/vlPNG.hpp"
+#include "vlCore/Array.hpp"
 
 class App_VectorGraphics: public BaseDemo
 {

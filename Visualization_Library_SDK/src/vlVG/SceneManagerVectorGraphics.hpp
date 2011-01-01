@@ -32,9 +32,9 @@
 #ifndef SceneManagerVectorGraphics_INCLUDE_ONCE
 #define SceneManagerVectorGraphics_INCLUDE_ONCE
 
-#include <vl/SceneManager.hpp>
-#include <vl/Collection.hpp>
-#include <vl/Frustum.hpp>
+#include <vlCore/SceneManager.hpp>
+#include <vlCore/Collection.hpp>
+#include <vlCore/Frustum.hpp>
 
 namespace vlVG
 {

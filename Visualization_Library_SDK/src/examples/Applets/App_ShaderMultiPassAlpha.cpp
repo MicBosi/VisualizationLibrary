@@ -32,9 +32,9 @@
 #include "BaseDemo.hpp"
 #include "vlut/Colors.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/DistanceLODEvaluator.hpp"
-#include "vl/PixelLODEvaluator.hpp"
-#include "vl/Light.hpp"
+#include "vlCore/DistanceLODEvaluator.hpp"
+#include "vlCore/PixelLODEvaluator.hpp"
+#include "vlCore/Light.hpp"
 
 /*
 This applet tests multipassing with alpha blending. The objects must be sorted based on their distance from the camera 

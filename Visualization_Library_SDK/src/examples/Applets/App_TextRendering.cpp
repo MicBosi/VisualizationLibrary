@@ -32,9 +32,9 @@
 #include "BaseDemo.hpp"
 #include "vlut/Colors.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/Text.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/Light.hpp"
+#include "vlCore/Text.hpp"
+#include "vlCore/FontManager.hpp"
+#include "vlCore/Light.hpp"
 
 class App_TextRendering: public BaseDemo
 {

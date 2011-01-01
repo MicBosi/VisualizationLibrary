@@ -199,7 +199,7 @@ if(IO_MODULE_TIFF)
 endif()
 
 #VLCore
-add_subdirectory("src/vl")
+add_subdirectory("src/vlCore")
 
 #VLUT
 option(VL_MODULE_VLUT "Enable VL Utility Library" ON)

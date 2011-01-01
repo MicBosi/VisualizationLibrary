@@ -32,8 +32,8 @@
 #ifndef ChemDatabase_INCLUDE_ONCE
 #define ChemDatabase_INCLUDE_ONCE
 
-#include <vl/Vector4.hpp>
-#include <vl/String.hpp>
+#include <vlCore/Vector4.hpp>
+#include <vlCore/String.hpp>
 
 namespace vlMolecule
 {

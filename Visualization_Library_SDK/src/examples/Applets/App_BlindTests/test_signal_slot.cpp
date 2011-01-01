@@ -29,11 +29,11 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vl/SignalSlot.hpp"
-#include "vl/Object.hpp"
-#include "vl/Log.hpp"
-#include "vl/Say.hpp"
-#include "vl/checks.hpp"
+#include "vlCore/SignalSlot.hpp"
+#include "vlCore/Object.hpp"
+#include "vlCore/Log.hpp"
+#include "vlCore/Say.hpp"
+#include "vlCore/checks.hpp"
 
 using namespace vl;
 

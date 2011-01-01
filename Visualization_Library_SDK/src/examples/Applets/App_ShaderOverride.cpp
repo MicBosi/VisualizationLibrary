@@ -31,12 +31,12 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/SceneManagerActorTree.hpp"
-#include "vl/Actor.hpp"
-#include "vl/Effect.hpp"
-#include "vl/Time.hpp"
-#include "vl/Light.hpp"
-#include "vl/RenderingTree.hpp"
+#include "vlCore/SceneManagerActorTree.hpp"
+#include "vlCore/Actor.hpp"
+#include "vlCore/Effect.hpp"
+#include "vlCore/Time.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/RenderingTree.hpp"
 
 class App_ShaderOverride: public BaseDemo
 {

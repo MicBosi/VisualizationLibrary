@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vl/Text.hpp"
-#include "vl/FontManager.hpp"
+#include "vlCore/Text.hpp"
+#include "vlCore/FontManager.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 
 class App_Deformer: public BaseDemo

@@ -32,7 +32,7 @@
 #ifndef TEST_PROGRAMS_INCLUDE_ONCE
 #define TEST_PROGRAMS_INCLUDE_ONCE
 
-#include <vl/VisualizationLibrary.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
 #include <vlut/Colors.hpp>
 #include "Applets/BaseDemo.hpp"
 
