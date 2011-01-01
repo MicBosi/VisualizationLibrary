@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/Colors.hpp"
-#include "vl/SceneManager.hpp"
-#include "vl/RenderingTree.hpp"
-#include "vl/Light.hpp"
+#include "vlCore/SceneManager.hpp"
+#include "vlCore/RenderingTree.hpp"
+#include "vlCore/Light.hpp"
 
 class App_MultipleCameras: public BaseDemo
 {

@@ -30,13 +30,13 @@
 /**************************************************************************************/
 
 #include <vlut/Applet.hpp>
-#include <vl/Rendering.hpp>
-#include <vl/VisualizationLibrary.hpp>
-#include <vl/SceneManager.hpp>
-#include <vl/RenderQueue.hpp>
-#include <vl/Time.hpp>
-#include <vl/Say.hpp>
-#include <vl/Log.hpp>
+#include <vlCore/Rendering.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/SceneManager.hpp>
+#include <vlCore/RenderQueue.hpp>
+#include <vlCore/Time.hpp>
+#include <vlCore/Say.hpp>
+#include <vlCore/Log.hpp>
 
 using namespace vlut;
 using namespace vl;

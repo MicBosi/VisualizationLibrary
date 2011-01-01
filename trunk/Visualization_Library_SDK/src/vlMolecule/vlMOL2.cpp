@@ -29,15 +29,15 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/DiskFile.hpp>
-#include <vl/MemoryFile.hpp>
+#include <vlCore/DiskFile.hpp>
+#include <vlCore/MemoryFile.hpp>
 #include <vlMolecule/Molecule.hpp>
 #include <vlMolecule/RingExtractor.hpp>
-#include <vl/TextStream.hpp>
-#include <vl/Effect.hpp>
-#include <vl/Scissor.hpp>
-#include <vl/Texture.hpp>
-#include <vl/Image.hpp>
+#include <vlCore/TextStream.hpp>
+#include <vlCore/Effect.hpp>
+#include <vlCore/Scissor.hpp>
+#include <vlCore/Texture.hpp>
+#include <vlCore/Image.hpp>
 #include <stdio.h>
 
 using namespace vlMolecule;

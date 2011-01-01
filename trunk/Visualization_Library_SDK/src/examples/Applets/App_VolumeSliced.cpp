@@ -32,9 +32,9 @@
 #include "BaseDemo.hpp"
 #include "vlVolume/SlicedVolume.hpp"
 #include "vlVolume/VolumeUtils.hpp"
-#include "vl/Text.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/GLSL.hpp"
+#include "vlCore/Text.hpp"
+#include "vlCore/FontManager.hpp"
+#include "vlCore/GLSL.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 
 using namespace vl;

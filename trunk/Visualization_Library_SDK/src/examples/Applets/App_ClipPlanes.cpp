@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vl/VisualizationLibrary.hpp"
-#include "vl/Light.hpp"
-#include "vl/ClipPlane.hpp"
-#include "vl/Geometry.hpp"
+#include "vlCore/VisualizationLibrary.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/ClipPlane.hpp"
+#include "vlCore/Geometry.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 
 class App_ClipPlanes: public BaseDemo

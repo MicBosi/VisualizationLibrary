@@ -32,17 +32,17 @@
 #ifndef VectorGraphics_INCLUDE_ONCE
 #define VectorGraphics_INCLUDE_ONCE
 
-#include <vl/VisualizationLibrary.hpp>
-#include <vl/Actor.hpp>
-#include <vl/Image.hpp>
-#include <vl/Text.hpp>
-#include <vl/FontManager.hpp>
-#include <vl/Effect.hpp>
-#include <vl/SceneManager.hpp>
-#include <vl/Clear.hpp>
-#include <vl/Scissor.hpp>
-#include <vl/Geometry.hpp>
-#include <vl/FontManager.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/Actor.hpp>
+#include <vlCore/Image.hpp>
+#include <vlCore/Text.hpp>
+#include <vlCore/FontManager.hpp>
+#include <vlCore/Effect.hpp>
+#include <vlCore/SceneManager.hpp>
+#include <vlCore/Clear.hpp>
+#include <vlCore/Scissor.hpp>
+#include <vlCore/Geometry.hpp>
+#include <vlCore/FontManager.hpp>
 
 namespace vlVG
 {

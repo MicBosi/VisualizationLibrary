@@ -33,10 +33,10 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/EdgeExtractor.hpp"
-#include "vl/EdgeRenderer.hpp"
-#include "vl/LoadWriterManager.hpp"
-#include "vl/Light.hpp"
+#include "vlCore/EdgeExtractor.hpp"
+#include "vlCore/EdgeRenderer.hpp"
+#include "vlCore/LoadWriterManager.hpp"
+#include "vlCore/Light.hpp"
 
 class App_Primitives: public BaseDemo
 {

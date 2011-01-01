@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vl/VisualizationLibrary.hpp"
-#include "vl/Effect.hpp"
-#include "vl/Geometry.hpp"
-#include "vl/Tessellator.hpp"
+#include "vlCore/VisualizationLibrary.hpp"
+#include "vlCore/Effect.hpp"
+#include "vlCore/Geometry.hpp"
+#include "vlCore/Tessellator.hpp"
 
 class App_Tessellator: public BaseDemo
 {

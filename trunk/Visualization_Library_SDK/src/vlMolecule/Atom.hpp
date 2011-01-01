@@ -32,8 +32,8 @@
 #ifndef Atom_INCLUDE_ONCE
 #define Atom_INCLUDE_ONCE
 
-#include <vl/Object.hpp>
-#include <vl/Vector4.hpp>
+#include <vlCore/Object.hpp>
+#include <vlCore/Vector4.hpp>
 #include <vlMolecule/chem_database.hpp>
 #include <vector>
 

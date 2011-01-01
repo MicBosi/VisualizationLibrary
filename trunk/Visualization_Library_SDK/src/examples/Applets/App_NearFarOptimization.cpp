@@ -31,7 +31,7 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/Light.hpp"
+#include "vlCore/Light.hpp"
 
 class App_NearFarOptimization: public BaseDemo
 {

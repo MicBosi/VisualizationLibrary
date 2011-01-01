@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vl/SceneManagerActorKdTree.hpp"
-#include "vl/Light.hpp"
-#include "vl/Text.hpp"
-#include "vl/FontManager.hpp"
+#include "vlCore/SceneManagerActorKdTree.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/Text.hpp"
+#include "vlCore/FontManager.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 
 class App_CullingBenchmark: public BaseDemo

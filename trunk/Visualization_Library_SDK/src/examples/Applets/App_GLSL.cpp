@@ -30,9 +30,9 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vl/Geometry.hpp"
-#include "vl/Light.hpp"
-#include "vl/GLSL.hpp"
+#include "vlCore/Geometry.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/GLSL.hpp"
 
 class App_GLSL: public BaseDemo
 {

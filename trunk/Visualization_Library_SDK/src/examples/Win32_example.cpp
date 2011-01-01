@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/VisualizationLibrary.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
 #include <vlWin32/Win32Window.hpp>
 #include "Applets/App_RotatingCube.hpp"
 

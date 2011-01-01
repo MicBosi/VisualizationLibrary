@@ -34,12 +34,12 @@
 
 #include <vlMolecule/Atom.hpp>
 #include <vlMolecule/Bond.hpp>
-#include <vl/Geometry.hpp>
-#include <vl/KeyValues.hpp>
-#include <vl/Actor.hpp>
-#include <vl/ActorTree.hpp>
-#include <vl/Text.hpp>
-#include <vl/String.hpp>
+#include <vlCore/Geometry.hpp>
+#include <vlCore/KeyValues.hpp>
+#include <vlCore/Actor.hpp>
+#include <vlCore/ActorTree.hpp>
+#include <vlCore/Text.hpp>
+#include <vlCore/String.hpp>
 
 namespace vlMolecule
 {

@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include <vlVolume/VolumeUtils.hpp>
-#include <vl/Log.hpp>
-#include <vl/GLSLmath.hpp>
+#include <vlCore/Log.hpp>
+#include <vlCore/GLSLmath.hpp>
 
 using namespace vl;
 using namespace vlVolume;

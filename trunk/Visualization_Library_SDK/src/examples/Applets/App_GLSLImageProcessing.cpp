@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vl/GLSL.hpp"
+#include "vlCore/GLSL.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/Text.hpp"
-#include "vl/FontManager.hpp"
+#include "vlCore/Text.hpp"
+#include "vlCore/FontManager.hpp"
 
 class App_GLSLImageProcessing: public BaseDemo
 {
