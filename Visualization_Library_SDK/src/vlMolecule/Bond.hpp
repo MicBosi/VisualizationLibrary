@@ -32,7 +32,7 @@
 #ifndef Bond_INCLUDE_ONCE
 #define Bond_INCLUDE_ONCE
 
-#include <vl/Object.hpp>
+#include <vlCore/Object.hpp>
 
 namespace vlMolecule
 {

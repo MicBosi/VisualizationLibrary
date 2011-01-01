@@ -31,14 +31,14 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/VisualizationLibrary.hpp"
-#include "vl/Effect.hpp"
-#include "vl/Light.hpp"
-#include "vl/Geometry.hpp"
-#include "vl/Text.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/Interpolator.hpp"
-#include "vl/Extrusion.hpp"
+#include "vlCore/VisualizationLibrary.hpp"
+#include "vlCore/Effect.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/Geometry.hpp"
+#include "vlCore/Text.hpp"
+#include "vlCore/FontManager.hpp"
+#include "vlCore/Interpolator.hpp"
+#include "vlCore/Extrusion.hpp"
 
 class App_Extrusion: public BaseDemo
 {

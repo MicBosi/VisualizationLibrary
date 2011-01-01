@@ -32,10 +32,10 @@
 #include "BaseDemo.hpp"
 // #include "vlVolume/RaycastVolume.hpp"
 #include "vlVolume/VolumeUtils.hpp"
-#include "vl/Light.hpp"
-#include "vl/Text.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/GLSL.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/Text.hpp"
+#include "vlCore/FontManager.hpp"
+#include "vlCore/GLSL.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 
 using namespace vl;

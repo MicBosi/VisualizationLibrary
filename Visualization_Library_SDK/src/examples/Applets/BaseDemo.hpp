@@ -33,10 +33,10 @@
 #define BaseDemo_INCLUDE_ONCE
 
 #include "vlut/Applet.hpp"
-#include "vl/Rendering.hpp"
-#include "vl/VisualizationLibrary.hpp"
-#include "vl/ReadPixels.hpp"
-#include "vl/Time.hpp"
+#include "vlCore/Rendering.hpp"
+#include "vlCore/VisualizationLibrary.hpp"
+#include "vlCore/ReadPixels.hpp"
+#include "vlCore/Time.hpp"
 
 class BaseDemo: public vlut::Applet
 {

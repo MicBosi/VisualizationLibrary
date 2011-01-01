@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vl/LoadWriterManager.hpp"
+#include "vlCore/LoadWriterManager.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 
 class App_ImageFunctions: public BaseDemo

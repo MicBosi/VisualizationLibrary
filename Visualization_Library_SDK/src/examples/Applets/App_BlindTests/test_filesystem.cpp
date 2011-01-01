@@ -29,18 +29,18 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vl/VisualizationLibrary.hpp"
-#include "vl/LoadWriterManager.hpp"
-#include "vl/Effect.hpp"
-#include "vl/ZippedDirectory.hpp"
-#include "vl/Array.hpp"
-#include <vl/DiskFile.hpp>
-#include <vl/GZipCodec.hpp>
-#include <vl/FileSystem.hpp>
-#include "vl/Text.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/TextStream.hpp"
-#include "vl/Geometry.hpp"
+#include "vlCore/VisualizationLibrary.hpp"
+#include "vlCore/LoadWriterManager.hpp"
+#include "vlCore/Effect.hpp"
+#include "vlCore/ZippedDirectory.hpp"
+#include "vlCore/Array.hpp"
+#include <vlCore/DiskFile.hpp>
+#include <vlCore/GZipCodec.hpp>
+#include <vlCore/FileSystem.hpp>
+#include "vlCore/Text.hpp"
+#include "vlCore/FontManager.hpp"
+#include "vlCore/TextStream.hpp"
+#include "vlCore/Geometry.hpp"
 #include <time.h>
 
 using namespace vl;

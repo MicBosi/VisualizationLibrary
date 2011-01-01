@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include <vlVolume/VolumePlot.hpp>
-#include <vl/Light.hpp>
-#include <vl/SceneManager.hpp>
-#include <vl/FontManager.hpp>
-#include <vl/VisualizationLibrary.hpp>
+#include <vlCore/Light.hpp>
+#include <vlCore/SceneManager.hpp>
+#include <vlCore/FontManager.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
 #include <vlut/GeometryPrimitives.hpp>
 
 using namespace vl;

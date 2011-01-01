@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vl/VisualizationLibrary.hpp"
-#include "vl/FontManager.hpp"
-#include "vl/Light.hpp"
-#include "vl/DepthSortCallback.hpp"
+#include "vlCore/VisualizationLibrary.hpp"
+#include "vlCore/FontManager.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/DepthSortCallback.hpp"
 #include "vlVolume/MarchingCubes.hpp"
 #include "vlVolume/VolumePlot.hpp"
 #include <ctime>

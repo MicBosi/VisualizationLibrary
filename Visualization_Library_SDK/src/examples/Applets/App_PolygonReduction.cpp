@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/Colors.hpp"
-#include "vl/PolygonSimplifier.hpp"
-#include "vl/Geometry.hpp"
-#include "vl/Light.hpp"
+#include "vlCore/PolygonSimplifier.hpp"
+#include "vlCore/Geometry.hpp"
+#include "vlCore/Light.hpp"
 
 class App_PolygonReduction: public BaseDemo
 {

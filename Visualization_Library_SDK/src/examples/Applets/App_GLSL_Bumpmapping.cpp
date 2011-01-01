@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/VisualizationLibrary.hpp"
-#include "vl/Light.hpp"
-#include "vl/GLSL.hpp"
+#include "vlCore/VisualizationLibrary.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/GLSL.hpp"
 
 const int TORUS_SEGS = 25;
 

@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/DrawPixels.hpp"
-#include "vl/Light.hpp"
-#include "vl/Geometry.hpp"
+#include "vlCore/DrawPixels.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/Geometry.hpp"
 
 class App_DrawPixels: public BaseDemo
 {

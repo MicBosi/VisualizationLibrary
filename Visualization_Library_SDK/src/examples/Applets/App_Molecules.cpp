@@ -31,8 +31,8 @@
 
 #include "BaseDemo.hpp"
 #include "vlMolecule/Molecule.hpp"
-#include "vl/Text.hpp"
-#include "vl/FontManager.hpp"
+#include "vlCore/Text.hpp"
+#include "vlCore/FontManager.hpp"
 
 class App_Molecules: public BaseDemo
 {

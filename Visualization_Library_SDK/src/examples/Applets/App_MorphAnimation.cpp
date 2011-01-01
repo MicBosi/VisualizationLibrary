@@ -31,11 +31,11 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vl/LoadWriterManager.hpp"
-#include "vl/Light.hpp"
-#include "vl/MorphingCallback.hpp"
-#include "vl/vlMD2.hpp"
-#include "vl/GLSL.hpp"
+#include "vlCore/LoadWriterManager.hpp"
+#include "vlCore/Light.hpp"
+#include "vlCore/MorphingCallback.hpp"
+#include "vlCore/vlMD2.hpp"
+#include "vlCore/GLSL.hpp"
 
 class App_MorphAnimation: public BaseDemo
 {

@@ -34,7 +34,7 @@
 
 // for more colors see: http://en.wikipedia.org/wiki/List_of_colors
 
-#include <vl/Vector4.hpp>
+#include <vlCore/Vector4.hpp>
 
 namespace vlut
 {
