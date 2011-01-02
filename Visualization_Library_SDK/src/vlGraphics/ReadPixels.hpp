@@ -36,6 +36,7 @@
 #include <vlCore/Say.hpp>
 #include <vlCore/Log.hpp>
 #include <vlGraphics/RenderEventCallback.hpp>
+#include <vlGraphics/GLBufferObject.hpp>
 #include <vlGraphics/vlTGA.hpp>
 #include <vlGraphics/vlTIFF.hpp>
 #include <vlGraphics/vlPNG.hpp>
@@ -44,6 +45,88 @@
 
 namespace vl
 {
+  //-----------------------------------------------------------------------------
+  // vl::readPixels()
+  //-----------------------------------------------------------------------------
+  /** Reads a rectangular pixel area from the specified read buffer and stores it in an Image.
+   *
+   * If 'store_in_pixel_buffer_object' is true the data will be copied in the GPU memory using the GL_EXT_pixel_buffer_object
+   * extension, while the local buffer will be deallocated.
+   *
+   * \note
+   * The image returned by this function might seem flipped upside down. */
+  inline void readPixels(Image* image, int x, int y, int w, int h, EReadDrawBuffer read_buffer, bool store_in_pixel_buffer_object)
+  {
+    // clears OpenGL errors
+    glGetError();
+
+    glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+
+    glPixelStorei( GL_PACK_ALIGNMENT,   1);
+    glPixelStorei( GL_PACK_ROW_LENGTH,  w);
+    glPixelStorei( GL_PACK_SKIP_PIXELS, 0);
+    glPixelStorei( GL_PACK_SKIP_ROWS,   0);
+    glPixelStorei( GL_PACK_SWAP_BYTES,  0);
+    glPixelStorei( GL_PACK_LSB_FIRST,   0);
+    if (GLEW_VERSION_1_2)
+    {
+      glPixelStorei( GL_PACK_IMAGE_HEIGHT, 0 );
+      glPixelStorei( GL_PACK_SKIP_IMAGES,  0 );
+    }
+
+    int prev = 0;
+    glGetIntegerv( GL_READ_BUFFER, &prev ); VL_CHECK_OGL()
+    glReadBuffer( read_buffer );
+    #ifndef NDEBUG
+      if (glGetError() != GL_NO_ERROR)
+      {
+        Log::print(Say("Image::readPixels() error: %s:%n\n"
+          "You seem to have specified a wrong read buffer for the bound render target,\n"
+          "for example you might have specified a RDB_BACK_LEFT but the active camera\n"
+          "is bound to a FBO (Framebuffer Object) render target or the selected\n"
+          "read buffer is FBO-specific (like RDB_COLOR_ATTACHMENT0_EXT) but the active\n"
+          "camera is not bound to a FBO render target. \n") << __FILE__ << __LINE__
+        );
+        VL_TRAP()
+      }
+    #endif
+
+    bool supports_pbo = GLEW_ARB_pixel_buffer_object||GLEW_EXT_pixel_buffer_object||GLEW_VERSION_2_1;
+    GLBufferObject* glbuf = dynamic_cast<GLBufferObject*>(image->imageBuffer());
+
+    if (store_in_pixel_buffer_object && supports_pbo)
+    {
+      int bytes = image->requiredMemory2D(w, h, 1, image->format(), image->type());
+      // allocates the PBO
+      glbuf->setBufferData( bytes, NULL, glbuf->usage() );
+      // bind the pbo
+      VL_glBindBuffer( GL_PIXEL_PACK_BUFFER, glbuf->handle() );
+      // read pixels into the pbo
+      glReadPixels( x, y, w, h, image->format(), image->type(), 0);
+      // unbind the pbo
+      VL_glBindBuffer( GL_PIXEL_PACK_BUFFER, 0 );
+
+      // deallocates the local storage and sets up the image configuration
+      image->reset(w, h, 0, 1, image->format(), image->type(), false);
+
+      // test GPU -> local copy
+      //if (w != image->width() || h != image->height() || image->dimension() != ID_2D || image->pixels() == NULL)
+      //  image->allocate2D( w, h, 1, image->format(), image->type() );
+      //glbuf->downloadGLBufferObject();
+    }
+    else
+    {
+      if (w != image->width() || h != image->height() || image->dimension() != ID_2D || image->pixels() == NULL)
+        image->allocate2D( w, h, 1, image->format(), image->type() );
+      glReadPixels( x, y, w, h, image->format(), image->type(), image->pixels() );
+    }
+
+    // restore read buffer
+    glReadBuffer( prev );
+    glPopClientAttrib();
+
+    VL_CHECK_OGL()
+  }
   //-----------------------------------------------------------------------------
   // ReadPixels
   //-----------------------------------------------------------------------------
@@ -150,7 +233,7 @@ namespace vl
     {
       if (mImage.get() == NULL)
         mImage = new Image;
-      mImage->readPixels(mX, mY, mWidth, mHeight, mReadBuffer, storeInPixelBufferObject() );
+      vl::readPixels(mImage.get(), mX, mY, mWidth, mHeight, mReadBuffer, storeInPixelBufferObject() );
       if ( savePath().length() )
       {
         if (!saveImage(mImage.get(), savePath()))
