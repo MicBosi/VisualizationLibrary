@@ -242,9 +242,9 @@ public:
 
         ref<Image> trfunc;
         if (COLORED_LIGHTS)
-          trfunc = Image::makeColorSpectrum(128, vl::white, vl::white); // let the lights color the volume
+          trfunc = vl::makeColorSpectrum(128, vl::white, vl::white); // let the lights color the volume
         else
-          trfunc = Image::makeColorSpectrum(128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson);
+          trfunc = vl::makeColorSpectrum(128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson);
         // installs GLSLProgram
         vol_fx->shader()->setRenderState(mGLSL.get());
         // install volume image
@@ -277,7 +277,7 @@ public:
         Log::info("IF_LUMINANCE image and GLSL not supported: transfer function and lighting will be precomputed.\n");
 
         // generate simple transfer function
-        ref<Image> trfunc = Image::makeColorSpectrum(128, vl::black, vl::blue, vl::green, vl::yellow, vl::red);
+        ref<Image> trfunc = vl::makeColorSpectrum(128, vl::black, vl::blue, vl::green, vl::yellow, vl::red);
         // precompute volume with transfer function and lighting
         ref<Image> volume = vl::genRGBAVolume(img.get(), trfunc.get(), fvec3(1.0f,1.0f,0.0f));
         vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( volume.get() ) );

@@ -69,8 +69,8 @@ public:
     vl::ref<vl::Image> circle16_yr = vl::loadImage("/images/circle16.png");
     circle16_yr->substituteColorGreenKey(0xFFFF00,0xFF0000);
     // generate the color spectrums
-    vl::ref<vl::Image> spectrum1 = vl::Image::makeColorSpectrum(128, vl::blue,  vl::green, vl::yellow, vl::red);
-    vl::ref<vl::Image> spectrum2 = vl::Image::makeColorSpectrum(128, vl::black, vl::white, vl::gray,   vl::black);
+    vl::ref<vl::Image> spectrum1 = vl::makeColorSpectrum(128, vl::blue,  vl::green, vl::yellow, vl::red);
+    vl::ref<vl::Image> spectrum2 = vl::makeColorSpectrum(128, vl::black, vl::white, vl::gray,   vl::black);
 
     // add a new VectorGraphics to our SceneManagerVectorGraphics
   
