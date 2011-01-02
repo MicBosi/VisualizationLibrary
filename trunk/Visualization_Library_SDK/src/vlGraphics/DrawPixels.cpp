@@ -32,6 +32,8 @@
 #include <vlGraphics/DrawPixels.hpp>
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Camera.hpp>
+#include <vlGraphics/GLBufferObject.hpp>
+#include <vlCore/Log.hpp>
 #include <map>
 
 using namespace vl;
@@ -92,7 +94,11 @@ DrawPixels::Pixels::~Pixels()
 //-----------------------------------------------------------------------------
 void DrawPixels::Pixels::deletePixelBufferObject()
 {
-  image()->imageBuffer()->deleteGLBufferObject();
+  GLBufferObject* glbuf = dynamic_cast<GLBufferObject*>(image()->imageBuffer());
+  if (glbuf)
+  {
+    glbuf->deleteGLBufferObject();
+  }
 }
 //-----------------------------------------------------------------------------
 bool DrawPixels::Pixels::generatePixelBufferObject(EGLBufferUsage usage, bool discard_local_storage)
@@ -100,13 +106,23 @@ bool DrawPixels::Pixels::generatePixelBufferObject(EGLBufferUsage usage, bool di
   VL_CHECK(image())
   if (!image())
     return false;
-  image()->imageBuffer()->setBufferData(usage, discard_local_storage);
-  return true;
+  GLBufferObject* glbuf = dynamic_cast<GLBufferObject*>(image()->imageBuffer());
+  if (glbuf)
+  {
+    glbuf->setBufferData(usage, discard_local_storage);
+    return true;
+  }
+  else
+  {
+    vl::Log::error("DrawPixels::Pixels::generatePixelBufferObject(): the Image does not have a GLBufferObject installed! Use Image::setImageBuffer( new GLBufferObject ).\n");
+    return false;
+  }
 }
 //-----------------------------------------------------------------------------
 bool DrawPixels::Pixels::hasPixelBufferObject() const
 {
-  return image()->imageBuffer()->handle() != 0;
+  const GLBufferObject* glbuf = dynamic_cast<const GLBufferObject*>(image()->imageBuffer());
+  return glbuf && glbuf->handle() != 0;
 }
 //-----------------------------------------------------------------------------
 // DrawPixels
@@ -121,9 +137,7 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
 {
   VL_CHECK_OGL()
 
-  int viewport[] = {0,0,0,0};
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  VL_CHECK_OGL()
+  int viewport[] = { camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height() };
 
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
@@ -144,9 +158,11 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
     if (cmd->image() == 0)
       continue;
 
+    const GLBufferObject* glbuf = dynamic_cast<const GLBufferObject*>(cmd->image());
+
     VL_CHECK( cmd->image() )
-    VL_CHECK( cmd->image()->imageBuffer() )
-    VL_CHECK( cmd->image()->imageBuffer()->handle() || cmd->image()->pixels() )
+    VL_CHECK( glbuf )
+    VL_CHECK( glbuf->handle() || cmd->image()->pixels() )
     VL_CHECK( cmd->image()->isValid() )
     VL_CHECK( cmd->mStart.x() >= 0 )
     VL_CHECK( cmd->mStart.y() >= 0 )
@@ -226,9 +242,9 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
     glPixelStorei( GL_UNPACK_SKIP_ROWS, cmd->mStart.y() + clip_bottom );
     VL_CHECK_OGL()
 
-    if ( cmd->image()->imageBuffer()->handle() )
+    if ( glbuf->handle() )
     {
-      VL_glBindBuffer( GL_PIXEL_UNPACK_BUFFER, cmd->image()->imageBuffer()->handle() ); VL_CHECK_OGL()
+      VL_glBindBuffer( GL_PIXEL_UNPACK_BUFFER, glbuf->handle() ); VL_CHECK_OGL()
       glDrawPixels( cmd->mSize.x() -clip_left -clip_right, cmd->mSize.y() -clip_bottom -clip_top, cmd->image()->format(), cmd->image()->type(), 0 );
       VL_CHECK_OGL();
     }
@@ -263,7 +279,11 @@ void DrawPixels::deletePixelBufferObjects()
   VL_CHECK_OGL()
   for(int i=0; i<(int)mDraws.size(); ++i)
   {
-    mDraws[i]->image()->imageBuffer()->deleteGLBufferObject();
+    GLBufferObject* glbuf = dynamic_cast<GLBufferObject*>(mDraws[i]->image()->imageBuffer());
+    if (glbuf)
+    {
+      glbuf->deleteGLBufferObject();
+    }
   }
   VL_CHECK_OGL()
 }
@@ -287,7 +307,7 @@ bool DrawPixels::generatePixelBufferObjects(EGLBufferUsage usage, bool discard_l
 
   for(int i=0; i<(int)mDraws.size(); ++i)
   {
-    if ( mDraws[i]->image()->imageBuffer()->handle() )
+    if ( mDraws[i]->hasPixelBufferObject() )
       continue;
 
     if ( mDraws[i]->mImage.get() == NULL )
