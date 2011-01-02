@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vlGraphics/GLSL.hpp>
+#include <vlGraphics/OpenGL.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/Log.hpp>

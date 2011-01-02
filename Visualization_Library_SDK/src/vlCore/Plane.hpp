@@ -33,7 +33,7 @@
 #define Plane_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlGraphics/GLSLmath.hpp>
+#include <vlCore/GLSLmath.hpp>
 #include <vlCore/Transform.hpp>
 
 namespace vl

@@ -68,15 +68,18 @@ set(VLCORE_INC
   Array.hpp
   Buffer.hpp
   BufferedStream.hpp
-  CRC32CheckSum.hpp
   CatmullRomInterpolator.hpp
+  Collection.hpp
+  CRC32CheckSum.hpp
   DiskDirectory.hpp
   DiskFile.hpp
   GZipCodec.hpp
   UUID.hpp
   half.hpp
   KeyValues.hpp
+  GLSLmath.hpp
   Image.hpp
+  ImageTools.hpp
   Interpolator.hpp
   LinearInterpolator.hpp
   LoadWriterManager.hpp
@@ -89,7 +92,7 @@ set(VLCORE_INC
   MemoryFile.hpp
   FileSystem.hpp
   Object.hpp
-  Collection.hpp
+  OpenGLDefs.hpp
   Plane.hpp
   Random.hpp
   Ray.hpp
