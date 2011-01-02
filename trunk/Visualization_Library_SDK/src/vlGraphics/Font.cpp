@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vlGraphics/Font.hpp>
+#include <vlGraphics/OpenGL.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
