@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/Light.hpp"
+#include "vlGraphics/Light.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vlCore/Text.hpp"
-#include "vlCore/FontManager.hpp"
+#include "vlGraphics/Text.hpp"
+#include "vlGraphics/FontManager.hpp"
 
 class App_Lights: public BaseDemo
 {

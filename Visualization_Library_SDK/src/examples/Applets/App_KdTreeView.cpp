@@ -32,11 +32,11 @@
 #include "BaseDemo.hpp"
 #include "vlut/Colors.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vlCore/Light.hpp"
-#include "vlCore/Text.hpp"
-#include "vlCore/FontManager.hpp"
-#include "vlCore/SceneManagerActorKdTree.hpp"
-#include "vlCore/SceneManagerActorTree.hpp"
+#include "vlGraphics/Light.hpp"
+#include "vlGraphics/Text.hpp"
+#include "vlGraphics/FontManager.hpp"
+#include "vlGraphics/SceneManagerActorKdTree.hpp"
+#include "vlGraphics/SceneManagerActorTree.hpp"
 
 class App_KdTreeView: public BaseDemo
 {
