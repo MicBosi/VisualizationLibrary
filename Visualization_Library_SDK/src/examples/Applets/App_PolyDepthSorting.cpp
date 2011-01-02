@@ -30,9 +30,9 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/DepthSortCallback.hpp"
-#include "vlCore/Geometry.hpp"
-#include "vlCore/Light.hpp"
+#include "vlGraphics/DepthSortCallback.hpp"
+#include "vlGraphics/Geometry.hpp"
+#include "vlGraphics/Light.hpp"
 
 class App_PolyDepthSorting: public BaseDemo
 {

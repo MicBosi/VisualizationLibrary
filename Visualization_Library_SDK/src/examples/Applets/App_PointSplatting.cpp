@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/DepthSortCallback.hpp"
-#include "vlCore/Light.hpp"
+#include "vlGraphics/DepthSortCallback.hpp"
+#include "vlGraphics/Light.hpp"
 #include "vlCore/Vector4.hpp"
 
 class App_PointSplatting: public BaseDemo

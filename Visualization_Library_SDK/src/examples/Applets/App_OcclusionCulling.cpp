@@ -32,10 +32,10 @@
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 #include "vlut/Colors.hpp"
-#include "vlCore/OcclusionCullRenderer.hpp"
-#include "vlCore/Text.hpp"
-#include "vlCore/Light.hpp"
-#include "vlCore/FontManager.hpp"
+#include "vlGraphics/OcclusionCullRenderer.hpp"
+#include "vlGraphics/Text.hpp"
+#include "vlGraphics/Light.hpp"
+#include "vlGraphics/FontManager.hpp"
 
 class App_OcclusionCulling: public BaseDemo
 {

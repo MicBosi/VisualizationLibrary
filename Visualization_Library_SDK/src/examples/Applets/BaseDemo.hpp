@@ -33,9 +33,9 @@
 #define BaseDemo_INCLUDE_ONCE
 
 #include "vlut/Applet.hpp"
-#include "vlCore/Rendering.hpp"
+#include "vlGraphics/Rendering.hpp"
 #include "vlCore/VisualizationLibrary.hpp"
-#include "vlCore/ReadPixels.hpp"
+#include "vlGraphics/ReadPixels.hpp"
 #include "vlCore/Time.hpp"
 
 class BaseDemo: public vl::Applet
