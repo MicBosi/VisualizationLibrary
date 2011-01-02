@@ -36,7 +36,7 @@
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/VirtualFile.hpp>
-#include <vlCore/GLSLmath.hpp>
+#include <vlGraphics/GLSLmath.hpp>
 #include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/LoadWriterManager.hpp>
 

@@ -37,7 +37,7 @@
 #ifndef vlnamespace_INCLUDE_ONCE
 #define vlnamespace_INCLUDE_ONCE
 
-#include <vlCore/OpenGL.hpp>
+#include <vlGraphics/OpenGL.hpp>
 #include <vlCore/config.hpp>
 #include <vlCore/version.hpp>
 

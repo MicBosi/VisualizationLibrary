@@ -30,21 +30,21 @@
 /**************************************************************************************/
 
 #include <vlCore/VisualizationLibrary.hpp>
-#include <vlCore/FontManager.hpp>
+#include <vlGraphics/FontManager.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Time.hpp>
 #include <vlCore/Log.hpp>
-#include <vlCore/Rendering.hpp> 
-#include <vlCore/RenderQueue.hpp>
-#include <vlCore/SceneManager.hpp>
+#include <vlGraphics/Rendering.hpp> 
+#include <vlGraphics/RenderQueue.hpp>
+#include <vlGraphics/SceneManager.hpp>
 #include <vlCore/FileSystem.hpp>
-#include <vlCore/FontManager.hpp>
+#include <vlGraphics/FontManager.hpp>
 #include <vlCore/DiskDirectory.hpp>
 #include <vlCore/ZippedDirectory.hpp>
 #include <vlCore/MemoryDirectory.hpp>
 #include <vlCore/LoadWriterManager.hpp>
-#include <vlCore/GeometryLoadCallback.hpp>
+#include <vlGraphics/GeometryLoadCallback.hpp>
 #include <vlCore/Quaternion.hpp>
 #include <vlCore/Object.hpp>
 #include <vlCore/KeyValues.hpp>
@@ -54,46 +54,46 @@
 #include FT_FREETYPE_H
 
 #if defined(IO_MODULE_JPG)
-  #include <vlCore/vlJPG.hpp>
+  #include <vlGraphics/vlJPG.hpp>
 #endif
 #if defined(IO_MODULE_PNG)
-  #include <vlCore/vlPNG.hpp>
+  #include <vlGraphics/vlPNG.hpp>
 #endif
 #if defined(IO_MODULE_TIFF)
-  #include <vlCore/vlTIFF.hpp>
+  #include <vlGraphics/vlTIFF.hpp>
 #endif
 #if defined(IO_MODULE_TGA)
-  #include <vlCore/vlTGA.hpp>
+  #include <vlGraphics/vlTGA.hpp>
 #endif
 #if defined(IO_MODULE_DAT)
-  #include <vlCore/vlDAT.hpp>
+  #include <vlGraphics/vlDAT.hpp>
 #endif
 #if defined(IO_MODULE_DDS)
-  #include <vlCore/vlDDS.hpp>
+  #include <vlGraphics/vlDDS.hpp>
 #endif
 #if defined(IO_MODULE_BMP)
-  #include <vlCore/vlBMP.hpp>
+  #include <vlGraphics/vlBMP.hpp>
 #endif
 #if defined(IO_MODULE_3DS)
-  #include <vlCore/vl3DS.hpp>
+  #include <vlGraphics/vl3DS.hpp>
 #endif
 #if defined(IO_MODULE_OBJ)
-  #include <vlCore/vlOBJ.hpp>
+  #include <vlGraphics/vlOBJ.hpp>
 #endif
 #if defined(IO_MODULE_AC3D)
-  #include <vlCore/vlAC3D.hpp>
+  #include <vlGraphics/vlAC3D.hpp>
 #endif
 #if defined(IO_MODULE_PLY)
-  #include <vlCore/vlPLY.hpp>
+  #include <vlGraphics/vlPLY.hpp>
 #endif
 #if defined(IO_MODULE_STL)
-  #include <vlCore/vlSTL.hpp>
+  #include <vlGraphics/vlSTL.hpp>
 #endif
 #if defined(IO_MODULE_MD2)
-  #include <vlCore/vlMD2.hpp>
+  #include <vlGraphics/vlMD2.hpp>
 #endif
 #if defined(IO_MODULE_DICOM)
-  #include <vlCore/vlDICOM.hpp>
+  #include <vlGraphics/vlDICOM.hpp>
 #endif
 
 #if defined(_WIN32)

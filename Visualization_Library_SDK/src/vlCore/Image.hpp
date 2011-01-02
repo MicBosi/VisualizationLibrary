@@ -33,7 +33,7 @@
 #define Image_INCUDE_DEFINE
 
 #include <vlCore/String.hpp>
-#include <vlCore/GLBufferObject.hpp>
+#include <vlGraphics/GLBufferObject.hpp>
 #include <vlCore/vlnamespace.hpp>
 #include <vlCore/Rect.hpp>
 #include <vlCore/KeyValues.hpp>
