@@ -29,9 +29,6 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/Actor.hpp>
-#include <vlCore/DrawCall.hpp>
-#include <vlCore/Geometry.hpp>
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>

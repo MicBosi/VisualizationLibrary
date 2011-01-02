@@ -32,7 +32,7 @@
 #ifndef math3D_INCLUDE_ONCE
 #define math3D_INCLUDE_ONCE
 
-#include <vlCore/GLSLmath.hpp>
+#include <vlGraphics/GLSLmath.hpp>
 #include <vlCore/Plane.hpp>
 #include <cstdio>
 #include <memory.h>

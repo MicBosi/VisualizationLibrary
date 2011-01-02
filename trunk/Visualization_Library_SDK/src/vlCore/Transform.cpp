@@ -32,7 +32,6 @@
 #include <vlCore/Transform.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/Log.hpp>
-#include <vlCore/Camera.hpp>
 #include <algorithm>
 #include <set>
 
