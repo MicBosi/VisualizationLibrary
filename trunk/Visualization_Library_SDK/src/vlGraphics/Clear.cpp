@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vlGraphics/Clear.hpp>
+#include <vlGraphics/Camera.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/Log.hpp>
 
@@ -49,7 +50,7 @@ Clear::Clear(): mClearColorMode(CCM_Float), mClearDepthValue(1.0f), mClearStenci
   mScissorBox[3] = -1;
 }
 //-----------------------------------------------------------------------------
-void Clear::render_Implementation(const Actor*, const Shader*, const Camera*, OpenGLContext*) const
+void Clear::render_Implementation(const Actor*, const Shader*, const Camera* camera, OpenGLContext*) const
 {
   // build buffer bit mask
   GLbitfield mask = 0;
@@ -66,8 +67,7 @@ void Clear::render_Implementation(const Actor*, const Shader*, const Camera*, Op
 
   if (mask)
   {
-    int viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
+    int viewport[] = { camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height() };
 
     // save scissor settings
     GLboolean scissor_on = glIsEnabled(GL_SCISSOR_TEST);
