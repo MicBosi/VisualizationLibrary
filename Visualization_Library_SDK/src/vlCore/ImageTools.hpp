@@ -29,15 +29,18 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VirtualFile.hpp>
+#ifndef ImageTools_INCLUDE_ONCE
+#define ImageTools_INCLUDE_ONCE
 
-namespace
+#include <memory.h>
+
+namespace vl
 {
+//-----------------------------------------------------------------------------
   typedef unsigned char TPalette3x256[256*3];
   typedef unsigned char TPalette4x256[256*4];
-  typedef unsigned short TPalette16x3x256[256*3];
 //-----------------------------------------------------------------------------
-  void internal_RGBToRGBA(void* buf, int w, int h, unsigned char alpha, int bytealign = 1)
+  inline void convertRGBToRGBA(void* buf, int w, int h, unsigned char alpha, int bytealign = 1)
   {
     int xbytes = w*3;
     int pitch = (xbytes / bytealign * bytealign) + ((xbytes % bytealign)? bytealign : 0);
@@ -76,7 +79,7 @@ namespace
     }
   }
 //-----------------------------------------------------------------------------
-  void internal_GrayscaleToRGBA(void* buf, int size, unsigned char alpha)
+  inline void convertGrayscaleToRGBA(void* buf, int size, unsigned char alpha)
   {
     unsigned char* px32 = (unsigned char*)buf + size * 4 - 4;
     unsigned char* px8  = (unsigned char*)buf + size * 1 - 1;
@@ -91,7 +94,7 @@ namespace
     }
   }
 //-----------------------------------------------------------------------------
-  void internal_A1R5G5B5ToRGBA(void* buf, int size, unsigned char alpha)
+  inline void convertA1R5G5B5ToRGBA(void* buf, int size, unsigned char alpha)
   {
     unsigned char* px32 = (unsigned char*)buf + size * 4 - 4;
     unsigned char* px8  = (unsigned char*)buf + size * 2 - 2;
@@ -111,7 +114,7 @@ namespace
     }
   }
 //-----------------------------------------------------------------------------
-  void internal_8ToRGBA(const TPalette3x256 & palette, void* buf, int w, int h, unsigned char alpha, int bytealign = 1)
+  inline void convert8ToRGBA(const TPalette3x256 & palette, void* buf, int w, int h, unsigned char alpha, int bytealign = 1)
   {
 
     int xbytes = w;
@@ -151,7 +154,7 @@ namespace
     }
   }
 //-----------------------------------------------------------------------------
-  void internal_8ToRGBA(const TPalette4x256 & palette, void* buf, int w, int h, int bytealign = 1)
+  inline void convert8ToRGBA(const TPalette4x256 & palette, void* buf, int w, int h, int bytealign = 1)
   {
 
     int xbytes = w;
@@ -191,7 +194,7 @@ namespace
     }
   }
 //-----------------------------------------------------------------------------
-  void internal_swapBytes32(void* buf, int size)
+  inline void swapBytes32(void* buf, int size)
   {
     unsigned char* p = (unsigned char*)buf;
     unsigned char dw[4];
@@ -205,7 +208,7 @@ namespace
     }
   }
 //-----------------------------------------------------------------------------
-  void internal_swapBytes32_BGRA_RGBA(void* buf, int bytecount)
+  inline void swapBytes32_BGRA_RGBA(void* buf, int bytecount)
   {
     unsigned char* p = (unsigned char*)buf;
     unsigned char dw[4];
@@ -217,7 +220,7 @@ namespace
     }
   }
 //-----------------------------------------------------------------------------
-  void internal_swapBytes24_BGR_RGB(void* buf, int bytecount)
+  inline void swapBytes24_BGR_RGB(void* buf, int bytecount)
   {
     unsigned char* p = (unsigned char*)buf;
     unsigned char dw[4];
@@ -230,7 +233,7 @@ namespace
     }
   }
 //-----------------------------------------------------------------------------
-  void internal_fillRGBA32_Alpha(void* buf, int bytecount, unsigned char alpha)
+  inline void fillRGBA32_Alpha(void* buf, int bytecount, unsigned char alpha)
   {
     unsigned char* pxl = (unsigned char*)buf;
     for(int i=0; i<bytecount; i+=4)
@@ -239,7 +242,7 @@ namespace
     }
   }
 //-----------------------------------------------------------------------------
-  void internal_fillGray8Alpha8_Alpha(void* buf, int bytecount, unsigned char alpha)
+  inline void fillGray8Alpha8_Alpha(void* buf, int bytecount, unsigned char alpha)
   {
     unsigned char* pxl = (unsigned char*)buf;
     for(int i=0; i<bytecount; i+=2)
@@ -247,4 +250,7 @@ namespace
       pxl[i+1] = alpha;
     }
   }
+//-----------------------------------------------------------------------------
 }
+
+#endif

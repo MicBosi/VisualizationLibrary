@@ -34,6 +34,7 @@
 
 #include <vlCore/vlnamespace.hpp>
 #include <vlCore/Object.hpp>
+#include <vlGraphics/OpenGL.hpp>
 #include <vector>
 
 namespace vl

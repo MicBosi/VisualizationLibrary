@@ -39,7 +39,7 @@
 
 using namespace vl;
 
-#include "Image_Tools.cpp"
+#include <vlCore/ImageTools.hpp>
 
 //-----------------------------------------------------------------------------
 // DDS loader
@@ -409,10 +409,10 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         file->read(image[i]->pixels() + offset, req_mem);
 
         if(reverse_rgba_bgra)
-          internal_swapBytes32_BGRA_RGBA(image[i]->pixels() + offset, req_mem);
+          swapBytes32_BGRA_RGBA(image[i]->pixels() + offset, req_mem);
 
         if (IS_BGRX8(header.ddpfPixelFormat))
-          internal_fillRGBA32_Alpha(image[i]->pixels() + offset, req_mem, 0xFF);
+          fillRGBA32_Alpha(image[i]->pixels() + offset, req_mem, 0xFF);
       }
     }
   }
@@ -449,7 +449,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         file->read(image[i]->pixels() + offset, req_mem);
 
         if(reverse_rgba_bgra)
-          internal_swapBytes24_BGR_RGB(image[i]->pixels() + offset, req_mem);
+          swapBytes24_BGR_RGB(image[i]->pixels() + offset, req_mem);
       }
     }
   }
@@ -519,7 +519,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         // fread(image[i]->pixels() + offset, 1, req_mem, fin);
         file->read(image[i]->pixels() + offset, req_mem);
         if (!hasalpha)
-          internal_fillGray8Alpha8_Alpha(image[i]->pixels() + offset, req_mem, 0xFF);
+          fillGray8Alpha8_Alpha(image[i]->pixels() + offset, req_mem, 0xFF);
       }
     }
   }
@@ -559,10 +559,10 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         // read the palette first
         // fread(image[i]->pixels() + offset, 1, req_mem1, fin);
         file->read( image[i]->pixels() + offset, req_mem1 );
-        internal_8ToRGBA( palette, image[i]->pixels() + offset, w, h * d );
-        internal_swapBytes32_BGRA_RGBA(image[i]->pixels() + offset, req_mem4);
+        convert8ToRGBA( palette, image[i]->pixels() + offset, w, h * d );
+        swapBytes32_BGRA_RGBA(image[i]->pixels() + offset, req_mem4);
         if (!hasalpha)
-          internal_fillRGBA32_Alpha(image[i]->pixels() + offset, req_mem4, 0xFF);
+          fillRGBA32_Alpha(image[i]->pixels() + offset, req_mem4, 0xFF);
       }
     }
   }

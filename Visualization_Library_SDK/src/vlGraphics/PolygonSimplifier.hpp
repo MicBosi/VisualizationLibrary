@@ -34,7 +34,7 @@
 
 #include <vlCore/Object.hpp>
 #include <vlCore/Vector3.hpp>
-#include <vlGraphics/GLSLmath.hpp>
+#include <vlCore/GLSLmath.hpp>
 #include <vector>
 #include <algorithm>
 

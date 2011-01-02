@@ -54,7 +54,6 @@ SET(VLGRAPHICS_SRC
   GLSL.cpp
   Geometry.cpp
   GhostCameraManipulator.cpp
-  Image_Tools.cpp
   ActorKdTree.cpp
   Light.cpp
   MorphingCallback.cpp
@@ -115,7 +114,6 @@ set(VLGRAPHICS_INC
   FramebufferObject.hpp
   Frustum.hpp
   GLSL.hpp
-  GLSLmath.hpp
   Geometry.hpp
   GeometryLoadCallback.hpp
   GhostCameraManipulator.hpp

@@ -32,7 +32,7 @@
 #ifndef quat_INCLUDE_ONCE
 #define quat_INCLUDE_ONCE
 
-#include <vlGraphics/GLSLmath.hpp>
+#include <vlCore/GLSLmath.hpp>
 
 namespace vl
 {
