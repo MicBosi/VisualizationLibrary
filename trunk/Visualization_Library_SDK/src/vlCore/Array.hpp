@@ -32,7 +32,7 @@
 #ifndef Array_INCLUDE_ONCE
 #define Array_INCLUDE_ONCE
 
-#include <vlCore/GLBufferObject.hpp>
+#include <vlGraphics/GLBufferObject.hpp>
 #include <vlCore/half.hpp>
 #include <vector>
 

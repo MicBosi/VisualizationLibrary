@@ -31,7 +31,7 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vlCore/Light.hpp"
+#include "vlGraphics/Light.hpp"
 
 class App_Transforms: public BaseDemo
 {

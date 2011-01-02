@@ -34,12 +34,12 @@
 
 #include "vlut/Applet.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vlCore/SceneManagerActorTree.hpp"
-#include "vlCore/Rendering.hpp"
-#include "vlCore/Actor.hpp"
-#include "vlCore/Effect.hpp"
+#include "vlGraphics/SceneManagerActorTree.hpp"
+#include "vlGraphics/Rendering.hpp"
+#include "vlGraphics/Actor.hpp"
+#include "vlGraphics/Effect.hpp"
 #include "vlCore/Time.hpp"
-#include "vlCore/Light.hpp"
+#include "vlGraphics/Light.hpp"
 
 class App_RotatingCube: public vl::Applet
 {

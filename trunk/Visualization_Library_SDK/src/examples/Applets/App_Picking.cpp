@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vlCore/RayIntersector.hpp"
-#include "vlCore/ReadPixels.hpp"
-#include "vlCore/Light.hpp"
+#include "vlGraphics/RayIntersector.hpp"
+#include "vlGraphics/ReadPixels.hpp"
+#include "vlGraphics/Light.hpp"
 
 class App_Picking: public BaseDemo
 {
