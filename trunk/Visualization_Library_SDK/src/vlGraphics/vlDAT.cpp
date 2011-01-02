@@ -41,7 +41,7 @@
 
 using namespace vl;
 
-#include "Image_Tools.cpp"
+#include <vlCore/ImageTools.hpp>
 
 //-----------------------------------------------------------------------------
 ref<Image> vl::loadDAT( const String& path )

@@ -38,7 +38,7 @@
 
 using namespace vl;
 
-#include "Image_Tools.cpp"
+#include <vlCore/ImageTools.hpp>
 
 //-----------------------------------------------------------------------------
 // BMP loader
@@ -204,7 +204,7 @@ ref<Image> vl::loadBMP( VirtualFile* file )
         // TODO
       }
 
-      internal_8ToRGBA( palette, img->pixels(), img->width(), img->height(), 4 );
+      convert8ToRGBA( palette, img->pixels(), img->width(), img->height(), 4 );
     } break;
 
     case 32:
@@ -227,7 +227,7 @@ ref<Image> vl::loadBMP( VirtualFile* file )
 
       // convert the buffer from 24 to 32bpp running from the end to the begining.
       if (bih.BitCount() == 24)
-        internal_RGBToRGBA(img->pixels(), img->width(), img->height(), 0xFF, 4);
+        convertRGBToRGBA(img->pixels(), img->width(), img->height(), 0xFF, 4);
 
     } break;
 
