@@ -225,14 +225,14 @@ public:
     color_range1.push_back(vl::green);
     color_range1.push_back(vl::blue);
     color_range1.push_back(vl::red);
-    mSpectrum1 = Image::makeColorSpectrum(256,color_range1);
+    mSpectrum1 = vl::makeColorSpectrum(256,color_range1);
 
     // color palette 2
     std::vector<fvec4> color_range2;
     color_range2.push_back(vl::yellow);
     color_range2.push_back(vl::royalblue);
     color_range2.push_back(vl::yellow);
-    mSpectrum2 = Image::makeColorSpectrum(256,color_range2);
+    mSpectrum2 = vl::makeColorSpectrum(256,color_range2);
 
     mTexture = new Texture;
     mTexture->prepareTexture1D( mSpectrum1.get(), TF_RGBA, false, false );
