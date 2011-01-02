@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include <vlut/Applet.hpp>
-#include <vlCore/Rendering.hpp>
+#include <vlGraphics/Rendering.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
-#include <vlCore/SceneManager.hpp>
-#include <vlCore/RenderQueue.hpp>
+#include <vlGraphics/SceneManager.hpp>
+#include <vlGraphics/RenderQueue.hpp>
 #include <vlCore/Time.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Log.hpp>

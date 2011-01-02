@@ -32,7 +32,7 @@
 #ifndef Win32Context_INCLUDE_ONCE
 #define Win32Context_INCLUDE_ONCE
 
-#include "vlCore/OpenGLContext.hpp"
+#include "vlGraphics/OpenGLContext.hpp"
 
 namespace vlWin32
 {

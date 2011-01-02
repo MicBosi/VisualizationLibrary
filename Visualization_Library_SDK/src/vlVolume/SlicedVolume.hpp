@@ -32,9 +32,9 @@
 #ifndef SlicedVolume_INCLUDE_ONCE
 #define SlicedVolume_INCLUDE_ONCE
 
-#include <vlCore/Actor.hpp>
-#include <vlCore/Geometry.hpp>
-#include <vlCore/Light.hpp>
+#include <vlGraphics/Actor.hpp>
+#include <vlGraphics/Geometry.hpp>
+#include <vlGraphics/Light.hpp>
 
 namespace vl
 {

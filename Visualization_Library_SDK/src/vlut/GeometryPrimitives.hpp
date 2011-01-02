@@ -33,7 +33,7 @@
 #define GeometricalPrimitives_INCLUDE_ONCE
 
 #include <vlCore/Vector4.hpp>
-#include <vlCore/Geometry.hpp>
+#include <vlGraphics/Geometry.hpp>
 #include <vlut/Colors.hpp>
 
 namespace vl

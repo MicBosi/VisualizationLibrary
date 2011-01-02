@@ -32,7 +32,7 @@
 #ifndef MarchingCubes_INCLUDE_ONCE
 #define MarchingCubes_INCLUDE_ONCE
 
-#include <vlCore/Geometry.hpp>
+#include <vlGraphics/Geometry.hpp>
 
 namespace vl
 {
