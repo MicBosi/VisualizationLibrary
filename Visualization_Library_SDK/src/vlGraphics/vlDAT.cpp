@@ -143,7 +143,7 @@ ref<Image> vl::loadDAT(VirtualFile* file)
   ref<VirtualFile> rawf = VisualizationLibrary::fileSystem()->locateFile(raw_file);
   if (rawf)
   {
-    return loadRAW( rawf.get(), width, height, depth, bytealign, format, type );
+    return loadRAW( rawf.get(), -1, width, height, depth, bytealign, format, type );
   }
   else
   {
