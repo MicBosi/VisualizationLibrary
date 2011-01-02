@@ -33,7 +33,8 @@
 #define Image_INCUDE_DEFINE
 
 #include <vlCore/String.hpp>
-#include <vlGraphics/GLBufferObject.hpp>
+#include <vlCore/Buffer.hpp>
+#include <vlCore/Vector4.hpp>
 #include <vlCore/vlnamespace.hpp>
 #include <vlCore/Rect.hpp>
 #include <vlCore/KeyValues.hpp>
@@ -46,14 +47,10 @@ namespace vl
   //------------------------------------------------------------------------------
   // Image
   //------------------------------------------------------------------------------
-  /**
-   * Implements a generic 1d, 2d, 3d and cubemap image that can have mipmaps.
-   * Image also supports the GL_EXT_pixel_buffer_object extension, see readPixels()
-   * and gpuBuffer().
+  /** Implements a generic 1d, 2d, 3d and cubemap image that can have mipmaps.
    *
    * \remarks The copy operator performs a deep copy of all the pixel data and thus
-   * is to be considered an expensive operation.
-  */
+   * is to be considered an expensive operation. */
   class Image: public Object
   {
     Image(const Image& other): Object(other) {}
@@ -95,31 +92,21 @@ namespace vl
     void setFormat(EImageFormat format) { mFormat = format; updatePitch(); }
     void setType(EImageType type) { mType=type; updatePitch(); }
 
-    // A set of key/value couples that can be used to attach extra information to an image like DICOM information etc.
+    //! A set of key/value couples that can be used to attach extra information to an image like DICOM information etc.
+    //! Returns NULL by default.
     KeyValues* tags() const { return mTags.get(); }
-    // A set of key/value couples that can be used to attach extra information to an image like DICOM information etc.
+
+    //! A set of key/value couples that can be used to attach extra information to an image like DICOM information etc.
     void setTags(KeyValues* tags) { mTags = tags; }
 
-    /**
-     * Sets a GLBufferObject to be used as the Image's pixels storage in local and GPU memory.
-     * You can bind it to a GL_PIXEL_PACK_BUFFER and GL_PIXEL_UNPACK_BUFFER using glBindBuffer()
-     * to take advantage of the GL_EXT_pixel_buffer_object extension.
-    */
-    void setImageBuffer(GLBufferObject* gpu_buffer) { mPixels = gpu_buffer; }
+    //! The buffer used to store the image pixels.
+    void setImageBuffer(Buffer* buffer) { mPixels = buffer; }
 
-    /**
-     * The GLBufferObject used as the Image's pixels storage in local and GPU memory.
-     * You can bind it to a GL_PIXEL_PACK_BUFFER and GL_PIXEL_UNPACK_BUFFER using glBindBuffer()
-     * to take advantage of the GL_EXT_pixel_buffer_object extension.
-    */
-    GLBufferObject* imageBuffer() { return mPixels.get(); }
+    //! The buffer used to store the image pixels.
+    Buffer* imageBuffer() { return mPixels.get(); }
 
-    /**
-     * The GLBufferObject used as the Image's pixels storage in local and GPU memory.
-     * You can bind it to a GL_PIXEL_PACK_BUFFER and GL_PIXEL_UNPACK_BUFFER using glBindBuffer()
-     * to take advantage of the GL_EXT_pixel_buffer_object extension.
-    */
-    const GLBufferObject* imageBuffer() const { return mPixels.get(); }
+    //! The buffer used to store the image pixels.
+    const Buffer* imageBuffer() const { return mPixels.get(); }
 
     const unsigned char* pixels() const { if (mPixels->bytesUsed()) return mPixels->ptr(); else return NULL; }
     unsigned char* pixels() { if (mPixels->bytesUsed()) return mPixels->ptr(); else return NULL; }
@@ -142,57 +129,9 @@ namespace vl
     EImageType type() const { return mType; }
     int alphaBits() const;
 
-    static int isCompressedFormat(EImageFormat fmt);
-
-    /**
-     * Reads a rectangular pixel area from the specified read buffer and stores it in an Image.
-     *
-     * If 'store_in_pixel_buffer_object' is true the data will be copied in the GPU memory using the GL_EXT_pixel_buffer_object
-     * extension, while the local buffer will be deallocated.
-     *
-     * \note
-     * The image returned by this function might seem flipped upside down.
-    */
-    void readPixels(int x, int y, int width, int height, EReadDrawBuffer read_buffer, bool store_in_pixel_buffer_object);
+    int isCompressedFormat(EImageFormat fmt);
 
     void flipVertically();
-
-    static ref<Image> createCubemap(const Image* xp, const Image* xn, const Image* yp, const Image* yn, const Image* zp, const Image* zn);
-
-    /**
-     * Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-    */
-    static ref<Image> makeNonUniformColorSpectrum(int width, const std::vector<fvec4>& colors, const std::vector<float>& col_pos)
-    {
-      if (colors.empty() || colors.size() != col_pos.size())
-        return NULL;
-      else
-        return makeNonUniformColorSpectrum(width, colors.size(), &colors[0], &col_pos[0]);
-    }
-    /**
-     * Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-    */
-    static ref<Image> makeNonUniformColorSpectrum(size_t width, size_t col_count, const fvec4* colors, const float* col_pos);
-    /**
-     * Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-    */
-    static ref<Image> makeColorSpectrum(size_t width, const std::vector<fvec4>& colors);
-    /**
-     * Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-    */
-    static ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1);
-    /**
-     * Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-    */
-    static ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2);
-    /**
-     * Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-    */
-    static ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3);
-    /**
-     * Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-    */
-    static ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3, const fvec4& c4);
 
     /**
      * Converts the \p type() of an image.
@@ -345,7 +284,7 @@ namespace vl
     void updatePitch();
 
   protected:
-    ref<GLBufferObject> mPixels;
+    ref<Buffer> mPixels;
     ref<KeyValues> mTags;
 
     std::vector< ref<Image> > mMipmaps;
@@ -359,23 +298,56 @@ namespace vl
     bool mIsCubemap;
   };
 
+  //! Assembles a cubemap image.
+  ref<Image> createCubemap(const Image* xp, const Image* xn, const Image* yp, const Image* yn, const Image* zp, const Image* zn);
+
   //! Loads six images and assembles them into a cubemap image
   ref<Image> loadCubemap(const String& xp_file, const String& xn_file, const String& yp_file, const String& yn_file, const String& zp_file, const String& zn_file);
-  //! Loads a raw image file
-  ref<Image> loadRAW(VirtualFile* file, int width, int height, int depth, int bytealign, EImageFormat format, EImageType type);
+
+  //! Loads a raw image file.
+  //! \param file The file from which the data is read. This function also opens the file if it is not open already. Note that this function 
+  //! never closes the file so that you can read sequentially several raw image data from the same file.
+  //! \param file_offset The offset in the file from where the data is read. If set to -1 the data is read from the current file position.
+  ref<Image> loadRAW(VirtualFile* file, long long file_offset, int width, int height, int depth, int bytealign, EImageFormat format, EImageType type);
 
   //! Loads an image from the specified file
   ref<Image> loadImage(VirtualFile* file);
+
   //! Loads an image from the specified path
   ref<Image> loadImage(const String& path);
+
   //! Loads all the images with the specified extension from the given directory.
   bool loadImagesFromDir(const String& dir_path, const String& ext, std::vector< ref<Image> >& images);
+
   //! Assembles the given 2D images in a single 2D image, all the images must be 2D images and have the same size, format() and type().
   ref<Image> assemble3DImage(const std::vector< ref<Image> >& images);
+
   //! Writes an image on the specified file
   bool saveImage(Image* img, VirtualFile* file);
+
   //! Writes an image on the specified path
   bool saveImage(Image* img, const String& path);
+
+  //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
+  ref<Image> makeNonUniformColorSpectrum(size_t width, size_t col_count, const fvec4* colors, const float* col_pos);
+
+  //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
+  ref<Image> makeNonUniformColorSpectrum(int width, const std::vector<fvec4>& colors, const std::vector<float>& col_pos);
+
+  //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
+  ref<Image> makeColorSpectrum(size_t width, const std::vector<fvec4>& colors);
+
+  //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
+  ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1);
+
+  //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
+  ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2);
+
+  //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
+  ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3);
+
+  //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
+  ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3, const fvec4& c4);
 }
 
 #endif

@@ -58,7 +58,7 @@ Image::Image()
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mPixels = new GLBufferObject;
+  mPixels = new Buffer;
   clear();
 }
 //-----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ Image::Image(const String& path)
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mPixels = new GLBufferObject;
+  mPixels = new Buffer;
   clear();
   setObjectName(path.toStdString());
   ref<Image> img = loadImage(path);
@@ -93,7 +93,7 @@ Image::Image(int x, int y, int z, int bytealign, EImageFormat format, EImageType
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mPixels = new GLBufferObject;
+  mPixels = new Buffer;
   setByteAlignment(bytealign);
 
   if (x && y && z)
@@ -786,7 +786,7 @@ unsigned char* Image::pixelsZSlice(int slice)
   }
 }
 //-----------------------------------------------------------------------------
-ref<Image> Image::createCubemap(const Image* xp, const Image* xn, const Image* yp, const Image* yn, const Image* zp, const Image* zn)
+ref<Image> vl::createCubemap(const Image* xp, const Image* xn, const Image* yp, const Image* yn, const Image* zp, const Image* zn)
 {
   // check validity of all the images
   // contract:
@@ -915,78 +915,6 @@ void Image::flipVertically()
   }
 }
 //-----------------------------------------------------------------------------
-void Image::readPixels(int x, int y, int w, int h, EReadDrawBuffer read_buffer, bool store_in_pixel_buffer_object)
-{
-  // clears OpenGL errors
-  glGetError();
-
-  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-
-  glPixelStorei( GL_PACK_ALIGNMENT,   1);
-  glPixelStorei( GL_PACK_ROW_LENGTH,  w);
-  glPixelStorei( GL_PACK_SKIP_PIXELS, 0);
-  glPixelStorei( GL_PACK_SKIP_ROWS,   0);
-  glPixelStorei( GL_PACK_SWAP_BYTES,  0);
-  glPixelStorei( GL_PACK_LSB_FIRST,   0);
-  if (GLEW_VERSION_1_2)
-  {
-    glPixelStorei( GL_PACK_IMAGE_HEIGHT, 0 );
-    glPixelStorei( GL_PACK_SKIP_IMAGES,  0 );
-  }
-
-  int prev = 0;
-  glGetIntegerv( GL_READ_BUFFER, &prev ); VL_CHECK_OGL()
-  glReadBuffer( read_buffer );
-  #ifndef NDEBUG
-    if (glGetError() != GL_NO_ERROR)
-    {
-      Log::print(Say("Image::readPixels() error: %s:%n\n"
-        "You seem to have specified a wrong read buffer for the bound render target,\n"
-        "for example you might have specified a RDB_BACK_LEFT but the active camera\n"
-        "is bound to a FBO (Framebuffer Object) render target or the selected\n"
-        "read buffer is FBO-specific (like RDB_COLOR_ATTACHMENT0_EXT) but the active\n"
-        "camera is not bound to a FBO render target. \n") << __FILE__ << __LINE__
-      );
-      VL_TRAP()
-    }
-  #endif
-
-  bool supports_pbo = GLEW_ARB_pixel_buffer_object||GLEW_EXT_pixel_buffer_object||GLEW_VERSION_2_1;
-
-  if (store_in_pixel_buffer_object && supports_pbo)
-  {
-    int bytes = requiredMemory2D(w, h, 1, format(), type());
-    // allocates the PBO
-    imageBuffer()->setBufferData( bytes, NULL, imageBuffer()->usage() );
-    // bind the pbo
-    VL_glBindBuffer( GL_PIXEL_PACK_BUFFER, imageBuffer()->handle() );
-    // read pixels into the pbo
-    glReadPixels( x, y, w, h, format(), type(), 0);
-    // unbind the pbo
-    VL_glBindBuffer( GL_PIXEL_PACK_BUFFER, 0 );
-
-    // deallocates the local storage and sets up the image configuration
-    reset(w, h, 0, 1, format(), type(), false);
-
-    // test GPU -> local copy
-    //if (w != width() || h != height() || dimension() != ID_2D || pixels() == NULL)
-    //  allocate2D( w, h, 1, format(), type() );
-    //imageBuffer()->downloadGLBufferObject();
-  }
-  else
-  {
-    if (w != width() || h != height() || dimension() != ID_2D || pixels() == NULL)
-      allocate2D( w, h, 1, format(), type() );
-    glReadPixels( x, y, w, h, format(), type(), pixels() );
-  }
-
-  // restore read buffer
-  glReadBuffer( prev );
-  glPopClientAttrib();
-
-  VL_CHECK_OGL()
-}
-//-----------------------------------------------------------------------------
 int Image::requiredMemory(int width, int height, int depth, int bytealign, EImageFormat format, EImageType type, bool is_cubemap)
 {
   // byte align
@@ -1054,35 +982,35 @@ int Image::requiredMemory(int width, int height, int depth, int bytealign, EImag
   return req_mem;
 }
 //-----------------------------------------------------------------------------
-ref<Image> Image::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1)
+ref<Image> vl::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1)
 {
   std::vector<fvec4> colors;
   colors.push_back(c0); colors.push_back(c1);
   return makeColorSpectrum(width, colors);
 }
 //-----------------------------------------------------------------------------
-ref<Image> Image::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2)
+ref<Image> vl::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2)
 {
   std::vector<fvec4> colors;
   colors.push_back(c0); colors.push_back(c1); colors.push_back(c2);
   return makeColorSpectrum(width, colors);
 }
 //-----------------------------------------------------------------------------
-ref<Image> Image::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3)
+ref<Image> vl::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3)
 {
   std::vector<fvec4> colors;
   colors.push_back(c0); colors.push_back(c1); colors.push_back(c2); colors.push_back(c3);
   return makeColorSpectrum(width, colors);
 }
 //-----------------------------------------------------------------------------
-ref<Image> Image::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3, const fvec4& c4)
+ref<Image> vl::makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3, const fvec4& c4)
 {
   std::vector<fvec4> colors;
   colors.push_back(c0); colors.push_back(c1); colors.push_back(c2); colors.push_back(c3); colors.push_back(c4);
   return makeColorSpectrum(width, colors);
 }
 //-----------------------------------------------------------------------------
-ref<Image> Image::makeNonUniformColorSpectrum(size_t width, size_t col_count, const fvec4* colors, const float* col_pos)
+ref<Image> vl::makeNonUniformColorSpectrum(size_t width, size_t col_count, const fvec4* colors, const float* col_pos)
 {
   //     c0    c1    c2    c4
   // |---t0----t1----t2----t4---|
@@ -1119,7 +1047,15 @@ ref<Image> Image::makeNonUniformColorSpectrum(size_t width, size_t col_count, co
   return img;
 }
 //-----------------------------------------------------------------------------
-ref<Image> Image::makeColorSpectrum(size_t width, const std::vector<fvec4>& colors)
+ref<Image> vl::makeNonUniformColorSpectrum(int width, const std::vector<fvec4>& colors, const std::vector<float>& col_pos)
+{
+  if (colors.empty() || colors.size() != col_pos.size())
+    return NULL;
+  else
+    return makeNonUniformColorSpectrum(width, colors.size(), &colors[0], &col_pos[0]);
+}
+//-----------------------------------------------------------------------------
+ref<Image> vl::makeColorSpectrum(size_t width, const std::vector<fvec4>& colors)
 {
   ref<Image> img = new Image(width, 0, 0, 1, IF_RGBA, IT_UNSIGNED_BYTE);
   int index = colors.size() - 1;
@@ -1258,25 +1194,30 @@ ref<Image> vl::loadCubemap(const String& xp_file, const String& xn_file, const S
     return NULL;
   }
 
-  ref<Image> img = Image::createCubemap(xp.get(), xn.get(), yp.get(), yn.get(), zp.get(), zn.get());  
+  ref<Image> img = vl::createCubemap(xp.get(), xn.get(), yp.get(), yn.get(), zp.get(), zn.get());  
 
   return img;
 }
 //-----------------------------------------------------------------------------
-ref<Image> vl::loadRAW(VirtualFile* file, int width, int height, int depth, int bytealign, EImageFormat format, EImageType type)
+ref<Image> vl::loadRAW(VirtualFile* file, long long file_offset, int width, int height, int depth, int bytealign, EImageFormat format, EImageType type)
 {
   ref<Image> img = new Image(width, height, depth, bytealign, format, type);
-  if ( file->open(OM_ReadOnly) )
+  if ( file->isOpen() || file->open(OM_ReadOnly) )
   {
+    bool ok = file_offset == -1 || file->seekSet(file_offset);
+    if (!ok)
+    {
+      Log::error( Say("loadRAW('%s'): seek set to position %n failed.\n") << file_offset );
+      return NULL;
+    }
     int count = (int)file->read( img->pixels(), img->requiredMemory() );
     if (count != img->requiredMemory())
       Log::error( Say("loadRAW('%s'): error reading RAW file.\n") << file->path() );
-    file->close();
     return img;
   }
   else
   {
-    Log::error( Say("loadRAW('%s'): could not find RAW file.\n") << file->path() );
+    Log::error( Say("loadRAW('%s'): could not open file for reading.\n") << file->path() );
     return NULL;
   }
 }
