@@ -33,7 +33,7 @@
 
 #include <vlVolume/MarchingCubes.hpp>
 #include <vlCore/Time.hpp>
-#include <vlCore/DoubleVertexRemover.hpp>
+#include <vlGraphics/DoubleVertexRemover.hpp>
 
 using namespace vl;
 

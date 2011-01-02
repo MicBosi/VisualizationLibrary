@@ -34,9 +34,9 @@
 #include <vlMolecule/Molecule.hpp>
 #include <vlMolecule/RingExtractor.hpp>
 #include <vlCore/TextStream.hpp>
-#include <vlCore/Effect.hpp>
-#include <vlCore/Scissor.hpp>
-#include <vlCore/Texture.hpp>
+#include <vlGraphics/Effect.hpp>
+#include <vlGraphics/Scissor.hpp>
+#include <vlGraphics/Texture.hpp>
 #include <vlCore/Image.hpp>
 #include <stdio.h>
 

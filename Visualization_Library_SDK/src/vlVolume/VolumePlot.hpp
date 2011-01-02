@@ -32,13 +32,13 @@
 #ifndef VolumePlot_INCLUDE_ONCE
 #define VolumePlot_INCLUDE_ONCE
 
-#include <vlCore/Actor.hpp>
-#include <vlCore/Geometry.hpp>
-#include <vlCore/Text.hpp>
-#include <vlCore/Effect.hpp>
+#include <vlGraphics/Actor.hpp>
+#include <vlGraphics/Geometry.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/Effect.hpp>
 #include <vlCore/Transform.hpp>
-#include <vlCore/ActorTreeAbstract.hpp>
-#include <vlCore/SceneManagerActorTree.hpp>
+#include <vlGraphics/ActorTreeAbstract.hpp>
+#include <vlGraphics/SceneManagerActorTree.hpp>
 #include <vlVolume/MarchingCubes.hpp>
 
 namespace vl

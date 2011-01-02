@@ -33,16 +33,16 @@
 #define VectorGraphics_INCLUDE_ONCE
 
 #include <vlCore/VisualizationLibrary.hpp>
-#include <vlCore/Actor.hpp>
+#include <vlGraphics/Actor.hpp>
 #include <vlCore/Image.hpp>
-#include <vlCore/Text.hpp>
-#include <vlCore/FontManager.hpp>
-#include <vlCore/Effect.hpp>
-#include <vlCore/SceneManager.hpp>
-#include <vlCore/Clear.hpp>
-#include <vlCore/Scissor.hpp>
-#include <vlCore/Geometry.hpp>
-#include <vlCore/FontManager.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/Effect.hpp>
+#include <vlGraphics/SceneManager.hpp>
+#include <vlGraphics/Clear.hpp>
+#include <vlGraphics/Scissor.hpp>
+#include <vlGraphics/Geometry.hpp>
+#include <vlGraphics/FontManager.hpp>
 
 namespace vl
 {

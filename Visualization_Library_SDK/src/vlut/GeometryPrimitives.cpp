@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include <vlut/GeometryPrimitives.hpp>
-#include <vlCore/Geometry.hpp>
-#include <vlCore/DoubleVertexRemover.hpp>
+#include <vlGraphics/Geometry.hpp>
+#include <vlGraphics/DoubleVertexRemover.hpp>
 
 using namespace vl;
 
