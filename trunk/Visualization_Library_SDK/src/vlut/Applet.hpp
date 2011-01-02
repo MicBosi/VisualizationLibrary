@@ -32,10 +32,10 @@
 #ifndef Applet_INCLUDE_ONCE
 #define Applet_INCLUDE_ONCE
 
-#include <vlCore/UIEventListener.hpp>
-#include <vlCore/TrackballManipulator.hpp>
-#include <vlCore/GhostCameraManipulator.hpp>
-#include <vlCore/SceneManagerActorTree.hpp>
+#include <vlGraphics/UIEventListener.hpp>
+#include <vlGraphics/TrackballManipulator.hpp>
+#include <vlGraphics/GhostCameraManipulator.hpp>
+#include <vlGraphics/SceneManagerActorTree.hpp>
 
 namespace vl
 {

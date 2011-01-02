@@ -34,11 +34,11 @@
 
 #include <vlMolecule/Atom.hpp>
 #include <vlMolecule/Bond.hpp>
-#include <vlCore/Geometry.hpp>
+#include <vlGraphics/Geometry.hpp>
 #include <vlCore/KeyValues.hpp>
-#include <vlCore/Actor.hpp>
-#include <vlCore/ActorTree.hpp>
-#include <vlCore/Text.hpp>
+#include <vlGraphics/Actor.hpp>
+#include <vlGraphics/ActorTree.hpp>
+#include <vlGraphics/Text.hpp>
 #include <vlCore/String.hpp>
 
 namespace vl

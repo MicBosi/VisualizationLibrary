@@ -30,9 +30,9 @@
 /**************************************************************************************/
 
 #include <vlVolume/VolumePlot.hpp>
-#include <vlCore/Light.hpp>
-#include <vlCore/SceneManager.hpp>
-#include <vlCore/FontManager.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/SceneManager.hpp>
+#include <vlGraphics/FontManager.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlut/GeometryPrimitives.hpp>
 
