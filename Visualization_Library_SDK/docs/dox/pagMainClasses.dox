@@ -50,7 +50,7 @@
 	- vl::Image::convertFormat()
 	- vl::Image::sample()
 	- vl::Image::sampleLinear()
-	- vl::Image::makeColorSpectrum()
+	- vl::makeColorSpectrum()
 	- vl::Image::subImage()
 	
 	\par Input / Output

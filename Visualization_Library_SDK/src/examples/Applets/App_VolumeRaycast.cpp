@@ -470,9 +470,9 @@ public:
 
       ref<Image> trfunc;
       if (COLORED_LIGHTS)
-        trfunc = Image::makeColorSpectrum(128, vl::white, vl::white); // let the lights color the volume
+        trfunc = vl::makeColorSpectrum(128, vl::white, vl::white); // let the lights color the volume
       else
-        trfunc = Image::makeColorSpectrum(128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson);
+        trfunc = vl::makeColorSpectrum(128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson);
       // installs GLSLProgram
       vol_fx->shader()->setRenderState(mGLSL.get());
       // install volume image
