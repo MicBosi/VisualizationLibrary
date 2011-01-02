@@ -1,0 +1,18 @@
+/**
+	\page pagContributing Contributing to Visualization Library
+
+	There are several ways to become a contributor of Visualization Library:
+
+	-# Developing new features or extending existing ones and contributing the source code back to Visualization Library.
+	-# Testing Visualization Library's features, releases, build system etc.
+	-# Writing documentation, articles, tutorials etc. about Visualization Library to be published as part of VL's own documentation or on third party websites.
+	-# Inserting a link pointing to http://www.visualizationlibrary.com from your website or from your product pages.
+	-# Sending pictures of your applications using Visualization Library.
+	-# Donating content to be distributed with Visualization Library, such as glsl shaders, textures, models etc.
+	-# Replying to user questions on Visualization Library forums.
+	-# Becoming a Visualization Library evangelist!
+	
+	\par Why contributing?
+	
+	Remember, by helping the development of Visualization Library is the most effective way to make sure the features you are interested in get further developed, supported and tested, because they are used and reviewed by potentially several other VL users!
+*/

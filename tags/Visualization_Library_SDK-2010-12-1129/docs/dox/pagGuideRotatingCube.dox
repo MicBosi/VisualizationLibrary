@@ -1,0 +1,66 @@
+/**
+	\page pagGuideRotatingCube Spinning Cube Tutorial
+	\image html pagGuideRotatingCube.jpg
+	
+	\par Implementing the First Rotating Cube
+	
+	Complete source: \p src/examples/Applets/App_RotatingCube.hpp
+	
+	Visualization Library comes with several utility components to quickly develop applictions under several GUI frameworks. 
+	The vlut::Applet class is an utility class that implements an event-driven application with a default rendering pipeline.
+	Below is a practical examples of how to implement a vlut::Applet that renders a spinning cube and how to use it (unchanged!)
+	with \p Win32, \p MFC, \p Qt4, \p SDL and \p GLUT!
+	For more information see vlut::Applet.
+	
+	\dontinclude App_RotatingCube.hpp
+	\skip include
+	\until // Have fun!
+	
+	\par Using the Qt4 Utility Bindings
+	
+	Complete source: \p src/examples/Qt4_example.cpp
+	
+	\dontinclude Qt4_example.cpp
+	\skip include
+	\until // Have fun!
+	
+	\par Using the wxWidgets Utility Bindings
+	
+	Complete source: \p src/examples/WX_example.cpp
+	
+	\dontinclude WX_example.cpp
+	\skip include
+	\until // Have fun!
+	
+	\par Using the Win32 Utility Bindings
+	
+	Complete source: \p src/examples/Win32_example.cpp
+	
+	\dontinclude Win32_example.cpp
+	\skip include
+	\until // Have fun!
+
+	\par Using the MFC Utility Bindings
+	
+	Complete source: \p src/examples/MFC_example/MFC_example.cpp
+	
+	\dontinclude MFC_example.cpp
+	\skip include
+	\until // Have fun!
+
+	\par Using the SDL GUI Utility Bindings
+	
+	Complete source: \p src/examples/SDL_example.cpp
+	
+	\dontinclude SDL_example.cpp
+	\skip include
+	\until // Have fun!
+
+	\par Using the GLUT GUI Utility Bindings
+	
+	Complete source: \p src/examples/GLUT_example.cpp
+	
+	\dontinclude GLUT_example.cpp
+	\skip include
+	\until // Have fun!
+*/
