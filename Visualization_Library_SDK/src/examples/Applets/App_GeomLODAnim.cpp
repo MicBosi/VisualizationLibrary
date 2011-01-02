@@ -32,9 +32,9 @@
 #include "BaseDemo.hpp"
 #include "vlut/Colors.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vlCore/DistanceLODEvaluator.hpp"
-#include "vlCore/PixelLODEvaluator.hpp"
-#include "vlCore/Light.hpp"
+#include "vlGraphics/DistanceLODEvaluator.hpp"
+#include "vlGraphics/PixelLODEvaluator.hpp"
+#include "vlGraphics/Light.hpp"
 
 /*
 Implements an animated wave geometry.

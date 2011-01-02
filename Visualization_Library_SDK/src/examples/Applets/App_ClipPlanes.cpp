@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlCore/VisualizationLibrary.hpp"
-#include "vlCore/Light.hpp"
-#include "vlCore/ClipPlane.hpp"
-#include "vlCore/Geometry.hpp"
+#include "vlGraphics/Light.hpp"
+#include "vlGraphics/ClipPlane.hpp"
+#include "vlGraphics/Geometry.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 
 class App_ClipPlanes: public BaseDemo

@@ -31,12 +31,12 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vlCore/RenderingTree.hpp"
-#include "vlCore/CopyTexSubImage.hpp"
-#include "vlCore/BlitFramebuffer.hpp"
-#include "vlCore/SceneManager.hpp"
-#include "vlCore/GLSL.hpp"
-#include "vlCore/Light.hpp"
+#include "vlGraphics/RenderingTree.hpp"
+#include "vlGraphics/CopyTexSubImage.hpp"
+#include "vlGraphics/BlitFramebuffer.hpp"
+#include "vlGraphics/SceneManager.hpp"
+#include "vlGraphics/GLSL.hpp"
+#include "vlGraphics/Light.hpp"
 
 class App_Framebuffer_Object: public BaseDemo
 {

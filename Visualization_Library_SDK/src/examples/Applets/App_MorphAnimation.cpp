@@ -32,10 +32,10 @@
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 #include "vlCore/LoadWriterManager.hpp"
-#include "vlCore/Light.hpp"
-#include "vlCore/MorphingCallback.hpp"
-#include "vlCore/vlMD2.hpp"
-#include "vlCore/GLSL.hpp"
+#include "vlGraphics/Light.hpp"
+#include "vlGraphics/MorphingCallback.hpp"
+#include "vlGraphics/vlMD2.hpp"
+#include "vlGraphics/GLSL.hpp"
 
 class App_MorphAnimation: public BaseDemo
 {

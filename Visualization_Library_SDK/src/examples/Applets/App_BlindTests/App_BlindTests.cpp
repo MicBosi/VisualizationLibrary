@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "../BaseDemo.hpp"
-#include "vlCore/Text.hpp"
+#include "vlGraphics/Text.hpp"
 #include "vlCore/Time.hpp"
-#include "vlCore/FontManager.hpp"
+#include "vlGraphics/FontManager.hpp"
 #include "vlCore/TextStream.hpp"
-#include "vlCore/Geometry.hpp"
+#include "vlGraphics/Geometry.hpp"
 #include <time.h>
 
 namespace blind_tests

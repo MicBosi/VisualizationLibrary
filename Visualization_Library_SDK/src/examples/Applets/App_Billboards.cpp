@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vlCore/Geometry.hpp"
-#include "vlCore/Billboard.hpp"
-#include "vlCore/Light.hpp"
+#include "vlGraphics/Geometry.hpp"
+#include "vlGraphics/Billboard.hpp"
+#include "vlGraphics/Light.hpp"
 #include <ctime>
 
 class App_Billboards: public BaseDemo
