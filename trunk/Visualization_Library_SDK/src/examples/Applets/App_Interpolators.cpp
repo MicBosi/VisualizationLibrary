@@ -32,13 +32,13 @@
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 #include "vlCore/VisualizationLibrary.hpp"
-#include "vlCore/Effect.hpp"
-#include "vlCore/Light.hpp"
-#include "vlCore/Text.hpp"
-#include "vlCore/FontManager.hpp"
+#include "vlGraphics/Effect.hpp"
+#include "vlGraphics/Light.hpp"
+#include "vlGraphics/Text.hpp"
+#include "vlGraphics/FontManager.hpp"
 #include "vlCore/CatmullRomInterpolator.hpp"
 #include "vlCore/LinearInterpolator.hpp"
-#include "vlCore/Extrusion.hpp"
+#include "vlGraphics/Extrusion.hpp"
 
 class App_Interpolators: public BaseDemo
 {

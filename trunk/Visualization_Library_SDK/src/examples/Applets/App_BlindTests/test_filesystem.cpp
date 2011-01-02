@@ -31,16 +31,16 @@
 
 #include "vlCore/VisualizationLibrary.hpp"
 #include "vlCore/LoadWriterManager.hpp"
-#include "vlCore/Effect.hpp"
+#include "vlGraphics/Effect.hpp"
 #include "vlCore/ZippedDirectory.hpp"
 #include "vlCore/Array.hpp"
 #include <vlCore/DiskFile.hpp>
 #include <vlCore/GZipCodec.hpp>
 #include <vlCore/FileSystem.hpp>
-#include "vlCore/Text.hpp"
-#include "vlCore/FontManager.hpp"
+#include "vlGraphics/Text.hpp"
+#include "vlGraphics/FontManager.hpp"
 #include "vlCore/TextStream.hpp"
-#include "vlCore/Geometry.hpp"
+#include "vlGraphics/Geometry.hpp"
 #include <time.h>
 
 using namespace vl;

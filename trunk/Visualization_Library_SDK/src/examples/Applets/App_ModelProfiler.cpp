@@ -30,22 +30,22 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/Light.hpp"
-#include "vlCore/Text.hpp"
-#include "vlCore/FontManager.hpp"
+#include "vlGraphics/Light.hpp"
+#include "vlGraphics/Text.hpp"
+#include "vlGraphics/FontManager.hpp"
 #include "vlCore/VisualizationLibrary.hpp"
 #include "vlCore/FileSystem.hpp"
 #include "vlCore/DiskDirectory.hpp"
 #include "vlCore/ResourceDatabase.hpp"
 #include "vlCore/LoadWriterManager.hpp"
-#include "vlCore/vl3DS.hpp"
-#include "vlCore/vlPLY.hpp"
-#include "vlCore/vlOBJ.hpp"
-#include "vlCore/vlAC3D.hpp"
-#include "vlCore/TriangleStripGenerator.hpp"
-#include "vlCore/DoubleVertexRemover.hpp"
-#include "vlCore/FontManager.hpp"
-#include "vlCore/GeometryLoadCallback.hpp"
+#include "vlGraphics/vl3DS.hpp"
+#include "vlGraphics/vlPLY.hpp"
+#include "vlGraphics/vlOBJ.hpp"
+#include "vlGraphics/vlAC3D.hpp"
+#include "vlGraphics/TriangleStripGenerator.hpp"
+#include "vlGraphics/DoubleVertexRemover.hpp"
+#include "vlGraphics/FontManager.hpp"
+#include "vlGraphics/GeometryLoadCallback.hpp"
 
 class App_ModelProfiler: public BaseDemo
 {

@@ -60,10 +60,9 @@ if(APPLE)
   include_directories("/Developer/Headers/FlatCarbon")
 endif()
 
-# mic fixme:
 set(VLCORE_NAME "VLCore")
 set(VLGRAPHICS_NAME "VLGraphics")
-set(VLGEOMETRY_NAME "VLGeometry")
+#set(VLGEOMETRY_NAME "VLGeometry")
 
 set(VLMOLECULE_NAME "VLMolecule")
 set(VLVOLUME_NAME "VLVolume")
@@ -200,6 +199,9 @@ endif()
 
 #VLCore
 add_subdirectory("src/vlCore")
+
+#VLGraphics
+add_subdirectory("src/vlGraphics")
 
 #VLUT
 option(VL_MODULE_VLUT "Enable VL Utility Library" ON)

@@ -31,9 +31,9 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include "vlCore/Text.hpp"
-#include "vlCore/GLSL.hpp"
-#include "vlCore/FontManager.hpp"
+#include "vlGraphics/Text.hpp"
+#include "vlGraphics/GLSL.hpp"
+#include "vlGraphics/FontManager.hpp"
 
 using namespace vl;
 

@@ -36,14 +36,14 @@
 
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
-#include <vlCore/MultiDrawElements.hpp>
-#include "vlCore/DrawRangeElements.hpp"
-#include "vlCore/SceneManagerActorTree.hpp"
-#include "vlCore/Actor.hpp"
-#include "vlCore/Effect.hpp"
+#include <vlGraphics/MultiDrawElements.hpp>
+#include "vlGraphics/DrawRangeElements.hpp"
+#include "vlGraphics/SceneManagerActorTree.hpp"
+#include "vlGraphics/Actor.hpp"
+#include "vlGraphics/Effect.hpp"
 #include "vlCore/Time.hpp"
-#include "vlCore/Light.hpp"
-#include "vlCore/RenderingTree.hpp"
+#include "vlGraphics/Light.hpp"
+#include "vlGraphics/RenderingTree.hpp"
 
 class App_DrawCalls: public BaseDemo
 {

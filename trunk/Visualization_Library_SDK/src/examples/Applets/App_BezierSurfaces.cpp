@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/Light.hpp"
-#include "vlCore/BezierSurface.hpp"
+#include "vlGraphics/Light.hpp"
+#include "vlGraphics/BezierSurface.hpp"
 
 class App_BezierSurfaces: public BaseDemo
 {
