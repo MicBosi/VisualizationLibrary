@@ -81,6 +81,7 @@ namespace vl
     {
       gpuBuffer()->resize( other.gpuBuffer()->bytesUsed() );
       memcpy( ptr(), other.ptr(), bytesUsed() );
+      setVBODirty(true);
     }
 
     virtual ref<ArrayAbstract> clone() const = 0;
