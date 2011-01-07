@@ -58,7 +58,7 @@ public:
 
     // points rendering
 
-    vl::ref<vl::Image> circle16 = new vl::Image("/images/circle16.png");
+    vl::ref<vl::ImagePBO> circle16 = new vl::ImagePBO("/images/circle16.png");
 
     mPoints = new vl::DrawPixels;
     for(int i=0; i<1000; ++i)
@@ -78,7 +78,7 @@ public:
 
     // split star rendering
 
-    vl::ref<vl::Image> star_img = new vl::Image("/images/star.png");
+    vl::ref<vl::ImagePBO> star_img = new vl::ImagePBO("/images/star.png");
 
     int w = star_img->width() / 2;
     mStar1 = new vl::DrawPixels::Pixels( star_img.get(), 0, 0, 0, 0, w, w );

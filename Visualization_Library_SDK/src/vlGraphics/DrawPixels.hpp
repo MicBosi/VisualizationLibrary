@@ -33,8 +33,8 @@
 #define DrawPixels_INCLUDE_ONCE
 
 #include <vlGraphics/Renderable.hpp>
+#include <vlGraphics/ImagePBO.hpp>
 #include <vlCore/Collection.hpp>
-#include <vlCore/Image.hpp>
 
 namespace vl
 {
@@ -79,7 +79,7 @@ namespace vl
        * If a Transform is attached to the Actor using DrawPixels scrx, scry follow the transform on the screen.
        * The parameters 'startx', 'starty', 'width' and 'height' define the sub-portion of the Image to be rendered.
        * The parameters 'width' and 'height' can be -1, in this case they will be automatically set so that the Image is shown until the top-right edge. */
-      Pixels(Image* img, int scrx, int scry, int startx=0, int starty=0, int width=-1, int height=-1, int alignment = AlignBottom | AlignLeft);
+      Pixels(ImagePBO* img, int scrx, int scry, int startx=0, int starty=0, int width=-1, int height=-1, int alignment = AlignBottom | AlignLeft);
 
       Pixels(const Pixels& other);
 
@@ -99,9 +99,9 @@ namespace vl
 
       void setSize( const ivec2& size) { mSize = size; }
 
-      Image* image() { return mImage.get(); }
+      ImagePBO* image() { return mImage.get(); }
 
-      const Image* image() const { return mImage.get(); }
+      const ImagePBO* image() const { return mImage.get(); }
 
       int align() const { return mAlign; }
 
@@ -119,7 +119,7 @@ namespace vl
       bool hasPixelBufferObject() const;
 
     protected:
-      ref<Image> mImage;
+      ref<ImagePBO> mImage;
       ivec2 mPosition;
       ivec2 mStart;
       ivec2 mSize;

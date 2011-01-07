@@ -49,7 +49,7 @@ DrawPixels::Pixels::Pixels()
   mAlign = AlignBottom | AlignLeft;
 }
 //-----------------------------------------------------------------------------
-DrawPixels::Pixels::Pixels(Image* img, int scrx, int scry, int startx, int starty, int width, int height, int alignment)
+DrawPixels::Pixels::Pixels(ImagePBO* img, int scrx, int scry, int startx, int starty, int width, int height, int alignment)
 {
   #ifndef NDEBUG
     mObjectName = className();
@@ -94,11 +94,7 @@ DrawPixels::Pixels::~Pixels()
 //-----------------------------------------------------------------------------
 void DrawPixels::Pixels::deletePixelBufferObject()
 {
-  GLBufferObject* glbuf = dynamic_cast<GLBufferObject*>(image()->imageBuffer());
-  if (glbuf)
-  {
-    glbuf->deleteGLBufferObject();
-  }
+  image()->pixelBufferObject()->deleteGLBufferObject();
 }
 //-----------------------------------------------------------------------------
 bool DrawPixels::Pixels::generatePixelBufferObject(EGLBufferUsage usage, bool discard_local_storage)
@@ -106,23 +102,15 @@ bool DrawPixels::Pixels::generatePixelBufferObject(EGLBufferUsage usage, bool di
   VL_CHECK(image())
   if (!image())
     return false;
-  GLBufferObject* glbuf = dynamic_cast<GLBufferObject*>(image()->imageBuffer());
-  if (glbuf)
-  {
-    glbuf->setBufferData(usage, discard_local_storage);
-    return true;
-  }
-  else
-  {
-    vl::Log::error("DrawPixels::Pixels::generatePixelBufferObject(): the Image does not have a GLBufferObject installed! Use Image::setImageBuffer( new GLBufferObject ).\n");
-    return false;
-  }
+  image()->pixelBufferObject()->setBufferData( image()->imageBuffer()->bytesUsed(), image()->imageBuffer()->ptr(), usage );
+  if (discard_local_storage)
+    image()->imageBuffer()->clear();
+  return true;
 }
 //-----------------------------------------------------------------------------
 bool DrawPixels::Pixels::hasPixelBufferObject() const
 {
-  const GLBufferObject* glbuf = dynamic_cast<const GLBufferObject*>(image()->imageBuffer());
-  return glbuf && glbuf->handle() != 0;
+  return image()->pixelBufferObject()->handle() != 0;
 }
 //-----------------------------------------------------------------------------
 // DrawPixels
@@ -158,7 +146,7 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
     if (cmd->image() == 0)
       continue;
 
-    const GLBufferObject* glbuf = dynamic_cast<const GLBufferObject*>(cmd->image());
+    const GLBufferObject* glbuf = cmd->image()->pixelBufferObject();
 
     VL_CHECK( cmd->image() )
     VL_CHECK( glbuf )
@@ -279,11 +267,7 @@ void DrawPixels::deletePixelBufferObjects()
   VL_CHECK_OGL()
   for(int i=0; i<(int)mDraws.size(); ++i)
   {
-    GLBufferObject* glbuf = dynamic_cast<GLBufferObject*>(mDraws[i]->image()->imageBuffer());
-    if (glbuf)
-    {
-      glbuf->deleteGLBufferObject();
-    }
+    mDraws[i]->image()->pixelBufferObject()->deleteGLBufferObject();
   }
   VL_CHECK_OGL()
 }
