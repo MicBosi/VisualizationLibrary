@@ -254,5 +254,5 @@ install(TARGETS ${VLGRAPHICS_NAME}
 )
 
 install(FILES ${VLGRAPHICS_INC}
-  DESTINATION include/vl
+  DESTINATION include/vlGraphics
 )
