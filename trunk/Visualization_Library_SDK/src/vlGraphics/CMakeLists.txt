@@ -117,6 +117,7 @@ set(VLGRAPHICS_INC
   Geometry.hpp
   GeometryLoadCallback.hpp
   GhostCameraManipulator.hpp
+  ImagePBO.hpp
   IndexIterator.hpp
   IVertexAttribSet.hpp
   ActorKdTree.hpp
