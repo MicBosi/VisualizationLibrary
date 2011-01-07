@@ -139,5 +139,5 @@ install(TARGETS ${VLCORE_NAME}
 )
 
 install(FILES ${VLCORE_INC}
-  DESTINATION include/vl
+  DESTINATION include/vlCore
 )
