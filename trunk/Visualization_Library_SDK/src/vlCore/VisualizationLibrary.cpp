@@ -48,6 +48,7 @@
 #include <vlCore/Quaternion.hpp>
 #include <vlCore/Object.hpp>
 #include <vlCore/KeyValues.hpp>
+#include <vlCore/version.hpp>
 #include <cassert>
 
 #if defined(IO_MODULE_JPG)
