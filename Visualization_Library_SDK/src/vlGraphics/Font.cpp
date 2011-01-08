@@ -31,11 +31,13 @@
 
 #include <vlGraphics/Font.hpp>
 #include <vlGraphics/OpenGL.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
+#include <vlGraphics/FontManager.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/Image.hpp>
+
+#include <vlCore/VisualizationLibrary.hpp> // mic fixme
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -76,22 +78,24 @@ Glyph::~Glyph()
   }
 }
 //-----------------------------------------------------------------------------
-Font::Font()
+Font::Font(FontManager* fm)
 {
   #ifndef NDEBUG
     mObjectName = className();
   #endif
+  mFontManager = fm;
   mHeight  = 0;
   mFT_Face = NULL;
   mSmooth  = false;
   setSize(14);
 }
 //-----------------------------------------------------------------------------
-Font::Font(const String& font_file, int size)
+Font::Font(FontManager* fm, const String& font_file, int size)
 {
   #ifndef NDEBUG
     mObjectName = className();
   #endif
+  mFontManager = fm;
   mHeight  = 0;
   mFT_Face = NULL;
   mSmooth  = false;
@@ -108,9 +112,9 @@ void Font::releaseFreeTypeData()
 {
   if (mFT_Face)
   {
-    if (!VisualizationLibrary::freeTypeLibrary())
+    if (!mFontManager->freeTypeLibrary())
     {
-      vl::Log::error("Font::releaseFreeTypeData(): cannot release FreeType data, Visualization Library has not been initialized!\n");
+      vl::Log::error("Font::releaseFreeTypeData(): mFontManager->freeTypeLibrary() is NULL!\n");
       VL_TRAP()
     }
     else
@@ -158,7 +162,7 @@ void Font::loadFont(const String& path)
   {
     if ( (int)mMemoryFile.size() == font_file->size() )
     {
-      error = FT_New_Memory_Face( (FT_Library)VisualizationLibrary::freeTypeLibrary(),
+      error = FT_New_Memory_Face( (FT_Library)mFontManager->freeTypeLibrary(),
                                   &mMemoryFile[0],
                                   (int)mMemoryFile.size(),
                                   0,
@@ -170,7 +174,7 @@ void Font::loadFont(const String& path)
 
   if (error)
   {
-    Log::error(Say("FT_New_Face error (%s): %s\n") << font_file << get_ft_error_message(error) );
+    Log::error(Say("FT_New_Face error (%s): %s\n") << filePath() << get_ft_error_message(error) );
     VL_TRAP()
     return;
   }

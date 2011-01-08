@@ -44,6 +44,7 @@ typedef struct FT_FaceRec_*  FT_Face;
 namespace vl
 {
   class Font;
+  class FontManager;
   //-----------------------------------------------------------------------------
   // Glyph
   //-----------------------------------------------------------------------------
@@ -128,21 +129,26 @@ namespace vl
   {
     friend class Text;
     friend class FontManager;
-    void operator=(const Font&) {}
+    
+    //! Assignment operator
+    void operator=(const Font&) { VL_TRAP() } // should never get used
+    
     //! Copy constructor.
-    Font(const Font& other): Object(other)
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
+    Font(const Font& other): Object(other) { VL_TRAP() } // should never get used
+    
     //! Constructor.
-    Font();
+    Font(FontManager* fm);
+    
     //! Constructor. The specified 'font_file' is immediately loaded.
-    Font(const String& font_file, int size );
+    Font(FontManager* fm, const String& font_file, int size );
+
   public:
-    ~Font();
     virtual const char* className() { return "Font"; }
+
+    //! Destructor
+    ~Font();
+
+    // mic fixme: ???
     bool operator<(const Font& other) const
     {
       if (filePath() != other.filePath())
@@ -161,7 +167,17 @@ namespace vl
     bool smooth() const { return mSmooth; }
     void releaseFreeTypeData();
 
+    //! The FontManager associated to this Font used to acquire/release FreeType resources.
+    void setFontManager(FontManager* fm) { mFontManager = fm; }
+    
+    //! The FontManager associated to this Font used to acquire/release FreeType resources.
+    const FontManager* fontManager() const { return mFontManager; }
+
+    //! The FontManager associated to this Font used to acquire/release FreeType resources.
+    FontManager* fontManager() { return mFontManager; }
+
   protected:
+    FontManager* mFontManager;
     String mFilePath;
     std::map< int, ref<Glyph> > mGlyphMap;
     FT_Face mFT_Face;

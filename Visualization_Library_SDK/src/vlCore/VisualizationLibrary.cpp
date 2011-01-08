@@ -29,29 +29,26 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VisualizationLibrary.hpp>
+#include <vlGraphics/GeometryLoadCallback.hpp>
 #include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/Rendering.hpp> 
+#include <vlGraphics/RenderQueue.hpp>
+#include <vlGraphics/SceneManager.hpp>
+
+#include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Time.hpp>
 #include <vlCore/Log.hpp>
-#include <vlGraphics/Rendering.hpp> 
-#include <vlGraphics/RenderQueue.hpp>
-#include <vlGraphics/SceneManager.hpp>
 #include <vlCore/FileSystem.hpp>
-#include <vlGraphics/FontManager.hpp>
 #include <vlCore/DiskDirectory.hpp>
 #include <vlCore/ZippedDirectory.hpp>
 #include <vlCore/MemoryDirectory.hpp>
 #include <vlCore/LoadWriterManager.hpp>
-#include <vlGraphics/GeometryLoadCallback.hpp>
 #include <vlCore/Quaternion.hpp>
 #include <vlCore/Object.hpp>
 #include <vlCore/KeyValues.hpp>
 #include <cassert>
-
-#include "ft2build.h"
-#include FT_FREETYPE_H
 
 #if defined(IO_MODULE_JPG)
   #include <vlGraphics/vlJPG.hpp>
@@ -114,22 +111,21 @@ VL_COMPILE_TIME_CHECK( sizeof(int)       == 4 )
 VL_COMPILE_TIME_CHECK( sizeof(short)     == 2 )
 VL_COMPILE_TIME_CHECK( sizeof(char)      == 1 )
 VL_COMPILE_TIME_CHECK( sizeof(wchar_t) >= 2 )
-VL_COMPILE_TIME_CHECK( sizeof(vec2)    == sizeof(Real)*2 )
-VL_COMPILE_TIME_CHECK( sizeof(vec3)    == sizeof(Real)*3 )
-VL_COMPILE_TIME_CHECK( sizeof(vec4)    == sizeof(Real)*4 )
-VL_COMPILE_TIME_CHECK( sizeof(mat2)    == sizeof(Real)*2*2 )
-VL_COMPILE_TIME_CHECK( sizeof(mat3)    == sizeof(Real)*3*3 )
-VL_COMPILE_TIME_CHECK( sizeof(mat4)    == sizeof(Real)*4*4 )
-VL_COMPILE_TIME_CHECK( sizeof(quat)    == sizeof(Real)*4 )
-VL_COMPILE_TIME_CHECK( sizeof(AABB)    == sizeof(Real)*6 )
-VL_COMPILE_TIME_CHECK( sizeof(Sphere)  == sizeof(Real)*4 )
+VL_COMPILE_TIME_CHECK( sizeof(vec2)      == sizeof(Real)*2 )
+VL_COMPILE_TIME_CHECK( sizeof(vec3)      == sizeof(Real)*3 )
+VL_COMPILE_TIME_CHECK( sizeof(vec4)      == sizeof(Real)*4 )
+VL_COMPILE_TIME_CHECK( sizeof(mat2)      == sizeof(Real)*2*2 )
+VL_COMPILE_TIME_CHECK( sizeof(mat3)      == sizeof(Real)*3*3 )
+VL_COMPILE_TIME_CHECK( sizeof(mat4)      == sizeof(Real)*4*4 )
+VL_COMPILE_TIME_CHECK( sizeof(quat)      == sizeof(Real)*4 )
+VL_COMPILE_TIME_CHECK( sizeof(AABB)      == sizeof(Real)*6 )
+VL_COMPILE_TIME_CHECK( sizeof(Sphere)    == sizeof(Real)*4 )
 //------------------------------------------------------------------------------
 class VisualizationLibraryInstance: public Object
 {
   static ref<VisualizationLibraryInstance> mSingleton;
   VisualizationLibraryInstance()
   {
-    mFreeTypeLibrary   = NULL;
     mVersionString     = String( Say("%n.%n.%n") << VL_Major << VL_Minor << VL_Build ).toStdString();
     mRenderingAbstract = new Rendering;
     mFontManager       = new FontManager;
@@ -150,7 +146,6 @@ public:
   }
   static void setSingleton(VisualizationLibraryInstance* data) { mSingleton = data; }
 
-  FT_Library       mFreeTypeLibrary;
   ref<RenderingAbstract> mRenderingAbstract;
   ref<LoadWriterManager> mLoadWriterManager;
   ref<FontManager> mFontManager;
@@ -169,8 +164,6 @@ bool VisualizationLibrary::initialized()             { return VisualizationLibra
 //------------------------------------------------------------------------------
 RenderingAbstract* VisualizationLibrary::rendering() { return VisualizationLibraryInstance::singleton()->mRenderingAbstract.get(); }
 void VisualizationLibrary::setRendering(RenderingAbstract* rendering) { VisualizationLibraryInstance::singleton()->mRenderingAbstract = rendering; }
-//------------------------------------------------------------------------------
-void* VisualizationLibrary::freeTypeLibrary()        { return VisualizationLibraryInstance::singleton()->mFreeTypeLibrary; }
 //------------------------------------------------------------------------------
 StandardLog* VisualizationLibrary::logger()          { return VisualizationLibraryInstance::singleton()->mStandardLogger.get(); }
 //------------------------------------------------------------------------------
@@ -272,13 +265,6 @@ void VisualizationLibrary::init()
     Log::print("\n");
   }
 
-  FT_Error error = FT_Init_FreeType( &VisualizationLibraryInstance::singleton()->mFreeTypeLibrary );
-  if ( error )
-  {
-    Log::error("An error occurred during FreeType library initialization!\n");
-    VL_TRAP()
-  }
-
   // adds default Visualization Library's data directory
   fileSystem()->directories()->push_back( new DiskDirectory( settings()->defaultDataPath() ) );
 
@@ -341,9 +327,6 @@ void VisualizationLibrary::shutdown()
   // release font resources
   fontManager()->releaseAllFonts();
   VisualizationLibraryInstance::singleton()->mFontManager = NULL;
-  VL_CHECK(VisualizationLibrary::freeTypeLibrary());
-  FT_Done_FreeType(VisualizationLibraryInstance::singleton()->mFreeTypeLibrary);
-  VisualizationLibraryInstance::singleton()->mFreeTypeLibrary = NULL;
   // release file system
   VisualizationLibraryInstance::singleton()->mFileSystem = NULL;
   // release load-writer manager
