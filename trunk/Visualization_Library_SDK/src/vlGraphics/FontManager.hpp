@@ -46,12 +46,40 @@ namespace vl
   {
   public:
     virtual const char* className() { return "FontManager"; }
+
+    //! Constructor: uses the given FT_Library handle otherwise will initialize and use its own FT_Library.
+    FontManager(void* free_type_library=NULL);
+
+    //! Destructor: releases all fonts and disposes the FT_Library if not NULL. 
+    //! If you don't want the FontManager to dispose the associated FT_Library then call setFreeTypeLibrary(NULL)
+    //! before the FontManager is destroyed.
+    ~FontManager();
+
+    //! Creates or returns an already created Font.
     Font* acquireFont(const String& font, int size, bool smooth=false);
+
+    //! Returns the list of Fonts created till now.
     const std::vector< ref<Font> >& fonts() const { return mFonts; }
+
+    //! Releases a given Font and its associated resources and memory.
     void releaseFont(Font* font);
+
+    //! Releases all Fonts and associated resources and memory.
     void releaseAllFonts();
+
+    //! Returns the FT_Library handle.
+    const void* freeTypeLibrary() const { return mFreeTypeLibrary; }
+
+    //! Returns the FT_Library handle.
+    void* freeTypeLibrary() { return mFreeTypeLibrary; }
+
+    //! Sets the FT_Library to the given one and returns the former one. 
+    //! It is the user responsibility to dispose the returned one (if non-NULL).
+    void* setFreeTypeLibrary(void* ftlib) { void* ret = mFreeTypeLibrary; mFreeTypeLibrary = ftlib; return ret; }
+
   protected:
     std::vector< ref<Font> > mFonts;
+    void* mFreeTypeLibrary;
   };
 }
 

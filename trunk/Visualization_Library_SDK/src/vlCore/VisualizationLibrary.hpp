@@ -146,9 +146,6 @@ namespace vl
     //! Returns the global settings of VL.
     static Settings* settings();
 
-    //! For internal use only
-    static void* freeTypeLibrary();
-
   protected:
     //! Initializes the environment variables
     static void initEnvVars();
