@@ -39,7 +39,6 @@
 
 #include <vlCore/OpenGLDefs.hpp>
 #include <vlCore/config.hpp>
-#include <vlCore/version.hpp>
 
 namespace vl
 {

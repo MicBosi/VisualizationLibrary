@@ -100,6 +100,7 @@ set(VLCORE_INC
   ResourceDatabase.hpp
   ResourceLoadWriter.hpp
   Say.hpp
+  Settings.hpp
   SignalSlot.hpp
   SignalSlotX.hpp
   Sphere.hpp
