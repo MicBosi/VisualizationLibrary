@@ -30,11 +30,40 @@
 /**************************************************************************************/
 
 #include <vlGraphics/FontManager.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/Log.hpp>
 #include <algorithm>
+
+#include "ft2build.h"
+#include FT_FREETYPE_H
 
 using namespace vl;
 
+//-----------------------------------------------------------------------------
+FontManager::FontManager(void* free_type_library)
+{
+  mFreeTypeLibrary = free_type_library;
+  if (!free_type_library)
+  {
+    FT_Library freetype = NULL;
+    FT_Error error = FT_Init_FreeType( &freetype );
+    mFreeTypeLibrary = freetype;
+    if ( error )
+    {
+      Log::error("FontManager::FontManager(): an error occurred during FreeType library initialization!\n");
+      VL_TRAP()
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+FontManager::~FontManager()
+{
+  releaseAllFonts();
+  if (mFreeTypeLibrary)
+  {
+    FT_Done_FreeType( (FT_Library)mFreeTypeLibrary );
+    mFreeTypeLibrary = NULL;
+  }
+}
 //-----------------------------------------------------------------------------
 Font* FontManager::acquireFont(const String& path, int size, bool smooth)
 {
@@ -45,7 +74,7 @@ Font* FontManager::acquireFont(const String& path, int size, bool smooth)
 
   if (!font)
   {
-    font = new Font;
+    font = new Font(this);
     font->loadFont(path);
     font->setSize(size);
     font->setSmooth(smooth);
