@@ -73,7 +73,7 @@ void Transform::addChild(Transform* child)
   mChildren.push_back(child);
   child->mParent = this;
 
-  if (VisualizationLibrary::settings()->checkTransformSiblings())
+  if (globalSettings()->checkTransformSiblings())
     if (hasDuplicatedChildren())
       vl::Log::error("Transform::addChild(): detected duplicated children.\n");
 }
@@ -106,7 +106,7 @@ void Transform::addChildren(const ref<Transform>* children, size_t count)
       (*ptr) = children[i];
     }
 
-    if (VisualizationLibrary::settings()->checkTransformSiblings())
+    if (globalSettings()->checkTransformSiblings())
       if (hasDuplicatedChildren())
         vl::Log::error("Transform::addChildren(): detected duplicated children.\n");
   }
@@ -128,7 +128,7 @@ void Transform::addChildren(Transform* const * children, size_t count)
       (*ptr) = children[i];
     }
 
-    if (VisualizationLibrary::settings()->checkTransformSiblings())
+    if (globalSettings()->checkTransformSiblings())
       if (hasDuplicatedChildren())
         vl::Log::error("Transform::addChildren(): detected duplicated children.\n");
   }

@@ -76,7 +76,7 @@ public:
       billboard->setType(vl::BT_AxisAlignedBillboard);
       billboard->setAxis(vl::vec3(0,1.0f,0));
       // bind billboard to the transform tree
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(billboard.get());
+      vl::defRendering()->as<vl::Rendering>()->transform()->addChild(billboard.get());
       // generate a random position
       vl::Real x = vl::randomMinMax(-side/2.0f,+side/2.0f);
       vl::Real y = 0;
@@ -104,7 +104,7 @@ public:
       // set spherical billboard type: orient the object always towards the camera.
       billboard->setType(vl::BT_SphericalBillboard);
       // add billboard to the transform tree
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(billboard.get());
+      vl::defRendering()->as<vl::Rendering>()->transform()->addChild(billboard.get());
       // compute a random point on the skydome
       vl::Real x = vl::randomMinMax(-1.0f,+1.0f);
       vl::Real y = vl::randomMinMax(0,2.0f);
@@ -177,7 +177,7 @@ public:
     arm_g->computeNormals();
     vl::ref<vl::Transform> arm1_t = new vl::Transform;
     vl::ref<vl::Transform> arm2_t = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(arm1_t.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(arm1_t.get());
     arm1_t->addChild(arm2_t.get());
     arm2_t->setLocalMatrix(vl::mat4::getTranslation(0.0f,2.0f,0.0f) * vl::mat4::getRotation(90,0,0,1) * vl::mat4::getTranslation(0.0f,2.0f,0.0f));
 

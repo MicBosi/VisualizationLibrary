@@ -82,8 +82,8 @@ public:
     /* bind Transform */
     mTransform_Left  = new vl::Transform;
     mTransform_Right = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Left.get() );
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Right.get() );
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Left.get() );
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Right.get() );
 
     /* bind Effect */
     mEffect = new vl::Effect;
@@ -100,6 +100,12 @@ public:
     vl::ref<vl::Geometry> geom1, geom2;
     res_db = vl::loadResource(mFileName); if ( res_db && res_db->count<vl::Geometry>() ) geom1 = res_db->get<vl::Geometry>(0);
     res_db = vl::loadResource(mFileName); if ( res_db && res_db->count<vl::Geometry>() ) geom2 = res_db->get<vl::Geometry>(0);
+
+    if (!geom1->normalArray())
+      geom1->computeNormals();
+
+    if (!geom2->normalArray())
+      geom2->computeNormals();
 
     // -------------- simplification start -------------------
 

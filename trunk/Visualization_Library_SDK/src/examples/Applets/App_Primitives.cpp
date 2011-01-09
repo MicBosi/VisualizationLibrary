@@ -46,7 +46,7 @@ public:
     BaseDemo::initEvent();
 
     // retrieve the default rendering
-    mRendering = (vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
+    mRendering = (vl::defRendering()->as<vl::Rendering>());
     // retrieve the default renderer, which we'll use as the solid-renderer
     mSolidRenderer = mRendering->renderer();
 

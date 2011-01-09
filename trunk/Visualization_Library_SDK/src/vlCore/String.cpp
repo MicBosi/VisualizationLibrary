@@ -84,7 +84,7 @@ String::String(wchar_t ch, int count)
 //-----------------------------------------------------------------------------
 String String::loadText(const String& path, EStringEncoding default_encoding)
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
   if (file)
     return loadText( file.get(), default_encoding );
   else

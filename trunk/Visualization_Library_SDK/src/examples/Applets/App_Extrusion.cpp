@@ -349,7 +349,7 @@ public:
   {
     vl::ref<vl::Text> text = new vl::Text;
     text->setText("Press the left/right arrow keys to change test.");
-    text->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    text->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     text->setAlignment( vl::AlignHCenter | vl::AlignTop );
     text->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     text->translate(0,-5,0);

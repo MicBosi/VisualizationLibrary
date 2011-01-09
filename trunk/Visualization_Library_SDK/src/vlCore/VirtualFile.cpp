@@ -30,12 +30,15 @@
 /**************************************************************************************/
 
 #include <vlCore/VirtualFile.hpp>
+#include <vlCore/FileSystem.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/CRC32CheckSum.hpp>
 
 using namespace vl;
 
+//-----------------------------------------------------------------------------
+ref<VirtualFile> vl::locateFile(const String& path)  { return defFileSystem()->locateFile(path); } 
 //-----------------------------------------------------------------------------
 unsigned int VirtualFile::crc32()
 {

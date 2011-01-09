@@ -106,13 +106,13 @@ public:
     /* bind the applet so it receives all the GUI events related to the OpenGLContext */
     oglcontext->addEventListener(applet);
     /* target the window so we can render on it */
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( oglcontext->renderTarget() );
+    vl::defRendering()->as<vl::Rendering>()->renderer()->setRenderTarget( oglcontext->renderTarget() );
     /* black background */
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( bk_color );
+    vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( bk_color );
     /* define the camera position and orientation */
     vl::vec3 up = vl::vec3(0,1,0);
     vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up);
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( view_mat );
+    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( view_mat );
   }
 
   class TestEntry

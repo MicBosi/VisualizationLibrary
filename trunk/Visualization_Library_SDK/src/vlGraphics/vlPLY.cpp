@@ -44,7 +44,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadPLY(const String& path)
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
 
   if (file)
     return loadPLY( file.get() );

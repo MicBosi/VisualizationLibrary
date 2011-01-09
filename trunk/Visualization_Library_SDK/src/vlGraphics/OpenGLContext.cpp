@@ -236,7 +236,7 @@ void OpenGLContext::logOpenGLInfo()
 {
   makeCurrent();
 
-  if (VisualizationLibrary::settings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
+  if (globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
   {
     Log::print(" --- GLEW ---\n");
     Log::print( Say("GLEW version: %s\n\n")<<glewGetString(GLEW_VERSION) );
@@ -1297,7 +1297,7 @@ void OpenGLContext::resetContextStates()
   VL_CHECK_OGL();
 
   // perform extra OpenGL environment sanity check
-  if (VisualizationLibrary::settings()->checkOpenGLStates() && !isCleanState(true))
+  if (globalSettings()->checkOpenGLStates() && !isCleanState(true))
   {
     VL_TRAP();
     return;

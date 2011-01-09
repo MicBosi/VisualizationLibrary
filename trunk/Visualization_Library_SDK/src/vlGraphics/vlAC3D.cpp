@@ -439,7 +439,7 @@ void LoaderAC3D::readObject()
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadAC3D(const String& path)
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
   if ( !file )
   {
     Log::error( Say("Could not locate '%s'.\n") << path );
@@ -571,7 +571,7 @@ ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)
       ref<Texture> texture = new Texture;
       // locate texture
       String tex_path = loader.meshes[imesh].Texture;
-      ref<VirtualFile> tex_file = VisualizationLibrary::fileSystem()->locateFile(tex_path,file->path().extractPath());
+      ref<VirtualFile> tex_file = defFileSystem()->locateFile(tex_path,file->path().extractPath());
       if (tex_file)
         tex_path = tex_file->path();
       texture->prepareTexture2D(tex_path, TF_RGBA);

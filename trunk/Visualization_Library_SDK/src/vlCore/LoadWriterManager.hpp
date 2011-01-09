@@ -142,6 +142,33 @@ namespace vl
     Collection<LoadCallback> mLoadCallbacks;
     Collection<WriteCallback> mWriteCallbacks;
   };
+
+  //! Returs the default LoadWriterManager used by Visualization Library.
+  LoadWriterManager* defLoadWriterManager();
+
+  //! Sets the default LoadWriterManager used by Visualization Library.
+  void setDefLoadWriterManager(LoadWriterManager* lwm);
+
+  //! Short version of defLoadWriterManager()->canLoad(path).
+  inline bool vl::canLoad(const String& path)  { return defLoadWriterManager()->canLoad(path);  }
+
+  //! Short version of defLoadWriterManager()->canWrite(path).
+  inline bool vl::canWrite(const String& path) { return defLoadWriterManager()->canWrite(path); }
+
+  //! Short version of defLoadWriterManager()->canLoad(file).
+  inline bool vl::canLoad(VirtualFile* file)   { return defLoadWriterManager()->canLoad(file);  }
+
+  //! Short version of defLoadWriterManager()->canWrite(file).
+  inline bool vl::canWrite(VirtualFile* file)  { return defLoadWriterManager()->canWrite(file); }
+
+  //! Short version of defLoadWriterManager()->loadResource(path,quick).
+  inline ref<ResourceDatabase> vl::loadResource(const String& path, bool quick) { return defLoadWriterManager()->loadResource(path,quick); }
+
+  //! Short version of defLoadWriterManager()->loadResource(file,quick).
+  inline ref<ResourceDatabase> vl::loadResource(VirtualFile* file, bool quick)  { return defLoadWriterManager()->loadResource(file,quick); }
+
+  //! Short version of defLoadWriterManager()->registerLoadWriter(rlw).
+  inline void registerLoadWriter(ResourceLoadWriter* rlw) { defLoadWriterManager()->registerLoadWriter(rlw); }
 }
 
 #endif

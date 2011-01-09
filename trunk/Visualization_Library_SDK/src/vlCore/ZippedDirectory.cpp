@@ -40,7 +40,7 @@ ZippedDirectory::ZippedDirectory() {}
 //-----------------------------------------------------------------------------
 ZippedDirectory::ZippedDirectory(const String& zip_file)
 {
-  ref<VirtualFile> v_file = VisualizationLibrary::fileSystem()->locateFile(zip_file);
+  ref<VirtualFile> v_file = defFileSystem()->locateFile(zip_file);
   if (v_file)
     setSourceZipFile(v_file.get());
   else

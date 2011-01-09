@@ -246,7 +246,7 @@ namespace vl
     String mPath;
   };
 //-----------------------------------------------------------------------------
-  //! Utility function, equivalent to \p vl::VisualizationLibrary::fileSystem()->locateFile(path)
+  //! Utility function, equivalent to \p vl::defFileSystem()->locateFile(path)
   ref<VirtualFile> locateFile(const String& path);
 //-----------------------------------------------------------------------------
 }

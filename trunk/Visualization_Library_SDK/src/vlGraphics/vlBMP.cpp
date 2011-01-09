@@ -103,7 +103,7 @@ namespace
 //! - image flipping
 ref<Image> vl::loadBMP( const String& path )
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
   if ( !file )
   {
     Log::error( Say("File '%s' not found.\n") << path );

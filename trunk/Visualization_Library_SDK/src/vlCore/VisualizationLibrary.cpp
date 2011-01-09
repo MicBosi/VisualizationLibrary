@@ -29,25 +29,11 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics/GeometryLoadCallback.hpp>
-#include <vlGraphics/FontManager.hpp>
-#include <vlGraphics/Rendering.hpp> 
-#include <vlGraphics/RenderQueue.hpp>
-#include <vlGraphics/SceneManager.hpp>
-
 #include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
-#include <vlCore/Time.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/FileSystem.hpp>
-#include <vlCore/DiskDirectory.hpp>
-#include <vlCore/ZippedDirectory.hpp>
-#include <vlCore/MemoryDirectory.hpp>
-#include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/Quaternion.hpp>
-#include <vlCore/Object.hpp>
-#include <vlCore/KeyValues.hpp>
 #include <vlCore/version.hpp>
 #include <cassert>
 
@@ -94,14 +80,6 @@
   #include <vlGraphics/vlDICOM.hpp>
 #endif
 
-#if defined(_WIN32)
-  // console includes
-  #include <stdio.h>
-  #include <io.h>
-  #include <fcntl.h>
-  #include <commdlg.h>
-#endif
-
 using namespace vl;
 
 //------------------------------------------------------------------------------
@@ -122,85 +100,28 @@ VL_COMPILE_TIME_CHECK( sizeof(quat)      == sizeof(Real)*4 )
 VL_COMPILE_TIME_CHECK( sizeof(AABB)      == sizeof(Real)*6 )
 VL_COMPILE_TIME_CHECK( sizeof(Sphere)    == sizeof(Real)*4 )
 //------------------------------------------------------------------------------
-class VisualizationLibraryInstance: public Object
+namespace
 {
-  static ref<VisualizationLibraryInstance> mSingleton;
-  VisualizationLibraryInstance()
-  {
-    mVersionString     = String( Say("%n.%n.%n") << VL_Major << VL_Minor << VL_Build ).toStdString();
-    mRenderingAbstract = new Rendering;
-    mFontManager       = new FontManager;
-    mFileSystem        = new FileSystem;
-    mLoadWriterManager = new LoadWriterManager;
-    mStandardLogger    = new StandardLog;
-    mGlobalSettings    = new Settings;
-    mEnvVars           = new KeyValues;
-    mCertificate       = "[Visualization Library BSD License]";
-    mInitialized       = false;
-  }
-public:
-  static VisualizationLibraryInstance* singleton()
-  {
-    if(!mSingleton)
-      mSingleton = new VisualizationLibraryInstance;
-    return mSingleton.get();
-  }
-  static void setSingleton(VisualizationLibraryInstance* data) { mSingleton = data; }
-
-  ref<RenderingAbstract> mRenderingAbstract;
-  ref<LoadWriterManager> mLoadWriterManager;
-  ref<FontManager> mFontManager;
-  ref<FileSystem>  mFileSystem;
-  ref<StandardLog> mStandardLogger;
-  ref<Settings> mGlobalSettings;
-  ref<KeyValues>   mEnvVars;
-  std::string      mVersionString;
-  const char* mCertificate;
-  bool mInitialized;
+  std::string gVersionString = "Visualization Library not initialized!";
+  const char* gCertificate = "[Visualization Library BSD License]";
+  bool gInitialized = false;
 };
 //------------------------------------------------------------------------------
-ref<VisualizationLibraryInstance> VisualizationLibraryInstance::mSingleton;
+bool VisualizationLibrary::initialized() { return gInitialized; }
 //------------------------------------------------------------------------------
-bool VisualizationLibrary::initialized()             { return VisualizationLibraryInstance::singleton()->mInitialized; }
-//------------------------------------------------------------------------------
-RenderingAbstract* VisualizationLibrary::rendering() { return VisualizationLibraryInstance::singleton()->mRenderingAbstract.get(); }
-void VisualizationLibrary::setRendering(RenderingAbstract* rendering) { VisualizationLibraryInstance::singleton()->mRenderingAbstract = rendering; }
-//------------------------------------------------------------------------------
-StandardLog* VisualizationLibrary::logger()          { return VisualizationLibraryInstance::singleton()->mStandardLogger.get(); }
-//------------------------------------------------------------------------------
-Settings* VisualizationLibrary::settings() { return VisualizationLibraryInstance::singleton()->mGlobalSettings.get(); }
-//------------------------------------------------------------------------------
-const char* VisualizationLibrary::versionString()    { return VisualizationLibraryInstance::singleton()->mVersionString.c_str(); }
-//------------------------------------------------------------------------------
-FileSystem* VisualizationLibrary::fileSystem()       { return VisualizationLibraryInstance::singleton()->mFileSystem.get(); }
-//------------------------------------------------------------------------------
-FontManager* VisualizationLibrary::fontManager()     { return VisualizationLibraryInstance::singleton()->mFontManager.get(); }
-//------------------------------------------------------------------------------
-LoadWriterManager* VisualizationLibrary::loadWriterManager() { return VisualizationLibraryInstance::singleton()->mLoadWriterManager.get(); }
-//------------------------------------------------------------------------------
-KeyValues* VisualizationLibrary::envVars()           { return VisualizationLibraryInstance::singleton()->mEnvVars.get(); }
-//------------------------------------------------------------------------------
-ref<VirtualFile> vl::locateFile(const String& path)  { return VisualizationLibrary::fileSystem()->locateFile(path); } 
-//------------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadResource(const String& path, bool quick) { return VisualizationLibrary::loadWriterManager()->loadResource(path,quick); }
-//------------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadResource(VirtualFile* file, bool quick)  { return VisualizationLibrary::loadWriterManager()->loadResource(file,quick); }
-//------------------------------------------------------------------------------
-bool vl::canLoad(const String& path)  { return VisualizationLibrary::loadWriterManager()->canLoad(path);  }
-//------------------------------------------------------------------------------
-bool vl::canWrite(const String& path) { return VisualizationLibrary::loadWriterManager()->canWrite(path); }
-//------------------------------------------------------------------------------
-bool vl::canLoad(VirtualFile* file)   { return VisualizationLibrary::loadWriterManager()->canLoad(file);  }
-//------------------------------------------------------------------------------
-bool vl::canWrite(VirtualFile* file)  { return VisualizationLibrary::loadWriterManager()->canWrite(file); }
+const char* VisualizationLibrary::versionString() { return gVersionString.c_str(); }
 //------------------------------------------------------------------------------
 void VisualizationLibrary::init()
 {
-  initEnvVars();
-  logger()->setLogFile( settings()->defaultLogPath() );
-  Log::setLogger( logger() );
+  gVersionString = String( Say("%n.%n.%n") << VL_Major << VL_Minor << VL_Build ).toStdString();
 
-  if (settings()->verbosityLevel())
+  // install logger
+  ref<StandardLog> logger = new StandardLog;
+  logger->setLogFile( globalSettings()->defaultLogPath() );
+  Log::setLogger( logger.get() );
+
+  // log some information
+  if (globalSettings()->verbosityLevel())
   {
     #if defined(_MSC_VER)
       const char* compiler = "MSVC";
@@ -216,7 +137,6 @@ void VisualizationLibrary::init()
       const char* build_type = "RELEASE";
     #endif
 
-    Time time;
     Log::print( Say("Visualization Library v%n.%n.%n [%s]\n%s - %s - %s compiler [%s] [%s]\n") 
       << VL_Major << VL_Minor << VL_Build 
       << (sizeof(vec3) == sizeof(fvec3) ? "f32" : "f64")
@@ -249,10 +169,10 @@ void VisualizationLibrary::init()
       Log::print("VL_CHECK_GL_STATES <not present>\n");
 
     Log::print("\n --- Global Settings --- \n");
-    Log::print( Say("Log file  = %s\n") << settings()->defaultLogPath() );
-    Log::print( Say("Data path = %s\n") << settings()->defaultDataPath() );
+    Log::print( Say("Log file  = %s\n") << globalSettings()->defaultLogPath() );
+    Log::print( Say("Data path = %s\n") << globalSettings()->defaultDataPath() );
     Log::print("Verbosity level = ");
-    switch(settings()->verbosityLevel())
+    switch(globalSettings()->verbosityLevel())
     {
       /*case vl::VEL_VERBOSITY_SILENT: Log::print("SILENT\n"); break;*/
       case vl::VEL_VERBOSITY_ERROR:  Log::print("ERROR\n"); break;
@@ -260,154 +180,81 @@ void VisualizationLibrary::init()
       case vl::VEL_VERBOSITY_DEBUG:  Log::print("DEBUG\n"); break;
       default: break;
     }
-    Log::print( Say("Check OpenGL States = %s\n") << (settings()->checkOpenGLStates()?"YES":"NO") );
-    Log::print( Say("Check Transform Siblings = %s\n") << (settings()->checkTransformSiblings()?"YES":"NO") );
+    Log::print( Say("Check OpenGL States = %s\n") << (globalSettings()->checkOpenGLStates()?"YES":"NO") );
+    Log::print( Say("Check Transform Siblings = %s\n") << (globalSettings()->checkTransformSiblings()?"YES":"NO") );
 
     Log::print("\n");
   }
 
-  // adds default Visualization Library's data directory
-  fileSystem()->directories()->push_back( new DiskDirectory( settings()->defaultDataPath() ) );
-
   // register I/O plugins
   #if defined(IO_MODULE_JPG)
-    loadWriterManager()->registerLoadWriter(new LoadWriterJPG);
+    registerLoadWriter(new LoadWriterJPG);
   #endif
   #if defined(IO_MODULE_PNG)
-    loadWriterManager()->registerLoadWriter(new LoadWriterPNG);
+    registerLoadWriter(new LoadWriterPNG);
   #endif
   #if defined(IO_MODULE_TIFF)
-    loadWriterManager()->registerLoadWriter(new LoadWriterTIFF);
+    registerLoadWriter(new LoadWriterTIFF);
   #endif
   #if defined(IO_MODULE_TGA)
-    loadWriterManager()->registerLoadWriter(new LoadWriterTGA);
+    registerLoadWriter(new LoadWriterTGA);
   #endif
   #if defined(IO_MODULE_BMP)
-    loadWriterManager()->registerLoadWriter(new LoadWriterBMP);
+    registerLoadWriter(new LoadWriterBMP);
   #endif
   #if defined(IO_MODULE_DDS)
-    loadWriterManager()->registerLoadWriter(new LoadWriterDDS);
+    registerLoadWriter(new LoadWriterDDS);
   #endif
   #if defined(IO_MODULE_DAT)
-    loadWriterManager()->registerLoadWriter(new LoadWriterDAT);
+    registerLoadWriter(new LoadWriterDAT);
   #endif
   #if defined(IO_MODULE_OBJ)
-    loadWriterManager()->registerLoadWriter(new LoadWriterOBJ);
+    registerLoadWriter(new LoadWriterOBJ);
   #endif
   #if defined(IO_MODULE_3DS)
-    loadWriterManager()->registerLoadWriter(new LoadWriter3DS);
+    registerLoadWriter(new LoadWriter3DS);
   #endif
   #if defined(IO_MODULE_AC3D)
-    loadWriterManager()->registerLoadWriter(new LoadWriterAC3D);
+    registerLoadWriter(new LoadWriterAC3D);
   #endif
   #if defined(IO_MODULE_PLY)
-    loadWriterManager()->registerLoadWriter(new LoadWriterPLY);
+    registerLoadWriter(new LoadWriterPLY);
   #endif
   #if defined(IO_MODULE_STL)
-    loadWriterManager()->registerLoadWriter(new LoadWriterSTL);
+    registerLoadWriter(new LoadWriterSTL);
   #endif
   #if defined(IO_MODULE_MD2)
-    loadWriterManager()->registerLoadWriter(new LoadWriterMD2);
+    registerLoadWriter(new LoadWriterMD2);
   #endif
   #if defined(IO_MODULE_DICOM)
-    loadWriterManager()->registerLoadWriter(new LoadWriterDICOM);
+    registerLoadWriter(new LoadWriterDICOM);
   #endif
 
-  VisualizationLibrary::loadWriterManager()->loadCallbacks()->push_back( new vl::GeometryLoadCallback );
   // initialized = on
-  VisualizationLibraryInstance::singleton()->mInitialized = true;
+  gInitialized = true;
 }
 //------------------------------------------------------------------------------
 void VisualizationLibrary::shutdown()
 {
   // initialized = off
-  VisualizationLibraryInstance::singleton()->mInitialized = false;
+  gInitialized = false;
 
-  // release Rendering hierarchy
-  VisualizationLibraryInstance::singleton()->mRenderingAbstract = NULL;
-  // release font resources
-  fontManager()->releaseAllFonts();
-  VisualizationLibraryInstance::singleton()->mFontManager = NULL;
-  // release file system
-  VisualizationLibraryInstance::singleton()->mFileSystem = NULL;
-  // release load-writer manager
-  VisualizationLibraryInstance::singleton()->mLoadWriterManager = NULL;  
-  // others
-  VisualizationLibraryInstance::singleton()->mEnvVars = NULL;
-  // say goodbye even to the logger!
-  if (settings()->verbosityLevel())
+  if (globalSettings()->verbosityLevel())
   {
     Log::print("Visualization Library shutdown.\n");
   }
-  VisualizationLibraryInstance::singleton()->mStandardLogger = NULL;
-
-  // delete VisualizationLibraryInstance singleton
-  VisualizationLibraryInstance::setSingleton(NULL);
 
   Log::setLogger( NULL );
 }
 //------------------------------------------------------------------------------
-void VisualizationLibrary::initEnvVars()
-{
-  char* val = NULL;
+#if defined(_WIN32)
+  // console includes
+  #include <stdio.h>
+  #include <io.h>
+  #include <fcntl.h>
+  #include <commdlg.h>
+#endif
 
-  // log file
-
-  val = getenv("VL_LOGFILE_PATH");
-  if (val)
-    settings()->mDefaultLogPath = val;
-  else
-    settings()->mDefaultLogPath = "log.txt";
-
-  // data path
-
-  val = getenv("VL_DATA_PATH");
-  if (val)
-    settings()->mDefaultDataPath = val;
-  else
-    settings()->mDefaultDataPath = "../data";
-
-  // verbosity level
-
-  val = getenv("VL_VERBOSITY_LEVEL");
-  if (val)
-  {
-    if ( String(val).toUpperCase() == "SILENT")
-      settings()->setVerbosityLevel(vl::VEL_VERBOSITY_SILENT);
-    else
-    if ( String(val).toUpperCase() == "ERROR")
-      settings()->setVerbosityLevel(vl::VEL_VERBOSITY_ERROR);
-    else
-    if ( String(val).toUpperCase() == "NORMAL")
-      settings()->setVerbosityLevel(vl::VEL_VERBOSITY_NORMAL);
-    else
-    if ( String(val).toUpperCase() == "DEBUG")
-      settings()->setVerbosityLevel(vl::VEL_VERBOSITY_DEBUG);
-    else
-    {
-      // no log here yet.
-      fprintf(stderr,"VL_VERBOSITY_LEVEL variable has unknown value %s! Legal values: SILENT, ERROR, NORMAL, DEBUG\n\n", val);
-    }
-  }
-
-  // opengl state checks
-
-  val = getenv("VL_CHECK_GL_STATES");
-  if (val)
-  {
-    if ( String(val).toUpperCase() == "YES" )
-      settings()->setCheckOpenGLStates(true);
-    else
-    if ( String(val).toUpperCase() == "NO" )
-      settings()->setCheckOpenGLStates(false);
-    else
-    {
-      // no log here yet.
-      fprintf(stderr,"VL_CHECK_GL_STATES variable has unknown value '%s'! Legal values: YES, NO.\n\n", val);
-    }
-  }
-}
-//------------------------------------------------------------------------------
 void vl::showWin32Console()
 {
   #if defined(_WIN32)
@@ -425,17 +272,6 @@ void vl::showWin32Console()
     setvbuf(hf_out, NULL, _IONBF, 1);
     *stderr = *hf_out;
   #endif
-}
-//------------------------------------------------------------------------------
-int vl::glcheck(const char* file, int line)
-{
-  unsigned int glerr = glGetError();
-  if (glerr != GL_NO_ERROR)
-  {
-    String msg( (char*)gluErrorString(glerr) );
-    Log::error( Say("glGetError() [%s:%n]: %s\n") << file << line << msg );
-  }
-  return glerr;
 }
 //------------------------------------------------------------------------------
 void vl::log_failed_check(const char* expr, const char* file, int line)

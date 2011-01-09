@@ -633,7 +633,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
     {
       // creates the path for the mtl
       String path = file->path().extractPath() + String(line.c_str()+7).trim();
-      ref<VirtualFile> vfile = VisualizationLibrary::fileSystem()->locateFile(path, file->path().extractPath());
+      ref<VirtualFile> vfile = defFileSystem()->locateFile(path, file->path().extractPath());
       std::string str_file = file->path().toStdString();
       std::string str_path = path.toStdString();
       if (vfile)
@@ -717,7 +717,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
         ref<Texture> texture = new Texture;
         // locate texture
         String tex_path = obj_mat->map_Kd().path();
-        ref<VirtualFile> tex_file = VisualizationLibrary::fileSystem()->locateFile(obj_mat->map_Kd().path(),file->path().extractPath());
+        ref<VirtualFile> tex_file = defFileSystem()->locateFile(obj_mat->map_Kd().path(),file->path().extractPath());
         if (tex_file)
           tex_path = tex_file->path();
         texture->prepareTexture2D( tex_path, TF_RGBA );
@@ -885,7 +885,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadOBJ( const String& path )
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile( path );
+  ref<VirtualFile> file = defFileSystem()->locateFile( path );
   if (file)
     return loadOBJ( file.get() );
   else

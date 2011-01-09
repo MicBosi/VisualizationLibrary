@@ -83,7 +83,7 @@ public:
     /* buttons */
 
     /* shows how to use Transforms if they don't need to be dynamically
-       animated: first of all you don't put them in the vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()'s
+       animated: first of all you don't put them in the vl::defRendering()->as<vl::Rendering>()->transform()'s
        hierarchy like the other transforms; secondly you have to manually call
        computeWorldMatrix()/computeWorldMatrixRecursive() to compute
        the final matrix used for the rendering. This way the rendering pipeline
@@ -170,7 +170,7 @@ public:
 
     /* concatenate the transforms */
 
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransfArm0.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransfArm0.get());
     mTransfArm0->addChild(mTransfArm1.get());
     mTransfArm1->addChild(mTransfArm2.get());
     mTransfArm2->addChild(mTransfArm3.get());

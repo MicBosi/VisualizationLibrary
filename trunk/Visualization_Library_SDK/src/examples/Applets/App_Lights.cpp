@@ -130,10 +130,10 @@ public:
     mLight1_Transform = new vl::Transform;
     mLight2_Transform = new vl::Transform;
     mLight3_Transform = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mLight0_Transform.get());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mLight1_Transform.get());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mLight2_Transform.get());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mLight3_Transform.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mLight0_Transform.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mLight1_Transform.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mLight2_Transform.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mLight3_Transform.get());
     // light 0..3 follow the relative transform
     mLight0->followTransform(mLight0_Transform.get());
     mLight1->followTransform(mLight1_Transform.get());
@@ -155,7 +155,7 @@ public:
     vl::ref<vl::Effect> text_fx = new vl::Effect;
     text_fx->shader()->enable(vl::EN_BLEND);
     mText = new vl::Text;
-    mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8) );
+    mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8) );
     mText->setAlignment( vl::AlignHCenter | vl::AlignTop );
     mText->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     mText->translate(0,-10,0);

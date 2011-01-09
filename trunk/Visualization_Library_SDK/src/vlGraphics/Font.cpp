@@ -153,7 +153,7 @@ void Font::loadFont(const String& path)
 
   FT_Error error = 0;
 
-  ref<VirtualFile> font_file = VisualizationLibrary::fileSystem()->locateFile( filePath() );
+  ref<VirtualFile> font_file = defFileSystem()->locateFile( filePath() );
 
   if (!font_file)
     Log::error( Say("Font::loadFont('%s'): font file not found.\n") << filePath() );

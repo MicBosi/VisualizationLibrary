@@ -62,11 +62,11 @@ public:
     vl::ref<vl::Light> light = new vl::Light(0);
 
     mTransform1 = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
     mTransform2 = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
     mTransform3 = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform3.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform3.get());
 
     vl::ref<vl::Geometry> box    = vl::makeBox(vl::vec3(0,0,-2), 1,1,1);
     vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0,0,0),0.5f);
@@ -145,7 +145,7 @@ public:
         // depth-sort only alpha blended objects (default settings)
         vl::ref<vl::RenderQueueSorterStandard> list_sorter = new vl::RenderQueueSorterStandard;
         list_sorter->setDepthSortMode(vl::AlphaDepthSort);
-        vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderQueueSorter( list_sorter.get() );
+        vl::defRendering()->as<vl::Rendering>()->setRenderQueueSorter( list_sorter.get() );
       }
       else
       if (mTestNumber == 2)
@@ -153,7 +153,7 @@ public:
         // depth-sort solid and alpha blended objects
         vl::ref<vl::RenderQueueSorterStandard> list_sorter = new vl::RenderQueueSorterStandard;
         list_sorter->setDepthSortMode(vl::AlwaysDepthSort);
-        vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderQueueSorter( list_sorter.get() );
+        vl::defRendering()->as<vl::Rendering>()->setRenderQueueSorter( list_sorter.get() );
       }
       else
       if (mTestNumber == 3)
@@ -161,7 +161,7 @@ public:
         // depth-sort alpha blended back to front
         // depth-sort solid object front to back
         vl::ref<vl::RenderQueueSorterOcclusion> list_sorter = new vl::RenderQueueSorterOcclusion;
-        vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setRenderQueueSorter( list_sorter.get() );
+        vl::defRendering()->as<vl::Rendering>()->setRenderQueueSorter( list_sorter.get() );
       }
     }
   }

@@ -47,6 +47,8 @@
 #include "vlGraphics/FontManager.hpp"
 #include "vlGraphics/GeometryLoadCallback.hpp"
 
+using namespace vl;
+
 class App_ModelProfiler: public BaseDemo
 {
 public:
@@ -55,46 +57,45 @@ public:
     BaseDemo::initEvent();
     openglContext()->setContinuousUpdate(true);
 
-    vl::GeometryLoadCallback* glc = dynamic_cast<vl::GeometryLoadCallback*>(vl::VisualizationLibrary::loadWriterManager()->loadCallbacks()->at(0));
+    ref<GeometryLoadCallback> glc = new GeometryLoadCallback;
+    defLoadWriterManager()->loadCallbacks()->push_back(glc.get());
     glc->setUseVBOs(false);
     glc->setSortVertices(false);
     glc->setComputeNormals(true);
 
-    // vl::VisualizationLibrary::fileSystem()->directories()->push_back( new vl::DiskDirectory( vl::VisualizationLibrary::envVars()->value("VL_DATA_PATH")+"/images/") );
-
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setFarPlane(10000000.0f);
+    defRendering()->as<Rendering>()->camera()->setFarPlane(10000000.0f);
 
     /* bind Transform */
-    mTransform = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mTransform.get() );
+    mTransform = new Transform;
+    defRendering()->as<Rendering>()->transform()->addChild( mTransform.get() );
     
     // geoms
-    vl::ref< vl::Effect > fx = new vl::Effect;
-    fx->shader()->enable(vl::EN_LIGHTING);
-    fx->shader()->enable(vl::EN_DEPTH_TEST);
-    fx->shader()->enable(vl::EN_CULL_FACE);
-    fx->shader()->setRenderState( new vl::Light(0) );
-    // fx->shader()->gocLight(0)->setPosition(vl::fvec4(0,0,1,1));
+    ref< Effect > fx = new Effect;
+    fx->shader()->enable(EN_LIGHTING);
+    fx->shader()->enable(EN_DEPTH_TEST);
+    fx->shader()->enable(EN_CULL_FACE);
+    fx->shader()->setRenderState( new Light(0) );
+    // fx->shader()->gocLight(0)->setPosition(fvec4(0,0,1,1));
 
     // text setup
 
     resetOptions();
 
-    mOptions = new vl::Text();
+    mOptions = new Text();
     mOptions->setDisplayListEnabled(true);
-    mOptions->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8) );
+    mOptions->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8) );
     mOptions->setMargin(0);
-    mOptions->setViewportAlignment(vl::AlignTop | vl::AlignLeft);
-    mOptions->setAlignment(vl::AlignTop | vl::AlignLeft);
-    mOptions->setColor(vl::white);
-    mOptions->setBackgroundColor(vl::fvec4(0,0,0,.75f));
+    mOptions->setViewportAlignment(AlignTop | AlignLeft);
+    mOptions->setAlignment(AlignTop | AlignLeft);
+    mOptions->setColor(white);
+    mOptions->setBackgroundColor(fvec4(0,0,0,.75f));
     mOptions->setBackgroundEnabled(true);
     mOptions->setInterlineSpacing(0);
 
-    vl::ref< vl::Effect > text_fx = new vl::Effect;
-    text_fx->shader()->enable(vl::EN_BLEND);
+    ref< Effect > text_fx = new Effect;
+    text_fx->shader()->enable(EN_BLEND);
 
-    mOptionsActor = new vl::Actor( mOptions.get(), text_fx.get() );
+    mOptionsActor = new Actor( mOptions.get(), text_fx.get() );
 
     sceneManager()->tree()->addActor( mOptionsActor.get() );
 
@@ -120,10 +121,10 @@ public:
     mOptUseDL = false;
   }
 
-  void mouseUpEvent(vl::EMouseButton, int x, int y)
+  void mouseUpEvent(EMouseButton, int x, int y)
   {
-    vl::AABB bbox = mOptions->boundingRect();
-    vl::Real h = bbox.height();
+    AABB bbox = mOptions->boundingRect();
+    Real h = bbox.height();
 
     // implement exclusion logic
     if( x < bbox.width() )
@@ -204,8 +205,8 @@ public:
 
   void applyChanges()
   {
-    vl::Log::print("Applying changes...\n");
-    std::map< vl::ref<vl::Actor>, vl::ref<vl::Geometry> >::iterator it = mActorGeomMap.begin();
+    Log::print("Applying changes...\n");
+    std::map< ref<Actor>, ref<Geometry> >::iterator it = mActorGeomMap.begin();
     int orig_primitives = 0;
     int resu_primitives = 0;
     int orig_indices = 0;
@@ -214,21 +215,21 @@ public:
     int resu_vertices = 0;
     for(; it != mActorGeomMap.end(); ++it)
     {
-      vl::ref<vl::Geometry> geom = it->second->deepCopy();
+      ref<Geometry> geom = it->second->deepCopy();
       it->first->lod(0) = geom.get();
 
       if (mOptRecomputeNormals)
         geom->setNormalArray(NULL);
 
       // apply changes
-      vl::Time timer;
+      Time timer;
 
       if (mOptDoubleFace)
       {
         for(unsigned i=0; i<mEffects.size(); ++i)
         {
           mEffects[i]->shader()->gocLightModel()->setTwoSide(true);
-          mEffects[i]->shader()->disable(vl::EN_CULL_FACE);
+          mEffects[i]->shader()->disable(EN_CULL_FACE);
         }
       }
       else
@@ -236,7 +237,7 @@ public:
         for(unsigned i=0; i<mEffects.size(); ++i)
         {
           mEffects[i]->shader()->gocLightModel()->setTwoSide(false);
-          mEffects[i]->shader()->enable(vl::EN_CULL_FACE);
+          mEffects[i]->shader()->enable(EN_CULL_FACE);
         }
       }
 
@@ -244,30 +245,30 @@ public:
       {
         int orig_vertc = (int)geom->vertexArray()->size();
         timer.start();
-        vl::DoubleVertexRemover dvr;
+        DoubleVertexRemover dvr;
         dvr.removeDoubles(geom.get());
-        vl::Log::print( vl::Say("vl::DoubleVertexRemover: %.3ns, ratio:%.3n\n") << timer.elapsed() << (float)geom->vertexArray()->size()/orig_vertc );
+        Log::print( Say("DoubleVertexRemover: %.3ns, ratio:%.3n\n") << timer.elapsed() << (float)geom->vertexArray()->size()/orig_vertc );
       }
 
       if (mOptStripfy1)
       {
         timer.start();
-        vl::TriangleStripGenerator::stripfy(geom.get(), 0, false, false, false);
-        vl::Log::print( vl::Say("vl::TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
+        TriangleStripGenerator::stripfy(geom.get(), 0, false, false, false);
+        Log::print( Say("TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
       }
 
       if (mOptStripfy2)
       {
         timer.start();
-        vl::TriangleStripGenerator::stripfy(geom.get(), 24, false, false, false);
-        vl::Log::print( vl::Say("vl::TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
+        TriangleStripGenerator::stripfy(geom.get(), 24, false, false, false);
+        Log::print( Say("TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
       }
 
       if (mOptMergeTriangleStrips)
       {
         timer.start();
         geom->mergeTriangleStrips();
-        vl::Log::print( vl::Say("Merge triangle strips: %.3ns\n") << timer.elapsed() );
+        Log::print( Say("Merge triangle strips: %.3ns\n") << timer.elapsed() );
       }
 
       if (mOptSortVertices)
@@ -275,23 +276,23 @@ public:
         timer.start();
         bool ok = geom->sortVertices();
         if (ok)
-          vl::Log::print( vl::Say("Sort Vertices: %.3ns\n") << timer.elapsed() );
+          Log::print( Say("Sort Vertices: %.3ns\n") << timer.elapsed() );
         else
-          vl::Log::print("Sort Vertices Not Performed.\n");
+          Log::print("Sort Vertices Not Performed.\n");
       }
 
       if (mOptConvertToDrawArrays)
       {
         geom->convertDrawCallToDrawArrays();
-        vl::Log::print("Convert to DrawArrays.\n");
+        Log::print("Convert to DrawArrays.\n");
       }
 
       if (mOptUseDL)
-        vl::Log::print("Using display lists.\n");
+        Log::print("Using display lists.\n");
       geom->setDisplayListEnabled(mOptUseDL);
 
       if (mOptUseVBO)
-        vl::Log::print("Using vertex buffer objects.\n");
+        Log::print("Using vertex buffer objects.\n");
       geom->setVBOEnabled(mOptUseVBO);
 
       if (!geom->normalArray())
@@ -315,14 +316,14 @@ public:
       resu_vertices += (int)geom->vertexArray()->size();
     }
 
-    vl::Log::print( vl::Say("\nPrimitives: %6n -> %6n (%3.1n%%)\n") << orig_primitives << resu_primitives << (float)resu_primitives/orig_primitives*100.0f );
-    vl::Log::print( vl::Say("Indices:    %6n -> %6n (%3.1n%%)\n") << orig_indices << resu_indices << (float)resu_indices/orig_indices*100.0f );
-    vl::Log::print( vl::Say("Vertices:   %6n -> %6n (%3.1n%%)\n\n") << orig_vertices << resu_vertices << (float)resu_vertices/orig_vertices*100.0f);
+    Log::print( Say("\nPrimitives: %6n -> %6n (%3.1n%%)\n") << orig_primitives << resu_primitives << (float)resu_primitives/orig_primitives*100.0f );
+    Log::print( Say("Indices:    %6n -> %6n (%3.1n%%)\n") << orig_indices << resu_indices << (float)resu_indices/orig_indices*100.0f );
+    Log::print( Say("Vertices:   %6n -> %6n (%3.1n%%)\n\n") << orig_vertices << resu_vertices << (float)resu_vertices/orig_vertices*100.0f);
   }
 
   void updateText()
   {
-    vl::String str;
+    String str;
     mOptions->setText("");
     str += mOptDoubleFace ? "[x]" : "[ ]"; str += " Double Face\n";
     str += mOptRemoveDoubles? "[x]" : "[ ]"; str += " Remove Doubles\n";
@@ -341,7 +342,7 @@ public:
     mOptions->setDisplayListDirty(true);
   }
 
-  void loadModel(const std::vector<vl::String>& files)
+  void loadModel(const std::vector<String>& files)
   {
     // load the model
     resetOptions();
@@ -352,41 +353,41 @@ public:
     mEffects.clear();
     mActorGeomMap.clear();
 
-    vl::Time timer;
+    Time timer;
     timer.start();
  
     for(unsigned int i=0; i<files.size(); ++i)
     {
       if (files.size()>1)
-        vl::Log::print( vl::Say("[% 3n%%] Loading: '%s'\n") << (100*i/(files.size()-1)) << files[i] );
+        Log::print( Say("[% 3n%%] Loading: '%s'\n") << (100*i/(files.size()-1)) << files[i] );
       else
-        vl::Log::print( vl::Say("Loading: '%s'\n") << files[i] );
+        Log::print( Say("Loading: '%s'\n") << files[i] );
 
-      vl::ref<vl::ResourceDatabase> resource_db = vl::loadResource(files[i],true);
+      ref<ResourceDatabase> resource_db = loadResource(files[i],true);
 
-      vl::Log::print( vl::Say("Import time = %.3ns\n") << timer.elapsed() );
+      Log::print( Say("Import time = %.3ns\n") << timer.elapsed() );
 
-      if (!resource_db || resource_db->count<vl::Actor>() == 0)
+      if (!resource_db || resource_db->count<Actor>() == 0)
       {
-        vl::Log::error("No data found.\n");
+        Log::error("No data found.\n");
         continue;
       }
 
-      std::vector< vl::ref<vl::Actor> > actors;
-      resource_db->get<vl::Actor>(actors);
+      std::vector< ref<Actor> > actors;
+      resource_db->get<Actor>(actors);
       for(unsigned i=0; i<actors.size(); ++i)
       {
-        vl::ref<vl::Actor> actor = actors[i].get();
+        ref<Actor> actor = actors[i].get();
 
         if(std::find(mEffects.begin(), mEffects.end(), actor->effect()) == mEffects.end())
           mEffects.push_back(actor->effect());
 
-        actor->effect()->shader()->setRenderState( new vl::Light(0) );
-        actor->effect()->shader()->enable(vl::EN_DEPTH_TEST);
-        actor->effect()->shader()->enable(vl::EN_LIGHTING);
-        actor->effect()->shader()->enable(vl::EN_CULL_FACE);
+        actor->effect()->shader()->setRenderState( new Light(0) );
+        actor->effect()->shader()->enable(EN_DEPTH_TEST);
+        actor->effect()->shader()->enable(EN_LIGHTING);
+        actor->effect()->shader()->enable(EN_CULL_FACE);
 
-        vl::Geometry* geom = dynamic_cast<vl::Geometry*>(actor->lod(0).get());
+        Geometry* geom = dynamic_cast<Geometry*>(actor->lod(0).get());
         if (geom)
           mActorGeomMap[actor] = geom->deepCopy();
 
@@ -406,19 +407,19 @@ public:
     }
 
     // position the camera to nicely see the objects in the scene
-    trackball()->adjustView( vl::VisualizationLibrary::rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
+    trackball()->adjustView( defRendering()->as<Rendering>(), vec3(0,0,1), vec3(0,1,0), 1.0f );
 
     // throttle ghost camera manipulator speed based on the scene size, using a simple euristic formula
     sceneManager()->computeBounds();
-    const vl::AABB& scene_aabb = sceneManager()->boundingBox();
-    vl::Real speed = (scene_aabb.width() + scene_aabb.height() + scene_aabb.depth()) / 20.0f;
+    const AABB& scene_aabb = sceneManager()->boundingBox();
+    Real speed = (scene_aabb.width() + scene_aabb.height() + scene_aabb.depth()) / 20.0f;
     ghostCamera()->setMovementSpeed(speed);
 
     // update the rendering
     openglContext()->update();
   }
 
-  void fileDroppedEvent(const std::vector<vl::String>& files)
+  void fileDroppedEvent(const std::vector<String>& files)
   {
     loadModel(files);
   }
@@ -429,42 +430,42 @@ public:
     mOptions->setDisplayListDirty(true);
   }
 
-  void keyPressEvent(unsigned short ch, vl::EKey key)
+  void keyPressEvent(unsigned short ch, EKey key)
   {
     BaseDemo::keyPressEvent(ch,key);
 
     for(unsigned i=0; i<mEffects.size(); ++i)
     {
-      if (key == vl::Key_1)
+      if (key == Key_1)
       {
-        if (mEffects[i]->shader()->gocShadeModel()->shadeModel() == vl::SM_FLAT)
-          mEffects[i]->shader()->gocShadeModel()->set(vl::SM_SMOOTH);
+        if (mEffects[i]->shader()->gocShadeModel()->shadeModel() == SM_FLAT)
+          mEffects[i]->shader()->gocShadeModel()->set(SM_SMOOTH);
         else
-          mEffects[i]->shader()->gocShadeModel()->set(vl::SM_FLAT);
+          mEffects[i]->shader()->gocShadeModel()->set(SM_FLAT);
       }
-      if (key == vl::Key_2)
+      if (key == Key_2)
       {
-        if (mEffects[i]->shader()->gocPolygonMode()->frontFace() == vl::PM_FILL)
-          mEffects[i]->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+        if (mEffects[i]->shader()->gocPolygonMode()->frontFace() == PM_FILL)
+          mEffects[i]->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
         else
-          mEffects[i]->shader()->gocPolygonMode()->set(vl::PM_FILL, vl::PM_FILL);
+          mEffects[i]->shader()->gocPolygonMode()->set(PM_FILL, PM_FILL);
       }
-      if (key == vl::Key_3)
+      if (key == Key_3)
       {
-        if (mEffects[i]->shader()->isEnabled(vl::EN_CULL_FACE) )
-          mEffects[i]->shader()->disable(vl::EN_CULL_FACE);
+        if (mEffects[i]->shader()->isEnabled(EN_CULL_FACE) )
+          mEffects[i]->shader()->disable(EN_CULL_FACE);
         else
-          mEffects[i]->shader()->enable(vl::EN_CULL_FACE);
+          mEffects[i]->shader()->enable(EN_CULL_FACE);
       }
     }
   }
 
 protected:
-  std::vector< vl::ref<vl::Effect> > mEffects;
-  vl::ref<vl::Transform> mTransform;
-  vl::ref< vl::Text > mOptions;
-  vl::ref< vl::Actor > mOptionsActor;
-  std::map< vl::ref<vl::Actor>, vl::ref<vl::Geometry> > mActorGeomMap;
+  std::vector< ref<Effect> > mEffects;
+  ref<Transform> mTransform;
+  ref< Text > mOptions;
+  ref< Actor > mOptionsActor;
+  std::map< ref<Actor>, ref<Geometry> > mActorGeomMap;
 
   // options
   bool mOptDoubleFace;

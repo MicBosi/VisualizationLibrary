@@ -36,14 +36,6 @@
 
 namespace vl
 {
-  class FileSystem;
-  class ResourceDatabase;
-  class KeyValues;
-  class StandardLog;
-  class FontManager;
-  class LoadWriterManager;
-  class RenderingAbstract;
-
   //! Used to initialize/shutdown VisualizationLibrary and to access important global data.
   class VisualizationLibrary
   {
@@ -59,36 +51,9 @@ namespace vl
 
     //! Returns the Visualization Library's version string.
     static const char* versionString();
-
-    //! Returns Visualization Library's default FileSystem.
-    static FileSystem* fileSystem();
-
-    //! Returns Visualization Library's default LoadWriterManager.
-    static LoadWriterManager* loadWriterManager();
-
-    //! Returns the environment variables used by Visualization Library.
-    //! Can also be used to globally pass parameters across different parts of an application.
-    static KeyValues* envVars();
-
-    //! Returns the default Log object.
-    static StandardLog* logger();
-
-    //! Returns the global settings of VL.
-    static Settings* settings();
-
-    //! Returns Visualization Library's rendering root.
-    static RenderingAbstract* rendering();
-    static void setRendering(RenderingAbstract* rendering);
-
-    //! Returns Visualization Library's default FontManager.
-    static FontManager* fontManager();
-
-  protected:
-    //! Initializes the environment variables
-    static void initEnvVars();
   };
 
-  //! Shows a console window that displays the standard output. This function is meant to be used only under Windows.
+  //! Shows a console window that displays the standard output. This function is meant to be used only under Windows only.
   void showWin32Console();
 }
 
