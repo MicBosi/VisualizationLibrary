@@ -1105,7 +1105,7 @@ bool vl::loadImagesFromDir(const String& dir_path, const String& ext, std::vecto
   images.clear();
   if (ext.empty() || dir_path.empty())
     return false;
-  ref<VirtualDirectory> dir = VisualizationLibrary::fileSystem()->locateDirectory(dir_path);
+  ref<VirtualDirectory> dir = defFileSystem()->locateDirectory(dir_path);
   if (!dir)
     return false;
   std::vector<String> files;
@@ -1125,7 +1125,7 @@ bool vl::loadImagesFromDir(const String& dir_path, const String& ext, std::vecto
 //-----------------------------------------------------------------------------
 ref<Image> vl::loadImage( const String& path )
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
   if ( !file )
   {
     Log::error( Say("File '%s' not found.\n") << path );
@@ -1137,7 +1137,7 @@ ref<Image> vl::loadImage( const String& path )
 //-----------------------------------------------------------------------------
 ref<Image> vl::loadImage( VirtualFile* file )
 {
-  ref<ResourceDatabase> res_db = VisualizationLibrary::loadWriterManager()->loadResource(file);
+  ref<ResourceDatabase> res_db = defLoadWriterManager()->loadResource(file);
 
   if (!res_db)
   {
@@ -1163,7 +1163,7 @@ bool vl::saveImage( Image* img, const String& path)
 {
   ref<ResourceDatabase> res_db = new ResourceDatabase;
   res_db->resources().push_back(img);
-  bool ok = VisualizationLibrary::loadWriterManager()->writeResource(path, res_db.get());
+  bool ok = defLoadWriterManager()->writeResource(path, res_db.get());
   if (!ok)
     Log::error( Say("vl::saveImage('%s') failed.\n") << path );
   return ok;
@@ -1173,7 +1173,7 @@ bool vl::saveImage( Image* img, VirtualFile* file )
 {
   ref<ResourceDatabase> res_db = new ResourceDatabase;
   res_db->resources().push_back(img);
-  bool ok = VisualizationLibrary::loadWriterManager()->writeResource(file, res_db.get());
+  bool ok = defLoadWriterManager()->writeResource(file, res_db.get());
   if (!ok)
     Log::error( Say("vl::saveImage('%s') failed.\n") << file->path() );
   return ok;

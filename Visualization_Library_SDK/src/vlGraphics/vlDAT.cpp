@@ -46,7 +46,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 ref<Image> vl::loadDAT( const String& path )
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
   if ( !file )
   {
     Log::error( Say("File '%s' not found.\n") << path );
@@ -140,7 +140,7 @@ ref<Image> vl::loadDAT(VirtualFile* file)
     return NULL;
   }
 
-  ref<VirtualFile> rawf = VisualizationLibrary::fileSystem()->locateFile(raw_file);
+  ref<VirtualFile> rawf = defFileSystem()->locateFile(raw_file);
   if (rawf)
   {
     return loadRAW( rawf.get(), -1, width, height, depth, bytealign, format, type );
@@ -228,7 +228,7 @@ bool vl::isDAT(VirtualFile* file)
   else
     return false;
 
-  if (VisualizationLibrary::fileSystem()->locateFile(raw_file))
+  if (defFileSystem()->locateFile(raw_file))
     return true;
   else
     return false;

@@ -228,7 +228,7 @@ public:
       vl::vec3 v = vl::mat4::getRotation(t,0,1,0) * vl::vec3(35,0,0);
       tr->setLocalMatrix( vl::mat4::getTranslation(v) );
 
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
+      vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
       
       vl::ref<vl::Actor> act = sceneManager()->tree()->addActor( NULL, ring_fx.get(), tr.get() );
 
@@ -253,7 +253,7 @@ public:
     eye += vl::vec3(0,10+70*t,0);
     vl::mat4 m;
     m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
+    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };
 

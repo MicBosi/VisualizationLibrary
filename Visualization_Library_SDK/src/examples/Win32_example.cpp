@@ -63,15 +63,15 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   win32_window->addEventListener(applet.get());
   /* target the window so we can render on it */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( win32_window->renderTarget() );
+  vl::defRendering()->as<vl::Rendering>()->renderer()->setRenderTarget( win32_window->renderTarget() );
   /* black background */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vl::black );
+  vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vl::black );
   /* define the camera position and orientation */
   vl::vec3 eye    = vl::vec3(0,10,35); // camera position
   vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
   vl::vec3 up     = vl::vec3(0,1,0);   // up direction
   vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setViewMatrix( view_mat );
+  vl::defRendering()->as<vl::Rendering>()->camera()->setViewMatrix( view_mat );
   /* Initialize the OpenGL context and window properties */
   int x = 0;
   int y = 0;

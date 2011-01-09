@@ -57,14 +57,15 @@ public:
 
     BaseDemo::initEvent();
 
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform3.get());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform4.get());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform5.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform3.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform4.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform5.get());
 
     vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/models/3ds/monkey.3ds");
     vl::ref<vl::Geometry> model = res_db->get<vl::Geometry>(0);
+    model->computeNormals();
 
     vl::ref<vl::Light> light = new vl::Light(0);
 

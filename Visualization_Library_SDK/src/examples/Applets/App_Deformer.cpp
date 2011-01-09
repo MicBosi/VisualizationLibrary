@@ -60,9 +60,9 @@ public:
     openglContext()->setContinuousUpdate(false);
 
     // camera setup
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
+    vl::defRendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
+    vl::defRendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    vl::defRendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
@@ -100,11 +100,11 @@ public:
     mPointsAnim->resize( mPoints->size() );
 
     mTransform = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform.get());
     sceneManager()->tree()->addActor(mGrid.get(), image_fx.get(), mTransform.get());
 
     mCursorTransform = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mCursorTransform.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mCursorTransform.get());
     mBrushSize = 100;
     vl::ref<vl::Effect> cursor_fx = new vl::Effect;
     cursor_fx->shader()->gocLogicOp()->set(vl::LO_INVERT);
@@ -117,7 +117,7 @@ public:
     mCursorActor->setRenderRank(1);
 
     mText = new vl::Text;
-    mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
+    mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
     mText->translate(0,-5,0);
     mText->setColor(vl::white);
     mText->setBackgroundColor(vl::fvec4(0,0,0,.75f));
@@ -266,7 +266,7 @@ public:
     mSelection.clear();
     // select points
     vl::vec4 c = vl::vec4(mCursorTransform->worldMatrix().getT(),1);
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->project(c, c);
+    vl::defRendering()->as<vl::Rendering>()->camera()->project(c, c);
     for(int x=0; x<mSlices; ++x)
     for(int y=0; y<mSlices; ++y)
     {
@@ -276,7 +276,7 @@ public:
 
       vl::vec4 p = vl::vec4((vl::vec3)mPoints->at(i),1);
       p = mTransform->worldMatrix() * p;
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->project(p, p);
+      vl::defRendering()->as<vl::Rendering>()->camera()->project(p, p);
       float distance = (float)( (p.xy()-c.xy()).length() );
       if (distance < mBrushSize)
       {
@@ -317,14 +317,14 @@ public:
     if (mMode == ScaleMode)
       m.translate(mCursorTransform->localMatrix().getT());
     else
-      m.translate((vl::Real)x, (vl::Real)vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->height()-y, 0);
+      m.translate((vl::Real)x, (vl::Real)vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->height()-y, 0);
 
     mCursorTransform->setLocalMatrix(m);
 
     if (mMode == TranslateMode)
     {
-      float tx = +(float)(x-mMouseStart.x())/vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->width();
-      float ty = -(float)(y-mMouseStart.y())/vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->height();
+      float tx = +(float)(x-mMouseStart.x())/vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->width();
+      float ty = -(float)(y-mMouseStart.y())/vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->height();
       for(unsigned i=0; i<mSelection.size(); ++i)
       {
         int ipt = mSelection[i].mIndex;
@@ -338,7 +338,7 @@ public:
     else
     if (mMode == ScaleMode)
     {
-      float scaling = 0.1f * (float)(y-mMouseStart.y())/vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->height();
+      float scaling = 0.1f * (float)(y-mMouseStart.y())/vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->height();
       for(unsigned i=0; i<mSelection.size(); ++i)
       {
         int ipt = mSelection[i].mIndex;
@@ -374,15 +374,15 @@ public:
     m.translate(x_texel/2.0f, y_texel/2.0f, 0.0f);
     mTextureMatrix->setMatrix(m);
 
-    resizeEvent( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->width(), vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->height() );
+    resizeEvent( vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->width(), vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->height() );
     reset();
   }
 
   void resizeEvent(int w, int h)
   {
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
+    vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
+    vl::defRendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
 
     vl::mat4 m;
     m.translate(w/2.0f, h/2.0f, 0.0f);

@@ -53,7 +53,7 @@ public:
     // Setup dual rendering
 
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
-    vl::VisualizationLibrary::setRendering(render_tree.get());
+    vl::setDefRendering(render_tree.get());
     mMainRendering = new vl::Rendering;
     mRTT_Rendering = new vl::Rendering;
     render_tree->subRenderings()->push_back(mRTT_Rendering.get());
@@ -107,7 +107,7 @@ public:
     // Setup dual rendering
 
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
-    vl::VisualizationLibrary::setRendering(render_tree.get());
+    vl::setDefRendering(render_tree.get());
     mMainRendering = new vl::Rendering;
     mRTT_Rendering = new vl::Rendering;
     render_tree->subRenderings()->push_back(mRTT_Rendering.get());
@@ -199,7 +199,7 @@ public:
     // Setup dual rendering
 
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
-    vl::VisualizationLibrary::setRendering(render_tree.get());
+    vl::setDefRendering(render_tree.get());
     mMainRendering = new vl::Rendering;
     mRTT_Rendering = new vl::Rendering;
     render_tree->subRenderings()->push_back(mRTT_Rendering.get());
@@ -267,7 +267,7 @@ public:
     // Setup dual rendering
 
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
-    vl::VisualizationLibrary::setRendering(render_tree.get());
+    vl::setDefRendering(render_tree.get());
     mMainRendering = new vl::Rendering;
     mRTT_Rendering = new vl::Rendering;
     render_tree->subRenderings()->push_back(mRTT_Rendering.get());
@@ -345,7 +345,7 @@ public:
     // Setup dual rendering
 
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
-    vl::VisualizationLibrary::setRendering(render_tree.get());
+    vl::setDefRendering(render_tree.get());
     mMainRendering = new vl::Rendering;
     mRTT_Rendering = new vl::Rendering;
     render_tree->subRenderings()->push_back(mRTT_Rendering.get());

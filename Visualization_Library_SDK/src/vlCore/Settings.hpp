@@ -38,22 +38,11 @@
 namespace vl
 {
   //! Global application settings controlling how Visualization Library behaves.
-  class Settings: public Object
+  class Settings
   {
     friend class VisualizationLibrary;
   public:
-    Settings()
-    {
-      #ifndef NDEBUG
-        mVerbosityLevel  = vl::VEL_VERBOSITY_NORMAL;
-        mCheckOpenGLStates = true;
-        mCheckTransformSiblings = false;
-      #else
-        mVerbosityLevel  = vl::VEL_VERBOSITY_ERROR;
-        mCheckOpenGLStates = false;
-        mCheckTransformSiblings = false;
-      #endif
-    }
+    Settings();
 
     /** If \p true VL checks at the beginning of each rendering that the OpenGL states are
       * clean and ready to be used by VL. If the test fails it can mean that either there 
@@ -98,6 +87,9 @@ namespace vl
     String mDefaultLogPath;
     String mDefaultDataPath;
   };
+
+  //! Returns VisulizationLibrary's global settings.
+  Settings* globalSettings();
 }
 
 #endif

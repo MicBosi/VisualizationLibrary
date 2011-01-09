@@ -224,7 +224,7 @@ namespace
 //! will have to flip the texture coordinates of your models.
 ref<Image> vl::loadDDS(const String& path)
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
   if ( !file )
   {
     Log::error( Say("File '%s' not found.\n") << path );

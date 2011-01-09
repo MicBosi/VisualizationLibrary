@@ -157,7 +157,7 @@ namespace vl
         mAlphaFuncRefValue = 0.0f;
         mAlphaFunc         = FU_ALWAYS;
         // font
-        mFont              = VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false);
+        mFont              = defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false);
         // masks
         /*mDepthMask   = true;*/
         mColorMask   = ivec4(1,1,1,1);
@@ -527,13 +527,13 @@ namespace vl
     void getStencilFunc(EFunction& func, int& refval, unsigned int& mask);
 
     //! Sets the current Font
-    void setFont(const String& name, int size, bool smooth=false) { mState.mFont = VisualizationLibrary::fontManager()->acquireFont(name,size,smooth); }
+    void setFont(const String& name, int size, bool smooth=false) { mState.mFont = defFontManager()->acquireFont(name,size,smooth); }
     
     //! Sets the current Font
     void setFont(const Font* font) { setFont(font->filePath(),font->size(),font->smooth()); }
     
     //! Sets the default Font
-    void setDefaultFont() { setFont(VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false)); }
+    void setDefaultFont() { setFont(defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false)); }
     
     //! Returns the current Font
     const Font* font() const { return mState.mFont.get(); }

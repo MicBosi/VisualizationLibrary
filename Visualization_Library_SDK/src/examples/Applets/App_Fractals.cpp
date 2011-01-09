@@ -83,8 +83,8 @@ public:
     else
     if (mMode == TranslateMode)
     {
-      float deltax = 0.5f * mZoom * (x - mMouseStartPos.x()) / VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->width();
-      float deltay = 0.5f * mZoom * (y - mMouseStartPos.y()) / VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->height();
+      float deltax = 0.5f * mZoom * (x - mMouseStartPos.x()) / defRendering()->as<Rendering>()->camera()->viewport()->width();
+      float deltay = 0.5f * mZoom * (y - mMouseStartPos.y()) / defRendering()->as<Rendering>()->camera()->viewport()->height();
       mXcenter = mStartCenter.x() - deltax;
       mYcenter = mStartCenter.y() + deltay;
       openglContext()->update();
@@ -162,7 +162,7 @@ public:
 
     mText = new Text;
     mText->setText("Mandelbrot!");
-    mText->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
+    mText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
     mText->setMode( Text2D );
     mText->setColor(vl::white);
     mText->setBackgroundColor( fvec4(0,0,0,0.75f) );
@@ -189,9 +189,9 @@ public:
     sceneManager()->tree()->addActor( geom.get(), effect.get() );
 
     // camera setup
-    VisualizationLibrary::rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
-    VisualizationLibrary::rendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4() );
-    VisualizationLibrary::rendering()->as<Rendering>()->camera()->setInverseViewMatrix( mat4() );
+    defRendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
+    defRendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4() );
+    defRendering()->as<Rendering>()->camera()->setInverseViewMatrix( mat4() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
@@ -256,8 +256,8 @@ public:
 
   void resizeEvent(int w, int h)
   {
-    VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->setWidth(w);
-    VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->setHeight(h);
+    defRendering()->as<Rendering>()->camera()->viewport()->setWidth(w);
+    defRendering()->as<Rendering>()->camera()->viewport()->setHeight(h);
   }
 
   void generateAndSaveFractalViaCPU()
@@ -266,8 +266,8 @@ public:
 
     Image* spectrum = mTextureToggle ? mSpectrum1.get() : mSpectrum2.get();
 
-    int pic_w = VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->width();
-    int pic_h = VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->height();
+    int pic_w = defRendering()->as<Rendering>()->camera()->viewport()->width();
+    int pic_h = defRendering()->as<Rendering>()->camera()->viewport()->height();
 
     ref< Image > image = new Image;
     image->allocate2D(pic_w,pic_h,4,IF_RGBA, IT_UNSIGNED_BYTE);

@@ -46,8 +46,8 @@ public:
     /* bind Transform */
     mTransform_Left  = new vl::Transform;
     mTransform_Right = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Left.get() );
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Right.get() );
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Left.get() );
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Right.get() );
 
     /* define the Effect to be used */
     vl::ref<vl::Effect> effect = new vl::Effect;
@@ -67,6 +67,12 @@ public:
     vl::ref<vl::ResourceDatabase> res_db;
     res_db = vl::loadResource(mFileName); if ( res_db && res_db->count<vl::Geometry>() ) geom_no_sort = res_db->get<vl::Geometry>(0);
     res_db = vl::loadResource(mFileName); if ( res_db && res_db->count<vl::Geometry>() ) geom_sorted  = res_db->get<vl::Geometry>(0);
+
+    if (!geom_no_sort->normalArray())
+      geom_no_sort->computeNormals();
+
+    if (!geom_sorted->normalArray())
+      geom_sorted->computeNormals();
 
     /*
      if you want you can do

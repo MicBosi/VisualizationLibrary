@@ -55,8 +55,8 @@ public:
     // Add empty Actors
     mStar1 = sceneManager()->tree()->addActor( new vl::Actor(NULL, filled_fx.get(), new vl::Transform) );
     mStar2 = sceneManager()->tree()->addActor( new vl::Actor(NULL, wireframe_fx.get(), new vl::Transform) );
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mStar1->transform());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mStar2->transform());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mStar1->transform());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mStar2->transform());
   }
 
   void run() 

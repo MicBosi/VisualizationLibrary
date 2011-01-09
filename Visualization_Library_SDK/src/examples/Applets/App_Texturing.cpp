@@ -57,8 +57,8 @@ public:
 
     mCubeRightTransform = new vl::Transform;
     mCubeLeftTransform = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mCubeRightTransform.get());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mCubeLeftTransform.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mCubeRightTransform.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mCubeLeftTransform.get());
 
     vl::ref<vl::Image> img_holebox = vl::loadImage("/images/holebox.tif");
     vl::ref<vl::Image> img_detail  = vl::loadImage("/images/detail.tif");
@@ -265,7 +265,7 @@ public:
     mFXSpheric->shader()->gocTexGen(0)->setGenModeT(vl::TGM_SPHERE_MAP);
 
     mActSpheric = sceneManager()->tree()->addActor( torus.get(), mFXSpheric.get(), new vl::Transform );
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mActSpheric->transform() );
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mActSpheric->transform() );
   }
 
   void cubeMapping()
@@ -313,7 +313,7 @@ public:
       vl::Log::error("Texture cubemap not supported.\n");
 
     mActCubic = sceneManager()->tree()->addActor( torus.get(), mFXCubic.get(), new vl::Transform );
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mActCubic->transform() );
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mActCubic->transform() );
   }
 
   void run()
@@ -376,7 +376,7 @@ public:
   {
     BaseDemo::initEvent();
 
-    trackball()->setTransform(vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform());
+    trackball()->setTransform(vl::defRendering()->as<vl::Rendering>()->transform());
 
     mMipmappingOn = true;
     mLodBias = 0.0;

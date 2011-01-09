@@ -62,7 +62,7 @@ public:
     if (key == vl::Key_F5)
     {
       mReadPixels->setup( 0, 0, openglContext()->width(), openglContext()->height(), vl::RDB_BACK_LEFT, false );
-      vl::VisualizationLibrary::rendering()->onFinishedCallbacks()->push_back( mReadPixels.get() );
+      vl::defRendering()->onFinishedCallbacks()->push_back( mReadPixels.get() );
       mReadPixels->setRemoveAfterCall(true);
       vl::String filename = vl::Say( applicationName() + "-%n.jpg") << (int)vl::Time::currentTime();
       mReadPixels ->setSavePath( filename );

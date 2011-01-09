@@ -97,9 +97,9 @@ public:
       mLight0Tr = new Transform;
       mLight1Tr = new Transform;
       mLight2Tr = new Transform;
-      VisualizationLibrary::rendering()->as<Rendering>()->transform()->addChild( mLight0Tr.get() );
-      VisualizationLibrary::rendering()->as<Rendering>()->transform()->addChild( mLight1Tr.get() );
-      VisualizationLibrary::rendering()->as<Rendering>()->transform()->addChild( mLight2Tr.get() );
+      defRendering()->as<Rendering>()->transform()->addChild( mLight0Tr.get() );
+      defRendering()->as<Rendering>()->transform()->addChild( mLight1Tr.get() );
+      defRendering()->as<Rendering>()->transform()->addChild( mLight2Tr.get() );
       mLight0->followTransform( mLight0Tr.get() );
       mLight1->followTransform( mLight1Tr.get() );
       mLight2->followTransform( mLight2Tr.get() );
@@ -161,7 +161,7 @@ public:
 
     // bias text
     mBiasText = new Text;
-    mBiasText->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
+    mBiasText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
     mBiasText->setAlignment( AlignHCenter | AlignBottom);
     mBiasText->setViewportAlignment( AlignHCenter | AlignBottom );
     mBiasText->translate(0,5,0);

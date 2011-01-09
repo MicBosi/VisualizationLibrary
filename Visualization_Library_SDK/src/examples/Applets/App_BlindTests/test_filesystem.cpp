@@ -131,7 +131,7 @@ namespace blind_tests
 
     // OBJ and material loading from zip file
 
-    vl::VisualizationLibrary::fileSystem()->directories()->push_back(zdir.get());
+    vl::defFileSystem()->directories()->push_back(zdir.get());
     vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/obj_test_mesh.obj");
 
     vl::Log::print( vl::Say("obj geometries = %n\n") << res_db->count<vl::Geometry>() );
@@ -148,7 +148,7 @@ namespace blind_tests
   bool testGZipStream()
   {
     std::vector<vl::String> file_list;
-    vl::VisualizationLibrary::fileSystem()->listFilesRecursive(file_list,"/images/*");
+    vl::defFileSystem()->listFilesRecursive(file_list,"/images/*");
 
     for( unsigned i=0; i<file_list.size(); ++i )
     {

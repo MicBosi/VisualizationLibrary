@@ -45,10 +45,11 @@ public:
 
     // load model
     vl::ref<vl::Geometry> model = vl::loadResource("/models/3ds/monkey.3ds")->get<vl::Geometry>(0);
+    model->computeNormals();
 
     // install transform
     mClipTr = new vl::Transform;
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mClipTr.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mClipTr.get());
 
     // to be used later
     vl::ref<vl::Light> light = new vl::Light(0);

@@ -31,9 +31,25 @@
 
 #include <vlGraphics/RenderingAbstract.hpp>
 #include <vlGraphics/RenderEventCallback.hpp>
+#include <vlGraphics/Rendering.hpp>
 
 using namespace vl;
 
+//------------------------------------------------------------------------------
+namespace
+{
+  ref<RenderingAbstract> gRendering = NULL;
+}
+RenderingAbstract* vl::defRendering()
+{
+  if (!gRendering)
+    gRendering = new Rendering;
+  return gRendering.get();
+}
+void vl::setDefRendering(RenderingAbstract* ra)
+{
+  gRendering = ra;
+}
 //------------------------------------------------------------------------------
 RenderingAbstract::RenderingAbstract()
 {

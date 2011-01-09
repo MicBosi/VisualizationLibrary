@@ -125,7 +125,7 @@ namespace
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadMD2(const String& path)
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
 
   if (file)
     return loadMD2( file.get() );

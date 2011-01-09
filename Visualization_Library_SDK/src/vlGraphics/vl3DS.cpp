@@ -377,7 +377,7 @@ A3DSTexture A3DSLoader::readMapChunk()
     {
       tex.mFileName = readLine();
       // locate the actual file
-      ref<VirtualFile> file = vl::VisualizationLibrary::fileSystem()->locateFile(tex.mFileName, mInputFile->path().extractPath());
+      ref<VirtualFile> file = vl::defFileSystem()->locateFile(tex.mFileName, mInputFile->path().extractPath());
       if (file)
         tex.mFileName = file->path();
 
@@ -681,7 +681,7 @@ bool A3DSLoader::parse3DS( VirtualFile* file )
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::load3DS(const String& path)
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
 
   if (file)
     return load3DS( file.get() );
