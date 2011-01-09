@@ -41,7 +41,7 @@ public:
 
   void mouseDownEvent(vl::EMouseButton, int x, int y)
   {
-    vl::Camera* camera = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera();
+    vl::Camera* camera = vl::defRendering()->as<vl::Rendering>()->camera();
 
     // convert Y coordinates to the OpenGL conventions
     y = openglContext()->height() - y;

@@ -54,7 +54,7 @@ Applet::Applet()
 void Applet::initialize()
 {
   // by default Visualization Library installs a Rendering
-  ref<Rendering> rend = VisualizationLibrary::rendering()->as<Rendering>();
+  ref<Rendering> rend = defRendering()->as<Rendering>();
   rend->setShaderAnimationEnabled(true);
   // attached later: viewport
   // attached later: opengl context
@@ -152,10 +152,10 @@ void Applet::runEvent()
 
   // set frame time for all the rendering
   Real now_time = Time::currentTime();
-  VisualizationLibrary::rendering()->setFrameClock( now_time );
+  defRendering()->setFrameClock( now_time );
 
   // execute rendering
-  VisualizationLibrary::rendering()->render();
+  defRendering()->render();
 
   // show rendering
   if( openglContext()->hasDoubleBuffer() )
@@ -167,7 +167,7 @@ void Applet::runEvent()
 void Applet::resizeEvent(int w, int h)
 {
   // if a simple Rendering is attached as the rendering root than update viewport and projection matrix.
-  Rendering* rendering = VisualizationLibrary::rendering()->as<Rendering>();
+  Rendering* rendering = defRendering()->as<Rendering>();
   if (rendering)
   {
     VL_CHECK( w == rendering->renderer()->renderTarget()->width() );

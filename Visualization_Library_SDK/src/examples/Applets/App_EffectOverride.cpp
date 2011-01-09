@@ -47,12 +47,12 @@ class App_EffectOverride: public BaseDemo
     // initialize solid & wire rendering with the default camera, transform root and scene manager.
     mSolidRendering = new vl::Rendering;
     mWireRendering  = new vl::Rendering;
-    *mSolidRendering = *(vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
-    *mWireRendering  = *(vl::VisualizationLibrary::rendering()->as<vl::Rendering>());
+    *mSolidRendering = *(vl::defRendering()->as<vl::Rendering>());
+    *mWireRendering  = *(vl::defRendering()->as<vl::Rendering>());
 
     // install the render tree that calls our two solid and wire renderings
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
-    vl::VisualizationLibrary::setRendering(render_tree.get());
+    vl::setDefRendering(render_tree.get());
     render_tree->subRenderings()->push_back(mSolidRendering.get());
     render_tree->subRenderings()->push_back(mWireRendering.get());
 

@@ -46,7 +46,7 @@ public:
 
   virtual void initEvent()
   {
-    if (!vl::VisualizationLibrary::loadWriterManager()->canLoad("md2"))
+    if (!vl::defLoadWriterManager()->canLoad("md2"))
     {
       vl::Log::error("App_MorphAnimation requires IO_MODULE_MD2.\n");
       vl::Time::sleep(3000);

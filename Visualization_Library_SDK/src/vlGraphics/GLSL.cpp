@@ -704,7 +704,7 @@ bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int le
     mScheduleLink = !linkStatus();
     
     // log error
-    if(!linked() && VisualizationLibrary::settings()->verbosityLevel() == vl::VEL_VERBOSITY_DEBUG)
+    if(!linked() && globalSettings()->verbosityLevel() == vl::VEL_VERBOSITY_DEBUG)
     {
       Log::error("GLSLProgram::programBinary() failed:\n");
       Log::print("GLSLProgram name: '"+String(objectName().c_str()) + "'\n");

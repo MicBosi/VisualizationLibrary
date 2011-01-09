@@ -32,6 +32,9 @@
 #include "BaseDemo.hpp"
 #include "vlut/GeometryPrimitives.hpp"
 #include "vlGraphics/Light.hpp"
+#include "vlGraphics/GeometryLoadCallback.hpp"
+
+using namespace vl;
 
 class App_NearFarOptimization: public BaseDemo
 {
@@ -41,71 +44,74 @@ public:
   // called once after the OpenGL window has been opened 
   void initEvent()
   {
+    ref<GeometryLoadCallback> glc = new GeometryLoadCallback;
+    defLoadWriterManager()->loadCallbacks()->push_back(glc.get());
+
     // allocate the Transform 
-    mCubeTransform = new vl::Transform;
+    mCubeTransform = new Transform;
     // bind the Transform with the transform tree of the rendring pipeline 
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mCubeTransform.get() );
+    defRendering()->as<Rendering>()->transform()->addChild( mCubeTransform.get() );
 
     float fsize = 2500;
     // create the cube's Geometry and compute its normals to support lighting 
-    vl::ref<vl::Geometry> ball1 = vl::makeIcosphere( vl::vec3(0,0,0), fsize, 2, false );
+    ref<Geometry> ball1 = makeIcosphere( vec3(0,0,0), fsize, 2, false );
     ball1->computeNormals();
-    vl::ref<vl::Geometry> ball2 = vl::makeIcosphere( vl::vec3(0,0,0), fsize*1.001f, 2, false );
+    ref<Geometry> ball2 = makeIcosphere( vec3(0,0,0), fsize*1.001f, 2, false );
     ball2->computeNormals();
 
     // setup the effect1 to be used to render the cube 
-    vl::ref<vl::Effect> effect1 = new vl::Effect;
+    ref<Effect> effect1 = new Effect;
     // enable depth test and lighting 
-    effect1->shader()->enable(vl::EN_DEPTH_TEST);
+    effect1->shader()->enable(EN_DEPTH_TEST);
     // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
-    effect1->shader()->setRenderState( new vl::Light(0) );
+    effect1->shader()->setRenderState( new Light(0) );
     // enable the standard OpenGL lighting 
-    effect1->shader()->enable(vl::EN_LIGHTING);
+    effect1->shader()->enable(EN_LIGHTING);
     // set the front and back material color of the cube 
     // "gocMaterial" stands for "get-or-create Material"
-    effect1->shader()->gocMaterial()->setDiffuse( vl::crimson );
+    effect1->shader()->gocMaterial()->setDiffuse( crimson );
 
     // setup the effect2 to be used to render the cube 
-    vl::ref<vl::Effect> effect2 = new vl::Effect;
+    ref<Effect> effect2 = new Effect;
     // enable depth test and lighting 
-    effect2->shader()->enable(vl::EN_DEPTH_TEST);
+    effect2->shader()->enable(EN_DEPTH_TEST);
     // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
-    effect2->shader()->setRenderState( new vl::Light(0) );
+    effect2->shader()->setRenderState( new Light(0) );
     // enable the standard OpenGL lighting 
-    effect2->shader()->enable(vl::EN_LIGHTING);
+    effect2->shader()->enable(EN_LIGHTING);
     // set the front and back material color of the cube 
     // "gocMaterial" stands for "get-or-create Material"
-    effect2->shader()->gocMaterial()->setDiffuse( vl::gold );
+    effect2->shader()->gocMaterial()->setDiffuse( gold );
 
     // add the cube to the scene using the previously defined effect and transform 
     sceneManager()->tree()->addActor( ball1.get(), effect1.get(), mCubeTransform.get()  );
     sceneManager()->tree()->addActor( ball2.get(), effect2.get(), mCubeTransform.get()  );
     sceneManager()->computeBounds();
 
-    trackball()->adjustView( vl::VisualizationLibrary::rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
+    trackball()->adjustView( defRendering()->as<Rendering>(), vec3(0,0,1), vec3(0,1,0), 1.0f );
   }
 
   // called every frame 
   virtual void run()
   {
     // rotates the cube around the Y axis 45 degrees per second 
-    vl::Real degrees = vl::Time::currentTime() * 45.0f;
-    vl::mat4 matrix = vl::mat4::getRotation( degrees, 0,1,0 );
+    Real degrees = Time::currentTime() * 45.0f;
+    mat4 matrix = mat4::getRotation( degrees, 0,1,0 );
     mCubeTransform->setLocalMatrix( matrix );
 
     // periodically toggle near/far optimization
-    if ( sin( vl::Time::currentTime() * 3.14159265 / 2 ) > 0 )
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(true);
+    if ( ::sin( Time::currentTime() * 3.14159265 / 2 ) > 0 )
+      defRendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(true);
     else
     {
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
+      defRendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
       // restore default perspective near/far values
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsPerspective(60.0f, 0.5f, 10000.0f);
+      defRendering()->as<Rendering>()->camera()->setProjectionAsPerspective(60.0f, 0.5f, 10000.0f);
     }
   }
 
 protected:
-  vl::ref<vl::Transform> mCubeTransform;
+  ref<Transform> mCubeTransform;
   bool mNearFarOptimized;
 };
 

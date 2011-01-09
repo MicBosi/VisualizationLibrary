@@ -90,7 +90,7 @@ public:
     SETUP TO RENDER THE ATOM LABELS:
 
     ... choose the style: font, color, alignment etc.
-    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setColor(vl::white);
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineColor(vl::black);
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineEnabled(true);
@@ -142,7 +142,7 @@ public:
 
     /* initialize the text actor */
     mText->setText("Drop a MOL2 file inside the window.");
-    mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     mText->setAlignment( vl::AlignHCenter | vl::AlignTop );
     mText->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     mText->setTextAlignment(vl::TextAlignCenter);
@@ -163,7 +163,7 @@ public:
       updateMolecule();
 
     /* adjust the camera position to nicely see the scene, it also position the rotation pivot to the center of the molecule */
-    trackball()->adjustView( vl::VisualizationLibrary::rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
+    trackball()->adjustView( vl::defRendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
 
     for(size_t i=0; i<mMolecules.size(); ++i)
     {

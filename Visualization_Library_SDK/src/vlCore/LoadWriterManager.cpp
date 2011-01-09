@@ -35,6 +35,20 @@
 
 using namespace vl;
 
+namespace 
+{
+  ref<LoadWriterManager> gLoadWriterManager = NULL;
+}
+LoadWriterManager* vl::defLoadWriterManager()
+{
+  if (!gLoadWriterManager)
+    gLoadWriterManager = new LoadWriterManager;
+  return gLoadWriterManager.get();
+}
+void vl::setDefLoadWriterManager(LoadWriterManager* lwm)
+{
+  gLoadWriterManager = lwm;
+}
 //-----------------------------------------------------------------------------
 const ResourceLoadWriter* LoadWriterManager::findLoader(VirtualFile* file) const 
 {

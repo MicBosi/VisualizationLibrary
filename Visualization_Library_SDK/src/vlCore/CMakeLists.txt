@@ -51,6 +51,7 @@ SET(VLCORE_SRC
   Plane.cpp
   Random.cpp
   Say.cpp
+  Settings.cpp
   String.cpp
   TextStream.cpp
   Time.cpp

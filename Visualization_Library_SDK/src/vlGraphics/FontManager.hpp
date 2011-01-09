@@ -81,6 +81,12 @@ namespace vl
     std::vector< ref<Font> > mFonts;
     void* mFreeTypeLibrary;
   };
+
+  //! Returns the default FontManager used by Visualization Library.
+  FontManager* defFontManager();
+
+  //! Sets the default FontManager used by Visualization Library.
+  void setDefFontManager(FontManager*);
 }
 
 #endif

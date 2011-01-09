@@ -136,9 +136,9 @@ namespace vl
     std::vector< ref<Object> > mResources;
   };
 //-----------------------------------------------------------------------------
-  //! Loads the specified resource. Equivalent to VisualizationLibrary::loadWriterManager()->loadResource(const String& path, bool quick)
+  //! Loads the specified resource. Equivalent to defLoadWriterManager()->loadResource(const String& path, bool quick)
   ref<ResourceDatabase> loadResource(const String& path, bool quick=true);
-  //! Loads the specified resource. Equivalent to VisualizationLibrary::loadWriterManager()->loadResource(VirtualFile* file)
+  //! Loads the specified resource. Equivalent to defLoadWriterManager()->loadResource(VirtualFile* file)
   ref<ResourceDatabase> loadResource(VirtualFile* file, bool quick=true);
   //! Returns true if there is a ResourceLoadWriter registered to load the specified path or extension
   bool canLoad(const String& path);

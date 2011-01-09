@@ -87,7 +87,7 @@ namespace
 //! - 8 bit palettizzed / 24 bit (rgb) per color RLE uncompressed
 ref<Image> vl::loadTGA( const String& path )
 {
-  ref<VirtualFile> file = VisualizationLibrary::fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
   if ( !file )
   {
     Log::error( Say("File '%s' not found.\n") << path );

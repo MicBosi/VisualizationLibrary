@@ -123,9 +123,9 @@ public:
     vl::ref<vl::Font> font;
     if (mTestNumber == 0)
     {
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vl::white );
+      vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vl::white );
 
-      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 30);
+      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 30);
 
       vl::ref<vl::Text> text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -142,9 +142,9 @@ public:
       text->setOutlineColor(vl::black);
       text->translate(0,-20,0);
 
-      float h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      float h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
-      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10);
+      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10);
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
       text->setFont(font.get());
@@ -157,9 +157,9 @@ public:
       text->setShadowVector( vl::fvec2(5,5) );
       text->translate(0,h-10,0);
 
-      h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
-      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 8);
+      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 8);
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
       text->setFont(font.get());
@@ -174,7 +174,7 @@ public:
       text->setBorderEnabled(true);
       text->translate(0,h-10,0);
 
-      h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -190,7 +190,7 @@ public:
       text->setBorderColor( vl::red );
       text->translate(0,h-20,0);
 
-      h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -206,7 +206,7 @@ public:
       text->setBorderColor( vl::red );
       text->translate(0,h-20,0);
 
-      h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -225,7 +225,7 @@ public:
     else
     if (mTestNumber == 1)
     {
-      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
+      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
       vl::ref<vl::Text> text;
 
       text = new vl::Text;
@@ -297,7 +297,7 @@ public:
     {
       _text1 = new vl::Text;
       sceneManager()->tree()->addActor( _text1.get(), effect.get() );
-      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10);
+      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10);
       _text1->setFont( font.get() );
       _text1->setText( cprog );
       _text1->setMode(vl::Text2D);
@@ -320,9 +320,9 @@ public:
       vl::String system_font_directory = get_system_font_directory();
 
       /* chinese & japanese fonts */
-      vl::ref<vl::Font> chinese_font = vl::VisualizationLibrary::fontManager()->acquireFont(system_font_directory+"/simhei.ttf", 16);
+      vl::ref<vl::Font> chinese_font = vl::defFontManager()->acquireFont(system_font_directory+"/simhei.ttf", 16);
       /* english, russian, hebrew, arabic */
-      font = vl::VisualizationLibrary::fontManager()->acquireFont(system_font_directory+"/arial.ttf", 16);
+      font = vl::defFontManager()->acquireFont(system_font_directory+"/arial.ttf", 16);
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -406,7 +406,7 @@ public:
       text->setBackgroundEnabled(true);
       text->translate(0,-40-space*5,0);
 
-      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
+      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -506,7 +506,7 @@ public:
       earth_effect->shader()->enable(vl::EN_CULL_FACE);
       earth_effect->shader()->gocMaterial()->setDiffuse(vl::royalblue);
 
-      vl::ref<vl::Font> font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10);
+      vl::ref<vl::Font> font = vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10);
 
       vl::ref<vl::Effect> name_effect = new vl::Effect;
       name_effect->shader()->setRenderState( light.get() );
@@ -559,7 +559,7 @@ public:
       };
 
       vl::ref<vl::Transform> belt_tr = new vl::Transform;
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( belt_tr.get() );
+      vl::defRendering()->as<vl::Rendering>()->transform()->addChild( belt_tr.get() );
 
       for(int i=0; i<9; i++)
       {
@@ -567,7 +567,7 @@ public:
         sceneManager()->tree()->addActor( belt1.get(), belt_effect.get(), belt_tr.get() );
 
         planet_tr[i] = new vl::Transform;
-        vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( planet_tr[i].get() );
+        vl::defRendering()->as<vl::Rendering>()->transform()->addChild( planet_tr[i].get() );
 
         if (i == 2)
           /* Earth */
@@ -611,7 +611,7 @@ public:
 
       /* the title */
 
-      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 20);
+      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 20);
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), name_effect.get() );
       text->setFont(font.get());

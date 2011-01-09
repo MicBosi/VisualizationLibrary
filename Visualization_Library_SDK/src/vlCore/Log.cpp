@@ -43,7 +43,7 @@ ref<Log> Log::mLogger;
 //-----------------------------------------------------------------------------
 void Log::print(ELogLevel level, const String& log)
 {
-  EVerbosityLevel verbosity = VisualizationLibrary::settings()->verbosityLevel();
+  EVerbosityLevel verbosity = globalSettings()->verbosityLevel();
   if (mLogger && verbosity != vl::VEL_VERBOSITY_SILENT)
   {
     switch(level)

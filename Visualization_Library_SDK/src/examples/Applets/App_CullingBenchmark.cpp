@@ -51,7 +51,7 @@ public:
 
     mSceneKdTree = new vl::SceneManagerActorKdTree;
 
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());
+    vl::defRendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());
 
     createScene(mActors);
 
@@ -59,7 +59,7 @@ public:
     sceneManager()->setCullingEnabled(true);
 
     mText = new vl::Text;
-    mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false) );
+    mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false) );
     mText->setAlignment(vl::AlignHCenter | vl::AlignTop);
     mText->setViewportAlignment(vl::AlignHCenter | vl::AlignTop);
     mText->setColor(vl::white);

@@ -79,7 +79,7 @@
 	
 	\par Virtual File System
 	
-	- vl::VisualizationLibrary::fileSystem()
+	- vl::defFileSystem()
 	- vl::FileSystem
 	- vl::VirtualDirectory
 	- vl::DiskDirectory

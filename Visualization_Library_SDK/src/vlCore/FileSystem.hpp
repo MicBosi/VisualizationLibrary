@@ -86,6 +86,12 @@ namespace vl
   protected:
     Collection<VirtualDirectory> mDirectories;
   };
+
+  //! Returns the default FileSystem used by VisualizationLibrary
+  FileSystem* defFileSystem();
+
+  //! Sets the default FileSystem used by VisualizationLibrary
+  void seDefFileSystem(FileSystem* fs);
 }
 
 #endif

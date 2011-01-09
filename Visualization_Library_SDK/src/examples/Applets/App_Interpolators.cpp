@@ -56,8 +56,8 @@ public:
   void initEvent()
   {
     BaseDemo::initEvent();
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
+    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
     showCatmullRomPentagonOpen();
     showText();
   }
@@ -274,7 +274,7 @@ public:
   {
     vl::ref<vl::Text> text = new vl::Text;
     text->setText("Press the left/right arrow keys to change test.");
-    text->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    text->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     text->setAlignment( vl::AlignHCenter | vl::AlignTop );
     text->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     text->translate(0,-5,0);

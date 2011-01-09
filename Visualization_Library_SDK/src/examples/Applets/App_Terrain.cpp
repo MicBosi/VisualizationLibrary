@@ -77,13 +77,13 @@ public:
     // initialize the terrain
     terrain->init();
     // add the terrain scene manager to the rendering
-    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back( terrain.get() );
+    vl::defRendering()->as<vl::Rendering>()->sceneManagers()->push_back( terrain.get() );
 
     // adds fog if we are not using GLSL but the fixed function pipeline
     if (!terrain->useGLSL())
     {
       // set sky to white
-      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::white);
+      vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::white);
       // set fog render state
       vl::ref<vl::Fog> fog = new vl::Fog;
       fog->setColor(vl::white);

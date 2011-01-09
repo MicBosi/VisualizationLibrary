@@ -80,7 +80,7 @@ VolumePlot::VolumePlot()
   mTextTemplate = new Text;
   mSamplingResolution = ivec3(64,64,64);
   mLabelFormat = "(%.2n %.2n %.2n)";
-  mLabelFont = VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
+  mLabelFont = defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
   mMinCorner = fvec3(-1,-1,-1);
   mMaxCorner = fvec3(+1,+1,+1);
 
