@@ -32,7 +32,7 @@
 #ifndef BaseDemo_INCLUDE_ONCE
 #define BaseDemo_INCLUDE_ONCE
 
-#include "vlut/Applet.hpp"
+#include "vlGraphics/Applet.hpp"
 #include "vlGraphics/Rendering.hpp"
 #include "vlCore/VisualizationLibrary.hpp"
 #include "vlGraphics/ReadPixels.hpp"

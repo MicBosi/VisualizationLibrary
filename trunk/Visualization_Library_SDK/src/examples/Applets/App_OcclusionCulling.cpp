@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlut/GeometryPrimitives.hpp"
-#include "vlut/Colors.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
+#include "vlCore/Colors.hpp"
 #include "vlGraphics/OcclusionCullRenderer.hpp"
 #include "vlGraphics/Text.hpp"
 #include "vlGraphics/Light.hpp"

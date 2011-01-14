@@ -34,7 +34,7 @@
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/GLSL.hpp>
-#include <vlut/GeometryPrimitives.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 

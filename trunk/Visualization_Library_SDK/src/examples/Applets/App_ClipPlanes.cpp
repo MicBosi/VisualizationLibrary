@@ -34,7 +34,7 @@
 #include "vlGraphics/Light.hpp"
 #include "vlGraphics/ClipPlane.hpp"
 #include "vlGraphics/Geometry.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 
 class App_ClipPlanes: public BaseDemo
 {

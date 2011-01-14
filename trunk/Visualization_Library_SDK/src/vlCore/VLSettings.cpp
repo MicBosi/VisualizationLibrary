@@ -29,13 +29,13 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/Settings.hpp>
+#include <vlCore/VLSettings.hpp>
 #include <cstdlib>
 
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-Settings::Settings()
+VLSettings::VLSettings()
 {
   #ifndef NDEBUG
     mVerbosityLevel  = vl::VEL_VERBOSITY_NORMAL;

@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vlMolecule/Molecule.hpp>
-#include <vlut/GeometryPrimitives.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/Text.hpp>
 #include <vlGraphics/Light.hpp>
 

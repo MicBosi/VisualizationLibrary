@@ -31,7 +31,7 @@
 
 #include "BaseDemo.hpp"
 #include "vlGraphics/GLSL.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include "vlGraphics/Text.hpp"
 #include "vlGraphics/FontManager.hpp"
 

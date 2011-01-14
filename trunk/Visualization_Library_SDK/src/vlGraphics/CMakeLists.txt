@@ -37,6 +37,7 @@ SET(VLGRAPHICS_SRC
   Actor.cpp
   ActorTreeAbstract.cpp
   ActorTree.cpp
+  Applet.cpp
   BezierSurface.cpp
   Billboard.cpp
   Camera.cpp
@@ -53,6 +54,7 @@ SET(VLGRAPHICS_SRC
   FramebufferObject.cpp
   GLSL.cpp
   Geometry.cpp
+  GeometryPrimitives.cpp
   GhostCameraManipulator.cpp
   ActorKdTree.cpp
   Light.cpp
@@ -85,6 +87,7 @@ SET(VLGRAPHICS_SRC
 
 set(VLGRAPHICS_INC
   Actor.hpp
+  Applet.hpp
   BezierSurface.hpp
   Billboard.hpp
   BlitFramebuffer.hpp
@@ -116,6 +119,7 @@ set(VLGRAPHICS_INC
   GLSL.hpp
   Geometry.hpp
   GeometryLoadCallback.hpp
+  GeometryPrimitives.hpp
   GhostCameraManipulator.hpp
   ImagePBO.hpp
   IndexIterator.hpp
