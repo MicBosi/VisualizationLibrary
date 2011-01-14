@@ -39,23 +39,6 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-namespace
-{
-  ref<FontManager> gFontManager = NULL;
-}
-//-----------------------------------------------------------------------------
-FontManager* vl::defFontManager()
-{
-  if (!gFontManager)
-    gFontManager = new FontManager;
-  return gFontManager.get();
-}
-//-----------------------------------------------------------------------------
-void vl::setDefFontManager(FontManager* fm)
-{
-  gFontManager = fm;
-}
-//-----------------------------------------------------------------------------
 FontManager::FontManager(void* free_type_library)
 {
   mFreeTypeLibrary = free_type_library;

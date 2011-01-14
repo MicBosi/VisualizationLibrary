@@ -36,21 +36,6 @@
 using namespace vl;
 
 //------------------------------------------------------------------------------
-namespace
-{
-  ref<RenderingAbstract> gRendering = NULL;
-}
-RenderingAbstract* vl::defRendering()
-{
-  if (!gRendering)
-    gRendering = new Rendering;
-  return gRendering.get();
-}
-void vl::setDefRendering(RenderingAbstract* ra)
-{
-  gRendering = ra;
-}
-//------------------------------------------------------------------------------
 RenderingAbstract::RenderingAbstract()
 {
   mFrameClock = 0.0f;
