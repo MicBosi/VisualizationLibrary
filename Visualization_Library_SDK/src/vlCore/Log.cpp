@@ -31,55 +31,129 @@
 
 #include <vlCore/Log.hpp>
 #include <vlCore/checks.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/Settings.hpp>
+#include <vlCore/Vector3.hpp>
+#include <vlCore/Say.hpp>
+#include <vlCore/version.hpp>
 #include <iostream>
 
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-ref<Log> Log::mLogger;
-//-----------------------------------------------------------------------------
 // Log
 //-----------------------------------------------------------------------------
-void Log::print(ELogLevel level, const String& log)
-{
-  EVerbosityLevel verbosity = globalSettings()->verbosityLevel();
-  if (mLogger && verbosity != vl::VEL_VERBOSITY_SILENT)
-  {
-    switch(level)
-    {
-    case LogBug:
-    case LogError:
-    case LogWarning:
-      if (verbosity >= vl::VEL_VERBOSITY_ERROR)
-        mLogger->printImplementation(level, log);
-      break;
-    case LogNormal:
-    case LogInfo:
-      if (verbosity >= vl::VEL_VERBOSITY_NORMAL)
-        mLogger->printImplementation(level, log);
-      break;
-    case LogDebug:
-      if (verbosity >= vl::VEL_VERBOSITY_DEBUG)
-        mLogger->printImplementation(level, log);
-      break;
-    }
-  }
+void Log::print(const String& log) 
+{ 
+  if(defLogger() && globalSettings()->verbosityLevel() != vl::VEL_VERBOSITY_SILENT)
+    defLogger()->printImplementation(LogNormal, log); 
 }
 //-----------------------------------------------------------------------------
-void Log::force_print(const String& log) { if (mLogger) mLogger->printImplementation(LogNormal, log); }
+void Log::debug(const String& log) 
+{ 
+  if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_DEBUG)
+    defLogger()->printImplementation(LogDebug, "Debug: " + log); 
+}
 //-----------------------------------------------------------------------------
-void Log::print(const String& log) { print(LogNormal, log); }
+void Log::info(const String& log) 
+{ 
+  if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
+    defLogger()->printImplementation(LogInfo, "Info: " + log); 
+}
 //-----------------------------------------------------------------------------
-void Log::debug(const String& log) { print(LogDebug, log); }
+void Log::warning(const String& log) 
+{ 
+  if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
+    defLogger()->printImplementation(LogWarning, "Warning: " + log); 
+}
 //-----------------------------------------------------------------------------
-void Log::info(const String& log) { print(LogInfo, log); }
+void Log::error(const String& log) 
+{ 
+  if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
+    defLogger()->printImplementation(LogError, "Error: " + log); 
+}
 //-----------------------------------------------------------------------------
-void Log::warning(const String& log) { print(LogWarning, log); }
-//-----------------------------------------------------------------------------
-void Log::error(const String& log) { print(LogError, log); }
-//-----------------------------------------------------------------------------
-void Log::bug(const String& log) { print(LogBug, log); }
+void Log::bug(const String& log) 
+{ 
+  if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
+    defLogger()->printImplementation(LogBug, "Bug: " + log); 
+}
+//------------------------------------------------------------------------------
+void Log::logSystemInfo()
+{
+  #if defined(_MSC_VER)
+    const char* compiler = "MSVC";
+  #elif defined(__GNUG__)
+    const char* compiler = "GCC";
+  #else
+    const char* compiler = "UNKNOWN";
+  #endif
+
+  #if defined(DEBUG) || !defined(NDEBUG)
+    const char* build_type = "DEBUG";
+  #else
+    const char* build_type = "RELEASE";
+  #endif
+
+  print( Say("Visualization Library v%n.%n.%n [%s]\n%s - %s - %s compiler [%s] [%s]\n") 
+    << VL_Major << VL_Minor << VL_Build 
+    << (sizeof(vec3) == sizeof(fvec3) ? "f32" : "f64")
+    << __DATE__ << __TIME__ << compiler << build_type 
+    << (sizeof(void*) == 4 ? "x32" : "x64") );
+
+  print("\n --- Environment ---\n");
+  const char* val = getenv("VL_LOGFILE_PATH");
+  if (val)
+    print( Say("VL_LOGFILE_PATH = %s\n") << val );
+  else
+    print("VL_LOGFILE_PATH <not present>\n");
+
+  val = getenv("VL_DATA_PATH");
+  if (val)
+    print( Say("VL_DATA_PATH = %s\n") << val );
+  else
+    print("VL_DATA_PATH <not present>\n");
+
+  val = getenv("VL_VERBOSITY_LEVEL");
+  if (val)
+    print( Say("VL_VERBOSITY_LEVEL = %s\n") << val );
+  else
+    print("VL_VERBOSITY_LEVEL <not present>\n");
+
+  val = getenv("VL_CHECK_GL_STATES");
+  if (val)
+    print( Say("VL_CHECK_GL_STATES = %s\n") << val );
+  else
+    print("VL_CHECK_GL_STATES <not present>\n");
+
+  print("\n --- Global Settings --- \n");
+  print( Say("Log file  = %s\n") << globalSettings()->defaultLogPath() );
+  print( Say("Data path = %s\n") << globalSettings()->defaultDataPath() );
+  print("Verbosity level = ");
+  switch(globalSettings()->verbosityLevel())
+  {
+    /*case vl::VEL_VERBOSITY_SILENT: print("SILENT\n"); break;*/
+    case vl::VEL_VERBOSITY_ERROR:  print("ERROR\n"); break;
+    case vl::VEL_VERBOSITY_NORMAL: print("NORMAL\n"); break;
+    case vl::VEL_VERBOSITY_DEBUG:  print("DEBUG\n"); break;
+    default: break;
+  }
+  print( Say("Check OpenGL States = %s\n") << (globalSettings()->checkOpenGLStates()?"YES":"NO") );
+  print( Say("Check Transform Siblings = %s\n") << (globalSettings()->checkTransformSiblings()?"YES":"NO") );
+
+  print("\n");
+}
+//------------------------------------------------------------------------------
+void vl::log_failed_check(const char* expr, const char* file, int line)
+{
+  Log::error( Say("Condition \"%s\" failed at %s:%n\n") << expr << file << line );
+  fflush(stdout);
+  fflush(stderr);
+
+  #if _WIN32 && VL_MESSAGEBOX_CHECK == 1
+     String msg = Say("Condition \"%s\" failed.\n\n%s:%n\n") << expr << file << line;
+     MessageBox(NULL, (wchar_t*)msg.ptr(), L"Visualization Library Debug", MB_OK | MB_ICONEXCLAMATION);
+  #endif
+}
 //-----------------------------------------------------------------------------
 // StandardLog
 //-----------------------------------------------------------------------------
@@ -94,22 +168,10 @@ void StandardLog::setLogFile(const String& file)
     mFile.open(file.toStdString().c_str());
 }
 //-----------------------------------------------------------------------------
-void StandardLog::printImplementation(ELogLevel level, const String& in_log)
+void StandardLog::printImplementation(ELogLevel, const String& log)
 {
-  if (in_log.empty())
+  if (log.empty())
     return;
-
-  String log = in_log;
-
-  switch(level)
-  {
-    case LogNormal: break;
-    case LogDebug:   log = "debug: "   + log; break;
-    case LogInfo:    log = "info: "    + log; break;
-    case LogWarning: log = "warning: " + log; break;
-    case LogError:   log = "error: "   + log; break;
-    case LogBug:     log = "bug: "     + log; break;
-  }
 
   std::string stdstr = log.toStdString();
   std::cout << stdstr << std::flush;
