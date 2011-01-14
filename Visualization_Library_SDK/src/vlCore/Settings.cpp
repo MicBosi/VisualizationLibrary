@@ -35,15 +35,6 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-namespace
-{
-  Settings gSettings;
-}
-Settings* vl::globalSettings()
-{
-  return &gSettings;
-}
-//-----------------------------------------------------------------------------
 Settings::Settings()
 {
   #ifndef NDEBUG
