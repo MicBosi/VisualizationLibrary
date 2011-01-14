@@ -30,22 +30,22 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/Text.hpp"
-#include "vlGraphics/FontManager.hpp"
-#include "vlCore/VisualizationLibrary.hpp"
-#include "vlCore/FileSystem.hpp"
-#include "vlCore/DiskDirectory.hpp"
-#include "vlCore/ResourceDatabase.hpp"
-#include "vlCore/LoadWriterManager.hpp"
-#include "vlGraphics/vl3DS.hpp"
-#include "vlGraphics/vlPLY.hpp"
-#include "vlGraphics/vlOBJ.hpp"
-#include "vlGraphics/vlAC3D.hpp"
-#include "vlGraphics/TriangleStripGenerator.hpp"
-#include "vlGraphics/DoubleVertexRemover.hpp"
-#include "vlGraphics/FontManager.hpp"
-#include "vlGraphics/GeometryLoadCallback.hpp"
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/FileSystem.hpp>
+#include <vlCore/DiskDirectory.hpp>
+#include <vlCore/ResourceDatabase.hpp>
+#include <vlCore/LoadWriterManager.hpp>
+#include <vlGraphics/vl3DS.hpp>
+#include <vlGraphics/vlPLY.hpp>
+#include <vlGraphics/vlOBJ.hpp>
+#include <vlGraphics/vlAC3D.hpp>
+#include <vlGraphics/TriangleStripGenerator.hpp>
+#include <vlGraphics/DoubleVertexRemover.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/GeometryLoadCallback.hpp>
 
 using namespace vl;
 

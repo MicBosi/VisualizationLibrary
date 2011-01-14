@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlWin32/Win32Context.hpp"
-#include "vlCore/Log.hpp"
+#include <vlWin32/Win32Context.hpp>
+#include <vlCore/Log.hpp>
 
 using namespace vl;
 using namespace vlWin32;

@@ -30,12 +30,12 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/VisualizationLibrary.hpp"
-#include "vlGraphics/FontManager.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/DepthSortCallback.hpp"
-#include "vlVolume/MarchingCubes.hpp"
-#include "vlVolume/VolumePlot.hpp"
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/DepthSortCallback.hpp>
+#include <vlVolume/MarchingCubes.hpp>
+#include <vlVolume/VolumePlot.hpp>
 #include <ctime>
 
 class App_MarchingCubes: public BaseDemo

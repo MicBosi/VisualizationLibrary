@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/DrawElements.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/GLSL.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/DrawElements.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/GLSL.hpp>
 
 class App_GeometryInstancing: public BaseDemo
 {

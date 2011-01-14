@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/Colors.hpp"
-#include "vlGraphics/PolygonSimplifier.hpp"
-#include "vlGraphics/Geometry.hpp"
-#include "vlGraphics/Light.hpp"
+#include <vlCore/Colors.hpp>
+#include <vlGraphics/PolygonSimplifier.hpp>
+#include <vlGraphics/Geometry.hpp>
+#include <vlGraphics/Light.hpp>
 
 class App_PolygonReduction: public BaseDemo
 {

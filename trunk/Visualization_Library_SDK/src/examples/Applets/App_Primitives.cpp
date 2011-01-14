@@ -32,11 +32,11 @@
 // mic fixme: implement and cleaup this demo test
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/EdgeExtractor.hpp"
-#include "vlGraphics/EdgeRenderer.hpp"
-#include "vlCore/LoadWriterManager.hpp"
-#include "vlGraphics/Light.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/EdgeExtractor.hpp>
+#include <vlGraphics/EdgeRenderer.hpp>
+#include <vlCore/LoadWriterManager.hpp>
+#include <vlGraphics/Light.hpp>
 
 class App_Primitives: public BaseDemo
 {
