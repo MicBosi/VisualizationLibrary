@@ -51,7 +51,7 @@ SET(VLCORE_SRC
   Plane.cpp
   Random.cpp
   Say.cpp
-  Settings.cpp
+  VLSettings.cpp
   String.cpp
   TextStream.cpp
   Time.cpp
@@ -71,6 +71,7 @@ set(VLCORE_INC
   BufferedStream.hpp
   CatmullRomInterpolator.hpp
   Collection.hpp
+  Colors.hpp
   CRC32CheckSum.hpp
   DiskDirectory.hpp
   DiskFile.hpp
@@ -101,7 +102,7 @@ set(VLCORE_INC
   ResourceDatabase.hpp
   ResourceLoadWriter.hpp
   Say.hpp
-  Settings.hpp
+  VLSettings.hpp
   SignalSlot.hpp
   SignalSlotX.hpp
   Sphere.hpp

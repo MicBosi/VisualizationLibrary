@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlut/Colors.hpp"
+#include "vlCore/Colors.hpp"
 #include "vlVG/VectorGraphics.hpp"
 #include "vlVG/SceneManagerVectorGraphics.hpp"
 #include "vlGraphics/Geometry.hpp"

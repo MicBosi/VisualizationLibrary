@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include "vlGraphics/Text.hpp"
 #include "vlGraphics/GLSL.hpp"
 #include "vlGraphics/FontManager.hpp"

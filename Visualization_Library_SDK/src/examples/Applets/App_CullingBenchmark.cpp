@@ -34,7 +34,7 @@
 #include "vlGraphics/Light.hpp"
 #include "vlGraphics/Text.hpp"
 #include "vlGraphics/FontManager.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 
 class App_CullingBenchmark: public BaseDemo
 {

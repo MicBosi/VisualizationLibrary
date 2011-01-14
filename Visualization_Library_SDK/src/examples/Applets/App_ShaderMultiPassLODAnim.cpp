@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlut/Colors.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlCore/Colors.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include "vlGraphics/DistanceLODEvaluator.hpp"
 #include "vlGraphics/PixelLODEvaluator.hpp"
 #include "vlGraphics/Light.hpp"

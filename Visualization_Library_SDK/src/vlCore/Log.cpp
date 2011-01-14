@@ -31,7 +31,7 @@
 
 #include <vlCore/Log.hpp>
 #include <vlCore/checks.hpp>
-#include <vlCore/Settings.hpp>
+#include <vlCore/VLSettings.hpp>
 #include <vlCore/Vector3.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/version.hpp>

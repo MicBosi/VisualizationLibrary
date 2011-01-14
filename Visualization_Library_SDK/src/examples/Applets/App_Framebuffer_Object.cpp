@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include "vlGraphics/RenderingTree.hpp"
 #include "vlGraphics/CopyTexSubImage.hpp"
 #include "vlGraphics/BlitFramebuffer.hpp"

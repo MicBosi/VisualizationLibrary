@@ -32,8 +32,8 @@
 #ifndef App_RotatingCube_INCLUDE_ONCE
 #define App_RotatingCube_INCLUDE_ONCE
 
-#include "vlut/Applet.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/Applet.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include "vlGraphics/SceneManagerActorTree.hpp"
 #include "vlGraphics/Rendering.hpp"
 #include "vlGraphics/Actor.hpp"
