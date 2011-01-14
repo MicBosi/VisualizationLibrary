@@ -32,7 +32,7 @@
 #ifndef UID_INCLUDE_ONCE
 #define UID_INCLUDE_ONCE
 
-#include "vlCore/checks.hpp"
+#include <vlCore/checks.hpp>
 #include <string>
 #include <string.h>
 

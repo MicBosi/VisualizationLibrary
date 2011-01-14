@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlCore/VisualizationLibrary.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/GLSL.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/GLSL.hpp>
 
 const int TORUS_SEGS = 25;
 

@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/Light.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/Light.hpp>
 
 class App_Transforms: public BaseDemo
 {

@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlCore/Array.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/GLSL.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlCore/Array.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/GLSL.hpp>
 
 /* 
  * You can find the documentatio for this example in the offical documentation at:

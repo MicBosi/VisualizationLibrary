@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/Colors.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/Text.hpp"
-#include "vlGraphics/FontManager.hpp"
-#include "vlGraphics/Light.hpp"
+#include <vlCore/Colors.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/Light.hpp>
 
 class App_TextRendering: public BaseDemo
 {

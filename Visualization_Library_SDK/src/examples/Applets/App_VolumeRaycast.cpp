@@ -30,13 +30,13 @@
 /*************************************************************************************/
 
 #include "BaseDemo.hpp"
-// #include "vlVolume/RaycastVolume.hpp"
-#include "vlVolume/VolumeUtils.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/Text.hpp"
-#include "vlGraphics/FontManager.hpp"
-#include "vlGraphics/GLSL.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
+// #include <vlVolume/RaycastVolume.hpp>
+#include <vlVolume/VolumeUtils.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/GLSL.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
 
 using namespace vl;
 

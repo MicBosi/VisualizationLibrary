@@ -32,7 +32,7 @@
 #ifndef Random_INCLUDE_ONCE
 #define Random_INCLUDE_ONCE
 
-#include "vlCore/Object.hpp"
+#include <vlCore/Object.hpp>
 
 namespace vl
 {

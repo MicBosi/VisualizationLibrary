@@ -30,13 +30,13 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/RenderingTree.hpp"
-#include "vlGraphics/CopyTexSubImage.hpp"
-#include "vlGraphics/BlitFramebuffer.hpp"
-#include "vlGraphics/SceneManager.hpp"
-#include "vlGraphics/GLSL.hpp"
-#include "vlGraphics/Light.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/RenderingTree.hpp>
+#include <vlGraphics/CopyTexSubImage.hpp>
+#include <vlGraphics/BlitFramebuffer.hpp>
+#include <vlGraphics/SceneManager.hpp>
+#include <vlGraphics/GLSL.hpp>
+#include <vlGraphics/Light.hpp>
 
 class App_Framebuffer_Object: public BaseDemo
 {

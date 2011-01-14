@@ -30,15 +30,15 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlCore/VisualizationLibrary.hpp"
-#include "vlGraphics/Effect.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/Text.hpp"
-#include "vlGraphics/FontManager.hpp"
-#include "vlCore/CatmullRomInterpolator.hpp"
-#include "vlCore/LinearInterpolator.hpp"
-#include "vlGraphics/Extrusion.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlGraphics/Effect.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlCore/CatmullRomInterpolator.hpp>
+#include <vlCore/LinearInterpolator.hpp>
+#include <vlGraphics/Extrusion.hpp>
 
 class App_Interpolators: public BaseDemo
 {

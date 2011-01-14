@@ -30,12 +30,12 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlCore/Colors.hpp"
-#include "vlGraphics/OcclusionCullRenderer.hpp"
-#include "vlGraphics/Text.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/FontManager.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlCore/Colors.hpp>
+#include <vlGraphics/OcclusionCullRenderer.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/FontManager.hpp>
 
 class App_OcclusionCulling: public BaseDemo
 {

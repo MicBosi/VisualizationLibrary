@@ -32,14 +32,14 @@
 #ifndef App_RotatingCube_INCLUDE_ONCE
 #define App_RotatingCube_INCLUDE_ONCE
 
-#include "vlGraphics/Applet.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/SceneManagerActorTree.hpp"
-#include "vlGraphics/Rendering.hpp"
-#include "vlGraphics/Actor.hpp"
-#include "vlGraphics/Effect.hpp"
-#include "vlCore/Time.hpp"
-#include "vlGraphics/Light.hpp"
+#include <vlGraphics/Applet.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/SceneManagerActorTree.hpp>
+#include <vlGraphics/Rendering.hpp>
+#include <vlGraphics/Actor.hpp>
+#include <vlGraphics/Effect.hpp>
+#include <vlCore/Time.hpp>
+#include <vlGraphics/Light.hpp>
 
 class App_RotatingCube: public vl::Applet
 {
