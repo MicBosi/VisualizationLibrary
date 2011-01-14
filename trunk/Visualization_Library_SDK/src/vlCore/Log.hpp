@@ -69,48 +69,48 @@ namespace vl
     // ---  statics ---
 
   public:
-    /** Installs a new logger. Set this to NULL to disable logging. */
-    static void setLogger(Log* logger) { mLogger = logger; }
-
-    /** Returns the currently installed logger. */
-    static Log* logger() { return mLogger.get(); }
-
-    /** Logs the specified string regardless of the current verbosity level. */
-    static void force_print(const String& message);
-    
     /* Logs the specified message.
-     * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_NORMAL */
+     * \note Log generated only if verbosity level != vl::VEL_VERBOSITY_SILENT */
     static void print(const String& message);
     
-    /** The string "info: " is prepended to the \p message. 
-      * Use this function to provide extra information useful to the end user.
+    /** Use this function to provide extra information useful to the end user.
+      * The string "Info: " is prepended to the \p message. 
       * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_NORMAL */
     static void info(const String& message);
-    
-    /** The string "debug: " is prepended to the \p message. 
-      * Use this function to provide information information useful to the programmer.
+
+    /** Use this function to provide extra information useful to investigate and solve problems.
+      * The string "Debug: " is prepended to the \p message. 
       * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_DEBUG */
     static void debug(const String& message);
-    
-    /** The string "warning: " is prepended to the \p message. 
-      * Use this function to provide information about situations that might lead to errors or loss of data.
+
+    /** Use this function to provide information about situations that might lead to errors or loss of data.
+      * The string "Warning: " is prepended to the \p message. 
       * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_ERROR */
     static void warning(const String& message);
-    
-    /** The string "error: " is prepended to the \p message. 
-      * Use this function to provide information about a run-time error: file not found, out of memory etc.
+
+    /** Use this function to provide information about run-time errors: file not found, out of memory, OpenGL version too old etc.
+      * The string "Error: " is prepended to the \p message. 
       * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_ERROR */
     static void error(const String& message);
-    
-    /** The string "bug: " is prepended to the \p message. 
-      * Use this function to provide information about a critical programming error: wrong parameter initialization, division by zero, imminent crash etc.
+
+    /** Use this function to provide information about programming errors: wrong parameter initialization, division by zero, imminent crash, inconsistent program state etc.
+      * The string "Bug: " is prepended to the \p message. 
       * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_ERROR */
     static void bug(const String& message);
 
-  protected:
-    static void print(ELogLevel level, const String& message);
-    static ref<Log> mLogger;
+    //! Logs VL and system information.
+    static void logSystemInfo();
   };
+
+  //-----------------------------------------------------------------------------
+  // Default logger
+  //-----------------------------------------------------------------------------
+  //! Installs the default logger used by Visualization Library. Setting this to NULL will disable logging.
+  void setDefLogger(Log* logger);
+
+  //! Returns the currently installed default logger.
+  Log* defLogger();
+
   //-----------------------------------------------------------------------------
   // StandardLog
   //-----------------------------------------------------------------------------
