@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/DrawPixels.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/Geometry.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/DrawPixels.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/Geometry.hpp>
 
 class App_DrawPixels: public BaseDemo
 {

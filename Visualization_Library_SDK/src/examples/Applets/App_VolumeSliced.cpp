@@ -30,12 +30,12 @@
 /*************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlVolume/SlicedVolume.hpp"
-#include "vlVolume/VolumeUtils.hpp"
-#include "vlGraphics/Text.hpp"
-#include "vlGraphics/FontManager.hpp"
-#include "vlGraphics/GLSL.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
+#include <vlVolume/SlicedVolume.hpp>
+#include <vlVolume/VolumeUtils.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/GLSL.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
 
 using namespace vl;
 

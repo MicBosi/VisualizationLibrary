@@ -30,13 +30,13 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/Colors.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/Text.hpp"
-#include "vlGraphics/FontManager.hpp"
-#include "vlGraphics/SceneManagerActorKdTree.hpp"
-#include "vlGraphics/SceneManagerActorTree.hpp"
+#include <vlCore/Colors.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/SceneManagerActorKdTree.hpp>
+#include <vlGraphics/SceneManagerActorTree.hpp>
 
 class App_KdTreeView: public BaseDemo
 {

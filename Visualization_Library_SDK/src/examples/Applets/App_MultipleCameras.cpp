@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/Colors.hpp"
-#include "vlGraphics/SceneManager.hpp"
-#include "vlGraphics/RenderingTree.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/Geometry.hpp"
+#include <vlCore/Colors.hpp>
+#include <vlGraphics/SceneManager.hpp>
+#include <vlGraphics/RenderingTree.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/Geometry.hpp>
 
 using namespace vl;
 

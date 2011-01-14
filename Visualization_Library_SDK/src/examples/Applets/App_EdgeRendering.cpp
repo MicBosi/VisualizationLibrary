@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/EdgeExtractor.hpp"
-#include "vlGraphics/EdgeRenderer.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/EdgeExtractor.hpp>
+#include <vlGraphics/EdgeRenderer.hpp>
 
 class App_EdgeRendering: public BaseDemo
 {

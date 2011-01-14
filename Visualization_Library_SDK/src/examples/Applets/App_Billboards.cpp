@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/Geometry.hpp"
-#include "vlGraphics/Billboard.hpp"
-#include "vlGraphics/Light.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/Geometry.hpp>
+#include <vlGraphics/Billboard.hpp>
+#include <vlGraphics/Light.hpp>
 #include <ctime>
 
 class App_Billboards: public BaseDemo

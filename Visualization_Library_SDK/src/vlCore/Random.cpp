@@ -29,9 +29,9 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlCore/Random.hpp"
-#include "vlCore/Time.hpp"
-#include "vlCore/Log.hpp"
+#include <vlCore/Random.hpp>
+#include <vlCore/Time.hpp>
+#include <vlCore/Log.hpp>
 #include <cstdlib>
 
 #if defined(_MSC_VER) || defined(__MINGW32__)

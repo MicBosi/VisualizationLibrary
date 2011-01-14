@@ -29,10 +29,10 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlWin32/Win32Window.hpp"
-#include "vlCore/Log.hpp"
-#include "vlCore/Say.hpp"
-#include "vlCore/Time.hpp"
+#include <vlWin32/Win32Window.hpp>
+#include <vlCore/Log.hpp>
+#include <vlCore/Say.hpp>
+#include <vlCore/Time.hpp>
 #include <shellapi.h>
 
 using namespace vl;

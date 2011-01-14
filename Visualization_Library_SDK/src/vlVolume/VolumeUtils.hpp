@@ -32,7 +32,7 @@
 #ifndef VolumeUtils_INCLUDE_ONCE
 #define VolumeUtils_INCLUDE_ONCE
 
-#include "vlCore/Image.hpp"
+#include <vlCore/Image.hpp>
 
 namespace vl
 {

@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlCore/VisualizationLibrary.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/ClipPlane.hpp"
-#include "vlGraphics/Geometry.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/ClipPlane.hpp>
+#include <vlGraphics/Geometry.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
 
 class App_ClipPlanes: public BaseDemo
 {

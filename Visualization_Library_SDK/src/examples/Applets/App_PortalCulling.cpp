@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlCore/Colors.hpp"
-#include "vlGraphics/SceneManagerPortals.hpp"
-#include "vlGraphics/Light.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlCore/Colors.hpp>
+#include <vlGraphics/SceneManagerPortals.hpp>
+#include <vlGraphics/Light.hpp>
 
 // Here we define our dungeon which will be the test platform for our portal scene manager.
 // X = room, for each room a sector is generated, each room is filled with a couple of spheres.

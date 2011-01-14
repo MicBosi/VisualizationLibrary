@@ -32,8 +32,8 @@
 #ifndef Win32_Window_INCLUDE_ONCE
 #define Win32_Window_INCLUDE_ONCE
 
-#include "vlGraphics/OpenGLContext.hpp"
-#include "vlWin32/Win32Context.hpp"
+#include <vlGraphics/OpenGLContext.hpp>
+#include <vlWin32/Win32Context.hpp>
 #include <map>
 
 namespace vlWin32

@@ -32,7 +32,7 @@
 #ifndef HalfFloat_INCLUDE_ONCE
 #define HalfFloat_INCLUDE_ONCE
 
-#include "vlCore/Matrix4.hpp"
+#include <vlCore/Matrix4.hpp>
 
 namespace vl
 {

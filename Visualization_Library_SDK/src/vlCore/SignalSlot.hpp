@@ -34,7 +34,7 @@
 
 #include <vector>
 #include <algorithm>
-#include "vlCore/checks.hpp"
+#include <vlCore/checks.hpp>
 
 //! \cond EXCLUDE_SECTION
 

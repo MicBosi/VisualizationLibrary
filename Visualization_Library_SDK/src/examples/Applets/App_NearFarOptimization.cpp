@@ -30,9 +30,9 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/Light.hpp"
-#include "vlGraphics/GeometryLoadCallback.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/GeometryLoadCallback.hpp>
 
 using namespace vl;
 

@@ -29,9 +29,9 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlCore/Quaternion.hpp"
-#include "vlCore/Say.hpp"
-#include "vlCore/Log.hpp"
+#include <vlCore/Quaternion.hpp>
+#include <vlCore/Say.hpp>
+#include <vlCore/Log.hpp>
 #include <set>
 #include <cstdlib>
 

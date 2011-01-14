@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlGraphics/GeometryPrimitives.hpp"
-#include "vlGraphics/Text.hpp"
-#include "vlGraphics/GLSL.hpp"
-#include "vlGraphics/FontManager.hpp"
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/GLSL.hpp>
+#include <vlGraphics/FontManager.hpp>
 
 using namespace vl;
 
