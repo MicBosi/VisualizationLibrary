@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlut/Colors.hpp"
+#include "vlCore/Colors.hpp"
 #include "vlGraphics/Terrain.hpp"
 
 class App_Terrain: public BaseDemo

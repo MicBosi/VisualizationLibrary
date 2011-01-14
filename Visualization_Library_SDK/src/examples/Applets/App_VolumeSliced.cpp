@@ -35,7 +35,7 @@
 #include "vlGraphics/Text.hpp"
 #include "vlGraphics/FontManager.hpp"
 #include "vlGraphics/GLSL.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 
 using namespace vl;
 

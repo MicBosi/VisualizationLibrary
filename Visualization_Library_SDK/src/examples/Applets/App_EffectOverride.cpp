@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include "vlGraphics/SceneManagerActorTree.hpp"
 #include "vlGraphics/Actor.hpp"
 #include "vlGraphics/Effect.hpp"

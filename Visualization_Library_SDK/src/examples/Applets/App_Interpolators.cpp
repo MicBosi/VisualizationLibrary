@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include "vlCore/VisualizationLibrary.hpp"
 #include "vlGraphics/Effect.hpp"
 #include "vlGraphics/Light.hpp"

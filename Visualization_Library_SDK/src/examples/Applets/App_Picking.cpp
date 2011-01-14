@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include "vlGraphics/RayIntersector.hpp"
 #include "vlGraphics/ReadPixels.hpp"
 #include "vlGraphics/Light.hpp"

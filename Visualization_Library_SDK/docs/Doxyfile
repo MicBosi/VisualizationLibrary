@@ -499,7 +499,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = dox ../src/vl ../src/vlut ../src/vlVG  ../src/vlVolume ../src/vlMolecule \
+INPUT                  = dox ../src/vl ../src/vlVG  ../src/vlVolume ../src/vlMolecule \
                          ../src/vlWin32 ../src/vlMFC ../src/vlQt4 ../src/vlWX ../src/vlGLUT ../src/vlSDL ../src/vlCocoa
 
 # This tag can be used to specify the character encoding of the source files that 

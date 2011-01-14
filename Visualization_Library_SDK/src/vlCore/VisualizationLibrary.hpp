@@ -32,7 +32,7 @@
 #ifndef VisualizationLibrary_INCLUDE_ONCE
 #define VisualizationLibrary_INCLUDE_ONCE
 
-#include <vlCore/Settings.hpp>
+#include <vlCore/VLSettings.hpp>
 
 namespace vl
 {

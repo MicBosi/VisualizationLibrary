@@ -35,7 +35,7 @@
 #define App_DrawCalls_INCLUDE_ONCE
 
 #include "BaseDemo.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include <vlGraphics/MultiDrawElements.hpp>
 #include "vlGraphics/DrawRangeElements.hpp"
 #include "vlGraphics/SceneManagerActorTree.hpp"

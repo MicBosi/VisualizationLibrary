@@ -64,7 +64,6 @@ set(VLGRAPHICS_NAME "VLGraphics")
 set(VLMOLECULE_NAME "VLMolecule")
 set(VLVOLUME_NAME "VLVolume")
 set(VLVG_NAME "VLVG")
-set(VLUT_NAME "VLUT")
 
 set(VLAPPLETS_NAME "Applets")
 set(VLWIN32_NAME "VLWin32")
@@ -199,12 +198,6 @@ add_subdirectory("src/vlCore")
 
 #VLGraphics
 add_subdirectory("src/vlGraphics")
-
-#VLUT
-option(VL_MODULE_VLUT "Enable VL Utility Library" ON)
-if(VL_MODULE_VLUT)
-	add_subdirectory("src/vlut")
-endif()
 
 #VLVG
 option(VL_MODULE_VLVG "Enable VL Vector Graphics Library" ON)

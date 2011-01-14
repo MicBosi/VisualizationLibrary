@@ -40,7 +40,7 @@
 #include <vlCore/vlnamespace.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
-#include <vlut/Colors.hpp>
+#include <vlCore/Colors.hpp>
 #include <vlGraphics/DrawElements.hpp>
 #include <vlGraphics/DrawArrays.hpp>
 #include <vlCore/Collection.hpp>

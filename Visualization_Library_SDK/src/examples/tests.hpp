@@ -33,7 +33,7 @@
 #define TEST_PROGRAMS_INCLUDE_ONCE
 
 #include <vlCore/VisualizationLibrary.hpp>
-#include <vlut/Colors.hpp>
+#include <vlCore/Colors.hpp>
 #include "Applets/BaseDemo.hpp"
 
 BaseDemo* Create_App_BlindTests();

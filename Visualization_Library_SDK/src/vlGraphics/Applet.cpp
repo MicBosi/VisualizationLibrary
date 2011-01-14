@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlut/Applet.hpp>
+#include <vlGraphics/Applet.hpp>
 #include <vlGraphics/Rendering.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlGraphics/SceneManager.hpp>

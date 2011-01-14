@@ -38,11 +38,11 @@
 namespace vl
 {
   //! Global application settings controlling how Visualization Library behaves.
-  class Settings: public Object
+  class VLSettings: public Object
   {
     friend class VisualizationLibrary;
   public:
-    Settings();
+    VLSettings();
 
     /** If \p true VL checks at the beginning of each rendering that the OpenGL states are
       * clean and ready to be used by VL. If the test fails it can mean that either there 
@@ -89,7 +89,7 @@ namespace vl
   };
 
   //! Returns VisulizationLibrary's global settings.
-  Settings* globalSettings();
+  VLSettings* globalSettings();
 }
 
 #endif

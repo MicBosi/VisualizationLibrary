@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlut/GeometryPrimitives.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/DoubleVertexRemover.hpp>
 

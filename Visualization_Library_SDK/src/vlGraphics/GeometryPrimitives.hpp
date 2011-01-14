@@ -34,7 +34,7 @@
 
 #include <vlCore/Vector4.hpp>
 #include <vlGraphics/Geometry.hpp>
-#include <vlut/Colors.hpp>
+#include <vlCore/Colors.hpp>
 
 namespace vl
 {

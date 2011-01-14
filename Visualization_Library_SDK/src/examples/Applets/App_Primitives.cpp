@@ -32,7 +32,7 @@
 // mic fixme: implement and cleaup this demo test
 
 #include "BaseDemo.hpp"
-#include "vlut/GeometryPrimitives.hpp"
+#include "vlGraphics/GeometryPrimitives.hpp"
 #include "vlGraphics/EdgeExtractor.hpp"
 #include "vlGraphics/EdgeRenderer.hpp"
 #include "vlCore/LoadWriterManager.hpp"
