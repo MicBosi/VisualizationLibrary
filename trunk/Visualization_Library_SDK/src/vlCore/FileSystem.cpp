@@ -36,26 +36,6 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-namespace 
-{
-  ref<FileSystem> gDefaultFileSystem = NULL;;
-}
-//-----------------------------------------------------------------------------
-FileSystem* vl::defFileSystem()
-{
-  if (!gDefaultFileSystem)
-  {
-    gDefaultFileSystem = new FileSystem;
-    gDefaultFileSystem->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
-  }
-  return gDefaultFileSystem.get();
-}
-//-----------------------------------------------------------------------------
-void vl::seDefFileSystem(FileSystem* fs)
-{
-  gDefaultFileSystem = fs;
-}
-//-----------------------------------------------------------------------------
 /** 
 If more than a file exists with the same name the VirtualFile returned is the one found
 in the VirtualDirectory added the latest. This means that a VirtualDirectory overrides

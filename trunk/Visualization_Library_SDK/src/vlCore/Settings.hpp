@@ -38,7 +38,7 @@
 namespace vl
 {
   //! Global application settings controlling how Visualization Library behaves.
-  class Settings
+  class Settings: public Object
   {
     friend class VisualizationLibrary;
   public:

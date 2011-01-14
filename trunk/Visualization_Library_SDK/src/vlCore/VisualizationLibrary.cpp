@@ -30,12 +30,17 @@
 /**************************************************************************************/
 
 #include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/Settings.hpp>
+#include <vlCore/FileSystem.hpp>
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Quaternion.hpp>
 #include <vlCore/version.hpp>
 #include <cassert>
+
+#include <vlGraphics/Rendering.hpp>
+#include <vlGraphics/FontManager.hpp>
 
 #if defined(IO_MODULE_JPG)
   #include <vlGraphics/vlJPG.hpp>
@@ -89,7 +94,7 @@ VL_COMPILE_TIME_CHECK( sizeof(long long) == 8 )
 VL_COMPILE_TIME_CHECK( sizeof(int)       == 4 )
 VL_COMPILE_TIME_CHECK( sizeof(short)     == 2 )
 VL_COMPILE_TIME_CHECK( sizeof(char)      == 1 )
-VL_COMPILE_TIME_CHECK( sizeof(wchar_t) >= 2 )
+VL_COMPILE_TIME_CHECK( sizeof(wchar_t)   >= 2 )
 VL_COMPILE_TIME_CHECK( sizeof(vec2)      == sizeof(Real)*2 )
 VL_COMPILE_TIME_CHECK( sizeof(vec3)      == sizeof(Real)*3 )
 VL_COMPILE_TIME_CHECK( sizeof(vec4)      == sizeof(Real)*4 )
@@ -100,9 +105,11 @@ VL_COMPILE_TIME_CHECK( sizeof(quat)      == sizeof(Real)*4 )
 VL_COMPILE_TIME_CHECK( sizeof(AABB)      == sizeof(Real)*6 )
 VL_COMPILE_TIME_CHECK( sizeof(Sphere)    == sizeof(Real)*4 )
 //------------------------------------------------------------------------------
+// VL misc
+//------------------------------------------------------------------------------
 namespace
 {
-  std::string gVersionString = "Visualization Library not initialized!";
+  std::string gVersionString = String( Say("%n.%n.%n") << VL_Major << VL_Minor << VL_Build ).toStdString();
   const char* gCertificate = "[Visualization Library BSD License]";
   bool gInitialized = false;
 };
@@ -111,81 +118,122 @@ bool VisualizationLibrary::initialized() { return gInitialized; }
 //------------------------------------------------------------------------------
 const char* VisualizationLibrary::versionString() { return gVersionString.c_str(); }
 //------------------------------------------------------------------------------
+// Global Settings
+//------------------------------------------------------------------------------
+namespace
+{
+  ref<Settings> gSettings = NULL;
+}
+Settings* vl::globalSettings()
+{
+  return gSettings.get();
+}
+//------------------------------------------------------------------------------
+// Default logger
+//------------------------------------------------------------------------------
+namespace
+{
+  ref<Log> gDefaultLogger;
+}
+void vl::setDefLogger(Log* logger) 
+{ 
+  gDefaultLogger = logger; 
+}
+Log* vl::defLogger() 
+{ 
+  return gDefaultLogger.get(); 
+}
+//------------------------------------------------------------------------------
+// Default Rendering
+//------------------------------------------------------------------------------
+namespace
+{
+  ref<RenderingAbstract> gDefaultRendering = NULL;
+}
+RenderingAbstract* vl::defRendering()
+{
+  return gDefaultRendering.get();
+}
+void vl::setDefRendering(RenderingAbstract* ra)
+{
+  gDefaultRendering = ra;
+}
+//-----------------------------------------------------------------------------
+// Default FontManager
+//-----------------------------------------------------------------------------
+namespace
+{
+  ref<FontManager> gDefaultFontManager = NULL;
+}
+FontManager* vl::defFontManager()
+{
+  return gDefaultFontManager.get();
+}
+void vl::setDefFontManager(FontManager* fm)
+{
+  gDefaultFontManager = fm;
+}
+//------------------------------------------------------------------------------
+// Default LoadWriterManager
+//------------------------------------------------------------------------------
+namespace 
+{
+  ref<LoadWriterManager> gDefaultLoadWriterManager = NULL;
+}
+LoadWriterManager* vl::defLoadWriterManager()
+{
+  return gDefaultLoadWriterManager.get();
+}
+void vl::setDefLoadWriterManager(LoadWriterManager* lwm)
+{
+  gDefaultLoadWriterManager = lwm;
+}
+//-----------------------------------------------------------------------------
+// Default FileSystem
+//-----------------------------------------------------------------------------
+namespace 
+{
+  ref<FileSystem> gDefaultFileSystem = NULL;;
+}
+FileSystem* vl::defFileSystem()
+{
+  return gDefaultFileSystem.get();
+}
+void vl::seDefFileSystem(FileSystem* fs)
+{
+  gDefaultFileSystem = fs;
+}
+//------------------------------------------------------------------------------
 void VisualizationLibrary::init()
 {
-  gVersionString = String( Say("%n.%n.%n") << VL_Major << VL_Minor << VL_Build ).toStdString();
-
-  // install logger
-  ref<StandardLog> logger = new StandardLog;
-  logger->setLogFile( globalSettings()->defaultLogPath() );
-  Log::setLogger( logger.get() );
-
-  // log some information
-  if (globalSettings()->verbosityLevel())
+  VL_CHECK(!gInitialized);
+  if (gInitialized)
   {
-    #if defined(_MSC_VER)
-      const char* compiler = "MSVC";
-    #elif defined(__GNUG__)
-      const char* compiler = "GCC";
-    #else
-      const char* compiler = "UNKNOWN";
-    #endif
-
-    #if defined(DEBUG) || !defined(NDEBUG)
-      const char* build_type = "DEBUG";
-    #else
-      const char* build_type = "RELEASE";
-    #endif
-
-    Log::print( Say("Visualization Library v%n.%n.%n [%s]\n%s - %s - %s compiler [%s] [%s]\n") 
-      << VL_Major << VL_Minor << VL_Build 
-      << (sizeof(vec3) == sizeof(fvec3) ? "f32" : "f64")
-      << __DATE__ << __TIME__ << compiler << build_type 
-      << (sizeof(void*) == 4 ? "x32" : "x64") );
-
-    Log::print("\n --- Environment ---\n");
-    const char* val = getenv("VL_LOGFILE_PATH");
-    if (val)
-      Log::print( Say("VL_LOGFILE_PATH = %s\n") << val );
-    else
-      Log::print("VL_LOGFILE_PATH <not present>\n");
-
-    val = getenv("VL_DATA_PATH");
-    if (val)
-      Log::print( Say("VL_DATA_PATH = %s\n") << val );
-    else
-      Log::print("VL_DATA_PATH <not present>\n");
-
-    val = getenv("VL_VERBOSITY_LEVEL");
-    if (val)
-      Log::print( Say("VL_VERBOSITY_LEVEL = %s\n") << val );
-    else
-      Log::print("VL_VERBOSITY_LEVEL <not present>\n");
-
-    val = getenv("VL_CHECK_GL_STATES");
-    if (val)
-      Log::print( Say("VL_CHECK_GL_STATES = %s\n") << val );
-    else
-      Log::print("VL_CHECK_GL_STATES <not present>\n");
-
-    Log::print("\n --- Global Settings --- \n");
-    Log::print( Say("Log file  = %s\n") << globalSettings()->defaultLogPath() );
-    Log::print( Say("Data path = %s\n") << globalSettings()->defaultDataPath() );
-    Log::print("Verbosity level = ");
-    switch(globalSettings()->verbosityLevel())
-    {
-      /*case vl::VEL_VERBOSITY_SILENT: Log::print("SILENT\n"); break;*/
-      case vl::VEL_VERBOSITY_ERROR:  Log::print("ERROR\n"); break;
-      case vl::VEL_VERBOSITY_NORMAL: Log::print("NORMAL\n"); break;
-      case vl::VEL_VERBOSITY_DEBUG:  Log::print("DEBUG\n"); break;
-      default: break;
-    }
-    Log::print( Say("Check OpenGL States = %s\n") << (globalSettings()->checkOpenGLStates()?"YES":"NO") );
-    Log::print( Say("Check Transform Siblings = %s\n") << (globalSettings()->checkTransformSiblings()?"YES":"NO") );
-
-    Log::print("\n");
+    Log::bug("VisualizationLibrary::init(): VisualizationLibrary is already initialized!\n");
+    return;
   }
 
+  // Install globabl settings
+  gSettings = new Settings;
+
+  // Install default logger
+  ref<StandardLog> logger = new StandardLog;
+  logger->setLogFile( globalSettings()->defaultLogPath() );
+  setDefLogger( logger.get() );
+
+  // Install default Rendering
+  gDefaultRendering = new Rendering;
+
+  // Install default FontManager
+  gDefaultFontManager = new FontManager;
+
+  // Install default LoadWriterManager
+  gDefaultLoadWriterManager = new LoadWriterManager;
+
+  // Install default FileSystem
+  gDefaultFileSystem = new FileSystem;
+  gDefaultFileSystem->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
+  
   // register I/O plugins
   #if defined(IO_MODULE_JPG)
     registerLoadWriter(new LoadWriterJPG);
@@ -230,21 +278,49 @@ void VisualizationLibrary::init()
     registerLoadWriter(new LoadWriterDICOM);
   #endif
 
-  // initialized = on
+  // Log VL and system information.
+  if (globalSettings()->verbosityLevel())
+    Log::logSystemInfo();
+
+  // Initialized = on
   gInitialized = true;
 }
 //------------------------------------------------------------------------------
 void VisualizationLibrary::shutdown()
 {
-  // initialized = off
-  gInitialized = false;
-
-  if (globalSettings()->verbosityLevel())
+  if (gInitialized)
   {
-    Log::print("Visualization Library shutdown.\n");
-  }
+    // Initialized = off
+    gInitialized = false;
 
-  Log::setLogger( NULL );
+    if (globalSettings()->verbosityLevel())
+    {
+      Log::print("Visualization Library shutdown.\n");
+    }
+
+    // Dispose globabl settings
+    gSettings = NULL;
+
+    // Dispose default Rendering
+    gDefaultRendering = NULL;
+
+    // Dispose default FontManager
+    gDefaultFontManager->releaseAllFonts();
+    gDefaultFontManager = NULL;
+
+    // Dispose default LoadWriterManager
+    gDefaultLoadWriterManager->loadCallbacks()->clear();
+    gDefaultLoadWriterManager->writeCallbacks()->clear();
+    gDefaultLoadWriterManager->loadWriters()->clear();
+    gDefaultLoadWriterManager = NULL;
+
+    // Dispose default FileSystem
+    gDefaultFileSystem->directories()->clear();
+    gDefaultFileSystem = NULL;
+    
+    // Dispose default logger
+    setDefLogger( NULL );
+  }
 }
 //------------------------------------------------------------------------------
 #if defined(_WIN32)
@@ -271,18 +347,6 @@ void vl::showWin32Console()
     hf_out = _fdopen(hCrt, "w");
     setvbuf(hf_out, NULL, _IONBF, 1);
     *stderr = *hf_out;
-  #endif
-}
-//------------------------------------------------------------------------------
-void vl::log_failed_check(const char* expr, const char* file, int line)
-{
-  Log::error( Say("Condition \"%s\" failed at %s:%n\n") << expr << file << line );
-  fflush(stdout);
-  fflush(stderr);
-
-  #if _WIN32 && VL_MESSAGEBOX_CHECK == 1
-     String msg = Say("Condition \"%s\" failed.\n\n%s:%n\n") << expr << file << line;
-     MessageBox(NULL, (wchar_t*)msg.ptr(), L"Visualization Library Debug", MB_OK | MB_ICONEXCLAMATION);
   #endif
 }
 //------------------------------------------------------------------------------
