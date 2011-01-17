@@ -32,9 +32,9 @@
 #if !defined(ioDICOM_INCLUDE_ONCE)
 #define ioDICOM_INCLUDE_ONCE
 
-#include <vl/ResourceLoadWriter.hpp>
-#include <vl/ResourceDatabase.hpp>
-#include <vl/Image.hpp>
+#include <vlCore/ResourceLoadWriter.hpp>
+#include <vlCore/ResourceDatabase.hpp>
+#include <vlCore/Image.hpp>
 
 namespace vl
 {
@@ -95,3 +95,4 @@ namespace vl
 }
 
 #endif
+

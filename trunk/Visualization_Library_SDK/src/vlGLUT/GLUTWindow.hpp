@@ -32,8 +32,8 @@
 #ifndef GLUT_Window_INCLUDE_ONCE
 #define GLUT_Window_INCLUDE_ONCE
 
-#include <vl/OpenGLContext.hpp>
-#include <vl/Vector4.hpp>
+#include <vlGraphics/OpenGLContext.hpp>
+#include <vlCore/Vector4.hpp>
 #include <map>
 #include <cstdlib> // exit()
 #if defined(__APPLE__)

@@ -29,11 +29,11 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlGLUT/GLUTWindow.hpp"
-#include "vlut/Applet.hpp"
-#include "vl/VisualizationLibrary.hpp"
-#include "vl/Log.hpp"
-#include "vl/Say.hpp"
+#include <vlGLUT/GLUTWindow.hpp>
+#include <vlGraphics/Applet.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/Log.hpp>
+#include <vlCore/Say.hpp>
 
 using namespace vlGLUT;
 

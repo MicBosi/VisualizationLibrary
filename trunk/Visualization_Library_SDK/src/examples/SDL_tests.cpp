@@ -29,10 +29,10 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/DiskDirectory.hpp>
+#include <vlCore/DiskDirectory.hpp>
 #include <vlSDL/SDLWindow.hpp>
-#include <vl/Log.hpp>
-#include <vl/Say.hpp>
+#include <vlCore/Log.hpp>
+#include <vlCore/Say.hpp>
 #include "tests.hpp"
 
 using namespace vl;

@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vlWX/vlWXGLCanvas.hpp>
-#include <vl/VisualizationLibrary.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
 #include "Applets/App_RotatingCube.hpp"
 
 using namespace vlWX;
@@ -60,13 +60,13 @@ IMPLEMENT_APP(MyApp)
 //-----------------------------------------------------------------------------
 bool MyApp::OnInit()
 {
-  vl::showWin32Console();
-  vl::VisualizationLibrary::init();
+  showWin32Console();
+  VisualizationLibrary::init();
 
   MyFrame *frame = new MyFrame(NULL, L"vlWXGLCanvas", wxDefaultPosition, wxSize(400, 300));
 
   /* create the applet to be run */
-  vl::ref<vlut::Applet> applet = new App_RotatingCube;
+  ref<Applet> applet = new App_RotatingCube;
   applet->initialize();
   /* Initialize the OpenGL context and window properties */
   // WX_GL_RGBA:            Use true colour
@@ -99,17 +99,17 @@ bool MyApp::OnInit()
     WX_GL_AUX_BUFFERS, 0*/
     0
   };
-  vl::ref<vlWXGLCanvas> vl_gl_canvas = new vlWXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
+  ref<vlWXGLCanvas> vl_gl_canvas = new vlWXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
   /* target the window so we can render on it */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
+  defRendering()->as<Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
   /* black background */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::black );
+  defRendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
   /* define the camera position and orientation */
-  vl::vec3 eye    = vl::vec3(0,10,35); // camera position
-  vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
-  vl::vec3 up     = vl::vec3(0,1,0);   // up direction
-  vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setViewMatrix( view_mat );
+  vec3 eye    = vec3(0,10,35); // camera position
+  vec3 center = vec3(0,0,0);   // point the camera is looking at
+  vec3 up     = vec3(0,1,0);   // up direction
+  mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
+  defRendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
   /* show the window */
   frame->Show();
   /* THE ORDER IS IMPORTANT IMPORTANT */
@@ -131,7 +131,7 @@ bool MyApp::OnInit()
 //-----------------------------------------------------------------------------
 int MyApp::OnExit()
 {
-  vl::VisualizationLibrary::shutdown();
+  VisualizationLibrary::shutdown();
   return 0;
 }
 //-----------------------------------------------------------------------------

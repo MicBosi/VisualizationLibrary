@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vlWX/vlWXGLCanvas.hpp>
-#include <vl/VisualizationLibrary.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
 #include "Applets/App_RotatingCube.hpp"
 #include "tests.hpp"
 

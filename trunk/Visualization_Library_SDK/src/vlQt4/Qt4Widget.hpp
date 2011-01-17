@@ -32,8 +32,8 @@
 #ifndef Qt4Window_INCLUDE_ONCE
 #define Qt4Window_INCLUDE_ONCE
 
-#include <vl/VisualizationLibrary.hpp>
-#include <vl/OpenGLContext.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlGraphics/OpenGLContext.hpp>
 #include <QtGui/QApplication>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QWidget>

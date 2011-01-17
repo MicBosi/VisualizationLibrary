@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/Quaternion.hpp>
-#include <vl/math3D.hpp>
+#include <vlCore/Quaternion.hpp>
+#include <vlCore/math3D.hpp>
 #include <cmath>
 
 using namespace vl;
