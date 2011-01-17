@@ -127,45 +127,45 @@ set(VLCORE_INC
   vlnamespace.hpp
 )
 
-if(IO_2D_BMP)
+if(VL_IO_2D_BMP)
   SET(VLCORE_SRC ${VLCORE_SRC} vlBMP.cpp)
   SET(VLCORE_INC ${VLCORE_INC} vlBMP.hpp)
-endif(IO_2D_BMP)
+endif(VL_IO_2D_BMP)
 
-if(IO_2D_DAT)
+if(VL_IO_2D_DAT)
   SET(VLCORE_SRC ${VLCORE_SRC} vlDAT.cpp)
   SET(VLCORE_INC ${VLCORE_INC} vlDAT.hpp)
-endif(IO_2D_DAT)
+endif(VL_IO_2D_DAT)
 
-if(IO_2D_DDS)
+if(VL_IO_2D_DDS)
   SET(VLCORE_SRC ${VLCORE_SRC} vlDDS.cpp)
   SET(VLCORE_INC ${VLCORE_INC} vlDDS.hpp)
-endif(IO_2D_DDS)
+endif(VL_IO_2D_DDS)
 
-if(IO_2D_DICOM)
+if(VL_IO_2D_DICOM)
   SET(VLCORE_SRC ${VLCORE_SRC} vlDICOM.cpp)
   SET(VLCORE_INC ${VLCORE_INC} vlDICOM.hpp)
-endif(IO_2D_DICOM)
+endif(VL_IO_2D_DICOM)
 
-if(IO_2D_JPG)
+if(VL_IO_2D_JPG)
   SET(VLCORE_SRC ${VLCORE_SRC} vlJPG.cpp)
   SET(VLCORE_INC ${VLCORE_INC} vlJPG.hpp)
-endif(IO_2D_JPG)
+endif(VL_IO_2D_JPG)
 
-if(IO_2D_PNG)
+if(VL_IO_2D_PNG)
   SET(VLCORE_SRC ${VLCORE_SRC} vlPNG.cpp)
   SET(VLCORE_INC ${VLCORE_INC} vlPNG.hpp)
-endif(IO_2D_PNG)
+endif(VL_IO_2D_PNG)
 
-if(IO_2D_TGA)
+if(VL_IO_2D_TGA)
   SET(VLCORE_SRC ${VLCORE_SRC} vlTGA.cpp)
   SET(VLCORE_INC ${VLCORE_INC} vlTGA.hpp)
-endif(IO_2D_TGA)
+endif(VL_IO_2D_TGA)
 
-if(IO_2D_TIFF)
+if(VL_IO_2D_TIFF)
   SET(VLCORE_SRC ${VLCORE_SRC} vlTIFF.cpp)
   SET(VLCORE_INC ${VLCORE_INC} vlTIFF.hpp)
-endif(IO_2D_TIFF)
+endif(VL_IO_2D_TIFF)
 
 #source_group(vl FILES ${VLCORE_INC} ${VLCORE_SRC})
 
