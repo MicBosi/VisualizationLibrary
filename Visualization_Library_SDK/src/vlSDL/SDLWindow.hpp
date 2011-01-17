@@ -32,9 +32,9 @@
 #ifndef SDLAdapter_INCLUDE_ONCE
 #define SDLAdapter_INCLUDE_ONCE
 
-#include <vl/OpenGLContext.hpp>
-#include <vl/String.hpp>
-#include <vl/Vector4.hpp>
+#include <vlGraphics/OpenGLContext.hpp>
+#include <vlCore/String.hpp>
+#include <vlCore/Vector4.hpp>
 #include <SDL.h>
 
 namespace vlut

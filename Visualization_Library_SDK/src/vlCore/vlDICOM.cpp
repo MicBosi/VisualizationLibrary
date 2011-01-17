@@ -32,20 +32,20 @@
 #ifndef vlDICOM_INCLUDE_ONCE
 #define vlDICOM_INCLUDE_ONCE
 
-#include <vl/vlDICOM.hpp>
-#include <vl/LoadWriterManager.hpp>
-#include <vl/GLSLmath.hpp>
-#include <vl/FileSystem.hpp>
+#include <vlCore/vlDICOM.hpp>
+#include <vlCore/LoadWriterManager.hpp>
+#include <vlCore/FileSystem.hpp>
+#include <vlGraphics/GLSLmath.hpp>
 
-#include "gdcmReader.h"
-#include "gdcmWriter.h"
-#include "gdcmAttribute.h"
-#include "gdcmImageReader.h"
-#include "gdcmImageWriter.h"
-#include "gdcmImage.h"
-#include "gdcmPhotometricInterpretation.h"
-#include "gdcmImage.h"
-#include "gdcmImageWriter.h"
+#include <gdcmReader.h>
+#include <gdcmWriter.h>
+#include <gdcmAttribute.h>
+#include <gdcmImageReader.h>
+#include <gdcmImageWriter.h>
+#include <gdcmImage.h>
+#include <gdcmPhotometricInterpretation.h>
+#include <gdcmImage.h>
+#include <gdcmImageWriter.h>
 
 using namespace vl;
 

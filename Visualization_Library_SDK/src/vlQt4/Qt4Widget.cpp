@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlQt4/Qt4Widget.hpp"
-#include "vl/Log.hpp"
+#include <vlQt4/Qt4Widget.hpp>
+#include <vlCore/Log.hpp>
 
 using namespace vl;
 using namespace vlQt4;
