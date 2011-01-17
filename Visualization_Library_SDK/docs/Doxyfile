@@ -1078,8 +1078,8 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 
 PREDEFINED             = VL_PIPELINE_PRECISION=1 \
-						 IO_3D_3DS IO_3D_OBJ IO_3D_AC3D IO_3D_PLY  IO_3D_MD2 \
-						 IO_2D_PNG IO_2D_JPG IO_2D_TGA IO_2D_TIFF IO_2D_DDS IO_2D_BMP IO_2D_DAT
+						 VL_IO_3D_3DS VL_IO_3D_OBJ VL_IO_3D_AC3D VL_IO_3D_PLY  VL_IO_3D_MD2 \
+						 VL_IO_2D_PNG VL_IO_2D_JPG VL_IO_2D_TGA VL_IO_2D_TIFF VL_IO_2D_DDS VL_IO_2D_BMP VL_IO_2D_DAT
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 

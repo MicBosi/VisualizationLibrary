@@ -43,28 +43,28 @@
 
 using namespace vl;
 
-#if defined(IO_2D_JPG)
+#if defined(VL_IO_2D_JPG)
   #include <vlCore/vlJPG.hpp>
 #endif
-#if defined(IO_2D_PNG)
+#if defined(VL_IO_2D_PNG)
   #include <vlCore/vlPNG.hpp>
 #endif
-#if defined(IO_2D_TIFF)
+#if defined(VL_IO_2D_TIFF)
   #include <vlCore/vlTIFF.hpp>
 #endif
-#if defined(IO_2D_TGA)
+#if defined(VL_IO_2D_TGA)
   #include <vlCore/vlTGA.hpp>
 #endif
-#if defined(IO_2D_DAT)
+#if defined(VL_IO_2D_DAT)
   #include <vlCore/vlDAT.hpp>
 #endif
-#if defined(IO_2D_DDS)
+#if defined(VL_IO_2D_DDS)
   #include <vlCore/vlDDS.hpp>
 #endif
-#if defined(IO_2D_BMP)
+#if defined(VL_IO_2D_BMP)
   #include <vlCore/vlBMP.hpp>
 #endif
-#if defined(IO_2D_DICOM)
+#if defined(VL_IO_2D_DICOM)
   #include <vlCore/vlDICOM.hpp>
 #endif
 
@@ -73,22 +73,22 @@ using namespace vl;
   #include <vlGraphics/Rendering.hpp>
   #include <vlGraphics/FontManager.hpp>
 
-  #if defined(IO_3D_3DS)
+  #if defined(VL_IO_3D_3DS)
     #include <vlGraphics/vl3DS.hpp>
   #endif
-  #if defined(IO_3D_OBJ)
+  #if defined(VL_IO_3D_OBJ)
     #include <vlGraphics/vlOBJ.hpp>
   #endif
-  #if defined(IO_3D_AC3D)
+  #if defined(VL_IO_3D_AC3D)
     #include <vlGraphics/vlAC3D.hpp>
   #endif
-  #if defined(IO_3D_PLY)
+  #if defined(VL_IO_3D_PLY)
     #include <vlGraphics/vlPLY.hpp>
   #endif
-  #if defined(IO_3D_STL)
+  #if defined(VL_IO_3D_STL)
     #include <vlGraphics/vlSTL.hpp>
   #endif
-  #if defined(IO_3D_MD2)
+  #if defined(VL_IO_3D_MD2)
     #include <vlGraphics/vlMD2.hpp>
   #endif
 
@@ -239,28 +239,28 @@ void VisualizationLibrary::init()
   gDefaultFileSystem->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
   
   // Register 2D modules
-  #if defined(IO_2D_JPG)
+  #if defined(VL_IO_2D_JPG)
     registerLoadWriter(new LoadWriterJPG);
   #endif
-  #if defined(IO_2D_PNG)
+  #if defined(VL_IO_2D_PNG)
     registerLoadWriter(new LoadWriterPNG);
   #endif
-  #if defined(IO_2D_TIFF)
+  #if defined(VL_IO_2D_TIFF)
     registerLoadWriter(new LoadWriterTIFF);
   #endif
-  #if defined(IO_2D_TGA)
+  #if defined(VL_IO_2D_TGA)
     registerLoadWriter(new LoadWriterTGA);
   #endif
-  #if defined(IO_2D_BMP)
+  #if defined(VL_IO_2D_BMP)
     registerLoadWriter(new LoadWriterBMP);
   #endif
-  #if defined(IO_2D_DDS)
+  #if defined(VL_IO_2D_DDS)
     registerLoadWriter(new LoadWriterDDS);
   #endif
-  #if defined(IO_2D_DAT)
+  #if defined(VL_IO_2D_DAT)
     registerLoadWriter(new LoadWriterDAT);
   #endif
-  #if defined(IO_2D_DICOM)
+  #if defined(VL_IO_2D_DICOM)
     registerLoadWriter(new LoadWriterDICOM);
   #endif
 
@@ -274,22 +274,22 @@ void VisualizationLibrary::init()
     gDefaultFontManager = new FontManager;
 
     // Register 3D modules
-    #if defined(IO_3D_OBJ)
+    #if defined(VL_IO_3D_OBJ)
       registerLoadWriter(new LoadWriterOBJ);
     #endif
-    #if defined(IO_3D_3DS)
+    #if defined(VL_IO_3D_3DS)
       registerLoadWriter(new LoadWriter3DS);
     #endif
-    #if defined(IO_3D_AC3D)
+    #if defined(VL_IO_3D_AC3D)
       registerLoadWriter(new LoadWriterAC3D);
     #endif
-    #if defined(IO_3D_PLY)
+    #if defined(VL_IO_3D_PLY)
       registerLoadWriter(new LoadWriterPLY);
     #endif
-    #if defined(IO_3D_STL)
+    #if defined(VL_IO_3D_STL)
       registerLoadWriter(new LoadWriterSTL);
     #endif
-    #if defined(IO_3D_MD2)
+    #if defined(VL_IO_3D_MD2)
       registerLoadWriter(new LoadWriterMD2);
     #endif
   #endif
