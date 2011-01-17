@@ -239,28 +239,28 @@ void VisualizationLibrary::init()
   gDefaultFileSystem->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
   
   // Register 2D modules
-  #if defined(IO_MODULE_JPG)
+  #if defined(IO_2D_JPG)
     registerLoadWriter(new LoadWriterJPG);
   #endif
-  #if defined(IO_MODULE_PNG)
+  #if defined(IO_2D_PNG)
     registerLoadWriter(new LoadWriterPNG);
   #endif
-  #if defined(IO_MODULE_TIFF)
+  #if defined(IO_2D_TIFF)
     registerLoadWriter(new LoadWriterTIFF);
   #endif
-  #if defined(IO_MODULE_TGA)
+  #if defined(IO_2D_TGA)
     registerLoadWriter(new LoadWriterTGA);
   #endif
-  #if defined(IO_MODULE_BMP)
+  #if defined(IO_2D_BMP)
     registerLoadWriter(new LoadWriterBMP);
   #endif
-  #if defined(IO_MODULE_DDS)
+  #if defined(IO_2D_DDS)
     registerLoadWriter(new LoadWriterDDS);
   #endif
-  #if defined(IO_MODULE_DAT)
+  #if defined(IO_2D_DAT)
     registerLoadWriter(new LoadWriterDAT);
   #endif
-  #if defined(IO_MODULE_DICOM)
+  #if defined(IO_2D_DICOM)
     registerLoadWriter(new LoadWriterDICOM);
   #endif
 
@@ -274,22 +274,22 @@ void VisualizationLibrary::init()
     gDefaultFontManager = new FontManager;
 
     // Register 3D modules
-    #if defined(IO_MODULE_OBJ)
+    #if defined(IO_3D_OBJ)
       registerLoadWriter(new LoadWriterOBJ);
     #endif
-    #if defined(IO_MODULE_3DS)
+    #if defined(IO_3D_3DS)
       registerLoadWriter(new LoadWriter3DS);
     #endif
-    #if defined(IO_MODULE_AC3D)
+    #if defined(IO_3D_AC3D)
       registerLoadWriter(new LoadWriterAC3D);
     #endif
-    #if defined(IO_MODULE_PLY)
+    #if defined(IO_3D_PLY)
       registerLoadWriter(new LoadWriterPLY);
     #endif
-    #if defined(IO_MODULE_STL)
+    #if defined(IO_3D_STL)
       registerLoadWriter(new LoadWriterSTL);
     #endif
-    #if defined(IO_MODULE_MD2)
+    #if defined(IO_3D_MD2)
       registerLoadWriter(new LoadWriterMD2);
     #endif
   #endif

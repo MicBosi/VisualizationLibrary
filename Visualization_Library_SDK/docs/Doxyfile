@@ -1077,9 +1077,9 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator 
 # instead of the = operator.
 
-PREDEFINED             = VL_PIPELINE_PRECISION=2 \
-						 IO_MODULE_3DS IO_MODULE_OBJ IO_MODULE_AC3D IO_MODULE_PLY  IO_MODULE_MD2 \
-						 IO_MODULE_PNG IO_MODULE_JPG IO_MODULE_TGA IO_MODULE_TIFF IO_MODULE_DDS IO_MODULE_BMP IO_MODULE_DAT
+PREDEFINED             = VL_PIPELINE_PRECISION=1 \
+						 IO_3D_3DS IO_3D_OBJ IO_3D_AC3D IO_3D_PLY  IO_3D_MD2 \
+						 IO_2D_PNG IO_2D_JPG IO_2D_TGA IO_2D_TIFF IO_2D_DDS IO_2D_BMP IO_2D_DAT
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 
