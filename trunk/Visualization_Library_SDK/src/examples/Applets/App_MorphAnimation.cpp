@@ -48,7 +48,7 @@ public:
   {
     if (!vl::defLoadWriterManager()->canLoad("md2"))
     {
-      vl::Log::error("App_MorphAnimation requires IO_2D_MD2.\n");
+      vl::Log::error("App_MorphAnimation requires VL_IO_2D_MD2.\n");
       vl::Time::sleep(3000);
       exit(1);
     }
