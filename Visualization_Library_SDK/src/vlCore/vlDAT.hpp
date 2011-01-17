@@ -29,11 +29,12 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#if !defined(ioDDS_INCLUDE_ONCE)
-#define ioDDS_INCLUDE_ONCE
+#if !defined(ioDAT_INCLUDE_ONCE)
+#define ioDAT_INCLUDE_ONCE
 
 #include <vlCore/ResourceLoadWriter.hpp>
 #include <vlCore/ResourceDatabase.hpp>
+#include <vlCore/Image.hpp>
 
 namespace vl
 {
@@ -41,26 +42,26 @@ namespace vl
   class String;
   class Image;
 
-  ref<Image> loadDDS(VirtualFile* file);
-  ref<Image> loadDDS(const String& path);
-  bool isDDS(VirtualFile* file);
+  ref<Image> loadDAT(VirtualFile* file);
+  ref<Image> loadDAT(const String& path);
+  bool isDAT(VirtualFile* file);
 
   //---------------------------------------------------------------------------
-  // LoadWriterDDS
+  // LoadWriterDAT
   //---------------------------------------------------------------------------
   /**
-   * The LoadWriterDDS class is a ResourceLoadWriter capable of reading DDS files.
+   * The LoadWriterDAT class is a ResourceLoadWriter capable of reading DAT files.
    */
-  class LoadWriterDDS: public ResourceLoadWriter
+  class LoadWriterDAT: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "LoadWriterDDS"; }
-    LoadWriterDDS(): ResourceLoadWriter("|dds|", "|dds|") {}
+    virtual const char* className() { return "LoadWriterDAT"; }
+    LoadWriterDAT(): ResourceLoadWriter("|dat|", "|dat|") {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 
     {
       ref<ResourceDatabase> res_db = new ResourceDatabase;
-      ref<Image> img = loadDDS(path);
+      ref<Image> img = loadDAT(path);
       if (img)
         res_db->resources().push_back(img);
       return res_db;
@@ -69,7 +70,7 @@ namespace vl
     ref<ResourceDatabase> loadResource(VirtualFile* file) const
     {
       ref<ResourceDatabase> res_db = new ResourceDatabase;
-      ref<Image> img = loadDDS(file);
+      ref<Image> img = loadDAT(file);
       if (img)
         res_db->resources().push_back(img);
       return res_db;

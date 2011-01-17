@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics/vlJPG.hpp>
+#include <vlCore/vlJPG.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/VirtualFile.hpp>
