@@ -37,10 +37,10 @@
 #include <vlCore/Log.hpp>
 #include <vlGraphics/RenderEventCallback.hpp>
 #include <vlGraphics/GLBufferObject.hpp>
-#include <vlGraphics/vlTGA.hpp>
-#include <vlGraphics/vlTIFF.hpp>
-#include <vlGraphics/vlPNG.hpp>
-#include <vlGraphics/vlJPG.hpp>
+#include <vlCore/vlTGA.hpp>
+#include <vlCore/vlTIFF.hpp>
+#include <vlCore/vlPNG.hpp>
+#include <vlCore/vlJPG.hpp>
 #include <vlCore/Image.hpp>
 
 namespace vl

@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics/vlDDS.hpp>
+#include <vlCore/vlDDS.hpp>
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/VisualizationLibrary.hpp>

@@ -29,11 +29,13 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#if !defined(ioTGA_INCLUDE_ONCE)
-#define ioTGA_INCLUDE_ONCE
+#if !defined(ioJPG_INCLUDE_ONCE)
+#define ioJPG_INCLUDE_ONCE
 
+#include <vlCore/Object.hpp>
 #include <vlCore/ResourceLoadWriter.hpp>
 #include <vlCore/ResourceDatabase.hpp>
+#include <vlCore/Image.hpp>
 
 namespace vl
 {
@@ -41,28 +43,28 @@ namespace vl
   class String;
   class Image;
 
-  ref<Image> loadTGA(VirtualFile* file);
-  ref<Image> loadTGA(const String& path);
-  bool isTGA(VirtualFile* file);
-  bool saveTGA(const Image* src, const String& path);
-  bool saveTGA(const Image* src, VirtualFile* file);
+  ref<Image> loadJPG(VirtualFile* file);
+  ref<Image> loadJPG(const String& path);
+  bool isJPG(VirtualFile* file);
+  bool saveJPG(const Image* src, const String& path, int quality = 95);
+  bool saveJPG(const Image* src, VirtualFile* file, int quality = 95);
 
   //---------------------------------------------------------------------------
-  // LoadWriterTGA
+  // LoadWriterJPG
   //---------------------------------------------------------------------------
   /**
-   * The LoadWriterTGA class is a ResourceLoadWriter capable of reading TGA files.
+   * The LoadWriterJPG class is a ResourceLoadWriter capable of reading JPG files.
    */
-  class LoadWriterTGA: public ResourceLoadWriter
+  class LoadWriterJPG: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "LoadWriterTGA"; }
-    LoadWriterTGA(): ResourceLoadWriter("|tga|", "|tga|") {}
+    virtual const char* className() { return "LoadWriterJPG"; }
+    LoadWriterJPG(): ResourceLoadWriter("|jpg|", "|jpg|"), mQuality(95) {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 
     {
       ref<ResourceDatabase> res_db = new ResourceDatabase;
-      ref<Image> img = loadTGA(path);
+      ref<Image> img = loadJPG(path);
       if (img)
         res_db->resources().push_back(img);
       return res_db;
@@ -71,7 +73,7 @@ namespace vl
     ref<ResourceDatabase> loadResource(VirtualFile* file) const
     {
       ref<ResourceDatabase> res_db = new ResourceDatabase;
-      ref<Image> img = loadTGA(file);
+      ref<Image> img = loadJPG(file);
       if (img)
         res_db->resources().push_back(img);
       return res_db;
@@ -81,7 +83,7 @@ namespace vl
     {
       bool ok = true;
       for(unsigned i=0; i<resource->count<Image>(); ++i)
-        ok &= saveTGA(resource->get<Image>(i), path);
+        ok &= saveJPG(resource->get<Image>(i), path, quality());
       return ok;
     }
 
@@ -89,9 +91,16 @@ namespace vl
     {
       bool ok = true;
       for(unsigned i=0; i<resource->count<Image>(); ++i)
-        ok &= saveTGA(resource->get<Image>(i), file);
+        ok &= saveJPG(resource->get<Image>(i), file, quality());
       return ok;
     }
+
+    int quality() const { return mQuality; }
+    //! Sets the quality level used when saving a file. Must be between 0 and 100.
+    void setQuality(int quality) { mQuality = quality; }
+
+  protected:
+    int mQuality;
   };
 }
 

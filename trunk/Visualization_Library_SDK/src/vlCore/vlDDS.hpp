@@ -29,12 +29,12 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#if !defined(ioJPG_INCLUDE_ONCE)
-#define ioJPG_INCLUDE_ONCE
+#if !defined(ioDDS_INCLUDE_ONCE)
+#define ioDDS_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
 #include <vlCore/ResourceLoadWriter.hpp>
 #include <vlCore/ResourceDatabase.hpp>
+#include <vlCore/Image.hpp>
 
 namespace vl
 {
@@ -42,28 +42,26 @@ namespace vl
   class String;
   class Image;
 
-  ref<Image> loadJPG(VirtualFile* file);
-  ref<Image> loadJPG(const String& path);
-  bool isJPG(VirtualFile* file);
-  bool saveJPG(const Image* src, const String& path, int quality = 95);
-  bool saveJPG(const Image* src, VirtualFile* file, int quality = 95);
+  ref<Image> loadDDS(VirtualFile* file);
+  ref<Image> loadDDS(const String& path);
+  bool isDDS(VirtualFile* file);
 
   //---------------------------------------------------------------------------
-  // LoadWriterJPG
+  // LoadWriterDDS
   //---------------------------------------------------------------------------
   /**
-   * The LoadWriterJPG class is a ResourceLoadWriter capable of reading JPG files.
+   * The LoadWriterDDS class is a ResourceLoadWriter capable of reading DDS files.
    */
-  class LoadWriterJPG: public ResourceLoadWriter
+  class LoadWriterDDS: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "LoadWriterJPG"; }
-    LoadWriterJPG(): ResourceLoadWriter("|jpg|", "|jpg|"), mQuality(95) {}
+    virtual const char* className() { return "LoadWriterDDS"; }
+    LoadWriterDDS(): ResourceLoadWriter("|dds|", "|dds|") {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 
     {
       ref<ResourceDatabase> res_db = new ResourceDatabase;
-      ref<Image> img = loadJPG(path);
+      ref<Image> img = loadDDS(path);
       if (img)
         res_db->resources().push_back(img);
       return res_db;
@@ -72,34 +70,21 @@ namespace vl
     ref<ResourceDatabase> loadResource(VirtualFile* file) const
     {
       ref<ResourceDatabase> res_db = new ResourceDatabase;
-      ref<Image> img = loadJPG(file);
+      ref<Image> img = loadDDS(file);
       if (img)
         res_db->resources().push_back(img);
       return res_db;
     }
 
-    bool writeResource(const String& path, ResourceDatabase* resource) const
+    bool writeResource(const String&, ResourceDatabase*) const
     {
-      bool ok = true;
-      for(unsigned i=0; i<resource->count<Image>(); ++i)
-        ok &= saveJPG(resource->get<Image>(i), path, quality());
-      return ok;
+      return false;
     }
 
-    bool writeResource(VirtualFile* file, ResourceDatabase* resource) const
+    bool writeResource(VirtualFile*, ResourceDatabase*) const
     {
-      bool ok = true;
-      for(unsigned i=0; i<resource->count<Image>(); ++i)
-        ok &= saveJPG(resource->get<Image>(i), file, quality());
-      return ok;
+      return false;
     }
-
-    int quality() const { return mQuality; }
-    //! Sets the quality level used when saving a file. Must be between 0 and 100.
-    void setQuality(int quality) { mQuality = quality; }
-
-  protected:
-    int mQuality;
   };
 }
 

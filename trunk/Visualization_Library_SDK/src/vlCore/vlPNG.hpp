@@ -34,6 +34,7 @@
 
 #include <vlCore/ResourceLoadWriter.hpp>
 #include <vlCore/ResourceDatabase.hpp>
+#include <vlCore/Image.hpp>
 
 namespace vl
 {
