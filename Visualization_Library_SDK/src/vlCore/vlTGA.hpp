@@ -29,11 +29,12 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#if !defined(ioBMP_INCLUDE_ONCE)
-#define ioBMP_INCLUDE_ONCE
+#if !defined(ioTGA_INCLUDE_ONCE)
+#define ioTGA_INCLUDE_ONCE
 
 #include <vlCore/ResourceLoadWriter.hpp>
 #include <vlCore/ResourceDatabase.hpp>
+#include <vlCore/Image.hpp>
 
 namespace vl
 {
@@ -41,26 +42,28 @@ namespace vl
   class String;
   class Image;
 
-  ref<Image> loadBMP(VirtualFile* file);
-  ref<Image> loadBMP(const String& path);
-  bool isBMP(VirtualFile* file);
+  ref<Image> loadTGA(VirtualFile* file);
+  ref<Image> loadTGA(const String& path);
+  bool isTGA(VirtualFile* file);
+  bool saveTGA(const Image* src, const String& path);
+  bool saveTGA(const Image* src, VirtualFile* file);
 
   //---------------------------------------------------------------------------
-  // LoadWriterBMP
+  // LoadWriterTGA
   //---------------------------------------------------------------------------
   /**
-   * The LoadWriterBMP class is a ResourceLoadWriter capable of reading BMP files.
+   * The LoadWriterTGA class is a ResourceLoadWriter capable of reading TGA files.
    */
-  class LoadWriterBMP: public ResourceLoadWriter
+  class LoadWriterTGA: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "LoadWriterBMP"; }
-    LoadWriterBMP(): ResourceLoadWriter("|bmp|", "|bmp|") {}
+    virtual const char* className() { return "LoadWriterTGA"; }
+    LoadWriterTGA(): ResourceLoadWriter("|tga|", "|tga|") {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 
     {
       ref<ResourceDatabase> res_db = new ResourceDatabase;
-      ref<Image> img = loadBMP(path);
+      ref<Image> img = loadTGA(path);
       if (img)
         res_db->resources().push_back(img);
       return res_db;
@@ -69,20 +72,26 @@ namespace vl
     ref<ResourceDatabase> loadResource(VirtualFile* file) const
     {
       ref<ResourceDatabase> res_db = new ResourceDatabase;
-      ref<Image> img = loadBMP(file);
+      ref<Image> img = loadTGA(file);
       if (img)
         res_db->resources().push_back(img);
       return res_db;
     }
 
-    bool writeResource(const String&, ResourceDatabase*) const
+    bool writeResource(const String& path, ResourceDatabase* resource) const
     {
-      return false;
+      bool ok = true;
+      for(unsigned i=0; i<resource->count<Image>(); ++i)
+        ok &= saveTGA(resource->get<Image>(i), path);
+      return ok;
     }
 
-    bool writeResource(VirtualFile*, ResourceDatabase*) const
+    bool writeResource(VirtualFile* file, ResourceDatabase* resource) const
     {
-      return false;
+      bool ok = true;
+      for(unsigned i=0; i<resource->count<Image>(); ++i)
+        ok &= saveTGA(resource->get<Image>(i), file);
+      return ok;
     }
   };
 }

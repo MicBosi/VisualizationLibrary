@@ -36,56 +36,94 @@
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Quaternion.hpp>
+#include <vlCore/AABB.hpp>
+#include <vlCore/Sphere.hpp>
 #include <vlCore/version.hpp>
 #include <cassert>
 
-#include <vlGraphics/Rendering.hpp>
-#include <vlGraphics/FontManager.hpp>
-
-#if defined(IO_MODULE_JPG)
-  #include <vlGraphics/vlJPG.hpp>
-#endif
-#if defined(IO_MODULE_PNG)
-  #include <vlGraphics/vlPNG.hpp>
-#endif
-#if defined(IO_MODULE_TIFF)
-  #include <vlGraphics/vlTIFF.hpp>
-#endif
-#if defined(IO_MODULE_TGA)
-  #include <vlGraphics/vlTGA.hpp>
-#endif
-#if defined(IO_MODULE_DAT)
-  #include <vlGraphics/vlDAT.hpp>
-#endif
-#if defined(IO_MODULE_DDS)
-  #include <vlGraphics/vlDDS.hpp>
-#endif
-#if defined(IO_MODULE_BMP)
-  #include <vlGraphics/vlBMP.hpp>
-#endif
-#if defined(IO_MODULE_3DS)
-  #include <vlGraphics/vl3DS.hpp>
-#endif
-#if defined(IO_MODULE_OBJ)
-  #include <vlGraphics/vlOBJ.hpp>
-#endif
-#if defined(IO_MODULE_AC3D)
-  #include <vlGraphics/vlAC3D.hpp>
-#endif
-#if defined(IO_MODULE_PLY)
-  #include <vlGraphics/vlPLY.hpp>
-#endif
-#if defined(IO_MODULE_STL)
-  #include <vlGraphics/vlSTL.hpp>
-#endif
-#if defined(IO_MODULE_MD2)
-  #include <vlGraphics/vlMD2.hpp>
-#endif
-#if defined(IO_MODULE_DICOM)
-  #include <vlGraphics/vlDICOM.hpp>
-#endif
-
 using namespace vl;
+
+#if defined(IO_2D_JPG)
+  #include <vlCore/vlJPG.hpp>
+#endif
+#if defined(IO_2D_PNG)
+  #include <vlCore/vlPNG.hpp>
+#endif
+#if defined(IO_2D_TIFF)
+  #include <vlCore/vlTIFF.hpp>
+#endif
+#if defined(IO_2D_TGA)
+  #include <vlCore/vlTGA.hpp>
+#endif
+#if defined(IO_2D_DAT)
+  #include <vlCore/vlDAT.hpp>
+#endif
+#if defined(IO_2D_DDS)
+  #include <vlCore/vlDDS.hpp>
+#endif
+#if defined(IO_2D_BMP)
+  #include <vlCore/vlBMP.hpp>
+#endif
+#if defined(IO_2D_DICOM)
+  #include <vlCore/vlDICOM.hpp>
+#endif
+
+#if defined(VL_MODULE_GRAPHICS)
+
+  #include <vlGraphics/Rendering.hpp>
+  #include <vlGraphics/FontManager.hpp>
+
+  #if defined(IO_3D_3DS)
+    #include <vlGraphics/vl3DS.hpp>
+  #endif
+  #if defined(IO_3D_OBJ)
+    #include <vlGraphics/vlOBJ.hpp>
+  #endif
+  #if defined(IO_3D_AC3D)
+    #include <vlGraphics/vlAC3D.hpp>
+  #endif
+  #if defined(IO_3D_PLY)
+    #include <vlGraphics/vlPLY.hpp>
+  #endif
+  #if defined(IO_3D_STL)
+    #include <vlGraphics/vlSTL.hpp>
+  #endif
+  #if defined(IO_3D_MD2)
+    #include <vlGraphics/vlMD2.hpp>
+  #endif
+
+  //------------------------------------------------------------------------------
+  // Default Rendering
+  //------------------------------------------------------------------------------
+  namespace
+  {
+    ref<RenderingAbstract> gDefaultRendering = NULL;
+  }
+  RenderingAbstract* vl::defRendering()
+  {
+    return gDefaultRendering.get();
+  }
+  void vl::setDefRendering(RenderingAbstract* ra)
+  {
+    gDefaultRendering = ra;
+  }
+  //-----------------------------------------------------------------------------
+  // Default FontManager
+  //-----------------------------------------------------------------------------
+  namespace
+  {
+    ref<FontManager> gDefaultFontManager = NULL;
+  }
+  FontManager* vl::defFontManager()
+  {
+    return gDefaultFontManager.get();
+  }
+  void vl::setDefFontManager(FontManager* fm)
+  {
+    gDefaultFontManager = fm;
+  }
+
+#endif
 
 //------------------------------------------------------------------------------
 VL_COMPILE_TIME_CHECK( sizeof(double)    == 8 )
@@ -144,36 +182,6 @@ Log* vl::defLogger()
   return gDefaultLogger.get(); 
 }
 //------------------------------------------------------------------------------
-// Default Rendering
-//------------------------------------------------------------------------------
-namespace
-{
-  ref<RenderingAbstract> gDefaultRendering = NULL;
-}
-RenderingAbstract* vl::defRendering()
-{
-  return gDefaultRendering.get();
-}
-void vl::setDefRendering(RenderingAbstract* ra)
-{
-  gDefaultRendering = ra;
-}
-//-----------------------------------------------------------------------------
-// Default FontManager
-//-----------------------------------------------------------------------------
-namespace
-{
-  ref<FontManager> gDefaultFontManager = NULL;
-}
-FontManager* vl::defFontManager()
-{
-  return gDefaultFontManager.get();
-}
-void vl::setDefFontManager(FontManager* fm)
-{
-  gDefaultFontManager = fm;
-}
-//------------------------------------------------------------------------------
 // Default LoadWriterManager
 //------------------------------------------------------------------------------
 namespace 
@@ -213,6 +221,8 @@ void VisualizationLibrary::init()
     return;
   }
 
+  // --- Init Core ---
+
   // Install globabl settings
   gSettings = new VLSettings;
 
@@ -221,12 +231,6 @@ void VisualizationLibrary::init()
   logger->setLogFile( globalSettings()->defaultLogPath() );
   setDefLogger( logger.get() );
 
-  // Install default Rendering
-  gDefaultRendering = new Rendering;
-
-  // Install default FontManager
-  gDefaultFontManager = new FontManager;
-
   // Install default LoadWriterManager
   gDefaultLoadWriterManager = new LoadWriterManager;
 
@@ -234,7 +238,7 @@ void VisualizationLibrary::init()
   gDefaultFileSystem = new FileSystem;
   gDefaultFileSystem->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
   
-  // register I/O plugins
+  // Register 2D modules
   #if defined(IO_MODULE_JPG)
     registerLoadWriter(new LoadWriterJPG);
   #endif
@@ -256,27 +260,41 @@ void VisualizationLibrary::init()
   #if defined(IO_MODULE_DAT)
     registerLoadWriter(new LoadWriterDAT);
   #endif
-  #if defined(IO_MODULE_OBJ)
-    registerLoadWriter(new LoadWriterOBJ);
-  #endif
-  #if defined(IO_MODULE_3DS)
-    registerLoadWriter(new LoadWriter3DS);
-  #endif
-  #if defined(IO_MODULE_AC3D)
-    registerLoadWriter(new LoadWriterAC3D);
-  #endif
-  #if defined(IO_MODULE_PLY)
-    registerLoadWriter(new LoadWriterPLY);
-  #endif
-  #if defined(IO_MODULE_STL)
-    registerLoadWriter(new LoadWriterSTL);
-  #endif
-  #if defined(IO_MODULE_MD2)
-    registerLoadWriter(new LoadWriterMD2);
-  #endif
   #if defined(IO_MODULE_DICOM)
     registerLoadWriter(new LoadWriterDICOM);
   #endif
+
+  // --- Init Graphics ---
+
+  #if defined(VL_MODULE_GRAPHICS)
+    // Install default Rendering
+    gDefaultRendering = new Rendering;
+
+    // Install default FontManager
+    gDefaultFontManager = new FontManager;
+
+    // Register 3D modules
+    #if defined(IO_MODULE_OBJ)
+      registerLoadWriter(new LoadWriterOBJ);
+    #endif
+    #if defined(IO_MODULE_3DS)
+      registerLoadWriter(new LoadWriter3DS);
+    #endif
+    #if defined(IO_MODULE_AC3D)
+      registerLoadWriter(new LoadWriterAC3D);
+    #endif
+    #if defined(IO_MODULE_PLY)
+      registerLoadWriter(new LoadWriterPLY);
+    #endif
+    #if defined(IO_MODULE_STL)
+      registerLoadWriter(new LoadWriterSTL);
+    #endif
+    #if defined(IO_MODULE_MD2)
+      registerLoadWriter(new LoadWriterMD2);
+    #endif
+  #endif
+
+  // ---
 
   // Log VL and system information.
   if (globalSettings()->verbosityLevel())
@@ -293,20 +311,20 @@ void VisualizationLibrary::shutdown()
     // Initialized = off
     gInitialized = false;
 
-    if (globalSettings()->verbosityLevel())
-    {
-      Log::print("Visualization Library shutdown.\n");
-    }
+    // --- Dispose Graphics ---
 
-    // Dispose globabl settings
-    gSettings = NULL;
+    #if defined(VL_MODULE_GRAPHICS)
 
-    // Dispose default Rendering
-    gDefaultRendering = NULL;
+      // Dispose default Rendering
+      gDefaultRendering = NULL;
 
-    // Dispose default FontManager
-    gDefaultFontManager->releaseAllFonts();
-    gDefaultFontManager = NULL;
+      // Dispose default FontManager
+      gDefaultFontManager->releaseAllFonts();
+      gDefaultFontManager = NULL;
+
+    #endif
+
+    // --- Dispose Core ---
 
     // Dispose default LoadWriterManager
     gDefaultLoadWriterManager->loadCallbacks()->clear();
@@ -317,9 +335,16 @@ void VisualizationLibrary::shutdown()
     // Dispose default FileSystem
     gDefaultFileSystem->directories()->clear();
     gDefaultFileSystem = NULL;
-    
+
     // Dispose default logger
+    if (globalSettings()->verbosityLevel())
+    {
+      Log::print("Visualization Library shutdown.\n");
+    }
     setDefLogger( NULL );
+
+    // Dispose globabl settings
+    gSettings = NULL;
   }
 }
 //------------------------------------------------------------------------------
