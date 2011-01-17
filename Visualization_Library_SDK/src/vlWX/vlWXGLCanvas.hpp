@@ -32,8 +32,8 @@
 #ifndef vlWXGLCanvas_INCLUDE_ONCE
 #define vlWXGLCanvas_INCLUDE_ONCE
 
-#include <vl/OpenGLContext.hpp>
-#include <vl/Time.hpp>
+#include <vlGraphics/OpenGLContext.hpp>
+#include <vlCore/Time.hpp>
 #include <wx/frame.h>
 #include <wx/glcanvas.h>
 #include <wx/timer.h>

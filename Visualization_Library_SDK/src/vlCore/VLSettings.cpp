@@ -31,6 +31,7 @@
 
 #include <vlCore/VLSettings.hpp>
 #include <cstdlib>
+#include <cstdio>
 
 using namespace vl;
 

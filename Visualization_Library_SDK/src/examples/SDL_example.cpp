@@ -29,17 +29,19 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vl/VisualizationLibrary.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
 #include <vlSDL/SDLWindow.hpp>
 #include "Applets/App_RotatingCube.hpp"
+
+using namespace vl;
 
 int main(int argc, char* args[])
 {
   /* init Visualization Library */
-  vl::VisualizationLibrary::init();
+  VisualizationLibrary::init();
 
   /* setup the OpenGL context format */
-  vl::OpenGLContextFormat format;
+  OpenGLContextFormat format;
   format.setDoubleBuffer(true);
   format.setRGBABits( 8,8,8,8 );
   format.setDepthBufferBits(24);
@@ -49,22 +51,22 @@ int main(int argc, char* args[])
   //format.setMultisample(true);
 
   /* create the applet to be run */
-  vl::ref<vlut::Applet> applet = new App_RotatingCube;
+  ref<Applet> applet = new App_RotatingCube;
   applet->initialize();
   /* create a native SDL window */
-  vl::ref<vlSDL::SDLWindow> sdl_window = new vlSDL::SDLWindow;
+  ref<vlSDL::SDLWindow> sdl_window = new vlSDL::SDLWindow;
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   sdl_window->addEventListener(applet.get());
   /* target the window so we can render on it */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( sdl_window->renderTarget() );
+  defRendering()->as<Rendering>()->renderer()->setRenderTarget( sdl_window->renderTarget() );
   /* black background */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::black );
+  defRendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
   /* define the camera position and orientation */
-  vl::vec3 eye    = vl::vec3(0,10,35); // camera position
-  vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
-  vl::vec3 up     = vl::vec3(0,1,0);   // up direction
-  vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setViewMatrix( view_mat );
+  vec3 eye    = vec3(0,10,35); // camera position
+  vec3 center = vec3(0,0,0);   // point the camera is looking at
+  vec3 up     = vec3(0,1,0);   // up direction
+  mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
+  defRendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
   /* Initialize the OpenGL context and window properties */
   int x = 0;
   int y = 0;
@@ -79,7 +81,7 @@ int main(int argc, char* args[])
   sdl_window = NULL;
 
   /* shutdown Visualization Library */
-  vl::VisualizationLibrary::shutdown();
+  VisualizationLibrary::shutdown();
 
   return 0;
 }

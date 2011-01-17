@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include "StdAfx.h"
-#include "vl/VisualizationLibrary.hpp"
-#include "vlMFC/MFCWindow.hpp"
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlMFC/MFCWindow.hpp>
 #include "Applets/App_RotatingCube.hpp"
 
 using namespace vl;
@@ -95,22 +95,22 @@ BOOL MFC_Example::InitInstance()
   format.setMultisample(true);
 
   /* create the applet to be run */
-  vl::ref<vlut::Applet> applet = new App_RotatingCube;
+  vl::ref<Applet> applet = new App_RotatingCube;
   applet->initialize();
   /* instance the MFC window/OpenGLContext */
   mVLCWin = new MFCWindow;
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   mVLCWin->addEventListener(applet.get());
   /* target the window so we can render on it */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( mVLCWin->renderTarget() );
+  vl::defRendering()->as<vl::Rendering>()->renderer()->setRenderTarget( mVLCWin->renderTarget() );
   /* black background */
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::black );
+  vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( black );
   /* define the camera position and orientation */
   vl::vec3 eye    = vl::vec3(0,10,35); // camera position
   vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
   vl::vec3 up     = vl::vec3(0,1,0);   // up direction
   vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
-  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setViewMatrix( view_mat );
+  vl::defRendering()->as<vl::Rendering>()->camera()->setViewMatrix( view_mat );
   /* Initialize the OpenGL context and window properties */
   int x = 100;
   int y = 100;

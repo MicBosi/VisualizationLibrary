@@ -36,6 +36,7 @@
 #include <vlCore/Say.hpp>
 #include <vlCore/version.hpp>
 #include <iostream>
+#include <cstdlib>
 
 using namespace vl;
 

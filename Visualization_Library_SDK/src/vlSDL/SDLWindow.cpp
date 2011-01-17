@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "vlSDL/SDLWindow.hpp"
-#include "vl/OpenGL.hpp"
-#include "vl/VisualizationLibrary.hpp"
-#include "vl/Log.hpp"
-#include "vl/Say.hpp"
-#include "vlut/Applet.hpp"
+#include "vlGraphics/OpenGL.hpp"
+#include "vlGraphics/Applet.hpp"
+#include "vlCore/VisualizationLibrary.hpp"
+#include "vlCore/Log.hpp"
+#include "vlCore/Say.hpp"
 #include <algorithm>
 #include <SDL.h>
 #include <map>

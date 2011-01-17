@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vl/SceneManagerKdTree.hpp"
+#include "vlCore/SceneManagerKdTree.hpp"
 #include <set>
 using namespace vl;
 

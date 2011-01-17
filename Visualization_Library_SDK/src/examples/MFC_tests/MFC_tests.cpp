@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "StdAfx.h"
-#include "vl/VisualizationLibrary.hpp"
-#include "vlMFC/MFCWindow.hpp"
-#include "vl/DiskDirectory.hpp"
-#include "vl/Log.hpp"
-#include "vl/Say.hpp"
+#include <vlCore/VisualizationLibrary.hpp>
+#include <vlMFC/MFCWindow.hpp>
+#include <vlCore/DiskDirectory.hpp>
+#include <vlCore/Log.hpp>
+#include <vlCore/Say.hpp>
 #include "tests.hpp"
 
 using namespace vl;
