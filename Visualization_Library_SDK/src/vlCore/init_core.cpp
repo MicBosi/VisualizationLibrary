@@ -68,63 +68,6 @@ using namespace vl;
   #include <vlCore/vlDICOM.hpp>
 #endif
 
-#if defined(VL_MODULE_GRAPHICS)
-
-  #include <vlGraphics/Rendering.hpp>
-  #include <vlGraphics/FontManager.hpp>
-
-  #if defined(VL_IO_3D_3DS)
-    #include <vlGraphics/vl3DS.hpp>
-  #endif
-  #if defined(VL_IO_3D_OBJ)
-    #include <vlGraphics/vlOBJ.hpp>
-  #endif
-  #if defined(VL_IO_3D_AC3D)
-    #include <vlGraphics/vlAC3D.hpp>
-  #endif
-  #if defined(VL_IO_3D_PLY)
-    #include <vlGraphics/vlPLY.hpp>
-  #endif
-  #if defined(VL_IO_3D_STL)
-    #include <vlGraphics/vlSTL.hpp>
-  #endif
-  #if defined(VL_IO_3D_MD2)
-    #include <vlGraphics/vlMD2.hpp>
-  #endif
-
-  //------------------------------------------------------------------------------
-  // Default Rendering
-  //------------------------------------------------------------------------------
-  namespace
-  {
-    ref<RenderingAbstract> gDefaultRendering = NULL;
-  }
-  RenderingAbstract* vl::defRendering()
-  {
-    return gDefaultRendering.get();
-  }
-  void vl::setDefRendering(RenderingAbstract* ra)
-  {
-    gDefaultRendering = ra;
-  }
-  //-----------------------------------------------------------------------------
-  // Default FontManager
-  //-----------------------------------------------------------------------------
-  namespace
-  {
-    ref<FontManager> gDefaultFontManager = NULL;
-  }
-  FontManager* vl::defFontManager()
-  {
-    return gDefaultFontManager.get();
-  }
-  void vl::setDefFontManager(FontManager* fm)
-  {
-    gDefaultFontManager = fm;
-  }
-
-#endif
-
 //------------------------------------------------------------------------------
 VL_COMPILE_TIME_CHECK( sizeof(double)    == 8 )
 VL_COMPILE_TIME_CHECK( sizeof(float)     == 4 )
@@ -149,10 +92,10 @@ namespace
 {
   std::string gVersionString = String( Say("%n.%n.%n") << VL_Major << VL_Minor << VL_Build ).toStdString();
   const char* gCertificate = "[Visualization Library BSD License]";
-  bool gInitialized = false;
+  bool gInitializedCore = false;
 };
 //------------------------------------------------------------------------------
-bool VisualizationLibrary::initialized() { return gInitialized; }
+bool VisualizationLibrary::isCoreInitialized() { return gInitializedCore; }
 //------------------------------------------------------------------------------
 const char* VisualizationLibrary::versionString() { return gVersionString.c_str(); }
 //------------------------------------------------------------------------------
@@ -212,12 +155,12 @@ void vl::seDefFileSystem(FileSystem* fs)
   gDefaultFileSystem = fs;
 }
 //------------------------------------------------------------------------------
-void VisualizationLibrary::init()
+void VisualizationLibrary::initCore()
 {
-  VL_CHECK(!gInitialized);
-  if (gInitialized)
+  VL_CHECK(!gInitializedCore);
+  if (gInitializedCore)
   {
-    Log::bug("VisualizationLibrary::init(): VisualizationLibrary is already initialized!\n");
+    Log::bug("VisualizationLibrary::initCore(): Visualization Library Core is already initialized!\n");
     return;
   }
 
@@ -264,89 +207,58 @@ void VisualizationLibrary::init()
     registerLoadWriter(new LoadWriterDICOM);
   #endif
 
-  // --- Init Graphics ---
-
-  #if defined(VL_MODULE_GRAPHICS)
-    // Install default Rendering
-    gDefaultRendering = new Rendering;
-
-    // Install default FontManager
-    gDefaultFontManager = new FontManager;
-
-    // Register 3D modules
-    #if defined(VL_IO_3D_OBJ)
-      registerLoadWriter(new LoadWriterOBJ);
-    #endif
-    #if defined(VL_IO_3D_3DS)
-      registerLoadWriter(new LoadWriter3DS);
-    #endif
-    #if defined(VL_IO_3D_AC3D)
-      registerLoadWriter(new LoadWriterAC3D);
-    #endif
-    #if defined(VL_IO_3D_PLY)
-      registerLoadWriter(new LoadWriterPLY);
-    #endif
-    #if defined(VL_IO_3D_STL)
-      registerLoadWriter(new LoadWriterSTL);
-    #endif
-    #if defined(VL_IO_3D_MD2)
-      registerLoadWriter(new LoadWriterMD2);
-    #endif
-  #endif
-
-  // ---
-
   // Log VL and system information.
   if (globalSettings()->verbosityLevel())
     Log::logSystemInfo();
 
   // Initialized = on
-  gInitialized = true;
+  gInitializedCore = true;
 }
 //------------------------------------------------------------------------------
-void VisualizationLibrary::shutdown()
+void VisualizationLibrary::shutdownCore()
 {
-  if (gInitialized)
+  // Initialized = off
+  gInitializedCore = false;
+
+  // --- Dispose Core ---
+
+  // Dispose default LoadWriterManager
+  gDefaultLoadWriterManager->loadCallbacks()->clear();
+  gDefaultLoadWriterManager->writeCallbacks()->clear();
+  gDefaultLoadWriterManager->loadWriters()->clear();
+  gDefaultLoadWriterManager = NULL;
+
+  // Dispose default FileSystem
+  gDefaultFileSystem->directories()->clear();
+  gDefaultFileSystem = NULL;
+
+  // Dispose default logger
+  if (globalSettings()->verbosityLevel())
   {
-    // Initialized = off
-    gInitialized = false;
-
-    // --- Dispose Graphics ---
-
-    #if defined(VL_MODULE_GRAPHICS)
-
-      // Dispose default Rendering
-      gDefaultRendering = NULL;
-
-      // Dispose default FontManager
-      gDefaultFontManager->releaseAllFonts();
-      gDefaultFontManager = NULL;
-
-    #endif
-
-    // --- Dispose Core ---
-
-    // Dispose default LoadWriterManager
-    gDefaultLoadWriterManager->loadCallbacks()->clear();
-    gDefaultLoadWriterManager->writeCallbacks()->clear();
-    gDefaultLoadWriterManager->loadWriters()->clear();
-    gDefaultLoadWriterManager = NULL;
-
-    // Dispose default FileSystem
-    gDefaultFileSystem->directories()->clear();
-    gDefaultFileSystem = NULL;
-
-    // Dispose default logger
-    if (globalSettings()->verbosityLevel())
-    {
-      Log::print("Visualization Library shutdown.\n");
-    }
-    setDefLogger( NULL );
-
-    // Dispose globabl settings
-    gSettings = NULL;
+    Log::print("Visualization Library shutdown.\n");
   }
+  setDefLogger( NULL );
+
+  // Dispose globabl settings
+  gSettings = NULL;
 }
+//------------------------------------------------------------------------------
+#if !defined(VL_MODULE_GRAPHICS)
+  void VisualizationLibrary::init()
+  {
+    initCore();
+  }
+//------------------------------------------------------------------------------
+  void VisualizationLibrary::shutdown()
+  {
+    if (gInitializedCore)
+    {
+      shutdownCore();
+    }
+  }
+//------------------------------------------------------------------------------
+  bool VisualizationLibrary::isGraphicsInitialized() { return false; }
+#endif
 //------------------------------------------------------------------------------
 #if defined(_WIN32)
   // console includes

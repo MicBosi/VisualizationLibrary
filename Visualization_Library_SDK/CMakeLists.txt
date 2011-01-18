@@ -151,8 +151,8 @@ if(VL_IO_2D_TIFF)
   add_definitions(-DVL_IO_2D_TIFF)
 endif()
 
-option(VL_MODULE_VLGRAPHICS "Enable VL Graphics Library" ON)
-if(VL_MODULE_VLGRAPHICS)
+option(VL_MODULE_GRAPHICS "Enable VL Graphics Library" ON)
+if(VL_MODULE_GRAPHICS)
 	add_definitions(-DVL_MODULE_GRAPHICS)
 
 	option(VL_MODULE_VG "Enable VL Vector Graphics Library" ON)
@@ -238,7 +238,7 @@ endif()
 add_subdirectory("src/vlCore")
 
 #VLGraphics
-if(VL_MODULE_VLGRAPHICS)
+if(VL_MODULE_GRAPHICS)
 	add_subdirectory("src/vlGraphics")
 endif()
 

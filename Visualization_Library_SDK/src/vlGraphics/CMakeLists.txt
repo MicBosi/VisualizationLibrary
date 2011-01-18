@@ -56,6 +56,7 @@ SET(VLGRAPHICS_SRC
   Geometry.cpp
   GeometryPrimitives.cpp
   GhostCameraManipulator.cpp
+  init_graphics.cpp
   ActorKdTree.cpp
   Light.cpp
   MorphingCallback.cpp
