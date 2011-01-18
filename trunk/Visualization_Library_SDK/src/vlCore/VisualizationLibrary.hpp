@@ -32,25 +32,40 @@
 #ifndef VisualizationLibrary_INCLUDE_ONCE
 #define VisualizationLibrary_INCLUDE_ONCE
 
-#include <vlCore/VLSettings.hpp>
-
 namespace vl
 {
   //! Used to initialize/shutdown VisualizationLibrary and to access important global data.
   class VisualizationLibrary
   {
   public:
-    //! Initializes Visualization Library's internal data.
+    //! Initializes VLCore or VLCore and VLGraphics libraries (if VL_MODULE_GRAPHICS was enabled during CMake configuration).
+    //! Call initCore() instead of init() when using only VLCore if VL_MODULE_GRAPHICS was enabled during CMake configuration.
     static void init();
 
-    //! Releases all the resources acquired by Visualization Library.
+    //! Releases all the resources acquired by VLCore and VLGraphics.
+    //! Call shutdownCore() instead of shutdown() when using only VLCore if VL_MODULE_GRAPHICS was enabled during CMake configuration.
     static void shutdown();
 
-    //! Returns true if init() has been called and shutdown() has not been called yet.
-    static bool initialized();
+    //! Initializes only VLCore library, equivalent to init() when VL_MODULE_GRAPHICS is disabled during CMake configuration.
+    //! Call initCore() instead of init() ONLY when using VLCore alone (i.e. no VLGraphics) and if VL_MODULE_GRAPHICS was enabled during CMake configuration.
+    static void initCore();
+
+    //! Releases all the resources acquired by Visualization Library Core
+    //! Call shutdownCore() instead of shutdown() ONLY when using VLCore alone (i.e. no VLGraphics) and if VL_MODULE_GRAPHICS was enabled during CMake configuration.
+    static void shutdownCore();
+
+    //! Returns true if VLCore library is initialized and shutdown has not been called.
+    static bool isCoreInitialized();
+
+    //! Returns true if VLGraphics library is initialized and shutdown has not been called.
+    static bool isGraphicsInitialized();
 
     //! Returns the Visualization Library's version string.
     static const char* versionString();
+  
+  private:
+    static void initGraphics();
+    static void shutdownGraphics();
   };
 
   //! Shows a console window that displays the standard output. This function is meant to be used only under Windows only.
