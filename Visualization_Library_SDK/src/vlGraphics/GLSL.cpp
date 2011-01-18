@@ -31,7 +31,7 @@
 
 #include <vlGraphics/GLSL.hpp>
 #include <vlGraphics/OpenGL.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/VLSettings.hpp>
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>

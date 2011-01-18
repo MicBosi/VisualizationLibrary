@@ -238,7 +238,7 @@ void FBORenderTarget::removeAttachment(FBOAttachmentAbstract* attachment)
 //-----------------------------------------------------------------------------
 void FBORenderTarget::removeAttachment(EAttachmentPoint attach_point)
 {
-  VL_CHECK(vl::VisualizationLibrary::initialized())
+  VL_CHECK(vl::VisualizationLibrary::isGraphicsInitialized())
 
   VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))

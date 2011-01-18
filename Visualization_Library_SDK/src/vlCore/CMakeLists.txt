@@ -40,6 +40,7 @@ SET(VLCORE_SRC
   GZipCodec.cpp
   UUID.cpp
   Image.cpp
+  init_core.cpp
   KeyValues.cpp
   LoadWriterManager.cpp
   Log.cpp
@@ -58,7 +59,6 @@ SET(VLCORE_SRC
   Transform.cpp
   VirtualDirectory.cpp
   VirtualFile.cpp
-  VisualizationLibrary.cpp
   ZippedDirectory.cpp
   ZippedFile.cpp
   math3D.cpp
