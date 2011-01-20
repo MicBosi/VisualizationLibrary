@@ -59,7 +59,7 @@ namespace vl
   //! Creates a box
   ref<Geometry> makeBox( const AABB& aabb, bool tex_coords=true );
   //! Creates a 2D grid
-  ref<Geometry> makeGrid( const vec3& origin, Real xside, Real zside, int x, int z, bool gen_texcoords = false, fvec2 uv0=fvec2(), fvec2 uv1=fvec2());
+  ref<Geometry> makeGrid( const vec3& origin, Real xside, Real zside, int x, int z, bool gen_texcoords = false, fvec2 uv0=fvec2(0,0), fvec2 uv1=fvec2(1,1));
   //! Creates an icosahedron
   ref<Geometry> makeIcosahedron( const vec3& origin, Real diameter );
   //! Creates a Geometry representing a set of points
