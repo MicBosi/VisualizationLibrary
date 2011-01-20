@@ -264,6 +264,23 @@ void Geometry::clearArrays(bool clear_draw_calls)
     mDrawCalls.clear();
 }
 //-----------------------------------------------------------------------------
+bool Geometry::flipNormals()
+{
+  if (normalArray())
+  {
+    ArrayFloat3* norm3f = dynamic_cast<ArrayFloat3*>(normalArray());
+    if (norm3f)
+    {
+      for(size_t i=0; i<norm3f->size(); ++i)
+      {
+        norm3f->at(i) = -norm3f->at(i);
+      }
+      return true;
+    }
+  }
+  return false;
+}
+//-----------------------------------------------------------------------------
 void Geometry::computeNormals()
 {
   ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttrib(0);
@@ -291,6 +308,12 @@ void Geometry::computeNormals()
       size_t b = trit.b();
       size_t c = trit.c();
 
+      if (a == b || b == c || c == a)
+      {
+        Log::warning( Say("Geometry::computeNormals(): skipping degenerate triangle %n %n %n\n") << a << b << c );
+        continue;
+      }
+
       VL_CHECK( a < posarr->size() )
       VL_CHECK( b < posarr->size() )
       VL_CHECK( c < posarr->size() )
@@ -298,11 +321,25 @@ void Geometry::computeNormals()
       vec3 n, v0, v1, v2;
 
       v0 = posarr->vectorAsVec4(a).xyz();
-      v1 = posarr->vectorAsVec4(b).xyz() - v0;
-      v2 = posarr->vectorAsVec4(c).xyz() - v0;
+      v1 = posarr->vectorAsVec4(b).xyz();
+      v2 = posarr->vectorAsVec4(c).xyz();
+
+      if (v0 == v1 || v1 == v2 || v2 == v0)
+      {
+        Log::warning("Geometry::computeNormals(): skipping degenerate triangle.\n");
+        continue;
+      }
+
+      v1 -= v0;
+      v2 -= v0;
 
       n = cross(v1, v2);
       n.normalize();
+      if ( fabs(1.0f - n.length()) > 0.1f )
+      {
+        Log::warning("Geometry::computeNormals(): skipping degenerate triangle.\n");
+        continue;
+      }
 
       (*norm3f)[a] += (fvec3)n;
       (*norm3f)[b] += (fvec3)n;
