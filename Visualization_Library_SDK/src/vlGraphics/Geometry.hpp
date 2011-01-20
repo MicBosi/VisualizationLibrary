@@ -151,6 +151,11 @@ namespace vl
     */
     void computeNormals();
 
+    /** Inverts the orientation of the normals.
+     *  Returns \p true if the normals could be flipped. The function fails if the normals
+     *  are defined in a format other than ArrayFloat3. */
+    bool flipNormals();
+
     /** 
     * Transforms vertices and normals belonging to this geometry.
     * If 'normalize' == true the normals are normalized after being transformed
