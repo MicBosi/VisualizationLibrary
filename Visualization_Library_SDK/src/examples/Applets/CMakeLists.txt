@@ -71,6 +71,7 @@ set(VL_APPLETS_SRC
   App_KdTreeView.cpp
   App_Lights.cpp
   App_MarchingCubes.cpp
+  App_MiniEarth.cpp
   App_ModelProfiler.cpp
   App_Molecules.cpp
   App_MorphAnimation.cpp

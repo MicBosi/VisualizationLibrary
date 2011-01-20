@@ -48,6 +48,7 @@ BaseDemo* Create_App_GLSL_Bumpmapping();
 BaseDemo* Create_App_GLSLImageProcessing();
 BaseDemo* Create_App_Lights();
 BaseDemo* Create_App_Fractals();
+BaseDemo* Create_App_MiniEarth();
 BaseDemo* Create_App_ModelProfiler();
 BaseDemo* Create_App_MorphAnimation();
 BaseDemo* Create_App_MultipleCameras();
@@ -190,6 +191,7 @@ public:
       { "Occlusion Culling", Create_App_OcclusionCulling(), 10,10, 512, 512, vl::gray, vl::vec3(0,25,575), vl::vec3(0,0,0) },
       { "Bezier Patches", Create_App_BezierSurfaces(), 10,10, 512, 512, vl::black, vl::vec3(4.5f,5,13), vl::vec3(4.5f,0,0) },
       { "Picking", Create_App_Picking(), 10,10, 512, 512, vl::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
+      { "Mini Earth", Create_App_MiniEarth(), 10,10, 512, 512, vl::black, vl::vec3(0,0,4), vl::vec3(0,0,0) },
     };
 
     int test_count = int( sizeof(tests)/sizeof(TestEntry) );
