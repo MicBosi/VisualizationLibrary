@@ -1,6 +1,6 @@
 /**
 
-	\page pagGuidePortals Portal-Based Culling and Scene Management Tutorial
+	\page pagGuidePortals Portal-Based Culling Scene Manager Tutorial
 
 	This tutorial shows how to use the powerful vl::SceneManagerPortals class to render indoor or highly occluded scenes order of magnitudes more quickly than simply using frustum culling methods (even if using KdTrees or other accelation structures). 
 	
@@ -30,8 +30,8 @@
 		<td width=25%> \image html pagGuidePortals4.jpg </td>
 	</tr>
 	<tr>
-		<td valign=top> View of the normal scene. </td>
-		<td valign=top> View of the detected portals. </td>
+		<td valign=top align=center> View of the normal scene. </td>
+		<td valign=top align=center> View of the detected portals. </td>
 		<td valign=top> Geometry rendered using only view frustum culling. Note how much geometry is rendered in the background that will never be visible. </td>
 		<td valign=top> Geometry rendered using portal-based hidden surface removal. As we see portal-based hsr can take advantage of highly occluded scenes
 		and can greatly boost the rendering process.</td>
