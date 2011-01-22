@@ -196,7 +196,7 @@ public:
 
     int test_count = int( sizeof(tests)/sizeof(TestEntry) );
     if (test > 0 && test-1 < test_count)
-      runGUI(secs, tests[test-1].title + " - " + vl::String("Visualization Library ") + vl::VisualizationLibrary::versionString(), tests[test-1].applet.get(), format, tests[test-1].x, tests[test-1].y, tests[test-1].width, tests[test-1].height, tests[test-1].bk_color, tests[test-1].eye, tests[test-1].center );
+      runGUI(secs, tests[test-1].title + " - " + vl::String("VL ") + vl::VisualizationLibrary::versionString(), tests[test-1].applet.get(), format, tests[test-1].x, tests[test-1].y, tests[test-1].width, tests[test-1].height, tests[test-1].bk_color, tests[test-1].eye, tests[test-1].center );
     else
     {
       vl::showWin32Console();
