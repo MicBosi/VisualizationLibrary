@@ -34,7 +34,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(${VLMFC_NAME})
 
 add_definitions(-D_AFXDLL)
-add_library(${VLMFC_NAME} STATIC MFCWindow.hpp MFCWindow.cpp StdAfx.cpp)
+add_library(${VLMFC_NAME} STATIC MFCWindow.hpp MFCWindow.cpp MDIWindow.hpp MDIWindow.cpp StdAfx.cpp)
 set_target_properties(${VLMFC_NAME} PROPERTIES DEBUG_POSTFIX "-d")
 set_target_properties(${VLMFC_NAME} PROPERTIES SOVERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
 set_target_properties(${VLMFC_NAME} PROPERTIES VERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
