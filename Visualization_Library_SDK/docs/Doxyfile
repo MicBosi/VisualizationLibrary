@@ -499,8 +499,8 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = dox ../src/vl ../src/vlVG  ../src/vlVolume ../src/vlMolecule \
-                         ../src/vlWin32 ../src/vlMFC ../src/vlQt4 ../src/vlWX ../src/vlGLUT ../src/vlSDL ../src/vlCocoa
+INPUT                  = dox ../src/vlCore ../src/vlGraphics ../src/vlVG ../src/vlVolume ../src/vlMolecule \
+                             ../src/vlWin32 ../src/vlMFC ../src/vlQt4 ../src/vlWX ../src/vlGLUT ../src/vlSDL ../src/vlCocoa
 
 # This tag can be used to specify the character encoding of the source files that 
 # doxygen parses. Internally doxygen uses the UTF-8 encoding, which is also the default 
