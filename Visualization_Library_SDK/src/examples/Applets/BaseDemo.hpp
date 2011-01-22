@@ -82,7 +82,7 @@ public:
     if (mFPSTimer.elapsed() > 1)
     {
       mFPSTimer.start();
-      openglContext()->setWindowTitle( vl::Say("%s [%.1n]") << applicationName() << fps() );
+      openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << applicationName() );
       vl::Log::print( vl::Say("FPS=%.1n\n") << fps() );
     }
 
