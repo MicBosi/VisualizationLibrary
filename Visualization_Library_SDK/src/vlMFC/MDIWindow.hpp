@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef MFCWindow_INCLUDE_ONCE
-#define MFCWindow_INCLUDE_ONCE
+#ifndef MDIWindow_INCLUDE_ONCE
+#define MDIWindow_INCLUDE_ONCE
 
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlWin32/Win32Context.hpp>
@@ -38,20 +38,20 @@
 namespace vlMFC
 {
 //-----------------------------------------------------------------------------
-// MFCWindow
+// MDIWindow
 //-----------------------------------------------------------------------------
   /**
-   * The MFCWindow class is an MFC CWnd with the functionalities of a Win32Context.
+   * The MDIWindow class is an MFC CView with the functionalities of a Win32Context.
    */
-  class MFCWindow: public CWnd, public vlWin32::Win32Context /* the order is important! */
+  class MDIWindow: public CView, public vlWin32::Win32Context /* the order is important! */
   {
   public:
-    MFCWindow() {}
+    MDIWindow() {}
 
-    virtual ~MFCWindow();
+    virtual ~MDIWindow();
 
     //! Creates the window and initializes the OpenGL rendering context
-    bool initMFCWindow(CWnd* parent, MFCWindow* share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
+    bool initOpenGLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
 
     //! calls destroyWindow() and dispatches the destroy event to the UIEventListener objects
     virtual void destroy();
