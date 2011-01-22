@@ -256,6 +256,8 @@ bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::
 
   setWindowTitle(title);
 
+  if (mHDC)
+    DeleteDC(mHDC);
   mHDC = ::GetDC(hwnd());
   if (!mHDC)
   {
@@ -280,6 +282,16 @@ bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::
   }
 
   // OpenGL rendering context creation
+
+  if (mHGLRC)
+  {
+    if ( wglDeleteContext(mHGLRC) == FALSE )
+    {
+      MessageBox(NULL, L"OpenGL context creation failed.\n"
+       L"The handle either doesn't specify a valid context or the context is being used by another thread.", L"Visualization Library Error", MB_OK);
+    }
+    mHGLRC = NULL;
+  }
 
   if (wglCreateContextAttribsARB && mContextAttribs.size() > 1)
   {
