@@ -326,7 +326,7 @@ void Geometry::computeNormals()
 
       if (v0 == v1 || v1 == v2 || v2 == v0)
       {
-        Log::warning("Geometry::computeNormals(): skipping degenerate triangle.\n");
+        Log::warning("Geometry::computeNormals(): skipping degenerate triangle (same vertex coodinate).\n");
         continue;
       }
 
@@ -337,7 +337,7 @@ void Geometry::computeNormals()
       n.normalize();
       if ( fabs(1.0f - n.length()) > 0.1f )
       {
-        Log::warning("Geometry::computeNormals(): skipping degenerate triangle.\n");
+        Log::warning("Geometry::computeNormals(): skipping degenerate triangle (normalization failed).\n");
         continue;
       }
 
