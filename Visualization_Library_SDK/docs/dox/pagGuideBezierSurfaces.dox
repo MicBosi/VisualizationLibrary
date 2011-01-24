@@ -2,7 +2,8 @@
 
 	\page pagGuideBezierSurfaces Bicubic Bézier Patches and Surfaces Tutorial
 
-	In the following tutorial you will learn how to manage and generate bicubic Bezier surfaces and how to concatenate multiple patches.
+	In the following tutorial you will learn how to manage and generate bicubic Bezier surfaces and how to concatenate multiple patches using the 
+	vl::BezierPatch and vl::BezierSurface classes.
 	
 	<center>
 	<table border=0 cellspacing=0 cellpadding=5 width=1%>

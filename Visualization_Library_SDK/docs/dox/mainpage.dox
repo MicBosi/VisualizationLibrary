@@ -8,7 +8,7 @@
 	<div class="featuretitle">Basic Information</div>
 
 	- \subpage pagIntro "Introduction"
-	- <a target=_blank href="http://www.visualizationlibrary.com/jetcms/node/4">Gallery</a>
+	- \subpage pagGallery "Image Gallery"
 	- \subpage pagLearning "Learning VL"
 	- \subpage pagKeyFeatures "Features Overview"
 	- \subpage pagContacts "Contacts"
