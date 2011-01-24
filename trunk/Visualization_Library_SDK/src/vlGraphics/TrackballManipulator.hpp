@@ -44,11 +44,15 @@ namespace vl
   class ActorCollection;
 
   //------------------------------------------------------------------------------
-  //! This class lets you rotate a Camera or a Transform node using a vitual trackball.
-  //! If you set a Transform node to manipulate, using the function setTransform(), this object
-  //! will manipulate the given Transform. If no Transform is specified or a NULL one is
-  //! passed to the function setTransform() then this object will manipulate the current camera.
-  //! \note In any case, before using a TrackballManipulator you have to specify a Camera object using the function setCamera().
+  // TrackballManipulator
+  //------------------------------------------------------------------------------
+  //! This class lets you rotate a Camera or a Transform node using a virtual trackball.
+  //! If you set a Transform node to manipulate, using the function setTransform(), the trackball
+  //! will manipulate the given Transform (rotation only, panning and zooming will always affect 
+  //! the bound Camera). If no Transform is specified or a NULL one is passed to the function 
+  //! setTransform() then the trackball will manipulate the current camera.
+  //! \note In any case, before using a TrackballManipulator you have to specify a Camera object 
+  //! using the function setCamera().
   //! \note The Transform is expected to contain only rotation and translation information. 
   //! Other transformations like shearing, scaling, projection, and so on can produce unspecified results.
   class TrackballManipulator: public UIEventListener
@@ -57,6 +61,8 @@ namespace vl
     typedef enum { NoMode, RotationMode, TranslationMode, ZoomMode } ETrackballMode;
   public:
     virtual const char* className() { return "TrackballManipulator"; }
+
+    //! Constructor.
     TrackballManipulator(): 
       mMode(NoMode),
       mRotationButton(LeftButton), mTranslationButton(MiddleButton), mZoomButton(RightButton), 
@@ -67,60 +73,92 @@ namespace vl
       #endif
     }
 
+    // --- UIEventListener interface ---
+
     virtual void mouseDownEvent(EMouseButton, int x, int y);
 
     virtual void mouseUpEvent(EMouseButton, int x, int y);
 
     virtual void mouseMoveEvent(int x, int y);
 
+    void prepareToReconnect();
+
+    // --- User methods ---
+
+    //! The camera through which the trackball manipulator is used.
+    void setCamera(Camera* camera) { mCamera = camera; }
+
+    //! The camera through which the trackball manipulator is used.
+    Camera* camera() { return mCamera.get(); }
+
+    //! The center point around which the camera will rotate
+    void setPivot(vec3 pivot) { mPivot = pivot; }
+
+    //! The center point around which the camera will rotate
+    vec3 pivot() const { return mPivot; }
+
+    //! If NULL the trackball will manipulate the camera transform, if non NULL the trackball will manipulate the specified transform.
+    void setTransform(Transform* tr) { mTransform = tr; }
+
+    //! If NULL the trackball will manipulate the camera transform, if non NULL the trackball will manipulate the specified transform.
+    Transform* transform() { return mTransform.get(); }
+
+    //! Mouse button used to rotate.
+    int rotationButton() const { return mRotationButton; }
+
+    //! Mouse button used to rotate.
+    void setRotationButton(int mouse_button) { mRotationButton = mouse_button; }
+
+    //! Mouse button used to zoom.
+    int zoomButton() const { return mZoomButton; }
+
+    //! Mouse button used to zoom.
+    void setZoomButton(int mouse_button) { mZoomButton = mouse_button; }
+
+    //! Mouse button used to translate the view.
+    int translationButton() const { return mTranslationButton; }
+
+    //! Mouse button used to translate the view.
+    void setTranslationButton(int mouse_button) { mTranslationButton = mouse_button; }
+
+    //! Rotation speed multiplicative factor (default = 1).
+    float rotationSpeed() const { return mRotationSpeed; }
+    
+    //! Rotation speed multiplicative factor (default = 1).
+    void setRotationSpeed(float speed) { mRotationSpeed = speed; }
+
+    //! Zoom speed multiplicative factor (default = 1).
+    float zoomSpeed() const { return mZoomSpeed; }
+
+    //! Zoom speed multiplicative factor (default = 1).
+    void setZoomSpeed(float speed) { mZoomSpeed = speed; }
+
+    //! Translation speed multiplicative factor (default = 1).
+    float translationSpeed() const { return mTranslationSpeed; }
+
+    //! Translation speed multiplicative factor (default = 1).
+    void setTranslationSpeed(float speed) { mTranslationSpeed = speed; }
+
+    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB. See also Camera::adjustView().
+    void adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias=1.0f);
+
+    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing the Actor[s]. See also Camera::adjustView().
+    void adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, Real bias=1.0f);
+
+    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing the given scene manager. See also Camera::adjustView().
+    void adjustView(SceneManager* scene, const vec3& dir, const vec3& up, Real bias=1.0f);
+
+    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing all the scene managers part of the given rendering. See also Camera::adjustView().
+    void adjustView(Rendering* rendering, const vec3& dir, const vec3& up, Real bias=1.0f);
+
+    // --- Advanced methods ---
+
     mat4 trackballRotation(int x, int y);
 
     vec3 computeVector(int x, int y);
 
-    void setCamera(Camera* camera) { mCamera = camera; }
-
-    Camera* camera() { return mCamera.get(); }
-
-    void prepareToReconnect();
-
-    //! Sets the center point the camera will rotate around
-    void setPivot(vec3 pivot) { mPivot = pivot; }
-
-    vec3 pivot() const { return mPivot; }
-
-    void setTransform(Transform* tr) { mTransform = tr; }
-
-    Transform* transform() { return mTransform.get(); }
-
-    int rotationButton() const { return mRotationButton; }
-    void setRotationButton(int mouse_button) { mRotationButton = mouse_button; }
-
-    int zoomButton() const { return mZoomButton; }
-    void setZoomButton(int mouse_button) { mZoomButton = mouse_button; }
-
-    int translationButton() const { return mTranslationButton; }
-    void setTranslationButton(int mouse_button) { mTranslationButton = mouse_button; }
-
-    float rotationSpeed() const { return mRotationSpeed; }
-    void setRotationSpeed(float speed) { mRotationSpeed = speed; }
-
-    float zoomSpeed() const { return mZoomSpeed; }
-    void setZoomSpeed(float speed) { mZoomSpeed = speed; }
-
-    float translationSpeed() const { return mTranslationSpeed; }
-    void setTranslationSpeed(float speed) { mTranslationSpeed = speed; }
-
     //! Returns the current trackball manipulator state.
     ETrackballMode mode() const { return mMode; }
-
-    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB. See also Camera::adjustView().
-    void adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias=1.0f);
-    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing the Actor[s]. See also Camera::adjustView().
-    void adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, Real bias=1.0f);
-    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing the given scene manager. See also Camera::adjustView().
-    void adjustView(SceneManager* scene, const vec3& dir, const vec3& up, Real bias=1.0f);
-    //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing all the scene managers part of the given rendering. See also Camera::adjustView().
-    void adjustView(Rendering* rendering, const vec3& dir, const vec3& up, Real bias=1.0f);
 
   protected:
     ref<Camera> mCamera;
