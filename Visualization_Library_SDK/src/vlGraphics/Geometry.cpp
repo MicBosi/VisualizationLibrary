@@ -281,7 +281,7 @@ bool Geometry::flipNormals()
   return false;
 }
 //-----------------------------------------------------------------------------
-void Geometry::computeNormals()
+void Geometry::computeNormals(bool verbose)
 {
   ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttrib(0);
   if (!posarr || posarr->size() == 0)
@@ -308,6 +308,7 @@ void Geometry::computeNormals()
       size_t b = trit.b();
       size_t c = trit.c();
 
+      if (verbose)
       if (a == b || b == c || c == a)
       {
         Log::warning( Say("Geometry::computeNormals(): skipping degenerate triangle %n %n %n\n") << a << b << c );
@@ -324,6 +325,7 @@ void Geometry::computeNormals()
       v1 = posarr->vectorAsVec4(b).xyz();
       v2 = posarr->vectorAsVec4(c).xyz();
 
+      if (verbose)
       if (v0 == v1 || v1 == v2 || v2 == v0)
       {
         Log::warning("Geometry::computeNormals(): skipping degenerate triangle (same vertex coodinate).\n");
@@ -335,6 +337,7 @@ void Geometry::computeNormals()
 
       n = cross(v1, v2);
       n.normalize();
+      if (verbose)
       if ( fabs(1.0f - n.length()) > 0.1f )
       {
         Log::warning("Geometry::computeNormals(): skipping degenerate triangle (normalization failed).\n");
