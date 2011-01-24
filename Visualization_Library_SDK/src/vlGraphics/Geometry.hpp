@@ -149,7 +149,7 @@ namespace vl
      * This function modifies the local buffers. After calling this you might want 
      * to update the buffers allocated on the GPU.
     */
-    void computeNormals();
+    void computeNormals(bool verbose=false);
 
     /** Inverts the orientation of the normals.
      *  Returns \p true if the normals could be flipped. The function fails if the normals
