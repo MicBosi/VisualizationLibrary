@@ -90,7 +90,7 @@ public:
       return it->second.get();
     else
     {
-      ref<Geometry> sphere = makeIcosphere( vec3(0,0,0), radius, detail() );
+      ref<Geometry> sphere = makeIcosphere( vec3(0,0,0), radius*2.0f, detail() );
       geometryMap()[radius] = sphere;
       return sphere.get();
     }
