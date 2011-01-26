@@ -8,7 +8,7 @@
 	
 	<h2 style="font-size: 20px">Volume Isosurface Extraction With Marching Cubes</h2>
 
-	Various examples of isosurface extraction using the MarchingCubes class.<br>
+	Various examples of isosurface extraction using the vl::MarchingCubes class.<br>
    
 	<p>
 	\endhtmlonly
