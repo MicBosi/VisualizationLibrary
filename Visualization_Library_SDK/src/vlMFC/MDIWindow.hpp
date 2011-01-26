@@ -41,7 +41,8 @@ namespace vlMFC
 // MDIWindow
 //-----------------------------------------------------------------------------
   /**
-   * The MDIWindow class is an MFC CView with the functionalities of a Win32Context.
+   * The MDIWindow class is an MFC CView with the functionalities of a Win32Context (experimental).
+   * \remarks Don't forget to reimplement the OnDraw() method.
    */
   class MDIWindow: public CView, public vlWin32::Win32Context /* the order is important! */
   {
@@ -61,6 +62,9 @@ namespace vlMFC
 
     //! Returns the Win32 window handle
     HWND hwnd() const { return m_hWnd; }
+
+    //! Don't forget to reimplement this!
+    void OnDraw(CDC *) {}
 
   public:
 	  //{{AFX_MSG(MFCContext
