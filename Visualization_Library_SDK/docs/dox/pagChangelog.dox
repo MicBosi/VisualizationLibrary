@@ -2,7 +2,7 @@
 
    \page pagChangelog Changelog
 
-	<div class="featuretitle">Visualization Library 2011.1.1135</div>
+	<div class="featuretitle">Visualization Library 2011.1.1131</div>
 	
 	- Visualization Library splitted into:
 		- \b VLCore: all classes not requiring OpenGL, including vl::Image and 2D image IO modules, virtual file system, resource management, vl::String, math classes and functions etc.
@@ -13,8 +13,16 @@
 	- Inclusion of VL files now are in the form of <vlCore/Image.hpp> instead of <vl/Image.hpp> and <vlGraphics/Geometry.hpp> instead of <vl/Geometry.hpp> etc.
 	- "vlut" utility namespace removed.
 	- All sub-library namespaces have been consolidated into vl:: with the exception of the GUI-binding namespaces.
-	- <b>... *** FIXME default entities FIXME *** ...</b>
+	- <b>New image gallery</b> (included into the doxygen documentation).
+	- Changed default top-level objects locations:
+		- vl::VisualizationLibrary::settings() renamed vl::globalSettings().
+		- vl::VisualizationLibrary::fontManager() renamed vl::defFontManager().
+		- vl::VisualizationLibrary::fileSystem() renamed vl::defFileSystem().
+		- vl::VisualizationLibrary::loadWriterManager() renamed vl::defLoadWriterManager().
+		- vl::VisualizationLibrary::rendering() renamed vl::defRendering().
+	- Added vl::Geometry::flipNormals() and degenerate triangles check during normal computation.
 	- New vlMFC::MDIWindow to support MFC's MDI architecture (experimental).
+	- Removed deprecated Cocoa bindings.
 	
 	<div class="featuretitle">Visualization Library 2010.12.1129</div>
 	
