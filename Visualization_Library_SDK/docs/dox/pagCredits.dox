@@ -46,6 +46,11 @@
 		<tr>
 			<td>Tanguy Fautré</td><td>Triangle stripping algorithm.</td>
 		</tr>
+		<tr>
+			<td colspan=2>Thanks to all the people (especially in the forum) who tested VL, reported bugs and 
+			provided feedback: your contribution made Visualization Library a much better resource 
+			for all of us, thank you!</td>
+		</tr>
 	</table>
 
 */
