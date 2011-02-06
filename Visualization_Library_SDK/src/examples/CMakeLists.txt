@@ -42,6 +42,7 @@ endif()
 
 if(GUI_MFC_EXAMPLES)
 	add_subdirectory("MFC_example")
+	add_subdirectory("MFC_MDI_example")
 	add_subdirectory("MFC_tests")
 endif()
 

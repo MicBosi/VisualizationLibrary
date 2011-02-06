@@ -46,7 +46,7 @@ public:
   virtual BOOL InitInstance();
   virtual int ExitInstance();
   /*virtual int Run();*/
-  /*virtual BOOL OnIdle(LONG lCount);*/
+  virtual BOOL OnIdle(LONG lCount);
 
 protected:
   ref<MFCWindow> mVLCWin;
@@ -58,6 +58,16 @@ END_MESSAGE_MAP()
 
 /* instance of the MFC application */
 MFC_Example mfc_app;
+
+/* updates the GL window */
+BOOL MFC_Example::OnIdle(LONG lCount)
+{
+  if( mVLCWin->continuousUpdate() )
+    mVLCWin->Win32Context::update();
+  else
+    Sleep(1);
+  return TRUE;
+}
 
 /* called when the application exits */
 int MFC_Example::ExitInstance()

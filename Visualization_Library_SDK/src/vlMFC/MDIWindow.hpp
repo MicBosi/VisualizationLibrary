@@ -52,7 +52,7 @@ namespace vlMFC
     virtual ~MDIWindow();
 
     //! Creates the window and initializes the OpenGL rendering context
-    bool initOpenGLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
+    bool initOpenGLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt);
 
     //! calls destroyWindow() and dispatches the destroy event to the UIEventListener objects
     virtual void destroy();
@@ -72,7 +72,7 @@ namespace vlMFC
 	  /*afx_msg void OnDraw(CDC *pDC);*/
     afx_msg void OnPaint();
     afx_msg void OnClose();
-    afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
+    /*afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);*/
     afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
     afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
     afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
@@ -87,7 +87,7 @@ namespace vlMFC
     afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
     afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
     afx_msg void OnSize(UINT nType, int cx, int cy);
-    afx_msg void OnTimer(UINT_PTR nIDEvent);
+    /*afx_msg void OnTimer(UINT_PTR nIDEvent);*/
     afx_msg void OnDropFiles(HDROP hDropInfo);
 	  //}}AFX_MSG
 

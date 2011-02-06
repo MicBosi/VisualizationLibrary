@@ -53,23 +53,25 @@ Applet::Applet()
 //-----------------------------------------------------------------------------
 void Applet::initialize()
 {
-  // by default Visualization Library installs a Rendering
-  ref<Rendering> rend = defRendering()->as<Rendering>();
-  rend->setShaderAnimationEnabled(true);
+  // if the user didn't provide one use the one installed by default
+  if (!mRendering)
+    mRendering = defRendering()->as<Rendering>();
+  mRendering->setShaderAnimationEnabled(true);
+
   // attached later: viewport
   // attached later: opengl context
   // attached later: render target
 
   // installs a SceneManagerActorTree as the default scene manager
   mSceneManagerActorTree = new SceneManagerActorTree;
-  rend->sceneManagers()->push_back(sceneManager());
+  mRendering->sceneManagers()->push_back(sceneManager());
 
   mFly       = new GhostCameraManipulator;
   mTrackball = new TrackballManipulator;
   mFly->setEnabled(false);
   mTrackball->setEnabled(true);
 
-  bindManipulators( rend.get() );
+  bindManipulators( mRendering.get() );
 }
 //-----------------------------------------------------------------------------
 void Applet::bindManipulators(Rendering* rendering)
@@ -167,14 +169,13 @@ void Applet::runEvent()
 void Applet::resizeEvent(int w, int h)
 {
   // if a simple Rendering is attached as the rendering root than update viewport and projection matrix.
-  Rendering* rendering = defRendering()->as<Rendering>();
-  if (rendering)
+  if (mRendering)
   {
-    VL_CHECK( w == rendering->renderer()->renderTarget()->width() );
-    VL_CHECK( h == rendering->renderer()->renderTarget()->height() );
-    rendering->camera()->viewport()->setWidth( w );
-    rendering->camera()->viewport()->setHeight( h );
-    rendering->camera()->setProjectionAsPerspective();
+    VL_CHECK( w == mRendering->renderer()->renderTarget()->width() );
+    VL_CHECK( h == mRendering->renderer()->renderTarget()->height() );
+    mRendering->camera()->viewport()->setWidth( w );
+    mRendering->camera()->viewport()->setHeight( h );
+    mRendering->camera()->setProjectionAsPerspective();
   }
 }
 //-----------------------------------------------------------------------------

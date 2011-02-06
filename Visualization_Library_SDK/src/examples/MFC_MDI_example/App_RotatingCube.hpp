@@ -29,74 +29,72 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef MFCWindow_INCLUDE_ONCE
-#define MFCWindow_INCLUDE_ONCE
+#ifndef App_RotatingCube_INCLUDE_ONCE
+#define App_RotatingCube_INCLUDE_ONCE
 
-#include <vlGraphics/OpenGLContext.hpp>
-#include <vlWin32/Win32Context.hpp>
+#include <vlGraphics/Applet.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
+#include <vlGraphics/SceneManagerActorTree.hpp>
+#include <vlGraphics/Rendering.hpp>
+#include <vlGraphics/Actor.hpp>
+#include <vlGraphics/Effect.hpp>
+#include <vlCore/Time.hpp>
+#include <vlGraphics/Light.hpp>
 
-namespace vlMFC
+class App_RotatingCube: public vl::Applet
 {
-//-----------------------------------------------------------------------------
-// MFCWindow
-//-----------------------------------------------------------------------------
-  /**
-   * The MFCWindow class is an MFC CWnd with the functionalities of a Win32Context.
-   */
-  class MFCWindow: public CWnd, public vlWin32::Win32Context /* the order is important! */
+public:
+  App_RotatingCube(vl::Rendering* rend)
   {
-  public:
-    MFCWindow() {}
+    mRendering = rend;
+  }
 
-    virtual ~MFCWindow();
+  virtual void shutdown() {}
 
-    //! Creates the window and initializes the OpenGL rendering context
-    bool initMFCWindow(CWnd* parent, MFCWindow* share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
+  // called once after the OpenGL window has been opened 
+  void initEvent()
+  {
+    // allocate the Transform 
+    mCubeTransform = new vl::Transform;
+    // bind the Transform with the transform tree of the rendring pipeline 
+    mRendering->transform()->addChild( mCubeTransform.get() );
 
-    //! calls destroyWindow() and dispatches the destroy event to the UIEventListener objects
-    virtual void destroy();
+    // create the cube's Geometry and compute its normals to support lighting 
+    vl::ref<vl::Geometry> cube = vl::makeBox( vl::vec3(0,0,0), 10, 10, 10 );
+    cube->computeNormals();
 
-    //! Destroyes the window and the OpenGL rendering context
-    void destroyWindow();
+    // setup the effect to be used to render the cube 
+    vl::ref<vl::Effect> effect = new vl::Effect;
+    // enable depth test and lighting 
+    effect->shader()->enable(vl::EN_DEPTH_TEST);
+    // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
+    effect->shader()->setRenderState( new vl::Light(0) );
+    // enable the standard OpenGL lighting 
+    effect->shader()->enable(vl::EN_LIGHTING);
+    // set the front and back material color of the cube 
+    // "gocMaterial" stands for "get-or-create Material"
+    effect->shader()->gocMaterial()->setDiffuse( vl::crimson );
 
-    //! Returns the Win32 window handle
-    HWND hwnd() const { return m_hWnd; }
+    // install our scene manager, we use the SceneManagerActorTree which is the most generic
+    vl::ref<vl::SceneManagerActorTree> scene_manager = new vl::SceneManagerActorTree;
+    mRendering->sceneManagers()->push_back(scene_manager.get());
+    // add the cube to the scene using the previously defined effect and transform 
+    scene_manager->tree()->addActor( cube.get(), effect.get(), mCubeTransform.get()  );
+  }
 
-  public:
-	  //{{AFX_MSG(MFCContext
-    /*afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);*/
-	  /*afx_msg void OnDraw(CDC *pDC);*/
-    afx_msg void OnPaint();
-    afx_msg void OnClose();
-    afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-    afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-    afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-    afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-    afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-    afx_msg void OnMButtonDblClk(UINT nFlags, CPoint point);
-    afx_msg void OnMButtonDown(UINT nFlags, CPoint point);
-    afx_msg void OnMButtonUp(UINT nFlags, CPoint point);
-    afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-    afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-    afx_msg void OnRButtonDblClk(UINT nFlags, CPoint point);
-    afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-    afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-    afx_msg void OnSize(UINT nType, int cx, int cy);
-    /*afx_msg void OnTimer(UINT_PTR nIDEvent);*/
-    afx_msg void OnDropFiles(HDROP hDropInfo);
-	  //}}AFX_MSG
+  // called every frame 
+  virtual void run()
+  {
+    // rotates the cube around the Y axis 45 degrees per second 
+    vl::Real degrees = vl::Time::currentTime() * 45.0f;
+    vl::mat4 matrix = vl::mat4::getRotation( degrees, 0,1,0 );
+    mCubeTransform->setLocalMatrix( matrix );
+  }
 
-  protected:
-    void CountAndCapture();
-    void CountAndRelease();
+protected:
+  vl::ref<vl::Transform> mCubeTransform;
+};
 
-  protected:
-    int mMouseDownCount;
-    static CString mClassName;
-
-    DECLARE_MESSAGE_MAP()
-  };
-}
+// Have fun!
 
 #endif

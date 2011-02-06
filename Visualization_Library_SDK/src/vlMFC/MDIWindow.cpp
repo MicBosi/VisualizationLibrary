@@ -79,24 +79,9 @@ MDIWindow::~MDIWindow()
   destroy();
 }
 //-----------------------------------------------------------------------------
-int MDIWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
+bool MDIWindow::initOpenGLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt)
 {
-  if (CWnd::OnCreate(lpCreateStruct) == -1)
-    return -1;
-
-  // more timers are needed to reach decent frame rates
-  SetTimer(1/*ID*/, 0/*ms*/, NULL);
-  SetTimer(2/*ID*/, 0/*ms*/, NULL);
-  SetTimer(3/*ID*/, 0/*ms*/, NULL);
-  SetTimer(4/*ID*/, 0/*ms*/, NULL);
-  SetTimer(5/*ID*/, 0/*ms*/, NULL);
-
-  return 0;
-}
-//-----------------------------------------------------------------------------
-bool MDIWindow::initOpenGLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
-{
-  return Win32Context::init(share_context, title, fmt, x, y, width, height);
+  return Win32Context::init(share_context, title, fmt, /*these last for are ignored*/0, 0, 100, 100);
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::destroy()
@@ -279,18 +264,5 @@ void MDIWindow::OnSize (UINT nType, int cx, int cy)
   renderTarget()->setWidth(cx);
   renderTarget()->setHeight(cy);
   dispatchResizeEvent(cx, cy);
-}
-//-----------------------------------------------------------------------------
-void MDIWindow::OnTimer(UINT_PTR nIDEvent)
-{
-  CWnd::OnTimer(nIDEvent);
-
-  if (nIDEvent>=0 && nIDEvent<=5)
-  {
-    if ( continuousUpdate() )
-      update();
-    else
-      Sleep(10);
-  }
 }
 //-----------------------------------------------------------------------------
