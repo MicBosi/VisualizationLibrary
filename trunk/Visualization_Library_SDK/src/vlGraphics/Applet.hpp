@@ -80,6 +80,7 @@ namespace vl
     void bindManipulators(Rendering* rendering);
 
   protected:
+    ref<Rendering> mRendering;
     ref<GhostCameraManipulator> mFly;
     ref<TrackballManipulator> mTrackball;
     ref<SceneManagerActorTree> mSceneManagerActorTree;

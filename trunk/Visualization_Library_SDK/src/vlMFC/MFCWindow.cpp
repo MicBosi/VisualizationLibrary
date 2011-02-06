@@ -87,14 +87,6 @@ int MFCWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
   if (CWnd::OnCreate(lpCreateStruct) == -1)
     return -1;
-
-  // more timers are needed to reach decent frame rates
-  SetTimer(1/*ID*/, 0/*ms*/, NULL);
-  SetTimer(2/*ID*/, 0/*ms*/, NULL);
-  SetTimer(3/*ID*/, 0/*ms*/, NULL);
-  SetTimer(4/*ID*/, 0/*ms*/, NULL);
-  SetTimer(5/*ID*/, 0/*ms*/, NULL);
-
   return 0;
 }
 //-----------------------------------------------------------------------------
@@ -295,18 +287,5 @@ void MFCWindow::OnSize (UINT nType, int cx, int cy)
   renderTarget()->setWidth(cx);
   renderTarget()->setHeight(cy);
   dispatchResizeEvent(cx, cy);
-}
-//-----------------------------------------------------------------------------
-void MFCWindow::OnTimer(UINT_PTR nIDEvent)
-{
-  CWnd::OnTimer(nIDEvent);
-
-  if (nIDEvent>=0 && nIDEvent<=5)
-  {
-    if ( continuousUpdate() )
-      update();
-    else
-      Sleep(10);
-  }
 }
 //-----------------------------------------------------------------------------
