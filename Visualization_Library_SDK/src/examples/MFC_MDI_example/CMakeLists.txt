@@ -29,23 +29,43 @@
 #                                                                                    #
 ######################################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 
-PROJECT(${VLMFC_NAME})
+project(MFC_MDI_example)
 
-add_definitions(-D_AFXDLL)
-add_library(${VLMFC_NAME} STATIC MFCWindow.hpp MFCWindow.cpp MDIWindow.hpp MDIWindow.cpp StdAfx.cpp)
-set_target_properties(${VLMFC_NAME} PROPERTIES DEBUG_POSTFIX "-d")
-set_target_properties(${VLMFC_NAME} PROPERTIES SOVERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
-set_target_properties(${VLMFC_NAME} PROPERTIES VERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
-
-install(TARGETS ${VLMFC_NAME}
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
+add_executable(MFC_MDI_example WIN32 
+	ChildFrm.h
+	ChildFrm.cpp 
+	MainFrm.h
+	MainFrm.cpp 
+	MDI_App.h
+	MDI_App.cpp
+	MDI_AppDoc.h
+	MDI_AppDoc.cpp 
+	MDI_AppView.h
+	MDI_AppView.cpp 
+	stdafx.h
+	stdafx.cpp 
+	MDI_App.rc
+	App_RotatingCube.hpp
+	Resource.h
+	targetver.h)
+	
+target_link_libraries(
+	MFC_MDI_example
+	${VLMFC_NAME}
+	${VLWIN32_NAME}
+	${VLGRAPHICS_NAME} ${VLCORE_NAME}
+	${OPENGL_LIBRARIES}
+	${VLFREETYPE_NAME} #FreeTypeLibrary
+	${VL_MODULE_LIBRARIES}
+	${VLZLIB_NAME} #ZLibLibrary
 )
-
-install(FILES MFCWindow.hpp MDIWindow.hpp
-  DESTINATION include/vlMFC
+# Install directives
+install(TARGETS MFC_MDI_example
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib
 )
-
+set_target_properties(MFC_MDI_example PROPERTIES COMPILE_FLAGS -D_AFXDLL)
+set_target_properties(MFC_MDI_example PROPERTIES LINK_FLAGS /ENTRY:wWinMainCRTStartup)  

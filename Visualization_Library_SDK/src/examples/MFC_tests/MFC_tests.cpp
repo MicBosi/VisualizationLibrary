@@ -41,6 +41,7 @@ using namespace vl;
 using namespace vlWin32;
 using namespace vlMFC;
 
+//-----------------------------------------------------------------------------
 /* TestBattery implementation to work with MFC */
 class TestBatteryMFC: public TestBattery
 {
@@ -66,7 +67,7 @@ public:
 protected:
   MFCWindow* mVLCWin;
 };
-
+//-----------------------------------------------------------------------------
 /* MFC_Test: implements the MFC application */
 class MFC_Test: public CWinApp
 {
@@ -79,19 +80,20 @@ public:
   virtual BOOL InitInstance();
   virtual int ExitInstance();
   /*virtual int Run();*/
-  /*virtual BOOL OnIdle(LONG lCount);*/
+  virtual BOOL OnIdle(LONG lCount);
 
 protected:
   ref<MFCWindow> mVLCWin;
 
   DECLARE_MESSAGE_MAP ()
 };
+//-----------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(MFC_Test, CWinApp)
 END_MESSAGE_MAP()
-
+//-----------------------------------------------------------------------------
 /* instance the MFC application*/
 MFC_Test mfc_app;
-
+//-----------------------------------------------------------------------------
 /* called when the application exits */
 int MFC_Test::ExitInstance()
 {
@@ -105,7 +107,7 @@ int MFC_Test::ExitInstance()
 
   return 0;
 }
-
+//-----------------------------------------------------------------------------
 /* called when the application starts */
 BOOL MFC_Test::InitInstance()
 {
@@ -142,3 +144,13 @@ BOOL MFC_Test::InitInstance()
 
   return TRUE;
 }
+//-----------------------------------------------------------------------------
+BOOL MFC_Test::OnIdle(LONG lCount)
+{
+  if( mVLCWin->continuousUpdate() )
+    mVLCWin->Win32Context::update();
+  else
+    Sleep(1);
+  return TRUE;
+}
+//-----------------------------------------------------------------------------
