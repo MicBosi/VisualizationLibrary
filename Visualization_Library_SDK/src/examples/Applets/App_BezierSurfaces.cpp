@@ -32,6 +32,9 @@
 #include "BaseDemo.hpp"
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/BezierSurface.hpp>
+#include <sstream>
+
+using namespace vl;
 
 class App_BezierSurfaces: public BaseDemo
 {
@@ -44,18 +47,19 @@ public:
 
     /* 2 pass shader: 1 = solid, 2 = wireframe */
 
-    vl::ref<vl::Effect> fx = new vl::Effect;
-    fx->lod(0)->push_back( new vl::Shader);
+    ref<Effect> fx = new Effect;
+    fx->lod(0)->push_back( new Shader);
 
-    fx->shader()->enable(vl::EN_LIGHTING);
+    fx->shader()->enable(EN_LIGHTING);
     fx->shader()->gocLightModel()->setTwoSide(true);
-    fx->shader()->enable(vl::EN_DEPTH_TEST);
+    fx->shader()->enable(EN_DEPTH_TEST);
     fx->shader()->gocLight(0)->setLinearAttenuation(0.025f);
+    fx->shader()->gocMaterial()->setDiffuse(royalblue);
 
-    fx->shader(0,1)->enable(vl::EN_DEPTH_TEST);
-    fx->shader(0,1)->gocPolygonOffset()->set(-0.5f, -0.5f);
-    fx->shader(0,1)->enable(vl::EN_POLYGON_OFFSET_LINE);
-    fx->shader(0,1)->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+    fx->shader(0,1)->enable(EN_DEPTH_TEST);
+    fx->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
+    fx->shader(0,1)->enable(EN_POLYGON_OFFSET_LINE);
+    fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx->shader(0,1)->gocDepthMask()->set(false);
 
     /* Generate random Bézier patches
@@ -86,67 +90,108 @@ public:
     - As we can see the total control points needed are 28 = (2 (patches along x) * 3 + 1) * (1 (patches along y) * 3 + 1)
     - Also in this case the Bézier surface is guaranteed to touch only the 6 corner control points A, B, E, F, G and H.
 
-    */
-
-    // This concatenated patch will actually contain 3*2 = 6 bicubic Bézier patches for a total of 70 control points!
+    If we wanted to concatenate 3x2=6 Bézier patches in a single BezierPatch we would do the following:
     int x = 3;
     int y = 2;
-    // We use the formula seen above to compute the number of control points required in each direction.
-    vl::ref<vl::BezierPatch> patch1 = new vl::BezierPatch(x*3+1,y*3+1);
-    for(int y=0;y<patch1->y();++y)
-      for(int x=0;x<patch1->x();++x)
-        patch1->points()[x][y] = vl::dvec3(x,vl::randomMinMax(-2.0,+2.0),y);
+    ref<BezierPatch> patch = new BezierPatch( x*3+1, y*3+1 ); // using the formula above
+    for(int y=0;y<patch->y();++y)
+      for(int x=0;x<patch->x();++x)
+        patch->at(x,y) = ... fill x/y control point ...
+
+    */
 
     /* Add Bézier patches to our Bézier surface */
 
+    // Load newell teaset
+    std::string teapot_txt = String::loadText("models/newell_teaset/teapot").toStdString();
+    std::stringstream sstr(teapot_txt);
+    int patchnum = 0;
+    sstr >> patchnum;
+    std::vector<int> patch_idx;
+    for(int i=0; i<patchnum; ++i)
+    {
+      for(int j=0; j<16; j++)
+      {
+        int p = 0;
+        sstr >> p;
+        patch_idx.push_back(p);
+      }
+    }
+    int vertnum;
+    sstr >> vertnum;
+    std::vector<fvec3> verts;
+    for(int i=0; i<vertnum; ++i)
+    {
+      float x,y,z;
+      sstr>>x>>y>>z;
+      verts.push_back(fvec3(x,y,z));
+    }
+
     // Instance our Bézier surface
-    mBezier = new vl::BezierSurface;
-    // We can actually add multiple Bézier patches
-    mBezier->patches().push_back(patch1.get());
+    mBezier = new BezierSurface;
+
+    // Add loaded patches
+    for(int i=0; i<patchnum; ++i)
+    {
+      ref<BezierPatch> patch = new BezierPatch(4,4);
+      for(int j=0; j<16; ++j)
+      {
+        int idx = patch_idx[j+16*i]-1;
+        patch->points()[j] = (dvec3)verts[ idx ];
+      }
+      mBezier->patches().push_back(patch.get());
+    }
+
     // Define the subdivision detail
     mBezier->setDetail(mDetail);
+    
     // Generate the actual geometry using the current patches and detail
     mBezier->updateBezierSurface(false);
+    
     // Compute the normals as we have lighting activated
     mBezier->computeNormals();
+    
     // Used by the line rendering
-    mBezier->setColor(vl::blue);
+    mBezier->setColor(gold);
+    
     // Add the Bézier surface to our scene
     sceneManager()->tree()->addActor(mBezier.get(), fx.get(), NULL);
 
-    /* Show the control points */
-
+    // Show the control points
     showPatchControlPoints(mBezier.get());
+
+    // position the camera to nicely see the teapot in the scene
+    trackball()->adjustView( sceneManager(), vec3(0,0,1)/*direction*/, vec3(0,1,0)/*up*/, 1.0f/*bias*/ );
   }
 
   /* 
     up/down arrow = increase/decrease the Bézier surface tessellation detail
     space         = toggle control points visibility
   */
-  void keyPressEvent(unsigned short ch, vl::EKey key)
+  void keyPressEvent(unsigned short ch, EKey key)
   {
     BaseDemo::keyPressEvent(ch,key);
-    if (key == vl::Key_Up)
+    if (key == Key_Up)
     {
       ++mDetail;
-      mDetail = vl::clamp(mDetail, 2, 64);
+      mDetail = clamp(mDetail, 2, 64);
       mBezier->setDetail(mDetail);
       mBezier->updateBezierSurface(false);
       mBezier->computeNormals();
       mBezier->setVBODirty(true);
     }
     else
-    if (key == vl::Key_Down)
+    if (key == Key_Down)
     {
       --mDetail;
-      mDetail = vl::clamp(mDetail, 2, 64);
+      mDetail = clamp(mDetail, 2, 64);
       mBezier->setDetail(mDetail);
       mBezier->updateBezierSurface(false);
       mBezier->computeNormals();
       mBezier->setVBODirty(true);
     }
     else
-    if(key == vl::Key_Space)
+    if(key == Key_Space)
     {
       if (sceneManager()->tree()->actors()->find(mCtrlPoints_Actor.get()) == -1)
         sceneManager()->tree()->actors()->push_back(mCtrlPoints_Actor.get());
@@ -156,47 +201,47 @@ public:
   }
 
   /* Generates the geometry to render the control points */
-  void showPatchControlPoints(vl::BezierSurface* bezier)
+  void showPatchControlPoints(BezierSurface* bezier)
   {
-    vl::ref<vl::Effect> fx = new vl::Effect;
-    fx->shader()->enable(vl::EN_DEPTH_TEST);
-    fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+    ref<Effect> fx = new Effect;
+    fx->shader()->enable(EN_DEPTH_TEST);
+    fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx->shader()->gocLineWidth()->set(1.0f);
     fx->shader()->gocPointSize()->set(5.0f);
 
-    vl::ref<vl::Geometry> geom = new vl::Geometry;
+    ref<Geometry> geom = new Geometry;
 
     int istart = 0;
-    std::vector<vl::fvec3> verts;
-    std::vector<vl::fvec4> colos;
+    std::vector<fvec3> verts;
+    std::vector<fvec4> colos;
     for(unsigned ipatch=0; ipatch<bezier->patches().size(); ++ipatch)
     {
-      const vl::BezierPatch::Points& p = bezier->patches()[ipatch]->points();
-      for(unsigned ix=0; ix<p.size()-3;     ix+=3)
-      for(unsigned iy=0; iy<p[ix].size()-3; iy+=3, istart+=16)
+      const BezierPatch* p = bezier->patches()[ipatch].get();
+      for(int ix=0; ix<p->x()-3; ix+=3)
+      for(int iy=0; iy<p->y()-3; iy+=3, istart+=16)
       {
-        verts.push_back((vl::fvec3)p[ix+0][iy+0]); colos.push_back(vl::red);
-        verts.push_back((vl::fvec3)p[ix+0][iy+1]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+0][iy+2]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+0][iy+3]); colos.push_back(vl::red);
+        verts.push_back((fvec3)p->at(ix+0,iy+0)); colos.push_back(red);
+        verts.push_back((fvec3)p->at(ix+0,iy+1)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+0,iy+2)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+0,iy+3)); colos.push_back(red);
 
-        verts.push_back((vl::fvec3)p[ix+1][iy+0]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+1][iy+1]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+1][iy+2]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+1][iy+3]); colos.push_back(vl::white);
+        verts.push_back((fvec3)p->at(ix+1,iy+0)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+1,iy+1)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+1,iy+2)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+1,iy+3)); colos.push_back(white);
 
-        verts.push_back((vl::fvec3)p[ix+2][iy+0]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+2][iy+1]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+2][iy+2]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+2][iy+3]); colos.push_back(vl::white);
+        verts.push_back((fvec3)p->at(ix+2,iy+0)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+2,iy+1)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+2,iy+2)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+2,iy+3)); colos.push_back(white);
 
-        verts.push_back((vl::fvec3)p[ix+3][iy+0]); colos.push_back(vl::red);
-        verts.push_back((vl::fvec3)p[ix+3][iy+1]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+3][iy+2]); colos.push_back(vl::white);
-        verts.push_back((vl::fvec3)p[ix+3][iy+3]); colos.push_back(vl::red);
+        verts.push_back((fvec3)p->at(ix+3,iy+0)); colos.push_back(red);
+        verts.push_back((fvec3)p->at(ix+3,iy+1)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+3,iy+2)); colos.push_back(white);
+        verts.push_back((fvec3)p->at(ix+3,iy+3)); colos.push_back(red);
 
-        vl::ref<vl::DrawArrays> da = new vl::DrawArrays(vl::PT_POINTS,istart,16);
-        vl::ref<vl::DrawElementsUInt> de = new vl::DrawElementsUInt(vl::PT_QUADS);
+        ref<DrawArrays> da = new DrawArrays(PT_POINTS,istart,16);
+        ref<DrawElementsUInt> de = new DrawElementsUInt(PT_QUADS);
         de->indices()->resize(4*9);
         unsigned int quads[] = { 0,1,5,4, 4,5,9,8, 8,9,13,12, 1,2,6,5, 5,6,10,9, 9,10,14,13, 2,3,7,6, 6,7,11,10, 10,11,15,14 };
         for(int q=0; q<4*9; ++q)
@@ -207,11 +252,11 @@ public:
       }
     }
 
-    vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
+    ref<ArrayFloat3> vert_array = new ArrayFloat3;
     geom->setVertexArray(vert_array.get());
     *vert_array = verts;
 
-    vl::ref<vl::ArrayFloat4> cols_array = new vl::ArrayFloat4;
+    ref<ArrayFloat4> cols_array = new ArrayFloat4;
     geom->setColorArray(cols_array.get());
     *cols_array = colos;
 
@@ -219,8 +264,8 @@ public:
   }
 
 protected:
-  vl::ref<vl::BezierSurface> mBezier;
-  vl::ref<vl::Actor> mCtrlPoints_Actor;
+  ref<BezierSurface> mBezier;
+  ref<Actor> mCtrlPoints_Actor;
   int mDetail;
 };
 

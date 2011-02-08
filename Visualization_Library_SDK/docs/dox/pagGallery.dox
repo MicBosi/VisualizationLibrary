@@ -432,7 +432,9 @@
 	<h2 style="font-size: 20px">Bezier Surfaces</h2>
 
 	The vl::BezierPatch and vl::BezierSurface classes allow you to define complex surfaces with an arbitrary tessellation level.
-	In the pictures above a set of patches are assembled together with three different subdivision levels, less detailed on the left, more detailed on the right.<br>
+	Below the famous Newell teapot is rendered using 32 4x4 Bezier patches with three different subdivision levels, less detailed on the left, more detailed on the right.
+	The dots and the white lines in the first image represent the control points of the patches, the red dots represent the corner control points that are guaranteed to 
+	touch the Bezier surface.<br>
    
 	<p>
 	\endhtmlonly
@@ -455,6 +457,11 @@
 		<td>
 			<a href="gallery/bezier03.png" class="highslide" onclick="return hs.expand(this)"> 
 				<img src="gallery_small/bezier03.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/bezier04.png" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/bezier04.jpg" alt="Highslide JS" title="Click to enlarge" />
 			</a>
 		</td>
 

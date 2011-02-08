@@ -13,7 +13,11 @@
 		<td> \image html pagGuideBezierSurfaces3.jpg </td>
 	</tr>
 	<tr>
-		<td align=center colspan=3> A Bézier surface defined by multiple concatenated patches rendered with an ascending (from left to right) tessellation level. The dots and the white lines represent the control points of the patches, the red dots represent the corner control points that are guaranteed to touch the Bézier surface.</td>
+		<td align=center colspan=3> 
+		Newell's tea cup rendered using 26 4x4 Bézier patches with increasing tessellation level from left to right.
+		The dots and the white lines represent the control points of the patches, the red dots represent the corner control points 
+		that are guaranteed to touch the Bézier surface.
+		</td>
 	</tr>
 	</table>
 	</center>
