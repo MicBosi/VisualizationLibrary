@@ -137,22 +137,22 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
         // +---+---+---+
         // |   |   |   |
         // +---+---+---+
-        double v  = (double)y/(detail()-1);
-        double ty = 1.0f - v;
-        double ty1 = 1.0f - ty;
-        double k0 = ty*ty*ty;
-        double k1 = 3*ty*ty*ty1;
-        double k2 = 3*ty*ty1*ty1;
-        double k3 = ty1*ty1*ty1;
-        dvec3 A = p->at(ix+0,iy+0)*k0 + p->at(ix+0,iy+1)*k1 + p->at(ix+0,iy+2)*k2 + p->at(ix+0,iy+3)*k3;
-        dvec3 B = p->at(ix+1,iy+0)*k0 + p->at(ix+1,iy+1)*k1 + p->at(ix+1,iy+2)*k2 + p->at(ix+1,iy+3)*k3;
-        dvec3 C = p->at(ix+2,iy+0)*k0 + p->at(ix+2,iy+1)*k1 + p->at(ix+2,iy+2)*k2 + p->at(ix+2,iy+3)*k3;
-        dvec3 D = p->at(ix+3,iy+0)*k0 + p->at(ix+3,iy+1)*k1 + p->at(ix+3,iy+2)*k2 + p->at(ix+3,iy+3)*k3;
+        Real v  = (Real)y/(detail()-1);
+        Real ty = 1.0f - v;
+        Real ty1 = 1.0f - ty;
+        Real k0 = ty*ty*ty;
+        Real k1 = 3*ty*ty*ty1;
+        Real k2 = 3*ty*ty1*ty1;
+        Real k3 = ty1*ty1*ty1;
+        vec3 A = p->at(ix+0,iy+0)*k0 + p->at(ix+0,iy+1)*k1 + p->at(ix+0,iy+2)*k2 + p->at(ix+0,iy+3)*k3;
+        vec3 B = p->at(ix+1,iy+0)*k0 + p->at(ix+1,iy+1)*k1 + p->at(ix+1,iy+2)*k2 + p->at(ix+1,iy+3)*k3;
+        vec3 C = p->at(ix+2,iy+0)*k0 + p->at(ix+2,iy+1)*k1 + p->at(ix+2,iy+2)*k2 + p->at(ix+2,iy+3)*k3;
+        vec3 D = p->at(ix+3,iy+0)*k0 + p->at(ix+3,iy+1)*k1 + p->at(ix+3,iy+2)*k2 + p->at(ix+3,iy+3)*k3;
         for(unsigned x=0; x<detail(); ++x, ++ivert)
         {
-          double u  = (double)x/(detail()-1);
-          double tx = 1.0f - u;
-          double tx1 = 1.0f - tx;
+          Real u  = (Real)x/(detail()-1);
+          Real tx = 1.0f - u;
+          Real tx1 = 1.0f - tx;
           vert_array->at(ivert) = (fvec3)(A*tx*tx*tx + B*3*tx*tx*tx1 + C*3*tx*tx1*tx1 + D*tx1*tx1*tx1);
           if(gen_tex_coords)
           {
