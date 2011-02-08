@@ -81,9 +81,7 @@ void BezierPatch::resize(int x, int y)
 
   mX = x;
   mY = y;
-  mControlPoints.resize(x);
-  for(int i=0; i<x; ++i)
-    mControlPoints[i].resize(y);
+  mControlPoints.resize(mX*mY);
 }
 //-----------------------------------------------------------------------------
 void BezierSurface::updateBezierSurface(bool gen_tex_coords)
@@ -124,9 +122,9 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
   int iquad = 0;
   for(unsigned ipatch=0, patch_num=0; ipatch<patches().size(); ++ipatch)
   {
-    const BezierPatch::Points& p = patches()[ipatch]->points();
-    for(unsigned ix=0; ix<p.size()-3;     ix+=3)
-    for(unsigned iy=0; iy<p[ix].size()-3; iy+=3)
+    const BezierPatch* p = patches()[ipatch].get();
+    for(int ix=0; ix<p->x()-3; ix+=3)
+    for(int iy=0; iy<p->y()-3; iy+=3)
     {
       for(unsigned y=0; y<detail(); ++y)
       {
@@ -146,10 +144,10 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
         double k1 = 3*ty*ty*ty1;
         double k2 = 3*ty*ty1*ty1;
         double k3 = ty1*ty1*ty1;
-        dvec3 A = p[ix+0][iy+0]*k0 + p[ix+0][iy+1]*k1 + p[ix+0][iy+2]*k2 + p[ix+0][iy+3]*k3;
-        dvec3 B = p[ix+1][iy+0]*k0 + p[ix+1][iy+1]*k1 + p[ix+1][iy+2]*k2 + p[ix+1][iy+3]*k3;
-        dvec3 C = p[ix+2][iy+0]*k0 + p[ix+2][iy+1]*k1 + p[ix+2][iy+2]*k2 + p[ix+2][iy+3]*k3;
-        dvec3 D = p[ix+3][iy+0]*k0 + p[ix+3][iy+1]*k1 + p[ix+3][iy+2]*k2 + p[ix+3][iy+3]*k3;
+        dvec3 A = p->at(ix+0,iy+0)*k0 + p->at(ix+0,iy+1)*k1 + p->at(ix+0,iy+2)*k2 + p->at(ix+0,iy+3)*k3;
+        dvec3 B = p->at(ix+1,iy+0)*k0 + p->at(ix+1,iy+1)*k1 + p->at(ix+1,iy+2)*k2 + p->at(ix+1,iy+3)*k3;
+        dvec3 C = p->at(ix+2,iy+0)*k0 + p->at(ix+2,iy+1)*k1 + p->at(ix+2,iy+2)*k2 + p->at(ix+2,iy+3)*k3;
+        dvec3 D = p->at(ix+3,iy+0)*k0 + p->at(ix+3,iy+1)*k1 + p->at(ix+3,iy+2)*k2 + p->at(ix+3,iy+3)*k3;
         for(unsigned x=0; x<detail(); ++x, ++ivert)
         {
           double u  = (double)x/(detail()-1);

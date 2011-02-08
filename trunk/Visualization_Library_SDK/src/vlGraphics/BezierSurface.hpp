@@ -45,7 +45,7 @@ namespace vl
   {
   public:
     //! The control points grid defining the bicubic Bézier patch(es).
-    typedef std::vector< std::vector<dvec3> > Points;
+    typedef std::vector< vec3 > Points;
     virtual const char* className() { return "BezierPatch"; }
     //! Constructor
     BezierPatch(): mX(0), mY(0) {}
@@ -62,6 +62,10 @@ namespace vl
     Points& points() { return mControlPoints; }
     //! The control points grid defining the bicubic Bézier patch(es).
     const Points& points() const { return mControlPoints; }
+    //! Returns the i/j control point.
+    vec3& at(int i, int j) { return mControlPoints[i + mX*j]; }
+    //! Returns the i/j control point.
+    const vec3& at(int i, int j) const { return mControlPoints[i + mX*j]; }
   protected:
     Points mControlPoints;
     int mX;
