@@ -119,7 +119,7 @@ public:
     }
     int vertnum;
     sstr >> vertnum;
-    std::vector<fvec3> verts;
+    std::vector<vec3> verts;
     for(int i=0; i<vertnum; ++i)
     {
       float x,y,z;
@@ -137,7 +137,7 @@ public:
       for(int j=0; j<16; ++j)
       {
         int idx = patch_idx[j+16*i]-1;
-        patch->points()[j] = (dvec3)verts[ idx ];
+        patch->points()[j] = verts[ idx ];
       }
       mBezier->patches().push_back(patch.get());
     }
