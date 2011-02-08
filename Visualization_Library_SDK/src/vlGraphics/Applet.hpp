@@ -36,6 +36,7 @@
 #include <vlGraphics/TrackballManipulator.hpp>
 #include <vlGraphics/GhostCameraManipulator.hpp>
 #include <vlGraphics/SceneManagerActorTree.hpp>
+#include <vlGraphics/Rendering.hpp>
 
 namespace vl
 {
