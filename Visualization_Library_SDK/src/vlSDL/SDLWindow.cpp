@@ -192,7 +192,7 @@ SDLWindow::SDLWindow( const vl::String& title, const vl::OpenGLContextFormat& in
   initSDLWindow(title, info, width, height);
 }
 //-----------------------------------------------------------------------------
-bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFormat& info, int /*x*/, int /*y*/, int width, int height)
+bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFormat& info, int x, int y, int width, int height)
 {
   if (mScreen || mSDLWindow)
   {
