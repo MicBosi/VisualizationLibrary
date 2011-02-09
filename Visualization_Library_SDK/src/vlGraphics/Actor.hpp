@@ -145,7 +145,7 @@ namespace vl
         mObjectName = className();
       #endif
       mActorEventCallbacks.setAutomaticDelete(false);
-      lod(0) = renderable;
+      setLod(0,renderable);
       // actor user data
       #if VL_ACTOR_USER_DATA
         mActorUserData = NULL;
@@ -155,9 +155,21 @@ namespace vl
     //! Destructor.
     virtual ~Actor();
 
-    /** Returns the Renderable object representing the LOD level specifed by \p index. */
-    ref<Renderable>& lod(int lod_index) { return mRenderables[lod_index]; }
-    /** Returns the Renderable object representing the LOD level specifed by \p index. */
+    /** Sets the Renderable object representing the LOD level specifed by \p lod_index. */
+    void setLod(int lod_index, Renderable* renderable) 
+    { 
+      mRenderables[lod_index] = renderable;
+      
+      // schedule update of the Actor's bounds.
+      if (lod_index == 0)
+      {
+        mBoundsUpdateTick = renderable->boundsUpdateTick()-1;
+        mAABB.setNull();
+        mSphere.setNull();
+      }
+    }
+
+    /** Returns the Renderable object representing the LOD level specifed by \p lod_index. */
     const ref<Renderable>& lod(int lod_index) const { return mRenderables[lod_index]; }
 
     /** Utility function to assign one or more Renderable[s] to one or more LOD levels. */
@@ -170,26 +182,39 @@ namespace vl
       mTransformUpdateTick = -1;
       mBoundsUpdateTick    = -1;
     }
+    
     /** Returns the Transform bound tho an Actor */
     Transform* transform()  { return mTransform.get(); }
+    
     /** Returns the Transform bound tho an Actor */
     const Transform* transform() const { return mTransform.get(); }
 
     /** Binds an Effect to an Actor */
     void setEffect(Effect* effect) { mEffect = effect; }
+    
     /** Returns the Effect bound to an Actor */
     Effect* effect() { return mEffect.get(); }
+    
     /** Returns the Effect bound to an Actor */
     const Effect* effect() const { return mEffect.get(); }
 
-    /** Returns the bounding sphere that contains this Actor taking into consideration also its Transform. */
-    const Sphere& boundingSphere() const { return mSphere; }
-
-    /** Returns the bounding box that contains this Actor taking into consideration also its Transform. */
+    /** Returns the bounding box (\p not guaranteed to be up to date) that contains this Actor. \sa boundingBoxSafe() */
     const AABB& boundingBox() const { return mAABB; }
 
-    /** Computes the bounding box and bounding sphere of an Actor taking into consideration also its Transform. */
+    /** Returns the bounding sphere (\p not guaranteed to be up to date) that contains this Actor. \sa boundingSphereSafe() */
+    const Sphere& boundingSphere() const { return mSphere; }
+
+    /** Returns the bounding box (\p guaranteed to be up to date) that contains this Actor. \sa boundingBox() */
+    const AABB& boundingBoxSafe() { computeBounds(); return mAABB; }
+
+    /** Returns the bounding sphere (\p guaranteed to be up to date) that contains this Actor. \sa boundingSphere() */
+    const Sphere& boundingSphereSafe() { computeBounds(); return mSphere; }
+
+    /** Computes the bounding box and bounding sphere of an Actor. */
     void computeBounds();
+
+    /** Returns whether the Actor's bounding box and sphere are up to date. */
+    bool boundsDirty() const;
 
     /** Modifies the rendering rank of an Actor.
 
@@ -372,6 +397,7 @@ namespace vl
      - Shader::setScissor()
     */
     const Scissor* scissor() const { return mScissor.get(); }
+    
     /** Returns the Scissor used when rendering an Actor.
      \sa
      - Scissor

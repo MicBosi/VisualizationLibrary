@@ -163,7 +163,7 @@ namespace
 void SlicedVolume::bindActor(Actor* actor)
 {
   actor->actorEventCallbacks()->push_back( this );
-  actor->lod(0) = mGeometry;
+  actor->setLod(0, mGeometry.get());
 }
 //-----------------------------------------------------------------------------
 void SlicedVolume::onActorRenderStarted(Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass)
