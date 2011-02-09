@@ -76,13 +76,28 @@ namespace vl
         return radius() >= distance + other.radius();
       }
     }
+
+    bool operator==(const Sphere& other) const 
+    {
+      return mCenter == other.mCenter && mRadius == other.mRadius;
+    }
+
+    bool operator!=(const Sphere& other) const
+    {
+      return !operator==(other);
+    }
     
     Sphere& operator=(const AABB& aabb)
     {
-      // center the sphere on the aabb center
-      mCenter = aabb.center();
-      // half of the maximum diagonal
-      mRadius = (aabb.minCorner() - aabb.maxCorner()).length() / (Real)2.0;
+      if (aabb.isNull())
+        setNull();
+      else
+      {
+        // center the sphere on the aabb center
+        mCenter = aabb.center();
+        // half of the maximum diagonal
+        mRadius = (aabb.minCorner() - aabb.maxCorner()).length() / (Real)2.0;
+      }
       return *this;
     }
 
