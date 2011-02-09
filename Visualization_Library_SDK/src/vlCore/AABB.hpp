@@ -47,39 +47,68 @@ namespace vl
   {
   public:
     AABB();
+
     AABB( const vec3& center, Real radius );
+
     AABB( const vec3& pt1, const vec3& pt2, Real displace=0);
 
     void setNull() { mMin = 1; mMax = -1; }
+
     bool isNull()  const { return mMin.x() > mMax.x() || mMin.y() > mMax.y() || mMin.z() > mMax.z(); }
+
     bool isPoint() const { return mMin == mMax; }
+
     void enlarge(Real displace);
+
     void addPoint(const vec3& v, Real radius);
+
     bool intersects(const AABB & bb) const;
+
     vec3 clip(const vec3& v, bool clipx=true, bool clipy=true, bool clipz=true) const;
+
     bool isInside(const vec3& v, bool clipx, bool clipy, bool clipz) const;
+
     bool isInside(const vec3& v) const;
+
     Real height() const;
+
     Real width() const;
+
     Real depth() const;
+
+    bool operator==(const AABB& aabb) const
+    {
+      return mMin == aabb.mMin && mMax == aabb.mMax;
+    }
+
+    bool operator!=(const AABB& aabb) const
+    {
+      return !operator==(aabb);
+    }
+
     AABB operator+(const AABB& aabb) const;
+
     const AABB& operator+=(const AABB& other)
     {
       *this = *this + other;
       return *this;
     }
+
     AABB operator+(const vec3& p)
     {
       AABB aabb = *this;
       aabb += p;
       return aabb;
     }
+
     const AABB& operator+=(const vec3& p)
     {
       addPoint(p);
       return *this;
     }
+
     vec3 center() const;
+
     Real area() const
     {
       if (isNull())
@@ -87,6 +116,7 @@ namespace vl
       else 
         return width()*height()*depth();
     }
+
     Real longestSideLength() const
     {
       Real side = width();
@@ -96,6 +126,7 @@ namespace vl
         side = depth();
       return side;
     }
+
     void addPoint(const vec3& v) 
     {
       if (isNull())
@@ -112,6 +143,7 @@ namespace vl
       if ( mMin.y() > v.y() ) mMin.y() = v.y();
       if ( mMin.z() > v.z() ) mMin.z() = v.z();
     }
+
     void transformed(AABB& aabb, const mat4& mat) const 
     {
       aabb.setNull();
@@ -127,6 +159,7 @@ namespace vl
         aabb.addPoint( mat * vec3(maxCorner().x(), minCorner().y(), maxCorner().z()) );
       }
     }
+
     AABB transformed(const mat4& mat) const 
     {
       AABB aabb;
