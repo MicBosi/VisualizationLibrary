@@ -207,7 +207,7 @@ void RaycastVolume::updateUniforms(vl::Actor*actor, vl::Real, const vl::Camera* 
 void RaycastVolume::bindActor(Actor* actor)
 {
   actor->actorEventCallbacks()->push_back( this );
-  actor->lod(0) = mGeometry;
+  actor->setLod(0, mGeometry.get());
 }
 //-----------------------------------------------------------------------------
 void RaycastVolume::onActorRenderStarted(Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass)

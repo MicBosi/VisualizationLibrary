@@ -121,8 +121,8 @@ public:
     tess_poly->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLES, 0, (int)vert_array->size()) );
 
     // Bind the created Geometry to the star Actor
-    mStar1->lod(0) = tess_poly.get();
-    mStar2->lod(0) = tess_poly.get();
+    mStar1->setLod(0, tess_poly.get());
+    mStar2->setLod(0, tess_poly.get());
   }
 
 protected:

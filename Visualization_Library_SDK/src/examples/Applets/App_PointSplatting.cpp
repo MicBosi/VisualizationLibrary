@@ -205,7 +205,7 @@ protected:
       }
     }
 
-    actor->lod(0) = geometry.get();
+    actor->setLod(0, geometry.get());
     geometry->setDisplayListEnabled(false);
     geometry->setVBOEnabled(true);
 

@@ -216,7 +216,7 @@ public:
     for(; it != mActorGeomMap.end(); ++it)
     {
       ref<Geometry> geom = it->second->deepCopy();
-      it->first->lod(0) = geom.get();
+      it->first->setLod(0, geom.get());
 
       if (mOptRecomputeNormals)
         geom->setNormalArray(NULL);

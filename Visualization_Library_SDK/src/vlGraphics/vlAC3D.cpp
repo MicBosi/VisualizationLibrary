@@ -502,7 +502,7 @@ ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)
     geom->drawCalls()->push_back( polys.get() );
     geom->setVertexArray( verts.get() );
     geom->setTexCoordArray(0, uv.get());
-    act->lod(0) = geom.get();
+    act->setLod(0, geom.get());
 
     // we handle only one material per surface
     int mat_index = loader.meshes[imesh].Surface[0].materials;

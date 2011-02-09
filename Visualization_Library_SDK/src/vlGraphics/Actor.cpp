@@ -44,12 +44,12 @@ Actor::~Actor()
 //-----------------------------------------------------------------------------
 void Actor::setLODs(Renderable* lod0, Renderable* lod1, Renderable* lod2, Renderable* lod3, Renderable* lod4, Renderable* lod5)
 {
-  if (lod0) { VL_CHECK(0<VL_MAX_ACTOR_LOD) lod(0) = lod0; }
-  if (lod1) { VL_CHECK(1<VL_MAX_ACTOR_LOD) lod(1) = lod1; }
-  if (lod2) { VL_CHECK(2<VL_MAX_ACTOR_LOD) lod(2) = lod2; }
-  if (lod3) { VL_CHECK(3<VL_MAX_ACTOR_LOD) lod(3) = lod3; }
-  if (lod4) { VL_CHECK(4<VL_MAX_ACTOR_LOD) lod(4) = lod4; }
-  if (lod5) { VL_CHECK(5<VL_MAX_ACTOR_LOD) lod(5) = lod5; }
+  if (lod0) { VL_CHECK(0<VL_MAX_ACTOR_LOD) setLod(0,lod0); }
+  if (lod1) { VL_CHECK(1<VL_MAX_ACTOR_LOD) setLod(1,lod1); }
+  if (lod2) { VL_CHECK(2<VL_MAX_ACTOR_LOD) setLod(2,lod2); }
+  if (lod3) { VL_CHECK(3<VL_MAX_ACTOR_LOD) setLod(3,lod3); }
+  if (lod4) { VL_CHECK(4<VL_MAX_ACTOR_LOD) setLod(4,lod4); }
+  if (lod5) { VL_CHECK(5<VL_MAX_ACTOR_LOD) setLod(5,lod5); }
 }
 //-----------------------------------------------------------------------------
 int Actor::evaluateLOD(Camera* camera)
@@ -81,25 +81,33 @@ void Actor::deleteOcclusionQuery()
   }
 }
 //-----------------------------------------------------------------------------
+bool Actor::boundsDirty() const
+{
+  // (1) renderable dirty or we're not up to date with the renderable.
+  bool dirty = lod(0)->boundsDirty() || lod(0)->boundsUpdateTick() != mBoundsUpdateTick;
+
+  // (2) we're not not up to date with the transform.
+  dirty |= transform() && transform()->worldMatrixUpdateTick() != mTransformUpdateTick;
+
+  return dirty;
+}
+//-----------------------------------------------------------------------------
 void Actor::computeBounds()
 {
-  if ( !lod(0) )
+  if ( lod(0) == NULL )
     return;
 
-  if ( lod(0)->boundsDirty() )
-    lod(0)->computeBounds();
+  bool geom_update = lod(0)->boundsDirty() || lod(0)->boundsUpdateTick() != mBoundsUpdateTick;
 
-  bool update = lod(0)->boundsUpdateTick() != mBoundsUpdateTick;
-
-  if ( transform() && (update || transform()->worldMatrixUpdateTick() != mTransformUpdateTick) )
+  if ( transform() && (geom_update || transform()->worldMatrixUpdateTick() != mTransformUpdateTick) )
   {
     lod(0)->boundingBox().transformed( mAABB, transform()->worldMatrix() );
     mTransformUpdateTick = transform()->worldMatrixUpdateTick();
-    mBoundsUpdateTick = lod(0)->boundsUpdateTick();
     mSphere = mAABB.isNull() ? Sphere() : mAABB;
+    mBoundsUpdateTick = lod(0)->boundsUpdateTick();
   }
   else
-  if (update)
+  if (geom_update)
   {
     mAABB   = lod(0)->boundingBox();
     mSphere = mAABB.isNull() ? Sphere() : mAABB;
