@@ -36,6 +36,7 @@
 #include <vlCore/Transform.hpp>
 #include <vlCore/AABB.hpp>
 #include <vlCore/Sphere.hpp>
+#include <vlCore/Log.hpp>
 
 namespace vl
 {
@@ -47,14 +48,12 @@ namespace vl
   class Transform;
   class Camera;
   class OpenGLContext;
-  /**
-   * An abstract class that represents all the objects that can be rendered.
-   * In order to render a Renderable you have to bind it to an Actor.
-   * An Actor glues together a Renderable, an Effect and eventually a Transform.
-   * Note that the same Renderable can be associated to more than one Actor.
-   * 
-   * \sa Actor, Effect, Transform, Geometry
-  */
+  /** An abstract class that represents all the objects that can be rendered.
+    * In order to render a Renderable you have to bind it to an Actor.
+    * An Actor glues together a Renderable, an Effect and eventually a Transform.
+    * Note that the same Renderable can be associated to more than one Actor.
+    * 
+    * \sa Actor, Effect, Shader, Transform, Geometry */
   class Renderable: public Object
   {
     Renderable(const Renderable& other): Object(other)
@@ -67,14 +66,14 @@ namespace vl
   public:
     virtual const char* className() { return "Renderable"; }
 
-    /** Constructor. */
+    //! Constructor
     Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true), 
-    mDisplayListEnabled(false), mDisplayListDirty(true), mVBOEnabled(true), mVBODirty(true) {}
+                  mDisplayListEnabled(false), mDisplayListDirty(true), mVBOEnabled(true), mVBODirty(true){}
     
-    /** Destructor. */
+    //! Destructor
     virtual ~Renderable() { deleteDisplayList(); }
 
-    /** Renders the Renderable, compiles the display list and updates VBOs. */
+    //! Renders the Renderable and if necessary compiles the display list and updates the VBOs.
     void render(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context)
     {
       VL_CHECK_OGL();
@@ -112,28 +111,100 @@ namespace vl
       VL_CHECK_OGL();
     }
 
-    long long boundsUpdateTick() const { return mBoundsUpdateTick; }
+    //! Recomputes the bounding box and bounding sphere of a Renderable.
     void computeBounds() { computeBounds_Implementation(); setBoundsDirty(false); }
-    void setBoundsDirty(bool dirty) { mBoundsDirty = dirty; }
-    bool boundsDirty() const { return mBoundsDirty; }
-    void setBoundingBox( const AABB& aabb ) { mAABB = aabb; setBoundsDirty(false); ++mBoundsUpdateTick; }
-    const AABB& boundingBox() const { return mAABB; }
-    void setBoundingSphere( const Sphere& sphere) { mSphere = sphere; setBoundsDirty(false); ++mBoundsUpdateTick; }
-    const Sphere& boundingSphere() const { return mSphere; }
 
+    //! Returns the bounds-update-tick which is a counter incremented every time the bounding box or bounding sphere is updated.
+    long long boundsUpdateTick() const { return mBoundsUpdateTick; }
+    
+    //! Marks the bounding box and bounding sphere as dirty in order to be recomputed at the next rendering.
+    void setBoundsDirty(bool dirty) { mBoundsDirty = dirty; }
+    
+    //! Returns whether the bounding sphere or bounding box are "dirty", that is, meant to be recomputed.
+    bool boundsDirty() const { return mBoundsDirty; }
+    
+    //! Sets the bounding box of a Renderable.
+    void setBoundingBox( const AABB& aabb ) 
+    { 
+      if (mAABB != aabb) 
+      { 
+        mAABB = aabb; 
+        ++mBoundsUpdateTick; 
+      } 
+      setBoundsDirty(false); 
+    }
+    
+    //! Sets the bounding sphere of a Renderable.
+    void setBoundingSphere( const Sphere& sphere) 
+    { 
+      if (mSphere != sphere) 
+      {
+        mSphere = sphere; 
+        ++mBoundsUpdateTick; 
+      }
+      setBoundsDirty(false); 
+    }
+    
+    //! Returns the bounding box of a Renderable without recomputing the bounds if dirty.
+    const AABB& boundingBox() const 
+    { 
+      if (boundsDirty())
+        vl::Log::warning("Renderable::boundingBox() returning dirty bounding box, call computeBounds() first or call boundingBox() from a non-const Renderable!\n");
+      return mAABB; 
+    }
+    
+    //! Returns the bounding sphere of a Renderable without recomputing the bounds if dirty.
+    const Sphere& boundingSphere() const 
+    { 
+      if (boundsDirty())
+        vl::Log::warning("Renderable::boundingSphere() returning dirty bounding sphere, call computeBounds() first or call boundingSphere() from a non-const Renderable!\n");
+      return mSphere; 
+    }
+
+    //! Returns the bounding box of a Renderable recomputing the bounds if dirty.
+    const AABB& boundingBox() 
+    { 
+      if (boundsDirty())
+        computeBounds();
+      return mAABB; 
+    }
+    
+    //! Returns the bounding sphere of a Renderable recomputing the bounds if dirty.
+    const Sphere& boundingSphere() 
+    { 
+      if (boundsDirty())
+        computeBounds();
+      return mSphere; 
+    }
+
+    //! Returns the display list associated to a Renderable or 0 (zero) if no display list is associated.
     unsigned int displayList() const { return mDisplayList; }
+    
+    //! Manually assciates a display list to a Renderable (to be used with care).
     void setDisplayList(unsigned int disp_list) { mDisplayList = disp_list; }
 
+    //! Returns \p true if display lists are enabled for a Renderable (disabled by default).
     bool isDisplayListEnabled() const { return mDisplayListEnabled; }
+
+    //! Enable/disable display lists (disabled by default).
     void setDisplayListEnabled(bool enabled) { mDisplayListEnabled = enabled; }
 
+    //! Whether the display list associated to a Renderable should be recompiled at the next rendering.
     bool displayListDirty() const { return mDisplayListDirty; }
+    
+    //! Whether the display list associated to a Renderable should be recompiled at the next rendering.
     void setDisplayListDirty(bool dirty) { mDisplayListDirty = dirty; }
 
+    //! Returns \p true if VBO (vertex buffer object) are enabled for a Renderable (enabled by default).
     bool vboEnabled() const { return mVBOEnabled; }
+
+    //! Enable/disable VBO (vertex buffer object) (enabled by default).
     void setVBOEnabled(bool enabled) { mVBOEnabled = enabled; }
 
+    //! Whether VBOs associated to a Renderable should be recomputed on the next rendering.
     bool isVBODirty() const { return mVBODirty; }
+
+    //! Whether VBOs associated to a Renderable should be recomputed on the next rendering.
     void setVBODirty(bool dirty) { mVBODirty = dirty; }
 
     //! Uploads the data stored in the local buffers on the GPU memory.
@@ -144,6 +215,7 @@ namespace vl
     //! \note This function does not touch the local (non GPU) data stored in the buffers associated to the vertex attributes and DrawCall.
     virtual void deleteVBOs() {}
 
+    //! Deletes the display list currently associated to a Renderable.
     void deleteDisplayList() 
     {
       if (displayList())
