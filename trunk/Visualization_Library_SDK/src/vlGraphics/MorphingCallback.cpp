@@ -162,7 +162,7 @@ void MorphingCallback::onActorRenderStarted(Actor*, Real frame_clock, const Came
 void MorphingCallback::bindActor(Actor* actor)
 {
   actor->actorEventCallbacks()->push_back( this );
-  actor->lod(0) = mGeometry;
+  actor->setLod(0, mGeometry.get());
 }
 //-----------------------------------------------------------------------------
 void MorphingCallback::init(ResourceDatabase* res_db)

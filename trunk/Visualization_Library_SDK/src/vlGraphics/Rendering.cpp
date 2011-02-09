@@ -282,7 +282,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
   // iterate actor list
 
-  for(int iactor=0; iactor<actor_list->size(); iactor++)
+  for(int iactor=0; iactor < actor_list->size(); iactor++)
   {
     Actor* actor = actor_list->at(iactor);
 

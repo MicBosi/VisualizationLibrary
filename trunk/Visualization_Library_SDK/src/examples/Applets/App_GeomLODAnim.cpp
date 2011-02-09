@@ -55,7 +55,7 @@ public:
     // LOD 0
     geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail, detail );
     geom->setColor(vl::royalblue);
-    actor->lod(0) = geom.get();
+    actor->setLod(0, geom.get());
 
     geom->setVBOEnabled(true);
     if (GLEW_ARB_vertex_buffer_object)
@@ -66,7 +66,7 @@ public:
     // LOD 1
     geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail/2, detail/2 );
     geom->setColor(vl::green);
-    actor->lod(1) = geom.get();
+    actor->setLod(1, geom.get());
 
     geom->setVBOEnabled(true);
     if (GLEW_ARB_vertex_buffer_object)
@@ -77,7 +77,7 @@ public:
     // LOD 2
     geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail/4, detail/4 );
     geom->setColor(vl::yellow);
-    actor->lod(2) = geom.get();
+    actor->setLod(2, geom.get());
 
     geom->setVBOEnabled(true);
     if (GLEW_ARB_vertex_buffer_object)
@@ -233,9 +233,9 @@ public:
       vl::ref<vl::Actor> act = sceneManager()->tree()->addActor( NULL, ring_fx.get(), tr.get() );
 
       /* define which geometry to use for each LOD */
-      act->lod(0) = geom_0.get();
-      act->lod(1) = geom_1.get();
-      act->lod(2) = geom_2.get();
+      act->setLod(0, geom_0.get());
+      act->setLod(1, geom_1.get());
+      act->setLod(2, geom_2.get());
 
       /* install the LOD evaluator*/
       act->setLODEvaluator(lod_eval.get());
