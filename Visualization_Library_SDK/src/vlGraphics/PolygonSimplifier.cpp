@@ -164,6 +164,11 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
 //-----------------------------------------------------------------------------
 void PolygonSimplifier::simplify(int target_vertex_count, std::vector<fvec3>& in_out_verts, std::vector<int>& in_out_tris)
 {
+  mSimplifiedVertices.clear();
+  mSimplifiedTriangles.clear();
+  mProtectedVerts.clear();
+  mTriangleLump.clear();
+  mVertexLump.clear();
 
   if (verbose())
     Log::print("PolygonSimplifier::simplify() starting ... \n");
