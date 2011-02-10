@@ -74,13 +74,31 @@ public:
     mEffect->shader(0,1)->gocLightModel()->setTwoSide(true);
     mEffect->shader(0,1)->gocMaterial()->setDiffuse(vl::lightgreen);
     mEffect->shader(0,1)->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
-    mEffect->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
+    mEffect->shader(0,1)->gocPolygonOffset()->set(-0.5f, 0);
     mEffect->shader(0,1)->enable(vl::EN_POLYGON_OFFSET_LINE);
     mEffect->shader(0,1)->enable(EN_DEPTH_TEST);
 
     /* load model */
     ref<ResourceDatabase> res_db;
-    res_db = loadResource(mFileName); if ( res_db && res_db->count<Geometry>() ) mGeom[0] = res_db->get<Geometry>(0);
+    res_db = loadResource(mFileName); 
+    if ( res_db && res_db->count<Geometry>() ) 
+      loadSimplifyGeometry( res_db->get<Geometry>(0) );
+
+    /* triangle count label */
+    mText = new Text;
+    mText->setMatrix( fmat4::getTranslation(0,5,0) );
+    mText->setText( "Triangle Count: -" );
+    mText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    mText->setAlignment( AlignHCenter | AlignBottom );
+    mText->setViewportAlignment( AlignHCenter | AlignBottom );
+    ref<Effect> effect = new Effect;
+    effect->shader()->enable(EN_BLEND);
+    mTextActor = sceneManager()->tree()->addActor(mText.get(), effect.get());
+  }
+
+  void loadSimplifyGeometry(Geometry* geom)
+  {
+    mGeom[0] = geom;
     for(int i=1; i<stages; ++i)
       mGeom[i] = mGeom[0]->deepCopy();
 
@@ -98,29 +116,19 @@ public:
 
     // -------------- simplification end -------------------
 
-    /* compute normals */
+    /* compute normals & create actors for each simplification level */
     for(int i=0; i<stages; ++i)
+    {
       mGeom[i]->computeNormals();
-
-    /* create actors for each simplification level */
-    for(int i=0; i<stages; ++i)
       mActors[i] = new Actor( mGeom[i].get(), mEffect.get(), mTransform.get() );
+    }
 
+    sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor(mActors[0].get());
 
     /* position the camera to nicely see the scene */
     trackball()->adjustView( sceneManager(), vec3(0,0,1)/*direction*/, vec3(0,1,0)/*up*/, 0.75f/*bias*/ );
 
-    /* triangle count label */
-    mText = new Text;
-    mText->setMatrix( fmat4::getTranslation(0,5,0) );
-    mText->setText( "Triangle Count: -" );
-    mText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    mText->setAlignment( AlignHCenter | AlignBottom );
-    mText->setViewportAlignment( AlignHCenter | AlignBottom );
-    ref<Effect> effect = new Effect;
-    effect->shader()->enable(EN_BLEND);
-    mTextActor = sceneManager()->tree()->addActor(mText.get(), effect.get());
   }
 
   virtual void run()
@@ -132,6 +140,14 @@ public:
     sceneManager()->tree()->addActor( mTextActor.get() );
     /* update label */
     mText->setText( Say("Triangle Count: %n") << mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indices()->size() / 3 );
+  }
+
+  void fileDroppedEvent(const std::vector<vl::String>& files)
+  {
+    ref<ResourceDatabase> res_db;
+    res_db = loadResource(files[0]); 
+    if ( res_db && res_db->count<Geometry>() ) 
+      loadSimplifyGeometry( res_db->get<Geometry>(0) );
   }
 
 protected:
