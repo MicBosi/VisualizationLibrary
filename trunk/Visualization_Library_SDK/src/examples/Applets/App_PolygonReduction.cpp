@@ -34,130 +34,117 @@
 #include <vlGraphics/PolygonSimplifier.hpp>
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/Light.hpp>
+#include <vlGraphics/Text.hpp>
+#include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/DrawElements.hpp>
+
+using namespace vl;
 
 class App_PolygonReduction: public BaseDemo
 {
 public:
-  App_PolygonReduction(const vl::String& path): mFileName(path) {}
+  static const int stages = 5;
 
-  virtual void shutdown() {}
-
-  void keyPressEvent(unsigned short, vl::EKey key)
-  {
-    if (key == vl::Key_1)
-    {
-      if (mEffect->shader()->gocShadeModel()->shadeModel() == vl::SM_FLAT)
-        mEffect->shader()->gocShadeModel()->set(vl::SM_SMOOTH);
-      else
-        mEffect->shader()->gocShadeModel()->set(vl::SM_FLAT);
-    }
-    if (key == vl::Key_2)
-    {
-      if (mEffect->shader()->gocPolygonMode()->frontFace() == vl::PM_FILL)
-        mEffect->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
-      else
-        mEffect->shader()->gocPolygonMode()->set(vl::PM_FILL, vl::PM_FILL);
-    }
-    if (key == vl::Key_3)
-    {
-      if (mEffect->shader()->isEnabled(vl::EN_CULL_FACE) )
-        mEffect->shader()->disable(vl::EN_CULL_FACE);
-      else
-        mEffect->shader()->enable(vl::EN_CULL_FACE);
-    }
-  }
-
-  virtual void run()
-  {
-    vl::Real degrees = 0;
-    vl::mat4 matrix = vl::mat4::getRotation( degrees, 0,1,0 );
-    mTransform_Left->setLocalMatrix( vl::mat4::getTranslation(-10,0,0) * matrix );
-    mTransform_Right->setLocalMatrix(vl::mat4::getTranslation(+10,0,0) *  matrix );
-  }
+  App_PolygonReduction(const String& path): mFileName(path), mActiveActor(0) {}
 
   void initEvent()
   {
     BaseDemo::initEvent();
 
-    /* bind Transform */
-    mTransform_Left  = new vl::Transform;
-    mTransform_Right = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Left.get() );
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Right.get() );
+    /* Transform */
+    mTransform = new Transform;
+    mTransform->setLocalAndWorldMatrix( mat4::getRotation(20, 1,0,0) );
 
-    /* bind Effect */
-    mEffect = new vl::Effect;
+    /* Effect */
+    mEffect = new Effect;
 
-    /* enable depth test and lighting */
-    mEffect->shader()->enable(vl::EN_DEPTH_TEST);
-    /* since no Transform is associated to the Light it will follow the camera */
-    mEffect->shader()->setRenderState( new vl::Light(0) );
-    mEffect->shader()->enable(vl::EN_LIGHTING);
-    mEffect->shader()->gocLightModel()->setTwoSide(true);
-    mEffect->shader()->gocMaterial()->setBackDiffuse( vl::darkgreen );
+    /* solid shader */
+    mEffect->shader(0,0)->setRenderState( new Light(0) );
+    mEffect->shader(0,0)->enable(EN_LIGHTING);
+    mEffect->shader(0,0)->gocLightModel()->setTwoSide(true);
+    mEffect->shader(0,0)->gocMaterial()->setDiffuse(vl::royalblue);
+    mEffect->shader(0,0)->gocMaterial()->setSpecular(vl::white);
+    mEffect->shader(0,0)->gocMaterial()->setShininess(50.0f);
+    mEffect->shader(0,0)->enable(EN_DEPTH_TEST);
 
-    vl::ref<vl::ResourceDatabase> res_db;
-    vl::ref<vl::Geometry> geom1, geom2;
-    res_db = vl::loadResource(mFileName); if ( res_db && res_db->count<vl::Geometry>() ) geom1 = res_db->get<vl::Geometry>(0);
-    res_db = vl::loadResource(mFileName); if ( res_db && res_db->count<vl::Geometry>() ) geom2 = res_db->get<vl::Geometry>(0);
+    /* wireframe shader */
+    mEffect->lod(0)->push_back( new Shader );
+    mEffect->shader(0,1)->setRenderState( new Light(0) );
+    mEffect->shader(0,1)->enable(EN_LIGHTING);
+    mEffect->shader(0,1)->gocLightModel()->setTwoSide(true);
+    mEffect->shader(0,1)->gocMaterial()->setDiffuse(vl::lightgreen);
+    mEffect->shader(0,1)->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+    mEffect->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
+    mEffect->shader(0,1)->enable(vl::EN_POLYGON_OFFSET_LINE);
+    mEffect->shader(0,1)->enable(EN_DEPTH_TEST);
 
-    if (!geom1->normalArray())
-      geom1->computeNormals();
+    /* load model */
+    ref<ResourceDatabase> res_db;
+    res_db = loadResource(mFileName); if ( res_db && res_db->count<Geometry>() ) mGeom[0] = res_db->get<Geometry>(0);
+    for(int i=1; i<stages; ++i)
+      mGeom[i] = mGeom[0]->deepCopy();
 
-    if (!geom2->normalArray())
-      geom2->computeNormals();
+    // -------------- simplification -------------------
 
-    // -------------- simplification start -------------------
-
-    vl::PolygonSimplifier simplifier;
+    PolygonSimplifier simplifier;
     simplifier.setQuick(false);
     simplifier.setVerbose(true);
-    #if 1
-      simplifier.simplify( 0.10f, geom1.get() );
-    #else
-      simplifier.simplify( 5000, geom1.get() );
-    #endif
+    float ratio = 0.60f;
+    for(int i=1; i<stages; ++i, ratio *= 0.60f)
+    {
+      simplifier.simplify( ratio, mGeom[i].get() );
+      Log::print("\n");
+    }
 
     // -------------- simplification end -------------------
 
-    geom1->setDisplayListEnabled(false);
-    geom2->setDisplayListEnabled(false);
-    geom1->setVBOEnabled(true);
-    geom2->setVBOEnabled(true);
-    sceneManager()->tree()->addActor( geom1.get(), mEffect.get(), mTransform_Left.get() );
-    sceneManager()->tree()->addActor( geom2.get(), mEffect.get(), mTransform_Right.get() );
+    /* compute normals */
+    for(int i=0; i<stages; ++i)
+      mGeom[i]->computeNormals();
 
-    geom2->computeBounds();
-    geom1->computeBounds();
+    /* create actors for each simplification level */
+    for(int i=0; i<stages; ++i)
+      mActors[i] = new Actor( mGeom[i].get(), mEffect.get(), mTransform.get() );
 
-    /* center and scale the geometry */
+    sceneManager()->tree()->addActor(mActors[0].get());
 
-    vl::AABB aabb = geom1->boundingBox();
-    geom1->transform( vl::mat4::getTranslation( - aabb.center() ) );
-    vl::Real max = aabb.width();
-    max = aabb.height() > max ? aabb.height() : max;
-    max = aabb.depth() > max ? aabb.depth() : max;
-    geom1->transform( vl::mat4::getScaling( vl::vec3(1.0f/max, 1.0f/max, 1.0f/max) * vl::vec3(15,15,15) ) );
-    geom1->computeBounds();
-    geom1->computeNormals();
+    /* position the camera to nicely see the scene */
+    trackball()->adjustView( sceneManager(), vec3(0,0,1)/*direction*/, vec3(0,1,0)/*up*/, 0.75f/*bias*/ );
 
-    aabb = geom2->boundingBox();
-    geom2->transform( vl::mat4::getTranslation( - aabb.center() ) );
-    max = aabb.width();
-    max = aabb.height() > max ? aabb.height() : max;
-    max = aabb.depth() > max ? aabb.depth() : max;
-    geom2->transform( vl::mat4::getScaling( vl::vec3(1.0f/max, 1.0f/max, 1.0f/max) * vl::vec3(15,15,15) ) );
-    geom2->computeBounds();
-    geom2->computeNormals();
+    /* triangle count label */
+    mText = new Text;
+    mText->setMatrix( fmat4::getTranslation(0,5,0) );
+    mText->setText( "Triangle Count: -" );
+    mText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    mText->setAlignment( AlignHCenter | AlignBottom );
+    mText->setViewportAlignment( AlignHCenter | AlignBottom );
+    ref<Effect> effect = new Effect;
+    effect->shader()->enable(EN_BLEND);
+    mTextActor = sceneManager()->tree()->addActor(mText.get(), effect.get());
+  }
+
+  virtual void run()
+  {
+    mActiveActor = int(Time::currentTime()) % stages;
+    /* activate current actor */
+    sceneManager()->tree()->actors()->clear();
+    sceneManager()->tree()->addActor( mActors[mActiveActor].get() );
+    sceneManager()->tree()->addActor( mTextActor.get() );
+    /* update label */
+    mText->setText( Say("Triangle Count: %n") << mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indices()->size() / 3 );
   }
 
 protected:
-  vl::ref<vl::Transform> mTransform_Left;
-  vl::ref<vl::Transform> mTransform_Right;
-  vl::String mFileName;
-  vl::ref<vl::Effect> mEffect;
+  ref<Transform> mTransform;
+  String mFileName;
+  ref<Effect> mEffect;
+  ref<Actor> mActors[5];
+  int mActiveActor;
+  ref<Actor> mTextActor; 
+  ref<Text> mText;
+  ref<Geometry> mGeom[stages];
 };
 
 // Have fun!
 
-BaseDemo* Create_App_PolygonReduction(const vl::String& path) { return new App_PolygonReduction(path); }
+BaseDemo* Create_App_PolygonReduction(const String& path) { return new App_PolygonReduction(path); }
