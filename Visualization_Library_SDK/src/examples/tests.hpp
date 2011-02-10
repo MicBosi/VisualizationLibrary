@@ -171,7 +171,7 @@ public:
       { "FBO Framebuffer Blit Multisample", Create_App_Framebuffer_Object(3), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,100), vl::vec3(0,0,0) }, 
       { "Geometry Instancing", Create_App_GeometryInstancing(), 10,10, 512, 512, vl::black, vl::vec3(45/2,60,90), vl::vec3(45/2,45/2,45/2) }, 
       { "Polygon Depth Sorting", Create_App_PolyDepthSorting("/models/3ds/monkey.3ds"), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
-      { "Polygon Reduction", Create_App_PolygonReduction("/models/3ds/monkey.3ds"), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
+      { "Polygon Reduction", Create_App_PolygonReduction("/models/3ds/monkey.3ds"), 10,10, 512, 512, vl::black, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
       { "Simple Terrain", Create_App_Terrain(), 10,10, 512, 512, vl::black, vl::vec3(0,5,0), vl::vec3(0,2,-10) }, 
       { "Vector Graphics", Create_App_VectorGraphics(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
       { "Culling Benchmark", Create_App_CullingBenchmark(), 10,10, 512, 512, vl::black, vl::vec3(0,500,-250), vl::vec3(0,500,-250-1) }, 
