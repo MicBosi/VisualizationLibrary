@@ -40,60 +40,77 @@ namespace vl
   //-----------------------------------------------------------------------------
   // AABB
   //-----------------------------------------------------------------------------
-  /**
-   * The AABB class implements an axis-aligned bounding box using vl::Real precision.
-  */
+  /** The AABB class implements an axis-aligned bounding box using vl::Real precision. */
   class AABB 
   {
   public:
+    /** Constructs a null AABB. */
     AABB();
 
+    /** Constructs an AABB large enough to contain a sphere with the specified \p radius and \p center. */
     AABB( const vec3& center, Real radius );
 
+    /** Constructs an AABB large enough to contain the two specified points and enlarged by the amount specified by \p displace. */
     AABB( const vec3& pt1, const vec3& pt2, Real displace=0);
 
+    /** Sets ths AABB as null, that is, empty. */
     void setNull() { mMin = 1; mMax = -1; }
 
+    /** Returns true if the AABB is null. */
     bool isNull()  const { return mMin.x() > mMax.x() || mMin.y() > mMax.y() || mMin.z() > mMax.z(); }
 
+    /** Returns true if the AABB contains a single point, that is, if the min and max corners of the AABB are equal. */
     bool isPoint() const { return mMin == mMax; }
 
+    /** Enlarges the AABB in all directions by \displace amount. 
+        As a result every edge of the AABB will be \p displace*2 longer. */
     void enlarge(Real displace);
 
-    void addPoint(const vec3& v, Real radius);
-
+    /** Returns true if an AABB intersects with the given AABB. */
     bool intersects(const AABB & bb) const;
 
-    vec3 clip(const vec3& v, bool clipx=true, bool clipy=true, bool clipz=true) const;
+    /** Clips the position of the given \p p point to be inside an AABB. */
+    vec3 clip(const vec3& p, bool clipx=true, bool clipy=true, bool clipz=true) const;
 
-    bool isInside(const vec3& v, bool clipx, bool clipy, bool clipz) const;
+    /** Returns true if the given point is inside the AABB. 
+        This method allows you to restrict the test to any of the x, y, z axes. */
+    bool isInside(const vec3& p, bool clipx, bool clipy, bool clipz) const;
 
-    bool isInside(const vec3& v) const;
+    /** Returns true if the given point is inside the AABB. */
+    bool isInside(const vec3& p) const;
 
-    Real height() const;
-
+    /** Returns the width of the AABB computed as max.x - min.x */
     Real width() const;
 
+    /** Returns the height of the AABB computed as max.y - min.y */
+    Real height() const;
+
+    /** Returns the depth of the AABB computed as max.z - min.z */
     Real depth() const;
 
+    /** Returns true if two AABB are identical. */
     bool operator==(const AABB& aabb) const
     {
       return mMin == aabb.mMin && mMax == aabb.mMax;
     }
 
+    /** Returns true if two AABB are not identical. */
     bool operator!=(const AABB& aabb) const
     {
       return !operator==(aabb);
     }
 
+    /** Returns an AABB which contains the two source AABB. */
     AABB operator+(const AABB& aabb) const;
 
-    const AABB& operator+=(const AABB& other)
+    /** Enlarges (if necessary) an AABB so that it contains the given AABB. */
+    AABB& operator+=(const AABB& other)
     {
       *this = *this + other;
       return *this;
     }
 
+    /** Returns an AABB which contains the source AABB and the given point. */
     AABB operator+(const vec3& p)
     {
       AABB aabb = *this;
@@ -101,22 +118,17 @@ namespace vl
       return aabb;
     }
 
+    /** Enlarges (if necessary) an AABB to contain the given point. */
     const AABB& operator+=(const vec3& p)
     {
       addPoint(p);
       return *this;
     }
 
+    /** Returns the center of the AABB. */
     vec3 center() const;
 
-    Real area() const
-    {
-      if (isNull())
-        return 0;
-      else 
-        return width()*height()*depth();
-    }
-
+    /** Returns the longest dimension of the AABB. */
     Real longestSideLength() const
     {
       Real side = width();
@@ -127,51 +139,72 @@ namespace vl
       return side;
     }
 
-    void addPoint(const vec3& v) 
+    /** Updates the AABB to contain the given point. 
+        The point can represent a sphere if \p radius > 0. */
+    void addPoint(const vec3& p, Real radius);
+
+    /** Updates the AABB to contain the given point. */
+    void addPoint(const vec3& p) 
     {
       if (isNull())
       {
-        mMax = v;
-        mMin = v;
+        mMax = p;
+        mMin = p;
         return;
       }
 
-      if ( mMax.x() < v.x() ) mMax.x() = v.x();
-      if ( mMax.y() < v.y() ) mMax.y() = v.y();
-      if ( mMax.z() < v.z() ) mMax.z() = v.z();
-      if ( mMin.x() > v.x() ) mMin.x() = v.x();
-      if ( mMin.y() > v.y() ) mMin.y() = v.y();
-      if ( mMin.z() > v.z() ) mMin.z() = v.z();
+      if ( mMax.x() < p.x() ) mMax.x() = p.x();
+      if ( mMax.y() < p.y() ) mMax.y() = p.y();
+      if ( mMax.z() < p.z() ) mMax.z() = p.z();
+      if ( mMin.x() > p.x() ) mMin.x() = p.x();
+      if ( mMin.y() > p.y() ) mMin.y() = p.y();
+      if ( mMin.z() > p.z() ) mMin.z() = p.z();
     }
 
-    void transformed(AABB& aabb, const mat4& mat) const 
+    /** Transforms an AABB by the given matrix and returns it into the \p out parameter. */
+    void transformed(AABB& out, const mat4& mat) const 
     {
-      aabb.setNull();
+      out.setNull();
       if ( !isNull() )
       {
-        aabb.addPoint( mat * vec3(minCorner().x(), minCorner().y(), minCorner().z()) );
-        aabb.addPoint( mat * vec3(minCorner().x(), maxCorner().y(), minCorner().z()) );
-        aabb.addPoint( mat * vec3(maxCorner().x(), maxCorner().y(), minCorner().z()) );
-        aabb.addPoint( mat * vec3(maxCorner().x(), minCorner().y(), minCorner().z()) );
-        aabb.addPoint( mat * vec3(minCorner().x(), minCorner().y(), maxCorner().z()) );
-        aabb.addPoint( mat * vec3(minCorner().x(), maxCorner().y(), maxCorner().z()) );
-        aabb.addPoint( mat * vec3(maxCorner().x(), maxCorner().y(), maxCorner().z()) );
-        aabb.addPoint( mat * vec3(maxCorner().x(), minCorner().y(), maxCorner().z()) );
+        out.addPoint( mat * vec3(minCorner().x(), minCorner().y(), minCorner().z()) );
+        out.addPoint( mat * vec3(minCorner().x(), maxCorner().y(), minCorner().z()) );
+        out.addPoint( mat * vec3(maxCorner().x(), maxCorner().y(), minCorner().z()) );
+        out.addPoint( mat * vec3(maxCorner().x(), minCorner().y(), minCorner().z()) );
+        out.addPoint( mat * vec3(minCorner().x(), minCorner().y(), maxCorner().z()) );
+        out.addPoint( mat * vec3(minCorner().x(), maxCorner().y(), maxCorner().z()) );
+        out.addPoint( mat * vec3(maxCorner().x(), maxCorner().y(), maxCorner().z()) );
+        out.addPoint( mat * vec3(maxCorner().x(), minCorner().y(), maxCorner().z()) );
       }
     }
 
+    /** Returns the AABB transformed by the given matrix. */
     AABB transformed(const mat4& mat) const 
     {
       AABB aabb;
       transformed(aabb, mat);
       return aabb;
     }
+    
+    /** Returns the corner of the AABB with the minimum x y z coordinates. */
     const vec3& minCorner() const { return mMin; }
+
+    /** Returns the corner of the AABB with the maximum x y z coordinates. */
     const vec3& maxCorner() const { return mMax; }
-    void setMinCorner(Real x, Real y, Real z) { mMin = vec3(x,y,z); }
+
+    /** Sets the corner of the AABB with the minimum x y z coordinates. */
+    void setMinCorner(Real x, Real y, Real z) { mMin.x() = x; mMin.y() = y; mMin.z() = z; }
+
+    /** Sets the corner of the AABB with the minimum x y z coordinates. */
     void setMinCorner(const vec3& v) { mMin = v; }
-    void setMaxCorner(Real x, Real y, Real z) { mMax = vec3(x,y,z); }
+
+    /** Sets the corner of the AABB with the maximum x y z coordinates. */
+    void setMaxCorner(Real x, Real y, Real z) { mMax.x() = x; mMax.y() = y; mMax.z() = z; }
+
+    /** Sets the corner of the AABB with the maximum x y z coordinates. */
     void setMaxCorner(const vec3& v) { mMax = v; }
+
+    /** Returns the volume of the AABB. */
     Real volume() const { return width() * height() * depth(); }
 
   protected:

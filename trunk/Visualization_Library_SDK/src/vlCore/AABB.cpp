@@ -138,7 +138,6 @@ void AABB::addPoint(const vec3& v, Real radius)
   {
     mMax = v;
     mMin = v;
-    return;
   }
 
   if ( mMax.x() < v.x() + radius) mMax.x() = v.x() + radius;
