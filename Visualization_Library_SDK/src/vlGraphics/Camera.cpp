@@ -49,7 +49,6 @@ Camera::Camera()
     mObjectName = className();
   #endif
   mFrustum.planes().resize(6);
-  mActive = true;
   mFOV = 60.0;
   mNearPlane = (Real)0.05;
   mFarPlane  = (Real)10000.0;
@@ -318,8 +317,6 @@ Ray Camera::computeRay(int winx, int winy)
   }
 }
 //-----------------------------------------------------------------------------
-/** Computes a frustum suitable to cull object during ray intersection detection.
- */
 Frustum Camera::computeRayFrustum(int winx, int winy)
 {
   /*
