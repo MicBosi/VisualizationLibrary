@@ -47,6 +47,9 @@
 			<td>Tanguy Fautré</td><td>Triangle stripping algorithm.</td>
 		</tr>
 		<tr>
+			<td>Hermann Amthor</td><td>MDIWindow and MFC examples enhacements.</td>
+		</tr>
+		<tr>
 			<td colspan=2>Thanks to all the people (especially in the forum) who tested VL, reported bugs and 
 			provided feedback: your contribution made Visualization Library a much better resource 
 			for all of us, thank you!</td>
