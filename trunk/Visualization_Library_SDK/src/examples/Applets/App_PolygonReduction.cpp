@@ -40,11 +40,12 @@
 
 using namespace vl;
 
+static const int stages = 5;
+static const float ratios[] = { 1.0f, 0.5f, 0.20f, 0.05f, 0.01f };
+
 class App_PolygonReduction: public BaseDemo
 {
 public:
-  static const int stages = 5;
-
   App_PolygonReduction(const String& path): mFileName(path), mActiveActor(0) {}
 
   void initEvent()
@@ -91,6 +92,8 @@ public:
     mText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     mText->setAlignment( AlignHCenter | AlignBottom );
     mText->setViewportAlignment( AlignHCenter | AlignBottom );
+    mText->setBackgroundEnabled(true);
+    mText->setBackgroundColor(vec4(0,0,0,0.5f));
     ref<Effect> effect = new Effect;
     effect->shader()->enable(EN_BLEND);
     mTextActor = sceneManager()->tree()->addActor(mText.get(), effect.get());
@@ -107,10 +110,9 @@ public:
     PolygonSimplifier simplifier;
     simplifier.setQuick(false);
     simplifier.setVerbose(true);
-    float ratio = 0.60f;
-    for(int i=1; i<stages; ++i, ratio *= 0.60f)
+    for(int i=1; i<stages; ++i)
     {
-      simplifier.simplify( ratio, mGeom[i].get() );
+      simplifier.simplify( ratios[i], mGeom[i].get() );
       Log::print("\n");
     }
 
@@ -128,7 +130,6 @@ public:
 
     /* position the camera to nicely see the scene */
     trackball()->adjustView( sceneManager(), vec3(0,0,1)/*direction*/, vec3(0,1,0)/*up*/, 0.75f/*bias*/ );
-
   }
 
   virtual void run()
@@ -139,7 +140,8 @@ public:
     sceneManager()->tree()->addActor( mActors[mActiveActor].get() );
     sceneManager()->tree()->addActor( mTextActor.get() );
     /* update label */
-    mText->setText( Say("Triangle Count: %n") << mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indices()->size() / 3 );
+    float percent = 100.0f * mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indices()->size() / mGeom[0]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indices()->size();
+    mText->setText( Say("Triangle Count: %n (%.1n%%)") << mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indices()->size() / 3 << percent );
   }
 
   void fileDroppedEvent(const std::vector<vl::String>& files)
