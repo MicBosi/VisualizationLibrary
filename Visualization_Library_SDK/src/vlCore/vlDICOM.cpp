@@ -35,7 +35,7 @@
 #include <vlCore/vlDICOM.hpp>
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/FileSystem.hpp>
-#include <vlGraphics/GLSLmath.hpp>
+#include <vlCore/GLSLmath.hpp>
 
 #include <gdcmReader.h>
 #include <gdcmWriter.h>
@@ -49,13 +49,6 @@
 
 using namespace vl;
 
-//-----------------------------------------------------------------------------
-ref<LoadWriterDICOM> LoadWriterDICOM::mLoadWriterDICOM;
-void LoadWriterDICOM::registerLoadWriter()
-{
-  LoadWriterManager::singleton()->loadWriters()->erase( singleton() );
-  LoadWriterManager::singleton()->loadWriters()->push_back( singleton() );
-}
 //---------------------------------------------------------------------------
 static void to8bits(int bits_used, void* ptr, int px_count, bool reverse)
 {
@@ -102,7 +95,7 @@ static void to32bits(int bits_used, void* ptr, int px_count, bool reverse)
 //-----------------------------------------------------------------------------
 ref<Image> vl::loadDICOM(const String& path)
 {
-  ref<VirtualFile> file = fileSystem()->locateFile(path);
+  ref<VirtualFile> file = defFileSystem()->locateFile(path);
   if ( !file )
   {
     Log::error( Say("File '%s' not found.\n") << path );
@@ -198,7 +191,6 @@ ref<Image> vl::loadDICOM(VirtualFile* vfile)
     const gdcm::DataElement& de = ds.GetDataElement( rescale_intercept.GetTag() );
     if(!de.IsEmpty())
     {
-      double val = rescale_intercept.GetValue();
       rescale_intercept.SetFromDataElement( ds.GetDataElement( rescale_intercept.GetTag() ) );
       tags->set("RescaleIntercept") = Say("%n") << rescale_intercept.GetValue();
     }
@@ -211,7 +203,6 @@ ref<Image> vl::loadDICOM(VirtualFile* vfile)
     const gdcm::DataElement& de = ds.GetDataElement( rescale_slope.GetTag() );
     if(!de.IsEmpty())
     {
-      double val = rescale_slope.GetValue();
       rescale_slope.SetFromDataElement( ds.GetDataElement( rescale_slope.GetTag() ) );
       tags->set("RescaleSlope") = Say("%n") << rescale_slope.GetValue();
     }
@@ -234,7 +225,7 @@ ref<Image> vl::loadDICOM(VirtualFile* vfile)
   h = h * d;
 
   ref<Image> img = new Image;
-  img->setName( vfile->path().toStdString() );
+  img->setObjectName( vfile->path().toStdString() );
   if (pf.GetSamplesPerPixel() == 1 && pi == gdcm::PhotometricInterpretation::PALETTE_COLOR)
   {
     if (pf.GetBitsStored() <= 8)
@@ -243,7 +234,6 @@ ref<Image> vl::loadDICOM(VirtualFile* vfile)
       image.GetBuffer((char*)img->pixels());
 
       const gdcm::LookupTable& lut = image.GetLUT();
-      unsigned short sample = lut.GetBitSample();
       std::auto_ptr<char> rgba( new char[(1<<lut.GetBitSample())*4] );
       lut.GetBufferAsRGBA((unsigned char*)rgba.get());
       for(int i=w*h; i--; )
@@ -262,7 +252,6 @@ ref<Image> vl::loadDICOM(VirtualFile* vfile)
       image.GetBuffer((char*)img->pixels());
 
       const gdcm::LookupTable& lut = image.GetLUT();
-      unsigned short sample = lut.GetBitSample();
       std::auto_ptr<char> rgba( new char[(1<<lut.GetBitSample())*4] );
       lut.GetBufferAsRGBA((unsigned char*)rgba.get());
       for(int i=w*h; i--; )
@@ -292,7 +281,6 @@ ref<Image> vl::loadDICOM(VirtualFile* vfile)
     {
       img->allocate2D( w, h, 1, vl::IF_LUMINANCE, vl::IT_UNSIGNED_SHORT);
       image.GetBuffer((char*)img->pixels());
-      unsigned short* px = (unsigned short*)img->pixels();
       if (pi == gdcm::PhotometricInterpretation::MONOCHROME1)
         to16bits(pf.GetBitsStored(), img->pixels(), w*h, true);
       else
@@ -411,7 +399,7 @@ bool vl::saveDICOM(const Image* src, VirtualFile* fout)
   *img = *src;
 
   // bytes per sample
-  int bps = 0; 
+  unsigned short bps = 0; 
   switch(img->type())
   {
   case vl::IT_UNSIGNED_BYTE:  bps = 1; break;
@@ -422,7 +410,7 @@ bool vl::saveDICOM(const Image* src, VirtualFile* fout)
   }
 
   // sample count;
-  int spp = 0;
+  unsigned short spp = 0;
   switch(img->format())
   {
     case vl::IF_ALPHA:     spp = 1; break;
@@ -487,7 +475,7 @@ bool vl::saveDICOM(const Image* src, VirtualFile* fout)
   fout->open(OM_WriteOnly);
   int bcount = (int)fout->write(ostr.str().c_str(), ostr.str().length());
   fout->close();
-  if( bcount != ostr.str().length() )
+  if( bcount != (int)ostr.str().length() )
   {
     vl::Log::error("saveDICOM(): error writing file.\n");
     return false;
