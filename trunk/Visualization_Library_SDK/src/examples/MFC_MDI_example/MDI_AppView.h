@@ -11,7 +11,7 @@ protected:
 	DECLARE_DYNCREATE(CMDI_AppView)
 
   // VL: initialize the OpenGL context here!
-  afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+  virtual void OnInitialUpdate();
 
   // the rest is MFC stuff...
 
