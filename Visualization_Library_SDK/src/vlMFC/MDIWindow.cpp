@@ -42,7 +42,7 @@ using namespace vl;
 using namespace vlMFC;
 
 //-----------------------------------------------------------------------------
-BEGIN_MESSAGE_MAP(MDIWindow, CWnd)
+BEGIN_MESSAGE_MAP(MDIWindow, CView)
   ON_WM_CHAR()
   ON_WM_CLOSE()
   ON_WM_CREATE()
@@ -77,11 +77,6 @@ END_MESSAGE_MAP()
 MDIWindow::~MDIWindow()
 {
   destroy();
-}
-//-----------------------------------------------------------------------------
-bool MDIWindow::initOpenGLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt)
-{
-  return Win32Context::init(share_context, title, fmt, /*these last for are ignored*/0, 0, 100, 100);
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::destroy()

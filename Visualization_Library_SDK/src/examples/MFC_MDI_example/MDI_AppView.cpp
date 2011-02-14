@@ -10,30 +10,11 @@
 #define new DEBUG_NEW
 #endif
 
-IMPLEMENT_DYNCREATE(CMDI_AppView, CView)
+IMPLEMENT_DYNCREATE(CMDI_AppView, vlMFC::MDIWindow)
 //-----------------------------------------------------------------------------
 // VL: it is important to enable these messages
-BEGIN_MESSAGE_MAP(CMDI_AppView, CView)
-  ON_WM_CHAR()
-  ON_WM_CLOSE()
-  ON_WM_CREATE()
-  ON_WM_KEYDOWN()
-  ON_WM_KEYUP()
-  ON_WM_LBUTTONDBLCLK()
-  ON_WM_LBUTTONDOWN()
-  ON_WM_LBUTTONUP()
-  ON_WM_MBUTTONDBLCLK()
-  ON_WM_MBUTTONDOWN()
-  ON_WM_MBUTTONUP()
-  ON_WM_MOUSEMOVE()
-  ON_WM_MOUSEWHEEL()
-  ON_WM_PAINT()
-  ON_WM_RBUTTONDBLCLK()
-  ON_WM_RBUTTONDOWN()
-  ON_WM_RBUTTONUP()
-  ON_WM_SIZE()
-  ON_WM_TIMER()
-  ON_WM_DROPFILES()
+BEGIN_MESSAGE_MAP(CMDI_AppView, vlMFC::MDIWindow)
+  
 END_MESSAGE_MAP()
 //-----------------------------------------------------------------------------
 CMDI_AppView::CMDI_AppView()
@@ -48,47 +29,48 @@ CMDI_AppView::~CMDI_AppView()
   theApp.RemoveView(this);
 }
 //-----------------------------------------------------------------------------
-int CMDI_AppView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+void CMDI_AppView::OnInitialUpdate()
 {
-  __super::OnCreate(lpCreateStruct);
-
-  /* setup the OpenGL context format */
-  vl::OpenGLContextFormat format;
-  format.setDoubleBuffer(true);
-  format.setRGBABits( 8,8,8,0 );
-  format.setDepthBufferBits(24);
-  format.setStencilBufferBits(8);
-  format.setFullscreen(false);
-  format.setMultisampleSamples(16);
-  format.setMultisample(true);
-
-  /* create a new vl::Rendering for this window */
-  vl::ref<vl::Rendering> rend = new vl::Rendering;
-  rend->renderer()->setRenderTarget( this->OpenGLContext::renderTarget() );
-  vl::defRendering()->as<vl::RenderingTree>()->subRenderings()->push_back(rend.get());
+	vlMFC::MDIWindow::OnInitialUpdate();
   
-  /* black background */
-  rend->camera()->viewport()->setClearColor( vl::black );
-  
-  /* define the camera position and orientation */
-  vl::vec3 eye    = vl::vec3(0,10,35); // camera position
-  vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
-  vl::vec3 up     = vl::vec3(0,1,0);   // up direction
-  vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
-  rend->camera()->setViewMatrix( view_mat );
+	/* setup the OpenGL context format */
+	vl::OpenGLContextFormat format;
+	format.setDoubleBuffer(true);
+	format.setRGBABits( 8,8,8,0 );
+	format.setDepthBufferBits(24);
+	format.setStencilBufferBits(8);
+	format.setFullscreen(false);
+	format.setMultisampleSamples(16);
+	format.setMultisample(true);
 
-  /* create the applet to be run */
-  vl::ref<App_RotatingCube> applet = new App_RotatingCube(rend.get());
-  applet->initialize();
-  
-  /* bind the applet so it receives all the GUI events related to the OpenGLContext */
-  this->OpenGLContext::addEventListener(applet.get());
+	/* create a new vl::Rendering for this window */
+	vl::ref<vl::Rendering> rend = new vl::Rendering;
+	rend->renderer()->setRenderTarget( this->OpenGLContext::renderTarget() );
+	vl::defRendering()->as<vl::RenderingTree>()->subRenderings()->push_back(rend.get());
 
-  /* Initialize the OpenGL context and window properties */
-  initOpenGLContext(NULL, "Visualization Library MFC MDI- Rotating Cube", format);
+	/* black background */
+	rend->camera()->viewport()->setClearColor( vl::black );
 
-  return 0;
+	/* define the camera position and orientation */
+	vl::vec3 eye    = vl::vec3(0,10,35); // camera position
+	vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
+	vl::vec3 up     = vl::vec3(0,1,0);   // up direction
+	vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
+	rend->camera()->setViewMatrix( view_mat );
+
+	/* create the applet to be run */
+	vl::ref<App_RotatingCube> applet = new App_RotatingCube(rend.get());
+	applet->initialize();
+
+	/* bind the applet so it receives all the GUI events related to the OpenGLContext */
+	this->OpenGLContext::addEventListener(applet.get());
+	
+ 	/* Initialize the OpenGL context and window properties */	
+ 	CRect r; 	
+	GetWindowRect(&r);
+	Win32Context::init(NULL, "Visualization Library MFC MDI- Rotating Cube", format, /*these last for are ignored*/0, 0, r.Width(), r.Height());
 }
+
 //-----------------------------------------------------------------------------
 
 // the rest is MFC stuff...

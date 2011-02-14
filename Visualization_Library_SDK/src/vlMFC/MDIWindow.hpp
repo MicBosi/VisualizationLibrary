@@ -51,9 +51,6 @@ namespace vlMFC
 
     virtual ~MDIWindow();
 
-    //! Creates the window and initializes the OpenGL rendering context
-    bool initOpenGLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt);
-
     //! calls destroyWindow() and dispatches the destroy event to the UIEventListener objects
     virtual void destroy();
 
