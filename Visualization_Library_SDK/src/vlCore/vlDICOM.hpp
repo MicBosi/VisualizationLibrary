@@ -55,13 +55,13 @@ namespace vl
   //---------------------------------------------------------------------------
   // LoadWriterDICOM
   //---------------------------------------------------------------------------
-  /**
-   * The LoadWriterDICOM class is a ResourceLoadWriter capable of reading DICOM files.
-   */
+  /** The LoadWriterDICOM class is a ResourceLoadWriter capable of reading DICOM files (.dcm, .dicom, .dic, .ima, .ph, .mag) using GDCM 2.0 library.
+  \sa GDCM home page: http://creatis-www.insa-lyon.fr/software/public/Gdcm/Main.html */
   class LoadWriterDICOM: public ResourceLoadWriter
   {
   public:
     virtual const char* className() { return "LoadWriterDICOM"; }
+
     LoadWriterDICOM(): ResourceLoadWriter("|dcm|dicom|dic|ima|ph|mag|", "|dcm|dicom|dic|ima|ph|mag|") {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 
