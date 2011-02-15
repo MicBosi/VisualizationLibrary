@@ -78,6 +78,19 @@
 	<table border=0 cellspacing=1 width=100% class="lightborder">
 	<tr>
 		<td width=100 align=left>
+			\image html pagGuidePrimitives_s.jpg
+		</td>
+		<td align=left>
+			\subpage pagGuidePrimitives "Geometry Primitives" (code and comments)
+		</td>
+	</tr>
+	</table>
+ 
+****************************************************************************************
+
+	<table border=0 cellspacing=1 width=100% class="lightborder">
+	<tr>
+		<td width=100 align=left>
 			\image html pagGuideFBO_s.jpg
 		</td>
 		<td align=left>

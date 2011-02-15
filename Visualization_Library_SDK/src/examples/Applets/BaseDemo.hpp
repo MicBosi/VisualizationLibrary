@@ -64,7 +64,7 @@ public:
       mReadPixels->setup( 0, 0, openglContext()->width(), openglContext()->height(), vl::RDB_BACK_LEFT, false );
       vl::defRendering()->onFinishedCallbacks()->push_back( mReadPixels.get() );
       mReadPixels->setRemoveAfterCall(true);
-      vl::String filename = vl::Say( applicationName() + "-%n.jpg") << (int)vl::Time::currentTime();
+      vl::String filename = vl::Say( applicationName() + "-%n.png") << (int)vl::Time::currentTime();
       mReadPixels ->setSavePath( filename );
       vl::Log::print( vl::Say("Screenshot: '%s'\n") << filename );
     }
