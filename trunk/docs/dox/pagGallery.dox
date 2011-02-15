@@ -457,7 +457,7 @@
 	
 	<hr><!-- ----------------------------------------------------------------------------------------------------------------------------- -->
 
-	<h2 style="font-size: 20px">Occlusion Culling With Sample Foreset Model</h2>
+	<h2 style="font-size: 20px">Occlusion Culling</h2>
 	
 	- In the first image the occlusion ratio is 96%: frame rate with and without occlusion culling is 125.9 vs 54.7, <b>speedup 2,3x</b>.<br>
 	- In the second image the occlusion ratio is 84%: frame rate with and without occlusion culling is 139.7 vs 106.4, <b>speedup 1,3x</b>.<br>
@@ -619,6 +619,106 @@
 			<a href="gallery/tessellator01.png" class="highslide" onclick="return hs.expand(this)"> 
 				<img src="gallery_small/tessellator01.jpg" alt="Highslide JS" title="Click to enlarge" />
 			</a>
+		</td>
+	</tr>
+	</table>
+	
+
+	<hr><!-- ----------------------------------------------------------------------------------------------------------------------------- -->
+
+	<h2 style="font-size: 20px">Geometrical Primitives</h2>
+	
+	Visualization Library includes a series of functions to create the most common geometrical primitives out of the box such as:<br>
+
+	<p>
+	\endhtmlonly
+	<ul>
+		<li> vl::makeBox()
+		<li> vl::makeTeapot()
+		<li> vl::makeCapsule()
+		<li> vl::makeTorus()
+		<li> vl::makeCylinder()
+		<li> vl::makeUVSphere()
+		<li> vl::makeIcosphere()
+		<li> vl::makeIcosahedron()
+		<li> vl::makeCone()
+		<li> vl::makePyramid()
+		<li> vl::makeGrid()
+	</ul>
+
+	See also the \ref pagGuidePrimitives page.
+	\htmlonly
+	</p>
+
+	<table border=0 cellspacing=0 cellpadding=5 width=1%>
+	<tr>
+		<td>
+			<a href="gallery/primitive01.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive01.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Box
+		</td>
+		<td>
+			<a href="gallery/primitive02.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive02.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Teapot
+		</td>
+		<td>
+			<a href="gallery/primitive03.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive03.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Capsule
+		</td>
+		<td>
+			<a href="gallery/primitive04.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive04.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Torus
+		</td>
+		<td>
+			<a href="gallery/primitive05.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive05.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Cylinder
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="gallery/primitive06.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive06.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			UV Sphere
+		</td>
+		<td>
+			<a href="gallery/primitive07.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive07.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Icosphere
+		</td>
+		<td>
+			<a href="gallery/primitive08.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive08.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Icosahedron
+		</td>
+		<td>
+			<a href="gallery/primitive09.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive09.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Cone
+		</td>
+		<td>
+			<a href="gallery/primitive10.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive10.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Pyramid
+		</td>
+		<td>
+			<a href="gallery/primitive11.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/primitive11.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+			Grid
 		</td>
 	</tr>
 	</table>
