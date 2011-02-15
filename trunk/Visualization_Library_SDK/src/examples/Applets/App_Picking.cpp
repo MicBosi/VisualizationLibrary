@@ -34,6 +34,7 @@
 #include <vlGraphics/RayIntersector.hpp>
 #include <vlGraphics/ReadPixels.hpp>
 #include <vlGraphics/Light.hpp>
+#include <ctime>
 
 class App_Picking: public BaseDemo
 {
@@ -84,6 +85,8 @@ public:
   {
     BaseDemo::initEvent();
 
+    srand((int)time(NULL));
+
     // populate our scene with some random objects
 
     vl::ref<vl::Effect> fx = new vl::Effect;
@@ -119,7 +122,7 @@ public:
   {
     vl::ref<vl::Geometry> geom;
     // random shape
-    switch(rand() % 6)
+    switch(rand() % 7)
     {
       case 0: geom = vl::makeIcosphere(vl::vec3(0,0,0), 1, 2, false); break;
       case 1: geom = vl::makeBox(vl::vec3(0,0,0), 1, 1, 1); break;
@@ -127,6 +130,7 @@ public:
       case 3: geom = vl::makeUVSphere(vl::vec3(0,0,0),1); break;
       case 4: geom = vl::makeCylinder(vl::vec3(0,0,0),1,1); break;
       case 5: geom = vl::makeTorus(vl::vec3(0,0,0),2,0.5f,20,20); break;
+      case 6: geom = vl::makeTeapot(vl::vec3(0,0,0),2); break;
     }
     // random color
     geom->setColor( vl::fvec4((float)vl::randomMinMax(0,1), (float)vl::randomMinMax(0,1), (float)vl::randomMinMax(0,1),1.0f) );
