@@ -163,7 +163,7 @@ namespace vl
       // schedule update of the Actor's bounds.
       if (lod_index == 0)
       {
-        mBoundsUpdateTick = renderable->boundsUpdateTick()-1;
+        mBoundsUpdateTick = -1;
         mAABB.setNull();
         mSphere.setNull();
       }
