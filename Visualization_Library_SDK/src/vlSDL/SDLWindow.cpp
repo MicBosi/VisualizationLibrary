@@ -468,7 +468,6 @@ void vlSDL::messageLoop()
 void SDLWindow::quitApplication()
 {
   dispatchDestroyEvent();
-  eraseAllEventListeners();
   mSDLWindow = NULL;
 }
 //-----------------------------------------------------------------------------
