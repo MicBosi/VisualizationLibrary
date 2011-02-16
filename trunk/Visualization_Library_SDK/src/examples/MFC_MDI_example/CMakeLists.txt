@@ -47,7 +47,7 @@ add_executable(MFC_MDI_example WIN32
 	stdafx.h
 	stdafx.cpp 
 	MDI_App.rc
-	App_RotatingCube.hpp
+	App_RotatingTeapot.hpp
 	Resource.h
 	targetver.h)
 	
