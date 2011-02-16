@@ -41,7 +41,7 @@ using namespace vlSDL;
 class TestBatterySDL: public TestBattery
 {
 public:
-  void runGUI(float secs, const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void runGUI(const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     /* used to display the application title next to FPS counter */
     applet->setApplicationName(title);
@@ -55,7 +55,7 @@ public:
     /* create a SDL window */
     vl::ref<vlSDL::SDLWindow> sdl_window = new vlSDL::SDLWindow;
 
-    setupApplet(applet, sdl_window.get(), secs, bk_color, eye, center);
+    setupApplet(applet, sdl_window.get(), bk_color, eye, center);
 
     /* Initialize the OpenGL context and window properties */
     sdl_window->initSDLWindow( title, format, x, y, width, height );
@@ -78,11 +78,8 @@ int main(int argc, char* args[])
 {
   /* parse command line arguments */
   int   test = 0;
-  float secs = 0;
   if (argc>=2)
     test = String(args[1]).toInt();
-  if (argc>=3)
-    secs = String(args[2]).toFloat();
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -95,7 +92,7 @@ int main(int argc, char* args[])
   //format.setMultisample(true);
 
   TestBatterySDL test_battery;
-  test_battery.run(test, secs, format);
+  test_battery.run(test, format);
 
   return 0;
 }

@@ -48,7 +48,7 @@ class TestBatteryMFC: public TestBattery
 public:
   TestBatteryMFC(MFCWindow* mfc_win): mVLCWin(mfc_win) {}
 
-  void runGUI(float secs, const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void runGUI(const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     program->setApplicationName(title);
 
@@ -58,7 +58,7 @@ public:
     /* init Visualization Library */
     vl::VisualizationLibrary::init();
 
-    setupApplet(program, mVLCWin, secs, bk_color, eye, center);
+    setupApplet(program, mVLCWin, bk_color, eye, center);
 
     /* Initialize the OpenGL context and window properties */
     mVLCWin->initMFCWindow(NULL, NULL, title, format, x, y, width, height );
@@ -116,10 +116,7 @@ BOOL MFC_Test::InitInstance()
   /* parse the command line */
   vl::String cmdline = m_lpCmdLine;
   int   test  = 0;
-  float secs  = 0;
-  /*int   count = */sscanf(cmdline.toStdString().c_str(), "%d %d", &test, &secs);
-
-  vl::Log::print( vl::Say("Test #%n %.1ns-------------------------------------------------------------\n\n") << test << secs );
+  /*int   count = */sscanf(cmdline.toStdString().c_str(), "%d", &test);
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -132,7 +129,7 @@ BOOL MFC_Test::InitInstance()
   format.setMultisample(true);*/
 
   TestBatteryMFC test_battery(mVLCWin.get());
-  test_battery.run(test, secs, format);
+  test_battery.run(test, format);
 
   /* MFC specific stuff */
   if (mVLCWin->m_hWnd)
