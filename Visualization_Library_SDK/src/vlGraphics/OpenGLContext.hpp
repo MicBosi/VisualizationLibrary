@@ -343,7 +343,8 @@ namespace vl
           temp_clients[i]->keyReleaseEvent(unicode_ch, key);
     }
 
-    //! Dispatches the UIEventListener::destroyEvent() notification to the subscribed UIEventListener objects and calls destroyAllFBORenderTargets().
+    //! Dispatches the UIEventListener::destroyEvent() notification to the subscribed UIEventListener(s), 
+    //! calls destroyAllFBORenderTargets() and eraseAllEventListeners()
     //! This event must be issued just before the actual GL context is destroyed.
     void dispatchDestroyEvent()
     {
@@ -353,6 +354,7 @@ namespace vl
         if ( temp_clients[i]->isEnabled() )
           temp_clients[i]->destroyEvent();
       destroyAllFBORenderTargets();
+      eraseAllEventListeners();
     }
 
     //! Dispatches the UIEventListener::runEvent() notification to the subscribed UIEventListener objects.
