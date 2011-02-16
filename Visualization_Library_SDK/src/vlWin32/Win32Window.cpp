@@ -185,9 +185,18 @@ LONG WINAPI Win32Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
       break;
     }
 
-    case WM_CLOSE:
+    /*case WM_CLOSE:
     {
-      win->destroy();
+      win->dispatchDestroyEvent();
+      win->destroyWindow();
+      break;
+    }*/
+
+    case WM_DESTROY:
+    {
+      Win32Window::mWinMap.erase(hWnd);
+      win->dispatchDestroyEvent();
+      win->destroyWindow();
       break;
     }
 
@@ -254,7 +263,7 @@ Win32Window::Win32Window()
 //-----------------------------------------------------------------------------
 Win32Window::~Win32Window()
 {
-  destroy(); // destroyWindow();
+  destroyWindow();
 }
 //-----------------------------------------------------------------------------
 bool Win32Window::initWin32Window(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
@@ -293,20 +302,13 @@ Win32Window* Win32Window::getWindow(HWND hWnd)
     return NULL;
 }
 //-----------------------------------------------------------------------------
-void Win32Window::destroy()
-{
-  Win32Context::destroy();
-  /*dispatchDestroyEvent();*/
-  destroyWindow();
-}
-//-----------------------------------------------------------------------------
 void Win32Window::destroyWindow()
 {
-  // wglMakeCurrent(NULL, NULL); // not needed 
+  // wglMakeCurrent(NULL, NULL) not needed 
+
   if (hwnd())
   {
     bool destroy_win = mWinMap.find(mHWND) != mWinMap.end();
-    mWinMap.erase(mHWND);
 
     if (mHGLRC)
     {

@@ -62,9 +62,6 @@ namespace vlWin32
     //! After the initialization to show the window use the show() method.
     bool initWin32Window(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
 
-    //! calls destroyWindow() and dispatches the destroy event to the UIEventListener objects
-    virtual void destroy();
-
     //! Destroyes the window and the OpenGL rendering context
     void destroyWindow();
 
