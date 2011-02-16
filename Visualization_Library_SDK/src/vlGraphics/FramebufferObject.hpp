@@ -459,28 +459,9 @@ namespace vl
 
     void printFramebufferError(GLenum status) const;
 
-    void create()
-    {
-      if (!mHandle)
-      {
-        VL_glGenFramebuffers(1, (unsigned int*)&mHandle); VL_CHECK_OGL();
-      }
-      VL_CHECK(mHandle)
-    }
+    void create();
 
-    void destroy()
-    {
-      removeAllAttachments();
-      if (handle())
-      {
-        VL_glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        VL_glDeleteFramebuffers(1,&mHandle);
-        VL_CHECK_OGL()
-        mHandle = 0;
-      }
-      setWidth(0);
-      setHeight(0);
-    }
+    void destroy();
 
     void addColorAttachment(EAttachmentPoint color_attachment, FBOAttachmentAbstract* attachment);
     void addTextureAttachment(EAttachmentPoint color_attachment, FBOAttachmentAbstract* attachment);
