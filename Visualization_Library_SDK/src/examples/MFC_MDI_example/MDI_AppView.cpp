@@ -3,7 +3,7 @@
 
 #include "MDI_AppDoc.h"
 #include "MDI_AppView.h"
-#include "App_RotatingCube.hpp"
+#include "App_RotatingTeapot.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
