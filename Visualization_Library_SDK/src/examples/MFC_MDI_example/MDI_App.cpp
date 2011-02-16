@@ -7,7 +7,6 @@
 #include "MDI_AppView.h"
 
 #include <vlCore/VisualizationLibrary.hpp>
-#include <vlGraphics/RenderingTree.hpp>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -48,10 +47,6 @@ void CMDI_App::InitVisualizationLibrary()
 
   /* init Visualization Library */
   vl::VisualizationLibrary::init();
-
-  /* we install a rendering tree so that each applet can use its own vl::Rendering */
-  vl::ref<vl::RenderingTree> rend_tree = new vl::RenderingTree;
-  vl::setDefRendering(rend_tree.get());
 }
 //-----------------------------------------------------------------------------
 int CMDI_App::ExitInstance()
