@@ -96,24 +96,22 @@ BaseDemo* Create_App_DrawCalls();
 class TestBattery
 {
 public:
-  virtual void runGUI(float secs, const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center) = 0;
+  virtual void runGUI(const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center) = 0;
 
-  void setupApplet(BaseDemo* applet, vl::OpenGLContext* oglcontext, float secs, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void setupApplet(BaseDemo* applet, vl::OpenGLContext* oglcontext, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     /* initialize the applet */
     applet->initialize();
-    /* how long the test runs */
-    applet->setMaxTime(secs);
     /* bind the applet so it receives all the GUI events related to the OpenGLContext */
     oglcontext->addEventListener(applet);
     /* target the window so we can render on it */
-    vl::defRendering()->as<vl::Rendering>()->renderer()->setRenderTarget( oglcontext->renderTarget() );
+    applet->rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( oglcontext->renderTarget() );
     /* black background */
-    vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( bk_color );
+    applet->rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( bk_color );
     /* define the camera position and orientation */
     vl::vec3 up = vl::vec3(0,1,0);
     vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up);
-    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( view_mat );
+    applet->rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( view_mat );
   }
 
   class TestEntry
@@ -127,7 +125,7 @@ public:
     vl::vec3 center;
   };
 
-  void run(int test, float secs, const vl::OpenGLContextFormat& format)
+  void run(int test, const vl::OpenGLContextFormat& format)
   {
     TestEntry tests[] = 
     {
@@ -196,7 +194,7 @@ public:
 
     int test_count = int( sizeof(tests)/sizeof(TestEntry) );
     if (test > 0 && test-1 < test_count)
-      runGUI(secs, tests[test-1].title + " - " + vl::String("VL ") + vl::VisualizationLibrary::versionString(), tests[test-1].applet.get(), format, tests[test-1].x, tests[test-1].y, tests[test-1].width, tests[test-1].height, tests[test-1].bk_color, tests[test-1].eye, tests[test-1].center );
+      runGUI(tests[test-1].title + " - " + vl::String("VL ") + vl::VisualizationLibrary::versionString(), tests[test-1].applet.get(), format, tests[test-1].x, tests[test-1].y, tests[test-1].width, tests[test-1].height, tests[test-1].bk_color, tests[test-1].eye, tests[test-1].center );
     else
     {
       vl::showWin32Console();
