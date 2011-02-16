@@ -211,7 +211,7 @@ namespace vl
     //! If 'discard_local_data' is set to \p true the memory used by the local buffers is released.
     virtual void updateVBOs(bool discard_local_data, bool force_update) = 0;
 
-    //! Destroyes the VBO (vertex buffer objects) associated to this a Renderable.
+    //! Destroys the VBO (vertex buffer objects) associated to this a Renderable.
     //! \note This function does not touch the local (non GPU) data stored in the buffers associated to the vertex attributes and DrawCall.
     virtual void deleteVBOs() {}
 

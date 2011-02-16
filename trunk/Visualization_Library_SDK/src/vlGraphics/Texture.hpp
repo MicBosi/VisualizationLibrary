@@ -218,7 +218,7 @@ namespace vl
     /** The TexParameter object associated to a Texture. */
     const TexParameter* getTexParameter() const { return &mTexParameter; }
 
-    /** Destroyes the texture. */
+    /** Destroys the texture. */
     void destroyTexture();
 
     /** Creates a texture using the parameters specified by the last \p prepareTexture*() called. 
