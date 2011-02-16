@@ -102,6 +102,10 @@ void Rendering::render()
   public:
     InOutContract(Rendering* rendering): mRendering(rendering)
     {
+      VL_CHECK(mRendering->renderers().size());
+      VL_CHECK(mRendering->renderers()[0]->renderTarget());
+      VL_CHECK(mRendering->renderers()[0]->renderTarget()->openglContext());
+
       // as stated in the documentation all the renderers must target the same OpenGLContext
       mOpenGLContext = mRendering->renderers()[0]->renderTarget()->openglContext();
 
