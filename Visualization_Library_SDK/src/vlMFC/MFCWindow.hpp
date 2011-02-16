@@ -53,12 +53,6 @@ namespace vlMFC
     //! Creates the window and initializes the OpenGL rendering context
     bool initMFCWindow(CWnd* parent, MFCWindow* share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
 
-    //! calls destroyWindow() and dispatches the destroy event to the UIEventListener objects
-    virtual void destroy();
-
-    //! Destroyes the window and the OpenGL rendering context
-    void destroyWindow();
-
     //! Returns the Win32 window handle
     HWND hwnd() const { return m_hWnd; }
 
@@ -67,7 +61,8 @@ namespace vlMFC
     /*afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);*/
 	  /*afx_msg void OnDraw(CDC *pDC);*/
     afx_msg void OnPaint();
-    afx_msg void OnClose();
+    // afx_msg void OnClose();
+    afx_msg void OnDestroy();
     afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
     afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -88,8 +83,9 @@ namespace vlMFC
 	  //}}AFX_MSG
 
   protected:
-    void CountAndCapture();
-    void CountAndRelease();
+    void destroyGLContext();
+    void countAndCapture();
+    void countAndRelease();
 
   protected:
     int mMouseDownCount;

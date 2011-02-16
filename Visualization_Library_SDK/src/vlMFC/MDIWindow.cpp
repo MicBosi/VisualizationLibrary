@@ -76,19 +76,11 @@ END_MESSAGE_MAP()
 //-----------------------------------------------------------------------------
 MDIWindow::~MDIWindow()
 {
-  destroy();
 }
 //-----------------------------------------------------------------------------
-void MDIWindow::destroy()
+void MDIWindow::destroyGLContext()
 {
-  vlWin32::Win32Context::destroy();
-  destroyWindow();
-  /*dispatchDestroyEvent();*/
-}
-//-----------------------------------------------------------------------------
-void MDIWindow::destroyWindow()
-{
-  // wglMakeCurrent(NULL, NULL); // not needed 
+  // wglMakeCurrent(NULL, NULL) not needed 
   if (hwnd())
   {
     if (mHGLRC)
@@ -96,7 +88,7 @@ void MDIWindow::destroyWindow()
       if ( wglDeleteContext(mHGLRC) == FALSE )
       {
         MessageBox( L"OpenGL context creation failed.\n"
-         L"The handle either doesn't specify a valid context or the context is being used by another thread.", L"Visualization Library Error", MB_OK);
+         L"The handle either doesn't specify a valid context or the context is being used by another thread.", L" MDIWindow::destroyGLContext() error!", MB_OK);
       }
       mHGLRC = NULL;
     }
@@ -106,15 +98,13 @@ void MDIWindow::destroyWindow()
       DeleteDC(mHDC);
       mHDC = NULL;
     }
-
-    DestroyWindow();
   }
 }
 //-----------------------------------------------------------------------------
-void MDIWindow::OnClose()
+void MDIWindow::OnDestroy()
 {
-  destroy(); // destroy OpenGL rendering context
-  DestroyWindow(); // destroy Win32 window
+  dispatchDestroyEvent();
+  destroyGLContext();
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::OnPaint()
@@ -152,14 +142,14 @@ void MDIWindow::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
   dispatchKeyReleaseEvent(unicode_out, key_out);
 }
 //-----------------------------------------------------------------------------
-void MDIWindow::CountAndCapture()
+void MDIWindow::countAndCapture()
 {
   mMouseDownCount++;
   if (mMouseDownCount == 1)
     ::SetCapture(hwnd());
 }
 //-----------------------------------------------------------------------------
-void MDIWindow::CountAndRelease()
+void MDIWindow::countAndRelease()
 {
   mMouseDownCount--;
   if (mMouseDownCount <= 0)
@@ -171,37 +161,37 @@ void MDIWindow::CountAndRelease()
 //-----------------------------------------------------------------------------
 void MDIWindow::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-  CountAndCapture();
+  countAndCapture();
   dispatchMouseDownEvent( LeftButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::OnLButtonDown(UINT nFlags, CPoint point)
 {
-  CountAndCapture();
+  countAndCapture();
   dispatchMouseDownEvent( LeftButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::OnLButtonUp(UINT nFlags, CPoint point)
 {
-  CountAndRelease();
+  countAndRelease();
   dispatchMouseUpEvent( LeftButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::OnMButtonDblClk(UINT nFlags, CPoint point)
 {
-  CountAndCapture();
+  countAndCapture();
   dispatchMouseDownEvent( MiddleButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::OnMButtonDown(UINT nFlags, CPoint point)
 {
-  CountAndCapture();
+  countAndCapture();
   dispatchMouseDownEvent( MiddleButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::OnMButtonUp(UINT nFlags, CPoint point)
 {
-  CountAndRelease();
+  countAndRelease();
   dispatchMouseUpEvent( MiddleButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
@@ -218,19 +208,19 @@ BOOL MDIWindow::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 //-----------------------------------------------------------------------------
 void MDIWindow::OnRButtonDblClk(UINT nFlags, CPoint point)
 {
-  CountAndCapture();
+  countAndCapture();
   dispatchMouseDownEvent( RightButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::OnRButtonDown(UINT nFlags, CPoint point)
 {
-  CountAndCapture();
+  countAndCapture();
   dispatchMouseDownEvent( RightButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MDIWindow::OnRButtonUp(UINT nFlags, CPoint point)
 {
-  CountAndRelease();
+  countAndRelease();
   dispatchMouseUpEvent( RightButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
