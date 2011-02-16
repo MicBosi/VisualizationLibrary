@@ -96,7 +96,7 @@ public:
     }
 
     _tr = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(_tr.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(_tr.get());
     vl::ref<vl::Geometry> points = vl::makePoints( pointset );
     sceneManager()->tree()->addActor( points.get(), effect.get(), _tr.get() );
 

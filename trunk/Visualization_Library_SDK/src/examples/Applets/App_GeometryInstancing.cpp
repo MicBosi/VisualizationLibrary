@@ -57,7 +57,7 @@ public:
     for (int batch = 0; batch < 10; ++batch)
     {
       // update matrices
-      vl::fmat4 view = (vl::fmat4)vl::defRendering()->as<vl::Rendering>()->camera()->viewMatrix();
+      vl::fmat4 view = (vl::fmat4)rendering()->as<vl::Rendering>()->camera()->viewMatrix();
       for(int k=0; k<100; ++k)
       {
         int i = batch*100 + k;

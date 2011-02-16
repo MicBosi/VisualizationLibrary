@@ -51,7 +51,7 @@ public:
 
     mSceneKdTree = new vl::SceneManagerActorKdTree;
 
-    vl::defRendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());
+    rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());
 
     createScene(mActors);
 

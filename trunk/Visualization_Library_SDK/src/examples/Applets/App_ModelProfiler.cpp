@@ -63,11 +63,11 @@ public:
     glc->setSortVertices(false);
     glc->setComputeNormals(true);
 
-    defRendering()->as<Rendering>()->camera()->setFarPlane(10000000.0f);
+    rendering()->as<Rendering>()->camera()->setFarPlane(10000000.0f);
 
     /* bind Transform */
     mTransform = new Transform;
-    defRendering()->as<Rendering>()->transform()->addChild( mTransform.get() );
+    rendering()->as<Rendering>()->transform()->addChild( mTransform.get() );
     
     // geoms
     ref< Effect > fx = new Effect;
@@ -407,7 +407,7 @@ public:
     }
 
     // position the camera to nicely see the objects in the scene
-    trackball()->adjustView( defRendering()->as<Rendering>(), vec3(0,0,1), vec3(0,1,0), 1.0f );
+    trackball()->adjustView( rendering()->as<Rendering>(), vec3(0,0,1), vec3(0,1,0), 1.0f );
 
     // throttle ghost camera manipulator speed based on the scene size, using a simple euristic formula
     sceneManager()->computeBounds();

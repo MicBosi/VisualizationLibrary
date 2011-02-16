@@ -187,7 +187,7 @@ public:
     // (1)
     // transform
     vl::ref<vl::Transform> tr_1 = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_1.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_1.get());
     tr_1->setLocalMatrix(vl::mat4::getTranslation(-5,0,0));
     // effect
     vl::ref<vl::Effect> fx_1 = new vl::Effect;
@@ -203,7 +203,7 @@ public:
     // (2)
     // transform
     vl::ref<vl::Transform> tr_2 = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_2.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_2.get());
     tr_2->setLocalMatrix(vl::mat4::getTranslation(+5,0,0));
     // effect
     vl::ref<vl::Effect> fx_2 = new vl::Effect;
@@ -219,7 +219,7 @@ public:
     // (x)
     // transform
     vl::ref<vl::Transform> tr_x = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_x.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_x.get());
     tr_x->setLocalMatrix(vl::mat4::getTranslation(-2.5-5,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_x = new vl::Effect;
@@ -235,7 +235,7 @@ public:
     // (y)
     // transform
     vl::ref<vl::Transform> tr_y = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_y.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_y.get());
     tr_y->setLocalMatrix(vl::mat4::getTranslation(-2.5,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_y = new vl::Effect;
@@ -251,7 +251,7 @@ public:
     // (z)
     // transform
     vl::ref<vl::Transform> tr_z = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_z.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_z.get());
     tr_z->setLocalMatrix(vl::mat4::getTranslation(+2.5,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_z = new vl::Effect;
@@ -267,7 +267,7 @@ public:
     // (w)
     // transform
     vl::ref<vl::Transform> tr_w = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_w.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_w.get());
     tr_w->setLocalMatrix(vl::mat4::getTranslation(+2.5+5.0,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_w = new vl::Effect;
@@ -283,7 +283,7 @@ public:
     // (a)
     // transform
     vl::ref<vl::Transform> tr_a = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_a.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_a.get());
     tr_a->setLocalMatrix(vl::mat4::getTranslation(-2.5-5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_a = new vl::Effect;
@@ -299,7 +299,7 @@ public:
     // (b)
     // transform
     vl::ref<vl::Transform> tr_b = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_b.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_b.get());
     tr_b->setLocalMatrix(vl::mat4::getTranslation(-2.5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_b = new vl::Effect;
@@ -315,7 +315,7 @@ public:
     // (c)
     // transform
     vl::ref<vl::Transform> tr_c = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_c.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_c.get());
     tr_c->setLocalMatrix(vl::mat4::getTranslation(+2.5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_c = new vl::Effect;
@@ -331,7 +331,7 @@ public:
     // (d)
     // transform
     vl::ref<vl::Transform> tr_d = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr_d.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(tr_d.get());
     tr_d->setLocalMatrix(vl::mat4::getTranslation(+2.5+5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_d = new vl::Effect;

@@ -50,10 +50,10 @@ public:
 
     // camera setup
 
-    vl::defRendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-    vl::defRendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
     // reset view matrix to I
-    vl::defRendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
+    rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
 
     // load images used later as textures
     
@@ -77,7 +77,7 @@ public:
     vl::ref<vl::VectorGraphics> vg = new vl::VectorGraphics;
     vl::ref<vl::SceneManagerVectorGraphics> vgscene = new vl::SceneManagerVectorGraphics;
     vgscene->vectorGraphicObjects()->push_back(vg.get());
-    vl::defRendering()->as<vl::Rendering>()->sceneManagers()->push_back(vgscene.get());
+    rendering()->as<vl::Rendering>()->sceneManagers()->push_back(vgscene.get());
 
     // start drawing with our new VectorGraphics object!
 
@@ -244,7 +244,7 @@ public:
 
       // rose create and bind transform
       mRoseTransform = new vl::Transform;
-      vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mRoseTransform.get());
+      rendering()->as<vl::Rendering>()->transform()->addChild(mRoseTransform.get());
       // draw our rotating rose as a set of 4 filled ellipses and bind them to mRoseTransform
       vg->fillEllipse(0,0 , 150,25)->setTransform(mRoseTransform.get());
       vg->pushMatrix();
@@ -300,7 +300,7 @@ public:
         vl::Actor* rota_star = vg->fillQuad(0,0,star->width(),star->height());
         mStarTransform = new vl::Transform;
         rota_star->setTransform( mStarTransform.get() );
-        vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mStarTransform.get() );
+        rendering()->as<vl::Rendering>()->transform()->addChild( mStarTransform.get() );
       vg->popState();
 
       // ###### how to instance multiple times the same object ###### 
@@ -393,9 +393,9 @@ public:
 
   void resizeEvent(int w, int h)
   {
-    vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
-    vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
-    vl::defRendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    rendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
+    rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
   }
 
   virtual void shutdown() {}

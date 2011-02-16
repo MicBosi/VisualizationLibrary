@@ -50,7 +50,7 @@ public:
     // allocate the Transform 
     mCubeTransform = new Transform;
     // bind the Transform with the transform tree of the rendring pipeline 
-    defRendering()->as<Rendering>()->transform()->addChild( mCubeTransform.get() );
+    rendering()->as<Rendering>()->transform()->addChild( mCubeTransform.get() );
 
     float fsize = 2500;
     // create the cube's Geometry and compute its normals to support lighting 
@@ -88,7 +88,7 @@ public:
     sceneManager()->tree()->addActor( ball2.get(), effect2.get(), mCubeTransform.get()  );
     sceneManager()->computeBounds();
 
-    trackball()->adjustView( defRendering()->as<Rendering>(), vec3(0,0,1), vec3(0,1,0), 1.0f );
+    trackball()->adjustView( rendering()->as<Rendering>(), vec3(0,0,1), vec3(0,1,0), 1.0f );
   }
 
   // called every frame 
@@ -101,12 +101,12 @@ public:
 
     // periodically toggle near/far optimization
     if ( ::sin( Time::currentTime() * 3.14159265 / 2 ) > 0 )
-      defRendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(true);
+      rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(true);
     else
     {
-      defRendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
+      rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
       // restore default perspective near/far values
-      defRendering()->as<Rendering>()->camera()->setProjectionAsPerspective(60.0f, 0.5f, 10000.0f);
+      rendering()->as<Rendering>()->camera()->setProjectionAsPerspective(60.0f, 0.5f, 10000.0f);
     }
   }
 
