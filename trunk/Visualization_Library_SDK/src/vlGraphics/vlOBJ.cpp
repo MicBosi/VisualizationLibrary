@@ -416,7 +416,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
         while( line[i] == ' ' || line[i] == '\t' ) ++i;
         int slash1 = 0;
         int slash2 = 0;
-        while( line[i] && line[i] != ' ' && line[i] != '\t' ) 
+        while( i < (int)line.size() && line[i] != ' ' && line[i] != '\t' ) 
         {
           if (line[i] == '/')
           {
@@ -449,7 +449,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
 
       int face_type = 0;
       // divide into tokens
-      for(int i=0; line[i]; ++i)
+      for(size_t i=0; i < line.size(); ++i)
       {
         if (line[i] == ' ')
         {
@@ -642,7 +642,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
         std::vector<ObjMaterial> mats;
         loadObjMaterials(vfile.get(), mats);
         // updates the material library
-        for(unsigned i=0;i<mats.size(); ++i)
+        for(size_t i=0; i < mats.size(); ++i)
           mMaterials[mats[i].objectName()] = new ObjMaterial(mats[i]);
       }
       else
