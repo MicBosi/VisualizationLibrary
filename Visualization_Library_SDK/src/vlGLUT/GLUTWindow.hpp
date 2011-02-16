@@ -67,7 +67,7 @@ namespace vlGLUT
 
     ~GLUTWindow()
     {
-      destroy();
+      destroyWindow();
     }
 
     virtual void setMouseVisible(bool visible);
@@ -82,8 +82,6 @@ namespace vlGLUT
     bool setFullscreen(bool fs);
 
     void makeCurrent();
-
-    void destroy();
 
     void updateOverlay();
 
@@ -108,6 +106,7 @@ namespace vlGLUT
     void getFocus();
 
   protected:
+    void destroyWindow();
     void initKeymap();
 
     vl::EKey mapAsciiKey(unsigned char ascii);
@@ -138,17 +137,17 @@ namespace vlGLUT
 
     static void glut_display_func();
 
+    static void glut_close_func();
+
     static void glut_wmclose_func();
+
+    // used for continuous update
+    static void glut_idle_func();
 
     // static void glut_overlay_display_func();
 
     // does not seem to work properly or usefully
     // static void glut_entry_func(int leave_enter);
-
-    static void glut_close_func();
-
-    // used for continuous update
-    static void glut_idle_func();
 
     // not used
     // static void glut_timer_func(int value);

@@ -63,7 +63,7 @@ namespace vlWX
       const wxString& name = wxT("vlWXGLCanvas"),
       const wxPalette& palette = wxNullPalette );
 
-    ~vlWXGLCanvas(){}
+    ~vlWXGLCanvas();
 
     void OnPaint(wxPaintEvent& ev);
     void OnSize(wxSizeEvent& ev);
