@@ -116,7 +116,7 @@ namespace vlWin32
     void setContextAttribs(const int* attribs);
 
   protected:
-    bool init(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height);
+    bool initWin32GLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height);
 
   protected:
     std::vector<int> mContextAttribs;
