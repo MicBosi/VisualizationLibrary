@@ -77,7 +77,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   int y = 0;
   int width = 512;
   int height= 512;
-  win32_window->initWin32Window(NULL, NULL, "Visualization Library on Win32 - Rotating Cube", format, x, y, width, height );
+  win32_window->initWin32GLWindow(NULL, NULL, "Visualization Library on Win32 - Rotating Cube", format, x, y, width, height );
   /* show the window */
   win32_window->show();
 
