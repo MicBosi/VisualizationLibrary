@@ -31,6 +31,7 @@
 
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlGraphics/FramebufferObject.hpp>
+#include <vlGraphics/OpenGLContext.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Log.hpp>
 
@@ -39,8 +40,37 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // FBORenderTarget
 //-----------------------------------------------------------------------------
+void FBORenderTarget::create()
+{
+  openglContext()->makeCurrent();
+
+  if (!mHandle)
+  {
+    VL_glGenFramebuffers(1, (unsigned int*)&mHandle); VL_CHECK_OGL();
+  }
+  VL_CHECK(mHandle)
+}
+//-----------------------------------------------------------------------------
+void FBORenderTarget::destroy()
+{
+  openglContext()->makeCurrent();
+
+  removeAllAttachments();
+  if (handle())
+  {
+    VL_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    VL_glDeleteFramebuffers(1,&mHandle);
+    VL_CHECK_OGL()
+    mHandle = 0;
+  }
+  setWidth(0);
+  setHeight(0);
+}
+//-----------------------------------------------------------------------------
 void FBORenderTarget::bindFramebuffer(EFrameBufferBind target)
 {
+  openglContext()->makeCurrent();
+
   VL_CHECK_OGL()
 
   if (!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
@@ -85,6 +115,8 @@ void FBORenderTarget::bindFramebuffer(EFrameBufferBind target)
 //! from VL_glCheckFramebufferStatus()
 GLenum FBORenderTarget::checkFramebufferStatus()
 {
+  openglContext()->makeCurrent();
+
   VL_CHECK_OGL()
 
   if (!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
@@ -239,6 +271,8 @@ void FBORenderTarget::removeAttachment(FBOAttachmentAbstract* attachment)
 void FBORenderTarget::removeAttachment(EAttachmentPoint attach_point)
 {
   VL_CHECK(vl::VisualizationLibrary::isGraphicsInitialized())
+
+  openglContext()->makeCurrent();
 
   VL_CHECK(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
   if(!(GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
