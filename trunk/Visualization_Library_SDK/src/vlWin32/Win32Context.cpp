@@ -61,7 +61,6 @@ void Win32Context::update()
 void Win32Context::quitApplication()
 {
   PostQuitMessage(0);
-  eraseAllEventListeners();
 }
 //-----------------------------------------------------------------------------
 void Win32Context::setMouseVisible(bool visible)
