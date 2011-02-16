@@ -131,9 +131,11 @@ namespace vl
     //! Dispatches also destroyEvent() to its event listeners.
     ~OpenGLContext() 
     { 
-      dispatchDestroyEvent();
+      // these two cannobe be called here, they have to be called from 
+      // the class' destructor implementing makeCurrent()
+      // dispatchDestroyEvent();
+      // destroyAllFBORenderTargets();
       eraseAllEventListeners();
-      destroyAllFBORenderTargets();
       mRenderTarget->mOpenGLContext = NULL;
     }
 
@@ -164,40 +166,18 @@ namespace vl
     //! The returned RenderTarget's dimensions will be automatically updated to the OpenGLContext's dimensions.
     const RenderTarget* renderTarget() const { return mRenderTarget.get(); }
 
-    //! Creates a new FBORenderTarget (framebuffer object RenderTarget).
-    //! \note A framebuffer object always belongs to an OpenGL context and in order to render on it the appropriate OpenGL context must be active.
-    ref<FBORenderTarget> createFBORenderTarget(int width, int height)
-    { 
-      mFBORenderTarget.push_back(new FBORenderTarget(this, width, height));
-      return mFBORenderTarget.back();
-    }
-
     //! Equivalent to \p "createFBORenderTarget(0,0);".
     ref<FBORenderTarget> createFBORenderTarget() { return createFBORenderTarget(0,0); }
 
+    //! Creates a new FBORenderTarget (framebuffer object RenderTarget).
+    //! \note A framebuffer object always belongs to an OpenGL context and in order to render on it the appropriate OpenGL context must be active.
+    ref<FBORenderTarget> createFBORenderTarget(int width, int height);
+
     //! Destroyes the specified FBORenderTarget.
-    void destroyFBORenderTarget(FBORenderTarget* fbort)
-    {
-      for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
-        if (mFBORenderTarget[i] == fbort)
-        {
-          mFBORenderTarget[i]->mOpenGLContext = NULL;
-          mFBORenderTarget[i]->destroy();
-          mFBORenderTarget.erase(mFBORenderTarget.begin()+i);
-          break;
-        }
-    }
+    void destroyFBORenderTarget(FBORenderTarget* fbort);
 
     //! Removes all FBORenderTargets belonging to an OpenGLContext.
-    void destroyAllFBORenderTargets()
-    {
-      for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
-      {
-        mFBORenderTarget[i]->mOpenGLContext = NULL;
-        mFBORenderTarget[i]->destroy();
-      }
-      mFBORenderTarget.clear();
-    }
+    void destroyAllFBORenderTargets();
 
     //! Asks to the windowing system that is managing the OpenGLContext to quit the application.
     virtual void quitApplication() {}
@@ -293,6 +273,7 @@ namespace vl
     //! Call this function at the beginning if you reimplement it
     void dispatchResizeEvent(int w, int h) 
     {
+      makeCurrent();
       mRenderTarget->setWidth(w);
       mRenderTarget->setHeight(h);
 
@@ -305,6 +286,7 @@ namespace vl
     //! Dispatches the UIEventListener::mouseMoveEvent() notification to the subscribed UIEventListener objects.
     void dispatchMouseMoveEvent(int x, int y)
     {
+      makeCurrent();
       if (mIgnoreNextMouseMoveEvent)
         mIgnoreNextMouseMoveEvent = false;
       else
@@ -319,6 +301,7 @@ namespace vl
     //! Dispatches the UIEventListener::mouseUpEvent() notification to the subscribed UIEventListener objects.
     void dispatchMouseUpEvent(EMouseButton button, int x, int y) 
     {
+      makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
@@ -328,6 +311,7 @@ namespace vl
     //! Dispatches the UIEventListener::mouseDownEvent() notification to the subscribed UIEventListener objects.
     void dispatchMouseDownEvent(EMouseButton button, int x, int y) 
     {
+      makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
@@ -337,6 +321,7 @@ namespace vl
     //! Dispatches the UIEventListener::mouseWheelEvent() notification to the subscribed UIEventListener objects.
     void dispatchMouseWheelEvent(int n) 
     {
+      makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
@@ -346,6 +331,7 @@ namespace vl
     //! Dispatches the UIEventListener::keyPressEvent() notification to the subscribed UIEventListener objects.
     void dispatchKeyPressEvent(unsigned short unicode_ch, EKey key) 
     {
+      makeCurrent();
       keyPress(key);
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
@@ -356,6 +342,7 @@ namespace vl
     //! Dispatches the UIEventListener::keyReleaseEvent() notification to the subscribed UIEventListener objects.
     void dispatchKeyReleaseEvent(unsigned short unicode_ch, EKey key) 
     {
+      makeCurrent();
       keyRelease(key);
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
@@ -366,6 +353,7 @@ namespace vl
     //! Dispatches the UIEventListener::destroyEvent() notification to the subscribed UIEventListener objects.
     void dispatchDestroyEvent()
     {
+      makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
@@ -375,6 +363,7 @@ namespace vl
     //! Dispatches the UIEventListener::runEvent() notification to the subscribed UIEventListener objects.
     void dispatchRunEvent()
     {
+      makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
@@ -384,6 +373,7 @@ namespace vl
     //! Dispatches the UIEventListener::visibilityEvent() notification to the subscribed UIEventListener objects.
     void dispatchVisibilityEvent(bool visible) 
     {
+      makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
@@ -397,6 +387,7 @@ namespace vl
     // - only the enabled event listeners receive this message
     void dispatchInitEvent()
     {
+      makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
@@ -406,6 +397,7 @@ namespace vl
     //! Dispatches the UIEventListener::fileDroppedEvent() notification to the subscribed UIEventListener objects.
     void dispatchFileDroppedEvent(const std::vector<String>& files)
     {
+      makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
