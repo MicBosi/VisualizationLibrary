@@ -337,17 +337,13 @@ void GLUTWindow::makeCurrent()
     glutSetWindow( handle() );
 }
 //-----------------------------------------------------------------------------
-void GLUTWindow::destroy()
+void GLUTWindow::destroyWindow()
 {
-  /*dispatchDestroyEvent();*/
   // according to GLUT specs pag 44 we can do this
   if ( handle() )
   {
-    // dispatchDestroyEvent() called by this
+    // should trigger glut_close_func
     glutDestroyWindow( handle() );
-    mHandle = 0;
-    mInited = false;
-    mKeymap.clear();
   }
 }
 //-----------------------------------------------------------------------------
@@ -750,14 +746,17 @@ void GLUTWindow::glut_display_func()
 void GLUTWindow::glut_close_func()
 {
   int cur_win = glutGetWindow();
-  GLUTWindow* win = mWinMap[cur_win];
-  VL_CHECK(win);
-  // win->updateModifiers(); // cannot be called from here;
-
-  /*win->dispatchDestroyEvent();*/
-
-  win->mHandle = 0;
-  mWinMap.erase( cur_win );
+  if (mWinMap.find(cur_win) != mWinMap.end())
+  {
+    GLUTWindow* win = mWinMap[cur_win];
+    VL_CHECK(win);
+    // win->updateModifiers() cannot be called from here
+    win->dispatchDestroyEvent();
+    win->mHandle = 0;
+    win->mInited = false;
+    win->mKeymap.clear();
+    mWinMap.erase( cur_win );
+  }
 }
 //-----------------------------------------------------------------------------
 void GLUTWindow::glut_wmclose_func()
