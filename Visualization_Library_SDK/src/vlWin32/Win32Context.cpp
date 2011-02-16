@@ -36,6 +36,12 @@ using namespace vl;
 using namespace vlWin32;
 
 //-----------------------------------------------------------------------------
+Win32Context::~Win32Context()
+{
+  dispatchDestroyEvent();
+  destroyAllFBORenderTargets();
+}
+//-----------------------------------------------------------------------------
 void Win32Context::shareOpenGLResources(HGLRC hGLRC)
 {
   if (hwnd() && mHDC && mHGLRC)
@@ -44,7 +50,7 @@ void Win32Context::shareOpenGLResources(HGLRC hGLRC)
 //-----------------------------------------------------------------------------
 void Win32Context::makeCurrent()
 {
-  if (hwnd() && mHDC && mHGLRC)
+  if (mHDC && mHGLRC)
     wglMakeCurrent(mHDC, mHGLRC);
 }
 //-----------------------------------------------------------------------------

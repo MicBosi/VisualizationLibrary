@@ -49,6 +49,8 @@ namespace vlWin32
 
     Win32Context(int w, int h): OpenGLContext(w,h), mHDC(NULL), mHGLRC(NULL) {}
 
+    ~Win32Context();
+  
     virtual HWND hwnd() const = 0;
 
     HDC   hdc()   const { return mHDC;   }
