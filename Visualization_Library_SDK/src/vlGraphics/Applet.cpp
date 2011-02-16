@@ -54,9 +54,9 @@ Applet::Applet()
 void Applet::initialize()
 {
   // if the user didn't provide one use the one installed by default
-  ref<Rendering> rendering = new Rendering;
-  mRendering = rendering;
-  rendering->setShaderAnimationEnabled(true);
+  ref<Rendering> rend = rendering()->as<Rendering>() ? rendering()->as<Rendering>() : new Rendering;
+  setRendering(rend.get());
+  rend->setShaderAnimationEnabled(true);
 
   // attached later: viewport
   // attached later: opengl context
@@ -64,14 +64,14 @@ void Applet::initialize()
 
   // installs a SceneManagerActorTree as the default scene manager
   mSceneManagerActorTree = new SceneManagerActorTree;
-  rendering->sceneManagers()->push_back(sceneManager());
+  rend->sceneManagers()->push_back(sceneManager());
 
   mFly       = new GhostCameraManipulator;
   mTrackball = new TrackballManipulator;
   mFly->setEnabled(false);
   mTrackball->setEnabled(true);
 
-  bindManipulators( rendering->camera(), rendering->transform() );
+  bindManipulators( rend->camera(), rend->transform() );
 }
 //-----------------------------------------------------------------------------
 void Applet::bindManipulators(Camera* camera, Transform* transform)
