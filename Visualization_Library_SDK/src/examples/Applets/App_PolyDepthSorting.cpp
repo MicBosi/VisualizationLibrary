@@ -46,8 +46,8 @@ public:
     /* bind Transform */
     mTransform_Left  = new vl::Transform;
     mTransform_Right = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Left.get() );
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Right.get() );
+    rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Left.get() );
+    rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Right.get() );
 
     /* define the Effect to be used */
     vl::ref<vl::Effect> effect = new vl::Effect;

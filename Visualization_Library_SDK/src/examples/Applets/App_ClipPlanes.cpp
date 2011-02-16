@@ -49,7 +49,7 @@ public:
 
     // install transform
     mClipTr = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mClipTr.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(mClipTr.get());
 
     // to be used later
     vl::ref<vl::Light> light = new vl::Light(0);

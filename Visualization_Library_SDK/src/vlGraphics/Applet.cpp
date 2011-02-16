@@ -54,9 +54,9 @@ Applet::Applet()
 void Applet::initialize()
 {
   // if the user didn't provide one use the one installed by default
-  if (!mRendering)
-    mRendering = defRendering()->as<Rendering>();
-  mRendering->setShaderAnimationEnabled(true);
+  ref<Rendering> rendering = new Rendering;
+  mRendering = rendering;
+  rendering->setShaderAnimationEnabled(true);
 
   // attached later: viewport
   // attached later: opengl context
@@ -64,23 +64,23 @@ void Applet::initialize()
 
   // installs a SceneManagerActorTree as the default scene manager
   mSceneManagerActorTree = new SceneManagerActorTree;
-  mRendering->sceneManagers()->push_back(sceneManager());
+  rendering->sceneManagers()->push_back(sceneManager());
 
   mFly       = new GhostCameraManipulator;
   mTrackball = new TrackballManipulator;
   mFly->setEnabled(false);
   mTrackball->setEnabled(true);
 
-  bindManipulators( mRendering.get() );
+  bindManipulators( rendering->camera(), rendering->transform() );
 }
 //-----------------------------------------------------------------------------
-void Applet::bindManipulators(Rendering* rendering)
+void Applet::bindManipulators(Camera* camera, Transform* transform)
 {
-  mFly->setCamera( rendering->camera() );
+  mFly->setCamera( camera );
   // mFly->prepareToReconnect();
 
-  mTrackball->setCamera( rendering->camera() );
-  mTrackball->setTransform( rendering->transform() );
+  mTrackball->setCamera( camera );
+  mTrackball->setTransform( transform );
   mTrackball->setPivot( vec3(0,0,0) );
 }
 //-----------------------------------------------------------------------------
@@ -103,7 +103,6 @@ void Applet::keyReleaseEvent(unsigned short, EKey key)
 {
   if (key == Key_Escape)
   {
-    openglContext()->destroyAllFBORenderTargets();
     openglContext()->quitApplication();
   }
   else
@@ -154,28 +153,32 @@ void Applet::runEvent()
 
   // set frame time for all the rendering
   Real now_time = Time::currentTime();
-  defRendering()->setFrameClock( now_time );
+  rendering()->setFrameClock( now_time );
 
   // execute rendering
-  defRendering()->render();
+  rendering()->render();
 
   // show rendering
   if( openglContext()->hasDoubleBuffer() )
     openglContext()->swapBuffers();
 
   VL_CHECK_OGL();
+
+  // useful for debugging
+  // wglMakeCurrent(NULL,NULL);
 }
 //-----------------------------------------------------------------------------
 void Applet::resizeEvent(int w, int h)
 {
   // if a simple Rendering is attached as the rendering root than update viewport and projection matrix.
-  if (mRendering)
+  Rendering* rend = dynamic_cast<Rendering*>(rendering());
+  if (rend)
   {
-    VL_CHECK( w == mRendering->renderer()->renderTarget()->width() );
-    VL_CHECK( h == mRendering->renderer()->renderTarget()->height() );
-    mRendering->camera()->viewport()->setWidth( w );
-    mRendering->camera()->viewport()->setHeight( h );
-    mRendering->camera()->setProjectionAsPerspective();
+    VL_CHECK( w == rend->renderer()->renderTarget()->width() );
+    VL_CHECK( h == rend->renderer()->renderTarget()->height() );
+    rend->camera()->viewport()->setWidth( w );
+    rend->camera()->viewport()->setHeight( h );
+    rend->camera()->setProjectionAsPerspective();
   }
 }
 //-----------------------------------------------------------------------------

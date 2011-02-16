@@ -62,14 +62,14 @@ public:
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
 
     /* create our primitives */
-    mGeometries.push_back( vl::makeBox( vec3( 0, 0, 0 ), objdim*0.8f, objdim*0.8, objdim*0.8 )  );
+    mGeometries.push_back( vl::makeBox( vec3( 0, 0, 0 ), objdim*0.8f, objdim*0.8f, objdim*0.8f )  );
     mGeometries.push_back( vl::makeCone( vec3( 0, 0, 0 ), objdim, objdim, 20 )  );
     mGeometries.push_back( vl::makePyramid( vec3( 0, 0, 0 ), objdim, objdim )  );
     mGeometries.push_back( vl::makeIcosahedron( vec3( 0, 0, 0 ), objdim )  );
     mGeometries.push_back( vl::makeIcosphere( vec3( 0, 0, 0 ), objdim )  );
     mGeometries.push_back( vl::makeUVSphere( vec3( 0, 0, 0 ), objdim )  );
     mGeometries.push_back( vl::makeCylinder( vec3( 0, 0, 0 ), objdim, objdim, 20 )  );
-    mGeometries.push_back( vl::makeTorus( vec3( 0, 0, 0 ), objdim*1.2, 0.2f, 20, 40  )  );
+    mGeometries.push_back( vl::makeTorus( vec3( 0, 0, 0 ), objdim*1.2f, 0.2f, 20, 40  )  );
     mGeometries.push_back( vl::makeCapsule( objdim/2.0f, objdim/2.0f, 20, CC_RoundedCap, CC_RoundedCap, vl::lightgreen, vl::lightgreen )  );
     mGeometries.push_back( vl::makeTeapot( vec3( 0, 0, 0 ), objdim*1.5f )  );
     mGeometries.push_back( vl::makeGrid( vec3( 0, 0, 0 ), objdim, objdim, 10, 10 )  );
@@ -79,8 +79,9 @@ public:
     {
       /* arrange objects in a circle */
       ref<Transform> tr = new Transform;
-      mRendering->transform()->addChild( tr.get() );
-      mat4 m = mat4::getRotation( 360 * i / mGeometries.size(), 0, 1, 0) * 
+      rendering()->as<Rendering>()->transform()->addChild( tr.get() );
+
+      mat4 m = mat4::getRotation( 360 * i / (Real)mGeometries.size(), 0, 1, 0) * 
                mat4::getTranslation(0,0,-scene_radius);
       tr->setLocalMatrix( m );
 
@@ -144,7 +145,7 @@ public:
       }
       t = smoothstep(0, 1, t);
       mat4 m = mat4::getRotation( mRot0*(1.0f-t) + mRot1*t, 0, 1, 0 );
-      mRendering->transform()->setLocalMatrix(m);
+      rendering()->as<Rendering>()->transform()->setLocalMatrix(m);
     }
   }
 

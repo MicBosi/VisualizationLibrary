@@ -47,7 +47,7 @@ public:
     // transform used for the moving cube and star
 
     vl::ref< vl::Transform > transf = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(transf.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(transf.get());
 
     // effect for 2d rendering
 

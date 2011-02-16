@@ -123,7 +123,7 @@ public:
     vl::ref<vl::Font> font;
     if (mTestNumber == 0)
     {
-      vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vl::white );
+      rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vl::white );
 
       font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 30);
 
@@ -142,7 +142,7 @@ public:
       text->setOutlineColor(vl::black);
       text->translate(0,-20,0);
 
-      float h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      float h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10);
       text = new vl::Text;
@@ -157,7 +157,7 @@ public:
       text->setShadowVector( vl::fvec2(5,5) );
       text->translate(0,h-10,0);
 
-      h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       font = vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 8);
       text = new vl::Text;
@@ -174,7 +174,7 @@ public:
       text->setBorderEnabled(true);
       text->translate(0,h-10,0);
 
-      h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -190,7 +190,7 @@ public:
       text->setBorderColor( vl::red );
       text->translate(0,h-20,0);
 
-      h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -206,7 +206,7 @@ public:
       text->setBorderColor( vl::red );
       text->translate(0,h-20,0);
 
-      h = (float)text->boundingRectTransformed( vl::defRendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -559,7 +559,7 @@ public:
       };
 
       vl::ref<vl::Transform> belt_tr = new vl::Transform;
-      vl::defRendering()->as<vl::Rendering>()->transform()->addChild( belt_tr.get() );
+      rendering()->as<vl::Rendering>()->transform()->addChild( belt_tr.get() );
 
       for(int i=0; i<9; i++)
       {
@@ -567,7 +567,7 @@ public:
         sceneManager()->tree()->addActor( belt1.get(), belt_effect.get(), belt_tr.get() );
 
         planet_tr[i] = new vl::Transform;
-        vl::defRendering()->as<vl::Rendering>()->transform()->addChild( planet_tr[i].get() );
+        rendering()->as<vl::Rendering>()->transform()->addChild( planet_tr[i].get() );
 
         if (i == 2)
           /* Earth */

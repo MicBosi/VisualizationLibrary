@@ -48,11 +48,11 @@ public:
     BaseDemo::initEvent();
 
     // save to be used later
-    ref<Renderer> renderer = defRendering()->as<Rendering>()->renderer();
-    ref<RenderTarget> render_target = defRendering()->as<Rendering>()->renderer()->renderTarget();
+    ref<Renderer> renderer = rendering()->as<Rendering>()->renderer();
+    ref<RenderTarget> render_target = rendering()->as<Rendering>()->renderer()->renderTarget();
     // install new rendering tree
     mRenderingTree = new RenderingTree;
-    setDefRendering(mRenderingTree.get());
+    setRendering(mRenderingTree.get());
     mRendering0 = new Rendering;
     mRendering1 = new Rendering;
     mRendering2 = new Rendering;
@@ -190,7 +190,8 @@ public:
     mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->viewport()->set(hw,0,w-hw,hh);
     mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
-    bindManipulators( mRenderingTree->subRenderings()->at(0)->as<Rendering>() );
+    Rendering* rend = mRenderingTree->subRenderings()->at(0)->as<Rendering>();
+    bindManipulators( rend->camera(), rend->transform() );
   }
 
   void mouseDownEvent(EMouseButton, int x, int y)
@@ -200,7 +201,8 @@ public:
       int height = mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->renderTarget()->height();
       if ( mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->viewport()->isPointInside(x,y,height) )
       {
-        bindManipulators( mRenderingTree->subRenderings()->at(i)->as<Rendering>() );
+        Rendering* rend = mRenderingTree->subRenderings()->at(i)->as<Rendering>();
+          bindManipulators( rend->camera(), rend->transform() );
          trackball()->setTransform( _tr2.get() );
         break;
       }

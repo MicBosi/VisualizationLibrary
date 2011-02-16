@@ -161,7 +161,7 @@ public:
     vl::mat4 obj_mat = mTransform->worldMatrix().getInverse();
 
     // project camera position from world to object space
-    vl::vec3 camera_pos = vl::defRendering()->as<vl::Rendering>()->camera()->inverseViewMatrix().getT();
+    vl::vec3 camera_pos = rendering()->as<vl::Rendering>()->camera()->inverseViewMatrix().getT();
     vl::vec3 camera_pos_obj_space = obj_mat * camera_pos;
     mLightObjSpacePosition->setUniform( (vl::fvec3)camera_pos_obj_space );
   }

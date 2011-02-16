@@ -163,7 +163,7 @@ public:
       updateMolecule();
 
     /* adjust the camera position to nicely see the scene, it also position the rotation pivot to the center of the molecule */
-    trackball()->adjustView( vl::defRendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
+    trackball()->adjustView( rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
 
     for(size_t i=0; i<mMolecules.size(); ++i)
     {

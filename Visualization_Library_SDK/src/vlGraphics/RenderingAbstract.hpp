@@ -92,13 +92,6 @@ namespace vl
     Real mFrameClock;
     unsigned int mEnableMask;
   };
-
-  //! Returns the default rendering used by Visualization Library. 
-  //! By default it is set to point to a vl::Rendering object.
-  RenderingAbstract* defRendering();
-
-  //! Sets the defaul rendering used by Visualization Library
-  void setDefRendering(RenderingAbstract*);
 }
 
 #endif
