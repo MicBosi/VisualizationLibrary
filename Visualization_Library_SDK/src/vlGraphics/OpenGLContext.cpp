@@ -78,6 +78,39 @@ mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false), mCurVAS(NU
   memset( mEnableTable,        0xFF, sizeof(mEnableTable) );
 }
 //-----------------------------------------------------------------------------
+ref<FBORenderTarget> OpenGLContext::createFBORenderTarget(int width, int height)
+{ 
+  makeCurrent();
+  mFBORenderTarget.push_back(new FBORenderTarget(this, width, height));
+  return mFBORenderTarget.back();
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::destroyFBORenderTarget(FBORenderTarget* fbort)
+{ 
+  makeCurrent();
+  for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
+  {
+    if (mFBORenderTarget[i] == fbort)
+    {
+      mFBORenderTarget[i]->mOpenGLContext = NULL;
+      mFBORenderTarget[i]->destroy();
+      mFBORenderTarget.erase(mFBORenderTarget.begin()+i);
+      break;
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+void OpenGLContext::destroyAllFBORenderTargets()
+{
+  makeCurrent();
+  for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
+  {
+    mFBORenderTarget[i]->mOpenGLContext = NULL;
+    mFBORenderTarget[i]->destroy();
+  }
+  mFBORenderTarget.clear();
+}
+//-----------------------------------------------------------------------------
 //! \note An \p UIEventListener can be associated only to one OpenGLContext at a time.
 void OpenGLContext::addEventListener(UIEventListener* el)
 {
