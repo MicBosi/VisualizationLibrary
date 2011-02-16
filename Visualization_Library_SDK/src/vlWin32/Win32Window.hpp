@@ -60,10 +60,10 @@ namespace vlWin32
 
     //! Initializes a new Win32 window with a new OpenGL rendering context.
     //! After the initialization to show the window use the show() method.
-    bool initWin32Window(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
+    bool initWin32GLWindow(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
 
-    //! Destroyes the window and the OpenGL rendering context
-    void destroyWindow();
+    //! Destroys the window and the OpenGL rendering context
+    void destroyWin32GLWindow();
 
     HWND  hwnd()  const { return mHWND;  }
 

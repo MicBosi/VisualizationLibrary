@@ -69,7 +69,7 @@ public:
     win32_window->setContextAttribs(attribs); */
 
     /* Initialize the OpenGL context and window properties */
-    win32_window->initWin32Window(NULL, NULL, title, format, x, y, width, height );
+    win32_window->initWin32GLWindow(NULL, NULL, title, format, x, y, width, height );
 
     /* show the window */
     win32_window->show();
