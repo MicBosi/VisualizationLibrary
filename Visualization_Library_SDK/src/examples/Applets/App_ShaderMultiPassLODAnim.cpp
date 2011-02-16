@@ -155,7 +155,7 @@ public:
     for(int i=0; i<24; ++i)
     {
       vl::ref<vl::Transform> tr = new vl::Transform;
-      vl::defRendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
+      rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
       vl::mat4 mat;
       mat.translate(30,0,0);
       mat.rotate( 360.0f / 20.0f * i, 0, 1, 0);
@@ -174,7 +174,7 @@ public:
     vl::vec3 eye( 130*t+5, t*20+5, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 15.0f, 0, 1, 0 ) * eye;
     vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };
 

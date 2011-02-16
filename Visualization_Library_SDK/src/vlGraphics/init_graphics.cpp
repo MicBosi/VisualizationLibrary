@@ -62,21 +62,6 @@ namespace
 {
   bool gInitializedGraphics = false;
 };
-//------------------------------------------------------------------------------
-// Default Rendering
-//------------------------------------------------------------------------------
-namespace
-{
-  ref<RenderingAbstract> gDefaultRendering = NULL;
-}
-RenderingAbstract* vl::defRendering()
-{
-  return gDefaultRendering.get();
-}
-void vl::setDefRendering(RenderingAbstract* ra)
-{
-  gDefaultRendering = ra;
-}
 //-----------------------------------------------------------------------------
 // Default FontManager
 //-----------------------------------------------------------------------------
@@ -104,9 +89,6 @@ void VisualizationLibrary::initGraphics()
   }
 
   // --- Init Graphics ---
-
-  // Install default Rendering
-  gDefaultRendering = new Rendering;
 
   // Install default FontManager
   gDefaultFontManager = new FontManager;
@@ -144,9 +126,6 @@ void VisualizationLibrary::shutdownGraphics()
     gInitializedGraphics = false;
 
     // --- Dispose Graphics ---
-
-    // Dispose default Rendering
-    gDefaultRendering = NULL;
 
     // Dispose default FontManager
     gDefaultFontManager->releaseAllFonts();

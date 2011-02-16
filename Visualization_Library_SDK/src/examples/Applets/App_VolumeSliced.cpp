@@ -97,9 +97,9 @@ public:
       mLight0Tr = new Transform;
       mLight1Tr = new Transform;
       mLight2Tr = new Transform;
-      defRendering()->as<Rendering>()->transform()->addChild( mLight0Tr.get() );
-      defRendering()->as<Rendering>()->transform()->addChild( mLight1Tr.get() );
-      defRendering()->as<Rendering>()->transform()->addChild( mLight2Tr.get() );
+      rendering()->as<Rendering>()->transform()->addChild( mLight0Tr.get() );
+      rendering()->as<Rendering>()->transform()->addChild( mLight1Tr.get() );
+      rendering()->as<Rendering>()->transform()->addChild( mLight2Tr.get() );
       mLight0->followTransform( mLight0Tr.get() );
       mLight1->followTransform( mLight1Tr.get() );
       mLight2->followTransform( mLight2Tr.get() );

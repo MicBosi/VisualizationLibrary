@@ -47,7 +47,7 @@ public:
 
     // retrieve our vl::Rendering object
 
-    mRendering = vl::defRendering()->as<vl::Rendering>();
+    mRendering = rendering()->as<vl::Rendering>();
 
     // setup transforms
 

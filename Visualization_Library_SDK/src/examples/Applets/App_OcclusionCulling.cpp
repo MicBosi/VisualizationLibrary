@@ -50,12 +50,12 @@ public:
     // #######################################################################
 
     // wraps the regular renderer inside the occlusion renderer
-    vl::Renderer* regular_renderer = vl::defRendering()->as<vl::Rendering>()->renderer();
+    vl::Renderer* regular_renderer = rendering()->as<vl::Rendering>()->renderer();
     // creates our occlusion renderer
     mOcclusionRenderer = new vl::OcclusionCullRenderer;
     mOcclusionRenderer->setWrappedRenderer( regular_renderer );
     // installs the occlusion renderer in place of the regular one
-    vl::defRendering()->as<vl::Rendering>()->setRenderer( mOcclusionRenderer.get() );
+    rendering()->as<vl::Rendering>()->setRenderer( mOcclusionRenderer.get() );
 
     // note: to disable occlusion culling just restore the 'regular_renderer' as we do below in 'keyPressEvent()'
 
@@ -167,11 +167,11 @@ public:
       mOcclusionCullingOn = !mOcclusionCullingOn;
       if (mOcclusionCullingOn)
       {
-        vl::defRendering()->as<vl::Rendering>()->setRenderer( mOcclusionRenderer.get() );
+        rendering()->as<vl::Rendering>()->setRenderer( mOcclusionRenderer.get() );
       }
       else
       {
-        vl::defRendering()->as<vl::Rendering>()->setRenderer( mOcclusionRenderer->wrappedRenderer() );
+        rendering()->as<vl::Rendering>()->setRenderer( mOcclusionRenderer->wrappedRenderer() );
         mText->setText("Occlusion Culling Off");
       }
     }

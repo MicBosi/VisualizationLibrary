@@ -90,7 +90,7 @@ public:
     // transform
 
     mTransform = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild( mTransform.get() );
+    rendering()->as<vl::Rendering>()->transform()->addChild( mTransform.get() );
 
     // text setup
 
@@ -251,7 +251,7 @@ public:
   // generates the 2 transparent volumes or a single volume
   vl::Actor* showVolumes(bool test1)
   {
-    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,20) );
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,20) );
 
     vl::ref<vl::Geometry > geom = new vl::Geometry;
     geom->setVertexArray(mMarchingCubes.mVertsArray.get());
@@ -380,7 +380,7 @@ public:
   // Setups the good old metaballs demo!
   vl::Actor* setupMetaballs()
   {
-    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,25) );
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,25) );
 
     sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor( mTextActor.get() );
@@ -418,7 +418,7 @@ public:
   // Setups the metaballs fountain demo!
   vl::Actor* setupFountain()
   {
-    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,25) );
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,25) );
 
     sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor( mTextActor.get() );
@@ -482,7 +482,7 @@ public:
     // reset actors and camera
     sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor( mTextActor.get() );
-    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getLookAt( vl::vec3(5,10,20), vl::vec3(0,0,0), vl::vec3(0,1,0)) );
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getLookAt( vl::vec3(5,10,20), vl::vec3(0,0,0), vl::vec3(0,1,0)) );
 
     float range = 5.0f;
     vl::fvec3 min_corner(-range,-range,-range);
@@ -498,7 +498,7 @@ public:
   void loadVolume(vl::ref<vl::Image> vol_img)
   {
     // reset camera
-    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,20) );
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4::getTranslation(0,0,20) );
 
     // reset actors
     sceneManager()->tree()->actors()->clear();

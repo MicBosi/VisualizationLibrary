@@ -38,6 +38,8 @@
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/RenderingTree.hpp>
 
+using namespace vl;
+
 class App_EffectOverride: public BaseDemo
 {
   void initEvent()
@@ -45,85 +47,85 @@ class App_EffectOverride: public BaseDemo
     BaseDemo::initEvent();
 
     // initialize solid & wire rendering with the default camera, transform root and scene manager.
-    mSolidRendering = new vl::Rendering;
-    mWireRendering  = new vl::Rendering;
-    *mSolidRendering = *(vl::defRendering()->as<vl::Rendering>());
-    *mWireRendering  = *(vl::defRendering()->as<vl::Rendering>());
+    mSolidRendering = new Rendering;
+    mWireRendering  = new Rendering;
+    *mSolidRendering = *(rendering()->as<Rendering>());
+    *mWireRendering  = *(rendering()->as<Rendering>());
 
     // install the render tree that calls our two solid and wire renderings
-    vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
-    vl::setDefRendering(render_tree.get());
+    ref<RenderingTree> render_tree = new RenderingTree;
+    setRendering(render_tree.get());
     render_tree->subRenderings()->push_back(mSolidRendering.get());
     render_tree->subRenderings()->push_back(mWireRendering.get());
 
     // this is shared by both solid and wire renderings
-    vl::ref<vl::SceneManagerActorTree> scene_manager = mSolidRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>();
+    ref<SceneManagerActorTree> scene_manager = mSolidRendering->sceneManagers()->at(0)->as<SceneManagerActorTree>();
 
     // initialize wire rendering's Renderer
 
     // create its own copy of the renderer
-    vl::ref<vl::Renderer> wire_renderer = new vl::Renderer;
+    ref<Renderer> wire_renderer = new Renderer;
     // don't clear color buffer otherwise we loose the results of the solid renderer
-    wire_renderer->setClearFlags(vl::CF_CLEAR_DEPTH);
+    wire_renderer->setClearFlags(CF_CLEAR_DEPTH);
     // target the same OpenGL window
     wire_renderer->setRenderTarget( mSolidRendering->renderer()->renderTarget() );
     // install the renderer
     mWireRendering->setRenderer( wire_renderer.get() );
 
-    mCubeTransform1 = new vl::Transform;
-    mCubeTransform2 = new vl::Transform;
-    mCubeTransform3 = new vl::Transform;
+    mCubeTransform1 = new Transform;
+    mCubeTransform2 = new Transform;
+    mCubeTransform3 = new Transform;
     mSolidRendering->transform()->addChild( mCubeTransform1.get() );
     mSolidRendering->transform()->addChild( mCubeTransform2.get() );
     mSolidRendering->transform()->addChild( mCubeTransform3.get() );
 
-    const vl::Real fsize = 8;
-    vl::ref<vl::Geometry> ball = vl::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
+    const Real fsize = 8;
+    ref<Geometry> ball = makeUVSphere( vec3(0,0,0), fsize, 8, 8 );
     ball->computeNormals();
 
     // setup solid effect
 
-    vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->enable(vl::EN_BLEND);
-    effect->shader()->enable(vl::EN_DEPTH_TEST);
-    effect->shader()->setRenderState( new vl::Light(0) );
-    effect->shader()->enable(vl::EN_LIGHTING);
-    effect->shader()->enable(vl::EN_CULL_FACE);
-    effect->shader()->gocMaterial()->setDiffuse( vl::gold );
+    ref<Effect> effect = new Effect;
+    effect->shader()->enable(EN_BLEND);
+    effect->shader()->enable(EN_DEPTH_TEST);
+    effect->shader()->setRenderState( new Light(0) );
+    effect->shader()->enable(EN_LIGHTING);
+    effect->shader()->enable(EN_CULL_FACE);
+    effect->shader()->gocMaterial()->setDiffuse( gold );
     effect->shader()->gocMaterial()->setTransparency( 0.5f );
 
     // populate the scene
 
-    vl::Actor* ball1 = scene_manager->tree()->addActor( ball.get(), effect.get(), mCubeTransform1.get() );
-    vl::Actor* ball2 = scene_manager->tree()->addActor( ball.get(), effect.get(), mCubeTransform2.get() );
-    vl::Actor* ball3 = scene_manager->tree()->addActor( ball.get(), effect.get(), mCubeTransform3.get() );
+    Actor* ball1 = scene_manager->tree()->addActor( ball.get(), effect.get(), mCubeTransform1.get() );
+    Actor* ball2 = scene_manager->tree()->addActor( ball.get(), effect.get(), mCubeTransform2.get() );
+    Actor* ball3 = scene_manager->tree()->addActor( ball.get(), effect.get(), mCubeTransform3.get() );
 
     // setup wire effects
 
-    vl::ref<vl::Effect> fx1 = new vl::Effect;
-    fx1->shader()->enable(vl::EN_LIGHTING);
-    fx1->shader()->gocMaterial()->setFlatColor(vl::red);
-    fx1->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
+    ref<Effect> fx1 = new Effect;
+    fx1->shader()->enable(EN_LIGHTING);
+    fx1->shader()->gocMaterial()->setFlatColor(red);
+    fx1->shader()->gocPolygonMode()->set(PM_LINE,PM_LINE);
     fx1->shader()->gocLineWidth()->set(2.0f);
-    fx1->shader()->enable(vl::EN_CULL_FACE);
+    fx1->shader()->enable(EN_CULL_FACE);
 
-    vl::ref<vl::Effect> fx2 = new vl::Effect;
-    fx2->shader()->enable(vl::EN_LIGHTING);
-    fx2->shader()->gocMaterial()->setFlatColor(vl::green);
-    fx2->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
+    ref<Effect> fx2 = new Effect;
+    fx2->shader()->enable(EN_LIGHTING);
+    fx2->shader()->gocMaterial()->setFlatColor(green);
+    fx2->shader()->gocPolygonMode()->set(PM_LINE,PM_LINE);
     fx2->shader()->gocLineWidth()->set(2.0f);
-    fx2->shader()->enable(vl::EN_CULL_FACE);
+    fx2->shader()->enable(EN_CULL_FACE);
 
-    vl::ref<vl::Effect> fx3 = new vl::Effect;
-    fx3->shader()->enable(vl::EN_LIGHTING);
-    fx3->shader()->gocMaterial()->setFlatColor(vl::blue);
-    fx3->shader()->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
+    ref<Effect> fx3 = new Effect;
+    fx3->shader()->enable(EN_LIGHTING);
+    fx3->shader()->gocMaterial()->setFlatColor(blue);
+    fx3->shader()->gocPolygonMode()->set(PM_LINE,PM_LINE);
     fx3->shader()->gocLineWidth()->set(2.0f);
-    fx3->shader()->enable(vl::EN_CULL_FACE);
+    fx3->shader()->enable(EN_CULL_FACE);
 
     // setup the effect override masks
-    // note that we can override the Effect at the vl::Rendering level but
-    // we can also override the single Shader at the vl::Renderer level, see App_ShaderOverride.hpp
+    // note that we can override the Effect at the Rendering level but
+    // we can also override the single Shader at the Renderer level, see App_ShaderOverride.hpp
 
     mWireRendering->effectOverrideMask()[0x01] = fx1;
     mWireRendering->effectOverrideMask()[0x02] = fx2;
@@ -136,8 +138,8 @@ class App_EffectOverride: public BaseDemo
 
   virtual void run()
   {
-    vl::Real degrees = vl::Time::currentTime() * 45.0f;
-    vl::mat4 matrix;
+    Real degrees = Time::currentTime() * 45.0f;
+    mat4 matrix;
     
     matrix.rotate( degrees, 0,1,0 );
     matrix.translate(-10,0,0);
@@ -157,18 +159,18 @@ class App_EffectOverride: public BaseDemo
   void resizeEvent(int w, int h)
   {
     // note that the camera is shared by both the solid and wire rendering.
-    vl::Camera* camera = mSolidRendering->camera();
+    Camera* camera = mSolidRendering->camera();
     camera->viewport()->setWidth ( w );
     camera->viewport()->setHeight( h );
     camera->setProjectionAsPerspective();
   }
 
 protected:
-  vl::ref<vl::Rendering> mSolidRendering;
-  vl::ref<vl::Rendering> mWireRendering;
-  vl::ref<vl::Transform> mCubeTransform1;
-  vl::ref<vl::Transform> mCubeTransform2;
-  vl::ref<vl::Transform> mCubeTransform3;
+  ref<Rendering> mSolidRendering;
+  ref<Rendering> mWireRendering;
+  ref<Transform> mCubeTransform1;
+  ref<Transform> mCubeTransform2;
+  ref<Transform> mCubeTransform3;
 };
 
 // Have fun!

@@ -46,9 +46,9 @@ public:
     BaseDemo::initEvent();
 
     // retrieve the default rendering
-    mRendering = (defRendering()->as<Rendering>());
+    mMainRendering = rendering()->as<Rendering>();
     // retrieve the default renderer, which we'll use as the solid-renderer
-    mSolidRenderer = mRendering->renderer();
+    mSolidRenderer = mMainRendering->renderer();
 
     // create our EdgeRenderer
     mEdgeRenderer = new EdgeRenderer;
@@ -60,7 +60,7 @@ public:
     // target the same opengl window
     mEdgeRenderer->setRenderTarget(mSolidRenderer->renderTarget());
     // enqueue the EdgeRenderer in the rendering, will be executed after mSolidRenderer
-    mRendering->renderers().push_back( mEdgeRenderer.get() );
+    mMainRendering->renderers().push_back( mEdgeRenderer.get() );
 
     // hidden line and crease options
     mEdgeRenderer->setShowHiddenLines(true);
@@ -119,9 +119,9 @@ public:
     geom3->computeNormals();
 
     // add the actors to the scene
-    sceneManager()->tree()->addActor( geom1.get(), red_fx.get(),    mRendering->transform() );
-    sceneManager()->tree()->addActor( geom2.get(), green_fx.get(),  mRendering->transform() );
-    sceneManager()->tree()->addActor( geom3.get(), yellow_fx.get(), mRendering->transform() );
+    sceneManager()->tree()->addActor( geom1.get(), red_fx.get(),    mMainRendering->transform() );
+    sceneManager()->tree()->addActor( geom2.get(), green_fx.get(),  mMainRendering->transform() );
+    sceneManager()->tree()->addActor( geom3.get(), yellow_fx.get(), mMainRendering->transform() );
   }
 
   // user controls:
@@ -199,7 +199,7 @@ public:
 
   void resizeEvent(int w, int h)
   {
-    Camera* camera = mRendering->camera();
+    Camera* camera = mMainRendering->camera();
     camera->viewport()->setWidth ( w );
     camera->viewport()->setHeight( h );
     camera->setProjectionAsPerspective();
@@ -247,7 +247,7 @@ public:
 protected:
   ref< Renderer > mSolidRenderer;
   ref< EdgeRenderer > mEdgeRenderer;
-  ref<Rendering> mRendering;
+  ref<Rendering> mMainRendering;
 };
 
 // Have fun!

@@ -119,9 +119,9 @@ public:
     mPortalSceneManager = new vl::SceneManagerPortals;
     mPortalSceneManager->setShowPortals(true);
     // remove all the other scene managers
-    vl::defRendering()->as<vl::Rendering>()->sceneManagers()->clear(); 
+    rendering()->as<vl::Rendering>()->sceneManagers()->clear(); 
     // install our SceneManagerPortals!
-    vl::defRendering()->as<vl::Rendering>()->sceneManagers()->push_back(mPortalSceneManager.get()); 
+    rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mPortalSceneManager.get()); 
 
     // Skip the boring code below and just pay attention to how the Sector and Portal classes are used!
 

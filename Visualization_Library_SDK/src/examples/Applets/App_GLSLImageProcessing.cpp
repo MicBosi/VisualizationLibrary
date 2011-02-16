@@ -76,9 +76,9 @@ public:
     mEffectNames[8] = "Darken";
 
     // camera setup
-    vl::defRendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-    vl::defRendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
-    vl::defRendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4() );
+    rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
@@ -117,7 +117,7 @@ public:
     mGridOriginal->texCoordArray(0)->transform( vl::mat4::getTranslation(0.5f, 0,0) );
 
     mTransform = new vl::Transform;
-    vl::defRendering()->as<vl::Rendering>()->transform()->addChild(mTransform.get());
+    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform.get());
     vl::Actor* effect_act = sceneManager()->tree()->addActor(mGridEffect.get(), postproc_fx.get(), mTransform.get());
     effect_act->setRenderRank(0);
     vl::Actor* original_act = sceneManager()->tree()->addActor(mGridOriginal.get(), original_fx.get(), mTransform.get());
@@ -179,8 +179,8 @@ public:
     vl::ref<vl::Uniform> image_height = mGLSLProgram->gocUniform("image_height");
     image_height->setUniform((float)mImage->width());
 
-    int w = vl::defRendering()->as<vl::Rendering>()->renderer()->renderTarget()->width();
-    int h = vl::defRendering()->as<vl::Rendering>()->renderer()->renderTarget()->height();
+    int w = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->width();
+    int h = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->height();
     resizeEvent( w, h );
     mTimer.start();
     mTest = 0;
@@ -189,7 +189,7 @@ public:
 
   void resizeEvent(int w, int h)
   {
-    vl::Camera* camera = vl::defRendering()->as<vl::Rendering>()->camera();
+    vl::Camera* camera = rendering()->as<vl::Rendering>()->camera();
     camera->viewport()->setWidth(w);
     camera->viewport()->setHeight(h);
     camera->setProjectionAsOrtho2D();

@@ -65,6 +65,12 @@ namespace vl
 
     void resizeEvent(int w, int h);
 
+    RenderingAbstract* rendering() { return mRendering.get(); }
+    
+    const RenderingAbstract* rendering() const { return mRendering.get(); }
+    
+    void setRendering(RenderingAbstract* rendering) { mRendering = rendering; }
+
     SceneManagerActorTree* sceneManager() { return mSceneManagerActorTree.get(); }
     const SceneManagerActorTree* sceneManager() const { return mSceneManagerActorTree.get(); }
 
@@ -78,10 +84,10 @@ namespace vl
     virtual void shutdown()  = 0;
 
   protected:
-    void bindManipulators(Rendering* rendering);
+    void bindManipulators(Camera* camera, Transform* transform);
 
-  protected:
-    ref<Rendering> mRendering;
+  private:
+    ref<RenderingAbstract> mRendering;
     ref<GhostCameraManipulator> mFly;
     ref<TrackballManipulator> mTrackball;
     ref<SceneManagerActorTree> mSceneManagerActorTree;

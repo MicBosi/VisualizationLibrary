@@ -50,7 +50,7 @@ public:
     BaseDemo::initEvent();
 
     mSceneKdTree = new vl::SceneManagerActorKdTree;
-    vl::defRendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());
+    rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());
 
     mText = new vl::Text;
     mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false) );
