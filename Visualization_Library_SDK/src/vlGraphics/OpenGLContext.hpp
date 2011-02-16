@@ -182,9 +182,6 @@ namespace vl
     //! Asks to the windowing system that is managing the OpenGLContext to quit the application.
     virtual void quitApplication() {}
 
-    //! This function should be appropriately reimplemented in all the subclasses of OpenGLContext.
-    virtual void destroy() { destroyAllFBORenderTargets(); }
-
     //! If the OpenGLContext is a widget this function requests a redraw.
     virtual void update() {}
 
@@ -358,6 +355,7 @@ namespace vl
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
           temp_clients[i]->destroyEvent();
+      destroyAllFBORenderTargets();
     }
 
     //! Dispatches the UIEventListener::runEvent() notification to the subscribed UIEventListener objects.
