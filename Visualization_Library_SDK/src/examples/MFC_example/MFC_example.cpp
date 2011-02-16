@@ -78,7 +78,7 @@ int MFC_Example::ExitInstance()
   mVLCWin = NULL;
 
   /* shutdown Visualization Library */
-  vl::VisualizationLibrary::shutdown();
+  VisualizationLibrary::shutdown();
 
   return 0;
 }
@@ -89,13 +89,13 @@ BOOL MFC_Example::InitInstance()
   CWinApp::InitInstance();
 
   /* open a console so we can see the program's output on stdout */
-  vl::showWin32Console();
+  showWin32Console();
 
   /* init Visualization Library */
-  vl::VisualizationLibrary::init();
+  VisualizationLibrary::init();
 
   /* setup the OpenGL context format */
-  vl::OpenGLContextFormat format;
+  OpenGLContextFormat format;
   format.setDoubleBuffer(true);
   format.setRGBABits( 8,8,8,0 );
   format.setDepthBufferBits(24);
@@ -105,22 +105,22 @@ BOOL MFC_Example::InitInstance()
   format.setMultisample(true);
 
   /* create the applet to be run */
-  vl::ref<Applet> applet = new App_RotatingCube;
+  ref<Applet> applet = new App_RotatingCube;
   applet->initialize();
   /* instance the MFC window/OpenGLContext */
   mVLCWin = new MFCWindow;
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   mVLCWin->addEventListener(applet.get());
   /* target the window so we can render on it */
-  vl::defRendering()->as<vl::Rendering>()->renderer()->setRenderTarget( mVLCWin->renderTarget() );
+  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( mVLCWin->renderTarget() );
   /* black background */
-  vl::defRendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( black );
+  applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
   /* define the camera position and orientation */
-  vl::vec3 eye    = vl::vec3(0,10,35); // camera position
-  vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
-  vl::vec3 up     = vl::vec3(0,1,0);   // up direction
-  vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
-  vl::defRendering()->as<vl::Rendering>()->camera()->setViewMatrix( view_mat );
+  vec3 eye    = vec3(0,10,35); // camera position
+  vec3 center = vec3(0,0,0);   // point the camera is looking at
+  vec3 up     = vec3(0,1,0);   // up direction
+  mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
+  applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
   /* Initialize the OpenGL context and window properties */
   int x = 100;
   int y = 100;

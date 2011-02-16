@@ -101,15 +101,15 @@ bool MyApp::OnInit()
   };
   ref<vlWXGLCanvas> vl_gl_canvas = new vlWXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
   /* target the window so we can render on it */
-  defRendering()->as<Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
+  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
   /* black background */
-  defRendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
+  applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
   /* define the camera position and orientation */
   vec3 eye    = vec3(0,10,35); // camera position
   vec3 center = vec3(0,0,0);   // point the camera is looking at
   vec3 up     = vec3(0,1,0);   // up direction
   mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
-  defRendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
+  applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
   /* show the window */
   frame->Show();
   /* THE ORDER IS IMPORTANT IMPORTANT */
