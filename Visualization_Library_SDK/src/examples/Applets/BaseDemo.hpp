@@ -43,7 +43,6 @@ class BaseDemo: public vl::Applet
 public:
   BaseDemo()
   {
-    mMaxTime = 0;
     mReadPixels = new vl::ReadPixels;
   }
 
@@ -62,15 +61,13 @@ public:
     if (key == vl::Key_F5)
     {
       mReadPixels->setup( 0, 0, openglContext()->width(), openglContext()->height(), vl::RDB_BACK_LEFT, false );
-      vl::defRendering()->onFinishedCallbacks()->push_back( mReadPixels.get() );
+      rendering()->onFinishedCallbacks()->push_back( mReadPixels.get() );
       mReadPixels->setRemoveAfterCall(true);
       vl::String filename = vl::Say( applicationName() + "-%n.png") << (int)vl::Time::currentTime();
       mReadPixels ->setSavePath( filename );
       vl::Log::print( vl::Say("Screenshot: '%s'\n") << filename );
     }
   }
-
-  void setMaxTime(float time) { mMaxTime = time; }
 
   void runEvent()
   {
@@ -85,15 +82,6 @@ public:
       openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << applicationName() );
       vl::Log::print( vl::Say("FPS=%.1n\n") << fps() );
     }
-
-    if (mMaxTime != 0)
-    {
-      if ( !mApplicatinLifeTime.isStarted() )
-        mApplicatinLifeTime.start();
-      else
-      if (mApplicatinLifeTime.elapsed() > mMaxTime)
-        openglContext()->destroy();
-    }
   }
 
   const vl::String& applicationName() const { return mApplicationName; }
@@ -102,9 +90,7 @@ public:
 
 protected:
   vl::ref<vl::ReadPixels> mReadPixels;
-  vl::Time mApplicatinLifeTime;
   vl::Time mFPSTimer;
-  float mMaxTime;
   vl::String mApplicationName;
 };
 
