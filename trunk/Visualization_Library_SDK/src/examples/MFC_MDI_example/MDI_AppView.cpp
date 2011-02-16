@@ -4,7 +4,6 @@
 #include "MDI_AppDoc.h"
 #include "MDI_AppView.h"
 #include "App_RotatingCube.hpp"
-#include <vlGraphics/RenderingTree.hpp>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -46,7 +45,6 @@ void CMDI_AppView::OnInitialUpdate()
 	/* create a new vl::Rendering for this window */
 	vl::ref<vl::Rendering> rend = new vl::Rendering;
 	rend->renderer()->setRenderTarget( this->OpenGLContext::renderTarget() );
-	vl::defRendering()->as<vl::RenderingTree>()->subRenderings()->push_back(rend.get());
 
 	/* black background */
 	rend->camera()->viewport()->setClearColor( vl::black );
@@ -59,7 +57,8 @@ void CMDI_AppView::OnInitialUpdate()
 	rend->camera()->setViewMatrix( view_mat );
 
 	/* create the applet to be run */
-	vl::ref<App_RotatingCube> applet = new App_RotatingCube(rend.get());
+	vl::ref<App_RotatingCube> applet = new App_RotatingCube;
+  applet->setRendering(rend.get());
 	applet->initialize();
 
 	/* bind the applet so it receives all the GUI events related to the OpenGLContext */
@@ -68,7 +67,7 @@ void CMDI_AppView::OnInitialUpdate()
  	/* Initialize the OpenGL context and window properties */	
  	CRect r; 	
 	GetWindowRect(&r);
-	Win32Context::init(NULL, "Visualization Library MFC MDI- Rotating Cube", format, /*these last for are ignored*/0, 0, r.Width(), r.Height());
+  Win32Context::initWin32GLContext(NULL, "Visualization Library MFC MDI- Rotating Cube", format, /*these last for are ignored*/0, 0, r.Width(), r.Height());
 }
 
 //-----------------------------------------------------------------------------

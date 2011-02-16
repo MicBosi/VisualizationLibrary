@@ -44,11 +44,6 @@
 class App_RotatingCube: public vl::Applet
 {
 public:
-  App_RotatingCube(vl::Rendering* rend)
-  {
-    mRendering = rend;
-  }
-
   virtual void shutdown() {}
 
   // called once after the OpenGL window has been opened 
@@ -57,7 +52,7 @@ public:
     // allocate the Transform 
     mCubeTransform = new vl::Transform;
     // bind the Transform with the transform tree of the rendring pipeline 
-    mRendering->transform()->addChild( mCubeTransform.get() );
+    rendering()->as<vl::Rendering>()->transform()->addChild( mCubeTransform.get() );
 
     // create the cube's Geometry and compute its normals to support lighting 
     vl::ref<vl::Geometry> cube = vl::makeBox( vl::vec3(0,0,0), 10, 10, 10 );
@@ -77,7 +72,7 @@ public:
 
     // install our scene manager, we use the SceneManagerActorTree which is the most generic
     vl::ref<vl::SceneManagerActorTree> scene_manager = new vl::SceneManagerActorTree;
-    mRendering->sceneManagers()->push_back(scene_manager.get());
+    rendering()->as<vl::Rendering>()->sceneManagers()->push_back(scene_manager.get());
     // add the cube to the scene using the previously defined effect and transform 
     scene_manager->tree()->addActor( cube.get(), effect.get(), mCubeTransform.get()  );
   }
