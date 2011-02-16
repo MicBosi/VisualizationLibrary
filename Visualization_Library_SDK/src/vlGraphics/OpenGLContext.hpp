@@ -131,10 +131,6 @@ namespace vl
     //! Dispatches also destroyEvent() to its event listeners.
     ~OpenGLContext() 
     { 
-      // these two cannobe be called here, they have to be called from 
-      // the class' destructor implementing makeCurrent()
-      // dispatchDestroyEvent();
-      // destroyAllFBORenderTargets();
       eraseAllEventListeners();
       mRenderTarget->mOpenGLContext = NULL;
     }
@@ -347,7 +343,8 @@ namespace vl
           temp_clients[i]->keyReleaseEvent(unicode_ch, key);
     }
 
-    //! Dispatches the UIEventListener::destroyEvent() notification to the subscribed UIEventListener objects.
+    //! Dispatches the UIEventListener::destroyEvent() notification to the subscribed UIEventListener objects and calls destroyAllFBORenderTargets().
+    //! This event must be issued just before the actual GL context is destroyed.
     void dispatchDestroyEvent()
     {
       makeCurrent();
