@@ -54,7 +54,7 @@ class TestBatteryWX: public TestBattery
 public:
   TestBatteryWX() {}
 
-  void runGUI(float secs, const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat /*format*/, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void runGUI(const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat /*format*/, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     program->setApplicationName(title);
 
@@ -100,7 +100,7 @@ public:
     frame->Show();
     /* THE ORDER IS IMPORTANT */
     mWXWin->initGLContext();
-    setupApplet(program, mWXWin, secs, bk_color, eye, center);
+    setupApplet(program, mWXWin, bk_color, eye, center);
     mWXWin->dispatchInitEvent();
     /* these must be done after the window is visible */
     frame->SetPosition( wxPoint(x,y) );
@@ -127,18 +127,15 @@ IMPLEMENT_APP(MyApp)
 bool MyApp::OnInit()
 {
   int   test = 0;
-  float secs = 0;
 
   int      argc = GetInstance()->argc;
   wxChar** argv = GetInstance()->argv;
 
   if (argc >= 2)
     test = vl::String(argv[1]).toInt();
-  if (argc >= 3)
-    secs = vl::String(argv[2]).toInt();
 
   TestBatteryWX test_battery;
-  test_battery.run(test, secs, vl::OpenGLContextFormat()/*not used*/);
+  test_battery.run(test, vl::OpenGLContextFormat()/*not used*/);
 
   return true;
 }
