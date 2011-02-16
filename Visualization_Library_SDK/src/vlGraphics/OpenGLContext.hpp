@@ -173,7 +173,7 @@ namespace vl
     //! \note A framebuffer object always belongs to an OpenGL context and in order to render on it the appropriate OpenGL context must be active.
     ref<FBORenderTarget> createFBORenderTarget(int width, int height);
 
-    //! Destroyes the specified FBORenderTarget.
+    //! Destroys the specified FBORenderTarget.
     void destroyFBORenderTarget(FBORenderTarget* fbort);
 
     //! Removes all FBORenderTargets belonging to an OpenGLContext.
