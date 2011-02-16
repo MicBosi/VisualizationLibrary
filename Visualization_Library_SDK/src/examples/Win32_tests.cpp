@@ -41,7 +41,7 @@ using namespace vlWin32;
 class TestBatteryWin32: public TestBattery
 {
 public:
-  void runGUI(float secs, const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void runGUI(const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     /* used to display the application title next to FPS counter */
     applet->setApplicationName(title);
@@ -55,7 +55,7 @@ public:
     /* create a native Win32 window */
     vl::ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
 
-    setupApplet(applet, win32_window.get(), secs, bk_color, eye, center);
+    setupApplet(applet, win32_window.get(), bk_color, eye, center);
 
     /* Used to test OpenGL 3.3 Core Profile
     int attribs[] =
@@ -89,14 +89,11 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
 {
   /* parse command line arguments */
   int   test = 0;
-  float secs = 0;
   String cmd = lpszCmdLine;
   std::vector<String> parms;
   cmd.split(' ', parms);
   if (parms.size()>=1)
     test = parms[0].toInt();
-  if (parms.size()>=2)
-    secs = parms[1].toFloat();
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -109,7 +106,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   format.setMultisample(true);*/
 
   TestBatteryWin32 test_battery;
-  test_battery.run(test, secs, format);
+  test_battery.run(test, format);
 
   return 0;
 }
