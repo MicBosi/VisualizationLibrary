@@ -188,7 +188,7 @@ LONG WINAPI Win32Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
     /*case WM_CLOSE:
     {
       win->dispatchDestroyEvent();
-      win->destroyWindow();
+      win->destroyWin32GLWindow();
       break;
     }*/
 
@@ -196,7 +196,7 @@ LONG WINAPI Win32Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
     {
       Win32Window::mWinMap.erase(hWnd);
       win->dispatchDestroyEvent();
-      win->destroyWindow();
+      win->destroyWin32GLWindow();
       break;
     }
 
@@ -263,12 +263,12 @@ Win32Window::Win32Window()
 //-----------------------------------------------------------------------------
 Win32Window::~Win32Window()
 {
-  destroyWindow();
+  destroyWin32GLWindow();
 }
 //-----------------------------------------------------------------------------
-bool Win32Window::initWin32Window(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
+bool Win32Window::initWin32GLWindow(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
 {
-  destroyWindow();
+  destroyWin32GLWindow();
 
   if (!registerClass())
     return false;
@@ -302,7 +302,7 @@ Win32Window* Win32Window::getWindow(HWND hWnd)
     return NULL;
 }
 //-----------------------------------------------------------------------------
-void Win32Window::destroyWindow()
+void Win32Window::destroyWin32GLWindow()
 {
   // wglMakeCurrent(NULL, NULL) not needed 
 
