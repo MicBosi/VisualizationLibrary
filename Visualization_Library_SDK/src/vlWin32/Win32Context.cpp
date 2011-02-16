@@ -246,7 +246,7 @@ bool Win32Context::setFullscreen(bool fullscreen_on)
   return true;
 }
 //-----------------------------------------------------------------------------
-bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
+bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
 {
   struct Contract
   {
@@ -286,6 +286,7 @@ bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::
         ctx->mHGLRC = NULL;
       }
     }
+
   } contract(this);
 
   if (!contract.ok)
