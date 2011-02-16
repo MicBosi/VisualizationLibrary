@@ -38,8 +38,6 @@ using namespace vlWin32;
 //-----------------------------------------------------------------------------
 Win32Context::~Win32Context()
 {
-  dispatchDestroyEvent();
-  destroyAllFBORenderTargets();
 }
 //-----------------------------------------------------------------------------
 void Win32Context::shareOpenGLResources(HGLRC hGLRC)
@@ -217,26 +215,26 @@ bool Win32Context::setFullscreen(bool fullscreen_on)
       }
       #if(_WIN32_WINNT >= 0x0501)
         case DISP_CHANGE_BADDUALVIEW:
-          MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_BADDUALVIEW", L"Visualization Library Error", MB_OK | MB_ICONEXCLAMATION);
+          MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_BADDUALVIEW", L"Win32Context::setFullscreen() error!", MB_OK | MB_ICONEXCLAMATION);
           return false;
       #endif
       case DISP_CHANGE_BADFLAGS:
-        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_BADFLAGS", L"Visualization Library Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_BADFLAGS", L"Win32Context::setFullscreen() error!", MB_OK | MB_ICONEXCLAMATION);
         return false;
       case DISP_CHANGE_BADMODE:
-        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_BADMODE", L"Visualization Library Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_BADMODE", L"Win32Context::setFullscreen() error!", MB_OK | MB_ICONEXCLAMATION);
         return false;
       case DISP_CHANGE_BADPARAM:
-        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_BADPARAM", L"Visualization Library Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_BADPARAM", L"Win32Context::setFullscreen() error!", MB_OK | MB_ICONEXCLAMATION);
         return false;
       case DISP_CHANGE_FAILED:
-        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_FAILED", L"Visualization Library Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_FAILED", L"Win32Context::setFullscreen() error!", MB_OK | MB_ICONEXCLAMATION);
         return false;
       case DISP_CHANGE_NOTUPDATED:
-        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_NOTUPDATED", L"Visualization Library Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_NOTUPDATED", L"Win32Context::setFullscreen() error!", MB_OK | MB_ICONEXCLAMATION);
         return false;
       case DISP_CHANGE_RESTART:
-        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_RESTART", L"Visualization Library Error", MB_OK | MB_ICONEXCLAMATION);
+        MessageBox(NULL, L"Full-screen mode switch failed: DISP_CHANGE_RESTART", L"Win32Context::setFullscreen() error!", MB_OK | MB_ICONEXCLAMATION);
         return false;
       default:
         return false;
@@ -250,54 +248,82 @@ bool Win32Context::setFullscreen(bool fullscreen_on)
 //-----------------------------------------------------------------------------
 bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
 {
+  struct Contract
+  {
+    bool ok;
+    Win32Context* ctx;
+
+    Contract(Win32Context* context): ok(true), ctx(context)
+    {
+      cleanup();
+    }
+    
+    ~Contract()
+    {
+      if (!ok)
+        cleanup();
+    }
+
+    void cleanup()
+    {
+      // delete HDC
+      if (ctx->mHDC)
+      {
+        DeleteDC(ctx->mHDC);
+        ctx->mHDC = NULL;
+      }
+
+      // delete HGLRC
+      if (ctx->mHGLRC)
+      {
+        if ( wglDeleteContext(ctx->mHGLRC) == FALSE )
+        {
+          MessageBox(NULL, L"OpenGL context cleanup failed.\n"
+           L"The handle either doesn't specify a valid context or the context is being used by another thread.", 
+           L"Win32Context::init() error!", MB_OK);
+          ok = false;
+        }
+        ctx->mHGLRC = NULL;
+      }
+    }
+  } contract(this);
+
+  if (!contract.ok)
+    return false;
+
   renderTarget()->setWidth(width);
   renderTarget()->setHeight(height);
 
   if (!hwnd())
   {
-    MessageBox(NULL, L"Cannot create OpenGL context: null HWND.", L"Visualization Library Error", MB_OK);
-    destroy();
-    return false;
+    MessageBox(NULL, L"Cannot create OpenGL context: null HWND.", L"Win32Context::init() error!", MB_OK);
+    return contract.ok = false;
   }
 
   setWindowTitle(title);
 
-  if (mHDC)
-    DeleteDC(mHDC);
+  VL_CHECK(mHDC == NULL);
   mHDC = ::GetDC(hwnd());
   if (!mHDC)
   {
-    MessageBox(NULL, L"Device context acquisition failed.", L"Visualization Library Error", MB_OK); 
-    destroy();
-    return false;
+    MessageBox(NULL, L"Device context acquisition failed.", L"Win32Context::init() error!", MB_OK); 
+    return contract.ok = false;
   }
 
   int pixel_format_index = vlWin32::choosePixelFormat(fmt);
   if (pixel_format_index == -1)
   {
-    MessageBox(NULL, L"No suitable pixel fmt found.", L"Visualization Library Error", MB_OK); 
-    destroy();
-    return false;
+    MessageBox(NULL, L"No suitable pixel fmt found.", L"Win32Context::init() error!", MB_OK); 
+    return contract.ok = false;
   }
 
   if (SetPixelFormat(mHDC, pixel_format_index, NULL) == FALSE)
   {
-    MessageBox(NULL, L"Pixel fmt setup failed.", L"Visualization Library Error", MB_OK);
-    destroy();
-    return false;
+    MessageBox(NULL, L"Pixel fmt setup failed.", L"Win32Context::init() error!", MB_OK);
+    return contract.ok = false;
   }
 
   // OpenGL rendering context creation
-
-  if (mHGLRC)
-  {
-    if ( wglDeleteContext(mHGLRC) == FALSE )
-    {
-      MessageBox(NULL, L"OpenGL context creation failed.\n"
-       L"The handle either doesn't specify a valid context or the context is being used by another thread.", L"Visualization Library Error", MB_OK);
-    }
-    mHGLRC = NULL;
-  }
 
   if (wglCreateContextAttribsARB && mContextAttribs.size() > 1)
   {
@@ -314,11 +340,11 @@ bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::
 
   if (!mHGLRC)
   {
-    MessageBox(NULL, L"OpenGL rendering context creation failed.", L"Visualization Library Error", MB_OK);
-    destroy();
-    return false;
+    MessageBox(NULL, L"OpenGL rendering context creation failed.", L"Win32Context::init() error!", MB_OK);
+    return contract.ok = false;
   }
-  wglMakeCurrent(mHDC, mHGLRC);
+
+  // init GL context and makes it current
   initGLContext();
 
   if (fmt.multisample() && !WGLEW_ARB_multisample)
@@ -327,6 +353,7 @@ bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::
   dispatchInitEvent();
 
   setPosition(x, y);
+
   setSize(width, height);
 
   if (WGLEW_EXT_swap_control)
@@ -338,7 +365,7 @@ bool Win32Context::init(HGLRC share_context, const vl::String& title, const vl::
   if (fmt.fullscreen())
     setFullscreen(true);
   
-  return true;
+  return contract.ok = true;
 }
 //-----------------------------------------------------------------------------
 void Win32Context::setContextAttribs(const int* attribs)
