@@ -69,8 +69,6 @@ namespace vlSDL
 
     void translateEvent(SDL_Event * ev);
 
-    void destroy();
-
     //! Quits the event loop
     void quitApplication();
 

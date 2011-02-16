@@ -58,6 +58,11 @@ BEGIN_EVENT_TABLE(vlWXGLCanvas, wxGLCanvas)
   EVT_DROP_FILES          (vlWXGLCanvas::OnDropFiles)
 END_EVENT_TABLE()
 //-----------------------------------------------------------------------------
+vlWXGLCanvas::~vlWXGLCanvas()
+{
+  dispatchDestroyEvent();
+}
+//-----------------------------------------------------------------------------
 vlWXGLCanvas::vlWXGLCanvas( 
   wxWindow *parent,
   const wxGLContext *shared,

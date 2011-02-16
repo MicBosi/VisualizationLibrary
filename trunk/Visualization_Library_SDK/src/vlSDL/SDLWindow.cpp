@@ -51,7 +51,6 @@ namespace
 {
   SDLWindow* mSDLWindow = NULL;
   bool mUpdateFlag = true;
-  bool mQuitFlag = false;
 
   std::map<int, vl::EKey> key_translation_map;
 
@@ -167,23 +166,11 @@ namespace
 //-----------------------------------------------------------------------------
 SDL_Surface* SDLWindow::mScreen = NULL;
 //-----------------------------------------------------------------------------
-SDLWindow::~SDLWindow()
-{
-  destroy();
-}
-//-----------------------------------------------------------------------------
-void SDLWindow::destroy()
-{
-  /*dispatchDestroyEvent();*/
-  if (mSDLWindow == this)
-  {
-    mSDLWindow = NULL;
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
-    quitApplication();
-  }
-}
-//-----------------------------------------------------------------------------
 SDLWindow::SDLWindow()
+{
+}
+//-----------------------------------------------------------------------------
+SDLWindow::~SDLWindow()
 {
 }
 //-----------------------------------------------------------------------------
@@ -449,7 +436,6 @@ void SDLWindow::translateEvent( SDL_Event * ev )
   else
   if (ev->type == SDL_QUIT)
   {
-    /*dispatchDestroyEvent();*/
     quitApplication();
   }
 }
@@ -457,7 +443,7 @@ void SDLWindow::translateEvent( SDL_Event * ev )
 void vlSDL::messageLoop()
 {
   SDL_Event ev;
-  while(!mQuitFlag)
+  while(mSDLWindow)
   {
     if ( SDL_PollEvent(&ev) )
       mSDLWindow->translateEvent(&ev);
@@ -481,8 +467,9 @@ void vlSDL::messageLoop()
 //-----------------------------------------------------------------------------
 void SDLWindow::quitApplication()
 {
-  mQuitFlag = true;
+  dispatchDestroyEvent();
   eraseAllEventListeners();
+  mSDLWindow = NULL;
 }
 //-----------------------------------------------------------------------------
 void SDLWindow::update()

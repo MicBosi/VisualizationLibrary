@@ -63,7 +63,16 @@ namespace vlQt4
       setAcceptDrops(true);
     }
 
-    void dragEnterEvent(QDragEnterEvent *ev) { if (ev->mimeData()->hasUrls()) ev->acceptProposedAction(); }
+    ~Qt4Widget()
+    {
+      dispatchDestroyEvent();
+    }
+
+    void dragEnterEvent(QDragEnterEvent *ev) 
+    { 
+      if (ev->mimeData()->hasUrls()) 
+        ev->acceptProposedAction(); 
+    }
 
     void dropEvent(QDropEvent* ev)
     {
@@ -248,14 +257,6 @@ namespace vlQt4
     {
       eraseAllEventListeners();
       QApplication::quit();
-    }
-
-    virtual void destroy()
-    {
-      /*dispatchDestroyEvent();*/
-      // the deletion must be managed by ref<>
-      // setAttribute(Qt::WA_DeleteOnClose, true);
-      QGLWidget::close();
     }
 
     virtual void show()
