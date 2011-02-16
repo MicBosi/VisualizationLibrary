@@ -39,7 +39,7 @@ using namespace vl;
 class TestBatteryGLUT: public TestBattery
 {
 public:
-  void runGUI(float secs, const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void runGUI(const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     /* used to display the application title next to FPS counter */
     applet->setApplicationName(title);
@@ -56,7 +56,7 @@ public:
     /* create a GLUT window */
     vl::ref<vlGLUT::GLUTWindow> glut_window = new vlGLUT::GLUTWindow;
 
-    setupApplet(applet, glut_window.get(), secs, bk_color, eye, center);
+    setupApplet(applet, glut_window.get(), bk_color, eye, center);
 
     /* Initialize the OpenGL context and window properties */
     glut_window->initGLUTWindow( title, format, x, y, width, height );
@@ -84,11 +84,8 @@ int main ( int argc, char *argv[] )
 
   /* parse command line arguments */
   int   test = 0;
-  float secs = 0;
   if (argc>=2)
     test = String(argv[1]).toInt();
-  if (argc>=3)
-    secs = String(argv[2]).toFloat();
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -101,7 +98,7 @@ int main ( int argc, char *argv[] )
   //format.setMultisample(true);
 
   TestBatteryGLUT test_battery;
-  test_battery.run(test, secs, format);
+  test_battery.run(test, format);
 
   return 0;
 }
