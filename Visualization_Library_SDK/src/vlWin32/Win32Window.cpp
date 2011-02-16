@@ -284,7 +284,7 @@ bool Win32Window::initWin32Window(HWND parent, HGLRC share_context, const vl::St
     x, y, width, height, 
     parent, NULL, GetModuleHandle(NULL), NULL);
 
-  if (init(share_context, title, fmt, x, y, width, height))
+  if (initWin32GLContext(share_context, title, fmt, x, y, width, height))
   {
     mWinMap[mHWND] = this;
     return true;
