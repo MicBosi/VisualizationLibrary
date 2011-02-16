@@ -84,7 +84,6 @@ Rendering& Rendering::operator=(const Rendering& other)
 //------------------------------------------------------------------------------
 void Rendering::render()
 {
-  VL_CHECK_OGL();
   VL_CHECK(camera());
   VL_CHECK(camera()->viewport());
 
@@ -108,6 +107,7 @@ void Rendering::render()
 
       // activate OpenGL context
       mOpenGLContext->makeCurrent();
+      VL_CHECK_OGL(); // the first check must be done when the context is active!
 
       // render states ]shield[
       mOpenGLContext->resetContextStates(); 
