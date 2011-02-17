@@ -130,7 +130,6 @@ void Applet::keyReleaseEvent(unsigned short, EKey key)
 //-----------------------------------------------------------------------------
 void Applet::destroyEvent()
 {
-  shutdown();
   mFly->setCamera(NULL);
   mTrackball->setCamera(NULL);
   mTrackball->setTransform(NULL);
