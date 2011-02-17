@@ -73,7 +73,7 @@ void GhostCameraManipulator::mouseMoveEvent(int x, int y)
   openglContext()->setMousePosition(cx, cy);
 }
 //-----------------------------------------------------------------------------
-void GhostCameraManipulator::runEvent()
+void GhostCameraManipulator::updateEvent()
 {
   if (camera() == NULL)
     return;
@@ -131,29 +131,32 @@ void GhostCameraManipulator::setCamera(Camera* camera) { mCamera = camera; }
 Camera* GhostCameraManipulator::camera() { return mCamera.get(); }
 const Camera* GhostCameraManipulator::camera() const { return mCamera.get(); }
 //-----------------------------------------------------------------------------
-void GhostCameraManipulator::prepareToReconnect()
+void GhostCameraManipulator::enableEvent(bool enabled)
 {
-  if ( camera() == NULL || !isEnabled() )
-    return;
-
-  setPosition( camera()->inverseViewMatrix().getT() );
-  Real x, y;
-  camera()->inverseViewMatrix().getYXRotationAngles( y, x );
-  setXDegrees(x);
-  setYDegrees(y);
-
-  if (openglContext())
-    openglContext()->setMouseVisible(false);
-
-  if ( openglContext() && openglContext()->renderTarget() )
+  if (enabled)
   {
-    int cx = (int)camera()->viewport()->center().x();
-    int cy = openglContext()->renderTarget()->height() - camera()->viewport()->height()/2 - camera()->viewport()->y();
-    openglContext()->ignoreNextMouseMoveEvent();
-    openglContext()->setMousePosition(cx, cy);
-  }
+    if ( camera() == NULL )
+      return;
 
-  // requires continuous update
-  openglContext()->setContinuousUpdate(true);
+    setPosition( camera()->inverseViewMatrix().getT() );
+    Real x, y;
+    camera()->inverseViewMatrix().getYXRotationAngles( y, x );
+    setXDegrees(x);
+    setYDegrees(y);
+
+    if (openglContext())
+      openglContext()->setMouseVisible(false);
+
+    if ( openglContext() && openglContext()->renderTarget() )
+    {
+      int cx = (int)camera()->viewport()->center().x();
+      int cy = openglContext()->renderTarget()->height() - camera()->viewport()->height() / 2 - camera()->viewport()->y();
+      openglContext()->ignoreNextMouseMoveEvent();
+      openglContext()->setMousePosition(cx, cy);
+    }
+
+    // requires continuous update
+    openglContext()->setContinuousUpdate(true);
+  }
 }
 //-----------------------------------------------------------------------------

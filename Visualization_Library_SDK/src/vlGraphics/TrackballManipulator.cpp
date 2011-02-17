@@ -250,13 +250,16 @@ void TrackballManipulator::adjustView(Rendering* rendering, const vec3& dir, con
   adjustView(actors, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
-void TrackballManipulator::prepareToReconnect()
+void TrackballManipulator::enableEvent(bool enabled)
 { 
-  mMode = NoMode;
-  if ( openglContext() )
+  if (enabled)
   {
-    openglContext()->setMouseVisible(true);
-    openglContext()->setContinuousUpdate(false);
+    mMode = NoMode;
+    if ( openglContext() )
+    {
+      openglContext()->setMouseVisible(true);
+      openglContext()->setContinuousUpdate(false);
+    }
   }
 }
 //-----------------------------------------------------------------------------

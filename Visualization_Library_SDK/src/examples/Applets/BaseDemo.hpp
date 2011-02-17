@@ -67,9 +67,9 @@ public:
     }
   }
 
-  void runEvent()
+  void updateEvent()
   {
-    vl::Applet::runEvent();
+    vl::Applet::updateEvent();
 
     if ( !mFPSTimer.isStarted() )
       mFPSTimer.start();

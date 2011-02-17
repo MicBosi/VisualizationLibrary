@@ -41,33 +41,67 @@ namespace vl
 //------------------------------------------------------------------------------
 // GhostCameraManipulator
 //------------------------------------------------------------------------------
-  /**
-   * The GhostCameraManipulator class is an UIEventListener that controls the position and orientation of a Camera.
-   * Using the GhostCameraManipulator class the user can freely fly around in the scene just like a ghost would do.
-  */
+  /** The GhostCameraManipulator class is an UIEventListener that controls the position and orientation of a Camera.
+      Using the GhostCameraManipulator class the user can freely fly around in the scene just like a ghost would do. */
   class GhostCameraManipulator: public UIEventListener
   {
   public:
-    GhostCameraManipulator();
     virtual const char* className() { return "GhostCameraManipulator"; }
+
+    /** Constructor. */
+    GhostCameraManipulator();
+
+    // ---  UIEventListener ---
 
     virtual void mouseMoveEvent(int x, int y);
 
-    virtual void runEvent();
+    void enableEvent(bool enabled);
+
+    virtual void updateEvent();
+
+    virtual void initEvent() {}
+
+    virtual void destroyEvent() {}
+
+    virtual void addedListenerEvent(OpenGLContext*) {}
+
+    virtual void removedListenerEvent(OpenGLContext*) {}
+
+    virtual void mouseUpEvent(EMouseButton, int, int) {}
+
+    virtual void mouseDownEvent(EMouseButton, int, int) {}
+
+    virtual void mouseWheelEvent(int) {}
+
+    virtual void keyPressEvent(unsigned short, EKey) {}
+
+    virtual void keyReleaseEvent(unsigned short, EKey) {}
+
+    virtual void resizeEvent(int, int) {}
+
+    virtual void fileDroppedEvent(const std::vector<String>&) {}
+
+    virtual void visibilityEvent(bool) {}
+
+    // --- --- ---
 
     void setCamera(Camera* camera);
 
     Camera* camera();
+    
     const Camera* camera() const;
 
     void setKeysForward(EKey key, EKey modifier = Key_None)  { mKeysForward[0] = key; mKeysForward[1] = modifier; };
+    
     void setKeysBackward(EKey key, EKey modifier = Key_None) { mKeysBackward[0] = key; mKeysBackward[1] = modifier; };
+    
     void setKeysLeft(EKey key, EKey modifier = Key_None)     { mKeysLeft[0] = key; mKeysLeft[1] = modifier; };
+    
     void setKeysRight(EKey key, EKey modifier = Key_None)    { mKeysRight[0] = key; mKeysRight[1] = modifier; };
+    
     void setKeysUp(EKey key, EKey modifier = Key_None)       { mKeysUp[0] = key; mKeysUp[1] = modifier; };
+    
     void setKeysDown(EKey key, EKey modifier = Key_None)     { mKeysDown[0] = key; mKeysDown[1] = modifier; };
-
-    void prepareToReconnect();
 
     void setPosition(vec3 position) { mPosition = position; }
 
@@ -82,8 +116,11 @@ namespace vl
     Real yDegrees() { return mYDegrees; }
 
     Real rotationSpeed() const { return mRotationSpeed; }
+    
     Real movementSpeed() const { return mMovementSpeed; }
+    
     void setRotationSpeed(Real speed) { mRotationSpeed = speed; }
+    
     void setMovementSpeed(Real speed) { mMovementSpeed = speed; }
 
   protected:

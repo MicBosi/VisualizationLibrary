@@ -131,9 +131,9 @@ public:
   }
 
   /* animate rotation */
-  void runEvent()
+  void updateEvent()
   {
-    BaseDemo::runEvent();
+    BaseDemo::updateEvent();
 
     if ( mTimer.isStarted() )
     {
