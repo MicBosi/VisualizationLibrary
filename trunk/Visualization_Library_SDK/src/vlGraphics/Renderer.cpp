@@ -120,9 +120,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       // note: we don't reset the render target here
     }
-  };
-
-  InOutContract contract(this, camera);
+  } contract(this, camera);
 
   // --------------- rendering --------------- 
 
