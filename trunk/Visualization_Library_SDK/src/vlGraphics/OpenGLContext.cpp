@@ -111,32 +111,49 @@ void OpenGLContext::destroyAllFBORenderTargets()
   mFBORenderTarget.clear();
 }
 //-----------------------------------------------------------------------------
-//! \note An \p UIEventListener can be associated only to one OpenGLContext at a time.
 void OpenGLContext::addEventListener(UIEventListener* el)
 {
+  VL_CHECK( el );
   VL_CHECK( el->mOpenGLContext == NULL );
-  mEventListeners.push_back(el);
-  el->mOpenGLContext = this;
-  el->openglContextBoundEvent(this);
+  if (el->mOpenGLContext == NULL)
+  {
+    mEventListeners.push_back(el);
+    el->mOpenGLContext = this;
+    el->addedListenerEvent(this);
+    if (isInitialized())
+      el->initEvent();
+  }
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::removeEventListener(UIEventListener* el)
 {
-  VL_CHECK( el->mOpenGLContext != NULL );
-  std::vector< ref<UIEventListener> >::iterator pos = std::find(mEventListeners.begin(), mEventListeners.end(), el);
-  if( pos != mEventListeners.end() )
+  VL_CHECK( el );
+  VL_CHECK( el->mOpenGLContext == this || el->mOpenGLContext == NULL );
+  if (el->mOpenGLContext == this)
   {
-    mEventListeners.erase( pos );
-    el->mOpenGLContext = NULL;
+    std::vector< ref<UIEventListener> >::iterator pos = std::find(mEventListeners.begin(), mEventListeners.end(), el);
+    if( pos != mEventListeners.end() )
+    {
+      mEventListeners.erase( pos );
+      // any operation here is safe, even adding or removing listeners.
+      el->removedListenerEvent(this);
+      el->mOpenGLContext = NULL;
+    }
   }
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::eraseAllEventListeners()
 {
-  std::vector< ref<UIEventListener> >::iterator it = mEventListeners.begin();
-  for(; it != mEventListeners.end(); it++)
-    it->get()->mOpenGLContext = NULL;
+  // iterate on a temp vector so that any operations inside removedListenerEvent() is safe,
+  // even adding or removing listeners.
+  std::vector< ref<UIEventListener> > temp = mEventListeners;
   mEventListeners.clear();
+  for(size_t i=0; i<temp.size(); ++i)
+  {
+    VL_CHECK( temp[i]->mOpenGLContext == this );
+    temp[i]->removedListenerEvent(this);
+    temp[i]->mOpenGLContext = NULL;
+  }
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::setVSyncEnabled(bool enable)
