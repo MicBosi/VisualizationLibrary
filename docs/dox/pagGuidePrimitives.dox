@@ -4,6 +4,7 @@
 	
 	Visualization Library includes a series of functions to create the most common primitive objects out of the box such as:
 	
+	<center>
 	<table border=0 cellspacing=0 cellpadding=5 width=1%>
 	<tr>
 		<td align=center>
@@ -26,6 +27,8 @@
 			<img src="gallery_small/primitive05.jpg"/>
 			Cylinder
 		</td>
+	</tr>
+	<tr>
 		<td align=center>
 			<img src="gallery_small/primitive06.jpg"/>
 			UV Sphere
@@ -43,15 +46,12 @@
 			Cone
 		</td>
 		<td align=center>
-			<img src="gallery_small/primitive10.jpg"/>
-			Pyramid
-		</td>
-		<td align=center>
 			<img src="gallery_small/primitive11.jpg"/>
 			Grid
 		</td>
 	</tr>
 	</table>
+	</center>
 	
 	The above primitive objects can be created by calling the following functions:
 	<ul>

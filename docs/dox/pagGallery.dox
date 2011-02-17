@@ -709,12 +709,6 @@
 			Cone
 		</td>
 		<td>
-			<a href="gallery/primitive10.jpg" class="highslide" onclick="return hs.expand(this)"> 
-				<img src="gallery_small/primitive10.jpg" alt="Highslide JS" title="Click to enlarge" />
-			</a>
-			Pyramid
-		</td>
-		<td>
 			<a href="gallery/primitive11.jpg" class="highslide" onclick="return hs.expand(this)"> 
 				<img src="gallery_small/primitive11.jpg" alt="Highslide JS" title="Click to enlarge" />
 			</a>
