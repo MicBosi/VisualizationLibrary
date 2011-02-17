@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlWX/vlWXGLCanvas.hpp>
+#include <vlWX/WXGLCanvas.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include "Applets/App_RotatingCube.hpp"
 
@@ -63,7 +63,7 @@ bool MyApp::OnInit()
   showWin32Console();
   VisualizationLibrary::init();
 
-  MyFrame *frame = new MyFrame(NULL, L"vlWXGLCanvas", wxDefaultPosition, wxSize(400, 300));
+  MyFrame *frame = new MyFrame(NULL, L"WXGLCanvas", wxDefaultPosition, wxSize(400, 300));
 
   /* create the applet to be run */
   ref<Applet> applet = new App_RotatingCube;
@@ -99,7 +99,7 @@ bool MyApp::OnInit()
     WX_GL_AUX_BUFFERS, 0*/
     0
   };
-  ref<vlWXGLCanvas> vl_gl_canvas = new vlWXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
+  ref<WXGLCanvas> vl_gl_canvas = new WXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
   /* target the window so we can render on it */
   applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
   /* black background */

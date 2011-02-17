@@ -34,7 +34,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(${VLWX_NAME})
 
 include_directories(${WXWIDGETS_INCLUDE_DIR})
-ADD_LIBRARY(${VLWX_NAME} STATIC vlWXGLCanvas.hpp vlWXGLCanvas.cpp)
+ADD_LIBRARY(${VLWX_NAME} STATIC WXGLCanvas.hpp WXGLCanvas.cpp)
 
 install(TARGETS ${VLWX_NAME}
   RUNTIME DESTINATION bin
@@ -42,6 +42,6 @@ install(TARGETS ${VLWX_NAME}
   ARCHIVE DESTINATION lib
 )
 
-install(FILES vlWXGLCanvas.hpp
+install(FILES WXGLCanvas.hpp
   DESTINATION include/vlWX
 )

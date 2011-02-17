@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlWX/vlWXGLCanvas.hpp>
+#include <vlWX/WXGLCanvas.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include "Applets/App_RotatingCube.hpp"
 #include "tests.hpp"
@@ -94,8 +94,8 @@ public:
       WX_GL_AUX_BUFFERS, 0*/
       0
     };
-    MyFrame *frame = new MyFrame(NULL, L"vlWXGLCanvas", wxPoint(x,y), wxSize(width, height));
-    mWXWin = new vlWXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
+    MyFrame *frame = new MyFrame(NULL, L"WXGLCanvas", wxPoint(x,y), wxSize(width, height));
+    mWXWin = new WXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
 
     frame->Show();
     /* THE ORDER IS IMPORTANT */
@@ -109,7 +109,7 @@ public:
   }
 
 protected:
-  vlWXGLCanvas* mWXWin;
+  WXGLCanvas* mWXWin;
 };
 //-----------------------------------------------------------------------------
 // implement the application
