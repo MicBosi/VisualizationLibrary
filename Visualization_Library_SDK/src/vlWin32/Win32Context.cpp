@@ -247,48 +247,49 @@ bool Win32Context::setFullscreen(bool fullscreen_on)
 //-----------------------------------------------------------------------------
 bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
 {
-  struct Contract
+  class InOutContract
   {
-    bool ok;
-    Win32Context* ctx;
+    Win32Context* mContext;
 
-    Contract(Win32Context* context): ok(true), ctx(context)
+  public:
+    bool mOK;
+
+    InOutContract(Win32Context* context): mOK(true), mContext(context)
     {
       cleanup();
     }
     
-    ~Contract()
+    ~InOutContract()
     {
-      if (!ok)
+      if (!mOK)
         cleanup();
     }
 
     void cleanup()
     {
       // delete HDC
-      if (ctx->mHDC)
+      if (mContext->mHDC)
       {
-        DeleteDC(ctx->mHDC);
-        ctx->mHDC = NULL;
+        DeleteDC(mContext->mHDC);
+        mContext->mHDC = NULL;
       }
 
       // delete HGLRC
-      if (ctx->mHGLRC)
+      if (mContext->mHGLRC)
       {
-        if ( wglDeleteContext(ctx->mHGLRC) == FALSE )
+        if ( wglDeleteContext(mContext->mHGLRC) == FALSE )
         {
           MessageBox(NULL, L"OpenGL context cleanup failed.\n"
            L"The handle either doesn't specify a valid context or the context is being used by another thread.", 
            L"Win32Context::init() error!", MB_OK);
-          ok = false;
+          mOK = false;
         }
-        ctx->mHGLRC = NULL;
+        mContext->mHGLRC = NULL;
       }
     }
-
   } contract(this);
 
-  if (!contract.ok)
+  if (!contract.mOK)
     return false;
 
   renderTarget()->setWidth(width);
@@ -297,7 +298,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   if (!hwnd())
   {
     MessageBox(NULL, L"Cannot create OpenGL context: null HWND.", L"Win32Context::init() error!", MB_OK);
-    return contract.ok = false;
+    return contract.mOK = false;
   }
 
   setWindowTitle(title);
@@ -307,20 +308,20 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   if (!mHDC)
   {
     MessageBox(NULL, L"Device context acquisition failed.", L"Win32Context::init() error!", MB_OK); 
-    return contract.ok = false;
+    return contract.mOK = false;
   }
 
   int pixel_format_index = vlWin32::choosePixelFormat(fmt);
   if (pixel_format_index == -1)
   {
     MessageBox(NULL, L"No suitable pixel fmt found.", L"Win32Context::init() error!", MB_OK); 
-    return contract.ok = false;
+    return contract.mOK = false;
   }
 
   if (SetPixelFormat(mHDC, pixel_format_index, NULL) == FALSE)
   {
     MessageBox(NULL, L"Pixel fmt setup failed.", L"Win32Context::init() error!", MB_OK);
-    return contract.ok = false;
+    return contract.mOK = false;
   }
 
   // OpenGL rendering context creation
@@ -341,7 +342,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   if (!mHGLRC)
   {
     MessageBox(NULL, L"OpenGL rendering context creation failed.", L"Win32Context::init() error!", MB_OK);
-    return contract.ok = false;
+    return contract.mOK = false;
   }
 
   // init GL context and makes it current
@@ -365,7 +366,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   if (fmt.fullscreen())
     setFullscreen(true);
   
-  return contract.ok = true;
+  return contract.mOK = true;
 }
 //-----------------------------------------------------------------------------
 void Win32Context::setContextAttribs(const int* attribs)

@@ -96,9 +96,7 @@ const RenderQueue* OcclusionCullRenderer::render(const RenderQueue* in_render_qu
       // check user-generated errors.
       VL_CHECK_OGL()
     }
-  };
-
-  InOutContract contract(this);
+  } contract(this);
 
   // --------------- rendering --------------- 
 

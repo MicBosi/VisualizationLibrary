@@ -134,9 +134,7 @@ void Rendering::render()
       // render states ]shield[
       mOpenGLContext->resetContextStates(); 
     }
-  };
-
-  InOutContract contract(this);
+  } contract(this);
 
   // --------------- rendering --------------- 
 
