@@ -71,8 +71,8 @@ int main(int argc, char *argv[])
   mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
   applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
   /* Initialize the OpenGL context and window properties */
-  int x = 0;
-  int y = 0;
+  int x = 10;
+  int y = 10;
   int width = 512;
   int height= 512;
   qt4_window->initQt4Widget( "Visualization Library on Qt4 - Rotating Cube", format, NULL, x, y, width, height );

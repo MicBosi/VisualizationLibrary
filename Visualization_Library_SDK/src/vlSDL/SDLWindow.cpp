@@ -196,7 +196,12 @@ bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFo
   for(int i=0; key_translation_vec[i]; i+=2)
     key_translation_map[ key_translation_vec[i] ] = (vl::EKey)key_translation_vec[i+1];
 
-  // init the given GLContext
+  // SDL_VIDEO_WINDOW_POS
+
+  char win_pos[32] = {0};
+  sprintf(win_pos, "%d,%d", x, y);
+  setenv("SDL_VIDEO_WINDOW_POS", win_pos, 0);
+  // setenv("SDL_VIDEO_CENTERED", "YES", 0);
 
   // init SDL
 
@@ -275,9 +280,6 @@ bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFo
     // DWORD Style = GetWindowLong(hWnd, GWL_STYLE);
     // Style |= WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
     // SetWindowLong(hWnd, GWL_STYLE, Style);
-
-    // sets the initial window position
-	  SetWindowPos( hWnd, 0, x, y, 0, 0, SWP_NOSIZE );
   #endif
 
   // mouse
