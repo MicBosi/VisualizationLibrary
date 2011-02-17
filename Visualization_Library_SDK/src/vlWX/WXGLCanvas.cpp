@@ -29,41 +29,41 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlWX/vlWXGLCanvas.hpp"
+#include "vlWX/WXGLCanvas.hpp"
 
 using namespace vlWX;
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-// vlWXGLCanvas
+// WXGLCanvas
 //-----------------------------------------------------------------------------
-BEGIN_EVENT_TABLE(vlWXGLCanvas, wxGLCanvas)
-  EVT_IDLE(vlWXGLCanvas::OnIdle)
-  EVT_SIZE(vlWXGLCanvas::OnSize)
-  EVT_PAINT(vlWXGLCanvas::OnPaint)
-  EVT_ERASE_BACKGROUND(vlWXGLCanvas::OnEraseBackground)
-  EVT_KEY_DOWN( vlWXGLCanvas::OnKeyDown )
-  EVT_KEY_UP( vlWXGLCanvas::OnKeyUp )
-  /*EVT_CHAR( vlWXGLCanvas::OnChar )*/
-  EVT_ENTER_WINDOW( vlWXGLCanvas::OnMouseEnter )
-  EVT_ENTER_WINDOW        (vlWXGLCanvas::OnMouseEnter)
-  EVT_LEFT_DOWN           (vlWXGLCanvas::OnMouseDown)
-  EVT_MIDDLE_DOWN         (vlWXGLCanvas::OnMouseDown)
-  EVT_RIGHT_DOWN          (vlWXGLCanvas::OnMouseDown)
-  EVT_LEFT_UP             (vlWXGLCanvas::OnMouseUp)
-  EVT_MIDDLE_UP           (vlWXGLCanvas::OnMouseUp)
-  EVT_RIGHT_UP            (vlWXGLCanvas::OnMouseUp)
-  EVT_MOUSEWHEEL          (vlWXGLCanvas::OnMouseWheel)
-  EVT_MOTION              (vlWXGLCanvas::OnMouseMotion)
-  EVT_DROP_FILES          (vlWXGLCanvas::OnDropFiles)
+BEGIN_EVENT_TABLE(WXGLCanvas, wxGLCanvas)
+  EVT_IDLE(WXGLCanvas::OnIdle)
+  EVT_SIZE(WXGLCanvas::OnSize)
+  EVT_PAINT(WXGLCanvas::OnPaint)
+  EVT_ERASE_BACKGROUND(WXGLCanvas::OnEraseBackground)
+  EVT_KEY_DOWN( WXGLCanvas::OnKeyDown )
+  EVT_KEY_UP( WXGLCanvas::OnKeyUp )
+  /*EVT_CHAR( WXGLCanvas::OnChar )*/
+  EVT_ENTER_WINDOW( WXGLCanvas::OnMouseEnter )
+  EVT_ENTER_WINDOW        (WXGLCanvas::OnMouseEnter)
+  EVT_LEFT_DOWN           (WXGLCanvas::OnMouseDown)
+  EVT_MIDDLE_DOWN         (WXGLCanvas::OnMouseDown)
+  EVT_RIGHT_DOWN          (WXGLCanvas::OnMouseDown)
+  EVT_LEFT_UP             (WXGLCanvas::OnMouseUp)
+  EVT_MIDDLE_UP           (WXGLCanvas::OnMouseUp)
+  EVT_RIGHT_UP            (WXGLCanvas::OnMouseUp)
+  EVT_MOUSEWHEEL          (WXGLCanvas::OnMouseWheel)
+  EVT_MOTION              (WXGLCanvas::OnMouseMotion)
+  EVT_DROP_FILES          (WXGLCanvas::OnDropFiles)
 END_EVENT_TABLE()
 //-----------------------------------------------------------------------------
-vlWXGLCanvas::~vlWXGLCanvas()
+WXGLCanvas::~WXGLCanvas()
 {
   dispatchDestroyEvent();
 }
 //-----------------------------------------------------------------------------
-vlWXGLCanvas::vlWXGLCanvas( 
+WXGLCanvas::WXGLCanvas( 
   wxWindow *parent,
   const wxGLContext *shared,
   wxWindowID id,
@@ -81,7 +81,7 @@ wxGLCanvas(parent, shared, id, pos, size, style, name, attribList)
   DragAcceptFiles(true);
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnDropFiles(wxDropFilesEvent& ev)
+void WXGLCanvas::OnDropFiles(wxDropFilesEvent& ev)
 {
   std::vector<String> files;
   for(int i=0; i<ev.GetNumberOfFiles(); ++i)
@@ -93,7 +93,7 @@ void vlWXGLCanvas::OnDropFiles(wxDropFilesEvent& ev)
   dispatchFileDroppedEvent(files);
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnIdle(wxIdleEvent& ev)
+void WXGLCanvas::OnIdle(wxIdleEvent& ev)
 {
   if (continuousUpdate())
     Refresh(false);
@@ -101,23 +101,23 @@ void vlWXGLCanvas::OnIdle(wxIdleEvent& ev)
     Time::sleep(1);*/
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnMouseEnter( wxMouseEvent& WXUNUSED(ev) )
+void WXGLCanvas::OnMouseEnter( wxMouseEvent& WXUNUSED(ev) )
 {
   SetFocus();
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnMouseMotion( wxMouseEvent& ev )
+void WXGLCanvas::OnMouseMotion( wxMouseEvent& ev )
 {
   dispatchMouseMoveEvent( ev.GetX(), ev.GetY() );
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnMouseWheel( wxMouseEvent& ev )
+void WXGLCanvas::OnMouseWheel( wxMouseEvent& ev )
 {
   int d = ev.GetWheelRotation() / ev.GetWheelDelta();
   dispatchMouseWheelEvent( d );
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnMouseUp( wxMouseEvent& ev )
+void WXGLCanvas::OnMouseUp( wxMouseEvent& ev )
 {
   if (ev.GetButton() == wxMOUSE_BTN_NONE)
     return;
@@ -136,7 +136,7 @@ void vlWXGLCanvas::OnMouseUp( wxMouseEvent& ev )
   VL_CHECK(mMouseCount>=0)
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnMouseDown( wxMouseEvent& ev )
+void WXGLCanvas::OnMouseDown( wxMouseEvent& ev )
 {
   if (ev.GetButton() == wxMOUSE_BTN_NONE)
     return;
@@ -155,7 +155,7 @@ void vlWXGLCanvas::OnMouseDown( wxMouseEvent& ev )
   mMouseCount++;
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnSize(wxSizeEvent& ev)
+void WXGLCanvas::OnSize(wxSizeEvent& ev)
 {
   // this is also necessary to update the context on some platforms
   wxGLCanvas::OnSize(ev);
@@ -290,12 +290,12 @@ void translateKey(int& unicode, EKey& key, const wxKeyEvent& ev)
     }
 }
 //-----------------------------------------------------------------------------
-/*void vlWXGLCanvas::OnChar(wxKeyEvent& ev)
+/*void WXGLCanvas::OnChar(wxKeyEvent& ev)
 {
   printf("key = %d, %d\n", (int)ev.GetKeyCode(), (int)ev.GetUnicodeKey() );
 }*/
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnKeyDown( wxKeyEvent& ev )
+void WXGLCanvas::OnKeyDown( wxKeyEvent& ev )
 {
   /*printf("key = %d, %d\n", (int)ev.GetKeyCode(), (int)ev.GetUnicodeKey() );*/
   int unicode = 0;
@@ -305,7 +305,7 @@ void vlWXGLCanvas::OnKeyDown( wxKeyEvent& ev )
   ev.Skip();
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnKeyUp( wxKeyEvent& ev )
+void WXGLCanvas::OnKeyUp( wxKeyEvent& ev )
 {
   int unicode = 0;
   EKey key = Key_Unknown;
@@ -314,7 +314,7 @@ void vlWXGLCanvas::OnKeyUp( wxKeyEvent& ev )
   ev.Skip();
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnPaint( wxPaintEvent& )
+void WXGLCanvas::OnPaint( wxPaintEvent& )
 {
   // validate dirty client area
   wxPaintDC dc(this);
@@ -334,12 +334,12 @@ void vlWXGLCanvas::OnPaint( wxPaintEvent& )
   #endif
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::OnEraseBackground(wxEraseEvent&)
+void WXGLCanvas::OnEraseBackground(wxEraseEvent&)
 {
   // Do nothing, to avoid flashing.
 }
 //-----------------------------------------------------------------------------
-bool vlWXGLCanvas::setFullscreen(bool fullscreen)
+bool WXGLCanvas::setFullscreen(bool fullscreen)
 {
   wxWindow* win = this;
   while(win->GetParent())
@@ -356,7 +356,7 @@ bool vlWXGLCanvas::setFullscreen(bool fullscreen)
   return true;
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::quitApplication()
+void WXGLCanvas::quitApplication()
 {
   wxApp* app = dynamic_cast<wxApp*>(wxApp::GetInstance());
   if (app)
@@ -364,7 +364,7 @@ void vlWXGLCanvas::quitApplication()
   eraseAllEventListeners();
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::makeCurrent()
+void WXGLCanvas::makeCurrent()
 {
   #ifndef __WXMOTIF__
     if (!GetContext()) return;
@@ -373,7 +373,7 @@ void vlWXGLCanvas::makeCurrent()
   SetCurrent();
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::swapBuffers()
+void WXGLCanvas::swapBuffers()
 {
   #ifndef __WXMOTIF__
     if (!GetContext()) return;
@@ -382,22 +382,22 @@ void vlWXGLCanvas::swapBuffers()
   SwapBuffers();
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::getFocus()
+void WXGLCanvas::getFocus()
 {
   SetFocus();
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::setMousePosition(int x, int y)
+void WXGLCanvas::setMousePosition(int x, int y)
 {
   WarpPointer(x,y);
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::update()
+void WXGLCanvas::update()
 {
   Refresh(false);
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::setWindowTitle(const String& text)
+void WXGLCanvas::setWindowTitle(const String& text)
 {
   wxWindow* win = this;
   while(win->GetParent())
@@ -409,33 +409,33 @@ void vlWXGLCanvas::setWindowTitle(const String& text)
   #endif
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::show()
+void WXGLCanvas::show()
 {
   Show(true);
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::hide() 
+void WXGLCanvas::hide() 
 {
   Show(false);
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::setPosition(int x, int y) 
+void WXGLCanvas::setPosition(int x, int y) 
 {
   SetPosition(wxPoint(x,y));
 }
 
-void vlWXGLCanvas::setSize(int w, int h) 
+void WXGLCanvas::setSize(int w, int h) 
 {
   SetClientSize(w,h);
 }
 //-----------------------------------------------------------------------------
-ivec2 vlWXGLCanvas::position() const 
+ivec2 WXGLCanvas::position() const 
 { 
   wxPoint pt = GetPosition();
   return ivec2(pt.x, pt.y); 
 }
 //-----------------------------------------------------------------------------
-void vlWXGLCanvas::setMouseVisible(bool visible)
+void WXGLCanvas::setMouseVisible(bool visible)
 {
   if (mouseVisible() && !visible)
   {
