@@ -41,7 +41,7 @@ class App_TextRendering: public BaseDemo
 public:
   App_TextRendering(int test): mTestNumber(test) {}
 
-  void run()
+  void updateScene()
   {
     if (_text1)
     {

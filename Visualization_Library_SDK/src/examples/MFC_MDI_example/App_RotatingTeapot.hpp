@@ -76,7 +76,7 @@ public:
   }
 
   // called every frame 
-  virtual void run()
+  virtual void updateScene()
   {
     // rotates the cube around the Y axis 45 degrees per second 
     vl::Real degrees = vl::Time::currentTime() * 45.0f;

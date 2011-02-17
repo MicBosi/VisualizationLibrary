@@ -37,7 +37,7 @@
 class App_Deformer: public BaseDemo
 {
 public:
-  virtual void run() 
+  virtual void updateScene() 
   {
     if (mMode == AnimateMode)
     {

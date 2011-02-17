@@ -51,9 +51,7 @@ public:
     trackball()->setPivot(vl::vec3(0,0,0));
     trackball()->setTransform(NULL);
   }
-  
-  void run() {}
-  
+
   void keyPressEvent(unsigned short, vl::EKey key)
   {
     if (key == vl::Key_F5)

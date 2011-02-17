@@ -132,7 +132,7 @@ public:
     trackball()->adjustView( sceneManager(), vec3(0,0,1)/*direction*/, vec3(0,1,0)/*up*/, 0.75f/*bias*/ );
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     mActiveActor = int(Time::currentTime()) % stages;
     /* activate current actor */

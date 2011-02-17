@@ -131,7 +131,7 @@ public:
   }
 
   /* animate rotation */
-  void run()
+  void updateScene()
   {
     if ( mTimer.isStarted() )
     {

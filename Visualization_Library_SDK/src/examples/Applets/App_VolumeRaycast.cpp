@@ -539,7 +539,7 @@ public:
   }
 
   /* animate the lights */
-  virtual void run()
+  virtual void updateScene()
   {
     if (DYNAMIC_LIGHTS)
     {

@@ -91,7 +91,7 @@ public:
   }
 
   /* rotate the camera around the sphere */
-  void run()
+  void updateScene()
   {
     vl::vec3 eye( 40, 0, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 5.0f, 0, 1, 0 ) * eye;

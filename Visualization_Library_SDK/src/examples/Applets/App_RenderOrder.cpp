@@ -38,7 +38,7 @@ class App_RenderOrder: public BaseDemo
 public:
   App_RenderOrder(int test): mTestNumber(test) {}
 
-  void run()
+  void updateScene()
   {
     if (mTestNumber == 0)
     {

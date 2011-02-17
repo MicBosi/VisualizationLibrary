@@ -205,7 +205,7 @@ public:
   }
 
   // animate the lunapark
-  void run()
+  void updateScene()
   {
     mArm1Transform->setLocalMatrix( 
       vl::mat4::getRotation(vl::Time::currentTime()*45,0,1,0) * 

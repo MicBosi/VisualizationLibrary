@@ -41,7 +41,7 @@ class App_ScatterPlot3D: public BaseDemo
 public:
   App_ScatterPlot3D(int test): _test_number(test) {}
   
-  void run()
+  void updateScene()
   {
     _tr->setLocalMatrix(vl::mat4::getRotation( vl::Time::currentTime()*45, 0,1,0 ) );
   }
