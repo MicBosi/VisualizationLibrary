@@ -38,8 +38,6 @@
 class App_GLSLImageProcessing: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
   virtual void run()
   {
     if (mTimer.elapsed() > 3)

@@ -398,8 +398,6 @@ public:
     rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
   }
 
-  virtual void shutdown() {}
-
 protected:
   vl::ref<vl::Transform> mRoseTransform;
   vl::ref<vl::Transform> mStarTransform;

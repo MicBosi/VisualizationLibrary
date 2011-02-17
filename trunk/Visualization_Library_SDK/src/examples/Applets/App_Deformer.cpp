@@ -37,8 +37,6 @@
 class App_Deformer: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
   virtual void run() 
   {
     if (mMode == AnimateMode)

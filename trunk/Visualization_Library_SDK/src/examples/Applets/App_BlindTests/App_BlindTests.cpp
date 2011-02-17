@@ -70,8 +70,6 @@ class App_BlindTests: public BaseDemo
 {
 
 public:
-  virtual void shutdown() {}
-  virtual void run() {}
   void initEvent()
   {
     BaseDemo::initEvent();

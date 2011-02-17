@@ -41,10 +41,6 @@
 class App_KdTreeView: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
-  virtual void run() {}
-
   virtual void initEvent()
   {
     BaseDemo::initEvent();

@@ -38,8 +38,6 @@
 class App_DrawPixels: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
   virtual void initEvent()
   {
     BaseDemo::initEvent();
