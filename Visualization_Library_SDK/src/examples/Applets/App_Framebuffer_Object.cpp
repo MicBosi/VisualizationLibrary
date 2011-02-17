@@ -537,8 +537,6 @@ public:
     mTransfRing5->setLocalMatrix( vl::mat4::getRotation(mX3, 1,0,0) );
   }
 
-  virtual void shutdown() {}
-
 protected:
   int mTestNum;
   vl::Real mX, mY, mX2, mY2, mX3;

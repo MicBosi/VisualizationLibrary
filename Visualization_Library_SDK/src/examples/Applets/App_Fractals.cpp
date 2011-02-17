@@ -40,9 +40,6 @@ using namespace vl;
 class App_Fractals: public BaseDemo
 {
 public:
-  App_Fractals() {}
-  virtual void shutdown() {}
-
   void mouseDownEvent(EMouseButton btn, int x, int y)
   {
     if (mMode != NoMode)

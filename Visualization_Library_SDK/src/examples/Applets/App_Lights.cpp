@@ -38,8 +38,6 @@
 class App_Lights: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
   virtual void initEvent()
   {
     BaseDemo::initEvent();

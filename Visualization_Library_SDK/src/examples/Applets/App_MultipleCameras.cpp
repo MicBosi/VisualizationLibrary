@@ -41,8 +41,6 @@ using namespace vl;
 class App_MultipleCameras: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
   virtual void initEvent()
   {
     BaseDemo::initEvent();

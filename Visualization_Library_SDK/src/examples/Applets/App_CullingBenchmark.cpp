@@ -41,10 +41,6 @@ class App_CullingBenchmark: public BaseDemo
 public:
   App_CullingBenchmark() {}
 
-  virtual void shutdown() {}
-
-  virtual void run() {}
-
   virtual void initEvent()
   {
     BaseDemo::initEvent();

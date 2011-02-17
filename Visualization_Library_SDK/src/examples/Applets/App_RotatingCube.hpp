@@ -44,8 +44,6 @@
 class App_RotatingCube: public vl::Applet
 {
 public:
-  virtual void shutdown() {}
-
   // called once after the OpenGL window has been opened 
   void initEvent()
   {

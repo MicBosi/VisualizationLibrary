@@ -40,10 +40,6 @@
 class App_MorphAnimation: public BaseDemo
 {
 public:
-  virtual void shutdown() { }
-
-  virtual void run() { }
-
   virtual void initEvent()
   {
     if (!vl::defLoadWriterManager()->canLoad("md2"))

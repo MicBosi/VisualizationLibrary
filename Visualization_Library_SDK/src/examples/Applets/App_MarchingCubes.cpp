@@ -670,8 +670,6 @@ public:
     mText->setDisplayListDirty(true);
   }
 
-  virtual void shutdown() {}
-
 protected:
   vl::ref<vl::ResourceDatabase> mResDB;
   vl::ref<vl::Transform> mTransform;

@@ -39,8 +39,6 @@ using namespace vl;
 class App_NearFarOptimization: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
   // called once after the OpenGL window has been opened 
   void initEvent()
   {

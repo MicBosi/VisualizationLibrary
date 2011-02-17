@@ -102,10 +102,6 @@ public:
     updateText();
   }
 
-  virtual void shutdown() {}
-
-  virtual void run() {}
-
   void resetOptions()
   {
     mOptDoubleFace = false;

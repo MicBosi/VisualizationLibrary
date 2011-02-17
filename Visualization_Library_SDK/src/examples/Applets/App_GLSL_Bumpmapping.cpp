@@ -166,8 +166,6 @@ public:
     mLightObjSpacePosition->setUniform( (vl::fvec3)camera_pos_obj_space );
   }
 
-  void shutdown() {}
-
 protected:
     vl::ref<vl::GLSLProgram> mGLSL;
     vl::ref<vl::Uniform> mLightObjSpacePosition;
