@@ -84,6 +84,7 @@ namespace vlMFC
 	  //}}AFX_MSG
 
   protected:
+    BOOL PreCreateWindow(CREATESTRUCT&cs);
     void destroyGLContext();
     void countAndCapture();
     void countAndRelease();

@@ -74,6 +74,12 @@ END_MESSAGE_MAP()
   WM_CAPTURECHANGED
   WM_MOUSEFIRST 
 */
+BOOL MDIWindow::PreCreateWindow(CREATESTRUCT & cs)
+{
+  cs.dwExStyle |= WS_EX_ACCEPTFILES;
+  cs.style |= WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+  return CView::PreCreateWindow(cs);
+}
 //-----------------------------------------------------------------------------
 MDIWindow::~MDIWindow()
 {
