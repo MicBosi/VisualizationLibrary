@@ -79,9 +79,7 @@ namespace vl
 
     double fps() const { return mFPS; }
 
-    virtual void run()       = 0;
-    virtual void initEvent() = 0;
-    virtual void shutdown()  = 0;
+	virtual void run() { }
 
   protected:
     void bindManipulators(Camera* camera, Transform* transform);
