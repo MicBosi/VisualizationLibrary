@@ -178,8 +178,8 @@ namespace vl
     //! Asks to the windowing system that is managing the OpenGLContext to quit the application.
     virtual void quitApplication() {}
 
-    //! If the OpenGLContext is a widget this function requests a redraw.
-    virtual void update() {}
+    //! If the OpenGLContext is a widget this function requests a redraw and generates an updateEvent().
+    virtual void update() = 0;
 
     //! If the OpenGL context is a top window this function sets its title.
     virtual void setWindowTitle(const String&) {}
