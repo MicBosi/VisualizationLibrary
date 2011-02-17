@@ -153,3 +153,17 @@ void LoadWriterManager::registerLoadWriter(ResourceLoadWriter* load_writer)
   LoadWriterManager::loadWriters()->push_back( load_writer );
 }
 //-----------------------------------------------------------------------------
+bool vl::canLoad(const String& path)  { return defLoadWriterManager()->canLoad(path);  }
+//-----------------------------------------------------------------------------
+bool vl::canWrite(const String& path) { return defLoadWriterManager()->canWrite(path); }
+//-----------------------------------------------------------------------------
+bool vl::canLoad(VirtualFile* file)   { return defLoadWriterManager()->canLoad(file);  }
+//-----------------------------------------------------------------------------
+bool vl::canWrite(VirtualFile* file)  { return defLoadWriterManager()->canWrite(file); }
+//-----------------------------------------------------------------------------
+ref<ResourceDatabase> vl::loadResource(const String& path, bool quick) { return defLoadWriterManager()->loadResource(path,quick); }
+//-----------------------------------------------------------------------------
+ref<ResourceDatabase> vl::loadResource(VirtualFile* file, bool quick)  { return defLoadWriterManager()->loadResource(file,quick); }
+//-----------------------------------------------------------------------------
+
+

@@ -54,7 +54,7 @@ typedef bool (*TestType)();
 struct s_Test
 {
   TestType mTest;
-  char* mTestName;
+  const char* mTestName;
 };
 
 s_Test g_Tests[] = { 

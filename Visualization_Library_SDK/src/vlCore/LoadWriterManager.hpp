@@ -41,37 +41,35 @@
 
 namespace vl
 {
-  /**
-   * Defines an operation to be exectued to a ResourceDatabase as soon as its loaded, see also LoadWriterManager, WriteCallback.
-   */
+  /** Defines an operation to be exectued to a ResourceDatabase as soon as its loaded, see also LoadWriterManager, WriteCallback. */
   class LoadCallback: public Object
   {
   public:
     virtual void operator()(ResourceDatabase* db) = 0;
   };
-  /**
-   * Defines an operation to be exectued to a ResourceDatabase just before it is written, see also LoadWriterManager, LoadCallback.
-   */
+
+  /** Defines an operation to be exectued to a ResourceDatabase just before it is written, see also LoadWriterManager, LoadCallback. */
   class WriteCallback: public Object
   {
   public:
     virtual void operator()(ResourceDatabase* db) = 0;
   };
-  /**
-   * The LoadWriterManager class loads and writes resources using the registered ResourceLoadWriter objects.
-   * You can install a LoadCallback to operate on loaded data or you can install a WriteCallback to operate on the data to be written,
-   *  using the methods loadCallbacks() and writeCallbacks().
-   */
+
+  /** The LoadWriterManager class loads and writes resources using the registered ResourceLoadWriter objects.
+  You can install a LoadCallback to operate on loaded data or you can install a WriteCallback to operate on the data to be written,
+  using the methods loadCallbacks() and writeCallbacks(). */
   class LoadWriterManager: public Object
   {
   public:
     virtual const char* className() { return "LoadWriterManager"; }
+
     LoadWriterManager()
     { 
       mLoadWriters.setAutomaticDelete(false); 
       mLoadCallbacks.setAutomaticDelete(false);
       mWriteCallbacks.setAutomaticDelete(false);
     }
+
     LoadWriterManager(const LoadWriterManager& other): Object(other) 
     { 
       mLoadWriters.setAutomaticDelete(false); 
@@ -83,6 +81,7 @@ namespace vl
 
     //! Returns the set of registered ResourceLoadWriter objects
     Collection<ResourceLoadWriter>* loadWriters() { return &mLoadWriters; }
+
     //! Returns the set of registered ResourceLoadWriter objects
     const Collection<ResourceLoadWriter>* loadWriters() const { return &mLoadWriters; }
 
@@ -101,10 +100,13 @@ namespace vl
 
     //! Returns true if there is a ResourceLoadWriter registered to load the specified path or extension
     bool canLoad(const String& path)  const { return findLoader(path) != NULL; }
+
     //! Returns true if there is a ResourceLoadWriter registered to load the specified file
     bool canLoad(VirtualFile* file)   const { return findLoader(file->path()) != NULL; }
+
     //! Returns true if there is a ResourceLoadWriter registered to write the specified path or extension
     bool canWrite(const String& path) const { return findWriter(path) != NULL; }
+
     //! Returns true if there is a ResourceLoadWriter registered to write the specified file
     bool canWrite(VirtualFile* file)  const { return findWriter(file->path()) != NULL; }
 
@@ -133,8 +135,11 @@ namespace vl
     bool writeResource(VirtualFile* file, ResourceDatabase* resource) const;
 
     const Collection<LoadCallback>* loadCallbacks() const { return &mLoadCallbacks; }
+
     const Collection<WriteCallback>* writeCallbacks() const { return &mWriteCallbacks; }
+
     Collection<LoadCallback>* loadCallbacks() { return &mLoadCallbacks; }
+
     Collection<WriteCallback>* writeCallbacks() { return &mWriteCallbacks; }
 
   protected:
@@ -148,24 +153,6 @@ namespace vl
 
   //! Sets the default LoadWriterManager used by Visualization Library.
   void setDefLoadWriterManager(LoadWriterManager* lwm);
-
-  //! Short version of defLoadWriterManager()->canLoad(path).
-  inline bool canLoad(const String& path)  { return defLoadWriterManager()->canLoad(path);  }
-
-  //! Short version of defLoadWriterManager()->canWrite(path).
-  inline bool canWrite(const String& path) { return defLoadWriterManager()->canWrite(path); }
-
-  //! Short version of defLoadWriterManager()->canLoad(file).
-  inline bool canLoad(VirtualFile* file)   { return defLoadWriterManager()->canLoad(file);  }
-
-  //! Short version of defLoadWriterManager()->canWrite(file).
-  inline bool canWrite(VirtualFile* file)  { return defLoadWriterManager()->canWrite(file); }
-
-  //! Short version of defLoadWriterManager()->loadResource(path,quick).
-  inline ref<ResourceDatabase> loadResource(const String& path, bool quick) { return defLoadWriterManager()->loadResource(path,quick); }
-
-  //! Short version of defLoadWriterManager()->loadResource(file,quick).
-  inline ref<ResourceDatabase> loadResource(VirtualFile* file, bool quick)  { return defLoadWriterManager()->loadResource(file,quick); }
 
   //! Short version of defLoadWriterManager()->registerLoadWriter(rlw).
   inline void registerLoadWriter(ResourceLoadWriter* rlw) { defLoadWriterManager()->registerLoadWriter(rlw); }
