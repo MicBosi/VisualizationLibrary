@@ -100,6 +100,8 @@ public:
 
   void setupApplet(BaseDemo* applet, vl::OpenGLContext* oglcontext, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
+    /* log test title */
+    vl::Log::print( "******* " + applet->appletName() + " *******\n\n");
     /* initialize the applet */
     applet->initialize();
     /* bind the applet so it receives all the GUI events related to the OpenGLContext */
