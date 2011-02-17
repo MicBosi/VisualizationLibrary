@@ -77,9 +77,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
       // check user-generated errors.
       VL_CHECK_OGL()
     }
-  };
-
-  InOutContract contract(this, camera);
+  } contract(this, camera);
 
   // --------------- rendering --------------- 
 
