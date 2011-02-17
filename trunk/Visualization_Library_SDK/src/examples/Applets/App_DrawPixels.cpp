@@ -112,7 +112,7 @@ public:
     mCube->setRenderRank(2); // draw after 2d objects
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     vl::ivec2 pos;
     vl::ivec2 pos1 = pos + vl::ivec2(vl::fvec2(-1,-1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));

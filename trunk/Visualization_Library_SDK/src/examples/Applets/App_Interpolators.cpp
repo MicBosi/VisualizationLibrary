@@ -225,7 +225,7 @@ public:
   }
 
   // Animates the arrows along the path.
-  void run()
+  void updateScene()
   {
     if (mTest == 3)
     {

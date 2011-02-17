@@ -106,7 +106,7 @@ public:
     updateText();
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     mGLSLProgram->useProgram();
     glUniform1f(mGLSLProgram->getUniformLocation("ColorOffset"), mColorOffset = (float)fract(Time::currentTime() * 0.5) );

@@ -230,7 +230,7 @@ public:
   }
 
   // Animate the lights
-  virtual void run()
+  virtual void updateScene()
   {
     vl::Real phase = 120.0f;
     vl::mat4 m;

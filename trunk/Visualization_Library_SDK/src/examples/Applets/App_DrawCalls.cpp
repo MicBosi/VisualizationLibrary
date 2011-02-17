@@ -183,8 +183,6 @@ class App_DrawCalls: public BaseDemo
     exit(0);
   }
 
-  virtual void run() {}
-
 };
 
 // Have fun!

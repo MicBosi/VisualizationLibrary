@@ -114,7 +114,7 @@ public:
     mTransform_Right->setLocalMatrix(vl::mat4::getTranslation(+mOffset,0,0) * matrix );
   }
 
-  void run() { updateTransforms(); }
+  void updateScene() { updateTransforms(); }
 
 protected:
   vl::ref<vl::Transform> mTransform_Left;

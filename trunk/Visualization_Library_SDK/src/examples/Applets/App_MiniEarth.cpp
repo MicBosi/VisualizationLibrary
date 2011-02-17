@@ -82,11 +82,6 @@ public:
     sceneManager()->tree()->addActor(earth.get(), fx.get());
   }
 
-  // Animate the lights
-  virtual void run()
-  {
-  }
-
 protected:
 };
 

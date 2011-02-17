@@ -38,7 +38,7 @@
 class App_GeometryInstancing: public BaseDemo
 {
 public:
-  virtual void run()
+  virtual void updateScene()
   {
     // note that this creates a delay on the application of the camera transform
 

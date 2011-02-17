@@ -155,7 +155,7 @@ public:
     }
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     _tr1->setLocalMatrix( mat4::getRotation(Time::currentTime()*45,0,1,0) );
   }

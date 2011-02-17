@@ -142,7 +142,7 @@ public:
     }
   }
 
-  void run()
+  void updateScene()
   {
     // animate the transforms
     mTransform1->setLocalMatrix( vl::mat4::getTranslation(-2,2,0)  * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );

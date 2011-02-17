@@ -127,7 +127,7 @@ public:
     cube3->setEnableMask(0x04);
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     vl::Real degrees = vl::Time::currentTime() * 45.0f;
     vl::mat4 matrix;

@@ -146,7 +146,7 @@ public:
     }
   }
 
-  void run()
+  void updateScene()
   {
     /* update text every 0.5 secs */
     if( mTimer.elapsed() > 0.5f && mOcclusionCullingOn )

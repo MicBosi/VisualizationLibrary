@@ -97,7 +97,7 @@ public:
     sceneManager()->tree()->addActor( plane.get(), plane_fx.get(), mClipTr.get() );
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     // animate the clipping planes and the rendered plane
     vl::Real t = (vl::Real)vl::Time::currentTime();
