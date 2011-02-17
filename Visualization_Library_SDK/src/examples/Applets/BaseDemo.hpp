@@ -35,7 +35,6 @@
 #include <vlGraphics/Applet.hpp>
 #include <vlGraphics/Rendering.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
-#include <vlGraphics/ReadPixels.hpp>
 #include <vlCore/Time.hpp>
 
 class BaseDemo: public vl::Applet
@@ -43,51 +42,23 @@ class BaseDemo: public vl::Applet
 public:
   BaseDemo()
   {
-    mReadPixels = new vl::ReadPixels;
-  }
-
-  void initEvent() 
-  {
-    trackball()->setPivot(vl::vec3(0,0,0));
-    trackball()->setTransform(NULL);
-  }
-
-  void keyPressEvent(unsigned short, vl::EKey key)
-  {
-    if (key == vl::Key_F5)
-    {
-      mReadPixels->setup( 0, 0, openglContext()->width(), openglContext()->height(), vl::RDB_BACK_LEFT, false );
-      rendering()->onFinishedCallbacks()->push_back( mReadPixels.get() );
-      mReadPixels->setRemoveAfterCall(true);
-      vl::String filename = vl::Say( applicationName() + "-%n.png") << (int)vl::Time::currentTime();
-      mReadPixels ->setSavePath( filename );
-      vl::Log::print( vl::Say("Screenshot: '%s'\n") << filename );
-    }
+    mFPSTimer.start();
   }
 
   void updateEvent()
   {
     vl::Applet::updateEvent();
 
-    if ( !mFPSTimer.isStarted() )
-      mFPSTimer.start();
-    else
     if (mFPSTimer.elapsed() > 1)
     {
       mFPSTimer.start();
-      openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << applicationName() );
+      openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << appletName() );
       vl::Log::print( vl::Say("FPS=%.1n\n") << fps() );
     }
   }
 
-  const vl::String& applicationName() const { return mApplicationName; }
-
-  void setApplicationName(const vl::String& app_name) { mApplicationName = app_name; } 
-
-protected:
-  vl::ref<vl::ReadPixels> mReadPixels;
+private:
   vl::Time mFPSTimer;
-  vl::String mApplicationName;
 };
 
 #endif

@@ -189,7 +189,7 @@ public:
     mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
     Rendering* rend = mRenderingTree->subRenderings()->at(0)->as<Rendering>();
-    bindManipulators( rend->camera(), rend->transform() );
+    bindManipulators( rend->camera() );
   }
 
   void mouseDownEvent(EMouseButton, int x, int y)
@@ -200,7 +200,7 @@ public:
       if ( mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->viewport()->isPointInside(x,y,height) )
       {
         Rendering* rend = mRenderingTree->subRenderings()->at(i)->as<Rendering>();
-          bindManipulators( rend->camera(), rend->transform() );
+          bindManipulators( rend->camera() );
          trackball()->setTransform( _tr2.get() );
         break;
       }
