@@ -77,26 +77,32 @@ void Applet::initialize()
 void Applet::bindManipulators(Camera* camera, Transform* transform)
 {
   mFly->setCamera( camera );
-  // mFly->prepareToReconnect();
+  // mFly->enableEvent(bool enabled);
 
   mTrackball->setCamera( camera );
   mTrackball->setTransform( transform );
   mTrackball->setPivot( vec3(0,0,0) );
 }
 //-----------------------------------------------------------------------------
-void Applet::openglContextBoundEvent(OpenGLContext* openglContext)
+void Applet::addedListenerEvent(OpenGLContext* openglContext)
 {
   VL_CHECK(openglContext)
   VL_CHECK(mFly->openglContext() == NULL);
   // mFly->setCamera( pipeline()->camera() );
   openglContext->addEventListener( mFly.get() );
-  // mFly->prepareToReconnect();
+  // mFly->enableEvent(bool enabled);
 
   VL_CHECK(mTrackball->openglContext() == NULL);
   // mTrackball->setCamera( pipeline()->camera() );
   // mTrackball->setTransform( pipeline()->rend->transform() );
   mTrackball->setPivot( vec3(0,0,0) );
   openglContext->addEventListener( mTrackball.get() );
+}
+//-----------------------------------------------------------------------------
+void Applet::removedListenerEvent(OpenGLContext* openglContext)
+{
+  openglContext->removeEventListener( mTrackball.get() );
+  openglContext->removeEventListener( mFly.get() );
 }
 //-----------------------------------------------------------------------------
 void Applet::keyReleaseEvent(unsigned short, EKey key)
@@ -135,7 +141,7 @@ void Applet::destroyEvent()
   mTrackball->setTransform(NULL);
 }
 //-----------------------------------------------------------------------------
-void Applet::runEvent()
+void Applet::updateEvent()
 {
   // FPS counter
   if (Time::currentTime() - mStartTime > 1.000)

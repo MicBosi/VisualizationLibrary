@@ -55,15 +55,39 @@ namespace vl
 
     void initialize();
 
-    virtual void openglContextBoundEvent(OpenGLContext* openglContext);
+    // --- UIEventListener ---
 
-    void keyReleaseEvent(unsigned short, EKey key);
+    virtual void addedListenerEvent(OpenGLContext* openglContext);
+
+    virtual void removedListenerEvent(OpenGLContext*);
+
+    virtual void keyReleaseEvent(unsigned short, EKey key);
 
     virtual void destroyEvent();
 
-    void runEvent();
+    virtual void updateEvent();
 
-    void resizeEvent(int w, int h);
+    virtual void resizeEvent(int, int);
+
+    virtual void initEvent() {}
+    
+    virtual void enableEvent(bool) {}
+
+    virtual void mouseMoveEvent(int, int) {}
+
+    virtual void mouseUpEvent(EMouseButton, int, int) {}
+
+    virtual void mouseDownEvent(EMouseButton, int, int) {}
+
+    virtual void mouseWheelEvent(int) {}
+
+    virtual void keyPressEvent(unsigned short, EKey) {}
+
+    virtual void fileDroppedEvent(const std::vector<String>&) {}
+
+    virtual void visibilityEvent(bool) {}
+
+    // --- --- ---
 
     RenderingAbstract* rendering() { return mRendering.get(); }
     
