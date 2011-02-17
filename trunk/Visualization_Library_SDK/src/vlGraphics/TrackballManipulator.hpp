@@ -73,7 +73,7 @@ namespace vl
       #endif
     }
 
-    // --- UIEventListener interface ---
+    // --- UIEventListener ---
 
     virtual void mouseDownEvent(EMouseButton, int x, int y);
 
@@ -81,9 +81,31 @@ namespace vl
 
     virtual void mouseMoveEvent(int x, int y);
 
-    void prepareToReconnect();
+    virtual void enableEvent(bool enabled);
 
-    // --- User methods ---
+    virtual void initEvent() {}
+
+    virtual void destroyEvent() {}
+
+    virtual void updateEvent() {}
+    
+    virtual void addedListenerEvent(OpenGLContext*) {}
+
+    virtual void removedListenerEvent(OpenGLContext*) {}
+
+    virtual void mouseWheelEvent(int) {}
+
+    virtual void keyPressEvent(unsigned short, EKey) {}
+
+    virtual void keyReleaseEvent(unsigned short, EKey) {}
+
+    virtual void resizeEvent(int, int) {}
+
+    virtual void fileDroppedEvent(const std::vector<String>&) {}
+
+    virtual void visibilityEvent(bool) {}
+
+    // --- user methods ---
 
     //! The camera through which the trackball manipulator is used.
     void setCamera(Camera* camera) { mCamera = camera; }

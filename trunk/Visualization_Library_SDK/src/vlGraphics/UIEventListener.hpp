@@ -40,26 +40,24 @@ namespace vl
   //-----------------------------------------------------------------------------
   // UIEventListener
   //-----------------------------------------------------------------------------
-  /**
-   * The UIEventListener class listens to the events emitted by an OpenGLContext.
-   *
-   * \remarks
-   * - Qt amongst others does not distinguish between left and right \a alt, \a shift and \a control keys, which means that you
-   *   won't receive messages like Key_LeftCtrl, Key_RightCtrl, Key_LeftAlt, Key_RightAlt, Key_LeftShift and Key_RightShift
-   *   but only the more general Key_Ctrl, Key_Alt and Key_Shift messages.
-   * - SDL supports Unicode only partially at the moment, which means that you will receive Unicode codes only for key press events and not
-   *   for release events.
-   * - keyPressed() returns the correct state only for the keys whose messages have been received by the OpenGLContext. This means that for
-   *   example if a key was pressed when the BanckendAdaper did not have the keyboard focus, the function keyPressed() will wrongly
-   *   report a \a released state for that key. If a key release event is not sent to the OpenGLContext because generated when the
-   *   OpenGLContext did not have the keyboard focus, the function keyPressed() will wrongly report a \a pressed state for that key.
-  */
+  /** The UIEventListener class listens to the events emitted by an OpenGLContext.
+  \remarks
+  - Qt amongst others does not distinguish between left and right \a alt, \a shift and \a control keys, which means that you
+	  won't receive messages like Key_LeftCtrl, Key_RightCtrl, Key_LeftAlt, Key_RightAlt, Key_LeftShift and Key_RightShift
+	  but only the more general Key_Ctrl, Key_Alt and Key_Shift messages.
+  - SDL supports Unicode only partially at the moment, which means that you will receive Unicode codes only for key press events and not
+	  for release events.
+  - keyPressed() returns the correct state only for the keys whose messages have been received by the OpenGLContext. This means that for
+	  example if a key was pressed when the OpenGLContext did not have the keyboard focus, the function keyPressed() will wrongly
+	  report a \a released state for that key. If a key release event is not sent to the OpenGLContext because generated when the
+	  OpenGLContext did not have the keyboard focus, the function keyPressed() will wrongly report a \a pressed state for that key. */
   class UIEventListener: public Object
   {
   friend class OpenGLContext;
   public:
     virtual const char* className() { return "UIEventListener"; }
 
+    /** Constructor. */
     UIEventListener(): mOpenGLContext(NULL), mEnabled(true) 
     {
       #ifndef NDEBUG
@@ -67,38 +65,65 @@ namespace vl
       #endif
     }
 
-    virtual ~UIEventListener() {}
+    /** Event generated when the bound OpenGLContext bocomes initialized or when the event listener is bound to an initialized OpenGLContext. */
+    virtual void initEvent() = 0;
 
-    virtual void initEvent() {}
+    /** Event generated right before the bound OpenGLContext is destroyed. */
+    virtual void destroyEvent() = 0;
 
-    virtual void mouseMoveEvent(int /*x*/, int /*y*/) {}
-    virtual void mouseUpEvent(EMouseButton /*button*/, int /*x*/, int /*y*/) {}
-    virtual void mouseDownEvent(EMouseButton /*button*/, int /*x*/, int /*y*/) {}
-    virtual void mouseWheelEvent(int /*n*/) {}
-    virtual void keyPressEvent(unsigned short /*unicode_ch*/, EKey /*key*/) {}
-    virtual void keyReleaseEvent(unsigned short /*unicode_ch*/, EKey /*key*/) {}
-    virtual void resizeEvent(int /*x*/, int /*y*/) {}
-    virtual void destroyEvent() {}
-    virtual void runEvent() {}
-    virtual void visibilityEvent(bool /*visible*/) {}
-    virtual void fileDroppedEvent(const std::vector<String>& /*files*/) {}
+    /** Event generated when the bound OpenGLContext does not have any other message to process and OpenGLContext::continuousUpdate() is set to \p true. */
+    virtual void updateEvent() = 0;
+    
+    /** Event generated whenever setEnabled() is called. */
+    virtual void enableEvent(bool enabled) = 0;
 
-    virtual void openglContextBoundEvent(OpenGLContext*) {}
+    /** Event generated whenever a listener is bound to an OpenGLContext context. */
+    virtual void addedListenerEvent(OpenGLContext*) = 0;
 
-    //! Returns the OpenGL context to which this UIEventListener is bound or NULL if no context is bound.
-    OpenGLContext* openglContext();
+    /** Event generated whenever a listener is unbound from an OpenGLContext context. */
+    virtual void removedListenerEvent(OpenGLContext*) = 0;
 
-    //! Enables or disables a UIEventListener
-    //! \note When an UIEventListener is enabled its prepareToReconnect() method is called so that 
-    //! it can be appropriately setup before it starts to receive events.
-    virtual void setEnabled(bool enabled) { mEnabled = enabled; if (enabled) prepareToReconnect(); }
+    /** Event generated when the mouse moves. */
+    virtual void mouseMoveEvent(int x, int y) = 0;
 
-    //! Reimplement this in order to react to a setEnabled(true), see setEnabled() for more information.
-    virtual void prepareToReconnect() {}
+    /** Event generated when one of the mouse buttons is released. */
+    virtual void mouseUpEvent(EMouseButton button, int x, int y) = 0;
 
+    /** Event generated when one of the mouse buttons is pressed. */
+    virtual void mouseDownEvent(EMouseButton button, int x, int y) = 0;
+
+    /** Event generated when the mouse wheel rotated. */
+    virtual void mouseWheelEvent(int n) = 0;
+
+    /** Event generated when one key is pressed. */
+    virtual void keyPressEvent(unsigned short unicode_ch, EKey key) = 0;
+
+    /** Event generated when one key is released. */
+    virtual void keyReleaseEvent(unsigned short unicode_ch, EKey key) = 0;
+
+    /** Event generated when the bound OpenGLContext is resized. */
+    virtual void resizeEvent(int x, int y) = 0;
+
+    /** Event generated when one or more files are dropped on the bound OpenGLContext's area. */
+    virtual void fileDroppedEvent(const std::vector<String>& files) = 0;
+
+    /** Event generated when the bound OpenGLContext is shown or hidden. */
+    virtual void visibilityEvent(bool visible) = 0;
+
+    /** Enables or disables a UIEventListener.
+        \note When an UIEventListener is enabled or disabled its enableEvent(bool enabled) method is called. */
+    virtual void setEnabled(bool enabled) { if (mEnabled != enabled) { mEnabled = enabled; enableEvent(enabled); } }
+
+    /** Returns whether the UIEventListener is currently enabled or not. */
     bool isEnabled() const { return mEnabled; }
 
-  protected:
+    /** Returns the OpenGLContext to which this UIEventListener is bound or NULL if no context is bound. */
+    OpenGLContext* openglContext();
+
+    /** Returns the OpenGLContext to which this UIEventListener is bound or NULL if no context is bound. */
+    const OpenGLContext* openglContext() const;
+
+  private:
     OpenGLContext* mOpenGLContext;
     bool mEnabled;
   };

@@ -146,9 +146,9 @@ public:
     }
   }
 
-  void runEvent()
+  void updateEvent()
   {
-    BaseDemo::runEvent();
+    BaseDemo::updateEvent();
 
     /* update text every 0.5 secs */
     if( mTimer.elapsed() > 0.5f && mOcclusionCullingOn )
