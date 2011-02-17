@@ -71,7 +71,8 @@ namespace vl
     /** Event generated right before the bound OpenGLContext is destroyed. */
     virtual void destroyEvent() = 0;
 
-    /** Event generated when the bound OpenGLContext does not have any other message to process and OpenGLContext::continuousUpdate() is set to \p true. */
+    /** Event generated when the bound OpenGLContext does not have any other message to process 
+        and OpenGLContext::continuousUpdate() is set to \p true or somebody calls OpenGLContext::update(). */
     virtual void updateEvent() = 0;
     
     /** Event generated whenever setEnabled() is called. */
