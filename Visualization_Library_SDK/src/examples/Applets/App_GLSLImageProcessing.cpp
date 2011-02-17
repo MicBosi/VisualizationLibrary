@@ -38,7 +38,7 @@
 class App_GLSLImageProcessing: public BaseDemo
 {
 public:
-  virtual void run()
+  virtual void updateScene()
   {
     if (mTimer.elapsed() > 3)
     {

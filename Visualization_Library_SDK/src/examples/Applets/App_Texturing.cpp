@@ -316,7 +316,7 @@ public:
     rendering()->as<vl::Rendering>()->transform()->addChild( mActCubic->transform() );
   }
 
-  void run()
+  void updateScene()
   {
     // rotating cubes
 

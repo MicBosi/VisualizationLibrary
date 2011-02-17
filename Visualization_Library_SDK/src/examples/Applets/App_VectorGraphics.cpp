@@ -375,7 +375,7 @@ public:
     vg->endDrawing();
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     vl::mat4 mat = vl::mat4::getRotation(vl::Time::currentTime() * 60.0f, 0, 0, 1);
     mat = vl::mat4::getTranslation(sin(vl::Time::currentTime()*vl::fPi*0.25f)*200.0f,0,0) * mat;

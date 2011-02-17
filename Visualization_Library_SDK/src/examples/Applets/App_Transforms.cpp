@@ -36,7 +36,7 @@
 class App_Transforms: public BaseDemo
 {
 public:
-  virtual void run()
+  virtual void updateScene()
   {
     // rotate arm0
     mTransfArm0->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*30.0f, 0.0f, 1.0f, 0.0f) );

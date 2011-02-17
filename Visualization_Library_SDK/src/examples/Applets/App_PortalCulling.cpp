@@ -91,7 +91,7 @@ public:
   }
 
   // simple method to keep the camera on the floor
-  void run()
+  void updateScene()
   {
     vl::mat4 im = trackball()->camera()->inverseViewMatrix();
     vl::vec3 t = im.getT(); t.y() = 1.5f; im.setT(t); 

@@ -50,9 +50,11 @@ namespace vl
   {
   public:
     virtual const char* className() { return "Applet"; }
-    Applet();
-    ~Applet() {}
 
+    /** Constructor */
+    Applet();
+
+    /** Initializes the rendering, scene manager and camera manipulators. */
     void initialize();
 
     // --- UIEventListener ---
@@ -103,7 +105,7 @@ namespace vl
 
     double fps() const { return mFPS; }
 
-	virtual void run() { }
+	  virtual void updateScene() { }
 
   protected:
     void bindManipulators(Camera* camera, Transform* transform);

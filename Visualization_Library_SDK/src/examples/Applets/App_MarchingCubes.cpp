@@ -115,7 +115,7 @@ public:
     setupTest();
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     if (mTest == 4)
       runTest4();

@@ -59,7 +59,7 @@ public:
     rendering()->as<vl::Rendering>()->transform()->addChild(mStar2->transform());
   }
 
-  void run() 
+  void updateScene() 
   {
     // Animation: compute rotation matrix to rotate the small star, 45°/sec rotation.
     vl::dmat4 m = vl::dmat4::getRotation( vl::Time::currentTime()*45, 0,0,1 );

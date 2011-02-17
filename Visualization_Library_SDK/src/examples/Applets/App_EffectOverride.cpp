@@ -136,7 +136,7 @@ class App_EffectOverride: public BaseDemo
     ball3->setEnableMask(0x04);
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     Real degrees = Time::currentTime() * 45.0f;
     mat4 matrix;

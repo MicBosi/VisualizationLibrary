@@ -168,7 +168,7 @@ public:
   }
 
   // animate the scene
-  void run()
+  void updateScene()
   {
     vl::Real t = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 8.0f ) * 0.5f + 0.5f;
     vl::vec3 eye( 130*t+5, t*20+5, 0 );

@@ -522,7 +522,7 @@ public:
     mMainRendering->camera()->setProjectionAsPerspective();
   }
 
-  virtual void run()
+  virtual void updateScene()
   {
     mX  = vl::Time::currentTime() * 45*2;
     mY  = vl::Time::currentTime() * 45*2.1f;

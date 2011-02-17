@@ -242,7 +242,7 @@ public:
     }
   }
 
-  void run()
+  void updateScene()
   {
     /* animate the camera to rotate around the scene and bounce near/far */
     float s = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 10.0f );

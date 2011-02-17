@@ -153,8 +153,8 @@ void Applet::updateEvent()
   }
   mFrameCount++;
 
-  // execute program
-  run();
+  // update the scene content
+  updateScene();
 
   // set frame time for all the rendering
   Real now_time = Time::currentTime();

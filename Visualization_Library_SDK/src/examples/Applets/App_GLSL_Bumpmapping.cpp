@@ -151,7 +151,7 @@ public:
     sceneManager()->tree()->addActor( NTBGeom.get(), effect.get(), mTransform.get() );
   }
 
-  void run() 
+  void updateScene() 
   {
     // update the torus tranform
     mTransform->setLocalMatrix( vl::mat4::getRotation( vl::Time::currentTime() * 5.0f, 0, -1, 1 ) );
