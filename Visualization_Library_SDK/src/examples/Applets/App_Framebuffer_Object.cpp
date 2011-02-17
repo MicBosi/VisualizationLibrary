@@ -512,7 +512,7 @@ public:
       break;
     }
 
-    bindManipulators( mMainRendering->camera(), mMainRendering->transform() );
+    bindManipulators( mMainRendering->camera() );
   }
 
   void resizeEvent(int w, int h)

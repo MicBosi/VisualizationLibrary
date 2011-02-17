@@ -49,6 +49,8 @@ Applet::Applet()
   mFrameCount = 0;
   mStartTime  = Time::currentTime();
   mFPS        = 0;
+  mReadPixels = new ReadPixels;
+  mAppletName = "AppletNoName";
 }
 //-----------------------------------------------------------------------------
 void Applet::initialize()
@@ -58,93 +60,25 @@ void Applet::initialize()
   setRendering(rend.get());
   rend->setShaderAnimationEnabled(true);
 
-  // attached later: viewport
-  // attached later: opengl context
-  // attached later: render target
-
   // installs a SceneManagerActorTree as the default scene manager
   mSceneManagerActorTree = new SceneManagerActorTree;
   rend->sceneManagers()->push_back(sceneManager());
+
+  // render target attached externally
+  // ...
 
   mFly       = new GhostCameraManipulator;
   mTrackball = new TrackballManipulator;
   mFly->setEnabled(false);
   mTrackball->setEnabled(true);
 
-  bindManipulators( rend->camera(), rend->transform() );
-}
-//-----------------------------------------------------------------------------
-void Applet::bindManipulators(Camera* camera, Transform* transform)
-{
-  mFly->setCamera( camera );
-  // mFly->enableEvent(bool enabled);
-
-  mTrackball->setCamera( camera );
-  mTrackball->setTransform( transform );
-  mTrackball->setPivot( vec3(0,0,0) );
-}
-//-----------------------------------------------------------------------------
-void Applet::addedListenerEvent(OpenGLContext* openglContext)
-{
-  VL_CHECK(openglContext)
-  VL_CHECK(mFly->openglContext() == NULL);
-  // mFly->setCamera( pipeline()->camera() );
-  openglContext->addEventListener( mFly.get() );
-  // mFly->enableEvent(bool enabled);
-
-  VL_CHECK(mTrackball->openglContext() == NULL);
-  // mTrackball->setCamera( pipeline()->camera() );
-  // mTrackball->setTransform( pipeline()->rend->transform() );
-  mTrackball->setPivot( vec3(0,0,0) );
-  openglContext->addEventListener( mTrackball.get() );
-}
-//-----------------------------------------------------------------------------
-void Applet::removedListenerEvent(OpenGLContext* openglContext)
-{
-  openglContext->removeEventListener( mTrackball.get() );
-  openglContext->removeEventListener( mFly.get() );
-}
-//-----------------------------------------------------------------------------
-void Applet::keyReleaseEvent(unsigned short, EKey key)
-{
-  if (key == Key_Escape)
-  {
-    openglContext()->quitApplication();
-  }
-  else
-  if (key == Key_U)
-    openglContext()->update();
-  else
-  if(key == Key_T)
-  {
-    mFly->setEnabled(false);
-    mTrackball->setEnabled(true);
-  }
-  else
-  if(key == Key_F)
-  {
-    mTrackball->setEnabled(false);
-    mFly->setEnabled(true);
-  }
-  else
-  if(key == Key_C)
-    openglContext()->setContinuousUpdate( !openglContext()->continuousUpdate() );
-  else
-  if(key == Key_F1)
-    openglContext()->setFullscreen( !openglContext()->fullscreen() );
-}
-//-----------------------------------------------------------------------------
-void Applet::destroyEvent()
-{
-  mFly->setCamera(NULL);
-  mTrackball->setCamera(NULL);
-  mTrackball->setTransform(NULL);
+  bindManipulators( rend->camera() );
 }
 //-----------------------------------------------------------------------------
 void Applet::updateEvent()
 {
   // FPS counter
-  if (Time::currentTime() - mStartTime > 1.000)
+  if (Time::currentTime() - mStartTime > 0.500f)
   {
     double secs = (Time::currentTime() - mStartTime);
     mFPS = mFrameCount / secs;
@@ -164,13 +98,51 @@ void Applet::updateEvent()
   rendering()->render();
 
   // show rendering
-  if( openglContext()->hasDoubleBuffer() )
+  if ( openglContext()->hasDoubleBuffer() )
     openglContext()->swapBuffers();
 
   VL_CHECK_OGL();
 
   // useful for debugging
   // wglMakeCurrent(NULL,NULL);
+}
+//-----------------------------------------------------------------------------
+void Applet::keyReleaseEvent(unsigned short, EKey key)
+{
+  if (key == Key_Escape)
+    openglContext()->quitApplication();
+  else
+  if (key == Key_T)
+  {
+    mFly->setEnabled(false);
+    mTrackball->setEnabled(true);
+  }
+  else
+  if (key == Key_F)
+  {
+    mTrackball->setEnabled(false);
+    mFly->setEnabled(true);
+  }
+  else
+  if (key == Key_F1)
+    openglContext()->setFullscreen( !openglContext()->fullscreen() );
+  else
+  if (key == Key_F5)
+  {
+    mReadPixels->setup( 0, 0, openglContext()->width(), openglContext()->height(), RDB_BACK_LEFT, false );
+    rendering()->onFinishedCallbacks()->push_back( mReadPixels.get() );
+    mReadPixels->setRemoveAfterCall(true);
+    Time time;
+    String filename = Say( appletName() + " - %n%02n%02n%02n%02n.png") << time.year() << time.month() << time.dayOfMonth() << time.hour() << time.second();
+    mReadPixels->setSavePath( filename );
+    Log::print( Say("Saved screenshot: '%s'\n") << filename );
+  }
+  else
+  if (key == Key_U)
+    openglContext()->update();
+  else
+  if (key == Key_C)
+    openglContext()->setContinuousUpdate( !openglContext()->continuousUpdate() );
 }
 //-----------------------------------------------------------------------------
 void Applet::resizeEvent(int w, int h)
@@ -185,5 +157,37 @@ void Applet::resizeEvent(int w, int h)
     rend->camera()->viewport()->setHeight( h );
     rend->camera()->setProjectionAsPerspective();
   }
+}
+//-----------------------------------------------------------------------------
+void Applet::bindManipulators(Camera* camera)
+{
+  mFly->setCamera( camera );
+  mTrackball->setCamera( camera );
+  mTrackball->setTransform( NULL );
+  mTrackball->setPivot( vec3(0,0,0) );
+}
+//-----------------------------------------------------------------------------
+void Applet::addedListenerEvent(OpenGLContext* ogl_context)
+{
+  VL_CHECK(ogl_context)
+  VL_CHECK(mFly->openglContext() == NULL);
+  ogl_context->addEventListener( mFly.get() );
+
+  VL_CHECK(mTrackball->openglContext() == NULL);
+  mTrackball->setPivot( vec3(0,0,0) );
+  ogl_context->addEventListener( mTrackball.get() );
+}
+//-----------------------------------------------------------------------------
+void Applet::removedListenerEvent(OpenGLContext* ogl_context)
+{
+  ogl_context->removeEventListener( mTrackball.get() );
+  ogl_context->removeEventListener( mFly.get() );
+}
+//-----------------------------------------------------------------------------
+void Applet::destroyEvent()
+{
+  mFly->setCamera(NULL);
+  mTrackball->setCamera(NULL);
+  mTrackball->setTransform(NULL);
 }
 //-----------------------------------------------------------------------------

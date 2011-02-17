@@ -37,15 +37,24 @@
 #include <vlGraphics/GhostCameraManipulator.hpp>
 #include <vlGraphics/SceneManagerActorTree.hpp>
 #include <vlGraphics/Rendering.hpp>
+#include <vlGraphics/ReadPixels.hpp>
 
 namespace vl
 {
 //-----------------------------------------------------------------------------
 // Applet
 //-----------------------------------------------------------------------------
-  /**
-   * The Applet class is an utilitly UIEventListener that features a ghost manipulator, 
-   * trackball manipulator, an FPS counter and a simple rendering pipeline. */
+  /** The Applet class is an utilitly UIEventListener that features a ghost manipulator, 
+      trackball manipulator, an FPS counter and a simple rendering pipeline. 
+
+      Default key bindings:
+      - Key_Escape: calls openglContext()->quitApplication()
+      - Key_T: enables the TrackballManipulator.
+      - Key_F: enables the GhostCameraManipulator (fly mode).
+      - Key_F1: toggles fullscreen mode if supported.
+      - Key_F5: saves a screenshot of the current OpenGL window. 
+      - Key_C: toggles the continuous update fo the OpenGL window (see also OpenGLContext::setContinuousUpdate()).
+      - Key_U: updates the OpenGL window content by calling openglContext()->update(). */
   class Applet: public UIEventListener
   {
   public:
@@ -54,7 +63,7 @@ namespace vl
     /** Constructor */
     Applet();
 
-    /** Initializes the rendering, scene manager and camera manipulators. */
+    /** Initializes the default rendering (with Rendering), the default scene manager (with SceneManagerActorTree) and camera manipulators (GhostCameraManipulator and TrackballManipulator). */
     void initialize();
 
     // --- UIEventListener ---
@@ -91,33 +100,55 @@ namespace vl
 
     // --- --- ---
 
+    /** The rendering used by the Applet, by default a Rendering. */
     RenderingAbstract* rendering() { return mRendering.get(); }
     
+    /** The rendering used by the Applet, by default a Rendering. */
     const RenderingAbstract* rendering() const { return mRendering.get(); }
     
+    /** Sets the rendering used by the Applet, by default a Rendering. */
     void setRendering(RenderingAbstract* rendering) { mRendering = rendering; }
 
+    /** The scene manager used by the default rendering. */
     SceneManagerActorTree* sceneManager() { return mSceneManagerActorTree.get(); }
+
+    /** The scene manager used by the default rendering. */
     const SceneManagerActorTree* sceneManager() const { return mSceneManagerActorTree.get(); }
 
+    /** GhostCameraManipulator used by the applet, activated by the "F" key. */
     GhostCameraManipulator* ghostCamera() { return mFly.get(); }
+
+    /** TrackballManipulator used by the applet, activated by the "T" key. */
     TrackballManipulator* trackball() { return mTrackball.get(); }
 
+    /** Current average frames per second (updated every 500ms). */
     double fps() const { return mFPS; }
 
-	  virtual void updateScene() { }
+    /** Override this to update the content of your scene. 
+        Called by updateEvent() right before rendering()->render() and swapping opengl front/back buffers. 
+        \note Since updateScene() is called by updateEvent() this function is called only if somebody
+        requests a OpenGLContext::update() or if OpenGLContext::continuousUpdate() is set to \p true. */
+	  virtual void updateScene() {}
+
+    /** Sets the applet name, used for the window title and for naming screenshots. */
+    void setAppletName(const String& app_name) { mAppletName = app_name; } 
+
+    /** The applet name, used for the window title and for naming screenshots. */
+    const String& appletName() const { return mAppletName; }
 
   protected:
-    void bindManipulators(Camera* camera, Transform* transform);
+    void bindManipulators(Camera* camera);
 
   private:
     ref<RenderingAbstract> mRendering;
     ref<GhostCameraManipulator> mFly;
     ref<TrackballManipulator> mTrackball;
     ref<SceneManagerActorTree> mSceneManagerActorTree;
-    int mFrameCount;
+    ref<ReadPixels> mReadPixels;
+    String mAppletName;
     double mStartTime;
     double mFPS;
+    int mFrameCount;
   };
 }
 
