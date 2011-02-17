@@ -36,10 +36,6 @@
 class App_Transforms: public BaseDemo
 {
 public:
-  App_Transforms() {}
-
-  virtual void shutdown() {}
-
   virtual void run()
   {
     // rotate arm0

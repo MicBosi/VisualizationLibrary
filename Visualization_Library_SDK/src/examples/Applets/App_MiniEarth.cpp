@@ -39,8 +39,6 @@
 class App_MiniEarth: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
   virtual void initEvent()
   {
     BaseDemo::initEvent();

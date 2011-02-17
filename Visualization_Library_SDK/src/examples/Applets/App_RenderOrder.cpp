@@ -38,8 +38,6 @@ class App_RenderOrder: public BaseDemo
 public:
   App_RenderOrder(int test): mTestNumber(test) {}
 
-  void shutdown() {}
-
   void run()
   {
     if (mTestNumber == 0)

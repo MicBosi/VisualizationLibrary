@@ -37,14 +37,6 @@
 class App_PointSplatting: public BaseDemo
 {
 public:
-  App_PointSplatting() {}
-
-  virtual void shutdown() {}
-
-  virtual void run()
-  {
-  }
-
   virtual void initEvent()
   {
     trackball()->setTransform(NULL);

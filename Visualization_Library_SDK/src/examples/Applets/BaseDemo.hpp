@@ -54,8 +54,6 @@ public:
   
   void run() {}
   
-  void shutdown() {}
-
   void keyPressEvent(unsigned short, vl::EKey key)
   {
     if (key == vl::Key_F5)

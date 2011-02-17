@@ -152,8 +152,6 @@ public:
     mTransform5->setLocalMatrix( vl::mat4::getTranslation(0,0,0)   * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
   }
 
-  void shutdown() {}
-
 protected:
   vl::ref<vl::Transform> mTransform1;
   vl::ref<vl::Transform> mTransform2;

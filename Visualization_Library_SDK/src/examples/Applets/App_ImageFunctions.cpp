@@ -36,10 +36,6 @@
 class App_ImageFunctions: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
-  virtual void run() {}
-
   virtual void initEvent()
   {
     if ( !vl::canLoad("png") || !vl::canLoad("jpg") || !vl::canLoad("tga") || !vl::canLoad("tif") )

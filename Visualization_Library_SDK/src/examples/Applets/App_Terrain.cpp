@@ -36,10 +36,6 @@
 class App_Terrain: public BaseDemo
 {
 public:
-  virtual void shutdown() {}
-
-  virtual void run() {}
-
   virtual void initEvent()
   {
     if (!GLEW_ARB_multitexture)
