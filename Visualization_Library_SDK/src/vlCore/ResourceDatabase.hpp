@@ -135,20 +135,24 @@ namespace vl
   protected:
     std::vector< ref<Object> > mResources;
   };
-//-----------------------------------------------------------------------------
-  //! Loads the specified resource. Equivalent to defLoadWriterManager()->loadResource(const String& path, bool quick)
-  ref<ResourceDatabase> loadResource(const String& path, bool quick=true);
-  //! Loads the specified resource. Equivalent to defLoadWriterManager()->loadResource(VirtualFile* file)
-  ref<ResourceDatabase> loadResource(VirtualFile* file, bool quick=true);
-  //! Returns true if there is a ResourceLoadWriter registered to load the specified path or extension
+
+  //! Short version of defLoadWriterManager()->canLoad(path).
   bool canLoad(const String& path);
-  //! Returns true if there is a ResourceLoadWriter registered to load the specified file
-  bool canLoad(VirtualFile* file);
-  //! Returns true if there is a ResourceLoadWriter registered to write the specified path or extension
+
+  //! Short version of defLoadWriterManager()->canWrite(path).
   bool canWrite(const String& path);
-  //! Returns true if there is a ResourceLoadWriter registered to write the specified file
+
+  //! Short version of defLoadWriterManager()->canLoad(file).
+  bool canLoad(VirtualFile* file);
+
+  //! Short version of defLoadWriterManager()->canWrite(file).
   bool canWrite(VirtualFile* file);
-//-----------------------------------------------------------------------------
+
+  //! Short version of defLoadWriterManager()->loadResource(path,quick).
+  ref<ResourceDatabase> loadResource(const String& path, bool quick=true);
+
+  //! Short version of defLoadWriterManager()->loadResource(file,quick).
+  ref<ResourceDatabase> loadResource(VirtualFile* file, bool quick=true);
 }
 
 #endif
