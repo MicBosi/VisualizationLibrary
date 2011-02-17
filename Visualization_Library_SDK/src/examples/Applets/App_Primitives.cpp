@@ -131,10 +131,8 @@ public:
   }
 
   /* animate rotation */
-  void updateEvent()
+  void run()
   {
-    BaseDemo::updateEvent();
-
     if ( mTimer.isStarted() )
     {
       float t = mTimer.elapsed();
