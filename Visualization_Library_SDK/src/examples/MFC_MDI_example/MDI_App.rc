@@ -278,12 +278,12 @@ END
 STRINGTABLE
 BEGIN
 // Non-mac-targeting apps remove the two extra substrings
-	IDR_MAINFRAME           "MDI_App"
+	IDR_MAINFRAME           "MFC MDI Example"
 	IDR_MDI_AppTYPE         "\nMDI_App\nMDI_App\n\n\nMDIApp.Document\nMDI_App.Document"
 END
 STRINGTABLE
 BEGIN
-	AFX_IDS_APP_TITLE       "MDI_App"
+	AFX_IDS_APP_TITLE       "MFC MDI Example"
 	AFX_IDS_IDLEMESSAGE     "Ready"
 END
 STRINGTABLE

@@ -44,8 +44,6 @@
 class App_RotatingCube: public vl::Applet
 {
 public:
-  virtual void shutdown() {}
-
   // called once after the OpenGL window has been opened 
   void initEvent()
   {
@@ -55,7 +53,7 @@ public:
     rendering()->as<vl::Rendering>()->transform()->addChild( mCubeTransform.get() );
 
     // create the cube's Geometry and compute its normals to support lighting 
-    vl::ref<vl::Geometry> cube = vl::makeTeapot( vl::vec3(0,0,0), 30, 16 );
+    vl::ref<vl::Geometry> cube = vl::makeTeapot( vl::vec3(0,0,0), 30, 10 );
     cube->computeNormals();
 
     // setup the effect to be used to render the cube 
