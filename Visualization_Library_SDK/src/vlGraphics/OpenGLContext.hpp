@@ -236,6 +236,8 @@ namespace vl
     bool continuousUpdate() const { return mContinuousUpdate; }
 
     //! Adds an UIEventListener to be notified of OpenGLContext related events.
+    //! This method triggers immediately an UIEventListener::addedListenerEvent() and if the OpenGLContext is initialized also an UIEventListener::initEvent().
+    //! \note An \p UIEventListener can be associated only to one OpenGLContext at a time.
     void addEventListener(UIEventListener* el);
     
     //! Removes an UIEventListener
@@ -357,14 +359,14 @@ namespace vl
       eraseAllEventListeners();
     }
 
-    //! Dispatches the UIEventListener::runEvent() notification to the subscribed UIEventListener objects.
+    //! Dispatches the UIEventListener::updateEvent() notification to the subscribed UIEventListener objects.
     void dispatchRunEvent()
     {
       makeCurrent();
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
-          temp_clients[i]->runEvent();
+          temp_clients[i]->updateEvent();
     }
 
     //! Dispatches the UIEventListener::visibilityEvent() notification to the subscribed UIEventListener objects.
