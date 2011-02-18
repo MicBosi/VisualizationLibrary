@@ -82,6 +82,7 @@ ref<FBORenderTarget> OpenGLContext::createFBORenderTarget(int width, int height)
 { 
   makeCurrent();
   mFBORenderTarget.push_back(new FBORenderTarget(this, width, height));
+  mFBORenderTarget.back()->create();
   return mFBORenderTarget.back();
 }
 //-----------------------------------------------------------------------------
