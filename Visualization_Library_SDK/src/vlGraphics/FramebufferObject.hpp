@@ -494,7 +494,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   /**
    * Implements a framebuffer object to be used as a rendering target as specified by
-   * the \p GL_ARB_framebuffer_object extension.
+   * the \p ARB_framebuffer_object extension.
    * An FBORenderTarget belongs to one and only one OpenGLContext and can be created
    * using the OpenGLContext::createFBORenderTarget() method.
    * To render to a FBORenderTarget use the Rendering::setRenderTarget() function.
@@ -507,6 +507,7 @@ namespace vl
    * All the renderbuffer attachments must specify the same number of samples.
    *
    * \sa
+   * - \ref pagGuideFramebufferObject
    * - \p ARB_framebuffer_object specifications http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt
    * - FBORenderbufferAttachment 
    * - FBOColorBufferAttachment 
