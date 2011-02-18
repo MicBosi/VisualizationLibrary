@@ -41,28 +41,28 @@ namespace vl
 {
   class FBORenderTarget;
 //-----------------------------------------------------------------------------
-// FBOAttachmentAbstract
+// FBOAbstractAttachment
 //-----------------------------------------------------------------------------
   /**
-   * Abstract class that represents a framebuffer object attachment, i.e. a texture or a renderbuffer attachment.
+   * Abstract class that represents a framebuffer object attachment to be used with FBORenderTarget.
    */
-  class FBOAttachmentAbstract: public Object
+  class FBOAbstractAttachment: public Object
   {
     friend class FBORenderTarget;
 
   private:
     // no copy constructor and no assignment operator
-    FBOAttachmentAbstract( const FBOAttachmentAbstract& other ): Object( other ) {}
-    void operator=( const FBOAttachmentAbstract& ) {}
+    FBOAbstractAttachment( const FBOAbstractAttachment& other ): Object( other ) {}
+    void operator=( const FBOAbstractAttachment& ) {}
 
   public:
-    virtual const char* className() { return "FBOAttachmentAbstract"; }
+    virtual const char* className() { return "FBOAbstractAttachment"; }
 
     /** Constructor */
-    FBOAttachmentAbstract() {}
+    FBOAbstractAttachment() {}
 
     /** Destructor, removes automatically the FBO attachment from all bound FBO render targets and releases any OpenGL resource. */
-    virtual ~FBOAttachmentAbstract() { destroy(); }
+    virtual ~FBOAbstractAttachment() { destroy(); }
 
     /** Removes the FBO attachment from all bound FBO render targets and releases any associated OpenGL resource. */
     virtual void destroy();
@@ -80,9 +80,11 @@ namespace vl
   // FBORenderbufferAttachment
   //-----------------------------------------------------------------------------
   /** 
-   * Abstract class that represents a framebuffer renderbuffer attachment, i.e. a non texture fbo attachment.
+   * Abstract class that represents a framebuffer renderbuffer attachment, that is, a non-texture fbo attachment (wraps \p glFramebufferRenderbuffer()).
+   * \sa FBORenderTarget.
+   * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferRenderbuffer.xml
    */
-  class FBORenderbufferAttachment: public FBOAttachmentAbstract
+  class FBORenderbufferAttachment: public FBOAbstractAttachment
   {
     friend class FBORenderTarget;
 
@@ -179,7 +181,6 @@ namespace vl
   //-----------------------------------------------------------------------------
   /**
    * A color renderbuffer to be attached to a FBORenderTarget.
-   * Supports GL_EXT_framebuffer_multisample.
    */
   class FBOColorBufferAttachment: public FBORenderbufferAttachment
   {
@@ -212,7 +213,6 @@ namespace vl
   //-----------------------------------------------------------------------------
   /**
    * A depth renderbuffer to be attached to a FBORenderTarget.
-   * Supports GL_EXT_framebuffer_multisample.
    */
   class FBODepthBufferAttachment: public FBORenderbufferAttachment
   {
@@ -245,7 +245,6 @@ namespace vl
   //-----------------------------------------------------------------------------
   /**
    * A stencil renderbuffer to be attached to a FBORenderTarget.
-   * Supports GL_EXT_framebuffer_multisample.
    */
   class FBOStencilBufferAttachment: public FBORenderbufferAttachment
   {
@@ -278,7 +277,6 @@ namespace vl
   //-----------------------------------------------------------------------------
   /**
    * A depth+stencil renderbuffer to be attached to a FBORenderTarget.
-   * Supports GL_EXT_framebuffer_multisample.
    */
   class FBODepthStencilBufferAttachment: public FBORenderbufferAttachment
   {
@@ -307,25 +305,22 @@ namespace vl
     EDepthStencilBufferFormat mType;
   };
   //-----------------------------------------------------------------------------
-  //
+  // FBOAbstractTextureAttachment
   //-----------------------------------------------------------------------------
   /**
-   * A 1D texture renderbuffer to be attached to a FBORenderTarget.
-   * Wraps the function glFramebufferTexture1DEXT.
+   * Base class for all the framebuffer texture attachments (see also FBORenderTarget).
    */
-  class FBOTexture1DAttachment: public FBOAttachmentAbstract
+  class FBOAbstractTextureAttachment: public FBOAbstractAttachment
   {
   public:
-    virtual const char* className() { return "FBOTexture1DAttachment"; }
+    virtual const char* className() { return "FBOAbstractTextureAttachment"; }
 
     /** Constructor. */
-    FBOTexture1DAttachment( Texture* texture, int mipmap_level )
+    FBOAbstractTextureAttachment( Texture* texture, int mipmap_level ): mTexture(texture), mMipmapLevel(mipmap_level)
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mMipmapLevel = mipmap_level;
-      mTexture     = texture;
     }
 
     /** The texture bound to this attachment. */
@@ -342,51 +337,54 @@ namespace vl
 
     /** The mipmap level of the texture to attach. */
     int mipmapLevel() const { return mMipmapLevel; }
-
-  protected:
-    virtual void bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point );
 
   protected:
     ref<Texture> mTexture;
     int mMipmapLevel;
   };
   //-----------------------------------------------------------------------------
-  //
+  // FBOTexture1DAttachment
   //-----------------------------------------------------------------------------
   /**
-   * A 2D texture renderbuffer to be attached to a FBORenderTarget.
-   * Wraps the function glFramebufferTexture2DEXT.
+   * A 1D texture renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTexture1D()).
+   * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTexture.xml
    */
-  class FBOTexture2DAttachment: public FBOAttachmentAbstract
+  class FBOTexture1DAttachment: public FBOAbstractTextureAttachment
+  {
+  public:
+    virtual const char* className() { return "FBOTexture1DAttachment"; }
+
+    /** Constructor. */
+    FBOTexture1DAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
+    {
+      #ifndef NDEBUG
+        mObjectName = className();
+      #endif
+    }
+
+  protected:
+    virtual void bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point );
+  };
+  //-----------------------------------------------------------------------------
+  // FBOTexture2DAttachment
+  //-----------------------------------------------------------------------------
+  /**
+   * A 2D texture renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTexture2D()).
+   * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTexture.xml
+   */
+  class FBOTexture2DAttachment: public FBOAbstractTextureAttachment
   {
   public:
     virtual const char* className() { return "FBOTexture2DAttachment"; }
 
     /** Constructor. */
-    FBOTexture2DAttachment( Texture* texture, int mipmap_level, ETex2DTarget target )
+    FBOTexture2DAttachment( Texture* texture, int mipmap_level, ETex2DTarget target ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mMipmapLevel   = mipmap_level;
-      mTexture       = texture;
       mTextureTarget = target;
     }
-
-    /** The texture bound to this attachment. */
-    void setTexture( Texture* texture ) { mTexture = texture; }
-
-    /** The texture bound to this attachment. */
-    Texture* texture() { return mTexture.get(); }
-
-    /** The texture bound to this attachment. */
-    const Texture* texture() const { return mTexture.get(); }
-
-    /** The mipmap level of the texture to attach. */
-    void setMipmapLevel( int mipmap_level ) { mMipmapLevel = mipmap_level; }
-
-    /** The mipmap level of the texture to attach. */
-    int mipmapLevel() const { return mMipmapLevel; }
 
     /** What type of texture is expected, or for cube map textures, which face is to be attached. */
     void setTextureTarget( ETex2DTarget target ) { mTextureTarget = target; }
@@ -398,90 +396,51 @@ namespace vl
     virtual void bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point );
 
   protected:
-    ref<Texture> mTexture;
     ETex2DTarget mTextureTarget;
-    int mMipmapLevel;
   };
   //-----------------------------------------------------------------------------
-  //
+  // FBOTextureAttachment
   //-----------------------------------------------------------------------------
   /**
-   * A texture renderbuffer to be attached to a FBORenderTarget.
-   * Wraps the glFramebufferTextureEXT function from GL_ARB_geometry_shader4.
+   * A texture renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTexture()).
+   * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTexture.xml
    */
-  class FBOTextureAttachment: public FBOAttachmentAbstract
+  class FBOTextureAttachment: public FBOAbstractTextureAttachment
   {
   public:
     virtual const char* className() { return "FBOTextureAttachment"; }
 
     /** Constructor. */
-    FBOTextureAttachment( Texture* texture, int mipmap_level )
+    FBOTextureAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mMipmapLevel = mipmap_level;
-      mTexture     = texture;
     }
-
-    /** The texture bound to this attachment. */
-    void setTexture( Texture* texture ) { mTexture = texture; }
-
-    /** The texture bound to this attachment. */
-    Texture* texture() { return mTexture.get(); }
-
-    /** The texture bound to this attachment. */
-    const Texture* texture() const { return mTexture.get(); }
-
-    /** The mipmap level of the texture to attach. */
-    void setMipmapLevel( int mipmap_level ) { mMipmapLevel = mipmap_level; }
-
-    /** The mipmap level of the texture to attach. */
-    int mipmapLevel() const { return mMipmapLevel; }
 
   protected:
     virtual void bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point );
 
-  protected:
-    ref<Texture> mTexture;
-    int mMipmapLevel;
   };
   //-----------------------------------------------------------------------------
-  //
+  // FBOTexture3DAttachment
   //-----------------------------------------------------------------------------
   /**
-   * A 3D texture renderbuffer to be attached to a FBORenderTarget.
-   * Wraps the function glFramebufferTexture3DEXT.
+   * A 3D texture renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTexture3D()).
+   * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTexture.xml
    */
-  class FBOTexture3DAttachment: public FBOAttachmentAbstract
+  class FBOTexture3DAttachment: public FBOAbstractTextureAttachment
   {
   public:
     virtual const char* className() { return "FBOTexture3DAttachment"; }
 
-    FBOTexture3DAttachment( Texture* texture, int mipmap_level, int layer )
+    FBOTexture3DAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mTexture = texture;
       mLayer   = layer;
-      mMipmapLevel = mipmap_level;
     }
-
-    /** The texture bound to this attachment. */
-    void setTexture( Texture* texture ) { mTexture = texture; }
-
-    /** The texture bound to this attachment. */
-    Texture* texture() { return mTexture.get(); }
-
-    /** The texture bound to this attachment. */
-    const Texture* texture() const { return mTexture.get(); }
-
-    /** The mipmap level of the texture to attach. */
-    void setMipmapLevel( int mipmap_level ) { mMipmapLevel = mipmap_level; }
-
-    /** The mipmap level of the texture to attach. */
-    int mipmapLevel() const { return mMipmapLevel; }
 
     /** The layer of a 2-dimensional image within a 3-dimensional texture. */
     void setLayer( int layer ) { mLayer = layer; }
@@ -493,47 +452,28 @@ namespace vl
     virtual void bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point );
 
   protected:
-    ref<Texture> mTexture;
-    int mMipmapLevel;
     int mLayer;
   };
   //-----------------------------------------------------------------------------
-  //
+  // FBOTextureLayerAttachment
   //-----------------------------------------------------------------------------
   /**
-   * A texture layer renderbuffer to be attached to a FBORenderTarget.
-   * Wraps the function glFramebufferTextureLayerEXT from GL_EXT_texture_array and GL_ARB_geometry_shader4.
+   * A texture layer renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTextureLayer()).
+   * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTextureLayer.xml
    */
-  class FBOTextureLayerAttachment: public FBOAttachmentAbstract
+  class FBOTextureLayerAttachment: public FBOAbstractTextureAttachment
   {
   public:
     virtual const char* className() { return "FBOTextureLayerAttachment"; }
 
     /** Constructor. */
-    FBOTextureLayerAttachment( Texture* texture, int mipmap_level, int layer )
+    FBOTextureLayerAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mTexture = texture;
       mLayer   = layer;
-      mMipmapLevel = mipmap_level;
     }
-
-    /** The texture bound to this attachment. */
-    void setTexture( Texture* texture ) { mTexture = texture; }
-
-    /** The texture bound to this attachment. */
-    Texture* texture() { return mTexture.get(); }
-
-    /** The texture bound to this attachment. */
-    const Texture* texture() const { return mTexture.get(); }
-
-    /** The mipmap level of the texture to attach. */
-    void setMipmapLevel( int mipmap_level ) { mMipmapLevel = mipmap_level; }
-
-    /** The mipmap level of the texture to attach. */
-    int mipmapLevel() const { return mMipmapLevel; }
 
     /** The layer of a 2-dimensional image within a 3-dimensional texture or texture array. */
     int layer() const { return mLayer; }
@@ -554,7 +494,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   /**
    * Implements a framebuffer object to be used as a rendering target as specified by
-   * the GL_EXT_framebuffer_object extension.
+   * the \p GL_ARB_framebuffer_object extension.
    * An FBORenderTarget belongs to one and only one OpenGLContext and can be created
    * using the OpenGLContext::createFBORenderTarget() method.
    * To render to a FBORenderTarget use the Rendering::setRenderTarget() function.
@@ -562,8 +502,22 @@ namespace vl
    * \remarks
    * Before using any method from FBORenderTarget make sure that the appropriate
    * OpenGL rendering context is active using FBORenderTarget::openglContext()->makeCurrent()
+   *
    * \remarks
    * All the renderbuffer attachments must specify the same number of samples.
+   *
+   * \sa
+   * - \p ARB_framebuffer_object specifications http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt
+   * - FBORenderbufferAttachment 
+   * - FBOColorBufferAttachment 
+   * - FBODepthBufferAttachment 
+   * - FBODepthStencilBufferAttachment 
+   * - FBOStencilBufferAttachment 
+   * - FBOTexture1DAttachment 
+   * - FBOTexture2DAttachment 
+   * - FBOTexture3DAttachment 
+   * - FBOTextureAttachment 
+   * - FBOTextureLayerAttachment 
    */
   class FBORenderTarget: public RenderTarget
   {
@@ -588,10 +542,16 @@ namespace vl
     /** Destructor. */
     ~FBORenderTarget() { destroy(); }
 
-    /** Creates a framebuffer object by calling glGenFramebuffers(). */
+    /** 
+     * Creates a framebuffer object by calling glGenFramebuffers(). 
+     * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glGenFramebuffers.xml
+     */
     void create();
 
-    /** Deletes the framebuffer object. */
+    /** 
+     * Deletes a framebuffer object by calling glDeleteFramebuffers(). 
+     * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glDeleteFramebuffers.xml
+     */
     void destroy();
 
     /** The handle of the framebuffer object as returned by glGenFramebuffers. */
@@ -603,6 +563,7 @@ namespace vl
     /**
      * Makes the framebuffer the current rendering target calling glBindFramebuffer( GL_FRAMEBUFFER, FBORenderTarget::handle() )
      * and initializes all the previously defined attachment points.
+     * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glBindFramebuffer.xml
      */
     virtual void bindFramebuffer( EFrameBufferBind target = FBB_FRAMEBUFFER );
 
@@ -613,22 +574,28 @@ namespace vl
     void printFramebufferError( GLenum status ) const;
 
     /** Binds a color attachment to a framebuffer object. */
-    void addColorAttachment( EAttachmentPoint attach_point, FBOAttachmentAbstract* attachment );
+    void addColorAttachment( EAttachmentPoint attach_point, FBOColorBufferAttachment* attachment );
     
     /** Binds a texture attachment to a framebuffer object. */
-    void addTextureAttachment( EAttachmentPoint attach_point, FBOAttachmentAbstract* attachment );
+    void addTextureAttachment( EAttachmentPoint attach_point, FBOAbstractTextureAttachment* attachment );
     
-    /** Binds a depth attachment to a framebuffer object. */
-    void addDepthAttachment( FBOAttachmentAbstract* attachment );
+    /** 
+     * Binds a depth attachment to a framebuffer object. 
+     * The \p attachment parameter must point to either a FBODepthBufferAttachment or FBODepthStencilBufferAttachment.
+     */
+    void addDepthAttachment( FBOAbstractAttachment* attachment );
     
-    /** Binds a stencil attachment to a framebuffer object. */
-    void addStencilAttachment( FBOAttachmentAbstract* attachment );
+    /** 
+     * Binds a stencil attachment to a framebuffer object. 
+     * The \p attachment parameter must point to either a FBOStencilBufferAttachment or FBODepthStencilBufferAttachment.
+     */
+    void addStencilAttachment( FBOAbstractAttachment* attachment );
     
     /** Binds a depth-stencil attachment to a framebuffer object. */
-    void addDepthStencilAttachment( FBOAttachmentAbstract* attachment );
+    void addDepthStencilAttachment( FBODepthStencilBufferAttachment* attachment );
     
     /** Unbinds the given attachments from a framebuffer object. */
-    void removeAttachment( FBOAttachmentAbstract* attachment );
+    void removeAttachment( FBOAbstractAttachment* attachment );
     
     /** Unbinds the attachment associated to the given attachment point from a framebuffer object. */
     void removeAttachment( EAttachmentPoint attach_point );
@@ -637,10 +604,10 @@ namespace vl
     void removeAllAttachments();
 
     /** A map associating which fbo-attachment belongs to which attachment point in a framebuffer object. */
-    const std::map< EAttachmentPoint, ref<FBOAttachmentAbstract> >& fboAttachments() const { return mFBOAttachments; }
+    const std::map< EAttachmentPoint, ref<FBOAbstractAttachment> >& fboAttachments() const { return mFBOAttachments; }
     
   public:
-    std::map< EAttachmentPoint, ref<FBOAttachmentAbstract> > mFBOAttachments;
+    std::map< EAttachmentPoint, ref<FBOAbstractAttachment> > mFBOAttachments;
     GLuint mHandle;
   };
 }

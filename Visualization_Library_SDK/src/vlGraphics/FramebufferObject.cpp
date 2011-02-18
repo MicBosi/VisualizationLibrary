@@ -218,7 +218,7 @@ void FBORenderTarget::printFramebufferError( GLenum status ) const
   }
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addColorAttachment( EAttachmentPoint attach_point, FBOAttachmentAbstract* attachment )
+void FBORenderTarget::addColorAttachment( EAttachmentPoint attach_point, FBOColorBufferAttachment* attachment )
 {
   VL_CHECK( attach_point >= AP_COLOR_ATTACHMENT0 && attach_point <= AP_COLOR_ATTACHMENT15 );
   VL_CHECK( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 )
@@ -230,7 +230,7 @@ void FBORenderTarget::addColorAttachment( EAttachmentPoint attach_point, FBOAtta
   attachment->bindAttachment( this, attach_point );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addTextureAttachment( EAttachmentPoint attach_point, FBOAttachmentAbstract* attachment )
+void FBORenderTarget::addTextureAttachment( EAttachmentPoint attach_point, FBOAbstractTextureAttachment* attachment )
 {
   VL_CHECK( attach_point >= AP_COLOR_ATTACHMENT0 && attach_point <= AP_COLOR_ATTACHMENT15 );
   VL_CHECK( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 )
@@ -242,7 +242,7 @@ void FBORenderTarget::addTextureAttachment( EAttachmentPoint attach_point, FBOAt
   attachment->bindAttachment( this, attach_point );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addDepthAttachment( FBOAttachmentAbstract* attachment )
+void FBORenderTarget::addDepthAttachment( FBOAbstractAttachment* attachment )
 {
   VL_CHECK( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 )
   if( !( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 ) )
@@ -253,7 +253,7 @@ void FBORenderTarget::addDepthAttachment( FBOAttachmentAbstract* attachment )
   attachment->bindAttachment( this, AP_DEPTH_ATTACHMENT );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addStencilAttachment( FBOAttachmentAbstract* attachment )
+void FBORenderTarget::addStencilAttachment( FBOAbstractAttachment* attachment )
 {
   VL_CHECK( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 )
   if( !( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 ) )
@@ -264,7 +264,7 @@ void FBORenderTarget::addStencilAttachment( FBOAttachmentAbstract* attachment )
   attachment->bindAttachment( this, AP_STENCIL_ATTACHMENT );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addDepthStencilAttachment( FBOAttachmentAbstract* attachment )
+void FBORenderTarget::addDepthStencilAttachment( FBODepthStencilBufferAttachment* attachment )
 {
   VL_CHECK( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 )
   if( !( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 ) )
@@ -275,14 +275,14 @@ void FBORenderTarget::addDepthStencilAttachment( FBOAttachmentAbstract* attachme
   attachment->bindAttachment( this, AP_DEPTH_STENCIL_ATTACHMENT );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::removeAttachment( FBOAttachmentAbstract* attachment )
+void FBORenderTarget::removeAttachment( FBOAbstractAttachment* attachment )
 {
   VL_CHECK( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 )
   if( !( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 ) )
     return;
   // collect for all the attachment points
   std::vector<EAttachmentPoint> attachment_points;
-  std::map< EAttachmentPoint, ref<FBOAttachmentAbstract> >::iterator it = mFBOAttachments.begin();
+  std::map< EAttachmentPoint, ref<FBOAbstractAttachment> >::iterator it = mFBOAttachments.begin();
   for( ; it != mFBOAttachments.end(); ++it )
     if ( it->second == attachment )
       attachment_points.push_back( it->first );
@@ -313,8 +313,8 @@ void FBORenderTarget::removeAttachment( EAttachmentPoint attach_point )
     // restore fbo
     VL_glBindFramebuffer( GL_FRAMEBUFFER, fbo ); VL_CHECK_OGL()
   }
-  // remove FBORenderTarget from FBOAttachmentAbstract
-  FBOAttachmentAbstract* fbo_attachment = /* mFBOAttachments.find( attachment ) != mFBOAttachments.end() ? */ mFBOAttachments[attach_point].get() /* : NULL */;
+  // remove FBORenderTarget from FBOAbstractAttachment
+  FBOAbstractAttachment* fbo_attachment = /* mFBOAttachments.find( attachment ) != mFBOAttachments.end() ? */ mFBOAttachments[attach_point].get() /* : NULL */;
   if ( fbo_attachment )
     fbo_attachment->mFBORenderTargets.erase( this );
   mFBOAttachments.erase( attach_point );
@@ -327,7 +327,7 @@ void FBORenderTarget::removeAllAttachments()
     return;
   // look for all the attachment points
   std::vector<EAttachmentPoint> attachment_points;
-  std::map< EAttachmentPoint, ref<FBOAttachmentAbstract> >::iterator it = mFBOAttachments.begin();
+  std::map< EAttachmentPoint, ref<FBOAbstractAttachment> >::iterator it = mFBOAttachments.begin();
   for( ; it != mFBOAttachments.end(); ++it )
     attachment_points.push_back( it->first );
 
@@ -468,7 +468,7 @@ void FBOTextureLayerAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmen
   VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
-void FBOAttachmentAbstract::destroy()
+void FBOAbstractAttachment::destroy()
 {
   std::set< ref<FBORenderTarget> > fbos = fboRenderTargets();
   for( std::set< ref<FBORenderTarget> >::iterator it = fbos.begin(); it != fbos.end(); ++it )
@@ -495,7 +495,7 @@ void FBORenderbufferAttachment::destroy()
   VL_CHECK( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 )
   if( !( GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object||GLEW_VERSION_3_0||GLEW_VERSION_4_0 ) )
     return;
-  FBOAttachmentAbstract::destroy();
+  FBOAbstractAttachment::destroy();
   mWidth  = 0;
   mHeight = 0;
   if ( mHandle )
