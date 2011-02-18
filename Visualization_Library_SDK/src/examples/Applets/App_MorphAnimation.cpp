@@ -53,7 +53,7 @@ public:
 
     const int actor_count = 1000;
 
-    ghostCamera()->setMovementSpeed(500.0f);
+    ghostCameraManipulator()->setMovementSpeed(500.0f);
     bool glsl_vertex_blend = GLEW_VERSION_2_0 ? true : false;
     const float area_unit  = 1500.0f*1500.0f/2000.0f;
     const float size = sqrt( actor_count * area_unit );

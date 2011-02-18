@@ -121,10 +121,18 @@ namespace vl
     const SceneManagerActorTree* sceneManager() const { return mSceneManagerActorTree.get(); }
 
     /** GhostCameraManipulator used by the applet, activated by the "F" key. */
-    GhostCameraManipulator* ghostCamera() { return mFly.get(); }
+    void setGhostCameraManipulator(GhostCameraManipulator* gcm) { mFly = gcm; }
+
+    /** GhostCameraManipulator used by the applet, activated by the "F" key. */
+    GhostCameraManipulator* ghostCameraManipulator() { return mFly.get(); }
+    const GhostCameraManipulator* ghostCameraManipulator() const { return mFly.get(); }
+
+    /** TrackballManipulator used by the applet, activated by the "T" key. */
+    void setTrackball(TrackballManipulator* trackball) { mTrackball = trackball; }
 
     /** TrackballManipulator used by the applet, activated by the "T" key. */
     TrackballManipulator* trackball() { return mTrackball.get(); }
+    const TrackballManipulator* trackball() const { return mTrackball.get(); }
 
     /** Current average frames per second (updated every 500ms). */
     double fps() const { return mFPS; }

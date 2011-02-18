@@ -63,7 +63,7 @@ public:
   {
     // Basic initialization
     BaseDemo::initEvent();
-    ghostCamera()->setMovementSpeed(5.0f);
+    ghostCameraManipulator()->setMovementSpeed(5.0f);
 
     generateDungeon();
   }
