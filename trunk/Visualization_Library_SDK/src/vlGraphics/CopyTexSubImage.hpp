@@ -51,7 +51,7 @@ namespace vl
     * This class supports Frame-Buffer-Objects, 3D textures, cubemaps.
     *
     * \sa 
-    * FBORenderTarget, FBOAttachmentAbstract, Rendering, RenderEventCallback, CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D */
+    * FBORenderTarget, FBOAbstractAttachment, Rendering, RenderEventCallback, CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D */
   class CopyTexSubImage: public RenderEventCallback
   {
   public:

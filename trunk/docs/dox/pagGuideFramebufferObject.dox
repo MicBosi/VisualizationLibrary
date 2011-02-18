@@ -5,8 +5,23 @@
 
 	\image html pagGuideFBO.jpg
 	
-	In this tutorial a scene with a few rotating toruses is rendered to a texture. Such texture is then applied to a cube and a plane in 
-	a second rendering.
+	Visualization Library uses the following classes to implement framebuffer objects and framebuffer attachments:
+
+	- FBORenderTarget
+	- FBORenderbufferAttachment 
+	- FBOColorBufferAttachment 
+	- FBODepthBufferAttachment 
+	- FBODepthStencilBufferAttachment 
+	- FBOStencilBufferAttachment 
+	- FBOTexture1DAttachment 
+	- FBOTexture2DAttachment 
+	- FBOTexture3DAttachment 
+	- FBOTextureAttachment 
+	- FBOTextureLayerAttachment 
+	- See also the \p ARB_framebuffer_object specifications http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt
+
+   In this tutorial a scene with a few rotating toruses is rendered to a texture. 
+   Such texture is then applied to a cube and a plane in a second rendering.
 	
 	[From \p App_Framebuffer_Object.cpp]
 	\dontinclude App_Framebuffer_Object.cpp
