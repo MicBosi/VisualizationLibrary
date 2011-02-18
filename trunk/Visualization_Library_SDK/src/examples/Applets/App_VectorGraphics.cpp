@@ -46,7 +46,7 @@ public:
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
-    ghostCamera()->setEnabled(false);
+    ghostCameraManipulator()->setEnabled(false);
 
     // camera setup
 

@@ -64,7 +64,7 @@ public:
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
-    ghostCamera()->setEnabled(false);
+    ghostCameraManipulator()->setEnabled(false);
 
     // dummy empty image
     mImage = new vl::Image(8,8,0, 1, vl::IF_RGBA, vl::IT_UNSIGNED_BYTE);
