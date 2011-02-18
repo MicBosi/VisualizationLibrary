@@ -7,17 +7,17 @@
 	
 	Visualization Library uses the following classes to implement framebuffer objects and framebuffer attachments:
 
-	- FBORenderTarget
-	- FBORenderbufferAttachment 
-	- FBOColorBufferAttachment 
-	- FBODepthBufferAttachment 
-	- FBODepthStencilBufferAttachment 
-	- FBOStencilBufferAttachment 
-	- FBOTexture1DAttachment 
-	- FBOTexture2DAttachment 
-	- FBOTexture3DAttachment 
-	- FBOTextureAttachment 
-	- FBOTextureLayerAttachment 
+	- vl::FBORenderTarget
+	- vl::FBORenderbufferAttachment 
+	- vl::FBOColorBufferAttachment 
+	- vl::FBODepthBufferAttachment 
+	- vl::FBODepthStencilBufferAttachment 
+	- vl::FBOStencilBufferAttachment 
+	- vl::FBOTexture1DAttachment 
+	- vl::FBOTexture2DAttachment 
+	- vl::FBOTexture3DAttachment 
+	- vl::FBOTextureAttachment 
+	- vl::FBOTextureLayerAttachment 
 	- See also the \p ARB_framebuffer_object specifications http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt
 
    In this tutorial a scene with a few rotating toruses is rendered to a texture. 
