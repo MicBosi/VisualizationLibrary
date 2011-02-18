@@ -44,14 +44,16 @@ namespace vl
   // RenderTarget
   //-----------------------------------------------------------------------------
   /** The RenderTarget class defines an abstract 'surface' where OpenGL can render into.
-   * \sa
-   * OpenGLContext::renderTarget() and FBORenderTarget
-  */
+   * \sa OpenGLContext::renderTarget() and FBORenderTarget
+   */
   class RenderTarget: public Object
   {
     friend class OpenGLContext;
+
   protected:
     virtual const char* className() { return "RenderTarget"; }
+
+    /** Constructor. */
     RenderTarget(OpenGLContext* ctx, int w, int h): mWidth(w), mHeight(h), mOpenGLContext(ctx)
     {
       #ifndef NDEBUG
@@ -61,21 +63,38 @@ namespace vl
     }
 
   public:
+    /** The OpenGLContext bound to a render target. */
     OpenGLContext* openglContext() { return mOpenGLContext; }
+    
+    /** The OpenGLContext bound to a render target. */
     const OpenGLContext* openglContext() const { return mOpenGLContext; }
 
+    /** The width of a render target. */
     int width() const { return mWidth; }
+    
+    /** The height of a render target. */
     int height() const { return mHeight; }
+    
+    /** The width of a render target. */
     void setWidth(int width) { mWidth = width; }
+    
+    /** The height of a render target. */
     void setHeight(int height) { mHeight = height; }
 
-    //! Activates the RenderTarget by calling bindFramebuffer() and bindDrawBuffers()
+    /** The framebuffer object id as used by glBindFramebuffer, RenderTarget::handle() always returns 0, i.e., the standard OpenGL framebuffer. */
+    virtual GLuint handle() const { return 0; }
+
+    /** Activates the RenderTarget by calling bindFramebuffer() and bindDrawBuffers() */
     void activate(EFrameBufferBind target = FBB_FRAMEBUFFER)
     {
       bindFramebuffer(target);
       bindDrawBuffers();
     }
 
+    /** 
+      * Calls glBindFramebuffer(target, 0) thus activating the the framebuffer 0, that is, the normal OpenGL buffers.
+      * \note This method is overridden in FBORenderTarget in order to activate the appropriate framebuffer object.
+      */
     virtual void bindFramebuffer(EFrameBufferBind target = FBB_FRAMEBUFFER)
     {
       VL_CHECK_OGL()
@@ -84,21 +103,28 @@ namespace vl
       VL_CHECK_OGL()
     }
 
+    /** Binds to the currently active framebuffer object (including the 0 one) the draw buffers specified by setDrawBuffers(). */
     void bindDrawBuffers() const;
 
-    void checkDrawBuffers() const;
+    /** Returns \p true if the draw buffers bound to this render target are legal for this render target type. */
+    bool checkDrawBuffers() const;
 
+    /** Specifies the color buffer to be drawn into. */
     void setDrawBuffer(EReadDrawBuffer draw_buffer)
     {
       mDrawBuffers.clear();
       mDrawBuffers.push_back(draw_buffer);
     }
+
+    /** Specifies a list of color buffers to be drawn into. */
     void setDrawBuffers(EReadDrawBuffer draw_buffer1, EReadDrawBuffer draw_buffer2)
     {
       mDrawBuffers.clear();
       mDrawBuffers.push_back(draw_buffer1);
       mDrawBuffers.push_back(draw_buffer2);
     }
+
+    /** Specifies a list of color buffers to be drawn into. */
     void setDrawBuffers(EReadDrawBuffer draw_buffer1, EReadDrawBuffer draw_buffer2, EReadDrawBuffer draw_buffer3)
     {
       mDrawBuffers.clear();
@@ -106,6 +132,8 @@ namespace vl
       mDrawBuffers.push_back(draw_buffer2);
       mDrawBuffers.push_back(draw_buffer3);
     }
+
+    /** Specifies a list of color buffers to be drawn into. */
     void setDrawBuffers(EReadDrawBuffer draw_buffer1, EReadDrawBuffer draw_buffer2, EReadDrawBuffer draw_buffer3, EReadDrawBuffer draw_buffer4)
     {
       mDrawBuffers.clear();
@@ -114,12 +142,14 @@ namespace vl
       mDrawBuffers.push_back(draw_buffer3);
       mDrawBuffers.push_back(draw_buffer4);
     }
+
+    /** Specifies a list of color buffers to be drawn into. */
     void setDrawBuffers(const std::vector< EReadDrawBuffer >& draw_buffers) { mDrawBuffers = draw_buffers; }
+
+    /** The color buffers to be drawn into. */
     const std::vector< EReadDrawBuffer >& drawBuffers() { return mDrawBuffers; }
 
-    virtual unsigned int handle() const { return 0; }
-
-  protected:
+  private:
     std::vector< EReadDrawBuffer > mDrawBuffers;
     int mWidth;
     int mHeight;

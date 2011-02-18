@@ -41,7 +41,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // RenderTarget
 //-----------------------------------------------------------------------------
-void RenderTarget::checkDrawBuffers() const
+bool RenderTarget::checkDrawBuffers() const
 {
   std::map<int, const char*> fbo_attachments;
   
@@ -54,51 +54,54 @@ void RenderTarget::checkDrawBuffers() const
   fbo_attachments[GL_AUX1] = "GL_AUX1";
   fbo_attachments[GL_AUX2] = "GL_AUX2";
   fbo_attachments[GL_AUX3] = "GL_AUX3";
-  fbo_attachments[GL_COLOR_ATTACHMENT0_EXT]  = "GL_COLOR_ATTACHMENT0_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT1_EXT]  = "GL_COLOR_ATTACHMENT1_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT2_EXT]  = "GL_COLOR_ATTACHMENT2_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT3_EXT]  = "GL_COLOR_ATTACHMENT3_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT4_EXT]  = "GL_COLOR_ATTACHMENT4_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT5_EXT]  = "GL_COLOR_ATTACHMENT5_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT6_EXT]  = "GL_COLOR_ATTACHMENT6_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT7_EXT]  = "GL_COLOR_ATTACHMENT7_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT8_EXT]  = "GL_COLOR_ATTACHMENT8_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT9_EXT]  = "GL_COLOR_ATTACHMENT9_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT10_EXT] = "GL_COLOR_ATTACHMENT10_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT11_EXT] = "GL_COLOR_ATTACHMENT11_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT12_EXT] = "GL_COLOR_ATTACHMENT12_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT13_EXT] = "GL_COLOR_ATTACHMENT13_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT14_EXT] = "GL_COLOR_ATTACHMENT14_EXT"; 
-  fbo_attachments[GL_COLOR_ATTACHMENT15_EXT] = "GL_COLOR_ATTACHMENT15_EXT"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT0]  = "GL_COLOR_ATTACHMENT0"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT1]  = "GL_COLOR_ATTACHMENT1"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT2]  = "GL_COLOR_ATTACHMENT2"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT3]  = "GL_COLOR_ATTACHMENT3"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT4]  = "GL_COLOR_ATTACHMENT4"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT5]  = "GL_COLOR_ATTACHMENT5"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT6]  = "GL_COLOR_ATTACHMENT6"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT7]  = "GL_COLOR_ATTACHMENT7"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT8]  = "GL_COLOR_ATTACHMENT8"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT9]  = "GL_COLOR_ATTACHMENT9"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT10] = "GL_COLOR_ATTACHMENT10"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT11] = "GL_COLOR_ATTACHMENT11"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT12] = "GL_COLOR_ATTACHMENT12"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT13] = "GL_COLOR_ATTACHMENT13"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT14] = "GL_COLOR_ATTACHMENT14"; 
+  fbo_attachments[GL_COLOR_ATTACHMENT15] = "GL_COLOR_ATTACHMENT15"; 
 
   int fbo = 0;
   if (GLEW_EXT_framebuffer_object||GLEW_ARB_framebuffer_object)
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &fbo);
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &fbo);
 
   if (fbo)
   {
     std::set<GLenum> legal;
     legal.insert(GL_NONE);
-    legal.insert(GL_COLOR_ATTACHMENT0_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT1_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT2_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT3_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT4_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT5_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT6_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT7_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT8_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT9_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT10_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT11_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT12_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT13_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT14_EXT);
-    legal.insert(GL_COLOR_ATTACHMENT15_EXT);
+    legal.insert(GL_COLOR_ATTACHMENT0);
+    legal.insert(GL_COLOR_ATTACHMENT1);
+    legal.insert(GL_COLOR_ATTACHMENT2);
+    legal.insert(GL_COLOR_ATTACHMENT3);
+    legal.insert(GL_COLOR_ATTACHMENT4);
+    legal.insert(GL_COLOR_ATTACHMENT5);
+    legal.insert(GL_COLOR_ATTACHMENT6);
+    legal.insert(GL_COLOR_ATTACHMENT7);
+    legal.insert(GL_COLOR_ATTACHMENT8);
+    legal.insert(GL_COLOR_ATTACHMENT9);
+    legal.insert(GL_COLOR_ATTACHMENT10);
+    legal.insert(GL_COLOR_ATTACHMENT11);
+    legal.insert(GL_COLOR_ATTACHMENT12);
+    legal.insert(GL_COLOR_ATTACHMENT13);
+    legal.insert(GL_COLOR_ATTACHMENT14);
+    legal.insert(GL_COLOR_ATTACHMENT15);
     for(unsigned i=0; i<mDrawBuffers.size(); ++i)
     {
       if(legal.find(mDrawBuffers[i]) == legal.end())
-        Log::error(Say("FBO bound but RenderTarget::setDrawBuffers() called with non FBO compatible draw buffer %s or not called at all.\n") << fbo_attachments[mDrawBuffers[i]]);
+      {
+        Log::error(Say("FBO bound but RenderTarget::setDrawBuffers() called with non FBO compatible draw buffer '%s'.\n") << fbo_attachments[mDrawBuffers[i]]);
+        return false;
+      }
     }
   }
   else
@@ -116,9 +119,13 @@ void RenderTarget::checkDrawBuffers() const
     for(unsigned i=0; i<mDrawBuffers.size(); ++i)
     {
       if(legal.find(mDrawBuffers[i]) == legal.end())
-        Log::error(Say("FBO not bound or not supported but RenderTarget::setDrawBuffers() called with FBO specific draw buffer %s\n") << fbo_attachments[mDrawBuffers[i]]);
+      {
+        Log::error(Say("FBO not bound or not supported but RenderTarget::setDrawBuffers() called with FBO specific draw buffer '%s'.\n") << fbo_attachments[mDrawBuffers[i]]);
+        return false;
+      }
     }
   }
+  return true;
 }
 //-----------------------------------------------------------------------------
 void RenderTarget::bindDrawBuffers() const
