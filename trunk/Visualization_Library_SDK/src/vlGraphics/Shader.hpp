@@ -52,7 +52,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // PixelTransfer
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glPixelTransfer(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPixelTransfer.xml for more information.
+  /** RenderState wrapping the OpenGL function glPixelTransfer(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPixelTransfer.xml for more information.
    * 
    * \sa Shader, Effect, Actor */
   class PixelTransfer: public RenderState
@@ -199,7 +199,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // Hint
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glHint(), see also http://www.opengl.org/sdk/docs/man/xhtml/glHint.xml for more information.
+  /** RenderState wrapping the OpenGL function glHint(), see also http://www.opengl.org/sdk/docs/man/xhtml/glHint.xml for more information.
    * \sa Shader, Effect, Actor */
   class Hint: public RenderState
   {
@@ -243,7 +243,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // CullFace
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glCullFace(), see also http://www.opengl.org/sdk/docs/man/xhtml/glCullFace.xml for more information.
+  /** RenderState wrapping the OpenGL function glCullFace(), see also http://www.opengl.org/sdk/docs/man/xhtml/glCullFace.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_CULL_FACE */
   class CullFace: public RenderState
   {
@@ -265,7 +265,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // FrontFace
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glFrontFace(), see also http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml for more information.
+  /** RenderState wrapping the OpenGL function glFrontFace(), see also http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml for more information.
    * \sa Shader, Effect, Actor */
   class FrontFace: public RenderState
   {
@@ -287,7 +287,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // DepthFunc
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glDepthFunc(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthFunc.xml for more information.
+  /** RenderState wrapping the OpenGL function glDepthFunc(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthFunc.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_DEPTH_TEST */
   class DepthFunc: public RenderState
   {
@@ -309,7 +309,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // DepthMask
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glDepthMask(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthMask.xml for more information.
+  /** RenderState wrapping the OpenGL function glDepthMask(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthMask.xml for more information.
    * \sa Shader, Effect, Actor */
   class DepthMask: public RenderState
   {
@@ -331,7 +331,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // PolygonMode
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glPolygonMode(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPolygonMode.xml for more information.
+  /** RenderState wrapping the OpenGL function glPolygonMode(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPolygonMode.xml for more information.
    * \sa Shader, Effect, Actor */
   class PolygonMode: public RenderState
   {
@@ -357,7 +357,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // ShadeModel
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glShadeModel(), see also http://www.opengl.org/sdk/docs/man/xhtml/glShadeModel.xml for more information.
+  /** RenderState wrapping the OpenGL function glShadeModel(), see also http://www.opengl.org/sdk/docs/man/xhtml/glShadeModel.xml for more information.
    * \sa Shader, Effect, Actor */
   class ShadeModel: public RenderState
   {
@@ -379,7 +379,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // BlendFunc
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glBlendFunc(), see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendFunc.xml for more information.
+  /** RenderState wrapping the OpenGL function glBlendFunc(), see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendFunc.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_BLEND */
   class BlendFunc: public RenderState
   {
@@ -414,7 +414,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // BlendEquation
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glBlendEquation()/glBlendEquationSeparate(), see also 
+  /** RenderState wrapping the OpenGL function glBlendEquation()/glBlendEquationSeparate(), see also 
    * http://www.opengl.org/sdk/docs/man/xhtml/glBlendEquation.xml and 
    * http://www.opengl.org/sdk/docs/man/xhtml/glBlendEquationSeparate.xml for more information.
    * \sa Shader, Effect, Actor */
@@ -442,7 +442,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // SampleCoverage
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glSampleCoverage(), see also http://www.opengl.org/sdk/docs/man/xhtml/glSampleCoverage.xml for more information.
+  /** RenderState wrapping the OpenGL function glSampleCoverage(), see also http://www.opengl.org/sdk/docs/man/xhtml/glSampleCoverage.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_SAMPLE_ALPHA_TO_COVERAGE, vl::EN_SAMPLE_ALPHA_TO_ONE, vl::EN_SAMPLE_COVERAGE */
   class SampleCoverage: public RenderState
   {
@@ -468,7 +468,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // AlphaFunc
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glAlphaFunc(), see also http://www.opengl.org/sdk/docs/man/xhtml/glAlphaFunc.xml for more information.
+  /** RenderState wrapping the OpenGL function glAlphaFunc(), see also http://www.opengl.org/sdk/docs/man/xhtml/glAlphaFunc.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_ALPHA_TEST */
   class AlphaFunc: public RenderState
   {
@@ -492,7 +492,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // Material
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glMaterial() and glColorMaterial(), see also http://www.opengl.org/sdk/docs/man/xhtml/glMaterial.xml and http://www.opengl.org/sdk/docs/man/xhtml/glColorMaterial.xml for more information.
+  /** RenderState wrapping the OpenGL function glMaterial() and glColorMaterial(), see also http://www.opengl.org/sdk/docs/man/xhtml/glMaterial.xml and http://www.opengl.org/sdk/docs/man/xhtml/glColorMaterial.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_LIGHTING */
   class Material: public RenderState
   {
@@ -564,7 +564,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // LightModel
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glLightModel(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLightModel.xml for more information.
+  /** RenderState wrapping the OpenGL function glLightModel(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLightModel.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_LIGHTING */
   class LightModel: public RenderState
   {
@@ -595,7 +595,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // Fog
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glFog(), see also http://www.opengl.org/sdk/docs/man/xhtml/glFog.xml for more information.
+  /** RenderState wrapping the OpenGL function glFog(), see also http://www.opengl.org/sdk/docs/man/xhtml/glFog.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_FOG */
   class Fog: public RenderState
   {
@@ -631,7 +631,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // PolygonOffset
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glPolygonOffset(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPolygonOffset.xml for more information.
+  /** RenderState wrapping the OpenGL function glPolygonOffset(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPolygonOffset.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_POLYGON_OFFSET_FILL, vl::EN_POLYGON_OFFSET_LINE, vl::EN_POLYGON_OFFSET_POINT */
   class PolygonOffset: public RenderState
   {
@@ -658,7 +658,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // LogicOp
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glLogicOp(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLogicOp.xml for more information.
+  /** RenderState wrapping the OpenGL function glLogicOp(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLogicOp.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_COLOR_LOGIC_OP */
   class LogicOp: public RenderState
   {
@@ -680,7 +680,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // DepthRange
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glDepthRange(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthRange.xml for more information.
+  /** RenderState wrapping the OpenGL function glDepthRange(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthRange.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_DEPTH_TEST */
   class DepthRange: public RenderState
   {
@@ -712,7 +712,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // LineWidth
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glLineWidth(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLineWidth.xml for more information.
+  /** RenderState wrapping the OpenGL function glLineWidth(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLineWidth.xml for more information.
    * \sa Shader, Effect, Actor */
   class LineWidth: public RenderState
   {
@@ -734,7 +734,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // PointSize
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glPointSize(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPointSize.xml for more information.
+  /** RenderState wrapping the OpenGL function glPointSize(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPointSize.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_POINT_SMOOTH, vl::EN_POINT_SPRITE */
   class PointSize: public RenderState
   {
@@ -756,7 +756,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // PolygonStipple
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glPolygonStipple(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPolygonStipple.xml for more information.
+  /** RenderState wrapping the OpenGL function glPolygonStipple(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPolygonStipple.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_POLYGON_STIPPLE */
   class PolygonStipple: public RenderState
   {
@@ -774,7 +774,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // LineStipple
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glLineStipple(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLineStipple.xml for more information.
+  /** RenderState wrapping the OpenGL function glLineStipple(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLineStipple.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_LINE_STIPPLE */
   class LineStipple: public RenderState
   {
@@ -800,7 +800,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // PointParameter
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glPointParameter(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPointParameter.xml for more information.
+  /** RenderState wrapping the OpenGL function glPointParameter(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPointParameter.xml for more information.
    * \sa Shader, Effect, Actor */
   class PointParameter: public RenderState
   {
@@ -888,7 +888,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // StencilOp
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glStencilOp() and glStencilOpSeparate(), see also 
+  /** RenderState wrapping the OpenGL function glStencilOp() and glStencilOpSeparate(), see also 
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilOp.xml and
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilOpSeparate.xml for more information.
    * \sa Shader, Effect, Actor, StencilMask, StencilFunc, vl::EN_STENCIL_TEST */
@@ -939,7 +939,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // StencilMask
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glStencilMask() and glStencilMaskSeparate(), see also 
+  /** RenderState wrapping the OpenGL function glStencilMask() and glStencilMaskSeparate(), see also 
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilMask.xml and
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilMaskSeparate.xml for more information.
    * \sa Shader, Effect, Actor, StencilOp, StencilFunc, vl::EN_STENCIL_TEST */
@@ -971,7 +971,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // BlendColor
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glBlendColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendColor.xml for more information.
+  /** RenderState wrapping the OpenGL function glBlendColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendColor.xml for more information.
    * \sa Shader, Effect, Actor */
   class BlendColor: public RenderState
   {
@@ -993,7 +993,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // ColorMask
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glColorMask(), see also http://www.opengl.org/sdk/docs/man/xhtml/glColorMask.xml for more information.
+  /** RenderState wrapping the OpenGL function glColorMask(), see also http://www.opengl.org/sdk/docs/man/xhtml/glColorMask.xml for more information.
    * \sa Shader, Effect, Actor */
   class ColorMask: public RenderState
   {
@@ -1056,7 +1056,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // TexEnv
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glTexEnv(), see also http://www.opengl.org/sdk/docs/man/xhtml/glTexEnv.xml for more information.
+  /** RenderState wrapping the OpenGL function glTexEnv(), see also http://www.opengl.org/sdk/docs/man/xhtml/glTexEnv.xml for more information.
    *
    * \note
    * A TexParameter defines a set of variables associated to a Texture while 
@@ -1141,7 +1141,7 @@ namespace vl
   //------------------------------------------------------------------------------
   // TexGen
   //------------------------------------------------------------------------------
-  /** Wraps the OpenGL function glTexGen(), see also http://www.opengl.org/sdk/docs/man/xhtml/glTexGen.xml for more information.
+  /** RenderState wrapping the OpenGL function glTexGen(), see also http://www.opengl.org/sdk/docs/man/xhtml/glTexGen.xml for more information.
    *
    * \note
    * A TexParameter defines a set of variables associated to a Texture while 
