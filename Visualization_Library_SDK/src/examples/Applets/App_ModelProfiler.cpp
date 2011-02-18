@@ -409,7 +409,7 @@ public:
     sceneManager()->computeBounds();
     const AABB& scene_aabb = sceneManager()->boundingBox();
     Real speed = (scene_aabb.width() + scene_aabb.height() + scene_aabb.depth()) / 20.0f;
-    ghostCamera()->setMovementSpeed(speed);
+    ghostCameraManipulator()->setMovementSpeed(speed);
 
     // update the rendering
     openglContext()->update();

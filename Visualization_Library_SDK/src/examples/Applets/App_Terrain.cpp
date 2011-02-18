@@ -46,7 +46,7 @@ public:
     }
     BaseDemo::initEvent();
 
-    ghostCamera()->setMovementSpeed(5);
+    ghostCameraManipulator()->setMovementSpeed(5);
     // allocate terrain scene manager
     vl::ref<vl::Terrain> terrain = new vl::Terrain;
     // use GLSL?
