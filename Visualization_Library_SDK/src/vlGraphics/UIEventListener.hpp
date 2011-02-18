@@ -96,10 +96,10 @@ namespace vl
     /** Event generated when the mouse wheel rotated. */
     virtual void mouseWheelEvent(int n) = 0;
 
-    /** Event generated when one key is pressed. */
+    /** Event generated when a key is pressed. */
     virtual void keyPressEvent(unsigned short unicode_ch, EKey key) = 0;
 
-    /** Event generated when one key is released. */
+    /** Event generated when a key is released. */
     virtual void keyReleaseEvent(unsigned short unicode_ch, EKey key) = 0;
 
     /** Event generated when the bound OpenGLContext is resized. */

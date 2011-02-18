@@ -48,7 +48,7 @@ GhostCameraManipulator::GhostCameraManipulator()
   mXDegrees = 0;
   mYDegrees = 0;
   mLastTime = 0;
-  mPosition = vec3(0,20,20);
+  mPosition = vec3(0,0,0);
 
   setKeysForward(Key_W);
   setKeysBackward(Key_S);
