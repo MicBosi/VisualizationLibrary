@@ -44,17 +44,19 @@ namespace vl
 //-----------------------------------------------------------------------------
 // Applet
 //-----------------------------------------------------------------------------
-  /** The Applet class is an utilitly UIEventListener that features a ghost manipulator, 
-      trackball manipulator, an FPS counter and a simple rendering pipeline. 
-
-      Default key bindings:
-      - Key_Escape: calls openglContext()->quitApplication()
-      - Key_T: enables the TrackballManipulator.
-      - Key_F: enables the GhostCameraManipulator (fly mode).
-      - Key_F1: toggles fullscreen mode if supported.
-      - Key_F5: saves a screenshot of the current OpenGL window. 
-      - Key_C: toggles the continuous update fo the OpenGL window (see also OpenGLContext::setContinuousUpdate()).
-      - Key_U: updates the OpenGL window content by calling openglContext()->update(). */
+  /** 
+   * The Applet class is an utilitly UIEventListener that features a ghost manipulator, 
+   * trackball manipulator, an FPS counter and a simple rendering pipeline. 
+   * 
+   * Default key bindings:
+   * - Key_Escape: calls openglContext()->quitApplication()
+   * - Key_T: enables the TrackballManipulator.
+   * - Key_F: enables the GhostCameraManipulator (fly mode).
+   * - Key_F1: toggles fullscreen mode if supported.
+   * - Key_F5: saves a screenshot of the current OpenGL window. 
+   * - Key_C: toggles the continuous update fo the OpenGL window (see also OpenGLContext::setContinuousUpdate()).
+   * - Key_U: updates the OpenGL window content by calling openglContext()->update(). 
+   */
   class Applet: public UIEventListener
   {
   public:
@@ -63,7 +65,10 @@ namespace vl
     /** Constructor */
     Applet();
 
-    /** Initializes the default rendering (with Rendering), the default scene manager (with SceneManagerActorTree) and camera manipulators (GhostCameraManipulator and TrackballManipulator). */
+    /** 
+     * Initializes the default rendering (with Rendering), the default scene manager (with SceneManagerActorTree) 
+     * and camera manipulators (GhostCameraManipulator and TrackballManipulator). 
+     */
     void initialize();
 
     // --- UIEventListener ---
@@ -124,10 +129,12 @@ namespace vl
     /** Current average frames per second (updated every 500ms). */
     double fps() const { return mFPS; }
 
-    /** Override this to update the content of your scene. 
-        Called by updateEvent() right before rendering()->render() and swapping opengl front/back buffers. 
-        \note Since updateScene() is called by updateEvent() this function is called only if somebody
-        requests a OpenGLContext::update() or if OpenGLContext::continuousUpdate() is set to \p true. */
+    /** 
+     * Override this to update the content of your scene. 
+     * Called by updateEvent() right before rendering()->render() and swapping opengl front/back buffers. 
+     * \note Since updateScene() is called by updateEvent() this function is called only if somebody
+     * requests a OpenGLContext::update() or if OpenGLContext::continuousUpdate() is set to \p true. 
+     */
 	  virtual void updateScene() {}
 
     /** Sets the applet name, used for the window title and for naming screenshots. */
