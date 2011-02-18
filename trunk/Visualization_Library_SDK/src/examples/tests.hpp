@@ -55,7 +55,7 @@ BaseDemo* Create_App_MultipleCameras();
 BaseDemo* Create_App_PointSplatting();
 BaseDemo* Create_App_PolyDepthSorting(const vl::String&);
 BaseDemo* Create_App_PolygonReduction(const vl::String&);
-BaseDemo* Create_App_RenderOrder(int);
+BaseDemo* Create_App_RenderOrder();
 BaseDemo* Create_App_RotatingCube();
 BaseDemo* Create_App_ScatterPlot3D(int);
 BaseDemo* Create_App_ShaderMultiPassLODAnim();
@@ -140,10 +140,7 @@ public:
       { "Shader Multipass+LOD+Animation", Create_App_ShaderMultiPassLODAnim(), 10, 10, 512, 512, vl::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
       { "Shader Alpha Multipass", Create_App_ShaderMultiPassAlpha(), 10, 10, 512, 512, vl::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
       { "Geometry LOD+Animation", Create_App_GeomLODAnim(), 10, 10, 512, 512, vl::black, vl::vec3(0,40,40), vl::vec3(0,0,0) }, 
-      { "Render Order - Effect & Actor Ranks", Create_App_RenderOrder(0), 10, 10, 512, 512, vl::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
-      { "Render Order - Alpha Z-Sort", Create_App_RenderOrder(1), 10, 10, 512, 512, vl::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
-      { "Render Order - Always Z-Sort", Create_App_RenderOrder(2), 10, 10, 512, 512, vl::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
-      { "Render Order - Occlusion Z-Sort", Create_App_RenderOrder(3), 10, 10, 512, 512, vl::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
+      { "Render Order", Create_App_RenderOrder(), 10, 10, 512, 512, vl::white, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Robot Transform", Create_App_Transforms(), 10, 10, 512, 512, vl::white, vl::vec3(0,40,60), vl::vec3(0,15,0) }, 
       { "Billboards", Create_App_Billboards(), 10, 10, 512, 512, vl::royalblue, vl::vec3(0,1,10), vl::vec3(0,1,0) }, 
       { "Multiple Cameras", Create_App_MultipleCameras(), 10, 10, 512, 512, vl::black, vl::vec3(0,10,15), vl::vec3(0,0,0) }, 
