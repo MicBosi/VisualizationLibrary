@@ -124,7 +124,7 @@ public:
       glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
       glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight_interlaced.fs") );
 
-      if (GLEW_NV_geometry_shader4 || GLEW_ARB_geometry_shader4 || GLEW_VERSION_3_2)
+      if (GLEW_Has_Geometry_Shader)
       {
         glsl = effect5->shader()->gocGLSLProgram();
         // a vertex shader is always needed when using geometry shaders

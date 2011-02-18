@@ -375,7 +375,7 @@ void GLSLProgram::preLink()
 
   // geometry shader - note: this pertains only to OpenGL 3.2 not OpenGL 4.x
 
-  if (GLEW_EXT_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_VERSION_3_2)
+  if (GLEW_Has_Geometry_Shader)
   {
     // if there is at least one geometry shader applies the geometry shader parameters
     for(unsigned i=0; i<mShaders.size(); ++i)
