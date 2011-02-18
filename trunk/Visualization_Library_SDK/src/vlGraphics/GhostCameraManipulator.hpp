@@ -37,12 +37,21 @@
 namespace vl
 {
   class Camera;
-
-//------------------------------------------------------------------------------
-// GhostCameraManipulator
-//------------------------------------------------------------------------------
-  /** The GhostCameraManipulator class is an UIEventListener that controls the position and orientation of a Camera.
-      Using the GhostCameraManipulator class the user can freely fly around in the scene just like a ghost would do. */
+  //------------------------------------------------------------------------------
+  // GhostCameraManipulator
+  //------------------------------------------------------------------------------
+  /** 
+   * The GhostCameraManipulator class is an UIEventListener that controls the position and orientation of a Camera.
+   * Using the GhostCameraManipulator class the user can freely fly around in the scene as if it was a ghost.
+   * Default key bindings:
+   * - Forward = \p Key_W
+   * - Backward = \p Key_S
+   * - Left = \p Key_A
+   * - Right = \p Key_D
+   * - Up = \p Key_W + \p Key_Shift
+   * - Down = \p Key_S + \p Key_Shift
+   * \sa TrackballManipulator
+   */
   class GhostCameraManipulator: public UIEventListener
   {
   public:
@@ -85,24 +94,46 @@ namespace vl
 
     // --- --- ---
 
+    /** The camera to be manipulated. */
     void setCamera(Camera* camera);
 
+    /** The camera to be manipulated. */
     Camera* camera();
     
+    /** The camera to be manipulated. */
     const Camera* camera() const;
 
+    /** Key bindings to move forward (default = Key_W). */
     void setKeysForward(EKey key, EKey modifier = Key_None)  { mKeysForward[0] = key; mKeysForward[1] = modifier; };
     
+    /** Key bindings to move backward (default = Key_S). */
     void setKeysBackward(EKey key, EKey modifier = Key_None) { mKeysBackward[0] = key; mKeysBackward[1] = modifier; };
     
+    /** Key bindings to move left (default = Key_A). */
     void setKeysLeft(EKey key, EKey modifier = Key_None)     { mKeysLeft[0] = key; mKeysLeft[1] = modifier; };
     
+    /** Key bindings to move right (default = Key_D). */
     void setKeysRight(EKey key, EKey modifier = Key_None)    { mKeysRight[0] = key; mKeysRight[1] = modifier; };
     
+    /** Key bindings to move up (default = Key_W + Key_Shift). */
     void setKeysUp(EKey key, EKey modifier = Key_None)       { mKeysUp[0] = key; mKeysUp[1] = modifier; };
     
+    /** Key bindings to move down (default = Key_S + Key_Shift). */
     void setKeysDown(EKey key, EKey modifier = Key_None)     { mKeysDown[0] = key; mKeysDown[1] = modifier; };
 
+    /** The camera rotation speed (default = 0.5). */
+    void setRotationSpeed(Real speed) { mRotationSpeed = speed; }
+    
+    /** The camera rotation speed (default = 0.5). */
+    Real rotationSpeed() const { return mRotationSpeed; }
+    
+    /** The camera translation speed (default = 50). */
+    void setMovementSpeed(Real speed) { mMovementSpeed = speed; }
+
+    /** The camera translation speed (default = 50). */
+    Real movementSpeed() const { return mMovementSpeed; }
+
+  protected:
     void setPosition(vec3 position) { mPosition = position; }
 
     const vec3& position() const { return mPosition; }
@@ -115,14 +146,6 @@ namespace vl
 
     Real yDegrees() { return mYDegrees; }
 
-    Real rotationSpeed() const { return mRotationSpeed; }
-    
-    Real movementSpeed() const { return mMovementSpeed; }
-    
-    void setRotationSpeed(Real speed) { mRotationSpeed = speed; }
-    
-    void setMovementSpeed(Real speed) { mMovementSpeed = speed; }
-
   protected:
     ref<Camera> mCamera;
     vec3 mPosition;
@@ -131,8 +154,6 @@ namespace vl
     Real mMovementSpeed;
     Real mXDegrees;
     Real mYDegrees;
-    // int mLastX;
-    // int mLastY;
     EKey mKeysForward[2];
     EKey mKeysBackward[2];
     EKey mKeysUp[2];
