@@ -35,6 +35,7 @@
 #include <vlGraphics/Applet.hpp>
 #include <vlGraphics/Rendering.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
+#include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/Time.hpp>
 
 class BaseDemo: public vl::Applet
