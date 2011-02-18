@@ -53,44 +53,54 @@ namespace vl
   public:
     //! Constructor.
     Tessellator();
+
+    //! Destructor
     ~Tessellator();
 
     //! The contours that specify the complex polygon to be tessellated.
     const std::vector<dvec3>& contourVerts() const { return mContourVerts; }
+    
     //! The contours that specify the complex polygon to be tessellated.
     std::vector<dvec3>& contourVerts() { return mContourVerts; }
 
     //! The contours that specify the complex polygon to be tessellated.
     const std::vector<int>& contours() const { return mContours; }
+    
     //! The contours that specify the complex polygon to be tessellated.
     std::vector<int>& contours() { return mContours; }
 
     //! A set of triangles representing the tessellated polygon.
     const std::vector<fvec3>& tessellatedTris() const { return mTessellatedTris; }
+    
     //! A set of triangles representing the tessellated polygon.
     std::vector<fvec3>& tessellatedTris() { return mTessellatedTris; }
 
     //! See gluTessNormal documentation.
     void setTessNormal(const fvec3& normal) { mTessNormal = normal; }
+    
     //! See gluTessNormal documentation.
     const fvec3& tessNormal() const { return mTessNormal; }
 
     //! See gluTessProperty documentation (GLU_TESS_BOUNDARY_ONLY)
     void setBoundaryOnly(bool on) { mBoundaryOnly = on; }
+    
     //! See gluTessProperty documentation (GLU_TESS_BOUNDARY_ONLY)
     bool boundaryOnly() const { return mBoundaryOnly; }
 
     //! See gluTessProperty documentation (GLU_TESS_TOLERANCE)
     double tolerance() const { return mTolerance; }
+    
     //! See gluTessProperty documentation (GLU_TESS_TOLERANCE)
     void setTolerance(double tolerance) { mTolerance = tolerance; }
 
     //! See gluTessProperty documentation (GLU_TESS_WINDING_RULE)
     ETessellationWinding windingRule() const { return mWindingRule; }
+    
     //! See gluTessProperty documentation (GLU_TESS_WINDING_RULE)
     void setWindingRule(ETessellationWinding rule) { mWindingRule = rule; }
 
-    /* Tessellates the specified polygon.
+    /* 
+     * Tessellates the specified polygon.
      * If \p append_tessellated_tris equals \p true then the previously tessellated triangles are kept and the newly 
      * generated triangles are appended to them. This is useful when one has to tessellate several triangles and 
      * the result should be accumulated in a single triangle set.
@@ -102,9 +112,10 @@ namespace vl
     //! Utility function that calls tessellate() and creates a Geometry with the tessellated triangles.
     ref<Geometry> tessellateGeometry(bool append_tessellated_tris=false);
 
-    bool tessellateIntoSinglePolygon() const { return mTessellateIntoSinglePolygon; }
     void setTessellateIntoSinglePolygon(bool on) { mTessellateIntoSinglePolygon = on; }
 
+    bool tessellateIntoSinglePolygon() const { return mTessellateIntoSinglePolygon; }
+    
   protected:
     static void CALLBACK tessBeginData( GLenum type, Tessellator* tessellator );
     static void CALLBACK tessVertexData( dvec3* vec, Tessellator* tessellator );
