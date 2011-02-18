@@ -47,8 +47,9 @@ namespace
     ScopedFBOBinding( FBORenderTarget* fbo )
     {
       VL_CHECK( fbo );
-      if ( !fbo->handle() )
-        fbo->create();
+      VL_CHECK( fbo->handle() );
+      /*if ( !fbo->handle() )
+        fbo->create();*/
 
       // saves current FBO
       mPrevFBO = 0;
