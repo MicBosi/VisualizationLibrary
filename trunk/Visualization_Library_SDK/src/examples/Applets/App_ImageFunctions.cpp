@@ -32,6 +32,12 @@
 #include "BaseDemo.hpp"
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlGraphics/GeometryPrimitives.hpp>
+#if defined(VL_IO_2D_PNG)
+  #include <vlCore/vlPNG.hpp>
+#endif
+#if defined(VL_IO_2D_JPG)
+  #include <vlCore/vlJPG.hpp>
+#endif
 
 class App_ImageFunctions: public BaseDemo
 {
@@ -62,12 +68,16 @@ public:
     vl::ref<vl::Image> img_d;
 
     // remember that this returns NULL if JPG support is disabled
+#if defined(VL_IO_2D_PNG)
     vl::defLoadWriterManager()->loadWriter<vl::LoadWriterJPG>()->setQuality(90);
+#endif
     vl::saveImage(img1.get(), "img_a.jpg");
     img_a = vl::loadImage("img_a.jpg");
 
     // remember that this returns NULL if PNG support is disabled
+#if defined(VL_IO_2D_JPG)
     vl::defLoadWriterManager()->loadWriter<vl::LoadWriterPNG>()->setCompression(9);
+#endif
     vl::saveImage(img1.get(), "img_b.png");
     img_b = vl::loadImage("img_b.png");
 
