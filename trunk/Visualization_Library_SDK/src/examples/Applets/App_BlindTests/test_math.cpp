@@ -49,10 +49,11 @@ namespace blind_tests
 {
   bool test_quat();
   bool test_matr();
+  bool test_glsl_math();
 
   bool test_math()
   {
-    return test_matr() && test_quat();
+    return test_matr() && test_quat() && test_glsl_math();
   }
 
   bool test_matr()
@@ -130,7 +131,7 @@ namespace blind_tests
     // transposition
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
-        m.e(i,j) = rand();
+        m.e(i,j) = (float)rand();
     fmat4 m2 = m;
     m2.transpose();
     for(int i=0; i<4; ++i)
@@ -476,6 +477,146 @@ namespace blind_tests
     CONDITION( distance(v3,fvec3(1,1,1)) < 0.001f )
     v1 = q1 * fvec4(1,1,1,1);
     CONDITION( distance(v1,fvec4(1,1,1,1)) < 0.001f )
+
+    return true;
+  }
+
+  bool test_glsl_math()
+  {
+    //-------------------------------------------------------------------------
+    // Test template function compilation & warnings.
+    //-------------------------------------------------------------------------
+
+    fvec2 fv2;
+    fvec3 fv3;
+    fvec4 fv4;
+    dvec2 dv2;
+    dvec3 dv3;
+    dvec4 dv4;
+    ivec2 iv2;
+    ivec3 iv3;
+    ivec4 iv4;
+    fmat4 fm4;
+    dmat4 dm4;
+
+    fv2 = vl::modf(fv2, fv2);
+    dv2 = vl::modf(dv2, dv2);
+    fv3 = vl::modf(fv3, fv3);
+    dv3 = vl::modf(dv3, dv3);
+    fv4 = vl::modf(fv4, fv4);
+    dv4 = vl::modf(dv4, dv4);
+    fv4 = vl::radians(fv4);
+    dv4 = vl::radians(dv4);
+    fv4 = vl::degrees(fv4);
+    dv4 = vl::degrees(dv4);
+    fv4 = vl::sin(fv4);
+    dv4 = vl::sin(dv4);
+    fv4 = vl::cos(fv4);
+    dv4 = vl::cos(dv4);
+    fv4 = vl::tan(fv4);
+    dv4 = vl::tan(dv4);
+    fv4 = vl::atan(fv4, fv4);
+    dv4 = vl::atan(dv4, dv4);
+    fv4 = vl::asin(fv4);
+    dv4 = vl::asin(dv4);
+    fv4 = vl::acos(fv4);
+    dv4 = vl::acos(dv4);
+    fv4 = vl::sinh(fv4);
+    dv4 = vl::sinh(dv4);
+    fv4 = vl::cosh(fv4);
+    dv4 = vl::cosh(dv4);
+    fv4 = vl::tanh(fv4);
+    dv4 = vl::tanh(dv4);
+    fv4 = vl::asinh(fv4);
+    dv4 = vl::asinh(dv4);
+    fv4 = vl::acosh(fv4);
+    dv4 = vl::acosh(dv4);
+    fv4 = vl::atanh(fv4);
+    dv4 = vl::atanh(dv4);
+    fv4 = vl::pow(fv4, fv4);
+    dv4 = vl::pow(dv4, dv4);
+    fv4 = vl::exp(fv4);
+    dv4 = vl::exp(dv4);
+    fv4 = vl::exp2(fv4);
+    dv4 = vl::exp2(dv4);
+    fv4 = vl::log(fv4);
+    dv4 = vl::log(dv4);
+    fv4 = vl::log10(fv4);
+    dv4 = vl::log10(dv4);
+    fv4 = vl::sqrt(fv4);
+    dv4 = vl::sqrt(dv4);
+    fv4 = vl::inversesqrt(fv4);
+    dv4 = vl::inversesqrt(dv4);
+    fv4 = vl::sqrt(fv4);
+    dv4 = vl::sqrt(dv4);
+    fv4 = vl::abs(fv4);
+    dv4 = vl::abs(dv4);
+    fv4 = vl::sign(fv4);
+    dv4 = vl::sign(dv4);
+    fv4 = vl::floor(fv4);
+    dv4 = vl::floor(dv4);
+    fv4 = vl::trunc(fv4);
+    dv4 = vl::trunc(dv4);
+    fv4 = vl::round(fv4);
+    dv4 = vl::round(dv4);
+    fv4 = vl::roundEven(fv4);
+    dv4 = vl::roundEven(dv4);
+    fv4 = vl::ceil(fv4);
+    dv4 = vl::ceil(dv4);
+    fv4 = vl::fract(fv4);
+    dv4 = vl::fract(dv4);
+    fv4 = vl::mod(fv4, 1.0f);
+    dv4 = vl::mod(dv4, 1.0);
+    fv4 = vl::mod(fv4, fv4);
+    dv4 = vl::mod(dv4, dv4);
+    fv4 = vl::modf(fv4, fv4);
+    dv4 = vl::modf(dv4, dv4);
+    fv4 = vl::mix(fv4, fv4, 1.0f);
+    dv4 = vl::mix(dv4, dv4, 1.0);
+    fv4 = vl::mix(fv4, fv4, fv4);
+    dv4 = vl::mix(dv4, dv4, dv4);
+    fv4 = vl::step(fv4, fv4);
+    dv4 = vl::step(dv4, dv4);
+    fv4 = vl::smoothstep(fv4, fv4, fv4);
+    dv4 = vl::smoothstep(dv4, dv4, dv4);
+    iv4 = vl::isnan(fv4);
+    iv4 = vl::isnan(dv4);
+    iv4 = vl::isinf(fv4);
+    iv4 = vl::isinf(dv4);
+    vl::length(fv4);
+    vl::length(dv4);
+    vl::distance(fv4, fv4);
+    vl::distance(dv4, dv4);
+    fv4 = vl::normalize(fv4);
+    dv4 = vl::normalize(dv4);
+    fv4 = vl::faceforward(fv4,fv4,fv4);
+    dv4 = vl::faceforward(dv4,dv4,dv4);
+    fv4 = vl::reflect(fv4,fv4);
+    dv4 = vl::reflect(dv4,dv4);
+    fv4 = vl::refract(fv4,fv4,1.0f);
+    dv4 = vl::refract(dv4,dv4,1.0);
+    fm4 = vl::matrixCompMult(fm4, fm4);
+    dm4 = vl::matrixCompMult(dm4, dm4);
+    fm4 = vl::outerProduct(fv4, fv4);
+    dm4 = vl::outerProduct(dv4, dv4);
+    fm4 = vl::transpose(fm4);
+    dm4 = vl::transpose(dm4);
+    iv4 = vl::lessThan(fv4, fv4);
+    iv4 = vl::lessThan(dv4, dv4);
+    iv4 = vl::lessThanEqual(fv4, fv4);
+    iv4 = vl::lessThanEqual(dv4, dv4);
+    iv4 = vl::greaterThan(fv4, fv4);
+    iv4 = vl::greaterThan(dv4, dv4);
+    iv4 = vl::greaterThanEqual(fv4, fv4);
+    iv4 = vl::greaterThanEqual(dv4, dv4);
+    iv4 = vl::equal(fv4, fv4);
+    iv4 = vl::equal(dv4, dv4);
+    iv4 = vl::notEqual(fv4, fv4);
+    iv4 = vl::notEqual(dv4, dv4);
+    fv4 = vl::dot(fv4, fv4);
+    dv4 = vl::dot(dv4, dv4);
+    fv3 = vl::cross(fv3, fv3);
+    dv3 = vl::cross(dv3, dv3);
 
     return true;
   }

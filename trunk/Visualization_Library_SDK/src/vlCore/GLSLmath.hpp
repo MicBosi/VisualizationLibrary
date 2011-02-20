@@ -38,7 +38,8 @@
   This functions are particularly useful when you want to port C++ code to GLSL and vice versa, or when you want to quickly 
   prototype in C++ an algorithm that will be ported later to GLSL. 
   
-  Note that most of this functions take as arguments not only \p int, \p unsigned \p int, \p float and \p double variables but also their vector counterparts like \p fvec4, \p dvec4, \p ivec4, \p uvec4, \p fvec3, \p fvec2 etc.
+  Note that most of this functions take as arguments not only \p int, \p unsigned \p int, \p float and \p double variables
+  but also their vector counterparts like \p fvec4, \p Vector4<T>, \p ivec4, \p uvec4, \p fvec3, \p fvec2 etc.
   For example you can do the following:
 \code
 // clamp a float value
@@ -49,7 +50,7 @@ f = vl::clamp(f, 0.0f, 1.0f);
 vl::fvec4 v = someValueVec4();
 v = vl::clamp(v, vl::fvec4(1,2,3,4), vl::fvec4(5,6,7,8));
 
-// the same goes for functions like mix(), min(), max(), sin(), cos(), floor() etc!
+// the same goes for functions like mix(), min(), max(), sin(), cos(), floor() etc.
 \endcode
 
   This module also implements other convenience functions like isnan(), isinf(), isinf_pos(), isinf_neg().
@@ -97,628 +98,456 @@ namespace vl
 
   // taken from http://support.microsoft.com/kb/625449/it
 
-  inline float asinh(float x) { return log(x+VL_FLOAT_SQRT(x*x+1.0f)); }
-  inline double asinh(double x) { return log(x+sqrt(x*x+1.0)); }
+  template<typename T>
+  T asinh(T x) { return log(x+::sqrt(x*x+1)); }
 
-  inline float acosh(float x)
+  template<typename T>
+  T acosh(T x)
   {
     // must be x>=1, if not return Nan (Not a Number)
-    if(!(x>=1.0f)) return VL_FLOAT_SQRT(-1.0f);
+    if(!(x>=1)) return ::sqrt((T)-1);
 
     // return only the positive result (as sqrt does).
-    return log(x+VL_FLOAT_SQRT(x*x-1.0f));
-  }
-  inline double acosh(double x)
-  {
-    // must be x>=1, if not return Nan (Not a Number)
-    if(!(x>=1.0)) return sqrt(-1.0);
-
-    // return only the positive result (as sqrt does).
-    return log(x+sqrt(x*x-1.0));
+    return log(x+::sqrt(x*x-1));
   }
 
-  inline float atanh(float x)
+  template<typename T>
+  T atanh(T x)
   {
     // must be x>-1, x<1, if not return Nan (Not a Number)
-    if(!(x>-1.0f && x<1.0f)) return VL_FLOAT_SQRT(-1.0f);
+    if(!(x>-1 && x<1)) return ::sqrt((T)-1);
 
-    return log((1.0f+x)/(1.0f-x))/2.0f;
-  }
-  inline double atanh(double x)
-  {
-    // must be x>-1, x<1, if not return Nan (Not a Number)
-    if(!(x>-1.0 && x<1.0)) return sqrt(-1.0);
-
-    return log((1.0+x)/(1.0-x))/2.0;
+    return log((1+x)/(1-x))/2;
   }
 
   // isinf, isnan functions not implemented in Visual C++
 
-  template<typename T> inline bool isnan(T value) { return !(value == value); }
-  template<typename T> inline bool isinf(T value) { return value < std::numeric_limits<T>::min() || value > std::numeric_limits<T>::max(); }
-  template<typename T> inline bool isinf_pos(T value) { return value > std::numeric_limits<T>::max(); }
-  template<typename T> inline bool isinf_neg(T value) { return value < std::numeric_limits<T>::min(); }
+  template<typename T> bool isnan(T value) { return !(value == value); }
+  template<typename T> bool isinf(T value) { return value < std::numeric_limits<T>::min() || value > std::numeric_limits<T>::max(); }
+  template<typename T> bool isinf_pos(T value) { return value > std::numeric_limits<T>::max(); }
+  template<typename T> bool isinf_neg(T value) { return value < std::numeric_limits<T>::min(); }
 
   //-----------------------------------------------------------------------------
   // GLSL functions
   //-----------------------------------------------------------------------------
 
-  inline float modf(float a, float& intpart);
-  inline double modf(double a, double& intpart);
+  template<typename T>
+  T modf(T a, T& intpart);
 
   // --------------- angle and trigonometric functions ---------------
 
   // --------------- radians ---------------
 
-  inline float radians(float degrees) { return degrees * fDEG_TO_RAD; }
-  inline fvec2 radians(const fvec2& degrees) {
-    return fvec2( degrees.x() * fDEG_TO_RAD,
-                  degrees.y() * fDEG_TO_RAD );
-  }
-  inline fvec3 radians(const fvec3& degrees) {
-    return fvec3( degrees.x() * fDEG_TO_RAD,
-                  degrees.y() * fDEG_TO_RAD,
-                  degrees.z() * fDEG_TO_RAD );
-  }
-  inline fvec4 radians(const fvec4& degrees) {
-    return fvec4( degrees.x() * fDEG_TO_RAD,
-                  degrees.y() * fDEG_TO_RAD,
-                  degrees.z() * fDEG_TO_RAD,
-                  degrees.w() * fDEG_TO_RAD );
+  template<typename T>
+  T radians(T degrees) { return degrees * (T)dDEG_TO_RAD; }
+
+  template<typename T>
+  Vector2<T> radians(const Vector2<T>& degrees) {
+    return Vector2<T>( degrees.x() * (T)dDEG_TO_RAD,
+                       degrees.y() * (T)dDEG_TO_RAD );
   }
 
-  // .........................................
+  template<typename T>
+  Vector3<T> radians(const Vector3<T>& degrees) {
+    return Vector3<T>( degrees.x() * (T)dDEG_TO_RAD,
+                       degrees.y() * (T)dDEG_TO_RAD,
+                       degrees.z() * (T)dDEG_TO_RAD );
+  }
 
-  inline double radians(double degrees) { return degrees * dRAD_TO_DEG; }
-  inline dvec2 radians(const dvec2& degrees) {
-    return dvec2( degrees.x() * dRAD_TO_DEG,
-                  degrees.y() * dRAD_TO_DEG );
-  }
-  inline dvec3 radians(const dvec3& degrees) {
-    return dvec3( degrees.x() * dRAD_TO_DEG,
-                  degrees.y() * dRAD_TO_DEG,
-                  degrees.z() * dRAD_TO_DEG );
-  }
-  inline dvec4 radians(const dvec4& degrees) {
-    return dvec4( degrees.x() * dRAD_TO_DEG,
-                  degrees.y() * dRAD_TO_DEG,
-                  degrees.z() * dRAD_TO_DEG,
-                  degrees.w() * dRAD_TO_DEG );
+  template<typename T>
+  Vector4<T> radians(const Vector4<T>& degrees) {
+    return Vector4<T>( degrees.x() * (T)dDEG_TO_RAD,
+                       degrees.y() * (T)dDEG_TO_RAD,
+                       degrees.z() * (T)dDEG_TO_RAD,
+                       degrees.w() * (T)dDEG_TO_RAD );
   }
 
   // --------------- degrees ---------------
 
-  inline float degrees(float radians) { return radians * fRAD_TO_DEG; }
-  inline fvec2 degrees(const fvec2& radians) {
-    return fvec2( radians.x() * fRAD_TO_DEG,
-                  radians.y() * fRAD_TO_DEG );
-  }
-  inline fvec3 degrees(const fvec3& radians) {
-    return fvec3( radians.x() * fRAD_TO_DEG,
-                  radians.y() * fRAD_TO_DEG,
-                  radians.z() * fRAD_TO_DEG );
-  }
-  inline fvec4 degrees(const fvec4& radians) {
-    return fvec4( radians.x() * fRAD_TO_DEG,
-                  radians.y() * fRAD_TO_DEG,
-                  radians.z() * fRAD_TO_DEG,
-                  radians.w() * fRAD_TO_DEG );
+  template<typename T>
+  T degrees(T radians) { return radians * (T)dRAD_TO_DEG; }
+
+  template<typename T>
+  Vector2<T> degrees(const Vector2<T>& radians) {
+    return Vector2<T>( radians.x() * (T)dRAD_TO_DEG,
+                       radians.y() * (T)dRAD_TO_DEG );
   }
 
-  // .........................................
+  template<typename T>
+  Vector3<T> degrees(const Vector3<T>& radians) {
+    return Vector3<T>( radians.x() * (T)dRAD_TO_DEG,
+                       radians.y() * (T)dRAD_TO_DEG,
+                       radians.z() * (T)dRAD_TO_DEG );
+  }
 
-  inline double degrees(double radians) { return radians * dRAD_TO_DEG; }
-  inline dvec2 degrees(const dvec2& radians) {
-    return dvec2( radians.x() * dRAD_TO_DEG,
-                  radians.y() * dRAD_TO_DEG );
-  }
-  inline dvec3 degrees(const dvec3& radians) {
-    return dvec3( radians.x() * dRAD_TO_DEG,
-                  radians.y() * dRAD_TO_DEG,
-                  radians.z() * dRAD_TO_DEG );
-  }
-  inline dvec4 degrees(const dvec4& radians) {
-    return dvec4( radians.x() * dRAD_TO_DEG,
-                  radians.y() * dRAD_TO_DEG,
-                  radians.z() * dRAD_TO_DEG,
-                  radians.w() * dRAD_TO_DEG );
+  template<typename T>
+  Vector4<T> degrees(const Vector4<T>& radians) {
+    return Vector4<T>( radians.x() * (T)dRAD_TO_DEG,
+                       radians.y() * (T)dRAD_TO_DEG,
+                       radians.z() * (T)dRAD_TO_DEG,
+                       radians.w() * (T)dRAD_TO_DEG );
   }
 
   // --------------- sin ---------------
 
-  inline float sin(float a) { return ::sin(a); }
-  inline fvec2 sin(const fvec2& angle) {
-    return fvec2( ::sin(angle.x()),
-                  ::sin(angle.y()) );
-  }
-  inline fvec3 sin(const fvec3& angle) {
-    return fvec3( ::sin(angle.x()),
-                  ::sin(angle.y()),
-                  ::sin(angle.z()) );
-  }
-  inline fvec4 sin(const fvec4& angle) {
-    return fvec4( ::sin(angle.x()),
-                  ::sin(angle.y()),
-                  ::sin(angle.z()),
-                  ::sin(angle.w()) );
+  template<typename T>
+  T sin(T a) { return ::sin(a); }
+
+  template<typename T>
+  Vector2<T> sin(const Vector2<T>& angle) {
+    return Vector2<T>( ::sin(angle.x()),
+                       ::sin(angle.y()) );
   }
 
-  // ...................................
+  template<typename T>
+  Vector3<T> sin(const Vector3<T>& angle) {
+    return Vector3<T>( ::sin(angle.x()),
+                       ::sin(angle.y()),
+                       ::sin(angle.z()) );
+  }
 
-  inline double sin(double a) { return ::sin(a); }
-  inline dvec2 sin(const dvec2& angle) {
-    return dvec2( ::sin(angle.x()),
-                  ::sin(angle.y()) );
-  }
-  inline dvec3 sin(const dvec3& angle) {
-    return dvec3( ::sin(angle.x()),
-                  ::sin(angle.y()),
-                  ::sin(angle.z()) );
-  }
-  inline dvec4 sin(const dvec4& angle) {
-    return dvec4( ::sin(angle.x()),
-                  ::sin(angle.y()),
-                  ::sin(angle.z()),
-                  ::sin(angle.w()) );
+  template<typename T>
+  Vector4<T> sin(const Vector4<T>& angle) {
+    return Vector4<T>( ::sin(angle.x()),
+                       ::sin(angle.y()),
+                       ::sin(angle.z()),
+                       ::sin(angle.w()) );
   }
 
   // --------------- cos ---------------
 
-  inline float cos(float a) { return ::cos(a); }
-  inline fvec2 cos(const fvec2& angle) {
-    return fvec2( ::cos(angle.x()),
-                  ::cos(angle.y()) );
+  template<typename T>
+  T cos(T a) { return ::cos(a); }
+  
+  template<typename T>
+  Vector2<T> cos(const Vector2<T>& angle) {
+    return Vector2<T>( ::cos(angle.x()),
+                           ::cos(angle.y()) );
   }
-  inline fvec3 cos(const fvec3& angle) {
-    return fvec3( ::cos(angle.x()),
-                  ::cos(angle.y()),
-                  ::cos(angle.z()) );
+  
+  template<typename T>
+  Vector3<T> cos(const Vector3<T>& angle) {
+    return Vector3<T>( ::cos(angle.x()),
+                       ::cos(angle.y()),
+                       ::cos(angle.z()) );
   }
-  inline fvec4 cos(const fvec4& angle) {
-    return fvec4( ::cos(angle.x()),
-                  ::cos(angle.y()),
-                  ::cos(angle.z()),
-                  ::cos(angle.w()) );
-  }
-
-  // ...................................
-
-  inline double cos(double a) { return ::cos(a); }
-  inline dvec2 cos(const dvec2& angle) {
-    return dvec2( ::cos(angle.x()),
-                  ::cos(angle.y()) );
-  }
-  inline dvec3 cos(const dvec3& angle) {
-    return dvec3( ::cos(angle.x()),
-                  ::cos(angle.y()),
-                  ::cos(angle.z()) );
-  }
-  inline dvec4 cos(const dvec4& angle) {
-    return dvec4( ::cos(angle.x()),
-                  ::cos(angle.y()),
-                  ::cos(angle.z()),
-                  ::cos(angle.w()) );
+  
+  template<typename T>
+  Vector4<T> cos(const Vector4<T>& angle) {
+    return Vector4<T>( ::cos(angle.x()),
+                       ::cos(angle.y()),
+                       ::cos(angle.z()),
+                       ::cos(angle.w()) );
   }
 
   // --------------- tan ---------------
 
-  inline float tan(float a) { return ::tan(a); }
-  inline fvec2 tan(const fvec2& angle) {
-    return fvec2( ::tan(angle.x()),
-                  ::tan(angle.y()) );
-  }
-  inline fvec3 tan(const fvec3& angle) {
-    return fvec3( ::tan(angle.x()),
-                  ::tan(angle.y()),
-                  ::tan(angle.z()) );
-  }
-  inline fvec4 tan(const fvec4& angle) {
-    return fvec4( ::tan(angle.x()),
-                  ::tan(angle.y()),
-                  ::tan(angle.z()),
-                  ::tan(angle.w()) );
+  template<typename T>
+  T tan(T a) { return ::tan(a); }
+
+  template<typename T>
+  Vector2<T> tan(const Vector2<T>& angle) {
+    return Vector2<T>( ::tan(angle.x()),
+                       ::tan(angle.y()) );
   }
 
-  // ...................................
-
-  inline double tan(double a) { return ::tan(a); }
-  inline dvec2 tan(const dvec2& angle) {
-    return dvec2( ::tan(angle.x()),
-                  ::tan(angle.y()) );
-  }
-  inline dvec3 tan(const dvec3& angle) {
-    return dvec3( ::tan(angle.x()),
-                  ::tan(angle.y()),
-                  ::tan(angle.z()) );
-  }
-  inline dvec4 tan(const dvec4& angle) {
-    return dvec4( ::tan(angle.x()),
-                  ::tan(angle.y()),
-                  ::tan(angle.z()),
-                  ::tan(angle.w()) );
+  template<typename T>
+  Vector3<T> tan(const Vector3<T>& angle) {
+    return Vector3<T>( ::tan(angle.x()),
+                       ::tan(angle.y()),
+                       ::tan(angle.z()) );
   }
 
-  // --------------- asin ---------------
-
-  inline float asin(float a) { return ::asin(a); }
-  inline fvec2 asin(const fvec2& angle) {
-    return fvec2( ::asin(angle.x()),
-                  ::asin(angle.y()) );
-  }
-  inline fvec3 asin(const fvec3& angle) {
-    return fvec3( ::asin(angle.x()),
-                  ::asin(angle.y()),
-                  ::asin(angle.z()) );
-  }
-  inline fvec4 asin(const fvec4& angle) {
-    return fvec4( ::asin(angle.x()),
-                  ::asin(angle.y()),
-                  ::asin(angle.z()),
-                  ::asin(angle.w()) );
-  }
-
-  // ...................................
-
-  inline double asin(double a) { return ::asin(a); }
-  inline dvec2 asin(const dvec2& angle) {
-    return dvec2( ::asin(angle.x()),
-                  ::asin(angle.y()) );
-  }
-  inline dvec3 asin(const dvec3& angle) {
-    return dvec3( ::asin(angle.x()),
-                  ::asin(angle.y()),
-                  ::asin(angle.z()) );
-  }
-  inline dvec4 asin(const dvec4& angle) {
-    return dvec4( ::asin(angle.x()),
-                  ::asin(angle.y()),
-                  ::asin(angle.z()),
-                  ::asin(angle.w()) );
-  }
-
-  // --------------- acos ---------------
-
-  inline float acos(float a) { return ::acos(a); }
-  inline fvec2 acos(const fvec2& angle) {
-    return fvec2( ::acos(angle.x()),
-                  ::acos(angle.y()) );
-  }
-  inline fvec3 acos(const fvec3& angle) {
-    return fvec3( ::acos(angle.x()),
-                  ::acos(angle.y()),
-                  ::acos(angle.z()) );
-  }
-  inline fvec4 acos(const fvec4& angle) {
-    return fvec4( ::acos(angle.x()),
-                  ::acos(angle.y()),
-                  ::acos(angle.z()),
-                  ::acos(angle.w()) );
-  }
-
-  // ...................................
-
-  inline double acos(double a) { return ::acos(a); }
-  inline dvec2 acos(const dvec2& angle) {
-    return dvec2( ::acos(angle.x()),
-                  ::acos(angle.y()) );
-  }
-  inline dvec3 acos(const dvec3& angle) {
-    return dvec3( ::acos(angle.x()),
-                  ::acos(angle.y()),
-                  ::acos(angle.z()) );
-  }
-  inline dvec4 acos(const dvec4& angle) {
-    return dvec4( ::acos(angle.x()),
-                  ::acos(angle.y()),
-                  ::acos(angle.z()),
-                  ::acos(angle.w()) );
+  template<typename T>
+  Vector4<T> tan(const Vector4<T>& angle) {
+    return Vector4<T>( ::tan(angle.x()),
+                       ::tan(angle.y()),
+                       ::tan(angle.z()),
+                       ::tan(angle.w()) );
   }
 
   // --------------- atan ---------------
 
-  inline float atan(float a) { return ::atan(a); }
-  inline fvec2 atan(const fvec2& a, const fvec2& b) {
-    return fvec2( ::atan2(a.x(), b.x()),
-                  ::atan2(a.y(), b.y()) );
-  }
-  inline fvec3 atan(const fvec3& a, const fvec3& b) {
-    return fvec3( ::atan2(a.x(), b.x()),
-                  ::atan2(a.y(), b.y()),
-                  ::atan2(a.z(), b.z()) );
-  }
-  inline fvec4 atan(const fvec4& a, const fvec4& b) {
-    return fvec4( ::atan2(a.x(), b.x()),
-                  ::atan2(a.y(), b.y()),
-                  ::atan2(a.z(), b.z()),
-                  ::atan2(a.w(), b.w()) );
+  template<typename T>
+  T atan(T a) { return ::atan(a); }
+
+  template<typename T>
+  Vector2<T> atan(const Vector2<T>& a, const Vector2<T>& b) {
+    return Vector2<T>( ::atan2(a.x(), b.x()),
+                       ::atan2(a.y(), b.y()) );
   }
 
-  // ...................................
+  template<typename T>
+  Vector3<T> atan(const Vector3<T>& a, const Vector3<T>& b) {
+    return Vector3<T>( ::atan2(a.x(), b.x()),
+                       ::atan2(a.y(), b.y()),
+                       ::atan2(a.z(), b.z()) );
+  }
 
-  inline double atan(double a) { return ::atan(a); }
-  inline dvec2 atan(const dvec2& a, const dvec2& b) {
-    return dvec2( ::atan2(a.x(), b.x()),
-                  ::atan2(a.y(), b.y()) );
+  template<typename T>
+  Vector4<T> atan(const Vector4<T>& a, const Vector4<T>& b) {
+    return Vector4<T>( ::atan2(a.x(), b.x()),
+                       ::atan2(a.y(), b.y()),
+                       ::atan2(a.z(), b.z()),
+                       ::atan2(a.w(), b.w()) );
   }
-  inline dvec3 atan(const dvec3& a, const dvec3& b) {
-    return dvec3( ::atan2(a.x(), b.x()),
-                  ::atan2(a.y(), b.y()),
-                  ::atan2(a.z(), b.z()) );
+
+  // --------------- asin ---------------
+
+  template<typename T>
+  T asin(T a) { return ::asin(a); }
+
+  template<typename T>
+  Vector2<T> asin(const Vector2<T>& angle) {
+    return Vector2<T>( ::asin(angle.x()),
+                       ::asin(angle.y()) );
   }
-  inline dvec4 atan(const dvec4& a, const dvec4& b) {
-    return dvec4( ::atan2(a.x(), b.x()),
-                  ::atan2(a.y(), b.y()),
-                  ::atan2(a.z(), b.z()),
-                  ::atan2(a.w(), b.w()) );
+
+  template<typename T>
+  Vector3<T> asin(const Vector3<T>& angle) {
+    return Vector3<T>( ::asin(angle.x()),
+                       ::asin(angle.y()),
+                       ::asin(angle.z()) );
+  }
+
+  template<typename T>
+  Vector4<T> asin(const Vector4<T>& angle) {
+    return Vector4<T>( ::asin(angle.x()),
+                       ::asin(angle.y()),
+                       ::asin(angle.z()),
+                       ::asin(angle.w()) );
+  }
+
+  // --------------- acos ---------------
+
+  template<typename T>
+  T acos(T a) { return ::acos(a); }
+
+  template<typename T>
+  Vector2<T> acos(const Vector2<T>& angle) {
+    return Vector2<T>( ::acos(angle.x()),
+                       ::acos(angle.y()) );
+  }
+
+  template<typename T>
+  Vector3<T> acos(const Vector3<T>& angle) {
+    return Vector3<T>( ::acos(angle.x()),
+                       ::acos(angle.y()),
+                       ::acos(angle.z()) );
+  }
+
+  template<typename T>
+  Vector4<T> acos(const Vector4<T>& angle) {
+    return Vector4<T>( ::acos(angle.x()),
+                       ::acos(angle.y()),
+                       ::acos(angle.z()),
+                       ::acos(angle.w()) );
   }
 
   // --------------- hyperbolic functions ---------------
 
   // --------------- sinh ---------------
 
-  inline float sinh(float a) { return (exp(a) - exp(-a)) / 2.0f; }
-  inline fvec2 sinh(const fvec2& a) { return fvec2( sinh(a.x()), sinh(a.y()) ); }
-  inline fvec3 sinh(const fvec3& a) { return fvec3( sinh(a.x()), sinh(a.y()), sinh(a.z()) ); }
-  inline fvec4 sinh(const fvec4& a) { return fvec4( sinh(a.x()), sinh(a.y()), sinh(a.z()), sinh(a.w()) ); }
+  template<typename T>
+  T sinh(T a) { return (exp(a) - exp(-a)) / 2; }
 
-  // .....................................
+  template<typename T>
+  Vector2<T> sinh(const Vector2<T>& a) { return Vector2<T>( sinh(a.x()), sinh(a.y()) ); }
 
-  inline double sinh(double a) { return (exp(a) - exp(-a)) / 2.0; }
-  inline dvec2 sinh(const dvec2& a) { return dvec2( sinh(a.x()), sinh(a.y()) ); }
-  inline dvec3 sinh(const dvec3& a) { return dvec3( sinh(a.x()), sinh(a.y()), sinh(a.z()) ); }
-  inline dvec4 sinh(const dvec4& a) { return dvec4( sinh(a.x()), sinh(a.y()), sinh(a.z()), sinh(a.w()) ); }
+  template<typename T>
+  Vector3<T> sinh(const Vector3<T>& a) { return Vector3<T>( sinh(a.x()), sinh(a.y()), sinh(a.z()) ); }
+
+  template<typename T>
+  Vector4<T> sinh(const Vector4<T>& a) { return Vector4<T>( sinh(a.x()), sinh(a.y()), sinh(a.z()), sinh(a.w()) ); }
 
   // --------------- cosh ---------------
 
-  inline float cosh(float a) { return (exp(a) + exp(-a)) / 2.0f; }
-  inline fvec2 cosh(const fvec2& a) { return fvec2( cosh(a.x()), cosh(a.y()) ); }
-  inline fvec3 cosh(const fvec3& a) { return fvec3( cosh(a.x()), cosh(a.y()), cosh(a.z()) ); }
-  inline fvec4 cosh(const fvec4& a) { return fvec4( cosh(a.x()), cosh(a.y()), cosh(a.z()), cosh(a.w()) ); }
+  template<typename T>
+  T cosh(T a) { return (exp(a) + exp(-a)) / 2; }
 
-  // .....................................
+  template<typename T>
+  Vector2<T> cosh(const Vector2<T>& a) { return Vector2<T>( cosh(a.x()), cosh(a.y()) ); }
 
-  inline double cosh(double a) { return (exp(a) + exp(-a)) / 2.0; }
-  inline dvec2 cosh(const dvec2& a) { return dvec2( cosh(a.x()), cosh(a.y()) ); }
-  inline dvec3 cosh(const dvec3& a) { return dvec3( cosh(a.x()), cosh(a.y()), cosh(a.z()) ); }
-  inline dvec4 cosh(const dvec4& a) { return dvec4( cosh(a.x()), cosh(a.y()), cosh(a.z()), cosh(a.w()) ); }
+  template<typename T>
+  Vector3<T> cosh(const Vector3<T>& a) { return Vector3<T>( cosh(a.x()), cosh(a.y()), cosh(a.z()) ); }
+
+  template<typename T>
+  Vector4<T> cosh(const Vector4<T>& a) { return Vector4<T>( cosh(a.x()), cosh(a.y()), cosh(a.z()), cosh(a.w()) ); }
 
   // --------------- tanh ---------------
 
-  inline float tanh(float a) { return sinh(a) / cosh(a); }
-  inline fvec2 tanh(const fvec2& a) { return fvec2( tanh(a.x()), tanh(a.y()) ); }
-  inline fvec3 tanh(const fvec3& a) { return fvec3( tanh(a.x()), tanh(a.y()), tanh(a.z()) ); }
-  inline fvec4 tanh(const fvec4& a) { return fvec4( tanh(a.x()), tanh(a.y()), tanh(a.z()), tanh(a.w()) ); }
+  template<typename T>
+  T tanh(T a) { return sinh(a) / cosh(a); }
 
-  // .....................................
+  template<typename T>
+  Vector2<T> tanh(const Vector2<T>& a) { return Vector2<T>( tanh(a.x()), tanh(a.y()) ); }
 
-  inline double tanh(double a) { return sinh(a) / cosh(a); }
-  inline dvec2 tanh(const dvec2& a) { return dvec2( tanh(a.x()), tanh(a.y()) ); }
-  inline dvec3 tanh(const dvec3& a) { return dvec3( tanh(a.x()), tanh(a.y()), tanh(a.z()) ); }
-  inline dvec4 tanh(const dvec4& a) { return dvec4( tanh(a.x()), tanh(a.y()), tanh(a.z()), tanh(a.w()) ); }
+  template<typename T>
+  Vector3<T> tanh(const Vector3<T>& a) { return Vector3<T>( tanh(a.x()), tanh(a.y()), tanh(a.z()) ); }
+
+  template<typename T>
+  Vector4<T> tanh(const Vector4<T>& a) { return Vector4<T>( tanh(a.x()), tanh(a.y()), tanh(a.z()), tanh(a.w()) ); }
 
   // --------------- asinh ---------------
 
-  inline fvec2 asinh(const fvec2& a) { return fvec2( asinh(a.x()), asinh(a.y()) ); }
-  inline fvec3 asinh(const fvec3& a) { return fvec3( asinh(a.x()), asinh(a.y()), asinh(a.z()) ); }
-  inline fvec4 asinh(const fvec4& a) { return fvec4( asinh(a.x()), asinh(a.y()), asinh(a.z()), asinh(a.w()) ); }
+  template<typename T>
+  Vector2<T> asinh(const Vector2<T>& a) { return Vector2<T>( asinh(a.x()), asinh(a.y()) ); }
 
-  // .....................................
+  template<typename T>
+  Vector3<T> asinh(const Vector3<T>& a) { return Vector3<T>( asinh(a.x()), asinh(a.y()), asinh(a.z()) ); }
 
-  inline dvec2 asinh(const dvec2& a) { return dvec2( asinh(a.x()), asinh(a.y()) ); }
-  inline dvec3 asinh(const dvec3& a) { return dvec3( asinh(a.x()), asinh(a.y()), asinh(a.z()) ); }
-  inline dvec4 asinh(const dvec4& a) { return dvec4( asinh(a.x()), asinh(a.y()), asinh(a.z()), asinh(a.w()) ); }
+  template<typename T>
+  Vector4<T> asinh(const Vector4<T>& a) { return Vector4<T>( asinh(a.x()), asinh(a.y()), asinh(a.z()), asinh(a.w()) ); }
 
   // --------------- acosh ---------------
 
-  inline fvec2 acosh(const fvec2& a) { return fvec2( acosh(a.x()), acosh(a.y()) ); }
-  inline fvec3 acosh(const fvec3& a) { return fvec3( acosh(a.x()), acosh(a.y()), acosh(a.z()) ); }
-  inline fvec4 acosh(const fvec4& a) { return fvec4( acosh(a.x()), acosh(a.y()), acosh(a.z()), acosh(a.w()) ); }
+  template<typename T>
+  Vector2<T> acosh(const Vector2<T>& a) { return Vector2<T>( acosh(a.x()), acosh(a.y()) ); }
 
-  // .....................................
+  template<typename T>
+  Vector3<T> acosh(const Vector3<T>& a) { return Vector3<T>( acosh(a.x()), acosh(a.y()), acosh(a.z()) ); }
 
-  inline dvec2 acosh(const dvec2& a) { return dvec2( acosh(a.x()), acosh(a.y()) ); }
-  inline dvec3 acosh(const dvec3& a) { return dvec3( acosh(a.x()), acosh(a.y()), acosh(a.z()) ); }
-  inline dvec4 acosh(const dvec4& a) { return dvec4( acosh(a.x()), acosh(a.y()), acosh(a.z()), acosh(a.w()) ); }
+  template<typename T>
+  Vector4<T> acosh(const Vector4<T>& a) { return Vector4<T>( acosh(a.x()), acosh(a.y()), acosh(a.z()), acosh(a.w()) ); }
 
   // --------------- atanh ---------------
 
-  inline fvec2 atanh(const fvec2& a) { return fvec2( atanh(a.x()), atanh(a.y()) ); }
-  inline fvec3 atanh(const fvec3& a) { return fvec3( atanh(a.x()), atanh(a.y()), atanh(a.z()) ); }
-  inline fvec4 atanh(const fvec4& a) { return fvec4( atanh(a.x()), atanh(a.y()), atanh(a.z()), atanh(a.w()) ); }
+  template<typename T>
+  Vector2<T> atanh(const Vector2<T>& a) { return Vector2<T>( atanh(a.x()), atanh(a.y()) ); }
 
-  // .....................................
+  template<typename T>
+  Vector3<T> atanh(const Vector3<T>& a) { return Vector3<T>( atanh(a.x()), atanh(a.y()), atanh(a.z()) ); }
 
-  inline dvec2 atanh(const dvec2& a) { return dvec2( atanh(a.x()), atanh(a.y()) ); }
-  inline dvec3 atanh(const dvec3& a) { return dvec3( atanh(a.x()), atanh(a.y()), atanh(a.z()) ); }
-  inline dvec4 atanh(const dvec4& a) { return dvec4( atanh(a.x()), atanh(a.y()), atanh(a.z()), atanh(a.w()) ); }
+  template<typename T>
+  Vector4<T> atanh(const Vector4<T>& a) { return Vector4<T>( atanh(a.x()), atanh(a.y()), atanh(a.z()), atanh(a.w()) ); }
 
   // --------------- exponential functions ---------------
 
   // --------------- pow ---------------
 
-  inline float pow(float a, float b) { return ::pow(a,b); }
-  inline fvec2 pow(const fvec2& a, const fvec2& b) {
-    return fvec2( ::pow(a.x(),b.x()),
-                  ::pow(a.y(),b.y()) );
-  }
-  inline fvec3 pow(const fvec3& a, const fvec3& b) {
-    return fvec3( ::pow(a.x(),b.x()),
-                  ::pow(a.y(),b.y()),
-                  ::pow(a.z(),b.z()) );
-  }
-  inline fvec4 pow(const fvec4& a, const fvec4& b) {
-    return fvec4( ::pow(a.x(),b.x()),
-                  ::pow(a.y(),b.y()),
-                  ::pow(a.z(),b.z()),
-                  ::pow(a.w(),b.w()) );
+  template<typename T>
+  T pow(T a, T b) { return ::pow(a, b); }
+
+  template<typename T>
+  Vector2<T> pow(const Vector2<T>& a, const Vector2<T>& b) {
+    return Vector2<T>( ::pow(a.x(), b.x()),
+                       ::pow(a.y(), b.y()) );
   }
 
-  // ...................................
+  template<typename T>
+  Vector3<T> pow(const Vector3<T>& a, const Vector3<T>& b) {
+    return Vector3<T>( ::pow(a.x(), b.x()),
+                       ::pow(a.y(), b.y()),
+                       ::pow(a.z(), b.z()) );
+  }
 
-  inline double pow(double a, double b) { return ::pow(a,b); }
-  inline dvec2 pow(const dvec2& a, const dvec2& b) {
-    return dvec2( ::pow(a.x(),b.x()),
-                  ::pow(a.y(),b.y()) );
-  }
-  inline dvec3 pow(const dvec3& a, const dvec3& b) {
-    return dvec3( ::pow(a.x(),b.x()),
-                  ::pow(a.y(),b.y()),
-                  ::pow(a.z(),b.z()) );
-  }
-  inline dvec4 pow(const dvec4& a, const dvec4& b) {
-    return dvec4( ::pow(a.x(),b.x()),
-                  ::pow(a.y(),b.y()),
-                  ::pow(a.z(),b.z()),
-                  ::pow(a.w(),b.w()) );
+  template<typename T>
+  Vector4<T> pow(const Vector4<T>& a, const Vector4<T>& b) {
+    return Vector4<T>( ::pow(a.x(), b.x()),
+                       ::pow(a.y(), b.y()),
+                       ::pow(a.z(), b.z()),
+                       ::pow(a.w(), b.w()) );
   }
 
   // --------------- exp ---------------
 
-  inline float exp(float a) { return ::exp(a); }
-  inline fvec2 exp(const fvec2& a) {
-    return fvec2( ::exp(a.x()),
-                  ::exp(a.y()) );
-  }
-  inline fvec3 exp(const fvec3& a) {
-    return fvec3( ::exp(a.x()),
-                  ::exp(a.y()),
-                  ::exp(a.z()) );
-  }
-  inline fvec4 exp(const fvec4& a) {
-    return fvec4( ::exp(a.x()),
-                  ::exp(a.y()),
-                  ::exp(a.z()),
-                  ::exp(a.w()) );
+  template<typename T>
+  T exp(T a) { return ::exp(a); }
+
+  template<typename T>
+  Vector2<T> exp(const Vector2<T>& a) {
+    return Vector2<T>( ::exp(a.x()),
+                       ::exp(a.y()) );
   }
 
-  // ...................................
+  template<typename T>
+  Vector3<T> exp(const Vector3<T>& a) {
+    return Vector3<T>( ::exp(a.x()),
+                       ::exp(a.y()),
+                       ::exp(a.z()) );
+  }
 
-  inline double exp(double a) { return ::exp(a); }
-  inline dvec2 exp(const dvec2& a) {
-    return dvec2( ::exp(a.x()),
-                  ::exp(a.y()) );
-  }
-  inline dvec3 exp(const dvec3& a) {
-    return dvec3( ::exp(a.x()),
-                  ::exp(a.y()),
-                  ::exp(a.z()) );
-  }
-  inline dvec4 exp(const dvec4& a) {
-    return dvec4( ::exp(a.x()),
-                  ::exp(a.y()),
-                  ::exp(a.z()),
-                  ::exp(a.w()) );
+  template<typename T>
+  Vector4<T> exp(const Vector4<T>& a) {
+    return Vector4<T>( ::exp(a.x()),
+                       ::exp(a.y()),
+                       ::exp(a.z()),
+                       ::exp(a.w()) );
   }
 
   // --------------- log ---------------
 
-  inline float log(float a) { return ::log(a); }
-  inline fvec2 log(const fvec2& a) {
-    return fvec2( ::log(a.x()),
-                  ::log(a.y()) );
-  }
-  inline fvec3 log(const fvec3& a) {
-    return fvec3( ::log(a.x()),
-                  ::log(a.y()),
-                  ::log(a.z()) );
-  }
-  inline fvec4 log(const fvec4& a) {
-    return fvec4( ::log(a.x()),
-                  ::log(a.y()),
-                  ::log(a.z()),
-                  ::log(a.w()) );
+  template<typename T>
+  T log(T a) { return ::log(a); }
+
+  template<typename T>
+  Vector2<T> log(const Vector2<T>& a) {
+    return Vector2<T>( ::log(a.x()),
+                       ::log(a.y()) );
   }
 
-  // ...................................
+  template<typename T>
+  Vector3<T> log(const Vector3<T>& a) {
+    return Vector3<T>( ::log(a.x()),
+                       ::log(a.y()),
+                       ::log(a.z()) );
+  }
 
-  inline double log(double a) { return ::log(a); }
-  inline dvec2 log(const dvec2& a) {
-    return dvec2( ::log(a.x()),
-                  ::log(a.y()) );
-  }
-  inline dvec3 log(const dvec3& a) {
-    return dvec3( ::log(a.x()),
-                  ::log(a.y()),
-                  ::log(a.z()) );
-  }
-  inline dvec4 log(const dvec4& a) {
-    return dvec4( ::log(a.x()),
-                  ::log(a.y()),
-                  ::log(a.z()),
-                  ::log(a.w()) );
+  template<typename T>
+  Vector4<T> log(const Vector4<T>& a) {
+    return Vector4<T>( ::log(a.x()),
+                       ::log(a.y()),
+                       ::log(a.z()),
+                       ::log(a.w()) );
   }
 
   // --------------- exp2 ---------------
 
-  inline float exp2(float a) { return ::pow(2.0f, a); }
-  inline fvec2 exp2(const fvec2& a) {
-    return fvec2( ::pow(2.0f, a.x()),
-                  ::pow(2.0f, a.y()) );
-  }
-  inline fvec3 exp2(const fvec3& a) {
-    return fvec3( ::pow(2.0f, a.x()),
-                  ::pow(2.0f, a.y()),
-                  ::pow(2.0f, a.z()) );
-  }
-  inline fvec4 exp2(const fvec4& a) {
-    return fvec4( ::pow(2.0f, a.x()),
-                  ::pow(2.0f, a.y()),
-                  ::pow(2.0f, a.z()),
-                  ::pow(2.0f, a.w()) );
+  template<typename T>
+  T exp2(T a) { return ::pow(2, a); }
+
+  template<typename T>
+  Vector2<T> exp2(const Vector2<T>& a) {
+    return Vector2<T>( ::pow(2, a.x()),
+                       ::pow(2, a.y()) );
   }
 
-  // ...................................
+  template<typename T>
+  Vector3<T> exp2(const Vector3<T>& a) {
+    return Vector3<T>( ::pow(2, a.x()),
+                       ::pow(2, a.y()),
+                       ::pow(2, a.z()) );
+  }
 
-  inline double exp2(double a) { return ::pow(2.0, a); }
-  inline dvec2 exp2(const dvec2& a) {
-    return dvec2( ::pow(2.0, a.x()),
-                  ::pow(2.0, a.y()) );
-  }
-  inline dvec3 exp2(const dvec3& a) {
-    return dvec3( ::pow(2.0, a.x()),
-                  ::pow(2.0, a.y()),
-                  ::pow(2.0, a.z()) );
-  }
-  inline dvec4 exp2(const dvec4& a) {
-    return dvec4( ::pow(2.0, a.x()),
-                  ::pow(2.0, a.y()),
-                  ::pow(2.0, a.z()),
-                  ::pow(2.0, a.w()) );
+  template<typename T>
+  Vector4<T> exp2(const Vector4<T>& a) {
+    return Vector4<T>( ::pow(2, a.x()),
+                       ::pow(2, a.y()),
+                       ::pow(2, a.z()),
+                       ::pow(2, a.w()) );
   }
 
   // --------------- log2 ---------------
 
-  inline float log2(float a) { return ::log10(a) / ::log10(2.0f); }
-  inline fvec2 log2(const fvec2& a) {
-    return fvec2( log2(a.x()),
+  template<typename T>
+  T log2(T a) { return log10(a) / log10(2); }
+
+  template<typename T>
+  Vector2<T> log2(const Vector2<T>& a) {
+    return Vector2<T>( log2(a.x()),
                   log2(a.y()) );
   }
-  inline fvec3 log2(const fvec3& a) {
-    return fvec3( log2(a.x()),
+
+  template<typename T>
+  Vector3<T> log2(const Vector3<T>& a) {
+    return Vector3<T>( log2(a.x()),
                   log2(a.y()),
                   log2(a.z()) );
   }
-  inline fvec4 log2(const fvec4& a) {
-    return fvec4( log2(a.x()),
-                  log2(a.y()),
-                  log2(a.z()),
-                  log2(a.w()) );
-  }
 
-  // ...................................
-
-  inline double log2(double a) { return log10(a) / log10(2.0); }
-  inline dvec2 log2(const dvec2& a) {
-    return dvec2( log2(a.x()),
-                  log2(a.y()) );
-  }
-  inline dvec3 log2(const dvec3& a) {
-    return dvec3( log2(a.x()),
-                  log2(a.y()),
-                  log2(a.z()) );
-  }
-  inline dvec4 log2(const dvec4& a) {
-    return dvec4( log2(a.x()),
+  template<typename T>
+  Vector4<T> log2(const Vector4<T>& a) {
+    return Vector4<T>( log2(a.x()),
                   log2(a.y()),
                   log2(a.z()),
                   log2(a.w()) );
@@ -728,306 +557,184 @@ namespace vl
 
   // this is not present in the GLSL standard
 
-  inline float log10(float a) { return ::log10(a); }
-  inline fvec2 log10(const fvec2& a) {
-    return fvec2( ::log10(a.x()),
-                  ::log10(a.y()) );
-  }
-  inline fvec3 log10(const fvec3& a) {
-    return fvec3( ::log10(a.x()),
-                  ::log10(a.y()),
-                  ::log10(a.z()) );
-  }
-  inline fvec4 log10(const fvec4& a) {
-    return fvec4( ::log10(a.x()),
-                  ::log10(a.y()),
-                  ::log10(a.z()),
-                  ::log10(a.w()) );
+  template<typename T>
+  T log10(T a) { return ::log10(a); }
+
+  template<typename T>
+  Vector2<T> log10(const Vector2<T>& a) {
+    return Vector2<T>( ::log10(a.x()),
+                       ::log10(a.y()) );
   }
 
-  // ...................................
+  template<typename T>
+  Vector3<T> log10(const Vector3<T>& a) {
+    return Vector3<T>( ::log10(a.x()),
+                       ::log10(a.y()),
+                       ::log10(a.z()) );
+  }
 
-  inline double log10(double a) { return ::log10(a); }
-  inline dvec2 log10(const dvec2& a) {
-    return dvec2( ::log10(a.x()),
-                  ::log10(a.y()) );
-  }
-  inline dvec3 log10(const dvec3& a) {
-    return dvec3( ::log10(a.x()),
-                  ::log10(a.y()),
-                  ::log10(a.z()) );
-  }
-  inline dvec4 log10(const dvec4& a) {
-    return dvec4( ::log10(a.x()),
-                  ::log10(a.y()),
-                  ::log10(a.z()),
-                  ::log10(a.w()) );
+  template<typename T>
+  Vector4<T> log10(const Vector4<T>& a) {
+    return Vector4<T>( ::log10(a.x()),
+                       ::log10(a.y()),
+                       ::log10(a.z()),
+                       ::log10(a.w()) );
   }
 
   // --------------- sqrt ---------------
 
-  inline float sqrt(float a) { return VL_FLOAT_SQRT(a); }
-  inline fvec2 sqrt(const fvec2& a) {
-    return fvec2( VL_FLOAT_SQRT(a.x()),
-                  VL_FLOAT_SQRT(a.y()) );
-  }
-  inline fvec3 sqrt(const fvec3& a) {
-    return fvec3( VL_FLOAT_SQRT(a.x()),
-                  VL_FLOAT_SQRT(a.y()),
-                  VL_FLOAT_SQRT(a.z()) );
-  }
-  inline fvec4 sqrt(const fvec4& a) {
-    return fvec4( VL_FLOAT_SQRT(a.x()),
-                  VL_FLOAT_SQRT(a.y()),
-                  VL_FLOAT_SQRT(a.z()),
-                  VL_FLOAT_SQRT(a.w()) );
+  template<typename T>
+  T sqrt(T a) { return ::sqrt(a); }
+
+  template<typename T>
+  Vector2<T> sqrt(const Vector2<T>& a) {
+    return Vector2<T>( ::sqrt(a.x()),
+                       ::sqrt(a.y()) );
   }
 
-  // ...................................
+  template<typename T>
+  Vector3<T> sqrt(const Vector3<T>& a) {
+    return Vector3<T>( ::sqrt(a.x()),
+                       ::sqrt(a.y()),
+                       ::sqrt(a.z()) );
+  }
 
-  inline double sqrt(double a) { return ::sqrt(a); }
-  inline dvec2 sqrt(const dvec2& a) {
-    return dvec2( ::sqrt(a.x()),
-                  ::sqrt(a.y()) );
-  }
-  inline dvec3 sqrt(const dvec3& a) {
-    return dvec3( ::sqrt(a.x()),
-                  ::sqrt(a.y()),
-                  ::sqrt(a.z()) );
-  }
-  inline dvec4 sqrt(const dvec4& a) {
-    return dvec4( ::sqrt(a.x()),
-                  ::sqrt(a.y()),
-                  ::sqrt(a.z()),
-                  ::sqrt(a.w()) );
+  template<typename T>
+  Vector4<T> sqrt(const Vector4<T>& a) {
+    return Vector4<T>( ::sqrt(a.x()),
+                       ::sqrt(a.y()),
+                       ::sqrt(a.z()),
+                       ::sqrt(a.w()) );
   }
 
   // --------------- inversesqrt ---------------
 
-  inline float inversesqrt(float a) { return VL_FLOAT_INVSQRT(a); }
-  inline fvec2 inversesqrt(const fvec2& a) {
-    return fvec2( VL_FLOAT_INVSQRT(a.x()),
-                  VL_FLOAT_INVSQRT(a.y()) );
-  }
-  inline fvec3 inversesqrt(const fvec3& a) {
-    return fvec3( VL_FLOAT_INVSQRT(a.x()),
-                  VL_FLOAT_INVSQRT(a.y()),
-                  VL_FLOAT_INVSQRT(a.z()) );
-  }
-  inline fvec4 inversesqrt(const fvec4& a) {
-    return fvec4( VL_FLOAT_INVSQRT(a.x()),
-                  VL_FLOAT_INVSQRT(a.y()),
-                  VL_FLOAT_INVSQRT(a.z()),
-                  VL_FLOAT_INVSQRT(a.w()) );
+  template<typename T>
+  T inversesqrt(T a) { return ::sqrt(a); }
+
+  template<typename T>
+  Vector2<T> inversesqrt(const Vector2<T>& a) {
+    return Vector2<T>( T(1) / ::sqrt(a.x()),
+                       T(1) / ::sqrt(a.y()) );
   }
 
-  // ...................................
+  template<typename T>
+  Vector3<T> inversesqrt(const Vector3<T>& a) {
+    return Vector3<T>( T(1) / ::sqrt(a.x()),
+                       T(1) / ::sqrt(a.y()),
+                       T(1) / ::sqrt(a.z()) );
+  }
 
-  inline double inversesqrt(double a) { return ::sqrt(a); }
-  inline dvec2 inversesqrt(const dvec2& a) {
-    return dvec2( 1.0 / ::sqrt(a.x()),
-                  1.0 / ::sqrt(a.y()) );
-  }
-  inline dvec3 inversesqrt(const dvec3& a) {
-    return dvec3( 1.0 / ::sqrt(a.x()),
-                  1.0 / ::sqrt(a.y()),
-                  1.0 / ::sqrt(a.z()) );
-  }
-  inline dvec4 inversesqrt(const dvec4& a) {
-    return dvec4( 1.0 / ::sqrt(a.x()),
-                  1.0 / ::sqrt(a.y()),
-                  1.0 / ::sqrt(a.z()),
-                  1.0 / ::sqrt(a.w()) );
+  template<typename T>
+  Vector4<T> inversesqrt(const Vector4<T>& a) {
+    return Vector4<T>( T(1) / ::sqrt(a.x()),
+                       T(1) / ::sqrt(a.y()),
+                       T(1) / ::sqrt(a.z()),
+                       T(1) / ::sqrt(a.w()) );
   }
 
   // --------------- common functions ---------------
 
   // --------------- abs ---------------
 
-  inline float abs(float a) { return a >= 0 ? a : -a; }
-  inline fvec2 abs(const fvec2& a)
+  template<typename T>
+  T abs(T a) { return a >= 0 ? a : -a; }
+
+  template<typename T>
+  Vector2<T> abs(const Vector2<T>& a)
   {
-    return fvec2( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y() );
-  }
-  inline fvec3 abs(const fvec3& a)
-  {
-    return fvec3( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y(),  a.z() >= 0 ? a.z() : -a.z() );
-  }
-  inline fvec4 abs(const fvec4& a)
-  {
-    return fvec4( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y(), a.z() >= 0 ? a.z() : -a.z(), a.w() >= 0 ? a.w() : -a.w() );
+    return Vector2<T>( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y() );
   }
 
-  // ....................................
-
-  inline double abs(double a) { return a >= 0 ? a : -a; }
-  inline dvec2 abs(const dvec2& a)
+  template<typename T>
+  Vector3<T> abs(const Vector3<T>& a)
   {
-    return dvec2( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y() );
-  }
-  inline dvec3 abs(const dvec3& a)
-  {
-    return dvec3( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y(),  a.z() >= 0 ? a.z() : -a.z() );
-  }
-  inline dvec4 abs(const dvec4& a)
-  {
-    return dvec4( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y(), a.z() >= 0 ? a.z() : -a.z(), a.w() >= 0 ? a.w() : -a.w() );
+    return Vector3<T>( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y(),  a.z() >= 0 ? a.z() : -a.z() );
   }
 
-  // ....................................
-
-  inline int abs(int a) { return a >= 0 ? a : -a; }
-  inline ivec2 abs(const ivec2& a)
+  template<typename T>
+  Vector4<T> abs(const Vector4<T>& a)
   {
-    return ivec2( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y() );
-  }
-  inline ivec3 abs(const ivec3& a)
-  {
-    return ivec3( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y(),  a.z() >= 0 ? a.z() : -a.z() );
-  }
-  inline ivec4 abs(const ivec4& a)
-  {
-    return ivec4( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y(), a.z() >= 0 ? a.z() : -a.z(), a.w() >= 0 ? a.w() : -a.w() );
+    return Vector4<T>( a.x() >= 0 ? a.x() : -a.x(), a.y() >= 0 ? a.y() : -a.y(), a.z() >= 0 ? a.z() : -a.z(), a.w() >= 0 ? a.w() : -a.w() );
   }
 
   // --------------- sign ---------------
 
-  inline float sign(float a) { return a > 0 ? 1.0f : a == 0 ? 0 : -1.0f; }
-  inline fvec2 sign(const fvec2& a)
+  template<typename T>
+  T sign(T a) { return a > 0 ? 1 : a == 0 ? 0 : (T)-1; }
+
+  template<typename T>
+  Vector2<T> sign(const Vector2<T> & a)
   {
-    return fvec2( a.x() > 0 ? 1.0f : a.x() == 0 ? 0 : -1.0f,
-                 a.y() > 0 ? 1.0f : a.y() == 0 ? 0 : -1.0f );
-  }
-  inline fvec3 sign(const fvec3& a)
-  {
-    return fvec3( a.x() > 0 ? 1.0f : a.x() == 0 ? 0 : -1.0f,
-                 a.y() > 0 ? 1.0f : a.y() == 0 ? 0 : -1.0f,
-                 a.z() > 0 ? 1.0f : a.z() == 0 ? 0 : -1.0f );
-  }
-  inline fvec4 sign(const fvec4& a)
-  {
-    return fvec4( a.x() > 0 ? 1.0f : a.x() == 0 ? 0 : -1.0f,
-                 a.y() > 0 ? 1.0f : a.y() == 0 ? 0 : -1.0f,
-                 a.z() > 0 ? 1.0f : a.z() == 0 ? 0 : -1.0f,
-                 a.w() > 0 ? 1.0f : a.w() == 0 ? 0 : -1.0f );
+    return Vector2<T>( a.x() > 0 ? 1 : a.x() == 0 ? 0 : (T)-1,
+                       a.y() > 0 ? 1 : a.y() == 0 ? 0 : (T)-1 );
   }
 
-  // .....................................
-
-  inline double sign(double a) { return a > 0 ? 1.0f : a == 0 ? 0 : -1.0f; }
-  inline dvec2 sign(const dvec2& a)
+  template<typename T>
+  Vector3<T> sign(const Vector3<T> & a)
   {
-    return dvec2( a.x() > 0 ? 1.0f : a.x() == 0 ? 0 : -1.0f,
-                 a.y() > 0 ? 1.0f : a.y() == 0 ? 0 : -1.0f );
-  }
-  inline dvec3 sign(const dvec3& a)
-  {
-    return dvec3( a.x() > 0 ? 1.0f : a.x() == 0 ? 0 : -1.0f,
-                 a.y() > 0 ? 1.0f : a.y() == 0 ? 0 : -1.0f,
-                 a.z() > 0 ? 1.0f : a.z() == 0 ? 0 : -1.0f );
-  }
-  inline dvec4 sign(const dvec4& a)
-  {
-    return dvec4( a.x() > 0 ? 1.0f : a.x() == 0 ? 0 : -1.0f,
-                 a.y() > 0 ? 1.0f : a.y() == 0 ? 0 : -1.0f,
-                 a.z() > 0 ? 1.0f : a.z() == 0 ? 0 : -1.0f,
-                 a.w() > 0 ? 1.0f : a.w() == 0 ? 0 : -1.0f );
+    return Vector3<T>( a.x() > 0 ? 1 : a.x() == 0 ? 0 : (T)-1,
+                       a.y() > 0 ? 1 : a.y() == 0 ? 0 : (T)-1,
+                       a.z() > 0 ? 1 : a.z() == 0 ? 0 : (T)-1 );
   }
 
-  // .....................................
-
-  inline int sign(int a) { return a > 0 ? 1 : a == 0 ? 0 : -1; }
-  inline ivec2 sign(const ivec2& a)
+  template<typename T>
+  Vector4<T> sign(const Vector4<T> & a)
   {
-    return ivec2( a.x() > 0 ? 1 : a.x() == 0 ? 0 : -1,
-                 a.y() > 0 ? 1 : a.y() == 0 ? 0 : -1 );
-  }
-  inline ivec3 sign(const ivec3& a)
-  {
-    return ivec3( a.x() > 0 ? 1 : a.x() == 0 ? 0 : -1,
-                 a.y() > 0 ? 1 : a.y() == 0 ? 0 : -1,
-                 a.z() > 0 ? 1 : a.z() == 0 ? 0 : -1 );
-  }
-  inline ivec4 sign(const ivec4& a)
-  {
-    return ivec4( a.x() > 0 ? 1 : a.x() == 0 ? 0 : -1,
-                 a.y() > 0 ? 1 : a.y() == 0 ? 0 : -1,
-                 a.z() > 0 ? 1 : a.z() == 0 ? 0 : -1,
-                 a.w() > 0 ? 1 : a.w() == 0 ? 0 : -1 );
+    return Vector4<T>( a.x() > 0 ? 1 : a.x() == 0 ? 0 : (T)-1,
+                       a.y() > 0 ? 1 : a.y() == 0 ? 0 : (T)-1,
+                       a.z() > 0 ? 1 : a.z() == 0 ? 0 : (T)-1,
+                       a.w() > 0 ? 1 : a.w() == 0 ? 0 : (T)-1 );
   }
 
   // --------------- floor ---------------
 
-  inline float floor(float a) { return ::floor(a); }
-  inline fvec2 floor(const fvec2& a) {
-    return fvec2( ::floor(a.x()),
-                  ::floor(a.y()) );
-  }
-  inline fvec3 floor(const fvec3& a) {
-    return fvec3( ::floor(a.x()),
-                  ::floor(a.y()),
-                  ::floor(a.z()) );
-  }
-  inline fvec4 floor(const fvec4& a) {
-    return fvec4( ::floor(a.x()),
-                  ::floor(a.y()),
-                  ::floor(a.z()),
-                  ::floor(a.w()) );
-  }
-  // ......................................
+  template<typename T>
+  T floor(T a) { return ::floor(a); }
 
-  inline double floor(double a) { return ::floor(a); }
-  inline dvec2 floor(const dvec2& a) {
-    return dvec2( ::floor(a.x()),
-                  ::floor(a.y()) );
+  template<typename T>
+  Vector2<T> floor(const Vector2<T>& a) {
+    return Vector2<T>( ::floor(a.x()),
+                       ::floor(a.y()) );
   }
-  inline dvec3 floor(const dvec3& a) {
-    return dvec3( ::floor(a.x()),
-                  ::floor(a.y()),
-                  ::floor(a.z()) );
+
+  template<typename T>
+  Vector3<T> floor(const Vector3<T>& a) {
+    return Vector3<T>( ::floor(a.x()),
+                       ::floor(a.y()),
+                       ::floor(a.z()) );
   }
-  inline dvec4 floor(const dvec4& a) {
-    return dvec4( ::floor(a.x()),
-                  ::floor(a.y()),
-                  ::floor(a.z()),
-                  ::floor(a.w()) );
+
+  template<typename T>
+  Vector4<T> floor(const Vector4<T>& a) {
+    return Vector4<T>( ::floor(a.x()),
+                       ::floor(a.y()),
+                       ::floor(a.z()),
+                       ::floor(a.w()) );
   }
 
   // --------------- trunc ---------------
 
-  inline float fract(float);
-  inline float trunc(float a) { return a - fract(a); }
-  inline fvec2 trunc(const fvec2& a) {
-    return fvec2( a.x() - fract(a.x()),
+
+  template<typename T>
+  T trunc(T a) { return a - fract(a); }
+
+  template<typename T>
+  Vector2<T> trunc(const Vector2<T>& a) {
+    return Vector2<T>( a.x() - fract(a.x()),
                   a.y() - fract(a.y()) );
   }
-  inline fvec3 trunc(const fvec3& a) {
-    return fvec3( a.x() - fract(a.x()),
+
+  template<typename T>
+  Vector3<T> trunc(const Vector3<T>& a) {
+    return Vector3<T>( a.x() - fract(a.x()),
                   a.y() - fract(a.y()),
                   a.z() - fract(a.z()) );
   }
-  inline fvec4 trunc(const fvec4& a) {
-    return fvec4( a.x() - fract(a.x()),
-                  a.y() - fract(a.y()),
-                  a.z() - fract(a.z()),
-                  a.w() - fract(a.w()) );
-  }
 
-  // .....................................
-
-  inline double fract(double);
-  inline double trunc(double a) { return a - fract(a); }
-  inline dvec2 trunc(const dvec2& a) {
-    return dvec2( a.x() - fract(a.x()),
-                  a.y() - fract(a.y()) );
-  }
-  inline dvec3 trunc(const dvec3& a) {
-    return dvec3( a.x() - fract(a.x()),
-                  a.y() - fract(a.y()),
-                  a.z() - fract(a.z()) );
-  }
-  inline dvec4 trunc(const dvec4& a) {
-    return dvec4( a.x() - fract(a.x()),
+  template<typename T>
+  Vector4<T> trunc(const Vector4<T>& a) {
+    return Vector4<T>( a.x() - fract(a.x()),
                   a.y() - fract(a.y()),
                   a.z() - fract(a.z()),
                   a.w() - fract(a.w()) );
@@ -1035,37 +742,25 @@ namespace vl
 
   // --------------- round ---------------
 
-  inline float round(float x) { return ((x - floor(x)) >= 0.5) ? ceil(x) : floor(x); }
-  inline fvec2 round(const fvec2& a) {
-    return fvec2( round(a.x()),
+  template<typename T>
+  T round(T x) { return ((x - floor(x)) >= 0.5) ? ceil(x) : floor(x); }
+
+  template<typename T>
+  Vector2<T> round(const Vector2<T>& a) {
+    return Vector2<T>( round(a.x()),
                   round(a.y()) );
   }
-  inline fvec3 round(const fvec3& a) {
-    return fvec3( round(a.x()),
+
+  template<typename T>
+  Vector3<T> round(const Vector3<T>& a) {
+    return Vector3<T>( round(a.x()),
                   round(a.y()),
                   round(a.z()) );
   }
-  inline fvec4 round(const fvec4& a) {
-    return fvec4( round(a.x()),
-                  round(a.y()),
-                  round(a.z()),
-                  round(a.w()) );
-  }
 
-  // .........................................
-
-  inline double round(double x) { return ((x - floor(x)) >= 0.5) ? ceil(x) : floor(x); }
-  inline dvec2 round(const dvec2& a) {
-    return dvec2( round(a.x()),
-                  round(a.y()) );
-  }
-  inline dvec3 round(const dvec3& a) {
-    return dvec3( round(a.x()),
-                  round(a.y()),
-                  round(a.z()) );
-  }
-  inline dvec4 round(const dvec4& a) {
-    return dvec4( round(a.x()),
+  template<typename T>
+  Vector4<T> round(const Vector4<T>& a) {
+    return Vector4<T>( round(a.x()),
                   round(a.y()),
                   round(a.z()),
                   round(a.w()) );
@@ -1073,20 +768,21 @@ namespace vl
 
   // --------------- roundEven ---------------
 
-  inline float roundEven(float a, float epsilon = 0.00001f)
+  inline 
+  float roundEven(float a, float epsilon)
   {
-    if( a < 0.0f )
-      return -roundEven(-a);
+    if( a < 0 )
+      return -roundEven(-a, epsilon);
     else
     {
       float intpart;
       modf( a, intpart );
 
       // 0.5 case
-      if ((a -(intpart + 0.5f)) < epsilon)
+      if ((a -(intpart + 0.5)) < epsilon)
       {
         // is even
-        if (::fmod(intpart, 2.0f) < epsilon)
+        if (::fmod(intpart, 2) < epsilon)
           return intpart;
         else
         // is odd
@@ -1097,28 +793,12 @@ namespace vl
         return round(a);
     }
   }
-  inline fvec2 roundEven(const fvec2& a, float epsilon = 0.00001f) {
-    return fvec2( roundEven(a.x(), epsilon),
-                  roundEven(a.y(), epsilon) );
-  }
-  inline fvec3 roundEven(const fvec3& a, float epsilon = 0.00001f) {
-    return fvec3( roundEven(a.x(), epsilon),
-                  roundEven(a.y(), epsilon),
-                  roundEven(a.z(), epsilon) );
-  }
-  inline fvec4 roundEven(const fvec4& a, float epsilon = 0.00001f) {
-    return fvec4( roundEven(a.x(), epsilon),
-                  roundEven(a.y(), epsilon),
-                  roundEven(a.z(), epsilon),
-                  roundEven(a.w(), epsilon) );
-  }
 
-  // ....................................
-
-  inline double roundEven(double a, double epsilon = 0.00001)
+  inline 
+  double roundEven(double a, double epsilon)
   {
-    if( a < 0.0 )
-      return -roundEven(-a);
+    if( a < 0 )
+      return -roundEven(-a, epsilon);
     else
     {
       double intpart;
@@ -1128,7 +808,7 @@ namespace vl
       if ((a -(intpart + 0.5)) < epsilon)
       {
         // is even
-        if (::fmod(intpart, 2.0) < epsilon)
+        if (::fmod(intpart, 2) < epsilon)
           return intpart;
         else
         // is odd
@@ -1139,97 +819,95 @@ namespace vl
         return round(a);
     }
   }
-  inline dvec2 roundEven(const dvec2& a, double epsilon = 0.00001) {
-    return dvec2( roundEven(a.x(), epsilon),
-                  roundEven(a.y(), epsilon) );
+
+  template<typename T>
+  Vector2<T> roundEven(const Vector2<T>& a, T epsilon = 0.00001) {
+    return Vector2<T>( roundEven(a.x(), epsilon),
+                       roundEven(a.y(), epsilon) );
   }
-  inline dvec3 roundEven(const dvec3& a, double epsilon = 0.00001) {
-    return dvec3( roundEven(a.x(), epsilon),
-                  roundEven(a.y(), epsilon),
-                  roundEven(a.z(), epsilon) );
+
+  template<typename T>
+  Vector3<T> roundEven(const Vector3<T>& a, T epsilon = 0.00001) {
+    return Vector3<T>( roundEven(a.x(), epsilon),
+                       roundEven(a.y(), epsilon),
+                       roundEven(a.z(), epsilon) );
   }
-  inline dvec4 roundEven(const dvec4& a, double epsilon = 0.00001) {
-    return dvec4( roundEven(a.x(), epsilon),
-                  roundEven(a.y(), epsilon),
-                  roundEven(a.z(), epsilon),
-                  roundEven(a.w(), epsilon) );
+
+  template<typename T>
+  Vector4<T> roundEven(const Vector4<T>& a, T epsilon = 0.00001) {
+    return Vector4<T>( roundEven(a.x(), epsilon),
+                       roundEven(a.y(), epsilon),
+                       roundEven(a.z(), epsilon),
+                       roundEven(a.w(), epsilon) );
   }
 
   // --------------- ceil ---------------
 
-  inline float ceil(float a) { return ::ceil(a); }
-  inline fvec2 ceil(const fvec2& a) {
-    return fvec2( ::ceil(a.x()),
-                  ::ceil(a.y()) );
-  }
-  inline fvec3 ceil(const fvec3& a) {
-    return fvec3( ::ceil(a.x()),
-                  ::ceil(a.y()),
-                  ::ceil(a.z()) );
-  }
-  inline fvec4 ceil(const fvec4& a) {
-    return fvec4( ::ceil(a.x()),
-                  ::ceil(a.y()),
-                  ::ceil(a.z()),
-                  ::ceil(a.w()) );
+  template<typename T>
+  T ceil(T a) { return ::ceil(a); }
+
+  template<typename T>
+  Vector2<T> ceil(const Vector2<T>& a) {
+    return Vector2<T>( ::ceil(a.x()),
+                       ::ceil(a.y()) );
   }
 
-  // ......................................
+  template<typename T>
+  Vector3<T> ceil(const Vector3<T>& a) {
+    return Vector3<T>( ::ceil(a.x()),
+                       ::ceil(a.y()),
+                       ::ceil(a.z()) );
+  }
 
-  inline double ceil(double a) { return ::ceil(a); }
-  inline dvec2 ceil(const dvec2& a) {
-    return dvec2( ::ceil(a.x()),
-                  ::ceil(a.y()) );
-  }
-  inline dvec3 ceil(const dvec3& a) {
-    return dvec3( ::ceil(a.x()),
-                  ::ceil(a.y()),
-                  ::ceil(a.z()) );
-  }
-  inline dvec4 ceil(const dvec4& a) {
-    return dvec4( ::ceil(a.x()),
-                  ::ceil(a.y()),
-                  ::ceil(a.z()),
-                  ::ceil(a.w()) );
+  template<typename T>
+  Vector4<T> ceil(const Vector4<T>& a) {
+    return Vector4<T>( ::ceil(a.x()),
+                       ::ceil(a.y()),
+                       ::ceil(a.z()),
+                       ::ceil(a.w()) );
   }
 
   // --------------- fract ---------------
 
-  inline float fract(float a) { return a - floor(a); }
-  inline fvec2 fract(const fvec2& a) { return a - floor(a); }
-  inline fvec3 fract(const fvec3& a) { return a - floor(a); }
-  inline fvec4 fract(const fvec4& a) { return a - floor(a); }
+  template<typename T>
+  T fract(T a) { return a - floor(a); }
 
-  // .....................................
+  template<typename T>
+  Vector2<T> fract(const Vector2<T>& a) { return a - floor(a); }
 
-  inline double fract(double a) { return a - floor(a); }
-  inline dvec2 fract(const dvec2& a) { return a - floor(a); }
-  inline dvec3 fract(const dvec3& a) { return a - floor(a); }
-  inline dvec4 fract(const dvec4& a) { return a - floor(a); }
+  template<typename T>
+  Vector3<T> fract(const Vector3<T>& a) { return a - floor(a); }
+
+  template<typename T>
+  Vector4<T> fract(const Vector4<T>& a) { return a - floor(a); }
 
   // --------------- mod ---------------
 
-  inline float mod(float a, float b) { return a - b * floor(a/b); }
-  inline fvec2 mod(const fvec2& a, float b) { return a - b * floor(a/b); }
-  inline fvec3 mod(const fvec3& a, float b) { return a - b * floor(a/b); }
-  inline fvec4 mod(const fvec4& a, float b) { return a - b * floor(a/b); }
-  inline fvec2 mod(const fvec2& a, const fvec2& b) { return a - b * floor(a/b); }
-  inline fvec3 mod(const fvec3& a, const fvec3& b) { return a - b * floor(a/b); }
-  inline fvec4 mod(const fvec4& a, const fvec4& b) { return a - b * floor(a/b); }
+  template<typename T>
+  T mod(T a, T b) { return a - b * floor(a/b); }
 
-  // ....................................
+  template<typename T>
+  Vector2<T> mod(const Vector2<T>& a, T b) { return a - b * floor(a/b); }
 
-  inline double mod(double a, double b) { return a - b * floor(a/b); }
-  inline dvec2 mod(const dvec2& a, double b) { return a - b * floor(a/b); }
-  inline dvec3 mod(const dvec3& a, double b) { return a - b * floor(a/b); }
-  inline dvec4 mod(const dvec4& a, double b) { return a - b * floor(a/b); }
-  inline dvec2 mod(const dvec2& a, const dvec2& b) { return a - b * floor(a/b); }
-  inline dvec3 mod(const dvec3& a, const dvec3& b) { return a - b * floor(a/b); }
-  inline dvec4 mod(const dvec4& a, const dvec4& b) { return a - b * floor(a/b); }
+  template<typename T>
+  Vector3<T> mod(const Vector3<T>& a, T b) { return a - b * floor(a/b); }
+
+  template<typename T>
+  Vector4<T> mod(const Vector4<T>& a, T b) { return a - b * floor(a/b); }
+
+  template<typename T>
+  Vector2<T> mod(const Vector2<T>& a, const Vector2<T>& b) { return a - b * floor(a/b); }
+
+  template<typename T>
+  Vector3<T> mod(const Vector3<T>& a, const Vector3<T>& b) { return a - b * floor(a/b); }
+
+  template<typename T>
+  Vector4<T> mod(const Vector4<T>& a, const Vector4<T>& b) { return a - b * floor(a/b); }
 
   // --------------- modf ---------------
 
-  inline float modf(float a, float& intpart) {
+  inline 
+  float modf(float a, float& intpart) {
     #if defined(_MSC_VER)
       return ::modf(a,&intpart);
     #else
@@ -1239,36 +917,28 @@ namespace vl
       return r;
     #endif
   }
-  inline fvec2 modf(const fvec2& a, fvec2& intpart) {
-    return fvec2( modf(a.x(), intpart.x()),
-                  modf(a.y(), intpart.y()) );
-  }
-  inline fvec3 modf(const fvec3& a, fvec3& intpart) {
-    return fvec3( modf(a.x(), intpart.x()),
-                  modf(a.y(), intpart.y()),
-                  modf(a.z(), intpart.z()) );
-  }
-  inline fvec4 modf(const fvec4& a, fvec4& intpart) {
-    return fvec4( modf(a.x(), intpart.x()),
-                  modf(a.y(), intpart.y()),
-                  modf(a.z(), intpart.z()),
-                  modf(a.w(), intpart.w()) );
-  }
 
   // ...................................
 
-  inline double modf(double a, double& intpart) { return ::modf(a, &intpart); }
-  inline dvec2 modf(const dvec2& a, dvec2& intpart) {
-    return dvec2( modf(a.x(), intpart.x()),
+  template<typename T>
+  T modf(T a, T& intpart) { return ::modf(a, &intpart); }
+
+  template<typename T>
+  Vector2<T> modf(const Vector2<T>& a, Vector2<T>& intpart) {
+    return Vector2<T>( modf(a.x(), intpart.x()),
                   modf(a.y(), intpart.y()) );
   }
-  inline dvec3 modf(const dvec3& a, dvec3& intpart) {
-    return dvec3( modf(a.x(), intpart.x()),
+
+  template<typename T>
+  Vector3<T> modf(const Vector3<T>& a, Vector3<T>& intpart) {
+    return Vector3<T>( modf(a.x(), intpart.x()),
                   modf(a.y(), intpart.y()),
                   modf(a.z(), intpart.z()) );
   }
-  inline dvec4 modf(const dvec4& a, dvec4& intpart) {
-    return dvec4( modf(a.x(), intpart.x()),
+
+  template<typename T>
+  Vector4<T> modf(const Vector4<T>& a, Vector4<T>& intpart) {
+    return Vector4<T>( modf(a.x(), intpart.x()),
                   modf(a.y(), intpart.y()),
                   modf(a.z(), intpart.z()),
                   modf(a.w(), intpart.w()) );
@@ -1276,236 +946,163 @@ namespace vl
 
   // --------------- mix ---------------
 
-  inline float mix(float a, float b, float t) { return a*(1.0f-t) + b*t; }
-  inline fvec2 mix(const fvec2& a, const fvec2& b, float t) { return a*(1.0f-t) + b*t; }
-  inline fvec3 mix(const fvec3& a, const fvec3& b, float t) { return a*(1.0f-t) + b*t; }
-  inline fvec4 mix(const fvec4& a, const fvec4& b, float t) { return a*(1.0f-t) + b*t; }
-  inline fvec2 mix(const fvec2& a, const fvec2& b, const fvec2& t)
+  template<typename T>
+  T mix(T a, T b, T t) { return a*(1-t) + b*t; }
+
+  template<typename T>
+  Vector2<T> mix(const Vector2<T>& a, const Vector2<T>& b, T t) { return a*(1-t) + b*t; }
+
+  template<typename T>
+  Vector3<T> mix(const Vector3<T>& a, const Vector3<T>& b, T t) { return a*(1-t) + b*t; }
+
+  template<typename T>
+  Vector4<T> mix(const Vector4<T>& a, const Vector4<T>& b, T t) { return a*(1-t) + b*t; }
+
+  template<typename T>
+  Vector2<T> mix(const Vector2<T>& a, const Vector2<T>& b, const Vector2<T>& t)
   {
-    return fvec2( a.x()*(1.0f-t.x()) + b.x()*t.x(),
-                 a.y()*(1.0f-t.y()) + b.y()*t.y() );
-  }
-  inline fvec3 mix(const fvec3& a, const fvec3& b, const fvec3& t)
-  {
-    return fvec3( a.x()*(1.0f-t.x()) + b.x()*t.x(),
-                 a.y()*(1.0f-t.y()) + b.y()*t.y(),
-                 a.z()*(1.0f-t.z()) + b.z()*t.z() );
-  }
-  inline fvec4 mix(const fvec4& a, const fvec4& b, const fvec4& t)
-  {
-    return fvec4( a.x()*(1.0f-t.x()) + b.x()*t.x(),
-                 a.y()*(1.0f-t.y()) + b.y()*t.y(),
-                 a.z()*(1.0f-t.z()) + b.z()*t.z(),
-                 a.w()*(1.0f-t.w()) + b.w()*t.w() );
+    return Vector2<T>( a.x()*(1-t.x()) + b.x()*t.x(),
+                  a.y()*(1-t.y()) + b.y()*t.y() );
   }
 
-  // ....................................
+  template<typename T>
+  Vector3<T> mix(const Vector3<T>& a, const Vector3<T>& b, const Vector3<T>& t)
+  {
+    return Vector3<T>( a.x()*(1-t.x()) + b.x()*t.x(),
+                  a.y()*(1-t.y()) + b.y()*t.y(),
+                  a.z()*(1-t.z()) + b.z()*t.z() );
+  }
 
-  inline double mix(double a, double b, double t) { return a*(1.0f-t) + b*t; }
-  inline dvec2 mix(const dvec2& a, const dvec2& b, double t) { return a*(1.0f-t) + b*t; }
-  inline dvec3 mix(const dvec3& a, const dvec3& b, double t) { return a*(1.0f-t) + b*t; }
-  inline dvec4 mix(const dvec4& a, const dvec4& b, double t) { return a*(1.0f-t) + b*t; }
-  inline dvec2 mix(const dvec2& a, const dvec2& b, const dvec2& t)
+  template<typename T>
+  Vector4<T> mix(const Vector4<T>& a, const Vector4<T>& b, const Vector4<T>& t)
   {
-    return dvec2( a.x()*(1.0f-t.x()) + b.x()*t.x(),
-                 a.y()*(1.0f-t.y()) + b.y()*t.y() );
-  }
-  inline dvec3 mix(const dvec3& a, const dvec3& b, const dvec3& t)
-  {
-    return dvec3( a.x()*(1.0f-t.x()) + b.x()*t.x(),
-                 a.y()*(1.0f-t.y()) + b.y()*t.y(),
-                 a.z()*(1.0f-t.z()) + b.z()*t.z() );
-  }
-  inline dvec4 mix(const dvec4& a, const dvec4& b, const dvec4& t)
-  {
-    return dvec4( a.x()*(1.0f-t.x()) + b.x()*t.x(),
-                 a.y()*(1.0f-t.y()) + b.y()*t.y(),
-                 a.z()*(1.0f-t.z()) + b.z()*t.z(),
-                 a.w()*(1.0f-t.w()) + b.w()*t.w() );
+    return Vector4<T>( a.x()*(1-t.x()) + b.x()*t.x(),
+                  a.y()*(1-t.y()) + b.y()*t.y(),
+                  a.z()*(1-t.z()) + b.z()*t.z(),
+                  a.w()*(1-t.w()) + b.w()*t.w() );
   }
 
   // --------------- step ---------------
 
-  inline float step( float edge, float a ) { if (a<edge) return 0.0f; else return 1.0f; }
-  inline fvec2 step( const fvec2& edge, const fvec2& a )
+  template<typename T>
+  T step( T edge, T a ) { if (a<edge) return 0; else return 1; }
+
+  template<typename T>
+  Vector2<T> step( const Vector2<T>& edge, const Vector2<T>& a )
   {
-    return fvec2( a.x()<edge.x() ? 0.0f : 1.0f,
-                 a.y()<edge.y() ? 0.0f : 1.0f );
-  }
-  inline fvec3 step( const fvec3& edge, const fvec3& a )
-  {
-    return fvec3( a.x()<edge.x() ? 0.0f : 1.0f,
-                 a.y()<edge.y() ? 0.0f : 1.0f,
-                 a.z()<edge.z() ? 0.0f : 1.0f );
-  }
-  inline fvec4 step( const fvec4& edge, const fvec4& a )
-  {
-    return fvec4( a.x()<edge.x() ? 0.0f : 1.0f,
-                 a.y()<edge.y() ? 0.0f : 1.0f,
-                 a.z()<edge.z() ? 0.0f : 1.0f,
-                 a.w()<edge.w() ? 0.0f : 1.0f );
+    return Vector2<T>( a.x()<edge.x() ? 0 : (T)1,
+                       a.y()<edge.y() ? 0 : (T)1 );
   }
 
-  // ..........................................
+  template<typename T>
+  Vector3<T> step( const Vector3<T>& edge, const Vector3<T>& a )
+  {
+    return Vector3<T>( a.x()<edge.x() ? 0 : (T)1,
+                       a.y()<edge.y() ? 0 : (T)1,
+                       a.z()<edge.z() ? 0 : (T)1 );
+  }
 
-  inline double step( double edge, double a ) { if (a<edge) return 0.0f; else return 1.0f; }
-  inline dvec2 step( const dvec2& edge, const dvec2& a )
+  template<typename T>
+  Vector4<T> step( const Vector4<T>& edge, const Vector4<T>& a )
   {
-    return dvec2( a.x()<edge.x() ? 0.0f : 1.0f,
-                 a.y()<edge.y() ? 0.0f : 1.0f );
-  }
-  inline dvec3 step( const dvec3& edge, const dvec3& a )
-  {
-    return dvec3( a.x()<edge.x() ? 0.0f : 1.0f,
-                 a.y()<edge.y() ? 0.0f : 1.0f,
-                 a.z()<edge.z() ? 0.0f : 1.0f );
-  }
-  inline dvec4 step( const dvec4& edge, const dvec4& a )
-  {
-    return dvec4( a.x()<edge.x() ? 0.0f : 1.0f,
-                 a.y()<edge.y() ? 0.0f : 1.0f,
-                 a.z()<edge.z() ? 0.0f : 1.0f,
-                 a.w()<edge.w() ? 0.0f : 1.0f );
+    return Vector4<T>( a.x()<edge.x() ? 0 : (T)1,
+                       a.y()<edge.y() ? 0 : (T)1,
+                       a.z()<edge.z() ? 0 : (T)1,
+                       a.w()<edge.w() ? 0 : (T)1 );
   }
   // --------------- smoothstep ---------------
 
-  inline float smoothstep(float edge0, float edge1, float a)
+  template<typename T>
+  T smoothstep(T edge0, T edge1, T a)
   {
-    float t = clamp( (a - edge0) / (edge1 - edge0), 0.0f, 1.0f);
-    return t * t * (3.0f - 2.0f * t);
+    T t = clamp( (a - edge0) / (edge1 - edge0), (T)0, (T)1);
+    return t * t * (3 - 2 * t);
   }
-  inline fvec2 smoothstep(const fvec2& edge0, const fvec2& edge1, const fvec2& a)
+
+  template<typename T>
+  Vector2<T> smoothstep(const Vector2<T>& edge0, const Vector2<T>& edge1, const Vector2<T>& a)
   {
-    fvec2 v;
-    float t;
-    t = clamp( (a.x() - edge0.x()) / (edge1.x() - edge0.x()), 0.0f, 1.0f); v.x() = t * t * (3.0f - 2.0f * t);
-    t = clamp( (a.y() - edge0.y()) / (edge1.y() - edge0.y()), 0.0f, 1.0f); v.y() = t * t * (3.0f - 2.0f * t);
-    return v;
-  }
-  inline fvec3 smoothstep(const fvec3& edge0, const fvec3& edge1, const fvec3& a)
-  {
-    fvec3 v;
-    float t;
-    t = clamp( (a.x() - edge0.x()) / (edge1.x() - edge0.x()), 0.0f, 1.0f); v.x() = t * t * (3.0f - 2.0f * t);
-    t = clamp( (a.y() - edge0.y()) / (edge1.y() - edge0.y()), 0.0f, 1.0f); v.y() = t * t * (3.0f - 2.0f * t);
-    t = clamp( (a.z() - edge0.z()) / (edge1.z() - edge0.z()), 0.0f, 1.0f); v.z() = t * t * (3.0f - 2.0f * t);
-    return v;
-  }
-  inline fvec4 smoothstep(const fvec4& edge0, const fvec4& edge1, const fvec4& a)
-  {
-    fvec4 v;
-    float t;
-    t = clamp( (a.x() - edge0.x()) / (edge1.x() - edge0.x()), 0.0f, 1.0f); v.x() = t * t * (3.0f - 2.0f * t);
-    t = clamp( (a.y() - edge0.y()) / (edge1.y() - edge0.y()), 0.0f, 1.0f); v.y() = t * t * (3.0f - 2.0f * t);
-    t = clamp( (a.z() - edge0.z()) / (edge1.z() - edge0.z()), 0.0f, 1.0f); v.z() = t * t * (3.0f - 2.0f * t);
-    t = clamp( (a.w() - edge0.w()) / (edge1.w() - edge0.w()), 0.0f, 1.0f); v.w() = t * t * (3.0f - 2.0f * t);
+    Vector2<T> v;
+    T t;
+    t = clamp( (a.x() - edge0.x()) / (edge1.x() - edge0.x()), (T)0, (T)1); v.x() = t * t * (3 - 2 * t);
+    t = clamp( (a.y() - edge0.y()) / (edge1.y() - edge0.y()), (T)0, (T)1); v.y() = t * t * (3 - 2 * t);
     return v;
   }
 
-  // ..........................................
+  template<typename T>
+  Vector3<T> smoothstep(const Vector3<T>& edge0, const Vector3<T>& edge1, const Vector3<T>& a)
+  {
+    Vector3<T> v;
+    T t;
+    t = clamp( (a.x() - edge0.x()) / (edge1.x() - edge0.x()), (T)0, (T)1); v.x() = t * t * (3 - 2 * t);
+    t = clamp( (a.y() - edge0.y()) / (edge1.y() - edge0.y()), (T)0, (T)1); v.y() = t * t * (3 - 2 * t);
+    t = clamp( (a.z() - edge0.z()) / (edge1.z() - edge0.z()), (T)0, (T)1); v.z() = t * t * (3 - 2 * t);
+    return v;
+  }
 
-  inline double smoothstep(double edge0, double edge1, double a)
+  template<typename T>
+  Vector4<T> smoothstep(const Vector4<T>& edge0, const Vector4<T>& edge1, const Vector4<T>& a)
   {
-    double t = clamp( (a - edge0) / (edge1 - edge0), 0.0, 1.0);
-    return t * t * (3.0 - 2.0 * t);
-  }
-  inline dvec2 smoothstep(const dvec2& edge0, const dvec2& edge1, const dvec2& a)
-  {
-    dvec2 v;
-    double t;
-    t = clamp( (a.x() - edge0.x()) / (edge1.x() - edge0.x()), 0.0, 1.0); v.x() = t * t * (3.0 - 2.0 * t);
-    t = clamp( (a.y() - edge0.y()) / (edge1.y() - edge0.y()), 0.0, 1.0); v.y() = t * t * (3.0 - 2.0 * t);
-    return v;
-  }
-  inline dvec3 smoothstep(const dvec3& edge0, const dvec3& edge1, const dvec3& a)
-  {
-    dvec3 v;
-    double t;
-    t = clamp( (a.x() - edge0.x()) / (edge1.x() - edge0.x()), 0.0, 1.0); v.x() = t * t * (3.0 - 2.0 * t);
-    t = clamp( (a.y() - edge0.y()) / (edge1.y() - edge0.y()), 0.0, 1.0); v.y() = t * t * (3.0 - 2.0 * t);
-    t = clamp( (a.z() - edge0.z()) / (edge1.z() - edge0.z()), 0.0, 1.0); v.z() = t * t * (3.0 - 2.0 * t);
-    return v;
-  }
-  inline dvec4 smoothstep(const dvec4& edge0, const dvec4& edge1, const dvec4& a)
-  {
-    dvec4 v;
-    double t;
-    t = clamp( (a.x() - edge0.x()) / (edge1.x() - edge0.x()), 0.0, 1.0); v.x() = t * t * (3.0 - 2.0 * t);
-    t = clamp( (a.y() - edge0.y()) / (edge1.y() - edge0.y()), 0.0, 1.0); v.y() = t * t * (3.0 - 2.0 * t);
-    t = clamp( (a.z() - edge0.z()) / (edge1.z() - edge0.z()), 0.0, 1.0); v.z() = t * t * (3.0 - 2.0 * t);
-    t = clamp( (a.w() - edge0.w()) / (edge1.w() - edge0.w()), 0.0, 1.0); v.w() = t * t * (3.0 - 2.0 * t);
+    Vector4<T> v;
+    T t;
+    t = clamp( (a.x() - edge0.x()) / (edge1.x() - edge0.x()), (T)0, (T)1); v.x() = t * t * (3 - 2 * t);
+    t = clamp( (a.y() - edge0.y()) / (edge1.y() - edge0.y()), (T)0, (T)1); v.y() = t * t * (3 - 2 * t);
+    t = clamp( (a.z() - edge0.z()) / (edge1.z() - edge0.z()), (T)0, (T)1); v.z() = t * t * (3 - 2 * t);
+    t = clamp( (a.w() - edge0.w()) / (edge1.w() - edge0.w()), (T)0, (T)1); v.w() = t * t * (3 - 2 * t);
     return v;
   }
 
   // --------------- isnan ---------------
 
-  inline ivec2 isnan(const fvec2& a) { return ivec2( isnan(a.x()), isnan(a.y()) ); }
-  inline ivec3 isnan(const fvec3& a) { return ivec3( isnan(a.x()), isnan(a.y()), isnan(a.z()) ); }
-  inline ivec4 isnan(const fvec4& a) { return ivec4( isnan(a.x()), isnan(a.y()), isnan(a.z()), isnan(a.w()) ); }
+  template<typename T>
+  ivec2 isnan(const Vector2<T>& a) { return ivec2( isnan(a.x()), isnan(a.y()) ); }
+
+  template<typename T>
+  ivec3 isnan(const Vector3<T>& a) { return ivec3( isnan(a.x()), isnan(a.y()), isnan(a.z()) ); }
+
+  template<typename T>
+  ivec4 isnan(const Vector4<T>& a) { return ivec4( isnan(a.x()), isnan(a.y()), isnan(a.z()), isnan(a.w()) ); }
 
   // --------------- isinf ---------------
 
-  inline ivec2 isinf(const fvec2& a) { return ivec2( isinf(a.x()), isinf(a.y()) ); }
-  inline ivec3 isinf(const fvec3& a) { return ivec3( isinf(a.x()), isinf(a.y()), isinf(a.z()) ); }
-  inline ivec4 isinf(const fvec4& a) { return ivec4( isinf(a.x()), isinf(a.y()), isinf(a.z()), isinf(a.w()) ); }
+  template<typename T>
+  ivec2 isinf(const Vector2<T>& a) { return ivec2( isinf(a.x()), isinf(a.y()) ); }
+
+  template<typename T>
+  ivec3 isinf(const Vector3<T>& a) { return ivec3( isinf(a.x()), isinf(a.y()), isinf(a.z()) ); }
+
+  template<typename T>
+  ivec4 isinf(const Vector4<T>& a) { return ivec4( isinf(a.x()), isinf(a.y()), isinf(a.z()), isinf(a.w()) ); }
 
   // --------------- geometric functions ---------------
 
   // --------------- length ---------------
 
-  inline float length(float v) { return v; }
-  inline float length(const fvec2& v) { return v.length(); }
-  inline float length(const fvec3& v) { return v.length(); }
-  inline float length(const fvec4& v) { return v.length(); }
+  template<typename T>
+  T length(T v) { return v; }
 
-  // ....................................
+  template<typename T>
+  T length(const Vector2<T>& v) { return v.length(); }
 
-  inline double length(double v) { return v; }
-  inline double length(const dvec2& v) { return v.length(); }
-  inline double length(const dvec3& v) { return v.length(); }
-  inline double length(const dvec4& v) { return v.length(); }
+  template<typename T>
+  T length(const Vector3<T>& v) { return v.length(); }
 
-  // ....................................
-
-  inline float length(int v) { return (float)v; }
-  inline float length(const ivec2& v) { return fvec2(v).length(); }
-  inline float length(const ivec3& v) { return fvec3(v).length(); }
-  inline float length(const ivec4& v) { return fvec4(v).length(); }
-
-  // ....................................
-
-  inline float length(unsigned int v) { return (float)v; }
-  inline float length(const uvec2& v) { return fvec2(v).length(); }
-  inline float length(const uvec3& v) { return fvec3(v).length(); }
-  inline float length(const uvec4& v) { return fvec4(v).length(); }
+  template<typename T>
+  T length(const Vector4<T>& v) { return v.length(); }
 
   // --------------- distance ---------------
 
-  inline float distance(float p0, float p1) { return length(p0-p1); }
-  inline float distance(const fvec2& p0, const fvec2& p1) { return length(p0-p1); }
-  inline float distance(const fvec3& p0, const fvec3& p1) { return length(p0-p1); }
-  inline float distance(const fvec4& p0, const fvec4& p1) { return length(p0-p1); }
+  template<typename T>
+  T distance(T p0, T p1) { return length(p0-p1); }
 
-  // ....................................
+  template<typename T>
+  T distance(const Vector2<T>& p0, const Vector2<T>& p1) { return length(p0-p1); }
 
-  inline double distance(double p0, double p1) { return length(p0-p1); }
-  inline double distance(const dvec2& p0, const dvec2& p1) { return length(p0-p1); }
-  inline double distance(const dvec3& p0, const dvec3& p1) { return length(p0-p1); }
-  inline double distance(const dvec4& p0, const dvec4& p1) { return length(p0-p1); }
+  template<typename T>
+  T distance(const Vector3<T>& p0, const Vector3<T>& p1) { return length(p0-p1); }
 
-  // ....................................
-
-  inline float distance(int p0, int p1) { return length(p0-p1); }
-  inline float distance(const ivec2& p0, const ivec2& p1) { return length(p0-p1); }
-  inline float distance(const ivec3& p0, const ivec3& p1) { return length(p0-p1); }
-  inline float distance(const ivec4& p0, const ivec4& p1) { return length(p0-p1); }
-
-  // ....................................
-
-  inline float distance(unsigned int p0, unsigned int p1) { return length(p0-p1); }
-  inline float distance(const uvec2& p0, const uvec2& p1) { return length(p0-p1); }
-  inline float distance(const uvec3& p0, const uvec3& p1) { return length(p0-p1); }
-  inline float distance(const uvec4& p0, const uvec4& p1) { return length(p0-p1); }
+  template<typename T>
+  T distance(const Vector4<T>& p0, const Vector4<T>& p1) { return length(p0-p1); }
 
   // --------------- dot ---------------
 
@@ -1517,118 +1114,92 @@ namespace vl
 
   // ....................................
 
-  inline float dot(int a, int b) { return (float)a*b; }
+  inline Real dot(int a, int b) { return (Real)a*b; }
 
   // ....................................
 
-  inline float dot(unsigned int a, unsigned int b) { return (float)a*b; }
+  inline Real dot(unsigned int a, unsigned int b) { return (Real)a*b; }
 
   // --------------- normalize ---------------
 
-  inline float normalize(float) { return 1; }
-  inline fvec2 normalize(const fvec2& v) { fvec2 t = v; t.normalize(); return t; }
-  inline fvec3 normalize(const fvec3& v) { fvec3 t = v; t.normalize(); return t; }
-  inline fvec4 normalize(const fvec4& v) { fvec4 t = v; t.normalize(); return t; }
+  template<typename T>
+  T normalize(T) { return (T)1; }
 
-  // .........................................
+  template<typename T>
+  Vector2<T> normalize(const Vector2<T>& v) { Vector2<T> t = v; t.normalize(); return t; }
 
-  inline double normalize(double) { return 1; }
-  inline dvec2 normalize(const dvec2& v) { dvec2 t = v; t.normalize(); return t; }
-  inline dvec3 normalize(const dvec3& v) { dvec3 t = v; t.normalize(); return t; }
-  inline dvec4 normalize(const dvec4& v) { dvec4 t = v; t.normalize(); return t; }
+  template<typename T>
+  Vector3<T> normalize(const Vector3<T>& v) { Vector3<T> t = v; t.normalize(); return t; }
+
+  template<typename T>
+  Vector4<T> normalize(const Vector4<T>& v) { Vector4<T> t = v; t.normalize(); return t; }
 
   // --------------- faceforward ---------------
 
-  inline float faceforward(float N, float I, float Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
-  inline fvec2 faceforward(const fvec2& N, const fvec2& I, const fvec2& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
-  inline fvec3 faceforward(const fvec3& N, const fvec3& I, const fvec3& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
-  inline fvec4 faceforward(const fvec4& N, const fvec4& I, const fvec4& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
+  template<typename T>
+  T faceforward(T N, T I, T Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
 
-  // ...........................................
+  template<typename T>
+  Vector2<T> faceforward(const Vector2<T>& N, const Vector2<T>& I, const Vector2<T>& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
 
-  inline double faceforward(double N, double I, double Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
-  inline dvec2 faceforward(const dvec2& N, const dvec2& I, const dvec2& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
-  inline dvec3 faceforward(const dvec3& N, const dvec3& I, const dvec3& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
-  inline dvec4 faceforward(const dvec4& N, const dvec4& I, const dvec4& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
+  template<typename T>
+  Vector3<T> faceforward(const Vector3<T>& N, const Vector3<T>& I, const Vector3<T>& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
+
+  template<typename T>
+  Vector4<T> faceforward(const Vector4<T>& N, const Vector4<T>& I, const Vector4<T>& Nref) { if ( dot(Nref,I) < 0 ) return N; else return -N; }
 
   // --------------- reflect ----------------
 
-  inline float reflect(float I, float N) { return I-2.0f*dot(N,I)*N; }
-  inline fvec2 reflect(const fvec2& I, const fvec2& N) { return I-2.0f*dot(N,I)*N; }
-  inline fvec3 reflect(const fvec3& I, const fvec3& N) { return I-2.0f*dot(N,I)*N; }
-  inline fvec4 reflect(const fvec4& I, const fvec4& N) { return I-2.0f*dot(N,I)*N; }
+  template<typename T>
+  T reflect(T I, T N) { return I-2*dot(N,I)*N; }
 
-  inline double reflect(double I, double N) { return I-2.0*dot(N,I)*N; }
-  inline dvec2 reflect(const dvec2& I, const dvec2& N) { return I-2.0*dot(N,I)*N; }
-  inline dvec3 reflect(const dvec3& I, const dvec3& N) { return I-2.0*dot(N,I)*N; }
-  inline dvec4 reflect(const dvec4& I, const dvec4& N) { return I-2.0*dot(N,I)*N; }
+  template<typename T>
+  Vector2<T> reflect(const Vector2<T>& I, const Vector2<T>& N) { return I-2*dot(N,I)*N; }
+
+  template<typename T>
+  Vector3<T> reflect(const Vector3<T>& I, const Vector3<T>& N) { return I-2*dot(N,I)*N; }
+
+  template<typename T>
+  Vector4<T> reflect(const Vector4<T>& I, const Vector4<T>& N) { return I-2*dot(N,I)*N; }
 
   // --------------- refract ---------------
 
-  inline float refract(float I, float N, float eta)
+  template<typename T>
+  T refract(T I, T N, T eta)
   {
-    float k = 1.0f - eta * eta * (1.0f - dot(N, I) * dot(N, I));
-    if (k < 0.0f)
-      return 0.0f;
+    T k = 1 - eta * eta * (1 - dot(N, I) * dot(N, I));
+    if (k < 0)
+      return 0;
     else
-      return eta * I - (eta * dot(N, I) + VL_FLOAT_SQRT(k)) * N;
-  }
-  inline fvec2 refract(const fvec2& I, const fvec2& N, float eta)
-  {
-    float k = 1.0f - eta * eta * (1.0f - dot(N, I) * dot(N, I));
-    if (k < 0.0f)
-      return fvec2(0,0);
-    else
-      return eta * I - (eta * dot(N, I) + VL_FLOAT_SQRT(k)) * N;
-  }
-  inline fvec3 refract(const fvec3& I, const fvec3& N, float eta)
-  {
-    float k = 1.0f - eta * eta * (1.0f - dot(N, I) * dot(N, I));
-    if (k < 0.0f)
-      return fvec3(0,0,0);
-    else
-      return eta * I - (eta * dot(N, I) + VL_FLOAT_SQRT(k)) * N;
-  }
-  inline fvec4 refract(const fvec4& I, const fvec4& N, float eta)
-  {
-    float k = 1.0f - eta * eta * (1.0f - dot(N, I) * dot(N, I));
-    if (k < 0.0f)
-      return fvec4(0,0,0,0);
-    else
-      return eta * I - (eta * dot(N, I) + VL_FLOAT_SQRT(k)) * N;
+      return eta * I - (eta * dot(N, I) + ::sqrt(k)) * N;
   }
 
-  // ...................................
+  template<typename T>
+  Vector2<T> refract(const Vector2<T>& I, const Vector2<T>& N, T eta)
+  {
+    T k = 1 - eta * eta * (1 - dot(N, I) * dot(N, I));
+    if (k < 0)
+      return Vector2<T>(0,0);
+    else
+      return eta * I - (eta * dot(N, I) + ::sqrt(k)) * N;
+  }
 
-  inline double refract(double I, double N, double eta)
+  template<typename T>
+  Vector3<T> refract(const Vector3<T>& I, const Vector3<T>& N, T eta)
   {
-    double k = 1.0 - eta * eta * (1.0 - dot(N, I) * dot(N, I));
-    if (k < 0.0)
-      return 0.0;
+    T k = 1 - eta * eta * (1 - dot(N, I) * dot(N, I));
+    if (k < 0)
+      return Vector3<T>(0,0,0);
     else
       return eta * I - (eta * dot(N, I) + ::sqrt(k)) * N;
   }
-  inline dvec2 refract(const dvec2& I, const dvec2& N, double eta)
+
+  template<typename T>
+  Vector4<T> refract(const Vector4<T>& I, const Vector4<T>& N, T eta)
   {
-    double k = 1.0 - eta * eta * (1.0 - dot(N, I) * dot(N, I));
-    if (k < 0.0)
-      return dvec2(0,0);
-    else
-      return eta * I - (eta * dot(N, I) + ::sqrt(k)) * N;
-  }
-  inline dvec3 refract(const dvec3& I, const dvec3& N, double eta)
-  {
-    double k = 1.0 - eta * eta * (1.0 - dot(N, I) * dot(N, I));
-    if (k < 0.0)
-      return dvec3(0,0,0);
-    else
-      return eta * I - (eta * dot(N, I) + ::sqrt(k)) * N;
-  }
-  inline dvec4 refract(const dvec4& I, const dvec4& N, double eta)
-  {
-    double k = 1.0 - eta * eta * (1.0 - dot(N, I) * dot(N, I));
-    if (k < 0.0)
-      return dvec4(0,0,0,0);
+    T k = 1 - eta * eta * (1 - dot(N, I) * dot(N, I));
+    if (k < 0)
+      return Vector4<T>(0,0,0,0);
     else
       return eta * I - (eta * dot(N, I) + ::sqrt(k)) * N;
   }
@@ -1637,52 +1208,30 @@ namespace vl
 
   // --------------- matrixCompMult ---------------
 
-  inline fmat2 matrixCompMult(const fmat2& a, const fmat2& b)
+  template<typename T>
+  Matrix2<T> matrixCompMult(const Matrix2<T>& a, const Matrix2<T>& b)
   {
-    fmat2 t;
+    Matrix2<T> t;
     for(int i=0; i<2; ++i)
       for(int j=0; j<2; ++j)
         t.e(j,i) = a.e(j,i) * b.e(j,i);
     return t;
   }
-  inline fmat3 matrixCompMult(const fmat3& a, const fmat3& b)
+
+  template<typename T>
+  Matrix3<T> matrixCompMult(const Matrix3<T>& a, const Matrix3<T>& b)
   {
-    fmat3 t;
+    Matrix3<T> t;
     for(int i=0; i<3; ++i)
       for(int j=0; j<3; ++j)
         t.e(j,i) = a.e(j,i) * b.e(j,i);
     return t;
   }
-  inline fmat4 matrixCompMult(const fmat4& a, const fmat4& b)
-  {
-    fmat4 t;
-    for(int i=0; i<4; ++i)
-      for(int j=0; j<4; ++j)
-        t.e(j,i) = a.e(j,i) * b.e(j,i);
-    return t;
-  }
 
- // .........................................
-
- inline dmat2 matrixCompMult(const dmat2& a, const dmat2& b)
+  template<typename T>
+  Matrix4<T> matrixCompMult(const Matrix4<T>& a, const Matrix4<T>& b)
   {
-    dmat2 t;
-    for(int i=0; i<2; ++i)
-      for(int j=0; j<2; ++j)
-        t.e(j,i) = a.e(j,i) * b.e(j,i);
-    return t;
-  }
-  inline dmat3 matrixCompMult(const dmat3& a, const dmat3& b)
-  {
-    dmat3 t;
-    for(int i=0; i<3; ++i)
-      for(int j=0; j<3; ++j)
-        t.e(j,i) = a.e(j,i) * b.e(j,i);
-    return t;
-  }
-  inline dmat4 matrixCompMult(const dmat4& a, const dmat4& b)
-  {
-    dmat4 t;
+    Matrix4<T> t;
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
         t.e(j,i) = a.e(j,i) * b.e(j,i);
@@ -1691,52 +1240,30 @@ namespace vl
 
   // --------------- outerProduct ---------------
 
-  inline fmat2 outerProduct(const fvec2& a, const fvec2& b)
+  template<typename T>
+  Matrix2<T> outerProduct(const Vector2<T>& a, const Vector2<T>& b)
   {
-    fmat2 m;
+    Matrix2<T> m;
     for(int i=0; i<2; ++i)
       for(int j=0; j<2; ++j)
         m.e(i,j) = a[i] * b[j];
     return m;
   }
-  inline fmat3 outerProduct(const fvec3& a, const fvec3& b)
+
+  template<typename T>
+  Matrix3<T> outerProduct(const Vector3<T>& a, const Vector3<T>& b)
   {
-    fmat3 m;
+    Matrix3<T> m;
     for(int i=0; i<3; ++i)
       for(int j=0; j<3; ++j)
         m.e(i,j) = a[i] * b[j];
     return m;
   }
-  inline fmat4 outerProduct(const fvec4& a, const fvec4& b)
-  {
-    fmat4 m;
-    for(int i=0; i<4; ++i)
-      for(int j=0; j<4; ++j)
-        m.e(i,j) = a[i] * b[j];
-    return m;
-  }
 
-  // ..............................................
-
-  inline dmat2 outerProduct(const dvec2& a, const dvec2& b)
+  template<typename T>
+  Matrix4<T> outerProduct(const Vector4<T>& a, const Vector4<T>& b)
   {
-    dmat2 m;
-    for(int i=0; i<2; ++i)
-      for(int j=0; j<2; ++j)
-        m.e(i,j) = a[i] * b[j];
-    return m;
-  }
-  inline dmat3 outerProduct(const dvec3& a, const dvec3& b)
-  {
-    dmat3 m;
-    for(int i=0; i<3; ++i)
-      for(int j=0; j<3; ++j)
-        m.e(i,j) = a[i] * b[j];
-    return m;
-  }
-  inline dmat4 outerProduct(const dvec4& a, const dvec4& b)
-  {
-    dmat4 m;
+    Matrix4<T> m;
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
         m.e(i,j) = a[i] * b[j];
@@ -1745,52 +1272,30 @@ namespace vl
 
   // --------------- transpose ---------------
 
-  inline fmat2 transpose(const fmat2& a)
+  template<typename T>
+  Matrix2<T> transpose(const Matrix2<T>& a)
   {
-    fmat2 t;
+    Matrix2<T> t;
     for(int i=0; i<2; ++i)
       for(int j=0; j<2; ++j)
         t.e(j,i) = a.e(i,j);
     return t;
   }
-  inline fmat3 transpose(const fmat3& a)
+
+  template<typename T>
+  Matrix3<T> transpose(const Matrix3<T>& a)
   {
-    fmat3 t;
+    Matrix3<T> t;
     for(int i=0; i<3; ++i)
       for(int j=0; j<3; ++j)
         t.e(j,i) = a.e(i,j);
     return t;
   }
-  inline fmat4 transpose(const fmat4& a)
-  {
-    fmat4 t;
-    for(int i=0; i<4; ++i)
-      for(int j=0; j<4; ++j)
-        t.e(j,i) = a.e(i,j);
-    return t;
-  }
 
-  // ............................................
-
-  inline dmat2 transpose(const dmat2& a)
+  template<typename T>
+  Matrix4<T> transpose(const Matrix4<T>& a)
   {
-    dmat2 t;
-    for(int i=0; i<2; ++i)
-      for(int j=0; j<2; ++j)
-        t.e(j,i) = a.e(i,j);
-    return t;
-  }
-  inline dmat3 transpose(const dmat3& a)
-  {
-    dmat3 t;
-    for(int i=0; i<3; ++i)
-      for(int j=0; j<3; ++j)
-        t.e(j,i) = a.e(i,j);
-    return t;
-  }
-  inline dmat4 transpose(const dmat4& a)
-  {
-    dmat4 t;
+    Matrix4<T> t;
     for(int i=0; i<4; ++i)
       for(int j=0; j<4; ++j)
         t.e(j,i) = a.e(i,j);
@@ -1801,480 +1306,138 @@ namespace vl
 
   // --------------- lessThan ---------------
 
-  inline ivec4 lessThan(const fvec4& a, const fvec4& b) {
+  template<typename T>
+  ivec4 lessThan(const Vector4<T>& a, const Vector4<T>& b) {
     return ivec4( a.x() < b.x() ? 1 : 0,
                   a.y() < b.y() ? 1 : 0,
                   a.z() < b.z() ? 1 : 0,
                   a.w() < b.w() ? 1 : 0 );
   }
 
-  inline ivec3 lessThan(const fvec3& a, const fvec3& b) {
+  template<typename T>
+  ivec3 lessThan(const Vector3<T>& a, const Vector3<T>& b) {
     return ivec3( a.x() < b.x() ? 1 : 0,
                   a.y() < b.y() ? 1 : 0,
                   a.z() < b.z() ? 1 : 0 );
   }
 
-  inline ivec2 lessThan(const fvec2& a, const fvec2& b) {
-    return ivec2( a.x() < b.x() ? 1 : 0,
-                  a.y() < b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 lessThan(const dvec4& a, const dvec4& b) {
-    return ivec4( a.x() < b.x() ? 1 : 0,
-                  a.y() < b.y() ? 1 : 0,
-                  a.z() < b.z() ? 1 : 0,
-                  a.w() < b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 lessThan(const dvec3& a, const dvec3& b) {
-    return ivec3( a.x() < b.x() ? 1 : 0,
-                  a.y() < b.y() ? 1 : 0,
-                  a.z() < b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 lessThan(const dvec2& a, const dvec2& b) {
-    return ivec2( a.x() < b.x() ? 1 : 0,
-                  a.y() < b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 lessThan(const ivec4& a, const ivec4& b) {
-    return ivec4( a.x() < b.x() ? 1 : 0,
-                  a.y() < b.y() ? 1 : 0,
-                  a.z() < b.z() ? 1 : 0,
-                  a.w() < b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 lessThan(const ivec3& a, const ivec3& b) {
-    return ivec3( a.x() < b.x() ? 1 : 0,
-                  a.y() < b.y() ? 1 : 0,
-                  a.z() < b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 lessThan(const ivec2& a, const ivec2& b) {
-    return ivec2( a.x() < b.x() ? 1 : 0,
-                  a.y() < b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 lessThan(const uvec4& a, const uvec4& b) {
-    return ivec4( a.x() < b.x() ? 1 : 0,
-                  a.y() < b.y() ? 1 : 0,
-                  a.z() < b.z() ? 1 : 0,
-                  a.w() < b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 lessThan(const uvec3& a, const uvec3& b) {
-    return ivec3( a.x() < b.x() ? 1 : 0,
-                  a.y() < b.y() ? 1 : 0,
-                  a.z() < b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 lessThan(const uvec2& a, const uvec2& b) {
+  template<typename T>
+  ivec2 lessThan(const Vector2<T>& a, const Vector2<T>& b) {
     return ivec2( a.x() < b.x() ? 1 : 0,
                   a.y() < b.y() ? 1 : 0 );
   }
 
   // --------------- lessThanEqual ---------------
 
-  inline ivec4 lessThanEqual(const fvec4& a, const fvec4& b) {
+  template<typename T>
+  ivec4 lessThanEqual(const Vector4<T>& a, const Vector4<T>& b) {
     return ivec4( a.x() <= b.x() ? 1 : 0,
                   a.y() <= b.y() ? 1 : 0,
                   a.z() <= b.z() ? 1 : 0,
                   a.w() <= b.w() ? 1 : 0 );
   }
 
-  inline ivec3 lessThanEqual(const fvec3& a, const fvec3& b) {
+  template<typename T>
+  ivec3 lessThanEqual(const Vector3<T>& a, const Vector3<T>& b) {
     return ivec3( a.x() <= b.x() ? 1 : 0,
                   a.y() <= b.y() ? 1 : 0,
                   a.z() <= b.z() ? 1 : 0 );
   }
 
-  inline ivec2 lessThanEqual(const fvec2& a, const fvec2& b) {
-    return ivec2( a.x() <= b.x() ? 1 : 0,
-                  a.y() <= b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 lessThanEqual(const dvec4& a, const dvec4& b) {
-    return ivec4( a.x() <= b.x() ? 1 : 0,
-                  a.y() <= b.y() ? 1 : 0,
-                  a.z() <= b.z() ? 1 : 0,
-                  a.w() <= b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 lessThanEqual(const dvec3& a, const dvec3& b) {
-    return ivec3( a.x() <= b.x() ? 1 : 0,
-                  a.y() <= b.y() ? 1 : 0,
-                  a.z() <= b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 lessThanEqual(const dvec2& a, const dvec2& b) {
-    return ivec2( a.x() <= b.x() ? 1 : 0,
-                  a.y() <= b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 lessThanEqual(const ivec4& a, const ivec4& b) {
-    return ivec4( a.x() <= b.x() ? 1 : 0,
-                  a.y() <= b.y() ? 1 : 0,
-                  a.z() <= b.z() ? 1 : 0,
-                  a.w() <= b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 lessThanEqual(const ivec3& a, const ivec3& b) {
-    return ivec3( a.x() <= b.x() ? 1 : 0,
-                  a.y() <= b.y() ? 1 : 0,
-                  a.z() <= b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 lessThanEqual(const ivec2& a, const ivec2& b) {
-    return ivec2( a.x() <= b.x() ? 1 : 0,
-                  a.y() <= b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 lessThanEqual(const uvec4& a, const uvec4& b) {
-    return ivec4( a.x() <= b.x() ? 1 : 0,
-                  a.y() <= b.y() ? 1 : 0,
-                  a.z() <= b.z() ? 1 : 0,
-                  a.w() <= b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 lessThanEqual(const uvec3& a, const uvec3& b) {
-    return ivec3( a.x() <= b.x() ? 1 : 0,
-                  a.y() <= b.y() ? 1 : 0,
-                  a.z() <= b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 lessThanEqual(const uvec2& a, const uvec2& b) {
+  template<typename T>
+  ivec2 lessThanEqual(const Vector2<T>& a, const Vector2<T>& b) {
     return ivec2( a.x() <= b.x() ? 1 : 0,
                   a.y() <= b.y() ? 1 : 0 );
   }
 
   // --------------- greaterThan ---------------
 
-  inline ivec4 greaterThan(const fvec4& a, const fvec4& b) {
+  template<typename T>
+  ivec4 greaterThan(const Vector4<T>& a, const Vector4<T>& b) {
     return ivec4( a.x() > b.x() ? 1 : 0,
                   a.y() > b.y() ? 1 : 0,
                   a.z() > b.z() ? 1 : 0,
                   a.w() > b.w() ? 1 : 0 );
   }
 
-  inline ivec3 greaterThan(const fvec3& a, const fvec3& b) {
+  template<typename T>
+  ivec3 greaterThan(const Vector3<T>& a, const Vector3<T>& b) {
     return ivec3( a.x() > b.x() ? 1 : 0,
                   a.y() > b.y() ? 1 : 0,
                   a.z() > b.z() ? 1 : 0 );
   }
 
-  inline ivec2 greaterThan(const fvec2& a, const fvec2& b) {
-    return ivec2( a.x() > b.x() ? 1 : 0,
-                  a.y() > b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 greaterThan(const dvec4& a, const dvec4& b) {
-    return ivec4( a.x() > b.x() ? 1 : 0,
-                  a.y() > b.y() ? 1 : 0,
-                  a.z() > b.z() ? 1 : 0,
-                  a.w() > b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 greaterThan(const dvec3& a, const dvec3& b) {
-    return ivec3( a.x() > b.x() ? 1 : 0,
-                  a.y() > b.y() ? 1 : 0,
-                  a.z() > b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 greaterThan(const dvec2& a, const dvec2& b) {
-    return ivec2( a.x() > b.x() ? 1 : 0,
-                  a.y() > b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 greaterThan(const ivec4& a, const ivec4& b) {
-    return ivec4( a.x() > b.x() ? 1 : 0,
-                  a.y() > b.y() ? 1 : 0,
-                  a.z() > b.z() ? 1 : 0,
-                  a.w() > b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 greaterThan(const ivec3& a, const ivec3& b) {
-    return ivec3( a.x() > b.x() ? 1 : 0,
-                  a.y() > b.y() ? 1 : 0,
-                  a.z() > b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 greaterThan(const ivec2& a, const ivec2& b) {
-    return ivec2( a.x() > b.x() ? 1 : 0,
-                  a.y() > b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 greaterThan(const uvec4& a, const uvec4& b) {
-    return ivec4( a.x() > b.x() ? 1 : 0,
-                  a.y() > b.y() ? 1 : 0,
-                  a.z() > b.z() ? 1 : 0,
-                  a.w() > b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 greaterThan(const uvec3& a, const uvec3& b) {
-    return ivec3( a.x() > b.x() ? 1 : 0,
-                  a.y() > b.y() ? 1 : 0,
-                  a.z() > b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 greaterThan(const uvec2& a, const uvec2& b) {
+  template<typename T>
+  ivec2 greaterThan(const Vector2<T>& a, const Vector2<T>& b) {
     return ivec2( a.x() > b.x() ? 1 : 0,
                   a.y() > b.y() ? 1 : 0 );
   }
 
   // --------------- greaterThanEqual ---------------
 
-  inline ivec4 greaterThanEqual(const fvec4& a, const fvec4& b) {
+  template<typename T>
+  ivec4 greaterThanEqual(const Vector4<T>& a, const Vector4<T>& b) {
     return ivec4( a.x() >= b.x() ? 1 : 0,
                   a.y() >= b.y() ? 1 : 0,
                   a.z() >= b.z() ? 1 : 0,
                   a.w() >= b.w() ? 1 : 0 );
   }
 
-  inline ivec3 greaterThanEqual(const fvec3& a, const fvec3& b) {
+  template<typename T>
+  ivec3 greaterThanEqual(const Vector3<T>& a, const Vector3<T>& b) {
     return ivec3( a.x() >= b.x() ? 1 : 0,
                   a.y() >= b.y() ? 1 : 0,
                   a.z() >= b.z() ? 1 : 0 );
   }
 
-  inline ivec2 greaterThanEqual(const fvec2& a, const fvec2& b) {
-    return ivec2( a.x() >= b.x() ? 1 : 0,
-                  a.y() >= b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 greaterThanEqual(const dvec4& a, const dvec4& b) {
-    return ivec4( a.x() >= b.x() ? 1 : 0,
-                  a.y() >= b.y() ? 1 : 0,
-                  a.z() >= b.z() ? 1 : 0,
-                  a.w() >= b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 greaterThanEqual(const dvec3& a, const dvec3& b) {
-    return ivec3( a.x() >= b.x() ? 1 : 0,
-                  a.y() >= b.y() ? 1 : 0,
-                  a.z() >= b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 greaterThanEqual(const dvec2& a, const dvec2& b) {
-    return ivec2( a.x() >= b.x() ? 1 : 0,
-                  a.y() >= b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 greaterThanEqual(const ivec4& a, const ivec4& b) {
-    return ivec4( a.x() >= b.x() ? 1 : 0,
-                  a.y() >= b.y() ? 1 : 0,
-                  a.z() >= b.z() ? 1 : 0,
-                  a.w() >= b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 greaterThanEqual(const ivec3& a, const ivec3& b) {
-    return ivec3( a.x() >= b.x() ? 1 : 0,
-                  a.y() >= b.y() ? 1 : 0,
-                  a.z() >= b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 greaterThanEqual(const ivec2& a, const ivec2& b) {
-    return ivec2( a.x() >= b.x() ? 1 : 0,
-                  a.y() >= b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 greaterThanEqual(const uvec4& a, const uvec4& b) {
-    return ivec4( a.x() >= b.x() ? 1 : 0,
-                  a.y() >= b.y() ? 1 : 0,
-                  a.z() >= b.z() ? 1 : 0,
-                  a.w() >= b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 greaterThanEqual(const uvec3& a, const uvec3& b) {
-    return ivec3( a.x() >= b.x() ? 1 : 0,
-                  a.y() >= b.y() ? 1 : 0,
-                  a.z() >= b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 greaterThanEqual(const uvec2& a, const uvec2& b) {
+  template<typename T>
+  ivec2 greaterThanEqual(const Vector2<T>& a, const Vector2<T>& b) {
     return ivec2( a.x() >= b.x() ? 1 : 0,
                   a.y() >= b.y() ? 1 : 0 );
   }
 
   // --------------- equal ---------------
 
-  inline ivec4 equal(const fvec4& a, const fvec4& b) {
+  template<typename T>
+  ivec4 equal(const Vector4<T>& a, const Vector4<T>& b) {
     return ivec4( a.x() == b.x() ? 1 : 0,
                   a.y() == b.y() ? 1 : 0,
                   a.z() == b.z() ? 1 : 0,
                   a.w() == b.w() ? 1 : 0 );
   }
 
-  inline ivec3 equal(const fvec3& a, const fvec3& b) {
+  template<typename T>
+  ivec3 equal(const Vector3<T>& a, const Vector3<T>& b) {
     return ivec3( a.x() == b.x() ? 1 : 0,
                   a.y() == b.y() ? 1 : 0,
                   a.z() == b.z() ? 1 : 0 );
   }
 
-  inline ivec2 equal(const fvec2& a, const fvec2& b) {
-    return ivec2( a.x() == b.x() ? 1 : 0,
-                  a.y() == b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 equal(const dvec4& a, const dvec4& b) {
-    return ivec4( a.x() == b.x() ? 1 : 0,
-                  a.y() == b.y() ? 1 : 0,
-                  a.z() == b.z() ? 1 : 0,
-                  a.w() == b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 equal(const dvec3& a, const dvec3& b) {
-    return ivec3( a.x() == b.x() ? 1 : 0,
-                  a.y() == b.y() ? 1 : 0,
-                  a.z() == b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 equal(const dvec2& a, const dvec2& b) {
-    return ivec2( a.x() == b.x() ? 1 : 0,
-                  a.y() == b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 equal(const ivec4& a, const ivec4& b) {
-    return ivec4( a.x() == b.x() ? 1 : 0,
-                  a.y() == b.y() ? 1 : 0,
-                  a.z() == b.z() ? 1 : 0,
-                  a.w() == b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 equal(const ivec3& a, const ivec3& b) {
-    return ivec3( a.x() == b.x() ? 1 : 0,
-                  a.y() == b.y() ? 1 : 0,
-                  a.z() == b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 equal(const ivec2& a, const ivec2& b) {
-    return ivec2( a.x() == b.x() ? 1 : 0,
-                  a.y() == b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 equal(const uvec4& a, const uvec4& b) {
-    return ivec4( a.x() == b.x() ? 1 : 0,
-                  a.y() == b.y() ? 1 : 0,
-                  a.z() == b.z() ? 1 : 0,
-                  a.w() == b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 equal(const uvec3& a, const uvec3& b) {
-    return ivec3( a.x() == b.x() ? 1 : 0,
-                  a.y() == b.y() ? 1 : 0,
-                  a.z() == b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 equal(const uvec2& a, const uvec2& b) {
+  template<typename T>
+  ivec2 equal(const Vector2<T>& a, const Vector2<T>& b) {
     return ivec2( a.x() == b.x() ? 1 : 0,
                   a.y() == b.y() ? 1 : 0 );
   }
 
   // --------------- notEqual ---------------
 
-  inline ivec4 notEqual(const fvec4& a, const fvec4& b) {
+  template<typename T>
+  ivec4 notEqual(const Vector4<T>& a, const Vector4<T>& b) {
     return ivec4( a.x() != b.x() ? 1 : 0,
                   a.y() != b.y() ? 1 : 0,
                   a.z() != b.z() ? 1 : 0,
                   a.w() != b.w() ? 1 : 0 );
   }
 
-  inline ivec3 notEqual(const fvec3& a, const fvec3& b) {
+  template<typename T>
+  ivec3 notEqual(const Vector3<T>& a, const Vector3<T>& b) {
     return ivec3( a.x() != b.x() ? 1 : 0,
                   a.y() != b.y() ? 1 : 0,
                   a.z() != b.z() ? 1 : 0 );
   }
 
-  inline ivec2 notEqual(const fvec2& a, const fvec2& b) {
-    return ivec2( a.x() != b.x() ? 1 : 0,
-                  a.y() != b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 notEqual(const dvec4& a, const dvec4& b) {
-    return ivec4( a.x() != b.x() ? 1 : 0,
-                  a.y() != b.y() ? 1 : 0,
-                  a.z() != b.z() ? 1 : 0,
-                  a.w() != b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 notEqual(const dvec3& a, const dvec3& b) {
-    return ivec3( a.x() != b.x() ? 1 : 0,
-                  a.y() != b.y() ? 1 : 0,
-                  a.z() != b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 notEqual(const dvec2& a, const dvec2& b) {
-    return ivec2( a.x() != b.x() ? 1 : 0,
-                  a.y() != b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 notEqual(const ivec4& a, const ivec4& b) {
-    return ivec4( a.x() != b.x() ? 1 : 0,
-                  a.y() != b.y() ? 1 : 0,
-                  a.z() != b.z() ? 1 : 0,
-                  a.w() != b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 notEqual(const ivec3& a, const ivec3& b) {
-    return ivec3( a.x() != b.x() ? 1 : 0,
-                  a.y() != b.y() ? 1 : 0,
-                  a.z() != b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 notEqual(const ivec2& a, const ivec2& b) {
-    return ivec2( a.x() != b.x() ? 1 : 0,
-                  a.y() != b.y() ? 1 : 0 );
-  }
-
-  // .............................................
-
-  inline ivec4 notEqual(const uvec4& a, const uvec4& b) {
-    return ivec4( a.x() != b.x() ? 1 : 0,
-                  a.y() != b.y() ? 1 : 0,
-                  a.z() != b.z() ? 1 : 0,
-                  a.w() != b.w() ? 1 : 0 );
-  }
-
-  inline ivec3 notEqual(const uvec3& a, const uvec3& b) {
-    return ivec3( a.x() != b.x() ? 1 : 0,
-                  a.y() != b.y() ? 1 : 0,
-                  a.z() != b.z() ? 1 : 0 );
-  }
-
-  inline ivec2 notEqual(const uvec2& a, const uvec2& b) {
+  template<typename T>
+  ivec2 notEqual(const Vector2<T>& a, const Vector2<T>& b) {
     return ivec2( a.x() != b.x() ? 1 : 0,
                   a.y() != b.y() ? 1 : 0 );
   }
