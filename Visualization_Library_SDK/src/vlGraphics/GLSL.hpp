@@ -54,7 +54,7 @@ namespace vl
 
     ~GLSLShader();
 
-    virtual const char* className() { return "GLSLShader"; }
+    virtual const char* className() { return "Unnamed GLSLShader"; }
 
     EShaderType type() const { return mType; }
 
@@ -263,7 +263,7 @@ namespace vl
     bool linkStatus() const;
 
     //! Returns true if the program has been succesfully linked.
-    bool linked() const { return handle() && !mScheduleLink; }
+    bool linked() const { return mHandle && !mScheduleLink; }
 
     //! Schedules a relink of the GLSL program.
     void scheduleRelinking() { mScheduleLink = true; }
@@ -324,8 +324,8 @@ namespace vl
     //! \note The program must be linked before calling this function.
     int getAttribLocation(const char* name) const
     {
-      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
         return -1;
       VL_CHECK(handle())
       VL_CHECK(linked())
@@ -439,8 +439,8 @@ namespace vl
     */
     int getUniformLocation(const std::string& name) const
     {
-      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
         return -1;
       VL_CHECK(linked())
 
@@ -456,8 +456,8 @@ namespace vl
     //! Equivalent to glGetUniformfv(handle(), location, params)
     void getUniformfv(int location, float* params) const
     {
-      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
@@ -468,8 +468,8 @@ namespace vl
     //! Equivalent to glGetUniformiv(handle(), location, params)
     void getUniformiv(int location, int* params) const
     {
-      VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-      if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())

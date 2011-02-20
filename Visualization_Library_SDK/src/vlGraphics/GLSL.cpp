@@ -77,8 +77,8 @@ void GLSLShader::setSource( const String& source )
 bool GLSLShader::compile()
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   if (!mCompiled)
@@ -110,9 +110,9 @@ bool GLSLShader::compile()
     }
     else
     {
-      Log::error( Say("\nShader compilation error: '%s':\n\n") << objectName().c_str() );
-      Log::print( Say("Source:\n%s\n\n") << mSource.c_str() );
-      Log::print( Say("OpenGL driver log:\n%s\n\n") << infoLog() );
+      Log::bug( Say("\nGLSLShader::compile() failed! '%s':\n\n") << objectName().c_str() );
+      // Log::bug( Say("Source:\n%s\n\n") << mSource.c_str() );
+      Log::bug( Say("Info log:\n%s\n\n") << infoLog() );
       VL_TRAP()
     }
   }
@@ -124,30 +124,29 @@ bool GLSLShader::compile()
 bool GLSLShader::compileStatus() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
   VL_CHECK(handle())
 
   int status = 0;
-  glGetShaderiv(handle(), GL_COMPILE_STATUS, &status);
-  VL_CHECK_OGL();
+  glGetShaderiv(handle(), GL_COMPILE_STATUS, &status); VL_CHECK_OGL();
   return status == GL_TRUE;
 }
 //-----------------------------------------------------------------------------
 String GLSLShader::infoLog() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return "OpenGL Shading Language not supported.\n";
   VL_CHECK(handle())
 
   int max_length = 0;
-  glGetShaderiv(handle(), GL_INFO_LOG_LENGTH, &max_length);
+  glGetShaderiv(handle(), GL_INFO_LOG_LENGTH, &max_length); VL_CHECK_OGL();
   std::vector<GLchar> log_buffer;
   log_buffer.resize(max_length+1);
-  glGetShaderInfoLog(handle(), max_length, NULL, &log_buffer[0]);
+  glGetShaderInfoLog(handle(), max_length, NULL, &log_buffer[0]); VL_CHECK_OGL();
   String log_string(&log_buffer[0]);
   VL_CHECK_OGL();
   return log_string;
@@ -156,8 +155,8 @@ String GLSLShader::infoLog() const
 void GLSLShader::createShader()
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
   if (!handle())
   {
@@ -170,12 +169,13 @@ void GLSLShader::createShader()
 //------------------------------------------------------------------------------
 void GLSLShader::deleteShader()
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  // VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
   if (handle())
   {
-    glDeleteShader(handle());
+    glDeleteShader(handle()); // VL_CHECK_OGL();
     mHandle = 0;
     mCompiled = false;
   }
@@ -205,22 +205,24 @@ GLSLProgram::~GLSLProgram()
 //-----------------------------------------------------------------------------
 void GLSLProgram::createProgram()
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
+
   if (handle() == 0)
   {
     scheduleRelinking();
     mHandle = glCreateProgram(); VL_CHECK_OGL();
     VL_CHECK(handle())
-    VL_CHECK_OGL()
   }
 }
 //-----------------------------------------------------------------------------
 void GLSLProgram::deleteProgram()
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  // VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
   if(handle())
   {
@@ -232,9 +234,11 @@ void GLSLProgram::deleteProgram()
 //-----------------------------------------------------------------------------
 bool GLSLProgram::attachShader(GLSLShader* shader)
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
+
   scheduleRelinking();
 
   #if 0
@@ -257,7 +261,7 @@ bool GLSLProgram::attachShader(GLSLShader* shader)
     return true;
   }
 
-  VL_CHECK_OGL()
+  VL_CHECK_OGL();
   VL_TRAP()
   return false;
 
@@ -265,6 +269,7 @@ bool GLSLProgram::attachShader(GLSLShader* shader)
 //-----------------------------------------------------------------------------
 void GLSLProgram::detachAllShaders()
 {
+  VL_CHECK_OGL();
   for(size_t i=mShaders.size(); i--;)
     detachShader(mShaders[i].get());
 }
@@ -272,8 +277,10 @@ void GLSLProgram::detachAllShaders()
 // detaching a shader that has not been attached is allowed, and is a No-Op
 bool GLSLProgram::detachShader(GLSLShader* shader)
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK_OGL();
+
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   if (!handle() || !shader->handle())
@@ -297,8 +304,8 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
 void GLSLProgram::discardAllShaders()
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
 
   if (!handle())
@@ -319,15 +326,15 @@ void GLSLProgram::discardAllShaders()
 bool GLSLProgram::linkProgram(bool force_relink)
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   if (!linked() || force_relink)
   {
     if (shaderCount() == 0)
     {
-      Log::error("GLSLProgram::linkProgram() called on a GLSLProgram with no shaders!\n");
+      Log::bug("GLSLProgram::linkProgram() called on a GLSLProgram with no shaders! ('" + String(objectName().c_str()) + "')\n");
       VL_TRAP()
       return false;
     }
@@ -343,17 +350,18 @@ bool GLSLProgram::linkProgram(bool force_relink)
     mScheduleLink = !linkStatus();
 
     // check link error
-    if(!linked())
+    if(linked())
     {
-      Log::error("GLSLProgram::linkProgram() failed:\n");
-      Log::print("GLSLProgram name: '"+String(objectName().c_str()) + "'\n");
-      Log::print( Say("OpenGL driver log:\n%s\n") << infoLog() );
+      // post-link operations
+      postLink();
+    }
+    else
+    {
+      Log::bug("GLSLProgram::linkProgram() failed! ('" + String(objectName().c_str()) + "')\n");
+      Log::bug( Say("Info log:\n%s\n") << infoLog() );
       VL_TRAP()
       return false;
     }
-
-    // post-link operations
-    postLink();
   }
 
   return true;
@@ -361,14 +369,15 @@ bool GLSLProgram::linkProgram(bool force_relink)
 //-----------------------------------------------------------------------------
 void GLSLProgram::preLink()
 {
+  VL_CHECK_OGL();
   // fragment shader color number binding
 
-  if (GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0)
+  if (GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
   {
     std::map<std::string, int>::iterator it = mFragDataLocation.begin();
     while(it != mFragDataLocation.end())
     {
-      VL_glBindFragDataLocation( handle(), it->second, it->first.c_str() );
+      VL_glBindFragDataLocation( handle(), it->second, it->first.c_str() ); VL_CHECK_OGL();
       ++it;
     }
   }
@@ -382,9 +391,9 @@ void GLSLProgram::preLink()
     {
       if (mShaders[i]->type() == ST_GEOMETRY_SHADER)
       {
-        VL_glProgramParameteri(handle(), GL_GEOMETRY_VERTICES_OUT_EXT, geometryVerticesOut());
-        VL_glProgramParameteri(handle(), GL_GEOMETRY_INPUT_TYPE_EXT,   geometryInputType());
-        VL_glProgramParameteri(handle(), GL_GEOMETRY_OUTPUT_TYPE_EXT,  geometryOutputType());
+        VL_glProgramParameteri(handle(), GL_GEOMETRY_VERTICES_OUT_EXT, geometryVerticesOut()); VL_CHECK_OGL();
+        VL_glProgramParameteri(handle(), GL_GEOMETRY_INPUT_TYPE_EXT,   geometryInputType()); VL_CHECK_OGL();
+        VL_glProgramParameteri(handle(), GL_GEOMETRY_OUTPUT_TYPE_EXT,  geometryOutputType()); VL_CHECK_OGL();
         break;
       }
     }
@@ -406,20 +415,22 @@ void GLSLProgram::preLink()
 
   for( std::map<std::string, int>::iterator it = mAttribLocation.begin(); it != mAttribLocation.end(); ++it)
   {
-    glBindAttribLocation(handle(),it->second,it->first.c_str());
+    glBindAttribLocation(handle(),it->second,it->first.c_str()); VL_CHECK_OGL();
   }
 }
 //-----------------------------------------------------------------------------
 void GLSLProgram::postLink()
 {
+  VL_CHECK_OGL();
+
   // populate uniform binding map
 
   mUniformLocation.clear();
 
   int uniform_count = 0;
-  glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count);
+  glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count); VL_CHECK_OGL();
   int uniform_len = 0;
-  glGetProgramiv(handle(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniform_len);
+  glGetProgramiv(handle(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniform_len); VL_CHECK_OGL();
 
   std::vector<char> name;
   name.resize(uniform_len);
@@ -429,7 +440,7 @@ void GLSLProgram::postLink()
     {
       GLenum type;
       int size;
-      glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, &name[0]);
+      glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, &name[0]); VL_CHECK_OGL();
       mUniformLocation[&name[0]] = glGetUniformLocation(handle(), &name[0]);
     }
   }
@@ -437,13 +448,16 @@ void GLSLProgram::postLink()
 //-----------------------------------------------------------------------------
 bool GLSLProgram::linkStatus() const
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
-  VL_CHECK(handle()) // no shaders attached
+  
+  VL_CHECK(handle())
 
   if (handle() == 0)
     return false;
+  
   int status = 0;
   glGetProgramiv(handle(), GL_LINK_STATUS, &status); VL_CHECK_OGL();
   return status == GL_TRUE;
@@ -451,28 +465,32 @@ bool GLSLProgram::linkStatus() const
 //-----------------------------------------------------------------------------
 String GLSLProgram::infoLog() const
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
-    return "OpenGL Shading Language not supported.\n";
-  VL_CHECK(handle()) // no shaders attached
+  VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
+    return "OpenGL Shading Language not supported!\n";
+  
+  VL_CHECK(handle())
 
   if (handle() == 0)
-    return "GLSLProgram::infoLog(): error! No shaders bound.";
+    return "GLSLProgram::infoLog(): error! GLSL program object not yet created! ('" + String(objectName().c_str()) + "')\n";
+
   int max_length = 0;
   glGetProgramiv(handle(), GL_INFO_LOG_LENGTH, &max_length); VL_CHECK_OGL();
   std::vector<GLchar> log_buffer;
   log_buffer.resize(max_length+1);
   glGetProgramInfoLog(handle(), max_length, NULL, &log_buffer[0]); VL_CHECK_OGL();
-  String info_log(&log_buffer[0]);
-  return info_log;
+  return &log_buffer[0];
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::validateProgram() const
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
-  VL_CHECK(handle()) // no shaders attached
+
+  VL_CHECK(handle())
 
   if (handle() == 0)
     return false;
@@ -485,7 +503,8 @@ bool GLSLProgram::validateProgram() const
 //-----------------------------------------------------------------------------
 void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name)
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
+  VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
 
   createProgram();
   scheduleRelinking();
@@ -494,8 +513,9 @@ void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name
 //-----------------------------------------------------------------------------
 int GLSLProgram::maxVertexAttribs()
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return 0;
 
   int max = 0;
@@ -505,16 +525,34 @@ int GLSLProgram::maxVertexAttribs()
 //-----------------------------------------------------------------------------
 bool GLSLProgram::useProgram() const
 {
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK_OGL()
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
-  VL_CHECK(handle())
-  VL_CHECK(linked())
+
+  if (!handle())
+  {
+    Log::bug("GLSLProgram::useProgram() failed! GLSL program handle is null! ('" + String(objectName().c_str()) + "')\n");
+    VL_TRAP()
+    return false;
+  }
 
   if (!linked())
+  {
+    Log::bug("GLSLProgram::useProgram() failed! GLSL program not linked! ('" + String(objectName().c_str()) + "')\n");
+    VL_TRAP()
     return false;
+  }
 
-  VL_CHECK(validateProgram())
+#ifndef NDEBUG
+  if (!validateProgram())
+  {
+    Log::bug("GLSLProgram::useProgram() failed validation! ('" + String(objectName().c_str()) + "')\n");
+    Log::bug( Say("Info log:\n%s\n") << infoLog() );
+    VL_TRAP();
+    return false;
+  }
+#endif
 
   // bind the GLSL program
   glUseProgram(handle()); VL_CHECK_OGL()
@@ -524,33 +562,37 @@ bool GLSLProgram::useProgram() const
 //-----------------------------------------------------------------------------
 void GLSLProgram::apply(const Camera*, OpenGLContext*) const
 {
-  if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+  VL_CHECK_OGL();
+  if(GLEW_Has_Shading_Language_20)
   {
     if ( handle() )
       useProgram();
     else
-      glUseProgram(0);
+      glUseProgram(0); VL_CHECK_OGL();
   }
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 {
   VL_CHECK_OGL();
-  VL_CHECK( GLEW_VERSION_2_0||GLEW_VERSION_3_0 )
-  if( !(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0) )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
+
   if(!uniforms)
     return false;
+  
   if (!linked())
     return false;
+  
   if (!handle())
     return false;
 
-  #ifndef NDEBUG
-    int current_glsl_program = -1;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &current_glsl_program); VL_CHECK_OGL();
-    VL_CHECK(current_glsl_program == (int)handle())
-  #endif
+#ifndef NDEBUG
+  int current_glsl_program = -1;
+  glGetIntegerv(GL_CURRENT_PROGRAM, &current_glsl_program); VL_CHECK_OGL();
+  VL_CHECK(current_glsl_program == (int)handle())
+#endif
 
   for(size_t i=0, count=uniforms->uniforms().size(); i<count; ++i)
   {
@@ -569,7 +611,7 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
       // Check the following:
       // (1) Is the uniform variable declared but not used in your GLSL program?
       // (2) Double-check the spelling of the uniform variable name.
-      vl::Log::error( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
+      vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
                               "Is the uniform variable declared but not used in your GLSL program?\n"
                               "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
       VL_TRAP();
@@ -626,11 +668,12 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 
       default:
         // Probably you added a uniform to a Shader or Actor but you forgot to specify it's data!
-        vl::Log::error( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' does not contain any data!\n") << uniform->name() );
+        vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' does not contain any data!\n") << uniform->name() );
         VL_TRAP();
         break;
     }
   }
+
   VL_CHECK_OGL();
   return true;
 }
@@ -682,7 +725,10 @@ bool GLSLProgram::getProgramBinary(GLenum& binary_format, std::vector<unsigned c
     return true;
   }
   else
+  {
+    VL_TRAP();
     return false;
+  }
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int length)
@@ -704,19 +750,24 @@ bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int le
     mScheduleLink = !linkStatus();
     
     // log error
-    if(!linked() && globalSettings()->verbosityLevel() == vl::VEL_VERBOSITY_DEBUG)
+    if(linked())
     {
-      Log::error("GLSLProgram::programBinary() failed:\n");
-      Log::print("GLSLProgram name: '"+String(objectName().c_str()) + "'\n");
-      Log::print( Say("OpenGL driver log:\n%s\n") << infoLog() );
+      // post-link operations
+      postLink();
+    }
+    else
+    {
+      Log::bug("GLSLProgram::programBinary() failed! ('" + String(objectName().c_str()) + "')\n");
+      Log::bug( Say("Info log:\n%s\n") << infoLog() );
+      VL_TRAP();
     }
     
-    // post-link operations
-    postLink();
-
     return linked();
   }
   else
+  {
+    VL_TRAP();
     return false;
+  }
 }
 //-----------------------------------------------------------------------------
