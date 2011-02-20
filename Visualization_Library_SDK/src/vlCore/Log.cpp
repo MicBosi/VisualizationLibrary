@@ -40,6 +40,35 @@
 
 using namespace vl;
 
+namespace
+{
+#ifdef _WIN32
+  struct ScopedColor
+  {
+    CONSOLE_SCREEN_BUFFER_INFO screen_info;
+    WORD color;
+    ScopedColor(WORD c): color(c)
+    {
+      HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+      GetConsoleScreenBufferInfo(
+        hConsole,
+        &screen_info
+      );
+      SetConsoleTextAttribute(hConsole, c);
+    }
+    ~ScopedColor()
+    {
+      // restore the color
+      HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+      SetConsoleTextAttribute(hConsole,screen_info.wAttributes);  
+    }
+  };
+  #define SET_TEXT_COLOR(color) ScopedColor set_scoped_color(color);
+#else
+  #define SET_TEXT_COLOR(color) ScopedColor(color);
+#endif
+}
+
 //-----------------------------------------------------------------------------
 // Log
 //-----------------------------------------------------------------------------
@@ -52,31 +81,34 @@ void Log::print(const String& log)
 void Log::debug(const String& log) 
 { 
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_DEBUG)
-    defLogger()->printImplementation(LogDebug, "Debug: " + log); 
+    defLogger()->printImplementation(LogDebug, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::info(const String& log) 
 { 
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
-    defLogger()->printImplementation(LogInfo, "Info: " + log); 
+    defLogger()->printImplementation(LogInfo, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::warning(const String& log) 
 { 
+  SET_TEXT_COLOR(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY)
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LogWarning, "Warning: " + log); 
+    defLogger()->printImplementation(LogWarning, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::error(const String& log) 
 { 
+  SET_TEXT_COLOR(FOREGROUND_RED|FOREGROUND_INTENSITY)
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LogError, "Error: " + log); 
+    defLogger()->printImplementation(LogError, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::bug(const String& log) 
 { 
+  SET_TEXT_COLOR(FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_INTENSITY)
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LogBug, "Bug: " + log); 
+    defLogger()->printImplementation(LogBug, log); 
 }
 //------------------------------------------------------------------------------
 void Log::logSystemInfo()
