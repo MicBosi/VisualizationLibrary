@@ -141,7 +141,7 @@ public:
         t = 1;
         mTimer.stop();
       }
-      t = smoothstep(0, 1, t);
+      t = smoothstep(0.0f, 1.0f, t);
       mat4 m = mat4::getRotation( mRot0*(1.0f-t) + mRot1*t, 0, 1, 0 );
       rendering()->as<Rendering>()->transform()->setLocalMatrix(m);
     }

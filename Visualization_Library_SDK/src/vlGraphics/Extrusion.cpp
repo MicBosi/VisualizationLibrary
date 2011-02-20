@@ -65,7 +65,7 @@ ref<Geometry> Extrusion::extrude()
 
   ref<Geometry> geom = new Geometry;
 
-  int segments = positionPath().size()-2;
+  size_t segments = positionPath().size()-2;
 
   std::vector<fvec3> verts;
   verts.resize( silhouette().size() * segments );
@@ -160,7 +160,7 @@ ref<Geometry> Extrusion::extrude()
 
   if(fillBottom())
   {
-    unsigned start = verts.size();
+    size_t start = verts.size();
     Tessellator tessellator;
     tessellator.contours().push_back((int)silhouette().size());
     for(unsigned i=0; i<silhouette().size(); ++i)
@@ -175,7 +175,7 @@ ref<Geometry> Extrusion::extrude()
   }
   if(fillTop())
   {
-    unsigned start = verts.size();
+    size_t start = verts.size();
     Tessellator tessellator;
     tessellator.contours().push_back(silhouette().size());
     for(unsigned i=0; i<silhouette().size(); ++i)
