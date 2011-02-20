@@ -63,9 +63,55 @@ namespace
       SetConsoleTextAttribute(hConsole,screen_info.wAttributes);  
     }
   };
-  #define SET_TEXT_COLOR(color) ScopedColor set_scoped_color(color);
+  #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
+  #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_INTENSITY);
+  #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
 #else
-  #define SET_TEXT_COLOR(color) ScopedColor(color);
+  struct ScopedColor
+  {
+    ScopedColor(const char* color)
+    {
+      //30 black foreground
+      //31 red foreground
+      //32 green foreground
+      //33 brown foreground
+      //34 blue foreground
+      //35 magenta (purple) foreground
+      //36 cyan (light blue) foreground
+      //37 gray foreground
+
+      //40 black background
+      //41 red background
+      //42 green background
+      //43 brown background
+      //44 blue background
+      //45 magenta background
+      //46 cyan background
+      //47 white background
+
+      //0 reset all attributes to their defaults
+      //1 set bold
+      //5 set blink
+      //7 set reverse video
+      //22 set normal intensity
+      //25 blink off
+      //27 reverse video off
+      
+      // example: 
+      // "\033[34mThis is blue.\033[0m"
+      // "\033[45;37mGrey on purple.\033[0m"
+
+      printf(color);
+    }
+    ~ScopedColor()
+    {
+      // restore normal color
+      printf("\033[0m");
+    }
+  };
+  #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color("\033[33m");
+  #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color("\033[31m");
+  #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color("\033[35m");
 #endif
 }
 
@@ -92,21 +138,21 @@ void Log::info(const String& log)
 //-----------------------------------------------------------------------------
 void Log::warning(const String& log) 
 { 
-  SET_TEXT_COLOR(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY)
+  SET_TEXT_COLOR_YELLOW()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
     defLogger()->printImplementation(LogWarning, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::error(const String& log) 
 { 
-  SET_TEXT_COLOR(FOREGROUND_RED|FOREGROUND_INTENSITY)
+  SET_TEXT_COLOR_RED()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
     defLogger()->printImplementation(LogError, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::bug(const String& log) 
 { 
-  SET_TEXT_COLOR(FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_INTENSITY)
+  SET_TEXT_COLOR_PURPLE()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
     defLogger()->printImplementation(LogBug, log); 
 }
