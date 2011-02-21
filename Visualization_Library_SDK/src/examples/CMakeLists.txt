@@ -51,6 +51,17 @@ if(${CMAKE_SYSTEM} MATCHES "Darwin")
 endif()
 
 if(GUI_WIN32_EXAMPLES)
+	# Direct
+	add_executable(Win32_direct WIN32 Win32_direct.cpp)
+	target_link_libraries(
+		Win32_direct
+		${VLWIN32_NAME}
+		${VLGRAPHICS_NAME} ${VLCORE_NAME}
+		${OPENGL_LIBRARIES}
+		${VLFREETYPE_NAME} #FreeTypeLibrary
+		${VL_MODULE_LIBRARIES}
+		${VLZLIB_NAME} #ZLibLibrary
+	)
 	# Example
 	add_executable(Win32_example WIN32 Win32_example.cpp Applets/App_RotatingCube.hpp)
 	target_link_libraries(
