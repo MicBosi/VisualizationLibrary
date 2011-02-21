@@ -766,6 +766,44 @@ namespace vl
                   round(a.w()) );
   }
 
+  // --------------- modf ---------------
+
+  inline
+  float modf(float a, float& intpart) {
+    #if defined(_MSC_VER)
+      return ::modf(a,&intpart);
+    #else
+      double dintpart = intpart;
+      float r = (float)::modf((double)a,&dintpart);
+      intpart = (float)dintpart;
+      return r;
+    #endif
+  }
+
+  inline
+  double modf(double a, double& intpart) { return ::modf(a,&intpart); }
+
+  template<typename T>
+  Vector2<T> modf(const Vector2<T>& a, Vector2<T>& intpart) {
+    return Vector2<T>( modf(a.x(), intpart.x()),
+                  modf(a.y(), intpart.y()) );
+  }
+
+  template<typename T>
+  Vector3<T> modf(const Vector3<T>& a, Vector3<T>& intpart) {
+    return Vector3<T>( modf(a.x(), intpart.x()),
+                  modf(a.y(), intpart.y()),
+                  modf(a.z(), intpart.z()) );
+  }
+
+  template<typename T>
+  Vector4<T> modf(const Vector4<T>& a, Vector4<T>& intpart) {
+    return Vector4<T>( modf(a.x(), intpart.x()),
+                  modf(a.y(), intpart.y()),
+                  modf(a.z(), intpart.z()),
+                  modf(a.w(), intpart.w()) );
+  }
+
   // --------------- roundEven ---------------
 
   inline 
@@ -776,10 +814,10 @@ namespace vl
     else
     {
       float intpart;
-      modf( a, intpart );
+      vl::modf( a, intpart );
 
       // 0.5 case
-      if ((a -(intpart + 0.5)) < epsilon)
+      if ((a -(intpart + 0.5f)) < epsilon)
       {
         // is even
         if (::fmod(intpart, 2) < epsilon)
@@ -802,7 +840,7 @@ namespace vl
     else
     {
       double intpart;
-      modf( a, intpart );
+      vl::modf( a, intpart );
 
       // 0.5 case
       if ((a -(intpart + 0.5)) < epsilon)
@@ -903,46 +941,6 @@ namespace vl
 
   template<typename T>
   Vector4<T> mod(const Vector4<T>& a, const Vector4<T>& b) { return a - b * floor(a/b); }
-
-  // --------------- modf ---------------
-
-  inline 
-  float modf(float a, float& intpart) {
-    #if defined(_MSC_VER)
-      return ::modf(a,&intpart);
-    #else
-      double dintpart = intpart;
-      float r = (float)::modf((double)a,&dintpart);
-      intpart = (float)dintpart;
-      return r;
-    #endif
-  }
-
-  // ...................................
-
-  template<typename T>
-  T modf(T a, T& intpart) { return ::modf(a, &intpart); }
-
-  template<typename T>
-  Vector2<T> modf(const Vector2<T>& a, Vector2<T>& intpart) {
-    return Vector2<T>( modf(a.x(), intpart.x()),
-                  modf(a.y(), intpart.y()) );
-  }
-
-  template<typename T>
-  Vector3<T> modf(const Vector3<T>& a, Vector3<T>& intpart) {
-    return Vector3<T>( modf(a.x(), intpart.x()),
-                  modf(a.y(), intpart.y()),
-                  modf(a.z(), intpart.z()) );
-  }
-
-  template<typename T>
-  Vector4<T> modf(const Vector4<T>& a, Vector4<T>& intpart) {
-    return Vector4<T>( modf(a.x(), intpart.x()),
-                  modf(a.y(), intpart.y()),
-                  modf(a.z(), intpart.z()),
-                  modf(a.w(), intpart.w()) );
-  }
 
   // --------------- mix ---------------
 
@@ -1181,7 +1179,7 @@ namespace vl
     if (k < 0)
       return Vector2<T>(0,0);
     else
-      return eta * I - (eta * dot(N, I) + ::sqrt(k)) * N;
+      return eta * I - N * (eta * dot(N, I) + ::sqrt(k));
   }
 
   template<typename T>
@@ -1191,7 +1189,7 @@ namespace vl
     if (k < 0)
       return Vector3<T>(0,0,0);
     else
-      return eta * I - (eta * dot(N, I) + ::sqrt(k)) * N;
+      return eta * I - N * (eta * dot(N, I) + ::sqrt(k));
   }
 
   template<typename T>
@@ -1201,7 +1199,7 @@ namespace vl
     if (k < 0)
       return Vector4<T>(0,0,0,0);
     else
-      return eta * I - (eta * dot(N, I) + ::sqrt(k)) * N;
+      return eta * I - N * (eta * dot(N, I) + ::sqrt(k));
   }
 
   // --------------- matrix functions ---------------
