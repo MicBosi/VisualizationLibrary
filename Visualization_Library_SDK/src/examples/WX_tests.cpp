@@ -56,7 +56,7 @@ public:
 
   void runGUI(const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat /*format*/, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
-    program->setApplicationName(title);
+    program->setAppletName(title);
 
     /* open a console so we can see the program's output on stdout */
     vl::showWin32Console();

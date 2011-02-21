@@ -34,6 +34,9 @@
 
 #include <vlCore/config.hpp>
 #include <cassert>
+#if defined(__GNUG__) || defined(__MINGW32__) 
+#include <cstdio>
+#endif
 
 namespace vl
 {
@@ -49,7 +52,7 @@ namespace vl
       #define VL_TRAP() __debugbreak(); /*{ __asm {int 3} }*/
     // GNU GCC
     #elif defined(__GNUG__) || defined(__MINGW32__) 
-      #define VL_TRAP() { asm("int $0x3"); }
+      #define VL_TRAP() { fflush(stdout); fflush(stderr); asm("int $0x3"); }
     // Others: fixme?
     #else 
       #define VL_TRAP() {}

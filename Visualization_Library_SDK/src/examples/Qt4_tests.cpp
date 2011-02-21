@@ -46,7 +46,7 @@ public:
   void runGUI(const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     /* used to display the application title next to FPS counter */
-    applet->setApplicationName(title);
+    applet->setAppletName(title);
 
     /* open a console so we can see the applet's output on stdout */
     showWin32Console();

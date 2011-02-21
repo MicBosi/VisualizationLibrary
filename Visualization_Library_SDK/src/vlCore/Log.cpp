@@ -111,7 +111,7 @@ namespace
   };
   #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color("\033[1;33m");
   #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color("\033[31m");
-  #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color("\033[1:35m");
+  #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color("\033[1;31m");
 #endif
 }
 
