@@ -41,7 +41,7 @@ using namespace vlWin32;
 class TestBatteryWin32: public TestBattery
 {
 public:
-  void runGUI(const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void runGUI(const String& title, BaseDemo* applet, OpenGLContextFormat format, int x, int y, int width, int height, fvec4 bk_color, vec3 eye, vec3 center)
   {
     /* used to display the application title next to FPS counter */
     applet->setAppletName(title);
@@ -50,10 +50,10 @@ public:
     showWin32Console();
 
     /* init Visualization Library */
-    vl::VisualizationLibrary::init();
+    VisualizationLibrary::init();
 
     /* create a native Win32 window */
-    vl::ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
+    ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
 
     setupApplet(applet, win32_window.get(), bk_color, eye, center);
 
@@ -81,7 +81,7 @@ public:
     win32_window = NULL;
 
     /* shutdown Visualization Library */
-    vl::VisualizationLibrary::shutdown();
+    VisualizationLibrary::shutdown();
   }
 };
 //-----------------------------------------------------------------------------
@@ -96,7 +96,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
     test = parms[0].toInt();
 
   /* setup the OpenGL context format */
-  vl::OpenGLContextFormat format;
+  OpenGLContextFormat format;
   format.setDoubleBuffer(true);
   format.setRGBABits( 8, 8, 8, 0 );
   format.setDepthBufferBits(24);

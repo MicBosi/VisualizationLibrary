@@ -58,7 +58,6 @@ void Applet::initialize()
   // if the user didn't provide one use the one installed by default
   ref<Rendering> rend = rendering()->as<Rendering>() ? rendering()->as<Rendering>() : new Rendering;
   setRendering(rend.get());
-  rend->setShaderAnimationEnabled(true);
 
   // installs a SceneManagerActorTree as the default scene manager
   mSceneManagerActorTree = new SceneManagerActorTree;
