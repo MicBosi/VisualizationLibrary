@@ -623,19 +623,19 @@ void TexParameter::apply(ETextureDimension dimension) const
   if (wrapS() == GL_MIRRORED_REPEAT || wrapT() == GL_MIRRORED_REPEAT || wrapR() == GL_MIRRORED_REPEAT)
   {
     if( !(GLEW_VERSION_1_4 || GLEW_ARB_texture_mirrored_repeat || GLEW_IBM_texture_mirrored_repeat) )
-      Log::error("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n");
+      Log::bug("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n");
   }
 
   if (wrapS() == GL_CLAMP_TO_EDGE || wrapT() == GL_CLAMP_TO_EDGE || wrapR() == GL_CLAMP_TO_EDGE)
   {
     if( !(GLEW_VERSION_1_2 || GLEW_EXT_texture_edge_clamp || GLEW_SGIS_texture_edge_clamp) )
-      Log::error("GL_CLAMP_TO_EDGE not supported by your OpenGL implementation.\n");
+      Log::bug("GL_CLAMP_TO_EDGE not supported by your OpenGL implementation.\n");
   }
 
   if (wrapS() == GL_CLAMP_TO_BORDER || wrapT() == GL_CLAMP_TO_BORDER || wrapR() == GL_CLAMP_TO_BORDER)
   {
     if( !(GLEW_VERSION_1_3 || GLEW_ARB_texture_border_clamp || GLEW_SGIS_texture_border_clamp) )
-      Log::error("GL_CLAMP_TO_BORDER not supported by your OpenGL implementation.\n");
+      Log::bug("GL_CLAMP_TO_BORDER not supported by your OpenGL implementation.\n");
   }
 #endif
 
@@ -691,7 +691,7 @@ namespace
 
     if (unit > max_texture-1)
     {
-      Log::error( Say("%s error: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << str << unit << max_texture-1 );
+      Log::bug( Say("%s error: texture unit index #%n not supported by this OpenGL implementation. Max texture unit index is %n.\n") << str << unit << max_texture-1 );
       return false;
     }
 
@@ -955,7 +955,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
   {
     if( !hasTexture() )
     {
-      Log::error( Say("TextureUnit::apply() error: null texture! (%s) \n") << texture()->objectName() );
+      Log::bug( Say("TextureUnit::apply() error: null texture! (%s) \n") << texture()->objectName() );
       VL_TRAP();
       return;
     }

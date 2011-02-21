@@ -142,7 +142,7 @@ ref<Geometry> Extrusion::extrude()
   ref<DrawElementsUInt> de = new DrawElementsUInt(PT_QUADS);
   geom->drawCalls()->push_back(de.get());
   de->indices()->resize(4 * prof_count * (segments-1));
-  for(int iseg=0; iseg<segments-1; ++iseg)
+  for(size_t iseg=0; iseg<segments-1; ++iseg)
   {
     for(int iquad=0; iquad<prof_count; ++iquad)
     {
@@ -199,7 +199,7 @@ ref<Geometry> Extrusion::extrude()
     geom->setColorArray(col_array.get());
     col_array->resize(geom->vertexArray()->size());
     int offs = 0;
-    for(int iseg=0; iseg<segments; ++iseg)
+    for(size_t iseg=0; iseg<segments; ++iseg)
     {
       for(unsigned j=0; j<silhouette().size(); ++j, ++offs)
         col_array->at(offs) = colorPath()[iseg];
