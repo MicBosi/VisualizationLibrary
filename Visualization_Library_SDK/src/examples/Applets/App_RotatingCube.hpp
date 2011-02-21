@@ -87,7 +87,6 @@ public:
 protected:
   vl::ref<vl::Transform> mCubeTransform;
 };
-
 // Have fun!
 
 #endif
