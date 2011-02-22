@@ -499,8 +499,11 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = dox ../src/vlCore ../src/vlGraphics ../src/vlVG ../src/vlVolume ../src/vlMolecule \
-                             ../src/vlWin32 ../src/vlMFC ../src/vlQt4 ../src/vlWX ../src/vlGLUT ../src/vlSDL ../src/vlCocoa
+INPUT = dox ../VL_SDK_SRC/src/vlCore ../VL_SDK_SRC/src/vlGraphics ../VL_SDK_SRC/src/vlVG 
+            ../VL_SDK_SRC/src/vlVolume ../VL_SDK_SRC/src/vlMolecule \
+            ../VL_SDK_SRC/src/vlWin32 ../VL_SDK_SRC/src/vlMFC ../VL_SDK_SRC/src/vlQt4 \
+            ../VL_SDK_SRC/src/vlWX ../VL_SDK_SRC/src/vlGLUT ../VL_SDK_SRC/src/vlSDL \
+            ../VL_SDK_SRC/src/vlCocoa
 
 # This tag can be used to specify the character encoding of the source files that 
 # doxygen parses. Internally doxygen uses the UTF-8 encoding, which is also the default 
@@ -528,7 +531,7 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a 
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = ../src/vl/SignalSlotX.hpp ../src/vl/SignalSlot.hpp
+EXCLUDE                = ../VL_SDK_SRC/src/vl/SignalSlotX.hpp ../VL_SDK_SRC/src/vl/SignalSlot.hpp
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
@@ -555,7 +558,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = ../src/examples ../data/glsl
+EXAMPLE_PATH           = ../VL_SDK_SRC/src/examples ../VL_SDK_SRC/data/glsl
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
