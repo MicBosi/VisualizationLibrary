@@ -363,7 +363,7 @@ endif()
 
 add_subdirectory("src/examples")
 
-add_subdirectory("docs")
+#add_subdirectory("docs")
 add_subdirectory("src/examples/Applets")
 
 #install(FILES "bin/Win32_Tests.bat" DESTINATION bin)
