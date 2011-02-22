@@ -150,8 +150,11 @@ namespace vl
     /** The camera's reference frame matrix, the inverse of the view matrix. */
     const mat4& inverseViewMatrix() const { return mInverseViewMatrix; }
 
-    /** The camera's projection matrix. */
-    void setProjectionMatrix(const mat4& mat) { mProjectionMatrix = mat; }
+    /** 
+     * The camera's projection matrix.
+     * \note This function sets the fov, near clipping plane and far clipping plane to -1.
+     */
+    void setProjectionMatrix(const mat4& mat) { mProjectionMatrix = mat;  mFOV = mNearPlane = mFarPlane  = -1; }
 
     /** The camera's projection matrix. */
     const mat4& projectionMatrix() const { return mProjectionMatrix; }
