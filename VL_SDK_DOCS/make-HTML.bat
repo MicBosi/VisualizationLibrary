@@ -1,9 +1,9 @@
-mkdir Visualization_Library_Docs
-mkdir Visualization_Library_Docs\gallery
-mkdir Visualization_Library_Docs\gallery_small
-mkdir Visualization_Library_Docs\highslide
+mkdir VL_SDK_DOCS
+mkdir VL_SDK_DOCS\gallery
+mkdir VL_SDK_DOCS\gallery_small
+mkdir VL_SDK_DOCS\highslide
 
-xcopy highslide\* Visualization_Library_Docs\highslide /Y /S
-xcopy gallery\* Visualization_Library_Docs\gallery /Y /S
-xcopy gallery_small\* Visualization_Library_Docs\gallery_small /Y /S
+xcopy highslide\* VL_SDK_DOCS\highslide /Y /S
+xcopy gallery\* VL_SDK_DOCS\gallery /Y /S
+xcopy gallery_small\* VL_SDK_DOCS\gallery_small /Y /S
 doxygen.exe
