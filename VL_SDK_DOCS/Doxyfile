@@ -698,7 +698,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = Visualization_Library_Docs
+HTML_OUTPUT            = VL_SDK_DOCS
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for 
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank 
@@ -753,7 +753,7 @@ HTML_DYNAMIC_SECTIONS  = NO
 # can add a path in front of the file if the result should not be 
 # written to the html output directory.
 
-CHM_FILE               = ../Visualization_Library_Docs.chm
+CHM_FILE               = ../VL_SDK_DOCS.chm
 
 # If the GENERATE_HTMLHELP tag is set to YES, the HHC_LOCATION tag can 
 # be used to specify the location (absolute path including file name) of 
