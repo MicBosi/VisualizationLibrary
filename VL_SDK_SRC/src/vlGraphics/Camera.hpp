@@ -69,8 +69,6 @@ namespace vl
     are respectively set to nearPlane() and farPlane(). */
     void computeFrustumPlanes();
 
-    //! \todo mic fixme: these three go in OpenGLContext.
-
     /** Loads the GL_MODELVIEW matrix with the Camera's view matrix multiplied by the specified model matrix. */
     void applyModelViewMatrix(const mat4& model_matrix) const;
 
