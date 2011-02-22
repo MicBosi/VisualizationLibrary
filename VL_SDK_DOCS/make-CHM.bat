@@ -1,2 +1,2 @@
-hhc .\Visualization_Library_DOCS\index.hhp
+hhc .\VL_SDK_DOCS\index.hhp
 pause
