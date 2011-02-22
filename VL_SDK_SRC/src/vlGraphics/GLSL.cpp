@@ -57,21 +57,37 @@ GLSLShader::~GLSLShader()
   deleteShader();
 }
 //-----------------------------------------------------------------------------
-void GLSLShader::setSource( const std::string& source )
-{
-  mCompiled = false;
-  mSource = source;
-}
-//-----------------------------------------------------------------------------
 void GLSLShader::setSource( const String& source )
 {
+  std::string new_src = "ERROR";
+
   if (vl::locateFile(source))
   {
-    setSource(vl::String::loadText(source).toStdString());
+    new_src = vl::String::loadText(source).toStdString();
     setObjectName( source.toStdString() );
   }
   else
-    setSource( source.toStdString() );
+  {
+    int cn = source.count('\n');
+    int cr = source.count('\r');
+    int cf = source.count('\f');
+    int line_count = vl::max( vl::max( cn, cr ), cf );
+    if(line_count == 0)
+    {
+      Log::error("GLSLShader::setSource('" + source + "') error: file not found!\n");
+      mSource = "";
+      VL_TRAP();
+    }
+    else
+      new_src = source.toStdString();
+  }
+  
+  // update only if the source is actually different
+  if (new_src != "ERROR" && new_src != mSource)
+  {
+    mSource = new_src;
+    mCompiled = false;
+  }
 }
 //-----------------------------------------------------------------------------
 bool GLSLShader::compile()
@@ -80,6 +96,13 @@ bool GLSLShader::compile()
   VL_CHECK( GLEW_Has_Shading_Language_20 )
   if( !GLEW_Has_Shading_Language_20 )
     return false;
+
+  if (mSource.empty())
+  {
+    Log::error("GLSLShader::compile() failed: shader source is empty!\n");
+    VL_TRAP();
+    return false;
+  }
 
   if (!mCompiled)
   {
@@ -262,7 +285,6 @@ bool GLSLProgram::attachShader(GLSLShader* shader)
   }
 
   VL_CHECK_OGL();
-  VL_TRAP()
   return false;
 
 }
@@ -611,11 +633,15 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
       // Check the following:
       // (1) Is the uniform variable declared but not used in your GLSL program?
       // (2) Double-check the spelling of the uniform variable name.
-      vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
-                              "Is the uniform variable declared but not used in your GLSL program?\n"
-                              "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
-      VL_TRAP();
-      return false;
+      vl::Log::warning( vl::Say(
+        "warning:\n"
+        "GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
+        "Is the uniform variable declared but not used in your GLSL program?\n"
+        "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
+
+      // VL_TRAP();
+      // return false;
+      continue;
     }
 
     // finally transmits the uniform
