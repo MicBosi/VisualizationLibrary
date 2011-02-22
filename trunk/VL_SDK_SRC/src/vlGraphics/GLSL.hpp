@@ -59,9 +59,6 @@ namespace vl
     EShaderType type() const { return mType; }
 
     //! Sets the sources for this shader and schedules a recompilation for it
-    void setSource( const std::string& source );
-
-    //! Sets the sources for this shader and schedules a recompilation for it
     void setSource( const String& source );
     
     //! Returns the sources for this shader
