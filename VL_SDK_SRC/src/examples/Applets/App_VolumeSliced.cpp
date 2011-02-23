@@ -70,7 +70,7 @@ public:
     BaseDemo::initEvent();
 
     // variable preconditions
-    USE_GLSL &= GLEW_VERSION_2_0 || GLEW_VERSION_3_0 || GLEW_VERSION_4_0;
+    USE_GLSL &= GLEW_Has_Shading_Language_20;
     DYNAMIC_LIGHTS &= USE_GLSL;
     COLORED_LIGHTS &= DYNAMIC_LIGHTS;
     PRECOMPUTE_GRADIENT &= USE_GLSL;
