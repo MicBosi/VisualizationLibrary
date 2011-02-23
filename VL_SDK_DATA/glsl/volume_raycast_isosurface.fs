@@ -5,7 +5,6 @@ varying vec3 frag_position;  // in object space
 uniform sampler3D volume_texunit;
 uniform sampler3D gradient_texunit;
 uniform sampler1D trfunc_texunit;
-uniform float trfunc_delta;
 uniform vec3 light_position[4]; // light positions in object space
 uniform bool light_enable[4];   // light enable flags
 uniform vec3 eye_position;      // camera position in object space
@@ -45,9 +44,7 @@ vec4 computeFragColor(vec3 iso_pos)
 	// compute lighting at isosurface point
 	float val = texture3D(volume_texunit, iso_pos).r;
 
-	// to properly sample the texture clamp bewteen trfunc_delta...1.0-trfunc_delta
-	float clamped_val = trfunc_delta+(1.0-2.0*trfunc_delta)*val;
-	vec4 color = texture1D(trfunc_texunit, clamped_val);
+	vec4 color = texture1D(trfunc_texunit, val);
 	vec3 color_tmp;
 
 	// compute the gradient and lighting only if the pixel is visible "enough"
