@@ -4,7 +4,6 @@ varying vec3 frag_position;  // in object space
 
 uniform sampler3D volume_texunit;
 uniform sampler1D trfunc_texunit;
-uniform float trfunc_delta;
 uniform vec3 eye_position;      // camera position in object space
 uniform float sample_step;      // step used to advance the sampling ray
 uniform float val_threshold;
@@ -38,9 +37,7 @@ void main(void)
 
 	if (max_val >= val_threshold)
 	{
-		// to properly sample the texture clamp bewteen trfunc_delta...1.0-trfunc_delta
-		float clamped_val = trfunc_delta+(1.0-2.0*trfunc_delta)*max_val;
-		gl_FragColor = texture1D(trfunc_texunit, clamped_val);
+		gl_FragColor = texture1D(trfunc_texunit, max_val);
 	}
 	else
 	{
