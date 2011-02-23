@@ -266,7 +266,7 @@ void RaycastVolume::setBox(const AABB& box)
 /* ----- sliced volume visualization settings ----- */
 
 /* volume visualization mode */
-static enum { Isosurface_Mode, Isosurface_Transp_Mode, MIP_Mode } MODE = Isosurface_Mode;
+static enum { Isosurface_Mode, Isosurface_Transp_Mode, MIP_Mode, Normal_Mode } MODE = Normal_Mode;
 
 /* If enabled, renders the volume using 3 animated lights. */
 static bool DYNAMIC_LIGHTS = false;
@@ -281,7 +281,7 @@ static bool PRECOMPUTE_GRADIENT = false;
 
 /* The sample step used to render the volume, the smaller the number the better
   (and slower) the rendering will be. */
-static const float SAMPLE_STEP = 1.0f / 520.0f;
+static const float SAMPLE_STEP = 1.0f / 512.0f;
 
 /* Our applet used to render and interact with the volume. */
 class App_VolumeRaycast: public BaseDemo
@@ -293,7 +293,7 @@ public:
   {
     BaseDemo::initEvent();
 
-    if (!(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
+    if (!GLEW_Has_Shading_Language_20)
     {
       vl::Log::error("OpenGL Shading Language not supported.\n");
       vl::Time::sleep(3000);
@@ -308,20 +308,20 @@ public:
     mLight1 = new Light(1);
     mLight2 = new Light(2);
 
-    // you can color the lights!
-    if (DYNAMIC_LIGHTS && COLORED_LIGHTS)
-    {
-      mLight0->setAmbient(fvec4(0.1f, 0.1f, 0.1f, 1.0f));
-      mLight1->setAmbient(fvec4(0.0f, 0.0f, 0.0f, 1.0f));
-      mLight2->setAmbient(fvec4(0.0f, 0.0f, 0.0f, 1.0f));
-      mLight0->setDiffuse(vl::gold);
-      mLight1->setDiffuse(vl::green);
-      mLight2->setDiffuse(vl::royalblue);
-    }
-
     // light bulbs
     if (DYNAMIC_LIGHTS)
     {
+      // you can color the lights!
+      if (COLORED_LIGHTS)
+      {
+        mLight0->setAmbient(fvec4(0.1f, 0.1f, 0.1f, 1.0f));
+        mLight1->setAmbient(fvec4(0.0f, 0.0f, 0.0f, 1.0f));
+        mLight2->setAmbient(fvec4(0.0f, 0.0f, 0.0f, 1.0f));
+        mLight0->setDiffuse(vl::gold);
+        mLight1->setDiffuse(vl::green);
+        mLight2->setDiffuse(vl::royalblue);
+      }
+
       mLight0Tr = new Transform;
       mLight1Tr = new Transform;
       mLight2Tr = new Transform;
@@ -343,7 +343,15 @@ public:
     ref<Effect> vol_fx = new Effect;
     vol_fx->shader()->enable(EN_CULL_FACE);
     vol_fx->shader()->enable(EN_DEPTH_TEST);
-    vol_fx->shader()->enable(EN_BLEND);
+    // vol_fx->shader()->enable(EN_BLEND); // this depends on you
+
+    // mic fixme
+    if (MODE == Normal_Mode)
+    {
+      vol_fx->shader()->enable(vl::EN_CULL_FACE);
+      vol_fx->shader()->gocCullFace()->set(vl::PF_FRONT);
+    }
+
     vol_fx->shader()->setRenderState( mLight0.get() );
     // add the other lights only if dynamic lights have to be displayed
     if (DYNAMIC_LIGHTS)
@@ -364,6 +372,9 @@ public:
     else
     if (MODE == MIP_Mode)
       mGLSL->attachShader( new GLSLFragmentShader("/glsl/volume_raycast_mip.fs") );
+    else
+    if (MODE == Normal_Mode)
+      mGLSL->attachShader( new GLSLFragmentShader("/glsl/volume_raycast03.fs") );
 
     // transform and trackball setup
     mVolumeTr = new Transform;
@@ -402,8 +413,9 @@ public:
     effect->shader()->enable(EN_BLEND);
     sceneManager()->tree()->addActor(mBiasText.get(), effect.get());
 
-    // mic fixme: isosurface value, and other interpretation of it?
-    // bias uniform
+    // val_threshold: manipulate via mouse wheel
+    // for isosurface volume rendering this is the isosurface value
+    // for MIP volume rendering all the volume values less than this are discarded
     mVolumeAct->gocUniform("val_threshold")->setUniform(0.5f);
     mAlphaBias = mVolumeAct->getUniform("val_threshold");
 
@@ -472,6 +484,7 @@ public:
       if (COLORED_LIGHTS)
         trfunc = vl::makeColorSpectrum(128, vl::white, vl::white); // let the lights color the volume
       else
+        // trfunc = vl::makeColorSpectrum(128, vl::gray, vl::gray, vl::gray, vl::gray, vl::gray);
         trfunc = vl::makeColorSpectrum(128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson);
       // installs GLSLProgram
       vol_fx->shader()->setRenderState(mGLSL.get());
@@ -482,7 +495,6 @@ public:
       // installs the transfer function as texture #1
       vol_fx->shader()->gocTextureUnit(1)->setTexture( new Texture( trfunc.get() ) );
       vol_fx->shader()->gocUniform("trfunc_texunit")->setUniform(1);
-      vol_fx->shader()->gocUniform("trfunc_delta")->setUniform(0.5f/trfunc->width());
       // pre-computed gradient texture
       if (MODE == Isosurface_Mode || MODE == Isosurface_Transp_Mode)
       {
@@ -511,7 +523,6 @@ public:
       Log::error("Only IF_LUMINANCE volumes are supported.\n");
     }
 
-    mAlphaBias->setUniform(0.3f);
     updateText();
     openglContext()->update();
   }
@@ -570,7 +581,6 @@ public:
     ref<Actor> mVolumeAct;
     ref<vl::RaycastVolume> mRaycastVolume;
 };
-
 // Have fun!
 
 BaseDemo* Create_App_VolumeRaycast() { return new App_VolumeRaycast; }
