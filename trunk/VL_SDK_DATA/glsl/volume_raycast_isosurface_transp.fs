@@ -82,7 +82,8 @@ vec4 computeFragColor(vec3 iso_pos)
 
 void main(void)
 {
-	vec3 ray_dir = -normalize(frag_position - eye_position);
+	// NOTE: ray direction goes from eye_position to frag_position, i.e. front to back
+	vec3 ray_dir = normalize(frag_position - eye_position);
 	vec3 ray_pos = gl_TexCoord[0].xyz; // the current ray position
 	vec3 pos111 = vec3(1.0, 1.0, 1.0);
 	vec3 pos000 = vec3(0.0, 0.0, 0.0);

@@ -12,8 +12,9 @@ uniform float val_threshold;
 
 void main(void)
 {
-	const float brightness = 50;
-	vec3 ray_dir = -normalize(frag_position - eye_position);
+	const float brightness = 50.0;
+	// NOTE: ray direction goes from frag_position to eye_position, i.e. back to front
+	vec3 ray_dir = normalize(eye_position - frag_position);
 	vec3 ray_pos = gl_TexCoord[0].xyz; // the current ray position
 	vec3 pos111 = vec3(1.0, 1.0, 1.0);
 	vec3 pos000 = vec3(0.0, 0.0, 0.0);
