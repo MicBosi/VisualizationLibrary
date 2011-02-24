@@ -1,6 +1,6 @@
 /**************************************************************************************/
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  Copyright (c) 2005-2011, Michele Bosi.                                            */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  This file is part of Visualization Library                                        */
@@ -22,5 +22,4 @@ void main(void)
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	gl_Position = ftransform();
 }
-
 // Have fun!
