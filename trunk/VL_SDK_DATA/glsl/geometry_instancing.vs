@@ -1,3 +1,16 @@
+/**************************************************************************************/
+/*                                                                                    */
+/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  All rights reserved.                                                              */
+/*                                                                                    */
+/*  This file is part of Visualization Library                                        */
+/*  http://www.visualizationlibrary.com                                               */
+/*                                                                                    */
+/*  Released under the OSI approved Simplified BSD License                            */
+/*  http://www.opensource.org/licenses/bsd-license.php                                */
+/*                                                                                    */
+/**************************************************************************************/
+
 // #version 120
 #extension GL_ARB_draw_instanced: enable
 #extension GL_EXT_gpu_shader4: enable

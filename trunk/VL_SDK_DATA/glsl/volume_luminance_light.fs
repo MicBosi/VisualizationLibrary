@@ -1,3 +1,16 @@
+/**************************************************************************************/
+/*                                                                                    */
+/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  All rights reserved.                                                              */
+/*                                                                                    */
+/*  This file is part of Visualization Library                                        */
+/*  http://www.visualizationlibrary.com                                               */
+/*                                                                                    */
+/*  Released under the OSI approved Simplified BSD License                            */
+/*  http://www.opensource.org/licenses/bsd-license.php                                */
+/*                                                                                    */
+/**************************************************************************************/
+
 // This shader maps the volume value to the transfer function plus computes the
 // gradient and lighting on the fly. This shader is to be used with IF_LUMINANCE
 // image volumes.
