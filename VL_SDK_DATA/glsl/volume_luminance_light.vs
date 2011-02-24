@@ -1,3 +1,16 @@
+/**************************************************************************************/
+/*                                                                                    */
+/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  All rights reserved.                                                              */
+/*                                                                                    */
+/*  This file is part of Visualization Library                                        */
+/*  http://www.visualizationlibrary.com                                               */
+/*                                                                                    */
+/*  Released under the OSI approved Simplified BSD License                            */
+/*  http://www.opensource.org/licenses/bsd-license.php                                */
+/*                                                                                    */
+/**************************************************************************************/
+
 // Simply passes the vertex frag_position and texture coordinate to the fragment shader. 
 // It also passes the vertex coord in object space to perform per-pixel lighting.
 

@@ -1,3 +1,16 @@
+/**************************************************************************************/
+/*                                                                                    */
+/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  All rights reserved.                                                              */
+/*                                                                                    */
+/*  This file is part of Visualization Library                                        */
+/*  http://www.visualizationlibrary.com                                               */
+/*                                                                                    */
+/*  Released under the OSI approved Simplified BSD License                            */
+/*  http://www.opensource.org/licenses/bsd-license.php                                */
+/*                                                                                    */
+/**************************************************************************************/
+
 uniform sampler2D sampler0;
 uniform float image_width;
 uniform float image_height;
