@@ -1,0 +1,42 @@
+/**
+
+	\page pagGuideRaycastVolume GPU Raycast Volume Rendering with Transfer Functions and Lighting Tutorial
+
+	This tutorial demonstrates how to use the vl::RaycastVolume class to render a volume using various raycasting techniques such as Isosurface, MIP and density integration.
+	
+	<center>
+	<table border=0 cellspacing=0 cellpadding=5>
+	<tr>
+		<td> \image html pagGuideRaycastVolume_1.jpg </td>
+		<td> \image html pagGuideRaycastVolume_2.jpg </td>
+		<td> \image html pagGuideRaycastVolume_3.jpg </td>
+	</tr>
+	<tr>
+		<td> \image html pagGuideRaycastVolume_4.jpg </td>
+		<td> \image html pagGuideRaycastVolume_5.jpg </td>
+		<td> \image html pagGuideRaycastVolume_6.jpg </td>
+	</tr>
+	</table>
+	</center>
+	
+	The example below demonstrates how to use an arbitrary GLSL program and transfer function to render a volume. The fragment shader used
+	in this example is capable of computing the volume gradient and per-pixel lighting in real-time with up to 4 lights at the same time. 
+	It's also capable of taking advantage of a precomputed normal-texture to speedup the lighting computations. You can drag and drop in 
+	the window any supported volume data to	visualize it. The mouse wheel is used to modifies the rendering based on the specific technique.
+	
+	[From \p App_VolumeRaycast.cpp]
+	\dontinclude App_VolumeRaycast.cpp
+	\skip #include
+	\until // Have fun!
+
+	[From \p volume_luminance_light.vs]
+	\dontinclude volume_luminance_light.vs
+	\skip //
+	\until // Have fun!
+
+	[From \p volume_raycast01.fs]
+	\dontinclude volume_raycast01.fs
+	\skip //
+	\until // Have fun!
+
+*/

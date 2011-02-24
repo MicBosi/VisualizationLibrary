@@ -1,16 +1,10 @@
 /**
 
-	\page pagGuideSlicedVolume Volume Rendering with Transfer Functions and Lighting Tutorial
+	\page pagGuideSlicedVolume Sliced Volume Rendering with Transfer Functions and Lighting Tutorial
 
 	This tutorial demonstrates how to use the vl::SlicedVolume class to render a volume in various ways.
 	
 	<center>
-	<table border=0 cellspacing=0 cellpadding=5>
-	<tr>
-		<td> \image html pagGuideSlicedVolume.jpg </td>
-		<td> \image html pagGuideSlicedVolume_3.jpg </td>
-	</tr>
-	</table>
 	<table border=0 cellspacing=0 cellpadding=5>
 	<tr>
 		<td> \image html pagGuideSlicedVolume_1.jpg </td>
