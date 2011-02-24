@@ -36,17 +36,11 @@
 
 using namespace vl;
 
-/** \class SlicedVolume
+/** \class vl::SlicedVolume
  * A ActorEventCallback used to render a volume using viewport aligned slices.
  *
  * Pictures from: \ref pagGuideSlicedVolume tutorial.
  * <center>
- * <table border=0 cellspacing=0 cellpadding=5>
- * <tr>
- * 	<td> \image html pagGuideSlicedVolume.jpg </td>
- * 	<td> \image html pagGuideSlicedVolume_3.jpg </td>
- * </tr>
- * </table>
  * <table border=0 cellspacing=0 cellpadding=5>
  * <tr>
  * 	<td> \image html pagGuideSlicedVolume_1.jpg </td>
@@ -61,7 +55,7 @@ using namespace vl;
  * </table>
  * </center>
  *
- * Using the SlicedVolume class is very simple, see \a App_VolumeSliced.cpp for a practical example.
+ * Using the SlicedVolume class is very simple, see \ref pagGuideSlicedVolume for a complete example.
  *
  * Basically all SlicedVolume does is to compute the correct texture coordinates and generates on the fly N viewport
  * aligned slices, where N can be specified by the user with setSliceCount(). Such slices then can be rendered using
@@ -75,7 +69,10 @@ using namespace vl;
  * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
  * object space, useful to compute specular highlights etc.
  *
- * For a complete example see: \ref pagGuideSlicedVolume.
+ * \sa 
+ * - \ref pagGuideSlicedVolume
+ * - \ref pagGuideRaycastVolume
+ * - RaycastVolume
  */
 //-----------------------------------------------------------------------------
 //! Constructor.
