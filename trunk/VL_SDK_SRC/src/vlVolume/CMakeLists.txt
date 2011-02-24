@@ -35,6 +35,7 @@ PROJECT(${VLVOLUME_NAME})
 
 set(VLVOLUME_INC
   MarchingCubes.hpp
+  RaycastVolume.hpp
   SlicedVolume.hpp
   VolumePlot.hpp
   VolumeUtils.hpp
@@ -42,6 +43,7 @@ set(VLVOLUME_INC
 
 set(VLVOLUME_SRC
   MarchingCubes.cpp
+  RaycastVolume.cpp
   SlicedVolume.cpp
   VolumePlot.cpp
   VolumeUtils.cpp
