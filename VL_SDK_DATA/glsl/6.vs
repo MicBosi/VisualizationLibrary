@@ -1,6 +1,6 @@
 /**************************************************************************************/
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  Copyright (c) 2005-2011, Michele Bosi.                                            */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  This file is part of Visualization Library                                        */
@@ -11,7 +11,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-// #SHADER <6> specular light separate + fog
+/* specular light separate + fog */
+
 void main(void)
 {
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
