@@ -117,10 +117,10 @@
 	<table border=0 cellspacing=1 width=100% class="lightborder">
 	<tr>
 		<td width=100 align=left>
-			\image html pagGuideMarchingCubes_s.jpg
+			\image html pagGuideRaycastVolume_s.jpg
 		</td>
 		<td align=left>
-			\subpage pagGuideMarchingCubes "Volume Rendering and Isosurfaces Extraction with Marching Cubes Tutorial" (code and comments)
+			\subpage pagGuideRaycastVolume "GPU Raycast Volume Rendering with Transfer Functions and Lighting Tutorial" (code and comments)
 		</td>
 	</tr>
 	</table>
@@ -133,7 +133,20 @@
 			\image html pagGuideSlicedVolume_s.jpg
 		</td>
 		<td align=left>
-			\subpage pagGuideSlicedVolume "Volume Rendering with Transfer Functions and Lighting Tutorial" (code and comments)
+			\subpage pagGuideSlicedVolume "Sliced Volume Rendering with Transfer Functions and Lighting Tutorial" (code and comments)
+		</td>
+	</tr>
+	</table>
+ 
+****************************************************************************************
+
+	<table border=0 cellspacing=1 width=100% class="lightborder">
+	<tr>
+		<td width=100 align=left>
+			\image html pagGuideMarchingCubes_s.jpg
+		</td>
+		<td align=left>
+			\subpage pagGuideMarchingCubes "Volume Rendering and Isosurfaces Extraction with Marching Cubes Tutorial" (code and comments)
 		</td>
 	</tr>
 	</table>
