@@ -1,6 +1,6 @@
 /**************************************************************************************/
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  Copyright (c) 2005-2011, Michele Bosi.                                            */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  This file is part of Visualization Library                                        */
@@ -11,10 +11,9 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#define LIGHTING_ALPHA_THRESHOLD 0.1
+/* raycast isosurface */
 
-varying vec3 frag_position;  // in object space
-
+varying vec3 frag_position;     // in object space
 uniform sampler3D volume_texunit;
 uniform sampler3D gradient_texunit;
 uniform sampler1D trfunc_texunit;
@@ -110,12 +109,11 @@ void main(void)
 	vec4 frag_color = vec4(0.0, 0.0, 0.0, 0.0);
 	do
 	{
-		// mic fixme: 
+		// note: 
 		// - ray_dir * sample_step can be precomputed
-		// - adjust sample step based on ray_dir to achieve planar ray-uniformity
-		// - adjust ray to deal with non-cubic volumes.
+		// - we assume the volume has a cube-like shape
+
 		prev_pos = ray_pos;
-		// ray_pos += ray_dir * adjusted_step;
 		ray_pos += ray_dir * sample_step;
 
 		// break out if ray reached the end of the cube.
@@ -138,5 +136,4 @@ void main(void)
 	
 	discard;
 }
-
 // Have fun!

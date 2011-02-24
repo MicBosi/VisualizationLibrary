@@ -1,6 +1,6 @@
 /**************************************************************************************/
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  Copyright (c) 2005-2011, Michele Bosi.                                            */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  This file is part of Visualization Library                                        */
@@ -11,10 +11,9 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#define LIGHTING_ALPHA_THRESHOLD 0.1
+/* raycast maximum intensity projection */
 
-varying vec3 frag_position;  // in object space
-
+varying vec3 frag_position;     // in object space
 uniform sampler3D volume_texunit;
 uniform sampler1D trfunc_texunit;
 uniform vec3 eye_position;      // camera position in object space
@@ -32,8 +31,10 @@ void main(void)
 	vec3 prev_pos = ray_pos;
 	do
 	{
-		// mic fixme: 
-		// - adjust ray to deal with non-cubic volumes.
+		// note: 
+		// - ray_dir * sample_step can be precomputed
+		// - we assume the volume has a cube-like shape
+
 		prev_pos = ray_pos;
 		ray_pos += ray_dir * sample_step;
 
@@ -57,5 +58,4 @@ void main(void)
 		discard;
 	}
 }
-
 // Have fun!

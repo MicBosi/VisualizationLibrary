@@ -1,6 +1,6 @@
 /**************************************************************************************/
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  Copyright (c) 2005-2011, Michele Bosi.                                            */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  This file is part of Visualization Library                                        */
@@ -15,10 +15,7 @@
 // gradient and lighting on the fly. This shader is to be used with IF_LUMINANCE
 // image volumes.
 
-#define LIGHTING_ALPHA_THRESHOLD 0.1
-
-varying vec3 frag_position;  // in object space
-
+varying vec3 frag_position;     // in object space
 uniform sampler3D volume_texunit;
 uniform sampler3D gradient_texunit;
 uniform sampler1D trfunc_texunit;
@@ -108,5 +105,4 @@ void main(void)
 
 	gl_FragColor = vec4(color_tmp,color.a);
 }
-
 // Have fun!

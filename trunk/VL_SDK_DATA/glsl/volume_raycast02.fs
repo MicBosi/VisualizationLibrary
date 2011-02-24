@@ -1,6 +1,6 @@
 /**************************************************************************************/
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi.                                            */
+/*  Copyright (c) 2005-2011, Michele Bosi.                                            */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  This file is part of Visualization Library                                        */
@@ -11,10 +11,9 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-// density control raycast example
+/* density control raycast example */
 
-varying vec3 frag_position;  // in object space
-
+varying vec3 frag_position;     // in object space
 uniform sampler3D volume_texunit;
 uniform sampler1D trfunc_texunit;
 uniform float trfunc_delta;
@@ -38,7 +37,7 @@ void main(void)
 	{
 		// note: 
 		// - ray_dir * sample_step can be precomputed
-		// - adjust ray to deal with non-cubic volumes.
+		// - we assume the volume has a cube-like shape
 
 		ray_pos += ray_dir * sample_step;
 
@@ -56,9 +55,6 @@ void main(void)
 		color.rgb = texture1D(trfunc_texunit, density).rgb;
 		color.a   = density * sample_step * brightness;
 		frag_color.rgb = frag_color.rgb * (1.0 - color.a) + color.rgb * color.a;
-		
-		// mic fixme: 
-		// the color accumulation should be mitigated according to the sample step.
 	}
 	while(true);
 
@@ -67,5 +63,4 @@ void main(void)
 	else
 		gl_FragColor = vec4(frag_color.rgb,1.0);
 }
-
 // Have fun!
