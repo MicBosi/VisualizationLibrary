@@ -128,7 +128,7 @@ bool GLSLShader::compile()
       mCompiled = true;
       #ifndef NDEBUG
       if (!infoLog().empty())
-        Log::info( Say("%s\n%s\n\n") << objectName().c_str() << infoLog() );
+        Log::warning( Say("%s\n%s\n\n") << objectName().c_str() << infoLog() );
       #endif
     }
     else
