@@ -36,7 +36,7 @@
 
 using namespace vl;
 
-/** \class SlicedVolume
+/** \class vl::SlicedVolume
  * A ActorEventCallback used to render a volume using viewport aligned slices.
  *
  * Pictures from: \ref pagGuideSlicedVolume tutorial.

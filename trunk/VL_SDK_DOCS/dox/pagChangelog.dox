@@ -1,8 +1,8 @@
-/**
+﻿/**
 
    \page pagChangelog Changelog
 
-	<div class="featuretitle">Visualization Library 2011.02.1131</div>
+	<div class="featuretitle">Visualization Library 2011.02.1133</div>
 	
 	- <b>API CHANGES</b>
 		- Visualization Library splitted into:
@@ -30,6 +30,7 @@
 			- addedListenerEvent() removedListenerEvent() substitute openglContextBoundEvent()
 			- enableEvent(bool) substitute prepareToReconnect()	
 		- Removed deprecated Cocoa bindings.
+	- <b>Raycast volume rendering: added vl::RaycastVolume class and App_VolumeRaycast.cpp demo and tutorial.</b>
 	- Added new tutorial on basic rendering application (Win32_direct.cpp)
 	- New vlMFC::MDIWindow to support MFC's MDI framework.
 	- <b>New MFC_MDI_example.cpp application demonstrating multiple VL windows in MFC application with MDI framework.</b>
