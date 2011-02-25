@@ -51,7 +51,7 @@ using namespace vl;
   - MIP_Mode
   - RaycastBrightnessControl_Mode
   - RaycastDensityControl_Mode
-  - RaycastColor_Mode
+  - RaycastColorControl_Mode
 
   Mouse wheel:
   - In Isosurface_Mode controls the iso-value of the isosurface
@@ -59,7 +59,7 @@ using namespace vl;
   - In MIP_Mode all the volume values less than this are discarded
   - In RaycastBrightnessControl_Mode controls the brightness of the voxels
   - In RaycastDensityControl_Mode controls the density of the voxels
-  - In RaycastColor_Mode controls the color-bias of the voxels
+  - In RaycastColorControl_Mode controls the color-bias of the voxels
 
   The Up/Down arrow keys are used to higher/lower the ray-advancement precision.
 
@@ -80,7 +80,7 @@ class App_VolumeRaycast: public BaseDemo
     MIP_Mode, 
     RaycastBrightnessControl_Mode,
     RaycastDensityControl_Mode,
-    RaycastColor_Mode
+    RaycastColorControl_Mode
   } MODE;
 
   /* If enabled, renders the volume using 3 animated lights. */
@@ -135,7 +135,7 @@ public:
     // - In MIP_Mode all the volume values less than this are discarded
     // - In RaycastBrightnessControl_Mode controls the brightness of the voxels
     // - In RaycastDensityControl_Mode controls the density of the voxels
-    // - In RaycastColor_Mode controls the color-bias of the voxels
+    // - In RaycastColorControl_Mode controls the color-bias of the voxels
     mValThreshold = new Uniform( "val_threshold" );
     mValThreshold->setUniform( 0.5f );
 
@@ -163,7 +163,7 @@ public:
     // NOTE
     // in these cases we render the back faces and raycast in back to front direction
     // in the other cases we render the front faces and raycast in front to back direction
-    if ( MODE == RaycastBrightnessControl_Mode || MODE == RaycastDensityControl_Mode || MODE == RaycastColor_Mode )
+    if ( MODE == RaycastBrightnessControl_Mode || MODE == RaycastDensityControl_Mode || MODE == RaycastColorControl_Mode )
     {
       volume_fx->shader()->enable( vl::EN_CULL_FACE );
       volume_fx->shader()->gocCullFace()->set( vl::PF_FRONT );
@@ -207,7 +207,7 @@ public:
     mGLSL = volume_fx->shader()->gocGLSLProgram();
     mGLSL->gocUniform( "sample_step" )->setUniform( SAMPLE_STEP );
     
-    // attach vertex shader
+    // attach vertex shader (common to all the raycasting techniques)
     mGLSL->attachShader( new GLSLVertexShader( "/glsl/volume_luminance_light.vs" ) );
     
     // attach fragment shader implementing the specific raycasting tecnique
@@ -226,7 +226,7 @@ public:
     if ( MODE == RaycastDensityControl_Mode )
       mGLSL->attachShader( new GLSLFragmentShader( "/glsl/volume_raycast02.fs" ) );
     else
-    if ( MODE == RaycastColor_Mode )
+    if ( MODE == RaycastColorControl_Mode )
       mGLSL->attachShader( new GLSLFragmentShader( "/glsl/volume_raycast03.fs" ) );
 
     // manipulate volume transform with the trackball
@@ -241,7 +241,7 @@ public:
     mVolumeAct->setUniform( mValThreshold.get() );
 
     // RaycastVolume will generate the actual actor's geometry upon setBox() invocation.
-    // The geometry generated is actually a simple box texturized with the 3D volume texture.
+    // The geometry generated is actually a simple box with 3D texture coordinates.
     mRaycastVolume = new vl::RaycastVolume;
     mRaycastVolume->bindActor( mVolumeAct.get() );
     AABB volume_box( vec3( -10,-10,-10 ), vec3( +10,+10,+10 ) );
@@ -296,7 +296,7 @@ public:
     volume_fx->shader()->gocTextureUnit( 1 )->setTexture( new Texture( trfunc.get() ) );
     volume_fx->shader()->gocUniform( "trfunc_texunit" )->setUniform( 1 );
     
-    // gradient computation
+    // gradient computation, only use for isosurface methods
     if ( MODE == Isosurface_Mode || MODE == Isosurface_Transp_Mode )
     {
       if ( PRECOMPUTE_GRADIENT )
@@ -323,6 +323,8 @@ public:
   /* load files drag&dropped in the window */
   void fileDroppedEvent( const std::vector<String>& files )
   {
+    mVolumeImage = NULL;
+
     if( files.size() == 1 ) // if there is one file load it directly
     {      
       if ( files[0].endsWith( ".dat" ) || files[0].endsWith( ".dds" ) )
@@ -332,7 +334,7 @@ public:
           setupVolume();
       }
     }
-    else // if there is more than one file load all the files and assemble a 3D image
+    else // if there is more than one file load and sort them and assemble a 3D image
     {      
       // sort files by their name
       std::vector<String> files_sorted = files;
@@ -358,16 +360,17 @@ public:
     String technique_name;
     switch(MODE)
     {
-      case Isosurface_Mode: technique_name = "raycast isosurface >"; break;
-      case Isosurface_Transp_Mode: technique_name = "< raycast transparent isosurface >"; break;
-      case MIP_Mode: technique_name = "< raycast maximum intensity projection >"; break;
+      case Isosurface_Mode: technique_name               = "raycast isosurface >"; break;
+      case Isosurface_Transp_Mode: technique_name        = "< raycast transparent isosurface >"; break;
+      case MIP_Mode: technique_name                      = "< raycast maximum intensity projection >"; break;
       case RaycastBrightnessControl_Mode: technique_name = "< raycast brightness control >"; break;
-      case RaycastDensityControl_Mode: technique_name = "< raycast density control >"; break;
-      case RaycastColor_Mode: technique_name = "< raycast color control"; break;
+      case RaycastDensityControl_Mode: technique_name    = "< raycast density control >"; break;
+      case RaycastColorControl_Mode: technique_name      = "< raycast color control"; break;
     };
-    float val_threshold = 0.0f;
+
+    float val_threshold = 0;
     mValThreshold->getUniform( &val_threshold );
-    mValThresholdText->setText( Say( "val_threshold = %n\nsample_step = 1.0 / %.0n\n%s" ) << val_threshold << 1.0f / SAMPLE_STEP << technique_name);
+    mValThresholdText->setText( Say( "val_threshold = %n\n" "sample_step = 1.0 / %.0n\n" "%s" ) << val_threshold << 1.0f / SAMPLE_STEP << technique_name);
   }
 
   void updateValThreshold( int val )
@@ -408,7 +411,7 @@ public:
   virtual void keyPressEvent(unsigned short, EKey key)
   {
     // left/right arrows change raycast technique
-    RaycastMode modes[] = { Isosurface_Mode, Isosurface_Transp_Mode, MIP_Mode, RaycastBrightnessControl_Mode, RaycastDensityControl_Mode, RaycastColor_Mode };
+    RaycastMode modes[] = { Isosurface_Mode, Isosurface_Transp_Mode, MIP_Mode, RaycastBrightnessControl_Mode, RaycastDensityControl_Mode, RaycastColorControl_Mode };
     int mode = MODE;
     if (key == vl::Key_Right)
       mode++;
