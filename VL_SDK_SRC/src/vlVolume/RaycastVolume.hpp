@@ -47,7 +47,7 @@ namespace vl
 
     void onActorDelete( Actor* ) {}
 
-    //! Binds a RaycastVolume to an Actor so that the RaycastVolume can generate the viewport aligned slices' geometry for the Actor as appropriate.
+    //! Binds a RaycastVolume to an Actor.
     void bindActor( Actor* );
 
     //! Updates the uniforms used by the GLSLProgram to render the volume each time the onActorRenderStarted() method is called.
@@ -59,7 +59,7 @@ namespace vl
     //! Returns the Geometry associated to a RaycastVolume and its bound Actor
     const Geometry* geometry() const { return mGeometry.get(); }
     
-    //! Defines the dimensions of the box enclosing the volume
+    //! Defines the dimensions of the box enclosing the volume and generates the actual geometry of the box to be rendered
     void setBox( const AABB& box );
     
     //! The dimensions of the box enclosing the volume

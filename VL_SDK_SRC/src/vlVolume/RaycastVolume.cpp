@@ -72,6 +72,11 @@ RaycastVolume::RaycastVolume()
   mVertCoord->resize( 8 );
   mGeometry->setVertexArray( mVertCoord.get() );
 
+  // install texture coords array
+  mTexCoord = new ArrayFloat3;
+  mTexCoord->resize( 8 );
+  mGeometry->setTexCoordArray( 0, mTexCoord.get() );
+
   // install index array
   ref<DrawElementsUInt> de = new DrawElementsUInt( PT_QUADS );
   mGeometry->drawCalls()->push_back( de.get() );
@@ -81,11 +86,6 @@ RaycastVolume::RaycastVolume()
   };
   de->indices()->resize( 4*6 );
   memcpy( de->indices()->ptr(), de_indices, sizeof( de_indices ) );
-
-  // install texture coords array
-  mTexCoord = new ArrayFloat3;
-  mTexCoord->resize( 8 );
-  mGeometry->setTexCoordArray( 0,mTexCoord.get() );
 
   // generate default texture coordinates
   fvec3 texc[] = 
@@ -100,16 +100,22 @@ RaycastVolume::RaycastVolume()
 }
 //-----------------------------------------------------------------------------
 /** Reimplement this method to update the uniform variables of your GLSL program before the volume is rendered.
- * By default updateUniforms() updates the position of up to 4 lights in object space. Such positions are stored in the
- * \p "uniform vec3 light_position[4]" variable.
- * The updateUniforms() method also fills the \p "uniform bool light_enable[4]" variable with a flag marking if the Nth 
- * light is active or not. These light values are computed based on the lights bound to the current Shader.
- * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
- * object space, useful to compute specular highlights, raycast direction etc. */
+ * - By default updateUniforms() updates the position of up to 4 lights in object space. Such positions are stored in the
+ *   \p "uniform vec3 light_position[4]" variable. The updateUniforms() method also fills the 
+ *   \p "uniform bool light_enable[4]" variable with a flag marking if the Nth light is active or not. 
+ *   These light values are computed based on the lights bound to the current Shader.
+ * - The \p "uniform vec3 eye_position" variable contains the camera position in object space, useful to compute 
+ *   specular highlights, raycast direction etc. 
+ * - The \p "uniform vec3 eye_look" variable contains the camera look vector in object space. */
 void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera* camera, vl::Renderable*, const vl::Shader* shader )
 {
   const GLSLProgram* glsl = shader->getGLSLProgram();
   VL_CHECK( glsl );
+
+  // used later
+  fmat4 inv_mat;
+  if (actor->transform())
+    inv_mat = ( fmat4 )actor->transform()->worldMatrix().getInverse();
 
   if ( glsl->getUniformLocation( "light_position" ) != -1 && glsl->getUniformLocation( "light_enable" ) != -1 )
   {
@@ -135,7 +141,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera*
 
         // light position in object space
         if ( actor->transform() )
-          light_position[i] = ( fmat4 )actor->transform()->worldMatrix().getInverse() * light_position[i];
+          light_position[i] = inv_mat * light_position[i];
       }
     }
 
@@ -151,7 +157,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera*
     fvec3 eye = ( fvec3 )camera->inverseViewMatrix().getT();
     // world to object space
     if ( actor->transform() )
-      eye = ( fmat4 )actor->transform()->worldMatrix().getInverse() * eye;
+      eye = inv_mat * eye;
     actor->gocUniform( "eye_position" )->setUniform( eye );
   }
 
@@ -164,7 +170,8 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera*
     // world to object space
     if ( actor->transform() )
     {
-      look = ( fmat4 )actor->transform()->worldMatrix().getInverse() /*.getTransposed().getInverse()*/ * look;
+      // look = inv_mat * look;
+      look = ( fmat4 )actor->transform()->worldMatrix().getInverse().getTransposed() * look;
     }
     actor->gocUniform( "eye_look" )->setUniform( look );
   }
@@ -172,6 +179,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera*
 //-----------------------------------------------------------------------------
 void RaycastVolume::bindActor( Actor* actor )
 {
+  actor->actorEventCallbacks()->erase( this );
   actor->actorEventCallbacks()->push_back( this );
   actor->setLod( 0, mGeometry.get() );
 }
@@ -213,7 +221,7 @@ void RaycastVolume::generateTextureCoordinates( const ivec3& size )
 //-----------------------------------------------------------------------------
 void RaycastVolume::setBox( const AABB& box ) 
 {
-  mBox = box; 
+  mBox = box;
   // generate the box geometry
   float x0 = box.minCorner().x();
   float y0 = box.minCorner().y();
