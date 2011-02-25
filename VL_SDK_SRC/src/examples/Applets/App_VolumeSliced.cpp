@@ -250,7 +250,7 @@ public:
         // install volume image
         vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
         vol_fx->shader()->gocUniform("volume_texunit")->setUniform(0);
-        mSlicedVolume->generateTextureCoordinates( img->width(), img->height(), img->depth() );
+        mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
         // installs the transfer function as texture #1
         vol_fx->shader()->gocTextureUnit(1)->setTexture( new Texture( trfunc.get() ) );  
         vol_fx->shader()->gocUniform("trfunc_texunit")->setUniform(1);
@@ -281,7 +281,7 @@ public:
         // precompute volume with transfer function and lighting
         ref<Image> volume = vl::genRGBAVolume(img.get(), trfunc.get(), fvec3(1.0f,1.0f,0.0f));
         vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( volume.get() ) );
-        mSlicedVolume->generateTextureCoordinates( volume->width(), volume->height(), volume->depth() );
+        mSlicedVolume->generateTextureCoordinates( ivec3(volume->width(), volume->height(), volume->depth()) );
         vol_fx->shader()->enable(EN_ALPHA_TEST);
         vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);
       }
@@ -291,7 +291,7 @@ public:
       Log::info("Non IF_LUMINANCE image: not using GLSL.\n");
       // install volume texture
       vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
-      mSlicedVolume->generateTextureCoordinates( img->width(), img->height(), img->depth() );
+      mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
       // setup alpha test
       vol_fx->shader()->enable(EN_ALPHA_TEST);
       vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);

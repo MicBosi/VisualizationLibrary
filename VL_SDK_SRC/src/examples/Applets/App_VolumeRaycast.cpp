@@ -283,7 +283,7 @@ public:
     // install volume image as textue #0
     volume_fx->shader()->gocTextureUnit( 0 )->setTexture( new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false ) );
     volume_fx->shader()->gocUniform( "volume_texunit" )->setUniform( 0 );
-    mRaycastVolume->generateTextureCoordinates( mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth() );
+    mRaycastVolume->generateTextureCoordinates( ivec3(mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth()) );
 
     // generate a simple colored transfer function
     ref<Image> trfunc;

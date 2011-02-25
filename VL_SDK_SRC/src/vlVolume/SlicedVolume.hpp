@@ -83,7 +83,8 @@ namespace vl
     void generateTextureCoordinates(const ivec3& size);
     
     //! Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
-    void generateTextureCoordinates(int width, int height, int depth) { generateTextureCoordinates(ivec3(width,height,depth)); }
+    //! Use this function to visualize a subset of the volume. The subset is defined by \p min_corner and \p max_corner.
+    void generateTextureCoordinates(const ivec3& img_size, const ivec3& min_corner, const ivec3& max_corner);
 
   protected:
     int mSliceCount;
