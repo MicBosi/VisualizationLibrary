@@ -18,7 +18,6 @@ uniform sampler3D volume_texunit;
 uniform sampler1D trfunc_texunit;
 uniform float trfunc_delta;
 uniform vec3 eye_position;      // camera position in object space
-uniform vec3 eye_look;          // camera look direction in object space
 uniform float sample_step;      // step used to advance the sampling ray
 uniform float val_threshold;
 
