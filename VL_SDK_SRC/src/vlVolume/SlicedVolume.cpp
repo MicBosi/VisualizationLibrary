@@ -36,7 +36,7 @@
 
 using namespace vl;
 
-/** \class vl::SlicedVolume
+/** \class SlicedVolume
  * A ActorEventCallback used to render a volume using viewport aligned slices.
  *
  * Pictures from: \ref pagGuideSlicedVolume tutorial.
@@ -330,28 +330,58 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, Real clock, const Camera* 
   // it does not seem to depend from camera clipping plane optimization.
 }
 //-----------------------------------------------------------------------------
-void SlicedVolume::generateTextureCoordinates(const ivec3& size)
+void SlicedVolume::generateTextureCoordinates(const ivec3& img_size)
 {
-  if (!size.x() || !size.y() || !size.z())
+  if (!img_size.x() || !img_size.y() || !img_size.z())
   {
-    Log::error("SlicedVolume::generateTextureCoordinates(): failed! The size passed does not represent a 3D image.\n");
+    Log::error("SlicedVolume::generateTextureCoordinates(): failed! The img_size passed does not represent a 3D image.\n");
     return;
   }
-  float dx = 0.5f/size.x();
-  float dy = 0.5f/size.y();
-  float dz = 0.5f/size.z();
+
+  float dx = 0.5f/img_size.x();
+  float dy = 0.5f/img_size.y();
+  float dz = 0.5f/img_size.z();
+
   float x0 = 0.0f + dx;
   float x1 = 1.0f - dx;
   float y0 = 0.0f + dy;
   float y1 = 1.0f - dy;
   float z0 = 0.0f + dz;
   float z1 = 1.0f - dz;
+
   fvec3 texc[] = 
   {
     fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1),
     fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
   };
   memcpy(mTexCoord, texc, sizeof(texc));
+}
+//-----------------------------------------------------------------------------
+void SlicedVolume::generateTextureCoordinates(const ivec3& img_size, const ivec3& min_corner, const ivec3& max_corner)
+{
+    if (!img_size.x() || !img_size.y() || !img_size.z())
+    {
+        Log::error("SlicedVolume::setDisplayRegion(): failed! The size passed does not represent a 3D image.\n");
+        return;
+    }
+
+    float dx = 0.5f/img_size.x();
+    float dy = 0.5f/img_size.y();
+    float dz = 0.5f/img_size.z();
+
+    float x0 = min_corner.x()/(float)img_size.x() + dx;
+    float x1 = max_corner.x()/(float)img_size.x() - dx;
+    float y0 = min_corner.y()/(float)img_size.y() + dy;
+    float y1 = max_corner.y()/(float)img_size.y() - dy;
+    float z0 = min_corner.z()/(float)img_size.z() + dz;
+    float z1 = max_corner.z()/(float)img_size.z() - dz;
+
+    fvec3 texc[] = 
+    {
+        fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
+        fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1)
+    };
+    memcpy(mTexCoord, texc, sizeof(texc));
 }
 //-----------------------------------------------------------------------------
 void SlicedVolume::setBox(const AABB& box) 
