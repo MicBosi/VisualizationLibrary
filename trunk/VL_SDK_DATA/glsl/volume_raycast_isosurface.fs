@@ -20,7 +20,7 @@ uniform sampler1D trfunc_texunit;
 uniform vec3 light_position[4]; // light positions in object space
 uniform bool light_enable[4];   // light enable flags
 uniform vec3 eye_position;      // camera position in object space
-uniform vec3 eye_look;          // camera look direction in object space
+// uniform vec3 eye_look;          // camera look direction in object space
 uniform float sample_step;      // step used to advance the sampling ray
 uniform float val_threshold;
 uniform vec3 gradient_delta;    // for on-the-fly gradient computation
@@ -99,8 +99,6 @@ void main(void)
 	vec3 ray_pos = gl_TexCoord[0].xyz; // the current ray position
 	vec3 pos111 = vec3(1.0, 1.0, 1.0);
 	vec3 pos000 = vec3(0.0, 0.0, 0.0);
-	
-	// float adjusted_step = sample_step / dot(ray_dir, eye_look);
 	
 	float val = texture3D(volume_texunit, gl_TexCoord[0].xyz ).r;
 	bool sign_prev = val > val_threshold;
