@@ -5,7 +5,61 @@
 	One picture is worth a thousand words, one word is worth a million pictures...
 
 	\htmlonly
-	
+
+	<!-- ----------------------------------------------------------------------------------------------------------------------------- -->
+
+	<h2 style="font-size: 20px">GPU Raycast Volume Rendering</h2>
+
+	A few volume rendering techniques based on GPU raycasting such as isosurface, MIP (maximum intensity projection) and integration, implemented using 
+	OpenGL Shading Language shaders.<br>
+   
+	<p>
+	\endhtmlonly
+	<b>See also:</b>
+	- \ref pagGuideRaycastVolume page.
+	- \ref pagGuideSlicedVolume page.
+
+	\htmlonly
+	</p>
+
+	<table border=0 cellspacing=0 cellpadding=5 width=1%>
+	<tr>
+		<td>
+			<a href="gallery/raycast01.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/raycast01.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/raycast02.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/raycast02.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/raycast03.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/raycast03.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/raycast04.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/raycast04.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/raycast05.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/raycast05.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/raycast06.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/raycast06.jpg" alt="Highslide JS" title="Click to enlarge" />
+			</a>
+		</td>
+
+	</tr>
+	</table>
+
+	<hr><!-- ----------------------------------------------------------------------------------------------------------------------------- -->
+
 	<h2 style="font-size: 20px">Volume Isosurface Extraction With Marching Cubes</h2>
 
 	Various examples of isosurface extraction using the vl::MarchingCubes class.<br>
