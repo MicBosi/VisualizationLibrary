@@ -271,7 +271,7 @@ namespace vl
     }
 
   protected:
-    VL_COMPILE_TIME_CHECK( sizeof(int) == sizeof(float) );
+    VL_COMPILE_TIME_CHECK( sizeof(int) == sizeof(float) )
     void initData(int count) { mData.resize(count); }
     void initDouble(int count) { mData.resize(count*2); }
     int singleCount() const { return (int)mData.size(); }
