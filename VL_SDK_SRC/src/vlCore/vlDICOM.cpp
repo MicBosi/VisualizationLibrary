@@ -47,6 +47,8 @@
 #include <gdcmImage.h>
 #include <gdcmImageWriter.h>
 
+#include <memory>
+
 using namespace vl;
 
 //---------------------------------------------------------------------------
