@@ -188,5 +188,6 @@ void Applet::destroyEvent()
   mFly->setCamera(NULL);
   mTrackball->setCamera(NULL);
   mTrackball->setTransform(NULL);
+  mRendering = NULL;
 }
 //-----------------------------------------------------------------------------
