@@ -71,7 +71,9 @@ namespace
 //-----------------------------------------------------------------------------
 void FBORenderTarget::create()
 {
-  openglContext()->makeCurrent();
+  VL_CHECK_OGL();
+  VL_CHECK(openglContext());
+  openglContext()->makeCurrent(); VL_CHECK_OGL();
 
   if ( !mHandle )
   {
@@ -82,6 +84,8 @@ void FBORenderTarget::create()
 //-----------------------------------------------------------------------------
 void FBORenderTarget::destroy()
 {
+  VL_CHECK_OGL();
+  VL_CHECK(openglContext());
   openglContext()->makeCurrent(); VL_CHECK_OGL();
 
   removeAllAttachments();
@@ -97,7 +101,9 @@ void FBORenderTarget::destroy()
 //-----------------------------------------------------------------------------
 void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
 {
-  openglContext()->makeCurrent(); VL_CHECK_OGL()
+  VL_CHECK_OGL();
+  VL_CHECK(openglContext());
+  openglContext()->makeCurrent(); VL_CHECK_OGL();
 
   if ( !GLEW_Has_Framebuffer_Object )
   {
@@ -138,7 +144,9 @@ void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
 //! Returns 0 if no FBO support is found otherwise returns the value obtained by VL_glCheckFramebufferStatus()
 GLenum FBORenderTarget::checkFramebufferStatus()
 {
-  openglContext()->makeCurrent(); VL_CHECK_OGL()
+  VL_CHECK_OGL();
+  VL_CHECK(openglContext());
+  openglContext()->makeCurrent(); VL_CHECK_OGL();
 
   if ( !GLEW_Has_Framebuffer_Object )
   {
@@ -296,7 +304,9 @@ void FBORenderTarget::removeAttachment( EAttachmentPoint attach_point )
 {
   VL_CHECK( vl::VisualizationLibrary::isGraphicsInitialized() )
 
-  openglContext()->makeCurrent();
+  VL_CHECK_OGL();
+  VL_CHECK(openglContext());
+  openglContext()->makeCurrent(); VL_CHECK_OGL();
 
   VL_CHECK( GLEW_Has_Framebuffer_Object )
   if( !GLEW_Has_Framebuffer_Object )

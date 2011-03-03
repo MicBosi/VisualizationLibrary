@@ -541,7 +541,7 @@ namespace vl
     virtual const char* className() { return "FBORenderTarget"; }
 
     /** Destructor. */
-    ~FBORenderTarget() { destroy(); }
+    ~FBORenderTarget() { if (openglContext()) destroy(); }
 
     /** 
      * Creates a framebuffer object by calling glGenFramebuffers(). 
