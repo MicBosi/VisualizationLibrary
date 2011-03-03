@@ -54,6 +54,9 @@ namespace vlQt4
     Q_OBJECT
 
   public:
+    using vl::Object::setObjectName;
+    using QObject::setObjectName;
+  
     Qt4Widget(QWidget* parent=NULL, const QGLWidget* shareWidget=NULL, Qt::WindowFlags f=0)
     :QGLWidget(parent,shareWidget,f)
     {
