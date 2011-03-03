@@ -128,12 +128,7 @@ namespace vl
     OpenGLContext(int w=0, int h=0);
 
     //! Destructor.
-    //! Dispatches also destroyEvent() to its event listeners.
-    ~OpenGLContext() 
-    { 
-      eraseAllEventListeners();
-      mRenderTarget->mOpenGLContext = NULL;
-    }
+    ~OpenGLContext();
 
     //! Swaps the back and front buffers to present the last rendering.
     virtual void swapBuffers() = 0;

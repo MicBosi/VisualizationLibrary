@@ -78,6 +78,26 @@ mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false), mCurVAS(NU
   memset( mEnableTable,        0xFF, sizeof(mEnableTable) );
 }
 //-----------------------------------------------------------------------------
+OpenGLContext::~OpenGLContext() 
+{ 
+  if (mFBORenderTarget.size() || mEventListeners.size())
+    Log::warning("~OpenGLContext(): you should have called dispatchDestroyEvent() before destroying the OpenGLContext!\nNow it's too late to cleanup things!\n");
+  
+  // invalidate the render target
+  mRenderTarget->mOpenGLContext = NULL;
+
+  // invalidate FBOs
+  for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
+  {
+    // note, we can't destroy the FBOs here because it's too late to call makeCurrent().
+    // mFBORenderTarget[i]->destroy();
+    mFBORenderTarget[i]->mOpenGLContext = NULL;
+  }
+
+  // remove all the event listeners
+  eraseAllEventListeners();
+}
+//-----------------------------------------------------------------------------
 ref<FBORenderTarget> OpenGLContext::createFBORenderTarget(int width, int height)
 { 
   makeCurrent();
@@ -93,8 +113,8 @@ void OpenGLContext::destroyFBORenderTarget(FBORenderTarget* fbort)
   {
     if (mFBORenderTarget[i] == fbort)
     {
-      mFBORenderTarget[i]->mOpenGLContext = NULL;
       mFBORenderTarget[i]->destroy();
+      mFBORenderTarget[i]->mOpenGLContext = NULL;
       mFBORenderTarget.erase(mFBORenderTarget.begin()+i);
       break;
     }
@@ -106,8 +126,8 @@ void OpenGLContext::destroyAllFBORenderTargets()
   makeCurrent();
   for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
   {
-    mFBORenderTarget[i]->mOpenGLContext = NULL;
     mFBORenderTarget[i]->destroy();
+    mFBORenderTarget[i]->mOpenGLContext = NULL;
   }
   mFBORenderTarget.clear();
 }

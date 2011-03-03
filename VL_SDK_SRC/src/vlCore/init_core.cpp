@@ -237,10 +237,11 @@ void VisualizationLibrary::shutdownCore()
   {
     Log::print("Visualization Library shutdown.\n");
   }
-  setDefLogger( NULL );
+  // we keep the logger alive as much as we can.
+  // setDefLogger( NULL );
 
-  // Dispose globabl settings
-  gSettings = NULL;
+  // keep global settings (used by logger)
+  // gSettings = NULL;
 }
 //------------------------------------------------------------------------------
 #if !defined(VL_MODULE_GRAPHICS)
