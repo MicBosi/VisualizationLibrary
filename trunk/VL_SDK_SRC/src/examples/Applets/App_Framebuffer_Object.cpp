@@ -536,6 +536,16 @@ public:
     mTransfRing4->setLocalMatrix( vl::mat4::getRotation(mY2, 0,1,0) );
     mTransfRing5->setLocalMatrix( vl::mat4::getRotation(mX3, 1,0,0) );
   }
+  
+  virtual void destroyEvent()
+  {
+    BaseDemo::destroyEvent();
+
+    // release all OpenGL resources
+    setRendering(NULL);
+    mMainRendering = NULL;
+    mRTT_Rendering = NULL;
+  }
 
 protected:
   int mTestNum;
