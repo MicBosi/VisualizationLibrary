@@ -2,8 +2,19 @@
 
    \page pagChangelog Changelog
 
-	<div class="featuretitle">Visualization Library 2011.02.1133</div>
+	<div class="featuretitle">Visualization Library 2011.04.1135</div>
 	
+	- Multisample textures.
+	- Texture buffers support.
+	- Tessellation shaders demo-test.
+	- New directory layout.
+	- New building scripts.
+	- VL can now be compiled as a DLL.
+	- Restored wxWidgets GUI bindings.
+	- A ton of bug fixes and enhancements.
+
+	<div class="featuretitle">Visualization Library 2011.02.1133</div>
+
 	- <b>API CHANGES</b>
 		- Visualization Library splitted into:
 			- \b VLCore: all classes not requiring OpenGL, including vl::Image and 2D image IO modules, virtual file system, resource management, vl::String, math classes and functions etc.
