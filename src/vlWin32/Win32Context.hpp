@@ -109,12 +109,14 @@ namespace vlWin32
     //! Context attributes used when creating an OpenGL 3.x / 4.x context. 
     //! The flags must be the ones specified by http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt
     const std::vector<int>& contextAttribs() const { return mContextAttribs; }
+
     //! Context attributes used when creating an OpenGL 3.x / 4.x context. 
     //! The flags must be the ones specified by http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt
     std::vector<int>& contextAttribs() { return mContextAttribs; }
+    
     //! Context attributes used when creating an OpenGL 3.x / 4.x context. 
     //! The flags must be the ones specified by http://www.opengl.org/registry/specs/ARB/wgl_create_context.txt
-    void setContextAttribs(const int* attribs);
+    void setContextAttribs(const int* attribs, int size);
 
   protected:
     bool initWin32GLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height);
