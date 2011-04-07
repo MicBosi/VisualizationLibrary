@@ -332,6 +332,33 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("OpenGL vendor: %s\n") << glGetString(GL_VENDOR) );
     Log::print( Say("OpenGL renderer: %s\n") << glGetString(GL_RENDERER) );
     Log::print( Say("OpenGL profile: %s\n") << (isCompatible() ? "Compatible" : "Core") );
+
+    // Note: GLEW returns GLEW_VERSION_1_1, 1_2, 1_3... even if we are in "Core" profile!
+#if 0
+    struct { GLboolean supported; String gl_name; } 
+    gl_versions[] =
+    {
+      { GLEW_VERSION_1_1, "GLEW_VERSION_1_1" },
+      { GLEW_VERSION_1_2, "GLEW_VERSION_1_2" },
+      { GLEW_VERSION_1_3, "GLEW_VERSION_1_3" },
+      { GLEW_VERSION_1_4, "GLEW_VERSION_1_4" },
+      { GLEW_VERSION_1_5, "GLEW_VERSION_1_5" },
+      { GLEW_VERSION_2_0, "GLEW_VERSION_2_0" },
+      { GLEW_VERSION_2_1, "GLEW_VERSION_2_1" },
+      { GLEW_VERSION_3_0, "GLEW_VERSION_3_0" },
+      { GLEW_VERSION_3_1, "GLEW_VERSION_3_1" },
+      { GLEW_VERSION_3_2, "GLEW_VERSION_3_2" },
+      { GLEW_VERSION_3_3, "GLEW_VERSION_3_3" },
+      { GLEW_VERSION_4_0, "GLEW_VERSION_4_0" },
+      { GLEW_VERSION_4_1, "GLEW_VERSION_4_1" },
+    };
+    for( int i = 0; i < sizeof(gl_versions) / sizeof(gl_versions[0]); ++i)
+    {
+      if (gl_versions[i].supported)
+        Log::print( gl_versions[i].gl_name + "\n" );
+    }
+#endif
+
     if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
       Log::print( Say("GLSL version: %s\n")<<glGetString(GL_SHADING_LANGUAGE_VERSION) );
     int max_val = 0;

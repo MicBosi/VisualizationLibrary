@@ -369,11 +369,10 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   return contract.mOK = true;
 }
 //-----------------------------------------------------------------------------
-void Win32Context::setContextAttribs(const int* attribs)
+void Win32Context::setContextAttribs(const int* attribs, int size)
 {
-  mContextAttribs.clear();
-  for( ; *attribs; ++attribs )
-    mContextAttribs.push_back(*attribs);
-  mContextAttribs.push_back(0);
+  mContextAttribs.resize(size);
+  for(int i = 0; i < size; ++i)
+    mContextAttribs[ i ] = attribs[ i ];
 }
 //-----------------------------------------------------------------------------
