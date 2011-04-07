@@ -49,138 +49,138 @@ class App_DrawCalls: public BaseDemo
 {
   void initEvent()
   {
-    BaseDemo::initEvent();
+    //BaseDemo::initEvent();
 
-    vl::ref<vl::DrawRangeElementsUInt> deu32 = new vl::DrawRangeElementsUInt;
-    deu32->setBaseVertex(100);
-    deu32->setPrimitiveRestartEnabled(true);
-    deu32->setPrimitiveRestartIndex(0xFF);
+    //vl::ref<vl::DrawRangeElementsUInt> deu32 = new vl::DrawRangeElementsUInt;
+    //deu32->setBaseVertex(100);
+    //deu32->setPrimitiveRestartEnabled(true);
+    //deu32->setPrimitiveRestartIndex(0xFF);
 
-    {
-      int idx[] = { 10,11,12,13,  20,21,22,23,  0xFF,  30,31,32,33,  0xFF, 40,41,42,  -1  };
-      int count = 0;
-      for(int i=0; idx[i] != -1; ++i)
-        ++count;
-      deu32->indices()->resize( count );
-      for(int i=0; idx[i] != -1; ++i)
-        deu32->indices()->at(i) = idx[i];
-    }
-    
-    //std::vector<GLint> base_vertices;
-    //  base_vertices.push_back(100);
-    //  base_vertices.push_back(200);
-    //  base_vertices.push_back(300);
-    //std::vector<GLsizei> vert_counts;
-    //  vert_counts.push_back(7);
-    //  vert_counts.push_back(5);
-    //  vert_counts.push_back(3);
+    //{
+    //  int idx[] = { 10,11,12,13,  20,21,22,23,  0xFF,  30,31,32,33,  0xFF, 40,41,42,  -1  };
+    //  int count = 0;
+    //  for(int i=0; idx[i] != -1; ++i)
+    //    ++count;
+    //  deu32->indices()->resize( count );
+    //  for(int i=0; idx[i] != -1; ++i)
+    //    deu32->indices()->at(i) = idx[i];
+    //}
+    //
+    ////std::vector<GLint> base_vertices;
+    ////  base_vertices.push_back(100);
+    ////  base_vertices.push_back(200);
+    ////  base_vertices.push_back(300);
+    ////std::vector<GLsizei> vert_counts;
+    ////  vert_counts.push_back(7);
+    ////  vert_counts.push_back(5);
+    ////  vert_counts.push_back(3);
 
-    //vl::ref< vl::IndexIteratorElements<vl::ArrayUInt1> > iie = new vl::IndexIteratorElements<vl::ArrayUInt1>;
-    //// iie->initialize( deu32->indices(), NULL, NULL, deu32->baseVertex(), deu32->primitiveRestartEnabled(), deu32->primitiveRestartIndex() );
-    //iie->initialize( deu32->indices(), &base_vertices, &vert_counts, 0, deu32->primitiveRestartEnabled(), deu32->primitiveRestartIndex() );
+    ////vl::ref< vl::IndexIteratorElements<vl::ArrayUInt1> > iie = new vl::IndexIteratorElements<vl::ArrayUInt1>;
+    ////// iie->initialize( deu32->indices(), NULL, NULL, deu32->baseVertex(), deu32->primitiveRestartEnabled(), deu32->primitiveRestartIndex() );
+    ////iie->initialize( deu32->indices(), &base_vertices, &vert_counts, 0, deu32->primitiveRestartEnabled(), deu32->primitiveRestartIndex() );
 
-    ////vl::ref< vl::IndexIteratorDrawArrays > iida = new vl::IndexIteratorDrawArrays;
-    ////iida->initialize(10,20);
+    //////vl::ref< vl::IndexIteratorDrawArrays > iida = new vl::IndexIteratorDrawArrays;
+    //////iida->initialize(10,20);
 
-    vl::IndexIterator iit = deu32->indexIterator();
+    //vl::IndexIterator iit = deu32->indexIterator();
 
-    for( ; !iit.isEnd(); iit.next() ) 
-      printf("%d\n", iit.index() );
+    //for( ; !iit.isEnd(); iit.next() ) 
+    //  printf("%d\n", iit.index() );
 
-    printf("-----\n");
+    //printf("-----\n");
 
-    vl::ref<vl::DrawCall> da = new vl::DrawArrays(vl::PT_LINE_LOOP, 10, 20);
+    //vl::ref<vl::DrawCall> da = new vl::DrawArrays(vl::PT_LINE_LOOP, 10, 20);
 
-    iit = da->indexIterator();
+    //iit = da->indexIterator();
 
-    for( ; !iit.isEnd(); iit.next() ) 
-      printf("%d\n", iit.index() );
+    //for( ; !iit.isEnd(); iit.next() ) 
+    //  printf("%d\n", iit.index() );
 
-    exit(0);
+    //exit(0);
 
-    for( vl::TriangleIterator trit = da->triangleIterator(); !trit.isEnd(); trit.next() ) 
-      printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
-
-    vl::ref<vl::MultiDrawElementsUInt> mdeu32 = new vl::MultiDrawElementsUInt(vl::PT_LINE_LOOP);
-
-    {
-      // int idx[] = { 10,11,12,13, 0xFF, 20,21,22, 30,31,32,33,34, 0xFF, 40,41,42,43, -1 };
-      int idx[] = { 10,11,12,13,  20,21,22,23, 0xFF, 30,31,32,33, -1 };
-      int count = 0;
-      for(int i=0; idx[i] != -1; ++i)
-        ++count;
-      mdeu32->indices()->resize( count );
-      for(int i=0; idx[i] != -1; ++i)
-        mdeu32->indices()->at(i) = idx[i];
-    }
-
-    std::vector<GLint> counts;
-    counts.push_back(4);
-    counts.push_back(9);
-    mdeu32->setCountVector( counts );
-
-    std::vector<GLint> basev;
-    basev.push_back(100);
-    basev.push_back(200);
-    mdeu32->setBaseVertices(basev);
-
-    mdeu32->setPrimitiveRestartEnabled(true);
-    mdeu32->setPrimitiveRestartIndex(0xFF);
-
-    iit = mdeu32->indexIterator();
-    for( ; !iit.isEnd(); iit.next() ) 
-      printf("%d\n", iit.index() );
-
-    //for( vl::TriangleIterator trit = mdeu32->triangleIterator(); !trit.isEnd(); trit.next() ) 
+    //for( vl::TriangleIterator trit = da->triangleIterator(); !trit.isEnd(); trit.next() ) 
     //  printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
 
-    printf("---\n");
-    exit(0);
+    //vl::ref<vl::MultiDrawElementsUInt> mdeu32 = new vl::MultiDrawElementsUInt(vl::PT_LINE_LOOP);
 
-    // fill the index buffer
+    //{
+    //  // int idx[] = { 10,11,12,13, 0xFF, 20,21,22, 30,31,32,33,34, 0xFF, 40,41,42,43, -1 };
+    //  int idx[] = { 10,11,12,13,  20,21,22,23, 0xFF, 30,31,32,33, -1 };
+    //  int count = 0;
+    //  for(int i=0; idx[i] != -1; ++i)
+    //    ++count;
+    //  mdeu32->indices()->resize( count );
+    //  for(int i=0; idx[i] != -1; ++i)
+    //    mdeu32->indices()->at(i) = idx[i];
+    //}
 
-    vl::ref<vl::DrawRangeElementsUInt> de_u32 = new vl::DrawRangeElementsUInt( vl::PT_POLYGON );
+    //std::vector<GLint> counts;
+    //counts.push_back(4);
+    //counts.push_back(9);
+    //mdeu32->setCountVector( counts );
 
-    // int idx[] = { 0,1,2,3,4,5, -1 };
-    int idx[] = { 10,11,12,13, 0xFF, 20,21,22,23,24, 0xFF, 30,31,32,33,34, -1 };
-    int count = 0;
-    for(int i=0; idx[i] != -1; ++i)
-      ++count;
-    de_u32->indices()->resize( count );
-    for(int i=0; idx[i] != -1; ++i)
-      de_u32->indices()->at(i) = idx[i];
+    //std::vector<GLint> basev;
+    //basev.push_back(100);
+    //basev.push_back(200);
+    //mdeu32->setBaseVertices(basev);
 
-    // initialize the triangle iterator
+    //mdeu32->setPrimitiveRestartEnabled(true);
+    //mdeu32->setPrimitiveRestartIndex(0xFF);
 
-    vl::TriangleIteratorIndexed<vl::ArrayUInt1> it(de_u32->indices(), de_u32->primitiveType(), 10, true, 0xFF );
+    //iit = mdeu32->indexIterator();
+    //for( ; !iit.isEnd(); iit.next() ) 
+    //  printf("%d\n", iit.index() );
 
-    // query the triangle iterator
+    ////for( vl::TriangleIterator trit = mdeu32->triangleIterator(); !trit.isEnd(); trit.next() ) 
+    ////  printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
 
-    for( it.initialize(); it.next(); ) 
-      printf("%d %d %d\n", it.a(), it.b(), it.c());
+    //printf("---\n");
+    //exit(0);
 
-    printf("---\n");
+    //// fill the index buffer
 
-    for( it.initialize(0,4); it.next(); ) 
-      printf("%d %d %d\n", it.a(), it.b(), it.c());
+    //vl::ref<vl::DrawRangeElementsUInt> de_u32 = new vl::DrawRangeElementsUInt( vl::PT_POLYGON );
 
-    for( it.initialize(5,10); it.next(); ) 
-      printf("%d %d %d\n", it.a(), it.b(), it.c());
+    //// int idx[] = { 0,1,2,3,4,5, -1 };
+    //int idx[] = { 10,11,12,13, 0xFF, 20,21,22,23,24, 0xFF, 30,31,32,33,34, -1 };
+    //int count = 0;
+    //for(int i=0; idx[i] != -1; ++i)
+    //  ++count;
+    //de_u32->indices()->resize( count );
+    //for(int i=0; idx[i] != -1; ++i)
+    //  de_u32->indices()->at(i) = idx[i];
 
-    for( it.initialize(11,16); it.next(); ) 
-      printf("%d %d %d\n", it.a(), it.b(), it.c());
+    //// initialize the triangle iterator
 
-    printf("---\n");
+    //vl::TriangleIteratorIndexed<vl::ArrayUInt1> it(de_u32->indices(), de_u32->primitiveType(), 10, true, 0xFF );
 
-    de_u32->setBaseVertex(100);
-    de_u32->setPrimitiveRestartEnabled(true);
-    de_u32->setPrimitiveRestartIndex(0xFF);
-    for( vl::TriangleIterator trit = de_u32->triangleIterator(); !trit.isEnd(); trit.next() ) 
-      printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
+    //// query the triangle iterator
 
-    printf("---\n");
+    //for( it.initialize(); it.next(); ) 
+    //  printf("%d %d %d\n", it.a(), it.b(), it.c());
 
-    exit(0);
+    //printf("---\n");
+
+    //for( it.initialize(0,4); it.next(); ) 
+    //  printf("%d %d %d\n", it.a(), it.b(), it.c());
+
+    //for( it.initialize(5,10); it.next(); ) 
+    //  printf("%d %d %d\n", it.a(), it.b(), it.c());
+
+    //for( it.initialize(11,16); it.next(); ) 
+    //  printf("%d %d %d\n", it.a(), it.b(), it.c());
+
+    //printf("---\n");
+
+    //de_u32->setBaseVertex(100);
+    //de_u32->setPrimitiveRestartEnabled(true);
+    //de_u32->setPrimitiveRestartIndex(0xFF);
+    //for( vl::TriangleIterator trit = de_u32->triangleIterator(); !trit.isEnd(); trit.next() ) 
+    //  printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
+
+    //printf("---\n");
+
+    //exit(0);
   }
 
 };

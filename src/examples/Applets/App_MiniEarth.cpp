@@ -29,6 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+// mic fixme: implement and cleaup this demo test
+
 #include "BaseDemo.hpp"
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/Effect.hpp>
