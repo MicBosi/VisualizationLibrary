@@ -125,7 +125,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::DepthSortCallback"; }
+    virtual const char* className() { return "DepthSortCallback"; }
 
     //! Constructor.
     DepthSortCallback()
@@ -320,9 +320,9 @@ namespace vl
       if (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
       if (polys->indices()->gpuBuffer()->handle())
       {
-        if (polys->indices()->gpuBuffer()->usage() != vl::BU_DYNAMIC_DRAW)
+        if (polys->indices()->gpuBuffer()->usage() != vl::GBU_DYNAMIC_DRAW)
         {
-          polys->indices()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW);
+          polys->indices()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW);
           polys->indices()->setVBODirty(false);
         }
         else

@@ -54,7 +54,7 @@ namespace vl
    * - SceneManagerActorTree
    * - Actor
   */
-  class VLGRAPHICS_EXPORT ActorKdTree: public ActorTreeAbstract
+  class ActorKdTree: public ActorTreeAbstract
   {
   public:
     ActorKdTree()
@@ -63,7 +63,7 @@ namespace vl
         mObjectName = className();
       #endif
     }
-    virtual const char* className() { return "vl::ActorKdTree"; }
+    virtual const char* className() { return "ActorKdTree"; }
 
     virtual int childrenCount() const;
     virtual ActorTreeAbstract* child(int i);

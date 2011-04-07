@@ -53,7 +53,7 @@ namespace vl
     } EAllocationMode;
 
   public:
-    virtual const char* className() { return "vl::Buffer"; }
+    virtual const char* className() { return "Buffer"; }
     Buffer()
     {
       #ifndef NDEBUG

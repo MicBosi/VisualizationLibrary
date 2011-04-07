@@ -33,7 +33,6 @@
 #define UniformSet_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlGraphics/config.hpp>
 #include <vlGraphics/Uniform.hpp>
 
 namespace vl
@@ -47,10 +46,10 @@ namespace vl
    * \sa 
    * Shader, Effect, Actor
   */
-  class VLGRAPHICS_EXPORT UniformSet: public Object
+  class UniformSet: public Object
   {
   public:
-    virtual const char* className() { return "vl::UniformSet"; }
+    virtual const char* className() { return "UniformSet"; }
     UniformSet()
     {
       #ifndef NDEBUG

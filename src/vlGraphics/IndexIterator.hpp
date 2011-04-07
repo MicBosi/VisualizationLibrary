@@ -43,14 +43,7 @@ namespace vl
   class IndexIteratorAbstract: public Object
   {
   public:
-    virtual const char* className() { return "vl::IndexIteratorAbstract"; }
-
-    IndexIteratorAbstract(): mIndex(-1) 
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
+    IndexIteratorAbstract(): mIndex(-1) {}
     int index() const { return mIndex; }
     virtual bool isEnd() const = 0;
     virtual bool next() = 0;
@@ -65,14 +58,6 @@ namespace vl
   class IndexIterator: public Object
   {
   public:
-    virtual const char* className() { return "vl::IndexIterator"; }
-
-    IndexIterator()
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
     void initialize(IndexIteratorAbstract* iterator) { mIterator = iterator; }
     int  index() { return mIterator->index(); }
     bool isEnd() { return mIterator->isEnd(); }
@@ -88,13 +73,8 @@ namespace vl
   class IndexIteratorDrawArrays: public IndexIteratorAbstract
   {
   public:
-    virtual const char* className() { return "vl::IndexIteratorDrawArrays"; }
-
     IndexIteratorDrawArrays()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       initialize(0,0);
     }
 
@@ -131,13 +111,8 @@ namespace vl
   class IndexIteratorElements: public IndexIteratorAbstract
   {
   public:
-    virtual const char* className() { return "vl::IndexIteratorElements"; }
-
     IndexIteratorElements()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       initialize( NULL, NULL, NULL, 0, false, 0 );
     }
 

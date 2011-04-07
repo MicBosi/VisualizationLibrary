@@ -57,37 +57,21 @@ GLSLShader::~GLSLShader()
   deleteShader();
 }
 //-----------------------------------------------------------------------------
+void GLSLShader::setSource( const std::string& source )
+{
+  mCompiled = false;
+  mSource = source;
+}
+//-----------------------------------------------------------------------------
 void GLSLShader::setSource( const String& source )
 {
-  std::string new_src = "ERROR";
-
   if (vl::locateFile(source))
   {
-    new_src = vl::String::loadText(source).toStdString();
+    setSource(vl::String::loadText(source).toStdString());
     setObjectName( source.toStdString() );
   }
   else
-  {
-    int cn = source.count('\n');
-    int cr = source.count('\r');
-    int cf = source.count('\f');
-    int line_count = vl::max( vl::max( cn, cr ), cf );
-    if(line_count == 0)
-    {
-      Log::error("GLSLShader::setSource('" + source + "') error: file not found!\n");
-      mSource = "";
-      VL_TRAP();
-    }
-    else
-      new_src = source.toStdString();
-  }
-  
-  // update only if the source is actually different
-  if (new_src != "ERROR" && new_src != mSource)
-  {
-    mSource = new_src;
-    mCompiled = false;
-  }
+    setSource( source.toStdString() );
 }
 //-----------------------------------------------------------------------------
 bool GLSLShader::compile()
@@ -96,13 +80,6 @@ bool GLSLShader::compile()
   VL_CHECK( GLEW_Has_Shading_Language_20 )
   if( !GLEW_Has_Shading_Language_20 )
     return false;
-
-  if (mSource.empty())
-  {
-    Log::error("GLSLShader::compile() failed: shader source is empty!\n");
-    VL_TRAP();
-    return false;
-  }
 
   if (!mCompiled)
   {
@@ -128,7 +105,7 @@ bool GLSLShader::compile()
       mCompiled = true;
       #ifndef NDEBUG
       if (!infoLog().empty())
-        Log::warning( Say("%s\n%s\n\n") << objectName().c_str() << infoLog() );
+        Log::info( Say("%s\n%s\n\n") << objectName().c_str() << infoLog() );
       #endif
     }
     else
@@ -285,6 +262,7 @@ bool GLSLProgram::attachShader(GLSLShader* shader)
   }
 
   VL_CHECK_OGL();
+  VL_TRAP()
   return false;
 
 }
@@ -356,7 +334,7 @@ bool GLSLProgram::linkProgram(bool force_relink)
   {
     if (shaderCount() == 0)
     {
-      Log::bug("GLSLProgram::linkProgram() called on a GLSLProgram with no shaders! (" + String(objectName().c_str()) + ")\n");
+      Log::bug("GLSLProgram::linkProgram() called on a GLSLProgram with no shaders! ('" + String(objectName().c_str()) + "')\n");
       VL_TRAP()
       return false;
     }
@@ -379,7 +357,7 @@ bool GLSLProgram::linkProgram(bool force_relink)
     }
     else
     {
-      Log::bug("GLSLProgram::linkProgram() failed! (" + String(objectName().c_str()) + ")\n");
+      Log::bug("GLSLProgram::linkProgram() failed! ('" + String(objectName().c_str()) + "')\n");
       Log::bug( Say("Info log:\n%s\n") << infoLog() );
       VL_TRAP()
       return false;
@@ -404,22 +382,18 @@ void GLSLProgram::preLink()
     }
   }
 
-  // Note that OpenGL 3 and 4 do not use glProgramParameter to define the layout of the 
-  // input/output geometry but something like this in the geometry shader:
-  //
-  // layout(triangles) in;
-  // layout(triangle_strip, max_vertices = 3) out;
+  // geometry shader - note: this pertains only to OpenGL 3.2 not OpenGL 4.x
 
-  if (GLEW_Has_Geometry_Shader && geometryVerticesOut() )
+  if (GLEW_Has_Geometry_Shader)
   {
     // if there is at least one geometry shader applies the geometry shader parameters
     for(unsigned i=0; i<mShaders.size(); ++i)
     {
       if (mShaders[i]->type() == ST_GEOMETRY_SHADER)
       {
+        VL_glProgramParameteri(handle(), GL_GEOMETRY_VERTICES_OUT_EXT, geometryVerticesOut()); VL_CHECK_OGL();
         VL_glProgramParameteri(handle(), GL_GEOMETRY_INPUT_TYPE_EXT,   geometryInputType()); VL_CHECK_OGL();
         VL_glProgramParameteri(handle(), GL_GEOMETRY_OUTPUT_TYPE_EXT,  geometryOutputType()); VL_CHECK_OGL();
-        VL_glProgramParameteri(handle(), GL_GEOMETRY_VERTICES_OUT_EXT, geometryVerticesOut()); VL_CHECK_OGL();
         break;
       }
     }
@@ -499,7 +473,7 @@ String GLSLProgram::infoLog() const
   VL_CHECK(handle())
 
   if (handle() == 0)
-    return "GLSLProgram::infoLog(): error! GLSL program object not yet created! (" + String(objectName().c_str()) + ")\n";
+    return "GLSLProgram::infoLog(): error! GLSL program object not yet created! ('" + String(objectName().c_str()) + "')\n";
 
   int max_length = 0;
   glGetProgramiv(handle(), GL_INFO_LOG_LENGTH, &max_length); VL_CHECK_OGL();
@@ -558,28 +532,27 @@ bool GLSLProgram::useProgram() const
 
   if (!handle())
   {
-    Log::bug("GLSLProgram::useProgram() failed! GLSL program handle is null! (" + String(objectName().c_str()) + ")\n");
+    Log::bug("GLSLProgram::useProgram() failed! GLSL program handle is null! ('" + String(objectName().c_str()) + "')\n");
     VL_TRAP()
     return false;
   }
 
   if (!linked())
   {
-    Log::bug("GLSLProgram::useProgram() failed! GLSL program not linked! (" + String(objectName().c_str()) + ")\n");
+    Log::bug("GLSLProgram::useProgram() failed! GLSL program not linked! ('" + String(objectName().c_str()) + "')\n");
     VL_TRAP()
     return false;
   }
 
-// The program validation should be done only after all the uniforms have been applied, just before rendering an object.
-//#ifndef NDEBUG
-//  if (!validateProgram())
-//  {
-//    Log::bug("GLSLProgram::useProgram() failed validation! (" + String(objectName().c_str()) + ")\n");
-//    Log::bug( Say("Info log:\n%s\n") << infoLog() );
-//    VL_TRAP();
-//    return false;
-//  }
-//#endif
+#ifndef NDEBUG
+  if (!validateProgram())
+  {
+    Log::bug("GLSLProgram::useProgram() failed validation! ('" + String(objectName().c_str()) + "')\n");
+    Log::bug( Say("Info log:\n%s\n") << infoLog() );
+    VL_TRAP();
+    return false;
+  }
+#endif
 
   // bind the GLSL program
   glUseProgram(handle()); VL_CHECK_OGL()
@@ -638,15 +611,11 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
       // Check the following:
       // (1) Is the uniform variable declared but not used in your GLSL program?
       // (2) Double-check the spelling of the uniform variable name.
-      vl::Log::warning( vl::Say(
-        "warning:\n"
-        "GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
-        "Is the uniform variable declared but not used in your GLSL program?\n"
-        "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
-
-      // VL_TRAP();
-      // return false;
-      continue;
+      vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
+                              "Is the uniform variable declared but not used in your GLSL program?\n"
+                              "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
+      VL_TRAP();
+      return false;
     }
 
     // finally transmits the uniform
@@ -788,7 +757,7 @@ bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int le
     }
     else
     {
-      Log::bug("GLSLProgram::programBinary() failed! (" + String(objectName().c_str()) + ")\n");
+      Log::bug("GLSLProgram::programBinary() failed! ('" + String(objectName().c_str()) + "')\n");
       Log::bug( Say("Info log:\n%s\n") << infoLog() );
       VL_TRAP();
     }

@@ -57,7 +57,7 @@ namespace vl
       mUseDisplayLists = false;
       mUseVBOs         = true;
     }
-    virtual const char* className() { return "vl::GeometryLoadCallback"; }
+    virtual const char* className() { return "GeometryLoadCallback"; }
 
     void operator()(ResourceDatabase* db)
     {

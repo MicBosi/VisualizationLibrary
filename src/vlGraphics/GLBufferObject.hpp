@@ -55,14 +55,14 @@ namespace vl
   class GLBufferObject: public Buffer
   {
   public:
-    virtual const char* className() { return "vl::GLBufferObject"; }
+    virtual const char* className() { return "GLBufferObject"; }
     GLBufferObject()
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
       mHandle = 0;
-      mUsage = BU_STATIC_DRAW;
+      mUsage = GBU_STATIC_DRAW;
       mByteCountGPU = 0;
     }
 
@@ -72,7 +72,7 @@ namespace vl
         mObjectName = className();
       #endif
       mHandle = 0;
-      mUsage = BU_STATIC_DRAW;
+      mUsage = GBU_STATIC_DRAW;
       mByteCountGPU = 0;
       // copy local data
       *this = other;
@@ -94,7 +94,7 @@ namespace vl
       // tmp
       unsigned int tmp_handle = mHandle;
       EGLBufferUsage tmp_usage = mUsage;
-      GLsizeiptr tmp_bytes = mByteCountGPU;
+      int tmp_bytes = mByteCountGPU;
       // this <- other
       mHandle = other.mHandle;
       mUsage = tmp_usage;
@@ -110,11 +110,8 @@ namespace vl
       deleteGLBufferObject();
     }
 
-    void setHandle(unsigned int handle) { mHandle = handle; }
-
     unsigned int handle() const { return mHandle; }
-
-    GLsizeiptr byteCountGPU() const { return mByteCountGPU; }
+    int byteCountGPU() const { return mByteCountGPU; }
 
     void createGLBufferObject()
     {
@@ -124,7 +121,7 @@ namespace vl
       if (handle() == 0)
       {
         VL_CHECK(mByteCountGPU == 0)
-        VL_glGenBuffers( 1, &mHandle );
+        VL_glGenBuffers( 1, &(mHandle) );
         mByteCountGPU = 0;
       }
       VL_CHECK(handle())
@@ -134,7 +131,7 @@ namespace vl
     {
       if (handle() != 0)
       {
-        VL_glDeleteBuffers( 1, &mHandle );
+        VL_glDeleteBuffers( 1, &(mHandle) );
         mHandle = 0;
         mByteCountGPU = 0;
       }
@@ -163,7 +160,7 @@ namespace vl
 
     // modifies the GPU Buffer from the local storage
     // attention: discarding the local storage might delete data used by other interfaces
-    void setBufferSubData( GLintptr offset=0, GLsizeiptr byte_count=-1, bool discard_local_storage=false )
+    void setBufferSubData( GLintptr offset=0, int byte_count=-1, bool discard_local_storage=false )
     {
       byte_count = byte_count < 0 ? byteCountGPU() : byte_count;
       setBufferSubData( offset, byte_count, ptr() );
@@ -173,14 +170,14 @@ namespace vl
 
     // if data == NULL the buffer will be allocated but no data will be writte into
     // if data != must point to a buffer of at least 'size' bytes
-    void setBufferData( GLsizeiptr byte_count, const GLvoid* data, EGLBufferUsage usage )
+    void setBufferData( int byte_count, const GLvoid* data, EGLBufferUsage usage )
     {
       VL_CHECK_OGL();
       VL_CHECK(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
       if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
         return;
-      //if (!data || !byte_count)
-      //  return;
+      if (!data || !byte_count)
+        return;
       createGLBufferObject();
       // we use the GL_ARRAY_BUFFER slot to send the data for no special reason
       VL_glBindBuffer( GL_ARRAY_BUFFER, handle() );
@@ -191,7 +188,7 @@ namespace vl
       VL_CHECK_OGL();
     }
 
-    void setBufferSubData( GLintptr offset, GLsizeiptr byte_count, const GLvoid* data )
+    void setBufferSubData( GLintptr offset, int byte_count, const GLvoid* data )
     {
       VL_CHECK(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
       if(!(GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0))
@@ -245,7 +242,7 @@ namespace vl
 
   protected:
     unsigned int mHandle;
-    GLsizeiptr mByteCountGPU;
+    int mByteCountGPU;
     EGLBufferUsage mUsage;
   };
 }

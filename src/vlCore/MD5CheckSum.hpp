@@ -32,7 +32,6 @@
 #ifndef MD5CheckSum_INCLUDE_ONCE
 #define MD5CheckSum_INCLUDE_ONCE
 
-#include <vlCore/config.hpp>
 #include <string>
 #include <string.h>
 
@@ -43,28 +42,21 @@ namespace vl
   /**
    * Computes the MD5 of a given buffer or VirtualFile.
   */
-  class VLCORE_EXPORT MD5CheckSum
+  class MD5CheckSum
   {
   public:
     MD5CheckSum()
     {
       memset(mMD5, 0, 16);
     }
-    
-    virtual const char* className() { return "vl::MD5CheckSum"; }
-    
+    virtual const char* className() { return "MD5CheckSum"; }
     const unsigned char* md5() const { return mMD5; }
-    
     std::string toStdString() const;
-    
     void compute(void* buffer, int len);
-    
     void compute(VirtualFile* file);
 
     bool operator==(const MD5CheckSum& other) const { return memcmp(mMD5, other.mMD5, 16) == 0; }
-    
     bool operator!=(const MD5CheckSum& other) const { return memcmp(mMD5, other.mMD5, 16) != 0; }
-    
     bool operator< (const MD5CheckSum& other) const { return memcmp(mMD5, other.mMD5, 16) <  0; }
 
   protected:

@@ -48,19 +48,14 @@ namespace vl
    * - \ref pagGuideExtrusion "Extrusion Tutorial" for a practical example of how to use extrusions.
    * - Interpolator, LinearInterpolator, CatmullRomInterpolator to generate silhouettes and extrusion paths.
    *
-   * <img src="pics/pagGuideExtrusion3.jpg">
+   * \image html pagGuideExtrusion3.jpg
    */
-  class VLGRAPHICS_EXPORT Extrusion: public vl::Object
+  class Extrusion: public vl::Object
   {
   public:
-    virtual const char* className() { return "vl::Extrusion"; }
-
     //! Constructor.
     Extrusion()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mSmooth     = false;
       mFillBottom = true;
       mFillTop    = true;

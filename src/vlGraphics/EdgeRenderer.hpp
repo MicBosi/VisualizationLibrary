@@ -52,7 +52,7 @@ namespace vl
   - \ref pagGuideEdgeRendering "Edge Enhancement and Wireframe Rendering Tutorial"
   - vl::EdgeExtractor
   */
-  class VLGRAPHICS_EXPORT EdgeRenderer: public Renderer
+  class EdgeRenderer: public Renderer
   {
     class WFInfo: public Object
     {
@@ -62,7 +62,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::EdgeRenderer"; }
+    virtual const char* className() { return "EdgeRenderer"; }
     EdgeRenderer(): mLineWidth(1.0f), mPolygonOffsetFactor(1.0f), mPolygonOffsetUnits(1.0f), mCreaseAngle(44.0f), mShowHiddenLines(true), mShowCreases(true), mSmoothLines(true)
     {
       #ifndef NDEBUG

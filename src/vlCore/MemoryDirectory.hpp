@@ -53,12 +53,12 @@ namespace vl
    * - DiskFile
    * - ZippedFile
   */
-  class VLCORE_EXPORT MemoryDirectory: public VirtualDirectory
+  class MemoryDirectory: public VirtualDirectory
   {
   public:
     MemoryDirectory(const String& path="."): VirtualDirectory(path) {}
 
-    virtual const char* className() { return "vl::MemoryDirectory"; }
+    virtual const char* className() { return "MemoryDirectory"; }
 
     virtual bool setPath(const String& name);
 

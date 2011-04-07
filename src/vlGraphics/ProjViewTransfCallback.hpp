@@ -33,7 +33,6 @@
 #define ProjViewTransfCallback_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlGraphics/config.hpp>
 
 namespace vl
 {
@@ -45,11 +44,9 @@ namespace vl
   // ProjViewTransfCallback
   //-----------------------------------------------------------------------------
   /** Vitual class used as a callback to update the state of the \p projection, \p view and \p transform matrices of a GLSLProgram or fixed function pipeline. */
-  class VLGRAPHICS_EXPORT ProjViewTransfCallback: public Object
+  class ProjViewTransfCallback: public Object
   {
   public:
-    virtual const char* className() { return "vl::ProjViewTransfCallback"; }
-
     /** This function is called whenever a new GLSLProgram (or the NULL one, i.e. the fixed function pipeline) is being activated for the first time in the current rendering.
      * This callback is most useful to initialize the GLSLProgram with the current projection and view matrices, besides the current Actor's transform.
      * \param caller The Renderer object calling this function.
@@ -76,22 +73,12 @@ namespace vl
   //! You usually want to install this callback if the fixed fuction pipeline is available, even when using GLSL shaders.
   //! In fact the GL_MODELVIEW and GL_PROJECTION matrices are visible from all the GLSL shaders, thus requiring fewer matrix updates
   //! compared to being forced to send projection, view and transform matrix to every single GLSLProgram at least once during the rendering!
-  class VLGRAPHICS_EXPORT ProjViewTransfCallbackStandard: public ProjViewTransfCallback
+  class ProjViewTransfCallbackStandard: public ProjViewTransfCallback
   {
   public:
-    virtual const char* className() { return "vl::ProjViewTransfCallbackStandard"; }
-    
-    ProjViewTransfCallbackStandard(): mLastTransform(NULL) 
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
-    
+    ProjViewTransfCallbackStandard(): mLastTransform(NULL) {}
     virtual void programFirstUse(const Renderer*, const GLSLProgram* glsl, const Transform*, const Camera*, bool first_overall );
-    
     virtual void programTransfChange(const Renderer*, const GLSLProgram* glsl, const Transform*, const Camera* );
-  
   private:
     const Transform* mLastTransform;
   };

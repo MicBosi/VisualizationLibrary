@@ -47,8 +47,7 @@ namespace vl
   class Collection: public Object
   {
   public:
-    virtual const char* className() { return "vl::Collection"; }
-    
+    virtual const char* className() { return "Collection"; }
     Collection(const std::vector< ref<T> >& vector)
     {
       #ifndef NDEBUG
@@ -56,53 +55,36 @@ namespace vl
       #endif
       mVector = vector;
     }
-    
     Collection()
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
     }
-    
     Collection& operator=(const std::vector< ref<T> >& vector)
     {
       mVector = vector;
       return *this;
     }
-
     operator std::vector< ref<T> >() const
     {
       return mVector;
     }
 
     void push_back( T* data ) { mVector.push_back(data); }
-    
     void pop_back() { mVector.pop_back(); }
-    
     void resize(int size) { mVector.resize(size); }
-    
     int size() const { return (int)mVector.size(); }
-    
     bool empty() const { return mVector.empty(); }
-    
     void clear() { mVector.clear(); }
-    
     const T* back() const { return mVector.back().get(); }
-    
     T* back() { return mVector.back().get(); }
-    
     void reserve(int capacity) { mVector.reserve(capacity); }
-    
     int capacity() const { return (int)mVector.capacity(); }
-    
     const ref<T>& operator[](int i) const { return mVector[i]; }
-    
     ref<T>& operator[](int i) { return mVector[i]; }
-    
     const T* at(int i) const { return mVector[i].get(); }
-    
     T* at(int i) { return mVector[i].get(); }
-    
     void swap(Collection& other) { mVector.swap(other.mVector); }
 
     // added functionalities
@@ -111,7 +93,6 @@ namespace vl
     {
       std::sort(mVector.begin(), mVector.end(), less);
     }
-
     int find(T* obj) const
     {
       typename std::vector< ref<T> >::const_iterator pos = std::find(mVector.begin(), mVector.end(), obj);
@@ -120,47 +101,37 @@ namespace vl
       else
         return (int)(pos - mVector.begin());
     }
-    
     void shrink()
     {
       Collection<T>(mVector).swap(mVector);
     }
-    
     void push_back(const Collection<T>& objs )
     {
       mVector.insert(mVector.end(), objs.mVector.begin(), objs.mVector.end());
     }
-    
     void insert(int start, const Collection<T>& objs )
     {
       mVector.insert(mVector.begin()+start, objs.mVector.begin(), objs.mVector.end());
     }
-    
     void set(const Collection<T>& objs)
     {
       mVector = objs.mVector;
     }
-    
     void erase(int start, int count)
     {
       mVector.erase(mVector.begin()+start, mVector.begin()+start+count);
     }
-    
     void set(int index, T* obj) { mVector[index] = obj; }
-    
     void insert(int index, T* obj) { mVector.insert(mVector.begin() + index, obj); }
-    
     void erase(const T* data)
     {
       typename std::vector< ref<T> >::iterator it = std::find(mVector.begin(), mVector.end(), data);
       if (it != mVector.end())
         mVector.erase(it);
-    
     }
     void eraseAt(int index) { mVector.erase(mVector.begin()+index); }
 
     const std::vector< ref<T> >& vector() const { return mVector; }
-    
     std::vector< ref<T> >& vector() { return mVector; }
 
   protected:

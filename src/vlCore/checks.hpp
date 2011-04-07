@@ -40,7 +40,7 @@
 
 namespace vl
 {
-  VLCORE_EXPORT void log_failed_check(const char*, const char*, int);
+  void log_failed_check(const char*, const char*, int);
 
   // Compile-time check
   #define VL_COMPILE_TIME_CHECK( expr ) typedef char compile_time_assert[ (expr) ? 1 : -1 ];

@@ -59,36 +59,27 @@ namespace vl
   - Fast substring find function based on the Quick Find algorithm.
   - Loads text from a variety of formats and sources.
   */
-  class VLCORE_EXPORT String
+  class String
   {
   public:
     //! Detects the encoding
     static EStringEncoding detectEncoding(const void* str, int byte_count, EStringEncoding encoding = VL_PLATFORM_DEFAULT_ENCODING);
-    
     //! Loads a String from the specified path.
     static String loadText(const String& path, EStringEncoding encoding = VL_PLATFORM_DEFAULT_ENCODING);
-    
     //! Loads a String from the specified path.
     static String loadText(const char* path, EStringEncoding encoding = VL_PLATFORM_DEFAULT_ENCODING) { return loadText(String(path),encoding); }
-    
     //! Loads a String from the specified VirtualFile.
     static String loadText(VirtualFile* file, EStringEncoding encoding = VL_PLATFORM_DEFAULT_ENCODING);
-    
     //! Loads a String from the specified memory buffer.
     static String loadText(void* data, int bytes, EStringEncoding encoding = VL_PLATFORM_DEFAULT_ENCODING);
-    
     //! Returns the upper-case version of the specified character.
     static unsigned short getUpperCase(unsigned short ch);
-    
     //! Returns the lower-case version of the specified character.
     static unsigned short getLowerCase(unsigned short ch);
-    
     //! Returns the title-case version of the specified character.
     static unsigned short getTitleCase(unsigned short ch);
-    
     //! Filters the specified Strings using the given filter. The \p filter must be of the type \p "*abc", \p "abc*" and \p "*abc*".
     static void filterStrings(std::vector<String>& strings, const String& filter);
-    
     //! Returns '\' under windows and '/' under Linux and Mac.
     static wchar_t platformSlash()
     {
@@ -104,16 +95,12 @@ namespace vl
 
     //! Constructor.
     String();
-    
     //! Constructor.
     String(const String& other);
-    
     //! Constructor.
     String(const wchar_t* wstr);
-    
     //! Constructor.
     String(const char* str);
-    
     //! Constructor.
     explicit String(wchar_t ch, int count=1);
 

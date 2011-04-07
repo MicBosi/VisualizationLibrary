@@ -43,15 +43,8 @@ namespace vl
   class PatchParameter: public Object
   {
   public:
-    virtual const char* className() { return "vl::PatchParameter"; }
-
     //! Constructor
-    PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(fvec4(4,4,4,4)), mPatchDefaultInnerLevel(fvec2(4,4)) 
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
+    PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(fvec4(4,4,4,4)), mPatchDefaultInnerLevel(fvec2(4,4)) {}
 
     //! Applies the glPatchParameter values.
     void apply() 

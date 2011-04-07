@@ -335,72 +335,6 @@ public:
   }
 
   /*
-  This example shows how to perform off-screen rendering directly on a multisample texture.
-  */
-  void initTest_FBO_Multisample_Texture()
-  {
-    if (!(GLEW_ARB_texture_multisample||GLEW_VERSION_3_2||GLEW_VERSION_4_0))
-    {
-      vl::Log::error("GLEW_ARB_texture_multisample not supported.\n");
-      vl::Time::sleep(3000);
-      exit(1);
-    }
-
-    const int samples = 4; // keep updated with tex_multisample.fs
-
-    // Setup dual rendering
-
-    vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
-    setRendering(render_tree.get());
-    mMainRendering = new vl::Rendering;
-    mRTT_Rendering = new vl::Rendering;
-    render_tree->subRenderings()->push_back(mRTT_Rendering.get());
-    render_tree->subRenderings()->push_back(mMainRendering.get());
-    mMainRendering->sceneManagers()->push_back(new vl::SceneManagerActorTree);
-    mRTT_Rendering->sceneManagers()->push_back(new vl::SceneManagerActorTree);
-
-    // RTT rendering
-
-    mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
-    mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
-    mRTT_Rendering->camera()->setProjectionAsPerspective();
-    vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setInverseViewMatrix(m);
-
-    /* use a framebuffer object as render target */
-    vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
-
-    /* bind a multisampled depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
-    fbo_depth_attachm->setSamples(samples);
-    fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
-
-    /* use multisample texture as color buffer */
-    vl::ref<vl::Texture> texture = new vl::Texture;
-    texture->prepareTexture2DMultisample(samples, vl::TF_RGBA, mFBO_Size, mFBO_Size, true);
-    texture->createTexture();
-    vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm = new vl::FBOTexture2DAttachment(texture.get(), 0, vl::T2DT_TEXTURE_2D_MULTISAMPLE);
-    fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
-    mRTT_Rendering->renderer()->renderTarget()->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
-
-    // Main rendering
-
-    /* setup camera */
-    mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
-    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
-    m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setInverseViewMatrix(m);
-
-    /* use the opengl window as render target */
-    mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
-
-    /* populate the scene */
-    addRings(NULL);
-    addCube(texture.get(), NULL); // here we use he /glsl/tex_multisample.fs to perform the texel fetch.
-  }
-
-  /*
   This example demonstrates how to perform render-to-texture without using framebuffer objects.
   First the scene with the ring is rendered normally on the screen. The pixels on the screen are then copied to 
   a texture using the vl::CopyTexSubImage2D callback object. Finally the scene with the cube can be rendered
@@ -463,11 +397,6 @@ public:
     effect1->shader()->enable(vl::EN_DEPTH_TEST);
     effect1->shader()->gocTextureUnit(0)->setTexture( texture1 );
     effect1->shader()->gocTexEnv(0)->setMode(vl::TEM_MODULATE);
-    // TD_TEXTURE_2D_MULTISAMPLE requires a special fragment shader
-    if (texture1->dimension() == vl::TD_TEXTURE_2D_MULTISAMPLE)
-    {
-      effect1->shader()->gocGLSLProgram()->attachShader( new vl::GLSLFragmentShader("/glsl/tex_multisample.fs") );
-    }
 
     // ground plane
     const vl::Real size = 50;
@@ -577,9 +506,7 @@ public:
       break;
     case 3: initTest_FBO_Framebuffer_Blit_Multisample(); 
       break;
-    case 4: initTest_FBO_Multisample_Texture();
-      break;
-    case 5: initTest_RTT_Legacy();
+    case 4: initTest_RTT_Legacy();
       break;
     default:
       break;
@@ -608,16 +535,6 @@ public:
     mTransfRing3->setLocalMatrix( vl::mat4::getRotation(mX2, 1,0,0) );
     mTransfRing4->setLocalMatrix( vl::mat4::getRotation(mY2, 0,1,0) );
     mTransfRing5->setLocalMatrix( vl::mat4::getRotation(mX3, 1,0,0) );
-  }
-  
-  virtual void destroyEvent()
-  {
-    BaseDemo::destroyEvent();
-
-    // release all OpenGL resources
-    setRendering(NULL);
-    mMainRendering = NULL;
-    mRTT_Rendering = NULL;
   }
 
 protected:

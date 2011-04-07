@@ -47,10 +47,10 @@ namespace vl
    *
    * \sa Shader, Effect, Actor
   */
-  class VLGRAPHICS_EXPORT RenderState: public Object
+  class RenderState: public Object
   {
   public:
-    virtual const char* className() { return "vl::RenderState"; }
+    virtual const char* className() { return "RenderState"; }
     RenderState() 
     {
       #ifndef NDEBUG
@@ -70,10 +70,10 @@ namespace vl
    *
    * \sa Shader, Effect, Actor, RenderState
   */
-  class VLGRAPHICS_EXPORT TextureState: public RenderState
+  class TextureState: public RenderState
   {
   public:
-    virtual const char* className() { return "vl::TextureState"; }
+    virtual const char* className() { return "TextureState"; }
     TextureState(): mTextureUnit(0)
     {
       #ifndef NDEBUG

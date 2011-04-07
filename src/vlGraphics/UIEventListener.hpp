@@ -32,7 +32,6 @@
 #ifndef EventListener_INCLUDE_ONCE
 #define EventListener_INCLUDE_ONCE
 
-#include <vlGraphics/config.hpp>
 #include <vlCore/String.hpp>
 
 namespace vl
@@ -52,11 +51,11 @@ namespace vl
 	  example if a key was pressed when the OpenGLContext did not have the keyboard focus, the function keyPressed() will wrongly
 	  report a \a released state for that key. If a key release event is not sent to the OpenGLContext because generated when the
 	  OpenGLContext did not have the keyboard focus, the function keyPressed() will wrongly report a \a pressed state for that key. */
-  class VLGRAPHICS_EXPORT UIEventListener: public Object
+  class UIEventListener: public Object
   {
   friend class OpenGLContext;
   public:
-    virtual const char* className() { return "vl::UIEventListener"; }
+    virtual const char* className() { return "UIEventListener"; }
 
     /** Constructor. */
     UIEventListener(): mOpenGLContext(NULL), mEnabled(true) 

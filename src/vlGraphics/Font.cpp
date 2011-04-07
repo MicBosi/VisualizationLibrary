@@ -69,8 +69,6 @@ const char* get_ft_error_message(int error)
 }
 
 //-----------------------------------------------------------------------------
-// Glyph
-//-----------------------------------------------------------------------------
 Glyph::~Glyph()
 {
   if (mTextureHandle)
@@ -79,8 +77,6 @@ Glyph::~Glyph()
     mTextureHandle = 0;
   }
 }
-//-----------------------------------------------------------------------------
-// Font
 //-----------------------------------------------------------------------------
 Font::Font(FontManager* fm)
 {
@@ -91,7 +87,6 @@ Font::Font(FontManager* fm)
   mHeight  = 0;
   mFT_Face = NULL;
   mSmooth  = false;
-  mFreeTypeLoadForceAutoHint = true;
   setSize(14);
 }
 //-----------------------------------------------------------------------------
@@ -104,7 +99,6 @@ Font::Font(FontManager* fm, const String& font_file, int size)
   mHeight  = 0;
   mFT_Face = NULL;
   mSmooth  = false;
-  mFreeTypeLoadForceAutoHint = true;
   loadFont(font_file);
   setSize(size);
 }
@@ -267,10 +261,7 @@ Glyph* Font::glyph(int character)
     //  return glyph;
     //}
 
-    // Note with FT 2.3.9 FT_LOAD_DEFAULT worked well, with FT 2.4 instead we ned FT_LOAD_FORCE_AUTOHINT
-    // This might work well with VL's font but it might be suboptimal for other fonts.
-
-    error = FT_Load_Char( mFT_Face, character, freeTypeLoadForceAutoHint() ? FT_LOAD_FORCE_AUTOHINT : FT_LOAD_DEFAULT );
+    error = FT_Load_Char( mFT_Face, character, FT_LOAD_DEFAULT );
 
     if(error)
     {

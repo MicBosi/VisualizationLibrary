@@ -147,7 +147,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::DrawRangeElements"; }
+    virtual const char* className() { return "DrawRangeElements"; }
 
     DrawRangeElements(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=index_type(~0))
     {

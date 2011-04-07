@@ -37,20 +37,20 @@
 
 using namespace vl;
 
-/** \class vl::MarchingCubes
+/** \class MarchingCubes
 
 Pictures from the \ref pagGuideMarchingCubes "Marching Cubes" tutorial.
 <center>
 <table border=0 cellspacing=0 cellpadding=5>
 <tr>
-	<td colspan=2> <img src="pics/pagGuideMarchingCubes.jpg"> </td>
-	<td colspan=2> <img src="pics/pagGuideMarchingCubes_5.jpg"> </td>
+	<td colspan=2> \image html pagGuideMarchingCubes.jpg </td>
+	<td colspan=2> \image html pagGuideMarchingCubes_5.jpg </td>
 </tr>
 <tr>
-	<td> <img src="pics/pagGuideMarchingCubes_1.jpg"> </td>
-	<td> <img src="pics/pagGuideMarchingCubes_2.jpg"> </td>
-	<td> <img src="pics/pagGuideMarchingCubes_3.jpg"> </td>
-	<td> <img src="pics/pagGuideMarchingCubes_4.jpg"> </td>
+	<td> \image html pagGuideMarchingCubes_1.jpg </td>
+	<td> \image html pagGuideMarchingCubes_2.jpg </td>
+	<td> \image html pagGuideMarchingCubes_3.jpg </td>
+	<td> \image html pagGuideMarchingCubes_4.jpg </td>
 </tr>
 </table>
 </center>
@@ -446,9 +446,6 @@ void MarchingCubes::updateAlpha(float alpha, int volume_index)
 //------------------------------------------------------------------------------
 Volume::Volume()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
   setup(NULL, fvec3(0,0,0), fvec3(1.0f,1.0f,1.0f), ivec3(50,50,50));
 }
 //------------------------------------------------------------------------------

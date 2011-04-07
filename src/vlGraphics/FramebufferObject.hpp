@@ -46,7 +46,7 @@ namespace vl
   /**
    * Abstract class that represents a framebuffer object attachment to be used with FBORenderTarget.
    */
-  class VLGRAPHICS_EXPORT FBOAbstractAttachment: public Object
+  class FBOAbstractAttachment: public Object
   {
     friend class FBORenderTarget;
 
@@ -56,7 +56,7 @@ namespace vl
     void operator=( const FBOAbstractAttachment& ) {}
 
   public:
-    virtual const char* className() { return "vl::FBOAbstractAttachment"; }
+    virtual const char* className() { return "FBOAbstractAttachment"; }
 
     /** Constructor */
     FBOAbstractAttachment() {}
@@ -84,12 +84,12 @@ namespace vl
    * \sa FBORenderTarget.
    * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferRenderbuffer.xml
    */
-  class VLGRAPHICS_EXPORT FBORenderbufferAttachment: public FBOAbstractAttachment
+  class FBORenderbufferAttachment: public FBOAbstractAttachment
   {
     friend class FBORenderTarget;
 
   public:
-    virtual const char* className() { return "vl::FBORenderbufferAttachment"; }
+    virtual const char* className() { return "FBORenderbufferAttachment"; }
     
     /** Constructor. */
     FBORenderbufferAttachment(): mHandle( 0 ), mWidth( 0 ), mHeight( 0 ), mSamples( 0 ), mReallocateRenderbuffer( true ) {}
@@ -182,10 +182,10 @@ namespace vl
   /**
    * A color renderbuffer to be attached to a FBORenderTarget.
    */
-  class VLGRAPHICS_EXPORT FBOColorBufferAttachment: public FBORenderbufferAttachment
+  class FBOColorBufferAttachment: public FBORenderbufferAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBOColorBufferAttachment"; }
+    virtual const char* className() { return "FBOColorBufferAttachment"; }
 
     /** Constructor */
     FBOColorBufferAttachment( EColorBufferFormat type )
@@ -214,10 +214,10 @@ namespace vl
   /**
    * A depth renderbuffer to be attached to a FBORenderTarget.
    */
-  class VLGRAPHICS_EXPORT FBODepthBufferAttachment: public FBORenderbufferAttachment
+  class FBODepthBufferAttachment: public FBORenderbufferAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBODepthBufferAttachment"; }
+    virtual const char* className() { return "FBODepthBufferAttachment"; }
 
     /** Constructor */
     FBODepthBufferAttachment( EDepthBufferFormat type )
@@ -246,10 +246,10 @@ namespace vl
   /**
    * A stencil renderbuffer to be attached to a FBORenderTarget.
    */
-  class VLGRAPHICS_EXPORT FBOStencilBufferAttachment: public FBORenderbufferAttachment
+  class FBOStencilBufferAttachment: public FBORenderbufferAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBOStencilBufferAttachment"; }
+    virtual const char* className() { return "FBOStencilBufferAttachment"; }
 
     /** Constructor */
     FBOStencilBufferAttachment( EStencilBufferFormat type )
@@ -278,10 +278,10 @@ namespace vl
   /**
    * A depth+stencil renderbuffer to be attached to a FBORenderTarget.
    */
-  class VLGRAPHICS_EXPORT FBODepthStencilBufferAttachment: public FBORenderbufferAttachment
+  class FBODepthStencilBufferAttachment: public FBORenderbufferAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBODepthStencilBufferAttachment"; }
+    virtual const char* className() { return "FBODepthStencilBufferAttachment"; }
 
     /** Constructor */
     FBODepthStencilBufferAttachment( EDepthStencilBufferFormat type )
@@ -310,10 +310,10 @@ namespace vl
   /**
    * Base class for all the framebuffer texture attachments (see also FBORenderTarget).
    */
-  class VLGRAPHICS_EXPORT FBOAbstractTextureAttachment: public FBOAbstractAttachment
+  class FBOAbstractTextureAttachment: public FBOAbstractAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBOAbstractTextureAttachment"; }
+    virtual const char* className() { return "FBOAbstractTextureAttachment"; }
 
     /** Constructor. */
     FBOAbstractTextureAttachment( Texture* texture, int mipmap_level ): mTexture(texture), mMipmapLevel(mipmap_level)
@@ -349,10 +349,10 @@ namespace vl
    * A 1D texture renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTexture1D()).
    * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTexture.xml
    */
-  class VLGRAPHICS_EXPORT FBOTexture1DAttachment: public FBOAbstractTextureAttachment
+  class FBOTexture1DAttachment: public FBOAbstractTextureAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBOTexture1DAttachment"; }
+    virtual const char* className() { return "FBOTexture1DAttachment"; }
 
     /** Constructor. */
     FBOTexture1DAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
@@ -372,10 +372,10 @@ namespace vl
    * A 2D texture renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTexture2D()).
    * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTexture.xml
    */
-  class VLGRAPHICS_EXPORT FBOTexture2DAttachment: public FBOAbstractTextureAttachment
+  class FBOTexture2DAttachment: public FBOAbstractTextureAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBOTexture2DAttachment"; }
+    virtual const char* className() { return "FBOTexture2DAttachment"; }
 
     /** Constructor. */
     FBOTexture2DAttachment( Texture* texture, int mipmap_level, ETex2DTarget target ): FBOAbstractTextureAttachment( texture, mipmap_level )
@@ -405,10 +405,10 @@ namespace vl
    * A texture renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTexture()).
    * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTexture.xml
    */
-  class VLGRAPHICS_EXPORT FBOTextureAttachment: public FBOAbstractTextureAttachment
+  class FBOTextureAttachment: public FBOAbstractTextureAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBOTextureAttachment"; }
+    virtual const char* className() { return "FBOTextureAttachment"; }
 
     /** Constructor. */
     FBOTextureAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
@@ -429,10 +429,10 @@ namespace vl
    * A 3D texture renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTexture3D()).
    * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTexture.xml
    */
-  class VLGRAPHICS_EXPORT FBOTexture3DAttachment: public FBOAbstractTextureAttachment
+  class FBOTexture3DAttachment: public FBOAbstractTextureAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBOTexture3DAttachment"; }
+    virtual const char* className() { return "FBOTexture3DAttachment"; }
 
     FBOTexture3DAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
@@ -461,10 +461,10 @@ namespace vl
    * A texture layer renderbuffer to be attached to a FBORenderTarget (wraps \p glFramebufferTextureLayer()).
    * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glFramebufferTextureLayer.xml
    */
-  class VLGRAPHICS_EXPORT FBOTextureLayerAttachment: public FBOAbstractTextureAttachment
+  class FBOTextureLayerAttachment: public FBOAbstractTextureAttachment
   {
   public:
-    virtual const char* className() { return "vl::FBOTextureLayerAttachment"; }
+    virtual const char* className() { return "FBOTextureLayerAttachment"; }
 
     /** Constructor. */
     FBOTextureLayerAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
@@ -520,7 +520,7 @@ namespace vl
    * - FBOTextureAttachment 
    * - FBOTextureLayerAttachment 
    */
-  class VLGRAPHICS_EXPORT FBORenderTarget: public RenderTarget
+  class FBORenderTarget: public RenderTarget
   {
     friend class OpenGLContext;
 
@@ -538,10 +538,10 @@ namespace vl
     }
 
   public:
-    virtual const char* className() { return "vl::FBORenderTarget"; }
+    virtual const char* className() { return "FBORenderTarget"; }
 
     /** Destructor. */
-    ~FBORenderTarget() { if (openglContext()) destroy(); }
+    ~FBORenderTarget() { destroy(); }
 
     /** 
      * Creates a framebuffer object by calling glGenFramebuffers(). 

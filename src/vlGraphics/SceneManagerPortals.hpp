@@ -50,18 +50,13 @@ namespace vl
   //! - SceneManagerPortals
   //! - Sector
   //! - \ref pagGuidePortals "Portal-Based Culling and Scene Management Tutorial"
-  class VLGRAPHICS_EXPORT Portal: public Object
+  class Portal: public Object
   {
     friend class SceneManagerPortals;
   public:
-    virtual const char* className() { return "vl::Portal"; }
-
     //! Constructor.
     Portal()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mIsOpen = true;
       mVisitTick = 0;
     }
@@ -107,10 +102,9 @@ namespace vl
    *  - Portal
    *  - \ref pagGuidePortals "Portal-Based Culling and Scene Management Tutorial"
    */
-  class VLGRAPHICS_EXPORT Sector: public Object
+  class Sector: public Object
   {
   public:
-    virtual const char* className() { return "vl::Sector"; }
 
     /** A callback object called each time a Sector becomes visible through a Portal.
      *  Note: a callback can be called multiple times with the same Sector argument if a Sector is discovered multiple times through different portals.
@@ -132,13 +126,7 @@ namespace vl
     };
   public:
     //! Constructor.
-    Sector() 
-    { 
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-      mActors = new ActorCollection; 
-    }
+    Sector() { mActors = new ActorCollection; }
 
     //! The Actor object contained in a sector. An actor can be part of multiple sectors.
     ActorCollection* actors() { return mActors.get(); }
@@ -184,18 +172,11 @@ namespace vl
    * - SceneManagerActorKdTree
    * - SceneManagerActorTree
    */
-  class VLGRAPHICS_EXPORT SceneManagerPortals: public SceneManager
+  class SceneManagerPortals: public SceneManager
   {
   public:
-    virtual const char* className() { return "vl::SceneManagerPortals"; }
-
     //! Constructor.
-    SceneManagerPortals(): mExternalSector(new Sector), mVisitTick(1), mShowPortals(false) 
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
+    SceneManagerPortals(): mExternalSector(new Sector), mVisitTick(1), mShowPortals(false) {}
 
     //! Appends to the given list all the Actor[s] contained in the scene regardless of their visibility.
     void extractActors(ActorCollection& list);

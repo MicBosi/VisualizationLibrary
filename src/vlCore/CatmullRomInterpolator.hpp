@@ -46,15 +46,7 @@ namespace vl
   class CatmullRomInterpolator: public Object
   {
   public:
-    virtual const char* className() { return "vl::CatmullRomInterpolator"; }
-
-    CatmullRomInterpolator() 
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
-
+    CatmullRomInterpolator() {}
     CatmullRomInterpolator(const std::vector<T>& path): mPath(path) {}
 
     //! Call this function after having specified the control points if you want to automatically generate the start/end control points.
@@ -131,10 +123,8 @@ namespace vl
     //! (one on each side) and cannot have less than 4 control points. You can also automatically generate such 
     //! extra control points by calling the setupEndPoints() method.
     void setPath(const std::vector<T>& path) { mPath = path; }
-    
     //! The control points defining the Catmull-Rom spline.
     const std::vector<T>& path() const { return mPath; }
-    
     //! The control points defining the Catmull-Rom spline.
     std::vector<T>& path() { return mPath; }
 

@@ -32,49 +32,44 @@
 #ifndef VisualizationLibrary_INCLUDE_ONCE
 #define VisualizationLibrary_INCLUDE_ONCE
 
-#include <vlCore/config.hpp>
-#include <vlGraphics/config.hpp>
-
-// TODO: it would be nice not to have this VLGRAPHICS/VLCORE_EXPORT mix and not to include <vlGraphics/config.hpp> here.
-
 namespace vl
 {
   //! Used to initialize/shutdown VisualizationLibrary and to access important global data.
   class VisualizationLibrary
   {
   public:
-    //! Initializes VLCore and VLGraphics libraries.
-    //! Call initCore() instead of init() when using only VLCore.
-    VLGRAPHICS_EXPORT static void init(bool log_info=true);
+    //! Initializes VLCore or VLCore and VLGraphics libraries (if VL_MODULE_GRAPHICS was enabled during CMake configuration).
+    //! Call initCore() instead of init() when using only VLCore if VL_MODULE_GRAPHICS was enabled during CMake configuration.
+    static void init();
 
     //! Releases all the resources acquired by VLCore and VLGraphics.
-    //! Call shutdownCore() instead of shutdown() when using only VLCore.
-    VLGRAPHICS_EXPORT static void shutdown();
+    //! Call shutdownCore() instead of shutdown() when using only VLCore if VL_MODULE_GRAPHICS was enabled during CMake configuration.
+    static void shutdown();
 
-    //! Initializes only VLCore library.
-    //! Call initCore() instead of init() ONLY when using VLCore alone.
-    VLCORE_EXPORT static void initCore(bool log_info=true);
+    //! Initializes only VLCore library, equivalent to init() when VL_MODULE_GRAPHICS is disabled during CMake configuration.
+    //! Call initCore() instead of init() ONLY when using VLCore alone (i.e. no VLGraphics) and if VL_MODULE_GRAPHICS was enabled during CMake configuration.
+    static void initCore();
 
     //! Releases all the resources acquired by Visualization Library Core
-    //! Call shutdownCore() instead of shutdown() ONLY when using VLCore alone.
-    VLCORE_EXPORT static void shutdownCore();
+    //! Call shutdownCore() instead of shutdown() ONLY when using VLCore alone (i.e. no VLGraphics) and if VL_MODULE_GRAPHICS was enabled during CMake configuration.
+    static void shutdownCore();
 
     //! Returns true if VLCore library is initialized and shutdown has not been called.
-    VLCORE_EXPORT static bool isCoreInitialized();
+    static bool isCoreInitialized();
 
     //! Returns true if VLGraphics library is initialized and shutdown has not been called.
-    VLGRAPHICS_EXPORT static bool isGraphicsInitialized();
+    static bool isGraphicsInitialized();
 
     //! Returns the Visualization Library's version string.
-    VLCORE_EXPORT static const char* versionString();
+    static const char* versionString();
   
   private:
-    VLGRAPHICS_EXPORT static void initGraphics();
-    VLGRAPHICS_EXPORT static void shutdownGraphics();
+    static void initGraphics();
+    static void shutdownGraphics();
   };
 
   //! Shows a console window that displays the standard output. This function is meant to be used only under Windows only.
-  VLCORE_EXPORT void showWin32Console();
+  void showWin32Console();
 }
 
 #endif

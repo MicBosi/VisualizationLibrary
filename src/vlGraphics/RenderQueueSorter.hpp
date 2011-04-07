@@ -45,7 +45,7 @@ namespace vl
   class RenderQueueSorter: public Object
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorter"; }
+    virtual const char* className() { return "RenderQueueSorter"; }
     RenderQueueSorter()
     {
       #ifndef NDEBUG
@@ -64,7 +64,7 @@ namespace vl
   class RenderQueueSorterByShader: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterByShader"; }
+    virtual const char* className() { return "RenderQueueSorterByShader"; }
     RenderQueueSorterByShader()
     {
       #ifndef NDEBUG
@@ -86,7 +86,7 @@ namespace vl
   class RenderQueueSorterByRenderable: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterByRenderable"; }
+    virtual const char* className() { return "RenderQueueSorterByRenderable"; }
     RenderQueueSorterByRenderable()
     {
       #ifndef NDEBUG
@@ -107,7 +107,7 @@ namespace vl
   class RenderQueueSorterBasic: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterBasic"; }
+    virtual const char* className() { return "RenderQueueSorterBasic"; }
     RenderQueueSorterBasic()
     {
       #ifndef NDEBUG
@@ -152,7 +152,7 @@ namespace vl
   class RenderQueueSorterStandard: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterStandard"; }
+    virtual const char* className() { return "RenderQueueSorterStandard"; }
     RenderQueueSorterStandard(): mDepthSortMode(AlphaDepthSort)
     {
       #ifndef NDEBUG
@@ -235,7 +235,7 @@ namespace vl
   class RenderQueueSorterOcclusion: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterOcclusion"; }
+    virtual const char* className() { return "RenderQueueSorterOcclusion"; }
     RenderQueueSorterOcclusion()
     {
       #ifndef NDEBUG
@@ -299,7 +299,7 @@ namespace vl
   class RenderQueueSorterAggressive: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterAggressive"; }
+    virtual const char* className() { return "RenderQueueSorterAggressive"; }
     RenderQueueSorterAggressive(): mDepthSortMode(AlphaDepthSort)
     {
     {

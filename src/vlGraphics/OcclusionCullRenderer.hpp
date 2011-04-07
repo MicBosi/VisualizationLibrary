@@ -41,11 +41,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** Wraps a Renderer performing occlusion culling acceleration. 
     * For more information see \ref pagGuideOcclusionCulling */
-  class VLGRAPHICS_EXPORT OcclusionCullRenderer: public Renderer
+  class OcclusionCullRenderer: public Renderer
   {
   public:
-    virtual const char* className() { return "vl::OcclusionCullRenderer"; }
-
     /** Constructor. */
     OcclusionCullRenderer();
 

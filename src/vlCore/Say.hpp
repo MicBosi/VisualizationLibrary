@@ -41,7 +41,7 @@ namespace vl
   // SayArg
   //-----------------------------------------------------------------------------
   //! Used internally by the Say class
-  class VLCORE_EXPORT SayArg
+  class SayArg
   {
   friend class Say;
   public:
@@ -121,7 +121,7 @@ namespace vl
   //! - Normal and exponential notation
   //! - Clear and helpful debugging messages
   //! - Typesafe, portable, easy to use, clean
-  class VLCORE_EXPORT Say: public std::vector<SayArg>
+  class Say: public std::vector<SayArg>
   {
   public:
     String format_string;

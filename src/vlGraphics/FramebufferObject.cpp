@@ -71,9 +71,7 @@ namespace
 //-----------------------------------------------------------------------------
 void FBORenderTarget::create()
 {
-  VL_CHECK_OGL();
-  VL_CHECK(openglContext());
-  openglContext()->makeCurrent(); VL_CHECK_OGL();
+  openglContext()->makeCurrent();
 
   if ( !mHandle )
   {
@@ -84,8 +82,6 @@ void FBORenderTarget::create()
 //-----------------------------------------------------------------------------
 void FBORenderTarget::destroy()
 {
-  VL_CHECK_OGL();
-  VL_CHECK(openglContext());
   openglContext()->makeCurrent(); VL_CHECK_OGL();
 
   removeAllAttachments();
@@ -101,9 +97,7 @@ void FBORenderTarget::destroy()
 //-----------------------------------------------------------------------------
 void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
 {
-  VL_CHECK_OGL();
-  VL_CHECK(openglContext());
-  openglContext()->makeCurrent(); VL_CHECK_OGL();
+  openglContext()->makeCurrent(); VL_CHECK_OGL()
 
   if ( !GLEW_Has_Framebuffer_Object )
   {
@@ -144,9 +138,7 @@ void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
 //! Returns 0 if no FBO support is found otherwise returns the value obtained by VL_glCheckFramebufferStatus()
 GLenum FBORenderTarget::checkFramebufferStatus()
 {
-  VL_CHECK_OGL();
-  VL_CHECK(openglContext());
-  openglContext()->makeCurrent(); VL_CHECK_OGL();
+  openglContext()->makeCurrent(); VL_CHECK_OGL()
 
   if ( !GLEW_Has_Framebuffer_Object )
   {
@@ -194,34 +186,34 @@ void FBORenderTarget::printFramebufferError( GLenum status ) const
   case GL_FRAMEBUFFER_COMPLETE:
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_UNSUPPORTED:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_UNSUPPORTED\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_UNSUPPORTED\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS_ARB:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS_ARB\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS_ARB\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_LAYER_COUNT_ARB:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_LAYER_COUNT_ARB\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_LAYER_COUNT_ARB\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE\n" ); VL_TRAP()
+    Log::error( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE\n" ); VL_TRAP()
     break;
   }
 }
@@ -304,9 +296,7 @@ void FBORenderTarget::removeAttachment( EAttachmentPoint attach_point )
 {
   VL_CHECK( vl::VisualizationLibrary::isGraphicsInitialized() )
 
-  VL_CHECK_OGL();
-  VL_CHECK(openglContext());
-  openglContext()->makeCurrent(); VL_CHECK_OGL();
+  openglContext()->makeCurrent();
 
   VL_CHECK( GLEW_Has_Framebuffer_Object )
   if( !GLEW_Has_Framebuffer_Object )
@@ -376,7 +366,7 @@ void FBOTexture2DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPo
     return;
   VL_CHECK( texture() )
   VL_CHECK( texture()->handle() )
-  // VL_CHECK( texture()->dimension() == GL_TEXTURE_2D )
+  VL_CHECK( texture()->dimension() == GL_TEXTURE_2D )
   VL_CHECK( fbo->width()  <= texture()->width()  );
   VL_CHECK( fbo->height() <= texture()->height() );
 
@@ -394,12 +384,9 @@ void FBOTexture2DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPo
   VL_glFramebufferTexture2D( GL_FRAMEBUFFER, attach_point, target, texture()->handle(), mipmapLevel() ); VL_CHECK_OGL()
 
   // needed to make non-mipmapped textures work with FBO, see framebuffer_object.txt line 442
-  if ( texture()->dimension() != TD_TEXTURE_2D_MULTISAMPLE )
-  {
-    glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
-    glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR ); VL_CHECK_OGL()
-    glBindTexture( texture()->dimension(), 0 ); VL_CHECK_OGL()
-  }
+  glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
+  glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR ); VL_CHECK_OGL()
+  glBindTexture( texture()->dimension(), 0 ); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void FBOTextureAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point )
@@ -415,12 +402,9 @@ void FBOTextureAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoin
   VL_glFramebufferTexture( GL_FRAMEBUFFER, attach_point, texture()->handle(), mipmapLevel() ); VL_CHECK_OGL()
 
   // needed to make non-mipmapped textures work with FBO, see framebuffer_object.txt line 442
-  if ( texture()->dimension() != TD_TEXTURE_2D_MULTISAMPLE )
-  {
-    glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
-    glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR ); VL_CHECK_OGL()
-    glBindTexture( texture()->dimension(), 0 ); VL_CHECK_OGL()
-  }
+  glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
+  glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR ); VL_CHECK_OGL()
+  glBindTexture( texture()->dimension(), 0 ); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void FBOTexture3DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point )
@@ -442,12 +426,9 @@ void FBOTexture3DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPo
   VL_glFramebufferTexture3D( GL_FRAMEBUFFER, attach_point, texture()->dimension(), texture()->handle(), mipmapLevel(), layer() ); VL_CHECK_OGL()
 
   // needed to make non-mipmapped textures work with FBO, see framebuffer_object.txt line 442
-  if ( texture()->dimension() != TD_TEXTURE_2D_MULTISAMPLE_ARRAY )
-  {
-    glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
-    glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR ); VL_CHECK_OGL()
-    glBindTexture( texture()->dimension(), 0 ); VL_CHECK_OGL()
-  }
+  glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
+  glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR ); VL_CHECK_OGL()
+  glBindTexture( texture()->dimension(), 0 ); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void FBOTextureLayerAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point )
@@ -472,12 +453,9 @@ void FBOTextureLayerAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmen
   VL_glFramebufferTextureLayer( GL_FRAMEBUFFER, attach_point, texture()->handle(), mipmapLevel(), layer() ); VL_CHECK_OGL()
 
   // needed to make non-mipmapped textures work with FBO, see framebuffer_object.txt line 442
-  if ( texture()->dimension() != TD_TEXTURE_2D_MULTISAMPLE_ARRAY )
-  {
-    glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
-    glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR ); VL_CHECK_OGL()
-    glBindTexture( texture()->dimension(), 0 ); VL_CHECK_OGL()
-  }
+  glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
+  glTexParameteri( texture()->dimension(), GL_TEXTURE_MIN_FILTER, GL_LINEAR ); VL_CHECK_OGL()
+  glBindTexture( texture()->dimension(), 0 ); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 void FBOAbstractAttachment::destroy()

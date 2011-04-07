@@ -52,26 +52,21 @@ namespace vl
    * - MemoryFile
    * - ZippedFile
   */
-  class VLCORE_EXPORT DiskDirectory: public VirtualDirectory
+  class DiskDirectory: public VirtualDirectory
   {
   public:
     DiskDirectory();
-
     DiskDirectory( const String& path );
 
-    virtual const char* className() { return "vl::DiskDirectory"; }
+    virtual const char* className() { return "DiskDirectory"; }
 
     //! Use carefully this function, since this search the whole given file system tree.
     void listFilesRecursive(std::vector<String>& file_list) const;
 
     void listFiles(std::vector<String>& file_list, bool append=false) const;
-    
     void listFiles(std::vector< ref<DiskFile> >& file_list, bool append=false) const;
-    
     void listSubDirs(std::vector<String>& dirs, bool append=false) const;
-    
     ref<DiskDirectory> diskSubDir(const String& subdir_name) const;
-    
     ref<VirtualDirectory> subDir(const String& subdir_name) const { return diskSubDir(subdir_name); }
 
     virtual ref<VirtualFile> file(const String& name) const;

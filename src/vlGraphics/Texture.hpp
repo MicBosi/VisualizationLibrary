@@ -35,7 +35,6 @@
 #include <vlCore/String.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/Image.hpp>
-#include <vlGraphics/GLBufferObject.hpp>
 
 namespace vl
 {
@@ -62,7 +61,7 @@ namespace vl
     friend class Texture;
   public:
     TexParameter();
-    virtual const char* className() { return "vl::TexParameter"; }
+    virtual const char* className() { return "TexParameter"; }
 
     void apply(ETextureDimension dimension) const;
 
@@ -79,7 +78,7 @@ namespace vl
     EDepthTextureMode depthTextureMode() const { return mDepthTextureMode; }
 
     void setMinFilter(ETexParamFilter minfilter) { mDirty = true; mMinFilter = minfilter; }
-	VLGRAPHICS_EXPORT void setMagFilter(ETexParamFilter magfilter);
+    void setMagFilter(ETexParamFilter magfilter);
     void setWrapS(ETexParamWrap texturewrap)     { mDirty = true; mWrapS = texturewrap; }
     void setWrapT(ETexParamWrap texturewrap)     { mDirty = true; mWrapT = texturewrap; }
     void setWrapR(ETexParamWrap texturewrap)     { mDirty = true; mWrapR = texturewrap; }
@@ -132,7 +131,7 @@ namespace vl
    * - Shader
    * - Effect
    * - Actor */
-  class VLGRAPHICS_EXPORT Texture: public Object
+  class Texture: public Object
   {
   public:
     /** The SetupParams function wraps all the parameters needed to crate a Texture.
@@ -149,32 +148,21 @@ namespace vl
         mBorder     = false;
         mGenMipmaps = false;
         mWidth = mHeight = mDepth = 0;
-        mSamples = 0;
-        mFixedSamplesLocation = true;
       }
 
-      void setImagePath(const String& path) { mImagePath = path; }
       const String& imagePath() const { return mImagePath; }
-
-      void setImage(Image* image) { mImage = image; }
-      const Image* image() const { return mImage.get(); }
-      Image* image() { return mImage.get(); }
-
-      const GLBufferObject* bufferObject() const { return mBufferObject.get(); }
-      GLBufferObject* bufferObject() { return mBufferObject.get(); }
-      void setBufferObject(GLBufferObject* bo) { mBufferObject = bo; }
-
-      void setDimension(ETextureDimension dimension) { mDimension = dimension; }
+      Image* image() const { return mImage.get(); }
       ETextureDimension dimension() const { return mDimension; }
-
-      void setFormat(ETextureFormat format) { mFormat = format; }
       ETextureFormat format() const { return mFormat; }
-
-      void setBorder(bool on) { mBorder = on; }
       bool border() const { return mBorder; }
-
-      void setGenMipmaps(bool on) { mGenMipmaps = on; }
       bool genMipmaps() const { return mGenMipmaps; }
+
+      void setImagePath(const String& path) { mImagePath = path; }
+      void setImage(Image* image) { mImage = image; }
+      void setDimension(ETextureDimension dimension) { mDimension = dimension; }
+      void setFormat(ETextureFormat format) { mFormat = format; }
+      void setBorder(bool on) { mBorder = on; }
+      void setGenMipmaps(bool on) { mGenMipmaps = on; }
 
       void setWidth(int w) { mWidth = w; }
       int width() const { return mWidth; }
@@ -185,27 +173,18 @@ namespace vl
       void setDepth(int d) { mDepth = d; }
       int depth() const { return mDepth; }
 
-      int samples() const { return mSamples; }
-      void setSamples(int samples) { mSamples = samples; }
-
-      bool fixedSamplesLocations() const { return mFixedSamplesLocation; }
-      void setFixedSamplesLocations(bool fixed) { mFixedSamplesLocation = fixed; }
-
     protected:
       String mImagePath;
-      ref<GLBufferObject> mBufferObject;
       ref<Image> mImage;
       ETextureDimension mDimension;
       ETextureFormat mFormat;
       int mWidth, mHeight, mDepth; // used when no image is specified.
-      int mSamples;
       bool mBorder;
       bool mGenMipmaps;
-      bool mFixedSamplesLocation;
     };
 
   public:
-    virtual const char* className() { return "vl::Texture"; }
+    virtual const char* className() { return "Texture"; }
 
     /** Constructs a texture from the specified file. 
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this constructor. */
@@ -239,12 +218,6 @@ namespace vl
     /** The TexParameter object associated to a Texture. */
     const TexParameter* getTexParameter() const { return &mTexParameter; }
 
-    /** The buffer object bound to a buffer object texture. */
-    GLBufferObject* bufferObject() { return mBufferObject.get(); }
-    
-    /** The buffer object bound to a buffer object texture. */
-    const GLBufferObject* bufferObject() const { return mBufferObject.get(); }
-
     /** Destroys the texture. */
     void destroyTexture();
 
@@ -255,7 +228,7 @@ namespace vl
 
     /** Creates an empty texture, with no mipmaps, of the specified type, format and dimensions.
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this function. */
-    bool createTexture(ETextureDimension tex_dimension, ETextureFormat tex_format, int w, int h, int d, bool border, GLBufferObject* bo, int samples, bool fixedsamplelocations);
+    bool createTexture(ETextureDimension tex_dimension, ETextureFormat tex_format, int w, int h, int d, bool border);
 
     /** Copies the texture image to the specified mip-maping level. This function can be useful to 
     specify one by one the mipmapping images or to create texture animation effects.
@@ -449,43 +422,6 @@ namespace vl
       mSetupParams->setBorder(false);
     }
 
-    void prepareTextureBuffer(vl::ETextureFormat format, GLBufferObject* bo)
-    {
-      mSetupParams = new SetupParams;
-      mSetupParams->setDimension(TD_TEXTURE_BUFFER);
-      mSetupParams->setFormat(format);
-      mSetupParams->setBufferObject(bo);
-      mSetupParams->setGenMipmaps(false);
-      mSetupParams->setBorder(false);
-    }
-
-    void prepareTexture2DMultisample(int samples, vl::ETextureFormat format, int width, int height, bool fixedsamplelocations)
-    {
-      mSetupParams = new SetupParams;
-      mSetupParams->setDimension(TD_TEXTURE_2D_MULTISAMPLE);
-      mSetupParams->setWidth(width);
-      mSetupParams->setHeight(height);
-      mSetupParams->setFormat(format);
-      mSetupParams->setSamples(samples);
-      mSetupParams->setFixedSamplesLocations(fixedsamplelocations);
-      mSetupParams->setGenMipmaps(false);
-      mSetupParams->setBorder(false);
-    }
-
-    void prepareTexture2DMultisampleArray(int samples, vl::ETextureFormat format, int width, int height, int depth, bool fixedsamplelocations)
-    {
-      mSetupParams = new SetupParams;
-      mSetupParams->setDimension(TD_TEXTURE_2D_MULTISAMPLE_ARRAY);
-      mSetupParams->setWidth(width);
-      mSetupParams->setHeight(height);
-      mSetupParams->setDepth(depth);
-      mSetupParams->setFormat(format);
-      mSetupParams->setSamples(samples);
-      mSetupParams->setFixedSamplesLocations(fixedsamplelocations);
-      mSetupParams->setGenMipmaps(false);
-      mSetupParams->setBorder(false);
-    }
-
     /** Returns \p true if the current texture configuration seems valid. */
     bool isValid() const;
 
@@ -524,12 +460,6 @@ namespace vl
     /** Whether the texture has a 1 pixel texture border or not. */
     bool border() const { return mBorder; }
 
-    /** Returns the number of samples of a multisample texture. */
-    int samples() const { return mSamples; }
-
-    /** Returns whether the samples location is fixed for a a multisample texture. */
-    bool fixedSamplesLocation() const { return mFixedSamplesLocation; }
-
     /** See SetupParams */
     const SetupParams* setupParams() const { return mSetupParams.get(); }
 
@@ -540,7 +470,7 @@ namespace vl
     void setSetupParams(SetupParams* setup_params) { mSetupParams = setup_params; }
 
     /** Checks whether the specified texture type, format and dimension combination is supported by the current OpenGL driver. */
-    static bool supports(ETextureDimension tex_dimension, ETextureFormat tex_format, int mip_level, EImageDimension img_dimension, int w, int h, int d, bool border, int samples, bool fixedsamplelocations, bool verbose);
+    static bool supports(ETextureDimension tex_dimension, ETextureFormat tex_format, int mip_level, EImageDimension img_dimension, int w, int h, int d, bool border, bool verbose);
 
     /** Returns \p true if the specified format is compressed. */
     static bool isCompressedFormat(int format);
@@ -554,15 +484,12 @@ namespace vl
     unsigned int mHandle;
     TexParameter mTexParameter;
     ref<SetupParams> mSetupParams;
-    ref<GLBufferObject> mBufferObject;
     ETextureFormat mFormat;
     ETextureDimension mDimension;
     int mWidth;
     int mHeight;
     int mDepth;
-    int mSamples;
     bool mBorder;
-    bool mFixedSamplesLocation;
   };
 }
 

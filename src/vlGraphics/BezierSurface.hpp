@@ -41,12 +41,12 @@ namespace vl
     - \ref pagGuideBezierSurfaces "Bézier Patches and Surfaces Tutorial" for a practical example on how to use the BezierSurface class.
     - BezierSurface
   */
-  class VLGRAPHICS_EXPORT BezierPatch: public Object
+  class BezierPatch: public Object
   {
   public:
     //! The control points grid defining the bicubic Bézier patch(es).
     typedef std::vector< vec3 > Points;
-    virtual const char* className() { return "vl::BezierPatch"; }
+    virtual const char* className() { return "BezierPatch"; }
     //! Constructor
     BezierPatch(): mX(0), mY(0) {}
     //! Constructor
@@ -83,10 +83,10 @@ namespace vl
     - \ref pagGuideBezierSurfaces "Bézier Patches and Surfaces Tutorial" for a practical example on how to use the BezierSurface class.
     - BezierPatch
   */
-  class VLGRAPHICS_EXPORT BezierSurface: public Geometry
+  class BezierSurface: public Geometry
   {
   public:
-    virtual const char* className() { return "vl::BezierSurface"; }
+    virtual const char* className() { return "BezierSurface"; }
     //! Constructor
     BezierSurface(): mDetail(16) {}
 

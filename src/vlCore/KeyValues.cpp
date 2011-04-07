@@ -36,13 +36,6 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-KeyValues::KeyValues()
-{
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
-}
-//-----------------------------------------------------------------------------
 String KeyValues::value(const String& key) const 
 { 
   std::map<String, String>::const_iterator it = mKeyValues.find(key);

@@ -1,38 +1,47 @@
-################################################################################
-#                                                                              #
-#  Copyright (c) 2005-2011, Michele Bosi, Thiago Bastos                        #
-#  All rights reserved.                                                        #
-#                                                                              #
-#  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.com                                         #
-#                                                                              #
-#  Released under the OSI approved Simplified BSD License                      #
-#  http://www.opensource.org/licenses/bsd-license.php                          #
-#                                                                              #
-################################################################################
+######################################################################################
+#                                                                                    #
+#  Visualization Library                                                             #
+#  http://www.visualizationlibrary.com                                               #
+#                                                                                    #
+#  Copyright (c) 2005-2010, Michele Bosi                                             #
+#  All rights reserved.                                                              #
+#                                                                                    #
+#  Redistribution and use in source and binary forms, with or without modification,  #
+#  are permitted provided that the following conditions are met:                     #
+#                                                                                    #
+#  - Redistributions of source code must retain the above copyright notice, this     #
+#  list of conditions and the following disclaimer.                                  #
+#                                                                                    #
+#  - Redistributions in binary form must reproduce the above copyright notice, this  #
+#  list of conditions and the following disclaimer in the documentation and/or       #
+#  other materials provided with the distribution.                                   #
+#                                                                                    #
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND   #
+#  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED     #
+#  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE            #
+#  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR  #
+#  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES    #
+#  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;      #
+#  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON    #
+#  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT           #
+#  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS     #
+#  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                      #
+#                                                                                    #
+######################################################################################
 
-################################################################################
-# VLWX Library
-################################################################################
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-project(VLWX)
+PROJECT(${VLWX_NAME})
 
-include(${wxWidgets_USE_FILE})
+include_directories(${WXWIDGETS_INCLUDE_DIR})
+ADD_LIBRARY(${VLWX_NAME} STATIC WXGLCanvas.hpp WXGLCanvas.cpp)
 
-# Gather VLWX source files
-file(GLOB VLWX_SRC "*.cpp")
-file(GLOB VLWX_INC "*.hpp")
+install(TARGETS ${VLWX_NAME}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
 
-add_library(VLWX ${VL_SHARED_OR_STATIC} ${VLWX_SRC} ${VLWX_INC})
-VL_DEFAULT_TARGET_PROPERTIES(VLWX)
-
-target_link_libraries(VLWX VLCore VLGraphics  ${wxWidgets_LIBRARIES})
-
-################################################################################
-# Install Rules
-################################################################################
-
-VL_INSTALL_TARGET(VLWX)
-
-# VLWX headers
-install(FILES ${VLWX_INC} DESTINATION "include/vlWX")
+install(FILES WXGLCanvas.hpp
+  DESTINATION include/vlWX
+)

@@ -46,18 +46,15 @@ namespace vl
   /**
    * The Plane class defines a plane using a normal and an origin.
   */
-  class VLCORE_EXPORT Plane: public Object
+  class Plane: public Object
   {
   public:
-    virtual const char* className() { return "vl::Plane"; }
-
     Plane( Real o=0.0f, vec3 n=vec3(0,0,0) ): mNormal(n), mOrigin(o) 
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
     }
-
     Plane( const vec3& o, const vec3& n ) 
     {
       #ifndef NDEBUG
@@ -66,21 +63,15 @@ namespace vl
       mNormal = n;
       mOrigin = dot(o, n);
     }
-
+    virtual const char* className() { return "Plane"; }
     Real distance(const vec3 &v) const;
-
     //! returns 0 if the AABB intersects the plane, 1 if it's in the positive side, 
     //! -1 if it's in the negative side.
     int classify(const AABB&) const;
-
     bool isOutside(const AABB&) const;
-
     const vec3& normal() const { return mNormal; }
-
     Real origin() const { return mOrigin; }
-
     void setNormal(const vec3& normal) { mNormal = normal; }
-
     void setOrigin(Real origin) { mOrigin = origin; }
 
   protected:

@@ -34,7 +34,6 @@
 
 #include <vlCore/Object.hpp>
 #include <vlCore/vlnamespace.hpp>
-#include <vlGraphics/config.hpp>
 #include <vector>
 
 namespace vl
@@ -44,7 +43,7 @@ namespace vl
 
   /** A set of RenderState objects managed by a Shader.
     * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT RenderStateSet: public Object
+  class RenderStateSet: public Object
   {
   public:
     RenderStateSet(): mGLSLProgram(NULL)
@@ -53,7 +52,7 @@ namespace vl
         mObjectName = className();
       #endif
     }
-    virtual const char* className() { return "vl::RenderStateSet"; }
+    virtual const char* className() { return "RenderStateSet"; }
 
     // renderstates getters and setters
 

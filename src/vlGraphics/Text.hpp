@@ -47,10 +47,10 @@ namespace vl
    * - Actor
    * - VectorGraphics
   */
-  class VLGRAPHICS_EXPORT Text: public Renderable
+  class Text: public Renderable
   {
   public:
-    virtual const char* className() { return "vl::Text"; }
+    virtual const char* className() { return "Text"; }
     Text(): mColor(1,1,1,1), mBorderColor(0,0,0,1), mBackgroundColor(1,1,1,1), mOutlineColor(0,0,0,1), mShadowColor(0,0,0,0.5f), mShadowVector(2,-2), 
       mInterlineSpacing(5), mAlignment(AlignBottom|AlignLeft), mViewportAlignment(AlignBottom|AlignLeft), mMargin(5), mMode(Text2D), mLayout(LeftToRightText), mTextAlignment(TextAlignLeft), 
       mBorderEnabled(false), mBackgroundEnabled(false), mOutlineEnabled(false), mShadowEnabled(false), mKerningEnabled(true) 

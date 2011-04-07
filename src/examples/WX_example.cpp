@@ -60,14 +60,14 @@ IMPLEMENT_APP(MyApp)
 //-----------------------------------------------------------------------------
 bool MyApp::OnInit()
 {
-  /* open a console so we can see the applet's output on stdout */
   showWin32Console();
-
-  /* init Visualization Library */
   VisualizationLibrary::init();
 
   MyFrame *frame = new MyFrame(NULL, L"WXGLCanvas", wxDefaultPosition, wxSize(400, 300));
 
+  /* create the applet to be run */
+  ref<Applet> applet = new App_RotatingCube;
+  applet->initialize();
   /* Initialize the OpenGL context and window properties */
   // WX_GL_RGBA:            Use true colour
   // WX_GL_BUFFER_SIZE:     Bits for buffer if not WX_GL_RGBA
@@ -100,34 +100,23 @@ bool MyApp::OnInit()
     0
   };
   ref<WXGLCanvas> vl_gl_canvas = new WXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
-
-  /* create the applet to be run */
-  ref<Applet> applet = new App_RotatingCube;
-
-  applet->initialize();
-
   /* target the window so we can render on it */
   applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
-  
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
-  
   /* define the camera position and orientation */
   vec3 eye    = vec3(0,10,35); // camera position
   vec3 center = vec3(0,0,0);   // point the camera is looking at
   vec3 up     = vec3(0,1,0);   // up direction
   mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
   applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
-  
   /* show the window */
   frame->Show();
-  
   /* THE ORDER IS IMPORTANT IMPORTANT */
   vl_gl_canvas->initGLContext();
-  
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   vl_gl_canvas->addEventListener(applet.get());
-
+  vl_gl_canvas->dispatchInitEvent();
   /* these must be done after the window is visible */
   int x = 0;
   int y = 0;

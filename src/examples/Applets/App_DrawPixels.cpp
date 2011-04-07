@@ -70,7 +70,7 @@ public:
       pixels->setAlign(vl::AlignHCenter | vl::AlignVCenter);
     }
 
-    mPoints->generatePixelBufferObjects(vl::BU_STATIC_DRAW, true);
+    mPoints->generatePixelBufferObjects(vl::GBU_STATIC_DRAW, true);
 
     sceneManager()->tree()->addActor( mPoints.get(), pixel_fx.get(), NULL )->setRenderRank(0);
 
@@ -95,7 +95,7 @@ public:
     mStar->draws()->push_back( mStar3.get() );
     mStar->draws()->push_back( mStar4.get() );
 
-    mStar->generatePixelBufferObjects(vl::BU_STATIC_DRAW, true);
+    mStar->generatePixelBufferObjects(vl::GBU_STATIC_DRAW, true);
 
     sceneManager()->tree()->addActor( mStar.get(), pixel_fx.get(), transf.get() )->setRenderRank(1);
 

@@ -51,14 +51,14 @@ namespace vl
    *
    * \remarks The copy operator performs a deep copy of all the pixel data and thus
    * is to be considered an expensive operation. */
-  class VLCORE_EXPORT Image: public Object
+  class Image: public Object
   {
     Image(const Image& other): Object(other) {}
   public:
     Image();
     Image(const String& path);
     Image(int x, int y, int z, int bytealign, EImageFormat format, EImageType type);
-    virtual const char* className() { return "vl::Image"; }
+    virtual const char* className() { return "Image"; }
     virtual ~Image();
     Image& operator=(const Image& other);
     bool isCubemap() const { return mIsCubemap; }
@@ -302,52 +302,52 @@ namespace vl
   ref<Image> createCubemap(const Image* xp, const Image* xn, const Image* yp, const Image* yn, const Image* zp, const Image* zn);
 
   //! Loads six images and assembles them into a cubemap image
-  VLCORE_EXPORT ref<Image> loadCubemap(const String& xp_file, const String& xn_file, const String& yp_file, const String& yn_file, const String& zp_file, const String& zn_file);
+  ref<Image> loadCubemap(const String& xp_file, const String& xn_file, const String& yp_file, const String& yn_file, const String& zp_file, const String& zn_file);
 
   //! Loads a raw image file.
   //! \param file The file from which the data is read. This function also opens the file if it is not open already. Note that this function 
   //! never closes the file so that you can read sequentially several raw image data from the same file.
   //! \param file_offset The offset in the file from where the data is read. If set to -1 the data is read from the current file position.
-  VLCORE_EXPORT ref<Image> loadRAW(VirtualFile* file, long long file_offset, int width, int height, int depth, int bytealign, EImageFormat format, EImageType type);
+  ref<Image> loadRAW(VirtualFile* file, long long file_offset, int width, int height, int depth, int bytealign, EImageFormat format, EImageType type);
 
   //! Loads an image from the specified file
-  VLCORE_EXPORT ref<Image> loadImage(VirtualFile* file);
+  ref<Image> loadImage(VirtualFile* file);
 
   //! Loads an image from the specified path
-  VLCORE_EXPORT ref<Image> loadImage(const String& path);
+  ref<Image> loadImage(const String& path);
 
   //! Loads all the images with the specified extension from the given directory.
-  VLCORE_EXPORT bool loadImagesFromDir(const String& dir_path, const String& ext, std::vector< ref<Image> >& images);
+  bool loadImagesFromDir(const String& dir_path, const String& ext, std::vector< ref<Image> >& images);
 
   //! Assembles the given 2D images in a single 2D image, all the images must be 2D images and have the same size, format() and type().
-  VLCORE_EXPORT ref<Image> assemble3DImage(const std::vector< ref<Image> >& images);
+  ref<Image> assemble3DImage(const std::vector< ref<Image> >& images);
 
   //! Writes an image on the specified file
-  VLCORE_EXPORT bool saveImage(Image* img, VirtualFile* file);
+  bool saveImage(Image* img, VirtualFile* file);
 
   //! Writes an image on the specified path
-  VLCORE_EXPORT bool saveImage(Image* img, const String& path);
+  bool saveImage(Image* img, const String& path);
 
   //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-  VLCORE_EXPORT ref<Image> makeNonUniformColorSpectrum(size_t width, size_t col_count, const fvec4* colors, const float* col_pos);
+  ref<Image> makeNonUniformColorSpectrum(size_t width, size_t col_count, const fvec4* colors, const float* col_pos);
 
   //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-  VLCORE_EXPORT ref<Image> makeNonUniformColorSpectrum(int width, const std::vector<fvec4>& colors, const std::vector<float>& col_pos);
+  ref<Image> makeNonUniformColorSpectrum(int width, const std::vector<fvec4>& colors, const std::vector<float>& col_pos);
 
   //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-  VLCORE_EXPORT ref<Image> makeColorSpectrum(size_t width, const std::vector<fvec4>& colors);
+  ref<Image> makeColorSpectrum(size_t width, const std::vector<fvec4>& colors);
 
   //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-  VLCORE_EXPORT ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1);
+  ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1);
 
   //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-  VLCORE_EXPORT ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2);
+  ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2);
 
   //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-  VLCORE_EXPORT ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3);
+  ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3);
 
   //! Creates a 1D Image whose color is interpolated from left to right from the specified spectrum.
-  VLCORE_EXPORT ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3, const fvec4& c4);
+  ref<Image> makeColorSpectrum(size_t width, const fvec4& c0, const fvec4& c1, const fvec4& c2, const fvec4& c3, const fvec4& c4);
 }
 
 #endif

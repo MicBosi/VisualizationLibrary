@@ -44,15 +44,7 @@ namespace vl
   class LinearInterpolator: public Object
   {
   public:
-    virtual const char* className() { return "vl::LinearInterpolator"; }
-
-    LinearInterpolator() 
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
-
+    LinearInterpolator() {}
     LinearInterpolator(const std::vector<T>& path): mPath(path) {}
 
     //! Samples the path at the given point. The \p t parameter must be in the range 0.0 ... 1.0 included.

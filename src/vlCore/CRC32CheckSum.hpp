@@ -91,7 +91,6 @@ namespace vl
         crc32_table[i] = reflect(crc32_table[i], 32); 
       } 
     }
-
     unsigned int reflect(unsigned int val, char ch) 
     {
       unsigned int refl = 0;

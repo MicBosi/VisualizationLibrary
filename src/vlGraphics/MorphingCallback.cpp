@@ -247,8 +247,8 @@ void MorphingCallback::blendFrames(int a, int b, float t)
 
   if (mGeometry->vboEnabled() && (GLEW_VERSION_1_5||GLEW_ARB_vertex_buffer_object))
   {
-    mVertices->gpuBuffer()->setBufferData(BU_DYNAMIC_DRAW, false);
-    mNormals ->gpuBuffer()->setBufferData(BU_DYNAMIC_DRAW, false);
+    mVertices->gpuBuffer()->setBufferData(GBU_DYNAMIC_DRAW, false);
+    mNormals ->gpuBuffer()->setBufferData(GBU_DYNAMIC_DRAW, false);
   }
 }
 //-----------------------------------------------------------------------------

@@ -56,7 +56,7 @@ namespace vl
         mObjectName = className();
       #endif
     }
-    virtual const char* className() { return "vl::DistanceLODEvaluator"; }
+    virtual const char* className() { return "DistanceLODEvaluator"; }
     virtual int evaluate(Actor* actor, Camera* camera)
     {
       if (mDistanceRangeSet.empty())

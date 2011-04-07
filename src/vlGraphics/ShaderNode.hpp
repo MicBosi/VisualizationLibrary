@@ -69,7 +69,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::ShaderNode"; }
+    virtual const char* className() { return "ShaderNode"; }
 
     ShaderNode(): mParent(NULL) {}
 

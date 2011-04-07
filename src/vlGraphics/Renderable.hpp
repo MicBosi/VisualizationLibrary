@@ -37,7 +37,6 @@
 #include <vlCore/AABB.hpp>
 #include <vlCore/Sphere.hpp>
 #include <vlCore/Log.hpp>
-#include <vlGraphics/OpenGL.hpp>
 
 namespace vl
 {
@@ -55,7 +54,7 @@ namespace vl
     * Note that the same Renderable can be associated to more than one Actor.
     * 
     * \sa Actor, Effect, Shader, Transform, Geometry */
-  class VLGRAPHICS_EXPORT Renderable: public Object
+  class Renderable: public Object
   {
     Renderable(const Renderable& other): Object(other)
     {
@@ -65,7 +64,7 @@ namespace vl
     }
 
   public:
-    virtual const char* className() { return "vl::Renderable"; }
+    virtual const char* className() { return "Renderable"; }
 
     //! Constructor
     Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true), 

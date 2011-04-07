@@ -38,12 +38,10 @@
 namespace vl
 {
   //! Global application settings controlling how Visualization Library behaves.
-  class VLCORE_EXPORT VLSettings: public Object
+  class VLSettings: public Object
   {
     friend class VisualizationLibrary;
   public:
-    virtual const char* className() { return "vl::VLSettings"; }
-
     VLSettings();
 
     /** If \p true VL checks at the beginning of each rendering that the OpenGL states are
@@ -60,6 +58,16 @@ namespace vl
       * \note This can slow down the rendering. Enabled by default in DEBUG mode only. */
     bool checkOpenGLStates() const { return mCheckOpenGLStates; }
 
+    /** If \p true VL checks that there are no duplicates in a Transform children list. 
+      * \note This can slow down considerably the insertion of new child Transforms. 
+      * Enabled by default in DEBUG mode only. */
+    void setCheckTransformSiblings(bool check_on) { mCheckTransformSiblings = check_on; }
+
+    /** If \p true VL checks that there are no duplicates in a Transform children list. 
+      * \note This can slow down considerably the insertion of new child Transforms. 
+      * Enabled by default in DEBUG mode only. */
+    bool checkTransformSiblings() const { return mCheckTransformSiblings; }
+
     /** The verbosity level of VL. This applies to all the logs generated via vl::Log::*. */
     void setVerbosityLevel(EVerbosityLevel verb_level) { mVerbosityLevel = verb_level; }
 
@@ -75,12 +83,13 @@ namespace vl
   protected:
     EVerbosityLevel mVerbosityLevel;
     bool mCheckOpenGLStates;
+    bool mCheckTransformSiblings;
     String mDefaultLogPath;
     String mDefaultDataPath;
   };
 
   //! Returns VisulizationLibrary's global settings.
-  VLCORE_EXPORT VLSettings* globalSettings();
+  VLSettings* globalSettings();
 }
 
 #endif

@@ -44,10 +44,10 @@ namespace vl
   //-----------------------------------------------------------------------------
   /** The Renderer class executes the actual rendering on the given RenderQueue.
     * \sa Rendering */
-  class VLGRAPHICS_EXPORT Renderer: public RendererAbstract
+  class Renderer: public RendererAbstract
   {
   public:
-    virtual const char* className() { return "vl::Renderer"; }
+    virtual const char* className() { return "Renderer"; }
     
     Renderer();
     

@@ -92,11 +92,6 @@ v = vl::clamp(v, vl::fvec4(1,2,3,4), vl::fvec4(5,6,7,8));
 #undef min
 #undef max
 
-#if defined(__CUDACC__)
-#undef isnan
-#undef isinf
-#endif
-
 namespace vl
 {
   // hyperbolic functions not implemented in Visual C++

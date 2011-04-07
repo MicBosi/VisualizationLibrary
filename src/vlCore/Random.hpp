@@ -37,11 +37,9 @@
 namespace vl
 {
   //! Random number generator.
-  class VLCORE_EXPORT Random: public Object
+  class Random: public Object
   {
   public:
-    virtual const char* className() { return "vl::Random"; }
-
     //! Constructor.
     Random();
 
@@ -56,7 +54,7 @@ namespace vl
     virtual bool fillRandom(void* ptr, size_t bytes) const;
 
     //! Fills the specified buffer with random data generated using the standard rand() function.
-    //! The method fillRandom() falls back to this function if no other high quality random number generation mechanism is detected.
+    //! The method fillRandom() falls back to this function is no other high quality random number generation mechanism is detected.
     static void standardFillRandom(void* ptr, size_t bytes);
 
     //! Initializes the standard rand() random number generator using srand() with a reasonably unprobable value,

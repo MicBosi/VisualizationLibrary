@@ -38,6 +38,10 @@
 #include <vlCore/DiskDirectory.hpp>
 #include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/LoadWriterManager.hpp>
+#include <vlGraphics/vl3DS.hpp>
+#include <vlGraphics/vlPLY.hpp>
+#include <vlGraphics/vlOBJ.hpp>
+#include <vlGraphics/vlAC3D.hpp>
 #include <vlGraphics/TriangleStripGenerator.hpp>
 #include <vlGraphics/DoubleVertexRemover.hpp>
 #include <vlGraphics/FontManager.hpp>

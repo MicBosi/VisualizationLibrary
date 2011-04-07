@@ -44,7 +44,7 @@ namespace vl
   class EdgeUpdateCallback: public ActorEventCallback
   {
   public:
-    virtual const char* className() { return "vl::EdgeUpdateCallback"; }
+    virtual const char* className() { return "EdgeUpdateCallback"; }
     EdgeUpdateCallback(): mShowCreases(true) 
     {
       #ifndef NDEBUG

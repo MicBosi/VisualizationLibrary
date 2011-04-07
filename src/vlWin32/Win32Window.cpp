@@ -310,12 +310,6 @@ void Win32Window::destroyWin32GLWindow()
   {
     bool destroy_win = mWinMap.find(mHWND) != mWinMap.end();
 
-    // WM_DESTROY must be dispatched while the OpenGL context is still available!
-    if (destroy_win)
-    {
-      DestroyWindow(mHWND);
-      mHWND = NULL;
-    }
     if (mHGLRC)
     {
       if ( wglDeleteContext(mHGLRC) == FALSE )
@@ -329,6 +323,11 @@ void Win32Window::destroyWin32GLWindow()
     {
       DeleteDC(mHDC);
       mHDC = NULL;
+    }
+    if (destroy_win)
+    {
+      DestroyWindow(mHWND);
+      mHWND = NULL;
     }
   }
 }
@@ -728,9 +727,9 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
     else
     {
       // check the returned pixel format
-      #if defined(DEBUG) || !defined(NDEBUG)
+      #ifndef NEDBUG
         DescribePixelFormat(hDC, pixel_format_index, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
-        vl::Log::print(" --- vlWin32::choosePixelFormat() ---\n");
+        vl::Log::print(" --- Pixel Format ---\n");
         // This one returns "not supported" even when its supported...
         // vl::Log::print( vl::Say("  OpenGL        = %s\n") << (pfd.dwFlags & PFD_SUPPORT_OPENGL ? "Supported" : "Not supported") );
         vl::Log::print( vl::Say("RGBA Bits     = %n %n %n %n\n") << pfd.cRedBits << pfd.cGreenBits << pfd.cBlueBits << pfd.cAlphaBits);

@@ -42,10 +42,10 @@ namespace vl
    * - Text
    * - Actor
    * - VectorGraphics */
-  class VLGRAPHICS_EXPORT FontManager: public Object
+  class FontManager: public Object
   {
   public:
-    virtual const char* className() { return "vl::FontManager"; }
+    virtual const char* className() { return "FontManager"; }
 
     //! Constructor: uses the given FT_Library handle otherwise will initialize and use its own FT_Library.
     FontManager(void* free_type_library=NULL);
@@ -83,7 +83,7 @@ namespace vl
   };
 
   //! Returns the default FontManager used by Visualization Library.
-  VLGRAPHICS_EXPORT FontManager* defFontManager();
+  FontManager* defFontManager();
 
   //! Sets the default FontManager used by Visualization Library.
   void setDefFontManager(FontManager*);

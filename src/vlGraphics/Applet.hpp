@@ -57,10 +57,10 @@ namespace vl
    * - Key_C: toggles the continuous update fo the OpenGL window (see also OpenGLContext::setContinuousUpdate()).
    * - Key_U: updates the OpenGL window content by calling openglContext()->update(). 
    */
-  class VLGRAPHICS_EXPORT Applet: public UIEventListener
+  class Applet: public UIEventListener
   {
   public:
-    virtual const char* className() { return "vl::Applet"; }
+    virtual const char* className() { return "Applet"; }
 
     /** Constructor */
     Applet();

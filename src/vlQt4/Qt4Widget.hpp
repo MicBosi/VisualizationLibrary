@@ -32,7 +32,6 @@
 #ifndef Qt4Window_INCLUDE_ONCE
 #define Qt4Window_INCLUDE_ONCE
 
-#include <vlQt4/config.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <QtGui/QApplication>
@@ -49,15 +48,12 @@ namespace vlQt4
 //-----------------------------------------------------------------------------
 // Qt4Widget
 //-----------------------------------------------------------------------------
-  /** The Qt4Widget class implements an OpenGLContext using the Qt4 API. */
-  class VLQT4_EXPORT Qt4Widget : public QGLWidget, public vl::OpenGLContext
+  /** The Qt4Widget class implements an OpenGLContext using the Trolltech's Qt4 API. */
+  class Qt4Widget: public QGLWidget, public vl::OpenGLContext
   {
     Q_OBJECT
 
   public:
-    using vl::Object::setObjectName;
-    using QObject::setObjectName;
-  
     Qt4Widget(QWidget* parent=NULL, const QGLWidget* shareWidget=NULL, Qt::WindowFlags f=0)
     :QGLWidget(parent,shareWidget,f)
     {
@@ -65,8 +61,6 @@ namespace vlQt4
       setMouseTracking(true);
       setAutoBufferSwap(false);
       setAcceptDrops(true);
-      // let Qt take care of object destruction.
-      vl::OpenGLContext::setAutomaticDelete(false);
     }
 
     ~Qt4Widget()
@@ -92,11 +86,11 @@ namespace vlQt4
             continue;
           #ifdef WIN32
             if (list[i].path()[0] == '/')
-              files.push_back( list[i].path().toStdString().c_str()+1 );
+              files.push_back( list[i].path().toStdWString().c_str()+1 );
             else
-              files.push_back( list[i].path().toStdString().c_str() );
+              files.push_back( list[i].path().toStdWString().c_str() );
           #else
-            files.push_back( list[i].path().toStdString().c_str() );
+            files.push_back( list[i].path().toStdWString().c_str() );
           #endif
         }
         dispatchFileDroppedEvent(files);
@@ -154,7 +148,7 @@ namespace vlQt4
       setContext(glctx);
 
       initGLContext();
-
+      
       mRenderTarget->setWidth(width);
       mRenderTarget->setHeight(height);
 
@@ -246,7 +240,7 @@ namespace vlQt4
 
     virtual void setWindowTitle(const vl::String& title)
     {
-      QGLWidget::setWindowTitle( QString::fromStdString(title.toStdString()) );
+      QGLWidget::setWindowTitle( QString::fromStdWString(title.toStdWString()) );
     }
 
     virtual bool setFullscreen(bool fullscreen)

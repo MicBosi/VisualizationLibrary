@@ -57,13 +57,13 @@ namespace vl
    * - MemoryFile
    * - ZippedFile
   */
-  class VLCORE_EXPORT VirtualFile: public Object
+  class VirtualFile: public Object
   {
   protected:
     VirtualFile(const VirtualFile& other): Object(other) {}
 
   public:
-    virtual const char* className() { return "vl::VirtualFile"; }
+    virtual const char* className() { return "VirtualFile"; }
 
     //! Constructor.
     VirtualFile() {}
@@ -247,7 +247,7 @@ namespace vl
   };
 //-----------------------------------------------------------------------------
   //! Utility function, equivalent to \p vl::defFileSystem()->locateFile(path)
-  VLCORE_EXPORT ref<VirtualFile> locateFile(const String& path);
+  ref<VirtualFile> locateFile(const String& path);
 //-----------------------------------------------------------------------------
 }
 

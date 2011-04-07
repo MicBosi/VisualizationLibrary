@@ -55,7 +55,7 @@ namespace vl
       mLinearFilteringEnabled = false;
       mReadBuffer = RDB_COLOR_ATTACHMENT0;
     }
-    virtual const char* className() { return "vl::BlitFramebuffer"; }
+    virtual const char* className() { return "BlitFramebuffer"; }
 
     //! Performs the actual pixel copy from the read framebuffer to the draw framebuffer
     void copyPixels()

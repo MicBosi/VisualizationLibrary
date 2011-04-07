@@ -35,7 +35,6 @@
 #include <vlCore/Object.hpp>
 #include <vlCore/Vector3.hpp>
 #include <vlCore/GLSLmath.hpp>
-#include <vlGraphics/config.hpp>
 #include <vector>
 #include <algorithm>
 
@@ -49,7 +48,7 @@ namespace vl
    * The PolygonSimplifier class reduces the amount of polygons present in a Geometry using a quadric error metric.
    * The algorithm simplifies only the position array of the Geometry all the other vertex attributes will be discarded.
   */
-  class VLGRAPHICS_EXPORT PolygonSimplifier: public Object
+  class PolygonSimplifier: public Object
   {
   public:
     class Vertex;
@@ -318,7 +317,7 @@ namespace vl
   public:
     PolygonSimplifier(): mRemoveDoubles(false), mVerbose(true), mQuick(true) {}
 
-    virtual const char* className() { return "vl::PolygonSimplifier"; }
+    virtual const char* className() { return "PolygonSimplifier"; }
 
     void simplify(float simplification_ratio, Geometry* geom);
     void simplify(int target_vertex_count, Geometry* geom);

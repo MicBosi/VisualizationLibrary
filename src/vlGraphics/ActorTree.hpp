@@ -59,10 +59,10 @@ namespace vl
    * - SceneManagerActorTree
    * - Actor
    */
-  class VLGRAPHICS_EXPORT ActorTree: public ActorTreeAbstract
+  class ActorTree: public ActorTreeAbstract
   {
   public:
-    virtual const char* className() { return "vl::ActorTree"; }
+    virtual const char* className() { return "ActorTree"; }
     ActorTree()
     {
       #ifndef NDEBUG

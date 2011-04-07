@@ -41,7 +41,7 @@ namespace vl
   class Random;
 
   //! Simple implementation of a 16 bytes Universally Unique ID based on http://www.ietf.org/rfc/rfc4122.txt
-  class VLCORE_EXPORT UUID
+  class UUID
   {
   public:
     //! Constructor, by default it is set to all zeros.

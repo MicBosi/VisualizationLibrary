@@ -43,7 +43,7 @@ namespace vl
   class Rect
   {
   public:
-    virtual const char* className() { return "vl::Rect"; }
+    virtual const char* className() { return "Rect"; }
     Rect(const Rect& other)
     {
       mX = other.x();
@@ -164,7 +164,7 @@ namespace vl
   class RectI: public Rect<int>
   {
   public:
-    virtual const char* className() { return "vl::RectI"; }
+    virtual const char* className() { return "RectI"; }
     RectI() {}
     RectI(int x, int y, int width, int height) { mX=x; mY=y; mWidth=width; mHeight=height; }
     RectI(const Rect<int>& other) { *this = other; }
@@ -191,7 +191,7 @@ namespace vl
   class RectF: public Rect<float>
   {
   public:
-    virtual const char* className() { return "vl::RectF"; }
+    virtual const char* className() { return "RectF"; }
     RectF() {}
     RectF(float x, float y, float width, float height) { mX=x; mY=y; mWidth=width; mHeight=height; }
     RectF(const RectF& other): Rect<float>(other) { *this = other; }

@@ -46,12 +46,12 @@ namespace vl
   /** The RenderTarget class defines an abstract 'surface' where OpenGL can render into.
    * \sa OpenGLContext::renderTarget() and FBORenderTarget
    */
-  class VLGRAPHICS_EXPORT RenderTarget: public Object
+  class RenderTarget: public Object
   {
     friend class OpenGLContext;
 
   protected:
-    virtual const char* className() { return "vl::RenderTarget"; }
+    virtual const char* className() { return "RenderTarget"; }
 
     /** Constructor. */
     RenderTarget(OpenGLContext* ctx, int w, int h): mWidth(w), mHeight(h), mOpenGLContext(ctx)

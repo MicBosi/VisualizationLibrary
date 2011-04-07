@@ -58,13 +58,13 @@ namespace vl
    * Other transformations like shearing, scaling, projection, and so on can produce unspecified results.
    * \sa GhostCameraManipulator
    */
-  class VLGRAPHICS_EXPORT TrackballManipulator: public UIEventListener
+  class TrackballManipulator: public UIEventListener
   {
   public:
     typedef enum { NoMode, RotationMode, TranslationMode, ZoomMode } ETrackballMode;
   
   public:
-    virtual const char* className() { return "vl::TrackballManipulator"; }
+    virtual const char* className() { return "TrackballManipulator"; }
 
     //! Constructor.
     TrackballManipulator(): mMode(NoMode),

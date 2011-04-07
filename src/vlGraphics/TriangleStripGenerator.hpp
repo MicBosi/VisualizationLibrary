@@ -32,8 +32,6 @@
 #ifndef TriangleStripGenerator_INCLUDE_ONCE
 #define TriangleStripGenerator_INCLUDE_ONCE
 
-#include <vlGraphics/config.hpp>
-
 namespace vl
 {
   class Geometry;
@@ -41,10 +39,10 @@ namespace vl
   /** 
    * The TriangleStripGenerator class is used to substitute lists of triangles or quads with triangle strips.
    */
-  class VLGRAPHICS_EXPORT TriangleStripGenerator
+  class TriangleStripGenerator
   {
   public:
-    virtual const char* className() { return "vl::TriangleStripGenerator"; }
+    virtual const char* className() { return "TriangleStripGenerator"; }
     static void stripfy(Geometry* geom, int cache_size=22, bool merge_strips = true, bool remove_doubles = true, bool substitute_quads = true);
   };
 }

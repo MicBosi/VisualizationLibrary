@@ -45,7 +45,7 @@ namespace vl
   class RenderQueue: public Object
   {
   public:
-    virtual const char* className() { return "vl::RenderQueue"; }
+    virtual const char* className() { return "RenderQueue"; }
 
     RenderQueue(): mSize(0), mSizeMP(0)
     {

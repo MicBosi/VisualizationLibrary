@@ -47,7 +47,7 @@ namespace vl
    * - LODEvaluator
    * - PixelLODEvaluator
   */
-  class VLGRAPHICS_EXPORT PixelLODEvaluator: public LODEvaluator
+  class PixelLODEvaluator: public LODEvaluator
   {
   public:
     PixelLODEvaluator() 
@@ -57,7 +57,7 @@ namespace vl
       #endif
     }
 
-    virtual const char* className() { return "vl::PixelLODEvaluator"; }
+    virtual const char* className() { return "PixelLODEvaluator"; }
 
     virtual int evaluate(Actor* actor, Camera* camera);
 

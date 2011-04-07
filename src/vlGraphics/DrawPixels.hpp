@@ -57,7 +57,7 @@ namespace vl
    * affect the rendering. For more information look at the glRasterPos documentation.
   */
   //-----------------------------------------------------------------------------
-  class VLGRAPHICS_EXPORT DrawPixels: public Renderable
+  class DrawPixels: public Renderable
   {
   public:
   //-----------------------------------------------------------------------------
@@ -66,12 +66,12 @@ namespace vl
     /**
      * Represents a bitmap to be drawn on the screen.
     */
-    class VLGRAPHICS_EXPORT Pixels: public Object
+    class Pixels: public Object
     {
       friend class DrawPixels;
 
     public:
-      virtual const char* className() { return "vl::Pixels"; }
+      virtual const char* className() { return "Pixels"; }
 
       Pixels();
       /** Constructor.
@@ -129,7 +129,7 @@ namespace vl
 
     DrawPixels();
 
-    virtual const char* className() { return "vl::DrawPixels"; }
+    virtual const char* className() { return "DrawPixels"; }
 
     void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }
 

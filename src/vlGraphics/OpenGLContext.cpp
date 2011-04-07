@@ -42,26 +42,11 @@
 #include <algorithm>
 #include <sstream>
 
-/*
- * Define glewGetProcAddress.
- */
-extern "C" 
+// include GLEW for the OpenGL extensions and to implement getProcAddress
+
+extern "C"
 {
-#if defined(_WIN32)
-#  define glewGetProcAddress(name) wglGetProcAddress((LPCSTR)name)
-#else
-#  if defined(__APPLE__)
-#    define glewGetProcAddress(name) NSGLGetProcAddress(name)
-     void* NSGLGetProcAddress(const GLubyte *name);
-#  else
-#    if defined(__sgi) || defined(__sun)
-#      define glewGetProcAddress(name) dlGetProcAddress(name)
-#    else /* __linux */
-#      define glewGetProcAddress(name) (*glXGetProcAddressARB)(name)
-       extern void (*glXGetProcAddressARB(const GLubyte *procName))(void);
-#    endif
-#  endif
-#endif
+  #include "../3rdparty/glew/src/glew.c"
 }
 
 using namespace vl;
@@ -73,9 +58,9 @@ OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 //-----------------------------------------------------------------------------
 // OpenGLContext
 //-----------------------------------------------------------------------------
-OpenGLContext::OpenGLContext(int w, int h):
+OpenGLContext::OpenGLContext(int w, int h): 
 mMaxVertexAttrib(0), mTextureUnitCount(0), mMajorVersion(0), mMinorVersion(0),
-mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false),
+mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false), 
 mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false), mCurVAS(NULL)
 {
   #ifndef NDEBUG
@@ -93,28 +78,8 @@ mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false), mCurVAS(NU
   memset( mEnableTable,        0xFF, sizeof(mEnableTable) );
 }
 //-----------------------------------------------------------------------------
-OpenGLContext::~OpenGLContext()
-{
-  if (mFBORenderTarget.size() || mEventListeners.size())
-    Log::warning("~OpenGLContext(): you should have called dispatchDestroyEvent() before destroying the OpenGLContext!\nNow it's too late to cleanup things!\n");
-
-  // invalidate the render target
-  mRenderTarget->mOpenGLContext = NULL;
-
-  // invalidate FBOs
-  for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
-  {
-    // note, we can't destroy the FBOs here because it's too late to call makeCurrent().
-    // mFBORenderTarget[i]->destroy();
-    mFBORenderTarget[i]->mOpenGLContext = NULL;
-  }
-
-  // remove all the event listeners
-  eraseAllEventListeners();
-}
-//-----------------------------------------------------------------------------
 ref<FBORenderTarget> OpenGLContext::createFBORenderTarget(int width, int height)
-{
+{ 
   makeCurrent();
   mFBORenderTarget.push_back(new FBORenderTarget(this, width, height));
   mFBORenderTarget.back()->create();
@@ -122,14 +87,14 @@ ref<FBORenderTarget> OpenGLContext::createFBORenderTarget(int width, int height)
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::destroyFBORenderTarget(FBORenderTarget* fbort)
-{
+{ 
   makeCurrent();
   for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
   {
     if (mFBORenderTarget[i] == fbort)
     {
-      mFBORenderTarget[i]->destroy();
       mFBORenderTarget[i]->mOpenGLContext = NULL;
+      mFBORenderTarget[i]->destroy();
       mFBORenderTarget.erase(mFBORenderTarget.begin()+i);
       break;
     }
@@ -141,8 +106,8 @@ void OpenGLContext::destroyAllFBORenderTargets()
   makeCurrent();
   for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
   {
-    mFBORenderTarget[i]->destroy();
     mFBORenderTarget[i]->mOpenGLContext = NULL;
+    mFBORenderTarget[i]->destroy();
   }
   mFBORenderTarget.clear();
 }
@@ -285,7 +250,7 @@ void OpenGLContext::initGLContext(bool log)
   VL_CHECK_OGL();
 
   // test for double buffer availability
-  glDrawBuffer(GL_BACK);
+  glDrawBuffer(GL_BACK); 
   if ( glGetError() )
     mHasDoubleBuffer = false;
   else
@@ -403,7 +368,7 @@ void OpenGLContext::logOpenGLInfo()
           break;
         ext_str += std::string(str) + " ";
       }
-    }
+    } 
     else
     {
       VL_CHECK(glGetString(GL_EXTENSIONS));
@@ -586,7 +551,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
       if ( mCurrentRenderState[cur->renderStates()[i]->type()] != cur->renderStates()[i] )
       {
         mCurrentRenderState[cur->renderStates()[i]->type()] = cur->renderStates()[i].get();
-        VL_CHECK(cur->renderStates()[i]);
+        VL_CHECK(cur->renderStates()[i]);      
         cur->renderStates()[i]->apply(camera, this); VL_CHECK_OGL()
       }
     }
@@ -925,8 +890,8 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
 
-    bound_tex = 0;
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_tex);
+    bound_tex = 0; 
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_tex);     
     if (bound_tex != 0)
     {
       if (verbose)
@@ -945,8 +910,8 @@ bool OpenGLContext::isCleanState(bool verbose)
         ok = false;
       }
 
-      bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &bound_tex);
+      bound_tex = 0; 
+      glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &bound_tex);     
       if (bound_tex != 0)
       {
         if (verbose)
@@ -966,8 +931,8 @@ bool OpenGLContext::isCleanState(bool verbose)
         ok = false;
       }
 
-      bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_3D, &bound_tex);
+      bound_tex = 0; 
+      glGetIntegerv(GL_TEXTURE_BINDING_3D, &bound_tex);     
       if (bound_tex != 0)
       {
         if (verbose)
@@ -986,8 +951,8 @@ bool OpenGLContext::isCleanState(bool verbose)
         ok = false;
       }
 
-      bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &bound_tex);
+      bound_tex = 0; 
+      glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &bound_tex);     
       if (bound_tex != 0)
       {
         if (verbose)
@@ -999,8 +964,8 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (GLEW_VERSION_3_0||GLEW_EXT_texture_array)
     {
-      bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_1D_ARRAY, &bound_tex);
+      bound_tex = 0; 
+      glGetIntegerv(GL_TEXTURE_BINDING_1D_ARRAY, &bound_tex);     
       if (bound_tex != 0)
       {
         if (verbose)
@@ -1009,7 +974,7 @@ bool OpenGLContext::isCleanState(bool verbose)
         ok = false;
       }
 
-      bound_tex = 0;
+      bound_tex = 0; 
       glGetIntegerv(GL_TEXTURE_BINDING_2D_ARRAY, &bound_tex);
       if (bound_tex != 0)
       {
@@ -1022,8 +987,8 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (GLEW_VERSION_3_2||GLEW_ARB_texture_multisample)
     {
-      bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE, &bound_tex);
+      bound_tex = 0; 
+      glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE, &bound_tex);     
       if (bound_tex != 0)
       {
         if (verbose)
@@ -1032,7 +997,7 @@ bool OpenGLContext::isCleanState(bool verbose)
         ok = false;
       }
 
-      bound_tex = 0;
+      bound_tex = 0; 
       glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY, &bound_tex);
       if (bound_tex != 0)
       {
@@ -1045,8 +1010,8 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (GLEW_VERSION_3_1||GLEW_EXT_texture_buffer_object)
     {
-      bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_BUFFER, &bound_tex);
+      bound_tex = 0; 
+      glGetIntegerv(GL_TEXTURE_BINDING_BUFFER, &bound_tex);     
       if (bound_tex != 0)
       {
         if (verbose)
@@ -1197,8 +1162,8 @@ bool OpenGLContext::isCleanState(bool verbose)
   }
 
   // we expect these settings for the default blending equation
-  GLint blend_src = 0;
-  GLint blend_dst = 0;
+  GLint blend_src;
+  GLint blend_dst;
   glGetIntegerv( GL_BLEND_SRC, &blend_src );
   glGetIntegerv( GL_BLEND_DST, &blend_dst );
   if (blend_src != GL_SRC_ALPHA)
@@ -1330,14 +1295,14 @@ bool OpenGLContext::isCleanState(bool verbose)
   if( !write_mask[0] || !write_mask[1] || !write_mask[2] || !write_mask[3] )
   {
     vl::Log::error( "Color write-mask should be glColorMask(GL_TRUE ,GL_TRUE, GL_TRUE, GL_TRUE)!\n" );
-    ok = false;
+    ok = false; 
   }
 
   glGetBooleanv(GL_DEPTH_WRITEMASK, write_mask);
   if ( !write_mask[0] )
   {
     vl::Log::error( "Depth write-mask should be glDepthMask(GL_TRUE)!\n" );
-    ok = false;
+    ok = false; 
   }
 
   GLint poly_mode[2];

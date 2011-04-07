@@ -693,20 +693,21 @@ ref<Geometry> vl::makeGrid( const vec3& origin, Real xside, Real zside, int x, i
     }
 
   // create indices
-  ref<DrawElementsUInt> polys = new DrawElementsUInt(PT_QUADS);
+  ref<DrawElementsUInt> polys = new DrawElementsUInt(PT_TRIANGLES);
   geom->drawCalls()->push_back(polys.get());
   int idx = 0;
-  polys->indices()->resize( (z-1)*(x-1)*4 );
+  polys->indices()->resize( (z-1)*(x-1)*6 );
   for(int i=0; i<z-1; ++i)
-  {
     for(int j=0; j<x-1; ++j)
     {
-      polys->indices()->at(idx++) = j+0 + x*(i+1);
+      polys->indices()->at(idx++) = j+0 + x*(i+0);
       polys->indices()->at(idx++) = j+1 + x*(i+1);
       polys->indices()->at(idx++) = j+1 + x*(i+0);
+
       polys->indices()->at(idx++) = j+0 + x*(i+0);
+      polys->indices()->at(idx++) = j+0 + x*(i+1);
+      polys->indices()->at(idx++) = j+1 + x*(i+1);
     }
-  }
 
   return geom;
 }

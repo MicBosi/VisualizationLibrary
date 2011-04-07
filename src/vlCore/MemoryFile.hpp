@@ -53,10 +53,10 @@ namespace vl
    * - DiskFile
    * - ZippedFile
   */
-  class VLCORE_EXPORT MemoryFile: public VirtualFile
+  class MemoryFile: public VirtualFile
   {
   public:
-    virtual const char* className() { return "vl::MemoryFile"; }
+    virtual const char* className() { return "MemoryFile"; }
 
     MemoryFile();
 

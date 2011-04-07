@@ -36,26 +36,32 @@
 
 using namespace vl;
 
-/** \class vl::SlicedVolume
+/** \class SlicedVolume
  * A ActorEventCallback used to render a volume using viewport aligned slices.
  *
  * Pictures from: \ref pagGuideSlicedVolume tutorial.
  * <center>
  * <table border=0 cellspacing=0 cellpadding=5>
  * <tr>
- * 	<td> <img src="pics/pagGuideSlicedVolume_1.jpg"> </td>
- * 	<td> <img src="pics/pagGuideSlicedVolume_2.jpg"> </td>
- * 	<td> <img src="pics/pagGuideSlicedVolume_4.jpg"> </td>
+ * 	<td> \image html pagGuideSlicedVolume.jpg </td>
+ * 	<td> \image html pagGuideSlicedVolume_3.jpg </td>
+ * </tr>
+ * </table>
+ * <table border=0 cellspacing=0 cellpadding=5>
+ * <tr>
+ * 	<td> \image html pagGuideSlicedVolume_1.jpg </td>
+ * 	<td> \image html pagGuideSlicedVolume_2.jpg </td>
+ * 	<td> \image html pagGuideSlicedVolume_4.jpg </td>
  * </tr>
  * <tr>
- * 	<td> <img src="pics/pagGuideSlicedVolume_5.jpg"> </td>
- * 	<td> <img src="pics/pagGuideSlicedVolume_6.jpg"> </td>
- * 	<td> <img src="pics/pagGuideSlicedVolume_7.jpg"> </td>
+ * 	<td> \image html pagGuideSlicedVolume_5.jpg </td>
+ * 	<td> \image html pagGuideSlicedVolume_6.jpg </td>
+ * 	<td> \image html pagGuideSlicedVolume_7.jpg </td>
  * </tr>
  * </table>
  * </center>
  *
- * Using the SlicedVolume class is very simple, see \ref pagGuideSlicedVolume for a complete example.
+ * Using the SlicedVolume class is very simple, see \a App_VolumeSliced.cpp for a practical example.
  *
  * Basically all SlicedVolume does is to compute the correct texture coordinates and generates on the fly N viewport
  * aligned slices, where N can be specified by the user with setSliceCount(). Such slices then can be rendered using
@@ -69,18 +75,12 @@ using namespace vl;
  * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
  * object space, useful to compute specular highlights etc.
  *
- * \sa 
- * - \ref pagGuideSlicedVolume
- * - \ref pagGuideRaycastVolume
- * - RaycastVolume
+ * For a complete example see: \ref pagGuideSlicedVolume.
  */
 //-----------------------------------------------------------------------------
 //! Constructor.
 SlicedVolume::SlicedVolume()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
   mSliceCount = 1024;
   mGeometry = new Geometry;
   
@@ -333,58 +333,28 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, Real clock, const Camera* 
   // it does not seem to depend from camera clipping plane optimization.
 }
 //-----------------------------------------------------------------------------
-void SlicedVolume::generateTextureCoordinates(const ivec3& img_size)
+void SlicedVolume::generateTextureCoordinates(const ivec3& size)
 {
-  if (!img_size.x() || !img_size.y() || !img_size.z())
+  if (!size.x() || !size.y() || !size.z())
   {
-    Log::error("SlicedVolume::generateTextureCoordinates(): failed! The img_size passed does not represent a 3D image.\n");
+    Log::error("SlicedVolume::generateTextureCoordinates(): failed! The size passed does not represent a 3D image.\n");
     return;
   }
-
-  float dx = 0.5f/img_size.x();
-  float dy = 0.5f/img_size.y();
-  float dz = 0.5f/img_size.z();
-
+  float dx = 0.5f/size.x();
+  float dy = 0.5f/size.y();
+  float dz = 0.5f/size.z();
   float x0 = 0.0f + dx;
   float x1 = 1.0f - dx;
   float y0 = 0.0f + dy;
   float y1 = 1.0f - dy;
   float z0 = 0.0f + dz;
   float z1 = 1.0f - dz;
-
   fvec3 texc[] = 
   {
     fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1),
     fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
   };
   memcpy(mTexCoord, texc, sizeof(texc));
-}
-//-----------------------------------------------------------------------------
-void SlicedVolume::generateTextureCoordinates(const ivec3& img_size, const ivec3& min_corner, const ivec3& max_corner)
-{
-    if (!img_size.x() || !img_size.y() || !img_size.z())
-    {
-        Log::error("SlicedVolume::setDisplayRegion(): failed! The size passed does not represent a 3D image.\n");
-        return;
-    }
-
-    float dx = 0.5f/img_size.x();
-    float dy = 0.5f/img_size.y();
-    float dz = 0.5f/img_size.z();
-
-    float x0 = min_corner.x()/(float)img_size.x() + dx;
-    float x1 = max_corner.x()/(float)img_size.x() - dx;
-    float y0 = min_corner.y()/(float)img_size.y() + dy;
-    float y1 = max_corner.y()/(float)img_size.y() - dy;
-    float z0 = min_corner.z()/(float)img_size.z() + dz;
-    float z1 = max_corner.z()/(float)img_size.z() - dz;
-
-    fvec3 texc[] = 
-    {
-        fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
-        fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1)
-    };
-    memcpy(mTexCoord, texc, sizeof(texc));
 }
 //-----------------------------------------------------------------------------
 void SlicedVolume::setBox(const AABB& box) 

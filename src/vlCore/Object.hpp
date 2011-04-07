@@ -69,24 +69,25 @@ namespace vl
    * The base class for all the reference counted objects.
    * See also vl::ref.
   */
-  class VLCORE_EXPORT Object
+  class Object
   {
   public:
 
     //! Returns the name of the class.
-    virtual const char* className() { return "vl::Object"; }
+    virtual const char* className() { return "Object"; }
 
     Object()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mMutex = NULL;
       mReferenceCount = 0;
       mAutomaticDelete = true;
       // user data
       #if VL_ACTOR_USER_DATA
         mUserData = NULL;
+      #endif
+      // debug living objects
+      #ifndef NDEBUG
+        mObjectName = className();
       #endif
       #if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
         debug_living_objects()->insert(this);
@@ -252,7 +253,7 @@ namespace vl
       mObject = other.get();
       return *this;
     }
-    template<class T2> ref& operator=(const ref<T2>& other)
+    template<class T2> ref& operator=(const ref<T2> other)
     {
       if (other)
         other->incReference();

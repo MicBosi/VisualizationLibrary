@@ -48,70 +48,15 @@ namespace vl
   class ResourceDatabase: public Object
   {
   public:
-    virtual const char* className() { return "vl::ResourceDatabase"; }
+    virtual const char* className() { return "ResourceDatabase"; }
 
     const std::vector< ref<Object> >& resources() const { return mResources; }
-
     std::vector< ref<Object> >& resources() { return mResources; }
 
-    //! Starts to look for the next object of the specified type from the given position.
     template<class T>
-    T* next(int& cur_pos) const
+    unsigned count() const
     {
-      for(unsigned i=cur_pos; i<mResources.size(); ++i)
-      {
-        ref<T> r = dynamic_cast<T*>(mResources[i].get());
-        if (r)
-        {
-          cur_pos = i+1;
-          return r.get();
-        }
-      }
-      return NULL;
-    }
-
-    //! Returns all the objects of the specified type in the given vector.
-    template<class T>
-    void get( std::vector< ref<T> >& resources, bool clear_vector=true )
-    {
-      if (clear_vector)
-        resources.clear();
-
-      for( unsigned i=0; i<mResources.size(); ++i )
-      {
-        ref<T> r = dynamic_cast<T*>(mResources[i].get());
-        if (r)
-          resources.push_back(r);
-      }
-    }
-
-    //! Returns all the objects of the specified type in the given vector and removes them from the ResourceDatabase.
-    template<class T>
-    void extract( std::vector< ref<T> >& resources, bool clear_vector=true )
-    {
-      if (clear_vector)
-        resources.clear();
-
-      size_t start = resources.size();
-
-      for( unsigned i=mResources.size(); i--; )
-      {
-        ref<T> r = dynamic_cast<T*>(mResources[i].get());
-        if (r)
-        {
-          resources.push_back(r);
-          mResources.erase(mResources.begin()+i);
-        }
-      }
-
-      std::reverse(resources.begin()+start, resources.end());
-    }
-
-    //! Don't use inside loops! Counts the number object of the specified type.
-    template<class T>
-    size_t count() const
-    {
-      size_t count=0;
+      unsigned count=0;
       for(unsigned i=0; i<mResources.size(); ++i)
       {
         ref<T> r = dynamic_cast<T*>(mResources[i].get());
@@ -121,7 +66,6 @@ namespace vl
       return count;
     }
 
-    //! Don't use inside loops! Returns the j-th object of the specified type (which is different from \p resources()[j]!).
     template<class T>
     T* get(int j) const
     {
@@ -140,27 +84,75 @@ namespace vl
       return NULL;
     }
 
+    template<class T>
+    T* next(int& cur_pos) const
+    {
+      for(unsigned i=cur_pos; i<mResources.size(); ++i)
+      {
+        ref<T> r = dynamic_cast<T*>(mResources[i].get());
+        if (r)
+        {
+          cur_pos = i+1;
+          return r.get();
+        }
+      }
+      return NULL;
+    }
+
+    template<class T>
+    void extract( std::vector< ref<T> >& resources, bool clear_vector=true )
+    {
+      if (clear_vector)
+        resources.clear();
+
+      for( unsigned i=mResources.size(); i--; )
+      {
+        ref<T> r = dynamic_cast<T*>(mResources[i].get());
+        if (r)
+        {
+          resources.push_back(r);
+          mResources.erase(mResources.begin()+i);
+        }
+      }
+
+      std::reverse(resources.begin(), resources.end());
+    }
+
+    template<class T>
+    void get( std::vector< ref<T> >& resources, bool clear_vector=true )
+    {
+      if (clear_vector)
+        resources.clear();
+
+      for( unsigned i=0; i<mResources.size(); ++i )
+      {
+        ref<T> r = dynamic_cast<T*>(mResources[i].get());
+        if (r)
+          resources.push_back(r);
+      }
+    }
+
   protected:
     std::vector< ref<Object> > mResources;
   };
 
   //! Short version of defLoadWriterManager()->canLoad(path).
-  VLCORE_EXPORT bool canLoad(const String& path);
+  bool canLoad(const String& path);
 
   //! Short version of defLoadWriterManager()->canWrite(path).
-  VLCORE_EXPORT bool canWrite(const String& path);
+  bool canWrite(const String& path);
 
   //! Short version of defLoadWriterManager()->canLoad(file).
-  VLCORE_EXPORT bool canLoad(VirtualFile* file);
+  bool canLoad(VirtualFile* file);
 
   //! Short version of defLoadWriterManager()->canWrite(file).
-  VLCORE_EXPORT bool canWrite(VirtualFile* file);
+  bool canWrite(VirtualFile* file);
 
   //! Short version of defLoadWriterManager()->loadResource(path,quick).
-  VLCORE_EXPORT ref<ResourceDatabase> loadResource(const String& path, bool quick=true);
+  ref<ResourceDatabase> loadResource(const String& path, bool quick=true);
 
   //! Short version of defLoadWriterManager()->loadResource(file,quick).
-  VLCORE_EXPORT ref<ResourceDatabase> loadResource(VirtualFile* file, bool quick=true);
+  ref<ResourceDatabase> loadResource(VirtualFile* file, bool quick=true);
 }
 
 #endif

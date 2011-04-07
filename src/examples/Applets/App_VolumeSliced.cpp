@@ -70,7 +70,7 @@ public:
     BaseDemo::initEvent();
 
     // variable preconditions
-    USE_GLSL &= GLEW_Has_Shading_Language_20;
+    USE_GLSL &= GLEW_VERSION_2_0 || GLEW_VERSION_3_0 || GLEW_VERSION_4_0;
     DYNAMIC_LIGHTS &= USE_GLSL;
     COLORED_LIGHTS &= DYNAMIC_LIGHTS;
     PRECOMPUTE_GRADIENT &= USE_GLSL;
@@ -203,11 +203,7 @@ public:
       // load the files
       std::vector< ref<Image> > images;
       for(unsigned int i=0; i<files_sorted.size(); ++i)
-      {
         images.push_back( loadImage(files_sorted[i]) );
-        if (files_sorted[i].endsWith(".dcm"))
-          images.back()->contrastHounsfieldAuto();
-      }
       // assemble the volume
       ref<Image> vol_img = assemble3DImage(images);
       // set the volume
@@ -254,7 +250,7 @@ public:
         // install volume image
         vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
         vol_fx->shader()->gocUniform("volume_texunit")->setUniform(0);
-        mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
+        mSlicedVolume->generateTextureCoordinates( img->width(), img->height(), img->depth() );
         // installs the transfer function as texture #1
         vol_fx->shader()->gocTextureUnit(1)->setTexture( new Texture( trfunc.get() ) );  
         vol_fx->shader()->gocUniform("trfunc_texunit")->setUniform(1);
@@ -285,7 +281,7 @@ public:
         // precompute volume with transfer function and lighting
         ref<Image> volume = vl::genRGBAVolume(img.get(), trfunc.get(), fvec3(1.0f,1.0f,0.0f));
         vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( volume.get() ) );
-        mSlicedVolume->generateTextureCoordinates( ivec3(volume->width(), volume->height(), volume->depth()) );
+        mSlicedVolume->generateTextureCoordinates( volume->width(), volume->height(), volume->depth() );
         vol_fx->shader()->enable(EN_ALPHA_TEST);
         vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);
       }
@@ -295,7 +291,7 @@ public:
       Log::info("Non IF_LUMINANCE image: not using GLSL.\n");
       // install volume texture
       vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
-      mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
+      mSlicedVolume->generateTextureCoordinates( img->width(), img->height(), img->depth() );
       // setup alpha test
       vol_fx->shader()->enable(EN_ALPHA_TEST);
       vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);

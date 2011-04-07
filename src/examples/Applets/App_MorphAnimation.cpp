@@ -34,6 +34,7 @@
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/MorphingCallback.hpp>
+#include <vlGraphics/vlMD2.hpp>
 #include <vlGraphics/GLSL.hpp>
 
 class App_MorphAnimation: public BaseDemo

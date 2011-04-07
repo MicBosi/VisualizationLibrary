@@ -55,7 +55,7 @@ namespace vl
   class CopyTexSubImage: public RenderEventCallback
   {
   public:
-    virtual const char* className() { return "vl::CopyTexSubImage"; }
+    virtual const char* className() { return "CopyTexSubImage"; }
     CopyTexSubImage(): mReadBuffer(RDB_BACK_LEFT) 
     {
       #ifndef NDEBUG
@@ -116,7 +116,7 @@ namespace vl
       mTexture = texture;
       setReadBuffer(read_buffer);
     }
-    virtual const char* className() { return "vl::CopyTexSubImage1D"; }
+    virtual const char* className() { return "CopyTexSubImage1D"; }
 
     void setTexture(Texture* tex) { mTexture = tex; }
     void setLevel(int level) { mLevel = level; }
@@ -184,7 +184,7 @@ namespace vl
       mTarget = target;
       setReadBuffer(read_buffer);
     }
-    virtual const char* className() { return "vl::CopyTexSubImage2D"; }
+    virtual const char* className() { return "CopyTexSubImage2D"; }
 
     void setTexture(Texture* tex) { mTexture = tex; }
     void setLevel(int level) { mLevel = level; }
@@ -279,7 +279,7 @@ namespace vl
       mTexture = texture;
       setReadBuffer(read_buffer);
     }
-    virtual const char* className() { return "vl::CopyTexSubImage3D"; }
+    virtual const char* className() { return "CopyTexSubImage3D"; }
 
     void setTexture(Texture* tex) { mTexture = tex; }
     void setLevel(int level) { mLevel = level; }

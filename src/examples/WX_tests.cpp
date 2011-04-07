@@ -97,19 +97,12 @@ public:
     MyFrame *frame = new MyFrame(NULL, L"WXGLCanvas", wxPoint(x,y), wxSize(width, height));
     mWXWin = new WXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
 
-    /* needed before accessing OpenGL */
     frame->Show();
-
-    /* common test setup */
-    setupApplet(program, mWXWin, bk_color, eye, center);
-
-    /* initialize OpenGL context */
+    /* THE ORDER IS IMPORTANT */
     mWXWin->initGLContext();
-
-    /* call initEvent() to initialize the test */
+    setupApplet(program, mWXWin, bk_color, eye, center);
     mWXWin->dispatchInitEvent();
-
-    /* these must be done after the window is visible and the applet is initialized */
+    /* these must be done after the window is visible */
     frame->SetPosition( wxPoint(x,y) );
     frame->SetClientSize( wxSize(width,height) );
     frame->SetLabel(wxT("Visualization Library on wxWindows"));

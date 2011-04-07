@@ -32,18 +32,17 @@
 #ifndef Win32Context_INCLUDE_ONCE
 #define Win32Context_INCLUDE_ONCE
 
-#include <vlWin32/config.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 
 namespace vlWin32
 {
 //-----------------------------------------------------------------------------
-  VLWIN32_EXPORT int choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose = true);
+  int choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose = true);
 //-----------------------------------------------------------------------------
   /**
    * The Win32Context class implements an OpenGLContext using the Win32 API.
    */
-  class VLWIN32_EXPORT Win32Context: public vl::OpenGLContext
+  class Win32Context: public vl::OpenGLContext
   {
   public:
     Win32Context(): mHDC(NULL), mHGLRC(NULL) {}

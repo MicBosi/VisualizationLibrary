@@ -36,311 +36,10 @@
 #include <vlCore/Object.hpp>
 #include <vlCore/Matrix4.hpp>
 #include <vector>
-#include <set>
-#include <algorithm>
 
 namespace vl
 {
   class Camera;
-
-  // mic fixme : remake all the documentation
-
-  //------------------------------------------------------------------------------
-  // TransformHierarchy
-  //------------------------------------------------------------------------------
-  class VLCORE_EXPORT ITransform: public Object
-  {
-  public:
-    ITransform(): mWorldMatrixUpdateTick(0), mAssumeIdentityWorldMatrix(false)  {}
-
-    virtual size_t childrenCount() const = 0;
-    
-    virtual ITransform* getChildren(size_t i) = 0;
-    
-    virtual const ITransform* getChildren(size_t i) const = 0;
-    
-    virtual ITransform* parent() = 0;
-    
-    virtual const ITransform* parent() const = 0;
-    
-    /** The matrix representing the transform's local space.
-      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
-    void setLocalMatrix(const mat4& m)
-    { 
-      mLocalMatrix = m;
-    }
-
-    /** The matrix representing the transform's local space. */
-    const mat4& localMatrix() const
-    { 
-      return mLocalMatrix;
-    }
-
-    /** Computes the world matrix by concatenating the parent's world matrix with its own local matrix. */
-    virtual void computeWorldMatrix(Camera* /*camera*/ = NULL)
-    {
-      if( assumeIdentityWorldMatrix() )
-      {
-        setWorldMatrix(mat4()); 
-      }
-      else
-      /* top Transforms are usually assumeIdentityWorldMatrix() == true for performance reasons */
-      if( parent() && !parent()->assumeIdentityWorldMatrix() )
-      {
-        setWorldMatrix( parent()->worldMatrix() * localMatrix() );
-      }
-      else
-        setWorldMatrix( localMatrix() );
-    }
-
-    /** Computes the world matrix by concatenating the parent's world matrix with its local matrix, recursively descending to the children. */
-    void computeWorldMatrixRecursive(Camera* camera = NULL)
-    {
-      computeWorldMatrix(camera);
-      for(size_t i=0; i<childrenCount(); ++i)
-        getChildren(i)->computeWorldMatrixRecursive(camera);
-    }
-
-    /** Returns the matrix computed concatenating this Transform's local matrix with the local matrices of all its parents. */
-    mat4 getComputedWorldMatrix()
-    {
-      mat4 world = localMatrix();
-      ref<ITransform> par = parent();
-      while(par)
-      {
-        world = par->localMatrix() * world;
-        par = par->parent();
-      }
-      return world;
-    }
-
-    /** Returns the world matrix used for rendering. */
-    const mat4& worldMatrix() const 
-    { 
-      return mWorldMatrix;
-    }
-
-    /** Normally you should not use directly this function, call it only if you are sure you cannot do otherwise. 
-      * Usually you want to call computeWorldMatrix() or computeWorldMatrixRecursive().
-      * Calling this function will also increment the worldMatrixUpdateTick(). */
-    void setWorldMatrix(const mat4& matrix) 
-    { 
-      mWorldMatrix = matrix; 
-      ++mWorldMatrixUpdateTick;
-    }
-
-    /** Returns the internal update tick used to avoid unnecessary computations. The world matrix thick 
-      * gets incremented every time the setWorldMatrix() or setLocalAndWorldMatrix() functions are called. */
-    long long worldMatrixUpdateTick() const { return mWorldMatrixUpdateTick; }
-
-    /** If set to true the world matrix of this transform will always be considered and identity.
-      * Is usually used to save calculations for top Transforms with many sub-Transforms. */
-    void setAssumeIdentityWorldMatrix(bool assume_I) { mAssumeIdentityWorldMatrix = assume_I; }
-
-    /** If set to true the world matrix of this transform will always be considered and identity.
-      * Is usually used to save calculations for top Transforms with many sub-Transforms. */
-    bool assumeIdentityWorldMatrix() { return mAssumeIdentityWorldMatrix; }
-
-    /** Checks whether there are duplicated entries in the Transform's children list. */
-    bool hasDuplicatedChildren() const
-    {
-      std::set<const ITransform*> tr_set;
-      for(size_t i=0; i<childrenCount(); ++i)
-        tr_set.insert(getChildren(i));
-      return tr_set.size() != childrenCount();
-    }
-
-#if VL_TRANSFORM_USER_DATA 
-  public:
-    void setTransformUserData(void* data) { mTransformUserData = data; }
-    const void* transformUserData() const { return mTransformUserData; }
-    void* transformUserData() { return mTransformUserData; }
-
-  private:
-    void* mTransformUserData;
-#endif
-
-  protected:
-    mat4 mLocalMatrix;
-    mat4 mWorldMatrix;
-    long long mWorldMatrixUpdateTick;
-    bool mAssumeIdentityWorldMatrix;
-  };
-
-  //------------------------------------------------------------------------------
-  // TransformHierarchy
-  //------------------------------------------------------------------------------
-  template<class Ttype>
-  class TransformHierarchy: public ITransform
-  {
-  public:
-    TransformHierarchy(): mParent(NULL) {}
-
-    // --- --- ITransform interface implementation --- ---
-
-    virtual size_t childrenCount() const { return mChildren.size(); }
-
-    virtual ITransform* getChildren(size_t i) { return mChildren[i].get(); }
-    
-    virtual const ITransform* getChildren(size_t i) const { return mChildren[i].get(); }
-
-    virtual const ITransform* parent() const { return mParent; }
-    
-    virtual ITransform* parent() { return mParent; }
-
-    // --- --- children management --- ---
-
-    /** Returns the children Transforms. */
-    const std::vector< ref<Ttype> >& children() const { return mChildren; }
-
-    /** Adds a child transform. */
-    void addChild(Ttype* child)
-    {
-      VL_CHECK(child != NULL)
-      VL_CHECK(child->mParent == NULL)
-
-      mChildren.push_back(child);
-      child->mParent = this;
-    }
-    
-    /** Adds \p count children transforms. */
-    void addChildren(Ttype*const* children, size_t count)
-    {
-      VL_CHECK(children != NULL)
-
-      if (count)
-      {
-        size_t insert_point = mChildren.size();
-        mChildren.resize(mChildren.size() + count);
-        vl::ref<Ttype>* ptr = &mChildren[insert_point];
-        for(size_t i=0; i<count; ++i, ++ptr)
-        {
-          VL_CHECK(children[i]->mParent == NULL);
-          children[i]->mParent = this;
-          (*ptr) = children[i];
-        }
-      }
-    }
-
-    void addChildren(const ref<Ttype>* children, size_t count)
-    {
-      VL_CHECK(children != NULL)
-
-      if (count)
-      {
-        size_t insert_point = mChildren.size();
-        mChildren.resize(mChildren.size() + count);
-        vl::ref<Ttype>* ptr = &mChildren[insert_point];
-        for(size_t i=0; i<count; ++i)
-        {
-          VL_CHECK(children[i]->mParent == NULL);
-          children[i]->mParent = this;
-          ptr[i] = children[i];
-        }
-      }
-    }
-
-    void addChildren(const std::vector< ref<Ttype> >& children)
-    {
-      if (children.size())
-        addChildren( &children[0], children.size() );
-    }
-    
-    /** Adds the specified \p children transforms. */
-    void addChildren(const std::vector< Ttype* >& children)
-    {
-      if (children.size())
-        addChildren( &children[0], children.size() );
-    }
-    
-    /** Sets the \p index-th child. */
-    void setChild(int index, Ttype* child)
-    {
-      VL_CHECK(child)
-      VL_CHECK( index < (int)mChildren.size() )
-      mChildren[index]->mParent = NULL;
-      mChildren[index] = child;
-      mChildren[index]->mParent = this;
-    }
-    
-    /** Returns the last child. */
-    Ttype* lastChild()
-    {
-      return mChildren.back().get();
-    }
-    
-    /** Removes the given \p child Ttype. */
-    void eraseChild(Ttype* child)
-    {
-      VL_CHECK(child != NULL)
-      typename std::vector< ref<Ttype> >::iterator it;
-      it = std::find(mChildren.begin(), mChildren.end(), child);
-      VL_CHECK(it != mChildren.end())
-      if (it != mChildren.end())
-      {
-        (*it)->mParent = NULL;
-        mChildren.erase(it);
-      }
-    }
-    
-    /** Removes \p count children Transforms starting at position \p index. */
-    void eraseChildren(int index, int count)
-    {
-      VL_CHECK( index + count <= (int)mChildren.size() );
-
-      for(int j=index; j<index+count; ++j)
-        mChildren[j]->mParent = NULL;
-
-      for(int i=index+count, j=index; i<(int)mChildren.size(); ++i, ++j)
-        mChildren[j] = mChildren[i];
-
-      mChildren.resize( mChildren.size() - count );
-    }    
-
-    /** Removes all the children of a Ttype. */
-    void eraseAllChildren()
-    {
-      for(int i=0; i<(int)mChildren.size(); ++i)
-        mChildren[i]->mParent = NULL;
-      mChildren.clear();
-    }
-    
-    /** Removes all the children of a Ttype recursively descending the hierachy. */
-    void eraseAllChildrenRecursive()
-    {
-      for(int i=0; i<(int)mChildren.size(); ++i)
-      {
-        mChildren[i]->eraseAllChildrenRecursive();
-        mChildren[i]->mParent = NULL;
-      }
-      mChildren.clear();
-    }
-
-    /** Minimizes the amount of memory used to store the children Transforms. */
-    void shrink()
-    {
-      std::vector< ref<Ttype> > tmp (mChildren);
-      mChildren.swap(tmp);
-    }
-
-    /** Minimizes recursively the amount of memory used to store the children Transforms. */
-    void shrinkRecursive()
-    {
-      shrink();
-      for(size_t i=0; i<mChildren.size(); ++i)
-        mChildren[i]->shrinkRecursive();
-    }
-
-    /** Reserves space for \p count children. This function is very useful when you need to add one by one a large number of children transforms. 
-      * \note This function does not affect the number of children, it only reallocates the buffer used to store them 
-      * so that it's large enough to \p eventually contain \p count of them. This will make subsequent calls to addChild() quicker
-      * as fewer or no reallocations of the buffer will be needed. */
-    void reserveChildren(size_t count) { mChildren.reserve(count); }
-
-  protected:
-    std::vector< ref<Ttype> > mChildren;
-    TransformHierarchy* mParent;
-  };
 
   //------------------------------------------------------------------------------
   // Transform
@@ -369,13 +68,13 @@ namespace vl
     *
     * \sa setLocalAndWorldMatrix(), setAssumeIdentityWorldMatrix(), Rendering::transform()
     * \sa Actor, Rendering, Effect, Renderable, Geometry */
-  class VLCORE_EXPORT Transform: public TransformHierarchy<Transform>
+  class Transform: public Object
   {
   public:
-    virtual const char* className() { return "vl::Transform"; }
+    virtual const char* className() { return "Transform"; }
 
     /** Constructor. */
-    Transform()
+    Transform(): mParent(NULL), mWorldMatrixUpdateTick(0), mAssumeIdentityWorldMatrix(false) 
     { 
       #ifndef NDEBUG
         mObjectName = className();
@@ -386,7 +85,7 @@ namespace vl
     }
 
     /** Constructor. The \p matrix parameter is used to set both the local and world matrix. */
-    Transform(const mat4& matrix)
+    Transform(const mat4& matrix): mParent(NULL), mAssumeIdentityWorldMatrix(false) 
     { 
       #ifndef NDEBUG
         mObjectName = className();
@@ -398,15 +97,76 @@ namespace vl
       #endif
     }
 
-    /** Sets both the local and the world matrices.
-      * This function is useful to quickly set those Transforms that do not have a parent, for which
-      * is equivalent to: \p setLocalMatrix(matrix); \p computeWorldMatrix(NULL); */
-    void setLocalAndWorldMatrix(const mat4& matrix)
-    { 
-      mLocalMatrix = matrix;
-      setWorldMatrix(matrix);
-    }
+    /** Returns the children Transforms. */
+    const std::vector< ref<Transform> >& children() const { return mChildren; }
 
+    /** Adds a child transform. */
+    void addChild(Transform* child);
+    
+    /** Adds \p count children transforms. */
+    void addChildren(Transform* const *, size_t count);
+    
+    /** Adds \p count children transforms. */
+    void addChildren(const ref<Transform>*, size_t count);
+    
+    /** Adds the specified \p children transforms. */
+    void addChildren(const std::vector< Transform* >& children);
+    
+    /** Adds the specified \p children transforms. */
+    void addChildren(const std::vector< ref<Transform> >& children);
+
+    /** Minimizes the amount of memory used to store the children Transforms. */
+    void shrink();
+
+    /** Minimizes recursively the amount of memory used to store the children Transforms. */
+    void shrinkRecursive();
+
+    /** Reserves space for \p count children. This function is very useful when you need to add one by one a large number of children transforms. 
+      * \note This function does not affect the number of children, it only reallocates the buffer used to store them 
+      * so that it's large enough to \p eventually contain \p count of them. This will make subsequent calls to addChild() quicker
+      * as fewer or no reallocations of the buffer will be needed. */
+    void reserveChildren(size_t count) { mChildren.reserve(count); }
+
+    /** Sets the \p index-th child. */
+    void setChild(int index, Transform* child);
+    
+    /** Returns the number of children a Transform has. */
+    int childCount() const;
+    
+    /** Returns the i-th child Transform. */
+    Transform* child(int i);
+    
+    /** Returns the last child. */
+    Transform* lastChild();
+    
+    /** Removes the given \p child Transform. */
+    void eraseChild(Transform* child);
+    
+    /** Removes \p count children Transforms starting at position \p index. */
+    void eraseChildren(int index, int count);
+    
+    /** Removes all the children of a Transform. */
+    void eraseAllChildren();
+    
+    /** Removes all the children of a Transform recursively descending the hierachy. */
+    void eraseAllChildrenRecursive();
+
+    /** Returns the parent of a Transform. */
+    const Transform* parent() const { return mParent; }
+    
+    /** Returns the parent of a Transform. */
+    Transform* parent() { return mParent; }
+    
+    /** Returns the matrix computed concatenating this Transform's local matrix with its parents' local matrices. */
+    mat4 getComputedWorldMatrix();
+
+    /** Returns the local matrix. */
+    const mat4& localMatrix() const;
+
+    /** Sets the local matrix. 
+      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
+    void setLocalMatrix(const mat4& matrix);
+    
     /** Utility function equivalent to \p setLocalMatrix( mat4::getTranslation(x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void translate(Real x, Real y, Real z);
@@ -426,6 +186,61 @@ namespace vl
     /** Utility function equivalent to \p setLocalMatrix( mat4::getRotation(from,to)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void rotate(const vec3& from, const vec3& to);
+
+    /** Sets both the local and the world matrices.
+      * This function is useful to quickly set those Transforms that do not have a parent, for which
+      * is equivalent to: \p setLocalMatrix(matrix); \p computeWorldMatrix(NULL); */
+    void setLocalAndWorldMatrix(const mat4& matrix)
+    { 
+      mLocalMatrix = matrix;
+      setWorldMatrix(matrix);
+    }
+
+    /** Computes the world matrix by concatenating the parent's world matrix with this' local matrix. */
+    virtual void computeWorldMatrix(Camera* camera=NULL);
+
+    /** Computes the world matrix by concatenating the parent's world matrix with this' local matrix, recursively descending to the children. */
+    void computeWorldMatrixRecursive(Camera* camera=NULL);
+
+    /** Returns the world matrix used for rendering. */
+    const mat4& worldMatrix() const;
+
+    /** Returns the internal update tick used to avoid unnecessary computations. The world matrix thick 
+      * gets incremented every time the setWorldMatrix() or setLocalAndWorldMatrix() functions are called. */
+    long long worldMatrixUpdateTick() const { return mWorldMatrixUpdateTick; }
+
+    /** If set to true the world matrix of this transform will always be considered and identity.
+      * Is usually used to save calculations for top Transforms with many sub-Transforms. */
+    void setAssumeIdentityWorldMatrix(bool assume_I) { mAssumeIdentityWorldMatrix = assume_I; }
+
+    /** If set to true the world matrix of this transform will always be considered and identity.
+      * Is usually used to save calculations for top Transforms with many sub-Transforms. */
+    bool assumeIdentityWorldMatrix() { return mAssumeIdentityWorldMatrix; }
+
+    /** Checks whether there are duplicated entries in the Transform's children list. */
+    bool hasDuplicatedChildren() const;
+
+    /** Normally you should not use directly this function, call it only if you are sure you cannot do otherwise. 
+      * Calling this function will also increment the worldMatrixUpdateTick(). */
+    void setWorldMatrix(const mat4& matrix);
+
+#if VL_TRANSFORM_USER_DATA 
+  public:
+    void setTransformUserData(void* data) { mTransformUserData = data; }
+    const void* transformUserData() const { return mTransformUserData; }
+    void* transformUserData() { return mTransformUserData; }
+
+  private:
+    void* mTransformUserData;
+#endif
+
+  protected:
+    mat4 mWorldMatrix; 
+    mat4 mLocalMatrix;
+    std::vector< ref<Transform> > mChildren;
+    Transform* mParent;
+    long long mWorldMatrixUpdateTick;
+    bool mAssumeIdentityWorldMatrix;
   };
 }
 

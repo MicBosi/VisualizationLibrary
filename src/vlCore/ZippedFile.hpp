@@ -49,7 +49,7 @@ namespace vl
     friend class ZippedDirectory;
 
   public:
-    virtual const char* className() { return "vl::ZippedFileInfo"; }
+    virtual const char* className() { return "ZippedFileInfo"; }
 
     ZippedFileInfo()
     {
@@ -129,14 +129,14 @@ namespace vl
    * - DiskFile
    * - MemoryFile
   */
-  class VLCORE_EXPORT ZippedFile: public VirtualFile
+  class ZippedFile: public VirtualFile
   {
 
     // Lower this if you need to limit the amount of data allocated to the stack, for example to 16K.
     static const int CHUNK_SIZE = 128*1024;
 
   public:
-    virtual const char* className() { return "vl::ZippedFile"; }
+    virtual const char* className() { return "ZippedFile"; }
 
     ZippedFile();
     ~ZippedFile();

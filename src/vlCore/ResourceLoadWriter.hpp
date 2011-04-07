@@ -44,7 +44,7 @@ namespace vl
   class ResourceLoadWriter: public Object
   {
   public:
-    virtual const char* className() { return "vl::ResourceLoadWriter"; }
+    virtual const char* className() { return "ResourceLoadWriter"; }
     ResourceLoadWriter(const String& load_extensions, const String& write_extensions): mLoadExtensions(load_extensions), mWriteExtensions(write_extensions) {}
 
     virtual ref<ResourceDatabase> loadResource(const String& path) const = 0;

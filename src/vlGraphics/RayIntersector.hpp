@@ -50,7 +50,7 @@ namespace vl
   class RayIntersection: public Object
   {
   public:
-    virtual const char* className() { return "vl::RayIntersection"; }
+    virtual const char* className() { return "RayIntersection"; }
     RayIntersection(): mActor(NULL), mDistance(0.0f) 
     {
       #ifndef NDEBUG
@@ -88,7 +88,7 @@ namespace vl
   class RayIntersectionGeometry: public RayIntersection
   {
   public:
-    virtual const char* className() { return "vl::RayIntersectionGeometry"; }
+    virtual const char* className() { return "RayIntersectionGeometry"; }
     RayIntersectionGeometry(): mGeometry(NULL), mDrawCalls(NULL), mTriangleIndex(-1) 
     {
       #ifndef NDEBUG
@@ -132,10 +132,10 @@ namespace vl
   //-----------------------------------------------------------------------------
   /** The RayIntersector class is used to detect the intersection points between a Ray and a set of Actor[s]
    */
-  class VLGRAPHICS_EXPORT RayIntersector: public Object
+  class RayIntersector: public Object
   {
   public:
-    virtual const char* className() { return "vl::RayIntersector"; }
+    virtual const char* className() { return "RayIntersector"; }
     RayIntersector()
     {
       #ifndef NDEBUG

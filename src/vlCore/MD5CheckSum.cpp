@@ -31,10 +31,9 @@
 
 #include <vlCore/MD5CheckSum.hpp>
 #include <vlCore/VirtualFile.hpp>
-#include <cstdio>
-#include <cstring>
-
-#include "3rdparty/md5/md5.c"
+#include "md5/md5.c"
+#include <stdio.h>
+#include <string.h>
 
 using namespace vl;
 

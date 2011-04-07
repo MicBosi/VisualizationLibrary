@@ -50,7 +50,7 @@ public:
     // allocate terrain scene manager
     vl::ref<vl::Terrain> terrain = new vl::Terrain;
     // use GLSL?
-    terrain->setUseGLSL( GLEW_ARB_shading_language_100 ? true : false );
+    terrain->setUseGLSL(GLEW_ARB_shading_language_100?true:false);
     // dimensions of the terrain
     terrain->setWidth(100);
     terrain->setDepth(100);
@@ -63,8 +63,8 @@ public:
     // origin of the terrain
     terrain->setOrigin(vl::vec3(0,0,0));
     // define textures
-    terrain->setHeightmapTexture("/images/ps_height_4k.jpg");
-    terrain->setTerrainTexture("/images/ps_texture_4k.jpg");
+    terrain->setHeightmapTexture("/images/terrain-h.jpg");
+    terrain->setTerrainTexture("/images/terrain-t.jpg");
     terrain->setDetailTexture("/images/noise.png");
     terrain->setDetailRepetitionCount(8);
     // define shaders to be used to render the terrain

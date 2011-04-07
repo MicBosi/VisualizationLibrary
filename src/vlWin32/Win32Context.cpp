@@ -254,7 +254,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   public:
     bool mOK;
 
-    InOutContract(Win32Context* context): mContext(context), mOK(true)
+    InOutContract(Win32Context* context): mOK(true), mContext(context)
     {
       cleanup();
     }

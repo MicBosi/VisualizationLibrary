@@ -201,7 +201,7 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
     draw_cmd.push_back( geom->drawCalls()->at(idraw) );
   geom->drawCalls()->clear();
 
-  for(size_t idraw=0; idraw<draw_cmd.size(); ++idraw)
+  for(unsigned idraw=0; idraw<draw_cmd.size(); ++idraw)
   {
     ref<DrawElementsUInt> tris = new DrawElementsUInt( draw_cmd[idraw]->primitiveType() );
     geom->drawCalls()->push_back(tris.get());

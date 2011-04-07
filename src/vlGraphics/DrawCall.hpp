@@ -49,7 +49,7 @@ namespace vl
   class DrawCall: public Object
   {
   public:
-    virtual const char* className() { return "vl::DrawCall"; }
+    virtual const char* className() { return "DrawCall"; }
 
     DrawCall(): mType(PT_TRIANGLES), mEnabled(true) {}
 
@@ -108,16 +108,6 @@ namespace vl
     {
       if (mType == PT_PATCHES && mPatchParameter)
         mPatchParameter->apply();
-
-      if (mPatchParameter && mType != PT_PATCHES)
-      {
-        vl::Log::warning("PatchParameter used with non PT_PATCHES draw call!\n");
-      }
-
-      if (!mPatchParameter && mType == PT_PATCHES)
-      {
-        vl::Log::warning("No PatchParameter supplied while using PT_PATCHES draw call!\n");
-      }
     }
 
   protected:

@@ -66,7 +66,7 @@ namespace vl
       mInstances = instances;
       mType = primitive;
     }
-    virtual const char* className() { return "vl::DrawArrays"; }
+    virtual const char* className() { return "DrawArrays"; }
 
     DrawArrays& operator=(const DrawArrays& other)
     {

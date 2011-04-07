@@ -46,10 +46,10 @@ namespace vl
   /**
    * Simple class to be used as a timer and to retrieve the current time and date.
   */
-  class VLCORE_EXPORT Time: public Object
+  class Time: public Object
   {
   public:
-    virtual const char* className() { return "vl::Time"; }
+    virtual const char* className() { return "Time"; }
     Time();
 
     int year() const { return mYear; }

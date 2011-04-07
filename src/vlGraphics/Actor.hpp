@@ -35,10 +35,9 @@
 #include <vlCore/Collection.hpp>
 #include <vlCore/Sphere.hpp>
 #include <vlCore/AABB.hpp>
-#include <vlCore/Transform.hpp>
-#include <vlGraphics/config.hpp>
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Renderable.hpp>
+#include <vlCore/Transform.hpp>
 #include <vlGraphics/LODEvaluator.hpp>
 #include <vlGraphics/UniformSet.hpp>
 #include <vlGraphics/Scissor.hpp>
@@ -72,7 +71,7 @@ namespace vl
 
   \sa
   - Actor::actorEventCallbacks() */
-  class VLGRAPHICS_EXPORT ActorEventCallback: public Object
+  class ActorEventCallback: public Object
   {
   public:
     ActorEventCallback(): mEnabled(true) {}
@@ -126,10 +125,10 @@ namespace vl
 
   \sa Transform, Effect, Renderable, Geometry
   */
-  class VLGRAPHICS_EXPORT Actor: public Object
+  class Actor: public Object
   {
   public:
-    virtual const char* className() { return "vl::Actor"; }
+    virtual const char* className() { return "Actor"; }
 
     /** Constructor.
     \param renderable A Renderable defining the Actor's LOD level #0

@@ -49,10 +49,10 @@ namespace vl
    * - SceneManagerActorTree
    * - SceneManagerPortals
   */
-  class VLGRAPHICS_EXPORT SceneManagerActorKdTree: public SceneManagerBVH<ActorKdTree>
+  class SceneManagerActorKdTree: public SceneManagerBVH<ActorKdTree>
   {
   public:
-    virtual const char* className() { return "vl::SceneManagerActorKdTree"; }
+    virtual const char* className() { return "SceneManagerActorKdTree"; }
 
     SceneManagerActorKdTree()
     { 

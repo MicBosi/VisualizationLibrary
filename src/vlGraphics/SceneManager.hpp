@@ -32,7 +32,6 @@
 #ifndef SceneManager_INCLUDE_ONCE
 #define SceneManager_INCLUDE_ONCE
 
-#include <vlGraphics/config.hpp>
 #include <vlCore/Object.hpp>
 #include <vlCore/Sphere.hpp>
 
@@ -69,10 +68,10 @@ namespace vl
    * - SceneManagerPortals
    * - Actor
   */
-  class VLGRAPHICS_EXPORT SceneManager: public Object
+  class SceneManager: public Object
   {
   public:
-    virtual const char* className() { return "vl::SceneManager"; }
+    virtual const char* className() { return "SceneManager"; }
     //! Constructor.
     SceneManager();
 

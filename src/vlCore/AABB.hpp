@@ -41,7 +41,7 @@ namespace vl
   // AABB
   //-----------------------------------------------------------------------------
   /** The AABB class implements an axis-aligned bounding box using vl::Real precision. */
-  class VLCORE_EXPORT AABB 
+  class AABB 
   {
   public:
     /** Constructs a null AABB. */
@@ -62,7 +62,7 @@ namespace vl
     /** Returns true if the AABB contains a single point, that is, if the min and max corners of the AABB are equal. */
     bool isPoint() const { return mMin == mMax; }
 
-    /** Enlarges the AABB in all directions by \p displace amount. 
+    /** Enlarges the AABB in all directions by \displace amount. 
         As a result every edge of the AABB will be \p displace*2 longer. */
     void enlarge(Real displace);
 

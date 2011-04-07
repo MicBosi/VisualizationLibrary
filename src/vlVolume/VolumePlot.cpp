@@ -38,8 +38,8 @@
 
 using namespace vl;
 
-/** \class vl::VolumePlot
-  <img src="pics/pagGuideMarchingCubes_1.jpg">
+/** \class VolumePlot
+  \image html pagGuideMarchingCubes_1.jpg
 
 Example:
 \code
@@ -71,9 +71,6 @@ Example:
 //-----------------------------------------------------------------------------
 VolumePlot::VolumePlot()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
   mActorTreeMulti = new ActorTree;
   mPlotTransform = new Transform;
   mIsosurfaceActor = new Actor;

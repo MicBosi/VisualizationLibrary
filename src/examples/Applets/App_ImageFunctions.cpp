@@ -67,10 +67,8 @@ public:
     vl::ref<vl::Image> img_c;
     vl::ref<vl::Image> img_d;
 
-	// remember that this returns NULL if JPG support is disabled
+    // remember that this returns NULL if JPG support is disabled
 #if defined(VL_IO_2D_PNG)
-	// TODO: review the way options are set for ResourceLoadWriters, that is, how we can 
-	// safely access to the actual object's interface implementing a generic plugin.
     vl::defLoadWriterManager()->loadWriter<vl::LoadWriterJPG>()->setQuality(90);
 #endif
     vl::saveImage(img1.get(), "img_a.jpg");
@@ -78,8 +76,6 @@ public:
 
     // remember that this returns NULL if PNG support is disabled
 #if defined(VL_IO_2D_JPG)
-	// TODO: review the way options are set for ResourceLoadWriters, that is, how we can 
-	// safely access to the actual object's interface implementing a generic plugin.
     vl::defLoadWriterManager()->loadWriter<vl::LoadWriterPNG>()->setCompression(9);
 #endif
     vl::saveImage(img1.get(), "img_b.png");

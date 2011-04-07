@@ -60,10 +60,10 @@ namespace vl
    *
    * \sa setTerrainTexture(), setHeightmapTexture(), setDetailTexture()
    */
-  class VLGRAPHICS_EXPORT Terrain: public SceneManagerActorKdTree
+  class Terrain: public SceneManagerActorKdTree
   {
   public:
-    virtual const char* className() { return "vl::Terrain"; }
+    virtual const char* className() { return "Terrain"; }
     Terrain(): 
         mShaderNode(new ShaderNode), mWidth(0), mHeight(0), mDepth(0), mDetailRepetitionCount(0), 
         mHeightmapTextureFormat(TF_LUMINANCE16F), mTerrainTextureFormat(TF_RGB), mDetailTextureFormat(TF_RGB),

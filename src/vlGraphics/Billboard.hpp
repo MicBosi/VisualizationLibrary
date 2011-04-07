@@ -33,7 +33,6 @@
 #define Billboard_INCLUDE_ONCE
 
 #include <vlCore/Transform.hpp>
-#include <vlGraphics/config.hpp>
 
 namespace vl
 {
@@ -43,11 +42,11 @@ namespace vl
   /**
    * A Transform that aligns an Actor towards the camera.
   */
-  class VLGRAPHICS_EXPORT Billboard: public Transform
+  class Billboard: public Transform
   {
   public:
     Billboard();
-    virtual const char* className() { return "vl::Billboard"; }
+    virtual const char* className() { return "Billboard"; }
     //! The billboard position and rotation center
     void setPosition(const vec3& pos);
     //! The billboard position and rotation center

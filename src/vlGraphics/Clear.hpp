@@ -32,9 +32,8 @@
 #ifndef Clear_INCLUDE_ONCE
 #define Clear_INCLUDE_ONCE
 
-#include <vlCore/Vector4.hpp>
-#include <vlGraphics/config.hpp>
 #include <vlGraphics/Renderable.hpp>
+#include <vlCore/Vector4.hpp>
 
 namespace vl
 {
@@ -66,10 +65,10 @@ namespace vl
    * Actor's and Effect's renderRank() and Actor's renderBlock(). 
    * - The following render states also affect the clearing process: ColorMask, StencilMask, DepthMask.
   */
-  class VLGRAPHICS_EXPORT Clear: public Renderable
+  class Clear: public Renderable
   {
   public:
-    virtual const char* className() { return "vl::Clear"; }
+    virtual const char* className() { return "Clear"; }
 
     Clear();
 

@@ -182,9 +182,7 @@
 
 // -------------------- Do Not Touch The Following Section --------------------
 
-///////////////////////////////////////////////////
 
-// Pipeline precision settings
 #if VL_PIPELINE_PRECISION == 2
   namespace vl { /** Defined as \p 'typedef \p double \p Real' */ typedef double Real; }
   //! Defined as \p glLoadMatrixd, used internally.
@@ -199,29 +197,14 @@
   //! Defined as \p glMultMatrixf, used internally.
   #define VL_glMultMatrix glMultMatrixf
 #endif
-
 ///////////////////////////////////////////////////
 
 // Visual Studio special settings
 #ifdef _MSC_VER
   #pragma warning( once : 4996 ) // function or variable may be unsafe
-  #pragma warning( once : 4800 ) // forcing value to bool (performance warning)
+  #pragma warning( once : 4800 )
   #pragma warning( once : 4127 ) // conditional expression is constant
   #pragma warning( once : 4100 ) // unreferenced formal parameter
-  #pragma warning( disable : 4251 ) // non-dll type exposed by a dll type
 #endif
 
-///////////////////////////////////////////////////
-
-// VLCORE_EXPORT macro
-#if defined(_WIN32) && !defined(VL_STATIC_LINKING)
-  #ifdef VLCore_EXPORTS
-    #define VLCORE_EXPORT __declspec(dllexport)
-  #else
-    #define VLCORE_EXPORT __declspec(dllimport)
-  #endif
-#else
-  #define VLCORE_EXPORT
 #endif
-
-#endif // VISUALIZATION_LIBRARY_CONFIG_INCLUDE_ONCE

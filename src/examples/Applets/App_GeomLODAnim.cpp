@@ -60,7 +60,7 @@ public:
     geom->setVBOEnabled(true);
     if (GLEW_ARB_vertex_buffer_object)
     {
-      geom->vertexArray()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
+      geom->vertexArray()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW,false);
     }
 
     // LOD 1
@@ -71,7 +71,7 @@ public:
     geom->setVBOEnabled(true);
     if (GLEW_ARB_vertex_buffer_object)
     {
-      geom->vertexArray()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
+      geom->vertexArray()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW,false);
     }
 
     // LOD 2
@@ -82,7 +82,7 @@ public:
     geom->setVBOEnabled(true);
     if (GLEW_ARB_vertex_buffer_object)
     {
-      geom->vertexArray()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
+      geom->vertexArray()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW,false);
     }
   }
 
@@ -121,7 +121,7 @@ public:
 
       if (GLEW_ARB_vertex_buffer_object)
       {
-        geom->vertexArray()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW, false);
+        geom->vertexArray()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW, false);
       }
 
       // when modifying the vertices of a geometry always remember to update the bounding volumes!

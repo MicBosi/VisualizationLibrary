@@ -66,7 +66,7 @@ namespace vl
       mFullscreen(false),
       mVSync(false) 
     {}
-    virtual const char* className() { return "vl::OpenGLContextFormat"; }
+    virtual const char* className() { return "OpenGLContextFormat"; }
 
     void setRGBABits(int r, int g, int b, int a) { mRGBABits = ivec4(r,g,b,a); }
     void setAccumRGBABits(int r, int g, int b, int a) { mAccumRGBABits = ivec4(r,g,b,a); }
@@ -119,16 +119,21 @@ namespace vl
   //! - Always update the mKeyboard structure appropriately especially with respect to Key_[Left/Right]-Alt/Ctrl/Shift events.
   //! - When cycling through EventListeners to dispatch the events you must do it on a temporary copy of mEventListeners so that
   //!   the EventListeners can safely add/remove themselves or other EventListeners to the OpenGLContext itself. */
-  class VLGRAPHICS_EXPORT OpenGLContext: public Object
+  class OpenGLContext: public Object
   {
   public:
-    virtual const char* className() { return "vl::OpenGLContext"; }
+    virtual const char* className() { return "OpenGLContext"; }
 
     //! Constructor.
     OpenGLContext(int w=0, int h=0);
 
     //! Destructor.
-    ~OpenGLContext();
+    //! Dispatches also destroyEvent() to its event listeners.
+    ~OpenGLContext() 
+    { 
+      eraseAllEventListeners();
+      mRenderTarget->mOpenGLContext = NULL;
+    }
 
     //! Swaps the back and front buffers to present the last rendering.
     virtual void swapBuffers() = 0;

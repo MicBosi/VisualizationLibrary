@@ -44,8 +44,6 @@ namespace vl
   class TriangleIteratorAbstract: public Object
   {
   public:
-    virtual const char* className() { return "vl::TriangleIteratorAbstract"; }
-
     virtual bool next() = 0;
     virtual bool isEnd() const = 0;
     virtual int a() const = 0;
@@ -60,13 +58,8 @@ namespace vl
   class TriangleIteratorIndexed: public TriangleIteratorAbstract
   {
   public:
-    virtual const char* className() { return "vl::TriangleIteratorIndexed"; }
-
     TriangleIteratorIndexed(TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, unsigned int prim_restart_idx)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mCurrentIndex = 0;
       mEnd    = 0;
       mA = mB = mC = -1;
@@ -318,13 +311,8 @@ namespace vl
   class TriangleIteratorDirect: public TriangleIteratorAbstract
   {
   public:
-    virtual const char* className() { return "vl::TriangleIteratorDirect"; }
-
     TriangleIteratorDirect(EPrimitiveType prim_type)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mCurrentIndex = mStart = mEnd = 0;
       mA = mB = mC = -1;
       mPrimType = prim_type;
@@ -500,14 +488,9 @@ namespace vl
   class TriangleIteratorMulti: public TriangleIteratorIndexed<TArray>
   {
   public:
-    virtual const char* className() { return "vl::TriangleIteratorMulti"; }
-
     TriangleIteratorMulti( const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_count_vector, TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
     :TriangleIteratorIndexed<TArray>( idx_array, prim_type, 0, prim_restart_on, prim_restart_idx)
     {
-      #ifndef NDEBUG
-        this->mObjectName = className();
-      #endif
       mpBaseVertices  = p_base_vertices;
       mpCountVector   = p_count_vector;
       mStart   = 0;

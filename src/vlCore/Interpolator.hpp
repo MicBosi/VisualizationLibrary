@@ -48,17 +48,11 @@ namespace vl
    *
    * LinearInterpolator, CatmullRomInterpolator, the \ref pagGuideInterpolators "Interpolators Tutorial" page and the Extrusion class.
    *
-   * <img src="pics/pagGuideInterpolators1.png"> */
-  class Interpolator: public Object
+   * \image html pagGuideInterpolators1.png */
+  class Interpolator: public vl::Object
   {
   public:
-    virtual const char* className() { return "vl::Interpolator"; }
-    Interpolator() 
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
+    Interpolator() {}
   };
   //! Abstract class that interpolates vl::fvec4 values
   class InterpolatorFVec4: public Interpolator

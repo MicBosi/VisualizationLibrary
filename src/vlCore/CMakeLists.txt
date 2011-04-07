@@ -1,55 +1,186 @@
-################################################################################
-#                                                                              #
-#  Copyright (c) 2005-2011, Michele Bosi, Thiago Bastos                        #
-#  All rights reserved.                                                        #
-#                                                                              #
-#  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.com                                         #
-#                                                                              #
-#  Released under the OSI approved Simplified BSD License                      #
-#  http://www.opensource.org/licenses/bsd-license.php                          #
-#                                                                              #
-################################################################################
+######################################################################################
+#                                                                                    #
+#  Visualization Library                                                             #
+#  http://www.visualizationlibrary.com                                               #
+#                                                                                    #
+#  Copyright (c) 2005-2010, Michele Bosi                                             #
+#  All rights reserved.                                                              #
+#                                                                                    #
+#  Redistribution and use in source and binary forms, with or without modification,  #
+#  are permitted provided that the following conditions are met:                     #
+#                                                                                    #
+#  - Redistributions of source code must retain the above copyright notice, this     #
+#  list of conditions and the following disclaimer.                                  #
+#                                                                                    #
+#  - Redistributions in binary form must reproduce the above copyright notice, this  #
+#  list of conditions and the following disclaimer in the documentation and/or       #
+#  other materials provided with the distribution.                                   #
+#                                                                                    #
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND   #
+#  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED     #
+#  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE            #
+#  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR  #
+#  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES    #
+#  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;      #
+#  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON    #
+#  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT           #
+#  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS     #
+#  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                      #
+#                                                                                    #
+######################################################################################
 
-################################################################################
-# VLCore Library
-################################################################################
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-project(VLCORE)
+PROJECT(${VLCORE_NAME})
 
-# Handle compile-time plugins for VLCore
-add_subdirectory("plugins")
+SET(VLCORE_SRC
+  AABB.cpp
+  DiskDirectory.cpp
+  DiskFile.cpp
+  GZipCodec.cpp
+  UUID.cpp
+  Image.cpp
+  init_core.cpp
+  KeyValues.cpp
+  LoadWriterManager.cpp
+  Log.cpp
+  MD5CheckSum.cpp
+  MemoryDirectory.cpp
+  MemoryFile.cpp
+  FileSystem.cpp
+  Object.cpp
+  Plane.cpp
+  Random.cpp
+  Say.cpp
+  VLSettings.cpp
+  String.cpp
+  TextStream.cpp
+  Time.cpp
+  Transform.cpp
+  VirtualDirectory.cpp
+  VirtualFile.cpp
+  ZippedDirectory.cpp
+  ZippedFile.cpp
+  math3D.cpp
+)
 
-# Gather VLCore source files
-file(GLOB VLCORE_SRC "*.cpp")
-file(GLOB VLCORE_INC "*.hpp")
+set(VLCORE_INC
+  AABB.hpp
+  Array.hpp
+  Buffer.hpp
+  BufferedStream.hpp
+  CatmullRomInterpolator.hpp
+  Collection.hpp
+  Colors.hpp
+  CRC32CheckSum.hpp
+  DiskDirectory.hpp
+  DiskFile.hpp
+  GZipCodec.hpp
+  UUID.hpp
+  half.hpp
+  KeyValues.hpp
+  GLSLmath.hpp
+  Image.hpp
+  ImageTools.hpp
+  Interpolator.hpp
+  LinearInterpolator.hpp
+  LoadWriterManager.hpp
+  Log.hpp
+  Matrix4.hpp
+  Matrix3.hpp
+  Matrix2.hpp
+  MD5CheckSum.hpp
+  MemoryDirectory.hpp
+  MemoryFile.hpp
+  FileSystem.hpp
+  Object.hpp
+  OpenGLDefs.hpp
+  Plane.hpp
+  Random.hpp
+  Ray.hpp
+  Rect.hpp
+  ResourceDatabase.hpp
+  ResourceLoadWriter.hpp
+  Say.hpp
+  VLSettings.hpp
+  SignalSlot.hpp
+  SignalSlotX.hpp
+  Sphere.hpp
+  String.hpp
+  String_Tables.hpp
+  TextStream.hpp
+  Time.hpp
+  Transform.hpp
+  Vector4.hpp
+  Vector3.hpp
+  Vector2.hpp
+  VirtualDirectory.hpp
+  VirtualFile.hpp
+  VisualizationLibrary.hpp
+  ZippedDirectory.hpp
+  ZippedFile.hpp
+  checks.hpp
+  config.hpp
+  math3D.hpp
+  Quaternion.hpp
+  version.hpp
+  vlnamespace.hpp
+)
 
-# Generate the 'vlCore/version.hpp' file
-configure_file("version.hpp.in" "version.hpp")
-list(APPEND VLCORE_INC "${CMAKE_CURRENT_BINARY_DIR}/version.hpp")
+if(VL_IO_2D_BMP)
+  SET(VLCORE_SRC ${VLCORE_SRC} vlBMP.cpp)
+  SET(VLCORE_INC ${VLCORE_INC} vlBMP.hpp)
+endif(VL_IO_2D_BMP)
 
-# Handle extras added by plugins
-VL_PROJECT_GET(VLCORE _SOURCES _DEFINITIONS _INCLUDE_DIRS _LIBS)
-add_definitions(${_DEFINITIONS})
-include_directories(${_INCLUDE_DIRS})
+if(VL_IO_2D_DAT)
+  SET(VLCORE_SRC ${VLCORE_SRC} vlDAT.cpp)
+  SET(VLCORE_INC ${VLCORE_INC} vlDAT.hpp)
+endif(VL_IO_2D_DAT)
 
-add_library(VLCore ${VL_SHARED_OR_STATIC} ${VLCORE_SRC} ${VLCORE_INC} ${_SOURCES})
-VL_DEFAULT_TARGET_PROPERTIES(VLCore)
+if(VL_IO_2D_DDS)
+  SET(VLCORE_SRC ${VLCORE_SRC} vlDDS.cpp)
+  SET(VLCORE_INC ${VLCORE_INC} vlDDS.hpp)
+endif(VL_IO_2D_DDS)
 
-# Because of GLEW, VLCore must also link with OpenGL
-target_link_libraries(VLCore ${_LIBS})
+if(VL_IO_2D_DICOM)
+  SET(VLCORE_SRC ${VLCORE_SRC} vlDICOM.cpp)
+  SET(VLCORE_INC ${VLCORE_INC} vlDICOM.hpp)
+endif(VL_IO_2D_DICOM)
 
-################################################################################
-# Source Groups
-################################################################################
+if(VL_IO_2D_JPG)
+  SET(VLCORE_SRC ${VLCORE_SRC} vlJPG.cpp)
+  SET(VLCORE_INC ${VLCORE_INC} vlJPG.hpp)
+endif(VL_IO_2D_JPG)
 
-source_group("plugins" FILES ${_SOURCES})
+if(VL_IO_2D_PNG)
+  SET(VLCORE_SRC ${VLCORE_SRC} vlPNG.cpp)
+  SET(VLCORE_INC ${VLCORE_INC} vlPNG.hpp)
+endif(VL_IO_2D_PNG)
 
-################################################################################
-# Install Rules
-################################################################################
+if(VL_IO_2D_TGA)
+  SET(VLCORE_SRC ${VLCORE_SRC} vlTGA.cpp)
+  SET(VLCORE_INC ${VLCORE_INC} vlTGA.hpp)
+endif(VL_IO_2D_TGA)
 
-VL_INSTALL_TARGET(VLCore)
+if(VL_IO_2D_TIFF)
+  SET(VLCORE_SRC ${VLCORE_SRC} vlTIFF.cpp)
+  SET(VLCORE_INC ${VLCORE_INC} vlTIFF.hpp)
+endif(VL_IO_2D_TIFF)
 
-# VLCore headers
-install(FILES ${VLCORE_INC} DESTINATION "include/vlCore")
+#source_group(vl FILES ${VLCORE_INC} ${VLCORE_SRC})
+
+add_library(${VLCORE_NAME} STATIC ${VLCORE_SRC} ${VLCORE_INC} )
+
+set_target_properties(${VLCORE_NAME} PROPERTIES DEBUG_POSTFIX "-d")
+set_target_properties(${VLCORE_NAME} PROPERTIES SOVERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
+set_target_properties(${VLCORE_NAME} PROPERTIES VERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
+
+install(TARGETS ${VLCORE_NAME}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
+install(FILES ${VLCORE_INC}
+  DESTINATION include/vlCore
+)

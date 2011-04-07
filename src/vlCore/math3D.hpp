@@ -43,22 +43,22 @@ namespace vl
   /** 
    * Returns a random number N that between 'min' and 'max' included.
    */
-  VLCORE_EXPORT Real randomMinMax(Real min, Real max);
+  Real randomMinMax(Real min, Real max);
 
   /** 
    * Returns a number N that is a power of 2 and that is equal to or greater than 'n'.
    */
-  VLCORE_EXPORT int greaterEqualPow2(int n);
+  int greaterEqualPow2(int n);
 
   /** 
    * Returns a number N that is a power of 2 and that is equal to or smaller than 'n'.
    */
-  VLCORE_EXPORT int smallerEqualPow2(int n);
+  int smallerEqualPow2(int n);
 
   /**
    * Extracts the 6 frustum planes for the given model-view-projection matrix.
    */
-  VLCORE_EXPORT void extractPlanes( Plane* planes, const mat4& modelviewproj );
+  void extractPlanes( Plane* planes, const mat4& modelviewproj );
 }
 
 #endif

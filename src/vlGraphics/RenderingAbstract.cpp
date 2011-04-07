@@ -38,9 +38,6 @@ using namespace vl;
 //------------------------------------------------------------------------------
 RenderingAbstract::RenderingAbstract()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
   mFrameClock = 0.0f;
   mEnableMask = 0xFFFFFFFF;
   mOnStartedCallbacks  = new Collection<RenderEventCallback>;

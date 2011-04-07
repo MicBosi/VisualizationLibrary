@@ -56,10 +56,10 @@ namespace vl
    * - MemoryFile
    * - ZippedFile
   */
-  class VLCORE_EXPORT FileSystem: public Object
+  class FileSystem: public Object
   {
   public:
-    virtual const char* className() { return "vl::FileSystem"; }
+    virtual const char* className() { return "FileSystem"; }
 
     FileSystem() { mDirectories.setAutomaticDelete(false); }
 
@@ -80,7 +80,6 @@ namespace vl
 
     //! Returns the list of VirtualDirectory objects added to a FileSystem
     Collection<VirtualDirectory>* directories() { return &mDirectories; }
-    
     //! Returns the list of VirtualDirectory objects added to a FileSystem
     const Collection<VirtualDirectory>* directories() const { return &mDirectories; }
 
@@ -89,7 +88,7 @@ namespace vl
   };
 
   //! Returns the default FileSystem used by VisualizationLibrary
-  VLCORE_EXPORT FileSystem* defFileSystem();
+  FileSystem* defFileSystem();
 
   //! Sets the default FileSystem used by VisualizationLibrary
   void seDefFileSystem(FileSystem* fs);

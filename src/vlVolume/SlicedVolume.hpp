@@ -32,17 +32,15 @@
 #ifndef SlicedVolume_INCLUDE_ONCE
 #define SlicedVolume_INCLUDE_ONCE
 
-#include <vlVolume/config.hpp>
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/Light.hpp>
 
 namespace vl
 {
-  class VLVOLUME_EXPORT SlicedVolume: public ActorEventCallback
+  class SlicedVolume: public ActorEventCallback
   {
   public:
-    virtual const char* className() { return "vl::SlicedVolume"; }
     
     //! Constructor.
     SlicedVolume();
@@ -85,8 +83,7 @@ namespace vl
     void generateTextureCoordinates(const ivec3& size);
     
     //! Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
-    //! Use this function to visualize a subset of the volume. The subset is defined by \p min_corner and \p max_corner.
-    void generateTextureCoordinates(const ivec3& img_size, const ivec3& min_corner, const ivec3& max_corner);
+    void generateTextureCoordinates(int width, int height, int depth) { generateTextureCoordinates(ivec3(width,height,depth)); }
 
   protected:
     int mSliceCount;

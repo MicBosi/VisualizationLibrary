@@ -57,12 +57,12 @@ namespace vl
    * - Molecule
    * - Atom
    *
-   * <img src="pics/pagGuideMolecule.png">
+   * \image html pagGuideMolecule.png
    */
   class Bond: public Object
   {
   public:
-    virtual const char* className() { return "vl::Atom"; }
+    virtual const char* className() { return "Atom"; }
 
     Bond(): mColor( 1.0f,1.0f,1.0f,1.0f ), mRadius(0.10f), mAtom1(NULL), mAtom2(NULL), mType(BT_Single), mId(0), mVisible(true), mUseAtomColors(true) 
     {
@@ -99,8 +99,8 @@ namespace vl
   protected:
     fvec4 mColor;
     float mRadius;
-    Atom* mAtom1;
-    Atom* mAtom2;
+	  Atom* mAtom1;
+	  Atom* mAtom2;
     EBondType mType;
     unsigned int mId;
     bool mVisible;

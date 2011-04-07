@@ -54,7 +54,7 @@ namespace vl
       #endif
     }
 
-    virtual const char* className() { return "vl::EnableSet"; }
+    virtual const char* className() { return "EnableSet"; }
 
     // enable getter and setters
 

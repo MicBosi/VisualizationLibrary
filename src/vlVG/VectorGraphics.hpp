@@ -32,10 +32,9 @@
 #ifndef VectorGraphics_INCLUDE_ONCE
 #define VectorGraphics_INCLUDE_ONCE
 
-#include <vlVG/config.hpp>
-#include <vlCore/Image.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlGraphics/Actor.hpp>
+#include <vlCore/Image.hpp>
 #include <vlGraphics/Text.hpp>
 #include <vlGraphics/FontManager.hpp>
 #include <vlGraphics/Effect.hpp>
@@ -103,7 +102,7 @@ namespace vl
    *
    * For more information please refer to the \ref pagGuideVectorGraphics "2D Vector Graphics" page.
    */
-  class VLVG_EXPORT VectorGraphics: public Object
+  class VectorGraphics: public Object
   {
   private:
     //------------------------------------------------------------------------- start internal
@@ -322,7 +321,7 @@ namespace vl
     //------------------------------------------------------------------------- end internal
 
   public:
-    virtual const char* className() { return "vl::VectorGraphics"; }
+    virtual const char* className() { return "VectorGraphics"; }
     
     VectorGraphics();
 

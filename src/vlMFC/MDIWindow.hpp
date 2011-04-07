@@ -32,7 +32,6 @@
 #ifndef MDIWindow_INCLUDE_ONCE
 #define MDIWindow_INCLUDE_ONCE
 
-#include <vlMFC/config.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlWin32/Win32Context.hpp>
 
@@ -45,7 +44,7 @@ namespace vlMFC
    * The MDIWindow class is an MFC CView with the functionalities of a Win32Context (experimental).
    * \remarks Don't forget to reimplement the OnDraw() method.
    */
-  class VLMFC_EXPORT MDIWindow: public CView, public vlWin32::Win32Context /* the order is important! */
+  class MDIWindow: public CView, public vlWin32::Win32Context /* the order is important! */
   {
   public:
     MDIWindow() {}

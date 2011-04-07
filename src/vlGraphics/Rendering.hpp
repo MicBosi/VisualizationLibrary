@@ -66,10 +66,10 @@ namespace vl
   - Actor
   - Effect
   - Transform */
-  class VLGRAPHICS_EXPORT Rendering: public RenderingAbstract
+  class Rendering: public RenderingAbstract
   {
   public:
-    virtual const char* className() { return "vl::Rendering"; }
+    virtual const char* className() { return "Rendering"; }
     
     /** Constructor. */
     Rendering();

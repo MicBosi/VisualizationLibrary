@@ -46,12 +46,12 @@ namespace vl
    * - Molecule
    * - Bond
    *
-   * <img src="pics/pagGuideMolecule.png">
+   * \image html pagGuideMolecule.png
    */
   class Atom: public Object
   {
   public:
-    virtual const char* className() { return "vl::Atom"; }
+    virtual const char* className() { return "Atom"; }
 
     Atom()
     {

@@ -123,7 +123,7 @@ namespace vl
   class MultiDrawElements: public MultiDrawElementsBase
   {
   public:
-    virtual const char* className() { return "vl::MultiDrawElements"; }
+    virtual const char* className() { return "MultiDrawElements"; }
 
     MultiDrawElements(EPrimitiveType primitive = PT_TRIANGLES)
     {

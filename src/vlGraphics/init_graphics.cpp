@@ -37,22 +37,22 @@
 using namespace vl;
 
 #if defined(VL_IO_3D_3DS)
-  #include "plugins/vl3DS.hpp"
+  #include <vlGraphics/vl3DS.hpp>
 #endif
 #if defined(VL_IO_3D_OBJ)
-  #include "plugins/vlOBJ.hpp"
+  #include <vlGraphics/vlOBJ.hpp>
 #endif
 #if defined(VL_IO_3D_AC3D)
-  #include "plugins/vlAC3D.hpp"
+  #include <vlGraphics/vlAC3D.hpp>
 #endif
 #if defined(VL_IO_3D_PLY)
-  #include "plugins/vlPLY.hpp"
+  #include <vlGraphics/vlPLY.hpp>
 #endif
 #if defined(VL_IO_3D_STL)
-  #include "plugins/vlSTL.hpp"
+  #include <vlGraphics/vlSTL.hpp>
 #endif
 #if defined(VL_IO_3D_MD2)
-  #include "plugins/vlMD2.hpp"
+  #include <vlGraphics/vlMD2.hpp>
 #endif
 
 //------------------------------------------------------------------------------
@@ -133,17 +133,19 @@ void VisualizationLibrary::shutdownGraphics()
   }
 }
 //------------------------------------------------------------------------------
-void VisualizationLibrary::init(bool log_info)
-{
-  initCore(log_info);
-  initGraphics();
-}
+#if defined(VL_MODULE_GRAPHICS)
+  void VisualizationLibrary::init()
+  {
+    initCore();
+    initGraphics();
+  }
 //------------------------------------------------------------------------------
-void VisualizationLibrary::shutdown()
-{
-  shutdownGraphics();
-  shutdownCore();
-}
+  void VisualizationLibrary::shutdown()
+  {
+    shutdownGraphics();
+    shutdownCore();
+  }
 //------------------------------------------------------------------------------
-bool VisualizationLibrary::isGraphicsInitialized() { return gInitializedGraphics; }
+  bool VisualizationLibrary::isGraphicsInitialized() { return gInitializedGraphics; }
+#endif
 //------------------------------------------------------------------------------

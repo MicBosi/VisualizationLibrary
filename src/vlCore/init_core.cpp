@@ -44,28 +44,28 @@
 using namespace vl;
 
 #if defined(VL_IO_2D_JPG)
-  #include "plugins/vlJPG.hpp"
+  #include <vlCore/vlJPG.hpp>
 #endif
 #if defined(VL_IO_2D_PNG)
-  #include "plugins/vlPNG.hpp"
+  #include <vlCore/vlPNG.hpp>
 #endif
 #if defined(VL_IO_2D_TIFF)
-  #include "plugins/vlTIFF.hpp"
+  #include <vlCore/vlTIFF.hpp>
 #endif
 #if defined(VL_IO_2D_TGA)
-  #include "plugins/vlTGA.hpp"
+  #include <vlCore/vlTGA.hpp>
 #endif
 #if defined(VL_IO_2D_DAT)
-  #include "plugins/vlDAT.hpp"
+  #include <vlCore/vlDAT.hpp>
 #endif
 #if defined(VL_IO_2D_DDS)
-  #include "plugins/vlDDS.hpp"
+  #include <vlCore/vlDDS.hpp>
 #endif
 #if defined(VL_IO_2D_BMP)
-  #include "plugins/vlBMP.hpp"
+  #include <vlCore/vlBMP.hpp>
 #endif
 #if defined(VL_IO_2D_DICOM)
-  #include "plugins/vlDICOM.hpp"
+  #include <vlCore/vlDICOM.hpp>
 #endif
 
 //------------------------------------------------------------------------------
@@ -91,6 +91,7 @@ VL_COMPILE_TIME_CHECK( sizeof(Sphere)    == sizeof(Real)*4 )
 namespace
 {
   std::string gVersionString = String( Say("%n.%n.%n") << VL_Major << VL_Minor << VL_Build ).toStdString();
+  const char* gCertificate = "[Visualization Library BSD License]";
   bool gInitializedCore = false;
 };
 //------------------------------------------------------------------------------
@@ -154,7 +155,7 @@ void vl::seDefFileSystem(FileSystem* fs)
   gDefaultFileSystem = fs;
 }
 //------------------------------------------------------------------------------
-void VisualizationLibrary::initCore(bool log_info)
+void VisualizationLibrary::initCore()
 {
   VL_CHECK(!gInitializedCore);
   if (gInitializedCore)
@@ -207,7 +208,7 @@ void VisualizationLibrary::initCore(bool log_info)
   #endif
 
   // Log VL and system information.
-  if (globalSettings()->verbosityLevel() && log_info)
+  if (globalSettings()->verbosityLevel())
     Log::logSystemInfo();
 
   // Initialized = on
@@ -236,12 +237,28 @@ void VisualizationLibrary::shutdownCore()
   {
     Log::print("Visualization Library shutdown.\n");
   }
-  // we keep the logger alive as much as we can.
-  // setDefLogger( NULL );
+  setDefLogger( NULL );
 
-  // keep global settings (used by logger)
-  // gSettings = NULL;
+  // Dispose globabl settings
+  gSettings = NULL;
 }
+//------------------------------------------------------------------------------
+#if !defined(VL_MODULE_GRAPHICS)
+  void VisualizationLibrary::init()
+  {
+    initCore();
+  }
+//------------------------------------------------------------------------------
+  void VisualizationLibrary::shutdown()
+  {
+    if (gInitializedCore)
+    {
+      shutdownCore();
+    }
+  }
+//------------------------------------------------------------------------------
+  bool VisualizationLibrary::isGraphicsInitialized() { return false; }
+#endif
 //------------------------------------------------------------------------------
 #if defined(_WIN32)
   // console includes

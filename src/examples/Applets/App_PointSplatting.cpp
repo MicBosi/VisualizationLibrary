@@ -203,10 +203,10 @@ protected:
 
     if (GLEW_ARB_vertex_buffer_object)
     {
-      color->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
-      points->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
-      norms->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
-      draw_elements->indices()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW);
+      color->gpuBuffer()->setBufferData(vl::GBU_STATIC_DRAW);
+      points->gpuBuffer()->setBufferData(vl::GBU_STATIC_DRAW);
+      norms->gpuBuffer()->setBufferData(vl::GBU_STATIC_DRAW);
+      draw_elements->indices()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW);
     }
 
     eye_space_points->resize( points->size() );

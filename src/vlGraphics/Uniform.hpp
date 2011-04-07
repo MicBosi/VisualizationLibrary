@@ -36,7 +36,6 @@
 #include <vlCore/Object.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/Matrix4.hpp>
-#include <vlGraphics/OpenGL.hpp>
 #include <cstring>
 #include <map>
 #include <vector>
@@ -60,7 +59,7 @@ namespace vl
   {
     friend class GLSLProgram;
   public:
-    virtual const char* className() { return "vl::Uniform"; }
+    virtual const char* className() { return "Uniform"; }
 
     Uniform(): mType(UT_NONE)
     {
@@ -272,7 +271,7 @@ namespace vl
     }
 
   protected:
-    VL_COMPILE_TIME_CHECK( sizeof(int) == sizeof(float) )
+    VL_COMPILE_TIME_CHECK( sizeof(int) == sizeof(float) );
     void initData(int count) { mData.resize(count); }
     void initDouble(int count) { mData.resize(count*2); }
     int singleCount() const { return (int)mData.size(); }

@@ -44,42 +44,31 @@ namespace vl
   class ImagePBO: public Image
   {
   public:
-    virtual const char* className() { return "vl::ImagePBO"; }
-	
-    //! Constructor.
+	//! Constructor.
     ImagePBO()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mPBO = new GLBufferObject;
     }
 	
-	  //! Constructors: loads an image from the specified path.
+	//! Constructors: loads an image from the specified path.
     ImagePBO(const String& path): Image(path) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mPBO = new GLBufferObject;
     }
 	
-	  //! Constructor: initializes an image with the specified parameters.
+	//! Constructor: initializes an image with the specified parameters.
     ImagePBO(int x, int y, int z, int bytealign, EImageFormat format, EImageType type): Image(x, y, z, bytealign, format, type) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mPBO = new GLBufferObject;
     }
 
-	  //! The associated OpenGL Buffer Object
+	//! The associated OpenGL Buffer Object
     const GLBufferObject* pixelBufferObject() const { return mPBO.get(); }
     
-	  //! The associated OpenGL Buffer Object
+	//! The associated OpenGL Buffer Object
     GLBufferObject* pixelBufferObject() { return mPBO.get(); }
     
-	  //! The associated OpenGL Buffer Object
+	//! The associated OpenGL Buffer Object
     void setPixelBufferObject(GLBufferObject* pbo) { mPBO = pbo; }
 
   protected:

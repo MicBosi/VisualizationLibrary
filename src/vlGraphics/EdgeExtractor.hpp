@@ -34,7 +34,6 @@
 
 #include <vlCore/Object.hpp>
 #include <vlCore/Vector3.hpp>
-#include <vlGraphics/config.hpp>
 #include <vector>
 #include <set>
 
@@ -57,7 +56,7 @@ namespace vl
 	
 	- \a Boundary edges are those edges that belong to a single triangle or quad.
 
-  <img src="pics/pagGuideWireframe_edges.jpg">
+  \image html pagGuideWireframe_edges.jpg
 
   \par Usage
   - Extract the edges from one or more Geometry objects using one of the extractEdges() methods.
@@ -70,7 +69,7 @@ namespace vl
   - \ref pagGuideEdgeRendering "Edge Enhancement and Wireframe Rendering Tutorial"
   - vl::EdgeRenderer
   */
-  class VLGRAPHICS_EXPORT EdgeExtractor: public Object
+  class EdgeExtractor: public Object
   {
   public:
     //! A single edge as extracted from the EdgeExtractor class.
@@ -131,7 +130,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::EdgeExtractor"; }
+    virtual const char* className() { return "EdgeExtractor"; }
     EdgeExtractor(): mCreaseAngle(45.0f), mWarnNonManifold(false)
     {
       #ifndef NDEBUG

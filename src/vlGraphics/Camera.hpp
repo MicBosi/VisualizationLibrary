@@ -47,10 +47,10 @@ namespace vl
   // Camera
   //-----------------------------------------------------------------------------
   /** Represents a virtual camera defining, among other things, the point of view from which scenes can be rendered. */
-  class VLGRAPHICS_EXPORT Camera: public Object
+  class Camera: public Object
   {
   public:
-    virtual const char* className() { return "vl::Camera"; }
+    virtual const char* className() { return "Camera"; }
 
     /** Constructs a perspective projecting camera with FOV = 60.0, Near Plane = 0.05, Far Plane = 10000.0 */
     Camera();
@@ -68,6 +68,8 @@ namespace vl
     If nearFarClippingPlanesOptimized() == true the near and far culling planes distances 
     are respectively set to nearPlane() and farPlane(). */
     void computeFrustumPlanes();
+
+    //! \todo mic fixme: these three go in OpenGLContext.
 
     /** Loads the GL_MODELVIEW matrix with the Camera's view matrix multiplied by the specified model matrix. */
     void applyModelViewMatrix(const mat4& model_matrix) const;

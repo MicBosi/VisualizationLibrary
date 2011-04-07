@@ -48,9 +48,6 @@ namespace vl
     return c;    
   }
 
-  inline bool isValidColor( const fvec4& color ) { return color.a() >= 0; }
-
-  static fvec4 invalid_color = fvec4(0, 0, 0, -1);
   static fvec4 black = makeColor(0x000000FF);
   static fvec4 white = makeColor(0xFFFFFFFF);
   static fvec4 red = makeColor(0xFF0000FF);

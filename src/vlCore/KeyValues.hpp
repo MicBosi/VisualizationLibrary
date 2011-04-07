@@ -38,30 +38,18 @@
 
 namespace vl
 {
-  //! A set of key/value pairs usually used to associate generic information, tags, attributes etc. to another class.
-  class VLCORE_EXPORT KeyValues: public Object
+  //! A set of key/value pairs used to store generic information.
+  class KeyValues: public Object
   {
   public:
-    virtual const char* className() { return "vl::KeyValues"; }
-
-    KeyValues();
-    
     bool has(const String& key) const { return mKeyValues.find(key) != mKeyValues.end(); }
-    
     String value(const String& key) const;
-    
     String& set(const String& key) { return mKeyValues[key]; }
-    
     void erase(const String& key) { mKeyValues.erase(key); }
-    
     void getKeys(std::vector<String>& keys) const;
-    
     void clear() { mKeyValues.clear(); }
-    
     const std::map<String,String>& keyValueMap() const { return mKeyValues; }
-    
     std::map<String,String>& keyValueMap() { return mKeyValues; }
-    
     void print();
 
   protected:

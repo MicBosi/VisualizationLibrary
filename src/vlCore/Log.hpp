@@ -41,7 +41,7 @@ namespace vl
   // Log
   //-----------------------------------------------------------------------------
   /** Utility class to generate logs. */
-  class VLCORE_EXPORT Log: public Object
+  class Log: public Object
   {
   protected:
     typedef enum 
@@ -55,7 +55,7 @@ namespace vl
     } ELogLevel;
 
   public:
-    virtual const char* className() { return "vl::Log"; }
+    virtual const char* className() { return "Log"; }
     Log()
     {
       #ifndef NDEBUG
@@ -106,19 +106,19 @@ namespace vl
   // Default logger
   //-----------------------------------------------------------------------------
   //! Installs the default logger used by Visualization Library. Setting this to NULL will disable logging.
-  VLCORE_EXPORT void setDefLogger(Log* logger);
+  void setDefLogger(Log* logger);
 
   //! Returns the currently installed default logger.
-  VLCORE_EXPORT Log* defLogger();
+  Log* defLogger();
 
   //-----------------------------------------------------------------------------
   // StandardLog
   //-----------------------------------------------------------------------------
   /** The StandardLog class outputs the log messages on the stdout device and optionally also on a specified file. */
-  class VLCORE_EXPORT StandardLog: public Log
+  class StandardLog: public Log
   {
   public:
-    virtual const char* className() { return "vl::StandardLog"; }
+    virtual const char* className() { return "StandardLog"; }
     void setLogFile(const String& file);
     const String& logFile() const { return mLogFile; }
 
