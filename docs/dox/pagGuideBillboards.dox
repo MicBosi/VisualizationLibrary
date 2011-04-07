@@ -4,7 +4,7 @@
 
 	This tutorial demonstrates how to use the vl::Billboard class to orient objects towards the camera.
 
-	<img src="pics/pagGuideBillboards.jpg">
+	\image html pagGuideBillboards.jpg
 
 	The term "billboard" in computer graphics refers to an object that always faces the camera. Visualization Library supports two kinds of billboards, "spherical billboards" and "axis aligned billboards". The first kind is free to rotate in any direction and always faces the camera perfectly. The second kind rotates towards the camera but only around a specific rotation axis. This last kind is often used to create billboard trees which should face the camera but whose rotational axis must remain parallel to the world Y axis.
 

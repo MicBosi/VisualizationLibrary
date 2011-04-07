@@ -30,12 +30,12 @@
 /*************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlVolume/SlicedVolume.hpp>
-#include <vlVolume/VolumeUtils.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/FontManager.hpp>
-#include <vlGraphics/GLSL.hpp>
-#include <vlGraphics/GeometryPrimitives.hpp>
+#include "vlVolume/SlicedVolume.hpp"
+#include "vlVolume/VolumeUtils.hpp"
+#include "vl/Text.hpp"
+#include "vl/FontManager.hpp"
+#include "vl/GLSL.hpp"
+#include "vlut/GeometryPrimitives.hpp"
 
 using namespace vl;
 
@@ -70,7 +70,7 @@ public:
     BaseDemo::initEvent();
 
     // variable preconditions
-    USE_GLSL &= GLEW_Has_Shading_Language_20;
+    USE_GLSL &= GLEW_VERSION_2_0 || GLEW_VERSION_3_0 || GLEW_VERSION_4_0;
     DYNAMIC_LIGHTS &= USE_GLSL;
     COLORED_LIGHTS &= DYNAMIC_LIGHTS;
     PRECOMPUTE_GRADIENT &= USE_GLSL;
@@ -86,9 +86,9 @@ public:
       mLight0->setAmbient(fvec4(0.1f, 0.1f, 0.1f, 1.0f));
       mLight1->setAmbient(fvec4(0.0f, 0.0f, 0.0f, 1.0f));
       mLight2->setAmbient(fvec4(0.0f, 0.0f, 0.0f, 1.0f));
-      mLight0->setDiffuse(vl::gold);
-      mLight1->setDiffuse(vl::green);
-      mLight2->setDiffuse(vl::royalblue);
+      mLight0->setDiffuse(vlut::gold);
+      mLight1->setDiffuse(vlut::green);
+      mLight2->setDiffuse(vlut::royalblue);
     }
 
     // light bulbs
@@ -97,16 +97,16 @@ public:
       mLight0Tr = new Transform;
       mLight1Tr = new Transform;
       mLight2Tr = new Transform;
-      rendering()->as<Rendering>()->transform()->addChild( mLight0Tr.get() );
-      rendering()->as<Rendering>()->transform()->addChild( mLight1Tr.get() );
-      rendering()->as<Rendering>()->transform()->addChild( mLight2Tr.get() );
+      VisualizationLibrary::rendering()->as<Rendering>()->transform()->addChild( mLight0Tr.get() );
+      VisualizationLibrary::rendering()->as<Rendering>()->transform()->addChild( mLight1Tr.get() );
+      VisualizationLibrary::rendering()->as<Rendering>()->transform()->addChild( mLight2Tr.get() );
       mLight0->followTransform( mLight0Tr.get() );
       mLight1->followTransform( mLight1Tr.get() );
       mLight2->followTransform( mLight2Tr.get() );
 
       ref<Effect> fx_bulb = new Effect;
       fx_bulb->shader()->enable(EN_DEPTH_TEST);
-      ref<Geometry> light_bulb = vl::makeIcosphere(vec3(0,0,0),1,1);
+      ref<Geometry> light_bulb = vlut::makeIcosphere(vec3(0,0,0),1,1);
       sceneManager()->tree()->addActor( light_bulb.get(), fx_bulb.get(), mLight0Tr.get() );
       sceneManager()->tree()->addActor( light_bulb.get(), fx_bulb.get(), mLight1Tr.get() );
       sceneManager()->tree()->addActor( light_bulb.get(), fx_bulb.get(), mLight2Tr.get() );
@@ -145,7 +145,7 @@ public:
     sceneManager()->tree()->addActor( mVolumeAct.get() );
 
     // sliced volume: will generate the actual actor's geometry on the fly.
-    mSlicedVolume = new vl::SlicedVolume;
+    mSlicedVolume = new vlVolume::SlicedVolume;
     mSlicedVolume->bindActor(mVolumeAct.get());
     mSlicedVolume->setSliceCount(SLICE_COUNT);
     AABB volume_box( vec3(-10,-10,-10), vec3(+10,+10,+10) );
@@ -155,19 +155,19 @@ public:
     ref<Effect> fx_box = new Effect;
     fx_box->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx_box->shader()->enable(EN_DEPTH_TEST);
-    ref<Geometry> box_outline = vl::makeBox(volume_box);
-    box_outline->setColor(vl::red);
+    ref<Geometry> box_outline = vlut::makeBox(volume_box);
+    box_outline->setColor(vlut::red);
     sceneManager()->tree()->addActor( box_outline.get(), fx_box.get(), mVolumeTr.get() );
 
     // bias text
     mBiasText = new Text;
-    mBiasText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
+    mBiasText->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
     mBiasText->setAlignment( AlignHCenter | AlignBottom);
     mBiasText->setViewportAlignment( AlignHCenter | AlignBottom );
     mBiasText->translate(0,5,0);
     mBiasText->setBackgroundEnabled(true);
     mBiasText->setBackgroundColor(fvec4(0,0,0,0.75));
-    mBiasText->setColor(vl::white);
+    mBiasText->setColor(vlut::white);
     ref<Effect> effect = new Effect;
     effect->shader()->enable(EN_BLEND);
     sceneManager()->tree()->addActor(mBiasText.get(), effect.get());
@@ -203,11 +203,7 @@ public:
       // load the files
       std::vector< ref<Image> > images;
       for(unsigned int i=0; i<files_sorted.size(); ++i)
-      {
         images.push_back( loadImage(files_sorted[i]) );
-        if (files_sorted[i].endsWith(".dcm"))
-          images.back()->contrastHounsfieldAuto();
-      }
       // assemble the volume
       ref<Image> vol_img = assemble3DImage(images);
       // set the volume
@@ -237,7 +233,7 @@ public:
       if (PRECOMPUTE_GRADIENT)
       {
         // note that this can take a while...
-        gradient = vl::genGradientNormals(img.get());
+        gradient = vlVolume::genGradientNormals(img.get());
       }
 
       if (USE_GLSL)
@@ -246,15 +242,15 @@ public:
 
         ref<Image> trfunc;
         if (COLORED_LIGHTS)
-          trfunc = vl::makeColorSpectrum(128, vl::white, vl::white); // let the lights color the volume
+          trfunc = Image::makeColorSpectrum(128, vlut::white, vlut::white); // let the lights color the volume
         else
-          trfunc = vl::makeColorSpectrum(128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson);
+          trfunc = Image::makeColorSpectrum(128, vlut::blue, vlut::royalblue, vlut::green, vlut::yellow, vlut::crimson);
         // installs GLSLProgram
         vol_fx->shader()->setRenderState(mGLSL.get());
         // install volume image
         vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
         vol_fx->shader()->gocUniform("volume_texunit")->setUniform(0);
-        mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
+        mSlicedVolume->generateTextureCoordinates( img->width(), img->height(), img->depth() );
         // installs the transfer function as texture #1
         vol_fx->shader()->gocTextureUnit(1)->setTexture( new Texture( trfunc.get() ) );  
         vol_fx->shader()->gocUniform("trfunc_texunit")->setUniform(1);
@@ -281,11 +277,11 @@ public:
         Log::info("IF_LUMINANCE image and GLSL not supported: transfer function and lighting will be precomputed.\n");
 
         // generate simple transfer function
-        ref<Image> trfunc = vl::makeColorSpectrum(128, vl::black, vl::blue, vl::green, vl::yellow, vl::red);
+        ref<Image> trfunc = Image::makeColorSpectrum(128, vlut::black, vlut::blue, vlut::green, vlut::yellow, vlut::red);
         // precompute volume with transfer function and lighting
-        ref<Image> volume = vl::genRGBAVolume(img.get(), trfunc.get(), fvec3(1.0f,1.0f,0.0f));
+        ref<Image> volume = vlVolume::genRGBAVolume(img.get(), trfunc.get(), fvec3(1.0f,1.0f,0.0f));
         vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( volume.get() ) );
-        mSlicedVolume->generateTextureCoordinates( ivec3(volume->width(), volume->height(), volume->depth()) );
+        mSlicedVolume->generateTextureCoordinates( volume->width(), volume->height(), volume->depth() );
         vol_fx->shader()->enable(EN_ALPHA_TEST);
         vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);
       }
@@ -295,7 +291,7 @@ public:
       Log::info("Non IF_LUMINANCE image: not using GLSL.\n");
       // install volume texture
       vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
-      mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
+      mSlicedVolume->generateTextureCoordinates( img->width(), img->height(), img->depth() );
       // setup alpha test
       vol_fx->shader()->enable(EN_ALPHA_TEST);
       vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);
@@ -329,7 +325,7 @@ public:
   }
 
   /* animate the lights */
-  virtual void updateScene()
+  virtual void run()
   {
     if (DYNAMIC_LIGHTS)
     {
@@ -358,7 +354,7 @@ public:
     ref<Light> mLight2;
     ref<GLSLProgram> mGLSL;
     ref<Actor> mVolumeAct;
-    ref<vl::SlicedVolume> mSlicedVolume;
+    ref<vlVolume::SlicedVolume> mSlicedVolume;
 };
 
 // Have fun!

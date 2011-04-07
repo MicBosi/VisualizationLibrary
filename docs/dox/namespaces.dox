@@ -3,6 +3,22 @@
 */
 
 /**
+ * \namespace vlut Visualization Library utility namespace.
+*/
+
+/**
+ * \namespace vlVG The Vector Graphics namespace.
+*/
+
+/**
+ * \namespace vlMolecule The Molecule Visualization namespace.
+*/
+
+/**
+ * \namespace vlVolume The Volume Rendering namespace.
+*/
+
+/**
  * \namespace vlQt4 The Qt4 bindings namespace.
 */
 

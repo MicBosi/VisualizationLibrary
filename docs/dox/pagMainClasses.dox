@@ -50,7 +50,7 @@
 	- vl::Image::convertFormat()
 	- vl::Image::sample()
 	- vl::Image::sampleLinear()
-	- vl::makeColorSpectrum()
+	- vl::Image::makeColorSpectrum()
 	- vl::Image::subImage()
 	
 	\par Input / Output
@@ -79,7 +79,7 @@
 	
 	\par Virtual File System
 	
-	- vl::defFileSystem()
+	- vl::VisualizationLibrary::fileSystem()
 	- vl::FileSystem
 	- vl::VirtualDirectory
 	- vl::DiskDirectory
@@ -183,7 +183,7 @@
 			- vl::SceneManagerActorKdTree
 				- vl::Terrain
 		- vl::SceneManagerPortals
-		- vl::SceneManagerVectorGraphics
+		- vlVG::SceneManagerVectorGraphics
 	- vl::ActorTree
 	- vl::ActorKdTree
 	
@@ -211,18 +211,18 @@
 	
 	\par Geometry primitives
 	
-	- vl::makeIcosphere()
-	- vl::makeCylinder()
-	- vl::makeUVSphere()
-	- vl::makeTorus()
-	- vl::makeCone()
-	- vl::makePyramid()
-	- vl::makeBox()
-	- vl::makeGrid()
-	- vl::makeIcosahedron()
-	- vl::makePoints()
-	- vl::makeCircle()
-	- vl::makeCapsule()
+	- vlut::makeIcosphere()
+	- vlut::makeCylinder()
+	- vlut::makeUVSphere()
+	- vlut::makeTorus()
+	- vlut::makeCone()
+	- vlut::makePyramid()
+	- vlut::makeBox()
+	- vlut::makeGrid()
+	- vlut::makeIcosahedron()
+	- vlut::makePoints()
+	- vlut::makeCircle()
+	- vlut::makeCapsule()
 	
 	\par Animation
 	
@@ -243,9 +243,9 @@
 
 	\par Volume Rendering
 
-	- vl::MarchingCubes
-	- vl::SlicedVolume
-	- vl::VolumePlot
+	- vlVolume::MarchingCubes
+	- vlVolume::SlicedVolume
+	- vlVolume::VolumePlot
 
 	\par Rendering enhancement
 
@@ -254,15 +254,15 @@
 
 	\par Vector graphics
 
-	- vl::VectorGraphics
-	- vl::SceneManagerVectorGraphics
+	- vlVG::VectorGraphics
+	- vlVG::SceneManagerVectorGraphics
 
 	\par Molecule Visualization
 
-	- vl::Molecule
-	- vl::Atom
-	- vl::Bond
-	- vl::RingExtractor
+	- vlMolecule::Molecule
+	- vlMolecule::Atom
+	- vlMolecule::Bond
+	- vlMolecule::RingExtractor
 
 	\par GUI bindings
 	

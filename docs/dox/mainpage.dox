@@ -8,10 +8,10 @@
 	<div class="featuretitle">Basic Information</div>
 
 	- \subpage pagIntro "Introduction"
+	- <a target=_blank href="http://www.visualizationlibrary.com/jetcms/node/4">Gallery</a>
 	- \subpage pagLearning "Learning VL"
 	- \subpage pagKeyFeatures "Features Overview"
 	- \subpage pagContacts "Contacts"
-	- \subpage pagGallery "Gallery"
  
 	<div class="featuretitle">Downloads</div>
 
@@ -46,5 +46,49 @@
 
 	</td></tr></table>
 	</center>
+*/
+
+/**
+ * \namespace vl Visualization Library namespace.
+*/
+
+/**
+ * \namespace vlut Visualization Library utility namespace.
+*/
+
+/**
+ * \namespace vlVG The Vector Graphics namespace.
+*/
+
+/**
+ * \namespace vlMolecule The Molecule Visualization namespace.
+*/
+
+/**
+ * \namespace vlVolume The Volume Rendering namespace.
+*/
+
+/**
+ * \namespace vlQt4 The Qt4 bindings namespace.
+*/
+
+/**
+ * \namespace vlMFC The MFC bindings namespace.
+*/
+
+/**
+ * \namespace vlWin32 The Win32 bindings namespace.
+*/
+
+/**
+ * \namespace vlSDL The SDL bindings namespace.
+*/
+
+/**
+ * \namespace vlGLUT The GLUT bindings namespace.
+*/
+
+/**
+ * \namespace vlWX The wxWidgets bindings namespace.
 */
 

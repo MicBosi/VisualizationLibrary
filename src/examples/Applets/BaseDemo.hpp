@@ -32,34 +32,80 @@
 #ifndef BaseDemo_INCLUDE_ONCE
 #define BaseDemo_INCLUDE_ONCE
 
-#include <vlGraphics/Applet.hpp>
-#include <vlGraphics/Rendering.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlCore/ResourceDatabase.hpp>
-#include <vlCore/Time.hpp>
+#include "vlut/Applet.hpp"
+#include "vl/Rendering.hpp"
+#include "vl/VisualizationLibrary.hpp"
+#include "vl/ReadPixels.hpp"
+#include "vl/Time.hpp"
 
-class BaseDemo: public vl::Applet
+class BaseDemo: public vlut::Applet
 {
 public:
   BaseDemo()
   {
-    mFPSTimer.start();
+    mMaxTime = 0;
+    mReadPixels = new vl::ReadPixels;
   }
 
-  void updateEvent()
+  void initEvent() 
   {
-    vl::Applet::updateEvent();
+    trackball()->setPivot(vl::vec3(0,0,0));
+    trackball()->setTransform(NULL);
+  }
+  
+  void run() {}
+  
+  void shutdown() {}
 
-    if (mFPSTimer.elapsed() > 1)
+  void keyPressEvent(unsigned short, vl::EKey key)
+  {
+    if (key == vl::Key_F5)
     {
-      mFPSTimer.start();
-      openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << appletName() );
-      vl::Log::print( vl::Say("FPS=%.1n\n") << fps() );
+      mReadPixels->setup( 0, 0, openglContext()->width(), openglContext()->height(), vl::RDB_BACK_LEFT, false );
+      vl::VisualizationLibrary::rendering()->onFinishedCallbacks()->push_back( mReadPixels.get() );
+      mReadPixels->setRemoveAfterCall(true);
+      vl::String filename = vl::Say( applicationName() + "-%n.jpg") << (int)vl::Time::currentTime();
+      mReadPixels ->setSavePath( filename );
+      vl::Log::print( vl::Say("Screenshot: '%s'\n") << filename );
     }
   }
 
-private:
+  void setMaxTime(float time) { mMaxTime = time; }
+
+  void runEvent()
+  {
+    vlut::Applet::runEvent();
+
+    if ( !mFPSTimer.isStarted() )
+      mFPSTimer.start();
+    else
+    if (mFPSTimer.elapsed() > 1)
+    {
+      mFPSTimer.start();
+      openglContext()->setWindowTitle( vl::Say("%s [%.1n]") << applicationName() << fps() );
+      vl::Log::print( vl::Say("FPS=%.1n\n") << fps() );
+    }
+
+    if (mMaxTime != 0)
+    {
+      if ( !mApplicatinLifeTime.isStarted() )
+        mApplicatinLifeTime.start();
+      else
+      if (mApplicatinLifeTime.elapsed() > mMaxTime)
+        openglContext()->destroy();
+    }
+  }
+
+  const vl::String& applicationName() const { return mApplicationName; }
+
+  void setApplicationName(const vl::String& app_name) { mApplicationName = app_name; } 
+
+protected:
+  vl::ref<vl::ReadPixels> mReadPixels;
+  vl::Time mApplicatinLifeTime;
   vl::Time mFPSTimer;
+  float mMaxTime;
+  vl::String mApplicationName;
 };
 
 #endif

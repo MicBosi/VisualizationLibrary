@@ -18,7 +18,7 @@
 	- A vl::FontManager object: used to query vl::Font objects to be used with one or multiple shared OpenGL contexts. This is provided for convenience. Your application can instantiate and use its own vl::FontManager. This is mandatory if you are using multiple non-shared OpenGL contexts. In this case you should use a different vl::FontManager for each context.
 	- A pointer to vl::RenderingAbstract: the entry point of the rendering pipeline. This can point to a single vl::Rendering object or to a hierarchy of renderings (vl::RenderingTree) or to a custom rendering objects performing post processing etc. This is provided for convenience. Your application can instantiate and use its own set of rendering objects and arrange them in the most appropriate way. By default the returned vl::RenderingAbstract is actually a vl::Rendering.
 	
-	<img src="pics/design-vl.png">
+	\image html design-vl.png
 	
 	<div class="featuretitle">Actors</div>
 	
@@ -37,7 +37,7 @@
 	The vl::Effect class can render for each level of detail a different set of rendering passes, each of which is defined by a vl::Shader 
 	which contains the actual render states to be used.
 	
-	<img src="pics/design-actor.png">
+	\image html design-actor.png
 	
 	<div class="featuretitle">ShaderNode Trees</div>
 	
@@ -47,7 +47,7 @@
 	Visualization Library gives you total control over \a when the shader hierarchy is updated, as opposed to most of the \a scene-graph-oriented engines that are forced 
 	to continuously traverse and update the whole hierarchy!
 	
-	<img src="pics/design-shadernode.png">
+	\image html design-shadernode.png
 	
 	<div class="featuretitle">Transform Trees</div>
 	
@@ -64,7 +64,7 @@
 	   amount of time when dealing with a large number of objects.
 	-# You have the freedom to choose if a transform should be continuously and automatically updated before each rendering or not.
 	
-	<img src="pics/design-transform.png">
+	\image html design-transform.png
 	
 	<div class="featuretitle">Rendering</div>
 	
@@ -83,12 +83,12 @@
 	
 	Visualization Library allows you to combine multiple renderings by organizing them in a powerful and simple to use tree layout, for more information see vl::RenderingTree.
 	
-	<img src="pics/design-rendering.png">
+	\image html design-rendering.png
 	
 	<div class="featuretitle">Rendering Queue</div>
 	
 	Below is a simplified view of Visualization Library internal rendering pipeline, from hidden surface removal to rendering.
 	
-	<img src="pics/design-renderqueue.png">
+	\image html design-renderqueue.png
 	
 */

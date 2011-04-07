@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/GLSL.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/VisualizationLibrary.hpp"
+#include "vl/Light.hpp"
+#include "vl/GLSL.hpp"
 
 const int TORUS_SEGS = 25;
 
@@ -54,7 +54,7 @@ public:
     mTransform = new vl::Transform;
 
     // generate torus, with normals and uv coords
-    vl::ref<vl::Geometry> model = vl::makeTorus( vl::vec3(0,0,0), 10, 2, TORUS_SEGS, TORUS_SEGS, 2.0f );
+    vl::ref<vl::Geometry> model = vlut::makeTorus( vl::vec3(0,0,0), 10, 2, TORUS_SEGS, TORUS_SEGS, 2.0f );
     model->transform( vl::mat4::getRotation( 45.0f, 1.0f, 1.0f, 0.0f ) );
 
     // setup effect
@@ -136,12 +136,12 @@ public:
       (*ntb_verts)[i*6 + 4] = verts[i];
       (*ntb_verts)[i*6 + 5] = verts[i] + bitangent * tick_size;
 
-      (*ntb_cols)[i*6 + 0] = vl::red;
-      (*ntb_cols)[i*6 + 1] = vl::red;
-      (*ntb_cols)[i*6 + 2] = vl::green;
-      (*ntb_cols)[i*6 + 3] = vl::green;
-      (*ntb_cols)[i*6 + 4] = vl::blue;
-      (*ntb_cols)[i*6 + 5] = vl::blue;
+      (*ntb_cols)[i*6 + 0] = vlut::red;
+      (*ntb_cols)[i*6 + 1] = vlut::red;
+      (*ntb_cols)[i*6 + 2] = vlut::green;
+      (*ntb_cols)[i*6 + 3] = vlut::green;
+      (*ntb_cols)[i*6 + 4] = vlut::blue;
+      (*ntb_cols)[i*6 + 5] = vlut::blue;
     }
 
     vl::ref<vl::Geometry> NTBGeom = new vl::Geometry;
@@ -151,7 +151,7 @@ public:
     sceneManager()->tree()->addActor( NTBGeom.get(), effect.get(), mTransform.get() );
   }
 
-  void updateScene() 
+  void run() 
   {
     // update the torus tranform
     mTransform->setLocalMatrix( vl::mat4::getRotation( vl::Time::currentTime() * 5.0f, 0, -1, 1 ) );
@@ -161,10 +161,12 @@ public:
     vl::mat4 obj_mat = mTransform->worldMatrix().getInverse();
 
     // project camera position from world to object space
-    vl::vec3 camera_pos = rendering()->as<vl::Rendering>()->camera()->inverseViewMatrix().getT();
+    vl::vec3 camera_pos = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->inverseViewMatrix().getT();
     vl::vec3 camera_pos_obj_space = obj_mat * camera_pos;
     mLightObjSpacePosition->setUniform( (vl::fvec3)camera_pos_obj_space );
   }
+
+  void shutdown() {}
 
 protected:
     vl::ref<vl::GLSLProgram> mGLSL;

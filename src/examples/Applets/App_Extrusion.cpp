@@ -30,15 +30,15 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/Geometry.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/FontManager.hpp>
-#include <vlCore/Interpolator.hpp>
-#include <vlGraphics/Extrusion.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/VisualizationLibrary.hpp"
+#include "vl/Effect.hpp"
+#include "vl/Light.hpp"
+#include "vl/Geometry.hpp"
+#include "vl/Text.hpp"
+#include "vl/FontManager.hpp"
+#include "vl/Interpolator.hpp"
+#include "vl/Extrusion.hpp"
 
 class App_Extrusion: public BaseDemo
 {
@@ -87,7 +87,7 @@ public:
     sceneManager()->tree()->addActor( geom.get(), effect.get(), NULL );
 
     // Utility function that visualizes the extrusion path.
-    showPath(extrusion.positionPath(),vl::red);
+    showPath(extrusion.positionPath(),vlut::red);
   }
 
   // Creates a fancy arch applying rotation and scaling to the extrusion
@@ -160,7 +160,7 @@ public:
     sceneManager()->tree()->addActor( geom.get(), effect.get(), NULL );
 
     // Utility function that visualizes the extrusion path.
-    showPath(extrusion.positionPath(),vl::red);
+    showPath(extrusion.positionPath(),vlut::red);
   }
 
   // Creates a vortex whose section is a flower.
@@ -197,7 +197,7 @@ public:
     for(int i=0; i<size-2; ++i)
     {
       float t = (float)i/(size-2-1);
-      vl::fvec4 c = vl::yellow*t + vl::blue*(1.0f-t);
+      vl::fvec4 c = vlut::yellow*t + vlut::blue*(1.0f-t);
       extrusion.colorPath().push_back(c);
     }
 
@@ -260,7 +260,7 @@ public:
     for(int i=0; i<segments-2; ++i)
     {
       float t = (float)i/(segments-2-1);
-      vl::fvec4 c = vl::gold * t + vl::royalblue*(1.0f-t);
+      vl::fvec4 c = vlut::gold * t + vlut::royalblue*(1.0f-t);
       extrusion.colorPath().push_back(c);
     }
 
@@ -349,11 +349,11 @@ public:
   {
     vl::ref<vl::Text> text = new vl::Text;
     text->setText("Press the left/right arrow keys to change test.");
-    text->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    text->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     text->setAlignment( vl::AlignHCenter | vl::AlignTop );
     text->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     text->translate(0,-5,0);
-    text->setColor(vl::white);
+    text->setColor(vlut::white);
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     sceneManager()->tree()->addActor(text.get(), effect.get());

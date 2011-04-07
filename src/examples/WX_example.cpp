@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlWX/WXGLCanvas.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
+#include <vlWX/vlWXGLCanvas.hpp>
+#include <vl/VisualizationLibrary.hpp>
 #include "Applets/App_RotatingCube.hpp"
 
 using namespace vlWX;
@@ -60,14 +60,14 @@ IMPLEMENT_APP(MyApp)
 //-----------------------------------------------------------------------------
 bool MyApp::OnInit()
 {
-  /* open a console so we can see the applet's output on stdout */
-  showWin32Console();
+  vl::showWin32Console();
+  vl::VisualizationLibrary::init();
 
-  /* init Visualization Library */
-  VisualizationLibrary::init();
+  MyFrame *frame = new MyFrame(NULL, L"vlWXGLCanvas", wxDefaultPosition, wxSize(400, 300));
 
-  MyFrame *frame = new MyFrame(NULL, L"WXGLCanvas", wxDefaultPosition, wxSize(400, 300));
-
+  /* create the applet to be run */
+  vl::ref<vlut::Applet> applet = new App_RotatingCube;
+  applet->initialize();
   /* Initialize the OpenGL context and window properties */
   // WX_GL_RGBA:            Use true colour
   // WX_GL_BUFFER_SIZE:     Bits for buffer if not WX_GL_RGBA
@@ -99,35 +99,24 @@ bool MyApp::OnInit()
     WX_GL_AUX_BUFFERS, 0*/
     0
   };
-  ref<WXGLCanvas> vl_gl_canvas = new WXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
-
-  /* create the applet to be run */
-  ref<Applet> applet = new App_RotatingCube;
-
-  applet->initialize();
-
+  vl::ref<vlWXGLCanvas> vl_gl_canvas = new vlWXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
   /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
-  
+  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
   /* black background */
-  applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
-  
+  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::black );
   /* define the camera position and orientation */
-  vec3 eye    = vec3(0,10,35); // camera position
-  vec3 center = vec3(0,0,0);   // point the camera is looking at
-  vec3 up     = vec3(0,1,0);   // up direction
-  mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
-  applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
-  
+  vl::vec3 eye    = vl::vec3(0,10,35); // camera position
+  vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
+  vl::vec3 up     = vl::vec3(0,1,0);   // up direction
+  vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
+  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setViewMatrix( view_mat );
   /* show the window */
   frame->Show();
-  
   /* THE ORDER IS IMPORTANT IMPORTANT */
   vl_gl_canvas->initGLContext();
-  
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   vl_gl_canvas->addEventListener(applet.get());
-
+  vl_gl_canvas->dispatchInitEvent();
   /* these must be done after the window is visible */
   int x = 0;
   int y = 0;
@@ -142,7 +131,7 @@ bool MyApp::OnInit()
 //-----------------------------------------------------------------------------
 int MyApp::OnExit()
 {
-  VisualizationLibrary::shutdown();
+  vl::VisualizationLibrary::shutdown();
   return 0;
 }
 //-----------------------------------------------------------------------------

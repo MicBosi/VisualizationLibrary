@@ -30,99 +30,90 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlCore/Colors.hpp>
-#include <vlGraphics/SceneManager.hpp>
-#include <vlGraphics/RenderingTree.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/Geometry.hpp>
-
-using namespace vl;
+#include "vlut/Colors.hpp"
+#include "vl/SceneManager.hpp"
+#include "vl/RenderingTree.hpp"
+#include "vl/Light.hpp"
 
 class App_MultipleCameras: public BaseDemo
 {
 public:
+  virtual void shutdown() {}
+
   virtual void initEvent()
   {
     BaseDemo::initEvent();
 
     // save to be used later
-    ref<Renderer> renderer = rendering()->as<Rendering>()->renderer();
-    ref<RenderTarget> render_target = rendering()->as<Rendering>()->renderer()->renderTarget();
+    vl::ref<vl::Renderer> renderer = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer();
+    vl::ref<vl::RenderTarget> render_target = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->renderTarget();
     // install new rendering tree
-    mRenderingTree = new RenderingTree;
-    setRendering(mRenderingTree.get());
-    mRendering0 = new Rendering;
-    mRendering1 = new Rendering;
-    mRendering2 = new Rendering;
-    mRendering3 = new Rendering;
+    mRenderingTree = new vl::RenderingTree;
+    vl::VisualizationLibrary::setRendering(mRenderingTree.get());
+    mRendering0 = new vl::Rendering;
+    mRendering1 = new vl::Rendering;
+    mRendering2 = new vl::Rendering;
+    mRendering3 = new vl::Rendering;
     mRenderingTree->subRenderings()->push_back(mRendering0.get());
     mRenderingTree->subRenderings()->push_back(mRendering1.get());
     mRenderingTree->subRenderings()->push_back(mRendering2.get());
     mRenderingTree->subRenderings()->push_back(mRendering3.get());
 
-    _tr1 = new Transform;
-    _tr2 = new Transform;
+    _tr1 = new vl::Transform;
+    _tr2 = new vl::Transform;
     _tr1->addChild( _tr2.get() );
 
-    ref<ResourceDatabase> res_db = loadResource("/models/3ds/monkey.3ds");
+    vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/models/3ds/monkey.3ds");
     if (!res_db)
       return;
 
-    // compute normals
-    for(unsigned i=0, count=res_db->count<Geometry>(); i<count; ++i)
+    vl::ref<vl::Light> light = new vl::Light(0);
+    light->setAmbient( vl::fvec4( .1f, .1f, .1f, 1.0f) );
+    light->setSpecular( vl::fvec4( .1f, .1f, .1f, 1.0f) );
+
+    for(unsigned i=0; i<res_db->count<vl::Actor>(); ++i)
     {
-      Geometry* geom = res_db->get<Geometry>(i);
-      if (!geom->normalArray())
-        geom->computeNormals();
+      res_db->get<vl::Actor>(i)->effect()->shader()->setRenderState( light.get() );
+      res_db->get<vl::Actor>(i)->effect()->shader()->enable(vl::EN_LIGHTING);
+      res_db->get<vl::Actor>(i)->effect()->shader()->enable(vl::EN_DEPTH_TEST);
     }
 
-    ref<Light> light = new Light(0);
-    light->setAmbient( fvec4( .1f, .1f, .1f, 1.0f) );
-    light->setSpecular( fvec4( .1f, .1f, .1f, 1.0f) );
-
-    for(unsigned i=0, count=res_db->count<Actor>(); i<count; ++i)
-    {
-      res_db->get<Actor>(i)->effect()->shader()->setRenderState( light.get() );
-      res_db->get<Actor>(i)->effect()->shader()->enable(EN_LIGHTING);
-      res_db->get<Actor>(i)->effect()->shader()->enable(EN_DEPTH_TEST);
-    }
-
-    ref<Effect> wirefx = new Effect;
-    wirefx->shader()->disable( EN_CULL_FACE );
-    wirefx->shader()->enable( EN_LIGHTING );
-    wirefx->shader()->enable( EN_DEPTH_TEST );
-    wirefx->shader()->enable( EN_LINE_SMOOTH );
-    wirefx->shader()->enable( EN_BLEND );
+    vl::ref<vl::Effect> wirefx = new vl::Effect;
+    wirefx->shader()->disable( vl::EN_CULL_FACE );
+    wirefx->shader()->enable( vl::EN_LIGHTING );
+    wirefx->shader()->enable( vl::EN_DEPTH_TEST );
+    wirefx->shader()->enable( vl::EN_LINE_SMOOTH );
+    wirefx->shader()->enable( vl::EN_BLEND );
     wirefx->shader()->gocLightModel()->setTwoSide(true);
-    wirefx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
-    wirefx->shader()->gocMaterial()->setDiffuse( white );
+    wirefx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+    wirefx->shader()->gocMaterial()->setDiffuse( vlut::white );
     wirefx->shader()->setRenderState( light.get() );
 
-    std::vector< ref<Actor> > moneky_w;
+    std::vector< vl::ref<vl::Actor> > moneky_w;
 
-    moneky_w.resize( res_db->count<Actor>() );
-    for(unsigned i=0; i<res_db->count<Actor>(); ++i)
+    moneky_w.resize( res_db->count<vl::Actor>() );
+    for(unsigned i=0; i<res_db->count<vl::Actor>(); ++i)
     {
-      moneky_w[i] = new Actor( *res_db->get<Actor>(i) );
+      moneky_w[i] = new vl::Actor( *res_db->get<vl::Actor>(i) );
       moneky_w[i]->setEffect(wirefx.get());
     }
 
     for( int i=0; i<mRenderingTree->subRenderings()->size(); ++i )
     {
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->setRenderTarget( render_target.get() );
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setRenderer( renderer.get() );
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setCamera( new Camera );
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setTransform( _tr1.get() );
-      ref<SceneManagerActorTree> scene_manager = new SceneManagerActorTree;
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->sceneManagers()->push_back( scene_manager.get() );
+      mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->renderer()->setRenderTarget( render_target.get() );
+      mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->setRenderer( renderer.get() );
+      mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->setCamera( new vl::Camera );
+      mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->setTransform( _tr1.get() );
+      vl::ref<vl::SceneManagerActorTree> scene_manager = new vl::SceneManagerActorTree;
+      mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->sceneManagers()->push_back( scene_manager.get() );
 
       switch(i)
       {
         case 0:
-          for(unsigned j=0; j<res_db->count<Actor>(); ++j)
+          for(unsigned j=0; j<res_db->count<vl::Actor>(); ++j)
           {
-            scene_manager->tree()->addActor( res_db->get<Actor>(j) );
-            res_db->get<Actor>(j)->setTransform( _tr2.get() );
+            scene_manager->tree()->addActor( res_db->get<vl::Actor>(j) );
+            res_db->get<vl::Actor>(j)->setTransform( _tr2.get() );
           }
           break;
         case 1:
@@ -137,27 +128,27 @@ public:
 
       switch(i)
       {
-      case 0: mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->viewport()->setClearColor(black); break;
-      case 1: mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->viewport()->setClearColor(yellow); break;
-      case 2: mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->viewport()->setClearColor(red); break;
-      case 3: mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->viewport()->setClearColor(green); break;
+      case 0: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::black); break;
+      case 1: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::yellow); break;
+      case 2: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::red); break;
+      case 3: mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::green); break;
       }
 
-      mat4 m;
+      vl::mat4 m;
       switch(i)
       {
-      case 0: m = mat4::getLookAt( vec3(0,1,3.5f), vec3(0,0,0), vec3(0,1,0) ); break;
-      case 1: m = mat4::getLookAt( vec3(0,1,3.5f), vec3(0,0,0), vec3(0,1,0) ); break;
-      case 2: m = mat4::getLookAt( vec3(3.5,1,0), vec3(0,0,0), vec3(0,1,0) ); break;
-      case 3: m = mat4::getLookAt( vec3(0,3.5,0), vec3(0,0,0), vec3(0,0,-1) ); break;
+      case 0: m = vl::mat4::getLookAt( vl::vec3(0,1,3.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) ); break;
+      case 1: m = vl::mat4::getLookAt( vl::vec3(0,1,3.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) ); break;
+      case 2: m = vl::mat4::getLookAt( vl::vec3(3.5,1,0), vl::vec3(0,0,0), vl::vec3(0,1,0) ); break;
+      case 3: m = vl::mat4::getLookAt( vl::vec3(0,3.5,0), vl::vec3(0,0,0), vl::vec3(0,0,-1) ); break;
       }
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->setInverseViewMatrix(m);
+      mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
     }
   }
 
-  virtual void updateScene()
+  virtual void run()
   {
-    _tr1->setLocalMatrix( mat4::getRotation(Time::currentTime()*45,0,1,0) );
+    _tr1->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*45,0,1,0) );
   }
 
   virtual void resizeEvent(int w, int h)
@@ -168,39 +159,37 @@ public:
     int hw = w/2;
     int hh = h/2;
 
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->viewport()->set(0,0,hw,hh);
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->setProjectionAsPerspective();
+    mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->renderer()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->camera()->viewport()->set(0,0,hw,hh);
+    mRenderingTree->subRenderings()->at(2)->as<vl::Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->viewport()->set(hw,hh,w-hw,h-hh);
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->setProjectionAsPerspective();
+    mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->renderer()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->camera()->viewport()->set(hw,hh,w-hw,h-hh);
+    mRenderingTree->subRenderings()->at(1)->as<vl::Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->viewport()->set(0,hh,hw,h-hh);
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->setProjectionAsPerspective();
+    mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->renderer()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->camera()->viewport()->set(0,hh,hw,h-hh);
+    mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->viewport()->set(hw,0,w-hw,hh);
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->setProjectionAsPerspective();
+    mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->renderer()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->camera()->viewport()->set(hw,0,w-hw,hh);
+    mRenderingTree->subRenderings()->at(3)->as<vl::Rendering>()->camera()->setProjectionAsPerspective();
 
-    Rendering* rend = mRenderingTree->subRenderings()->at(0)->as<Rendering>();
-    bindManipulators( rend->camera() );
+    bindManipulators( mRenderingTree->subRenderings()->at(0)->as<vl::Rendering>() );
   }
 
-  void mouseDownEvent(EMouseButton, int x, int y)
+  void mouseDownEvent(vl::EMouseButton, int x, int y)
   {
     for( int i=0; i<mRenderingTree->subRenderings()->size(); ++i )
     {
-      int height = mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->renderTarget()->height();
-      if ( mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->viewport()->isPointInside(x,y,height) )
+      int height = mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->renderer()->renderTarget()->height();
+      if ( mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>()->camera()->viewport()->isPointInside(x,y,height) )
       {
-        Rendering* rend = mRenderingTree->subRenderings()->at(i)->as<Rendering>();
-          bindManipulators( rend->camera() );
+        bindManipulators( mRenderingTree->subRenderings()->at(i)->as<vl::Rendering>() );
          trackball()->setTransform( _tr2.get() );
         break;
       }
@@ -208,13 +197,13 @@ public:
   }
 
 protected:
-  ref<Transform> _tr1;
-  ref<Transform> _tr2;
-  ref<RenderingTree> mRenderingTree;
-  ref<Rendering> mRendering0;
-  ref<Rendering> mRendering1;
-  ref<Rendering> mRendering2;
-  ref<Rendering> mRendering3;
+  vl::ref<vl::Transform> _tr1;
+  vl::ref<vl::Transform> _tr2;
+  vl::ref<vl::RenderingTree> mRenderingTree;
+  vl::ref<vl::Rendering> mRendering0;
+  vl::ref<vl::Rendering> mRendering1;
+  vl::ref<vl::Rendering> mRendering2;
+  vl::ref<vl::Rendering> mRendering3;
 };
 
 // Have fun!

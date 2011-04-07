@@ -13,40 +13,40 @@
 		<td> <b>Silhouettes + Creases + Hidden Lines</b> </td>
 	</tr>
 	<tr>
-		<td> <img src="pics/pagGuideWireframe3a.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe3b.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe3c.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe3d.jpg"> </td>
+		<td> \image html pagGuideWireframe3a.jpg </td>
+		<td> \image html pagGuideWireframe3b.jpg </td>
+		<td> \image html pagGuideWireframe3c.jpg </td>
+		<td> \image html pagGuideWireframe3d.jpg </td>
 	</tr>
 	<tr>
-		<td> <img src="pics/pagGuideWireframe1a.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe1b.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe1c.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe1d.jpg"> </td>
+		<td> \image html pagGuideWireframe1a.jpg </td>
+		<td> \image html pagGuideWireframe1b.jpg </td>
+		<td> \image html pagGuideWireframe1c.jpg </td>
+		<td> \image html pagGuideWireframe1d.jpg </td>
 	</tr>
 	<tr>
-		<td> <img src="pics/pagGuideWireframe6a.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe6b.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe6c.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe6d.jpg"> </td>
+		<td> \image html pagGuideWireframe6a.jpg </td>
+		<td> \image html pagGuideWireframe6b.jpg </td>
+		<td> \image html pagGuideWireframe6c.jpg </td>
+		<td> \image html pagGuideWireframe6d.jpg </td>
 	</tr>
 	<tr>
 		<td colspan=4> <b>Cartoonish models with silhouette enhancement</b> </td>
 	</tr>
 	<tr>
-		<td> <img src="pics/pagGuideWireframe4b.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe4a.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe5b.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe5a.jpg"> </td>
+		<td> \image html pagGuideWireframe4b.jpg </td>
+		<td> \image html pagGuideWireframe4a.jpg </td>
+		<td> \image html pagGuideWireframe5b.jpg </td>
+		<td> \image html pagGuideWireframe5a.jpg </td>
 	</tr>
 	<tr>
 		<td colspan=4> <b>Hidden line removal wireframe</b> </td>
 	</tr>
 	<tr>
-		<td> <img src="pics/pagGuideWireframe7a.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe7b.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe7c.jpg"> </td>
-		<td> <img src="pics/pagGuideWireframe7d.jpg"> </td>
+		<td> \image html pagGuideWireframe7a.jpg </td>
+		<td> \image html pagGuideWireframe7b.jpg </td>
+		<td> \image html pagGuideWireframe7c.jpg </td>
+		<td> \image html pagGuideWireframe7d.jpg </td>
 	</tr>
 	</table>
 	</center>
@@ -71,7 +71,7 @@
 	
 	- \a Boundary edges are those edges that belong to a single triangle or quad.
 
-  <img src="pics/pagGuideWireframe_edges.jpg">
+  \image html pagGuideWireframe_edges.jpg
 
 For more information see also vl::EdgeExtractor and vl::EdgeRenderer.
 

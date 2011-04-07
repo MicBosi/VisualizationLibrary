@@ -29,18 +29,18 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlCore/LoadWriterManager.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlCore/ZippedDirectory.hpp>
-#include <vlCore/Array.hpp>
-#include <vlCore/DiskFile.hpp>
-#include <vlCore/GZipCodec.hpp>
-#include <vlCore/FileSystem.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/FontManager.hpp>
-#include <vlCore/TextStream.hpp>
-#include <vlGraphics/Geometry.hpp>
+#include "vl/VisualizationLibrary.hpp"
+#include "vl/LoadWriterManager.hpp"
+#include "vl/Effect.hpp"
+#include "vl/ZippedDirectory.hpp"
+#include "vl/Array.hpp"
+#include <vl/DiskFile.hpp>
+#include <vl/GZipCodec.hpp>
+#include <vl/FileSystem.hpp>
+#include "vl/Text.hpp"
+#include "vl/FontManager.hpp"
+#include "vl/TextStream.hpp"
+#include "vl/Geometry.hpp"
 #include <time.h>
 
 using namespace vl;
@@ -131,7 +131,7 @@ namespace blind_tests
 
     // OBJ and material loading from zip file
 
-    vl::defFileSystem()->directories()->push_back(zdir.get());
+    vl::VisualizationLibrary::fileSystem()->directories()->push_back(zdir.get());
     vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/obj_test_mesh.obj");
 
     vl::Log::print( vl::Say("obj geometries = %n\n") << res_db->count<vl::Geometry>() );
@@ -148,7 +148,7 @@ namespace blind_tests
   bool testGZipStream()
   {
     std::vector<vl::String> file_list;
-    vl::defFileSystem()->listFilesRecursive(file_list,"/images/*");
+    vl::VisualizationLibrary::fileSystem()->listFilesRecursive(file_list,"/images/*");
 
     for( unsigned i=0; i<file_list.size(); ++i )
     {

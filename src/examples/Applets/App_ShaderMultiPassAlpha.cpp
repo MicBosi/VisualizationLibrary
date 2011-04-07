@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlCore/Colors.hpp>
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/DistanceLODEvaluator.hpp>
-#include <vlGraphics/PixelLODEvaluator.hpp>
-#include <vlGraphics/Light.hpp>
+#include "vlut/Colors.hpp"
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/DistanceLODEvaluator.hpp"
+#include "vl/PixelLODEvaluator.hpp"
+#include "vl/Light.hpp"
 
 /*
 This applet tests multipassing with alpha blending. The objects must be sorted based on their distance from the camera 
@@ -73,9 +73,9 @@ public:
     sphere_fx->lod(0)->push_back(wirepass.get());
 
     /* create template sphere */
-    vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0,0,0), 6, 10, 10);
+    vl::ref<vl::Geometry> sphere = vlut::makeUVSphere(vl::vec3(0,0,0), 6, 10, 10);
     sphere->computeNormals();
-    sphere->setColor(vl::green);
+    sphere->setColor(vlut::green);
 
     /* generate a ring of spheres */
     const int actor_count = 20;
@@ -85,18 +85,18 @@ public:
       vl::Real t = 360.0f / actor_count * i;
       vl::vec3 v = vl::mat4::getRotation(t, 0,1,0) * vl::vec3(30,0,0);
       tr->setLocalMatrix( vl::mat4::getTranslation(v) );
-      rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
+      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
       sceneManager()->tree()->addActor( sphere.get(), sphere_fx.get(), tr.get() );
     }
   }
 
   /* rotate the camera around the sphere */
-  void updateScene()
+  void run()
   {
     vl::vec3 eye( 40, 0, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 5.0f, 0, 1, 0 ) * eye;
     vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };
 

@@ -29,10 +29,10 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlWin32/Win32Window.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/Say.hpp>
-#include <vlCore/Time.hpp>
+#include "vlWin32/Win32Window.hpp"
+#include "vl/Log.hpp"
+#include "vl/Say.hpp"
+#include "vl/Time.hpp"
 #include <shellapi.h>
 
 using namespace vl;
@@ -185,18 +185,9 @@ LONG WINAPI Win32Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
       break;
     }
 
-    /*case WM_CLOSE:
+    case WM_CLOSE:
     {
-      win->dispatchDestroyEvent();
-      win->destroyWin32GLWindow();
-      break;
-    }*/
-
-    case WM_DESTROY:
-    {
-      Win32Window::mWinMap.erase(hWnd);
-      win->dispatchDestroyEvent();
-      win->destroyWin32GLWindow();
+      win->destroy();
       break;
     }
 
@@ -263,12 +254,12 @@ Win32Window::Win32Window()
 //-----------------------------------------------------------------------------
 Win32Window::~Win32Window()
 {
-  destroyWin32GLWindow();
+  destroy(); // destroyWindow();
 }
 //-----------------------------------------------------------------------------
-bool Win32Window::initWin32GLWindow(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
+bool Win32Window::initWin32Window(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
 {
-  destroyWin32GLWindow();
+  destroyWindow();
 
   if (!registerClass())
     return false;
@@ -284,7 +275,7 @@ bool Win32Window::initWin32GLWindow(HWND parent, HGLRC share_context, const vl::
     x, y, width, height, 
     parent, NULL, GetModuleHandle(NULL), NULL);
 
-  if (initWin32GLContext(share_context, title, fmt, x, y, width, height))
+  if (init(share_context, title, fmt, x, y, width, height))
   {
     mWinMap[mHWND] = this;
     return true;
@@ -302,20 +293,21 @@ Win32Window* Win32Window::getWindow(HWND hWnd)
     return NULL;
 }
 //-----------------------------------------------------------------------------
-void Win32Window::destroyWin32GLWindow()
+void Win32Window::destroy()
 {
-  // wglMakeCurrent(NULL, NULL) not needed 
-
+  Win32Context::destroy();
+  /*dispatchDestroyEvent();*/
+  destroyWindow();
+}
+//-----------------------------------------------------------------------------
+void Win32Window::destroyWindow()
+{
+  // wglMakeCurrent(NULL, NULL); // not needed 
   if (hwnd())
   {
     bool destroy_win = mWinMap.find(mHWND) != mWinMap.end();
+    mWinMap.erase(mHWND);
 
-    // WM_DESTROY must be dispatched while the OpenGL context is still available!
-    if (destroy_win)
-    {
-      DestroyWindow(mHWND);
-      mHWND = NULL;
-    }
     if (mHGLRC)
     {
       if ( wglDeleteContext(mHGLRC) == FALSE )
@@ -329,6 +321,11 @@ void Win32Window::destroyWin32GLWindow()
     {
       DeleteDC(mHDC);
       mHDC = NULL;
+    }
+    if (destroy_win)
+    {
+      DestroyWindow(mHWND);
+      mHWND = NULL;
     }
   }
 }
@@ -728,9 +725,9 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
     else
     {
       // check the returned pixel format
-      #if defined(DEBUG) || !defined(NDEBUG)
+      #ifndef NEDBUG
         DescribePixelFormat(hDC, pixel_format_index, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
-        vl::Log::print(" --- vlWin32::choosePixelFormat() ---\n");
+        vl::Log::print(" --- Pixel Format ---\n");
         // This one returns "not supported" even when its supported...
         // vl::Log::print( vl::Say("  OpenGL        = %s\n") << (pfd.dwFlags & PFD_SUPPORT_OPENGL ? "Supported" : "Not supported") );
         vl::Log::print( vl::Say("RGBA Bits     = %n %n %n %n\n") << pfd.cRedBits << pfd.cGreenBits << pfd.cBlueBits << pfd.cAlphaBits);

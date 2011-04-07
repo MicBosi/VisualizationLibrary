@@ -10,15 +10,15 @@
 	<table border=0 cellspacing=0 cellpadding=5 width=1%>
 	<tr>
 		<td> <b>Depth&nbsp;sorting&nbsp;on:</b> </td>
-		<td> <img src="pics/pagGuidePolygonDepthSorting1a.png"> </td>
-		<td> <img src="pics/pagGuidePolygonDepthSorting2a.png"> </td>
-		<td> <img src="pics/pagGuidePolygonDepthSorting3a.png"> </td>
+		<td> \image html pagGuidePolygonDepthSorting1a.png </td>
+		<td> \image html pagGuidePolygonDepthSorting2a.png </td>
+		<td> \image html pagGuidePolygonDepthSorting3a.png </td>
 	</tr>
 	<tr>
 		<td> <b>Depth&nbsp;sorting&nbsp;off:</b> </td>
-		<td> <img src="pics/pagGuidePolygonDepthSorting1b.png"> </td>
-		<td> <img src="pics/pagGuidePolygonDepthSorting2b.png"> </td>
-		<td> <img src="pics/pagGuidePolygonDepthSorting3b.png"> </td>
+		<td> \image html pagGuidePolygonDepthSorting1b.png </td>
+		<td> \image html pagGuidePolygonDepthSorting2b.png </td>
+		<td> \image html pagGuidePolygonDepthSorting3b.png </td>
 	</tr>
 	</table>
 	</center>

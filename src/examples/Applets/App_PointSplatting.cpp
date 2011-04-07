@@ -30,13 +30,21 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/DepthSortCallback.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlCore/Vector4.hpp>
+#include "vl/DepthSortCallback.hpp"
+#include "vl/Light.hpp"
+#include "vl/Vector4.hpp"
 
 class App_PointSplatting: public BaseDemo
 {
 public:
+  App_PointSplatting() {}
+
+  virtual void shutdown() {}
+
+  virtual void run()
+  {
+  }
+
   virtual void initEvent()
   {
     trackball()->setTransform(NULL);
@@ -197,16 +205,16 @@ protected:
       }
     }
 
-    actor->setLod(0, geometry.get());
+    actor->lod(0) = geometry.get();
     geometry->setDisplayListEnabled(false);
     geometry->setVBOEnabled(true);
 
     if (GLEW_ARB_vertex_buffer_object)
     {
-      color->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
-      points->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
-      norms->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
-      draw_elements->indices()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW);
+      color->gpuBuffer()->setBufferData(vl::GBU_STATIC_DRAW);
+      points->gpuBuffer()->setBufferData(vl::GBU_STATIC_DRAW);
+      norms->gpuBuffer()->setBufferData(vl::GBU_STATIC_DRAW);
+      draw_elements->indices()->gpuBuffer()->setBufferData(vl::GBU_DYNAMIC_DRAW);
     }
 
     eye_space_points->resize( points->size() );

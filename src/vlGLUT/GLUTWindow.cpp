@@ -29,11 +29,11 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGLUT/GLUTWindow.hpp>
-#include <vlGraphics/Applet.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/Say.hpp>
+#include "vlGLUT/GLUTWindow.hpp"
+#include "vlut/Applet.hpp"
+#include "vl/VisualizationLibrary.hpp"
+#include "vl/Log.hpp"
+#include "vl/Say.hpp"
 
 using namespace vlGLUT;
 
@@ -337,13 +337,17 @@ void GLUTWindow::makeCurrent()
     glutSetWindow( handle() );
 }
 //-----------------------------------------------------------------------------
-void GLUTWindow::destroyWindow()
+void GLUTWindow::destroy()
 {
+  /*dispatchDestroyEvent();*/
   // according to GLUT specs pag 44 we can do this
   if ( handle() )
   {
-    // should trigger glut_close_func
+    // dispatchDestroyEvent() called by this
     glutDestroyWindow( handle() );
+    mHandle = 0;
+    mInited = false;
+    mKeymap.clear();
   }
 }
 //-----------------------------------------------------------------------------
@@ -746,17 +750,14 @@ void GLUTWindow::glut_display_func()
 void GLUTWindow::glut_close_func()
 {
   int cur_win = glutGetWindow();
-  if (mWinMap.find(cur_win) != mWinMap.end())
-  {
-    GLUTWindow* win = mWinMap[cur_win];
-    VL_CHECK(win);
-    // win->updateModifiers() cannot be called from here
-    win->dispatchDestroyEvent();
-    win->mHandle = 0;
-    win->mInited = false;
-    win->mKeymap.clear();
-    mWinMap.erase( cur_win );
-  }
+  GLUTWindow* win = mWinMap[cur_win];
+  VL_CHECK(win);
+  // win->updateModifiers(); // cannot be called from here;
+
+  /*win->dispatchDestroyEvent();*/
+
+  win->mHandle = 0;
+  mWinMap.erase( cur_win );
 }
 //-----------------------------------------------------------------------------
 void GLUTWindow::glut_wmclose_func()

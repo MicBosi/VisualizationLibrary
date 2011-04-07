@@ -29,10 +29,10 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/DiskDirectory.hpp>
+#include <vl/DiskDirectory.hpp>
 #include <vlWin32/Win32Window.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/Say.hpp>
+#include <vl/Log.hpp>
+#include <vl/Say.hpp>
 #include "tests.hpp"
 
 using namespace vl;
@@ -41,21 +41,21 @@ using namespace vlWin32;
 class TestBatteryWin32: public TestBattery
 {
 public:
-  void runGUI(const String& title, BaseDemo* applet, OpenGLContextFormat format, int x, int y, int width, int height, fvec4 bk_color, vec3 eye, vec3 center)
+  void runGUI(float secs, const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     /* used to display the application title next to FPS counter */
-    applet->setAppletName(title);
+    applet->setApplicationName(title);
 
     /* open a console so we can see the applet's output on stdout */
     showWin32Console();
 
     /* init Visualization Library */
-    VisualizationLibrary::init();
+    vl::VisualizationLibrary::init();
 
     /* create a native Win32 window */
-    ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
+    vl::ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
 
-    setupApplet(applet, win32_window.get(), bk_color, eye, center);
+    setupApplet(applet, win32_window.get(), secs, bk_color, eye, center);
 
     /* Used to test OpenGL 3.3 Core Profile
     int attribs[] =
@@ -69,7 +69,7 @@ public:
     win32_window->setContextAttribs(attribs); */
 
     /* Initialize the OpenGL context and window properties */
-    win32_window->initWin32GLWindow(NULL, NULL, title, format, x, y, width, height );
+    win32_window->initWin32Window(NULL, NULL, title, format, x, y, width, height );
 
     /* show the window */
     win32_window->show();
@@ -81,7 +81,7 @@ public:
     win32_window = NULL;
 
     /* shutdown Visualization Library */
-    VisualizationLibrary::shutdown();
+    vl::VisualizationLibrary::shutdown();
   }
 };
 //-----------------------------------------------------------------------------
@@ -89,14 +89,17 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
 {
   /* parse command line arguments */
   int   test = 0;
+  float secs = 0;
   String cmd = lpszCmdLine;
   std::vector<String> parms;
   cmd.split(' ', parms);
   if (parms.size()>=1)
     test = parms[0].toInt();
+  if (parms.size()>=2)
+    secs = parms[1].toFloat();
 
   /* setup the OpenGL context format */
-  OpenGLContextFormat format;
+  vl::OpenGLContextFormat format;
   format.setDoubleBuffer(true);
   format.setRGBABits( 8, 8, 8, 0 );
   format.setDepthBufferBits(24);
@@ -106,7 +109,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   format.setMultisample(true);*/
 
   TestBatteryWin32 test_battery;
-  test_battery.run(test, format);
+  test_battery.run(test, secs, format);
 
   return 0;
 }

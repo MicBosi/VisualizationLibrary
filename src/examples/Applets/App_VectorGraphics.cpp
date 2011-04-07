@@ -30,11 +30,12 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlCore/Colors.hpp>
-#include <vlVG/VectorGraphics.hpp>
-#include <vlVG/SceneManagerVectorGraphics.hpp>
-#include <vlGraphics/Geometry.hpp>
-#include <vlCore/Array.hpp>
+#include "vlut/Colors.hpp"
+#include "vlVG/VectorGraphics.hpp"
+#include "vlVG/SceneManagerVectorGraphics.hpp"
+#include "vl/Geometry.hpp"
+#include "vl/vlPNG.hpp"
+#include "vl/Array.hpp"
 
 class App_VectorGraphics: public BaseDemo
 {
@@ -45,14 +46,14 @@ public:
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
-    ghostCameraManipulator()->setEnabled(false);
+    ghostCamera()->setEnabled(false);
 
     // camera setup
 
-    rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
     // reset view matrix to I
-    rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
 
     // load images used later as textures
     
@@ -68,22 +69,22 @@ public:
     vl::ref<vl::Image> circle16_yr = vl::loadImage("/images/circle16.png");
     circle16_yr->substituteColorGreenKey(0xFFFF00,0xFF0000);
     // generate the color spectrums
-    vl::ref<vl::Image> spectrum1 = vl::makeColorSpectrum(128, vl::blue,  vl::green, vl::yellow, vl::red);
-    vl::ref<vl::Image> spectrum2 = vl::makeColorSpectrum(128, vl::black, vl::white, vl::gray,   vl::black);
+    vl::ref<vl::Image> spectrum1 = vl::Image::makeColorSpectrum(128, vlut::blue,  vlut::green, vlut::yellow, vlut::red);
+    vl::ref<vl::Image> spectrum2 = vl::Image::makeColorSpectrum(128, vlut::black, vlut::white, vlut::gray,   vlut::black);
 
     // add a new VectorGraphics to our SceneManagerVectorGraphics
   
-    vl::ref<vl::VectorGraphics> vg = new vl::VectorGraphics;
-    vl::ref<vl::SceneManagerVectorGraphics> vgscene = new vl::SceneManagerVectorGraphics;
+    vl::ref<vlVG::VectorGraphics> vg = new vlVG::VectorGraphics;
+    vl::ref<vlVG::SceneManagerVectorGraphics> vgscene = new vlVG::SceneManagerVectorGraphics;
     vgscene->vectorGraphicObjects()->push_back(vg.get());
-    rendering()->as<vl::Rendering>()->sceneManagers()->push_back(vgscene.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back(vgscene.get());
 
     // start drawing with our new VectorGraphics object!
 
     vg->startDrawing();
 
       // clear the viewport
-      vg->clearColor(vl::white);
+      vg->clearColor(vlut::white);
 
       // ###### textured quad rendering ######
 
@@ -94,16 +95,16 @@ public:
       vg->pushMatrix();
         // textured quad #1 repeat texturing
         vg->translate(10,110);
-        vg->setTextureMode(vl::TextureMode_Repeat);
+        vg->setTextureMode(vlVG::TextureMode_Repeat);
         vg->fillQuad( 0,0 , pattern->width()*3.0f,pattern->height()*3.0f );
         // textured quad #2 stretch texturing
         vg->translate(100,0);
-        vg->setTextureMode(vl::TextureMode_Clamp);
+        vg->setTextureMode(vlVG::TextureMode_Clamp);
         vg->fillQuad( 0,0 , pattern->width()*3.0f,pattern->height()*3.0f );
         // textured quad #3 stretch texturing
         vg->translate(100,0);
         vg->setImage(spectrum2.get());
-        vg->setTextureMode(vl::TextureMode_Clamp);
+        vg->setTextureMode(vlVG::TextureMode_Clamp);
         vg->fillQuad( 0,0 , pattern->width()*3.0f,pattern->height()*3.0f );
       vg->popMatrix();
 
@@ -111,35 +112,35 @@ public:
 
       vg->setImage(NULL);
       vg->setLineWidth(1.0f);
-      vg->setColor(vl::black);
+      vg->setColor(vlut::black);
       vg->resetMatrix();
       vg->translate(10,250);
 
-      vg->setLineStipple(vl::LineStipple_Dash);
+      vg->setLineStipple(vlVG::LineStipple_Dash);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vl::LineStipple_Dash4);
+      vg->setLineStipple(vlVG::LineStipple_Dash4);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vl::LineStipple_Dash8);
+      vg->setLineStipple(vlVG::LineStipple_Dash8);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vl::LineStipple_DashDot);
+      vg->setLineStipple(vlVG::LineStipple_DashDot);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vl::LineStipple_DashDotDot);
+      vg->setLineStipple(vlVG::LineStipple_DashDotDot);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vl::LineStipple_Dot);
+      vg->setLineStipple(vlVG::LineStipple_Dot);
       vg->drawLine(0,0, 200,0);
 
       vg->translate(0,10);
-      vg->setLineStipple(vl::LineStipple_Solid);
+      vg->setLineStipple(vlVG::LineStipple_Solid);
       vg->drawLine(0,0, 200,0);
 
       vg->resetMatrix();
@@ -193,7 +194,7 @@ public:
       vg->setImage(NULL);
       vg->setPointSize(7);
       vg->setPointSmoothing(true); /* default value */
-      vg->setColor(vl::crimson);
+      vg->setColor(vlut::crimson);
       vg->translate(196,64);
       points.clear();
       for(int i=0; i<100; ++i)
@@ -211,7 +212,7 @@ public:
       vg->setImage(NULL);
       vg->setPointSize(5);
       vg->setPointSmoothing(false);
-      vg->setColor(vl::green);
+      vg->setColor(vlut::green);
       vg->translate(0,-128);
       points.clear();
       for(int i=0; i<100; ++i)
@@ -228,7 +229,7 @@ public:
 
       // reset states
       vg->resetMatrix();
-      vg->setColor(vl::white);
+      vg->setColor(vlut::white);
       vg->setImage(NULL);
 
       // clear the stencil buffer
@@ -243,7 +244,7 @@ public:
 
       // rose create and bind transform
       mRoseTransform = new vl::Transform;
-      rendering()->as<vl::Rendering>()->transform()->addChild(mRoseTransform.get());
+      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mRoseTransform.get());
       // draw our rotating rose as a set of 4 filled ellipses and bind them to mRoseTransform
       vg->fillEllipse(0,0 , 150,25)->setTransform(mRoseTransform.get());
       vg->pushMatrix();
@@ -264,11 +265,11 @@ public:
       // make sure our matrix is clean
       vg->resetMatrix();
       // render random blue ellipses
-      vg->setColor(vl::blue);
+      vg->setColor(vlut::blue);
       for(int i=0; i<400; ++i)
         vg->drawEllipse(rand()%512,rand()%512 , rand()%20+10,rand()%20+10);
       // renders concentric red circles
-      vg->setColor(vl::red);
+      vg->setColor(vlut::red);
       for(int i=0; i<256/4; ++i)
         vg->drawEllipse(256,256 , i*8,i*8);
 
@@ -277,13 +278,13 @@ public:
 
       // render text following our rotating rose
       vg->setFont("/font/bitstream-vera/Vera.ttf", 14, false);
-      vg->setColor(vl::black);
+      vg->setColor(vlut::black);
       // note that the 2D text is not transformed by mRoseTransform but just follows an idea point transformed by mRoseTransform.
       vg->drawText("Stencil buffer in action here!", vl::AlignHCenter|vl::AlignVCenter)->setTransform(mRoseTransform.get());
 
       // ###### draws a rotated text ###### 
 
-      vg->setColor(vl::black);
+      vg->setColor(vlut::black);
       vg->setFont("/font/bitstream-vera/VeraMono.ttf", 14, true);
       vg->pushMatrix();
       vg->rotate(45);
@@ -299,7 +300,7 @@ public:
         vl::Actor* rota_star = vg->fillQuad(0,0,star->width(),star->height());
         mStarTransform = new vl::Transform;
         rota_star->setTransform( mStarTransform.get() );
-        rendering()->as<vl::Rendering>()->transform()->addChild( mStarTransform.get() );
+        vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mStarTransform.get() );
       vg->popState();
 
       // ###### how to instance multiple times the same object ###### 
@@ -329,21 +330,21 @@ public:
 
       // star1
       vg->setLineWidth(4.0f);
-      vg->setColor(vl::gold);
+      vg->setColor(vlut::gold);
       vl::Actor* star1 = vg->drawLineLoop(star_line_loop);
       // star2 - recycle the geometry from star1
       vg->setLineWidth(2.0f);
-      vg->setColor(vl::red);
+      vg->setColor(vlut::red);
       vl::Actor* star2 = vg->drawActorCopy(star1);
       // star3 - recycle the geometry from star1
       vg->setLineWidth(1.0f);
-      vg->setLineStipple(vl::LineStipple_DashDotDot);
+      vg->setLineStipple(vlVG::LineStipple_DashDotDot);
       vl::Actor* star3 = vg->drawActorCopy(star1);
       // star4 - texturing #1
-      vg->setColor(vl::white); // make sure color is white so that the texture color is not filtered
+      vg->setColor(vlut::white); // make sure color is white so that the texture color is not filtered
       vg->setImage(spectrum1.get());
       vg->setLineWidth(2.0f);
-      vg->setLineStipple(vl::LineStipple_Solid);
+      vg->setLineStipple(vlVG::LineStipple_Solid);
       // Here we call drawLineLoop() because we need to create a new geometry instance
       // so that VL can generate appropriate UV texture coordinates that are dependent
       // on the currently active Image.
@@ -374,7 +375,7 @@ public:
     vg->endDrawing();
   }
 
-  virtual void updateScene()
+  virtual void run()
   {
     vl::mat4 mat = vl::mat4::getRotation(vl::Time::currentTime() * 60.0f, 0, 0, 1);
     mat = vl::mat4::getTranslation(sin(vl::Time::currentTime()*vl::fPi*0.25f)*200.0f,0,0) * mat;
@@ -392,10 +393,12 @@ public:
 
   void resizeEvent(int w, int h)
   {
-    rendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
-    rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
-    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
   }
+
+  virtual void shutdown() {}
 
 protected:
   vl::ref<vl::Transform> mRoseTransform;

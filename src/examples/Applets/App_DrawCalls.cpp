@@ -35,15 +35,15 @@
 #define App_DrawCalls_INCLUDE_ONCE
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/MultiDrawElements.hpp>
-#include <vlGraphics/DrawRangeElements.hpp>
-#include <vlGraphics/SceneManagerActorTree.hpp>
-#include <vlGraphics/Actor.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlCore/Time.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/RenderingTree.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include <vl/MultiDrawElements.hpp>
+#include "vl/DrawRangeElements.hpp"
+#include "vl/SceneManagerActorTree.hpp"
+#include "vl/Actor.hpp"
+#include "vl/Effect.hpp"
+#include "vl/Time.hpp"
+#include "vl/Light.hpp"
+#include "vl/RenderingTree.hpp"
 
 class App_DrawCalls: public BaseDemo
 {
@@ -182,6 +182,8 @@ class App_DrawCalls: public BaseDemo
 
     exit(0);
   }
+
+  virtual void run() {}
 
 };
 

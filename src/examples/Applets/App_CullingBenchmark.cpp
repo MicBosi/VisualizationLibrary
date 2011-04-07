@@ -30,16 +30,20 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/SceneManagerActorKdTree.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/FontManager.hpp>
-#include <vlGraphics/GeometryPrimitives.hpp>
+#include "vl/SceneManagerActorKdTree.hpp"
+#include "vl/Light.hpp"
+#include "vl/Text.hpp"
+#include "vl/FontManager.hpp"
+#include "vlut/GeometryPrimitives.hpp"
 
 class App_CullingBenchmark: public BaseDemo
 {
 public:
   App_CullingBenchmark() {}
+
+  virtual void shutdown() {}
+
+  virtual void run() {}
 
   virtual void initEvent()
   {
@@ -47,7 +51,7 @@ public:
 
     mSceneKdTree = new vl::SceneManagerActorKdTree;
 
-    rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());
 
     createScene(mActors);
 
@@ -55,10 +59,10 @@ public:
     sceneManager()->setCullingEnabled(true);
 
     mText = new vl::Text;
-    mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false) );
+    mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10, false) );
     mText->setAlignment(vl::AlignHCenter | vl::AlignTop);
     mText->setViewportAlignment(vl::AlignHCenter | vl::AlignTop);
-    mText->setColor(vl::white);
+    mText->setColor(vlut::white);
     mText->translate(0,-10,0);
     vl::Actor* text_act = sceneManager()->tree()->addActor(mText.get(), new vl::Effect);
     text_act->effect()->shader()->enable(vl::EN_BLEND);
@@ -115,7 +119,7 @@ public:
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->setRenderState( new vl::Light(0) );
 
-    vl::ref<vl::Geometry> ball = vl::makeUVSphere(vl::vec3(0,0,0),1,20,20);
+    vl::ref<vl::Geometry> ball = vlut::makeUVSphere(vl::vec3(0,0,0),1,20,20);
     ball->computeNormals();
 
     int volume = 1000;

@@ -30,14 +30,16 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/DrawPixels.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/Geometry.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/DrawPixels.hpp"
+#include "vl/Light.hpp"
+#include "vl/Geometry.hpp"
 
 class App_DrawPixels: public BaseDemo
 {
 public:
+  virtual void shutdown() {}
+
   virtual void initEvent()
   {
     BaseDemo::initEvent();
@@ -45,7 +47,7 @@ public:
     // transform used for the moving cube and star
 
     vl::ref< vl::Transform > transf = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(transf.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(transf.get());
 
     // effect for 2d rendering
 
@@ -56,7 +58,7 @@ public:
 
     // points rendering
 
-    vl::ref<vl::ImagePBO> circle16 = new vl::ImagePBO("/images/circle16.png");
+    vl::ref<vl::Image> circle16 = new vl::Image("/images/circle16.png");
 
     mPoints = new vl::DrawPixels;
     for(int i=0; i<1000; ++i)
@@ -70,13 +72,13 @@ public:
       pixels->setAlign(vl::AlignHCenter | vl::AlignVCenter);
     }
 
-    mPoints->generatePixelBufferObjects(vl::BU_STATIC_DRAW, true);
+    mPoints->generatePixelBufferObjects(vl::GBU_STATIC_DRAW, true);
 
     sceneManager()->tree()->addActor( mPoints.get(), pixel_fx.get(), NULL )->setRenderRank(0);
 
     // split star rendering
 
-    vl::ref<vl::ImagePBO> star_img = new vl::ImagePBO("/images/star.png");
+    vl::ref<vl::Image> star_img = new vl::Image("/images/star.png");
 
     int w = star_img->width() / 2;
     mStar1 = new vl::DrawPixels::Pixels( star_img.get(), 0, 0, 0, 0, w, w );
@@ -95,7 +97,7 @@ public:
     mStar->draws()->push_back( mStar3.get() );
     mStar->draws()->push_back( mStar4.get() );
 
-    mStar->generatePixelBufferObjects(vl::BU_STATIC_DRAW, true);
+    mStar->generatePixelBufferObjects(vl::GBU_STATIC_DRAW, true);
 
     sceneManager()->tree()->addActor( mStar.get(), pixel_fx.get(), transf.get() )->setRenderRank(1);
 
@@ -106,13 +108,13 @@ public:
     cube_fx->shader()->enable(vl::EN_LIGHTING);
     cube_fx->shader()->setRenderState( new vl::Light(0) );
 
-    vl::ref<vl::Geometry> cube = vl::makeBox( vl::vec3(0,0,0), 1, 1, 1 );
+    vl::ref<vl::Geometry> cube = vlut::makeBox( vl::vec3(0,0,0), 1, 1, 1 );
     cube->computeNormals();
     mCube = sceneManager()->tree()->addActor(cube.get(), cube_fx.get(), transf.get() );
     mCube->setRenderRank(2); // draw after 2d objects
   }
 
-  virtual void updateScene()
+  virtual void run()
   {
     vl::ivec2 pos;
     vl::ivec2 pos1 = pos + vl::ivec2(vl::fvec2(-1,-1) * (float)((1+sin(vl::Time::currentTime()*vl::fPi*2.0f/5.0f))*100.0f));

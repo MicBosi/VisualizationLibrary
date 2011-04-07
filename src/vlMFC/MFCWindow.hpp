@@ -32,9 +32,8 @@
 #ifndef MFCWindow_INCLUDE_ONCE
 #define MFCWindow_INCLUDE_ONCE
 
-#include <vlMFC/config.hpp>
-#include <vlGraphics/OpenGLContext.hpp>
-#include <vlWin32/Win32Context.hpp>
+#include "vl/OpenGLContext.hpp"
+#include "vlWin32/Win32Context.hpp"
 
 namespace vlMFC
 {
@@ -44,15 +43,20 @@ namespace vlMFC
   /**
    * The MFCWindow class is an MFC CWnd with the functionalities of a Win32Context.
    */
-  class VLMFC_EXPORT MFCWindow: public CWnd, public vlWin32::Win32Context /* the order is important! */
+  class MFCWindow : public CWnd, public vlWin32::Win32Context /* the order is important! */
   {
   public:
     MFCWindow() {}
-
     virtual ~MFCWindow();
 
     //! Creates the window and initializes the OpenGL rendering context
     bool initMFCWindow(CWnd* parent, MFCWindow* share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
+
+    //! calls destroyWindow() and dispatches the destroy event to the UIEventListener objects
+    virtual void destroy();
+
+    //! Destroyes the window and the OpenGL rendering context
+    void destroyWindow();
 
     //! Returns the Win32 window handle
     HWND hwnd() const { return m_hWnd; }
@@ -62,8 +66,7 @@ namespace vlMFC
     /*afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);*/
 	  /*afx_msg void OnDraw(CDC *pDC);*/
     afx_msg void OnPaint();
-    // afx_msg void OnClose();
-    afx_msg void OnDestroy();
+    afx_msg void OnClose();
     afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
     afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -79,14 +82,13 @@ namespace vlMFC
     afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
     afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
     afx_msg void OnSize(UINT nType, int cx, int cy);
-    /*afx_msg void OnTimer(UINT_PTR nIDEvent);*/
+    afx_msg void OnTimer(UINT_PTR nIDEvent);
     afx_msg void OnDropFiles(HDROP hDropInfo);
 	  //}}AFX_MSG
 
   protected:
-    void destroyGLContext();
-    void countAndCapture();
-    void countAndRelease();
+    void CountAndCapture();
+    void CountAndRelease();
 
   protected:
     int mMouseDownCount;

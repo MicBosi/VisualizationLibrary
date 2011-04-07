@@ -32,9 +32,9 @@
 #ifndef Bond_INCLUDE_ONCE
 #define Bond_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
+#include <vl/Object.hpp>
 
-namespace vl
+namespace vlMolecule
 {
   class Atom;
 
@@ -57,12 +57,12 @@ namespace vl
    * - Molecule
    * - Atom
    *
-   * <img src="pics/pagGuideMolecule.png">
+   * \image html pagGuideMolecule.png
    */
-  class Bond: public Object
+  class Bond: public vl::Object
   {
   public:
-    virtual const char* className() { return "vl::Atom"; }
+    virtual const char* className() { return "Atom"; }
 
     Bond(): mColor( 1.0f,1.0f,1.0f,1.0f ), mRadius(0.10f), mAtom1(NULL), mAtom2(NULL), mType(BT_Single), mId(0), mVisible(true), mUseAtomColors(true) 
     {
@@ -70,7 +70,7 @@ namespace vl
         mObjectName = className();
       #endif
     }
-    Bond(const Bond& other): Object(other) { *this = other; }
+    Bond(const Bond& other): vl::Object(other) { *this = other; }
 
     unsigned int id() const { return mId; }
     void setId(unsigned int id) { mId = id; }
@@ -87,8 +87,8 @@ namespace vl
     void setVisible(bool visible) { mVisible = visible; }
     bool visible() const { return mVisible; }
 
-    void setColor(const fvec4& color) { mColor = color; }
-    const fvec4& color() const { return mColor; }
+    void setColor(const vl::fvec4& color) { mColor = color; }
+    const vl::fvec4& color() const { return mColor; }
 
     void setUseAtomColors(bool use_atom_color) { mUseAtomColors = use_atom_color; }
     bool useAtomColors() const { return mUseAtomColors; }
@@ -97,10 +97,10 @@ namespace vl
     void setRadius(float radius) { mRadius = radius; }
 
   protected:
-    fvec4 mColor;
+    vl::fvec4 mColor;
     float mRadius;
-    Atom* mAtom1;
-    Atom* mAtom2;
+	  Atom* mAtom1;
+	  Atom* mAtom2;
     EBondType mType;
     unsigned int mId;
     bool mVisible;

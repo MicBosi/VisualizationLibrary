@@ -32,31 +32,34 @@
 #ifndef SceneManagerVectorGraphics_INCLUDE_ONCE
 #define SceneManagerVectorGraphics_INCLUDE_ONCE
 
-#include <vlGraphics/SceneManager.hpp>
-#include <vlCore/Collection.hpp>
-#include <vlGraphics/Frustum.hpp>
+#include <vl/SceneManager.hpp>
+#include <vl/Collection.hpp>
+#include <vl/Frustum.hpp>
 
-namespace vl
+namespace vlVG
 {
   class VectorGraphics;
+}
+namespace vlVG
+{
 //-------------------------------------------------------------------------------------------------------------------------------------------
 // SceneManagerVectorGraphics
 //-------------------------------------------------------------------------------------------------------------------------------------------
   /** The SceneManagerVectorGraphics class is a SceneManager that contains VectorGraphics objects.
    * The VectorGraphics objects are rendered in the order in which they are added to the SceneManagerVectorGraphics.
    * \sa
-   * - Actor
-   * - ActorKdTree
-   * - ActorTree
-   * - SceneManager
-   * - SceneManagerBVH
-   * - SceneManagerActorKdTree
-   * - SceneManagerActorTree
-   * - SceneManagerPortals */
-  class SceneManagerVectorGraphics: public SceneManager
+   * - vl::Actor
+   * - vl::ActorKdTree
+   * - vl::ActorTree
+   * - vl::SceneManager
+   * - vl::SceneManagerBVH
+   * - vl::SceneManagerActorKdTree
+   * - vl::SceneManagerActorTree
+   * - vl::SceneManagerPortals */
+  class SceneManagerVectorGraphics: public vl::SceneManager
   {
   public:
-    virtual const char* className() { return "vl::SceneManagerVectorGraphics"; }
+    virtual const char* className() { return "SceneManagerVectorGraphics"; }
 
     SceneManagerVectorGraphics() { mActorRenderRankStart = 0; mVectorGraphicObjects.setAutomaticDelete(false); }
 
@@ -69,7 +72,7 @@ namespace vl
     //! Returns the rendering rank start value used during the rendering of the VectorGraphics objects. See setActorRenderRankStart() for more information.
     int actorRenderRankStart() const { return mActorRenderRankStart; }
 
-    virtual void extractVisibleActors(ActorCollection& queue, const Camera*)
+    virtual void extractVisibleActors(vl::ActorCollection& queue, const vl::Camera*)
     {
       if (cullingEnabled())
         // FIXME: implement 2d culling?
@@ -78,7 +81,7 @@ namespace vl
         extractActors(queue);
     }
 
-    virtual void extractActors(ActorCollection& queue)
+    virtual void extractActors(vl::ActorCollection& queue)
     {
       int actor_rank = mActorRenderRankStart;
       for(int i=0; i<vectorGraphicObjects()->size(); ++i)
@@ -92,13 +95,13 @@ namespace vl
     }
 
     //! Returns the list of VectorGraphics objects bound to a SceneManagerVectorGraphics
-    Collection<VectorGraphics>* vectorGraphicObjects() { return &mVectorGraphicObjects; }
+    vl::Collection<VectorGraphics>* vectorGraphicObjects() { return &mVectorGraphicObjects; }
 
     //! Returns the list of VectorGraphics objects bound to a SceneManagerVectorGraphics
-    const Collection<VectorGraphics>* vectorGraphicObjects() const { return &mVectorGraphicObjects; }
+    const vl::Collection<VectorGraphics>* vectorGraphicObjects() const { return &mVectorGraphicObjects; }
 
   protected:
-    Collection<VectorGraphics> mVectorGraphicObjects;
+    vl::Collection<VectorGraphics> mVectorGraphicObjects;
     int mActorRenderRankStart;
   };
 //-------------------------------------------------------------------------------------------------------------------------------------------

@@ -30,16 +30,19 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/GLSL.hpp>
-#include <vlGraphics/FontManager.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/Text.hpp"
+#include "vl/GLSL.hpp"
+#include "vl/FontManager.hpp"
 
 using namespace vl;
 
 class App_Fractals: public BaseDemo
 {
 public:
+  App_Fractals() {}
+  virtual void shutdown() {}
+
   void mouseDownEvent(EMouseButton btn, int x, int y)
   {
     if (mMode != NoMode)
@@ -80,8 +83,8 @@ public:
     else
     if (mMode == TranslateMode)
     {
-      float deltax = 0.5f * mZoom * (x - mMouseStartPos.x()) / rendering()->as<Rendering>()->camera()->viewport()->width();
-      float deltay = 0.5f * mZoom * (y - mMouseStartPos.y()) / rendering()->as<Rendering>()->camera()->viewport()->height();
+      float deltax = 0.5f * mZoom * (x - mMouseStartPos.x()) / VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->width();
+      float deltay = 0.5f * mZoom * (y - mMouseStartPos.y()) / VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->height();
       mXcenter = mStartCenter.x() - deltax;
       mYcenter = mStartCenter.y() + deltay;
       openglContext()->update();
@@ -106,7 +109,7 @@ public:
     updateText();
   }
 
-  virtual void updateScene()
+  virtual void run()
   {
     mGLSLProgram->useProgram();
     glUniform1f(mGLSLProgram->getUniformLocation("ColorOffset"), mColorOffset = (float)fract(Time::currentTime() * 0.5) );
@@ -144,7 +147,7 @@ public:
 
   void initEvent()
   {
-    if (!GLEW_Has_Shading_Language_20)
+    if (!(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0))
     {
       Log::error("OpenGL Shading Language not supported.\n");
       Time::sleep(3000);
@@ -159,9 +162,9 @@ public:
 
     mText = new Text;
     mText->setText("Mandelbrot!");
-    mText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
+    mText->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
     mText->setMode( Text2D );
-    mText->setColor(vl::white);
+    mText->setColor(vlut::white);
     mText->setBackgroundColor( fvec4(0,0,0,0.75f) );
     mText->setBackgroundEnabled(true);
     mText->setAlignment( AlignBottom | AlignLeft );
@@ -181,18 +184,18 @@ public:
     ref<Effect> effect = new Effect;
 
     /* screen aligned quad */
-    ref<Geometry> geom = vl::makeGrid( vec3(0,0,0), 2, 2, 2, 2, true, fvec2(0,0), fvec2(1,1) );
+    ref<Geometry> geom = vlut::makeGrid( vec3(0,0,0), 2, 2, 2, 2, true, fvec2(0,0), fvec2(1,1) );
     geom->transform( mat4::getRotation( -90, 1,0,0 ) );
     sceneManager()->tree()->addActor( geom.get(), effect.get() );
 
     // camera setup
-    rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
-    rendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4() );
-    rendering()->as<Rendering>()->camera()->setInverseViewMatrix( mat4() );
+    VisualizationLibrary::rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
+    VisualizationLibrary::rendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4() );
+    VisualizationLibrary::rendering()->as<Rendering>()->camera()->setInverseViewMatrix( mat4() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
-    ghostCameraManipulator()->setEnabled(false);
+    ghostCamera()->setEnabled(false);
 
     /* fractal variables variables */
 
@@ -217,19 +220,19 @@ public:
 
     // color palette 1
     std::vector<fvec4> color_range1;
-    color_range1.push_back(vl::red);
-    color_range1.push_back(vl::yellow);
-    color_range1.push_back(vl::green);
-    color_range1.push_back(vl::blue);
-    color_range1.push_back(vl::red);
-    mSpectrum1 = vl::makeColorSpectrum(256,color_range1);
+    color_range1.push_back(vlut::red);
+    color_range1.push_back(vlut::yellow);
+    color_range1.push_back(vlut::green);
+    color_range1.push_back(vlut::blue);
+    color_range1.push_back(vlut::red);
+    mSpectrum1 = Image::makeColorSpectrum(256,color_range1);
 
     // color palette 2
     std::vector<fvec4> color_range2;
-    color_range2.push_back(vl::yellow);
-    color_range2.push_back(vl::royalblue);
-    color_range2.push_back(vl::yellow);
-    mSpectrum2 = vl::makeColorSpectrum(256,color_range2);
+    color_range2.push_back(vlut::yellow);
+    color_range2.push_back(vlut::royalblue);
+    color_range2.push_back(vlut::yellow);
+    mSpectrum2 = Image::makeColorSpectrum(256,color_range2);
 
     mTexture = new Texture;
     mTexture->prepareTexture1D( mSpectrum1.get(), TF_RGBA, false, false );
@@ -253,8 +256,8 @@ public:
 
   void resizeEvent(int w, int h)
   {
-    rendering()->as<Rendering>()->camera()->viewport()->setWidth(w);
-    rendering()->as<Rendering>()->camera()->viewport()->setHeight(h);
+    VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->setWidth(w);
+    VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->setHeight(h);
   }
 
   void generateAndSaveFractalViaCPU()
@@ -263,8 +266,8 @@ public:
 
     Image* spectrum = mTextureToggle ? mSpectrum1.get() : mSpectrum2.get();
 
-    int pic_w = rendering()->as<Rendering>()->camera()->viewport()->width();
-    int pic_h = rendering()->as<Rendering>()->camera()->viewport()->height();
+    int pic_w = VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->width();
+    int pic_h = VisualizationLibrary::rendering()->as<Rendering>()->camera()->viewport()->height();
 
     ref< Image > image = new Image;
     image->allocate2D(pic_w,pic_h,4,IF_RGBA, IT_UNSIGNED_BYTE);

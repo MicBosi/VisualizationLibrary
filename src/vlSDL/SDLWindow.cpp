@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "vlSDL/SDLWindow.hpp"
-#include "vlGraphics/OpenGL.hpp"
-#include "vlGraphics/Applet.hpp"
-#include "vlCore/VisualizationLibrary.hpp"
-#include "vlCore/Log.hpp"
-#include "vlCore/Say.hpp"
+#include "vl/OpenGL.hpp"
+#include "vl/VisualizationLibrary.hpp"
+#include "vl/Log.hpp"
+#include "vl/Say.hpp"
+#include "vlut/Applet.hpp"
 #include <algorithm>
 #include <SDL.h>
 #include <map>
@@ -51,6 +51,7 @@ namespace
 {
   SDLWindow* mSDLWindow = NULL;
   bool mUpdateFlag = true;
+  bool mQuitFlag = false;
 
   std::map<int, vl::EKey> key_translation_map;
 
@@ -166,11 +167,23 @@ namespace
 //-----------------------------------------------------------------------------
 SDL_Surface* SDLWindow::mScreen = NULL;
 //-----------------------------------------------------------------------------
-SDLWindow::SDLWindow()
+SDLWindow::~SDLWindow()
 {
+  destroy();
 }
 //-----------------------------------------------------------------------------
-SDLWindow::~SDLWindow()
+void SDLWindow::destroy()
+{
+  /*dispatchDestroyEvent();*/
+  if (mSDLWindow == this)
+  {
+    mSDLWindow = NULL;
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+    quitApplication();
+  }
+}
+//-----------------------------------------------------------------------------
+SDLWindow::SDLWindow()
 {
 }
 //-----------------------------------------------------------------------------
@@ -179,7 +192,7 @@ SDLWindow::SDLWindow( const vl::String& title, const vl::OpenGLContextFormat& in
   initSDLWindow(title, info, width, height);
 }
 //-----------------------------------------------------------------------------
-bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFormat& info, int x, int y, int width, int height)
+bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFormat& info, int /*x*/, int /*y*/, int width, int height)
 {
   if (mScreen || mSDLWindow)
   {
@@ -196,12 +209,7 @@ bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFo
   for(int i=0; key_translation_vec[i]; i+=2)
     key_translation_map[ key_translation_vec[i] ] = (vl::EKey)key_translation_vec[i+1];
 
-  // SDL_VIDEO_WINDOW_POS
-
-  char win_pos[32] = {0};
-  sprintf(win_pos, "%d,%d", x, y);
-  setenv("SDL_VIDEO_WINDOW_POS", win_pos, 0);
-  // setenv("SDL_VIDEO_CENTERED", "YES", 0);
+  // init the given GLContext
 
   // init SDL
 
@@ -280,6 +288,9 @@ bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFo
     // DWORD Style = GetWindowLong(hWnd, GWL_STYLE);
     // Style |= WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
     // SetWindowLong(hWnd, GWL_STYLE, Style);
+
+    // sets the initial window position
+	  SetWindowPos( hWnd, 0, x, y, 0, 0, SWP_NOSIZE );
   #endif
 
   // mouse
@@ -438,6 +449,7 @@ void SDLWindow::translateEvent( SDL_Event * ev )
   else
   if (ev->type == SDL_QUIT)
   {
+    /*dispatchDestroyEvent();*/
     quitApplication();
   }
 }
@@ -445,7 +457,7 @@ void SDLWindow::translateEvent( SDL_Event * ev )
 void vlSDL::messageLoop()
 {
   SDL_Event ev;
-  while(mSDLWindow)
+  while(!mQuitFlag)
   {
     if ( SDL_PollEvent(&ev) )
       mSDLWindow->translateEvent(&ev);
@@ -469,8 +481,8 @@ void vlSDL::messageLoop()
 //-----------------------------------------------------------------------------
 void SDLWindow::quitApplication()
 {
-  dispatchDestroyEvent();
-  mSDLWindow = NULL;
+  mQuitFlag = true;
+  eraseAllEventListeners();
 }
 //-----------------------------------------------------------------------------
 void SDLWindow::update()

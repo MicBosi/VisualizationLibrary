@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlWX/WXGLCanvas.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
+#include <vlWX/vlWXGLCanvas.hpp>
+#include <vl/VisualizationLibrary.hpp>
 #include "Applets/App_RotatingCube.hpp"
 #include "tests.hpp"
 
@@ -54,9 +54,9 @@ class TestBatteryWX: public TestBattery
 public:
   TestBatteryWX() {}
 
-  void runGUI(const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat /*format*/, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void runGUI(float secs, const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat /*format*/, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
-    program->setAppletName(title);
+    program->setApplicationName(title);
 
     /* open a console so we can see the program's output on stdout */
     vl::showWin32Console();
@@ -94,29 +94,22 @@ public:
       WX_GL_AUX_BUFFERS, 0*/
       0
     };
-    MyFrame *frame = new MyFrame(NULL, L"WXGLCanvas", wxPoint(x,y), wxSize(width, height));
-    mWXWin = new WXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
+    MyFrame *frame = new MyFrame(NULL, L"vlWXGLCanvas", wxPoint(x,y), wxSize(width, height));
+    mWXWin = new vlWXGLCanvas( frame, NULL, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE, context_format );
 
-    /* needed before accessing OpenGL */
     frame->Show();
-
-    /* common test setup */
-    setupApplet(program, mWXWin, bk_color, eye, center);
-
-    /* initialize OpenGL context */
+    /* THE ORDER IS IMPORTANT */
     mWXWin->initGLContext();
-
-    /* call initEvent() to initialize the test */
+    setupApplet(program, mWXWin, secs, bk_color, eye, center);
     mWXWin->dispatchInitEvent();
-
-    /* these must be done after the window is visible and the applet is initialized */
+    /* these must be done after the window is visible */
     frame->SetPosition( wxPoint(x,y) );
     frame->SetClientSize( wxSize(width,height) );
     frame->SetLabel(wxT("Visualization Library on wxWindows"));
   }
 
 protected:
-  WXGLCanvas* mWXWin;
+  vlWXGLCanvas* mWXWin;
 };
 //-----------------------------------------------------------------------------
 // implement the application
@@ -134,15 +127,18 @@ IMPLEMENT_APP(MyApp)
 bool MyApp::OnInit()
 {
   int   test = 0;
+  float secs = 0;
 
   int      argc = GetInstance()->argc;
   wxChar** argv = GetInstance()->argv;
 
   if (argc >= 2)
     test = vl::String(argv[1]).toInt();
+  if (argc >= 3)
+    secs = vl::String(argv[2]).toInt();
 
   TestBatteryWX test_battery;
-  test_battery.run(test, vl::OpenGLContextFormat()/*not used*/);
+  test_battery.run(test, secs, vl::OpenGLContextFormat()/*not used*/);
 
   return true;
 }

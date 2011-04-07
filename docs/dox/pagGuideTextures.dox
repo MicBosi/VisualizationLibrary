@@ -2,7 +2,7 @@
 
 	\page pagGuideTextures OpenGL Texture Mapping Tutorial
 
-	<img src="pics/pagGuideTextures.jpg">
+	\image html pagGuideTextures.jpg
 	
 	"Texturing" is the technique used to apply in various ways an image over the surface of an object. Textures can be used to 
 	change or modify the color, the transparency and even the lighting properties of an object. In this tutorial we will go through the

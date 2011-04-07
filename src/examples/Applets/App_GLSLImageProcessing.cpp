@@ -30,15 +30,17 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GLSL.hpp>
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/FontManager.hpp>
+#include "vl/GLSL.hpp"
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/Text.hpp"
+#include "vl/FontManager.hpp"
 
 class App_GLSLImageProcessing: public BaseDemo
 {
 public:
-  virtual void updateScene()
+  virtual void shutdown() {}
+
+  virtual void run()
   {
     if (mTimer.elapsed() > 3)
     {
@@ -74,13 +76,13 @@ public:
     mEffectNames[8] = "Darken";
 
     // camera setup
-    rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
-    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4() );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
-    ghostCameraManipulator()->setEnabled(false);
+    ghostCamera()->setEnabled(false);
 
     // dummy empty image
     mImage = new vl::Image(5,5,0, 1, vl::IF_RGBA, vl::IT_UNSIGNED_BYTE);
@@ -107,15 +109,15 @@ public:
 
     VL_CHECK_OGL()
 
-    mGridEffect = vl::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, 4, 4, true, vl::fvec2(0,0), vl::fvec2(1,1) );
+    mGridEffect = vlut::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, 4, 4, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     mGridEffect->transform(vl::mat4::getRotation(-90,1,0,0));
 
-    mGridOriginal = vl::makeGrid( vl::vec3(0.25f,0,0), 0.5f, 1.0f, 4, 4, true, vl::fvec2(0,0), vl::fvec2(0.5f,1) );
+    mGridOriginal = vlut::makeGrid( vl::vec3(0.25f,0,0), 0.5f, 1.0f, 4, 4, true, vl::fvec2(0,0), vl::fvec2(0.5f,1) );
     mGridOriginal->transform(vl::mat4::getRotation(-90,1,0,0));
     mGridOriginal->texCoordArray(0)->transform( vl::mat4::getTranslation(0.5f, 0,0) );
 
     mTransform = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform.get());
     vl::Actor* effect_act = sceneManager()->tree()->addActor(mGridEffect.get(), postproc_fx.get(), mTransform.get());
     effect_act->setRenderRank(0);
     vl::Actor* original_act = sceneManager()->tree()->addActor(mGridOriginal.get(), original_fx.get(), mTransform.get());
@@ -123,11 +125,11 @@ public:
 
     // text
     mText = new vl::Text;
-    mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
+    mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
     mText->setAlignment( vl::AlignHCenter | vl::AlignBottom );
     mText->setViewportAlignment( vl::AlignHCenter | vl::AlignBottom );
     mText->translate(0,5,0);
-    mText->setColor(vl::white);
+    mText->setColor(vlut::white);
     mText->setBackgroundColor(vl::fvec4(0,0,0,.75f));
     mText->setBackgroundEnabled(true);
     updateText();
@@ -177,8 +179,8 @@ public:
     vl::ref<vl::Uniform> image_height = mGLSLProgram->gocUniform("image_height");
     image_height->setUniform((float)mImage->width());
 
-    int w = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->width();
-    int h = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->height();
+    int w = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->renderTarget()->width();
+    int h = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->renderTarget()->height();
     resizeEvent( w, h );
     mTimer.start();
     mTest = 0;
@@ -187,7 +189,7 @@ public:
 
   void resizeEvent(int w, int h)
   {
-    vl::Camera* camera = rendering()->as<vl::Rendering>()->camera();
+    vl::Camera* camera = vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera();
     camera->viewport()->setWidth(w);
     camera->viewport()->setHeight(h);
     camera->setProjectionAsOrtho2D();

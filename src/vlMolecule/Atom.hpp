@@ -32,12 +32,12 @@
 #ifndef Atom_INCLUDE_ONCE
 #define Atom_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
-#include <vlCore/Vector4.hpp>
+#include <vl/Object.hpp>
+#include <vl/Vector4.hpp>
 #include <vlMolecule/chem_database.hpp>
 #include <vector>
 
-namespace vl
+namespace vlMolecule
 {
   
   /** The Atom class represents an atom to be used with the Molecule class.
@@ -46,12 +46,12 @@ namespace vl
    * - Molecule
    * - Bond
    *
-   * <img src="pics/pagGuideMolecule.png">
+   * \image html pagGuideMolecule.png
    */
-  class Atom: public Object
+  class Atom: public vl::Object
   {
   public:
-    virtual const char* className() { return "vl::Atom"; }
+    virtual const char* className() { return "Atom"; }
 
     Atom()
     {
@@ -60,8 +60,8 @@ namespace vl
       #endif
       mId       = 0;
       mAtomType = AT_Unknown;
-      mCoordinates = fvec3(0,0,0);
-      mColor    = fvec4(1.0f,1.0f,1.0f,1.0f);
+      mCoordinates = vl::fvec3(0,0,0);
+      mColor    = vl::fvec4(1.0f,1.0f,1.0f,1.0f);
       mRadius   = 0.25f;
       mVisited  = false;
       mVisible  = true;
@@ -105,8 +105,8 @@ namespace vl
     unsigned int id() const { return mId; }
     void setId(unsigned int id) { mId = id; }
 
-    const fvec3& coordinates() const { return mCoordinates; }
-    void setCoordinates(const fvec3& coordinates) { mCoordinates = coordinates; }
+    const vl::fvec3& coordinates() const { return mCoordinates; }
+    void setCoordinates(const vl::fvec3& coordinates) { mCoordinates = coordinates; }
 
     float radius() const { return mRadius; }
     void setRadius(float radius) { mRadius = radius; }
@@ -117,8 +117,8 @@ namespace vl
     void setAtomName(const std::string& name) { mAtomName = name; }
     const std::string& atomName() const { return mAtomName; }
 
-    const fvec4& color() const { return mColor; }
-    void setColor(const fvec4& color) { mColor = color; }
+    const vl::fvec4& color() const { return mColor; }
+    void setColor(const vl::fvec4& color) { mColor = color; }
 
     bool visible() const { return mVisible; }
     void setVisible(bool visible) { mVisible = visible; }
@@ -129,8 +129,8 @@ namespace vl
     bool showAtomName() const { return mShowAtomName; }
 
   protected:
-    fvec4 mColor;
-    fvec3 mCoordinates;
+    vl::fvec4 mColor;
+    vl::fvec3 mCoordinates;
     EAtomType mAtomType;
     float mRadius;
     std::vector< Atom* > mAdjacentAtoms;

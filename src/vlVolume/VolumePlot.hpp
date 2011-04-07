@@ -32,22 +32,24 @@
 #ifndef VolumePlot_INCLUDE_ONCE
 #define VolumePlot_INCLUDE_ONCE
 
-#include <vlVolume/config.hpp>
-#include <vlGraphics/Actor.hpp>
-#include <vlGraphics/Geometry.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlCore/Transform.hpp>
-#include <vlGraphics/ActorTreeAbstract.hpp>
-#include <vlGraphics/SceneManagerActorTree.hpp>
+#include <vl/Actor.hpp>
+#include <vl/Geometry.hpp>
+#include <vl/Text.hpp>
+#include <vl/Effect.hpp>
+#include <vl/Transform.hpp>
+#include <vl/ActorTreeAbstract.hpp>
+#include <vl/SceneManagerActorTree.hpp>
 #include <vlVolume/MarchingCubes.hpp>
 
 namespace vl
 {
   class SceneManager;
+}
 
+namespace vlVolume
+{
   //! Generates a 3D plot with labels and isosurface. The isosurface is generated using the MarchingCubes algorithm.
-  class VLVOLUME_EXPORT VolumePlot: public Object
+  class VolumePlot: public vl::Object
   {
   public:
     //! A function to be used with VolumePlot
@@ -58,8 +60,6 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::VolumePlot"; }
-
     //! Constructor.
     VolumePlot();
 
@@ -67,81 +67,81 @@ namespace vl
     void compute(const Function& func, float threshold);
 
     //! The Actor representing the isosurface
-    const Actor* isosurfaceActor() const { return mIsosurfaceActor.get(); }
+    const vl::Actor* isosurfaceActor() const { return mIsosurfaceActor.get(); }
     //! The Actor representing the isosurface
-    Actor* isosurfaceActor() { return mIsosurfaceActor.get(); }
+    vl::Actor* isosurfaceActor() { return mIsosurfaceActor.get(); }
 
     //! The Geometry representing the isosurface
-    const Geometry* isosurfaceGeometry() const { return mIsosurfaceGeometry.get(); }
+    const vl::Geometry* isosurfaceGeometry() const { return mIsosurfaceGeometry.get(); }
     //! The Geometry representing the isosurface
-    Geometry* isosurfaceGeometry() { return mIsosurfaceGeometry.get(); }
+    vl::Geometry* isosurfaceGeometry() { return mIsosurfaceGeometry.get(); }
 
     //! Used to get/set the rendering options (like color, material, transparency) etc. of the isosurface 
-    const Effect* isosurfaceEffect() const { return mIsosurfaceEffect.get(); }
+    const vl::Effect* isosurfaceEffect() const { return mIsosurfaceEffect.get(); }
     //! Used to get/set the rendering options (like color, material, transparency) etc. of the isosurface 
-    Effect* isosurfaceEffect() { return mIsosurfaceEffect.get(); }
+    vl::Effect* isosurfaceEffect() { return mIsosurfaceEffect.get(); }
 
     //! Used to get/set the rendering options (like color, material, transparency) etc. of the box
-    const Effect* boxEffect() const { return mBoxEffect.get(); }
+    const vl::Effect* boxEffect() const { return mBoxEffect.get(); }
     //! Used to get/set the rendering options (like color, material, transparency) etc. of the box
-    Effect* boxEffect() { return mBoxEffect.get(); }
+    vl::Effect* boxEffect() { return mBoxEffect.get(); }
 
-    //! Default value: fvec3(-1,-1,-1)
-    const fvec3& minCorner() const { return mMinCorner; }
-    //! Default value: fvec3(-1,-1,-1)
-    void setMinCorner(const fvec3& min_corner) { mMinCorner = min_corner; }
+    //! Default value: vl::fvec3(-1,-1,-1)
+    const vl::fvec3& minCorner() const { return mMinCorner; }
+    //! Default value: vl::fvec3(-1,-1,-1)
+    void setMinCorner(const vl::fvec3& min_corner) { mMinCorner = min_corner; }
 
-    //! Default value: fvec3(+1,+1,+1)
-    const fvec3& maxCorner() const { return mMaxCorner; }
-    //! Default value: fvec3(+1,+1,+1)
-    void setMaxCorner(const fvec3& max_corner) { mMaxCorner = max_corner; }
+    //! Default value: vl::fvec3(+1,+1,+1)
+    const vl::fvec3& maxCorner() const { return mMaxCorner; }
+    //! Default value: vl::fvec3(+1,+1,+1)
+    void setMaxCorner(const vl::fvec3& max_corner) { mMaxCorner = max_corner; }
 
     //! The transform associated to the whole plot
-    Transform* plotTransform() const { return mPlotTransform.get(); }
+    vl::Transform* plotTransform() const { return mPlotTransform.get(); }
     //! The transform associated to the whole plot
-    void setPlotTransform(Transform* tr) { mPlotTransform = tr; }
+    void setPlotTransform(vl::Transform* tr) { mPlotTransform = tr; }
 
-    //! Default value: ivec3(64,64,64)
-    const ivec3& samplingResolution() const { return mSamplingResolution; }
-    //! Default value: ivec3(64,64,64)
-    void setSamplingResolution(const ivec3& size) { mSamplingResolution = size; }
+    //! Default value: vl::ivec3(64,64,64)
+    const vl::ivec3& samplingResolution() const { return mSamplingResolution; }
+    //! Default value: vl::ivec3(64,64,64)
+    void setSamplingResolution(const vl::ivec3& size) { mSamplingResolution = size; }
 
     //! Sets the format of the labels
-    const String& labelFormat() const { return mLabelFormat; }
+    const vl::String& labelFormat() const { return mLabelFormat; }
     //! Sets the format of the label to be generated, es. "(%.2n %.2n %.2n)" or "<%.3n, %.3n, %.3n>"
-    void setLabelFormat(const String& format) { mLabelFormat = format; }
+    void setLabelFormat(const vl::String& format) { mLabelFormat = format; }
 
     //! The Font to be used for the box labels
-    Font* labelFont() const { return mLabelFont.get(); }
+    vl::Font* labelFont() const { return mLabelFont.get(); }
     //! The Font to be used for the box labels
-    void setLabelFont(Font* font) { mLabelFont = font; }
+    void setLabelFont(vl::Font* font) { mLabelFont = font; }
 
     //! A Text used to initialize the plot labels
-    const Text* textTemplate() const { return mTextTemplate.get(); }
+    const vl::Text* textTemplate() const { return mTextTemplate.get(); }
     //! A Text used to initialize the plot labels
-    Text* textTemplate() { return mTextTemplate.get(); }
+    vl::Text* textTemplate() { return mTextTemplate.get(); }
 
-    ActorTree* actorTreeMulti() { return mActorTreeMulti.get(); }
-    const ActorTree* actorTreeMulti() const { return mActorTreeMulti.get(); }
-
-  protected:
-    void setupLabels(const String& format, const fvec3& min_corner, const fvec3& max_corner, Font* font, Transform* root_tr);
-    void evaluateFunction(float* scalar, const fvec3& min_corner, const fvec3& max_corner, const Function& func);
+    vl::ActorTree* actorTreeMulti() { return mActorTreeMulti.get(); }
+    const vl::ActorTree* actorTreeMulti() const { return mActorTreeMulti.get(); }
 
   protected:
-    std::vector< ref<Actor> > mActors;
-    ref<Transform> mPlotTransform;
-    ivec3 mSamplingResolution;
-    String mLabelFormat;
-    ref< Font > mLabelFont;
-    fvec3 mMinCorner;
-    fvec3 mMaxCorner;
-    ref<Geometry> mIsosurfaceGeometry;
-    ref<Actor> mIsosurfaceActor;
-    ref<Effect> mIsosurfaceEffect;
-    ref<Effect> mBoxEffect;
-    ref<Text> mTextTemplate;
-    ref<ActorTree> mActorTreeMulti;
+    void setupLabels(const vl::String& format, const vl::fvec3& min_corner, const vl::fvec3& max_corner, vl::Font* font, vl::Transform* root_tr);
+    void evaluateFunction(float* scalar, const vl::fvec3& min_corner, const vl::fvec3& max_corner, const Function& func);
+
+  protected:
+    std::vector< vl::ref<vl::Actor> > mActors;
+    vl::ref<vl::Transform> mPlotTransform;
+    vl::ivec3 mSamplingResolution;
+    vl::String mLabelFormat;
+    vl::ref< vl::Font > mLabelFont;
+    vl::fvec3 mMinCorner;
+    vl::fvec3 mMaxCorner;
+    vl::ref<vl::Geometry> mIsosurfaceGeometry;
+    vl::ref<vl::Actor> mIsosurfaceActor;
+    vl::ref<vl::Effect> mIsosurfaceEffect;
+    vl::ref<vl::Effect> mBoxEffect;
+    vl::ref<vl::Text> mTextTemplate;
+    vl::ref<vl::ActorTree> mActorTreeMulti;
   };
 }
 

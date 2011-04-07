@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/half.hpp>
+#include "vl/half.hpp"
 #include <limits>
 #include <vector>
 

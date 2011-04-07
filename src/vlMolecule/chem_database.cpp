@@ -31,7 +31,7 @@
 
 #include <vlMolecule/chem_database.hpp>
 
-namespace vl
+namespace vlMolecule
 {
   //-----------------------------------------------------------------------------
   static const AtomInfo elements_database[AT_Count] = 
@@ -161,7 +161,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   EAtomType atomType(const char* type)
   {
-    std::string str = String(type).trim().toStdString();
+    std::string str = vl::String(type).trim().toStdString();
     for(int i=0; i<AT_Count; ++i)
     {
       if (strcmp(str.c_str(), elements_database[i].name()) == 0)
@@ -170,40 +170,40 @@ namespace vl
         return elements_database[i].type();
     }
     // see http://www.tripos.com/mol2/atom_types.html (Sybyl types)
-    if (str == "C.3")    return vl::AT_Carbon;
-    if (str == "C.2")    return vl::AT_Carbon;
-    if (str == "C.1")    return vl::AT_Carbon;
-    if (str == "C.ar")   return vl::AT_Carbon;
-    if (str == "C.cat")  return vl::AT_Carbon;
-    if (str == "N.3")    return vl::AT_Nitrogen;
-    if (str == "N.2")    return vl::AT_Nitrogen;
-    if (str == "N.1")    return vl::AT_Nitrogen;
-    if (str == "N.ar")   return vl::AT_Nitrogen;
-    if (str == "N.am")   return vl::AT_Nitrogen;
-    if (str == "N.pl3")  return vl::AT_Nitrogen;
-    if (str == "N.4")    return vl::AT_Nitrogen;
-    if (str == "O.3")    return vl::AT_Oxygen;
-    if (str == "O.2")    return vl::AT_Oxygen;
-    if (str == "O.co2")  return vl::AT_Oxygen;
-    if (str == "O.spc")  return vl::AT_Oxygen;
-    if (str == "O.t3p")  return vl::AT_Oxygen;
-    if (str == "S.3")    return vl::AT_Sulfur;
-    if (str == "S.2")    return vl::AT_Sulfur;
-    if (str == "S.O")    return vl::AT_Sulfur;
-    if (str == "S.O2")   return vl::AT_Sulfur;
-    if (str == "P.3")    return vl::AT_Sulfur;
-    if (str == "H.spc")  return vl::AT_Hydrogen;
-    if (str == "H.t3p")  return vl::AT_Hydrogen;
-    if (str == "LP")     return vl::AT_Unknown;
-    if (str == "Du")     return vl::AT_Unknown;
-    if (str == "Du.C")   return vl::AT_Unknown;
-    if (str == "Any")    return vl::AT_Unknown;
-    if (str == "Hal")    return vl::AT_Unknown;
-    if (str == "Het")    return vl::AT_Unknown;
-    if (str == "Hev")    return vl::AT_Unknown;
-    if (str == "Cr.th")  return vl::AT_Chromium;
-    if (str == "Cr.oh ") return vl::AT_Chromium;
-    if (str == "Co.oh")  return vl::AT_Cobalt;
+    if (str == "C.3")    return vlMolecule::AT_Carbon;
+    if (str == "C.2")    return vlMolecule::AT_Carbon;
+    if (str == "C.1")    return vlMolecule::AT_Carbon;
+    if (str == "C.ar")   return vlMolecule::AT_Carbon;
+    if (str == "C.cat")  return vlMolecule::AT_Carbon;
+    if (str == "N.3")    return vlMolecule::AT_Nitrogen;
+    if (str == "N.2")    return vlMolecule::AT_Nitrogen;
+    if (str == "N.1")    return vlMolecule::AT_Nitrogen;
+    if (str == "N.ar")   return vlMolecule::AT_Nitrogen;
+    if (str == "N.am")   return vlMolecule::AT_Nitrogen;
+    if (str == "N.pl3")  return vlMolecule::AT_Nitrogen;
+    if (str == "N.4")    return vlMolecule::AT_Nitrogen;
+    if (str == "O.3")    return vlMolecule::AT_Oxygen;
+    if (str == "O.2")    return vlMolecule::AT_Oxygen;
+    if (str == "O.co2")  return vlMolecule::AT_Oxygen;
+    if (str == "O.spc")  return vlMolecule::AT_Oxygen;
+    if (str == "O.t3p")  return vlMolecule::AT_Oxygen;
+    if (str == "S.3")    return vlMolecule::AT_Sulfur;
+    if (str == "S.2")    return vlMolecule::AT_Sulfur;
+    if (str == "S.O")    return vlMolecule::AT_Sulfur;
+    if (str == "S.O2")   return vlMolecule::AT_Sulfur;
+    if (str == "P.3")    return vlMolecule::AT_Sulfur;
+    if (str == "H.spc")  return vlMolecule::AT_Hydrogen;
+    if (str == "H.t3p")  return vlMolecule::AT_Hydrogen;
+    if (str == "LP")     return vlMolecule::AT_Unknown;
+    if (str == "Du")     return vlMolecule::AT_Unknown;
+    if (str == "Du.C")   return vlMolecule::AT_Unknown;
+    if (str == "Any")    return vlMolecule::AT_Unknown;
+    if (str == "Hal")    return vlMolecule::AT_Unknown;
+    if (str == "Het")    return vlMolecule::AT_Unknown;
+    if (str == "Hev")    return vlMolecule::AT_Unknown;
+    if (str == "Cr.th")  return vlMolecule::AT_Chromium;
+    if (str == "Cr.oh ") return vlMolecule::AT_Chromium;
+    if (str == "Co.oh")  return vlMolecule::AT_Cobalt;
     return AT_Unknown;
   }
   //-----------------------------------------------------------------------------

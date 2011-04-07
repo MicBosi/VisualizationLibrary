@@ -29,10 +29,10 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/DiskDirectory.hpp>
+#include <vl/DiskDirectory.hpp>
 #include <vlQt4/Qt4Widget.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/Say.hpp>
+#include <vl/Log.hpp>
+#include <vl/Say.hpp>
 #include "tests.hpp"
 
 using namespace vl;
@@ -43,10 +43,10 @@ class TestBatteryQt4: public TestBattery
 public:
   TestBatteryQt4(QApplication& app): mApplication(app) {}
 
-  void runGUI(const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void runGUI(float secs, const vl::String& title, BaseDemo* applet, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     /* used to display the application title next to FPS counter */
-    applet->setAppletName(title);
+    applet->setApplicationName(title);
 
     /* open a console so we can see the applet's output on stdout */
     showWin32Console();
@@ -57,7 +57,7 @@ public:
     /* create a native Qt4 window */
     vl::ref<vlQt4::Qt4Widget> qt4_window = new vlQt4::Qt4Widget;
 
-    setupApplet(applet, qt4_window.get(), bk_color, eye, center);
+    setupApplet(applet, qt4_window.get(), secs, bk_color, eye, center);
 
     /* Initialize the OpenGL context and window properties */
     qt4_window->initQt4Widget( title, format, NULL, x, y, width, height );
@@ -85,8 +85,11 @@ int main(int argc, char *argv[])
 
   /* parse command line arguments */
   int   test = 0;
+  float secs = 0;
   if (argc>=2)
     test = String(argv[1]).toInt();
+  if (argc>=3)
+    secs = String(argv[2]).toFloat();
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -98,7 +101,7 @@ int main(int argc, char *argv[])
   format.setMultisample(false);
 
   TestBatteryQt4 test_battery(app);
-  test_battery.run(test, format);
+  test_battery.run(test, secs, format);
 
   return 0;
 }

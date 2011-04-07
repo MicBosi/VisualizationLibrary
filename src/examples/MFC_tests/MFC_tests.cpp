@@ -30,27 +30,26 @@
 /**************************************************************************************/
 
 #include "StdAfx.h"
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlMFC/MFCWindow.hpp>
-#include <vlCore/DiskDirectory.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/Say.hpp>
+#include "vl/VisualizationLibrary.hpp"
+#include "vlMFC/MFCWindow.hpp"
+#include "vl/DiskDirectory.hpp"
+#include "vl/Log.hpp"
+#include "vl/Say.hpp"
 #include "tests.hpp"
 
 using namespace vl;
 using namespace vlWin32;
 using namespace vlMFC;
 
-//-----------------------------------------------------------------------------
 /* TestBattery implementation to work with MFC */
 class TestBatteryMFC: public TestBattery
 {
 public:
   TestBatteryMFC(MFCWindow* mfc_win): mVLCWin(mfc_win) {}
 
-  void runGUI(const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
+  void runGUI(float secs, const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat format, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
-    program->setAppletName(title);
+    program->setApplicationName(title);
 
     /* open a console so we can see the program's output on stdout */
     vl::showWin32Console();
@@ -58,7 +57,7 @@ public:
     /* init Visualization Library */
     vl::VisualizationLibrary::init();
 
-    setupApplet(program, mVLCWin, bk_color, eye, center);
+    setupApplet(program, mVLCWin, secs, bk_color, eye, center);
 
     /* Initialize the OpenGL context and window properties */
     mVLCWin->initMFCWindow(NULL, NULL, title, format, x, y, width, height );
@@ -67,7 +66,7 @@ public:
 protected:
   MFCWindow* mVLCWin;
 };
-//-----------------------------------------------------------------------------
+
 /* MFC_Test: implements the MFC application */
 class MFC_Test: public CWinApp
 {
@@ -80,20 +79,19 @@ public:
   virtual BOOL InitInstance();
   virtual int ExitInstance();
   /*virtual int Run();*/
-  virtual BOOL OnIdle(LONG lCount);
+  /*virtual BOOL OnIdle(LONG lCount);*/
 
 protected:
   ref<MFCWindow> mVLCWin;
 
   DECLARE_MESSAGE_MAP ()
 };
-//-----------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(MFC_Test, CWinApp)
 END_MESSAGE_MAP()
-//-----------------------------------------------------------------------------
+
 /* instance the MFC application*/
 MFC_Test mfc_app;
-//-----------------------------------------------------------------------------
+
 /* called when the application exits */
 int MFC_Test::ExitInstance()
 {
@@ -107,7 +105,7 @@ int MFC_Test::ExitInstance()
 
   return 0;
 }
-//-----------------------------------------------------------------------------
+
 /* called when the application starts */
 BOOL MFC_Test::InitInstance()
 {
@@ -116,7 +114,10 @@ BOOL MFC_Test::InitInstance()
   /* parse the command line */
   vl::String cmdline = m_lpCmdLine;
   int   test  = 0;
-  /*int   count = */sscanf(cmdline.toStdString().c_str(), "%d", &test);
+  float secs  = 0;
+  /*int   count = */sscanf(cmdline.toStdString().c_str(), "%d %d", &test, &secs);
+
+  vl::Log::print( vl::Say("Test #%n %.1ns-------------------------------------------------------------\n\n") << test << secs );
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -129,7 +130,7 @@ BOOL MFC_Test::InitInstance()
   format.setMultisample(true);*/
 
   TestBatteryMFC test_battery(mVLCWin.get());
-  test_battery.run(test, format);
+  test_battery.run(test, secs, format);
 
   /* MFC specific stuff */
   if (mVLCWin->m_hWnd)
@@ -141,13 +142,3 @@ BOOL MFC_Test::InitInstance()
 
   return TRUE;
 }
-//-----------------------------------------------------------------------------
-BOOL MFC_Test::OnIdle(LONG lCount)
-{
-  if( mVLCWin->continuousUpdate() )
-    mVLCWin->Win32Context::update();
-  else
-    Sleep(1);
-  return TRUE;
-}
-//-----------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 
 	\par Text Antialiasing
 	
-	<img src="pics/pagGuideAntialiasing_1.png">
+	\image html pagGuideAntialiasing_1.png
 
 Visualization Library addresses text rendering and line/polygon/points antialiasing separately. Visualization Library uses FreeType for text rendering which natively supports high quality sub-pixel antialiasing. Of course the antialiasing effect depends on the type and quality of the font used. The fonts distributed with VL (Bitstream Vera from the Gnome project) for example are excellent fonts and render high quality text. Poor fonts will always render poor text. The user does not need to enable text antialiasing, the text is always rendered antialiased, regardless of the settings discussed below.
 
@@ -20,8 +20,8 @@ Visualization Library addresses text rendering and line/polygon/points antialias
 		<td> Smoothing on </td>
 	</tr>
 	<tr>
-		<td> <img src="pics/pagGuideAntialiasing_2a.png"> </td>
-		<td> <img src="pics/pagGuideAntialiasing_2b.png"> </td>
+		<td> \image html pagGuideAntialiasing_2a.png </td>
+		<td> \image html pagGuideAntialiasing_2b.png </td>
 	</tr>
 	</table>
 
@@ -49,8 +49,8 @@ Keep also in mind that smoothed primitives require always more computational pow
 		<td> Multisampling 8x on </td>
 	</tr>
 	<tr>
-		<td> <img src="pics/pagGuideAntialiasing_3a.png"> </td>
-		<td> <img src="pics/pagGuideAntialiasing_3b.png"> </td>
+		<td> \image html pagGuideAntialiasing_3a.png </td>
+		<td> \image html pagGuideAntialiasing_3b.png </td>
 	</tr>
 	</table>
 

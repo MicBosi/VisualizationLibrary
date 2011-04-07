@@ -32,9 +32,8 @@
 #ifndef GLUT_Window_INCLUDE_ONCE
 #define GLUT_Window_INCLUDE_ONCE
 
-#include <vlGLUT/config.hpp>
-#include <vlCore/Vector4.hpp>
-#include <vlGraphics/OpenGLContext.hpp>
+#include <vl/OpenGLContext.hpp>
+#include <vl/Vector4.hpp>
 #include <map>
 #include <cstdlib> // exit()
 #if defined(__APPLE__)
@@ -56,7 +55,7 @@ namespace vlGLUT
   /**
    * The GLUTWindow class implements an OpenGLContext using the GLUT API.
   */
-  class VLGLUT_EXPORT GLUTWindow: public vl::OpenGLContext
+  class GLUTWindow: public vl::OpenGLContext
   {
   public:
     GLUTWindow();
@@ -68,7 +67,7 @@ namespace vlGLUT
 
     ~GLUTWindow()
     {
-      destroyWindow();
+      destroy();
     }
 
     virtual void setMouseVisible(bool visible);
@@ -83,6 +82,8 @@ namespace vlGLUT
     bool setFullscreen(bool fs);
 
     void makeCurrent();
+
+    void destroy();
 
     void updateOverlay();
 
@@ -107,7 +108,6 @@ namespace vlGLUT
     void getFocus();
 
   protected:
-    void destroyWindow();
     void initKeymap();
 
     vl::EKey mapAsciiKey(unsigned char ascii);
@@ -138,17 +138,17 @@ namespace vlGLUT
 
     static void glut_display_func();
 
-    static void glut_close_func();
-
     static void glut_wmclose_func();
-
-    // used for continuous update
-    static void glut_idle_func();
 
     // static void glut_overlay_display_func();
 
     // does not seem to work properly or usefully
     // static void glut_entry_func(int leave_enter);
+
+    static void glut_close_func();
+
+    // used for continuous update
+    static void glut_idle_func();
 
     // not used
     // static void glut_timer_func(int value);
@@ -161,7 +161,7 @@ namespace vlGLUT
     static std::map< int, GLUTWindow* > mWinMap;
   };
 
-  VLGLUT_EXPORT void atexit_visualization_library_shutdown();
+  void atexit_visualization_library_shutdown();
 }
 
 #endif

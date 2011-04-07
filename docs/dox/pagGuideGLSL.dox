@@ -4,7 +4,7 @@
 
 	This tutorial shows how simple it is to use the OpenGL Shading Language with Visualization Library. 
 
-	<img src="pics/pagGuideGLSL.jpg">
+	\image html pagGuideGLSL.jpg
 	
 	The example below demostrates the use of vertex shaders, fragment shaders and geometry shaders.
 	

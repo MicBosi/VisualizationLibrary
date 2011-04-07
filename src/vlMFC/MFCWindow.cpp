@@ -33,9 +33,9 @@
 
 #include <vlMFC/MFCWindow.hpp>
 #include <vlWin32/Win32Window.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/Say.hpp>
-#include <vlCore/Time.hpp>
+#include <vl/Log.hpp>
+#include <vl/Say.hpp>
+#include <vl/Time.hpp>
 #include <shellapi.h>
 
 using namespace vl;
@@ -67,7 +67,6 @@ BEGIN_MESSAGE_MAP(MFCWindow, CWnd)
   ON_WM_SIZE()
   ON_WM_TIMER()
   ON_WM_DROPFILES()
-  ON_WM_DESTROY()
 END_MESSAGE_MAP()
 /*
   WM_SYSKEYDOWN
@@ -81,19 +80,27 @@ END_MESSAGE_MAP()
 //-----------------------------------------------------------------------------
 MFCWindow::~MFCWindow()
 {
-  dispatchDestroyEvent();
+  destroy();
 }
 //-----------------------------------------------------------------------------
 int MFCWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
   if (CWnd::OnCreate(lpCreateStruct) == -1)
     return -1;
+
+  // more timers are needed to reach decent frame rates
+  SetTimer(1/*ID*/, 0/*ms*/, NULL);
+  SetTimer(2/*ID*/, 0/*ms*/, NULL);
+  SetTimer(3/*ID*/, 0/*ms*/, NULL);
+  SetTimer(4/*ID*/, 0/*ms*/, NULL);
+  SetTimer(5/*ID*/, 0/*ms*/, NULL);
+
   return 0;
 }
 //-----------------------------------------------------------------------------
 bool MFCWindow::initMFCWindow(CWnd* parent, MFCWindow* share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height)
 {
-  destroyGLContext();
+  destroyWindow();
 
   // register the class only once
   if (mClassName.IsEmpty())
@@ -105,12 +112,19 @@ bool MFCWindow::initMFCWindow(CWnd* parent, MFCWindow* share_context, const vl::
            x, y, width, height, 
            parent?parent->m_hWnd:NULL, NULL, NULL);
 
-  return initWin32GLContext(share_context?share_context->hglrc():NULL, title, fmt, x, y, width, height);
+  return init(share_context?share_context->hglrc():NULL, title, fmt, x, y, width, height);
 }
 //-----------------------------------------------------------------------------
-void MFCWindow::destroyGLContext()
+void MFCWindow::destroy()
 {
-  // wglMakeCurrent(NULL, NULL) not needed 
+  vlWin32::Win32Context::destroy();
+  destroyWindow();
+  /*dispatchDestroyEvent();*/
+}
+//-----------------------------------------------------------------------------
+void MFCWindow::destroyWindow()
+{
+  // wglMakeCurrent(NULL, NULL); // not needed 
   if (hwnd())
   {
     if (mHGLRC)
@@ -118,7 +132,7 @@ void MFCWindow::destroyGLContext()
       if ( wglDeleteContext(mHGLRC) == FALSE )
       {
         MessageBox( L"OpenGL context creation failed.\n"
-         L"The handle either doesn't specify a valid context or the context is being used by another thread.", L"MFCWindow::destroyGLContext() error!", MB_OK);
+         L"The handle either doesn't specify a valid context or the context is being used by another thread.", L"Visualization Library Error", MB_OK);
       }
       mHGLRC = NULL;
     }
@@ -128,13 +142,15 @@ void MFCWindow::destroyGLContext()
       DeleteDC(mHDC);
       mHDC = NULL;
     }
+
+    DestroyWindow();
   }
 }
 //-----------------------------------------------------------------------------
-void MFCWindow::OnDestroy()
+void MFCWindow::OnClose()
 {
-  dispatchDestroyEvent();
-  destroyGLContext();
+  destroy(); // destroy OpenGL rendering context
+  DestroyWindow(); // destroy Win32 window
 }
 //-----------------------------------------------------------------------------
 void MFCWindow::OnPaint()
@@ -172,14 +188,14 @@ void MFCWindow::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
   dispatchKeyReleaseEvent(unicode_out, key_out);
 }
 //-----------------------------------------------------------------------------
-void MFCWindow::countAndCapture()
+void MFCWindow::CountAndCapture()
 {
   mMouseDownCount++;
   if (mMouseDownCount == 1)
     ::SetCapture(hwnd());
 }
 //-----------------------------------------------------------------------------
-void MFCWindow::countAndRelease()
+void MFCWindow::CountAndRelease()
 {
   mMouseDownCount--;
   if (mMouseDownCount <= 0)
@@ -191,37 +207,37 @@ void MFCWindow::countAndRelease()
 //-----------------------------------------------------------------------------
 void MFCWindow::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-  countAndCapture();
+  CountAndCapture();
   dispatchMouseDownEvent( LeftButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MFCWindow::OnLButtonDown(UINT nFlags, CPoint point)
 {
-  countAndCapture();
+  CountAndCapture();
   dispatchMouseDownEvent( LeftButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MFCWindow::OnLButtonUp(UINT nFlags, CPoint point)
 {
-  countAndRelease();
+  CountAndRelease();
   dispatchMouseUpEvent( LeftButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MFCWindow::OnMButtonDblClk(UINT nFlags, CPoint point)
 {
-  countAndCapture();
+  CountAndCapture();
   dispatchMouseDownEvent( MiddleButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MFCWindow::OnMButtonDown(UINT nFlags, CPoint point)
 {
-  countAndCapture();
+  CountAndCapture();
   dispatchMouseDownEvent( MiddleButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MFCWindow::OnMButtonUp(UINT nFlags, CPoint point)
 {
-  countAndRelease();
+  CountAndRelease();
   dispatchMouseUpEvent( MiddleButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
@@ -238,19 +254,19 @@ BOOL MFCWindow::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 //-----------------------------------------------------------------------------
 void MFCWindow::OnRButtonDblClk(UINT nFlags, CPoint point)
 {
-  countAndCapture();
+  CountAndCapture();
   dispatchMouseDownEvent( RightButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MFCWindow::OnRButtonDown(UINT nFlags, CPoint point)
 {
-  countAndCapture();
+  CountAndCapture();
   dispatchMouseDownEvent( RightButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
 void MFCWindow::OnRButtonUp(UINT nFlags, CPoint point)
 {
-  countAndRelease();
+  CountAndRelease();
   dispatchMouseUpEvent( RightButton, point.x, point.y );
 }
 //-----------------------------------------------------------------------------
@@ -279,5 +295,18 @@ void MFCWindow::OnSize (UINT nType, int cx, int cy)
   renderTarget()->setWidth(cx);
   renderTarget()->setHeight(cy);
   dispatchResizeEvent(cx, cy);
+}
+//-----------------------------------------------------------------------------
+void MFCWindow::OnTimer(UINT_PTR nIDEvent)
+{
+  CWnd::OnTimer(nIDEvent);
+
+  if (nIDEvent>=0 && nIDEvent<=5)
+  {
+    if ( continuousUpdate() )
+      update();
+    else
+      Sleep(10);
+  }
 }
 //-----------------------------------------------------------------------------

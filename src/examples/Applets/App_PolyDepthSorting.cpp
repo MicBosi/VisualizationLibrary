@@ -30,9 +30,9 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/DepthSortCallback.hpp>
-#include <vlGraphics/Geometry.hpp>
-#include <vlGraphics/Light.hpp>
+#include "vl/DepthSortCallback.hpp"
+#include "vl/Geometry.hpp"
+#include "vl/Light.hpp"
 
 class App_PolyDepthSorting: public BaseDemo
 {
@@ -46,8 +46,8 @@ public:
     /* bind Transform */
     mTransform_Left  = new vl::Transform;
     mTransform_Right = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Left.get() );
-    rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Right.get() );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Left.get() );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mTransform_Right.get() );
 
     /* define the Effect to be used */
     vl::ref<vl::Effect> effect = new vl::Effect;
@@ -67,12 +67,6 @@ public:
     vl::ref<vl::ResourceDatabase> res_db;
     res_db = vl::loadResource(mFileName); if ( res_db && res_db->count<vl::Geometry>() ) geom_no_sort = res_db->get<vl::Geometry>(0);
     res_db = vl::loadResource(mFileName); if ( res_db && res_db->count<vl::Geometry>() ) geom_sorted  = res_db->get<vl::Geometry>(0);
-
-    if (!geom_no_sort->normalArray())
-      geom_no_sort->computeNormals();
-
-    if (!geom_sorted->normalArray())
-      geom_sorted->computeNormals();
 
     /*
      if you want you can do
@@ -114,7 +108,7 @@ public:
     mTransform_Right->setLocalMatrix(vl::mat4::getTranslation(+mOffset,0,0) * matrix );
   }
 
-  void updateScene() { updateTransforms(); }
+  void run() { updateTransforms(); }
 
 protected:
   vl::ref<vl::Transform> mTransform_Left;

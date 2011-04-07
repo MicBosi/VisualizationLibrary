@@ -4,7 +4,7 @@
 
 	In this tutorial you will learn how to use the vl::Tessellator class to tessellate a concave or self intersecting polygon into a set of triangles that can be rendered with Visualization Library.
 	
-	<img src="pics/pagGuideTessellation.jpg">
+	\image html pagGuideTessellation.jpg
 	
 	[From \p App_Tessellator.cpp]
 	\dontinclude App_Tessellator.cpp

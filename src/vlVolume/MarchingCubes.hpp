@@ -32,10 +32,9 @@
 #ifndef MarchingCubes_INCLUDE_ONCE
 #define MarchingCubes_INCLUDE_ONCE
 
-#include <vlVolume/config.hpp>
-#include <vlGraphics/Geometry.hpp>
+#include <vl/Geometry.hpp>
 
-namespace vl
+namespace vlVolume
 {
   //------------------------------------------------------------------------------
   // Volume
@@ -43,7 +42,7 @@ namespace vl
   /**
    * Defines the volume data to be used with a MarchingCube object.
    */
-  class VLVOLUME_EXPORT Volume: public Object
+  class Volume: public vl::Object
   {
     /**
      * A Volume cell.
@@ -55,17 +54,17 @@ namespace vl
       bool includes(float v) const { return v >= mMin && v <= mMax; }
     };
   public:
-    virtual const char* className() { return "vl::Volume"; }
-
     Volume();
 
-    void setup(float* data, const fvec3& bottom_left, const fvec3& top_right, const ivec3& slices);
+    virtual const char* className() { return "Volume"; }
+
+    void setup(float* data, const vl::fvec3& bottom_left, const vl::fvec3& top_right, const vl::ivec3& slices);
     void setup(const Volume&);
 
     /** Returns a new volume which is half of the size of the original volume in each direction (thus requires up to 1/8th of the memory).
         Use this function when the volume data to be processed is too big or produces too many polygons.
      */
-    ref<Volume> downsample() const;
+    vl::ref<Volume> downsample() const;
 
     const float* values() const { if (mValues.size()) return &mValues[0]; else return NULL; }
     float* values() { if (mValues.size()) return &mValues[0]; else return NULL; }
@@ -77,20 +76,20 @@ namespace vl
     float& value(int x, int y, int z) { return mValues[x + mSlices.x()*y + mSlices.x()*mSlices.y()*z]; }
 
     //! Computes a high quality normal (best rendering quality)
-    void normalHQ(fvec3& normal, const fvec3& v, float dx, float dy, float dz);
+    void normalHQ(vl::fvec3& normal, const vl::fvec3& v, float dx, float dy, float dz);
     //! Computes a low quality normal (best performances)
-    void normalLQ(fvec3& normal, const fvec3& v, float dx, float dy, float dz);
+    void normalLQ(vl::fvec3& normal, const vl::fvec3& v, float dx, float dy, float dz);
     //! Samples the volume using tri-linear interpolation sampling
     float sampleSmooth(float x, float y, float z) const;
     //! Samples the volume using nearest point sampling
     float sampleNearest(float x, float y, float z) const;
 
-    fvec3 coordinate(int x, int y, int z) const { return mBottomLeft + fvec3(float(mCellSize.x()*x), float(mCellSize.y()*y), float(mCellSize.z()*z)); }
+    vl::fvec3 coordinate(int x, int y, int z) const { return mBottomLeft + vl::fvec3(float(mCellSize.x()*x), float(mCellSize.y()*y), float(mCellSize.z()*z)); }
 
-    const fvec3& bottomLeft() const { return mBottomLeft; }
-    const fvec3& topRight() const { return mTopRight; }
-    const ivec3& slices() const { return mSlices; }
-    fvec3 size() const { return mSize; }
+    const vl::fvec3& bottomLeft() const { return mBottomLeft; }
+    const vl::fvec3& topRight() const { return mTopRight; }
+    const vl::ivec3& slices() const { return mSlices; }
+    vl::fvec3 size() const { return mSize; }
 
     float computeMinimum() const;
     float computeMaximum() const;
@@ -109,7 +108,7 @@ namespace vl
     }
 
     //! Returns the x/y/z size of a cell
-    const fvec3& cellSize() const { return mCellSize; }
+    const vl::fvec3& cellSize() const { return mCellSize; }
 
     //! Returns true if the internal data hasn't been updated since the last call to setDataDirty() or setup()
     bool dataIsDirty() const { return mDataIsDirty; }
@@ -120,11 +119,11 @@ namespace vl
 
   protected:
     std::vector<float> mValues;
-    fvec3 mBottomLeft;
-    fvec3 mTopRight;
-    fvec3 mSize;
-    ivec3 mSlices;
-    fvec3 mCellSize;
+    vl::fvec3 mBottomLeft;
+    vl::fvec3 mTopRight;
+    vl::fvec3 mSize;
+    vl::ivec3 mSlices;
+    vl::fvec3 mCellSize;
     float mMinimum;
     float mMaximum;
     float mAverage;
@@ -138,16 +137,13 @@ namespace vl
   /**
    * Defines the volume parameters to be used with a MarchingCube and Volume object.
    */
-  class VolumeInfo: public Object
+  class VolumeInfo: public vl::Object
   {
   public:
-    virtual const char* className() { return "vl::VolumeInfo"; }
+    virtual const char* className() { return "VolumeInfo"; }
 
-    VolumeInfo(Volume* vol, float threshold, const fvec4& color)
+    VolumeInfo(Volume* vol, float threshold, const vl::fvec4& color)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mColor = color;
       mThreshold = threshold;
       mVolume = vol;
@@ -157,17 +153,14 @@ namespace vl
 
     VolumeInfo(Volume* vol, float threshold)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
       mThreshold = threshold;
       mVolume = vol;
       mVert0 = -1;
       mVertC = -1;
     }
 
-    void setColor(const fvec4& col) { mColor = col; }
-    const fvec4& color() const { return mColor; }
+    void setColor(const vl::fvec4& col) { mColor = col; }
+    const vl::fvec4& color() const { return mColor; }
 
     void setThreshold(float t) { mThreshold = t; }
     float threshold() const { return mThreshold; }
@@ -182,9 +175,9 @@ namespace vl
     int vertC() const { return mVertC; }
 
   protected:
-    fvec4 mColor;
+    vl::fvec4 mColor;
     float mThreshold;
-    ref<Volume> mVolume;
+    vl::ref<Volume> mVolume;
     int mVert0, mVertC;
   };
   //------------------------------------------------------------------------------
@@ -193,7 +186,7 @@ namespace vl
   /**
    * An efficient implementation of the Marching Cubes algorithm.
    */
-  class VLVOLUME_EXPORT MarchingCubes
+  class MarchingCubes
   {
   public:
     MarchingCubes();
@@ -202,11 +195,11 @@ namespace vl
 
     void reset();
 
-    const Collection<VolumeInfo>* volumeInfo() const { return &mVolumeInfo; }
-    Collection<VolumeInfo>* volumeInfo() { return &mVolumeInfo; }
+    const vl::Collection<VolumeInfo>* volumeInfo() const { return &mVolumeInfo; }
+    vl::Collection<VolumeInfo>* volumeInfo() { return &mVolumeInfo; }
 
-    void updateColor(const fvec3& color, int volume_index);
-    void updateColor(const fvec4& color, int volume_index);
+    void updateColor(const vl::fvec3& color, int volume_index);
+    void updateColor(const vl::fvec4& color, int volume_index);
     void updateAlpha(float alpha, int volume_index);
 
     //! Select hight quality normals for best rendering quality, select low quality normals for best performances.
@@ -215,19 +208,19 @@ namespace vl
     bool highQualityNormals() const { return mHighQualityNormals; }
 
   public:
-    ref<ArrayFloat3> mVertsArray;
-    ref<ArrayFloat3> mNormsArray;
-    ref<ArrayFloat4> mColorArray;
-    ref<DrawElementsUInt> mDrawElements;
+    vl::ref<vl::ArrayFloat3> mVertsArray;
+    vl::ref<vl::ArrayFloat3> mNormsArray;
+    vl::ref<vl::ArrayFloat4> mColorArray;
+    vl::ref<vl::DrawElementsUInt> mDrawElements;
 
   protected:
     void computeEdges(Volume*, float threshold);
     void processCube(int x, int y, int z, Volume* vol, float threshold);
 
   private:
-    std::vector<fvec3> mVerts;
-    std::vector<fvec3> mNorms;
-    std::vector<fvec4> mColors;
+    std::vector<vl::fvec3> mVerts;
+    std::vector<vl::fvec3> mNorms;
+    std::vector<vl::fvec4> mColors;
     std::vector<unsigned int> mIndices;
     struct Edge
     {
@@ -235,8 +228,8 @@ namespace vl
       int mX, mY, mZ;
     };
     std::vector<Edge>  mEdges;
-    std::vector<usvec3> mCubes;
-    Collection<VolumeInfo> mVolumeInfo;
+    std::vector<vl::usvec3> mCubes;
+    vl::Collection<VolumeInfo> mVolumeInfo;
     bool mHighQualityNormals;
 
   protected:

@@ -32,20 +32,21 @@
 #include <vlMolecule/Molecule.hpp>
 #include <vlMolecule/RingExtractor.hpp>
 
+using namespace vlMolecule;
 using namespace vl;
 
 //-----------------------------------------------------------------------------
 Molecule::Molecule(): 
-  mActorTree(new ActorTree), 
-  mTransformTree(new Transform), 
-  mTags(new KeyValues), 
-  mAtomLabelTemplate(new Text),
-  mAtomLabelEffect(new Effect)
+  mActorTree(new vl::ActorTree), 
+  mTransformTree(new vl::Transform), 
+  mTags(new vl::KeyValues), 
+  mAtomLabelTemplate(new vl::Text),
+  mAtomLabelEffect(new vl::Effect)
 { 
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  mAtomLabelEffect->shader()->enable(EN_BLEND);
+  mAtomLabelEffect->shader()->enable(vl::EN_BLEND);
   reset(); 
 }
 //-----------------------------------------------------------------------------
@@ -228,7 +229,7 @@ void Molecule::setCPKAtomColors()
     atoms()[i]->setColor( atomInfo(atoms()[i]->atomType()).cpkColor() );
 }
 //-----------------------------------------------------------------------------
-void Molecule::setAtomColors(const fvec4& color)
+void Molecule::setAtomColors(const vl::fvec4& color)
 {
   for(unsigned i=0; i<atoms().size(); ++i)
     atoms()[i]->setColor( color );
@@ -277,7 +278,7 @@ void Molecule::setAtomTypeVisible(EAtomType type, bool visible)
       atom(i)->setVisible(visible);
 }
 //-----------------------------------------------------------------------------
-void Molecule::setAromaticBondsColor(const fvec4& color)
+void Molecule::setAromaticBondsColor(const vl::fvec4& color)
 {
   for(unsigned i=0; i<bonds().size(); ++i)
   {

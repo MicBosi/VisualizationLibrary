@@ -32,25 +32,26 @@
 /* The marching cubes tables are from Cory Bloyd. */
 
 #include <vlVolume/MarchingCubes.hpp>
-#include <vlCore/Time.hpp>
-#include <vlGraphics/DoubleVertexRemover.hpp>
+#include <vl/Time.hpp>
+#include <vl/DoubleVertexRemover.hpp>
 
 using namespace vl;
+using namespace vlVolume;
 
-/** \class vl::MarchingCubes
+/** \class vlVolume::MarchingCubes
 
 Pictures from the \ref pagGuideMarchingCubes "Marching Cubes" tutorial.
 <center>
 <table border=0 cellspacing=0 cellpadding=5>
 <tr>
-	<td colspan=2> <img src="pics/pagGuideMarchingCubes.jpg"> </td>
-	<td colspan=2> <img src="pics/pagGuideMarchingCubes_5.jpg"> </td>
+	<td colspan=2> \image html pagGuideMarchingCubes.jpg </td>
+	<td colspan=2> \image html pagGuideMarchingCubes_5.jpg </td>
 </tr>
 <tr>
-	<td> <img src="pics/pagGuideMarchingCubes_1.jpg"> </td>
-	<td> <img src="pics/pagGuideMarchingCubes_2.jpg"> </td>
-	<td> <img src="pics/pagGuideMarchingCubes_3.jpg"> </td>
-	<td> <img src="pics/pagGuideMarchingCubes_4.jpg"> </td>
+	<td> \image html pagGuideMarchingCubes_1.jpg </td>
+	<td> \image html pagGuideMarchingCubes_2.jpg </td>
+	<td> \image html pagGuideMarchingCubes_3.jpg </td>
+	<td> \image html pagGuideMarchingCubes_4.jpg </td>
 </tr>
 </table>
 </center>
@@ -310,7 +311,7 @@ void MarchingCubes::run(bool generate_colors)
   mColors.reserve(1024);
   mIndices.reserve(1024);
 
-  /*Time time; time.start();*/
+  /*vl::Time time; time.start();*/
 
   for(int ivol=0; ivol<mVolumeInfo.size(); ++ivol)
   {
@@ -446,9 +447,6 @@ void MarchingCubes::updateAlpha(float alpha, int volume_index)
 //------------------------------------------------------------------------------
 Volume::Volume()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
   setup(NULL, fvec3(0,0,0), fvec3(1.0f,1.0f,1.0f), ivec3(50,50,50));
 }
 //------------------------------------------------------------------------------
@@ -462,7 +460,7 @@ ref<Volume> Volume::downsample() const
   if (h<1) h = 1;
   if (d<1) d = 1;
 
-  vol->setup(NULL, bottomLeft(), topRight(), ivec3(w,h,d));
+  vol->setup(NULL, bottomLeft(), topRight(), vl::ivec3(w,h,d));
 
   for(int z=0; z<d; ++z)
   {

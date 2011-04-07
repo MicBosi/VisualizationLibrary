@@ -30,18 +30,18 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlCore/Colors.hpp>
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/FontManager.hpp>
-#include <vlGraphics/Light.hpp>
+#include "vlut/Colors.hpp"
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/Text.hpp"
+#include "vl/FontManager.hpp"
+#include "vl/Light.hpp"
 
 class App_TextRendering: public BaseDemo
 {
 public:
   App_TextRendering(int test): mTestNumber(test) {}
 
-  void updateScene()
+  void run()
   {
     if (_text1)
     {
@@ -123,9 +123,9 @@ public:
     vl::ref<vl::Font> font;
     if (mTestNumber == 0)
     {
-      rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vl::white );
+      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::white );
 
-      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 30);
+      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 30);
 
       vl::ref<vl::Text> text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -136,15 +136,15 @@ public:
       text->setTextAlignment( vl::TextAlignJustify );
       text->setAlignment( vl::AlignHCenter | vl::AlignTop );
       text->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
-      text->setColor( vl::red );
+      text->setColor( vlut::red );
       text->setShadowVector( vl::fvec2(5,5) );
       text->setOutlineEnabled(true);
-      text->setOutlineColor(vl::black);
+      text->setOutlineColor(vlut::black);
       text->translate(0,-20,0);
 
-      float h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      float h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
-      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10);
+      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10);
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
       text->setFont(font.get());
@@ -153,13 +153,13 @@ public:
       text->setTextAlignment( vl::TextAlignJustify );
       text->setAlignment( vl::AlignHCenter | vl::AlignTop );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor( vl::black );
+      text->setColor( vlut::black );
       text->setShadowVector( vl::fvec2(5,5) );
       text->translate(0,h-10,0);
 
-      h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
-      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 8);
+      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 8);
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
       text->setFont(font.get());
@@ -168,13 +168,13 @@ public:
       text->setTextAlignment( vl::TextAlignLeft );
       text->setAlignment( vl::AlignHCenter | vl::AlignTop );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter);
-      text->setColor(vl::crimson);
-      text->setBorderColor( vl::red );
+      text->setColor(vlut::crimson);
+      text->setBorderColor( vlut::red );
       text->setShadowColor(vl::fvec4(0,0,0,0.3f));
       text->setBorderEnabled(true);
       text->translate(0,h-10,0);
 
-      h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -184,13 +184,13 @@ public:
       text->setTextAlignment( vl::TextAlignCenter );
       text->setAlignment( vl::AlignHCenter | vl::AlignTop );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter);
-      text->setColor(vl::crimson);
+      text->setColor(vlut::crimson);
       text->setShadowColor(vl::fvec4(0,0,0,0.3f));
       text->setBorderEnabled(true);
-      text->setBorderColor( vl::red );
+      text->setBorderColor( vlut::red );
       text->translate(0,h-20,0);
 
-      h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -200,13 +200,13 @@ public:
       text->setTextAlignment( vl::TextAlignRight );
       text->setAlignment( vl::AlignHCenter | vl::AlignTop );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter);
-      text->setColor(vl::crimson);
+      text->setColor(vlut::crimson);
       text->setShadowColor(vl::fvec4(0,0,0,0.3f));
       text->setBorderEnabled(true);
-      text->setBorderColor( vl::red );
+      text->setBorderColor( vlut::red );
       text->translate(0,h-20,0);
 
-      h = (float)text->boundingRectTransformed( rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
+      h = (float)text->boundingRectTransformed( vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera() ).minCorner().y();
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -216,16 +216,16 @@ public:
       text->setTextAlignment( vl::TextAlignJustify );
       text->setAlignment( vl::AlignHCenter | vl::AlignTop );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter);
-      text->setColor(vl::crimson);
+      text->setColor(vlut::crimson);
       text->setShadowColor(vl::fvec4(0,0,0,0.3f));
       text->setBorderEnabled(true);
-      text->setBorderColor( vl::red );
+      text->setBorderColor( vlut::red );
       text->translate(0,h-20,0);
     }
     else
     if (mTestNumber == 1)
     {
-      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
+      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
       vl::ref<vl::Text> text;
 
       text = new vl::Text;
@@ -239,7 +239,7 @@ public:
       text->setViewportAlignment( vl::AlignTop | vl::AlignLeft );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
-      text->setColor( vl::black );
+      text->setColor( vlut::black );
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -252,7 +252,7 @@ public:
       text->setViewportAlignment( vl::AlignTop | vl::AlignRight );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
-      text->setColor( vl::black );
+      text->setColor( vlut::black );
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -265,7 +265,7 @@ public:
       text->setViewportAlignment( vl::AlignBottom | vl::AlignLeft );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
-      text->setColor( vl::black );
+      text->setColor( vlut::black );
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -278,7 +278,7 @@ public:
       text->setViewportAlignment( vl::AlignBottom | vl::AlignRight );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
-      text->setColor( vl::black );
+      text->setColor( vlut::black );
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -290,20 +290,20 @@ public:
       text->setViewportAlignment( vl::AlignVCenter | vl::AlignHCenter );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
-      text->setColor( vl::black );
+      text->setColor( vlut::black );
     }
     else
     if (mTestNumber == 2)
     {
       _text1 = new vl::Text;
       sceneManager()->tree()->addActor( _text1.get(), effect.get() );
-      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10);
+      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10);
       _text1->setFont( font.get() );
       _text1->setText( cprog );
       _text1->setMode(vl::Text2D);
       _text1->setAlignment( vl::AlignVCenter | vl::AlignHCenter );
       _text1->setViewportAlignment( vl::AlignVCenter | vl::AlignHCenter );
-      _text1->setColor(vl::black);
+      _text1->setColor(vlut::black);
       _text1->setMargin(10);
       _text1->setBorderEnabled(true);
       _text1->setBackgroundEnabled(true);
@@ -320,9 +320,9 @@ public:
       vl::String system_font_directory = get_system_font_directory();
 
       /* chinese & japanese fonts */
-      vl::ref<vl::Font> chinese_font = vl::defFontManager()->acquireFont(system_font_directory+"/simhei.ttf", 16);
+      vl::ref<vl::Font> chinese_font = vl::VisualizationLibrary::fontManager()->acquireFont(system_font_directory+"/simhei.ttf", 16);
       /* english, russian, hebrew, arabic */
-      font = vl::defFontManager()->acquireFont(system_font_directory+"/arial.ttf", 16);
+      font = vl::VisualizationLibrary::fontManager()->acquireFont(system_font_directory+"/arial.ttf", 16);
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -331,7 +331,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignTop | vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
@@ -346,7 +346,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignTop | vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
@@ -359,7 +359,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignTop | vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
@@ -373,7 +373,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignTop | vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
@@ -387,7 +387,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignTop | vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
@@ -400,13 +400,13 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignTop | vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
       text->translate(0,-40-space*5,0);
 
-      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
+      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8);
 
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), effect.get() );
@@ -415,7 +415,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(0);
       text->translate(0,-40-space*0,0);
 
@@ -426,7 +426,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(0);
       text->translate(0,-40-space*1,0);
 
@@ -437,7 +437,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(0);
       text->translate(0,-40-space*2,0);
 
@@ -448,7 +448,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(0);
       text->translate(0,-40-space*3,0);
 
@@ -459,7 +459,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(0);
       text->translate(0,-40-space*4,0);
 
@@ -470,7 +470,7 @@ public:
       text->setMode(vl::Text2D);
       text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
       text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setColor(vl::black);
+      text->setColor(vlut::black);
       text->setMargin(0);
       text->translate(0,-40-space*5,0);
     }
@@ -479,10 +479,10 @@ public:
     {
       vl::ref<vl::Light> light = new vl::Light(0);
 
-      vl::ref<vl::Geometry> planet = vl::makeIcosphere(vl::vec3(0,0,0), 1, 2 );
+      vl::ref<vl::Geometry> planet = vlut::makeIcosphere(vl::vec3(0,0,0), 1, 2 );
       planet->computeNormals();
 
-      vl::ref<vl::Geometry> moon = vl::makeIcosphere(vl::vec3(0,0,0), 0.5, 1 );
+      vl::ref<vl::Geometry> moon = vlut::makeIcosphere(vl::vec3(0,0,0), 0.5, 1 );
       moon->computeNormals();
 
       vl::ref<vl::Effect> sun_effect = new vl::Effect;
@@ -490,23 +490,23 @@ public:
       sun_effect->shader()->enable(vl::EN_LIGHTING);
       sun_effect->shader()->enable(vl::EN_DEPTH_TEST);
       sun_effect->shader()->enable(vl::EN_CULL_FACE);
-      sun_effect->shader()->gocMaterial()->setDiffuse(vl::gold);
+      sun_effect->shader()->gocMaterial()->setDiffuse(vlut::gold);
 
       vl::ref<vl::Effect> planet_effect = new vl::Effect;
       planet_effect->shader()->setRenderState( light.get() );
       planet_effect->shader()->enable(vl::EN_LIGHTING);
       planet_effect->shader()->enable(vl::EN_DEPTH_TEST);
       planet_effect->shader()->enable(vl::EN_CULL_FACE);
-      planet_effect->shader()->gocMaterial()->setDiffuse(vl::gray);
+      planet_effect->shader()->gocMaterial()->setDiffuse(vlut::gray);
 
       vl::ref<vl::Effect> earth_effect = new vl::Effect;
       earth_effect->shader()->setRenderState( light.get() );
       earth_effect->shader()->enable(vl::EN_LIGHTING);
       earth_effect->shader()->enable(vl::EN_DEPTH_TEST);
       earth_effect->shader()->enable(vl::EN_CULL_FACE);
-      earth_effect->shader()->gocMaterial()->setDiffuse(vl::royalblue);
+      earth_effect->shader()->gocMaterial()->setDiffuse(vlut::royalblue);
 
-      vl::ref<vl::Font> font = vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10);
+      vl::ref<vl::Font> font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10);
 
       vl::ref<vl::Effect> name_effect = new vl::Effect;
       name_effect->shader()->setRenderState( light.get() );
@@ -528,7 +528,7 @@ public:
       text->setFont(font.get());
       text->setMode( vl::Text2D );
       text->setText( L"Sun");
-      text->setColor(vl::white);
+      text->setColor(vlut::white);
       text->setAlignment(vl::AlignBottom|vl::AlignLeft);
 
       /* belts & planets */
@@ -538,7 +538,7 @@ public:
       belt_effect->shader()->enable(vl::EN_LIGHTING);
       belt_effect->shader()->enable(vl::EN_DEPTH_TEST);
       belt_effect->shader()->enable(vl::EN_CULL_FACE);
-      belt_effect->shader()->gocMaterial()->setFlatColor(vl::red);
+      belt_effect->shader()->gocMaterial()->setFlatColor(vlut::red);
       belt_effect->shader()->enable(vl::EN_BLEND);
       belt_effect->shader()->enable(vl::EN_LINE_SMOOTH);
       // render this first
@@ -559,15 +559,15 @@ public:
       };
 
       vl::ref<vl::Transform> belt_tr = new vl::Transform;
-      rendering()->as<vl::Rendering>()->transform()->addChild( belt_tr.get() );
+      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( belt_tr.get() );
 
       for(int i=0; i<9; i++)
       {
-        vl::ref< vl::Geometry > belt1 = vl::makeCircle(vl::vec3(0,0,0), 3.0f*(i+1));
+        vl::ref< vl::Geometry > belt1 = vlut::makeCircle(vl::vec3(0,0,0), 3.0f*(i+1));
         sceneManager()->tree()->addActor( belt1.get(), belt_effect.get(), belt_tr.get() );
 
         planet_tr[i] = new vl::Transform;
-        rendering()->as<vl::Rendering>()->transform()->addChild( planet_tr[i].get() );
+        vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( planet_tr[i].get() );
 
         if (i == 2)
           /* Earth */
@@ -581,7 +581,7 @@ public:
         text->setFont(font.get());
         text->setMode( vl::Text2D );
         text->setText( names[i] );
-        text->setColor(vl::white);
+        text->setColor(vlut::white);
         text->setAlignment(vl::AlignBottom | vl::AlignLeft);
         /* when the label follows an object the settings for text->setViewportAlignment don't have any effect */
       }
@@ -599,8 +599,8 @@ public:
       text->setFont(font.get());
       text->setMode( vl::Text2D );
       text->setText( L"Moon");
-      text->setColor(vl::gold);
-      text->setBorderColor(vl::royalblue);
+      text->setColor(vlut::gold);
+      text->setBorderColor(vlut::royalblue);
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
       text->setBackgroundColor( vl::fvec4(1,1,1,0.35f) );
@@ -611,13 +611,13 @@ public:
 
       /* the title */
 
-      font = vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 20);
+      font = vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 20);
       text = new vl::Text;
       sceneManager()->tree()->addActor( text.get(), name_effect.get() );
       text->setFont(font.get());
       text->setMode( vl::Text2D );
       text->setText( L"The Solar System");
-      text->setColor(vl::white);
+      text->setColor(vlut::white);
       text->setAlignment(vl::AlignTop | vl::AlignHCenter );
       text->setViewportAlignment(vl::AlignTop | vl::AlignHCenter );
       text->translate(0,-20,0);

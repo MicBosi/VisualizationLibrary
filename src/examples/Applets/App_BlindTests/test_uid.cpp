@@ -31,9 +31,9 @@
 
 //-----------------------------------------------------------------------------
 
-#include <vlCore/UUID.hpp>
-#include <vlCore/Random.hpp>
-#include <vlCore/checks.hpp>
+#include <vl/UUID.hpp>
+#include <vl/Random.hpp>
+#include <vl/checks.hpp>
 #include <cstdio>
 #include <set>
 

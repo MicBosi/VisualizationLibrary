@@ -32,26 +32,23 @@
 #ifndef Win32Context_INCLUDE_ONCE
 #define Win32Context_INCLUDE_ONCE
 
-#include <vlWin32/config.hpp>
-#include <vlGraphics/OpenGLContext.hpp>
+#include "vl/OpenGLContext.hpp"
 
 namespace vlWin32
 {
 //-----------------------------------------------------------------------------
-  VLWIN32_EXPORT int choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose = true);
+  int choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose = true);
 //-----------------------------------------------------------------------------
   /**
    * The Win32Context class implements an OpenGLContext using the Win32 API.
    */
-  class VLWIN32_EXPORT Win32Context: public vl::OpenGLContext
+  class Win32Context: public vl::OpenGLContext
   {
   public:
     Win32Context(): mHDC(NULL), mHGLRC(NULL) {}
 
     Win32Context(int w, int h): OpenGLContext(w,h), mHDC(NULL), mHGLRC(NULL) {}
 
-    ~Win32Context();
-  
     virtual HWND hwnd() const = 0;
 
     HDC   hdc()   const { return mHDC;   }
@@ -117,7 +114,7 @@ namespace vlWin32
     void setContextAttribs(const int* attribs);
 
   protected:
-    bool initWin32GLContext(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height);
+    bool init(HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x, int y, int width, int height);
 
   protected:
     std::vector<int> mContextAttribs;

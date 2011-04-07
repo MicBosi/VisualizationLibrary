@@ -12,10 +12,10 @@
 		<th colspan=4> Sample Foreset Model (1681 trees) - Benchmark on NVIDIA GeForce 8600M GT, Intel Core 2 Duo 2.0GHz </th>
 	</tr>
 	<tr>
-		<td> <img src="pics/pagGuideOcclusionCulling1.jpg"> </td>
-		<td> <img src="pics/pagGuideOcclusionCulling3.jpg"> </td>
-		<td> <img src="pics/pagGuideOcclusionCulling4.jpg"> </td>
-		<td> <img src="pics/pagGuideOcclusionCulling2.jpg"> </td>
+		<td> \image html pagGuideOcclusionCulling1.jpg </td>
+		<td> \image html pagGuideOcclusionCulling3.jpg </td>
+		<td> \image html pagGuideOcclusionCulling4.jpg </td>
+		<td> \image html pagGuideOcclusionCulling2.jpg </td>
 	</tr>
 	<tr>
 		<td valign=top> 
@@ -52,7 +52,7 @@
 
 The OpenGL extension \p GL_ARB_occlusion_query allows a program to request if a given object will contribute or not to the final rendering providing a huge potential in terms of rendering performances increase as we have seen. Unfortunately this technique has also some drawbacks due to the way the GPU and CPU collaborate, the most important being the fact that once you requested this occlusion visibility check, the OpenGL driver cannot reply before having executed all the OpenGL commands that precede such request. For this reason in order to maximize the CPU/GPU concurrency (and with it the rendering performances) Visualization Library waits one rendering frame before checking the result of the occlusion queries. This means that at any given frame the result of such query actually refers to the position that the camera and the objects had relative to each other in the previous frame. As a result of this occasional flickers might occur when an invisible object becomes visible especially when the camera or such object is moving fast compared to the rendering refresh rate. An example of such problem is shown below.
 	
-	<img src="pics/pagGuideOcclusionCulling_Error.jpg">
+	\image html pagGuideOcclusionCulling_Error.jpg
 	
 	In the image above the camera is quickly moving to the left uncovering a part of the trees that in the preceding frame were covered by the red occluder. Such trees weren't visible in the previous frame and are thus not rendered in the current frame producing a temporary "hole" in the forest. Note that such "hole" lasts for a single rendering frame but potentially new holes might occur while the camera continues its movement.
 	

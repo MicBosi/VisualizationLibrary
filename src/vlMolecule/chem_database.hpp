@@ -32,11 +32,10 @@
 #ifndef ChemDatabase_INCLUDE_ONCE
 #define ChemDatabase_INCLUDE_ONCE
 
-#include <vlMolecule/config.hpp>
-#include <vlCore/Vector4.hpp>
-#include <vlCore/String.hpp>
+#include <vl/Vector4.hpp>
+#include <vl/String.hpp>
 
-namespace vl
+namespace vlMolecule
 {
   //! Element types.
   typedef enum
@@ -220,9 +219,9 @@ namespace vl
     //! Returns the atom's van der Waals radius in Angstroms
     double vanDerWaalsRadius() const { return mVanDerWaalsRadius / 100.0; }
     //! Returns the atom's CPK color
-    fvec4 cpkColor() const 
+    vl::fvec4 cpkColor() const 
     {
-      fvec4 c;
+      vl::fvec4 c;
       c.r() = ((mCPKColor >> 16) & 0xFF) / 255.0f;
       c.g() = ((mCPKColor >> 8)  & 0xFF) / 255.0f;
       c.b() =  (mCPKColor        & 0xFF) / 255.0f;
@@ -230,9 +229,9 @@ namespace vl
       return c; 
     }
     //! Returns the atom's RasMol color
-    fvec4 rasmolColor() const 
+    vl::fvec4 rasmolColor() const 
     {
-      fvec4 c;
+      vl::fvec4 c;
       c.r() = ((mRasMolColor >> 16) & 0xFF) / 255.0f;
       c.g() = ((mRasMolColor >> 8)  & 0xFF) / 255.0f;
       c.b() =  (mRasMolColor        & 0xFF) / 255.0f;
@@ -260,10 +259,10 @@ namespace vl
   };
 
   //! Returns an AtomInfo representing the properties of the given atom type.
-  VLMOLECULE_EXPORT const AtomInfo& atomInfo(EAtomType type);
+  const AtomInfo& atomInfo(EAtomType type);
 
   //! Translates a string containing atom type name, atom symbol or a Sybyl type into an EAtomType.
-  VLMOLECULE_EXPORT EAtomType atomType(const char* type);
+  EAtomType atomType(const char* type);
 }
 
 #endif

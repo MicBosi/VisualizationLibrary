@@ -1,108 +1,415 @@
-################################################################################
-#                                                                              #
-#  Copyright (c) 2005-2011, Michele Bosi, Thiago Bastos                        #
-#  All rights reserved.                                                        #
-#                                                                              #
-#  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.com                                         #
-#                                                                              #
-#  Released under the OSI approved Simplified BSD License                      #
-#  http://www.opensource.org/licenses/bsd-license.php                          #
-#                                                                              #
-################################################################################
+######################################################################################
+#                                                                                    #
+#  Visualization Library                                                             #
+#  http://www.visualizationlibrary.com                                               #
+#                                                                                    #
+#  Copyright (c) 2005-2010, Michele Bosi                                             #
+#  All rights reserved.                                                              #
+#                                                                                    #
+#  Redistribution and use in source and binary forms, with or without modification,  #
+#  are permitted provided that the following conditions are met:                     #
+#                                                                                    #
+#  - Redistributions of source code must retain the above copyright notice, this     #
+#  list of conditions and the following disclaimer.                                  #
+#                                                                                    #
+#  - Redistributions in binary form must reproduce the above copyright notice, this  #
+#  list of conditions and the following disclaimer in the documentation and/or       #
+#  other materials provided with the distribution.                                   #
+#                                                                                    #
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND   #
+#  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED     #
+#  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE            #
+#  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR  #
+#  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES    #
+#  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;      #
+#  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON    #
+#  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT           #
+#  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS     #
+#  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                      #
+#                                                                                    #
+######################################################################################
 
-################################################################################
-# Modules
-################################################################################
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-# VLCore
-add_subdirectory("vlCore")
+PROJECT(${VISUALIZATIONLIBRARY_NAME})
 
-# VLGraphics
-add_subdirectory("vlGraphics")
+SET(VL_SRC
+  vl/AABB.cpp
+  vl/Actor.cpp
+  vl/ActorTreeAbstract.cpp
+  vl/ActorTree.cpp
+  vl/BezierSurface.cpp
+  vl/Billboard.cpp
+  vl/Camera.cpp
+  vl/Clear.cpp
+  vl/ClipPlane.cpp
+  vl/DiskDirectory.cpp
+  vl/DiskFile.cpp
+  vl/DoubleVertexRemover.cpp
+  vl/DrawPixels.cpp
+  vl/EdgeExtractor.cpp
+  vl/EdgeRenderer.cpp
+  vl/Effect.cpp
+  vl/Extrusion.cpp
+  vl/Font.cpp
+  vl/FontManager.cpp
+  vl/FramebufferObject.cpp
+  vl/GLSL.cpp
+  vl/Geometry.cpp
+  vl/GhostCameraManipulator.cpp
+  vl/GZipCodec.cpp
+  vl/UUID.cpp
+  vl/Image.cpp
+  vl/Image_Tools.cpp
+  vl/ActorKdTree.cpp
+  vl/KeyValues.cpp
+  vl/Light.cpp
+  vl/LoadWriterManager.cpp
+  vl/Log.cpp
+  vl/MD5CheckSum.cpp
+  vl/MemoryDirectory.cpp
+  vl/MemoryFile.cpp
+  vl/MorphingCallback.cpp
+  vl/FileSystem.cpp
+  vl/OcclusionCullRenderer.cpp
+  vl/Object.cpp
+  vl/OpenGL.cpp
+  vl/OpenGLContext.cpp
+  vl/PixelLODEvaluator.cpp
+  vl/Plane.cpp
+  vl/PolygonSimplifier.cpp
+  vl/ProjViewTransfCallback.cpp
+  vl/SceneManagerPortals.cpp
+  vl/Random.cpp
+  vl/RayIntersector.cpp
+  vl/RenderTarget.cpp
+  vl/Renderer.cpp
+  vl/Rendering.cpp
+  vl/RenderingAbstract.cpp
+  vl/RenderingTree.cpp
+  vl/RenderStateSet.cpp
+  vl/UniformSet.cpp
+  vl/Say.cpp
+  vl/SceneManager.cpp
+  vl/Shader.cpp
+  vl/String.cpp
+  vl/TriangleStripGenerator.cpp
+  vl/Terrain.cpp
+  vl/Tessellator.cpp
+  vl/Text.cpp
+  vl/TextStream.cpp
+  vl/Texture.cpp
+  vl/Time.cpp
+  vl/TrackballManipulator.cpp
+  vl/Transform.cpp
+  vl/Viewport.cpp
+  vl/VirtualDirectory.cpp
+  vl/VirtualFile.cpp
+  vl/VisualizationLibrary.cpp
+  vl/ZippedDirectory.cpp
+  vl/ZippedFile.cpp
+  vl/math3D.cpp
+)
 
-# VLVG
-add_subdirectory("vlVG")
+set(VL_INC
+  vl/AABB.hpp
+  vl/Actor.hpp
+  vl/Array.hpp
+  vl/BezierSurface.hpp
+  vl/Billboard.hpp
+  vl/BlitFramebuffer.hpp
+  vl/ActorTreeAbstract.hpp
+  vl/ActorTree.hpp
+  vl/Buffer.hpp
+  vl/GLBufferObject.hpp
+  vl/BufferedStream.hpp
+  vl/CRC32CheckSum.hpp
+  vl/Camera.hpp
+  vl/CatmullRomInterpolator.hpp
+  vl/Clear.hpp
+  vl/ClipPlane.hpp
+  vl/CopyTexSubImage.hpp
+  vl/DepthSortCallback.hpp
+  vl/DiskDirectory.hpp
+  vl/DiskFile.hpp
+  vl/DistanceLODEvaluator.hpp
+  vl/DoubleVertexRemover.hpp
+  vl/DrawArrays.hpp
+  vl/DrawCall.hpp
+  vl/DrawElements.hpp
+  vl/DrawRangeElements.hpp
+  vl/MultiDrawElements.hpp
+  vl/DrawPixels.hpp
+  vl/EdgeExtractor.hpp
+  vl/EdgeRenderer.hpp
+  vl/EdgeUpdateCallback.hpp
+  vl/Effect.hpp
+  vl/Extrusion.hpp
+  vl/Font.hpp
+  vl/FontManager.hpp
+  vl/FramebufferObject.hpp
+  vl/Frustum.hpp
+  vl/GLSL.hpp
+  vl/GLSLmath.hpp
+  vl/Geometry.hpp
+  vl/GeometryLoadCallback.hpp
+  vl/GhostCameraManipulator.hpp
+  vl/GZipCodec.hpp
+  vl/UUID.hpp
+  vl/half.hpp
+  vl/KeyValues.hpp
+  vl/Image.hpp
+  vl/IndexIterator.hpp
+  vl/Interpolator.hpp
+  vl/IVertexAttribSet.hpp
+  vl/ActorKdTree.hpp
+  vl/LODEvaluator.hpp
+  vl/Light.hpp
+  vl/LinearInterpolator.hpp
+  vl/LoadWriterManager.hpp
+  vl/Log.hpp
+  vl/Matrix4.hpp
+  vl/Matrix3.hpp
+  vl/Matrix2.hpp
+  vl/MD5CheckSum.hpp
+  vl/MemoryDirectory.hpp
+  vl/MemoryFile.hpp
+  vl/MorphingCallback.hpp
+  vl/FileSystem.hpp
+  vl/Object.hpp
+  vl/Collection.hpp
+  vl/OcclusionCullRenderer.hpp
+  vl/OpenGL.hpp
+  vl/OpenGLContext.hpp
+  vl/PatchParameter.hpp
+  vl/PixelLODEvaluator.hpp
+  vl/Plane.hpp
+  vl/PolygonSimplifier.hpp
+  vl/ProjViewTransfCallback.hpp
+  vl/SceneManagerPortals.hpp
+  vl/Random.hpp
+  vl/Ray.hpp
+  vl/RayIntersector.hpp
+  vl/ReadPixels.hpp
+  vl/Rect.hpp
+  vl/RenderQueue.hpp
+  vl/RenderQueueSorter.hpp
+  vl/RenderState.hpp
+  vl/RenderTarget.hpp
+  vl/RenderToken.hpp
+  vl/Renderable.hpp
+  vl/Renderer.hpp
+  vl/RendererAbstract.hpp
+  vl/Rendering.hpp
+  vl/RenderingAbstract.hpp
+  vl/RenderingTree.hpp
+  vl/RenderEventCallback.hpp
+  vl/RenderStateSet.hpp
+  vl/EnableSet.hpp
+  vl/UniformSet.hpp
+  vl/ResourceDatabase.hpp
+  vl/ResourceLoadWriter.hpp
+  vl/Say.hpp
+  vl/SceneManager.hpp
+  vl/SceneManagerActorTree.hpp
+  vl/SceneManagerActorKdTree.hpp
+  vl/SceneManagerBVH.hpp
+  vl/Scissor.hpp
+  vl/Shader.hpp
+  vl/ShaderNode.hpp
+  vl/Sphere.hpp
+  vl/String.hpp
+  vl/String_Tables.hpp
+  vl/TriangleStripGenerator.hpp
+  vl/Terrain.hpp
+  vl/Tessellator.hpp
+  vl/Text.hpp
+  vl/TextStream.hpp
+  vl/Texture.hpp
+  vl/Time.hpp
+  vl/TrackballManipulator.hpp
+  vl/Transform.hpp
+  vl/TriangleIterator.hpp
+  vl/UIEventListener.hpp
+  vl/Uniform.hpp
+  vl/Vector4.hpp
+  vl/Vector3.hpp
+  vl/Vector2.hpp
+  vl/VertexAttribInfo.hpp
+  vl/Viewport.hpp
+  vl/VirtualDirectory.hpp
+  vl/VirtualFile.hpp
+  vl/VisualizationLibrary.hpp
+  vl/ZippedDirectory.hpp
+  vl/ZippedFile.hpp
+  vl/checks.hpp
+  vl/config.hpp
+  vl/math3D.hpp
+  vl/Quaternion.hpp
+  vl/version.hpp
+  vl/vlnamespace.hpp
+)
 
-# VLMolecule
-add_subdirectory("vlMolecule")
+if(IO_MODULE_JPG)
+  SET(VL_SRC ${VL_SRC} vl/vlJPG.cpp)
+  SET(VL_INC ${VL_INC} vl/vlJPG.hpp)
+endif(IO_MODULE_JPG)
 
-# VLVolume
-add_subdirectory("vlVolume")
+if(IO_MODULE_PNG)
+  SET(VL_SRC ${VL_SRC} vl/vlPNG.cpp)
+  SET(VL_INC ${VL_INC} vl/vlPNG.hpp)
+endif(IO_MODULE_PNG)
 
-################################################################################
-# GUI Modules (automatically enabled when their requirements are met)
-################################################################################
+if(IO_MODULE_MD2)
+  SET(VL_SRC ${VL_SRC} vl/vlMD2.cpp)
+  SET(VL_INC ${VL_INC} vl/vlMD2.hpp)
+endif(IO_MODULE_MD2)
 
-# GLUT
-option(GUI_GLUT_SUPPORT "Build GLUT support" OFF)
-if(GUI_GLUT_SUPPORT)
-	set(GLUT_ROOT_PATH "${3RDPARTY_DIR}")
-	find_package(GLUT REQUIRED)
-	add_subdirectory("vlGLUT")
-endif()
+if(IO_MODULE_PLY)
+  SET(VL_SRC ${VL_SRC} vl/vlPLY.cpp)
+  SET(VL_INC ${VL_INC} vl/vlPLY.hpp)
+endif(IO_MODULE_PLY)
 
-# Qt4
-option(GUI_QT4_SUPPORT "Build Qt4 support" OFF)
-if(GUI_QT4_SUPPORT)
-	find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtMain REQUIRED)
-	include("${QT_USE_FILE}")
-	add_subdirectory("vlQt4")
-endif()
+if(IO_MODULE_STL)
+  SET(VL_SRC ${VL_SRC} vl/vlSTL.cpp)
+  SET(VL_INC ${VL_INC} vl/vlSTL.hpp)
+endif(IO_MODULE_STL)
 
-# Win32 & MFC
-if(MSVC)
-	option(GUI_WIN32_SUPPORT "Build Win32 support" ON)
-	option(GUI_MFC_SUPPORT "Build MFC support" OFF)
-endif()
+if(IO_MODULE_AC3D)
+  SET(VL_SRC ${VL_SRC} vl/vlAC3D.cpp)
+  SET(VL_INC ${VL_INC} vl/vlAC3D.hpp)
+endif(IO_MODULE_AC3D)
 
-if(MINGW)
-	option(GUI_WIN32_SUPPORT "Build Win32 support" ON)
-endif()
+if(IO_MODULE_OBJ)
+  SET(VL_SRC ${VL_SRC} vl/vlOBJ.cpp)
+  SET(VL_INC ${VL_INC} vl/vlOBJ.hpp)
+endif(IO_MODULE_OBJ)
 
-if(GUI_MFC_SUPPORT)
-  add_subdirectory("vlMFC")
-endif()
+if(IO_MODULE_3DS)
+  SET(VL_SRC ${VL_SRC} vl/vl3DS.cpp)
+  SET(VL_INC ${VL_INC} vl/vl3DS.hpp)
+endif(IO_MODULE_3DS)
 
-if(GUI_WIN32_SUPPORT)
-	add_subdirectory("vlWin32")
-endif()
+if(IO_MODULE_DAT)
+  SET(VL_SRC ${VL_SRC} vl/vlDAT.cpp)
+  SET(VL_INC ${VL_INC} vl/vlDAT.hpp)
+endif(IO_MODULE_DAT)
 
-# SDL
-option(GUI_SDL_SUPPORT "Build SDL support" OFF)
+if(IO_MODULE_BMP)
+  SET(VL_SRC ${VL_SRC} vl/vlBMP.cpp)
+  SET(VL_INC ${VL_INC} vl/vlBMP.hpp)
+endif(IO_MODULE_BMP)
 
-if(GUI_SDL_SUPPORT)
-	find_package(SDL REQUIRED)
-	add_subdirectory("vlSDL")
-endif()
+if(IO_MODULE_TGA)
+  SET(VL_SRC ${VL_SRC} vl/vlTGA.cpp)
+  SET(VL_INC ${VL_INC} vl/vlTGA.hpp)
+endif(IO_MODULE_TGA)
 
-# wxWidgets
-option(GUI_WXWIDGETS_SUPPORT "Build wxWidgets support" OFF)
-if(GUI_WXWIDGETS_SUPPORT)
-	find_package(wxWidgets COMPONENTS gl core base REQUIRED)
-	if (wxWidgets_FOUND)
-		add_subdirectory("vlWX")
-	endif()
-endif()
+if(IO_MODULE_DDS)
+  SET(VL_SRC ${VL_SRC} vl/vlDDS.cpp)
+  SET(VL_INC ${VL_INC} vl/vlDDS.hpp)
+endif(IO_MODULE_DDS)
 
-# Cocoa
-#if(APPLE)
-#	option(GUI_COCOA_SUPPORT "Build Cocoa support" ON)
-#endif()
-#if(GUI_COCOA_SUPPORT)
-#	add_subdirectory("vlCocoa")
-#endif()
+if(IO_MODULE_TIFF)
+  SET(VL_SRC ${VL_SRC} vl/vlTIFF.cpp)
+  SET(VL_INC ${VL_INC} vl/vlTIFF.hpp)
+endif(IO_MODULE_TIFF)
 
-################################################################################
-# Examples
-################################################################################
+if(IO_MODULE_DICOM)
+  SET(VL_SRC ${VL_SRC} vl/vlDICOM.cpp)
+  SET(VL_INC ${VL_INC} vl/vlDICOM.hpp)
+endif(IO_MODULE_DICOM)
 
-cmake_dependent_option(GUI_GLUT_EXAMPLES "Build GLUT examples" ON "GUI_GLUT_SUPPORT" OFF)
-cmake_dependent_option(GUI_QT4_EXAMPLES "Build Qt4 examples" ON "GUI_QT4_SUPPORT" OFF)
-cmake_dependent_option(GUI_MFC_EXAMPLES "Build MFC examples" ON "GUI_MFC_SUPPORT" OFF)
-cmake_dependent_option(GUI_WIN32_EXAMPLES "Build win32 examples" ON "GUI_WIN32_SUPPORT" OFF)
-cmake_dependent_option(GUI_SDL_EXAMPLES "Build SDL examples" ON "GUI_SDL_SUPPORT" OFF)
-cmake_dependent_option(GUI_WXWIDGETS_EXAMPLES "Build wxWidgets examples" ON "GUI_WXWIDGETS_SUPPORT" OFF)
-#cmake_dependent_option(GUI_COCOA_EXAMPLES "Build Cocoa examples" ON "GUI_COCOA_SUPPORT" OFF)
+set(VLUT_SRC
+  vlut/GeometryPrimitives.cpp
+  vlut/Applet.cpp
+)
 
-add_subdirectory("examples")
+set(VLUT_INC
+  vlut/GeometryPrimitives.hpp
+  vlut/Applet.hpp
+  vlut/Colors.hpp
+)
+
+set(VLVG_SRC
+  vlVG/VectorGraphics.cpp
+)
+
+set(VLVG_INC
+  vlVG/SceneManagerVectorGraphics.hpp
+  vlVG/VectorGraphics.hpp
+)
+
+set(VLVOLUME_INC
+  vlVolume/MarchingCubes.hpp
+  vlVolume/SlicedVolume.hpp
+  vlVolume/VolumePlot.hpp
+  vlVolume/VolumeUtils.hpp
+)
+
+set(VLVOLUME_SRC
+  vlVolume/MarchingCubes.cpp
+  vlVolume/SlicedVolume.cpp
+  vlVolume/VolumePlot.cpp
+  vlVolume/VolumeUtils.cpp
+)
+
+set(VLMOLECULE_INC
+  vlMolecule/Molecule.hpp
+  vlMolecule/Atom.hpp
+  vlMolecule/Bond.hpp
+  vlMolecule/RingExtractor.hpp
+  vlMolecule/chem_database.hpp
+)
+
+set(VLMOLECULE_SRC
+  vlMolecule/Molecule.cpp
+  vlMolecule/Molecule_rendering.cpp
+  vlMolecule/vlMOL2.cpp
+  vlMolecule/chem_database.cpp
+)
+
+source_group(vl FILES ${VL_INC} ${VL_SRC})
+source_group(vlut FILES ${VLUT_INC} ${VLUT_SRC})
+source_group(vlVG FILES ${VLVG_INC} ${VLVG_SRC})
+source_group(vlVolume FILES ${VLVOLUME_INC} ${VLVOLUME_SRC})
+source_group(vlMolecule FILES ${VLMOLECULE_INC} ${VLMOLECULE_SRC})
+
+add_library(${VISUALIZATIONLIBRARY_NAME} STATIC 
+  ${VL_APPLETS_INC}
+  ${VL_SRC} ${VL_INC} 
+  ${VLUT_SRC} ${VLUT_INC} 
+  ${VLVG_SRC} ${VLVG_INC} 
+  ${VLVOLUME_INC} ${VLVOLUME_SRC}
+  ${VLMOLECULE_INC} ${VLMOLECULE_SRC}
+  )
+set_target_properties(${VISUALIZATIONLIBRARY_NAME} PROPERTIES DEBUG_POSTFIX "-d")
+set_target_properties(${VISUALIZATIONLIBRARY_NAME} PROPERTIES SOVERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
+set_target_properties(${VISUALIZATIONLIBRARY_NAME} PROPERTIES VERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
+
+install(TARGETS ${VISUALIZATIONLIBRARY_NAME}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
+install(FILES ${VL_INC}
+  DESTINATION include/vl
+)
+
+install(FILES ${VLUT_INC}
+  DESTINATION include/vlut
+)
+
+install(FILES ${VLVG_INC}
+  DESTINATION include/vlVG
+)
+
+install(FILES ${VLVOLUME_INC}
+  DESTINATION include/vlVolume
+)
+
+install(FILES ${VLMOLECULE_INC}
+  DESTINATION include/vlMolecule
+)
+

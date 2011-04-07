@@ -1,37 +1,51 @@
-################################################################################
-#                                                                              #
-#  Copyright (c) 2005-2011, Michele Bosi, Thiago Bastos                        #
-#  All rights reserved.                                                        #
-#                                                                              #
-#  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.com                                         #
-#                                                                              #
-#  Released under the OSI approved Simplified BSD License                      #
-#  http://www.opensource.org/licenses/bsd-license.php                          #
-#                                                                              #
-################################################################################
+######################################################################################
+#                                                                                    #
+#  Visualization Library                                                             #
+#  http://www.visualizationlibrary.com                                               #
+#                                                                                    #
+#  Copyright (c) 2005-2010, Michele Bosi                                             #
+#  All rights reserved.                                                              #
+#                                                                                    #
+#  Redistribution and use in source and binary forms, with or without modification,  #
+#  are permitted provided that the following conditions are met:                     #
+#                                                                                    #
+#  - Redistributions of source code must retain the above copyright notice, this     #
+#  list of conditions and the following disclaimer.                                  #
+#                                                                                    #
+#  - Redistributions in binary form must reproduce the above copyright notice, this  #
+#  list of conditions and the following disclaimer in the documentation and/or       #
+#  other materials provided with the distribution.                                   #
+#                                                                                    #
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND   #
+#  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED     #
+#  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE            #
+#  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR  #
+#  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES    #
+#  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;      #
+#  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON    #
+#  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT           #
+#  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS     #
+#  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                      #
+#                                                                                    #
+######################################################################################
 
-################################################################################
-# VLMFC Library
-################################################################################
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-project(VLMFC)
-
-# Gather VLMFC source files
-file(GLOB VLMFC_SRC "*.cpp")
-file(GLOB VLMFC_INC "*.hpp")
+PROJECT(${VLMFC_NAME})
 
 add_definitions(-D_AFXDLL)
-add_library(VLMFC ${VL_SHARED_OR_STATIC} ${VLMFC_SRC} ${VLMFC_INC})
-VL_DEFAULT_TARGET_PROPERTIES(VLMFC)
+add_library(${VLMFC_NAME} STATIC MFCWindow.hpp MFCWindow.cpp StdAfx.cpp)
+set_target_properties(${VLMFC_NAME} PROPERTIES DEBUG_POSTFIX "-d")
+set_target_properties(${VLMFC_NAME} PROPERTIES SOVERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
+set_target_properties(${VLMFC_NAME} PROPERTIES VERSION "${VLVERSION_MAJOR}.{VLVERSION_MINOR}")
 
-target_link_libraries(VLMFC VLCore VLGraphics VLWin32 ${wxWidgets_LIBRARIES})
+install(TARGETS ${VLMFC_NAME}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
 
-################################################################################
-# Install Rules
-################################################################################
+install(FILES MFCWindow.hpp
+  DESTINATION include/vlMFC
+)
 
-VL_INSTALL_TARGET(VLMFC)
-
-# VLMolecule headers
-install(FILES ${VLMFC_INC} DESTINATION "include/vlMFC")

@@ -30,9 +30,9 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlMolecule/Molecule.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/FontManager.hpp>
+#include "vlMolecule/Molecule.hpp"
+#include "vl/Text.hpp"
+#include "vl/FontManager.hpp"
 
 class App_Molecules: public BaseDemo
 {
@@ -44,7 +44,7 @@ public:
     if (mCurrentStyle == 0) // wireframe
     {
       // activate "wireframe" style
-      mMolecules[mCurrentMolecule]->setMoleculeStyle(vl::MS_Wireframe);
+      mMolecules[mCurrentMolecule]->setMoleculeStyle(vlMolecule::MS_Wireframe);
       // colorize the atoms by their CPK color
       mMolecules[mCurrentMolecule]->setCPKAtomColors();
       // define the line width
@@ -56,7 +56,7 @@ public:
     if (mCurrentStyle == 1) // ball & stick
     {
       // activate "ball & stick" style
-      mMolecules[mCurrentMolecule]->setMoleculeStyle(vl::MS_BallAndStick);
+      mMolecules[mCurrentMolecule]->setMoleculeStyle(vlMolecule::MS_BallAndStick);
       // colorize the atoms by their CPK color
       mMolecules[mCurrentMolecule]->setCPKAtomColors();
       // set all the atom radii to 0.30A
@@ -68,7 +68,7 @@ public:
     if (mCurrentStyle == 2) // sticks
     {
       // activate "sticks" style
-      mMolecules[mCurrentMolecule]->setMoleculeStyle(vl::MS_Sticks);
+      mMolecules[mCurrentMolecule]->setMoleculeStyle(vlMolecule::MS_Sticks);
       // colorize the atoms by their CPK color
       mMolecules[mCurrentMolecule]->setCPKAtomColors();
       // set all the bond radii to 0.10A
@@ -78,7 +78,7 @@ public:
     if (mCurrentStyle == 3) // cpk space fill
     {
       // activates "atoms only" style
-      mMolecules[mCurrentMolecule]->setMoleculeStyle(vl::MS_AtomsOnly);
+      mMolecules[mCurrentMolecule]->setMoleculeStyle(vlMolecule::MS_AtomsOnly);
       // colorize the atoms by their CPK color
       mMolecules[mCurrentMolecule]->setCPKAtomColors();
       // set all the atom radii to their van der Waals radii value as returned by atomInfo().
@@ -90,9 +90,9 @@ public:
     SETUP TO RENDER THE ATOM LABELS:
 
     ... choose the style: font, color, alignment etc.
-    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setColor(vl::white);
-    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineColor(vl::black);
+    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setColor(vlut::white);
+    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineColor(vlut::black);
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineEnabled(true);
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setAlignment(vl::AlignHCenter|vl::AlignVCenter);
 
@@ -105,18 +105,18 @@ public:
     OTHER COMMON OPERATIONS:
 
     ... aromatic ring settings
-    mMolecules[mCurrentMolecule]->setAromaticRingColor(vl::red);
-    mMolecules[mCurrentMolecule]->setAromaticBondsColor(vl::gold);
+    mMolecules[mCurrentMolecule]->setAromaticRingColor(vlut::red);
+    mMolecules[mCurrentMolecule]->setAromaticBondsColor(vlut::gold);
 
     ... geometrical detail for bonds and atoms
     mMolecules[mCurrentMolecule]->setBondDetail(50);
     mMolecules[mCurrentMolecule]->setAtomDetail(3);
 
     ... toggle visibility by atom type
-    mMolecules[mCurrentMolecule]->setAtomTypeVisible(vl::AT_Hydrogen, false);
+    mMolecules[mCurrentMolecule]->setAtomTypeVisible(vlMolecule::AT_Hydrogen, false);
 
     ... define per-atom color
-    mMolecules[mCurrentMolecule]->atom(4)->setColor(vl::fuchsia);
+    mMolecules[mCurrentMolecule]->atom(4)->setColor(vlut::fuchsia);
 
     ... define per-atom and per-bond visibility
     mMolecules[mCurrentMolecule]->atom(5)->setVisible(false);
@@ -142,12 +142,12 @@ public:
 
     /* initialize the text actor */
     mText->setText("Drop a MOL2 file inside the window.");
-    mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    mText->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     mText->setAlignment( vl::AlignHCenter | vl::AlignTop );
     mText->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     mText->setTextAlignment(vl::TextAlignCenter);
     mText->translate(0,-5,0);
-    mText->setColor(vl::white);
+    mText->setColor(vlut::white);
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     sceneManager()->tree()->addActor(mText.get(), effect.get());
@@ -158,12 +158,12 @@ public:
   {
     mCurrentMolecule = 0;
     /*loads only the first .mol2 file if more are dropped*/
-    vl::loadMOL2( files[0], mMolecules );
+    vlMolecule::loadMOL2( files[0], mMolecules );
     if (!mMolecules.empty())
       updateMolecule();
 
     /* adjust the camera position to nicely see the scene, it also position the rotation pivot to the center of the molecule */
-    trackball()->adjustView( rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
+    trackball()->adjustView( vl::VisualizationLibrary::rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
 
     for(size_t i=0; i<mMolecules.size(); ++i)
     {
@@ -210,7 +210,7 @@ public:
   }
 
 protected:
-  std::vector< vl::ref<vl::Molecule> > mMolecules;
+  std::vector< vl::ref<vlMolecule::Molecule> > mMolecules;
   int mCurrentMolecule;
   int mCurrentStyle;
   vl::ref<vl::Text> mText;

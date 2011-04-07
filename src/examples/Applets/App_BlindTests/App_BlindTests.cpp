@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "../BaseDemo.hpp"
-#include <vlGraphics/Text.hpp>
-#include <vlCore/Time.hpp>
-#include <vlGraphics/FontManager.hpp>
-#include <vlCore/TextStream.hpp>
-#include <vlGraphics/Geometry.hpp>
+#include "vl/Text.hpp"
+#include "vl/Time.hpp"
+#include "vl/FontManager.hpp"
+#include "vl/TextStream.hpp"
+#include "vl/Geometry.hpp"
 #include <time.h>
 
 namespace blind_tests
@@ -54,7 +54,7 @@ typedef bool (*TestType)();
 struct s_Test
 {
   TestType mTest;
-  const char* mTestName;
+  char* mTestName;
 };
 
 s_Test g_Tests[] = { 
@@ -70,6 +70,8 @@ class App_BlindTests: public BaseDemo
 {
 
 public:
+  virtual void shutdown() {}
+  virtual void run() {}
   void initEvent()
   {
     BaseDemo::initEvent();
@@ -89,7 +91,7 @@ public:
 
     ref<Text> text = new Text;
     text->setText( msg );
-    text->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraSe.ttf", 12) );
+    text->setFont( VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraSe.ttf", 12) );
     text->setAlignment( AlignLeft | AlignTop );
     text->setViewportAlignment( AlignLeft | AlignTop );
     ref<Effect> effect = new Effect;

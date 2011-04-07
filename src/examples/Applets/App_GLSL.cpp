@@ -30,9 +30,9 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/Geometry.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/GLSL.hpp>
+#include "vl/Geometry.hpp"
+#include "vl/Light.hpp"
+#include "vl/GLSL.hpp"
 
 class App_GLSL: public BaseDemo
 {
@@ -57,15 +57,14 @@ public:
 
     BaseDemo::initEvent();
 
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform3.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform4.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform5.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform3.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform4.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform5.get());
 
     vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/models/3ds/monkey.3ds");
     vl::ref<vl::Geometry> model = res_db->get<vl::Geometry>(0);
-    model->computeNormals();
 
     vl::ref<vl::Light> light = new vl::Light(0);
 
@@ -124,7 +123,7 @@ public:
       glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
       glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight_interlaced.fs") );
 
-      if (GLEW_Has_Geometry_Shader)
+      if (GLEW_NV_geometry_shader4 || GLEW_ARB_geometry_shader4 || GLEW_VERSION_3_2)
       {
         glsl = effect5->shader()->gocGLSLProgram();
         // a vertex shader is always needed when using geometry shaders
@@ -136,13 +135,13 @@ public:
       }
       else
       {
-        effect5->shader()->gocMaterial()->setDiffuse(vl::red);
+        effect5->shader()->gocMaterial()->setDiffuse(vlut::red);
         vl::Log::print("GL_NV_geometry_shader4 not supported.\n");
       }
     }
   }
 
-  void updateScene()
+  void run()
   {
     // animate the transforms
     mTransform1->setLocalMatrix( vl::mat4::getTranslation(-2,2,0)  * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
@@ -151,6 +150,8 @@ public:
     mTransform4->setLocalMatrix( vl::mat4::getTranslation(+2,-2,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
     mTransform5->setLocalMatrix( vl::mat4::getTranslation(0,0,0)   * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
   }
+
+  void shutdown() {}
 
 protected:
   vl::ref<vl::Transform> mTransform1;

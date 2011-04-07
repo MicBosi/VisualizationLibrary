@@ -30,15 +30,15 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/Text.hpp>
-#include <vlGraphics/FontManager.hpp>
-#include <vlCore/CatmullRomInterpolator.hpp>
-#include <vlCore/LinearInterpolator.hpp>
-#include <vlGraphics/Extrusion.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/VisualizationLibrary.hpp"
+#include "vl/Effect.hpp"
+#include "vl/Light.hpp"
+#include "vl/Text.hpp"
+#include "vl/FontManager.hpp"
+#include "vl/CatmullRomInterpolator.hpp"
+#include "vl/LinearInterpolator.hpp"
+#include "vl/Extrusion.hpp"
 
 class App_Interpolators: public BaseDemo
 {
@@ -56,8 +56,8 @@ public:
   void initEvent()
   {
     BaseDemo::initEvent();
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
     showCatmullRomPentagonOpen();
     showText();
   }
@@ -73,7 +73,7 @@ public:
       pentagon.push_back(vl::fvec3(cos(a)*radius,sin(a)*radius,0));
     }
     // show the pentagon
-    showPath(pentagon, vl::green);
+    showPath(pentagon, vlut::green);
 
     // Catmull-Rom interpolation over the pentagon control points
     std::vector<vl::fvec3> pentagon_spline;
@@ -89,7 +89,7 @@ public:
       pentagon_spline.push_back( catmull.computePoint(t) );
     }
     // show the interpolated pentagon
-    showPath(pentagon_spline, vl::red, true/*show points*/);
+    showPath(pentagon_spline, vlut::red, true/*show points*/);
   }
 
   void showCatmullRomPentagonLoop()
@@ -102,7 +102,7 @@ public:
       float a = (float)i/5.0f*vl::fPi*2.0f + vl::fPi/2.0f;
       pentagon.push_back(vl::fvec3(cos(a)*radius,sin(a)*radius,0));
     }
-    showPath(pentagon, vl::green);
+    showPath(pentagon, vlut::green);
 
     // Catmull-Rom interpolation over the pentagon
     vl::CatmullRomInterpolatorFVec3 catmull;
@@ -117,7 +117,7 @@ public:
       float t = (float)i/segments; 
       pentagon_loop.push_back( catmull.computePoint(t) );
     }
-    showPath(pentagon_loop, vl::yellow, true/*show points*/, true/*close line loop*/);
+    showPath(pentagon_loop, vlut::yellow, true/*show points*/, true/*close line loop*/);
   }
 
   void showLinearPentagon()
@@ -130,7 +130,7 @@ public:
       float a = (float)i/5.0f*vl::fPi*2.0f + vl::fPi/2.0f;
       pentagon.push_back(vl::fvec3(cos(a)*radius,sin(a)*radius,0));
     }
-    showPath(pentagon, vl::green);
+    showPath(pentagon, vlut::green);
 
     // linear interpolation over the pentagon
     vl::LinearInterpolatorFVec3 linear;
@@ -143,7 +143,7 @@ public:
       float t = (float)i/(segments-1); 
       pentagon_linear.push_back( linear.computePoint(t) );
     }
-    vl::Actor* line = showPath(pentagon_linear, vl::blue, true/*show points*/);
+    vl::Actor* line = showPath(pentagon_linear, vlut::blue, true/*show points*/);
     // ensure the blue line is over the green one.
     line->setRenderRank(1);
   }
@@ -173,7 +173,7 @@ public:
       float t = (float)i/segments; 
       pentagon_loop.push_back( mCatmullRomInterpolator->computePoint(t)*1.2f /*1.2f -> makes it a bit larger*/ );
     }
-    showPath(pentagon_loop, vl::yellow, true/*show points*/, true/*close line loop*/);
+    showPath(pentagon_loop, vlut::yellow, true/*show points*/, true/*close line loop*/);
 
     // linear interpolation over the star (loop)
     mLinearInterpolator->interpolator()->setPath( pentagon );
@@ -188,10 +188,10 @@ public:
       float t = (float)i/segments; 
       pentagon_linear.push_back( mLinearInterpolator->computePoint(t) );
     }
-    showPath(pentagon_linear, vl::blue, true/*show points*/, true/*close line loop*/);
+    showPath(pentagon_linear, vlut::blue, true/*show points*/, true/*close line loop*/);
 
     // display animated arrows
-    vl::ref<vl::Geometry> arrow = vl::makePyramid(vl::vec3(0,0,0),0.5f,1.0f);
+    vl::ref<vl::Geometry> arrow = vlut::makePyramid(vl::vec3(0,0,0),0.5f,1.0f);
     arrow->transform( vl::mat4::getRotation(-90.0f,1,0,0) );
     arrow->computeNormals();
     vl::ref<vl::Effect> arrow_fx = new vl::Effect;
@@ -225,7 +225,7 @@ public:
   }
 
   // Animates the arrows along the path.
-  void updateScene()
+  void run()
   {
     if (mTest == 3)
     {
@@ -274,11 +274,11 @@ public:
   {
     vl::ref<vl::Text> text = new vl::Text;
     text->setText("Press the left/right arrow keys to change test.");
-    text->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
+    text->setFont( vl::VisualizationLibrary::fontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     text->setAlignment( vl::AlignHCenter | vl::AlignTop );
     text->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     text->translate(0,-5,0);
-    text->setColor(vl::white);
+    text->setColor(vlut::white);
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     sceneManager()->tree()->addActor(text.get(), effect.get());

@@ -30,13 +30,14 @@
 /**************************************************************************************/
 
 #include <vlVolume/VolumeUtils.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/GLSLmath.hpp>
+#include <vl/Log.hpp>
+#include <vl/GLSLmath.hpp>
 
 using namespace vl;
+using namespace vlVolume;
 
 //-----------------------------------------------------------------------------
-ref<Image> vl::genRGBAVolume(const Image* data, const Image* trfunc, const fvec3& light_dir, bool alpha_from_data)
+ref<Image> vlVolume::genRGBAVolume(const Image* data, const Image* trfunc, const fvec3& light_dir, bool alpha_from_data)
 {
   ref<Image> img;
 
@@ -49,12 +50,12 @@ ref<Image> vl::genRGBAVolume(const Image* data, const Image* trfunc, const fvec3
   if(data->type() == IT_FLOAT)
     img = genRGBAVolumeT<float,IT_FLOAT>(data,trfunc,light_dir,alpha_from_data);
   else
-    Log::error("genRGBAVolume() called with non supported data type().\n");
+    vl::Log::error("vlVolume::genRGBAVolume() called with non supported data type().\n");
 
   return img;
 }
 //-----------------------------------------------------------------------------
-ref<Image> vl::genRGBAVolume(const Image* data, const Image* trfunc, bool alpha_from_data)
+ref<Image> vlVolume::genRGBAVolume(const Image* data, const Image* trfunc, bool alpha_from_data)
 {
   ref<Image> img;
 
@@ -67,44 +68,44 @@ ref<Image> vl::genRGBAVolume(const Image* data, const Image* trfunc, bool alpha_
   if(data->type() == IT_FLOAT)
     img = genRGBAVolumeT<float,IT_FLOAT>(data,trfunc,alpha_from_data);
   else
-    Log::error("genRGBAVolume() called with non supported data type().\n");
+    vl::Log::error("vlVolume::genRGBAVolume() called with non supported data type().\n");
 
   return img;
 }
 //-----------------------------------------------------------------------------
 template<typename data_type, EImageType img_type>
-ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, const fvec3& light_dir, bool alpha_from_data)
+ref<Image> vlVolume::genRGBAVolumeT(const Image* data, const Image* trfunc, const fvec3& light_dir, bool alpha_from_data)
 {
   if (!trfunc || !data)
     return NULL;
   if (data->format() != IF_LUMINANCE)
   {
-    Log::error("genRGBAVolume() called with non IF_LUMINANCE data format().\n");
+    vl::Log::error("vlVolume::genRGBAVolume() called with non IF_LUMINANCE data format().\n");
     return NULL;
   }
   if (data->type() != img_type)
   {
-    Log::error("genRGBAVolume() called with invalid data type().\n");
+    vl::Log::error("vlVolume::genRGBAVolume() called with invalid data type().\n");
     return NULL;
   }
   if (data->dimension() != ID_3D)
   {
-    Log::error("genRGBAVolume() called with non 3D data.\n");
+    vl::Log::error("vlVolume::genRGBAVolume() called with non 3D data.\n");
     return NULL;
   }
   if (trfunc->dimension() != ID_1D)
   {
-    Log::error("genRGBAVolume() transfer function image must be an 1D image.\n");
+    vl::Log::error("vlVolume::genRGBAVolume() transfer function image must be an 1D image.\n");
     return NULL;
   }
   if (trfunc->format() != IF_RGBA)
   {
-    Log::error("genRGBAVolume() transfer function format() must be IF_RGBA.\n");
+    vl::Log::error("vlVolume::genRGBAVolume() transfer function format() must be IF_RGBA.\n");
     return NULL;
   }
   if (trfunc->type() != IT_UNSIGNED_BYTE)
   {
-    Log::error("genRGBAVolume() transfer function format() must be IT_UNSIGNED_BYTE.\n");
+    vl::Log::error("vlVolume::genRGBAVolume() transfer function format() must be IT_UNSIGNED_BYTE.\n");
     return NULL;
   }
 
@@ -133,14 +134,14 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, const fvec
   {
     int z1 = z-1;
     int z2 = z+1;
-    z1 = clamp(z1, 0, d-1);
-    z2 = clamp(z2, 0, d-1);
+    z1 = vl::clamp(z1, 0, d-1);
+    z2 = vl::clamp(z2, 0, d-1);
     for(int y=0; y<h; ++y)
     {
       int y1 = y-1;
       int y2 = y+1;
-      y1 = clamp(y1, 0, h-1);
-      y2 = clamp(y2, 0, h-1);
+      y1 = vl::clamp(y1, 0, h-1);
+      y2 = vl::clamp(y2, 0, h-1);
       for(int x=0; x<w; ++x, ++rgba_px)
       {
         // value
@@ -153,7 +154,7 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, const fvec
         int ix1 = (int)xval;
         int ix2 = ix1+1;
         VL_CHECK(ix2<trfunc->width())
-        float w21  = (float)fract(xval);
+        float w21  = (float)vl::fract(xval);
         float w11  = 1.0f - w21;
         fvec4 c11  = (fvec4)((ubvec4*)trfunc->pixels())[ix1];
         fvec4 c21  = (fvec4)((ubvec4*)trfunc->pixels())[ix2];
@@ -162,8 +163,8 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, const fvec
         // bake the lighting
         int x1 = x-1;
         int x2 = x+1;
-        x1 = clamp(x1, 0, w-1);
-        x2 = clamp(x2, 0, w-1);
+        x1 = vl::clamp(x1, 0, w-1);
+        x2 = vl::clamp(x2, 0, w-1);
         data_type vx1 = (*(data_type*)(lum_px + x1*sizeof(data_type) + y *pitch + z *pitch*h));
         data_type vx2 = (*(data_type*)(lum_px + x2*sizeof(data_type) + y *pitch + z *pitch*h));
         data_type vy1 = (*(data_type*)(lum_px + x *sizeof(data_type) + y1*pitch + z *pitch*h));
@@ -173,14 +174,14 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, const fvec
         fvec3 N1(float(vx1-vx2), float(vy1-vy2), float(vz1-vz2));
         N1.normalize();
         fvec3 N2 = -N1 * 0.15f;
-        float l1 = max(dot(N1,L),0.0f);
-        float l2 = max(dot(N2,L),0.0f); // opposite dim light to enhance 3D perception
+        float l1 = vl::max(dot(N1,L),0.0f);
+        float l2 = vl::max(dot(N2,L),0.0f); // opposite dim light to enhance 3D perception
         rgba.r() = rgba.r()*l1 + rgba.r()*l2+0.2f; // +0.2f = ambient light
         rgba.g() = rgba.g()*l1 + rgba.g()*l2+0.2f;
         rgba.b() = rgba.b()*l1 + rgba.b()*l2+0.2f;
-        rgba.r() = clamp(rgba.r(), 0.0f, 1.0f);
-        rgba.g() = clamp(rgba.g(), 0.0f, 1.0f);
-        rgba.b() = clamp(rgba.b(), 0.0f, 1.0f);
+        rgba.r() = vl::clamp(rgba.r(), 0.0f, 1.0f);
+        rgba.g() = vl::clamp(rgba.g(), 0.0f, 1.0f);
+        rgba.b() = vl::clamp(rgba.b(), 0.0f, 1.0f);
 
         // map pixel
         rgba_px->r() = (unsigned char)(rgba.r()*255.0f);
@@ -198,38 +199,38 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, const fvec
 }
 //-----------------------------------------------------------------------------
 template<typename data_type, EImageType img_type>
-ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, bool alpha_from_data)
+ref<Image> vlVolume::genRGBAVolumeT(const Image* data, const Image* trfunc, bool alpha_from_data)
 {
   if (!trfunc || !data)
     return NULL;
   if (data->format() != IF_LUMINANCE)
   {
-    Log::error("genRGBAVolume() called with non IF_LUMINANCE data format().\n");
+    vl::Log::error("vlVolume::genRGBAVolume() called with non IF_LUMINANCE data format().\n");
     return NULL;
   }
   if (data->type() != img_type)
   {
-    Log::error("genRGBAVolume() called with invalid data type().\n");
+    vl::Log::error("vlVolume::genRGBAVolume() called with invalid data type().\n");
     return NULL;
   }  
   if (data->dimension() != ID_3D)
   {
-    Log::error("genRGBAVolume() called with non 3D data.\n");
+    vl::Log::error("vlVolume::genRGBAVolume() called with non 3D data.\n");
     return NULL;
   }
   if (trfunc->dimension() != ID_1D)
   {
-    Log::error("genRGBAVolume() transfer function image must be an 1D image.\n");
+    vl::Log::error("vlVolume::genRGBAVolume() transfer function image must be an 1D image.\n");
     return NULL;
   }
   if (trfunc->format() != IF_RGBA)
   {
-    Log::error("genRGBAVolume() transfer function format() must be IF_RGBA.\n");
+    vl::Log::error("vlVolume::genRGBAVolume() transfer function format() must be IF_RGBA.\n");
     return NULL;
   }
   if (trfunc->type() != IT_UNSIGNED_BYTE)
   {
-    Log::error("genRGBAVolume() transfer function format() must be IT_UNSIGNED_BYTE.\n");
+    vl::Log::error("vlVolume::genRGBAVolume() transfer function format() must be IT_UNSIGNED_BYTE.\n");
     return NULL;
   }
 
@@ -256,14 +257,14 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, bool alpha
   {
     int z1 = z-1;
     int z2 = z+1;
-    z1 = clamp(z1, 0, d-1);
-    z2 = clamp(z2, 0, d-1);
+    z1 = vl::clamp(z1, 0, d-1);
+    z2 = vl::clamp(z2, 0, d-1);
     for(int y=0; y<h; ++y)
     {
       int y1 = y-1;
       int y2 = y+1;
-      y1 = clamp(y1, 0, h-1);
-      y2 = clamp(y2, 0, h-1);
+      y1 = vl::clamp(y1, 0, h-1);
+      y2 = vl::clamp(y2, 0, h-1);
       for(int x=0; x<w; ++x, ++rgba_px)
       {
         // value
@@ -276,7 +277,7 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, bool alpha
         int ix1 = (int)xval;
         int ix2 = ix1+1;
         VL_CHECK(ix2<trfunc->width())
-        float w21  = (float)fract(xval);
+        float w21  = (float)vl::fract(xval);
         float w11  = 1.0f - w21;
         fvec4 c11  = (fvec4)((ubvec4*)trfunc->pixels())[ix1];
         fvec4 c21  = (fvec4)((ubvec4*)trfunc->pixels())[ix2];
@@ -297,10 +298,10 @@ ref<Image> vl::genRGBAVolumeT(const Image* data, const Image* trfunc, bool alpha
   return volume;
 }
 //-----------------------------------------------------------------------------
-ref<Image> vl::genGradientNormals(const Image* img)
+vl::ref<vl::Image> vlVolume::genGradientNormals(const vl::Image* img)
 {
-  ref<Image> gradient = new Image;
-  gradient->allocate3D(img->width(), img->height(), img->depth(), 1, IF_RGB, IT_FLOAT);
+  vl::ref<vl::Image> gradient = new Image;
+  gradient->allocate3D(img->width(), img->height(), img->depth(), 1, vl::IF_RGB, vl::IT_FLOAT);
   fvec3* px = (fvec3*)gradient->pixels();
   fvec3 A, B;
   for(int z=0; z<gradient->depth(); ++z)

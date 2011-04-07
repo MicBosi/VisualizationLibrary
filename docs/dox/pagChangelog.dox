@@ -1,73 +1,7 @@
-﻿/**
+/**
 
    \page pagChangelog Changelog
 
-	<div class="featuretitle">Visualization Library 2011.04.1135</div>
-	
-	- Multisample textures.
-	- Texture buffers support.
-	- Tessellation shaders demo-test.
-	- New directory layout.
-	- New building scripts.
-	- VL can now be compiled as a DLL.
-	- Restored wxWidgets GUI bindings.
-	- A ton of bug fixes and enhancements.
-
-	<div class="featuretitle">Visualization Library 2011.02.1133</div>
-
-	- <b>API CHANGES</b>
-		- Visualization Library splitted into:
-			- \b VLCore: all classes not requiring OpenGL, including vl::Image and 2D image IO modules, virtual file system, resource management, vl::String, math classes and functions etc.
-			- \b VLGraphics [<i>depends on VLCore</i>]: all classes that depend on OpenGL such as vl::Geometry, vl::Shader, vl::Rendering, vl::OpenGLContext, 3D files IO modules etc.
-			- \b VLVG [<i>depends on VLGraphics</i>]: 2D vector graphics facilities.
-			- \b VLVolume [<i>depends on VLGraphics</i>]: volume rendering facilities such as marching cubes, screen aligned slices, ray-casting etc.
-			- \b VLMolecule [<i>depends on VLGraphics</i>]: molecule rendering facilities.
-		- Inclusion of VL files now are in the form of <vlCore/Image.hpp> instead of <vl/Image.hpp> and <vlGraphics/Geometry.hpp> instead of <vl/Geometry.hpp> etc.
-		- "vlut" utility namespace removed.
-		- All sub-library namespaces have been consolidated into vl:: with the exception of the GUI-binding namespaces.
-		- Win32Context::init() renamed Win32Context::initWin32GLContext()
-		- initWin32Window() & destroyWindow() renamed initWin32GLWindow() & destroyWin32GLWindow()
-		- vlWXGLCanvas renamed WXGLCanvas.
-		- <b>Applet::run() renamed Applet::updateScene()</b>.
-		- Changed default top-level objects locations:
-			- vl::VisualizationLibrary::settings() renamed vl::globalSettings().
-			- vl::VisualizationLibrary::fontManager() renamed vl::defFontManager().
-			- vl::VisualizationLibrary::fileSystem() renamed vl::defFileSystem().
-			- vl::VisualizationLibrary::loadWriterManager() renamed vl::defLoadWriterManager().
-			- <b>vl::VisualizationLibrary::rendering() REMOVED</b> (not needed and generated more confusion than anything else)
-		- UIEventListener revisited: 
-			- events have pure virtual functions
-			- <b>runEvent() renamed updateEvent()</b>
-			- addedListenerEvent() removedListenerEvent() substitute openglContextBoundEvent()
-			- enableEvent(bool) substitute prepareToReconnect()	
-		- Removed deprecated Cocoa bindings.
-	- <b>Raycast volume rendering: added vl::RaycastVolume class and App_VolumeRaycast.cpp demo and tutorial.</b>
-	- Added new tutorial on basic rendering application (Win32_direct.cpp)
-	- New vlMFC::MDIWindow to support MFC's MDI framework.
-	- <b>New MFC_MDI_example.cpp application demonstrating multiple VL windows in MFC application with MDI framework.</b>
-	- warning/bug/error logs are now color coded on both Windows and Linux (and hopefully Mac).
-	- GLSL program and shader checks and error messages reviewed.
-	- GLSL math library completely reviewed.
-	- Reviewed various OpenGL checks to use more human readable macros.
-	- Updated and extended documentation of FBO classes, GhostCameraManipulator, TrackballManipulator, UIEventListner, RenderTarget, render states vari, Applet, Sphere, AABB, Camera.
-	- FBO render target and FBO attachment implementation reviewed and more robust.
-	- OpenGLContext & GUI bindings messaging policy clarified especially for destruction.
-	- SDLWindow how allows x/y window positioning.
-	- OpenGL context made current during OpenGLContext event dispatch and FBO operations.
-	- Fixed crash in OBJ loader.
-	- fixed crash on Actor::setLod().
-	- GDCM IO module fixed and updated.
-	- Sphere and AABB classes documented, reviewed and fixed.
-	- Fixed bug when calling multiple simplifications on the same PolygonSimplifier.
-	- Actor and Renderable bounds computation more automatic and developer-friendly.
-	- Added vl::Geometry::flipNormals() and degenerate triangles check during normal computation.
-	- App_PolygonReduction: added file drag&drop and polygon count label, and shows animation of simplified mesh.
-	- App_BezierSurface.cpp demo & gallery updated to use Newell's tea set.
-	- Added App_Primitives demotest and primitive objects gallery.
-	- Refreshed render order tests, now all the tests are collapsed into a single one.
-	- Added makeTeapot() primitive object.
-	- New image gallery (work in progress).
-	
 	<div class="featuretitle">Visualization Library 2010.12.1129</div>
 	
 	- New vl::UUID class implementing version 4 (random based) universally unique IDs.
@@ -78,7 +12,7 @@
 	- OpenGL 4.x:
 		- Double precision uniforms.
 		- Texture and color buffer formats		
-	- <b>API CHANGES</b>
+	- API CHANGES:
 		- Streamlined array naming convention: ArrayFloat,ArrayFVec2/3/4 renamed 
 		ArrayFloat1/2/3/4, the same goes with all the other base types.
 		- Reworked matrix and quaternion classes for better performances and more 
@@ -125,7 +59,7 @@
 	- VL_TRANSFORM_USER_DATA compile time configuration variable to enable user data binding to vl::Transform objects.
 	- Added missing texture related render states enums above texture unit #0.
 	- Several other minor improvements and bug fixes.
-	- <b>API CHANGES</b>
+	- <b>API CHANGES</b>:
 		- vl::Texture::setupTexture*() renamed vl::Texture::prepareTexture*(); added new methods createTexture(), setMipLevel() and prepareTexture*() methods for empty textures.
 		- vl::RenderingCallback removed in favor of vl::RenderEventCallback
 		- vl::Shader::update() and vl::Actor::update() removed in favor of ShaderAnimator and ActorEventCallback.
@@ -136,7 +70,7 @@
 
 	- Fixed texture creation functions.
 	- Improved pre-post condition satisfaction during rendering.
-	- <b>API CHANGES</b>
+	- API CHANGES
 		- Updated texture format naming to reflect latest OpenGL headers.
 		- Matrix4/3/2 new methods: transpose(), getTransposed(), getTransposed(M), invert(), getInverse(), getInverse(M), normalize(len), diff(), fill(); scalar_type typedef; 
 	
@@ -149,7 +83,7 @@
 	
 	- DrawCall: <b>new universal index and triangle iterator mechanics</b>. Now normals computation, edge extraction, ray intersection, tangent space computation, polygon simplification, triangle stripfy... all support all combinations of DrawArrays, DrawElements, MultiDrawElements, DrawRangeElements, primitive restart and base vertex.
 	- Geometry: enhanced bounds computation, tighter and faster.
-	- <b>API CHANGES</b>
+	- API CHANGES 
 		- Geometry and DrawCall: removed deprecated triangleCount(), lineCount(), pointCount(), shrinkDrawElements(), sortTriangles(), getTriangle(), methods.
 		- Removed deprecated statistics related methods in Rendering.
 		- DrawCall: removed direct index access API, replaced by index iterator api.
@@ -163,7 +97,7 @@
 	- <b>vl::Effect override  mechanics at the vl::Rendering level reviewed, see App_EffectOverride.hpp.</b>
     - <b>vl::Transform: new methods vl::Transform::addChildren(), vl::Transform::children(), vl::Transform::shrink(), vl::Transform::shrinkRecursive(), vl::Transform::setLocalAndWorldMatrix(), vl::Transform::reserveChildren(), largely improved documentation.</b>
 	- Updated App_OcclusionCulling.hpp and App_EdgeRendering.hpp to use the new features.
-	- <b>API CHANGES</b>
+	- API CHANGES 
 		- Removed OpenGLContext parameter from Renderable::render() method.
 		- Removed occlusion culling related methods from vl::Rendering.
 		- RenderTarget management methods moved from vl::Renderer to vl::Rendering.
@@ -175,7 +109,7 @@
 
 	 <div class="featuretitle">Visualization Library 2010.10.1111</div>
 
-	- <b>API CHANGES</b>
+	- API CHANGES
 		- Primitives class renamed <b>DrawCall</b>.
 		- Geometry::primitives() renamed <b>Geometry::drawCalls()</b>.
 		- GlobalSettings renamed <b>Settings</b>.

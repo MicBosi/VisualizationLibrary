@@ -30,12 +30,16 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlCore/Colors.hpp>
-#include <vlGraphics/Terrain.hpp>
+#include "vlut/Colors.hpp"
+#include "vl/Terrain.hpp"
 
 class App_Terrain: public BaseDemo
 {
 public:
+  virtual void shutdown() {}
+
+  virtual void run() {}
+
   virtual void initEvent()
   {
     if (!GLEW_ARB_multitexture)
@@ -46,11 +50,11 @@ public:
     }
     BaseDemo::initEvent();
 
-    ghostCameraManipulator()->setMovementSpeed(5);
+    ghostCamera()->setMovementSpeed(5);
     // allocate terrain scene manager
     vl::ref<vl::Terrain> terrain = new vl::Terrain;
     // use GLSL?
-    terrain->setUseGLSL( GLEW_ARB_shading_language_100 ? true : false );
+    terrain->setUseGLSL(GLEW_ARB_shading_language_100?true:false);
     // dimensions of the terrain
     terrain->setWidth(100);
     terrain->setDepth(100);
@@ -63,8 +67,8 @@ public:
     // origin of the terrain
     terrain->setOrigin(vl::vec3(0,0,0));
     // define textures
-    terrain->setHeightmapTexture("/images/ps_height_4k.jpg");
-    terrain->setTerrainTexture("/images/ps_texture_4k.jpg");
+    terrain->setHeightmapTexture("/images/terrain-h.jpg");
+    terrain->setTerrainTexture("/images/terrain-t.jpg");
     terrain->setDetailTexture("/images/noise.png");
     terrain->setDetailRepetitionCount(8);
     // define shaders to be used to render the terrain
@@ -73,16 +77,16 @@ public:
     // initialize the terrain
     terrain->init();
     // add the terrain scene manager to the rendering
-    rendering()->as<vl::Rendering>()->sceneManagers()->push_back( terrain.get() );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->sceneManagers()->push_back( terrain.get() );
 
     // adds fog if we are not using GLSL but the fixed function pipeline
     if (!terrain->useGLSL())
     {
       // set sky to white
-      rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::white);
+      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor(vlut::white);
       // set fog render state
       vl::ref<vl::Fog> fog = new vl::Fog;
-      fog->setColor(vl::white);
+      fog->setColor(vlut::white);
       fog->setDensity(0.045f);
       fog->setMode(vl::FM_EXP);
       // install and enable fog

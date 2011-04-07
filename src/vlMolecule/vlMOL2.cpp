@@ -29,17 +29,18 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/DiskFile.hpp>
-#include <vlCore/MemoryFile.hpp>
+#include <vl/DiskFile.hpp>
+#include <vl/MemoryFile.hpp>
 #include <vlMolecule/Molecule.hpp>
 #include <vlMolecule/RingExtractor.hpp>
-#include <vlCore/TextStream.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlGraphics/Scissor.hpp>
-#include <vlGraphics/Texture.hpp>
-#include <vlCore/Image.hpp>
+#include <vl/TextStream.hpp>
+#include <vl/Effect.hpp>
+#include <vl/Scissor.hpp>
+#include <vl/Texture.hpp>
+#include <vl/Image.hpp>
 #include <stdio.h>
 
+using namespace vlMolecule;
 using namespace vl;
 
 //-----------------------------------------------------------------------------
@@ -67,7 +68,7 @@ namespace
 
     // parse structure name
     text_stream.readLine(line);
-    structure->setMoleculeName( String::trimStdString(line).c_str() );
+    structure->setMoleculeName( vl::String::trimStdString(line).c_str() );
 
     // skip lines until atom coordinates start
     while(text_stream.readLine(line) && !strstr(line.c_str(), "@<TRIPOS>ATOM")) { /*skip lines*/ }
@@ -77,7 +78,7 @@ namespace
     char atom_type[NAME_CHAR_COUNT];
     while(text_stream.readLine(line) && !strstr(line.c_str(), "@<TRIPOS>BOND"))
     {
-      fvec3 pos;
+      vl::fvec3 pos;
       int id = 0;
       int tokens = sscanf(line.c_str(), "%d %s %f %f %f %s", &id, atom_name, &pos.x(), &pos.y(), &pos.z(), atom_type);
       // make sure they are zero-terminated.
@@ -165,12 +166,12 @@ namespace
   }
 }
 //-----------------------------------------------------------------------------
-bool vl::loadMOL2(const String& path, std::vector< ref<Molecule> >& structures)
+bool vlMolecule::loadMOL2(const String& path, std::vector< ref<Molecule> >& structures)
 {
-  ref<DiskFile>   dfile = new DiskFile(path);
-  ref<MemoryFile> mfile = new MemoryFile; // cache in the memory
+  ref<DiskFile>   dfile = new vl::DiskFile(path);
+  ref<MemoryFile> mfile = new vl::MemoryFile; // cache in the memory
   mfile->copy(dfile.get());
-  if (!mfile->open(OM_ReadOnly))
+  if (!mfile->open(vl::OM_ReadOnly))
 	{
     Log::error( Say("Error opening file %s.\n") << path );
 	  return false;
@@ -178,7 +179,7 @@ bool vl::loadMOL2(const String& path, std::vector< ref<Molecule> >& structures)
   return loadMOL2(mfile.get(), structures);
 }
 //-----------------------------------------------------------------------------
-bool vl::loadMOL2(VirtualFile* vfile, std::vector< ref<Molecule> >& structures)
+bool vlMolecule::loadMOL2(VirtualFile* vfile, std::vector< ref<Molecule> >& structures)
 {
   structures.clear();
 

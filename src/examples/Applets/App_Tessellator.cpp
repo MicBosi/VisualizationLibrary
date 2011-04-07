@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlGraphics/Geometry.hpp>
-#include <vlGraphics/Tessellator.hpp>
+#include "vl/VisualizationLibrary.hpp"
+#include "vl/Effect.hpp"
+#include "vl/Geometry.hpp"
+#include "vl/Tessellator.hpp"
 
 class App_Tessellator: public BaseDemo
 {
@@ -55,11 +55,11 @@ public:
     // Add empty Actors
     mStar1 = sceneManager()->tree()->addActor( new vl::Actor(NULL, filled_fx.get(), new vl::Transform) );
     mStar2 = sceneManager()->tree()->addActor( new vl::Actor(NULL, wireframe_fx.get(), new vl::Transform) );
-    rendering()->as<vl::Rendering>()->transform()->addChild(mStar1->transform());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mStar2->transform());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mStar1->transform());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mStar2->transform());
   }
 
-  void updateScene() 
+  void run() 
   {
     // Animation: compute rotation matrix to rotate the small star, 45°/sec rotation.
     vl::dmat4 m = vl::dmat4::getRotation( vl::Time::currentTime()*45, 0,0,1 );
@@ -121,8 +121,8 @@ public:
     tess_poly->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLES, 0, (int)vert_array->size()) );
 
     // Bind the created Geometry to the star Actor
-    mStar1->setLod(0, tess_poly.get());
-    mStar2->setLod(0, tess_poly.get());
+    mStar1->lod(0) = tess_poly.get();
+    mStar2->lod(0) = tess_poly.get();
   }
 
 protected:

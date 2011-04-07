@@ -30,20 +30,25 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlCore/LoadWriterManager.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/MorphingCallback.hpp>
-#include <vlGraphics/GLSL.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/LoadWriterManager.hpp"
+#include "vl/Light.hpp"
+#include "vl/MorphingCallback.hpp"
+#include "vl/vlMD2.hpp"
+#include "vl/GLSL.hpp"
 
 class App_MorphAnimation: public BaseDemo
 {
 public:
+  virtual void shutdown() { }
+
+  virtual void run() { }
+
   virtual void initEvent()
   {
-    if (!vl::defLoadWriterManager()->canLoad("md2"))
+    if (!vl::VisualizationLibrary::loadWriterManager()->canLoad("md2"))
     {
-      vl::Log::error("App_MorphAnimation requires VL_IO_2D_MD2.\n");
+      vl::Log::error("App_MorphAnimation requires IO_MODULE_MD2.\n");
       vl::Time::sleep(3000);
       exit(1);
     }
@@ -52,7 +57,7 @@ public:
 
     const int actor_count = 1000;
 
-    ghostCameraManipulator()->setMovementSpeed(500.0f);
+    ghostCamera()->setMovementSpeed(500.0f);
     bool glsl_vertex_blend = GLEW_VERSION_2_0 ? true : false;
     const float area_unit  = 1500.0f*1500.0f/2000.0f;
     const float size = sqrt( actor_count * area_unit );
@@ -68,7 +73,7 @@ public:
     // ground
 
     vl::ref<vl::Geometry> ground;
-    ground = vl::makeGrid( vl::vec3(0,-30,0), size*1.1f, size*1.1f, 20, 20 );
+    ground = vlut::makeGrid( vl::vec3(0,-30,0), size*1.1f, size*1.1f, 20, 20 );
     ground->computeNormals();
     sceneManager()->tree()->addActor(ground.get(), ground_fx.get() );
 

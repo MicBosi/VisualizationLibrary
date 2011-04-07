@@ -30,13 +30,17 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/Light.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/Light.hpp"
 
 class App_Transforms: public BaseDemo
 {
 public:
-  virtual void updateScene()
+  App_Transforms() {}
+
+  virtual void shutdown() {}
+
+  virtual void run()
   {
     // rotate arm0
     mTransfArm0->setLocalMatrix( vl::mat4::getRotation(vl::Time::currentTime()*30.0f, 0.0f, 1.0f, 0.0f) );
@@ -71,15 +75,15 @@ public:
 
     /* working desk */
 
-    vl::ref<vl::Geometry> plane = vl::makeGrid(vl::vec3(0,0,0), 50,50, 2,2);
+    vl::ref<vl::Geometry> plane = vlut::makeGrid(vl::vec3(0,0,0), 50,50, 2,2);
     plane->computeNormals();
-    plane->setColor(vl::gray);
+    plane->setColor(vlut::gray);
     sceneManager()->tree()->addActor(plane.get(), effect.get());
 
     /* buttons */
 
     /* shows how to use Transforms if they don't need to be dynamically
-       animated: first of all you don't put them in the rendering()->as<vl::Rendering>()->transform()'s
+       animated: first of all you don't put them in the vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()'s
        hierarchy like the other transforms; secondly you have to manually call
        computeWorldMatrix()/computeWorldMatrixRecursive() to compute
        the final matrix used for the rendering. This way the rendering pipeline
@@ -89,8 +93,8 @@ public:
 
     vl::ref<vl::Transform> tr;
 
-    vl::ref<vl::Geometry> button = vl::makeCylinder(vl::vec3(0,0.5,0), 1.5, 1);
-    button->setColor(vl::orange);
+    vl::ref<vl::Geometry> button = vlut::makeCylinder(vl::vec3(0,0.5,0), 1.5, 1);
+    button->setColor(vlut::orange);
     button->computeNormals();
 
     tr = new vl::Transform( vl::mat4::getTranslation(-6,0,10) );
@@ -119,54 +123,54 @@ public:
 
     /* robot base */
 
-    vl::ref<vl::Geometry>  arm_base = vl::makeBox(vl::vec3(0,0.5,0), 12, 1, 12);
+    vl::ref<vl::Geometry>  arm_base = vlut::makeBox(vl::vec3(0,0.5,0), 12, 1, 12);
     arm_base ->computeNormals();
-    arm_base ->setColor(vl::blue);
+    arm_base ->setColor(vlut::blue);
     sceneManager()->tree()->addActor(arm_base.get(), effect.get());
 
     /* robot arms */
 
-    vl::ref<vl::Geometry>  arm0    = vl::makeBox(vl::vec3(0,5,0), 2, 10, 2);
+    vl::ref<vl::Geometry>  arm0    = vlut::makeBox(vl::vec3(0,5,0), 2, 10, 2);
     arm0->computeNormals();
-    arm0->setColor(vl::red);
+    arm0->setColor(vlut::red);
     mTransfArm0 = new vl::Transform;
     sceneManager()->tree()->addActor(arm0.get(), effect.get(), mTransfArm0.get());
 
-    vl::ref<vl::Geometry>  arm1    = vl::makeCylinder(vl::vec3(0,5,0), 2, 10);
+    vl::ref<vl::Geometry>  arm1    = vlut::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm1->computeNormals();
-    arm1->setColor(vl::green);
+    arm1->setColor(vlut::green);
     mTransfArm1 = new vl::Transform;
     sceneManager()->tree()->addActor(arm1.get(), effect.get(), mTransfArm1.get());
 
-    vl::ref<vl::Geometry>  arm2    = vl::makeCylinder(vl::vec3(0,5,0), 2, 10);
+    vl::ref<vl::Geometry>  arm2    = vlut::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm2->computeNormals();
-    arm2->setColor(vl::green);
+    arm2->setColor(vlut::green);
     mTransfArm2 = new vl::Transform;
     sceneManager()->tree()->addActor(arm2.get(), effect.get(), mTransfArm2.get());
 
-    vl::ref<vl::Geometry>  arm3    = vl::makeCylinder(vl::vec3(0,5,0), 2, 10);
+    vl::ref<vl::Geometry>  arm3    = vlut::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm3->computeNormals();
-    arm3->setColor(vl::green);
+    arm3->setColor(vlut::green);
     mTransfArm3 = new vl::Transform;
     sceneManager()->tree()->addActor(arm3.get(), effect.get(), mTransfArm3.get());
 
     /* robot fingers */
 
-    vl::ref<vl::Geometry>  finger1   = vl::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
+    vl::ref<vl::Geometry>  finger1   = vlut::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
     finger1->computeNormals();
-    finger1->setColor(vl::crimson);
+    finger1->setColor(vlut::crimson);
     mTransfHand1 = new vl::Transform;
     sceneManager()->tree()->addActor(finger1.get(), effect.get(), mTransfHand1.get());
 
-    vl::ref<vl::Geometry>  finger2   = vl::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
+    vl::ref<vl::Geometry>  finger2   = vlut::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
     finger2->computeNormals();
-    finger2->setColor(vl::crimson);
+    finger2->setColor(vlut::crimson);
     mTransfHand2 = new vl::Transform;
     sceneManager()->tree()->addActor(finger2.get(), effect.get(), mTransfHand2.get());
 
     /* concatenate the transforms */
 
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransfArm0.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mTransfArm0.get());
     mTransfArm0->addChild(mTransfArm1.get());
     mTransfArm1->addChild(mTransfArm2.get());
     mTransfArm2->addChild(mTransfArm3.get());

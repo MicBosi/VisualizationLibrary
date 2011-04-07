@@ -30,13 +30,13 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/SceneManagerActorTree.hpp>
-#include <vlGraphics/Actor.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlCore/Time.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/RenderingTree.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/SceneManagerActorTree.hpp"
+#include "vl/Actor.hpp"
+#include "vl/Effect.hpp"
+#include "vl/Time.hpp"
+#include "vl/Light.hpp"
+#include "vl/RenderingTree.hpp"
 
 class App_ShaderOverride: public BaseDemo
 {
@@ -47,7 +47,7 @@ public:
 
     // retrieve our vl::Rendering object
 
-    mRendering = rendering()->as<vl::Rendering>();
+    mRendering = vl::VisualizationLibrary::rendering()->as<vl::Rendering>();
 
     // setup transforms
 
@@ -61,7 +61,7 @@ public:
     // setup sphere geometry
 
     const vl::Real fsize = 8;
-    vl::ref<vl::Geometry> ball = vl::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
+    vl::ref<vl::Geometry> ball = vlut::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
     ball->computeNormals();
 
     // setup solid effect
@@ -72,7 +72,7 @@ public:
     effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_CULL_FACE);
-    effect->shader()->gocMaterial()->setDiffuse( vl::gold );
+    effect->shader()->gocMaterial()->setDiffuse( vlut::gold );
     effect->shader()->gocMaterial()->setTransparency( 0.5f );
 
     // creates 3 actors and adds them to the scene
@@ -100,9 +100,9 @@ public:
 
     // assign a different flat material color to each shader
 
-    sh1->gocMaterial()->setFlatColor(vl::red);
-    sh2->gocMaterial()->setFlatColor(vl::green);
-    sh3->gocMaterial()->setFlatColor(vl::blue);
+    sh1->gocMaterial()->setFlatColor(vlut::red);
+    sh2->gocMaterial()->setFlatColor(vlut::green);
+    sh3->gocMaterial()->setFlatColor(vlut::blue);
 
     // setup the renderer that will override the shaders
 
@@ -127,7 +127,7 @@ public:
     cube3->setEnableMask(0x04);
   }
 
-  virtual void updateScene()
+  virtual void run()
   {
     vl::Real degrees = vl::Time::currentTime() * 45.0f;
     vl::mat4 matrix;

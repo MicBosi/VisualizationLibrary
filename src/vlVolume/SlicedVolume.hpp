@@ -32,30 +32,28 @@
 #ifndef SlicedVolume_INCLUDE_ONCE
 #define SlicedVolume_INCLUDE_ONCE
 
-#include <vlVolume/config.hpp>
-#include <vlGraphics/Actor.hpp>
-#include <vlGraphics/Geometry.hpp>
-#include <vlGraphics/Light.hpp>
+#include <vl/Actor.hpp>
+#include <vl/Geometry.hpp>
+#include <vl/Light.hpp>
 
-namespace vl
+namespace vlVolume
 {
-  class VLVOLUME_EXPORT SlicedVolume: public ActorEventCallback
+  class SlicedVolume: public vl::ActorEventCallback
   {
   public:
-    virtual const char* className() { return "vl::SlicedVolume"; }
     
     //! Constructor.
     SlicedVolume();
     
-    void onActorRenderStarted(Actor* actor, Real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass);
+    void onActorRenderStarted(vl::Actor* actor, vl::Real frame_clock, const vl::Camera* cam, vl::Renderable* renderable, const vl::Shader* shader, int pass);
 
-    void onActorDelete(Actor* ) {}
+    void onActorDelete(vl::Actor* ) {}
 
     //! Binds a SlicedVolume to an Actor so that the SlicedVolume can generate the viewport aligned slices' geometry for the Actor as appropriate.
-    void bindActor(Actor*);
+    void bindActor(vl::Actor*);
 
-    //! Updates the uniforms used by the GLSLProgram to render the volume each time the onActorRenderStarted() method is called.
-    virtual void updateUniforms(Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader);
+    //! Updates the uniforms used by the vl::GLSLProgram to render the volume each time the onActorRenderStarted() method is called.
+    virtual void updateUniforms(vl::Actor* actor, vl::Real clock, const vl::Camera* camera, vl::Renderable* rend, const vl::Shader* shader);
     
     //! Defines the number of slices used to render the volume: more slices generate a better (and slower) rendering.
     void setSliceCount(int count) { mSliceCount = count; }
@@ -63,37 +61,36 @@ namespace vl
     //! Returns the number of slices used to render the volume.
     int sliceCount() const { return mSliceCount; }
     
-    //! Returns the Geometry associated to a SlicedVolume and its bound Actor
-    Geometry* geometry() { return mGeometry.get(); }
+    //! Returns the vl::Geometry associated to a SlicedVolume and its bound Actor
+    vl::Geometry* geometry() { return mGeometry.get(); }
     
-    //! Returns the Geometry associated to a SlicedVolume and its bound Actor
-    const Geometry* geometry() const { return mGeometry.get(); }
+    //! Returns the vl::Geometry associated to a SlicedVolume and its bound Actor
+    const vl::Geometry* geometry() const { return mGeometry.get(); }
     
     //! Defines the dimensions of the box enclosing the volume
-    void setBox(const AABB& box);
+    void setBox(const vl::AABB& box);
     
     //! The dimensions of the box enclosing the volume
-    const AABB& box() const { return mBox; }
+    const vl::AABB& box() const { return mBox; }
     
     //! Returns the texture coordinates assigned to each of the 8 box corners of the volume
-    const fvec3* texCoords() const { return mTexCoord; }
+    const vl::fvec3* texCoords() const { return mTexCoord; }
     
     //! Returns the texture coordinates assigned to each of the 8 box corners of the volume
-    fvec3* texCoords() { return mTexCoord; }
+    vl::fvec3* texCoords() { return mTexCoord; }
     
     //! Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
-    void generateTextureCoordinates(const ivec3& size);
+    void generateTextureCoordinates(const vl::ivec3& size);
     
     //! Generates a default set of texture coordinates for the 8 box corners of the volume based on the given texture dimensions.
-    //! Use this function to visualize a subset of the volume. The subset is defined by \p min_corner and \p max_corner.
-    void generateTextureCoordinates(const ivec3& img_size, const ivec3& min_corner, const ivec3& max_corner);
+    void generateTextureCoordinates(int width, int height, int depth) { generateTextureCoordinates(vl::ivec3(width,height,depth)); }
 
   protected:
     int mSliceCount;
-    ref<Geometry> mGeometry;
-    AABB mBox;
-    fmat4 mCache;
-    fvec3 mTexCoord[8];
+    vl::ref<vl::Geometry> mGeometry;
+    vl::AABB mBox;
+    vl::fmat4 mCache;
+    vl::fvec3 mTexCoord[8];
   };
 }
 

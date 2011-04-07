@@ -30,11 +30,11 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlCore/Colors.hpp>
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/DistanceLODEvaluator.hpp>
-#include <vlGraphics/PixelLODEvaluator.hpp>
-#include <vlGraphics/Light.hpp>
+#include "vlut/Colors.hpp"
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/DistanceLODEvaluator.hpp"
+#include "vl/PixelLODEvaluator.hpp"
+#include "vl/Light.hpp"
 
 // color blinking effect
 class BlinkShaderAnimator: public vl::ShaderAnimator
@@ -45,9 +45,9 @@ public:
     int c = (int)( cur_time * 15.0 ) % 2;
     vl::fvec4 color;
     if (c == 0) 
-      color = vl::gold;
+      color = vlut::gold;
     else
-      color = vl::red;
+      color = vlut::red;
     shader->gocMaterial()->setFlatColor( color );
   }
 };
@@ -75,7 +75,7 @@ public:
   void updateShader(vl::Shader* shader, vl::Camera* , vl::Real cur_time)
   {
     float t = (float)sin( cur_time*vl::fPi*2.0f )*0.5f + 0.5f;
-    vl::fvec4 col = vl::red*t + vl::blue*(1-t);
+    vl::fvec4 col = vlut::red*t + vlut::blue*(1-t);
     shader->gocMaterial()->setFlatColor(col);
   }
 };
@@ -146,7 +146,7 @@ public:
     effect->setLODEvaluator(lod_eval.get());
 
     // generate template geometry
-    vl::ref<vl::Geometry> box = vl::makeBox( vl::vec3(0,0,0), 5,5,5);
+    vl::ref<vl::Geometry> box = vlut::makeBox( vl::vec3(0,0,0), 5,5,5);
     box->computeNormals();
     // use the same texture coordinates for unit #0 and unit #1
     box->setTexCoordArray(1, box->texCoordArray(0));
@@ -155,7 +155,7 @@ public:
     for(int i=0; i<24; ++i)
     {
       vl::ref<vl::Transform> tr = new vl::Transform;
-      rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
+      vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
       vl::mat4 mat;
       mat.translate(30,0,0);
       mat.rotate( 360.0f / 20.0f * i, 0, 1, 0);
@@ -168,13 +168,13 @@ public:
   }
 
   // animate the scene
-  void updateScene()
+  void run()
   {
     vl::Real t = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 8.0f ) * 0.5f + 0.5f;
     vl::vec3 eye( 130*t+5, t*20+5, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 15.0f, 0, 1, 0 ) * eye;
     vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };
 

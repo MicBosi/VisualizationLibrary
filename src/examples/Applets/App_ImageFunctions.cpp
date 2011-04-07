@@ -30,23 +30,21 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlCore/LoadWriterManager.hpp>
-#include <vlGraphics/GeometryPrimitives.hpp>
-#if defined(VL_IO_2D_PNG)
-  #include <vlCore/vlPNG.hpp>
-#endif
-#if defined(VL_IO_2D_JPG)
-  #include <vlCore/vlJPG.hpp>
-#endif
+#include "vl/LoadWriterManager.hpp"
+#include "vlut/GeometryPrimitives.hpp"
 
 class App_ImageFunctions: public BaseDemo
 {
 public:
+  virtual void shutdown() {}
+
+  virtual void run() {}
+
   virtual void initEvent()
   {
     if ( !vl::canLoad("png") || !vl::canLoad("jpg") || !vl::canLoad("tga") || !vl::canLoad("tif") )
     {
-      vl::Log::error("App_ImageFunctions test requires the following modules: VL_IO_2D_JPG, VL_IO_2D_PNG, VL_IO_2D_TIFF and VL_IO_2D_TGA.\n");
+      vl::Log::error("App_ImageFunctions test requires the following modules: IO_MODULE_JPG, IO_MODULE_PNG, IO_MODULE_TIFF and IO_MODULE_TGA.\n");
       vl::Time::sleep(5000);
       openglContext()->quitApplication();
       return;
@@ -67,21 +65,13 @@ public:
     vl::ref<vl::Image> img_c;
     vl::ref<vl::Image> img_d;
 
-	// remember that this returns NULL if JPG support is disabled
-#if defined(VL_IO_2D_PNG)
-	// TODO: review the way options are set for ResourceLoadWriters, that is, how we can 
-	// safely access to the actual object's interface implementing a generic plugin.
-    vl::defLoadWriterManager()->loadWriter<vl::LoadWriterJPG>()->setQuality(90);
-#endif
+    // remember that this returns NULL if JPG support is disabled
+    vl::VisualizationLibrary::loadWriterManager()->loadWriter<vl::LoadWriterJPG>()->setQuality(90);
     vl::saveImage(img1.get(), "img_a.jpg");
     img_a = vl::loadImage("img_a.jpg");
 
     // remember that this returns NULL if PNG support is disabled
-#if defined(VL_IO_2D_JPG)
-	// TODO: review the way options are set for ResourceLoadWriters, that is, how we can 
-	// safely access to the actual object's interface implementing a generic plugin.
-    vl::defLoadWriterManager()->loadWriter<vl::LoadWriterPNG>()->setCompression(9);
-#endif
+    vl::VisualizationLibrary::loadWriterManager()->loadWriter<vl::LoadWriterPNG>()->setCompression(9);
     vl::saveImage(img1.get(), "img_b.png");
     img_b = vl::loadImage("img_b.png");
 
@@ -191,13 +181,13 @@ public:
       }
     }
 
-    vl::ref<vl::Geometry> quad = vl::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
+    vl::ref<vl::Geometry> quad = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     quad->transform( vl::mat4::getRotation(-90, 1,0,0), false );
 
     // (1)
     // transform
     vl::ref<vl::Transform> tr_1 = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_1.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_1.get());
     tr_1->setLocalMatrix(vl::mat4::getTranslation(-5,0,0));
     // effect
     vl::ref<vl::Effect> fx_1 = new vl::Effect;
@@ -213,7 +203,7 @@ public:
     // (2)
     // transform
     vl::ref<vl::Transform> tr_2 = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_2.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_2.get());
     tr_2->setLocalMatrix(vl::mat4::getTranslation(+5,0,0));
     // effect
     vl::ref<vl::Effect> fx_2 = new vl::Effect;
@@ -229,7 +219,7 @@ public:
     // (x)
     // transform
     vl::ref<vl::Transform> tr_x = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_x.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_x.get());
     tr_x->setLocalMatrix(vl::mat4::getTranslation(-2.5-5,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_x = new vl::Effect;
@@ -245,7 +235,7 @@ public:
     // (y)
     // transform
     vl::ref<vl::Transform> tr_y = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_y.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_y.get());
     tr_y->setLocalMatrix(vl::mat4::getTranslation(-2.5,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_y = new vl::Effect;
@@ -261,7 +251,7 @@ public:
     // (z)
     // transform
     vl::ref<vl::Transform> tr_z = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_z.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_z.get());
     tr_z->setLocalMatrix(vl::mat4::getTranslation(+2.5,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_z = new vl::Effect;
@@ -277,7 +267,7 @@ public:
     // (w)
     // transform
     vl::ref<vl::Transform> tr_w = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_w.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_w.get());
     tr_w->setLocalMatrix(vl::mat4::getTranslation(+2.5+5.0,+7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_w = new vl::Effect;
@@ -293,7 +283,7 @@ public:
     // (a)
     // transform
     vl::ref<vl::Transform> tr_a = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_a.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_a.get());
     tr_a->setLocalMatrix(vl::mat4::getTranslation(-2.5-5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_a = new vl::Effect;
@@ -309,7 +299,7 @@ public:
     // (b)
     // transform
     vl::ref<vl::Transform> tr_b = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_b.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_b.get());
     tr_b->setLocalMatrix(vl::mat4::getTranslation(-2.5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_b = new vl::Effect;
@@ -325,7 +315,7 @@ public:
     // (c)
     // transform
     vl::ref<vl::Transform> tr_c = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_c.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_c.get());
     tr_c->setLocalMatrix(vl::mat4::getTranslation(+2.5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_c = new vl::Effect;
@@ -341,7 +331,7 @@ public:
     // (d)
     // transform
     vl::ref<vl::Transform> tr_d = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(tr_d.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(tr_d.get());
     tr_d->setLocalMatrix(vl::mat4::getTranslation(+2.5+5,-7.5,0) * vl::mat4::getScaling(0.5f,0.5f,1.0f));
     // effect
     vl::ref<vl::Effect> fx_d = new vl::Effect;

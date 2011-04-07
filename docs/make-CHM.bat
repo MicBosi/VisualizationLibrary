@@ -1,5 +1,2 @@
-set PATH=%PATH%;..\..\BuildSystem\htmlhelp
-
-hhc .\VL_SDK_DOCS-HTML\index.hhp
-
+hhc .\Visualization_Library_DOCS\index.hhp
 pause

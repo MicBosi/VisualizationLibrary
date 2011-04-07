@@ -32,23 +32,23 @@
 #ifndef Win32_Window_INCLUDE_ONCE
 #define Win32_Window_INCLUDE_ONCE
 
-#include <vlGraphics/OpenGLContext.hpp>
-#include <vlWin32/Win32Context.hpp>
+#include "vl/OpenGLContext.hpp"
+#include "vlWin32/Win32Context.hpp"
 #include <map>
 
 namespace vlWin32
 {
 //-----------------------------------------------------------------------------
-  VLWIN32_EXPORT int messageLoop();
-  VLWIN32_EXPORT void peekMessage(MSG& msg);
-  VLWIN32_EXPORT void dispatchUpdate();
+  int messageLoop();
+  void peekMessage(MSG& msg);
+  void dispatchUpdate();
 //-----------------------------------------------------------------------------
 // Win32Window
 //-----------------------------------------------------------------------------
   /**
    * The Win32Window class is a Win32Context that can be used as a top or child window.
   */
-  class VLWIN32_EXPORT Win32Window: public Win32Context
+  class Win32Window: public Win32Context
   {
   public:
     static const wchar_t* Win32WindowClassName;
@@ -60,10 +60,13 @@ namespace vlWin32
 
     //! Initializes a new Win32 window with a new OpenGL rendering context.
     //! After the initialization to show the window use the show() method.
-    bool initWin32GLWindow(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
+    bool initWin32Window(HWND parent, HGLRC share_context, const vl::String& title, const vl::OpenGLContextFormat& fmt, int x=0, int y=0, int width=640, int height=480);
 
-    //! Destroys the window and the OpenGL rendering context
-    void destroyWin32GLWindow();
+    //! calls destroyWindow() and dispatches the destroy event to the UIEventListener objects
+    virtual void destroy();
+
+    //! Destroyes the window and the OpenGL rendering context
+    void destroyWindow();
 
     HWND  hwnd()  const { return mHWND;  }
 
@@ -103,7 +106,7 @@ namespace vlWin32
     static std::map< HWND, Win32Window* > mWinMap;
   };
 //-----------------------------------------------------------------------------
-  VLWIN32_EXPORT void translateKeyEvent(WPARAM wParam, LPARAM lParam, unsigned short& unicode_out, vl::EKey& key_out);
+  void translateKeyEvent(WPARAM wParam, LPARAM lParam, unsigned short& unicode_out, vl::EKey& key_out);
 //-----------------------------------------------------------------------------
 }
 

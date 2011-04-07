@@ -30,10 +30,10 @@
 /**************************************************************************************/
 
 #include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlCore/Array.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/GLSL.hpp>
+#include "vlut/GeometryPrimitives.hpp"
+#include "vl/Array.hpp"
+#include "vl/Light.hpp"
+#include "vl/GLSL.hpp"
 
 /* 
  * You can find the documentatio for this example in the offical documentation at:
@@ -51,14 +51,14 @@ public:
       return;
     }
 
-    vl::ref<vl::Geometry> box = vl::makeBox( vl::vec3(0,0,0), 5,5,5, true );
+    vl::ref<vl::Geometry> box = vlut::makeBox( vl::vec3(0,0,0), 5,5,5, true );
     box->computeNormals();
     box->setTexCoordArray(1, box->texCoordArray(0));
 
     mCubeRightTransform = new vl::Transform;
     mCubeLeftTransform = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(mCubeRightTransform.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mCubeLeftTransform.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mCubeRightTransform.get());
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild(mCubeLeftTransform.get());
 
     vl::ref<vl::Image> img_holebox = vl::loadImage("/images/holebox.tif");
     vl::ref<vl::Image> img_detail  = vl::loadImage("/images/detail.tif");
@@ -107,8 +107,8 @@ public:
   {
     vl::ref<vl::Image> img_volume = vl::loadImage("/volume/VLTest.dat");
 
-    vl::ref<vl::Geometry> quad_3d = vl::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
-    quad_3d->setColor(vl::white);
+    vl::ref<vl::Geometry> quad_3d = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
+    quad_3d->setColor(vlut::white);
     quad_3d->transform( vl::mat4::getRotation(90, 1,0,0), false );
 
     mTexCoords_3D = new vl::ArrayFloat3;
@@ -139,8 +139,8 @@ public:
     vl::ref<vl::Image> img_volume = vl::loadImage("/volume/VLTest.dat");
     m2DArraySize = img_volume->depth(); // save this to be used during the animation
 
-    vl::ref<vl::Geometry> quad_2darray = vl::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
-    quad_2darray->setColor(vl::white);
+    vl::ref<vl::Geometry> quad_2darray = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
+    quad_2darray->setColor(vlut::white);
     quad_2darray->transform( vl::mat4::getRotation(90, 1,0,0), false );
 
     mTexCoords_2DArray = new vl::ArrayFloat3;
@@ -176,8 +176,8 @@ public:
     m1DArraySize = img_holebox->height(); // save this to be used during the animation
 
     // create a grid with img_holebox->height() slices
-    vl::ref<vl::Geometry> quad_1darray = vl::makeGrid( vl::vec3(0,0,0), 10, 10, 2, img_holebox->height() );
-    quad_1darray->setColor(vl::white);
+    vl::ref<vl::Geometry> quad_1darray = vlut::makeGrid( vl::vec3(0,0,0), 10, 10, 2, img_holebox->height() );
+    quad_1darray->setColor(vlut::white);
     quad_1darray->transform( vl::mat4::getRotation(90, 1,0,0), false );
     
     mTexCoords_1DArray = new vl::ArrayFloat2;
@@ -212,8 +212,8 @@ public:
     vl::ref<vl::Image> img_holebox = vl::loadImage("/images/holebox.tif");    
 
     // generate non-normalized uv coordinates, i.e. from <0,0> to <img_holebox->width(),img_holebox->height()>
-    vl::ref<vl::Geometry> quad_rect = vl::makeGrid( vl::vec3(0,0,0), 10.0f, 10.0f, 2, 2, true, vl::fvec2(0,0), vl::fvec2((float)img_holebox->width(),(float)img_holebox->height()) );
-    quad_rect->setColor(vl::white);
+    vl::ref<vl::Geometry> quad_rect = vlut::makeGrid( vl::vec3(0,0,0), 10.0f, 10.0f, 2, 2, true, vl::fvec2(0,0), vl::fvec2((float)img_holebox->width(),(float)img_holebox->height()) );
+    quad_rect->setColor(vlut::white);
     quad_rect->transform( vl::mat4::getRotation(90, 1,0,0), false );
 
     vl::ref<vl::Effect> fx_rect = new vl::Effect;
@@ -243,7 +243,7 @@ public:
   {
     vl::ref<vl::Image> img_spheric = vl::loadImage("/images/spheremap_klimt.jpg");
 
-    vl::ref<vl::Geometry> torus = vl::makeTorus(vl::vec3(), 8,3, 40,40);
+    vl::ref<vl::Geometry> torus = vlut::makeTorus(vl::vec3(), 8,3, 40,40);
     // normals already present, needed by GL_SPHERE_MAP to work correctly!
 
     mFXSpheric = new vl::Effect;
@@ -265,7 +265,7 @@ public:
     mFXSpheric->shader()->gocTexGen(0)->setGenModeT(vl::TGM_SPHERE_MAP);
 
     mActSpheric = sceneManager()->tree()->addActor( torus.get(), mFXSpheric.get(), new vl::Transform );
-    rendering()->as<vl::Rendering>()->transform()->addChild( mActSpheric->transform() );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mActSpheric->transform() );
   }
 
   void cubeMapping()
@@ -280,7 +280,7 @@ public:
       "/images/cubemap/cubemap04.png", // (z+) back
       "/images/cubemap/cubemap05.png");// (z-) front
 
-    vl::ref<vl::Geometry> torus = vl::makeTorus( vl::vec3(), 8,3, 40,40 );
+    vl::ref<vl::Geometry> torus = vlut::makeTorus( vl::vec3(), 8,3, 40,40 );
     // normals already present, needed by GL_SPHERE_MAP to work correctly!
 
     mFXCubic = new vl::Effect;
@@ -313,10 +313,10 @@ public:
       vl::Log::error("Texture cubemap not supported.\n");
 
     mActCubic = sceneManager()->tree()->addActor( torus.get(), mFXCubic.get(), new vl::Transform );
-    rendering()->as<vl::Rendering>()->transform()->addChild( mActCubic->transform() );
+    vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform()->addChild( mActCubic->transform() );
   }
 
-  void updateScene()
+  void run()
   {
     // rotating cubes
 
@@ -376,7 +376,7 @@ public:
   {
     BaseDemo::initEvent();
 
-    trackball()->setTransform(rendering()->as<vl::Rendering>()->transform());
+    trackball()->setTransform(vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->transform());
 
     mMipmappingOn = true;
     mLodBias = 0.0;

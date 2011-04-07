@@ -2,22 +2,17 @@
 
 	\page pagGuideBezierSurfaces Bicubic Bézier Patches and Surfaces Tutorial
 
-	In the following tutorial you will learn how to manage and generate bicubic Bezier surfaces and how to concatenate multiple patches using the 
-	vl::BezierPatch and vl::BezierSurface classes.
+	In the following tutorial you will learn how to manage and generate bicubic Bezier surfaces and how to concatenate multiple patches.
 	
 	<center>
 	<table border=0 cellspacing=0 cellpadding=5 width=1%>
 	<tr>
-		<td> <img src="pics/pagGuideBezierSurfaces1.jpg"> </td>
-		<td> <img src="pics/pagGuideBezierSurfaces2.jpg"> </td>
-		<td> <img src="pics/pagGuideBezierSurfaces3.jpg"> </td>
+		<td> \image html pagGuideBezierSurfaces1.jpg </td>
+		<td> \image html pagGuideBezierSurfaces2.jpg </td>
+		<td> \image html pagGuideBezierSurfaces3.jpg </td>
 	</tr>
 	<tr>
-		<td align=center colspan=3> 
-		Newell's tea cup rendered using 26 4x4 Bézier patches with increasing tessellation level from left to right.
-		The dots and the white lines represent the control points of the patches, the red dots represent the corner control points 
-		that are guaranteed to touch the Bézier surface.
-		</td>
+		<td align=center colspan=3> A Bézier surface defined by multiple concatenated patches rendered with an ascending (from left to right) tessellation level. The dots and the white lines represent the control points of the patches, the red dots represent the corner control points that are guaranteed to touch the Bézier surface.</td>
 	</tr>
 	</table>
 	</center>

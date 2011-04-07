@@ -4,7 +4,7 @@
 
 	This tutorial demonstrates how to render a heightmap-based terrain using the Terrain scene manager.
 	
-	<img src="pics/pagGuideTerrain.jpg">
+	\image html pagGuideTerrain.jpg
 	
 	[From \p App_Terrain.cpp]
 	\dontinclude App_Terrain.cpp

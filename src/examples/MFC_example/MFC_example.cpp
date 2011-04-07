@@ -30,8 +30,8 @@
 /**************************************************************************************/
 
 #include "StdAfx.h"
-#include <vlCore/VisualizationLibrary.hpp>
-#include <vlMFC/MFCWindow.hpp>
+#include "vl/VisualizationLibrary.hpp"
+#include "vlMFC/MFCWindow.hpp"
 #include "Applets/App_RotatingCube.hpp"
 
 using namespace vl;
@@ -46,7 +46,7 @@ public:
   virtual BOOL InitInstance();
   virtual int ExitInstance();
   /*virtual int Run();*/
-  virtual BOOL OnIdle(LONG lCount);
+  /*virtual BOOL OnIdle(LONG lCount);*/
 
 protected:
   ref<MFCWindow> mVLCWin;
@@ -59,16 +59,6 @@ END_MESSAGE_MAP()
 /* instance of the MFC application */
 MFC_Example mfc_app;
 
-/* updates the GL window */
-BOOL MFC_Example::OnIdle(LONG lCount)
-{
-  if( mVLCWin->continuousUpdate() )
-    mVLCWin->Win32Context::update();
-  else
-    Sleep(1);
-  return TRUE;
-}
-
 /* called when the application exits */
 int MFC_Example::ExitInstance()
 {
@@ -78,7 +68,7 @@ int MFC_Example::ExitInstance()
   mVLCWin = NULL;
 
   /* shutdown Visualization Library */
-  VisualizationLibrary::shutdown();
+  vl::VisualizationLibrary::shutdown();
 
   return 0;
 }
@@ -89,13 +79,13 @@ BOOL MFC_Example::InitInstance()
   CWinApp::InitInstance();
 
   /* open a console so we can see the program's output on stdout */
-  showWin32Console();
+  vl::showWin32Console();
 
   /* init Visualization Library */
-  VisualizationLibrary::init();
+  vl::VisualizationLibrary::init();
 
   /* setup the OpenGL context format */
-  OpenGLContextFormat format;
+  vl::OpenGLContextFormat format;
   format.setDoubleBuffer(true);
   format.setRGBABits( 8,8,8,0 );
   format.setDepthBufferBits(24);
@@ -105,22 +95,22 @@ BOOL MFC_Example::InitInstance()
   format.setMultisample(true);
 
   /* create the applet to be run */
-  ref<Applet> applet = new App_RotatingCube;
+  vl::ref<vlut::Applet> applet = new App_RotatingCube;
   applet->initialize();
   /* instance the MFC window/OpenGLContext */
   mVLCWin = new MFCWindow;
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   mVLCWin->addEventListener(applet.get());
   /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( mVLCWin->renderTarget() );
+  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->renderer()->setRenderTarget( mVLCWin->renderTarget() );
   /* black background */
-  applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
+  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor( vlut::black );
   /* define the camera position and orientation */
-  vec3 eye    = vec3(0,10,35); // camera position
-  vec3 center = vec3(0,0,0);   // point the camera is looking at
-  vec3 up     = vec3(0,1,0);   // up direction
-  mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
-  applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
+  vl::vec3 eye    = vl::vec3(0,10,35); // camera position
+  vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
+  vl::vec3 up     = vl::vec3(0,1,0);   // up direction
+  vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
+  vl::VisualizationLibrary::rendering()->as<vl::Rendering>()->camera()->setViewMatrix( view_mat );
   /* Initialize the OpenGL context and window properties */
   int x = 100;
   int y = 100;
