@@ -34,7 +34,7 @@
 
 #include <vlCore/Vector4.hpp>
 #include <vlCore/Matrix4.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 #include <vlGraphics/RenderState.hpp>
 #include <vlGraphics/RenderStateSet.hpp>
 #include <vlGraphics/EnableSet.hpp>

@@ -33,9 +33,9 @@
 #define VisualizationLibrary_INCLUDE_ONCE
 
 #include <vlCore/config.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 
-// TODO: it would be nice not to have this VLGRAPHICS/VLCORE_EXPORT mix and not to include <vlGraphics/config.hpp> here.
+// TODO: it would be nice not to have this VLGRAPHICS/VLCORE_EXPORT mix and not to include <vlGraphics/link_config.hpp> here.
 
 namespace vl
 {

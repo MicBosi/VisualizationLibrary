@@ -35,7 +35,7 @@
 #include <vlCore/Object.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/String.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 #include <map>
 
 //-----------------------------------------------------------------------------

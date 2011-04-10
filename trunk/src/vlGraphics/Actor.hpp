@@ -36,7 +36,7 @@
 #include <vlCore/Sphere.hpp>
 #include <vlCore/AABB.hpp>
 #include <vlCore/Transform.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Renderable.hpp>
 #include <vlGraphics/LODEvaluator.hpp>

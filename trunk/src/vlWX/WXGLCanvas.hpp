@@ -32,7 +32,7 @@
 #ifndef vlWXGLCanvas_INCLUDE_ONCE
 #define vlWXGLCanvas_INCLUDE_ONCE
 
-#include <vlWX/config.hpp>
+#include <vlWX/link_config.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlCore/Time.hpp>
 #include <wx/frame.h>

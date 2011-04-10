@@ -33,7 +33,7 @@
 #define ProjViewTransfCallback_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 
 namespace vl
 {

@@ -32,7 +32,7 @@
 #ifndef VectorGraphics_INCLUDE_ONCE
 #define VectorGraphics_INCLUDE_ONCE
 
-#include <vlVG/config.hpp>
+#include <vlVG/link_config.hpp>
 #include <vlCore/Image.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlGraphics/Actor.hpp>

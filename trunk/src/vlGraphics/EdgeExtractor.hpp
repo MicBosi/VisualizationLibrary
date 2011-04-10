@@ -34,7 +34,7 @@
 
 #include <vlCore/Object.hpp>
 #include <vlCore/Vector3.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 #include <vector>
 #include <set>
 
