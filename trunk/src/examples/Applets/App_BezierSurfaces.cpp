@@ -41,9 +41,17 @@ class App_BezierSurfaces: public BaseDemo
 public:
   App_BezierSurfaces(): mDetail(10) {}
 
+  virtual String appletInfo()
+  {
+    return BaseDemo::appletInfo() + 
+    "Up/Down Arrow = increase/decrease the Bezier surface tessellation detail.\n" +
+    "Space         = toggle control points visibility.\n" +
+    "\n";
+  }
+
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     /* 2 pass shader: 1 = solid, 2 = wireframe */
 
@@ -120,11 +128,12 @@ public:
     int vertnum;
     sstr >> vertnum;
     std::vector<vec3> verts;
+    verts.resize(vertnum);
     for(int i=0; i<vertnum; ++i)
     {
-      float x,y,z;
-      sstr>>x>>y>>z;
-      verts.push_back(fvec3(x,y,z));
+      float x, y, z;
+      sstr >> x >> y >> z;
+      verts[i] = vec3(x, z, -y);
     }
 
     // Instance our Bézier surface

@@ -49,7 +49,7 @@ public:
       exit(1);
     }
 
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     mTransform = new vl::Transform;
 
@@ -79,7 +79,7 @@ public:
     mGLSL->attachShader( new vl::GLSLFragmentShader("/glsl/bumpmap.fs") );
     // samper0
     vl::ref<vl::Uniform> sampler0 = new vl::Uniform("sampler0");
-    sampler0->setUniform(0);
+    sampler0->setUniformI(0);
     mGLSL->setUniform( sampler0.get() );
     // light_obj_space_pos
     mLightObjSpacePosition = new vl::Uniform("light_obj_space_pos");

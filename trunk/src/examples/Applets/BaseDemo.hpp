@@ -50,12 +50,26 @@ public:
   {
     vl::Applet::updateEvent();
 
-    if (mFPSTimer.elapsed() > 1)
+    if ( mFPSTimer.elapsed() > 2 )
     {
       mFPSTimer.start();
-      openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << appletName() );
+      openglContext()->setWindowTitle( vl::Say("[%.1n] %s") << fps() << appletName()  + " - " + vl::String("VL ") + vl::VisualizationLibrary::versionString() );
       vl::Log::print( vl::Say("FPS=%.1n\n") << fps() );
     }
+  }
+
+  virtual vl::String appletInfo()
+  {
+    return "Applet info: " + appletName() + "\n" +
+    "Keys:\n" +
+    "- Escape: quits the application.\n" +
+    "- T:  enables the TrackballManipulator.\n" +
+    "- F:  enables the GhostCameraManipulator (use A/D S/W keys).\n" +
+    "- F1: toggles fullscreen mode if supported.\n" +
+    "- F5: saves a screenshot of the current OpenGL window.\n" +
+    "- C:  toggles the continuous update fo the OpenGL window.\n" +
+    "- U:  force update of the OpenGL window.\n" +
+    "\n";
   }
 
 private:

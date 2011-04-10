@@ -43,7 +43,7 @@ public:
 
   virtual void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     mSceneKdTree = new vl::SceneManagerActorKdTree;
 

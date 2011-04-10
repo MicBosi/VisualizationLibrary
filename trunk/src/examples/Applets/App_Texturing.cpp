@@ -374,7 +374,7 @@ public:
 
   virtual void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     trackball()->setTransform(rendering()->as<vl::Rendering>()->transform());
 

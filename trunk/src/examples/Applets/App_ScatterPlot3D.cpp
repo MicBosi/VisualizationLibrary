@@ -48,7 +48,7 @@ public:
 
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     vl::ref<vl::Effect> effect = new vl::Effect;
 

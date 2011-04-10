@@ -42,7 +42,7 @@ class App_OcclusionCulling: public BaseDemo
 public:
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     // #######################################################################
     // # These 4 lines are the only code needed to enable occlusion culling, #

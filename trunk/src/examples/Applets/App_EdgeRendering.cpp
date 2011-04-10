@@ -43,7 +43,7 @@ class App_EdgeRendering: public BaseDemo
 public:
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     // retrieve the default rendering
     mMainRendering = rendering()->as<Rendering>();
