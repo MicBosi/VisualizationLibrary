@@ -38,7 +38,7 @@ using namespace vl;
 //------------------------------------------------------------------------------
 // Object
 //------------------------------------------------------------------------------
-#if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
+#if VL_DEBUG_LIVING_OBJECTS
   std::set< Object* > *Object::mDebug_LivingObjects = NULL;
 #endif
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ Object::~Object()
     "- explicit call to Object::incReference().\n"
     ) << mObjectName << mReferenceCount );
 
-#if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
+#if VL_DEBUG_LIVING_OBJECTS
   debug_living_objects()->erase(this);
 #endif
 }
