@@ -90,7 +90,7 @@
      
 	<h2>How do I compile and run the example and test applications?</h2>
     
-    When configuring CMake tick the checkbox relative to the GUI examples you want to compile. For ex. "GUI_WIN32_EXAMPLES" will compile the \a 
+    When configuring CMake tick the checkbox relative to the GUI examples you want to compile. For ex. "VL_GUI_WIN32_EXAMPLES" will compile the \a 
 	win32_example.exe and \a win32_tests.exe applications. Running the \a win32_tests.exe application without parameters will print out the list
 	of available tests and options.
      
