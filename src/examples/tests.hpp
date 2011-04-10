@@ -213,7 +213,7 @@ public:
       }
     }
 
-#ifdef VL_DEBUG_LIVING_OBJECTS
+#if VL_DEBUG_LIVING_OBJECTS
     std::set< vl::Object* >* obj_database = vl::Object::debug_living_objects() ;
     printf( "Living objects: %d\n", obj_database->size() );
     std::set< vl::Object* >::iterator it = obj_database->begin();

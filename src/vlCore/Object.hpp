@@ -35,7 +35,7 @@
 #include <vlCore/checks.hpp>
 #include <string>
 
-#if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
+#if VL_DEBUG_LIVING_OBJECTS
   #include <set>
 #endif
 
@@ -88,7 +88,7 @@ namespace vl
       #if VL_ACTOR_USER_DATA
         mUserData = NULL;
       #endif
-      #if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
+      #if VL_DEBUG_LIVING_OBJECTS
         debug_living_objects()->insert(this);
         // mDebug_LivingObjects.insert(this);
       #endif
@@ -107,7 +107,7 @@ namespace vl
         mUserData = other.mUserData;
       #endif
       // debug living object
-      #if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
+      #if VL_DEBUG_LIVING_OBJECTS
         debug_living_objects()->insert(this);
         // mDebug_LivingObjects.insert(this);
       #endif
@@ -200,7 +200,7 @@ namespace vl
   // debugging facilities
 
   public:
-  #if VL_DEBUG_LIVING_OBJECTS && !defined(NDEBUG)
+  #if VL_DEBUG_LIVING_OBJECTS
     static std::set< Object* >* mDebug_LivingObjects;
     static std::set< Object* >* debug_living_objects() 
     { 
