@@ -253,7 +253,7 @@ ref<Geometry> vl::makeTeapot( const vec3& origin, Real diameter, int detail)
     {
       int idx = patch_idx[j+16*i]-1;
       VL_CHECK(idx < sizeof(coords) / coords[0])
-      patch->points()[j] = verts[ idx ];
+      patch->points()[j] = (vec3)verts[ idx ];
     }
     teapot->patches().push_back(patch.get());
   }
