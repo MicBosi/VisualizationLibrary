@@ -32,7 +32,7 @@
 #ifndef TriangleStripGenerator_INCLUDE_ONCE
 #define TriangleStripGenerator_INCLUDE_ONCE
 
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 
 namespace vl
 {

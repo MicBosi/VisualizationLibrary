@@ -32,7 +32,7 @@
 #ifndef EventListener_INCLUDE_ONCE
 #define EventListener_INCLUDE_ONCE
 
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 #include <vlCore/String.hpp>
 
 namespace vl

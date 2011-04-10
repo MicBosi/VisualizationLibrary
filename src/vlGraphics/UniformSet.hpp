@@ -33,7 +33,7 @@
 #define UniformSet_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 #include <vlGraphics/Uniform.hpp>
 
 namespace vl

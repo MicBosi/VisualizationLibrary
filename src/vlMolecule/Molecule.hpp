@@ -32,7 +32,7 @@
 #ifndef Molecule_INCLUDE_ONCE
 #define Molecule_INCLUDE_ONCE
 
-#include <vlMolecule/config.hpp>
+#include <vlMolecule/link_config.hpp>
 #include <vlMolecule/Atom.hpp>
 #include <vlMolecule/Bond.hpp>
 #include <vlGraphics/Geometry.hpp>

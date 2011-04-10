@@ -32,7 +32,7 @@
 #ifndef ChemDatabase_INCLUDE_ONCE
 #define ChemDatabase_INCLUDE_ONCE
 
-#include <vlMolecule/config.hpp>
+#include <vlMolecule/link_config.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/String.hpp>
 

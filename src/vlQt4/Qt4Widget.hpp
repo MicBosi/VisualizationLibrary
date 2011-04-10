@@ -32,7 +32,7 @@
 #ifndef Qt4Window_INCLUDE_ONCE
 #define Qt4Window_INCLUDE_ONCE
 
-#include <vlQt4/config.hpp>
+#include <vlQt4/link_config.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <QtGui/QApplication>

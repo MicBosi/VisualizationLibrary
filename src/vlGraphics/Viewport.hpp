@@ -36,7 +36,7 @@
 #include <vlCore/Rect.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/vlnamespace.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 
 namespace vl
 {
