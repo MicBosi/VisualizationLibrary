@@ -40,11 +40,11 @@ namespace vl
    * The Vector4 class is a template class that implements a generic 4 components vector, see also vl::fvec4, vl::dvec4, vl::uvec4, vl::ivec4, vl::svec4, vl::usvec4, vl::bvec4, vl::ubvec4.
    * \sa Vector3, Vector2, Matrix4, Matrix3, Matrix2
    */
-  template<typename T_scalar>
+  template<typename T_Scalar>
   class Vector4
   {
   public:
-    typedef T_scalar scalar_type;
+    typedef T_Scalar scalar_type;
     static const int scalar_count = 4;
     Vector4(const Vector4& other) { *this = other; }
     Vector4() { x() = y() = z() = w() = 0; }
@@ -52,13 +52,13 @@ namespace vl
     template<class T>
     explicit Vector4(const T& other)
     {
-      x() = (T_scalar)other.x();
-      y() = (T_scalar)other.y();
-      z() = (T_scalar)other.z();
-      w() = (T_scalar)other.w();
+      x() = (T_Scalar)other.x();
+      y() = (T_Scalar)other.y();
+      z() = (T_Scalar)other.z();
+      w() = (T_Scalar)other.w();
     }
 
-    explicit Vector4(T_scalar x, T_scalar y, T_scalar z, T_scalar w)
+    explicit Vector4(T_Scalar x, T_Scalar y, T_Scalar z, T_Scalar w)
     {
       mScalar[0] = x;
       mScalar[1] = y;
@@ -66,7 +66,7 @@ namespace vl
       mScalar[3] = w;
     }
 
-    explicit Vector4(const Vector3<T_scalar>& v, T_scalar w)
+    explicit Vector4(const Vector3<T_Scalar>& v, T_Scalar w)
     {
       mScalar[0] = v.x();
       mScalar[1] = v.y();
@@ -74,7 +74,7 @@ namespace vl
       mScalar[3] = w;
     }
 
-    explicit Vector4(const Vector2<T_scalar>& u, const Vector2<T_scalar>& v)
+    explicit Vector4(const Vector2<T_Scalar>& u, const Vector2<T_Scalar>& v)
     {
       mScalar[0] = u.x();
       mScalar[1] = u.y();
@@ -82,46 +82,46 @@ namespace vl
       mScalar[3] = v.y();
     }
 
-    T_scalar* ptr() { return mScalar; }
-    const T_scalar* ptr() const { return mScalar; }
+    T_Scalar* ptr() { return mScalar; }
+    const T_Scalar* ptr() const { return mScalar; }
 
-    const T_scalar& x() const { return mScalar[0]; }
-    const T_scalar& y() const { return mScalar[1]; }
-    const T_scalar& z() const { return mScalar[2]; }
-    const T_scalar& w() const { return mScalar[3]; }
+    const T_Scalar& x() const { return mScalar[0]; }
+    const T_Scalar& y() const { return mScalar[1]; }
+    const T_Scalar& z() const { return mScalar[2]; }
+    const T_Scalar& w() const { return mScalar[3]; }
 
-    T_scalar& x() { return mScalar[0]; }
-    T_scalar& y() { return mScalar[1]; }
-    T_scalar& z() { return mScalar[2]; }
-    T_scalar& w() { return mScalar[3]; }
+    T_Scalar& x() { return mScalar[0]; }
+    T_Scalar& y() { return mScalar[1]; }
+    T_Scalar& z() { return mScalar[2]; }
+    T_Scalar& w() { return mScalar[3]; }
 
-    const T_scalar& r() const { return mScalar[0]; }
-    const T_scalar& g() const { return mScalar[1]; }
-    const T_scalar& b() const { return mScalar[2]; }
-    const T_scalar& a() const { return mScalar[3]; }
+    const T_Scalar& r() const { return mScalar[0]; }
+    const T_Scalar& g() const { return mScalar[1]; }
+    const T_Scalar& b() const { return mScalar[2]; }
+    const T_Scalar& a() const { return mScalar[3]; }
 
-    T_scalar& r() { return mScalar[0]; }
-    T_scalar& g() { return mScalar[1]; }
-    T_scalar& b() { return mScalar[2]; }
-    T_scalar& a() { return mScalar[3]; }
+    T_Scalar& r() { return mScalar[0]; }
+    T_Scalar& g() { return mScalar[1]; }
+    T_Scalar& b() { return mScalar[2]; }
+    T_Scalar& a() { return mScalar[3]; }
 
-    const T_scalar& s() const { return mScalar[0]; }
-    const T_scalar& t() const { return mScalar[1]; }
-    const T_scalar& p() const { return mScalar[2]; }
-    const T_scalar& q() const { return mScalar[3]; }
+    const T_Scalar& s() const { return mScalar[0]; }
+    const T_Scalar& t() const { return mScalar[1]; }
+    const T_Scalar& p() const { return mScalar[2]; }
+    const T_Scalar& q() const { return mScalar[3]; }
 
-    T_scalar& s() { return mScalar[0]; }
-    T_scalar& t() { return mScalar[1]; }
-    T_scalar& p() { return mScalar[2]; }
-    T_scalar& q() { return mScalar[3]; }
+    T_Scalar& s() { return mScalar[0]; }
+    T_Scalar& t() { return mScalar[1]; }
+    T_Scalar& p() { return mScalar[2]; }
+    T_Scalar& q() { return mScalar[3]; }
 
-    Vector3<T_scalar> xyz() const { return Vector3<T_scalar>(x(),y(),z()); }
-    Vector3<T_scalar> rgb() const { return Vector3<T_scalar>(x(),y(),z()); }
-    Vector3<T_scalar> stp() const { return Vector3<T_scalar>(x(),y(),z()); }
+    Vector3<T_Scalar> xyz() const { return Vector3<T_Scalar>(x(),y(),z()); }
+    Vector3<T_Scalar> rgb() const { return Vector3<T_Scalar>(x(),y(),z()); }
+    Vector3<T_Scalar> stp() const { return Vector3<T_Scalar>(x(),y(),z()); }
 
-    Vector2<T_scalar> xy() const { return Vector2<T_scalar>(x(),y()); }
-    Vector2<T_scalar> rg() const { return Vector2<T_scalar>(x(),y()); }
-    Vector2<T_scalar> st() const { return Vector2<T_scalar>(x(),y()); }
+    Vector2<T_Scalar> xy() const { return Vector2<T_Scalar>(x(),y()); }
+    Vector2<T_Scalar> rg() const { return Vector2<T_Scalar>(x(),y()); }
+    Vector2<T_Scalar> st() const { return Vector2<T_Scalar>(x(),y()); }
 
     Vector4 operator+(const Vector4& other) const
     {
@@ -139,19 +139,19 @@ namespace vl
     {
       return Vector4(x()/other.x(), y()/other.y(), z()/other.z(), w()/other.w());
     }
-    Vector4 operator+(T_scalar val) const
+    Vector4 operator+(T_Scalar val) const
     {
       return Vector4(x()+val, y()+val, z()+val, w()+val);
     }
-    Vector4 operator-(T_scalar val) const
+    Vector4 operator-(T_Scalar val) const
     {
       return Vector4(x()-val, y()-val, z()-val, w()-val);
     }
-    Vector4 operator*(T_scalar val) const
+    Vector4 operator*(T_Scalar val) const
     {
       return Vector4(x()*val, y()*val, z()*val, w()*val);
     }
-    Vector4 operator/(T_scalar val) const
+    Vector4 operator/(T_Scalar val) const
     {
       return Vector4(x()/val, y()/val, z()/val, w()/val);
     }
@@ -179,22 +179,22 @@ namespace vl
       *this = *this / other;
       return *this;
     }
-    Vector4& operator+=(T_scalar val)
+    Vector4& operator+=(T_Scalar val)
     {
       *this = *this + val;
       return *this;
     }
-    Vector4& operator-=(T_scalar val)
+    Vector4& operator-=(T_Scalar val)
     {
       *this = *this - val;
       return *this;
     }
-    Vector4& operator*=(T_scalar val)
+    Vector4& operator*=(T_Scalar val)
     {
       *this = *this * val;
       return *this;
     }
-    Vector4& operator/=(T_scalar val)
+    Vector4& operator/=(T_Scalar val)
     {
       *this = *this / val;
       return *this;
@@ -207,7 +207,7 @@ namespace vl
       w() = other.w();
       return *this;
     }
-    Vector4& operator=(T_scalar val)
+    Vector4& operator=(T_Scalar val)
     {
       x() = y() = z() = w() = val;
       return *this;
@@ -233,23 +233,23 @@ namespace vl
       else
         return w() < other.w();
     }
-    T_scalar& operator[](unsigned i) { return mScalar[i]; }
-    const T_scalar& operator[](unsigned i) const { return mScalar[i]; }
-    T_scalar length() const { return (T_scalar)::sqrt(x()*x()+y()*y()+z()*z()+w()*w()); }
-    T_scalar lengthSquared() const { return x()*x()+y()*y()+z()*z()+w()*w(); }
+    T_Scalar& operator[](unsigned i) { return mScalar[i]; }
+    const T_Scalar& operator[](unsigned i) const { return mScalar[i]; }
+    T_Scalar length() const { return (T_Scalar)::sqrt(x()*x()+y()*y()+z()*z()+w()*w()); }
+    T_Scalar lengthSquared() const { return x()*x()+y()*y()+z()*z()+w()*w(); }
     bool isNull() const { return !x() && !y() && !z() && !w(); }
-    const Vector4& normalize(T_scalar *len=NULL) 
+    const Vector4& normalize(T_Scalar *len=NULL) 
     {
-      T_scalar l = length();
+      T_Scalar l = length();
       if (len)
         *len = l;
       if (l)
-        *this *= (T_scalar)(1.0/l); 
+        *this *= (T_Scalar)(1.0/l); 
       return *this; 
     }
 
   protected:
-    T_scalar mScalar[scalar_count];
+    T_Scalar mScalar[scalar_count];
   };
 
   template<typename T>

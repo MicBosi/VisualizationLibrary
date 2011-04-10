@@ -45,17 +45,17 @@ namespace vl
    * The Matrix2 class is a template class that implements a generic 2x2 matrix, see also vl::dmat2, vl::fmat2, vl::umat2, vl::imat2.
    * \sa Vector4, Vector3, Vector2, Matrix4, Matrix3
    */
-  template<typename T_scalar>
+  template<typename T_Scalar>
   class Matrix2
   {
   public:
-    typedef T_scalar scalar_type;
+    typedef T_Scalar scalar_type;
     //-----------------------------------------------------------------------------
     template<typename T>
     explicit Matrix2(const Matrix2<T>& m)
     {
-      e(0,0) = (T_scalar)m.e(0,0); e(1,0) = (T_scalar)m.e(1,0);
-      e(0,1) = (T_scalar)m.e(0,1); e(1,1) = (T_scalar)m.e(1,1);
+      e(0,0) = (T_Scalar)m.e(0,0); e(1,0) = (T_Scalar)m.e(1,0);
+      e(0,1) = (T_Scalar)m.e(0,1); e(1,1) = (T_Scalar)m.e(1,1);
     }
     //-----------------------------------------------------------------------------
     Matrix2()
@@ -63,29 +63,29 @@ namespace vl
       setIdentity();
     }
     //-----------------------------------------------------------------------------
-    explicit Matrix2(T_scalar n)
+    explicit Matrix2(T_Scalar n)
     {
       setIdentity();
       e(0,0) = e(1,1) = n;
     }
     //-----------------------------------------------------------------------------
-    explicit Matrix2(T_scalar e00, T_scalar e01,
-                      T_scalar e10, T_scalar e11 )
+    explicit Matrix2(T_Scalar e00, T_Scalar e01,
+                      T_Scalar e10, T_Scalar e11 )
     {
       e(0,0) = e00; e(0,1) = e01;
       e(1,0) = e10; e(1,1) = e11;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& fill(T_scalar val)
+    Matrix2& fill(T_Scalar val)
     {
       e(0,0) = e(1,0) = 
       e(0,1) = e(1,1) = val;
       return *this;
     }
     //-----------------------------------------------------------------------------
-    T_scalar diff(const Matrix2& other) const
+    T_Scalar diff(const Matrix2& other) const
     {
-      T_scalar err = 0;
+      T_Scalar err = 0;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
           if (e(j,i) > other.e(j,i)) // avoid fabs/abs
@@ -97,7 +97,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     bool operator==(const Matrix2& m) const 
     {
-      return memcmp(m.mVec, mVec, sizeof(T_scalar)*4) == 0;
+      return memcmp(m.mVec, mVec, sizeof(T_Scalar)*4) == 0;
     }
     //-----------------------------------------------------------------------------
     bool operator!=(const Matrix2& m) const 
@@ -107,7 +107,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix2& operator=(const Matrix2& m) 
     {
-      memcpy(mVec, m.mVec, sizeof(T_scalar)*4);
+      memcpy(mVec, m.mVec, sizeof(T_Scalar)*4);
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -159,7 +159,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2 operator+(T_scalar d) const
+    Matrix2 operator+(T_Scalar d) const
     {
       Matrix2 t;
       for(int i=0; i<2; ++i)
@@ -168,7 +168,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& operator+=(T_scalar d)
+    Matrix2& operator+=(T_Scalar d)
     {
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
@@ -176,7 +176,7 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix2 operator-(T_scalar d) const
+    Matrix2 operator-(T_Scalar d) const
     {
       Matrix2 t;
       for(int i=0; i<2; ++i)
@@ -185,7 +185,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& operator-=(T_scalar d)
+    Matrix2& operator-=(T_Scalar d)
     {
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
@@ -193,7 +193,7 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix2 operator*(T_scalar d) const
+    Matrix2 operator*(T_Scalar d) const
     {
       Matrix2 t;
       for(int i=0; i<2; ++i)
@@ -202,7 +202,7 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& operator*=(T_scalar d)
+    Matrix2& operator*=(T_Scalar d)
     {
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
@@ -210,9 +210,9 @@ namespace vl
       return *this;
     }
     //-----------------------------------------------------------------------------
-    Matrix2 operator/(T_scalar d) const
+    Matrix2 operator/(T_Scalar d) const
     {
-      d = (T_scalar)1 / d;
+      d = (T_Scalar)1 / d;
       Matrix2 t;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
@@ -220,9 +220,9 @@ namespace vl
       return t;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& operator/=(T_scalar d)
+    Matrix2& operator/=(T_Scalar d)
     {
-      d = (T_scalar)1 / d;
+      d = (T_Scalar)1 / d;
       for(int i=0; i<2; ++i)
         for(int j=0; j<2; ++j)
           e(j,i) *= d;
@@ -232,22 +232,22 @@ namespace vl
     bool isIdentity() const
     {
       Matrix2 i;
-      return memcmp(ptr(), i.ptr(), sizeof(T_scalar)*4) == 0;
+      return memcmp(ptr(), i.ptr(), sizeof(T_Scalar)*4) == 0;
     }
     //-----------------------------------------------------------------------------
-    T_scalar* ptr()
+    T_Scalar* ptr()
     {
       return &e(0,0);
     }
     //-----------------------------------------------------------------------------
-    const T_scalar* ptr() const
+    const T_Scalar* ptr() const
     {
       return &e(0,0);
     }
     //-----------------------------------------------------------------------------
     Matrix2& transpose()
     {
-      T_scalar tmp;
+      T_Scalar tmp;
       for(int i=0; i<2; ++i)
         for(int j=i; j<2; ++j)
         {
@@ -303,12 +303,12 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix2& setIdentity()
     {
-      static const T_scalar I2d[] = 
+      static const T_Scalar I2d[] = 
       { 
-        (T_scalar)1, (T_scalar)0,
-        (T_scalar)0, (T_scalar)1
+        (T_Scalar)1, (T_Scalar)0,
+        (T_Scalar)0, (T_Scalar)1
       };
-      memcpy(mVec, I2d, sizeof(T_scalar)*4);
+      memcpy(mVec, I2d, sizeof(T_Scalar)*4);
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -323,25 +323,25 @@ namespace vl
       return out;
     }
     //-----------------------------------------------------------------------------
-    T_scalar getInverse(Matrix2& dest) const
+    T_Scalar getInverse(Matrix2& dest) const
     {
       if (&dest == this)
       {
         Matrix2 tmp;
-        T_scalar det = getInverse(tmp);
+        T_Scalar det = getInverse(tmp);
         dest = tmp;
         return det;
       }
       else
       {
-        const T_scalar& a11 = e(0,0); 
-        const T_scalar& a12 = e(1,0); 
-        const T_scalar& a21 = e(0,1); 
-        const T_scalar& a22 = e(1,1); 
+        const T_Scalar& a11 = e(0,0); 
+        const T_Scalar& a12 = e(1,0); 
+        const T_Scalar& a21 = e(0,1); 
+        const T_Scalar& a22 = e(1,1); 
 
         dest.fill(0);
 
-        T_scalar det = a11*a22-a12*a21;
+        T_Scalar det = a11*a22-a12*a21;
 
         if (det != 0)
           dest = Matrix2(+a22, -a12, -a21, +a11) / det;
@@ -350,18 +350,18 @@ namespace vl
       }
     }
     //-----------------------------------------------------------------------------
-    Matrix2 getInverse(T_scalar *determinant=NULL) const
+    Matrix2 getInverse(T_Scalar *determinant=NULL) const
     {
       Matrix2 tmp;
-      T_scalar det = getInverse(tmp);
+      T_Scalar det = getInverse(tmp);
       if (determinant)
         *determinant = det;
       return tmp;
     }
     //-----------------------------------------------------------------------------
-    Matrix2& invert(T_scalar *determinant=NULL)
+    Matrix2& invert(T_Scalar *determinant=NULL)
     {
-      T_scalar det = getInverse(*this);
+      T_Scalar det = getInverse(*this);
       if (determinant)
         *determinant = det;
       return *this;
@@ -382,66 +382,66 @@ namespace vl
     //-----------------------------------------------------------------------------
     Matrix2& postMultiply(const Matrix2& m)
     {
-      Matrix2<T_scalar> t;
+      Matrix2<T_Scalar> t;
       return *this = multiply(t, *this, m);
     }
     //-----------------------------------------------------------------------------
     Matrix2& preMultiply(const Matrix2& m)
     {
-      Matrix2<T_scalar> t;
+      Matrix2<T_Scalar> t;
       return *this = multiply(t, m, *this);
     }
     //-----------------------------------------------------------------------------
 
-    const T_scalar& e(int i, int j) const { return mVec[j][i]; }
-    T_scalar& e(int i, int j) { return mVec[j][i]; }
+    const T_Scalar& e(int i, int j) const { return mVec[j][i]; }
+    T_Scalar& e(int i, int j) { return mVec[j][i]; }
 
   private:
-    const Vector2<T_scalar>& operator[](unsigned int i) const { VL_CHECK(i<2); return mVec[i]; }
-    Vector2<T_scalar>& operator[](unsigned int i) { VL_CHECK(i<2); return mVec[i]; }
+    const Vector2<T_Scalar>& operator[](unsigned int i) const { VL_CHECK(i<2); return mVec[i]; }
+    Vector2<T_Scalar>& operator[](unsigned int i) { VL_CHECK(i<2); return mVec[i]; }
 
   protected:
-    Vector2<T_scalar> mVec[2];
+    Vector2<T_Scalar> mVec[2];
   };
 
   //-----------------------------------------------------------------------------
   // OPERATORS
   //-----------------------------------------------------------------------------
-  template<typename T_scalar>
-  inline Matrix2<T_scalar> operator*(const Matrix2<T_scalar>& p, const Matrix2<T_scalar>& q)
+  template<typename T_Scalar>
+  inline Matrix2<T_Scalar> operator*(const Matrix2<T_Scalar>& p, const Matrix2<T_Scalar>& q)
   {
-    Matrix2<T_scalar> t;
-    Matrix2<T_scalar>::multiply(t, p, q);
+    Matrix2<T_Scalar> t;
+    Matrix2<T_Scalar>::multiply(t, p, q);
     return t;
   }
   //-----------------------------------------------------------------------------
-  template<typename T_scalar>
-  inline Matrix2<T_scalar> operator+(T_scalar d, const Matrix2<T_scalar>& m)
+  template<typename T_Scalar>
+  inline Matrix2<T_Scalar> operator+(T_Scalar d, const Matrix2<T_Scalar>& m)
   {
     return m + d;
   }
   //-----------------------------------------------------------------------------
-  template<typename T_scalar>
-  inline Matrix2<T_scalar> operator*(T_scalar d, const Matrix2<T_scalar>& m)
+  template<typename T_Scalar>
+  inline Matrix2<T_Scalar> operator*(T_Scalar d, const Matrix2<T_Scalar>& m)
   {
     return m * d;
   }
   //-----------------------------------------------------------------------------
   // post multiplication: matrix * column vector
-  template<typename T_scalar>
-  inline Vector2<T_scalar> operator*(const Matrix2<T_scalar>& m, const Vector2<T_scalar>& v)
+  template<typename T_Scalar>
+  inline Vector2<T_Scalar> operator*(const Matrix2<T_Scalar>& m, const Vector2<T_Scalar>& v)
   {
-    Vector2<T_scalar> t;
+    Vector2<T_Scalar> t;
     t.x() = v.x()*m.e(0,0) + v.y()*m.e(0,1);
     t.y() = v.x()*m.e(1,0) + v.y()*m.e(1,1);
     return t;
   }
   //-----------------------------------------------------------------------------
   // pre-multiplication: row vector * matrix
-  template<typename T_scalar>
-  inline Vector2<T_scalar> operator*(const Vector2<T_scalar>& v, const Matrix2<T_scalar>& m)
+  template<typename T_Scalar>
+  inline Vector2<T_Scalar> operator*(const Vector2<T_Scalar>& v, const Matrix2<T_Scalar>& m)
   {
-    Vector2<T_scalar> t;
+    Vector2<T_Scalar> t;
     t.x() = v.x()*m.e(0,0) + v.y()*m.e(1,0);
     t.y() = v.x()*m.e(0,1) + v.y()*m.e(1,1);
     return t;
