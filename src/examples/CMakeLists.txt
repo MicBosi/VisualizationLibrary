@@ -29,7 +29,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(VL_LIBS_EXAMPLE VLGraphics VLCore)
 set(VL_LIBS_TESTS VLMolecule VLVG VLVolume VLGraphics VLCore)
 
-if(GUI_SDL_EXAMPLES)
+if(VL_GUI_SDL_EXAMPLES)
     # Darwin
     if( ${CMAKE_SYSTEM} MATCHES "Darwin" )
         set(SDLMAIN_M_PATH "Specify path to SDLMain.m" CACHE FILEPATH "Path to SDLMain.m")
@@ -48,7 +48,7 @@ if(GUI_SDL_EXAMPLES)
     VL_INSTALL_TARGET(SDL_tests)
 endif()
 
-if(GUI_GLUT_EXAMPLES)
+if(VL_GUI_GLUT_EXAMPLES)
     include_directories(${GLUT_INCLUDE_DIR})
 
     # Example
@@ -62,7 +62,7 @@ if(GUI_GLUT_EXAMPLES)
     VL_INSTALL_TARGET(GLUT_tests)
 endif()
 
-if(GUI_QT4_EXAMPLES)
+if(VL_GUI_QT4_EXAMPLES)
 	include(${QT_USE_FILE})
 
 	# Example
@@ -76,7 +76,7 @@ if(GUI_QT4_EXAMPLES)
 	VL_INSTALL_TARGET(Qt4_tests)
 endif()
 
-if (GUI_WIN32_EXAMPLES)
+if (VL_GUI_WIN32_EXAMPLES)
 	# Direct
 	add_executable(Win32_direct WIN32 Win32_direct.cpp)
 	target_link_libraries(Win32_direct VLWin32 ${VL_LIBS_EXAMPLE} ${OPENGL_LIBRARIES})
@@ -93,7 +93,7 @@ if (GUI_WIN32_EXAMPLES)
 	VL_INSTALL_TARGET(Win32_tests)
 endif()
 
-if (GUI_MFC_EXAMPLES)
+if (VL_GUI_MFC_EXAMPLES)
 	# Example
 	add_executable(MFC_example WIN32 MFC_example/MFC_example.cpp MFC_example/StdAfx.cpp )
 	target_link_libraries(MFC_example VLApplets VLMFC ${VL_LIBS_TESTS} ${OPENGL_LIBRARIES})
@@ -119,7 +119,7 @@ if (GUI_MFC_EXAMPLES)
 	VL_INSTALL_TARGET(MFC_tests)
 endif()
 
-if(GUI_WXWIDGETS_EXAMPLES)
+if(VL_GUI_WXWIDGETS_EXAMPLES)
     include(${wxWidgets_USE_FILE})
 
     # Example
