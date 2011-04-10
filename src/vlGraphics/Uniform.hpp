@@ -158,17 +158,17 @@ namespace vl
 
     // single value setters
 
-    void setUniform(const int& value) { setUniform1i(1, &value); }
+    void setUniformI(const int& value) { setUniform1i(1, &value); }
     void setUniform(const ivec2& value) { setUniform2i(1, value.ptr()); }
     void setUniform(const ivec3& value) { setUniform3i(1, value.ptr()); }
     void setUniform(const ivec4& value) { setUniform4i(1, value.ptr()); }
 
-    void setUniform(const unsigned int& value){ setUniform1ui(1, &value); }
+    void setUniformU(const unsigned int& value){ setUniform1ui(1, &value); }
     void setUniform(const uvec2& value) { setUniform2ui(1, value.ptr()); }
     void setUniform(const uvec3& value) { setUniform3ui(1, value.ptr()); }
     void setUniform(const uvec4& value) { setUniform4ui(1, value.ptr()); }
 
-    void setUniform(const float& value)  { setUniform1f(1, &value); }
+    void setUniformF(const float& value)  { setUniform1f(1, &value); }
     void setUniform(const fvec2& value)  { setUniform2f(1, value.ptr()); }
     void setUniform(const fvec3& value)  { setUniform3f(1, value.ptr()); }
     void setUniform(const fvec4& value)  { setUniform4f(1, value.ptr()); }
@@ -177,7 +177,7 @@ namespace vl
     void setUniform(const fmat3& value)  { setUniformMatrix3f(1, value.ptr()); }
     void setUniform(const fmat4& value)  { setUniformMatrix4f(1, value.ptr()); }
 
-    void setUniform(const double& value) { setUniform1d(1, &value); }
+    void setUniformD(const double& value) { setUniform1d(1, &value); }
     void setUniform(const dvec2& value)  { setUniform2d(1, value.ptr()); }
     void setUniform(const dvec3& value)  { setUniform3d(1, value.ptr()); }
     void setUniform(const dvec4& value)  { setUniform4d(1, value.ptr()); }
