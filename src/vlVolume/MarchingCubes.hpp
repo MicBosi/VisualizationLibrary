@@ -32,7 +32,7 @@
 #ifndef MarchingCubes_INCLUDE_ONCE
 #define MarchingCubes_INCLUDE_ONCE
 
-#include <vlVolume/config.hpp>
+#include <vlVolume/link_config.hpp>
 #include <vlGraphics/Geometry.hpp>
 
 namespace vl
@@ -59,7 +59,13 @@ namespace vl
 
     Volume();
 
-    void setup(float* data, const fvec3& bottom_left, const fvec3& top_right, const ivec3& slices);
+    //! Setup the volume data with the specified memory management.
+    //! \param data The buffer containing the volume data. Can be NULL only if \p use_directly == \p false and \p copy_data == \p false.
+    //! \param use_directly If \p true the buffer will be used directly and no internal copy will be done.
+    //! \param copy_data If \p true the buffer pointed by \p data will be copied in the internal buffer used to store the volume data.
+    //! The \p copy_data parameter is ignored if \p use_directly is set to \p true.
+    void setup(float* data, bool use_directly, bool copy_data, const fvec3& bottom_left, const fvec3& top_right, const ivec3& slices);
+
     void setup(const Volume&);
 
     /** Returns a new volume which is half of the size of the original volume in each direction (thus requires up to 1/8th of the memory).
@@ -67,37 +73,50 @@ namespace vl
      */
     ref<Volume> downsample() const;
 
-    const float* values() const { if (mValues.size()) return &mValues[0]; else return NULL; }
-    float* values() { if (mValues.size()) return &mValues[0]; else return NULL; }
+    const float* values() const { return mValues; }
+
+    float* values() { return mValues; }
 
     const float& value(int i) const { return mValues[i]; }
+
     float& value(int i) { return mValues[i]; }
 
     const float& value(int x, int y, int z) const { return mValues[x + mSlices.x()*y + mSlices.x()*mSlices.y()*z]; }
+
     float& value(int x, int y, int z) { return mValues[x + mSlices.x()*y + mSlices.x()*mSlices.y()*z]; }
 
     //! Computes a high quality normal (best rendering quality)
     void normalHQ(fvec3& normal, const fvec3& v, float dx, float dy, float dz);
+
     //! Computes a low quality normal (best performances)
     void normalLQ(fvec3& normal, const fvec3& v, float dx, float dy, float dz);
+
     //! Samples the volume using tri-linear interpolation sampling
     float sampleSmooth(float x, float y, float z) const;
+
     //! Samples the volume using nearest point sampling
     float sampleNearest(float x, float y, float z) const;
 
     fvec3 coordinate(int x, int y, int z) const { return mBottomLeft + fvec3(float(mCellSize.x()*x), float(mCellSize.y()*y), float(mCellSize.z()*z)); }
 
     const fvec3& bottomLeft() const { return mBottomLeft; }
+
     const fvec3& topRight() const { return mTopRight; }
+
     const ivec3& slices() const { return mSlices; }
+
     fvec3 size() const { return mSize; }
 
     float computeMinimum() const;
+
     float computeMaximum() const;
+
     float computeAverage() const;
 
     float minimum() const { return mMinimum; }
+
     float maximum() const { return mMaximum; }
+
     float average() const { return mAverage; }
 
     const Volume::Cube& cube(int x, int y, int z) const 
@@ -113,13 +132,15 @@ namespace vl
 
     //! Returns true if the internal data hasn't been updated since the last call to setDataDirty() or setup()
     bool dataIsDirty() const { return mDataIsDirty; }
+
     //! Notifies that the data of a Volume has changed and that the internal acceleration structures should be recomputed.
     void setDataDirty() { mDataIsDirty = true; }
 
     void setupInternalData();
 
   protected:
-    std::vector<float> mValues;
+    std::vector<float> mInternalValues;
+    float* mValues;
     fvec3 mBottomLeft;
     fvec3 mTopRight;
     fvec3 mSize;
