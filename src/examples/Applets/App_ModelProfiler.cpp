@@ -50,7 +50,7 @@ class App_ModelProfiler: public BaseDemo
 public:
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
     openglContext()->setContinuousUpdate(true);
 
     ref<GeometryLoadCallback> glc = new GeometryLoadCallback;

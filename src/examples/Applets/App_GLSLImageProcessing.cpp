@@ -57,7 +57,7 @@ public:
       exit(1);
     }
 
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     /*openglContext()->setContinuousUpdate(false);*/
 
@@ -172,10 +172,10 @@ public:
 
     // set "image_width" uniform
     vl::ref<vl::Uniform> image_width = mGLSLProgram->gocUniform("image_width");
-    image_width->setUniform((float)mImage->width());
+    image_width->setUniformF(mImage->width());
     // set "image_height" uniform
     vl::ref<vl::Uniform> image_height = mGLSLProgram->gocUniform("image_height");
-    image_height->setUniform((float)mImage->width());
+    image_height->setUniformF(mImage->width());
 
     int w = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->width();
     int h = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->height();
@@ -227,7 +227,7 @@ public:
       mTest = 0;
     // set "test" uniform
     vl::ref<vl::Uniform> test_uni = mGLSLProgram->gocUniform("test");
-    test_uni->setUniform(mTest);
+    test_uni->setUniformI(mTest);
     updateText();
   }
 

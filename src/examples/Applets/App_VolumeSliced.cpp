@@ -64,10 +64,18 @@ class App_VolumeSliced: public BaseDemo
 {
 public:
 
+  virtual String appletInfo()
+  {
+    return BaseDemo::appletInfo() + 
+    "Use the mouse wheel to change the bias used to render the volume.\n" +
+    "Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
+    "\n";
+  }
+
   /* initialize the applet with a default volume */
   virtual void initEvent()
   {
-    BaseDemo::initEvent();
+    Log::print(appletInfo());
 
     // variable preconditions
     USE_GLSL &= GLEW_Has_Shading_Language_20;
@@ -173,7 +181,7 @@ public:
     sceneManager()->tree()->addActor(mBiasText.get(), effect.get());
 
     // bias uniform
-    mVolumeAct->gocUniform("val_threshold")->setUniform(0.5f);
+    mVolumeAct->gocUniform("val_threshold")->setUniformF(0.5f);
     mAlphaBias = mVolumeAct->getUniform("val_threshold");
 
     // update alpha bias text
@@ -253,22 +261,22 @@ public:
         vol_fx->shader()->setRenderState(mGLSL.get());
         // install volume image
         vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
-        vol_fx->shader()->gocUniform("volume_texunit")->setUniform(0);
+        vol_fx->shader()->gocUniform("volume_texunit")->setUniformI(0);
         mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
         // installs the transfer function as texture #1
         vol_fx->shader()->gocTextureUnit(1)->setTexture( new Texture( trfunc.get() ) );  
-        vol_fx->shader()->gocUniform("trfunc_texunit")->setUniform(1);
-        vol_fx->shader()->gocUniform("trfunc_delta")->setUniform(0.5f/trfunc->width());    
+        vol_fx->shader()->gocUniform("trfunc_texunit")->setUniformI(1);
+        vol_fx->shader()->gocUniform("trfunc_delta")->setUniformF( 0.5f / trfunc->width() );    
         // pre-computed gradient texture
         if (PRECOMPUTE_GRADIENT)
         {
-          vol_fx->shader()->gocUniform("precomputed_gradient")->setUniform(1);
+          vol_fx->shader()->gocUniform("precomputed_gradient")->setUniformI(1);
           vol_fx->shader()->gocTextureUnit(2)->setTexture( new Texture( gradient.get(), TF_RGBA8, false, false ) );
-          vol_fx->shader()->gocUniform("gradient_texunit")->setUniform(2);
+          vol_fx->shader()->gocUniform("gradient_texunit")->setUniformI(2);
         }
         else
         {
-          vol_fx->shader()->gocUniform("precomputed_gradient")->setUniform(0);
+          vol_fx->shader()->gocUniform("precomputed_gradient")->setUniformI(0);
           // used to compute on the fly the normals based on the volume's gradient
           vol_fx->shader()->gocUniform("gradient_delta")->setUniform(fvec3(0.5f/img->width(), 0.5f/img->height(), 0.5f/img->depth()));
         }
@@ -301,7 +309,7 @@ public:
       vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);
     }
     
-    mAlphaBias->setUniform(0.3f);
+    mAlphaBias->setUniformF(0.3f);
     updateText();
     openglContext()->update();
   }
@@ -319,7 +327,7 @@ public:
     mAlphaBias->getUniform(&alpha);
     alpha += val * 0.002f;
     alpha =  clamp(alpha, 0.0f, 1.0f);
-    mAlphaBias->setUniform(alpha);
+    mAlphaBias->setUniformF(alpha);
 
     // used for non GLSL mode volumes
     mVolumeAct->effect()->shader()->gocAlphaFunc()->set(FU_GEQUAL, alpha);

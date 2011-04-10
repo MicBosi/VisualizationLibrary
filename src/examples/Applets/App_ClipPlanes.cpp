@@ -41,7 +41,7 @@ class App_ClipPlanes: public BaseDemo
 public:
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     // load model
     vl::ref<vl::Geometry> model = vl::loadResource("/models/3ds/monkey.3ds")->get<vl::Geometry>(0);

@@ -59,7 +59,7 @@ public:
 
   virtual void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     /* basic render states */
 

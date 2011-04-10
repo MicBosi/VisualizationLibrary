@@ -43,7 +43,7 @@ public:
   void initEvent()
   {
     // Basic initialization
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     // Filled effect
     vl::ref<vl::Effect> filled_fx = new vl::Effect;

@@ -361,7 +361,7 @@ public:
 
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
     showSimplePipe();
     showText();
   }
