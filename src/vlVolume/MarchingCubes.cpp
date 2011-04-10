@@ -324,8 +324,6 @@ void MarchingCubes::run(bool generate_colors)
     // note: this function takes the 90% of the time
     computeEdges(vol, threshold);
 
-    /*printf("#1 time = %.2f\n", time.elapsed()); time.start();*/
-
     // note: this loop takes the remaining 10% of the time
     //// the z->y->x order is important in order to minimize cache misses
     //for(int z = 0; z < mVolume->slices().z()-1; ++z)
@@ -334,7 +332,7 @@ void MarchingCubes::run(bool generate_colors)
     //      if(mVolume->cube(x,y,z).includes(threshold))
     //        processCube(x, y, z);
     for(unsigned int i=0; i<mCubes.size(); ++i)
-      processCube(mCubes[i].x(),mCubes[i].y(),mCubes[i].z(), vol, threshold);
+      processCube(mCubes[i].x(), mCubes[i].y(), mCubes[i].z(), vol, threshold);
 
     int count = (int)mVerts.size() - start;
     mVolumeInfo.at(ivol)->setVert0(start);
@@ -347,8 +345,6 @@ void MarchingCubes::run(bool generate_colors)
       for(int i=start; i<start+count; ++i)
         mColors[i] = mVolumeInfo.at(ivol)->color();
     }
-
-    /*printf("#2 time = %.2f\n", time.elapsed()); time.start();*/
   }
 
   mVertsArray->resize(mVerts.size());
@@ -449,7 +445,7 @@ Volume::Volume()
   #ifndef NDEBUG
     mObjectName = className();
   #endif
-  setup(NULL, fvec3(0,0,0), fvec3(1.0f,1.0f,1.0f), ivec3(50,50,50));
+  setup(NULL, false, false, fvec3(0,0,0), fvec3(1.0f,1.0f,1.0f), ivec3(50,50,50));
 }
 //------------------------------------------------------------------------------
 ref<Volume> Volume::downsample() const
@@ -462,7 +458,7 @@ ref<Volume> Volume::downsample() const
   if (h<1) h = 1;
   if (d<1) d = 1;
 
-  vol->setup(NULL, bottomLeft(), topRight(), ivec3(w,h,d));
+  vol->setup(NULL, false, false, bottomLeft(), topRight(), ivec3(w,h,d));
 
   for(int z=0; z<d; ++z)
   {
@@ -529,12 +525,26 @@ void Volume::setupInternalData()
   }
 }
 //------------------------------------------------------------------------------
-void Volume::setup( float* data, const fvec3& bottom_left, const fvec3& top_right, const ivec3& slices )
+void Volume::setup( float* data, bool use_directly, bool copy_data, const fvec3& bottom_left, const fvec3& top_right, const ivec3& slices )
 {
   fvec3 size = top_right-bottom_left;
-  mValues.resize(slices.x()*slices.y()*slices.z());
-  if (data)
-    memcpy(&mValues[0], data, slices.x()*slices.y()*slices.z()*sizeof(float));
+  
+  if (use_directly)
+  {
+    VL_CHECK(data);
+    // discard internal data.
+    std::vector<float>().swap( mInternalValues );
+    mValues = data;
+  }
+  else
+  {
+    // allocate internal data & copy
+    mInternalValues.resize( slices.x() * slices.y() * slices.z() );
+    mValues = &mInternalValues[0];
+    if (copy_data)
+      memcpy( mValues, data, slices.x() * slices.y() * slices.z() * sizeof(float) );
+  }
+
   mBottomLeft = bottom_left;
   mTopRight   = top_right;
   mSize       = topRight()-bottomLeft();
@@ -637,10 +647,11 @@ void Volume::normalLQ(fvec3 &normal, const fvec3& v, float dx, float dy, float d
 //------------------------------------------------------------------------------
 float Volume::computeMinimum() const
 {
-  if (mValues.empty())
+  if (!mValues)
     return 0;
   float lowest = mValues[0];
-  for(int i=1; i<(int)mValues.size(); ++i)
+  int val_count = mSlices.x() * mSlices.y() * mSlices.z();
+  for(int i=1; i<val_count; ++i)
     if (mValues[i] < lowest)
       lowest = mValues[i];
   return lowest;
@@ -648,10 +659,11 @@ float Volume::computeMinimum() const
 //------------------------------------------------------------------------------
 float Volume::computeMaximum() const
 {
-  if (mValues.empty())
+  if (!mValues)
     return 0;
   float highest = mValues[0];
-  for(int i=1; i<(int)mValues.size(); ++i)
+  int val_count = mSlices.x() * mSlices.y() * mSlices.z();
+  for(int i=1; i<val_count; ++i)
     if (mValues[i] > highest)
       highest = mValues[i];
   return highest;
@@ -659,12 +671,13 @@ float Volume::computeMaximum() const
 //------------------------------------------------------------------------------
 float Volume::computeAverage() const
 {
-  if (mValues.empty())
+  if (!mValues)
     return 0;
   double average = 0;
-  for(int i=0; i<(int)mValues.size(); ++i)
+  int val_count = mSlices.x() * mSlices.y() * mSlices.z();
+  for(int i=0; i<val_count; ++i)
     average += mValues[i];
-  average /= (double)mValues.size();
+  average /= (double)val_count;
   return (float)average;
 }
 //------------------------------------------------------------------------------
