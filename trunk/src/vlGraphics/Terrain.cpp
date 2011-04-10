@@ -183,7 +183,7 @@ void Terrain::init()
 
     glsl = new GLSLProgram;
     ref<Uniform> Height = new vl::Uniform("Height");
-    Height->setUniform((float)height());
+    Height->setUniformF(height());
     glsl->setUniform( Height.get() );
     glsl->attachShader( new GLSLFragmentShader( String::loadText(fragmentShader()) ) );
     if (use_uniform_transform)
@@ -195,9 +195,9 @@ void Terrain::init()
     ref<Uniform> terrain_tex   = new Uniform("terrain_tex");
     ref<Uniform> detail_tex    = new Uniform("detail_tex");
     ref<Uniform> heightmap_tex = new Uniform("heightmap_tex");
-    terrain_tex  ->setUniform(0);
-    detail_tex   ->setUniform(1);
-    heightmap_tex->setUniform(2);
+    terrain_tex  ->setUniformI(0);
+    detail_tex   ->setUniformI(1);
+    heightmap_tex->setUniformI(2);
     glsl->setUniform(terrain_tex.get());
     if (!detailTexture().empty())
       glsl->setUniform(detail_tex.get());
