@@ -36,7 +36,7 @@
 	
 	- \b CMAKE_INSTALL_PREFIX: this is the location where Visualization Library will be installed. In order to install visualization library you can either call \p make \p install under Unix-like environments or build the \p INSTALL project under Visual Studio.
 	
-	- \b GUI_*_SUPPORT and \b GUI_*_EXAMPLES: check the appropriate variable if you would like to build the binding classes for a particular GUI framework. Note that after selecting this variable and pressing the \a Configure button CMake might require more information to locate the required libraries and include files (like the location of the SDL library, of the GLUT header files etc.).
+	- \b VL_GUI_*_SUPPORT and \b VL_GUI_*_EXAMPLES: check the appropriate variable if you would like to build the binding classes for a particular GUI framework. Note that after selecting this variable and pressing the \a Configure button CMake might require more information to locate the required libraries and include files (like the location of the SDL library, of the GLUT header files etc.).
 	
 	- \b VL_IO_2D_*: check the resource file formats that you want to be natively supported by VL. Selecting less modules will make Visualization Library smaller. Note that if you select modules like VL_IO_2D_JPG or VL_IO_2D_PNG CMake will require more information to locate the libpng and libjpeg libraries and include files.
 	
