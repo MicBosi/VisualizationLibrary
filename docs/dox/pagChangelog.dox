@@ -2,6 +2,21 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.04.1137</div>
+	
+	- DLL compilation enabled by default.
+	- Fixed context attrib creation handling.
+	- setUniform(int/unsigned/float/double) renamed setUniformI/U/F/D() to avoid confusion.
+	- CMake variables starting with GUI_* renamed VL_GUI_*
+	- Fixed double precision pipeline compilation.
+	- Marching cube volume can now use directly the user's data without duplication and perform an optional copy on the internal volume buffer.
+	- VL_DEBUG_LIVING_OBJECTS enabled also in release mode.
+	- Optional debugging living objects code after tests.
+	- Print demo-applet info on startup.
+	- More coherent template parameters naming conventions.
+	- config.hpp renamed to link_config.hpp.
+	- Updated READMEs.
+
 	<div class="featuretitle">Visualization Library 2011.04.1135</div>
 	
 	- Multisample textures.
