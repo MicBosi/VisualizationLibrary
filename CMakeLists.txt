@@ -42,7 +42,7 @@ include( InternalMacros )
 ################################################################################
 
 # Dynamic vs Static Linking
-option(VL_DYNAMIC_LINKING "Set to ON to build VL for dynamic linking, or OFF for static." OFF)
+option(VL_DYNAMIC_LINKING "Set to ON to build VL for dynamic linking, or OFF for static." ON)
 if(VL_DYNAMIC_LINKING)
 	add_definitions(-DVL_DYNAMIC_LINKING)
 	set(VL_SHARED_OR_STATIC "SHARED")
