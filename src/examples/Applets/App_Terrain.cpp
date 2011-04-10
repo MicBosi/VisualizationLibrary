@@ -44,7 +44,7 @@ public:
       openglContext()->quitApplication();
       return;
     }
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     ghostCameraManipulator()->setMovementSpeed(5);
     // allocate terrain scene manager

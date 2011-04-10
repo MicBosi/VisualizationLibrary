@@ -55,7 +55,7 @@ public:
 
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
     rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
     rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
     showCatmullRomPentagonOpen();

@@ -36,12 +36,14 @@
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/GeometryPrimitives.hpp>
 
+#include <vlCore/FileSystem.hpp>
+
 class App_TessellationShader: public BaseDemo
 {
 public:
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     const int patch_count = 128;
     const float world_size = 2500.0;
@@ -49,7 +51,7 @@ public:
     const float pixel_per_edge = 16.0f;
     const float max_tessellation = 64.0f;
     
-    vl::ref< vl::Geometry > geom_patch = makeGrid(vl::fvec3(), world_size,world_size, patch_count,patch_count, true);
+    vl::ref< vl::Geometry > geom_patch = makeGrid(vl::vec3(), world_size,world_size, patch_count,patch_count, true);
 
     // patch parameter associated to the draw call
     vl::ref<vl::PatchParameter> patch_param = new vl::PatchParameter;
@@ -76,13 +78,13 @@ public:
     mGLSL->attachShader( new vl::GLSLTessControlShader("glsl/tess_grid.tcs") );
     mGLSL->attachShader( new vl::GLSLTessEvaluationShader("glsl/tess_grid.tes") );
     mGLSL->attachShader( new vl::GLSLFragmentShader("glsl/tess_grid.fs") );
-    mGLSL->gocUniform("pixel_per_edge")->setUniform(pixel_per_edge);
-    mGLSL->gocUniform("max_tessellation")->setUniform(max_tessellation);
+    mGLSL->gocUniform("pixel_per_edge")->setUniformF(pixel_per_edge);
+    mGLSL->gocUniform("max_tessellation")->setUniformF(max_tessellation);
     mGLSL->gocUniform("screen_size")->setUniform(vl::fvec2(512,512));
-    mGLSL->gocUniform("world_size")->setUniform(world_size);
-    mGLSL->gocUniform("height_scale")->setUniform(height_scale);
-    mGLSL->gocUniform("tex_heghtmap")->setUniform(0);
-    mGLSL->gocUniform("tex_diffuse")->setUniform(1);
+    mGLSL->gocUniform("world_size")->setUniformF(world_size);
+    mGLSL->gocUniform("height_scale")->setUniformF(height_scale);
+    mGLSL->gocUniform("tex_heghtmap")->setUniformI(0);
+    mGLSL->gocUniform("tex_diffuse")->setUniformI(1);
 
     // tessellated patches fx_wire
     vl::ref<vl::Effect> fx_wire = new vl::Effect;
@@ -98,12 +100,12 @@ public:
     mGLSLWire->attachShader( new vl::GLSLTessControlShader("glsl/tess_grid.tcs") );
     mGLSLWire->attachShader( new vl::GLSLTessEvaluationShader("glsl/tess_grid.tes") );
     mGLSLWire->attachShader( new vl::GLSLFragmentShader("glsl/tess_grid_wire.fs") );
-    mGLSLWire->gocUniform("pixel_per_edge")->setUniform(pixel_per_edge);
-    mGLSLWire->gocUniform("max_tessellation")->setUniform(max_tessellation);
+    mGLSLWire->gocUniform("pixel_per_edge")->setUniformF(pixel_per_edge);
+    mGLSLWire->gocUniform("max_tessellation")->setUniformF(max_tessellation);
     mGLSLWire->gocUniform("screen_size")->setUniform(vl::fvec2(512,512));
-    mGLSLWire->gocUniform("world_size")->setUniform(world_size);
-    mGLSLWire->gocUniform("height_scale")->setUniform(height_scale);
-    mGLSLWire->gocUniform("tex_heghtmap")->setUniform(0);
+    mGLSLWire->gocUniform("world_size")->setUniformF(world_size);
+    mGLSLWire->gocUniform("height_scale")->setUniformF(height_scale);
+    mGLSLWire->gocUniform("tex_heghtmap")->setUniformI(0);
     mGLSLWire->gocUniform("wire_color")->setUniform(vl::lightgreen);
 
     sceneManager()->tree()->addActor( geom_patch.get(), fx.get(), NULL )->setRenderRank(0);
@@ -153,7 +155,7 @@ class App_TessellationShaderTri: public BaseDemo
 public:
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     // hemisphere base geometry
     vl::ref< vl::Geometry > geom_patch = new vl::Geometry;
@@ -224,9 +226,9 @@ public:
     mGLSL->attachShader( new vl::GLSLTessControlShader("glsl/smooth_triangle.tcs") );
     mGLSL->attachShader( new vl::GLSLTessEvaluationShader("glsl/smooth_triangle.tes") );
     mGLSL->attachShader( new vl::GLSLGeometryShader("glsl/smooth_triangle.gs") );
-    mGLSL->gocUniform("Outer")->setUniform(10.0f);
-    mGLSL->gocUniform("Inner")->setUniform(10.0f);
-    mGLSL->gocUniform("Radius")->setUniform(1.0f);
+    mGLSL->gocUniform("Outer")->setUniformF(10.0f);
+    mGLSL->gocUniform("Inner")->setUniformF(10.0f);
+    mGLSL->gocUniform("Radius")->setUniformF(1.0f);
 
     sceneManager()->tree()->addActor( geom_patch.get(), fx.get(), NULL );
   }
@@ -254,8 +256,8 @@ public:
     inner = inner < 1 ? 1 : inner;
     outer = outer < 1 ? 1 : outer;
 
-    mGLSL->gocUniform("Outer")->setUniform(outer);
-    mGLSL->gocUniform("Inner")->setUniform(inner);
+    mGLSL->gocUniform("Outer")->setUniformF(outer);
+    mGLSL->gocUniform("Inner")->setUniformF(inner);
 
     vl::Log::print( vl::Say("outer = %n, inner = %n\n") << outer << inner );
   }

@@ -58,7 +58,7 @@ public:
 
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
     openglContext()->setContinuousUpdate(true);
 
     srand((unsigned int)time(NULL));
@@ -271,7 +271,7 @@ public:
     sceneManager()->tree()->addActor( mTextActor.get() );
 
     vl::ref<vl::Volume> volume = new vl::Volume;
-    volume->setup( (float*)mVolumeImage->pixels(), vl::fvec3(-5,-5,-5), vl::fvec3(+5,+5,+5), vl::ivec3(mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth()) );
+    volume->setup( (float*)mVolumeImage->pixels(), false, true, vl::fvec3(-5,-5,-5), vl::fvec3(+5,+5,+5), vl::ivec3(mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth()) );
     
     mMarchingCubes.reset();
     mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 0.40f, /*yellow*/vl::fvec4(1, 1, 0, 0.5f)) );
@@ -388,7 +388,7 @@ public:
     vl::ref<vl::Volume> volume = new vl::Volume;
     mMarchingCubes.reset();
     mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 400.0f) );
-    mMarchingCubes.volumeInfo()->at(0)->volume()->setup( NULL, vl::fvec3(-10,-10,-10), vl::fvec3(+10,+10,+10), vl::ivec3(mMetaballsResolution,mMetaballsResolution,mMetaballsResolution) );
+    mMarchingCubes.volumeInfo()->at(0)->volume()->setup( NULL, false, false, vl::fvec3(-10,-10,-10), vl::fvec3(+10,+10,+10), vl::ivec3(mMetaballsResolution,mMetaballsResolution,mMetaballsResolution) );
     
     vl::ref<vl::Geometry > geom = new vl::Geometry;
     geom->setVertexArray(mMarchingCubes.mVertsArray.get());
@@ -426,7 +426,7 @@ public:
     vl::ref<vl::Volume> volume = new vl::Volume;
     mMarchingCubes.reset();
     mMarchingCubes.volumeInfo()->push_back( new vl::VolumeInfo( volume.get(), 400.0f) );
-    mMarchingCubes.volumeInfo()->at(0)->volume()->setup( NULL, vl::fvec3(-10,-10,-10), vl::fvec3(+10,+10,+10), vl::ivec3(mMetaballsResolution,mMetaballsResolution,mMetaballsResolution) );
+    mMarchingCubes.volumeInfo()->at(0)->volume()->setup( NULL, false, false, vl::fvec3(-10,-10,-10), vl::fvec3(+10,+10,+10), vl::ivec3(mMetaballsResolution,mMetaballsResolution,mMetaballsResolution) );
     
     vl::ref<vl::Geometry > geom = new vl::Geometry;
     geom->setBoundingBox( vl::AABB( vl::vec3(-10,-10,1-10), vl::vec3(10,10,10) ) );
@@ -505,10 +505,12 @@ public:
     sceneManager()->tree()->addActor( mTextActor.get() );
 
     // convert the image to a one-component float volume
-    vol_img = vol_img->convertFormat(vl::IF_LUMINANCE)->convertType(vl::IT_FLOAT);
+    // and keep it alive since we use its data directly
+    mDropImage = vol_img->convertFormat(vl::IF_LUMINANCE)->convertType(vl::IT_FLOAT);
 
+    // note: we use the image data directly without making copies:
     vl::ref<vl::Volume> volume = new vl::Volume;
-    volume->setup( (float*)vol_img->pixels(), vl::fvec3(-5,-5,-5), vl::fvec3(+5,+5,+5), vl::ivec3(vol_img->width(), vol_img->height(), vol_img->depth()) );
+    volume->setup( (float*)mDropImage->pixels(), true, false, vl::fvec3(-5,-5,-5), vl::fvec3(+5,+5,+5), vl::ivec3(mDropImage->width(), mDropImage->height(), mDropImage->depth()) );
 
     // start timing
     vl::Time time; 
@@ -689,6 +691,7 @@ protected:
   float mFountainSpeed;
   vl::ref<vl::Image> mVolumeImage;
   vl::ref<vl::Image> mColorImage;
+  vl::ref<vl::Image> mDropImage;
   int mTest;
 };
 

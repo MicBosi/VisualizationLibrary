@@ -94,6 +94,18 @@ class App_VolumeRaycast: public BaseDemo
   bool PRECOMPUTE_GRADIENT;
 
 public:
+  virtual String appletInfo()
+  {
+    return BaseDemo::appletInfo() + 
+    "Left/Right Arrow: change raycast technique.\n" +
+    "Up/Down Arrow: changes SAMPLE_STEP.\n" +
+    "L: toggles lights (useful only for isosurface).\n" +
+    "Mouse Wheel: change the bias used to render the volume.\n" +
+    "\n" +
+    "Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
+    "\n";
+  }
+
   App_VolumeRaycast()
   {
     SAMPLE_STEP         = 1.0f / 512.0f;
@@ -106,7 +118,7 @@ public:
   /* initialize the applet with a default volume */
   virtual void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     if ( !GLEW_Has_Shading_Language_20 )
     {
@@ -137,7 +149,7 @@ public:
     // - In RaycastDensityControl_Mode controls the density of the voxels
     // - In RaycastColorControl_Mode controls the color-bias of the voxels
     mValThreshold = new Uniform( "val_threshold" );
-    mValThreshold->setUniform( 0.5f );
+    mValThreshold->setUniformF( 0.5f );
 
     // default volume image
     mVolumeImage = loadImage( "/volume/VLTest.dat" );
@@ -205,7 +217,7 @@ public:
 
     // the GLSL program that performs the actual raycasting
     mGLSL = volume_fx->shader()->gocGLSLProgram();
-    mGLSL->gocUniform( "sample_step" )->setUniform( SAMPLE_STEP );
+    mGLSL->gocUniform( "sample_step" )->setUniformF( SAMPLE_STEP );
     
     // attach vertex shader (common to all the raycasting techniques)
     mGLSL->attachShader( new GLSLVertexShader( "/glsl/volume_luminance_light.vs" ) );
@@ -282,7 +294,7 @@ public:
 
     // install volume image as textue #0
     volume_fx->shader()->gocTextureUnit( 0 )->setTexture( new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false ) );
-    volume_fx->shader()->gocUniform( "volume_texunit" )->setUniform( 0 );
+    volume_fx->shader()->gocUniform( "volume_texunit" )->setUniformI( 0 );
     mRaycastVolume->generateTextureCoordinates( ivec3(mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth()) );
 
     // generate a simple colored transfer function
@@ -294,20 +306,20 @@ public:
 
     // installs the transfer function as texture #1
     volume_fx->shader()->gocTextureUnit( 1 )->setTexture( new Texture( trfunc.get() ) );
-    volume_fx->shader()->gocUniform( "trfunc_texunit" )->setUniform( 1 );
+    volume_fx->shader()->gocUniform( "trfunc_texunit" )->setUniformI( 1 );
     
     // gradient computation, only use for isosurface methods
     if ( MODE == Isosurface_Mode || MODE == Isosurface_Transp_Mode )
     {
       if ( PRECOMPUTE_GRADIENT )
       {
-        volume_fx->shader()->gocUniform( "precomputed_gradient" )->setUniform( 1 /*true*/ );
+        volume_fx->shader()->gocUniform( "precomputed_gradient" )->setUniformI( 1 /*true*/ );
         volume_fx->shader()->gocTextureUnit( 2 )->setTexture( new Texture( gradient.get(), TF_RGBA, false, false ) );
-        volume_fx->shader()->gocUniform( "gradient_texunit" )->setUniform( 2 );
+        volume_fx->shader()->gocUniform( "gradient_texunit" )->setUniformI( 2 );
       }
       else
       {
-        volume_fx->shader()->gocUniform( "precomputed_gradient" )->setUniform( 0 /*false*/ );
+        volume_fx->shader()->gocUniform( "precomputed_gradient" )->setUniformI( 0 /*false*/ );
         // used to compute on the fly the normals based on the volume's gradient
         volume_fx->shader()->gocUniform( "gradient_delta" )->setUniform( fvec3( 0.5f/mVolumeImage->width(), 0.5f/mVolumeImage->height(), 0.5f/mVolumeImage->depth() ) );
       }
@@ -383,7 +395,7 @@ public:
     mValThreshold->getUniform( &val_threshold );
     val_threshold += val * 0.01f;
     val_threshold = clamp( val_threshold, 0.0f, 1.0f );
-    mValThreshold->setUniform( val_threshold );
+    mValThreshold->setUniformF( val_threshold );
 
     updateText();
     openglContext()->update();

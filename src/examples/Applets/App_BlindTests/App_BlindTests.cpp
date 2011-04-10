@@ -72,7 +72,7 @@ class App_BlindTests: public BaseDemo
 public:
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
     String msg;
     Time time;
 

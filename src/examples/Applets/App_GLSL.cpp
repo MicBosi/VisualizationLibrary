@@ -55,7 +55,7 @@ public:
       exit(1);
     }
 
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
     rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());

@@ -52,7 +52,7 @@ public:
       return;
     }
 
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     bool use_mipmaps = true;
 

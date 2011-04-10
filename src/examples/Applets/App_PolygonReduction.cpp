@@ -50,7 +50,7 @@ public:
 
   void initEvent()
   {
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     /* Transform */
     mTransform = new Transform;
@@ -93,7 +93,7 @@ public:
     mText->setAlignment( AlignHCenter | AlignBottom );
     mText->setViewportAlignment( AlignHCenter | AlignBottom );
     mText->setBackgroundEnabled(true);
-    mText->setBackgroundColor(vec4(0,0,0,0.5f));
+    mText->setBackgroundColor(fvec4(0,0,0,0.5f));
     ref<Effect> effect = new Effect;
     effect->shader()->enable(EN_BLEND);
     mTextActor = sceneManager()->tree()->addActor(mText.get(), effect.get());

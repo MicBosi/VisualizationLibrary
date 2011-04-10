@@ -151,7 +151,7 @@ public:
       exit(1);
     }
 
-    BaseDemo::initEvent();
+    vl::Log::print(appletInfo());
 
     mMode = NoMode;
     mHelpOn = true;
