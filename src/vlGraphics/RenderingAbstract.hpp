@@ -34,7 +34,7 @@
 
 #include <vlCore/Collection.hpp>
 #include <vlCore/vlnamespace.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 
 namespace vl
 {

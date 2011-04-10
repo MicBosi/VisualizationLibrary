@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlVolume/config.hpp>
+#include <vlVolume/link_config.hpp>
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/Actor.hpp>
 

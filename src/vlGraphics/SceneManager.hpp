@@ -32,7 +32,7 @@
 #ifndef SceneManager_INCLUDE_ONCE
 #define SceneManager_INCLUDE_ONCE
 
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 #include <vlCore/Object.hpp>
 #include <vlCore/Sphere.hpp>
 

@@ -32,7 +32,7 @@
 #ifndef MFCWindow_INCLUDE_ONCE
 #define MFCWindow_INCLUDE_ONCE
 
-#include <vlMFC/config.hpp>
+#include <vlMFC/link_config.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlWin32/Win32Context.hpp>
 

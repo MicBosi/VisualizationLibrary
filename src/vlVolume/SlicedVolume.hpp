@@ -32,7 +32,7 @@
 #ifndef SlicedVolume_INCLUDE_ONCE
 #define SlicedVolume_INCLUDE_ONCE
 
-#include <vlVolume/config.hpp>
+#include <vlVolume/link_config.hpp>
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/Light.hpp>

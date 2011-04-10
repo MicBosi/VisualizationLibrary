@@ -33,7 +33,7 @@
 #define OpenGL_INCLUDE_ONCE
 
 #include <vlCore/OpenGLDefs.hpp>
-#include <vlGraphics/config.hpp>
+#include <vlGraphics/link_config.hpp>
 
 #define GLEW_Has_Geometry_Shader (GLEW_NV_geometry_shader4||GLEW_EXT_geometry_shader4||GLEW_ARB_geometry_shader4||GLEW_VERSION_3_2||GLEW_VERSION_4_0)
 #define GLEW_Has_Shading_Language_20 (GLEW_ARB_shading_language_100||GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)

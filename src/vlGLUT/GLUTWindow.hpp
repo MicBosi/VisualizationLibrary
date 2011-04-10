@@ -32,7 +32,7 @@
 #ifndef GLUT_Window_INCLUDE_ONCE
 #define GLUT_Window_INCLUDE_ONCE
 
-#include <vlGLUT/config.hpp>
+#include <vlGLUT/link_config.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <map>
