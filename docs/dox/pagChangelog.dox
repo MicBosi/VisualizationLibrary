@@ -3,13 +3,16 @@
    \page pagChangelog Changelog
 
 	<div class="featuretitle">Visualization Library 2011.04.1137</div>
-	
+
 	- DLL compilation enabled by default.
-	- Fixed context attrib creation handling.
-	- setUniform(int/unsigned/float/double) renamed setUniformI/U/F/D() to avoid confusion.
+	- Fixed OpenGL context creation attributes handling.
+	- setUniform(int/unsigned/float/double) renamed setUniformI/U/F/D() for better clarity.
 	- CMake variables starting with GUI_* renamed VL_GUI_*
 	- Fixed double precision pipeline compilation.
 	- Marching cube volume can now use directly the user's data without duplication and perform an optional copy on the internal volume buffer.
+	- MarchingCubes demo-tests uses VBOs and shows polygon tessellation in wireframe.
+	- Added Texture::clone() function. Useful when one needs to use the same texture object with different texture parameters.
+	- Added direct texture creation functions: vl::Texture::createTexture1D()/createTexture2D() etc.
 	- VL_DEBUG_LIVING_OBJECTS enabled also in release mode.
 	- Optional debugging living objects code after tests.
 	- Print demo-applet info on startup.
