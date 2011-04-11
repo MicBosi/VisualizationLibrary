@@ -910,6 +910,26 @@ bool Texture::createTexture()
     return true;
 }
 //-----------------------------------------------------------------------------
+void Texture::clone(const Texture& other)
+{
+  // keep its own copyof SetupParams
+  if (other.mSetupParams)
+    mSetupParams = new SetupParams(*other.mSetupParams);
+  else
+    mSetupParams = NULL;
+  mHandle        = other.mHandle;
+  mTexParameter  = other.mTexParameter;
+  mBufferObject  = other.mBufferObject;
+  mFormat        = other.mFormat;
+  mDimension     = other.mDimension;
+  mWidth         = other.mWidth;
+  mHeight        = other.mHeight;
+  mDepth         = other.mDepth;
+  mSamples       = other.mSamples;
+  mBorder        = other.mBorder;
+  mFixedSamplesLocation = other.mFixedSamplesLocation;
+}
+//-----------------------------------------------------------------------------
 bool Texture::isCompressedFormat(int format)
 {
   int comp[] =
