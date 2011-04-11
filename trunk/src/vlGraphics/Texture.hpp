@@ -136,7 +136,7 @@ namespace vl
   {
   public:
     /** The SetupParams function wraps all the parameters needed to crate a Texture.
-     * A SetupParams object is automatically bound to a Texture after calling prepareTexture2D() and similar functions.
+     * A SetupParams object is automatically setup and bound to a Texture after calling prepareTexture2D() and similar functions.
      * Once the SetupParams are bound to a Texture calling Texture::createTexture() will create a new Texture according 
      * to what specified in the SetupParams objects. After Texture::createTexture() the SetupParams object is removed. */
     class SetupParams: public Object
@@ -715,6 +715,10 @@ namespace vl
 
     /** Returns \p true if the specified format is compressed. */
     static bool isCompressedFormat(int format);
+
+    /** Copies all the texture parameters form the specified texture, including the OpenGL texture handle.
+        Mainly useful when you want to use the same texture object with different texture parameters. */
+    void clone(const Texture& other);
 
   private:
     Texture(const Texture& other): Object(other) {}
