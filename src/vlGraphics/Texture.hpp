@@ -615,7 +615,7 @@ namespace vl
     }
 
     /** Prepares a 2D multisample texture. */
-    void prepareTexture2DMultisample(int samples, vl::ETextureFormat format, int width, int height, bool fixedsamplelocations)
+    void prepareTexture2DMultisample(int width, int height, vl::ETextureFormat format, int samples, bool fixedsamplelocations)
     {
       mSetupParams = new SetupParams;
       mSetupParams->setDimension(TD_TEXTURE_2D_MULTISAMPLE);
@@ -629,14 +629,14 @@ namespace vl
     }
 
     /** Creates a 2D multisample texture. */
-    void createTexture2DMultisample(int samples, vl::ETextureFormat format, int width, int height, bool fixedsamplelocations)
+    void createTexture2DMultisample(int width, int height, vl::ETextureFormat format, int samples, bool fixedsamplelocations)
     {
-      prepareTexture2DMultisample(samples, format, width, height, fixedsamplelocations);
+      prepareTexture2DMultisample(width, height, format, samples, fixedsamplelocations);
       createTexture();
     }
 
     /** Prepares a 3D multisample texture. */
-    void prepareTexture2DMultisampleArray(int samples, vl::ETextureFormat format, int width, int height, int depth, bool fixedsamplelocations)
+    void prepareTexture2DMultisampleArray(int width, int height, int depth, vl::ETextureFormat format, int samples, bool fixedsamplelocations)
     {
       mSetupParams = new SetupParams;
       mSetupParams->setDimension(TD_TEXTURE_2D_MULTISAMPLE_ARRAY);
@@ -651,9 +651,9 @@ namespace vl
     }
 
     /** Creates a 3D multisample texture. */
-    void createTexture2DMultisampleArray(int samples, vl::ETextureFormat format, int width, int height, int depth, bool fixedsamplelocations)
+    void createTexture2DMultisampleArray(int width, int height, int depth, vl::ETextureFormat format, int samples, bool fixedsamplelocations)
     {
-      prepareTexture2DMultisampleArray(samples, format, width, height, depth, fixedsamplelocations);
+      prepareTexture2DMultisampleArray(width, height, depth, format, samples, fixedsamplelocations);
       createTexture();
     }
 
