@@ -378,7 +378,7 @@ public:
 
     /* use multisample texture as color buffer */
     vl::ref<vl::Texture> texture = new vl::Texture;
-    texture->prepareTexture2DMultisample(samples, vl::TF_RGBA, mFBO_Size, mFBO_Size, true);
+    texture->prepareTexture2DMultisample(mFBO_Size, mFBO_Size, vl::TF_RGBA, samples, true);
     texture->createTexture();
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm = new vl::FBOTexture2DAttachment(texture.get(), 0, vl::T2DT_TEXTURE_2D_MULTISAMPLE);
     fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
