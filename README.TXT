@@ -22,6 +22,9 @@ visualization, presentations, multimedia applications, special effects, 2D and 3
 
 * The official documentation can be found here:
   http://www.visualizationlibrary.com/documentation
+  
+* The latest sources can be found here:
+  http://visualizationlibrary.googlecode.com/svn/trunk
 
 For inquiries regarding licensing, credits, collaboration, professional support etc. 
 contact me at: michele@visualizationlibrary.com
