@@ -716,6 +716,9 @@ namespace vl
     /** Returns \p true if the specified format is compressed. */
     static bool isCompressedFormat(int format);
 
+    /** Returns true if the texture is a depth or depth/stencil textre. */
+    bool isDepthTexture() const;
+
     /** Copies all the texture parameters form the specified texture, including the OpenGL texture handle.
         Mainly useful when you want to use the same texture object with different texture parameters. */
     void clone(const Texture& other);
