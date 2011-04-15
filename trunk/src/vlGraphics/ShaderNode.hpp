@@ -267,11 +267,11 @@ namespace vl
     const Shader* shader() const { return mShader.get(); }
     Shader* shader() { return mShader.get(); }
 
-    void updateHierachy()
+    void updateHierarchy()
     {
       inherit(parent());
       for(unsigned i=0;i <childrenCount(); ++i)
-        child(i)->updateHierachy();
+        child(i)->updateHierarchy();
     }
 
   protected:

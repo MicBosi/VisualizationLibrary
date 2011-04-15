@@ -311,7 +311,7 @@ namespace vl
       mChildren.clear();
     }
     
-    /** Removes all the children of a Ttype recursively descending the hierachy. */
+    /** Removes all the children of a Ttype recursively descending the hierarchy. */
     void eraseAllChildrenRecursive()
     {
       for(int i=0; i<(int)mChildren.size(); ++i)
