@@ -930,6 +930,27 @@ void Texture::clone(const Texture& other)
   mFixedSamplesLocation = other.mFixedSamplesLocation;
 }
 //-----------------------------------------------------------------------------
+bool Texture::isDepthTexture() const
+{
+  switch(internalFormat())
+  {
+    case TF_DEPTH_STENCIL:
+    case TF_DEPTH24_STENCIL8:
+
+    case TF_DEPTH_COMPONENT32F:
+    case TF_DEPTH32F_STENCIL8:
+
+    case TF_DEPTH_COMPONENT:
+    case TF_DEPTH_COMPONENT16:
+    case TF_DEPTH_COMPONENT24:
+    case TF_DEPTH_COMPONENT32:
+      return true;
+
+    default:
+      return false;
+  }
+}
+//-----------------------------------------------------------------------------
 bool Texture::isCompressedFormat(int format)
 {
   int comp[] =
