@@ -44,34 +44,49 @@ namespace vl
    */
   class ShaderNode: public Object
   {
-  private:
-    class EnableInfo
+  public:
+    // --- --- ---
+    struct EnableInfo
     {
-    public:
       EnableInfo(EEnable en=EN_UnknownEnable, bool on=false, EInheritance inheritance=IN_Propagate): mEnable(en), mOn(on), mInheritance(inheritance) {}
+
       EEnable mEnable;
       bool mOn;
       EInheritance mInheritance;
     };
-    class RenderStateInfo
+    // --- --- ---
+    struct RenderStateInfo
     {
-    public:
       RenderStateInfo(RenderState* rs=NULL, EInheritance inheritance=IN_Propagate): mRenderState(rs), mInheritance(inheritance) {}
+
       ref<RenderState> mRenderState;
       EInheritance mInheritance;
     };
-    class UniformInfo
+    // --- --- ---
+    struct UniformInfo
     {
-    public:
       UniformInfo(Uniform* unif=NULL, EInheritance inheritance=IN_Propagate): mUniform(unif), mInheritance(inheritance) {}
+
       ref<Uniform> mUniform;
       EInheritance mInheritance;
     };
+    // --- --- ---
+    typedef std::map< ERenderState, RenderStateInfo > RenderStatesMap;
+    typedef std::map< EEnable, EnableInfo > EnablesMap;
+    typedef std::map< std::string, UniformInfo > UniformsMap;
 
   public:
     virtual const char* className() { return "vl::ShaderNode"; }
 
     ShaderNode(): mParent(NULL) {}
+
+    // shader-related functions
+
+    void setShader(Shader* shader) { mShader = shader; }
+
+    const Shader* shader() const { return mShader.get(); }
+
+    Shader* shader() { return mShader.get(); }
 
     // tree-related functions
 
@@ -121,12 +136,21 @@ namespace vl
     size_t childrenCount() const { return mNodes.size(); }
 
     ShaderNode* child(unsigned i) { return mNodes[i].get(); }
+
     const ShaderNode* child(unsigned i) const { return mNodes[i].get(); }
 
     ShaderNode* parent() { return mParent; }
+
     const ShaderNode* parent() const { return mParent; }
 
-    // shader-related functions
+    // inheritance-related functions
+
+    void updateHierarchy()
+    {
+      inherit(parent());
+      for(unsigned i=0;i <childrenCount(); ++i)
+        child(i)->updateHierarchy();
+    }
 
     void inherit(ShaderNode* parent)
     {
@@ -136,14 +160,14 @@ namespace vl
       mUniforms_Final.clear();
 
       // propagate
-      for(std::map< ERenderState, RenderStateInfo >::const_iterator rs_it = mRenderStates.begin(); rs_it != mRenderStates.end(); ++rs_it)
+      for(RenderStatesMap::const_iterator rs_it = mRenderStates.begin(); rs_it != mRenderStates.end(); ++rs_it)
           mRenderStates_Final[rs_it->first] = rs_it->second;
 
       for(std::map< EEnable, EnableInfo>::const_iterator en_it = mEnables.begin(); en_it != mEnables.end(); ++en_it)
         if(en_it->second.mOn)
           mEnables_Final[en_it->first] = en_it->second;
 
-      for(std::map< std::string, UniformInfo >::const_iterator unif_it = mUniforms.begin(); unif_it != mUniforms.end(); ++unif_it)
+      for(UniformsMap::const_iterator unif_it = mUniforms.begin(); unif_it != mUniforms.end(); ++unif_it)
           mUniforms_Final[unif_it->first] = unif_it->second;
 
       // iterate parent final values
@@ -164,11 +188,11 @@ namespace vl
          */
 
         // render states
-        for(std::map< ERenderState, RenderStateInfo >::const_iterator par_it = parent->mRenderStates_Final.begin(); par_it != parent->mRenderStates_Final.end(); ++par_it)
+        for(RenderStatesMap::const_iterator par_it = parent->mRenderStates_Final.begin(); par_it != parent->mRenderStates_Final.end(); ++par_it)
         {
           if (!(par_it->second.mInheritance & IN_Propagate))
             continue;
-          std::map< ERenderState, RenderStateInfo >::const_iterator cur_it = mRenderStates_Final.find(par_it->first);
+          RenderStatesMap::const_iterator cur_it = mRenderStates_Final.find(par_it->first);
           if (cur_it == mRenderStates_Final.end())
             mRenderStates_Final[par_it->first] = par_it->second;
           else
@@ -179,13 +203,13 @@ namespace vl
         }
 
         // enables
-        for(std::map< EEnable, EnableInfo >::const_iterator par_it = parent->mEnables_Final.begin(); par_it != parent->mEnables_Final.end(); ++par_it)
+        for(EnablesMap::const_iterator par_it = parent->mEnables_Final.begin(); par_it != parent->mEnables_Final.end(); ++par_it)
         {
           if (!par_it->second.mOn)
             continue;
           if (!(par_it->second.mInheritance & IN_Propagate))
             continue;
-          std::map< EEnable, EnableInfo >::const_iterator cur_it = mEnables_Final.find(par_it->first);
+          EnablesMap::const_iterator cur_it = mEnables_Final.find(par_it->first);
           if (cur_it == mEnables_Final.end())
             mEnables_Final[par_it->first] = par_it->second;
           else
@@ -196,11 +220,11 @@ namespace vl
         }
 
         // uniforms
-        for(std::map< std::string, UniformInfo >::const_iterator par_it = parent->mUniforms_Final.begin(); par_it != parent->mUniforms_Final.end(); ++par_it)
+        for(UniformsMap::const_iterator par_it = parent->mUniforms_Final.begin(); par_it != parent->mUniforms_Final.end(); ++par_it)
         {
           if (!(par_it->second.mInheritance & IN_Propagate))
             continue;
-          std::map< std::string, UniformInfo >::const_iterator cur_it = mUniforms_Final.find(par_it->first);
+          UniformsMap::const_iterator cur_it = mUniforms_Final.find(par_it->first);
           if (cur_it == mUniforms_Final.end())
             mUniforms_Final[par_it->first] = par_it->second;
           else
@@ -221,14 +245,16 @@ namespace vl
 
         // we can speed this up even more by removing the duplication check
 
-        for(std::map< ERenderState, RenderStateInfo >::const_iterator rs_it = mRenderStates_Final.begin(); rs_it != mRenderStates_Final.end(); ++rs_it)
+        for(RenderStatesMap::const_iterator rs_it = mRenderStates_Final.begin(); rs_it != mRenderStates_Final.end(); ++rs_it)
           mShader->setRenderState(rs_it->second.mRenderState.get());
-        for(std::map< EEnable, EnableInfo >::const_iterator en_it = mEnables_Final.begin(); en_it != mEnables_Final.end(); ++en_it)
+        for(EnablesMap::const_iterator en_it = mEnables_Final.begin(); en_it != mEnables_Final.end(); ++en_it)
           mShader->enable(en_it->second.mEnable);
-        for(std::map< std::string, UniformInfo >::const_iterator rs_it = mUniforms_Final.begin(); rs_it != mUniforms_Final.end(); ++rs_it)
+        for(UniformsMap::const_iterator rs_it = mUniforms_Final.begin(); rs_it != mUniforms_Final.end(); ++rs_it)
           mShader->setUniform(rs_it->second.mUniform.get());
       }
     }
+
+    // states setters
 
     void setRenderState(RenderState* rs, EInheritance inheritance=IN_Propagate)
     {
@@ -263,28 +289,31 @@ namespace vl
       mUniforms.erase(unif->name());
     }
 
-    void setShader(Shader* shader) { mShader = shader; }
-    const Shader* shader() const { return mShader.get(); }
-    Shader* shader() { return mShader.get(); }
+    // states getters
 
-    void updateHierarchy()
-    {
-      inherit(parent());
-      for(unsigned i=0;i <childrenCount(); ++i)
-        child(i)->updateHierarchy();
-    }
+    const RenderStatesMap& renderStates() const { return mRenderStates; }
+
+    RenderStatesMap& renderStates() { return mRenderStates; }
+
+    const EnablesMap& enables() const { return mEnables; }
+
+    EnablesMap& enables() { return mEnables; }
+
+    const UniformsMap& uniforms() const { return mUniforms; }
+
+    UniformsMap& uniforms() { return mUniforms; }
 
   protected:
     std::vector< ref< ShaderNode > > mNodes;
     ShaderNode* mParent;
 
-    std::map< ERenderState, RenderStateInfo > mRenderStates;
-    std::map< EEnable, EnableInfo> mEnables;
-    std::map< std::string, UniformInfo > mUniforms;
+    RenderStatesMap mRenderStates;
+    EnablesMap mEnables;
+    UniformsMap mUniforms;
 
-    std::map< ERenderState, RenderStateInfo > mRenderStates_Final;
-    std::map< EEnable, EnableInfo> mEnables_Final;
-    std::map< std::string, UniformInfo > mUniforms_Final;
+    RenderStatesMap mRenderStates_Final;
+    EnablesMap mEnables_Final;
+    UniformsMap mUniforms_Final;
 
     ref<Shader> mShader;
   };
