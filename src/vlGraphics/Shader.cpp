@@ -48,6 +48,10 @@ Shader::Shader()
     mObjectName = className();
   #endif
   mLastUpdateTime = 0;
+  // shader user data
+  #if VL_SHADER_USER_DATA
+    mShaderUserData = NULL;
+  #endif
 }
 //------------------------------------------------------------------------------
 Shader::~Shader()
