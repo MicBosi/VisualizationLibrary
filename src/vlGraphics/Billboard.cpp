@@ -40,9 +40,7 @@ Billboard::Billboard()
   setAxis(vec3(0,1,0));
   setNormal(vec3(0,0,1));
   mType = BT_SphericalBillboard;
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 }
 //-----------------------------------------------------------------------------
 vec3 Billboard::position()

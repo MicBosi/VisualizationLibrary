@@ -76,9 +76,7 @@ namespace
 //-----------------------------------------------------------------------------
 Time::Time()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 
   for(int i=0; i<VL_MAX_TIMERS; ++i)
     mStart[i] = -1;

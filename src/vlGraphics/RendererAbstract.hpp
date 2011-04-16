@@ -55,9 +55,7 @@ namespace vl
 
     RendererAbstract()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mOnStartedCallbacks  = new Collection<RenderEventCallback>;
       mOnFinishedCallbacks = new Collection<RenderEventCallback>;
       mClearFlags = CF_CLEAR_COLOR_DEPTH;

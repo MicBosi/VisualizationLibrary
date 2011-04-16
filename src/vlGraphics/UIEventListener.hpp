@@ -61,9 +61,7 @@ namespace vl
     /** Constructor. */
     UIEventListener(): mOpenGLContext(NULL), mEnabled(true) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     /** Event generated when the bound OpenGLContext bocomes initialized or when the event listener is bound to an initialized OpenGLContext. */

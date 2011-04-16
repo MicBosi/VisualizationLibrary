@@ -56,9 +56,7 @@ namespace vl
     /** Constructor. */
     RenderTarget(OpenGLContext* ctx, int w, int h): mWidth(w), mHeight(h), mOpenGLContext(ctx)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       setDrawBuffer(RDB_BACK_LEFT);
     }
 

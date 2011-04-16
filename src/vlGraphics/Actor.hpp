@@ -142,9 +142,7 @@ namespace vl
       mEffect(effect), mTransform(transform), mRenderBlock(block), mRenderRank(rank),
       mTransformUpdateTick(-1), mBoundsUpdateTick(-1), mEnableMask(0xFFFFFFFF), mOcclusionQuery(0), mIsOccludee(true), mOcclusionQueryTick(0xFFFFFFFF)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mActorEventCallbacks.setAutomaticDelete(false);
       setLod(0,renderable);
       // actor user data

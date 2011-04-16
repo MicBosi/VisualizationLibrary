@@ -64,9 +64,7 @@ namespace vl
 
     TriangleIteratorIndexed(TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, unsigned int prim_restart_idx)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mCurrentIndex = 0;
       mEnd    = 0;
       mA = mB = mC = -1;
@@ -322,9 +320,7 @@ namespace vl
 
     TriangleIteratorDirect(EPrimitiveType prim_type)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mCurrentIndex = mStart = mEnd = 0;
       mA = mB = mC = -1;
       mPrimType = prim_type;
@@ -505,9 +501,7 @@ namespace vl
     TriangleIteratorMulti( const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_count_vector, TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
     :TriangleIteratorIndexed<TArray>( idx_array, prim_type, 0, prim_restart_on, prim_restart_idx)
     {
-      #ifndef NDEBUG
-        this->mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mpBaseVertices  = p_base_vertices;
       mpCountVector   = p_count_vector;
       mStart   = 0;

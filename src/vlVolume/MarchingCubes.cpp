@@ -442,9 +442,7 @@ void MarchingCubes::updateAlpha(float alpha, int volume_index)
 //------------------------------------------------------------------------------
 Volume::Volume()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   setup(NULL, false, false, fvec3(0,0,0), fvec3(1.0f,1.0f,1.0f), ivec3(50,50,50));
 }
 //------------------------------------------------------------------------------

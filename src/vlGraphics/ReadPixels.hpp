@@ -151,9 +151,7 @@ namespace vl
       mReadBuffer ( RDB_BACK_LEFT ),
       mStoreInPixelBufferObject(false)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     ReadPixels(int x, int y, int width, int height, EReadDrawBuffer read_buffer, Image* image, bool store_in_pbo):
@@ -165,9 +163,7 @@ namespace vl
       mImage ( image ),
       mStoreInPixelBufferObject( store_in_pbo )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     virtual bool onRenderingStarted(const RenderingAbstract*)

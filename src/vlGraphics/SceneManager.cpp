@@ -42,9 +42,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 SceneManager::SceneManager()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   // mActors = new ActorCollection;
   mBoundsDirty = true;
   mCullingEnabled = true;

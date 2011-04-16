@@ -51,17 +51,13 @@ namespace vl
     
     Collection(const std::vector< ref<T> >& vector)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mVector = vector;
     }
     
     Collection()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     
     Collection& operator=(const std::vector< ref<T> >& vector)

@@ -154,9 +154,7 @@ void Texture::reset()
 Texture::Texture(int width, ETextureFormat format, bool border)
 {
   VL_CHECK_OGL()
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   reset();
   if (!createTexture(vl::TD_TEXTURE_1D, format, width, 0, 0, border, NULL, 0, 0))
   {
@@ -167,9 +165,7 @@ Texture::Texture(int width, ETextureFormat format, bool border)
 Texture::Texture(int width, int height, ETextureFormat format, bool border)
 {
   VL_CHECK_OGL()
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   reset();
   if (!createTexture(vl::TD_TEXTURE_2D, format, width, height, 0, border, NULL, 0, 0))
   {
@@ -180,9 +176,7 @@ Texture::Texture(int width, int height, ETextureFormat format, bool border)
 Texture::Texture(int width, int height, int depth, ETextureFormat format, bool border)
 {
   VL_CHECK_OGL()
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   reset();
   if (!createTexture(vl::TD_TEXTURE_3D, format, width, height, depth, border, NULL, 0, 0))
   {
@@ -192,9 +186,7 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
 //-----------------------------------------------------------------------------
 Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 
   reset();
 
@@ -218,9 +210,7 @@ Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border
 //-----------------------------------------------------------------------------
 Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps , bool border)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 
   reset();
 
@@ -246,9 +236,7 @@ Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps ,
 //-----------------------------------------------------------------------------
 Texture::Texture()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   reset();
 }
 //-----------------------------------------------------------------------------

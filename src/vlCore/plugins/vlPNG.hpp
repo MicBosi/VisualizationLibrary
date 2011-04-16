@@ -61,9 +61,7 @@ namespace vl
     
     LoadWriterPNG(): ResourceLoadWriter("|png|", "|png|"), mCompression(6) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     ref<ResourceDatabase> loadResource(const String& path) const 

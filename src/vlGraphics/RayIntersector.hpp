@@ -53,9 +53,7 @@ namespace vl
     virtual const char* className() { return "vl::RayIntersection"; }
     RayIntersection(): mActor(NULL), mDistance(0.0f) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     //! The intersected Actor
@@ -91,9 +89,7 @@ namespace vl
     virtual const char* className() { return "vl::RayIntersectionGeometry"; }
     RayIntersectionGeometry(): mGeometry(NULL), mDrawCalls(NULL), mTriangleIndex(-1) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       memset(mTriangle, 0xFF, sizeof(mTriangle));
     }
 
@@ -138,9 +134,7 @@ namespace vl
     virtual const char* className() { return "vl::RayIntersector"; }
     RayIntersector()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mActors = new ActorCollection;
     }
 

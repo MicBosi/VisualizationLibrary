@@ -50,9 +50,7 @@ namespace vl
 
     CatmullRomInterpolator() 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     CatmullRomInterpolator(const std::vector<T>& path): mPath(path) {}

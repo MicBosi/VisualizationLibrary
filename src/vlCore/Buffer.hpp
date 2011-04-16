@@ -56,9 +56,7 @@ namespace vl
     virtual const char* className() { return "vl::Buffer"; }
     Buffer()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mPtr = NULL;
       mByteCount = 0;
       mAlignment = VL_DEFAULT_BUFFER_BYTE_ALIGNMENT;
@@ -66,9 +64,7 @@ namespace vl
     }
     Buffer(const Buffer& other): Object(other)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mPtr = NULL;
       mByteCount = 0;
       mAlignment = VL_DEFAULT_BUFFER_BYTE_ALIGNMENT;

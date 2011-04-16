@@ -52,9 +52,7 @@ namespace vl
   public:
     DistanceLODEvaluator() 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::DistanceLODEvaluator"; }
     virtual int evaluate(Actor* actor, Camera* camera)

@@ -55,9 +55,7 @@ namespace vl
       mInterlineSpacing(5), mAlignment(AlignBottom|AlignLeft), mViewportAlignment(AlignBottom|AlignLeft), mMargin(5), mMode(Text2D), mLayout(LeftToRightText), mTextAlignment(TextAlignLeft), 
       mBorderEnabled(false), mBackgroundEnabled(false), mOutlineEnabled(false), mShadowEnabled(false), mKerningEnabled(true) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     const String& text() const { return mText; }

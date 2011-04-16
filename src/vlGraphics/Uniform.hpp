@@ -64,16 +64,12 @@ namespace vl
 
     Uniform(): mType(UT_NONE)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     Uniform(const std::string& name): mType(UT_NONE) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mName = name;
     }
 

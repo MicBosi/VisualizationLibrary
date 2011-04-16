@@ -40,9 +40,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 MorphingCallback::MorphingCallback()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 
   mGeometry = new Geometry;
   setAnimation(0,0,0);

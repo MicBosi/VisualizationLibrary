@@ -66,9 +66,7 @@ namespace vl
 
     Bond(): mColor( 1.0f,1.0f,1.0f,1.0f ), mRadius(0.10f), mAtom1(NULL), mAtom2(NULL), mType(BT_Single), mId(0), mVisible(true), mUseAtomColors(true) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     Bond(const Bond& other): Object(other) { *this = other; }
 

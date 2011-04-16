@@ -166,9 +166,7 @@ namespace vl
 
     VolumeInfo(Volume* vol, float threshold, const fvec4& color)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mColor = color;
       mThreshold = threshold;
       mVolume = vol;
@@ -178,9 +176,7 @@ namespace vl
 
     VolumeInfo(Volume* vol, float threshold)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mThreshold = threshold;
       mVolume = vol;
       mVert0 = -1;

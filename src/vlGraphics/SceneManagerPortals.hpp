@@ -59,9 +59,7 @@ namespace vl
     //! Constructor.
     Portal()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mIsOpen = true;
       mVisitTick = 0;
     }
@@ -134,9 +132,7 @@ namespace vl
     //! Constructor.
     Sector() 
     { 
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mActors = new ActorCollection; 
     }
 
@@ -192,9 +188,7 @@ namespace vl
     //! Constructor.
     SceneManagerPortals(): mExternalSector(new Sector), mVisitTick(1), mShowPortals(false) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     //! Appends to the given list all the Actor[s] contained in the scene regardless of their visibility.

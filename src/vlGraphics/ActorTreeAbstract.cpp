@@ -37,9 +37,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 ActorTreeAbstract::ActorTreeAbstract()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mActors.setAutomaticDelete(false);
   mParent = NULL;
 }

@@ -43,9 +43,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 GLSLShader::GLSLShader(EShaderType type, const String& source)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mType = type;
   mHandle = 0;
   mCompiled = false;
@@ -208,9 +206,7 @@ void GLSLShader::deleteShader()
 //------------------------------------------------------------------------------
 GLSLProgram::GLSLProgram()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mScheduleLink = true;
   mHandle = 0;
   mGeometryVerticesOut = 0;
