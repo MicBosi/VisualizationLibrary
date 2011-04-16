@@ -56,7 +56,12 @@ namespace vl
   class VLCORE_EXPORT ITransform: public Object
   {
   public:
-    ITransform(): mWorldMatrixUpdateTick(0), mAssumeIdentityWorldMatrix(false)  {}
+    ITransform(): mWorldMatrixUpdateTick(0), mAssumeIdentityWorldMatrix(false)  
+    {
+      #if VL_TRANSFORM_USER_DATA 
+        mTransformUserData = NULL;
+      #endif
+    }
 
     virtual size_t childrenCount() const = 0;
     
@@ -386,9 +391,6 @@ namespace vl
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      #if VL_TRANSFORM_USER_DATA 
-        mTransformUserData = NULL;
-      #endif
     }
 
     /** Constructor. The \p matrix parameter is used to set both the local and world matrix. */
@@ -399,9 +401,6 @@ namespace vl
       #endif
       setLocalMatrix(matrix);
       setWorldMatrix(matrix);
-      #if VL_TRANSFORM_USER_DATA 
-        mTransformUserData = NULL;
-      #endif
     }
 
     /** Sets both the local and the world matrices.
