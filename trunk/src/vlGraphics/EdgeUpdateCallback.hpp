@@ -47,15 +47,11 @@ namespace vl
     virtual const char* className() { return "vl::EdgeUpdateCallback"; }
     EdgeUpdateCallback(): mShowCreases(true) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     EdgeUpdateCallback(const std::vector<EdgeExtractor::Edge>& edge): mEdges(edge), mShowCreases(false) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     //! If \p true only the edges forming the silhouette of an object will be rendered.

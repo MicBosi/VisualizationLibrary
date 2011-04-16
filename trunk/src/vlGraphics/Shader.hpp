@@ -59,9 +59,7 @@ namespace vl
   public:
     PixelTransfer()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mMapColor    = false;
       mMapStencil  = false;
       mIndexShift  = 0;
@@ -206,9 +204,7 @@ namespace vl
     Hint(): mPerspectiveCorrectionHint(HM_DONT_CARE), mPointSmoothHint(HM_DONT_CARE), mLineSmoothHint(HM_DONT_CARE),
             mPolygonSmoothHint(HM_DONT_CARE), mFogHint(HM_DONT_CARE), mGenerateMipmapHint(HM_DONT_CARE)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     virtual const char* className() { return "vl::Hint"; }
@@ -249,9 +245,7 @@ namespace vl
   public:
     CullFace(EPolygonFace cullface=PF_BACK): mFaceMode(cullface)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::CullFace"; }
     virtual ERenderState type() const { return RS_CullFace; }
@@ -271,9 +265,7 @@ namespace vl
   public:
     FrontFace(EFrontFace frontface=FF_CCW): mFrontFace(frontface)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::FrontFace"; }
     virtual ERenderState type() const { return RS_FrontFace; }
@@ -293,9 +285,7 @@ namespace vl
   public:
     DepthFunc(EFunction depthfunc=FU_LESS): mDepthFunc(depthfunc)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::DepthFunc"; }
     virtual ERenderState type() const { return RS_DepthFunc; }
@@ -315,9 +305,7 @@ namespace vl
   public:
     DepthMask(bool depthmask=true): mDepthMask(depthmask)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::DepthMask"; }
     virtual ERenderState type() const { return RS_DepthMask; }
@@ -337,9 +325,7 @@ namespace vl
   public:
     PolygonMode(EPolygonMode frontface=PM_FILL, EPolygonMode backface=PM_FILL): mFrontFace(frontface), mBackFace(backface)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::PlygonMode"; }
     virtual ERenderState type() const { return RS_PolygonMode; }
@@ -363,9 +349,7 @@ namespace vl
   public:
     ShadeModel(EShadeModel shademodel=SM_SMOOTH): mShadeModel(shademodel)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::ShadeModel"; }
     virtual ERenderState type() const { return RS_ShadeModel; }
@@ -386,9 +370,7 @@ namespace vl
     BlendFunc(EBlendFactor src_rgb=BF_SRC_ALPHA, EBlendFactor dst_rgb=BF_ONE_MINUS_SRC_ALPHA, EBlendFactor src_alpha=BF_SRC_ALPHA, EBlendFactor dst_alpha=BF_ONE_MINUS_SRC_ALPHA):
       mSrcRGB(src_rgb), mDstRGB(dst_rgb), mSrcAlpha(src_alpha), mDstAlpha(dst_alpha)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::BlendFunc"; }
     virtual ERenderState type() const { return RS_BlendFunc; }
@@ -422,9 +404,7 @@ namespace vl
   public:
     BlendEquation(EBlendEquation mode_rgb=BE_FUNC_ADD, EBlendEquation mode_alpha=BE_FUNC_ADD): mModeRGB(mode_rgb), mModeAlpha(mode_alpha)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::BlendEquation"; }
     virtual ERenderState type() const { return RS_BlendEquation; }
@@ -448,9 +428,7 @@ namespace vl
   public:
     SampleCoverage(GLclampf value=1.0f, bool invert=false): mValue(value), mInvert(invert)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::SampleCoverage"; }
     virtual ERenderState type() const { return RS_SampleCoverage; }
@@ -474,9 +452,7 @@ namespace vl
   public:
     AlphaFunc(EFunction alphafunc=FU_ALWAYS, float refvalue=0): mRefValue(refvalue), mAlphaFunc(alphafunc)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::AlphaFunc"; }
     virtual ERenderState type() const { return RS_AlphaFunc; }
@@ -570,9 +546,7 @@ namespace vl
   public:
     LightModel(): mAmbientColor(0.2f,0.2f,0.2f,1.0f), mColorControl(CC_SINGLE_COLOR), mLocalViewer(false), mTwoSide(false)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::LightModel"; }
     virtual ERenderState type() const { return RS_LightModel; }
@@ -602,9 +576,7 @@ namespace vl
     Fog(EFogMode mode=FM_LINEAR, fvec4 color=fvec4(0,0,0,0), float density=1, float start=0, float end=1):
       mColor(color), mMode(mode), mDensity(density), mStart(start), mEnd(end)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::Fog"; }
     virtual ERenderState type() const { return RS_Fog; }
@@ -637,9 +609,7 @@ namespace vl
   public:
     PolygonOffset(): mFactor(0.0f), mUnits(0.0f)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::PolygonOffset"; }
     virtual ERenderState type() const { return RS_PolygonOffset; }
@@ -664,9 +634,7 @@ namespace vl
   public:
     LogicOp(ELogicOp logicop=LO_COPY): mLogicOp(logicop)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::LogicOp"; }
     virtual ERenderState type() const { return RS_LogicOp; }
@@ -686,15 +654,11 @@ namespace vl
   public:
     DepthRange(): mZNear(0), mZFar(1.0f)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     DepthRange(float znear, float zfar): mZNear(znear), mZFar(zfar)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::DepthRange"; }
     virtual ERenderState type() const { return RS_DepthRange; }
@@ -718,9 +682,7 @@ namespace vl
   public:
     LineWidth(float linewidth=1.0f): mLineWidth(linewidth)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::LineWidth"; }
     virtual ERenderState type() const { return RS_LineWidth; }
@@ -740,9 +702,7 @@ namespace vl
   public:
     PointSize(float pointsize=1.0f): mPointSize(pointsize)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::PointSize"; }
     virtual ERenderState type() const { return RS_PointSize; }
@@ -780,9 +740,7 @@ namespace vl
   public:
     LineStipple(int factor=1, GLushort pattern=~(GLushort)0): mFactor(factor), mPattern(pattern)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::LineStipple"; }
     virtual ERenderState type() const { return RS_LineStipple; }
@@ -808,9 +766,7 @@ namespace vl
       mDistanceAttenuation(distanceattenuation), mSizeMin(sizemin), mSizeMax(sizemax), mFadeThresholdSize(fadethresholdsize),
       mPointSpriteCoordOrigin(PPCO_UPPER_LEFT)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::PointParameter"; }
     virtual ERenderState type() const { return RS_PointParameter; }
@@ -848,9 +804,7 @@ namespace vl
         mRefValue_Front(refvalue), mRefValue_Back(refvalue), 
         mMask_Front(mask),         mMask_Back(mask)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::StencilFunc"; }
     virtual ERenderState type() const { return RS_StencilFunc; }
@@ -899,9 +853,7 @@ namespace vl
         mDpFail_Front(dpfail), mDpFail_Back(dpfail), 
         mDpPass_Front(dppass), mDpPass_Back(dppass)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::StencilOp"; }
     virtual ERenderState type() const { return RS_StencilOp; }
@@ -947,9 +899,7 @@ namespace vl
   public:
     StencilMask(unsigned int mask=~(unsigned int)0): mMask_Front(mask), mMask_Back(mask)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::StencilMask"; }
     virtual ERenderState type() const { return RS_StencilMask; }
@@ -977,9 +927,7 @@ namespace vl
   public:
     BlendColor(fvec4 blendcolor=fvec4(0,0,0,0)): mBlendColor(blendcolor)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::BlendColor"; }
     virtual ERenderState type() const { return RS_BlendColor; }
@@ -999,9 +947,7 @@ namespace vl
   public:
     ColorMask(bool red=true, bool green=true, bool blue=true, bool alpha=true): mRed(red), mGreen(green), mBlue(blue), mAlpha(alpha)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::ColorMask"; }
     virtual ERenderState type() const { return RS_ColorMask; }
@@ -1210,9 +1156,7 @@ namespace vl
     virtual const char* className() { return "vl::TextureUnit"; }
     TextureUnit(int texunit)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mTextureUnit = texunit;
     }
 

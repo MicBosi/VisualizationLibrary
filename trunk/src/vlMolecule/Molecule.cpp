@@ -42,9 +42,7 @@ Molecule::Molecule():
   mAtomLabelTemplate(new Text),
   mAtomLabelEffect(new Effect)
 { 
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mAtomLabelEffect->shader()->enable(EN_BLEND);
   reset(); 
 }

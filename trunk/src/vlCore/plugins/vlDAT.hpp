@@ -59,9 +59,7 @@ namespace vl
     
     LoadWriterDAT(): ResourceLoadWriter("|dat|", "|dat|") 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     ref<ResourceDatabase> loadResource(const String& path) const 

@@ -134,9 +134,7 @@ namespace vl
     virtual const char* className() { return "vl::EdgeExtractor"; }
     EdgeExtractor(): mCreaseAngle(45.0f), mWarnNonManifold(false)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     void extractEdges(Geometry* geom);

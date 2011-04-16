@@ -48,9 +48,7 @@ namespace vl
     //! Constructor
     PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(fvec4(4,4,4,4)), mPatchDefaultInnerLevel(fvec2(4,4)) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     //! Applies the glPatchParameter values.

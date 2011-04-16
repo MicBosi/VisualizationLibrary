@@ -46,9 +46,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 Random::Random()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 #if defined(_MSC_VER) || defined(__MINGW32__)
   hCryptProv = NULL;
   if( !CryptAcquireContext( (HCRYPTPROV*)&hCryptProv, NULL, NULL, PROV_RSA_FULL, 0) )

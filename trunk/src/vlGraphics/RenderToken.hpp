@@ -50,9 +50,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderToken"; }
     RenderToken(): mNextPass(NULL), mActor(NULL), mShader(NULL), mEffectRenderRank(0), mCameraDistance(0.0)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     const RenderToken* mNextPass;
     

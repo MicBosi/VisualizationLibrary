@@ -56,9 +56,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderEventCallback"; }
     RenderEventCallback(): mRemoveAfterCall(false), mEnabled(true)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     /** Reimplement to react to this event.

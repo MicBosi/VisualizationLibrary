@@ -48,9 +48,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderQueueSorter"; }
     RenderQueueSorter()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual bool operator()(const RenderToken* a, const RenderToken* b) const = 0;
     virtual bool confirmZCameraDistanceNeed(const RenderToken*) const = 0;
@@ -67,9 +65,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderQueueSorterByShader"; }
     RenderQueueSorterByShader()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual bool mightNeedZCameraDistance() const { return false; }
     virtual bool confirmZCameraDistanceNeed(const RenderToken*) const { return false; }
@@ -89,9 +85,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderQueueSorterByRenderable"; }
     RenderQueueSorterByRenderable()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual bool mightNeedZCameraDistance() const { return false; }
     virtual bool confirmZCameraDistanceNeed(const RenderToken*) const { return false; }
@@ -110,9 +104,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderQueueSorterBasic"; }
     RenderQueueSorterBasic()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual bool confirmZCameraDistanceNeed(const RenderToken*) const { return false; }
     virtual bool operator()(const RenderToken* a, const RenderToken* b) const
@@ -155,9 +147,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderQueueSorterStandard"; }
     RenderQueueSorterStandard(): mDepthSortMode(AlphaDepthSort)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     virtual bool mightNeedZCameraDistance() const { return true; }
@@ -238,9 +228,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderQueueSorterOcclusion"; }
     RenderQueueSorterOcclusion()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     virtual bool mightNeedZCameraDistance() const { return true; }
@@ -302,11 +290,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderQueueSorterAggressive"; }
     RenderQueueSorterAggressive(): mDepthSortMode(AlphaDepthSort)
     {
-    {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
-    }
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     virtual bool mightNeedZCameraDistance() const { return true; }

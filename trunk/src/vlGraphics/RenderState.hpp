@@ -53,9 +53,7 @@ namespace vl
     virtual const char* className() { return "vl::RenderState"; }
     RenderState() 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_NONE; }
 
@@ -76,9 +74,7 @@ namespace vl
     virtual const char* className() { return "vl::TextureState"; }
     TextureState(): mTextureUnit(0)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     int textureUnit() const { return mTextureUnit; }
     void setUnitIndex(int unit_index) { mTextureUnit = unit_index; }

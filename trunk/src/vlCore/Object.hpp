@@ -61,9 +61,7 @@ namespace vl
     //! Constructor.
     Object()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mRefCountMutex = NULL;
       mReferenceCount = 0;
       mAutomaticDelete = true;

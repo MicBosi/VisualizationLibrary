@@ -58,9 +58,7 @@ namespace vl
     //! Constructor.
     Extrusion()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mSmooth     = false;
       mFillBottom = true;
       mFillTop    = true;

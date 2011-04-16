@@ -84,9 +84,7 @@ Glyph::~Glyph()
 //-----------------------------------------------------------------------------
 Font::Font(FontManager* fm)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mFontManager = fm;
   mHeight  = 0;
   mFT_Face = NULL;
@@ -97,9 +95,7 @@ Font::Font(FontManager* fm)
 //-----------------------------------------------------------------------------
 Font::Font(FontManager* fm, const String& font_file, int size)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mFontManager = fm;
   mHeight  = 0;
   mFT_Face = NULL;

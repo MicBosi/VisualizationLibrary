@@ -41,9 +41,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 Viewport::Viewport()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mX = 0;
   mY = 0;
   mWidth = 0;
@@ -57,9 +55,7 @@ Viewport::Viewport()
 //-----------------------------------------------------------------------------
 Viewport::Viewport(int x, int y, int w, int h)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mX = x;
   mY = y;
   mWidth  = w;

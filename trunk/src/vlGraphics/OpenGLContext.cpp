@@ -78,9 +78,7 @@ mMaxVertexAttrib(0), mTextureUnitCount(0), mMajorVersion(0), mMinorVersion(0),
 mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false),
 mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false), mCurVAS(NULL)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mRenderTarget = new RenderTarget(this, w, h);
 
   // set to unknown texture target

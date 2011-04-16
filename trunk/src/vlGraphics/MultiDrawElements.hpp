@@ -127,9 +127,7 @@ namespace vl
 
     MultiDrawElements(EPrimitiveType primitive = PT_TRIANGLES)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mType                    = primitive;
       mIndexBuffer             = new arr_type;
       mPrimitiveRestartIndex   = typename arr_type::scalar_type(~0);

@@ -71,9 +71,7 @@ Example:
 //-----------------------------------------------------------------------------
 VolumePlot::VolumePlot()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mActorTreeMulti = new ActorTree;
   mPlotTransform = new Transform;
   mIsosurfaceActor = new Actor;

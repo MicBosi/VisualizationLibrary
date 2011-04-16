@@ -130,9 +130,7 @@ namespace vl
     //! Constructor.
     DepthSortCallback()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mEyeSpaceVerts = new ArrayFloat3;
       setSortMode(SM_SortBackToFront);
     }

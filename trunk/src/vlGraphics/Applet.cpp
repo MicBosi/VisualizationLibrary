@@ -43,9 +43,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 Applet::Applet()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mFrameCount = 0;
   mStartTime  = Time::currentTime();
   mFPS        = 0;

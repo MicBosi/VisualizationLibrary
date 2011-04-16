@@ -49,9 +49,7 @@ namespace vl
 
     RenderQueue(): mSize(0), mSizeMP(0)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mList.reserve(100);
       mListMP.reserve(100);
     }

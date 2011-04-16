@@ -71,9 +71,7 @@ namespace vl
       mRotationButton(LeftButton), mTranslationButton(MiddleButton), mZoomButton(RightButton), 
       mRotationSpeed(1.0f),        mTranslationSpeed(1.0f),          mZoomSpeed(1.0f)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     // --- UIEventListener ---

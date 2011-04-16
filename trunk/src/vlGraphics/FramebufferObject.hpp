@@ -190,9 +190,7 @@ namespace vl
     /** Constructor */
     FBOColorBufferAttachment( EColorBufferFormat type )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mType = type;
     }
     
@@ -222,9 +220,7 @@ namespace vl
     /** Constructor */
     FBODepthBufferAttachment( EDepthBufferFormat type )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mType = type;
     }
 
@@ -254,9 +250,7 @@ namespace vl
     /** Constructor */
     FBOStencilBufferAttachment( EStencilBufferFormat type )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mType = type;
     }
 
@@ -286,9 +280,7 @@ namespace vl
     /** Constructor */
     FBODepthStencilBufferAttachment( EDepthStencilBufferFormat type )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mType = type;
     }
 
@@ -318,9 +310,7 @@ namespace vl
     /** Constructor. */
     FBOAbstractTextureAttachment( Texture* texture, int mipmap_level ): mTexture(texture), mMipmapLevel(mipmap_level)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     /** The texture bound to this attachment. */
@@ -357,9 +347,7 @@ namespace vl
     /** Constructor. */
     FBOTexture1DAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
   protected:
@@ -380,9 +368,7 @@ namespace vl
     /** Constructor. */
     FBOTexture2DAttachment( Texture* texture, int mipmap_level, ETex2DTarget target ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mTextureTarget = target;
     }
 
@@ -413,9 +399,7 @@ namespace vl
     /** Constructor. */
     FBOTextureAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
   protected:
@@ -436,9 +420,7 @@ namespace vl
 
     FBOTexture3DAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mLayer   = layer;
     }
 
@@ -469,9 +451,7 @@ namespace vl
     /** Constructor. */
     FBOTextureLayerAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mLayer   = layer;
     }
 
@@ -531,9 +511,7 @@ namespace vl
     
     FBORenderTarget( OpenGLContext* ctx, int w, int h ): RenderTarget( ctx, w, h ), mHandle( 0 )
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       setDrawBuffer( RDB_COLOR_ATTACHMENT0 );
     }
 

@@ -49,27 +49,21 @@ namespace vl
     //! Constructor.
     ImagePBO()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mPBO = new GLBufferObject;
     }
 	
 	  //! Constructors: loads an image from the specified path.
     ImagePBO(const String& path): Image(path) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mPBO = new GLBufferObject;
     }
 	
 	  //! Constructor: initializes an image with the specified parameters.
     ImagePBO(int x, int y, int z, int bytealign, EImageFormat format, EImageType type): Image(x, y, z, bytealign, format, type) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mPBO = new GLBufferObject;
     }
 

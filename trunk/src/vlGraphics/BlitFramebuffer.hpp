@@ -46,9 +46,7 @@ namespace vl
   public:
     BlitFramebuffer()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       setSrcRect(0,0,640,480);
       setDstRect(0,0,640,480);
       mBufferMask = 0;

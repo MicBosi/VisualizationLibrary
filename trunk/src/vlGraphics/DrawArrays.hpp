@@ -51,18 +51,14 @@ namespace vl
   public:
     DrawArrays(): mStart(0), mCount(0) 
     { 
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mType      = PT_TRIANGLES;
       mInstances = 1;
     }
     DrawArrays(EPrimitiveType primitive, int start, int count, int instances=1)
       : mStart(start), mCount(count)
     { 
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mInstances = instances;
       mType = primitive;
     }

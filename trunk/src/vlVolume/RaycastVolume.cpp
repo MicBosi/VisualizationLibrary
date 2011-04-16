@@ -64,9 +64,7 @@ using namespace vl;
  */
 RaycastVolume::RaycastVolume()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   // box geometry
   mGeometry = new Geometry;
 
