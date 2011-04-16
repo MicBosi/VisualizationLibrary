@@ -33,6 +33,7 @@
 #define Log_INCLUDE_ONCE
 
 #include <vlCore/String.hpp>
+#include <vlCore/IMutex.hpp>
 #include <fstream>
 
 namespace vl
@@ -56,6 +57,7 @@ namespace vl
 
   public:
     virtual const char* className() { return "vl::Log"; }
+
     Log()
     {
       #ifndef NDEBUG
@@ -66,9 +68,16 @@ namespace vl
   protected:
     virtual void printImplementation(ELogLevel level, const String& message) = 0;
 
-    // ---  statics ---
+    // ---  static methods ---
 
   public:
+    //! The mutex used to synchronize concurrent calls to the log functions.
+    //! You should always install a log mutex when using VL in multi-threaded applications.
+    static void setLogMutex(IMutex* mutex) { mLogMutex = mutex; }
+
+    //! The mutex used to synchronize concurrent calls to the log functions.
+    static IMutex* logMutex() { return mLogMutex; }
+
     /* Logs the specified message.
      * \note Log generated only if verbosity level != vl::VEL_VERBOSITY_SILENT */
     static void print(const String& message);
@@ -100,6 +109,9 @@ namespace vl
 
     //! Logs VL and system information.
     static void logSystemInfo();
+
+  private:
+    static IMutex* mLogMutex;
   };
 
   //-----------------------------------------------------------------------------
