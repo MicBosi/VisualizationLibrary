@@ -116,6 +116,15 @@
 
 
 /**
+ * Set this to 1 to be able to attach user data to any vl::Shader using the 
+ * "void setShaderUserData(void*)" and "void* shaderUserData()" methods. 
+ * Useful to glue Shader objects and the user's application logic.
+ * \note This will add 4 or 8 bytes to each vl::Shader instance.
+ */
+#define VL_SHADER_USER_DATA 0
+
+
+/**
  * Enables fast square root computation when using single precision mode.
  *
  * - 0 = disable fast square roots when in single precision floating point pipeline
@@ -182,6 +191,13 @@
 
 // -------------------- Do Not Touch The Following Section --------------------
 
+///////////////////////////////////////////////////
+
+#ifndef NDEBUG
+  #define VL_DEBUG_SET_OBJECT_NAME() mObjectName = className();
+#else
+  #define VL_DEBUG_SET_OBJECT_NAME()
+#endif
 
 ///////////////////////////////////////////////////
 
