@@ -59,9 +59,7 @@ namespace vl
   {
     Renderable(const Renderable& other): Object(other)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
   public:

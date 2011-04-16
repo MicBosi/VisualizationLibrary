@@ -43,17 +43,13 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 DrawPixels::Pixels::Pixels()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mAlign = AlignBottom | AlignLeft;
 }
 //-----------------------------------------------------------------------------
 DrawPixels::Pixels::Pixels(ImagePBO* img, int scrx, int scry, int startx, int starty, int width, int height, int alignment)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 
   mAlign = alignment;
 
@@ -71,9 +67,7 @@ DrawPixels::Pixels::Pixels(ImagePBO* img, int scrx, int scry, int startx, int st
 //-----------------------------------------------------------------------------
 DrawPixels::Pixels::Pixels(const Pixels& other): Object(other)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 
   *this = other;
 }

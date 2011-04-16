@@ -40,9 +40,7 @@ using namespace vl;
 Clear::Clear(): mClearColorMode(CCM_Float), mClearDepthValue(1.0f), mClearStencilValue(0),
          mClearColorBuffer(false), mClearDepthBuffer(false), mClearStencilBuffer(false)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   // no scissor box by default
   mScissorBox[0] = 0;
   mScissorBox[1] = 0;

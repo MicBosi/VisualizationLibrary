@@ -65,9 +65,7 @@ namespace vl
     //! Default constructor.
     ArrayAbstract()
     { 
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mBufferGPU = new GLBufferObject;
       mVBODirty = true;
       mVBOUsage = vl::BU_STATIC_DRAW;

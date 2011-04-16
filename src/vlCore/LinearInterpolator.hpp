@@ -48,9 +48,7 @@ namespace vl
 
     LinearInterpolator() 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     LinearInterpolator(const std::vector<T>& path): mPath(path) {}

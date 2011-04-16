@@ -48,9 +48,7 @@ Rendering::Rendering():
   mShaderAnimationEnabled(true),
   mNearFarClippingPlanesOptimized(false)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mRenderQueueSorter  = new RenderQueueSorterStandard;
   mActorQueue         = new ActorCollection;
   mRenderQueue        = new RenderQueue;

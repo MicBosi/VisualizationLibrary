@@ -55,9 +55,7 @@ namespace vl
 
     Atom()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mId       = 0;
       mAtomType = AT_Unknown;
       mCoordinates = fvec3(0,0,0);

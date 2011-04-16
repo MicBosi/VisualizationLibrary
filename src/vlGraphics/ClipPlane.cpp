@@ -36,9 +36,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 ClipPlane::ClipPlane(int plane_index, Real o, vec3 n)
 { 
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mPlaneIndex = plane_index;
   mPlane.setNormal(n); 
   mPlane.setOrigin(o); 
@@ -46,9 +44,7 @@ ClipPlane::ClipPlane(int plane_index, Real o, vec3 n)
 //-----------------------------------------------------------------------------
 ClipPlane::ClipPlane(int plane_index, const vec3& o, const vec3& n)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mPlaneIndex = plane_index;
   mPlane.setNormal(n); 
   mPlane.setOrigin(dot(o, n)); 

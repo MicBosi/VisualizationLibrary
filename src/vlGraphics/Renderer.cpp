@@ -42,9 +42,7 @@ using namespace vl;
 //------------------------------------------------------------------------------
 Renderer::Renderer()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 
   mProjViewTransfCallback = new ProjViewTransfCallbackStandard;
 

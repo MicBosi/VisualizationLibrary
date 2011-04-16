@@ -45,9 +45,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 Camera::Camera()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mFrustum.planes().resize(6);
   mFOV = 60.0;
   mNearPlane = (Real)0.05;

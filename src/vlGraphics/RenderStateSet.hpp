@@ -49,9 +49,7 @@ namespace vl
   public:
     RenderStateSet(): mGLSLProgram(NULL)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual const char* className() { return "vl::RenderStateSet"; }
 

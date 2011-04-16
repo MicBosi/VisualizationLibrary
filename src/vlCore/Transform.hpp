@@ -388,17 +388,13 @@ namespace vl
     /** Constructor. */
     Transform()
     { 
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     /** Constructor. The \p matrix parameter is used to set both the local and world matrix. */
     Transform(const mat4& matrix)
     { 
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       setLocalMatrix(matrix);
       setWorldMatrix(matrix);
     }

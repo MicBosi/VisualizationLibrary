@@ -38,9 +38,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 KeyValues::KeyValues()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 }
 //-----------------------------------------------------------------------------
 String KeyValues::value(const String& key) const 

@@ -42,9 +42,7 @@ using namespace vl;
 //------------------------------------------------------------------------------
 Light::Light(int light_index)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   if (light_index<0 && light_index>7)
     Log::error( Say("Light index %n out of range. The light index must be between 0 and 7.\n") << light_index );
   VL_CHECK(light_index>=0 && light_index<8) 

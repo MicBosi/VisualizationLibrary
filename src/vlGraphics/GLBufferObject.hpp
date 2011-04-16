@@ -58,9 +58,7 @@ namespace vl
     virtual const char* className() { return "vl::GLBufferObject"; }
     GLBufferObject()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mHandle = 0;
       mUsage = BU_STATIC_DRAW;
       mByteCountGPU = 0;
@@ -68,9 +66,7 @@ namespace vl
 
     GLBufferObject(const GLBufferObject& other): Buffer(other)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mHandle = 0;
       mUsage = BU_STATIC_DRAW;
       mByteCountGPU = 0;

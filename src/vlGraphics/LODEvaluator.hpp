@@ -52,9 +52,7 @@ namespace vl
   public:
     LODEvaluator()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual int evaluate(Actor* actor, Camera* camera) = 0;
     virtual const char* className() { return "vl::LODEvaluator"; }

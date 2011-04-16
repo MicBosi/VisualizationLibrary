@@ -59,9 +59,7 @@ namespace vl
     virtual const char* className() { return "vl::CopyTexSubImage"; }
     CopyTexSubImage(): mReadBuffer(RDB_BACK_LEFT) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     /** The source buffer used when copying color buffers, ignored when using depth textures. */
@@ -109,9 +107,7 @@ namespace vl
   public:
     CopyTexSubImage1D(int level, int xoffset, int x, int y, int width, Texture* texture=NULL, EReadDrawBuffer read_buffer=RDB_BACK_LEFT)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mLevel = level;
       mXOffset = xoffset;
       mX = x;
@@ -179,9 +175,7 @@ namespace vl
 
     CopyTexSubImage2D(int level, int xoffset, int yoffset, int x, int y, int width, int height, Texture* texture=NULL, ETex2DTarget target=T2DT_TEXTURE_2D, EReadDrawBuffer read_buffer=RDB_BACK_LEFT)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
 
       mLevel = level;
       mXOffset = xoffset;
@@ -278,9 +272,7 @@ namespace vl
   public:
     CopyTexSubImage3D(int level, int xoffset, int yoffset, int zoffset, int x, int y, int width, int height, Texture* texture, EReadDrawBuffer read_buffer=RDB_BACK_LEFT)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
 
       mLevel = level;
       mXOffset = xoffset;

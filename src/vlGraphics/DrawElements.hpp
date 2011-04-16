@@ -147,9 +147,7 @@ namespace vl
 
     DrawElements(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mType                    = primitive;
       mInstances               = instances;
       mIndexBuffer             = new arr_type;

@@ -41,9 +41,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 Geometry::Geometry()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mVertexAttribArrays.setAutomaticDelete(false);
   mTexCoordArrays.setAutomaticDelete(false);
   mDrawCalls.setAutomaticDelete(false);

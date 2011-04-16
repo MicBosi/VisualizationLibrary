@@ -65,9 +65,7 @@ namespace vl
     virtual const char* className() { return "vl::EdgeRenderer"; }
     EdgeRenderer(): mLineWidth(1.0f), mPolygonOffsetFactor(1.0f), mPolygonOffsetUnits(1.0f), mCreaseAngle(44.0f), mShowHiddenLines(true), mShowCreases(true), mSmoothLines(true)
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock);

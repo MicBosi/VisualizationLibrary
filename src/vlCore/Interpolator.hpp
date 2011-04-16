@@ -55,9 +55,7 @@ namespace vl
     virtual const char* className() { return "vl::Interpolator"; }
     Interpolator() 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
   };
   //! Abstract class that interpolates vl::fvec4 values

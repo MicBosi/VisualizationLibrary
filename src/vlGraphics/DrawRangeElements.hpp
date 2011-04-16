@@ -151,9 +151,7 @@ namespace vl
 
     DrawRangeElements(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=index_type(~0))
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       mType                    = primitive;
       mRangeStart              = r_start;
       mRangeEnd                = r_end;

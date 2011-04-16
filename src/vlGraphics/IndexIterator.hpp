@@ -47,9 +47,7 @@ namespace vl
 
     IndexIteratorAbstract(): mIndex(-1) 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     int index() const { return mIndex; }
     virtual bool isEnd() const = 0;
@@ -69,9 +67,7 @@ namespace vl
 
     IndexIterator()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
     void initialize(IndexIteratorAbstract* iterator) { mIterator = iterator; }
     int  index() { return mIterator->index(); }
@@ -92,9 +88,7 @@ namespace vl
 
     IndexIteratorDrawArrays()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       initialize(0,0);
     }
 
@@ -135,9 +129,7 @@ namespace vl
 
     IndexIteratorElements()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
       initialize( NULL, NULL, NULL, 0, false, 0 );
     }
 

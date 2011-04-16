@@ -65,9 +65,7 @@ namespace vl
     virtual const char* className() { return "vl::ActorTree"; }
     ActorTree()
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     virtual int childrenCount() const { return (int)mChildren.size(); }

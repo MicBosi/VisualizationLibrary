@@ -55,18 +55,14 @@ Image::~Image()
 //-----------------------------------------------------------------------------
 Image::Image()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mPixels = new Buffer;
   clear();
 }
 //-----------------------------------------------------------------------------
 Image::Image(const String& path)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mPixels = new Buffer;
   clear();
   setObjectName(path.toStdString());
@@ -90,9 +86,7 @@ Image::Image(const String& path)
 Image::Image(int x, int y, int z, int bytealign, EImageFormat format, EImageType type):
   mWidth(x), mHeight(y), mDepth(z), mPitch(0), mByteAlign(1), mFormat(format), mType(type), mIsCubemap(false)
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mPixels = new Buffer;
   setByteAlignment(bytealign);
 

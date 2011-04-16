@@ -38,9 +38,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 VLSettings::VLSettings()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
 
   #ifndef NDEBUG
     mVerbosityLevel  = vl::VEL_VERBOSITY_NORMAL;

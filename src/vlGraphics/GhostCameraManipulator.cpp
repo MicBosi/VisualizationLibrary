@@ -40,9 +40,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 GhostCameraManipulator::GhostCameraManipulator()
 {
-  #ifndef NDEBUG
-    mObjectName = className();
-  #endif
+  VL_DEBUG_SET_OBJECT_NAME()
   mRotationSpeed = 0.5;
   mMovementSpeed = 50.0f;
   mXDegrees = 0;
