@@ -1323,6 +1323,11 @@ namespace vl
 
       mScissor = other.mScissor;
       mShaderAnimator = other.mShaderAnimator;
+          
+      #if VL_SHADER_USER_DATA
+        mShaderUserData = other.mShaderUserData;
+      #endif
+
       return *this;
     }
 
@@ -1330,6 +1335,14 @@ namespace vl
     Shader& copy(const Shader& other) 
     {
       return operator=(other);
+    }
+
+    //! Disables everything, erases all the render states, erases all the uniforms.
+    void reset()
+    {
+      disableAll();
+      eraseAllRenderStates();
+      eraseAllUniforms();
     }
 
     // state getters
@@ -1457,57 +1470,87 @@ namespace vl
 
     // indexed render states
 
+    // lights
+
     Light* gocLight(int light_index);
+    
     const Light* getLight(int light_index) const;
+    
     Light* getLight(int light_index);
 
+    // clip planes
+
     ClipPlane* gocClipPlane(int plane_index);
+    
     const ClipPlane* getClipPlane(int plane_index) const;
+    
     ClipPlane* getClipPlane(int plane_index);
 
+    // texture unit
+
     TextureUnit* gocTextureUnit(int unit_index);
+    
     const TextureUnit* getTextureUnit(int unit_index) const { return dynamic_cast<const TextureUnit*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureUnit0+unit_index) ) ); }
+    
     TextureUnit* getTextureUnit(int unit_index) { return dynamic_cast<TextureUnit*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureUnit0+unit_index) ) ); }
 
+    // tex env
+
     TexEnv* gocTexEnv(int unit_index);
+    
     const TexEnv* getTexEnv(int unit_index) const { return dynamic_cast<const TexEnv*>( getRenderStateSet()->renderState( (ERenderState)(RS_TexEnv0+unit_index) ) ); }
+    
     TexEnv* getTexEnv(int unit_index) { return dynamic_cast<TexEnv*>( getRenderStateSet()->renderState( (ERenderState)(RS_TexEnv0+unit_index) ) ); }
 
+    // tex gen
+    
     TexGen* gocTexGen(int unit_index);
+    
     const TexGen* getTexGen(int unit_index) const { return dynamic_cast<const TexGen*>( getRenderStateSet()->renderState( (ERenderState)(RS_TexGen0+unit_index) ) ); }
+    
     TexGen* getTexGen(int unit_index) { return dynamic_cast<TexGen*>( getRenderStateSet()->renderState( (ERenderState)(RS_TexGen0+unit_index) ) ); }
 
-    TextureMatrix* gocTextureMatrix(int unit_index);
-    const TextureMatrix* getTextureMatrix(int unit_index) const { return dynamic_cast<const TextureMatrix*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureMatrix0+unit_index) ) ); }
-    TextureMatrix* getTextureMatrix(int unit_index) { return dynamic_cast<TextureMatrix*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureMatrix0+unit_index) ) ); }
+    // texture matrix
 
-    void reset()
-    {
-      disableAll();
-      eraseAllRenderStates();
-      eraseAllUniforms();
-    }
+    TextureMatrix* gocTextureMatrix(int unit_index);
+    
+    const TextureMatrix* getTextureMatrix(int unit_index) const { return dynamic_cast<const TextureMatrix*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureMatrix0+unit_index) ) ); }
+    
+    TextureMatrix* getTextureMatrix(int unit_index) { return dynamic_cast<TextureMatrix*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureMatrix0+unit_index) ) ); }
 
     // enable methods
 
     void enable(EEnable capability)  { gocEnableSet()->enable(capability); }
+    
     void disable(EEnable capability) { gocEnableSet()->disable(capability); }
+    
     const std::vector<EEnable>& enables() const { return getEnableSet()->enables(); }
+    
     int isEnabled(EEnable capability) const { if (!getEnableSet()) return false; return getEnableSet()->isEnabled(capability); }
+    
     void disableAll() { if (getEnableSet()) getEnableSet()->disableAll(); }
+    
     bool blendingEnabled() const { if (!getEnableSet()) return false; return getEnableSet()->blendingEnabled(); }
 
     // render states methods
 
     void setRenderState(RenderState* renderstate) { gocRenderStateSet()->setRenderState(renderstate); }
+    
     const RenderState* renderState( ERenderState type ) const { if (!getRenderStateSet()) return NULL; return getRenderStateSet()->renderState(type); }
+    
     RenderState* renderState( ERenderState type ) { return gocRenderStateSet()->renderState(type); }
+    
     const std::vector< ref<RenderState> >& renderStates() const { return getRenderStateSet()->renderStates(); }
+    
     void eraseRenderState(ERenderState type) { gocRenderStateSet()->eraseRenderState(type); }
+    
     void eraseRenderState(RenderState* rs) { if (rs) gocRenderStateSet()->eraseRenderState(rs->type()); }
+    
     void eraseAllRenderStates() { if(getRenderStateSet()) getRenderStateSet()->eraseAllRenderStates(); }
+    
     //! Returns the GLSLProgram associated to a Shader (if any)
     const GLSLProgram* glslProgram() const { if (!getRenderStateSet()) return NULL; return getRenderStateSet()->glslProgram(); }
+
     //! Returns the GLSLProgram associated to a Shader (if any)
     GLSLProgram* glslProgram() { return gocRenderStateSet()->glslProgram(); }
 
@@ -1515,26 +1558,40 @@ namespace vl
 
     //! Equivalent to gocUniformSet()->setUniform(...)
     void setUniform(Uniform* uniform) { VL_CHECK(uniform); gocUniformSet()->setUniform(uniform); }
+    
     //! Equivalent to gocUniformSet()->uniforms(...)
     const std::vector< ref<Uniform> >& uniforms() const { return getUniformSet()->uniforms(); }
+    
     //! Equivalent to gocUniformSet()->eraseUniform(...)
     void eraseUniform(const std::string& name) { gocUniformSet()->eraseUniform(name); }
+    
     //! Equivalent to gocUniformSet()->eraseUniform(...)
     void eraseUniform(const Uniform* uniform) { gocUniformSet()->eraseUniform(uniform); }
+    
     //! Equivalent to gocUniformSet()->eraseAllUniforms(...)
     void eraseAllUniforms() { if (getUniformSet()) getUniformSet()->eraseAllUniforms(); }
+    
     //! Equivalent to gocUniformSet()->gocUniform(...)
     Uniform* gocUniform(const std::string& name) { return gocUniformSet()->gocUniform(name); }
+    
     //! Equivalent to gocUniformSet()->getUniform(...)
     Uniform* getUniform(const std::string& name) { return getUniformSet()->getUniform(name); }
+    
     //! Equivalent to gocUniformSet()->getUniform(...)
     const Uniform* getUniform(const std::string& name) const { return getUniformSet()->getUniform(name); }
 
+    // sets
+
     EnableSet* gocEnableSet() { if (!mEnableSet) mEnableSet = new EnableSet; return mEnableSet.get(); }
+    
     EnableSet* getEnableSet() { return mEnableSet.get(); }
+    
     const EnableSet* getEnableSet() const { return mEnableSet.get(); }
+    
     RenderStateSet* gocRenderStateSet() { if (!mRenderStateSet) mRenderStateSet = new RenderStateSet; return mRenderStateSet.get(); }
+    
     RenderStateSet* getRenderStateSet() { return mRenderStateSet.get(); }
+    
     const RenderStateSet* getRenderStateSet() const { return mRenderStateSet.get(); }
     
     /**
@@ -1632,6 +1689,16 @@ namespace vl
 
     //! Used internally.
     void setLastUpdateTime(Real time) { mLastUpdateTime = time; }
+
+#if VL_SHADER_USER_DATA
+  public:
+    void* shaderUserData() { return mShaderUserData; }
+    const void* shaderUserData() const { return mShaderUserData; }
+    void setShaderUserData(void* user_data) { mShaderUserData = user_data; }
+
+  private:
+    void* mShaderUserData;
+#endif
 
   protected:
     ref<RenderStateSet> mRenderStateSet;
