@@ -34,6 +34,7 @@
 #include <vlCore/VLSettings.hpp>
 #include <vlCore/Vector3.hpp>
 #include <vlCore/Say.hpp>
+#include <vlCore/ScopedMutex.hpp>
 #include <vlCore/version.hpp>
 #include <cstdio>
 #include <cstdlib>
@@ -121,24 +122,36 @@ namespace
 //-----------------------------------------------------------------------------
 void Log::print(const String& log) 
 { 
+  //! Synchronize log across threads.
+  ScopedMutex mutex(Log::logMutex());
+
   if(defLogger() && globalSettings()->verbosityLevel() != vl::VEL_VERBOSITY_SILENT)
     defLogger()->printImplementation(LogNormal, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::debug(const String& log) 
 { 
+  //! Synchronize log across threads.
+  ScopedMutex mutex(Log::logMutex());
+
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_DEBUG)
     defLogger()->printImplementation(LogDebug, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::info(const String& log) 
 { 
+  //! Synchronize log across threads.
+  ScopedMutex mutex(Log::logMutex());
+
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
     defLogger()->printImplementation(LogInfo, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::warning(const String& log) 
 { 
+  //! Synchronize log across threads.
+  ScopedMutex mutex(Log::logMutex());
+
   SET_TEXT_COLOR_YELLOW()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
     defLogger()->printImplementation(LogWarning, log); 
@@ -146,13 +159,19 @@ void Log::warning(const String& log)
 //-----------------------------------------------------------------------------
 void Log::error(const String& log) 
 { 
+  //! Synchronize log across threads.
+  ScopedMutex mutex(Log::logMutex());
+
   SET_TEXT_COLOR_RED()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
     defLogger()->printImplementation(LogError, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::bug(const String& log) 
-{ 
+{
+  //! Synchronize log across threads.
+  ScopedMutex mutex(Log::logMutex());
+
   SET_TEXT_COLOR_PURPLE()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
     defLogger()->printImplementation(LogBug, log); 
@@ -233,6 +252,10 @@ void vl::log_failed_check(const char* expr, const char* file, int line)
      MessageBox(NULL, (wchar_t*)msg.ptr(), L"Visualization Library Debug", MB_OK | MB_ICONEXCLAMATION);
   #endif
 }
+//-----------------------------------------------------------------------------
+// Log mutex.
+//-----------------------------------------------------------------------------
+IMutex* Log::mLogMutex;
 //-----------------------------------------------------------------------------
 // StandardLog
 //-----------------------------------------------------------------------------
