@@ -33,6 +33,7 @@
 #define Object_INCLUDE_ONCE
 
 #include <vlCore/checks.hpp>
+#include <vlCore/IMutex.hpp>
 #include <string>
 
 #if VL_DEBUG_LIVING_OBJECTS
@@ -42,25 +43,6 @@
 namespace vl
 {
   template<class T> class ref;
-  //------------------------------------------------------------------------------
-  // VirtualMutex
-  //------------------------------------------------------------------------------
-  /**
-   * A base class to implement simple platform-independent mutexes.
-  */
-  class VirtualMutex
-  {
-  public:
-
-    //! Locks the mutex.
-    virtual void lock() = 0;
-
-    //! Unlocks the mutex.
-    virtual void unlock() = 0;
-
-    //! Returns 1 if locked, 0 if non locked, -1 if unknown.
-    virtual int isLocked() const = 0;
-  };
 
   //------------------------------------------------------------------------------
   // Object
@@ -76,12 +58,13 @@ namespace vl
     //! Returns the name of the class.
     virtual const char* className() { return "vl::Object"; }
 
+    //! Constructor.
     Object()
     {
       #ifndef NDEBUG
         mObjectName = className();
       #endif
-      mMutex = NULL;
+      mRefCountMutex = NULL;
       mReferenceCount = 0;
       mAutomaticDelete = true;
       // user data
@@ -94,73 +77,93 @@ namespace vl
       #endif
     }
 
+    //! Copy constructor: copies the name, ref count mutex and user data.
     Object(const Object& other)
     {
-      // copy the name only
+      // copy the name, the ref count mutex and the user data.
       mObjectName = other.mObjectName;
-      // mMutex, mReferenceCount and mAutomaticDelete are not copiable.
-      mMutex = NULL;
-      mReferenceCount  = 0;
-      mAutomaticDelete = true;
-      // user data
+      mRefCountMutex = other.mRefCountMutex;
       #if VL_ACTOR_USER_DATA
         mUserData = other.mUserData;
       #endif
+
+      // mReferenceCount and mAutomaticDelete are not copiable.
+      mReferenceCount  = 0;
+      mAutomaticDelete = true;
+
       // debug living object
       #if VL_DEBUG_LIVING_OBJECTS
         debug_living_objects()->insert(this);
-        // mDebug_LivingObjects.insert(this);
       #endif
     }
 
+    //! Copy operator: copies the object's name, ref count mutex and user data.
     Object& operator=(const Object& other) 
     { 
-      /* mMutex, mReferenceCount and mAutomaticDelete is not copied */ 
-      mObjectName = other.mObjectName; 
-      // user data
+      // copy the name, the ref count mutex and the user data.
+      mObjectName = other.mObjectName;
+      mRefCountMutex = other.mRefCountMutex;
       #if VL_ACTOR_USER_DATA
         mUserData = other.mUserData;
       #endif
+
+      // mReferenceCount and mAutomaticDelete are not copiable.
+      // ...
+
       return *this;
     }
 
+    //! The name of the object, by default set to the object's class name.
     const std::string& objectName() const { return mObjectName; }
-    
+
+    //! The name of the object, by default set to the object's class name.
     void setObjectName(const std::string& name) { mObjectName = name; }
 
-    //! Set the mutex used to protect the reference counting of this object across multiple threads.
-    void setMutex(VirtualMutex* mutex) { mMutex = mutex; }
+    //! The mutex used to protect the reference counting of an Object across multiple threads.
+    void setRefCountMutex(IMutex* mutex) { mRefCountMutex = mutex; }
     
-    //! Returns the mutex used to protect the reference counting of this object across multiple threads.
-    VirtualMutex* mutex() { return mMutex; }
+    //! The mutex used to protect the reference counting of an Object across multiple threads.
+    IMutex* refCountMutex() { return mRefCountMutex; }
     
-    //! Returns the mutex used to protect the reference counting of this object across multiple threads.
-    const VirtualMutex* mutex() const { return mMutex; }
+    //! The mutex used to protect the reference counting of an Object across multiple threads.
+    const IMutex* refCountMutex() const { return mRefCountMutex; }
 
+    //! Returns the number of references of an object.
     int referenceCount() const 
     { 
       return mReferenceCount; 
     }
 
+    //! Increments the reference count of an object.
     void incReference()
     {
-      if (mutex())
-        mutex()->lock();
+      // Lock mutex
+      if (refCountMutex())
+        refCountMutex()->lock();
+
       ++mReferenceCount;
-      if(mutex())
-        mutex()->unlock();
+      
+      // Unlock mutex
+      if(refCountMutex())
+        refCountMutex()->unlock();
     }
 
+    //! Decrements the reference count of an object and deletes it if both automaticDelete() is \p true the count reaches 0.
     void decReference()
     {
       // Save local copy in case of deletion.
-      VirtualMutex* mutex = mMutex;
+      IMutex* mutex = mRefCountMutex;
+
+      // Lock mutex.
       if (mutex)
         mutex->lock();
+
       VL_CHECK(mReferenceCount)
       --mReferenceCount;
       if (mReferenceCount == 0 && automaticDelete())
         delete this;
+
+      // Unlock mutex.
       if (mutex)
         mutex->unlock();
     }
@@ -193,7 +196,7 @@ namespace vl
     virtual ~Object();
     std::string mObjectName;
 
-    VirtualMutex* mMutex;
+    IMutex* mRefCountMutex;
     int mReferenceCount;
     bool mAutomaticDelete;
 
