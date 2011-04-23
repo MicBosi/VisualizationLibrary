@@ -571,7 +571,7 @@ namespace vl
     void addStencilAttachment( FBOAbstractAttachment* attachment );
     
     /** Binds a depth-stencil attachment to a framebuffer object. */
-    void addDepthStencilAttachment( FBODepthStencilBufferAttachment* attachment );
+    void addDepthStencilAttachment( FBOAbstractAttachment* attachment );
     
     /** Unbinds the given attachments from a framebuffer object. */
     void removeAttachment( FBOAbstractAttachment* attachment );
