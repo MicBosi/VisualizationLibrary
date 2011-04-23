@@ -272,7 +272,7 @@ void FBORenderTarget::addStencilAttachment( FBOAbstractAttachment* attachment )
   attachment->bindAttachment( this, AP_STENCIL_ATTACHMENT );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addDepthStencilAttachment( FBODepthStencilBufferAttachment* attachment )
+void FBORenderTarget::addDepthStencilAttachment( FBOAbstractAttachment* attachment )
 {
   VL_CHECK( GLEW_Has_Framebuffer_Object )
   if( !GLEW_Has_Framebuffer_Object )
