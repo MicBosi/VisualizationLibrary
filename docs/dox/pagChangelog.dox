@@ -2,8 +2,14 @@
 
    \page pagChangelog Changelog
 
-	<div class="featuretitle">Visualization Library 2011.04.1137</div>
+	<div class="featuretitle">Visualization Library 2011.04.1140 RC1</div>
 
+	- Added ScopedMutex class and IMutex interface class.
+	- Synchronized log functions for multithreaded usage of VL.
+	- Added VL_SHADER_USER_DATA config variable, to bind user data to a vl::Shader.
+	- Added ShaderNode getter functions.
+	- CopyTexSubImage calls glReadBuffer only for color textures.
+	- Added vl::Texture::isDepthTexture() method.
 	- DLL compilation enabled by default.
 	- Fixed OpenGL context creation attributes handling.
 	- setUniform(int/unsigned/float/double) renamed setUniformI/U/F/D() for better clarity.
