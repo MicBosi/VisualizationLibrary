@@ -194,7 +194,7 @@
 ///////////////////////////////////////////////////
 
 #ifndef NDEBUG
-  #define VL_DEBUG_SET_OBJECT_NAME() mObjectName = className();
+  #define VL_DEBUG_SET_OBJECT_NAME() this->mObjectName = className();
 #else
   #define VL_DEBUG_SET_OBJECT_NAME()
 #endif

@@ -35,4 +35,4 @@ target_link_libraries(VLQt4 VLCore VLGraphics ${QT_LIBRARIES})
 VL_INSTALL_TARGET(VLQt4)
 
 # VLQt4 headers
-install(FILES ${VLQt4_INC} DESTINATION "include/VLQt4")
+install(FILES ${VLQt4_INC} DESTINATION "include/vlQt4")
