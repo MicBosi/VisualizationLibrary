@@ -44,80 +44,289 @@ namespace
   {
     switch(internal_format)
     {
-    case TF_DEPTH_STENCIL:
-    case TF_DEPTH24_STENCIL8:
-    case TF_DEPTH32F_STENCIL8:
-    case TF_DEPTH_COMPONENT32F:
-    case TF_DEPTH_COMPONENT:
-    case TF_DEPTH_COMPONENT16:
-    case TF_DEPTH_COMPONENT24:
-    case TF_DEPTH_COMPONENT32:
-      return GL_DEPTH_COMPONENT;
+      case TF_ALPHA:
+      case TF_ALPHA4:
+      case TF_ALPHA8:
+      case TF_ALPHA12:
+      case TF_ALPHA16:
+        return GL_ALPHA;
 
-    case TF_RGBA32UI_EXT:
-    case TF_RGB32UI_EXT:
-    case TF_ALPHA32UI_EXT:
-    case TF_INTENSITY32UI_EXT:
-    case TF_LUMINANCE32UI_EXT:
-    case TF_LUMINANCE_ALPHA32UI_EXT:
+      case TF_LUMINANCE:
+      case TF_LUMINANCE4:
+      case TF_LUMINANCE8:
+      case TF_LUMINANCE12:
+      case TF_LUMINANCE16:
+      case TF_SLUMINANCE:
+      case TF_SLUMINANCE8:
+        return GL_LUMINANCE;
 
-    case TF_RGBA16UI_EXT:
-    case TF_RGB16UI_EXT:
-    case TF_ALPHA16UI_EXT:
-    case TF_INTENSITY16UI_EXT:
-    case TF_LUMINANCE16UI_EXT:
-    case TF_LUMINANCE_ALPHA16UI_EXT:
+      case TF_LUMINANCE_ALPHA:
+      case TF_LUMINANCE4_ALPHA4:
+      case TF_LUMINANCE6_ALPHA2:
+      case TF_LUMINANCE8_ALPHA8:
+      case TF_LUMINANCE12_ALPHA4:
+      case TF_LUMINANCE12_ALPHA12:
+      case TF_LUMINANCE16_ALPHA16:
+      case TF_SLUMINANCE_ALPHA:
+      case TF_SLUMINANCE8_ALPHA8:
+        return GL_LUMINANCE_ALPHA;
 
-    case TF_RGBA8UI_EXT:
-    case TF_RGB8UI_EXT:
-    case TF_ALPHA8UI_EXT:
-    case TF_INTENSITY8UI_EXT:
-    case TF_LUMINANCE8UI_EXT:
-    case TF_LUMINANCE_ALPHA8UI_EXT:
+      case TF_INTENSITY:
+      case TF_INTENSITY4:
+      case TF_INTENSITY8:
+      case TF_INTENSITY12:
+      case TF_INTENSITY16:
+        return GL_INTENSITY;
 
-    case TF_RGBA32I_EXT:
-    case TF_RGB32I_EXT:
-    case TF_ALPHA32I_EXT:
-    case TF_INTENSITY32I_EXT:
-    case TF_LUMINANCE32I_EXT:
-    case TF_LUMINANCE_ALPHA32I_EXT:
+      case TF_RED:
+      case TF_R8:
+      case TF_R8_SNORM:
+      case TF_R16:
+      case TF_R16_SNORM:
+      case TF_R16F:
+      case TF_R32F:
+        return GL_RED;
 
-    case TF_RGBA16I_EXT:
-    case TF_RGB16I_EXT:
-    case TF_ALPHA16I_EXT:
-    case TF_INTENSITY16I_EXT:
-    case TF_LUMINANCE16I_EXT:
-    case TF_LUMINANCE_ALPHA16I_EXT:
+      case TF_RG:
+      case TF_RG8:
+      case TF_RG8_SNORM:
+      case TF_RG16:
+      case TF_RG16_SNORM:
+      case TF_RG16F:
+      case TF_RG32F:
+        return GL_RG;
 
-    case TF_RGBA8I_EXT:
-    case TF_RGB8I_EXT:
-    case TF_ALPHA8I_EXT:
-    case TF_INTENSITY8I_EXT:
-    case TF_LUMINANCE8I_EXT:
-    case TF_LUMINANCE_ALPHA8I_EXT:
+      case TF_RGB:
+      case TF_RGB4:
+      case TF_RGB5:
+      case TF_RGB8:
+      case TF_RGB8_SNORM:
+      case TF_RGB10:
+      case TF_RGB12:
+      case TF_RGB16:
+      // case TF_RGB16_SNORM:
+      case TF_RGB16F:
+      case TF_RGB32F:
+      case TF_R3_G3_B2:
+      case TF_R11F_G11F_B10F:
+      // case TF_RGB9_A5:
+      case TF_SRGB8:
+        return GL_RGB;
 
-    case TF_R8I:
-    case TF_R8UI:
-    case TF_R16I:
-    case TF_R16UI:
-    case TF_R32I:
-    case TF_R32UI:
-    case TF_RG8I:
-    case TF_RG8UI:
-    case TF_RG16I:
-    case TF_RG16UI:
-    case TF_RG32I:
-    case TF_RG32UI:
-      return GL_RED_INTEGER;
+      case TF_RGBA:
+      case TF_RGBA2:
+      case TF_RGBA4:
+      case TF_RGBA8:
+      case TF_RGBA8_SNORM:
+      case TF_RGBA12:
+      case TF_RGBA16:
+      case TF_RGBA16_SNORM:
+      case TF_RGBA16F:
+      case TF_RGBA32F:
+      case TF_RGB5_A1:
+      case TF_RGB10_A2:
+      case TF_SRGB8_ALPHA8:
+        return GL_RGBA;
 
-    default:
-      return GL_RED;
+      case TF_R8I:
+      case TF_R8UI:
+      case TF_R16I:
+      case TF_R16UI:
+      case TF_R32I:
+      case TF_R32UI:
+        return GL_RED_INTEGER;
+
+      case TF_RG8I:
+      case TF_RG8UI:
+      case TF_RG16I:
+      case TF_RG16UI:
+      case TF_RG32I:
+      case TF_RG32UI:
+        return GL_RG_INTEGER;
+
+      case TF_RGB8I:
+      // case TF_RGB8I_EXT: // Has the same value has above
+      case TF_RGB8UI:
+      // case TF_RGB8UI_EXT: // Has the same value has above
+      case TF_RGB16I:
+      // case TF_RGB16I_EXT: // Has the same value has above
+      case TF_RGB16UI:
+      // case TF_RGB16UI_EXT: // Has the same value has above
+      case TF_RGB32I:
+      // case TF_RGB32I_EXT: // Has the same value has above
+      case TF_RGB32UI:
+      // case TF_RGB32UI_EXT: // Has the same value has above
+        return GL_RGB_INTEGER;
+
+      case TF_RGBA8I:
+      // case TF_RGBAI_EXT: // Has the same value has above
+      case TF_RGBA8UI:
+      // case TF_RGBA8UI_EXT: // Has the same value has above
+      case TF_RGBA16I:
+      // case TF_RGBA16I_EXT: // Has the same value has above
+      case TF_RGBA16UI:
+      // case TF_RGBA16UI_EXT: // Has the same value has above
+      case TF_RGBA32I:
+      // case TF_RGBA32I_EXT: // Has the same value has above
+      case TF_RGBA32UI:
+      // case TF_RGBA32UI_EXT: // Has the same value has above
+      case TF_RGB10_A2UI:
+        return GL_RGBA_INTEGER;
+
+      case TF_DEPTH_STENCIL:
+      case TF_DEPTH24_STENCIL8:
+      case TF_DEPTH32F_STENCIL8:
+      return GL_DEPTH_STENCIL;
+
+      case TF_DEPTH_COMPONENT:
+      case TF_DEPTH_COMPONENT16:
+      case TF_DEPTH_COMPONENT24:
+      case TF_DEPTH_COMPONENT32:
+      case TF_DEPTH_COMPONENT32F:
+        return GL_DEPTH_COMPONENT;
+
+      // GL_EXT_texture_integer
+      case TF_ALPHA8I_EXT:
+      case TF_ALPHA8UI_EXT:
+      case TF_ALPHA16I_EXT:
+      case TF_ALPHA16UI_EXT:
+      case TF_ALPHA32I_EXT:
+      case TF_ALPHA32UI_EXT:
+        return GL_ALPHA_INTEGER;
+
+      case TF_INTENSITY8I_EXT:
+      case TF_INTENSITY8UI_EXT:
+      case TF_INTENSITY16I_EXT:
+      case TF_INTENSITY16UI_EXT:
+      case TF_INTENSITY32I_EXT:
+      case TF_INTENSITY32UI_EXT:
+        return GL_RED_INTEGER; // Nothing associated with intensity in GL_EXT_texture_integer
+
+      case TF_LUMINANCE8I_EXT:
+      case TF_LUMINANCE8UI_EXT:
+      case TF_LUMINANCE16UI_EXT:
+      case TF_LUMINANCE16I_EXT:
+      case TF_LUMINANCE32I_EXT:
+      case TF_LUMINANCE32UI_EXT:
+        return GL_LUMINANCE_INTEGER_EXT;
+
+      case TF_LUMINANCE_ALPHA8I_EXT:
+      case TF_LUMINANCE_ALPHA8UI_EXT:
+      case TF_LUMINANCE_ALPHA16I_EXT:
+      case TF_LUMINANCE_ALPHA16UI_EXT:
+      case TF_LUMINANCE_ALPHA32I_EXT:
+      case TF_LUMINANCE_ALPHA32UI_EXT:
+        return GL_LUMINANCE_ALPHA_INTEGER_EXT;
+
+      default:
+        return GL_RED;
     }
   }
 
-  int getDefaultType(ETextureFormat /*internal_format*/)
+  int getDefaultType(ETextureFormat internal_format)
   {
-    return GL_UNSIGNED_BYTE;
+    switch( internal_format )
+    {
+      case TF_ALPHA4:
+      case TF_ALPHA8:
+      case TF_ALPHA8UI_EXT:
+      case TF_INTENSITY4:
+      case TF_INTENSITY8:
+      case TF_INTENSITY8UI_EXT:
+      case TF_LUMINANCE4:
+      case TF_LUMINANCE8:
+      case TF_LUMINANCE8UI_EXT:
+      case TF_LUMINANCE8_ALPHA8:
+      case TF_LUMINANCE_ALPHA8UI_EXT:
+      case TF_R8:
+      case TF_R8UI:
+      case TF_RG8:
+      case TF_RG8UI:
+      case TF_RGB8:
+      case TF_RGB8UI:
+      case TF_RGBA8:
+      case TF_RGBA8UI:
+        return GL_UNSIGNED_BYTE;
+
+      case TF_ALPHA8I_EXT:
+      case TF_INTENSITY8I_EXT:
+      case TF_LUMINANCE8I_EXT:
+      case TF_LUMINANCE_ALPHA8I_EXT:
+      case TF_R8I:
+      case TF_RG8I:
+      case TF_RGB8I:
+      case TF_RGBA8I:
+        return GL_BYTE;
+
+      case TF_ALPHA12:
+      case TF_ALPHA16:
+      case TF_ALPHA16UI_EXT:
+      case TF_INTENSITY12:
+      case TF_INTENSITY16:
+      case TF_INTENSITY16UI_EXT:
+      case TF_LUMINANCE12:
+      case TF_LUMINANCE16:
+      case TF_LUMINANCE16UI_EXT:
+      case TF_LUMINANCE16_ALPHA16:
+      case TF_LUMINANCE_ALPHA16UI_EXT:
+      case TF_R16:
+      case TF_R16UI:
+      case TF_RG16:
+      case TF_RG16UI:
+      case TF_RGB10:
+      case TF_RGB12:
+      case TF_RGB16:
+      case TF_RGB16UI:
+      case TF_RGBA12:
+      case TF_RGBA16:
+      case TF_RGBA16UI:
+      case TF_DEPTH_COMPONENT16:
+        return GL_UNSIGNED_SHORT; 
+
+      case TF_ALPHA16I_EXT:
+      case TF_INTENSITY16I_EXT:
+      case TF_LUMINANCE16I_EXT:
+      case TF_LUMINANCE_ALPHA16I_EXT:
+      case TF_R16I:
+      case TF_RG16I:
+      case TF_RGB16I:
+      case TF_RGBA16I:
+        return GL_SHORT;
+
+      case TF_ALPHA32UI_EXT:
+      case TF_INTENSITY32UI_EXT:
+      case TF_LUMINANCE32UI_EXT:
+      case TF_LUMINANCE_ALPHA32UI_EXT:
+      case TF_R32UI:
+      case TF_RG32UI:
+      case TF_RGB32UI:
+      case TF_RGBA32UI:
+      case TF_DEPTH_COMPONENT24:
+      case TF_DEPTH_COMPONENT32:
+        return GL_UNSIGNED_INT;
+
+      case TF_ALPHA32I_EXT:
+      case TF_INTENSITY32I_EXT:
+      case TF_LUMINANCE32I_EXT:
+      case TF_LUMINANCE_ALPHA32I_EXT:
+      case TF_R32I:
+      case TF_RG32I:
+      case TF_RGB32I:
+      case TF_RGBA32I:
+        return GL_INT;
+
+      case TF_DEPTH24_STENCIL8:
+        return GL_UNSIGNED_INT_24_8;
+
+      case TF_DEPTH_COMPONENT32F:
+        return GL_FLOAT;
+
+      case TF_DEPTH32F_STENCIL8:
+        return GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
+
+      default:
+        return GL_UNSIGNED_BYTE;
+    }
   }
 }
 //-----------------------------------------------------------------------------
