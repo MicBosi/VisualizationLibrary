@@ -25,7 +25,7 @@ file(GLOB VLCORE_SRC "*.cpp")
 file(GLOB VLCORE_INC "*.hpp")
 
 # Generate the 'vlCore/version.hpp' file
-configure_file("version.hpp.in" "version.hpp")
+configure_file("version.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.hpp")
 list(APPEND VLCORE_INC "${CMAKE_CURRENT_BINARY_DIR}/version.hpp")
 
 # Handle extras added by plugins
