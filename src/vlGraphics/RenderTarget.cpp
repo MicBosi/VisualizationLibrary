@@ -156,3 +156,13 @@ void RenderTarget::bindDrawBuffers() const
   }
 }
 //-----------------------------------------------------------------------------
+void RenderTarget::bindReadBuffer()
+{
+  VL_CHECK_OGL();
+
+  glReadBuffer( readBuffer() );
+
+  VL_CHECK_OGL();
+}
+//-----------------------------------------------------------------------------
+
