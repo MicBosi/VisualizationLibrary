@@ -58,6 +58,7 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
       setDrawBuffer(RDB_BACK_LEFT);
+      setReadBuffer(RDB_BACK_LEFT);
     }
 
   public:
@@ -86,7 +87,6 @@ namespace vl
     void activate(EFrameBufferBind target = FBB_FRAMEBUFFER)
     {
       bindFramebuffer(target);
-      bindDrawBuffers();
     }
 
     /** 
@@ -96,10 +96,21 @@ namespace vl
     virtual void bindFramebuffer(EFrameBufferBind target = FBB_FRAMEBUFFER)
     {
       VL_CHECK_OGL()
+
       // the base render target is the framebuffer 0, that is, the normal OpenGL buffers
-      VL_glBindFramebuffer(target, 0);
+      VL_glBindFramebuffer(target, 0); VL_CHECK_OGL()
+
+      // bind draw buffers
+      bindDrawBuffers();
+
+      // bind read buffer
+      bindReadBuffer();
+
       VL_CHECK_OGL()
     }
+
+    /** Binds to the currently active framebuffer object (including the 0 one) the read buffer specified by setReadBuffer(). */
+    void bindReadBuffer();
 
     /** Binds to the currently active framebuffer object (including the 0 one) the draw buffers specified by setDrawBuffers(). */
     void bindDrawBuffers() const;
@@ -147,8 +158,15 @@ namespace vl
     /** The color buffers to be drawn into. */
     const std::vector< EReadDrawBuffer >& drawBuffers() { return mDrawBuffers; }
 
+    /** The read-buffer bound when the render target is activated. */
+    EReadDrawBuffer readBuffer() const { return mReadBuffer; }
+    
+    /** The read-buffer bound when the render target is activated. */
+    void setReadBuffer(EReadDrawBuffer read_buffer) { mReadBuffer = read_buffer; }
+
   private:
     std::vector< EReadDrawBuffer > mDrawBuffers;
+    EReadDrawBuffer mReadBuffer;
     int mWidth;
     int mHeight;
     OpenGLContext* mOpenGLContext;

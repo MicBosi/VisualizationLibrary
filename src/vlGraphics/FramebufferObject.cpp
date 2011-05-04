@@ -131,6 +131,14 @@ void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
 
   VL_glBindFramebuffer( target, handle() ); VL_CHECK_OGL()
 
+  // bind draw buffers
+  if (target == FBB_FRAMEBUFFER || target == FBB_DRAW_FRAMEBUFFER)
+    bindDrawBuffers();
+
+  // bind read buffer
+  if (target == FBB_FRAMEBUFFER || target == FBB_READ_FRAMEBUFFER)
+    bindReadBuffer();
+
   #ifndef NDEBUG
     GLenum status = VL_glCheckFramebufferStatus( GL_FRAMEBUFFER ); VL_CHECK_OGL()
     if ( status != GL_FRAMEBUFFER_COMPLETE )

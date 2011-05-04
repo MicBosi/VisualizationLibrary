@@ -68,10 +68,17 @@ namespace vl
         glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &read_fbo); VL_CHECK_OGL()
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_fbo); VL_CHECK_OGL()
 
-        // initializes the source and destination FBOs
-        readFramebuffer()->activate(FBB_READ_FRAMEBUFFER); VL_CHECK_OGL()
+        // initializes the source render target
+        readRenderTarget()->activate(FBB_READ_FRAMEBUFFER); VL_CHECK_OGL()
+        
+        // override read buffer specified by readRenderTarget()->activate() with the one specified by the user here
         glReadBuffer(mReadBuffer); VL_CHECK_OGL()
-        drawFramebuffer()->activate(FBB_DRAW_FRAMEBUFFER); VL_CHECK_OGL()
+        
+        // activate destination render target
+        drawRenderTarget()->activate(FBB_DRAW_FRAMEBUFFER); VL_CHECK_OGL()
+
+        // note: keep the draw-buffers as specified by drawRenderTarget()->activate()
+        // ...
 
         // performs the blit
         VL_glBlitFramebuffer( mSrcRect[0], mSrcRect[1], mSrcRect[2], mSrcRect[3], 
@@ -112,14 +119,23 @@ namespace vl
       return true;
     }
 
-    void setReadFramebuffer(RenderTarget* fbo) { mReadFramebuffer = fbo; }
-    RenderTarget* readFramebuffer() const { return mReadFramebuffer.get(); }
+    /** The render-target used as source during blitting. */
+    void setReadRenderTarget(RenderTarget* fbo) { mReadRenderTarget = fbo; }
 
-    void setDrawFramebuffer(RenderTarget* fbo) { mDrawFramebuffer = fbo; }
-    RenderTarget* drawFramebuffer() const { return mDrawFramebuffer.get(); }
+    /** The render-target used as source during blitting. */
+    RenderTarget* readRenderTarget() const { return mReadRenderTarget.get(); }
 
+    /** The read-buffer of the read-render-target used as pixel source during blitting. */
     void setReadBuffer(EReadDrawBuffer read_buffer) { mReadBuffer = read_buffer; }
+
+    /** The read-buffer of the read-render-target used as pixel source during blitting. */
     EReadDrawBuffer readBuffer() const { return mReadBuffer; }
+
+    /** The render-target used as destination during blitting. */
+    void setDrawRenderTarget(RenderTarget* fbo) { mDrawRenderTarget = fbo; }
+
+    /** The render-target used as destination during blitting. */
+    RenderTarget* drawRenderTarget() const { return mDrawRenderTarget.get(); }
 
     void setSrcRect(int x0, int y0, int x1, int y1)
     {
@@ -148,8 +164,8 @@ namespace vl
     bool linearFilteringEnabled() const { return mLinearFilteringEnabled; }
 
   protected:
-    ref<RenderTarget> mReadFramebuffer;
-    ref<RenderTarget> mDrawFramebuffer;
+    ref<RenderTarget> mReadRenderTarget;
+    ref<RenderTarget> mDrawRenderTarget;
     int mSrcRect[4];
     int mDstRect[4];
     int mBufferMask;

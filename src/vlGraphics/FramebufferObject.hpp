@@ -513,6 +513,7 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
       setDrawBuffer( RDB_COLOR_ATTACHMENT0 );
+      setReadBuffer( RDB_COLOR_ATTACHMENT0 );
     }
 
   public:
