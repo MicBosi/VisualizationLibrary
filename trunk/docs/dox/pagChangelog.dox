@@ -3,11 +3,11 @@
    \page pagChangelog Changelog
 
 	<div class="featuretitle">Visualization Library 2011.04.1140 RC3</div>
-	
-	BlitFrameBuffer::setReadFramebuffer/setDrawFramebuffer() renamed setReadRenderTarget()/setDrawRenderTarget()
-	Added RenderTarget::setReadBuffer() to specify the read-buffer to be used with a RenderTarget.
-	Read-buffer and draw-buffer binding moved after render-target binding but before fbo completeness check.
-	Added VL_INSTALL_DATA option during CMake configuration.
+
+	- BlitFrameBuffer::setReadFramebuffer/setDrawFramebuffer() renamed setReadRenderTarget()/setDrawRenderTarget()
+	- Added RenderTarget::setReadBuffer() to specify the read-buffer to be used with a RenderTarget.
+	- Read-buffer and draw-buffer binding moved after render-target binding but before fbo completeness check.
+	- Added VL_INSTALL_DATA option during CMake configuration.
 
 	<div class="featuretitle">Visualization Library 2011.04.1140 RC2</div>
 
