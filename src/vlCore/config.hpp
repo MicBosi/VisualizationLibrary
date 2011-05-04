@@ -43,7 +43,7 @@
 
 
 /**
- * Only for Win32 platforms.
+ * Show a message box upon check failure. Only for Win32 platforms.
  * 1 = opens a MessageBox on failed check\n
  * 0 = opens a MessageBox on failed check\n
  */
