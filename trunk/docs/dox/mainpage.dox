@@ -8,6 +8,7 @@
 	<div class="featuretitle">Basic Information</div>
 
 	- \subpage pagIntro "Introduction"
+	- \subpage pagKnowledgeBase "Knowledge Base"
 	- \subpage pagLearning "Learning VL"
 	- \subpage pagKeyFeatures "Features Overview"
 	- \subpage pagContacts "Contacts"
