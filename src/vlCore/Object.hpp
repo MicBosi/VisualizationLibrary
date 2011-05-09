@@ -66,7 +66,7 @@ namespace vl
       mReferenceCount = 0;
       mAutomaticDelete = true;
       // user data
-      #if VL_ACTOR_USER_DATA
+      #if VL_OBJECT_USER_DATA
         mUserData = NULL;
       #endif
       #if VL_DEBUG_LIVING_OBJECTS
@@ -81,7 +81,7 @@ namespace vl
       // copy the name, the ref count mutex and the user data.
       mObjectName = other.mObjectName;
       mRefCountMutex = other.mRefCountMutex;
-      #if VL_ACTOR_USER_DATA
+      #if VL_OBJECT_USER_DATA
         mUserData = other.mUserData;
       #endif
 
@@ -101,7 +101,7 @@ namespace vl
       // copy the name, the ref count mutex and the user data.
       mObjectName = other.mObjectName;
       mRefCountMutex = other.mRefCountMutex;
-      #if VL_ACTOR_USER_DATA
+      #if VL_OBJECT_USER_DATA
         mUserData = other.mUserData;
       #endif
 
