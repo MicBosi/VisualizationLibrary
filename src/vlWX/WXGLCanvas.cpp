@@ -171,7 +171,7 @@ void translateKey(int& unicode, EKey& key, const wxKeyEvent& ev)
   // see also OnChar(wxKeyEvent&)
 
   unicode = 0;
-  #ifdef wxUSE_UNICODE 
+  #if wxUSE_UNICODE == 1
     unicode = ev.GetUnicodeKey();
   #else
     unicode = ev.GetKeyCode() < 128 ? ev.GetKeyCode() : 0;
