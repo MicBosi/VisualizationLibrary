@@ -50,7 +50,7 @@
 	The right way of asking for help and reporting issues is via the forum or contacting me at the above mentioned email. <i>Please do not write on the issue tracker on google code or on github.com, just use the forums!</i>
 	
 	- Important: 
-		- Make sure you checked the log.txt file when you have a problem with VL, most of the time the solution to your problem is written right in there of can be easily deducted. 
+		- Make sure you checked the log.txt file when you have a problem with VL, most of the time the solution to your problem is written right in there or can be easily deducted. 
 		- When posting on the forum always include the exact error reported in the log.txt file (or even better attach the whole file), your operating system, and VL version at least!
 		
 	- Use of the forum:
