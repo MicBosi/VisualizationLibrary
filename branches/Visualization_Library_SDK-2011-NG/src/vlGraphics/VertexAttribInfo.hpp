@@ -49,7 +49,7 @@ namespace vl
   public:
     virtual const char* className() { return "vl::VertexAttribInfo"; }
     
-    VertexAttribInfo(unsigned int location, bool normalize, EVertexAttribBehavior data_behav, ArrayAbstract* data): mData(data), mAttribIndex(location), mDataBehavior(data_behav), mNormalize(normalize) {}
+    VertexAttribInfo(unsigned int location, ArrayAbstract* data, bool normalize=true, EVertexAttribBehavior data_behav=VAB_NORMAL): mData(data), mAttribIndex(location), mDataBehavior(data_behav), mNormalize(normalize) {}
     
     VertexAttribInfo(): mAttribIndex((unsigned int)-1), mDataBehavior(VAB_NORMAL), mNormalize(false) {}
 
