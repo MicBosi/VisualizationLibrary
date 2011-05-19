@@ -233,7 +233,7 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
 
   opengl_context->applyRenderStates(NULL, mOcclusionShader->getRenderStateSet(), camera );
   opengl_context->applyEnables(NULL, mOcclusionShader->getEnableSet() );
-  projViewTransfCallback()->programFirstUse(this, glsl_program, cur_transform, camera, true);
+  projViewTransfCallback()->updateMatrices( true, true, glsl_program, camera, cur_transform, opengl_context->isCompatible() );
 
   // camera/eye position for later usage
 
@@ -287,7 +287,7 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
         if (tok->mActor->transform() != cur_transform)
         {
           cur_transform = tok->mActor->transform();
-          projViewTransfCallback()->programTransfChange(this, glsl_program, cur_transform, camera);
+          projViewTransfCallback()->updateMatrices( false, true, glsl_program, camera, cur_transform, opengl_context->isCompatible() );
         }
 
         // register occlusion query tick

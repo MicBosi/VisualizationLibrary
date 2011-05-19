@@ -836,7 +836,12 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
   GLint generate_mipmap_orig = GL_FALSE;
   if ( gen_mipmaps )
   {
-    if( GLEW_SGIS_generate_mipmap||GLEW_VERSION_1_4||GLEW_VERSION_3_0 )
+    if ( GLEW_ARB_framebuffer_object || GLEW_VERSION_3_0 || GLEW_VERSION_4_0 )
+    {
+      // do nothing, we will use glGenerateMipmaps later
+    }
+    else
+    if( GLEW_SGIS_generate_mipmap||GLEW_VERSION_1_4 )
     {
       glGetTexParameteriv( dimension(), GL_GENERATE_MIPMAP, &generate_mipmap_orig ); VL_CHECK_OGL()
       glTexParameteri(dimension(), GL_GENERATE_MIPMAP, GL_TRUE); VL_CHECK_OGL()
@@ -1005,10 +1010,17 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
     }
   }
 
-  if ( gen_mipmaps && (GLEW_SGIS_generate_mipmap||GLEW_VERSION_1_4||GLEW_VERSION_3_0) )
+  if ( gen_mipmaps )
   {
-    glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig);
-    VL_CHECK_OGL()
+    if ( GLEW_ARB_framebuffer_object || GLEW_VERSION_3_0 || GLEW_VERSION_4_0 )
+    {
+      glGenerateMipmap( dimension() );
+    }
+    else
+    if ( GLEW_SGIS_generate_mipmap||GLEW_VERSION_1_4 )
+    {
+      glTexParameteri(dimension(), GL_GENERATE_MIPMAP, generate_mipmap_orig); VL_CHECK_OGL()
+    }
   }
 
   glBindTexture( dimension(), 0 ); VL_CHECK_OGL()

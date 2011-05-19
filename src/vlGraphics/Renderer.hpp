@@ -57,11 +57,11 @@ namespace vl
       * Renderer's implementation of this function always returns \p in_render_queue. */
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock);
 
-    void setProjViewTransfCallback(ProjViewTransfCallbackStandard* callback) { mProjViewTransfCallback = callback; }
+    void setProjViewTransfCallback(ProjViewTransfCallback* callback) { mProjViewTransfCallback = callback; }
     
-    const ProjViewTransfCallbackStandard* projViewTransfCallback() const { return mProjViewTransfCallback.get(); }
+    const ProjViewTransfCallback* projViewTransfCallback() const { return mProjViewTransfCallback.get(); }
     
-    ProjViewTransfCallbackStandard* projViewTransfCallback() { return mProjViewTransfCallback.get(); }
+    ProjViewTransfCallback* projViewTransfCallback() { return mProjViewTransfCallback.get(); }
 
     /** A bitmask/Shader map used to everride the Shader of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
     const std::map<unsigned int, ref<Shader> >& shaderOverrideMask() const { return mShaderOverrideMask; }
@@ -89,7 +89,7 @@ namespace vl
 
     std::map<unsigned int, ref<Shader> > mShaderOverrideMask;
 
-    ref<ProjViewTransfCallbackStandard> mProjViewTransfCallback;
+    ref<ProjViewTransfCallback> mProjViewTransfCallback;
   };
   //------------------------------------------------------------------------------
 }

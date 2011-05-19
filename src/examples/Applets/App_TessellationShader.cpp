@@ -33,7 +33,6 @@
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/GLSL.hpp>
-#include <vlGraphics/Light.hpp>
 #include <vlGraphics/GeometryPrimitives.hpp>
 
 #include <vlCore/FileSystem.hpp>
@@ -45,13 +44,15 @@ public:
   {
     vl::Log::print(appletInfo());
 
-    const int patch_count = 128;
-    const float world_size = 2500.0;
-    const float height_scale = 150.0;
-    const float pixel_per_edge = 16.0f;
+    const int   patch_count      = 128;
+    const float world_size       = 2500.0;
+    const float height_scale     = 150.0;
+    const float pixel_per_edge   = 16.0f;
     const float max_tessellation = 64.0f;
-    
-    vl::ref< vl::Geometry > geom_patch = makeGrid(vl::vec3(), world_size,world_size, patch_count,patch_count, true);
+
+    vl::ref< vl::Geometry > geom_patch = makeGrid( vl::vec3(), world_size, world_size, patch_count, patch_count, false );
+
+    geom_patch->toGenericVertexAttribs();
 
     // patch parameter associated to the draw call
     vl::ref<vl::PatchParameter> patch_param = new vl::PatchParameter;
@@ -59,7 +60,7 @@ public:
     geom_patch->drawCalls()->at(0)->setPatchParameter( patch_param.get() );
     geom_patch->drawCalls()->at(0)->setPrimitiveType(vl::PT_PATCHES);
 
-    vl::ref<vl::Texture> hmap = new vl::Texture("/images/ps_height_4k.jpg", vl::TF_LUMINANCE, false, false);
+    vl::ref<vl::Texture> hmap = new vl::Texture("/images/ps_height_4k.jpg", vl::TF_RED, false, false);
     vl::ref<vl::Texture> tmap = new vl::Texture("/images/ps_texture_4k.jpg", vl::TF_RGBA, true, false);
 
     hmap->getTexParameter()->setMinFilter(vl::TPF_LINEAR);
@@ -67,7 +68,6 @@ public:
 
     // tessellated patches fx
     vl::ref<vl::Effect> fx = new vl::Effect;
-    fx->shader()->setRenderState( new vl::Light(0) );
     fx->shader()->enable(vl::EN_DEPTH_TEST);
     fx->shader()->gocTextureUnit(0)->setTexture( hmap.get() );
     fx->shader()->gocTextureUnit(1)->setTexture( tmap.get() );
@@ -85,6 +85,8 @@ public:
     mGLSL->gocUniform("height_scale")->setUniformF(height_scale);
     mGLSL->gocUniform("tex_heghtmap")->setUniformI(0);
     mGLSL->gocUniform("tex_diffuse")->setUniformI(1);
+
+    mGLSL->addAutoAttribLocation( "vl_Position", 0 );
 
     // tessellated patches fx_wire
     vl::ref<vl::Effect> fx_wire = new vl::Effect;
@@ -107,6 +109,8 @@ public:
     mGLSLWire->gocUniform("height_scale")->setUniformF(height_scale);
     mGLSLWire->gocUniform("tex_heghtmap")->setUniformI(0);
     mGLSLWire->gocUniform("wire_color")->setUniform(vl::lightgreen);
+
+    mGLSLWire->addAutoAttribLocation( "vl_Position", 0 );
 
     sceneManager()->tree()->addActor( geom_patch.get(), fx.get(), NULL )->setRenderRank(0);
     
@@ -218,7 +222,6 @@ public:
     // effect: light + depth testing
     vl::ref<vl::Effect> fx = new vl::Effect;
     fx->shader()->enable(vl::EN_DEPTH_TEST);
-    fx->shader()->setRenderState( new vl::Light(0) );
 
     // bind all the necessary stages to the GLSLProgram
     mGLSL = fx->shader()->gocGLSLProgram();

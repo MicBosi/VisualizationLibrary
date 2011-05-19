@@ -41,59 +41,30 @@ namespace vl
   class GLSLProgram;
   class Transform;
   class Camera;
+
   //-----------------------------------------------------------------------------
   // ProjViewTransfCallback
   //-----------------------------------------------------------------------------
-  /** Vitual class used as a callback to update the state of the \p projection, \p view and \p transform matrices of a GLSLProgram or fixed function pipeline. */
+  /** Callback class to update the state of the \p projection, \p view, \p transform and \p normal matrices of a GLSLProgram or fixed function pipeline. 
+  * By default it updates the GL_PROJECTION and GL_MODELVIEW matrices. If GLSL is used and any of \p vl_ModelViewMatrix, \p vl_ProjectionMatrix, 
+  * \p vl_ModelViewProjectionMatrix or \p vl_NormalMatrix is used, then no legacy uniform matrix is updated (GL_MODELVIEW, gl_ModelViewMatrix etc.)
+  * but only the vl_* ones.
+  * Reimplement the updateMatrices() method to update any other camera/transform matrix you might need such as the ones defined in
+  * http://www.opengl.org/registry/doc/GLSLangSpec.Full.1.10.59.pdf pag 45.
+  */
   class VLGRAPHICS_EXPORT ProjViewTransfCallback: public Object
   {
   public:
     virtual const char* className() { return "vl::ProjViewTransfCallback"; }
 
-    /** This function is called whenever a new GLSLProgram (or the NULL one, i.e. the fixed function pipeline) is being activated for the first time in the current rendering.
-     * This callback is most useful to initialize the GLSLProgram with the current projection and view matrices, besides the current Actor's transform.
-     * \param caller The Renderer object calling this function.
-     * \param glsl The GLSLProgram being activated. If NULL the fixed function pipeline is being activated.
-     * \param transform The transform of the current Actor being rendered.
-     * \param camera The Camera used for the rendering from which you can retrieve the projection and view matrices.
-     * \param first_overall If \p true it means that the rendering has just started. Useful if you want to initialized your callback object.
-     */
-    virtual void programFirstUse(const Renderer* caller, const GLSLProgram* glsl, const Transform* transform, const Camera* camera, bool first_overall) = 0;
-    /** This function is called whenever the Transform changes with respect to the current GLSLProgram (including the NULL one, i.e. the fixed function pipeline).
-     * This callback is most useful to update the GLSLProgram with the current Actor's transform matrix.
-     * \param caller The Renderer object calling this function.
-     * \param glsl The GLSLProgram being activated. If NULL the fixed function pipeline is being activated.
-     * \param transform The transform of the current Actor being rendered.
-     * \param camera The Camera used for the rendering from which you can retrieve the projection and view matrices.
-     */
-    virtual void programTransfChange(const Renderer* caller, const GLSLProgram* glsl, const Transform* transform, const Camera* camera) = 0;
-  };
-
-  //-----------------------------------------------------------------------------
-  // ProjViewTransfCallbackStandard
-  //-----------------------------------------------------------------------------
-  //! Updates the GL_MODELVIEW and GL_PROJECTION matrices of the fixed function pipeline in an optimized manner.
-  //! You usually want to install this callback if the fixed fuction pipeline is available, even when using GLSL shaders.
-  //! In fact the GL_MODELVIEW and GL_PROJECTION matrices are visible from all the GLSL shaders, thus requiring fewer matrix updates
-  //! compared to being forced to send projection, view and transform matrix to every single GLSLProgram at least once during the rendering!
-  class VLGRAPHICS_EXPORT ProjViewTransfCallbackStandard: public ProjViewTransfCallback
-  {
-  public:
-    virtual const char* className() { return "vl::ProjViewTransfCallbackStandard"; }
-    
-    ProjViewTransfCallbackStandard(): mLastTransform(NULL) 
+    ProjViewTransfCallback()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    
-    virtual void programFirstUse(const Renderer*, const GLSLProgram* glsl, const Transform*, const Camera*, bool first_overall );
-    
-    virtual void programTransfChange(const Renderer*, const GLSLProgram* glsl, const Transform*, const Camera* );
-  
-  private:
-    const Transform* mLastTransform;
+
+    //! Update matrices of the current GLSLProgram, if glsl_program == NULL then fixed function pipeline is active.
+    virtual void updateMatrices(bool cam_changed, bool transf_changed, const GLSLProgram* glsl_program, const Camera* camera, const Transform* transform, bool is_gl_compatible);
   };
-  //------------------------------------------------------------------------------
 }
 
 #endif

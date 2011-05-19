@@ -125,8 +125,9 @@ bool GLSLShader::compile()
     {
       mCompiled = true;
       #ifndef NDEBUG
-      if (!infoLog().empty())
-        Log::warning( Say("%s\n%s\n\n") << objectName().c_str() << infoLog() );
+        String log = infoLog();
+        if (!log.empty())
+          Log::warning( Say("%s\n%s\n\n") << objectName().c_str() << log );
       #endif
     }
     else
@@ -165,12 +166,16 @@ String GLSLShader::infoLog() const
 
   int max_length = 0;
   glGetShaderiv(handle(), GL_INFO_LOG_LENGTH, &max_length); VL_CHECK_OGL();
-  std::vector<GLchar> log_buffer;
-  log_buffer.resize(max_length+1);
-  glGetShaderInfoLog(handle(), max_length, NULL, &log_buffer[0]); VL_CHECK_OGL();
-  String log_string(&log_buffer[0]);
-  VL_CHECK_OGL();
-  return log_string;
+  if (max_length != 0)
+  {
+    std::vector<GLchar> log_buffer;
+    log_buffer.resize(max_length);
+    glGetShaderInfoLog(handle(), max_length, NULL, &log_buffer[0]); VL_CHECK_OGL();
+    VL_CHECK_OGL();
+    return &log_buffer[0];
+  }
+  else
+    return String();
 }
 //-----------------------------------------------------------------------------
 void GLSLShader::createShader()
@@ -214,6 +219,10 @@ GLSLProgram::GLSLProgram()
   mGeometryOutputType  = GOT_TRIANGLE_STRIP;
   mProgramBinaryRetrievableHint = false;
   mProgramSeparable = false;
+  m_vl_ModelViewMatrix = -1;
+  m_vl_ProjectionMatrix = -1;
+  m_vl_ModelViewProjectionMatrix = -1;
+  m_vl_NormalMatrix = -1;
 }
 //-----------------------------------------------------------------------------
 GLSLProgram::~GLSLProgram()
@@ -372,6 +381,12 @@ bool GLSLProgram::linkProgram(bool force_relink)
     {
       // post-link operations
       postLink();
+
+      #ifndef NDEBUG
+        String log = infoLog();
+        if (!log.empty())
+          Log::warning( Say("%s\n%s\n\n") << objectName().c_str() << log );
+      #endif
     }
     else
     {
@@ -435,7 +450,7 @@ void GLSLProgram::preLink()
 
   // automatically binds the specified attributes to the desired values
 
-  for( std::map<std::string, int>::iterator it = mAttribLocation.begin(); it != mAttribLocation.end(); ++it)
+  for( std::map<std::string, int>::iterator it = mAutoAttribLocation.begin(); it != mAutoAttribLocation.end(); ++it)
   {
     glBindAttribLocation(handle(),it->second,it->first.c_str()); VL_CHECK_OGL();
   }
@@ -447,7 +462,7 @@ void GLSLProgram::postLink()
 
   // populate uniform binding map
 
-  mUniformLocation.clear();
+  mActiveUniformLocation.clear();
 
   int uniform_count = 0;
   glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count); VL_CHECK_OGL();
@@ -463,9 +478,16 @@ void GLSLProgram::postLink()
       GLenum type;
       int size;
       glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, &name[0]); VL_CHECK_OGL();
-      mUniformLocation[&name[0]] = glGetUniformLocation(handle(), &name[0]);
+      mActiveUniformLocation[&name[0]] = glGetUniformLocation(handle(), &name[0]);
     }
   }
+
+  // check for the predefined glsl uniform variables
+
+  m_vl_ModelViewMatrix           = glGetUniformLocation(handle(), "vl_ModelViewMatrix");
+  m_vl_ProjectionMatrix          = glGetUniformLocation(handle(), "vl_ProjectionMatrix");
+  m_vl_ModelViewProjectionMatrix = glGetUniformLocation(handle(), "vl_ModelViewProjectionMatrix");
+  m_vl_NormalMatrix              = glGetUniformLocation(handle(), "vl_NormalMatrix");
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::linkStatus() const
@@ -622,8 +644,8 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     Uniform* uniform = uniforms->uniforms()[i].get();
 
     #if 1
-      std::map<std::string, int>::const_iterator it = mUniformLocation.find(uniform->name());
-      int location = it == mUniformLocation.end() ? -1 : it->second;
+      std::map<std::string, int>::const_iterator it = mActiveUniformLocation.find(uniform->name());
+      int location = it == mActiveUniformLocation.end() ? -1 : it->second;
     #else
       // for benchmarking purposes
       int location = glGetUniformLocation(handle(), uniform->name().c_str());
@@ -781,6 +803,12 @@ bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int le
     {
       // post-link operations
       postLink();
+
+      #ifndef NDEBUG
+        String log = infoLog();
+        if (!log.empty())
+          Log::warning( Say("%s\n%s\n\n") << objectName().c_str() << log );
+      #endif
     }
     else
     {
