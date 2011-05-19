@@ -11,11 +11,13 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#version 400 compatibility
+#version 400
 
+in vec4 vl_Position;
 out vec4 vPosition;
 
 void main(void)
 {
-	vPosition = gl_Vertex;
+	vPosition = vl_Position;
+	// vPosition = gl_Vertex;
 }
