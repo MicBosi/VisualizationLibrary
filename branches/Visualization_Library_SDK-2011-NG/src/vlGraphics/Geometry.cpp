@@ -279,6 +279,46 @@ bool Geometry::flipNormals()
   return false;
 }
 //-----------------------------------------------------------------------------
+void Geometry::toGenericVertexAttribs()
+{
+  vertexAttribArrays()->clear();
+  int index = 0;
+  
+  if (vertexArray())
+  {
+    setVertexAttribArray(index++, vertexArray());
+    setVertexArray(NULL);
+  }
+  
+  if (normalArray())
+  {
+    setVertexAttribArray(index++, normalArray());
+    setNormalArray(NULL);
+  }
+  
+  if (colorArray())
+  {
+    setVertexAttribArray(index++, colorArray());
+    setColorArray(NULL);
+  }
+
+  for(int i=0; i<mTexCoordArrays.size(); i++)
+    setVertexAttribArray( index++, mTexCoordArrays[i]->mTexCoordArray.get() );
+  mTexCoordArrays.clear();
+  
+  if (secondaryColorArray())
+  {
+    setVertexAttribArray(index++, secondaryColorArray());
+    setSecondaryColorArray(NULL);
+  }
+
+  if (fogCoordArray())
+  {
+    setVertexAttribArray(index++, fogCoordArray());
+    setFogCoordArray(NULL);
+  }
+}
+//-----------------------------------------------------------------------------
 void Geometry::computeNormals(bool verbose)
 {
   ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttrib(0);
@@ -460,9 +500,7 @@ void Geometry::transform(const mat4& m, bool normalize)
 
   if (normalArray())
   {
-    mat4 nmat = m;
-    nmat.setT(vec3(0,0,0)); // keep only the upper 3x3
-    nmat = nmat.getInverse().transpose();
+    mat4 nmat = m.as3x3().getInverse().transpose();
     normalArray()->transform(nmat);
     if (normalize)
       normalArray()->normalize();
