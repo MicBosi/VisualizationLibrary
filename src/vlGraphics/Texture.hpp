@@ -39,6 +39,8 @@
 
 namespace vl
 {
+  class OpenGLContext;
+
   //------------------------------------------------------------------------------
   // TexParameter
   //------------------------------------------------------------------------------
@@ -64,7 +66,7 @@ namespace vl
     TexParameter();
     virtual const char* className() { return "vl::TexParameter"; }
 
-    void apply(ETextureDimension dimension) const;
+    void apply(ETextureDimension dimension, OpenGLContext* gl) const;
 
     ETexParamFilter minFilter()   const { return mMinFilter; }
     ETexParamFilter magFilter()   const { return mMagfilter; }

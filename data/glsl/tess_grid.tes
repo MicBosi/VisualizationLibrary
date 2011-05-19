@@ -11,14 +11,15 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#version 400 compatibility
+#version 400
 #extension GL_ARB_tessellation_shader : enable
 
 layout( quads, equal_spacing, ccw ) in;
 
 in vec4 tcsPosition[];
-out vec2 tex_coord;
+out vec2 TexCoord;
 
+uniform mat4 vl_ModelViewProjectionMatrix;
 uniform sampler2D tex_heghtmap;
 uniform float world_size;
 uniform float height_scale;
@@ -33,7 +34,7 @@ void main( )
 	vec4 p0 = mix(a,b,v);
 
 	// compute texture uv from vertex position
-	tex_coord = p0.xz / world_size + vec2(0.5,0.5);
-	p0.y = texture( tex_heghtmap, tex_coord ).r * height_scale;
-	gl_Position = gl_ModelViewProjectionMatrix * p0;
+	TexCoord = p0.xz / world_size + vec2(0.5,0.5);
+	p0.y = texture( tex_heghtmap, TexCoord ).r * height_scale;
+	gl_Position = vl_ModelViewProjectionMatrix * p0;
 }

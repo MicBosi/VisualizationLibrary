@@ -54,7 +54,7 @@ namespace vl
     //! Applies the glPatchParameter values.
     void apply() 
     {
-      VL_CHECK(GLEW_ARB_tessellation_shader);
+      VL_CHECK(GLEW_ARB_tessellation_shader||GLEW_VERSION_4_0);
       if (GLEW_ARB_tessellation_shader)
       {
         glPatchParameteri(GL_PATCH_VERTICES, mPatchVertices); VL_CHECK_OGL();

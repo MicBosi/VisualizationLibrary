@@ -11,13 +11,14 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#version 400 compatibility
+#version 400
 
 uniform sampler2D tex_diffuse;
-in vec2 tex_coord;
+in vec2 TexCoord;
+out vec4 FragColor;
 
 void main(void)
 {
-	vec3 diffuse = texture(tex_diffuse, tex_coord).rgb;
-	gl_FragColor = vec4( diffuse, 1.0);
+	vec3 diffuse = texture(tex_diffuse, TexCoord).rgb;
+	FragColor = vec4( diffuse, 1.0);
 }
