@@ -199,7 +199,7 @@ namespace vl
    * -# call glBindAttribLocation() with the appropriate GLSLProgram::handle(). This is the most low level way of doing it.
    * -# call bindAttribLocation() as you would do normally with glBindAttribLocation() but with the difference the you don't need to specify the GLSL program handle.
    * -# create a list of attribute name/indices that will be automatically bound whenever the GLSLProgram is linked. In order to do so you can use the following functions 
-   *    setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), addAutomaticAttribLocation(), removeAutomaticAttribLocation().
+   *    setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), addAutoAttribLocation(), removeAutoAttribLocation().
    *
    * Note that for option #1 and #2 you need to relink the GLSLProgram in order for the changes to take effect (linkProgram(force_relink=true)). 
    * Option #2 and #3 automatically schedule a re-link of the GLSL program. See also http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml
@@ -288,34 +288,34 @@ namespace vl
 
     /** Equivalent to glBindAttribLocation(handle(), index, name.c_str()) with the difference that this function will automatically create a GLSL program if none is present
       * and it will schedule a re-link since the new specified bindings take effect after linking the GLSL program.
-      * \sa setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), 
-      *     removeAutomaticAttribLocation(), addAutomaticAttribLocation() */
+      * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
+      *     removeAutoAttribLocation(), addAutoAttribLocation() */
     void bindAttribLocation(unsigned int index, const std::string& name);
 
     /** Adds an attribute name / index pair to the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
-    * \sa setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), 
-    *     bindAttribLocation(), removeAutomaticAttribLocation() */
-    void addAutomaticAttribLocation(const char* attr_name, int attr_index) { mAttribLocation[attr_name] = attr_index; mScheduleLink = true; }
+    * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
+    *     bindAttribLocation(), removeAutoAttribLocation() */
+    void addAutoAttribLocation(const char* attr_name, int attr_index) { mAutoAttribLocation[attr_name] = attr_index; mScheduleLink = true; }
 
     /** Removes an attribute from the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
-    * \sa setAutomaticAttribLocations(), automaticAttribLocations(), clearAutomaticAttribLocations(), 
-    *     bindAttribLocation(), addAutomaticAttribLocation() */
-    void removeAutomaticAttribLocation(const char* attr_name) { mAttribLocation.erase(attr_name); mScheduleLink = true; }
+    * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
+    *     bindAttribLocation(), addAutoAttribLocation() */
+    void removeAutoAttribLocation(const char* attr_name) { mAutoAttribLocation.erase(attr_name); mScheduleLink = true; }
 
     /** Defines which \p attribute should be automatically bound to which \p attribute \p index at GLSL program linking time. Calling this function will schedule a re-linking of the GLSL program.
-    * \sa automaticAttribLocations(), clearAutomaticAttribLocations(), 
-    *     bindAttribLocation(), removeAutomaticAttribLocation(), addAutomaticAttribLocation() */
-    void setAutomaticAttribLocations(const std::map<std::string, int>& attrib_bindings) { mAttribLocation = attrib_bindings; mScheduleLink = true; }
+    * \sa autoAttribLocations(), clearAutoAttribLocations(), 
+    *     bindAttribLocation(), removeAutoAttribLocation(), addAutoAttribLocation() */
+    void setAutoAttribLocations(const std::map<std::string, int>& attrib_bindings) { mAutoAttribLocation = attrib_bindings; mScheduleLink = true; }
 
     /** Returns which \p attribute name should be automatically bound to which \p attribute \p index at GLSL program linking time.
-    * \sa setAutomaticAttribLocations(), clearAutomaticAttribLocations(), 
-    *     bindAttribLocation(), removeAutomaticAttribLocation(), addAutomaticAttribLocation() */
-    const std::map<std::string, int>& automaticAttribLocations() const { return  mAttribLocation; }
+    * \sa setAutoAttribLocations(), clearAutoAttribLocations(), 
+    *     bindAttribLocation(), removeAutoAttribLocation(), addAutoAttribLocation() */
+    const std::map<std::string, int>& autoAttribLocations() const { return  mAutoAttribLocation; }
 
-    /** Clears the automatic attribute location binding list. See also setAutomaticAttribLocations() and automaticAttribLocations().
-    * \sa setAutomaticAttribLocations(), automaticAttribLocations(), 
-    *     bindAttribLocation(), removeAutomaticAttribLocation(), addAutomaticAttribLocation() */
-    void clearAutomaticAttribLocations() { mAttribLocation.clear(); }
+    /** Clears the automatic attribute location binding list. See also setAutoAttribLocations() and autoAttribLocations().
+    * \sa setAutoAttribLocations(), autoAttribLocations(), 
+    *     bindAttribLocation(), removeAutoAttribLocation(), addAutoAttribLocation() */
+    void clearAutoAttribLocations() { mAutoAttribLocation.clear(); }
 
     //! Eqivalento to glGetAttribLocation(handle(), name).
     //! \note The program must be linked before calling this function.
@@ -432,7 +432,7 @@ namespace vl
     bool applyUniformSet(const UniformSet* uniforms) const;
 
     /**
-     * Returns the binding index of the uniform with the given name.
+    * Returns the binding index of the given uniform.
     */
     int getUniformLocation(const std::string& name) const
     {
@@ -442,6 +442,20 @@ namespace vl
       VL_CHECK(linked())
 
       int location = glGetUniformLocation(handle(), name.c_str());
+      return location;
+    }
+
+    /**
+    * Returns the binding index of the given uniform.
+    */
+    int getUniformLocation(const char* name) const
+    {
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
+        return -1;
+      VL_CHECK(linked())
+
+      int location = glGetUniformLocation(handle(), name);
       return location;
     }
 
@@ -518,6 +532,21 @@ namespace vl
     //! Utility function using uniformSet(). Erases all the uniforms.
     void eraseAllUniforms() { if(uniformSet()) uniformSet()->eraseAllUniforms(); }
 
+    //! Returns a map of the currently active uniforms and their relative location index.
+    const std::map<std::string, int>& activeUniformLocations() const { return mActiveUniformLocation; }
+
+    //! Returns the binding location of the vl_ModelViewMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
+    int vl_ModelViewMatrix() const { return m_vl_ModelViewMatrix; }
+
+    //! Returns the binding location of the vl_ProjectionMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
+    int vl_ProjectionMatrix() const  { return m_vl_ProjectionMatrix; }
+
+    //! Returns the binding location of the vl_ModelViewProjectionMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
+    int vl_ModelViewProjectionMatrix() const  { return m_vl_ModelViewProjectionMatrix; }
+
+    //! Returns the binding location of the vl_NormalMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
+    int vl_NormalMatrix() const { return m_vl_NormalMatrix; }
+
   private:
     void preLink();
     void postLink();
@@ -525,8 +554,8 @@ namespace vl
   protected:
     std::vector< ref<GLSLShader> > mShaders;
     std::map<std::string, int> mFragDataLocation;
-    std::map<std::string, int> mUniformLocation;
-    std::map<std::string, int> mAttribLocation;
+    std::map<std::string, int> mActiveUniformLocation;
+    std::map<std::string, int> mAutoAttribLocation;
     ref<UniformSet> mUniformSet;
     unsigned int mHandle;
     bool mScheduleLink;
@@ -536,6 +565,10 @@ namespace vl
     EGeometryOutputType mGeometryOutputType;
     bool mProgramBinaryRetrievableHint;
     bool mProgramSeparable;
+    int m_vl_ModelViewMatrix;
+    int m_vl_ProjectionMatrix;
+    int m_vl_ModelViewProjectionMatrix;
+    int m_vl_NormalMatrix;
   };
 }
 
