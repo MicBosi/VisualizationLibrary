@@ -487,7 +487,7 @@ namespace vl
     //! - Depth write-mask should be glDepthMask(GL_TRUE).
     //! - Polygon mode should be glPolygonMode(GL_FRONT_AND_BACK, GL_FILL).
     //! - <i>In general all OpenGL render states should be set to their default values.</i>
-    static bool isCleanState(bool verbose);
+    bool isCleanState(bool verbose);
 
   protected:
     ref<RenderTarget> mRenderTarget;

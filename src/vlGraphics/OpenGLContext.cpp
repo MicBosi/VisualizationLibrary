@@ -544,6 +544,7 @@ namespace
 void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
 {
   VL_CHECK_OGL()
+
   if (prev == NULL)
     memset( mEnableTable, 0, sizeof(mEnableTable) );
 
@@ -598,6 +599,8 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
 //------------------------------------------------------------------------------
 void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera )
 {
+  VL_CHECK_OGL()
+
   if (prev == NULL)
     memset( mRenderStateTable, 0, sizeof(mRenderStateTable) );
 
@@ -607,12 +610,13 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
   {
     for( unsigned i=0; i<cur->renderStates().size(); ++i )
     {
-      mRenderStateTable[cur->renderStates()[i]->type()] += 1; // 0 -> 1; 1 -> 2;
-      if ( mCurrentRenderState[cur->renderStates()[i]->type()] != cur->renderStates()[i] )
+      RenderState* cur_rs = cur->renderStates()[i].get();
+      mRenderStateTable[cur_rs->type()] += 1; // 0 -> 1; 1 -> 2;
+      if ( mCurrentRenderState[cur_rs->type()] != cur_rs )
       {
-        mCurrentRenderState[cur->renderStates()[i]->type()] = cur->renderStates()[i].get();
-        VL_CHECK(cur->renderStates()[i]);
-        cur->renderStates()[i]->apply(camera, this); VL_CHECK_OGL()
+        mCurrentRenderState[cur_rs->type()] = cur_rs;
+        VL_CHECK(cur_rs);
+        cur_rs->apply(camera, this); VL_CHECK_OGL()
       }
     }
   }
@@ -623,20 +627,21 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
   {
     for( unsigned i=0; i<prev->renderStates().size(); ++i )
     {
-      if ( mRenderStateTable[prev->renderStates()[i]->type()] == 1 )
+      RenderState* prev_rs = prev->renderStates()[i].get();
+      if ( mRenderStateTable[prev_rs->type()] == 1 )
       {
-        mCurrentRenderState[prev->renderStates()[i]->type()] = mDefaultRenderStates[prev->renderStates()[i]->type()].get();
+        mCurrentRenderState[prev_rs->type()] = mDefaultRenderStates[prev_rs->type()].get();
         #ifndef NDEBUG
-        if (!mDefaultRenderStates[prev->renderStates()[i]->type()])
+        if (!mDefaultRenderStates[prev_rs->type()])
         {
-          vl::Log::error( Say("Render state type '%s' not supported by this OpenGL implementation!\n") << prev->renderStates()[i]->className() );
+          vl::Log::error( Say("Render state type '%s' not supported by this OpenGL implementation!\n") << prev_rs->className() );
           VL_TRAP()
         }
         #endif
         // if this fails you are using a render state that is not supported by the current OpenGL implementation (too old or Core profile)
-        mDefaultRenderStates[prev->renderStates()[i]->type()]->apply(NULL, this); VL_CHECK_OGL()
+        mDefaultRenderStates[prev_rs->type()]->apply(NULL, this); VL_CHECK_OGL()
       }
-      mRenderStateTable[prev->renderStates()[i]->type()] >>= 1; // 1 -> 0; 2 -> 1;
+      mRenderStateTable[prev_rs->type()] >>= 1; // 1 -> 0; 2 -> 1;
     }
   }
   else
@@ -727,14 +732,14 @@ void OpenGLContext::setupDefaultRenderStates()
     mDefaultRenderStates[RS_DepthRange] = new DepthRange;
     // mDefaultRenderStates[RS_Fog] = new Fog;
     mDefaultRenderStates[RS_FrontFace] = new FrontFace;
-    // mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
-    // mDefaultRenderStates[RS_Hint] = new Hint;
+    mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
+    mDefaultRenderStates[RS_Hint] = new Hint;
     // mDefaultRenderStates[RS_LightModel] = new LightModel;
     // mDefaultRenderStates[RS_LineStipple] = new LineStipple;
     mDefaultRenderStates[RS_LineWidth] = new LineWidth;
     mDefaultRenderStates[RS_LogicOp] = new LogicOp;
     // mDefaultRenderStates[RS_Material] = new Material;
-    // mic fixme ??? mDefaultRenderStates[RS_PixelTransfer] = new PixelTransfer;
+    // mDefaultRenderStates[RS_PixelTransfer] = new PixelTransfer;
     mDefaultRenderStates[RS_PointParameter] = new PointParameter;
     mDefaultRenderStates[RS_PointSize] = new PointSize;
     mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
@@ -813,6 +818,10 @@ bool OpenGLContext::isCleanState(bool verbose)
   // everything must be disabled
   for( unsigned i=0; i<EN_EnableCount; ++i )
   {
+    if (!isCompatible())
+      if ( TranslateEnable[i] == GL_POINT_SPRITE)
+        break;
+
     GLboolean enabled = glIsEnabled( TranslateEnable[i] );
     // const char* name = TranslateEnableString[i];
     if (glGetError() == GL_NO_ERROR && enabled)
@@ -824,23 +833,26 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
-  for( int i=0; i<8; ++i)
-    if (glIsEnabled(GL_LIGHT0+i))
-    {
-      if (verbose)
-        vl::Log::error( Say("GL_LIGHT%n was enabled!\n") << i );
-      VL_TRAP();
-      ok = false;
-    }
+  if (isCompatible())
+  {
+    for( int i=0; i<8; ++i)
+      if (glIsEnabled(GL_LIGHT0+i))
+      {
+        if (verbose)
+          vl::Log::error( Say("GL_LIGHT%n was enabled!\n") << i );
+        VL_TRAP();
+        ok = false;
+      }
 
-  for( int i=0; i<6; ++i)
-    if (glIsEnabled(GL_CLIP_PLANE0+i))
-    {
-      if (verbose)
-        vl::Log::error( Say("GL_CLIP_PLANE%n was enabled!\n") << i );
-      VL_TRAP();
-      ok = false;
-    }
+    for( int i=0; i<6; ++i)
+      if (glIsEnabled(GL_CLIP_PLANE0+i))
+      {
+        if (verbose)
+          vl::Log::error( Say("GL_CLIP_PLANE%n was enabled!\n") << i );
+        VL_TRAP();
+        ok = false;
+      }
+  }
 
   if (GLEW_VERSION_3_1)
     if (glIsEnabled(GL_PRIMITIVE_RESTART))
@@ -853,7 +865,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
   if(GLEW_VERSION_1_3||GLEW_ARB_multitexture||GLEW_VERSION_2_0||GLEW_VERSION_3_0)
   {
-    int active_tex = 0;
+    int active_tex = -1;
     glGetIntegerv(GL_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
     active_tex -= GL_TEXTURE0;
     if (active_tex != 0)
@@ -864,14 +876,18 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
 
-    glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
-    active_tex -= GL_TEXTURE0;
-    if (active_tex != 0)
+    if (isCompatible())
     {
-      if (verbose)
-        vl::Log::error( Say("Active client texture unit is #%n instead of #0!\n") << active_tex );
-      VL_TRAP();
-      ok = false;
+      active_tex = -1;
+      glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
+      active_tex -= GL_TEXTURE0;
+      if (active_tex != 0)
+      {
+        if (verbose)
+          vl::Log::error( Say("Active client texture unit is #%n instead of #0!\n") << active_tex );
+        VL_TRAP();
+        ok = false;
+      }
     }
   }
 
@@ -897,60 +913,64 @@ bool OpenGLContext::isCleanState(bool verbose)
   while(coord_count--)
   {
     VL_glActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
-    VL_glClientActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
 
-    float matrix[16];
-    float imatrix[16];
-    glGetFloatv(GL_TEXTURE_MATRIX, matrix); VL_CHECK_OGL()
-    glMatrixMode(GL_TEXTURE); VL_CHECK_OGL()
-    glLoadIdentity(); VL_CHECK_OGL()
-    glGetFloatv(GL_TEXTURE_MATRIX, imatrix); VL_CHECK_OGL()
-    glLoadMatrixf(matrix);
-    if (memcmp(matrix,imatrix,sizeof(matrix)) != 0)
+    if (isCompatible())
     {
-      if (verbose)
-        vl::Log::error( Say("Texture matrix was not set to identity on texture unit %n!\n") << coord_count );
-      VL_TRAP();
-      ok = false;
-    }
-
-    if (glIsEnabled(GL_TEXTURE_COORD_ARRAY))
-    {
-      if (verbose)
-        vl::Log::error( Say("GL_TEXTURE_COORD_ARRAY was enabled on texture unit %n!\n") << coord_count );
-      VL_TRAP();
-      ok = false;
-    }
-
-    // check that all texture targets are disabled and bound to texture #0
-
-    if (glIsEnabled(GL_TEXTURE_1D))
-    {
-      if (verbose)
-        vl::Log::error( Say("GL_TEXTURE_1D was enabled on texture unit #%n!\n") << coord_count );
-      VL_TRAP();
-      ok = false;
+	    VL_glClientActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
+	
+	    float matrix[16];
+	    float imatrix[16];
+	    glGetFloatv(GL_TEXTURE_MATRIX, matrix); VL_CHECK_OGL()
+	    glMatrixMode(GL_TEXTURE); VL_CHECK_OGL()
+	    glLoadIdentity(); VL_CHECK_OGL()
+	    glGetFloatv(GL_TEXTURE_MATRIX, imatrix); VL_CHECK_OGL()
+	    glLoadMatrixf(matrix); VL_CHECK_OGL()
+	    if (memcmp(matrix,imatrix,sizeof(matrix)) != 0)
+	    {
+	      if (verbose)
+	        vl::Log::error( Say("Texture matrix was not set to identity on texture unit %n!\n") << coord_count );
+	      VL_TRAP();
+	      ok = false;
+	    }
+	
+	    if (glIsEnabled(GL_TEXTURE_COORD_ARRAY))
+	    {
+	      if (verbose)
+	        vl::Log::error( Say("GL_TEXTURE_COORD_ARRAY was enabled on texture unit %n!\n") << coord_count );
+	      VL_TRAP();
+	      ok = false;
+	    }
+	
+	    // check that all texture targets are disabled and bound to texture #0
+	
+	    if (glIsEnabled(GL_TEXTURE_1D))
+	    {
+	      if (verbose)
+	        vl::Log::error( Say("GL_TEXTURE_1D was enabled on texture unit #%n!\n") << coord_count );
+	      VL_TRAP();
+	      ok = false;
+	    }
+	
+      GLint bound_tex = 0;
+	    glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex);
+	    if (bound_tex != 0)
+	    {
+	      if (verbose)
+	        vl::Log::error( Say("GL_TEXTURE_BINDING_1D != 0 on texture unit #%n!\n") << coord_count );
+	      VL_TRAP();
+	      ok = false;
+	    }
+	
+	    if (glIsEnabled(GL_TEXTURE_2D))
+	    {
+	      if (verbose)
+	        vl::Log::error( Say("GL_TEXTURE_2D was enabled on texture unit #%n!\n") << coord_count );
+	      VL_TRAP();
+	      ok = false;
+	    }
     }
 
     GLint bound_tex = 0;
-    glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex);
-    if (bound_tex != 0)
-    {
-      if (verbose)
-        vl::Log::error( Say("GL_TEXTURE_BINDING_1D != 0 on texture unit #%n!\n") << coord_count );
-      VL_TRAP();
-      ok = false;
-    }
-
-    if (glIsEnabled(GL_TEXTURE_2D))
-    {
-      if (verbose)
-        vl::Log::error( Say("GL_TEXTURE_2D was enabled on texture unit #%n!\n") << coord_count );
-      VL_TRAP();
-      ok = false;
-    }
-
-    bound_tex = 0;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_tex);
     if (bound_tex != 0)
     {
@@ -962,6 +982,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle||GLEW_VERSION_3_1)
     {
+      if (isCompatible())
       if (glIsEnabled(GL_TEXTURE_RECTANGLE))
       {
         if (verbose)
@@ -983,6 +1004,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (GLEW_VERSION_1_2||GLEW_VERSION_3_0)
     {
+      if (isCompatible())
       if (glIsEnabled(GL_TEXTURE_3D))
       {
         if (verbose)
@@ -1003,6 +1025,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
     if (GLEW_VERSION_1_3||GLEW_ARB_texture_cube_map||GLEW_VERSION_3_0)
     {
+      if (isCompatible())
       if (glIsEnabled(GL_TEXTURE_CUBE_MAP))
       {
         if (verbose)
@@ -1081,109 +1104,115 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
     }
 
-    if (glIsEnabled(GL_TEXTURE_GEN_S))
+    if (isCompatible())
     {
-      if (verbose)
-        vl::Log::error( "GL_TEXTURE_GEN_S was enabled!\n" );
-      VL_TRAP();
-      ok = false;
-    }
-
-    if (glIsEnabled(GL_TEXTURE_GEN_T))
-    {
-      if (verbose)
-        vl::Log::error( "GL_TEXTURE_GEN_T was enabled!\n" );
-      VL_TRAP();
-      ok = false;
-    }
-
-    if (glIsEnabled(GL_TEXTURE_GEN_R))
-    {
-      if (verbose)
-        vl::Log::error( "GL_TEXTURE_GEN_R was enabled!\n" );
-      VL_TRAP();
-      ok = false;
-    }
-
-    if (glIsEnabled(GL_TEXTURE_GEN_Q))
-    {
-      if (verbose)
-        vl::Log::error( "GL_TEXTURE_GEN_Q was enabled!\n" );
-      VL_TRAP();
-      ok = false;
+	    if (glIsEnabled(GL_TEXTURE_GEN_S))
+	    {
+	      if (verbose)
+	        vl::Log::error( "GL_TEXTURE_GEN_S was enabled!\n" );
+	      VL_TRAP();
+	      ok = false;
+	    }
+	
+	    if (glIsEnabled(GL_TEXTURE_GEN_T))
+	    {
+	      if (verbose)
+	        vl::Log::error( "GL_TEXTURE_GEN_T was enabled!\n" );
+	      VL_TRAP();
+	      ok = false;
+	    }
+	
+	    if (glIsEnabled(GL_TEXTURE_GEN_R))
+	    {
+	      if (verbose)
+	        vl::Log::error( "GL_TEXTURE_GEN_R was enabled!\n" );
+	      VL_TRAP();
+	      ok = false;
+	    }
+	
+	    if (glIsEnabled(GL_TEXTURE_GEN_Q))
+	    {
+	      if (verbose)
+	        vl::Log::error( "GL_TEXTURE_GEN_Q was enabled!\n" );
+	      VL_TRAP();
+	      ok = false;
+	    }
     }
   }
 
-  if (glIsEnabled(GL_COLOR_MATERIAL))
+  if(isCompatible())
   {
-    if (verbose)
-      vl::Log::error( "GL_COLOR_MATERIAL was enabled!\n");
-    VL_TRAP();
-    ok = false;
+    if (glIsEnabled(GL_COLOR_MATERIAL))
+    {
+      if (verbose)
+        vl::Log::error( "GL_COLOR_MATERIAL was enabled!\n");
+      VL_TRAP();
+      ok = false;
+    }
+
+    if (GLEW_VERSION_1_4||GLEW_EXT_fog_coord)
+      if (glIsEnabled(GL_FOG_COORD_ARRAY))
+      {
+        if (verbose)
+          vl::Log::error( "GL_FOG_COORD_ARRAY was enabled!\n");
+        VL_TRAP();
+        ok = false;
+      }
+
+    if (GLEW_VERSION_1_4||GLEW_EXT_secondary_color)
+      if (glIsEnabled(GL_SECONDARY_COLOR_ARRAY))
+      {
+        if (verbose)
+          vl::Log::error( "GL_SECONDARY_COLOR_ARRAY was enabled!\n");
+        VL_TRAP();
+        ok = false;
+      }
+
+    if (glIsEnabled(GL_COLOR_ARRAY))
+    {
+      if (verbose)
+        vl::Log::error( "GL_COLOR_ARRAY was enabled!\n");
+      VL_TRAP();
+      ok = false;
+    }
+
+    if (glIsEnabled(GL_EDGE_FLAG_ARRAY))
+    {
+      if (verbose)
+        vl::Log::error( "GL_EDGE_FLAG_ARRAY was enabled!\n");
+      VL_TRAP();
+      ok = false;
+    }
+
+    if (glIsEnabled(GL_INDEX_ARRAY))
+    {
+      if (verbose)
+        vl::Log::error( "GL_INDEX_ARRAY was enabled!\n");
+      VL_TRAP();
+      ok = false;
+    }
+
+    if (glIsEnabled(GL_NORMAL_ARRAY))
+    {
+      if (verbose)
+        vl::Log::error( "GL_NORMAL_ARRAY was enabled!\n");
+      VL_TRAP();
+      ok = false;
+    }
+
+    if (glIsEnabled(GL_VERTEX_ARRAY))
+    {
+      if (verbose)
+        vl::Log::error( "GL_VERTEX_ARRAY was enabled!\n");
+      VL_TRAP();
+      ok = false;
+    }
   }
 
   if (glIsEnabled(GL_SCISSOR_TEST))
   {
     if (verbose)
       vl::Log::error( "GL_SCISSOR_TEST was enabled!\n");
-    VL_TRAP();
-    ok = false;
-  }
-
-  if (GLEW_VERSION_1_4||GLEW_EXT_fog_coord)
-    if (glIsEnabled(GL_FOG_COORD_ARRAY))
-    {
-      if (verbose)
-        vl::Log::error( "GL_FOG_COORD_ARRAY was enabled!\n");
-      VL_TRAP();
-      ok = false;
-    }
-
-  if (GLEW_VERSION_1_4||GLEW_EXT_secondary_color)
-    if (glIsEnabled(GL_SECONDARY_COLOR_ARRAY))
-    {
-      if (verbose)
-        vl::Log::error( "GL_SECONDARY_COLOR_ARRAY was enabled!\n");
-      VL_TRAP();
-      ok = false;
-    }
-
-  if (glIsEnabled(GL_COLOR_ARRAY))
-  {
-    if (verbose)
-      vl::Log::error( "GL_COLOR_ARRAY was enabled!\n");
-    VL_TRAP();
-    ok = false;
-  }
-
-  if (glIsEnabled(GL_EDGE_FLAG_ARRAY))
-  {
-    if (verbose)
-      vl::Log::error( "GL_EDGE_FLAG_ARRAY was enabled!\n");
-    VL_TRAP();
-    ok = false;
-  }
-
-  if (glIsEnabled(GL_INDEX_ARRAY))
-  {
-    if (verbose)
-      vl::Log::error( "GL_INDEX_ARRAY was enabled!\n");
-    VL_TRAP();
-    ok = false;
-  }
-
-  if (glIsEnabled(GL_NORMAL_ARRAY))
-  {
-    if (verbose)
-      vl::Log::error( "GL_NORMAL_ARRAY was enabled!\n");
-    VL_TRAP();
-    ok = false;
-  }
-
-  if (glIsEnabled(GL_VERTEX_ARRAY))
-  {
-    if (verbose)
-      vl::Log::error( "GL_VERTEX_ARRAY was enabled!\n");
     VL_TRAP();
     ok = false;
   }
@@ -1432,11 +1461,13 @@ void OpenGLContext::resetContextStates()
   resetRenderStates(); VL_CHECK_OGL()
 
   // reset Vertex Attrib Set tables
-  bindVAS(NULL, false, true);
+  bindVAS(NULL, false, true); VL_CHECK_OGL();
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool force)
 {
+  VL_CHECK_OGL();
+
   // bring opengl to a known state
 
   if (vas != mCurVAS || force)
@@ -1491,29 +1522,32 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
       // reset all gl states
 
       for(int i=0; i<mMaxVertexAttrib; ++i)
-        VL_glDisableVertexAttribArray(i);
-
-      // iterate backwards so the last active is #0
-      for ( int i=mTextureUnitCount; i--; )
-      {
-        VL_glClientActiveTexture(GL_TEXTURE0 + i);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-      }
+        VL_glDisableVertexAttribArray(i); VL_CHECK_OGL();
 
       // note this one
-      VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+      VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL();
 
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
 
-      glDisableClientState(GL_VERTEX_ARRAY);
+      if(isCompatible())
+      {
+        // iterate backwards so the last active is #0
+        for ( int i=mTextureUnitCount; i--; )
+        {
+          VL_glClientActiveTexture(GL_TEXTURE0 + i); VL_CHECK_OGL();
+          glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();
+        }
 
-      glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
 
-      glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
 
-      glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
 
-      glDisableClientState(GL_FOG_COORD_ARRAY);
+        glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
+
+        glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
+      }
     }
 
     if (vas)
@@ -1579,7 +1613,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           {
             mNormalArray.mPtr = ptr;
             mNormalArray.mVBO = vbo;
-            VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
+            VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL(); 
             glNormalPointer(vas->normalArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
           }
@@ -1837,10 +1871,12 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         }
       }
 
-      VL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+      VL_glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
     }
   }
 
   mCurVAS = vas;
+
+  VL_CHECK_OGL();
 }
 //-----------------------------------------------------------------------------
