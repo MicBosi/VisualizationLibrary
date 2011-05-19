@@ -44,7 +44,7 @@ Renderer::Renderer()
 {
   VL_DEBUG_SET_OBJECT_NAME()
 
-  mProjViewTransfCallback = new ProjViewTransfCallbackStandard;
+  mProjViewTransfCallback = new ProjViewTransfCallback;
 
   mDummyEnables  = new EnableSet;
   mDummyStateSet = new RenderStateSet;
@@ -52,11 +52,11 @@ Renderer::Renderer()
 //------------------------------------------------------------------------------
 namespace
 {
-  struct ShaderInfo
+  struct GLSLProgState
   {
   public:
-    ShaderInfo(): mTransform(NULL), mShaderUniformSet(NULL), mActorUniformSet(NULL) {}
-    bool operator<(const ShaderInfo& other) const
+    GLSLProgState(): mCamera(NULL), mTransform(NULL), mGLSLProgUniformSet(NULL), mShaderUniformSet(NULL), mActorUniformSet(NULL) {}
+    bool operator<(const GLSLProgState& other) const
     {
       if (mTransform != other.mTransform)
         return mTransform < other.mTransform;
@@ -67,13 +67,15 @@ namespace
         return mActorUniformSet < other.mActorUniformSet;
     }
 
+    const Camera* mCamera;
     const Transform* mTransform;
+    const UniformSet* mGLSLProgUniformSet;
     const UniformSet* mShaderUniformSet;
     const UniformSet* mActorUniformSet;
   };
 }
 //------------------------------------------------------------------------------
-const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* camera, Real frame_clock)
+const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur_camera, Real frame_clock)
 {
   VL_CHECK_OGL()
 
@@ -118,11 +120,11 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       // note: we don't reset the render target here
     }
-  } contract(this, camera);
+  } contract(this, cur_camera);
 
   // --------------- rendering --------------- 
 
-  std::map<const GLSLProgram*, ShaderInfo> glslprogram_map;
+  std::map<const GLSLProgram*, GLSLProgState> glslprogram_map;
 
   OpenGLContext* opengl_context = renderTarget()->openglContext();
 
@@ -136,7 +138,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   // scissor the viewport by default: needed for points and lines since they are not clipped against the viewport
   #if 1
     glEnable(GL_SCISSOR_TEST);
-    glScissor(camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height());
+    glScissor(cur_camera->viewport()->x(), cur_camera->viewport()->y(), cur_camera->viewport()->width(), cur_camera->viewport()->height());
   #else
     glDisable(GL_SCISSOR_TEST);
   #endif
@@ -145,7 +147,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
   for(int itok=0; itok < render_queue->size(); ++itok)
   {
-    const RenderToken* tok   = render_queue->at(itok); VL_CHECK(tok);
+    const RenderToken* tok = render_queue->at(itok); VL_CHECK(tok);
     Actor* actor = tok->mActor; VL_CHECK(actor);
 
     if ( !isEnabled(actor->enableMask()) )
@@ -159,14 +161,14 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       cur_scissor = scissor;
       if (cur_scissor)
       {
-        cur_scissor->enable(camera->viewport());
+        cur_scissor->enable(cur_camera->viewport());
       }
       else
       {
         #if 1
           // scissor the viewport by default: needed for points and lines with size > 1.0 as they are not clipped against the viewport.
           VL_CHECK(glIsEnabled(GL_SCISSOR_TEST))
-          glScissor(camera->viewport()->x(), camera->viewport()->y(), camera->viewport()->width(), camera->viewport()->height());
+          glScissor(cur_camera->viewport()->x(), cur_camera->viewport()->y(), cur_camera->viewport()->width(), cur_camera->viewport()->height());
         #else
           glDisable(GL_SCISSOR_TEST);
         #endif
@@ -195,7 +197,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       if ( cur_render_state_set != shader->getRenderStateSet() )
       {
-        opengl_context->applyRenderStates(cur_render_state_set, shader->getRenderStateSet(), camera );
+        opengl_context->applyRenderStates(cur_render_state_set, shader->getRenderStateSet(), cur_camera );
         cur_render_state_set = shader->getRenderStateSet();
       }
 
@@ -218,10 +220,11 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       #endif
 
       // --------------- Actor pre-render callback ---------------
-      // here the user has still the possibility to modify the Actor's uniforms
-      /* mic fixme: document this */
 
-      actor->dispatchOnActorRenderStarted( frame_clock, camera, tok->mRenderable, shader, ipass );
+      // (mic fixme: document this)
+      // here the user has still the possibility to modify the Actor's uniforms
+
+      actor->dispatchOnActorRenderStarted( frame_clock, cur_camera, tok->mRenderable, shader, ipass );
 
       VL_CHECK_OGL()
 
@@ -232,83 +235,101 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       VL_CHECK_OGL()
 
       // current transform
-      const Transform*   cur_transform          = actor->transform(); 
-      const GLSLProgram* cur_glsl_program       = NULL; // NULL == fixed function pipeline
-      const UniformSet*  cur_shader_uniform_set = NULL;
-      const UniformSet*  cur_actor_uniform_set  = NULL;
+      const Transform*   cur_transform             = actor->transform(); 
+      const GLSLProgram* cur_glsl_program          = NULL; // NULL == fixed function pipeline
+      const UniformSet*  cur_glsl_prog_uniform_set = NULL;
+      const UniformSet*  cur_shader_uniform_set    = NULL;
+      const UniformSet*  cur_actor_uniform_set     = NULL;
+
       // make sure we update these things only if there is a valid GLSLProgram
       if (shader->glslProgram() && shader->glslProgram()->handle())
       {
-        cur_glsl_program       = shader->glslProgram();
-        cur_shader_uniform_set = shader->getUniformSet();
-        cur_actor_uniform_set  = actor->getUniformSet();
+        cur_glsl_program = shader->glslProgram();
+
         // consider them NULL if they are empty
-        if (cur_shader_uniform_set && cur_shader_uniform_set->uniforms().empty())
-          cur_shader_uniform_set = NULL;
-        if (cur_actor_uniform_set  && cur_actor_uniform_set ->uniforms().empty())
-          cur_actor_uniform_set = NULL;
+        if (cur_glsl_program->uniformSet() && !cur_glsl_program->uniformSet()->uniforms().empty())
+          cur_glsl_prog_uniform_set = cur_glsl_program->uniformSet();
+
+        if (shader->getUniformSet() && !shader->getUniformSet()->uniforms().empty())
+          cur_shader_uniform_set = shader->getUniformSet();
+        
+        if (actor->getUniformSet() && !actor->getUniformSet() ->uniforms().empty())
+          cur_actor_uniform_set = actor->getUniformSet();
       } 
 
-      // is it the first update we do overall? (ie this is the first object rendered)
-      bool is_first_overall = glslprogram_map.empty();
+      bool update_cm = false; // update camera
+      bool update_tr = false; // update transform
+      bool update_pu = false; // update glsl-program uniforms
       bool update_su = false; // update shader uniforms
       bool update_au = false; // update actor uniforms
-      bool update_tr = false; // update transform
-      ShaderInfo* shader_info = NULL;
+      GLSLProgState* glsl_state = NULL;
+
       // retrieve the state of this GLSLProgram (including the NULL one)
-      std::map<const GLSLProgram*, ShaderInfo>::iterator shader_info_it = glslprogram_map.find(cur_glsl_program);
-      bool is_first_use = false;
-      if ( shader_info_it == glslprogram_map.end() )
+      std::map<const GLSLProgram*, GLSLProgState>::iterator glsl_state_it = glslprogram_map.find(cur_glsl_program);
+      
+      if ( glsl_state_it == glslprogram_map.end() )
       {
-        // create a new shader-info entry
-        shader_info = &glslprogram_map[cur_glsl_program];
-        // update_tr = true; not needed since is_first_use overrides it.
-        update_su = cur_shader_uniform_set != NULL ? true : false;
-        update_au = cur_actor_uniform_set  != NULL ? true : false;
-        // is it the first update to this GLSLProgram? Yes.
-        is_first_use = true;
+        //
+        // this is the first time we see this GLSL program so we update everything we can
+        //
+
+        // create a new glsl-state entry
+        glsl_state = &glslprogram_map[cur_glsl_program];
+        update_cm = true;
+        update_tr = true;
+        update_pu = cur_glsl_prog_uniform_set != NULL;
+        update_su = cur_shader_uniform_set    != NULL;
+        update_au = cur_actor_uniform_set     != NULL;
       }
       else
       {
-        shader_info = &shader_info_it->second;      
+        //
+        // we already know this GLSLProgram so we update only what has changed since last time
+        //
+
+        glsl_state = &glsl_state_it->second;
         // check for differences
-        update_tr = shader_info->mTransform        != cur_transform;
-        update_su = shader_info->mShaderUniformSet != cur_shader_uniform_set && cur_shader_uniform_set;
-        update_au = shader_info->mActorUniformSet  != cur_actor_uniform_set  && cur_actor_uniform_set;
+        update_cm = glsl_state->mCamera             != cur_camera;
+        update_tr = glsl_state->mTransform          != cur_transform;
+        update_pu = glsl_state->mGLSLProgUniformSet != cur_glsl_prog_uniform_set && cur_glsl_prog_uniform_set != NULL;
+        update_su = glsl_state->mShaderUniformSet   != cur_shader_uniform_set    && cur_shader_uniform_set    != NULL;
+        update_au = glsl_state->mActorUniformSet    != cur_actor_uniform_set     && cur_actor_uniform_set     != NULL;
       }
 
-      // update shader-info structure
-      shader_info->mTransform        = cur_transform;
-      shader_info->mShaderUniformSet = cur_shader_uniform_set;
-      shader_info->mActorUniformSet  = cur_actor_uniform_set;
-
-      // fixme?
-      // theoretically we can optimize further caching the last GLSLProgram used and it's shader-info and if 
-      // the new one is the same as the old one we can avoid looking up in the map. The gain should be minimal
-      // and the code would get further clutterd.
+      // update glsl-state structure
+      glsl_state->mCamera             = cur_camera;
+      glsl_state->mTransform          = cur_transform;
+      glsl_state->mGLSLProgUniformSet = cur_glsl_prog_uniform_set;
+      glsl_state->mShaderUniformSet   = cur_shader_uniform_set;
+      glsl_state->mActorUniformSet    = cur_actor_uniform_set;
 
       // --- update proj, view and transform matrices ---
 
       VL_CHECK_OGL()
 
-      if (is_first_use) // note: 'is_first_overall' implies 'is_first_use'
-        projViewTransfCallback()->programFirstUse(this, cur_glsl_program, cur_transform, camera, is_first_overall);
-      else
-      if (update_tr)
-        projViewTransfCallback()->programTransfChange(this, cur_glsl_program, cur_transform, camera);
+      if (update_cm || update_tr)
+        projViewTransfCallback()->updateMatrices( update_cm, update_tr, cur_glsl_program, cur_camera, cur_transform, opengl_context->isCompatible() );
 
       VL_CHECK_OGL()
 
       // --- uniforms ---
 
-      // note: the user must not make the shader's and actor's uniforms collide!
+      // note: the user must not make the glslprogram's, shader's and actor's uniforms collide!
       VL_CHECK( !opengl_context->areUniformsColliding(cur_shader_uniform_set, cur_actor_uniform_set) );
+      VL_CHECK( !opengl_context->areUniformsColliding(cur_shader_uniform_set, cur_glsl_prog_uniform_set ) );
+      VL_CHECK( !opengl_context->areUniformsColliding(cur_actor_uniform_set, cur_glsl_prog_uniform_set ) );
 
-      // 'static' uniform set: update only once per rendering, if present.
-      if (is_first_use && cur_glsl_program && cur_glsl_program->uniformSet())
+      VL_CHECK_OGL()
+
+      // glsl program uniform set
+      if (update_pu)
       {
-        cur_glsl_program->applyUniformSet(cur_glsl_program->uniformSet());
+        VL_CHECK( cur_glsl_prog_uniform_set && cur_glsl_prog_uniform_set->uniforms().size() );
+        VL_CHECK( shader->getRenderStateSet()->glslProgram() && shader->getRenderStateSet()->glslProgram()->handle() )
+        cur_glsl_program->applyUniformSet( cur_glsl_prog_uniform_set );
       }
+
+      VL_CHECK_OGL()
 
       // shader uniform set
       if ( update_su )
@@ -333,7 +354,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       // --------------- Actor rendering ---------------
 
       // also compiles display lists and updates VBOs if necessary
-      tok->mRenderable->render( actor, shader, camera, opengl_context );
+      tok->mRenderable->render( actor, shader, cur_camera, opengl_context );
 
       VL_CHECK_OGL()
 
@@ -344,20 +365,21 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   }
 
   // clear enables
-  opengl_context->applyEnables(cur_enable_set, mDummyEnables.get() );
+  opengl_context->applyEnables(cur_enable_set, mDummyEnables.get() ); VL_CHECK_OGL();
 
   // clear render states
-  opengl_context->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), camera );
+  opengl_context->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), cur_camera ); VL_CHECK_OGL();
 
   // enabled texture unit #0
-  VL_glActiveTexture( GL_TEXTURE0 );
-  VL_glClientActiveTexture( GL_TEXTURE0 );
+  VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
+  if (opengl_context->isCompatible())
+    VL_glClientActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
 
   // disable scissor test
-  glDisable(GL_SCISSOR_TEST);
+  glDisable(GL_SCISSOR_TEST); VL_CHECK_OGL();
 
   // disable all vertex arrays
-  opengl_context->bindVAS(NULL, false, false);
+  opengl_context->bindVAS(NULL, false, false); VL_CHECK_OGL();
   VL_CHECK( opengl_context->isCleanState(true) );
 
   return render_queue;

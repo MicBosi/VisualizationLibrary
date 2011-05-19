@@ -11,13 +11,18 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#version 400 compatibility
+// WARNING: this is just a stub, not tested!
 
-layout(quads) in;
-layout(quads_strip, max_vertices = 4) out;
+#version 400
+
+layout(triangles) in;
+layout(triangle_strip, max_vertices = 3) out;
 
 in vec3 tesPosition[3];
 in vec4 tesColor[3];
+
+uniform mat4 vl_ModelViewMatrix;
+uniform mat4 vl_ProjectionMatrix;
 
 vec3 shrink(vec3 v, vec3 center, float amount)
 {
@@ -26,9 +31,9 @@ vec3 shrink(vec3 v, vec3 center, float amount)
 
 void main(void)
 {
-	vec4 A = gl_ModelViewMatrix * vec4( tesPosition[0], 1.0 );
-	vec4 B = gl_ModelViewMatrix * vec4( tesPosition[1], 1.0 );
-	vec4 C = gl_ModelViewMatrix * vec4( tesPosition[2], 1.0 );
+	vec4 A = vl_ModelViewMatrix * vec4( tesPosition[0], 1.0 );
+	vec4 B = vl_ModelViewMatrix * vec4( tesPosition[1], 1.0 );
+	vec4 C = vl_ModelViewMatrix * vec4( tesPosition[2], 1.0 );
 	vec3 N = normalize( cross( B.xyz-A.xyz, C.xyz-A.xyz) );
 	vec3 center = ( A.xyz + B.xyz + C.xyz ) / 3.0;
 	A.xyz = shrink(A.xyz, center, 0.01);
