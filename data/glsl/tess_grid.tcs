@@ -11,13 +11,15 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#version 400 compatibility
+#version 400
 #extension GL_ARB_tessellation_shader : enable
 
 layout( vertices = 4 ) out;
 
 in vec4 vPosition[];
 out vec4 tcsPosition[];
+
+uniform mat4 vl_ModelViewProjectionMatrix;
 
 // pixels between two edges
 uniform float pixel_per_edge;
@@ -29,7 +31,7 @@ uniform vec2 screen_size;
 
 vec4 project(vec4 a)
 {
-	vec4 b = gl_ModelViewProjectionMatrix * a;
+	vec4 b = vl_ModelViewProjectionMatrix * a;
 	return b / b.w;
 }
 
