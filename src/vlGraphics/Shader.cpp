@@ -207,17 +207,26 @@ void PixelTransfer::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // Hint
 //------------------------------------------------------------------------------
-void Hint::apply(const Camera*, OpenGLContext*) const
+void Hint::apply(const Camera*, OpenGLContext* gl) const
 {
   VL_CHECK_OGL()
-  glHint( GL_PERSPECTIVE_CORRECTION_HINT, mPerspectiveCorrectionHint );
-  glHint( GL_POLYGON_SMOOTH_HINT, mPolygonSmoothHint );
-  glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint );
-  glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint );
-  glHint( GL_FOG_HINT, mFogHint );
-  if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
-    glHint( GL_GENERATE_MIPMAP_HINT, mGenerateMipmapHint );
-  VL_CHECK_OGL()
+
+  if( gl->isCompatible() )
+  {
+    glHint( GL_PERSPECTIVE_CORRECTION_HINT, mPerspectiveCorrectionHint ); VL_CHECK_OGL()
+    
+    glHint( GL_FOG_HINT, mFogHint ); VL_CHECK_OGL()
+
+    if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
+    {
+      glHint( GL_GENERATE_MIPMAP_HINT, mGenerateMipmapHint ); VL_CHECK_OGL()
+    }
+  }
+  
+  glHint( GL_POLYGON_SMOOTH_HINT, mPolygonSmoothHint ); VL_CHECK_OGL()
+  glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint ); VL_CHECK_OGL()
+  glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint ); VL_CHECK_OGL()
+  
 }
 //------------------------------------------------------------------------------
 // CullFace
@@ -252,8 +261,16 @@ void DepthMask::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void PolygonMode::apply(const Camera*, OpenGLContext*) const
 {
-  glPolygonMode(GL_FRONT, mFrontFace); VL_CHECK_OGL()
-  glPolygonMode(GL_BACK, mBackFace); VL_CHECK_OGL()
+  // required by GL 3.1 CORE
+  if ( mFrontFace == mBackFace )
+  {
+    glPolygonMode(GL_FRONT_AND_BACK, mFrontFace); VL_CHECK_OGL()
+  }
+  else
+  {
+    glPolygonMode(GL_FRONT, mFrontFace); VL_CHECK_OGL()
+    glPolygonMode(GL_BACK, mBackFace); VL_CHECK_OGL()
+  }
 }
 //------------------------------------------------------------------------------
 // ShadeModel
@@ -600,7 +617,7 @@ void TexParameter::setMagFilter(ETexParamFilter magfilter)
   }
 }
 //------------------------------------------------------------------------------
-void TexParameter::apply(ETextureDimension dimension) const
+void TexParameter::apply(ETextureDimension dimension, OpenGLContext* gl) const
 {
   VL_CHECK_OGL()
 
@@ -650,15 +667,17 @@ void TexParameter::apply(ETextureDimension dimension) const
     if (GLEW_EXT_texture_filter_anisotropic)
       glTexParameterf( dimension, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy() ); VL_CHECK_OGL()
 
-    if (GLEW_VERSION_1_4||GLEW_SGIS_generate_mipmap)
-      if (dimension != TD_TEXTURE_RECTANGLE)
-        glTexParameteri(dimension, GL_GENERATE_MIPMAP, generateMipmap() ? GL_TRUE : GL_FALSE); VL_CHECK_OGL()
+    if (gl->isCompatible())
+      if (GLEW_VERSION_1_4||GLEW_SGIS_generate_mipmap)
+        if (dimension != TD_TEXTURE_RECTANGLE)
+          glTexParameteri(dimension, GL_GENERATE_MIPMAP, generateMipmap() ? GL_TRUE : GL_FALSE); VL_CHECK_OGL()
 
     if (GLEW_VERSION_1_4||GLEW_ARB_shadow)
     {
       glTexParameteri(dimension, GL_TEXTURE_COMPARE_MODE, compareMode() ); VL_CHECK_OGL()
       glTexParameteri(dimension, GL_TEXTURE_COMPARE_FUNC, compareFunc() ); VL_CHECK_OGL()
-      glTexParameteri(dimension, GL_DEPTH_TEXTURE_MODE, depthTextureMode() ); VL_CHECK_OGL()
+      if(gl->isCompatible())
+        glTexParameteri(dimension, GL_DEPTH_TEXTURE_MODE, depthTextureMode() ); VL_CHECK_OGL()
     }
   }
 
@@ -1014,7 +1033,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
 
     // texture parameters
     if ( texture()->getTexParameter()->dirty() )
-      texture()->getTexParameter()->apply( texture()->dimension() );
+      texture()->getTexParameter()->apply( texture()->dimension(), ctx );
   }
 }
 //-----------------------------------------------------------------------------
