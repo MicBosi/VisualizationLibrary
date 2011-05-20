@@ -1,5 +1,4 @@
 /**
-
 	\page pagDesign Visualization Library Architecture
 	
 	<div class="featuretitle">Introduction</div>
@@ -7,17 +6,7 @@
 	Visualization Library's architecture provides the programmer with a flexible and efficient framework to develop any kind of 3D graphics and visualization applications. In fact, even if Visualization Library was born with mainly scientific applications in mind, its modular architecture is perfectly suitable to develop high-performance applications such as next-generation games. It is not a surprise after all if we consider the fact that VL was designed to natively support technologies such as OpenGL Shading Language, geometry shaders, occlusion culling, framebuffer objects, vertex buffer objects, multiple render targets, multiple rendering, post processing etc. Not to mention more traditional features like hierachical frustum culling, geometry LOD, effect LOD, multipassing, hierachical transforms...
 	
 	The paragraphs below briefly describe the interaction among the most important Visualization Library classes. This will give you a general idea of how VL works and how the main classes collaborate with each another.
-	
-	<div class="featuretitle">Visualization Library Singleton</div>
-	
-	The vl::VisualizationLibrary class is used to globally initialize, access and shutdown all the most important Visualization Library's components. As shown in the picture below, each instance of Visualization Library provides the following components:
-	
-	- A vl::KeyValues object: used to conveniently pass key/value pairs across the application.
-	- A vl::FileSystem object: used to locate and retrieve files and directories on all the registered vl::VirtualDirectory[s].
-	- A vl::LoadWriterManager object: is used to register, manage and use all the vl::ResourceLoadWriter[s] which allow Visualization Library to load and save various file formats.
-	- A vl::FontManager object: used to query vl::Font objects to be used with one or multiple shared OpenGL contexts. This is provided for convenience. Your application can instantiate and use its own vl::FontManager. This is mandatory if you are using multiple non-shared OpenGL contexts. In this case you should use a different vl::FontManager for each context.
-	- A pointer to vl::RenderingAbstract: the entry point of the rendering pipeline. This can point to a single vl::Rendering object or to a hierarchy of renderings (vl::RenderingTree) or to a custom rendering objects performing post processing etc. This is provided for convenience. Your application can instantiate and use its own set of rendering objects and arrange them in the most appropriate way. By default the returned vl::RenderingAbstract is actually a vl::Rendering.
-	
+
 	<img src="pics/design-vl.png">
 	
 	<div class="featuretitle">Actors</div>
@@ -90,5 +79,4 @@
 	Below is a simplified view of Visualization Library internal rendering pipeline, from hidden surface removal to rendering.
 	
 	<img src="pics/design-renderqueue.png">
-	
 */
