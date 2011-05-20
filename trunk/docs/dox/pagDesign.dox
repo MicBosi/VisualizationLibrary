@@ -7,8 +7,6 @@
 	
 	The paragraphs below briefly describe the interaction among the most important Visualization Library classes. This will give you a general idea of how VL works and how the main classes collaborate with each another.
 
-	<img src="pics/design-vl.png">
-	
 	<div class="featuretitle">Actors</div>
 	
 	The vl::Actor class associates three kinds of information:
