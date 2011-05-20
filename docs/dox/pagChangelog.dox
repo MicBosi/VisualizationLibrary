@@ -2,6 +2,22 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.04.1140 RC4</div>
+
+	- GLSLProgram: log warning on GLSLProgram linkage in debug mode.
+	- GLSLProgram: methods *AutomaticAttribLocation() renamed *AutoAttribLocation()
+	- GLSLProgram: added getUniformLocation() taking "const char*" as argument.
+	- GLSLProgram: added activeUniformLocations() method to access the list of currently active uniforms and relative binding locations.
+	- GLSLProgram: added methods vl_ModelViewMatrix(), vl_ProjectionMatrix(), vl_ModelViewProjectionMatrix() and vl_NormalMatrix() to access VL built-in uniforms locations and test for their existence after GLSLProgram linkage.
+	- OpenGL 4: OpenGL 4 Core working!
+	- OpenGL 4: unified ProjViewTransfCallback class can automatically update OpenGL 1.x matrices as well as VL built-in matrices for GL 4 Core profile: vl_ModelViewMatrix, vl_ProjectionMatrix, vl_ModelViewProjectionMatrix, vl_NormalMatrix.
+	- OpenGL 4: OpenGL 4 Core mipmaps generation support.
+	- OpenGL 4: App_TessellationShader made (almost) compatible with OpenGL 4 Core.
+	- Added method toGenericVertexAttribs() to convert a Geometry vertex array to generic ones.
+	- Fixed use of wxUSE_UNICODE in WXGLCanvas.cpp
+	- Fixed VL_ACTOR_USER_DATA incorrectly placed inside Object.hpp
+	- VertexAttribInfo construction parameters order changed and added defaults.
+
 	<div class="featuretitle">Visualization Library 2011.04.1140 RC3</div>
 
 	- BlitFrameBuffer::setReadFramebuffer/setDrawFramebuffer() renamed setReadRenderTarget()/setDrawRenderTarget()
