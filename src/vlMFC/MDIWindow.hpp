@@ -48,7 +48,7 @@ namespace vlMFC
   class VLMFC_EXPORT MDIWindow: public CView, public vlWin32::Win32Context /* the order is important! */
   {
   public:
-    MDIWindow() {}
+    MDIWindow() { vl::OpenGLContext::setAutomaticDelete(false); }
 
     virtual ~MDIWindow();
 
