@@ -554,15 +554,16 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
   {
     for( unsigned i=0; i<cur->enables().size(); ++i )
     {
-      mEnableTable[cur->enables()[i]] += 1; // 0 -> 1; 1 -> 2;
-      if ( !mCurrentEnable[cur->enables()[i]] )
+      EEnable cur_en = cur->enables()[i];
+      mEnableTable[cur_en] += 1; // 0 -> 1; 1 -> 2;
+      if ( !mCurrentEnable[cur_en] )
       {
-        glEnable( TranslateEnable[cur->enables()[i]] );
-        mCurrentEnable[ cur->enables()[i] ] = true;
+        glEnable( TranslateEnable[cur_en] );
+        mCurrentEnable[ cur_en ] = true;
   #ifndef NDEBUG
         if (glGetError() != GL_NO_ERROR)
         {
-          Log::error( Say("An unsupported enum has been enabled: %s.\n") << TranslateEnableString[cur->enables()[i]]);
+          Log::error( Say("An unsupported enum has been enabled: %s.\n") << TranslateEnableString[cur_en]);
           VL_TRAP()
         }
   #endif
@@ -576,19 +577,20 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
   {
     for( unsigned i=0; i<prev->enables().size(); ++i )
     {
-      if ( mEnableTable[prev->enables()[i]] == 1 )
+      EEnable prev_en = prev->enables()[i];
+      if ( mEnableTable[prev_en] == 1 )
       {
-        mCurrentEnable[prev->enables()[i]] = false;
-        glDisable( TranslateEnable[prev->enables()[i]] ); VL_CHECK_OGL()
+        mCurrentEnable[prev_en] = false;
+        glDisable( TranslateEnable[prev_en] ); VL_CHECK_OGL()
         #ifndef NDEBUG
           if (glGetError() != GL_NO_ERROR)
           {
-            Log::error( Say("An unsupported enum has been disabled: %s.\n") << TranslateEnableString[prev->enables()[i]]);
+            Log::error( Say("An unsupported enum has been disabled: %s.\n") << TranslateEnableString[prev_en]);
             VL_TRAP()
           }
         #endif
       }
-      mEnableTable[prev->enables()[i]] >>= 1; // 1 -> 0; 2 -> 1
+      mEnableTable[prev_en] >>= 1; // 1 -> 0; 2 -> 1
     }
   }
   else
@@ -720,7 +722,8 @@ void OpenGLContext::setupDefaultRenderStates()
   }
   else /* CORE profile */
   {
-    // mic fixme: fare ordine
+    // mic fixme: it would be nice if we did not need to have this mDefaultRenderStates at all!
+
     // mDefaultRenderStates[RS_AlphaFunc] = new AlphaFunc;
     mDefaultRenderStates[RS_BlendColor] = new BlendColor;
     mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
@@ -1338,7 +1341,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
   }
-  /* mic fixme: GLEW forgot these?
+  /* mic fixme: missing?
   glGetIntegerv(GL_COPY_READ_BUFFER_BINDING, &buf_bind);
   if (buf_bind != 0)
   {

@@ -174,7 +174,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, std::vector<fvec3>& in
   mSimplifiedTriangles.clear();
   mProtectedVerts.clear();
   mTriangleLump.clear();
-  mVertexLump.clear(); // mic fixme: this is the one taking time to clearup.
+  mVertexLump.clear(); // mic fixme: this is the one taking time.
 
   // preallocate vertices and triangles in one chunk
   mTriangleLump.resize(in_out_tris.size()/3);
