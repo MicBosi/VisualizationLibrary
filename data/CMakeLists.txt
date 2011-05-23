@@ -19,6 +19,6 @@ project(DATA)
 
 option(VL_INSTALL_DATA "Install sample data" OFF)
 if(VL_INSTALL_DATA)
-	install(DIRECTORY 3rdparty font glsl images models text volume DESTINATION "data/")
+	install(DIRECTORY 3rdparty font glsl images models text volume mol DESTINATION "data/")
 	install(FILES README.TXT ztest.zip DESTINATION "data/")
 endif()
