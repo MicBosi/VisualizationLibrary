@@ -86,7 +86,7 @@ namespace vl
   VLGRAPHICS_EXPORT FontManager* defFontManager();
 
   //! Sets the default FontManager used by Visualization Library.
-  void setDefFontManager(FontManager*);
+  VLGRAPHICS_EXPORT void setDefFontManager(FontManager*);
 }
 
 #endif
