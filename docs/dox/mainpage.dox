@@ -8,8 +8,6 @@
 	<div class="featuretitle">Basic Information</div>
 
 	- \subpage pagIntro "Introduction"
-	- \subpage pagKnowledgeBase "Knowledge Base"
-	- \subpage pagLearning "Learning VL"
 	- \subpage pagKeyFeatures "Features Overview"
 	- \subpage pagContacts "Contacts"
 	- \subpage pagGallery "Gallery"
@@ -22,8 +20,10 @@
 	<div class="featuretitle">Getting Started</div>
 
 	- \subpage pagInstall "Compiling and Installing VL"
+	- \subpage pagKnowledgeBase "Knowledge Base"
+	- \subpage pagLearning "Learning VL"
 	- \subpage pagDesign "Architecture Diagrams"
-	- \subpage pagOpenGL "OpenGL - Visualization Library Feature Mapping"
+	- \subpage pagOpenGL "OpenGL to VL Mapping"
 	- \subpage pagGuides "Tutorials"
  
 	<div class="featuretitle">API Documentation</div>

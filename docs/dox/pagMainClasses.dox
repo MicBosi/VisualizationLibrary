@@ -40,11 +40,18 @@
 	- vl::Text
 	- vl::Font
 	- vl::FontManager
+	- vl::defFontManager() [DEPRECATED]
+	- vl::setDefFontManager() [DEPRECATED]
 	
 	\par Image
 	
 	- vl::loadImage()
 	- vl::saveImage()
+	- vl::loadRAW()
+	- vl::loadCubemap()
+	- vl::loadImagesFromDir()
+	- vl::assemble3DImage()
+	- vl::createCubemap()
 	- vl::Image
 	- vl::Image::convertType()
 	- vl::Image::convertFormat()
@@ -54,10 +61,21 @@
 	- vl::Image::subImage()
 	
 	\par Input / Output
-	
+
+	- vl::defLoadWriterManager()
+	- vl::setDefLoadWriterManager()
+	- vl::registerLoadWriter()
+	- vl::loadResource()
+	- vl::canLoad()
+	- vl::canWrite()
+	- vl::loadImage()
+	- vl::saveImage()
+	- vl::loadRAW()
+	- vl::loadCubemap()
+	- vl::loadImagesFromDir()
 	- vl::ResourceDatabase
-	- vl::LoadWriterManager
 	- vl::ResourceLoadWriter
+	- vl::LoadWriterManager
 	- vl::LoadCallback
 	- vl::WriteCallback
 	- vl::LoadWriterDICOM
@@ -74,12 +92,12 @@
 	- vl::LoadWriterPLY
 	- vl::LoadWriterSTL
 	- vl::LoadWriterMD2
-	- vl::loadResource()
-	- vl::loadImage()
 	
 	\par Virtual File System
 	
 	- vl::defFileSystem()
+	- vl::setDefFileSystem()
+	- vl::locateFile()
 	- vl::FileSystem
 	- vl::VirtualDirectory
 	- vl::DiskDirectory
@@ -90,32 +108,33 @@
 	- vl::ZippedFile
 	- vl::MemoryFile
 	- vl::GZipCodec
-	- vl::loadResource()
-	- vl::loadImage()
 	
 	\par OpenGL Shading Language
 	
 	- vl::GLSLProgram
 	- vl::GLSLVertexShader
-	- vl::GLSLFragmentShader
+	- vl::GLSLTessControlShader
+	- vl::GLSLTessEvaluationShader
 	- vl::GLSLGeometryShader
-	- vl::Uniform
+	- vl::GLSLFragmentShader
 	- vl::Shader::glslProgram()
+	- vl::Uniform
 	
 	\par Framebuffer Objects
 	
 	- vl::FBORenderTarget
-	- vl::FBOAttachmentAbstract
+	- vl::FBOAbstractAttachment
 		- vl::FBORenderbufferAttachment
 			- vl::FBOColorBufferAttachment
 			- vl::FBODepthBufferAttachment
 			- vl::FBODepthStencilBufferAttachment
 			- vl::FBOStencilBufferAttachment
-		- vl::FBOTexture1DAttachment
-		- vl::FBOTexture2DAttachment
-		- vl::FBOTexture3DAttachment
-		- vl::FBOTextureAttachment
-		- vl::FBOTextureLayerAttachment
+		- vl::FBOAbstractTextureAttachment
+			- vl::FBOTexture1DAttachment
+			- vl::FBOTexture2DAttachment
+			- vl::FBOTexture3DAttachment
+			- vl::FBOTextureAttachment
+			- vl::FBOTextureLayerAttachment
 	- vl::BlitFramebuffer
 	- vl::OpenGLContext::createFBORenderTarget()
 	
@@ -190,13 +209,18 @@
 	\par Geometry
 	
 	- vl::Geometry
+	- vl::Geometry::computeNormals()
+	- vl::Geometry::flipNormals()
+	- vl::Geometry::transform()
+	- vl::Geometry::toGenericVertexAttribs()
+	- vl::Geometry::computeTangentSpace()
 	- vl::BezierSurface
 	- vl::Tessellator
 	- vl::Extrusion
 	- vl::DoubleVertexRemover
 	- vl::PolygonSimplifier
 	- vl::TriangleStripGenerator
-	- vl::Geometry::computeNormals()
+	- vl::DrawCall
 	- vl::DrawArrays
 	- vl::DrawElements
 	- vl::VertexAttribInfo
@@ -240,24 +264,33 @@
 	- vl::OpenGLContext
 	- vl::TrackballManipulator
 	- vl::GhostCameraManipulator
+	
+	\par Threading
+	
+	- vl::Object::setRefCountMutex()
+	- vl::Log::setLogMutex()
+	- vl::IMutex
+	- vl::ScopedMutex
 
-	\par Volume Rendering
+	\par Volume rendering
 
-	- vl::MarchingCubes
+	- vl::RaycastVolume
 	- vl::SlicedVolume
+	- vl::MarchingCubes
 	- vl::VolumePlot
 
 	\par Rendering enhancement
 
 	- vl::EdgeRenderer
 	- vl::EdgeExtractor
+	- vl::OcclusionCullRenderer
 
 	\par Vector graphics
 
 	- vl::VectorGraphics
 	- vl::SceneManagerVectorGraphics
 
-	\par Molecule Visualization
+	\par Molecule visualization
 
 	- vl::Molecule
 	- vl::Atom

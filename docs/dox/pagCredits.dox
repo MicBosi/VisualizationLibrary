@@ -29,6 +29,21 @@
 		<tr>
 			<td>GDCM library</td><td>http://sourceforge.net/projects/gdcm</td>
 		</tr>
+		<tr>
+			<td> Qt </td><td> http://qt.nokia.com </td> 
+		</tr>
+		<tr>
+			<td> wxWidgets </td><td> http://www.wxwidgets.org </td>
+		</tr>
+		<tr>
+			<td> SDL </td><td> http://www.libsdl.org </td>
+		</tr>
+		<tr>
+			<td> GLUT </td><td> http://www.opengl.org/resources/libraries/glut </td>
+		</tr>
+		<tr>
+			<td> FreeGLUT </td><td> http://freeglut.sourceforge.net </td>
+		</tr>
 	</table>
 
 	\par Developers and Contributors
