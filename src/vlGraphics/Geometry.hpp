@@ -211,7 +211,7 @@ namespace vl
 
     void regenerateVertices(const std::vector<size_t>& map_new_to_old);
 
-    // mic fixme: move where appropriate: GUtils
+    // mic fixme: move somewhere else?
     //! Computes the tangent (and optionally bitangent) vectors used to form a TBN matrix to be used for bumpmapping.
     //! @param vert_count The number of elements stored in @a vertex, @a normal, @a texcoord, @a tangent and @a bitangent.
     //! @param vertex Array containing the vertex positions.
@@ -319,6 +319,7 @@ namespace vl
 
   protected:
     virtual void computeBounds_Implementation();
+    
     virtual void render_Implementation(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const;
 
     // render calls
