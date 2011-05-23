@@ -167,7 +167,7 @@ namespace
 //-----------------------------------------------------------------------------
 bool vl::loadMOL2(const String& path, std::vector< ref<Molecule> >& structures)
 {
-  ref<DiskFile>   dfile = new DiskFile(path);
+  ref<VirtualFile>   dfile = locateFile(path);
   ref<MemoryFile> mfile = new MemoryFile; // cache in the memory
   mfile->copy(dfile.get());
   if (!mfile->open(OM_ReadOnly))
