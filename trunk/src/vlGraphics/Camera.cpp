@@ -254,7 +254,7 @@ bool Camera::unproject(const vec3& win, vec4& out) const
     v.z() = v.z() * 2.0f - 1.0f;
 
     Real det=0;
-    mat4 inverse = (mProjectionMatrix * mViewMatrix).getInverse(&det); // mic fixme all inverse here
+    mat4 inverse = (mProjectionMatrix * mViewMatrix).getInverse(&det);
     if (!det)
       return false;
 

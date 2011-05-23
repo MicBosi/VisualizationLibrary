@@ -89,7 +89,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Effect: public Object
   {
-    // mic fixme: well define these
+    // mic fixme: define these?
     Effect(const Effect&): Object() {}
     Effect& operator=(const Effect&) { return *this; }
 
