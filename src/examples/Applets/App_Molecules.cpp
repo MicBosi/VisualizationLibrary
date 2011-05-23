@@ -151,14 +151,15 @@ public:
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     sceneManager()->tree()->addActor(mText.get(), effect.get());
+
+    loadMolecule("/mol/molecule.mol2");
   }
- 
-  /* loads a MOL2 file when it is dropped in the window */
-  void fileDroppedEvent(const std::vector<vl::String>& files)
+
+  /* Loads the specified mol2 file. */
+  void loadMolecule(const vl::String& mol2_file)
   {
     mCurrentMolecule = 0;
-    /*loads only the first .mol2 file if more are dropped*/
-    vl::loadMOL2( files[0], mMolecules );
+    vl::loadMOL2( mol2_file, mMolecules );
     if (!mMolecules.empty())
       updateMolecule();
 
@@ -171,6 +172,13 @@ public:
       msg = "New molecule: " + mMolecules[i]->moleculeName() + " - " + vl::String::fromInt(mMolecules[i]->atomCount()) + " atoms\n";
       vl::Log::print(msg);
     }
+  }
+ 
+  /* loads a MOL2 file when it is dropped in the window */
+  void fileDroppedEvent(const std::vector<vl::String>& files)
+  {
+    /*loads only the first .mol2 file if more are dropped*/
+    loadMolecule( files[0] );
   }
 
   /* user controls to change the molecule (if we loaded a multi-MOL2 file) and the style */
