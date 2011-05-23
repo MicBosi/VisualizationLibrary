@@ -511,7 +511,6 @@ namespace vl
     void getUniform(const std::string& name, ivec4& vec) const { getUniform(getUniformLocation(name), vec); }
 
     // mic fixme: documenta la differenza tra vari tipi di Uniforms, "see also" tutte le funzioni sotto, documenta il fatto che non devono esserci collisioni.
-    // collision check tra Actor/Shader/Static: specificare l'errore da function parameter.
 
     //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
     UniformSet* uniformSet() { return mUniformSet.get(); }
