@@ -59,7 +59,8 @@
 	- \b IJG's \b libjpeg - http://www.ijg.org [required, included with VL]
 	- \b libpng - http://www.libpng.org [required, included with VL]
 	- \b libtiff - http://www.libtiff.org [required, included with VL]
-	- \b Qt - http://www.qtsoftware.com
+	- \b GDCM - http://sourceforge.net/projects/gdcm
+	- \b Qt - http://qt.nokia.com
 	- \b wxWidgets - http://www.wxwidgets.org
 	- \b SDL - http://www.libsdl.org
 	- \b GLUT - http://www.opengl.org/resources/libraries/glut

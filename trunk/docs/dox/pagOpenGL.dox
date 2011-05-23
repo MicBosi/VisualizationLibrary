@@ -253,7 +253,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 			<td valign=top>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glDrawArrays.xml>glDrawArrays()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glMultiDrawArrays.xml>glMultiDrawArrays()</a>
-				- glDrawArraysInstanced()
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glDrawArraysInstanced.xml>glDrawArraysInstanced()</a>
 			</td>
 			<td valign=top>
 				- vl::DrawArrays
@@ -264,11 +264,18 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 		<tr>
 			<td valign=top>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glDrawElements.xml>glDrawElements()</a>
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElementsBaseVertex.xml>glDrawElementsBaseVertex</a>
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElementsInstanced.xml>glDrawElementsInstanced</a>
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElementsInstancedBaseVertex.xml>glDrawElementsInstancedBaseVertex</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glMultiDrawElements.xml>glMultiDrawElements()</a>
-				- glDrawArraysInstanced()
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glDrawRangeElements.xml>glDrawRangeElements</a>
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glDrawRangeElementsBaseVertex.xml>glDrawRangeElementsBaseVertex</a>
 			</td>
 			<td valign=top>
+				- vl::DrawCall
 				- vl::DrawElements
+				- vl::DrawRangeElements
+				- vl::MultiDrawElements
 				- vl::Geometry::drawCalls()
 			</td>
 		</tr>
