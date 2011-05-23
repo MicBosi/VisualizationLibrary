@@ -467,6 +467,7 @@ public:
     if (texture1->dimension() == vl::TD_TEXTURE_2D_MULTISAMPLE)
     {
       effect1->shader()->gocGLSLProgram()->attachShader( new vl::GLSLFragmentShader("/glsl/tex_multisample.fs") );
+      effect1->shader()->gocGLSLProgram()->gocUniform("ms_texture")->setUniformI(0);
     }
 
     // ground plane
