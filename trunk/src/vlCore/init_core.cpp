@@ -149,7 +149,7 @@ FileSystem* vl::defFileSystem()
 {
   return gDefaultFileSystem.get();
 }
-void vl::seDefFileSystem(FileSystem* fs)
+void vl::setDefFileSystem(FileSystem* fs)
 {
   gDefaultFileSystem = fs;
 }
