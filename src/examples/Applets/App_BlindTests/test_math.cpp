@@ -181,9 +181,10 @@ namespace blind_tests
     CONDITION( fmat4(1) != fmat4(2) );
 
     // mic fixme:
-    // coprire tutte le funzioni di tutti i tipi di matrici.
-    // documentare tutte le funzioni.
-    // GLSLmath implementazione da rifare tutta coi templates.
+    // * coprire tutte le funzioni di tutti i tipi di matrici.
+    // * documentare tutte le funzioni.
+    // * lookAt() dovrebbe tornare l'inversa per compatibilita con OpenGL.
+    // * tutorial su funzioni/classi matematiche.
 
     return true;
   }

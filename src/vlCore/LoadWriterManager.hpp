@@ -154,7 +154,7 @@ namespace vl
   //! Sets the default LoadWriterManager used by Visualization Library.
   VLCORE_EXPORT void setDefLoadWriterManager(LoadWriterManager* lwm);
 
-  //! Short version of defLoadWriterManager()->registerLoadWriter(rlw).
+  //! Utility function, equivalent to defLoadWriterManager()->registerLoadWriter(rlw).
   inline void registerLoadWriter(ResourceLoadWriter* rlw) { defLoadWriterManager()->registerLoadWriter(rlw); }
 }
 
