@@ -144,10 +144,10 @@ namespace vl
   public:
     virtual const char* className() { return "vl::Font"; }
 
-    //! Destructor
+    //! Destructor.
     ~Font();
 
-    // mic fixme: ???
+    //! Less-than operator.
     bool operator<(const Font& other) const
     {
       if (filePath() != other.filePath())
@@ -156,14 +156,28 @@ namespace vl
         return size() < other.size();
     }
 
+    //! The font's file path.
     const String& filePath() const { return mFilePath; }
-    //! Loads a font using fileSystem()::locateFile()
+    
+    //! Loads a font using fileSystem()::locateFile().
     void loadFont(const String& path);
+
+    //! The size of the font.
     int size() const { return mSize; }
+    
+    //! The size of the font.
     void setSize(int size);
+
+    //! Returns (and eventually creates) the Glyph* associated to the given character.
     Glyph* glyph(int character);
+    
+    //! Whether the font rendering should use linear filtering or not.
     void setSmooth(bool smooth);
+    
+    //! Whether the font rendering should use linear filtering or not.
     bool smooth() const { return mSmooth; }
+
+    //! Releases the FreeType's FT_Face used by a Font.
     void releaseFreeTypeData();
 
     //! The FontManager associated to this Font used to acquire/release FreeType resources.
