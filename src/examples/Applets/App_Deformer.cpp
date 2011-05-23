@@ -128,6 +128,8 @@ public:
     vl::Actor* txt_act = sceneManager()->tree()->addActor(mText.get(), txt_fx.get());
     // draw the text for last
     txt_act->setRenderRank(2);
+
+    loadFile("/images/toy.jpg");
   }
 
   void reset()
@@ -350,13 +352,18 @@ public:
 
   void fileDroppedEvent(const std::vector<vl::String>& files)
   {
+    loadFile(files[0]);
+  }
+
+  void loadFile(const vl::String& file)
+  {
     if (mMode == AnimateMode)
       return;
 
-    mImage = vl::loadImage(files[0]);
+    mImage = vl::loadImage(file);
     if (!mImage)
       return;
-    if (files[0].endsWith(".dcm"))
+    if (file.endsWith(".dcm"))
       mImage->contrastHounsfieldAuto();
 
     mTexture->destroyTexture();
