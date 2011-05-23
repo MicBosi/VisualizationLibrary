@@ -37,8 +37,6 @@
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/Image.hpp>
 
-#include <vlCore/VisualizationLibrary.hpp> // mic fixme
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
