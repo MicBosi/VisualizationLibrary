@@ -47,7 +47,7 @@ namespace vlMFC
   class VLMFC_EXPORT MFCWindow: public CWnd, public vlWin32::Win32Context /* the order is important! */
   {
   public:
-    MFCWindow() {}
+    MFCWindow() { vl::OpenGLContext::setAutomaticDelete(false); }
 
     virtual ~MFCWindow();
 
