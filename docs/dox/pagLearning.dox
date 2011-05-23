@@ -13,28 +13,30 @@
 		
 	The \ref pagKeyFeatures page illustrates more in detail the most important aspects of VL, its features, its whys and hows.
 	
-	The \ref pagMainClasses page gives a quick overview of the most important classes divided into functional
-	groups such as "Math", "Geometry", "Animation" etc. Make sure you check it out, it's a great way to start your jurney through VL architecture
+	The \ref pagMainClasses page gives a quick overview of the most important classes and functions divided into functional
+	groups such as "Math", "Geometry", "Animation" etc. Take some time to check it out, it's a great way to start your jurney through VL architecture
 	and organization.
 
 	The <a href=annotated.html>Annotated Class List</a> page contains the complete list of all VL classes with their relative description. 
-	Make sure you glimpse through it at least once, you might discover classes and features you didn't even know you would need!
+	It is strongly adviced to glimpse through it at least once, you might discover classes and features you didn't even know you would need!
 	
 	The \ref pagDesign page depticts visually a 10000 foot view of VL architecture and design. 
 	VL design is all in all very simple but it's important that you understand it before you use it so that you can get the most out of VL.
 	
 	The \ref pagOpenGL page allows you to see how VL maps OpenGL functions and features into its own C++
 	object-oriented framework. This way if you know OpenGL and want to know how to do a specific thing with VL, you will be pointed right
-	to the appropriate direction. This is one of the key features of VL. That is, it translates almost transparently what you would do in 
-	OpenGL into a friendly C++ object-oriented framework. Knowing OpenGL is thus a key factor in using proficiently Visualization Library.
+	to the appropriate direction. This is one of the key features of VL: it translates almost transparently what you would do in 
+	OpenGL into a friendly C++ object-oriented framework.
 	
-	These links are vital for any OpenGL programmer and chances are you will find yourself using them often:
+	These links are vital for any OpenGL programmer, chances are you will find yourself using them often:
 	
 	- OpenGL API and Shading Language Specifications and Reference Pages: http://www.opengl.org/registry/#apispecs
 	- OpenGL Extensions: http://www.opengl.org/registry/#arbextspecs	
 	- OpenGL 2.x Reference Manual: http://www.opengl.org/sdk/docs/man/
 	- OpenGL 3.x Reference Manual: http://www.opengl.org/sdk/docs/man3/
 	- OpenGL 4.x Reference Manual: http://www.opengl.org/sdk/docs/man4/
+	- OpenGL ES 1.x Reference Manual: http://www.khronos.org/opengles/sdk/1.1/docs/man/
+	- OpenGL ES 2.x Reference Manual: http://www.khronos.org/opengles/sdk/docs/man/
 	- OpenGL SDK: http://www.opengl.org/sdk/
 	
 	\par Tutorials and Examples

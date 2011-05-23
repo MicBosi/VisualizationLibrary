@@ -7,6 +7,25 @@
 	
 	The paragraphs below briefly describe the interaction among the most important Visualization Library classes. This will give you a general idea of how VL works and how the main classes collaborate with each another.
 
+	<div class="featuretitle">Default Objects</div>
+	
+	Visualization Library once initialized allocates a few default objects to manage frequently used subsystems such as 
+	font management, file system access, resource loaders/writers and logging such default objects can be accessed using
+	the following functions:
+	
+	- vl::defFileSystem(), vl::setDefFileSystem() - <i>[vlCore\FileSystem.hpp]</i>
+	- vl::defLoadWriterManager(), vl::setDefLoadWriterManager() - <i>[vlCore\LoadWriterManager.hpp]</i>
+	- vl::defLogger(), vl::setDefLogger() - <i>[vlCore\Log.hpp]</i>
+	- vl::defFontManager(), vl::setDefFontManager() - <i>[vlGraphics\FontManager.hpp]</i> [DEPRECATED]
+	
+	Note that you are not required to use such objects those are just the objects that VL uses by default. You can actually use 
+	any number of vl::FileSystem, vl::LoadWriterManager, vl::FontManager and logger at the same time or even install a
+	different set of default objects for VL to use.
+	
+	Funcitons such as vl::loadImage() and vl::loadResource() for example use the default FileSystem and LoadWriterManager to 
+	locate and load images and resources. Also the default logger is used basically everywhere by VL to report warnings 
+	and notifications to the user.
+	
 	<div class="featuretitle">Actors</div>
 	
 	The vl::Actor class associates three kinds of information:
@@ -21,8 +40,7 @@
 	
 	As shown in the picture, a vl::Actor can render different things for each level of detail.
 	
-	The vl::Effect class can render for each level of detail a different set of rendering passes, each of which is defined by a vl::Shader 
-	which contains the actual render states to be used.
+	The vl::Effect class can render for each level of detail a different set of rendering passes, each of which is defined by a vl::Shader which contains the actual render states to be used.
 	
 	<img src="pics/design-actor.png">
 	
@@ -47,10 +65,9 @@
 	Compared to a typical \a scene-graph-oriented architecture Visualization Library has the following advantages:
 	
 	-# An object does not need to be part of the rendering transform tree to be part of the rendering.
-	-# During the rendering you do not need to traverse the whole transform hierarchy but only the ones that are animated, saving a considerable
-	   amount of time when dealing with a large number of objects.
+	-# During the rendering you do not need to traverse the whole transform hierarchy but only the ones that are animated, saving a considerable amount of time when dealing with a large number of objects.
 	-# You have the freedom to choose if a transform should be continuously and automatically updated before each rendering or not.
-	
+
 	<img src="pics/design-transform.png">
 	
 	<div class="featuretitle">Rendering</div>

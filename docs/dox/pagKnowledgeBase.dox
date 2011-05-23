@@ -19,9 +19,9 @@
 	
 	Once you have succesfully compiled and installed VL, if you compiled any of the examples you will find them in \a "<VL_INSTALL_DIR>/bin". For example under windows by default the following executables are created:
 	
-	- Win32_tests.exe: contains Visualization Library test-demos. Calling it without arguments will show the list of available demo-tests. Calling it with a number as argument will run the corresponding demo-test.
-	- Win32_example.exe: displays a simple rotating cube implemented using the vl::Applet class.
-	- Win32_direct.exe: displays a simple scene implemented without using the vl::Applet class.
+	- \a Win32_tests.exe: contains Visualization Library test-demos. Calling it without arguments will show the list of available demo-tests. Calling it with a number as argument will run the corresponding demo-test.
+	- \a Win32_example.exe: displays a simple rotating cube implemented using the utility vl::Applet class.
+	- \a Win32_direct.exe: shows all the steps required to manually setup a simple rendering pipeline (no vl::Applet here).
 	
 	Note that by default VL applications look for their data in the \a "../data" subdirectory. If you run the demos make sure you also installed the data by selecting the \a VL_INSTALL_DATA option from CMake. 
 	You can also specify a custom directory using the \a VL_DATA_PATH environment variable.
@@ -44,7 +44,17 @@
 	\par Configuring Visualization Library (\a config.hpp)
 	
 	Before compiling VL you have a chance to tune it for your particular purposes by modifing some defines located in the config.hpp file (see the file content for all the details).
-
+	
+	Popular macros:
+	
+	- VL_PIPELINE_PRECISION = defines whether VL's default math classes should use single precision (\p float) or double precision (\p double). Default is 1 (single precision).
+	- VL_OBJECT_USER_DATA, VL_ACTOR_USER_DATA, VL_TRANSFORM_USER_DATA, VL_SHADER_USER_DATA = allows the user to bind a void* to any vl::Object, vl::Actor, vl::Transform and vl::Shader respectively. 
+      Very helpful to glue the user's application's logic to VL main classes. Default is 0 (disabled).
+	- VL_MAX_TEXTURE_UNITS = the maximum number of texture units your application is going to use. Allows VL to keep track of a minimum number of texture units. Default is 8.
+	- VL_MAX_GENERIC_VERTEX_ATTRIB = the maximum number of vertex attributes that can be used in a vl::Geometry. Allows VL to keep track of a minimum number of vertex attributes. Default is 8.
+	- VL_MAX_ACTOR_LOD = the maximum number of LOD levels that a vl::Actor can use. Default is 4.
+	- VL_MAX_EFFECT_LOD = the maximum number of LOD levels that a vl::Effect can use. Default is 4.
+	
 	\par Requesting Help And Reporting Issues
 	
 	The right way of asking for help and reporting issues is via the forum or contacting me at the above mentioned email. <i>Please do not write on the issue tracker on google code or on github.com, just use the forums!</i>
