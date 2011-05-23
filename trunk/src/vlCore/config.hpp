@@ -43,23 +43,14 @@
 
 
 /**
- * Show a message box upon check failure. Only for Win32 platforms.
- * 1 = opens a MessageBox on failed check\n
- * 0 = opens a MessageBox on failed check\n
+ * Enable/disable memory leaks debugging.
+ *
+ * - 0 = disable memory leaks debugging
+ * - 1 = Objects::mDebug_LivingObjects will contain the set of currently living Object-s.
+ *
+ * This is useful when you want to track memory leaks and object construction/destruction.
  */
-#define VL_MESSAGEBOX_CHECK 0
-
-
-/**
- * Defines the maximum number of LOD levels available to the Actor class.
- */
-#define VL_MAX_ACTOR_LOD 4
-
-
-/**
- * Defines the maximum number of LOD levels available to the Effect class.
- */
-#define VL_MAX_EFFECT_LOD 4
+#define VL_DEBUG_LIVING_OBJECTS 0
 
 
 /**
@@ -69,6 +60,14 @@
  * if set to 0 the VL_CHECK() and VL_CHECK_OGL() macros will be active only in debug mode builds
  */
 #define VL_FORCE_CHECKS 0
+
+
+/**
+ * Show a message box upon check failure. Only for Win32 platforms.
+ * 1 = opens a MessageBox on failed check\n
+ * 0 = opens a MessageBox on failed check\n
+ */
+#define VL_MESSAGEBOX_CHECK 0
 
 
 /**
@@ -89,8 +88,26 @@
 
 
 /**
+ * Enables fast square root computation when using single precision mode.
+ *
+ * - 0 = disable fast square roots when in single precision floating point pipeline
+ * - 1 = enable fast square roots when in single precision floating point pipeline
+ *
+ * Potential performance improvements:
+ * - float sqrt will be up to 1.4x quicker
+ * - float 1.0/sqrt will be up to 3x quicker
+ * - vec3 normalization will be up to 2x quicker
+ *
+ * Please note that the precision of such operations is seriously affected.
+ * Use with care! Under some platforms / compiler configurations this might produce wrong results,
+ * like objects disappearing, transforms, matrices and vectors filled with garbage data etc.
+ */
+#define VL_FAST_SQUARE_ROOTS 0
+
+
+/**
  * Set this to 1 to be able to attach user data to any vl::Object using the 
- * setUserData(void*) and void* userData() methods.
+ * "setUserData(void*)" and "void* userData()" methods.
  * Useful to glue VL classes to the user's application logic.
  * \note This will add 4 or 8 bytes to each vl::Object instance.
  */
@@ -99,7 +116,7 @@
 
 /**
  * Set this to 1 to be able to attach user data to any vl::Actor using the 
- * setActorUserData(void*) and void* actorUserData() methods. 
+ * "setActorUserData(void*)" and "void* actorUserData()" methods. 
  * Useful to glue VL classes to the user's application logic.
  * \note This will add 4 or 8 bytes to each vl::Actor instance.
  */
@@ -125,38 +142,52 @@
 
 
 /**
- * Enables fast square root computation when using single precision mode.
+ * Defines the maximum number of LOD levels available to the Actor class.
+ * Set this value to optimize VL to your application's needs.
  *
- * - 0 = disable fast square roots when in single precision floating point pipeline
- * - 1 = enable fast square roots when in single precision floating point pipeline
- *
- * Potential performance improvements:
- * - float sqrt will be up to 1.4x quicker
- * - float 1.0/sqrt will be up to 3x quicker
- * - vec3 normalization will be up to 2x quicker
- *
- * Please note that the precision of such operations is seriously affected.
- * Use with care! Under some platforms / compiler configurations this might produce wrong results,
- * like objects disappearing, transforms, matrices and vectors filled with garbage data etc.
+ * - minimum = 1
+ * - maximum = application dependent
  */
-#define VL_FAST_SQUARE_ROOTS 0
+#define VL_MAX_ACTOR_LOD 4
+
+
+/**
+ * Defines the maximum number of LOD levels available to the Effect class.
+ * Set this value to optimize VL to your application's needs.
+ *
+ * - minimum = 1
+ * - maximum = application dependent
+ */
+#define VL_MAX_EFFECT_LOD 4
 
 
 /**
  * Maximum number of texture units used.
+ * Allows VL to keep track of only the effectively used texture units.
+ * Set this value to optimize VL to your application's needs.
  *
  * - minimum = 1
  * - maximum = OpenGL implementation dependent
  */
-#define VL_MAX_TEXTURE_UNITS 6
+#define VL_MAX_TEXTURE_UNITS 8
+
 
 /**
  * Maximum number of generic vertex attributes used by a single Geometry.
+ * Allows VL to keep track of only the effectively used vertex attributes.
+ * Set this value to optimize VL to your application's needs.
  *
  * - minimum = 1
  * - maximum = OpenGL implementation dependent
  */
-#define VL_MAX_GENERIC_VERTEX_ATTRIB 6
+#define VL_MAX_GENERIC_VERTEX_ATTRIB 8
+
+
+/**
+ * Maximum timer index that can be passed to vl::Time::start(int index), vl::Time::stop(int index) etc.
+ */
+#define VL_MAX_TIMERS 16
+
 
 /**
  * Enable String copy-on-write mode.
@@ -171,22 +202,6 @@
  * Default byte alignment for the vl::Buffer class.
  */
 #define VL_DEFAULT_BUFFER_BYTE_ALIGNMENT 16
-
-/**
- * Maximum timer index that can be passed to vl::Time::start(int index), vl::Time::stop(int index) etc.
- */
-#define VL_MAX_TIMERS 16
-
-
-/**
- * Enable/disable memory leaks debugging.
- *
- * - 0 = disable memory leaks debugging
- * - 1 = Objects::mDebug_LivingObjects will contain the set of currently living Object-s.
- *
- * This is useful when you want to track memory leaks and object construction/destruction.
- */
-#define VL_DEBUG_LIVING_OBJECTS 0
 
 
 // -------------------- Do Not Touch The Following Section --------------------
