@@ -2,6 +2,17 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.04.1140</div>
+
+	- Added pagGuideThreads.dox file "Multi-Threading with VL".
+	- Documentation updates: mainpage.dox, pagDesign.dox, pagKnowledgeBase.dox, pagLearning.dox, pagMainClasses.dox, pagOpenGL.dox, pagCredits.dox, pagInstall.dox.
+	- Updated config.hpp documentation and set to 8 both VL_MAX_TEXTURE_UNITS and VL_MAX_GENERIC_VERTEX_ATTRIB.
+	- App_Deformer loads default file.
+	- App_Molecules loads default mol2 file.
+	- Default log mutex initialized to NULL.
+	- Disabled vl::Object/vl::ref<> automatic delete for MFC windows.
+	- Fixed warning in App_Framebuffer_Object.
+
 	<div class="featuretitle">Visualization Library 2011.04.1140 RC4</div>
 
 	- GLSLProgram: log warning on GLSLProgram linkage in debug mode.
