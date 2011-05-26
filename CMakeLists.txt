@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 2.6)
 # Current Version
 set(VLVERSION_MAJOR "2011")
 set(VLVERSION_MINOR "05")
-set(VLVERSION_PATCH "1140")
+set(VLVERSION_PATCH "1142")
 set(VLVERSION "${VLVERSION_MAJOR}.${VLVERSION_MINOR}")
 
 # Common Dirs
@@ -65,8 +65,10 @@ include_directories( "src" "${CMAKE_BINARY_DIR}/src" "${3RDPARTY_DIR}/glew" )
 # High Warning Level
 if(MSVC10)
 	set(CMAKE_CXX_FLAGS "/W4 /EHsc /MP")
+	add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES)
 elseif(MSVC)
 	set(CMAKE_CXX_FLAGS "/W4 /EHsc")
+	add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES)
 else()
 	set(CMAKE_CXX_FLAGS "-W -Wall") # see also: -W -Wall -Wwrite-strings -Wcast-qual -Wconversion -Wshadow
 endif()
