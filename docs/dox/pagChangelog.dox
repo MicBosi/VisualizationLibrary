@@ -2,6 +2,11 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.04.1142</div>
+	
+	- Fixed compilation error when VL_PIPELINE_PRECISION == 2
+	- Define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES for MSVC compilers.
+
 	<div class="featuretitle">Visualization Library 2011.04.1140</div>
 
 	- Added pagGuideThreads.dox file "Multi-Threading with VL".
