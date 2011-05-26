@@ -181,7 +181,7 @@ void VolumePlot::setupLabels(const String& format, const fvec3& min_corner, cons
     text->setDisplayListEnabled(false);
     text->setVBOEnabled(false);
     text->setFont( font );
-    text->setAlignment(AlignHCenter| AlignVCenter);
+    text->setTextPivot(AlignHCenter| AlignVCenter);
     text->setText(coord_label[i]);
     // template parameters
     text->setColor( textTemplate()->color() );

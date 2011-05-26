@@ -456,8 +456,8 @@ Actor* VectorGraphics::drawText(const String& text, int alignment)
 {
   ref<Text> t = new Text;
   t->setText( text );
-  t->setAlignment(alignment);
-  t->setViewportAlignment(AlignBottom|AlignLeft);
+  t->setTextPivot(alignment);
+  t->setViewportOrigin(AlignBottom|AlignLeft);
   t->setColor( mState.mColor );
   t->setMatrix( (fmat4)matrix() );
   return drawText(t.get());

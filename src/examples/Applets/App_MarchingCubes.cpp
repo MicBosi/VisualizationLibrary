@@ -98,8 +98,8 @@ public:
     mText->setDisplayListEnabled(true);
     mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     mText->setMargin(5);
-    mText->setViewportAlignment(vl::AlignTop | vl::AlignHCenter);
-    mText->setAlignment(vl::AlignTop | vl::AlignHCenter);
+    mText->setViewportOrigin(vl::AlignTop | vl::AlignHCenter);
+    mText->setTextPivot(vl::AlignTop | vl::AlignHCenter);
     mText->setTextAlignment(vl::TextAlignCenter);
     mText->setColor(vl::white);
     mText->setBackgroundColor(vl::fvec4(0,0,0,.75f));

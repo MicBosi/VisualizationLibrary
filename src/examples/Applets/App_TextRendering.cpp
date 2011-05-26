@@ -134,8 +134,8 @@ public:
       text->setText( L"The Raven");
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignJustify );
-      text->setAlignment( vl::AlignHCenter | vl::AlignTop );
-      text->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
+      text->setTextPivot( vl::AlignHCenter | vl::AlignTop );
+      text->setViewportOrigin( vl::AlignHCenter | vl::AlignTop );
       text->setColor( vl::red );
       text->setShadowVector( vl::fvec2(5,5) );
       text->setOutlineEnabled(true);
@@ -151,8 +151,8 @@ public:
       text->setText( L"By Egar Allan Poe");
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignJustify );
-      text->setAlignment( vl::AlignHCenter | vl::AlignTop );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignHCenter | vl::AlignTop );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor( vl::black );
       text->setShadowVector( vl::fvec2(5,5) );
       text->translate(0,h-10,0);
@@ -166,8 +166,8 @@ public:
       text->setText( raven1 );
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignLeft );
-      text->setAlignment( vl::AlignHCenter | vl::AlignTop );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter);
+      text->setTextPivot( vl::AlignHCenter | vl::AlignTop );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter);
       text->setColor(vl::crimson);
       text->setBorderColor( vl::red );
       text->setShadowColor(vl::fvec4(0,0,0,0.3f));
@@ -182,8 +182,8 @@ public:
       text->setText( raven2 );
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignCenter );
-      text->setAlignment( vl::AlignHCenter | vl::AlignTop );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter);
+      text->setTextPivot( vl::AlignHCenter | vl::AlignTop );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter);
       text->setColor(vl::crimson);
       text->setShadowColor(vl::fvec4(0,0,0,0.3f));
       text->setBorderEnabled(true);
@@ -198,8 +198,8 @@ public:
       text->setText( raven3 );
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignRight );
-      text->setAlignment( vl::AlignHCenter | vl::AlignTop );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter);
+      text->setTextPivot( vl::AlignHCenter | vl::AlignTop );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter);
       text->setColor(vl::crimson);
       text->setShadowColor(vl::fvec4(0,0,0,0.3f));
       text->setBorderEnabled(true);
@@ -214,8 +214,8 @@ public:
       text->setText( raven4 );
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignJustify );
-      text->setAlignment( vl::AlignHCenter | vl::AlignTop );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter);
+      text->setTextPivot( vl::AlignHCenter | vl::AlignTop );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter);
       text->setColor(vl::crimson);
       text->setShadowColor(vl::fvec4(0,0,0,0.3f));
       text->setBorderEnabled(true);
@@ -235,8 +235,8 @@ public:
       text->setText( L"vl::AlignTop | vl::AlignLeft");
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignJustify );
-      text->setAlignment( vl::AlignTop | vl::AlignLeft );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignLeft );
+      text->setTextPivot( vl::AlignTop | vl::AlignLeft );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignLeft );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
       text->setColor( vl::black );
@@ -248,8 +248,8 @@ public:
       text->setText( L"vl::AlignTop | vl::AlignRight");
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignJustify );
-      text->setAlignment( vl::AlignTop | vl::AlignRight );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignRight );
+      text->setTextPivot( vl::AlignTop | vl::AlignRight );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignRight );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
       text->setColor( vl::black );
@@ -261,8 +261,8 @@ public:
       text->setText( L"vl::AlignBottom | vl::AlignLeft");
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignJustify );
-      text->setAlignment( vl::AlignBottom | vl::AlignLeft );
-      text->setViewportAlignment( vl::AlignBottom | vl::AlignLeft );
+      text->setTextPivot( vl::AlignBottom | vl::AlignLeft );
+      text->setViewportOrigin( vl::AlignBottom | vl::AlignLeft );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
       text->setColor( vl::black );
@@ -274,8 +274,8 @@ public:
       text->setText( L"vl::AlignBottom | vl::AlignRight");
       text->setMode(vl::Text2D);
       text->setTextAlignment( vl::TextAlignJustify );
-      text->setAlignment( vl::AlignBottom | vl::AlignRight );
-      text->setViewportAlignment( vl::AlignBottom | vl::AlignRight );
+      text->setTextPivot( vl::AlignBottom | vl::AlignRight );
+      text->setViewportOrigin( vl::AlignBottom | vl::AlignRight );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
       text->setColor( vl::black );
@@ -286,8 +286,8 @@ public:
       text->setKerningEnabled(false);
       text->setText( L"vl::AlignVCenter | vl::AlignHCenter");
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignVCenter | vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignVCenter | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignVCenter | vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignVCenter | vl::AlignHCenter );
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
       text->setColor( vl::black );
@@ -301,8 +301,8 @@ public:
       _text1->setFont( font.get() );
       _text1->setText( cprog );
       _text1->setMode(vl::Text2D);
-      _text1->setAlignment( vl::AlignVCenter | vl::AlignHCenter );
-      _text1->setViewportAlignment( vl::AlignVCenter | vl::AlignHCenter );
+      _text1->setTextPivot( vl::AlignVCenter | vl::AlignHCenter );
+      _text1->setViewportOrigin( vl::AlignVCenter | vl::AlignHCenter );
       _text1->setColor(vl::black);
       _text1->setMargin(10);
       _text1->setBorderEnabled(true);
@@ -329,8 +329,8 @@ public:
       text->setFont( font.get() );
       text->setText( vl::String::loadText("/text/greetings-en.txt") );
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignTop | vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
@@ -344,8 +344,8 @@ public:
       text->setFont( font.get() );
       text->setText( vl::String::loadText("/text/greetings-ru.txt") );
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignTop | vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
@@ -357,8 +357,8 @@ public:
       text->setFont( font.get() );
       text->setText( vl::String::loadText("/text/greetings-he.txt") );
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignTop | vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
@@ -371,8 +371,8 @@ public:
       text->setFont( font.get() );
       text->setText( vl::String::loadText("/text/greetings-ar.txt") );
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignTop | vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
@@ -385,8 +385,8 @@ public:
       text->setFont( chinese_font.get() );
       text->setText( vl::String::loadText("/text/greetings-jp.txt") );
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignTop | vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
@@ -398,8 +398,8 @@ public:
       text->setFont( chinese_font.get() );
       text->setText( vl::String::loadText("/text/greetings-ch.txt") );
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignTop | vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignTop | vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(10);
       text->setBorderEnabled(true);
@@ -413,8 +413,8 @@ public:
       text->setFont( font.get() );
       text->setText( L"English");
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignBottom| vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(0);
       text->translate(0,-40-space*0,0);
@@ -424,8 +424,8 @@ public:
       text->setFont( font.get() );
       text->setText( L"Russian");
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignBottom| vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(0);
       text->translate(0,-40-space*1,0);
@@ -435,8 +435,8 @@ public:
       text->setFont( font.get() );
       text->setText( L"Hebrew");
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignBottom| vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(0);
       text->translate(0,-40-space*2,0);
@@ -446,8 +446,8 @@ public:
       text->setFont( font.get() );
       text->setText( L"Arabic");
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignBottom| vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(0);
       text->translate(0,-40-space*3,0);
@@ -457,8 +457,8 @@ public:
       text->setFont( font.get() );
       text->setText( L"Japanese");
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignBottom| vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(0);
       text->translate(0,-40-space*4,0);
@@ -468,8 +468,8 @@ public:
       text->setFont( font.get() );
       text->setText( L"Chinese");
       text->setMode(vl::Text2D);
-      text->setAlignment( vl::AlignBottom| vl::AlignHCenter );
-      text->setViewportAlignment( vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot( vl::AlignBottom| vl::AlignHCenter );
+      text->setViewportOrigin( vl::AlignTop | vl::AlignHCenter );
       text->setColor(vl::black);
       text->setMargin(0);
       text->translate(0,-40-space*5,0);
@@ -529,7 +529,7 @@ public:
       text->setMode( vl::Text2D );
       text->setText( L"Sun");
       text->setColor(vl::white);
-      text->setAlignment(vl::AlignBottom|vl::AlignLeft);
+      text->setTextPivot(vl::AlignBottom|vl::AlignLeft);
 
       /* belts & planets */
 
@@ -582,8 +582,8 @@ public:
         text->setMode( vl::Text2D );
         text->setText( names[i] );
         text->setColor(vl::white);
-        text->setAlignment(vl::AlignBottom | vl::AlignLeft);
-        /* when the label follows an object the settings for text->setViewportAlignment don't have any effect */
+        text->setTextPivot(vl::AlignBottom | vl::AlignLeft);
+        /* when the label follows an object the settings for text->setViewportOrigin don't have any effect */
       }
 
       /* moon */
@@ -604,7 +604,7 @@ public:
       text->setBorderEnabled(true);
       text->setBackgroundEnabled(true);
       text->setBackgroundColor( vl::fvec4(1,1,1,0.35f) );
-      text->setAlignment( vl::AlignVCenter | vl::AlignLeft );
+      text->setTextPivot( vl::AlignVCenter | vl::AlignLeft );
       /* note: matrix transformations still apply in pixel coordinates and are often
          useful to offset the label from the followed object. */
       text->translate(5,0,0);
@@ -618,8 +618,8 @@ public:
       text->setMode( vl::Text2D );
       text->setText( L"The Solar System");
       text->setColor(vl::white);
-      text->setAlignment(vl::AlignTop | vl::AlignHCenter );
-      text->setViewportAlignment(vl::AlignTop | vl::AlignHCenter );
+      text->setTextPivot(vl::AlignTop | vl::AlignHCenter );
+      text->setViewportOrigin(vl::AlignTop | vl::AlignHCenter );
       text->translate(0,-20,0);
     }
   }

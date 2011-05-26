@@ -170,8 +170,8 @@ public:
     // bias text
     mBiasText = new Text;
     mBiasText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 12) );
-    mBiasText->setAlignment( AlignHCenter | AlignBottom);
-    mBiasText->setViewportAlignment( AlignHCenter | AlignBottom );
+    mBiasText->setTextPivot( AlignHCenter | AlignBottom);
+    mBiasText->setViewportOrigin( AlignHCenter | AlignBottom );
     mBiasText->translate(0,5,0);
     mBiasText->setBackgroundEnabled(true);
     mBiasText->setBackgroundColor(fvec4(0,0,0,0.75));
