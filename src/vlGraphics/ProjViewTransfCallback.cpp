@@ -55,7 +55,11 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
     if ( glsl_program && glsl_program->vl_ProjectionMatrix() != -1 )
     {
       use_fixed_function_matrices = false;
+#if VL_PIPELINE_PRECISION == 1
       glUniformMatrix4fv( glsl_program->vl_ProjectionMatrix(), 1, GL_FALSE, camera->projectionMatrix().ptr() ); VL_CHECK_OGL();
+#elif VL_PIPELINE_PRECISION == 2
+      glUniformMatrix4fv( glsl_program->vl_ProjectionMatrix(), 1, GL_FALSE, ((fmat4)camera->projectionMatrix()).ptr() ); VL_CHECK_OGL();
+#endif
     }
 
     if ( use_fixed_function_matrices )
@@ -82,14 +86,22 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
       if ( glsl_program->vl_ModelViewMatrix() != -1 )
       {
         use_fixed_function_matrices = false;
+#if VL_PIPELINE_PRECISION == 1
         glUniformMatrix4fv( glsl_program->vl_ModelViewMatrix(), 1, GL_FALSE, modelview.ptr() ); VL_CHECK_OGL();
+#elif VL_PIPELINE_PRECISION == 2
+        glUniformMatrix4fv( glsl_program->vl_ModelViewMatrix(), 1, GL_FALSE, ((fmat4)modelview).ptr() ); VL_CHECK_OGL();
+#endif
       }
 
       // update vl_ModelViewProjectionMatrix if used
       if ( glsl_program->vl_ModelViewProjectionMatrix() != -1 )
       {
         use_fixed_function_matrices = false;
+#if VL_PIPELINE_PRECISION == 1
         glUniformMatrix4fv( glsl_program->vl_ModelViewProjectionMatrix(), 1, GL_FALSE, (camera->projectionMatrix() * modelview).ptr() ); VL_CHECK_OGL();
+#elif VL_PIPELINE_PRECISION == 2
+        glUniformMatrix4fv( glsl_program->vl_ModelViewProjectionMatrix(), 1, GL_FALSE, ((fmat4)(camera->projectionMatrix() * modelview)).ptr() ); VL_CHECK_OGL();
+#endif
       }
 
       // update vl_NormalMatrix if used
@@ -100,7 +112,11 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
         mat4 normalmtx = modelview.as3x3();
         normalmtx.invert();
         normalmtx.transpose();
+#if VL_PIPELINE_PRECISION == 1
         glUniformMatrix4fv( glsl_program->vl_NormalMatrix(), 1, GL_FALSE, normalmtx.ptr() ); VL_CHECK_OGL();
+#elif VL_PIPELINE_PRECISION == 2
+        glUniformMatrix4fv( glsl_program->vl_NormalMatrix(), 1, GL_FALSE, ((fmat4)normalmtx).ptr() ); VL_CHECK_OGL();
+#endif
       }
     }
 
