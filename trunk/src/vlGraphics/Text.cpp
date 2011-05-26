@@ -213,6 +213,50 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
   FT_Long use_kerning = FT_HAS_KERNING( font()->mFT_Face );
   FT_UInt previous = 0;
 
+  // viewport alignment
+  fmat4 m = mMatrix;
+
+  int w = camera->viewport()->width();
+  int h = camera->viewport()->height();
+
+  if (w < 1) w = 1;
+  if (h < 1) h = 1;
+
+  if ( !(actor && actor->transform()) && mode() == Text2D )
+  {
+    if (viewportOrigin() & AlignHCenter)
+    {
+      VL_CHECK( !(viewportOrigin() & AlignRight) )
+      VL_CHECK( !(viewportOrigin() & AlignLeft) )
+      // vect[i].x() += int((viewport[2]-1.0f) / 2.0f);
+      m.translate( (float)int((w-1.0f) / 2.0f), 0, 0);
+    }
+
+    if (viewportOrigin() & AlignRight)
+    {
+      VL_CHECK( !(viewportOrigin() & AlignHCenter) )
+      VL_CHECK( !(viewportOrigin() & AlignLeft) )
+      // vect[i].x() += int(viewport[2]-1.0f);
+      m.translate( (float)int(w-1.0f), 0, 0);
+    }
+
+    if (viewportOrigin() & AlignTop)
+    {
+      VL_CHECK( !(viewportOrigin() & AlignBottom) )
+      VL_CHECK( !(viewportOrigin() & AlignVCenter) )
+      // vect[i].y() += int(viewport[3]-1.0f);
+      m.translate( 0, (float)int(h-1.0f), 0);
+    }
+
+    if (viewportOrigin() & AlignVCenter)
+    {
+      VL_CHECK( !(viewportOrigin() & AlignTop) )
+      VL_CHECK( !(viewportOrigin() & AlignBottom) )
+      // vect[i].y() += int((viewport[3]-1.0f) / 2.0f);
+      m.translate( 0, (float)int((h-1.0f) / 2.0f), 0);
+    }
+  }
+
   // split the text in different lines
 
   VL_CHECK(text().length())
@@ -418,46 +462,6 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
           }
         }
 
-        // viewport alignment
-        fmat4 m = mMatrix;
-
-#if(1)
-        if ( !actor->transform() )
-        {
-          if (viewportOrigin() & AlignHCenter)
-          {
-            VL_CHECK( !(viewportOrigin() & AlignRight) )
-            VL_CHECK( !(viewportOrigin() & AlignLeft) )
-            // vect[i].x() += int((viewport[2]-1.0f) / 2.0f);
-            m.translate( (float)int((viewport[2]-1.0f) / 2.0f), 0, 0);
-          }
-
-          if (viewportOrigin() & AlignRight)
-          {
-            VL_CHECK( !(viewportOrigin() & AlignHCenter) )
-            VL_CHECK( !(viewportOrigin() & AlignLeft) )
-            // vect[i].x() += int(viewport[2]-1.0f);
-            m.translate( (float)int(viewport[2]-1.0f), 0, 0);
-          }
-
-          if (viewportOrigin() & AlignTop)
-          {
-            VL_CHECK( !(viewportOrigin() & AlignBottom) )
-            VL_CHECK( !(viewportOrigin() & AlignVCenter) )
-            // vect[i].y() += int(viewport[3]-1.0f);
-            m.translate( 0, (float)int(viewport[3]-1.0f), 0);
-          }
-
-          if (viewportOrigin() & AlignVCenter)
-          {
-            VL_CHECK( !(viewportOrigin() & AlignTop) )
-            VL_CHECK( !(viewportOrigin() & AlignBottom) )
-            // vect[i].y() += int((viewport[3]-1.0f) / 2.0f);
-            m.translate( 0, (float)int((viewport[3]-1.0f) / 2.0f), 0);
-          }
-        }
-#endif
-
         // apply text transform
         vect[0] = m * vect[0];
         vect[1] = m * vect[1];
@@ -489,10 +493,10 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
           vect[3].y() += (float)v.y();
 
           // clever trick part #2
-          vect[0].z() = float((v.z()- 0.5) / 0.5);
-          vect[1].z() = float((v.z()- 0.5) / 0.5);
-          vect[2].z() = float((v.z()- 0.5) / 0.5);
-          vect[3].z() = float((v.z()- 0.5) / 0.5);
+          vect[0].z() = 
+          vect[1].z() = 
+          vect[2].z() = 
+          vect[3].z() = float((v.z() - 0.5f) / 0.5f);
         }
 
         glDrawArrays(GL_QUADS, 0, 4);
@@ -523,7 +527,6 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
         if(just_remained_space)
           just_remained_space--;
       }
-
 
       if (layout() == LeftToRightText)
       {
@@ -905,14 +908,13 @@ AABB Text::boundingRectTransformed(vec3& a, vec3& b, vec3& c, vec3& d, const Cam
   // viewport alignment
   fmat4 m = mMatrix;
 
-#if (1)
   int w = camera->viewport()->width();
   int h = camera->viewport()->height();
 
   if (w < 1) w = 1;
   if (h < 1) h = 1;
 
-  if(!actor || !actor->transform())
+  if ( !(actor && actor->transform()) && mode() == Text2D )
   {
     if (viewportOrigin() & AlignHCenter)
     {
@@ -946,8 +948,8 @@ AABB Text::boundingRectTransformed(vec3& a, vec3& b, vec3& c, vec3& d, const Cam
       m.translate( 0, (float)int((h-1.0f) / 2.0f), 0);
     }
   }
-#endif
 
+  // ??? mix fixme: remove all these castings!
   // apply matrix transform
   a = (mat4)m * a;
   b = (mat4)m * b;
@@ -988,10 +990,10 @@ AABB Text::boundingRectTransformed(vec3& a, vec3& b, vec3& c, vec3& d, const Cam
       d += v.xyz();
 
       // clever trick part #2
-      a.z() = (v.z()- 0.5f) / 0.5f;
-      b.z() = (v.z()- 0.5f) / 0.5f;
-      c.z() = (v.z()- 0.5f) / 0.5f;
-      d.z() = (v.z()- 0.5f) / 0.5f;
+      a.z() = 
+      b.z() = 
+      c.z() = 
+      d.z() = (v.z() - 0.5f) / 0.5f;
     }
   }
 
