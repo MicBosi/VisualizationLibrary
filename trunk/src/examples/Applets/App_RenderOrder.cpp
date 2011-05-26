@@ -54,8 +54,8 @@ public:
     mText = new Text;
     mText->setText("...");
     mText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    mText->setAlignment( AlignHCenter | AlignTop );
-    mText->setViewportAlignment( AlignHCenter| AlignTop );
+    mText->setTextPivot( AlignHCenter | AlignTop );
+    mText->setViewportOrigin( AlignHCenter| AlignTop );
     mText->setTextAlignment(TextAlignLeft);
     mText->translate(0,-5,0);
     mText->setColor(white);

@@ -263,8 +263,8 @@ public:
     mValThresholdText = new Text;
     mValThresholdText->setFont( defFontManager()->acquireFont( "/font/bitstream-vera/VeraMono.ttf", 12 ) );
     mValThresholdText->setTextAlignment( TextAlignCenter );
-    mValThresholdText->setAlignment( AlignHCenter | AlignBottom );
-    mValThresholdText->setViewportAlignment( AlignHCenter | AlignBottom );
+    mValThresholdText->setTextPivot( AlignHCenter | AlignBottom );
+    mValThresholdText->setViewportOrigin( AlignHCenter | AlignBottom );
     mValThresholdText->translate( 0,5,0 );
     mValThresholdText->setBackgroundEnabled( true );
     mValThresholdText->setBackgroundColor( fvec4( 0,0,0,0.75 ) );

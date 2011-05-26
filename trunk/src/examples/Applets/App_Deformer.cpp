@@ -143,8 +143,8 @@ public:
   {
     if (mHelpOn)
     {
-      mText->setAlignment(vl::AlignHCenter | vl::AlignVCenter);
-      mText->setViewportAlignment(vl::AlignHCenter | vl::AlignVCenter);
+      mText->setTextPivot(vl::AlignHCenter | vl::AlignVCenter);
+      mText->setViewportOrigin(vl::AlignHCenter | vl::AlignVCenter);
       mText->setText(
         "HELP:\n"
         "\n"
@@ -163,8 +163,8 @@ public:
     }
     else
     {
-      mText->setAlignment(vl::AlignHCenter | vl::AlignTop);
-      mText->setViewportAlignment(vl::AlignHCenter | vl::AlignTop);
+      mText->setTextPivot(vl::AlignHCenter | vl::AlignTop);
+      mText->setViewportOrigin(vl::AlignHCenter | vl::AlignTop);
       mText->setText("http://www.VisualizationLibrary.com\n");
     }
   }

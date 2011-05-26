@@ -90,8 +90,8 @@ public:
     mText->setMatrix( fmat4::getTranslation(0,5,0) );
     mText->setText( "Triangle Count: -" );
     mText->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    mText->setAlignment( AlignHCenter | AlignBottom );
-    mText->setViewportAlignment( AlignHCenter | AlignBottom );
+    mText->setTextPivot( AlignHCenter | AlignBottom );
+    mText->setViewportOrigin( AlignHCenter | AlignBottom );
     mText->setBackgroundEnabled(true);
     mText->setBackgroundColor(fvec4(0,0,0,0.5f));
     ref<Effect> effect = new Effect;
