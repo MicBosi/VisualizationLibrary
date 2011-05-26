@@ -52,7 +52,7 @@ namespace vl
   public:
     virtual const char* className() { return "vl::Text"; }
     Text(): mColor(1,1,1,1), mBorderColor(0,0,0,1), mBackgroundColor(1,1,1,1), mOutlineColor(0,0,0,1), mShadowColor(0,0,0,0.5f), mShadowVector(2,-2), 
-      mInterlineSpacing(5), mAlignment(AlignBottom|AlignLeft), mViewportAlignment(AlignBottom|AlignLeft), mMargin(5), mMode(Text2D), mLayout(LeftToRightText), mTextAlignment(TextAlignLeft), 
+      mInterlineSpacing(5), mTextPivot(AlignBottom|AlignLeft), mViewportOrigin(AlignBottom|AlignLeft), mMargin(5), mMode(Text2D), mLayout(LeftToRightText), mTextAlignment(TextAlignLeft), 
       mBorderEnabled(false), mBackgroundEnabled(false), mOutlineEnabled(false), mShadowEnabled(false), mKerningEnabled(true) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -88,12 +88,6 @@ namespace vl
     const fmat4 matrix() const { return mMatrix; }
     void setMatrix(const fmat4& matrix) { mMatrix = matrix; }
 
-    int  alignment() const { return mAlignment; }
-    void setAlignment(int  align) { mAlignment = align; }
-
-    int  viewportAlignment() const { return mViewportAlignment; }
-    void setViewportAlignment(int  align) { mViewportAlignment = align; }
-
     float interlineSpacing() const { return mInterlineSpacing; }
     void setInterlineSpacing(float spacing) { mInterlineSpacing = spacing; }
 
@@ -105,6 +99,12 @@ namespace vl
 
     ETextAlign textAlignment() const { return mTextAlignment; }
     void setTextAlignment(ETextAlign align) { mTextAlignment = align; }
+
+    int  textPivot() const { return mTextPivot; }
+    void setTextPivot(int align) { mTextPivot = align; }
+
+    int  viewportOrigin() const { return mViewportOrigin; }
+    void setViewportOrigin(int align) { mViewportOrigin = align; }
 
     bool borderEnabled() const { return mBorderEnabled; }
     void setBorderEnabled(bool border) { mBorderEnabled = border; }
@@ -153,8 +153,8 @@ namespace vl
     fvec2 mShadowVector;
     fmat4 mMatrix;
     float mInterlineSpacing;
-    int mAlignment;
-    int mViewportAlignment;
+    int mTextPivot;
+    int mViewportOrigin;
     int mMargin;
     ETextMode mMode;
     ETextLayout mLayout;

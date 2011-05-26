@@ -167,9 +167,10 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
     glPushMatrix();
     // glLoadIdentity();
     // gluOrtho2D( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f );
+
     // clever trick part #1
     dmat4 mat = dmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
-    mat.e(2,2) = 1.0f;
+    mat.e(2,2) = 1.0f; // preserve the z value from the incoming vertex.
     mat.e(2,3) = 0.0f;
     glLoadMatrixd(mat.ptr());
 
@@ -388,31 +389,31 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
         // alignment
         for(int i=0; i<4; ++i)
         {
-          if (alignment() & AlignHCenter)
+          if (textPivot() & AlignHCenter)
           {
-            VL_CHECK( !(alignment() & AlignRight) )
-            VL_CHECK( !(alignment() & AlignLeft) )
+            VL_CHECK( !(textPivot() & AlignRight) )
+            VL_CHECK( !(textPivot() & AlignLeft) )
             vect[i].x() -= (int)(bbox.width() / 2.0f);
           }
 
-          if (alignment() & AlignRight)
+          if (textPivot() & AlignRight)
           {
-            VL_CHECK( !(alignment() & AlignHCenter) )
-            VL_CHECK( !(alignment() & AlignLeft) )
+            VL_CHECK( !(textPivot() & AlignHCenter) )
+            VL_CHECK( !(textPivot() & AlignLeft) )
             vect[i].x() -= (int)bbox.width();
           }
 
-          if (alignment() & AlignTop)
+          if (textPivot() & AlignTop)
           {
-            VL_CHECK( !(alignment() & AlignBottom) )
-            VL_CHECK( !(alignment() & AlignVCenter) )
+            VL_CHECK( !(textPivot() & AlignBottom) )
+            VL_CHECK( !(textPivot() & AlignVCenter) )
             vect[i].y() -= (int)bbox.height();
           }
 
-          if (alignment() & AlignVCenter)
+          if (textPivot() & AlignVCenter)
           {
-            VL_CHECK( !(alignment() & AlignTop) )
-            VL_CHECK( !(alignment() & AlignBottom) )
+            VL_CHECK( !(textPivot() & AlignTop) )
+            VL_CHECK( !(textPivot() & AlignBottom) )
             vect[i].y() -= int(bbox.height() / 2.0);
           }
         }
@@ -423,34 +424,34 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
 #if(1)
         if ( !actor->transform() )
         {
-          if (viewportAlignment() & AlignHCenter)
+          if (viewportOrigin() & AlignHCenter)
           {
-            VL_CHECK( !(viewportAlignment() & AlignRight) )
-            VL_CHECK( !(viewportAlignment() & AlignLeft) )
+            VL_CHECK( !(viewportOrigin() & AlignRight) )
+            VL_CHECK( !(viewportOrigin() & AlignLeft) )
             // vect[i].x() += int((viewport[2]-1.0f) / 2.0f);
             m.translate( (float)int((viewport[2]-1.0f) / 2.0f), 0, 0);
           }
 
-          if (viewportAlignment() & AlignRight)
+          if (viewportOrigin() & AlignRight)
           {
-            VL_CHECK( !(viewportAlignment() & AlignHCenter) )
-            VL_CHECK( !(viewportAlignment() & AlignLeft) )
+            VL_CHECK( !(viewportOrigin() & AlignHCenter) )
+            VL_CHECK( !(viewportOrigin() & AlignLeft) )
             // vect[i].x() += int(viewport[2]-1.0f);
             m.translate( (float)int(viewport[2]-1.0f), 0, 0);
           }
 
-          if (viewportAlignment() & AlignTop)
+          if (viewportOrigin() & AlignTop)
           {
-            VL_CHECK( !(viewportAlignment() & AlignBottom) )
-            VL_CHECK( !(viewportAlignment() & AlignVCenter) )
+            VL_CHECK( !(viewportOrigin() & AlignBottom) )
+            VL_CHECK( !(viewportOrigin() & AlignVCenter) )
             // vect[i].y() += int(viewport[3]-1.0f);
             m.translate( 0, (float)int(viewport[3]-1.0f), 0);
           }
 
-          if (viewportAlignment() & AlignVCenter)
+          if (viewportOrigin() & AlignVCenter)
           {
-            VL_CHECK( !(viewportAlignment() & AlignTop) )
-            VL_CHECK( !(viewportAlignment() & AlignBottom) )
+            VL_CHECK( !(viewportOrigin() & AlignTop) )
+            VL_CHECK( !(viewportOrigin() & AlignBottom) )
             // vect[i].y() += int((viewport[3]-1.0f) / 2.0f);
             m.translate( 0, (float)int((viewport[3]-1.0f) / 2.0f), 0);
           }
@@ -708,6 +709,7 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
     glPushMatrix();
     //glLoadIdentity();
     //gluOrtho2D( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f );
+
     // clever trick part #1
     dmat4 mat = dmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
     mat.e(2,2) = 1.0f;
@@ -764,6 +766,7 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
     glPushMatrix();
     //glLoadIdentity();
     //gluOrtho2D( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f );
+
     // clever trick part #1
     dmat4 mat = dmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
     mat.e(2,2) = 1.0f;
@@ -823,34 +826,34 @@ AABB Text::boundingRect(const String& text) const
 
   // alignment
 
-  if (alignment() & AlignHCenter)
+  if (textPivot() & AlignHCenter)
   {
-    VL_CHECK( !(alignment() & AlignRight) )
-    VL_CHECK( !(alignment() & AlignLeft) )
+    VL_CHECK( !(textPivot() & AlignRight) )
+    VL_CHECK( !(textPivot() & AlignLeft) )
     min.x() -= int(bbox.width() / 2.0);
     max.x() -= int(bbox.width() / 2.0);
   }
 
-  if (alignment() & AlignRight)
+  if (textPivot() & AlignRight)
   {
-    VL_CHECK( !(alignment() & AlignHCenter) )
-    VL_CHECK( !(alignment() & AlignLeft) )
+    VL_CHECK( !(textPivot() & AlignHCenter) )
+    VL_CHECK( !(textPivot() & AlignLeft) )
     min.x() -= (int)bbox.width();
     max.x() -= (int)bbox.width();
   }
 
-  if (alignment() & AlignTop)
+  if (textPivot() & AlignTop)
   {
-    VL_CHECK( !(alignment() & AlignBottom) )
-    VL_CHECK( !(alignment() & AlignVCenter) )
+    VL_CHECK( !(textPivot() & AlignBottom) )
+    VL_CHECK( !(textPivot() & AlignVCenter) )
     min.y() -= (int)bbox.height();
     max.y() -= (int)bbox.height();
   }
 
-  if (alignment() & AlignVCenter)
+  if (textPivot() & AlignVCenter)
   {
-    VL_CHECK( !(alignment() & AlignTop) )
-    VL_CHECK( !(alignment() & AlignBottom) )
+    VL_CHECK( !(textPivot() & AlignTop) )
+    VL_CHECK( !(textPivot() & AlignBottom) )
     min.y() -= int(bbox.height() / 2.0);
     max.y() -= int(bbox.height() / 2.0);
   }
@@ -911,34 +914,34 @@ AABB Text::boundingRectTransformed(vec3& a, vec3& b, vec3& c, vec3& d, const Cam
 
   if(!actor || !actor->transform())
   {
-    if (viewportAlignment() & AlignHCenter)
+    if (viewportOrigin() & AlignHCenter)
     {
-      VL_CHECK( !(viewportAlignment() & AlignRight) )
-      VL_CHECK( !(viewportAlignment() & AlignLeft) )
+      VL_CHECK( !(viewportOrigin() & AlignRight) )
+      VL_CHECK( !(viewportOrigin() & AlignLeft) )
       // vect[i].x() += int((viewport[2]-1.0f) / 2.0f);
       m.translate( (float)int((w-1.0f) / 2.0f), 0, 0);
     }
 
-    if (viewportAlignment() & AlignRight)
+    if (viewportOrigin() & AlignRight)
     {
-      VL_CHECK( !(viewportAlignment() & AlignHCenter) )
-      VL_CHECK( !(viewportAlignment() & AlignLeft) )
+      VL_CHECK( !(viewportOrigin() & AlignHCenter) )
+      VL_CHECK( !(viewportOrigin() & AlignLeft) )
       // vect[i].x() += int(viewport[2]-1.0f);
       m.translate( (float)int(w-1.0f), 0, 0);
     }
 
-    if (viewportAlignment() & AlignTop)
+    if (viewportOrigin() & AlignTop)
     {
-      VL_CHECK( !(viewportAlignment() & AlignBottom) )
-      VL_CHECK( !(viewportAlignment() & AlignVCenter) )
+      VL_CHECK( !(viewportOrigin() & AlignBottom) )
+      VL_CHECK( !(viewportOrigin() & AlignVCenter) )
       // vect[i].y() += int(viewport[3]-1.0f);
       m.translate( 0, (float)int(h-1.0f), 0);
     }
 
-    if (viewportAlignment() & AlignVCenter)
+    if (viewportOrigin() & AlignVCenter)
     {
-      VL_CHECK( !(viewportAlignment() & AlignTop) )
-      VL_CHECK( !(viewportAlignment() & AlignBottom) )
+      VL_CHECK( !(viewportOrigin() & AlignTop) )
+      VL_CHECK( !(viewportOrigin() & AlignBottom) )
       // vect[i].y() += int((viewport[3]-1.0f) / 2.0f);
       m.translate( 0, (float)int((h-1.0f) / 2.0f), 0);
     }

@@ -94,7 +94,7 @@ public:
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setColor(vl::white);
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineColor(vl::black);
     mMolecules[mCurrentMolecule]->atomLabelTemplate()->setOutlineEnabled(true);
-    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setAlignment(vl::AlignHCenter|vl::AlignVCenter);
+    mMolecules[mCurrentMolecule]->atomLabelTemplate()->setTextPivot(vl::AlignHCenter|vl::AlignVCenter);
 
     ... enable the atom label rendering at the molecule level
     mMolecules[mCurrentMolecule]->setShowAtomNames(true);
@@ -143,8 +143,8 @@ public:
     /* initialize the text actor */
     mText->setText("Drop a MOL2 file inside the window.");
     mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    mText->setAlignment( vl::AlignHCenter | vl::AlignTop );
-    mText->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
+    mText->setTextPivot( vl::AlignHCenter | vl::AlignTop );
+    mText->setViewportOrigin( vl::AlignHCenter | vl::AlignTop );
     mText->setTextAlignment(vl::TextAlignCenter);
     mText->translate(0,-5,0);
     mText->setColor(vl::white);

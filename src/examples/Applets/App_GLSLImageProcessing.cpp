@@ -124,8 +124,8 @@ public:
     // text
     mText = new vl::Text;
     mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10) );
-    mText->setAlignment( vl::AlignHCenter | vl::AlignBottom );
-    mText->setViewportAlignment( vl::AlignHCenter | vl::AlignBottom );
+    mText->setTextPivot( vl::AlignHCenter | vl::AlignBottom );
+    mText->setViewportOrigin( vl::AlignHCenter | vl::AlignBottom );
     mText->translate(0,5,0);
     mText->setColor(vl::white);
     mText->setBackgroundColor(vl::fvec4(0,0,0,.75f));
