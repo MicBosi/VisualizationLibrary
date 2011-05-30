@@ -56,10 +56,17 @@ namespace
   {
   public:
     GLSLProgState(): mCamera(NULL), mTransform(NULL), mGLSLProgUniformSet(NULL), mShaderUniformSet(NULL), mActorUniformSet(NULL) {}
+
     bool operator<(const GLSLProgState& other) const
     {
-      if (mTransform != other.mTransform)
+      if ( mCamera != other.mCamera )
+        return mCamera < other.mCamera;
+      else
+      if ( mTransform != other.mTransform )
         return mTransform < other.mTransform;
+      else
+      if ( mGLSLProgUniformSet != other.mGLSLProgUniformSet )
+        return mGLSLProgUniformSet < other.mGLSLProgUniformSet;
       else
       if ( mShaderUniformSet != other.mShaderUniformSet ) 
         return mShaderUniformSet < other.mShaderUniformSet;
