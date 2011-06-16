@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef Image_INCUDE_DEFINE
-#define Image_INCUDE_DEFINE
+#ifndef Image_INCUDE_ONCE
+#define Image_INCUDE_ONCE
 
 #include <vlCore/String.hpp>
 #include <vlCore/Buffer.hpp>
@@ -53,44 +53,93 @@ namespace vl
    * is to be considered an expensive operation. */
   class VLCORE_EXPORT Image: public Object
   {
-    Image(const Image& other): Object(other) {}
   public:
-    Image();
-    Image(const String& path);
-    Image(int x, int y, int z, int bytealign, EImageFormat format, EImageType type);
     virtual const char* className() { return "vl::Image"; }
-    virtual ~Image();
-    Image& operator=(const Image& other);
-    bool isCubemap() const { return mIsCubemap; }
-    bool isValid() const;
-    EImageDimension dimension() const;
-    void allocate();
-    void allocate1D(int x, EImageFormat format, EImageType type);
-    void allocate2D(int x, int y, int bytealign, EImageFormat format, EImageType type);
-    void allocate3D(int x, int y, int z, int bytealign, EImageFormat format, EImageType type);
-    void allocateCubemap(int x, int y, int bytealign, EImageFormat format, EImageType type);
-    // just sets up the image configuration & clears the local storage
-    void reset(int x, int y, int z, int bytealign, EImageFormat format, EImageType type, bool is_cubemap);
-    void clear();
-    int byteAlignment() const;
-    void setByteAlignment(int bytealign);
-    static int bitsPerPixel(EImageType type, EImageFormat format);
-    int bitsPerPixel() const { return bitsPerPixel(type(),format()); }
-    int requiredMemory() const;
-    static int requiredMemory(int x, int y, int z, int bytealign, EImageFormat format, EImageType type, bool is_cubemap);
-    static int requiredMemory1D(int x, EImageFormat format, EImageType type) { return requiredMemory(x, 0, 0, 1, format, type, false); } 
-    static int requiredMemory2D(int x, int y, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, 0, bytealign, format, type, false); } 
-    static int requiredMemory3D(int x, int y, int z, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, z, bytealign, format, type, false); } 
-    static int requiredMemoryCubemap(int x, int y, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, 0, bytealign, format, type, true); } 
-    String print() const;
-    String printType() const;
-    String printFormat() const;
 
+    virtual ~Image();
+
+    Image();
+
+    Image(const String& path);
+
+    Image(int x, int y, int z, int bytealign, EImageFormat format, EImageType type);
+
+    Image(const Image& other);
+
+    Image& operator=(const Image& other);
+
+    bool isCubemap() const { return mIsCubemap; }
+
+    bool isValid() const;
+
+    EImageDimension dimension() const;
+
+    void allocate();
+
+    void allocate1D(int x, EImageFormat format, EImageType type);
+
+    void allocate2D(int x, int y, int bytealign, EImageFormat format, EImageType type);
+
+    void allocate3D(int x, int y, int z, int bytealign, EImageFormat format, EImageType type);
+
+    void allocateCubemap(int x, int y, int bytealign, EImageFormat format, EImageType type);
+
+    //! Sets up the image configuration & clears the local storage
+    void reset(int x, int y, int z, int bytealign, EImageFormat format, EImageType type, bool is_cubemap);
+
+    //! Disposes all the pixel data and resets the image settings to its defaults.
+    void reset();
+
+    int byteAlignment() const;
+
+    void setByteAlignment(int bytealign);
+
+    static int bitsPerPixel(EImageType type, EImageFormat format);
+
+    int bitsPerPixel() const { return bitsPerPixel(type(),format()); }
+
+    int requiredMemory() const;
+
+    static int requiredMemory(int x, int y, int z, int bytealign, EImageFormat format, EImageType type, bool is_cubemap);
+
+    static int requiredMemory1D(int x, EImageFormat format, EImageType type) { return requiredMemory(x, 0, 0, 1, format, type, false); } 
+
+    static int requiredMemory2D(int x, int y, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, 0, bytealign, format, type, false); } 
+
+    static int requiredMemory3D(int x, int y, int z, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, z, bytealign, format, type, false); } 
+
+    static int requiredMemoryCubemap(int x, int y, int bytealign, EImageFormat format, EImageType type) { return requiredMemory(x, y, 0, bytealign, format, type, true); } 
+
+    String print() const;
+
+    String printType() const;
+
+    String printFormat() const;
+    
     void setWidth(int x) { mWidth = x; updatePitch(); }
+    
     void setHeight(int y) { mHeight = y; }
+    
     void setDepth(int z) { mDepth = z; }
+    
     void setFormat(EImageFormat format) { mFormat = format; updatePitch(); }
+    
     void setType(EImageType type) { mType=type; updatePitch(); }
+
+    //! Whether an image contains relevant alpha information.
+    bool hasAlpha() const { return mHasAlpha; }
+    
+    //! Whether an image contains relevant alpha information.
+    void setHasAlpha(bool has_alpha) { mHasAlpha = has_alpha; }
+
+    //! The number of bits dedicated to the alpha channel.
+    int alphaBits() const;
+
+    //! Whether an image represents a normal map.
+    bool isNormalMap() const { return mIsNormalMap; }
+
+    //! Whether an image represents a normal map.
+    void setIsNormalMap(bool is_normalmap) { mIsNormalMap = is_normalmap; }
 
     //! A set of key/value couples that can be used to attach extra information to an image like DICOM information etc.
     //! Returns NULL by default.
@@ -109,26 +158,43 @@ namespace vl
     const Buffer* imageBuffer() const { return mPixels.get(); }
 
     const unsigned char* pixels() const { if (mPixels->bytesUsed()) return mPixels->ptr(); else return NULL; }
+    
     unsigned char* pixels() { if (mPixels->bytesUsed()) return mPixels->ptr(); else return NULL; }
+    
     bool empty() { return pixels() == NULL; }
+    
     unsigned char* pixelsZSlice(int slice);
+    
     unsigned char* pixelsXP();
+    
     unsigned char* pixelsXN();
+    
     unsigned char* pixelsYP();
+    
     unsigned char* pixelsYN();
+    
     unsigned char* pixelsZP();
+    
     unsigned char* pixelsZN();
+    
     void setMipmaps(const std::vector< ref<Image> >& mipmaps) { mMipmaps = mipmaps; };
+    
     const std::vector< ref<Image> >& mipmaps() const { return mMipmaps; };
+    
     void clearMipmaps() { mMipmaps.clear(); }
+    
     int width() const { return mWidth; }
+    
     int height() const { return mHeight; }
+    
     int depth() const { return mDepth; }
+    
     int pitch() const { return mPitch; }
+    
     EImageFormat format() const { return mFormat; }
+    
     EImageType type() const { return mType; }
-    int alphaBits() const;
-
+    
     int isCompressedFormat(EImageFormat fmt);
 
     void flipVertically();
@@ -296,6 +362,8 @@ namespace vl
     EImageFormat mFormat;
     EImageType mType;
     bool mIsCubemap;
+    bool mIsNormalMap;
+    bool mHasAlpha;
   };
 
   //! Assembles a cubemap image.
