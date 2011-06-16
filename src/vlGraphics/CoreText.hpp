@@ -50,7 +50,7 @@ namespace vl
     virtual const char* className() { return "vl::CoreText"; }
 
     CoreText(): mColor(1,1,1,1), mBorderColor(0,0,0,1), mBackgroundColor(1,1,1,1), mOutlineColor(0,0,0,1), mShadowColor(0,0,0,0.5f), mShadowVector(2,-2), 
-      mTextPivot(AlignBottom|AlignLeft), mMargin(5), mLayout(LeftToRightText), mTextAlignment(TextAlignLeft), 
+      mTextOrigin(AlignBottom|AlignLeft), mMargin(5), mLayout(LeftToRightText), mTextAlignment(TextAlignLeft), 
       mBorderEnabled(false), mBackgroundEnabled(false), mOutlineEnabled(false), mShadowEnabled(false), mKerningEnabled(true) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -76,20 +76,20 @@ namespace vl
     //! The font to be used to render the text.
     void setFont(Font* font) { mFont = font; }
 
-    //! CoreText layout: left to right, right to left.
+    //! Text layout: left to right, right to left.
     ETextLayout layout() const { return mLayout; }
-    //! CoreText layout: left to right, right to left.
+    //! Text layout: left to right, right to left.
     void setLayout(ETextLayout layout) { mLayout = layout; }
 
-    //! CoreText alignment: left, right, center, justify.
+    //! Text alignment: left, right, center, justify.
     ETextAlign textAlignment() const { return mTextAlignment; }
-    //! CoreText alignment: left, right, center, justify.
+    //! Text alignment: left, right, center, justify.
     void setTextAlignment(ETextAlign align) { mTextAlignment = align; }
 
-    //! CoreText pivot: the origin of the text (pivot point for offsetting and rotations).
-    int  textPivot() const { return mTextPivot; }
-    //! CoreText pivot: the origin of the text (pivot point for offsetting and rotations).
-    void setTextPivot(int align) { mTextPivot = align; }
+    //! The origin of the text (pivot point for offsetting and rotations).
+    int  textOrigin() const { return mTextOrigin; }
+    //! The origin of the text (pivot point for offsetting and rotations).
+    void setTextOrigin(int align) { mTextOrigin = align; }
 
     //! If enabled text rendering uses kerning information for better quality results (slower).
     bool kerningEnabled() const { return mKerningEnabled; }
@@ -169,7 +169,7 @@ namespace vl
     fvec4 mOutlineColor;
     fvec4 mShadowColor;
     fvec2 mShadowVector;
-    int mTextPivot;
+    int mTextOrigin;
     int mMargin;
     ETextLayout mLayout;
     ETextAlign mTextAlignment;
