@@ -40,6 +40,7 @@ using namespace vl;
 
 namespace
 {
+  // if you think your application has a bug that depends on this function you are wrong
   int getDefaultFormat(ETextureFormat internal_format)
   {
     switch(internal_format)
@@ -176,7 +177,7 @@ namespace
       case TF_DEPTH_STENCIL:
       case TF_DEPTH24_STENCIL8:
       case TF_DEPTH32F_STENCIL8:
-      return GL_DEPTH_STENCIL;
+        return GL_DEPTH_STENCIL;
 
       case TF_DEPTH_COMPONENT:
       case TF_DEPTH_COMPONENT16:
@@ -223,6 +224,7 @@ namespace
     }
   }
 
+  // if you think your application has a bug that depends on this function you are wrong
   int getDefaultType(ETextureFormat internal_format)
   {
     switch( internal_format )
