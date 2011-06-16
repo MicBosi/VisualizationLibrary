@@ -38,7 +38,7 @@
 #include <tiffio.h>
 
 // mic fixme: read and write 16 bits images.
-...
+
 using namespace vl;
 
 namespace

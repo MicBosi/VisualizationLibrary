@@ -43,18 +43,6 @@
 #include <map>
 #include <cmath>
 
-... mettere questi mic fixmes nella todo list on nel nuovo TODO.txt file ...
-
-// mic fixme: 
-// - document
-//
-// proposals:
-// - make it more flexible/programmable, able to transport currently unknown formats?
-// - embed mipmaps inside one single vl::Image
-// - honour the hasAlpha() flag in the loaders and at allocation time.
-// - support half float images
-// - unify image format and type into a single pixel format description?
-
 using namespace vl;
 
 //-----------------------------------------------------------------------------
