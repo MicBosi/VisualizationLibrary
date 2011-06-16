@@ -42,7 +42,7 @@ namespace vl
   {
     friend class VisualizationLibrary;
   public:
-    virtual const char* className() { return "vl::VLSettings"; }
+    virtual const char* className() const { return "vl::VLSettings"; }
 
     VLSettings();
 

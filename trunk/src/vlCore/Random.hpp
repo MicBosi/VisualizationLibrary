@@ -40,7 +40,7 @@ namespace vl
   class VLCORE_EXPORT Random: public Object
   {
   public:
-    virtual const char* className() { return "vl::Random"; }
+    virtual const char* className() const { return "vl::Random"; }
 
     //! Constructor.
     Random();

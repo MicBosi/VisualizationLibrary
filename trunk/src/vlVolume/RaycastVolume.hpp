@@ -41,7 +41,7 @@ namespace vl
   class VLVOLUME_EXPORT RaycastVolume: public ActorEventCallback
   {
   public:
-    virtual const char* className() { return "vl::RaycastVolume"; }
+    virtual const char* className() const { return "vl::RaycastVolume"; }
     
     RaycastVolume();
     

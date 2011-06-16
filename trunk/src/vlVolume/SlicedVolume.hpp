@@ -42,7 +42,7 @@ namespace vl
   class VLVOLUME_EXPORT SlicedVolume: public ActorEventCallback
   {
   public:
-    virtual const char* className() { return "vl::SlicedVolume"; }
+    virtual const char* className() const { return "vl::SlicedVolume"; }
     
     //! Constructor.
     SlicedVolume();

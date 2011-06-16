@@ -49,7 +49,7 @@ namespace vl
     friend class ZippedDirectory;
 
   public:
-    virtual const char* className() { return "vl::ZippedFileInfo"; }
+    virtual const char* className() const { return "vl::ZippedFileInfo"; }
 
     ZippedFileInfo()
     {
@@ -136,7 +136,7 @@ namespace vl
     static const int CHUNK_SIZE = 128*1024;
 
   public:
-    virtual const char* className() { return "vl::ZippedFile"; }
+    virtual const char* className() const { return "vl::ZippedFile"; }
 
     ZippedFile();
     ~ZippedFile();

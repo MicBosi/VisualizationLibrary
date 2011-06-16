@@ -64,7 +64,7 @@ namespace vl
     typedef enum { NoMode, RotationMode, TranslationMode, ZoomMode } ETrackballMode;
   
   public:
-    virtual const char* className() { return "vl::TrackballManipulator"; }
+    virtual const char* className() const { return "vl::TrackballManipulator"; }
 
     //! Constructor.
     TrackballManipulator(): mMode(NoMode),

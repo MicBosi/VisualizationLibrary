@@ -72,7 +72,7 @@ namespace vl
     DiskFile(const String& path = String());
     ~DiskFile();
 
-    virtual const char* className() { return "vl::DiskFile"; }
+    virtual const char* className() const { return "vl::DiskFile"; }
 
     //! The specified path is relative to the parent directory. See setPhysicalPath().
     bool open(const String& path, EOpenMode mode);

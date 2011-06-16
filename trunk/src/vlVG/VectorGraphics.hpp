@@ -322,7 +322,7 @@ namespace vl
     //------------------------------------------------------------------------- end internal
 
   public:
-    virtual const char* className() { return "vl::VectorGraphics"; }
+    virtual const char* className() const { return "vl::VectorGraphics"; }
     
     VectorGraphics();
 

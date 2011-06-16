@@ -53,7 +53,7 @@ namespace vl
     } EAllocationMode;
 
   public:
-    virtual const char* className() { return "vl::Buffer"; }
+    virtual const char* className() const { return "vl::Buffer"; }
     Buffer()
     {
       VL_DEBUG_SET_OBJECT_NAME()

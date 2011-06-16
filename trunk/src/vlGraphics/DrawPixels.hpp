@@ -71,7 +71,7 @@ namespace vl
       friend class DrawPixels;
 
     public:
-      virtual const char* className() { return "vl::Pixels"; }
+      virtual const char* className() const { return "vl::Pixels"; }
 
       Pixels();
       /** Constructor.
@@ -129,7 +129,7 @@ namespace vl
 
     DrawPixels();
 
-    virtual const char* className() { return "vl::DrawPixels"; }
+    virtual const char* className() const { return "vl::DrawPixels"; }
 
     void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }
 

@@ -69,7 +69,7 @@ namespace vl
   class VLGRAPHICS_EXPORT Clear: public Renderable
   {
   public:
-    virtual const char* className() { return "vl::Clear"; }
+    virtual const char* className() const { return "vl::Clear"; }
 
     Clear();
 

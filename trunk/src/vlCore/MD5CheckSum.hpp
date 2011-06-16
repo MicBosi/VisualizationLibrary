@@ -51,7 +51,7 @@ namespace vl
       memset(mMD5, 0, 16);
     }
     
-    virtual const char* className() { return "vl::MD5CheckSum"; }
+    virtual const char* className() const { return "vl::MD5CheckSum"; }
     
     const unsigned char* md5() const { return mMD5; }
     

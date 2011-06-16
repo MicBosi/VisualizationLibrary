@@ -47,7 +47,7 @@ namespace vl
   class Scissor: public Object
   {
   public:
-    virtual const char* className() { return "vl::Scissor"; }
+    virtual const char* className() const { return "vl::Scissor"; }
 
     Scissor(int x, int y, int width, int height)
     {

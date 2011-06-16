@@ -46,7 +46,7 @@ namespace vl
   class CatmullRomInterpolator: public Object
   {
   public:
-    virtual const char* className() { return "vl::CatmullRomInterpolator"; }
+    virtual const char* className() const { return "vl::CatmullRomInterpolator"; }
 
     CatmullRomInterpolator() 
     {

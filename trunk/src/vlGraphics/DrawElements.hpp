@@ -143,7 +143,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::DrawElements"; }
+    virtual const char* className() const { return "vl::DrawElements"; }
 
     DrawElements(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
     {

@@ -44,7 +44,7 @@ namespace vl
   class VLGRAPHICS_EXPORT MorphingCallback: public ActorEventCallback
   {
   public:
-    virtual const char* className() { return "vl::MorphingCallback"; }
+    virtual const char* className() const { return "vl::MorphingCallback"; }
 
     MorphingCallback();
 

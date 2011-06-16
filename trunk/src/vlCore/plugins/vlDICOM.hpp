@@ -60,7 +60,7 @@ namespace vl
   class LoadWriterDICOM: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "LoadWriterDICOM"; }
+    virtual const char* className() const { return "LoadWriterDICOM"; }
 
     LoadWriterDICOM(): ResourceLoadWriter("|dcm|dicom|dic|ima|ph|mag|", "|dcm|dicom|dic|ima|ph|mag|") 
     {

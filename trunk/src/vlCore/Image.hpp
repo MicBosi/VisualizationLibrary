@@ -54,7 +54,7 @@ namespace vl
   class VLCORE_EXPORT Image: public Object
   {
   public:
-    virtual const char* className() { return "vl::Image"; }
+    virtual const char* className() const { return "vl::Image"; }
 
     virtual ~Image();
 

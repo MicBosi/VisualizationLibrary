@@ -45,7 +45,7 @@ namespace vl
   class RenderQueueSorter: public Object
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorter"; }
+    virtual const char* className() const { return "vl::RenderQueueSorter"; }
     RenderQueueSorter()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -62,7 +62,7 @@ namespace vl
   class RenderQueueSorterByShader: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterByShader"; }
+    virtual const char* className() const { return "vl::RenderQueueSorterByShader"; }
     RenderQueueSorterByShader()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -82,7 +82,7 @@ namespace vl
   class RenderQueueSorterByRenderable: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterByRenderable"; }
+    virtual const char* className() const { return "vl::RenderQueueSorterByRenderable"; }
     RenderQueueSorterByRenderable()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -101,7 +101,7 @@ namespace vl
   class RenderQueueSorterBasic: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterBasic"; }
+    virtual const char* className() const { return "vl::RenderQueueSorterBasic"; }
     RenderQueueSorterBasic()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -144,7 +144,7 @@ namespace vl
   class RenderQueueSorterStandard: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterStandard"; }
+    virtual const char* className() const { return "vl::RenderQueueSorterStandard"; }
     RenderQueueSorterStandard(): mDepthSortMode(AlphaDepthSort)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -225,7 +225,7 @@ namespace vl
   class RenderQueueSorterOcclusion: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterOcclusion"; }
+    virtual const char* className() const { return "vl::RenderQueueSorterOcclusion"; }
     RenderQueueSorterOcclusion()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -287,7 +287,7 @@ namespace vl
   class RenderQueueSorterAggressive: public RenderQueueSorter
   {
   public:
-    virtual const char* className() { return "vl::RenderQueueSorterAggressive"; }
+    virtual const char* className() const { return "vl::RenderQueueSorterAggressive"; }
     RenderQueueSorterAggressive(): mDepthSortMode(AlphaDepthSort)
     {
       VL_DEBUG_SET_OBJECT_NAME()

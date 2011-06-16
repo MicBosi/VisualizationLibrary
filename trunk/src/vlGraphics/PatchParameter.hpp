@@ -43,7 +43,7 @@ namespace vl
   class PatchParameter: public Object
   {
   public:
-    virtual const char* className() { return "vl::PatchParameter"; }
+    virtual const char* className() const { return "vl::PatchParameter"; }
 
     //! Constructor
     PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(fvec4(4,4,4,4)), mPatchDefaultInnerLevel(fvec2(4,4)) 
