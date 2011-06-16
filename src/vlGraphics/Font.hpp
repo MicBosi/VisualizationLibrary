@@ -126,6 +126,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Font: public Object
   {
+    friend class CoreText;
     friend class Text;
     friend class FontManager;
     
