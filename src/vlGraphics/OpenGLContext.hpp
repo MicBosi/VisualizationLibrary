@@ -66,7 +66,7 @@ namespace vl
       mFullscreen(false),
       mVSync(false) 
     {}
-    virtual const char* className() { return "vl::OpenGLContextFormat"; }
+    virtual const char* className() const { return "vl::OpenGLContextFormat"; }
 
     void setRGBABits(int r, int g, int b, int a) { mRGBABits = ivec4(r,g,b,a); }
     void setAccumRGBABits(int r, int g, int b, int a) { mAccumRGBABits = ivec4(r,g,b,a); }
@@ -122,7 +122,7 @@ namespace vl
   class VLGRAPHICS_EXPORT OpenGLContext: public Object
   {
   public:
-    virtual const char* className() { return "vl::OpenGLContext"; }
+    virtual const char* className() const { return "vl::OpenGLContext"; }
 
     //! Constructor.
     OpenGLContext(int w=0, int h=0);

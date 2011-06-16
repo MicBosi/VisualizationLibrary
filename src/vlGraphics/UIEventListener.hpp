@@ -56,7 +56,7 @@ namespace vl
   {
   friend class OpenGLContext;
   public:
-    virtual const char* className() { return "vl::UIEventListener"; }
+    virtual const char* className() const { return "vl::UIEventListener"; }
 
     /** Constructor. */
     UIEventListener(): mOpenGLContext(NULL), mEnabled(true) 

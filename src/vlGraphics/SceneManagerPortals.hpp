@@ -54,7 +54,7 @@ namespace vl
   {
     friend class SceneManagerPortals;
   public:
-    virtual const char* className() { return "vl::Portal"; }
+    virtual const char* className() const { return "vl::Portal"; }
 
     //! Constructor.
     Portal()
@@ -108,7 +108,7 @@ namespace vl
   class VLGRAPHICS_EXPORT Sector: public Object
   {
   public:
-    virtual const char* className() { return "vl::Sector"; }
+    virtual const char* className() const { return "vl::Sector"; }
 
     /** A callback object called each time a Sector becomes visible through a Portal.
      *  Note: a callback can be called multiple times with the same Sector argument if a Sector is discovered multiple times through different portals.
@@ -183,7 +183,7 @@ namespace vl
   class VLGRAPHICS_EXPORT SceneManagerPortals: public SceneManager
   {
   public:
-    virtual const char* className() { return "vl::SceneManagerPortals"; }
+    virtual const char* className() const { return "vl::SceneManagerPortals"; }
 
     //! Constructor.
     SceneManagerPortals(): mExternalSector(new Sector), mVisitTick(1), mShowPortals(false) 

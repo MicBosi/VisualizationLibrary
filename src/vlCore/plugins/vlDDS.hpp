@@ -55,7 +55,7 @@ namespace vl
   class LoadWriterDDS: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "vl::LoadWriterDDS"; }
+    virtual const char* className() const { return "vl::LoadWriterDDS"; }
 
     LoadWriterDDS(): ResourceLoadWriter("|dds|", "|dds|") 
     {

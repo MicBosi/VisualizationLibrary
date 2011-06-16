@@ -42,7 +42,7 @@ namespace vl
   class VLCORE_EXPORT KeyValues: public Object
   {
   public:
-    virtual const char* className() { return "vl::KeyValues"; }
+    virtual const char* className() const { return "vl::KeyValues"; }
 
     KeyValues();
     

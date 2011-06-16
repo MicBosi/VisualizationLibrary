@@ -56,7 +56,7 @@ namespace vl
   class SceneManagerVectorGraphics: public SceneManager
   {
   public:
-    virtual const char* className() { return "vl::SceneManagerVectorGraphics"; }
+    virtual const char* className() const { return "vl::SceneManagerVectorGraphics"; }
 
     SceneManagerVectorGraphics() { mActorRenderRankStart = 0; mVectorGraphicObjects.setAutomaticDelete(false); }
 

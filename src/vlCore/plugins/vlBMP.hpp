@@ -55,7 +55,7 @@ namespace vl
   class LoadWriterBMP: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "vl::LoadWriterBMP"; }
+    virtual const char* className() const { return "vl::LoadWriterBMP"; }
 
     LoadWriterBMP(): ResourceLoadWriter("|bmp|", "|bmp|") 
     {

@@ -58,7 +58,7 @@ namespace vl
   public:
     MemoryDirectory(const String& path="."): VirtualDirectory(path) {}
 
-    virtual const char* className() { return "vl::MemoryDirectory"; }
+    virtual const char* className() const { return "vl::MemoryDirectory"; }
 
     virtual bool setPath(const String& name);
 

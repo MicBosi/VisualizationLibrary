@@ -44,7 +44,7 @@ namespace vl
   class VLGRAPHICS_EXPORT VertexMapper: public Object
   {
   public:
-    virtual const char* className() { return "vl::VertexMapper"; }
+    virtual const char* className() const { return "vl::VertexMapper"; }
     //! Regenerates a new Array based on the given mapping.
     //! \param data The array to be regenerated
     //! \param map_new_to_old Specifies the mapping from the old vetices to the new one. The \p i-th vertex of the new vertex array will use the \p map_new_to_old[i]-th vertex of the old array, 
@@ -122,7 +122,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::DoubleVertexRemover"; }
+    virtual const char* className() const { return "vl::DoubleVertexRemover"; }
     DoubleVertexRemover() {}
     void removeDoubles(Geometry* geom);
     const std::vector<size_t>& mapNewToOld() const { return mMapNewToOld; }

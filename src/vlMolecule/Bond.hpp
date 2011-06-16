@@ -62,7 +62,7 @@ namespace vl
   class Bond: public Object
   {
   public:
-    virtual const char* className() { return "vl::Atom"; }
+    virtual const char* className() const { return "vl::Atom"; }
 
     Bond(): mColor( 1.0f,1.0f,1.0f,1.0f ), mRadius(0.10f), mAtom1(NULL), mAtom2(NULL), mType(BT_Single), mId(0), mVisible(true), mUseAtomColors(true) 
     {

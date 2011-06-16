@@ -73,7 +73,7 @@ namespace vl
   class LoadWriterAC3D: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "vl::LoadWriterAC3D"; }
+    virtual const char* className() const { return "vl::LoadWriterAC3D"; }
     LoadWriterAC3D(): ResourceLoadWriter("|ac|", "|ac|") {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 

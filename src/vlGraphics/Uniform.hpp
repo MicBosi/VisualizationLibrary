@@ -60,7 +60,7 @@ namespace vl
   {
     friend class GLSLProgram;
   public:
-    virtual const char* className() { return "vl::Uniform"; }
+    virtual const char* className() const { return "vl::Uniform"; }
 
     Uniform(): mType(UT_NONE)
     {

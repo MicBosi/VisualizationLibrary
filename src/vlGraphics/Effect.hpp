@@ -51,7 +51,7 @@ namespace vl
   class ShaderSequence: public Collection<Shader>
   {
   public:
-    virtual const char* className() { return "vl::ShaderSequence"; }
+    virtual const char* className() const { return "vl::ShaderSequence"; }
     /** Constructor. 
     \param pass1 The Shader (if any) to be used for pass #1
     \param pass2 The Shader (if any) to be used for pass #2
@@ -94,7 +94,7 @@ namespace vl
     Effect& operator=(const Effect&) { return *this; }
 
   public:
-    virtual const char* className() { return "vl::Effect"; }
+    virtual const char* className() const { return "vl::Effect"; }
 
     /** Constructor. */
     Effect() 

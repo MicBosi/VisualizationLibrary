@@ -52,7 +52,7 @@ namespace vl
   class LoadWriterMD2: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "vl::LoadWriterMD2"; }
+    virtual const char* className() const { return "vl::LoadWriterMD2"; }
     LoadWriterMD2(): ResourceLoadWriter("|md2|", "|md2|") {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 

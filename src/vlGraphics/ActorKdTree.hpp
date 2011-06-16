@@ -61,7 +61,7 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    virtual const char* className() { return "vl::ActorKdTree"; }
+    virtual const char* className() const { return "vl::ActorKdTree"; }
 
     virtual int childrenCount() const;
     virtual ActorTreeAbstract* child(int i);

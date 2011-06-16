@@ -47,7 +47,7 @@ namespace vl
   class VLGRAPHICS_EXPORT CoreText: public Renderable
   {
   public:
-    virtual const char* className() { return "vl::CoreText"; }
+    virtual const char* className() const { return "vl::CoreText"; }
 
     CoreText(): mColor(1,1,1,1), mBorderColor(0,0,0,1), mBackgroundColor(1,1,1,1), mOutlineColor(0,0,0,1), mShadowColor(0,0,0,0.5f), mShadowVector(2,-2), 
       mTextOrigin(AlignBottom|AlignLeft), mMargin(5), mLayout(LeftToRightText), mTextAlignment(TextAlignLeft), 

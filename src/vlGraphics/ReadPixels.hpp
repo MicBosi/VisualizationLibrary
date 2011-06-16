@@ -142,7 +142,7 @@ namespace vl
   class ReadPixels: public RenderEventCallback
   {
   public:
-    virtual const char* className() { return "vl::ReadPixels"; }
+    virtual const char* className() const { return "vl::ReadPixels"; }
     ReadPixels():
       mX ( 0 ),
       mY ( 0 ),

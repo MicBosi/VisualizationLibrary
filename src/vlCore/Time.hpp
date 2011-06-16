@@ -49,7 +49,7 @@ namespace vl
   class VLCORE_EXPORT Time: public Object
   {
   public:
-    virtual const char* className() { return "vl::Time"; }
+    virtual const char* className() const { return "vl::Time"; }
     Time();
 
     int year() const { return mYear; }

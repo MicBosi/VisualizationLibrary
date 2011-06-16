@@ -78,7 +78,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::Geometry"; }
+    virtual const char* className() const { return "vl::Geometry"; }
     
     /** Constructor. */
     Geometry();

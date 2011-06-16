@@ -41,7 +41,7 @@ namespace vl
   class VLGRAPHICS_EXPORT RenderingTree: public RenderingAbstract
   {
   public:
-    virtual const char* className() { return "vl::RenderingTree"; }
+    virtual const char* className() const { return "vl::RenderingTree"; }
 
     //! Constructor.
     RenderingTree();

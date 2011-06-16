@@ -383,7 +383,7 @@ namespace vl
   class VLCORE_EXPORT Transform: public TransformHierarchy<Transform>
   {
   public:
-    virtual const char* className() { return "vl::Transform"; }
+    virtual const char* className() const { return "vl::Transform"; }
 
     /** Constructor. */
     Transform()

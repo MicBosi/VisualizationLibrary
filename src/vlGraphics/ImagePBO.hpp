@@ -44,7 +44,7 @@ namespace vl
   class ImagePBO: public Image
   {
   public:
-    virtual const char* className() { return "vl::ImagePBO"; }
+    virtual const char* className() const { return "vl::ImagePBO"; }
 	
     //! Constructor.
     ImagePBO()

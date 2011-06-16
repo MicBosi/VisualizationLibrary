@@ -76,7 +76,7 @@ namespace vl
     typedef std::map< std::string, UniformInfo > UniformsMap;
 
   public:
-    virtual const char* className() { return "vl::ShaderNode"; }
+    virtual const char* className() const { return "vl::ShaderNode"; }
 
     ShaderNode(): mParent(NULL) {}
 

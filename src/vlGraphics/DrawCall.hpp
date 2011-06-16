@@ -49,7 +49,7 @@ namespace vl
   class DrawCall: public Object
   {
   public:
-    virtual const char* className() { return "vl::DrawCall"; }
+    virtual const char* className() const { return "vl::DrawCall"; }
 
     DrawCall(): mType(PT_TRIANGLES), mEnabled(true) {}
 

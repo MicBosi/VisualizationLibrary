@@ -56,7 +56,7 @@ namespace vl
     } ELogLevel;
 
   public:
-    virtual const char* className() { return "vl::Log"; }
+    virtual const char* className() const { return "vl::Log"; }
 
     Log()
     {
@@ -128,7 +128,7 @@ namespace vl
   class VLCORE_EXPORT StandardLog: public Log
   {
   public:
-    virtual const char* className() { return "vl::StandardLog"; }
+    virtual const char* className() const { return "vl::StandardLog"; }
     void setLogFile(const String& file);
     const String& logFile() const { return mLogFile; }
 

@@ -53,7 +53,7 @@ namespace vl
   public:
     Light(int light_index);
 
-    virtual const char* className() { return "vl::Light"; }
+    virtual const char* className() const { return "vl::Light"; }
 
     virtual ERenderState type() const { return (ERenderState)(RS_Light0 + lightIndex()); }
 

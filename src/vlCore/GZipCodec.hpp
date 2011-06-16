@@ -55,7 +55,7 @@ namespace vl
     //! Destructor
     ~GZipCodec();
 
-    virtual const char* className() { return "vl::GZipCodec"; }
+    virtual const char* className() const { return "vl::GZipCodec"; }
 
     //! Opens a compressed stream. 
     //! - If \p mode == \p OM_ReadOnly the stream will be decompressed during read operations. 

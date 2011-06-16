@@ -55,7 +55,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    virtual const char* className() { return "vl::PixelLODEvaluator"; }
+    virtual const char* className() const { return "vl::PixelLODEvaluator"; }
 
     virtual int evaluate(Actor* actor, Camera* camera);
 
