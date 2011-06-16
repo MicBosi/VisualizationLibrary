@@ -154,8 +154,8 @@ public:
     text_fx->shader()->enable(vl::EN_BLEND);
     mText = new vl::Text;
     mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8) );
-    mText->setTextPivot( vl::AlignHCenter | vl::AlignTop );
-    mText->setViewportOrigin( vl::AlignHCenter | vl::AlignTop );
+    mText->setAlignment( vl::AlignHCenter | vl::AlignTop );
+    mText->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     mText->translate(0,-10,0);
     sceneManager()->tree()->addActor(mText.get(), text_fx.get());
     updateText();

@@ -275,8 +275,8 @@ public:
     vl::ref<vl::Text> text = new vl::Text;
     text->setText("Press the left/right arrow keys to change test.");
     text->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    text->setTextPivot( vl::AlignHCenter | vl::AlignTop );
-    text->setViewportOrigin( vl::AlignHCenter | vl::AlignTop );
+    text->setAlignment( vl::AlignHCenter | vl::AlignTop );
+    text->setViewportAlignment( vl::AlignHCenter | vl::AlignTop );
     text->translate(0,-5,0);
     text->setColor(vl::white);
     vl::ref<vl::Effect> effect = new vl::Effect;

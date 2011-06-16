@@ -117,8 +117,8 @@ public:
     mText = new vl::Text;
     mText->setText("*** N/A ***");
     mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
-    mText->setTextPivot( vl::AlignLeft | vl::AlignTop );
-    mText->setViewportOrigin( vl::AlignLeft | vl::AlignTop );
+    mText->setAlignment( vl::AlignLeft | vl::AlignTop );
+    mText->setViewportAlignment( vl::AlignLeft | vl::AlignTop );
     mText->setTextAlignment(vl::TextAlignLeft);
     mText->translate(+5,-5,0);
     mText->setColor(vl::white);

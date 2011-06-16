@@ -209,7 +209,7 @@ void Molecule::generateAtomLabel(const Atom* atom, Transform* tr)
     // text label
     text->setText( atom->atomName().c_str() );
     // text template style
-    text->setViewportOrigin( atomLabelTemplate()->viewportOrigin() );
+    text->setViewportAlignment( atomLabelTemplate()->viewportAlignment() );
     text->setTextAlignment( atomLabelTemplate()->textAlignment() );
     text->setShadowVector( atomLabelTemplate()->shadowVector() );
     text->setShadowEnabled( atomLabelTemplate()->shadowEnabled() );
@@ -225,7 +225,7 @@ void Molecule::generateAtomLabel(const Atom* atom, Transform* tr)
     text->setBorderColor( atomLabelTemplate()->borderColor() );
     text->setBackgroundEnabled( atomLabelTemplate()->backgroundEnabled() );
     text->setBackgroundColor( atomLabelTemplate()->backgroundColor() );
-    text->setTextPivot( atomLabelTemplate()->textPivot() );
+    text->setAlignment( atomLabelTemplate()->alignment() );
     // text actor
     ref<Actor> text_act = new Actor( text.get(), mAtomLabelEffect.get(), tr );
     actorTree()->actors()->push_back(text_act.get());
