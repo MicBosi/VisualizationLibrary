@@ -86,7 +86,6 @@ public:
     mOptions->setColor(white);
     mOptions->setBackgroundColor(fvec4(0,0,0,.75f));
     mOptions->setBackgroundEnabled(true);
-    mOptions->setInterlineSpacing(0);
 
     ref< Effect > text_fx = new Effect;
     text_fx->shader()->enable(EN_BLEND);
