@@ -382,31 +382,31 @@ void CoreText::renderText(const Actor*, const Camera*, const fvec4& color, const
         // text pivot
         for(int i=0; i<4; ++i)
         {
-          if (textPivot() & AlignHCenter)
+          if (textOrigin() & AlignHCenter)
           {
-            VL_CHECK( !(textPivot() & AlignRight) )
-            VL_CHECK( !(textPivot() & AlignLeft) )
+            VL_CHECK( !(textOrigin() & AlignRight) )
+            VL_CHECK( !(textOrigin() & AlignLeft) )
             vect[i].x() -= (int)(bbox.width() / 2.0f);
           }
 
-          if (textPivot() & AlignRight)
+          if (textOrigin() & AlignRight)
           {
-            VL_CHECK( !(textPivot() & AlignHCenter) )
-            VL_CHECK( !(textPivot() & AlignLeft) )
+            VL_CHECK( !(textOrigin() & AlignHCenter) )
+            VL_CHECK( !(textOrigin() & AlignLeft) )
             vect[i].x() -= (int)bbox.width();
           }
 
-          if (textPivot() & AlignTop)
+          if (textOrigin() & AlignTop)
           {
-            VL_CHECK( !(textPivot() & AlignBottom) )
-            VL_CHECK( !(textPivot() & AlignVCenter) )
+            VL_CHECK( !(textOrigin() & AlignBottom) )
+            VL_CHECK( !(textOrigin() & AlignVCenter) )
             vect[i].y() -= (int)bbox.height();
           }
 
-          if (textPivot() & AlignVCenter)
+          if (textOrigin() & AlignVCenter)
           {
-            VL_CHECK( !(textPivot() & AlignTop) )
-            VL_CHECK( !(textPivot() & AlignBottom) )
+            VL_CHECK( !(textOrigin() & AlignTop) )
+            VL_CHECK( !(textOrigin() & AlignBottom) )
             vect[i].y() -= int(bbox.height() / 2.0);
           }
         }
@@ -644,34 +644,34 @@ AABB CoreText::boundingRect(const String& text) const
 
   // text pivot
 
-  if (textPivot() & AlignHCenter)
+  if (textOrigin() & AlignHCenter)
   {
-    VL_CHECK( !(textPivot() & AlignRight) )
-    VL_CHECK( !(textPivot() & AlignLeft) )
+    VL_CHECK( !(textOrigin() & AlignRight) )
+    VL_CHECK( !(textOrigin() & AlignLeft) )
     min.x() -= int(bbox.width() / 2.0);
     max.x() -= int(bbox.width() / 2.0);
   }
 
-  if (textPivot() & AlignRight)
+  if (textOrigin() & AlignRight)
   {
-    VL_CHECK( !(textPivot() & AlignHCenter) )
-    VL_CHECK( !(textPivot() & AlignLeft) )
+    VL_CHECK( !(textOrigin() & AlignHCenter) )
+    VL_CHECK( !(textOrigin() & AlignLeft) )
     min.x() -= (int)bbox.width();
     max.x() -= (int)bbox.width();
   }
 
-  if (textPivot() & AlignTop)
+  if (textOrigin() & AlignTop)
   {
-    VL_CHECK( !(textPivot() & AlignBottom) )
-    VL_CHECK( !(textPivot() & AlignVCenter) )
+    VL_CHECK( !(textOrigin() & AlignBottom) )
+    VL_CHECK( !(textOrigin() & AlignVCenter) )
     min.y() -= (int)bbox.height();
     max.y() -= (int)bbox.height();
   }
 
-  if (textPivot() & AlignVCenter)
+  if (textOrigin() & AlignVCenter)
   {
-    VL_CHECK( !(textPivot() & AlignTop) )
-    VL_CHECK( !(textPivot() & AlignBottom) )
+    VL_CHECK( !(textOrigin() & AlignTop) )
+    VL_CHECK( !(textOrigin() & AlignBottom) )
     min.y() -= int(bbox.height() / 2.0);
     max.y() -= int(bbox.height() / 2.0);
   }
