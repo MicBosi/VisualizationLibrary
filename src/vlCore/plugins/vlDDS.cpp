@@ -42,8 +42,6 @@
 // - read and write float and half float images.
 // - support directx 10 dds and formats
 // - support A8R8G8B8, A1R5G5B5, A4R4G4B4, R8G8B8, R5G6B5
-...
-... image viewer test to see quickly the supported images formats ...
 
 using namespace vl;
 
