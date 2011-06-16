@@ -578,6 +578,7 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
     for( unsigned i=0; i<prev->enables().size(); ++i )
     {
       const EEnable& prev_en = prev->enables()[i];
+      VL_CHECK(mEnableTable[prev_en] == 1 || mEnableTable[prev_en] == 2);
       if ( mEnableTable[prev_en] == 1 )
       {
         mCurrentEnable[prev_en] = false;
@@ -630,6 +631,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
     for( unsigned i=0; i<prev->renderStates().size(); ++i )
     {
       const RenderState* prev_rs = prev->renderStates()[i].get();
+      VL_CHECK(mRenderStateTable[prev_rs->type()] == 1 || mRenderStateTable[prev_rs->type()] == 2);
       if ( mRenderStateTable[prev_rs->type()] == 1 )
       {
         mCurrentRenderState[prev_rs->type()] = mDefaultRenderStates[prev_rs->type()].get();
@@ -654,44 +656,15 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
 //------------------------------------------------------------------------------
 void OpenGLContext::setupDefaultRenderStates()
 {
-  // initialize to NULL
-  memset(mDefaultRenderStates, 0, sizeof(mDefaultRenderStates));
-
-  if ( isCompatible() ) /* COMPATIBLE profile */
+  if ( isCompatible() )
   {
     mDefaultRenderStates[RS_AlphaFunc] = new AlphaFunc;
-    if (GLEW_VERSION_1_4||GLEW_EXT_blend_color)
-      mDefaultRenderStates[RS_BlendColor] = new BlendColor;
-    if (GLEW_VERSION_1_4)
-      mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
-    mDefaultRenderStates[RS_BlendFunc] = new BlendFunc;
-    mDefaultRenderStates[RS_ColorMask] = new ColorMask;
-    mDefaultRenderStates[RS_CullFace] = new CullFace;
-    mDefaultRenderStates[RS_DepthFunc] = new DepthFunc;
-    mDefaultRenderStates[RS_DepthMask] = new DepthMask;
-    mDefaultRenderStates[RS_DepthRange] = new DepthRange;
     mDefaultRenderStates[RS_Fog] = new Fog;
-    mDefaultRenderStates[RS_FrontFace] = new FrontFace;
-    mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
-    mDefaultRenderStates[RS_Hint] = new Hint;
     mDefaultRenderStates[RS_LightModel] = new LightModel;
     mDefaultRenderStates[RS_LineStipple] = new LineStipple;
-    mDefaultRenderStates[RS_LineWidth] = new LineWidth;
-    mDefaultRenderStates[RS_LogicOp] = new LogicOp;
     mDefaultRenderStates[RS_Material] = new Material;
     mDefaultRenderStates[RS_PixelTransfer] = new PixelTransfer;
-    if (GLEW_VERSION_1_4||GLEW_ARB_point_parameters)
-      mDefaultRenderStates[RS_PointParameter] = new PointParameter;
-    mDefaultRenderStates[RS_PointSize] = new PointSize;
-    mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
     mDefaultRenderStates[RS_PolygonStipple] = new PolygonStipple;
-    if (GLEW_VERSION_1_3||GLEW_ARB_multisample)
-      mDefaultRenderStates[RS_SampleCoverage] = new SampleCoverage;
-    mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
-    mDefaultRenderStates[RS_StencilFunc] = new StencilFunc;
-    mDefaultRenderStates[RS_StencilMask] = new StencilMask;
-    mDefaultRenderStates[RS_StencilOp] = new StencilOp;
-    mDefaultRenderStates[RS_GLSLProgram] = new GLSLProgram;
 
     mDefaultRenderStates[RS_Light0] = new Light(0);
     mDefaultRenderStates[RS_Light1] = new Light(1);
@@ -708,82 +681,51 @@ void OpenGLContext::setupDefaultRenderStates()
     mDefaultRenderStates[RS_ClipPlane3] = new ClipPlane(3);
     mDefaultRenderStates[RS_ClipPlane4] = new ClipPlane(4);
     mDefaultRenderStates[RS_ClipPlane5] = new ClipPlane(5);
+  }
 
-    for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+  if (GLEW_VERSION_1_4||GLEW_EXT_blend_color)
+    mDefaultRenderStates[RS_BlendColor] = new BlendColor;
+  if (GLEW_VERSION_1_4)
+    mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
+  mDefaultRenderStates[RS_BlendFunc] = new BlendFunc;
+  mDefaultRenderStates[RS_ColorMask] = new ColorMask;
+  mDefaultRenderStates[RS_CullFace] = new CullFace;
+  mDefaultRenderStates[RS_DepthFunc] = new DepthFunc;
+  mDefaultRenderStates[RS_DepthMask] = new DepthMask;
+  mDefaultRenderStates[RS_DepthRange] = new DepthRange;
+  mDefaultRenderStates[RS_FrontFace] = new FrontFace;
+  mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
+  mDefaultRenderStates[RS_Hint] = new Hint;
+  mDefaultRenderStates[RS_LineWidth] = new LineWidth;
+  mDefaultRenderStates[RS_LogicOp] = new LogicOp;
+  if (GLEW_VERSION_1_4||GLEW_ARB_point_parameters)
+    mDefaultRenderStates[RS_PointParameter] = new PointParameter;
+  mDefaultRenderStates[RS_PointSize] = new PointSize;
+  mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
+  if (GLEW_VERSION_1_3||GLEW_ARB_multisample)
+    mDefaultRenderStates[RS_SampleCoverage] = new SampleCoverage;
+  mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
+  mDefaultRenderStates[RS_StencilFunc] = new StencilFunc;
+  mDefaultRenderStates[RS_StencilMask] = new StencilMask;
+  mDefaultRenderStates[RS_StencilOp] = new StencilOp;
+  mDefaultRenderStates[RS_GLSLProgram] = new GLSLProgram;
+
+  for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+  {
+    if (i < textureUnitCount())
     {
-      if (i < textureUnitCount())
+      mDefaultRenderStates[RS_TextureUnit0   + i] = new TextureUnit(i);
+      if( isCompatible() )
       {
-        mDefaultRenderStates[RS_TextureUnit0   + i] = new TextureUnit(i);
         mDefaultRenderStates[RS_TexGen0        + i] = new TexGen(i);
         mDefaultRenderStates[RS_TexEnv0        + i] = new TexEnv(i);
         mDefaultRenderStates[RS_TextureMatrix0 + i] = new TextureMatrix(i);
       }
     }
   }
-  else /* CORE profile */
-  {
-    // mic fixme: it would be nice if we did not need to have this mDefaultRenderStates at all!
 
-    // mDefaultRenderStates[RS_AlphaFunc] = new AlphaFunc;
-    mDefaultRenderStates[RS_BlendColor] = new BlendColor;
-    mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
-    mDefaultRenderStates[RS_BlendFunc] = new BlendFunc;
-    mDefaultRenderStates[RS_ColorMask] = new ColorMask;
-    mDefaultRenderStates[RS_CullFace] = new CullFace;
-    mDefaultRenderStates[RS_DepthFunc] = new DepthFunc;
-    mDefaultRenderStates[RS_DepthMask] = new DepthMask;
-    mDefaultRenderStates[RS_DepthRange] = new DepthRange;
-    // mDefaultRenderStates[RS_Fog] = new Fog;
-    mDefaultRenderStates[RS_FrontFace] = new FrontFace;
-    mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
-    mDefaultRenderStates[RS_Hint] = new Hint;
-    // mDefaultRenderStates[RS_LightModel] = new LightModel;
-    // mDefaultRenderStates[RS_LineStipple] = new LineStipple;
-    mDefaultRenderStates[RS_LineWidth] = new LineWidth;
-    mDefaultRenderStates[RS_LogicOp] = new LogicOp;
-    // mDefaultRenderStates[RS_Material] = new Material;
-    // mDefaultRenderStates[RS_PixelTransfer] = new PixelTransfer;
-    mDefaultRenderStates[RS_PointParameter] = new PointParameter;
-    mDefaultRenderStates[RS_PointSize] = new PointSize;
-    mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
-    // mDefaultRenderStates[RS_PolygonStipple] = new PolygonStipple;
-    mDefaultRenderStates[RS_SampleCoverage] = new SampleCoverage;
-    mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
-    mDefaultRenderStates[RS_StencilFunc] = new StencilFunc;
-    mDefaultRenderStates[RS_StencilMask] = new StencilMask;
-    mDefaultRenderStates[RS_StencilOp] = new StencilOp;
-    mDefaultRenderStates[RS_GLSLProgram] = new GLSLProgram;
-
-    // mDefaultRenderStates[RS_Light0] = new Light(0);
-    // mDefaultRenderStates[RS_Light1] = new Light(1);
-    // mDefaultRenderStates[RS_Light2] = new Light(2);
-    // mDefaultRenderStates[RS_Light3] = new Light(3);
-    // mDefaultRenderStates[RS_Light4] = new Light(4);
-    // mDefaultRenderStates[RS_Light5] = new Light(5);
-    // mDefaultRenderStates[RS_Light6] = new Light(6);
-    // mDefaultRenderStates[RS_Light7] = new Light(7);
-
-    // mDefaultRenderStates[RS_ClipPlane0] = new ClipPlane(0);
-    // mDefaultRenderStates[RS_ClipPlane1] = new ClipPlane(1);
-    // mDefaultRenderStates[RS_ClipPlane2] = new ClipPlane(2);
-    // mDefaultRenderStates[RS_ClipPlane3] = new ClipPlane(3);
-    // mDefaultRenderStates[RS_ClipPlane4] = new ClipPlane(4);
-    // mDefaultRenderStates[RS_ClipPlane5] = new ClipPlane(5);
-
-    for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-    {
-      if (i < textureUnitCount())
-      {
-        mDefaultRenderStates[RS_TextureUnit0   + i] = new TextureUnit(i);
-        // mDefaultRenderStates[RS_TexGen0        + i] = new TexGen(i);
-        // mDefaultRenderStates[RS_TexEnv0        + i] = new TexEnv(i);
-        // mDefaultRenderStates[RS_TextureMatrix0 + i] = new TextureMatrix(i);
-      }
-    }
-  }
-
-  // applies our default render states
-  for( unsigned i=0; i<RS_COUNT; ++i )
+  // applies default render states backwards so we don't need to call VL_glActiveTexture(GL_TEXTURE0) at the end.
+  for( int i=RS_COUNT; i--; )
   {
     // the empty ones are the ones that are not supported by the current OpenGL implementation (too old or Core profile)
     if (mDefaultRenderStates[i])
@@ -793,7 +735,6 @@ void OpenGLContext::setupDefaultRenderStates()
       VL_CHECK_OGL();
     }
   }
-  VL_glActiveTexture( GL_TEXTURE0 );
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::resetRenderStates()
