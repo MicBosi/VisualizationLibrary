@@ -37,6 +37,8 @@
 #include <vlCore/Image.hpp>
 #include <tiffio.h>
 
+// mic fixme: read and write 16 bits images.
+...
 using namespace vl;
 
 namespace
@@ -197,11 +199,7 @@ bool vl::saveTIFF(const Image* image, const String& path)
 //-----------------------------------------------------------------------------
 bool vl::saveTIFF(const Image* src, VirtualFile* fout)
 {
-  //if (src->dimension() != ID_2D )
-  //{
-  //  Log::error( Say("saveTIFF('%s'): can save only 2D images.\n") << fout->path() );
-  //  return false;
-  //}
+  // mic fixme: handle somehow not supported image type, cubemaps, 3d textures, mimaps etc.
 
   int w = src->width();
   int h = src->height();
@@ -378,7 +376,6 @@ bool vl::saveTIFF(const Image* src, VirtualFile* fout)
   int y = h;
   while( y-- )
     fout->write(src->pixels()+src->pitch()*y, w*src->bitsPerPixel()/8);
-  // fout->write(src->pixels(), src->requiredMemory());
 
   fout->close();
   return true;
