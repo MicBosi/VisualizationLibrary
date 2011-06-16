@@ -81,8 +81,8 @@ public:
     mOptions->setDisplayListEnabled(true);
     mOptions->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8) );
     mOptions->setMargin(0);
-    mOptions->setViewportOrigin(AlignTop | AlignLeft);
-    mOptions->setTextPivot(AlignTop | AlignLeft);
+    mOptions->setViewportAlignment(AlignTop | AlignLeft);
+    mOptions->setAlignment(AlignTop | AlignLeft);
     mOptions->setColor(white);
     mOptions->setBackgroundColor(fvec4(0,0,0,.75f));
     mOptions->setBackgroundEnabled(true);

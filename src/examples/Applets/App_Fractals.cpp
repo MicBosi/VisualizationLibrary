@@ -130,15 +130,15 @@ public:
         "<Left Button> translates the view\n"
         "<Right Button> zooms the view\n"
       );
-      mText->setTextPivot( AlignVCenter | AlignHCenter );
-      mText->setViewportOrigin( AlignVCenter| AlignHCenter );
+      mText->setAlignment( AlignVCenter | AlignHCenter );
+      mText->setViewportAlignment( AlignVCenter| AlignHCenter );
     }
     else
     {
       String text = Say("coords = %.8n %.8n; zoom = %.7n") << mXcenter << mYcenter << mZoom;
       mText->setText(text);
-      mText->setTextPivot( AlignBottom | AlignHCenter );
-      mText->setViewportOrigin( AlignBottom | AlignHCenter );
+      mText->setAlignment( AlignBottom | AlignHCenter );
+      mText->setViewportAlignment( AlignBottom | AlignHCenter );
     }
   }
 
@@ -164,8 +164,8 @@ public:
     mText->setColor(vl::white);
     mText->setBackgroundColor( fvec4(0,0,0,0.75f) );
     mText->setBackgroundEnabled(true);
-    mText->setTextPivot( AlignBottom | AlignLeft );
-    mText->setViewportOrigin( AlignBottom | AlignLeft );
+    mText->setAlignment( AlignBottom | AlignLeft );
+    mText->setViewportAlignment( AlignBottom | AlignLeft );
     mText->translate(10,10,0);
     ref<Effect> text_effect = new Effect;
     text_effect->shader()->enable(EN_BLEND);
