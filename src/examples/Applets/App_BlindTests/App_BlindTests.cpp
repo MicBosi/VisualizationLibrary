@@ -90,8 +90,8 @@ public:
     ref<Text> text = new Text;
     text->setText( msg );
     text->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraSe.ttf", 12) );
-    text->setTextPivot( AlignLeft | AlignTop );
-    text->setViewportOrigin( AlignLeft | AlignTop );
+    text->setAlignment( AlignLeft | AlignTop );
+    text->setViewportAlignment( AlignLeft | AlignTop );
     ref<Effect> effect = new Effect;
     effect->shader()->enable(EN_BLEND);
     sceneManager()->tree()->addActor(text.get(), effect.get());
