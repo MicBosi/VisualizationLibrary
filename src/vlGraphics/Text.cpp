@@ -52,36 +52,35 @@ void Text::render_Implementation(const Actor* actor, const Shader*, const Camera
   if ( text().empty() )
     return;
 
-  bool light_enabled = glIsEnabled(GL_LIGHTING) == GL_TRUE;
-  glDisable(GL_LIGHTING);
+  // Lighting can be enabled or disabled.
+  // glDisable(GL_LIGHTING);
 
-  // we need blend to be enabled explicity to perform z-sort
-  //bool blend_enabled  = glIsEnabled(GL_BLEND) == GL_TRUE;
-  //glEnable(GL_BLEND);
+  // Blending must be enabled explicity by the vl::Shader, also to perform z-sort.
+  // glEnable(GL_BLEND);
+
+  // Trucchetto che usiamo per evitare z-fighting:
+  // Pass #1 - fill color and stencil
+  // - disable depth write mask
+  // - depth test can be enabled or not by the user
+  // - depth func can be choosen by the user
+  // - render in the order: background, border, shadow, outline, text
+  // Pass #2 - fill z-buffer
+  // - enable depth write mask
+  // - disable color mask
+  // - disable stencil
+  // - drawing background and border
+
+  // Pass #1
 
   // disable z-writing
   GLboolean depth_mask=0;
   glGetBooleanv(GL_DEPTH_WRITEMASK, &depth_mask);
   glDepthMask(GL_FALSE);
 
-  int depth_func=0;
-  glGetIntegerv(GL_DEPTH_FUNC, &depth_func);
-  if (mode() == Text2D)
-    glDepthFunc(GL_LEQUAL);
-
-  GLboolean color_mask[4];
-  glGetBooleanv(GL_COLOR_WRITEMASK, color_mask);
-
-  // stencil writing is not disabled now
-  int stencil_front_mask=0;
-  glGetIntegerv(GL_STENCIL_WRITEMASK, &stencil_front_mask);
-  int stencil_back_mask=0;
-  if (GLEW_VERSION_2_0)
-    glGetIntegerv(GL_STENCIL_BACK_WRITEMASK, &stencil_back_mask);
-
   // background
   if (backgroundEnabled())
     renderBackground( actor, camera );
+
   // border
   if (borderEnabled())
     renderBorder( actor, camera );
@@ -102,35 +101,41 @@ void Text::render_Implementation(const Actor* actor, const Shader*, const Camera
   // text render
   renderText( actor, camera, color(), fvec2(0,0) );
 
-  // fixme?
+  // Pass #2
   // fills the z-buffer (not the stencil buffer): approximated to the text bbox
 
-  // restores depth & stencil writing
+  // restores depth mask
   glDepthMask(depth_mask);
-  // don't write on the stencil buffer
-  glStencilMask(0);
 
-  // disables writing to the color buffer
-  glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+  if (depth_mask)
+  {
+    // disables writing to the color buffer
+    GLboolean color_mask[4];
+    glGetBooleanv(GL_COLOR_WRITEMASK, color_mask);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
-  // background
-  renderBackground( actor, camera );
-  // border
-  renderBorder( actor, camera );
+    // disable writing to the stencil buffer
+    int stencil_front_mask=0;
+    glGetIntegerv(GL_STENCIL_WRITEMASK, &stencil_front_mask);
+    int stencil_back_mask=0;
+    if (GLEW_VERSION_2_0)
+      glGetIntegerv(GL_STENCIL_BACK_WRITEMASK, &stencil_back_mask);
+    glStencilMask(0);
 
-  // restores color writing
-  glColorMask(color_mask[0],color_mask[1],color_mask[2],color_mask[3]);
+    // background
+    renderBackground( actor, camera );
 
-  // restore the stencil masks
-  glStencilMask(stencil_front_mask);
-  if (GLEW_VERSION_2_0)
-    glStencilMaskSeparate(GL_BACK, stencil_back_mask);
+    // border
+    renderBorder( actor, camera );
 
-  if(light_enabled)
-    glEnable(GL_LIGHTING);
-  //if (!blend_enabled)
-  //  glDisable(GL_BLEND);
-  glDepthFunc(depth_func);
+    // restores color writing
+    glColorMask(color_mask[0],color_mask[1],color_mask[2],color_mask[3]);
+
+    // restore the stencil masks
+    glStencilMask(stencil_front_mask);
+    if (GLEW_VERSION_2_0)
+      glStencilMaskSeparate(GL_BACK, stencil_back_mask);
+  }
 }
 //-----------------------------------------------------------------------------
 void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& color, const fvec2& offset) const
@@ -198,13 +203,11 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
   glEnableClientState( GL_TEXTURE_COORD_ARRAY );
   glTexCoordPointer(2, GL_FLOAT, 0, texc);
 
-  fvec4 cols[] = { color, color, color, color};
-  glEnableClientState( GL_COLOR_ARRAY );
-  glColorPointer(4, GL_FLOAT, 0, cols);
+  // text color
+  glColor4fv(color.ptr());
 
-  fvec3 norms[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
-  glEnableClientState( GL_NORMAL_ARRAY );
-  glNormalPointer(GL_FLOAT, 0, norms);
+  // Constant normal
+  glNormal3fv( fvec3(0,0,1).ptr() );
 
   fvec3 vect[4];
   glEnableClientState( GL_VERTEX_ARRAY );
@@ -502,11 +505,10 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
         glDrawArrays(GL_QUADS, 0, 4);
 
         #if (0)
-          vec4 red[] = { vec4(1,0,0,1), vec4(1,0,0,1), vec4(1,0,0,1), vec4(1,0,0,1) };
           glDisable(GL_TEXTURE_2D);
-          glColorPointer(4, GL_FLOAT, 0, red);
+          glColor3fv(vec3(1,0,0).ptr());
           glDrawArrays(GL_LINE_LOOP, 0, 4);
-          glColorPointer(4, GL_FLOAT, 0, cols);
+          glColor4fv(color.ptr());
           glEnable(GL_TEXTURE_2D);
         #endif
       }
@@ -544,8 +546,6 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
   }
 
   glDisableClientState( GL_VERTEX_ARRAY );
-  glDisableClientState( GL_NORMAL_ARRAY );
-  glDisableClientState( GL_COLOR_ARRAY );
   glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 #endif
 
@@ -721,13 +721,11 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
     VL_CHECK_OGL();
   }
 
-  fvec4 cols[] = { mBackgroundColor, mBackgroundColor, mBackgroundColor, mBackgroundColor };
-  glEnableClientState( GL_COLOR_ARRAY );
-  glColorPointer(4, GL_FLOAT, 0, cols);
+  // Background color
+  glColor4fv(mBackgroundColor.ptr());
 
-  fvec3 norms[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
-  glEnableClientState( GL_NORMAL_ARRAY );
-  glNormalPointer(GL_FLOAT, 0, norms);
+  // Constant normal
+  glNormal3fv( fvec3(0,0,1).ptr() );
 
   vec3 a,b,c,d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
@@ -738,8 +736,6 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
   glDrawArrays(GL_QUADS,0,4);
 
   glDisableClientState( GL_VERTEX_ARRAY );
-  glDisableClientState( GL_NORMAL_ARRAY );
-  glDisableClientState( GL_COLOR_ARRAY );
 
   if (mode() == Text2D)
   {
@@ -778,13 +774,11 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
     VL_CHECK_OGL();
   }
 
-  fvec4 cols[] = { mBorderColor, mBorderColor, mBorderColor, mBorderColor };
-  glEnableClientState( GL_COLOR_ARRAY );
-  glColorPointer(4, GL_FLOAT, 0, cols);
+  // Border color
+  glColor4fv(mBorderColor.ptr());
 
-  fvec3 norms[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
-  glEnableClientState( GL_NORMAL_ARRAY );
-  glNormalPointer(GL_FLOAT, 0, norms);
+  // Constant normal
+  glNormal3fv( fvec3(0,0,1).ptr() );
 
   vec3 a,b,c,d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
@@ -795,8 +789,6 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
   glDrawArrays(GL_LINE_LOOP,0,4);
 
   glDisableClientState( GL_VERTEX_ARRAY );
-  glDisableClientState( GL_NORMAL_ARRAY );
-  glDisableClientState( GL_COLOR_ARRAY );
 
   if (mode() == Text2D)
   {
