@@ -37,6 +37,14 @@
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/Image.hpp>
 
+// mic fixme: 
+// http://msdn.microsoft.com/en-us/library/bb943991(v=vs.85).aspx#dds_variants
+// - read and write float and half float images.
+// - support directx 10 dds and formats
+// - support A8R8G8B8, A1R5G5B5, A4R4G4B4, R8G8B8, R5G6B5
+...
+... image viewer test to see quickly the supported images formats ...
+
 using namespace vl;
 
 #include <vlCore/ImageTools.hpp>
@@ -71,14 +79,15 @@ namespace
   const unsigned long DDS_REQUIRED_FLAGS  = DDS_CAPS|DDS_PIXELFORMAT|DDS_WIDTH|DDS_HEIGHT;
 
   // DDPIXELFORMAT.dwFlags
-  const unsigned long DDPF_ALPHAPIXELS     = 0x00000001;
-  const unsigned long DDPF_ALPHA           = 0x00000002;
-  const unsigned long DDPF_FOURCC          = 0x00000004;
+  const unsigned long DDPF_ALPHAPIXELS     = 0x00000001; // there is an alpha channel
+  const unsigned long DDPF_ALPHA           = 0x00000002; // the image is an alpha channel only image
+  const unsigned long DDPF_FOURCC          = 0x00000004; // the foucc code defines the pixel format
   const unsigned long DDPF_INDEXED4        = 0x00000008;
   const unsigned long DDPF_INDEXEDTO8      = 0x00000010;
   const unsigned long DDPF_INDEXED8        = 0x00000020;
-  const unsigned long DDPF_RGB             = 0x00000040;
-  const unsigned long DDPF_COMPRESSED      = 0x00000080;
+  const unsigned long DDPF_RGB             = 0x00000040; // RGB, no fourcc
+  const unsigned long DDPF_RGBA            = 0x00000041; // DDPF_RGB | DDPF_ALPHAPIXELS
+  const unsigned long DDPF_COMPRESSED      = 0x00000080; // It's a compressed format
   const unsigned long DDPF_RGBTOYUV        = 0x00000100;
   const unsigned long DDPF_YUV             = 0x00000200;
   const unsigned long DDPF_ZBUFFER         = 0x00000400;
@@ -87,44 +96,40 @@ namespace
   const unsigned long DDPF_ZPIXELS         = 0x00002000;
   const unsigned long DDPF_STENCILBUFFER   = 0x00004000;
   const unsigned long DDPF_ALPHAPREMULT    = 0x00008000;
-  const unsigned long DDPF_LUMINANCE       = 0x00020000;
+  const unsigned long DDPF_LUMINANCE       = 0x00020000; // Is a luminance image
   const unsigned long DDPF_BUMPLUMINANCE   = 0x00040000;
   const unsigned long DDPF_BUMPDUDV        = 0x00080000;
 
   // DDSCAPS2.dwCaps1
-  const unsigned long DDSCAPS_COMPLEX  = 0x00000008;
-  const unsigned long DDSCAPS_TEXTURE  = 0x00001000;
-  const unsigned long DDSCAPS_MIPMAP  = 0x00400000;
+  const unsigned long DDSCAPS_COMPLEX = 0x00000008; // Whenever is cubemap or volume
+  const unsigned long DDSCAPS_TEXTURE = 0x00001000; // Always present
+  const unsigned long DDSCAPS_MIPMAP  = 0x00400000; // It's a mipmap image
 
   // DDSCAPS2.dwCaps2
-  const unsigned long DDSCAPS2_CUBEMAP  = 0x00000200;
+  const unsigned long DDSCAPS2_VOLUME            = 0x00200000; // It's a 3D texture
+  const unsigned long DDSCAPS2_CUBEMAP           = 0x00000200; // It's a cubemap
   const unsigned long DDSCAPS2_CUBEMAP_POSITIVEX = 0x00000400;
   const unsigned long DDSCAPS2_CUBEMAP_NEGATIVEX = 0x00000800;
   const unsigned long DDSCAPS2_CUBEMAP_POSITIVEY = 0x00001000;
   const unsigned long DDSCAPS2_CUBEMAP_NEGATIVEY = 0x00002000;
   const unsigned long DDSCAPS2_CUBEMAP_POSITIVEZ = 0x00004000;
   const unsigned long DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x00008000;
-  const unsigned long DDSCAPS2_CUBEMAP_FACES =
-    DDSCAPS2_CUBEMAP_POSITIVEX + DDSCAPS2_CUBEMAP_POSITIVEY + DDSCAPS2_CUBEMAP_POSITIVEZ +
-    DDSCAPS2_CUBEMAP_NEGATIVEX + DDSCAPS2_CUBEMAP_NEGATIVEY + DDSCAPS2_CUBEMAP_NEGATIVEZ;
+  const unsigned long DDSCAPS2_CUBEMAP_FACES = DDSCAPS2_CUBEMAP_POSITIVEX | DDSCAPS2_CUBEMAP_NEGATIVEX | 
+                                               DDSCAPS2_CUBEMAP_POSITIVEY | DDSCAPS2_CUBEMAP_NEGATIVEY |
+                                               DDSCAPS2_CUBEMAP_POSITIVEZ | DDSCAPS2_CUBEMAP_NEGATIVEZ ; 
 
-  const unsigned long DDSCAPS2_VOLUME  = 0x00200000;
-
-  // DDPIXELFORMAT.dwFourCC compressed texture type
-  //const char* FOURCC_DXT1 = "DXT1";
-  //const char* FOURCC_DXT2 = "DXT2";
-  //const char* FOURCC_DXT3 = "DXT3";
-  //const char* FOURCC_DXT4 = "DXT4";
-  //const char* FOURCC_DXT5 = "DXT5";
-  //const char* FOURCC_PALETTE8 = "P8  ";
-  //const char* FOURCC_GRAY8ALPHA8 = "AG8 ";
-
-  bool isFOURCC(const char* code, unsigned long fcc)
+  inline unsigned int MAKEFOURCC(unsigned int ch0, unsigned int ch1, unsigned int ch2, unsigned int ch3) 
   {
-    return memcmp(code, &fcc, 4) == 0;
+      return ch0 | (ch1 << 8) | ( ch2 << 16) | ( ch3 << 24 );
+  }
+
+  inline bool isFOURCC(const char* code, unsigned int fcc)
+  {
+    return MAKEFOURCC(code[0], code[1], code[2], code[3]) == fcc;
   }
 
   // quick surface type macros
+
   #define IS_BGRA8(pf) \
     ((pf.dwFlags & DDPF_RGB) && \
      (pf.dwFlags & DDPF_ALPHAPIXELS) && \
@@ -150,7 +155,7 @@ namespace
     (pf.dwRGBBitCount == 16) && (pf.dwFlags & DDPF_ALPHAPIXELS)) || \
      isFOURCC("AG8 ", pf.dwFourCC ) )
 
-  #define IS_PALETTE8(pf) isFOURCC("P8  ", pf.dwFourCC )
+  #define IS_PALETTE8(pf) isFOURCC("P8  ", pf.dwFourCC)
 
   #define IS_DXT1(pf) isFOURCC("DXT1", pf.dwFourCC)
 
@@ -231,8 +236,6 @@ ref<Image> vl::loadDDS(const String& path)
     return NULL;
   }
 
-  // FILE * fin = fopen( path.toStdString().c_str(), "rb");
-  // if (!fin)
   return loadDDS(file.get());
 }
 
@@ -246,15 +249,10 @@ ref<Image> vl::loadDDS(VirtualFile* file)
     return NULL;
   }
 
-  ref<Image> img = new Image;
-  img->setObjectName( file->path().toStdString() );
-
   char signature[4];
-  // fread(signature, 1, 4, fin);
   file->read(signature,4);
   if (strncmp(signature, "DDS ", 4) != 0)
   {
-    // fclose(fin);
     file->close();
     Log::error( Say("DDS: '%s' is not a DDS file.\n") << file->path() );
     return NULL;
@@ -263,35 +261,11 @@ ref<Image> vl::loadDDS(VirtualFile* file)
   DDSURFACEDESC2 header;
   memset(&header, 0, sizeof(header));
 
-  // fread(&header, 1, sizeof(header), fin);
-
-  header.dwSize = file->readUInt32();
-  header.dwFlags = file->readUInt32();
-  header.dwHeight = file->readUInt32();
-  header.dwWidth = file->readUInt32();
-  header.dwPitchOrLinearSize = file->readUInt32();
-  header.dwDepth = file->readUInt32();
-  header.dwMipMapCount = file->readUInt32();
-  // fread(header.dwReserved1, 1, 11*sizeof(unsigned long), fin);
-  file->read(header.dwReserved1, 11*sizeof(unsigned long));
-  header.ddpfPixelFormat.dwSize = file->readUInt32();
-  header.ddpfPixelFormat.dwFlags = file->readUInt32();
-  header.ddpfPixelFormat.dwFourCC = file->readUInt32();
-  header.ddpfPixelFormat.dwRGBBitCount = file->readUInt32();
-  header.ddpfPixelFormat.dwRBitMask = file->readUInt32();
-  header.ddpfPixelFormat.dwGBitMask = file->readUInt32();
-  header.ddpfPixelFormat.dwBBitMask = file->readUInt32();
-  header.ddpfPixelFormat.dwAlphaBitMask = file->readUInt32();
-  header.ddsCaps.dwCaps1 = file->readUInt32();
-  header.ddsCaps.dwCaps2 = file->readUInt32();
-  header.ddsCaps.dwReserved[0] = file->readUInt32();
-  header.ddsCaps.dwReserved[1] = file->readUInt32();
-  header.dwReserved2 = file->readUInt32();
+  file->read(&header, sizeof(header));
 
   if (header.dwSize != 124 || header.ddpfPixelFormat.dwSize != 32)
   {
     Log::error( Say("DDS file '%s': corrupted header.\n") << file->path() );
-    // fclose(fin);
     file->close();
     return NULL;
   }
@@ -302,23 +276,15 @@ ref<Image> vl::loadDDS(VirtualFile* file)
   if ((header.ddsCaps.dwCaps1 & DDSCAPS_TEXTURE) != DDSCAPS_TEXTURE)
     Log::warning( Say("DDS file '%s': missing DDSCAPS_TEXTURE flag.\n") << file->path() );
 
-  //if (header.ddsCaps.dwCaps1 & DDSCAPS_MIPMAP)
-  //{
-  //  printf("we got mipmaps: %d!\n", header.dwMipMapCount);
-  //}
-
   int image_type = header.dwDepth ? DDS_IMAGE_3D : DDS_IMAGE_2D;
 
   if (header.ddsCaps.dwCaps2 & DDSCAPS2_CUBEMAP)
   {
-    // printf("we got a cubemap!\n");
-    bool allfaces = (header.ddsCaps.dwCaps2 & DDSCAPS2_CUBEMAP_FACES) != 0;
+    bool allfaces = (header.ddsCaps.dwCaps2 & DDSCAPS2_CUBEMAP_FACES) != DDSCAPS2_CUBEMAP_FACES;
 
     if (!allfaces)
     {
-      // printf("Error: the cubemap is incomplete, one or more faces are missing!\n");
       Log::error( Say("DDS: '%s' contains an invalid cubemap.\n") << file->path() );
-      // fclose(fin);
       file->close();
       return NULL;
     }
@@ -368,15 +334,6 @@ ref<Image> vl::loadDDS(VirtualFile* file)
     image.back()->setObjectName(file->path().toStdString());
   }
 
-  //  char ptr[] = {
-  //  ((char*)&header.ddpfPixelFormat.dwFourCC)[0],
-  //  ((char*)&header.ddpfPixelFormat.dwFourCC)[1],
-  //  ((char*)&header.ddpfPixelFormat.dwFourCC)[2],
-  //  ((char*)&header.ddpfPixelFormat.dwFourCC)[3],
-  //  0
-  //};
-  //printf("===> '%s'\n", ptr);
-
   if (IS_BGRA8(header.ddpfPixelFormat) || IS_BGRX8(header.ddpfPixelFormat))
   {
     for(int i=0, w = header.dwWidth, h = header.dwHeight, d = header.dwDepth; i<mipmaps; ++i, w/=2, h/=2, d/=2)
@@ -404,8 +361,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         d = d == 0 ? 1 : d;
 
         int req_mem = Image::requiredMemory( w, h, d, 1, IF_RGBA, IT_UNSIGNED_BYTE, false );
-        int offset = req_mem*face;
-        // fread(image[i]->pixels() + offset, 1, req_mem, fin);
+        int offset = req_mem * face;
         file->read(image[i]->pixels() + offset, req_mem);
 
         if(reverse_rgba_bgra)
@@ -444,8 +400,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         d = d == 0 ? 1 : d;
 
         int req_mem = Image::requiredMemory( w, h, d, 1, IF_RGB, IT_UNSIGNED_BYTE, false );
-        int offset = req_mem*face;
-        // fread(image[i]->pixels() + offset, 1, req_mem, fin);
+        int offset = req_mem * face;
         file->read(image[i]->pixels() + offset, req_mem);
 
         if(reverse_rgba_bgra)
@@ -482,7 +437,6 @@ ref<Image> vl::loadDDS(VirtualFile* file)
 
         int req_mem = Image::requiredMemory( w, h, d, 1, IF_LUMINANCE, IT_UNSIGNED_BYTE, false );
         int offset = req_mem*face;
-        // fread(image[i]->pixels() + offset, 1, req_mem, fin);
         file->read(image[i]->pixels() + offset, req_mem);
       }
     }
@@ -516,8 +470,8 @@ ref<Image> vl::loadDDS(VirtualFile* file)
 
         int req_mem = Image::requiredMemory( w, h, d, 1, IF_LUMINANCE_ALPHA, IT_UNSIGNED_BYTE, false );
         int offset = req_mem*face;
-        // fread(image[i]->pixels() + offset, 1, req_mem, fin);
         file->read(image[i]->pixels() + offset, req_mem);
+
         if (!hasalpha)
           fillGray8Alpha8_Alpha(image[i]->pixels() + offset, req_mem, 0xFF);
       }
@@ -545,7 +499,6 @@ ref<Image> vl::loadDDS(VirtualFile* file)
     for(int face=0; face<max_face; ++face)
     {
       TPalette4x256 palette;
-      // fread( palette, 1, sizeof(TPalette4x256), fin );
       file->read( palette, sizeof(TPalette4x256) );
       for(int i=0, w = header.dwWidth, h = header.dwHeight, d = header.dwDepth; i<mipmaps; ++i, w/=2, h/=2, d/=2)
       {
@@ -557,7 +510,6 @@ ref<Image> vl::loadDDS(VirtualFile* file)
         int req_mem4 = w*h*d*4;
         int offset = req_mem4*face;
         // read the palette first
-        // fread(image[i]->pixels() + offset, 1, req_mem1, fin);
         file->read( image[i]->pixels() + offset, req_mem1 );
         convert8ToRGBA( palette, image[i]->pixels() + offset, w, h * d );
         swapBytes32_BGRA_RGBA(image[i]->pixels() + offset, req_mem4);
@@ -597,7 +549,6 @@ ref<Image> vl::loadDDS(VirtualFile* file)
 
         int req_mem = Image::requiredMemory( w, h, d, 1, DXT1, IT_IMPLICIT_TYPE, false );
         int offset = req_mem*face;
-        // fread(image[i]->pixels() + offset, 1, req_mem, fin);
         file->read(image[i]->pixels() + offset, req_mem);
       }
     }
@@ -631,7 +582,6 @@ ref<Image> vl::loadDDS(VirtualFile* file)
 
         int req_mem = Image::requiredMemory( w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT3, IT_IMPLICIT_TYPE, false );
         int offset = req_mem*face;
-        // fread(image[i]->pixels() + offset, 1, req_mem, fin);
         file->read(image[i]->pixels() + offset, req_mem);
       }
     }
@@ -665,7 +615,6 @@ ref<Image> vl::loadDDS(VirtualFile* file)
 
         int req_mem = Image::requiredMemory( w, h, d, 1, IF_COMPRESSED_RGBA_S3TC_DXT5, IT_IMPLICIT_TYPE, false );
         int offset = req_mem*face;
-        // fread(image[i]->pixels() + offset, 1, req_mem, fin);
         file->read(image[i]->pixels() + offset, req_mem);
       }
     }
@@ -673,12 +622,10 @@ ref<Image> vl::loadDDS(VirtualFile* file)
   else
   {
     Log::error( Say("DDS: not supported format for '%s'.\n") << file->path() );
-    // fclose(fin);
     file->close();
     return NULL;
   }
 
-  // fclose(fin);
   file->close();
 
   // We don't flip at all the DDS to be consistent since flipping
@@ -710,6 +657,9 @@ ref<Image> vl::loadDDS(VirtualFile* file)
   #endif
 
   VL_CHECK(image.size());
+
+  ref<Image> img = new Image;
+  img->setObjectName(file->path().toStdString());
   *img = *image[0];
   image.erase(image.begin());
   img->setMipmaps(image);

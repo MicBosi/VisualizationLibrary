@@ -82,11 +82,13 @@ namespace vl
 
     bool writeResource(const String&, ResourceDatabase*) const
     {
+      // mic fixme
       return false;
     }
 
     bool writeResource(VirtualFile*, ResourceDatabase*) const
     {
+      // mic fixme
       return false;
     }
   };
