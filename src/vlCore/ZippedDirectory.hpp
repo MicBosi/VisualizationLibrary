@@ -58,7 +58,7 @@ namespace vl
   class VLCORE_EXPORT ZippedDirectory: public VirtualDirectory
   {
   public:
-    virtual const char* className() { return "vl::ZippedDirectory"; }
+    virtual const char* className() const { return "vl::ZippedDirectory"; }
 
     ZippedDirectory();
 

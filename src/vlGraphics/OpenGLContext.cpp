@@ -554,7 +554,7 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
   {
     for( unsigned i=0; i<cur->enables().size(); ++i )
     {
-      EEnable cur_en = cur->enables()[i];
+      const EEnable& cur_en = cur->enables()[i];
       mEnableTable[cur_en] += 1; // 0 -> 1; 1 -> 2;
       if ( !mCurrentEnable[cur_en] )
       {
@@ -577,7 +577,7 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
   {
     for( unsigned i=0; i<prev->enables().size(); ++i )
     {
-      EEnable prev_en = prev->enables()[i];
+      const EEnable& prev_en = prev->enables()[i];
       if ( mEnableTable[prev_en] == 1 )
       {
         mCurrentEnable[prev_en] = false;
@@ -612,7 +612,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
   {
     for( unsigned i=0; i<cur->renderStates().size(); ++i )
     {
-      RenderState* cur_rs = cur->renderStates()[i].get();
+      const RenderState* cur_rs = cur->renderStates()[i].get();
       mRenderStateTable[cur_rs->type()] += 1; // 0 -> 1; 1 -> 2;
       if ( mCurrentRenderState[cur_rs->type()] != cur_rs )
       {
@@ -629,7 +629,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
   {
     for( unsigned i=0; i<prev->renderStates().size(); ++i )
     {
-      RenderState* prev_rs = prev->renderStates()[i].get();
+      const RenderState* prev_rs = prev->renderStates()[i].get();
       if ( mRenderStateTable[prev_rs->type()] == 1 )
       {
         mCurrentRenderState[prev_rs->type()] = mDefaultRenderStates[prev_rs->type()].get();

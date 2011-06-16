@@ -58,7 +58,7 @@ namespace vl
   class LoadWriterJPG: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "vl::LoadWriterJPG"; }
+    virtual const char* className() const { return "vl::LoadWriterJPG"; }
 
     LoadWriterJPG(): ResourceLoadWriter("|jpg|", "|jpg|"), mQuality(95) 
     {

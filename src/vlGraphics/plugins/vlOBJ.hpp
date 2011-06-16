@@ -57,7 +57,7 @@ namespace vl
   class LoadWriterOBJ: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "vl::LoadWriterOBJ"; }
+    virtual const char* className() const { return "vl::LoadWriterOBJ"; }
     LoadWriterOBJ(): ResourceLoadWriter("|obj|", "|obj|") {}
 
     void registerLoadWriter();
@@ -186,7 +186,7 @@ namespace vl
   class ObjMaterial: public Object
   {
   public:
-    virtual const char* className() { return "vl::ObjMaterial"; }
+    virtual const char* className() const { return "vl::ObjMaterial"; }
 
     ObjMaterial(): mTr(1.0f), mNs(0.0f), mIllum(0), mNi(1.0f) {}
 
@@ -297,7 +297,7 @@ namespace vl
   class ObjMesh: public Object
   {
   public:
-    virtual const char* className() { return "vl::ObjMesh"; }
+    virtual const char* className() const { return "vl::ObjMesh"; }
 
     //! The material associated to this mesh
     void setMaterial(ObjMaterial* mat)  { mMaterial = mat; }

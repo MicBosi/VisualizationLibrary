@@ -129,7 +129,7 @@ namespace vl
   class VLGRAPHICS_EXPORT Actor: public Object
   {
   public:
-    virtual const char* className() { return "vl::Actor"; }
+    virtual const char* className() const { return "vl::Actor"; }
 
     /** Constructor.
     \param renderable A Renderable defining the Actor's LOD level #0

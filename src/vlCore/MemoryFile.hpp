@@ -56,7 +56,7 @@ namespace vl
   class VLCORE_EXPORT MemoryFile: public VirtualFile
   {
   public:
-    virtual const char* className() { return "vl::MemoryFile"; }
+    virtual const char* className() const { return "vl::MemoryFile"; }
 
     MemoryFile();
 

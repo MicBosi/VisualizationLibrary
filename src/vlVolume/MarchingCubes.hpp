@@ -55,7 +55,7 @@ namespace vl
       bool includes(float v) const { return v >= mMin && v <= mMax; }
     };
   public:
-    virtual const char* className() { return "vl::Volume"; }
+    virtual const char* className() const { return "vl::Volume"; }
 
     Volume();
 
@@ -162,7 +162,7 @@ namespace vl
   class VolumeInfo: public Object
   {
   public:
-    virtual const char* className() { return "vl::VolumeInfo"; }
+    virtual const char* className() const { return "vl::VolumeInfo"; }
 
     VolumeInfo(Volume* vol, float threshold, const fvec4& color)
     {

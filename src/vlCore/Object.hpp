@@ -56,7 +56,7 @@ namespace vl
   public:
 
     //! Returns the name of the class.
-    virtual const char* className() { return "vl::Object"; }
+    virtual const char* className() const { return "vl::Object"; }
 
     //! Constructor.
     Object()

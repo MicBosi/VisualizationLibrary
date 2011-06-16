@@ -58,7 +58,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::VolumePlot"; }
+    virtual const char* className() const { return "vl::VolumePlot"; }
 
     //! Constructor.
     VolumePlot();

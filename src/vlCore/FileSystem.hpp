@@ -59,7 +59,7 @@ namespace vl
   class VLCORE_EXPORT FileSystem: public Object
   {
   public:
-    virtual const char* className() { return "vl::FileSystem"; }
+    virtual const char* className() const { return "vl::FileSystem"; }
 
     FileSystem() { mDirectories.setAutomaticDelete(false); }
 

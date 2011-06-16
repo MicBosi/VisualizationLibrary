@@ -57,7 +57,7 @@ namespace vl
   class LoadWriterTGA: public ResourceLoadWriter
   {
   public:
-    virtual const char* className() { return "vl::LoadWriterTGA"; }
+    virtual const char* className() const { return "vl::LoadWriterTGA"; }
 
     LoadWriterTGA(): ResourceLoadWriter("|tga|", "|tga|") 
     {

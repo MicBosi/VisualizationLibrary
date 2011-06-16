@@ -52,7 +52,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    virtual const char* className() { return "vl::EnableSet"; }
+    virtual const char* className() const { return "vl::EnableSet"; }
 
     // enable getter and setters
 

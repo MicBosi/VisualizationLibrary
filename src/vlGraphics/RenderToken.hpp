@@ -47,7 +47,7 @@ namespace vl
   class RenderToken: public Object
   {
   public:
-    virtual const char* className() { return "vl::RenderToken"; }
+    virtual const char* className() const { return "vl::RenderToken"; }
     RenderToken(): mNextPass(NULL), mActor(NULL), mShader(NULL), mEffectRenderRank(0), mCameraDistance(0.0)
     {
       VL_DEBUG_SET_OBJECT_NAME()

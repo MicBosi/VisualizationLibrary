@@ -52,7 +52,7 @@ namespace vl
   class Interpolator: public Object
   {
   public:
-    virtual const char* className() { return "vl::Interpolator"; }
+    virtual const char* className() const { return "vl::Interpolator"; }
     Interpolator() 
     {
       VL_DEBUG_SET_OBJECT_NAME()

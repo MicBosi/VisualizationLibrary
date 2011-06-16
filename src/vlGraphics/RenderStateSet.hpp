@@ -51,7 +51,7 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    virtual const char* className() { return "vl::RenderStateSet"; }
+    virtual const char* className() const { return "vl::RenderStateSet"; }
 
     // renderstates getters and setters
 

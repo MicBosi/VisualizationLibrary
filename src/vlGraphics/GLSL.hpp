@@ -54,7 +54,7 @@ namespace vl
 
     ~GLSLShader();
 
-    virtual const char* className() { return "vl::Unnamed GLSLShader"; }
+    virtual const char* className() const { return "vl::Unnamed GLSLShader"; }
 
     EShaderType type() const { return mType; }
 
@@ -106,7 +106,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() { return "vl::GLSLVertexShader"; }
+    virtual const char* className() const { return "vl::GLSLVertexShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL fragment shader to be bound to a GLSLProgram: the shader this shader will run on the programmable fragment processor.
@@ -123,7 +123,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() { return "vl::GLSLFragmentShader"; }
+    virtual const char* className() const { return "vl::GLSLFragmentShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL geometry shader to be bound to a GLSLProgram: the shader this shader will run on the programmable geometry processor.
@@ -140,7 +140,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() { return "vl::GLSLGeometryShader"; }
+    virtual const char* className() const { return "vl::GLSLGeometryShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL tessellation control shader to be bound to a GLSLProgram: the shader this shader will run on the programmable tessellation processor in the control stage.
@@ -157,7 +157,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() { return "vl::GLSLTessControlShader"; }
+    virtual const char* className() const { return "vl::GLSLTessControlShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL tessellation evaluation shader to be bound to a GLSLProgram: this shader will run on the programmable tessellation processor in the evaluation stage.
@@ -174,7 +174,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() { return "vl::GLSLTessEvaluationShader"; }
+    virtual const char* className() const { return "vl::GLSLTessEvaluationShader"; }
   };
   //------------------------------------------------------------------------------
   // GLSLProgram
@@ -223,7 +223,7 @@ namespace vl
     //! Destructor. Calls deleteProgram().
     ~GLSLProgram();
 
-    virtual const char* className() { return "vl::GLSLProgram"; }
+    virtual const char* className() const { return "vl::GLSLProgram"; }
 
     //! \internal
     virtual ERenderState type() const { return RS_GLSLProgram; }

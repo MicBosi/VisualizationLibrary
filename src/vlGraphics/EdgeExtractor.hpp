@@ -131,7 +131,7 @@ namespace vl
     };
 
   public:
-    virtual const char* className() { return "vl::EdgeExtractor"; }
+    virtual const char* className() const { return "vl::EdgeExtractor"; }
     EdgeExtractor(): mCreaseAngle(45.0f), mWarnNonManifold(false)
     {
       VL_DEBUG_SET_OBJECT_NAME()

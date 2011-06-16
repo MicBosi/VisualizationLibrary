@@ -43,7 +43,7 @@ namespace vl
   class IndexIteratorAbstract: public Object
   {
   public:
-    virtual const char* className() { return "vl::IndexIteratorAbstract"; }
+    virtual const char* className() const { return "vl::IndexIteratorAbstract"; }
 
     IndexIteratorAbstract(): mIndex(-1) 
     {
@@ -63,7 +63,7 @@ namespace vl
   class IndexIterator: public Object
   {
   public:
-    virtual const char* className() { return "vl::IndexIterator"; }
+    virtual const char* className() const { return "vl::IndexIterator"; }
 
     IndexIterator()
     {
@@ -84,7 +84,7 @@ namespace vl
   class IndexIteratorDrawArrays: public IndexIteratorAbstract
   {
   public:
-    virtual const char* className() { return "vl::IndexIteratorDrawArrays"; }
+    virtual const char* className() const { return "vl::IndexIteratorDrawArrays"; }
 
     IndexIteratorDrawArrays()
     {
@@ -125,7 +125,7 @@ namespace vl
   class IndexIteratorElements: public IndexIteratorAbstract
   {
   public:
-    virtual const char* className() { return "vl::IndexIteratorElements"; }
+    virtual const char* className() const { return "vl::IndexIteratorElements"; }
 
     IndexIteratorElements()
     {

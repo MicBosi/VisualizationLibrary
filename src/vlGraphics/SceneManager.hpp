@@ -72,7 +72,7 @@ namespace vl
   class VLGRAPHICS_EXPORT SceneManager: public Object
   {
   public:
-    virtual const char* className() { return "vl::SceneManager"; }
+    virtual const char* className() const { return "vl::SceneManager"; }
     //! Constructor.
     SceneManager();
 

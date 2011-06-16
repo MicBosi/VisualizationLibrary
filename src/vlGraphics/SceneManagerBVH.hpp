@@ -55,7 +55,7 @@ namespace vl
   class VLGRAPHICS_EXPORT SceneManagerBVH: public SceneManager
   {
   public:
-    virtual const char* className() { return "vl::SceneManagerBVH"; }
+    virtual const char* className() const { return "vl::SceneManagerBVH"; }
 
     //! Sets the tree to be used by the scene manager.
     void setTree(T* bbh) { mBoundingVolumeTree = bbh; }

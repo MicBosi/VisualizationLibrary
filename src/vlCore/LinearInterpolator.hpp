@@ -44,7 +44,7 @@ namespace vl
   class LinearInterpolator: public Object
   {
   public:
-    virtual const char* className() { return "vl::LinearInterpolator"; }
+    virtual const char* className() const { return "vl::LinearInterpolator"; }
 
     LinearInterpolator() 
     {

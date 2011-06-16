@@ -60,7 +60,7 @@ namespace vl
   class ArrayAbstract: public Object
   {
   public:
-    virtual const char* className() { return "vl::ArrayAbstract"; }
+    virtual const char* className() const { return "vl::ArrayAbstract"; }
 
     //! Default constructor.
     ArrayAbstract()
@@ -181,7 +181,7 @@ namespace vl
   class Array: public ArrayAbstract
   {
   public:
-    virtual const char* className() { return "vl::Array"; }
+    virtual const char* className() const { return "vl::Array"; }
     typedef T_Scalar scalar_type;
 
     virtual size_t glSize() const { return T_GL_Size; }

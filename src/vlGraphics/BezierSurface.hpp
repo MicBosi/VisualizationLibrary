@@ -46,7 +46,7 @@ namespace vl
   public:
     //! The control points grid defining the bicubic Bézier patch(es).
     typedef std::vector< vec3 > Points;
-    virtual const char* className() { return "vl::BezierPatch"; }
+    virtual const char* className() const { return "vl::BezierPatch"; }
     //! Constructor
     BezierPatch(): mX(0), mY(0) {}
     //! Constructor
@@ -86,7 +86,7 @@ namespace vl
   class VLGRAPHICS_EXPORT BezierSurface: public Geometry
   {
   public:
-    virtual const char* className() { return "vl::BezierSurface"; }
+    virtual const char* className() const { return "vl::BezierSurface"; }
     //! Constructor
     BezierSurface(): mDetail(16) {}
 
