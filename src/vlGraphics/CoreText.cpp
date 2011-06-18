@@ -136,7 +136,7 @@ void CoreText::render_Implementation(const Actor* actor, const Shader*, const Ca
     int stencil_front_mask=0;
     glGetIntegerv(GL_STENCIL_WRITEMASK, &stencil_front_mask);
     int stencil_back_mask=0;
-    if (GLEW_VERSION_2_0)
+    if (Has_GL_Version_2_0)
       glGetIntegerv(GL_STENCIL_BACK_WRITEMASK, &stencil_back_mask);
     glStencilMask(0);
 
@@ -151,7 +151,7 @@ void CoreText::render_Implementation(const Actor* actor, const Shader*, const Ca
 
     // restore the stencil masks
     glStencilMask(stencil_front_mask);
-    if (GLEW_VERSION_2_0)
+    if (Has_GL_Version_2_0)
       glStencilMaskSeparate(GL_BACK, stencil_back_mask);
   }
 }

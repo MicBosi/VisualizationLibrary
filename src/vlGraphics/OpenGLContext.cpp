@@ -194,7 +194,7 @@ void OpenGLContext::setVSyncEnabled(bool enable)
 {
 #ifdef _WIN32
   makeCurrent();
-  if (WGLEW_EXT_swap_control)
+  if (Has_GL_EXT_swap_control)
     wglSwapIntervalEXT(enable?1:0);
 #else
   // Mac and Linux?
@@ -204,7 +204,7 @@ void OpenGLContext::setVSyncEnabled(bool enable)
 bool OpenGLContext::vsyncEnabled() const
 {
 #ifdef _WIN32
-  if (WGLEW_EXT_swap_control)
+  if (Has_GL_EXT_swap_control)
     return wglGetSwapIntervalEXT() != 0;
   else
     return false;
@@ -221,6 +221,9 @@ void OpenGLContext::initGLContext(bool log)
   mMinorVersion = 0;
 
   makeCurrent();
+
+  // initialize vl::Has_GL_Version_*
+  initOpenGLVersions();
 
   // init glew for each rendering context
   GLenum err = glewInit();
@@ -241,10 +244,12 @@ void OpenGLContext::initGLContext(bool log)
     // clear errors
     glGetError();
     // test if fixed function pipeline is supported.
-    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
     // check error code
-    mIsCompatible  = glGetError() == GL_NO_ERROR;
+    mIsCompatible = glGetError() == GL_NO_ERROR;
   }
+
+  VL_CHECK_OGL();
 
   if (log)
   {
@@ -257,17 +262,17 @@ void OpenGLContext::initGLContext(bool log)
   // find max number of texture units
   int max_tmp = 0;
   mTextureUnitCount = 1;
-  if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
+  if (Has_GL_Version_1_3||Has_GL_ARB_multitexture)
   {
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL();
     mTextureUnitCount = max_tmp > mTextureUnitCount ? max_tmp : mTextureUnitCount;
   }
-  if (GLEW_VERSION_2_0)
+  if (Has_GL_Version_2_0)
   {
     glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL();
     mTextureUnitCount = max_tmp > mTextureUnitCount ? max_tmp : mTextureUnitCount;
   }
-  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+  if (Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
     mTextureUnitCount = max_tmp > mTextureUnitCount ? max_tmp : mTextureUnitCount;
@@ -276,7 +281,7 @@ void OpenGLContext::initGLContext(bool log)
 
   // find max number of vertex attributes
   mMaxVertexAttrib = 0;
-  if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+  if(Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &mMaxVertexAttrib);
   mMaxVertexAttrib = mMaxVertexAttrib < VL_MAX_GENERIC_VERTEX_ATTRIB ? mMaxVertexAttrib : VL_MAX_GENERIC_VERTEX_ATTRIB;
 
@@ -331,24 +336,24 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("OpenGL renderer: %s\n") << glGetString(GL_RENDERER) );
     Log::print( Say("OpenGL profile: %s\n") << (isCompatible() ? "Compatible" : "Core") );
 
-    // Note: GLEW returns GLEW_VERSION_1_1, 1_2, 1_3... even if we are in "Core" profile!
+    // Note: GLEW returns Has_GL_Version_1_1, 1_2, 1_3... even if we are in "Core" profile!
 #if 0
     struct { GLboolean supported; String gl_name; } 
     gl_versions[] =
     {
-      { GLEW_VERSION_1_1, "GLEW_VERSION_1_1" },
-      { GLEW_VERSION_1_2, "GLEW_VERSION_1_2" },
-      { GLEW_VERSION_1_3, "GLEW_VERSION_1_3" },
-      { GLEW_VERSION_1_4, "GLEW_VERSION_1_4" },
-      { GLEW_VERSION_1_5, "GLEW_VERSION_1_5" },
-      { GLEW_VERSION_2_0, "GLEW_VERSION_2_0" },
-      { GLEW_VERSION_2_1, "GLEW_VERSION_2_1" },
-      { GLEW_VERSION_3_0, "GLEW_VERSION_3_0" },
-      { GLEW_VERSION_3_1, "GLEW_VERSION_3_1" },
-      { GLEW_VERSION_3_2, "GLEW_VERSION_3_2" },
-      { GLEW_VERSION_3_3, "GLEW_VERSION_3_3" },
-      { GLEW_VERSION_4_0, "GLEW_VERSION_4_0" },
-      { GLEW_VERSION_4_1, "GLEW_VERSION_4_1" },
+      { Has_GL_Version_1_1, "Has_GL_Version_1_1" },
+      { Has_GL_Version_1_2, "Has_GL_Version_1_2" },
+      { Has_GL_Version_1_3, "Has_GL_Version_1_3" },
+      { Has_GL_Version_1_4, "Has_GL_Version_1_4" },
+      { Has_GL_Version_1_5, "Has_GL_Version_1_5" },
+      { Has_GL_Version_2_0, "Has_GL_Version_2_0" },
+      { Has_GL_Version_2_1, "Has_GL_Version_2_1" },
+      { Has_GL_Version_3_0, "Has_GL_Version_3_0" },
+      { Has_GL_Version_3_1, "Has_GL_Version_3_1" },
+      { Has_GL_Version_3_2, "Has_GL_Version_3_2" },
+      { Has_GL_Version_3_3, "Has_GL_Version_3_3" },
+      { Has_GL_Version_4_0, "Has_GL_Version_4_0" },
+      { Has_GL_Version_4_1, "Has_GL_Version_4_1" },
     };
     for( int i = 0; i < sizeof(gl_versions) / sizeof(gl_versions[0]); ++i)
     {
@@ -357,58 +362,58 @@ void OpenGLContext::logOpenGLInfo()
     }
 #endif
 
-    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+    if (Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
       Log::print( Say("GLSL version: %s\n")<<glGetString(GL_SHADING_LANGUAGE_VERSION) );
     int max_val = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_val);
     Log::print( Say("Max texture size: %n\n")<<max_val);
     max_val = 0;
-    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+    if (Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
       glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_val);
     Log::print( Say("Texture coords: %n\n") << max_val);
     max_val = 1;
-    if (GLEW_ARB_multitexture||GLEW_VERSION_1_3||GLEW_VERSION_3_0)
+    if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GL_Version_3_0)
       glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val);
     Log::print( Say("Texture conventional units: %n\n") << max_val);
     max_val = 0;
-    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+    if (Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
       glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
     Log::print( Say("Texture image units: %n\n") << max_val);
     max_val = 0;
-    if (GLEW_ARB_multitexture||GLEW_VERSION_1_3)
+    if (Has_GL_ARB_multitexture||Has_GL_Version_1_3)
       glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_val);
-    Log::print( Say("Anisotropic texture filter: %s, ") << (GLEW_EXT_texture_filter_anisotropic? "YES" : "NO") );
-    GLEW_EXT_texture_filter_anisotropic ? Log::print( Say("%nX\n") << max_val) : Log::print("\n");
-    Log::print( Say("S3 Texture Compression: %s\n") << (GLEW_EXT_texture_compression_s3tc? "YES" : "NO") );
-    Log::print( Say("Vertex Buffer Object: %s\n") << (GLEW_ARB_vertex_buffer_object ? "YES" : "NO"));
-    Log::print( Say("Pixel Buffer Object: %s\n") << (GLEW_ARB_pixel_buffer_object ? "YES" : "NO"));
-    Log::print( Say("Framebuffer Object: %s\n") << (GLEW_EXT_framebuffer_object ? "YES" : "NO"));
+    Log::print( Say("Anisotropic texture filter: %s, ") << (Has_GL_EXT_texture_filter_anisotropic? "YES" : "NO") );
+    Has_GL_EXT_texture_filter_anisotropic ? Log::print( Say("%nX\n") << max_val) : Log::print("\n");
+    Log::print( Say("S3 Texture Compression: %s\n") << (Has_GL_EXT_texture_compression_s3tc? "YES" : "NO") );
+    Log::print( Say("Vertex Buffer Object: %s\n") << (Has_GL_ARB_vertex_buffer_object ? "YES" : "NO"));
+    Log::print( Say("Pixel Buffer Object: %s\n") << (Has_GL_ARB_pixel_buffer_object ? "YES" : "NO"));
+    Log::print( Say("Framebuffer Object: %s\n") << (Has_GL_EXT_framebuffer_object ? "YES" : "NO"));
     max_val = 0;
-    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+    if(Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
       glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &max_val);
     Log::print( Say("Max vertex attributes: %n\n")<<max_val);
     VL_CHECK_OGL();
     max_val = 0;
-    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+    if(Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
       glGetIntegerv(GL_MAX_VARYING_FLOATS , &max_val);
     Log::print( Say("Max varying floats: %n\n")<<max_val);
     VL_CHECK_OGL();
     max_val = 0;
-    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+    if(Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
       glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS , &max_val);
     Log::print( Say("Max fragment uniform components: %n\n")<<max_val);
     VL_CHECK_OGL();
     max_val = 0;
-    if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+    if(Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
       glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS , &max_val);
     Log::print( Say("Max vertex uniform components: %n\n")<<max_val);
     VL_CHECK_OGL();
     max_val = 0;
-    if(GLEW_VERSION_1_2||GLEW_VERSION_3_0)
+    if(Has_GL_Version_1_2||Has_GL_Version_3_0)
       glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val);
     Log::print( Say("Max elements vertices: %n\n") << max_val );
     max_val = 0;
-    if(GLEW_VERSION_1_2||GLEW_VERSION_3_0)
+    if(Has_GL_Version_1_2||Has_GL_Version_3_0)
       glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val );
     Log::print( Say("Max elements indices: %n\n") << max_val );
 
@@ -417,7 +422,7 @@ void OpenGLContext::logOpenGLInfo()
     Log::print("\n --- OpenGL Extensions --- \n");
     std::stringstream sstream;
     std::string ext_str;
-    if (GLEW_VERSION_3_0)
+    if (Has_GL_Version_3_0||Has_GL_Version_4_0)
     {
       int count = 0;
       glGetIntegerv(GL_NUM_EXTENSIONS, &count);
@@ -683,9 +688,9 @@ void OpenGLContext::setupDefaultRenderStates()
     mDefaultRenderStates[RS_ClipPlane5] = new ClipPlane(5);
   }
 
-  if (GLEW_VERSION_1_4||GLEW_EXT_blend_color)
+  if (Has_GL_Version_1_4||Has_GL_EXT_blend_color)
     mDefaultRenderStates[RS_BlendColor] = new BlendColor;
-  if (GLEW_VERSION_1_4)
+  if (Has_GL_Version_1_4)
     mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
   mDefaultRenderStates[RS_BlendFunc] = new BlendFunc;
   mDefaultRenderStates[RS_ColorMask] = new ColorMask;
@@ -698,11 +703,11 @@ void OpenGLContext::setupDefaultRenderStates()
   mDefaultRenderStates[RS_Hint] = new Hint;
   mDefaultRenderStates[RS_LineWidth] = new LineWidth;
   mDefaultRenderStates[RS_LogicOp] = new LogicOp;
-  if (GLEW_VERSION_1_4||GLEW_ARB_point_parameters)
+  if (Has_GL_Version_1_4||Has_GL_ARB_point_parameters)
     mDefaultRenderStates[RS_PointParameter] = new PointParameter;
   mDefaultRenderStates[RS_PointSize] = new PointSize;
   mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
-  if (GLEW_VERSION_1_3||GLEW_ARB_multisample)
+  if (Has_GL_Version_1_3||Has_GL_ARB_multisample)
     mDefaultRenderStates[RS_SampleCoverage] = new SampleCoverage;
   mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
   mDefaultRenderStates[RS_StencilFunc] = new StencilFunc;
@@ -798,7 +803,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
   }
 
-  if (GLEW_VERSION_3_1)
+  if (Has_GL_Version_3_1)
     if (glIsEnabled(GL_PRIMITIVE_RESTART))
     {
       if (verbose)
@@ -807,7 +812,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
 
-  if(GLEW_VERSION_1_3||GLEW_ARB_multitexture||GLEW_VERSION_2_0||GLEW_VERSION_3_0)
+  if(Has_GL_Version_1_3||Has_GL_ARB_multitexture||Has_GL_Version_2_0||Has_GL_Version_3_0)
   {
     int active_tex = -1;
     glGetIntegerv(GL_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
@@ -839,17 +844,17 @@ bool OpenGLContext::isCleanState(bool verbose)
   // int units_count = 1;
   int coord_count = 1;
   int max_tmp = 0;
-  if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
+  if (Has_GL_Version_1_3||Has_GL_ARB_multitexture)
   {
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL();
     coord_count = max_tmp > coord_count ? max_tmp : coord_count;
   }
-  if (GLEW_VERSION_2_0)
+  if (Has_GL_Version_2_0)
   {
     glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL();
     coord_count = max_tmp > coord_count ? max_tmp : coord_count;
   }
-  //if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+  //if (Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
   //{
   //  glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
   //  units_count = max_tmp > coord_count ? max_tmp : coord_count;
@@ -924,7 +929,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
 
-    if (GLEW_ARB_texture_rectangle||GLEW_EXT_texture_rectangle||GLEW_NV_texture_rectangle||GLEW_VERSION_3_1)
+    if (Has_Texture_Rectangle)
     {
       if (isCompatible())
       if (glIsEnabled(GL_TEXTURE_RECTANGLE))
@@ -946,7 +951,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
     }
 
-    if (GLEW_VERSION_1_2||GLEW_VERSION_3_0)
+    if (Has_GL_Version_1_2||Has_GL_Version_3_0)
     {
       if (isCompatible())
       if (glIsEnabled(GL_TEXTURE_3D))
@@ -967,7 +972,7 @@ bool OpenGLContext::isCleanState(bool verbose)
         ok = false;
       }
     }
-    if (GLEW_VERSION_1_3||GLEW_ARB_texture_cube_map||GLEW_VERSION_3_0)
+    if (Has_GL_Version_1_3||Has_GL_ARB_texture_cube_map||Has_GL_Version_3_0)
     {
       if (isCompatible())
       if (glIsEnabled(GL_TEXTURE_CUBE_MAP))
@@ -989,7 +994,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
     }
 
-    if (GLEW_VERSION_3_0||GLEW_EXT_texture_array)
+    if (Has_GL_Version_3_0||Has_GL_EXT_texture_array)
     {
       bound_tex = 0;
       glGetIntegerv(GL_TEXTURE_BINDING_1D_ARRAY, &bound_tex);
@@ -1012,7 +1017,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
     }
 
-    if (GLEW_VERSION_3_2||GLEW_ARB_texture_multisample)
+    if (Has_GL_Version_3_2||Has_GL_ARB_texture_multisample)
     {
       bound_tex = 0;
       glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE, &bound_tex);
@@ -1035,7 +1040,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
     }
 
-    if (GLEW_VERSION_3_1||GLEW_EXT_texture_buffer_object)
+    if (Has_GL_Version_3_1||Has_GL_EXT_texture_buffer_object)
     {
       bound_tex = 0;
       glGetIntegerv(GL_TEXTURE_BINDING_BUFFER, &bound_tex);
@@ -1094,7 +1099,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
 
-    if (GLEW_VERSION_1_4||GLEW_EXT_fog_coord)
+    if (Has_GL_Version_1_4||Has_GL_EXT_fog_coord)
       if (glIsEnabled(GL_FOG_COORD_ARRAY))
       {
         if (verbose)
@@ -1103,7 +1108,7 @@ bool OpenGLContext::isCleanState(bool verbose)
         ok = false;
       }
 
-    if (GLEW_VERSION_1_4||GLEW_EXT_secondary_color)
+    if (Has_GL_Version_1_4||Has_GL_EXT_secondary_color)
       if (glIsEnabled(GL_SECONDARY_COLOR_ARRAY))
       {
         if (verbose)
@@ -1162,7 +1167,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   }
 
   GLint max_vert_attribs = 0;
-  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
+  if (Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_vert_attribs);
   for(int i=0; i<max_vert_attribs; ++i)
   {
@@ -1175,7 +1180,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
-  if (GLEW_ARB_imaging)
+  if (Has_GL_ARB_imaging)
   {
     if (glIsEnabled(GL_HISTOGRAM))
     {
@@ -1217,7 +1222,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   // buffer object bindings
 
   GLint buf_bind = 0;
-  if (GLEW_VERSION_1_5)
+  if (Has_GL_Version_1_5)
   {
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buf_bind);
     if (buf_bind != 0)
@@ -1237,7 +1242,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
   }
-  if (GLEW_VERSION_2_1)
+  if (Has_GL_Version_2_1)
   {
     buf_bind = 0;
     glGetIntegerv(GL_PIXEL_PACK_BUFFER_BINDING, &buf_bind);
@@ -1258,7 +1263,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
   }
-  if (GLEW_ARB_uniform_buffer_object)
+  if (Has_GL_ARB_uniform_buffer_object)
   {
     buf_bind = 0;
     glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &buf_bind);
@@ -1270,7 +1275,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
   }
-  if(GLEW_VERSION_3_0)
+  if(Has_GL_Version_3_0)
   {
     buf_bind = 0;
     glGetIntegerv(GL_TRANSFORM_FEEDBACK_BUFFER_BINDING, &buf_bind);

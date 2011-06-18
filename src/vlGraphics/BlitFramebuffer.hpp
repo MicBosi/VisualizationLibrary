@@ -58,7 +58,7 @@ namespace vl
     //! Performs the actual pixel copy from the read framebuffer to the draw framebuffer
     void copyPixels()
     {
-      if (GLEW_EXT_framebuffer_blit||GLEW_ARB_framebuffer_object)
+      if (Has_GL_EXT_framebuffer_blit||Has_GL_ARB_framebuffer_object)
       {
         VL_CHECK_OGL()
 

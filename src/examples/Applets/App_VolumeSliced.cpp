@@ -78,7 +78,7 @@ public:
     Log::print(appletInfo());
 
     // variable preconditions
-    USE_GLSL &= GLEW_Has_Shading_Language_20;
+    USE_GLSL &= Has_Shading_Language_20;
     DYNAMIC_LIGHTS &= USE_GLSL;
     COLORED_LIGHTS &= DYNAMIC_LIGHTS;
     PRECOMPUTE_GRADIENT &= USE_GLSL;
