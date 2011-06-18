@@ -34,110 +34,112 @@
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/GLSL.hpp>
 
+using namespace vl;
+
 class App_GLSL: public BaseDemo
 {
 public:
   App_GLSL()
   {
-    mTransform1 = new vl::Transform;
-    mTransform2 = new vl::Transform;
-    mTransform3 = new vl::Transform;
-    mTransform4 = new vl::Transform;
-    mTransform5 = new vl::Transform;
+    mTransform1 = new Transform;
+    mTransform2 = new Transform;
+    mTransform3 = new Transform;
+    mTransform4 = new Transform;
+    mTransform5 = new Transform;
   }
 
   void initEvent()
   {
-    if (!(GLEW_ARB_shading_language_100||GLEW_VERSION_3_0))
+    if (!(Has_GL_ARB_shading_language_100||Has_GL_Version_3_0))
     {
-      vl::Log::error("OpenGL Shading Language not supported.\n");
-      vl::Time::sleep(3000);
+      Log::error("OpenGL Shading Language not supported.\n");
+      Time::sleep(3000);
       exit(1);
     }
 
-    vl::Log::print(appletInfo());
+    Log::print(appletInfo());
 
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform3.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform4.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mTransform5.get());
+    rendering()->as<Rendering>()->transform()->addChild(mTransform1.get());
+    rendering()->as<Rendering>()->transform()->addChild(mTransform2.get());
+    rendering()->as<Rendering>()->transform()->addChild(mTransform3.get());
+    rendering()->as<Rendering>()->transform()->addChild(mTransform4.get());
+    rendering()->as<Rendering>()->transform()->addChild(mTransform5.get());
 
-    vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/models/3ds/monkey.3ds");
-    vl::ref<vl::Geometry> model = res_db->get<vl::Geometry>(0);
+    ref<ResourceDatabase> res_db = loadResource("/models/3ds/monkey.3ds");
+    ref<Geometry> model = res_db->get<Geometry>(0);
     model->computeNormals();
 
-    vl::ref<vl::Light> light = new vl::Light(0);
+    ref<Light> light = new Light(0);
 
-    vl::ref<vl::Effect> effect1 = new vl::Effect;
+    ref<Effect> effect1 = new Effect;
     effect1->shader()->setRenderState( light.get() );
-    effect1->shader()->enable(vl::EN_LIGHTING);
-    effect1->shader()->enable(vl::EN_DEPTH_TEST);
-    effect1->shader()->enable(vl::EN_CULL_FACE);
+    effect1->shader()->enable(EN_LIGHTING);
+    effect1->shader()->enable(EN_DEPTH_TEST);
+    effect1->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect1.get(), mTransform1.get() );
 
-    vl::ref<vl::Effect> effect2 = new vl::Effect;
+    ref<Effect> effect2 = new Effect;
     effect2->shader()->setRenderState( light.get() );
-    effect2->shader()->enable(vl::EN_LIGHTING);
-    effect2->shader()->enable(vl::EN_DEPTH_TEST);
-    effect2->shader()->enable(vl::EN_CULL_FACE);
+    effect2->shader()->enable(EN_LIGHTING);
+    effect2->shader()->enable(EN_DEPTH_TEST);
+    effect2->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect2.get(), mTransform2.get() );
 
-    vl::ref<vl::Effect> effect3 = new vl::Effect;
+    ref<Effect> effect3 = new Effect;
     effect3->shader()->setRenderState( light.get() );
-    effect3->shader()->enable(vl::EN_LIGHTING);
-    effect3->shader()->enable(vl::EN_DEPTH_TEST);
-    effect3->shader()->enable(vl::EN_CULL_FACE);
+    effect3->shader()->enable(EN_LIGHTING);
+    effect3->shader()->enable(EN_DEPTH_TEST);
+    effect3->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect3.get(), mTransform3.get() );
 
-    vl::ref<vl::Effect> effect4 = new vl::Effect;
+    ref<Effect> effect4 = new Effect;
     effect4->shader()->setRenderState( light.get() );
-    effect4->shader()->enable(vl::EN_LIGHTING);
-    effect4->shader()->enable(vl::EN_DEPTH_TEST);
-    effect4->shader()->enable(vl::EN_CULL_FACE);
+    effect4->shader()->enable(EN_LIGHTING);
+    effect4->shader()->enable(EN_DEPTH_TEST);
+    effect4->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect4.get(), mTransform4.get() );
 
-    vl::ref<vl::Effect> effect5 = new vl::Effect;
+    ref<Effect> effect5 = new Effect;
     effect5->shader()->setRenderState( light.get() );
-    effect5->shader()->enable(vl::EN_LIGHTING);
-    effect5->shader()->enable(vl::EN_DEPTH_TEST);
-    effect5->shader()->enable(vl::EN_CULL_FACE);
+    effect5->shader()->enable(EN_LIGHTING);
+    effect5->shader()->enable(EN_DEPTH_TEST);
+    effect5->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect5.get(), mTransform5.get() );
 
-    if (GLEW_ARB_shading_language_100||GLEW_VERSION_3_0)
+    if (Has_GL_ARB_shading_language_100||Has_GL_Version_3_0)
     {
-      vl::ref<vl::GLSLProgram> glsl;
+      ref<GLSLProgram> glsl;
 
       glsl = effect1->shader()->gocGLSLProgram();
-      glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
-      glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight_cartoon.fs") );
+      glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
+      glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight_cartoon.fs") );
 
       glsl = effect2->shader()->gocGLSLProgram();
-      glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
-      glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight.fs") );
+      glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
+      glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight.fs") );
 
       glsl = effect3->shader()->gocGLSLProgram();
-      glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
-      glsl->attachShader( new vl::GLSLFragmentShader("/glsl/heat.fs") );
+      glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
+      glsl->attachShader( new GLSLFragmentShader("/glsl/heat.fs") );
 
       glsl = effect4->shader()->gocGLSLProgram();
-      glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
-      glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight_interlaced.fs") );
+      glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
+      glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight_interlaced.fs") );
 
-      if (GLEW_Has_Geometry_Shader)
+      if (Has_Geometry_Shader)
       {
         glsl = effect5->shader()->gocGLSLProgram();
         // a vertex shader is always needed when using geometry shaders
-        glsl->attachShader( new vl::GLSLVertexShader("/glsl/diffuse.vs") );
-        glsl->attachShader( new vl::GLSLGeometryShader("/glsl/triangle_fur.gs") );
-        glsl->setGeometryInputType(vl::GIT_TRIANGLES);
-        glsl->setGeometryOutputType(vl::GOT_TRIANGLE_STRIP);
+        glsl->attachShader( new GLSLVertexShader("/glsl/diffuse.vs") );
+        glsl->attachShader( new GLSLGeometryShader("/glsl/triangle_fur.gs") );
+        glsl->setGeometryInputType(GIT_TRIANGLES);
+        glsl->setGeometryOutputType(GOT_TRIANGLE_STRIP);
         glsl->setGeometryVerticesOut( 3*6 );
       }
       else
       {
-        effect5->shader()->gocMaterial()->setDiffuse(vl::red);
-        vl::Log::print("GL_NV_geometry_shader4 not supported.\n");
+        effect5->shader()->gocMaterial()->setDiffuse(red);
+        Log::print("GL_NV_geometry_shader4 not supported.\n");
       }
     }
   }
@@ -145,19 +147,19 @@ public:
   void updateScene()
   {
     // animate the transforms
-    mTransform1->setLocalMatrix( vl::mat4::getTranslation(-2,2,0)  * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
-    mTransform2->setLocalMatrix( vl::mat4::getTranslation(+2,2,0)  * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
-    mTransform3->setLocalMatrix( vl::mat4::getTranslation(-2,-2,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
-    mTransform4->setLocalMatrix( vl::mat4::getTranslation(+2,-2,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
-    mTransform5->setLocalMatrix( vl::mat4::getTranslation(0,0,0)   * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
+    mTransform1->setLocalMatrix( mat4::getTranslation(-2,2,0)  * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
+    mTransform2->setLocalMatrix( mat4::getTranslation(+2,2,0)  * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
+    mTransform3->setLocalMatrix( mat4::getTranslation(-2,-2,0) * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
+    mTransform4->setLocalMatrix( mat4::getTranslation(+2,-2,0) * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
+    mTransform5->setLocalMatrix( mat4::getTranslation(0,0,0)   * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
   }
 
 protected:
-  vl::ref<vl::Transform> mTransform1;
-  vl::ref<vl::Transform> mTransform2;
-  vl::ref<vl::Transform> mTransform3;
-  vl::ref<vl::Transform> mTransform4;
-  vl::ref<vl::Transform> mTransform5;
+  ref<Transform> mTransform1;
+  ref<Transform> mTransform2;
+  ref<Transform> mTransform3;
+  ref<Transform> mTransform4;
+  ref<Transform> mTransform5;
 };
 
 // Have fun!

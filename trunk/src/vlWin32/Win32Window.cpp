@@ -670,7 +670,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
   // if this is not supported we use the current 'pixel_format_index' returned by ChoosePixelFormat above.
 
   int samples = 0;
-  if(WGLEW_ARB_pixel_format && fmt.multisample())
+  if(Has_WGL_ARB_pixel_format && fmt.multisample())
   {
     float fAttributes[] = { 0, 0 };
     int iAttributes[] =

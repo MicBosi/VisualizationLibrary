@@ -315,7 +315,7 @@ namespace vl
         memcpy(&tris[0], &sorted_points[0], sizeof(sorted_points[0])*sorted_points.size() );
       }
 
-      if (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)
+      if (Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0)
       if (polys->indices()->gpuBuffer()->handle())
       {
         if (polys->indices()->gpuBuffer()->usage() != vl::BU_DYNAMIC_DRAW)

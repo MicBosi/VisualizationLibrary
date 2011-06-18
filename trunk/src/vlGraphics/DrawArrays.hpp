@@ -87,7 +87,7 @@ namespace vl
       // apply patch parameters if any and if using PT_PATCHES
       applyPatchParameters();
 
-      if ( instances() > 1 && (GLEW_ARB_draw_instanced||GLEW_EXT_draw_instanced) )
+      if ( instances() > 1 && (Has_GL_ARB_draw_instanced||Has_GL_EXT_draw_instanced) )
         VL_glDrawArraysInstanced( primitiveType(), (int)start(), (int)count(), (int)instances() );
       else
         glDrawArrays( primitiveType(), (int)start(), (int)count() );
