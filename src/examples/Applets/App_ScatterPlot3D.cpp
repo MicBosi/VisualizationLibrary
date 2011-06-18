@@ -66,7 +66,7 @@ public:
     {
       effect->shader()->gocPointSize()->set(10.0f);
 
-      if (GLEW_ARB_point_sprite)
+      if (vl::Has_GL_ARB_point_sprite)
       {
         vl::ref<vl::Image> img = vl::loadImage("/images/particle.tif");
         effect->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );

@@ -87,7 +87,7 @@ public:
        significant performance improvement.
     */
 
-    if (!GLEW_EXT_draw_instanced)
+    if (!vl::Has_GL_EXT_draw_instanced)
     {
       vl::Log::error("GL_EXT_draw_instanced not supported.\n");
       vl::Time::sleep(3000);

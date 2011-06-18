@@ -348,7 +348,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   // init GL context and makes it current
   initGLContext();
 
-  if (fmt.multisample() && !WGLEW_ARB_multisample)
+  if (fmt.multisample() && !Has_GL_ARB_multisample)
     vl::Log::error("WGL_ARB_multisample not supported.\n");
 
   dispatchInitEvent();
@@ -357,7 +357,7 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
 
   setSize(width, height);
 
-  if (WGLEW_EXT_swap_control)
+  if (Has_GL_EXT_swap_control)
     wglSwapIntervalEXT( fmt.vSync() ? 1 : 0 );
 
   if (share_context)

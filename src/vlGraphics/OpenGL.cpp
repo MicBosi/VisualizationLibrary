@@ -33,6 +33,100 @@
 #include <vlCore/String.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
+#include <algorithm>
+
+namespace vl
+{
+  bool Has_GL_Version_1_1 = false;
+  bool Has_GL_Version_1_2 = false;
+  bool Has_GL_Version_1_3 = false;
+  bool Has_GL_Version_1_4 = false;
+  bool Has_GL_Version_1_5 = false;
+  bool Has_GL_Version_2_0 = false;
+  bool Has_GL_Version_2_1 = false;
+  bool Has_GL_Version_3_0 = false;
+  bool Has_GL_Version_3_1 = false;
+  bool Has_GL_Version_3_2 = false;
+  bool Has_GL_Version_3_3 = false;
+  bool Has_GL_Version_4_0 = false;
+  bool Has_GL_Version_4_1 = false;
+
+  #define VL_EXTENSION(extension) bool Has_##extension = false;
+  #include "GLExtensionList.inc"
+  #undef VL_EXTENSION
+}
+
+void vl::initOpenGLVersions()
+{
+    // clear errors
+    glGetError();
+    // test if fixed function pipeline is supported.
+    glDisable(GL_LIGHTING);
+    // check error code
+    bool compatible = glGetError() == GL_NO_ERROR;
+    const char* version_str = (const char*)glGetString(GL_VERSION);
+    int vmaj = version_str[0] - '0';
+    int vmin = version_str[2] - '0';
+    int version = vmaj*10 + vmin;
+
+    Has_GL_Version_1_1 = vmaj == 1 && vmin >= 1 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_1_2 = vmaj == 1 && vmin >= 2 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_1_3 = vmaj == 1 && vmin >= 3 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_1_4 = vmaj == 1 && vmin >= 4 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_1_5 = vmaj == 1 && vmin >= 5 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_2_0 = vmaj == 2 && vmin >= 0 || version == 30 || (vmaj > 2 && compatible);
+    Has_GL_Version_2_1 = vmaj == 2 && vmin >= 1 || version == 30 || (vmaj > 2 && compatible);
+    Has_GL_Version_3_0 = vmaj == 3 && vmin >= 0 || (vmaj > 3 && compatible);
+    Has_GL_Version_3_1 = vmaj == 3 && vmin >= 1 || (vmaj > 3 && compatible);
+    Has_GL_Version_3_2 = vmaj == 3 && vmin >= 2 || (vmaj > 3 && compatible);
+    Has_GL_Version_3_3 = vmaj == 3 && vmin >= 3 || (vmaj > 3 && compatible);
+    Has_GL_Version_4_0 = vmaj == 4 && vmin >= 0 || (vmaj > 4 && compatible);
+    Has_GL_Version_4_1 = vmaj == 4 && vmin >= 1 || (vmaj > 4 && compatible);
+
+    std::string extensions;
+    if (Has_GL_Version_3_0||Has_GL_Version_4_0)
+    {
+      int count = 0;
+      glGetIntegerv(GL_NUM_EXTENSIONS, &count);
+      for( int i=0; i<count; ++i )
+      {
+        const char* str = (const char*)glGetStringi(GL_EXTENSIONS,i); VL_CHECK_OGL();
+        extensions += std::string(str) + " ";
+      }
+    }
+    else
+    {
+      VL_CHECK(glGetString(GL_EXTENSIONS));
+      extensions = (const char*)glGetString(GL_EXTENSIONS);
+    }
+
+    #define INIT_EXTENSION(extension) Has_##extension=checkExtension("|GL_"#extension"|", extensions.c_str())
+
+    struct CheckExtension
+    {
+      bool operator()(const char* ext_name, const char* list)
+      {
+        size_t len = strlen(ext_name);
+        const char* ext = list;
+        const char* ext_end = ext + strlen(ext);
+
+        for( const char* pos = strstr(ext,ext_name); pos && pos < ext_end; pos = strstr(pos,ext_name) )
+        {
+          if (pos[len] == ' ' || pos[len] == 0)
+            return true;
+          else
+            pos += len;
+        }
+
+        return false;
+      }
+
+    } checkExtension;
+
+    #define VL_EXTENSION(extension) Has_##extension = checkExtension(#extension, extensions.c_str());
+    #include "GLExtensionList.inc"
+    #undef VL_EXTENSION
+}
 
 //------------------------------------------------------------------------------
 int vl::glcheck(const char* file, int line)

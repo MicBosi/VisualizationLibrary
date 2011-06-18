@@ -205,8 +205,8 @@ namespace vl
     virtual void render(bool use_vbo) const
     {
       VL_CHECK(mBaseVertex>=0)
-      VL_CHECK(!use_vbo || (use_vbo && (GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0)))
-      use_vbo &= GLEW_ARB_vertex_buffer_object||GLEW_VERSION_1_5||GLEW_VERSION_3_0; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
+      VL_CHECK(!use_vbo || (use_vbo && (Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0)))
+      use_vbo &= Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
       if ( !use_vbo && !indices()->size() )
         return;
 
@@ -216,13 +216,13 @@ namespace vl
       // primitive restart enable
       if(primitiveRestartEnabled())
       {
-        if(GLEW_VERSION_3_1)
+        if(Has_GL_Version_3_1)
         {
           glEnable(GL_PRIMITIVE_RESTART);
           glPrimitiveRestartIndex(primitiveRestartIndex());
         }
         else
-        if(GLEW_NV_primitive_restart)
+        if(Has_GL_NV_primitive_restart)
         {
           glEnable(GL_PRIMITIVE_RESTART_NV);
           glPrimitiveRestartIndexNV(primitiveRestartIndex());
@@ -254,10 +254,10 @@ namespace vl
 
       if(primitiveRestartEnabled())
       {
-        if(GLEW_VERSION_3_1)
+        if(Has_GL_Version_3_1)
           glDisable(GL_PRIMITIVE_RESTART);
         else
-        if(GLEW_NV_primitive_restart)
+        if(Has_GL_NV_primitive_restart)
           glDisable(GL_PRIMITIVE_RESTART_NV);
       }
     }

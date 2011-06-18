@@ -786,7 +786,7 @@ Effect* VectorGraphics::currentEffect(const State& vgs)
     if (vgs.mImage)
     {
       shader->gocTextureUnit(0)->setTexture( resolveTexture(vgs.mImage.get()) );
-      if (GLEW_ARB_point_sprite || GLEW_VERSION_2_0)
+      if (Has_GL_ARB_point_sprite || Has_GL_Version_2_0)
       {
         shader->gocTexEnv(0)->setPointSpriteCoordReplace(true);
         shader->enable(EN_POINT_SPRITE);

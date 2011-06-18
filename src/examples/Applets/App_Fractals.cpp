@@ -144,7 +144,7 @@ public:
 
   void initEvent()
   {
-    if (!GLEW_Has_Shading_Language_20)
+    if (!Has_Shading_Language_20)
     {
       Log::error("OpenGL Shading Language not supported.\n");
       Time::sleep(3000);
