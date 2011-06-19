@@ -120,7 +120,7 @@ public:
   {
     vl::Log::print(appletInfo());
 
-    if ( !Has_Shading_Language_20 )
+    if ( !Has_GLSL )
     {
       vl::Log::error( "OpenGL Shading Language not supported.\n" );
       vl::Time::sleep( 3000 );

@@ -11,27 +11,36 @@
 #                                                                              #
 ################################################################################
 
-cmake_minimum_required(VERSION 2.6)
-
-################################################################################
-# Global VL Settings
-################################################################################
-
 # Current Version
 set(VLVERSION_MAJOR "2011")
-set(VLVERSION_MINOR "05")
-set(VLVERSION_PATCH "1142")
+set(VLVERSION_MINOR "06")
+set(VLVERSION_PATCH "1145")
 set(VLVERSION "${VLVERSION_MAJOR}.${VLVERSION_MINOR}")
-
-# Common Dirs
-set(VL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
-set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/3rdparty")
 
 ################################################################################
 # Initialization
 ################################################################################
 
 project(Visualization_Library_SDK-${VLVERSION_MAJOR}.${VLVERSION_MINOR})
+
+# Must be called after project!
+cmake_minimum_required(VERSION 2.6)
+
+# Platform detect
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+   add_definitions(-DVL_PLATFORM_MACOSX=1)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+   add_definitions(-DVL_PLATFORM_LINUX=1)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+   add_definitions(-DVL_PLATFORM_WINDOWS=1)
+else()
+   add_definitions(-DVL_PLATFORM_UNKNOWN=1)
+endif()
+message(STATUS "System detected: \"${CMAKE_SYSTEM_NAME}\"")
+
+# Common Dirs
+set(VL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
+set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/3rdparty")
 
 # Add our dir to the CMake modules path and include our InternalMacros file
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
@@ -60,7 +69,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
 
 # Shared include paths for all subprojects
-include_directories( "src" "${CMAKE_BINARY_DIR}/src" "${3RDPARTY_DIR}/glew" )
+include_directories( "src" "${CMAKE_BINARY_DIR}/src" "${3RDPARTY_DIR}/Khronos" )
 
 # High Warning Level
 if(MSVC10)

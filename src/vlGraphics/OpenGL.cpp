@@ -35,6 +35,7 @@
 #include <vlCore/Say.hpp>
 #include <algorithm>
 
+// OpenGL implmentation
 namespace vl
 {
   bool Has_GL_Version_1_1 = false;
@@ -54,16 +55,27 @@ namespace vl
   #define VL_EXTENSION(extension) bool Has_##extension = false;
   #include "GLExtensionList.inc"
   #undef VL_EXTENSION
+
+  #define VL_OPENGL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
+  #include "GLFunctionList.inc"
+  #undef VL_OPENGL_FUNCTION
 }
 
-void vl::initOpenGLVersions()
+bool vl::initializeOpenGL()
 {
-    // clear errors
-    glGetError();
-    // test if fixed function pipeline is supported.
+    // clear errors and check OpenGL context is present
+    if (glGetError() != GL_NO_ERROR)
+      return false;
+    
+    // opengl function pointer initialization
+    #define VL_OPENGL_FUNCTION(TYPE, NAME) NAME = (TYPE)getOpenGLProcAddress((const GLubyte*)#NAME);
+    #include "GLFunctionList.inc"
+
+    // check fixed function pipeline present
     glDisable(GL_LIGHTING);
-    // check error code
     bool compatible = glGetError() == GL_NO_ERROR;
+
+    // opengl version detect
     const char* version_str = (const char*)glGetString(GL_VERSION);
     int vmaj = version_str[0] - '0';
     int vmin = version_str[2] - '0';
@@ -83,6 +95,7 @@ void vl::initOpenGLVersions()
     Has_GL_Version_4_0 = vmaj == 4 && vmin >= 0 || (vmaj > 4 && compatible);
     Has_GL_Version_4_1 = vmaj == 4 && vmin >= 1 || (vmaj > 4 && compatible);
 
+    // opengl extension strings init
     std::string extensions;
     if (Has_GL_Version_3_0||Has_GL_Version_4_0)
     {
@@ -126,6 +139,8 @@ void vl::initOpenGLVersions()
     #define VL_EXTENSION(extension) Has_##extension = checkExtension(#extension, extensions.c_str());
     #include "GLExtensionList.inc"
     #undef VL_EXTENSION
+
+    return glGetError() == GL_NO_ERROR;
 }
 
 //------------------------------------------------------------------------------
@@ -145,4 +160,96 @@ int vl::glcheck(const char* file, int line)
   }
   return glerr;
 }
+//------------------------------------------------------------------------------
+// vl::getOpenGLProcAddress() implementation based on GLEW's
+//------------------------------------------------------------------------------
+#if defined(VL_PLATFORM_WINDOWS)
+void* vl::getOpenGLProcAddress(const GLubyte* name)
+{
+  return wglGetProcAddress((LPCSTR)name);
+}
+#elif defined(VL_PLATFORM_LINUX)
+void* vl::getOpenGLProcAddress(const GLubyte* name)
+{
+  return (*glXGetProcAddressARB)(name);
+}
+#elif defined(__APPLE__)
+#include <stdlib.h>
+#include <string.h>
+#include <AvailabilityMacros.h>
+
+#ifdef MAC_OS_X_VERSION_10_3
+
+#include <dlfcn.h>
+
+void* vl::getOpenGLProcAddress(const GLubyte *name)
+{
+  static void* image = NULL;
+  if (NULL == image) 
+  {
+    image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
+  }
+  return image ? dlsym(image, (const char*)name) : NULL;
+}
+
+#else
+
+#include <mach-o/dyld.h>
+
+void* vl::getOpenGLProcAddress(const GLubyte *name)
+{
+  static const struct mach_header* image = NULL;
+  NSSymbol symbol;
+  char* symbolName;
+  if (NULL == image)
+  {
+    image = NSAddImage("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", NSADDIMAGE_OPTION_RETURN_ON_ERROR);
+  }
+  /* prepend a '_' for the Unix C symbol mangling convention */
+  symbolName = malloc(strlen((const char*)name) + 2);
+  strcpy(symbolName+1, (const char*)name);
+  symbolName[0] = '_';
+  symbol = NULL;
+  /* if (NSIsSymbolNameDefined(symbolName))
+	 symbol = NSLookupAndBindSymbol(symbolName); */
+  symbol = image ? NSLookupSymbolInImage(image, symbolName, NSLOOKUPSYMBOLINIMAGE_OPTION_BIND | NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR) : NULL;
+  free(symbolName);
+  return symbol ? NSAddressOfSymbol(symbol) : NULL;
+}
+
+#endif /* MAC_OS_X_VERSION_10_3 */
+
+/* __APPLE__ end */
+
+#elif defined(__sgi) || defined (__sun)
+
+#include <dlfcn.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void* vl::getOpenGLProcAddress(const GLubyte* name)
+{
+  static void* h = NULL;
+  static void* gpa;
+
+  if (h == NULL)
+  {
+    if ((h = dlopen(NULL, RTLD_LAZY | RTLD_LOCAL)) == NULL) return NULL;
+    gpa = dlsym(h, "glXGetProcAddress");
+  }
+
+  if (gpa != NULL)
+    return ((void*(*)(const GLubyte*))gpa)(name);
+  else
+    return dlsym(h, (const char*)name);
+}
+
+/* __sgi || __sun end */
+
+#else
+void* vl::getOpenGLProcAddress(const GLubyte* name)
+{
+  return NULL;
+}
+#endif
 //------------------------------------------------------------------------------
