@@ -36,7 +36,6 @@ include_directories(${_INCLUDE_DIRS})
 add_library(VLCore ${VL_SHARED_OR_STATIC} ${VLCORE_SRC} ${VLCORE_INC} ${_SOURCES})
 VL_DEFAULT_TARGET_PROPERTIES(VLCore)
 
-# Because of GLEW, VLCore must also link with OpenGL
 target_link_libraries(VLCore ${_LIBS})
 
 ################################################################################

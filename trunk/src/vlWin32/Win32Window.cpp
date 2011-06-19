@@ -657,11 +657,9 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
 
   wglMakeCurrent(hDC, hGLRC);
 
-  // init glew for each rendering context
-  GLenum err = glewInit();
-  if (GLEW_OK != err)
+  if (!initializeOpenGL())
   {
-    if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure during GLEW initialization.", L"Visualization Library error", MB_OK);
+    fprintf(stderr, "Error initializing OpenGL!\n");
     DeleteDC(hDC);
     DestroyWindow(hWnd);
     return -1;
