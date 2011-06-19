@@ -37,34 +37,46 @@
 
 // Helper macros
 
+#define Has_GLSL (::vl::Has_GL_ARB_shading_language_100||::vl::Has_GL_Version_2_0||::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
+#define Has_GLSL_120_Or_More (::vl::Has_GL_Version_2_1||::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
+#define Has_GLSL_130_Or_More (::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
+#define Has_GLSL_140_Or_More (::vl::Has_GL_Version_3_1||::vl::Has_GL_Version_4_0)
+#define Has_GLSL_150_Or_More (::vl::Has_GL_Version_3_2||::vl::Has_GL_Version_4_0)
+#define Has_GLSL_330_Or_More (::vl::Has_GL_Version_3_3||::vl::Has_GL_Version_4_0)
+#define Has_GLSL_400_Or_More (::vl::Has_GL_Version_4_0)
+#define Has_GLSL_410_Or_More (::vl::Has_GL_Version_4_1)
 #define Has_Geometry_Shader (::vl::Has_GL_NV_geometry_shader4||::vl::Has_GL_EXT_geometry_shader4||::vl::Has_GL_ARB_geometry_shader4||::vl::Has_GL_Version_3_2||::vl::Has_GL_Version_4_0)
-#define Has_Shading_Language_20 (::vl::Has_GL_ARB_shading_language_100||::vl::Has_GL_Version_2_0||::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
-#define Has_Shading_Language_21 (::vl::Has_GL_Version_2_1||::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
 #define Has_Framebuffer_Object (::vl::Has_GL_EXT_framebuffer_object||::vl::Has_GL_ARB_framebuffer_object||::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
 #define Has_Framebuffer_Object_Multisample (::vl::Has_GL_Version_4_0||::vl::Has_GL_Version_3_0||::vl::Has_GL_ARB_framebuffer_object||::vl::Has_GL_EXT_framebuffer_multisample)
 #define Has_Texture_Rectangle (vl::Has_GL_ARB_texture_rectangle||vl::Has_GL_NV_texture_rectangle||vl::Has_GL_Version_3_1||vl::Has_GL_Version_4_0)
 
 namespace vl
 {
-  extern bool Has_GL_Version_1_1;
-  extern bool Has_GL_Version_1_2;
-  extern bool Has_GL_Version_1_3;
-  extern bool Has_GL_Version_1_4;
-  extern bool Has_GL_Version_1_5;
-  extern bool Has_GL_Version_2_0;
-  extern bool Has_GL_Version_2_1;
-  extern bool Has_GL_Version_3_0;
-  extern bool Has_GL_Version_3_1;
-  extern bool Has_GL_Version_3_2;
-  extern bool Has_GL_Version_3_3;
-  extern bool Has_GL_Version_4_0;
-  extern bool Has_GL_Version_4_1;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_1;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_2;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_3;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_4;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_5;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_2_0;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_2_1;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_3_0;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_3_1;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_3_2;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_3_3;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_0;
+  VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_1;
 
   #define VL_EXTENSION(extension) VLGRAPHICS_EXPORT extern bool Has_##extension;
   #include "GLExtensionList.inc"
   #undef VL_EXTENSION
 
-  VLGRAPHICS_EXPORT void initOpenGLVersions();
+  #define VL_OPENGL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
+  #include "GLFunctionList.inc"
+  #undef VL_OPENGL_FUNCTION
+
+  VLGRAPHICS_EXPORT void* getOpenGLProcAddress(const GLubyte* name);
+  
+  VLGRAPHICS_EXPORT bool initializeOpenGL();
 
   //-----------------------------------------------------------------------------
   // VL_CHECK_OGL
@@ -612,7 +624,6 @@ namespace vl
   
   inline void VL_glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
   {
-    // mix fixme: missing function -> GLEW bug?
     if (glFramebufferTextureLayer)
       glFramebufferTextureLayer(target, attachment, texture, level, layer);
     else

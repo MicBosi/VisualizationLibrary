@@ -34,19 +34,31 @@
 
 #include <vlCore/checks.hpp>
 
-//-----------------------------------------------------------------------------
+#if defined(VL_PLATFORM_WINDOWS)
 
-#ifdef VL_STATIC_LINKING
-  #define GLEW_STATIC
-#endif
-
-#include "GL/glew.h"
-
-#ifdef _WIN32
-  #ifndef NOMINMAX
-    #define NOMINMAX
+  #if defined(_WIN32) && !defined(APIENTRY) && !defined(__CYGWIN__) && !defined(__SCITECH_SNAP__)
+    #define WIN32_LEAN_AND_MEAN 1
+    #include <windows.h>
   #endif
-  #include "GL/wglew.h"
+
+  #include <GL/gl.h>
+  #include <GL/glu.h>
+  #include <GL/glext.h>
+  #include <GL/wglext.h>
+
+#elif defined(VL_PLATFORM_LINUX)
+
+  #include <GL/gl.h>
+  #include <GL/glu.h>
+  #include <GL/glext.h>
+  #include <GL/glxext.h>
+
+#elif defined(VL_PLATFORM_MACOSX)
+
+  #include <OpenGL/gl.h>
+  #include <OpenGL/glu.h>
+  #include <GL/glext.h>
+
 #endif
 
 #endif

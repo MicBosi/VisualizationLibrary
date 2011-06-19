@@ -206,11 +206,11 @@ namespace vl
         }
       }
 
-      GLvoid **indices_ptr = (GLvoid**)&mPointerVector[0];
+      const GLvoid **indices_ptr = (const GLvoid**)&mPointerVector[0];
       if (use_vbo && indices()->gpuBuffer()->handle())
       {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
-        indices_ptr = (GLvoid**)&mNULLPointerVector[0];
+        indices_ptr = (const GLvoid**)&mNULLPointerVector[0];
       }
       else
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

@@ -29,12 +29,11 @@ VL_PROJECT_GET(VLGRAPHICS _SOURCES _DEFINITIONS _INCLUDE_DIRS _LIBS)
 add_definitions(${_DEFINITIONS})
 include_directories(${_INCLUDE_DIRS})
 
-# VLGraphics must embed and export GLEW
-set(GLEW_DIR "${3RDPARTY_DIR}/glew")
-set(GLEW_SRC "${GLEW_DIR}/glew.c")
-add_definitions(-DGLEW_BUILD)
+# Khronos OpenGL headers
+set(KHRONOS_DIR "${3RDPARTY_DIR}/Khronos")
+set(KHRONOS_INC ${KHRONOS_DIR}/GL/gl3.h ${KHRONOS_DIR}/GL/glext.h ${KHRONOS_DIR}/GL/glxext.h ${KHRONOS_DIR}/GL/wglext.h)
 
-add_library(VLGraphics ${VL_SHARED_OR_STATIC} ${VLGRAPHICS_SRC} ${VLGRAPHICS_INC} ${GLEW_SRC} ${_SOURCES})
+add_library(VLGraphics ${VL_SHARED_OR_STATIC} ${VLGRAPHICS_SRC} ${VLGRAPHICS_INC} ${KHRONOS_INC} ${_SOURCES})
 VL_DEFAULT_TARGET_PROPERTIES(VLGraphics)
 
 target_link_libraries(VLGraphics VLCore ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${_LIBS})
@@ -43,7 +42,6 @@ target_link_libraries(VLGraphics VLCore ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRAR
 # Source Groups
 ################################################################################
 
-source_group("glew" FILES ${GLEW_SRC})
 source_group("plugins" FILES ${_SOURCES})
 
 ################################################################################
@@ -55,5 +53,5 @@ VL_INSTALL_TARGET(VLGraphics)
 # VLGraphics headers
 install(FILES ${VLGRAPHICS_INC} DESTINATION "include/vlGraphics")
 
-# GLEW headers
-install(DIRECTORY "${GLEW_DIR}/GL" DESTINATION "include")
+# Khronos headers
+install(DIRECTORY "${KHRONOS_DIR}/GL" DESTINATION "include")

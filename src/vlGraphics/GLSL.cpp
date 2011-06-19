@@ -91,8 +91,8 @@ void GLSLShader::setSource( const String& source )
 bool GLSLShader::compile()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return false;
 
   if (mSource.empty())
@@ -146,8 +146,8 @@ bool GLSLShader::compile()
 bool GLSLShader::compileStatus() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return false;
   VL_CHECK(handle())
 
@@ -159,8 +159,8 @@ bool GLSLShader::compileStatus() const
 String GLSLShader::infoLog() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return "OpenGL Shading Language not supported.\n";
   VL_CHECK(handle())
 
@@ -181,8 +181,8 @@ String GLSLShader::infoLog() const
 void GLSLShader::createShader()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return;
   if (!handle())
   {
@@ -196,8 +196,8 @@ void GLSLShader::createShader()
 void GLSLShader::deleteShader()
 {
   // VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return;
   if (handle())
   {
@@ -234,8 +234,8 @@ GLSLProgram::~GLSLProgram()
 void GLSLProgram::createProgram()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return;
 
   if (handle() == 0)
@@ -249,8 +249,8 @@ void GLSLProgram::createProgram()
 void GLSLProgram::deleteProgram()
 {
   // VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return;
   if(handle())
   {
@@ -263,8 +263,8 @@ void GLSLProgram::deleteProgram()
 bool GLSLProgram::attachShader(GLSLShader* shader)
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return false;
 
   scheduleRelinking();
@@ -306,8 +306,8 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
 {
   VL_CHECK_OGL();
 
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return false;
 
   if (!handle() || !shader->handle())
@@ -331,8 +331,8 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
 void GLSLProgram::discardAllShaders()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return;
 
   if (!handle())
@@ -353,8 +353,8 @@ void GLSLProgram::discardAllShaders()
 bool GLSLProgram::linkProgram(bool force_relink)
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return false;
 
   if (!linked() || force_relink)
@@ -493,8 +493,8 @@ void GLSLProgram::postLink()
 bool GLSLProgram::linkStatus() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return false;
   
   VL_CHECK(handle())
@@ -510,8 +510,8 @@ bool GLSLProgram::linkStatus() const
 String GLSLProgram::infoLog() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return "OpenGL Shading Language not supported!\n";
   
   VL_CHECK(handle())
@@ -530,8 +530,8 @@ String GLSLProgram::infoLog() const
 bool GLSLProgram::validateProgram() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return false;
 
   VL_CHECK(handle())
@@ -548,7 +548,7 @@ bool GLSLProgram::validateProgram() const
 void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name)
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
 
   createProgram();
   scheduleRelinking();
@@ -558,8 +558,8 @@ void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name
 int GLSLProgram::maxVertexAttribs()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return 0;
 
   int max = 0;
@@ -570,8 +570,8 @@ int GLSLProgram::maxVertexAttribs()
 bool GLSLProgram::useProgram() const
 {
   VL_CHECK_OGL()
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return false;
 
   if (!handle())
@@ -608,7 +608,7 @@ bool GLSLProgram::useProgram() const
 void GLSLProgram::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL();
-  if(Has_Shading_Language_20)
+  if(Has_GLSL)
   {
     if ( handle() )
       useProgram();
@@ -620,8 +620,8 @@ void GLSLProgram::apply(const Camera*, OpenGLContext*) const
 bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_Shading_Language_20 )
-  if( !Has_Shading_Language_20 )
+  VL_CHECK( Has_GLSL )
+  if( !Has_GLSL )
     return false;
 
   if(!uniforms)

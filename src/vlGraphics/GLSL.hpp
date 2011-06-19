@@ -321,8 +321,8 @@ namespace vl
     //! \note The program must be linked before calling this function.
     int getAttribLocation(const char* name) const
     {
-      VL_CHECK( Has_Shading_Language_20 )
-      if( !Has_Shading_Language_20 )
+      VL_CHECK( Has_GLSL )
+      if( !Has_GLSL )
         return -1;
       VL_CHECK(handle())
       VL_CHECK(linked())
@@ -436,8 +436,8 @@ namespace vl
     */
     int getUniformLocation(const std::string& name) const
     {
-      VL_CHECK( Has_Shading_Language_20 )
-      if( !Has_Shading_Language_20 )
+      VL_CHECK( Has_GLSL )
+      if( !Has_GLSL )
         return -1;
       VL_CHECK(linked())
 
@@ -450,8 +450,8 @@ namespace vl
     */
     int getUniformLocation(const char* name) const
     {
-      VL_CHECK( Has_Shading_Language_20 )
-      if( !Has_Shading_Language_20 )
+      VL_CHECK( Has_GLSL )
+      if( !Has_GLSL )
         return -1;
       VL_CHECK(linked())
 
@@ -467,8 +467,8 @@ namespace vl
     //! Equivalent to glGetUniformfv(handle(), location, params)
     void getUniformfv(int location, float* params) const
     {
-      VL_CHECK( Has_Shading_Language_20 )
-      if( !Has_Shading_Language_20 )
+      VL_CHECK( Has_GLSL )
+      if( !Has_GLSL )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
@@ -479,8 +479,8 @@ namespace vl
     //! Equivalent to glGetUniformiv(handle(), location, params)
     void getUniformiv(int location, int* params) const
     {
-      VL_CHECK( Has_Shading_Language_20 )
-      if( !Has_Shading_Language_20 )
+      VL_CHECK( Has_GLSL )
+      if( !Has_GLSL )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())

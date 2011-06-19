@@ -129,7 +129,8 @@ mTexCoords_3D->at(3) = vl::fvec3(1, 1, t);</pre>
 	Since the 't' coordinate changes from 0 to 1 the 2d plane will show a series of 2d slices of the 3d texture as if it was a movie!
 	
 	Now we create a vl::Effect which uses our 3D texture.\n
-	In order to use any 3D texture though we have to check that our OpenGL implementation actually supports 3D textures. The GLEW library embedded in Visualization Library lets us do this in a very simple and expressive manner as you can see. We also enable mipmapping as we did in the multi-texturing example. The function that actually creates our 3D texture is \b prepareTexture3D().
+	In order to use any 3D texture though we have to check that our OpenGL implementation actually supports 3D textures. 
+	We also enable mipmapping as we did in the multi-texturing example. The function that actually creates our 3D texture is \b prepareTexture3D().
 	
 	\until vl::Log::error
 	
