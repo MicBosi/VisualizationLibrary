@@ -51,13 +51,21 @@
   #include <GL/gl.h>
   #include <GL/glu.h>
   #include <GL/glext.h>
-  #include <GL/glxext.h>
+  // #include <GL/glx.h>
+  // #include <GL/glxext.h>
+  extern "C" {
+    extern void ( * glXGetProcAddress (const GLubyte *procName)) (void);
+  }
 
 #elif defined(VL_PLATFORM_MACOSX)
 
   #include <OpenGL/gl.h>
   #include <OpenGL/glu.h>
   #include <GL/glext.h>
+
+#else
+
+  VL_COMPILE_TIME_CHECK(0) // Unknown platform!
 
 #endif
 
