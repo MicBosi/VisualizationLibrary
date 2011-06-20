@@ -66,7 +66,7 @@ bool vl::initializeOpenGL()
     // clear errors and check OpenGL context is present
     if (glGetError() != GL_NO_ERROR)
       return false;
-    
+
     // opengl function pointer initialization
     #define VL_OPENGL_FUNCTION(TYPE, NAME) NAME = (TYPE)getOpenGLProcAddress((const GLubyte*)#NAME);
     #include "GLFunctionList.inc"
@@ -81,19 +81,19 @@ bool vl::initializeOpenGL()
     int vmin = version_str[2] - '0';
     int version = vmaj*10 + vmin;
 
-    Has_GL_Version_1_1 = vmaj == 1 && vmin >= 1 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
-    Has_GL_Version_1_2 = vmaj == 1 && vmin >= 2 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
-    Has_GL_Version_1_3 = vmaj == 1 && vmin >= 3 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
-    Has_GL_Version_1_4 = vmaj == 1 && vmin >= 4 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
-    Has_GL_Version_1_5 = vmaj == 1 && vmin >= 5 || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
-    Has_GL_Version_2_0 = vmaj == 2 && vmin >= 0 || version == 30 || (vmaj > 2 && compatible);
-    Has_GL_Version_2_1 = vmaj == 2 && vmin >= 1 || version == 30 || (vmaj > 2 && compatible);
-    Has_GL_Version_3_0 = vmaj == 3 && vmin >= 0 || (vmaj > 3 && compatible);
-    Has_GL_Version_3_1 = vmaj == 3 && vmin >= 1 || (vmaj > 3 && compatible);
-    Has_GL_Version_3_2 = vmaj == 3 && vmin >= 2 || (vmaj > 3 && compatible);
-    Has_GL_Version_3_3 = vmaj == 3 && vmin >= 3 || (vmaj > 3 && compatible);
-    Has_GL_Version_4_0 = vmaj == 4 && vmin >= 0 || (vmaj > 4 && compatible);
-    Has_GL_Version_4_1 = vmaj == 4 && vmin >= 1 || (vmaj > 4 && compatible);
+    Has_GL_Version_1_1 = (vmaj == 1 && vmin >= 1) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_1_2 = (vmaj == 1 && vmin >= 2) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_1_3 = (vmaj == 1 && vmin >= 3) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_1_4 = (vmaj == 1 && vmin >= 4) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_1_5 = (vmaj == 1 && vmin >= 5) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible);
+    Has_GL_Version_2_0 = (vmaj == 2 && vmin >= 0) || version == 30 || (vmaj > 2 && compatible);
+    Has_GL_Version_2_1 = (vmaj == 2 && vmin >= 1) || version == 30 || (vmaj > 2 && compatible);
+    Has_GL_Version_3_0 = (vmaj == 3 && vmin >= 0) || (vmaj > 3 && compatible);
+    Has_GL_Version_3_1 = (vmaj == 3 && vmin >= 1) || (vmaj > 3 && compatible);
+    Has_GL_Version_3_2 = (vmaj == 3 && vmin >= 2) || (vmaj > 3 && compatible);
+    Has_GL_Version_3_3 = (vmaj == 3 && vmin >= 3) || (vmaj > 3 && compatible);
+    Has_GL_Version_4_0 = (vmaj == 4 && vmin >= 0) || (vmaj > 4 && compatible);
+    Has_GL_Version_4_1 = (vmaj == 4 && vmin >= 1) || (vmaj > 4 && compatible);
 
     // opengl extension strings init
     std::string extensions;
@@ -171,7 +171,7 @@ void* vl::getOpenGLProcAddress(const GLubyte* name)
 #elif defined(VL_PLATFORM_LINUX)
 void* vl::getOpenGLProcAddress(const GLubyte* name)
 {
-  return (*glXGetProcAddressARB)(name);
+  return (void*)(*glXGetProcAddress)(name);
 }
 #elif defined(__APPLE__)
 #include <stdlib.h>
@@ -185,7 +185,7 @@ void* vl::getOpenGLProcAddress(const GLubyte* name)
 void* vl::getOpenGLProcAddress(const GLubyte *name)
 {
   static void* image = NULL;
-  if (NULL == image) 
+  if (NULL == image)
   {
     image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
   }
