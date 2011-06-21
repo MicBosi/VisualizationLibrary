@@ -59,6 +59,10 @@ namespace vl
   #define VL_OPENGL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
   #include "GLFunctionList.inc"
   #undef VL_OPENGL_FUNCTION
+
+  #define VL_GLES_EXTENSION(extension) bool Has_##extension = false;
+  #include "GLESExtensionList.inc"
+  #undef VL_GLES_EXTENSION
 }
 
 bool vl::initializeOpenGL()
@@ -139,6 +143,10 @@ bool vl::initializeOpenGL()
     #define VL_EXTENSION(extension) Has_##extension = checkExtension(#extension, extensions.c_str());
     #include "GLExtensionList.inc"
     #undef VL_EXTENSION
+
+    #define VL_GLES_EXTENSION(extension) Has_##extension = checkExtension(#extension, extensions.c_str());
+    #include "GLESExtensionList.inc"
+    #undef VL_GLES_EXTENSION
 
     return glGetError() == GL_NO_ERROR;
 }
