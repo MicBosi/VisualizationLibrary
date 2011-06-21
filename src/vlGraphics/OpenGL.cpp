@@ -53,15 +53,15 @@ namespace vl
   bool Has_GL_Version_4_1 = false;
 
   #define VL_EXTENSION(extension) bool Has_##extension = false;
-  #include "GLExtensionList.inc"
+  #include "GLExtensionList.hpp"
   #undef VL_EXTENSION
 
   #define VL_OPENGL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
-  #include "GLFunctionList.inc"
+  #include "GLFunctionList.hpp"
   #undef VL_OPENGL_FUNCTION
 
   #define VL_GLES_EXTENSION(extension) bool Has_##extension = false;
-  #include "GLESExtensionList.inc"
+  #include "GLESExtensionList.hpp"
   #undef VL_GLES_EXTENSION
 }
 
@@ -73,7 +73,7 @@ bool vl::initializeOpenGL()
 
     // opengl function pointer initialization
     #define VL_OPENGL_FUNCTION(TYPE, NAME) NAME = (TYPE)getOpenGLProcAddress((const GLubyte*)#NAME);
-    #include "GLFunctionList.inc"
+    #include "GLFunctionList.hpp"
 
     // check fixed function pipeline present
     glDisable(GL_LIGHTING);
@@ -141,11 +141,11 @@ bool vl::initializeOpenGL()
     } checkExtension;
 
     #define VL_EXTENSION(extension) Has_##extension = checkExtension(#extension, extensions.c_str());
-    #include "GLExtensionList.inc"
+    #include "GLExtensionList.hpp"
     #undef VL_EXTENSION
 
     #define VL_GLES_EXTENSION(extension) Has_##extension = checkExtension(#extension, extensions.c_str());
-    #include "GLESExtensionList.inc"
+    #include "GLESExtensionList.hpp"
     #undef VL_GLES_EXTENSION
 
     return glGetError() == GL_NO_ERROR;
