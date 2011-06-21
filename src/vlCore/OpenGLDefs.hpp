@@ -41,16 +41,16 @@
     #include <windows.h>
   #endif
 
-  #include <GL/gl.h>
+  #include <GL/mesa_gl.h>
   #include <GL/glu.h>
-  #include <GL/glext.h>
-  #include <GL/wglext.h>
+  #include <GL/khronos_glext.h>
+  #include <GL/khronos_wglext.h>
 
 #elif defined(VL_PLATFORM_LINUX)
 
-  #include <GL/gl.h>
+  #include <GL/mesa_gl.h>
   #include <GL/glu.h>
-  #include <GL/glext.h>
+  #include <GL/khronos_glext.h>
   // #include <GL/glx.h>
   // #include <GL/glxext.h>
   extern "C" {
@@ -59,9 +59,9 @@
 
 #elif defined(VL_PLATFORM_MACOSX)
 
-  #include <OpenGL/gl.h>
+  #include <GL/mesa_gl.h>
   #include <OpenGL/glu.h>
-  #include <GL/glext.h>
+  #include <GL/khronos_glext.h>
 
 #else
 

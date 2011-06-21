@@ -74,6 +74,10 @@ namespace vl
   #include "GLFunctionList.inc"
   #undef VL_OPENGL_FUNCTION
 
+  #define VL_GLES_EXTENSION(extension) VLGRAPHICS_EXPORT extern bool Has_##extension;
+  #include "GLESExtensionList.inc"
+  #undef VL_GLES_EXTENSION
+
   VLGRAPHICS_EXPORT void* getOpenGLProcAddress(const GLubyte* name);
   
   VLGRAPHICS_EXPORT bool initializeOpenGL();
