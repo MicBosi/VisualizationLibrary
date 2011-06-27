@@ -407,22 +407,25 @@ void Material::apply(const Camera*, OpenGLContext*) const
 void LightModel::apply(const Camera*, OpenGLContext*) const
 {
   if (Has_GL_Version_1_2||Has_GL_EXT_separate_specular_color)
-    { glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, mColorControl); VL_CHECK_OGL() }
+  { 
+    glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, (float)mColorControl); VL_CHECK_OGL() 
+  }
 
+  glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, mLocalViewer ? 1.0f : 0.0f ); VL_CHECK_OGL()
+  // mic fixme: GLES supporta solo questi due
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, mAmbientColor.ptr()); VL_CHECK_OGL()
-  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, mLocalViewer?1:0); VL_CHECK_OGL()
-  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, mTwoSide?1:0); VL_CHECK_OGL()
+  glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, mTwoSide ? 1.0f : 0.0f ); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // Fog
 //------------------------------------------------------------------------------
 void Fog::apply(const Camera*, OpenGLContext*) const
 {
-  glFogi(GL_FOG_MODE, mMode); VL_CHECK_OGL()
-  glFogfv(GL_FOG_COLOR, mColor.ptr()); VL_CHECK_OGL()
+  glFogf(GL_FOG_MODE, (float)mMode); VL_CHECK_OGL()
   glFogf(GL_FOG_DENSITY, mDensity); VL_CHECK_OGL()
   glFogf(GL_FOG_START, mStart); VL_CHECK_OGL()
   glFogf(GL_FOG_END, mEnd); VL_CHECK_OGL()
+  glFogfv(GL_FOG_COLOR, mColor.ptr()); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PolygonOffset
