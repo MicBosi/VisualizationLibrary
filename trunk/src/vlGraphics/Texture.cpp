@@ -742,7 +742,7 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
       unsigned int glerr = glGetError();
       if (glerr != GL_NO_ERROR)
       {
-        String msg( (const char*)gluErrorString(glerr) );
+        String msg( (const char*)getGLErrorString(glerr) );
         Log::bug( "Texture::createTexture(): glTexBuffer() failed with error: '" + msg + "'.\n" );
         Log::error("Probably you supplied a non supported texture format! Review the glTexBuffer() man page for a complete list of supported texture formats.\n");
         VL_TRAP();
