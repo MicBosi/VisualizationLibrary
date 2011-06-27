@@ -338,6 +338,9 @@ namespace vl
     //! Returns the float number represented by the string. The conversion is done using the standard atof() function.
     float toFloat() const { return (float)toDouble(); }
 
+    //! Formats a string using the legacy printf syntax. The resulting string can be maximum 1024 + strlen(fmt) characters long.
+    String& printf(const char* fmt, ...);
+
     //! Returns a UTF8 encoded std::string.
     std::string toStdString() const;
 

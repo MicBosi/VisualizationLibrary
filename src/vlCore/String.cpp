@@ -37,6 +37,7 @@
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <stdio.h>
+#include <stdarg.h>
 
 using namespace vl;
 
@@ -1452,5 +1453,19 @@ std::string String::trimStdString(const std::string& text)
   }
   trimmed.resize( i+1 );
   return trimmed;
+}
+//-----------------------------------------------------------------------------
+String& String::printf(const char* fmt, ...)
+{
+  std::vector<char> buffer;
+  buffer.resize(1024 + strlen(fmt));
+  buffer[0] = 0;
+
+  va_list ap;
+  va_start(ap, fmt);
+  vsnprintf(&buffer[0], buffer.size(), fmt, ap);
+  va_end(ap);
+  *this = &buffer[0];
+  return *this;
 }
 //-----------------------------------------------------------------------------
