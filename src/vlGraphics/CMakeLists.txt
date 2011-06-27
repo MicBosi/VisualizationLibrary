@@ -24,6 +24,12 @@ add_subdirectory("plugins")
 file(GLOB VLGRAPHICS_SRC "*.cpp")
 file(GLOB VLGRAPHICS_INC "*.hpp")
 
+if( NOT (VL_OPENGL_MODE STREQUAL "OPENGL") )
+	list(REMOVE_ITEM VLGRAPHICS_SRC "${VLGRAPHICS_SOURCE_DIR}/Tessellator.cpp")
+	list(REMOVE_ITEM VLGRAPHICS_INC "${VLGRAPHICS_SOURCE_DIR}/Tessellator.hpp")
+	message(STATUS "Removing Tessellator class, not supported in OpenGL ES 1.x and 2.x (requires GLU)")
+endif()
+
 # Handle extras added by plugins
 VL_PROJECT_GET(VLGRAPHICS _SOURCES _DEFINITIONS _INCLUDE_DIRS _LIBS)
 add_definitions(${_DEFINITIONS})
@@ -31,7 +37,11 @@ include_directories(${_INCLUDE_DIRS})
 
 # Khronos OpenGL headers
 set(KHRONOS_DIR "${3RDPARTY_DIR}/Khronos")
-set(KHRONOS_INC ${KHRONOS_DIR}/GL/gl3.h ${KHRONOS_DIR}/GL/glext.h ${KHRONOS_DIR}/GL/glxext.h ${KHRONOS_DIR}/GL/wglext.h)
+set(KHRONOS_INC ${KHRONOS_DIR}/GL/mesa_gl.h
+				${KHRONOS_DIR}/GL/khronos_glext.h 
+				${KHRONOS_DIR}/GL/khronos_wglext.h 				
+				${KHRONOS_DIR}/GLES/gl_extra_defines.h
+				${KHRONOS_DIR}/GLES2/gl_extra_defines.h)
 
 add_library(VLGraphics ${VL_SHARED_OR_STATIC} ${VLGRAPHICS_SRC} ${VLGRAPHICS_INC} ${KHRONOS_INC} ${_SOURCES})
 VL_DEFAULT_TARGET_PROPERTIES(VLGraphics)
