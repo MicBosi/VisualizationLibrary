@@ -395,7 +395,7 @@ void Geometry::computeNormals(bool verbose)
 //-----------------------------------------------------------------------------
 void Geometry::deleteVBOs()
 {
-  if (!(Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0))
+  if (!Has_VBO)
     return;
 
   for(int i=0; i<(int)drawCalls()->size(); ++i)
@@ -428,7 +428,7 @@ void Geometry::updateVBOs(bool discard_local_data, bool force_update)
 {
   setVBODirty(false);
 
-  if (!(Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0))
+  if (!Has_VBO)
     return;
 
   if ( mVertexArray && (mVertexArray->isVBODirty() || force_update) )
@@ -480,7 +480,7 @@ void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*,
 
   // bind Vertex Attrib Set
 
-  bool vbo_on = (Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0) && vboEnabled() && !isDisplayListEnabled();
+  bool vbo_on = Has_VBO && vboEnabled() && !isDisplayListEnabled();
   gl_context->bindVAS(this, vbo_on, false);
 
   // actual draw

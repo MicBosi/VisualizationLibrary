@@ -315,16 +315,18 @@ namespace vl
         memcpy(&tris[0], &sorted_points[0], sizeof(sorted_points[0])*sorted_points.size() );
       }
 
-      if (Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0)
-      if (polys->indices()->gpuBuffer()->handle())
+      if (Has_VBO)
       {
-        if (polys->indices()->gpuBuffer()->usage() != vl::BU_DYNAMIC_DRAW)
+        if (polys->indices()->gpuBuffer()->handle())
         {
-          polys->indices()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW);
-          polys->indices()->setVBODirty(false);
+          if (polys->indices()->gpuBuffer()->usage() != vl::BU_DYNAMIC_DRAW)
+          {
+            polys->indices()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW);
+            polys->indices()->setVBODirty(false);
+          }
+          else
+            polys->indices()->setVBODirty(true);
         }
-        else
-          polys->indices()->setVBODirty(true);
       }
     }
 

@@ -50,7 +50,7 @@ public:
 
   virtual void initEvent()
   {
-    if (!(vl::Has_GL_ARB_shading_language_100||vl::Has_GL_Version_3_0))
+    if (!vl::Has_GLSL)
     {
       vl::Log::error("OpenGL Shading Language not supported.\n");
       vl::Time::sleep(3000);

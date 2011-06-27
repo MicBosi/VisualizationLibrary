@@ -64,7 +64,7 @@ namespace vl
     glPixelStorei( GL_PACK_SKIP_ROWS,   0);
     glPixelStorei( GL_PACK_SWAP_BYTES,  0);
     glPixelStorei( GL_PACK_LSB_FIRST,   0);
-    if (Has_GL_Version_1_2)
+    if (Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0) // Texture 3D but excluding EOS
     {
       glPixelStorei( GL_PACK_IMAGE_HEIGHT, 0 );
       glPixelStorei( GL_PACK_SKIP_IMAGES,  0 );

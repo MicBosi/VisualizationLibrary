@@ -118,7 +118,7 @@ public:
 
     vl::ref<vl::Effect> fx_3d = new vl::Effect;
 
-    if(vl::Has_GL_Version_1_2||vl::Has_GL_EXT_texture3D)
+    if(vl::Has_Texture_3D)
     {
       vl::ref<vl::Texture> texture_3d = new vl::Texture;
       texture_3d->prepareTexture3D( img_volume.get(), vl::TF_RGBA, mMipmappingOn, false );
@@ -150,7 +150,7 @@ public:
 
     vl::ref<vl::Effect> fx_2darray = new vl::Effect;
 
-    if(vl::Has_GL_EXT_texture_array||vl::Has_GL_Version_3_0)
+    if(vl::Has_Texture_Array)
     {
       vl::ref<vl::Texture> texture_2darray = new vl::Texture;
       texture_2darray->prepareTexture2DArray( img_volume.get(), vl::TF_RGBA, mMipmappingOn );
@@ -187,7 +187,7 @@ public:
 
     vl::ref<vl::Effect> fx_1darray = new vl::Effect;
 
-    if(vl::Has_GL_EXT_texture_array||vl::Has_GL_Version_3_0)
+    if(vl::Has_Texture_Array)
     {
       vl::ref<vl::Texture> texture_1darray = new vl::Texture;
       texture_1darray->prepareTexture1DArray( img_holebox.get(), vl::TF_RGBA, mMipmappingOn );
@@ -218,7 +218,7 @@ public:
 
     vl::ref<vl::Effect> fx_rect = new vl::Effect;
 
-    if(Has_Texture_Rectangle)
+    if(vl::Has_Texture_Rectangle)
     {
       vl::ref<vl::Texture> texture_rect = new vl::Texture;
       texture_rect->prepareTextureRectangle( img_holebox.get(), vl::TF_RGBA );
@@ -291,7 +291,7 @@ public:
     // to ensure the torus is drawn after the textured quads
     mFXCubic->setRenderRank(1);
 
-    if (vl::Has_GL_Version_1_3||vl::Has_GL_ARB_texture_cube_map)
+    if (vl::Has_Cubemap_Textures)
     {
       vl::ref<vl::Texture> texture_cubic = new vl::Texture;
       texture_cubic->prepareTextureCubemap( img_cubemap.get(), vl::TF_RGBA, mMipmappingOn, false );
