@@ -237,7 +237,7 @@ void OpenGLContext::initGLContext(bool log)
 
   // Find max number of texture units, see http://www.opengl.org/sdk/docs/man/xhtml/glActiveTexture.xml
   mTextureUnitCount = 1;
-  if (Has_GL_Version_1_3||Has_GL_ARB_multitexture) // for GL < 2.x
+  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_x) // for GL < 2.x
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
@@ -319,18 +319,16 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("Max texture size: %n\n")<<max_val);
 
     max_val = 1;
-    if (Has_GL_Version_1_3||Has_GL_ARB_multitexture)
+    if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_x)
       glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val); // deprecated enum
     Log::print( Say("Texture units (legacy): %n\n") << max_val);
 
     max_val = 0;
-    if (Has_GLSL)
-      glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
-    Log::print( Say("Texture units (fragment shader): %n\n") << max_val);
-
-    max_val = 0;
     if (Has_GL_Version_2_0)
+    {
       glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_val); // deprecated enum
+      Log::print( Say("Texture units (client): %n\n") << max_val);
+    }
     if (Has_GLSL)
     {
       int tmp = 0;
@@ -338,6 +336,11 @@ void OpenGLContext::logOpenGLInfo()
       max_val = tmp > max_val ? tmp : max_val;
     }
     Log::print( Say("Texture units (combined): %n\n") << max_val);
+
+    max_val = 0;
+    if (Has_GLSL)
+      glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
+    Log::print( Say("Texture units (fragment shader): %n\n") << max_val);
 
     max_val = 0;
     if (Has_GL_EXT_texture_filter_anisotropic)
@@ -369,11 +372,11 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("Max vertex uniform components: %n\n")<<max_val);
     VL_CHECK_OGL();
     max_val = 0;
-    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
+    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
       glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val);
     Log::print( Say("Max elements vertices: %n\n") << max_val );
     max_val = 0;
-    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
+    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
       glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val );
     Log::print( Say("Max elements indices: %n\n") << max_val );
 
@@ -383,6 +386,7 @@ void OpenGLContext::logOpenGLInfo()
 
     // mic fixme
     Log::print( extensions().c_str() );
+    Log::print( "\n" );
     Log::print( "\n" );
 #if 0
     std::stringstream sstream;
@@ -639,7 +643,7 @@ void OpenGLContext::setupDefaultRenderStates()
   if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
     mDefaultRenderStates[RS_BlendColor] = new BlendColor;
 
-  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
     mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
 
   mDefaultRenderStates[RS_BlendFunc] = new BlendFunc;
@@ -654,13 +658,13 @@ void OpenGLContext::setupDefaultRenderStates()
   mDefaultRenderStates[RS_LineWidth] = new LineWidth;
   mDefaultRenderStates[RS_LogicOp] = new LogicOp;
   
-  if (Has_GL_ARB_point_parameters||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  if (Has_GL_ARB_point_parameters||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x) // note GLES 2.x is excluded
     mDefaultRenderStates[RS_PointParameter] = new PointParameter;
 
   mDefaultRenderStates[RS_PointSize] = new PointSize;
   mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
   
-  if (Has_GL_ARB_multisample||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  if (Has_GL_ARB_multisample||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
     mDefaultRenderStates[RS_SampleCoverage] = new SampleCoverage;
   
   mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
@@ -716,17 +720,25 @@ bool OpenGLContext::isCleanState(bool verbose)
     ~contract() { VL_CHECK_OGL(); }
   } contract_instance;
 
-  bool ok  = true;
+  bool ok = true;
 
   // everything must be disabled
   for( unsigned i=0; i<EN_EnableCount; ++i )
   {
+    // mic fixme: investigate
+    // These are enabled in Core profile!
     if (!isCompatible())
-      if ( TranslateEnable[i] == GL_POINT_SPRITE)
-        break;
+    {
+      if (TranslateEnable[i] == GL_POINT_SPRITE)
+        continue;
 
-    GLboolean enabled = glIsEnabled( TranslateEnable[i] );
-    // const char* name = TranslateEnableString[i];
+      if (TranslateEnable[i] == GL_VERTEX_PROGRAM_POINT_SIZE)
+        continue;
+    }
+
+    GLboolean enabled = glIsEnabled( TranslateEnable[i] ); VL_CHECK_OGL();
+
+    // the order is important!
     if (glGetError() == GL_NO_ERROR && enabled)
     {
 	    if (verbose)
@@ -738,7 +750,11 @@ bool OpenGLContext::isCleanState(bool verbose)
 
   if (isCompatible())
   {
-    for( int i=0; i<8; ++i)
+    int max_lights = 0;
+    glGetIntegerv(GL_MAX_LIGHTS, &max_lights);
+
+    for( int i=0; i<max_lights; ++i)
+    {
       if (glIsEnabled(GL_LIGHT0+i))
       {
         if (verbose)
@@ -746,8 +762,14 @@ bool OpenGLContext::isCleanState(bool verbose)
         VL_TRAP();
         ok = false;
       }
+    }
 
-    for( int i=0; i<6; ++i)
+    // OpenGL requires 6 planes but GLES 1.x requires only 1.
+    int max_planes = 0;
+    glGetIntegerv(GL_MAX_CLIP_PLANES, &max_planes);
+
+    for( int i=0; i<max_planes; ++i)
+    {
       if (glIsEnabled(GL_CLIP_PLANE0+i))
       {
         if (verbose)
@@ -755,16 +777,16 @@ bool OpenGLContext::isCleanState(bool verbose)
         VL_TRAP();
         ok = false;
       }
+    }
   }
 
-  if (Has_Primitive_Restart)
-    if (glIsEnabled(GL_PRIMITIVE_RESTART))
-    {
-      if (verbose)
-        vl::Log::error( "GL_PRIMITIVE_RESTART was enabled!\n" );
-      VL_TRAP();
-      ok = false;
-    }
+  if (Has_Primitive_Restart && glIsEnabled(GL_PRIMITIVE_RESTART))
+  {
+    if (verbose)
+      vl::Log::error( "GL_PRIMITIVE_RESTART was enabled!\n" );
+    VL_TRAP();
+    ok = false;
+  }
 
   if(Has_Multitexture)
   {
@@ -794,28 +816,31 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
-  // Find max number of texture units, see http://www.opengl.org/sdk/docs/man/xhtml/glActiveTexture.xml
-  int coord_count = 1;
-  if (Has_GL_Version_1_3||Has_GL_ARB_multitexture) // for GL < 2.x
+  /* We only check the the subset of tex-units supported also by glClientActiveTexture() */
+  // find the minimum of the max texture units supported, starting at 16
+  // mic fixme: test this with Core and GLES 1.x 2.x
+  int coord_count = 16;
+  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_x)
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
-    coord_count = max_tmp > coord_count ? max_tmp : coord_count;
+    coord_count = max_tmp < coord_count ? max_tmp : coord_count;
   }
-  if (Has_GL_Version_2_0) // for GL == 2.x
-  {
-    int max_tmp = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
-    coord_count = max_tmp > coord_count ? max_tmp : coord_count;
-  }
-  /* We only check the first GL_MAX_TEXTURE_COORDS units, which is the subset supported also by glClientActiveTexture()
+
   if (Has_GLSL) // for GL >= 2.0
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
-    coord_count = max_tmp > coord_count ? max_tmp : coord_count;
+    coord_count = max_tmp < coord_count ? max_tmp : coord_count;
   }
-  */
+
+  if (Has_GL_Version_2_0) // for GL == 2.x && compatible higher
+  {
+    int max_tmp = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
+    coord_count = max_tmp < coord_count ? max_tmp : coord_count;
+  }
+
   while(coord_count--)
   {
     VL_glActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
@@ -823,7 +848,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     if (isCompatible())
     {
 	    VL_glClientActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
-	
+
 	    float matrix[16];
 	    float imatrix[16];
 	    glGetFloatv(GL_TEXTURE_MATRIX, matrix); VL_CHECK_OGL()
@@ -888,8 +913,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Texture_Rectangle)
     {
-      if (isCompatible())
-      if (glIsEnabled(GL_TEXTURE_RECTANGLE))
+      if (isCompatible() && glIsEnabled(GL_TEXTURE_RECTANGLE))
       {
         if (verbose)
           vl::Log::error( Say("GL_TEXTURE_RECTANGLE was enabled on texture unit #%n!\n") << coord_count );
@@ -910,8 +934,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Texture_3D)
     {
-      if (isCompatible())
-      if (glIsEnabled(GL_TEXTURE_3D))
+      if (isCompatible() && glIsEnabled(GL_TEXTURE_3D))
       {
         if (verbose)
           vl::Log::error( Say("GL_TEXTURE_3D was enabled on texture unit #%n!\n") << coord_count );
@@ -931,8 +954,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
     if (Has_Cubemap_Textures)
     {
-      if (isCompatible())
-      if (glIsEnabled(GL_TEXTURE_CUBE_MAP))
+      if (isCompatible() && glIsEnabled(GL_TEXTURE_CUBE_MAP))
       {
         if (verbose)
           vl::Log::error( Say("GL_TEXTURE_CUBE_MAP was enabled on texture unit #%n!\n") << coord_count );
@@ -1046,73 +1068,74 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
-  if(isCompatible())
+  if (Has_GL_Version_1_1 && glIsEnabled(GL_COLOR_MATERIAL)) // excludes also GLES
   {
-    if (Has_GL_Version_1_1 && glIsEnabled(GL_COLOR_MATERIAL))
+    if (verbose)
+      vl::Log::error( "GL_COLOR_MATERIAL was enabled!\n");
+    VL_TRAP();
+    ok = false;
+  }
+
+  if (Has_GL_Version_1_4 || Has_GL_EXT_fog_coord) // excludes also GLES 1.x
+  {
+    if (glIsEnabled(GL_FOG_COORD_ARRAY))
     {
       if (verbose)
-        vl::Log::error( "GL_COLOR_MATERIAL was enabled!\n");
+        vl::Log::error( "GL_FOG_COORD_ARRAY was enabled!\n");
       VL_TRAP();
       ok = false;
     }
+  }
 
-    if (Has_GL_Version_1_4||Has_GL_EXT_fog_coord)
-      if (glIsEnabled(GL_FOG_COORD_ARRAY))
-      {
-        if (verbose)
-          vl::Log::error( "GL_FOG_COORD_ARRAY was enabled!\n");
-        VL_TRAP();
-        ok = false;
-      }
-
-    if (Has_GL_Version_1_4||Has_GL_EXT_secondary_color)
-      if (glIsEnabled(GL_SECONDARY_COLOR_ARRAY))
-      {
-        if (verbose)
-          vl::Log::error( "GL_SECONDARY_COLOR_ARRAY was enabled!\n");
-        VL_TRAP();
-        ok = false;
-      }
-
-    if (glIsEnabled(GL_COLOR_ARRAY))
+  if (Has_GL_Version_1_4 || Has_GL_EXT_secondary_color) // excludes also GLES 1.x
+  {
+    if (glIsEnabled(GL_SECONDARY_COLOR_ARRAY))
     {
       if (verbose)
-        vl::Log::error( "GL_COLOR_ARRAY was enabled!\n");
+        vl::Log::error( "GL_SECONDARY_COLOR_ARRAY was enabled!\n");
       VL_TRAP();
       ok = false;
     }
+  }
 
-    if (glIsEnabled(GL_EDGE_FLAG_ARRAY))
-    {
-      if (verbose)
-        vl::Log::error( "GL_EDGE_FLAG_ARRAY was enabled!\n");
-      VL_TRAP();
-      ok = false;
-    }
+  if (isCompatible() && glIsEnabled(GL_COLOR_ARRAY)) // includes GLES 1.x
+  {
+    if (verbose)
+      vl::Log::error( "GL_COLOR_ARRAY was enabled!\n");
+    VL_TRAP();
+    ok = false;
+  }
 
-    if (glIsEnabled(GL_INDEX_ARRAY))
-    {
-      if (verbose)
-        vl::Log::error( "GL_INDEX_ARRAY was enabled!\n");
-      VL_TRAP();
-      ok = false;
-    }
+  if (Has_GL_Version_1_1 && glIsEnabled(GL_EDGE_FLAG_ARRAY)) // excludes GLES 
+  {
+    if (verbose)
+      vl::Log::error( "GL_EDGE_FLAG_ARRAY was enabled!\n");
+    VL_TRAP();
+    ok = false;
+  }
 
-    if (glIsEnabled(GL_NORMAL_ARRAY))
-    {
-      if (verbose)
-        vl::Log::error( "GL_NORMAL_ARRAY was enabled!\n");
-      VL_TRAP();
-      ok = false;
-    }
+  if (Has_GL_Version_1_1 && glIsEnabled(GL_INDEX_ARRAY)) // excludes GLES
+  {
+    if (verbose)
+      vl::Log::error( "GL_INDEX_ARRAY was enabled!\n");
+    VL_TRAP();
+    ok = false;
+  }
 
-    if (glIsEnabled(GL_VERTEX_ARRAY))
-    {
-      if (verbose)
-        vl::Log::error( "GL_VERTEX_ARRAY was enabled!\n");
-      VL_TRAP();
-      ok = false;
-    }
+  if (isCompatible() && glIsEnabled(GL_NORMAL_ARRAY)) // includes GLES 1.x
+  {
+    if (verbose)
+      vl::Log::error( "GL_NORMAL_ARRAY was enabled!\n");
+    VL_TRAP();
+    ok = false;
+  }
+
+  if (isCompatible() && glIsEnabled(GL_VERTEX_ARRAY)) // includes GLES 1.x
+  {
+    if (verbose)
+      vl::Log::error( "GL_VERTEX_ARRAY was enabled!\n");
+    VL_TRAP();
+    ok = false;
   }
 
   if (glIsEnabled(GL_SCISSOR_TEST))

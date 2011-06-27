@@ -284,9 +284,9 @@ void ShadeModel::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void BlendFunc::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_EXT_blend_func_separate||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  if (Has_GL_EXT_blend_func_separate||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_func_separate||Has_GLES_Version_2_x)
   { 
-    VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL() 
+    VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL()
   }
   else
   { 
@@ -504,13 +504,13 @@ void LineStipple::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void PointParameter::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_Version_1_4)
+  if (Has_GL_Version_1_4||Has_GLES_Version_1_x)
   {
     VL_glPointParameterf(GL_POINT_SIZE_MIN, mSizeMin); VL_CHECK_OGL()
     VL_glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
     VL_glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, (const float*)mDistanceAttenuation.ptr()); VL_CHECK_OGL()
   }
-  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x)
   {
     VL_glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
   }
@@ -626,7 +626,7 @@ void TexParameter::setMagFilter(ETexParamFilter magfilter)
   }
 }
 //------------------------------------------------------------------------------
-void TexParameter::apply(ETextureDimension dimension, OpenGLContext* gl) const
+void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
 {
   VL_CHECK_OGL()
 
@@ -644,7 +644,7 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* gl) const
 
   if (wrapS() == GL_MIRRORED_REPEAT || wrapT() == GL_MIRRORED_REPEAT || wrapR() == GL_MIRRORED_REPEAT)
   {
-    if( !(Has_GL_IBM_texture_mirrored_repeat ||Has_GL_ARB_texture_mirrored_repeat || Has_GL_Version_1_4 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_2_x) )
+    if( !(Has_GL_IBM_texture_mirrored_repeat || Has_GL_ARB_texture_mirrored_repeat || Has_GL_Version_1_4 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_2_x) )
       Log::bug("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n");
   }
 
@@ -683,7 +683,7 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* gl) const
     {
       glTexParameteri(dimension, GL_TEXTURE_COMPARE_MODE, compareMode() ); VL_CHECK_OGL()
       glTexParameteri(dimension, GL_TEXTURE_COMPARE_FUNC, compareFunc() ); VL_CHECK_OGL()
-      if(gl->isCompatible())
+      if(Has_GL_Version_1_4)
         glTexParameteri(dimension, GL_DEPTH_TEXTURE_MODE, depthTextureMode() ); VL_CHECK_OGL()
     }
   }
@@ -698,7 +698,7 @@ namespace
   {
     int max_texture = 1, max_tmp = 0;
 
-    if (Has_GL_Version_1_3||Has_GL_ARB_multitexture)
+    if (Has_GL_Version_1_3||Has_GL_ARB_multitexture||Has_GLES_Version_1_x)
     {
       glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
@@ -765,9 +765,8 @@ void TexEnv::apply(const Camera*, OpenGLContext*) const
   VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
   VL_CHECK(checkTextureUnit("TexEnv::apply",textureUnit()));
 
-  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
-  VL_CHECK_OGL();
+  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() ); VL_CHECK_OGL();
 
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode()); VL_CHECK_OGL()
 
