@@ -142,6 +142,9 @@ namespace vl
     //! Logs some information about the OpenGL context
     void logOpenGLInfo();
 
+    //! Returns the list of OpenGL extensions supported separated by '|' characters.
+    const std::string& extensions() const { return mExtensions; }
+    
     //! Returns true if the given extension is supported.
     //! \note This is a relatively slow function, don't use it inside loops and similar.
     bool isExtensionSupported(const char* ext_name);
@@ -506,6 +509,7 @@ namespace vl
     bool mHasDoubleBuffer;
     bool mIsInitialized;
     bool mIsCompatible;
+    std::string mExtensions;
 
     // --- Render States ---
     // state table
