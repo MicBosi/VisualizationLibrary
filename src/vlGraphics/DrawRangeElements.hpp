@@ -205,8 +205,8 @@ namespace vl
     virtual void render(bool use_vbo) const
     {
       VL_CHECK(mBaseVertex>=0)
-      VL_CHECK(!use_vbo || (use_vbo && (Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0)))
-      use_vbo &= Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
+      VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
+      use_vbo &= Has_VBO; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
       if ( !use_vbo && !indices()->size() )
         return;
 
@@ -216,7 +216,7 @@ namespace vl
       // primitive restart enable
       if(primitiveRestartEnabled())
       {
-        if(Has_GL_Version_3_1||Has_GL_Version_4_0)
+        if(Has_Primitive_Restart)
         {
           glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
           glPrimitiveRestartIndex(primitiveRestartIndex()); VL_CHECK_OGL();
@@ -225,7 +225,7 @@ namespace vl
         {
           Log::error("Primitive restart not supported by the current OpenGL implementation!\n");
         }
-        VL_CHECK(Has_GL_Version_3_1||Has_GL_Version_4_0);
+        VL_CHECK(Has_Primitive_Restart);
       }
 
       const GLvoid* ptr = indices()->gpuBuffer()->ptr();

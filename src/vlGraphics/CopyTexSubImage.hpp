@@ -310,7 +310,7 @@ namespace vl
 
     virtual void copyPixels()
     {
-      if (Has_GL_Version_1_2)
+      if (Has_Texture_3D)
       {
         VL_CHECK_OGL()
         VL_CHECK( texture()->dimension() == TD_TEXTURE_3D )
