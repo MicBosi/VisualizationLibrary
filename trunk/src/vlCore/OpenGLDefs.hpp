@@ -34,39 +34,51 @@
 
 #include <vlCore/checks.hpp>
 
-#if defined(VL_PLATFORM_WINDOWS)
+#if defined(VL_OPENGL_ES1)
 
-  #if defined(_WIN32) && !defined(APIENTRY) && !defined(__CYGWIN__) && !defined(__SCITECH_SNAP__)
-    #define WIN32_LEAN_AND_MEAN 1
-    #include <windows.h>
+  #include <GLES/gl.h>
+  #include <GLES/glext.h>
+  #include <GLES/gl_extra_defines.h> // defines used by VL but not present in GLES 1.x
+
+#elif defined(VL_OPENGL_ES2)
+
+  #include <GLES2/gl.h>
+  #include <GLES2/glext.h>
+  #include <GLES2/gl_extra_defines.h> // defines used by VL but not present in GLES 2.x
+
+#elif defined(VL_OPENGL)
+
+  #if defined(VL_PLATFORM_WINDOWS)
+
+    #include <GL/mesa_gl.h>
+    #include <GL/glu.h>
+    #include <GL/khronos_glext.h>
+    #include <GL/khronos_wglext.h>
+
+  #elif defined(VL_PLATFORM_LINUX)
+
+    #include <GL/mesa_gl.h>
+    #include <GL/glu.h>
+    #include <GL/khronos_glext.h>
+    extern "C" { extern void ( * glXGetProcAddress (const GLubyte *procName)) (void); }
+
+  #elif defined(VL_PLATFORM_MACOSX)
+
+    #include <GL/mesa_gl.h>
+    #include <OpenGL/glu.h>
+    #include <GL/khronos_glext.h>
+
+  #else
+
+    #error Unknown platform!
+
   #endif
 
-  #include <GL/mesa_gl.h>
-  #include <GL/glu.h>
-  #include <GL/khronos_glext.h>
-  #include <GL/khronos_wglext.h>
+#endif
 
-#elif defined(VL_PLATFORM_LINUX)
-
-  #include <GL/mesa_gl.h>
-  #include <GL/glu.h>
-  #include <GL/khronos_glext.h>
-  // #include <GL/glx.h>
-  // #include <GL/glxext.h>
-  extern "C" {
-    extern void ( * glXGetProcAddress (const GLubyte *procName)) (void);
-  }
-
-#elif defined(VL_PLATFORM_MACOSX)
-
-  #include <GL/mesa_gl.h>
-  #include <OpenGL/glu.h>
-  #include <GL/khronos_glext.h>
-
-#else
-
-  VL_COMPILE_TIME_CHECK(0) // Unknown platform!
-
+/* Define NULL */
+#ifndef NULL
+  #define NULL 0
 #endif
 
 #endif
