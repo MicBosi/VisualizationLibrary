@@ -465,8 +465,9 @@ void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*,
   VL_CHECK_OGL()
 
   // set default normal, color and secondary colors
+  // note: Has_GL_Version_1_1 is false for GLES 1.x and GLES 2.x
 
-  if (gl_context->isCompatible())
+  if (Has_GL_Version_1_1) 
   {
     if (!normalArray())
       glNormal3fv(mNormal.ptr());

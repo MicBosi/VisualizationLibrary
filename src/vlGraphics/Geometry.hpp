@@ -116,19 +116,40 @@ namespace vl
     const Collection<DrawCall>* drawCalls() const { return &mDrawCalls; }
 
     //! Geometry normal used when no normal array is defined.
-    void setNormal(const fvec3& normal) { mNormal = normal; }
+    void setNormal(const fvec3& normal) 
+    { 
+      mNormal = normal;
+      #if defined(VL_OPENGL_ES_1_x) || defined(VL_OPENGL_ES_2_x)
+        // functionality not supported by GLES 1.x and 2.x
+        VL_CHECK(0);
+      #endif
+    }
 
     //! Geometry normal used when no normal array is defined.
     const fvec3& normal() { return mNormal; }
 
     //! Geometry color used when no color array is defined.
-    void setColor(const fvec4& color) { mColor = color; }
+    void setColor(const fvec4& color) 
+    { 
+      mColor = color; 
+      #if defined(VL_OPENGL_ES_1_x) || defined(VL_OPENGL_ES_2_x)
+        // functionality not supported by GLES 1.x and 2.x
+        VL_CHECK(0);
+      #endif
+    }
 
     //! Geometry color used when no color array is defined.
     const fvec4& color() { return mColor; }
 
     //! Geometry color used when no color array is defined.
-    void setSecondaryColor(const fvec4& color) { mSecondaryColor = color; }
+    void setSecondaryColor(const fvec4& color) 
+    { 
+      mSecondaryColor = color; 
+      #if defined(VL_OPENGL_ES_1_x) || defined(VL_OPENGL_ES_2_x)
+        // functionality not supported by GLES 1.x and 2.x
+        VL_CHECK(0);
+      #endif
+    }
 
     //! Geometry color used when no color array is defined.
     const fvec4& secondaryColor() { return mSecondaryColor; }

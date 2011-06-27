@@ -202,7 +202,7 @@ bool vl::initializeOpenGL()
     Has_Occlusion_Query = Has_GL_ARB_occlusion_query||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_Transform_Feedback = Has_GL_NV_transform_feedback||Has_GL_EXT_transform_feedback||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
-    Has_GL_GENERATE_MIPMAP = Has_GL_SGIS_generate_mipmap||Has_GL_Version_1_4||Has_GLES_Version_1_x;
+    Has_GL_GENERATE_MIPMAP = /*Has_GL_SGIS_generate_mipmap||*/Has_GL_Version_1_4||Has_GLES_Version_1_x; // mic fixme: investigate: Has_GL_SGIS_generate_mipmap is exposed in NVIDIA core profile but generates invalid enum.
 
     // opengl extension strings init
     std::string extensions = getOpenGLExtensions();
