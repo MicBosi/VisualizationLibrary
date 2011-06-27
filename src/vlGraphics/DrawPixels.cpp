@@ -96,7 +96,7 @@ bool DrawPixels::Pixels::generatePixelBufferObject(EGLBufferUsage usage, bool di
   VL_CHECK(image())
   if (!image())
     return false;
-  image()->pixelBufferObject()->setBufferData( image()->imageBuffer()->bytesUsed(), image()->imageBuffer()->ptr(), usage );
+  image()->pixelBufferObject()->setBufferData( (GLsizeiptr)image()->imageBuffer()->bytesUsed(), image()->imageBuffer()->ptr(), usage );
   if (discard_local_storage)
     image()->imageBuffer()->clear();
   return true;
@@ -129,7 +129,7 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  glOrtho( -0.5, viewport[2]-0.5, -0.5, viewport[3]-0.5, -1, +1 ); VL_CHECK_OGL();
+  glOrtho( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1.0f, +1.0f ); VL_CHECK_OGL();
 
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT); VL_CHECK_OGL();
 
