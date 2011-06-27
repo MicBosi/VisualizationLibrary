@@ -187,23 +187,16 @@ namespace vl
       // primitive restart enable
       if(primitiveRestartEnabled())
       {
-        if(Has_GL_Version_3_1)
+        if(Has_GL_Version_3_1||Has_GL_Version_4_0)
         {
-          glEnable(GL_PRIMITIVE_RESTART);
-          glPrimitiveRestartIndex(primitiveRestartIndex());
-        }
-        else
-        if(Has_GL_NV_primitive_restart)
-        {
-          glEnable(GL_PRIMITIVE_RESTART_NV);
-          glPrimitiveRestartIndexNV(primitiveRestartIndex());
+          glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
+          glPrimitiveRestartIndex(primitiveRestartIndex()); VL_CHECK_OGL();
         }
         else
         {
-          vl::Log::error("MultiDrawElements error: primitive restart not supported by this OpenGL implementation!\n");
-          VL_TRAP();
-          return;
+          Log::error("Primitive restart not supported by the current OpenGL implementation!\n");
         }
+        VL_CHECK(Has_GL_Version_3_1||Has_GL_Version_4_0);
       }
 
       const GLvoid **indices_ptr = (const GLvoid**)&mPointerVector[0];
@@ -219,10 +212,8 @@ namespace vl
       {
         VL_CHECK( baseVertices().size() == pointerVector().size() )
         VL_CHECK( baseVertices().size() == countVector().size() )
-        if (Has_GL_ARB_draw_elements_base_vertex || Has_GL_Version_3_1)
-          glMultiDrawElementsBaseVertex( 
-            primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), indices_ptr, (GLsizei)mCountVector.size(), (GLint*)&mBaseVertices[0] 
-          );
+        if (Has_GL_Version_3_1||Has_GL_Version_4_0||Has_GL_ARB_draw_elements_base_vertex)
+          glMultiDrawElementsBaseVertex( primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), indices_ptr, (GLsizei)mCountVector.size(), (GLint*)&mBaseVertices[0] );
         else
         {
           vl::Log::error("MultiDrawElements::render(): glMultiDrawElementsBaseVertex() not supported!\n"
@@ -236,11 +227,7 @@ namespace vl
       // primitive restart disable
       if(primitiveRestartEnabled())
       {
-        if(Has_GL_Version_3_1)
-          glDisable(GL_PRIMITIVE_RESTART);
-        else
-        if(Has_GL_NV_primitive_restart)
-          glDisable(GL_PRIMITIVE_RESTART_NV);
+        glDisable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL()
       }
     }
 
