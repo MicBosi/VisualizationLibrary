@@ -174,10 +174,10 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
     // gluOrtho2D( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f );
 
     // clever trick part #1
-    dmat4 mat = dmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
+    fmat4 mat = fmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
     mat.e(2,2) = 1.0f; // preserve the z value from the incoming vertex.
     mat.e(2,3) = 0.0f;
-    glLoadMatrixd(mat.ptr());
+    glLoadMatrixf(mat.ptr());
 
     VL_CHECK_OGL();
   }
@@ -714,10 +714,10 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
     //gluOrtho2D( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f );
 
     // clever trick part #1
-    dmat4 mat = dmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
+    fmat4 mat = fmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
     mat.e(2,2) = 1.0f;
     mat.e(2,3) = 0.0f;
-    glLoadMatrixd(mat.ptr());
+    glLoadMatrixf(mat.ptr());
     VL_CHECK_OGL();
   }
 
@@ -767,10 +767,10 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
     //gluOrtho2D( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f );
 
     // clever trick part #1
-    dmat4 mat = dmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
+    fmat4 mat = fmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
     mat.e(2,2) = 1.0f;
     mat.e(2,3) = 0.0f;
-    glLoadMatrixd(mat.ptr());
+    glLoadMatrixf(mat.ptr());
     VL_CHECK_OGL();
   }
 
