@@ -106,7 +106,7 @@ namespace vl
     #elif defined(__GNUG__)
       struct timeval tv;
       gettimeofday( &tv, NULL );
-      gStartTime = (unsigned long long)tv.tv_sec + (unsigned long long)tv.tv_usec;
+      gStartTime = (unsigned long long)tv.tv_sec * 1000000 + (unsigned long long)tv.tv_usec;
     #endif
   }
 }
@@ -137,7 +137,7 @@ Real Time::currentTime()
   #elif defined(__GNUG__)
     struct timeval tv;
     gettimeofday( &tv, NULL );
-    return ((unsigned long long)tv.tv_sec + (unsigned long long)tv.tv_usec - gStartTime) * 0.000001f;
+    return ((unsigned long long)tv.tv_sec * 1000000 + (unsigned long long)tv.tv_usec - gStartTime) * 0.000001f;
   #endif
 }
 //-----------------------------------------------------------------------------
