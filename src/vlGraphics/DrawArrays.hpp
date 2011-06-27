@@ -96,7 +96,7 @@ namespace vl
         unsigned int glerr = glGetError();
         if (glerr != GL_NO_ERROR)
         {
-          String msg( (char*)gluErrorString(glerr) );
+          String msg( getGLErrorString(glerr) );
           Log::error( Say("glGetError() [%s:%n]: %s\n") << __FILE__ << __LINE__ << msg );
           Log::print(
             "OpenGL Geometry Instancing (GL_ARB_draw_instanced) does not support display lists."
