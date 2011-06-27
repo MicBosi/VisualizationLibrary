@@ -61,10 +61,10 @@ namespace vl
       * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
     void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
 
-    /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
+    /** Returns whether the primitive-restart functionality is enabled or not (requires OpenGL 3.1). See http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml */
     bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
 
-    /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
+    /** Enables the primitive-restart functionality (requires OpenGL 3.1). See http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
     /** Sets the number of instances for this set of primitives. */
@@ -210,23 +210,16 @@ namespace vl
       // primitive restart enable
       if(primitiveRestartEnabled())
       {
-        if(Has_GL_Version_3_1)
+        if(Has_GL_Version_3_1||Has_GL_Version_4_0)
         {
-          glEnable(GL_PRIMITIVE_RESTART);
-          glPrimitiveRestartIndex(primitiveRestartIndex());
-        }
-        else
-        if(Has_GL_NV_primitive_restart)
-        {
-          glEnable(GL_PRIMITIVE_RESTART_NV);
-          glPrimitiveRestartIndexNV(primitiveRestartIndex());
+          glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
+          glPrimitiveRestartIndex(primitiveRestartIndex()); VL_CHECK_OGL();
         }
         else
         {
-          vl::Log::error("DrawElements error: primitive restart not supported by this OpenGL implementation!\n");
-          VL_TRAP();
-          return;
+          Log::error("Primitive restart not supported by the current OpenGL implementation!\n");
         }
+        VL_CHECK(Has_GL_Version_3_1||Has_GL_Version_4_0);
       }
 
       const GLvoid* ptr = indices()->gpuBuffer()->ptr();
@@ -259,18 +252,14 @@ namespace vl
 
       if(primitiveRestartEnabled())
       {
-        if(Has_GL_Version_3_1)
-          glDisable(GL_PRIMITIVE_RESTART);
-        else
-        if(Has_GL_NV_primitive_restart)
-          glDisable(GL_PRIMITIVE_RESTART_NV);
+        glDisable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL()
       }
 
       #ifndef NDEBUG
         unsigned int glerr = glGetError();
         if (glerr != GL_NO_ERROR)
         {
-          String msg( (char*)gluErrorString(glerr) );
+          String msg( getGLErrorString(glerr) );
           Log::error( Say("glGetError() [%s:%n]: %s\n") << __FILE__ << __LINE__ << msg );
           Log::print(
             "OpenGL Geometry Instancing (GL_ARB_draw_instanced) does not support display lists."
