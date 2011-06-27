@@ -170,7 +170,7 @@ void OpenGLContext::eraseAllEventListeners()
 //-----------------------------------------------------------------------------
 void OpenGLContext::setVSyncEnabled(bool enable)
 {
-#ifdef _WIN32
+#if defined(VL_OPENGL) && defined(VL_PLATFORM_WINDOWS)
   makeCurrent();
   if (Has_GL_EXT_swap_control)
     wglSwapIntervalEXT(enable?1:0);
@@ -181,7 +181,7 @@ void OpenGLContext::setVSyncEnabled(bool enable)
 //-----------------------------------------------------------------------------
 bool OpenGLContext::vsyncEnabled() const
 {
-#ifdef _WIN32
+#if defined(VL_OPENGL) && defined(VL_PLATFORM_WINDOWS)
   if (Has_GL_EXT_swap_control)
     return wglGetSwapIntervalEXT() != 0;
   else
@@ -209,6 +209,8 @@ void OpenGLContext::initGLContext(bool log)
   else
   {
     mIsInitialized = true;
+
+    mExtensions = getOpenGLExtensions();
 
     char punto;
     std::stringstream stream;
@@ -275,7 +277,7 @@ bool OpenGLContext::isExtensionSupported(const char* ext_name)
 {
   makeCurrent();
   size_t len = strlen(ext_name);
-  const char* ext = (const char*)glGetString(GL_EXTENSIONS);
+  const char* ext = mExtensions.c_str();
   const char* ext_end = ext + strlen(ext);
 
   for( const char* pos = strstr(ext,ext_name); pos && pos < ext_end; pos = strstr(pos,ext_name) )
@@ -292,7 +294,7 @@ bool OpenGLContext::isExtensionSupported(const char* ext_name)
 void* OpenGLContext::getProcAddress(const char* function_name)
 {
   makeCurrent();
-  return getOpenGLProcAddress((const GLubyte*)function_name);
+  return getGLProcAddress((const GLubyte*)function_name);
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::logOpenGLInfo()
@@ -365,27 +367,13 @@ void OpenGLContext::logOpenGLInfo()
     // --- print supported extensions on two columns ---
 
     Log::print("\n --- OpenGL Extensions --- \n");
+
+    // mic fixme
+    Log::print( String::fromStdString(extensions()) + "\n" );
+#if 0
     std::stringstream sstream;
-    std::string ext_str;
-    if (Has_GL_Version_3_0||Has_GL_Version_4_0)
-    {
-      int count = 0;
-      glGetIntegerv(GL_NUM_EXTENSIONS, &count);
-      for( int i=0; i<count; ++i )
-      {
-        const char* str = (const char*)glGetStringi(GL_EXTENSIONS,i); VL_CHECK_OGL();
-        if (!str)
-          break;
-        ext_str += std::string(str) + " ";
-      }
-    }
-    else
-    {
-      VL_CHECK(glGetString(GL_EXTENSIONS));
-      ext_str = (const char*)glGetString(GL_EXTENSIONS);
-    }
-    sstream << ext_str;
-    std::string ext,line;
+    sstream << getOpenGLExtensions();
+    std::string ext, line;
     for( int i=0; !sstream.eof(); ++i )
     {
       sstream >> ext;
@@ -405,6 +393,7 @@ void OpenGLContext::logOpenGLInfo()
     if (line.length())
       Log::print( Say("%s\n") << line );
     Log::print("\n");
+#endif
   }
 
   VL_CHECK_OGL();
