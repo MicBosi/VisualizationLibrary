@@ -116,14 +116,14 @@ namespace
                                                DDSCAPS2_CUBEMAP_POSITIVEY | DDSCAPS2_CUBEMAP_NEGATIVEY |
                                                DDSCAPS2_CUBEMAP_POSITIVEZ | DDSCAPS2_CUBEMAP_NEGATIVEZ ; 
 
-  inline unsigned int MAKEFOURCC(unsigned int ch0, unsigned int ch1, unsigned int ch2, unsigned int ch3) 
+  inline unsigned int makeFourCC(unsigned int ch0, unsigned int ch1, unsigned int ch2, unsigned int ch3) 
   {
       return ch0 | (ch1 << 8) | ( ch2 << 16) | ( ch3 << 24 );
   }
 
-  inline bool isFOURCC(const char* code, unsigned int fcc)
+  inline bool isFourCC(const char* code, unsigned int fcc)
   {
-    return MAKEFOURCC(code[0], code[1], code[2], code[3]) == fcc;
+    return makeFourCC(code[0], code[1], code[2], code[3]) == fcc;
   }
 
   // quick surface type macros
@@ -146,20 +146,20 @@ namespace
   #define IS_GRAY8(pf) \
     ((((pf.dwFlags & DDPF_LUMINANCE) || (pf.dwFlags & DDPF_ALPHA) ) && \
     (pf.dwRGBBitCount == 8) && !(pf.dwFlags & DDPF_ALPHAPIXELS) ) || \
-     isFOURCC("G8  ", pf.dwFourCC ) )
+     isFourCC("G8  ", pf.dwFourCC ) )
 
   #define IS_GRAY8_ALPHA8(pf) \
     (((pf.dwFlags & DDPF_LUMINANCE) && \
     (pf.dwRGBBitCount == 16) && (pf.dwFlags & DDPF_ALPHAPIXELS)) || \
-     isFOURCC("AG8 ", pf.dwFourCC ) )
+     isFourCC("AG8 ", pf.dwFourCC ) )
 
-  #define IS_PALETTE8(pf) isFOURCC("P8  ", pf.dwFourCC)
+  #define IS_PALETTE8(pf) isFourCC("P8  ", pf.dwFourCC)
 
-  #define IS_DXT1(pf) isFOURCC("DXT1", pf.dwFourCC)
+  #define IS_DXT1(pf) isFourCC("DXT1", pf.dwFourCC)
 
-  #define IS_DXT3(pf) isFOURCC("DXT3", pf.dwFourCC)
+  #define IS_DXT3(pf) isFourCC("DXT3", pf.dwFourCC)
 
-  #define IS_DXT5(pf) isFOURCC("DXT5", pf.dwFourCC)
+  #define IS_DXT5(pf) isFourCC("DXT5", pf.dwFourCC)
 
   typedef struct
   {
