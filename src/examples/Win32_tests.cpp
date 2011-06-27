@@ -58,7 +58,7 @@ public:
     setupApplet(applet, win32_window.get(), bk_color, eye, center);
 
     /* Used to test OpenGL Core Profile */
-#if 1
+#if 0
     int attribs[] =
     {
         WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
