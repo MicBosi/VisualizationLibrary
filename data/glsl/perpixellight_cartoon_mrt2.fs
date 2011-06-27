@@ -11,6 +11,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+#extension GL_EXT_gpu_shader4 : enable
+
 varying out vec4 FragDataOutputA;
 varying out vec4 FragDataOutputB;
 

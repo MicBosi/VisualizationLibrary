@@ -26,7 +26,7 @@ void main(void)
  L.z = dot( gl_Normal, v );
  #if 0
   L = normalize(L); // normalized in the fragment shader
- #else
+ #endif
  
  gl_FrontColor = gl_Color;
  gl_TexCoord[0] = gl_MultiTexCoord0;
