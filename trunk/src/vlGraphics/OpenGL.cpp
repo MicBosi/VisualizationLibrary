@@ -56,13 +56,29 @@ namespace vl
   #include "GLExtensionList.hpp"
   #undef VL_EXTENSION
 
-  #define VL_OPENGL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
-  #include "GLFunctionList.hpp"
-  #undef VL_OPENGL_FUNCTION
-
   #define VL_GLES_EXTENSION(extension) bool Has_##extension = false;
   #include "GLESExtensionList.hpp"
   #undef VL_GLES_EXTENSION
+
+  #if defined(VL_OPENGL)
+    #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
+    #include "GLFunctionList.hpp"
+    #undef VL_GL_FUNCTION
+  #endif
+
+  #if defined(VL_OPENGL_ES1)
+    #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
+    #include "GLES1FunctionList.hpp"
+    #include "GLES1FunctionList_missing.hpp"
+    #undef VL_GL_FUNCTION
+  #endif
+
+  #if defined(VL_OPENGL_ES2)
+    #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
+    #include "GLES2FunctionList.hpp"
+    #undef VL_GL_FUNCTION
+  #endif
+
 }
 
 bool vl::initializeOpenGL()
@@ -72,8 +88,23 @@ bool vl::initializeOpenGL()
       return false;
 
     // opengl function pointer initialization
-    #define VL_OPENGL_FUNCTION(TYPE, NAME) NAME = (TYPE)getOpenGLProcAddress((const GLubyte*)#NAME);
-    #include "GLFunctionList.hpp"
+    #if defined(VL_OPENGL)
+      #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress((const GLubyte*)#NAME);
+      #include "GLFunctionList.hpp"
+    #endif
+
+    // opengl function pointer initialization
+    #if defined(VL_OPENGL_ES1)
+      #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress((const GLubyte*)#NAME);
+      #include "GLES1FunctionList.hpp"
+      #include "GLES1FunctionList_missing.hpp"
+    #endif
+
+    // opengl function pointer initialization
+    #if defined(VL_OPENGL_ES2)
+      #define VL_GLES_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress((const GLubyte*)#NAME);
+      #include "GLES2FunctionList.hpp"
+    #endif
 
     // check fixed function pipeline present
     glDisable(GL_LIGHTING);
@@ -100,55 +131,33 @@ bool vl::initializeOpenGL()
     Has_GL_Version_4_1 = (vmaj == 4 && vmin >= 1) || (vmaj > 4 && compatible);
 
     // opengl extension strings init
-    std::string extensions;
-    if (Has_GL_Version_3_0||Has_GL_Version_4_0)
-    {
-      int count = 0;
-      glGetIntegerv(GL_NUM_EXTENSIONS, &count);
-      for( int i=0; i<count; ++i )
-      {
-        const char* str = (const char*)glGetStringi(GL_EXTENSIONS,i); VL_CHECK_OGL();
-        extensions += std::string(str) + " ";
-      }
-    }
-    else
-    {
-      VL_CHECK(glGetString(GL_EXTENSIONS));
-      extensions = (const char*)glGetString(GL_EXTENSIONS);
-    }
+    std::string extensions = getOpenGLExtensions();
 
-    #define INIT_EXTENSION(extension) Has_##extension=checkExtension("|GL_"#extension"|", extensions.c_str())
-
-    struct CheckExtension
-    {
-      bool operator()(const char* ext_name, const char* list)
-      {
-        size_t len = strlen(ext_name);
-        const char* ext = list;
-        const char* ext_end = ext + strlen(ext);
-
-        for( const char* pos = strstr(ext,ext_name); pos && pos < ext_end; pos = strstr(pos,ext_name) )
-        {
-          if (pos[len] == ' ' || pos[len] == 0)
-            return true;
-          else
-            pos += len;
-        }
-
-        return false;
-      }
-
-    } checkExtension;
-
-    #define VL_EXTENSION(extension) Has_##extension = checkExtension(#extension, extensions.c_str());
+    // mic fixme: check that it works!
+    #define VL_EXTENSION(extension) Has_##extension = strstr(extensions.c_str(), #extension" ") != NULL;
     #include "GLExtensionList.hpp"
     #undef VL_EXTENSION
 
-    #define VL_GLES_EXTENSION(extension) Has_##extension = checkExtension(#extension, extensions.c_str());
+    #define VL_GLES_EXTENSION(extension) Has_##extension = strstr(extensions.c_str(), #extension" ") != NULL;
     #include "GLESExtensionList.hpp"
     #undef VL_GLES_EXTENSION
 
     return glGetError() == GL_NO_ERROR;
+}
+
+const char* vl::getGLErrorString(int err)
+{
+  switch(err)
+  {
+  case GL_INVALID_ENUM:      return "Invalid enum";
+  case GL_INVALID_VALUE:     return "Invalid value";
+  case GL_INVALID_OPERATION: return "Invalid operation";
+  case GL_STACK_OVERFLOW:    return "Stack overflow";
+  case GL_STACK_UNDERFLOW:   return "Stack underflow";
+  case GL_OUT_OF_MEMORY:     return "Out of memory";
+  default:
+    return "";
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -163,21 +172,27 @@ int vl::glcheck(const char* file, int line)
   else
   if (glerr != GL_NO_ERROR)
   {
-    String msg( (char*)gluErrorString(glerr) );
+    String msg( (char*)getGLErrorString(glerr) );
     Log::bug( Say("glGetError() [%s:%n]: %s\n") << file << line << msg );
   }
   return glerr;
 }
 //------------------------------------------------------------------------------
-// vl::getOpenGLProcAddress() implementation based on GLEW's
+// vl::getGLProcAddress() implementation based on GLEW's
 //------------------------------------------------------------------------------
-#if defined(VL_PLATFORM_WINDOWS)
-void* vl::getOpenGLProcAddress(const GLubyte* name)
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+void* vl::getGLProcAddress(const GLubyte* name)
 {
-  return wglGetProcAddress((LPCSTR)name);
+  // mic fixme: use EGL
+  return NULL;
+}
+#elif defined(VL_PLATFORM_WINDOWS)
+void* vl::getGLProcAddress(const GLubyte* name)
+{
+  return (void*)wglGetProcAddress((LPCSTR)name);
 }
 #elif defined(VL_PLATFORM_LINUX)
-void* vl::getOpenGLProcAddress(const GLubyte* name)
+void* vl::getGLProcAddress(const GLubyte* name)
 {
   return (void*)(*glXGetProcAddress)(name);
 }
@@ -190,7 +205,7 @@ void* vl::getOpenGLProcAddress(const GLubyte* name)
 
 #include <dlfcn.h>
 
-void* vl::getOpenGLProcAddress(const GLubyte *name)
+void* vl::getGLProcAddress(const GLubyte *name)
 {
   static void* image = NULL;
   if (NULL == image)
@@ -204,7 +219,7 @@ void* vl::getOpenGLProcAddress(const GLubyte *name)
 
 #include <mach-o/dyld.h>
 
-void* vl::getOpenGLProcAddress(const GLubyte *name)
+void* vl::getGLProcAddress(const GLubyte *name)
 {
   static const struct mach_header* image = NULL;
   NSSymbol symbol;
@@ -235,7 +250,7 @@ void* vl::getOpenGLProcAddress(const GLubyte *name)
 #include <stdio.h>
 #include <stdlib.h>
 
-void* vl::getOpenGLProcAddress(const GLubyte* name)
+void* vl::getGLProcAddress(const GLubyte* name)
 {
   static void* h = NULL;
   static void* gpa;
@@ -255,7 +270,7 @@ void* vl::getOpenGLProcAddress(const GLubyte* name)
 /* __sgi || __sun end */
 
 #else
-void* vl::getOpenGLProcAddress(const GLubyte* name)
+void* vl::getGLProcAddress(const GLubyte* name)
 {
   return NULL;
 }
