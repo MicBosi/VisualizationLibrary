@@ -26,6 +26,10 @@ project(Visualization_Library_SDK-${VLVERSION_MAJOR}.${VLVERSION_MINOR})
 # Must be called after project!
 cmake_minimum_required(VERSION 2.6)
 
+################################################################################
+# Global Build Settings
+################################################################################
+
 # Platform detect
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
    add_definitions(-DVL_PLATFORM_MACOSX=1)
@@ -35,20 +39,24 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
    add_definitions(-DVL_PLATFORM_WINDOWS=1)
 else()
    add_definitions(-DVL_PLATFORM_UNKNOWN=1)
+   message(FATAL_ERROR "Unable to detect platform!")
 endif()
 message(STATUS "System detected: \"${CMAKE_SYSTEM_NAME}\"")
 
-# Common Dirs
-set(VL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
-set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/3rdparty")
-
-# Add our dir to the CMake modules path and include our InternalMacros file
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
-include( InternalMacros )
-
-################################################################################
-# Global Build Settings
-################################################################################
+# OpenGL, OpenGL ES 1 or OpenGL ES 2 mode
+set(VL_OPENGL_MODE "OPENGL" CACHE STRING "Set it to OPENGL, OPENGL_ES1 or OPENGL_ES2 to build VL for OpenGL, OpenGL ES 1.x or OpenGL ES 2.x")
+if( VL_OPENGL_MODE STREQUAL  "OPENGL")
+	add_definitions(-DVL_OPENGL)
+	message(STATUS "Configuring for OpenGL 1.x/2.x/3.x/4.x")
+elseif( VL_OPENGL_MODE STREQUAL  "OPENGL_ES1")
+	add_definitions(-DVL_OPENGL_ES1)
+	message(STATUS "Configuring for OpenGL ES 1.x")
+elseif( VL_OPENGL_MODE STREQUAL  "OPENGL_ES2")
+	add_definitions(-DVL_OPENGL_ES2)
+	message(STATUS "Configuring for OpenGL ES 2.x")
+else()
+	message(FATAL_ERROR "Invalid VL_OPENGL_MODE!")
+endif()
 
 # Dynamic vs Static Linking
 option(VL_DYNAMIC_LINKING "Set to ON to build VL for dynamic linking, or OFF for static." ON)
@@ -59,6 +67,14 @@ else()
 	add_definitions(-DVL_STATIC_LINKING)
 	set(VL_SHARED_OR_STATIC "STATIC")
 endif()
+
+# Common Dirs
+set(VL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
+set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/3rdparty")
+
+# Add our dir to the CMake modules path and include our InternalMacros file
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
+include( InternalMacros )
 
 # Debug postfix for all libraries.
 set(CMAKE_DEBUG_POSTFIX "-d")
