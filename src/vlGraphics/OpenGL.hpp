@@ -36,23 +36,11 @@
 #include <vlGraphics/link_config.hpp>
 #include <vlCore/Log.hpp>
 
-// Helper macros
-
-#define Has_GLSL (::vl::Has_GL_ARB_shading_language_100||::vl::Has_GL_Version_2_0||::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
-#define Has_GLSL_120_Or_More (::vl::Has_GL_Version_2_1||::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
-#define Has_GLSL_130_Or_More (::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
-#define Has_GLSL_140_Or_More (::vl::Has_GL_Version_3_1||::vl::Has_GL_Version_4_0)
-#define Has_GLSL_150_Or_More (::vl::Has_GL_Version_3_2||::vl::Has_GL_Version_4_0)
-#define Has_GLSL_330_Or_More (::vl::Has_GL_Version_3_3||::vl::Has_GL_Version_4_0)
-#define Has_GLSL_400_Or_More (::vl::Has_GL_Version_4_0)
-#define Has_GLSL_410_Or_More (::vl::Has_GL_Version_4_1)
-#define Has_Geometry_Shader (::vl::Has_GL_NV_geometry_shader4||::vl::Has_GL_EXT_geometry_shader4||::vl::Has_GL_ARB_geometry_shader4||::vl::Has_GL_Version_3_2||::vl::Has_GL_Version_4_0)
-#define Has_Framebuffer_Object (::vl::Has_GL_EXT_framebuffer_object||::vl::Has_GL_ARB_framebuffer_object||::vl::Has_GL_Version_3_0||::vl::Has_GL_Version_4_0)
-#define Has_Framebuffer_Object_Multisample (::vl::Has_GL_Version_4_0||::vl::Has_GL_Version_3_0||::vl::Has_GL_ARB_framebuffer_object||::vl::Has_GL_EXT_framebuffer_multisample)
-#define Has_Texture_Rectangle (vl::Has_GL_ARB_texture_rectangle||vl::Has_GL_NV_texture_rectangle||vl::Has_GL_Version_3_1||vl::Has_GL_Version_4_0)
-
 namespace vl
 {
+  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1_x;
+  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2_x;
+
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_1;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_2;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_3;
@@ -66,6 +54,33 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_3_3;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_0;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_4_1;
+
+  // Helper variables
+
+  VLGRAPHICS_EXPORT extern bool Has_GLSL;
+  VLGRAPHICS_EXPORT extern bool Has_GLSL_120_Or_More;
+  VLGRAPHICS_EXPORT extern bool Has_GLSL_130_Or_More;
+  VLGRAPHICS_EXPORT extern bool Has_GLSL_140_Or_More;
+  VLGRAPHICS_EXPORT extern bool Has_GLSL_150_Or_More;
+  VLGRAPHICS_EXPORT extern bool Has_GLSL_330_Or_More;
+  VLGRAPHICS_EXPORT extern bool Has_GLSL_400_Or_More;
+  VLGRAPHICS_EXPORT extern bool Has_GLSL_410_Or_More;
+  VLGRAPHICS_EXPORT extern bool Has_Geometry_Shader;
+  VLGRAPHICS_EXPORT extern bool Has_VBO;
+  VLGRAPHICS_EXPORT extern bool Has_FBO;
+  VLGRAPHICS_EXPORT extern bool Has_FBO_Multisample;
+  VLGRAPHICS_EXPORT extern bool Has_Cubemap_Textures;
+  VLGRAPHICS_EXPORT extern bool Has_Texture_Rectangle;
+  VLGRAPHICS_EXPORT extern bool Has_Texture_Array;
+  VLGRAPHICS_EXPORT extern bool Has_Texture_Buffer;
+  VLGRAPHICS_EXPORT extern bool Has_Texture_Multisample;
+  VLGRAPHICS_EXPORT extern bool Has_Texture_3D;
+  VLGRAPHICS_EXPORT extern bool Has_Multitexture;
+  VLGRAPHICS_EXPORT extern bool Has_Primitive_Restart;
+  VLGRAPHICS_EXPORT extern bool Has_Occlusion_Query;
+  VLGRAPHICS_EXPORT extern bool Has_Transform_Feedback;
+  VLGRAPHICS_EXPORT extern bool Has_glGenerateMipmaps;
+  VLGRAPHICS_EXPORT extern bool Has_GL_GENERATE_MIPMAP;
 
   #define VL_EXTENSION(extension) VLGRAPHICS_EXPORT extern bool Has_##extension;
   #include "GLExtensionList.hpp"

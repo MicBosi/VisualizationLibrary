@@ -50,7 +50,7 @@ public:
 
   void initEvent()
   {
-    if (!(Has_GL_ARB_shading_language_100||Has_GL_Version_3_0))
+    if (!Has_GLSL)
     {
       Log::error("OpenGL Shading Language not supported.\n");
       Time::sleep(3000);
@@ -106,7 +106,7 @@ public:
     effect5->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect5.get(), mTransform5.get() );
 
-    if (Has_GL_ARB_shading_language_100||Has_GL_Version_3_0)
+    if (Has_GLSL)
     {
       ref<GLSLProgram> glsl;
 

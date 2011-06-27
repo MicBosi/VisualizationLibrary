@@ -217,7 +217,7 @@ void Hint::apply(const Camera*, OpenGLContext* gl) const
     
     glHint( GL_FOG_HINT, mFogHint ); VL_CHECK_OGL()
 
-    if (Has_GL_SGIS_generate_mipmap || Has_GL_Version_1_4)
+    if (Has_GL_GENERATE_MIPMAP)
     {
       glHint( GL_GENERATE_MIPMAP_HINT, mGenerateMipmapHint ); VL_CHECK_OGL()
     }
@@ -284,10 +284,14 @@ void ShadeModel::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 void BlendFunc::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_Version_1_4||Has_GL_EXT_blend_func_separate)
-    { VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL() }
+  if (Has_GL_EXT_blend_func_separate||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  { 
+    VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL() 
+  }
   else
-    { glBlendFunc(mSrcRGB, mDstRGB); VL_CHECK_OGL() }// modifies rgb and alpha
+  { 
+    glBlendFunc(mSrcRGB, mDstRGB); VL_CHECK_OGL() // modifies rgb and alpha
+  }
 }
 //------------------------------------------------------------------------------
 // BlendEquation
@@ -411,8 +415,10 @@ void LightModel::apply(const Camera*, OpenGLContext*) const
     glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, (float)mColorControl); VL_CHECK_OGL() 
   }
 
-  glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, mLocalViewer ? 1.0f : 0.0f ); VL_CHECK_OGL()
-  // mic fixme: GLES supporta solo questi due
+  if (Has_GL_Version_1_1)
+    glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, mLocalViewer ? 1.0f : 0.0f ); VL_CHECK_OGL()
+
+  // Supported by GLES 1.x as well.
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, mAmbientColor.ptr()); VL_CHECK_OGL()
   glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, mTwoSide ? 1.0f : 0.0f ); VL_CHECK_OGL()
 }
@@ -504,7 +510,7 @@ void PointParameter::apply(const Camera*, OpenGLContext*) const
     VL_glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
     VL_glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, (const float*)mDistanceAttenuation.ptr()); VL_CHECK_OGL()
   }
-  if (Has_GL_Version_1_4||Has_GL_Version_3_0)
+  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
   {
     VL_glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
   }
@@ -638,19 +644,19 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* gl) const
 
   if (wrapS() == GL_MIRRORED_REPEAT || wrapT() == GL_MIRRORED_REPEAT || wrapR() == GL_MIRRORED_REPEAT)
   {
-    if( !(Has_GL_Version_1_4 || Has_GL_ARB_texture_mirrored_repeat || Has_GL_IBM_texture_mirrored_repeat) )
+    if( !(Has_GL_IBM_texture_mirrored_repeat ||Has_GL_ARB_texture_mirrored_repeat || Has_GL_Version_1_4 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_2_x) )
       Log::bug("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n");
   }
 
   if (wrapS() == GL_CLAMP_TO_EDGE || wrapT() == GL_CLAMP_TO_EDGE || wrapR() == GL_CLAMP_TO_EDGE)
   {
-    if( !(Has_GL_Version_1_2 || Has_GL_SGIS_texture_edge_clamp) )
+    if( !(Has_GL_SGIS_texture_edge_clamp || Has_GL_Version_1_2 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_1_x || Has_GLES_Version_2_x) )
       Log::bug("GL_CLAMP_TO_EDGE not supported by your OpenGL implementation.\n");
   }
 
   if (wrapS() == GL_CLAMP_TO_BORDER || wrapT() == GL_CLAMP_TO_BORDER || wrapR() == GL_CLAMP_TO_BORDER)
   {
-    if( !(Has_GL_Version_1_3 || Has_GL_ARB_texture_border_clamp || Has_GL_SGIS_texture_border_clamp) )
+    if( !(Has_GL_SGIS_texture_border_clamp || Has_GL_ARB_texture_border_clamp || Has_GL_Version_1_3 || Has_GL_Version_3_0 || Has_GL_Version_4_0) )
       Log::bug("GL_CLAMP_TO_BORDER not supported by your OpenGL implementation.\n");
   }
 #endif
@@ -664,18 +670,16 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* gl) const
     glTexParameteri(dimension, GL_TEXTURE_MAG_FILTER, magFilter()); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_WRAP_S, wrapS()); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_WRAP_T, wrapT()); VL_CHECK_OGL()
-    if (Has_GL_Version_1_2) 
+    if (Has_Texture_3D) 
       glTexParameteri(dimension, GL_TEXTURE_WRAP_R, wrapR()); VL_CHECK_OGL()
 
     if (Has_GL_EXT_texture_filter_anisotropic)
       glTexParameterf( dimension, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy() ); VL_CHECK_OGL()
 
-    if (gl->isCompatible())
-      if (Has_GL_Version_1_4||Has_GL_SGIS_generate_mipmap)
-        if (dimension != TD_TEXTURE_RECTANGLE)
-          glTexParameteri(dimension, GL_GENERATE_MIPMAP, generateMipmap() ? GL_TRUE : GL_FALSE); VL_CHECK_OGL()
+    if (Has_GL_GENERATE_MIPMAP && dimension != TD_TEXTURE_RECTANGLE)
+      glTexParameteri(dimension, GL_GENERATE_MIPMAP, generateMipmap() ? GL_TRUE : GL_FALSE); VL_CHECK_OGL()
 
-    if (Has_GL_Version_1_4||Has_GL_ARB_shadow)
+    if (Has_GL_ARB_shadow||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
     {
       glTexParameteri(dimension, GL_TEXTURE_COMPARE_MODE, compareMode() ); VL_CHECK_OGL()
       glTexParameteri(dimension, GL_TEXTURE_COMPARE_FUNC, compareFunc() ); VL_CHECK_OGL()
@@ -696,17 +700,17 @@ namespace
 
     if (Has_GL_Version_1_3||Has_GL_ARB_multitexture)
     {
-      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL();
+      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
     }
 
     if (Has_GL_Version_2_0)
     {
-      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL();
+      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // also deprecated enum
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
     }
 
-    if (Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
+    if (Has_GLSL)
     {
       glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
