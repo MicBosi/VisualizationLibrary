@@ -44,33 +44,6 @@
 
 using namespace vl;
 
-namespace
-{
-  double init_start_time()
-  {
-    #if defined(_WIN32)
-      // Win32
-      LARGE_INTEGER Frequency;
-      LARGE_INTEGER PerformanceCount;
-      BOOL has_timer = QueryPerformanceFrequency( &Frequency );
-      if (has_timer)
-      {
-        QueryPerformanceCounter( &PerformanceCount );
-        return (double)PerformanceCount.QuadPart/Frequency.QuadPart;
-      }
-      else
-      {
-        return GetTickCount() / 1000.0;
-      }
-    #elif defined(__GNUG__)
-      struct timeval tv;
-      gettimeofday( &tv, NULL );
-      return tv.tv_sec + tv.tv_usec * 0.000001;
-    #endif
-  }
-  double mStartTime =  init_start_time();
-}
-
 //-----------------------------------------------------------------------------
 // Time
 //-----------------------------------------------------------------------------
@@ -111,10 +84,42 @@ Time::Time()
   #endif
 }
 //-----------------------------------------------------------------------------
+namespace vl
+{
+  unsigned long long gStartTime = 0;
+
+  void initStartTime()
+  {
+    #if defined(_WIN32)
+      LARGE_INTEGER Frequency;
+      LARGE_INTEGER PerformanceCount;
+      BOOL has_timer = QueryPerformanceFrequency( &Frequency );
+      if (has_timer)
+      {
+        QueryPerformanceCounter( &PerformanceCount );
+        gStartTime = PerformanceCount.QuadPart;
+      }
+      else
+      {
+        gStartTime = GetTickCount();
+      }
+    #elif defined(__GNUG__)
+      struct timeval tv;
+      gettimeofday( &tv, NULL );
+      gStartTime = (unsigned long long)tv.tv_sec + (unsigned long long)tv.tv_usec;
+    #endif
+  }
+}
+//-----------------------------------------------------------------------------
 //! Seconds passed from an arbitrary origin
 //! QueryPerformanceFrequency should be called only once in the application lifetime
 Real Time::currentTime()
 {
+  if (gStartTime == 0)
+    initStartTime();
+
+  VL_CHECK(gStartTime);
+
   #if defined(_WIN32)
     // Win32
     LARGE_INTEGER Frequency;
@@ -123,16 +128,16 @@ Real Time::currentTime()
     if (has_timer)
     {
       QueryPerformanceCounter( &PerformanceCount );
-      return (Real)PerformanceCount.QuadPart/Frequency.QuadPart  - mStartTime;
+      return (Real)(PerformanceCount.QuadPart-gStartTime)/Frequency.QuadPart;
     }
     else
     {
-      return (Real)(GetTickCount() / 1000.0 - mStartTime);
+      return (GetTickCount()-gStartTime) / 1000.0f;
     }
   #elif defined(__GNUG__)
     struct timeval tv;
     gettimeofday( &tv, NULL );
-    return (Real)(tv.tv_sec + tv.tv_usec * 0.000001 - mStartTime);
+    return ((unsigned long long)tv.tv_sec + (unsigned long long)tv.tv_usec - gStartTime) * 0.000001f;
   #endif
 }
 //-----------------------------------------------------------------------------
