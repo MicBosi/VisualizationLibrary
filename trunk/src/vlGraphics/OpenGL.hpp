@@ -99,7 +99,6 @@ namespace vl
   #if defined(VL_OPENGL_ES1)
     #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
     #include "GLES1FunctionList.hpp"
-    #include "GLES1FunctionList_missing.hpp"
     #undef VL_GL_FUNCTION
   #endif
 

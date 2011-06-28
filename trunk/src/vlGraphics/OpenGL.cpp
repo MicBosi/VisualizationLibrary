@@ -101,7 +101,6 @@ namespace vl
   #if defined(VL_OPENGL_ES1)
     #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
     #include "GLES1FunctionList.hpp"
-    #include "GLES1FunctionList_missing.hpp"
     #undef VL_GL_FUNCTION
   #endif
 
@@ -129,7 +128,6 @@ bool vl::initializeOpenGL()
     #if defined(VL_OPENGL_ES1)
       #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress((const GLubyte*)#NAME);
       #include "GLES1FunctionList.hpp"
-      #include "GLES1FunctionList_missing.hpp"
     #endif
 
     // opengl function pointer initialization
