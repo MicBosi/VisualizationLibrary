@@ -422,7 +422,7 @@ namespace vl
     //! Returns \p true if an OpenGLContext supports double buffering.
     bool hasDoubleBuffer() const { return mHasDoubleBuffer; }
     
-    //! Returns \p true if an OpenGLContext provides backwards compatibility to previous OpenGL API versions.
+    //! Returns \p true if an OpenGLContext provides backwards compatibility to previous OpenGL API versions (\a true for GLES 1.x, \a false for GLES 2.x).
     bool isCompatible() const { return mIsCompatible; }
 
     //! Returns the OpenGL's driver version's major number.

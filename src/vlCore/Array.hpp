@@ -32,7 +32,7 @@
 #ifndef Array_INCLUDE_ONCE
 #define Array_INCLUDE_ONCE
 
-// mic fixme: we should not include vlGraphics here
+// mic fixme: we should not include vlGraphics here, use opaque interface instead of GLBufferObject or something similar.
 
 #include <vlGraphics/GLBufferObject.hpp>
 #include <vlCore/half.hpp>
