@@ -260,7 +260,7 @@ void OpenGLContext::initGLContext(bool log)
   // find max number of vertex attributes
   mMaxVertexAttrib = 0;
   if(Has_GLSL)
-    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &mMaxVertexAttrib);
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &mMaxVertexAttrib);
   mMaxVertexAttrib = mMaxVertexAttrib < VL_MAX_GENERIC_VERTEX_ATTRIB ? mMaxVertexAttrib : VL_MAX_GENERIC_VERTEX_ATTRIB;
 
   VL_CHECK_OGL();
@@ -351,30 +351,36 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("Vertex Buffer Object: %s\n") << (Has_GL_ARB_vertex_buffer_object ? "YES" : "NO"));
     Log::print( Say("Pixel Buffer Object: %s\n") << (Has_GL_ARB_pixel_buffer_object ? "YES" : "NO"));
     Log::print( Say("Framebuffer Object: %s\n") << (Has_GL_EXT_framebuffer_object ? "YES" : "NO"));
+
     max_val = 0;
     if(Has_GLSL)
-      glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &max_val);
+      glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_val);
     Log::print( Say("Max vertex attributes: %n\n")<<max_val);
     VL_CHECK_OGL();
+
     max_val = 0;
     if(Has_GLSL)
-      glGetIntegerv(GL_MAX_VARYING_FLOATS , &max_val);
+      glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val);
     Log::print( Say("Max varying floats: %n\n")<<max_val);
     VL_CHECK_OGL();
+
     max_val = 0;
     if(Has_GLSL)
-      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS , &max_val);
+      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val);
     Log::print( Say("Max fragment uniform components: %n\n")<<max_val);
     VL_CHECK_OGL();
+    
     max_val = 0;
     if(Has_GLSL)
-      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS , &max_val);
+      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val);
     Log::print( Say("Max vertex uniform components: %n\n")<<max_val);
     VL_CHECK_OGL();
+    
     max_val = 0;
     if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
       glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val);
     Log::print( Say("Max elements vertices: %n\n") << max_val );
+    
     max_val = 0;
     if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
       glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val );
@@ -384,13 +390,8 @@ void OpenGLContext::logOpenGLInfo()
 
     Log::print("\n --- OpenGL Extensions --- \n");
 
-    // mic fixme
-    Log::print( extensions().c_str() );
-    Log::print( "\n" );
-    Log::print( "\n" );
-#if 0
     std::stringstream sstream;
-    sstream << getOpenGLExtensions();
+    sstream << extensions();
     std::string ext, line;
     for( int i=0; !sstream.eof(); ++i )
     {
@@ -411,7 +412,6 @@ void OpenGLContext::logOpenGLInfo()
     if (line.length())
       Log::print( Say("%s\n") << line );
     Log::print("\n");
-#endif
   }
 
   VL_CHECK_OGL();
@@ -816,7 +816,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
-  /* We only check the the subset of tex-units supported also by glClientActiveTexture() */
+  /* We only check the subset of tex-units supported also by glClientActiveTexture() */
   // find the minimum of the max texture units supported, starting at 16
   // mic fixme: test this with Core and GLES 1.x 2.x
   int coord_count = 16;

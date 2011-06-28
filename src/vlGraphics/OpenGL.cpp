@@ -140,13 +140,13 @@ bool vl::initializeOpenGL()
 
     // check fixed function pipeline present
     glDisable(GL_LIGHTING);
-    bool compatible = glGetError() == GL_NO_ERROR;
+    bool bkw_compatible = glGetError() == GL_NO_ERROR;
 
     // opengl version detect
-    const char* version_str = (const char*)glGetString(GL_VERSION);
-    int vmaj = version_str[0] - '0';
-    int vmin = version_str[2] - '0';
-    int version = vmaj*10 + vmin;
+    const char* version_str = (const char*)glGetString(GL_VERSION); VL_CHECK_OGL(); 
+    VL_CHECK(version_str);
+    int vmaj = 0, vmin = 0;
+    sscanf(version_str, "%d.%d", &vmaj, &vmin);
 
     // GLES defines
 
@@ -160,21 +160,23 @@ bool vl::initializeOpenGL()
 
     bool is_gles = Has_GLES_Version_1_x || Has_GLES_Version_2_x;
 
-    Has_GL_Version_1_1 = !is_gles && ( (vmaj == 1 && vmin >= 1) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible) );
-    Has_GL_Version_1_2 = !is_gles && ( (vmaj == 1 && vmin >= 2) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible) );
-    Has_GL_Version_1_3 = !is_gles && ( (vmaj == 1 && vmin >= 3) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible) );
-    Has_GL_Version_1_4 = !is_gles && ( (vmaj == 1 && vmin >= 4) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible) );
-    Has_GL_Version_1_5 = !is_gles && ( (vmaj == 1 && vmin >= 5) || vmaj == 2 || version == 30 || (vmaj > 1 && compatible) );
-    Has_GL_Version_2_0 = !is_gles && ( (vmaj == 2 && vmin >= 0) || version == 30 || (vmaj > 2 && compatible) );
-    Has_GL_Version_2_1 = !is_gles && ( (vmaj == 2 && vmin >= 1) || version == 30 || (vmaj > 2 && compatible) );
-    Has_GL_Version_3_0 = !is_gles && ( (vmaj == 3 && vmin >= 0) || (vmaj > 3 && compatible) );
-    Has_GL_Version_3_1 = !is_gles && ( (vmaj == 3 && vmin >= 1) || (vmaj > 3 && compatible) );
-    Has_GL_Version_3_2 = !is_gles && ( (vmaj == 3 && vmin >= 2) || (vmaj > 3 && compatible) );
-    Has_GL_Version_3_3 = !is_gles && ( (vmaj == 3 && vmin >= 3) || (vmaj > 3 && compatible) );
-    Has_GL_Version_4_0 = !is_gles && ( (vmaj == 4 && vmin >= 0) || (vmaj > 4 && compatible) );
-    Has_GL_Version_4_1 = !is_gles && ( (vmaj == 4 && vmin >= 1) || (vmaj > 4 && compatible) );
+    Has_GL_Version_1_1 = !is_gles && ( (vmaj == 1 && vmin >= 1) || (vmaj > 1 && bkw_compatible) );
+    Has_GL_Version_1_2 = !is_gles && ( (vmaj == 1 && vmin >= 2) || (vmaj > 1 && bkw_compatible) );
+    Has_GL_Version_1_3 = !is_gles && ( (vmaj == 1 && vmin >= 3) || (vmaj > 1 && bkw_compatible) );
+    Has_GL_Version_1_4 = !is_gles && ( (vmaj == 1 && vmin >= 4) || (vmaj > 1 && bkw_compatible) );
+    Has_GL_Version_1_5 = !is_gles && ( (vmaj == 1 && vmin >= 5) || (vmaj > 1 && bkw_compatible) );
+    Has_GL_Version_2_0 = !is_gles && ( (vmaj == 2 && vmin >= 0) || (vmaj > 2 && bkw_compatible) );
+    Has_GL_Version_2_1 = !is_gles && ( (vmaj == 2 && vmin >= 1) || (vmaj > 2 && bkw_compatible) );
+    Has_GL_Version_3_0 = !is_gles && ( (vmaj == 3 && vmin >= 0) || (vmaj > 3 && bkw_compatible) );
+    Has_GL_Version_3_1 = !is_gles && ( (vmaj == 3 && vmin >= 1) || (vmaj > 3 && bkw_compatible) );
+    Has_GL_Version_3_2 = !is_gles && ( (vmaj == 3 && vmin >= 2) || (vmaj > 3 && bkw_compatible) );
+    Has_GL_Version_3_3 = !is_gles && ( (vmaj == 3 && vmin >= 3) || (vmaj > 3 && bkw_compatible) );
+    Has_GL_Version_4_0 = !is_gles && ( (vmaj == 4 && vmin >= 0) || (vmaj > 4 && bkw_compatible) );
+    Has_GL_Version_4_1 = !is_gles && ( (vmaj == 4 && vmin >= 1) || (vmaj > 4 && bkw_compatible) );
 
     // Helper defines
+
+    // Note that deprecated GL extensions seem to be reported even under a Core profile, although they are not supported.
 
     Has_GLSL = Has_GL_ARB_shading_language_100||Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
     Has_GLSL_120_Or_More = Has_GL_Version_2_1||Has_GL_Version_3_0||Has_GL_Version_4_0;
@@ -202,7 +204,7 @@ bool vl::initializeOpenGL()
     Has_Occlusion_Query = Has_GL_ARB_occlusion_query||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_Transform_Feedback = Has_GL_NV_transform_feedback||Has_GL_EXT_transform_feedback||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
-    Has_GL_GENERATE_MIPMAP = /*Has_GL_SGIS_generate_mipmap||*/Has_GL_Version_1_4||Has_GLES_Version_1_x; // mic fixme: investigate: Has_GL_SGIS_generate_mipmap is exposed in NVIDIA core profile but generates invalid enum.
+    Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && bkw_compatible)||Has_GL_Version_1_4||Has_GLES_Version_1_x;
 
     // opengl extension strings init
     std::string extensions = getOpenGLExtensions();
