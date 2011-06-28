@@ -1151,7 +1151,7 @@ namespace vl
   inline std::string getOpenGLExtensions()
   {
     VL_CHECK(glGetString(GL_EXTENSIONS));
-    ext = (const char*)glGetString(GL_EXTENSIONS);
+    std::string ext = (const char*)glGetString(GL_EXTENSIONS);
     // make sure also the last extension ends with a space
     ext.push_back(' ');
     return ext;
