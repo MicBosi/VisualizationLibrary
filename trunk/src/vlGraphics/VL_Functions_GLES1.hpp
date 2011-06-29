@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -51,7 +51,6 @@
 namespace vl
 {
 
-  // mic fixme: test this
   #ifndef VL_UNSUPPORTED_GLES1_FUNC
   #define VL_UNSUPPORTED_GLES1_FUNC() { Log::error( String().printf("Function \"%s\" not supported under OpenGL ES 1.x profile (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
   #endif
@@ -372,12 +371,16 @@ namespace vl
   
   inline void VL_glRenderbufferStorageMultisample( GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height )
   {
+#ifdef GL_APPLE_framebuffer_multisample
     if (glRenderbufferStorageMultisampleAPPLE)
       glRenderbufferStorageMultisampleAPPLE(target, samples, internalformat, width, height);
     else
+#endif
+#ifdef GL_IMG_multisampled_render_to_texture
     if (glRenderbufferStorageMultisampleIMG)
       glRenderbufferStorageMultisampleIMG(target, samples, internalformat, width, height);
     else
+#endif
       VL_TRAP();
   }
   
@@ -420,7 +423,7 @@ namespace vl
     VL_UNSUPPORTED_GLES1_FUNC()
   }
 
-  inline void VL_glBindFragDataLocation(GLuint program, GLuint colorNumber, const GLchar *name)
+  inline void VL_glBindFragDataLocation(GLuint program, GLuint colorNumber, const char *name)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
@@ -447,13 +450,13 @@ namespace vl
   
   //-----------------------------------------------------------------------------
 
-  inline GLint glGetAttribLocation (GLuint program, const GLchar *name)
+  inline GLint glGetAttribLocation (GLuint program, const char *name)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
     return -1;
   }
   
-  inline GLint glGetUniformLocation (GLuint program, const GLchar *name)
+  inline GLint glGetUniformLocation (GLuint program, const char *name)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
     return -1;
@@ -719,7 +722,7 @@ namespace vl
     VL_UNSUPPORTED_GLES1_FUNC()
   }
 
-  inline void glGetProgramInfoLog (GLuint program, GLsizei bufSize, GLsizei *length, GLchar *infoLog)
+  inline void glGetProgramInfoLog (GLuint program, GLsizei bufSize, GLsizei *length, char *infoLog)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
@@ -729,7 +732,7 @@ namespace vl
     VL_UNSUPPORTED_GLES1_FUNC()
   }
 
-  inline void glGetShaderInfoLog (GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *infoLog)
+  inline void glGetShaderInfoLog (GLuint shader, GLsizei bufSize, GLsizei *length, char *infoLog)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
@@ -752,7 +755,7 @@ namespace vl
     VL_UNSUPPORTED_GLES1_FUNC()
   }
 
-  inline void glShaderSource (GLuint shader, GLsizei count, const GLchar* *string, const GLint *length)
+  inline void glShaderSource (GLuint shader, GLsizei count, const char* *string, const GLint *length)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
@@ -779,12 +782,12 @@ namespace vl
   }
 
 
-  inline void glBindAttribLocation (GLuint program, GLuint index, const GLchar *name)
+  inline void glBindAttribLocation (GLuint program, GLuint index, const char *name)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
 
-  inline void glGetActiveUniform (GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name)
+  inline void glGetActiveUniform (GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, char *name)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
