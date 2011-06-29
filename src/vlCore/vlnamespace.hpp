@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -807,11 +807,11 @@ namespace vl
   typedef enum 
   {
     TGM_DISABLED = 0, 
-    TGM_EYE_LINEAR=GL_EYE_LINEAR, 
-    TGM_OBJECT_LINEAR=GL_OBJECT_LINEAR, 
-    TGM_SPHERE_MAP=GL_SPHERE_MAP, 
-    TGM_REFLECTION_MAP=GL_REFLECTION_MAP, 
-    TGM_NORMAL_MAP=GL_NORMAL_MAP
+    TGM_EYE_LINEAR = GL_EYE_LINEAR,         //!< Not supported under OpenGL ES 1.x
+    TGM_OBJECT_LINEAR = GL_OBJECT_LINEAR,   //!< Not supported under OpenGL ES 1.x
+    TGM_SPHERE_MAP = GL_SPHERE_MAP,         //!< Not supported under OpenGL ES 1.x
+    TGM_REFLECTION_MAP = GL_REFLECTION_MAP,
+    TGM_NORMAL_MAP = GL_NORMAL_MAP           
   } ETexGenMode;
 
   //! Constant that enable/disable a specific OpenGL feature, see also Shader, Shader::enable(), Shader::disable(), Shader::isEnabled()
