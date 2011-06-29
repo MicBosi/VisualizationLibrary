@@ -54,6 +54,7 @@ endif()
 if(MSVC)
 	option(VL_GUI_WIN32_SUPPORT "Build Win32 support" ON)
 	option(VL_GUI_MFC_SUPPORT "Build MFC support" OFF)
+	option(VL_GUI_EGL_SUPPORT "Build MFC support" OFF)
 endif()
 
 if(MINGW)
@@ -66,6 +67,10 @@ endif()
 
 if(VL_GUI_WIN32_SUPPORT)
 	add_subdirectory("vlWin32")
+endif()
+
+if(VL_GUI_EGL_SUPPORT)
+	add_subdirectory("vlEGL")
 endif()
 
 # SDL
