@@ -182,8 +182,10 @@ public:
         { "Volume Sliced", Create_App_VolumeSliced(), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
         { "Volume Raycast", Create_App_VolumeRaycast(), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) },      
         { "Marching Cubes", Create_App_MarchingCubes(), 10,10, 512, 512, vl::black, vl::vec3(0,10,50), vl::vec3(0,0,0) }, 
+#if defined(VL_OPENGL)
         { "Tessellator", Create_App_Tessellator(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
         { "Extrusion", Create_App_Extrusion(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
+#endif
         { "Interpolator", Create_App_Interpolators(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
         { "Molecule", Create_App_Molecules(), 10,10, 512, 512, vl::black, vl::vec3(0,0,20), vl::vec3(0,0,0) },
         { "Edge Enhancement", Create_App_EdgeRendering(), 10,10, 512, 512, vl::white, vl::vec3(0,0,20), vl::vec3(0,0,0) },
