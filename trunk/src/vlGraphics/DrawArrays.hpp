@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -98,10 +98,8 @@ namespace vl
         {
           String msg( getGLErrorString(glerr) );
           Log::error( Say("glGetError() [%s:%n]: %s\n") << __FILE__ << __LINE__ << msg );
-          Log::print(
-            "OpenGL Geometry Instancing (GL_ARB_draw_instanced) does not support display lists."
-            "If you are using geometry instancing in conjunction with display lists you will have to disable one of them.\n"
-          );
+          Log::warning( "- If you are using geometry instancing in conjunction with display lists you will have to disable one of them.\n" );
+          Log::warning( "- If you are using OpenGL ES you must not use GL_QUADS, GL_QUAD_STRIP and GL_POLYGON primitive types.\n" );
           VL_TRAP()
         }
       #endif
