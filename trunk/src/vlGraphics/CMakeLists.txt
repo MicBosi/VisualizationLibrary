@@ -27,6 +27,9 @@ file(GLOB VLGRAPHICS_INC "*.hpp")
 if( NOT (VL_OPENGL_MODE STREQUAL "OPENGL") )
 	list(REMOVE_ITEM VLGRAPHICS_SRC "${VLGRAPHICS_SOURCE_DIR}/Tessellator.cpp")
 	list(REMOVE_ITEM VLGRAPHICS_INC "${VLGRAPHICS_SOURCE_DIR}/Tessellator.hpp")
+
+	list(REMOVE_ITEM VLGRAPHICS_SRC "${VLGRAPHICS_SOURCE_DIR}/Extrusion.cpp")
+	list(REMOVE_ITEM VLGRAPHICS_INC "${VLGRAPHICS_SOURCE_DIR}/Extrusion.hpp")
 	message(STATUS "Removing Tessellator class, not supported in OpenGL ES 1.x and 2.x (requires GLU)")
 endif()
 
