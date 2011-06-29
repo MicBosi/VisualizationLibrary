@@ -421,7 +421,7 @@ Glyph* Font::glyph(int character)
         }
       }
 
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, img->width(), img->height(), 0, img->format(), img->type(), img->pixels() );
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->width(), img->height(), 0, img->format(), img->type(), img->pixels() ); VL_CHECK_OGL();
 
       if ( smooth() )
       {
