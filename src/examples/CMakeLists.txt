@@ -96,7 +96,7 @@ endif()
 if (VL_GUI_MFC_EXAMPLES)
 	# Example
 	add_executable(MFC_example WIN32 MFC_example/MFC_example.cpp MFC_example/StdAfx.cpp )
-	target_link_libraries(MFC_example VLApplets VLMFC ${VL_LIBS_TESTS} ${OPENGL_LIBRARIES})
+	target_link_libraries(MFC_example VLApplets VLMFC ${VL_LIBS_EXAMPLE} ${OPENGL_LIBRARIES})
 	set_target_properties(MFC_example PROPERTIES COMPILE_FLAGS -D_AFXDLL)
 	set_target_properties(MFC_example PROPERTIES LINK_FLAGS /ENTRY:wWinMainCRTStartup)
 	VL_INSTALL_TARGET(MFC_example)
@@ -133,3 +133,14 @@ if(VL_GUI_WXWIDGETS_EXAMPLES)
     VL_INSTALL_TARGET(WX_tests)
 endif()
 
+if (VL_GLES1_EXAMPLES)
+	# Example
+	add_executable(GLES1_example GLES1_example.cpp)
+	target_link_libraries(GLES1_example VLEGL ${VL_LIBS_EXAMPLE} ${VL_GLES_LIBRARIES})
+	VL_INSTALL_TARGET(GLES1_example)
+
+	# Tests
+	add_executable(GLES1_tests GLES1_tests.cpp)
+	target_link_libraries(GLES1_tests VLApplets VLEGL ${VL_LIBS_TESTS} ${VL_GLES_LIBRARIES})
+	VL_INSTALL_TARGET(GLES1_tests)
+endif()
