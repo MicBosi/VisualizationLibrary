@@ -182,7 +182,6 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
     VL_CHECK_OGL();
   }
 
-#if (1)
   AABB rbbox = rawboundingRect( text() ); // for text alignment
   VL_CHECK(rbbox.maxCorner().z() == 0)
   VL_CHECK(rbbox.minCorner().z() == 0)
@@ -196,18 +195,24 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
 
   fvec2 pen(0,0);
 
-  float texc[] = { 0,0,0,0,0,0,0,0 };
+  float texc[] = { 0,0, 0,0, 0,0, 0,0 };
   VL_glActiveTexture( GL_TEXTURE0 );
   VL_glClientActiveTexture( GL_TEXTURE0 );
   glEnable(GL_TEXTURE_2D);
   glEnableClientState( GL_TEXTURE_COORD_ARRAY );
   glTexCoordPointer(2, GL_FLOAT, 0, texc);
 
-  // text color
-  glColor4fv(color.ptr());
+  // Constant color
+  // glColor4fv(color.ptr());
+  fvec4 color_array[] = { color, color, color, color };
+  glEnableClientState( GL_COLOR_ARRAY );
+  glColorPointer(4, GL_FLOAT, 0, color_array);
 
   // Constant normal
-  glNormal3fv( fvec3(0,0,1).ptr() );
+  // glNormal3fv( fvec3(0,0,1).ptr() );
+  fvec3 normal_array[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
+  glEnableClientState( GL_NORMAL_ARRAY );
+  glNormalPointer(GL_FLOAT, 0, normal_array);
 
   fvec3 vect[4];
   glEnableClientState( GL_VERTEX_ARRAY );
@@ -365,16 +370,22 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
       {
         glBindTexture( GL_TEXTURE_2D, glyph->textureHandle() );
 
+        // triangle strip layout
         texc[0] = glyph->s0();
         texc[1] = glyph->t1();
+        
         texc[2] = glyph->s1();
         texc[3] = glyph->t1();
-        texc[4] = glyph->s1();
-        texc[5] = glyph->t0();
-        texc[6] = glyph->s0();
+
+        texc[6] = glyph->s1();
         texc[7] = glyph->t0();
+        
+        texc[4] = glyph->s0();
+        texc[5] = glyph->t0();
 
         int left = layout() == RightToLeftText ? -glyph->left() : +glyph->left();
+
+        // triangle strip layout
 
         vect[0].x() = pen.x() + glyph->width()*0 + left -1;
         vect[0].y() = pen.y() + glyph->height()*0 + glyph->top() - glyph->height() -1;
@@ -382,11 +393,11 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
         vect[1].x() = pen.x() + glyph->width()*1 + left +1;
         vect[1].y() = pen.y() + glyph->height()*0 + glyph->top() - glyph->height() -1;
 
-        vect[2].x() = pen.x() + glyph->width()*1 + left +1;
-        vect[2].y() = pen.y() + glyph->height()*1 + glyph->top() - glyph->height() +1;
-
-        vect[3].x() = pen.x() + glyph->width()*0 + left -1;
+        vect[3].x() = pen.x() + glyph->width()*1 + left +1;
         vect[3].y() = pen.y() + glyph->height()*1 + glyph->top() - glyph->height() +1;
+
+        vect[2].x() = pen.x() + glyph->width()*0 + left -1;
+        vect[2].y() = pen.y() + glyph->height()*1 + glyph->top() - glyph->height() +1;
 
         if (layout() == RightToLeftText)
         {
@@ -502,7 +513,7 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
           vect[3].z() = float((v.z() - 0.5f) / 0.5f);
         }
 
-        glDrawArrays(GL_QUADS, 0, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); VL_CHECK_OGL();
 
         #if (0)
           glDisable(GL_TEXTURE_2D);
@@ -545,9 +556,10 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
     }
   }
 
-  glDisableClientState( GL_VERTEX_ARRAY );
-  glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-#endif
+  glDisableClientState( GL_VERTEX_ARRAY ); VL_CHECK_OGL();
+  glDisableClientState( GL_COLOR_ARRAY ); VL_CHECK_OGL();
+  glDisableClientState( GL_NORMAL_ARRAY ); VL_CHECK_OGL();
+  glDisableClientState( GL_TEXTURE_COORD_ARRAY ); VL_CHECK_OGL();
 
   VL_CHECK_OGL();
 
@@ -721,21 +733,29 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
     VL_CHECK_OGL();
   }
 
-  // Background color
-  glColor4fv(mBackgroundColor.ptr());
+  // Constant color
+  // glColor4fv(mBackgroundColor.ptr());
+  fvec4 color_array[] = { mBackgroundColor, mBackgroundColor, mBackgroundColor, mBackgroundColor };
+  glEnableClientState( GL_COLOR_ARRAY );
+  glColorPointer(4, GL_FLOAT, 0, color_array);
 
   // Constant normal
-  glNormal3fv( fvec3(0,0,1).ptr() );
+  // glNormal3fv( fvec3(0,0,1).ptr() );
+  fvec3 normal_array[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
+  glEnableClientState( GL_NORMAL_ARRAY );
+  glNormalPointer(GL_FLOAT, 0, normal_array);
 
   vec3 a,b,c,d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
-  fvec3 vect[] = { (fvec3)a, (fvec3)b, (fvec3)c, (fvec3)d };
+  fvec3 vect[] = { (fvec3)a, (fvec3)b, (fvec3)d, (fvec3)c };
   glEnableClientState( GL_VERTEX_ARRAY );
   glVertexPointer(3, GL_FLOAT, 0, vect);
 
-  glDrawArrays(GL_QUADS,0,4);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
   glDisableClientState( GL_VERTEX_ARRAY );
+  glDisableClientState( GL_COLOR_ARRAY );
+  glDisableClientState( GL_NORMAL_ARRAY );
 
   if (mode() == Text2D)
   {
@@ -774,11 +794,17 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
     VL_CHECK_OGL();
   }
 
-  // Border color
-  glColor4fv(mBorderColor.ptr());
+  // Constant color
+  // glColor4fv(mBorderColor.ptr());
+  fvec4 color_array[] = { mBorderColor, mBorderColor, mBorderColor, mBorderColor };
+  glEnableClientState( GL_COLOR_ARRAY );
+  glColorPointer(4, GL_FLOAT, 0, color_array);
 
   // Constant normal
-  glNormal3fv( fvec3(0,0,1).ptr() );
+  // glNormal3fv( fvec3(0,0,1).ptr() );
+  fvec3 normal_array[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
+  glEnableClientState( GL_NORMAL_ARRAY );
+  glNormalPointer(GL_FLOAT, 0, normal_array);
 
   vec3 a,b,c,d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
@@ -786,9 +812,11 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
   glEnableClientState( GL_VERTEX_ARRAY );
   glVertexPointer(3, GL_FLOAT, 0, vect);
 
-  glDrawArrays(GL_LINE_LOOP,0,4);
+  glDrawArrays(GL_LINE_LOOP, 0, 4);
 
   glDisableClientState( GL_VERTEX_ARRAY );
+  glDisableClientState( GL_COLOR_ARRAY );
+  glDisableClientState( GL_NORMAL_ARRAY );
 
   if (mode() == Text2D)
   {
