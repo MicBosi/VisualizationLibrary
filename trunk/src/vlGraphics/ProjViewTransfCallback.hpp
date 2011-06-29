@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -63,7 +63,7 @@ namespace vl
     }
 
     //! Update matrices of the current GLSLProgram, if glsl_program == NULL then fixed function pipeline is active.
-    virtual void updateMatrices(bool cam_changed, bool transf_changed, const GLSLProgram* glsl_program, const Camera* camera, const Transform* transform, bool is_gl_compatible);
+    virtual void updateMatrices(bool cam_changed, bool transf_changed, const GLSLProgram* glsl_program, const Camera* camera, const Transform* transform);
   };
 }
 

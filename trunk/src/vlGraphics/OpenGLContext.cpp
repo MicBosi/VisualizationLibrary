@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -52,9 +52,9 @@ OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 // OpenGLContext
 //-----------------------------------------------------------------------------
 OpenGLContext::OpenGLContext(int w, int h):
-mMaxVertexAttrib(0), mTextureUnitCount(0), mMajorVersion(0), mMinorVersion(0),
+mMaxVertexAttrib(0), mTextureUnitCount(0), 
 mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false),
-mHasDoubleBuffer(false), mIsInitialized(false), mIsCompatible(false), mCurVAS(NULL)
+mHasDoubleBuffer(false), mIsInitialized(false), mCurVAS(NULL)
 {
   VL_DEBUG_SET_OBJECT_NAME()
   mRenderTarget = new RenderTarget(this, w, h);
@@ -191,38 +191,23 @@ bool OpenGLContext::vsyncEnabled() const
 #endif
 }
 //-----------------------------------------------------------------------------
-void OpenGLContext::initGLContext(bool log)
+bool OpenGLContext::initGLContext(bool log)
 {
   mIsInitialized = false;
-  mIsCompatible  = false;
-  mMajorVersion = 0;
-  mMinorVersion = 0;
 
   makeCurrent();
 
   // init OpenGL extensions
   if (!initializeOpenGL())
   {
-    fprintf(stderr, "Error initializing OpenGL!\n");
+    Log::error("Error initializing OpenGL!\n");
     VL_TRAP()
+    return false;
   }
   else
   {
     mIsInitialized = true;
-
     mExtensions = getOpenGLExtensions();
-
-    char punto;
-    std::stringstream stream;
-    stream << glGetString(GL_VERSION);
-    stream >> mMajorVersion >> punto >> mMinorVersion;
-
-    // clear errors
-    glGetError();
-    // test if fixed function pipeline is supported.
-    glDisable(GL_LIGHTING);
-    // check error code
-    mIsCompatible = glGetError() == GL_NO_ERROR;
   }
 
   VL_CHECK_OGL();
@@ -231,9 +216,6 @@ void OpenGLContext::initGLContext(bool log)
   {
     logOpenGLInfo();
   }
-
-  // clears eventual OpenGL errors generated during initialization
-  glGetError();
 
   // Find max number of texture units, see http://www.opengl.org/sdk/docs/man/xhtml/glActiveTexture.xml
   mTextureUnitCount = 1;
@@ -265,14 +247,20 @@ void OpenGLContext::initGLContext(bool log)
 
   VL_CHECK_OGL();
 
+#if defined(VL_OPENGL)
   // test for double buffer availability
   glDrawBuffer(GL_BACK);
   if ( glGetError() )
     mHasDoubleBuffer = false;
   else
     mHasDoubleBuffer = true;
+#else
+  mHasDoubleBuffer = true;
+#endif
 
   setupDefaultRenderStates();
+
+  return true;
 }
 //-----------------------------------------------------------------------------
 bool OpenGLContext::isExtensionSupported(const char* ext_name)
@@ -309,7 +297,7 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("OpenGL version: %s\n") << glGetString(GL_VERSION) );
     Log::print( Say("OpenGL vendor: %s\n") << glGetString(GL_VENDOR) );
     Log::print( Say("OpenGL renderer: %s\n") << glGetString(GL_RENDERER) );
-    Log::print( Say("OpenGL profile: %s\n") << (isCompatible() ? "Compatible" : "Core") );
+    Log::print( Say("OpenGL profile: %s\n") << (Has_GL_Compatibility ? "Compatible" : "Core") );
 
     if (Has_GLSL)
       Log::print( Say("GLSL version: %s\n") << glGetString(GL_SHADING_LANGUAGE_VERSION) );
@@ -333,14 +321,17 @@ void OpenGLContext::logOpenGLInfo()
     {
       int tmp = 0;
       glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &tmp);
+      // max between GL_MAX_TEXTURE_COORDS and GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
       max_val = tmp > max_val ? tmp : max_val;
+      Log::print( Say("Texture units (combined): %n\n") << max_val);
     }
-    Log::print( Say("Texture units (combined): %n\n") << max_val);
 
     max_val = 0;
     if (Has_GLSL)
+    {
       glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
-    Log::print( Say("Texture units (fragment shader): %n\n") << max_val);
+      Log::print( Say("Texture units (fragment shader): %n\n") << max_val);
+    }
 
     max_val = 0;
     if (Has_GL_EXT_texture_filter_anisotropic)
@@ -348,45 +339,53 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("Anisotropic texture filter: %s, ") << (Has_GL_EXT_texture_filter_anisotropic? "YES" : "NO") );
     Has_GL_EXT_texture_filter_anisotropic ? Log::print( Say("%nX\n") << max_val) : Log::print("\n");
     Log::print( Say("S3 Texture Compression: %s\n") << (Has_GL_EXT_texture_compression_s3tc? "YES" : "NO") );
-    Log::print( Say("Vertex Buffer Object: %s\n") << (Has_GL_ARB_vertex_buffer_object ? "YES" : "NO"));
-    Log::print( Say("Pixel Buffer Object: %s\n") << (Has_GL_ARB_pixel_buffer_object ? "YES" : "NO"));
-    Log::print( Say("Framebuffer Object: %s\n") << (Has_GL_EXT_framebuffer_object ? "YES" : "NO"));
+    Log::print( Say("Vertex Buffer Object: %s\n") << (Has_VBO? "YES" : "NO"));
+    Log::print( Say("Pixel Buffer Object: %s\n") << (Has_PBO ? "YES" : "NO"));
+    Log::print( Say("Framebuffer Object: %s\n") << (Has_FBO? "YES" : "NO"));
 
     max_val = 0;
     if(Has_GLSL)
-      glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_val);
-    Log::print( Say("Max vertex attributes: %n\n")<<max_val);
-    VL_CHECK_OGL();
+    {
+      glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_val); VL_CHECK_OGL();
+      Log::print( Say("Max vertex attributes: %n\n")<<max_val);      
+    }
 
     max_val = 0;
     if(Has_GLSL)
-      glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val);
-    Log::print( Say("Max varying floats: %n\n")<<max_val);
-    VL_CHECK_OGL();
+    {
+      glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val); VL_CHECK_OGL();
+      Log::print( Say("Max varying floats: %n\n")<<max_val);
+    }
 
     max_val = 0;
     if(Has_GLSL)
-      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val);
-    Log::print( Say("Max fragment uniform components: %n\n")<<max_val);
-    VL_CHECK_OGL();
+    {
+      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+      Log::print( Say("Max fragment uniform components: %n\n")<<max_val);
+    }
     
     max_val = 0;
     if(Has_GLSL)
-      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val);
-    Log::print( Say("Max vertex uniform components: %n\n")<<max_val);
-    VL_CHECK_OGL();
+    {
+      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+      Log::print( Say("Max vertex uniform components: %n\n")<<max_val);
+    }
     
     max_val = 0;
-    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
-      glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val);
-    Log::print( Say("Max elements vertices: %n\n") << max_val );
-    
-    max_val = 0;
-    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
-      glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val );
-    Log::print( Say("Max elements indices: %n\n") << max_val );
+    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
+    {
+      glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val); VL_CHECK_OGL();
+      Log::print( Say("Max elements vertices: %n\n") << max_val );
+    }
 
-    // --- print supported extensions on two columns ---
+    max_val = 0;
+    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
+    {
+      glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val ); VL_CHECK_OGL();
+      Log::print( Say("Max elements indices: %n\n") << max_val );
+    }
+
+    // --- log supported extensions on two columns ---
 
     Log::print("\n --- OpenGL Extensions --- \n");
 
@@ -441,7 +440,7 @@ namespace
     GL_POLYGON_OFFSET_POINT,
     GL_RESCALE_NORMAL,
     GL_STENCIL_TEST,
-    GL_VERTEX_PROGRAM_POINT_SIZE,
+    GL_PROGRAM_POINT_SIZE,
     GL_VERTEX_PROGRAM_TWO_SIDE,
 
     GL_TEXTURE_CUBE_MAP_SEAMLESS,
@@ -480,7 +479,7 @@ namespace
     "EN_POLYGON_OFFSET_POINT",
     "EN_RESCALE_NORMAL",
     "EN_STENCIL_TEST",
-    "EN_VERTEX_PROGRAM_POINT_SIZE",
+    "EN_PROGRAM_POINT_SIZE",
     "EN_VERTEX_PROGRAM_TWO_SIDE",
 
     "EN_TEXTURE_CUBE_MAP_SEAMLESS",
@@ -609,19 +608,22 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
   {
     memset(mCurrentRenderState, 0, sizeof(mCurrentRenderState));
   }
-}
+} 
 //------------------------------------------------------------------------------
 void OpenGLContext::setupDefaultRenderStates()
 {
-  if ( isCompatible() )
+  if ( Has_GL_Compatibility )
   {
     mDefaultRenderStates[RS_AlphaFunc] = new AlphaFunc;
     mDefaultRenderStates[RS_Fog] = new Fog;
     mDefaultRenderStates[RS_LightModel] = new LightModel;
-    mDefaultRenderStates[RS_LineStipple] = new LineStipple;
     mDefaultRenderStates[RS_Material] = new Material;
-    mDefaultRenderStates[RS_PixelTransfer] = new PixelTransfer;
-    mDefaultRenderStates[RS_PolygonStipple] = new PolygonStipple;
+    if(!Has_GLES_Version_1_x)
+    {
+      mDefaultRenderStates[RS_PixelTransfer] = new PixelTransfer;
+      mDefaultRenderStates[RS_LineStipple] = new LineStipple;
+      mDefaultRenderStates[RS_PolygonStipple] = new PolygonStipple;
+    }
 
     mDefaultRenderStates[RS_Light0] = new Light(0);
     mDefaultRenderStates[RS_Light1] = new Light(1);
@@ -643,7 +645,7 @@ void OpenGLContext::setupDefaultRenderStates()
   if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
     mDefaultRenderStates[RS_BlendColor] = new BlendColor;
 
-  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
+  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_subtract)
     mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
 
   mDefaultRenderStates[RS_BlendFunc] = new BlendFunc;
@@ -653,7 +655,8 @@ void OpenGLContext::setupDefaultRenderStates()
   mDefaultRenderStates[RS_DepthMask] = new DepthMask;
   mDefaultRenderStates[RS_DepthRange] = new DepthRange;
   mDefaultRenderStates[RS_FrontFace] = new FrontFace;
-  mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
+  if(!Has_GLES_Version_1_x)
+    mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
   mDefaultRenderStates[RS_Hint] = new Hint;
   mDefaultRenderStates[RS_LineWidth] = new LineWidth;
   mDefaultRenderStates[RS_LogicOp] = new LogicOp;
@@ -678,14 +681,18 @@ void OpenGLContext::setupDefaultRenderStates()
     if (i < textureUnitCount())
     {
       mDefaultRenderStates[RS_TextureUnit0   + i] = new TextureUnit(i);
-      if( isCompatible() )
+      if( Has_GL_Compatibility )
       {
-        mDefaultRenderStates[RS_TexGen0        + i] = new TexGen(i);
-        mDefaultRenderStates[RS_TexEnv0        + i] = new TexEnv(i);
+        // TexGen under GLES is supported only if GL_OES_texture_cube_map is present
+        if(!Has_GLES_Version_1_x || Has_GL_OES_texture_cube_map)
+          mDefaultRenderStates[RS_TexGen0 + i] = new TexGen(i);
+        mDefaultRenderStates[RS_TexEnv0 + i] = new TexEnv(i);
         mDefaultRenderStates[RS_TextureMatrix0 + i] = new TextureMatrix(i);
       }
     }
   }
+
+  VL_CHECK_OGL();
 
   // applies default render states backwards so we don't need to call VL_glActiveTexture(GL_TEXTURE0) at the end.
   for( int i=RS_COUNT; i--; )
@@ -693,9 +700,7 @@ void OpenGLContext::setupDefaultRenderStates()
     // the empty ones are the ones that are not supported by the current OpenGL implementation (too old or Core profile)
     if (mDefaultRenderStates[i])
     {
-      VL_CHECK_OGL();
-      mDefaultRenderStates[i]->apply(NULL, this);
-      VL_CHECK_OGL();
+      mDefaultRenderStates[i]->apply(NULL, this); VL_CHECK_OGL();
     }
   }
 }
@@ -725,20 +730,27 @@ bool OpenGLContext::isCleanState(bool verbose)
   // everything must be disabled
   for( unsigned i=0; i<EN_EnableCount; ++i )
   {
-    // mic fixme: investigate
-    // These are enabled in Core profile!
-    if (!isCompatible())
+    // These are enabled in Core profiles
+    if (!Has_GL_Compatibility)
     {
-      if (TranslateEnable[i] == GL_POINT_SPRITE)
+      // "Non-sprite points - Enable/Disable targets POINT_SMOOTH and POINT_-
+      // SPRITE, and all associated state. Point rasterization is always performed as
+      // though POINT_SPRITE were enabled." OpenGL 3.3 (Core Profile) p344
+      if (TranslateEnable[i] == GL_POINT_SPRITE) // this is actually deprecated
         continue;
 
-      if (TranslateEnable[i] == GL_VERTEX_PROGRAM_POINT_SIZE)
+      // "If enabled and a vertex or geometry shader is active, then the derived point 
+      // size is taken from the (potentially clipped) shader builtin gl_PointSize and 
+      // clamped to the implementation-dependent point size range."
+      // See http://www.opengl.org/sdk/docs/man3/xhtml/glEnable.xml
+      if (TranslateEnable[i] == GL_PROGRAM_POINT_SIZE)
         continue;
     }
 
-    GLboolean enabled = glIsEnabled( TranslateEnable[i] ); VL_CHECK_OGL();
+    // Note: for simplicity we allow GL to generate errors for unsupported enables.
+    GLboolean enabled = glIsEnabled( TranslateEnable[i] ); /* VL_CHECK_OGL(); */
 
-    // the order is important!
+    // The order is important!
     if (glGetError() == GL_NO_ERROR && enabled)
     {
 	    if (verbose)
@@ -748,7 +760,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
-  if (isCompatible())
+  if (Has_GL_Compatibility)
   {
     int max_lights = 0;
     glGetIntegerv(GL_MAX_LIGHTS, &max_lights);
@@ -801,7 +813,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
 
-    if (isCompatible())
+    if (Has_GL_Compatibility)
     {
       active_tex = -1;
       glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
@@ -816,9 +828,10 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
+  VL_CHECK_OGL()
+
   /* We only check the subset of tex-units supported also by glClientActiveTexture() */
-  // find the minimum of the max texture units supported, starting at 16
-  // mic fixme: test this with Core and GLES 1.x 2.x
+  // Find the minimum of the max texture units supported, starting at 16
   int coord_count = 16;
   if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_x)
   {
@@ -826,6 +839,8 @@ bool OpenGLContext::isCleanState(bool verbose)
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
     coord_count = max_tmp < coord_count ? max_tmp : coord_count;
   }
+
+  VL_CHECK_OGL()
 
   if (Has_GLSL) // for GL >= 2.0
   {
@@ -841,11 +856,14 @@ bool OpenGLContext::isCleanState(bool verbose)
     coord_count = max_tmp < coord_count ? max_tmp : coord_count;
   }
 
+  VL_CHECK_OGL()
+
   while(coord_count--)
   {
+    VL_CHECK_OGL()
     VL_glActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
 
-    if (isCompatible())
+    if (Has_GL_Compatibility)
     {
 	    VL_glClientActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
 
@@ -874,23 +892,26 @@ bool OpenGLContext::isCleanState(bool verbose)
 	
 	    // check that all texture targets are disabled and bound to texture #0
 	
-	    if (glIsEnabled(GL_TEXTURE_1D))
-	    {
-	      if (verbose)
-	        vl::Log::error( Say("GL_TEXTURE_1D was enabled on texture unit #%n!\n") << coord_count );
-	      VL_TRAP();
-	      ok = false;
-	    }
+      if (!Has_GLES)
+      {
+	      if (glIsEnabled(GL_TEXTURE_1D))
+	      {
+	        if (verbose)
+	          vl::Log::error( Say("GL_TEXTURE_1D was enabled on texture unit #%n!\n") << coord_count );
+	        VL_TRAP();
+	        ok = false;
+	      }
 	
-      GLint bound_tex = 0;
-	    glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex);
-	    if (bound_tex != 0)
-	    {
-	      if (verbose)
-	        vl::Log::error( Say("GL_TEXTURE_BINDING_1D != 0 on texture unit #%n!\n") << coord_count );
-	      VL_TRAP();
-	      ok = false;
-	    }
+        GLint bound_tex = 0;
+	      glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex); VL_CHECK_OGL()
+	      if (bound_tex != 0)
+	      {
+	        if (verbose)
+	          vl::Log::error( Say("GL_TEXTURE_BINDING_1D != 0 on texture unit #%n!\n") << coord_count );
+	        VL_TRAP();
+	        ok = false;
+	      }
+      }
 	
 	    if (glIsEnabled(GL_TEXTURE_2D))
 	    {
@@ -902,7 +923,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
 
     GLint bound_tex = 0;
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_tex);
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_tex); VL_CHECK_OGL()
     if (bound_tex != 0)
     {
       if (verbose)
@@ -913,7 +934,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Texture_Rectangle)
     {
-      if (isCompatible() && glIsEnabled(GL_TEXTURE_RECTANGLE))
+      if (Has_GL_Compatibility && glIsEnabled(GL_TEXTURE_RECTANGLE))
       {
         if (verbose)
           vl::Log::error( Say("GL_TEXTURE_RECTANGLE was enabled on texture unit #%n!\n") << coord_count );
@@ -922,7 +943,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
 
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &bound_tex);
+      glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &bound_tex); VL_CHECK_OGL()
       if (bound_tex != 0)
       {
         if (verbose)
@@ -934,7 +955,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Texture_3D)
     {
-      if (isCompatible() && glIsEnabled(GL_TEXTURE_3D))
+      if (Has_GL_Compatibility && glIsEnabled(GL_TEXTURE_3D))
       {
         if (verbose)
           vl::Log::error( Say("GL_TEXTURE_3D was enabled on texture unit #%n!\n") << coord_count );
@@ -943,7 +964,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
 
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_3D, &bound_tex);
+      glGetIntegerv(GL_TEXTURE_BINDING_3D, &bound_tex); VL_CHECK_OGL()
       if (bound_tex != 0)
       {
         if (verbose)
@@ -952,9 +973,10 @@ bool OpenGLContext::isCleanState(bool verbose)
         ok = false;
       }
     }
+
     if (Has_Cubemap_Textures)
     {
-      if (isCompatible() && glIsEnabled(GL_TEXTURE_CUBE_MAP))
+      if (Has_GL_Compatibility && glIsEnabled(GL_TEXTURE_CUBE_MAP))
       {
         if (verbose)
           vl::Log::error( Say("GL_TEXTURE_CUBE_MAP was enabled on texture unit #%n!\n") << coord_count );
@@ -963,7 +985,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
 
       bound_tex = 0;
-      glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &bound_tex);
+      glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &bound_tex); VL_CHECK_OGL()
       if (bound_tex != 0)
       {
         if (verbose)
@@ -1032,8 +1054,9 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
     }
 
-    if (isCompatible())
+    if (Has_GL_Compatibility)
     {
+#if defined(VL_OPENGL)
 	    if (glIsEnabled(GL_TEXTURE_GEN_S))
 	    {
 	      if (verbose)
@@ -1065,6 +1088,15 @@ bool OpenGLContext::isCleanState(bool verbose)
 	      VL_TRAP();
 	      ok = false;
 	    }
+#elif defined(VL_OPENGL_ES1)
+	    if (Has_GL_OES_texture_cube_map && glIsEnabled(GL_TEXTURE_GEN_STR_OES))
+	    {
+	      if (verbose)
+	        vl::Log::error( "GL_TEXTURE_GEN_STR_OES was enabled!\n" );
+	      VL_TRAP();
+	      ok = false;
+	    }
+#endif
     }
   }
 
@@ -1098,7 +1130,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
-  if (isCompatible() && glIsEnabled(GL_COLOR_ARRAY)) // includes GLES 1.x
+  if (Has_GL_Compatibility && glIsEnabled(GL_COLOR_ARRAY)) // includes GLES 1.x
   {
     if (verbose)
       vl::Log::error( "GL_COLOR_ARRAY was enabled!\n");
@@ -1122,7 +1154,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     ok = false;
   }
 
-  if (isCompatible() && glIsEnabled(GL_NORMAL_ARRAY)) // includes GLES 1.x
+  if (Has_GL_Compatibility && glIsEnabled(GL_NORMAL_ARRAY)) // includes GLES 1.x
   {
     if (verbose)
       vl::Log::error( "GL_NORMAL_ARRAY was enabled!\n");
@@ -1130,7 +1162,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     ok = false;
   }
 
-  if (isCompatible() && glIsEnabled(GL_VERTEX_ARRAY)) // includes GLES 1.x
+  if (Has_GL_Compatibility && glIsEnabled(GL_VERTEX_ARRAY)) // includes GLES 1.x
   {
     if (verbose)
       vl::Log::error( "GL_VERTEX_ARRAY was enabled!\n");
@@ -1182,8 +1214,8 @@ bool OpenGLContext::isCleanState(bool verbose)
   // we expect these settings for the default blending equation
   GLint blend_src = 0;
   GLint blend_dst = 0;
-  glGetIntegerv( GL_BLEND_SRC, &blend_src );
-  glGetIntegerv( GL_BLEND_DST, &blend_dst );
+  glGetIntegerv( GL_BLEND_SRC, &blend_src ); VL_CHECK_OGL();
+  glGetIntegerv( GL_BLEND_DST, &blend_dst ); VL_CHECK_OGL();
   if (blend_src != GL_SRC_ALPHA)
   {
     if (verbose)
@@ -1204,7 +1236,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   GLint buf_bind = 0;
   if (Has_VBO)
   {
-    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buf_bind);
+    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       if (verbose)
@@ -1213,7 +1245,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
     buf_bind = 0;
-    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buf_bind);
+    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       if (verbose)
@@ -1225,7 +1257,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (Has_GL_Version_2_1)
   {
     buf_bind = 0;
-    glGetIntegerv(GL_PIXEL_PACK_BUFFER_BINDING, &buf_bind);
+    glGetIntegerv(GL_PIXEL_PACK_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       if (verbose)
@@ -1234,7 +1266,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
     buf_bind = 0;
-    glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &buf_bind);
+    glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       if (verbose)
@@ -1246,7 +1278,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (Has_GL_ARB_uniform_buffer_object)
   {
     buf_bind = 0;
-    glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &buf_bind);
+    glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       if (verbose)
@@ -1258,7 +1290,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   if(Has_Transform_Feedback)
   {
     buf_bind = 0;
-    glGetIntegerv(GL_TRANSFORM_FEEDBACK_BUFFER_BINDING, &buf_bind);
+    glGetIntegerv(GL_TRANSFORM_FEEDBACK_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
     {
       if (verbose)
@@ -1267,32 +1299,6 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
   }
-  /* mic fixme: missing? 
-  glGetIntegerv(GL_COPY_READ_BUFFER_BINDING, &buf_bind);
-  if (buf_bind != 0)
-  {
-    if (verbose)
-      vl::Log::error( "GL_COPY_READ_BUFFER_BINDING should be 0!\n");
-    VL_TRAP();
-    ok = false;
-  }
-  glGetIntegerv(GL_COPY_WRITE_BUFFER_BINDING, &buf_bind);
-  if (buf_bind != 0)
-  {
-    if (verbose)
-      vl::Log::error( "GL_COPY_WRITE_BUFFER_BINDING should be 0!\n");
-    VL_TRAP();
-    ok = false;
-  }
-  glGetIntegerv(GL_TEXTURE_BUFFER_BINDING, &buf_bind);
-  if (buf_bind != 0)
-  {
-    if (verbose)
-      vl::Log::error( "GL_TEXTURE_BUFFER_BINDING should be 0!\n");
-    VL_TRAP();
-    ok = false;
-  }
-  */
 
   #if 0
   // check viewport
@@ -1309,27 +1315,29 @@ bool OpenGLContext::isCleanState(bool verbose)
   #endif
 
   GLboolean write_mask[4];
-  glGetBooleanv(GL_COLOR_WRITEMASK, write_mask);
+  glGetBooleanv(GL_COLOR_WRITEMASK, write_mask); VL_CHECK_OGL();
   if( !write_mask[0] || !write_mask[1] || !write_mask[2] || !write_mask[3] )
   {
     vl::Log::error( "Color write-mask should be glColorMask(GL_TRUE ,GL_TRUE, GL_TRUE, GL_TRUE)!\n" );
     ok = false;
   }
 
-  glGetBooleanv(GL_DEPTH_WRITEMASK, write_mask);
+  glGetBooleanv(GL_DEPTH_WRITEMASK, write_mask); VL_CHECK_OGL();
   if ( !write_mask[0] )
   {
     vl::Log::error( "Depth write-mask should be glDepthMask(GL_TRUE)!\n" );
     ok = false;
   }
 
+#if defined(VL_OPENGL)
   GLint poly_mode[2];
-  glGetIntegerv(GL_POLYGON_MODE, poly_mode);
+  glGetIntegerv(GL_POLYGON_MODE, poly_mode); VL_CHECK_OGL();
   if ( poly_mode[0] != GL_FILL || poly_mode[1] != GL_FILL )
   {
     vl::Log::error( "Polygon mode should be glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)!\n" );
     ok = false;
   }
+#endif
 
   VL_CHECK_OGL();
   return ok;
@@ -1337,7 +1345,6 @@ bool OpenGLContext::isCleanState(bool verbose)
 //-----------------------------------------------------------------------------
 bool OpenGLContext::areUniformsColliding(const UniformSet* u1, const UniformSet* u2)
 {
-  // mic fixme: test it
   if (!u1 || !u2)
     return false;
 
@@ -1374,6 +1381,8 @@ void OpenGLContext::resetContextStates()
 
   VL_glBindFramebuffer(GL_FRAMEBUFFER, 0); VL_CHECK_OGL();
 
+  // not existing under OpenGL ES 1 and 2
+#if defined(VL_OPENGL)
   if ( hasDoubleBuffer() )
   {
     glDrawBuffer(GL_BACK); VL_CHECK_OGL();
@@ -1384,6 +1393,7 @@ void OpenGLContext::resetContextStates()
     glDrawBuffer(GL_FRONT); VL_CHECK_OGL();
     glReadBuffer(GL_FRONT); VL_CHECK_OGL();
   }
+#endif
 
   // reset internal VL enables & render states tables
   resetEnables();      VL_CHECK_OGL()
@@ -1458,7 +1468,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
 
       VL_glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
 
-      if(isCompatible())
+      if(Has_GL_Compatibility)
       {
         // iterate backwards so the last active is #0
         for ( int i=mTextureUnitCount; i--; )
@@ -1468,14 +1478,14 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         }
 
         glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
-
         glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
-
         glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
 
+        // not supported under GLES
+#if defined(VL_OPENG)
         glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
-
         glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
+#endif
       }
     }
 

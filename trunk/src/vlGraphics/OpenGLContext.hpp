@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -54,6 +54,8 @@ namespace vl
   class OpenGLContextFormat
   {
   public:
+    virtual const char* className() const { return "vl::OpenGLContextFormat"; }
+
     OpenGLContextFormat():
       mRGBABits(ivec4(8,8,8,8)),
       mAccumRGBABits(ivec4(0,0,0,0)),
@@ -64,9 +66,8 @@ namespace vl
       mMultisampleSamples(16),
       mStereo(false),
       mFullscreen(false),
-      mVSync(false) 
-    {}
-    virtual const char* className() const { return "vl::OpenGLContextFormat"; }
+      mVSync(false),
+      mContextClientVersion(1) {}
 
     void setRGBABits(int r, int g, int b, int a) { mRGBABits = ivec4(r,g,b,a); }
     void setAccumRGBABits(int r, int g, int b, int a) { mAccumRGBABits = ivec4(r,g,b,a); }
@@ -78,6 +79,8 @@ namespace vl
     void setStereo(bool stereo_on) { mStereo = stereo_on; }
     void setFullscreen(bool fullscreent) { mFullscreen = fullscreent; }
     void setVSync(bool vsync_on) { mVSync = vsync_on; }
+    //! Used by EGLWindow to initialize either GLES 1.x or GLES 2.x contexts.
+    void setContextClientVersion(int version) { mContextClientVersion = version; }
 
     const ivec4& rgbaBits() const { return mRGBABits; }
     const ivec4& accumRGBABits() const { return mAccumRGBABits; }
@@ -89,6 +92,8 @@ namespace vl
     bool stereo() const { return mStereo; }
     bool fullscreen() const { return mFullscreen; }
     bool vSync() const { return mVSync; }
+    //! Used by EGLWindow to initialize either GLES 1.x or GLES 2.x contexts.
+    int contextClientVersion() const { return mContextClientVersion; }
 
     //! Returns rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a()
     int bitsPerPixel() const { return rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a(); }
@@ -104,6 +109,7 @@ namespace vl
     bool mStereo;
     bool mFullscreen;
     bool mVSync;
+    int mContextClientVersion;
   };
   //-----------------------------------------------------------------------------
   // OpenGLContext
@@ -137,7 +143,7 @@ namespace vl
     virtual void makeCurrent() = 0;
 
     //! Initializes the supported OpenGL extensions.
-    void initGLContext(bool log=true);
+    bool initGLContext(bool log=true);
 
     //! Logs some information about the OpenGL context
     void logOpenGLInfo();
@@ -422,15 +428,6 @@ namespace vl
     //! Returns \p true if an OpenGLContext supports double buffering.
     bool hasDoubleBuffer() const { return mHasDoubleBuffer; }
     
-    //! Returns \p true if an OpenGLContext provides backwards compatibility to previous OpenGL API versions (\a true for GLES 1.x, \a false for GLES 2.x).
-    bool isCompatible() const { return mIsCompatible; }
-
-    //! Returns the OpenGL's driver version's major number.
-    int openglVersionMajorNumber() const { return mMajorVersion; }
-
-    //! Returns the OpenGL's driver version's minor number.
-    int openglVersionMinorNumber() const { return mMinorVersion; }
-
     // --- render states management ---
 
     //! Activates the specified vertex attribute set - For internal use only.
@@ -500,15 +497,12 @@ namespace vl
     OpenGLContextFormat mGLContextInfo;
     int mMaxVertexAttrib;
     int mTextureUnitCount;
-    int mMajorVersion;
-    int mMinorVersion;
     bool mMouseVisible;
     bool mContinuousUpdate;
     bool mIgnoreNextMouseMoveEvent;
     bool mFullscreen;
     bool mHasDoubleBuffer;
     bool mIsInitialized;
-    bool mIsCompatible;
     std::string mExtensions;
 
     // --- Render States ---

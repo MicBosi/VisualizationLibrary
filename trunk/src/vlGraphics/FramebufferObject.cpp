@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -131,6 +131,7 @@ void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
 
   VL_glBindFramebuffer( target, handle() ); VL_CHECK_OGL()
 
+#if defined(VL_OPENGL)
   // bind draw buffers
   if (target == FBB_FRAMEBUFFER || target == FBB_DRAW_FRAMEBUFFER)
     bindDrawBuffers();
@@ -138,6 +139,7 @@ void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
   // bind read buffer
   if (target == FBB_FRAMEBUFFER || target == FBB_READ_FRAMEBUFFER)
     bindReadBuffer();
+#endif
 
   #ifndef NDEBUG
     GLenum status = VL_glCheckFramebufferStatus( GL_FRAMEBUFFER ); VL_CHECK_OGL()

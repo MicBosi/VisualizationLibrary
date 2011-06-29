@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -40,6 +40,9 @@ namespace vl
 {
   VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1_x;
   VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2_x;
+  VLGRAPHICS_EXPORT extern bool Has_GLES;
+
+  VLGRAPHICS_EXPORT extern bool Has_GL_Compatibility;
 
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_1;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_2;
@@ -68,6 +71,7 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Has_Geometry_Shader;
   VLGRAPHICS_EXPORT extern bool Has_VBO;
   VLGRAPHICS_EXPORT extern bool Has_FBO;
+  VLGRAPHICS_EXPORT extern bool Has_PBO;
   VLGRAPHICS_EXPORT extern bool Has_FBO_Multisample;
   VLGRAPHICS_EXPORT extern bool Has_Cubemap_Textures;
   VLGRAPHICS_EXPORT extern bool Has_Texture_Rectangle;
