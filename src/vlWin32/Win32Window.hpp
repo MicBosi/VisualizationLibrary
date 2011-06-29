@@ -51,7 +51,6 @@ namespace vlWin32
   class VLWIN32_EXPORT Win32Window: public Win32Context
   {
   public:
-    static const wchar_t* Win32WindowClassName;
     static LONG WINAPI WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
   public:
