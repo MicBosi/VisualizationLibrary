@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -233,7 +233,7 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
 
   opengl_context->applyRenderStates(NULL, mOcclusionShader->getRenderStateSet(), camera );
   opengl_context->applyEnables(NULL, mOcclusionShader->getEnableSet() );
-  projViewTransfCallback()->updateMatrices( true, true, glsl_program, camera, cur_transform, opengl_context->isCompatible() );
+  projViewTransfCallback()->updateMatrices( true, true, glsl_program, camera, cur_transform );
 
   // camera/eye position for later usage
 
@@ -287,7 +287,7 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
         if (tok->mActor->transform() != cur_transform)
         {
           cur_transform = tok->mActor->transform();
-          projViewTransfCallback()->updateMatrices( false, true, glsl_program, camera, cur_transform, opengl_context->isCompatible() );
+          projViewTransfCallback()->updateMatrices( false, true, glsl_program, camera, cur_transform );
         }
 
         // register occlusion query tick

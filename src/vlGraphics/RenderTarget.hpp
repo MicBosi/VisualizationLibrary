@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -100,12 +100,14 @@ namespace vl
       // the base render target is the framebuffer 0, that is, the normal OpenGL buffers
       VL_glBindFramebuffer(target, 0); VL_CHECK_OGL()
 
+#if defined(VL_OPENGL)
       // bind draw buffers
       bindDrawBuffers();
 
       // bind read buffer
       bindReadBuffer();
-
+#endif
+      
       VL_CHECK_OGL()
     }
 

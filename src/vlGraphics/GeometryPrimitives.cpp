@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -539,17 +539,31 @@ ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zsid
   fvec3 a6( (fvec3)(vec3(-x,-y,-z) + origin) );
   fvec3 a7( (fvec3)(vec3(+x,-y,-z) + origin) );
 
+#if defined(VL_OPENGL)
   ref<DrawArrays> polys = new DrawArrays(PT_QUADS, 0, 24);
   geom->drawCalls()->push_back( polys.get() );
-
   vert3->resize( 24  );
-
   vert3->at(0)  = a1; vert3->at(1)  = a2; vert3->at(2)  = a3; vert3->at(3)  = a0;
   vert3->at(4)  = a2; vert3->at(5)  = a6; vert3->at(6)  = a7; vert3->at(7)  = a3;
   vert3->at(8)  = a6; vert3->at(9)  = a5; vert3->at(10) = a4; vert3->at(11) = a7;
   vert3->at(12) = a5; vert3->at(13) = a1; vert3->at(14) = a0; vert3->at(15) = a4;
   vert3->at(16) = a0; vert3->at(17) = a3; vert3->at(18) = a7; vert3->at(19) = a4;
   vert3->at(20) = a5; vert3->at(21) = a6; vert3->at(22) = a2; vert3->at(23) = a1;
+#else
+  fvec3 verts[] = {
+    a1, a2, a3, a3, a0, a1,
+    a2, a6, a7, a7, a3, a2,
+    a6, a5, a4, a4, a7, a6,
+    a5, a1, a0, a0, a4, a5,
+    a0, a3, a7, a7, a4, a0,
+    a5, a6, a2, a2, a1, a5
+  };
+
+  ref<DrawArrays> polys = new DrawArrays(PT_TRIANGLES, 0, 36);
+  geom->drawCalls()->push_back( polys.get() );
+  vert3->resize( 36 );
+  memcpy(vert3->ptr(), verts, sizeof(verts));
+#endif
 
   texc2->resize( 24 );
   int idx = 0;

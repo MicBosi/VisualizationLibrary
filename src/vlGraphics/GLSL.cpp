@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -114,7 +114,7 @@ bool GLSLShader::compile()
 
     // assign sources
 
-    const GLchar* source[] = { mSource.c_str() };
+    const char* source[] = { mSource.c_str() };
     glShaderSource(handle(), 1, source, NULL);
 
     // compile the shader
@@ -168,7 +168,7 @@ String GLSLShader::infoLog() const
   glGetShaderiv(handle(), GL_INFO_LOG_LENGTH, &max_length); VL_CHECK_OGL();
   if (max_length != 0)
   {
-    std::vector<GLchar> log_buffer;
+    std::vector<char> log_buffer;
     log_buffer.resize(max_length);
     glGetShaderInfoLog(handle(), max_length, NULL, &log_buffer[0]); VL_CHECK_OGL();
     VL_CHECK_OGL();
@@ -521,7 +521,7 @@ String GLSLProgram::infoLog() const
 
   int max_length = 0;
   glGetProgramiv(handle(), GL_INFO_LOG_LENGTH, &max_length); VL_CHECK_OGL();
-  std::vector<GLchar> log_buffer;
+  std::vector<char> log_buffer;
   log_buffer.resize(max_length+1);
   glGetProgramInfoLog(handle(), max_length, NULL, &log_buffer[0]); VL_CHECK_OGL();
   return &log_buffer[0];
