@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -30,8 +30,6 @@
 /**************************************************************************************/
 
 #include <vlWin32/Win32Window.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/Say.hpp>
 #include <vlCore/Time.hpp>
 #include <shellapi.h>
 
@@ -39,8 +37,37 @@ using namespace vl;
 using namespace vlWin32;
 
 //-----------------------------------------------------------------------------
-namespace
+namespace vlWin32
 {
+  const wchar_t* gWin32WindowClassName = L"VisualizationLibraryWindowClass";
+
+  bool registerClass()
+  {
+    static bool class_already_registered = false;
+    if (!class_already_registered)
+    {
+      WNDCLASS wc;
+      memset(&wc, 0, sizeof(wc));
+      /* only register the window class once. */
+      wc.style         = CS_OWNDC | CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
+      wc.lpfnWndProc   = (WNDPROC)Win32Window::WindowProc;
+      wc.cbClsExtra    = 0;
+      wc.cbWndExtra    = 0;
+      wc.hInstance     = GetModuleHandle(NULL);
+      wc.hIcon         = LoadIcon(NULL, IDI_WINLOGO);
+      wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
+      wc.hbrBackground = NULL;
+      wc.lpszMenuName  = NULL;
+      wc.lpszClassName = gWin32WindowClassName;
+
+      if (!RegisterClass(&wc))
+        MessageBox(NULL, L"Class registration failed.", L"Visualization Library Error", MB_OK);
+      else
+        class_already_registered = true;
+    }
+    return class_already_registered;
+  }
+
   #if 0
     // used for debugging purposes
     void win32PrintError(LPTSTR lpszFunction) 
@@ -67,36 +94,7 @@ namespace
         LocalFree(lpMsgBuf);
     }
   #endif
-
-  bool registerClass()
-  {
-    static bool class_already_registered = false;
-    if (!class_already_registered)
-    {
-      WNDCLASS wc;
-      memset(&wc, 0, sizeof(wc));
-      /* only register the window class once. */
-      wc.style         = CS_OWNDC | CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
-      wc.lpfnWndProc   = (WNDPROC)Win32Window::WindowProc;
-      wc.cbClsExtra    = 0;
-      wc.cbWndExtra    = 0;
-      wc.hInstance     = GetModuleHandle(NULL);
-      wc.hIcon         = LoadIcon(NULL, IDI_WINLOGO);
-      wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-      wc.hbrBackground = NULL;
-      wc.lpszMenuName  = NULL;
-      wc.lpszClassName = Win32Window::Win32WindowClassName;
-
-      if (!RegisterClass(&wc))
-        MessageBox(NULL, L"Class registration failed.", L"Visualization Library Error", MB_OK);
-      else
-        class_already_registered = true;
-    }
-    return class_already_registered;
-  }
 }
-//-----------------------------------------------------------------------------
-const wchar_t* Win32Window::Win32WindowClassName = L"VisualizationLibraryWindowClass";
 //-----------------------------------------------------------------------------
 std::map< HWND, Win32Window* > Win32Window::mWinMap;
 //-----------------------------------------------------------------------------
@@ -258,7 +256,7 @@ Win32Window::Win32Window()
 
   mStyle   = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
   mExStyle = WS_EX_APPWINDOW | WS_EX_ACCEPTFILES;
-  mWindowClassName = Win32WindowClassName;
+  mWindowClassName = gWin32WindowClassName;
 }
 //-----------------------------------------------------------------------------
 Win32Window::~Win32Window()

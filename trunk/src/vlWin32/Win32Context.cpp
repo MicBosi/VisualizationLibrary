@@ -31,6 +31,7 @@
 
 #include <vlWin32/Win32Context.hpp>
 #include <vlCore/Log.hpp>
+#include <vlCore/Say.hpp>
 
 using namespace vl;
 using namespace vlWin32;
@@ -346,7 +347,9 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   }
 
   // init GL context and makes it current
-  initGLContext();
+  // mic fixme: check this also on all the other GUI bindings.
+  if( !initGLContext() )
+    return contract.mOK = false;
 
   if (fmt.multisample() && !Has_GL_ARB_multisample)
     vl::Log::error("WGL_ARB_multisample not supported.\n");
@@ -376,6 +379,12 @@ void Win32Context::setContextAttribs(const int* attribs, int size)
     mContextAttribs[ i ] = attribs[ i ];
 }
 //-----------------------------------------------------------------------------
+namespace vlWin32
+{ 
+  extern bool registerClass(); 
+  extern const wchar_t* gWin32WindowClassName;
+}
+//-----------------------------------------------------------------------------
 int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
 {
   if (!registerClass())
@@ -386,7 +395,7 @@ int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
 
   HWND hWnd = CreateWindowEx(
     WS_EX_APPWINDOW | WS_EX_ACCEPTFILES,
-    Win32Window::Win32WindowClassName,
+    gWin32WindowClassName,
     L"Temp GL Window",
     WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
