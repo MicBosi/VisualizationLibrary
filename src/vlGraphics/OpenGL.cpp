@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -35,6 +35,10 @@
 #include <vlCore/Say.hpp>
 #include <algorithm>
 
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+  #include <EGL/egl.h> // for eglGetProcAddress()
+#endif
+
 // OpenGL implmentation
 namespace vl
 {
@@ -52,10 +56,13 @@ namespace vl
   bool Has_GL_Version_4_0 = false;
   bool Has_GL_Version_4_1 = false;
 
+  bool Has_GL_Compatibility = false;
+
   // GLES defines
 
   bool Has_GLES_Version_1_x = false;
   bool Has_GLES_Version_2_x = false;
+  bool Has_GLES = false;
 
   // Helper defines
 
@@ -70,6 +77,7 @@ namespace vl
   bool Has_Geometry_Shader = false;
   bool Has_VBO = false;
   bool Has_FBO = false;
+  bool Has_PBO = false;
   bool Has_FBO_Multisample = false;
   bool Has_Cubemap_Textures = false;
   bool Has_Texture_Rectangle = false;
@@ -136,73 +144,44 @@ bool vl::initializeOpenGL()
       #include "GLES2FunctionList.hpp"
     #endif
 
-    // check fixed function pipeline present
+    // Check fixed function pipeline
     glDisable(GL_LIGHTING);
-    bool bkw_compatible = glGetError() == GL_NO_ERROR;
+    Has_GL_Compatibility = glGetError() == GL_NO_ERROR;
 
-    // opengl version detect
-    const char* version_str = (const char*)glGetString(GL_VERSION); VL_CHECK_OGL(); 
-    VL_CHECK(version_str);
-    int vmaj = 0, vmin = 0;
-    sscanf(version_str, "%d.%d", &vmaj, &vmin);
-
-    // GLES defines
-
+    // GLES detect
     #if defined(VL_OPENGL_ES1)
-      Has_GLES_Version_1_x = true;
+      Has_GLES = Has_GLES_Version_1_x = true;
     #endif
 
     #if defined(VL_OPENGL_ES2)
-      Has_GLES_Version_2_x = true;
+      Has_GLES = Has_GLES_Version_2_x = true;
     #endif
 
-    bool is_gles = Has_GLES_Version_1_x || Has_GLES_Version_2_x;
+    // GL versions
+    const char* version_string = (const char*)glGetString(GL_VERSION);
+    // These stay zero for GLES
+    int vmaj = 0;
+    int vmin = 0;
+    // Format returned by GLES is "OpenGL ES-XX N.M"
+    if (!Has_GLES)
+    {
+      vmaj = version_string[0] - '0';
+      vmin = version_string[2] - '0';
+    }
 
-    Has_GL_Version_1_1 = !is_gles && ( (vmaj == 1 && vmin >= 1) || (vmaj > 1 && bkw_compatible) );
-    Has_GL_Version_1_2 = !is_gles && ( (vmaj == 1 && vmin >= 2) || (vmaj > 1 && bkw_compatible) );
-    Has_GL_Version_1_3 = !is_gles && ( (vmaj == 1 && vmin >= 3) || (vmaj > 1 && bkw_compatible) );
-    Has_GL_Version_1_4 = !is_gles && ( (vmaj == 1 && vmin >= 4) || (vmaj > 1 && bkw_compatible) );
-    Has_GL_Version_1_5 = !is_gles && ( (vmaj == 1 && vmin >= 5) || (vmaj > 1 && bkw_compatible) );
-    Has_GL_Version_2_0 = !is_gles && ( (vmaj == 2 && vmin >= 0) || (vmaj > 2 && bkw_compatible) );
-    Has_GL_Version_2_1 = !is_gles && ( (vmaj == 2 && vmin >= 1) || (vmaj > 2 && bkw_compatible) );
-    Has_GL_Version_3_0 = !is_gles && ( (vmaj == 3 && vmin >= 0) || (vmaj > 3 && bkw_compatible) );
-    Has_GL_Version_3_1 = !is_gles && ( (vmaj == 3 && vmin >= 1) || (vmaj > 3 && bkw_compatible) );
-    Has_GL_Version_3_2 = !is_gles && ( (vmaj == 3 && vmin >= 2) || (vmaj > 3 && bkw_compatible) );
-    Has_GL_Version_3_3 = !is_gles && ( (vmaj == 3 && vmin >= 3) || (vmaj > 3 && bkw_compatible) );
-    Has_GL_Version_4_0 = !is_gles && ( (vmaj == 4 && vmin >= 0) || (vmaj > 4 && bkw_compatible) );
-    Has_GL_Version_4_1 = !is_gles && ( (vmaj == 4 && vmin >= 1) || (vmaj > 4 && bkw_compatible) );
-
-    // Helper defines
-
-    // Note that deprecated GL extensions seem to be reported even under a Core profile, although they are not supported.
-
-    Has_GLSL = Has_GL_ARB_shading_language_100||Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
-    Has_GLSL_120_Or_More = Has_GL_Version_2_1||Has_GL_Version_3_0||Has_GL_Version_4_0;
-    Has_GLSL_130_Or_More = Has_GL_Version_3_0||Has_GL_Version_4_0;
-    Has_GLSL_140_Or_More = Has_GL_Version_3_1||Has_GL_Version_4_0;
-    Has_GLSL_150_Or_More = Has_GL_Version_3_2||Has_GL_Version_4_0;
-    Has_GLSL_330_Or_More = Has_GL_Version_3_3||Has_GL_Version_4_0;
-    Has_GLSL_400_Or_More = Has_GL_Version_4_0;
-    Has_GLSL_410_Or_More = Has_GL_Version_4_1;
-    Has_Geometry_Shader = Has_GL_NV_geometry_shader4||Has_GL_EXT_geometry_shader4||Has_GL_ARB_geometry_shader4||Has_GL_Version_3_2||Has_GL_Version_4_0;
-    Has_VBO = Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x;
-    Has_FBO = Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_framebuffer_object||Has_GLES_Version_2_x;
-    // We only support GL_ANGLE_framebuffer_blit for GLES, see also:
-    // http://www.khronos.org/registry/gles/extensions/IMG/IMG_multisampled_render_to_texture.txt
-    // http://www.khronos.org/registry/gles/extensions/APPLE/APPLE_framebuffer_multisample.txt
-    Has_FBO_Multisample = Has_GL_Version_4_0||Has_GL_Version_3_0||Has_GL_ARB_framebuffer_object||Has_GL_EXT_framebuffer_multisample||Has_GL_ANGLE_framebuffer_multisample;
-    Has_Cubemap_Textures = Has_GL_ARB_texture_cube_map||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_texture_cube_map||Has_GLES_Version_2_x;
-    Has_Texture_Rectangle = Has_GL_ARB_texture_rectangle||Has_GL_NV_texture_rectangle||Has_GL_Version_3_1||Has_GL_Version_4_0;
-    Has_Texture_Array = Has_GL_EXT_texture_array||Has_GL_Version_3_0||Has_GL_Version_4_0;
-    Has_Texture_Buffer = Has_GL_ARB_texture_buffer_object||Has_GL_EXT_texture_buffer_object||Has_GL_Version_3_1||Has_GL_Version_4_0;
-    Has_Texture_Multisample = Has_GL_ARB_texture_multisample||Has_GL_Version_3_2||Has_GL_Version_4_0;
-    Has_Texture_3D = Has_GL_EXT_texture3D||Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_texture_3D;
-    Has_Multitexture = Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x;
-    Has_Primitive_Restart = Has_GL_Version_3_1||Has_GL_Version_4_0;
-    Has_Occlusion_Query = Has_GL_ARB_occlusion_query||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0;
-    Has_Transform_Feedback = Has_GL_NV_transform_feedback||Has_GL_EXT_transform_feedback||Has_GL_Version_3_0||Has_GL_Version_4_0;
-    Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
-    Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && bkw_compatible)||Has_GL_Version_1_4||Has_GLES_Version_1_x;
+    Has_GL_Version_1_1 = (vmaj == 1 && vmin >= 1) || (vmaj > 1 && Has_GL_Compatibility);
+    Has_GL_Version_1_2 = (vmaj == 1 && vmin >= 2) || (vmaj > 1 && Has_GL_Compatibility);
+    Has_GL_Version_1_3 = (vmaj == 1 && vmin >= 3) || (vmaj > 1 && Has_GL_Compatibility);
+    Has_GL_Version_1_4 = (vmaj == 1 && vmin >= 4) || (vmaj > 1 && Has_GL_Compatibility);
+    Has_GL_Version_1_5 = (vmaj == 1 && vmin >= 5) || (vmaj > 1 && Has_GL_Compatibility);
+    Has_GL_Version_2_0 = (vmaj == 2 && vmin >= 0) || (vmaj > 2 && Has_GL_Compatibility);
+    Has_GL_Version_2_1 = (vmaj == 2 && vmin >= 1) || (vmaj > 2 && Has_GL_Compatibility);
+    Has_GL_Version_3_0 = (vmaj == 3 && vmin >= 0) || (vmaj > 3 && Has_GL_Compatibility);
+    Has_GL_Version_3_1 = (vmaj == 3 && vmin >= 1) || (vmaj > 3 && Has_GL_Compatibility);
+    Has_GL_Version_3_2 = (vmaj == 3 && vmin >= 2) || (vmaj > 3 && Has_GL_Compatibility);
+    Has_GL_Version_3_3 = (vmaj == 3 && vmin >= 3) || (vmaj > 3 && Has_GL_Compatibility);
+    Has_GL_Version_4_0 = (vmaj == 4 && vmin >= 0) || (vmaj > 4 && Has_GL_Compatibility);
+    Has_GL_Version_4_1 = (vmaj == 4 && vmin >= 1) || (vmaj > 4 && Has_GL_Compatibility);
 
     // opengl extension strings init
     std::string extensions = getOpenGLExtensions();
@@ -214,6 +193,62 @@ bool vl::initializeOpenGL()
     #define VL_GLES_EXTENSION(extension) Has_##extension = strstr(extensions.c_str(), #extension" ") != NULL;
     #include "GLESExtensionList.hpp"
     #undef VL_GLES_EXTENSION
+
+#if defined(VL_OPENGL_ES1)
+    // mic fixme: http://www.imgtec.com/forum/forum_posts.asp?TID=1379
+    // POWERVR emulator bugs:
+    if (Has_GL_OES_texture_cube_map && glTexGenfOES == 0)
+    {
+      Has_GL_OES_texture_cube_map = false;
+      Log::error("GL_OES_texture_cube_map exposed but glTexGenfOES == NULL!\n"); /*VL_TRAP();*/
+    }
+    if(Has_GL_OES_blend_func_separate && glBlendFuncSeparateOES == 0)
+    {
+      Has_GL_OES_blend_func_separate = false;
+      Log::error("GL_OES_blend_func_separate exposed but glBlendFuncSeparateOES == NULL!\n"); /*VL_TRAP();*/
+    }
+    if (Has_GL_OES_fixed_point && glAlphaFuncxOES == NULL)
+    {
+      Log::warning("GL_OES_fixed_point functions are not exposed with their OES suffix!\n");
+    }
+    if (Has_GL_OES_single_precision && glDepthRangefOES == NULL)
+    {
+      Log::warning("GL_OES_single_precision functions are not exposed with their OES suffix!\n");
+    }
+#endif
+
+    // Helper defines
+
+    // Note that GL extensions pertaining to deprecated features seem to be exposed under Core profiles even if they are not supported (like Has_GL_SGIS_generate_mipmap)
+
+    Has_GLSL = Has_GL_ARB_shading_language_100||Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
+    Has_GLSL_120_Or_More = Has_GL_Version_2_1||Has_GL_Version_3_0||Has_GL_Version_4_0;
+    Has_GLSL_130_Or_More = Has_GL_Version_3_0||Has_GL_Version_4_0;
+    Has_GLSL_140_Or_More = Has_GL_Version_3_1||Has_GL_Version_4_0;
+    Has_GLSL_150_Or_More = Has_GL_Version_3_2||Has_GL_Version_4_0;
+    Has_GLSL_330_Or_More = Has_GL_Version_3_3||Has_GL_Version_4_0;
+    Has_GLSL_400_Or_More = Has_GL_Version_4_0;
+    Has_GLSL_410_Or_More = Has_GL_Version_4_1;
+    Has_Geometry_Shader  = Has_GL_NV_geometry_shader4||Has_GL_EXT_geometry_shader4||Has_GL_ARB_geometry_shader4||Has_GL_Version_3_2||Has_GL_Version_4_0;
+    Has_VBO = Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES;
+    Has_FBO = Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_framebuffer_object||Has_GLES_Version_2_x;
+    Has_PBO = Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object||Has_GL_Version_2_1||Has_GL_Version_3_0||Has_GL_Version_4_0;
+    // We only support GL_ANGLE_framebuffer_blit for GLES, see also:
+    // http://www.khronos.org/registry/gles/extensions/IMG/IMG_multisampled_render_to_texture.txt
+    // http://www.khronos.org/registry/gles/extensions/APPLE/APPLE_framebuffer_multisample.txt
+    Has_FBO_Multisample = Has_GL_Version_4_0||Has_GL_Version_3_0||Has_GL_ARB_framebuffer_object||Has_GL_EXT_framebuffer_multisample||Has_GL_ANGLE_framebuffer_multisample;
+    Has_Cubemap_Textures = Has_GL_ARB_texture_cube_map||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_texture_cube_map||Has_GLES_Version_2_x;
+    Has_Texture_Rectangle = Has_GL_ARB_texture_rectangle||Has_GL_NV_texture_rectangle||Has_GL_Version_3_1||Has_GL_Version_4_0;
+    Has_Texture_Array = Has_GL_EXT_texture_array||Has_GL_Version_3_0||Has_GL_Version_4_0;
+    Has_Texture_Buffer = Has_GL_ARB_texture_buffer_object||Has_GL_EXT_texture_buffer_object||Has_GL_Version_3_1||Has_GL_Version_4_0;
+    Has_Texture_Multisample = Has_GL_ARB_texture_multisample||Has_GL_Version_3_2||Has_GL_Version_4_0;
+    Has_Texture_3D = Has_GL_EXT_texture3D||Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_texture_3D;
+    Has_Multitexture = Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES;
+    Has_Primitive_Restart = Has_GL_Version_3_1||Has_GL_Version_4_0;
+    Has_Occlusion_Query = Has_GL_ARB_occlusion_query||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0;
+    Has_Transform_Feedback = Has_GL_NV_transform_feedback||Has_GL_EXT_transform_feedback||Has_GL_Version_3_0||Has_GL_Version_4_0;
+    Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
+    Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_GL_Compatibility)||Has_GL_Version_1_4||Has_GLES_Version_1_x;
 
     return glGetError() == GL_NO_ERROR;
 }
@@ -256,8 +291,12 @@ int vl::glcheck(const char* file, int line)
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
 void* vl::getGLProcAddress(const GLubyte* name)
 {
-  // mic fixme: use EGL
-  return NULL;
+  void* func = (void*)eglGetProcAddress( (const char*)name );
+  /*if (func)
+    Log::warning( String().printf("+ %s\n", name) );
+  else
+    Log::error( String().printf("- %s\n", name) );*/
+  return func;
 }
 #elif defined(VL_PLATFORM_WINDOWS)
 void* vl::getGLProcAddress(const GLubyte* name)

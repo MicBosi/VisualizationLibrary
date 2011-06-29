@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -468,6 +468,7 @@ namespace vl
   // Material
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glMaterial() and glColorMaterial(), see also http://www.opengl.org/sdk/docs/man/xhtml/glMaterial.xml and http://www.opengl.org/sdk/docs/man/xhtml/glColorMaterial.xml for more information.
+    * Under OpenGL ES 1.x the front material properties are used for both front and back faces.
    * \sa Shader, Effect, Actor, vl::EN_LIGHTING */
   class VLGRAPHICS_EXPORT Material: public RenderState
   {

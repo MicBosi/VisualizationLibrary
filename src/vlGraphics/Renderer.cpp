@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -228,7 +228,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       // --------------- Actor pre-render callback ---------------
 
-      // (mic fixme: document this)
       // here the user has still the possibility to modify the Actor's uniforms
 
       actor->dispatchOnActorRenderStarted( frame_clock, cur_camera, tok->mRenderable, shader, ipass );
@@ -315,7 +314,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
       VL_CHECK_OGL()
 
       if (update_cm || update_tr)
-        projViewTransfCallback()->updateMatrices( update_cm, update_tr, cur_glsl_program, cur_camera, cur_transform, opengl_context->isCompatible() );
+        projViewTransfCallback()->updateMatrices( update_cm, update_tr, cur_glsl_program, cur_camera, cur_transform );
 
       VL_CHECK_OGL()
 
@@ -379,7 +378,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
   // enabled texture unit #0
   VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
-  if (opengl_context->isCompatible())
+  if (Has_GL_Compatibility)
     VL_glClientActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
 
   // disable scissor test

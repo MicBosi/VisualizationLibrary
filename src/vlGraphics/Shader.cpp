@@ -3,7 +3,7 @@
 /*  Visualization Library                                                             */
 /*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2010, Michele Bosi                                             */
+/*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -211,7 +211,7 @@ void Hint::apply(const Camera*, OpenGLContext* gl) const
 {
   VL_CHECK_OGL()
 
-  if( gl->isCompatible() )
+  if( Has_GL_Compatibility )
   {
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, mPerspectiveCorrectionHint ); VL_CHECK_OGL()
     
@@ -222,8 +222,11 @@ void Hint::apply(const Camera*, OpenGLContext* gl) const
       glHint( GL_GENERATE_MIPMAP_HINT, mGenerateMipmapHint ); VL_CHECK_OGL()
     }
   }
-  
-  glHint( GL_POLYGON_SMOOTH_HINT, mPolygonSmoothHint ); VL_CHECK_OGL()
+
+  if ( !Has_GLES_Version_1_x )
+  {
+    glHint( GL_POLYGON_SMOOTH_HINT, mPolygonSmoothHint ); VL_CHECK_OGL()
+  }
   glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint ); VL_CHECK_OGL()
   glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint ); VL_CHECK_OGL()
   
@@ -385,6 +388,8 @@ void Material::setFlatColor(const fvec4& color)
 //------------------------------------------------------------------------------
 void Material::apply(const Camera*, OpenGLContext*) const
 {
+#if defined(VL_OPENGL)
+
   if (mColorMaterialEnabled)
   {
     glColorMaterial(colorMaterialFace(), colorMaterial());
@@ -404,6 +409,17 @@ void Material::apply(const Camera*, OpenGLContext*) const
   glMaterialfv(GL_BACK, GL_SPECULAR, mBackSpecular.ptr());
   glMaterialfv(GL_BACK, GL_EMISSION, mBackEmission.ptr());
   glMaterialf(GL_BACK, GL_SHININESS, mBackShininess);
+
+#else
+
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr()); 
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr()); 
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr()); 
+  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mFrontEmission.ptr()); 
+  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, mFrontShininess); 
+
+#endif
+
 }
 //------------------------------------------------------------------------------
 // LightModel
@@ -845,11 +861,13 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
   VL_CHECK_OGL();
 
   VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureUnit("TexGen::apply",textureUnit()));
+  VL_CHECK(checkTextureUnit("TexGen::apply", textureUnit()));
 
   VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_CHECK_OGL();
+
+#if defined(VL_OPENGL)
 
   if (genModeS() || genModeT() || genModeR() || genModeQ())
   {
@@ -857,12 +875,11 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
     glPushMatrix();
     glLoadIdentity();
 
-    VL_CHECK_OGL();
-
     if (genModeS())
     {
       glEnable(GL_TEXTURE_GEN_S);
       glTexGeni( GL_S, GL_TEXTURE_GEN_MODE, genModeS());
+      // Note: these are not supported by OpenGL ES
       if (genModeS() == TGM_OBJECT_LINEAR) glTexGenfv(GL_S, GL_OBJECT_PLANE, objectPlaneS().ptr());
       if (genModeS() == TGM_EYE_LINEAR)    glTexGenfv(GL_S, GL_EYE_PLANE,       eyePlaneS().ptr());
     }
@@ -873,6 +890,7 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
     {
       glEnable(GL_TEXTURE_GEN_T);
       glTexGeni( GL_T, GL_TEXTURE_GEN_MODE, genModeT());
+      // Note: these are not supported by OpenGL ES
       if (genModeT() == TGM_OBJECT_LINEAR) glTexGenfv(GL_T, GL_OBJECT_PLANE, objectPlaneT().ptr());
       if (genModeT() == TGM_EYE_LINEAR)    glTexGenfv(GL_T, GL_EYE_PLANE,       eyePlaneT().ptr());
     }
@@ -883,6 +901,7 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
     {
       glEnable(GL_TEXTURE_GEN_R);
       glTexGeni( GL_R, GL_TEXTURE_GEN_MODE, genModeR());
+      // Note: these are not supported by OpenGL ES
       if (genModeR() == TGM_OBJECT_LINEAR) glTexGenfv(GL_R, GL_OBJECT_PLANE, objectPlaneR().ptr());
       if (genModeR() == TGM_EYE_LINEAR)    glTexGenfv(GL_R, GL_EYE_PLANE,       eyePlaneR().ptr());
     }
@@ -893,8 +912,9 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
     {
       glEnable(GL_TEXTURE_GEN_Q);
       glTexGeni( GL_Q, GL_TEXTURE_GEN_MODE, genModeQ());
+      // Note: these are not supported by OpenGL ES
       if (genModeQ() == TGM_OBJECT_LINEAR) glTexGenfv(GL_Q, GL_OBJECT_PLANE, objectPlaneQ().ptr());
-      if (genModeQ() == TGM_EYE_LINEAR)    glTexGenfv(GL_Q, GL_EYE_PLANE,       eyePlaneQ().ptr());
+      if (genModeQ() == TGM_EYE_LINEAR)    glTexGenfv(GL_Q, GL_EYE_PLANE,    eyePlaneQ().ptr());
     }
 
     glPopMatrix();
@@ -902,6 +922,8 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
 
   // these needs to be done here to apply a TexGen which has all components disabled
   // and to finish up the TexGen which mixed enabled/disabled components.
+
+  VL_CHECK_OGL();
 
   if (!genModeS())
     glDisable(GL_TEXTURE_GEN_S);
@@ -915,7 +937,32 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
   if (!genModeQ())
     glDisable(GL_TEXTURE_GEN_Q);
 
-  VL_CHECK_OGL();
+#elif defined(VL_OPENGL_ES1)
+
+  VL_CHECK(Has_GL_OES_texture_cube_map);
+
+  if (genModeS() && genModeT() && genModeR())
+  {
+    VL_CHECK( genModeS() == genModeT() && genModeT() == genModeR() ) // Under GLES all three are managed together
+    VL_CHECK( genModeS() == TGM_REFLECTION_MAP || genModeS() == TGM_NORMAL_MAP ) // GLES supports only these
+
+    glMatrixMode(GL_MODELVIEW); VL_CHECK_OGL();
+    glPushMatrix(); VL_CHECK_OGL();
+    glLoadIdentity(); VL_CHECK_OGL(); 
+
+    glEnable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
+    glTexGeni( GL_TEXTURE_GEN_STR_OES, GL_TEXTURE_GEN_MODE, genModeS() ); VL_CHECK_OGL();
+
+    glPopMatrix(); VL_CHECK_OGL();
+  }
+  else    
+  {
+    glTexGeni( GL_TEXTURE_GEN_STR_OES, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP_OES ); VL_CHECK_OGL();
+    glEnable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
+    glDisable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
+  }
+
+#endif
 }
 //-----------------------------------------------------------------------------
 // TextureMatrix
@@ -960,7 +1007,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
     glBindTexture( prev_tex_target, 0 ); VL_CHECK_OGL()
 
     /* GL_TEXTURE_1D_ARRAY and GL_TEXTURE_2D_ARRAY are not supported by the OpenGL fixed function pipeline */
-    if (ctx->isCompatible())
+    if (Has_GL_Compatibility)
     {
       switch(prev_tex_target)
       {
@@ -1018,7 +1065,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
     #endif
 
     // enable the texture
-    if (ctx->isCompatible())
+    if (Has_GL_Compatibility)
     {
       /* GL_TEXTURE_1D_ARRAY and GL_TEXTURE_2D_ARRAY are not supported by the OpenGL fixed function pipeline */
       switch(texture()->dimension())
