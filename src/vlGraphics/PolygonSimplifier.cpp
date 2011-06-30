@@ -141,7 +141,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
 
   pvec3->resize( (int)verts.size() );
   pint->indices()->resize( (int)indices.size() );
-  memcpy( pvec3->ptr(),               &verts[0],   sizeof(verts[0])   * verts.size() );
+  memcpy( pvec3->ptr(),           &verts[0],   sizeof(verts[0])   * verts.size() );
   memcpy( pint->indices()->ptr(), &indices[0], sizeof(indices[0]) * indices.size() );
 
   // install draw call
