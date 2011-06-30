@@ -297,7 +297,7 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("OpenGL version: %s\n") << glGetString(GL_VERSION) );
     Log::print( Say("OpenGL vendor: %s\n") << glGetString(GL_VENDOR) );
     Log::print( Say("OpenGL renderer: %s\n") << glGetString(GL_RENDERER) );
-    Log::print( Say("OpenGL profile: %s\n") << (Has_GL_Compatibility ? "Compatible" : "Core") );
+    Log::print( Say("OpenGL profile: %s\n") << (Has_Fixed_Function_Pipeline ? "Compatible" : "Core") );
 
     if (Has_GLSL)
       Log::print( Say("GLSL version: %s\n") << glGetString(GL_SHADING_LANGUAGE_VERSION) );
@@ -616,7 +616,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
 //------------------------------------------------------------------------------
 void OpenGLContext::setupDefaultRenderStates()
 {
-  if ( Has_GL_Compatibility )
+  if ( Has_Fixed_Function_Pipeline )
   {
     mDefaultRenderStates[RS_AlphaFunc] = new AlphaFunc;
     mDefaultRenderStates[RS_Fog] = new Fog;
@@ -685,7 +685,7 @@ void OpenGLContext::setupDefaultRenderStates()
     if (i < textureUnitCount())
     {
       mDefaultRenderStates[RS_TextureUnit0   + i] = new TextureUnit(i);
-      if( Has_GL_Compatibility )
+      if( Has_Fixed_Function_Pipeline )
       {
         // TexGen under GLES is supported only if GL_OES_texture_cube_map is present
         if(!Has_GLES_Version_1_x || Has_GL_OES_texture_cube_map)
@@ -735,7 +735,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   for( unsigned i=0; i<EN_EnableCount; ++i )
   {
     // These are enabled in Core profiles
-    if (!Has_GL_Compatibility)
+    if (!Has_Fixed_Function_Pipeline)
     {
       // "Non-sprite points - Enable/Disable targets POINT_SMOOTH and POINT_-
       // SPRITE, and all associated state. Point rasterization is always performed as
@@ -789,7 +789,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
-  if (Has_GL_Compatibility)
+  if (Has_Fixed_Function_Pipeline)
   {
     int max_lights = 0;
     glGetIntegerv(GL_MAX_LIGHTS, &max_lights);
@@ -842,7 +842,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       ok = false;
     }
 
-    if (Has_GL_Compatibility)
+    if (Has_Fixed_Function_Pipeline)
     {
       active_tex = -1;
       glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
@@ -892,7 +892,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     VL_CHECK_OGL()
     VL_glActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
 
-    if (Has_GL_Compatibility)
+    if (Has_Fixed_Function_Pipeline)
     {
 	    VL_glClientActiveTexture(GL_TEXTURE0+coord_count); VL_CHECK_OGL()
 
@@ -963,7 +963,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Texture_Rectangle)
     {
-      if (Has_GL_Compatibility && glIsEnabled(GL_TEXTURE_RECTANGLE))
+      if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_TEXTURE_RECTANGLE))
       {
         if (verbose)
           vl::Log::error( Say("GL_TEXTURE_RECTANGLE was enabled on texture unit #%n!\n") << coord_count );
@@ -984,7 +984,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Texture_3D)
     {
-      if (Has_GL_Compatibility && glIsEnabled(GL_TEXTURE_3D))
+      if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_TEXTURE_3D))
       {
         if (verbose)
           vl::Log::error( Say("GL_TEXTURE_3D was enabled on texture unit #%n!\n") << coord_count );
@@ -1005,7 +1005,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (Has_Cubemap_Textures)
     {
-      if (Has_GL_Compatibility && glIsEnabled(GL_TEXTURE_CUBE_MAP))
+      if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_TEXTURE_CUBE_MAP))
       {
         if (verbose)
           vl::Log::error( Say("GL_TEXTURE_CUBE_MAP was enabled on texture unit #%n!\n") << coord_count );
@@ -1083,7 +1083,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       }
     }
 
-    if (Has_GL_Compatibility)
+    if (Has_Fixed_Function_Pipeline)
     {
 #if defined(VL_OPENGL)
 	    if (glIsEnabled(GL_TEXTURE_GEN_S))
@@ -1159,7 +1159,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     }
   }
 
-  if (Has_GL_Compatibility && glIsEnabled(GL_COLOR_ARRAY)) // includes GLES 1.x
+  if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_COLOR_ARRAY)) // includes GLES 1.x
   {
     if (verbose)
       vl::Log::error( "GL_COLOR_ARRAY was enabled!\n");
@@ -1183,7 +1183,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     ok = false;
   }
 
-  if (Has_GL_Compatibility && glIsEnabled(GL_NORMAL_ARRAY)) // includes GLES 1.x
+  if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_NORMAL_ARRAY)) // includes GLES 1.x
   {
     if (verbose)
       vl::Log::error( "GL_NORMAL_ARRAY was enabled!\n");
@@ -1191,7 +1191,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     ok = false;
   }
 
-  if (Has_GL_Compatibility && glIsEnabled(GL_VERTEX_ARRAY)) // includes GLES 1.x
+  if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_VERTEX_ARRAY)) // includes GLES 1.x
   {
     if (verbose)
       vl::Log::error( "GL_VERTEX_ARRAY was enabled!\n");
@@ -1497,7 +1497,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
 
       VL_glBindBuffer(GL_ARRAY_BUFFER, 0); VL_CHECK_OGL();
 
-      if(Has_GL_Compatibility)
+      if(Has_Fixed_Function_Pipeline)
       {
         // iterate backwards so the last active is #0
         for ( int i=mTextureUnitCount; i--; )
