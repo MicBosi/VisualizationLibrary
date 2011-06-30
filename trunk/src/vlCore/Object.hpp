@@ -57,6 +57,9 @@ namespace vl
 
     //! Returns the name of the class.
     virtual const char* className() const { return "vl::Object"; }
+    
+    //! Returns true if 'name' equals className().
+    bool isClassName(const char* name);
 
     //! Constructor.
     Object()
