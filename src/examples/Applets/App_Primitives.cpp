@@ -52,6 +52,7 @@ public:
     fx->shader()->setRenderState( new Light(0) );
     fx->shader()->gocMaterial()->setDiffuse(vl::royalblue);
     
+#if defined(VL_OPENGL)
     /* wireframe shader */
     fx->lod(0)->push_back( new Shader );
     fx->shader(0,1)->enable(EN_BLEND);
@@ -60,6 +61,7 @@ public:
     fx->shader(0,1)->enable(EN_POLYGON_OFFSET_LINE);
     fx->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
+#endif
 
     /* create our primitives */
     mGeometries.push_back( vl::makeBox( vec3( 0, 0, 0 ), objdim*0.8f, objdim*0.8f, objdim*0.8f )  );
