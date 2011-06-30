@@ -119,12 +119,17 @@ namespace vl
     void setNormal(const fvec3& normal) 
     { 
       mNormal = normal;
-      #if defined(VL_OPENGL_ES_1_x) || defined(VL_OPENGL_ES_2_x)
-        // functionality not supported by GLES 1.x and 2.x
-        VL_CHECK(0);
+      #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+        Log::warning("Geometry::setNormal(): constant vertex attributes not supported under OpenGL ES! Falling back to vertex arrays.\n");
+        VL_CHECK(vertexArray() && vertexArray()->size())
+        ref<ArrayFloat3> norm_array = new ArrayFloat3;
+        norm_array->resize(vertexArray()->size());
+        for(int i=0; i<norm_array->size(); ++i)
+          norm_array->at(i) = normal;
+        setNormalArray(norm_array.get());
       #endif
     }
-
+    
     //! Geometry normal used when no normal array is defined.
     const fvec3& normal() { return mNormal; }
 
@@ -132,9 +137,14 @@ namespace vl
     void setColor(const fvec4& color) 
     { 
       mColor = color; 
-      #if defined(VL_OPENGL_ES_1_x) || defined(VL_OPENGL_ES_2_x)
-        // functionality not supported by GLES 1.x and 2.x
-        VL_CHECK(0);
+      #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+        Log::warning("Geometry::setColor(): constant vertex attributes not supported under OpenGL ES! Falling back to vertex arrays.\n");
+        VL_CHECK(vertexArray() && vertexArray()->size())
+        ref<ArrayFloat4> color_array = new ArrayFloat4;
+        color_array->resize(vertexArray()->size());
+        for(int i=0; i<color_array->size(); ++i)
+          color_array->at(i) = color;
+        setColorArray(color_array.get());
       #endif
     }
 
@@ -145,9 +155,14 @@ namespace vl
     void setSecondaryColor(const fvec4& color) 
     { 
       mSecondaryColor = color; 
-      #if defined(VL_OPENGL_ES_1_x) || defined(VL_OPENGL_ES_2_x)
-        // functionality not supported by GLES 1.x and 2.x
-        VL_CHECK(0);
+      #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+        Log::warning("Geometry::setSecondaryColor(): constant vertex attributes not supported under OpenGL ES! Falling back to vertex arrays.\n");
+        VL_CHECK(vertexArray() && vertexArray()->size())
+        ref<ArrayFloat4> sec_color_array = new ArrayFloat4;
+        sec_color_array->resize(vertexArray()->size());
+        for(int i=0; i<sec_color_array->size(); ++i)
+          sec_color_array->at(i) = color;
+        setSecondaryColorArray(sec_color_array.get());
       #endif
     }
 
