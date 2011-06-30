@@ -378,7 +378,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
   // enabled texture unit #0
   VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
-  if (Has_GL_Compatibility)
+  if (Has_Fixed_Function_Pipeline)
     VL_glClientActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
 
   // disable scissor test

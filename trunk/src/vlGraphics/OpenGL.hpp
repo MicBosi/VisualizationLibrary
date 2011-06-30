@@ -42,7 +42,7 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2_x;
   VLGRAPHICS_EXPORT extern bool Has_GLES;
 
-  VLGRAPHICS_EXPORT extern bool Has_GL_Compatibility;
+  VLGRAPHICS_EXPORT extern bool Has_Fixed_Function_Pipeline;
 
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_1;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_2;

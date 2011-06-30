@@ -211,7 +211,7 @@ void Hint::apply(const Camera*, OpenGLContext* gl) const
 {
   VL_CHECK_OGL()
 
-  if( Has_GL_Compatibility )
+  if( Has_Fixed_Function_Pipeline )
   {
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, mPerspectiveCorrectionHint ); VL_CHECK_OGL()
     
@@ -1040,7 +1040,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
     glBindTexture( prev_tex_target, 0 ); VL_CHECK_OGL()
 
     /* GL_TEXTURE_1D_ARRAY and GL_TEXTURE_2D_ARRAY are not supported by the OpenGL fixed function pipeline */
-    if (Has_GL_Compatibility)
+    if (Has_Fixed_Function_Pipeline)
     {
       switch(prev_tex_target)
       {
@@ -1098,7 +1098,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
 #endif
 
     // enable the texture
-    if (Has_GL_Compatibility)
+    if (Has_Fixed_Function_Pipeline)
     {
       /* GL_TEXTURE_1D_ARRAY and GL_TEXTURE_2D_ARRAY are not supported by the OpenGL fixed function pipeline */
       switch(texture()->dimension())

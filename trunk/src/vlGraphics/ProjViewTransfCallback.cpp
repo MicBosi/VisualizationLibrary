@@ -47,7 +47,7 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
 
   // Also, don't use the fixed function pipeline if we don't have it!
 
-  bool use_fixed_function_matrices = Has_GL_Compatibility;
+  bool use_fixed_function_matrices = Has_Fixed_Function_Pipeline;
 
   // projection matrix
   if ( cam_changed )
