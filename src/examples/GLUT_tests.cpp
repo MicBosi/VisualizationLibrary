@@ -44,9 +44,6 @@ public:
     /* used to display the application title next to FPS counter */
     applet->setAppletName(title);
 
-    /* open a console so we can see the applet's output on stdout */
-    showWin32Console();
-
     /* install Visualization Library shutdown function */
     atexit( vlGLUT::atexit_visualization_library_shutdown );
 
