@@ -109,16 +109,18 @@ void SceneManagerPortals::renderPortal(Portal* portal)
     vl::ref<vl::Geometry> portal_geom = new vl::Geometry;
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     portal_geom->setVertexArray(vert_array.get());
-    portal_geom->setColor(portal_color);
     vert_array->resize(portal->geometry().size());
+    portal_geom->setColor(portal_color);
     for(unsigned int i=0; i<portal->geometry().size(); ++i)
       vert_array->at(i) = portal->geometry()[i];
     portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, (int)vert_array->size()) );
+    // mic fixme: this is weird!
+#if defined(VL_OPENGL)
     portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, (int)vert_array->size()) );
     portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, (int)vert_array->size()) );
     portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_POLYGON,   0, (int)vert_array->size()) );
-    mTempActors.push_back( new vl::Actor(portal_geom.get(), portal_fx.get(), NULL) );
-    mPortalActorMap[portal] = mTempActors.back();
+#endif
+    mPortalActorMap[portal] = new vl::Actor(portal_geom.get(), portal_fx.get(), NULL);
   }
 }
 //-----------------------------------------------------------------------------
@@ -140,12 +142,18 @@ void SceneManagerPortals::extractVisibleActors(ActorCollection& list, const Came
     {
       ++mVisitTick;
       mTempActors.clear();
-      mPortalActorMap.clear();
       mFrustumStack.clear();
 
       mFrustumStack.push_back(camera->frustum());
       start->executeCallbacks(camera,this,NULL);
       visitSector(NULL, start, camera->inverseViewMatrix().getT(), camera);
+
+      // insert portal actors
+      if (showPortals())
+      {
+        for(std::map<Portal*, ref<Actor> >::const_iterator it = mPortalActorMap.begin(); it != mPortalActorMap.end(); ++it)
+          mTempActors.push_back(it->second);
+      }
 
       // avoid reporting duplicates
       std::sort(mTempActors.begin(), mTempActors.end());
