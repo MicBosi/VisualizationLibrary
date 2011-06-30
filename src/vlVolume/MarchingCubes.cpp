@@ -62,7 +62,13 @@ MarchingCubes::MarchingCubes()
   mVertsArray = new ArrayFloat3;
   mNormsArray = new ArrayFloat3;
   mColorArray = new ArrayFloat4;
+
+  // OpenGL ES does not support DrawElementsUInt
+#if defined(VL_OPENGL)
   mDrawElements = new DrawElementsUInt(PT_TRIANGLES);
+#else
+  mDrawElements = new DrawElementsUShort(PT_TRIANGLES);
+#endif
   mVolumeInfo.setAutomaticDelete(false);
   mHighQualityNormals = true;
 }
