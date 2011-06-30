@@ -44,7 +44,7 @@ public:
     if (!vl::defLoadWriterManager()->canLoad("md2"))
     {
       vl::Log::error("App_MorphAnimation requires VL_IO_2D_MD2.\n");
-      vl::Time::sleep(3000);
+      vl::Time::sleep(2000);
       exit(1);
     }
 
@@ -73,6 +73,7 @@ public:
     sceneManager()->tree()->addActor(ground.get(), ground_fx.get() );
 
     vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/3rdparty/pknight/tris.md2");
+    VL_CHECK(res_db && res_db->get<vl::Geometry>(0))
 
     vl::ref<vl::MorphingCallback> morph_cb1 = new vl::MorphingCallback;
     morph_cb1->init(res_db.get());

@@ -159,7 +159,7 @@ public:
     texc->at(2) = vl::fvec2( 1.0f, 1.0f );
     texc->at(3) = vl::fvec2( 0.0f, 1.0f );
     // quad primitive
-    quad->drawCalls()->push_back( new vl::DrawArrays(vl::PT_QUADS,0,4) );
+    quad->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLE_FAN, 0, 4) );
     return quad;
   }
 

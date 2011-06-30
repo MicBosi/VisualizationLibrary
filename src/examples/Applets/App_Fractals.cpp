@@ -147,7 +147,7 @@ public:
     if (!Has_GLSL)
     {
       Log::error("OpenGL Shading Language not supported.\n");
-      Time::sleep(3000);
+      Time::sleep(2000);
       exit(1);
     }
 

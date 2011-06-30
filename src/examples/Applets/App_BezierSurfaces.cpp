@@ -44,8 +44,8 @@ public:
   virtual String appletInfo()
   {
     return BaseDemo::appletInfo() + 
-    "Up/Down Arrow = increase/decrease the Bezier surface tessellation detail.\n" +
-    "Space         = toggle control points visibility.\n" +
+    "- Up/Down Arrow = increase/decrease the Bezier surface tessellation detail.\n" +
+    "- Space         = toggle control points visibility.\n" +
     "\n";
   }
 
@@ -56,7 +56,6 @@ public:
     /* 2 pass shader: 1 = solid, 2 = wireframe */
 
     ref<Effect> fx = new Effect;
-    fx->lod(0)->push_back( new Shader);
 
     fx->shader()->enable(EN_LIGHTING);
     fx->shader()->gocLightModel()->setTwoSide(true);
@@ -64,11 +63,14 @@ public:
     fx->shader()->gocLight(0)->setLinearAttenuation(0.025f);
     fx->shader()->gocMaterial()->setDiffuse(royalblue);
 
+#if defined(VL_OPENGL)
+    fx->lod(0)->push_back( new Shader);
     fx->shader(0,1)->enable(EN_DEPTH_TEST);
     fx->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
     fx->shader(0,1)->enable(EN_POLYGON_OFFSET_LINE);
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx->shader(0,1)->gocDepthMask()->set(false);
+#endif
 
     /* Generate random Bézier patches
 
@@ -166,8 +168,10 @@ public:
     // Add the Bézier surface to our scene
     sceneManager()->tree()->addActor(mBezier.get(), fx.get(), NULL);
 
+#if defined(VL_OPENGL)
     // Show the control points
     showPatchControlPoints(mBezier.get());
+#endif
 
     // position the camera to nicely see the teapot in the scene
     trackball()->adjustView( sceneManager(), vec3(0,0,1)/*direction*/, vec3(0,1,0)/*up*/, 1.0f/*bias*/ );
@@ -249,7 +253,7 @@ public:
         verts.push_back((fvec3)p->at(ix+3,iy+2)); colos.push_back(white);
         verts.push_back((fvec3)p->at(ix+3,iy+3)); colos.push_back(red);
 
-        ref<DrawArrays> da = new DrawArrays(PT_POINTS,istart,16);
+        ref<DrawArrays> da = new DrawArrays(PT_POINTS, istart,16);
         ref<DrawElementsUInt> de = new DrawElementsUInt(PT_QUADS);
         de->indices()->resize(4*9);
         unsigned int quads[] = { 0,1,5,4, 4,5,9,8, 8,9,13,12, 1,2,6,5, 5,6,10,9, 9,10,14,13, 2,3,7,6, 6,7,11,10, 10,11,15,14 };
@@ -258,6 +262,7 @@ public:
         memcpy(de->indices()->ptr(), quads, sizeof(quads));
         geom->drawCalls()->push_back(de.get());
         geom->drawCalls()->push_back(da.get());
+        geom->convertDrawCallsForGLES();
       }
     }
 

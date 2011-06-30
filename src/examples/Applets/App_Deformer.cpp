@@ -66,17 +66,12 @@ public:
     trackball()->setEnabled(false);
     ghostCameraManipulator()->setEnabled(false);
 
-    // dummy empty image
-    mImage = new vl::Image(8,8,0, 1, vl::IF_RGBA, vl::IT_UNSIGNED_BYTE);
-    memset(mImage->pixels(), 0xFF, mImage->requiredMemory());
-
     // texture setup
     mTexture = new vl::Texture;
     mTexture->getTexParameter()->setWrapS(vl::TPW_CLAMP);
     mTexture->getTexParameter()->setWrapT(vl::TPW_CLAMP);
     mTexture->getTexParameter()->setMinFilter(vl::TPF_LINEAR);
     mTexture->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
     mTextureMatrix = new vl::TextureMatrix(0);
 
     vl::ref<vl::Effect> image_fx = new vl::Effect;
@@ -100,6 +95,7 @@ public:
     mTransform = new vl::Transform;
     rendering()->as<vl::Rendering>()->transform()->addChild(mTransform.get());
     sceneManager()->tree()->addActor(mGrid.get(), image_fx.get(), mTransform.get());
+    mGrid->setColor(vl::white);
 
     mCursorTransform = new vl::Transform;
     rendering()->as<vl::Rendering>()->transform()->addChild(mCursorTransform.get());
@@ -367,7 +363,7 @@ public:
       mImage->contrastHounsfieldAuto();
 
     mTexture->destroyTexture();
-    mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
+    mTexture->prepareTexture2D(mImage.get(), vl::TF_UNKNOWN);
 
     // perfectly center the texture texels (see GL_CLAMP documentation)
     vl::mat4 m;
@@ -389,16 +385,18 @@ public:
     rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
     rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
 
-    vl::mat4 m;
-    m.translate(w/2.0f, h/2.0f, 0.0f);
+    if (mImage)
+    {
+      vl::mat4 m;
+      m.translate(w/2.0f, h/2.0f, 0.0f);
 
-    float x_scaling = (float)w / mImage->width();
-    float y_scaling = (float)h / mImage->height();
-    float scaling   = x_scaling < y_scaling ? x_scaling : y_scaling;
+      float x_scaling = (float)w / mImage->width();
+      float y_scaling = (float)h / mImage->height();
+      float scaling   = x_scaling < y_scaling ? x_scaling : y_scaling;
 
-    m = m * vl::mat4::getScaling(scaling*mImage->width(), scaling*mImage->height(), scaling);
-    mTransform->setLocalMatrix(m);
-    // openglContext()->update();
+      m = m * vl::mat4::getScaling(scaling*mImage->width(), scaling*mImage->height(), scaling);
+      mTransform->setLocalMatrix(m);
+    }
   }
 
 protected:

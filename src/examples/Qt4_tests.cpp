@@ -51,9 +51,6 @@ public:
     /* open a console so we can see the applet's output on stdout */
     showWin32Console();
 
-    /* init Visualization Library */
-    vl::VisualizationLibrary::init();
-
     /* create a native Qt4 window */
     vl::ref<vlQt4::Qt4Widget> qt4_window = new vlQt4::Qt4Widget;
 
@@ -70,9 +67,6 @@ public:
 
     /* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
     qt4_window = NULL;
-
-    /* shutdown Visualization Library */
-    vl::VisualizationLibrary::shutdown();
   }
 
 public:

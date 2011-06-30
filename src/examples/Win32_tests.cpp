@@ -49,9 +49,6 @@ public:
     /* open a console so we can see the applet's output on stdout */
     showWin32Console();
 
-    /* init Visualization Library */
-    VisualizationLibrary::init();
-
     /* create a native Win32 window */
     ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
 
@@ -89,9 +86,6 @@ public:
 
     /* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
     win32_window = NULL;
-
-    /* shutdown Visualization Library */
-    VisualizationLibrary::shutdown();
   }
 };
 //-----------------------------------------------------------------------------

@@ -90,7 +90,7 @@ public:
     if (!vl::Has_GL_EXT_draw_instanced)
     {
       vl::Log::error("GL_EXT_draw_instanced not supported.\n");
-      vl::Time::sleep(3000);
+      vl::Time::sleep(2000);
       exit(1);
     }
 

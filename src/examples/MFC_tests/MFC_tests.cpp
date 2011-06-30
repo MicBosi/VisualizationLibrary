@@ -55,9 +55,6 @@ public:
     /* open a console so we can see the program's output on stdout */
     vl::showWin32Console();
 
-    /* init Visualization Library */
-    vl::VisualizationLibrary::init();
-
     setupApplet(program, mVLCWin, bk_color, eye, center);
 
     /* Initialize the OpenGL context and window properties */
@@ -101,9 +98,6 @@ int MFC_Test::ExitInstance()
 
   /* destroy the window and OpenGL rendering context */
   mVLCWin = NULL;
-
-  /* shut down Visualization Library*/
-  vl::VisualizationLibrary::shutdown();
 
   return 0;
 }

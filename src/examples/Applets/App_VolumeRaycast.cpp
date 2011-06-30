@@ -97,12 +97,12 @@ public:
   virtual String appletInfo()
   {
     return BaseDemo::appletInfo() + 
-    "Left/Right Arrow: change raycast technique.\n" +
-    "Up/Down Arrow: changes SAMPLE_STEP.\n" +
-    "L: toggles lights (useful only for isosurface).\n" +
-    "Mouse Wheel: change the bias used to render the volume.\n" +
+    "- Left/Right Arrow: change raycast technique.\n" +
+    "- Up/Down Arrow: changes SAMPLE_STEP.\n" +
+    "- L: toggles lights (useful only for isosurface).\n" +
+    "- Mouse Wheel: change the bias used to render the volume.\n" +
     "\n" +
-    "Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
+    "- Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
     "\n";
   }
 
@@ -123,8 +123,8 @@ public:
     if ( !Has_GLSL )
     {
       vl::Log::error( "OpenGL Shading Language not supported.\n" );
-      vl::Time::sleep( 3000 );
-      exit( 1 );
+      vl::Time::sleep(2000);
+      exit(1);
     }
 
     mLight0 = new Light( 0 );
