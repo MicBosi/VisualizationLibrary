@@ -235,7 +235,13 @@ namespace vl
     ref<ArrayFloat3> mVertsArray;
     ref<ArrayFloat3> mNormsArray;
     ref<ArrayFloat4> mColorArray;
+    
+    // OpenGL ES does not support DrawElementsUInt
+#if defined(VL_OPENGL)
     ref<DrawElementsUInt> mDrawElements;
+#else
+    ref<DrawElementsUShort> mDrawElements;
+#endif
 
   protected:
     void computeEdges(Volume*, float threshold);
