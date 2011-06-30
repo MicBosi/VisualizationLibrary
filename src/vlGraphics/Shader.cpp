@@ -842,7 +842,7 @@ void TexEnv::apply(const Camera*, OpenGLContext*) const
   }
 
   // no need to do it if point sprite is disabled but we cannot know it here
-  if (Has_GL_Version_2_0||Has_GL_ARB_point_sprite)
+  if (Has_Point_Sprite)
   {
     glTexEnvi( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, mPointSpriteCoordReplace ? GL_TRUE : GL_FALSE ); VL_CHECK_OGL()
   }
@@ -959,13 +959,26 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
 
 #elif defined(VL_OPENGL_ES1)
 
-  VL_CHECK(Has_GL_OES_texture_cube_map);
+  if ( genModeS() != TGM_DISABLED && genModeS() != TGM_REFLECTION_MAP && genModeS() != TGM_NORMAL_MAP )
+  {
+    Log::bug("OpenGL ES does not support GL_SPHERE_MAP, GL_EYE_LINEAR or GL_OBJECT_LINEAR texture coordinate generation!\n"); VL_TRAP();
+    return;
+  }
+
+  if ( genModeS() != genModeT() || genModeT() != genModeR() )
+  {
+    Log::bug("OpenGL ES requires the same texture coordinate generation mode for S, T and R!\n"); VL_TRAP();
+    return;
+  }
+
+  if(!Has_GL_OES_texture_cube_map)
+  {
+    Log::bug("Use of vl::TexGen under OpenGL ES requires GL_OES_texture_cube_map extension!\n"); VL_TRAP();
+    return;
+  }
 
   if (genModeS() && genModeT() && genModeR())
   {
-    VL_CHECK( genModeS() == genModeT() && genModeT() == genModeR() ) // Under GLES all three are managed together
-    VL_CHECK( genModeS() == TGM_REFLECTION_MAP || genModeS() == TGM_NORMAL_MAP ) // GLES supports only these
-
     glMatrixMode(GL_MODELVIEW); VL_CHECK_OGL();
     glPushMatrix(); VL_CHECK_OGL();
     glLoadIdentity(); VL_CHECK_OGL(); 
