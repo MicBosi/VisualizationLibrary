@@ -747,8 +747,30 @@ bool OpenGLContext::isCleanState(bool verbose)
         continue;
     }
 
+#if defined(VL_OPENGL_ES1)
+      // skip unsupported enables
+      switch(TranslateEnable[i])
+      {
+      case GL_COLOR_SUM:
+      case GL_LINE_STIPPLE:
+      case GL_POLYGON_STIPPLE:
+      case GL_POLYGON_SMOOTH:
+      case GL_POLYGON_OFFSET_LINE:
+      case GL_POLYGON_OFFSET_POINT:
+      case GL_PROGRAM_POINT_SIZE:
+      case GL_VERTEX_PROGRAM_TWO_SIDE:
+      case GL_TEXTURE_CUBE_MAP_SEAMLESS:
+        continue;
+      }
+#endif
+
     // Note: for simplicity we allow GL to generate errors for unsupported enables.
     GLboolean enabled = glIsEnabled( TranslateEnable[i] ); /* VL_CHECK_OGL(); */
+
+    // mic fixme
+    //if(glGetError() != GL_NO_ERROR)
+		  //vl::Log::error( Say("Capability %s!\n") << TranslateEnableString[i] );
+    //VL_CHECK_OGL();
 
     // The order is important!
     if (glGetError() == GL_NO_ERROR && enabled)
