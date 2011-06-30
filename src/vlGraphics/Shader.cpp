@@ -681,7 +681,9 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
 
   if (dimension != TD_TEXTURE_BUFFER && dimension != TD_TEXTURE_2D_MULTISAMPLE && dimension != TD_TEXTURE_2D_MULTISAMPLE_ARRAY)
   {
+#if defined(VL_OPENGL)
     glTexParameterfv(dimension, GL_TEXTURE_BORDER_COLOR, borderColor().ptr()); VL_CHECK_OGL()
+#endif
     glTexParameteri(dimension, GL_TEXTURE_MIN_FILTER, minFilter()); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_MAG_FILTER, magFilter()); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_WRAP_S, wrapS()); VL_CHECK_OGL()
@@ -1036,7 +1038,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
     glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
 
     // if we request mipmapped filtering then we must have a mip-mapped texture.
-    #ifndef NDEBUG
+#if !defined(NDEBUG) && defined(VL_OPENGL) // glGetTexLevelParameter* is not supported under OpenGL ES
     if (texture()->dimension() != TD_TEXTURE_BUFFER)
     {
       GLint width = 0;
@@ -1062,7 +1064,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
         }
       }
     }
-    #endif
+#endif
 
     // enable the texture
     if (Has_GL_Compatibility)
