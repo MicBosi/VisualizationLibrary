@@ -649,6 +649,8 @@ namespace vl
 
     ref<Geometry> prepareGeometry(const std::vector<dvec2>& ln);
 
+    ref<Geometry> prepareGeometryPolyToTriangles(const std::vector<dvec2>& ln);
+  
     Scissor* resolveScissor(int x, int y, int width, int height);
 
     Texture* resolveTexture(Image* image);
