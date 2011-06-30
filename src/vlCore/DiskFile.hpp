@@ -35,7 +35,7 @@
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/DiskDirectory.hpp>
 
-#ifdef _WIN32
+#ifdef VL_PLATFORM_WINDOWS
   #include <windows.h>
 #else
   #include <sys/types.h>
