@@ -56,14 +56,14 @@ Actor* VectorGraphics::drawLines(const std::vector<dvec2>& ln)
   // generate texture coords
   if (mState.mImage)
   {
-    ref<ArrayFloat1> tex_array = new ArrayFloat1;
+    ref<ArrayFloat2> tex_array = new ArrayFloat2;
     tex_array->resize(geom->vertexArray()->size());
     float u1 = 1.0f / mState.mImage->width() * 0.5f;
     float u2 = 1.0f - 1.0f / mState.mImage->width() * 0.5f;
     for(size_t i=0; i<tex_array->size(); i+=2)
     {
-      tex_array->at(i+0) = u1;
-      tex_array->at(i+1) = u2;
+      tex_array->at(i+0) = fvec2(u1, 0);
+      tex_array->at(i+1) = fvec2(u2, 0);
     }
     // generate geometry
     geom->setTexCoordArray(0, tex_array.get());
@@ -101,11 +101,11 @@ Actor* VectorGraphics::drawLineLoop(const std::vector<dvec2>& ln)
 Actor* VectorGraphics::fillPolygon(const std::vector<dvec2>& poly)
 {
   // fill the vertex position array
-  ref<Geometry> geom = prepareGeometry(poly);
+  ref<Geometry> geom = prepareGeometryPolyToTriangles(poly);
   // generate texture coords
   generatePlanarTexCoords(geom.get(), poly);
   // issue the primitive
-  geom->drawCalls()->push_back( new DrawArrays(PT_POLYGON, 0, (int)poly.size()) );
+  geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLES, 0, (int)geom->vertexArray()->size()) );
   // add the actor
   return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
@@ -242,7 +242,14 @@ Actor* VectorGraphics::fillQuad(double left, double bottom, double right, double
   quad.push_back(dvec2(left,top));
   quad.push_back(dvec2(right,top));
   quad.push_back(dvec2(right,bottom));
-  return fillQuads(quad);
+  // fill the vertex position array
+  ref<Geometry> geom = prepareGeometry(quad);
+  // generate texture coords
+  generateQuadsTexCoords(geom.get(), quad);
+  // issue the primitive
+  geom->drawCalls()->push_back( new DrawArrays(PT_TRIANGLE_FAN, 0, (int)quad.size()) );
+  // add the actor
+  return addActor( new Actor(geom.get(), currentEffect(), NULL) );
 }
 //-----------------------------------------------------------------------------
 void VectorGraphics::continueDrawing()
@@ -629,18 +636,37 @@ void VectorGraphics::generateLinearTexCoords(Geometry* geom)
 {
   if (mState.mImage)
   {
-    ref<ArrayFloat1> tex_array = new ArrayFloat1;
+    ref<ArrayFloat2> tex_array = new ArrayFloat2;
     tex_array->resize(geom->vertexArray()->size());
     float u1 = 1.0f / mState.mImage->width() * 0.5f;
     float u2 = 1.0f - 1.0f / mState.mImage->width() * 0.5f;
     for(size_t i=0; i<tex_array->size(); ++i)
     {
       float t = (float)i/(tex_array->size()-1);
-      tex_array->at(i) = u1 * (1.0f-t) + u2 * t;
+      tex_array->at(i).s() = u1 * (1.0f-t) + u2 * t;
+      tex_array->at(i).t() = 0;
     }
     // generate geometry
     geom->setTexCoordArray(0, tex_array.get());
   }
+}
+//-----------------------------------------------------------------------------
+ref<Geometry> VectorGraphics::prepareGeometryPolyToTriangles(const std::vector<dvec2>& ln)
+{
+  // transform the lines
+  ref<ArrayFloat3> pos_array = new ArrayFloat3;
+  pos_array->resize( (ln.size()-2) * 3 );
+  // transform done using high precision
+  for(unsigned i=0, itri=0; i<ln.size()-2; ++i, itri+=3)
+  {
+    pos_array->at(itri+0) = (fvec3)(matrix() * dvec3(ln[0].x(), ln[0].y(), 0));
+    pos_array->at(itri+1) = (fvec3)(matrix() * dvec3(ln[i+1].x(), ln[i+1].y(), 0));
+    pos_array->at(itri+2) = (fvec3)(matrix() * dvec3(ln[i+2].x(), ln[i+2].y(), 0));
+  }
+  // generate geometry
+  ref< Geometry > geom = new Geometry;
+  geom->setVertexArray(pos_array.get());
+  return geom;
 }
 //-----------------------------------------------------------------------------
 ref<Geometry> VectorGraphics::prepareGeometry(const std::vector<dvec2>& ln)
@@ -721,8 +747,12 @@ Effect* VectorGraphics::currentEffect(const State& vgs)
     // line stipple
     if ( vgs.mLineStipple != 0xFFFF )
     {
+#if defined(VL_OPENGL)
       shader->gocLineStipple()->set(1, vgs.mLineStipple);
       shader->enable(EN_LINE_STIPPLE);
+#else
+      Log::error("vl::VectorGraphics: line stipple not supported under OpenGL ES. Try using a stipple texture instead.\n");
+#endif
     }
     // line width
     if (vgs.mLineWidth != 1.0f)
@@ -758,8 +788,12 @@ Effect* VectorGraphics::currentEffect(const State& vgs)
     };
     if ( memcmp(vgs.mPolyStipple, solid_stipple, 32*32/8) != 0 )
     {
+#if defined(VL_OPENGL)
       shader->gocPolygonStipple()->set(vgs.mPolyStipple);
       shader->enable(EN_POLYGON_STIPPLE);
+#else
+      Log::error("vl::VectorGraphics: polygon stipple not supported under OpenGL ES. Try using a stipple texture instead.\n");
+#endif
     }
     // blending equation and function
     shader->gocBlendEquation()->set(vgs.mBlendEquationRGB, vgs.mBlendEquationAlpha);
@@ -786,7 +820,7 @@ Effect* VectorGraphics::currentEffect(const State& vgs)
     if (vgs.mImage)
     {
       shader->gocTextureUnit(0)->setTexture( resolveTexture(vgs.mImage.get()) );
-      if (Has_GL_ARB_point_sprite || Has_GL_Version_2_0)
+      if (Has_Point_Sprite)
       {
         shader->gocTexEnv(0)->setPointSpriteCoordReplace(true);
         shader->enable(EN_POINT_SPRITE);
