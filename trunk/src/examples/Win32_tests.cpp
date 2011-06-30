@@ -46,9 +46,6 @@ public:
     /* used to display the application title next to FPS counter */
     applet->setAppletName(title);
 
-    /* open a console so we can see the applet's output on stdout */
-    showWin32Console();
-
     /* create a native Win32 window */
     ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
 

@@ -58,9 +58,6 @@ public:
   {
     program->setAppletName(title);
 
-    /* open a console so we can see the program's output on stdout */
-    vl::showWin32Console();
-
     // WX_GL_RGBA:            Use true colour
     // WX_GL_BUFFER_SIZE:     Bits for buffer if not WX_GL_RGBA
     // WX_GL_LEVEL:           0 for main buffer, >0 for overlay, <0 for underlay

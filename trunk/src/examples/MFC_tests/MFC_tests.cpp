@@ -52,9 +52,6 @@ public:
   {
     program->setAppletName(title);
 
-    /* open a console so we can see the program's output on stdout */
-    vl::showWin32Console();
-
     setupApplet(program, mVLCWin, bk_color, eye, center);
 
     /* Initialize the OpenGL context and window properties */

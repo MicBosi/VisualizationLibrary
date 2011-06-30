@@ -200,6 +200,9 @@ public:
     int test_count = int( sizeof(tests)/sizeof(TestEntry) );
     if (test > 0 && test-1 < test_count)
     {
+      /* open a console so we can see the applet's output on stdout */
+      vl::showWin32Console();
+
       /* init Visualization Library */
       vl::VisualizationLibrary::init();
 
