@@ -370,18 +370,17 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
       {
         glBindTexture( GL_TEXTURE_2D, glyph->textureHandle() );
 
-        // triangle strip layout
         texc[0] = glyph->s0();
         texc[1] = glyph->t1();
         
         texc[2] = glyph->s1();
         texc[3] = glyph->t1();
 
-        texc[6] = glyph->s1();
-        texc[7] = glyph->t0();
-        
-        texc[4] = glyph->s0();
+        texc[4] = glyph->s1();
         texc[5] = glyph->t0();
+        
+        texc[6] = glyph->s0();
+        texc[7] = glyph->t0();
 
         int left = layout() == RightToLeftText ? -glyph->left() : +glyph->left();
 
@@ -393,11 +392,11 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
         vect[1].x() = pen.x() + glyph->width()*1 + left +1;
         vect[1].y() = pen.y() + glyph->height()*0 + glyph->top() - glyph->height() -1;
 
-        vect[3].x() = pen.x() + glyph->width()*1 + left +1;
-        vect[3].y() = pen.y() + glyph->height()*1 + glyph->top() - glyph->height() +1;
-
-        vect[2].x() = pen.x() + glyph->width()*0 + left -1;
+        vect[2].x() = pen.x() + glyph->width()*1 + left +1;
         vect[2].y() = pen.y() + glyph->height()*1 + glyph->top() - glyph->height() +1;
+
+        vect[3].x() = pen.x() + glyph->width()*0 + left -1;
+        vect[3].y() = pen.y() + glyph->height()*1 + glyph->top() - glyph->height() +1;
 
         if (layout() == RightToLeftText)
         {
@@ -513,7 +512,7 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
           vect[3].z() = float((v.z() - 0.5f) / 0.5f);
         }
 
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); VL_CHECK_OGL();
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 4); VL_CHECK_OGL();
 
         #if (0)
           glDisable(GL_TEXTURE_2D);
@@ -747,11 +746,11 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
 
   vec3 a,b,c,d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
-  fvec3 vect[] = { (fvec3)a, (fvec3)b, (fvec3)d, (fvec3)c };
+  fvec3 vect[] = { (fvec3)a, (fvec3)b, (fvec3)c, (fvec3)d };
   glEnableClientState( GL_VERTEX_ARRAY );
   glVertexPointer(3, GL_FLOAT, 0, vect);
 
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
   glDisableClientState( GL_VERTEX_ARRAY );
   glDisableClientState( GL_COLOR_ARRAY );
