@@ -275,24 +275,36 @@ namespace vl
   class MultiDrawElementsUInt: public MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>
   {
   public:
+    virtual const char* className() const { return "vl::MultiDrawElementsUInt"; }
     MultiDrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>(primitive) {}
+    :MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>(primitive)
+    {
+      VL_DEBUG_SET_OBJECT_NAME();
+    }
   };
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLushort. */
   class MultiDrawElementsUShort: public MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
   {
   public:
+    virtual const char* className() const { return "vl::MultiDrawElementsUShort"; }
     MultiDrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>(primitive) {}
+    :MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>(primitive)
+    {
+      VL_DEBUG_SET_OBJECT_NAME();
+    }
   };
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLubyte. */
   class MultiDrawElementsUByte: public MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
   {
   public:
+    virtual const char* className() const { return "vl::MultiDrawElementsUByte"; }
     MultiDrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>(primitive) {}
+    :MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>(primitive)
+    {
+      VL_DEBUG_SET_OBJECT_NAME();
+    }
   };
 //-----------------------------------------------------------------------------
   template <GLenum Tgltype, class arr_type>
