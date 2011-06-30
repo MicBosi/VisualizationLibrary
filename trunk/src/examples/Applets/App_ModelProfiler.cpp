@@ -41,7 +41,6 @@
 #include <vlGraphics/TriangleStripGenerator.hpp>
 #include <vlGraphics/DoubleVertexRemover.hpp>
 #include <vlGraphics/FontManager.hpp>
-#include <vlGraphics/GeometryLoadCallback.hpp>
 
 using namespace vl;
 
@@ -52,12 +51,6 @@ public:
   {
     vl::Log::print(appletInfo());
     openglContext()->setContinuousUpdate(true);
-
-    ref<GeometryLoadCallback> glc = new GeometryLoadCallback;
-    defLoadWriterManager()->loadCallbacks()->push_back(glc.get());
-    glc->setUseVBOs(false);
-    glc->setSortVertices(false);
-    glc->setComputeNormals(true);
 
     rendering()->as<Rendering>()->camera()->setFarPlane(10000000.0f);
 
@@ -78,7 +71,7 @@ public:
     resetOptions();
 
     mOptions = new Text();
-    mOptions->setDisplayListEnabled(true);
+    mOptions->setDisplayListEnabled(vl::Has_GL_Version_1_1);
     mOptions->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8) );
     mOptions->setMargin(0);
     mOptions->setViewportAlignment(AlignTop | AlignLeft);

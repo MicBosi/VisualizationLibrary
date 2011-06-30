@@ -47,9 +47,6 @@ public:
     /* open a console so we can see the applet's output on stdout */
     showWin32Console();
 
-    /* init Visualization Library */
-    vl::VisualizationLibrary::init();
-
     /* install Visualization Library shutdown function */
     atexit( vlGLUT::atexit_visualization_library_shutdown );
 
@@ -71,9 +68,6 @@ public:
 
     ///* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
     //glut_window = NULL;
-
-    ///* shutdown Visualization Library */
-    //vl::VisualizationLibrary::shutdown();
   }
 };
 int main ( int argc, char *argv[] )

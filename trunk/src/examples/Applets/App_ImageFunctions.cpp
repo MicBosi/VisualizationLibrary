@@ -47,9 +47,8 @@ public:
     if ( !vl::canLoad("png") || !vl::canLoad("jpg") || !vl::canLoad("tga") || !vl::canLoad("tif") )
     {
       vl::Log::error("App_ImageFunctions test requires the following modules: VL_IO_2D_JPG, VL_IO_2D_PNG, VL_IO_2D_TIFF and VL_IO_2D_TGA.\n");
-      vl::Time::sleep(5000);
-      openglContext()->quitApplication();
-      return;
+      vl::Time::sleep(2000);
+      exit(1);
     }
 
     vl::Log::print(appletInfo());

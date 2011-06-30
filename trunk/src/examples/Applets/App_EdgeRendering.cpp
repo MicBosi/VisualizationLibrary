@@ -34,7 +34,6 @@
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/EdgeExtractor.hpp>
 #include <vlGraphics/EdgeRenderer.hpp>
-#include <vlGraphics/GeometryLoadCallback.hpp>
 
 using namespace vl;
 
@@ -44,12 +43,12 @@ public:
   virtual String appletInfo()
   {
     return BaseDemo::appletInfo() + 
-    "'1' = edge rendering off.\n" +
-    "'2' = edge rendering on: silhouette only.\n" +
-    "'3' = edge rendering on: silhouette + creases.\n" +
-    "'4' = edge rendering on: silhouette + creases + hidden lines.\n" +
-    "'5' = edges only: silhouette + creases.\n" + 
-    "'6' = edges only: silhouette + creases + hidden lines.\n" +
+    "- '1' = edge rendering off.\n" +
+    "- '2' = edge rendering on: silhouette only.\n" +
+    "- '3' = edge rendering on: silhouette + creases.\n" +
+    "- '4' = edge rendering on: silhouette + creases + hidden lines.\n" +
+    "- '5' = edges only: silhouette + creases.\n" + 
+    "- '6' = edges only: silhouette + creases + hidden lines.\n" +
     "\n";
   }
 
@@ -83,9 +82,6 @@ public:
     mEdgeRenderer->setLineWidth(2.0f);
     mEdgeRenderer->setSmoothLines(true);
     mEdgeRenderer->setDefaultLineColor(black);
-
-    ref<GeometryLoadCallback> glc = new GeometryLoadCallback;
-    defLoadWriterManager()->loadCallbacks()->push_back(glc.get());
 
     // fills the scene with a few actors.
     // the beauty of this system is that you setup your actors ony once in a single scene managers and

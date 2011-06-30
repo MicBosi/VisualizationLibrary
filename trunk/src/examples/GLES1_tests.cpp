@@ -50,9 +50,6 @@ public:
     /* used to display the application title next to FPS counter */
     applet->setAppletName(title);
 
-    /* init Visualization Library */
-    VisualizationLibrary::init();
-
     /* create a native EGL window */
     ref<vlEGL::EGLWindow> egl_window = new vlEGL::EGLWindow;
 
@@ -69,14 +66,12 @@ public:
 
     /* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
     egl_window = NULL;
-
-    /* shutdown Visualization Library */
-    VisualizationLibrary::shutdown();
   }
 };
 
 int main ( int argc, char *argv[] )
 { 
+
   /* parse command line arguments */
   int test = 0;
   if (argc>=2)
@@ -86,7 +81,7 @@ int main ( int argc, char *argv[] )
   format.setDoubleBuffer(true);
   format.setRGBABits( 5,6,5,0 );
   format.setDepthBufferBits(16);
-  format.setStencilBufferBits(0);
+  format.setStencilBufferBits(8);
   format.setMultisampleSamples(0);
   format.setMultisample(false);
   format.setVSync(false);

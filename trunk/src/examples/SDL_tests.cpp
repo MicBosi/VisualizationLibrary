@@ -49,9 +49,6 @@ public:
     /* open a console so we can see the applet's output on stdout */
     showWin32Console();
 
-    /* init Visualization Library */
-    vl::VisualizationLibrary::init();
-
     /* create a SDL window */
     vl::ref<vlSDL::SDLWindow> sdl_window = new vlSDL::SDLWindow;
 
@@ -68,9 +65,6 @@ public:
 
     /* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
     sdl_window = NULL;
-
-    /* shutdown Visualization Library */
-    vl::VisualizationLibrary::shutdown();
   }
 };
 //-----------------------------------------------------------------------------

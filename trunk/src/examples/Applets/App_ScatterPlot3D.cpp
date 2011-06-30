@@ -66,21 +66,21 @@ public:
     {
       effect->shader()->gocPointSize()->set(10.0f);
 
-      if (vl::Has_GL_ARB_point_sprite)
+      if (vl::Has_Point_Sprite)
       {
         vl::ref<vl::Image> img = vl::loadImage("/images/particle.tif");
         effect->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
         effect->shader()->gocTexEnv(0)->setPointSpriteCoordReplace(true);
-        effect->shader()->enable(vl::EN_POINT_SPRITE);
+        effect->shader()->enable(vl::EN_POINT_SPRITE); 
       }
       else
-        vl::Log::error("GL_ARB_point_sprite not supported.\n");
+        vl::Log::error("Point sprites not supported.\n");
 
-      effect->shader()->enable(vl::EN_DEPTH_TEST);
-      effect->shader()->enable(vl::EN_CULL_FACE);
-      effect->shader()->enable(vl::EN_ALPHA_TEST);
-      effect->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 1.0f - 0.02f);
-      effect->shader()->enable(vl::EN_BLEND);
+       effect->shader()->enable(vl::EN_DEPTH_TEST);
+       effect->shader()->enable(vl::EN_CULL_FACE);
+       effect->shader()->enable(vl::EN_ALPHA_TEST);
+       effect->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 1.0f - 0.02f);
+       effect->shader()->enable(vl::EN_BLEND);
     }
 
     std::vector< vl::vec3 > pointset;

@@ -57,7 +57,14 @@ const float room_size_in  = 18.0f;
 class App_PortalCulling: public BaseDemo
 {
 public:
-  App_PortalCulling() {}
+  virtual vl::String appletInfo()
+  {
+    return BaseDemo::appletInfo() + 
+    "- F6: toggles wireframe\n" +
+    "- F7: toggles show portals\n" +
+    "- F8: enable/disable portal-based culling\n" +
+    "\n";
+  }
 
   void initEvent()
   {
@@ -133,7 +140,8 @@ public:
     floor_fx->shader()->gocLight(0);
     floor_fx->shader()->gocLightModel()->setTwoSide(true);
     floor_fx->shader()->gocMaterial()->setDiffuse(vl::crimson);
-    floor_fx->shader()->setRenderState(mPolygonMode.get());
+    if (!vl::Has_GLES_Version_1_x)
+      floor_fx->shader()->setRenderState(mPolygonMode.get());
 
     vl::ref<vl::Effect> ceiling_fx = new vl::Effect;
     ceiling_fx->shader()->enable(vl::EN_DEPTH_TEST);
@@ -141,7 +149,8 @@ public:
     ceiling_fx->shader()->gocLight(0);
     ceiling_fx->shader()->gocLightModel()->setTwoSide(true);
     ceiling_fx->shader()->gocMaterial()->setDiffuse(vl::gray);
-    ceiling_fx->shader()->setRenderState(mPolygonMode.get());
+    if (!vl::Has_GLES_Version_1_x)
+      ceiling_fx->shader()->setRenderState(mPolygonMode.get());
 
     vl::ref<vl::Effect> wall_fx = new vl::Effect;
     wall_fx->shader()->enable(vl::EN_DEPTH_TEST);
@@ -149,7 +158,8 @@ public:
     wall_fx->shader()->gocLight(0)->setLinearAttenuation(0.025f);
     wall_fx->shader()->gocLightModel()->setTwoSide(true);
     wall_fx->shader()->gocMaterial()->setDiffuse(vl::gold);
-    wall_fx->shader()->setRenderState(mPolygonMode.get());
+    if (!vl::Has_GLES_Version_1_x)
+      wall_fx->shader()->setRenderState(mPolygonMode.get());
 
     // boring code to generate the gometry of various kinds of walls, with out door, with door, with the passage and portal.
 
@@ -325,7 +335,15 @@ public:
     ball_fx->shader()->enable(vl::EN_DEPTH_TEST);
     ball_fx->shader()->enable(vl::EN_LIGHTING);
     ball_fx->shader()->gocLight(0);
-    ball_fx->shader()->setRenderState(mPolygonMode.get());
+    if (!vl::Has_GLES_Version_1_x)
+      ball_fx->shader()->setRenderState(mPolygonMode.get());
+
+    wall_1_a->convertDrawCallsForGLES();
+    wall_2_a->convertDrawCallsForGLES();
+    wall_1_b->convertDrawCallsForGLES();
+    wall_1_c->convertDrawCallsForGLES();
+    wall_2_b->convertDrawCallsForGLES();
+    wall_2_c->convertDrawCallsForGLES();
 
     // for each cell of the dungeon
     for(int y=0; y<map_size; ++y)

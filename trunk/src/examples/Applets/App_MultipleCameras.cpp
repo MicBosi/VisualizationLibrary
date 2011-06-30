@@ -94,7 +94,9 @@ public:
     wirefx->shader()->enable( EN_LINE_SMOOTH );
     wirefx->shader()->enable( EN_BLEND );
     wirefx->shader()->gocLightModel()->setTwoSide(true);
+#if defined(VL_OPENGL)
     wirefx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
+#endif
     wirefx->shader()->gocMaterial()->setDiffuse( white );
     wirefx->shader()->setRenderState( light.get() );
 

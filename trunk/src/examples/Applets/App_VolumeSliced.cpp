@@ -67,8 +67,8 @@ public:
   virtual String appletInfo()
   {
     return BaseDemo::appletInfo() + 
-    "Use the mouse wheel to change the bias used to render the volume.\n" +
-    "Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
+    "- Use the mouse wheel to change the bias used to render the volume.\n" +
+    "- Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
     "\n";
   }
 
@@ -76,6 +76,13 @@ public:
   virtual void initEvent()
   {
     Log::print(appletInfo());
+    
+    if (!Has_Texture_3D && !Has_GLSL)
+    {
+      Log::error("This test requires 3D texture or GLSL support!\n");
+      vl::Time::sleep(2000);
+      exit(1);
+    }
 
     // variable preconditions
     USE_GLSL &= Has_GLSL;

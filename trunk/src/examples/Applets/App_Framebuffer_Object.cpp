@@ -74,7 +74,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* use texture as color buffer */
@@ -104,6 +104,12 @@ public:
   */
   void initTest_FBO_Render_To_Texture_MRT()
   {
+    if (!vl::Has_GLSL)
+    {
+      vl::Log::error("This test requires GLSL!\n");
+      vl::Time::sleep(2000);
+      exit(1);
+    }
     // Setup dual rendering
 
     vl::ref<vl::RenderingTree> render_tree = new vl::RenderingTree;
@@ -128,7 +134,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* use a per-pixel-light GLSL shader which renders on two color attachments at the same time */
@@ -150,8 +156,8 @@ public:
     }
 
     /* use two textures as color attachment #0 and #1 */
-    vl::ref<vl::Texture> texture1 = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA8);
-    vl::ref<vl::Texture> texture2 = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA8);
+    vl::ref<vl::Texture> texture1 = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA);
+    vl::ref<vl::Texture> texture2 = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA);
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm1 = new vl::FBOTexture2DAttachment(texture1.get(), 0, vl::T2DT_TEXTURE_2D);
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm2 = new vl::FBOTexture2DAttachment(texture2.get(), 0, vl::T2DT_TEXTURE_2D);
     fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm1.get() );
@@ -220,7 +226,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* bind a normal color buffer as color attachment #0 */
@@ -229,7 +235,7 @@ public:
     mRTT_Rendering->renderer()->renderTarget()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
 
     /* at the end of the rendering copy the color attachment pixels into the texture */
-    vl::ref<vl::Texture> texture = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA8, false); // note that mipmapping is off
+    vl::ref<vl::Texture> texture = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA, false); // note that mipmapping is off
     vl::ref<vl::CopyTexSubImage2D> copytex = new vl::CopyTexSubImage2D(0, 0,0, 0,0, mFBO_Size,mFBO_Size, texture.get(), vl::T2DT_TEXTURE_2D, vl::RDB_COLOR_ATTACHMENT0);
     mRTT_Rendering->onFinishedCallbacks()->push_back(copytex.get());
   
@@ -257,8 +263,8 @@ public:
   {
     if (!(vl::Has_GL_EXT_framebuffer_multisample||vl::Has_GL_EXT_framebuffer_blit||vl::Has_GL_Version_3_0||vl::Has_GL_Version_4_0))
     {
-      vl::Log::error("GL_EXT_framebuffer_multisample or vl::Has_GL_EXT_framebuffer_blit not supported.\n");
-      vl::Time::sleep(3000);
+      vl::Log::error("Framebuffer multisample blitting not supported.\n");
+      vl::Time::sleep(2000);
       exit(1);
     }
 
@@ -288,7 +294,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a multisampled depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
     fbo_depth_attachm->setSamples(samples);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
@@ -341,8 +347,8 @@ public:
   {
     if (!(vl::Has_GL_ARB_texture_multisample||vl::Has_GL_Version_3_2||vl::Has_GL_Version_4_0))
     {
-      vl::Log::error("Has_GL_ARB_texture_multisample not supported.\n");
-      vl::Time::sleep(3000);
+      vl::Log::error("Multisample texture not supported.\n");
+      vl::Time::sleep(2000);
       exit(1);
     }
 
@@ -372,7 +378,7 @@ public:
     mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
 
     /* bind a multisampled depth buffer */
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
+    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
     fbo_depth_attachm->setSamples(samples);
     fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
 
@@ -564,7 +570,7 @@ public:
     if (!vl::Has_FBO)
     {
       vl::Log::error("GL_ARB_framebuffer_object not supported.\n");
-      vl::Time::sleep(3000);
+      vl::Time::sleep(2000);
       exit(1);
     }
 
