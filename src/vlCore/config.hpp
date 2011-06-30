@@ -246,7 +246,7 @@
 ///////////////////////////////////////////////////
 
 // VLCORE_EXPORT macro
-#if defined(_WIN32) && !defined(VL_STATIC_LINKING)
+#if defined(VL_PLATFORM_WINDOWS) && !defined(VL_STATIC_LINKING)
   #ifdef VLCore_EXPORTS
     #define VLCORE_EXPORT __declspec(dllexport)
   #else

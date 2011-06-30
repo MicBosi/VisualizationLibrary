@@ -44,7 +44,7 @@ using namespace vl;
 
 namespace
 {
-#ifdef _WIN32
+#if defined(VL_PLATFORM_WINDOWS)
   struct ScopedColor
   {
     CONSOLE_SCREEN_BUFFER_INFO screen_info;
@@ -68,6 +68,7 @@ namespace
   #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
   #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_INTENSITY);
   #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
+  #define SET_TEXT_COLOR_GREEN() ScopedColor set_scoped_color(FOREGROUND_GREEN|FOREGROUND_INTENSITY);
 #else
   struct ScopedColor
   {
@@ -114,6 +115,7 @@ namespace
   #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color("\033[1;33m");
   #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color("\033[31m");
   #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color("\033[1;31m");
+  #define SET_TEXT_COLOR_GREEN()  ScopedColor set_scoped_color("\033[1;32m");
 #endif
 }
 
@@ -143,6 +145,7 @@ void Log::info(const String& log)
   //! Synchronize log across threads.
   ScopedMutex mutex(Log::logMutex());
 
+  SET_TEXT_COLOR_GREEN()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
     defLogger()->printImplementation(LogInfo, log); 
 }
@@ -247,7 +250,7 @@ void vl::log_failed_check(const char* expr, const char* file, int line)
   fflush(stdout);
   fflush(stderr);
 
-  #if _WIN32 && VL_MESSAGEBOX_CHECK == 1
+  #if defined(VL_PLATFORM_WINDOWS) && VL_MESSAGEBOX_CHECK == 1
      String msg = Say("Condition \"%s\" failed.\n\n%s:%n\n") << expr << file << line;
      MessageBox(NULL, (wchar_t*)msg.ptr(), L"Visualization Library Debug", MB_OK | MB_ICONEXCLAMATION);
   #endif

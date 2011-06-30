@@ -151,7 +151,7 @@ namespace vl
         glGetIntegerv(GL_READ_BUFFER, &read_buffer); VL_CHECK_OGL()
         glReadBuffer(readBuffer()); VL_CHECK_OGL()
       }
-#endif()
+#endif
 
       glBindTexture(TD_TEXTURE_1D, texture()->handle() ); VL_CHECK_OGL()
       glCopyTexSubImage1D(TD_TEXTURE_1D, level(), xoffset(), x(), y(), width()); VL_CHECK_OGL()

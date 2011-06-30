@@ -243,17 +243,15 @@ void VisualizationLibrary::shutdownCore()
   // gSettings = NULL;
 }
 //------------------------------------------------------------------------------
-#if defined(_WIN32)
+#if defined(VL_PLATFORM_WINDOWS)
   // console includes
-  #include <stdio.h>
   #include <io.h>
   #include <fcntl.h>
-  #include <commdlg.h>
 #endif
 
 void vl::showWin32Console()
 {
-  #if defined(_WIN32)
+  #if defined(VL_PLATFORM_WINDOWS)
     AllocConsole();
     // stdout
     HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
