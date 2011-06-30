@@ -78,15 +78,13 @@ void ClipPlane::apply(const Camera* camera, OpenGLContext*) const
     vec3 n = pt2 - pt1;
     Real orig = dot(n, pt1);
 
-    double equation[] = 
-    {
-      (double)n.x(),
-      (double)n.y(),
-      (double)n.z(),
-      -(double)orig
-    };
-
+#if defined(VL_OPENGL)
+    double equation[] = { n.x(), n.y(), n.z(), -orig };
     glClipPlane(GL_CLIP_PLANE0 + planeIndex(), equation);
+#else
+    float equation[] = { n.x(), n.y(), n.z(), -orig };
+    glClipPlanef(GL_CLIP_PLANE0 + planeIndex(), equation);
+#endif
 
     glPopMatrix();
   }
