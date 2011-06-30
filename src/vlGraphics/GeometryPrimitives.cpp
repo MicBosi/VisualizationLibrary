@@ -1076,7 +1076,10 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
   *vert_array = verts;
   *colr_array = cols;
 
-\
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+  geom->convertDrawCallsForGLES();
+#endif
+
   return geom;
 }
 //-----------------------------------------------------------------------------
