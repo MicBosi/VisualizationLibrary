@@ -50,7 +50,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     /* Transform */
     mTransform = new Transform;

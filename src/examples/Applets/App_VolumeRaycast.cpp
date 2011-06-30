@@ -118,7 +118,7 @@ public:
   /* initialize the applet with a default volume */
   virtual void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     if ( !Has_GLSL )
     {

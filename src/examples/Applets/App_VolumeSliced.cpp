@@ -75,7 +75,7 @@ public:
   /* initialize the applet with a default volume */
   virtual void initEvent()
   {
-    Log::print(appletInfo());
+    Log::info(appletInfo());
     
     if (!Has_Texture_3D && !Has_GLSL)
     {

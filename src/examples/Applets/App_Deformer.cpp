@@ -51,7 +51,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     mMode = NoMode;
 

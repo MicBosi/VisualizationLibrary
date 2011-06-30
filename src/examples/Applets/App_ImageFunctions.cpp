@@ -51,7 +51,7 @@ public:
       exit(1);
     }
 
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     bool use_mipmaps = true;
 

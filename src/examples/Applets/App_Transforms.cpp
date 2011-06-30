@@ -59,7 +59,7 @@ public:
 
   virtual void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     /* basic render states */
 

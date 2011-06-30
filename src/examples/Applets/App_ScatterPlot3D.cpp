@@ -48,7 +48,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     vl::ref<vl::Effect> effect = new vl::Effect;
 
