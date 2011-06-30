@@ -91,6 +91,7 @@ namespace vl
   bool Has_Transform_Feedback = false;
   bool Has_glGenerateMipmaps = false;
   bool Has_GL_GENERATE_MIPMAP = false;
+  bool Has_Point_Sprite = false;
 
   #define VL_EXTENSION(extension) bool Has_##extension = false;
   #include "GLExtensionList.hpp"
@@ -200,6 +201,7 @@ bool vl::initializeOpenGL()
     if (Has_GL_OES_texture_cube_map && glTexGenfOES == 0)
     {
       Has_GL_OES_texture_cube_map = false;
+      Has_Cubemap_Textures = false;
       Log::error("GL_OES_texture_cube_map exposed but glTexGenfOES == NULL!\n"); /*VL_TRAP();*/
     }
     if(Has_GL_OES_blend_func_separate && glBlendFuncSeparateOES == 0)
@@ -249,6 +251,7 @@ bool vl::initializeOpenGL()
     Has_Transform_Feedback = Has_GL_NV_transform_feedback||Has_GL_EXT_transform_feedback||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
     Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_GL_Compatibility)||Has_GL_Version_1_4||Has_GLES_Version_1_x;
+    Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL || Has_GLES_Version_1_x;
 
     return glGetError() == GL_NO_ERROR;
 }
