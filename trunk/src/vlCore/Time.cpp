@@ -33,13 +33,9 @@
 #include <ctime>
 #include <cmath>
 
-// mingw and msvc
-#if defined(_WIN32)
-  #include <windows.h>
-// linux and mac
-#elif defined(__GNUG__)
+#if defined(VL_PLATFORM_LINUX) || defined(VL_PLATFORM_MACOSX)
   #include <sys/time.h> // gettimeofday()
-  #include <unistd.h> // usleep()
+  #include <unistd.h>   // usleep()
 #endif
 
 using namespace vl;
@@ -54,7 +50,7 @@ Time::Time()
   for(int i=0; i<VL_MAX_TIMERS; ++i)
     mStart[i] = -1;
 
-  #if defined(_WIN32)
+  #if defined(VL_PLATFORM_WINDOWS)
     SYSTEMTIME local_time;
     GetLocalTime(&local_time);
     mYear = local_time.wYear;
@@ -90,7 +86,7 @@ namespace vl
 
   void initStartTime()
   {
-    #if defined(_WIN32)
+    #if defined(VL_PLATFORM_WINDOWS)
       LARGE_INTEGER Frequency;
       LARGE_INTEGER PerformanceCount;
       BOOL has_timer = QueryPerformanceFrequency( &Frequency );
@@ -120,7 +116,7 @@ Real Time::currentTime()
 
   VL_CHECK(gStartTime);
 
-  #if defined(_WIN32)
+  #if defined(VL_PLATFORM_WINDOWS)
     // Win32
     LARGE_INTEGER Frequency;
     LARGE_INTEGER PerformanceCount;
@@ -143,7 +139,7 @@ Real Time::currentTime()
 //-----------------------------------------------------------------------------
 void Time::sleep(unsigned int milliseconds)
 {
-  #if defined(_WIN32)
+  #if defined(VL_PLATFORM_WINDOWS)
     Sleep(milliseconds);
   #elif defined(__GNUG__)
     usleep(milliseconds*1000);

@@ -35,9 +35,7 @@
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/DiskDirectory.hpp>
 
-#ifdef VL_PLATFORM_WINDOWS
-  #include <windows.h>
-#else
+#if defined(VL_PLATFORM_LINUX) || defined(VL_PLATFORM_MACOSX)
   #include <sys/types.h>
   #include <sys/stat.h>
   #include <unistd.h>
@@ -104,7 +102,7 @@ namespace vl
     ref<DiskDirectory> parentDir() const;
 
   protected:
-    #ifdef _WIN32
+    #if defined(VL_PLATFORM_WINDOWS)
       HANDLE mHandle;
     #else
       FILE*  mHandle;

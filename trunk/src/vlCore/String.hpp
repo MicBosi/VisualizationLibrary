@@ -37,7 +37,7 @@
 #include <vector>
 #include <string.h>
 
-#if defined(_WIN32)
+#if defined(VL_PLATFORM_WINDOWS)
   #define VL_PLATFORM_DEFAULT_ENCODING SE_LATIN1
 #else
   #define VL_PLATFORM_DEFAULT_ENCODING SE_UTF8
@@ -92,7 +92,7 @@ namespace vl
     //! Returns '\' under windows and '/' under Linux and Mac.
     static wchar_t platformSlash()
     {
-      #ifdef _WIN32
+      #if defined(VL_PLATFORM_WINDOWS)
         return '\\';
       #else
         return '/';

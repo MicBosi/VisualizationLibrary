@@ -100,7 +100,7 @@ bool DiskDirectory::exists() const
     Log::error( "VirtualDirectory::path() must not be empty!\n" );
     return false;
   }
-  #ifdef _WIN32
+  #if defined(VL_PLATFORM_WINDOWS)
     WIN32_FIND_DATA FindFileData;
     memset( &FindFileData, 0, sizeof(FindFileData) );
     String wild = path() + "/*";
@@ -135,7 +135,7 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
     Log::error( "VirtualDirectory::path() must not be empty!\n" );
     return;
   }
-  #ifdef _WIN32
+  #if defined(VL_PLATFORM_WINDOWS)
     WIN32_FIND_DATA FindFileData;
     memset( &FindFileData, 0, sizeof(FindFileData) );
     String wild = path() + "/*";
@@ -222,7 +222,7 @@ void DiskDirectory::listFiles(std::vector<String>& files, bool append) const
     Log::error( "VirtualDirectory::path() must not be empty!\n" );
     return;
   }
-  #ifdef _WIN32
+  #if defined(VL_PLATFORM_WINDOWS)
     WIN32_FIND_DATA FindFileData;
     memset( &FindFileData, 0, sizeof(FindFileData) );
     String wild = path() + "/*";

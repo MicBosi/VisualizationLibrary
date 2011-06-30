@@ -679,7 +679,7 @@ void Geometry::convertDrawCallsForGLES()
         DrawElementsUInt* polygon = static_cast<DrawElementsUInt*>(dc);
         ref<DrawElementsUInt> triangles = new DrawElementsUInt(PT_TRIANGLES);
         triangles->indices()->resize( (polygon->indices()->size()-2) * 3 );
-        for(int i=0, itri=0; i<polygon->indices()->size()-2; ++i, itri+=3)
+        for(size_t i=0, itri=0; i<polygon->indices()->size()-2; ++i, itri+=3)
         {
           triangles->indices()->at(itri+0) = polygon->indices()->at(0);
           triangles->indices()->at(itri+1) = polygon->indices()->at(i+1);
@@ -751,7 +751,7 @@ void Geometry::convertDrawCallsForGLES()
         de->indices()->resize( idx_count );
         int i=0;
         for( vl::IndexIterator it = dc->indexIterator(); !it.isEnd(); it.next(), ++i )
-          de->indices()->at(i) = it.index();
+          de->indices()->at(i) = (GLubyte)it.index();
 
         // substitute new draw call
         this->drawCalls()->eraseAt(idraw);
@@ -765,7 +765,7 @@ void Geometry::convertDrawCallsForGLES()
         de->indices()->resize( idx_count );
         int i=0;
         for( vl::IndexIterator it = dc->indexIterator(); !it.isEnd(); it.next(), ++i )
-          de->indices()->at(i) = it.index();
+          de->indices()->at(i) = (GLushort)it.index();
 
         // substitute new draw call
         this->drawCalls()->eraseAt(idraw);
