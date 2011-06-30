@@ -204,6 +204,7 @@ namespace vl
 
     virtual void render(bool use_vbo) const
     {
+      VL_CHECK_OGL()
       VL_CHECK(mBaseVertex>=0)
       VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
       use_vbo &= Has_VBO; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
@@ -232,16 +233,20 @@ namespace vl
 
       if (use_vbo && indices()->gpuBuffer()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle()); VL_CHECK_OGL()
         ptr = 0;
       }
       else
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
       if (mBaseVertex == 0)
-        glDrawRangeElements( primitiveType(), mRangeStart, mRangeEnd, use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr );
+      {
+        glDrawRangeElements( primitiveType(), mRangeStart, mRangeEnd, use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr ); VL_CHECK_OGL()
+      }
       else
-        VL_glDrawRangeElementsBaseVertex( primitiveType(), mRangeStart, mRangeEnd, use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, mBaseVertex );
+      {
+        VL_glDrawRangeElementsBaseVertex( primitiveType(), mRangeStart, mRangeEnd, use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, mBaseVertex ); VL_CHECK_OGL()
+      }
 
       // primitive restart disable
 

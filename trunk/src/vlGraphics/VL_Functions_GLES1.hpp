@@ -52,7 +52,7 @@ namespace vl
 {
 
   #ifndef VL_UNSUPPORTED_GLES1_FUNC
-  #define VL_UNSUPPORTED_GLES1_FUNC() { Log::error( String().printf("Function \"%s\" not supported under OpenGL ES 1.x profile (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
+  #define VL_UNSUPPORTED_GLES1_FUNC() { Log::error( String().printf("The function \"%s\" is not supported under OpenGL ES 1.x! (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
   #endif
 
   inline void VL_glBindBuffer( GLenum target, GLuint buffer )
