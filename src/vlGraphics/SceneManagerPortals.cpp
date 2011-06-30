@@ -155,6 +155,7 @@ void SceneManagerPortals::extractVisibleActors(ActorCollection& list, const Came
           mTempActors.push_back(it->second);
       }
 
+      // mic fixme: isn't quicker to use sets instead of sort()+unique()?
       // avoid reporting duplicates
       std::sort(mTempActors.begin(), mTempActors.end());
       std::vector< ref<Actor> >::iterator new_end = std::unique(mTempActors.begin(), mTempActors.end());
