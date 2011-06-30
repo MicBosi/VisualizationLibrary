@@ -109,7 +109,18 @@ if(MSVC)
 endif()
 
 # Required Dependencies
-find_package(OpenGL REQUIRED)
+
+if( VL_OPENGL_MODE STREQUAL "OPENGL")
+	find_package(OpenGL REQUIRED)
+endif()
+
+if( (VL_OPENGL_MODE STREQUAL "OPENGL_ES1") OR VL_GUI_EGL_SUPPORT)
+	#mic fixme: VL-DLL does work with GLES
+	include( SetupGLES )
+elseif( (VL_OPENGL_MODE STREQUAL "OPENGL_ES2") OR VL_GUI_EGL_SUPPORT )
+	#mic fixme: VL-DLL does work with GLES
+	include( SetupGLES )
+endif()
 
 ################################################################################
 # Packaging
