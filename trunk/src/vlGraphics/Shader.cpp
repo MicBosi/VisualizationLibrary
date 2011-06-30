@@ -388,6 +388,8 @@ void Material::setFlatColor(const fvec4& color)
 //------------------------------------------------------------------------------
 void Material::apply(const Camera*, OpenGLContext*) const
 {
+  VL_CHECK_OGL();
+
 #if defined(VL_OPENGL)
 
   if (mColorMaterialEnabled)
@@ -412,6 +414,21 @@ void Material::apply(const Camera*, OpenGLContext*) const
 
 #else
 
+  if (mColorMaterialEnabled)
+  {
+    // OpenGL ES supports only this
+    if (colorMaterial() != CM_AMBIENT_AND_DIFFUSE)
+    {
+      Log::error("OpenGL ES 1.x supports only CM_AMBIENT_AND_DIFFUSE color material mode!\n");
+      VL_TRAP();
+    }
+    glEnable(GL_COLOR_MATERIAL);
+  }
+  else
+  {
+    glDisable(GL_COLOR_MATERIAL);
+  }
+
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr()); 
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr()); 
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr()); 
@@ -420,6 +437,7 @@ void Material::apply(const Camera*, OpenGLContext*) const
 
 #endif
 
+  VL_CHECK_OGL();
 }
 //------------------------------------------------------------------------------
 // LightModel
