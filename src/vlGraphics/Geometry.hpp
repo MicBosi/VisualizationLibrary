@@ -222,6 +222,10 @@ namespace vl
     //! Converts all the DrawCall objects bound to a Geometry into DrawArrays.
     void convertDrawCallToDrawArrays();
 
+    //! Converts PT_QUADS, PT_QUADS_STRIP, PT_POLYGON into PT_TRIANGLE primitives and converts DrawElementsUInt into DrawElementsUByte and DrawElementsUShort.
+    //! - Does not handle vl::MultiDrawElements* vl::DrawRangeElements*, primitive restart and draw call multi-instancing.
+    void convertDrawCallsForGLES();
+
     //! Sorts the vertices of the geometry to maximize vertex-cache coherency.
     //! This function will work only if all the DrawCall are DrawElements.
     //! \returns true if all the DrawCall are DrawElements and the sorting took place.
