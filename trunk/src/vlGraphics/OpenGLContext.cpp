@@ -385,6 +385,10 @@ void OpenGLContext::logOpenGLInfo()
       Log::print( Say("Max elements indices: %n\n") << max_val );
     }
 
+    max_val = 0;
+    glGetIntegerv(GL_MAX_CLIP_PLANES,  &max_val ); VL_CHECK_OGL();
+    Log::print( Say("Max clipping planes: %n\n") << max_val );
+
     // --- log supported extensions on two columns ---
 
     Log::print("\n --- OpenGL Extensions --- \n");
@@ -519,7 +523,7 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
   #ifndef NDEBUG
         if (glGetError() != GL_NO_ERROR)
         {
-          Log::error( Say("An unsupported enum has been enabled: %s.\n") << TranslateEnableString[cur_en]);
+          Log::error( Say("An unsupported function has been enabled: %s.\n") << TranslateEnableString[cur_en]);
           VL_TRAP()
         }
   #endif
@@ -594,7 +598,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
         #ifndef NDEBUG
         if (!mDefaultRenderStates[prev_rs->type()])
         {
-          vl::Log::error( Say("Render state type '%s' not supported by this OpenGL implementation!\n") << prev_rs->className() );
+          vl::Log::error( Say("Render state type '%s' not supported by the current OpenGL implementation! (version=%s, vendor=%s)\n") << prev_rs->className() << glGetString(GL_VERSION) << glGetString(GL_VENDOR) );
           VL_TRAP()
         }
         #endif
@@ -747,6 +751,7 @@ bool OpenGLContext::isCleanState(bool verbose)
         continue;
     }
 
+    // mic fixme: check GLES1 extensions, check GLES2 separately, check GLES2 extensions
 #if defined(VL_OPENGL_ES1)
       // skip unsupported enables
       switch(TranslateEnable[i])
@@ -768,9 +773,11 @@ bool OpenGLContext::isCleanState(bool verbose)
     GLboolean enabled = glIsEnabled( TranslateEnable[i] ); /* VL_CHECK_OGL(); */
 
     // mic fixme
-    //if(glGetError() != GL_NO_ERROR)
-		  //vl::Log::error( Say("Capability %s!\n") << TranslateEnableString[i] );
-    //VL_CHECK_OGL();
+    if(glGetError() != GL_NO_ERROR)
+    {
+      vl::Log::error( Say("Capability %s not supported!\n") << TranslateEnableString[i] );
+      VL_TRAP();
+    }
 
     // The order is important!
     if (glGetError() == GL_NO_ERROR && enabled)
@@ -1794,7 +1801,13 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
 
           VL_glClientActiveTexture(GL_TEXTURE0 + tex_unit); VL_CHECK_OGL();
           VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
-          glTexCoordPointer((int)texarr->glSize(), texarr->glType(), 0/*texarr->stride()*/, ptr/*+ texarr->offset()*/);
+#if !defined(NDEBUG)
+          if ( Has_GLES_Version_1_x && texarr->glSize() == 1)
+          {
+            Log::error("OpenGL ES does not allow 1D texture coordinates.\n"); VL_TRAP();
+          }
+#endif
+          glTexCoordPointer((int)texarr->glSize(), texarr->glType(), 0/*texarr->stride()*/, ptr/*+ texarr->offset()*/); VL_CHECK_OGL();
 
           // enable if not previously enabled
           if (mTexCoordArray[tex_unit].mState == 1)
