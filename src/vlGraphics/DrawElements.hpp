@@ -198,6 +198,7 @@ namespace vl
 
     virtual void render(bool use_vbo) const
     {
+      VL_CHECK_OGL()
       VL_CHECK(mBaseVertex>=0)
       VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
       use_vbo &= Has_VBO; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
@@ -226,26 +227,36 @@ namespace vl
 
       if (use_vbo && indices()->gpuBuffer()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle()); VL_CHECK_OGL()
         ptr = 0;
       }
       else
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+      {
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
+      }
 
 
       if (mBaseVertex == 0)
       {
         if ( instances() > 1 && (Has_GL_ARB_draw_instanced||Has_GL_EXT_draw_instanced) )
-          VL_glDrawElementsInstanced( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, (GLsizei)instances() );
+        {
+          VL_glDrawElementsInstanced( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, (GLsizei)instances() ); VL_CHECK_OGL()
+        }
         else
-          glDrawElements( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr );
+        {
+          glDrawElements( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr ); VL_CHECK_OGL()
+        }
       }
       else
       {
         if ( instances() > 1 && (Has_GL_ARB_draw_instanced||Has_GL_EXT_draw_instanced) )
-          VL_glDrawElementsInstancedBaseVertex( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, (GLsizei)instances(), mBaseVertex );
+        {
+          VL_glDrawElementsInstancedBaseVertex( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, (GLsizei)instances(), mBaseVertex ); VL_CHECK_OGL()
+        }
         else
-          VL_glDrawElementsBaseVertex( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, mBaseVertex );
+        {
+          VL_glDrawElementsBaseVertex( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, mBaseVertex ); VL_CHECK_OGL()
+        }
       }
 
       // primitive restart disable
@@ -296,24 +307,36 @@ namespace vl
   class DrawElementsUInt:  public DrawElements<GL_UNSIGNED_INT, ArrayUInt1>
   {
   public:
+    virtual const char* className() const { return "vl::DrawElementsUInt"; }
     DrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GL_UNSIGNED_INT, ArrayUInt1>(primitive, instances) {}
+    :DrawElements<GL_UNSIGNED_INT, ArrayUInt1>(primitive, instances) 
+    {
+      VL_DEBUG_SET_OBJECT_NAME();
+    }
   };
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLushort. */
   class DrawElementsUShort: public DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
   {
   public:
+    virtual const char* className() const { return "vl::DrawElementsUShort"; }
     DrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>(primitive, instances) {}
+    :DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>(primitive, instances)
+    {
+      VL_DEBUG_SET_OBJECT_NAME();
+    }
   };
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLubyte. */
   class DrawElementsUByte:  public DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
   {
   public:
+    virtual const char* className() const { return "vl::DrawElementsUByte"; }
     DrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>(primitive, instances) {}
+    :DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>(primitive, instances)
+    {
+      VL_DEBUG_SET_OBJECT_NAME();
+    }
   };
    //------------------------------------------------------------------------------
 }

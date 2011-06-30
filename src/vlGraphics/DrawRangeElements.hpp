@@ -299,24 +299,36 @@ namespace vl
   class DrawRangeElementsUInt: public DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>
   {
   public:
+    virtual const char* className() const { return "vl::DrawRangeElementsUInt"; }
     DrawRangeElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLuint(~0))
-    :DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>(primitive, r_start, r_end) {}
+    :DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>(primitive, r_start, r_end)
+    {
+      VL_DEBUG_SET_OBJECT_NAME();
+    }
   };
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLushort. */
   class DrawRangeElementsUShort: public DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>
   {
   public:
+    virtual const char* className() const { return "vl::DrawRangeElementsUShort"; }
     DrawRangeElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLushort(~0))
-    :DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>(primitive, r_start, r_end) {}
+    :DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>(primitive, r_start, r_end)
+    {
+      VL_DEBUG_SET_OBJECT_NAME();
+    }
   };
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLubyte. */
   class DrawRangeElementsUByte: public DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>
   {
   public:
+    virtual const char* className() const { return "vl::DrawRangeElementsUByte"; }
     DrawRangeElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLubyte(~0))
-    :DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>(primitive, r_start, r_end) {}
+    :DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>(primitive, r_start, r_end)
+    {
+      VL_DEBUG_SET_OBJECT_NAME();
+    }
   };
   //------------------------------------------------------------------------------
 }
