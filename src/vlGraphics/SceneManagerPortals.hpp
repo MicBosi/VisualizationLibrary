@@ -222,6 +222,8 @@ namespace vl
     bool showPortals() const { return mShowPortals; }
     //! Whether portals should be shown in the rendering or not.
     void setShowPortals(bool show) { mShowPortals = show; }
+    //! Regenerates the portal actors next time their rendering is requested.
+    void invalidatePortalActors() { mPortalActorMap.clear(); }
 
     //! The stack of frustums active at a given point during sector discovery.
     const std::vector<Frustum>& frustumStack() const { return mFrustumStack; }
