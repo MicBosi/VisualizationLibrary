@@ -544,9 +544,7 @@ ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zsid
   geom->setObjectName("Box");
 
   ref<ArrayFloat3> vert3 = new ArrayFloat3;
-  ref<ArrayFloat2> texc2 = new ArrayFloat2;
   geom->setVertexArray(vert3.get());
-  geom->setTexCoordArray(0, texc2.get());
 
   Real x=xside/2.0f;
   Real y=yside/2.0f;
@@ -577,6 +575,22 @@ ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zsid
   vert3->resize( 24  );
   memcpy(vert3->ptr(), verts, sizeof(verts));
 
+  if(tex_coords)
+  {
+    fvec2 texc[] = {
+      fvec2(0,1), fvec2(0,0), fvec2(1,0), fvec2(1,1),
+      fvec2(0,1), fvec2(0,0), fvec2(1,0), fvec2(1,1),
+      fvec2(1,0), fvec2(1,1), fvec2(0,1), fvec2(0,0),
+      fvec2(0,1), fvec2(0,0), fvec2(1,0), fvec2(1,1),
+      fvec2(0,0), fvec2(1,0), fvec2(1,1), fvec2(0,1),
+      fvec2(1,1), fvec2(0,1), fvec2(0,0), fvec2(1,0)
+    };
+    ref<ArrayFloat2> tex_array = new ArrayFloat2;
+    geom->setTexCoordArray(0, tex_array.get());
+    tex_array->resize( vert3->size() );
+    memcpy(tex_array->ptr(), texc, sizeof(texc));
+  }
+
 #else
   
   fvec3 verts[] = {
@@ -593,19 +607,23 @@ ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zsid
   vert3->resize( 36 );
   memcpy(vert3->ptr(), verts, sizeof(verts));
 
-#endif
-
-  texc2->resize( 24 );
-  int idx = 0;
-  if (tex_coords)
+  if(tex_coords)
   {
-    texc2->at(idx++) = fvec2(0,1); texc2->at(idx++) = fvec2(0,0); texc2->at(idx++) = fvec2(1,0); texc2->at(idx++) = fvec2(1,1);
-    texc2->at(idx++) = fvec2(0,1); texc2->at(idx++) = fvec2(0,0); texc2->at(idx++) = fvec2(1,0); texc2->at(idx++) = fvec2(1,1);
-    texc2->at(idx++) = fvec2(1,0); texc2->at(idx++) = fvec2(1,1); texc2->at(idx++) = fvec2(0,1); texc2->at(idx++) = fvec2(0,0);
-    texc2->at(idx++) = fvec2(0,1); texc2->at(idx++) = fvec2(0,0); texc2->at(idx++) = fvec2(1,0); texc2->at(idx++) = fvec2(1,1);
-    texc2->at(idx++) = fvec2(0,0); texc2->at(idx++) = fvec2(1,0); texc2->at(idx++) = fvec2(1,1); texc2->at(idx++) = fvec2(0,1);
-    texc2->at(idx++) = fvec2(1,1); texc2->at(idx++) = fvec2(0,1); texc2->at(idx++) = fvec2(0,0); texc2->at(idx++) = fvec2(1,0);
+    fvec2 texc[] = {
+      fvec2(0,1), fvec2(0,0), fvec2(1,0), fvec2(1,0), fvec2(1,1), fvec2(0,1), 
+      fvec2(0,1), fvec2(0,0), fvec2(1,0), fvec2(1,0), fvec2(1,1), fvec2(0,1), 
+      fvec2(1,0), fvec2(1,1), fvec2(0,1), fvec2(0,1), fvec2(0,0), fvec2(1,0), 
+      fvec2(0,1), fvec2(0,0), fvec2(1,0), fvec2(1,0), fvec2(1,1), fvec2(0,1), 
+      fvec2(0,0), fvec2(1,0), fvec2(1,1), fvec2(1,1), fvec2(0,1), fvec2(0,0), 
+      fvec2(1,1), fvec2(0,1), fvec2(0,0), fvec2(0,0), fvec2(1,0), fvec2(1,1), 
+    };
+    ref<ArrayFloat2> tex_array = new ArrayFloat2;
+    geom->setTexCoordArray(0, tex_array.get());
+    tex_array->resize( vert3->size() );
+    memcpy(tex_array->ptr(), texc, sizeof(texc));
   }
+
+#endif
 
   return geom;
 }
@@ -1058,10 +1076,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
   *vert_array = verts;
   *colr_array = cols;
 
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  geom->convertDrawCallsForGLES();
-#endif
-
+\
   return geom;
 }
 //-----------------------------------------------------------------------------
