@@ -49,12 +49,15 @@ namespace vl
   class DrawArrays: public DrawCall
   {
   public:
+    virtual const char* className() const { return "vl::DrawArrays"; }
+
     DrawArrays(): mStart(0), mCount(0) 
     { 
       VL_DEBUG_SET_OBJECT_NAME()
       mType      = PT_TRIANGLES;
       mInstances = 1;
     }
+
     DrawArrays(EPrimitiveType primitive, int start, int count, int instances=1)
       : mStart(start), mCount(count)
     { 
@@ -62,7 +65,6 @@ namespace vl
       mInstances = instances;
       mType = primitive;
     }
-    virtual const char* className() const { return "vl::DrawArrays"; }
 
     DrawArrays& operator=(const DrawArrays& other)
     {
