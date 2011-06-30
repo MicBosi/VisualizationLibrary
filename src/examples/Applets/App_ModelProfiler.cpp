@@ -49,7 +49,7 @@ class App_ModelProfiler: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
     openglContext()->setContinuousUpdate(true);
 
     rendering()->as<Rendering>()->camera()->setFarPlane(10000000.0f);

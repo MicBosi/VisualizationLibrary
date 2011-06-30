@@ -138,7 +138,7 @@ public:
   /* initialization */
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     /* initialize the text actor */
     mText->setText("Drop a MOL2 file inside the window.");

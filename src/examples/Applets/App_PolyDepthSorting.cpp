@@ -41,7 +41,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     /* bind Transform */
     mTransform_Left  = new vl::Transform;

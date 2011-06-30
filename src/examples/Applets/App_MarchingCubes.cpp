@@ -58,7 +58,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
     openglContext()->setContinuousUpdate(true);
 
     srand((unsigned int)time(NULL));

@@ -42,7 +42,7 @@ class App_TessellationShader: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     if(!vl::Has_GL_Version_4_0)
     {
@@ -166,7 +166,7 @@ class App_TessellationShaderTri: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     // hemisphere base geometry
     vl::ref< vl::Geometry > geom_patch = new vl::Geometry;

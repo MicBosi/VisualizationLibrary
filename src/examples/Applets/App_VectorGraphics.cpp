@@ -41,7 +41,7 @@ class App_VectorGraphics: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
