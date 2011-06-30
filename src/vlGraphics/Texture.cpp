@@ -584,6 +584,8 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
     }
   }
 
+  // OpenGL ES does not support proxy textures and glGetTexLevelParameter*
+#if defined(VL_OPENGL)
   int width = 0;
 
   if (tex_dimension == TD_TEXTURE_BUFFER)
@@ -657,6 +659,9 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
 
   GLenum err = glGetError();
   return err == 0 && width != 0;
+#else
+  return true;
+#endif
 }
 //-----------------------------------------------------------------------------
 bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_format, int w, int h, int d, bool border, GLBufferObject* buffer_object, int samples, bool fixedsamplelocations)
