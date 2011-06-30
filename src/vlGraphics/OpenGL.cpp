@@ -56,7 +56,7 @@ namespace vl
   bool Has_GL_Version_4_0 = false;
   bool Has_GL_Version_4_1 = false;
 
-  bool Has_GL_Compatibility = false;
+  bool Has_Fixed_Function_Pipeline = false;
 
   // GLES defines
 
@@ -147,7 +147,7 @@ bool vl::initializeOpenGL()
 
     // Check fixed function pipeline
     glDisable(GL_LIGHTING);
-    Has_GL_Compatibility = glGetError() == GL_NO_ERROR;
+    Has_Fixed_Function_Pipeline = glGetError() == GL_NO_ERROR;
 
     // GLES detect
     #if defined(VL_OPENGL_ES1)
@@ -170,19 +170,19 @@ bool vl::initializeOpenGL()
       vmin = version_string[2] - '0';
     }
 
-    Has_GL_Version_1_1 = (vmaj == 1 && vmin >= 1) || (vmaj > 1 && Has_GL_Compatibility);
-    Has_GL_Version_1_2 = (vmaj == 1 && vmin >= 2) || (vmaj > 1 && Has_GL_Compatibility);
-    Has_GL_Version_1_3 = (vmaj == 1 && vmin >= 3) || (vmaj > 1 && Has_GL_Compatibility);
-    Has_GL_Version_1_4 = (vmaj == 1 && vmin >= 4) || (vmaj > 1 && Has_GL_Compatibility);
-    Has_GL_Version_1_5 = (vmaj == 1 && vmin >= 5) || (vmaj > 1 && Has_GL_Compatibility);
-    Has_GL_Version_2_0 = (vmaj == 2 && vmin >= 0) || (vmaj > 2 && Has_GL_Compatibility);
-    Has_GL_Version_2_1 = (vmaj == 2 && vmin >= 1) || (vmaj > 2 && Has_GL_Compatibility);
-    Has_GL_Version_3_0 = (vmaj == 3 && vmin >= 0) || (vmaj > 3 && Has_GL_Compatibility);
-    Has_GL_Version_3_1 = (vmaj == 3 && vmin >= 1) || (vmaj > 3 && Has_GL_Compatibility);
-    Has_GL_Version_3_2 = (vmaj == 3 && vmin >= 2) || (vmaj > 3 && Has_GL_Compatibility);
-    Has_GL_Version_3_3 = (vmaj == 3 && vmin >= 3) || (vmaj > 3 && Has_GL_Compatibility);
-    Has_GL_Version_4_0 = (vmaj == 4 && vmin >= 0) || (vmaj > 4 && Has_GL_Compatibility);
-    Has_GL_Version_4_1 = (vmaj == 4 && vmin >= 1) || (vmaj > 4 && Has_GL_Compatibility);
+    Has_GL_Version_1_1 = (vmaj == 1 && vmin >= 1) || (vmaj > 1 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_1_2 = (vmaj == 1 && vmin >= 2) || (vmaj > 1 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_1_3 = (vmaj == 1 && vmin >= 3) || (vmaj > 1 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_1_4 = (vmaj == 1 && vmin >= 4) || (vmaj > 1 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_1_5 = (vmaj == 1 && vmin >= 5) || (vmaj > 1 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_2_0 = (vmaj == 2 && vmin >= 0) || (vmaj > 2 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_2_1 = (vmaj == 2 && vmin >= 1) || (vmaj > 2 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_3_0 = (vmaj == 3 && vmin >= 0) || (vmaj > 3 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_3_1 = (vmaj == 3 && vmin >= 1) || (vmaj > 3 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_3_2 = (vmaj == 3 && vmin >= 2) || (vmaj > 3 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_3_3 = (vmaj == 3 && vmin >= 3) || (vmaj > 3 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_4_0 = (vmaj == 4 && vmin >= 0) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
+    Has_GL_Version_4_1 = (vmaj == 4 && vmin >= 1) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
 
     // opengl extension strings init
     std::string extensions = getOpenGLExtensions();
@@ -250,7 +250,7 @@ bool vl::initializeOpenGL()
     Has_Occlusion_Query = Has_GL_ARB_occlusion_query||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_Transform_Feedback = Has_GL_NV_transform_feedback||Has_GL_EXT_transform_feedback||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
-    Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_GL_Compatibility)||Has_GL_Version_1_4||Has_GLES_Version_1_x;
+    Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_Fixed_Function_Pipeline)||Has_GL_Version_1_4||Has_GLES_Version_1_x;
     Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL || Has_GLES_Version_1_x;
 
     return glGetError() == GL_NO_ERROR;
