@@ -32,6 +32,8 @@
 #ifndef VL_GL_FUNCTION_WRAPPERS
 #define VL_GL_FUNCTION_WRAPPERS
 
+#pragma warning( disable : 4100 ) // unreferenced formal parameter
+
 // functions that have direct translations
 
 #define glDepthRange glDepthRangef
@@ -1161,5 +1163,7 @@ namespace vl
   }
 
 }
+
+#pragma warning( default: 4100 ) // unreferenced formal parameter
 
 #endif
