@@ -101,7 +101,7 @@ namespace vl
           String msg( getGLErrorString(glerr) );
           Log::error( Say("glGetError() [%s:%n]: %s\n") << __FILE__ << __LINE__ << msg );
           Log::warning( "- If you are using geometry instancing in conjunction with display lists you will have to disable one of them.\n" );
-          Log::warning( "- If you are using OpenGL ES you must not use GL_QUADS, GL_QUAD_STRIP and GL_POLYGON primitive types.\n" );
+          Log::warning( "- If you are using OpenGL ES you must NOT use GL_QUADS, GL_QUAD_STRIP and GL_POLYGON primitive types.\n" );
           VL_TRAP()
         }
       #endif
