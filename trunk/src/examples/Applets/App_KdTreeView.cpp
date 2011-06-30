@@ -43,7 +43,7 @@ class App_KdTreeView: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     mSceneKdTree = new vl::SceneManagerActorKdTree;
     rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());

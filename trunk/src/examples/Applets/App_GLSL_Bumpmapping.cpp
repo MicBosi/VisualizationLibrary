@@ -49,7 +49,7 @@ public:
       exit(1);
     }
 
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     mTransform = new vl::Transform;
 

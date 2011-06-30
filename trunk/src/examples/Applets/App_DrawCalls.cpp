@@ -49,7 +49,7 @@ class App_DrawCalls: public BaseDemo
 {
   void initEvent()
   {
-    //vl::Log::print(appletInfo());
+    //vl::Log::info(appletInfo());
 
     //vl::ref<vl::DrawRangeElementsUInt> deu32 = new vl::DrawRangeElementsUInt;
     //deu32->setBaseVertex(100);

@@ -51,7 +51,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     /* 2 pass shader: 1 = solid, 2 = wireframe */
 

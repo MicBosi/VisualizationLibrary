@@ -43,7 +43,7 @@ class App_MiniEarth: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     vl::ref<vl::Effect> fx = new vl::Effect;
     fx->shader()->enable(vl::EN_LIGHTING);
@@ -72,7 +72,7 @@ public:
     vl::ref<vl::ArrayFloat3> norm3 = new vl::ArrayFloat3;
     earth->setNormalArray(norm3.get());
     norm3->resize(coord3->size());
-    for(int i=0; i<coord3->size(); ++i)
+    for(size_t i=0; i<coord3->size(); ++i)
     {
       float longitude = coord3->at(i).x();
       float latitude  = coord3->at(i).z();

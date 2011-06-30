@@ -57,7 +57,7 @@ public:
       exit(1);
     }
 
-    vl::Log::print(appletInfo());
+    vl::Log::info(appletInfo());
 
     /*openglContext()->setContinuousUpdate(false);*/
 
