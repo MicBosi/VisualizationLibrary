@@ -213,6 +213,7 @@ void CALLBACK Tessellator::tessVertexData( dvec3* vec, Tessellator* tessellator 
   }
 }
 //-----------------------------------------------------------------------------
+#pragma warning( disable : 4100 ) // unreferenced formal parameter
 void CALLBACK Tessellator::tessCombineData( GLdouble coords[3], dvec3* d[4], GLfloat w[4], dvec3 **dataOut, Tessellator* tessellator )
 {
   dvec3 *vec = new dvec3;
@@ -222,6 +223,7 @@ void CALLBACK Tessellator::tessCombineData( GLdouble coords[3], dvec3* d[4], GLf
   *dataOut = vec;
   tessellator->mCombinedVertices.push_back( vec );
 }
+#pragma warning( default: 4100 ) // unreferenced formal parameter
 //-----------------------------------------------------------------------------
 void CALLBACK Tessellator::tessEnd(void)
 {
