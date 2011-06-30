@@ -34,11 +34,8 @@
 #include <vlCore/Log.hpp>
 #include <cstdlib>
 
-#if defined(_MSC_VER) || defined(__MINGW32__)
-  #include <windows.h>
+#if defined(VL_PLATFORM_WINDOWS)
   #include <wincrypt.h>
-  // #include <NTSecAPI.h>
-  // #pragma comment(lib,"Advapi32.lib")
 #endif
 
 using namespace vl;

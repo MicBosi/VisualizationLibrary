@@ -33,9 +33,17 @@
 #define CHECK_INCLUDED
 
 #include <vlCore/config.hpp>
-#include <cassert>
+
+// Required for IsDebuggerPresent()
+#if defined(VL_PLATFORM_WINDOWS)
+  #ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN 1
+  #endif
+  #include <windows.h>
+#endif
+
 #if defined(__GNUG__) || defined(__MINGW32__) 
-#include <cstdio>
+  #include <cstdio>
 #endif
 
 namespace vl
@@ -49,13 +57,12 @@ namespace vl
 
     // Visual Studio
     #if defined(_MSC_VER) 
-      #define VL_TRAP() __debugbreak(); /*{ __asm {int 3} }*/
+      #define VL_TRAP() { if (IsDebuggerPresent()) { __debugbreak(); } else exit(1); }
     // GNU GCC
     #elif defined(__GNUG__) || defined(__MINGW32__) 
       #define VL_TRAP() { fflush(stdout); fflush(stderr); asm("int $0x3"); }
-    // Others: fixme?
     #else 
-      #define VL_TRAP() {}
+      #define VL_TRAP() { exit(1); }
     #endif
 
     #define VL_CHECK(expr) { if(!(expr)) { ::vl::log_failed_check(#expr,__FILE__,__LINE__); VL_TRAP() } }
