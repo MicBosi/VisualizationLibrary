@@ -338,7 +338,7 @@ public:
     /* populate the scene */
     addRings(NULL);
     addCube(texture.get(), NULL);
-  }
+  } 
 
   /*
   This example shows how to perform off-screen rendering directly on a multisample texture.
