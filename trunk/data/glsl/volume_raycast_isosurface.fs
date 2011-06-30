@@ -57,7 +57,7 @@ vec4 computeFragColor(vec3 iso_pos)
 	float val = texture3D(volume_texunit, iso_pos).r;
 
 	vec4 color = texture1D(trfunc_texunit, val);
-	vec3 color_tmp = vec3(0.0, 0.0, 0.0);
+	vec3 color_tmp; // mic fixme: if I initialize this to vec3(0,0,0) the whole volume disappears!
 
 	// compute the gradient and lighting only if the pixel is visible "enough"
 	vec3 N;
