@@ -169,7 +169,7 @@ void MorphingCallback::init(ResourceDatabase* res_db)
     return;
 
   Geometry* geometry = res_db->get<Geometry>(0);
-  geometry->shallowCopy( mGeometry.get() );
+  geometry->shallowCopyTo( mGeometry.get() );
   mVertices = new ArrayFloat3;
   mNormals  = new ArrayFloat3;
 
@@ -245,6 +245,9 @@ void MorphingCallback::blendFrames(int a, int b, float t)
 
   if (mGeometry->vboEnabled() && Has_VBO)
   {
+    // mic fixme:
+    // Come si vede qui' sta nomenclatura non e' chiara: 
+    // sembra che stiamo semplicemente cambiano un po di flags invece stiamo updatando tutto il VBO!!!
     mVertices->gpuBuffer()->setBufferData(BU_DYNAMIC_DRAW, false);
     mNormals ->gpuBuffer()->setBufferData(BU_DYNAMIC_DRAW, false);
   }
@@ -296,7 +299,7 @@ void MorphingCallback::initFrom(MorphingCallback* morph_cb)
     mGeometry = morph_cb->mGeometry;
   #else
     // Geometry copy method
-    morph_cb->mGeometry->shallowCopy( mGeometry.get() );
+    morph_cb->mGeometry->shallowCopyTo( mGeometry.get() );
 
     // compute AABB using the first frame
 
