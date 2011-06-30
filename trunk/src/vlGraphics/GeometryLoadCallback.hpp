@@ -45,19 +45,21 @@ namespace vl
   class GeometryLoadCallback: public LoadCallback
   {
   public:
+    virtual const char* className() const { return "vl::GeometryLoadCallback"; }
+
     GeometryLoadCallback()
     {
+      mConvertForGLES    = false;
+      mComputeNormals    = true;
+      mUseVBOs           = true;
+      mUseDisplayLists   = false;
       mTransformGeometry = false;
       mDiscardOriginalNormals = false;
-      mComputeNormals  = true;
-      mRemoveDoubles   = false;
-      mSortVertices    = false;
-      mStripfy         = false;
-      mConvertToDrawArrays = false;
-      mUseDisplayLists = false;
-      mUseVBOs         = true;
+      mRemoveDoubles          = false;
+      mSortVertices           = false;
+      mStripfy                = false;
+      mConvertToDrawArrays    = false;
     }
-    virtual const char* className() const { return "vl::GeometryLoadCallback"; }
 
     void operator()(ResourceDatabase* db)
     {
@@ -91,6 +93,9 @@ namespace vl
 
         if (transformGeometry())
           geom[i]->transform(transformMatrix(),true);
+
+        if (convertDrawCallsForGLES())
+          geom[i]->convertDrawCallsForGLES();
       }
     }
 
@@ -142,6 +147,11 @@ namespace vl
     //! Transforms the Geometries using transformMatrix().
     void setTransformGeometry(bool on) { mTransformGeometry = on; }
 
+    //! If true calls Geometry::convertDrawCallsForGLES()
+    bool convertDrawCallsForGLES() const { return mConvertForGLES; }
+    //! If true calls Geometry::convertDrawCallsForGLES()
+    void setConvertDrawCallsForGLES(bool on) { mConvertForGLES = on; }
+
   protected:
     mat4 mMatrix;
     bool mTransformGeometry;
@@ -153,6 +163,7 @@ namespace vl
     bool mConvertToDrawArrays;
     bool mUseDisplayLists;
     bool mUseVBOs;
+    bool mConvertForGLES;
   };
 }
 
