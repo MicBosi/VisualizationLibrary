@@ -46,6 +46,7 @@ ref<Geometry> vl::makeIcosphere(const vec3& pos, Real diameter, int detail, bool
 
   ref<ArrayFloat3> coords = new ArrayFloat3;
   ref<ArrayFloat3> norms = new ArrayFloat3;
+
   ref<DrawElementsUInt> polys = new DrawElementsUInt(PT_TRIANGLES);
 
   const Real X = (Real)0.525731112119133606;
@@ -136,6 +137,10 @@ ref<Geometry> vl::makeIcosphere(const vec3& pos, Real diameter, int detail, bool
     DoubleVertexRemover dvr;
     dvr.removeDoubles(geom.get());
   }
+
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+  geom->convertDrawCallsForGLES();
+#endif
 
   return geom;
 }
@@ -269,6 +274,10 @@ ref<Geometry> vl::makeTeapot( const vec3& origin, Real diameter, int detail)
   DoubleVertexRemover dvr;
   dvr.removeDoubles(teapot.get());
 
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+  teapot->convertDrawCallsForGLES();
+#endif
+
   return teapot;
 }
 //-----------------------------------------------------------------------------
@@ -318,6 +327,7 @@ ref<Geometry> vl::makeUVSphere( const vec3& origin, Real diameter, int phi, int 
   // top/bottom triangles
 
   ref<DrawElementsUInt> tris = new DrawElementsUInt( PT_TRIANGLES );
+
   tris->indices()->resize( phi*3 + phi*3 );
   geom->drawCalls()->push_back(tris.get());
   idx = 0;
@@ -335,6 +345,10 @@ ref<Geometry> vl::makeUVSphere( const vec3& origin, Real diameter, int phi, int 
     tris->indices()->at(idx++) = 1+phi*(theta-1)+(j+1)%phi;
     tris->indices()->at(idx++) = 1+phi*(theta-1)+(j+0)%phi;
   }
+
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+  geom->convertDrawCallsForGLES();
+#endif
 
   return geom;
 }
@@ -383,7 +397,7 @@ ref<Geometry> vl::makeCylinder( const vec3& origin, Real diameter, Real height, 
 
   if (top)
   {
-    ref<DrawElementsUInt> tris = new DrawElementsUInt( PT_TRIANGLE_FAN );
+    ref<DrawElementsUShort> tris = new DrawElementsUShort( PT_TRIANGLE_FAN );
     tris->indices()->resize( phi+2 );
     geom->drawCalls()->push_back(tris.get());
     idx = 0;
@@ -405,7 +419,7 @@ ref<Geometry> vl::makeCylinder( const vec3& origin, Real diameter, Real height, 
 
   if (bottom)
   {
-    ref<DrawElementsUInt> tris = new DrawElementsUInt( PT_TRIANGLE_FAN );
+    ref<DrawElementsUShort> tris = new DrawElementsUShort( PT_TRIANGLE_FAN );
     tris->indices()->resize( phi+2 );
     geom->drawCalls()->push_back(tris.get());
     idx = 0;
@@ -424,6 +438,10 @@ ref<Geometry> vl::makeCylinder( const vec3& origin, Real diameter, Real height, 
     for(int j=0; j<phi+1; ++j)
       tris->indices()->at(idx++) = 1+fan_center+(phi -1 - j%phi);
   }
+
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+  geom->convertDrawCallsForGLES();
+#endif
 
   return geom;
 }
@@ -494,6 +512,10 @@ ref<Geometry> vl::makeTorus( const vec3& origin, Real diameter, Real thickness, 
     }
   }
 
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+  geom->convertDrawCallsForGLES();
+#endif
+
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -540,16 +562,23 @@ ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zsid
   fvec3 a7( (fvec3)(vec3(+x,-y,-z) + origin) );
 
 #if defined(VL_OPENGL)
+
+  fvec3 verts[] = {
+   a1, a2, a3, a0,
+   a2, a6, a7, a3,
+   a6, a5, a4, a7,
+   a5, a1, a0, a4,
+   a0, a3, a7, a4,
+   a5, a6, a2, a1
+  };
+
   ref<DrawArrays> polys = new DrawArrays(PT_QUADS, 0, 24);
   geom->drawCalls()->push_back( polys.get() );
   vert3->resize( 24  );
-  vert3->at(0)  = a1; vert3->at(1)  = a2; vert3->at(2)  = a3; vert3->at(3)  = a0;
-  vert3->at(4)  = a2; vert3->at(5)  = a6; vert3->at(6)  = a7; vert3->at(7)  = a3;
-  vert3->at(8)  = a6; vert3->at(9)  = a5; vert3->at(10) = a4; vert3->at(11) = a7;
-  vert3->at(12) = a5; vert3->at(13) = a1; vert3->at(14) = a0; vert3->at(15) = a4;
-  vert3->at(16) = a0; vert3->at(17) = a3; vert3->at(18) = a7; vert3->at(19) = a4;
-  vert3->at(20) = a5; vert3->at(21) = a6; vert3->at(22) = a2; vert3->at(23) = a1;
+  memcpy(vert3->ptr(), verts, sizeof(verts));
+
 #else
+  
   fvec3 verts[] = {
     a1, a2, a3, a3, a0, a1,
     a2, a6, a7, a7, a3, a2,
@@ -563,6 +592,7 @@ ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zsid
   geom->drawCalls()->push_back( polys.get() );
   vert3->resize( 36 );
   memcpy(vert3->ptr(), verts, sizeof(verts));
+
 #endif
 
   texc2->resize( 24 );
@@ -635,7 +665,7 @@ ref<Geometry> vl::makeCone( const vec3& origin, Real diameter, Real height, int 
   }
 
   // top fan
-  ref<DrawElementsUInt> top_fan = new DrawElementsUInt(PT_TRIANGLE_FAN);
+  ref<DrawElementsUShort> top_fan = new DrawElementsUShort(PT_TRIANGLE_FAN);
   top_fan->indices()->resize(phi+2);
   geom->drawCalls()->push_back(top_fan.get());
   int idx = 0;
@@ -655,7 +685,7 @@ ref<Geometry> vl::makeCone( const vec3& origin, Real diameter, Real height, int 
       vert3->at(vert_idx++) = (fvec3)(v + origin);
     }
 
-    ref<DrawElementsUInt> bottom_fan = new DrawElementsUInt(PT_TRIANGLE_FAN);
+    ref<DrawElementsUShort> bottom_fan = new DrawElementsUShort(PT_TRIANGLE_FAN);
     bottom_fan->indices()->resize(phi+2);
     geom->drawCalls()->push_back(bottom_fan.get());
     idx = 0;
@@ -722,6 +752,10 @@ ref<Geometry> vl::makeGrid( const vec3& origin, Real xside, Real zside, int x, i
     }
   }
 
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+  geom->convertDrawCallsForGLES();
+#endif
+
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -779,7 +813,7 @@ ref<Geometry> vl::makeIcosahedron( const vec3& origin, Real diameter )
   vert3->at(10) = (fvec3)(origin + vec3(+z, -x, 0.0)*radius);
   vert3->at(11) = (fvec3)(origin + vec3(-z, -x, 0.0)*radius);
 
-  int faces[20][3] = 
+  unsigned short faces[20][3] = 
   {
     {1,4,0},  {4,9,0},  {4,5,9},  {8,5,4},  {1,8,4}, 
     {1,10,8}, {10,3,8}, {8,3,5},  {3,2,5},  {3,7,2}, 
@@ -787,10 +821,10 @@ ref<Geometry> vl::makeIcosahedron( const vec3& origin, Real diameter )
     {10,1,6}, {11,0,9}, {2,11,9}, {5,2,9},  {11,2,7}
   };
 
-  ref<DrawElementsUInt> polys = new DrawElementsUInt;
+  ref<DrawElementsUShort> polys = new DrawElementsUShort(PT_TRIANGLES);
   geom->drawCalls()->push_back(polys.get());
   polys->indices()->resize(20*3);
-  memcpy(polys->indices()->ptr(), faces, sizeof(int)*20*3);
+  memcpy(polys->indices()->ptr(), faces, sizeof(faces));
 
   return geom;
 }
@@ -913,7 +947,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
       verts.push_back(v);
       cols.push_back(top_col);
     }
-    ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
+    ref<DrawElementsUShort> de = new DrawElementsUShort(PT_TRIANGLE_FAN);
     geom->drawCalls()->push_back(de.get());
     de->indices()->resize(segments);
     for(int i=0,j=segments; j--; ++i)
@@ -929,7 +963,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
       verts.push_back(v);
       cols.push_back(bottom_col);
     }
-    ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
+    ref<DrawElementsUShort> de = new DrawElementsUShort(PT_TRIANGLE_FAN);
     geom->drawCalls()->push_back(de.get());
     de->indices()->resize(segments);
     for(int i=0; i<segments; ++i)
@@ -971,7 +1005,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
       }
     }
 
-    ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
+    ref<DrawElementsUShort> de = new DrawElementsUShort(PT_TRIANGLE_FAN);
     geom->drawCalls()->push_back(de.get());
     de->indices()->resize(segments+2);
     de->indices()->at(0) = (GLuint)verts.size()-1;
@@ -1013,7 +1047,7 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
       }
     }
 
-    ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLE_FAN);
+    ref<DrawElementsUShort> de = new DrawElementsUShort(PT_TRIANGLE_FAN);
     geom->drawCalls()->push_back(de.get());
     de->indices()->resize(segments+2);
     de->indices()->at(0) = (GLuint)verts.size()-1;
@@ -1023,6 +1057,10 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
 
   *vert_array = verts;
   *colr_array = cols;
+
+#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
+  geom->convertDrawCallsForGLES();
+#endif
 
   return geom;
 }
