@@ -122,11 +122,16 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   // back wireframe
   glDisable(GL_DEPTH_TEST);
   glLineWidth(mLineWidth > 2.0f ? mLineWidth / 2.0f : 1.0f);
+#if defined(VL_OPENGL)
   glLineStipple(1,0xF0F0);
   glEnable(GL_LINE_STIPPLE);
-    if (showHiddenLines()) renderLines(camera);
+#endif
+  if (showHiddenLines()) 
+    renderLines(camera);
   glDisable(GL_LINE_SMOOTH);
+#if defined(VL_OPENGL)
   glDisable(GL_LINE_STIPPLE);
+#endif
   glDisable(GL_BLEND);
   glLineWidth(1.0f);
 
