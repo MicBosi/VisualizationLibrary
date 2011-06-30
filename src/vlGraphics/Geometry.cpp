@@ -89,11 +89,11 @@ void Geometry::computeBounds_Implementation()
 ref<Geometry> Geometry::deepCopy() const
 {
   ref<Geometry> geom = new Geometry;
-  deepCopy(geom.get());
+  deepCopyTo(geom.get());
   return geom;
 }
 //-----------------------------------------------------------------------------
-void Geometry::deepCopy(Geometry* geom) const
+void Geometry::deepCopyTo(Geometry* geom) const
 {
   // copy the base class Renderable
   geom->Renderable::operator=(*this);
@@ -150,7 +150,7 @@ ref<Geometry> Geometry::shallowCopy()
   return geom;
 }
 //-----------------------------------------------------------------------------
-void Geometry::shallowCopy(Geometry* geom)
+void Geometry::shallowCopyTo(Geometry* geom)
 {
   geom->operator=(*this);
 }
