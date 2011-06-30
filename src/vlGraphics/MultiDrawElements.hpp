@@ -175,6 +175,7 @@ namespace vl
 
     virtual void render(bool use_vbo) const
     {
+      VL_CHECK_OGL()
       VL_CHECK(Has_GL_EXT_multi_draw_arrays||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0);
       VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
       use_vbo &= Has_VBO; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
@@ -202,7 +203,7 @@ namespace vl
       const GLvoid **indices_ptr = (const GLvoid**)&mPointerVector[0];
       if (use_vbo && indices()->gpuBuffer()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle());
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle()); VL_CHECK_OGL()
         indices_ptr = (const GLvoid**)&mNULLPointerVector[0];
       }
       else
@@ -213,7 +214,9 @@ namespace vl
         VL_CHECK( baseVertices().size() == pointerVector().size() )
         VL_CHECK( baseVertices().size() == countVector().size() )
         if (Has_GL_ARB_draw_elements_base_vertex||Has_GL_Version_3_1||Has_GL_Version_4_0)
-          glMultiDrawElementsBaseVertex( primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), indices_ptr, (GLsizei)mCountVector.size(), (GLint*)&mBaseVertices[0] );
+        {
+          glMultiDrawElementsBaseVertex( primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), indices_ptr, (GLsizei)mCountVector.size(), (GLint*)&mBaseVertices[0] ); VL_CHECK_OGL()
+        }
         else
         {
           vl::Log::error("MultiDrawElements::render(): glMultiDrawElementsBaseVertex() not supported!\n"
@@ -222,7 +225,9 @@ namespace vl
         }
       }
       else
-        glMultiDrawElements( primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), (const GLvoid**)indices_ptr, (GLsizei)mCountVector.size() );
+      {
+        glMultiDrawElements( primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), (const GLvoid**)indices_ptr, (GLsizei)mCountVector.size() ); VL_CHECK_OGL()
+      }
 
       // primitive restart disable
       if(primitiveRestartEnabled())

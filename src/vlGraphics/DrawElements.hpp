@@ -201,6 +201,33 @@ namespace vl
       VL_CHECK_OGL()
       VL_CHECK(mBaseVertex>=0)
       VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
+
+#if !defined(NDEBUG) && (defined(VL_OPENGL_ES1) || defined(GL_OPENGL_ES2))
+      bool error = true;
+      // check primitive type
+      switch(primitiveType())
+      {
+      case PT_QUADS:      Log::error("vl::DrawElements does not support PT_QUADS under OpenGL ES!\n"); break;
+      case PT_QUAD_STRIP: Log::error("vl::DrawElements does not support PT_QUAD_STRIP under OpenGL ES!\n"); break;
+      case PT_POLYGON:    Log::error("vl::DrawElements does not support PT_POLYGON under OpenGL ES!\n"); break;
+      case PT_LINES_ADJACENCY:      Log::error("vl::DrawElements does not support PT_LINES_ADJACENCY under OpenGL ES!\n"); break;
+      case PT_LINE_STRIP_ADJACENCY: Log::error("vl::DrawElements does not support PT_LINE_STRIP_ADJACENCY under OpenGL ES!\n"); break;
+      case PT_TRIANGLES_ADJACENCY:  Log::error("vl::DrawElements does not support PT_TRIANGLES_ADJACENCY under OpenGL ES!\n"); break;
+      case PT_TRIANGLE_STRIP_ADJACENCY: Log::error("vl::DrawElements does not support PT_TRIANGLE_STRIP_ADJACENCY under OpenGL ES!\n"); break;
+      case PT_PATCHES:    Log::error("vl::DrawElements does not support PT_PATCHES under OpenGL ES!\n"); break;
+      default:
+        error = false;
+        break;
+      }
+      // check index type
+      if (indices()->glType() != GL_UNSIGNED_BYTE && indices()->glType() != GL_UNSIGNED_SHORT)
+      {
+        Log::error("vl::DrawElements only supports GL_UNSIGNED_BYTE and GL_UNSIGNED_SHORT under OpenGL ES!\n");
+        error = true;
+      }
+      VL_CHECK(!error)
+#endif
+
       use_vbo &= Has_VBO; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
       if ( !use_vbo && !indices()->size() )
         return;
