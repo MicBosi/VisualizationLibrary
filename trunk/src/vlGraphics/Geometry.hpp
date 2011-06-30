@@ -94,7 +94,7 @@ namespace vl
     /**
      * Performs a shallow copy (as opposed to a deep copy) of the specified Geometry.
      * \sa deepCopy() */
-    void shallowCopy(Geometry*);
+    void shallowCopyTo(Geometry*);
 
     /**
      * Performs a deep copy (as opposed to a shallow copy) of the specified Geometry.
@@ -104,7 +104,7 @@ namespace vl
     /**
      * Performs a deep copy (as opposed to a shallow copy) of the specified Geometry.
      * \sa shallowCopy() */
-    void deepCopy(Geometry* ) const;
+    void deepCopyTo(Geometry* ) const;
 
     //! Performs a shallowCopy() of the Geometry
     Geometry& operator=(const Geometry& other);
@@ -124,7 +124,7 @@ namespace vl
         VL_CHECK(vertexArray() && vertexArray()->size())
         ref<ArrayFloat3> norm_array = new ArrayFloat3;
         norm_array->resize(vertexArray()->size());
-        for(int i=0; i<norm_array->size(); ++i)
+        for(size_t i=0; i<norm_array->size(); ++i)
           norm_array->at(i) = normal;
         setNormalArray(norm_array.get());
       #endif
@@ -142,7 +142,7 @@ namespace vl
         VL_CHECK(vertexArray() && vertexArray()->size())
         ref<ArrayFloat4> color_array = new ArrayFloat4;
         color_array->resize(vertexArray()->size());
-        for(int i=0; i<color_array->size(); ++i)
+        for(size_t i=0; i<color_array->size(); ++i)
           color_array->at(i) = color;
         setColorArray(color_array.get());
       #endif
@@ -160,7 +160,7 @@ namespace vl
         VL_CHECK(vertexArray() && vertexArray()->size())
         ref<ArrayFloat4> sec_color_array = new ArrayFloat4;
         sec_color_array->resize(vertexArray()->size());
-        for(int i=0; i<sec_color_array->size(); ++i)
+        for(size_t i=0; i<sec_color_array->size(); ++i)
           sec_color_array->at(i) = color;
         setSecondaryColorArray(sec_color_array.get());
       #endif
