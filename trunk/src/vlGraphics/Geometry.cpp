@@ -666,6 +666,146 @@ void Geometry::convertDrawCallToDrawArrays()
   regenerateVertices(map_new_to_old);
 }
 //-----------------------------------------------------------------------------
+void Geometry::convertDrawCallsForGLES()
+{
+  // Pass#1: remove PT_QUADS, PT_QUADS_STRIP, PT_POLYGON
+  for( int idraw=this->drawCalls()->size(); idraw--; )
+  {
+    DrawCall* dc = this->drawCalls()->at(idraw);
+    if( dc->isClassName("vl::DrawElementsUInt") )
+    {
+      if (dc->primitiveType() == PT_POLYGON)
+      {
+        DrawElementsUInt* polygon = static_cast<DrawElementsUInt*>(dc);
+        ref<DrawElementsUInt> triangles = new DrawElementsUInt(PT_TRIANGLES);
+        triangles->indices()->resize( (polygon->indices()->size()-2) * 3 );
+        for(int i=0, itri=0; i<polygon->indices()->size()-2; ++i, itri+=3)
+        {
+          triangles->indices()->at(itri+0) = polygon->indices()->at(0);
+          triangles->indices()->at(itri+1) = polygon->indices()->at(i+1);
+          triangles->indices()->at(itri+2) = polygon->indices()->at(i+2);
+        }
+        // substitute the draw call
+        this->drawCalls()->eraseAt(idraw);
+        this->drawCalls()->push_back(triangles.get());
+      }
+      else
+      if (dc->primitiveType() == PT_QUAD_STRIP)
+      {
+        dc->setPrimitiveType(vl::PT_TRIANGLE_STRIP);
+      }
+      else
+      if (dc->primitiveType() == PT_QUADS)
+      {
+        DrawElementsUInt* quads = static_cast<DrawElementsUInt*>(dc);
+        ref<DrawElementsUInt> triangles = new DrawElementsUInt(PT_TRIANGLES);
+        triangles->indices()->resize( quads->indices()->size() / 4 * 6 );
+        unsigned int* triangle_idx = &triangles->indices()->at(0);
+        unsigned int* quad_idx = &quads->indices()->at(0);
+        unsigned int* quad_end = &quads->indices()->at(0) + quads->indices()->size();
+        for( ; quad_idx < quad_end ; quad_idx += 4, triangle_idx += 6 )
+        {
+          triangle_idx[0] = quad_idx[0];
+          triangle_idx[1] = quad_idx[1];
+          triangle_idx[2] = quad_idx[2];
+
+          triangle_idx[3] = quad_idx[2];
+          triangle_idx[4] = quad_idx[3];
+          triangle_idx[5] = quad_idx[0];
+        }
+        // substitute the draw call
+        this->drawCalls()->eraseAt(idraw);
+        this->drawCalls()->push_back(triangles.get());
+      }
+    }
+    else
+    if ( strstr(dc->className(), "vl::MultiDrawElements") )
+    {
+        dc->setEnabled(false);
+        Log::warning( "Geometry::convertDrawCallsForGLES(): cannot convert vl::MultiDrawElements, draw call disabled.\n" );
+    }
+    else
+    if ( strstr(dc->className(), "vl::DrawRangeElements") )
+    {
+        dc->setEnabled(false);
+        Log::warning( "Geometry::convertDrawCallsForGLES(): cannot convert vl::DrawRangeElements, draw call disabled.\n" );
+    }
+  } // for()
+
+  // Pass #2: shrink DrawElementsUInt to UByte or UShort
+  for( int idraw=this->drawCalls()->size(); idraw--; )
+  {
+    DrawCall* dc = this->drawCalls()->at(idraw);
+    if( dc->isClassName("vl::DrawElementsUInt") )
+    {
+      // find max index
+      int max_idx = -1;
+      int idx_count = 0;
+      for( vl::IndexIterator it = dc->indexIterator(); !it.isEnd(); it.next(), ++idx_count )
+        max_idx = it.index() > max_idx ? it.index() : max_idx;
+
+      if(max_idx <= 0xFF)
+      {
+        // shrink to DrawElementsUByte
+        ref<DrawElementsUByte> de = new DrawElementsUByte( dc->primitiveType() );
+        de->indices()->resize( idx_count );
+        int i=0;
+        for( vl::IndexIterator it = dc->indexIterator(); !it.isEnd(); it.next(), ++i )
+          de->indices()->at(i) = it.index();
+
+        // substitute new draw call
+        this->drawCalls()->eraseAt(idraw);
+        this->drawCalls()->push_back(de.get());
+      }
+      else
+      if(max_idx <= 0xFFFF)
+      {
+        // shrink to DrawElementsUShort
+        ref<DrawElementsUShort> de = new DrawElementsUShort( dc->primitiveType() );
+        de->indices()->resize( idx_count );
+        int i=0;
+        for( vl::IndexIterator it = dc->indexIterator(); !it.isEnd(); it.next(), ++i )
+          de->indices()->at(i) = it.index();
+
+        // substitute new draw call
+        this->drawCalls()->eraseAt(idraw);
+        this->drawCalls()->push_back(de.get());
+      }
+      else
+      {
+        dc->setEnabled(false);
+        Log::error( Say("Geometry::convertDrawCallsForGLES(): could not shrink DrawElementsUInt, max index found is %n! Draw call disabled.\n") << max_idx );
+      }
+    }
+
+    // check supported primitive types
+    switch(dc->primitiveType())
+    {
+    case GL_POINTS:
+    case GL_LINE_STRIP:
+    case GL_LINE_LOOP:
+    case GL_LINES:
+    case GL_TRIANGLE_STRIP:
+    case GL_TRIANGLE_FAN:
+    case GL_TRIANGLES:
+      break;
+
+    case PT_QUADS:
+    case PT_QUAD_STRIP:
+    case PT_POLYGON:
+    case PT_LINES_ADJACENCY:
+    case PT_LINE_STRIP_ADJACENCY:
+    case PT_TRIANGLES_ADJACENCY:
+    case PT_TRIANGLE_STRIP_ADJACENCY:
+    case PT_PATCHES:
+      dc->setEnabled(false);
+      Log::error("Geometry::convertDrawCallsForGLES(): primitive type illegal under GLES, draw call disabled.\n");
+      break;
+    }
+  } // for()
+
+}
+//-----------------------------------------------------------------------------
 bool Geometry::sortVertices()
 {
   // works only if the primitive types are all DrawElements
