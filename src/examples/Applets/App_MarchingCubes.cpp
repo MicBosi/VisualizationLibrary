@@ -404,11 +404,14 @@ public:
     // two side lighting
     fx->shader()->gocLightModel()->setTwoSide(true);
 
-    vl::ref<vl::Image> texture = vl::loadImage("/images/spheremap.png");
-    fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( texture.get() ) );
-    fx->shader()->gocTexGen(0)->setGenModeS(vl::TGM_SPHERE_MAP);
-    fx->shader()->gocTexGen(0)->setGenModeT(vl::TGM_SPHERE_MAP);
-    fx->shader()->gocTexEnv(0)->setMode(vl::TEM_BLEND);
+    if (vl::Has_GL_Version_1_1)
+    {
+      vl::ref<vl::Image> texture = vl::loadImage("/images/spheremap.png");
+      fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( texture.get() ) );
+      fx->shader()->gocTexGen(0)->setGenModeS(vl::TGM_SPHERE_MAP);
+      fx->shader()->gocTexGen(0)->setGenModeT(vl::TGM_SPHERE_MAP);
+      fx->shader()->gocTexEnv(0)->setMode(vl::TEM_BLEND);
+    }
 
     vl::ref<vl::Actor> act = sceneManager()->tree()->addActor(geom.get(), fx.get(), mTransform.get());
 

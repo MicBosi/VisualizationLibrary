@@ -142,6 +142,7 @@ public:
 
     // add a white sphere for each light to have a better visual feedback of the light animation.
     vl::ref<vl::Geometry> bulb = vl::makeUVSphere(vl::vec3(0,0,0), 0.5f);
+    bulb->setColor(vl::white);
     vl::ref<vl::Effect> bulb_fx = new vl::Effect;
     bulb_fx->shader()->enable(vl::EN_DEPTH_TEST);
     sceneManager()->tree()->addActor(bulb.get(), bulb_fx.get(), mLight0_Transform.get());

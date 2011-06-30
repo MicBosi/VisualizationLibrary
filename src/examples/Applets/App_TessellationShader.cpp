@@ -44,6 +44,13 @@ public:
   {
     vl::Log::print(appletInfo());
 
+    if(!vl::Has_GL_Version_4_0)
+    {
+      vl::Log::error("This test requires OpenGL 4!\n");
+      vl::Time::sleep(2000);
+      exit(1);
+    }
+
     const int   patch_count      = 128;
     const float world_size       = 2500.0;
     const float height_scale     = 150.0;

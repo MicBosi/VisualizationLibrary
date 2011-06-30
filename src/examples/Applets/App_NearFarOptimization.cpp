@@ -32,7 +32,6 @@
 #include "BaseDemo.hpp"
 #include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/Light.hpp>
-#include <vlGraphics/GeometryLoadCallback.hpp>
 
 using namespace vl;
 
@@ -42,9 +41,6 @@ public:
   // called once after the OpenGL window has been opened 
   void initEvent()
   {
-    ref<GeometryLoadCallback> glc = new GeometryLoadCallback;
-    defLoadWriterManager()->loadCallbacks()->push_back(glc.get());
-
     // allocate the Transform 
     mCubeTransform = new Transform;
     // bind the Transform with the transform tree of the rendring pipeline 

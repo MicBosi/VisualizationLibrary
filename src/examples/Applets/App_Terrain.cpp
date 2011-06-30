@@ -38,13 +38,14 @@ class App_Terrain: public BaseDemo
 public:
   virtual void initEvent()
   {
-    if (!vl::Has_GL_ARB_multitexture)
-    {
-      vl::Log::error("GL_ARB_multitexture required.\n");
-      openglContext()->quitApplication();
-      return;
-    }
     vl::Log::print(appletInfo());
+
+    if (!vl::Has_Multitexture)
+    {
+      vl::Log::error("This test requres multi texturing.\n");
+      vl::Time::sleep(2000);
+      exit(1);
+    }
 
     ghostCameraManipulator()->setMovementSpeed(5);
     // allocate terrain scene manager

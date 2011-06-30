@@ -44,6 +44,13 @@ public:
   {
     vl::Log::print(appletInfo());
 
+    if(!vl::Has_Occlusion_Query)
+    {
+      vl::Log::error("No support to hardware occlusion culling found!\n");
+      vl::Time::sleep(2000);
+      exit(1);
+    }
+
     // #######################################################################
     // # These 4 lines are the only code needed to enable occlusion culling, #
     // # no special sorter or render rank/block setup needed!                #
@@ -76,7 +83,7 @@ public:
 
     /* the ground under the trees */
     float side = 400;
-    vl::ref<vl::Geometry> ground = vl::makeGrid(vl::vec3(0, -1.0f, 0), side*2.1f, side*2.1f, (int)side, (int)side);
+    vl::ref<vl::Geometry> ground = vl::makeGrid(vl::vec3(0, -1.0f, 0), side*2.1f, side*2.1f, 100, 100);
     ground->computeNormals();
     ground->setColor(vl::green);
     sceneManager()->tree()->addActor(ground.get(), fx.get(), NULL);
