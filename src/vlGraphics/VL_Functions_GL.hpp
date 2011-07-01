@@ -507,16 +507,16 @@ namespace vl
       VL_TRAP();
   }
   
-  inline void VL_glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
-  {
-    if (glFramebufferTexture3D)
-      glFramebufferTexture3D(target, attachment, textarget, texture, level, zoffset);
-    else
-    if (glFramebufferTexture3DEXT)
-      glFramebufferTexture3DEXT(target, attachment, textarget, texture, level, zoffset);
-    else
-      VL_TRAP();
-  }
+  //inline void VL_glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
+  //{
+  //  if (glFramebufferTexture3D)
+  //    glFramebufferTexture3D(target, attachment, textarget, texture, level, zoffset);
+  //  else
+  //  if (glFramebufferTexture3DEXT)
+  //    glFramebufferTexture3DEXT(target, attachment, textarget, texture, level, zoffset);
+  //  else
+  //    VL_TRAP();
+  //}
   
   inline void VL_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
   {
@@ -721,6 +721,64 @@ namespace vl
       VL_TRAP();
   }
   
+  inline void VL_glGetProgramBinary(GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, GLvoid *binary)
+  {
+    if (glGetProgramBinary)
+      glGetProgramBinary(program, bufSize, length, binaryFormat, binary);
+    else
+      VL_TRAP();
+  }
+  inline void VL_glProgramBinary(GLuint program, GLenum binaryFormat, const GLvoid *binary, GLint length)
+  {
+    if (glProgramBinary)
+      glProgramBinary(program, binaryFormat, binary, length);
+    else
+      VL_TRAP();
+  }
+
+  inline void VL_glTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid* pixels)
+  {
+    if (glTexImage3D)
+      glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, pixels);
+    else
+      VL_TRAP();
+  }
+  inline void VL_glTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid* pixels)
+  {
+    if (glTexSubImage3D)
+      glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
+    else
+      VL_TRAP();
+  }
+  inline void VL_glCopyTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
+  {
+    if (glCopyTexSubImage3D)
+      glCopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
+    else
+      VL_TRAP();
+  }
+  inline void VL_glCompressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid* data)
+  {
+    if (glCompressedTexImage3D)
+      glCompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data);
+    else
+      VL_TRAP();
+  }
+  inline void VL_glCompressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid* data)
+  {
+    if (glCompressedTexSubImage3D)
+      glCompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
+    else
+      VL_TRAP();
+  }
+  inline void VL_glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
+  {
+    if (glFramebufferTexture3D)
+      glFramebufferTexture3D(target, attachment, textarget, texture, level, zoffset);
+    else
+      VL_TRAP();
+  }
+
   //-----------------------------------------------------------------------------
   
   inline std::string getOpenGLExtensions()

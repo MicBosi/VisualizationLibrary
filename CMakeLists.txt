@@ -112,11 +112,12 @@ endif()
 
 if( VL_OPENGL_MODE STREQUAL "OPENGL")
 	find_package(OpenGL REQUIRED)
+	set(VL_OPENGL_LIBRARIES ${OPENGL_LIBRARIES})
 endif()
 
-#mic fixme: VL-DLL does work with OpenGL ES
 if( VL_OPENGL_ES1 OR VL_OPENGL_ES2 )
 	include( SetupGLES )
+	set(VL_OPENGL_LIBRARIES ${VL_GLES_LIBRARY} ${VL_EGL_LIBRARY})
 endif()
 
 ################################################################################

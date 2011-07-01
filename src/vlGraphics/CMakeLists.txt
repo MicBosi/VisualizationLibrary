@@ -44,8 +44,11 @@ set(KHRONOS_DIR "${3RDPARTY_DIR}/Khronos")
 set(KHRONOS_INC ${KHRONOS_DIR}/GL/mesa_gl.h
 				${KHRONOS_DIR}/GL/khronos_glext.h 
 				${KHRONOS_DIR}/GL/khronos_wglext.h 				
-				${KHRONOS_DIR}/GLES/gl_extra_defines.h
-				${KHRONOS_DIR}/GLES2/gl_extra_defines.h
+				${KHRONOS_DIR}/GLES/gles_extra_defines.h
+				${KHRONOS_DIR}/GLES/khronos_gl.h
+				${KHRONOS_DIR}/GLES/khronos_glext.h
+				${KHRONOS_DIR}/GLES/khronos_glplatform.h
+				${KHRONOS_DIR}/GLES2/gles_extra_defines.h
 				${KHRONOS_DIR}/GLES2/khronos_gl2.h
 				${KHRONOS_DIR}/GLES2/khronos_gl2ext.h
 				${KHRONOS_DIR}/GLES2/khronos_gl2platform.h)
@@ -53,7 +56,7 @@ set(KHRONOS_INC ${KHRONOS_DIR}/GL/mesa_gl.h
 add_library(VLGraphics ${VL_SHARED_OR_STATIC} ${VLGRAPHICS_SRC} ${VLGRAPHICS_INC} ${KHRONOS_INC} ${_SOURCES})
 VL_DEFAULT_TARGET_PROPERTIES(VLGraphics)
 
-target_link_libraries(VLGraphics VLCore ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} ${_LIBS})
+target_link_libraries(VLGraphics VLCore ${VL_OPENGL_LIBRARIES} ${_LIBS})
 
 ################################################################################
 # Source Groups
