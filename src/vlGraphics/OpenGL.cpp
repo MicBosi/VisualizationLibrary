@@ -60,8 +60,8 @@ namespace vl
 
   // GLES defines
 
-  bool Has_GLES_Version_1_x = false;
-  bool Has_GLES_Version_2_x = false;
+  bool Has_GLES_Version_1 = false;
+  bool Has_GLES_Version_2 = false;
   bool Has_GLES = false;
 
   // Helper defines
@@ -151,11 +151,11 @@ bool vl::initializeOpenGL()
 
     // GLES detect
     #if defined(VL_OPENGL_ES1)
-      Has_GLES = Has_GLES_Version_1_x = true;
+      Has_GLES = Has_GLES_Version_1 = true;
     #endif
 
     #if defined(VL_OPENGL_ES2)
-      Has_GLES = Has_GLES_Version_2_x = true;
+      Has_GLES = Has_GLES_Version_2 = true;
     #endif
 
     // GL versions
@@ -223,7 +223,7 @@ bool vl::initializeOpenGL()
 
     // Note that GL extensions pertaining to deprecated features seem to be exposed under Core profiles even if they are not supported (like Has_GL_SGIS_generate_mipmap)
 
-    Has_GLSL = Has_GL_ARB_shading_language_100||Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
+    Has_GLSL = Has_GL_ARB_shading_language_100||Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2;
     Has_GLSL_120_Or_More = Has_GL_Version_2_1||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_GLSL_130_Or_More = Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_GLSL_140_Or_More = Has_GL_Version_3_1||Has_GL_Version_4_0;
@@ -233,13 +233,13 @@ bool vl::initializeOpenGL()
     Has_GLSL_410_Or_More = Has_GL_Version_4_1;
     Has_Geometry_Shader  = Has_GL_NV_geometry_shader4||Has_GL_EXT_geometry_shader4||Has_GL_ARB_geometry_shader4||Has_GL_Version_3_2||Has_GL_Version_4_0;
     Has_VBO = Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES;
-    Has_FBO = Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_framebuffer_object||Has_GLES_Version_2_x;
+    Has_FBO = Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_framebuffer_object||Has_GLES_Version_2;
     Has_PBO = Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object||Has_GL_Version_2_1||Has_GL_Version_3_0||Has_GL_Version_4_0;
     // We only support GL_ANGLE_framebuffer_blit for GLES, see also:
     // http://www.khronos.org/registry/gles/extensions/IMG/IMG_multisampled_render_to_texture.txt
     // http://www.khronos.org/registry/gles/extensions/APPLE/APPLE_framebuffer_multisample.txt
     Has_FBO_Multisample = Has_GL_Version_4_0||Has_GL_Version_3_0||Has_GL_ARB_framebuffer_object||Has_GL_EXT_framebuffer_multisample||Has_GL_ANGLE_framebuffer_multisample;
-    Has_Cubemap_Textures = Has_GL_ARB_texture_cube_map||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_texture_cube_map||Has_GLES_Version_2_x;
+    Has_Cubemap_Textures = Has_GL_ARB_texture_cube_map||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_texture_cube_map||Has_GLES_Version_2;
     Has_Texture_Rectangle = Has_GL_ARB_texture_rectangle||Has_GL_NV_texture_rectangle||Has_GL_Version_3_1||Has_GL_Version_4_0;
     Has_Texture_Array = Has_GL_EXT_texture_array||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_Texture_Buffer = Has_GL_ARB_texture_buffer_object||Has_GL_EXT_texture_buffer_object||Has_GL_Version_3_1||Has_GL_Version_4_0;
@@ -249,9 +249,9 @@ bool vl::initializeOpenGL()
     Has_Primitive_Restart = Has_GL_Version_3_1||Has_GL_Version_4_0;
     Has_Occlusion_Query = Has_GL_ARB_occlusion_query||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0;
     Has_Transform_Feedback = Has_GL_NV_transform_feedback||Has_GL_EXT_transform_feedback||Has_GL_Version_3_0||Has_GL_Version_4_0;
-    Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x;
-    Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_Fixed_Function_Pipeline)||Has_GL_Version_1_4||Has_GLES_Version_1_x;
-    Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL || Has_GLES_Version_1_x;
+    Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2;
+    Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_Fixed_Function_Pipeline)||Has_GL_Version_1_4||Has_GLES_Version_1;
+    Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL || Has_GLES_Version_1;
 
     return glGetError() == GL_NO_ERROR;
 }
