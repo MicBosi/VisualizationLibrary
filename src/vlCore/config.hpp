@@ -41,6 +41,7 @@
 #ifndef VISUALIZATION_LIBRARY_CONFIG_INCLUDE_ONCE
 #define VISUALIZATION_LIBRARY_CONFIG_INCLUDE_ONCE
 
+#include <vlCore/platform.hpp>
 
 /**
  * Enable/disable memory leaks debugging.
