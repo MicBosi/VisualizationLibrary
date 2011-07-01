@@ -24,7 +24,7 @@ add_subdirectory("plugins")
 file(GLOB VLGRAPHICS_SRC "*.cpp")
 file(GLOB VLGRAPHICS_INC "*.hpp")
 
-if( NOT (VL_OPENGL_MODE STREQUAL "OPENGL") )
+if( NOT VL_OPENGL )
 	list(REMOVE_ITEM VLGRAPHICS_SRC "${VLGRAPHICS_SOURCE_DIR}/Tessellator.cpp")
 	list(REMOVE_ITEM VLGRAPHICS_INC "${VLGRAPHICS_SOURCE_DIR}/Tessellator.hpp")
 
@@ -38,13 +38,17 @@ VL_PROJECT_GET(VLGRAPHICS _SOURCES _DEFINITIONS _INCLUDE_DIRS _LIBS)
 add_definitions(${_DEFINITIONS})
 include_directories(${_INCLUDE_DIRS})
 
+# mic fixme: use khronos headers also for GLES1
 # Khronos OpenGL headers
 set(KHRONOS_DIR "${3RDPARTY_DIR}/Khronos")
 set(KHRONOS_INC ${KHRONOS_DIR}/GL/mesa_gl.h
 				${KHRONOS_DIR}/GL/khronos_glext.h 
 				${KHRONOS_DIR}/GL/khronos_wglext.h 				
 				${KHRONOS_DIR}/GLES/gl_extra_defines.h
-				${KHRONOS_DIR}/GLES2/gl_extra_defines.h)
+				${KHRONOS_DIR}/GLES2/gl_extra_defines.h
+				${KHRONOS_DIR}/GLES2/khronos_gl2.h
+				${KHRONOS_DIR}/GLES2/khronos_gl2ext.h
+				${KHRONOS_DIR}/GLES2/khronos_gl2platform.h)
 
 add_library(VLGraphics ${VL_SHARED_OR_STATIC} ${VLGRAPHICS_SRC} ${VLGRAPHICS_INC} ${KHRONOS_INC} ${_SOURCES})
 VL_DEFAULT_TARGET_PROPERTIES(VLGraphics)
