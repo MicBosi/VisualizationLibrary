@@ -30,29 +30,29 @@ cmake_minimum_required(VERSION 2.6)
 # Global Build Settings
 ################################################################################
 
-# Platform detect
+# Platform detect, used to configure platform.hpp.in
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-   add_definitions(-DVL_PLATFORM_MACOSX=1)
+   set(VL_PLATFORM_MACOSX 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-   add_definitions(-DVL_PLATFORM_LINUX=1)
+   set(VL_PLATFORM_LINUX 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-   add_definitions(-DVL_PLATFORM_WINDOWS=1)
+   set(VL_PLATFORM_WINDOWS 1) 
 else()
-   add_definitions(-DVL_PLATFORM_UNKNOWN=1)
    message(FATAL_ERROR "Unable to detect platform!")
 endif()
 message(STATUS "System detected: \"${CMAKE_SYSTEM_NAME}\"")
 
 # OpenGL, OpenGL ES 1 or OpenGL ES 2 mode
 set(VL_OPENGL_MODE "OPENGL" CACHE STRING "Set it to OPENGL, OPENGL_ES1 or OPENGL_ES2 to build VL for OpenGL, OpenGL ES 1.x or OpenGL ES 2.x")
+# Setup variables used to configure platform.hpp.in
 if( VL_OPENGL_MODE STREQUAL  "OPENGL")
-	add_definitions(-DVL_OPENGL)
+	set(VL_OPENGL 1)
 	message(STATUS "Configuring for OpenGL 1.x/2.x/3.x/4.x")
 elseif( VL_OPENGL_MODE STREQUAL  "OPENGL_ES1")
-	add_definitions(-DVL_OPENGL_ES1)
+	set(VL_OPENGL_ES1 1)
 	message(STATUS "Configuring for OpenGL ES 1.x")
 elseif( VL_OPENGL_MODE STREQUAL  "OPENGL_ES2")
-	add_definitions(-DVL_OPENGL_ES2)
+	set(VL_OPENGL_ES2 1)
 	message(STATUS "Configuring for OpenGL ES 2.x")
 else()
 	message(FATAL_ERROR "Invalid VL_OPENGL_MODE!")
@@ -114,10 +114,10 @@ if( VL_OPENGL_MODE STREQUAL "OPENGL")
 	find_package(OpenGL REQUIRED)
 endif()
 
-if( (VL_OPENGL_MODE STREQUAL "OPENGL_ES1") OR VL_GUI_EGL_SUPPORT)
+if( (VL_OPENGL_MODE STREQUAL "OPENGL_ES1") )
 	#mic fixme: VL-DLL does work with GLES
 	include( SetupGLES )
-elseif( (VL_OPENGL_MODE STREQUAL "OPENGL_ES2") OR VL_GUI_EGL_SUPPORT )
+elseif( (VL_OPENGL_MODE STREQUAL "OPENGL_ES2") )
 	#mic fixme: VL-DLL does work with GLES
 	include( SetupGLES )
 endif()
