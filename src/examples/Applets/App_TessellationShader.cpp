@@ -59,7 +59,7 @@ public:
 
     vl::ref< vl::Geometry > geom_patch = makeGrid( vl::vec3(), world_size, world_size, patch_count, patch_count, false );
 
-    geom_patch->toGenericVertexAttribs();
+    geom_patch->convertToVertexAttribs();
 
     // patch parameter associated to the draw call
     vl::ref<vl::PatchParameter> patch_param = new vl::PatchParameter;
