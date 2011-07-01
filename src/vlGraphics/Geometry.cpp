@@ -279,49 +279,60 @@ bool Geometry::flipNormals()
   return false;
 }
 //-----------------------------------------------------------------------------
-void Geometry::toGenericVertexAttribs()
+void Geometry::convertToVertexAttribs()
 {
-  vertexAttribArrays()->clear();
-  int index = 0;
-  
+  std::map<int, ref<ArrayAbstract> > attrib_map;
+
   if (vertexArray())
   {
-    setVertexAttribArray(index++, vertexArray());
+    attrib_map[VA_Position] = vertexArray();
     setVertexArray(NULL);
   }
   
   if (normalArray())
   {
-    setVertexAttribArray(index++, normalArray());
+    attrib_map[VA_Normal] = normalArray();
     setNormalArray(NULL);
   }
   
   if (colorArray())
   {
-    setVertexAttribArray(index++, colorArray());
+    attrib_map[VA_Color] = colorArray();
     setColorArray(NULL);
   }
 
+  // Texture coordinates starting from VA_TexCoord0
   for(int i=0; i<mTexCoordArrays.size(); i++)
-    setVertexAttribArray( index++, mTexCoordArrays[i]->mTexCoordArray.get() );
+  {
+    attrib_map[VA_TexCoord0+i] = mTexCoordArrays[i]->mTexCoordArray;
+  }
   mTexCoordArrays.clear();
   
+  // Secondary color and fog are packed right after the texture coordinates
+  int index = VA_TexCoord0 + mTexCoordArrays.size();
   if (secondaryColorArray())
   {
-    setVertexAttribArray(index++, secondaryColorArray());
+    attrib_map[index++] = secondaryColorArray();
     setSecondaryColorArray(NULL);
   }
 
   if (fogCoordArray())
   {
-    setVertexAttribArray(index++, fogCoordArray());
+    attrib_map[index++] = fogCoordArray();
     setFogCoordArray(NULL);
   }
+
+  // copy over the collected attributes
+  // note: we override eventual existing vertex attributes if they are in busy positions, the other are left where they are
+  for(std::map<int, ref<ArrayAbstract> >::iterator it=attrib_map.begin(); it != attrib_map.end(); ++it)
+    setVertexAttribArray(it->first, it->second.get());
+
 }
 //-----------------------------------------------------------------------------
 void Geometry::computeNormals(bool verbose)
 {
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttrib(0);
+  // Retrieve vertex position array
+  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttrib(VA_Position);
   if (!posarr || posarr->size() == 0)
   {
     Log::warning("Geometry::computeNormals() not performed: no vertex coordinate array present!\n");
@@ -330,7 +341,12 @@ void Geometry::computeNormals(bool verbose)
 
   ref<ArrayFloat3> norm3f = new ArrayFloat3;
   norm3f->resize( posarr->size() );
-  setNormalArray( norm3f.get() );
+
+  // Install the normal array
+  if (vertexArray())
+    setNormalArray( norm3f.get() );
+  else
+    setVertexAttribArray(VA_Normal, norm3f.get());
 
   // zero the normals
   for(int i=0; i<(int)posarr->size(); ++i)
@@ -804,6 +820,10 @@ void Geometry::convertDrawCallsForGLES()
     }
   } // for()
 
+  // converts legacy vertex arrays into generic vertex attributes
+#if defined(VL_OPENGL_ES2)
+  convertToVertexAttribs();
+#endif
 }
 //-----------------------------------------------------------------------------
 bool Geometry::sortVertices()

@@ -139,11 +139,22 @@ namespace vl
       mColor = color; 
       #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
         Log::warning("Geometry::setColor(): constant vertex attributes not supported under OpenGL ES! Falling back to vertex arrays.\n");
-        VL_CHECK(vertexArray() && vertexArray()->size())
-        ref<ArrayFloat4> color_array = new ArrayFloat4;
-        color_array->resize(vertexArray()->size());
-        for(size_t i=0; i<color_array->size(); ++i)
-          color_array->at(i) = color;
+        setColorArray(color);
+      #endif
+    }
+
+    //! Fills the color array with the given color
+    void setColorArray(const fvec4& color)
+    {
+      size_t vert_count = vertexArray() ? vertexArray()->size() : vertexAttrib(VA_Position) ? vertexAttrib(VA_Position)->size() : 0;
+      VL_CHECK( vert_count )
+      ref<ArrayFloat4> color_array = new ArrayFloat4;
+      color_array->resize(vert_count);
+      for(size_t i=0; i<color_array->size(); ++i)
+        color_array->at(i) = color;
+      #if defined(VL_OPENGL_ES2)
+        setVertexAttribArray(VA_Color, color_array.get());
+      #else
         setColorArray(color_array.get());
       #endif
     }
@@ -174,18 +185,18 @@ namespace vl
     // ------------------------------------------------------------------------
 
     /** Converts the fixed function pipeline arrays (vertex array, normal arrays) into the generic ones.
-    * The generic attribute indices are allocated in the following order:
-    * - vertex array
-    * - normal array
-    * - color array
-    * - texture array 0 .. N
-    * - secondary color array
-    * - fog coord array
+    * The generic attribute indices are allocated in the following way:
+    * - vertex array -> VA_Position
+    * - normal array -> VA_Normal
+    * - color array  -> VA_Color
+    * - texture array 0..N -> VA_TexCoord0..N
+    * - secondary color array -> at the first free position from VA_TexCoord0 (included)
+    * - fog coord array  -> at the first free position from VA_TexCoord0 (included)
     *
     * \remarks
     * The previously installed generic vertex attributes are removed. The fixed function attributes are set to NULL.
     */
-    void toGenericVertexAttribs();
+    void convertToVertexAttribs();
 
     /**
      * Computes the normals in a "smooth" way, i.e. averaging the normals of those 
@@ -238,6 +249,7 @@ namespace vl
     void convertDrawCallToDrawArrays();
 
     //! Converts PT_QUADS, PT_QUADS_STRIP, PT_POLYGON into PT_TRIANGLE primitives and converts DrawElementsUInt into DrawElementsUByte and DrawElementsUShort.
+    //! - Under OpenGL ES 2.0 this function also calls Geometry::convertToVertexAttribs().
     //! - Does not handle vl::MultiDrawElements* vl::DrawRangeElements*, primitive restart and draw call multi-instancing.
     void convertDrawCallsForGLES();
 
