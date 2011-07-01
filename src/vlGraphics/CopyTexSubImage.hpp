@@ -346,7 +346,7 @@ namespace vl
 #endif
 
         glBindTexture(texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
-        glCopyTexSubImage3D(texture()->dimension(), level(), xoffset(), yoffset(), zoffset(), x(), y(), width(), height()); VL_CHECK_OGL()
+        VL_glCopyTexSubImage3D(texture()->dimension(), level(), xoffset(), yoffset(), zoffset(), x(), y(), width(), height()); VL_CHECK_OGL()
         glBindTexture(texture()->dimension(), 0 );
 
 #if defined(VL_OPENGL)
