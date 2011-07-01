@@ -1128,14 +1128,14 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
 
-  //! A 4x4 matrix using \p GLdouble precision.
-  typedef Matrix4<GLdouble> dmat4;
-  //! A 4x4 matrix using \p GLfloat precision.
-  typedef Matrix4<GLfloat>  fmat4;
-  //! A 4x4 matrix using \p GLint precision.
-  typedef Matrix4<GLint>    imat4;
-  //! A 4x4 matrix using \p GLuint precision.
-  typedef Matrix4<GLuint>  umat4;
+  //! A 4x4 matrix using \p double precision.
+  typedef Matrix4<double> dmat4;
+  //! A 4x4 matrix using \p float precision.
+  typedef Matrix4<float>  fmat4;
+  //! A 4x4 matrix using \p int precision.
+  typedef Matrix4<int>    imat4;
+  //! A 4x4 matrix using \p unsigned int precision.
+  typedef Matrix4<unsigned int>  umat4;
 
   #if VL_PIPELINE_PRECISION == 2
     //! Defined as: \p 'typedef \p dmat4 \p mat4'. See also \ref VL_PIPELINE_PRECISION.

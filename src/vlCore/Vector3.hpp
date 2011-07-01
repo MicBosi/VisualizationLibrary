@@ -232,22 +232,22 @@ namespace vl
     return v * val;
   }
 
-  //! A 3 components vector with \p GLint precision.
-  typedef Vector3<GLint> ivec3;
-  //! A 3 components vector with \p GLuint precision.
-  typedef Vector3<GLuint> uvec3;
-  //! A 3 components vector with \p GLfloat precision.
-  typedef Vector3<GLfloat> fvec3;
-  //! A 3 components vector with \p GLdouble precision.
-  typedef Vector3<GLdouble> dvec3;
-  //! A 3 components vector with \p GLbyte precision.
-  typedef Vector3<GLbyte> bvec3;
-  //! A 3 components vector with \p GLubyte precision.
-  typedef Vector3<GLubyte> ubvec3;
-  //! A 3 components vector with \p GLshort precision.
-  typedef Vector3<GLshort> svec3;
-  //! A 3 components vector with \p GLushort precision.
-  typedef Vector3<GLushort> usvec3;
+  //! A 3 components vector with \p int precision.
+  typedef Vector3<int> ivec3;
+  //! A 3 components vector with \p unsigned int precision.
+  typedef Vector3<unsigned int> uvec3;
+  //! A 3 components vector with \p float precision.
+  typedef Vector3<float> fvec3;
+  //! A 3 components vector with \p double precision.
+  typedef Vector3<double> dvec3;
+  //! A 3 components vector with \p char precision.
+  typedef Vector3<char> bvec3;
+  //! A 3 components vector with \p unsigned char precision.
+  typedef Vector3<unsigned char> ubvec3;
+  //! A 3 components vector with \p short precision.
+  typedef Vector3<short> svec3;
+  //! A 3 components vector with \p unsigned short precision.
+  typedef Vector3<unsigned short> usvec3;
 
   #if VL_PIPELINE_PRECISION == 2
     //! Defined as: \p 'typedef \p dvec3 \p vec3'. See also \ref VL_PIPELINE_PRECISION.

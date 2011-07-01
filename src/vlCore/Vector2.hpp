@@ -278,22 +278,22 @@ namespace vl
     return v * val;
   }
 
-  //! A 2 components vector with \p GLint precision.
-  typedef Vector2<GLint> ivec2;
-  //! A 2 components vector with \p GLuint precision.
-  typedef Vector2<GLuint> uvec2;
-  //! A 2 components vector with \p GLfloat precision.
-  typedef Vector2<GLfloat> fvec2;
-  //! A 2 components vector with \p GLdouble precision.
-  typedef Vector2<GLdouble> dvec2;
-  //! A 2 components vector with \p GLbyte precision.
-  typedef Vector2<GLbyte> bvec2;
-  //! A 2 components vector with \p GLubyte precision.
-  typedef Vector2<GLubyte> ubvec2;
-  //! A 2 components vector with \p GLshort precision.
-  typedef Vector2<GLshort> svec2;
-  //! A 2 components vector with \p GLushort precision.
-  typedef Vector2<GLushort> usvec2;
+  //! A 2 components vector with \p int precision.
+  typedef Vector2<int> ivec2;
+  //! A 2 components vector with \p unsigned int precision.
+  typedef Vector2<unsigned int> uvec2;
+  //! A 2 components vector with \p float precision.
+  typedef Vector2<float> fvec2;
+  //! A 2 components vector with \p double precision.
+  typedef Vector2<double> dvec2;
+  //! A 2 components vector with \p char precision.
+  typedef Vector2<char> bvec2;
+  //! A 2 components vector with \p unsigned char precision.
+  typedef Vector2<unsigned char> ubvec2;
+  //! A 2 components vector with \p short precision.
+  typedef Vector2<short> svec2;
+  //! A 2 components vector with \p unsigned short precision.
+  typedef Vector2<unsigned short> usvec2;
 
   #if VL_PIPELINE_PRECISION == 2
     //! Defined as: \p 'typedef \p dvec2 \p vec2'. See also \ref VL_PIPELINE_PRECISION.
