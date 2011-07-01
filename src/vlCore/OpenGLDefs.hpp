@@ -36,15 +36,15 @@
 
 #if defined(VL_OPENGL_ES1)
 
-  #include <GLES/gl.h>
-  #include <GLES/glext.h>
-  #include <GLES/gl_extra_defines.h> // defines used by VL but not present in GLES 1.x
+  #include <GLES/khronos_gl.h>
+  #include <GLES/khronos_glext.h>
+  #include <GLES/gles_extra_defines.h> // defines used by VL but not present in GLES 1.x
 
 #elif defined(VL_OPENGL_ES2)
 
   #include <GLES2/khronos_gl2.h>
   #include <GLES2/khronos_gl2ext.h>
-  #include <GLES2/gl_extra_defines.h> // defines used by VL but not present in GLES 2.x
+  #include <GLES2/gles_extra_defines.h> // defines used by VL but not present in GLES 2.x
 
 #elif defined(VL_OPENGL)
 
