@@ -1355,6 +1355,15 @@ namespace vl
     VAB_PURE_DOUBLE,  //!< Data will be sent using glVertexAttribLPointer(), that is, it will be associated with a 
                       //!< shader attribute variable declared with 64-bit double precision components, data format must be \a double.
   } EVertexAttribBehavior;
+
+  //! Default vertex attribute bindings
+  typedef enum
+  {
+    VA_Position  = 0,
+    VA_Normal    = 1,
+    VA_Color     = 2,
+    VA_TexCoord0 = 3,
+  } EVertexAttribBinding;
 }
 
 
