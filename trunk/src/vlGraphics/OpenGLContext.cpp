@@ -350,25 +350,58 @@ void OpenGLContext::logOpenGLInfo()
       Log::print( Say("Max vertex attributes: %n\n")<<max_val);      
     }
 
-    max_val = 0;
+    max_val = 0; 
     if(Has_GLSL)
     {
-      glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val); VL_CHECK_OGL();
-      Log::print( Say("Max varying floats: %n\n")<<max_val);
+      if (Has_GLES_Version_2_x)
+      {
+        glGetIntegerv(GL_MAX_VARYING_VECTORS, &max_val); VL_CHECK_OGL(); // 3) for some reason OpenGL ES 2.0 has only this
+      }
+      else
+      if (Has_GL_Version_3_0||Has_GL_Version_4_0)
+      {
+        glGetIntegerv(GL_MAX_VARYING_COMPONENTS, &max_val); VL_CHECK_OGL(); // 2) then they renamed to account for non float types I guess (but also the enum is different so the meaning might be different).
+        max_val /= 4;
+      }
+      else
+      if (Has_GL_Version_2_0)
+      {
+        glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val); VL_CHECK_OGL(); // 1) this is the original
+        max_val /= 4;
+      }
+      Log::print( Say("Max varying vectors: %n\n")<<max_val);
     }
 
     max_val = 0;
     if(Has_GLSL)
     {
-      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
-      Log::print( Say("Max fragment uniform components: %n\n")<<max_val);
+      if (Has_GLES_Version_2_x)
+      {
+        glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
+      }
+      else
+      {
+        glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+        max_val /= 4;
+      }
+      
+      Log::print( Say("Max fragment uniform vectors: %n\n")<<max_val);
     }
     
     max_val = 0;
     if(Has_GLSL)
     {
-      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
-      Log::print( Say("Max vertex uniform components: %n\n")<<max_val);
+      if (Has_GLES_Version_2_x)
+      {
+        glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
+      }
+      else
+      {
+        glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+        max_val /= 4;
+      }
+      
+      Log::print( Say("Max vertex uniform vectors: %n\n")<<max_val);
     }
     
     max_val = 0;
@@ -385,9 +418,19 @@ void OpenGLContext::logOpenGLInfo()
       Log::print( Say("Max elements indices: %n\n") << max_val );
     }
 
-    max_val = 0;
-    glGetIntegerv(GL_MAX_CLIP_PLANES,  &max_val ); VL_CHECK_OGL();
-    Log::print( Say("Max clipping planes: %n\n") << max_val );
+    if (Has_Fixed_Function_Pipeline)
+    {
+      max_val = 0;
+      glGetIntegerv(GL_MAX_CLIP_PLANES,  &max_val ); VL_CHECK_OGL();
+      Log::print( Say("Max clipping planes: %n\n") << max_val );
+    }
+    else
+    if (Has_GLSL && !Has_GLES_Version_2_x)
+    {
+      max_val = 0;
+      glGetIntegerv(GL_MAX_CLIP_DISTANCES,  &max_val ); VL_CHECK_OGL();
+      Log::print( Say("Max clip distances: %n\n") << max_val );
+    }
 
     // --- log supported extensions on two columns ---
 
@@ -618,14 +661,15 @@ void OpenGLContext::setupDefaultRenderStates()
 {
   if ( Has_Fixed_Function_Pipeline )
   {
-    mDefaultRenderStates[RS_AlphaFunc] = new AlphaFunc;
-    mDefaultRenderStates[RS_Fog] = new Fog;
+    mDefaultRenderStates[RS_AlphaFunc]  = new AlphaFunc;
+    mDefaultRenderStates[RS_Fog]        = new Fog;
+    mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
     mDefaultRenderStates[RS_LightModel] = new LightModel;
-    mDefaultRenderStates[RS_Material] = new Material;
+    mDefaultRenderStates[RS_Material]   = new Material;
     if(!Has_GLES_Version_1_x)
     {
-      mDefaultRenderStates[RS_PixelTransfer] = new PixelTransfer;
-      mDefaultRenderStates[RS_LineStipple] = new LineStipple;
+      mDefaultRenderStates[RS_PixelTransfer]  = new PixelTransfer;
+      mDefaultRenderStates[RS_LineStipple]    = new LineStipple;
       mDefaultRenderStates[RS_PolygonStipple] = new PolygonStipple;
     }
 
@@ -646,38 +690,41 @@ void OpenGLContext::setupDefaultRenderStates()
     mDefaultRenderStates[RS_ClipPlane5] = new ClipPlane(5);
   }
 
-  if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x)
     mDefaultRenderStates[RS_BlendColor] = new BlendColor;
 
-  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_subtract)
+  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_subtract||Has_GLES_Version_2_x)
     mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
 
-  mDefaultRenderStates[RS_BlendFunc] = new BlendFunc;
-  mDefaultRenderStates[RS_ColorMask] = new ColorMask;
-  mDefaultRenderStates[RS_CullFace] = new CullFace;
-  mDefaultRenderStates[RS_DepthFunc] = new DepthFunc;
-  mDefaultRenderStates[RS_DepthMask] = new DepthMask;
-  mDefaultRenderStates[RS_DepthRange] = new DepthRange;
-  mDefaultRenderStates[RS_FrontFace] = new FrontFace;
-  if(!Has_GLES_Version_1_x)
+  if(!Has_GLES)
     mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
-  mDefaultRenderStates[RS_Hint] = new Hint;
-  mDefaultRenderStates[RS_LineWidth] = new LineWidth;
-  mDefaultRenderStates[RS_LogicOp] = new LogicOp;
+
+  if(!Has_GLES_Version_2_x)
+  {
+    mDefaultRenderStates[RS_LogicOp] = new LogicOp;
+    mDefaultRenderStates[RS_PointSize] = new PointSize;
+  }
+
+  mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
+  mDefaultRenderStates[RS_BlendFunc]  = new BlendFunc;
+  mDefaultRenderStates[RS_ColorMask]  = new ColorMask;
+  mDefaultRenderStates[RS_CullFace]   = new CullFace;
+  mDefaultRenderStates[RS_DepthFunc]  = new DepthFunc;
+  mDefaultRenderStates[RS_DepthMask]  = new DepthMask;
+  mDefaultRenderStates[RS_DepthRange] = new DepthRange;
+  mDefaultRenderStates[RS_FrontFace]  = new FrontFace;
+  mDefaultRenderStates[RS_Hint]       = new Hint;
+  mDefaultRenderStates[RS_LineWidth]  = new LineWidth;
   
   if (Has_GL_ARB_point_parameters||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x) // note GLES 2.x is excluded
     mDefaultRenderStates[RS_PointParameter] = new PointParameter;
 
-  mDefaultRenderStates[RS_PointSize] = new PointSize;
-  mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
-  
   if (Has_GL_ARB_multisample||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
     mDefaultRenderStates[RS_SampleCoverage] = new SampleCoverage;
   
-  mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
   mDefaultRenderStates[RS_StencilFunc] = new StencilFunc;
   mDefaultRenderStates[RS_StencilMask] = new StencilMask;
-  mDefaultRenderStates[RS_StencilOp] = new StencilOp;
+  mDefaultRenderStates[RS_StencilOp]   = new StencilOp;
   mDefaultRenderStates[RS_GLSLProgram] = new GLSLProgram;
 
   for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
@@ -832,6 +879,8 @@ bool OpenGLContext::isCleanState(bool verbose)
   if(Has_Multitexture)
   {
     int active_tex = -1;
+    // mic fixme: PVR emulator bug? returns always 1.
+#if !defined(VL_OPENGL_ES2)
     glGetIntegerv(GL_ACTIVE_TEXTURE, &active_tex); VL_CHECK_OGL();
     active_tex -= GL_TEXTURE0;
     if (active_tex != 0)
@@ -841,6 +890,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       VL_TRAP();
       ok = false;
     }
+#endif
 
     if (Has_Fixed_Function_Pipeline)
     {
@@ -1241,6 +1291,26 @@ bool OpenGLContext::isCleanState(bool verbose)
   }
 
   // we expect these settings for the default blending equation
+#if defined(VL_OPENGL_ES2)
+  GLint blend_src = 0;
+  GLint blend_dst = 0;
+  glGetIntegerv( GL_BLEND_SRC_RGB, &blend_src ); VL_CHECK_OGL();
+  glGetIntegerv( GL_BLEND_DST_RGB, &blend_dst ); VL_CHECK_OGL();
+  if (blend_src != GL_SRC_ALPHA)
+  {
+    if (verbose)
+      vl::Log::error( "GL_BLEND_SRC is not GL_SRC_ALPHA!\n");
+    VL_TRAP();
+    ok = false;
+  }
+  if (blend_dst != GL_ONE_MINUS_SRC_ALPHA)
+  {
+    if (verbose)
+      vl::Log::error( "GL_BLEND_DST is not GL_ONE_MINUS_SRC_ALPHA!\n");
+    VL_TRAP();
+    ok = false;
+  }
+#else
   GLint blend_src = 0;
   GLint blend_dst = 0;
   glGetIntegerv( GL_BLEND_SRC, &blend_src ); VL_CHECK_OGL();
@@ -1259,6 +1329,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     VL_TRAP();
     ok = false;
   }
+#endif
 
   // buffer object bindings
 

@@ -141,7 +141,7 @@ bool vl::initializeOpenGL()
 
     // opengl function pointer initialization
     #if defined(VL_OPENGL_ES2)
-      #define VL_GLES_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress((const GLubyte*)#NAME);
+      #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress((const GLubyte*)#NAME);
       #include "GLES2FunctionList.hpp"
     #endif
 
