@@ -42,8 +42,8 @@
 
 #elif defined(VL_OPENGL_ES2)
 
-  #include <GLES2/gl.h>
-  #include <GLES2/glext.h>
+  #include <GLES2/khronos_gl2.h>
+  #include <GLES2/khronos_gl2ext.h>
   #include <GLES2/gl_extra_defines.h> // defines used by VL but not present in GLES 2.x
 
 #elif defined(VL_OPENGL)
