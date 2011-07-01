@@ -50,13 +50,12 @@
 #define glGetTexGeniv glGetTexGenivOES 
 #define glGetTexGenxv glGetTexGenxvOES 
 
+#ifndef VL_UNSUPPORTED_GLES1_FUNC
+  #define VL_UNSUPPORTED_GLES1_FUNC() { Log::error( String().printf("The function \"%s\" is not supported under OpenGL ES 1.x! (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
+#endif
+
 namespace vl
 {
-
-  #ifndef VL_UNSUPPORTED_GLES1_FUNC
-  #define VL_UNSUPPORTED_GLES1_FUNC() { Log::error( String().printf("The function \"%s\" is not supported under OpenGL ES 1.x! (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
-  #endif
-
   inline void VL_glBindBuffer( GLenum target, GLuint buffer )
   {
     glBindBuffer(target,buffer);
@@ -381,6 +380,11 @@ namespace vl
 #ifdef GL_IMG_multisampled_render_to_texture
     if (glRenderbufferStorageMultisampleIMG)
       glRenderbufferStorageMultisampleIMG(target, samples, internalformat, width, height);
+    else
+#endif
+#ifdef GL_ANGLE_framebuffer_multisample
+    if (glRenderbufferStorageMultisampleANGLE)
+      glRenderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
     else
 #endif
       VL_TRAP();
@@ -814,7 +818,6 @@ namespace vl
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
-
   
   inline void glPolygonStipple( const GLubyte *mask )
   {
@@ -841,6 +844,11 @@ namespace vl
     VL_UNSUPPORTED_GLES1_FUNC()
   }
   
+  inline void glDrawBuffers(GLsizei n, const GLenum *bufs)
+  {
+    VL_UNSUPPORTED_GLES1_FUNC()
+  }
+
   inline void glDrawBuffer( GLenum mode )
   {
     VL_UNSUPPORTED_GLES1_FUNC()
@@ -1040,24 +1048,19 @@ namespace vl
     VL_UNSUPPORTED_GLES1_FUNC()
   }
 
-  inline void glDrawBuffers (GLsizei n, const GLenum *bufs)
+  inline void VL_glTexImage3D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
-
-  inline void glTexImage3D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
+  inline void VL_glCopyTexSubImage3D (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
-  inline void glCopyTexSubImage3D (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
+  inline void VL_glCompressedTexImage3D (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid *data)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
-  inline void glCompressedTexImage3D (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid *data)
-  {
-    VL_UNSUPPORTED_GLES1_FUNC()
-  }
-  inline void glCompressedTexSubImage3D (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid *data)
+  inline void VL_glCompressedTexSubImage3D (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid *data)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
   }
@@ -1147,6 +1150,15 @@ namespace vl
   }
   
   inline void glGetQueryObjectuiv (GLuint id, GLenum pname, GLuint *params)
+  {
+    VL_UNSUPPORTED_GLES1_FUNC();
+  }
+
+  inline void VL_glGetProgramBinary(GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, GLvoid *binary)
+  {
+    VL_UNSUPPORTED_GLES1_FUNC();
+  }
+  inline void VL_glProgramBinary(GLuint program, GLenum binaryFormat, const GLvoid *binary, GLint length)
   {
     VL_UNSUPPORTED_GLES1_FUNC();
   }
