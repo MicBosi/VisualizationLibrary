@@ -28,6 +28,10 @@ file(GLOB VLCORE_INC "*.hpp")
 configure_file("version.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.hpp")
 list(APPEND VLCORE_INC "${CMAKE_CURRENT_BINARY_DIR}/version.hpp")
 
+# Generate the 'vlCore/platform.hpp' file
+configure_file("platform.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/platform.hpp")
+list(APPEND VLCORE_INC "${CMAKE_CURRENT_BINARY_DIR}/platform.hpp")
+
 # Handle extras added by plugins
 VL_PROJECT_GET(VLCORE _SOURCES _DEFINITIONS _INCLUDE_DIRS _LIBS)
 add_definitions(${_DEFINITIONS})
