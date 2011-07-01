@@ -371,6 +371,9 @@ typedef double		GLclampd;	/* double precision float in [0,1] */
 #define GL_DECR					0x1E03
 
 /* Buffers, Pixel Drawing/Reading */
+#if defined(VL_OPENGL_ES1)
+	#define GL_NONE					0x0
+#endif
 #define GL_LEFT					0x0406
 #define GL_RIGHT				0x0407
 /*GL_FRONT					0x0404 */
@@ -674,6 +677,8 @@ typedef double		GLclampd;	/* double precision float in [0,1] */
 #define GL_CLIENT_VERTEX_ARRAY_BIT		0x00000002
 #define GL_ALL_CLIENT_ATTRIB_BITS 		0xFFFFFFFF
 #define GL_CLIENT_ALL_ATTRIB_BITS 		0xFFFFFFFF
+
+/*************************************************************/
 
 #ifndef GL_VERSION_1_2
 #define GL_UNSIGNED_BYTE_3_3_2            0x8032
@@ -5607,7 +5612,9 @@ typedef double		GLclampd;	/* double precision float in [0,1] */
 #endif
 
 #ifndef GL_NV_multisample_coverage
-// #define GL_COVERAGE_SAMPLES_NV            0x80A9
+#if defined(VL_OPENGL_ES1)
+  #define GL_COVERAGE_SAMPLES_NV            0x80A9
+#endif
 #define GL_COLOR_SAMPLES_NV               0x8E20
 #endif
 
