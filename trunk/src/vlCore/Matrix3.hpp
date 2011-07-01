@@ -650,14 +650,14 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
 
-  //! A 3x3 matrix using \p GLdouble precision.
-  typedef Matrix3<GLdouble> dmat3;
-  //! A 3x3 matrix using \p GLfloat precision.
-  typedef Matrix3<GLfloat>  fmat3;
-  //! A 3x3 matrix using \p GLint precision.
-  typedef Matrix3<GLint>    imat3;
-  //! A 3x3 matrix using \p GLuint precision.
-  typedef Matrix3<GLuint>  umat3;
+  //! A 3x3 matrix using \p double precision.
+  typedef Matrix3<double> dmat3;
+  //! A 3x3 matrix using \p float precision.
+  typedef Matrix3<float>  fmat3;
+  //! A 3x3 matrix using \p int precision.
+  typedef Matrix3<int>    imat3;
+  //! A 3x3 matrix using \p unsigned int precision.
+  typedef Matrix3<unsigned int>  umat3;
 
   #if VL_PIPELINE_PRECISION == 2
     //! Defined as: \p 'typedef \p dmat3 \p mat3'. See also \ref VL_PIPELINE_PRECISION.
