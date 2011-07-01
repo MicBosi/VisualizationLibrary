@@ -150,5 +150,4 @@ namespace vl
   #include "VL_Functions_GLES2.hpp"
 #endif
 //-----------------------------------------------------------------------------
-
 #endif

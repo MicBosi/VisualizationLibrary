@@ -769,7 +769,7 @@ bool GLSLProgram::getProgramBinary(GLenum& binary_format, std::vector<unsigned c
     if (length)
     {
       binary.resize(length);
-      glGetProgramBinary(handle(), length, NULL, &binary_format, &binary[0]); VL_CHECK_OGL();
+      VL_glGetProgramBinary(handle(), length, NULL, &binary_format, &binary[0]); VL_CHECK_OGL();
     }
     return true;
   }
@@ -795,7 +795,7 @@ bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int le
     preLink();
     
     // load glsl program and link
-    glProgramBinary(handle(), binary_format, binary, length); VL_CHECK_OGL();
+    VL_glProgramBinary(handle(), binary_format, binary, length); VL_CHECK_OGL();
     mScheduleLink = !linkStatus();
     
     // log error

@@ -207,7 +207,7 @@ void PixelTransfer::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // Hint
 //------------------------------------------------------------------------------
-void Hint::apply(const Camera*, OpenGLContext* gl) const
+void Hint::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL()
 
@@ -223,13 +223,15 @@ void Hint::apply(const Camera*, OpenGLContext* gl) const
     }
   }
 
-  if ( !Has_GLES_Version_1_x )
+  if ( !Has_GLES )
   {
     glHint( GL_POLYGON_SMOOTH_HINT, mPolygonSmoothHint ); VL_CHECK_OGL()
   }
-  glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint ); VL_CHECK_OGL()
-  glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint ); VL_CHECK_OGL()
-  
+  if ( !Has_GLES_Version_2_x )
+  {
+    glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint ); VL_CHECK_OGL()
+    glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint ); VL_CHECK_OGL()
+  }  
 }
 //------------------------------------------------------------------------------
 // CullFace
