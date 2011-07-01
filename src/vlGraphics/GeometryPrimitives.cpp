@@ -625,6 +625,11 @@ ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zsid
 
 #endif
 
+
+#if defined(VL_OPENGL_ES2)
+  geom->convertToVertexAttribs();
+#endif
+
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -657,6 +662,10 @@ ref<Geometry> vl::makePyramid( const vec3& origin, Real side, Real height)
   vert3->at(9)  = a1; vert3->at(10) = a2; vert3->at(11) = a0;
   vert3->at(12) = a2; vert3->at(13) = a3; vert3->at(14) = a0;
   vert3->at(15) = a3; vert3->at(16) = a4; vert3->at(17) = a0;
+
+#if defined(VL_OPENGL_ES2)
+  geom->convertToVertexAttribs();
+#endif
 
   return geom;
 }
@@ -711,6 +720,10 @@ ref<Geometry> vl::makeCone( const vec3& origin, Real diameter, Real height, int 
     for(int j=0; j<phi+1; ++j)
       bottom_fan->indices()->at(idx++) = fan_center+1+(phi-1-j%phi);
   }
+
+#if defined(VL_OPENGL_ES2)
+  geom->convertToVertexAttribs();
+#endif
 
   return geom;
 }
@@ -797,6 +810,10 @@ ref<Geometry> vl::makePoints( const std::vector< vec3>& pos, const fvec4& color 
 
   geom->drawCalls()->push_back( new DrawArrays(PT_POINTS, 0, vert3->size() ));
 
+#if defined(VL_OPENGL_ES2)
+  geom->convertToVertexAttribs();
+#endif
+
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -844,6 +861,10 @@ ref<Geometry> vl::makeIcosahedron( const vec3& origin, Real diameter )
   polys->indices()->resize(20*3);
   memcpy(polys->indices()->ptr(), faces, sizeof(faces));
 
+#if defined(VL_OPENGL_ES2)
+  geom->convertToVertexAttribs();
+#endif
+
   return geom;
 }
 //-----------------------------------------------------------------------------
@@ -862,6 +883,10 @@ ref<Geometry> vl::makeCircle( vec3 origin, Real radius, int slices )
     points->at(i) = (fvec3)v;
   }
   geom->drawCalls()->push_back( new DrawArrays(PT_LINE_LOOP, 0, points->size()) );
+
+#if defined(VL_OPENGL_ES2)
+  geom->convertToVertexAttribs();
+#endif
 
   return geom;
 }
