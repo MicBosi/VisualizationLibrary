@@ -786,13 +786,13 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
     else
     if (tex_dimension == TD_TEXTURE_2D_ARRAY)
     {
-      glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
+      VL_glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
       VL_CHECK_OGL();
     }
     else
     if (tex_dimension == TD_TEXTURE_3D)
     {
-      glTexImage3D(GL_TEXTURE_3D, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
+      VL_glTexImage3D(GL_TEXTURE_3D, 0, tex_format, w + (border?2:0), h + (border?2:0), d + (border?2:0), border?1:0, default_format, default_type, NULL);
       VL_CHECK_OGL();
     }
     else
@@ -948,12 +948,12 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
   {
     if (is_compressed)
     {
-      glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
+      VL_glCompressedTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
       VL_CHECK_OGL()
     }
     else
     {
-      glTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
+      VL_glTexImage3D(GL_TEXTURE_2D_ARRAY, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
       VL_CHECK_OGL()
     }
   }
@@ -962,12 +962,12 @@ bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
   {
     if (is_compressed)
     {
-      glCompressedTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
+      VL_glCompressedTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->requiredMemory(), img->pixels());
       VL_CHECK_OGL()
     }
     else
     {
-      glTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
+      VL_glTexImage3D(GL_TEXTURE_3D, mip_level, internalFormat(), w, h, d, border()?1:0, img->format(), img->type(), img->pixels());
       VL_CHECK_OGL()
     }
   }
