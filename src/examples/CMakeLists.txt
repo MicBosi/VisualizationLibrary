@@ -133,14 +133,26 @@ if(VL_GUI_WXWIDGETS_EXAMPLES)
     VL_INSTALL_TARGET(WX_tests)
 endif()
 
-if (VL_GLES1_EXAMPLES)
+if (VL_GLES_EXAMPLES AND VL_OPENGL_ES1)
 	# Example
 	add_executable(GLES1_example GLES1_example.cpp)
-	target_link_libraries(GLES1_example VLEGL ${VL_LIBS_EXAMPLE} ${VL_GLES_LIBRARIES})
+	target_link_libraries(GLES1_example VLEGL ${VL_LIBS_EXAMPLE} ${VL_GLES_LIBRARY} ${VL_EGL_LIBRARY})
 	VL_INSTALL_TARGET(GLES1_example)
 
 	# Tests
 	add_executable(GLES1_tests GLES1_tests.cpp)
-	target_link_libraries(GLES1_tests VLApplets VLEGL ${VL_LIBS_TESTS} ${VL_GLES_LIBRARIES})
+	target_link_libraries(GLES1_tests VLApplets VLEGL ${VL_LIBS_TESTS} ${VL_GLES_LIBRARY} ${VL_EGL_LIBRARY})
 	VL_INSTALL_TARGET(GLES1_tests)
+endif()
+
+if (VL_GLES_EXAMPLES AND VL_OPENGL_ES2)
+	# Example
+	add_executable(GLES2_example GLES2_example.cpp)
+	target_link_libraries(GLES2_example VLEGL ${VL_LIBS_EXAMPLE} ${VL_GLES_LIBRARY} ${VL_EGL_LIBRARY})
+	VL_INSTALL_TARGET(GLES2_example)
+
+	# Tests
+	add_executable(GLES2_tests GLES2_tests.cpp)
+	target_link_libraries(GLES2_tests VLApplets VLEGL ${VL_LIBS_TESTS} ${VL_GLES_LIBRARY} ${VL_EGL_LIBRARY})
+	VL_INSTALL_TARGET(GLES2_tests)
 endif()
