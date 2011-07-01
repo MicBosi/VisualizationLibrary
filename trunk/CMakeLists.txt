@@ -114,11 +114,8 @@ if( VL_OPENGL_MODE STREQUAL "OPENGL")
 	find_package(OpenGL REQUIRED)
 endif()
 
-if( (VL_OPENGL_MODE STREQUAL "OPENGL_ES1") )
-	#mic fixme: VL-DLL does work with GLES
-	include( SetupGLES )
-elseif( (VL_OPENGL_MODE STREQUAL "OPENGL_ES2") )
-	#mic fixme: VL-DLL does work with GLES
+#mic fixme: VL-DLL does work with OpenGL ES
+if( VL_OPENGL_ES1 OR VL_OPENGL_ES2 )
 	include( SetupGLES )
 endif()
 
