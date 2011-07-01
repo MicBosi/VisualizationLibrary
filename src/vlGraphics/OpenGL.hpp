@@ -38,8 +38,8 @@
 
 namespace vl
 {
-  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1_x;
-  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2_x;
+  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1;
+  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2;
   VLGRAPHICS_EXPORT extern bool Has_GLES;
 
   VLGRAPHICS_EXPORT extern bool Has_Fixed_Function_Pipeline;

@@ -219,7 +219,7 @@ bool OpenGLContext::initGLContext(bool log)
 
   // Find max number of texture units, see http://www.opengl.org/sdk/docs/man/xhtml/glActiveTexture.xml
   mTextureUnitCount = 1;
-  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_x) // for GL < 2.x
+  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1) // for GL < 2.x
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
@@ -307,7 +307,7 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("Max texture size: %n\n")<<max_val);
 
     max_val = 1;
-    if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_x)
+    if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1)
       glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val); // deprecated enum
     Log::print( Say("Texture units (legacy): %n\n") << max_val);
 
@@ -353,7 +353,7 @@ void OpenGLContext::logOpenGLInfo()
     max_val = 0; 
     if(Has_GLSL)
     {
-      if (Has_GLES_Version_2_x)
+      if (Has_GLES_Version_2)
       {
         glGetIntegerv(GL_MAX_VARYING_VECTORS, &max_val); VL_CHECK_OGL(); // 3) for some reason OpenGL ES 2.0 has only this
       }
@@ -375,7 +375,7 @@ void OpenGLContext::logOpenGLInfo()
     max_val = 0;
     if(Has_GLSL)
     {
-      if (Has_GLES_Version_2_x)
+      if (Has_GLES_Version_2)
       {
         glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
       }
@@ -391,7 +391,7 @@ void OpenGLContext::logOpenGLInfo()
     max_val = 0;
     if(Has_GLSL)
     {
-      if (Has_GLES_Version_2_x)
+      if (Has_GLES_Version_2)
       {
         glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
       }
@@ -425,7 +425,7 @@ void OpenGLContext::logOpenGLInfo()
       Log::print( Say("Max clipping planes: %n\n") << max_val );
     }
     else
-    if (Has_GLSL && !Has_GLES_Version_2_x)
+    if (Has_GLSL && !Has_GLES_Version_2)
     {
       max_val = 0;
       glGetIntegerv(GL_MAX_CLIP_DISTANCES,  &max_val ); VL_CHECK_OGL();
@@ -666,7 +666,7 @@ void OpenGLContext::setupDefaultRenderStates()
     mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
     mDefaultRenderStates[RS_LightModel] = new LightModel;
     mDefaultRenderStates[RS_Material]   = new Material;
-    if(!Has_GLES_Version_1_x)
+    if(!Has_GLES_Version_1)
     {
       mDefaultRenderStates[RS_PixelTransfer]  = new PixelTransfer;
       mDefaultRenderStates[RS_LineStipple]    = new LineStipple;
@@ -690,16 +690,16 @@ void OpenGLContext::setupDefaultRenderStates()
     mDefaultRenderStates[RS_ClipPlane5] = new ClipPlane(5);
   }
 
-  if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_x)
+  if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2)
     mDefaultRenderStates[RS_BlendColor] = new BlendColor;
 
-  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_subtract||Has_GLES_Version_2_x)
+  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_subtract||Has_GLES_Version_2)
     mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
 
   if(!Has_GLES)
     mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
 
-  if(!Has_GLES_Version_2_x)
+  if(!Has_GLES_Version_2)
   {
     mDefaultRenderStates[RS_LogicOp] = new LogicOp;
     mDefaultRenderStates[RS_PointSize] = new PointSize;
@@ -716,10 +716,10 @@ void OpenGLContext::setupDefaultRenderStates()
   mDefaultRenderStates[RS_Hint]       = new Hint;
   mDefaultRenderStates[RS_LineWidth]  = new LineWidth;
   
-  if (Has_GL_ARB_point_parameters||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x) // note GLES 2.x is excluded
+  if (Has_GL_ARB_point_parameters||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1) // note GLES 2.x is excluded
     mDefaultRenderStates[RS_PointParameter] = new PointParameter;
 
-  if (Has_GL_ARB_multisample||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_x||Has_GLES_Version_2_x)
+  if (Has_GL_ARB_multisample||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1||Has_GLES_Version_2)
     mDefaultRenderStates[RS_SampleCoverage] = new SampleCoverage;
   
   mDefaultRenderStates[RS_StencilFunc] = new StencilFunc;
@@ -735,7 +735,7 @@ void OpenGLContext::setupDefaultRenderStates()
       if( Has_Fixed_Function_Pipeline )
       {
         // TexGen under GLES is supported only if GL_OES_texture_cube_map is present
-        if(!Has_GLES_Version_1_x || Has_GL_OES_texture_cube_map)
+        if(!Has_GLES_Version_1 || Has_GL_OES_texture_cube_map)
           mDefaultRenderStates[RS_TexGen0 + i] = new TexGen(i);
         mDefaultRenderStates[RS_TexEnv0 + i] = new TexEnv(i);
         mDefaultRenderStates[RS_TextureMatrix0 + i] = new TextureMatrix(i);
@@ -912,7 +912,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   /* We only check the subset of tex-units supported also by glClientActiveTexture() */
   // Find the minimum of the max texture units supported, starting at 16
   int coord_count = 16;
-  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_x)
+  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1)
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
@@ -1873,7 +1873,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           VL_glClientActiveTexture(GL_TEXTURE0 + tex_unit); VL_CHECK_OGL();
           VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
 #if !defined(NDEBUG)
-          if ( Has_GLES_Version_1_x && texarr->glSize() == 1)
+          if ( Has_GLES_Version_1 && texarr->glSize() == 1)
           {
             Log::error("OpenGL ES does not allow 1D texture coordinates.\n"); VL_TRAP();
           }
