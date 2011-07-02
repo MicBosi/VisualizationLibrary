@@ -855,7 +855,7 @@ ref<Geometry> vl::makeIcosahedron( const vec3& origin, Real diameter )
     {10,1,6}, {11,0,9}, {2,11,9}, {5,2,9},  {11,2,7}
   };
 
-  ref<DrawElementsUInt> polys = new DrawElementsUInt(PT_TRIANGLES);
+  ref<DrawElementsUShort> polys = new DrawElementsUShort(PT_TRIANGLES);
   geom->drawCalls()->push_back(polys.get());
   polys->indices()->resize(20*3);
   memcpy(polys->indices()->ptr(), faces, sizeof(faces));
