@@ -204,18 +204,13 @@ bool OpenGLContext::initGLContext(bool log)
     VL_TRAP()
     return false;
   }
-  else
-  {
-    mIsInitialized = true;
-    mExtensions = getOpenGLExtensions();
-  }
+
+  if (log)
+    logOpenGLInfo();
 
   VL_CHECK_OGL();
 
-  if (log)
-  {
-    logOpenGLInfo();
-  }
+  mExtensions = getOpenGLExtensions();
 
   // Find max number of texture units, see http://www.opengl.org/sdk/docs/man/xhtml/glActiveTexture.xml
   mTextureUnitCount = 1;
@@ -260,7 +255,7 @@ bool OpenGLContext::initGLContext(bool log)
 
   setupDefaultRenderStates();
 
-  return true;
+  return mIsInitialized = true;;
 }
 //-----------------------------------------------------------------------------
 bool OpenGLContext::isExtensionSupported(const char* ext_name)
@@ -284,7 +279,7 @@ bool OpenGLContext::isExtensionSupported(const char* ext_name)
 void* OpenGLContext::getProcAddress(const char* function_name)
 {
   makeCurrent();
-  return getGLProcAddress((const GLubyte*)function_name);
+  return getGLProcAddress(function_name);
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::logOpenGLInfo()
@@ -350,23 +345,18 @@ void OpenGLContext::logOpenGLInfo()
       Log::print( Say("Max vertex attributes: %n\n")<<max_val);      
     }
 
+    VL_CHECK_OGL();
+
     max_val = 0; 
     if(Has_GLSL)
     {
-      if (Has_GLES_Version_2)
+      if (Has_GLES_Version_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
       {
-        glGetIntegerv(GL_MAX_VARYING_VECTORS, &max_val); VL_CHECK_OGL(); // 3) for some reason OpenGL ES 2.0 has only this
+        glGetIntegerv(GL_MAX_VARYING_VECTORS, &max_val); VL_CHECK_OGL();
       }
-      else
-      if (Has_GL_Version_3_0||Has_GL_Version_4_0)
-      {
-        glGetIntegerv(GL_MAX_VARYING_COMPONENTS, &max_val); VL_CHECK_OGL(); // 2) then they renamed to account for non float types I guess (but also the enum is different so the meaning might be different).
-        max_val /= 4;
-      }
-      else
       if (Has_GL_Version_2_0)
       {
-        glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val); VL_CHECK_OGL(); // 1) this is the original
+        glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val); VL_CHECK_OGL();
         max_val /= 4;
       }
       Log::print( Say("Max varying vectors: %n\n")<<max_val);
@@ -463,87 +453,6 @@ void OpenGLContext::logOpenGLInfo()
   VL_CHECK_OGL();
 }
 //------------------------------------------------------------------------------
-namespace
-{
-  const GLenum TranslateEnable[] =
-  {
-    GL_ALPHA_TEST,
-    GL_BLEND,
-    GL_COLOR_LOGIC_OP,
-    GL_LIGHTING,
-    GL_COLOR_SUM,
-    GL_CULL_FACE,
-    GL_DEPTH_TEST,
-    GL_FOG,
-    GL_LINE_SMOOTH,
-    GL_LINE_STIPPLE,
-    GL_POLYGON_STIPPLE,
-    GL_NORMALIZE,
-    GL_POINT_SMOOTH,
-    GL_POINT_SPRITE,
-    GL_POLYGON_SMOOTH,
-    GL_POLYGON_OFFSET_FILL,
-    GL_POLYGON_OFFSET_LINE,
-    GL_POLYGON_OFFSET_POINT,
-    GL_RESCALE_NORMAL,
-    GL_STENCIL_TEST,
-    GL_PROGRAM_POINT_SIZE,
-    GL_VERTEX_PROGRAM_TWO_SIDE,
-
-    GL_TEXTURE_CUBE_MAP_SEAMLESS,
-    GL_CLIP_DISTANCE0,
-    GL_CLIP_DISTANCE1,
-    GL_CLIP_DISTANCE2,
-    GL_CLIP_DISTANCE3,
-    GL_CLIP_DISTANCE4,
-    GL_CLIP_DISTANCE5,
-
-    // multisampling
-    GL_SAMPLE_ALPHA_TO_COVERAGE,
-    GL_SAMPLE_ALPHA_TO_ONE,
-    GL_SAMPLE_COVERAGE
-  };
-
-  const char* TranslateEnableString[] =
-  {
-    "EN_ALPHA_TEST",
-    "EN_BLEND",
-    "EN_COLOR_LOGIC_OP",
-    "EN_LIGHTING",
-    "EN_COLOR_SUM",
-    "EN_CULL_FACE",
-    "EN_DEPTH_TEST",
-    "EN_FOG ",
-    "EN_LINE_SMOOTH",
-    "EN_LINE_STIPPLE",
-    "EN_POLYGON_STIPPLE",
-    "EN_NORMALIZE",
-    "EN_POINT_SMOOTH",
-    "EN_POINT_SPRITE",
-    "EN_POLYGON_SMOOTH",
-    "EN_POLYGON_OFFSET_FILL",
-    "EN_POLYGON_OFFSET_LINE",
-    "EN_POLYGON_OFFSET_POINT",
-    "EN_RESCALE_NORMAL",
-    "EN_STENCIL_TEST",
-    "EN_PROGRAM_POINT_SIZE",
-    "EN_VERTEX_PROGRAM_TWO_SIDE",
-
-    "EN_TEXTURE_CUBE_MAP_SEAMLESS",
-    "EN_GL_CLIP_DISTANCE0",
-    "EN_GL_CLIP_DISTANCE1",
-    "EN_GL_CLIP_DISTANCE2",
-    "EN_GL_CLIP_DISTANCE3",
-    "EN_GL_CLIP_DISTANCE4",
-    "EN_GL_CLIP_DISTANCE5",
-
-    // multisampling
-    "EN_SAMPLE_ALPHA_TO_COVERAGE",
-    "EN_SAMPLE_ALPHA_TO_ONE",
-    "EN_SAMPLE_COVERAGE"
-  };
-}
-//------------------------------------------------------------------------------
 void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
 {
   VL_CHECK_OGL()
@@ -561,12 +470,12 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
       mEnableTable[cur_en] += 1; // 0 -> 1; 1 -> 2;
       if ( !mCurrentEnable[cur_en] )
       {
-        glEnable( TranslateEnable[cur_en] );
+        glEnable( Translate_Enable[cur_en] );
         mCurrentEnable[ cur_en ] = true;
   #ifndef NDEBUG
         if (glGetError() != GL_NO_ERROR)
         {
-          Log::error( Say("An unsupported function has been enabled: %s.\n") << TranslateEnableString[cur_en]);
+          Log::error( Say("An unsupported function has been enabled: %s.\n") << Translate_Enable_String[cur_en]);
           VL_TRAP()
         }
   #endif
@@ -585,11 +494,11 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
       if ( mEnableTable[prev_en] == 1 )
       {
         mCurrentEnable[prev_en] = false;
-        glDisable( TranslateEnable[prev_en] ); VL_CHECK_OGL()
+        glDisable( Translate_Enable[prev_en] ); VL_CHECK_OGL()
         #ifndef NDEBUG
           if (glGetError() != GL_NO_ERROR)
           {
-            Log::error( Say("An unsupported enum has been disabled: %s.\n") << TranslateEnableString[prev_en]);
+            Log::error( Say("An unsupported enum has been disabled: %s.\n") << Translate_Enable_String[prev_en]);
             VL_TRAP()
           }
         #endif
@@ -781,56 +690,15 @@ bool OpenGLContext::isCleanState(bool verbose)
   // everything must be disabled
   for( unsigned i=0; i<EN_EnableCount; ++i )
   {
-    // These are enabled in Core profiles
-    if (!Has_Fixed_Function_Pipeline)
-    {
-      // "Non-sprite points - Enable/Disable targets POINT_SMOOTH and POINT_-
-      // SPRITE, and all associated state. Point rasterization is always performed as
-      // though POINT_SPRITE were enabled." OpenGL 3.3 (Core Profile) p344
-      if (TranslateEnable[i] == GL_POINT_SPRITE) // this is actually deprecated
-        continue;
+    if (!Is_Enable_Supported[i])
+      continue;
 
-      // "If enabled and a vertex or geometry shader is active, then the derived point 
-      // size is taken from the (potentially clipped) shader builtin gl_PointSize and 
-      // clamped to the implementation-dependent point size range."
-      // See http://www.opengl.org/sdk/docs/man3/xhtml/glEnable.xml
-      if (TranslateEnable[i] == GL_PROGRAM_POINT_SIZE)
-        continue;
-    }
+    GLboolean enabled = glIsEnabled( Translate_Enable[i] ); VL_CHECK_OGL();
 
-    // mic fixme: check GLES1 extensions, check GLES2 separately, check GLES2 extensions
-#if defined(VL_OPENGL_ES1)
-      // skip unsupported enables
-      switch(TranslateEnable[i])
-      {
-      case GL_COLOR_SUM:
-      case GL_LINE_STIPPLE:
-      case GL_POLYGON_STIPPLE:
-      case GL_POLYGON_SMOOTH:
-      case GL_POLYGON_OFFSET_LINE:
-      case GL_POLYGON_OFFSET_POINT:
-      case GL_PROGRAM_POINT_SIZE:
-      case GL_VERTEX_PROGRAM_TWO_SIDE:
-      case GL_TEXTURE_CUBE_MAP_SEAMLESS:
-        continue;
-      }
-#endif
-
-    // Note: for simplicity we allow GL to generate errors for unsupported enables.
-    GLboolean enabled = glIsEnabled( TranslateEnable[i] ); /* VL_CHECK_OGL(); */
-
-    // mic fixme
-    if(glGetError() != GL_NO_ERROR)
-    {
-      vl::Log::error( Say("Capability %s not supported!\n") << TranslateEnableString[i] );
-      VL_TRAP();
-    }
-
-    // The order is important!
-    if (glGetError() == GL_NO_ERROR && enabled)
+    if (enabled)
     {
 	    if (verbose)
-		    vl::Log::error( Say("Capability %s was enabled!\n") << TranslateEnableString[i] );
+		    vl::Log::error( Say("Capability %s was enabled!\n") << Translate_Enable_String[i] );
       VL_TRAP();
       ok = false;
     }
