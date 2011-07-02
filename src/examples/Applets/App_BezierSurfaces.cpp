@@ -262,7 +262,7 @@ public:
         memcpy(de->indices()->ptr(), quads, sizeof(quads));
         geom->drawCalls()->push_back(de.get());
         geom->drawCalls()->push_back(da.get());
-        geom->convertDrawCallsForGLES();
+        geom->makeGLESFriendly();
       }
     }
 

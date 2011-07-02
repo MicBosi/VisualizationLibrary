@@ -338,12 +338,12 @@ public:
     if (!vl::Has_GLES_Version_1)
       ball_fx->shader()->setRenderState(mPolygonMode.get());
 
-    wall_1_a->convertDrawCallsForGLES();
-    wall_2_a->convertDrawCallsForGLES();
-    wall_1_b->convertDrawCallsForGLES();
-    wall_1_c->convertDrawCallsForGLES();
-    wall_2_b->convertDrawCallsForGLES();
-    wall_2_c->convertDrawCallsForGLES();
+    wall_1_a->makeGLESFriendly();
+    wall_2_a->makeGLESFriendly();
+    wall_1_b->makeGLESFriendly();
+    wall_1_c->makeGLESFriendly();
+    wall_2_b->makeGLESFriendly();
+    wall_2_c->makeGLESFriendly();
 
     // for each cell of the dungeon
     for(int y=0; y<map_size; ++y)

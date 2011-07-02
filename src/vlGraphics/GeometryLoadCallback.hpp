@@ -49,7 +49,7 @@ namespace vl
 
     GeometryLoadCallback()
     {
-      mConvertForGLES    = false;
+      mMakeGLESFriendly    = false;
       mComputeNormals    = true;
       mUseVBOs           = true;
       mUseDisplayLists   = false;
@@ -94,8 +94,8 @@ namespace vl
         if (transformGeometry())
           geom[i]->transform(transformMatrix(),true);
 
-        if (convertDrawCallsForGLES())
-          geom[i]->convertDrawCallsForGLES();
+        if (makeGLESFriendly())
+          geom[i]->makeGLESFriendly();
       }
     }
 
@@ -147,10 +147,10 @@ namespace vl
     //! Transforms the Geometries using transformMatrix().
     void setTransformGeometry(bool on) { mTransformGeometry = on; }
 
-    //! If true calls Geometry::convertDrawCallsForGLES()
-    bool convertDrawCallsForGLES() const { return mConvertForGLES; }
-    //! If true calls Geometry::convertDrawCallsForGLES()
-    void setConvertDrawCallsForGLES(bool on) { mConvertForGLES = on; }
+    //! If true calls Geometry::makeGLESFriendly()
+    bool makeGLESFriendly() const { return mMakeGLESFriendly; }
+    //! If true calls Geometry::makeGLESFriendly()
+    void setMakeGLESFriendly(bool on) { mMakeGLESFriendly = on; }
 
   protected:
     mat4 mMatrix;
@@ -163,7 +163,7 @@ namespace vl
     bool mConvertToDrawArrays;
     bool mUseDisplayLists;
     bool mUseVBOs;
-    bool mConvertForGLES;
+    bool mMakeGLESFriendly;
   };
 }
 
