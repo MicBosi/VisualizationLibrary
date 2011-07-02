@@ -408,10 +408,9 @@ bool vl::initializeOpenGL()
     #include "GLESExtensionList.hpp"
   #undef VL_GLES_EXTENSION
 
-  // mic fixme: check also for GLES2 ...
 #if defined(VL_OPENGL_ES1)
-  // mic fixme: http://www.imgtec.com/forum/forum_posts.asp?TID=1379
-  // POWERVR emulator bugs:
+  // mic fixme
+  // POWERVR emulator bugs: http://www.imgtec.com/forum/forum_posts.asp?TID=1379
   if (Has_GL_OES_texture_cube_map && glTexGenfOES == 0)
   {
     Has_GL_OES_texture_cube_map = false;
