@@ -92,7 +92,9 @@ namespace vl
       BOOL has_timer = QueryPerformanceFrequency( &Frequency );
       if (has_timer)
       {
+        DWORD_PTR oldmask = ::SetThreadAffinityMask(::GetCurrentThread(), 0);
         QueryPerformanceCounter( &PerformanceCount );
+        ::SetThreadAffinityMask(::GetCurrentThread(), oldmask);
         gStartTime = PerformanceCount.QuadPart;
       }
       else
@@ -123,7 +125,9 @@ Real Time::currentTime()
     BOOL has_timer = QueryPerformanceFrequency( &Frequency );
     if (has_timer)
     {
+      DWORD_PTR oldmask = ::SetThreadAffinityMask(::GetCurrentThread(), 0);
       QueryPerformanceCounter( &PerformanceCount );
+      ::SetThreadAffinityMask(::GetCurrentThread(), oldmask);
       return (Real)(PerformanceCount.QuadPart-gStartTime)/Frequency.QuadPart;
     }
     else
