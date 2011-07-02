@@ -77,7 +77,7 @@ MarchingCubes::MarchingCubes()
 //------------------------------------------------------------------------------
 void MarchingCubes::computeEdges(Volume* vol, float threshold)
 {
-  mEdges.clear();
+  // mEdges.clear();
   mEdges.resize(vol->slices().x() * vol->slices().y() * vol->slices().z());
   mCubes.clear();
   mCubes.reserve(1024);
@@ -322,7 +322,7 @@ void MarchingCubes::run(bool generate_colors)
   {
     Volume* vol     = mVolumeInfo.at(ivol)->volume();
     float threshold = mVolumeInfo.at(ivol)->threshold();
-    int start = (int)mVerts.size();
+    int start       = (int)mVerts.size();
 
     if (vol->dataIsDirty())
       vol->setupInternalData();
@@ -335,8 +335,9 @@ void MarchingCubes::run(bool generate_colors)
     //for(int z = 0; z < mVolume->slices().z()-1; ++z)
     //  for(int y = 0; y < mVolume->slices().y()-1; ++y)
     //    for(int x = 0; x < mVolume->slices().x()-1; ++x)
-    //      if(mVolume->cube(x,y,z).includes(threshold))
-    //        processCube(x, y, z);
+    //      if(vol->cube(x,y,z).includes(threshold))
+    //        processCube(x, y, z, vol, threshold);
+
     for(unsigned int i=0; i<mCubes.size(); ++i)
       processCube(mCubes[i].x(), mCubes[i].y(), mCubes[i].z(), vol, threshold);
 
