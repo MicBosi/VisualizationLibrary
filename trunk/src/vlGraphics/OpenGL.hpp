@@ -40,11 +40,31 @@ namespace vl
 {
   VLGRAPHICS_EXPORT extern bool Is_OpenGL_Initialized;
 
+  // OpenGL: true if the current context has been created with the WGL_CONTEXT_CORE_PROFILE_BIT_ARB or equivalent.
+  //         If true all removed functionalities are not present.
+  // OpenGL ES 1: always false
+  // OpenGL ES 2: always false
+  VLGRAPHICS_EXPORT extern bool Is_OpenGL_Core_Profile;
+
+  // OpenGL: true if the current context has been created with the WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB or equivalent.
+  //         If true all removed AND deprecated (even if not yet removed) functionalities are not present.
+  // OpenGL ES 1: always false
+  // OpenGL ES 2: always false
+  VLGRAPHICS_EXPORT extern bool Is_OpenGL_Forward_Compatible;
+
+  // OpenGL: true if !Is_OpenGL_Forward_Compatible && !Is_OpenGL_Core_Profile
+  // OpenGL ES 1: always true
+  // OpenGL ES 2: always false
+  VLGRAPHICS_EXPORT extern bool Has_Fixed_Function_Pipeline;
+
+  VLGRAPHICS_EXPORT extern const GLenum Translate_Enable[];
+  VLGRAPHICS_EXPORT extern bool Is_Enable_Supported[];
+  VLGRAPHICS_EXPORT extern const char* Translate_Enable_String[];
+
   VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1;
   VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2;
   VLGRAPHICS_EXPORT extern bool Has_GLES;
 
-  VLGRAPHICS_EXPORT extern bool Has_Fixed_Function_Pipeline;
 
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_1;
   VLGRAPHICS_EXPORT extern bool Has_GL_Version_1_2;
@@ -115,12 +135,11 @@ namespace vl
     #undef VL_GL_FUNCTION
   #endif
 
-  //! If \a force == true all the OpenGL strings and function pointers will be initialized even if they have already been initialized.
-  //! To test whether OpenGL has already been initialized check vl::Is_OpenGL_Initialized
-  VLGRAPHICS_EXPORT bool initializeOpenGL(bool force=false);
+  //! To test whether OpenGL has been initialized at least once check vl::Is_OpenGL_Initialized
+  VLGRAPHICS_EXPORT bool initializeOpenGL();
 
   //! Returns the address of the specified OpenGL function if supported by the active OpenGL driver and profile.
-  VLGRAPHICS_EXPORT void* getGLProcAddress(const GLubyte* name);
+  VLGRAPHICS_EXPORT void* getGLProcAddress(const char* name);
   
   //! Returns a readable string corresponding to the given OpenGL error code as returned by glGetError()
   VLGRAPHICS_EXPORT const char* getGLErrorString(int err);
