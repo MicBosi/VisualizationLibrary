@@ -817,39 +817,54 @@ namespace vl
   //! Constant that enable/disable a specific OpenGL feature, see also Shader, Shader::enable(), Shader::disable(), Shader::isEnabled()
   typedef enum 
   {
-    EN_ALPHA_TEST, //!< If enabled, performs alpha testing, see also AlphaFunc for more information.
+    // Common ones
     EN_BLEND, //!< If enabled, blend the incoming RGBA color values with the values in the color buffers, see also BlendFunc for more information.
-    EN_COLOR_LOGIC_OP, //!< If enabled, apply the currently selected logical operation to the incoming RGBA color and color buffer values, see also LogicOp.
-    EN_LIGHTING, //!< If enabled, use the current lighting parameters to compute the vertex color; Otherwise, simply associate the current color with each vertex, see also Material, LightModel, and Light.
-    EN_COLOR_SUM, //!< If enabled, add the secondary color value to the computed fragment color. 
     EN_CULL_FACE, //!< If enabled, cull polygons based on their winding in window coordinates, see also CullFace. 
     EN_DEPTH_TEST, //!< If enabled, do depth comparisons and update the depth buffer; Note that even if the depth buffer exists and the depth mask is non-zero, the depth buffer is not updated if the depth test is disabled, see also DepthFunc and DepthRange.
-    EN_FOG, //!< If enabled, blend a fog color into the post-texturing color, see also Fog.
-    EN_LINE_SMOOTH, //!< IIf enabled, draw lines with correct filtering; Otherwise, draw aliased lines, see also LineWidth.
-    EN_LINE_STIPPLE, //!< If enabled, use the current line stipple pattern when drawing lines, see also LineStipple.
-    EN_POLYGON_STIPPLE, //!< If enabled, use the current polygon stipple pattern when rendering polygons, see also PolygonStipple.
-    EN_NORMALIZE, //!< If enabled, normal vectors are scaled to unit length after transformation, see also vl::EN_RESCALE_NORMAL.
-    EN_POINT_SMOOTH, //!< If enabled, draw points with proper filtering; Otherwise, draw aliased points, see also PointSize.
-    EN_POINT_SPRITE, //!< If enabled, calculate texture coordinates for points based on texture environment and point parameter settings; Otherwise texture coordinates are constant across points.
-    EN_POLYGON_SMOOTH, //!< If enabled, draw polygons with proper filtering; Otherwise, draw aliased polygons; For correct antialiased polygons, an alpha buffer is needed and the polygons must be sorted front to back.
+    EN_STENCIL_TEST, //!< If enabled, do stencil testing and update the stencil buffer, see also StencilFunc and StencilOp.
     EN_POLYGON_OFFSET_FILL, //!< If enabled, and if the polygon is rendered in GL_FILL mode, an offset is added to depth values of a polygon's fragments before the depth comparison is performed, see also PolygonOffset.
     EN_POLYGON_OFFSET_LINE, //!< If enabled, and if the polygon is rendered in GL_LINE mode, an offset is added to depth values of a polygon's fragments before the depth comparison is performed, see also PolygonOffset.
     EN_POLYGON_OFFSET_POINT, //!< If enabled, an offset is added to depth values of a polygon's fragments before the depth comparison is performed, if the polygon is rendered in GL_POINT mode, see also PolygonOffset.
+    EN_COLOR_LOGIC_OP, //!< If enabled, apply the currently selected logical operation to the incoming RGBA color and color buffer values, see also LogicOp.
+
+    // Smoothing
+    EN_POINT_SMOOTH, //!< If enabled, draw points with proper filtering; Otherwise, draw aliased points, see also PointSize.
+    EN_LINE_SMOOTH, //!< IIf enabled, draw lines with correct filtering; Otherwise, draw aliased lines, see also LineWidth.
+    EN_POLYGON_SMOOTH, //!< If enabled, draw polygons with proper filtering; Otherwise, draw aliased polygons; For correct antialiased polygons, an alpha buffer is needed and the polygons must be sorted front to back.
+
+    // Stippling
+    EN_LINE_STIPPLE, //!< If enabled, use the current line stipple pattern when drawing lines, see also LineStipple.
+    EN_POLYGON_STIPPLE, //!< If enabled, use the current polygon stipple pattern when rendering polygons, see also PolygonStipple.
+
+    // Point sprites
+    EN_POINT_SPRITE, //!< If enabled, calculate texture coordinates for points based on texture environment and point parameter settings; Otherwise texture coordinates are constant across points.
+    EN_PROGRAM_POINT_SIZE, //!< [GL_VERTEX_PROGRAM_POINT_SIZE/GL_PROGRAM_POINT_SIZE] If enabled, and a vertex shader is active, then the derived point size is taken from the (potentially clipped) shader builtin \p gl_PointSize and clamped to the implementation-dependent point size range|
+
+    // Fixed function pipeline
+    EN_ALPHA_TEST, //!< If enabled, performs alpha testing, see also AlphaFunc for more information.
+    EN_LIGHTING, //!< If enabled, use the current lighting parameters to compute the vertex color; Otherwise, simply associate the current color with each vertex, see also Material, LightModel, and Light.
+    EN_COLOR_SUM, //!< If enabled, add the secondary color value to the computed fragment color. 
+    EN_FOG, //!< If enabled, blend a fog color into the post-texturing color, see also Fog.
+    EN_NORMALIZE, //!< If enabled, normal vectors are scaled to unit length after transformation, see also vl::EN_RESCALE_NORMAL.
     EN_RESCALE_NORMAL, //!< If enabled, normals are scaled by a scaling factor derived from the modelview matrix; vl::EN_RESCALE_NORMAL requires that the originally specified normals were of unit length, and that the modelview matrix contain only uniform scales for proper results, see also vl::EN_NORMALIZE.
-    EN_STENCIL_TEST, //!< If enabled, do stencil testing and update the stencil buffer, see also StencilFunc and StencilOp.
-    EN_VERTEX_PROGRAM_POINT_SIZE, //!< If enabled, and a vertex shader is active, then the derived point size is taken from the (potentially clipped) shader builtin \p gl_PointSize and clamped to the implementation-dependent point size range|
+
+    // Available only under OpenGL 2.x
     EN_VERTEX_PROGRAM_TWO_SIDE, //!< If enabled, and a vertex shader is active, it specifies that the GL will choose between front and back colors based on the polygon's face direction of which the vertex being shaded is a part; It has no effect on points or lines.
 
-    // OpenGL 3
-    EN_TEXTURE_CUBE_MAP_SEAMLESS,
-    EN_GL_CLIP_DISTANCE0,
-    EN_GL_CLIP_DISTANCE1,
-    EN_GL_CLIP_DISTANCE2,
-    EN_GL_CLIP_DISTANCE3,
-    EN_GL_CLIP_DISTANCE4,
-    EN_GL_CLIP_DISTANCE5,
+    // OpenGL 3.2
+    EN_TEXTURE_CUBE_MAP_SEAMLESS, //!< If enabled, cubemap textures are sampled such that when linearly sampling from the border between two adjacent faces, texels from both faces are used to generate the final sample value. When disabled, texels from only a single face are used to construct the final sample value.
 
-    // multisampling
+    // OpenGL 3.0
+    EN_CLIP_DISTANCE0, //!< If enabled, clip geometry against user-defined half space #0.
+    EN_CLIP_DISTANCE1, //!< If enabled, clip geometry against user-defined half space #1.
+    EN_CLIP_DISTANCE2, //!< If enabled, clip geometry against user-defined half space #2.
+    EN_CLIP_DISTANCE3, //!< If enabled, clip geometry against user-defined half space #3.
+    EN_CLIP_DISTANCE4, //!< If enabled, clip geometry against user-defined half space #4.
+    EN_CLIP_DISTANCE5, //!< If enabled, clip geometry against user-defined half space #5.
+    EN_CLIP_DISTANCE6, //!< If enabled, clip geometry against user-defined half space #6.
+    EN_CLIP_DISTANCE7, //!< If enabled, clip geometry against user-defined half space #7.
+
+    // Multisampling
     EN_SAMPLE_ALPHA_TO_COVERAGE, //!< If enabled, compute a temporary coverage value where each bit is determined by the alpha value at the corresponding sample location; The temporary coverage value is then ANDed with the fragment coverage value.
     EN_SAMPLE_ALPHA_TO_ONE, //!< If enabled, each sample alpha value is replaced by the maximum representable alpha value.
     EN_SAMPLE_COVERAGE, //!< If enabled, the fragment's coverage is ANDed with the temporary coverage value; If GL_SAMPLE_COVERAGE_INVERT is set to GL_TRUE, invert the coverage value, see also SampleCoverage.
