@@ -251,11 +251,14 @@ namespace vl
     std::vector<fvec3> mVerts;
     std::vector<fvec3> mNorms;
     std::vector<fvec4> mColors;
+    
 #if defined(VL_OPENGL)
-    std::vector<unsigned int> mIndices;
+    typedef unsigned int IndexType;
 #else
-    std::vector<unsigned short> mIndices;
+    typedef unsigned short IndexType;
 #endif
+    std::vector<IndexType> mIndices;
+
     struct Edge
     {
       Edge(): mX(-1), mY(-1), mZ(-1) {}
