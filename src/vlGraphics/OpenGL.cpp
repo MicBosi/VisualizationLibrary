@@ -39,10 +39,12 @@
   #include <EGL/egl.h> // for eglGetProcAddress()
 #endif
 
-// OpenGL implmentation
+//-----------------------------------------------------------------------------
 namespace vl
 {
   bool Is_OpenGL_Initialized = false;
+  bool Is_OpenGL_Core_Profile = false;
+  bool Is_OpenGL_Forward_Compatible = false;
 
   bool Has_GL_Version_1_1 = false;
   bool Has_GL_Version_1_2 = false;
@@ -121,13 +123,179 @@ namespace vl
     #undef VL_GL_FUNCTION
   #endif
 
-}
+  const GLenum Translate_Enable[] =
+  {
+    // Common ones
+    GL_BLEND,
+    GL_CULL_FACE,
+    GL_DEPTH_TEST,
+    GL_STENCIL_TEST,
+    GL_POLYGON_OFFSET_FILL, 
+    GL_POLYGON_OFFSET_LINE, 
+    GL_POLYGON_OFFSET_POINT,
+    GL_COLOR_LOGIC_OP, 
 
-bool vl::initializeOpenGL(bool force)
+    // Smoothing
+    GL_POINT_SMOOTH,
+    GL_LINE_SMOOTH, 
+    GL_POLYGON_SMOOTH,
+
+    // Stippling
+    GL_LINE_STIPPLE,
+    GL_POLYGON_STIPPLE,
+
+    // Point sprites
+    GL_POINT_SPRITE, 
+    GL_PROGRAM_POINT_SIZE, 
+
+    // Fixed function pipeline
+    GL_ALPHA_TEST, 
+    GL_LIGHTING, 
+    GL_COLOR_SUM,
+    GL_FOG,
+    GL_NORMALIZE,
+    GL_RESCALE_NORMAL,
+
+    // Available only under OpenGL 2.x
+    GL_VERTEX_PROGRAM_TWO_SIDE,
+
+    // OpenGL 3.2
+    GL_TEXTURE_CUBE_MAP_SEAMLESS,
+
+    // OpenGL 3.0
+    GL_CLIP_DISTANCE0,
+    GL_CLIP_DISTANCE1,
+    GL_CLIP_DISTANCE2,
+    GL_CLIP_DISTANCE3,
+    GL_CLIP_DISTANCE4,
+    GL_CLIP_DISTANCE5,
+    GL_CLIP_DISTANCE6,
+    GL_CLIP_DISTANCE7,
+
+    // Multisampling
+    GL_SAMPLE_ALPHA_TO_COVERAGE,
+    GL_SAMPLE_ALPHA_TO_ONE,
+    GL_SAMPLE_COVERAGE
+  };
+
+  const char* Translate_Enable_String[] =
+  {
+    // Common ones
+    "GL_BLEND",
+    "GL_CULL_FACE",
+    "GL_DEPTH_TEST",
+    "GL_STENCIL_TEST",
+    "GL_POLYGON_OFFSET_FILL", 
+    "GL_POLYGON_OFFSET_LINE", 
+    "GL_POLYGON_OFFSET_POINT",
+    "GL_COLOR_LOGIC_OP", 
+
+    // Smoothing
+    "GL_POINT_SMOOTH",
+    "GL_LINE_SMOOTH", 
+    "GL_POLYGON_SMOOTH",
+
+    // Stippling
+    "GL_LINE_STIPPLE",
+    "GL_POLYGON_STIPPLE",
+
+    // Point sprites
+    "GL_POINT_SPRITE", 
+    "GL_PROGRAM_POINT_SIZE", 
+
+    // Fixed function pipeline
+    "GL_ALPHA_TEST", 
+    "GL_LIGHTING", 
+    "GL_COLOR_SUM",
+    "GL_FOG",
+    "GL_NORMALIZE",
+    "GL_RESCALE_NORMAL",
+
+    // Available only under OpenGL 2.x
+    "GL_VERTEX_PROGRAM_TWO_SIDE",
+
+    // OpenGL 3.2
+    "GL_TEXTURE_CUBE_MAP_SEAMLESS",
+
+    // OpenGL 3.0
+    "GL_CLIP_DISTANCE0",
+    "GL_CLIP_DISTANCE1",
+    "GL_CLIP_DISTANCE2",
+    "GL_CLIP_DISTANCE3",
+    "GL_CLIP_DISTANCE4",
+    "GL_CLIP_DISTANCE5",
+    "GL_CLIP_DISTANCE6",
+    "GL_CLIP_DISTANCE7",
+
+    // Multisampling
+    "GL_SAMPLE_ALPHA_TO_COVERAGE",
+    "GL_SAMPLE_ALPHA_TO_ONE",
+    "GL_SAMPLE_COVERAGE"
+  };
+
+  bool Is_Enable_Supported[EN_EnableCount] = 
+  {
+    // Common ones
+    false /*GL_BLEND*/,
+    false /*GL_CULL_FACE*/,
+    false /*GL_DEPTH_TEST*/,
+    false /*GL_STENCIL_TEST*/,
+    false /*GL_POLYGON_OFFSET_FILL*/, 
+    false /*GL_POLYGON_OFFSET_LINE*/, 
+    false /*GL_POLYGON_OFFSET_POINT*/,
+    false /*GL_COLOR_LOGIC_OP*/, 
+
+    // Smoothing
+    false /*GL_POINT_SMOOTH*/,
+    false /*GL_LINE_SMOOTH*/, 
+    false /*GL_POLYGON_SMOOTH*/,
+
+    // Stippling
+    false /*GL_LINE_STIPPLE*/,
+    false /*GL_POLYGON_STIPPLE*/,
+
+    // Point sprites
+    false /*GL_POINT_SPRITE*/, 
+    false /*GL_PROGRAM_POINT_SIZE*/, 
+
+    // Fixed function pipeline
+    false /*GL_ALPHA_TEST*/, 
+    false /*GL_LIGHTING*/, 
+    false /*GL_COLOR_SUM*/,
+    false /*GL_FOG*/,
+    false /*GL_NORMALIZE*/,
+    false /*GL_RESCALE_NORMAL*/,
+
+    // Available only under OpenGL 2.x
+    false /*GL_VERTEX_PROGRAM_TWO_SIDE*/,
+
+    // OpenGL 3.2
+    false /*GL_TEXTURE_CUBE_MAP_SEAMLESS*/,
+
+    // OpenGL 3.0
+    false /*GL_CLIP_DISTANCE0*/,
+    false /*GL_CLIP_DISTANCE1*/,
+    false /*GL_CLIP_DISTANCE2*/,
+    false /*GL_CLIP_DISTANCE3*/,
+    false /*GL_CLIP_DISTANCE4*/,
+    false /*GL_CLIP_DISTANCE5*/,
+    false /*GL_CLIP_DISTANCE6*/,
+    false /*GL_CLIP_DISTANCE7*/,
+
+    // Multisampling
+    false /*GL_SAMPLE_ALPHA_TO_COVERAGE*/,
+    false /*GL_SAMPLE_ALPHA_TO_ONE*/,
+    false /*GL_SAMPLE_COVERAGE*/
+  };
+
+  VL_COMPILE_TIME_CHECK( EN_EnableCount == sizeof(Is_Enable_Supported) / sizeof(Is_Enable_Supported[0]) );
+  VL_COMPILE_TIME_CHECK( EN_EnableCount == sizeof(Translate_Enable) / sizeof(Translate_Enable[0]) );
+  VL_COMPILE_TIME_CHECK( EN_EnableCount == sizeof(Translate_Enable_String) / sizeof(Translate_Enable_String[0]) );
+}
+//-----------------------------------------------------------------------------
+bool vl::initializeOpenGL()
 {
-  // initialize OpenGL only once
-  if (Is_OpenGL_Initialized && !force)
-    return true;
+  Is_OpenGL_Initialized = false;
 
   // clear errors
   glGetError();
@@ -136,27 +304,27 @@ bool vl::initializeOpenGL(bool force)
   if (glGetError() != GL_NO_ERROR)
     return false;
 
+  // - - - OpenGL function pointers - - -
+
   // opengl function pointer initialization
   #if defined(VL_OPENGL)
-    #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress((const GLubyte*)#NAME);
+    #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress(#NAME);
     #include "GLFunctionList.hpp"
   #endif
 
   // opengl function pointer initialization
   #if defined(VL_OPENGL_ES1)
-    #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress((const GLubyte*)#NAME);
+    #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress(#NAME);
     #include "GLES1FunctionList.hpp"
   #endif
 
   // opengl function pointer initialization
   #if defined(VL_OPENGL_ES2)
-    #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress((const GLubyte*)#NAME);
+    #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress(#NAME);
     #include "GLES2FunctionList.hpp"
   #endif
 
-  // Check fixed function pipeline
-  glDisable(GL_LIGHTING);
-  Has_Fixed_Function_Pipeline = glGetError() == GL_NO_ERROR;
+  // - - - OpenGL versions - - -
 
   // GLES detect
   #if defined(VL_OPENGL_ES1)
@@ -168,16 +336,51 @@ bool vl::initializeOpenGL(bool force)
   #endif
 
   // GL versions
+  // OpenGL ES returns "OpenGL ES-XX N.M"
   const char* version_string = (const char*)glGetString(GL_VERSION);
+
   // These stay zero for GLES
-  int vmaj = 0;
-  int vmin = 0;
-  // Format returned by GLES is "OpenGL ES-XX N.M"
-  if (!Has_GLES)
+  const int vmaj = Has_GLES ? 0 : version_string[0] - '0';
+  const int vmin = Has_GLES ? 0 : version_string[2] - '0';
+
+  // Check fixed function pipeline
+#if defined(VL_OPENGL_ES2)
+  Is_OpenGL_Core_Profile = false;
+  Is_OpenGL_Forward_Compatible = false;
+  Has_Fixed_Function_Pipeline = false;
+#elif defined(VL_OPENGL_ES1)
+  Is_OpenGL_Core_Profile = false;
+  Is_OpenGL_Forward_Compatible = false;
+  Has_Fixed_Function_Pipeline = true;
+#else
+  Is_OpenGL_Forward_Compatible = false;
+  if( vmaj >= 3 )
   {
-    vmaj = version_string[0] - '0';
-    vmin = version_string[2] - '0';
+    int forward_compatible = 0;
+    glGetIntegerv( GL_CONTEXT_FLAGS, &forward_compatible ); VL_CHECK_OGL();
+    Is_OpenGL_Forward_Compatible = (forward_compatible & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT) != 0;
   }
+
+  Is_OpenGL_Core_Profile = false;
+  const int version = vmaj*10 + vmin;
+  if( version >= 32 )
+  {
+    // Valid for WGL and GLX
+    #define CONTEXT_CORE_PROFILE_BIT          0x00000001
+    #define CONTEXT_COMPATIBILITY_PROFILE_BIT 0x00000002
+    #define CONTEXT_PROFILE_MASK              0x9126
+
+    // Note: 
+    // - This should be non-0 by when using wglCreateContextAttribs() and is == 0 when creating a GL context in the old way.
+    // - Creating a context in the old way returns the highest compatible OpenGL version available thus the presence 
+    //   of CONTEXT_COMPATIBILITY_PROFILE_BIT is not enough, we need to check the absence of CONTEXT_CORE_PROFILE_BIT
+    int context_flags = 0;
+    glGetIntegerv( CONTEXT_PROFILE_MASK, &context_flags ); VL_CHECK_OGL();
+    Is_OpenGL_Core_Profile = (context_flags & CONTEXT_CORE_PROFILE_BIT) != 0;
+  }
+
+  Has_Fixed_Function_Pipeline = !Is_OpenGL_Forward_Compatible && !Is_OpenGL_Core_Profile;
+#endif
 
   Has_GL_Version_1_1 = (vmaj == 1 && vmin >= 1) || (vmaj > 1 && Has_Fixed_Function_Pipeline);
   Has_GL_Version_1_2 = (vmaj == 1 && vmin >= 2) || (vmaj > 1 && Has_Fixed_Function_Pipeline);
@@ -193,7 +396,8 @@ bool vl::initializeOpenGL(bool force)
   Has_GL_Version_4_0 = (vmaj == 4 && vmin >= 0) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
   Has_GL_Version_4_1 = (vmaj == 4 && vmin >= 1) || (vmaj > 4 && Has_Fixed_Function_Pipeline);
 
-  // opengl extension strings init
+  // - - - Extension strings init - - -
+
   std::string extensions = getOpenGLExtensions();
 
   #define VL_EXTENSION(extension) Has_##extension = strstr(extensions.c_str(), #extension" ") != NULL;
@@ -204,7 +408,7 @@ bool vl::initializeOpenGL(bool force)
     #include "GLESExtensionList.hpp"
   #undef VL_GLES_EXTENSION
 
-  // mic fixme: check also for GLES2
+  // mic fixme: check also for GLES2 ...
 #if defined(VL_OPENGL_ES1)
   // mic fixme: http://www.imgtec.com/forum/forum_posts.asp?TID=1379
   // POWERVR emulator bugs:
@@ -229,7 +433,7 @@ bool vl::initializeOpenGL(bool force)
   }
 #endif
 
-  // Helper defines
+  // - - - Helper defines - - - 
 
   // Note that GL extensions pertaining to deprecated features seem to be exposed under Core profiles even if they are not supported (like Has_GL_SGIS_generate_mipmap)
 
@@ -263,9 +467,107 @@ bool vl::initializeOpenGL(bool force)
   Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_Fixed_Function_Pipeline)||Has_GL_Version_1_4||Has_GLES_Version_1;
   Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL || Has_GLES_Version_1;
 
-  return Is_OpenGL_Initialized = glGetError() == GL_NO_ERROR;
-}
+  // - - - Resolve supported enables - - -
 
+  // Common ones
+  Is_Enable_Supported[EN_BLEND]        = true;
+  Is_Enable_Supported[EN_CULL_FACE]    = true;
+  Is_Enable_Supported[EN_DEPTH_TEST]   = true;
+  Is_Enable_Supported[EN_STENCIL_TEST] = true;
+  Is_Enable_Supported[EN_POLYGON_OFFSET_FILL]  = true;
+  Is_Enable_Supported[EN_POLYGON_OFFSET_LINE]  = !Has_GLES;
+  Is_Enable_Supported[EN_POLYGON_OFFSET_POINT] = !Has_GLES;
+  Is_Enable_Supported[EN_COLOR_LOGIC_OP]       = !Has_GLES_Version_2;
+
+  // Smooth
+  Is_Enable_Supported[EN_POINT_SMOOTH]   = Has_GL_Version_1_1||Has_GLES_Version_1;
+  Is_Enable_Supported[EN_LINE_SMOOTH]    = !Has_GLES_Version_2;
+  Is_Enable_Supported[EN_POLYGON_SMOOTH] = !Has_GLES;
+
+  // Stipple
+  Is_Enable_Supported[EN_LINE_STIPPLE]    = Has_GL_Version_1_1;
+  Is_Enable_Supported[EN_POLYGON_STIPPLE] = Has_GL_Version_1_1;
+
+  // Point sprites
+  // Point sprites when !Has_Fixed_Function_Pipeline is considered always enabled but GL_POINT_SPRITE should not be called even if GL_OES_point_sprite, GL_ARB_point_sprite etc. are exposed!
+  // Note that calling glIsEnabled() with the two below under a Core profile returns true for the same reason.
+  Is_Enable_Supported[EN_POINT_SPRITE]       = (Has_GL_NV_point_sprite||Has_GL_ARB_point_sprite||Has_GL_Version_2_0||Has_GL_OES_point_sprite||Has_GLES_Version_1) && Has_Fixed_Function_Pipeline;
+  Is_Enable_Supported[EN_PROGRAM_POINT_SIZE] = Has_GLSL && !Has_GLES_Version_2; // Only OpenGL ES 2 does not support glPointSize()/GL_POINT_SIZE
+
+  // Fixed function pipeline
+  Is_Enable_Supported[EN_ALPHA_TEST]     = Has_GL_Version_1_1||Has_GLES_Version_1;
+  Is_Enable_Supported[EN_LIGHTING]       = Has_GL_Version_1_1||Has_GLES_Version_1;
+  Is_Enable_Supported[EN_COLOR_SUM]      = Has_GL_Version_1_1;
+  Is_Enable_Supported[EN_FOG]            = Has_GL_Version_1_1||Has_GLES_Version_1;
+  Is_Enable_Supported[EN_NORMALIZE]      = Has_GL_Version_1_1||Has_GLES_Version_1;
+  Is_Enable_Supported[EN_RESCALE_NORMAL] = Has_GL_Version_1_2||Has_GLES_Version_1;
+
+  // Available only under OpenGL 2.x
+  Is_Enable_Supported[EN_VERTEX_PROGRAM_TWO_SIDE]   = (Has_GL_ARB_vertex_program||Has_GL_NV_vertex_program) && Has_GL_Version_1_1 || Has_GL_Version_2_0;
+
+  // OpenGL 3.2
+  Is_Enable_Supported[EN_TEXTURE_CUBE_MAP_SEAMLESS] = Has_GL_AMD_seamless_cubemap_per_texture||Has_GL_ARB_seamless_cube_map||Has_GL_Version_3_2||Has_GL_Version_4_0;
+  
+  // Clipping planes
+  int max_clip_planes = 0;
+  // OpenGL ES 2 is the only one without clipping planes!
+  if (!Has_GLES_Version_2)
+  {
+    glGetIntegerv(GL_MAX_CLIP_DISTANCES, &max_clip_planes); // GL_MAX_CLIP_DISTANCES == GL_MAX_CLIP_PLANES
+  }
+  Is_Enable_Supported[EN_CLIP_DISTANCE0] = max_clip_planes >= 1;
+  Is_Enable_Supported[EN_CLIP_DISTANCE1] = max_clip_planes >= 2;
+  Is_Enable_Supported[EN_CLIP_DISTANCE2] = max_clip_planes >= 3;
+  Is_Enable_Supported[EN_CLIP_DISTANCE3] = max_clip_planes >= 4;
+  Is_Enable_Supported[EN_CLIP_DISTANCE4] = max_clip_planes >= 5;
+  Is_Enable_Supported[EN_CLIP_DISTANCE5] = max_clip_planes >= 6;
+  Is_Enable_Supported[EN_CLIP_DISTANCE6] = max_clip_planes >= 7;
+  Is_Enable_Supported[EN_CLIP_DISTANCE7] = max_clip_planes >= 8;
+
+  // Multisampling
+  Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_COVERAGE] = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline||Has_GLES;
+  Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_ONE]      = Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1;
+  Is_Enable_Supported[EN_SAMPLE_COVERAGE]          = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline||Has_GLES;
+
+  // Enables management debug code (mic fixme: comment out on next stable release)
+  VL_CHECK_OGL();
+  bool got_error = false;
+  for(int i=0; i<EN_EnableCount; ++i)
+  {
+    glDisable(Translate_Enable[i]); // glIsEnabled() for some reason is not reliable!!
+    bool supported = glGetError() == GL_NO_ERROR;
+    if (supported != Is_Enable_Supported[i])
+    {
+      Log::error( Say("%s: capability %s supported!\n") << Translate_Enable_String[i] << (supported? "*IS*" : "*IS NOT*") );
+      got_error = true;
+    }
+  }
+  if(got_error)
+  {
+    printf("OpenGL Version = %s\n", glGetString(GL_VERSION));
+    #define PRINT_INFO(STRING) printf(#STRING" = %d\n", STRING?1:0)
+    PRINT_INFO(Is_OpenGL_Core_Profile);
+    PRINT_INFO(Is_OpenGL_Forward_Compatible);
+    PRINT_INFO(Has_GL_Version_4_1);
+    PRINT_INFO(Has_GL_Version_4_0);
+    PRINT_INFO(Has_GL_Version_3_3);
+    PRINT_INFO(Has_GL_Version_3_2);
+    PRINT_INFO(Has_GL_Version_3_1);
+    PRINT_INFO(Has_GL_Version_3_0);
+    PRINT_INFO(Has_GL_Version_2_1);
+    PRINT_INFO(Has_GL_Version_2_0);
+    PRINT_INFO(Has_GL_Version_1_5);
+    PRINT_INFO(Has_GL_Version_1_4);
+    PRINT_INFO(Has_GL_Version_1_3);
+    PRINT_INFO(Has_GL_Version_1_2);
+    PRINT_INFO(Has_GL_Version_1_1);
+    VL_TRAP();
+  }
+
+  VL_CHECK_OGL();
+  return Is_OpenGL_Initialized = true;
+}
+//-----------------------------------------------------------------------------
 const char* vl::getGLErrorString(int err)
 {
   switch(err)
@@ -280,7 +582,6 @@ const char* vl::getGLErrorString(int err)
     return "";
   }
 }
-
 //------------------------------------------------------------------------------
 int vl::glcheck(const char* file, int line)
 {
@@ -302,9 +603,9 @@ int vl::glcheck(const char* file, int line)
 // vl::getGLProcAddress() implementation based on GLEW's
 //------------------------------------------------------------------------------
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-void* vl::getGLProcAddress(const GLubyte* name)
+void* vl::getGLProcAddress(const char* name)
 {
-  void* func = (void*)eglGetProcAddress( (const char*)name );
+  void* func = (void*)eglGetProcAddress(name);
   /*if (func)
     Log::warning( String().printf("+ %s\n", name) );
   else
@@ -312,14 +613,14 @@ void* vl::getGLProcAddress(const GLubyte* name)
   return func;
 }
 #elif defined(VL_PLATFORM_WINDOWS)
-void* vl::getGLProcAddress(const GLubyte* name)
+void* vl::getGLProcAddress(const char* name)
 {
   return (void*)wglGetProcAddress((LPCSTR)name);
 }
 #elif defined(VL_PLATFORM_LINUX)
-void* vl::getGLProcAddress(const GLubyte* name)
+void* vl::getGLProcAddress(const char* name)
 {
-  return (void*)(*glXGetProcAddress)(name);
+  return (void*)(*glXGetProcAddress)((const GLubyte*)name);
 }
 #elif defined(__APPLE__)
 #include <stdlib.h>
@@ -330,21 +631,21 @@ void* vl::getGLProcAddress(const GLubyte* name)
 
 #include <dlfcn.h>
 
-void* vl::getGLProcAddress(const GLubyte *name)
+void* vl::getGLProcAddress(const char* name)
 {
   static void* image = NULL;
   if (NULL == image)
   {
     image = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_LAZY);
   }
-  return image ? dlsym(image, (const char*)name) : NULL;
+  return image ? dlsym(image, name) : NULL;
 }
 
 #else
 
 #include <mach-o/dyld.h>
 
-void* vl::getGLProcAddress(const GLubyte *name)
+void* vl::getGLProcAddress(const char*name)
 {
   static const struct mach_header* image = NULL;
   NSSymbol symbol;
@@ -354,8 +655,8 @@ void* vl::getGLProcAddress(const GLubyte *name)
     image = NSAddImage("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", NSADDIMAGE_OPTION_RETURN_ON_ERROR);
   }
   /* prepend a '_' for the Unix C symbol mangling convention */
-  symbolName = malloc(strlen((const char*)name) + 2);
-  strcpy(symbolName+1, (const char*)name);
+  symbolName = malloc(strlen(name) + 2);
+  strcpy(symbolName+1, name);
   symbolName[0] = '_';
   symbol = NULL;
   /* if (NSIsSymbolNameDefined(symbolName))
@@ -375,7 +676,7 @@ void* vl::getGLProcAddress(const GLubyte *name)
 #include <stdio.h>
 #include <stdlib.h>
 
-void* vl::getGLProcAddress(const GLubyte* name)
+void* vl::getGLProcAddress(const char* name)
 {
   static void* h = NULL;
   static void* gpa;
@@ -387,15 +688,15 @@ void* vl::getGLProcAddress(const GLubyte* name)
   }
 
   if (gpa != NULL)
-    return ((void*(*)(const GLubyte*))gpa)(name);
+    return ((void*(*)(const GLubyte*))gpa)((const GLubyte*)name);
   else
-    return dlsym(h, (const char*)name);
+    return dlsym(h, name);
 }
 
 /* __sgi || __sun end */
 
 #else
-void* vl::getGLProcAddress(const GLubyte* name)
+void* vl::getGLProcAddress(const char* name)
 {
   return NULL;
 }
