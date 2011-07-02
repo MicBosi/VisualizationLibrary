@@ -213,7 +213,7 @@
 	- vl::Geometry::flipNormals()
 	- vl::Geometry::transform()
 	- vl::Geometry::convertToVertexAttribs()
-	- vl::Geometry::convertDrawCallsForGLES()
+	- vl::Geometry::makeGLESFriendly()
 	- vl::Geometry::computeTangentSpace()
 	- vl::BezierSurface
 	- vl::Tessellator
