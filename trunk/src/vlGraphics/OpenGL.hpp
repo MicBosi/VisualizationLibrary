@@ -38,6 +38,8 @@
 
 namespace vl
 {
+  VLGRAPHICS_EXPORT extern bool Is_OpenGL_Initialized;
+
   VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1;
   VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2;
   VLGRAPHICS_EXPORT extern bool Has_GLES;
@@ -113,10 +115,14 @@ namespace vl
     #undef VL_GL_FUNCTION
   #endif
 
-  VLGRAPHICS_EXPORT bool initializeOpenGL();
+  //! If \a force == true all the OpenGL strings and function pointers will be initialized even if they have already been initialized.
+  //! To test whether OpenGL has already been initialized check vl::Is_OpenGL_Initialized
+  VLGRAPHICS_EXPORT bool initializeOpenGL(bool force=false);
 
+  //! Returns the address of the specified OpenGL function if supported by the active OpenGL driver and profile.
   VLGRAPHICS_EXPORT void* getGLProcAddress(const GLubyte* name);
   
+  //! Returns a readable string corresponding to the given OpenGL error code as returned by glGetError()
   VLGRAPHICS_EXPORT const char* getGLErrorString(int err);
 
   //-----------------------------------------------------------------------------
