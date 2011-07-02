@@ -822,10 +822,12 @@ namespace vl
     EN_CULL_FACE, //!< If enabled, cull polygons based on their winding in window coordinates, see also CullFace. 
     EN_DEPTH_TEST, //!< If enabled, do depth comparisons and update the depth buffer; Note that even if the depth buffer exists and the depth mask is non-zero, the depth buffer is not updated if the depth test is disabled, see also DepthFunc and DepthRange.
     EN_STENCIL_TEST, //!< If enabled, do stencil testing and update the stencil buffer, see also StencilFunc and StencilOp.
+    EN_DITHER, //!< If enabled, dither color components or indices before they are written to the color buffer.
     EN_POLYGON_OFFSET_FILL, //!< If enabled, and if the polygon is rendered in GL_FILL mode, an offset is added to depth values of a polygon's fragments before the depth comparison is performed, see also PolygonOffset.
     EN_POLYGON_OFFSET_LINE, //!< If enabled, and if the polygon is rendered in GL_LINE mode, an offset is added to depth values of a polygon's fragments before the depth comparison is performed, see also PolygonOffset.
     EN_POLYGON_OFFSET_POINT, //!< If enabled, an offset is added to depth values of a polygon's fragments before the depth comparison is performed, if the polygon is rendered in GL_POINT mode, see also PolygonOffset.
     EN_COLOR_LOGIC_OP, //!< If enabled, apply the currently selected logical operation to the incoming RGBA color and color buffer values, see also LogicOp.
+    EN_MULTISAMPLE, //!< If enabled, use multiple fragment samples in computing the final color of a pixel. See glSampleCoverage.
 
     // Smoothing
     EN_POINT_SMOOTH, //!< If enabled, draw points with proper filtering; Otherwise, draw aliased points, see also PointSize.
