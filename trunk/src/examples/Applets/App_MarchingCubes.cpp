@@ -95,7 +95,7 @@ public:
     // text setup
 
     mText = new vl::Text();
-    mText->setDisplayListEnabled(true);
+    mText->setDisplayListEnabled(!vl::Has_GLES);
     mText->setFont( vl::defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 10) );
     mText->setMargin(5);
     mText->setViewportAlignment(vl::AlignTop | vl::AlignHCenter);
@@ -306,6 +306,12 @@ public:
   // 2 - to guarantee maximum compatibility the texture should be a cube (not a rectangle) whose side length is a power of 2.
   void textureVolumeColor(vl::Actor* vol_act)
   {
+    if (!vl::Has_Texture_3D)
+    {
+      vl::Log::info("textureVolumeColor() requires 3D texturing.\n");
+      return;
+    }
+
     vl::Effect* fx = vol_act->effect();
 
     // automatic 3D texture coordinate generation
@@ -562,12 +568,14 @@ public:
     actor->effect()->shader()->gocMaterial()->setBackDiffuse(vl::green);
 
     // show the volume in wireframe to see the tessellation.
+#if defined(VL_OPENGL)
     actor->effect()->lod(0)->push_back( new vl::Shader );
     actor->effect()->shader(0,1)->enable(vl::EN_CULL_FACE);
     actor->effect()->shader(0,1)->enable(vl::EN_DEPTH_TEST);
     actor->effect()->shader(0,1)->enable(vl::EN_POLYGON_OFFSET_LINE);
     actor->effect()->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
     actor->effect()->shader(0,1)->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+#endif
 
     // add actor to the scene
     sceneManager()->tree()->addActor( actor.get() );
