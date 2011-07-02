@@ -75,6 +75,9 @@ public:
     effect->shader()->gocGLSLProgram()->bindAttribLocation(vl::VA_Normal, "A_Normal");
     effect->shader()->gocGLSLProgram()->bindAttribLocation(vl::VA_Color, "A_Color");
 
+    /* link the GLSL program */
+    effect->shader()->gocGLSLProgram()->linkProgram();
+
     // define light position
     effect->shader()->gocGLSLProgram()->gocUniform("U_LightPosition")->setUniform(vl::fvec3(0, 25, 0));
 

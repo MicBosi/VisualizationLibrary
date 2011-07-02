@@ -29,7 +29,10 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+#include <cstdio>
+
 int main ( int argc, char *argv[] )
 { 
+  printf("No tests implemented yet!\n");
   return 0;
 }
