@@ -155,6 +155,7 @@ namespace vl
 
       // this works well with LOD
       ref<Geometry> geometry = dynamic_cast<Geometry*>(renderable);
+
       if (!geometry)
         return;
 
