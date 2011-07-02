@@ -178,7 +178,7 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
   }
 
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  this->convertDrawCallsForGLES();
+  this->makeGLESFriendly();
 #endif
 }
 //-----------------------------------------------------------------------------

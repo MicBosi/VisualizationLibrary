@@ -251,7 +251,7 @@ namespace vl
     //! Converts PT_QUADS, PT_QUADS_STRIP, PT_POLYGON into PT_TRIANGLE primitives and converts DrawElementsUInt into DrawElementsUByte and DrawElementsUShort.
     //! - Under OpenGL ES 2.0 this function also calls Geometry::convertToVertexAttribs().
     //! - Does not handle vl::MultiDrawElements* vl::DrawRangeElements*, primitive restart and draw call multi-instancing.
-    void convertDrawCallsForGLES();
+    void makeGLESFriendly();
 
     //! Sorts the vertices of the geometry to maximize vertex-cache coherency.
     //! This function will work only if all the DrawCall are DrawElements.
