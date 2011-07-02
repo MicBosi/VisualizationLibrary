@@ -92,15 +92,18 @@ void MarchingCubes::computeEdges(Volume* vol, float threshold)
   const float dx = vol->cellSize().x() * 0.25f;
   const float dy = vol->cellSize().y() * 0.25f;
   const float dz = vol->cellSize().z() * 0.25f;
-  float v0,v1,v2,v3,t;
+  float v0, v1, v2, v3, t;
   int iedge = 0;
+  int w = vol->slices().x() -1;
+  int h = vol->slices().y() -1;
+  int d = vol->slices().z() -1;
   for(unsigned short z = 0; z < vol->slices().z(); ++z)
   {
     for(unsigned short y = 0; y < vol->slices().y(); ++y)
     {
       for(unsigned short x = 0; x < vol->slices().x(); ++x, ++iedge)
       {
-        if (x != vol->slices().x()-1 && y != vol->slices().y()-1 && z != vol->slices().z()-1)
+        if (x != w && y != h && z != d)
         {
           if (vol->cube(x,y,z).includes(threshold))
           {
@@ -121,15 +124,15 @@ void MarchingCubes::computeEdges(Volume* vol, float threshold)
         v0 = vol->value( x,y,z );
         fvec3 v0_coord = vol->coordinate(x, y, z);
 
-        if (x != vol->slices().x()-1)
+        if (x != w)
         {
           v1 = vol->value( x + 1, y, z );
           if (v1!=v0)
           {
-            t = (threshold-v0)/(v1-v0);
             //if (t>=0 && t<=1.0f)
             if ( (threshold>=v0 && threshold<=v1) || (threshold>=v1 && threshold<=v0) )
             {
+              t = (threshold-v0)/(v1-v0);
               VL_CHECK(t>=-0.001f && t<=1.001f)
               // emit vertex
               mEdges[iedge].mX = (int)mVerts.size();
@@ -144,15 +147,15 @@ void MarchingCubes::computeEdges(Volume* vol, float threshold)
             }
           }
         }
-        if (y != vol->slices().y()-1)
+        if (y != h)
         {
           v2 = vol->value( x, y + 1, z );
           if (v2!=v0)
           {
-            t = (threshold-v0)/(v2-v0);
             //if (t>=0 && t<=1.0f)
             if ( (threshold>=v0 && threshold<=v2) || (threshold>=v2 && threshold<=v0) )
             {
+              t = (threshold-v0)/(v2-v0);
               VL_CHECK(t>=-0.001f && t<=1.001f)
               // emit vertex
               mEdges[iedge].mY = (int)mVerts.size();
@@ -167,15 +170,15 @@ void MarchingCubes::computeEdges(Volume* vol, float threshold)
             }
           }
         }
-        if (z != vol->slices().z()-1)
+        if (z != d)
         {
           v3 = vol->value( x, y, z + 1 );
           if (v3!=v0)
           {
-            t = (threshold-v0)/(v3-v0);
             //if (t>=0 && t<=1.0f)
             if ( (threshold>=v0 && threshold<=v3) || (threshold>=v3 && threshold<=v0) )
             {
+              t = (threshold-v0)/(v3-v0);
               VL_CHECK(t>=-0.001f && t<=1.001f)
               // emit vertex
               mEdges[iedge].mZ = (int)mVerts.size();
@@ -223,18 +226,18 @@ void MarchingCubes::processCube(int x, int y, int z, Volume* vol, float threshol
   int cell6 = x     + (y+1) * vol->slices().x() + (z+1) * vol->slices().x()*vol->slices().y();
   */
 
-  int ia = z * vol->slices().x()*vol->slices().y();
-  int ib = (z+1) * vol->slices().x()*vol->slices().y();
-  int ic = y * vol->slices().x();
-  int id = (y+1) * vol->slices().x();
+  int z0 = z * vol->slices().x()*vol->slices().y();
+  int z1 = (z+1) * vol->slices().x()*vol->slices().y();
+  int y0 = y * vol->slices().x();
+  int y1 = (y+1) * vol->slices().x();
 
-  int cell0 = x     + ic + ia;
-  int cell1 = (x+1) + ic + ia;
-  int cell2 = (x+1) + ic + ib;
-  int cell3 = x     + ic + ib;
-  int cell4 = (x+1) + id + ia;
-  int cell5 = x     + id + ia;
-  int cell6 = x     + id + ib;
+  int cell0 = x     + y0 + z0;
+  int cell1 = (x+1) + y0 + z0;
+  int cell2 = (x+1) + y0 + z1;
+  int cell3 = x     + y0 + z1;
+  int cell4 = (x+1) + y1 + z0;
+  int cell5 = x     + y1 + z0;
+  int cell6 = x     + y1 + z1;
 
   int edge_ivert[12] =
   {
@@ -285,9 +288,9 @@ void MarchingCubes::processCube(int x, int y, int z, Volume* vol, float threshol
         continue;
     #endif
 
-    mIndices.push_back(a);
-    mIndices.push_back(b);
-    mIndices.push_back(c);
+    mIndices.push_back((IndexType)a);
+    mIndices.push_back((IndexType)b);
+    mIndices.push_back((IndexType)c);
   }
 }
 //------------------------------------------------------------------------------
@@ -383,7 +386,7 @@ void MarchingCubes::run(bool generate_colors)
 
     geom->computeNormals();
     mNormsArray->resize( geom->normalArray()->size() );
-    memcpy(mNormsArray->ptr(), geom->normalArray()->ptr(), sizeof(fvec3)*mNormsArray->size());
+    memcpy(mNormsArray->ptr(), geom->normalArray()->ptr(), sizeof(mNormsArray->at(0)) * mNormsArray->size());
   }
 }
 //------------------------------------------------------------------------------
