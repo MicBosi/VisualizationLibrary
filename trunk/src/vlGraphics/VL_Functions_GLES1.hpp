@@ -165,7 +165,6 @@ namespace vl
   
   //-----------------------------------------------------------------------------
   
-  // mic fixme: core in GLES 2
   inline void VL_glBlendFuncSeparate( GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
   {
     if(glBlendFuncSeparateOES)
