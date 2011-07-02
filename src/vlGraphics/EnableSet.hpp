@@ -50,6 +50,9 @@ namespace vl
     EnableSet(): mBlendingEnabled(false)
     {
       VL_DEBUG_SET_OBJECT_NAME()
+      // these are enabled by default
+      mEnables.push_back(EN_DITHER);
+      mEnables.push_back(EN_MULTISAMPLE);
     }
 
     virtual const char* className() const { return "vl::EnableSet"; }

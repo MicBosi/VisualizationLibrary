@@ -687,10 +687,13 @@ bool OpenGLContext::isCleanState(bool verbose)
 
   bool ok = true;
 
-  // everything must be disabled
+  // everything must be disabled except GL_DITHER and GL_MULTISAMPLE
   for( unsigned i=0; i<EN_EnableCount; ++i )
   {
     if (!Is_Enable_Supported[i])
+      continue;
+
+    if (i == EN_DITHER || i == EN_MULTISAMPLE)
       continue;
 
     GLboolean enabled = glIsEnabled( Translate_Enable[i] ); VL_CHECK_OGL();

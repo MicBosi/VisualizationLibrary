@@ -472,7 +472,7 @@ namespace vl
     //! Checks whether the OpenGL state is clean or not.
     //! \par Clean state conditions:
     //! - All functionalities must be disabled, no GL_LIGHTING, GL_DEPTH_TEST, GL_LIGHTn, GL_CLIP_PLANEn etc. enabled, 
-    //!   with the sole exception of GL_MULTISAMPLE.
+    //!   with the sole exception of GL_MULTISAMPLE and GL_DITHER.
     //! - All buffer objects targets such as GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER etc. must be bound to buffer object #0.
     //! - Current texture unit and client texture unit must be #0.
     //! - All texture matrices must be set to identity.

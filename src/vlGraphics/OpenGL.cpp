@@ -130,10 +130,12 @@ namespace vl
     GL_CULL_FACE,
     GL_DEPTH_TEST,
     GL_STENCIL_TEST,
+    GL_DITHER,
     GL_POLYGON_OFFSET_FILL, 
     GL_POLYGON_OFFSET_LINE, 
     GL_POLYGON_OFFSET_POINT,
     GL_COLOR_LOGIC_OP, 
+    GL_MULTISAMPLE,
 
     // Smoothing
     GL_POINT_SMOOTH,
@@ -185,11 +187,13 @@ namespace vl
     "GL_CULL_FACE",
     "GL_DEPTH_TEST",
     "GL_STENCIL_TEST",
+    "GL_DITHER",
     "GL_POLYGON_OFFSET_FILL", 
     "GL_POLYGON_OFFSET_LINE", 
     "GL_POLYGON_OFFSET_POINT",
     "GL_COLOR_LOGIC_OP", 
-
+    "GL_MULTISAMPLE",
+    
     // Smoothing
     "GL_POINT_SMOOTH",
     "GL_LINE_SMOOTH", 
@@ -240,10 +244,12 @@ namespace vl
     false /*GL_CULL_FACE*/,
     false /*GL_DEPTH_TEST*/,
     false /*GL_STENCIL_TEST*/,
+    false /*GL_DITHER*/,
     false /*GL_POLYGON_OFFSET_FILL*/, 
     false /*GL_POLYGON_OFFSET_LINE*/, 
     false /*GL_POLYGON_OFFSET_POINT*/,
     false /*GL_COLOR_LOGIC_OP*/, 
+    false /*GL_MULTISAMPLE*/,
 
     // Smoothing
     false /*GL_POINT_SMOOTH*/,
@@ -473,10 +479,12 @@ bool vl::initializeOpenGL()
   Is_Enable_Supported[EN_CULL_FACE]    = true;
   Is_Enable_Supported[EN_DEPTH_TEST]   = true;
   Is_Enable_Supported[EN_STENCIL_TEST] = true;
+  Is_Enable_Supported[EN_DITHER]       = true;
   Is_Enable_Supported[EN_POLYGON_OFFSET_FILL]  = true;
   Is_Enable_Supported[EN_POLYGON_OFFSET_LINE]  = !Has_GLES;
   Is_Enable_Supported[EN_POLYGON_OFFSET_POINT] = !Has_GLES;
   Is_Enable_Supported[EN_COLOR_LOGIC_OP]       = !Has_GLES_Version_2;
+  Is_Enable_Supported[EN_MULTISAMPLE]          = !Has_GLES_Version_2;
 
   // Smooth
   Is_Enable_Supported[EN_POINT_SMOOTH]   = Has_GL_Version_1_1||Has_GLES_Version_1;
