@@ -61,7 +61,7 @@ public:
     vl::mat4 mat;
     mat.translate(-0.5,-0.5,0.0f);
     mat.rotate( cur_time * 90, 0, 0, 1 );
-    float s = 0.5f + (float)sin( cur_time * vl::fPi * 2.0f )*0.5 + 0.5f;
+    float s = 0.5f + (float)sin( cur_time * vl::fPi * 2.0f )*0.5f + 0.5f;
     mat.scale( s, s, s );
     mat.translate(+0.5,+0.5,0.0f);
     shader->gocTextureMatrix(1)->setMatrix( mat );
