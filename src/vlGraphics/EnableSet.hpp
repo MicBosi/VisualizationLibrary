@@ -50,9 +50,12 @@ namespace vl
     EnableSet(): mBlendingEnabled(false)
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      // these are enabled by default
+      // these two are enabled by default
       mEnables.push_back(EN_DITHER);
+      // only OpenGL ES 2 does not support GL_MULTISAMPLE
+#if !defined(VL_OPENGL_ES2)
       mEnables.push_back(EN_MULTISAMPLE);
+#endif
     }
 
     virtual const char* className() const { return "vl::EnableSet"; }

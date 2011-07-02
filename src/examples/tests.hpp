@@ -209,7 +209,7 @@ public:
       /* install GeometryLoadCallback for computing normals and converting geometry to GLES friendly format */
       vl::ref<vl::GeometryLoadCallback> glc = new vl::GeometryLoadCallback;
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-      glc->setConvertDrawCallsForGLES(true);
+      glc->setMakeGLESFriendly(true);
 #endif
       vl::defLoadWriterManager()->loadCallbacks()->push_back(glc.get());
 
