@@ -682,7 +682,7 @@ void Geometry::convertDrawCallToDrawArrays()
   regenerateVertices(map_new_to_old);
 }
 //-----------------------------------------------------------------------------
-void Geometry::convertDrawCallsForGLES()
+void Geometry::makeGLESFriendly()
 {
   // Pass#1: remove PT_QUADS, PT_QUADS_STRIP, PT_POLYGON
   for( int idraw=this->drawCalls()->size(); idraw--; )
@@ -738,13 +738,13 @@ void Geometry::convertDrawCallsForGLES()
     if ( strstr(dc->className(), "vl::MultiDrawElements") )
     {
         dc->setEnabled(false);
-        Log::warning( "Geometry::convertDrawCallsForGLES(): cannot convert vl::MultiDrawElements, draw call disabled.\n" );
+        Log::warning( "Geometry::makeGLESFriendly(): cannot convert vl::MultiDrawElements, draw call disabled.\n" );
     }
     else
     if ( strstr(dc->className(), "vl::DrawRangeElements") )
     {
         dc->setEnabled(false);
-        Log::warning( "Geometry::convertDrawCallsForGLES(): cannot convert vl::DrawRangeElements, draw call disabled.\n" );
+        Log::warning( "Geometry::makeGLESFriendly(): cannot convert vl::DrawRangeElements, draw call disabled.\n" );
     }
   } // for()
 
@@ -790,7 +790,7 @@ void Geometry::convertDrawCallsForGLES()
       else
       {
         dc->setEnabled(false);
-        Log::error( Say("Geometry::convertDrawCallsForGLES(): could not shrink DrawElementsUInt, max index found is %n! Draw call disabled.\n") << max_idx );
+        Log::error( Say("Geometry::makeGLESFriendly(): could not shrink DrawElementsUInt, max index found is %n! Draw call disabled.\n") << max_idx );
       }
     }
 
@@ -815,7 +815,7 @@ void Geometry::convertDrawCallsForGLES()
     case PT_TRIANGLE_STRIP_ADJACENCY:
     case PT_PATCHES:
       dc->setEnabled(false);
-      Log::error("Geometry::convertDrawCallsForGLES(): primitive type illegal under GLES, draw call disabled.\n");
+      Log::error("Geometry::makeGLESFriendly(): primitive type illegal under GLES, draw call disabled.\n");
       break;
     }
   } // for()
