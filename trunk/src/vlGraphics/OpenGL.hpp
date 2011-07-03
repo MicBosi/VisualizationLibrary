@@ -61,8 +61,8 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Is_Enable_Supported[];
   VLGRAPHICS_EXPORT extern const char* Translate_Enable_String[];
 
-  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1;
-  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2;
+  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_1_1;
+  VLGRAPHICS_EXPORT extern bool Has_GLES_Version_2_0;
   VLGRAPHICS_EXPORT extern bool Has_GLES;
 
 

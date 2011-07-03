@@ -64,8 +64,8 @@ namespace vl
 
   // GLES defines
 
-  bool Has_GLES_Version_1 = false;
-  bool Has_GLES_Version_2 = false;
+  bool Has_GLES_Version_1_1 = false;
+  bool Has_GLES_Version_2_0 = false;
   bool Has_GLES = false;
 
   // Helper defines
@@ -334,11 +334,11 @@ bool vl::initializeOpenGL()
 
   // GLES detect
   #if defined(VL_OPENGL_ES1)
-    Has_GLES = Has_GLES_Version_1 = true;
+    Has_GLES = Has_GLES_Version_1_1 = true;
   #endif
 
   #if defined(VL_OPENGL_ES2)
-    Has_GLES = Has_GLES_Version_2 = true;
+    Has_GLES = Has_GLES_Version_2_0 = true;
   #endif
 
   // GL versions
@@ -442,7 +442,7 @@ bool vl::initializeOpenGL()
 
   // Note that GL extensions pertaining to deprecated features seem to be exposed under Core profiles even if they are not supported (like Has_GL_SGIS_generate_mipmap)
 
-  Has_GLSL = Has_GL_ARB_shading_language_100||Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2;
+  Has_GLSL = Has_GL_ARB_shading_language_100||Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_0;
   Has_GLSL_120_Or_More = Has_GL_Version_2_1||Has_GL_Version_3_0||Has_GL_Version_4_0;
   Has_GLSL_130_Or_More = Has_GL_Version_3_0||Has_GL_Version_4_0;
   Has_GLSL_140_Or_More = Has_GL_Version_3_1||Has_GL_Version_4_0;
@@ -452,13 +452,13 @@ bool vl::initializeOpenGL()
   Has_GLSL_410_Or_More = Has_GL_Version_4_1;
   Has_Geometry_Shader  = Has_GL_NV_geometry_shader4||Has_GL_EXT_geometry_shader4||Has_GL_ARB_geometry_shader4||Has_GL_Version_3_2||Has_GL_Version_4_0;
   Has_VBO = Has_GL_ARB_vertex_buffer_object||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES;
-  Has_FBO = Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_framebuffer_object||Has_GLES_Version_2;
+  Has_FBO = Has_GL_EXT_framebuffer_object||Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_framebuffer_object||Has_GLES_Version_2_0;
   Has_PBO = Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object||Has_GL_Version_2_1||Has_GL_Version_3_0||Has_GL_Version_4_0;
   // We only support GL_ANGLE_framebuffer_blit for GLES, see also:
   // http://www.khronos.org/registry/gles/extensions/IMG/IMG_multisampled_render_to_texture.txt
   // http://www.khronos.org/registry/gles/extensions/APPLE/APPLE_framebuffer_multisample.txt
   Has_FBO_Multisample = Has_GL_Version_4_0||Has_GL_Version_3_0||Has_GL_ARB_framebuffer_object||Has_GL_EXT_framebuffer_multisample||Has_GL_ANGLE_framebuffer_multisample;
-  Has_Cubemap_Textures = Has_GL_ARB_texture_cube_map||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_texture_cube_map||Has_GLES_Version_2;
+  Has_Cubemap_Textures = Has_GL_ARB_texture_cube_map||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_texture_cube_map||Has_GLES_Version_2_0;
   Has_Texture_Rectangle = Has_GL_ARB_texture_rectangle||Has_GL_NV_texture_rectangle||Has_GL_Version_3_1||Has_GL_Version_4_0;
   Has_Texture_Array = Has_GL_EXT_texture_array||Has_GL_Version_3_0||Has_GL_Version_4_0;
   Has_Texture_Buffer = Has_GL_ARB_texture_buffer_object||Has_GL_EXT_texture_buffer_object||Has_GL_Version_3_1||Has_GL_Version_4_0;
@@ -468,9 +468,9 @@ bool vl::initializeOpenGL()
   Has_Primitive_Restart = Has_GL_Version_3_1||Has_GL_Version_4_0;
   Has_Occlusion_Query = Has_GL_ARB_occlusion_query||Has_GL_Version_1_5||Has_GL_Version_3_0||Has_GL_Version_4_0;
   Has_Transform_Feedback = Has_GL_NV_transform_feedback||Has_GL_EXT_transform_feedback||Has_GL_Version_3_0||Has_GL_Version_4_0;
-  Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2;
-  Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_Fixed_Function_Pipeline)||Has_GL_Version_1_4||Has_GLES_Version_1;
-  Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL || Has_GLES_Version_1;
+  Has_glGenerateMipmaps = Has_GL_ARB_framebuffer_object||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_0;
+  Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_Fixed_Function_Pipeline)||Has_GL_Version_1_4||Has_GLES_Version_1_1;
+  Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL || Has_GLES_Version_1_1;
 
   // - - - Resolve supported enables - - -
 
@@ -483,12 +483,12 @@ bool vl::initializeOpenGL()
   Is_Enable_Supported[EN_POLYGON_OFFSET_FILL]  = true;
   Is_Enable_Supported[EN_POLYGON_OFFSET_LINE]  = !Has_GLES;
   Is_Enable_Supported[EN_POLYGON_OFFSET_POINT] = !Has_GLES;
-  Is_Enable_Supported[EN_COLOR_LOGIC_OP]       = !Has_GLES_Version_2;
-  Is_Enable_Supported[EN_MULTISAMPLE]          = !Has_GLES_Version_2;
+  Is_Enable_Supported[EN_COLOR_LOGIC_OP]       = !Has_GLES_Version_2_0;
+  Is_Enable_Supported[EN_MULTISAMPLE]          = !Has_GLES_Version_2_0;
 
   // Smooth
-  Is_Enable_Supported[EN_POINT_SMOOTH]   = Has_GL_Version_1_1||Has_GLES_Version_1;
-  Is_Enable_Supported[EN_LINE_SMOOTH]    = !Has_GLES_Version_2;
+  Is_Enable_Supported[EN_POINT_SMOOTH]   = Has_GL_Version_1_1||Has_GLES_Version_1_1;
+  Is_Enable_Supported[EN_LINE_SMOOTH]    = !Has_GLES_Version_2_0;
   Is_Enable_Supported[EN_POLYGON_SMOOTH] = !Has_GLES;
 
   // Stipple
@@ -498,16 +498,16 @@ bool vl::initializeOpenGL()
   // Point sprites
   // Point sprites when !Has_Fixed_Function_Pipeline is considered always enabled but GL_POINT_SPRITE should not be called even if GL_OES_point_sprite, GL_ARB_point_sprite etc. are exposed!
   // Note that calling glIsEnabled() with the two below under a Core profile returns true for the same reason.
-  Is_Enable_Supported[EN_POINT_SPRITE]       = (Has_GL_NV_point_sprite||Has_GL_ARB_point_sprite||Has_GL_Version_2_0||Has_GL_OES_point_sprite||Has_GLES_Version_1) && Has_Fixed_Function_Pipeline;
-  Is_Enable_Supported[EN_PROGRAM_POINT_SIZE] = Has_GLSL && !Has_GLES_Version_2; // Only OpenGL ES 2 does not support glPointSize()/GL_POINT_SIZE
+  Is_Enable_Supported[EN_POINT_SPRITE]       = (Has_GL_NV_point_sprite||Has_GL_ARB_point_sprite||Has_GL_Version_2_0||Has_GL_OES_point_sprite||Has_GLES_Version_1_1) && Has_Fixed_Function_Pipeline;
+  Is_Enable_Supported[EN_PROGRAM_POINT_SIZE] = Has_GLSL && !Has_GLES_Version_2_0; // Only OpenGL ES 2 does not support glPointSize()/GL_POINT_SIZE
 
   // Fixed function pipeline
-  Is_Enable_Supported[EN_ALPHA_TEST]     = Has_GL_Version_1_1||Has_GLES_Version_1;
-  Is_Enable_Supported[EN_LIGHTING]       = Has_GL_Version_1_1||Has_GLES_Version_1;
+  Is_Enable_Supported[EN_ALPHA_TEST]     = Has_GL_Version_1_1||Has_GLES_Version_1_1;
+  Is_Enable_Supported[EN_LIGHTING]       = Has_GL_Version_1_1||Has_GLES_Version_1_1;
   Is_Enable_Supported[EN_COLOR_SUM]      = Has_GL_Version_1_1;
-  Is_Enable_Supported[EN_FOG]            = Has_GL_Version_1_1||Has_GLES_Version_1;
-  Is_Enable_Supported[EN_NORMALIZE]      = Has_GL_Version_1_1||Has_GLES_Version_1;
-  Is_Enable_Supported[EN_RESCALE_NORMAL] = Has_GL_Version_1_2||Has_GLES_Version_1;
+  Is_Enable_Supported[EN_FOG]            = Has_GL_Version_1_1||Has_GLES_Version_1_1;
+  Is_Enable_Supported[EN_NORMALIZE]      = Has_GL_Version_1_1||Has_GLES_Version_1_1;
+  Is_Enable_Supported[EN_RESCALE_NORMAL] = Has_GL_Version_1_2||Has_GLES_Version_1_1;
 
   // Available only under OpenGL 2.x
   Is_Enable_Supported[EN_VERTEX_PROGRAM_TWO_SIDE]   = (Has_GL_ARB_vertex_program||Has_GL_NV_vertex_program) && Has_GL_Version_1_1 || Has_GL_Version_2_0;
@@ -518,7 +518,7 @@ bool vl::initializeOpenGL()
   // Clipping planes
   int max_clip_planes = 0;
   // OpenGL ES 2 is the only one without clipping planes!
-  if (!Has_GLES_Version_2)
+  if (!Has_GLES_Version_2_0)
   {
     glGetIntegerv(GL_MAX_CLIP_DISTANCES, &max_clip_planes); // GL_MAX_CLIP_DISTANCES == GL_MAX_CLIP_PLANES
   }
@@ -533,7 +533,7 @@ bool vl::initializeOpenGL()
 
   // Multisampling
   Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_COVERAGE] = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline||Has_GLES;
-  Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_ONE]      = Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1;
+  Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_ONE]      = Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1;
   Is_Enable_Supported[EN_SAMPLE_COVERAGE]          = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline||Has_GLES;
 
   // Enables management debug code (mic fixme: comment out on next stable release)

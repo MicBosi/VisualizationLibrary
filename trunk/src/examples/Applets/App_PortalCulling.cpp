@@ -140,7 +140,7 @@ public:
     floor_fx->shader()->gocLight(0);
     floor_fx->shader()->gocLightModel()->setTwoSide(true);
     floor_fx->shader()->gocMaterial()->setDiffuse(vl::crimson);
-    if (!vl::Has_GLES_Version_1)
+    if (!vl::Has_GLES_Version_1_1)
       floor_fx->shader()->setRenderState(mPolygonMode.get());
 
     vl::ref<vl::Effect> ceiling_fx = new vl::Effect;
@@ -149,7 +149,7 @@ public:
     ceiling_fx->shader()->gocLight(0);
     ceiling_fx->shader()->gocLightModel()->setTwoSide(true);
     ceiling_fx->shader()->gocMaterial()->setDiffuse(vl::gray);
-    if (!vl::Has_GLES_Version_1)
+    if (!vl::Has_GLES_Version_1_1)
       ceiling_fx->shader()->setRenderState(mPolygonMode.get());
 
     vl::ref<vl::Effect> wall_fx = new vl::Effect;
@@ -158,7 +158,7 @@ public:
     wall_fx->shader()->gocLight(0)->setLinearAttenuation(0.025f);
     wall_fx->shader()->gocLightModel()->setTwoSide(true);
     wall_fx->shader()->gocMaterial()->setDiffuse(vl::gold);
-    if (!vl::Has_GLES_Version_1)
+    if (!vl::Has_GLES_Version_1_1)
       wall_fx->shader()->setRenderState(mPolygonMode.get());
 
     // boring code to generate the gometry of various kinds of walls, with out door, with door, with the passage and portal.
@@ -335,7 +335,7 @@ public:
     ball_fx->shader()->enable(vl::EN_DEPTH_TEST);
     ball_fx->shader()->enable(vl::EN_LIGHTING);
     ball_fx->shader()->gocLight(0);
-    if (!vl::Has_GLES_Version_1)
+    if (!vl::Has_GLES_Version_1_1)
       ball_fx->shader()->setRenderState(mPolygonMode.get());
 
     wall_1_a->makeGLESFriendly();
