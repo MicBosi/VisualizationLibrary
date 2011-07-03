@@ -54,10 +54,9 @@ namespace vl
   class VLCORE_EXPORT Object
   {
   public:
-
+    // mic fixme: remove these two, implement TypeInfo mechanics.
     //! Returns the name of the class.
     virtual const char* className() const { return "vl::Object"; }
-    
     //! Returns true if 'name' equals className().
     bool isClassName(const char* name);
 
