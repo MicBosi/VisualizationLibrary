@@ -45,6 +45,8 @@ Molecule::Molecule():
   VL_DEBUG_SET_OBJECT_NAME()
   mAtomLabelEffect->shader()->enable(EN_BLEND);
   reset(); 
+
+  mBase = new ClassB; // mic fixme
 }
 //-----------------------------------------------------------------------------
 void Molecule::reset()
