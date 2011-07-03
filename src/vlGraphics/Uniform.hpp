@@ -82,49 +82,49 @@ namespace vl
 
     // array setters
 
-    void setUniform1i(int count, const int* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int;  VL_CHECK(Has_GLSL); }
-    void setUniform2i(int count, const int* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int2; VL_CHECK(Has_GLSL); }
-    void setUniform3i(int count, const int* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int3; VL_CHECK(Has_GLSL); }
-    void setUniform4i(int count, const int* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Int4; VL_CHECK(Has_GLSL); }
+    void setUniform1i(int count, const int* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_INT;  VL_CHECK(Has_GLSL); }
+    void setUniform2i(int count, const int* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_INT_VEC2; VL_CHECK(Has_GLSL); }
+    void setUniform3i(int count, const int* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_INT_VEC3; VL_CHECK(Has_GLSL); }
+    void setUniform4i(int count, const int* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_INT_VEC4; VL_CHECK(Has_GLSL); }
 
-    void setUniform1ui(int count, const unsigned int* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt;  VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0); }
-    void setUniform2ui(int count, const unsigned int* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt2; VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0); }
-    void setUniform3ui(int count, const unsigned int* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt3; VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0); }
-    void setUniform4ui(int count, const unsigned int* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UInt4; VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0); }
+    void setUniform1ui(int count, const unsigned int* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UNSIGNED_INT;  VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0); }
+    void setUniform2ui(int count, const unsigned int* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UNSIGNED_INT_VEC2; VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0); }
+    void setUniform3ui(int count, const unsigned int* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UNSIGNED_INT_VEC3; VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0); }
+    void setUniform4ui(int count, const unsigned int* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_UNSIGNED_INT_VEC4; VL_CHECK(Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0); }
 
-    void setUniform1f(int count, const float* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float;  VL_CHECK(Has_GLSL); }
-    void setUniform2f(int count, const float* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float2; VL_CHECK(Has_GLSL); }
-    void setUniform3f(int count, const float* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float3; VL_CHECK(Has_GLSL); }
-    void setUniform4f(int count, const float* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Float4; VL_CHECK(Has_GLSL); }
+    void setUniform1f(int count, const float* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT;  VL_CHECK(Has_GLSL); }
+    void setUniform2f(int count, const float* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_VEC2; VL_CHECK(Has_GLSL); }
+    void setUniform3f(int count, const float* value) { initData(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_VEC3; VL_CHECK(Has_GLSL); }
+    void setUniform4f(int count, const float* value) { initData(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_VEC4; VL_CHECK(Has_GLSL); }
 
-    void setUniform1d(int count, const double* value) { initDouble(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double;  VL_CHECK(Has_GL_Version_4_0); }
-    void setUniform2d(int count, const double* value) { initDouble(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double2; VL_CHECK(Has_GL_Version_4_0); }
-    void setUniform3d(int count, const double* value) { initDouble(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double3; VL_CHECK(Has_GL_Version_4_0); }
-    void setUniform4d(int count, const double* value) { initDouble(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Double4; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniform1d(int count, const double* value) { initDouble(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE;  VL_CHECK(Has_GL_Version_4_0); }
+    void setUniform2d(int count, const double* value) { initDouble(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_VEC2; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniform3d(int count, const double* value) { initDouble(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_VEC3; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniform4d(int count, const double* value) { initDouble(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_VEC4; VL_CHECK(Has_GL_Version_4_0); }
 
     // matrix array setters
 
-    void setUniformMatrix2f(int count, const float* value) { initData(count*2*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2F; VL_CHECK(Has_GLSL); }
-    void setUniformMatrix3f(int count, const float* value) { initData(count*3*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3F; VL_CHECK(Has_GLSL); }
-    void setUniformMatrix4f(int count, const float* value) { initData(count*4*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4F; VL_CHECK(Has_GLSL); }
+    void setUniformMatrix2f(int count, const float* value) { initData(count*2*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT2; VL_CHECK(Has_GLSL); }
+    void setUniformMatrix3f(int count, const float* value) { initData(count*3*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT3; VL_CHECK(Has_GLSL); }
+    void setUniformMatrix4f(int count, const float* value) { initData(count*4*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT4; VL_CHECK(Has_GLSL); }
 
-    void setUniformMatrix2x3f(int count, const float* value) { initData(count*2*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x3F; VL_CHECK(Has_GLSL_120_Or_More); }
-    void setUniformMatrix3x2f(int count, const float* value) { initData(count*3*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x2F; VL_CHECK(Has_GLSL_120_Or_More); }
-    void setUniformMatrix2x4f(int count, const float* value) { initData(count*2*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x4F; VL_CHECK(Has_GLSL_120_Or_More); }
-    void setUniformMatrix4x2f(int count, const float* value) { initData(count*4*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x2F; VL_CHECK(Has_GLSL_120_Or_More); }
-    void setUniformMatrix3x4f(int count, const float* value) { initData(count*3*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x4F; VL_CHECK(Has_GLSL_120_Or_More); }
-    void setUniformMatrix4x3f(int count, const float* value) { initData(count*4*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x3F; VL_CHECK(Has_GLSL_120_Or_More); }
+    void setUniformMatrix2x3f(int count, const float* value) { initData(count*2*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT2x3; VL_CHECK(Has_GLSL_120_Or_More); }
+    void setUniformMatrix3x2f(int count, const float* value) { initData(count*3*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT3x2; VL_CHECK(Has_GLSL_120_Or_More); }
+    void setUniformMatrix2x4f(int count, const float* value) { initData(count*2*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT2x4; VL_CHECK(Has_GLSL_120_Or_More); }
+    void setUniformMatrix4x2f(int count, const float* value) { initData(count*4*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT4x2; VL_CHECK(Has_GLSL_120_Or_More); }
+    void setUniformMatrix3x4f(int count, const float* value) { initData(count*3*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT3x4; VL_CHECK(Has_GLSL_120_Or_More); }
+    void setUniformMatrix4x3f(int count, const float* value) { initData(count*4*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT4x3; VL_CHECK(Has_GLSL_120_Or_More); }
 
-    void setUniformMatrix2d(int count, const double* value) { initDouble(count*2*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2D; VL_CHECK(Has_GL_Version_4_0); }
-    void setUniformMatrix3d(int count, const double* value) { initDouble(count*3*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3D; VL_CHECK(Has_GL_Version_4_0); }
-    void setUniformMatrix4d(int count, const double* value) { initDouble(count*4*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4D; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniformMatrix2d(int count, const double* value) { initDouble(count*2*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_MAT2; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniformMatrix3d(int count, const double* value) { initDouble(count*3*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_MAT3; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniformMatrix4d(int count, const double* value) { initDouble(count*4*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_MAT4; VL_CHECK(Has_GL_Version_4_0); }
 
-    void setUniformMatrix2x3d(int count, const double* value) { initDouble(count*2*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x3D; VL_CHECK(Has_GL_Version_4_0); }
-    void setUniformMatrix3x2d(int count, const double* value) { initDouble(count*3*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x2D; VL_CHECK(Has_GL_Version_4_0); }
-    void setUniformMatrix2x4d(int count, const double* value) { initDouble(count*2*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat2x4D; VL_CHECK(Has_GL_Version_4_0); }
-    void setUniformMatrix4x2d(int count, const double* value) { initDouble(count*4*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x2D; VL_CHECK(Has_GL_Version_4_0); }
-    void setUniformMatrix3x4d(int count, const double* value) { initDouble(count*3*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat3x4D; VL_CHECK(Has_GL_Version_4_0); }
-    void setUniformMatrix4x3d(int count, const double* value) { initDouble(count*4*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_Mat4x3D; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniformMatrix2x3d(int count, const double* value) { initDouble(count*2*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_MAT2x3; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniformMatrix3x2d(int count, const double* value) { initDouble(count*3*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_MAT3x2; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniformMatrix2x4d(int count, const double* value) { initDouble(count*2*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_MAT2x4; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniformMatrix4x2d(int count, const double* value) { initDouble(count*4*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_MAT4x2; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniformMatrix3x4d(int count, const double* value) { initDouble(count*3*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_MAT3x4; VL_CHECK(Has_GL_Version_4_0); }
+    void setUniformMatrix4x3d(int count, const double* value) { initDouble(count*4*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_MAT4x3; VL_CHECK(Has_GL_Version_4_0); }
 
     // vector/matrix array setters
 
@@ -219,47 +219,47 @@ namespace vl
     {
       switch(mType)
       {
-        case UT_Int:     return singleCount();      
-        case UT_Int2:    return singleCount() / 2;      
-        case UT_Int3:    return singleCount() / 3;      
-        case UT_Int4:    return singleCount() / 4;
+        case UT_INT:     return singleCount();      
+        case UT_INT_VEC2:    return singleCount() / 2;      
+        case UT_INT_VEC3:    return singleCount() / 3;      
+        case UT_INT_VEC4:    return singleCount() / 4;
 
-        case UT_UInt:    return singleCount();      
-        case UT_UInt2:   return singleCount() / 2;      
-        case UT_UInt3:   return singleCount() / 3;      
-        case UT_UInt4:   return singleCount() / 4;
+        case UT_UNSIGNED_INT:    return singleCount();      
+        case UT_UNSIGNED_INT_VEC2:   return singleCount() / 2;      
+        case UT_UNSIGNED_INT_VEC3:   return singleCount() / 3;      
+        case UT_UNSIGNED_INT_VEC4:   return singleCount() / 4;
 
-        case UT_Float:   return singleCount();
-        case UT_Float2:  return singleCount() / 2;
-        case UT_Float3:  return singleCount() / 3;
-        case UT_Float4:  return singleCount() / 4;      
+        case UT_FLOAT:   return singleCount();
+        case UT_FLOAT_VEC2:  return singleCount() / 2;
+        case UT_FLOAT_VEC3:  return singleCount() / 3;
+        case UT_FLOAT_VEC4:  return singleCount() / 4;      
 
-        case UT_Mat2F:   return singleCount() / (2*2);
-        case UT_Mat3F:   return singleCount() / (3*3);      
-        case UT_Mat4F:   return singleCount() / (4*4);      
+        case UT_FLOAT_MAT2:   return singleCount() / (2*2);
+        case UT_FLOAT_MAT3:   return singleCount() / (3*3);      
+        case UT_FLOAT_MAT4:   return singleCount() / (4*4);      
 
-        case UT_Mat2x3F: return singleCount() / (2*3);
-        case UT_Mat3x2F: return singleCount() / (3*2);
-        case UT_Mat2x4F: return singleCount() / (2*4);
-        case UT_Mat4x2F: return singleCount() / (4*2);
-        case UT_Mat3x4F: return singleCount() / (3*4);
-        case UT_Mat4x3F: return singleCount() / (4*3);
+        case UT_FLOAT_MAT2x3: return singleCount() / (2*3);
+        case UT_FLOAT_MAT3x2: return singleCount() / (3*2);
+        case UT_FLOAT_MAT2x4: return singleCount() / (2*4);
+        case UT_FLOAT_MAT4x2: return singleCount() / (4*2);
+        case UT_FLOAT_MAT3x4: return singleCount() / (3*4);
+        case UT_FLOAT_MAT4x3: return singleCount() / (4*3);
 
-        case UT_Double:  return doubleCount();
-        case UT_Double2: return doubleCount() / 2;
-        case UT_Double3: return doubleCount() / 3;
-        case UT_Double4: return doubleCount() / 4;
+        case UT_DOUBLE:  return doubleCount();
+        case UT_DOUBLE_VEC2: return doubleCount() / 2;
+        case UT_DOUBLE_VEC3: return doubleCount() / 3;
+        case UT_DOUBLE_VEC4: return doubleCount() / 4;
 
-        case UT_Mat2D:   return doubleCount() / (2*2);
-        case UT_Mat3D:   return doubleCount() / (3*3);
-        case UT_Mat4D:   return doubleCount() / (4*4);
+        case UT_DOUBLE_MAT2:   return doubleCount() / (2*2);
+        case UT_DOUBLE_MAT3:   return doubleCount() / (3*3);
+        case UT_DOUBLE_MAT4:   return doubleCount() / (4*4);
 
-        case UT_Mat2x3D: return doubleCount() / (2*3);
-        case UT_Mat3x2D: return doubleCount() / (3*2);
-        case UT_Mat2x4D: return doubleCount() / (2*4);
-        case UT_Mat4x2D: return doubleCount() / (4*2);
-        case UT_Mat3x4D: return doubleCount() / (3*4);
-        case UT_Mat4x3D: return doubleCount() / (4*3);
+        case UT_DOUBLE_MAT2x3: return doubleCount() / (2*3);
+        case UT_DOUBLE_MAT3x2: return doubleCount() / (3*2);
+        case UT_DOUBLE_MAT2x4: return doubleCount() / (2*4);
+        case UT_DOUBLE_MAT4x2: return doubleCount() / (4*2);
+        case UT_DOUBLE_MAT3x4: return doubleCount() / (3*4);
+        case UT_DOUBLE_MAT4x3: return doubleCount() / (4*3);
 
         default:
         VL_TRAP()

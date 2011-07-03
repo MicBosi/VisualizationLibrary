@@ -40,6 +40,20 @@
 namespace vl
 {
   class Uniform;
+  
+  //------------------------------------------------------------------------------
+  // UniformInfo
+  //------------------------------------------------------------------------------
+  struct UniformInfo: public Object
+  {
+    UniformInfo(const char* name, EUniformType type, int size, int location)
+    :Name(name), Type(type), Size(size), Location(location) {}
+
+    std::string Name;  //!< The name of the uniform.
+    EUniformType Type; //!< The type of the uniform (float, vec4, mat2x3, sampler2D etc.)
+    int Size;          //!< The size of the uniform: 1 for non-arrays, >= 1 for arrays.
+    int Location;      //!< Location of the uniform as retuned by glGetUniformLocation().
+  };
 
   //------------------------------------------------------------------------------
   // GLSLShader
@@ -510,8 +524,6 @@ namespace vl
     void getUniform(const std::string& name, ivec3& vec) const { getUniform(getUniformLocation(name), vec); }
     void getUniform(const std::string& name, ivec4& vec) const { getUniform(getUniformLocation(name), vec); }
 
-    // mic fixme: documenta la differenza tra vari tipi di Uniforms, "see also" tutte le funzioni sotto, documenta il fatto che non devono esserci collisioni.
-
     //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
     UniformSet* uniformSet() { return mUniformSet.get(); }
     //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
@@ -531,8 +543,20 @@ namespace vl
     //! Utility function using uniformSet(). Erases all the uniforms.
     void eraseAllUniforms() { if(uniformSet()) uniformSet()->eraseAllUniforms(); }
 
-    //! Returns a map of the currently active uniforms and their relative location index.
-    const std::map<std::string, int>& activeUniformLocations() const { return mActiveUniformLocation; }
+    //! Returns a map containing name, type, size and location of all the uniforms that were active last time the GLSL program was linked.
+    //! - See also vl::GLSLProgram::activeUniformInfo(), vl::UniformInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
+    const std::map<std::string, ref<UniformInfo> >& activeUniforms() const { return mActiveUniforms; }
+
+    //! Returns the info (name, type, size and location) regarding the specified uniform or NULL if such uniform is not currently active since last time the GLSL program was linked.
+    //! - See also vl::GLSLProgram::activeUniforms(), vl::UniformInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
+    const UniformInfo* activeUniformInfo(const std::string& name) const 
+    { 
+      std::map<std::string, ref<UniformInfo> >::const_iterator it = mActiveUniforms.find(name);
+      if (it == mActiveUniforms.end())
+        return NULL;
+      else
+        return it->second.get();
+    }
 
     //! Returns the binding location of the vl_ModelViewMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
     int vl_ModelViewMatrix() const { return m_vl_ModelViewMatrix; }
@@ -553,7 +577,7 @@ namespace vl
   protected:
     std::vector< ref<GLSLShader> > mShaders;
     std::map<std::string, int> mFragDataLocation;
-    std::map<std::string, int> mActiveUniformLocation;
+    std::map<std::string, ref<UniformInfo> > mActiveUniforms;
     std::map<std::string, int> mAutoAttribLocation;
     ref<UniformSet> mUniformSet;
     unsigned int mHandle;
