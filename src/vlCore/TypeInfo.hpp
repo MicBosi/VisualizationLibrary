@@ -51,11 +51,17 @@ struct TypeInfo
 #define INSTRUMENT_BASE_CLASS(ClassName)                                                                    \
 public:                                                                                                     \
   /* static functions */                                                                                    \
+  /** Returns the name of the class. */                                                                     \
   static const char* staticName() { return #ClassName; }                                                    \
+  /** Returns the TypeInfo of the class. */                                                                 \
   static const TypeInfo* staticType() { static const TypeInfo class_type(#ClassName); return &class_type; } \
+                                                                                                            \
   /* virtual functions */                                                                                   \
-  virtual const char* objectName() const { return #ClassName; }                                             \
-  virtual const TypeInfo* objectType() const { return staticType(); }                                       \
+  /** Returns the name of the object's class. */                                                            \
+  virtual const char* className() const { return #ClassName; }                                              \
+  /** Returns the TypeInfo of the object's class. */                                                        \
+  virtual const TypeInfo* classType() const { return staticType(); }                                        \
+  /** Returns \a true if \a type matches the object's class type. */                                        \
   virtual bool isOfType(const TypeInfo* type) const                                                         \
   {                                                                                                         \
     return type == staticType();                                                                            \
@@ -67,11 +73,17 @@ private:                                                                        
   typedef BaseClass super;                                                                                  \
 public:                                                                                                     \
   /* static functions */                                                                                    \
+  /** Returns the name of the class. */                                                                     \
   static const char* staticName() { return #ClassName; }                                                    \
+  /** Returns the TypeInfo of the class. */                                                                 \
   static const TypeInfo* staticType() { static const TypeInfo class_type(#ClassName); return &class_type; } \
+                                                                                                            \
   /* virtual functions */                                                                                   \
-  virtual const char* objectName() const { return #ClassName; }                                             \
-  virtual const TypeInfo* objectType() const { return staticType(); }                                       \
+  /** Returns the name of the object's class. */                                                            \
+  virtual const char* className() const { return #ClassName; }                                              \
+  /** Returns the TypeInfo of the object's class. */                                                        \
+  virtual const TypeInfo* classType() const { return staticType(); }                                        \
+  /** Returns \a true if \a type matches the object's class type. */                                        \
   virtual bool isOfType(const TypeInfo* type) const                                                         \
   {                                                                                                         \
     return type == staticType() || super::isOfType(type);                                                   \
@@ -84,11 +96,17 @@ private:                                                                        
   typedef BaseClass2 super2;                                                                                \
 public:                                                                                                     \
   /* static functions */                                                                                    \
+  /** Returns the name of the class. */                                                                     \
   static const char* staticName() { return #ClassName; }                                                    \
+  /** Returns the TypeInfo of the class. */                                                                 \
   static const TypeInfo* staticType() { static const TypeInfo class_type(#ClassName); return &class_type; } \
+                                                                                                            \
   /* virtual functions */                                                                                   \
-  virtual const char* objectName() const { return #ClassName; }                                             \
-  virtual const TypeInfo* objectType() const { return staticType(); }                                       \
+  /** Returns the name of the object's class. */                                                            \
+  virtual const char* className() const { return #ClassName; }                                              \
+  /** Returns the TypeInfo of the object's class. */                                                        \
+  virtual const TypeInfo* classType() const { return staticType(); }                                        \
+  /** Returns \a true if \a type matches the object's class type. */                                        \
   virtual bool isOfType(const TypeInfo* type) const                                                         \
   {                                                                                                         \
     return type == staticType() || super1::isOfType(type) || super2::isOfType(type);                        \
