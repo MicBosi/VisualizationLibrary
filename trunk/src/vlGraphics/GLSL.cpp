@@ -462,23 +462,25 @@ void GLSLProgram::postLink()
 
   // populate uniform binding map
 
-  mActiveUniformLocation.clear();
+  mActiveUniforms.clear();
 
-  int uniform_count = 0;
-  glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count); VL_CHECK_OGL();
   int uniform_len = 0;
   glGetProgramiv(handle(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniform_len); VL_CHECK_OGL();
-
-  std::vector<char> name;
-  name.resize(uniform_len);
-  if (name.size())
+  if (uniform_len)
   {
+    std::vector<char> tmp_buf;
+    tmp_buf.resize(uniform_len);
+    char* name = &tmp_buf[0];
+
+    int uniform_count = 0;
+    glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count); VL_CHECK_OGL();
     for(int i=0; i<uniform_count; ++i)
     {
       GLenum type;
       int size;
-      glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, &name[0]); VL_CHECK_OGL();
-      mActiveUniformLocation[&name[0]] = glGetUniformLocation(handle(), &name[0]);
+      glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, name); VL_CHECK_OGL();
+      ref<UniformInfo> uinfo = new UniformInfo(name, (EUniformType)type, size, glGetUniformLocation(handle(), name));
+      mActiveUniforms[name] = uinfo;
     }
   }
 
@@ -644,10 +646,9 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     Uniform* uniform = uniforms->uniforms()[i].get();
 
     #if 1
-      std::map<std::string, int>::const_iterator it = mActiveUniformLocation.find(uniform->name());
-      int location = it == mActiveUniformLocation.end() ? -1 : it->second;
+      const UniformInfo* uinfo = activeUniformInfo(uniform->name());
+      int location = uinfo ? uinfo->Location : -1;
     #else
-      // for benchmarking purposes
       int location = glGetUniformLocation(handle(), uniform->name().c_str());
     #endif
 
@@ -661,9 +662,6 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
         "GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
         "Is the uniform variable declared but not used in your GLSL program?\n"
         "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
-
-      // VL_TRAP();
-      // return false;
       continue;
     }
 
@@ -673,51 +671,56 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     VL_CHECK_OGL();
     switch(uniform->mType)
     {
-      case UT_Int:     glUniform1iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
-      case UT_Int2:    glUniform2iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
-      case UT_Int3:    glUniform3iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
-      case UT_Int4:    glUniform4iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
+      case UT_INT:      glUniform1iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
+      case UT_INT_VEC2: glUniform2iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
+      case UT_INT_VEC3: glUniform3iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
+      case UT_INT_VEC4: glUniform4iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
 
-      case UT_UInt:    VL_glUniform1uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
-      case UT_UInt2:   VL_glUniform2uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
-      case UT_UInt3:   VL_glUniform3uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
-      case UT_UInt4:   VL_glUniform4uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UNSIGNED_INT:      VL_glUniform1uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UNSIGNED_INT_VEC2: VL_glUniform2uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UNSIGNED_INT_VEC3: VL_glUniform3uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UNSIGNED_INT_VEC4: VL_glUniform4uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
 
-      case UT_Float:   glUniform1fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Float2:  glUniform2fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Float3:  glUniform3fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Float4:  glUniform4fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT:      glUniform1fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_VEC2: glUniform2fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_VEC3: glUniform3fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_VEC4: glUniform4fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
 
-      case UT_Mat2F:   glUniformMatrix2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Mat3F:   glUniformMatrix3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Mat4F:   glUniformMatrix4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_MAT2: glUniformMatrix2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_MAT3: glUniformMatrix3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_MAT4: glUniformMatrix4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
 
-      case UT_Mat2x3F: glUniformMatrix2x3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Mat3x2F: glUniformMatrix3x2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Mat2x4F: glUniformMatrix2x4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Mat4x2F: glUniformMatrix4x2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Mat3x4F: glUniformMatrix3x4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_Mat4x3F: glUniformMatrix4x3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_MAT2x3: glUniformMatrix2x3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_MAT3x2: glUniformMatrix3x2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_MAT2x4: glUniformMatrix2x4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_MAT4x2: glUniformMatrix4x2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_MAT3x4: glUniformMatrix3x4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_FLOAT_MAT4x3: glUniformMatrix4x3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
 
-      case UT_Double:  glUniform1dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Double2: glUniform2dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Double3: glUniform3dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Double4: glUniform4dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE:      glUniform1dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_VEC2: glUniform2dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_VEC3: glUniform3dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_VEC4: glUniform4dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
 
-      case UT_Mat2D:   glUniformMatrix2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Mat3D:   glUniformMatrix3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Mat4D:   glUniformMatrix4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_MAT2: glUniformMatrix2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_MAT3: glUniformMatrix3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_MAT4: glUniformMatrix4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
 
-      case UT_Mat2x3D: glUniformMatrix2x3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Mat3x2D: glUniformMatrix3x2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Mat2x4D: glUniformMatrix2x4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Mat4x2D: glUniformMatrix4x2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Mat3x4D: glUniformMatrix3x4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_Mat4x3D: glUniformMatrix4x3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_MAT2x3: glUniformMatrix2x3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_MAT3x2: glUniformMatrix3x2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_MAT2x4: glUniformMatrix2x4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_MAT4x2: glUniformMatrix4x2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_MAT3x4: glUniformMatrix3x4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_DOUBLE_MAT4x3: glUniformMatrix4x3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+
+      case UT_NONE:
+        // Probably you added a uniform to a Shader or Actor but you forgot to assign a valueto it.
+        vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' does not contain any data! Did you forget to assign a value to it?\n") << uniform->name() );
+        VL_TRAP();
+        break;
 
       default:
-        // Probably you added a uniform to a Shader or Actor but you forgot to specify it's data!
-        vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' does not contain any data!\n") << uniform->name() );
+        vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): wrong uniform type for '%s'!\n") << uniform->name() );
         VL_TRAP();
         break;
     }
