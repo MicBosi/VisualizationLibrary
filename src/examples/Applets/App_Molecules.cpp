@@ -33,7 +33,6 @@
 #include <vlMolecule/Molecule.hpp>
 #include <vlGraphics/Text.hpp>
 #include <vlGraphics/FontManager.hpp>
-#include <vlCore/RTTI-test.hpp>
 
 class App_Molecules: public BaseDemo
 {
@@ -163,18 +162,6 @@ public:
     vl::loadMOL2( mol2_file, mMolecules );
     if (!mMolecules.empty())
       updateMolecule();
-
-    ClassA* classA = new ClassA;
-    ClassB* classB = new ClassB;
-
-    // mic fixme
-    printf("mol classB: %s\n", mMolecules[0]->mBase->objectType()->Name);
-    printf("app classA: %s\n", classA->objectType()->Name);
-    printf("app classB: %s\n", classB->objectType()->Name);
-    printf("mol class B == app class B? %d\n", mMolecules[0]->mBase->objectType() == classB->objectType() );
-    printf("mol class B == app class B? %d\n", mMolecules[0]->mBase->isOfType(classB->objectType()) );
-    printf("dynamic_cast<ClassB*>? %d\n", dynamic_cast<ClassB*>(mMolecules[0]->mBase) != 0 );
-    exit(0);
 
     /* adjust the camera position to nicely see the scene, it also position the rotation pivot to the center of the molecule */
     trackball()->adjustView( rendering()->as<vl::Rendering>(), vl::vec3(0,0,1), vl::vec3(0,1,0), 1.0f );
