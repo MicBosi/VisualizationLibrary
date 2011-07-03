@@ -41,6 +41,7 @@
 #include <vlGraphics/Text.hpp>
 #include <vlCore/String.hpp>
 #include <vlCore/KeyValues.hpp>
+#include <vlCore/RTTI-test.hpp> // mic fixme
 
 namespace vl
 {
@@ -64,6 +65,9 @@ namespace vl
   class VLMOLECULE_EXPORT Molecule: public Object
   {
   public:
+
+    Base* mBase; // mic fixme
+
     virtual const char* className() const { return "vl::Molecule"; }
 
     Molecule();
