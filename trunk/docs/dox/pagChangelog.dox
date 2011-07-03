@@ -2,6 +2,29 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.07.1151</div>
+	
+	- <b>New OpenGL extensions management supporting all versions of OpenGL 1/2/3/4 and OpenGL ES 1/2. GLEW has been removed completely.</b>
+	- Important OpenGL status global variables: vl::Is_OpenGL_Initialized, vl::Is_OpenGL_Core_Profile, vl::Is_OpenGL_Forward_Compatible, vl::Has_Fixed_Function_Pipeline.
+	- <b>Preliminary support to OpenGL ES 1.1 and OpenGL ES 2.0, tested with PowerVR SDK under Win32.</b>
+	- New EGLWindow: EGL bindings for Win32.
+	- New OpenGL ES tests and examples: GLES1_example.cpp, GLES1_tests.cpp, GLES2_example.cpp. All relevant tests already passed by GLES1_tests.cpp.
+	- All geometry primitives are now suported under OpenGL ES 1 and OpenGL ES 2.
+	- OpenGL ES related new functions: vl::Geometry:convertToVertexAttribs(), vl::Geometry::makeGLESFriendly()
+	- vl::Text now working under OpenGL ES 1.1 (not yet OpenGL ES 2.0) and enhanced redering efficiency.
+	- Enhanced support to core profiles and forward compatible profiles.
+	- Better enbles management. VL can now detect ahead of time which enables are supported by the current OpenGL driver.
+	- vl::Shader now allows you to enable and disable also GL_DITHER and GL_MULTISAMPLE.
+	- <b>GLSLProgram now reports the full list of active uniforms with name, type, size and location information. See vl::UniformInfo and vl::GLSLProgram::activeUniforms().</b>
+	- Minor efficiency enhancements in MarchingCubes.
+	- Renamed shallowCopy() to shallowCopyTo() and deepCopy() to deepCopyTo()
+	- Added String::printf() utility function.
+	- Added experimental TypeInfo.hpp for portable RTTI implementation (not yet used).
+	- Added experimental vl::CoreText for text rendering support under OpenGL ES 2.0 and OpenGL core profiles (work in progress).
+	- Fixed vl::Time behavior when system runs for very long time.
+	- Fixed bug in GLSLProgState sorting in rendering loop.
+	- Fixed vl::Object::className() constness.
+	
 	<div class="featuretitle">Visualization Library 2011.04.1142</div>
 	
 	- Fixed compilation error when VL_PIPELINE_PRECISION is 2.
