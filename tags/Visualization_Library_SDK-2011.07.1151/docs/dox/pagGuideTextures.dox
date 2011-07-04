@@ -1,0 +1,336 @@
+/**
+
+	\page pagGuideTextures OpenGL Texture Mapping Tutorial
+
+	<img src="pics/pagGuideTextures.jpg">
+	
+	"Texturing" is the technique used to apply in various ways an image over the surface of an object. Textures can be used to 
+	change or modify the color, the transparency and even the lighting properties of an object. In this tutorial we will go through the
+	implementation of the texturing test ("src/examples/Applets/App_Texturing.cpp") part of the Visualization Library regression test suite.
+	This will give us the chance to see how to use several standard and advanced texturing techniques like 2D texturing, multi-texturing, 
+	3D textures, 1D and 2D texture arrays, sphere-mapping and cubemaps environment mapping. We will also see how to use the texture lod bias
+	to simulate opaque reflections.
+	
+	The most important classes involved in the texturing process are:
+	- vl::Texture
+	- vl::TextureUnit
+	- vl::TexGen
+	- vl::TexEnv
+	- vl::TextureMatrix
+	- vl::Image
+	
+	\par Creating the test class
+	
+	Our test like all the other tests is a subclass of \p BaseDemo so the only thing we do is to derive from it, implement a set of functions
+	testing the different texturing technique and reimplementing the virtual functions \p initEvent() and \p run() to initialize and animate
+	our test.
+	
+	\dontinclude App_Texturing.cpp
+	\skipline class
+	\until public:
+	
+	\par Multitexturing
+
+    This example will show you how to use multiple textures to enhance the detail of your 3D 
+    objects. We will create 2 cubes: the one on the right will use a single texture, the one on
+    the left will use multitexturing to add detail to the base texture. The two cubes will be 
+    procedurally animated by the run() virtual function (see the sources).
+
+	\skipline void multitexturing()
+	\until {
+
+    Create a box 5x5x5 and generate texture coordinates (generates only box->texCoordArray(0)).
+	
+    Compute the normals for the box.
+	
+    Share the same texture coordinates for texture unit #1 and #0. This is VERY important as for every texture unit we need a corresponding set of texture coordinates. In our case makeBox() automatically generated the texture coordinates for the texture unit #0 and we can simply 'recycle' them also for texture unit #1.
+
+	\until setTexCoordArray
+
+    Creates a vl::Transform for each cube so we can procedurally animate them and attaches them to the scene's root transform.
+	
+	\until addChild(mCubeLeftTransform.get());
+	
+    First of all we need to load the images that we intend to use with our textures
+	
+	\until img_detail
+	
+	Once we loaded our images we can create our textures from them. Here we use the \p GL_RGBA texture 
+	format, enable mipmapping and disable texture border. Note that even if the vl::Texture will be 
+	allocated and configured, the actual OpenGL texture object will not be created yet. Instead the 
+	OpenGL texture object will be created automatically during the rendering the first time it is 
+	used. Alternatively you can explicitly create it by calling 
+	<pre>tex_holebox->createTexture()</pre>
+	
+	Another way to create a 2D texture would be
+	<pre>
+vl::ref<vl::Texture> tex_holebox = new vl::Texture;
+tex_holebox->prepareTexture2D(img_holebox.get(), vl::TF_RGBA, mMipmappingOn, false);</pre>
+
+	Note that upon creation of the OpenGL texture object VL will also automatically generate the 
+	mipmaps (if requested) using the hardware acceleration where available or using GLU.
+
+	\until tex_detail
+
+	Since we requested mipmapping we set the MinFilter to \p GL_LINEAR_MIPMAP_LINEAR, i.e. trilinear filtering.
+	Note that while you can set the MinFilter to any of \p GL_NEAREST, \p GL_LINEAR, \p GL_NEAREST_MIPMAP_NEAREST, 
+	\p GL_LINEAR_MIPMAP_NEAREST, \p GL_NEAREST_MIPMAP_LINEAR, \p GL_LINEAR_MIPMAP_LINEAR, you can set the MagFilter
+	only to \p GL_NEAREST, \p GL_LINEAR.
+
+	\until tex_detail->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+
+	Here we are going to create 2 vl::Effect objects: cube_right_fx and cube_left_fx with the specific settings for the left and right cubes.
+
+	The right cube is going to be textured with one simple texture.
+	
+	\until gocTextureUnit
+	
+	The left cube is going to use multitexturing: base texture + detail texture. \n
+	The color of the detail texture will be used to modulate the color coming from lighiting and the base texture. \n
+	
+	\until gocTexEnv
+	
+	Add the left and right cube to the scene. \n
+	
+	\until }
+	
+	\par 3D textures
+
+	In this paragraph we will use 3D textures to implement a sort of animation on a 2d flat plane.
+	
+	\until {
+	
+	As usual we start by loading our image with the difference that this time it is a 3D image and we also convert its format and type to IT_UNSIGNED_BYTE/IF_LUMINANCE
+	
+	\until vl::ref<vl::Image> img_volume
+	
+	Now we create a white plane 10x10 units wide, oriented towards the viewer (without the rotation it would be on the x/z plane instead of being on the x/y plane).
+	
+	Note 3 things:
+	-# Using vl::Geometry::transform() you can apply any kind of matrix transform to any geometry regardless of it's internal format!
+	-# We don't need to compute the normals as we will not use lighting here.
+	-# If all the vertices of vl::Geometry have the same color you can set such color directly using vl::Geometry::setColorArray(const fvec4& col).
+	
+	\until transform
+	
+	Since we want to animate the texture coordinates of our plane we manually allocate a vl::ArrayFloat3 to be used as the texture coordinate array for the texture unit #0. We also disable the vertex buffer objects so that any change made locally to our buffer will be immediately visible. If VBO were enabled we would have had to update the VBOs after the animation, this way we make the things a bit less efficient but easyer to follow. The animation of the texture coordinates is done in the run() method (see the sources).
+	
+	\until setVBOEnabled
+	
+	This is how the animation of the 3D texture coordinates looks like:
+<pre>
+// 5 seconds period: t = 0 -> 1
+float t = sin( (float)vl::Time::timerSeconds()*vl::fPI*2.0f/5.0f) * 0.5f + 0.5f;
+
+mTexCoords_3D->at(0) = vl::fvec3(0, 0, t);
+mTexCoords_3D->at(1) = vl::fvec3(0, 1, t);
+mTexCoords_3D->at(2) = vl::fvec3(1, 0, t);
+mTexCoords_3D->at(3) = vl::fvec3(1, 1, t);</pre>
+	Since the 't' coordinate changes from 0 to 1 the 2d plane will show a series of 2d slices of the 3d texture as if it was a movie!
+	
+	Now we create a vl::Effect which uses our 3D texture.\n
+	In order to use any 3D texture though we have to check that our OpenGL implementation actually supports 3D textures. 
+	We also enable mipmapping as we did in the multi-texturing example. The function that actually creates our 3D texture is \b prepareTexture3D().
+	
+	\until vl::Log::error
+	
+	At this point we have everything that is needed to create and add an Actor to the scene. We will position the plane on the top left corner <-6,+6,0>. Note that in this case we don't bind \p act_3d's Transform to any parent Transform as we will not animate it during the rendering.
+	Instead we simply set the local matrix and compute manually the world matrix (which is the one used during the rendering).
+	
+	\until }
+	
+	\par 2D Texture Arrays
+	
+	\until {
+	
+	Using 2D texture arrays (\p GL_TEXTURE_2D_ARRAY) is very similar to using normal 3D textures (\p GL_TEXTURE_3D), but with the following differences:
+	- the "r" coordinate of a 2D texture array is expressed as an integer and not as normalized floats (as it is for normal \p GL_TEXTURE_1D/2D/3D textures), i.e. 1, 2, 3, 4, 5 etc. instead of 0.02, 0.04, 0.06, 0.08 etc. for example. 
+	- The mipmaps are computed in a different way: if you have a 3D texture whose dimensions are 256x256x256 at level #0, it's mipmap level #1 will be 128x128x128. Instead in 2D texture array each "layer" is kept separate somehow from one another. In fact if the mipmap level #0 of a 2D texture array is 256x256x256, its mipmap level #1 will be 128x128x256. That is, the texture size is half but you still have 256 "layers". For this reason 2D texture arrays occupy more memory that 3D textures. 
+	- 3D textures can have a texture border, while 2D texture arrays are not allowed to have a border. For more information about the border of a texture refer to the OpenGL function glTexImage1D/2D/3D() documentation.
+	- 1D and 2D texture arrays are not available in the fixed function pipeline. In order to take advantage of them you have to use an \b OpenGL \b Shading \b Language \b program.
+	
+	For our demo we will use the 2D texture array in the very same way as we did for the 3D textures, but in this case we will put the textured plane on the top right corner. Note the use of the function \b prepareTexture2DArray().
+	
+	\until }
+	\until }
+	
+	The fragment shader 'glsl/texture_2d_array.fs' used in the example looks like this:
+\code
+#extension GL_EXT_texture_array: enable
+uniform sampler2DArray sampler0;
+void main(void)
+{
+	gl_FragColor = texture2DArray(sampler0, gl_TexCoord[0].xyz );
+}
+\endcode
+	
+	Since the 2D texture arrays take integer coordinates we will animate them using \p 't*m2DArraySize' instead of simply \p 't' like this:
+<pre>
+    mTexCoords_2DArray->at(0) = vl::fvec3(0, 0, t*m2DArraySize);
+    mTexCoords_2DArray->at(1) = vl::fvec3(0, 1, t*m2DArraySize);
+    mTexCoords_2DArray->at(2) = vl::fvec3(1, 0, t*m2DArraySize);
+    mTexCoords_2DArray->at(3) = vl::fvec3(1, 1, t*m2DArraySize);</pre>
+	
+	\par 1D Texture Arrays
+	
+	For 1D texture arrays count the considerations that we did for 2D texture arrays.
+	
+	In this example we create again a plane oriented towards the views with the difference that this time instead of being a simple plane with 2*2=4 vertices we create \p 2*img_holebox->height() vertices, that is, we cut it in \p img_holebox->height() slices. Each slice will be textured using a 1D texture taken from the 1D texture array. The resulting image will look very similar to a 2D textured quad. 
+	
+	\until }
+	\until }
+	
+	The fragment shader 'glsl/texture_1d_array.fs' used in the example looks like this:
+\code
+#extension GL_EXT_texture_array: enable
+uniform sampler1DArray sampler0;
+void main(void)
+{
+	gl_FragColor = texture1DArray(sampler0, gl_TexCoord[0].xyz );
+}
+\endcode
+	
+	Inside the run() method we also animate the s/t texture coordinates of the plane in a more sofisticated way so that the slices of the plane become more apparent:
+<pre>
+for(int i=0; i<m1DArraySize; ++i)
+{
+  mTexCoords_1DArray->at(i*2+0) = vl::fvec2(0+t*0.02f*(i%2?+1.0f:-1.0f), (float)i);
+  mTexCoords_1DArray->at(i*2+1) = vl::fvec2(1+t*0.02f*(i%2?+1.0f:-1.0f), (float)i);
+}</pre>
+	The important part to be noted here is that here \p 'i', an integer coordinate, is used here instead of a normalized floating point number ranging between 0 and 1, as we would have done for 1D, 2D, 3D and cubemap textures.
+	
+	\par Texture Rectangle
+	
+	A texture rectangle (\p GL_TEXTURE_RECTANGLE) is a special kind of 2D textures often used for post processing effects. They differ from normal 2D texture for the following:
+	- Texture rectangle do not support mipmapping.
+	- Texture rectangle do not support any texture border.
+	- Texture rectangle s/t coordinates are expressed as integers.
+	- Texture rectangle supports only the following clamping modes: \p GL_CLAMP, \p GL_CLAMP_TO_EDGE, \p GL_CLAMP_TO_BORDER.
+	
+	\until {
+	
+	First we load our image in the usual way
+	
+	\until loadImage
+	
+	Now we create our plane to be textured as we did in the above examples with one major difference, we ask makeGrid() to generate for us 2d texture coordinates ranging from <0,0> to <\p img_holebox->width(),\p img_holebox->height()>.
+	
+	\until transform
+	
+	Now we create our texture rectangle using the function \b prepareTextureRectangle(). Note that we disable mipmapping and set the clamping mode to \p vl::TPW_CLAMP (GL_CLAMP).
+	
+	\until }
+	\until }
+	
+	\par Spherical mapping
+	
+	Spherical mapping is a very simple and cheap way to simulate environmental reflection over an object using simple 2D textures.
+	
+	Spherical mapping is very simple to use all we need is:
+	- A spherical map texture
+	- A 3d object with normals
+	- Appropriate texture coordinates dynamically generated using glTexGen()/GL_SPHERE_MAP
+	
+	For more information about spherical mapping see also:
+	- OpenGL Cube Map Texturing, http://developer.nvidia.com/object/cube_map_ogl_tutorial.html
+	
+	In our test we will apply spherical mapping to a rotating torus.
+	
+	\until {
+	
+	First of all we load the 2d texture containing our spherical map.
+	
+	\until img_spheric
+	
+	Here we create the torus to which we will apply the spherical map. Note that in order to use
+	glTexGen()/GL_SPHERE_MAP our model need to have normals.
+	
+	\until computeNormals
+	
+	The Effect applied to the torus will have depht testing, back face culling and lighting. Note that since no transform is specified for 
+	the light this means that the light will follow the camera (ie. a headlight).
+	
+	\until setRenderRank
+	
+	Now we apply the texture to the effect used by the torus and enable sphere-map automatic texture coordinate generation.
+	
+	\until setGenModeT
+	
+	Finally we add the torus to the scene and its transform to the scene's root transform, so that it gets updated every frame.
+	
+	\until }
+	
+	\par Cubemaps
+	
+	Cubemapping is a very flexible technique used to achieve many different kinds of effects. Here we will use cubmapping to implement the so 
+	called "environment mapping" which is a technique that simulates the environmental reflection over an object. While using spherical mapping
+	the reflection always faces the camera (unless you regenerate it on the fly every frame), cubemapping lets you use a single cubemap texture 
+	to simulate a much more realistic three-dimensional reflection.
+	
+	Implementing cubemapping is also very simple with Visualization Library, all you need is:
+	- A cubemap texture
+	- A 3d model with normals
+	- Appropriate texture coordinates dynamically generated using glTexGen()/GL_REFLECTION_MAP
+	
+	\until {
+	
+	You can load cubemap images in many different ways. You can assemble them on the fly using the vl::loadAsCubemap() functions or you can 
+	load it directly from a DDS file with the vl::loadImage() function.
+	
+	\until );
+	
+	Create a torus and compute its normals.
+	
+	\until computeNormals
+	
+	Setup a simple Effect like we did for the sphere mapping example.
+	
+	\until setRenderRank
+	
+	Here we create the cubemap texture. Note that in order to use cubmaps we need to check that either the GL_ARB_texture_cube_map extension 
+	or OpenGL 1.3 is supported. Note that we use the GL_CLAMP_TO_EDGE mode here to minimize the seams of the cubemaps. This does not remove
+	the seams totally. In order to have a cubemap without seams the cubemap must be properly generated and adjusted by the texture artist.
+	Note that we use GL_REFLECTION_MAP texture generation mode for the S, T and R texture coordinates. Remember that this texture generation 
+	mode works properly only when the model has the normals, as we already discussed. Note also the line:
+	<pre>mFXCubic->shader()->gocTextureMatrix(0)->setUseCameraRotationInverse(true);</pre>
+	This tells VL to put in the texture matrix the inverse of the camera rotation. This puts into world-space the cubemap texture coordinates 
+	automatically generated by OpenGL, which would otherwise be in eye-space (ie. always facing the camera).
+	
+	\until vl::Log::error
+	
+	Finally we add the torus to the scene and its transform to the scene's root transform, so that it gets updated every frame.
+	
+	\until }	
+	
+	\par Animation
+	
+	The animation of the texture coordinates and of the transformed objects is implemented in the run() virtual function as shown below:
+	
+	\skip run()
+	\until mActCubic->transform()->computeWorldMatrix();
+	\until }
+	
+	\par Reflectivity
+	
+	A classic method to simulate sharp/dull reflectivity is to manually change the lod bias via the glTexEnv() command. The Lod Bias modifies
+	the way OpenGL selects the set of mipmaps to be used during the rendering. A higher lod bias will make OpenGL select mipmaps of a higher 
+	level (smaller images) thus the reflected image will look more blurry and less sharp. This will produce an effect similar to a rough and opaque 
+	surface. Instead, if the lod bias is set to 0 (default) the reflection will look very sharp and definite as if the surface was a perfectly
+	polished mirror. In our test we can dynamically adjust the lod bias using the mouse wheel:
+	
+	\until }
+	
+	\par Test initialization
+	
+	The following function shows the simple steps used to initialize our test and the protected data used by our applet.
+	
+	\until };
+	
+	\par Conclusions 
+	
+	This tutorial gave you the basic knowledge to start using several standard and advanced texturing techniques like 2D texturing, multi-texturing, 
+	3D textures, 1D and 2D texture arrays, sphere-mapping, cubemap environment mapping and lod bias manipulation. For all the details and secrets of 
+	OpenGL texturing the definitive guide remains the OpenGL Programmer's Guide.
+
+*/
+
