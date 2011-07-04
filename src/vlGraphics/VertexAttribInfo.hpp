@@ -49,10 +49,13 @@ namespace vl
   public:
     virtual const char* className() const { return "vl::VertexAttribInfo"; }
     
-    VertexAttribInfo(unsigned int location, ArrayAbstract* data, bool normalize=true, EVertexAttribBehavior data_behav=VAB_NORMAL): mData(data), mAttribIndex(location), mDataBehavior(data_behav), mNormalize(normalize) {}
+    VertexAttribInfo(unsigned int location, ArrayAbstract* data, bool normalize=true, EVertexAttribBehavior data_behav=VAB_NORMAL): mData(data), mAttribLocation(location), mDataBehavior(data_behav), mNormalize(normalize) {}
     
-    VertexAttribInfo(): mAttribIndex((unsigned int)-1), mDataBehavior(VAB_NORMAL), mNormalize(false) {}
+    VertexAttribInfo(): mAttribLocation((unsigned int)-1), mDataBehavior(VAB_NORMAL), mNormalize(false) {}
 
+    //! The GPU buffer that stores the data
+    void setData(ArrayAbstract* data) { mData = data; }
+    
     //! The GPU buffer that stores the data
     ArrayAbstract* data() const { return mData.get(); }
     
@@ -60,8 +63,19 @@ namespace vl
     //! \sa
     //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
     //! - http://www.opengl.org/sdk/docs/man/xhtml/glEnableVertexAttribArray.xml
-    unsigned int attribIndex() const { return mAttribIndex; }
+    void setAttribLocation(unsigned int index) { mAttribLocation = index; }
     
+    //! The 'index' parameter of the vertex attribute as used with glVertexAttribPointer() and glEnableVertexAttribArray().
+    //! \sa
+    //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
+    //! - http://www.opengl.org/sdk/docs/man/xhtml/glEnableVertexAttribArray.xml
+    unsigned int attribLocation() const { return mAttribLocation; }
+    
+    //! The 'normalized' parameter as used with glVertexAttribPointer()
+    //! \sa
+    //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
+    void setNormalize(bool normalize) { mNormalize = normalize; }
+
     //! The 'normalized' parameter as used with glVertexAttribPointer()
     //! \sa
     //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
@@ -73,23 +87,9 @@ namespace vl
     //! How the data is interpreted by the OpenGL, see EVertexAttribBehavior.
     EVertexAttribBehavior dataBehavior() const { return mDataBehavior; }
 
-    //! The GPU buffer that stores the data
-    void setData(ArrayAbstract* data) { mData = data; }
-    
-    //! The 'index' parameter of the vertex attribute as used with glVertexAttribPointer() and glEnableVertexAttribArray().
-    //! \sa
-    //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-    //! - http://www.opengl.org/sdk/docs/man/xhtml/glEnableVertexAttribArray.xml
-    void setAttribIndex(unsigned int index) { mAttribIndex = index; }
-    
-    //! The 'normalized' parameter as used with glVertexAttribPointer()
-    //! \sa
-    //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-    void setNormalize(bool normalize) { mNormalize = normalize; }
-
   protected:
     ref<ArrayAbstract> mData;
-    unsigned int mAttribIndex;
+    unsigned int mAttribLocation;
     EVertexAttribBehavior mDataBehavior;
     bool mNormalize;
   };
