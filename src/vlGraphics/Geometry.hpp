@@ -146,7 +146,7 @@ namespace vl
     //! Fills the color array with the given color
     void setColorArray(const fvec4& color)
     {
-      size_t vert_count = vertexArray() ? vertexArray()->size() : vertexAttrib(VA_Position) ? vertexAttrib(VA_Position)->size() : 0;
+      size_t vert_count = vertexArray() ? vertexArray()->size() : vertexAttribArray(VA_Position) ? vertexAttribArray(VA_Position)->data()->size() : 0;
       VL_CHECK( vert_count )
       ref<ArrayFloat4> color_array = new ArrayFloat4;
       color_array->resize(vert_count);
@@ -186,15 +186,16 @@ namespace vl
 
     /** Converts the fixed function pipeline arrays (vertex array, normal arrays) into the generic ones.
     * The generic attribute indices are allocated in the following way:
-    * - vertex array -> VA_Position
-    * - normal array -> VA_Normal
-    * - color array  -> VA_Color
-    * - texture array 0..N -> VA_TexCoord0..N
-    * - secondary color array -> at the first free position from VA_TexCoord0 (included)
-    * - fog coord array  -> at the first free position from VA_TexCoord0 (included)
+    * - vertex array -> vl::VA_Position
+    * - normal array -> vl::VA_Normal
+    * - color array  -> vl::VA_Color
+    * - texture array 0..N -> vl::VA_TexCoord0 .. N
+    * - secondary color array -> at the first free position from vl::VA_TexCoord0 (included)
+    * - fog coord array  -> at the first free position from vl::VA_TexCoord0 (included)
     *
     * \remarks
-    * The previously installed generic vertex attributes are removed. The fixed function attributes are set to NULL.
+    * - Already existing generic vertex attributes are overwritten if their binding location collides with one of the non-NULL fixed function pipeline arrays being converted. 
+    * - After this function all the fixed function pipeline arrays are set to NULL.
     */
     void convertToVertexAttribs();
 
@@ -345,28 +346,16 @@ namespace vl
       tex_array = mTexCoordArrays[i]->mTexCoordArray.get();
     }
 
-    void setVertexAttribArray(unsigned int attrib_idx, ArrayAbstract* data, bool normalize=true, EVertexAttribBehavior data_behav=VAB_NORMAL) { setVertexAttribArray(VertexAttribInfo(attrib_idx, data, normalize, data_behav)); }
+    void setVertexAttribArray(unsigned int attrib_location, ArrayAbstract* data, bool normalize=true, EVertexAttribBehavior data_behav=VAB_NORMAL) { setVertexAttribArray(VertexAttribInfo(attrib_location, data, normalize, data_behav)); }
 
     void setVertexAttribArray(const VertexAttribInfo& info);
 
-    const ArrayAbstract* vertexAttrib(unsigned int attrib_idx) const;
+    const VertexAttribInfo* vertexAttribArray(unsigned int attrib_location) const;
 
-    ArrayAbstract* vertexAttrib(unsigned int attrib_idx);
+    VertexAttribInfo* vertexAttribArray(unsigned int attrib_location);
 
-    const VertexAttribInfo* vertexAttribInfo(unsigned int attrib_idx) const;
-
-    VertexAttribInfo* vertexAttribInfo(unsigned int attrib_idx);
-
-    ref<VertexAttribInfo> eraseVertexAttrib(unsigned int attrib_idx);
-
-    int vertexAttribInfoCount() const { return mVertexAttribArrays.size(); }
-    
-    const VertexAttribInfo* getVertexAttribInfoAt(int i) const { return mVertexAttribArrays[i].get(); }
-
-    /** The list of VertexAttribInfo objects bound to a Geometry. */
     Collection<VertexAttribInfo>* vertexAttribArrays() { return &mVertexAttribArrays; }
 
-    /** The list of VertexAttribInfo objects bound to a Geometry. */
     const Collection<VertexAttribInfo>* vertexAttribArrays() const { return &mVertexAttribArrays; }
 
   protected:

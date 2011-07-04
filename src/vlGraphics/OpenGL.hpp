@@ -38,23 +38,24 @@
 
 namespace vl
 {
+  //! Set to \a true if the last call to vl::initializeOpenGL() was succesful.
   VLGRAPHICS_EXPORT extern bool Is_OpenGL_Initialized;
 
-  // OpenGL: true if the current context has been created with the WGL_CONTEXT_CORE_PROFILE_BIT_ARB or equivalent.
-  //         If true all removed functionalities are not present.
-  // OpenGL ES 1: always false
-  // OpenGL ES 2: always false
+  //! OpenGL: true if the current context has been created with the WGL_CONTEXT_CORE_PROFILE_BIT_ARB or equivalent.
+  //!         If true all removed functionalities are not present.
+  //! OpenGL ES 1: always false
+  //! OpenGL ES 2: always false
   VLGRAPHICS_EXPORT extern bool Is_OpenGL_Core_Profile;
 
-  // OpenGL: true if the current context has been created with the WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB or equivalent.
-  //         If true all removed AND deprecated (even if not yet removed) functionalities are not present.
-  // OpenGL ES 1: always false
-  // OpenGL ES 2: always false
+  //! OpenGL: true if the current context has been created with the WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB or equivalent.
+  //!         If true all removed AND deprecated (even if not yet removed) functionalities are not present.
+  //! OpenGL ES 1: always false
+  //! OpenGL ES 2: always false
   VLGRAPHICS_EXPORT extern bool Is_OpenGL_Forward_Compatible;
 
-  // OpenGL: true if !Is_OpenGL_Forward_Compatible && !Is_OpenGL_Core_Profile
-  // OpenGL ES 1: always true
-  // OpenGL ES 2: always false
+  //! OpenGL: true if !Is_OpenGL_Forward_Compatible && !Is_OpenGL_Core_Profile
+  //! OpenGL ES 1: always true
+  //! OpenGL ES 2: always false
   VLGRAPHICS_EXPORT extern bool Has_Fixed_Function_Pipeline;
 
   VLGRAPHICS_EXPORT extern const GLenum Translate_Enable[];

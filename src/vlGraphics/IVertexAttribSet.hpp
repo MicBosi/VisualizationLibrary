@@ -85,33 +85,26 @@ namespace vl
     virtual const ArrayAbstract* texCoordArray(int tex_unit) const = 0;
     /** Conventional texture coords arrays. */
     virtual ArrayAbstract* texCoordArray(int tex_unit) = 0;
-
+    /** Number of texture coordinate arrays currently present. */
     virtual int texCoordArrayCount() const = 0;
-
+    /** Gets the i-th texture coordinate information, where i must be 0 <= i < texCoordArrayCount(). */
     virtual void getTexCoordArrayAt(int i, int& out_tex_unit, const ArrayAbstract* &tex_array) const = 0;
 
     /** Binds a generic vertex attribute. */
     virtual void setVertexAttribArray(const VertexAttribInfo& info) = 0;
 
-    /** Returns a generic vertex attribute. */
-    virtual const ArrayAbstract* vertexAttrib(unsigned int attrib_idx) const = 0;
-
-    /** Returns a generic vertex attribute. */
-    virtual ArrayAbstract* vertexAttrib(unsigned int attrib_idx) = 0;
+    /** Returns a generic vertex attribute's info. */
+    virtual const VertexAttribInfo* vertexAttribArray(unsigned int attrib_location) const = 0;
 
     /** Returns a generic vertex attribute's info. */
-    virtual const VertexAttribInfo* vertexAttribInfo(unsigned int attrib_idx) const = 0;
+    virtual VertexAttribInfo* vertexAttribArray(unsigned int attrib_location) = 0;
 
-    /** Returns a generic vertex attribute's info. */
-    virtual VertexAttribInfo* vertexAttribInfo(unsigned int attrib_idx) = 0;
+    /** The list of VertexAttribInfo objects bound to a Geometry. */
+    virtual Collection<VertexAttribInfo>* vertexAttribArrays() = 0;
 
-    virtual ref<VertexAttribInfo> eraseVertexAttrib(unsigned int attrib_idx) = 0;
+    /** The list of VertexAttribInfo objects bound to a Geometry. */
+    virtual const Collection<VertexAttribInfo>* vertexAttribArrays() const = 0;
 
-    /** Returns the number of generic vertex attribute arrays bound. */
-    virtual int vertexAttribInfoCount() const = 0;
-
-    /** Returns \p i-th VertexAttribInfo, where \p i is not out_attrib_info.attribIndex(). */
-    virtual const VertexAttribInfo* getVertexAttribInfoAt(int i) const = 0;
   };
 }
 

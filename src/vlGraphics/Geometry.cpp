@@ -57,8 +57,8 @@ Geometry::~Geometry()
 void Geometry::computeBounds_Implementation()
 {
   const ArrayAbstract* coords = vertexArray();
-  if (!coords && vertexAttribInfo(0))
-    coords = vertexAttribInfo(0)->data();
+  if (!coords && vertexAttribArray(0))
+    coords = vertexAttribArray(0)->data();
 
   AABB aabb;
 
@@ -113,7 +113,7 @@ void Geometry::deepCopyTo(Geometry* geom) const
     geom->mVertexAttribArrays[i] = new VertexAttribInfo;
     geom->mVertexAttribArrays[i]->setNormalize( mVertexAttribArrays[i]->normalize() );
     geom->mVertexAttribArrays[i]->setDataBehavior( mVertexAttribArrays[i]->dataBehavior() );
-    geom->mVertexAttribArrays[i]->setAttribIndex( mVertexAttribArrays[i]->attribIndex() );
+    geom->mVertexAttribArrays[i]->setAttribLocation( mVertexAttribArrays[i]->attribLocation() );
     geom->mVertexAttribArrays[i]->setData( geom->mVertexAttribArrays[i]->data() ? geom->mVertexAttribArrays[i]->data()->clone().get() : NULL );
   }
   // primitives
@@ -325,14 +325,18 @@ void Geometry::convertToVertexAttribs()
   // copy over the collected attributes
   // note: we override eventual existing vertex attributes if they are in busy positions, the other are left where they are
   for(std::map<int, ref<ArrayAbstract> >::iterator it=attrib_map.begin(); it != attrib_map.end(); ++it)
+  {
+    if (vertexAttribArray(it->first) != NULL)
+      Log::warning( Say("Geometry::convertToVertexAttribs(): vertex attrib index #%n is already in use, it will be overwritten.\n") << it->first );
     setVertexAttribArray(it->first, it->second.get());
+  }
 
 }
 //-----------------------------------------------------------------------------
 void Geometry::computeNormals(bool verbose)
 {
   // Retrieve vertex position array
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttrib(VA_Position);
+  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(VA_Position)->data();
   if (!posarr || posarr->size() == 0)
   {
     Log::warning("Geometry::computeNormals() not performed: no vertex coordinate array present!\n");
@@ -511,7 +515,7 @@ void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*,
 //-----------------------------------------------------------------------------
 void Geometry::transform(const mat4& m, bool normalize)
 {
-  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttrib(0);
+  ArrayAbstract* posarr = vertexArray() ? vertexArray() : vertexAttribArray(0) ? vertexAttribArray(0)->data() : NULL;
   if (posarr)
     posarr->transform(m);
 
@@ -529,7 +533,7 @@ void Geometry::setVertexAttribArray(const VertexAttribInfo& info)
   for(int i=0; i<vertexAttribArrays()->size(); ++i)
   {
     VL_CHECK(vertexAttribArrays()->at(i))
-    if (vertexAttribArrays()->at(i)->attribIndex() == info.attribIndex())
+    if (vertexAttribArrays()->at(i)->attribLocation() == info.attribLocation())
     {
       *vertexAttribArrays()->at(i) = info;
       return;
@@ -538,52 +542,19 @@ void Geometry::setVertexAttribArray(const VertexAttribInfo& info)
   mVertexAttribArrays.push_back( new VertexAttribInfo(info) );
 }
 //-----------------------------------------------------------------------------
-const ArrayAbstract* Geometry::vertexAttrib(unsigned int name) const
-{
-  const VertexAttribInfo* attrib_info = vertexAttribInfo(name);
-  if (attrib_info)
-    return attrib_info->data();
-  else
-    return NULL;
-}
-//-----------------------------------------------------------------------------
-ArrayAbstract* Geometry::vertexAttrib(unsigned int name)
-{
-  VertexAttribInfo* attrib_info = vertexAttribInfo(name);
-  if (attrib_info)
-    return attrib_info->data();
-  else
-    return NULL;
-}
-//-----------------------------------------------------------------------------
-const VertexAttribInfo* Geometry::vertexAttribInfo(unsigned int name) const
+const VertexAttribInfo* Geometry::vertexAttribArray(unsigned int attrib_location) const
 {
   for(int i=0; i<vertexAttribArrays()->size(); ++i)
-    if (vertexAttribArrays()->at(i)->attribIndex() == name)
+    if (vertexAttribArrays()->at(i)->attribLocation() == attrib_location)
       return vertexAttribArrays()->at(i);
   return NULL;
 }
 //-----------------------------------------------------------------------------
-VertexAttribInfo* Geometry::vertexAttribInfo(unsigned int name)
+VertexAttribInfo* Geometry::vertexAttribArray(unsigned int attrib_location)
 {
   for(int i=0; i<vertexAttribArrays()->size(); ++i)
-    if (vertexAttribArrays()->at(i)->attribIndex() == name)
+    if (vertexAttribArrays()->at(i)->attribLocation() == attrib_location)
       return vertexAttribArrays()->at(i);
-  return NULL;
-}
-//-----------------------------------------------------------------------------
-ref<VertexAttribInfo> Geometry::eraseVertexAttrib(unsigned int name)
-{
-  ref<VertexAttribInfo> vai;
-  for(int i=0; i<vertexAttribArrays()->size(); ++i)
-  {
-    if (vertexAttribArrays()->at(i)->attribIndex() == name)
-    {
-      vai = vertexAttribArrays()->at(i);
-      vertexAttribArrays()->eraseAt(i);
-      return vai;
-    }
-  }
   return NULL;
 }
 //-----------------------------------------------------------------------------
