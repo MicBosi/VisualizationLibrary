@@ -1644,10 +1644,10 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
       // ----- vertex attrib -----
 
       // (1) enable pass
-      for(int i=0; i<vas->vertexAttribInfoCount(); ++i)
+      for(int i=0; i<vas->vertexAttribArrays()->size(); ++i)
       {
-        const VertexAttribInfo* info = vas->getVertexAttribInfoAt(i);
-        int idx = info->attribIndex();
+        const VertexAttribInfo* info = vas->vertexAttribArrays()->at(i);
+        int idx = info->attribLocation();
 
         mVertexAttrib[idx].mState += 1; // 0 -> 1; 1 -> 2;
         VL_CHECK( mVertexAttrib[idx].mState == 1 || mVertexAttrib[idx].mState == 2 );
@@ -1694,12 +1694,12 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
       // (2) disable pass
       if (mCurVAS)
       {
-        for(int i=0; i<mCurVAS->vertexAttribInfoCount(); ++i)
+        for(int i=0; i<mCurVAS->vertexAttribArrays()->size(); ++i)
         {
           // vertex array
-          const VertexAttribInfo* info = mCurVAS->getVertexAttribInfoAt(i);
+          const VertexAttribInfo* info = mCurVAS->vertexAttribArrays()->at(i);
           VL_CHECK(info)
-            int idx = info->attribIndex();
+            int idx = info->attribLocation();
           // disable if not used by new VAS
           if ( mVertexAttrib[idx].mState == 1 )
           {

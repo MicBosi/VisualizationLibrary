@@ -159,7 +159,7 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
   mMapOldToNew.clear();
 
   std::vector<unsigned int> verti;
-  size_t vert_count = geom->vertexArray() ? geom->vertexArray()->size() : geom->vertexAttrib(VA_Position) ? geom->vertexAttrib(VA_Position)->size() : 0;
+  size_t vert_count = geom->vertexArray() ? geom->vertexArray()->size() : geom->vertexAttribArray(VA_Position) ? geom->vertexAttribArray(VA_Position)->data()->size() : 0;
   VL_CHECK(vert_count);
   verti.resize(vert_count);
   mMapOldToNew.resize(verti.size());
