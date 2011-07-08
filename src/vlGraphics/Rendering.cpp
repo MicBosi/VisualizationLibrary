@@ -126,6 +126,9 @@ void Rendering::render()
       // post rendering callback
       mRendering->dispatchOnRenderingFinished();
 
+      // release rendered Actors
+      mRendering->actorQueue()->clear();
+
       // check user-generated errors.
       VL_CHECK_OGL()
 
@@ -228,7 +231,6 @@ void Rendering::render()
   // render queue filling
 
   renderQueue()->clear();
-
   fillRenderQueue( actorQueue() );
 
   // sort the rendering queue according to this renderer sorting algorithm
@@ -249,12 +251,14 @@ void Rendering::render()
         VL_TRAP();
         continue;
       }
+      
       if (renderers()[i]->renderTarget()->openglContext() == NULL)
       {
         vl::Log::error( Say("Rendering::render(): invalid RenderTarget for Renderer #%n, OpenGLContext is NULL!\n") << i );
         VL_TRAP();
         continue;
       }
+
       // loop the rendering
       render_queue = renderers()[i]->render( render_queue, camera(), frameClock() );
     }
