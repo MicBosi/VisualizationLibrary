@@ -115,33 +115,17 @@ namespace vl
     //! Returns the list of DrawCall objects bound to a Geometry
     const Collection<DrawCall>* drawCalls() const { return &mDrawCalls; }
 
-    //! Geometry normal used when no normal array is defined.
-    void setNormal(const fvec3& normal) 
-    { 
-      mNormal = normal;
-      #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-        Log::warning("Geometry::setNormal(): constant vertex attributes not supported under OpenGL ES! Falling back to vertex arrays.\n");
-        VL_CHECK(vertexArray() && vertexArray()->size())
-        ref<ArrayFloat3> norm_array = new ArrayFloat3;
-        norm_array->resize(vertexArray()->size());
-        for(size_t i=0; i<norm_array->size(); ++i)
-          norm_array->at(i) = normal;
-        setNormalArray(norm_array.get());
-      #endif
-    }
+    //! Constant normal used when no normal array is defined.
+    void setNormal(const fvec3& normal) { mNormal = normal; }
     
-    //! Geometry normal used when no normal array is defined.
+    //! Constant normal used when no normal array is defined.
     const fvec3& normal() { return mNormal; }
 
-    //! Geometry color used when no color array is defined.
-    void setColor(const fvec4& color) 
-    { 
-      mColor = color; 
-      #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-        Log::warning("Geometry::setColor(): constant vertex attributes not supported under OpenGL ES! Falling back to vertex arrays.\n");
-        setColorArray(color);
-      #endif
-    }
+    //! Constant color used when no color array is defined.
+    void setColor(const fvec4& color) { mColor = color; }
+
+    //! Constant color used when no color array is defined.
+    const fvec4& color() { return mColor; }
 
     //! Fills the color array with the given color
     void setColorArray(const fvec4& color)
@@ -159,23 +143,8 @@ namespace vl
       #endif
     }
 
-    //! Geometry color used when no color array is defined.
-    const fvec4& color() { return mColor; }
-
-    //! Geometry color used when no color array is defined.
-    void setSecondaryColor(const fvec4& color) 
-    { 
-      mSecondaryColor = color; 
-      #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-        Log::warning("Geometry::setSecondaryColor(): constant vertex attributes not supported under OpenGL ES! Falling back to vertex arrays.\n");
-        VL_CHECK(vertexArray() && vertexArray()->size())
-        ref<ArrayFloat4> sec_color_array = new ArrayFloat4;
-        sec_color_array->resize(vertexArray()->size());
-        for(size_t i=0; i<sec_color_array->size(); ++i)
-          sec_color_array->at(i) = color;
-        setSecondaryColorArray(sec_color_array.get());
-      #endif
-    }
+    //! Geometry color used when no color array is defined. Requires OpenGL 1.4. Not supported under OpenGL ES.
+    void setSecondaryColor(const fvec4& color) { mSecondaryColor = color; }
 
     //! Geometry color used when no color array is defined.
     const fvec4& secondaryColor() { return mSecondaryColor; }
