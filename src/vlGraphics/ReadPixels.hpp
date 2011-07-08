@@ -56,9 +56,12 @@ namespace vl
     // clears OpenGL errors
     glGetError();
 
+#if defined(VL_OPENGL)
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+#endif
 
     glPixelStorei( GL_PACK_ALIGNMENT,   1);
+#if defined(VL_OPENGL)
     glPixelStorei( GL_PACK_ROW_LENGTH,  w);
     glPixelStorei( GL_PACK_SKIP_PIXELS, 0);
     glPixelStorei( GL_PACK_SKIP_ROWS,   0);
@@ -73,6 +76,8 @@ namespace vl
     int prev = 0;
     glGetIntegerv( GL_READ_BUFFER, &prev ); VL_CHECK_OGL()
     glReadBuffer( read_buffer );
+#endif
+
     #ifndef NDEBUG
       if (glGetError() != GL_NO_ERROR)
       {
@@ -117,9 +122,12 @@ namespace vl
       glReadPixels( x, y, w, h, image->format(), image->type(), image->pixels() );
     }
 
+#if defined(VL_OPENGL)
     // restore read buffer
     glReadBuffer( prev );
+
     glPopClientAttrib();
+#endif
 
     VL_CHECK_OGL()
   }
