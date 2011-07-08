@@ -203,16 +203,10 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
   glTexCoordPointer(2, GL_FLOAT, 0, texc);
 
   // Constant color
-  // glColor4fv(color.ptr());
-  fvec4 color_array[] = { color, color, color, color };
-  glEnableClientState( GL_COLOR_ARRAY );
-  glColorPointer(4, GL_FLOAT, 0, color_array);
+  glColor4f( color.r(), color.g(), color.b(), color.a() );
 
   // Constant normal
-  // glNormal3fv( fvec3(0,0,1).ptr() );
-  fvec3 normal_array[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
-  glEnableClientState( GL_NORMAL_ARRAY );
-  glNormalPointer(GL_FLOAT, 0, normal_array);
+  glNormal3f( 0, 0, 1 );
 
   fvec3 vect[4];
   glEnableClientState( GL_VERTEX_ARRAY );
@@ -556,8 +550,6 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
   }
 
   glDisableClientState( GL_VERTEX_ARRAY ); VL_CHECK_OGL();
-  glDisableClientState( GL_COLOR_ARRAY ); VL_CHECK_OGL();
-  glDisableClientState( GL_NORMAL_ARRAY ); VL_CHECK_OGL();
   glDisableClientState( GL_TEXTURE_COORD_ARRAY ); VL_CHECK_OGL();
 
   VL_CHECK_OGL();
@@ -733,16 +725,10 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
   }
 
   // Constant color
-  // glColor4fv(mBackgroundColor.ptr());
-  fvec4 color_array[] = { mBackgroundColor, mBackgroundColor, mBackgroundColor, mBackgroundColor };
-  glEnableClientState( GL_COLOR_ARRAY );
-  glColorPointer(4, GL_FLOAT, 0, color_array);
+  glColor4f(mBackgroundColor.r(),mBackgroundColor.g(), mBackgroundColor.b(), mBackgroundColor.a());
 
   // Constant normal
-  // glNormal3fv( fvec3(0,0,1).ptr() );
-  fvec3 normal_array[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
-  glEnableClientState( GL_NORMAL_ARRAY );
-  glNormalPointer(GL_FLOAT, 0, normal_array);
+  glNormal3f(0, 0, 1);
 
   vec3 a,b,c,d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
@@ -753,8 +739,6 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
   glDisableClientState( GL_VERTEX_ARRAY );
-  glDisableClientState( GL_COLOR_ARRAY );
-  glDisableClientState( GL_NORMAL_ARRAY );
 
   if (mode() == Text2D)
   {
@@ -794,16 +778,10 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
   }
 
   // Constant color
-  // glColor4fv(mBorderColor.ptr());
-  fvec4 color_array[] = { mBorderColor, mBorderColor, mBorderColor, mBorderColor };
-  glEnableClientState( GL_COLOR_ARRAY );
-  glColorPointer(4, GL_FLOAT, 0, color_array);
+  glColor4f(mBorderColor.r(), mBorderColor.g(), mBorderColor.b(), mBorderColor.a());
 
   // Constant normal
-  // glNormal3fv( fvec3(0,0,1).ptr() );
-  fvec3 normal_array[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
-  glEnableClientState( GL_NORMAL_ARRAY );
-  glNormalPointer(GL_FLOAT, 0, normal_array);
+  glNormal3f( 0, 0, 1 );
 
   vec3 a,b,c,d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
@@ -814,8 +792,6 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
   glDrawArrays(GL_LINE_LOOP, 0, 4);
 
   glDisableClientState( GL_VERTEX_ARRAY );
-  glDisableClientState( GL_COLOR_ARRAY );
-  glDisableClientState( GL_NORMAL_ARRAY );
 
   if (mode() == Text2D)
   {

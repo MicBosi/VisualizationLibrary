@@ -487,15 +487,15 @@ void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*,
   // set default normal, color and secondary colors
   // note: Has_GL_Version_1_1 is false for GLES 1.x and GLES 2.x
 
-  if (Has_GL_Version_1_1) 
+  if (Has_Fixed_Function_Pipeline) 
   {
     if (!normalArray())
-      glNormal3fv(mNormal.ptr());
+      glNormal3f(mNormal.x(), mNormal.y(), mNormal.z()); // also GLES 1.1
 
     if (!colorArray())
-      glColor4fv(mColor.ptr());
+      glColor4f(mColor.r(), mColor.g(), mColor.b(), mColor.a()); // also GLES 1.1
 
-    if (!secondaryColorArray() && Has_GL_Version_1_4)
+    if (!secondaryColorArray() && Has_GL_Version_1_4) // not GLES 1.1
       glSecondaryColor3fv(mSecondaryColor.ptr());
   }
 
