@@ -100,20 +100,22 @@ void Camera::computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphe
   // near/far clipping planes optimization
   if (!scene_bounding_sphere.isNull())
   {
-    // compute the sphere in camera coordinates
+    // transform the sphere in camera coordinates
     Sphere camera_sphere;
     scene_bounding_sphere.transformed(camera_sphere, viewMatrix());
-    mNearPlane = -(camera_sphere.center().z() + camera_sphere.radius() * (Real)1.01);
-    mFarPlane  = -(camera_sphere.center().z() - camera_sphere.radius() * (Real)1.01);
-    #if 0
-      far  = max(far,  (Real)1.0e-5);
-      near = max(near, (Real)1.0e-6);
-    #else
-      // prevents z-thrashing when very large objects are zoomed a lot
-      Real ratio = camera_sphere.radius() * (Real)2.01 / (Real)2000.0;
-      mNearPlane = max(mNearPlane, ratio*1);
-      mFarPlane  = max(mFarPlane,  ratio*2);
-    #endif
+
+    // visible objects are in the negative z, but we need a positive distance for the near and far clipping planes
+    mNearPlane = -(camera_sphere.center().z() + camera_sphere.radius());
+    mFarPlane  = -(camera_sphere.center().z() - camera_sphere.radius());
+
+    // clamp to positive epsilon: can't let near and far clipping planes go behind the camera!
+    Real epsilon = camera_sphere.radius() / 1000.0f;
+    mFarPlane  = max(mFarPlane,  epsilon * 2); // alway more than the near
+    mNearPlane = max(mNearPlane, epsilon * 1);
+
+    // mic fixme:
+    // support also orthographic projections!
+
     // supports only perspective projection matrices
     setProjectionAsPerspective();
   }
