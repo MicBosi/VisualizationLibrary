@@ -186,9 +186,8 @@ public:
     sceneManager()->tree()->addActor( geom.get(), effect.get() );
 
     // camera setup
-    rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
-    rendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4() );
-    rendering()->as<Rendering>()->camera()->setInverseViewMatrix( mat4() );
+    rendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4::getIdentity(), vl::PMT_UserProjection );
+    rendering()->as<Rendering>()->camera()->setLocalMatrix( mat4::getIdentity() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
