@@ -50,6 +50,7 @@ Camera::Camera()
   mFOV = 60.0;
   mNearPlane = (Real)0.05;
   mFarPlane  = (Real)10000.0;
+  mLeft = mRight = mTop = mBottom = -1;
   mViewport = new Viewport;
 
   mProjectionMatrix  = mat4::getPerspective(fov(), 640.0f/480.0f, nearPlane(), farPlane());
@@ -113,11 +114,20 @@ void Camera::computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphe
     mFarPlane  = max(mFarPlane,  epsilon * 2); // alway more than the near
     mNearPlane = max(mNearPlane, epsilon * 1);
 
-    // mic fixme:
-    // support also orthographic projections!
+    switch(projectionMatrixType())
+    {
+    case PMT_OrthographicProjection: setProjectionAsOrtho(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane);
+      break;
+    case PMT_PerspectiveProjection:  setProjectionAsPerspective(); 
+      break;
 
-    // supports only perspective projection matrices
-    setProjectionAsPerspective();
+    // we cannot do this: if we change the near plane we have to recompute also left, right, bottom and top!
+    // case PMT_PerspectiveProjectionFrustum: setProjectionAsFrustum(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane); 
+    //   break;
+
+    default:
+      Log::bug("Camera::computeNearFarOptimizedProjMatrix() called on unsupported projection type.\n");
+    }
   }
 }
 //-----------------------------------------------------------------------------
@@ -130,8 +140,8 @@ void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real 
   vec3 center = aabb.center();
 
   Sphere sphere(aabb);
-  const vec3& C = inverseViewMatrix().getT();
-  const vec3& V = -inverseViewMatrix().getZ();
+  const vec3& C = localMatrix().getT();
+  const vec3& V = -localMatrix().getZ();
   const Real  R = sphere.radius();
 
   // extract the frustum planes based on the current view and projection matrices
@@ -151,7 +161,7 @@ void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real 
   }
   Real dist = max_t;
   mat4 m = mat4::getLookAt(center+dir*dist*bias,center,up);
-  setInverseViewMatrix(m);
+  setLocalMatrix(m);
 }
 //-----------------------------------------------------------------------------
 void Camera::computeFrustumPlanes()
@@ -165,10 +175,11 @@ void Camera::computeFrustumPlanes()
 //-----------------------------------------------------------------------------
 void Camera::setProjectionAsFrustum(Real left, Real right, Real bottom, Real top, Real near, Real far)
 {
-  setFOV(-1);
+  // see http://www.opengl.org/resources/faq/technical/transformations.htm
+  setFOV( 2.0f*atan((top-bottom)*0.5f/near) );
   setNearPlane(near);
   setFarPlane(far);
-  mProjectionMatrix = mat4::getFrustum(left, right, bottom, top, near, far);
+  setProjectionMatrix(mat4::getFrustum(left, right, bottom, top, near, far), PMT_PerspectiveProjectionFrustum);
 }
 //-----------------------------------------------------------------------------
 void Camera::setProjectionAsPerspective(Real fov, Real near, Real far)
@@ -176,44 +187,57 @@ void Camera::setProjectionAsPerspective(Real fov, Real near, Real far)
   setFOV(fov);
   setNearPlane(near);
   setFarPlane(far);
-  mProjectionMatrix = mat4::getPerspective(fov, aspectRatio(), near, far);
+  setProjectionMatrix(mat4::getPerspective(fov, aspectRatio(), near, far), PMT_PerspectiveProjection);
 }
 //-----------------------------------------------------------------------------
 void Camera::setProjectionAsPerspective()
 {
-  mProjectionMatrix = mat4::getPerspective(fov(), aspectRatio(), nearPlane(), farPlane());
+  setProjectionMatrix(mat4::getPerspective(fov(), aspectRatio(), nearPlane(), farPlane()), PMT_PerspectiveProjection);
 }
 //-----------------------------------------------------------------------------
-void Camera::setProjectionAsOrtho(Real offset)
+void Camera::setProjectionAsOrtho()
 {
-  setProjectionMatrix( 
-    mat4::getOrtho(
-      offset, (Real)mViewport->width()  + offset,
-      offset, (Real)mViewport->height() + offset,
-      nearPlane(), farPlane())
-  );
+  mLeft   = 0;
+  mRight  = (Real)mViewport->width();
+  mBottom = 0;
+  mTop    = (Real)mViewport->height();
+  mFOV = -1;
+  setProjectionMatrix( mat4::getOrtho( mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane), PMT_OrthographicProjection );
+}
+//-----------------------------------------------------------------------------
+void Camera::setProjectionAsOrtho(Real left, Real right, Real bottom, Real top, Real znear, Real zfar)
+{
+  mLeft   = left;
+  mRight  = right;
+  mBottom = bottom;
+  mTop    = top;
+  mFOV = -1;
+  mNearPlane = znear;
+  mFarPlane  = zfar;
+  setProjectionMatrix( mat4::getOrtho( mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane), PMT_OrthographicProjection );
 }
 //-----------------------------------------------------------------------------
 void Camera::setProjectionAsOrtho2D(Real offset)
 {
-  setProjectionMatrix( 
-    mat4::getOrtho(
-      offset, (Real)mViewport->width()  + offset,
-      offset, (Real)mViewport->height() + offset,
-      -1, +1)
-  );
+  mLeft   = offset;
+  mRight  = viewport()->width() + offset;
+  mBottom = offset;
+  mTop    = viewport()->height() + offset;
+  mFOV = -1;
+  mNearPlane = -1;
+  mFarPlane  = +1;
+  setProjectionMatrix( mat4::getOrtho( mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane), PMT_OrthographicProjection );
 }
 //-----------------------------------------------------------------------------
 void Camera::setViewMatrixAsLookAt( const vec3& eye, const vec3& center, const vec3& up)
 {
-  mat4 m = mat4::getLookAt(eye, center, up);
-  // this sets both the frame matrix and the view matrix
-  setInverseViewMatrix(m);
+  // note: this sets both the local matrix and the view matrix
+  setLocalMatrix( mat4::getLookAt(eye, center, up) );
 }
 //-----------------------------------------------------------------------------
 void Camera::getViewMatrixAsLookAt( vec3& eye, vec3& look, vec3& up, vec3& right) const
 {
-  mInverseViewMatrix.getAsLookAt(eye,look,up,right);
+  mLocalMatrix.getAsLookAt(eye, look, up, right);
 }
 //-----------------------------------------------------------------------------
 bool Camera::project(const vec4& in, vec4& out) const
@@ -312,7 +336,7 @@ Ray Camera::computeRay(int winx, int winy)
   {
     vl::Ray ray;
     ray.setOrigin(out.xyz());
-    ray.setDirection( (out.xyz() - inverseViewMatrix().getT()).normalize() );
+    ray.setDirection( (out.xyz() - localMatrix().getT()).normalize() );
     return ray;
   }
 }
