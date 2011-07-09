@@ -138,7 +138,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera*
           light_position[i] = ( fmat4 )light->followedTransform()->worldMatrix() * light->position().xyz();
         // light position following camera
         else
-          light_position[i] = ( ( fmat4 )camera->inverseViewMatrix() * light->position() ).xyz();
+          light_position[i] = ( ( fmat4 )camera->localMatrix() * light->position() ).xyz();
 
         // light position in object space
         if ( actor->transform() )
@@ -155,7 +155,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera*
     // pass the eye position in object space
 
     // eye postion
-    fvec3 eye = ( fvec3 )camera->inverseViewMatrix().getT();
+    fvec3 eye = ( fvec3 )camera->localMatrix().getT();
     // world to object space
     if ( actor->transform() )
       eye = inv_mat * eye;
@@ -167,7 +167,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera*
     // pass the eye look direction in object space
 
     // eye postion
-    fvec3 look = -( fvec3 )camera->inverseViewMatrix().getZ();
+    fvec3 look = -( fvec3 )camera->localMatrix().getZ();
     // world to object space
     if ( actor->transform() )
     {

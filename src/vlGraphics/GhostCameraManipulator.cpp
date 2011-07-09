@@ -86,7 +86,7 @@ void GhostCameraManipulator::updateEvent()
 
   mat4 m = mat4::getTranslation(mPosition);
   m *= mat4::getRotation( mYDegrees, vec3(0,1,0), mXDegrees, vec3(1,0,0) );
-  camera()->setInverseViewMatrix(m);
+  camera()->setLocalMatrix(m);
 
   vec3 direction;
   bool okmodifier;
@@ -117,9 +117,9 @@ void GhostCameraManipulator::updateEvent()
     direction.y() = -1;
 
   vec3 dir;
-  dir += camera()->inverseViewMatrix().getX() * direction.x();
-  dir += camera()->inverseViewMatrix().getY() * direction.y();
-  dir -= camera()->inverseViewMatrix().getZ() * direction.z();
+  dir += camera()->localMatrix().getX() * direction.x();
+  dir += camera()->localMatrix().getY() * direction.y();
+  dir -= camera()->localMatrix().getZ() * direction.z();
   dir.normalize();
   mPosition += dir * (Real)(dt * mMovementSpeed);
 }
@@ -136,9 +136,9 @@ void GhostCameraManipulator::enableEvent(bool enabled)
     if ( camera() == NULL )
       return;
 
-    setPosition( camera()->inverseViewMatrix().getT() );
+    setPosition( camera()->localMatrix().getT() );
     Real x, y;
-    camera()->inverseViewMatrix().getYXRotationAngles( y, x );
+    camera()->localMatrix().getYXRotationAngles( y, x );
     setXDegrees(x);
     setYDegrees(y);
 

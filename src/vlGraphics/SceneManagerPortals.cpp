@@ -146,7 +146,7 @@ void SceneManagerPortals::extractVisibleActors(ActorCollection& list, const Came
 
       mFrustumStack.push_back(camera->frustum());
       start->executeCallbacks(camera,this,NULL);
-      visitSector(NULL, start, camera->inverseViewMatrix().getT(), camera);
+      visitSector(NULL, start, camera->localMatrix().getT(), camera);
 
       // insert portal actors
       if (showPortals())
@@ -241,7 +241,7 @@ void SceneManagerPortals::computePortalNormals()
 //-----------------------------------------------------------------------------
 Sector* SceneManagerPortals::computeStartingSector(const Camera* camera)
 {
-  vec3 eye = camera->inverseViewMatrix().getT();
+  vec3 eye = camera->localMatrix().getT();
   for(unsigned i=0; i<mSectors.size(); ++i)
   {
     for(unsigned j=0; j<mSectors[i]->volumes().size(); ++j)
