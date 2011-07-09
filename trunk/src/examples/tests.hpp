@@ -115,7 +115,7 @@ public:
     /* define the camera position and orientation */
     vl::vec3 up = vl::vec3(0,1,0);
     vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up);
-    applet->rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( view_mat );
+    applet->rendering()->as<vl::Rendering>()->camera()->setLocalMatrix( view_mat );
   }
 
   class TestEntry
