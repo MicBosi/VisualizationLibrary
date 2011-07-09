@@ -96,7 +96,7 @@ public:
     vl::vec3 eye( 40, 0, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 5.0f, 0, 1, 0 ) * eye;
     vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
+    rendering()->as<vl::Rendering>()->camera()->setLocalMatrix(m);
   }
 };
 
