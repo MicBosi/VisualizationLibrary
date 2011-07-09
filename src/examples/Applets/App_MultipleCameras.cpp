@@ -153,7 +153,7 @@ public:
       case 2: m = mat4::getLookAt( vec3(3.5,1,0), vec3(0,0,0), vec3(0,1,0) ); break;
       case 3: m = mat4::getLookAt( vec3(0,3.5,0), vec3(0,0,0), vec3(0,0,-1) ); break;
       }
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->setInverseViewMatrix(m);
+      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->setLocalMatrix(m);
     }
   }
 
