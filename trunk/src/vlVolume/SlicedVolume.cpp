@@ -120,7 +120,7 @@ void SlicedVolume::updateUniforms(Actor*actor, Real, const Camera* camera, Rende
           light_position[i] = (fmat4)light->followedTransform()->worldMatrix() * light->position().xyz();
         // light position following camera
         else
-          light_position[i] = ((fmat4)camera->inverseViewMatrix() * light->position()).xyz();
+          light_position[i] = ((fmat4)camera->localMatrix() * light->position()).xyz();
 
         // light position in object space
         if (actor->transform())
@@ -137,7 +137,7 @@ void SlicedVolume::updateUniforms(Actor*actor, Real, const Camera* camera, Rende
     // pass the eye position in object space
 
     // eye postion
-    fvec3 eye = (fvec3)camera->inverseViewMatrix().getT();
+    fvec3 eye = (fvec3)camera->localMatrix().getT();
     // world to object space
     if (actor->transform())
       eye = (fmat4)actor->transform()->worldMatrix().getInverse() * eye;

@@ -79,9 +79,9 @@ void TrackballManipulator::mouseDownEvent(EMouseButton btn, int x, int y)
     mPivot = mStartMatrix.getT();
   }
   else
-    mStartMatrix = camera()->inverseViewMatrix();
+    mStartMatrix = camera()->localMatrix();
 
-  mStartCameraPos = camera()->inverseViewMatrix().getT();
+  mStartCameraPos = camera()->localMatrix().getT();
   mStartPivot = mPivot;
 }
 //-----------------------------------------------------------------------------
@@ -129,8 +129,8 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
     }
     else
     {
-      camera()->setInverseViewMatrix( mat4::getTranslation(mPivot) * trackballRotation(x,y) * mat4::getTranslation(-mPivot) * mStartMatrix );
-      mStartMatrix = camera()->inverseViewMatrix();
+      camera()->setLocalMatrix( mat4::getTranslation(mPivot) * trackballRotation(x,y) * mat4::getTranslation(-mPivot) * mStartMatrix );
+      mStartMatrix = camera()->localMatrix();
     }
 
     mMouseStart.x() = x;
@@ -142,10 +142,10 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
     float t = (y-mMouseStart.y()) / 200.0f;
     t *= zoomSpeed();
     Real distance = (mStartCameraPos - mPivot).length();
-    vec3 camera_pos = mStartCameraPos - camera()->inverseViewMatrix().getZ()*t*distance;
-    mat4 m = camera()->inverseViewMatrix();
+    vec3 camera_pos = mStartCameraPos - camera()->localMatrix().getZ()*t*distance;
+    mat4 m = camera()->localMatrix();
     m.setT(camera_pos);
-    camera()->setInverseViewMatrix(m);
+    camera()->setLocalMatrix(m);
   }
   else
   if (mode() == TranslationMode)
@@ -155,11 +155,11 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
     tx *= translationSpeed();
     ty *= translationSpeed();
     Real distance = (mStartCameraPos - mPivot).length();
-    vec3 up    = camera()->inverseViewMatrix().getY();
-    vec3 right = camera()->inverseViewMatrix().getX();
-    mat4 m = camera()->inverseViewMatrix();
+    vec3 up    = camera()->localMatrix().getY();
+    vec3 right = camera()->localMatrix().getX();
+    mat4 m = camera()->localMatrix();
     m.setT(mStartCameraPos + up*distance*ty + right*distance*tx);
-    camera()->setInverseViewMatrix(m);
+    camera()->setLocalMatrix(m);
     mPivot = mStartPivot + up*distance*ty + right*distance*tx;
   }
 
@@ -183,7 +183,7 @@ mat4 TrackballManipulator::trackballRotation(int x, int y)
   dot_a_b = clamp(dot_a_b,(Real)-1.0,(Real)+1.0);
   Real alpha = acos(dot_a_b) * (mTransform ? 1 : -1);
   alpha = alpha * rotationSpeed();
-  vec3 nc =  camera()->inverseViewMatrix().get3x3() * n;
+  vec3 nc =  camera()->localMatrix().get3x3() * n;
   if (mTransform && mTransform->parent())
     nc = mTransform->parent()->getComputedWorldMatrix().getInverse() * nc;
   nc.normalize();
