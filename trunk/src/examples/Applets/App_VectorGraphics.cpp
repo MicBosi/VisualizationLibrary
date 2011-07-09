@@ -50,7 +50,7 @@ public:
     // camera setup
 
     rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D(-0.5f);
     // reset view matrix to I
     rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
 
@@ -394,7 +394,7 @@ public:
   {
     rendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
     rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
-    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D(-0.5f);
   }
 
 protected:
