@@ -75,8 +75,8 @@ public:
 
     // camera setup
     rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
-    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix( vl::mat4() );
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D(-0.5f);
+    rendering()->as<vl::Rendering>()->camera()->setLocalMatrix( vl::mat4() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
@@ -190,7 +190,7 @@ public:
     vl::Camera* camera = rendering()->as<vl::Rendering>()->camera();
     camera->viewport()->setWidth(w);
     camera->viewport()->setHeight(h);
-    camera->setProjectionAsOrtho2D();
+    camera->setProjectionAsOrtho2D(-0.5f);
 
     if (mImage)
     {

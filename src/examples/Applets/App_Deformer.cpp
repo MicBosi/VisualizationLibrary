@@ -58,9 +58,8 @@ public:
     openglContext()->setContinuousUpdate(false);
 
     // camera setup
-    rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
-    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
-    rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D(-0.5f);
+    rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4::getIdentity() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
@@ -383,7 +382,7 @@ public:
   {
     rendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
     rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
-    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D(-0.5f);
 
     if (mImage)
     {
