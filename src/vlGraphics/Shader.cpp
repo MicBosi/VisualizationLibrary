@@ -1013,7 +1013,7 @@ void TextureMatrix::apply(const Camera* camera, OpenGLContext*) const
   VL_CHECK_OGL();
   glMatrixMode(GL_TEXTURE);
   if (useCameraRotationInverse())
-    VL_glLoadMatrix( (matrix()*camera->inverseViewMatrix().as3x3()).ptr() );
+    VL_glLoadMatrix( (matrix()*camera->localMatrix().as3x3()).ptr() );
   else
     VL_glLoadMatrix( matrix().ptr() );
 }
