@@ -73,22 +73,22 @@ void Billboard::computeWorldMatrix(Camera* camera)
     if ( type() == BT_SphericalBillboard )
     {
       // eye positional
-      world_mat.setZ( (camera->inverseViewMatrix().getT() - pos).normalize() );
-      world_mat.setY( camera->inverseViewMatrix().getY() );
+      world_mat.setZ( (camera->localMatrix().getT() - pos).normalize() );
+      world_mat.setY( camera->localMatrix().getY() );
       world_mat.setX( cross(world_mat.getY(), world_mat.getZ()) );
       world_mat = vl::mat4::getTranslation(pos) * world_mat;
 
       // eye directional
-      //world_mat.setZ( camera->inverseViewMatrix().getZ() );
-      //world_mat.setY( camera->inverseViewMatrix().getY() );
-      //world_mat.setX( camera->inverseViewMatrix().getX() );
+      //world_mat.setZ( camera->localMatrix().getZ() );
+      //world_mat.setY( camera->localMatrix().getY() );
+      //world_mat.setX( camera->localMatrix().getX() );
       //world_mat = vl::mat4::getTranslation(pos) * world_mat;
     }
     else
     if ( type() == BT_AxisAlignedBillboard )
     {
       vec3 normal = mNormal;
-      vec3 bill_to_eye = (camera->inverseViewMatrix().getT() - pos).normalize();
+      vec3 bill_to_eye = (camera->localMatrix().getT() - pos).normalize();
       // flatten on the plane defined by the axis()
       normal      = normal      - axis() * dot(normal,      axis());
       bill_to_eye = bill_to_eye - axis() * dot(bill_to_eye, axis());
