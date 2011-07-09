@@ -100,9 +100,9 @@ public:
   // simple method to keep the camera on the floor
   void updateScene()
   {
-    vl::mat4 im = trackball()->camera()->inverseViewMatrix();
+    vl::mat4 im = trackball()->camera()->localMatrix();
     vl::vec3 t = im.getT(); t.y() = 1.5f; im.setT(t); 
-    trackball()->camera()->setInverseViewMatrix(im);
+    trackball()->camera()->setLocalMatrix(im);
   }
 
   // procedurally generate the dungeon with sectors, geometry and portals

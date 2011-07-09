@@ -67,7 +67,7 @@ public:
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setInverseViewMatrix(m);
+    mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
@@ -89,7 +89,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setInverseViewMatrix(m);
+    mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
@@ -127,7 +127,7 @@ public:
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setInverseViewMatrix(m);
+    mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
@@ -186,7 +186,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setInverseViewMatrix(m);
+    mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
@@ -219,7 +219,7 @@ public:
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setInverseViewMatrix(m);
+    mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
@@ -245,7 +245,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setInverseViewMatrix(m);
+    mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
@@ -287,7 +287,7 @@ public:
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setInverseViewMatrix(m);
+    mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
@@ -330,7 +330,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setInverseViewMatrix(m);
+    mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
@@ -371,7 +371,7 @@ public:
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setInverseViewMatrix(m);
+    mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
@@ -396,7 +396,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setInverseViewMatrix(m);
+    mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
@@ -436,7 +436,7 @@ public:
     mRTT_Rendering->camera()->viewport()->set(0,0,512,512);
     mRTT_Rendering->camera()->setProjectionAsPerspective();
     vl::mat4 m = vl::mat4::getLookAt( vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    mRTT_Rendering->camera()->setInverseViewMatrix( m );
+    mRTT_Rendering->camera()->setLocalMatrix( m );
 
     /* install copy to texture callback */
     vl::ref<vl::Texture> texture = new vl::Texture( 512, 512, vl::TF_RGBA, false );
@@ -450,7 +450,7 @@ public:
     mMainRendering->camera()->viewport()->set(0,0,512,512);
     mMainRendering->camera()->setProjectionAsPerspective();
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setInverseViewMatrix( m );
+    mMainRendering->camera()->setLocalMatrix( m );
 
     /* populate the scene */
     addCube(texture.get(), NULL);
