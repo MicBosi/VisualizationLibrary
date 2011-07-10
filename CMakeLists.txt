@@ -55,7 +55,7 @@ elseif( VL_OPENGL_MODE STREQUAL  "OPENGL_ES2")
 	set(VL_OPENGL_ES2 1)
 	message(STATUS "Configuring for OpenGL ES 2.x")
 else()
-	message(FATAL_ERROR "Invalid VL_OPENGL_MODE!")
+	message(FATAL_ERROR "Invalid VL_OPENGL_MODE! Valid modes are: OPENGL, OPENGL_ES1, OPENGL_ES2.")
 endif()
 
 # Dynamic vs Static Linking
