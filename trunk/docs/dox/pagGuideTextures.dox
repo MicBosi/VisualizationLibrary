@@ -45,16 +45,16 @@
 	- Using a \p vl::Texture constructor. \n
 	  With this method you can create 1D, 2D and 3D textures. The actual OpenGL texture object is <b>immediately</b> created.
 	- Using one of \p vl::Texture::prepare*() methods. \n
-	  With this method you can create all supported texture type. The actual OpenGL texture is <b>not created immediately</b> but rather the first time it is used in a rendering.
+	  With this method you can create all supported texture types. The actual OpenGL texture is <b>not created immediately</b> but rather the first time it is used in a rendering.
 	- Using one of \p vl::Texture::create*() methods. \n
-	  With this method you can create all supported texture type. The actual OpenGL texture is <b>created immediately</b>. \n
+	  With this method you can create all supported texture types. The actual OpenGL texture is <b>created immediately</b>. \n
 	  This is equivalent to calling a \p vl::Texture::prepare*() method followed by \p vl::Texture::createTexture().
 
 	Notes on vl::Image:
 
 	- In order to create 1D texture arrays you need a 2D image, in which every y slice will be considered a layer of the 1D texture array
 	- In order to create 2D texture arrays you need a 3D image, in which every z slice will be considered a layer of the 2D texture array.
-	- When creating 1D images make sure you have a 1D image not a 1px high 2D image. VL can distinguish between 1D images and 1px high 2D images by the value of vl::Image::height() 
+	- When creating 1D textures make sure you have a 1D image not a 1px high 2D image. VL can distinguish between 1D images and 1px high 2D images by the value of vl::Image::height() 
 	  which is 0 in the first case and 1 in the second. \n 
 	  Be careful when loading 1D images as usually they are loaded as 1px high 2D images. Thus, if you intend to use them as 1D 
 	  textures, make sure to set the image height to 0.
@@ -62,7 +62,7 @@
 	Texture parameters:
 
 	All the parameters that are part of the texture object, such as texture filtering modes, anisotropic filtering, clamping modes etc. can be accessed via \p vl::Texture::getTexParameter().
-	Below you will find how to use it.
+	Below you will find a few example on how to use it.
 	
 	\par Creating the texturing test
 	
