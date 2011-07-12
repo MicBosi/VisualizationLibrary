@@ -62,7 +62,7 @@
 	Texture parameters:
 
 	All the parameters that are part of the texture object, such as texture filtering modes, anisotropic filtering, clamping modes etc. can be accessed via \p vl::Texture::getTexParameter().
-	Below you will find a few example on how to use it.
+	See the code below for a few examples.
 	
 	\par Creating the texturing test
 	
