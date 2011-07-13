@@ -38,12 +38,6 @@ using namespace vl;
 //------------------------------------------------------------------------------
 // Object
 //------------------------------------------------------------------------------
-bool Object::isClassName(const char* name)
-{
-  VL_CHECK(name);
-  return strcmp(name, className()) == 0;
-}
-//------------------------------------------------------------------------------
 #if VL_DEBUG_LIVING_OBJECTS
   std::set< Object* > *Object::mDebug_LivingObjects = NULL;
 #endif

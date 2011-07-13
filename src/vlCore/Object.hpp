@@ -55,11 +55,8 @@ namespace vl
   class VLCORE_EXPORT Object
   {
     INSTRUMENT_BASE_CLASS(vl::Object)
+
   public:
-
-    // mic fixme: remove these two, implement TypeInfo mechanics.
-    bool isClassName(const char* name);
-
     //! Constructor.
     Object()
     {
