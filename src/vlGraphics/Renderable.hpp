@@ -123,7 +123,7 @@ namespace vl
     bool boundsDirty() const { return mBoundsDirty; }
     
     //! Sets the bounding box of a Renderable.
-    void setBoundingBox( const AABB& aabb ) 
+    void setBoundingBox( const AABB& aabb )
     { 
       if (mAABB != aabb) 
       { 

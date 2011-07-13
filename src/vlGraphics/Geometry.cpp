@@ -60,8 +60,19 @@ void Geometry::computeBounds_Implementation()
   if (!coords && vertexAttribArray(0))
     coords = vertexAttribArray(0)->data();
 
-  AABB aabb;
+  if (coords == NULL)
+  {
+    Log::error("Geometry::computeBounds_Implementation() failed! No vertex buffer present!\n");
+    return;
+  }
 
+  if (coords->size() == 0)
+  {
+    Log::error("Geometry::computeBounds_Implementation() failed! No vertices present in the local buffer! Did you forget to call setBoundingBox() and setBoundingSphere()?\n");
+    return;
+  }
+
+  AABB aabb;
   for(int i=0; i<drawCalls()->size(); ++i)
   {
     for(IndexIterator iit = drawCalls()->at(i)->indexIterator(); !iit.isEnd(); iit.next())
@@ -353,7 +364,7 @@ void Geometry::computeNormals(bool verbose)
     setVertexAttribArray(VA_Normal, norm3f.get());
 
   // zero the normals
-  for(int i=0; i<(int)posarr->size(); ++i)
+  for(size_t i=0; i<norm3f->size(); ++i)
     (*norm3f)[i] = 0;
 
   // iterate all draw calls
