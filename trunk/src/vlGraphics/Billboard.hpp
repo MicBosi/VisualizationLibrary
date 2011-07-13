@@ -45,9 +45,10 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Billboard: public Transform
   {
+    INSTRUMENT_CLASS(vl::Billboard, Transform)
+
   public:
     Billboard();
-    virtual const char* className() const { return "vl::Billboard"; }
     //! The billboard position and rotation center
     void setPosition(const vec3& pos);
     //! The billboard position and rotation center

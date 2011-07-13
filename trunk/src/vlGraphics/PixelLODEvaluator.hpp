@@ -49,13 +49,13 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT PixelLODEvaluator: public LODEvaluator
   {
+    INSTRUMENT_CLASS(vl::PixelLODEvaluator, LODEvaluator)
+
   public:
     PixelLODEvaluator() 
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-
-    virtual const char* className() const { return "vl::PixelLODEvaluator"; }
 
     virtual int evaluate(Actor* actor, Camera* camera);
 

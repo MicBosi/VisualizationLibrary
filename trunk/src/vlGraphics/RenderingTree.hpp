@@ -40,9 +40,9 @@ namespace vl
   //! To enable the RenderingTree set the enableMask() to a value != 0, otherwise the RenderingTree will be disabled.
   class VLGRAPHICS_EXPORT RenderingTree: public RenderingAbstract
   {
-  public:
-    virtual const char* className() const { return "vl::RenderingTree"; }
+    INSTRUMENT_CLASS(vl::RenderingTree, RenderingAbstract)
 
+  public:
     //! Constructor.
     RenderingTree();
     

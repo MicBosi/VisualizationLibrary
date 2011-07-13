@@ -57,14 +57,14 @@ namespace vl
     * \sa Actor, Effect, Shader, Transform, Geometry */
   class VLGRAPHICS_EXPORT Renderable: public Object
   {
+    INSTRUMENT_CLASS(vl::Renderable, Object)
+
     Renderable(const Renderable& other): Object(other)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
   public:
-    virtual const char* className() const { return "vl::Renderable"; }
-
     //! Constructor
     Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true), 
                   mDisplayListEnabled(false), mDisplayListDirty(true), mVBOEnabled(true), mVBODirty(true){}

@@ -49,13 +49,14 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT LODEvaluator: public Object
   {
+    INSTRUMENT_CLASS(vl::LODEvaluator, Object)
+
   public:
     LODEvaluator()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual int evaluate(Actor* actor, Camera* camera) = 0;
-    virtual const char* className() const { return "vl::LODEvaluator"; }
   };
   //------------------------------------------------------------------------------
 }

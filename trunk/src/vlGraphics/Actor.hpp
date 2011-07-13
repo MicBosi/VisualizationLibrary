@@ -74,6 +74,8 @@ namespace vl
   - Actor::actorEventCallbacks() */
   class VLGRAPHICS_EXPORT ActorEventCallback: public Object
   {
+    INSTRUMENT_CLASS(vl::ActorEventCallback, Object)
+
   public:
     ActorEventCallback(): mEnabled(true) {}
 
@@ -128,9 +130,9 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Actor: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Actor"; }
+    INSTRUMENT_CLASS(vl::Actor, Object)
 
+  public:
     /** Constructor.
     \param renderable A Renderable defining the Actor's LOD level #0
     \param effect The Effect to be used by the Actor

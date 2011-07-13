@@ -58,9 +58,11 @@ namespace vl
   */
   class Uniform: public Object
   {
+    INSTRUMENT_CLASS(vl::Uniform, Object)
+
     friend class GLSLProgram;
+
   public:
-    virtual const char* className() const { return "vl::Uniform"; }
 
     Uniform(): mType(UT_NONE)
     {

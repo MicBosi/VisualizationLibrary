@@ -46,9 +46,9 @@ namespace vl
   */
   class VertexAttribInfo: public Object
   {
+    INSTRUMENT_CLASS(vl::VertexAttribInfo, Object)
+
   public:
-    virtual const char* className() const { return "vl::VertexAttribInfo"; }
-    
     VertexAttribInfo(unsigned int location, ArrayAbstract* data, bool normalize=true, EVertexAttribBehavior data_behav=VAB_NORMAL): mData(data), mAttribLocation(location), mDataBehavior(data_behav), mNormalize(normalize) {}
     
     VertexAttribInfo(): mAttribLocation((unsigned int)-1), mDataBehavior(VAB_NORMAL), mNormalize(false) {}

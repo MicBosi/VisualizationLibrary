@@ -36,6 +36,7 @@
 
 namespace vl
 {
+
 //-----------------------------------------------------------------------------
 // TextStream
 //-----------------------------------------------------------------------------
@@ -44,8 +45,9 @@ namespace vl
   */
   class VLCORE_EXPORT TextStream: public BufferedStream<unsigned char, 128*1024>
   {
+    INSTRUMENT_CLASS(vl::TextStream, BufferedStream)
+
   public:
-    virtual const char* className() const { return "vl::TextStream"; }
     TextStream(VirtualFile* file=NULL)
     {
       setInputFile(file);

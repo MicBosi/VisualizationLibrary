@@ -43,9 +43,9 @@ namespace vl
   /** For internal use only. See vl::TriangleIterator instead. */
   class TriangleIteratorAbstract: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::TriangleIteratorAbstract"; }
+    INSTRUMENT_CLASS(vl::TriangleIteratorAbstract, Object)
 
+  public:
     virtual bool next() = 0;
     virtual bool isEnd() const = 0;
     virtual int a() const = 0;
@@ -59,8 +59,9 @@ namespace vl
   template<class TArray>
   class TriangleIteratorIndexed: public TriangleIteratorAbstract
   {
+    INSTRUMENT_CLASS(vl::TriangleIteratorIndexed, TriangleIteratorAbstract)
+
   public:
-    virtual const char* className() const { return "vl::TriangleIteratorIndexed"; }
 
     TriangleIteratorIndexed(TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, unsigned int prim_restart_idx)
     {
@@ -315,9 +316,9 @@ namespace vl
   /** For internal use only. See vl::TriangleIterator instead. */
   class TriangleIteratorDirect: public TriangleIteratorAbstract
   {
-  public:
-    virtual const char* className() const { return "vl::TriangleIteratorDirect"; }
+    INSTRUMENT_CLASS(vl::TriangleIteratorDirect, TriangleIteratorAbstract)
 
+  public:
     TriangleIteratorDirect(EPrimitiveType prim_type)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -495,9 +496,9 @@ namespace vl
   template<class TArray>
   class TriangleIteratorMulti: public TriangleIteratorIndexed<TArray>
   {
-  public:
-    virtual const char* className() const { return "vl::TriangleIteratorMulti"; }
+    INSTRUMENT_CLASS(vl::TriangleIteratorMulti, TriangleIteratorIndexed)
 
+  public:
     TriangleIteratorMulti( const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_count_vector, TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
     :TriangleIteratorIndexed<TArray>( idx_array, prim_type, 0, prim_restart_on, prim_restart_idx)
     {

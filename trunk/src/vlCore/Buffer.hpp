@@ -45,6 +45,8 @@ namespace vl
   */
   class Buffer: public Object
   {
+    INSTRUMENT_CLASS(vl::Buffer, Object)
+
   public:
     typedef enum
     {
@@ -53,7 +55,6 @@ namespace vl
     } EAllocationMode;
 
   public:
-    virtual const char* className() const { return "vl::Buffer"; }
     Buffer()
     {
       VL_DEBUG_SET_OBJECT_NAME()

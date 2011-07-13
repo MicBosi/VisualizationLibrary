@@ -68,9 +68,9 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Clear: public Renderable
   {
-  public:
-    virtual const char* className() const { return "vl::Clear"; }
+    INSTRUMENT_CLASS(vl::Clear, Renderable)
 
+  public:
     Clear();
 
     virtual void render_Implementation(const Actor*, const Shader*, const Camera*, OpenGLContext*) const;

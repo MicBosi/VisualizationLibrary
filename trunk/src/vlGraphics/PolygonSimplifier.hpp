@@ -51,6 +51,8 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT PolygonSimplifier: public Object
   {
+    INSTRUMENT_CLASS(vl::PolygonSimplifier, Object)
+
   public:
     class Vertex;
     //-----------------------------------------------------------------------------
@@ -317,8 +319,6 @@ namespace vl
 
   public:
     PolygonSimplifier(): mRemoveDoubles(false), mVerbose(true), mQuick(true) {}
-
-    virtual const char* className() const { return "vl::PolygonSimplifier"; }
 
     void simplify(float simplification_ratio, Geometry* geom);
     void simplify(int target_vertex_count, Geometry* geom);

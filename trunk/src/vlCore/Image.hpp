@@ -53,9 +53,9 @@ namespace vl
    * is to be considered an expensive operation. */
   class VLCORE_EXPORT Image: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Image"; }
+    INSTRUMENT_CLASS(vl::Image, Object)
 
+  public:
     virtual ~Image();
 
     Image();

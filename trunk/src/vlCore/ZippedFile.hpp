@@ -48,9 +48,9 @@ namespace vl
     friend class ZippedFile;
     friend class ZippedDirectory;
 
-  public:
-    virtual const char* className() const { return "vl::ZippedFileInfo"; }
+    INSTRUMENT_CLASS(vl::ZippedFileInfo, Object)
 
+  public:
     ZippedFileInfo()
     {
       mVersionNeeded = 0;
@@ -131,12 +131,12 @@ namespace vl
   */
   class VLCORE_EXPORT ZippedFile: public VirtualFile
   {
+    INSTRUMENT_CLASS(vl::ZippedFile, VirtualFile)
 
     // Lower this if you need to limit the amount of data allocated to the stack, for example to 16K.
     static const int CHUNK_SIZE = 128*1024;
 
   public:
-    virtual const char* className() const { return "vl::ZippedFile"; }
 
     ZippedFile();
     ~ZippedFile();

@@ -41,9 +41,9 @@ namespace vl
   //! A set of key/value pairs usually used to associate generic information, tags, attributes etc. to another class.
   class VLCORE_EXPORT KeyValues: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::KeyValues"; }
+    INSTRUMENT_CLASS(vl::KeyValues, Object)
 
+  public:
     KeyValues();
     
     bool has(const String& key) const { return mKeyValues.find(key) != mKeyValues.end(); }

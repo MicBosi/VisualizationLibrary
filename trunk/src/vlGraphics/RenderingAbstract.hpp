@@ -43,9 +43,9 @@ namespace vl
   //! The RenderingAbstract class is the base of all the rendering related sub-classes.
   class VLGRAPHICS_EXPORT RenderingAbstract: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::RenderingAbstract"; }
+    INSTRUMENT_CLASS(vl::RenderingAbstract, Object)
 
+  public:
     //! Constructor.
     RenderingAbstract();
 

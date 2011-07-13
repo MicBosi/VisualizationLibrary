@@ -60,12 +60,12 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT TrackballManipulator: public UIEventListener
   {
+    INSTRUMENT_CLASS(vl::TrackballManipulator, UIEventListener)
+
   public:
     typedef enum { NoMode, RotationMode, TranslationMode, ZoomMode } ETrackballMode;
   
   public:
-    virtual const char* className() const { return "vl::TrackballManipulator"; }
-
     //! Constructor.
     TrackballManipulator(): mMode(NoMode),
       mRotationButton(LeftButton), mTranslationButton(MiddleButton), mZoomButton(RightButton), 

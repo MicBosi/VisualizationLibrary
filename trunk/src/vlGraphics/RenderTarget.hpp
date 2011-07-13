@@ -48,11 +48,11 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT RenderTarget: public Object
   {
+    INSTRUMENT_CLASS(vl::RenderTarget, Object)
+
     friend class OpenGLContext;
 
   protected:
-    virtual const char* className() const { return "vl::RenderTarget"; }
-
     /** Constructor. */
     RenderTarget(OpenGLContext* ctx, int w, int h): mWidth(w), mHeight(h), mOpenGLContext(ctx)
     {

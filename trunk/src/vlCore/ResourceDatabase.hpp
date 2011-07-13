@@ -47,9 +47,9 @@ namespace vl
   */
   class ResourceDatabase: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::ResourceDatabase"; }
+    INSTRUMENT_CLASS(vl::ResourceDatabase, Object)
 
+  public:
     const std::vector< ref<Object> >& resources() const { return mResources; }
 
     std::vector< ref<Object> >& resources() { return mResources; }

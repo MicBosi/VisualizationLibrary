@@ -55,9 +55,9 @@ namespace vl
   */
   class VLCORE_EXPORT MemoryFile: public VirtualFile
   {
-  public:
-    virtual const char* className() const { return "vl::MemoryFile"; }
+    INSTRUMENT_CLASS(vl::MemoryFile, VirtualFile)
 
+  public:
     MemoryFile();
 
     const Buffer* buffer() const { return mBuffer.get(); }

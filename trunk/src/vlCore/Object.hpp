@@ -34,6 +34,7 @@
 
 #include <vlCore/checks.hpp>
 #include <vlCore/IMutex.hpp>
+#include <vlCore/TypeInfo.hpp>
 #include <string>
 
 #if VL_DEBUG_LIVING_OBJECTS
@@ -53,11 +54,10 @@ namespace vl
   */
   class VLCORE_EXPORT Object
   {
+    INSTRUMENT_BASE_CLASS(vl::Object)
   public:
+
     // mic fixme: remove these two, implement TypeInfo mechanics.
-    //! Returns the name of the class.
-    virtual const char* className() const { return "vl::Object"; }
-    //! Returns true if 'name' equals className().
     bool isClassName(const char* name);
 
     //! Constructor.

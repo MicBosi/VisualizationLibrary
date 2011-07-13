@@ -54,8 +54,6 @@ namespace vl
   class OpenGLContextFormat
   {
   public:
-    virtual const char* className() const { return "vl::OpenGLContextFormat"; }
-
     OpenGLContextFormat():
       mRGBABits(ivec4(8,8,8,8)),
       mAccumRGBABits(ivec4(0,0,0,0)),
@@ -127,9 +125,9 @@ namespace vl
   //!   the EventListeners can safely add/remove themselves or other EventListeners to the OpenGLContext itself. */
   class VLGRAPHICS_EXPORT OpenGLContext: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::OpenGLContext"; }
+    INSTRUMENT_CLASS(vl::OpenGLContext, Object)
 
+  public:
     //! Constructor.
     OpenGLContext(int w=0, int h=0);
 
