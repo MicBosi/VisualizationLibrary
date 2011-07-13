@@ -276,10 +276,10 @@ namespace vl
     }
 
     /** Creates an empty 1D texture. */
-    void createTexture1D(int width, ETextureFormat format, bool border=false)
+    bool createTexture1D(int width, ETextureFormat format, bool border=false)
     {
       prepareTexture1D(width, format, border);
-      createTexture();
+      return createTexture();
     }
 
     /** Prepares for creation a 1D texture from the specified file. */
@@ -290,10 +290,10 @@ namespace vl
     }
 
     /** Creates a 1D texture from the specified file. */
-    void createTexture1D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
+    bool createTexture1D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture1D(image_path, format, mipmaps, border);
-      createTexture();
+      return createTexture();
     }
 
     /** Prepares for creation a 1D texture from the specified image. */
@@ -308,10 +308,10 @@ namespace vl
     }
 
     /** Creates a 1D texture from the specified image. */
-    void createTexture1D(Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
+    bool createTexture1D(Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture1D(image, format, mipmaps, border);
-      createTexture();
+      return createTexture();
     }
 
     /** Prepares for creation an empty 2D texture. */
@@ -323,10 +323,10 @@ namespace vl
     }
     
     /** Creates an empty 2D texture. */
-    void createTexture2D(int width, int height, ETextureFormat format, bool border=false)
+    bool createTexture2D(int width, int height, ETextureFormat format, bool border=false)
     {
       prepareTexture2D(width, height, format, border);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a 2D texture from the specified file. */
@@ -337,10 +337,10 @@ namespace vl
     }
     
     /** Creates a 2D texture from the specified file. */
-    void createTexture2D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
+    bool createTexture2D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture2D(image_path, format, mipmaps, border);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a 2D texture from the specified image. */
@@ -355,10 +355,10 @@ namespace vl
     }
     
     /** Creates a 2D texture from the specified image. */
-    void createTexture2D(Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
+    bool createTexture2D(Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture2D(image, format, mipmaps, border);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation an empty 3D texture. */
@@ -371,10 +371,10 @@ namespace vl
     }
     
     /** Creates an empty 3D texture. */
-    void createTexture3D(int width, int height, int depth, ETextureFormat format, bool border=false)
+    bool createTexture3D(int width, int height, int depth, ETextureFormat format, bool border=false)
     {
       prepareTexture3D(width, height, depth, format, border);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a 3D texture from the specified file. */
@@ -385,10 +385,10 @@ namespace vl
     }
     
     /** Creates a 3D texture from the specified file. */
-    void createTexture3D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
+    bool createTexture3D(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture3D(image_path, format, mipmaps, border);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a 3D texture from the specified image. */
@@ -403,10 +403,10 @@ namespace vl
     }
    
     /** Creates a 3D texture from the specified image. */
-    void createTexture3D(Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
+    bool createTexture3D(Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTexture3D(image, format, mipmaps, border);
-      createTexture();
+      return createTexture();
     }
    
     /** Prepares for creation an empty cubemap texture. */
@@ -418,10 +418,10 @@ namespace vl
     }
     
     /** Creates an empty cubemap texture. */
-    void createTextureCubemap(int width, int height, ETextureFormat format, bool border=false)
+    bool createTextureCubemap(int width, int height, ETextureFormat format, bool border=false)
     {
       prepareTextureCubemap(width, height, format, border);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a cubemap texture from the specified file. */
@@ -432,10 +432,10 @@ namespace vl
     }
     
     /** Creates creation a cubemap texture from the specified file. */
-    void createTextureCubemap(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
+    bool createTextureCubemap(const String& image_path, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTextureCubemap(image_path, format, mipmaps, border);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a cubemap texture from the specified image. */
@@ -450,10 +450,10 @@ namespace vl
     }
     
     /** Creates a cubemap texture from the specified image. */
-    void createTextureCubemap(Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
+    bool createTextureCubemap(Image* image, ETextureFormat format, bool mipmaps=true, bool border=false)
     {
       prepareTextureCubemap(image, format, mipmaps, border);
-      createTexture();
+      return createTexture();
     }
 
     /** Prepares for creation an empty 1D array texture. */
@@ -465,10 +465,10 @@ namespace vl
     }
     
     /** Creates an empty 1D array texture. */
-    void createTexture1DArray(int width, int count, ETextureFormat format)
+    bool createTexture1DArray(int width, int count, ETextureFormat format)
     {
       prepareTexture1DArray(width, count, format);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a 1d texture array from the specified file. */
@@ -479,10 +479,10 @@ namespace vl
     }
     
     /** Creates a 1d texture array from the specified file. */
-    void createTexture1DArray(const String& image_path, ETextureFormat format, bool mipmaps=true)
+    bool createTexture1DArray(const String& image_path, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture1DArray(image_path, format, mipmaps);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a 1d texture array from the specified image. */
@@ -497,10 +497,10 @@ namespace vl
     }
     
     /** Creates a 1d texture array from the specified image. */
-    void createTexture1DArray(Image* image, ETextureFormat format, bool mipmaps=true)
+    bool createTexture1DArray(Image* image, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture1DArray(image, format, mipmaps);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation an empty 2D array texture. */
@@ -513,10 +513,10 @@ namespace vl
     }
     
     /** Creates an empty 2D array texture. */
-    void createTexture2DArray(int width, int height, int count, ETextureFormat format)
+    bool createTexture2DArray(int width, int height, int count, ETextureFormat format)
     {
       prepareTexture2DArray(width, height, count, format);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a 2d texture array from the specified file. */
@@ -527,10 +527,10 @@ namespace vl
     }
     
     /** Creates a 2d texture array from the specified file. */
-    void createTexture2DArray(const String& image_path, ETextureFormat format, bool mipmaps=true)
+    bool createTexture2DArray(const String& image_path, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture2DArray(image_path, format, mipmaps);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a 2d texture array from the specified image. */
@@ -545,10 +545,10 @@ namespace vl
     }
     
     /** Creates a 2d texture array from the specified image. */
-    void createTexture2DArray(Image* image, ETextureFormat format, bool mipmaps=true)
+    bool createTexture2DArray(Image* image, ETextureFormat format, bool mipmaps=true)
     {
       prepareTexture2DArray(image, format, mipmaps);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation an empty texture rectangle. */
@@ -560,10 +560,10 @@ namespace vl
     }
     
     /** Creates an empty texture rectangle. */
-    void createTextureRectangle(int width, int height, ETextureFormat format)
+    bool createTextureRectangle(int width, int height, ETextureFormat format)
     {
       prepareTextureRectangle(width, height, format);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a texture rectangle from the specified file. */
@@ -574,10 +574,10 @@ namespace vl
     }
     
     /** Creates a texture rectangle from the specified file. */
-    void createTextureRectangle(const String& image_path, ETextureFormat format)
+    bool createTextureRectangle(const String& image_path, ETextureFormat format)
     {
       prepareTextureRectangle(image_path, format);
-      createTexture();
+      return createTexture();
     }
     
     /** Prepares for creation a texture rectangle from the specified image. */
@@ -592,10 +592,10 @@ namespace vl
     }
 
     /** Creates a texture rectangle from the specified image. */
-    void createTextureRectangle(Image* image, ETextureFormat format)
+    bool createTextureRectangle(Image* image, ETextureFormat format)
     {
       prepareTextureRectangle(image, format);
-      createTexture();
+      return createTexture();
     }
 
     /** Prepares a texture buffer texture. */
@@ -610,10 +610,10 @@ namespace vl
     }
 
     /** Creates a texture buffer texture. */
-    void createTextureBuffer(vl::ETextureFormat format, GLBufferObject* bo)
+    bool createTextureBuffer(vl::ETextureFormat format, GLBufferObject* bo)
     {
       prepareTextureBuffer(format, bo);
-      createTexture();
+      return createTexture();
     }
 
     /** Prepares a 2D multisample texture. */
@@ -631,10 +631,10 @@ namespace vl
     }
 
     /** Creates a 2D multisample texture. */
-    void createTexture2DMultisample(int width, int height, vl::ETextureFormat format, int samples, bool fixedsamplelocations)
+    bool createTexture2DMultisample(int width, int height, vl::ETextureFormat format, int samples, bool fixedsamplelocations)
     {
       prepareTexture2DMultisample(width, height, format, samples, fixedsamplelocations);
-      createTexture();
+      return createTexture();
     }
 
     /** Prepares a 3D multisample texture. */
@@ -653,10 +653,10 @@ namespace vl
     }
 
     /** Creates a 3D multisample texture. */
-    void createTexture2DMultisampleArray(int width, int height, int depth, vl::ETextureFormat format, int samples, bool fixedsamplelocations)
+    bool createTexture2DMultisampleArray(int width, int height, int depth, vl::ETextureFormat format, int samples, bool fixedsamplelocations)
     {
       prepareTexture2DMultisampleArray(width, height, depth, format, samples, fixedsamplelocations);
-      createTexture();
+      return createTexture();
     }
 
     /** Returns \p true if the current texture configuration seems valid. */
