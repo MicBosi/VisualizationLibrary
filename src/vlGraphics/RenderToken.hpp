@@ -46,8 +46,9 @@ namespace vl
   //! Internally used by the rendering engine
   class RenderToken: public Object
   {
+    INSTRUMENT_CLASS(vl:RenderToken, Object)
+
   public:
-    virtual const char* className() const { return "vl::RenderToken"; }
     RenderToken(): mNextPass(NULL), mActor(NULL), mShader(NULL), mEffectRenderRank(0), mCameraDistance(0.0)
     {
       VL_DEBUG_SET_OBJECT_NAME()

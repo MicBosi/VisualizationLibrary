@@ -41,9 +41,10 @@ namespace vl
   class VLCORE_EXPORT VLSettings: public Object
   {
     friend class VisualizationLibrary;
-  public:
-    virtual const char* className() const { return "vl::VLSettings"; }
 
+    INSTRUMENT_CLASS(vl::VLSettings, Object)
+
+  public:
     VLSettings();
 
     /** If \p true VL checks at the beginning of each rendering that the OpenGL states are

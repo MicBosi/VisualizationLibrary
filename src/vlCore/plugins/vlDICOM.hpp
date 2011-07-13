@@ -59,14 +59,12 @@ namespace vl
   \sa GDCM home page: http://creatis-www.insa-lyon.fr/software/public/Gdcm/Main.html */
   class LoadWriterDICOM: public ResourceLoadWriter
   {
-  public:
-    virtual const char* className() const { return "LoadWriterDICOM"; }
+    INSTRUMENT_CLASS(vl::LoadWriterDICOM, ResourceLoadWriter)
 
+  public:
     LoadWriterDICOM(): ResourceLoadWriter("|dcm|dicom|dic|ima|ph|mag|", "|dcm|dicom|dic|ima|ph|mag|") 
     {
-      #ifndef NDEBUG
-        mObjectName = className();
-      #endif
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     ref<ResourceDatabase> loadResource(const String& path) const 

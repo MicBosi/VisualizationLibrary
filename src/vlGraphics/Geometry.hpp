@@ -66,6 +66,8 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Geometry: public Renderable, public IVertexAttribSet
   {
+    INSTRUMENT_CLASS(vl::Geometry, Renderable)
+
   private:
     class TextureArray: public Object
     {
@@ -78,8 +80,6 @@ namespace vl
     };
 
   public:
-    virtual const char* className() const { return "vl::Geometry"; }
-    
     /** Constructor. */
     Geometry();
 

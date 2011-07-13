@@ -54,8 +54,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT ActorTreeAbstract: public Object
   {
+    INSTRUMENT_CLASS(vl::ActorTreeAbstract, Object)
+
   public:
-    virtual const char* className() const { return "vl::ActorTreeAbstract"; }
     ActorTreeAbstract();
 
     //! Returns the number of child nodes of an ActorTreeAbstract node.

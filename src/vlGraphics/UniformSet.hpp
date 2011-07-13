@@ -49,8 +49,9 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT UniformSet: public Object
   {
+    INSTRUMENT_CLASS(vl::UniformSet, Object)
+
   public:
-    virtual const char* className() const { return "vl::UniformSet"; }
     UniformSet()
     {
       VL_DEBUG_SET_OBJECT_NAME()

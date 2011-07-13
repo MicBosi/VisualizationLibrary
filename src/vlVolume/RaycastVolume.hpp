@@ -40,9 +40,9 @@ namespace vl
 {
   class VLVOLUME_EXPORT RaycastVolume: public ActorEventCallback
   {
+    INSTRUMENT_CLASS(vl::RaycastVolume, ActorEventCallback)
+
   public:
-    virtual const char* className() const { return "vl::RaycastVolume"; }
-    
     RaycastVolume();
     
     void onActorRenderStarted( Actor* actor, Real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass );

@@ -45,6 +45,8 @@ namespace vl
    */
   class VLVOLUME_EXPORT Volume: public Object
   {
+    INSTRUMENT_CLASS(vl::Volume, Object)
+
     /**
      * A Volume cell.
      */
@@ -55,8 +57,6 @@ namespace vl
       bool includes(float v) const { return v >= mMin && v <= mMax; }
     };
   public:
-    virtual const char* className() const { return "vl::Volume"; }
-
     Volume();
 
     //! Setup the volume data with the specified memory management.
@@ -161,9 +161,9 @@ namespace vl
    */
   class VolumeInfo: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::VolumeInfo"; }
+    INSTRUMENT_CLASS(vl::VolumeInfo, Object)
 
+  public:
     VolumeInfo(Volume* vol, float threshold, const fvec4& color)
     {
       VL_DEBUG_SET_OBJECT_NAME()

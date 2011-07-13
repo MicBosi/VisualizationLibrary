@@ -46,12 +46,7 @@ namespace vl
   class VLCORE_EXPORT MD5CheckSum
   {
   public:
-    MD5CheckSum()
-    {
-      memset(mMD5, 0, 16);
-    }
-    
-    virtual const char* className() const { return "vl::MD5CheckSum"; }
+    MD5CheckSum() { memset(mMD5, 0, 16); }
     
     const unsigned char* md5() const { return mMD5; }
     

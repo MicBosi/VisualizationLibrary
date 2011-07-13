@@ -46,6 +46,8 @@ namespace vl
   */
   class EnableSet: public Object
   {
+    INSTRUMENT_CLASS(vl::EnableSet, Object)
+
   public:
     EnableSet(): mBlendingEnabled(false)
     {
@@ -57,8 +59,6 @@ namespace vl
       mEnables.push_back(EN_MULTISAMPLE);
 #endif
     }
-
-    virtual const char* className() const { return "vl::EnableSet"; }
 
     // enable getter and setters
 

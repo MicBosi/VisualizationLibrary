@@ -54,12 +54,12 @@ namespace vl
   */
   class VLCORE_EXPORT DiskDirectory: public VirtualDirectory
   {
+    INSTRUMENT_CLASS(vl::DiskDirectory, VirtualDirectory)
+
   public:
     DiskDirectory();
 
     DiskDirectory( const String& path );
-
-    virtual const char* className() const { return "vl::DiskDirectory"; }
 
     //! Use carefully this function, since this search the whole given file system tree.
     void listFilesRecursive(std::vector<String>& file_list) const;

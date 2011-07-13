@@ -42,9 +42,9 @@ namespace vl
   //! Wrapper of glPatchParameter() - specifies the parameters for patch primitives, see also http://www.opengl.org/sdk/docs/man4/xhtml/glPatchParameter.xml
   class PatchParameter: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::PatchParameter"; }
+    INSTRUMENT_CLASS(vl::PatchParameter, Object)
 
+  public:
     //! Constructor
     PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(fvec4(4,4,4,4)), mPatchDefaultInnerLevel(fvec2(4,4)) 
     {

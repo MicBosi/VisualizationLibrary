@@ -149,8 +149,9 @@ namespace vl
   */
   class ReadPixels: public RenderEventCallback
   {
+    INSTRUMENT_CLASS(vl::ReadPixels, RenderEventCallback)
+
   public:
-    virtual const char* className() const { return "vl::ReadPixels"; }
     ReadPixels():
       mX ( 0 ),
       mY ( 0 ),

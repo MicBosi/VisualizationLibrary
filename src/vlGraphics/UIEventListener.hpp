@@ -54,10 +54,11 @@ namespace vl
 	  OpenGLContext did not have the keyboard focus, the function keyPressed() will wrongly report a \a pressed state for that key. */
   class VLGRAPHICS_EXPORT UIEventListener: public Object
   {
-  friend class OpenGLContext;
-  public:
-    virtual const char* className() const { return "vl::UIEventListener"; }
+    INSTRUMENT_CLASS(vl::UIEventListener, Object)
 
+    friend class OpenGLContext;
+
+  public:
     /** Constructor. */
     UIEventListener(): mOpenGLContext(NULL), mEnabled(true) 
     {

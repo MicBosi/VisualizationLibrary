@@ -63,9 +63,9 @@ namespace vl
    */
   class VLMOLECULE_EXPORT Molecule: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Molecule"; }
+    INSTRUMENT_CLASS(vl::Molecule, Object)
 
+  public:
     Molecule();
     ~Molecule() { reset(); }
     Molecule(const Molecule& other): Object(other) { operator=(other); }

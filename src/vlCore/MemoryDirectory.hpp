@@ -55,10 +55,10 @@ namespace vl
   */
   class VLCORE_EXPORT MemoryDirectory: public VirtualDirectory
   {
+    INSTRUMENT_CLASS(vl::MemoryDirectory, VirtualDirectory)
+
   public:
     MemoryDirectory(const String& path="."): VirtualDirectory(path) {}
-
-    virtual const char* className() const { return "vl::MemoryDirectory"; }
 
     virtual bool setPath(const String& name);
 

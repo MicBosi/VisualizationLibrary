@@ -52,9 +52,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Extrusion: public vl::Object
   {
-  public:
-    virtual const char* className() const { return "vl::Extrusion"; }
+    INSTRUMENT_CLASS(vl::Extrusion, Object)
 
+  public:
     //! Constructor.
     Extrusion()
     {

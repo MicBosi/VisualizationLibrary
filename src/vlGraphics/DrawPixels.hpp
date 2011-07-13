@@ -59,6 +59,8 @@ namespace vl
   //-----------------------------------------------------------------------------
   class VLGRAPHICS_EXPORT DrawPixels: public Renderable
   {
+    INSTRUMENT_CLASS(vl::DrawPixels, Renderable)
+
   public:
   //-----------------------------------------------------------------------------
   // Pixels
@@ -68,11 +70,11 @@ namespace vl
     */
     class VLGRAPHICS_EXPORT Pixels: public Object
     {
+      INSTRUMENT_CLASS(vl::Pixels, Object)
+
       friend class DrawPixels;
 
     public:
-      virtual const char* className() const { return "vl::Pixels"; }
-
       Pixels();
       /** Constructor.
        * The parameters 'scrx' and 'scry' define the position of the viewport in pixels where the image has to be placed.
@@ -128,8 +130,6 @@ namespace vl
   public:
 
     DrawPixels();
-
-    virtual const char* className() const { return "vl::DrawPixels"; }
 
     void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }
 

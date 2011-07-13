@@ -54,9 +54,9 @@ namespace vl
    */
   class LoadWriterDAT: public ResourceLoadWriter
   {
+    INSTRUMENT_CLASS(vl::LoadWriterDAT, ResourceLoadWriter)
+
   public:
-    virtual const char* className() const { return "vl::LoadWriterDAT"; }
-    
     LoadWriterDAT(): ResourceLoadWriter("|dat|", "|dat|") 
     {
       VL_DEBUG_SET_OBJECT_NAME()

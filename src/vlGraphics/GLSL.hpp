@@ -63,12 +63,12 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class VLGRAPHICS_EXPORT GLSLShader: public Object
   {
+    INSTRUMENT_CLASS(vl::GLSLShader, Object)
+
   public:
     GLSLShader(EShaderType type, const String& source=String());
 
     ~GLSLShader();
-
-    virtual const char* className() const { return "vl::Unnamed GLSLShader"; }
 
     EShaderType type() const { return mType; }
 
@@ -110,6 +110,8 @@ namespace vl
    * \sa GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLVertexShader: public GLSLShader
   {
+    INSTRUMENT_CLASS(vl::GLSLVertexShader, GLSLShader)
+
   public:
     //! Constructor.
     //! \param source Vertex shader's source code or path to a text file containing the vertex shader's source code.
@@ -120,7 +122,6 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() const { return "vl::GLSLVertexShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL fragment shader to be bound to a GLSLProgram: the shader this shader will run on the programmable fragment processor.
@@ -128,6 +129,8 @@ namespace vl
    * \sa GLSLVertexShader, GLSLGeometryShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLFragmentShader: public GLSLShader
   {
+    INSTRUMENT_CLASS(vl::GLSLFragmentShader, GLSLShader)
+
   public:
     //! \param source Fragment shader's source code or path to a text file containing the fragment shader's source code.
     GLSLFragmentShader(const String& source=String()): GLSLShader(ST_FRAGMENT_SHADER, source)
@@ -137,7 +140,6 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() const { return "vl::GLSLFragmentShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL geometry shader to be bound to a GLSLProgram: the shader this shader will run on the programmable geometry processor.
@@ -145,6 +147,8 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLGeometryShader: public GLSLShader
   {
+    INSTRUMENT_CLASS(vl::GLSLGeometryShader, GLSLShader)
+
   public:
     //! \param source Geometry shader's source code or path to a text file containing the geometry shader's source code.
     GLSLGeometryShader(const String& source=String()): GLSLShader(ST_GEOMETRY_SHADER, source)
@@ -154,7 +158,6 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() const { return "vl::GLSLGeometryShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL tessellation control shader to be bound to a GLSLProgram: the shader this shader will run on the programmable tessellation processor in the control stage.
@@ -162,6 +165,8 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLTessControlShader: public GLSLShader
   {
+    INSTRUMENT_CLASS(vl::GLSLTessControlShader, GLSLShader)
+
   public:
     //! \param source Tessellation-control shader's source code or path to a text file containing the shader's source code.
     GLSLTessControlShader(const String& source=String()): GLSLShader(ST_TESS_CONTROL_SHADER, source)
@@ -171,7 +176,6 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() const { return "vl::GLSLTessControlShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL tessellation evaluation shader to be bound to a GLSLProgram: this shader will run on the programmable tessellation processor in the evaluation stage.
@@ -179,6 +183,8 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLProgram, Effect */
   class GLSLTessEvaluationShader: public GLSLShader
   {
+    INSTRUMENT_CLASS(vl::GLSLTessEvaluationShader, GLSLShader)
+
   public:
     //! \param source Tessellation-evaluation shader's source code or path to a text file containing the shader's source code.
     GLSLTessEvaluationShader(const String& source=String()): GLSLShader(ST_TESS_EVALUATION_SHADER, source)
@@ -188,7 +194,6 @@ namespace vl
           mObjectName = className();
       #endif
     }
-    virtual const char* className() const { return "vl::GLSLTessEvaluationShader"; }
   };
   //------------------------------------------------------------------------------
   // GLSLProgram
@@ -228,6 +233,8 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT GLSLProgram: public RenderState
   {
+    INSTRUMENT_CLASS(vl::GLSLProgram, RenderState)
+
     // applyUniform
     friend class Renderer;
   public:
@@ -236,8 +243,6 @@ namespace vl
 
     //! Destructor. Calls deleteProgram().
     ~GLSLProgram();
-
-    virtual const char* className() const { return "vl::GLSLProgram"; }
 
     //! \internal
     virtual ERenderState type() const { return RS_GLSLProgram; }

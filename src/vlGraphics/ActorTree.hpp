@@ -61,8 +61,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT ActorTree: public ActorTreeAbstract
   {
+    INSTRUMENT_CLASS(vl::ActorTree, ActorTreeAbstract)
+
   public:
-    virtual const char* className() const { return "vl::ActorTree"; }
     ActorTree()
     {
       VL_DEBUG_SET_OBJECT_NAME()

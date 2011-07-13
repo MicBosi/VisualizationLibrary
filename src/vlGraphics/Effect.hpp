@@ -50,8 +50,9 @@ namespace vl
   */
   class ShaderSequence: public Collection<Shader>
   {
+    INSTRUMENT_CLASS(vl::ShaderSequence, Collection)
+
   public:
-    virtual const char* className() const { return "vl::ShaderSequence"; }
     /** Constructor. 
     \param pass1 The Shader (if any) to be used for pass #1
     \param pass2 The Shader (if any) to be used for pass #2
@@ -89,13 +90,13 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Effect: public Object
   {
+    INSTRUMENT_CLASS(vl::Effect, Object)
+
     // mic fixme: define these?
     Effect(const Effect&): Object() {}
     Effect& operator=(const Effect&) { return *this; }
 
   public:
-    virtual const char* className() const { return "vl::Effect"; }
-
     /** Constructor. */
     Effect() 
     { 

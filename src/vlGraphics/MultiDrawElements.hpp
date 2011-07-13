@@ -51,6 +51,8 @@ namespace vl
    * vl::MultiDrawElementsUInt, vl::MultiDrawElementsUShort or vl::MultiDrawElementsUByte. */
   class MultiDrawElementsBase: public DrawCall
   {
+    INSTRUMENT_CLASS(vl::MultiDrawElementsBase, DrawCall)
+
   public:
     /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
       * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
@@ -122,9 +124,9 @@ namespace vl
   template <GLenum Tgltype, class arr_type>
   class MultiDrawElements: public MultiDrawElementsBase
   {
-  public:
-    virtual const char* className() const { return "vl::MultiDrawElements"; }
+    INSTRUMENT_CLASS(vl::MultiDrawElements, MultiDrawElementsBase)
 
+  public:
     MultiDrawElements(EPrimitiveType primitive = PT_TRIANGLES)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -279,8 +281,9 @@ namespace vl
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLuint. */
   class MultiDrawElementsUInt: public MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>
   {
+    INSTRUMENT_CLASS(vl::MultiDrawElementsUInt, MultiDrawElements)
+
   public:
-    virtual const char* className() const { return "vl::MultiDrawElementsUInt"; }
     MultiDrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES)
     :MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>(primitive)
     {
@@ -291,8 +294,9 @@ namespace vl
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLushort. */
   class MultiDrawElementsUShort: public MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
   {
+    INSTRUMENT_CLASS(vl::MultiDrawElementsUShort, MultiDrawElements)
+
   public:
-    virtual const char* className() const { return "vl::MultiDrawElementsUShort"; }
     MultiDrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES)
     :MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>(primitive)
     {
@@ -303,8 +307,9 @@ namespace vl
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLubyte. */
   class MultiDrawElementsUByte: public MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
   {
+    INSTRUMENT_CLASS(vl::MultiDrawElementsUByte, MultiDrawElements)
+
   public:
-    virtual const char* className() const { return "vl::MultiDrawElementsUByte"; }
     MultiDrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES)
     :MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>(primitive)
     {

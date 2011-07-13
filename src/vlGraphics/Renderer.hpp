@@ -46,9 +46,9 @@ namespace vl
     * \sa Rendering */
   class VLGRAPHICS_EXPORT Renderer: public RendererAbstract
   {
+    INSTRUMENT_CLASS(vl::Renderer, RendererAbstract)
+
   public:
-    virtual const char* className() const { return "vl::Renderer"; }
-    
     Renderer();
     
     virtual ~Renderer() {}

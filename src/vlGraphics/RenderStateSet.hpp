@@ -46,12 +46,13 @@ namespace vl
     * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT RenderStateSet: public Object
   {
+    INSTRUMENT_CLASS(vl::RenderStateSet, Object)
+
   public:
     RenderStateSet(): mGLSLProgram(NULL)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    virtual const char* className() const { return "vl::RenderStateSet"; }
 
     // renderstates getters and setters
 

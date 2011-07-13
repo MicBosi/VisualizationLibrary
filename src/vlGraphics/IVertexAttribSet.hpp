@@ -104,7 +104,6 @@ namespace vl
 
     /** The list of VertexAttribInfo objects bound to a Geometry. */
     virtual const Collection<VertexAttribInfo>* vertexAttribArrays() const = 0;
-
   };
 }
 

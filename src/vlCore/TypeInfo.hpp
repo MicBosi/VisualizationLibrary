@@ -34,7 +34,7 @@
 
 /**
  * \file TypeInfo.hpp
- * Set of macros and templates implementing a simple portable RTTI system.
+ * Set of macros and templates implementing a simple portable RTTI system with various features.
 */
 
 //! Represents a class type.

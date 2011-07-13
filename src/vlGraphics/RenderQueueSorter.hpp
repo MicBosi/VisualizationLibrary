@@ -44,8 +44,9 @@ namespace vl
   */
   class RenderQueueSorter: public Object
   {
+    INSTRUMENT_CLASS(vl::RenderQueueSorter, Object)
+
   public:
-    virtual const char* className() const { return "vl::RenderQueueSorter"; }
     RenderQueueSorter()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -61,8 +62,9 @@ namespace vl
   // no z sort, no effect render rank, no actor render rank
   class RenderQueueSorterByShader: public RenderQueueSorter
   {
+    INSTRUMENT_CLASS(vl::RenderQueueSorterByShader, RenderQueueSorter)
+
   public:
-    virtual const char* className() const { return "vl::RenderQueueSorterByShader"; }
     RenderQueueSorterByShader()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -81,8 +83,9 @@ namespace vl
   // no z sort, no effect render rank, no actor render rank
   class RenderQueueSorterByRenderable: public RenderQueueSorter
   {
+    INSTRUMENT_CLASS(vl::RenderQueueSorterByRenderable, RenderQueueSorter)
+
   public:
-    virtual const char* className() const { return "vl::RenderQueueSorterByRenderable"; }
     RenderQueueSorterByRenderable()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -100,8 +103,9 @@ namespace vl
   //! Sorts the RenderTokens by their Effect rank -> Actor rank -> Shader pointer -> Renderable pointer
   class RenderQueueSorterBasic: public RenderQueueSorter
   {
+    INSTRUMENT_CLASS(vl::RenderQueueSorterBasic, RenderQueueSorter)
+
   public:
-    virtual const char* className() const { return "vl::RenderQueueSorterBasic"; }
     RenderQueueSorterBasic()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -143,8 +147,9 @@ namespace vl
   //! -# Sort solid objects by Renderable
   class RenderQueueSorterStandard: public RenderQueueSorter
   {
+    INSTRUMENT_CLASS(vl::RenderQueueSorterStandard, RenderQueueSorter)
+
   public:
-    virtual const char* className() const { return "vl::RenderQueueSorterStandard"; }
     RenderQueueSorterStandard(): mDepthSortMode(AlphaDepthSort)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -224,8 +229,9 @@ namespace vl
   //! -# Sort translucent objects back-to-front
   class RenderQueueSorterOcclusion: public RenderQueueSorter
   {
+    INSTRUMENT_CLASS(vl::RenderQueueSorterOcclusion, RenderQueueSorter)
+
   public:
-    virtual const char* className() const { return "vl::RenderQueueSorterOcclusion"; }
     RenderQueueSorterOcclusion()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -286,8 +292,9 @@ namespace vl
   //! GLSL program -> render state set -> enable set -> texture set -> light set -> Shader pointer -> Renderable pointer
   class RenderQueueSorterAggressive: public RenderQueueSorter
   {
+    INSTRUMENT_CLASS(vl::RenderQueueSorterAggressive, RenderQueueSorter)
+
   public:
-    virtual const char* className() const { return "vl::RenderQueueSorterAggressive"; }
     RenderQueueSorterAggressive(): mDepthSortMode(AlphaDepthSort)
     {
       VL_DEBUG_SET_OBJECT_NAME()

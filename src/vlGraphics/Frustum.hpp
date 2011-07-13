@@ -48,9 +48,9 @@ namespace vl
   */
   class Frustum: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Frustum"; }
+    INSTRUMENT_CLASS(vl::Frustum, Object)
 
+  public:
     std::vector<Plane>& planes() { return mPlanes; }
     const std::vector<Plane>& planes() const { return mPlanes; }
 

@@ -52,10 +52,11 @@ namespace vl
   //! - \ref pagGuidePortals "Portal-Based Culling and Scene Management Tutorial"
   class VLGRAPHICS_EXPORT Portal: public Object
   {
-    friend class SceneManagerPortals;
-  public:
-    virtual const char* className() const { return "vl::Portal"; }
+    INSTRUMENT_CLASS(vl::Portal, Object)
 
+    friend class SceneManagerPortals;
+
+  public:
     //! Constructor.
     Portal()
     {
@@ -107,9 +108,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Sector: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Sector"; }
+    INSTRUMENT_CLASS(vl::Sector, Object)
 
+  public:
     /** A callback object called each time a Sector becomes visible through a Portal.
      *  Note: a callback can be called multiple times with the same Sector argument if a Sector is discovered multiple times through different portals.
      *  Using callbacks can be very useful to perform special actions upon sector discovery, like enabling/disabling animations, enabling/disabling 
@@ -182,9 +183,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT SceneManagerPortals: public SceneManager
   {
-  public:
-    virtual const char* className() const { return "vl::SceneManagerPortals"; }
+    INSTRUMENT_CLASS(vl::SceneManagerPortals, SceneManager)
 
+  public:
     //! Constructor.
     SceneManagerPortals(): mExternalSector(new Sector), mVisitTick(1), mShowPortals(false) 
     {

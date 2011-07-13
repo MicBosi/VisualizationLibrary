@@ -50,8 +50,9 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Viewport: public Object
   {
+    INSTRUMENT_CLASS(vl::Viewport, Object)
+
   public:
-    virtual const char* className() const { return "vl::Viewport"; }
     Viewport();
     Viewport(int x, int y, int w, int h);
 

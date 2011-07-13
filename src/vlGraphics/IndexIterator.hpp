@@ -42,9 +42,9 @@ namespace vl
   /** Abstract class used as base for all the index iterators specializations. */
   class IndexIteratorAbstract: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::IndexIteratorAbstract"; }
+    INSTRUMENT_CLASS(vl::IndexIteratorAbstract, Object)
 
+  public:
     IndexIteratorAbstract(): mIndex(-1) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -62,9 +62,9 @@ namespace vl
   /** Wraps a IndexIteratorAbstract to iterate over the indices of a DrawCall. */
   class IndexIterator: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::IndexIterator"; }
+    INSTRUMENT_CLASS(vl::IndexIterator, Object)
 
+  public:
     IndexIterator()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -83,9 +83,9 @@ namespace vl
   /** Index iterator operating used by DrawArrays. */
   class IndexIteratorDrawArrays: public IndexIteratorAbstract
   {
-  public:
-    virtual const char* className() const { return "vl::IndexIteratorDrawArrays"; }
+    INSTRUMENT_CLASS(vl::IndexIteratorDrawArrays, IndexIteratorAbstract)
 
+  public:
     IndexIteratorDrawArrays()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -124,9 +124,9 @@ namespace vl
   template<class TArray>
   class IndexIteratorElements: public IndexIteratorAbstract
   {
-  public:
-    virtual const char* className() const { return "vl::IndexIteratorElements"; }
+    INSTRUMENT_CLASS(vl::IndexIteratorElements, IndexIteratorAbstract)
 
+  public:
     IndexIteratorElements()
     {
       VL_DEBUG_SET_OBJECT_NAME()

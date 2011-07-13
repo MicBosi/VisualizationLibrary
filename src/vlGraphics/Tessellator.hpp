@@ -49,9 +49,10 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Tessellator: public Object
   {
+    INSTRUMENT_CLASS(vl::Tessellator, Object)
+
     typedef void (CALLBACK *callback_type)(void);
   public:
-    virtual const char* className() const { return "vl::Tessellator"; }
 
     //! Constructor.
     Tessellator();

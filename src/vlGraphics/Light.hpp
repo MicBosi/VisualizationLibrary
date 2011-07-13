@@ -50,10 +50,10 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Light: public RenderState
   {
+    INSTRUMENT_CLASS(vl::Light, RenderState)
+
   public:
     Light(int light_index);
-
-    virtual const char* className() const { return "vl::Light"; }
 
     virtual ERenderState type() const { return (ERenderState)(RS_Light0 + lightIndex()); }
 

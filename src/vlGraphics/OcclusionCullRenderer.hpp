@@ -43,9 +43,9 @@ namespace vl
     * For more information see \ref pagGuideOcclusionCulling */
   class VLGRAPHICS_EXPORT OcclusionCullRenderer: public Renderer
   {
-  public:
-    virtual const char* className() const { return "vl::OcclusionCullRenderer"; }
+    INSTRUMENT_CLASS(vl::OcclusionCullRenderer, Renderer)
 
+  public:
     /** Constructor. */
     OcclusionCullRenderer();
 
