@@ -35,6 +35,8 @@
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/GLSL.hpp>
 
+using namespace vl;
+
 /* 
  * You can find the documentatio for this example in the offical documentation at:
  * Quick Start Guides -> Texturing
@@ -45,368 +47,337 @@ class App_Texturing: public BaseDemo
 public:
   void multitexturing()
   {
-    if (!vl::Has_Multitexture)
+    if (!Has_Multitexture)
     {
-      vl::Log::error("Multitexturing not supported.\n");
+      Log::error("Multitexturing not supported.\n");
       return;
     }
 
-    vl::ref<vl::Geometry> box = vl::makeBox( vl::vec3(0,0,0), 5,5,5, true );
+    // create a box with texture coordinates
+    const bool generate_tex_coords = true;
+    ref<Geometry> box = makeBox( vec3(0,0,0), 5,5,5, generate_tex_coords );
     box->computeNormals();
+    // IMPORTANT: makeBox() filled for use box->texCoordArray(0) however in order to use multi-texturing we need
+    // texture coordinates also for unit #1 so we make texture unit #1 share the texture coordinates with unit #0.
     box->setTexCoordArray(1, box->texCoordArray(0));
 
-    mCubeRightTransform = new vl::Transform;
-    mCubeLeftTransform = new vl::Transform;
-    rendering()->as<vl::Rendering>()->transform()->addChild(mCubeRightTransform.get());
-    rendering()->as<vl::Rendering>()->transform()->addChild(mCubeLeftTransform.get());
+    // load base texture
+    // note: TF_UNKNOWN tells VL to set the texture format to whatever format the image is.
+    ref<Texture> tex_holebox = new Texture("/images/holebox.tif", TF_UNKNOWN, mMipmappingOn );
+    tex_holebox->getTexParameter()->setMagFilter(TPF_LINEAR);
+    tex_holebox->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
 
-    vl::ref<vl::Image> img_holebox = vl::loadImage("/images/holebox.tif");
-    vl::ref<vl::Image> img_detail  = vl::loadImage("/images/detail.tif");
+    // load detail texture
+    ref<Texture> tex_detail  = new Texture("/images/detail.tif", TF_UNKNOWN, mMipmappingOn );
+    tex_detail->getTexParameter()->setMagFilter(TPF_LINEAR);
+    tex_detail->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
 
-    vl::ref<vl::Texture> tex_holebox = new vl::Texture(img_holebox.get(), vl::TF_RGBA, mMipmappingOn, false);
-    vl::ref<vl::Texture> tex_detail  = new vl::Texture(img_detail.get(),  vl::TF_RGBA, mMipmappingOn, false);
+	  // IMPORTANT: since we requested mipmapping we set the MinFilter to GL_LINEAR_MIPMAP_LINEAR, i.e. trilinear filtering.
+    // Note also that using a mipmapped filter with a texture that has no mipmaps will typically show a black texture.
+	  
+    // You can set the MinFilter to any of GL_NEAREST, GL_LINEAR, GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST, 
+	  // GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR. However rembember that you can set the MagFilter only to 
+    // GL_NEAREST or GL_LINEAR as mipmapping does not make any sense for texture magnification.
 
-    tex_holebox->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    tex_holebox->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
-    tex_detail->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    tex_detail->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    ref<Light> light = new Light(0);
 
-    vl::ref<vl::Light> light = new vl::Light(0);
+    // single texture effect with alpha testing
+    ref<Effect> fx_right_cube = new Effect;
+    fx_right_cube->shader()->setRenderState( light.get() );
+    fx_right_cube->shader()->enable(EN_LIGHTING);
+    fx_right_cube->shader()->enable(EN_DEPTH_TEST);
+    fx_right_cube->shader()->enable(EN_BLEND);
+    fx_right_cube->shader()->enable(EN_ALPHA_TEST);
+    fx_right_cube->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.98f);
+    fx_right_cube->shader()->gocLightModel()->setTwoSide(true);
+    fx_right_cube->shader()->gocTextureUnit(0)->setTexture( tex_holebox.get() );
 
-    vl::ref<vl::Effect> cube_right_fx = new vl::Effect;
-    // to ensure the cubes are drawn after the textured quads
-    cube_right_fx->setRenderRank(1);
-    cube_right_fx->shader()->setRenderState( light.get() );
-    cube_right_fx->shader()->enable(vl::EN_LIGHTING);
-    cube_right_fx->shader()->enable(vl::EN_DEPTH_TEST);
-    cube_right_fx->shader()->enable(vl::EN_BLEND);
-    cube_right_fx->shader()->enable(vl::EN_ALPHA_TEST);
-    cube_right_fx->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 1.0f - 0.02f);
-    cube_right_fx->shader()->gocLightModel()->setTwoSide(true);
-    cube_right_fx->shader()->gocTextureUnit(0)->setTexture( tex_holebox.get() );
+    // multi-texture effect with alpha testing
+    ref<Effect> fx_left_cube = new Effect;
+    fx_left_cube->shader()->setRenderState( light.get() );
+    fx_left_cube->shader()->enable(EN_LIGHTING);
+    fx_left_cube->shader()->enable(EN_DEPTH_TEST);
+    fx_left_cube->shader()->enable(EN_BLEND);
+    fx_left_cube->shader()->enable(EN_ALPHA_TEST);
+    fx_left_cube->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.98f);
+    fx_left_cube->shader()->gocLightModel()->setTwoSide(true);
+    fx_left_cube->shader()->gocTextureUnit(0)->setTexture( tex_holebox.get() );
+    fx_left_cube->shader()->gocTextureUnit(1)->setTexture( tex_detail.get() );
+    fx_left_cube->shader()->gocTexEnv(1)->setMode(TEM_MODULATE); // modulate texture #0 and #1
 
-    vl::ref<vl::Effect> cube_left_fx = new vl::Effect;
-    // to ensure the cubes are drawn after the textured quads
-    cube_left_fx->setRenderRank(1);
-    cube_left_fx->shader()->setRenderState( light.get() );
-    cube_left_fx->shader()->enable(vl::EN_LIGHTING);
-    cube_left_fx->shader()->enable(vl::EN_DEPTH_TEST);
-    cube_left_fx->shader()->enable(vl::EN_BLEND);
-    cube_left_fx->shader()->enable(vl::EN_ALPHA_TEST);
-    cube_left_fx->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 1.0f - 0.02f);
-    cube_left_fx->shader()->gocLightModel()->setTwoSide(true);
-    cube_left_fx->shader()->gocTextureUnit(0)->setTexture( tex_holebox.get() );
-    cube_left_fx->shader()->gocTextureUnit(1)->setTexture( tex_detail.get() );
-    cube_left_fx->shader()->gocTexEnv(1)->setMode( vl::TEM_MODULATE );
+    // add right box
+    mRightCubeTransform = new Transform;
+    rendering()->as<Rendering>()->transform()->addChild(mRightCubeTransform.get());
+    sceneManager()->tree()->addActor( box.get(), fx_right_cube.get(), mRightCubeTransform.get() );
 
-    sceneManager()->tree()->addActor( box.get(), cube_right_fx.get(), mCubeRightTransform.get() );
-    sceneManager()->tree()->addActor( box.get(), cube_left_fx.get(),  mCubeLeftTransform.get() );
+    // add left box
+    mLeftCubeTransform = new Transform;
+    rendering()->as<Rendering>()->transform()->addChild(mLeftCubeTransform.get());
+    sceneManager()->tree()->addActor( box.get(), fx_left_cube.get(),  mLeftCubeTransform.get() );
   }
 
   void texture3D()
   {
-    if(!vl::Has_Texture_3D)
+    if(!Has_Texture_3D)
     {
-      vl::Log::error("Texture 3D not supported.\n");
+      Log::error("Texture 3D not supported.\n");
       return;
     }
 
-    vl::ref<vl::Image> img_volume = vl::loadImage("/volume/VLTest.dat");
+    // Create a 2x2 vertices quad facing the camera
+    mQuad3DTex = makeGrid( vec3(0,0,0), 10.0f, 10.0f, 2, 2 );
+    // Set one single color for all the vertices
+    mQuad3DTex->setColor(white);
+    // Rotate plane toward the user, otherwise it would be on the x/z plane
+    mQuad3DTex->transform( mat4::getRotation(90, 1,0,0), false );
 
-    vl::ref<vl::Geometry> quad_3d = vl::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
-    quad_3d->setColor(vl::white);
-    quad_3d->transform( vl::mat4::getRotation(90, 1,0,0), false );
-
-    mTexCoords_3D = new vl::ArrayFloat3;
-    quad_3d->setTexCoordArray(0, mTexCoords_3D.get());
+    // Texture coordinates to be animated in updateScene()
+    mTexCoords_3D = new ArrayFloat3;
     mTexCoords_3D->resize( 2*2 );
-    quad_3d->setVBOEnabled(false);
+    mQuad3DTex->setTexCoordArray(0, mTexCoords_3D.get());
 
-    vl::ref<vl::Effect> fx_3d = new vl::Effect;
+    // Effect used by the actor
+    ref<Effect> fx_3d = new Effect;
+    fx_3d->shader()->enable(EN_DEPTH_TEST);
 
-    vl::ref<vl::Texture> texture_3d = new vl::Texture;
-    texture_3d->prepareTexture3D( img_volume.get(), vl::TF_RGBA, mMipmappingOn, false );
+    // Add and position the actor in the scene
+    Actor* act_3d = sceneManager()->tree()->addActor( mQuad3DTex.get(), fx_3d.get(), new Transform );
+    act_3d->transform()->setLocalAndWorldMatrix( mat4::getTranslation(-6,+6,-6) );
+
+    // Setup a 3D texture with mipmapping
+    ref<Texture> texture_3d = new Texture;
+    // Load "/volume/VLTest.dat" which is a 3D image and prepare a 3D texture from it
+    texture_3d->prepareTexture3D( "/volume/VLTest.dat", TF_UNKNOWN, mMipmappingOn );
+    texture_3d->getTexParameter()->setMagFilter(TPF_LINEAR);
+    texture_3d->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
     fx_3d->shader()->gocTextureUnit(0)->setTexture( texture_3d.get() );
-    texture_3d->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    texture_3d->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
-
-    vl::Actor* act_3d = sceneManager()->tree()->addActor( quad_3d.get(), fx_3d.get(), new vl::Transform );
-    act_3d->transform()->setLocalMatrix( vl::mat4::getTranslation(-6,+6,0) );
-    act_3d->transform()->computeWorldMatrix();
   }
 
   void texture2DArray()
   {
-    if(!vl::Has_Texture_Array)
+    if(!Has_Texture_Array)
     {
-      vl::Log::error("Texture 2d array not supported.\n");
+      Log::error("Texture 2d array not supported.\n");
       return;
     }
 
-    vl::ref<vl::Image> img_volume = vl::loadImage("/volume/VLTest.dat");
-    m2DArraySize = img_volume->depth(); // save this to be used during the animation
+    // Create a 2x2 vertices quad facing the camera
+    mQuad2DArrayTex = makeGrid( vec3(0,0,0), 10.0f, 10.0f, 2, 2 );
+    // Set one single color for all the vertices
+    mQuad2DArrayTex->setColor(white);
+    // Rotate plane toward the user
+    mQuad2DArrayTex->transform( mat4::getRotation(90, 1,0,0), false );
 
-    vl::ref<vl::Geometry> quad_2darray = vl::makeGrid( vl::vec3(0,0,0), 10, 10, 2, 2 );
-    quad_2darray->setColor(vl::white);
-    quad_2darray->transform( vl::mat4::getRotation(90, 1,0,0), false );
-
-    mTexCoords_2DArray = new vl::ArrayFloat3;
-    quad_2darray->setTexCoordArray(0, mTexCoords_2DArray.get());
+    // Texture coordinates to be animated in updateScene()
+    mTexCoords_2DArray = new ArrayFloat3;
     mTexCoords_2DArray->resize( 2*2 );
-    quad_2darray->setVBOEnabled(false);
+    mQuad2DArrayTex->setTexCoordArray(0, mTexCoords_2DArray.get());
 
-    vl::ref<vl::Effect> fx_2darray = new vl::Effect;
+    // Create the effect used by the actor
+    ref<Effect> fx_2darray = new Effect;
+    fx_2darray->shader()->enable(EN_DEPTH_TEST);
 
-    vl::ref<vl::Texture> texture_2darray = new vl::Texture;
-    texture_2darray->prepareTexture2DArray( img_volume.get(), vl::TF_RGBA, mMipmappingOn );
+    // Add and position the actor in the scene
+    Actor* act_2darray = sceneManager()->tree()->addActor( mQuad2DArrayTex.get(), fx_2darray.get(), new Transform );
+    act_2darray->transform()->setLocalAndWorldMatrix( mat4::getTranslation(+6,+6,-6) );
+
+    // Load a 3D image, VL considers 3D images equivalent to an array of 2D images.
+    ref<Image> img_volume = loadImage("/volume/VLTest.dat");
+    m2DArraySize = img_volume->depth();
+
+    // Create the 2D texture array and bind it to unit #0
+    ref<Texture> texture_2darray = new Texture;
+    texture_2darray->prepareTexture2DArray( img_volume.get(), TF_RGBA, mMipmappingOn );
+    texture_2darray->getTexParameter()->setMagFilter(TPF_LINEAR);
+    texture_2darray->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
     fx_2darray->shader()->gocTextureUnit(0)->setTexture( texture_2darray.get() );
-    texture_2darray->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    texture_2darray->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
       
-    // we need an OpenGL Shading Language program that uses 'sampler2DArray()' to access the texture!
-    vl::GLSLProgram* glsl = fx_2darray->shader()->gocGLSLProgram();
-    glsl->attachShader( new vl::GLSLFragmentShader("/glsl/texture_2d_array.fs") );
-
-    vl::Actor* act_2darray = sceneManager()->tree()->addActor( quad_2darray.get(), fx_2darray.get(), new vl::Transform );
-    act_2darray->transform()->setLocalMatrix( vl::mat4::getTranslation(+6,+6,0) );
-    act_2darray->transform()->computeWorldMatrix();
+    // IMPORTANT
+    // We need a GLSL program that uses 'sampler2DArray()' to access the 1D and 2D texture arrays!
+    GLSLProgram* glsl = fx_2darray->shader()->gocGLSLProgram();
+    glsl->attachShader( new GLSLFragmentShader("/glsl/texture_2d_array.fs") );
+    // Bind the sampler to unit #0
+    glsl->gocUniform("sampler0")->setUniformI(0);
   }
 
   void texture1DArray()
   {
-    if(!vl::Has_Texture_Array)
+    if(!Has_Texture_Array)
     {
-      vl::Log::error("Texture 1d array not supported.\n");
+      Log::error("Texture 1d array not supported.\n");
       return;
     }
 
-    vl::ref<vl::Image> img_holebox = vl::loadImage("/images/holebox.tif");    
-    m1DArraySize = img_holebox->height(); // save this to be used during the animation
+    // Load a 2D texture, VL considers 2D images equivalent to arrays of 1D images.
+    ref<Image> img_holebox = loadImage("/images/holebox.tif");    
+    m1DArraySize = img_holebox->height();
 
-    // create a grid with img_holebox->height() slices
-    vl::ref<vl::Geometry> quad_1darray = vl::makeGrid( vl::vec3(0,0,0), 10, 10, 2, img_holebox->height() );
-    quad_1darray->setColor(vl::white);
-    quad_1darray->transform( vl::mat4::getRotation(90, 1,0,0), false );
-    
-    mTexCoords_1DArray = new vl::ArrayFloat2;
-    quad_1darray->setTexCoordArray(0, mTexCoords_1DArray.get());
+    // Create a grid with img_holebox->height() slices
+    mQuad1DArrayTex = makeGrid( vec3(0,0,0), 10, 10, 2, img_holebox->height() );
+    mQuad1DArrayTex->setColor(white);
+    mQuad1DArrayTex->transform( mat4::getRotation(90, 1,0,0), false );
+
+    // Texture coordinates to be animated in updateScene()
+    mTexCoords_1DArray = new ArrayFloat2;
     mTexCoords_1DArray->resize( 2 * img_holebox->height() );
-    quad_1darray->setVBOEnabled(false);
+    mQuad1DArrayTex->setTexCoordArray(0, mTexCoords_1DArray.get());
 
-    vl::ref<vl::Effect> fx_1darray = new vl::Effect;
+    // Create the effect used by the actor
+    ref<Effect> fx_1darray = new Effect;
+    fx_1darray->shader()->enable(EN_DEPTH_TEST);
 
-    vl::ref<vl::Texture> texture_1darray = new vl::Texture;
-    texture_1darray->prepareTexture1DArray( img_holebox.get(), vl::TF_RGBA, mMipmappingOn );
+    // Add and position the actor in the scene
+    Actor* act_1darray = sceneManager()->tree()->addActor( mQuad1DArrayTex.get(), fx_1darray.get(), new Transform );
+    act_1darray->transform()->setLocalAndWorldMatrix( mat4::getTranslation(+6,-6,-6) );
+
+    // Create the 1D texture array and bind it to unit #0
+    ref<Texture> texture_1darray = new Texture;
+    texture_1darray->prepareTexture1DArray( img_holebox.get(), TF_RGBA, mMipmappingOn );
+    texture_1darray->getTexParameter()->setMagFilter(TPF_LINEAR);
+    texture_1darray->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
     fx_1darray->shader()->gocTextureUnit(0)->setTexture( texture_1darray.get() );
-    texture_1darray->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    texture_1darray->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
       
-    // we need an OpenGL Shading Language program that uses 'sampler1DArray()' to access the texture!
-    vl::GLSLProgram* glsl = fx_1darray->shader()->gocGLSLProgram();
-    glsl->attachShader( new vl::GLSLFragmentShader("/glsl/texture_1d_array.fs") );
-
-    vl::Actor* act_1darray = sceneManager()->tree()->addActor( quad_1darray.get(), fx_1darray.get(), new vl::Transform );
-    act_1darray->transform()->setLocalMatrix( vl::mat4::getTranslation(+6,-6,0) );
-    act_1darray->transform()->computeWorldMatrix();
+    // IMPORTANT
+    // We need a GLSL program that uses 'sampler1DArray()' to access the 1D and 2D texture arrays!
+    GLSLProgram* glsl = fx_1darray->shader()->gocGLSLProgram();
+    glsl->attachShader( new GLSLFragmentShader("/glsl/texture_1d_array.fs") );
+    glsl->gocUniform("sampler0")->setUniformI(0);
   }
 
   void textureRectangle()
   {
-    if(!vl::Has_Texture_Rectangle)
+    if(!Has_Texture_Rectangle)
     {
-      vl::Log::error("Texture rectangle not supported.\n");
+      Log::error("Texture rectangle not supported.\n");
       return;
     }
 
-    vl::ref<vl::Image> img_holebox = vl::loadImage("/images/holebox.tif");    
+    ref<Image> img_holebox = loadImage("/images/holebox.tif");    
 
-    // generate non-normalized uv coordinates, i.e. from <0,0> to <img_holebox->width(),img_holebox->height()>
-    vl::ref<vl::Geometry> quad_rect = vl::makeGrid( vl::vec3(0,0,0), 10.0f, 10.0f, 2, 2, true, vl::fvec2(0,0), vl::fvec2((float)img_holebox->width(),(float)img_holebox->height()) );
-    quad_rect->setColor(vl::white);
-    quad_rect->transform( vl::mat4::getRotation(90, 1,0,0), false );
+    // Create a box that faces the camera
+    // Generate non-normalized uv coordinates, i.e. from <0,0> to <img_holebox->width(), img_holebox->height()>
+    float s_max = (float)img_holebox->width();
+    float t_max = (float)img_holebox->height();
+    ref<Geometry> quad_rect = makeGrid( vec3(0,0,0), 10.0f, 10.0f, 2, 2, true, fvec2(0, 0), fvec2(s_max, t_max) );
+    quad_rect->setColor(white);
+    quad_rect->transform( mat4::getRotation(90, 1,0,0), false );
 
-    vl::ref<vl::Effect> fx_rect = new vl::Effect;
+    // Effect used by the actor
+    ref<Effect> fx_rect = new Effect;
+    fx_rect->shader()->enable(EN_DEPTH_TEST);
 
-    vl::ref<vl::Texture> texture_rect = new vl::Texture;
-    texture_rect->prepareTextureRectangle( img_holebox.get(), vl::TF_RGBA );
-    fx_rect->shader()->gocTextureUnit(0)->setTexture( texture_rect.get() );
-    // mipmaps not allowed with texture rectangle!
-    texture_rect->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    texture_rect->getTexParameter()->setMinFilter(vl::TPF_LINEAR);
-    // GL_REPEAT (the default) not allowed with texture rectangle!
-    texture_rect->getTexParameter()->setWrapS(vl::TPW_CLAMP);
-    texture_rect->getTexParameter()->setWrapT(vl::TPW_CLAMP);
-    texture_rect->getTexParameter()->setWrapR(vl::TPW_CLAMP);
+    // Add and position the actor in the scene
+    Actor* act_rect = sceneManager()->tree()->addActor( quad_rect.get(), fx_rect.get(), new Transform );
+    act_rect->transform()->setLocalAndWorldMatrix( mat4::getTranslation(-6,-6,-6) );
 
-    vl::Actor* act_rect = sceneManager()->tree()->addActor( quad_rect.get(), fx_rect.get(), new vl::Transform );
-    act_rect->transform()->setLocalMatrix( vl::mat4::getTranslation(-6,-6,0) );
-    act_rect->transform()->computeWorldMatrix();
+    // Setup the texture rectangle
+    ref<Texture> texture_rectangle = new Texture;
+    // Note that mipmapping is not an option for texture rectangles since they do not support mipmaps
+    texture_rectangle->prepareTextureRectangle( img_holebox.get(), TF_RGBA );
+    // Set non-mipmapping filters for the texture
+    texture_rectangle->getTexParameter()->setMagFilter(TPF_LINEAR);
+    texture_rectangle->getTexParameter()->setMinFilter(TPF_LINEAR);
+    // GL_REPEAT (the default) is not allowed with texture rectangle so we set it to GL_CLAMP
+    texture_rectangle->getTexParameter()->setWrapS(TPW_CLAMP);
+    texture_rectangle->getTexParameter()->setWrapT(TPW_CLAMP);
+    texture_rectangle->getTexParameter()->setWrapR(TPW_CLAMP);
+    fx_rect->shader()->gocTextureUnit(0)->setTexture( texture_rectangle.get() );
   }
 
   void sphericalMapping()
   {
-    if (vl::Has_GLES)
+    if (Has_GLES)
     {
-      vl::Log::error("Spherical mapping texture coordinate generation not supported.\n");
+      Log::error("Spherical mapping texture coordinate generation not supported.\n");
       return;
     }
 
-    vl::ref<vl::Image> img_spheric = vl::loadImage("/images/spheremap_klimt.jpg");
+    // Effect used by the actor
+    mFXSpheric = new Effect;
+    mFXSpheric->shader()->enable(EN_DEPTH_TEST);
+    mFXSpheric->shader()->enable(EN_CULL_FACE);
+    mFXSpheric->shader()->enable(EN_LIGHTING);
+    mFXSpheric->shader()->setRenderState( new Light(0) );
 
-    vl::ref<vl::Geometry> torus = vl::makeTorus(vl::vec3(), 8,3, 40,40);
-    // normals already present, needed by GL_SPHERE_MAP to work correctly!
+    // Add sphere mapped torus
+    // makeTorus() also generates the normals which are needed by GL_SPHERE_MAP texture coordinate generation mode
+    ref<Geometry> torus = makeTorus(vec3(), 8,3, 40,40);
+    mActSpheric = sceneManager()->tree()->addActor( torus.get(), mFXSpheric.get(), new Transform );
+    rendering()->as<Rendering>()->transform()->addChild( mActSpheric->transform() );
 
-    mFXSpheric = new vl::Effect;
-    mFXSpheric->shader()->enable(vl::EN_DEPTH_TEST);
-    mFXSpheric->shader()->enable(vl::EN_CULL_FACE);
-    mFXSpheric->shader()->enable(vl::EN_LIGHTING);
-    mFXSpheric->shader()->setRenderState( new vl::Light(0) );
-    // to ensure the torus is drawn after the textured quads
-    mFXSpheric->setRenderRank(1);
+    // Create a 2d texture sphere map
+    ref<Texture> texture_sphere_map = new Texture;
+    texture_sphere_map->prepareTexture2D( "/images/spheremap_klimt.jpg", TF_UNKNOWN, mMipmappingOn );
+    texture_sphere_map->getTexParameter()->setMagFilter(TPF_LINEAR);
+    texture_sphere_map->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
+    mFXSpheric->shader()->gocTextureUnit(0)->setTexture( texture_sphere_map.get() );
 
-    vl::ref<vl::Texture> texture_spheric = new vl::Texture;
-    texture_spheric->prepareTexture2D( img_spheric.get(), vl::TF_RGBA, mMipmappingOn, false );
-    mFXSpheric->shader()->gocTextureUnit(0)->setTexture( texture_spheric.get() );
-    texture_spheric->getTexParameter()->setAnisotropy(16.0);
-    texture_spheric->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    texture_spheric->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
-    // enable automatic texture generation for s,t
-    mFXSpheric->shader()->gocTexGen(0)->setGenModeS(vl::TGM_SPHERE_MAP);
-    mFXSpheric->shader()->gocTexGen(0)->setGenModeT(vl::TGM_SPHERE_MAP);
-
-    mActSpheric = sceneManager()->tree()->addActor( torus.get(), mFXSpheric.get(), new vl::Transform );
-    rendering()->as<vl::Rendering>()->transform()->addChild( mActSpheric->transform() );
+    // Enable spherical mapping texture coordinate generation for s and t
+    mFXSpheric->shader()->gocTexGen(0)->setGenModeS(TGM_SPHERE_MAP);
+    mFXSpheric->shader()->gocTexGen(0)->setGenModeT(TGM_SPHERE_MAP);
   }
 
   void cubeMapping()
   {
-    // cube mapping, see also http://developer.nvidia.com/object/cube_map_ogl_tutorial.html
-
-    if (!vl::Has_Cubemap_Textures)
+    if (!Has_Cubemap_Textures)
     {
-      vl::Log::error("Texture cubemap not supported.\n");
+      Log::error("Texture cubemap not supported.\n");
       return;
     }
 
-    vl::ref<vl::Image> img_cubemap = vl::loadCubemap(
-      "/images/cubemap/cubemap00.png", // (x+) right
-      "/images/cubemap/cubemap01.png", // (x-) left
-      "/images/cubemap/cubemap02.png", // (y+) top
-      "/images/cubemap/cubemap03.png", // (y-) bottom
-      "/images/cubemap/cubemap04.png", // (z+) back
-      "/images/cubemap/cubemap05.png");// (z-) front
+    ref<Image> img_cubemap = loadCubemap(
+      "/images/cubemap/cubemap00.png",  // (x+) right
+      "/images/cubemap/cubemap01.png",  // (x-) left
+      "/images/cubemap/cubemap02.png",  // (y+) top
+      "/images/cubemap/cubemap03.png",  // (y-) bottom
+      "/images/cubemap/cubemap04.png",  // (z+) back
+      "/images/cubemap/cubemap05.png"); // (z-) front
 
-    vl::ref<vl::Geometry> torus = vl::makeTorus( vl::vec3(), 8,3, 40,40 );
-    // normals already present, needed by GL_SPHERE_MAP to work correctly!
+    // Effect used by the actor
+    mFXCubic = new Effect;
+    mFXCubic->shader()->enable(EN_DEPTH_TEST);
+    mFXCubic->shader()->enable(EN_CULL_FACE);
+    mFXCubic->shader()->enable(EN_LIGHTING);
+    mFXCubic->shader()->setRenderState( new Light(0) );
 
-    mFXCubic = new vl::Effect;
-    mFXCubic->shader()->enable(vl::EN_DEPTH_TEST);
-    mFXCubic->shader()->enable(vl::EN_CULL_FACE);
-    mFXCubic->shader()->enable(vl::EN_LIGHTING);
-    mFXCubic->shader()->setRenderState( new vl::Light(0) );
-    // to ensure the torus is drawn after the textured quads
-    mFXCubic->setRenderRank(1);
+    // Add cube-mapped torus
+    // makeTorus() also generates the normals which are needed by GL_REFLECTION_MAP texture coordinate generation mode
+    ref<Geometry> torus = makeTorus( vec3(), 8,3, 40,40 );
+    mActCubic = sceneManager()->tree()->addActor( torus.get(), mFXCubic.get(), new Transform );
+    rendering()->as<Rendering>()->transform()->addChild( mActCubic->transform() );
 
-    vl::ref<vl::Texture> texture_cubic = new vl::Texture;
-    texture_cubic->prepareTextureCubemap( img_cubemap.get(), vl::TF_RGBA, mMipmappingOn, false );
+    // Create the cube-map texture
+    ref<Texture> texture_cubic = new Texture;
+    texture_cubic->prepareTextureCubemap( img_cubemap.get(), TF_RGBA, mMipmappingOn );
+    // Texture filtering modes
+    texture_cubic->getTexParameter()->setMagFilter(TPF_LINEAR);
+    texture_cubic->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
+    // Clamp to edge to minimize seams
+    texture_cubic->getTexParameter()->setWrapS(TPW_CLAMP_TO_EDGE);
+    texture_cubic->getTexParameter()->setWrapT(TPW_CLAMP_TO_EDGE);
+    texture_cubic->getTexParameter()->setWrapR(TPW_CLAMP_TO_EDGE);
+    // Install the texture on unit #0
     mFXCubic->shader()->gocTextureUnit(0)->setTexture( texture_cubic.get() );
-    texture_cubic->getTexParameter()->setAnisotropy(16.0);
-    texture_cubic->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    texture_cubic->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
-    texture_cubic->getTexParameter()->setWrapS(vl::TPW_CLAMP_TO_EDGE);
-    texture_cubic->getTexParameter()->setWrapT(vl::TPW_CLAMP_TO_EDGE);
-    texture_cubic->getTexParameter()->setWrapR(vl::TPW_CLAMP_TO_EDGE);
-    // enable automatic texture generation for s,t,r
-    mFXCubic->shader()->gocTexGen(0)->setGenModeS(vl::TGM_REFLECTION_MAP);
-    mFXCubic->shader()->gocTexGen(0)->setGenModeT(vl::TGM_REFLECTION_MAP);
-    mFXCubic->shader()->gocTexGen(0)->setGenModeR(vl::TGM_REFLECTION_MAP);
-    // texture matrix
+
+    // Enable automatic texture generation for s, t, r on unit #0
+    mFXCubic->shader()->gocTexGen(0)->setGenModeS(TGM_REFLECTION_MAP);
+    mFXCubic->shader()->gocTexGen(0)->setGenModeT(TGM_REFLECTION_MAP);
+    mFXCubic->shader()->gocTexGen(0)->setGenModeR(TGM_REFLECTION_MAP);
+    
+    // Align the cube-map to the world space axes rather than eye space axes.
     mFXCubic->shader()->gocTextureMatrix(0)->setUseCameraRotationInverse(true);
-
-    mActCubic = sceneManager()->tree()->addActor( torus.get(), mFXCubic.get(), new vl::Transform );
-    rendering()->as<vl::Rendering>()->transform()->addChild( mActCubic->transform() );
   }
 
-  void updateScene()
+  void initEvent()
   {
-    // rotating cubes
+    // Log applet info
+    Log::info(appletInfo());
 
-    if (vl::Has_Multitexture)
-    {
-      mCubeRightTransform->setLocalMatrix( vl::mat4::getTranslation(+6,0,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
-      mCubeLeftTransform ->setLocalMatrix( vl::mat4::getTranslation(-6,0,0) * vl::mat4::getRotation( vl::Time::currentTime()*45, 0, 1, 0) );
-    }
-
-    // 5 seconds period
-    float t = sin( (float)vl::Time::currentTime()*vl::fPi*2.0f/5.0f) * 0.5f + 0.5f;
-    t = t * (1.0f - 0.02f*2) + 0.02f;
-
-    // 3d texture coordinates animation
-
-    if (mTexCoords_3D)
-    {
-      mTexCoords_3D->at(0) = vl::fvec3(0, 0, t);
-      mTexCoords_3D->at(1) = vl::fvec3(0, 1, t);
-      mTexCoords_3D->at(2) = vl::fvec3(1, 0, t);
-      mTexCoords_3D->at(3) = vl::fvec3(1, 1, t);
-    }
-
-    // 2d texture array coordinates animation
-
-    if (mTexCoords_2DArray)
-    {
-      mTexCoords_2DArray->at(0) = vl::fvec3(0, 0, t*m2DArraySize);
-      mTexCoords_2DArray->at(1) = vl::fvec3(0, 1, t*m2DArraySize);
-      mTexCoords_2DArray->at(2) = vl::fvec3(1, 0, t*m2DArraySize);
-      mTexCoords_2DArray->at(3) = vl::fvec3(1, 1, t*m2DArraySize);
-    }
-
-    // 1d texture array coordinates animation
-
-    if (mTexCoords_1DArray)
-    {
-      for(int i=0; i<m1DArraySize; ++i)
-      {
-        mTexCoords_1DArray->at(i*2+0) = vl::fvec2(0+t*0.02f*(i%2?+1.0f:-1.0f), (float)i);
-        mTexCoords_1DArray->at(i*2+1) = vl::fvec2(1+t*0.02f*(i%2?+1.0f:-1.0f), (float)i);
-      }
-    }
-
-    // spherical mapped torus rotation
-
-    if (mActSpheric)
-    {
-      mActSpheric->transform()->setLocalMatrix( vl::mat4::getTranslation(0,+6,0)*vl::mat4::getRotation(45*vl::Time::currentTime(),1,0,0) );
-      mActSpheric->transform()->computeWorldMatrix();
-    }
-
-    // cube mapped torus rotation
-
-    if (mActCubic)
-    {
-      mActCubic->transform()->setLocalMatrix( vl::mat4::getTranslation(0,-6,0)*vl::mat4::getRotation(45*vl::Time::currentTime(),1,0,0) );
-      mActCubic->transform()->computeWorldMatrix();
-    }
-  }
-
-  virtual void mouseWheelEvent(int w)
-  {
-    mLodBias += w*0.3f;
-    mLodBias = vl::clamp(mLodBias, 0.0f, 4.0f);
-
-    mFXSpheric->shader()->gocTexEnv(0)->setLodBias(mLodBias);
-    mFXCubic->shader()->gocTexEnv(0)->setLodBias(mLodBias);
-  }
-
-  virtual void initEvent()
-  {
-    vl::Log::info(appletInfo());
-
-    trackball()->setTransform(rendering()->as<vl::Rendering>()->transform());
-
+    // Default values
     mMipmappingOn = true;
     mLodBias = 0.0;
 
+    // Show all the texture types tests
     multitexturing();
     textureRectangle();
     texture3D();
@@ -416,18 +387,117 @@ public:
     cubeMapping();
   }
 
+  void updateScene()
+  {
+    // 5 seconds period
+    float t = sin( Time::currentTime()*dPi*2.0/5.0) * 0.5 + 0.5;
+    t = t * (1.0f - 0.02f*2) + 0.02f;
+
+    // Rotating cubes
+
+    if (Has_Multitexture)
+    {
+      mRightCubeTransform->setLocalMatrix( mat4::getTranslation(+6,0,0) * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
+      mLeftCubeTransform ->setLocalMatrix( mat4::getTranslation(-6,0,0) * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
+    }
+
+    // 3D texture coordinates animation
+
+    if (mTexCoords_3D)
+    {
+      // Animate the z texture coordinate.
+      mTexCoords_3D->at(0) = fvec3(0, 0, t);
+      mTexCoords_3D->at(1) = fvec3(0, 1, t);
+      mTexCoords_3D->at(2) = fvec3(1, 0, t);
+      mTexCoords_3D->at(3) = fvec3(1, 1, t);
+      // Mark texture coords as dirty to update its VBOs.
+      mTexCoords_3D->setVBODirty(true);
+      // Request the quad geometry to check its VBOs at the next rendering.
+      mQuad3DTex->setVBODirty(true);
+    }
+
+    // 2D texture array coordinates animation
+
+    if (mTexCoords_2DArray)
+    {
+      // Animate the z texture coordinate.
+      // Note that unlike for 3D textures in 2d array textures the z coordinate
+      // is not defined between 0..1 but between 1..N where N is the number of
+      // texture layers present in the texture array.
+      mTexCoords_2DArray->at(0) = fvec3(0, 0, t*m2DArraySize);
+      mTexCoords_2DArray->at(1) = fvec3(0, 1, t*m2DArraySize);
+      mTexCoords_2DArray->at(2) = fvec3(1, 0, t*m2DArraySize);
+      mTexCoords_2DArray->at(3) = fvec3(1, 1, t*m2DArraySize);
+      // Mark texture coords as dirty to update its VBOs.
+      mTexCoords_2DArray->setVBODirty(true);
+      // Request the quad geometry to check its VBOs at the next rendering.
+      mQuad2DArrayTex->setVBODirty(true);
+    }
+
+    // 1D texture array coordinates animation
+
+    if (mTexCoords_1DArray)
+    {
+      for(int i=0; i<m1DArraySize; ++i)
+      {
+        // Create some waving animation
+        float x_offset = 0.1f * cos( t*3.14159265f + 10.0f*((float)i/m1DArraySize)*3.14159265f );
+        // Note: the y texture coordinate is an integer value between 0 and N where N 
+        // is the number of texture 1D layers present in the texture array
+        mTexCoords_1DArray->at(i*2+0) = fvec2(0+x_offset, i);
+        mTexCoords_1DArray->at(i*2+1) = fvec2(1+x_offset, i);
+      }
+      // Mark texture coords as dirty to update its VBOs.
+      mTexCoords_1DArray->setVBODirty(true);
+      // Request the quad geometry to check its VBOs at the next rendering.
+      mQuad1DArrayTex->setVBODirty(true);
+    }
+
+    // Spherical mapped torus animation
+
+    if (mActSpheric)
+    {
+      // Just rotate the torus
+      mActSpheric->transform()->setLocalMatrix( mat4::getTranslation(0,+6,0)*mat4::getRotation(45*Time::currentTime(),1,0,0) );
+      mActSpheric->transform()->computeWorldMatrix();
+    }
+
+    // Cube mapped torus animation
+
+    if (mActCubic)
+    {
+      // Just rotate the torus
+      mActCubic->transform()->setLocalMatrix( mat4::getTranslation(0,-6,0)*mat4::getRotation(45*Time::currentTime(),1,0,0) );
+      mActCubic->transform()->computeWorldMatrix();
+    }
+  } 
+
+  void mouseWheelEvent(int w)
+  {
+    // Change the LOD bias of the texture to simulate sharp/dull reflections.
+
+    mLodBias += w*0.3f;
+    mLodBias = clamp(mLodBias, 0.0f, 4.0f);
+
+    mFXSpheric->shader()->gocTexEnv(0)->setLodBias(mLodBias);
+    mFXCubic->shader()->gocTexEnv(0)->setLodBias(mLodBias);
+  }
+
 protected:
-  vl::ref<vl::Transform> mCubeRightTransform;
-  vl::ref<vl::Transform> mCubeLeftTransform;
-  vl::ref<vl::ArrayFloat3> mTexCoords_3D;
-  vl::ref<vl::ArrayFloat3> mTexCoords_2DArray;
-  vl::ref<vl::ArrayFloat2> mTexCoords_1DArray;
+  ref<Geometry> mQuad3DTex;
+  ref<Geometry> mQuad2DArrayTex;
+  ref<Geometry> mQuad1DArrayTex; 
+  ref<Transform> mRightCubeTransform;
+  ref<Transform> mLeftCubeTransform;
+  ref<ArrayFloat3> mTexCoords_3D;
+  ref<ArrayFloat3> mTexCoords_2DArray;
+  ref<ArrayFloat2> mTexCoords_1DArray;
   int m1DArraySize;
   int m2DArraySize;
-  vl::ref<vl::Actor> mActSpheric;
-  vl::ref<vl::Actor> mActCubic;
-  vl::ref<vl::Effect> mFXSpheric;
-  vl::ref<vl::Effect> mFXCubic;
+  ref<Actor> mActSpheric;
+  ref<Actor> mActCubic;
+  ref<Effect> mFXSpheric;
+  ref<Effect> mFXCubic;
   float mLodBias;
   bool mMipmappingOn;
 };
