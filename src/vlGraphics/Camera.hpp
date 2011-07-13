@@ -49,9 +49,9 @@ namespace vl
   /** Represents a virtual camera defining, among other things, the point of view from which scenes can be rendered. */
   class VLGRAPHICS_EXPORT Camera: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Camera"; }
+    INSTRUMENT_CLASS(vl::Camera, Object)
 
+  public:
     /** Constructs a perspective projecting camera with FOV = 60.0, Near Plane = 0.05, Far Plane = 10000.0 */
     Camera();
 

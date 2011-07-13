@@ -56,9 +56,9 @@ namespace vl
    */
   class LoadWriterPNG: public ResourceLoadWriter
   {
-  public:
-    virtual const char* className() const { return "vl::LoadWriterPNG"; }
-    
+    INSTRUMENT_CLASS(vl::LoadWriterPNG, ResourceLoadWriter)
+
+  public:    
     LoadWriterPNG(): ResourceLoadWriter("|png|", "|png|"), mCompression(6) 
     {
       VL_DEBUG_SET_OBJECT_NAME()

@@ -48,9 +48,9 @@ namespace vl
    * \sa DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
   class DrawCall: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::DrawCall"; }
+    INSTRUMENT_CLASS(vl::DrawCalls, Object)
 
+  public:
     DrawCall(): mType(PT_TRIANGLES), mEnabled(true) {}
 
     DrawCall& operator=(const DrawCall& other)

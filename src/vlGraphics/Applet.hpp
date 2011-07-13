@@ -59,9 +59,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Applet: public UIEventListener
   {
-  public:
-    virtual const char* className() const { return "vl::Applet"; }
+    INSTRUMENT_CLASS(vl::Applet, UIEventListener)
 
+  public:
     /** Constructor */
     Applet();
 

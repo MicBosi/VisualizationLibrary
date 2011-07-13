@@ -44,9 +44,9 @@ namespace vl
    */
   class GeometryLoadCallback: public LoadCallback
   {
-  public:
-    virtual const char* className() const { return "vl::GeometryLoadCallback"; }
+    INSTRUMENT_CLASS(vl::GeometryLoadCallback, LoadCallback)
 
+  public:
     GeometryLoadCallback()
     {
       mMakeGLESFriendly    = false;

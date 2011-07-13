@@ -51,9 +51,9 @@ namespace vl
   */
   class SceneManagerActorTree: public SceneManagerBVH<ActorTree>
   {
-  public:
-    virtual const char* className() const { return "vl::SceneManagerActorTree"; }
+    INSTRUMENT_CLASS(vl::SceneManagerActorTree, SceneManagerBVH)
 
+  public:
     SceneManagerActorTree()
     { 
       VL_DEBUG_SET_OBJECT_NAME()

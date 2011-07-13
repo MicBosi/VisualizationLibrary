@@ -56,9 +56,9 @@ namespace vl
   */
   class VLCORE_EXPORT VirtualDirectory: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::VirtualDirectory"; }
+    INSTRUMENT_CLASS(vl::VirtualDirectory, Object)
 
+  public:
     //! Constructor
     //! \param path Defines the path name of the virtual dirctory, must be a non empty string.
     VirtualDirectory( const String& path="/" ): mPath(path) {}

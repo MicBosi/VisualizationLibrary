@@ -46,9 +46,9 @@ namespace vl
    */
   class Scissor: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Scissor"; }
+    INSTRUMENT_CLASS(vl::Scissor, Object)
 
+  public:
     Scissor(int x, int y, int width, int height)
     {
       setScissor(x,y,width,height);

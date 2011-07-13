@@ -46,9 +46,9 @@ namespace vl
   template <typename T>
   class Collection: public Object
   {
+    INSTRUMENT_CLASS(vl::Collection, Object)
+
   public:
-    virtual const char* className() const { return "vl::Collection"; }
-    
     Collection(const std::vector< ref<T> >& vector)
     {
       VL_DEBUG_SET_OBJECT_NAME()

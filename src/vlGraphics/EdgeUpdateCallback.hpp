@@ -43,12 +43,14 @@ namespace vl
   //! \sa EdgeExtractor
   class EdgeUpdateCallback: public ActorEventCallback
   {
+    INSTRUMENT_CLASS(vl::EdgeUpdateCallback, ActorEventCallback)
+
   public:
-    virtual const char* className() const { return "vl::EdgeUpdateCallback"; }
     EdgeUpdateCallback(): mShowCreases(true) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
+
     EdgeUpdateCallback(const std::vector<EdgeExtractor::Edge>& edge): mEdges(edge), mShowCreases(false) 
     {
       VL_DEBUG_SET_OBJECT_NAME()

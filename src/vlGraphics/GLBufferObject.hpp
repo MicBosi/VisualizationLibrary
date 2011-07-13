@@ -54,8 +54,9 @@ namespace vl
   */
   class GLBufferObject: public Buffer
   {
+    INSTRUMENT_CLASS(vl::GLBufferObject, Buffer)
+
   public:
-    virtual const char* className() const { return "vl::GLBufferObject"; }
     GLBufferObject()
     {
       VL_DEBUG_SET_OBJECT_NAME()

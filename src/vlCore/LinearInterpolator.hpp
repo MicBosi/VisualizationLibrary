@@ -43,9 +43,9 @@ namespace vl
   template<typename T>
   class LinearInterpolator: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::LinearInterpolator"; }
+    INSTRUMENT_CLASS(vl::LinearInterpolator, Object)
 
+  public:
     LinearInterpolator() 
     {
       VL_DEBUG_SET_OBJECT_NAME()

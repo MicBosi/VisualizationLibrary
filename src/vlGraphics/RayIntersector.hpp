@@ -49,8 +49,9 @@ namespace vl
    */
   class RayIntersection: public Object
   {
+    INSTRUMENT_CLASS(vl::RayIntersection, Object)
+
   public:
-    virtual const char* className() const { return "vl::RayIntersection"; }
     RayIntersection(): mActor(NULL), mDistance(0.0f) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -85,8 +86,9 @@ namespace vl
       providing also extra information relative to the intersection on the Geometry in use by the Actor. */
   class RayIntersectionGeometry: public RayIntersection
   {
+    INSTRUMENT_CLASS(vl::RayIntersectionGeometry, RayIntersection)
+
   public:
-    virtual const char* className() const { return "vl::RayIntersectionGeometry"; }
     RayIntersectionGeometry(): mGeometry(NULL), mDrawCalls(NULL), mTriangleIndex(-1) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -130,8 +132,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT RayIntersector: public Object
   {
+    INSTRUMENT_CLASS(vl::RayIntersector, Object)
+
   public:
-    virtual const char* className() const { return "vl::RayIntersector"; }
     RayIntersector()
     {
       VL_DEBUG_SET_OBJECT_NAME()

@@ -64,7 +64,6 @@ namespace vl
     friend class Texture;
   public:
     TexParameter();
-    virtual const char* className() const { return "vl::TexParameter"; }
 
     void apply(ETextureDimension dimension, OpenGLContext* gl) const;
 
@@ -81,7 +80,7 @@ namespace vl
     EDepthTextureMode depthTextureMode() const { return mDepthTextureMode; }
 
     void setMinFilter(ETexParamFilter minfilter) { mDirty = true; mMinFilter = minfilter; }
-	VLGRAPHICS_EXPORT void setMagFilter(ETexParamFilter magfilter);
+	  VLGRAPHICS_EXPORT void setMagFilter(ETexParamFilter magfilter);
     void setWrapS(ETexParamWrap texturewrap)     { mDirty = true; mWrapS = texturewrap; }
     void setWrapT(ETexParamWrap texturewrap)     { mDirty = true; mWrapT = texturewrap; }
     void setWrapR(ETexParamWrap texturewrap)     { mDirty = true; mWrapR = texturewrap; }
@@ -136,6 +135,8 @@ namespace vl
    * - Actor */
   class VLGRAPHICS_EXPORT Texture: public Object
   {
+    INSTRUMENT_CLASS(vl::Texture, Object)
+
   public:
     /** The SetupParams function wraps all the parameters needed to crate a Texture.
      * A SetupParams object is automatically setup and bound to a Texture after calling prepareTexture2D() and similar functions.
@@ -207,8 +208,6 @@ namespace vl
     };
 
   public:
-    virtual const char* className() const { return "vl::Texture"; }
-
     /** Constructs a texture from the specified file. 
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this constructor. */
     Texture(const String& image_path, ETextureFormat format = TF_RGBA, bool mipmaps = true, bool border=false);

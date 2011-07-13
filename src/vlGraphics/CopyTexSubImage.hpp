@@ -55,8 +55,9 @@ namespace vl
     * FBORenderTarget, FBOAbstractAttachment, Rendering, RenderEventCallback, CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D */
   class CopyTexSubImage: public RenderEventCallback
   {
+    INSTRUMENT_CLASS(vl::CopyTexSubImage, RenderEventCallback)
+
   public:
-    virtual const char* className() const { return "vl::CopyTexSubImage"; }
     CopyTexSubImage(): mReadBuffer(RDB_BACK_LEFT) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -104,6 +105,8 @@ namespace vl
   //! Wraps glCopyTexSubImage1D, see also CopyTexSubImage.
   class CopyTexSubImage1D: public CopyTexSubImage
   {
+    INSTRUMENT_CLASS(vl::CopyTexSubImage1D, CopyTexSubImage)
+
   public:
     CopyTexSubImage1D(int level, int xoffset, int x, int y, int width, Texture* texture=NULL, EReadDrawBuffer read_buffer=RDB_BACK_LEFT)
     {
@@ -116,7 +119,6 @@ namespace vl
       mTexture = texture;
       setReadBuffer(read_buffer);
     }
-    virtual const char* className() const { return "vl::CopyTexSubImage1D"; }
 
     void setTexture(Texture* tex) { mTexture = tex; }
     void setLevel(int level) { mLevel = level; }
@@ -177,8 +179,9 @@ namespace vl
   //! Wraps glCopyTexSubImage2D, see also CopyTexSubImage. To be used also for 1D array textures.
   class CopyTexSubImage2D: public CopyTexSubImage
   {
-  public:
+    INSTRUMENT_CLASS(vl::CopyTexSubImage2D, CopyTexSubImage)
 
+  public:
     CopyTexSubImage2D(int level, int xoffset, int yoffset, int x, int y, int width, int height, Texture* texture=NULL, ETex2DTarget target=T2DT_TEXTURE_2D, EReadDrawBuffer read_buffer=RDB_BACK_LEFT)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -194,7 +197,6 @@ namespace vl
       mTarget = target;
       setReadBuffer(read_buffer);
     }
-    virtual const char* className() const { return "vl::CopyTexSubImage2D"; }
 
     void setTexture(Texture* tex) { mTexture = tex; }
     void setLevel(int level) { mLevel = level; }
@@ -280,6 +282,8 @@ namespace vl
   //! Wraps glCopyTexSubImage3D, see also CopyTexSubImage. To be used also for 2D array textures.
   class CopyTexSubImage3D: public CopyTexSubImage
   {
+    INSTRUMENT_CLASS(vl::CopyTexSubImage3D, CopyTexSubImage)
+
   public:
     CopyTexSubImage3D(int level, int xoffset, int yoffset, int zoffset, int x, int y, int width, int height, Texture* texture, EReadDrawBuffer read_buffer=RDB_BACK_LEFT)
     {
@@ -296,7 +300,6 @@ namespace vl
       mTexture = texture;
       setReadBuffer(read_buffer);
     }
-    virtual const char* className() const { return "vl::CopyTexSubImage3D"; }
 
     void setTexture(Texture* tex) { mTexture = tex; }
     void setLevel(int level) { mLevel = level; }

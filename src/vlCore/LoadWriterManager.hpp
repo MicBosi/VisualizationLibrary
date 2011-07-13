@@ -60,9 +60,9 @@ namespace vl
   using the methods loadCallbacks() and writeCallbacks(). */
   class VLCORE_EXPORT LoadWriterManager: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::LoadWriterManager"; }
+    INSTRUMENT_CLASS(vl::LoadWriterManager, Object)
 
+  public:
     LoadWriterManager()
     { 
       mLoadWriters.setAutomaticDelete(false); 

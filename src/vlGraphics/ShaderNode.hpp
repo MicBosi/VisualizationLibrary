@@ -44,6 +44,8 @@ namespace vl
    */
   class ShaderNode: public Object
   {
+    INSTRUMENT_CLASS(vl::ShaderNode, Object)
+
   public:
     // --- --- ---
     struct EnableInfo
@@ -76,8 +78,6 @@ namespace vl
     typedef std::map< std::string, UniformInfo > UniformsMap;
 
   public:
-    virtual const char* className() const { return "vl::ShaderNode"; }
-
     ShaderNode(): mParent(NULL) {}
 
     // shader-related functions

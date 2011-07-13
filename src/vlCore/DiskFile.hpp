@@ -62,15 +62,16 @@ namespace vl
   */
   class VLCORE_EXPORT DiskFile: public VirtualFile
   {
+    INSTRUMENT_CLASS(vl::DiskFile, VirtualFile)
+
     friend class DiskDirectory;
   protected:
     DiskFile(const DiskFile& other): VirtualFile(other) {}
 
   public:
     DiskFile(const String& path = String());
-    ~DiskFile();
 
-    virtual const char* className() const { return "vl::DiskFile"; }
+    ~DiskFile();
 
     //! The specified path is relative to the parent directory. See setPhysicalPath().
     bool open(const String& path, EOpenMode mode);

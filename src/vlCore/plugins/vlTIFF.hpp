@@ -56,8 +56,8 @@ namespace vl
    */
   class LoadWriterTIFF: public ResourceLoadWriter
   {
+    INSTRUMENT_CLASS(vl::LoadWriterTIFF, ResourceLoadWriter)
   public:
-    virtual const char* className() const { return "vl::LoadWriterTIFF"; }
 
     LoadWriterTIFF(): ResourceLoadWriter("|tif|tiff|", "|tif|tiff|") 
     {

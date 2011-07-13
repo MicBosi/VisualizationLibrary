@@ -43,8 +43,9 @@ namespace vl
   //! Generates a set of new vertices from the old one.
   class VLGRAPHICS_EXPORT VertexMapper: public Object
   {
+    INSTRUMENT_CLASS(vl::VertexMapper, Object)
+
   public:
-    virtual const char* className() const { return "vl::VertexMapper"; }
     //! Regenerates a new Array based on the given mapping.
     //! \param data The array to be regenerated
     //! \param map_new_to_old Specifies the mapping from the old vetices to the new one. The \p i-th vertex of the new vertex array will use the \p map_new_to_old[i]-th vertex of the old array, 
@@ -61,6 +62,8 @@ namespace vl
   //! As a result also all the DrawArrays prensent in the Geometry are substituted with DrawElements.
   class VLGRAPHICS_EXPORT DoubleVertexRemover: public VertexMapper
   {
+    INSTRUMENT_CLASS(vl::DoubleVertexRemover, VertexMapper)
+
   private:
     class CompareVertex
     {
@@ -122,7 +125,6 @@ namespace vl
     };
 
   public:
-    virtual const char* className() const { return "vl::DoubleVertexRemover"; }
     DoubleVertexRemover() {}
     void removeDoubles(Geometry* geom);
     const std::vector<size_t>& mapNewToOld() const { return mMapNewToOld; }

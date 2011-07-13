@@ -52,8 +52,9 @@ namespace vl
    * - vl::RendererAbstract, vl::Renderer */
   class RenderEventCallback: public Object
   {
+    INSTRUMENT_CLASS(vl::RenderEventCallback, Object)
+
   public:
-    virtual const char* className() const { return "vl::RenderEventCallback"; }
     RenderEventCallback(): mRemoveAfterCall(false), mEnabled(true)
     {
       VL_DEBUG_SET_OBJECT_NAME()

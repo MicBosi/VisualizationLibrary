@@ -56,13 +56,13 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT ActorKdTree: public ActorTreeAbstract
   {
+    INSTRUMENT_CLASS(vl::ActorKdTree, ActorTreeAbstract)
+
   public:
     ActorKdTree()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    virtual const char* className() const { return "vl::ActorKdTree"; }
-
     virtual int childrenCount() const;
     virtual ActorTreeAbstract* child(int i);
     virtual const ActorTreeAbstract* child(int i) const;

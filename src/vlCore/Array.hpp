@@ -59,9 +59,9 @@ namespace vl
    */
   class ArrayAbstract: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::ArrayAbstract"; }
+    INSTRUMENT_CLASS(vl::ArrayAbstract, Object)
 
+  public:
     //! Default constructor.
     ArrayAbstract()
     { 
@@ -180,8 +180,9 @@ namespace vl
   template <typename T_VectorType, typename T_Scalar, int T_GL_Size, GLenum T_GL_Type>
   class Array: public ArrayAbstract
   {
+    INSTRUMENT_CLASS(vl::Array, ArrayAbstract)
+
   public:
-    virtual const char* className() const { return "vl::Array"; }
     typedef T_Scalar scalar_type;
 
     virtual size_t glSize() const { return T_GL_Size; }

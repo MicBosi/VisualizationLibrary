@@ -44,6 +44,8 @@ namespace vl
   /** Utility class to generate logs. */
   class VLCORE_EXPORT Log: public Object
   {
+    INSTRUMENT_CLASS(vl::Log, Object)
+
   protected:
     typedef enum 
     { 
@@ -56,8 +58,6 @@ namespace vl
     } ELogLevel;
 
   public:
-    virtual const char* className() const { return "vl::Log"; }
-
     Log()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -127,8 +127,9 @@ namespace vl
   /** The StandardLog class outputs the log messages on the stdout device and optionally also on a specified file. */
   class VLCORE_EXPORT StandardLog: public Log
   {
+    INSTRUMENT_CLASS(vl::StandardLog, Log)
+
   public:
-    virtual const char* className() const { return "vl::StandardLog"; }
     void setLogFile(const String& file);
     const String& logFile() const { return mLogFile; }
 

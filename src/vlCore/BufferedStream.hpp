@@ -48,9 +48,9 @@ namespace vl
   template<class Element_Type, int Chunk_Size>
   class BufferedStream: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::BufferedStream"; }
+    INSTRUMENT_CLASS(vl::BufferedStream, Object)
 
+  public:
     BufferedStream()
     {
       mSize = 0;

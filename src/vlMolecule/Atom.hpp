@@ -50,9 +50,9 @@ namespace vl
    */
   class Atom: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Atom"; }
+    INSTRUMENT_CLASS(vl::Atom, Object)
 
+  public:
     Atom()
     {
       VL_DEBUG_SET_OBJECT_NAME()

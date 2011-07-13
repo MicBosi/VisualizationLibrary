@@ -54,6 +54,8 @@ namespace vl
   */
   class Glyph: public Object
   {
+    INSTRUMENT_CLASS(vl::Glyph, Object)
+
   private:
     Glyph(const Glyph& other): Object(other)  
     {
@@ -65,8 +67,6 @@ namespace vl
     Glyph(): mFont(NULL), mS0(0), mT0(0), mS1(0), mT1(0), mGlyphIndex(0), mTextureHandle(0), mWidth(0), mHeight(0), mLeft(0), mTop(0) {}
 
     ~Glyph();
-
-    virtual const char* className() const { return "vl::Glyph"; }
 
     unsigned int textureHandle() const { return mTextureHandle; }
     void setTextureHandle(unsigned int handle) { mTextureHandle = handle; }
@@ -126,6 +126,8 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Font: public Object
   {
+    INSTRUMENT_CLASS(vl::Font, Object)
+
     friend class CoreText;
     friend class Text;
     friend class FontManager;
@@ -143,8 +145,6 @@ namespace vl
     Font(FontManager* fm, const String& font_file, int size );
 
   public:
-    virtual const char* className() const { return "vl::Font"; }
-
     //! Destructor.
     ~Font();
 

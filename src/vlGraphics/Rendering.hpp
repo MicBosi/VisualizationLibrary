@@ -68,9 +68,9 @@ namespace vl
   - Transform */
   class VLGRAPHICS_EXPORT Rendering: public RenderingAbstract
   {
+    INSTRUMENT_CLASS(vl::Rendering, RenderingAbstract)
+
   public:
-    virtual const char* className() const { return "vl::Rendering"; }
-    
     /** Constructor. */
     Rendering();
     

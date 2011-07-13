@@ -48,6 +48,8 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOAbstractAttachment: public Object
   {
+    INSTRUMENT_CLASS(vl::FBOAbstractAttachment, Object)
+
     friend class FBORenderTarget;
 
   private:
@@ -56,8 +58,6 @@ namespace vl
     void operator=( const FBOAbstractAttachment& ) {}
 
   public:
-    virtual const char* className() const { return "vl::FBOAbstractAttachment"; }
-
     /** Constructor */
     FBOAbstractAttachment() {}
 
@@ -86,11 +86,11 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBORenderbufferAttachment: public FBOAbstractAttachment
   {
+    INSTRUMENT_CLASS(vl::FBORenderbufferAttachment, FBOAbstractAttachment)
+
     friend class FBORenderTarget;
 
-  public:
-    virtual const char* className() const { return "vl::FBORenderbufferAttachment"; }
-    
+  public:    
     /** Constructor. */
     FBORenderbufferAttachment(): mHandle( 0 ), mWidth( 0 ), mHeight( 0 ), mSamples( 0 ), mReallocateRenderbuffer( true ) {}
     
@@ -184,9 +184,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOColorBufferAttachment: public FBORenderbufferAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBOColorBufferAttachment"; }
+    INSTRUMENT_CLASS(vl::FBOColorBufferAttachment, FBOColorBufferAttachment)
 
+  public:
     /** Constructor */
     FBOColorBufferAttachment( EColorBufferFormat type )
     {
@@ -214,9 +214,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBODepthBufferAttachment: public FBORenderbufferAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBODepthBufferAttachment"; }
+    INSTRUMENT_CLASS(vl::FBODepthBufferAttachment, FBORenderbufferAttachment)
 
+  public:
     /** Constructor */
     FBODepthBufferAttachment( EDepthBufferFormat type )
     {
@@ -244,9 +244,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOStencilBufferAttachment: public FBORenderbufferAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBOStencilBufferAttachment"; }
+    INSTRUMENT_CLASS(vl::FBOStencilBufferAttachment, FBORenderbufferAttachment)
 
+  public:
     /** Constructor */
     FBOStencilBufferAttachment( EStencilBufferFormat type )
     {
@@ -274,9 +274,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBODepthStencilBufferAttachment: public FBORenderbufferAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBODepthStencilBufferAttachment"; }
+    INSTRUMENT_CLASS(vl::FBODepthStencilBufferAttachment, FBORenderbufferAttachment)
 
+  public:
     /** Constructor */
     FBODepthStencilBufferAttachment( EDepthStencilBufferFormat type )
     {
@@ -304,9 +304,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOAbstractTextureAttachment: public FBOAbstractAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBOAbstractTextureAttachment"; }
+    INSTRUMENT_CLASS(vl::FBOAbstractTextureAttachment, FBOAbstractAttachment)
 
+  public:
     /** Constructor. */
     FBOAbstractTextureAttachment( Texture* texture, int mipmap_level ): mTexture(texture), mMipmapLevel(mipmap_level)
     {
@@ -341,9 +341,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTexture1DAttachment: public FBOAbstractTextureAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBOTexture1DAttachment"; }
+    INSTRUMENT_CLASS(vl::FBOTexture1DAttachment, FBOAbstractTextureAttachment)
 
+  public:
     /** Constructor. */
     FBOTexture1DAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
@@ -362,9 +362,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTexture2DAttachment: public FBOAbstractTextureAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBOTexture2DAttachment"; }
+    INSTRUMENT_CLASS(vl::FBOTexture2DAttachment, FBOAbstractTextureAttachment)
 
+  public:
     /** Constructor. */
     FBOTexture2DAttachment( Texture* texture, int mipmap_level, ETex2DTarget target ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
@@ -393,9 +393,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTextureAttachment: public FBOAbstractTextureAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBOTextureAttachment"; }
+    INSTRUMENT_CLASS(vl::FBOTextureAttachment, FBOAbstractTextureAttachment)
 
+  public:
     /** Constructor. */
     FBOTextureAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
@@ -415,9 +415,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTexture3DAttachment: public FBOAbstractTextureAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBOTexture3DAttachment"; }
+    INSTRUMENT_CLASS(vl::FBOTexture3DAttachment, FBOAbstractTextureAttachment)
 
+  public:
     FBOTexture3DAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -445,9 +445,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTextureLayerAttachment: public FBOAbstractTextureAttachment
   {
-  public:
-    virtual const char* className() const { return "vl::FBOTextureLayerAttachment"; }
+    INSTRUMENT_CLASS(vl::FBOTextureLayerAttachment, FBOAbstractTextureAttachment)
 
+  public:
     /** Constructor. */
     FBOTextureLayerAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
@@ -502,6 +502,8 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBORenderTarget: public RenderTarget
   {
+    INSTRUMENT_CLASS(vl::FBORenderTarget, RenderTarget)
+
     friend class OpenGLContext;
 
   private:
@@ -517,8 +519,6 @@ namespace vl
     }
 
   public:
-    virtual const char* className() const { return "vl::FBORenderTarget"; }
-
     /** Destructor. */
     ~FBORenderTarget() { if (openglContext()) destroy(); }
 

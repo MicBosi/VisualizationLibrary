@@ -56,9 +56,9 @@ namespace vl
    */
   class LoadWriterTGA: public ResourceLoadWriter
   {
-  public:
-    virtual const char* className() const { return "vl::LoadWriterTGA"; }
+    INSTRUMENT_CLASS(vl::LoadWriterTGA, ResourceLoadWriter)
 
+  public:
     LoadWriterTGA(): ResourceLoadWriter("|tga|", "|tga|") 
     {
       VL_DEBUG_SET_OBJECT_NAME()

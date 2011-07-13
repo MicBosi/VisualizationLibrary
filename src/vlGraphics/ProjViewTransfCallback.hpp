@@ -54,9 +54,9 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT ProjViewTransfCallback: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::ProjViewTransfCallback"; }
+    INSTRUMENT_CLASS(vl::ProjViewTransfCallback, Object)
 
+  public:
     ProjViewTransfCallback()
     {
       VL_DEBUG_SET_OBJECT_NAME()

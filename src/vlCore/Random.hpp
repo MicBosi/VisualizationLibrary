@@ -39,9 +39,9 @@ namespace vl
   //! Random number generator.
   class VLCORE_EXPORT Random: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Random"; }
+    INSTRUMENT_CLASS(vl::Random, Object)
 
+  public:
     //! Constructor.
     Random();
 

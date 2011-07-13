@@ -48,9 +48,9 @@ namespace vl
   */
   class VLCORE_EXPORT Plane: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::Plane"; }
+    INSTRUMENT_CLASS(vl::Plane, Object)
 
+  public:
     Plane( Real o=0.0f, vec3 n=vec3(0,0,0) ): mNormal(n), mOrigin(o) 
     {
       VL_DEBUG_SET_OBJECT_NAME()

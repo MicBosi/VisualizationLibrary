@@ -43,9 +43,9 @@ namespace vl
   /** Represents a vl::Image with an associated Pixel Buffer Object. */
   class ImagePBO: public Image
   {
+    INSTRUMENT_CLASS(vl::ImagePBO, Image)
+
   public:
-    virtual const char* className() const { return "vl::ImagePBO"; }
-	
     //! Constructor.
     ImagePBO()
     {

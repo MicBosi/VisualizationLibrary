@@ -44,9 +44,9 @@ namespace vl
   */
   class RenderQueue: public Object
   {
-  public:
-    virtual const char* className() const { return "vl::RenderQueue"; }
+    INSTRUMENT_CLASS(vl::RenderQueue, Object)
 
+  public:
     RenderQueue(): mSize(0), mSizeMP(0)
     {
       VL_DEBUG_SET_OBJECT_NAME()

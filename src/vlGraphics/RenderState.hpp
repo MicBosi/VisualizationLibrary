@@ -49,8 +49,9 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT RenderState: public Object
   {
+    INSTRUMENT_CLASS(vl::RenderState, Object)
+
   public:
-    virtual const char* className() const { return "vl::RenderState"; }
     RenderState() 
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -70,8 +71,9 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT TextureState: public RenderState
   {
+    INSTRUMENT_CLASS(vl::TextureState, RenderState)
+
   public:
-    virtual const char* className() const { return "vl::TextureState"; }
     TextureState(): mTextureUnit(0)
     {
       VL_DEBUG_SET_OBJECT_NAME()

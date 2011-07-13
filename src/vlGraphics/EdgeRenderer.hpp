@@ -54,6 +54,8 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT EdgeRenderer: public Renderer
   {
+    INSTRUMENT_CLASS(vl::EdgeRenderer, Renderer)
+
     class WFInfo: public Object
     {
     public:
@@ -62,7 +64,6 @@ namespace vl
     };
 
   public:
-    virtual const char* className() const { return "vl::EdgeRenderer"; }
     EdgeRenderer(): mLineWidth(1.0f), mPolygonOffsetFactor(1.0f), mPolygonOffsetUnits(1.0f), mCreaseAngle(44.0f), mShowHiddenLines(true), mShowCreases(true), mSmoothLines(true)
     {
       VL_DEBUG_SET_OBJECT_NAME()
