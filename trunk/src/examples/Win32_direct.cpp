@@ -140,7 +140,7 @@ public:
 
     // update the projection matrix
     vl::mat4 proj_matr = vl::mat4::getPerspective( 60 /*FOV*/, (float)w/h, 5/*near plane*/, 100/*far plane*/);
-    rendering()->camera()->setProjectionMatrix( proj_matr );
+    rendering()->camera()->setProjectionMatrix( proj_matr, vl::PMT_PerspectiveProjection );
 
     /* can also be done like this:
     (the camera already knows the viewport dimensions and aspect ratio) 
