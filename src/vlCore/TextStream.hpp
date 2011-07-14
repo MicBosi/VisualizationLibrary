@@ -45,7 +45,7 @@ namespace vl
   */
   class VLCORE_EXPORT TextStream: public BufferedStream<unsigned char, 128*1024>
   {
-    INSTRUMENT_CLASS(vl::TextStream, BufferedStream)
+    INSTRUMENT_CLASS(vl::TextStream, VL_GROUP(BufferedStream<unsigned char, 128*1024>))
 
   public:
     TextStream(VirtualFile* file=NULL)
