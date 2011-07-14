@@ -54,7 +54,7 @@ Applet::Applet()
 void Applet::initialize()
 {
   // if the user didn't provide one use the one installed by default
-  ref<Rendering> rend = rendering()->as<Rendering>() ? rendering()->as<Rendering>() : new Rendering;
+  ref<Rendering> rend = rendering() && rendering()->as<Rendering>() ? rendering()->as<Rendering>() : new Rendering;
   setRendering(rend.get());
 
   // installs a SceneManagerActorTree as the default scene manager
@@ -145,7 +145,7 @@ void Applet::keyReleaseEvent(unsigned short, EKey key)
 void Applet::resizeEvent(int w, int h)
 {
   // if a simple Rendering is attached as the rendering root than update viewport and projection matrix.
-  Rendering* rend = dynamic_cast<Rendering*>(rendering());
+  Rendering* rend = cast<Rendering>(rendering());
   if (rend)
   {
     VL_CHECK( w == rend->renderer()->renderTarget()->width() );

@@ -371,7 +371,7 @@ public:
         actor->effect()->shader()->enable(EN_LIGHTING);
         actor->effect()->shader()->enable(EN_CULL_FACE);
 
-        Geometry* geom = dynamic_cast<Geometry*>(actor->lod(0).get());
+        Geometry* geom = cast<Geometry>(actor->lod(0).get());
         if (geom)
           mActorGeomMap[actor] = geom->deepCopy();
 

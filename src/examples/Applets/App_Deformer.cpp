@@ -81,7 +81,7 @@ public:
     mGrid = vl::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, mSlices, mSlices, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     mGrid->setVBOEnabled(false);
     mGrid->transform(vl::mat4::getRotation(-90,1,0,0));
-    mPoints = dynamic_cast<vl::ArrayFloat3*>(mGrid->vertexArray());
+    mPoints = vl::cast<vl::ArrayFloat3>(mGrid->vertexArray());
 
     // save point coordinates for the animation keyframe
     mPointsRest = new vl::ArrayFloat3;

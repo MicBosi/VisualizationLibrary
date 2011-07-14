@@ -67,7 +67,7 @@ void EdgeExtractor::addEdge(std::set<EdgeExtractor::Edge>& edges, const EdgeExtr
 //! The given geometry must have a vertex array of format ArrayFloat3.
 void EdgeExtractor::extractEdges(Geometry* geom)
 {
-  ArrayFloat3* verts = dynamic_cast<ArrayFloat3*>(geom->vertexArray());
+  ArrayFloat3* verts = cast<ArrayFloat3>(geom->vertexArray());
 
   // mic fixme:
   // here the bottle-neck seems to be the continuous allocation/deallocation and insertion/search time,
@@ -163,7 +163,7 @@ ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
 //-----------------------------------------------------------------------------
 bool EdgeExtractor::extractEdges(Actor* actor)
 {
-  Geometry* geom = dynamic_cast<Geometry*>(actor->lod(0).get());
+  Geometry* geom = cast<Geometry>(actor->lod(0).get());
   if (geom)
     extractEdges(geom);
   return geom != NULL;
@@ -173,7 +173,7 @@ void EdgeExtractor::extractEdges(ActorCollection* actors)
 {
   for(int i=0; i<actors->size(); ++i)
   {
-    Geometry* geom = dynamic_cast<Geometry*>(actors->at(i)->lod(0).get());
+    Geometry* geom = cast<Geometry>(actors->at(i)->lod(0).get());
     if (geom)
       extractEdges(geom);
   }

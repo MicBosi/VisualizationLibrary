@@ -72,7 +72,7 @@ void PolygonSimplifier::simplify(float simplification_ratio, Geometry* geom)
   if ( simplification_ratio > 1.0f || simplification_ratio <= 0.0f )
     return;
 
-  ArrayFloat3* pvec3 = dynamic_cast<ArrayFloat3*>( geom->vertexArray() );
+  ArrayFloat3* pvec3 = cast<ArrayFloat3>( geom->vertexArray() );
   if (pvec3)
   {
     simplify( (int)(simplification_ratio*pvec3->size()), geom );
@@ -100,7 +100,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
       Log::warning("PolygonSimplifier::simplify() simplifies only the position array of a Geometry, the other attibutes will be discarded.\n");
   #endif
 
-  if (!dynamic_cast<ArrayFloat3*>(geom->vertexArray()))
+  if (!cast<ArrayFloat3>(geom->vertexArray()))
   {
     Log::error("PolygonSimplifier::simplify() supports only position arrays of type ArrayFloat3!\n");
     return;
@@ -133,7 +133,7 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
   }
 
   // fill vertices
-  ref<ArrayFloat3> pvec3 = dynamic_cast<ArrayFloat3*>( geom->vertexArray() );
+  ref<ArrayFloat3> pvec3 = cast<ArrayFloat3>( geom->vertexArray() );
   verts.resize( pvec3->size() );
   memcpy( &verts[0], pvec3->ptr(), sizeof(verts[0])   * verts.size() );
 

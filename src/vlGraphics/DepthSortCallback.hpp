@@ -154,14 +154,14 @@ namespace vl
         mCacheMatrix = matrix;
 
       // this works well with LOD
-      ref<Geometry> geometry = dynamic_cast<Geometry*>(renderable);
+      ref<Geometry> geometry = cast<Geometry>(renderable);
 
       if (!geometry)
         return;
 
       geometry->setDisplayListDirty(true);
 
-      ref<ArrayFloat3> verts = dynamic_cast<ArrayFloat3*>(geometry->vertexArray());
+      ref<ArrayFloat3> verts = cast<ArrayFloat3>(geometry->vertexArray());
 
       if (!verts)
         return;
@@ -181,9 +181,9 @@ namespace vl
 
       for(int idraw=0; idraw<geometry->drawCalls()->size(); ++idraw)
       {
-        ref<DrawElementsUInt>   polys_uint   = dynamic_cast<DrawElementsUInt*>  (geometry->drawCalls()->at(idraw));
-        ref<DrawElementsUShort> polys_ushort = dynamic_cast<DrawElementsUShort*>(geometry->drawCalls()->at(idraw));
-        ref<DrawElementsUByte>  polys_ubyte  = dynamic_cast<DrawElementsUByte*> (geometry->drawCalls()->at(idraw));
+        ref<DrawElementsUInt>   polys_uint   = cast<DrawElementsUInt>  (geometry->drawCalls()->at(idraw));
+        ref<DrawElementsUShort> polys_ushort = cast<DrawElementsUShort>(geometry->drawCalls()->at(idraw));
+        ref<DrawElementsUByte>  polys_ubyte  = cast<DrawElementsUByte> (geometry->drawCalls()->at(idraw));
 
         if (polys_uint)
           sort<unsigned int,DrawElementsUInt>(polys_uint.get(), mSortedPointsUInt, mSortedLinesUInt, mSortedTrianglesUInt, mSortedQuadsUInt);

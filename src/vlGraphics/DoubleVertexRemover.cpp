@@ -38,7 +38,7 @@ using namespace vl;
 template<class T>
 ref<ArrayAbstract> VertexMapper::regenerateT(ArrayAbstract* data, const std::vector<size_t>& map_new_to_old) const
 {
-  ref<T> in_data = dynamic_cast<T*>(data);
+  ref<T> in_data = cast<T>(data);
   if (in_data)
   {
     ref<T> out_data = new T;

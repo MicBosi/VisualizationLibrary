@@ -255,9 +255,9 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
   remover.removeDoubles( geometry.get() );
 
   // install the newly created and simplified arrays
-  vertex_frames[0] = dynamic_cast<ArrayFloat3*>(geometry->vertexArray());
-  tex_coords       = dynamic_cast<ArrayFloat2*>(geometry->texCoordArray(0));
-  polygons         = dynamic_cast<DrawElementsUInt*>(geometry->drawCalls()->at(0));
+  vertex_frames[0] = cast<ArrayFloat3>(geometry->vertexArray()); VL_CHECK(vertex_frames[0]);
+  tex_coords       = cast<ArrayFloat2>(geometry->texCoordArray(0)); VL_CHECK(tex_coords);
+  polygons         = cast<DrawElementsUInt>(geometry->drawCalls()->at(0)); VL_CHECK(polygons);
 
   // simplify the remaining frames based on the translation table remover.oldToNewIndexMap()
   for(int iframe=1; iframe<loader.header.numFrames; ++iframe)
@@ -279,7 +279,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
   {
     geometry->setVertexArray( vertex_frames[iframe].get() );
     geometry->computeNormals();
-    normal_frames[iframe] = dynamic_cast<ArrayFloat3*>(geometry->normalArray());
+    normal_frames[iframe] = cast<ArrayFloat3>(geometry->normalArray()); VL_CHECK(normal_frames[iframe]);
     VL_CHECK( normal_frames[iframe] )
   }
 

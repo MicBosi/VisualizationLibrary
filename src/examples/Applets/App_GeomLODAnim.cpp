@@ -104,8 +104,8 @@ public:
       mLastUpdatedLod = renderable;
 
       // note: this returns the current LOD geometry
-      vl::ref<vl::Geometry> geom = dynamic_cast<vl::Geometry*>( renderable );
-      vl::ref<vl::ArrayFloat3> vecarr3 = dynamic_cast<vl::ArrayFloat3*>( geom->vertexArray() );
+      vl::ref<vl::Geometry> geom = vl::cast<vl::Geometry>( renderable );
+      vl::ref<vl::ArrayFloat3> vecarr3 = vl::cast<vl::ArrayFloat3>( geom->vertexArray() );
       vl::fvec3* vec = vecarr3->begin();
       vl::vec3 center = renderable->boundingBox().center();
 

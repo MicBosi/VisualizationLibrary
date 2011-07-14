@@ -277,7 +277,7 @@ bool Geometry::flipNormals()
 {
   if (normalArray())
   {
-    ArrayFloat3* norm3f = dynamic_cast<ArrayFloat3*>(normalArray());
+    ArrayFloat3* norm3f = cast<ArrayFloat3>(normalArray());
     if (norm3f)
     {
       for(size_t i=0; i<norm3f->size(); ++i)
@@ -577,7 +577,7 @@ void Geometry::mergeTriangleStrips()
   // collect DrawElementsUInt
   for(int i=drawCalls()->size(); i--; )
   {
-    ref<DrawElementsUInt> de_uint = dynamic_cast<DrawElementsUInt*>( drawCalls()->at(i) );
+    ref<DrawElementsUInt> de_uint = cast<DrawElementsUInt>( drawCalls()->at(i) );
     if (de_uint && de_uint->primitiveType() == PT_TRIANGLE_STRIP)
     {
       de.push_back(de_uint);
@@ -816,9 +816,9 @@ bool Geometry::sortVertices()
   // collect DrawElements
   for(int i=0; i<drawCalls()->size(); ++i)
   {
-    DrawElementsUInt*   dei = dynamic_cast<DrawElementsUInt*>(drawCalls()->at(i));
-    DrawElementsUShort* des = dynamic_cast<DrawElementsUShort*>(drawCalls()->at(i));
-    DrawElementsUByte*  deb = dynamic_cast<DrawElementsUByte*>(drawCalls()->at(i));
+    DrawElementsUInt*   dei = cast<DrawElementsUInt>(drawCalls()->at(i));
+    DrawElementsUShort* des = cast<DrawElementsUShort>(drawCalls()->at(i));
+    DrawElementsUByte*  deb = cast<DrawElementsUByte>(drawCalls()->at(i));
     if (dei)
       de_uint.push_back(dei);
     else

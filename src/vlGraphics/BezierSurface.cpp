@@ -90,7 +90,7 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
   for(unsigned ipatch=0; ipatch<patches().size(); ++ipatch)
     patch_count += ((patches()[ipatch]->x()-1)/3)*((patches()[ipatch]->y()-1)/3);
 
-  ref<ArrayFloat3> vert_array = dynamic_cast<ArrayFloat3*>(vertexArray());
+  ref<ArrayFloat3> vert_array = cast<ArrayFloat3>(vertexArray());
   if (!vert_array)
   {
     vert_array = new ArrayFloat3;
@@ -98,7 +98,7 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
   }
   vert_array->resize(detail()*detail()*patch_count);
 
-  ref<ArrayFloat2> texc_array = dynamic_cast<ArrayFloat2*>(texCoordArray(0));
+  ref<ArrayFloat2> texc_array = cast<ArrayFloat2>(texCoordArray(0));
   if ( gen_tex_coords )
   {
     if (!texc_array)
@@ -109,7 +109,7 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
     texc_array->resize(detail()*detail()*patch_count);
   }
 
-  ref<DrawElementsUInt> de = drawCalls()->size() == 1 ? dynamic_cast<DrawElementsUInt*>(drawCalls()->at(0)) : NULL;
+  ref<DrawElementsUInt> de = drawCalls()->size() == 1 ? cast<DrawElementsUInt>(drawCalls()->at(0)) : NULL;
   if (!de)
   {
     drawCalls()->clear();

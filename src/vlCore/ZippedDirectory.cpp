@@ -331,7 +331,7 @@ ref<ZippedDirectory> ZippedDirectory::zippedSubDir(const String& subdir_name) co
   {
     if (it->first.startsWith(p+'/'))
     {
-      ref<ZippedFile> mfile = dynamic_cast<ZippedFile*>(it->second->clone().get());
+      ref<ZippedFile> mfile = static_cast<ZippedFile*>(it->second->clone().get());
       VL_CHECK(mfile)
       dir->mFiles[mfile->path()] = mfile;
     }
