@@ -117,25 +117,26 @@ public:                                                                         
   }                                                                                                                   \
 private:
 //---------------------------------------------------------------------------------------------------------------------
-// mic fixme: VL_DYNAMIC_CAST
-//template<class B, class A>
-//B* vl_cast(A obj)
-//{
-//  if(obj->isOfType(B::staticType()))
-//    return static_cast<B*>(obj);
-//  else
-//    return NULL;
-//}
-//---------------------------------------------------------------------------------------------------------------------
-// mic fixme: VL_DYNAMIC_CAST
-//template<class B, class A>
-//const B* vl_const_cast(const A obj)
-//{
-//  if(obj->isOfType(B::staticType()))
-//    return static_cast<const B*>(obj);
-//  else
-//    return NULL;
-//}
+namespace vl
+{
+  template<class B, class A>
+  B* cast(A* obj)
+  {
+    if(obj->isOfType(B::staticType()))
+      return static_cast<B*>(obj);
+    else
+      return NULL;
+  }
+  //---------------------------------------------------------------------------------------------------------------------
+  template<class B, class A>
+  const B* cast(const A* obj)
+  {
+    if(obj->isOfType(B::staticType()))
+      return static_cast<const B*>(obj);
+    else
+      return NULL;
+  }
+}
 //---------------------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -146,38 +147,38 @@ private:
 
 namespace ns
 {
-  >>> NO INHERITANCE FROM INSTRUMENTED BASE CLASS
+  // >>> NO INHERITANCE FROM INSTRUMENTED BASE CLASS
   class Base
   {
     VL_INSTRUMENT_BASE_CLASS(Base)
   };
 
-  >>> SIMPLE INHERITANCE OF INSTRUMENTED CLASS
-  class ClassA: public Base
+  // >>> SIMPLE INHERITANCE OF INSTRUMENTED CLASS
+  class ClassA: public virtual Base
   {
     VL_INSTRUMENT_CLASS(ns::ClassA, Base)
   };
 
-  >>> SIMPLE INHERITANCE OF INSTRUMENTED CLASS
-  class ClassB: public ClassA
+  // >>> SIMPLE INHERITANCE OF INSTRUMENTED CLASS
+  class ClassB: public virtual Base
   {
-    VL_INSTRUMENT_CLASS(ns::ClassB, ClassA)
+    VL_INSTRUMENT_CLASS(ns::ClassB, Base)
   };
 
-  >>> MULTIPLE INHERITANCE
-  class ClassC: public ClassA, public ClassB
+  // >>> MULTIPLE INHERITANCE
+  class ClassAB: public ClassA, public ClassB
   {
-    VL_INSTRUMENT_CLASS_2(ns::ClassC, ClassA, ClassB)
+    VL_INSTRUMENT_CLASS_2(ns::ClassAB, ClassA, ClassB)
   };
 
-  >>> TEMPLATE CLASSES WITH MORE THAN 1 PARAMS
+  // >>> TEMPLATE CLASSES WITH MORE THAN 1 PARAMS
   template<class T1, class T2>
   class ClassT: public Base
   {
     VL_INSTRUMENT_CLASS(VL_GROUP(ns::ClassT<class T1, class T2>), Base)
   };
 
-  >>> SUBCLASSES OF TEMPLATES WITH MORE THAN 1 PARAMS
+  // >>> SUBCLASSES OF TEMPLATES WITH MORE THAN 1 PARAMS
   class ClassSubT: public ClassT<int, float>
   {
     VL_INSTRUMENT_CLASS(ns::ClassSubT, VL_GROUP(ClassT<int, float>))
@@ -187,6 +188,23 @@ namespace ns
 IMPORTANT NOTE:
   - The "ClassName" parameter of VL_INSTRUMENT_* should ALWAYS specify the full namespace.
   - The "BaseClass" parameter of VL_INSTRUMENT_* should not specify the namespace unless strictly necessary.
+
+--- dynamic casting example ---
+
+ns::ClassAB AB;
+ns::ClassA* pA = &AB;
+ns::ClassB* pB = &AB;
+assert( vl::cast<ns::ClassAB>(pA)   != NULL )
+assert( vl::cast<ns::ClassAB>(pB)   != NULL )
+assert( vl::cast<ns::ClassSubT>(pA) == NULL )
+
+NOTE THAT UNLIKE dynamic_cast<> AND static_cast<> WE USE:
+
+  vl::cast<ns::ClassAB>(pB)
+
+INSTEAD OF:
+
+  vl::cast<ns::ClassAB*>(pB)
 
 ***/
 

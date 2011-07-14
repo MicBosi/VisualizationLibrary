@@ -39,6 +39,7 @@
 
 namespace blind_tests
 {
+  bool test_TypeInfo();
   bool test_filesystem();
   bool test_hfloat();
   bool test_math();
@@ -58,6 +59,7 @@ struct s_Test
 };
 
 s_Test g_Tests[] = { 
+  { test_TypeInfo,    "TypeInfo"     },
   { test_math,        "Math"         },
   { test_filesystem,  "Filesystem"   },
   { test_hfloat,      "Half Float"   },
