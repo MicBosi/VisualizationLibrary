@@ -41,7 +41,7 @@ namespace vl
   //! A set of key/value pairs usually used to associate generic information, tags, attributes etc. to another class.
   class VLCORE_EXPORT KeyValues: public Object
   {
-    INSTRUMENT_CLASS(vl::KeyValues, Object)
+    VL_INSTRUMENT_CLASS(vl::KeyValues, Object)
 
   public:
     KeyValues();

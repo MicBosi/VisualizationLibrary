@@ -66,7 +66,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Geometry: public Renderable, public IVertexAttribSet
   {
-    INSTRUMENT_CLASS(vl::Geometry, Renderable)
+    VL_INSTRUMENT_CLASS(vl::Geometry, Renderable)
 
   private:
     class TextureArray: public Object

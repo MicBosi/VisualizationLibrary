@@ -49,7 +49,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT RenderState: public Object
   {
-    INSTRUMENT_CLASS(vl::RenderState, Object)
+    VL_INSTRUMENT_CLASS(vl::RenderState, Object)
 
   public:
     RenderState() 
@@ -71,7 +71,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT TextureState: public RenderState
   {
-    INSTRUMENT_CLASS(vl::TextureState, RenderState)
+    VL_INSTRUMENT_CLASS(vl::TextureState, RenderState)
 
   public:
     TextureState(): mTextureUnit(0)

@@ -48,7 +48,7 @@ namespace vl
   */
   class VLCORE_EXPORT Time: public Object
   {
-    INSTRUMENT_CLASS(vl::Time, Object)
+    VL_INSTRUMENT_CLASS(vl::Time, Object)
 
   public:
     Time();

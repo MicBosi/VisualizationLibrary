@@ -49,7 +49,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT PixelLODEvaluator: public LODEvaluator
   {
-    INSTRUMENT_CLASS(vl::PixelLODEvaluator, LODEvaluator)
+    VL_INSTRUMENT_CLASS(vl::PixelLODEvaluator, LODEvaluator)
 
   public:
     PixelLODEvaluator() 

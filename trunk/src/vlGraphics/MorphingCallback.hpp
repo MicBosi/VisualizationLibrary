@@ -43,7 +43,7 @@ namespace vl
       GPU acceleration where available. */
   class VLGRAPHICS_EXPORT MorphingCallback: public ActorEventCallback
   {
-    INSTRUMENT_CLASS(vl::MorphingCallback, ActorEventCallback)
+    VL_INSTRUMENT_CLASS(vl::MorphingCallback, ActorEventCallback)
 
   public:
     MorphingCallback();

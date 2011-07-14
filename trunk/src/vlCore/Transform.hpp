@@ -55,7 +55,7 @@ namespace vl
   //! Abstract interface for a generic transform.
   class VLCORE_EXPORT ITransform: public Object
   {
-    INSTRUMENT_CLASS(vl::ITransform, Object)
+    VL_INSTRUMENT_CLASS(vl::ITransform, Object)
 
   public:
     ITransform(): mWorldMatrixUpdateTick(0), mAssumeIdentityWorldMatrix(false)  
@@ -186,7 +186,7 @@ namespace vl
   template<class Ttype>
   class TransformHierarchy: public ITransform
   {
-    INSTRUMENT_CLASS(vl::TransformHierarchy, ITransform)
+    VL_INSTRUMENT_CLASS(vl::TransformHierarchy<class Ttype>, ITransform)
 
   public:
     TransformHierarchy(): mParent(NULL) {}
@@ -386,7 +386,7 @@ namespace vl
     * \sa Actor, Rendering, Effect, Renderable, Geometry */
   class VLCORE_EXPORT Transform: public TransformHierarchy<Transform>
   {
-    INSTRUMENT_CLASS(vl::Transform, TransformHierarchy<Transform>)
+    VL_INSTRUMENT_CLASS(vl::Transform, TransformHierarchy<Transform>)
 
   public:
     /** Constructor. */

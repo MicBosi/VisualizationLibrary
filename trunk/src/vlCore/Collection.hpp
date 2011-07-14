@@ -46,7 +46,7 @@ namespace vl
   template <typename T>
   class Collection: public Object
   {
-    INSTRUMENT_CLASS(vl::Collection, Object)
+    VL_INSTRUMENT_CLASS(vl::Collection, Object)
 
   public:
     Collection(const std::vector< ref<T> >& vector)

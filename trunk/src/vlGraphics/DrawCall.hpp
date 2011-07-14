@@ -48,7 +48,7 @@ namespace vl
    * \sa DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
   class DrawCall: public Object
   {
-    INSTRUMENT_CLASS(vl::DrawCalls, Object)
+    VL_INSTRUMENT_CLASS(vl::DrawCalls, Object)
 
   public:
     DrawCall(): mType(PT_TRIANGLES), mEnabled(true) {}

@@ -40,7 +40,7 @@ namespace vl
 {
   class VLVOLUME_EXPORT RaycastVolume: public ActorEventCallback
   {
-    INSTRUMENT_CLASS(vl::RaycastVolume, ActorEventCallback)
+    VL_INSTRUMENT_CLASS(vl::RaycastVolume, ActorEventCallback)
 
   public:
     RaycastVolume();

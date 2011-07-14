@@ -56,7 +56,7 @@ namespace vl
    */
   class LoadWriterTIFF: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterTIFF, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterTIFF, ResourceLoadWriter)
   public:
 
     LoadWriterTIFF(): ResourceLoadWriter("|tif|tiff|", "|tif|tiff|") 

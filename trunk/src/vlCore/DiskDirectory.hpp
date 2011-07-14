@@ -54,7 +54,7 @@ namespace vl
   */
   class VLCORE_EXPORT DiskDirectory: public VirtualDirectory
   {
-    INSTRUMENT_CLASS(vl::DiskDirectory, VirtualDirectory)
+    VL_INSTRUMENT_CLASS(vl::DiskDirectory, VirtualDirectory)
 
   public:
     DiskDirectory();

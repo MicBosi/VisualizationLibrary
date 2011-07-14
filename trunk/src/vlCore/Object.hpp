@@ -54,7 +54,7 @@ namespace vl
   */
   class VLCORE_EXPORT Object
   {
-    INSTRUMENT_BASE_CLASS(vl::Object)
+    VL_INSTRUMENT_BASE_CLASS(vl::Object)
 
   public:
     //! Constructor.

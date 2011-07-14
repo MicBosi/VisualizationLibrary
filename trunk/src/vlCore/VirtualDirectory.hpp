@@ -56,7 +56,7 @@ namespace vl
   */
   class VLCORE_EXPORT VirtualDirectory: public Object
   {
-    INSTRUMENT_CLASS(vl::VirtualDirectory, Object)
+    VL_INSTRUMENT_CLASS(vl::VirtualDirectory, Object)
 
   public:
     //! Constructor

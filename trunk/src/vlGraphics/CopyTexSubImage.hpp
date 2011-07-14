@@ -55,7 +55,7 @@ namespace vl
     * FBORenderTarget, FBOAbstractAttachment, Rendering, RenderEventCallback, CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D */
   class CopyTexSubImage: public RenderEventCallback
   {
-    INSTRUMENT_CLASS(vl::CopyTexSubImage, RenderEventCallback)
+    VL_INSTRUMENT_CLASS(vl::CopyTexSubImage, RenderEventCallback)
 
   public:
     CopyTexSubImage(): mReadBuffer(RDB_BACK_LEFT) 
@@ -105,7 +105,7 @@ namespace vl
   //! Wraps glCopyTexSubImage1D, see also CopyTexSubImage.
   class CopyTexSubImage1D: public CopyTexSubImage
   {
-    INSTRUMENT_CLASS(vl::CopyTexSubImage1D, CopyTexSubImage)
+    VL_INSTRUMENT_CLASS(vl::CopyTexSubImage1D, CopyTexSubImage)
 
   public:
     CopyTexSubImage1D(int level, int xoffset, int x, int y, int width, Texture* texture=NULL, EReadDrawBuffer read_buffer=RDB_BACK_LEFT)
@@ -179,7 +179,7 @@ namespace vl
   //! Wraps glCopyTexSubImage2D, see also CopyTexSubImage. To be used also for 1D array textures.
   class CopyTexSubImage2D: public CopyTexSubImage
   {
-    INSTRUMENT_CLASS(vl::CopyTexSubImage2D, CopyTexSubImage)
+    VL_INSTRUMENT_CLASS(vl::CopyTexSubImage2D, CopyTexSubImage)
 
   public:
     CopyTexSubImage2D(int level, int xoffset, int yoffset, int x, int y, int width, int height, Texture* texture=NULL, ETex2DTarget target=T2DT_TEXTURE_2D, EReadDrawBuffer read_buffer=RDB_BACK_LEFT)
@@ -282,7 +282,7 @@ namespace vl
   //! Wraps glCopyTexSubImage3D, see also CopyTexSubImage. To be used also for 2D array textures.
   class CopyTexSubImage3D: public CopyTexSubImage
   {
-    INSTRUMENT_CLASS(vl::CopyTexSubImage3D, CopyTexSubImage)
+    VL_INSTRUMENT_CLASS(vl::CopyTexSubImage3D, CopyTexSubImage)
 
   public:
     CopyTexSubImage3D(int level, int xoffset, int yoffset, int zoffset, int x, int y, int width, int height, Texture* texture, EReadDrawBuffer read_buffer=RDB_BACK_LEFT)

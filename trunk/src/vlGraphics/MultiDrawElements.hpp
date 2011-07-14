@@ -51,7 +51,7 @@ namespace vl
    * vl::MultiDrawElementsUInt, vl::MultiDrawElementsUShort or vl::MultiDrawElementsUByte. */
   class MultiDrawElementsBase: public DrawCall
   {
-    INSTRUMENT_CLASS(vl::MultiDrawElementsBase, DrawCall)
+    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsBase, DrawCall)
 
   public:
     /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
@@ -124,7 +124,7 @@ namespace vl
   template <GLenum Tgltype, class arr_type>
   class MultiDrawElements: public MultiDrawElementsBase
   {
-    INSTRUMENT_CLASS(vl::MultiDrawElements, MultiDrawElementsBase)
+    VL_INSTRUMENT_CLASS(vl::MultiDrawElements, MultiDrawElementsBase)
 
   public:
     MultiDrawElements(EPrimitiveType primitive = PT_TRIANGLES)
@@ -281,7 +281,7 @@ namespace vl
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLuint. */
   class MultiDrawElementsUInt: public MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>
   {
-    INSTRUMENT_CLASS(vl::MultiDrawElementsUInt, VL_GROUP(MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>))
+    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsUInt, VL_GROUP(MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>))
 
   public:
     MultiDrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES)
@@ -294,7 +294,7 @@ namespace vl
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLushort. */
   class MultiDrawElementsUShort: public MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
   {
-    INSTRUMENT_CLASS(vl::MultiDrawElementsUShort, VL_GROUP(MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>))
+    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsUShort, VL_GROUP(MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>))
 
   public:
     MultiDrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES)
@@ -307,7 +307,7 @@ namespace vl
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLubyte. */
   class MultiDrawElementsUByte: public MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
   {
-    INSTRUMENT_CLASS(vl::MultiDrawElementsUByte, VL_GROUP(MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>))
+    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsUByte, VL_GROUP(MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>))
 
   public:
     MultiDrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES)

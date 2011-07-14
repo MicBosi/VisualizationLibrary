@@ -46,7 +46,7 @@ namespace vl
    */
   class Scissor: public Object
   {
-    INSTRUMENT_CLASS(vl::Scissor, Object)
+    VL_INSTRUMENT_CLASS(vl::Scissor, Object)
 
   public:
     Scissor(int x, int y, int width, int height)

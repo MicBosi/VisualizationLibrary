@@ -105,7 +105,7 @@ namespace vl
    */
   class VLVG_EXPORT VectorGraphics: public Object
   {
-    INSTRUMENT_CLASS(vl::VectorGraphics, Object)
+    VL_INSTRUMENT_CLASS(vl::VectorGraphics, Object)
 
   private:
     //------------------------------------------------------------------------- start internal

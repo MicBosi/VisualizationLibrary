@@ -59,7 +59,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Applet: public UIEventListener
   {
-    INSTRUMENT_CLASS(vl::Applet, UIEventListener)
+    VL_INSTRUMENT_CLASS(vl::Applet, UIEventListener)
 
   public:
     /** Constructor */

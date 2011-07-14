@@ -43,7 +43,7 @@ namespace vl
     * For more information see \ref pagGuideOcclusionCulling */
   class VLGRAPHICS_EXPORT OcclusionCullRenderer: public Renderer
   {
-    INSTRUMENT_CLASS(vl::OcclusionCullRenderer, Renderer)
+    VL_INSTRUMENT_CLASS(vl::OcclusionCullRenderer, Renderer)
 
   public:
     /** Constructor. */

@@ -61,7 +61,7 @@ namespace vl
    */
   class Bond: public Object
   {
-    INSTRUMENT_CLASS(vl::Bond, Object)
+    VL_INSTRUMENT_CLASS(vl::Bond, Object)
 
   public:
     Bond(): mColor( 1.0f,1.0f,1.0f,1.0f ), mRadius(0.10f), mAtom1(NULL), mAtom2(NULL), mType(BT_Single), mId(0), mVisible(true), mUseAtomColors(true) 

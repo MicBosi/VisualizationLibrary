@@ -44,7 +44,7 @@ namespace vl
   */
   class RenderQueue: public Object
   {
-    INSTRUMENT_CLASS(vl::RenderQueue, Object)
+    VL_INSTRUMENT_CLASS(vl::RenderQueue, Object)
 
   public:
     RenderQueue(): mSize(0), mSizeMP(0)

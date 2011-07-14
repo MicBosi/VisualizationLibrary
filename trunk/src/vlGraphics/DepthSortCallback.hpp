@@ -66,7 +66,7 @@ namespace vl
    */
   class DepthSortCallback: public ActorEventCallback
   {
-    INSTRUMENT_CLASS(vl::DepthSortCallback, ActorEventCallback)
+    VL_INSTRUMENT_CLASS(vl::DepthSortCallback, ActorEventCallback)
 
     template<typename T>
     class Point

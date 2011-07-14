@@ -50,7 +50,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT RendererAbstract: public Object
   {
-    INSTRUMENT_CLASS(vl::RendererAbstract, Object)
+    VL_INSTRUMENT_CLASS(vl::RendererAbstract, Object)
 
   public:
     RendererAbstract()

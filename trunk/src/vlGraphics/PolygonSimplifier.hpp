@@ -51,7 +51,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT PolygonSimplifier: public Object
   {
-    INSTRUMENT_CLASS(vl::PolygonSimplifier, Object)
+    VL_INSTRUMENT_CLASS(vl::PolygonSimplifier, Object)
 
   public:
     class Vertex;

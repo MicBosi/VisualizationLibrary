@@ -54,7 +54,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT EdgeRenderer: public Renderer
   {
-    INSTRUMENT_CLASS(vl::EdgeRenderer, Renderer)
+    VL_INSTRUMENT_CLASS(vl::EdgeRenderer, Renderer)
 
     class WFInfo: public Object
     {

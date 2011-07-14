@@ -52,7 +52,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Extrusion: public vl::Object
   {
-    INSTRUMENT_CLASS(vl::Extrusion, Object)
+    VL_INSTRUMENT_CLASS(vl::Extrusion, Object)
 
   public:
     //! Constructor.

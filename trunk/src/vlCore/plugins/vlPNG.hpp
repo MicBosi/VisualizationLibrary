@@ -56,7 +56,7 @@ namespace vl
    */
   class LoadWriterPNG: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterPNG, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterPNG, ResourceLoadWriter)
 
   public:    
     LoadWriterPNG(): ResourceLoadWriter("|png|", "|png|"), mCompression(6) 

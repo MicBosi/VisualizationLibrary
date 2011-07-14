@@ -58,7 +58,7 @@ namespace vl
   */
   class VLCORE_EXPORT FileSystem: public Object
   {
-    INSTRUMENT_CLASS(vl::FileSystem, Object)
+    VL_INSTRUMENT_CLASS(vl::FileSystem, Object)
 
   public:
     FileSystem() { mDirectories.setAutomaticDelete(false); }

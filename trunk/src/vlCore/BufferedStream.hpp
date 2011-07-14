@@ -48,7 +48,7 @@ namespace vl
   template<class Element_Type, int Chunk_Size>
   class BufferedStream: public Object
   {
-    INSTRUMENT_CLASS(vl::BufferedStream, Object)
+    VL_INSTRUMENT_CLASS(VL_GROUP(vl::BufferedStream<class Element_Type, int Chunk_Size>), Object)
 
   public:
     BufferedStream()

@@ -50,7 +50,7 @@ namespace vl
   */
   class ShaderSequence: public Collection<Shader>
   {
-    INSTRUMENT_CLASS(vl::ShaderSequence, Collection<Shader>)
+    VL_INSTRUMENT_CLASS(vl::ShaderSequence, Collection<Shader>)
 
   public:
     /** Constructor. 
@@ -90,7 +90,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Effect: public Object
   {
-    INSTRUMENT_CLASS(vl::Effect, Object)
+    VL_INSTRUMENT_CLASS(vl::Effect, Object)
 
     // mic fixme: define these?
     Effect(const Effect&): Object() {}

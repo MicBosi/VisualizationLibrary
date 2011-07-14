@@ -59,7 +59,7 @@ namespace vl
   */
   class VLCORE_EXPORT VirtualFile: public Object
   {
-    INSTRUMENT_CLASS(vl::VirtualFile, Object)
+    VL_INSTRUMENT_CLASS(vl::VirtualFile, Object)
 
   protected:
     VirtualFile(const VirtualFile& other): Object(other) {}

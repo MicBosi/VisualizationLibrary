@@ -63,7 +63,7 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class VLGRAPHICS_EXPORT GLSLShader: public Object
   {
-    INSTRUMENT_CLASS(vl::GLSLShader, Object)
+    VL_INSTRUMENT_CLASS(vl::GLSLShader, Object)
 
   public:
     GLSLShader(EShaderType type, const String& source=String());
@@ -110,7 +110,7 @@ namespace vl
    * \sa GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLVertexShader: public GLSLShader
   {
-    INSTRUMENT_CLASS(vl::GLSLVertexShader, GLSLShader)
+    VL_INSTRUMENT_CLASS(vl::GLSLVertexShader, GLSLShader)
 
   public:
     //! Constructor.
@@ -129,7 +129,7 @@ namespace vl
    * \sa GLSLVertexShader, GLSLGeometryShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLFragmentShader: public GLSLShader
   {
-    INSTRUMENT_CLASS(vl::GLSLFragmentShader, GLSLShader)
+    VL_INSTRUMENT_CLASS(vl::GLSLFragmentShader, GLSLShader)
 
   public:
     //! \param source Fragment shader's source code or path to a text file containing the fragment shader's source code.
@@ -147,7 +147,7 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLGeometryShader: public GLSLShader
   {
-    INSTRUMENT_CLASS(vl::GLSLGeometryShader, GLSLShader)
+    VL_INSTRUMENT_CLASS(vl::GLSLGeometryShader, GLSLShader)
 
   public:
     //! \param source Geometry shader's source code or path to a text file containing the geometry shader's source code.
@@ -165,7 +165,7 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLTessControlShader: public GLSLShader
   {
-    INSTRUMENT_CLASS(vl::GLSLTessControlShader, GLSLShader)
+    VL_INSTRUMENT_CLASS(vl::GLSLTessControlShader, GLSLShader)
 
   public:
     //! \param source Tessellation-control shader's source code or path to a text file containing the shader's source code.
@@ -183,7 +183,7 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLProgram, Effect */
   class GLSLTessEvaluationShader: public GLSLShader
   {
-    INSTRUMENT_CLASS(vl::GLSLTessEvaluationShader, GLSLShader)
+    VL_INSTRUMENT_CLASS(vl::GLSLTessEvaluationShader, GLSLShader)
 
   public:
     //! \param source Tessellation-evaluation shader's source code or path to a text file containing the shader's source code.
@@ -233,7 +233,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT GLSLProgram: public RenderState
   {
-    INSTRUMENT_CLASS(vl::GLSLProgram, RenderState)
+    VL_INSTRUMENT_CLASS(vl::GLSLProgram, RenderState)
 
     // applyUniform
     friend class Renderer;

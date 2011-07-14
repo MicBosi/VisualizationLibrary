@@ -52,7 +52,7 @@ namespace vl
    * vl::DrawElementsUInt, vl::DrawElementsUShort or vl::DrawElementsUByte. */
   class DrawElementsBase: public DrawCall
   {
-    INSTRUMENT_CLASS(vl::DrawElementsBase, DrawCall)
+    VL_INSTRUMENT_CLASS(vl::DrawElementsBase, DrawCall)
 
   public:
     /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
@@ -119,7 +119,7 @@ namespace vl
   template <GLenum Tgltype, class arr_type>
   class DrawElements: public DrawElementsBase
   {
-    INSTRUMENT_CLASS(vl::DrawElements, DrawElementsBase)
+    VL_INSTRUMENT_CLASS(vl::DrawElements, DrawElementsBase)
 
   private:
     template<typename T>
@@ -335,7 +335,7 @@ namespace vl
   /** See DrawElements. A DrawElements using indices of type \p GLuint. */
   class DrawElementsUInt: public DrawElements<GL_UNSIGNED_INT, ArrayUInt1>
   {
-    INSTRUMENT_CLASS(vl::DrawElementsUInt, VL_GROUP(DrawElements<GL_UNSIGNED_INT, ArrayUInt1>))
+    VL_INSTRUMENT_CLASS(vl::DrawElementsUInt, VL_GROUP(DrawElements<GL_UNSIGNED_INT, ArrayUInt1>))
 
   public:
     DrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
@@ -348,7 +348,7 @@ namespace vl
   /** See DrawElements. A DrawElements using indices of type \p GLushort. */
   class DrawElementsUShort: public DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
   {
-    INSTRUMENT_CLASS(vl::DrawElementsUShort, VL_GROUP(DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>))
+    VL_INSTRUMENT_CLASS(vl::DrawElementsUShort, VL_GROUP(DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>))
 
   public:
     DrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
@@ -361,7 +361,7 @@ namespace vl
   /** See DrawElements. A DrawElements using indices of type \p GLubyte. */
   class DrawElementsUByte: public DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
   {
-    INSTRUMENT_CLASS(vl::DrawElementsUByte, VL_GROUP(DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>))
+    VL_INSTRUMENT_CLASS(vl::DrawElementsUByte, VL_GROUP(DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>))
 
   public:
     DrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)

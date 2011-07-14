@@ -60,7 +60,7 @@ namespace vl
   using the methods loadCallbacks() and writeCallbacks(). */
   class VLCORE_EXPORT LoadWriterManager: public Object
   {
-    INSTRUMENT_CLASS(vl::LoadWriterManager, Object)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterManager, Object)
 
   public:
     LoadWriterManager()

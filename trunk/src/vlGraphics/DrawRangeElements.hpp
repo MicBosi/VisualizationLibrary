@@ -52,7 +52,7 @@ namespace vl
    * vl::DrawRangeElementsUInt, vl::DrawRangeElementsUShort or vl::DrawRangeElementsUByte. */
   class DrawRangeElementsBase: public DrawCall
   {
-    INSTRUMENT_CLASS(vl::DrawRangeElementsBase, DrawCall)
+    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsBase, DrawCall)
 
   public:
     /** Sets the range start. See also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElements.xml */
@@ -123,7 +123,7 @@ namespace vl
   template <typename index_type, GLenum Tgltype, class arr_type>
   class DrawRangeElements: public DrawRangeElementsBase
   {
-    INSTRUMENT_CLASS(vl::DrawRangeElements, DrawRangeElementsBase)
+    VL_INSTRUMENT_CLASS(vl::DrawRangeElements, DrawRangeElementsBase)
 
   private:
     template<typename T>
@@ -305,7 +305,7 @@ namespace vl
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLuint. */
   class DrawRangeElementsUInt: public DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>
   {
-    INSTRUMENT_CLASS(vl::DrawRangeElementsUInt, VL_GROUP(DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>))
+    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsUInt, VL_GROUP(DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>))
 
   public:
     DrawRangeElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLuint(~0))
@@ -318,7 +318,7 @@ namespace vl
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLushort. */
   class DrawRangeElementsUShort: public DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>
   {
-    INSTRUMENT_CLASS(vl::DrawRangeElementsUShort, VL_GROUP(DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>))
+    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsUShort, VL_GROUP(DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>))
 
   public:
     DrawRangeElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLushort(~0))
@@ -331,7 +331,7 @@ namespace vl
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLubyte. */
   class DrawRangeElementsUByte: public DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>
   {
-    INSTRUMENT_CLASS(vl::DrawRangeElementsUByte, VL_GROUP(DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>))
+    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsUByte, VL_GROUP(DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>))
 
   public:
     DrawRangeElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLubyte(~0))

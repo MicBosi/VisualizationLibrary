@@ -46,7 +46,7 @@ namespace vl
   */
   class EnableSet: public Object
   {
-    INSTRUMENT_CLASS(vl::EnableSet, Object)
+    VL_INSTRUMENT_CLASS(vl::EnableSet, Object)
 
   public:
     EnableSet(): mBlendingEnabled(false)
