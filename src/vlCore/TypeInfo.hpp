@@ -48,17 +48,20 @@ struct TypeInfo
   const char* Name;
 };
 
+#define VL_GROUP(...) __VA_ARGS__
+#define VL_TO_STR(...) #__VA_ARGS__
+
 #define INSTRUMENT_BASE_CLASS(ClassName)                                                                    \
 public:                                                                                                     \
   /* static functions */                                                                                    \
   /** Returns the name of the class. */                                                                     \
-  static const char* staticName() { return #ClassName; }                                                    \
+  static const char* staticName() { return VL_TO_STR(ClassName); }                                          \
   /** Returns the TypeInfo of the class. */                                                                 \
-  static const TypeInfo* staticType() { static const TypeInfo class_type(#ClassName); return &class_type; } \
+  static const TypeInfo* staticType() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; } \
                                                                                                             \
   /* virtual functions */                                                                                   \
   /** Returns the name of the object's class. */                                                            \
-  virtual const char* className() const { return #ClassName; }                                              \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                    \
   /** Returns the TypeInfo of the object's class. */                                                        \
   virtual const TypeInfo* classType() const { return staticType(); }                                        \
   /** Returns \a true if \a type matches the object's class type. */                                        \
@@ -74,13 +77,13 @@ private:                                                                        
 public:                                                                                                     \
   /* static functions */                                                                                    \
   /** Returns the name of the class. */                                                                     \
-  static const char* staticName() { return #ClassName; }                                                    \
+  static const char* staticName() { return VL_TO_STR(ClassName); }                                          \
   /** Returns the TypeInfo of the class. */                                                                 \
-  static const TypeInfo* staticType() { static const TypeInfo class_type(#ClassName); return &class_type; } \
+  static const TypeInfo* staticType() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; } \
                                                                                                             \
   /* virtual functions */                                                                                   \
   /** Returns the name of the object's class. */                                                            \
-  virtual const char* className() const { return #ClassName; }                                              \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                    \
   /** Returns the TypeInfo of the object's class. */                                                        \
   virtual const TypeInfo* classType() const { return staticType(); }                                        \
   /** Returns \a true if \a type matches the object's class type. */                                        \
@@ -97,13 +100,13 @@ private:                                                                        
 public:                                                                                                     \
   /* static functions */                                                                                    \
   /** Returns the name of the class. */                                                                     \
-  static const char* staticName() { return #ClassName; }                                                    \
+  static const char* staticName() { return VL_TO_STR(ClassName); }                                          \
   /** Returns the TypeInfo of the class. */                                                                 \
-  static const TypeInfo* staticType() { static const TypeInfo class_type(#ClassName); return &class_type; } \
+  static const TypeInfo* staticType() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; } \
                                                                                                             \
   /* virtual functions */                                                                                   \
   /** Returns the name of the object's class. */                                                            \
-  virtual const char* className() const { return #ClassName; }                                              \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                    \
   /** Returns the TypeInfo of the object's class. */                                                        \
   virtual const TypeInfo* classType() const { return staticType(); }                                        \
   /** Returns \a true if \a type matches the object's class type. */                                        \

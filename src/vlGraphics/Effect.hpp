@@ -50,7 +50,7 @@ namespace vl
   */
   class ShaderSequence: public Collection<Shader>
   {
-    INSTRUMENT_CLASS(vl::ShaderSequence, Collection)
+    INSTRUMENT_CLASS(vl::ShaderSequence, Collection<Shader>)
 
   public:
     /** Constructor. 
