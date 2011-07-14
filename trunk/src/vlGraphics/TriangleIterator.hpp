@@ -496,7 +496,7 @@ namespace vl
   template<class TArray>
   class TriangleIteratorMulti: public TriangleIteratorIndexed<TArray>
   {
-    INSTRUMENT_CLASS(vl::TriangleIteratorMulti, TriangleIteratorIndexed)
+    INSTRUMENT_CLASS(vl::TriangleIteratorMulti, TriangleIteratorIndexed<TArray>)
 
   public:
     TriangleIteratorMulti( const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_count_vector, TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)

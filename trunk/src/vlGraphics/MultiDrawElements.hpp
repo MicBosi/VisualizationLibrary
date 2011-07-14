@@ -281,7 +281,7 @@ namespace vl
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLuint. */
   class MultiDrawElementsUInt: public MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>
   {
-    INSTRUMENT_CLASS(vl::MultiDrawElementsUInt, MultiDrawElements)
+    INSTRUMENT_CLASS(vl::MultiDrawElementsUInt, VL_GROUP(MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>))
 
   public:
     MultiDrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES)
@@ -294,7 +294,7 @@ namespace vl
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLushort. */
   class MultiDrawElementsUShort: public MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
   {
-    INSTRUMENT_CLASS(vl::MultiDrawElementsUShort, MultiDrawElements)
+    INSTRUMENT_CLASS(vl::MultiDrawElementsUShort, VL_GROUP(MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>))
 
   public:
     MultiDrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES)
@@ -307,7 +307,7 @@ namespace vl
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLubyte. */
   class MultiDrawElementsUByte: public MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
   {
-    INSTRUMENT_CLASS(vl::MultiDrawElementsUByte, MultiDrawElements)
+    INSTRUMENT_CLASS(vl::MultiDrawElementsUByte, VL_GROUP(MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>))
 
   public:
     MultiDrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES)

@@ -333,9 +333,9 @@ namespace vl
   // typedefs
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLuint. */
-  class DrawElementsUInt:  public DrawElements<GL_UNSIGNED_INT, ArrayUInt1>
+  class DrawElementsUInt: public DrawElements<GL_UNSIGNED_INT, ArrayUInt1>
   {
-    INSTRUMENT_CLASS(vl::DrawElementsUInt, DrawElements)
+    INSTRUMENT_CLASS(vl::DrawElementsUInt, VL_GROUP(DrawElements<GL_UNSIGNED_INT, ArrayUInt1>))
 
   public:
     DrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
@@ -348,24 +348,24 @@ namespace vl
   /** See DrawElements. A DrawElements using indices of type \p GLushort. */
   class DrawElementsUShort: public DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
   {
-    INSTRUMENT_CLASS(vl::DrawElementsUShort, DrawElements)
+    INSTRUMENT_CLASS(vl::DrawElementsUShort, VL_GROUP(DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>))
 
   public:
     DrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>(primitive, instances)
+    :DrawElements<GL_UNSIGNED_SHORT, VL_GROUP(ArrayUShort1>(primitive, instances))
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
   };
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLubyte. */
-  class DrawElementsUByte:  public DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
+  class DrawElementsUByte: public DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
   {
-    INSTRUMENT_CLASS(vl::DrawElementsUByte, DrawElements)
+    INSTRUMENT_CLASS(vl::DrawElementsUByte, VL_GROUP(DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>))
 
   public:
     DrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>(primitive, instances)
+    :DrawElements<GL_UNSIGNED_BYTE, VL_GROUP(ArrayUByte1>(primitive, instances))
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
