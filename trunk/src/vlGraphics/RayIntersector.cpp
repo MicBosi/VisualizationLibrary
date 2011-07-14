@@ -59,16 +59,16 @@ void RayIntersector::intersect()
 //-----------------------------------------------------------------------------
 void RayIntersector::intersect(Actor* act)
 {
-  Geometry* geom = dynamic_cast<Geometry*>(act->lod(0).get());
+  Geometry* geom = cast<Geometry>(act->lod(0).get());
   if (geom)
     intersectGeometry(act, geom);
 }
 //-----------------------------------------------------------------------------
 void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
 {
-  ArrayFloat3* vert3f = dynamic_cast<ArrayFloat3*>(geom->vertexArray());
-  ArrayDouble3* vert3d = dynamic_cast<ArrayDouble3*>(geom->vertexArray());
-  ArrayHFloat3* vert3h = dynamic_cast<ArrayHFloat3*>(geom->vertexArray());
+  ArrayFloat3* vert3f  = cast<ArrayFloat3>(geom->vertexArray());
+  ArrayDouble3* vert3d = cast<ArrayDouble3>(geom->vertexArray());
+  ArrayHFloat3* vert3h = cast<ArrayHFloat3>(geom->vertexArray());
   if (vert3f)
   {
     fmat4 matrix = act->transform() ? (fmat4)act->transform()->worldMatrix() : fmat4();

@@ -179,7 +179,7 @@ void MorphingCallback::init(ResourceDatabase* res_db)
 
   for(unsigned i=0, count=res_db->count<ArrayAbstract>(); i<count; ++i)
   {
-    ArrayFloat3* buffer = dynamic_cast<ArrayFloat3*>(res_db->get<ArrayAbstract>(i));
+    ArrayFloat3* buffer = cast<ArrayFloat3>(res_db->get<ArrayAbstract>(i));
     if (buffer && buffer->objectName() == "vertex_frame")
     {
       mVertexFrames.push_back(buffer);

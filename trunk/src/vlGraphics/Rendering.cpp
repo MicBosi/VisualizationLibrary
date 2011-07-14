@@ -384,7 +384,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
           {
             if (states[i]->type() >= RS_TextureUnit0 && states[i]->type() < RS_TextureUnit0+VL_MAX_TEXTURE_UNITS)
             {
-              TextureUnit* tex_unit = dynamic_cast<TextureUnit*>( states[i].get() );
+              TextureUnit* tex_unit = static_cast<TextureUnit*>( states[i].get() );
               VL_CHECK(tex_unit);
               if (tex_unit)
               {

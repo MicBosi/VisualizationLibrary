@@ -173,11 +173,11 @@ namespace vl
 
     //! Casts an Object to the specified class.
     template<class T>
-    T* as() { return dynamic_cast<T*>(this); }
+    T* as() { return cast<T>(this); }
 
     //! Casts an Object to the specified class.
     template<class T>
-    const T* as() const { return dynamic_cast<const T*>(this); }
+    const T* as() const { return cast<const T>(this); }
 
 #if VL_OBJECT_USER_DATA
   public:

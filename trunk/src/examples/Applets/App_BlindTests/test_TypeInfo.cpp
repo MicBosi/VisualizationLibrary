@@ -128,8 +128,8 @@ namespace blind_tests
     CHECK_CONDITION( vl::cast<ns::ClassB>(&AB) != NULL )
 
     pBase = &C;
-    CHECK_CONDITION( vl::cast<ns::ClassC>(pBase) != NULL )
-    CHECK_CONDITION( vl::cast<ns::ClassSubT>(pBase) == NULL )
+    CHECK_CONDITION( vl::cast_const<ns::ClassC>(pBase) != NULL )
+    CHECK_CONDITION( vl::cast_const<ns::ClassSubT>(pBase) == NULL )
 
     pBase = &A;
     // CHECK_CONDITION( vl::cast<ns::ClassA>(pBase) != NULL ) // conversion from a virtual pBase class forbidden by C++, requires dynamic_cast, kind of Ok.

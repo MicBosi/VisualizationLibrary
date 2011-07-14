@@ -60,7 +60,7 @@ namespace vl
     {
       for(unsigned i=cur_pos; i<mResources.size(); ++i)
       {
-        ref<T> r = dynamic_cast<T*>(mResources[i].get());
+        ref<T> r = cast<T>(mResources[i].get());
         if (r)
         {
           cur_pos = i+1;
@@ -79,7 +79,7 @@ namespace vl
 
       for( unsigned i=0; i<mResources.size(); ++i )
       {
-        ref<T> r = dynamic_cast<T*>(mResources[i].get());
+        ref<T> r = cast<T>(mResources[i].get());
         if (r)
           resources.push_back(r);
       }
@@ -96,7 +96,7 @@ namespace vl
 
       for( unsigned i=mResources.size(); i--; )
       {
-        ref<T> r = dynamic_cast<T*>(mResources[i].get());
+        ref<T> r = cast<T>(mResources[i].get());
         if (r)
         {
           resources.push_back(r);
@@ -114,7 +114,7 @@ namespace vl
       size_t count=0;
       for(unsigned i=0; i<mResources.size(); ++i)
       {
-        ref<T> r = dynamic_cast<T*>(mResources[i].get());
+        ref<T> r = cast<T>(mResources[i].get());
         if (r)
           ++count;
       }
@@ -128,7 +128,7 @@ namespace vl
       int count=0;
       for(unsigned i=0; i<mResources.size(); ++i)
       {
-        ref<T> r = dynamic_cast<T*>(mResources[i].get());
+        ref<T> r = cast<T>(mResources[i].get());
         if (r)
         {
           if (count == j)

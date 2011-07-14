@@ -91,7 +91,7 @@ namespace vl
     {
       for(int i=0; i<loadWriters()->size(); ++i)
       {
-        T* load_writer = dynamic_cast<T*>(loadWriters()->at(i));
+        T* load_writer = cast<T>(loadWriters()->at(i));
         if (load_writer)
           return load_writer;
       }

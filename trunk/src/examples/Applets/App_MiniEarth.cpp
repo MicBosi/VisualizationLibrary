@@ -68,7 +68,7 @@ public:
     float dy = 0.5f / texture->height();
     vl::ref<vl::Geometry> earth = vl::makeGrid( vl::vec3(0,0,0), vl::fPi*2.0f, vl::fPi, 40, 40, true, vl::fvec2(dx,dy), vl::fvec2(1-dx,1-dy) );
     earth->setColor(vl::white);
-    vl::ArrayFloat3* coord3 = dynamic_cast<vl::ArrayFloat3*>( earth->vertexArray() );
+    vl::ArrayFloat3* coord3 = vl::cast<vl::ArrayFloat3>( earth->vertexArray() );
     vl::ref<vl::ArrayFloat3> norm3 = new vl::ArrayFloat3;
     earth->setNormalArray(norm3.get());
     norm3->resize(coord3->size());
