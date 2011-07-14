@@ -49,7 +49,7 @@ namespace vl
    */
   class RayIntersection: public Object
   {
-    INSTRUMENT_CLASS(vl::RayIntersection, Object)
+    VL_INSTRUMENT_CLASS(vl::RayIntersection, Object)
 
   public:
     RayIntersection(): mActor(NULL), mDistance(0.0f) 
@@ -86,7 +86,7 @@ namespace vl
       providing also extra information relative to the intersection on the Geometry in use by the Actor. */
   class RayIntersectionGeometry: public RayIntersection
   {
-    INSTRUMENT_CLASS(vl::RayIntersectionGeometry, RayIntersection)
+    VL_INSTRUMENT_CLASS(vl::RayIntersectionGeometry, RayIntersection)
 
   public:
     RayIntersectionGeometry(): mGeometry(NULL), mDrawCalls(NULL), mTriangleIndex(-1) 
@@ -132,7 +132,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT RayIntersector: public Object
   {
-    INSTRUMENT_CLASS(vl::RayIntersector, Object)
+    VL_INSTRUMENT_CLASS(vl::RayIntersector, Object)
 
   public:
     RayIntersector()

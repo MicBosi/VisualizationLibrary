@@ -54,7 +54,7 @@ namespace vl
    */
   class LoadWriterDDS: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterDDS, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterDDS, ResourceLoadWriter)
 
   public:
     LoadWriterDDS(): ResourceLoadWriter("|dds|", "|dds|") 

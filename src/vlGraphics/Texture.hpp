@@ -135,7 +135,7 @@ namespace vl
    * - Actor */
   class VLGRAPHICS_EXPORT Texture: public Object
   {
-    INSTRUMENT_CLASS(vl::Texture, Object)
+    VL_INSTRUMENT_CLASS(vl::Texture, Object)
 
   public:
     /** The SetupParams function wraps all the parameters needed to crate a Texture.

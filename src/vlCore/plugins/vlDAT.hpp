@@ -54,7 +54,7 @@ namespace vl
    */
   class LoadWriterDAT: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterDAT, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterDAT, ResourceLoadWriter)
 
   public:
     LoadWriterDAT(): ResourceLoadWriter("|dat|", "|dat|") 

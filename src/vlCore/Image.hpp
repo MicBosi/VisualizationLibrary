@@ -53,7 +53,7 @@ namespace vl
    * is to be considered an expensive operation. */
   class VLCORE_EXPORT Image: public Object
   {
-    INSTRUMENT_CLASS(vl::Image, Object)
+    VL_INSTRUMENT_CLASS(vl::Image, Object)
 
   public:
     virtual ~Image();

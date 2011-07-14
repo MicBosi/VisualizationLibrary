@@ -49,7 +49,7 @@ namespace vl
   //! Generates a 3D plot with labels and isosurface. The isosurface is generated using the MarchingCubes algorithm.
   class VLVOLUME_EXPORT VolumePlot: public Object
   {
-    INSTRUMENT_CLASS(vl::VolumePlot, Object)
+    VL_INSTRUMENT_CLASS(vl::VolumePlot, Object)
 
   public:
     //! A function to be used with VolumePlot

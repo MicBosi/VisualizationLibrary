@@ -63,7 +63,7 @@ namespace vl
    */
   class VLMOLECULE_EXPORT Molecule: public Object
   {
-    INSTRUMENT_CLASS(vl::Molecule, Object)
+    VL_INSTRUMENT_CLASS(vl::Molecule, Object)
 
   public:
     Molecule();

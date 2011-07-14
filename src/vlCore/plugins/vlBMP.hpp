@@ -54,7 +54,7 @@ namespace vl
    */
   class LoadWriterBMP: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterBMP, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterBMP, ResourceLoadWriter)
 
   public:
     LoadWriterBMP(): ResourceLoadWriter("|bmp|", "|bmp|") 

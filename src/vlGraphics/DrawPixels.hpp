@@ -59,7 +59,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   class VLGRAPHICS_EXPORT DrawPixels: public Renderable
   {
-    INSTRUMENT_CLASS(vl::DrawPixels, Renderable)
+    VL_INSTRUMENT_CLASS(vl::DrawPixels, Renderable)
 
   public:
   //-----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ namespace vl
     */
     class VLGRAPHICS_EXPORT Pixels: public Object
     {
-      INSTRUMENT_CLASS(vl::Pixels, Object)
+      VL_INSTRUMENT_CLASS(vl::Pixels, Object)
 
       friend class DrawPixels;
 

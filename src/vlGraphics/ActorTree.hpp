@@ -61,7 +61,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT ActorTree: public ActorTreeAbstract
   {
-    INSTRUMENT_CLASS(vl::ActorTree, ActorTreeAbstract)
+    VL_INSTRUMENT_CLASS(vl::ActorTree, ActorTreeAbstract)
 
   public:
     ActorTree()

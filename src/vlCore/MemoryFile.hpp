@@ -55,7 +55,7 @@ namespace vl
   */
   class VLCORE_EXPORT MemoryFile: public VirtualFile
   {
-    INSTRUMENT_CLASS(vl::MemoryFile, VirtualFile)
+    VL_INSTRUMENT_CLASS(vl::MemoryFile, VirtualFile)
 
   public:
     MemoryFile();

@@ -42,7 +42,7 @@ namespace vl
   {
     friend class VisualizationLibrary;
 
-    INSTRUMENT_CLASS(vl::VLSettings, Object)
+    VL_INSTRUMENT_CLASS(vl::VLSettings, Object)
 
   public:
     VLSettings();

@@ -51,7 +51,7 @@ namespace vl
   */
   class SceneManagerActorTree: public SceneManagerBVH<ActorTree>
   {
-    INSTRUMENT_CLASS(vl::SceneManagerActorTree, SceneManagerBVH<ActorTree>)
+    VL_INSTRUMENT_CLASS(vl::SceneManagerActorTree, SceneManagerBVH<ActorTree>)
 
   public:
     SceneManagerActorTree()

@@ -68,7 +68,7 @@ namespace vl
   - Transform */
   class VLGRAPHICS_EXPORT Rendering: public RenderingAbstract
   {
-    INSTRUMENT_CLASS(vl::Rendering, RenderingAbstract)
+    VL_INSTRUMENT_CLASS(vl::Rendering, RenderingAbstract)
 
   public:
     /** Constructor. */

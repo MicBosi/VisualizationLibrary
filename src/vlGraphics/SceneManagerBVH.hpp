@@ -54,7 +54,7 @@ namespace vl
   template<class T>
   class VLGRAPHICS_EXPORT SceneManagerBVH: public SceneManager
   {
-    INSTRUMENT_CLASS(vl::SceneManagerBVH, SceneManager)
+    VL_INSTRUMENT_CLASS(vl::SceneManagerBVH<class T>, SceneManager)
 
   public:
     //! Sets the tree to be used by the scene manager.

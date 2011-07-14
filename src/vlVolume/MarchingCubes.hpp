@@ -45,7 +45,7 @@ namespace vl
    */
   class VLVOLUME_EXPORT Volume: public Object
   {
-    INSTRUMENT_CLASS(vl::Volume, Object)
+    VL_INSTRUMENT_CLASS(vl::Volume, Object)
 
     /**
      * A Volume cell.
@@ -161,7 +161,7 @@ namespace vl
    */
   class VolumeInfo: public Object
   {
-    INSTRUMENT_CLASS(vl::VolumeInfo, Object)
+    VL_INSTRUMENT_CLASS(vl::VolumeInfo, Object)
 
   public:
     VolumeInfo(Volume* vol, float threshold, const fvec4& color)

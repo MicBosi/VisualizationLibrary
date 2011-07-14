@@ -55,7 +55,7 @@ namespace vl
    */
   class LoadWriterSTL: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterSTL, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterSTL, ResourceLoadWriter)
 
   public:
     LoadWriterSTL(): ResourceLoadWriter("|stl|", "|stl|") {}

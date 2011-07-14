@@ -48,7 +48,7 @@ namespace vl
   */
   class Frustum: public Object
   {
-    INSTRUMENT_CLASS(vl::Frustum, Object)
+    VL_INSTRUMENT_CLASS(vl::Frustum, Object)
 
   public:
     std::vector<Plane>& planes() { return mPlanes; }

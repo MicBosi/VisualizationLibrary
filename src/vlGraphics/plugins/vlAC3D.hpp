@@ -72,7 +72,7 @@ namespace vl
    */
   class LoadWriterAC3D: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterAC3D, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterAC3D, ResourceLoadWriter)
 
   public:
     LoadWriterAC3D(): ResourceLoadWriter("|ac|", "|ac|") {}

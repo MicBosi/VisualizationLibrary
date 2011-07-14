@@ -42,7 +42,7 @@ namespace vl
   /** Abstract class used as base for all the index iterators specializations. */
   class IndexIteratorAbstract: public Object
   {
-    INSTRUMENT_CLASS(vl::IndexIteratorAbstract, Object)
+    VL_INSTRUMENT_CLASS(vl::IndexIteratorAbstract, Object)
 
   public:
     IndexIteratorAbstract(): mIndex(-1) 
@@ -62,7 +62,7 @@ namespace vl
   /** Wraps a IndexIteratorAbstract to iterate over the indices of a DrawCall. */
   class IndexIterator: public Object
   {
-    INSTRUMENT_CLASS(vl::IndexIterator, Object)
+    VL_INSTRUMENT_CLASS(vl::IndexIterator, Object)
 
   public:
     IndexIterator()
@@ -83,7 +83,7 @@ namespace vl
   /** Index iterator operating used by DrawArrays. */
   class IndexIteratorDrawArrays: public IndexIteratorAbstract
   {
-    INSTRUMENT_CLASS(vl::IndexIteratorDrawArrays, IndexIteratorAbstract)
+    VL_INSTRUMENT_CLASS(vl::IndexIteratorDrawArrays, IndexIteratorAbstract)
 
   public:
     IndexIteratorDrawArrays()
@@ -124,7 +124,7 @@ namespace vl
   template<class TArray>
   class IndexIteratorElements: public IndexIteratorAbstract
   {
-    INSTRUMENT_CLASS(vl::IndexIteratorElements, IndexIteratorAbstract)
+    VL_INSTRUMENT_CLASS(vl::IndexIteratorElements<class TArray>, IndexIteratorAbstract)
 
   public:
     IndexIteratorElements()

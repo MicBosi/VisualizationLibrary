@@ -56,7 +56,7 @@ namespace vl
    */
   class LoadWriterOBJ: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterOBJ, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterOBJ, ResourceLoadWriter)
 
   public:
     LoadWriterOBJ(): ResourceLoadWriter("|obj|", "|obj|") {}
@@ -186,7 +186,7 @@ namespace vl
   //! Represents a Wavefront OBJ material as loaded from an MTL file. See also ObjLoader.
   class ObjMaterial: public Object
   {
-    INSTRUMENT_CLASS(vl::ObjMaterial, Object)
+    VL_INSTRUMENT_CLASS(vl::ObjMaterial, Object)
 
   public:
     ObjMaterial(): mTr(1.0f), mNs(0.0f), mIllum(0), mNi(1.0f) {}
@@ -297,7 +297,7 @@ namespace vl
   //! Represents a Wavefront OBJ mesh. See also ObjLoader.
   class ObjMesh: public Object
   {
-    INSTRUMENT_CLASS(vl::ObjMesh, Object)
+    VL_INSTRUMENT_CLASS(vl::ObjMesh, Object)
 
   public:
     //! The material associated to this mesh

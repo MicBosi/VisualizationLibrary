@@ -42,7 +42,7 @@ namespace vl
    */
   class VLCORE_EXPORT GZipCodec: public VirtualFile
   {
-    INSTRUMENT_CLASS(vl::GZipCodec, VirtualFile)
+    VL_INSTRUMENT_CLASS(vl::GZipCodec, VirtualFile)
 
     // Lower this if you need to limit the amount of data allocated to the stack, for example to 16K.
     static const int CHUNK_SIZE = 128*1024;

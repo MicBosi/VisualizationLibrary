@@ -56,7 +56,7 @@ namespace vl
    */
   class LoadWriterTGA: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterTGA, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterTGA, ResourceLoadWriter)
 
   public:
     LoadWriterTGA(): ResourceLoadWriter("|tga|", "|tga|") 

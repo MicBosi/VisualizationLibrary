@@ -59,7 +59,7 @@ namespace vl
    */
   class ArrayAbstract: public Object
   {
-    INSTRUMENT_CLASS(vl::ArrayAbstract, Object)
+    VL_INSTRUMENT_CLASS(vl::ArrayAbstract, Object)
 
   public:
     //! Default constructor.
@@ -180,7 +180,7 @@ namespace vl
   template <typename T_VectorType, typename T_Scalar, int T_GL_Size, GLenum T_GL_Type>
   class Array: public ArrayAbstract
   {
-    INSTRUMENT_CLASS(vl::Array, ArrayAbstract)
+    VL_INSTRUMENT_CLASS(vl::Array, ArrayAbstract)
 
   public:
     typedef T_Scalar scalar_type;

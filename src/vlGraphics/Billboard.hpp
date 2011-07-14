@@ -45,7 +45,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Billboard: public Transform
   {
-    INSTRUMENT_CLASS(vl::Billboard, Transform)
+    VL_INSTRUMENT_CLASS(vl::Billboard, Transform)
 
   public:
     Billboard();

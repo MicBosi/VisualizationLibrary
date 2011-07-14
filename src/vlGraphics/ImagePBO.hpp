@@ -43,7 +43,7 @@ namespace vl
   /** Represents a vl::Image with an associated Pixel Buffer Object. */
   class ImagePBO: public Image
   {
-    INSTRUMENT_CLASS(vl::ImagePBO, Image)
+    VL_INSTRUMENT_CLASS(vl::ImagePBO, Image)
 
   public:
     //! Constructor.

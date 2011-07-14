@@ -55,7 +55,7 @@ namespace vl
    */
   class LoadWriterPLY: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterPLY, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterPLY, ResourceLoadWriter)
 
   public:
     LoadWriterPLY(): ResourceLoadWriter("|ply|", "|ply|") {}

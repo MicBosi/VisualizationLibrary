@@ -72,7 +72,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT EdgeExtractor: public Object
   {
-    INSTRUMENT_CLASS(vl::EdgeExtractor, Object)
+    VL_INSTRUMENT_CLASS(vl::EdgeExtractor, Object)
 
   public:
     //! A single edge as extracted from the EdgeExtractor class.

@@ -57,7 +57,7 @@ namespace vl
    */
   class LoadWriterJPG: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterJPG, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterJPG, ResourceLoadWriter)
 
   public:
     LoadWriterJPG(): ResourceLoadWriter("|jpg|", "|jpg|"), mQuality(95) 

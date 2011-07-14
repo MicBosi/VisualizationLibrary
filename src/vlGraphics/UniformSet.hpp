@@ -49,7 +49,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT UniformSet: public Object
   {
-    INSTRUMENT_CLASS(vl::UniformSet, Object)
+    VL_INSTRUMENT_CLASS(vl::UniformSet, Object)
 
   public:
     UniformSet()

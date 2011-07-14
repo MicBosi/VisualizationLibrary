@@ -48,7 +48,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT RenderTarget: public Object
   {
-    INSTRUMENT_CLASS(vl::RenderTarget, Object)
+    VL_INSTRUMENT_CLASS(vl::RenderTarget, Object)
 
     friend class OpenGLContext;
 

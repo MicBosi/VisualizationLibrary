@@ -43,7 +43,7 @@ namespace vl
   //! Generates a set of new vertices from the old one.
   class VLGRAPHICS_EXPORT VertexMapper: public Object
   {
-    INSTRUMENT_CLASS(vl::VertexMapper, Object)
+    VL_INSTRUMENT_CLASS(vl::VertexMapper, Object)
 
   public:
     //! Regenerates a new Array based on the given mapping.
@@ -62,7 +62,7 @@ namespace vl
   //! As a result also all the DrawArrays prensent in the Geometry are substituted with DrawElements.
   class VLGRAPHICS_EXPORT DoubleVertexRemover: public VertexMapper
   {
-    INSTRUMENT_CLASS(vl::DoubleVertexRemover, VertexMapper)
+    VL_INSTRUMENT_CLASS(vl::DoubleVertexRemover, VertexMapper)
 
   private:
     class CompareVertex

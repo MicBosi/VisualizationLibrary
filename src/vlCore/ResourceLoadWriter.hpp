@@ -43,7 +43,7 @@ namespace vl
    */
   class ResourceLoadWriter: public Object
   {
-    INSTRUMENT_CLASS(vl::ResourceLoadWriter, Object)
+    VL_INSTRUMENT_CLASS(vl::ResourceLoadWriter, Object)
 
   public:
     ResourceLoadWriter(const String& load_extensions, const String& write_extensions): mLoadExtensions(load_extensions), mWriteExtensions(write_extensions) {}

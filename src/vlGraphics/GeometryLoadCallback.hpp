@@ -44,7 +44,7 @@ namespace vl
    */
   class GeometryLoadCallback: public LoadCallback
   {
-    INSTRUMENT_CLASS(vl::GeometryLoadCallback, LoadCallback)
+    VL_INSTRUMENT_CLASS(vl::GeometryLoadCallback, LoadCallback)
 
   public:
     GeometryLoadCallback()

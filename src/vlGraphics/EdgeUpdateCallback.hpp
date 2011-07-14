@@ -43,7 +43,7 @@ namespace vl
   //! \sa EdgeExtractor
   class EdgeUpdateCallback: public ActorEventCallback
   {
-    INSTRUMENT_CLASS(vl::EdgeUpdateCallback, ActorEventCallback)
+    VL_INSTRUMENT_CLASS(vl::EdgeUpdateCallback, ActorEventCallback)
 
   public:
     EdgeUpdateCallback(): mShowCreases(true) 

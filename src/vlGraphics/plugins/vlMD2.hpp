@@ -51,7 +51,7 @@ namespace vl
    */
   class LoadWriterMD2: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterMD2, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterMD2, ResourceLoadWriter)
 
   public:
     LoadWriterMD2(): ResourceLoadWriter("|md2|", "|md2|") {}

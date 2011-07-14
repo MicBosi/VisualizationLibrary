@@ -54,7 +54,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT ProjViewTransfCallback: public Object
   {
-    INSTRUMENT_CLASS(vl::ProjViewTransfCallback, Object)
+    VL_INSTRUMENT_CLASS(vl::ProjViewTransfCallback, Object)
 
   public:
     ProjViewTransfCallback()

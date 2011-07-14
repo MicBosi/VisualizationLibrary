@@ -59,7 +59,7 @@ namespace vl
   \sa GDCM home page: http://creatis-www.insa-lyon.fr/software/public/Gdcm/Main.html */
   class LoadWriterDICOM: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriterDICOM, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterDICOM, ResourceLoadWriter)
 
   public:
     LoadWriterDICOM(): ResourceLoadWriter("|dcm|dicom|dic|ima|ph|mag|", "|dcm|dicom|dic|ima|ph|mag|") 

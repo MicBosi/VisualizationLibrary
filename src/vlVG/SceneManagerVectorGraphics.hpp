@@ -55,7 +55,7 @@ namespace vl
    * - SceneManagerPortals */
   class SceneManagerVectorGraphics: public SceneManager
   {
-    INSTRUMENT_CLASS(vl::SceneManagerVectorGraphics, SceneManager)
+    VL_INSTRUMENT_CLASS(vl::SceneManagerVectorGraphics, SceneManager)
 
   public:
     SceneManagerVectorGraphics() { mActorRenderRankStart = 0; mVectorGraphicObjects.setAutomaticDelete(false); }

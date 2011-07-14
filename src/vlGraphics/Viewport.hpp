@@ -50,7 +50,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Viewport: public Object
   {
-    INSTRUMENT_CLASS(vl::Viewport, Object)
+    VL_INSTRUMENT_CLASS(vl::Viewport, Object)
 
   public:
     Viewport();

@@ -50,7 +50,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Light: public RenderState
   {
-    INSTRUMENT_CLASS(vl::Light, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Light, RenderState)
 
   public:
     Light(int light_index);
