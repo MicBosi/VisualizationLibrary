@@ -175,7 +175,7 @@ ref<MemoryDirectory> MemoryDirectory::memorySubDir(const String& subdir_name) co
   {
     if (it->first.startsWith(p+'/'))
     {
-      ref<MemoryFile> mfile = dynamic_cast<MemoryFile*>(it->second->clone().get());
+      ref<MemoryFile> mfile = static_cast<MemoryFile*>(it->second->clone().get());
       VL_CHECK(mfile)
       dir->mFiles[mfile->path()] = mfile;
     }

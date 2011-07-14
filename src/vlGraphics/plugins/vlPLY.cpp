@@ -139,7 +139,7 @@ void PlyLoader::PlyElement::analyze()
   {
     for(unsigned int j=0; j<properties().size(); ++j)
     {
-      PlyScalar* scalar = dynamic_cast<PlyScalar*>(properties()[j].get());
+      PlyScalar* scalar = cast<PlyScalar>(properties()[j].get()); VL_CHECK(scalar)
       if (scalar)
       {
         if (scalar->name() == "x")
@@ -230,7 +230,7 @@ void PlyLoader::newElement(PlyElement*el)
   {
     for(unsigned int j=0; j<el->properties().size(); ++j)
     {
-      PlyScalarList* list = dynamic_cast<PlyScalarList*>(el->properties()[j].get());
+      PlyScalarList* list = cast<PlyScalarList>(el->properties()[j].get()); VL_CHECK(list)
       if (list && list->name() == "vertex_indices")
       {
         for(int i=1; i<(int)list->scalars().size()-1; ++i)

@@ -93,10 +93,12 @@ namespace vl
     #endif
 
     bool supports_pbo = Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object||Has_GL_Version_2_1;
-    GLBufferObject* glbuf = dynamic_cast<GLBufferObject*>(image->imageBuffer());
 
     if (store_in_pixel_buffer_object && supports_pbo)
     {
+      // mic fixme: test
+      GLBufferObject* glbuf = cast<GLBufferObject>(image->imageBuffer()); VL_CHECK(glbuf);
+
       int bytes = image->requiredMemory2D(w, h, 1, image->format(), image->type());
       // allocates the PBO
       glbuf->setBufferData( bytes, NULL, glbuf->usage() );

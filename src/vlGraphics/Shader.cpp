@@ -58,18 +58,18 @@ Shader::~Shader()
 //------------------------------------------------------------------------------
 const GLSLProgram* Shader::getGLSLProgram() const 
 { 
-  return dynamic_cast<const GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
+  return static_cast<const GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
 }
 //------------------------------------------------------------------------------
 GLSLProgram* Shader::getGLSLProgram() 
 { 
-  return dynamic_cast<GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
+  return static_cast<GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
 }
 //------------------------------------------------------------------------------
 // state getters
 //------------------------------------------------------------------------------
 #define GET_OR_CREATE(RS)\
-  RS* rs = dynamic_cast<RS*>( gocRenderStateSet()->renderState( RS_##RS ) ); \
+  RS* rs = static_cast<RS*>( gocRenderStateSet()->renderState( RS_##RS ) ); \
   if ( rs == NULL ) \
   { \
     rs = new RS; \
@@ -78,7 +78,7 @@ GLSLProgram* Shader::getGLSLProgram()
   return rs;
 //------------------------------------------------------------------------------
 #define GET_OR_CREATE_IDX(RS, index)\
-  RS* rs = dynamic_cast<RS*>( gocRenderStateSet()->renderState( (ERenderState)(RS_##RS##0 + index) ) ); \
+  RS* rs = static_cast<RS*>( gocRenderStateSet()->renderState( (ERenderState)(RS_##RS##0 + index) ) ); \
   if ( rs == NULL ) \
   { \
     rs = new RS(index); \
@@ -146,15 +146,15 @@ SampleCoverage* Shader::gocSampleCoverage() { GET_OR_CREATE(SampleCoverage) }
 //------------------------------------------------------------------------------
 Light* Shader::gocLight(int light_index) { GET_OR_CREATE_IDX(Light, light_index) }
 //------------------------------------------------------------------------------
-const Light* Shader::getLight(int light_index) const { return dynamic_cast<const Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
+const Light* Shader::getLight(int light_index) const { return static_cast<const Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
 //------------------------------------------------------------------------------
-Light* Shader::getLight(int light_index) { return dynamic_cast<Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
+Light* Shader::getLight(int light_index) { return static_cast<Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
 //------------------------------------------------------------------------------
 ClipPlane* Shader::gocClipPlane(int plane_index) { GET_OR_CREATE_IDX(ClipPlane, plane_index) }
 //------------------------------------------------------------------------------
-const ClipPlane* Shader::getClipPlane(int plane_index) const { return dynamic_cast<const ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
+const ClipPlane* Shader::getClipPlane(int plane_index) const { return static_cast<const ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
 //------------------------------------------------------------------------------
-ClipPlane* Shader::getClipPlane(int plane_index) { return dynamic_cast<ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
+ClipPlane* Shader::getClipPlane(int plane_index) { return static_cast<ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
 //------------------------------------------------------------------------------
 TextureUnit* Shader::gocTextureUnit(int unit_index) { GET_OR_CREATE_IDX(TextureUnit, unit_index) }
 //------------------------------------------------------------------------------

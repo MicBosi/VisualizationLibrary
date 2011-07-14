@@ -122,16 +122,16 @@ namespace vl
   template<class B, class A>
   B* cast(A* obj)
   {
-    if(obj->isOfType(B::staticType()))
+    if(obj && obj->isOfType(B::staticType()))
       return static_cast<B*>(obj);
     else
       return NULL;
   }
   //---------------------------------------------------------------------------------------------------------------------
   template<class B, class A>
-  const B* cast(const A* obj)
+  const B* cast_const(const A* obj) // need rename to cast_const for GCC
   {
-    if(obj->isOfType(B::staticType()))
+    if(obj && obj->isOfType(B::staticType()))
       return static_cast<const B*>(obj);
     else
       return NULL;
