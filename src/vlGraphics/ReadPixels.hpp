@@ -149,7 +149,7 @@ namespace vl
   */
   class ReadPixels: public RenderEventCallback
   {
-    INSTRUMENT_CLASS(vl::ReadPixels, RenderEventCallback)
+    VL_INSTRUMENT_CLASS(vl::ReadPixels, RenderEventCallback)
 
   public:
     ReadPixels():

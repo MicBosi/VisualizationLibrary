@@ -34,9 +34,10 @@
 
 /**
  * \file TypeInfo.hpp
- * Set of macros and templates implementing a simple portable RTTI system with various features.
+ * Set of macros and templates implementing a simple and portable RTTI system.
 */
 
+//---------------------------------------------------------------------------------------------------------------------
 //! Represents a class type.
 struct TypeInfo
 {
@@ -47,127 +48,146 @@ struct TypeInfo
   }
   const char* Name;
 };
-
+//---------------------------------------------------------------------------------------------------------------------
 #define VL_GROUP(...) __VA_ARGS__
 #define VL_TO_STR(...) #__VA_ARGS__
-
-#define INSTRUMENT_BASE_CLASS(ClassName)                                                                    \
-public:                                                                                                     \
-  /* static functions */                                                                                    \
-  /** Returns the name of the class. */                                                                     \
-  static const char* staticName() { return VL_TO_STR(ClassName); }                                          \
-  /** Returns the TypeInfo of the class. */                                                                 \
+//---------------------------------------------------------------------------------------------------------------------
+#define VL_INSTRUMENT_BASE_CLASS(ClassName)                                                                           \
+public:                                                                                                               \
+  /* static functions */                                                                                              \
+  /** Returns the name of the class. */                                                                               \
+  static const char* staticName() { return VL_TO_STR(ClassName); }                                                    \
+  /** Returns the TypeInfo of the class. */                                                                           \
   static const TypeInfo* staticType() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; } \
-                                                                                                            \
-  /* virtual functions */                                                                                   \
-  /** Returns the name of the object's class. */                                                            \
-  virtual const char* className() const { return VL_TO_STR(ClassName); }                                    \
-  /** Returns the TypeInfo of the object's class. */                                                        \
-  virtual const TypeInfo* classType() const { return staticType(); }                                        \
-  /** Returns \a true if \a type matches the object's class type. */                                        \
-  virtual bool isOfType(const TypeInfo* type) const                                                         \
-  {                                                                                                         \
-    return type == staticType();                                                                            \
-  }                                                                                                         \
+                                                                                                                      \
+  /* virtual functions */                                                                                             \
+  /** Returns the name of the object's class. */                                                                      \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
+  /** Returns the TypeInfo of the object's class. */                                                                  \
+  virtual const TypeInfo* classType() const { return staticType(); }                                                  \
+  /** Returns \a true if \a type matches the object's class type. */                                                  \
+  virtual bool isOfType(const TypeInfo* type) const                                                                   \
+  {                                                                                                                   \
+    return type == staticType();                                                                                      \
+  }                                                                                                                   \
 private:
-
-#define INSTRUMENT_CLASS(ClassName, BaseClass)                                                              \
-private:                                                                                                    \
-  typedef BaseClass super;                                                                                  \
-public:                                                                                                     \
-  /* static functions */                                                                                    \
-  /** Returns the name of the class. */                                                                     \
-  static const char* staticName() { return VL_TO_STR(ClassName); }                                          \
-  /** Returns the TypeInfo of the class. */                                                                 \
+//---------------------------------------------------------------------------------------------------------------------
+#define VL_INSTRUMENT_CLASS(ClassName, BaseClass)                                                                     \
+private:                                                                                                              \
+  typedef BaseClass super;                                                                                            \
+public:                                                                                                               \
+  /* static functions */                                                                                              \
+  /** Returns the name of the class. */                                                                               \
+  static const char* staticName() { return VL_TO_STR(ClassName); }                                                    \
+  /** Returns the TypeInfo of the class. */                                                                           \
   static const TypeInfo* staticType() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; } \
-                                                                                                            \
-  /* virtual functions */                                                                                   \
-  /** Returns the name of the object's class. */                                                            \
-  virtual const char* className() const { return VL_TO_STR(ClassName); }                                    \
-  /** Returns the TypeInfo of the object's class. */                                                        \
-  virtual const TypeInfo* classType() const { return staticType(); }                                        \
-  /** Returns \a true if \a type matches the object's class type. */                                        \
-  virtual bool isOfType(const TypeInfo* type) const                                                         \
-  {                                                                                                         \
-    return type == staticType() || super::isOfType(type);                                                   \
-  }                                                                                                         \
+                                                                                                                      \
+  /* virtual functions */                                                                                             \
+  /** Returns the name of the object's class. */                                                                      \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
+  /** Returns the TypeInfo of the object's class. */                                                                  \
+  virtual const TypeInfo* classType() const { return staticType(); }                                                  \
+  /** Returns \a true if \a type matches the object's class type. */                                                  \
+  virtual bool isOfType(const TypeInfo* type) const                                                                   \
+  {                                                                                                                   \
+    return type == staticType() || super::isOfType(type);                                                             \
+  }                                                                                                                   \
 private:
-
-#define INSTRUMENT_CLASS2(ClassName, BaseClass1, BaseClass2)                                                \
-private:                                                                                                    \
-  typedef BaseClass1 super1;                                                                                \
-  typedef BaseClass2 super2;                                                                                \
-public:                                                                                                     \
-  /* static functions */                                                                                    \
-  /** Returns the name of the class. */                                                                     \
-  static const char* staticName() { return VL_TO_STR(ClassName); }                                          \
-  /** Returns the TypeInfo of the class. */                                                                 \
+//---------------------------------------------------------------------------------------------------------------------
+#define VL_INSTRUMENT_CLASS_2(ClassName, BaseClass1, BaseClass2)                                                       \
+private:                                                                                                              \
+  typedef BaseClass1 super1;                                                                                          \
+  typedef BaseClass2 super2;                                                                                          \
+public:                                                                                                               \
+  /* static functions */                                                                                              \
+  /** Returns the name of the class. */                                                                               \
+  static const char* staticName() { return VL_TO_STR(ClassName); }                                                    \
+  /** Returns the TypeInfo of the class. */                                                                           \
   static const TypeInfo* staticType() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; } \
-                                                                                                            \
-  /* virtual functions */                                                                                   \
-  /** Returns the name of the object's class. */                                                            \
-  virtual const char* className() const { return VL_TO_STR(ClassName); }                                    \
-  /** Returns the TypeInfo of the object's class. */                                                        \
-  virtual const TypeInfo* classType() const { return staticType(); }                                        \
-  /** Returns \a true if \a type matches the object's class type. */                                        \
-  virtual bool isOfType(const TypeInfo* type) const                                                         \
-  {                                                                                                         \
-    return type == staticType() || super1::isOfType(type) || super2::isOfType(type);                        \
-  }                                                                                                         \
+                                                                                                                      \
+  /* virtual functions */                                                                                             \
+  /** Returns the name of the object's class. */                                                                      \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
+  /** Returns the TypeInfo of the object's class. */                                                                  \
+  virtual const TypeInfo* classType() const { return staticType(); }                                                  \
+  /** Returns \a true if \a type matches the object's class type. */                                                  \
+  virtual bool isOfType(const TypeInfo* type) const                                                                   \
+  {                                                                                                                   \
+    return type == staticType() || super1::isOfType(type) || super2::isOfType(type);                                  \
+  }                                                                                                                   \
 private:
+//---------------------------------------------------------------------------------------------------------------------
+// mic fixme: VL_DYNAMIC_CAST
+//template<class B, class A>
+//B* vl_cast(A obj)
+//{
+//  if(obj->isOfType(B::staticType()))
+//    return static_cast<B*>(obj);
+//  else
+//    return NULL;
+//}
+//---------------------------------------------------------------------------------------------------------------------
+// mic fixme: VL_DYNAMIC_CAST
+//template<class B, class A>
+//const B* vl_const_cast(const A obj)
+//{
+//  if(obj->isOfType(B::staticType()))
+//    return static_cast<const B*>(obj);
+//  else
+//    return NULL;
+//}
+//---------------------------------------------------------------------------------------------------------------------
 
-template<class B, class A>
-B* vl_cast(A obj)
+//---------------------------------------------------------------------------------------------------------------------
+// USAGE EXAMPLES 
+//---------------------------------------------------------------------------------------------------------------------
+
+/***
+
+namespace ns
 {
-  if(obj->isOfType(B::staticType()))
-    return static_cast<B*>(obj);
-  else
-    return NULL;
+  >>> NO INHERITANCE FROM INSTRUMENTED BASE CLASS
+  class Base
+  {
+    VL_INSTRUMENT_BASE_CLASS(Base)
+  };
+
+  >>> SIMPLE INHERITANCE OF INSTRUMENTED CLASS
+  class ClassA: public Base
+  {
+    VL_INSTRUMENT_CLASS(ns::ClassA, Base)
+  };
+
+  >>> SIMPLE INHERITANCE OF INSTRUMENTED CLASS
+  class ClassB: public ClassA
+  {
+    VL_INSTRUMENT_CLASS(ns::ClassB, ClassA)
+  };
+
+  >>> MULTIPLE INHERITANCE
+  class ClassC: public ClassA, public ClassB
+  {
+    VL_INSTRUMENT_CLASS_2(ns::ClassC, ClassA, ClassB)
+  };
+
+  >>> TEMPLATE CLASSES WITH MORE THAN 1 PARAMS
+  template<class T1, class T2>
+  class ClassT: public Base
+  {
+    VL_INSTRUMENT_CLASS(VL_GROUP(ns::ClassT<class T1, class T2>), Base)
+  };
+
+  >>> SUBCLASSES OF TEMPLATES WITH MORE THAN 1 PARAMS
+  class ClassSubT: public ClassT<int, float>
+  {
+    VL_INSTRUMENT_CLASS(ns::ClassSubT, VL_GROUP(ClassT<int, float>))
+  };
 }
 
-template<class B, class A>
-const B* vl_const_cast(const A obj)
-{
-  if(obj->isOfType(B::staticType()))
-    return static_cast<const B*>(obj);
-  else
-    return NULL;
-}
+IMPORTANT NOTE:
+  - The "ClassName" parameter of VL_INSTRUMENT_* should ALWAYS specify the full namespace.
+  - The "BaseClass" parameter of VL_INSTRUMENT_* should not specify the namespace unless strictly necessary.
 
-/******************************************************************************
- USAGE EXAMPLES 
-*******************************************************************************
-
-class Base
-{
-  INSTRUMENT_BASE_CLASS(Base)
-};
-
-class ClassA: public Base
-{
-  INSTRUMENT_CLASS(vl::ClassA, Base)
-};
-
-class ClassB: public ClassA
-{
-  INSTRUMENT_CLASS(vl::ClassB, ClassA)
-};
-
-class ClassC: public Base
-{
-  INSTRUMENT_CLASS(vl::ClassC, Base)
-};
-
-class ClassD: public ClassC
-{
-  INSTRUMENT_CLASS(vl::ClassD, ClassC)
-};
-
-class ClassBD: public ClassB, public ClassD
-{
-  INSTRUMENT_CLASS2(vl::ClassBD, ClassB, ClassD)
-};
-
-*******************************************************************************/
+***/
 
 #endif

@@ -41,7 +41,7 @@ namespace vl
 {
   class VLVOLUME_EXPORT SlicedVolume: public ActorEventCallback
   {
-    INSTRUMENT_CLASS(vl::SclicedVolume, ActorEventCallback)
+    VL_INSTRUMENT_CLASS(vl::SclicedVolume, ActorEventCallback)
 
   public:
     //! Constructor.

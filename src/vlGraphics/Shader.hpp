@@ -56,7 +56,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT PixelTransfer: public RenderState
   {
-    INSTRUMENT_CLASS(vl::PixelTransfer, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PixelTransfer, RenderState)
 
   public:
     PixelTransfer()
@@ -200,7 +200,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT Hint: public RenderState
   {
-    INSTRUMENT_CLASS(vl::Hint, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Hint, RenderState)
 
   public:
     Hint(): mPerspectiveCorrectionHint(HM_DONT_CARE), mPointSmoothHint(HM_DONT_CARE), mLineSmoothHint(HM_DONT_CARE),
@@ -242,7 +242,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_CULL_FACE */
   class VLGRAPHICS_EXPORT CullFace: public RenderState
   {
-    INSTRUMENT_CLASS(vl::CullFace, RenderState)
+    VL_INSTRUMENT_CLASS(vl::CullFace, RenderState)
 
   public:
     CullFace(EPolygonFace cullface=PF_BACK): mFaceMode(cullface)
@@ -263,7 +263,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT FrontFace: public RenderState
   {
-    INSTRUMENT_CLASS(vl::FrontFace, RenderState)
+    VL_INSTRUMENT_CLASS(vl::FrontFace, RenderState)
 
   public:
     FrontFace(EFrontFace frontface=FF_CCW): mFrontFace(frontface)
@@ -284,7 +284,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_DEPTH_TEST */
   class VLGRAPHICS_EXPORT DepthFunc: public RenderState
   {
-    INSTRUMENT_CLASS(vl::DepthFunc, RenderState)
+    VL_INSTRUMENT_CLASS(vl::DepthFunc, RenderState)
 
   public:
     DepthFunc(EFunction depthfunc=FU_LESS): mDepthFunc(depthfunc)
@@ -305,7 +305,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT DepthMask: public RenderState
   {
-    INSTRUMENT_CLASS(vl::DepthMask, RenderState)
+    VL_INSTRUMENT_CLASS(vl::DepthMask, RenderState)
 
   public:
     DepthMask(bool depthmask=true): mDepthMask(depthmask)
@@ -326,7 +326,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT PolygonMode: public RenderState
   {
-    INSTRUMENT_CLASS(vl::PolygonMode, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PolygonMode, RenderState)
 
   public:
     PolygonMode(EPolygonMode frontface=PM_FILL, EPolygonMode backface=PM_FILL): mFrontFace(frontface), mBackFace(backface)
@@ -351,7 +351,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT ShadeModel: public RenderState
   {
-    INSTRUMENT_CLASS(vl::ShadeModel, RenderState)
+    VL_INSTRUMENT_CLASS(vl::ShadeModel, RenderState)
 
   public:
     ShadeModel(EShadeModel shademodel=SM_SMOOTH): mShadeModel(shademodel)
@@ -372,7 +372,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_BLEND */
   class VLGRAPHICS_EXPORT BlendFunc: public RenderState
   {
-    INSTRUMENT_CLASS(vl::BlendFunc, RenderState)
+    VL_INSTRUMENT_CLASS(vl::BlendFunc, RenderState)
 
   public:
     BlendFunc(EBlendFactor src_rgb=BF_SRC_ALPHA, EBlendFactor dst_rgb=BF_ONE_MINUS_SRC_ALPHA, EBlendFactor src_alpha=BF_SRC_ALPHA, EBlendFactor dst_alpha=BF_ONE_MINUS_SRC_ALPHA):
@@ -408,7 +408,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT BlendEquation: public RenderState
   {
-    INSTRUMENT_CLASS(vl::BlendEquation, RenderState)
+    VL_INSTRUMENT_CLASS(vl::BlendEquation, RenderState)
 
   public:
     BlendEquation(EBlendEquation mode_rgb=BE_FUNC_ADD, EBlendEquation mode_alpha=BE_FUNC_ADD): mModeRGB(mode_rgb), mModeAlpha(mode_alpha)
@@ -433,7 +433,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_SAMPLE_ALPHA_TO_COVERAGE, vl::EN_SAMPLE_ALPHA_TO_ONE, vl::EN_SAMPLE_COVERAGE */
   class VLGRAPHICS_EXPORT SampleCoverage: public RenderState
   {
-    INSTRUMENT_CLASS(vl::SampleCoverage, RenderState)
+    VL_INSTRUMENT_CLASS(vl::SampleCoverage, RenderState)
 
   public:
     SampleCoverage(GLclampf value=1.0f, bool invert=false): mValue(value), mInvert(invert)
@@ -458,7 +458,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_ALPHA_TEST */
   class VLGRAPHICS_EXPORT AlphaFunc: public RenderState
   {
-    INSTRUMENT_CLASS(vl::AlphaFunc, RenderState)
+    VL_INSTRUMENT_CLASS(vl::AlphaFunc, RenderState)
 
   public:
     AlphaFunc(EFunction alphafunc=FU_ALWAYS, float refvalue=0): mRefValue(refvalue), mAlphaFunc(alphafunc)
@@ -482,7 +482,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_LIGHTING */
   class VLGRAPHICS_EXPORT Material: public RenderState
   {
-    INSTRUMENT_CLASS(vl::Material, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Material, RenderState)
 
   public:
     Material();
@@ -555,7 +555,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_LIGHTING */
   class VLGRAPHICS_EXPORT LightModel: public RenderState
   {
-    INSTRUMENT_CLASS(vl::LightModel, RenderState)
+    VL_INSTRUMENT_CLASS(vl::LightModel, RenderState)
 
   public:
     LightModel(): mAmbientColor(0.2f,0.2f,0.2f,1.0f), mColorControl(CC_SINGLE_COLOR), mLocalViewer(false), mTwoSide(false)
@@ -585,7 +585,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_FOG */
   class VLGRAPHICS_EXPORT Fog: public RenderState
   {
-    INSTRUMENT_CLASS(vl::Fog, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Fog, RenderState)
 
   public:
     Fog(EFogMode mode=FM_LINEAR, fvec4 color=fvec4(0,0,0,0), float density=1, float start=0, float end=1):
@@ -620,7 +620,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_POLYGON_OFFSET_FILL, vl::EN_POLYGON_OFFSET_LINE, vl::EN_POLYGON_OFFSET_POINT */
   class VLGRAPHICS_EXPORT PolygonOffset: public RenderState
   {
-    INSTRUMENT_CLASS(vl::PolygonOffset, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PolygonOffset, RenderState)
 
   public:
     PolygonOffset(): mFactor(0.0f), mUnits(0.0f)
@@ -646,7 +646,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_COLOR_LOGIC_OP */
   class VLGRAPHICS_EXPORT LogicOp: public RenderState
   {
-    INSTRUMENT_CLASS(vl::LogicOp, RenderState)
+    VL_INSTRUMENT_CLASS(vl::LogicOp, RenderState)
 
   public:
     LogicOp(ELogicOp logicop=LO_COPY): mLogicOp(logicop)
@@ -667,7 +667,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_DEPTH_TEST */
   class VLGRAPHICS_EXPORT DepthRange: public RenderState
   {
-    INSTRUMENT_CLASS(vl::DepthRange, RenderState)
+    VL_INSTRUMENT_CLASS(vl::DepthRange, RenderState)
 
   public:
     DepthRange(): mZNear(0), mZFar(1.0f)
@@ -696,7 +696,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT LineWidth: public RenderState
   {
-    INSTRUMENT_CLASS(vl::LineWidth, RenderState)
+    VL_INSTRUMENT_CLASS(vl::LineWidth, RenderState)
 
   public:
     LineWidth(float linewidth=1.0f): mLineWidth(linewidth)
@@ -717,7 +717,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_POINT_SMOOTH, vl::EN_POINT_SPRITE */
   class VLGRAPHICS_EXPORT PointSize: public RenderState
   {
-    INSTRUMENT_CLASS(vl::PointSize, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PointSize, RenderState)
 
   public:
     PointSize(float pointsize=1.0f): mPointSize(pointsize)
@@ -738,7 +738,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_POLYGON_STIPPLE */
   class VLGRAPHICS_EXPORT PolygonStipple: public RenderState
   {
-    INSTRUMENT_CLASS(vl::PolygonStipple, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PolygonStipple, RenderState)
 
   public:
     PolygonStipple();
@@ -757,7 +757,7 @@ namespace vl
    * \sa Shader, Effect, Actor, vl::EN_LINE_STIPPLE */
   class VLGRAPHICS_EXPORT LineStipple: public RenderState
   {
-    INSTRUMENT_CLASS(vl::LineStipple, RenderState)
+    VL_INSTRUMENT_CLASS(vl::LineStipple, RenderState)
 
   public:
     LineStipple(int factor=1, GLushort pattern=~(GLushort)0): mFactor(factor), mPattern(pattern)
@@ -782,7 +782,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT PointParameter: public RenderState
   {
-    INSTRUMENT_CLASS(vl::PointParameter, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PointParameter, RenderState)
 
   public:
     PointParameter(float sizemin=0, float sizemax=1024.0f, float fadethresholdsize=1.0f, fvec3 distanceattenuation=fvec3(1,0,0)):
@@ -820,7 +820,7 @@ namespace vl
    * \sa Shader, Effect, Actor, StencilMask, StencilOp, vl::EN_STENCIL_TEST */
   class VLGRAPHICS_EXPORT StencilFunc: public RenderState
   {
-    INSTRUMENT_CLASS(vl::StencilFunc, RenderState)
+    VL_INSTRUMENT_CLASS(vl::StencilFunc, RenderState)
 
   public:
     StencilFunc(EFunction function=FU_ALWAYS, int refvalue=0, unsigned int mask=~(unsigned int)0): 
@@ -870,7 +870,7 @@ namespace vl
    * \sa Shader, Effect, Actor, StencilMask, StencilFunc, vl::EN_STENCIL_TEST */
   class VLGRAPHICS_EXPORT StencilOp: public RenderState
   {
-    INSTRUMENT_CLASS(vl::StencilOp, RenderState)
+    VL_INSTRUMENT_CLASS(vl::StencilOp, RenderState)
 
   public:
     StencilOp(EStencilOp sfail=SO_KEEP, EStencilOp dpfail=SO_KEEP, EStencilOp dppass=SO_KEEP): 
@@ -920,7 +920,7 @@ namespace vl
    * \sa Shader, Effect, Actor, StencilOp, StencilFunc, vl::EN_STENCIL_TEST */
   class VLGRAPHICS_EXPORT StencilMask: public RenderState
   {
-    INSTRUMENT_CLASS(vl::StencilMask, RenderState)
+    VL_INSTRUMENT_CLASS(vl::StencilMask, RenderState)
 
   public:
     StencilMask(unsigned int mask=~(unsigned int)0): mMask_Front(mask), mMask_Back(mask)
@@ -949,7 +949,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT BlendColor: public RenderState
   {
-    INSTRUMENT_CLASS(vl::BlendColor, RenderState)
+    VL_INSTRUMENT_CLASS(vl::BlendColor, RenderState)
 
   public:
     BlendColor(fvec4 blendcolor=fvec4(0,0,0,0)): mBlendColor(blendcolor)
@@ -970,7 +970,7 @@ namespace vl
    * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT ColorMask: public RenderState
   {
-    INSTRUMENT_CLASS(vl::ColorMask, RenderState)
+    VL_INSTRUMENT_CLASS(vl::ColorMask, RenderState)
 
   public:
     ColorMask(bool red=true, bool green=true, bool blue=true, bool alpha=true): mRed(red), mGreen(green), mBlue(blue), mAlpha(alpha)
@@ -1002,7 +1002,7 @@ namespace vl
    * \sa Shader, TextureUnit, Texture, TexGen, TexParameter, Effect, Actor */
   class VLGRAPHICS_EXPORT TextureMatrix: public TextureState
   {
-    INSTRUMENT_CLASS(vl::TextureMatrix, TextureState)
+    VL_INSTRUMENT_CLASS(vl::TextureMatrix, TextureState)
 
   public:
     TextureMatrix(int texunit) { mTextureUnit=texunit; mUseCameraRotationInverse = false; }
@@ -1038,7 +1038,7 @@ namespace vl
    * \sa Shader, TextureUnit, Texture, TexGen, TexParameter, Effect, Actor */
   class VLGRAPHICS_EXPORT TexEnv: public TextureState
   {
-    INSTRUMENT_CLASS(vl::TexEnv, TextureState)
+    VL_INSTRUMENT_CLASS(vl::TexEnv, TextureState)
 
   public:
     TexEnv(int texunit);
@@ -1124,7 +1124,7 @@ namespace vl
    * \sa Shader, TextureUnit, Texture, TexGen, TexParameter, Effect, Actor */
   class VLGRAPHICS_EXPORT TexGen: public TextureState
   {
-    INSTRUMENT_CLASS(vl::TexGen, TextureState)
+    VL_INSTRUMENT_CLASS(vl::TexGen, TextureState)
 
   public:
     TexGen(int texunit);
@@ -1182,7 +1182,7 @@ namespace vl
    * \sa Texture, TexParameter, Shader, TextureMatrix, TexEnv, TexGen, Effect, Actor */
   class VLGRAPHICS_EXPORT TextureUnit: public TextureState
   {
-    INSTRUMENT_CLASS(vl::TextureUnit, TextureState)
+    VL_INSTRUMENT_CLASS(vl::TextureUnit, TextureState)
 
   public:
     TextureUnit(int texunit)
@@ -1212,7 +1212,7 @@ namespace vl
   \sa Shader::setUpdater(); */
   class VLGRAPHICS_EXPORT ShaderAnimator: public Object
   {
-    INSTRUMENT_CLASS(vl::ShaderAnimator, Object)
+    VL_INSTRUMENT_CLASS(vl::ShaderAnimator, Object)
 
   public:
     ShaderAnimator(): mEnabled(true) {}
@@ -1250,7 +1250,7 @@ namespace vl
    * \sa Effect, Actor */
   class VLGRAPHICS_EXPORT Shader: public Object
   {
-    INSTRUMENT_CLASS(vl::Shader, Object)
+    VL_INSTRUMENT_CLASS(vl::Shader, Object)
 
   public:
     /** Constructor. */

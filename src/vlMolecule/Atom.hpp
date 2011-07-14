@@ -50,7 +50,7 @@ namespace vl
    */
   class Atom: public Object
   {
-    INSTRUMENT_CLASS(vl::Atom, Object)
+    VL_INSTRUMENT_CLASS(vl::Atom, Object)
 
   public:
     Atom()

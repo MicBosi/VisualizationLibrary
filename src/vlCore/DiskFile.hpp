@@ -62,7 +62,7 @@ namespace vl
   */
   class VLCORE_EXPORT DiskFile: public VirtualFile
   {
-    INSTRUMENT_CLASS(vl::DiskFile, VirtualFile)
+    VL_INSTRUMENT_CLASS(vl::DiskFile, VirtualFile)
 
     friend class DiskDirectory;
   protected:

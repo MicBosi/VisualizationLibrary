@@ -45,7 +45,7 @@ namespace vl
   template<typename T>
   class CatmullRomInterpolator: public Object
   {
-    INSTRUMENT_CLASS(vl::CatmullRomInterpolator, Object)
+    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolator<typename T>, Object)
 
   public:
     CatmullRomInterpolator() 
@@ -153,7 +153,7 @@ namespace vl
   //! Interpolates fvec4 values using a CatmullRomInterpolator.
   class CatmullRomInterpolatorFVec4: public InterpolatorFVec4
   {
-    INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFVec4, InterpolatorFVec4)
+    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFVec4, InterpolatorFVec4)
   public:
     CatmullRomInterpolatorFVec4(): mInterpolator( new CatmullRomInterpolatorFVec4_T ) {}
     CatmullRomInterpolatorFVec4(const std::vector<fvec4>& path): mInterpolator( new CatmullRomInterpolatorFVec4_T(path) ) {}
@@ -167,7 +167,7 @@ namespace vl
   //! Interpolates fvec3 values using a CatmullRomInterpolator.
   class CatmullRomInterpolatorFVec3: public InterpolatorFVec3
   {
-    INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFVec3, InterpolatorFVec3)
+    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFVec3, InterpolatorFVec3)
   public:
     CatmullRomInterpolatorFVec3(): mInterpolator( new CatmullRomInterpolatorFVec3_T ) {}
     CatmullRomInterpolatorFVec3(const std::vector<fvec3>& path): mInterpolator( new CatmullRomInterpolatorFVec3_T(path) ) {}
@@ -181,7 +181,7 @@ namespace vl
   //! Interpolates fvec2 values using a CatmullRomInterpolator.
   class CatmullRomInterpolatorFVec2: public InterpolatorFVec2
   {
-    INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFVec2, InterpolatorFVec2)
+    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFVec2, InterpolatorFVec2)
   public:
     CatmullRomInterpolatorFVec2(): mInterpolator( new CatmullRomInterpolatorFVec2_T ) {}
     CatmullRomInterpolatorFVec2(const std::vector<fvec2>& path): mInterpolator( new CatmullRomInterpolatorFVec2_T(path) ) {}
@@ -195,7 +195,7 @@ namespace vl
   //! Interpolates \p float values using a CatmullRomInterpolator.
   class CatmullRomInterpolatorFloat: public InterpolatorFloat
   {
-    INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFloat, InterpolatorFloat)
+    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFloat, InterpolatorFloat)
   public:
     CatmullRomInterpolatorFloat(): mInterpolator( new CatmullRomInterpolatorFloat_T ) {}
     CatmullRomInterpolatorFloat(const std::vector<float>& path): mInterpolator( new CatmullRomInterpolatorFloat_T(path) ) {}
@@ -209,7 +209,7 @@ namespace vl
   //! Interpolates dvec4 values using a CatmullRomInterpolator.
   class CatmullRomInterpolatorDVec4: public InterpolatorDVec4
   {
-    INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDVec4, InterpolatorDVec4)
+    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDVec4, InterpolatorDVec4)
   public:
     CatmullRomInterpolatorDVec4(): mInterpolator( new CatmullRomInterpolatorDVec4_T ) {}
     CatmullRomInterpolatorDVec4(const std::vector<dvec4>& path): mInterpolator( new CatmullRomInterpolatorDVec4_T(path) ) {}
@@ -223,7 +223,7 @@ namespace vl
   //! Interpolates dvec3 values using a CatmullRomInterpolator.
   class CatmullRomInterpolatorDVec3: public InterpolatorDVec3
   {
-    INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDVec3, InterpolatorDVec3)
+    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDVec3, InterpolatorDVec3)
   public:
     CatmullRomInterpolatorDVec3(): mInterpolator( new CatmullRomInterpolatorDVec3_T ) {}
     CatmullRomInterpolatorDVec3(const std::vector<dvec3>& path): mInterpolator( new CatmullRomInterpolatorDVec3_T(path) ) {}
@@ -237,7 +237,7 @@ namespace vl
   //! Interpolates dvec2 values using a CatmullRomInterpolator.
   class CatmullRomInterpolatorDVec2: public InterpolatorDVec2
   {
-    INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDVec2, InterpolatorDVec2)
+    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDVec2, InterpolatorDVec2)
   public:
     CatmullRomInterpolatorDVec2(): mInterpolator( new CatmullRomInterpolatorDVec2_T ) {}
     CatmullRomInterpolatorDVec2(const std::vector<dvec2>& path): mInterpolator( new CatmullRomInterpolatorDVec2_T(path) ) {}
@@ -251,7 +251,7 @@ namespace vl
   //! Interpolates \p double values using a CatmullRomInterpolator.
   class CatmullRomInterpolatorDouble: public InterpolatorDouble
   {
-    INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDouble, InterpolatorDouble)
+    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDouble, InterpolatorDouble)
   public:
     CatmullRomInterpolatorDouble(): mInterpolator( new CatmullRomInterpolatorDouble_T ) {}
     CatmullRomInterpolatorDouble(const std::vector<double>& path): mInterpolator( new CatmullRomInterpolatorDouble_T(path) ) {}

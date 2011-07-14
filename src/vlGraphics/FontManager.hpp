@@ -44,7 +44,7 @@ namespace vl
    * - VectorGraphics */
   class VLGRAPHICS_EXPORT FontManager: public Object
   {
-    INSTRUMENT_CLASS(vl::FontManager, Object)
+    VL_INSTRUMENT_CLASS(vl::FontManager, Object)
 
   public:
     //! Constructor: uses the given FT_Library handle otherwise will initialize and use its own FT_Library.

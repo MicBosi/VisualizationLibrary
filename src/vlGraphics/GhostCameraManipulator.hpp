@@ -54,7 +54,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT GhostCameraManipulator: public UIEventListener
   {
-    INSTRUMENT_CLASS(vl::GhostCameraManipulator, UIEventListener)
+    VL_INSTRUMENT_CLASS(vl::GhostCameraManipulator, UIEventListener)
 
   public:
     /** Constructor. */

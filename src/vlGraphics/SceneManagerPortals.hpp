@@ -52,7 +52,7 @@ namespace vl
   //! - \ref pagGuidePortals "Portal-Based Culling and Scene Management Tutorial"
   class VLGRAPHICS_EXPORT Portal: public Object
   {
-    INSTRUMENT_CLASS(vl::Portal, Object)
+    VL_INSTRUMENT_CLASS(vl::Portal, Object)
 
     friend class SceneManagerPortals;
 
@@ -108,7 +108,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Sector: public Object
   {
-    INSTRUMENT_CLASS(vl::Sector, Object)
+    VL_INSTRUMENT_CLASS(vl::Sector, Object)
 
   public:
     /** A callback object called each time a Sector becomes visible through a Portal.
@@ -183,7 +183,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT SceneManagerPortals: public SceneManager
   {
-    INSTRUMENT_CLASS(vl::SceneManagerPortals, SceneManager)
+    VL_INSTRUMENT_CLASS(vl::SceneManagerPortals, SceneManager)
 
   public:
     //! Constructor.

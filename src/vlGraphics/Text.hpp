@@ -49,7 +49,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Text: public Renderable
   {
-    INSTRUMENT_CLASS(vl::Text, Renderable)
+    VL_INSTRUMENT_CLASS(vl::Text, Renderable)
 
   public:
     Text(): mColor(1,1,1,1), mBorderColor(0,0,0,1), mBackgroundColor(1,1,1,1), mOutlineColor(0,0,0,1), mShadowColor(0,0,0,0.5f), mShadowVector(2,-2), 

@@ -62,7 +62,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Terrain: public SceneManagerActorKdTree
   {
-    INSTRUMENT_CLASS(vl::Terrain, SceneManagerActorKdTree)
+    VL_INSTRUMENT_CLASS(vl::Terrain, SceneManagerActorKdTree)
 
   public:
     Terrain(): 

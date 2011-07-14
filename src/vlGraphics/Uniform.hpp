@@ -58,7 +58,7 @@ namespace vl
   */
   class Uniform: public Object
   {
-    INSTRUMENT_CLASS(vl::Uniform, Object)
+    VL_INSTRUMENT_CLASS(vl::Uniform, Object)
 
     friend class GLSLProgram;
 

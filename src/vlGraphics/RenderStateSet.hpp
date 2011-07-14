@@ -46,7 +46,7 @@ namespace vl
     * \sa Shader, Effect, Actor */
   class VLGRAPHICS_EXPORT RenderStateSet: public Object
   {
-    INSTRUMENT_CLASS(vl::RenderStateSet, Object)
+    VL_INSTRUMENT_CLASS(vl::RenderStateSet, Object)
 
   public:
     RenderStateSet(): mGLSLProgram(NULL)

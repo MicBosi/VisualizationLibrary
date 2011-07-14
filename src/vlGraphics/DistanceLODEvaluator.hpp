@@ -49,7 +49,7 @@ namespace vl
   */
   class DistanceLODEvaluator: public LODEvaluator
   {
-    INSTRUMENT_CLASS(vl::DistanceLODEvaluator, LODEvaluator)
+    VL_INSTRUMENT_CLASS(vl::DistanceLODEvaluator, LODEvaluator)
 
   public:
     DistanceLODEvaluator() 

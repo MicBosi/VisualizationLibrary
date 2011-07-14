@@ -60,7 +60,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT TrackballManipulator: public UIEventListener
   {
-    INSTRUMENT_CLASS(vl::TrackballManipulator, UIEventListener)
+    VL_INSTRUMENT_CLASS(vl::TrackballManipulator, UIEventListener)
 
   public:
     typedef enum { NoMode, RotationMode, TranslationMode, ZoomMode } ETrackballMode;

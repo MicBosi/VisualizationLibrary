@@ -44,7 +44,7 @@ namespace vl
    */
   class ShaderNode: public Object
   {
-    INSTRUMENT_CLASS(vl::ShaderNode, Object)
+    VL_INSTRUMENT_CLASS(vl::ShaderNode, Object)
 
   public:
     // --- --- ---

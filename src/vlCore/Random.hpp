@@ -39,7 +39,7 @@ namespace vl
   //! Random number generator.
   class VLCORE_EXPORT Random: public Object
   {
-    INSTRUMENT_CLASS(vl::Random, Object)
+    VL_INSTRUMENT_CLASS(vl::Random, Object)
 
   public:
     //! Constructor.

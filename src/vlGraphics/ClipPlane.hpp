@@ -48,7 +48,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT ClipPlane: public RenderState
   {
-    INSTRUMENT_CLASS(vl::ClipPlane, RenderState)
+    VL_INSTRUMENT_CLASS(vl::ClipPlane, RenderState)
 
   public:
     /** Constructor. */

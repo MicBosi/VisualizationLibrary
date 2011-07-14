@@ -56,7 +56,7 @@ namespace vl
    */
   class LoadWriter3DS: public ResourceLoadWriter
   {
-    INSTRUMENT_CLASS(vl::LoadWriter3DS, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriter3DS, ResourceLoadWriter)
 
   public:
     LoadWriter3DS(): ResourceLoadWriter("|3ds|", "|3ds|") {}

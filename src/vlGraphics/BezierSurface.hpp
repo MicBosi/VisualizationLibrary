@@ -43,7 +43,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT BezierPatch: public Object
   {
-    INSTRUMENT_CLASS(vl::BezierPatch, Object)
+    VL_INSTRUMENT_CLASS(vl::BezierPatch, Object)
 
   public:
     //! The control points grid defining the bicubic Bézier patch(es).
@@ -86,7 +86,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT BezierSurface: public Geometry
   {
-    INSTRUMENT_CLASS(vl::BezierSurface, Geometry)
+    VL_INSTRUMENT_CLASS(vl::BezierSurface, Geometry)
 
   public:
     //! Constructor

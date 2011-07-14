@@ -54,7 +54,7 @@ namespace vl
   */
   class GLBufferObject: public Buffer
   {
-    INSTRUMENT_CLASS(vl::GLBufferObject, Buffer)
+    VL_INSTRUMENT_CLASS(vl::GLBufferObject, Buffer)
 
   public:
     GLBufferObject()

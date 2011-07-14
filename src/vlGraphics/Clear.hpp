@@ -68,7 +68,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Clear: public Renderable
   {
-    INSTRUMENT_CLASS(vl::Clear, Renderable)
+    VL_INSTRUMENT_CLASS(vl::Clear, Renderable)
 
   public:
     Clear();

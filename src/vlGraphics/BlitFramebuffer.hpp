@@ -43,7 +43,7 @@ namespace vl
   */
   class BlitFramebuffer: public RenderEventCallback
   {
-    INSTRUMENT_CLASS(vl::BlitFramebuffer, RenderEventCallback)
+    VL_INSTRUMENT_CLASS(vl::BlitFramebuffer, RenderEventCallback)
 
   public:
     BlitFramebuffer()

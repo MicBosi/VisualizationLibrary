@@ -57,7 +57,7 @@ namespace vl
     * \sa Actor, Effect, Shader, Transform, Geometry */
   class VLGRAPHICS_EXPORT Renderable: public Object
   {
-    INSTRUMENT_CLASS(vl::Renderable, Object)
+    VL_INSTRUMENT_CLASS(vl::Renderable, Object)
 
     Renderable(const Renderable& other): Object(other)
     {

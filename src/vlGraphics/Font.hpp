@@ -54,7 +54,7 @@ namespace vl
   */
   class Glyph: public Object
   {
-    INSTRUMENT_CLASS(vl::Glyph, Object)
+    VL_INSTRUMENT_CLASS(vl::Glyph, Object)
 
   private:
     Glyph(const Glyph& other): Object(other)  
@@ -126,7 +126,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Font: public Object
   {
-    INSTRUMENT_CLASS(vl::Font, Object)
+    VL_INSTRUMENT_CLASS(vl::Font, Object)
 
     friend class CoreText;
     friend class Text;

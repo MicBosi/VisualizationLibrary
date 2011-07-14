@@ -45,7 +45,7 @@ namespace vl
   */
   class Buffer: public Object
   {
-    INSTRUMENT_CLASS(vl::Buffer, Object)
+    VL_INSTRUMENT_CLASS(vl::Buffer, Object)
 
   public:
     typedef enum

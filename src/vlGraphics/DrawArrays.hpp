@@ -48,7 +48,7 @@ namespace vl
    * \sa DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
   class DrawArrays: public DrawCall
   {
-    INSTRUMENT_CLASS(vl::DrawArrays, DrawCall)
+    VL_INSTRUMENT_CLASS(vl::DrawArrays, DrawCall)
 
   public:
     DrawArrays(): mStart(0), mCount(0) 

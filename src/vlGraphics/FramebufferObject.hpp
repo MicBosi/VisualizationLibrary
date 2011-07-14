@@ -48,7 +48,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOAbstractAttachment: public Object
   {
-    INSTRUMENT_CLASS(vl::FBOAbstractAttachment, Object)
+    VL_INSTRUMENT_CLASS(vl::FBOAbstractAttachment, Object)
 
     friend class FBORenderTarget;
 
@@ -86,7 +86,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBORenderbufferAttachment: public FBOAbstractAttachment
   {
-    INSTRUMENT_CLASS(vl::FBORenderbufferAttachment, FBOAbstractAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBORenderbufferAttachment, FBOAbstractAttachment)
 
     friend class FBORenderTarget;
 
@@ -184,7 +184,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOColorBufferAttachment: public FBORenderbufferAttachment
   {
-    INSTRUMENT_CLASS(vl::FBOColorBufferAttachment, FBOColorBufferAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBOColorBufferAttachment, FBOColorBufferAttachment)
 
   public:
     /** Constructor */
@@ -214,7 +214,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBODepthBufferAttachment: public FBORenderbufferAttachment
   {
-    INSTRUMENT_CLASS(vl::FBODepthBufferAttachment, FBORenderbufferAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBODepthBufferAttachment, FBORenderbufferAttachment)
 
   public:
     /** Constructor */
@@ -244,7 +244,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOStencilBufferAttachment: public FBORenderbufferAttachment
   {
-    INSTRUMENT_CLASS(vl::FBOStencilBufferAttachment, FBORenderbufferAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBOStencilBufferAttachment, FBORenderbufferAttachment)
 
   public:
     /** Constructor */
@@ -274,7 +274,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBODepthStencilBufferAttachment: public FBORenderbufferAttachment
   {
-    INSTRUMENT_CLASS(vl::FBODepthStencilBufferAttachment, FBORenderbufferAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBODepthStencilBufferAttachment, FBORenderbufferAttachment)
 
   public:
     /** Constructor */
@@ -304,7 +304,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOAbstractTextureAttachment: public FBOAbstractAttachment
   {
-    INSTRUMENT_CLASS(vl::FBOAbstractTextureAttachment, FBOAbstractAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBOAbstractTextureAttachment, FBOAbstractAttachment)
 
   public:
     /** Constructor. */
@@ -341,7 +341,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTexture1DAttachment: public FBOAbstractTextureAttachment
   {
-    INSTRUMENT_CLASS(vl::FBOTexture1DAttachment, FBOAbstractTextureAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBOTexture1DAttachment, FBOAbstractTextureAttachment)
 
   public:
     /** Constructor. */
@@ -362,7 +362,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTexture2DAttachment: public FBOAbstractTextureAttachment
   {
-    INSTRUMENT_CLASS(vl::FBOTexture2DAttachment, FBOAbstractTextureAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBOTexture2DAttachment, FBOAbstractTextureAttachment)
 
   public:
     /** Constructor. */
@@ -393,7 +393,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTextureAttachment: public FBOAbstractTextureAttachment
   {
-    INSTRUMENT_CLASS(vl::FBOTextureAttachment, FBOAbstractTextureAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBOTextureAttachment, FBOAbstractTextureAttachment)
 
   public:
     /** Constructor. */
@@ -415,7 +415,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTexture3DAttachment: public FBOAbstractTextureAttachment
   {
-    INSTRUMENT_CLASS(vl::FBOTexture3DAttachment, FBOAbstractTextureAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBOTexture3DAttachment, FBOAbstractTextureAttachment)
 
   public:
     FBOTexture3DAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
@@ -445,7 +445,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOTextureLayerAttachment: public FBOAbstractTextureAttachment
   {
-    INSTRUMENT_CLASS(vl::FBOTextureLayerAttachment, FBOAbstractTextureAttachment)
+    VL_INSTRUMENT_CLASS(vl::FBOTextureLayerAttachment, FBOAbstractTextureAttachment)
 
   public:
     /** Constructor. */
@@ -502,7 +502,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBORenderTarget: public RenderTarget
   {
-    INSTRUMENT_CLASS(vl::FBORenderTarget, RenderTarget)
+    VL_INSTRUMENT_CLASS(vl::FBORenderTarget, RenderTarget)
 
     friend class OpenGLContext;
 

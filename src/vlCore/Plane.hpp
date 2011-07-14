@@ -48,7 +48,7 @@ namespace vl
   */
   class VLCORE_EXPORT Plane: public Object
   {
-    INSTRUMENT_CLASS(vl::Plane, Object)
+    VL_INSTRUMENT_CLASS(vl::Plane, Object)
 
   public:
     Plane( Real o=0.0f, vec3 n=vec3(0,0,0) ): mNormal(n), mOrigin(o) 

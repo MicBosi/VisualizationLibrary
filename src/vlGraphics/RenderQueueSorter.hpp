@@ -44,7 +44,7 @@ namespace vl
   */
   class RenderQueueSorter: public Object
   {
-    INSTRUMENT_CLASS(vl::RenderQueueSorter, Object)
+    VL_INSTRUMENT_CLASS(vl::RenderQueueSorter, Object)
 
   public:
     RenderQueueSorter()
@@ -62,7 +62,7 @@ namespace vl
   // no z sort, no effect render rank, no actor render rank
   class RenderQueueSorterByShader: public RenderQueueSorter
   {
-    INSTRUMENT_CLASS(vl::RenderQueueSorterByShader, RenderQueueSorter)
+    VL_INSTRUMENT_CLASS(vl::RenderQueueSorterByShader, RenderQueueSorter)
 
   public:
     RenderQueueSorterByShader()
@@ -83,7 +83,7 @@ namespace vl
   // no z sort, no effect render rank, no actor render rank
   class RenderQueueSorterByRenderable: public RenderQueueSorter
   {
-    INSTRUMENT_CLASS(vl::RenderQueueSorterByRenderable, RenderQueueSorter)
+    VL_INSTRUMENT_CLASS(vl::RenderQueueSorterByRenderable, RenderQueueSorter)
 
   public:
     RenderQueueSorterByRenderable()
@@ -103,7 +103,7 @@ namespace vl
   //! Sorts the RenderTokens by their Effect rank -> Actor rank -> Shader pointer -> Renderable pointer
   class RenderQueueSorterBasic: public RenderQueueSorter
   {
-    INSTRUMENT_CLASS(vl::RenderQueueSorterBasic, RenderQueueSorter)
+    VL_INSTRUMENT_CLASS(vl::RenderQueueSorterBasic, RenderQueueSorter)
 
   public:
     RenderQueueSorterBasic()
@@ -147,7 +147,7 @@ namespace vl
   //! -# Sort solid objects by Renderable
   class RenderQueueSorterStandard: public RenderQueueSorter
   {
-    INSTRUMENT_CLASS(vl::RenderQueueSorterStandard, RenderQueueSorter)
+    VL_INSTRUMENT_CLASS(vl::RenderQueueSorterStandard, RenderQueueSorter)
 
   public:
     RenderQueueSorterStandard(): mDepthSortMode(AlphaDepthSort)
@@ -229,7 +229,7 @@ namespace vl
   //! -# Sort translucent objects back-to-front
   class RenderQueueSorterOcclusion: public RenderQueueSorter
   {
-    INSTRUMENT_CLASS(vl::RenderQueueSorterOcclusion, RenderQueueSorter)
+    VL_INSTRUMENT_CLASS(vl::RenderQueueSorterOcclusion, RenderQueueSorter)
 
   public:
     RenderQueueSorterOcclusion()
@@ -292,7 +292,7 @@ namespace vl
   //! GLSL program -> render state set -> enable set -> texture set -> light set -> Shader pointer -> Renderable pointer
   class RenderQueueSorterAggressive: public RenderQueueSorter
   {
-    INSTRUMENT_CLASS(vl::RenderQueueSorterAggressive, RenderQueueSorter)
+    VL_INSTRUMENT_CLASS(vl::RenderQueueSorterAggressive, RenderQueueSorter)
 
   public:
     RenderQueueSorterAggressive(): mDepthSortMode(AlphaDepthSort)

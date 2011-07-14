@@ -57,7 +57,7 @@ namespace vl
   */
   class VLCORE_EXPORT ZippedDirectory: public VirtualDirectory
   {
-    INSTRUMENT_CLASS(vl::ZippedDirectory, VirtualDirectory)
+    VL_INSTRUMENT_CLASS(vl::ZippedDirectory, VirtualDirectory)
 
   public:
     ZippedDirectory();
