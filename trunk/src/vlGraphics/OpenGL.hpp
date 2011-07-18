@@ -110,28 +110,28 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Has_Point_Sprite;  
 
   #define VL_EXTENSION(extension) VLGRAPHICS_EXPORT extern bool Has_##extension;
-  #include "GLExtensionList.hpp"
+  #include <vlGraphics/GL/GLExtensionList.hpp>
   #undef VL_EXTENSION
 
   #define VL_GLES_EXTENSION(extension) VLGRAPHICS_EXPORT extern bool Has_##extension;
-  #include "GLESExtensionList.hpp"
+  #include <vlGraphics/GL/GLESExtensionList.hpp>
   #undef VL_GLES_EXTENSION
 
   #if defined(VL_OPENGL)
     #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
-    #include "GLFunctionList.hpp"
+    #include <vlGraphics/GL/GLFunctionList.hpp>
     #undef VL_GL_FUNCTION
   #endif
 
   #if defined(VL_OPENGL_ES1)
     #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
-    #include "GLES1FunctionList.hpp"
+    #include <vlGraphics/GL/GLES1FunctionList.hpp>
     #undef VL_GL_FUNCTION
   #endif
 
   #if defined(VL_OPENGL_ES2)
     #define VL_GL_FUNCTION(TYPE, NAME) VLGRAPHICS_EXPORT extern TYPE NAME;
-    #include "GLES2FunctionList.hpp"
+    #include <vlGraphics/GL/GLES2FunctionList.hpp>
     #undef VL_GL_FUNCTION
   #endif
 
@@ -163,16 +163,17 @@ namespace vl
 //-----------------------------------------------------------------------------
 // OpenGL functions wrappers
 //-----------------------------------------------------------------------------
+
 #if defined(VL_OPENGL)
-  #include "VL_Functions_GL.hpp"
+  #include <vlGraphics/GL/VL_Functions_GL.hpp>
 #endif
   
 #if defined(VL_OPENGL_ES1)
-  #include "VL_Functions_GLES1.hpp"
+  #include <vlGraphics/GL/VL_Functions_GLES1.hpp>
 #endif
 
 #if defined(VL_OPENGL_ES2)
-  #include "VL_Functions_GLES2.hpp"
+  #include <vlGraphics/GL/VL_Functions_GLES2.hpp>
 #endif
 //-----------------------------------------------------------------------------
 #endif
