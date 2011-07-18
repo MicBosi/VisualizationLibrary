@@ -999,14 +999,14 @@ namespace vl
   //------------------------------------------------------------------------------
   /** The TextureMatrix class uses a 4x4 matrix to transform the texture coordinates of a texture unit.
    *
-   * \sa Shader, TextureUnit, Texture, TexGen, TexParameter, Effect, Actor */
+   * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
   class VLGRAPHICS_EXPORT TextureMatrix: public TextureState
   {
     VL_INSTRUMENT_CLASS(vl::TextureMatrix, TextureState)
 
   public:
-    TextureMatrix(int texunit) { mTextureUnit=texunit; mUseCameraRotationInverse = false; }
-    virtual ERenderState type() const { return (ERenderState)(RS_TextureMatrix0 + mTextureUnit); }
+    TextureMatrix(int texunit) { mTextureSampler=texunit; mUseCameraRotationInverse = false; }
+    virtual ERenderState type() const { return (ERenderState)(RS_TextureMatrix0 + mTextureSampler); }
     virtual void apply(const Camera*, OpenGLContext* ctx) const;
     const mat4& matrix() const { return mMatrix; }
     const TextureMatrix& setMatrix(const mat4& matrix)
@@ -1033,16 +1033,16 @@ namespace vl
    *
    * \note
    * A TexParameter defines a set of variables associated to a Texture while 
-   * TexGen and TexEnv define a set of variables associated to a TextureUnit.
+   * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
-   * \sa Shader, TextureUnit, Texture, TexGen, TexParameter, Effect, Actor */
+   * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
   class VLGRAPHICS_EXPORT TexEnv: public TextureState
   {
     VL_INSTRUMENT_CLASS(vl::TexEnv, TextureState)
 
   public:
     TexEnv(int texunit);
-    virtual ERenderState type() const { return (ERenderState)(RS_TexEnv0 + mTextureUnit); }
+    virtual ERenderState type() const { return (ERenderState)(RS_TexEnv0 + mTextureSampler); }
     virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     void setMode(ETexEnvMode mode) { mMode = mode; }
@@ -1119,9 +1119,9 @@ namespace vl
    *
    * \note
    * A TexParameter defines a set of variables associated to a Texture while 
-   * TexGen and TexEnv define a set of variables associated to a TextureUnit.
+   * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
-   * \sa Shader, TextureUnit, Texture, TexGen, TexParameter, Effect, Actor */
+   * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
   class VLGRAPHICS_EXPORT TexGen: public TextureState
   {
     VL_INSTRUMENT_CLASS(vl::TexGen, TextureState)
@@ -1129,7 +1129,7 @@ namespace vl
   public:
     TexGen(int texunit);
 
-    virtual ERenderState type() const { return (ERenderState)(RS_TexGen0 + mTextureUnit); }
+    virtual ERenderState type() const { return (ERenderState)(RS_TexGen0 + mTextureSampler); }
     virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     void setEyePlaneS(fvec4 plane) { mEyePlaneS = plane; }
@@ -1175,23 +1175,23 @@ namespace vl
     ETexGenMode mGenModeQ;
   };
   //------------------------------------------------------------------------------
-  // TextureUnit
+  // TextureSampler
   //------------------------------------------------------------------------------
-  /** The TextureUnit class associates a Texture object to an OpenGL texture unit.
+  /** The TextureSampler class associates a Texture object to an OpenGL texture unit.
    *
    * \sa Texture, TexParameter, Shader, TextureMatrix, TexEnv, TexGen, Effect, Actor */
-  class VLGRAPHICS_EXPORT TextureUnit: public TextureState
+  class VLGRAPHICS_EXPORT TextureSampler: public TextureState
   {
-    VL_INSTRUMENT_CLASS(vl::TextureUnit, TextureState)
+    VL_INSTRUMENT_CLASS(vl::TextureSampler, TextureState)
 
   public:
-    TextureUnit(int texunit)
+    TextureSampler(int texunit)
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mTextureUnit = texunit;
+      mTextureSampler = texunit;
     }
 
-    virtual ERenderState type() const { return (ERenderState)(RS_TextureUnit0 + textureUnit()); }
+    virtual ERenderState type() const { return (ERenderState)(RS_TextureSampler0 + textureUnit()); }
     virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     void setTexture(Texture* texture) { mTexture = texture; }
@@ -1465,11 +1465,11 @@ namespace vl
 
     // texture unit
 
-    TextureUnit* gocTextureUnit(int unit_index);
+    TextureSampler* gocTextureSampler(int unit_index);
     
-    const TextureUnit* getTextureUnit(int unit_index) const { return static_cast<const TextureUnit*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureUnit0+unit_index) ) ); }
+    const TextureSampler* getTextureSampler(int unit_index) const { return static_cast<const TextureSampler*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureSampler0+unit_index) ) ); }
     
-    TextureUnit* getTextureUnit(int unit_index) { return static_cast<TextureUnit*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureUnit0+unit_index) ) ); }
+    TextureSampler* getTextureSampler(int unit_index) { return static_cast<TextureSampler*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureSampler0+unit_index) ) ); }
 
     // tex env
 

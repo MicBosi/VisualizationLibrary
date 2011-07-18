@@ -74,14 +74,14 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::TextureState, RenderState)
 
   public:
-    TextureState(): mTextureUnit(0)
+    TextureState(): mTextureSampler(0)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-    int textureUnit() const { return mTextureUnit; }
-    void setUnitIndex(int unit_index) { mTextureUnit = unit_index; }
+    int textureUnit() const { return mTextureSampler; }
+    void setUnitIndex(int unit_index) { mTextureSampler = unit_index; }
   protected:
-    int mTextureUnit;
+    int mTextureSampler;
   };
 
 }

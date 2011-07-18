@@ -76,8 +76,8 @@ public:
     // tessellated patches fx
     vl::ref<vl::Effect> fx = new vl::Effect;
     fx->shader()->enable(vl::EN_DEPTH_TEST);
-    fx->shader()->gocTextureUnit(0)->setTexture( hmap.get() );
-    fx->shader()->gocTextureUnit(1)->setTexture( tmap.get() );
+    fx->shader()->gocTextureSampler(0)->setTexture( hmap.get() );
+    fx->shader()->gocTextureSampler(1)->setTexture( tmap.get() );
 
     // bind all the necessary stages to the GLSLProgram
     mGLSL = fx->shader()->gocGLSLProgram();
@@ -99,7 +99,7 @@ public:
     vl::ref<vl::Effect> fx_wire = new vl::Effect;
     fx_wire->shader()->enable(vl::EN_DEPTH_TEST);
     fx_wire->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
-    fx_wire->shader()->gocTextureUnit(0)->setTexture( hmap.get() );
+    fx_wire->shader()->gocTextureSampler(0)->setTexture( hmap.get() );
     fx_wire->shader()->gocPolygonOffset()->set(-1.0f, -1.0f);
     fx_wire->shader()->enable(vl::EN_POLYGON_OFFSET_LINE);
 

@@ -55,7 +55,7 @@ public:
     // vl::ref<vl::Texture> texture = new vl::Texture("/images/land_lights_16384.tif");
     // vl::ref<vl::Texture> texture = new vl::Texture("/images/land_ocean_ice_cloud_8192.tif");
 
-    fx->shader()->gocTextureUnit(0)->setTexture(texture.get());
+    fx->shader()->gocTextureSampler(0)->setTexture(texture.get());
 
     //vl::ref<vl::Shader> wire = new vl::Shader;
     //wire->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);

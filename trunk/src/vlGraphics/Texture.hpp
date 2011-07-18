@@ -48,12 +48,12 @@ namespace vl
    *
    * \note
    * A TexParameter defines a set of variables associated to a Texture while 
-   * TexGen and TexEnv define a set of variables associated to a TextureUnit.
+   * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
    * \sa
    * - Texture::getTexParameter()
    * - Texture
-   * - TextureUnit
+   * - TextureSampler
    * - TexGen
    * - TexEnv
    * - Shader
@@ -121,13 +121,13 @@ namespace vl
    *
    * \note
    * A TexParameter defines a set of variables associated to a Texture while 
-   * TexGen and TexEnv define a set of variables associated to a TextureUnit.
+   * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
    * \sa
    * - getTexParameter() and TexParameter
    * - createTexture()
    * - setMipLevel()
-   * - TextureUnit
+   * - TextureSampler
    * - TexGen
    * - TexEnv
    * - Shader
