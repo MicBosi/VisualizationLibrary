@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.com                                               */
+/*  http://www.visualizationlibrary.org                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -69,6 +69,7 @@ public:
     mEffect->shader(0,0)->enable(EN_DEPTH_TEST);
 
     /* wireframe shader */
+#if defined(VL_OPENGL)
     mEffect->lod(0)->push_back( new Shader );
     mEffect->shader(0,1)->setRenderState( new Light(0) );
     mEffect->shader(0,1)->enable(EN_LIGHTING);
@@ -78,6 +79,7 @@ public:
     mEffect->shader(0,1)->gocPolygonOffset()->set(-0.5f, 0);
     mEffect->shader(0,1)->enable(vl::EN_POLYGON_OFFSET_LINE);
     mEffect->shader(0,1)->enable(EN_DEPTH_TEST);
+#endif
 
     /* load model */
     ref<ResourceDatabase> res_db;
