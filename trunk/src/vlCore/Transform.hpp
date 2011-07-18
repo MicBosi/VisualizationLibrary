@@ -43,12 +43,6 @@ namespace vl
 {
   class Camera;
 
-  // mic fixme: finalize the generalization by
-  // - moving the local matrix management away from ITransform
-  // - implementing a Quat/Scale/Translation-based transform type: QuScTrTransform?
-  // - rename Transform to MatrixTransform
-  // - the engine, rendering, actors etc. should use ITransform instead of MatrixTransform
-
   //------------------------------------------------------------------------------
   // TransformHierarchy
   //------------------------------------------------------------------------------
