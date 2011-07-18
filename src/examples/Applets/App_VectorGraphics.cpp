@@ -34,7 +34,7 @@
 #include <vlVG/VectorGraphics.hpp>
 #include <vlVG/SceneManagerVectorGraphics.hpp>
 #include <vlGraphics/Geometry.hpp>
-#include <vlCore/Array.hpp>
+#include <vlGraphics/Array.hpp>
 
 class App_VectorGraphics: public BaseDemo
 {

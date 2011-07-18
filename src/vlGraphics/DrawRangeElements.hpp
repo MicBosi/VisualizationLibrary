@@ -34,7 +34,7 @@
 
 #include <vlGraphics/DrawCall.hpp>
 #include <vlGraphics/TriangleIterator.hpp>
-#include <vlCore/Array.hpp>
+#include <vlGraphics/Array.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <algorithm>
