@@ -579,12 +579,12 @@ void VectorGraphics::generateQuadsTexCoords(Geometry* geom, const std::vector<dv
     {
       AABB aabb;
       for(unsigned i=0; i<points.size(); ++i)
-        aabb.addPoint( (vec3)geom->vertexArray()->vectorAsVec4(i).xyz() );
+        aabb.addPoint( geom->vertexArray()->getAsVec3(i) );
       for(unsigned i=0; i<points.size(); ++i)
       {
-        vec4 v = geom->vertexArray()->vectorAsVec4(i);
-        double s = (geom->vertexArray()->vectorAsVec4(i).s()-aabb.minCorner().s()) / (mState.mImage->width() );
-        double t = (geom->vertexArray()->vectorAsVec4(i).t()-aabb.minCorner().t()) / (mState.mImage->height());
+        vec4 v = geom->vertexArray()->getAsVec4(i);
+        double s = (geom->vertexArray()->getAsVec4(i).s()-aabb.minCorner().s()) / (mState.mImage->width() );
+        double t = (geom->vertexArray()->getAsVec4(i).t()-aabb.minCorner().t()) / (mState.mImage->height());
         tex_array->at(i).s() = (float)s;
         tex_array->at(i).t() = (float)t;
       }
@@ -619,12 +619,12 @@ void VectorGraphics::generatePlanarTexCoords(Geometry* geom, const std::vector<d
     {
       AABB aabb;
       for(unsigned i=0; i<points.size(); ++i)
-        aabb.addPoint( (vec3)geom->vertexArray()->vectorAsVec4(i).xyz()+vec3(0.5f,0.5f,0.0f) );
+        aabb.addPoint( geom->vertexArray()->getAsVec3(i)+vec3(0.5f,0.5f,0.0f) );
       for(unsigned i=0; i<points.size(); ++i)
       {
-        vec4 v = geom->vertexArray()->vectorAsVec4(i);
-        double s = (geom->vertexArray()->vectorAsVec4(i).s()-aabb.minCorner().s()) / mState.mImage->width();
-        double t = (geom->vertexArray()->vectorAsVec4(i).t()-aabb.minCorner().t()) / mState.mImage->height();
+        vec4 v = geom->vertexArray()->getAsVec4(i);
+        double s = (geom->vertexArray()->getAsVec4(i).s()-aabb.minCorner().s()) / mState.mImage->width();
+        double t = (geom->vertexArray()->getAsVec4(i).t()-aabb.minCorner().t()) / mState.mImage->height();
         tex_array->at(i).s() = (float)s;
         tex_array->at(i).t() = (float)t;
       }

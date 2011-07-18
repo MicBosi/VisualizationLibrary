@@ -232,7 +232,7 @@
 	- vl::ArrayAbstract::computeBoundingBox()
 	- vl::ArrayAbstract::transform()
 	- vl::ArrayAbstract::normalize()
-	- vl::ArrayAbstract::vectorAsVec4()
+	- vl::ArrayAbstract::getAsVec4()
 	
 	\par Geometry primitives
 	

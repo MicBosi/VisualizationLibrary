@@ -120,10 +120,13 @@ namespace vl
     virtual void normalize() = 0;
 
     //! Returns a vector from the buffer as a \p vec4 value.
-    virtual vec4 vectorAsVec4(size_t vector_index) const = 0;
+    virtual vec4 getAsVec4(size_t vector_index) const = 0;
 
     //! Returns a vector from the buffer as a \p vec3 value.
-    virtual vec3 vectorAsVec3(size_t vector_index) const = 0;
+    virtual vec3 getAsVec3(size_t vector_index) const = 0;
+
+    //! Returns a vector from the buffer as a \p vec3 value.
+    virtual vec2 getAsVec2(size_t vector_index) const = 0;
 
     //! Compares two vectors
     virtual int compare(int a, int b) const = 0;
@@ -294,7 +297,7 @@ namespace vl
       }
     }
 
-    vec4 vectorAsVec4(size_t vector_index) const
+    vec4 getAsVec4(size_t vector_index) const
     {
       vec4 v(0,0,0,1);
       const T_Scalar* pv = reinterpret_cast<const T_Scalar*>(&at(vector_index));
@@ -303,11 +306,21 @@ namespace vl
       return v;
     }
 
-    vec3 vectorAsVec3(size_t vector_index) const
+    vec3 getAsVec3(size_t vector_index) const
     {
       vec3 v;
       const T_Scalar* pv = reinterpret_cast<const T_Scalar*>(&at(vector_index));
-      const int count = T_GL_Size == 4 ? 3 : T_GL_Size;
+      const int count = T_GL_Size <= 3 ? T_GL_Size : 3;
+      for( int j=0; j<count; ++j )
+        v.ptr()[j] = (Real)pv[j];
+      return v;
+    }
+
+    vec2 getAsVec2(size_t vector_index) const
+    {
+      vec2 v;
+      const T_Scalar* pv = reinterpret_cast<const T_Scalar*>(&at(vector_index));
+      const int count = T_GL_Size <= 2 ? T_GL_Size : 2;
       for( int j=0; j<count; ++j )
         v.ptr()[j] = (Real)pv[j];
       return v;
