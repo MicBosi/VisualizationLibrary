@@ -38,7 +38,6 @@ VL_PROJECT_GET(VLGRAPHICS _SOURCES _DEFINITIONS _INCLUDE_DIRS _LIBS)
 add_definitions(${_DEFINITIONS})
 include_directories(${_INCLUDE_DIRS})
 
-# mic fixme: use khronos headers also for GLES1
 # Khronos OpenGL headers
 set(KHRONOS_DIR "${3RDPARTY_DIR}/Khronos")
 set(KHRONOS_INC ${KHRONOS_DIR}/GL/mesa_gl.h
