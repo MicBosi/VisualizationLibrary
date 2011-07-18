@@ -125,7 +125,7 @@ namespace vl
     //! Returns a vector from the buffer as a \p vec3 value.
     virtual vec3 getAsVec3(size_t vector_index) const = 0;
 
-    //! Returns a vector from the buffer as a \p vec3 value.
+    //! Returns a vector from the buffer as a \p vec2 value.
     virtual vec2 getAsVec2(size_t vector_index) const = 0;
 
     //! Compares two vectors
