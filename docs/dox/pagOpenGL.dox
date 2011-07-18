@@ -214,6 +214,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glNormalPointer.xml>glNormalPointer()</a>
 			</td>
 			<td valign=top>
+				- vl::Geometry::setNormal()
 				- vl::Geometry::setNormalArray()
 			</td>
 		</tr>
@@ -224,6 +225,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glColorPointer.xml>glColorPointer()</a>
 			</td>
 			<td valign=top>
+				- vl::Geometry::setColor()
 				- vl::Geometry::setColorArray()
 			</td>
 		</tr>
@@ -234,6 +236,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glSecondaryColorPointer.xml>glSecondaryColorPointer()</a>
 			</td>
 			<td valign=top>
+				- vl::Geometry::setSecondaryColor()
 				- vl::Geometry::setSecondaryColorArray()
 			</td>
 		</tr>
@@ -300,7 +303,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glReadPixels.xml>glReadPixels()</a>
 			</td>
 			<td valign=top>
-				- vl::Image::readPixels()
+				- vl::readPixels()
 				- vl::ReadPixels
 			</td>
 		</tr>
@@ -318,20 +321,25 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glValidateProgram.xml>glValidateProgram()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml>glBindAttribLocation()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glUniform.xml>glUniform()</a>
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml>glGetActiveAttrib()</a>
+				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml>glGetActiveUniform()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glPatchParameter.xml>glPatchParameter()</a>
+				
 			</td>
 			<td valign=top>
 				- vl::GLSLVertexShader, vl::GLSLFragmentShader, vl::GLSLGeometryShader
 				- vl::GLSLProgram
-				- vl::GLSLProgram::linkProgram() (done automatically)
+				- vl::GLSLProgram::linkProgram()
 				- vl::GLSLProgram::attachShader()
 				- vl::GLSLProgram::detachShader()
-				- (done automatically)
+				- vl::GLSLShader::compile()
 				- vl::GLSLProgram::useProgram()
 				- vl::GLSLProgram::validateProgram()
 				- vl::GLSLProgram::bindAttribLocation()
 				- vl::Uniform, vl::GLSLProgram::setUniform(), vl::Actor::setUniform(), vl::Shader::setUniform()
-				- vl::PatchParameter
+				- vl::GLSLProgram::activeAttribs()
+				- vl::GLSLProgram::activeUniforms()
+				- vl::PatchParameter, vl::DrawCall::setPatchParameter()
 			</td>
 		</tr>
 *******************************************************************************
@@ -359,10 +367,9 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 			</td>
 		</tr>
 *******************************************************************************
-		<tr> <th colspan=2 align=left> Framebuffer object extension </th> </tr>
+		<tr><th colspan=2 align=left> Framebuffer object extension (see http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt) </th></tr>
 		<tr>
 			<td valign=top>
-				See http://oss.sgi.com/projects/ogl-sample/registry/EXT/framebuffer_object.txt
 				- glFramebufferTexture1D()
 				- glFramebufferTexture2D()
 				- glFramebufferTexture()
@@ -520,7 +527,6 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- GL_TEXTURE_3D
 				- GL_TEXTURE_CUBE_MAP
 				- GL_TEXTURE_GEN_Q/R/S/T
-				- GL_DITHER
 				- GL_INDEX_LOGIC_OP
 			</td>
 			<td valign=top>
@@ -558,7 +564,6 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- automatically managed, see vl::Texture, vl::TextureUnit, vl::TexParameter
 				- automatically managed, see vl::Texture, vl::TextureUnit, vl::TexParameter
 				- automatically managed by vl::TexGen
-				- deprecated functionality
 				- deprecated functionality
 				</td>
 		</tr>
