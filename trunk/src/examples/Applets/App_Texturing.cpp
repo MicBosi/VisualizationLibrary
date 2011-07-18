@@ -31,7 +31,7 @@
 
 #include "BaseDemo.hpp"
 #include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlCore/Array.hpp>
+#include <vlGraphics/Array.hpp>
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/GLSL.hpp>
 

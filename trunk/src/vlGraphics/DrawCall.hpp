@@ -32,7 +32,7 @@
 #ifndef DrawCommand_INCLUDE_ONCE
 #define DrawCommand_INCLUDE_ONCE
 
-#include <vlCore/Array.hpp>
+#include <vlGraphics/Array.hpp>
 #include <vlGraphics/TriangleIterator.hpp>
 #include <vlGraphics/IndexIterator.hpp>
 #include <vlGraphics/PatchParameter.hpp>

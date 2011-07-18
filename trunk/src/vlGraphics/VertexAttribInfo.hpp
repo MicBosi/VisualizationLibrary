@@ -33,7 +33,7 @@
 #define VertexAttribInfo_INLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlCore/Array.hpp>
+#include <vlGraphics/Array.hpp>
 
 namespace vl
 {

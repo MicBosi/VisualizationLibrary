@@ -32,7 +32,7 @@
 #ifndef TriangleIterator_INCLUDE_ONCE
 #define TriangleIterator_INCLUDE_ONCE
 
-#include <vlCore/Array.hpp>
+#include <vlGraphics/Array.hpp>
 #include <vlCore/vlnamespace.hpp>
 
 namespace vl

@@ -33,7 +33,7 @@
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlGraphics/Effect.hpp>
 #include <vlCore/ZippedDirectory.hpp>
-#include <vlCore/Array.hpp>
+#include <vlGraphics/Array.hpp>
 #include <vlCore/DiskFile.hpp>
 #include <vlCore/GZipCodec.hpp>
 #include <vlCore/FileSystem.hpp>

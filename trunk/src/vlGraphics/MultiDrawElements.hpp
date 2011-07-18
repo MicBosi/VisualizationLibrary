@@ -33,7 +33,7 @@
 #define MultiDrawElements_INCLUDE_ONCE
 
 #include <vlGraphics/DrawCall.hpp>
-#include <vlCore/Array.hpp>
+#include <vlGraphics/Array.hpp>
 #include <vlGraphics/TriangleIterator.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
