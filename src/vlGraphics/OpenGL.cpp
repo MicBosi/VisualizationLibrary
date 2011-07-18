@@ -98,28 +98,28 @@ namespace vl
   bool Has_Point_Sprite = false;
 
   #define VL_EXTENSION(extension) bool Has_##extension = false;
-  #include "GLExtensionList.hpp"
+  #include <vlGraphics/GL/GLExtensionList.hpp>
   #undef VL_EXTENSION
 
   #define VL_GLES_EXTENSION(extension) bool Has_##extension = false;
-  #include "GLESExtensionList.hpp"
+  #include <vlGraphics/GL/GLESExtensionList.hpp>
   #undef VL_GLES_EXTENSION
 
   #if defined(VL_OPENGL)
     #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
-    #include "GLFunctionList.hpp"
+    #include <vlGraphics/GL/GLFunctionList.hpp>
     #undef VL_GL_FUNCTION
   #endif
 
   #if defined(VL_OPENGL_ES1)
     #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
-    #include "GLES1FunctionList.hpp"
+    #include <vlGraphics/GL/GLES1FunctionList.hpp>
     #undef VL_GL_FUNCTION
   #endif
 
   #if defined(VL_OPENGL_ES2)
     #define VL_GL_FUNCTION(TYPE, NAME) TYPE NAME = NULL;
-    #include "GLES2FunctionList.hpp"
+    #include <vlGraphics/GL/GLES2FunctionList.hpp>
     #undef VL_GL_FUNCTION
   #endif
 
@@ -315,19 +315,19 @@ bool vl::initializeOpenGL()
   // opengl function pointer initialization
   #if defined(VL_OPENGL)
     #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress(#NAME);
-    #include "GLFunctionList.hpp"
+    #include <vlGraphics/GL/GLFunctionList.hpp>
   #endif
 
   // opengl function pointer initialization
   #if defined(VL_OPENGL_ES1)
     #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress(#NAME);
-    #include "GLES1FunctionList.hpp"
+    #include <vlGraphics/GL/GLES1FunctionList.hpp>
   #endif
 
   // opengl function pointer initialization
   #if defined(VL_OPENGL_ES2)
     #define VL_GL_FUNCTION(TYPE, NAME) NAME = (TYPE)getGLProcAddress(#NAME);
-    #include "GLES2FunctionList.hpp"
+    #include <vlGraphics/GL/GLES2FunctionList.hpp>
   #endif
 
   // - - - OpenGL versions - - -
@@ -407,11 +407,11 @@ bool vl::initializeOpenGL()
   std::string extensions = getOpenGLExtensions();
 
   #define VL_EXTENSION(extension) Has_##extension = strstr(extensions.c_str(), #extension" ") != NULL;
-    #include "GLExtensionList.hpp"
+    #include <vlGraphics/GL/GLExtensionList.hpp>
   #undef VL_EXTENSION
 
   #define VL_GLES_EXTENSION(extension) Has_##extension = strstr(extensions.c_str(), #extension" ") != NULL;
-    #include "GLESExtensionList.hpp"
+    #include <vlGraphics/GL/GLESExtensionList.hpp>
   #undef VL_GLES_EXTENSION
 
 #if defined(VL_OPENGL_ES1)
