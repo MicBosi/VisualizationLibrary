@@ -52,7 +52,7 @@ OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 // OpenGLContext
 //-----------------------------------------------------------------------------
 OpenGLContext::OpenGLContext(int w, int h):
-mMaxVertexAttrib(0), mTextureUnitCount(0), 
+mMaxVertexAttrib(0), mTextureSamplerCount(0), 
 mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false),
 mHasDoubleBuffer(false), mIsInitialized(false), mCurVAS(NULL)
 {
@@ -213,26 +213,26 @@ bool OpenGLContext::initGLContext(bool log)
   mExtensions = getOpenGLExtensions();
 
   // Find max number of texture units, see http://www.opengl.org/sdk/docs/man/xhtml/glActiveTexture.xml
-  mTextureUnitCount = 1;
+  mTextureSamplerCount = 1;
   if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_1) // for GL < 2.x
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
-    mTextureUnitCount = max_tmp > mTextureUnitCount ? max_tmp : mTextureUnitCount;
+    mTextureSamplerCount = max_tmp > mTextureSamplerCount ? max_tmp : mTextureSamplerCount;
   }
   if (Has_GL_Version_2_0) // for GL == 2.x
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
-    mTextureUnitCount = max_tmp > mTextureUnitCount ? max_tmp : mTextureUnitCount;
+    mTextureSamplerCount = max_tmp > mTextureSamplerCount ? max_tmp : mTextureSamplerCount;
   }
   if (Has_GLSL) // for GL >= 2.0
   {
     int max_tmp = 0;
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
-    mTextureUnitCount = max_tmp > mTextureUnitCount ? max_tmp : mTextureUnitCount;
+    mTextureSamplerCount = max_tmp > mTextureSamplerCount ? max_tmp : mTextureSamplerCount;
   }
-  mTextureUnitCount = mTextureUnitCount < VL_MAX_TEXTURE_UNITS ? mTextureUnitCount : VL_MAX_TEXTURE_UNITS;
+  mTextureSamplerCount = mTextureSamplerCount < VL_MAX_TEXTURE_UNITS ? mTextureSamplerCount : VL_MAX_TEXTURE_UNITS;
 
   // find max number of vertex attributes
   mMaxVertexAttrib = 0;
@@ -640,7 +640,7 @@ void OpenGLContext::setupDefaultRenderStates()
   {
     if (i < textureUnitCount())
     {
-      mDefaultRenderStates[RS_TextureUnit0   + i] = new TextureUnit(i);
+      mDefaultRenderStates[RS_TextureSampler0   + i] = new TextureSampler(i);
       if( Has_Fixed_Function_Pipeline )
       {
         // TexGen under GLES is supported only if GL_OES_texture_cube_map is present
@@ -1442,7 +1442,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
       if(Has_Fixed_Function_Pipeline)
       {
         // iterate backwards so the last active is #0
-        for ( int i=mTextureUnitCount; i--; )
+        for ( int i=mTextureSamplerCount; i--; )
         {
           VL_glClientActiveTexture(GL_TEXTURE0 + i); VL_CHECK_OGL();
           glDisableClientState(GL_TEXTURE_COORD_ARRAY); VL_CHECK_OGL();

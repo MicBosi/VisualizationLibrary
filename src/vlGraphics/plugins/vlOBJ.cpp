@@ -722,7 +722,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
           tex_path = tex_file->path();
         texture->prepareTexture2D( tex_path, TF_RGBA );
         effect->shader()->gocTexEnv(0)->setMode(TEM_DECAL);
-        effect->shader()->gocTextureUnit(0)->setTexture( texture.get() );
+        effect->shader()->gocTextureSampler(0)->setTexture( texture.get() );
       }
     }
   }

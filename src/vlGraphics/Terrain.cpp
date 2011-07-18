@@ -236,7 +236,7 @@ void Terrain::init()
 
       // terrain texture
       ref<Image> tex_image = terrain_img->subImage(tx, tz, tx_xsize, tx_zsize);
-      ref<TextureUnit> tex_unit0 = new TextureUnit(0);
+      ref<TextureSampler> tex_unit0 = new TextureSampler(0);
       shader_node->setRenderState(tex_unit0.get());
       tex_unit0->setTexture(new Texture(tex_image.get(), terrainTextureFormat(), false));
       tex_unit0->texture()->getTexParameter()->setMagFilter(TPF_LINEAR);
@@ -247,7 +247,7 @@ void Terrain::init()
       // detail texture
       if (detail_img)
       {
-        ref<TextureUnit> tex_unit1 = new TextureUnit(1);
+        ref<TextureSampler> tex_unit1 = new TextureSampler(1);
         shader_node->setRenderState(tex_unit1.get());
         tex_unit1->setTexture(new Texture(detail_img.get(), detailTextureFormat(), true));
         tex_unit1->texture()->getTexParameter()->setMagFilter(TPF_LINEAR);
@@ -266,7 +266,7 @@ void Terrain::init()
       ref<Image> hmap_image = heightmap_img->subImage(mx, mz, xsize, zsize);
       if (useGLSL())
       {
-        ref<TextureUnit> tex_unit2 = new TextureUnit(2);
+        ref<TextureSampler> tex_unit2 = new TextureSampler(2);
         shader_node->setRenderState(tex_unit2.get());
         tex_unit2->setTexture(new Texture(hmap_image.get(), heightmapTextureFormat(), false));
         tex_unit2->texture()->getTexParameter()->setMagFilter(TPF_NEAREST);

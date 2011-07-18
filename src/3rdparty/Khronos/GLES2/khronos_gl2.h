@@ -335,7 +335,7 @@ typedef khronos_ssize_t  GLsizeiptr;
 #define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z    0x851A
 #define GL_MAX_CUBE_MAP_TEXTURE_SIZE      0x851C
 
-/* TextureUnit */
+/* TextureSampler */
 #define GL_TEXTURE0                       0x84C0
 #define GL_TEXTURE1                       0x84C1
 #define GL_TEXTURE2                       0x84C2

@@ -880,7 +880,7 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
               texture->getTexParameter()->setWrapT(TPW_CLAMP);
               texture->getTexParameter()->setWrapR(TPW_CLAMP);
             }
-            mat_map[mat_name]->shader()->gocTextureUnit(0)->setTexture( texture.get() );
+            mat_map[mat_name]->shader()->gocTextureSampler(0)->setTexture( texture.get() );
           }
         }
 

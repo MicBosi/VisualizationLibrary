@@ -155,7 +155,7 @@
 	- vl::TexEnv
 	- vl::TexGen
 	- vl::TextureMatrix
-	- vl::TextureUnit
+	- vl::TextureSampler
 	- vl::CopyTexSubImage1D
 	- vl::CopyTexSubImage2D
 	- vl::CopyTexSubImage3D
@@ -355,6 +355,6 @@
 	- vl::TexEnv, see also http://www.opengl.org/sdk/docs/man/xhtml/glTexEnv.xml
 	- vl::TexGen, see also http://www.opengl.org/sdk/docs/man/xhtml/glTexGen.xml
 	- vl::TextureMatrix
-	- vl::TextureUnit
+	- vl::TextureSampler
 	
 */

@@ -234,7 +234,7 @@ public:
     mTexture->prepareTexture1D( mSpectrum1.get(), TF_RGBA, false, false );
     mTexture->getTexParameter()->setMagFilter(TPF_NEAREST);
     mTexture->getTexParameter()->setMinFilter(TPF_NEAREST);
-    effect->shader()->gocTextureUnit(0)->setTexture( mTexture.get() );
+    effect->shader()->gocTextureSampler(0)->setTexture( mTexture.get() );
 
     mGLSLProgram = effect->shader()->gocGLSLProgram();
     mGLSLProgram->attachShader( new GLSLVertexShader("/glsl/mandelbrot.vs") );

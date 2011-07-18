@@ -445,7 +445,7 @@ typedef khronos_ssize_t  GLsizeiptr;
 /* TextureTarget */
 /*      GL_TEXTURE_2D */
 
-/* TextureUnit */
+/* TextureSampler */
 #define GL_TEXTURE0                       0x84C0
 #define GL_TEXTURE1                       0x84C1
 #define GL_TEXTURE2                       0x84C2

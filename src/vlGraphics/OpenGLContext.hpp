@@ -421,7 +421,7 @@ namespace vl
     bool isInitialized() const { return mIsInitialized; }
 
     //! The number (clamped to VL_MAX_TEXTURE_UNITS) of texture units supported by the current hardware.
-    int textureUnitCount() const { return mTextureUnitCount; }
+    int textureUnitCount() const { return mTextureSamplerCount; }
 
     //! Returns \p true if an OpenGLContext supports double buffering.
     bool hasDoubleBuffer() const { return mHasDoubleBuffer; }
@@ -494,7 +494,7 @@ namespace vl
     std::set<EKey> mKeyboard;
     OpenGLContextFormat mGLContextInfo;
     int mMaxVertexAttrib;
-    int mTextureUnitCount;
+    int mTextureSamplerCount;
     bool mMouseVisible;
     bool mContinuousUpdate;
     bool mIgnoreNextMouseMoveEvent;

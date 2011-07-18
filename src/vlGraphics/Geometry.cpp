@@ -116,7 +116,7 @@ void Geometry::deepCopyTo(Geometry* geom) const
   geom->mFogCoordArray       = mFogCoordArray       ? mFogCoordArray->clone().get()       : NULL;
   geom->mTexCoordArrays.resize(mTexCoordArrays.size());
   for(int i=0; i<mTexCoordArrays.size(); ++i)
-    geom->mTexCoordArrays[i] = new TextureArray(mTexCoordArrays[i]->mTextureUnit, mTexCoordArrays[i]->mTexCoordArray ? mTexCoordArrays[i]->mTexCoordArray->clone().get() : NULL);
+    geom->mTexCoordArrays[i] = new TextureArray(mTexCoordArrays[i]->mTextureSampler, mTexCoordArrays[i]->mTexCoordArray ? mTexCoordArrays[i]->mTexCoordArray->clone().get() : NULL);
   // custom arrays
   geom->mVertexAttribArrays.resize(mVertexAttribArrays.size());
   for(int i=0; i<mVertexAttribArrays.size(); ++i)
@@ -247,7 +247,7 @@ void Geometry::setTexCoordArray(int tex_unit, ArrayAbstract* data)
 
   for(int i=0; i<mTexCoordArrays.size(); ++i)
   {
-    if (mTexCoordArrays.at(i)->mTextureUnit == tex_unit)
+    if (mTexCoordArrays.at(i)->mTextureSampler == tex_unit)
     {
       if (data)
         mTexCoordArrays.at(i)->mTexCoordArray = data;
