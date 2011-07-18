@@ -40,10 +40,11 @@
 namespace vl
 {
   class Uniform;
-  
+
   //------------------------------------------------------------------------------
   // UniformInfo
   //------------------------------------------------------------------------------
+  //! Structure containing all the info regarding an active Uniform, see also GLSLProgram::activeUniforms()
   struct UniformInfo: public Object
   {
     UniformInfo(const char* name, EUniformType type, int size, int location)
@@ -53,6 +54,21 @@ namespace vl
     EUniformType Type; //!< The type of the uniform (float, vec4, mat2x3, sampler2D etc.)
     int Size;          //!< The size of the uniform: 1 for non-arrays, >= 1 for arrays.
     int Location;      //!< Location of the uniform as retuned by glGetUniformLocation().
+  };
+
+  //------------------------------------------------------------------------------
+  // AttribInfo
+  //------------------------------------------------------------------------------
+  //! Structure containing all the info regarding an active vertex attribute, see also GLSLProgram::activeAttribs()
+  struct AttribInfo: public Object
+  {
+    AttribInfo(const char* name, EAttributeType type, int size, int location)
+    :Name(name), Type(type), Size(size), Location(location) {}
+
+    std::string Name;    //!< Name of the active attribute.
+    EAttributeType Type; //!< Type as returned by http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
+    int Size;            //!< The size of the attribute, in units of the type returned in Type.
+    int Location;        //!< Location of the active attribute
   };
 
   //------------------------------------------------------------------------------
@@ -563,6 +579,21 @@ namespace vl
         return it->second.get();
     }
 
+    //! Returns a map containing the info of all the attributes active since last time the GLSL program was linked.
+    //! - See also vl::GLSLProgram::activeAttribInfo(), vl::AttribInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
+    const std::map<std::string, ref<AttribInfo> >& activeAttribs() const { return mActiveAttribs; }
+
+    //! Returns the info regarding the specified attribute or NULL if such attribute is not currently active since last time the GLSL program was linked.
+    //! - See also vl::GLSLProgram::activeAttribs(), vl::AttribInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
+    const AttribInfo* activeAttribInfo(const std::string& name) const 
+    { 
+      std::map<std::string, ref<AttribInfo> >::const_iterator it = mActiveAttribs.find(name);
+      if (it == mActiveAttribs.end())
+        return NULL;
+      else
+        return it->second.get();
+    }
+
     //! Returns the binding location of the vl_ModelViewMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
     int vl_ModelViewMatrix() const { return m_vl_ModelViewMatrix; }
 
@@ -583,16 +614,19 @@ namespace vl
     std::vector< ref<GLSLShader> > mShaders;
     std::map<std::string, int> mFragDataLocation;
     std::map<std::string, ref<UniformInfo> > mActiveUniforms;
+    std::map<std::string, ref<AttribInfo> > mActiveAttribs;
     std::map<std::string, int> mAutoAttribLocation;
     ref<UniformSet> mUniformSet;
     unsigned int mHandle;
     bool mScheduleLink;
+
     // glProgramParameter
     int mGeometryVerticesOut;
     EGeometryInputType mGeometryInputType;
     EGeometryOutputType mGeometryOutputType;
     bool mProgramBinaryRetrievableHint;
     bool mProgramSeparable;
+
     int m_vl_ModelViewMatrix;
     int m_vl_ProjectionMatrix;
     int m_vl_ModelViewProjectionMatrix;

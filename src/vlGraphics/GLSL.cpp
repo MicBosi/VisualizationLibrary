@@ -484,6 +484,30 @@ void GLSLProgram::postLink()
     }
   }
 
+  // populate attribute binding map
+
+  mActiveAttribs.clear();
+
+  int attrib_len = 0;
+  glGetProgramiv(handle(), GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attrib_len); VL_CHECK_OGL();
+  if (attrib_len)
+  {
+    std::vector<char> tmp_buf;
+    tmp_buf.resize(attrib_len);
+    char* name = &tmp_buf[0];
+
+    int attrib_count = 0;
+    glGetProgramiv(handle(), GL_ACTIVE_ATTRIBUTES, &attrib_count); VL_CHECK_OGL();
+    for(int i=0; i<attrib_count; ++i)
+    {
+      GLenum type;
+      int size;
+      glGetActiveAttrib(handle(), i, attrib_len, NULL, &size, &type, name); VL_CHECK_OGL();
+      ref<AttribInfo> uinfo = new AttribInfo(name, (EAttributeType)type, size, glGetAttribLocation(handle(), name));
+      mActiveAttribs[name] = uinfo;
+    }
+  }
+
   // check for the predefined glsl uniform variables
 
   m_vl_ModelViewMatrix           = glGetUniformLocation(handle(), "vl_ModelViewMatrix");
