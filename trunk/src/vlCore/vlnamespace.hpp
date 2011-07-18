@@ -1419,6 +1419,46 @@ namespace vl
 
   } EUniformType;
 
+  //! GLSLProgram attribute types, see also GLSLProgram::activeAttribs() and http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
+  typedef enum
+  {
+    AT_FLOAT = GL_FLOAT, //!< float
+    AT_FLOAT_VEC2 = GL_FLOAT_VEC2, //!< vec2
+    AT_FLOAT_VEC3 = GL_FLOAT_VEC3, //!< vec3
+    AT_FLOAT_VEC4 = GL_FLOAT_VEC4, //!< vec4
+    AT_FLOAT_MAT2 = GL_FLOAT_MAT2, //!< mat2
+    AT_FLOAT_MAT3 = GL_FLOAT_MAT3, //!< mat3
+    AT_FLOAT_MAT4 = GL_FLOAT_MAT4, //!< mat4
+    AT_FLOAT_MAT2x3 = GL_FLOAT_MAT2x3, //!< mat2x3
+    AT_FLOAT_MAT2x4 = GL_FLOAT_MAT2x4, //!< mat2x4
+    AT_FLOAT_MAT3x2 = GL_FLOAT_MAT3x2, //!< mat3x2
+    AT_FLOAT_MAT3x4 = GL_FLOAT_MAT3x4, //!< mat3x4
+    AT_FLOAT_MAT4x2 = GL_FLOAT_MAT4x2, //!< mat4x2
+    AT_FLOAT_MAT4x3 = GL_FLOAT_MAT4x3, //!< mat4x3
+    AT_INT = GL_INT, //!< int
+    AT_INT_VEC2 = GL_INT_VEC2, //!< ivec2
+    AT_INT_VEC3 = GL_INT_VEC3, //!< ivec3
+    AT_INT_VEC4 = GL_INT_VEC4, //!< ivec4
+    AT_UNSIGNED_INT = GL_UNSIGNED_INT, //!< unsigned int
+    AT_UNSIGNED_INT_VEC2 = GL_UNSIGNED_INT_VEC2, //!< vec2
+    AT_UNSIGNED_INT_VEC3 = GL_UNSIGNED_INT_VEC3, //!< vec3
+    AT_UNSIGNED_INT_VEC4 = GL_UNSIGNED_INT_VEC4, //!< vec4
+    AT_DOUBLE = GL_DOUBLE, //!< double
+    AT_DOUBLE_VEC2 = GL_DOUBLE_VEC2, //!< dvec2
+    AT_DOUBLE_VEC3 = GL_DOUBLE_VEC3, //!< dvec3
+    AT_DOUBLE_VEC4 = GL_DOUBLE_VEC4, //!< dvec4
+    AT_DOUBLE_MAT2 = GL_DOUBLE_MAT2, //!< dmat2
+    AT_DOUBLE_MAT3 = GL_DOUBLE_MAT3, //!< dmat3
+    AT_DOUBLE_MAT4 = GL_DOUBLE_MAT4, //!< dmat4
+    AT_DOUBLE_MAT2x3 = GL_DOUBLE_MAT2x3, //!< dmat2x3
+    AT_DOUBLE_MAT2x4 = GL_DOUBLE_MAT2x4, //!< dmat2x4
+    AT_DOUBLE_MAT3x2 = GL_DOUBLE_MAT3x2, //!< dmat3x2
+    AT_DOUBLE_MAT3x4 = GL_DOUBLE_MAT3x4, //!< dmat3x4
+    AT_DOUBLE_MAT4x2 = GL_DOUBLE_MAT4x2, //!< dmat4x2
+    AT_DOUBLE_MAT4x3 = GL_DOUBLE_MAT4x3, //!< dmat4x3
+
+  } EAttributeType;
+
   typedef enum
   {
     PMT_UserProjection,              //!< Unknown or other projection type.
