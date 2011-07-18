@@ -8,6 +8,40 @@
 
 	<!-- ----------------------------------------------------------------------------------------------------------------------------- -->
 
+	<h2 style="font-size: 20px">Tessellation Shaders</h2>
+	
+	<p>
+	Using tessellation shaders it is possible to control directly on the GPU the LOD and tessellation level of primitives.<br>
+	The example below shows how to use tesselation shaders to implement a simple terrain rendering system with dynamic LOD (see <tt>App_TessellationShader.cpp</tt>).
+	</p>
+	
+	<p>
+	For more info on how to use tessellation shaders with Visualization Library see vl::GLSLTessEvaluationShader and vl::GLSLTessControlShader.
+	</p>
+	
+	<table border=0 cellspacing=0 cellpadding=5 width=1%>
+	<tr>
+		<td>
+			<a href="gallery/tess01.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/tess01.jpg" alt="Tesselation Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/tess02.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/tess02.jpg" alt="Tesselation Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/tess03.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/tess03.jpg" alt="Tesselation Shaders" title="" />
+			</a>
+		</td>
+	</tr>
+	</table>
+	
+
+	<hr><!-- ----------------------------------------------------------------------------------------------------------------------------- -->
+
 	<h2 style="font-size: 20px">GPU Raycast Volume Rendering</h2>
 
 	A few volume rendering techniques based on GPU raycasting such as isosurface, MIP (maximum intensity projection) and integration, implemented using 
