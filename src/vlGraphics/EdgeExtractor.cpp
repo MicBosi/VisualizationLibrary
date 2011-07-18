@@ -34,7 +34,7 @@
 #include <vlGraphics/SceneManager.hpp>
 #include <vlGraphics/RenderQueue.hpp>
 #include <vlCore/Log.hpp>
-#include <vlCore/Array.hpp>
+#include <vlGraphics/Array.hpp>
 #include <vlGraphics/Geometry.hpp>
 
 using namespace vl;
