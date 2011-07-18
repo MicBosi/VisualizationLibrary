@@ -77,7 +77,7 @@ void Geometry::computeBounds_Implementation()
   {
     for(IndexIterator iit = drawCalls()->at(i)->indexIterator(); !iit.isEnd(); iit.next())
     {
-      aabb += coords->vectorAsVec3( iit.index() );
+      aabb += coords->getAsVec3( iit.index() );
     }
   }
 
@@ -87,7 +87,7 @@ void Geometry::computeBounds_Implementation()
   {
     for(IndexIterator iit = drawCalls()->at(i)->indexIterator(); !iit.isEnd(); iit.next())
     {
-      r = (coords->vectorAsVec3(iit.index()) - center).lengthSquared();
+      r = (coords->getAsVec3(iit.index()) - center).lengthSquared();
       if (r > radius)
         radius = r;
     }
@@ -390,9 +390,9 @@ void Geometry::computeNormals(bool verbose)
 
       vec3 n, v0, v1, v2;
 
-      v0 = posarr->vectorAsVec4(a).xyz();
-      v1 = posarr->vectorAsVec4(b).xyz();
-      v2 = posarr->vectorAsVec4(c).xyz();
+      v0 = posarr->getAsVec3(a);
+      v1 = posarr->getAsVec3(b);
+      v2 = posarr->getAsVec3(c);
 
       if (verbose)
       if (v0 == v1 || v1 == v2 || v2 == v0)

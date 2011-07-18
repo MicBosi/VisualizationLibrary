@@ -349,7 +349,7 @@ public:
       tex_array->resize( geom->vertexArray()->size() );
       geom->setTexCoordArray(0, tex_array.get());
       for(int i=0; i<tex_array->size(); ++i)
-        tex_array->at(i) = ((vl::fvec4)(tex_mat * geom->vertexArray()->vectorAsVec4(i))).xyz();
+        tex_array->at(i) = ((vl::fvec4)(tex_mat * geom->vertexArray()->getAsVec4(i))).xyz();
     #endif
   }
 
@@ -375,7 +375,7 @@ public:
     geom->setColorArray(color_array.get());
     for(size_t i=0; i<color_array->size(); ++i)
     {
-      vl::vec4 px = tex_mat * geom->vertexArray()->vectorAsVec4(i);
+      vl::vec4 px = tex_mat * geom->vertexArray()->getAsVec4(i);
       px.x() *= mColorImage->width();
       px.y() *= mColorImage->height();
       px.z() *= mColorImage->depth();
