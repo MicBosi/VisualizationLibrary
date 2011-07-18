@@ -156,7 +156,7 @@ const ClipPlane* Shader::getClipPlane(int plane_index) const { return static_cas
 //------------------------------------------------------------------------------
 ClipPlane* Shader::getClipPlane(int plane_index) { return static_cast<ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
 //------------------------------------------------------------------------------
-TextureUnit* Shader::gocTextureUnit(int unit_index) { GET_OR_CREATE_IDX(TextureUnit, unit_index) }
+TextureSampler* Shader::gocTextureSampler(int unit_index) { GET_OR_CREATE_IDX(TextureSampler, unit_index) }
 //------------------------------------------------------------------------------
 TexGen* Shader::gocTexGen(int unit_index) { GET_OR_CREATE_IDX(TexGen, unit_index) }
 //------------------------------------------------------------------------------
@@ -732,7 +732,7 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
 }
 namespace
 {
-  bool checkTextureUnit(const char* str, int unit)
+  bool checkTextureSampler(const char* str, int unit)
   {
     int max_texture = 1, max_tmp = 0;
 
@@ -770,7 +770,7 @@ TexEnv::TexEnv(int texunit)
 {
   VL_DEBUG_SET_OBJECT_NAME()
 
-  mTextureUnit = texunit;
+  mTextureSampler = texunit;
   mMode = TEM_MODULATE;
   mColor = fvec4(0,0,0,0);
 
@@ -801,7 +801,7 @@ void TexEnv::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL()
   VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureUnit("TexEnv::apply",textureUnit()));
+  VL_CHECK(checkTextureSampler("TexEnv::apply",textureUnit()));
 
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_glActiveTexture( GL_TEXTURE0 + textureUnit() ); VL_CHECK_OGL();
@@ -863,7 +863,7 @@ void TexEnv::apply(const Camera*, OpenGLContext*) const
 TexGen::TexGen(int texunit)
 {
   VL_DEBUG_SET_OBJECT_NAME()
-  mTextureUnit  = texunit;
+  mTextureSampler  = texunit;
   mEyePlaneS    = fvec4(1,0,0,0);
   mObjectPlaneS = fvec4(1,0,0,0);
   mEyePlaneT    = fvec4(0,1,0,0);
@@ -883,7 +883,7 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
   VL_CHECK_OGL();
 
   VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureUnit("TexGen::apply", textureUnit()));
+  VL_CHECK(checkTextureSampler("TexGen::apply", textureUnit()));
 
   VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
@@ -1006,7 +1006,7 @@ void TextureMatrix::apply(const Camera* camera, OpenGLContext*) const
 {
   VL_CHECK_OGL();
   VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS);
-  VL_CHECK(checkTextureUnit("TextureMatrix::apply",textureUnit()));
+  VL_CHECK(checkTextureSampler("TextureMatrix::apply",textureUnit()));
 
   VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
@@ -1018,18 +1018,18 @@ void TextureMatrix::apply(const Camera* camera, OpenGLContext*) const
     VL_glLoadMatrix( matrix().ptr() );
 }
 //-----------------------------------------------------------------------------
-// TextureUnit
+// TextureSampler
 //-----------------------------------------------------------------------------
-bool TextureUnit::hasTexture() const 
+bool TextureSampler::hasTexture() const 
 { 
   return mTexture && mTexture->handle(); 
 }
 //------------------------------------------------------------------------------
-void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
+void TextureSampler::apply(const Camera* camera, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL();
   VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureUnit("TextureUnit::apply",textureUnit()));
+  VL_CHECK(checkTextureSampler("TextureSampler::apply",textureUnit()));
 
   // activate the appropriate texture unit
   VL_glActiveTexture( GL_TEXTURE0 + textureUnit() ); VL_CHECK_OGL()
@@ -1062,7 +1062,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
   {
     if( !hasTexture() )
     {
-      Log::bug( Say("TextureUnit::apply() error: null texture! (%s) \n") << texture()->objectName() );
+      Log::bug( Say("TextureSampler::apply() error: null texture! (%s) \n") << texture()->objectName() );
       VL_TRAP();
       return;
     }
@@ -1087,7 +1087,7 @@ void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
           case TPF_NEAREST_MIPMAP_LINEAR:
           case TPF_NEAREST_MIPMAP_NEAREST:
           {
-            Log::bug( vl::Say("TextureUnit::apply() error: requested mipmapping texture filtering on a Texture with no mipmaps! (%s)\n") << texture()->objectName() );
+            Log::bug( vl::Say("TextureSampler::apply() error: requested mipmapping texture filtering on a Texture with no mipmaps! (%s)\n") << texture()->objectName() );
             VL_TRAP()
             break;
           }

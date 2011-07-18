@@ -61,7 +61,7 @@ public:
     effect->shader()->gocDepthMask()->set(false);
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->gocLight(0)->setLinearAttenuation(0.025f);
-    effect->shader()->gocTextureUnit(0)->setTexture( new vl::Texture("images/tree.png") );
+    effect->shader()->gocTextureSampler(0)->setTexture( new vl::Texture("images/tree.png") );
 
     vl::ref<vl::Geometry> tree = generateQuad();
     tree->transform( vl::mat4::getTranslation(0,+0.5f,0) );
@@ -93,7 +93,7 @@ public:
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
-    effect->shader()->gocTextureUnit(0)->setTexture( new vl::Texture("images/sun.png", vl::TF_RGBA, true) );
+    effect->shader()->gocTextureSampler(0)->setTexture( new vl::Texture("images/sun.png", vl::TF_RGBA, true) );
 
     vl::ref<vl::Geometry> star = generateQuad();
 

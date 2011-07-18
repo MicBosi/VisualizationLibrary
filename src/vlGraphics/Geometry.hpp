@@ -72,8 +72,8 @@ namespace vl
     class TextureArray: public Object
     {
     public:
-      TextureArray(int unit, ArrayAbstract* data): mTextureUnit(unit), mTexCoordArray(data) {}
-      int mTextureUnit;
+      TextureArray(int unit, ArrayAbstract* data): mTextureSampler(unit), mTexCoordArray(data) {}
+      int mTextureSampler;
       ref<ArrayAbstract> mTexCoordArray;
       const GLBufferObject* gpuBuffer() const { return mTexCoordArray->gpuBuffer(); }
       GLBufferObject* gpuBuffer() { return mTexCoordArray->gpuBuffer(); }
@@ -293,7 +293,7 @@ namespace vl
     const ArrayAbstract* texCoordArray(int tex_unit) const
     { 
       for(int i=0; i<mTexCoordArrays.size(); ++i)
-        if (mTexCoordArrays.at(i)->mTextureUnit == tex_unit)
+        if (mTexCoordArrays.at(i)->mTextureSampler == tex_unit)
           return mTexCoordArrays.at(i)->mTexCoordArray.get();
       return NULL;
     }
@@ -301,7 +301,7 @@ namespace vl
     ArrayAbstract* texCoordArray(int tex_unit) 
     { 
       for(int i=0; i<mTexCoordArrays.size(); ++i)
-        if (mTexCoordArrays.at(i)->mTextureUnit == tex_unit)
+        if (mTexCoordArrays.at(i)->mTextureSampler == tex_unit)
           return mTexCoordArrays.at(i)->mTexCoordArray.get();
       return NULL;
     }
@@ -311,7 +311,7 @@ namespace vl
     void getTexCoordArrayAt(int i, int& out_tex_unit, const ArrayAbstract* &tex_array) const
     {
       VL_CHECK(i<mTexCoordArrays.size());
-      out_tex_unit = mTexCoordArrays[i]->mTextureUnit;
+      out_tex_unit = mTexCoordArrays[i]->mTextureSampler;
       tex_array = mTexCoordArrays[i]->mTexCoordArray.get();
     }
 

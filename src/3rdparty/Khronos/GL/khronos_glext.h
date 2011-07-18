@@ -9054,7 +9054,7 @@ GLAPI void APIENTRY glDisableVariantClientStateEXT (GLuint id);
 GLAPI GLuint APIENTRY glBindLightParameterEXT (GLenum light, GLenum value);
 GLAPI GLuint APIENTRY glBindMaterialParameterEXT (GLenum face, GLenum value);
 GLAPI GLuint APIENTRY glBindTexGenParameterEXT (GLenum unit, GLenum coord, GLenum value);
-GLAPI GLuint APIENTRY glBindTextureUnitParameterEXT (GLenum unit, GLenum value);
+GLAPI GLuint APIENTRY glBindTextureSamplerParameterEXT (GLenum unit, GLenum value);
 GLAPI GLuint APIENTRY glBindParameterEXT (GLenum value);
 GLAPI GLboolean APIENTRY glIsVariantEnabledEXT (GLuint id, GLenum cap);
 GLAPI void APIENTRY glGetVariantBooleanvEXT (GLuint id, GLenum value, GLboolean *data);

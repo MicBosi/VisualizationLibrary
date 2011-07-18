@@ -575,7 +575,7 @@ ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)
       if (tex_file)
         tex_path = tex_file->path();
       texture->prepareTexture2D(tex_path, TF_RGBA);
-      act->effect()->shader()->gocTextureUnit(0)->setTexture( texture.get() );
+      act->effect()->shader()->gocTextureSampler(0)->setTexture( texture.get() );
     }
 
     // !!! FIX !!! double-side - ci dovrebbe essere un unico materiale per ogni combinazione di double-side/texture

@@ -293,7 +293,7 @@ public:
     }
 
     // install volume image as textue #0
-    volume_fx->shader()->gocTextureUnit( 0 )->setTexture( new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false ) );
+    volume_fx->shader()->gocTextureSampler( 0 )->setTexture( new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false ) );
     volume_fx->shader()->gocUniform( "volume_texunit" )->setUniformI( 0 );
     mRaycastVolume->generateTextureCoordinates( ivec3(mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth()) );
 
@@ -305,7 +305,7 @@ public:
       trfunc = vl::makeColorSpectrum( 128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson );
 
     // installs the transfer function as texture #1
-    volume_fx->shader()->gocTextureUnit( 1 )->setTexture( new Texture( trfunc.get() ) );
+    volume_fx->shader()->gocTextureSampler( 1 )->setTexture( new Texture( trfunc.get() ) );
     volume_fx->shader()->gocUniform( "trfunc_texunit" )->setUniformI( 1 );
     
     // gradient computation, only use for isosurface methods
@@ -314,7 +314,7 @@ public:
       if ( PRECOMPUTE_GRADIENT )
       {
         volume_fx->shader()->gocUniform( "precomputed_gradient" )->setUniformI( 1 /*true*/ );
-        volume_fx->shader()->gocTextureUnit( 2 )->setTexture( new Texture( gradient.get(), TF_RGBA, false, false ) );
+        volume_fx->shader()->gocTextureSampler( 2 )->setTexture( new Texture( gradient.get(), TF_RGBA, false, false ) );
         volume_fx->shader()->gocUniform( "gradient_texunit" )->setUniformI( 2 );
       }
       else

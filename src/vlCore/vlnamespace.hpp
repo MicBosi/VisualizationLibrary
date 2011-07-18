@@ -949,7 +949,7 @@ namespace vl
   {
     ST_RenderStates = 1,
     ST_Enables      = 2,
-    ST_TextureUnits = 4,
+    ST_TextureSamplers = 4,
     ST_Lights       = 8,
     ST_ClipPlanes   = 16
   } EStateType;
@@ -1002,25 +1002,25 @@ namespace vl
     RS_ClipPlane4,
     RS_ClipPlane5,
 
-    RS_TextureUnit0,
-    RS_TextureUnit1  = RS_TextureUnit0 + 1,
-    RS_TextureUnit2  = RS_TextureUnit0 + 2,
-    RS_TextureUnit3  = RS_TextureUnit0 + 3,
-    RS_TextureUnit4  = RS_TextureUnit0 + 4,
-    RS_TextureUnit5  = RS_TextureUnit0 + 5,
-    RS_TextureUnit6  = RS_TextureUnit0 + 6,
-    RS_TextureUnit7  = RS_TextureUnit0 + 7,
-    RS_TextureUnit8  = RS_TextureUnit0 + 8,
-    RS_TextureUnit9  = RS_TextureUnit0 + 9,
-    RS_TextureUnit10 = RS_TextureUnit0 + 10,
-    RS_TextureUnit11 = RS_TextureUnit0 + 11,
-    RS_TextureUnit12 = RS_TextureUnit0 + 12,
-    RS_TextureUnit13 = RS_TextureUnit0 + 13,
-    RS_TextureUnit14 = RS_TextureUnit0 + 14,
-    RS_TextureUnit15 = RS_TextureUnit0 + 15,
+    RS_TextureSampler0,
+    RS_TextureSampler1  = RS_TextureSampler0 + 1,
+    RS_TextureSampler2  = RS_TextureSampler0 + 2,
+    RS_TextureSampler3  = RS_TextureSampler0 + 3,
+    RS_TextureSampler4  = RS_TextureSampler0 + 4,
+    RS_TextureSampler5  = RS_TextureSampler0 + 5,
+    RS_TextureSampler6  = RS_TextureSampler0 + 6,
+    RS_TextureSampler7  = RS_TextureSampler0 + 7,
+    RS_TextureSampler8  = RS_TextureSampler0 + 8,
+    RS_TextureSampler9  = RS_TextureSampler0 + 9,
+    RS_TextureSampler10 = RS_TextureSampler0 + 10,
+    RS_TextureSampler11 = RS_TextureSampler0 + 11,
+    RS_TextureSampler12 = RS_TextureSampler0 + 12,
+    RS_TextureSampler13 = RS_TextureSampler0 + 13,
+    RS_TextureSampler14 = RS_TextureSampler0 + 14,
+    RS_TextureSampler15 = RS_TextureSampler0 + 15,
     /* ... */
 
-    RS_TexGen0  = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 1,
+    RS_TexGen0  = RS_TextureSampler0 + VL_MAX_TEXTURE_UNITS * 1,
     RS_TexGen1  = RS_TexGen0 + 1,
     RS_TexGen2  = RS_TexGen0 + 2,
     RS_TexGen3  = RS_TexGen0 + 3,
@@ -1038,7 +1038,7 @@ namespace vl
     RS_TexGen15 = RS_TexGen0 + 15,
     /* ... */
 
-    RS_TexEnv0  = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 2,
+    RS_TexEnv0  = RS_TextureSampler0 + VL_MAX_TEXTURE_UNITS * 2,
     RS_TexEnv1  = RS_TexEnv0 + 1,
     RS_TexEnv2  = RS_TexEnv0 + 2,
     RS_TexEnv3  = RS_TexEnv0 + 3,
@@ -1056,7 +1056,7 @@ namespace vl
     RS_TexEnv15 = RS_TexEnv0 + 15,
     /* ... */
 
-    RS_TextureMatrix0  = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 3,
+    RS_TextureMatrix0  = RS_TextureSampler0 + VL_MAX_TEXTURE_UNITS * 3,
     RS_TextureMatrix1  = RS_TextureMatrix0 + 1,
     RS_TextureMatrix2  = RS_TextureMatrix0 + 2,
     RS_TextureMatrix3  = RS_TextureMatrix0 + 3,
@@ -1074,7 +1074,7 @@ namespace vl
     RS_TextureMatrix15 = RS_TextureMatrix0 + 15,
     /* ... */
 
-    RS_COUNT          = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 4,
+    RS_COUNT          = RS_TextureSampler0 + VL_MAX_TEXTURE_UNITS * 4,
     RS_NONE,
 
   } ERenderState;

@@ -203,9 +203,9 @@ public:
     fx_1->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_1 = new vl::Texture( img1.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_1->shader()->gocTextureUnit(0)->setTexture( texture_1.get() );
-    fx_1->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_1->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_1->shader()->gocTextureSampler(0)->setTexture( texture_1.get() );
+    fx_1->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_1->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_1.get(), tr_1.get() );
 
@@ -219,9 +219,9 @@ public:
     fx_2->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_2 = new vl::Texture( img2.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_2->shader()->gocTextureUnit(0)->setTexture( texture_2.get() );
-    fx_2->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_2->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_2->shader()->gocTextureSampler(0)->setTexture( texture_2.get() );
+    fx_2->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_2->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_2.get(), tr_2.get() );
 
@@ -235,9 +235,9 @@ public:
     fx_x->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_x = new vl::Texture( img_x.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_x->shader()->gocTextureUnit(0)->setTexture( texture_x.get() );
-    fx_x->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_x->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_x->shader()->gocTextureSampler(0)->setTexture( texture_x.get() );
+    fx_x->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_x->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_x.get(), tr_x.get() );
 
@@ -251,9 +251,9 @@ public:
     fx_y->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_y = new vl::Texture( img_y.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_y->shader()->gocTextureUnit(0)->setTexture( texture_y.get() );
-    fx_y->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_y->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_y->shader()->gocTextureSampler(0)->setTexture( texture_y.get() );
+    fx_y->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_y->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_y.get(), tr_y.get() );
 
@@ -267,9 +267,9 @@ public:
     fx_z->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_z = new vl::Texture( img_z.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_z->shader()->gocTextureUnit(0)->setTexture( texture_z.get() );
-    fx_z->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_z->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_z->shader()->gocTextureSampler(0)->setTexture( texture_z.get() );
+    fx_z->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_z->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_z.get(), tr_z.get() );
 
@@ -283,9 +283,9 @@ public:
     fx_w->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_w = new vl::Texture( img_w.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_w->shader()->gocTextureUnit(0)->setTexture( texture_w.get() );
-    fx_w->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_w->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_w->shader()->gocTextureSampler(0)->setTexture( texture_w.get() );
+    fx_w->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_w->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_w.get(), tr_w.get() );
 
@@ -299,9 +299,9 @@ public:
     fx_a->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_a = new vl::Texture( img_a.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_a->shader()->gocTextureUnit(0)->setTexture( texture_a.get() );
-    fx_a->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_a->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_a->shader()->gocTextureSampler(0)->setTexture( texture_a.get() );
+    fx_a->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_a->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_a.get(), tr_a.get() );
 
@@ -315,9 +315,9 @@ public:
     fx_b->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_b = new vl::Texture( img_b.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_b->shader()->gocTextureUnit(0)->setTexture( texture_b.get() );
-    fx_b->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_b->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_b->shader()->gocTextureSampler(0)->setTexture( texture_b.get() );
+    fx_b->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_b->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_b.get(), tr_b.get() );
 
@@ -331,9 +331,9 @@ public:
     fx_c->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_c = new vl::Texture( img_c.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_c->shader()->gocTextureUnit(0)->setTexture( texture_c.get() );
-    fx_c->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_c->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_c->shader()->gocTextureSampler(0)->setTexture( texture_c.get() );
+    fx_c->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_c->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_c.get(), tr_c.get() );
 
@@ -347,9 +347,9 @@ public:
     fx_d->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_d = new vl::Texture( img_d.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_d->shader()->gocTextureUnit(0)->setTexture( texture_d.get() );
-    fx_d->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_d->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_d->shader()->gocTextureSampler(0)->setTexture( texture_d.get() );
+    fx_d->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_d->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_d.get(), tr_d.get() );
   }

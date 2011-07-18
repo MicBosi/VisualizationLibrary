@@ -234,7 +234,7 @@ The vl::Texture class provides out of the box and transparent support for all th
 
 \par Classes
 
-vl::Image, vl::Texture, vl::TexParameter, vl::TexEnv, vl::TexGen, vl::TextureMatrix, vl::TextureUnit, vl::CopyTexSubImage1D, vl::CopyTexSubImage2D, vl::CopyTexSubImage3D, vl::Shader
+vl::Image, vl::Texture, vl::TexParameter, vl::TexEnv, vl::TexGen, vl::TextureMatrix, vl::TextureSampler, vl::CopyTexSubImage1D, vl::CopyTexSubImage2D, vl::CopyTexSubImage3D, vl::Shader
 
 \par Related Pages
 
