@@ -32,12 +32,8 @@
 #include "BaseDemo.hpp"
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlGraphics/GeometryPrimitives.hpp>
-#if defined(VL_IO_2D_PNG)
-  #include <vlCore/vlPNG.hpp>
-#endif
-#if defined(VL_IO_2D_JPG)
-  #include <vlCore/vlJPG.hpp>
-#endif
+#include <vlCore/plugins/vlPNG.hpp>
+#include <vlCore/plugins/vlJPG.hpp>
 
 class App_ImageFunctions: public BaseDemo
 {
@@ -66,23 +62,21 @@ public:
     vl::ref<vl::Image> img_c;
     vl::ref<vl::Image> img_d;
 
-	// remember that this returns NULL if JPG support is disabled
-#if defined(VL_IO_2D_PNG)
-	// TODO: review the way options are set for ResourceLoadWriters, that is, how we can 
-	// safely access to the actual object's interface implementing a generic plugin.
-    vl::defLoadWriterManager()->loadWriter<vl::LoadWriterJPG>()->setQuality(90);
-#endif
-    vl::saveImage(img1.get(), "img_a.jpg");
-    img_a = vl::loadImage("img_a.jpg");
+    vl::LoadWriterJPG* jpg_load_writer = vl::defLoadWriterManager()->loadWriter<vl::LoadWriterJPG>();
+    if (jpg_load_writer)
+    {
+      jpg_load_writer->setQuality(90);
+      vl::saveImage(img1.get(), "img_a.jpg");
+      img_a = vl::loadImage("img_a.jpg");
+    }
 
-    // remember that this returns NULL if PNG support is disabled
-#if defined(VL_IO_2D_JPG)
-	// TODO: review the way options are set for ResourceLoadWriters, that is, how we can 
-	// safely access to the actual object's interface implementing a generic plugin.
-    vl::defLoadWriterManager()->loadWriter<vl::LoadWriterPNG>()->setCompression(9);
-#endif
-    vl::saveImage(img1.get(), "img_b.png");
-    img_b = vl::loadImage("img_b.png");
+    vl::LoadWriterPNG* png_load_writer = vl::defLoadWriterManager()->loadWriter<vl::LoadWriterPNG>();
+    if (png_load_writer)
+    {
+      png_load_writer->setCompression(9);
+      vl::saveImage(img1.get(), "img_b.png");
+      img_b = vl::loadImage("img_b.png");
+    }
 
     vl::saveImage(img1.get(), "img_c.tga");
     img_c = vl::loadImage("img_c.tga");
