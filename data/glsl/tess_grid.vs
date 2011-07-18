@@ -19,5 +19,4 @@ out vec4 vPosition;
 void main(void)
 {
 	vPosition = vl_Position;
-	// vPosition = gl_Vertex;
 }
