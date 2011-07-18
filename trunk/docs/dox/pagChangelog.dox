@@ -2,6 +2,27 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.07.1153</div>
+	
+	- New class instrumentation system for portable RTTI-like functionalities.
+	- Added TypeInfo regression test.
+	- Texturing tutorial basically rewritten.
+	- vl::Texture::createTexture*() returns boolean value to report success/failure.
+	- Camera enhancements:
+		- vl::Camera::computeNearFarOptimizedProjMatrix() now support orthographic projections as well and issues error if unsupported projection is used (Camera::setProjectionAsFrustum() and custom projection types).
+		- added Camera::left(), Camera::right(), Camera::bottom(), Camera::top() methods.
+		- the projection type now is tracked by projectionMatrixType() and required to be set when setting the projection type.
+		- proper support to Camera::setProjectionAsFrustum() and added comments.
+		- Camera::setProjectionAsOrtho() now can use parameters other than the ones coming from the viewport.
+		- Camera::setProjectionAsOrtho2D() requires explicit offset now for better clarity.
+	- Actor queue cleared after a rendering.
+	- Lots of docs update, code cleanup and OpenGL ES fixes.
+	- <b>API CHANGES</b>
+		- Simplified generic vertex attrib array API.
+		- vl::TextureUnit renamed vl::TextureSampler.
+		- vectorAsVec*() renamed getAsVec*().
+		- Camera::inverseViewMatrix() renamed Camera::localMatrix()
+
 	<div class="featuretitle">Visualization Library 2011.07.1151</div>
 	
 	- <b>New OpenGL extensions management supporting all versions of OpenGL 1/2/3/4 and OpenGL ES 1/2. GLEW has been removed completely.</b>
