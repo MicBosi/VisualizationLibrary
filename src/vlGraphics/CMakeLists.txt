@@ -23,6 +23,7 @@ add_subdirectory("plugins")
 # Gather VLGraphics source files
 file(GLOB VLGRAPHICS_SRC "*.cpp")
 file(GLOB VLGRAPHICS_INC "*.hpp")
+file(GLOB VLGRAPHICS_GL_INC "GL/*.hpp")
 
 if( NOT VL_OPENGL )
 	list(REMOVE_ITEM VLGRAPHICS_SRC "${VLGRAPHICS_SOURCE_DIR}/Tessellator.cpp")
@@ -71,6 +72,7 @@ VL_INSTALL_TARGET(VLGraphics)
 
 # VLGraphics headers
 install(FILES ${VLGRAPHICS_INC} DESTINATION "include/vlGraphics")
+install(FILES ${VLGRAPHICS_GL_INC} DESTINATION "include/vlGraphics/GL")
 
 # Khronos headers
 install(DIRECTORY "${KHRONOS_DIR}/GL" DESTINATION "include")
