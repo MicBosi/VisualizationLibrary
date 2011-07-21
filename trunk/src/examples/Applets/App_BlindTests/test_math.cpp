@@ -473,13 +473,24 @@ namespace blind_tests
     v1 = q1 * fvec4(1,1,1,1);
     CONDITION( distance(v1,fvec4(1,1,1,1)) < 0.001f )
 
+    // 3x3 matrix inversion
+    fmat3 m3x3;
+    m3x3.translate(10, 10);
+    m3x3.rotate(45);
+    m3x3.translate(12, -19);
+    m3x3.rotate(-17);
+    m3x3.scale(3,-2);
+    fmat3 m3x3_inverse = m3x3.getInverse();
+    fmat3 m3x3_identity = m3x3 * m3x3_inverse;
+    CONDITION( m3x3_identity.diff(fmat3::getIdentity()) < 0.00001f )
+
     return true;
   }
 
   bool test_glsl_math()
   {
     //-------------------------------------------------------------------------
-    // Test template function compilation & warnings.
+    // For the moment we are just checking that it compiles
     //-------------------------------------------------------------------------
 
     fvec2 fv2;
