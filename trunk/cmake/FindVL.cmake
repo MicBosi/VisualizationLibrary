@@ -28,8 +28,8 @@ macro(_vl_find_library _var)
 endmacro()
 
 macro(_vl_find_component _name)
-	_vl_find_library(VL_${_name}_LIBRARY "${_component_name}")
-	_vl_find_library(VL_${_name}_LIBRARY_DEBUG "${_component_name}-d")
+	_vl_find_library(VL_${_name}_LIBRARY ${_name})
+	_vl_find_library(VL_${_name}_LIBRARY_DEBUG ${_name}-d)
 
 	if(VL_${_name}_LIBRARY AND VL_${_name}_LIBRARY_DEBUG)
 		set(VL_${_name}_LIBRARIES optimized ${VL_${_name}_LIBRARY} debug ${VL_${_name}_LIBRARY_DEBUG})
@@ -57,7 +57,7 @@ find_path(VL_INCLUDE_DIRS "vlCore/VisualizationLibrary.hpp"
 # Find the requested VL components
 foreach(component_name ${VL_FIND_COMPONENTS})
 	_vl_find_component(${component_name})
-	list(APPEND _vl_required_vars VL_${name}_LIBRARIES)
+	list(APPEND _vl_required_vars VL_${component_name}_LIBRARIES)
 endforeach(component_name)
 
 include( FindPackageHandleStandardArgs )
