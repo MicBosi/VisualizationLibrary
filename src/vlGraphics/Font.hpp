@@ -203,7 +203,7 @@ namespace vl
     String mFilePath;
     std::map< int, ref<Glyph> > mGlyphMap;
     FT_Face mFT_Face;
-    std::vector<unsigned char> mMemoryFile;
+    std::vector<char> mMemoryFile;
     int mSize;
     float mHeight;
     bool mSmooth;

@@ -97,7 +97,7 @@ String String::loadText(const String& path, EStringEncoding default_encoding)
 //-----------------------------------------------------------------------------
 String String::loadText(VirtualFile* file, EStringEncoding default_encoding)
 {
-  std::vector<unsigned char> buffer;
+  std::vector<char> buffer;
   file->load( buffer );
   file->close();
 
