@@ -722,6 +722,11 @@ namespace vl
   }
 
 
+  inline void glGetActiveAttrib (GLuint program, GLuint index, GLsizei bufsize, GLsizei* length, GLint* size, GLenum* type, GLchar* name) 
+  {
+    VL_UNSUPPORTED_GLES1_FUNC()
+  }
+
   inline void glGetProgramiv (GLuint program, GLenum pname, GLint *params)
   {
     VL_UNSUPPORTED_GLES1_FUNC()
