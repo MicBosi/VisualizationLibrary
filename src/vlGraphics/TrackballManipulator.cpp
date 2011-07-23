@@ -217,6 +217,7 @@ vec3 TrackballManipulator::computeVector(int x, int y)
 void TrackballManipulator::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias)
 {
   VL_CHECK(camera())
+  VL_CHECK(!aabb.isNull())
   /*setTransform(NULL);*/
   setPivot( aabb.center() );
   camera()->adjustView(aabb, dir, up, bias);
