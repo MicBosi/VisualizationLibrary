@@ -456,7 +456,7 @@ void LightModel::apply(const Camera*, OpenGLContext*) const
 
   // Supported by GLES 1.x as well.
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, mAmbientColor.ptr()); VL_CHECK_OGL()
-  glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, mTwoSide ? 1.0f : 0.0f ); VL_CHECK_OGL()
+  glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, mTwoSide ? 1 : 0 ); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // Fog
