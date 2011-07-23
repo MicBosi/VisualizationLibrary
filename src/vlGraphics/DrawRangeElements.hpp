@@ -184,6 +184,8 @@ namespace vl
 
     virtual unsigned int handle() const { return indices()->gpuBuffer()->handle(); }
 
+    void setIndices(arr_type* index_buffer) { mIndexBuffer = index_buffer; }
+
     arr_type* indices() { return mIndexBuffer.get(); }
 
     const arr_type* indices() const { return mIndexBuffer.get(); }
