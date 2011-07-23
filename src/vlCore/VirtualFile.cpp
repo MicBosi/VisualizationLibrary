@@ -128,7 +128,7 @@ bool VirtualFile::seekEnd(long long offset)
   return seekSet( size() + offset );
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::load(std::vector<unsigned char>& data)
+long long VirtualFile::load(std::vector<char>& data)
 {
   data.resize( (size_t)size() );
   if (data.size())

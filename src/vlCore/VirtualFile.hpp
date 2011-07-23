@@ -128,7 +128,7 @@ namespace vl
     //! Loads the entire file in the specified vector.
     //! Returns the number of bytes read.
     //! The file must be closed before calling this function.
-    long long load(std::vector<unsigned char>& data);
+    long long load(std::vector<char>& data);
 
     //! Loads the entire file in the specified buffer.
     //! Returns the number of bytes read.
