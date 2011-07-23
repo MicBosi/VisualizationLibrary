@@ -54,6 +54,9 @@ using namespace vl;
 #if defined(VL_IO_3D_MD2)
   #include "plugins/vlMD2.hpp"
 #endif
+#if defined(VL_IO_3D_COLLADA)
+  #include "plugins/vlCOLLADA.hpp"
+#endif
 
 //------------------------------------------------------------------------------
 // VL misc
@@ -111,6 +114,9 @@ void VisualizationLibrary::initGraphics()
   #endif
   #if defined(VL_IO_3D_MD2)
     registerLoadWriter(new LoadWriterMD2);
+  #endif
+  #if defined(VL_IO_3D_COLLADA)
+    registerLoadWriter(new LoadWriterCOLLADA);
   #endif
 
   // ---
