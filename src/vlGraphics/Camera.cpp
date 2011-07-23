@@ -134,6 +134,7 @@ void Camera::computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphe
 void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias)
 {
   VL_CHECK(bias >= 0)
+  VL_CHECK(!aabb.isNull())
   if (bias < 0)
     vl::Log::bug("Camera::adjustView(): 'bias' must be >= 0.\n");
 
