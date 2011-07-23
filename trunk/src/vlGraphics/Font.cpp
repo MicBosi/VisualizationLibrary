@@ -163,7 +163,7 @@ void Font::loadFont(const String& path)
     if ( (int)mMemoryFile.size() == font_file->size() )
     {
       error = FT_New_Memory_Face( (FT_Library)mFontManager->freeTypeLibrary(),
-                                  &mMemoryFile[0],
+                                  (FT_Byte*)&mMemoryFile[0],
                                   (int)mMemoryFile.size(),
                                   0,
                                   &mFT_Face );
