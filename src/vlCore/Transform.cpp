@@ -75,3 +75,13 @@ void Transform::rotate(const vec3& from, const vec3& to)
   setLocalMatrix( mat4::getRotation(from,to)*localMatrix() );
 }
 //-----------------------------------------------------------------------------
+void Transform::preMultiply(const mat4& m)
+{
+  setLocalMatrix( m*localMatrix() );
+}
+//-----------------------------------------------------------------------------
+void Transform::postMultiply(const mat4& m)
+{
+  setLocalMatrix( localMatrix()*m );
+}
+//-----------------------------------------------------------------------------

@@ -428,6 +428,15 @@ namespace vl
     /** Utility function equivalent to \p setLocalMatrix( mat4::getRotation(from,to)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
     void rotate(const vec3& from, const vec3& to);
+
+    /** Utility function equivalent to \p setLocalMatrix( m*localMatrix() ).
+      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
+    void preMultiply(const mat4& m);
+
+    /** Utility function equivalent to \p setLocalMatrix( localMatrix()*m ).
+      * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
+    void postMultiply(const mat4& m);
+
   };
 }
 
