@@ -397,6 +397,9 @@ namespace vl
       setWorldMatrix(matrix);
     }
 
+    /** Destructor. */
+    ~Transform();
+
     /** Sets both the local and the world matrices.
       * This function is useful to quickly set those Transforms that do not have a parent, for which
       * is equivalent to: \p setLocalMatrix(matrix); \p computeWorldMatrix(NULL); */
