@@ -41,6 +41,15 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // Transform
 //-----------------------------------------------------------------------------
+Transform::~Transform()
+{
+  if (!mChildren.empty())
+    Log::warning("Transform::~Transform(): a Transform with children is being destroyed! One or more Transforms will be orphaned.\n");
+
+  for(size_t i=0; i<mChildren.size(); ++i)
+    mChildren[i]->mParent = NULL;
+}
+//-----------------------------------------------------------------------------
 void Transform::translate(Real x, Real y, Real z)
 {
   setLocalMatrix( mat4::getTranslation(x,y,z)*localMatrix() );
