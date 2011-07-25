@@ -42,10 +42,51 @@ namespace vl
   //------------------------------------------------------------------------------
   // DrawCall
   //------------------------------------------------------------------------------
-  /** The base class of DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays 
-   * which are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
+  /** The base class of DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements. 
+   * which are used by Geometry to define a set of primitives to be rendered (see also Geometry::drawCalls()).
    *
-   * \sa DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
+   * \par Overview
+   *
+   * vl::DrawArrays wraps:
+   * - glDrawArrays (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawArrays.xml)
+   * - glDrawArraysInstanced (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawArraysInstanced.xml)
+   *
+   * Supports:
+   * - <b>Multi instancing</b>: YES
+   * - <b>Base vertex</b>: N/A
+   * - <b>Primitive restart</b>: N/A
+   *
+   * vl::DrawElements wraps:
+   * - glDrawElements (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElements.xml)
+   * - glDrawElementsInstanced (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElementsInstanced.xml)
+   * - glDrawElementsBaseVertex (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElementsBaseVertex.xml)
+   * - glDrawElementsInstancedBaseVertex (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElementsInstancedBaseVertex.xml)
+   *
+   * Supports:
+   * - <b>Multi instancing</b>: YES
+   * - <b>Base vertex</b>: YES
+   * - <b>Primitive restart</b>: YES
+   *
+   * vl::DrawRangeElements wraps:
+   * - glDrawRangeElements (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawRangeElements.xml)
+   * - glDrawRangeElementsBaseVertex (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawRangeElementsBaseVertex.xml)
+   *
+   * Supports:
+   * - <b>Multi instancing</b>: NO
+   * - <b>Base vertex</b>: YES
+   * - <b>Primitive restart</b>: YES
+   *
+   * vl::MultiDrawElements wraps:
+   * - glMultiDrawElements (http://www.opengl.org/sdk/docs/man4/xhtml/glMultiDrawElements.xml)
+   * - glMultiDrawElementsBaseVertex (http://www.opengl.org/sdk/docs/man4/xhtml/glMultiDrawElementsBaseVertex.xml)
+   *
+   * Supports:
+   * - <b>Multi instancing</b>: NO
+   * - <b>Base vertex</b>: YES
+   * - <b>Primitive restart</b>: YES
+   *
+   * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
+   * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
   class DrawCall: public Object
   {
     VL_INSTRUMENT_CLASS(vl::DrawCalls, Object)

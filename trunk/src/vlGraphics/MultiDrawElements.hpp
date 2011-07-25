@@ -129,12 +129,16 @@ namespace vl
   // MultiDrawElements
   //------------------------------------------------------------------------------
   /** 
-   * Wrapper for the OpenGL function glMultiDrawElements(). See also http://www.opengl.org/sdk/docs/man/xhtml/glMultiDrawElements.xml for more information. 
+   * Wrapper for the OpenGL function glMultiDrawElements(). See vl::DrawCall for an overview of the different draw call methods.
    *
-   * Features supported: 
-   * - <b>multi instancing</b>: NO 
-   * - <b>base vertex</b>: YES
-   * - <b>primitive restart</b>: YES
+   * This class wraps the following OpenGL functions:
+   * - glMultiDrawElements (http://www.opengl.org/sdk/docs/man4/xhtml/glMultiDrawElements.xml)
+   * - glMultiDrawElementsBaseVertex (http://www.opengl.org/sdk/docs/man4/xhtml/glMultiDrawElementsBaseVertex.xml)
+   *
+   * Supports: 
+   * - <b>Multi instancing</b>: NO 
+   * - <b>Base vertex</b>: YES
+   * - <b>Primitive restart</b>: YES
    *
    * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to use the <b>primitive 
    * restart</b> functionality (requires OpenGL 3.1). For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml
@@ -146,7 +150,8 @@ namespace vl
    * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
    * To gain direct access to the GLBufferObject use the indices() function.
    *
-   * \sa DrawCall, DrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
+   * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
+   * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
   template <class arr_type>
   class MultiDrawElements: public MultiDrawElementsBase
   {
