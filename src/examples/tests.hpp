@@ -135,7 +135,7 @@ public:
     {
       { "Blind Tests", Create_App_BlindTests(), 10,10, 512, 512, vl::black, vl::vec3(0,0,1), vl::vec3(0,0,0) }, 
       { "Primitives", Create_App_Primitives(), 10,10, 512, 512, vl::white, vl::vec3(0,0.75,-2.5), vl::vec3(0,0,-4) },
-      // { "DrawCall Tests", Create_App_DrawCalls(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
+      { "DrawCall", Create_App_DrawCalls(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Near/Far Planes Optimization", Create_App_NearFarOptimization(), 10, 10, 512, 512, vl::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
       { "Effect Override", Create_App_EffectOverride(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Shader Override", Create_App_ShaderOverride(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
