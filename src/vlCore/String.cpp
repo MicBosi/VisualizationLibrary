@@ -533,7 +533,9 @@ String& String::reverse()
 //-----------------------------------------------------------------------------
 String& String::normalizeSlashes() 
 { 
+  // convert all '\' to '/'
   replace('\\', '/');
+  // remove double slashes
   int len=0;
   do
   {
