@@ -45,142 +45,149 @@
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/RenderingTree.hpp>
 
+using namespace vl;
+
 class App_DrawCalls: public BaseDemo
 {
+  void setupScene_Normal()
+  {
+    ref<Geometry> torus1 = vl::makeTorus( vec3(-10,0,0), 8.0f, 1.0f, 20, 20 );
+    ref<Geometry> torus2 = vl::makeTorus( vec3(  0,0,0), 8.0f, 2.0f, 10, 10 );
+    ref<Geometry> torus3 = vl::makeTorus( vec3(+10,0,0), 8.0f, 3.0f, 7, 7 );
+
+    ref<Effect> fx = new Effect;
+    fx->shader()->enable(vl::EN_LIGHTING);
+    fx->shader()->enable(vl::EN_DEPTH_TEST);
+    fx->shader()->setRenderState( new Light(0) );
+
+    sceneManager()->tree()->actors()->clear();
+    sceneManager()->tree()->addActor( torus1.get(), fx.get(), NULL );
+    sceneManager()->tree()->addActor( torus2.get(), fx.get(), NULL );
+    sceneManager()->tree()->addActor( torus3.get(), fx.get(), NULL );
+  }
+
+  void setupScene_MultiDrawElements()
+  {
+    ref<Geometry> torus1 = vl::makeTorus( vec3(-10, -9, 0), 8.0f, 1.0f, 20, 20 );
+    ref<Geometry> torus2 = vl::makeTorus( vec3(  0, -9, 0), 8.0f, 2.0f, 10, 10 );
+    ref<Geometry> torus3 = vl::makeTorus( vec3(+10, -9, 0), 8.0f, 3.0f, 7, 7 );
+
+    // merge vertices
+    ref<ArrayFloat3> vert = new ArrayFloat3;
+    ref<ArrayFloat3> torus1_vert = vl::cast<ArrayFloat3>(torus1->vertexArray());
+    ref<ArrayFloat3> torus2_vert = vl::cast<ArrayFloat3>(torus2->vertexArray());
+    ref<ArrayFloat3> torus3_vert = vl::cast<ArrayFloat3>(torus3->vertexArray());
+
+    vert->resize( torus1_vert->size() + torus2_vert->size() + torus3_vert->size() );
+    memcpy( vert->ptr(), torus1_vert->ptr(), torus1_vert->bytesUsed() );
+    memcpy( vert->ptr() + torus1_vert->bytesUsed(), torus2_vert->ptr(), torus2_vert->bytesUsed() );
+    memcpy( vert->ptr() + torus1_vert->bytesUsed() + torus2_vert->bytesUsed(), torus3_vert->ptr(), torus3_vert->bytesUsed() );
+
+    // merge indices
+    ref<MultiDrawElementsUInt> mde = new MultiDrawElementsUInt(PT_QUADS);
+    ref<DrawElementsUInt> torus1_de = vl::cast<DrawElementsUInt>(torus1->drawCalls()->at(0));
+    ref<DrawElementsUInt> torus2_de = vl::cast<DrawElementsUInt>(torus2->drawCalls()->at(0));
+    ref<DrawElementsUInt> torus3_de = vl::cast<DrawElementsUInt>(torus3->drawCalls()->at(0));
+
+    mde->indices()->resize( torus1_de->indices()->size() + torus2_de->indices()->size() + torus3_de->indices()->size() );
+    memset(mde->indices()->ptr(), 0, mde->indices()->bytesUsed()); // mic fixme
+    MultiDrawElementsUInt::index_type* p_idx = mde->indices()->begin();
+    for( size_t i=0; i< torus1_de->indices()->size(); ++i, ++p_idx )
+    {
+      *p_idx = torus1_de->indices()->at(i);
+      VL_CHECK(*p_idx < 0xFFFF)
+    }
+    
+    for( size_t i=0; i< torus2_de->indices()->size(); ++i, ++p_idx )
+    {
+      *p_idx = torus2_de->indices()->at(i) + torus1_vert->size();
+      VL_CHECK(*p_idx < 0xFFFF)
+    }
+
+    for( size_t i=0; i< torus3_de->indices()->size(); ++i, ++p_idx )
+    {
+      *p_idx = torus3_de->indices()->at(i) + torus1_vert->size() + torus2_vert->size();
+      VL_CHECK(*p_idx < 0xFFFF)
+    }
+
+    // define how many indices for each draw call
+    GLsizei count_vector[] = { torus1_de->indices()->size(), torus2_de->indices()->size(), torus3_de->indices()->size() };
+    mde->setCountVector( count_vector, 3 );
+
+    ref<Geometry> geom = new Geometry;
+    geom->setVertexArray( vert.get() );
+    geom->drawCalls()->push_back( mde.get() );
+
+    // compute normals must be done after the draw calls have been added.
+    geom->computeNormals();
+
+    ref<Effect> fx = new Effect;
+    fx->shader()->setRenderState( new Light(0) );
+    fx->shader()->enable(vl::EN_LIGHTING);
+    fx->shader()->enable(vl::EN_DEPTH_TEST);
+    fx->shader()->gocMaterial()->setDiffuse( vl::pink );
+
+    sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL );
+  }
+
+  void setupScene_BaseVertex()
+  {
+    // creat three meshes with the same topology but different shapes
+    ref<Geometry> torus1 = vl::makeTorus( vec3(-10, 9, 0), 6.0f, 1.0f, 15, 15 );
+    ref<Geometry> torus2 = vl::makeTorus( vec3(  0, 9, 0), 7.0f, 2.0f, 15, 15 );
+    ref<Geometry> torus3 = vl::makeTorus( vec3(+10, 9, 0), 8.0f, 3.0f, 15, 15 );
+
+    // merge vertices
+    ref<ArrayFloat3> vert = new ArrayFloat3;
+    ref<ArrayFloat3> torus1_vert = vl::cast<ArrayFloat3>(torus1->vertexArray());
+    ref<ArrayFloat3> torus2_vert = vl::cast<ArrayFloat3>(torus2->vertexArray());
+    ref<ArrayFloat3> torus3_vert = vl::cast<ArrayFloat3>(torus3->vertexArray());
+
+    vert->resize( torus1_vert->size() + torus2_vert->size() + torus3_vert->size() );
+    memcpy( vert->ptr(), torus1_vert->ptr(), torus1_vert->bytesUsed() );
+    memcpy( vert->ptr() + torus1_vert->bytesUsed(), torus2_vert->ptr(), torus2_vert->bytesUsed() );
+    memcpy( vert->ptr() + torus1_vert->bytesUsed() + torus2_vert->bytesUsed(), torus3_vert->ptr(), torus3_vert->bytesUsed() );
+
+    ref<Geometry> geom = new Geometry;
+    geom->setVertexArray( vert.get() );
+
+    // create three DrawElementsUInt sharing the same index buffer and using base-vertex functionality.
+    ref<DrawElementsUInt> torus1_de = vl::cast<DrawElementsUInt>(torus1->drawCalls()->at(0));
+
+    // (1)
+    ref<DrawElementsUInt> de1 = new DrawElementsUInt(PT_QUADS);
+    de1->setIndices( torus1_de->indices() );
+    de1->setBaseVertex(0);
+    geom->drawCalls()->push_back( de1.get() );
+    // (2)
+    ref<DrawElementsUInt> de2 = new DrawElementsUInt(PT_QUADS);
+    de2->setIndices( torus1_de->indices() );
+    de2->setBaseVertex( torus1_vert->size() ); // skip the vertices of the first torus
+    geom->drawCalls()->push_back( de2.get() );
+    // (3)
+    ref<DrawElementsUInt> de3 = new DrawElementsUInt(PT_QUADS);
+    de3->setIndices( torus1_de->indices() );
+    de3->setBaseVertex( torus1_vert->size() + torus2_vert->size() ); // skip the vertices of the first and second torus
+    geom->drawCalls()->push_back( de3.get() );
+
+    // compute normals must be done after the draw calls have been added.
+    geom->computeNormals();
+
+    ref<Effect> fx = new Effect;
+    fx->shader()->setRenderState( new Light(0) );
+    fx->shader()->enable(vl::EN_LIGHTING);
+    fx->shader()->enable(vl::EN_DEPTH_TEST);
+    fx->shader()->gocMaterial()->setDiffuse( vl::yellow );
+
+    sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL );
+  }
+
   void initEvent()
   {
-    //vl::Log::info(appletInfo());
+    vl::Log::info(appletInfo());
 
-    //vl::ref<vl::DrawRangeElementsUInt> deu32 = new vl::DrawRangeElementsUInt;
-    //deu32->setBaseVertex(100);
-    //deu32->setPrimitiveRestartEnabled(true);
-    //deu32->setPrimitiveRestartIndex(0xFF);
-
-    //{
-    //  int idx[] = { 10,11,12,13,  20,21,22,23,  0xFF,  30,31,32,33,  0xFF, 40,41,42,  -1  };
-    //  int count = 0;
-    //  for(int i=0; idx[i] != -1; ++i)
-    //    ++count;
-    //  deu32->indices()->resize( count );
-    //  for(int i=0; idx[i] != -1; ++i)
-    //    deu32->indices()->at(i) = idx[i];
-    //}
-    //
-    ////std::vector<GLint> base_vertices;
-    ////  base_vertices.push_back(100);
-    ////  base_vertices.push_back(200);
-    ////  base_vertices.push_back(300);
-    ////std::vector<GLsizei> vert_counts;
-    ////  vert_counts.push_back(7);
-    ////  vert_counts.push_back(5);
-    ////  vert_counts.push_back(3);
-
-    ////vl::ref< vl::IndexIteratorElements<vl::ArrayUInt1> > iie = new vl::IndexIteratorElements<vl::ArrayUInt1>;
-    ////// iie->initialize( deu32->indices(), NULL, NULL, deu32->baseVertex(), deu32->primitiveRestartEnabled(), deu32->primitiveRestartIndex() );
-    ////iie->initialize( deu32->indices(), &base_vertices, &vert_counts, 0, deu32->primitiveRestartEnabled(), deu32->primitiveRestartIndex() );
-
-    //////vl::ref< vl::IndexIteratorDrawArrays > iida = new vl::IndexIteratorDrawArrays;
-    //////iida->initialize(10,20);
-
-    //vl::IndexIterator iit = deu32->indexIterator();
-
-    //for( ; !iit.isEnd(); iit.next() ) 
-    //  printf("%d\n", iit.index() );
-
-    //printf("-----\n");
-
-    //vl::ref<vl::DrawCall> da = new vl::DrawArrays(vl::PT_LINE_LOOP, 10, 20);
-
-    //iit = da->indexIterator();
-
-    //for( ; !iit.isEnd(); iit.next() ) 
-    //  printf("%d\n", iit.index() );
-
-    //exit(0);
-
-    //for( vl::TriangleIterator trit = da->triangleIterator(); !trit.isEnd(); trit.next() ) 
-    //  printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
-
-    //vl::ref<vl::MultiDrawElementsUInt> mdeu32 = new vl::MultiDrawElementsUInt(vl::PT_LINE_LOOP);
-
-    //{
-    //  // int idx[] = { 10,11,12,13, 0xFF, 20,21,22, 30,31,32,33,34, 0xFF, 40,41,42,43, -1 };
-    //  int idx[] = { 10,11,12,13,  20,21,22,23, 0xFF, 30,31,32,33, -1 };
-    //  int count = 0;
-    //  for(int i=0; idx[i] != -1; ++i)
-    //    ++count;
-    //  mdeu32->indices()->resize( count );
-    //  for(int i=0; idx[i] != -1; ++i)
-    //    mdeu32->indices()->at(i) = idx[i];
-    //}
-
-    //std::vector<GLint> counts;
-    //counts.push_back(4);
-    //counts.push_back(9);
-    //mdeu32->setCountVector( counts );
-
-    //std::vector<GLint> basev;
-    //basev.push_back(100);
-    //basev.push_back(200);
-    //mdeu32->setBaseVertices(basev);
-
-    //mdeu32->setPrimitiveRestartEnabled(true);
-    //mdeu32->setPrimitiveRestartIndex(0xFF);
-
-    //iit = mdeu32->indexIterator();
-    //for( ; !iit.isEnd(); iit.next() ) 
-    //  printf("%d\n", iit.index() );
-
-    ////for( vl::TriangleIterator trit = mdeu32->triangleIterator(); !trit.isEnd(); trit.next() ) 
-    ////  printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
-
-    //printf("---\n");
-    //exit(0);
-
-    //// fill the index buffer
-
-    //vl::ref<vl::DrawRangeElementsUInt> de_u32 = new vl::DrawRangeElementsUInt( vl::PT_POLYGON );
-
-    //// int idx[] = { 0,1,2,3,4,5, -1 };
-    //int idx[] = { 10,11,12,13, 0xFF, 20,21,22,23,24, 0xFF, 30,31,32,33,34, -1 };
-    //int count = 0;
-    //for(int i=0; idx[i] != -1; ++i)
-    //  ++count;
-    //de_u32->indices()->resize( count );
-    //for(int i=0; idx[i] != -1; ++i)
-    //  de_u32->indices()->at(i) = idx[i];
-
-    //// initialize the triangle iterator
-
-    //vl::TriangleIteratorIndexed<vl::ArrayUInt1> it(de_u32->indices(), de_u32->primitiveType(), 10, true, 0xFF );
-
-    //// query the triangle iterator
-
-    //for( it.initialize(); it.next(); ) 
-    //  printf("%d %d %d\n", it.a(), it.b(), it.c());
-
-    //printf("---\n");
-
-    //for( it.initialize(0,4); it.next(); ) 
-    //  printf("%d %d %d\n", it.a(), it.b(), it.c());
-
-    //for( it.initialize(5,10); it.next(); ) 
-    //  printf("%d %d %d\n", it.a(), it.b(), it.c());
-
-    //for( it.initialize(11,16); it.next(); ) 
-    //  printf("%d %d %d\n", it.a(), it.b(), it.c());
-
-    //printf("---\n");
-
-    //de_u32->setBaseVertex(100);
-    //de_u32->setPrimitiveRestartEnabled(true);
-    //de_u32->setPrimitiveRestartIndex(0xFF);
-    //for( vl::TriangleIterator trit = de_u32->triangleIterator(); !trit.isEnd(); trit.next() ) 
-    //  printf("%d %d %d\n", trit.a(), trit.b(), trit.c());
-
-    //printf("---\n");
-
-    //exit(0);
+    setupScene_BaseVertex();
+    setupScene_MultiDrawElements();
   }
 
 };
