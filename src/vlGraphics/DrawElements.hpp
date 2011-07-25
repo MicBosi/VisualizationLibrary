@@ -89,7 +89,7 @@ namespace vl
     int mInstances;
     GLuint mPrimitiveRestartIndex;
     bool mPrimitiveRestartEnabled;
-    int  mBaseVertex;
+    GLuint mBaseVertex;
   };
   //------------------------------------------------------------------------------
   // DrawElements
@@ -116,10 +116,13 @@ namespace vl
    * To gain direct access to the GLBufferObject use the indices() function.
    *
    * \sa DrawCall, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
-  template <GLenum Tgltype, class arr_type>
+  template <class arr_type>
   class DrawElements: public DrawElementsBase
   {
     VL_INSTRUMENT_CLASS(vl::DrawElements, DrawElementsBase)
+
+  public:
+    typedef typename arr_type::scalar_type index_type;
 
   private:
     template<typename T>
@@ -127,7 +130,7 @@ namespace vl
     {
     public:
       T ABC[3];
-      bool operator<(const Triangle< typename arr_type::scalar_type>& b) const
+      bool operator<(const Triangle<index_type>& b) const
       {
         if (ABC[0] != b.ABC[0])
           return ABC[0] < b.ABC[0];
@@ -153,7 +156,7 @@ namespace vl
       mType                    = primitive;
       mInstances               = instances;
       mIndexBuffer             = new arr_type;
-      mPrimitiveRestartIndex   = typename arr_type::scalar_type(~0);
+      mPrimitiveRestartIndex   = index_type(~0);
       mPrimitiveRestartEnabled = false;
       mBaseVertex              = 0;
     }
@@ -203,7 +206,6 @@ namespace vl
     virtual void render(bool use_vbo) const
     {
       VL_CHECK_OGL()
-      VL_CHECK(mBaseVertex>=0)
       VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
 
 #if !defined(NDEBUG) && (defined(VL_OPENGL_ES1) || defined(GL_OPENGL_ES2))
@@ -335,39 +337,39 @@ namespace vl
   // typedefs
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLuint. */
-  class DrawElementsUInt: public DrawElements<GL_UNSIGNED_INT, ArrayUInt1>
+  class DrawElementsUInt: public DrawElements<ArrayUInt1>
   {
-    VL_INSTRUMENT_CLASS(vl::DrawElementsUInt, VL_GROUP(DrawElements<GL_UNSIGNED_INT, ArrayUInt1>))
+    VL_INSTRUMENT_CLASS(vl::DrawElementsUInt, DrawElements<ArrayUInt1>)
 
   public:
     DrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GL_UNSIGNED_INT, ArrayUInt1>(primitive, instances) 
+    :DrawElements<ArrayUInt1>(primitive, instances) 
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
   };
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLushort. */
-  class DrawElementsUShort: public DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
+  class DrawElementsUShort: public DrawElements<ArrayUShort1>
   {
-    VL_INSTRUMENT_CLASS(vl::DrawElementsUShort, VL_GROUP(DrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>))
+    VL_INSTRUMENT_CLASS(vl::DrawElementsUShort, DrawElements<ArrayUShort1>)
 
   public:
     DrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GL_UNSIGNED_SHORT, VL_GROUP(ArrayUShort1>(primitive, instances))
+    :DrawElements<ArrayUShort1>(primitive, instances)
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
   };
   //------------------------------------------------------------------------------
   /** See DrawElements. A DrawElements using indices of type \p GLubyte. */
-  class DrawElementsUByte: public DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
+  class DrawElementsUByte: public DrawElements<ArrayUByte1>
   {
-    VL_INSTRUMENT_CLASS(vl::DrawElementsUByte, VL_GROUP(DrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>))
+    VL_INSTRUMENT_CLASS(vl::DrawElementsUByte, DrawElements<ArrayUByte1>)
 
   public:
     DrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int instances = 1)
-    :DrawElements<GL_UNSIGNED_BYTE, VL_GROUP(ArrayUByte1>(primitive, instances))
+    :DrawElements<ArrayUByte1>(primitive, instances)
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }

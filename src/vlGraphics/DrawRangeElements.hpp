@@ -94,7 +94,7 @@ namespace vl
   protected:
     int mRangeStart;
     int mRangeEnd;
-    int  mBaseVertex;
+    GLuint mBaseVertex;
     GLuint mPrimitiveRestartIndex;
     bool mPrimitiveRestartEnabled;
   };
@@ -102,9 +102,9 @@ namespace vl
   // DrawRangeElements
   //------------------------------------------------------------------------------
   /** 
-    * Wrapper for the OpenGL function glDrawRangeElements(). See also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElements.xml for more information.
+   * Wrapper for the OpenGL function glDrawRangeElements(). See also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElements.xml for more information.
    *
-   * Features supported: 
+   * Features supported:
    * - <b>multi instancing</b>: NO 
    * - <b>base vertex</b>: YES
    * - <b>primitive restart</b>: YES
@@ -120,10 +120,13 @@ namespace vl
    * To gain direct access to the GLBufferObject use the indices() function.
    *
    * \sa DrawCall, DrawElements, MultiDrawElements, DrawArrays, Geometry, Actor */
-  template <typename index_type, GLenum Tgltype, class arr_type>
+  template <class arr_type>
   class DrawRangeElements: public DrawRangeElementsBase
   {
     VL_INSTRUMENT_CLASS(vl::DrawRangeElements, DrawRangeElementsBase)
+
+  public:
+    typedef typename arr_type::scalar_type index_type;
 
   private:
     template<typename T>
@@ -209,7 +212,6 @@ namespace vl
     virtual void render(bool use_vbo) const
     {
       VL_CHECK_OGL()
-      VL_CHECK(mBaseVertex>=0)
       VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
       use_vbo &= Has_VBO; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
       if ( !use_vbo && !indices()->size() )
@@ -305,39 +307,39 @@ namespace vl
   // typedefs
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLuint. */
-  class DrawRangeElementsUInt: public DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>
+  class DrawRangeElementsUInt: public DrawRangeElements<ArrayUInt1>
   {
-    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsUInt, VL_GROUP(DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>))
+    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsUInt, DrawRangeElements<ArrayUInt1>)
 
   public:
     DrawRangeElementsUInt(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLuint(~0))
-    :DrawRangeElements<GLuint, GL_UNSIGNED_INT, ArrayUInt1>(primitive, r_start, r_end)
+    :DrawRangeElements<ArrayUInt1>(primitive, r_start, r_end)
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
   };
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLushort. */
-  class DrawRangeElementsUShort: public DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>
+  class DrawRangeElementsUShort: public DrawRangeElements<ArrayUShort1>
   {
-    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsUShort, VL_GROUP(DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>))
+    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsUShort, DrawRangeElements<ArrayUShort1>)
 
   public:
     DrawRangeElementsUShort(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLushort(~0))
-    :DrawRangeElements<GLushort, GL_UNSIGNED_SHORT, ArrayUShort1>(primitive, r_start, r_end)
+    :DrawRangeElements<ArrayUShort1>(primitive, r_start, r_end)
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
   };
   //------------------------------------------------------------------------------
   /** See DrawRangeElements. A DrawRangeElements using indices of type \p GLubyte. */
-  class DrawRangeElementsUByte: public DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>
+  class DrawRangeElementsUByte: public DrawRangeElements<ArrayUByte1>
   {
-    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsUByte, VL_GROUP(DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>))
+    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsUByte, DrawRangeElements<ArrayUByte1>)
 
   public:
     DrawRangeElementsUByte(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=GLubyte(~0))
-    :DrawRangeElements<GLubyte, GL_UNSIGNED_BYTE, ArrayUByte1>(primitive, r_start, r_end)
+    :DrawRangeElements<ArrayUByte1>(primitive, r_start, r_end)
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
