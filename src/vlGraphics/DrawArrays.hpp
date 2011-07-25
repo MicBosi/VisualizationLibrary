@@ -41,11 +41,19 @@ namespace vl
   // DrawArrays
   //------------------------------------------------------------------------------
   /**
-   * Wraps the OpenGL function glDrawArrays(). See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawArrays.xml for more information.
+   * Wraps the OpenGL function glDrawArrays(). See vl::DrawCall for an overview of the different draw call methods.
    *
-   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
+   * This class wraps the following OpenGL functions:
+   * - glDrawArrays (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawArrays.xml)
+   * - glDrawArraysInstanced (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawArraysInstanced.xml)
    *
-   * \sa DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
+   * Supports:
+   * - <b>Multi instancing</b>: YES
+   * - <b>Base vertex</b>: N/A
+   * - <b>Primitive restart</b>: N/A
+   *
+   * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
+   * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
   class DrawArrays: public DrawCall
   {
     VL_INSTRUMENT_CLASS(vl::DrawArrays, DrawCall)

@@ -95,14 +95,20 @@ namespace vl
   // DrawElements
   //------------------------------------------------------------------------------
   /** 
-   * Wrapper for the OpenGL function glDrawElements(). See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawElements.xml for more information.
+   * Wrapper for the OpenGL function glDrawElements(). See vl::DrawCall for an overview of the different draw call methods.
    *
-   * Features supported: 
-   * - <b>multi instancing</b>: YES 
-   * - <b>base vertex</b>: YES
-   * - <b>primitive restart</b>: YES
+   * This class wraps the following OpenGL functions:
+   * - glDrawElements (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElements.xml)
+   * - glDrawElementsInstanced (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElementsInstanced.xml)
+   * - glDrawElementsBaseVertex (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElementsBaseVertex.xml)
+   * - glDrawElementsInstancedBaseVertex (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawElementsInstancedBaseVertex.xml)
    *
-   * Use the functions setInstances() and instances() to use the <b>multi instancing</b> functionality.
+   * Supports: 
+   * - <b>Multi instancing</b>: YES 
+   * - <b>Base vertex</b>: YES
+   * - <b>Primitive restart</b>: YES
+   *
+   * Use the functions setInstances() and instances() to use the <b>Multi instancing</b> functionality.
    * (requires OpenGL 3.1). For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
    *
    * Use the functions setPrimitiveRestartIndex() and setPrimitiveRestartEnabled() to use the <b>primitive 
@@ -115,7 +121,8 @@ namespace vl
    * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
    * To gain direct access to the GLBufferObject use the indices() function.
    *
-   * \sa DrawCall, MultiDrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
+   * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
+   * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
   template <class arr_type>
   class DrawElements: public DrawElementsBase
   {
