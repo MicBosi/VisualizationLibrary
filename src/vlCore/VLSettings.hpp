@@ -72,7 +72,7 @@ namespace vl
 
     /** The path of the default data directory. */
     const String& defaultDataPath() const { return mDefaultDataPath; }
-
+    
   protected:
     EVerbosityLevel mVerbosityLevel;
     bool mCheckOpenGLStates;
