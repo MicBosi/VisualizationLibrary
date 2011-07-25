@@ -73,7 +73,7 @@ namespace vl
     void setCountVector(const std::vector<GLsizei>& vcount)
     {
       mCountVector = vcount;
-      compute_pointer_vector();
+      computePointerVector();
     }
 
     /** The count vector used as 'count' parameter of glMultiDrawElements. */
@@ -91,7 +91,7 @@ namespace vl
     std::vector<GLint>& baseVertices() { return mBaseVertices; }
 
   protected:
-    virtual void compute_pointer_vector() = 0;
+    virtual void computePointerVector() = 0;
 
   protected:
     GLuint mPrimitiveRestartIndex;
@@ -204,14 +204,19 @@ namespace vl
         VL_CHECK(Has_Primitive_Restart);
       }
 
-      const GLvoid **indices_ptr = (const GLvoid**)&mPointerVector[0];
+      const GLvoid **indices_ptr = NULL;
       if (use_vbo && indices()->gpuBuffer()->handle())
       {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle()); VL_CHECK_OGL()
-        indices_ptr = (const GLvoid**)&mNULLPointerVector[0];
+        VL_CHECK(!mVBOPointerVector.empty())
+        indices_ptr = (const GLvoid**)&mVBOPointerVector[0];
       }
       else
+      {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        VL_CHECK(!mPointerVector.empty())
+        indices_ptr = (const GLvoid**)&mPointerVector[0];
+      }
 
       if (baseVertices().size())
       {
@@ -255,27 +260,26 @@ namespace vl
     const std::vector<const typename arr_type::scalar_type*>& pointerVector() const { return mPointerVector; }
 
   protected:
-    void compute_pointer_vector()
+    void computePointerVector()
     {
-      // set all to null: used when VBO is active.
-      mNULLPointerVector.resize( mCountVector.size() );
+      mPointerVector.resize( mCountVector.size() );
+      mVBOPointerVector.resize( mCountVector.size() );
 
-      // used when VBOs are not active.
-      mPointerVector.clear();
-      const typename arr_type::scalar_type* ptr = (const typename arr_type::scalar_type*)indices()->gpuBuffer()->ptr();
+      const typename arr_type::scalar_type* base_ptr = (const typename arr_type::scalar_type*)indices()->gpuBuffer()->ptr();
+      const typename arr_type::scalar_type* ptr = base_ptr;
       for(size_t i=0; i<mCountVector.size(); ++i)
       {
-        mPointerVector.push_back(ptr);
+        mPointerVector[i]    = ptr;
+        mVBOPointerVector[i] = ptr - base_ptr;
         ptr += mCountVector[i];
       }
       VL_CHECK( ptr - (const typename arr_type::scalar_type*)indices()->gpuBuffer()->ptr() <= (int)indices()->size() );
     }
 
-
   protected:
     ref< arr_type > mIndexBuffer;
     std::vector<const typename arr_type::scalar_type*> mPointerVector;
-    std::vector<const typename arr_type::scalar_type*> mNULLPointerVector;
+    std::vector<const typename arr_type::scalar_type*> mVBOPointerVector;
   };
   //------------------------------------------------------------------------------
   // typedefs
