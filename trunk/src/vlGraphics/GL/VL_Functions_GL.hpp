@@ -33,7 +33,7 @@
 #define VL_GL_FUNCTION_WRAPPERS
 
 #ifndef VL_UNSUPPORTED_FUNC
-  #define VL_UNSUPPORTED_FUNC() { Log::error( String().printf("The function \"%s\" is not supported under OpenGL ES 1.x! (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
+  #define VL_UNSUPPORTED_FUNC() { Log::error( String().printf("The function \"%s\" is not supported by the current OpenGL implementation! (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
 #endif
 
 namespace vl
