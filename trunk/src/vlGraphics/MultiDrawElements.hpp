@@ -68,16 +68,37 @@ namespace vl
     /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
-    /** Sets the vector defining the length of each primitive and automatically computes the pointer 
-      * vectors used to exectue glMultiDrawElements(). */
+    /** Sets the vector defining the length of each primitive and automatically computes the pointer vectors used to exectue glMultiDrawElements(). */
     void setCountVector(const std::vector<GLsizei>& vcount)
     {
       mCountVector = vcount;
+      // update pointers
       computePointerVector();
+      computeVBOPointerVector();
+      // set default base vertices to 0
+      if (mBaseVertices.empty())
+        mBaseVertices.resize(mCountVector.size());
+    }
+
+    /** Sets the vector defining the length of each primitive and automatically computes the pointer vectors used to exectue glMultiDrawElements(). */
+    void setCountVector(const GLsizei* vcount, size_t size)
+    {
+      mCountVector.resize(size);
+      for(size_t i=0; i<size; ++i)
+        mCountVector[i] = vcount[i];
+      // update pointers
+      computePointerVector();
+      computeVBOPointerVector();
+      // set default base vertices to 0
+      if (mBaseVertices.empty())
+        mBaseVertices.resize(mCountVector.size());
     }
 
     /** The count vector used as 'count' parameter of glMultiDrawElements. */
     const std::vector<GLsizei>& countVector() const { return mCountVector; }
+
+    /** The count vector used as 'count' parameter of glMultiDrawElements. */
+    std::vector<GLsizei>& countVector() { return mCountVector; }
 
     /** Returns the list of base vertices, one for each primitive. This will enable the use 
       * of glMultiDrawElementsBaseVertex() to render a set of primitives. 
@@ -90,8 +111,13 @@ namespace vl
     /** Returns the list of base vertices, one for each primitive. */
     std::vector<GLint>& baseVertices() { return mBaseVertices; }
 
-  protected:
+    /** Computes the pointer vector to be used when VBOs are DISABLED. Call this function after having updated the count vector and the index buffer indices().
+     * @note Normally you don't need to call this function as setCountVector() already calls it. */
     virtual void computePointerVector() = 0;
+
+    /** Computes the pointer vector to be used when VBOs are ENABLED. Call this function after having updated the count vector and the index buffer indices().
+     * @note Normally you don't need to call this function as setCountVector() already calls it. */
+    virtual void computeVBOPointerVector() = 0;
 
   protected:
     GLuint mPrimitiveRestartIndex;
@@ -121,10 +147,13 @@ namespace vl
    * To gain direct access to the GLBufferObject use the indices() function.
    *
    * \sa DrawCall, DrawElements, DrawRangeElements, DrawArrays, Geometry, Actor */
-  template <GLenum Tgltype, class arr_type>
+  template <class arr_type>
   class MultiDrawElements: public MultiDrawElementsBase
   {
     VL_INSTRUMENT_CLASS(vl::MultiDrawElements, MultiDrawElementsBase)
+
+  public:
+    typedef typename arr_type::scalar_type index_type;
 
   public:
     MultiDrawElements(EPrimitiveType primitive = PT_TRIANGLES)
@@ -132,7 +161,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
       mType                    = primitive;
       mIndexBuffer             = new arr_type;
-      mPrimitiveRestartIndex   = typename arr_type::scalar_type(~0);
+      mPrimitiveRestartIndex   = index_type(~0);
       mPrimitiveRestartEnabled = false;
     }
 
@@ -256,75 +285,90 @@ namespace vl
       return iit;
     }
 
-    /** The pointer vector used as 'indices' parameter of glMultiDrawElements. */
-    const std::vector<const typename arr_type::scalar_type*>& pointerVector() const { return mPointerVector; }
+    /** The pointer vector used as 'indices' parameter of glMultiDrawElements when NOT using VBOs. 
+     * Automatically computed when calling setCountVector(). If you need to modify this manually then you also have to modify the vboPointerVector. */
+    const std::vector<const index_type*>& pointerVector() const { return mPointerVector; }
 
-  protected:
+    /** The pointer vector used as 'indices' parameter of glMultiDrawElements when NOT using VBOs. */
+    std::vector<const index_type*>& pointerVector() { return mPointerVector; }
+
+    /** The pointer vector used as 'indices' parameter of glMultiDrawElements when using VBOs. */
+    const std::vector<const index_type*>& vboPointerVector() const { return mVBOPointerVector; }
+
+    /** The pointer vector used as 'indices' parameter of glMultiDrawElements when using VBOs. */
+    std::vector<const index_type*>& vboPointerVector() { return mVBOPointerVector; }
+
     void computePointerVector()
     {
       mPointerVector.resize( mCountVector.size() );
-      mVBOPointerVector.resize( mCountVector.size() );
-
-      const typename arr_type::scalar_type* base_ptr = (const typename arr_type::scalar_type*)indices()->gpuBuffer()->ptr();
-      const typename arr_type::scalar_type* ptr = base_ptr;
+      const index_type* ptr = (const index_type*)indices()->gpuBuffer()->ptr();
       for(size_t i=0; i<mCountVector.size(); ++i)
       {
         mPointerVector[i]    = ptr;
-        mVBOPointerVector[i] = ptr - base_ptr;
         ptr += mCountVector[i];
       }
-      VL_CHECK( ptr - (const typename arr_type::scalar_type*)indices()->gpuBuffer()->ptr() <= (int)indices()->size() );
+    }
+
+    void computeVBOPointerVector()
+    {
+      mVBOPointerVector.resize( mCountVector.size() );
+      const index_type* vbo_ptr = 0;
+      for(size_t i=0; i<mCountVector.size(); ++i)
+      {
+        mVBOPointerVector[i] = vbo_ptr;
+        vbo_ptr += mCountVector[i];
+      }
     }
 
   protected:
     ref< arr_type > mIndexBuffer;
-    std::vector<const typename arr_type::scalar_type*> mPointerVector;
-    std::vector<const typename arr_type::scalar_type*> mVBOPointerVector;
+    std::vector<const index_type*> mPointerVector;
+    std::vector<const index_type*> mVBOPointerVector;
   };
   //------------------------------------------------------------------------------
   // typedefs
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLuint. */
-  class MultiDrawElementsUInt: public MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>
+  class MultiDrawElementsUInt: public MultiDrawElements<ArrayUInt1>
   {
-    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsUInt, VL_GROUP(MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>))
+    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsUInt, MultiDrawElements< ArrayUInt1>)
 
   public:
     MultiDrawElementsUInt(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GL_UNSIGNED_INT, ArrayUInt1>(primitive)
+    :MultiDrawElements<ArrayUInt1>(primitive)
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
   };
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLushort. */
-  class MultiDrawElementsUShort: public MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>
+  class MultiDrawElementsUShort: public MultiDrawElements<ArrayUShort1>
   {
-    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsUShort, VL_GROUP(MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>))
+    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsUShort, MultiDrawElements< ArrayUShort1>)
 
   public:
     MultiDrawElementsUShort(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GL_UNSIGNED_SHORT, ArrayUShort1>(primitive)
+    :MultiDrawElements<ArrayUShort1>(primitive)
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
   };
   //------------------------------------------------------------------------------
   /** See MultiDrawElements. A MultiDrawElements using indices of type \p GLubyte. */
-  class MultiDrawElementsUByte: public MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>
+  class MultiDrawElementsUByte: public MultiDrawElements<ArrayUByte1>
   {
-    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsUByte, VL_GROUP(MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>))
+    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsUByte, MultiDrawElements<ArrayUByte1>)
 
   public:
     MultiDrawElementsUByte(EPrimitiveType primitive = PT_TRIANGLES)
-    :MultiDrawElements<GL_UNSIGNED_BYTE, ArrayUByte1>(primitive)
+    :MultiDrawElements<ArrayUByte1>(primitive)
     {
       VL_DEBUG_SET_OBJECT_NAME();
     }
   };
 //-----------------------------------------------------------------------------
-  template <GLenum Tgltype, class arr_type>
-  TriangleIterator MultiDrawElements<Tgltype, arr_type>::triangleIterator() const
+  template <class arr_type>
+  TriangleIterator MultiDrawElements<arr_type>::triangleIterator() const
   {
     ref< TriangleIteratorMulti<arr_type> > it = 
       new TriangleIteratorMulti<arr_type>( &mBaseVertices, &mCountVector, mIndexBuffer.get(), primitiveType(), 
