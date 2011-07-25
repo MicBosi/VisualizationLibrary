@@ -32,6 +32,10 @@
 #ifndef VL_GL_FUNCTION_WRAPPERS
 #define VL_GL_FUNCTION_WRAPPERS
 
+#ifndef VL_UNSUPPORTED_FUNC
+  #define VL_UNSUPPORTED_FUNC() { Log::error( String().printf("The function \"%s\" is not supported under OpenGL ES 1.x! (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
+#endif
+
 namespace vl
 {
 
@@ -56,7 +60,7 @@ namespace vl
     if (glGenBuffersARB)
       glGenBuffersARB( n, buffers);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glDeleteBuffers( GLsizei n, const GLuint * buffers)
@@ -67,7 +71,7 @@ namespace vl
     if (glDeleteBuffersARB)
       glDeleteBuffersARB( n, buffers);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glBufferData( GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage)
@@ -78,7 +82,7 @@ namespace vl
     if (glBufferDataARB)
       glBufferDataARB( target, size, data, usage);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glBufferSubData( GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid * data)
@@ -89,7 +93,7 @@ namespace vl
     if (glBufferSubDataARB)
       glBufferSubDataARB( target, offset, size, data);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void* VL_glMapBuffer( GLenum target, GLenum access)
@@ -100,7 +104,7 @@ namespace vl
     if (glMapBufferARB)
       return glMapBufferARB( target, access);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
     return 0;
   }
 
@@ -112,7 +116,7 @@ namespace vl
     if (glUnmapBufferARB)
       return glUnmapBufferARB( target );
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
     return GL_FALSE;
   }
   
@@ -126,7 +130,7 @@ namespace vl
     if(glSecondaryColor3fEXT)
       glSecondaryColor3fEXT(r,g,b);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glSecondaryColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
@@ -137,7 +141,7 @@ namespace vl
     if(glSecondaryColorPointerEXT)
       glSecondaryColorPointerEXT(size, type, stride, (GLvoid*)pointer);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   //-----------------------------------------------------------------------------
@@ -150,7 +154,7 @@ namespace vl
     if (glFogCoordPointerEXT)
       glFogCoordPointerEXT(type,stride,pointer);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   //-----------------------------------------------------------------------------
@@ -163,7 +167,7 @@ namespace vl
     if (glEnableVertexAttribArrayARB)
       glEnableVertexAttribArrayARB(index);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glDisableVertexAttribArray( GLuint index )
@@ -174,7 +178,7 @@ namespace vl
     if (glDisableVertexAttribArrayARB)
       glDisableVertexAttribArrayARB(index);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   //-----------------------------------------------------------------------------
@@ -187,7 +191,7 @@ namespace vl
     if (glVertexAttribPointerARB)
       glVertexAttribPointerARB(index, size, type, normalized, stride, pointer);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glVertexAttribIPointer(GLuint name, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
@@ -198,7 +202,7 @@ namespace vl
     if (glVertexAttribIPointerEXT)
       glVertexAttribIPointerEXT(name, size, type, stride, pointer);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glVertexAttribLPointer(GLuint name, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
@@ -209,7 +213,7 @@ namespace vl
     if(glVertexAttribLPointerEXT)
       glVertexAttribLPointerEXT(name, size, type, stride, pointer);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   //-----------------------------------------------------------------------------
@@ -250,7 +254,7 @@ namespace vl
     if (glBlendFuncSeparateEXT)
       glBlendFuncSeparateEXT( srcRGB, dstRGB, srcAlpha, dstAlpha);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glBlendEquationSeparate( GLenum modeRGB, GLenum modeAlpha)
@@ -261,7 +265,7 @@ namespace vl
     if(glBlendEquationSeparateEXT)
       glBlendEquationSeparateEXT(modeRGB, modeAlpha);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glBlendEquation(GLenum mode)
@@ -272,7 +276,7 @@ namespace vl
     if (glBlendEquationEXT)
       glBlendEquationEXT(mode);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glBlendColor( GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
@@ -283,7 +287,7 @@ namespace vl
     if (glBlendColorEXT)
       glBlendColorEXT(red,green,blue,alpha);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   //-----------------------------------------------------------------------------
@@ -299,7 +303,7 @@ namespace vl
     if (glPointParameterfvEXT)
       glPointParameterfvEXT(pname,(GLfloat*)params);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glPointParameterf( GLenum pname, GLfloat param)
@@ -313,7 +317,7 @@ namespace vl
     if (glPointParameterfEXT)
       glPointParameterfEXT(pname,param);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glPointParameteri( GLenum pname, GLenum param)
@@ -324,7 +328,7 @@ namespace vl
     if (glPointParameteriNV)
       glPointParameteriNV(pname,param);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   //-----------------------------------------------------------------------------
@@ -334,7 +338,7 @@ namespace vl
     if (glStencilFuncSeparate)
       glStencilFuncSeparate( face, func, ref, mask );
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
     // NOT SUPPORTED
     // see also http://www.opengl.org/registry/specs/ATI/separate_stencil.txt
     /*else
@@ -347,7 +351,7 @@ namespace vl
     if (glStencilOpSeparate)
       glStencilOpSeparate( face, sfail, dpfail, dppass );
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
     // NOT SUPPORTED
     // see also http://www.opengl.org/registry/specs/ATI/separate_stencil.txt
     /*else
@@ -365,7 +369,7 @@ namespace vl
     if (glSampleCoverageARB)
       glSampleCoverageARB(value,invert);  
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   //-----------------------------------------------------------------------------
@@ -378,7 +382,7 @@ namespace vl
     if (glBindRenderbufferEXT)
       glBindRenderbufferEXT(target, renderbuffer);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
@@ -389,7 +393,7 @@ namespace vl
     if (glDeleteRenderbuffersEXT)
       glDeleteRenderbuffersEXT(n, renderbuffers);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glGenRenderbuffers(GLsizei n, GLuint *renderbuffers)
@@ -400,7 +404,7 @@ namespace vl
     if (glGenRenderbuffersEXT)
       glGenRenderbuffersEXT(n, renderbuffers);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
@@ -411,7 +415,7 @@ namespace vl
     if (glRenderbufferStorageEXT)
       glRenderbufferStorageEXT(target, internalformat, width, height);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glGetRenderbufferParameteriv(GLenum target, GLenum pname, GLint *params)
@@ -422,7 +426,7 @@ namespace vl
     if (glGetRenderbufferParameterivEXT)
       glGetRenderbufferParameterivEXT(target, pname, params);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline GLboolean VL_glIsFramebuffer(GLuint framebuffer)
@@ -433,7 +437,7 @@ namespace vl
     if (glIsFramebufferEXT)
       return glIsFramebufferEXT(framebuffer);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
     return GL_FALSE;
   }
   
@@ -458,7 +462,7 @@ namespace vl
     if (glDeleteFramebuffersEXT)
       glDeleteFramebuffersEXT(n, framebuffers);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glGenFramebuffers(GLsizei n, GLuint *framebuffers)
@@ -469,7 +473,7 @@ namespace vl
     if (glGenFramebuffersEXT)
       glGenFramebuffersEXT(n, framebuffers);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline GLenum VL_glCheckFramebufferStatus(GLenum target)
@@ -480,7 +484,7 @@ namespace vl
     if (glCheckFramebufferStatusEXT)
       return glCheckFramebufferStatusEXT(target);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
 
     return GL_FRAMEBUFFER_UNSUPPORTED;
   }
@@ -493,7 +497,7 @@ namespace vl
     if (glFramebufferTexture1DEXT)
       glFramebufferTexture1DEXT(target, attachment, textarget, texture, level);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
@@ -504,7 +508,7 @@ namespace vl
     if (glFramebufferTexture2DEXT)
       glFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   //inline void VL_glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
@@ -515,7 +519,7 @@ namespace vl
   //  if (glFramebufferTexture3DEXT)
   //    glFramebufferTexture3DEXT(target, attachment, textarget, texture, level, zoffset);
   //  else
-  //    VL_TRAP();
+  //    VL_UNSUPPORTED_FUNC();
   //}
   
   inline void VL_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
@@ -526,7 +530,7 @@ namespace vl
     if (glFramebufferRenderbufferEXT)
       glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, renderbuffer);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint *params)
@@ -537,7 +541,7 @@ namespace vl
     if (glGetFramebufferAttachmentParameterivEXT)
       glGetFramebufferAttachmentParameterivEXT(target,attachment,pname,params);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glGenerateMipmap(GLenum target)
@@ -548,7 +552,7 @@ namespace vl
     if (glGenerateMipmapEXT)
       glGenerateMipmapEXT(target);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glFramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLint level)
@@ -560,7 +564,7 @@ namespace vl
     if (glFramebufferTextureEXT)
       glFramebufferTextureEXT(target,attachment,texture,level);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
@@ -574,7 +578,7 @@ namespace vl
     if (glFramebufferTextureLayerEXT)
       glFramebufferTextureLayerEXT(target, attachment, texture, level, layer);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glRenderbufferStorageMultisample( GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height )
@@ -585,7 +589,7 @@ namespace vl
     if (glRenderbufferStorageMultisampleEXT)
       glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
@@ -596,7 +600,7 @@ namespace vl
     if (glBlitFramebufferEXT)
       glBlitFramebufferEXT(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   //-----------------------------------------------------------------------------
@@ -612,7 +616,7 @@ namespace vl
     if (glDrawElementsInstancedEXT)
       glDrawElementsInstancedEXT(mode, count, type, indices, primcount);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glDrawElementsInstancedBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount, int basevertex)
@@ -620,7 +624,7 @@ namespace vl
     if (glDrawElementsInstancedBaseVertex)
       glDrawElementsInstancedBaseVertex(mode, count, type, indices, primcount, basevertex);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, int basevertex)
@@ -628,7 +632,7 @@ namespace vl
     if (glDrawElementsBaseVertex)
       glDrawElementsBaseVertex(mode, count, type, (void*)indices, basevertex);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices, int basevertex)
@@ -636,7 +640,7 @@ namespace vl
     if (glDrawRangeElementsBaseVertex)
       glDrawRangeElementsBaseVertex(mode, start, end, count, type, (void*)indices, basevertex);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glDrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei primcount)
@@ -650,7 +654,7 @@ namespace vl
     if (glDrawArraysInstancedEXT)
       glDrawArraysInstancedEXT(mode, first, count, primcount);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   //-----------------------------------------------------------------------------
@@ -663,7 +667,7 @@ namespace vl
     if (glProgramParameteriEXT)
       glProgramParameteriEXT(program, pname, value);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glBindFragDataLocation(GLuint program, GLuint colorNumber, const GLchar *name)
@@ -674,7 +678,7 @@ namespace vl
     if (glBindFragDataLocationEXT)
       glBindFragDataLocationEXT(program, colorNumber, name);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glUniform1uiv(GLint location, GLsizei count, const GLuint *value)
@@ -685,7 +689,7 @@ namespace vl
     if (glUniform1uivEXT)
       glUniform1uivEXT(location, count, value);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glUniform2uiv(GLint location, GLsizei count, const GLuint *value)
@@ -696,7 +700,7 @@ namespace vl
     if (glUniform2uivEXT)
       glUniform2uivEXT(location, count, value);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glUniform3uiv(GLint location, GLsizei count, const GLuint *value)
@@ -707,7 +711,7 @@ namespace vl
     if (glUniform3uivEXT)
       glUniform3uivEXT(location, count, value);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glUniform4uiv(GLint location, GLsizei count, const GLuint *value)
@@ -718,7 +722,7 @@ namespace vl
     if (glUniform4uivEXT)
       glUniform4uivEXT(location, count, value);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glGetProgramBinary(GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, GLvoid *binary)
@@ -726,14 +730,14 @@ namespace vl
     if (glGetProgramBinary)
       glGetProgramBinary(program, bufSize, length, binaryFormat, binary);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   inline void VL_glProgramBinary(GLuint program, GLenum binaryFormat, const GLvoid *binary, GLint length)
   {
     if (glProgramBinary)
       glProgramBinary(program, binaryFormat, binary, length);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid* pixels)
@@ -741,42 +745,42 @@ namespace vl
     if (glTexImage3D)
       glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, pixels);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   inline void VL_glTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid* pixels)
   {
     if (glTexSubImage3D)
       glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   inline void VL_glCopyTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
   {
     if (glCopyTexSubImage3D)
       glCopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   inline void VL_glCompressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid* data)
   {
     if (glCompressedTexImage3D)
       glCompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   inline void VL_glCompressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid* data)
   {
     if (glCompressedTexSubImage3D)
       glCompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
   inline void VL_glFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
   {
     if (glFramebufferTexture3D)
       glFramebufferTexture3D(target, attachment, textarget, texture, level, zoffset);
     else
-      VL_TRAP();
+      VL_UNSUPPORTED_FUNC();
   }
 
   //-----------------------------------------------------------------------------

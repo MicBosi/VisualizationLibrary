@@ -49,8 +49,8 @@
 #define glGetTexGeniv glGetTexGenivOES 
 #define glGetTexGenxv glGetTexGenxvOES 
 
-#ifndef VL_UNSUPPORTED_GLES2_FUNC
-  #define VL_UNSUPPORTED_GLES2_FUNC() { Log::error( String().printf("Function \"%s\" not supported under OpenGL ES 2.x (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
+#ifndef VL_UNSUPPORTED_FUNC
+  #define VL_UNSUPPORTED_FUNC() { Log::error( String().printf("Function \"%s\" not supported under OpenGL ES 2.x (%s:%d).\n", __FUNCTION__, __FILE__, __LINE__) ); VL_TRAP(); }
 #endif
 
 
@@ -104,13 +104,13 @@ namespace vl
   
   inline void VL_glSecondaryColor3f(float r, float g, float b)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glSecondaryColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
   {
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   }
   
@@ -119,7 +119,7 @@ namespace vl
   inline void VL_glFogCoordPointer( GLenum type, GLsizei stride, GLvoid* pointer )
   {
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   }
   
@@ -127,11 +127,11 @@ namespace vl
   
   inline void glPushClientAttrib( GLbitfield mask )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glPopClientAttrib( void )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void VL_glEnableVertexAttribArray( GLuint index )
@@ -145,44 +145,44 @@ namespace vl
 
   inline void glDrawBuffers(GLsizei n, const GLenum *bufs)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glDrawBuffer( GLenum mode )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glReadBuffer( GLenum mode )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   //-----------------------------------------------------------------------------
 
   inline void glTexParameterIivEXT (GLenum target, GLenum pname, const GLint *params)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glTexParameterIuivEXT (GLenum target, GLenum pname, const GLuint *params)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glGetTexParameterIivEXT (GLenum target, GLenum pname, GLint *params)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glGetTexParameterIuivEXT (GLenum target, GLenum pname, GLuint *params)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glClearColorIiEXT (GLint red, GLint green, GLint blue, GLint alpha)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glClearColorIuiEXT (GLuint red, GLuint green, GLuint blue, GLuint alpha)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   //-----------------------------------------------------------------------------
@@ -194,19 +194,19 @@ namespace vl
 
   inline void VL_glVertexAttribIPointer(GLuint name, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glVertexAttribLPointer(GLuint name, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   //-----------------------------------------------------------------------------
   
   inline void VL_glClientActiveTexture(GLenum texture)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glActiveTexture(GLenum texture)
@@ -240,17 +240,17 @@ namespace vl
   
   inline void VL_glPointParameterfv( GLenum pname, const GLfloat* params)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glPointParameterf( GLenum pname, GLfloat param)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glPointParameteri( GLenum pname, GLenum param)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   //-----------------------------------------------------------------------------
@@ -326,7 +326,7 @@ namespace vl
   
   inline void VL_glFramebufferTexture1D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
@@ -357,12 +357,12 @@ namespace vl
   
   inline void VL_glFramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLint level)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glRenderbufferStorageMultisample( GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height )
@@ -399,437 +399,437 @@ namespace vl
 
   inline void glPrimitiveRestartIndex (GLuint index)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void VL_glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glDrawElementsInstancedBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount, int basevertex)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, int basevertex)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void glDrawRangeElements (GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void VL_glDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices, int basevertex)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glDrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei primcount)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void glMultiDrawElementsBaseVertex (GLenum mode, const GLsizei *count, GLenum type, const GLvoid* *indices, GLsizei primcount, const GLint *basevertex)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glMultiDrawElements (GLenum mode, const GLsizei *count, GLenum type, const GLvoid* *indices, GLsizei primcount)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   //-----------------------------------------------------------------------------
   
   inline void VL_glProgramParameteri(GLuint program, GLenum pname, GLint value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glBindFragDataLocation(GLuint program, GLuint colorNumber, const GLchar *name)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void VL_glUniform1uiv(GLint location, GLsizei count, const GLuint *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glUniform2uiv(GLint location, GLsizei count, const GLuint *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glUniform3uiv(GLint location, GLsizei count, const GLuint *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void VL_glUniform4uiv(GLint location, GLsizei count, const GLuint *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   //-----------------------------------------------------------------------------
   
   inline void glPixelTransferf( GLenum pname, GLfloat param )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glPixelTransferi( GLenum pname, GLint param )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   
   inline void glPolygonMode( GLenum face, GLenum mode )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glColorMaterial( GLenum face, GLenum mode )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glPolygonStipple( const GLubyte *mask )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glLineStipple( GLint factor, GLushort pattern )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glShadeModel( GLenum mode )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glNormal3fv (const GLfloat *v)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glColor4fv (const GLfloat *v)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glSecondaryColor3fv (const GLfloat *v)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glColor4f( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glNormal3f( GLfloat nx, GLfloat ny, GLfloat nz )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glTexCoord3f( GLfloat s, GLfloat t, GLfloat r )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glDrawPixels( GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glRasterPos2f( GLfloat x, GLfloat y )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glOrtho( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glClipPlane( GLenum plane, const GLdouble *equation )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glLightfv( GLenum light, GLenum pname, const GLfloat *params )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glLightf (GLenum light, GLenum pname, GLfloat param)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glAlphaFunc( GLenum func, GLclampf ref )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glMaterialfv( GLenum face, GLenum pname, const GLfloat *params )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glMaterialf( GLenum face, GLenum pname, GLfloat param )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glLightModelf( GLenum pname, GLfloat param )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glLightModelfv( GLenum pname, const GLfloat *params )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glFogf( GLenum pname, GLfloat param )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glFogfv( GLenum pname, const GLfloat *params )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glLogicOp( GLenum opcode )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glPointSize( GLfloat size )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glTexEnvf( GLenum target, GLenum pname, GLfloat param )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glTexEnvi( GLenum target, GLenum pname, GLint param )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glTexEnvfv( GLenum target, GLenum pname, const GLfloat *params )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   
   //-----------------------------------------------------------------------------
 
   inline void glMatrixMode( GLenum mode )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glPushMatrix( void )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glPopMatrix( void )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void  glLoadIdentity( void )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glLoadMatrixd( const double *m )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glLoadMatrixf( const GLfloat *m )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glMultMatrixd( const double *m )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glMultMatrixf( const GLfloat *m )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   //-----------------------------------------------------------------------------
 
   inline GLboolean glIsList( GLuint list )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
     return GL_FALSE;
   }
   inline void glDeleteLists( GLuint list, GLsizei range )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline GLuint glGenLists( GLsizei range )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
     return 0;
   }
   inline void glNewList( GLuint list, GLenum mode )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glEndList( void )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glCallList( GLuint list )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glCallLists( GLsizei n, GLenum type, const GLvoid *lists )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glListBase( GLuint base )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   //-----------------------------------------------------------------------------
 
   inline void glEnableClientState( GLenum cap )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glDisableClientState( GLenum cap )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glVertexPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *ptr )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glNormalPointer( GLenum type, GLsizei stride, const GLvoid *ptr )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *ptr )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glIndexPointer( GLenum type, GLsizei stride, const GLvoid *ptr )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glTexCoordPointer( GLint size, GLenum type,  GLsizei stride, const GLvoid *ptr )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glEdgeFlagPointer( GLsizei stride, const GLvoid *ptr )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glGetPointerv( GLenum pname, GLvoid **params )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glArrayElement( GLint i )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glInterleavedArrays( GLenum format, GLsizei stride, const GLvoid *pointer )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glSecondaryColorPointer (GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glFogCoordPointer (GLenum type, GLsizei stride, const GLvoid *pointer)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   //-----------------------------------------------------------------------------
   
   inline void glUniformMatrix2x3fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix3x2fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix2x4fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix4x2fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix3x4fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix4x3fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   inline void glUniform1d (GLint location, GLdouble x)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniform2d (GLint location, GLdouble x, GLdouble y)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniform3d (GLint location, GLdouble x, GLdouble y, GLdouble z)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniform4d (GLint location, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniform1dv (GLint location, GLsizei count, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniform2dv (GLint location, GLsizei count, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniform3dv (GLint location, GLsizei count, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniform4dv (GLint location, GLsizei count, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix2dv (GLint location, GLsizei count, GLboolean transpose, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix3dv (GLint location, GLsizei count, GLboolean transpose, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix4dv (GLint location, GLsizei count, GLboolean transpose, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix2x3dv (GLint location, GLsizei count, GLboolean transpose, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix2x4dv (GLint location, GLsizei count, GLboolean transpose, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix3x2dv (GLint location, GLsizei count, GLboolean transpose, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix3x4dv (GLint location, GLsizei count, GLboolean transpose, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix4x2dv (GLint location, GLsizei count, GLboolean transpose, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glUniformMatrix4x3dv (GLint location, GLsizei count, GLboolean transpose, const GLdouble *value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   //-----------------------------------------------------------------------------
@@ -851,11 +851,11 @@ namespace vl
 
   inline void glPatchParameteri (GLenum pname, GLint value)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glPatchParameterfv (GLenum pname, const GLfloat *values)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
 
   //-----------------------------------------------------------------------------
@@ -907,36 +907,36 @@ namespace vl
   
   inline void glTexImage1D( GLenum target, GLint level, GLint internalFormat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glCopyTexSubImage1D( GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width )
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glCompressedTexImage1D (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const GLvoid *data)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glTexImage2DMultisample (GLenum target, GLsizei samples, GLint internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glTexImage3DMultisample (GLenum target, GLsizei samples, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline void glTexBuffer (GLenum target, GLenum internalformat, GLuint buffer)
   {
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
   }
   inline int gluBuild2DMipmaps ( GLenum target,  GLint components, GLint width,  GLint height,  GLenum format, GLenum type,  const void *data) 
   { 
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
     return GL_INVALID_OPERATION; 
   }
   inline int gluBuild1DMipmaps ( GLenum target,  GLint components, GLint width,  GLenum format, GLenum type,  const void *data) 
   { 
-    VL_UNSUPPORTED_GLES2_FUNC()
+    VL_UNSUPPORTED_FUNC()
     return GL_INVALID_OPERATION; 
   }
 
@@ -944,43 +944,43 @@ namespace vl
   
   inline void glGenQueries (GLsizei n, GLuint *ids) 
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline void glDeleteQueries (GLsizei n, const GLuint *ids) 
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   inline GLboolean glIsQuery (GLuint id) 
   { 
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
     return GL_FALSE; 
   }
   
   inline void glBeginQuery (GLenum target, GLuint id)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void glEndQuery (GLenum target)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void glGetQueryiv (GLenum target, GLenum pname, GLint *params)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void glGetQueryObjectiv (GLuint id, GLenum pname, GLint *params)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
   
   inline void glGetQueryObjectuiv (GLuint id, GLenum pname, GLuint *params)
   {
-    VL_UNSUPPORTED_GLES2_FUNC();
+    VL_UNSUPPORTED_FUNC();
   }
 
   //-----------------------------------------------------------------------------
