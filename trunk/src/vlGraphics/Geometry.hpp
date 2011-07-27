@@ -215,6 +215,12 @@ namespace vl
     //! Merges all the PT_TRIANGLE_STRIP DrawElementsUInt objects into one single PT_TRIANGLE_STRIP DrawElementsUInt.
     void mergeTriangleStrips();
 
+    //! Merges all the draw calls that use the given primitive type into one single draw call using primitive restart.
+    void mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type);
+
+    //! Merges all the draw calls that use the given primitive type into one single MultiDrawElements draw call.
+    void mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type);
+
     //! Converts all the DrawCall objects bound to a Geometry into DrawArrays.
     void convertDrawCallToDrawArrays();
 

@@ -32,6 +32,7 @@
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlGraphics/DoubleVertexRemover.hpp>
+#include <vlGraphics/MultiDrawElements.hpp>
 #include <cmath>
 
 using namespace vl;
@@ -75,7 +76,7 @@ void Geometry::computeBounds_Implementation()
   AABB aabb;
   for(int i=0; i<drawCalls()->size(); ++i)
   {
-    for(IndexIterator iit = drawCalls()->at(i)->indexIterator(); !iit.isEnd(); iit.next())
+    for(IndexIterator iit = drawCalls()->at(i)->indexIterator(); iit.hasNext(); iit.next())
     {
       aabb += coords->getAsVec3( iit.index() );
     }
@@ -85,7 +86,7 @@ void Geometry::computeBounds_Implementation()
   vec3 center = aabb.center();
   for(int i=0; i<drawCalls()->size(); ++i)
   {
-    for(IndexIterator iit = drawCalls()->at(i)->indexIterator(); !iit.isEnd(); iit.next())
+    for(IndexIterator iit = drawCalls()->at(i)->indexIterator(); iit.hasNext(); iit.next())
     {
       r = (coords->getAsVec3(iit.index()) - center).lengthSquared();
       if (r > radius)
@@ -371,7 +372,7 @@ void Geometry::computeNormals(bool verbose)
   for(int prim=0; prim<(int)drawCalls()->size(); prim++)
   {
     // iterate all triangles, if present
-    for(TriangleIterator trit = mDrawCalls[prim]->triangleIterator(); !trit.isEnd(); trit.next())
+    for(TriangleIterator trit = mDrawCalls[prim]->triangleIterator(); trit.hasNext(); trit.next())
     {
       size_t a = trit.a();
       size_t b = trit.b();
@@ -571,38 +572,51 @@ VertexAttribInfo* Geometry::vertexAttribArray(unsigned int attrib_location)
 //-----------------------------------------------------------------------------
 void Geometry::mergeTriangleStrips()
 {
-  std::vector< ref<DrawElementsUInt> > de;
+  std::vector< ref<DrawElementsBase> > de_vector;
   std::vector<size_t> indices;
 
   // collect DrawElementsUInt
   for(int i=drawCalls()->size(); i--; )
   {
-    ref<DrawElementsUInt> de_uint = cast<DrawElementsUInt>( drawCalls()->at(i) );
-    if (de_uint && de_uint->primitiveType() == PT_TRIANGLE_STRIP)
+    ref<DrawElementsBase> deb = cast<DrawElementsBase>( drawCalls()->at(i) );
+    if (deb && deb->primitiveType() == PT_TRIANGLE_STRIP)
     {
-      de.push_back(de_uint);
-      drawCalls()->erase(i,1);
+      de_vector.push_back(deb);
+      drawCalls()->eraseAt(i);
     }
   }
 
   // generate new strip
   indices.reserve( vertexArray()->size()*2 );
-  for(size_t i=0; i<de.size(); ++i)
+  for(size_t i=0; i<de_vector.size(); ++i)
   {
-    if (!de[i]->indices()->size())
+    size_t index_count = 0;
+    for(IndexIterator it=de_vector[i]->indexIterator(); it.hasNext(); it.next(), ++index_count)
+      indices.push_back(it.index());
+
+    if (index_count == 0)
       continue;
-    for(size_t j=0; j<de[i]->indices()->size(); ++j)
-      indices.push_back(de[i]->indices()->at(j));
+    
     // odd -> even
-    if ( de[i]->indices()->size() % 2 )
-      indices.push_back(indices.back());
+    if ( index_count % 2 )
+      indices.push_back( indices.back() );
+
     // concatenate next strip inserting degenerate triangles
-    if ( i != de.size()-1 )
+    if ( i != de_vector.size()-1 )
     {
+      // grab the first two indices of the next draw call
+      IndexIterator it=de_vector[i+1]->indexIterator();
+      int A = it.index();
+      it.next();
+      int B = it.index();
+
+      if (A == -1 || B == -1)
+        continue;
+
       indices.push_back(indices.back());
-      indices.push_back(de[i+1]->indices()->at(0));
-      indices.push_back(de[i+1]->indices()->at(0));
-      indices.push_back(de[i+1]->indices()->at(1));
+      indices.push_back(A);
+      indices.push_back(A);
+      indices.push_back(B);
     }
   }
 
@@ -610,9 +624,94 @@ void Geometry::mergeTriangleStrips()
   {
     ref<DrawElementsUInt> draw_elems = new DrawElementsUInt(PT_TRIANGLE_STRIP);
     draw_elems->indices()->resize(indices.size());
-    memcpy(draw_elems->indices()->ptr(), &indices[0], sizeof(unsigned int)*indices.size());
+    memcpy(draw_elems->indices()->ptr(), &indices[0], sizeof(indices[0])*indices.size());
     drawCalls()->push_back(draw_elems.get());
   }
+}
+//-----------------------------------------------------------------------------
+void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
+{
+  size_t total_index_count = 0;
+  std::vector< ref<DrawCall> > strip_calls;
+  for( size_t i=this->drawCalls()->size(); i--; )
+  {
+    if (this->drawCalls()->at(i)->primitiveType() == primitive_type)
+    {
+      int index_count = this->drawCalls()->at(i)->countIndices();
+      VL_CHECK(index_count >= 0);
+      total_index_count += index_count;
+      strip_calls.push_back( this->drawCalls()->at(i) );
+      this->drawCalls()->eraseAt(i);
+    }
+  }
+
+  Log::debug( Say("%n draw calls will be merged using primitive restart.\n") << strip_calls.size() );
+
+  ref<DrawElementsUInt> de_prim_restart = new DrawElementsUInt(primitive_type);
+  // make space for all the indices plus the primitive restart markers.
+  de_prim_restart->indices()->resize(total_index_count + strip_calls.size()-1);
+  GLuint* index = de_prim_restart->indices()->begin();
+  // merge draw calls using primitive restart!
+  for( size_t i=0; i<strip_calls.size(); ++i )
+  {
+    for( IndexIterator it = strip_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
+    {
+      *index = it.index();
+      VL_CHECK(*index < this->vertexArray()->size());
+    }
+    if ( i != strip_calls.size() -1 )
+    {
+      *index = DrawElementsUInt::primitive_restart_index;
+      ++index;
+    }
+  }
+  VL_CHECK( index == de_prim_restart->indices()->end() )
+
+  // enable primitive restart!
+  de_prim_restart->setPrimitiveRestartEnabled(true);
+
+  this->drawCalls()->push_back( de_prim_restart.get() );
+}
+//-----------------------------------------------------------------------------
+void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type)
+{
+  size_t total_index_count = 0;
+  std::vector< ref<DrawCall> > strip_calls;
+  std::vector<GLsizei> count_vector;
+  for( size_t i=this->drawCalls()->size(); i--; )
+  {
+    if (this->drawCalls()->at(i)->primitiveType() == primitive_type)
+    {
+      int index_count = this->drawCalls()->at(i)->countIndices();
+      VL_CHECK(index_count >= 0);
+      total_index_count += index_count;
+      count_vector.push_back( index_count );
+      strip_calls.push_back( this->drawCalls()->at(i) );
+      this->drawCalls()->eraseAt(i);
+    }
+  }
+
+  Log::debug( Say("%n draw calls will be merged using MultiDrawElements.\n") << strip_calls.size() );
+
+  ref<MultiDrawElementsUInt> de_multi = new MultiDrawElementsUInt(primitive_type);
+  // make space for all the indices plus the primitive restart markers.
+  de_multi->indices()->resize(total_index_count);
+  GLuint* index = de_multi->indices()->begin();
+  // merge draw calls using primitive restart!
+  for( size_t i=0; i<strip_calls.size(); ++i )
+  {
+    for( IndexIterator it = strip_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
+    {
+      *index = it.index();
+      VL_CHECK(*index < this->vertexArray()->size());
+    }
+  }
+  VL_CHECK( index == de_multi->indices()->end() )
+
+  // Specify primitive boundaries. This must be done last!
+  de_multi->setCountVector( count_vector );
+
+  this->drawCalls()->push_back( de_multi.get() );
 }
 //-----------------------------------------------------------------------------
 void Geometry::regenerateVertices(const std::vector<size_t>& map_new_to_old)
@@ -651,7 +750,7 @@ void Geometry::convertDrawCallToDrawArrays()
   for(int i=drawCalls()->size(); i--; )
   {
     int start = (int)map_new_to_old.size();
-    for(IndexIterator it=drawCalls()->at(i)->indexIterator(); !it.isEnd(); it.next())
+    for(IndexIterator it=drawCalls()->at(i)->indexIterator(); it.hasNext(); it.next())
       map_new_to_old.push_back(it.index());
     int count = (int)map_new_to_old.size() - start;
 
@@ -739,7 +838,7 @@ void Geometry::makeGLESFriendly()
       // find max index
       int max_idx = -1;
       int idx_count = 0;
-      for( vl::IndexIterator it = dc->indexIterator(); !it.isEnd(); it.next(), ++idx_count )
+      for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); it.next(), ++idx_count )
         max_idx = it.index() > max_idx ? it.index() : max_idx;
 
       if(max_idx <= 0xFF)
@@ -748,7 +847,7 @@ void Geometry::makeGLESFriendly()
         ref<DrawElementsUByte> de = new DrawElementsUByte( dc->primitiveType() );
         de->indices()->resize( idx_count );
         int i=0;
-        for( vl::IndexIterator it = dc->indexIterator(); !it.isEnd(); it.next(), ++i )
+        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); it.next(), ++i )
           de->indices()->at(i) = (GLubyte)it.index();
 
         // substitute new draw call
@@ -762,7 +861,7 @@ void Geometry::makeGLESFriendly()
         ref<DrawElementsUShort> de = new DrawElementsUShort( dc->primitiveType() );
         de->indices()->resize( idx_count );
         int i=0;
-        for( vl::IndexIterator it = dc->indexIterator(); !it.isEnd(); it.next(), ++i )
+        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); it.next(), ++i )
           de->indices()->at(i) = (GLushort)it.index();
 
         // substitute new draw call
@@ -900,7 +999,7 @@ void Geometry::colorizePrimitives()
     c.b() = rand()%100 / 99.0f;
     c.a() = 1.0f;
 
-    for(IndexIterator it=drawCalls()->at(i)->indexIterator(); !it.isEnd(); it.next())
+    for(IndexIterator it=drawCalls()->at(i)->indexIterator(); it.hasNext(); it.next())
       col->at( it.index() ) = c;
   }
 }
@@ -919,7 +1018,7 @@ void Geometry::computeTangentSpace(
   tan1.resize(vert_count);
   tan2.resize(vert_count);
   
-  for ( TriangleIterator trit = prim->triangleIterator(); !trit.isEnd(); trit.next() )
+  for ( TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next() )
   {
     unsigned int tri[] = { trit.a(), trit.b(), trit.c() };
 
