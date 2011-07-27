@@ -219,16 +219,9 @@ namespace vl
       // primitive restart enable
       if(primitiveRestartEnabled())
       {
-        if(Has_Primitive_Restart)
-        {
-          glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
-          glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
-        }
-        else
-        {
-          Log::error("Primitive restart not supported by the current OpenGL implementation!\n");
-        }
         VL_CHECK(Has_Primitive_Restart);
+        glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
+        glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
       }
 
       const GLvoid* ptr = indices()->gpuBuffer()->ptr();
@@ -241,13 +234,16 @@ namespace vl
       else
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+      GLsizei count = (GLsizei)(use_vbo ? indices()->sizeGPU() : indices()->size());
+      GLenum type = indices()->glType();
       if (mBaseVertex == 0)
       {
-        glDrawRangeElements( primitiveType(), mRangeStart, mRangeEnd, use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr ); VL_CHECK_OGL()
+        glDrawRangeElements( primitiveType(), mRangeStart, mRangeEnd, count, type, ptr ); VL_CHECK_OGL()
       }
       else
       {
-        VL_glDrawRangeElementsBaseVertex( primitiveType(), mRangeStart, mRangeEnd, use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, mBaseVertex ); VL_CHECK_OGL()
+        VL_CHECK(Has_Base_Vertex)
+        VL_glDrawRangeElementsBaseVertex( primitiveType(), mRangeStart, mRangeEnd, count, type, ptr, mBaseVertex ); VL_CHECK_OGL()
       }
 
       // primitive restart disable

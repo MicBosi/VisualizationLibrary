@@ -187,7 +187,46 @@ namespace vl
     typedef T_Scalar scalar_type;
 
     virtual size_t glSize() const { return T_GL_Size; }
+
     virtual int glType() const { return T_GL_Type; }
+
+    virtual size_t bytesPerVector() const { return sizeof(T_VectorType); }
+
+    // ---
+
+    void clear() { resize(0); gpuBuffer()->deleteGLBufferObject(); }
+    
+    void resize(size_t dim) { gpuBuffer()->resize(dim*bytesPerVector()); setVBODirty(true); }
+    
+    size_t size() const { return bytesUsed() / bytesPerVector(); }
+    
+    size_t sizeGPU() const { return gpuBuffer() ? gpuBuffer()->byteCountGPU() / bytesPerVector() : 0; }
+    
+    size_t scalarCount() const { return size() * glSize(); }
+    
+    size_t scalarCountGPU() const { return sizeGPU() * glSize(); }
+
+    // ---
+
+    const T_VectorType* begin() const { return reinterpret_cast<const T_VectorType*>(ptr()); }
+
+    T_VectorType* begin() { return reinterpret_cast<T_VectorType*>(ptr()); }
+    
+    const T_VectorType* end() const { return (reinterpret_cast<const T_VectorType*>(ptr()))+size(); }
+
+    T_VectorType* end() { return (reinterpret_cast<T_VectorType*>(ptr()))+size(); }
+
+    // ---
+
+    T_VectorType& at(size_t i) { VL_CHECK(i<size()); return *(reinterpret_cast<T_VectorType*>(ptr())+i); }
+
+    const T_VectorType& at(size_t i) const { VL_CHECK(i<size()); return *(reinterpret_cast<const T_VectorType*>(ptr())+i); }
+
+    T_VectorType& operator[](size_t i) { return at(i); }
+
+    const T_VectorType& operator[](size_t i) const { return at(i); }
+
+    // ---
 
     virtual ref<ArrayAbstract> clone() const
     {
@@ -199,28 +238,9 @@ namespace vl
       }
       return arr;
     }
-    
-    void clear() { resize(0); gpuBuffer()->deleteGLBufferObject(); }
-    void resize(size_t dim) { gpuBuffer()->resize(dim*bytesPerVector()); setVBODirty(true); }
-    size_t size() const { return bytesUsed() / bytesPerVector(); }
-    size_t sizeGPU() const { return gpuBuffer() ? gpuBuffer()->byteCountGPU() / bytesPerVector() : 0; }
-    size_t scalarCount() const { return size() * glSize(); }
-    size_t scalarCountGPU() const { return sizeGPU() * glSize(); }
-    
-    const T_VectorType* begin() const { return reinterpret_cast<const T_VectorType*>(ptr()); }
-    T_VectorType* begin() { return reinterpret_cast<T_VectorType*>(ptr()); }
-    
-    const T_VectorType* end() const { return (reinterpret_cast<const T_VectorType*>(ptr()))+size(); }
-    T_VectorType* end() { return (reinterpret_cast<T_VectorType*>(ptr()))+size(); }
-    
-    T_VectorType& at(size_t i) { VL_CHECK(i<size()); return *(reinterpret_cast<T_VectorType*>(ptr())+i); }
-    const T_VectorType& at(size_t i) const { VL_CHECK(i<size()); return *(reinterpret_cast<const T_VectorType*>(ptr())+i); }
 
-    T_VectorType& operator[](size_t i) { return at(i); }
-    const T_VectorType& operator[](size_t i) const { return at(i); }
+    // ---
 
-    virtual size_t bytesPerVector() const { return sizeof(T_VectorType); }
-    
     Sphere computeBoundingSphere() const
     {
       AABB aabb;
