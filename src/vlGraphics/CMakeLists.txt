@@ -71,8 +71,8 @@ source_group("plugins" FILES ${_SOURCES})
 VL_INSTALL_TARGET(VLGraphics)
 
 # VLGraphics headers
-install(FILES ${VLGRAPHICS_INC} DESTINATION "include/vlGraphics")
-install(FILES ${VLGRAPHICS_GL_INC} DESTINATION "include/vlGraphics/GL")
+install(FILES ${VLGRAPHICS_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlGraphics")
+install(FILES ${VLGRAPHICS_GL_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlGraphics/GL")
 
 # Khronos headers
-install(DIRECTORY "${KHRONOS_DIR}/GL" DESTINATION "include")
+install(DIRECTORY "${KHRONOS_DIR}/GL" DESTINATION ${VL_INCLUDE_INSTALL_DIR})

@@ -55,4 +55,4 @@ source_group("plugins" FILES ${_SOURCES})
 VL_INSTALL_TARGET(VLCore)
 
 # VLCore headers
-install(FILES ${VLCORE_INC} DESTINATION "include/vlCore")
+install(FILES ${VLCORE_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlCore")

@@ -33,4 +33,4 @@ target_link_libraries(VLVolume VLCore VLGraphics)
 VL_INSTALL_TARGET(VLVolume)
 
 # VLVolume headers
-install(FILES ${VLVOLUME_INC} DESTINATION "include/vlVolume")
+install(FILES ${VLVOLUME_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlVolume")

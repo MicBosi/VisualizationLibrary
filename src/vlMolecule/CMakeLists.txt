@@ -33,4 +33,4 @@ target_link_libraries(VLMolecule VLCore VLGraphics ${OPENGL_glu_LIBRARY})
 VL_INSTALL_TARGET(VLMolecule)
 
 # VLMolecule headers
-install(FILES ${VLMOLECULE_INC} DESTINATION "include/vlMolecule")
+install(FILES ${VLMOLECULE_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlMolecule")

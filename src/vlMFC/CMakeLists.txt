@@ -34,4 +34,4 @@ target_link_libraries(VLMFC VLCore VLGraphics VLWin32 ${wxWidgets_LIBRARIES})
 VL_INSTALL_TARGET(VLMFC)
 
 # VLMolecule headers
-install(FILES ${VLMFC_INC} DESTINATION "include/vlMFC")
+install(FILES ${VLMFC_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlMFC")
