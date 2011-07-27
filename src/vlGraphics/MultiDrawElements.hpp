@@ -217,16 +217,9 @@ namespace vl
       // primitive restart enable
       if(primitiveRestartEnabled())
       {
-        if(Has_Primitive_Restart)
-        {
-          glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
-          glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
-        }
-        else
-        {
-          Log::error("Primitive restart not supported by the current OpenGL implementation!\n");
-        }
         VL_CHECK(Has_Primitive_Restart);
+        glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
+        glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
       }
 
       const GLvoid **indices_ptr = NULL;
@@ -294,6 +287,7 @@ namespace vl
     /** The pointer vector used as 'indices' parameter of glMultiDrawElements when using VBOs. */
     std::vector<const index_type*>& vboPointerVector() { return mVBOPointerVector; }
 
+    /** Computes pointerVector() based on the values contained on countVector(). */
     void computePointerVector()
     {
       mPointerVector.resize( mCountVector.size() );
@@ -305,14 +299,16 @@ namespace vl
       }
     }
 
+    //! Computes vboPointerVector() based on the values contained in pointerVector().
     void computeVBOPointerVector()
     {
-      mVBOPointerVector.resize( mCountVector.size() );
-      const index_type* vbo_ptr = 0;
-      for(size_t i=0; i<mCountVector.size(); ++i)
+      mVBOPointerVector.resize( mPointerVector.size() );
+      const index_type* base_ptr = (const index_type*)indices()->ptr();
+      VL_CHECK(base_ptr)
+      for(size_t i=0; i<mPointerVector.size(); ++i)
       {
-        mVBOPointerVector[i] = vbo_ptr;
-        vbo_ptr += mCountVector[i];
+        size_t offset = mPointerVector[i] - base_ptr;
+        mVBOPointerVector[i] = (const index_type*)0 + offset;
       }
     }
 

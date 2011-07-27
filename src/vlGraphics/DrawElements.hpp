@@ -242,16 +242,9 @@ namespace vl
       // primitive restart enable
       if(primitiveRestartEnabled())
       {
-        if(Has_Primitive_Restart)
-        {
-          glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
-          glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
-        }
-        else
-        {
-          Log::error("Primitive restart not supported by the current OpenGL implementation!\n");
-        }
         VL_CHECK(Has_Primitive_Restart);
+        glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
+        glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
       }
 
       const GLvoid* ptr = indices()->gpuBuffer()->ptr();
@@ -266,27 +259,32 @@ namespace vl
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
       }
 
+      GLsizei count = (GLsizei)(use_vbo ? indices()->sizeGPU() : indices()->size());
+      GLenum type = indices()->glType();
 
       if (mBaseVertex == 0)
       {
-        if ( instances() > 1 && (Has_GL_ARB_draw_instanced||Has_GL_EXT_draw_instanced) )
+        if ( instances() == 1 )
         {
-          VL_glDrawElementsInstanced( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, (GLsizei)instances() ); VL_CHECK_OGL()
+          glDrawElements( primitiveType(), count, type, ptr ); VL_CHECK_OGL()
         }
         else
         {
-          glDrawElements( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr ); VL_CHECK_OGL()
+          VL_CHECK(Has_Primitive_Instancing)
+          VL_glDrawElementsInstanced( primitiveType(), count, type, ptr, instances() ); VL_CHECK_OGL()
         }
       }
       else
       {
-        if ( instances() > 1 && (Has_GL_ARB_draw_instanced||Has_GL_EXT_draw_instanced) )
+        VL_CHECK(Has_Base_Vertex)
+        if ( instances() == 1 )
         {
-          VL_glDrawElementsInstancedBaseVertex( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, (GLsizei)instances(), mBaseVertex ); VL_CHECK_OGL()
+          VL_glDrawElementsBaseVertex( primitiveType(), count, type, ptr, mBaseVertex ); VL_CHECK_OGL()
         }
         else
         {
-          VL_glDrawElementsBaseVertex( primitiveType(), use_vbo ? (GLsizei)indices()->sizeGPU() : (GLsizei)indices()->size(), indices()->glType(), ptr, mBaseVertex ); VL_CHECK_OGL()
+          VL_CHECK(Has_Primitive_Instancing)
+          VL_glDrawElementsInstancedBaseVertex( primitiveType(), count, type, ptr, instances(), mBaseVertex ); VL_CHECK_OGL()
         }
       }
 
