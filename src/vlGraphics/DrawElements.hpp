@@ -55,14 +55,6 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::DrawElementsBase, DrawCall)
 
   public:
-    /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
-      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
-    GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
-
-    /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 
-      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
-    void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
-
     /** Returns whether the primitive-restart functionality is enabled or not (requires OpenGL 3.1). See http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml */
     bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
 
@@ -87,7 +79,6 @@ namespace vl
 
   protected:
     int mInstances;
-    GLuint mPrimitiveRestartIndex;
     bool mPrimitiveRestartEnabled;
     GLuint mBaseVertex;
   };
@@ -130,6 +121,8 @@ namespace vl
 
   public:
     typedef typename arr_type::scalar_type index_type;
+    //! The special index which identifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for GLubyte, GLushort, GLuint index types. */
+    static const index_type primitive_restart_index = index_type(~0);
 
   private:
     template<typename T>
@@ -163,7 +156,6 @@ namespace vl
       mType                    = primitive;
       mInstances               = instances;
       mIndexBuffer             = new arr_type;
-      mPrimitiveRestartIndex   = index_type(~0);
       mPrimitiveRestartEnabled = false;
       mBaseVertex              = 0;
     }
@@ -174,7 +166,6 @@ namespace vl
       *indices() = *other.indices();
       mInstances = other.mInstances;
       mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
-      mPrimitiveRestartIndex   = other.mPrimitiveRestartIndex;
       mBaseVertex              = other.mBaseVertex;
       return *this;
     }
@@ -254,7 +245,7 @@ namespace vl
         if(Has_Primitive_Restart)
         {
           glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
-          glPrimitiveRestartIndex(primitiveRestartIndex()); VL_CHECK_OGL();
+          glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
         }
         else
         {
@@ -323,7 +314,7 @@ namespace vl
     {
       ref< TriangleIteratorIndexed<arr_type> > it = 
         new TriangleIteratorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(), 
-            baseVertex(), primitiveRestartEnabled(), primitiveRestartIndex() );
+            baseVertex(), primitiveRestartEnabled(), primitive_restart_index );
       it->initialize();
       return TriangleIterator(it.get());
     }
@@ -331,7 +322,7 @@ namespace vl
     IndexIterator indexIterator() const
     {
       ref< IndexIteratorElements<arr_type> > iie = new IndexIteratorElements<arr_type>;
-      iie->initialize( mIndexBuffer.get(), NULL, NULL, mBaseVertex, mPrimitiveRestartEnabled, mPrimitiveRestartIndex );
+      iie->initialize( mIndexBuffer.get(), NULL, NULL, mBaseVertex, mPrimitiveRestartEnabled, primitive_restart_index );
       IndexIterator iit;
       iit.initialize( iie.get() );
       return iit;

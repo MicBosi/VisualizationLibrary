@@ -54,14 +54,6 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::MultiDrawElementsBase, DrawCall)
 
   public:
-    /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
-      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
-    GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
-
-    /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 
-      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
-    void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
-
     /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
     
@@ -120,7 +112,6 @@ namespace vl
     virtual void computeVBOPointerVector() = 0;
 
   protected:
-    GLuint mPrimitiveRestartIndex;
     bool mPrimitiveRestartEnabled;
     std::vector<GLsizei> mCountVector;
     std::vector<GLint>   mBaseVertices;
@@ -159,6 +150,8 @@ namespace vl
 
   public:
     typedef typename arr_type::scalar_type index_type;
+    //! The special index which identifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for GLubyte, GLushort, GLuint index types. */
+    static const index_type primitive_restart_index = index_type(~0);
 
   public:
     MultiDrawElements(EPrimitiveType primitive = PT_TRIANGLES)
@@ -166,7 +159,6 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
       mType                    = primitive;
       mIndexBuffer             = new arr_type;
-      mPrimitiveRestartIndex   = index_type(~0);
       mPrimitiveRestartEnabled = false;
     }
 
@@ -175,7 +167,6 @@ namespace vl
       DrawCall::operator=(other);
       *indices() = *other.indices();
       mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
-      mPrimitiveRestartIndex   = other.mPrimitiveRestartIndex;
       setCountVector(other.mCountVector);
       return *this;
     }
@@ -229,7 +220,7 @@ namespace vl
         if(Has_Primitive_Restart)
         {
           glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
-          glPrimitiveRestartIndex(primitiveRestartIndex()); VL_CHECK_OGL();
+          glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
         }
         else
         {
@@ -284,7 +275,7 @@ namespace vl
     IndexIterator indexIterator() const
     {
       ref< IndexIteratorElements<arr_type> > iie = new IndexIteratorElements<arr_type>;
-      iie->initialize( mIndexBuffer.get(), &mBaseVertices, &mCountVector, 0, mPrimitiveRestartEnabled, mPrimitiveRestartIndex );
+      iie->initialize( mIndexBuffer.get(), &mBaseVertices, &mCountVector, 0, mPrimitiveRestartEnabled, primitive_restart_index );
       IndexIterator iit;
       iit.initialize( iie.get() );
       return iit;
@@ -377,7 +368,7 @@ namespace vl
   {
     ref< TriangleIteratorMulti<arr_type> > it = 
       new TriangleIteratorMulti<arr_type>( &mBaseVertices, &mCountVector, mIndexBuffer.get(), primitiveType(), 
-          primitiveRestartEnabled(), primitiveRestartIndex() );
+          primitiveRestartEnabled(), primitive_restart_index );
     it->initialize();
     return TriangleIterator(it.get());
   }
