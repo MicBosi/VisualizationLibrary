@@ -54,7 +54,7 @@ namespace
 
     indices.reserve( 1000 );
 
-    for(TriangleIterator trit = dc->triangleIterator(); !trit.isEnd(); trit.next())
+    for(TriangleIterator trit = dc->triangleIterator(); trit.hasNext(); trit.next())
     {
       int a = trit.a();
       int b = trit.b();

@@ -47,7 +47,7 @@ namespace vl
 
   public:
     virtual bool next() = 0;
-    virtual bool isEnd() const = 0;
+    virtual bool hasNext() const = 0;
     virtual int a() const = 0;
     virtual int b() const = 0;
     virtual int c() const = 0;
@@ -78,7 +78,7 @@ namespace vl
       mPrimType         = prim_type;
     }
 
-    bool isEnd() const { return mCurrentIndex == mEnd; }
+    bool hasNext() const { return mCurrentIndex != mEnd; }
 
     virtual int a() const { return mA; }
     virtual int b() const { return mB; }
@@ -328,7 +328,7 @@ namespace vl
       mEven = true;
     }
 
-    bool isEnd() const { return mCurrentIndex == mEnd; }
+    bool hasNext() const { return mCurrentIndex != mEnd; }
 
     virtual int a() const { return mA; }
     virtual int b() const { return mB; }
@@ -517,7 +517,7 @@ namespace vl
       int end = mStart + (*mpCountVector)[mCurPrim];
       TriangleIteratorIndexed<TArray>::initialize( mStart, end );
       // abort if could not initialize (primitive not supported)
-      if ( TriangleIteratorIndexed<TArray>::isEnd() )
+      if ( !TriangleIteratorIndexed<TArray>::hasNext() )
         mCurPrim = (int)(*mpCountVector).size()-1;
     }
 
@@ -537,12 +537,12 @@ namespace vl
         return false;
     }
 
-    bool isEnd() const
+    bool hasNext() const
     { 
-      if ( TriangleIteratorIndexed<TArray>::isEnd() && mCurPrim == (int)(*mpCountVector).size()-1 )
-        return true;
-      else
+      if ( !TriangleIteratorIndexed<TArray>::hasNext() && mCurPrim == (int)(*mpCountVector).size()-1 )
         return false;
+      else
+        return true;
     }
 
   protected:
@@ -566,7 +566,7 @@ namespace vl
     bool next() { return mIterator->next(); }
 
     /** Returns true if the iterator reached the end of the triangle list. In this case a(), b() and c() return -1. */
-    bool isEnd() { return mIterator->isEnd(); }
+    bool hasNext() { return mIterator->hasNext(); }
 
     /** First index of the triangle. */
     int a() const { return mIterator->a(); }
