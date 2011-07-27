@@ -67,14 +67,6 @@ namespace vl
     /** Returns the range end. See also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElements.xml */
     int rangeEnd() const { return mRangeEnd; }
 
-    /** Returns the special index which idendifies a primitive restart. By default it is set to ~0 that is 
-      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
-    GLuint primitiveRestartIndex() const { return mPrimitiveRestartIndex; }
-
-    /** Sets the special index which idendifies a primitive restart. By default it is set to ~0 that is 
-      * 0xFF, 0xFFFF, 0xFFFFFFFF respectively for ubyte, ushort, uint index types. */
-    void setPrimitiveRestartIndex(GLuint index) { mPrimitiveRestartIndex = index; }
-
     /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
 
@@ -95,7 +87,6 @@ namespace vl
     int mRangeStart;
     int mRangeEnd;
     GLuint mBaseVertex;
-    GLuint mPrimitiveRestartIndex;
     bool mPrimitiveRestartEnabled;
   };
   //------------------------------------------------------------------------------
@@ -132,6 +123,8 @@ namespace vl
 
   public:
     typedef typename arr_type::scalar_type index_type;
+    //! The special index which identifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for GLubyte, GLushort, GLuint index types. */
+    static const index_type primitive_restart_index = index_type(~0);
 
   private:
     template<typename T>
@@ -159,14 +152,13 @@ namespace vl
     };
 
   public:
-    DrawRangeElements(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=index_type(~0))
+    DrawRangeElements(EPrimitiveType primitive = PT_TRIANGLES, int r_start=0, int r_end=primitive_restart_index)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mType                    = primitive;
       mRangeStart              = r_start;
       mRangeEnd                = r_end;
       mIndexBuffer             = new arr_type;
-      mPrimitiveRestartIndex   = index_type(~0);
       mPrimitiveRestartEnabled = false;
       mBaseVertex              = 0;
     }
@@ -178,7 +170,6 @@ namespace vl
       mRangeStart              = other.mRangeStart;
       mRangeEnd                = other.mRangeEnd;
       mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
-      mPrimitiveRestartIndex   = other.mPrimitiveRestartIndex;
       mBaseVertex              = other.mBaseVertex;
       return *this;
     }
@@ -231,7 +222,7 @@ namespace vl
         if(Has_Primitive_Restart)
         {
           glEnable(GL_PRIMITIVE_RESTART); VL_CHECK_OGL();
-          glPrimitiveRestartIndex(primitiveRestartIndex()); VL_CHECK_OGL();
+          glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
         }
         else
         {
@@ -271,7 +262,7 @@ namespace vl
     {
       ref< TriangleIteratorIndexed<arr_type> > it = 
         new TriangleIteratorIndexed<arr_type>( mIndexBuffer.get(), primitiveType(), 
-            baseVertex(), primitiveRestartEnabled(), primitiveRestartIndex() );
+            baseVertex(), primitiveRestartEnabled(), primitive_restart_index );
       it->initialize();
       return TriangleIterator(it.get());
     }
@@ -279,7 +270,7 @@ namespace vl
     IndexIterator indexIterator() const
     {
       ref< IndexIteratorElements<arr_type> > iie = new IndexIteratorElements<arr_type>;
-      iie->initialize( mIndexBuffer.get(), NULL, NULL, mBaseVertex, mPrimitiveRestartEnabled, mPrimitiveRestartIndex );
+      iie->initialize( mIndexBuffer.get(), NULL, NULL, mBaseVertex, mPrimitiveRestartEnabled, primitive_restart_index );
       IndexIterator iit;
       iit.initialize( iie.get() );
       return iit;
@@ -287,10 +278,10 @@ namespace vl
 
     void computeRange()
     {
-      mRangeStart = index_type(~0);
+      mRangeStart = primitive_restart_index;
       mRangeEnd   = 0;
 
-      for(IndexIterator it=indexIterator(); !it.isEnd(); it.next())
+      for(IndexIterator it=indexIterator(); it.hasNext(); it.next())
       {
         if (it.index() < mRangeStart)
           mRangeStart = it.index();
@@ -301,7 +292,7 @@ namespace vl
       if (mRangeEnd < mRangeStart)
       {
         mRangeStart = 0;
-        mRangeEnd   = index_type(~0);
+        mRangeEnd   = primitive_restart_index;
       }
     }
 
