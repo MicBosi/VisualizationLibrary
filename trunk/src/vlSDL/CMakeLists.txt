@@ -35,4 +35,4 @@ target_link_libraries(VLSDL VLCore VLGraphics ${SDL_LIBRARY})
 VL_INSTALL_TARGET(VLSDL)
 
 # VLSDL headers
-install(FILES ${VLSDL_INC} DESTINATION "include/vlSDL")
+install(FILES ${VLSDL_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlSDL")

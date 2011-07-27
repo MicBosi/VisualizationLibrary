@@ -33,4 +33,4 @@ target_link_libraries(VLWin32 VLCore VLGraphics)
 VL_INSTALL_TARGET(VLWin32)
 
 # VLWin32 headers
-install(FILES ${VLWin32_INC} DESTINATION "include/vlWin32")
+install(FILES ${VLWin32_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlWin32")

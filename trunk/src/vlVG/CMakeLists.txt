@@ -33,4 +33,4 @@ target_link_libraries(VLVG VLCore VLGraphics)
 VL_INSTALL_TARGET(VLVG)
 
 # VLVG headers
-install(FILES ${VLVG_INC} DESTINATION "include/vlVG")
+install(FILES ${VLVG_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlVG")

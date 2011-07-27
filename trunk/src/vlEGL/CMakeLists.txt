@@ -33,4 +33,4 @@ target_link_libraries(VLEGL VLCore VLGraphics ${VL_EGL_LIBRARY})
 VL_INSTALL_TARGET(VLEGL)
 
 # VLEGL headers
-install(FILES ${VLEGL_INC} DESTINATION "include/vlEGL")
+install(FILES ${VLEGL_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlEGL")
