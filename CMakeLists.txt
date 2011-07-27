@@ -32,13 +32,14 @@ cmake_minimum_required(VERSION 2.6)
 
 # Platform detect, used to configure platform.hpp.in
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-   set(VL_PLATFORM_MACOSX 1)
+	set(VL_PLATFORM_MACOSX 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-   set(VL_PLATFORM_LINUX 1)
+	option(VL_UNIX_INSTALL_MODE "Set to ON to install VL into default UNIX path structure." OFF)
+	set(VL_PLATFORM_LINUX 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-   set(VL_PLATFORM_WINDOWS 1) 
+	set(VL_PLATFORM_WINDOWS 1) 
 else()
-   message(FATAL_ERROR "Unable to detect platform!")
+	message(FATAL_ERROR "Unable to detect platform!")
 endif()
 message(STATUS "System detected: \"${CMAKE_SYSTEM_NAME}\"")
 
@@ -71,6 +72,13 @@ endif()
 # Common Dirs
 set(VL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
 set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/3rdparty")
+
+# Header Install Dir
+if(VL_UNIX_INSTALL_MODE)
+	set(VL_INCLUDE_INSTALL_DIR "include/vl")
+else()
+	set(VL_INCLUDE_INSTALL_DIR "include")
+endif()
 
 # Add our dir to the CMake modules path and include our InternalMacros file
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
@@ -150,5 +158,10 @@ add_subdirectory("src")
 # Install Rules
 ################################################################################
 
-install(FILES "LICENSE.TXT" "README.TXT" DESTINATION ".")
-install(FILES "cmake/FindVL.cmake" DESTINATION "cmake")
+if(VL_UNIX_INSTALL_MODE)
+	install(FILES "LICENSE.TXT" "README.TXT" DESTINATION "share/vl")
+	install(FILES "cmake/FindVL.cmake" DESTINATION "share/cmake/Modules")
+else()
+	install(FILES "LICENSE.TXT" "README.TXT" DESTINATION ".")
+	install(FILES "cmake/FindVL.cmake" DESTINATION "cmake")
+endif()
