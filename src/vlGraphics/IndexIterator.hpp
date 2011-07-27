@@ -50,7 +50,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     int index() const { return mIndex; }
-    virtual bool isEnd() const = 0;
+    virtual bool hasNext() const = 0;
     virtual bool next() = 0;
 
   protected:
@@ -71,7 +71,7 @@ namespace vl
     }
     void initialize(IndexIteratorAbstract* iterator) { mIterator = iterator; }
     int  index() { return mIterator->index(); }
-    bool isEnd() { return mIterator->isEnd(); }
+    bool hasNext() { return mIterator->hasNext(); }
     bool next()  { return mIterator->next();  }
 
   protected:
@@ -100,9 +100,9 @@ namespace vl
       mIndex  = start;
     }
 
-    virtual bool isEnd() const 
+    virtual bool hasNext() const 
     { 
-      return mCurPos == mStart + mCount; 
+      return mCurPos != mStart + mCount; 
     }
 
     virtual bool next() 
@@ -162,9 +162,9 @@ namespace vl
       }
     }
 
-    virtual bool isEnd() const 
+    virtual bool hasNext() const 
     { 
-      return mCurPos == (int)mArray->size(); 
+      return mCurPos != (int)mArray->size(); 
     }
 
     virtual bool next() 

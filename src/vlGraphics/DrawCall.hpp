@@ -123,12 +123,12 @@ namespace vl
     //! This \note The returned indices already take into account primitive restart and base vertex.
     virtual IndexIterator indexIterator() const = 0;
 
-    /** Counts the number of virtual indices of a DrawCall. */
-    int countIndices() const
+    /** Counts the number of virtual indices of a DrawCall., i.e. the number of indices you would retrieve by iterating over the iterator returned by indexIterator(). */
+    size_t countIndices() const
     {
-      int count = 0;
-      for( IndexIterator it = indexIterator(); !it.isEnd(); it.next() )
-        count++;
+      size_t count = 0;
+      for( IndexIterator it = indexIterator(); it.hasNext(); it.next() )
+        ++count;
       return count;
     }
 
