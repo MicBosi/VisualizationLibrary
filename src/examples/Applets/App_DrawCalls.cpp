@@ -47,23 +47,6 @@ using namespace vl;
 
 class App_DrawCalls: public BaseDemo
 {
-  void setupScene_Normal()
-  {
-    ref<Geometry> torus1 = vl::makeTorus( vec3(-10,0,0), 8.0f, 1.0f, 20, 20 );
-    ref<Geometry> torus2 = vl::makeTorus( vec3(  0,0,0), 8.0f, 2.0f, 10, 10 );
-    ref<Geometry> torus3 = vl::makeTorus( vec3(+10,0,0), 8.0f, 3.0f, 7, 7 );
-
-    ref<Effect> fx = new Effect;
-    fx->shader()->enable(vl::EN_LIGHTING);
-    fx->shader()->enable(vl::EN_DEPTH_TEST);
-    fx->shader()->setRenderState( new Light(0) );
-
-    sceneManager()->tree()->actors()->clear();
-    sceneManager()->tree()->addActor( torus1.get(), fx.get(), NULL );
-    sceneManager()->tree()->addActor( torus2.get(), fx.get(), NULL );
-    sceneManager()->tree()->addActor( torus3.get(), fx.get(), NULL );
-  }
-
   void setupScene_MultiDrawElements()
   {
     ref<Geometry> torus1 = vl::makeTorus( vec3(-10, -9, 0), 8.0f, 1.0f, 20, 20 );
