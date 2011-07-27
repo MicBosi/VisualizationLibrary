@@ -97,6 +97,7 @@ namespace vl
   bool Has_GL_GENERATE_MIPMAP = false;
   bool Has_Point_Sprite = false;
   bool Has_Base_Vertex = false;
+  bool Has_Primitive_Instancing = false;
 
   #define VL_EXTENSION(extension) bool Has_##extension = false;
   #include <vlGraphics/GL/GLExtensionList.hpp>
@@ -473,6 +474,7 @@ bool vl::initializeOpenGL()
   Has_GL_GENERATE_MIPMAP = (Has_GL_SGIS_generate_mipmap && Has_Fixed_Function_Pipeline) || Has_GL_Version_1_4 || Has_GLES_Version_1_1;
   Has_Point_Sprite = Has_GL_NV_point_sprite || Has_GL_ARB_point_sprite || Has_GLSL || Has_GLES_Version_1_1;
   Has_Base_Vertex = Has_GL_Version_3_2 || Has_GL_Version_4_0 || Has_GL_ARB_draw_elements_base_vertex;
+  Has_Primitive_Instancing = Has_GL_Version_3_1 || Has_GL_Version_4_0 || Has_GL_ARB_draw_instanced || Has_GL_EXT_draw_instanced;
 
   // - - - Resolve supported enables - - -
 
