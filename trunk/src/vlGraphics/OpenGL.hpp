@@ -107,7 +107,8 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Has_Transform_Feedback;
   VLGRAPHICS_EXPORT extern bool Has_glGenerateMipmaps;
   VLGRAPHICS_EXPORT extern bool Has_GL_GENERATE_MIPMAP;
-  VLGRAPHICS_EXPORT extern bool Has_Point_Sprite;  
+  VLGRAPHICS_EXPORT extern bool Has_Point_Sprite;
+  VLGRAPHICS_EXPORT extern bool Has_Base_Vertex;
 
   #define VL_EXTENSION(extension) VLGRAPHICS_EXPORT extern bool Has_##extension;
   #include <vlGraphics/GL/GLExtensionList.hpp>
