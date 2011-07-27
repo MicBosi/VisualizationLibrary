@@ -84,7 +84,7 @@ void EdgeExtractor::extractEdges(Geometry* geom)
   {
     DrawCall* prim = geom->drawCalls()->at(iprim);
     // iterate triangles (if present)
-    for(TriangleIterator trit = prim->triangleIterator(); !trit.isEnd(); trit.next())
+    for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next())
     {
       size_t a = trit.a();
       size_t b = trit.b();
