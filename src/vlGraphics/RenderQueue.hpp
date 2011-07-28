@@ -54,7 +54,9 @@ namespace vl
       mListMP.reserve(100);
     }
 
-    RenderToken* at(int i) const { return mList[i].get(); }
+    const RenderToken* at(int i) const { return mList[i].get(); }
+
+    RenderToken* at(int i) { return mList[i].get(); }
 
     RenderToken* newToken(bool multipass)
     {

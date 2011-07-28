@@ -53,7 +53,7 @@ namespace vl
     }
 
     //! Applies the glPatchParameter values.
-    void apply() 
+    void apply() const
     {
       VL_CHECK(Has_GL_ARB_tessellation_shader||Has_GL_Version_4_0);
       if (Has_GL_ARB_tessellation_shader)

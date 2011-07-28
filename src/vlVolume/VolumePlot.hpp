@@ -97,7 +97,9 @@ namespace vl
     void setMaxCorner(const fvec3& max_corner) { mMaxCorner = max_corner; }
 
     //! The transform associated to the whole plot
-    Transform* plotTransform() const { return mPlotTransform.get(); }
+    const Transform* plotTransform() const { return mPlotTransform.get(); }
+    //! The transform associated to the whole plot
+    Transform* plotTransform() { return mPlotTransform.get(); }
     //! The transform associated to the whole plot
     void setPlotTransform(Transform* tr) { mPlotTransform = tr; }
 
@@ -112,7 +114,9 @@ namespace vl
     void setLabelFormat(const String& format) { mLabelFormat = format; }
 
     //! The Font to be used for the box labels
-    Font* labelFont() const { return mLabelFont.get(); }
+    const Font* labelFont() const { return mLabelFont.get(); }
+    //! The Font to be used for the box labels
+    Font* labelFont() { return mLabelFont.get(); }
     //! The Font to be used for the box labels
     void setLabelFont(Font* font) { mLabelFont = font; }
 

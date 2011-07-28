@@ -59,7 +59,7 @@ void RayIntersector::intersect()
 //-----------------------------------------------------------------------------
 void RayIntersector::intersect(Actor* act)
 {
-  Geometry* geom = cast<Geometry>(act->lod(0).get());
+  Geometry* geom = cast<Geometry>(act->lod(0));
   if (geom)
     intersectGeometry(act, geom);
 }

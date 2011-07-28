@@ -63,7 +63,7 @@ namespace vl
 
   public:
 
-    TriangleIteratorIndexed(TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, unsigned int prim_restart_idx)
+    TriangleIteratorIndexed(const TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, unsigned int prim_restart_idx)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mCurrentIndex = 0;
@@ -299,7 +299,7 @@ namespace vl
     bool isPrimRestart(int i) const { return mPrimRestartOn && mArray->at(i) == mPrimRestartIndex; }
 
   private:
-    ref<TArray> mArray;
+    const TArray* mArray;
     EPrimitiveType mPrimType;
     int  mA, mB, mC;
     int  mCurrentIndex;
@@ -499,7 +499,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::TriangleIteratorMulti<class TArray>, TriangleIteratorIndexed<TArray>)
 
   public:
-    TriangleIteratorMulti( const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_count_vector, TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
+    TriangleIteratorMulti( const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_count_vector, const TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
     :TriangleIteratorIndexed<TArray>( idx_array, prim_type, 0, prim_restart_on, prim_restart_idx)
     {
       VL_DEBUG_SET_OBJECT_NAME()

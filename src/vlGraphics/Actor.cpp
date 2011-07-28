@@ -94,7 +94,7 @@ bool Actor::boundsDirty() const
 //-----------------------------------------------------------------------------
 void Actor::computeBounds()
 {
-  if ( lod(0).get() == NULL )
+  if ( lod(0) == NULL )
     return;
 
   bool geom_update = lod(0)->boundsDirty() || lod(0)->boundsUpdateTick() != mBoundsUpdateTick;

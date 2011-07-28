@@ -252,7 +252,10 @@ namespace vl
     const std::vector< ref<UIEventListener> >& eventListeners() const { return mEventListeners; }
     
     //! Returns the \p i-th UIEventListener registered to an OpenGLContext.
-    UIEventListener* eventListener(int i) const { return mEventListeners[i].get(); }
+    const UIEventListener* eventListener(int i) const { return mEventListeners[i].get(); }
+    
+    //! Returns the \p i-th UIEventListener registered to an OpenGLContext.
+    UIEventListener* eventListener(int i) { return mEventListeners[i].get(); }
     
     //! Returns the number of UIEventListener registered to an OpenGLContext.
     int eventListenerCount() const { return (int)mEventListeners.size(); }

@@ -246,11 +246,11 @@ namespace vl
         // we can speed this up even more by removing the duplication check
 
         for(RenderStatesMap::const_iterator rs_it = mRenderStates_Final.begin(); rs_it != mRenderStates_Final.end(); ++rs_it)
-          mShader->setRenderState(rs_it->second.mRenderState.get());
+          mShader->setRenderState(rs_it->second.mRenderState.get_writable());
         for(EnablesMap::const_iterator en_it = mEnables_Final.begin(); en_it != mEnables_Final.end(); ++en_it)
           mShader->enable(en_it->second.mEnable);
         for(UniformsMap::const_iterator rs_it = mUniforms_Final.begin(); rs_it != mUniforms_Final.end(); ++rs_it)
-          mShader->setUniform(rs_it->second.mUniform.get());
+          mShader->setUniform(rs_it->second.mUniform.get_writable());
       }
     }
 

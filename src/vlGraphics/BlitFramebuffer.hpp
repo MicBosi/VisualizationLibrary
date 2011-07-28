@@ -124,7 +124,10 @@ namespace vl
     void setReadRenderTarget(RenderTarget* fbo) { mReadRenderTarget = fbo; }
 
     /** The render-target used as source during blitting. */
-    RenderTarget* readRenderTarget() const { return mReadRenderTarget.get(); }
+    const RenderTarget* readRenderTarget() const { return mReadRenderTarget.get(); }
+
+    /** The render-target used as source during blitting. */
+    RenderTarget* readRenderTarget() { return mReadRenderTarget.get(); }
 
     /** The read-buffer of the read-render-target used as pixel source during blitting. */
     void setReadBuffer(EReadDrawBuffer read_buffer) { mReadBuffer = read_buffer; }
@@ -136,7 +139,10 @@ namespace vl
     void setDrawRenderTarget(RenderTarget* fbo) { mDrawRenderTarget = fbo; }
 
     /** The render-target used as destination during blitting. */
-    RenderTarget* drawRenderTarget() const { return mDrawRenderTarget.get(); }
+    const RenderTarget* drawRenderTarget() const { return mDrawRenderTarget.get(); }
+
+    /** The render-target used as destination during blitting. */
+    RenderTarget* drawRenderTarget() { return mDrawRenderTarget.get(); }
 
     void setSrcRect(int x0, int y0, int x1, int y1)
     {

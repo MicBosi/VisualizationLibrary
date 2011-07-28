@@ -290,7 +290,7 @@ void CoreText::renderText(const Actor*, const Camera*, const fvec4& color, const
         pen.x()  = 0;
       }
 
-      const ref<Glyph>& glyph = mFont->glyph( lines[iline][c] );
+      const Glyph* glyph = mFont->glyph( lines[iline][c] );
 
       if (!glyph)
         continue;

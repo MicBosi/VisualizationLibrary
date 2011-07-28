@@ -703,82 +703,112 @@ Image& Image::operator=(const Image& other)
   return *this;
 }
 //-----------------------------------------------------------------------------
+const unsigned char* Image::pixelsXP() const
+{
+  VL_CHECK( dimension() == 4 )
+  if( dimension() != 4 || !pixels())
+    return NULL;
+  else
+    return pixels();
+}
+//-----------------------------------------------------------------------------
 unsigned char* Image::pixelsXP()
 {
+  VL_CHECK( dimension() == 4 )
   if( dimension() != 4 || !pixels())
-  {
-    VL_TRAP()
     return NULL;
-  }
   else
-  {
     return pixels();
-  }
+}
+//-----------------------------------------------------------------------------
+const unsigned char* Image::pixelsXN() const
+{
+  VL_CHECK( dimension() == 4 )
+  if( dimension() != 4 || !pixels())
+    return NULL;
+  else
+    return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 1;
 }
 //-----------------------------------------------------------------------------
 unsigned char* Image::pixelsXN()
 {
+  VL_CHECK( dimension() == 4 )
   if( dimension() != 4 || !pixels())
-  {
-    VL_TRAP()
     return NULL;
-  }
   else
-  {
     return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 1;
-  }
+}
+//-----------------------------------------------------------------------------
+const unsigned char* Image::pixelsYP() const
+{
+  VL_CHECK( dimension() == 4 )
+  if( dimension() != 4 || !pixels())
+    return NULL;
+  else
+    return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 2;
 }
 //-----------------------------------------------------------------------------
 unsigned char* Image::pixelsYP()
 {
+  VL_CHECK( dimension() == 4 )
   if( dimension() != 4 || !pixels())
-  {
-    VL_TRAP()
     return NULL;
-  }
   else
-  {
     return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 2;
-  }
+}
+//-----------------------------------------------------------------------------
+const unsigned char* Image::pixelsYN() const
+{
+  VL_CHECK( dimension() == 4 )
+  if( dimension() != 4 || !pixels())
+    return NULL;
+  else
+    return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 3;
 }
 //-----------------------------------------------------------------------------
 unsigned char* Image::pixelsYN()
 {
+  VL_CHECK( dimension() == 4 )
   if( dimension() != 4 || !pixels())
-  {
-    VL_TRAP()
     return NULL;
-  }
   else
-  {
     return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 3;
-  }
+}
+//-----------------------------------------------------------------------------
+const unsigned char* Image::pixelsZP() const
+{
+  VL_CHECK( dimension() == 4 )
+  if( dimension() != 4 || !pixels())
+    return NULL;
+  else
+    return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 4;
 }
 //-----------------------------------------------------------------------------
 unsigned char* Image::pixelsZP()
 {
+  VL_CHECK( dimension() == 4 )
   if( dimension() != 4 || !pixels())
-  {
-    VL_TRAP()
     return NULL;
-  }
   else
-  {
     return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 4;
-  }
+}
+//-----------------------------------------------------------------------------
+const unsigned char* Image::pixelsZN() const
+{
+  VL_CHECK( dimension() == 4 )
+  if( dimension() != 4 || !pixels())
+    return NULL;
+  else
+    return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 5;
 }
 //-----------------------------------------------------------------------------
 unsigned char* Image::pixelsZN()
 {
-  if ( dimension() != 4 || !pixels())
-  {
-    VL_TRAP()
+  VL_CHECK( dimension() == 4 )
+  if( dimension() != 4 || !pixels())
     return NULL;
-  }
   else
-  {
     return (unsigned char*)pixels() + requiredMemory2D( width(), height(), byteAlignment(), format(), type() ) * 5;
-  }
 }
 //-----------------------------------------------------------------------------
 //! Returns the pixels of the specified Z slice of a 3D image

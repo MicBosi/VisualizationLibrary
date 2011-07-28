@@ -72,7 +72,9 @@ namespace vl
     void setMargin(int margin) { mMargin = margin; }
 
     //! The font to be used to render the text.
-    Font* font() const { return mFont.get(); }
+    const Font* font() const { return mFont.get(); }
+    //! The font to be used to render the text.
+    Font* font() { return mFont.get(); }
     //! The font to be used to render the text.
     void setFont(Font* font) { mFont = font; }
 
@@ -161,7 +163,7 @@ namespace vl
     AABB rawboundingRect(const String& text) const;
 
   protected:
-    ref<Font> mFont;
+    mutable ref<Font> mFont;
     String mText;
     fvec4 mColor;
     fvec4 mBorderColor;

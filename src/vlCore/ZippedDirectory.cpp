@@ -44,7 +44,7 @@ ZippedDirectory::ZippedDirectory(const String& zip_file)
   if (v_file)
     setSourceZipFile(v_file.get());
   else
-    Log::error( Say("ZippedFile() could not locate zip file '%s'.\n") << zip_file );
+    Log::error( Say("ZippedDirectory() could not locate zip file '%s'.\n") << zip_file );
 }
 //-----------------------------------------------------------------------------
 ZippedDirectory::ZippedDirectory(VirtualFile* zip_file)
@@ -67,7 +67,7 @@ bool ZippedDirectory::setPath(const String& name)
     return false;
   }
   std::map< String, ref<ZippedFile> > file_map;
-  for( std::map< String, ref<ZippedFile> >::const_iterator it = mFiles.begin(); it != mFiles.end(); ++it )
+  for( std::map< String, ref<ZippedFile> >::iterator it = mFiles.begin(); it != mFiles.end(); ++it )
   {
     String p = it->first;
     if (path().length())
@@ -82,7 +82,12 @@ bool ZippedDirectory::setPath(const String& name)
   return true;
 }
 //-----------------------------------------------------------------------------
-VirtualFile* ZippedDirectory::sourceZipFile() const
+const VirtualFile* ZippedDirectory::sourceZipFile() const
+{
+  return mSourceZipFile.get();
+}
+//-----------------------------------------------------------------------------
+VirtualFile* ZippedDirectory::sourceZipFile()
 {
   return mSourceZipFile.get();
 }
@@ -245,12 +250,26 @@ int ZippedDirectory::zippedFileCount() const
   return (int)mFiles.size();
 }
 //-----------------------------------------------------------------------------
-ZippedFile* ZippedDirectory::zippedFile(int index) const
+const ZippedFile* ZippedDirectory::zippedFile(int index) const
 {
   std::map< String, ref<ZippedFile> >::const_iterator it = mFiles.begin();
-  for(int i=0; i<index; ++i)
+  for(int i=0; i<index && it != mFiles.end(); ++i)
     ++it;
-  return it->second.get();
+  if ( it == mFiles.end() )
+    return NULL;
+  else
+  	return it->second.get();
+}
+//-----------------------------------------------------------------------------
+ZippedFile* ZippedDirectory::zippedFile(int index)
+{
+  std::map< String, ref<ZippedFile> >::iterator it = mFiles.begin();
+  for(int i=0; i<index && it != mFiles.end(); ++i)
+    ++it;
+  if ( it == mFiles.end() )
+    return NULL;
+  else
+  	return it->second.get();
 }
 //-----------------------------------------------------------------------------
 ref<ZippedFile> ZippedDirectory::zippedFile(const String& name) const
