@@ -222,7 +222,7 @@ namespace vl
   class ref
   {
   public:
-    // we put 'const' here because the copy constructor has to have this signature.
+    // 'const' is required as the copy constructor must have this signature.
     ref(const ref& other)
     {
       mObject = NULL;
@@ -249,7 +249,7 @@ namespace vl
       mObject = NULL;
     }
 
-    // 'const' is required here because operator= must have this signature.
+    // 'const' is required because operator= must have this signature.
     ref& operator=(const ref& other)
     {
       if (other)
@@ -260,7 +260,7 @@ namespace vl
       return *this;
     }
 
-    // 'const' is required here because operator= must have this signature.
+    // 'const' is required because operator= must have this signature.
     ref& operator=(const T* other)
     {
       if (other)
@@ -271,7 +271,7 @@ namespace vl
       return *this;
     }
 
-    // 'const' is required here because operator= must have this signature.
+    // 'const' is required because operator= must have this signature.
     template<class T2> ref& operator=(const ref<T2>& other)
     {
       if (other)
