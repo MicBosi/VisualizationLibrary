@@ -35,6 +35,7 @@
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
+#include <vlCore/Time.hpp>
 #include <vlCore/Quaternion.hpp>
 #include <vlCore/AABB.hpp>
 #include <vlCore/Sphere.hpp>
@@ -242,6 +243,12 @@ void VisualizationLibrary::shutdownCore()
   // keep global settings (used by logger)
   // gSettings = NULL;
 }
+//------------------------------------------------------------------------------
+void vl::abort_vl()
+{
+  vl::Time::sleep(3000);
+  exit(1);
+}  
 //------------------------------------------------------------------------------
 #if defined(VL_PLATFORM_WINDOWS)
   // console includes
