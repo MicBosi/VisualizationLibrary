@@ -43,8 +43,10 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 Transform::~Transform()
 {
+#if 0
   if (!mChildren.empty())
     Log::warning("Transform::~Transform(): a Transform with children is being destroyed! One or more Transforms will be orphaned.\n");
+#endif 
 
   for(size_t i=0; i<mChildren.size(); ++i)
     mChildren[i]->mParent = NULL;
