@@ -49,7 +49,10 @@ Transform::~Transform()
 #endif 
 
   for(size_t i=0; i<mChildren.size(); ++i)
+  {
     mChildren[i]->mParent = NULL;
+    mChildren[i]->setLocalMatrix( mChildren[i]->worldMatrix() );
+  }
 }
 //-----------------------------------------------------------------------------
 void Transform::translate(Real x, Real y, Real z)
