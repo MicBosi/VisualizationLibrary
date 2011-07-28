@@ -43,6 +43,55 @@
 
 using namespace vl;
 
+// mic fixme
+// ---
+// 
+// ---
+bool debug_Wireframe = false;
+int debug_IndentLevel = 0;
+mat4 debug_WorldMatrix;
+std::vector< ref<Actor> > debug_Actors;
+// ---
+void debug_PrintIndent(const String& str)
+{
+  for(int i=0; i<debug_IndentLevel; ++i)
+    Log::print("  ");
+  Log::print(str);
+}
+// ---
+bool debug_IsMatrixSane(const mat4& m)
+{
+  for(int i=0; i<16; i++)
+    if( m.ptr()[i] != m.ptr()[i] )
+      return false;
+  return true;
+}
+// ---
+void debug_PrintMatrix(const fmat4& m)
+{
+  debug_PrintIndent("<matrix>\n");
+  debug_PrintIndent( Say("%n %n %n %n\n") << m.e(0, 0) << m.e(0, 1) << m.e(0, 2) << m.e(0, 3) );
+  debug_PrintIndent( Say("%n %n %n %n\n") << m.e(1, 0) << m.e(1, 1) << m.e(1, 2) << m.e(1, 3) );
+  debug_PrintIndent( Say("%n %n %n %n\n") << m.e(2, 0) << m.e(2, 1) << m.e(2, 2) << m.e(2, 3) );
+  debug_PrintIndent( Say("%n %n %n %n\n") << m.e(3, 0) << m.e(3, 1) << m.e(3, 2) << m.e(3, 3) );
+}
+// ---
+int debug_ExtractGeometry = false;
+// ---
+void debug_PrintMatrices(const Transform* tr)
+{
+  debug_IndentLevel++;
+
+  debug_PrintMatrix( tr->worldMatrix() );
+  for(size_t i=0; i<tr->childrenCount(); ++i)
+  {
+    debug_PrintMatrices( tr->children()[i].get() );
+  }
+
+  debug_IndentLevel--;
+}
+// ---
+
 //-----------------------------------------------------------------------------
 typedef enum
 {
@@ -80,7 +129,7 @@ struct DaeVert
   DaeVert()
   {
     memset(mAttribIndex, 0xFF, sizeof(mAttribIndex));
-    mIndex = -1;
+    mIndex = (size_t)-1;
   }
 
   bool operator<(const DaeVert& other) const
@@ -230,8 +279,8 @@ struct DaeInput: public Object
 
   ref<DaeSource> mSource;
   EInputSemantic mSemantic;
-  domUint mOffset;
-  domUint mSet;
+  size_t mOffset;
+  size_t mSet;
 };
 //-----------------------------------------------------------------------------
 struct DaeMaterial: public Object
@@ -281,7 +330,7 @@ struct DaePrimitive: public Object
 
         // fill vertex info
         for(size_t ichannel=0; ichannel<mChannels.size(); ++ichannel)
-          vert.mAttribIndex[ichannel] = mP[ip]->getValue()[ivert + mChannels[ichannel]->mOffset];
+          vert.mAttribIndex[ichannel] = (size_t)mP[ip]->getValue()[ivert + mChannels[ichannel]->mOffset];
 
         // retrieve/insert the vertex
         std::set<DaeVert>::iterator it = vert_set.find(vert);
@@ -394,6 +443,14 @@ struct DaePrimitive: public Object
         size_t idx = vert.mAttribIndex[ich];
         VL_CHECK(ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex < ptr_end);
         mChannels[ich]->mSource->readData(idx, ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex);
+
+        //// mic fixme: just for debugging
+        //if(mChannels[ich]->mSemantic == IS_NORMAL)
+        //{
+        //  fvec3* n = (fvec3*)(ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex);
+        //  printf("%f %f %f\n", n->x(), n->y(), n->z());
+        //  VL_CHECK( fabs(n->length() - 1.0) <= 0.01);
+        //}
       }
 
       // mic fixme: ifdef-out and remove memset()s prima
@@ -405,7 +462,9 @@ struct DaePrimitive: public Object
       }
     }
 
-    // mGeometry->computeNormals();
+    // mic fixme
+    //if (!mGeometry->normalArray())
+    //  mGeometry->computeNormals();
   }
 };
 //-----------------------------------------------------------------------------
@@ -456,11 +515,12 @@ public:
     // parse material
     mDefaultMaterial = new DaeMaterial;
     mDefaultMaterial->mEffect = new Effect;
-    mDefaultMaterial->mEffect->shader()->enable(EN_DEPTH_TEST);
+    mDefaultMaterial->mEffect->setObjectName("<COLLADA_Default_Material>");
+    mDefaultMaterial->mEffect->shader()->setRenderState( new Light(0) );
     mDefaultMaterial->mEffect->shader()->enable(EN_LIGHTING);
     mDefaultMaterial->mEffect->shader()->gocLightModel()->setTwoSide(true);
-    // mDefaultMaterial->mEffect->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
-    mDefaultMaterial->mEffect->shader()->setRenderState( new Light(0) );
+    mDefaultMaterial->mEffect->shader()->gocMaterial()->setFlatColor( vl::fuchsia );
+    /*if (debug_Wireframe) */mDefaultMaterial->mEffect->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
   }
 
   void reset()
@@ -487,8 +547,8 @@ public:
           ref<DaeInput> dae_input = new DaeInput;
           dae_input->mSemantic = vertex_inputs[ivert]->mSemantic;
           dae_input->mSource   = vertex_inputs[ivert]->mSource;
-          dae_input->mOffset   = input->getOffset();
-          dae_input->mSet      = input->getSet();
+          dae_input->mOffset   = (size_t)input->getOffset();
+          dae_input->mSet      = (size_t)input->getSet();
           dae_primitive->mChannels.push_back(dae_input);
           // mic fixme: check error
           VL_CHECK(dae_input->mSource);
@@ -502,8 +562,8 @@ public:
           ref<DaeInput> dae_input = new DaeInput;
           dae_input->mSemantic = getSemantic(input->getSemantic());
           dae_input->mSource   = getSource( input->getSource().getElement() );
-          dae_input->mOffset   = input->getOffset();
-          dae_input->mSet      = input->getSet();
+          dae_input->mOffset   = (size_t)input->getOffset();
+          dae_input->mSet      = (size_t)input->getSet();
           dae_primitive->mChannels.push_back( dae_input );
           // mic fixme: check error
           VL_CHECK(dae_input->mSource);
@@ -578,7 +638,7 @@ public:
       ref<DaePrimitive> dae_primitive = new DaePrimitive;
       dae_mesh->mPrimitives.push_back(dae_primitive);
       dae_primitive->mType = DaePrimitive::TRIANGLES;
-      dae_primitive->mCount = triangles->getCount();
+      dae_primitive->mCount = (size_t)triangles->getCount();
 
       // --- input ---
       domInputLocalOffset_Array input_arr = triangles->getInput_array();
@@ -603,7 +663,7 @@ public:
       ref<DaePrimitive> dae_primitive = new DaePrimitive;
       dae_mesh->mPrimitives.push_back(dae_primitive);
       dae_primitive->mType = DaePrimitive::TRIFANS;
-      dae_primitive->mCount = trifan->getCount();
+      dae_primitive->mCount = (size_t)trifan->getCount();
 
       // --- input ---
       domInputLocalOffset_Array input_arr = trifan->getInput_array();
@@ -629,7 +689,7 @@ public:
       ref<DaePrimitive> dae_primitive = new DaePrimitive;
       dae_mesh->mPrimitives.push_back(dae_primitive);
       dae_primitive->mType = DaePrimitive::TRISTRIPS;
-      dae_primitive->mCount = tristrip->getCount();
+      dae_primitive->mCount = (size_t)tristrip->getCount();
 
       // --- input ---
       domInputLocalOffset_Array input_arr = tristrip->getInput_array();
@@ -655,7 +715,7 @@ public:
       ref<DaePrimitive> dae_primitive = new DaePrimitive;
       dae_mesh->mPrimitives.push_back(dae_primitive);
       dae_primitive->mType = DaePrimitive::POLYGONS;
-      dae_primitive->mCount = polygon->getCount();
+      dae_primitive->mCount = (size_t)polygon->getCount();
 
       // --- input ---
       domInputLocalOffset_Array input_arr = polygon->getInput_array();
@@ -681,7 +741,7 @@ public:
       ref<DaePrimitive> dae_primitive = new DaePrimitive;
       dae_mesh->mPrimitives.push_back(dae_primitive);
       dae_primitive->mType = DaePrimitive::POLYGONS;
-      dae_primitive->mCount = polylist->getVcount()->getValue().getCount();
+      dae_primitive->mCount = (size_t)polylist->getVcount()->getValue().getCount();
 
       // --- input ---
       domInputLocalOffset_Array input_arr = polylist->getInput_array();
@@ -694,7 +754,7 @@ public:
         domPRef p = static_cast<domP*>(domP::create(mDAE).cast());
         VL_CHECK(p->typeID() == domP::ID());
         dae_primitive->mP.push_back( p );
-        size_t vcount = polylist->getVcount()->getValue()[ivc];
+        size_t vcount = (size_t)polylist->getVcount()->getValue()[ivc];
         p->getValue().setCount(vcount * dae_primitive->mIndexStride);
         for(size_t i=0; i<p->getValue().getCount(); ++i)
           p->getValue().set(i, polylist->getP()->getValue()[ip++]);
@@ -716,7 +776,7 @@ public:
       ref<DaePrimitive> dae_primitive = new DaePrimitive;
       dae_mesh->mPrimitives.push_back(dae_primitive);
       dae_primitive->mType = DaePrimitive::LINE_STRIP;
-      dae_primitive->mCount = linestrip->getCount();
+      dae_primitive->mCount = (size_t)linestrip->getCount();
 
       // --- input ---
       domInputLocalOffset_Array input_arr = linestrip->getInput_array();
@@ -742,7 +802,7 @@ public:
       ref<DaePrimitive> dae_primitive = new DaePrimitive;
       dae_mesh->mPrimitives.push_back(dae_primitive);
       dae_primitive->mType = DaePrimitive::LINES;
-      dae_primitive->mCount = line->getCount();
+      dae_primitive->mCount = (size_t)line->getCount();
 
       // --- input ---
       domInputLocalOffset_Array input_arr = line->getInput_array();
@@ -803,7 +863,6 @@ public:
   {
     if (!name)
     {
-      // mic fixme: warning
       return mDefaultMaterial.get();
     }
 
@@ -822,7 +881,7 @@ public:
       material->mEffect->shader()->enable(EN_DEPTH_TEST);
       material->mEffect->shader()->enable(EN_LIGHTING);
       material->mEffect->shader()->gocLightModel()->setTwoSide(true);
-      // material->mEffect->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
+      if (debug_Wireframe) material->mEffect->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
       material->mEffect->shader()->setRenderState( new Light(0) );
 
       // insert new material
@@ -863,42 +922,45 @@ public:
 
       // mic fixme: support skew
 
-      // note: transforms are accumulated in the order in which they are specified
-      for(size_t transf=0; transf<node->getChildren().getCount(); ++transf)
+      // note: transforms are post-multiplied in the order in which they are specified (as if they were sub-nodes)
+      for(size_t ichild=0; ichild<node->getChildren().getCount(); ++ichild)
       {
-        daeElement* tranf_el = node->getChildren()[transf];
+        daeElement* child = node->getChildren()[ichild];
       
-        if ( 0 == strcmp(tranf_el->getElementName(), "matrix") )
+        if ( 0 == strcmp(child->getElementName(), "matrix") )
         {
-          domMatrix* matrix = static_cast<domMatrix*>(tranf_el);
-          fmat4 local_matrix;
+          domMatrix* matrix = static_cast<domMatrix*>(child);
+          mat4 local_matrix;
           for(int i=0; i<16; ++i)
-            local_matrix.ptr()[i] = (float)matrix->getValue().get(i);
+            local_matrix.ptr()[i] = (Real)matrix->getValue().get(i);
           local_matrix.transpose();
-          this_node->mTransform->preMultiply(local_matrix);
+          this_node->mTransform->postMultiply(local_matrix);
         }
         else
-        if ( 0 == strcmp(tranf_el->getElementName(), "translate") )
+        if ( 0 == strcmp(child->getElementName(), "translate") )
         {
-          domTranslate* tr = static_cast<domTranslate*>(tranf_el);
-          this_node->mTransform->translate((Real)tr->getValue()[0], (Real)tr->getValue()[1], (Real)tr->getValue()[2]);
+          domTranslate* tr = static_cast<domTranslate*>(child);
+          mat4 m = mat4::getTranslation((Real)tr->getValue()[0], (Real)tr->getValue()[1], (Real)tr->getValue()[2]);
+          this_node->mTransform->postMultiply( m );
         }
         else
-        if ( 0 == strcmp(tranf_el->getElementName(), "rotate") )
+        if ( 0 == strcmp(child->getElementName(), "rotate") )
         {
-          domRotate* rot = static_cast<domRotate*>(tranf_el);
-          this_node->mTransform->rotate((Real)rot->getValue()[3], (Real)rot->getValue()[0], (Real)rot->getValue()[1], (Real)rot->getValue()[2]);
+          domRotate* rot = static_cast<domRotate*>(child);
+          mat4 m = mat4::getRotation((Real)rot->getValue()[3], (Real)rot->getValue()[0], (Real)rot->getValue()[1], (Real)rot->getValue()[2]);
+          this_node->mTransform->postMultiply( m );
         }
         else
-        if ( 0 == strcmp(tranf_el->getElementName(), "scale") )
+        if ( 0 == strcmp(child->getElementName(), "scale") )
         {
-          domScale* sc = static_cast<domScale*>(tranf_el);
-          this_node->mTransform->scale((Real)sc->getValue()[0], (Real)sc->getValue()[1], (Real)sc->getValue()[2]);
+          domScale* sc = static_cast<domScale*>(child);
+          mat4 m = mat4::getScaling((Real)sc->getValue()[0], (Real)sc->getValue()[1], (Real)sc->getValue()[2]);
+          this_node->mTransform->postMultiply( m );
         }
         else
-        if ( 0 == strcmp(tranf_el->getElementName(), "lookat") )
+        if ( 0 == strcmp(child->getElementName(), "lookat") )
         {
-          domLookat* lookat = static_cast<domLookat*>(tranf_el);
+          domLookat* lookat = static_cast<domLookat*>(child);
           vec3 eye ((Real)lookat->getValue()[0], (Real)lookat->getValue()[1], (Real)lookat->getValue()[2]);
           vec3 look((Real)lookat->getValue()[3], (Real)lookat->getValue()[4], (Real)lookat->getValue()[5]);
           vec3 up  ((Real)lookat->getValue()[6], (Real)lookat->getValue()[7], (Real)lookat->getValue()[8]);
@@ -924,7 +986,7 @@ public:
     }
   }
 
-  bool loadCOLLADA(VirtualFile* file)
+  bool load(VirtualFile* file)
   {
     reset();
 
@@ -933,7 +995,7 @@ public:
     if (buffer.empty())
       return false;
     buffer.push_back(0);
-    
+
     daeElement* root = mDAE.openFromMemory(file->path().toStdString(), (char*)&buffer[0]);
     // mic fixme: issue warning
     if (!root)
@@ -950,7 +1012,6 @@ public:
     for(size_t i=0; i<children.getCount(); ++i)
       parseNode(children[i], mScene.get());
 
-    mResources->resources().push_back( mScene->mTransform );
     mScene->mTransform->computeWorldMatrixRecursive();
 
     // return the Actors
@@ -958,27 +1019,49 @@ public:
     {
       for(size_t i=0; i<mNodes[inode]->mActors.size(); ++i)
       {
-        mResources->resources().push_back( mNodes[inode]->mActors[i].get() );
+        Actor* actor = mNodes[inode]->mActors[i].get();
 
-        // mic fixme: ifdef-out
-        #if 1
-          printf("---\n");
-          mat4 m = mNodes[inode]->mActors[i]->transform()->worldMatrix();
-          // m = mat4::getTranslation(10,20,30);
-          printf("%f %f %f %f\n", m.e(0,0), m.e(0,1), m.e(0,2), m.e(0,3) );
-          printf("%f %f %f %f\n", m.e(1,0), m.e(1,1), m.e(1,2), m.e(1,3) );
-          printf("%f %f %f %f\n", m.e(2,0), m.e(2,1), m.e(2,2), m.e(2,3) );
-          printf("%f %f %f %f\n", m.e(3,0), m.e(3,1), m.e(3,2), m.e(3,3) );        
-        #endif
+        // add actor to the resources
+        mResources->resources().push_back( actor );
+
+        // *** flatten transform hierarchy ***
+        if ( loadOptions()->flattenTransformHierarchy() )
+          actor->transform()->removeFromParent();
+
+        // *** check for transforms that require normal rescaling ***
+        mat4 nmatrix = actor->transform()->worldMatrix().as3x3().invert().transpose();
+        Real len_x = nmatrix.getX().length();
+        Real len_y = nmatrix.getY().length();
+        Real len_z = nmatrix.getZ().length();
+        if ( fabs(len_x - 1) > 0.1 || fabs(len_y - 1) > 0.1 || fabs(len_z - 1) > 0.1 )
+        {
+          if ( actor->effect()->shader()->isEnabled(vl::EN_LIGHTING) )
+            actor->effect()->shader()->enable(vl::EN_NORMALIZE);
+            // actor->effect()->shader()->enable(vl::EN_RESCALE_NORMAL);
+        }
       }
     }
+
+    if ( loadOptions()->flattenTransformHierarchy() )
+      mScene->mTransform->eraseAllChildrenRecursive();
+    else
+      mResources->resources().push_back( mScene->mTransform );
 
     return true;
   }
 
-  ResourceDatabase* resources() { return mResources.get(); }
-  
   const ResourceDatabase* resources() const { return mResources.get(); }
+
+  ResourceDatabase* resources() { return mResources.get(); }
+
+  // --- options ---
+
+  void setLoadOptions(const LoadWriterCOLLADA::LoadOptions* options) { mLoadOptions = options; }
+
+  const LoadWriterCOLLADA::LoadOptions* loadOptions() const { return mLoadOptions; }
+
+protected:
+  const LoadWriterCOLLADA::LoadOptions* mLoadOptions;
 
 protected:
   ref<ResourceDatabase> mResources;
@@ -991,12 +1074,12 @@ protected:
   DAE mDAE;
 };
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadCOLLADA(const String& path)
+ref<ResourceDatabase> LoadWriterCOLLADA::load(const String& path, const LoadOptions* options)
 {
   ref<VirtualFile> file = defFileSystem()->locateFile(path);
 
   if (file)
-    return loadCOLLADA( file.get() );
+    return load( file.get(), options );
   else
   {
     Log::error( Say("Could not locate '%s'.\n") << path );
@@ -1004,10 +1087,11 @@ ref<ResourceDatabase> vl::loadCOLLADA(const String& path)
   }
 }
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadCOLLADA(VirtualFile* file)
+ref<ResourceDatabase> LoadWriterCOLLADA::load(VirtualFile* file, const LoadOptions* options)
 {
   COLLADALoader loader;
-  loader.loadCOLLADA(file);
+  loader.setLoadOptions(options);
+  loader.load(file);
   return loader.resources();
 }
 //-----------------------------------------------------------------------------
