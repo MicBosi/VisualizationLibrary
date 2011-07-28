@@ -132,17 +132,17 @@ namespace vl
     }
 
     //! Increments the reference count of an object.
-    void incReference()
+    void incReference() const
     {
       // Lock mutex
       if (refCountMutex())
-        refCountMutex()->lock();
+        const_cast<IMutex*>(refCountMutex())->lock();
 
       ++mReferenceCount;
       
       // Unlock mutex
       if(refCountMutex())
-        refCountMutex()->unlock();
+        const_cast<IMutex*>(refCountMutex())->unlock();
     }
 
     //! Decrements the reference count of an object and deletes it if both automaticDelete() is \p true the count reaches 0.
@@ -194,7 +194,7 @@ namespace vl
     std::string mObjectName;
 
     IMutex* mRefCountMutex;
-    int mReferenceCount;
+    mutable int mReferenceCount;
     bool mAutomaticDelete;
 
   // debugging facilities
@@ -216,79 +216,89 @@ namespace vl
   /**
    * The ref<> class is used to reference-count an Object.
    * When the last ref<> that points to an Object is deallocated also the pointed Object is deallocated.
-  */
+   * @note IMPORTANT: assigning to a ref<> 'washes aways' the constness of an object.
+   */
   template<class T>
   class ref
   {
   public:
-    ref(T* object=NULL)
-    {
-      mObject = object;
-      if (mObject)
-        mObject->incReference();
-    }
+    // we put 'const' here because the copy constructor has to have this signature.
     ref(const ref& other)
     {
       mObject = NULL;
       *this = other;
     }
+
+    ref(const T* object=NULL)
+    {
+      mObject = const_cast<T*>(object);
+      if (mObject)
+        mObject->incReference();
+    }
+
     template<class T2> ref(const ref<T2>& other)
     {
       mObject = NULL;
       *this = other;
     }
+
     ~ref() 
     {
       if (mObject)
         mObject->decReference();
       mObject = NULL;
     }
+
+    // 'const' is required here because operator= must have this signature.
     ref& operator=(const ref& other)
     {
       if (other)
         other->incReference();
       if (mObject)
         mObject->decReference();
-      mObject = other.get();
+      mObject = const_cast<T*>(other.get());
       return *this;
     }
+
+    // 'const' is required here because operator= must have this signature.
+    ref& operator=(const T* other)
+    {
+      if (other)
+        other->incReference();
+      if (mObject)
+        mObject->decReference();
+      mObject = const_cast<T*>(other);
+      return *this;
+    }
+
+    // 'const' is required here because operator= must have this signature.
     template<class T2> ref& operator=(const ref<T2>& other)
     {
       if (other)
         other->incReference();
       if (mObject)
         mObject->decReference();
-      mObject = other.get();
+      mObject = const_cast<T2*>(other.get());
       return *this;
     }
-    ref& operator=(T* other)
-    {
-      if (other)
-        other->incReference();
-      if (mObject)
-        mObject->decReference();
-      mObject = other;
-      return *this;
-    }
-    template<class T2> ref& operator=(T2* other)
-    {
-      if (other)
-        other->incReference();
-      if (mObject)
-        mObject->decReference();
-      mObject = other;
-      return *this;
-    }
+
     void swap(ref& other)
     {
-      T* tmp = other.get();
+      T* tmp = other.mObject;
       other = mObject; 
       mObject = tmp;
     }
-    T* get() const { return mObject; }
-    T* operator->() const { VL_CHECK(mObject); return mObject; }
-    T& operator*() const { VL_CHECK(mObject); return *mObject; }
-    bool operator<(const ref& other) const { return mObject < other.get(); }
+
+    const T* get() const { return mObject; }
+    const T* operator->() const { VL_CHECK(mObject); return mObject; }
+    const T& operator*() const { VL_CHECK(mObject); return *mObject; }
+
+    T* get() { return mObject; }
+    T* operator->() { VL_CHECK(mObject); return mObject; }
+    T& operator*() { VL_CHECK(mObject); return *mObject; }
+
+    bool operator<(const ref& other) const { return mObject < other.mObject; }
+
     operator bool() const { return mObject != NULL; }
 
   protected:
