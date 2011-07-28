@@ -91,6 +91,37 @@ void debug_PrintMatrices(const Transform* tr)
   debug_IndentLevel--;
 }
 // ---
+void debug_PrintGometry(Actor* actor)
+{
+  Geometry* geom = actor->lod(0)->as<Geometry>();
+
+  debug_PrintIndent( "[VERTICES]\n" );
+  for(size_t i=0; i<geom->vertexArray()->size(); ++i)
+  {
+    vec3 v = geom->vertexArray()->getAsVec3(i);
+    debug_PrintIndent( Say("    %n %n %n \n") << v.x() << v.y() << v.z() );
+  }
+  debug_PrintIndent( "[/VERTICES]\n" );
+
+  debug_PrintIndent( "[NORMALS]\n" );
+  for(size_t i=0; i<geom->normalArray()->size(); ++i)
+  {
+    vec3 v = geom->normalArray()->getAsVec3(i);
+    debug_PrintIndent( Say("    %n %n %n \n") << v.x() << v.y() << v.z() );
+  }
+  debug_PrintIndent( "[/NORMALS]\n" );
+
+  debug_PrintIndent( "[TRIANGLES]\n" );
+  for(size_t i=0; i<geom->drawCalls()->size(); ++i)
+  {
+    DrawCall* dc = geom->drawCalls()->at(i);
+    TriangleIterator it = dc->triangleIterator();
+    for( ; it.hasNext(); it.next() )
+      debug_PrintIndent( Say("  %n %n %n \n") << it.a() << it.b() << it.c() );
+  }
+  debug_PrintIndent( "[/TRIANGLES]\n" );
+}
+// ---
 
 //-----------------------------------------------------------------------------
 typedef enum
@@ -444,13 +475,15 @@ struct DaePrimitive: public Object
         VL_CHECK(ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex < ptr_end);
         mChannels[ich]->mSource->readData(idx, ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex);
 
-        //// mic fixme: just for debugging
-        //if(mChannels[ich]->mSemantic == IS_NORMAL)
-        //{
-        //  fvec3* n = (fvec3*)(ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex);
-        //  printf("%f %f %f\n", n->x(), n->y(), n->z());
-        //  VL_CHECK( fabs(n->length() - 1.0) <= 0.01);
-        //}
+        // mic fixme: just for debugging
+        #if 0
+        if(mChannels[ich]->mSemantic == IS_NORMAL)
+        {
+          fvec3* n = (fvec3*)(ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex);
+          printf("%f %f %f\n", n->x(), n->y(), n->z());
+          VL_CHECK( fabs(n->length() - 1.0) <= 0.01);
+        }
+        #endif 
       }
 
       // mic fixme: ifdef-out and remove memset()s prima
@@ -518,7 +551,6 @@ public:
     mDefaultMaterial->mEffect->setObjectName("<COLLADA_Default_Material>");
     mDefaultMaterial->mEffect->shader()->setRenderState( new Light(0) );
     mDefaultMaterial->mEffect->shader()->enable(EN_LIGHTING);
-    mDefaultMaterial->mEffect->shader()->gocLightModel()->setTwoSide(true);
     mDefaultMaterial->mEffect->shader()->gocMaterial()->setFlatColor( vl::fuchsia );
     /*if (debug_Wireframe) */mDefaultMaterial->mEffect->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
   }
@@ -880,9 +912,9 @@ public:
       material->mEffect = new Effect;
       material->mEffect->shader()->enable(EN_DEPTH_TEST);
       material->mEffect->shader()->enable(EN_LIGHTING);
-      material->mEffect->shader()->gocLightModel()->setTwoSide(true);
-      if (debug_Wireframe) material->mEffect->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
       material->mEffect->shader()->setRenderState( new Light(0) );
+      // material->mEffect->shader()->gocLightModel()->setTwoSide(true);
+      //if (debug_Wireframe) material->mEffect->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
 
       // insert new material
       mMaterials[name] = material;
@@ -1035,6 +1067,7 @@ public:
         Real len_z = nmatrix.getZ().length();
         if ( fabs(len_x - 1) > 0.1 || fabs(len_y - 1) > 0.1 || fabs(len_z - 1) > 0.1 )
         {
+          // Log::warning("Detected mesh using scaling transform: enabled normal renormalization.\n");
           if ( actor->effect()->shader()->isEnabled(vl::EN_LIGHTING) )
             actor->effect()->shader()->enable(vl::EN_NORMALIZE);
             // actor->effect()->shader()->enable(vl::EN_RESCALE_NORMAL);
