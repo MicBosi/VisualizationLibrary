@@ -115,10 +115,9 @@ namespace vl
       mInputFile = file;
     }
 
-    VirtualFile* inputFile() const
-    {
-      return mInputFile.get();
-    }
+    VirtualFile* inputFile() { return mInputFile.get(); }
+
+    const VirtualFile* inputFile() const { return mInputFile.get(); }
 
     void ungetToken(const Element_Type& token)
     {

@@ -57,7 +57,10 @@ namespace vl
     void setData(ArrayAbstract* data) { mData = data; }
     
     //! The GPU buffer that stores the data
-    ArrayAbstract* data() const { return mData.get(); }
+    const ArrayAbstract* data() const { return mData.get(); }
+    
+    //! The GPU buffer that stores the data
+    ArrayAbstract* data() { return mData.get(); }
     
     //! The 'index' parameter of the vertex attribute as used with glVertexAttribPointer() and glEnableVertexAttribArray().
     //! \sa

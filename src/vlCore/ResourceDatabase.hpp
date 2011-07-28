@@ -114,7 +114,7 @@ namespace vl
       size_t count=0;
       for(unsigned i=0; i<mResources.size(); ++i)
       {
-        ref<T> r = cast<T>(mResources[i].get());
+        const T* r = cast_const<T>(mResources[i].get());
         if (r)
           ++count;
       }
@@ -123,16 +123,35 @@ namespace vl
 
     //! Don't use inside loops! Returns the j-th object of the specified type (which is different from \p resources()[j]!).
     template<class T>
-    T* get(int j) const
+    const T* get(int j) const
     {
       int count=0;
       for(unsigned i=0; i<mResources.size(); ++i)
       {
-        ref<T> r = cast<T>(mResources[i].get());
+        const T* r = cast_const<T>(mResources[i].get());
         if (r)
         {
           if (count == j)
-            return r.get();
+            return r;
+          else
+            ++count;
+        }
+      }
+      return NULL;
+    }
+
+    //! Don't use inside loops! Returns the j-th object of the specified type (which is different from \p resources()[j]!).
+    template<class T>
+    T* get(int j)
+    {
+      int count=0;
+      for(unsigned i=0; i<mResources.size(); ++i)
+      {
+        T* r = cast<T>(mResources[i].get());
+        if (r)
+        {
+          if (count == j)
+            return r;
           else
             ++count;
         }

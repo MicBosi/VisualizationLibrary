@@ -152,10 +152,10 @@ void EdgeRenderer::renderSolids(Camera* camera, Real frame_clock)
 
   for( std::map< ref<Actor>, ref<WFInfo> >::iterator it = mVisibleActors.begin(); it != mVisibleActors.end(); ++it)
   {
-    Actor* actor = it->first.get();
+    ref<Actor> actor = it->first;
     VL_CHECK(actor);
     VL_CHECK(actor->lod(0));
-    const WFInfo* wfinfo = it->second.get();
+    WFInfo* wfinfo = it->second.get();
     VL_CHECK(wfinfo);
 
     // --------------- transform ---------------
@@ -185,8 +185,8 @@ void EdgeRenderer::renderSolids(Camera* camera, Real frame_clock)
     }
 
     wfinfo->mEdgeCallback->setShowCreases(showCreases());
-    wfinfo->mEdgeCallback->onActorRenderStarted( actor, frame_clock, camera, wfinfo->mGeometry.get(), NULL, 0 );
-    actor->lod(0)->render( actor, NULL, camera, renderTarget()->openglContext() );
+    wfinfo->mEdgeCallback->onActorRenderStarted( actor.get(), frame_clock, camera, wfinfo->mGeometry.get(), NULL, 0 );
+    actor->lod(0)->render( actor.get(), NULL, camera, renderTarget()->openglContext() );
   }
 }
 //-----------------------------------------------------------------------------
@@ -200,8 +200,8 @@ void EdgeRenderer::renderLines(Camera* camera)
 
   for( std::map< ref<Actor>, ref<WFInfo> >::iterator it = mVisibleActors.begin(); it != mVisibleActors.end(); ++it)
   {
-    Actor* actor = it->first.get();
-    const WFInfo* wfinfo = it->second.get();
+    ref<Actor> actor = it->first;
+    WFInfo* wfinfo = it->second.get();
 
     // --------------- transform ---------------
 
@@ -230,7 +230,7 @@ void EdgeRenderer::renderLines(Camera* camera)
     }
 
     // note: no rendering callbacks here
-    wfinfo->mGeometry->render( actor, NULL, camera, renderTarget()->openglContext() );
+    wfinfo->mGeometry->render( actor.get(), NULL, camera, renderTarget()->openglContext() );
   }
 }
 //-----------------------------------------------------------------------------

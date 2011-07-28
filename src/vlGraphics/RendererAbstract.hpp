@@ -88,7 +88,7 @@ namespace vl
     /** Dispatches the onRendererStarted() event to the registered RenderEventCallback objects. */
     void dispatchOnRendererStarted()
     {
-      const Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
+      Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
       for(int i=0; i<cb.size(); ++i)
       {
         if ( cb[i]->isEnabled() && cb[i]->onRendererStarted(this) && cb[i]->removeAfterCall() )
@@ -102,7 +102,7 @@ namespace vl
     /** Dispatches the onRendererFinished() event to the registered RenderEventCallback objects. */
     void dispatchOnRendererFinished()
     {
-      const Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
+      Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
       for(int i=0; i<cb.size(); ++i)
       {
         if ( cb[i]->isEnabled() && cb[i]->onRendererFinished(this) && cb[i]->removeAfterCall() )

@@ -89,7 +89,8 @@ namespace vl
     // offset of the compressed data in the source zip file
     unsigned int zippedFileOffset() const { return mZippedFileOffset; }
     // source stream used to seek and read the compressed zip data
-    VirtualFile* sourceZipFile() const { return mSourceZipFile.get(); }
+    const VirtualFile* sourceZipFile() const { return mSourceZipFile.get(); }
+    VirtualFile* sourceZipFile() { return mSourceZipFile.get(); }
     void setSourceZipFile(VirtualFile* file) { mSourceZipFile = file; }
 
   public:
@@ -141,7 +142,9 @@ namespace vl
     ZippedFile();
     ~ZippedFile();
 
-    ZippedFileInfo* zippedFileInfo() const;
+    const ZippedFileInfo* zippedFileInfo() const;
+
+    ZippedFileInfo* zippedFileInfo();
 
     void setZippedFileInfo(ZippedFileInfo* info);
 

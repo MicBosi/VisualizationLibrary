@@ -400,7 +400,7 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
   }
 }
 //-----------------------------------------------------------------------------
-Texture::Texture(Image* image, ETextureFormat format, bool mipmaps , bool border)
+Texture::Texture(const Image* image, ETextureFormat format, bool mipmaps , bool border)
 {
   VL_DEBUG_SET_OBJECT_NAME()
 
@@ -825,7 +825,7 @@ bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_
   }
 }
 //-----------------------------------------------------------------------------
-bool Texture::setMipLevel(int mip_level, Image* img, bool gen_mipmaps)
+bool Texture::setMipLevel(int mip_level, const Image* img, bool gen_mipmaps)
 {
   VL_CHECK_OGL()
 
@@ -1092,16 +1092,17 @@ bool Texture::createTexture()
   ETextureDimension tex_dimension = setupParams()->dimension();
   bool gen_mipmaps = setupParams()->genMipmaps();
   bool border = setupParams()->border();
-  ref<Image> img = setupParams()->image();
-  if ( !img && !setupParams()->imagePath().empty() )
+  if ( !setupParams()->image() && !setupParams()->imagePath().empty() ) 
   {
-    img = loadImage( setupParams()->imagePath() );
-    if (!img)
+    setupParams()->setImage( loadImage( setupParams()->imagePath() ).get() );
+    if (!setupParams()->image())
     {
       vl::Log::error( Say("Texture::createTexture(): could not load image file '%s'\n") << setupParams()->imagePath() );
       return false;
     }
   }
+
+  ref<Image> img = const_cast<Image*>(setupParams()->image());
 
   int w = setupParams()->width();
   int h = setupParams()->height();
@@ -1128,7 +1129,7 @@ bool Texture::createTexture()
   if (img)
   {
     // compile mipmapping levels
-    std::vector<vl::Image*> mipmaps;
+    std::vector<const vl::Image*> mipmaps;
     mipmaps.push_back(img.get());
     for(int i=0; i<(int)img->mipmaps().size(); ++i)
       mipmaps.push_back( img->mipmaps()[i].get() );
@@ -1136,7 +1137,9 @@ bool Texture::createTexture()
     bool ok = false;
 
     if (!gen_mipmaps) // no mipmaps
+    {
       ok = setMipLevel(0, img.get(), false);
+    }
     else 
     {
       if (mipmaps.size() > 1) // explicit mipmaps

@@ -83,7 +83,8 @@ namespace vl
     int margin() const { return mMargin; }
     void setMargin(int margin) { mMargin = margin; }
 
-    Font* font() const { return mFont.get(); }
+    const Font* font() const { return mFont.get(); }
+    Font* font() { return mFont.get(); }
     void setFont(Font* font) { mFont = font; }
 
     const fmat4 matrix() const { return mMatrix; }
@@ -144,7 +145,7 @@ namespace vl
     AABB rawboundingRect(const String& text) const;
 
   protected:
-    ref<Font> mFont;
+    mutable ref<Font> mFont;
     String mText;
     fvec4 mColor;
     fvec4 mBorderColor;

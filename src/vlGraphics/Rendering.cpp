@@ -303,7 +303,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
     // effect override
     
-    for( std::map< unsigned int, ref<Effect> >::const_iterator eom_it = mEffectOverrideMask.begin(); 
+    for( std::map< unsigned int, ref<Effect> >::iterator eom_it = mEffectOverrideMask.begin(); 
          eom_it != mEffectOverrideMask.end(); 
          ++eom_it )
     {
@@ -344,7 +344,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
       tok->mNextPass = NULL;
       // track the current state
       tok->mActor = actor;
-      tok->mRenderable = actor->lod(geometry_lod).get();
+      tok->mRenderable = actor->lod(geometry_lod);
       // set the shader used (multipassing shader or effect->shader())
       tok->mShader = shader;
 
@@ -379,8 +379,9 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
         // lazy texture creation
         if ( shader->gocRenderStateSet() )
         {
-          const std::vector< ref<RenderState> >& states = shader->gocRenderStateSet()->renderStates();
-          for( size_t i=0; i<states.size(); ++i )
+          size_t count = shader->gocRenderStateSet()->renderStatesCount();
+          ref<RenderState>* states = shader->gocRenderStateSet()->renderStates();
+          for( size_t i=0; i<count; ++i )
           {
             if (states[i]->type() >= RS_TextureSampler0 && states[i]->type() < RS_TextureSampler0+VL_MAX_TEXTURE_UNITS)
             {

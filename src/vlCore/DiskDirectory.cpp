@@ -69,17 +69,17 @@ ref<DiskDirectory> DiskDirectory::diskSubDir(const String& subdir_name) const
     Log::error( "VirtualDirectory::path() must not be empty!\n" );
     return NULL;
   }
+
   std::vector<String> dir_list;
   String p = translatePath(subdir_name).right(-path().length()-1);
-  ref<DiskDirectory> dir = const_cast<DiskDirectory*>(this);
-  dir->listSubDirs(dir_list);
+  this->listSubDirs(dir_list);
   String cur_p = path();
   for(int i=0; i<(int)dir_list.size(); ++i)
   {
     dir_list[i] = dir_list[i].right(-cur_p.length()-1);
     if (p.startsWith(dir_list[i]+'/') || p == dir_list[i])
     {
-      dir = new DiskDirectory(cur_p + '/' + dir_list[i]);
+      ref<DiskDirectory> dir = new DiskDirectory(cur_p + '/' + dir_list[i]);
       if (!dir)
         return NULL;
       cur_p = cur_p + '/' + dir_list[i];

@@ -236,7 +236,9 @@ ZippedFile::~ZippedFile()
   delete mZStream; mZStream = NULL;
 }
 //-----------------------------------------------------------------------------
-ZippedFileInfo* ZippedFile::zippedFileInfo() const { return mZippedFileInfo.get(); }
+const ZippedFileInfo* ZippedFile::zippedFileInfo() const { return mZippedFileInfo.get(); }
+//-----------------------------------------------------------------------------
+ZippedFileInfo* ZippedFile::zippedFileInfo() { return mZippedFileInfo.get(); }
 //-----------------------------------------------------------------------------
 void ZippedFile::setZippedFileInfo(ZippedFileInfo* info) { mZippedFileInfo = info; }
 //-----------------------------------------------------------------------------
