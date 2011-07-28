@@ -533,7 +533,7 @@ void Geometry::transform(const mat4& m, bool normalize)
 
   if (normalArray())
   {
-    mat4 nmat = m.as3x3().getInverse().transpose();
+    mat4 nmat = m.as3x3().invert().transpose();
     normalArray()->transform(nmat);
     if (normalize)
       normalArray()->normalize();
