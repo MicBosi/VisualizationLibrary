@@ -163,7 +163,7 @@ ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
 //-----------------------------------------------------------------------------
 bool EdgeExtractor::extractEdges(Actor* actor)
 {
-  Geometry* geom = cast<Geometry>(actor->lod(0).get());
+  Geometry* geom = cast<Geometry>(actor->lod(0));
   if (geom)
     extractEdges(geom);
   return geom != NULL;
@@ -173,7 +173,7 @@ void EdgeExtractor::extractEdges(ActorCollection* actors)
 {
   for(int i=0; i<actors->size(); ++i)
   {
-    Geometry* geom = cast<Geometry>(actors->at(i)->lod(0).get());
+    Geometry* geom = cast<Geometry>(actors->at(i)->lod(0));
     if (geom)
       extractEdges(geom);
   }

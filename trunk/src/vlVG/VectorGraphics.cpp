@@ -694,7 +694,7 @@ Scissor* VectorGraphics::resolveScissor(int x, int y, int width, int height)
   return scissor.get();
 }
 //-----------------------------------------------------------------------------
-Texture* VectorGraphics::resolveTexture(Image* image)
+Texture* VectorGraphics::resolveTexture(const Image* image)
 {
   Texture* texture = mImageToTextureMap[ImageState(image,mState.mTextureMode)].get();
   if (!texture)

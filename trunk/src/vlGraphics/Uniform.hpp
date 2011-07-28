@@ -275,10 +275,10 @@ namespace vl
     void initDouble(int count) { mData.resize(count*2); }
     int singleCount() const { return (int)mData.size(); }
     int doubleCount() const { VL_CHECK((mData.size() & 0x1) == 0 ); return (int)(mData.size() >> 1); }
-    double* doubleData() { VL_CHECK(!mData.empty()); VL_CHECK((mData.size() & 0x1) == 0 ); return (double*)&mData[0]; }
-    float* floatData() { VL_CHECK(!mData.empty()); return (float*)&mData[0]; }
-    int* intData() { VL_CHECK(!mData.empty()); return (int*)&mData[0]; }
-    unsigned int* uintData() { VL_CHECK(!mData.empty()); return (unsigned int*)&mData[0]; }
+    const double* doubleData() const { VL_CHECK(!mData.empty()); VL_CHECK((mData.size() & 0x1) == 0 ); return (double*)&mData[0]; }
+    const float* floatData() const { VL_CHECK(!mData.empty()); return (float*)&mData[0]; }
+    const int* intData() const { VL_CHECK(!mData.empty()); return (int*)&mData[0]; }
+    const unsigned int* uintData() const { VL_CHECK(!mData.empty()); return (unsigned int*)&mData[0]; }
 
     EUniformType mType;
     std::vector<int> mData;

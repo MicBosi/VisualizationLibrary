@@ -494,7 +494,7 @@ void FBOAbstractAttachment::destroy()
 {
   std::set< ref<FBORenderTarget> > fbos = fboRenderTargets();
   for( std::set< ref<FBORenderTarget> >::iterator it = fbos.begin(); it != fbos.end(); ++it )
-    it->get()->removeAttachment( this );
+    it->get_writable()->removeAttachment( this );
 }
 //-----------------------------------------------------------------------------
 void FBORenderbufferAttachment::create()

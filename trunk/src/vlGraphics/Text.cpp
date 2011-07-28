@@ -337,7 +337,7 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
         pen.x()  = 0;
       }
 
-      const ref<Glyph>& glyph = mFont->glyph( lines[iline][c] );
+      const Glyph* glyph = mFont->glyph( lines[iline][c] );
 
       if (!glyph)
         continue;

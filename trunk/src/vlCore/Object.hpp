@@ -289,6 +289,9 @@ namespace vl
       mObject = tmp;
     }
 
+    //! This is mainly useful when using ref<> with std::map, std::set, etc.
+    T* get_writable() const { return mObject; }
+
     const T* get() const { return mObject; }
     const T* operator->() const { VL_CHECK(mObject); return mObject; }
     const T& operator*() const { VL_CHECK(mObject); return *mObject; }

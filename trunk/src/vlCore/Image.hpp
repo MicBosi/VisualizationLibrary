@@ -143,7 +143,11 @@ namespace vl
 
     //! A set of key/value couples that can be used to attach extra information to an image like DICOM information etc.
     //! Returns NULL by default.
-    KeyValues* tags() const { return mTags.get(); }
+    const KeyValues* tags() const { return mTags.get(); }
+
+    //! A set of key/value couples that can be used to attach extra information to an image like DICOM information etc.
+    //! Returns NULL by default.
+    KeyValues* tags() { return mTags.get(); }
 
     //! A set of key/value couples that can be used to attach extra information to an image like DICOM information etc.
     void setTags(KeyValues* tags) { mTags = tags; }
@@ -166,22 +170,24 @@ namespace vl
     unsigned char* pixelsZSlice(int slice);
     
     unsigned char* pixelsXP();
-    
     unsigned char* pixelsXN();
-    
     unsigned char* pixelsYP();
-    
     unsigned char* pixelsYN();
-    
     unsigned char* pixelsZP();
-    
     unsigned char* pixelsZN();
     
+    const unsigned char* pixelsXP() const;
+    const unsigned char* pixelsXN() const;
+    const unsigned char* pixelsYP() const;
+    const unsigned char* pixelsYN() const;
+    const unsigned char* pixelsZP() const;
+    const unsigned char* pixelsZN() const;
+
     void setMipmaps(const std::vector< ref<Image> >& mipmaps) { mMipmaps = mipmaps; };
     
     const std::vector< ref<Image> >& mipmaps() const { return mMipmaps; };
     
-    void clearMipmaps() { mMipmaps.clear(); }
+    std::vector< ref<Image> >& mipmaps() { return mMipmaps; };
     
     int width() const { return mWidth; }
     

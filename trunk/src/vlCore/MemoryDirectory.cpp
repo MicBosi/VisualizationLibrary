@@ -48,7 +48,7 @@ bool MemoryDirectory::setPath(const String& name)
     return false;
   }
   std::map< String, ref<MemoryFile> > file_map;
-  for( std::map< String, ref<MemoryFile> >::const_iterator it = mFiles.begin(); it != mFiles.end(); ++it )
+  for( std::map< String, ref<MemoryFile> >::iterator it = mFiles.begin(); it != mFiles.end(); ++it )
   {
     String p = it->first;
     if (path().length())

@@ -113,7 +113,7 @@ namespace vl
     class ImageState
     {
     public:
-      ImageState(Image* img, ETextureMode mode): mImage(img), mTextureMode(mode) {}
+      ImageState(const Image* img, ETextureMode mode): mImage(img), mTextureMode(mode) {}
 
       bool operator<(const ImageState& other) const
       {
@@ -126,7 +126,7 @@ namespace vl
           return false;
       }
     protected:
-      Image* mImage;
+      const Image* mImage;
       ETextureMode mTextureMode;
     };
     //------------------------------------------------------------------------- start internal
@@ -653,7 +653,7 @@ namespace vl
   
     Scissor* resolveScissor(int x, int y, int width, int height);
 
-    Texture* resolveTexture(Image* image);
+    Texture* resolveTexture(const Image* image);
 
     Effect* currentEffect(const State& vgs);
 

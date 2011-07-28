@@ -171,7 +171,10 @@ namespace vl
     }
 
     /** Returns the Renderable object representing the LOD level specifed by \p lod_index. */
-    const ref<Renderable>& lod(int lod_index) const { return mRenderables[lod_index]; }
+    const Renderable* lod(int lod_index) const { return mRenderables[lod_index].get(); }
+
+    /** Returns the Renderable object representing the LOD level specifed by \p lod_index. */
+    Renderable* lod(int lod_index) { return mRenderables[lod_index].get(); }
 
     /** Utility function to assign one or more Renderable[s] to one or more LOD levels. */
     void setLODs(Renderable* lod0, Renderable* lod1=NULL, Renderable* lod2=NULL, Renderable* lod3=NULL, Renderable* lod4=NULL, Renderable* lod5=NULL);

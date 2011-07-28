@@ -62,7 +62,11 @@ namespace vl
 
     const RenderState* renderState( ERenderState type ) const;
 
-    const std::vector< ref<RenderState> >& renderStates() const { return mRenderStates; }
+    size_t renderStatesCount() const { return mRenderStates.size(); }
+
+    const ref<RenderState>* renderStates() const { if (mRenderStates.empty()) return NULL; else return &mRenderStates[0]; }
+
+    ref<RenderState>* renderStates() { if (mRenderStates.empty()) return NULL; else return &mRenderStates[0]; }
 
     void eraseRenderState(ERenderState type);
 

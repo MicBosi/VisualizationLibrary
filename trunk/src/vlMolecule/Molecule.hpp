@@ -86,7 +86,8 @@ namespace vl
     std::vector< ref<Atom> >& atoms() { return mAtoms; }
 
     int atomCount() const { return (int)mAtoms.size(); }
-    Atom* atom(int index) const;
+    const Atom* atom(int index) const;
+    Atom* atom(int index);
     void addAtom(Atom* atom);
     void eraseAtom(Atom*atom);
     void eraseAtom(int index);
@@ -96,7 +97,9 @@ namespace vl
     std::vector< ref<Bond> >& bonds() { return mBonds; }
 
     int bondCount() const { return (int)mBonds.size(); }
-    Bond* bond(int index) const;
+    const Bond* bond(int index) const;
+    Bond* bond(int index);
+    const Bond* bond(Atom* a1, Atom* a2) const;
     Bond* bond(Atom* a1, Atom* a2);
     void addBond(Bond* bond);
     Bond* addBond(Atom* a1, Atom* a2);
@@ -183,9 +186,9 @@ namespace vl
     const Transform* transformTree() const { return mTransformTree.get(); }
 
     //! The text settings to be used to render the atom labels
-    Text* atomLabelTemplate() { return mAtomLabelTemplate.get(); }
-    //! The text settings to be used to render the atom labels
     const Text* atomLabelTemplate() const { return mAtomLabelTemplate.get(); }
+    //! The text settings to be used to render the atom labels
+    Text* atomLabelTemplate() { return mAtomLabelTemplate.get(); }
 
     //! Globally defines whether the atom names should be rendered or not. See also Atom::setShowAtomName().
     void setShowAtomNames(bool show) { mShowAtomNames = show; }

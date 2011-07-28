@@ -667,7 +667,7 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 
   for(size_t i=0, count=uniforms->uniforms().size(); i<count; ++i)
   {
-    Uniform* uniform = uniforms->uniforms()[i].get();
+    const Uniform* uniform = uniforms->uniforms()[i].get();
 
     #if 1
       const UniformInfo* uinfo = activeUniformInfo(uniform->name());

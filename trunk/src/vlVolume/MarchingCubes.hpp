@@ -190,7 +190,8 @@ namespace vl
     float threshold() const { return mThreshold; }
 
     void setVolume(Volume* vol) { mVolume = vol; }
-    Volume* volume() const { return mVolume.get(); }
+    const Volume* volume() const { return mVolume.get(); }
+    Volume* volume() { return mVolume.get(); }
 
     void setVert0(int index) { mVert0 = index; }
     int vert0() const { return mVert0; }

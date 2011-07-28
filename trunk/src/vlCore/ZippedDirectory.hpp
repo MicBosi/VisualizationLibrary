@@ -68,7 +68,9 @@ namespace vl
 
     bool setPath(const String& name);
 
-    VirtualFile* sourceZipFile() const;
+    const VirtualFile* sourceZipFile() const;
+
+    VirtualFile* sourceZipFile();
 
     void setSourceZipFile(VirtualFile* file);
 
@@ -84,7 +86,9 @@ namespace vl
 
     int zippedFileCount() const;
 
-    ZippedFile* zippedFile(int index) const;
+    const ZippedFile* zippedFile(int index) const;
+
+    ZippedFile* zippedFile(int index);
 
     void listSubDirs(std::vector<String>& dirs, bool append=false) const;
     ref<ZippedDirectory> zippedSubDir(const String& subdir_name) const;

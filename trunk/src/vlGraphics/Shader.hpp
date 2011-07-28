@@ -1517,8 +1517,12 @@ namespace vl
     
     RenderState* renderState( ERenderState type ) { return gocRenderStateSet()->renderState(type); }
     
-    const std::vector< ref<RenderState> >& renderStates() const { return getRenderStateSet()->renderStates(); }
-    
+    size_t renderStatesCount() const { return getRenderStateSet()->renderStatesCount(); }
+
+    const ref<RenderState>* renderStates() const { return getRenderStateSet()->renderStates(); }
+
+    ref<RenderState>* renderStates() { return getRenderStateSet()->renderStates(); }
+
     void eraseRenderState(ERenderState type) { gocRenderStateSet()->eraseRenderState(type); }
     
     void eraseRenderState(RenderState* rs) { if (rs) gocRenderStateSet()->eraseRenderState(rs->type()); }

@@ -358,7 +358,7 @@ public:
   // This technique is not particularly efficient if your isosurfaces are animated and you need to recompute the colors often.
   void vertexVolumeColor(vl::Actor* vol_act)
   {
-    vl::Geometry* geom = vl::cast<vl::Geometry>(vol_act->lod(0).get());
+    vl::Geometry* geom = vl::cast<vl::Geometry>(vol_act->lod(0));
     vl::Effect* fx = vol_act->effect();
     // use color array
     fx->shader()->gocMaterial()->setColorMaterialEnabled(true);

@@ -133,7 +133,7 @@ namespace vl
       initialize( NULL, NULL, NULL, 0, false, 0 );
     }
 
-    void initialize( TArray* idx_array, const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_vert_counts, 
+    void initialize( const TArray* idx_array, const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_vert_counts, 
                      int base_vert, bool prim_restart_on, unsigned int prim_restart_idx )
     {
       mArray = idx_array;
@@ -198,7 +198,7 @@ namespace vl
     }
 
   protected:
-    ref<TArray> mArray;
+    const TArray* mArray;
     int mBaseVert;
     int mCurPos;
     bool mPrimRestartEnabled;

@@ -523,7 +523,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
 
   if (cur)
   {
-    for( unsigned i=0; i<cur->renderStates().size(); ++i )
+    for( unsigned i=0; i<cur->renderStatesCount(); ++i )
     {
       const RenderState* cur_rs = cur->renderStates()[i].get();
       mRenderStateTable[cur_rs->type()] += 1; // 0 -> 1; 1 -> 2;
@@ -540,7 +540,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
 
   if (prev)
   {
-    for( unsigned i=0; i<prev->renderStates().size(); ++i )
+    for( unsigned i=0; i<prev->renderStatesCount(); ++i )
     {
       const RenderState* prev_rs = prev->renderStates()[i].get();
       VL_CHECK(mRenderStateTable[prev_rs->type()] == 1 || mRenderStateTable[prev_rs->type()] == 2);
