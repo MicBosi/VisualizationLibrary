@@ -281,8 +281,7 @@ void Terrain::init()
       dmat.translate(mx*dx + (xsize-1)*dx*0.5 - width()/2.0, 0, mz*dz + (zsize-1)*dz*0.5 - depth()/2.0);
       dmat.translate((dvec3)mOrigin);
       ref<Transform> transform = new Transform;
-      transform->setLocalMatrix((mat4)dmat);
-      transform->computeWorldMatrix(NULL);
+      transform->setLocalAndWorldMatrix((mat4)dmat);
 
       if (!useGLSL())
       {
