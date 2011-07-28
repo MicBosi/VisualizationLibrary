@@ -39,9 +39,6 @@
 
 namespace vl
 {
-//-----------------------------------------------------------------------------
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadCOLLADA(const String& path);
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadCOLLADA(VirtualFile* file);
 //---------------------------------------------------------------------------
 // LoadWriterCOLLADA
 //---------------------------------------------------------------------------
@@ -53,16 +50,40 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::LoadWriterCOLLADA, ResourceLoadWriter)
 
   public:
-    LoadWriterCOLLADA(): ResourceLoadWriter("|dae|", "|dae|") {}
+    class LoadOptions: public Object
+    {
+    public:
+      LoadOptions()
+      {
+        mFlattenTransformHierarchy = true;
+      }
+
+      bool flattenTransformHierarchy() const { return mFlattenTransformHierarchy; }
+
+      void setFlattenTransformHierarchy(bool flatten) { mFlattenTransformHierarchy = flatten; }
+
+    protected:
+      bool mFlattenTransformHierarchy;
+    };
+
+  public:
+    static VLGRAPHICS_EXPORT ref<ResourceDatabase> load(const String& path, const LoadOptions* options);
+
+    static VLGRAPHICS_EXPORT ref<ResourceDatabase> load(VirtualFile* file, const LoadOptions* options);
+
+    LoadWriterCOLLADA(): ResourceLoadWriter("|dae|", "|dae|") 
+    { 
+      mLoadOptions = new LoadOptions;
+    }
 
     ref<ResourceDatabase> loadResource(const String& path) const 
     {
-      return loadCOLLADA(path);
+      return load(path, loadOptions());
     }
 
     ref<ResourceDatabase> loadResource(VirtualFile* file) const
     {
-      return loadCOLLADA(file);
+      return load(file, loadOptions());
     }
 
     //! Not supported yet.
@@ -76,6 +97,15 @@ namespace vl
     {
       return false;
     }
+
+    // --- options ---
+
+    const LoadOptions* loadOptions() const { return mLoadOptions.get(); }
+
+    LoadOptions* loadOptions() { return mLoadOptions.get(); }
+
+  protected:
+    ref<LoadOptions> mLoadOptions;
   };
 //---------------------------------------------------------------------------
 }
