@@ -51,7 +51,7 @@ endmacro()
 set(_vl_required_vars VL_INCLUDE_DIRS)
 find_path(VL_INCLUDE_DIRS "vlCore/VisualizationLibrary.hpp"
 	PATHS ${VL_ROOT} ENV VL_ROOT
-	PATH_SUFFIXES "include"
+	PATH_SUFFIXES "include" "include/vl"
 )
 
 # Find the requested VL components
