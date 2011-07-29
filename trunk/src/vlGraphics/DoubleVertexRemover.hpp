@@ -65,10 +65,10 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::DoubleVertexRemover, VertexMapper)
 
   private:
-    class CompareVertex
+    class LessCompare
     {
     public:
-      CompareVertex(const Geometry* geom)
+      LessCompare(const Geometry* geom)
       {
         if (geom->vertexArray())
           mAttribs.push_back(geom->vertexArray());
@@ -89,7 +89,6 @@ namespace vl
 
       bool operator()(unsigned int a, unsigned int b) const 
       { 
-        // less(a,b); 
         for(unsigned i=0; i<mAttribs.size(); ++i)
         {
           int val = mAttribs[i]->compare(a,b);
@@ -99,19 +98,34 @@ namespace vl
         return false;
       }
 
-      bool less(unsigned int a, unsigned int b) const
+    protected:
+      std::vector< const ArrayAbstract* > mAttribs;
+    };
+
+    class EqualsCompare
+    {
+    public:
+      EqualsCompare(const Geometry* geom)
       {
-        for(unsigned i=0; i<mAttribs.size(); ++i)
-        {
-          int val = mAttribs[i]->compare(a,b);
-          if (val != 0)
-            return val < 0;
-        }
-        return false;
+        if (geom->vertexArray())
+          mAttribs.push_back(geom->vertexArray());
+        if (geom->normalArray())
+          mAttribs.push_back(geom->normalArray());
+        if (geom->colorArray())
+          mAttribs.push_back(geom->colorArray());
+        if (geom->secondaryColorArray())
+          mAttribs.push_back(geom->secondaryColorArray());
+        if (geom->fogCoordArray())
+          mAttribs.push_back(geom->fogCoordArray());
+        for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+          if (geom->texCoordArray(i))
+            mAttribs.push_back(geom->texCoordArray(i));
+        for(int i=0; i<geom->vertexAttribArrays()->size(); ++i)
+          mAttribs.push_back(geom->vertexAttribArrays()->at(i)->data());
       }
 
-      bool equals(unsigned int a, unsigned int b) const
-      {
+      bool operator()(unsigned int a, unsigned int b) const 
+      { 
         for(unsigned i=0; i<mAttribs.size(); ++i)
         {
           if (mAttribs[i]->compare(a,b) != 0)
