@@ -35,7 +35,7 @@
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Light.hpp>
-#include <strstream>
+#include <vlCore/Time.hpp>
 #include <set>
 #include <dae.h>
 #include <dom.h>
@@ -43,14 +43,18 @@
 
 using namespace vl;
 
-// mic fixme
-// ---
-// 
-// ---
+// --- mic fixme ---
 bool debug_Wireframe = false;
+// ---
 int debug_IndentLevel = 0;
+// ---
 mat4 debug_WorldMatrix;
+// ---
 std::vector< ref<Actor> > debug_Actors;
+// ---
+float debug_GeometryTime = 0;
+// ---
+Time debug_Timer;
 // ---
 void debug_PrintIndent(const String& str)
 {
@@ -112,7 +116,7 @@ void debug_PrintGometry(Actor* actor)
   debug_PrintIndent( "[/NORMALS]\n" );
 
   debug_PrintIndent( "[TRIANGLES]\n" );
-  for(size_t i=0; i<geom->drawCalls()->size(); ++i)
+  for(int i=0; i<geom->drawCalls()->size(); ++i)
   {
     DrawCall* dc = geom->drawCalls()->at(i);
     TriangleIterator it = dc->triangleIterator();
@@ -152,10 +156,64 @@ typedef enum
   IS_WEIGHT
 } EInputSemantic;
 //-----------------------------------------------------------------------------
+struct 
+{
+  EInputSemantic mSemantic;
+  const char* mSemanticString;
+} SemanticTable[] = 
+  {
+    { IS_UNKNOWN,         "UNKNOWN"         },
+    { IS_BINORMAL,        "BINORMAL"        },
+    { IS_COLOR,           "COLOR"           },
+    { IS_CONTINUITY,      "CONTINUITY"      },
+    { IS_IMAGE,           "IMAGE"           },
+    { IS_INPUT,           "INPUT"           },
+    { IS_IN_TANGENT,      "IN_TANGENT"      },
+    { IS_INTERPOLATION,   "INTERPOLATION"   },
+    { IS_INV_BIND_MATRIX, "INV_BIND_MATRIX" },
+    { IS_JOINT,           "JOINT"           },
+    { IS_LINEAR_STEPS,    "LINEAR_STEPS"    },
+    { IS_MORPHS_TARGET,   "MORPHS_TARGET"   },
+    { IS_MORPH_WEIGHT,    "MORPH_WEIGHT"    },
+    { IS_NORMAL,          "NORMAL"          },
+    { IS_OUTPUT,          "OUTPUT"          },
+    { IS_OUT_TANGENT,     "OUT_TANGENT"     },
+    { IS_POSITION,        "POSITION"        },
+    { IS_TANGENT,         "TANGENT"         },
+    { IS_TEXBINORMAL,     "TEXBINORMAL"     },
+    { IS_TEXCOORD,        "TEXCOORD"        },
+    { IS_TEXTANGENT,      "TEXTANGENT"      },
+    { IS_UV,              "UV"              },
+    { IS_VERTEX,          "VERTEX"          },
+    { IS_WEIGHT,          "WEIGHT"          },
+    { IS_UNKNOWN,          NULL             }
+  };
+//-----------------------------------------------------------------------------
+EInputSemantic getSemantic(const char* semantic)
+{
+  for(int i=0; SemanticTable[i].mSemanticString; ++i)
+  {
+    if (strcmp(semantic, SemanticTable[i].mSemanticString) == 0)
+      return SemanticTable[i].mSemantic;
+  }
+
+  return IS_UNKNOWN;
+}
+//-----------------------------------------------------------------------------
+const char* getSemanticString(EInputSemantic semantic)
+{
+  for(int i=0; SemanticTable[i].mSemanticString; ++i)
+  {
+    if ( semantic == SemanticTable[i].mSemantic )
+      return SemanticTable[i].mSemanticString;
+  }
+
+  return NULL;
+}
+//-----------------------------------------------------------------------------
 struct DaeVert
 {
-  // mic fixme: comment or configure this.
-  static const int MAX_ATTRIBS = 12;
+  static const int MAX_ATTRIBS = 8;
 
   DaeVert()
   {
@@ -177,68 +235,14 @@ struct DaeVert
   size_t mIndex;
 };
 //-----------------------------------------------------------------------------
-EInputSemantic getSemantic(const char* semantic)
-{
-  if(strcmp(semantic, "BINORMAL") == 0)
-    return IS_BINORMAL;
-  else if(strcmp(semantic, "COLOR") == 0)
-    return IS_COLOR;
-  else if(strcmp(semantic, "CONTINUITY") == 0)
-    return IS_CONTINUITY;
-  else if(strcmp(semantic, "IMAGE") == 0)
-    return IS_IMAGE;
-  else if(strcmp(semantic, "INPUT") == 0)
-    return IS_INPUT;
-  else if(strcmp(semantic, "IN_TANGENT") == 0)
-    return IS_IN_TANGENT;
-  else if(strcmp(semantic, "INTERPOLATION") == 0)
-    return IS_INTERPOLATION;
-  else if(strcmp(semantic, "INV_BIND_MATRIX") == 0)
-    return IS_INV_BIND_MATRIX;
-  else if(strcmp(semantic, "JOINT") == 0)
-    return IS_JOINT;
-  else if(strcmp(semantic, "LINEAR_STEPS") == 0)
-    return IS_LINEAR_STEPS;
-  else if(strcmp(semantic, "MORPHS_TARGET") == 0)
-    return IS_MORPHS_TARGET;
-  else if(strcmp(semantic, "MORPH_WEIGHT") == 0)
-    return IS_MORPH_WEIGHT;
-  else if(strcmp(semantic, "NORMAL") == 0)
-    return IS_NORMAL;
-  else if(strcmp(semantic, "OUTPUT") == 0)
-    return IS_OUTPUT;
-  else if(strcmp(semantic, "OUT_TANGENT") == 0)
-    return IS_OUT_TANGENT;
-  else if(strcmp(semantic, "POSITION") == 0)
-    return IS_POSITION;
-  else if(strcmp(semantic, "TANGENT") == 0)
-    return IS_TANGENT;
-  else if(strcmp(semantic, "TEXBINORMAL") == 0)
-    return IS_TEXBINORMAL;
-  else if(strcmp(semantic, "TEXCOORD") == 0)
-    return IS_TEXCOORD;
-  else if(strcmp(semantic, "TEXTANGENT") == 0)
-    return IS_TEXTANGENT;
-  else if(strcmp(semantic, "UV") == 0)
-    return IS_UV;
-  else if(strcmp(semantic, "VERTEX") == 0)
-    return IS_VERTEX;
-  else if(strcmp(semantic, "WEIGHT") == 0)
-    return IS_WEIGHT;
-  else
-  {
-    VL_TRAP()
-    return IS_UNKNOWN;
-  }
-}
-//-----------------------------------------------------------------------------
-// mic fixme: support sources of other types: int_array, name_array, bool_array, idref_array
 class DaeSource: public Object
 {
 public:
   DaeSource()
   {
-    mRawSource    = NULL;
+    mFloatSource = NULL;
+    mIntSource   = NULL;
+    mBoolSource  = NULL;
     mFieldsMask = 0;
     mStride     = 0;
     mOffset     = 0;
@@ -249,11 +253,49 @@ public:
   //! Initializes an accessor. An accessor can read only up to 32 floats.
   void init(domFloat_arrayRef data_src, domUint count, domUint stride, domUint offset, size_t fields_mask)
   {
-    mRawSource  = data_src;
-    mCount      = (size_t)count;
-    mStride     = (size_t)stride;
-    mOffset     = (size_t)offset;
-    mFieldsMask = fields_mask;
+    mFloatSource = data_src;
+    mIntSource   = NULL;
+    mBoolSource  = NULL;
+    mCount       = (size_t)count;
+    mStride      = (size_t)stride;
+    mOffset      = (size_t)offset;
+    mFieldsMask  = fields_mask;
+
+    // count the number of scalars that will be read.
+    mDataSize = 0;
+    for(size_t i=0; i<32; ++i)
+      if (mFieldsMask & (1<<i))
+        mDataSize++;
+  }
+
+  //! Initializes an accessor. An accessor can read only up to 32 floats.
+  void init(domInt_arrayRef data_src, domUint count, domUint stride, domUint offset, size_t fields_mask)
+  {
+    mFloatSource = NULL;
+    mIntSource   = data_src;
+    mBoolSource  = NULL;
+    mCount       = (size_t)count;
+    mStride      = (size_t)stride;
+    mOffset      = (size_t)offset;
+    mFieldsMask  = fields_mask;
+
+    // count the number of scalars that will be read.
+    mDataSize = 0;
+    for(size_t i=0; i<32; ++i)
+      if (mFieldsMask & (1<<i))
+        mDataSize++;
+  }
+
+  //! Initializes an accessor. An accessor can read only up to 32 floats.
+  void init(domBool_arrayRef data_src, domUint count, domUint stride, domUint offset, size_t fields_mask)
+  {
+    mFloatSource = NULL;
+    mIntSource   = NULL;
+    mBoolSource  = data_src;
+    mCount       = (size_t)count;
+    mStride      = (size_t)stride;
+    mOffset      = (size_t)offset;
+    mFieldsMask  = fields_mask;
 
     // count the number of scalars that will be read.
     mDataSize = 0;
@@ -267,17 +309,30 @@ public:
   {
     size_t read_pos = mOffset + n * mStride;
 
-    if ( !((n < mCount) || (read_pos < mRawSource->getValue().getCount() - mDataSize)) )
+    size_t pos = 0;
+
+    if(mFloatSource)
     {
-      Log::error("DaeSource::readData() out of bounds!\n");
-      VL_TRAP();
-    }
-    else
-    {
-      size_t pos = 0;
+      VL_CHECK( (n < mCount) || (read_pos < mFloatSource->getValue().getCount() - mDataSize) )
       for(size_t i=0; i<32 && i<mStride; ++i)
         if (mFieldsMask & (1<<i))
-          output[pos++] = (float)mRawSource->getValue()[read_pos+i];
+          output[pos++] = (float)mFloatSource->getValue()[read_pos+i];
+    }
+    else
+    if(mIntSource)
+    {
+      VL_CHECK( (n < mCount) || (read_pos < mIntSource->getValue().getCount() - mDataSize) )
+      for(size_t i=0; i<32 && i<mStride; ++i)
+        if (mFieldsMask & (1<<i))
+          output[pos++] = (float)mIntSource->getValue()[read_pos+i];
+    }
+    else
+    if(mBoolSource)
+    {
+      VL_CHECK( (n < mCount) || (read_pos < mBoolSource->getValue().getCount() - mDataSize) )
+      for(size_t i=0; i<32 && i<mStride; ++i)
+        if (mFieldsMask & (1<<i))
+          output[pos++] = (float)mBoolSource->getValue()[read_pos+i];
     }
   }
 
@@ -287,13 +342,12 @@ public:
   //! The number of elements written by readData().
   size_t dataSize() const { return mDataSize; }
 
-  //! Returns the raw data source
-  domFloat_arrayRef rawSource() { return mRawSource; }
-
 protected:
   size_t mFieldsMask;
   size_t mDataSize;
-  domFloat_arrayRef mRawSource;
+  domFloat_arrayRef mFloatSource;
+  domInt_arrayRef  mIntSource;
+  domBool_arrayRef mBoolSource;
   size_t mStride;
   size_t mOffset;
   size_t mCount;
@@ -345,57 +399,55 @@ struct DaePrimitive: public Object
 
     mGeometry = new Geometry;
 
-    // mic fixme: we should do it directly in the DrawElementsUInt
-    std::vector<unsigned int> index_buffer;
-    index_buffer.reserve(1000);
-
     // generate index buffers & DrawElements
     std::set<DaeVert> vert_set;
     for(size_t ip=0; ip<mP.size(); ++ip)
     {
-      index_buffer.clear();
+      ref<ArrayUInt1> index_buffer = new ArrayUInt1;
+      index_buffer->resize( mP[ip]->getValue().getCount() / mIndexStride );
 
-      for(size_t ivert=0; ivert<mP[ip]->getValue().getCount(); ivert+=mIndexStride)
+      for(size_t ivert=0, iidx=0; ivert<mP[ip]->getValue().getCount(); ivert+=mIndexStride, ++iidx)
       {
         DaeVert vert;
 
+        const domListOfUInts& p = mP[ip]->getValue();
+
         // fill vertex info
         for(size_t ichannel=0; ichannel<mChannels.size(); ++ichannel)
-          vert.mAttribIndex[ichannel] = (size_t)mP[ip]->getValue()[ivert + mChannels[ichannel]->mOffset];
+          vert.mAttribIndex[ichannel] = (size_t)p[ivert + mChannels[ichannel]->mOffset];
 
+        size_t final_index = 0xFFFFFFFF;
         // retrieve/insert the vertex
         std::set<DaeVert>::iterator it = vert_set.find(vert);
         if (it == vert_set.end())
         {
-          vert.mIndex = vert_set.size();
+          vert.mIndex = final_index = vert_set.size();
           vert_set.insert(vert);
         }
         else
-          vert.mIndex = it->mIndex;
+          final_index = it->mIndex;
         
         // this is the actual index
-        index_buffer.push_back( vert.mIndex );
+        (*index_buffer)[iidx] = final_index;
       }
 
       // fill the DrawElementsUInt
       ref<DrawElementsUInt> de;
       switch(mType)
       {
-        case LINES: de = new DrawElementsUInt( PT_LINES ); break;
+        case LINES:      de = new DrawElementsUInt( PT_LINES ); break;
         case LINE_STRIP: de = new DrawElementsUInt( PT_LINE_STRIP ); break;
-        case POLYGONS: de = new DrawElementsUInt( PT_POLYGON ); break;
-        case TRIFANS: de = new DrawElementsUInt( PT_TRIANGLE_FAN ); break;
-        case TRIANGLES: de = new DrawElementsUInt( PT_TRIANGLES ); VL_CHECK(mCount*3 == mP[ip]->getValue().getCount() / mIndexStride); break;
-        case TRISTRIPS: de = new DrawElementsUInt( PT_TRIANGLE_STRIP ); break;
+        case POLYGONS:   de = new DrawElementsUInt( PT_POLYGON ); break;
+        case TRIFANS:    de = new DrawElementsUInt( PT_TRIANGLE_FAN ); break;
+        case TRIANGLES:  de = new DrawElementsUInt( PT_TRIANGLES ); break;
+        case TRISTRIPS:  de = new DrawElementsUInt( PT_TRIANGLE_STRIP ); break;
         default:
-          // mic fixme: issue warning
           VL_TRAP()
           continue;
       }
-      de->indices()->resize( index_buffer.size() );
-      VL_CHECK(de->indices()->bytesUsed() == sizeof(index_buffer[0])*index_buffer.size());
-      memcpy(de->indices()->ptr(), &index_buffer[0], sizeof(index_buffer[0])*index_buffer.size());
+
       mGeometry->drawCalls()->push_back(de.get());
+      de->setIndices( index_buffer.get() );
     }
 
     // generate new vertex attrib info and install data
@@ -414,8 +466,8 @@ struct DaePrimitive: public Object
           vert_attrib = array_f1;
           array_f1->resize( vert_set.size() );
           ptr = array_f1->begin();
+          // debug
           ptr_end = ptr + vert_set.size() * 1;
-          memset(ptr, 0xFF, array_f1->bytesUsed());
           break;
         }
         case 2:
@@ -424,8 +476,8 @@ struct DaePrimitive: public Object
           vert_attrib = array_f2;
           array_f2->resize( vert_set.size() );
           ptr = array_f2->at(0).ptr();
+          // debug
           ptr_end = ptr + vert_set.size() * 2;
-          memset(ptr, 0xFF, array_f2->bytesUsed());
           break;
         }
         case 3:
@@ -434,8 +486,8 @@ struct DaePrimitive: public Object
           vert_attrib = array_f3;
           array_f3->resize( vert_set.size() );
           ptr = array_f3->at(0).ptr();
+          // debug
           ptr_end = ptr + vert_set.size() * 3;
-          memset(ptr, 0xFF, array_f3->bytesUsed());
           break;
         }
         case 4:
@@ -444,26 +496,24 @@ struct DaePrimitive: public Object
           vert_attrib = array_f4;
           array_f4->resize( vert_set.size() );
           ptr = array_f4->at(0).ptr();
+          // debug
           ptr_end = ptr + vert_set.size() * 4;
-          memset(ptr, 0xFF, array_f4->bytesUsed());
           break;
         }
         default:
-          // mic fixme: issue error
-          VL_TRAP();
+          Log::warning( Say("LoadWriterCOLLADA: input '%s' skipped because parameter count is more than 4.\n") << getSemanticString(mChannels[ich]->mSemantic) );
           continue;
       }
 
-      // install vertex attribute array
+      // install vertex attribute
       switch(mChannels[ich]->mSemantic)
       {
-        // mic fixme: support tangent, binormal and uv at least.
       case IS_POSITION: mGeometry->setVertexArray( vert_attrib.get() ); break;
-      case IS_NORMAL: mGeometry->setNormalArray( vert_attrib.get() ); break;
-      case IS_COLOR: mGeometry->setColorArray( vert_attrib.get() ); break;
+      case IS_NORMAL:   mGeometry->setNormalArray( vert_attrib.get() ); break;
+      case IS_COLOR:    mGeometry->setColorArray( vert_attrib.get() ); break;
       case IS_TEXCOORD: mGeometry->setTexCoordArray( tex_unit++, vert_attrib.get() ); break;
       default:
-        // mic fixme: issue warning
+        Log::warning( Say("LoadWriterCOLLADA: input semantic '%s' not supported.\n") << getSemanticString(mChannels[ich]->mSemantic) );
         continue;
       }
 
@@ -474,30 +524,8 @@ struct DaePrimitive: public Object
         size_t idx = vert.mAttribIndex[ich];
         VL_CHECK(ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex < ptr_end);
         mChannels[ich]->mSource->readData(idx, ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex);
-
-        // mic fixme: just for debugging
-        #if 0
-        if(mChannels[ich]->mSemantic == IS_NORMAL)
-        {
-          fvec3* n = (fvec3*)(ptr + mChannels[ich]->mSource->dataSize()*vert.mIndex);
-          printf("%f %f %f\n", n->x(), n->y(), n->z());
-          VL_CHECK( fabs(n->length() - 1.0) <= 0.01);
-        }
-        #endif 
-      }
-
-      // mic fixme: ifdef-out and remove memset()s prima
-      // debug: check that all the buffer has been filled.
-      for(float* pos=ptr; pos<ptr_end; ++pos)
-      {
-        unsigned int FF = 0xFFFFFFFF;
-        VL_CHECK( memcmp(&FF, pos, sizeof(FF)) != 0 );
       }
     }
-
-    // mic fixme
-    //if (!mGeometry->normalArray())
-    //  mGeometry->computeNormals();
   }
 };
 //-----------------------------------------------------------------------------
@@ -572,7 +600,6 @@ public:
       // copy over VERTEX inputs with the current offset and set
       if ( getSemantic(input->getSemantic()) ==  IS_VERTEX )
       {
-        // mic fixme: issue warning
         VL_CHECK(!vertex_inputs.empty())
         for(size_t ivert=0; ivert<vertex_inputs.size(); ++ivert)
         {
@@ -582,11 +609,12 @@ public:
           dae_input->mOffset   = (size_t)input->getOffset();
           dae_input->mSet      = (size_t)input->getSet();
           dae_primitive->mChannels.push_back(dae_input);
-          // mic fixme: check error
+
           VL_CHECK(dae_input->mSource);
           VL_CHECK(dae_input->mSemantic != IS_UNKNOWN);
 
-          dae_primitive->mIndexStride = dae_primitive->mIndexStride > dae_input->mOffset ? dae_primitive->mIndexStride : dae_input->mOffset;
+          
+          dae_primitive->mIndexStride = std::max(dae_primitive->mIndexStride, dae_input->mOffset);
         }
       }
       else
@@ -596,12 +624,15 @@ public:
           dae_input->mSource   = getSource( input->getSource().getElement() );
           dae_input->mOffset   = (size_t)input->getOffset();
           dae_input->mSet      = (size_t)input->getSet();
-          dae_primitive->mChannels.push_back( dae_input );
-          // mic fixme: check error
+          
+          // if the source is NULL getSource() has already issued an error.
+          if (dae_input->mSource)
+            dae_primitive->mChannels.push_back( dae_input );
+
           VL_CHECK(dae_input->mSource);
           VL_CHECK(dae_input->mSemantic != IS_UNKNOWN);
 
-          dae_primitive->mIndexStride = dae_primitive->mIndexStride > dae_input->mOffset ? dae_primitive->mIndexStride : dae_input->mOffset;
+          dae_primitive->mIndexStride = std::max(dae_primitive->mIndexStride, dae_input->mOffset);
       }
     }
     
@@ -610,14 +641,8 @@ public:
 
   ref<DaeMesh> parseGeometry(daeElement* geometry)
   {
-    // mic fixme: issue warning
-    // we need IDs
-    VL_CHECK(geometry->getID())
-    if (!geometry->getID())
-      return NULL;
-
     // try to reuse the geometry in the library
-    std::map< std::string, ref<DaeMesh> >::iterator it = mMeshes.find( geometry->getID() );
+    std::map< daeElement*, ref<DaeMesh> >::iterator it = mMeshes.find( geometry );
     if (it != mMeshes.end())
       return it->second;
 
@@ -628,7 +653,7 @@ public:
 
     // add to dictionary
     ref<DaeMesh> dae_mesh = new DaeMesh;
-    mMeshes[geometry->getID()] = dae_mesh;
+    mMeshes[geometry] = dae_mesh;
 
     // vertices
     domVerticesRef vertices = mesh->getVertices();
@@ -640,26 +665,23 @@ public:
       dae_input->mSemantic = getSemantic(input_array[i]->getSemantic());
       if (dae_input->mSemantic == IS_UNKNOWN)
       {
-        // mic fixme: issue warning
-        VL_TRAP()
+        Log::error( Say("LoadWriterCOLLADA: the following semantic is unknown: %s\n") << input_array[i]->getSemantic() );
         continue;
       }
 
       dae_input->mSource = getSource( input_array[i]->getSource().getElement() );
+      // if the source is NULL getSource() already issued an error.
       if (!dae_input->mSource)
-      {
-        // mic fixme: issue warning
-        VL_TRAP()
         continue;
-      }
 
       dae_mesh->mVertexInputs.push_back(dae_input);
     }
 
     // --- --- ---- primitives ---- --- ---
 
-    // mic fixme: for the moment we generate one Geometry for each primitive but we should try to generate
-    // one single set of vertex attribute array for each input semantic and recycle it.
+    // NOTE: for the moment we generate one Geometry for each primitive but we should try to generate
+    // one single set of vertex attribute array for each input semantic and recycle it if possible.
+    // Unfortunately COLLADA makes this trivial task impossible to achieve.
 
     // --- ---- triangles ---- ---
     domTriangles_Array triangles_arr = mesh->getTriangles_array();
@@ -855,7 +877,7 @@ public:
 
   DaeSource* getSource(daeElement* source_el)
   {
-    std::map< std::string, ref<DaeSource> >::iterator it = mSources.find(source_el->getID());
+    std::map< daeElement*, ref<DaeSource> >::iterator it = mSources.find(source_el);
     if (it != mSources.end())
       return it->second.get();
     else
@@ -863,15 +885,11 @@ public:
       VL_CHECK(source_el->typeID() == domSource::ID())
       domSourceRef source = static_cast<domSource*>(source_el);
 
-      // mic fixme: issue warning
-      if(!source->getID() || !strlen(source->getID()))
-        return NULL;
-
       domSource::domTechnique_commonRef tech_common = source->getTechnique_common(); VL_CHECK(tech_common)
       domAccessorRef accessor = tech_common->getAccessor();
       
       size_t mask = 0;
-      // we support only up to 32 parameters for a single accessor
+      // we support up to 32 parameters for a single accessor
       domParam_Array param_array = accessor->getParam_array();
       size_t attr_count = param_array.getCount() <= 32 ? param_array.getCount() : 32;
       for(size_t ipar=0; ipar<attr_count; ++ipar)
@@ -881,11 +899,23 @@ public:
       }
 
       ref<DaeSource> dae_source = new DaeSource;
-      domFloat_arrayRef float_array = source->getFloat_array(); VL_CHECK(float_array); // mic fixme: support other source types.
-      dae_source->init(float_array, accessor->getCount(), accessor->getStride(), accessor->getOffset(), mask);
-      
+
+      if (source->getFloat_array())
+        dae_source->init(source->getFloat_array(), accessor->getCount(), accessor->getStride(), accessor->getOffset(), mask);
+      else
+      if (source->getInt_array())
+        dae_source->init(source->getInt_array(), accessor->getCount(), accessor->getStride(), accessor->getOffset(), mask);
+      else
+      if (source->getBool_array())
+        dae_source->init(source->getBool_array(), accessor->getCount(), accessor->getStride(), accessor->getOffset(), mask);
+      else
+      {
+        Log::error("LoadWriterCOLLADA: no supported source data found. Only Float_array, Int_array and Bool_array are supported as source data.\n");
+        return NULL;
+      }
+
       // add to source library for quick access later
-      mSources[source->getID()] = dae_source;
+      mSources[source] = dae_source;
 
       return dae_source.get();
     }
@@ -907,7 +937,6 @@ public:
       // parse material
       ref<DaeMaterial> material = new DaeMaterial;
 
-      // mic fixme: do we really have to lookup materials by their name instead of ID???
       // mic fixme: generate from the material library
       material->mEffect = new Effect;
       material->mEffect->shader()->enable(EN_DEPTH_TEST);
@@ -951,8 +980,6 @@ public:
 
       // generate the Actors belonging to this node
       this_node->generateActors();
-
-      // mic fixme: support skew
 
       // note: transforms are post-multiplied in the order in which they are specified (as if they were sub-nodes)
       for(size_t ichild=0; ichild<node->getChildren().getCount(); ++ichild)
@@ -998,6 +1025,13 @@ public:
           vec3 up  ((Real)lookat->getValue()[6], (Real)lookat->getValue()[7], (Real)lookat->getValue()[8]);
           this_node->mTransform->preMultiply( mat4::getLookAt(eye, look, up).invert() );
         }
+        else
+        if ( 0 == strcmp(child->getElementName(), "skew") )
+        {
+          // mic fixme: support skew
+          // domSkew* skew = static_cast<domSkew*>(child);
+          Log::error("LoadWriterCOLLADA: <skew> transform not supported yet. Call me if you know how to compute it.\n");
+        }
       }
 
       // --- --- --- parse children --- --- ---
@@ -1022,6 +1056,7 @@ public:
   {
     reset();
 
+    // load COLLADA file as a string.
     std::vector<char> buffer;
     file->load(buffer);
     if (buffer.empty())
@@ -1029,20 +1064,27 @@ public:
     buffer.push_back(0);
 
     daeElement* root = mDAE.openFromMemory(file->path().toStdString(), (char*)&buffer[0]);
-    // mic fixme: issue warning
     if (!root)
+    {
+      Log::error( "LoadWriterCOLLADA: failed to open COLLADA document.\n" );
       return false;
+    }
 
     daeElement* visual_scene = root->getDescendant("visual_scene");
-    // mic fixme: issue warning
     if (!visual_scene)
+    {
+      Log::error( "LoadWriterCOLLADA: <visual_scene> not found!\n" );
       return false;
+    }
 
-    // parse children and build the visual scene tree
+    // --- parse the visual scene ---
+
     mScene = new DaeNode;
     daeTArray< daeSmartRef<daeElement> > children = visual_scene->getChildren();
     for(size_t i=0; i<children.getCount(); ++i)
       parseNode(children[i], mScene.get());
+
+    // --- fill the resource database and final setup ---
 
     mScene->mTransform->computeWorldMatrixRecursive();
 
@@ -1067,7 +1109,7 @@ public:
         Real len_z = nmatrix.getZ().length();
         if ( fabs(len_x - 1) > 0.1 || fabs(len_y - 1) > 0.1 || fabs(len_z - 1) > 0.1 )
         {
-          // Log::warning("Detected mesh using scaling transform: enabled normal renormalization.\n");
+          // Log::warning("Detected mesh with scaled transform: enabled normal renormalization.\n");
           if ( actor->effect()->shader()->isEnabled(vl::EN_LIGHTING) )
             actor->effect()->shader()->enable(vl::EN_NORMALIZE);
             // actor->effect()->shader()->enable(vl::EN_RESCALE_NORMAL);
@@ -1099,9 +1141,9 @@ protected:
 protected:
   ref<ResourceDatabase> mResources;
   std::map< std::string, ref<DaeMaterial> > mMaterials;
-  std::map< std::string, ref<DaeMesh> > mMeshes;
+  std::map< daeElement*, ref<DaeMesh> > mMeshes; // daeElement* -> <geometry>
   std::vector< ref<DaeNode> > mNodes;
-  std::map< std::string, ref<DaeSource> > mSources;
+  std::map< daeElement*, ref<DaeSource> > mSources; // daeElement* -> <source>
   ref<DaeMaterial> mDefaultMaterial;
   ref<DaeNode> mScene;
   DAE mDAE;
