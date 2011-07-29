@@ -158,27 +158,29 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
   mMapNewToOld.clear();
   mMapOldToNew.clear();
 
-  std::vector<unsigned int> verti;
   size_t vert_count = geom->vertexArray() ? geom->vertexArray()->size() : geom->vertexAttribArray(VA_Position) ? geom->vertexAttribArray(VA_Position)->data()->size() : 0;
+  
   VL_CHECK(vert_count);
+  if (!vert_count)
+    return;
+
+  std::vector<size_t> verti;
   verti.resize(vert_count);
-  mMapOldToNew.resize(verti.size());
+  mMapOldToNew.resize(vert_count);
+
   for(unsigned int i=0; i<verti.size(); ++i)
   {
     verti[i] = i;
     mMapOldToNew[i] = 0xFFFFFFFF;
   }
-  mMapNewToOld.reserve(verti.size());
 
-  std::sort(verti.begin(), verti.end(), CompareVertex(geom));
-
-  if (verti.empty())
-    return;
-
+  std::sort(verti.begin(), verti.end(), LessCompare(geom));
+  EqualsCompare equal_vertex(geom);
+  mMapNewToOld.reserve(vert_count);
   unsigned int unique_vert_idx = 0;
   for(unsigned i=1; i<verti.size(); ++i)
   {
-    if ( !CompareVertex(geom).equals(verti[unique_vert_idx],verti[i]) )
+    if ( !equal_vertex(verti[unique_vert_idx], verti[i]) )
     {
       for(unsigned j=unique_vert_idx; j<i; ++j)
         mMapOldToNew[verti[j]] = mMapNewToOld.size();
@@ -205,13 +207,13 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
 
   for(size_t idraw=0; idraw<draw_cmd.size(); ++idraw)
   {
-    ref<DrawElementsUInt> tris = new DrawElementsUInt( draw_cmd[idraw]->primitiveType() );
-    geom->drawCalls()->push_back(tris.get());
+    ref<DrawElementsUInt> de = new DrawElementsUInt( draw_cmd[idraw]->primitiveType() );
+    geom->drawCalls()->push_back(de.get());
     const int idx_count = draw_cmd[idraw]->countIndices();
-    tris->indices()->resize(idx_count);
+    de->indices()->resize(idx_count);
     int i=0;
     for(IndexIterator it = draw_cmd[idraw]->indexIterator(); it.hasNext(); it.next(), ++i)
-      tris->indices()->at(i) = mMapOldToNew[it.index()];
+      de->indices()->at(i) = mMapOldToNew[it.index()];
   }
 
   #if 0
