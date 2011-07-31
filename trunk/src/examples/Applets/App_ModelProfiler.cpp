@@ -200,7 +200,7 @@ public:
     for(; it != mActorGeomMap.end(); ++it)
     {
       ref<Geometry> geom = it->second->deepCopy();
-      it->first->setLod(0, geom.get());
+      it->first.get_writable()->setLod(0, geom.get());
 
       if (mOptRecomputeNormals)
         geom->setNormalArray(NULL);
@@ -371,7 +371,7 @@ public:
         actor->effect()->shader()->enable(EN_LIGHTING);
         actor->effect()->shader()->enable(EN_CULL_FACE);
 
-        Geometry* geom = cast<Geometry>(actor->lod(0).get());
+        Geometry* geom = cast<Geometry>(actor->lod(0));
         if (geom)
           mActorGeomMap[actor] = geom->deepCopy();
 
