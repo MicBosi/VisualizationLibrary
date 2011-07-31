@@ -543,6 +543,45 @@ String& String::normalizeSlashes()
     replace("//", "/"); 
   }
   while(len!=length());
+
+  bool beg_slash = startsWith('/');
+
+  bool end_slash = endsWith('/');
+
+  // resolve . and ..
+  std::vector<String> parts;
+  split('/', parts, true);
+  std::vector<String> new_parts;
+  for(size_t i=0; i<parts.size(); ++i)
+  {
+    if (parts[i] == ".")
+      continue;
+    else
+    if (parts[i] == ".." && !new_parts.empty())
+    {
+      new_parts.pop_back();
+      continue;
+    }
+    else
+      new_parts.push_back(parts[i]);
+  }
+
+  // recreate the string
+
+  clear();
+  if (beg_slash)
+    *this += '/';
+
+  for(size_t i=0; i<new_parts.size(); ++i)
+  {
+    *this += new_parts[i];
+    if(i != new_parts.size()-1)
+      *this += '/';
+  }
+
+  if (end_slash)
+    *this += '/';
+
   return *this; 
 }
 //-----------------------------------------------------------------------------
