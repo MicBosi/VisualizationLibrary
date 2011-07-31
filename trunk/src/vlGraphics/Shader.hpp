@@ -496,32 +496,34 @@ namespace vl
     void setBackFlatColor(const fvec4& color);
     void setFlatColor(const fvec4& color);
 
-    void setAmbient(fvec4 color)          { mFrontAmbient   = mBackAmbient   = color; }
-    void setDiffuse(fvec4 color)          { mFrontDiffuse   = mBackDiffuse   = color; }
-    void setSpecular(fvec4 color)         { mFrontSpecular  = mBackSpecular  = color; }
-    void setEmission(fvec4 color)         { mFrontEmission  = mBackEmission  = color; }
+    void setAmbient(fvec4 color)       { mFrontAmbient   = mBackAmbient   = color; }
+    void setDiffuse(fvec4 color)       { mFrontDiffuse   = mBackDiffuse   = color; }
+    void setSpecular(fvec4 color)      { mFrontSpecular  = mBackSpecular  = color; }
+    void setEmission(fvec4 color)      { mFrontEmission  = mBackEmission  = color; }
     void setShininess(float shininess) { mFrontShininess = mBackShininess = shininess; }
 
-    void setFrontAmbient(fvec4 color) { mFrontAmbient = color; }
-    void setFrontDiffuse(fvec4 color) { mFrontDiffuse = color; }
+    void setFrontAmbient(fvec4 color)  { mFrontAmbient = color; }
+    void setFrontDiffuse(fvec4 color)  { mFrontDiffuse = color; }
     void setFrontSpecular(fvec4 color) { mFrontSpecular = color; }
     void setFrontEmission(fvec4 color) { mFrontEmission = color; }
     void setFrontShininess(float shininess) { mFrontShininess=shininess; }
-    fvec4 frontAmbient() const { return mFrontAmbient; }
-    fvec4 frontDiffuse() const { return mFrontDiffuse; }
-    fvec4 frontSpecular() const { return mFrontSpecular; }
-    fvec4 frontEmission() const { return mFrontEmission; }
+
+    fvec4 frontAmbient() const   { return mFrontAmbient; }
+    fvec4 frontDiffuse() const   { return mFrontDiffuse; }
+    fvec4 frontSpecular() const  { return mFrontSpecular; }
+    fvec4 frontEmission() const  { return mFrontEmission; }
     float frontShininess() const { return mFrontShininess; }
 
-    void setBackAmbient(fvec4 color) { mBackAmbient = color; }
-    void setBackDiffuse(fvec4 color) { mBackDiffuse = color; }
+    void setBackAmbient(fvec4 color)  { mBackAmbient = color; }
+    void setBackDiffuse(fvec4 color)  { mBackDiffuse = color; }
     void setBackSpecular(fvec4 color) { mBackSpecular = color; }
     void setBackEmission(fvec4 color) { mBackEmission = color; }
     void setBackShininess(float shininess) { mBackShininess=shininess; }
-    fvec4 backAmbient() const { return mBackAmbient; }
-    fvec4 backDiffuse() const { return mBackDiffuse; }
-    fvec4 backSpecular() const { return mBackSpecular; }
-    fvec4 backEmission() const { return mBackEmission; }
+
+    fvec4 backAmbient() const   { return mBackAmbient; }
+    fvec4 backDiffuse() const   { return mBackDiffuse; }
+    fvec4 backSpecular() const  { return mBackSpecular; }
+    fvec4 backEmission() const  { return mBackEmission; }
     float backShininess() const { return mBackShininess; }
 
     // color material
