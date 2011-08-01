@@ -396,23 +396,25 @@ void Material::apply(const Camera*, OpenGLContext*) const
 
   if (mColorMaterialEnabled)
   {
-    glColorMaterial(colorMaterialFace(), colorMaterial());
-    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(colorMaterialFace(), colorMaterial()); VL_CHECK_OGL();
+    glEnable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
   }
   else
-    glDisable(GL_COLOR_MATERIAL);
+  {
+    glDisable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
+  }
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, mFrontAmbient.ptr()); 
   glMaterialfv(GL_FRONT, GL_DIFFUSE, mFrontDiffuse.ptr()); 
   glMaterialfv(GL_FRONT, GL_SPECULAR, mFrontSpecular.ptr()); 
   glMaterialfv(GL_FRONT, GL_EMISSION, mFrontEmission.ptr()); 
-  glMaterialf(GL_FRONT, GL_SHININESS, mFrontShininess); 
+  glMaterialf(GL_FRONT, GL_SHININESS, mFrontShininess); VL_CHECK_OGL();
 
   glMaterialfv(GL_BACK, GL_AMBIENT, mBackAmbient.ptr());
   glMaterialfv(GL_BACK, GL_DIFFUSE, mBackDiffuse.ptr());
   glMaterialfv(GL_BACK, GL_SPECULAR, mBackSpecular.ptr());
   glMaterialfv(GL_BACK, GL_EMISSION, mBackEmission.ptr());
-  glMaterialf(GL_BACK, GL_SHININESS, mBackShininess);
+  glMaterialf(GL_BACK, GL_SHININESS, mBackShininess); VL_CHECK_OGL();
 
 #else
 
@@ -424,18 +426,18 @@ void Material::apply(const Camera*, OpenGLContext*) const
       Log::error("OpenGL ES 1.x supports only CM_AMBIENT_AND_DIFFUSE color material mode!\n");
       VL_TRAP();
     }
-    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
   }
   else
   {
-    glDisable(GL_COLOR_MATERIAL);
+    glDisable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
   }
 
   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr()); 
   glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr()); 
   glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr()); 
   glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mFrontEmission.ptr()); 
-  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, mFrontShininess); 
+  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, mFrontShininess); VL_CHECK_OGL();
 
 #endif
 
