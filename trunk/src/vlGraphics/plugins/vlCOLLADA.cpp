@@ -36,6 +36,7 @@
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Light.hpp>
 #include <vlCore/Time.hpp>
+#include <vlCore/GLSLmath.hpp>
 #include <set>
 #include <dae.h>
 #include <dom.h>
@@ -43,10 +44,6 @@
 #include <dom/domProfile_COMMON.h>
 
 using namespace vl;
-
-// mic fixme:
-
-// CODE: put everything in the COLLADA loader class and cleanup
 
 // TODO
 // - support blending/transparency
@@ -721,11 +718,24 @@ ref<Effect> setupMaterial( DaeMaterial* mat )
   {
     DaeTechniqueCOMMON* common_tech =mat->mDaeEffect->mDaeTechniqueCOMMON.get();
 
+    // material sanity checks: these are needed only when using fixed function pipeline
+    common_tech->mShininess = vl::clamp(common_tech->mShininess, 0.0f, 128.0f);
+
+    // material normalization
+    // mic fixme: BikeFromXSI test requires this
+    fvec4 total_color = common_tech->mDiffuse + common_tech->mAmbient + common_tech->mSpecular + common_tech->mEmission;
+    total_color.a() = 1;
+    if ( !vl::any(vl::greaterThan(total_color, fvec4(1.1f, 1.1f, 1.1f, 1))) )
+      total_color = fvec4(1,1,1,1);
+    else
+      // allow some over-saturation
+      total_color /= 1.1f;
+
     // mic fixme: this vl::Material can be put in mDaeTechniqueCOMMON and shared among all the materials that use it.
-    fx->shader()->gocMaterial()->setDiffuse( common_tech->mDiffuse );
-    fx->shader()->gocMaterial()->setAmbient( common_tech->mAmbient );
-    fx->shader()->gocMaterial()->setEmission( common_tech->mEmission );
-    fx->shader()->gocMaterial()->setSpecular( common_tech->mSpecular );
+    fx->shader()->gocMaterial()->setDiffuse  ( common_tech->mDiffuse  / total_color );
+    fx->shader()->gocMaterial()->setAmbient  ( common_tech->mAmbient  / total_color );
+    fx->shader()->gocMaterial()->setEmission ( common_tech->mEmission / total_color );
+    fx->shader()->gocMaterial()->setSpecular ( common_tech->mSpecular / total_color );
     fx->shader()->gocMaterial()->setShininess( common_tech->mShininess );
 
     // mic fixme: 
@@ -1348,13 +1358,73 @@ public:
   const LoadWriterCOLLADA::LoadOptions* loadOptions() const { return mLoadOptions; }
 
 public:
+  std::string percentDecode(const char* uri)
+  {
+    std::string str;
+    for(int i=0; uri[i]; ++i)
+    {
+      // process encoded character
+      if ( uri[i] == '%' && uri[i+1] && uri[i+2] )
+      {
+        ++i;
+        char hex1 = uri[i];
+        if (hex1 >= '0' && hex1 <= '9')
+          hex1 -= '0';
+        else
+        if (hex1 >= 'A' && hex1 <= 'F')
+          hex1 -= 'A';
+        else
+        if (hex1 >= 'a' && hex1 <= 'f')
+          hex1 -= 'a';
+        else
+          hex1 = -1;
+
+        ++i;
+        char hex2 = uri[i];
+        if (hex2 >= '0' && hex2 <= '9')
+          hex2 -= '0';
+        else
+        if (hex2 >= 'A' && hex2 <= 'F')
+          hex2 -= 'A';
+        else
+        if (hex2 >= 'a' && hex2 <= 'f')
+          hex2 -= 'a';
+        else
+          hex2 = -1;
+
+        // encoding error
+        if (hex1 == -1 || hex2 == -1)
+        {
+          // insert percent code as it is
+          str.push_back('%');
+          i -= 2;
+        }
+
+        char ch = (hex1 << 4) + (hex2);
+        str.push_back(ch);
+      }
+      else
+        str.push_back(uri[i]);
+    }
+    return str;
+  }
+
+
   void loadImages(const domImage_Array& images)
   {
     for(size_t i=0; i<images.getCount(); ++i)
     {
-      String complete_path = mFilePath.extractPath() + images[i]->getInit_from()->getValue().getOriginalURI();
-      complete_path.normalizeSlashes();
-      ref<Image> image = loadImage( complete_path );
+      if ( strstr( images[i]->getInit_from()->getValue().getProtocol(), "file") == 0 )
+      {
+        Log::error( Say("LoadWriterCOLLADA: protocol not supported: %s\n") << images[i]->getInit_from()->getValue().getURI() );
+        continue;
+      }
+
+      std::string full_path = percentDecode( images[i]->getInit_from()->getValue().getURI() + 6 );
+      ref<Image> image = loadImage( full_path.c_str() );
+      
+      // mic fixme: issue error
+      VL_CHECK(image);
       mImages[ images[i].cast() ] = image;
     }
   }
@@ -1576,7 +1646,9 @@ public:
             parseColor( phong->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
             parseColor( phong->getSpecular(), &dae_effect->mDaeTechniqueCOMMON->mSpecular );
             if (phong->getShininess())
+            {
               dae_effect->mDaeTechniqueCOMMON->mShininess = (float)phong->getShininess()->getFloat()->getValue();
+            }
 
             // --- <diffuse><texture texture="..." texcoord="..." /></diffuse> ---
             if ( phong->getDiffuse()->getTexture() )
@@ -1628,9 +1700,8 @@ public:
             parseColor( lambert->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
             parseColor( lambert->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
             parseColor( lambert->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
-            // parseColor( lambert->getSpecular(), &dae_effect->mDaeTechniqueCOMMON->mSpecular );
-            //if (lambert->getShininess())
-            //  dae_effect->mDaeTechniqueCOMMON->mShininess = (float)lambert->getShininess()->getFloat()->getValue();
+            dae_effect->mDaeTechniqueCOMMON->mSpecular = fvec4(0,0,0,1);
+            dae_effect->mDaeTechniqueCOMMON->mShininess = 0;
 
             // --- <diffuse><texture texture="..." texcoord="..." /></diffuse> ---
             if ( lambert->getDiffuse()->getTexture() )
@@ -1672,6 +1743,40 @@ public:
             }
             if (lambert->getTransparency())
               dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)lambert->getTransparency()->getFloat()->getValue();
+          }
+          else
+          if (common->getTechnique()->getConstant())
+          {
+            domProfile_COMMON::domTechnique::domConstantRef constant = common->getTechnique()->getConstant();
+
+            dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
+            parseColor( constant->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
+            dae_effect->mDaeTechniqueCOMMON->mAmbient = fvec4(0,0,0,1);
+            dae_effect->mDaeTechniqueCOMMON->mDiffuse = fvec4(0,0,0,1);
+            dae_effect->mDaeTechniqueCOMMON->mSpecular = fvec4(0,0,0,1);
+            dae_effect->mDaeTechniqueCOMMON->mShininess = 0;
+
+            parseColor( constant->getReflective(), &dae_effect->mDaeTechniqueCOMMON->mReflective );
+            if (constant->getReflectivity())
+              dae_effect->mDaeTechniqueCOMMON->mReflectivity = (float)constant->getReflectivity()->getFloat()->getValue();
+
+            if (constant->getTransparent())
+            {
+              if (constant->getTransparent()->getColor())
+              {
+                domFloat4 tr_col = constant->getTransparent()->getColor()->getValue();
+                dae_effect->mDaeTechniqueCOMMON->mTransparent = fvec4((float)tr_col[0], (float)tr_col[1], (float)tr_col[2], (float)tr_col[3]);
+              }
+              dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = constant->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
+            }
+            if (constant->getTransparency())
+              dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)constant->getTransparency()->getFloat()->getValue();
+          }
+          else
+          {
+            Log::error("LoadWriterCOLLADA: technique not supported.\n");
+            // mic fixme: remove this
+            VL_CHECK(dae_effect->mDaeTechniqueCOMMON)
           }
         }
       }
