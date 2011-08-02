@@ -492,10 +492,10 @@ struct DaeMaterial: public Object
   ref<DaeEffect> mDaeEffect;
 };
 //-----------------------------------------------------------------------------
-class COLLADALoader
+class DaeLoader
 {
 public:
-  COLLADALoader();
+  DaeLoader();
 
   bool load(VirtualFile* file);
 
@@ -523,6 +523,8 @@ protected:
   void bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_materialRef bind_material);
 
   void parseNode(daeElement* el, DaeNode* parent);
+
+  void parseAsset(domElement* root);
 
   void loadImages(const domImage_Array& images);
 
@@ -573,7 +575,7 @@ protected:
   bool mAssumeOpaque;
 };
 //-----------------------------------------------------------------------------
-COLLADALoader::COLLADALoader()
+DaeLoader::DaeLoader()
 {
   reset();
 
@@ -587,7 +589,7 @@ COLLADALoader::COLLADALoader()
   mDefaultFX->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::reset()
+void DaeLoader::reset()
 {
   mAssumeOpaque = false;
   mInvertTransparency = false;
@@ -595,7 +597,7 @@ void COLLADALoader::reset()
   mResources = new ResourceDatabase;
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::parseInputs(DaePrimitive* dae_primitive, const domInputLocalOffset_Array& input_arr, const std::vector< ref<DaeInput> >& vertex_inputs)
+void DaeLoader::parseInputs(DaePrimitive* dae_primitive, const domInputLocalOffset_Array& input_arr, const std::vector< ref<DaeInput> >& vertex_inputs)
 {
   dae_primitive->mIndexStride = 0;
 
@@ -645,7 +647,7 @@ void COLLADALoader::parseInputs(DaePrimitive* dae_primitive, const domInputLocal
   dae_primitive->mIndexStride += 1;
 }
 //-----------------------------------------------------------------------------
-ref<DaeMesh> COLLADALoader::parseGeometry(daeElement* geometry)
+ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
 {
   // try to reuse the geometry in the library
   std::map< daeElement*, ref<DaeMesh> >::iterator it = mMeshes.find( geometry );
@@ -881,7 +883,7 @@ ref<DaeMesh> COLLADALoader::parseGeometry(daeElement* geometry)
   return dae_mesh;
 }
 //-----------------------------------------------------------------------------
-DaeSource* COLLADALoader::getSource(daeElement* source_el)
+DaeSource* DaeLoader::getSource(daeElement* source_el)
 {
   std::map< daeElement*, ref<DaeSource> >::iterator it = mSources.find(source_el);
   if (it != mSources.end())
@@ -927,7 +929,7 @@ DaeSource* COLLADALoader::getSource(daeElement* source_el)
   }
 }
 //-----------------------------------------------------------------------------
-ref<Effect> COLLADALoader::setup_vl_Effect( DaeMaterial* mat )
+ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
 {
   VL_CHECK(mat)
   VL_CHECK(mat->mDaeEffect)
@@ -1004,7 +1006,7 @@ ref<Effect> COLLADALoader::setup_vl_Effect( DaeMaterial* mat )
   return fx;
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_materialRef bind_material)
+void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_materialRef bind_material)
 {
   // map symbols to actual materials
   std::map< std::string, DaeMaterial* > material_map;
@@ -1061,7 +1063,7 @@ void COLLADALoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_
   }
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::parseNode(daeElement* el, DaeNode* parent)
+void DaeLoader::parseNode(daeElement* el, DaeNode* parent)
 {
   if (el->typeID() == domNode::ID())
   {
@@ -1183,7 +1185,7 @@ void COLLADALoader::parseNode(daeElement* el, DaeNode* parent)
   }
 }
 //-----------------------------------------------------------------------------
-bool COLLADALoader::load(VirtualFile* file)
+bool DaeLoader::load(VirtualFile* file)
 {
   reset();
 
@@ -1203,89 +1205,7 @@ bool COLLADALoader::load(VirtualFile* file)
     return false;
   }
 
-  // check transparency & up vector
-  if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyInvert)
-    mInvertTransparency = true;
-  else
-  if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyKeep)
-    mInvertTransparency = false;
-  else
-  if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyAuto)
-  {
-    mInvertTransparency = false;
-    domElement* asset_el = root->getChild("asset");
-    if (asset_el)
-    {
-      domAsset* asset = static_cast<domAsset*>(asset_el);
-      for(size_t i=0; i<asset->getContributor_array().getCount(); ++i)
-      {
-        const char* tool = asset->getContributor_array()[i]->getAuthoring_tool()->getValue();
-
-        // Google SketchUp before 7.1 requires <transparency> inversion.
-        // see http://www.collada.org/public_forum/viewtopic.php?f=12&t=1667
-        if ( tool && strstr(tool, "Google SketchUp") )
-        {
-          float version = 1000;
-          if ( sscanf( strstr(tool, "Google SketchUp") + 16, "%f", &version) )
-          {
-            version = version * 100 + 0.5f;
-            if (version < 710)
-              mInvertTransparency = true;
-          }
-          break;
-        }
-
-        // See https://collada.org/mediawiki/index.php/ColladaMaya#ColladaMaya_3.03
-        // - "Data exported with previous versions of our COLLADA tools may import with inverted transparency in ColladaMax 3.03 and ColladaMaya 3.03."
-        // - ColladaMax/ColladaMaya before 3.03 use unpredictable combinations of <transparent> and <transparency>, so we assume opaque.
-
-        // mic fixme: remove
-        printf("TOOL = %s\n", tool);
-
-        if ( strstr(tool, "ColladaMaya") )
-        {
-          float version = 1000;
-          if ( sscanf( strstr(tool, "ColladaMaya") + 13, "%f", &version) )
-          {
-            version = version * 100 + 0.5f;
-            if (version < 303)
-              mAssumeOpaque = true;
-          }
-        }
-
-        if ( strstr(tool, "ColladaMax") )
-        {
-          float version = 1000;
-          if ( sscanf( strstr(tool, "ColladaMax") + 12, "%f", &version) )
-          {
-            version = version * 100 + 0.5f;
-            if (version < 303)
-              mAssumeOpaque = true;
-          }
-        }
-      }
-
-      // up vector
-      if (asset->getUp_axis())
-      {
-        if( asset->getUp_axis()->getValue() == UPAXISTYPE_X_UP )
-        {
-          // X_UP Negative y Positive x Positive z
-          mUpMatrix.setX( fvec3( 0, 1, 0) );
-          mUpMatrix.setY( fvec3(-1, 0, 0) );
-          mUpMatrix.setZ( fvec3( 0, 0, 1) );
-        }
-        else
-        if( asset->getUp_axis()->getValue() == UPAXISTYPE_Z_UP )
-        {
-          // Z_UP Positive x Positive z Negative y
-          mUpMatrix.setX( fvec3(1, 0, 0) );
-          mUpMatrix.setY( fvec3(0, 0,-1) );
-          mUpMatrix.setZ( fvec3(0, 1, 0) );
-        }
-      }
-    }
-  }
+  parseAsset(root);
 
   parseImages(root->getDescendant("library_images"));
 
@@ -1340,8 +1260,7 @@ bool COLLADALoader::load(VirtualFile* file)
       {
         // Log::warning("Detected mesh with scaled transform: enabled normal renormalization.\n");
         if ( actor->effect()->shader()->isEnabled(vl::EN_LIGHTING) )
-          actor->effect()->shader()->enable(vl::EN_NORMALIZE);
-          // actor->effect()->shader()->enable(vl::EN_RESCALE_NORMAL);
+          actor->effect()->shader()->enable(vl::EN_NORMALIZE); // or vl::EN_RESCALE_NORMAL
       }
     }
   }
@@ -1354,7 +1273,7 @@ bool COLLADALoader::load(VirtualFile* file)
   return true;
 }
 //-----------------------------------------------------------------------------
-std::string COLLADALoader::percentDecode(const char* uri)
+std::string DaeLoader::percentDecode(const char* uri)
 {
   std::string str;
   for(int i=0; uri[i]; ++i)
@@ -1405,7 +1324,7 @@ std::string COLLADALoader::percentDecode(const char* uri)
   return str;
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::loadImages(const domImage_Array& images)
+void DaeLoader::loadImages(const domImage_Array& images)
 {
   for(size_t i=0; i<images.getCount(); ++i)
   {
@@ -1422,7 +1341,7 @@ void COLLADALoader::loadImages(const domImage_Array& images)
   }
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::parseImages(daeElement* library)
+void DaeLoader::parseImages(daeElement* library)
 {
   if (!library)
     return;
@@ -1431,7 +1350,7 @@ void COLLADALoader::parseImages(daeElement* library)
   loadImages(images);
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::parseEffects(daeElement* library)
+void DaeLoader::parseEffects(daeElement* library)
 {
   if (!library)
     return;
@@ -1725,7 +1644,7 @@ void COLLADALoader::parseEffects(daeElement* library)
   }
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::prepareTexture2D(DaeSampler2D* sampler2D)
+void DaeLoader::prepareTexture2D(DaeSampler2D* sampler2D)
 {
   if (sampler2D->mDaeSurface && sampler2D->mDaeSurface->mImage)
   {
@@ -1749,7 +1668,7 @@ void COLLADALoader::prepareTexture2D(DaeSampler2D* sampler2D)
   }
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::parseMaterials(daeElement* library)
+void DaeLoader::parseMaterials(daeElement* library)
 {
   if (!library)
     return;
@@ -1780,7 +1699,7 @@ void COLLADALoader::parseMaterials(daeElement* library)
   }
 }
 //-----------------------------------------------------------------------------
-Dae::EInputSemantic COLLADALoader::getSemantic(const char* semantic)
+Dae::EInputSemantic DaeLoader::getSemantic(const char* semantic)
 {
   for(int i=0; Dae::SemanticTable[i].mSemanticString; ++i)
   {
@@ -1791,7 +1710,7 @@ Dae::EInputSemantic COLLADALoader::getSemantic(const char* semantic)
   return Dae::IS_UNKNOWN;
 }
 //-----------------------------------------------------------------------------
-const char* COLLADALoader::getSemanticString(Dae::EInputSemantic semantic)
+const char* DaeLoader::getSemanticString(Dae::EInputSemantic semantic)
 {
   for(int i=0; Dae::SemanticTable[i].mSemanticString; ++i)
   {
@@ -1802,7 +1721,7 @@ const char* COLLADALoader::getSemanticString(Dae::EInputSemantic semantic)
   return NULL;
 }
 //-----------------------------------------------------------------------------
-ETexParamFilter COLLADALoader::translateSampleFilter(domFx_sampler_filter_common filter)
+ETexParamFilter DaeLoader::translateSampleFilter(domFx_sampler_filter_common filter)
 {
   switch(filter)
   {
@@ -1816,7 +1735,7 @@ ETexParamFilter COLLADALoader::translateSampleFilter(domFx_sampler_filter_common
   }
 }
 //-----------------------------------------------------------------------------
-ETexParamWrap COLLADALoader::translateWrapMode(domFx_sampler_wrap_common wrap)
+ETexParamWrap DaeLoader::translateWrapMode(domFx_sampler_wrap_common wrap)
 {
   switch(wrap)
   {
@@ -1829,7 +1748,7 @@ ETexParamWrap COLLADALoader::translateWrapMode(domFx_sampler_wrap_common wrap)
 }
 //-----------------------------------------------------------------------------
 template<class T_color_or_texture>
-void COLLADALoader::parseColor(const domProfile_COMMON* common, const T_color_or_texture& color_or_texture, DaeColorOrTexture* out_col)
+void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_texture& color_or_texture, DaeColorOrTexture* out_col)
 {
   if (!color_or_texture)
     return;
@@ -1864,7 +1783,7 @@ void COLLADALoader::parseColor(const domProfile_COMMON* common, const T_color_or
   }
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::generateGeometry(DaePrimitive* prim)
+void DaeLoader::generateGeometry(DaePrimitive* prim)
 {
   VL_CHECK(prim->mIndexStride);
 
@@ -2056,7 +1975,94 @@ void COLLADALoader::generateGeometry(DaePrimitive* prim)
    // --- orient geometry based on up vector ---
    // prim->mGeometry->transform((mat4)mUpMatrix);
 }
+//-----------------------------------------------------------------------------
+void DaeLoader::parseAsset(domElement* root)
+{
+  domElement* asset_el = root->getChild("asset");
+  if (asset_el)
+  {
+    domAsset* asset = static_cast<domAsset*>(asset_el);
 
+    // up vector
+    if (asset->getUp_axis())
+    {
+      if( asset->getUp_axis()->getValue() == UPAXISTYPE_X_UP )
+      {
+        // X_UP Negative y Positive x Positive z
+        mUpMatrix.setX( fvec3( 0, 1, 0) );
+        mUpMatrix.setY( fvec3(-1, 0, 0) );
+        mUpMatrix.setZ( fvec3( 0, 0, 1) );
+      }
+      else
+      if( asset->getUp_axis()->getValue() == UPAXISTYPE_Z_UP )
+      {
+        // Z_UP Positive x Positive z Negative y
+        mUpMatrix.setX( fvec3(1, 0, 0) );
+        mUpMatrix.setY( fvec3(0, 0,-1) );
+        mUpMatrix.setZ( fvec3(0, 1, 0) );
+      }
+    }
+
+    // try to fix the transparency written by crappy tools
+    mInvertTransparency = false;
+    mAssumeOpaque = false;
+    if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyInvert)
+      mInvertTransparency = true;
+    else
+    if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyAuto)
+    {
+      for(size_t i=0; i<asset->getContributor_array().getCount(); ++i)
+      {
+        const char* tool = asset->getContributor_array()[i]->getAuthoring_tool()->getValue();
+
+        // mic fixme: remove
+        printf("TOOL = %s\n", tool);
+
+        // Google SketchUp before 7.1 requires <transparency> inversion.
+        // see http://www.collada.org/public_forum/viewtopic.php?f=12&t=1667
+        if ( tool && strstr(tool, "Google SketchUp") )
+        {
+          float version = 1000;
+          if ( sscanf( strstr(tool, "Google SketchUp") + 16, "%f", &version) )
+          {
+            version = version * 100 + 0.5f;
+            if (version < 710)
+              mInvertTransparency = true;
+          }
+          break;
+        }
+
+        // See https://collada.org/mediawiki/index.php/ColladaMaya#ColladaMaya_3.03
+        // - "Data exported with previous versions of our COLLADA tools may import with inverted transparency in ColladaMax 3.03 and ColladaMaya 3.03."
+        // - ColladaMax/ColladaMaya before 3.03 use unpredictable combinations of <transparent> and <transparency>, so... we assume opaque.
+
+        if ( strstr(tool, "ColladaMaya") )
+        {
+          float version = 1000;
+          if ( sscanf( strstr(tool, "ColladaMaya") + 13, "%f", &version) )
+          {
+            version = version * 100 + 0.5f;
+            if (version < 303)
+              mAssumeOpaque = true;
+          }
+        }
+
+        if ( strstr(tool, "ColladaMax") )
+        {
+          float version = 1000;
+          if ( sscanf( strstr(tool, "ColladaMax") + 12, "%f", &version) )
+          {
+            version = version * 100 + 0.5f;
+            if (version < 303)
+              mAssumeOpaque = true;
+          }
+        }
+      }
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
 ref<ResourceDatabase> LoadWriterCOLLADA::load(const String& path, const LoadOptions* options)
 {
   ref<VirtualFile> file = defFileSystem()->locateFile(path);
@@ -2072,7 +2078,7 @@ ref<ResourceDatabase> LoadWriterCOLLADA::load(const String& path, const LoadOpti
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> LoadWriterCOLLADA::load(VirtualFile* file, const LoadOptions* options)
 {
-  COLLADALoader loader;
+  DaeLoader loader;
   loader.setLoadOptions(options);
   loader.load(file);
   return loader.resources();
