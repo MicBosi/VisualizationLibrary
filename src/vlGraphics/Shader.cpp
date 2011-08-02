@@ -1074,10 +1074,10 @@ void TextureSampler::apply(const Camera* camera, OpenGLContext* ctx) const
 
     // if we request mipmapped filtering then we must have a mip-mapped texture.
 #if !defined(NDEBUG) && defined(VL_OPENGL) // glGetTexLevelParameter* is not supported under OpenGL ES
-    if (texture()->dimension() != TD_TEXTURE_BUFFER)
+    if (texture()->dimension() != TD_TEXTURE_BUFFER && texture()->width() > 1 || texture()->height() > 1 || texture()->depth() > 1)
     {
       GLint width = 0;
-      int tex_target = texture()->dimension() == vl::TD_TEXTURE_CUBE_MAP ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : texture()->dimension();
+      ETextureDimension tex_target = texture()->dimension() == vl::TD_TEXTURE_CUBE_MAP ? (ETextureDimension)GL_TEXTURE_CUBE_MAP_POSITIVE_X : texture()->dimension();
       glGetTexLevelParameteriv( tex_target, 1, GL_TEXTURE_WIDTH, &width );
       VL_CHECK_OGL()
       if ( !width )
