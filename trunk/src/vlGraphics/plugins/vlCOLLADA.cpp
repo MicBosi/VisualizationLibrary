@@ -534,7 +534,7 @@ protected:
 
   void parseMaterials(daeElement* library);
 
-  static ref<Effect> setup_vl_Effect( DaeMaterial* mat );
+  ref<Effect> setup_vl_Effect( DaeMaterial* mat );
 
   static std::string percentDecode(const char* uri);
 
@@ -570,6 +570,7 @@ protected:
   String mFilePath;
   fmat4 mUpMatrix;
   bool mInvertTransparency;
+  bool mAssumeOpaque;
 };
 //-----------------------------------------------------------------------------
 COLLADALoader::COLLADALoader()
@@ -588,6 +589,7 @@ COLLADALoader::COLLADALoader()
 //-----------------------------------------------------------------------------
 void COLLADALoader::reset()
 {
+  mAssumeOpaque = false;
   mInvertTransparency = false;
   mScene = NULL;
   mResources = new ResourceDatabase;
@@ -938,7 +940,7 @@ ref<Effect> COLLADALoader::setup_vl_Effect( DaeMaterial* mat )
 
   // mic fixme: most of .dae files I tested require this even if no double_sided flag is set.
 #if 1
-  fx->shader()->gocLightModel()->setTwoSide(true);
+  fx->shader()->gocLightModel()->setTwoSide(false);
 #else
   if (mat->mDaeEffect->mDoubleSided)
     fx->shader()->gocLightModel()->setTwoSide(true); // yes two side lighting, no culling
@@ -963,10 +965,15 @@ ref<Effect> COLLADALoader::setup_vl_Effect( DaeMaterial* mat )
     
     // this sets the alpha values of all material colors, front and back.
     float transparency = 0;
-    if ( common_tech->mOpaqueMode == DaeTechniqueCOMMON::Opaque_A_ONE )
-      transparency = common_tech->mTransparent.mColor.a() * common_tech->mTransparency;
+    if (mAssumeOpaque)
+      transparency = 1.0f;
     else
-      transparency = (1.0f - dot( common_tech->mTransparent.mColor.rgb(), fvec3(0.2126f, 0.7152f, 0.0722f))) * common_tech->mTransparency;
+    {
+      if ( common_tech->mOpaqueMode == DaeTechniqueCOMMON::Opaque_A_ONE )
+        transparency = common_tech->mTransparent.mColor.a() * common_tech->mTransparency;
+      else
+        transparency = (1.0f - dot( common_tech->mTransparent.mColor.rgb(), fvec3(0.2126f, 0.7152f, 0.0722f))) * common_tech->mTransparency;
+    }
 
     fx->shader()->gocMaterial()->setTransparency( transparency );
 
@@ -1214,34 +1221,46 @@ bool COLLADALoader::load(VirtualFile* file)
       {
         const char* tool = asset->getContributor_array()[i]->getAuthoring_tool()->getValue();
 
-        // Google seems to always invert the transparency
-        if ( tool && strstr(tool, "Google") )
+        // Google SketchUp before 7.1 requires <transparency> inversion.
+        // see http://www.collada.org/public_forum/viewtopic.php?f=12&t=1667
+        if ( tool && strstr(tool, "Google SketchUp") )
         {
-          mInvertTransparency = true;
+          float version = 1000;
+          if ( sscanf( strstr(tool, "Google SketchUp") + 16, "%f", &version) )
+          {
+            version = version * 100 + 0.5f;
+            if (version < 710)
+              mInvertTransparency = true;
+          }
           break;
         }
 
         // See https://collada.org/mediawiki/index.php/ColladaMaya#ColladaMaya_3.03
-        // "Data exported with previous versions of our COLLADA tools may import with inverted transparency in ColladaMax 3.03 and ColladaMaya 3.03."
+        // - "Data exported with previous versions of our COLLADA tools may import with inverted transparency in ColladaMax 3.03 and ColladaMaya 3.03."
+        // - ColladaMax/ColladaMaya before 3.03 use unpredictable combinations of <transparent> and <transparency>, so we assume opaque.
 
-        // example: <authoring_tool>Maya 7.0 | ColladaMaya v2.03b Jul 27 2006 at 18:43:34 | FCollada v1.13</authoring_tool>
+        // mic fixme: remove
+        printf("TOOL = %s\n", tool);
+
         if ( strstr(tool, "ColladaMaya") )
         {
-          float ColladaMayaVersion = 1000;
-          if ( sscanf( strstr(tool, "ColladaMaya") + 13, "%f", &ColladaMayaVersion) )
+          float version = 1000;
+          if ( sscanf( strstr(tool, "ColladaMaya") + 13, "%f", &version) )
           {
-            if (ColladaMayaVersion < 3.03)
-              mInvertTransparency = true;
+            version = version * 100 + 0.5f;
+            if (version < 303)
+              mAssumeOpaque = true;
           }
         }
 
         if ( strstr(tool, "ColladaMax") )
         {
-          float ColladaMaxVersion = 1000;
-          if ( sscanf( strstr(tool, "ColladaMax") + 12, "%f", &ColladaMaxVersion) )
+          float version = 1000;
+          if ( sscanf( strstr(tool, "ColladaMax") + 12, "%f", &version) )
           {
-            if (ColladaMaxVersion < 3.03)
-              mInvertTransparency = true;
+            version = version * 100 + 0.5f;
+            if (version < 303)
+              mAssumeOpaque = true;
           }
         }
       }
@@ -1994,24 +2013,26 @@ void COLLADALoader::generateGeometry(DaePrimitive* prim)
     VL_CHECK(norm_new);
 
     size_t flipped = 0;
+    size_t degenerate = 0;
     for(size_t i=0; i<norm_new->size(); ++i)
     {
       // compare VL normals with original ones
       float l = norm_old->at(i).length();
       if ( l < 0.5f ) 
       {
-        // mic fixme: issue these things as debug once things got stable
-        Log::warning( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
+        // Log::warning( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
         norm_old->at(i) = norm_new->at(i);
+        ++degenerate;
       }
-      else
+
       if ( l < 0.9f || l > 1.1f ) 
       {
         // mic fixme: issue these things as debug once things got stable
         Log::warning( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
         norm_old->at(i).normalize();
+        ++degenerate;
       }
-      else
+
       if ( dot(norm_new->at(i), norm_old->at(i)) < -0.1f )
       {
         norm_old->at(i) = -norm_old->at(i);
@@ -2019,8 +2040,9 @@ void COLLADALoader::generateGeometry(DaePrimitive* prim)
       }
     }
 
-    if (flipped)
-      Log::warning( Say("LoadWriterCOLLADA: found %n flipped normals out of %n.\n") << flipped << norm_old->size() );
+    // mic fixme: issue these things as debug once things got stable
+    if (degenerate || flipped) 
+      Log::warning( Say("LoadWriterCOLLADA: fixed bad normals: %n degenerate and %n flipped (out of %n).\n") << degenerate << flipped << norm_old->size() );
 
     // reinstall fixed normals
     prim->mGeometry->setNormalArray(norm_old.get());
