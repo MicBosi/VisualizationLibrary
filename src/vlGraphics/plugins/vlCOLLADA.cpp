@@ -1082,6 +1082,29 @@ void COLLADALoader::parseNode(daeElement* el, DaeNode* parent)
       bindMaterials(this_node.get(), dae_mesh.get(), geometries[i]->getBind_material());
     }
 
+    // parse controllers
+    if (loadOptions()->extractSkins())
+    {
+      domInstance_controller_Array controllers = node->getInstance_controller_array();
+      for(size_t i=0; i<controllers.getCount(); ++i)
+      {
+        VL_CHECK(controllers[i]->getUrl().getElement()->typeID() == domController::ID())
+        daeElement* controller_el = controllers[i]->getUrl().getElement();
+        // mic fixme issue warning
+        VL_CHECK(controller_el)
+        domController* controller = static_cast<domController*>(controller_el);
+        daeElement* geometry = controller->getSkin()->getSource().getElement();
+        // mic fixme issue warning
+        VL_CHECK(geometry)
+        ref<DaeMesh> dae_mesh = parseGeometry(geometry);
+        if (dae_mesh)
+          this_node->mMesh.push_back(dae_mesh.get());
+        
+        // generate the Actors belonging to this node with their own material
+        bindMaterials(this_node.get(), dae_mesh.get(), controllers[i]->getBind_material());
+      }
+    }
+
     // note: transforms are post-multiplied in the order in which they are specified (as if they were sub-nodes)
     for(size_t ichild=0; ichild<node->getChildren().getCount(); ++ichild)
     {
@@ -1190,28 +1213,57 @@ bool COLLADALoader::load(VirtualFile* file)
       for(size_t i=0; i<asset->getContributor_array().getCount(); ++i)
       {
         const char* tool = asset->getContributor_array()[i]->getAuthoring_tool()->getValue();
+
+        // Google seems to always invert the transparency
         if ( tool && strstr(tool, "Google") )
         {
           mInvertTransparency = true;
           break;
         }
+
+        // See https://collada.org/mediawiki/index.php/ColladaMaya#ColladaMaya_3.03
+        // "Data exported with previous versions of our COLLADA tools may import with inverted transparency in ColladaMax 3.03 and ColladaMaya 3.03."
+
+        // example: <authoring_tool>Maya 7.0 | ColladaMaya v2.03b Jul 27 2006 at 18:43:34 | FCollada v1.13</authoring_tool>
+        if ( strstr(tool, "ColladaMaya") )
+        {
+          float ColladaMayaVersion = 1000;
+          if ( sscanf( strstr(tool, "ColladaMaya") + 13, "%f", &ColladaMayaVersion) )
+          {
+            if (ColladaMayaVersion < 3.03)
+              mInvertTransparency = true;
+          }
+        }
+
+        if ( strstr(tool, "ColladaMax") )
+        {
+          float ColladaMaxVersion = 1000;
+          if ( sscanf( strstr(tool, "ColladaMax") + 12, "%f", &ColladaMaxVersion) )
+          {
+            if (ColladaMaxVersion < 3.03)
+              mInvertTransparency = true;
+          }
+        }
       }
 
       // up vector
-      if( asset->getUp_axis()->getValue() == UPAXISTYPE_X_UP )
+      if (asset->getUp_axis())
       {
-        // X_UP Negative y Positive x Positive z
-        mUpMatrix.setX( fvec3( 0, 1, 0) );
-        mUpMatrix.setY( fvec3(-1, 0, 0) );
-        mUpMatrix.setZ( fvec3( 0, 0, 1) );
-      }
-      else
-      if( asset->getUp_axis()->getValue() == UPAXISTYPE_Z_UP )
-      {
-        // Z_UP Positive x Positive z Negative y
-        mUpMatrix.setX( fvec3(1, 0, 0) );
-        mUpMatrix.setY( fvec3(0, 0,-1) );
-        mUpMatrix.setZ( fvec3(0, 1, 0) );
+        if( asset->getUp_axis()->getValue() == UPAXISTYPE_X_UP )
+        {
+          // X_UP Negative y Positive x Positive z
+          mUpMatrix.setX( fvec3( 0, 1, 0) );
+          mUpMatrix.setY( fvec3(-1, 0, 0) );
+          mUpMatrix.setZ( fvec3( 0, 0, 1) );
+        }
+        else
+        if( asset->getUp_axis()->getValue() == UPAXISTYPE_Z_UP )
+        {
+          // Z_UP Positive x Positive z Negative y
+          mUpMatrix.setX( fvec3(1, 0, 0) );
+          mUpMatrix.setY( fvec3(0, 0,-1) );
+          mUpMatrix.setZ( fvec3(0, 1, 0) );
+        }
       }
     }
   }
