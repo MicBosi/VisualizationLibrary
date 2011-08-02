@@ -57,7 +57,7 @@ namespace vl
       { 
         TransparencyKeep,   //!<< Keep the <transparency> value as it is.
         TransparencyInvert, //!<< Transparency becomes 1.0 - <transparency>.
-        TransparencyAuto    //!<< Transparency is inverted if <authoring_tool> contains the string "Google".
+        TransparencyAuto    //!<< Transparency is inverted if <authoring_tool> contains the string "Google" or reports ColladaMax or ColladaMaya version less than 3.03.
       };
 
     public:
@@ -68,6 +68,7 @@ namespace vl
         mFlattenTransformHierarchy = true;
         mComputeMissingNormals = true;
         mFixBadNormals = true;
+        mExtractSkins = true;
       }
 
       //! If true then the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported in the resource database.
@@ -100,12 +101,19 @@ namespace vl
       //! Fix normals that are flipped compared to the polygon winding order
       bool fixBadNormals() const { return mFixBadNormals; }
 
+      //! If set to true the skinned geometries will be also exported.
+      void setExtractSkins(bool extract) { mExtractSkins = extract; }
+
+      //! If set to true the skinned geometries will be also exported.
+      bool extractSkins() const { return mExtractSkins; }
+
     protected:
       TransparencyOption mInvertTransparency;
       bool mFlattenTransformHierarchy;
       bool mUseAlwaysMipmapping;
       bool mComputeMissingNormals;
       bool mFixBadNormals;
+      bool mExtractSkins;
     };
 
   public:
