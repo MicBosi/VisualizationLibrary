@@ -568,6 +568,7 @@ protected:
   ref<DaeNode> mScene;
   DAE mDAE;
   String mFilePath;
+  fmat4 mUpMatrix;
   bool mInvertTransparency;
 };
 //-----------------------------------------------------------------------------
@@ -1172,7 +1173,7 @@ bool COLLADALoader::load(VirtualFile* file)
     return false;
   }
 
-  // check transparency
+  // check transparency & up vector
   if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyInvert)
     mInvertTransparency = true;
   else
@@ -1194,6 +1195,23 @@ bool COLLADALoader::load(VirtualFile* file)
           mInvertTransparency = true;
           break;
         }
+      }
+
+      // up vector
+      if( asset->getUp_axis()->getValue() == UPAXISTYPE_X_UP )
+      {
+        // X_UP Negative y Positive x Positive z
+        mUpMatrix.setX( fvec3( 0, 1, 0) );
+        mUpMatrix.setY( fvec3(-1, 0, 0) );
+        mUpMatrix.setZ( fvec3( 0, 0, 1) );
+      }
+      else
+      if( asset->getUp_axis()->getValue() == UPAXISTYPE_Z_UP )
+      {
+        // Z_UP Positive x Positive z Negative y
+        mUpMatrix.setX( fvec3(1, 0, 0) );
+        mUpMatrix.setY( fvec3(0, 0,-1) );
+        mUpMatrix.setZ( fvec3(0, 1, 0) );
       }
     }
   }
@@ -1220,6 +1238,12 @@ bool COLLADALoader::load(VirtualFile* file)
 
   // --- fill the resource database and final setup ---
 
+  // --- orient geometry based on up vector ---
+  // Note that we don't touch the local space vertices and the intermediate matrices,
+  // for proper reorientation of matrices and geometry the up-vector conditioner in
+  // Refinery should do the job.
+  mScene->mTransform->preMultiply( mUpMatrix );
+  // compute world matrices
   mScene->mTransform->computeWorldMatrixRecursive();
 
   // return the Actors
@@ -1953,6 +1977,10 @@ void COLLADALoader::generateGeometry(DaePrimitive* prim)
    // --- compute missing normals ---
    if ( loadOptions()->computeMissingNormals() && !prim->mGeometry->normalArray() )
      prim->mGeometry->computeNormals();
+
+   // disabled: we transform the root matrix instead
+   // --- orient geometry based on up vector ---
+   // prim->mGeometry->transform((mat4)mUpMatrix);
 }
 
 ref<ResourceDatabase> LoadWriterCOLLADA::load(const String& path, const LoadOptions* options)
