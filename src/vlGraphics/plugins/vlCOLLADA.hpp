@@ -53,17 +53,59 @@ namespace vl
     class LoadOptions: public Object
     {
     public:
+      enum TransparencyOption 
+      { 
+        TransparencyKeep,   //!<< Keep the <transparency> value as it is.
+        TransparencyInvert, //!<< Transparency becomes 1.0 - <transparency>.
+        TransparencyAuto    //!<< Transparency is inverted if <authoring_tool> contains the string "Google".
+      };
+
+    public:
       LoadOptions()
       {
+        mInvertTransparency = TransparencyAuto;
+        mUseAlwaysMipmapping = true;
         mFlattenTransformHierarchy = true;
+        mComputeMissingNormals = true;
+        mFixBadNormals = true;
       }
 
-      bool flattenTransformHierarchy() const { return mFlattenTransformHierarchy; }
-
+      //! If true then the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported in the resource database.
       void setFlattenTransformHierarchy(bool flatten) { mFlattenTransformHierarchy = flatten; }
 
+      //! If true then the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported in the resource database.
+      bool flattenTransformHierarchy() const { return mFlattenTransformHierarchy; }
+
+      //! If true then TPF_LINEAR_MIPMAP_NEAREST filtering is used when a non-mipmapped filter is specified
+      void setUseAlwaysMipmapping(bool use) { mUseAlwaysMipmapping = use; }
+
+      //! If true then TPF_LINEAR_MIPMAP_NEAREST filtering is used when a non-mipmapped filter is specified
+      bool useAlwaysMipmapping() const { return mUseAlwaysMipmapping; }
+
+      //! Invert the value of the <transparency> tag
+      void setInvertTransparency(TransparencyOption invert) { mInvertTransparency = invert; }
+
+      //! Invert the value of the <transparency> tag
+      TransparencyOption invertTransparency() const { return mInvertTransparency; }
+
+      //! Compute normals for those objects that don't have
+      void setComputeMissingNormals(bool compute) { mComputeMissingNormals = compute; }
+
+      //! Compute normals for those objects that don't have
+      bool computeMissingNormals() const { return mComputeMissingNormals; }
+
+      //! Fix normals that are flipped compared to the polygon winding order
+      void setFixBadNormals(bool fix) { mFixBadNormals = fix; }
+
+      //! Fix normals that are flipped compared to the polygon winding order
+      bool fixBadNormals() const { return mFixBadNormals; }
+
     protected:
+      TransparencyOption mInvertTransparency;
       bool mFlattenTransformHierarchy;
+      bool mUseAlwaysMipmapping;
+      bool mComputeMissingNormals;
+      bool mFixBadNormals;
     };
 
   public:

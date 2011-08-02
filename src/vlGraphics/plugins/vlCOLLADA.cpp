@@ -39,6 +39,7 @@
 #include <vlCore/GLSLmath.hpp>
 #include <set>
 #include <dae.h>
+#include <dae/domAny.h>
 #include <dom.h>
 #include <dom/domCOLLADA.h>
 #include <dom/domProfile_COMMON.h>
@@ -47,16 +48,9 @@ using namespace vl;
 
 // TODO
 // - support UP vector
-// - support blending/transparency
-// - support two sides
-// - default material values
 // - parse and use lights
-// ---
 // - output more diagnostic messages with debug verbosity.
 // - parse and export cameras.
-// - materials should be reused as much as possible from their parent-effect,
-//   for profile_COMMON we should be able to share GLSLProgram and Materials.
-// - proper TEXTURE and input semantic binding logic.
 
 // --- mic fixme: remove debug code ---
 bool debug_Wireframe = false;
@@ -433,27 +427,6 @@ struct DaeSampler2D: public Object
   vl::ETexParamWrap   mWrapT;     // <wrap_t>
 
   ref<Texture> mTexture; // actual VL texture implementing the sampler
-
-  void prepareTexture2D()
-  {
-    if (mDaeSurface && mDaeSurface->mImage)
-    {
-      bool use_mipmaps = true;
-      switch(mMinFilter)
-      {
-      case TPF_LINEAR:
-      case TPF_NEAREST:
-        use_mipmaps = false;
-      }
-
-      mTexture = new Texture;
-      mTexture->prepareTexture2D( mDaeSurface->mImage.get(), TF_UNKNOWN, use_mipmaps, false);
-      mTexture->getTexParameter()->setWrapS(mWrapS);
-      mTexture->getTexParameter()->setWrapT(mWrapT);
-      mTexture->getTexParameter()->setMinFilter(mMinFilter);
-      mTexture->getTexParameter()->setMagFilter(mMagFilter);
-    }
-  }
 };
 //-----------------------------------------------------------------------------
 struct DaeNewParam: public Object
@@ -463,22 +436,29 @@ struct DaeNewParam: public Object
   fvec4 mFloat4;
 };
 //-----------------------------------------------------------------------------
+struct DaeColorOrTexture: public Object
+{
+  fvec4 mColor;
+  ref<DaeSampler2D> mSampler;
+  std::string mTexCoord;
+};
+//-----------------------------------------------------------------------------
 struct DaeTechniqueCOMMON: public Object
 {
   DaeTechniqueCOMMON()
   {
     mMode = Unknown;
 
-    mEmission     = fvec4(0, 0, 0, 1);
-    mAmbient      = fvec4(0, 0, 0, 1);
-    mDiffuse      = fvec4(1, 1, 1, 1);
-    mSpecular     = fvec4(0, 0, 0, 1);
+    mEmission.mColor     = fvec4(0, 0, 0, 1);
+    mAmbient.mColor      = fvec4(0, 0, 0, 1);
+    mDiffuse.mColor      = fvec4(1, 1, 1, 1);
+    mSpecular.mColor     = fvec4(0, 0, 0, 1);
     mShininess    = 40;
 
-    mReflective   = fvec4(1, 1, 1, 1);
+    mReflective.mColor   = fvec4(1, 1, 1, 1);
     mReflectivity = 0;
 
-    mTransparent  = fvec4(1, 1, 1, 1);
+    mTransparent.mColor  = fvec4(1, 1, 1, 1);
     mOpaqueMode   = Opaque_A_ONE;
     mTransparency = 1;
 
@@ -487,27 +467,30 @@ struct DaeTechniqueCOMMON: public Object
 
   enum { Unknown, Blinn, Phong, Lambert } mMode;
 
-  fvec4 mEmission;
-  fvec4 mAmbient;
-  fvec4 mDiffuse;
-  fvec4 mSpecular;
+  DaeColorOrTexture mEmission;
+  DaeColorOrTexture mAmbient;
+  DaeColorOrTexture mDiffuse;
+  DaeColorOrTexture mSpecular;
   float mShininess;
-  fvec4 mReflective;
+  DaeColorOrTexture mReflective;
   float mReflectivity;
-  fvec4 mTransparent;
+  DaeColorOrTexture mTransparent;
   float mTransparency;
   float mIndexOfRefraction;
-
-  // mic fixme: for the moment we support the <texture> tag only in <diffuse>
-  struct { ref<DaeSampler2D> mSampler; std::string mTexCoord; } mDiffuseTexture;
 
   enum { Opaque_A_ONE, Opaque_RGB_ZERO } mOpaqueMode;
 };
 //-----------------------------------------------------------------------------
 struct DaeEffect: public Object
 {
+  DaeEffect()
+  {
+    mDoubleSided = false;
+  }
+
   std::vector<ref<DaeNewParam> > mNewParams;
   ref<DaeTechniqueCOMMON> mDaeTechniqueCOMMON;
+  bool mDoubleSided;
 };
 //-----------------------------------------------------------------------------
 struct DaeMaterial: public Object
@@ -553,6 +536,8 @@ protected:
 
   void parseEffects(daeElement* library);
 
+  void prepareTexture2D(DaeSampler2D* sampler2D);
+
   void parseMaterials(daeElement* library);
 
   static ref<Effect> setup_vl_Effect( DaeMaterial* mat );
@@ -567,9 +552,11 @@ protected:
 
   static ETexParamWrap translateWrapMode(domFx_sampler_wrap_common wrap);
   
-  static void parseColor(domCommon_color_or_texture_typeRef color_or_texture, fvec4* out_col);
+  // template required becase Transparent is implemented as something different from domCommon_color_or_texture_typeRef!!!
+  template<class T_color_or_texture>
+  void parseColor(const domProfile_COMMON* common, const T_color_or_texture& color_or_texture, DaeColorOrTexture* out_col);
 
-  static void generateGeometry(DaePrimitive* primitive);
+  void generateGeometry(DaePrimitive* primitive);
 
 protected:
   const LoadWriterCOLLADA::LoadOptions* mLoadOptions;
@@ -587,6 +574,7 @@ protected:
   ref<DaeNode> mScene;
   DAE mDAE;
   String mFilePath;
+  bool mInvertTransparency;
 };
 //-----------------------------------------------------------------------------
 COLLADALoader::COLLADALoader()
@@ -605,8 +593,9 @@ COLLADALoader::COLLADALoader()
 //-----------------------------------------------------------------------------
 void COLLADALoader::reset()
 {
-  mResources = new ResourceDatabase;
+  mInvertTransparency = false;
   mScene = NULL;
+  mResources = new ResourceDatabase;
 }
 //-----------------------------------------------------------------------------
 void COLLADALoader::parseInputs(DaePrimitive* dae_primitive, const domInputLocalOffset_Array& input_arr, const std::vector< ref<DaeInput> >& vertex_inputs)
@@ -952,6 +941,14 @@ ref<Effect> COLLADALoader::setup_vl_Effect( DaeMaterial* mat )
   fx->shader()->setRenderState( new Light(0) ); // mic fixme: these should be all removed and add the ones present in the scene.
   fx->shader()->enable(EN_DEPTH_TEST);
 
+  if (mat->mDaeEffect->mDoubleSided)
+    fx->shader()->gocLightModel()->setTwoSide(true); // yes two side lighting, no culling
+  else
+  {
+    // mic fixme
+    // fx->shader()->enable(EN_CULL_FACE); // no two sidelighting, yes culling
+  }
+
   // very basic material setup
   if (mat->mDaeEffect->mDaeTechniqueCOMMON)
   {
@@ -960,30 +957,32 @@ ref<Effect> COLLADALoader::setup_vl_Effect( DaeMaterial* mat )
     // material sanity checks: these are needed only when using fixed function pipeline
     common_tech->mShininess = vl::clamp(common_tech->mShininess, 0.0f, 128.0f);
 
-    // material normalization
-    // mic fixme: BikeFromXSI test requires this
-    fvec4 total_color = common_tech->mDiffuse + common_tech->mAmbient + common_tech->mSpecular + common_tech->mEmission;
-    total_color.a() = 1;
-    if ( !vl::any(vl::greaterThan(total_color, fvec4(1.1f, 1.1f, 1.1f, 1))) )
-      total_color = fvec4(1,1,1,1);
-    else
-      // allow some over-saturation
-      total_color /= 1.1f;
-
-    // mic fixme: this vl::Material can be put in mDaeTechniqueCOMMON and shared among all the materials that use it.
-    fx->shader()->gocMaterial()->setDiffuse  ( common_tech->mDiffuse  / total_color );
-    fx->shader()->gocMaterial()->setAmbient  ( common_tech->mAmbient  / total_color );
-    fx->shader()->gocMaterial()->setEmission ( common_tech->mEmission / total_color );
-    fx->shader()->gocMaterial()->setSpecular ( common_tech->mSpecular / total_color );
+    // mic fixme: this vl::Effect can be put in mDaeTechniqueCOMMON and shared among all the materials that use it.
+    fx->shader()->gocMaterial()->setDiffuse  ( common_tech->mDiffuse.mColor  );
+    fx->shader()->gocMaterial()->setAmbient  ( common_tech->mAmbient.mColor  );
+    fx->shader()->gocMaterial()->setEmission ( common_tech->mEmission.mColor );
+    fx->shader()->gocMaterial()->setSpecular ( common_tech->mSpecular.mColor );
     fx->shader()->gocMaterial()->setShininess( common_tech->mShininess );
+    // this sets the alpha values of all material colors, front and back.
+    fx->shader()->gocMaterial()->setTransparency( common_tech->mTransparency );
 
-    // mic fixme: 
+    // mic fixme:
     // for the moment we ignore things like <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0"/>
     // instead we use the first texture with the first texture coordinate set installed.
-    if ( common_tech->mDiffuseTexture.mSampler && common_tech->mDiffuseTexture.mSampler->mTexture )
+    if ( common_tech->mDiffuse.mSampler && common_tech->mDiffuse.mSampler->mTexture )
     {
-      fx->shader()->gocTextureSampler(0)->setTexture( common_tech->mDiffuseTexture.mSampler->mTexture.get() );
+      fx->shader()->gocTextureSampler(0)->setTexture( common_tech->mDiffuse.mSampler->mTexture.get() );
     }
+
+    // check if alpha blending is required
+    if (common_tech->mTransparency != 1.0f || common_tech->mTransparent.mSampler)
+    {
+      fx->shader()->enable(EN_BLEND);
+
+      // mic fixme:
+      // debug level: if common_tech->mTransparent.mSampler != common_tech->mDiffuse.mSampler issue warning.
+    }
+
   }
   else
   {
@@ -1170,6 +1169,32 @@ bool COLLADALoader::load(VirtualFile* file)
     return false;
   }
 
+  // check transparency
+  if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyInvert)
+    mInvertTransparency = true;
+  else
+  if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyKeep)
+    mInvertTransparency = false;
+  else
+  if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyAuto)
+  {
+    mInvertTransparency = false;
+    domElement* asset_el = root->getChild("asset");
+    if (asset_el)
+    {
+      domAsset* asset = static_cast<domAsset*>(asset_el);
+      for(size_t i=0; i<asset->getContributor_array().getCount(); ++i)
+      {
+        const char* tool = asset->getContributor_array()[i]->getAuthoring_tool()->getValue();
+        if ( tool && strstr(tool, "Google") )
+        {
+          mInvertTransparency = true;
+          break;
+        }
+      }
+    }
+  }
+
   parseImages(root->getDescendant("library_images"));
 
   parseEffects(root->getDescendant("library_effects"));
@@ -1295,8 +1320,6 @@ void COLLADALoader::loadImages(const domImage_Array& images)
     std::string full_path = percentDecode( images[i]->getInit_from()->getValue().getURI() + 6 );
     ref<Image> image = loadImage( full_path.c_str() );
       
-    // mic fixme: issue error
-    VL_CHECK(image);
     mImages[ images[i].cast() ] = image;
   }
 }
@@ -1330,6 +1353,7 @@ void COLLADALoader::parseEffects(daeElement* library)
     const domFx_profile_abstract_Array& profiles = effect->getFx_profile_abstract_array();
     for(size_t i=0; i<profiles.getCount(); ++i)
     {
+      // <profile_COMMON>
       if ( profiles[i]->typeID() == domProfile_COMMON::ID() )
       {
         domProfile_COMMON* common = static_cast<domProfile_COMMON*>(profiles[i].cast());
@@ -1425,7 +1449,7 @@ void COLLADALoader::parseEffects(daeElement* library)
             }
 
             // prepare vl::Texture for creation with the given parameters
-            dae_newparam->mDaeSampler2D->prepareTexture2D();
+            prepareTexture2D(dae_newparam->mDaeSampler2D.get());
           }
 
           // --- <float>, <float2>, <float3>, <floa4> ---
@@ -1453,59 +1477,36 @@ void COLLADALoader::parseEffects(daeElement* library)
           }
         }
 
+        // <technique sid="COMMON">
+
         // --- parse technique ---
         if (common->getTechnique()->getBlinn())
         {
           domProfile_COMMON::domTechnique::domBlinnRef blinn = common->getTechnique()->getBlinn();
 
           dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
-          parseColor( blinn->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
-          parseColor( blinn->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
-          parseColor( blinn->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
-          parseColor( blinn->getSpecular(), &dae_effect->mDaeTechniqueCOMMON->mSpecular );
+          parseColor( common, blinn->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
+          parseColor( common, blinn->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
+          parseColor( common, blinn->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
+          parseColor( common, blinn->getSpecular(), &dae_effect->mDaeTechniqueCOMMON->mSpecular );
           if (blinn->getShininess())
             dae_effect->mDaeTechniqueCOMMON->mShininess = (float)blinn->getShininess()->getFloat()->getValue();
 
-          // --- <diffuse><texture texture="..." texcoord="..." /></diffuse> ---
-          if ( blinn->getDiffuse()->getTexture() )
-          {
-            // <texture texture="...">
-            daeSIDResolver sid_res( common, blinn->getDiffuse()->getTexture()->getTexture() );
-            domElement* sampler2D_newparam = sid_res.getElement();
-            // mic fixme: issue error
-            VL_CHECK(sampler2D_newparam)
-
-            std::map<domElement*, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
-            if ( it != mDaeNewParams.end() )
-            {
-              VL_CHECK(it->second->mDaeSampler2D)
-              dae_effect->mDaeTechniqueCOMMON->mDiffuseTexture.mSampler = it->second->mDaeSampler2D;
-            }
-            else
-            {
-              // mic fixme: issue error
-              continue;
-            }
-
-            // <texture texcoord="...">
-            dae_effect->mDaeTechniqueCOMMON->mDiffuseTexture.mTexCoord = blinn->getDiffuse()->getTexture()->getTexcoord();
-          }
-
-          parseColor( blinn->getReflective(), &dae_effect->mDaeTechniqueCOMMON->mReflective );
+          parseColor( common, blinn->getReflective(), &dae_effect->mDaeTechniqueCOMMON->mReflective );
           if (blinn->getReflectivity())
             dae_effect->mDaeTechniqueCOMMON->mReflectivity = (float)blinn->getReflectivity()->getFloat()->getValue();
 
           if (blinn->getTransparent())
           {
-            if (blinn->getTransparent()->getColor())
-            {
-              domFloat4 tr_col = blinn->getTransparent()->getColor()->getValue();
-              dae_effect->mDaeTechniqueCOMMON->mTransparent = fvec4((float)tr_col[0], (float)tr_col[1], (float)tr_col[2], (float)tr_col[3]);
-            }
+            parseColor( common, blinn->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
             dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = blinn->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
           }
           if (blinn->getTransparency())
+          {
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)blinn->getTransparency()->getFloat()->getValue();
+            if(mInvertTransparency)
+              dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
+          }
         }
         else
         if (common->getTechnique()->getPhong())
@@ -1513,55 +1514,30 @@ void COLLADALoader::parseEffects(daeElement* library)
           domProfile_COMMON::domTechnique::domPhongRef phong = common->getTechnique()->getPhong();
 
           dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
-          parseColor( phong->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
-          parseColor( phong->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
-          parseColor( phong->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
-          parseColor( phong->getSpecular(), &dae_effect->mDaeTechniqueCOMMON->mSpecular );
+          parseColor( common, phong->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
+          parseColor( common, phong->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
+          parseColor( common, phong->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
+          parseColor( common, phong->getSpecular(), &dae_effect->mDaeTechniqueCOMMON->mSpecular );
           if (phong->getShininess())
           {
             dae_effect->mDaeTechniqueCOMMON->mShininess = (float)phong->getShininess()->getFloat()->getValue();
           }
 
-          // --- <diffuse><texture texture="..." texcoord="..." /></diffuse> ---
-          if ( phong->getDiffuse()->getTexture() )
-          {
-            // <texture texture="...">
-            daeSIDResolver sid_res( common, phong->getDiffuse()->getTexture()->getTexture() );
-            domElement* sampler2D_newparam = sid_res.getElement();
-            // mic fixme: issue error
-            VL_CHECK(sampler2D_newparam)
-
-            std::map<domElement*, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
-            if ( it != mDaeNewParams.end() )
-            {
-              VL_CHECK(it->second->mDaeSampler2D)
-              dae_effect->mDaeTechniqueCOMMON->mDiffuseTexture.mSampler = it->second->mDaeSampler2D;
-            }
-            else
-            {
-              // mic fixme: issue error
-              continue;
-            }
-
-            // <texture texcoord="...">
-            dae_effect->mDaeTechniqueCOMMON->mDiffuseTexture.mTexCoord = phong->getDiffuse()->getTexture()->getTexcoord();
-          }
-
-          parseColor( phong->getReflective(), &dae_effect->mDaeTechniqueCOMMON->mReflective );
+          parseColor( common, phong->getReflective(), &dae_effect->mDaeTechniqueCOMMON->mReflective );
           if (phong->getReflectivity())
             dae_effect->mDaeTechniqueCOMMON->mReflectivity = (float)phong->getReflectivity()->getFloat()->getValue();
 
           if (phong->getTransparent())
           {
-            if (phong->getTransparent()->getColor())
-            {
-              domFloat4 tr_col = phong->getTransparent()->getColor()->getValue();
-              dae_effect->mDaeTechniqueCOMMON->mTransparent = fvec4((float)tr_col[0], (float)tr_col[1], (float)tr_col[2], (float)tr_col[3]);
-            }
+            parseColor( common, phong->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
             dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = phong->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
           }
           if (phong->getTransparency())
+          {
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)phong->getTransparency()->getFloat()->getValue();
+            if(mInvertTransparency)
+              dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
+          }
         }
         else
         if (common->getTechnique()->getLambert())
@@ -1569,52 +1545,27 @@ void COLLADALoader::parseEffects(daeElement* library)
           domProfile_COMMON::domTechnique::domLambertRef lambert = common->getTechnique()->getLambert();
 
           dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
-          parseColor( lambert->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
-          parseColor( lambert->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
-          parseColor( lambert->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
-          dae_effect->mDaeTechniqueCOMMON->mSpecular = fvec4(0,0,0,1);
+          parseColor( common, lambert->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
+          parseColor( common, lambert->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
+          parseColor( common, lambert->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
+          dae_effect->mDaeTechniqueCOMMON->mSpecular.mColor = fvec4(0,0,0,1);
           dae_effect->mDaeTechniqueCOMMON->mShininess = 0;
 
-          // --- <diffuse><texture texture="..." texcoord="..." /></diffuse> ---
-          if ( lambert->getDiffuse()->getTexture() )
-          {
-            // <texture texture="...">
-            daeSIDResolver sid_res( common, lambert->getDiffuse()->getTexture()->getTexture() );
-            domElement* sampler2D_newparam = sid_res.getElement();
-            // mic fixme: issue error
-            VL_CHECK(sampler2D_newparam)
-
-            std::map<domElement*, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
-            if ( it != mDaeNewParams.end() )
-            {
-              VL_CHECK(it->second->mDaeSampler2D)
-              dae_effect->mDaeTechniqueCOMMON->mDiffuseTexture.mSampler = it->second->mDaeSampler2D;
-            }
-            else
-            {
-              // mic fixme: issue error
-              continue;
-            }
-
-            // <texture texcoord="...">
-            dae_effect->mDaeTechniqueCOMMON->mDiffuseTexture.mTexCoord = lambert->getDiffuse()->getTexture()->getTexcoord();
-          }
-
-          parseColor( lambert->getReflective(), &dae_effect->mDaeTechniqueCOMMON->mReflective );
+          parseColor( common, lambert->getReflective(), &dae_effect->mDaeTechniqueCOMMON->mReflective );
           if (lambert->getReflectivity())
             dae_effect->mDaeTechniqueCOMMON->mReflectivity = (float)lambert->getReflectivity()->getFloat()->getValue();
 
           if (lambert->getTransparent())
           {
-            if (lambert->getTransparent()->getColor())
-            {
-              domFloat4 tr_col = lambert->getTransparent()->getColor()->getValue();
-              dae_effect->mDaeTechniqueCOMMON->mTransparent = fvec4((float)tr_col[0], (float)tr_col[1], (float)tr_col[2], (float)tr_col[3]);
-            }
+            parseColor( common, lambert->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
             dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = lambert->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
           }
           if (lambert->getTransparency())
+          {
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)lambert->getTransparency()->getFloat()->getValue();
+            if(mInvertTransparency)
+              dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
+          }
         }
         else
         if (common->getTechnique()->getConstant())
@@ -1622,36 +1573,81 @@ void COLLADALoader::parseEffects(daeElement* library)
           domProfile_COMMON::domTechnique::domConstantRef constant = common->getTechnique()->getConstant();
 
           dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
-          parseColor( constant->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
-          dae_effect->mDaeTechniqueCOMMON->mAmbient = fvec4(0,0,0,1);
-          dae_effect->mDaeTechniqueCOMMON->mDiffuse = fvec4(0,0,0,1);
-          dae_effect->mDaeTechniqueCOMMON->mSpecular = fvec4(0,0,0,1);
+          parseColor( common, constant->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
+          dae_effect->mDaeTechniqueCOMMON->mAmbient.mColor = fvec4(0,0,0,1);
+          dae_effect->mDaeTechniqueCOMMON->mDiffuse.mColor = fvec4(0,0,0,1);
+          dae_effect->mDaeTechniqueCOMMON->mSpecular.mColor = fvec4(0,0,0,1);
           dae_effect->mDaeTechniqueCOMMON->mShininess = 0;
 
-          parseColor( constant->getReflective(), &dae_effect->mDaeTechniqueCOMMON->mReflective );
+          parseColor( common, constant->getReflective(), &dae_effect->mDaeTechniqueCOMMON->mReflective );
           if (constant->getReflectivity())
             dae_effect->mDaeTechniqueCOMMON->mReflectivity = (float)constant->getReflectivity()->getFloat()->getValue();
 
           if (constant->getTransparent())
           {
-            if (constant->getTransparent()->getColor())
-            {
-              domFloat4 tr_col = constant->getTransparent()->getColor()->getValue();
-              dae_effect->mDaeTechniqueCOMMON->mTransparent = fvec4((float)tr_col[0], (float)tr_col[1], (float)tr_col[2], (float)tr_col[3]);
-            }
+            parseColor( common, constant->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
             dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = constant->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
           }
           if (constant->getTransparency())
+          {
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)constant->getTransparency()->getFloat()->getValue();
+            if(mInvertTransparency)
+              dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
+          }
         }
         else
         {
           Log::error("LoadWriterCOLLADA: technique not supported.\n");
-          // mic fixme: remove this
-          VL_CHECK(dae_effect->mDaeTechniqueCOMMON)
         }
+
+        // <extra>
+
+        for(size_t iextra=0; iextra<common->getExtra_array().getCount(); ++iextra)
+        {
+          domExtraRef extra = common->getExtra_array()[iextra];
+          for(size_t itech=0; itech<extra->getTechnique_array().getCount(); ++itech)
+          {
+            domTechniqueRef tech = extra->getTechnique_array()[itech];
+            if ( strstr(tech->getProfile(), "GOOGLEEARTH") )
+            {
+              domAny* double_sided = (domAny*)tech->getChild("double_sided");
+              if (double_sided)
+              {
+                const char* ptr = double_sided->getValue();
+                if(strcmp(ptr, "1") == 0)
+                  dae_effect->mDoubleSided = true;
+              }
+            }
+          }
+        }
+
       }
+
     }
+  }
+}
+//-----------------------------------------------------------------------------
+void COLLADALoader::prepareTexture2D(DaeSampler2D* sampler2D)
+{
+  if (sampler2D->mDaeSurface && sampler2D->mDaeSurface->mImage)
+  {
+    bool use_mipmaps = true;
+    switch(sampler2D->mMinFilter)
+    {
+    case TPF_LINEAR:
+    case TPF_NEAREST:
+      if ( loadOptions()->useAlwaysMipmapping() )
+        sampler2D->mMinFilter = TPF_LINEAR_MIPMAP_NEAREST;
+      else
+        use_mipmaps = false;
+    }
+
+    sampler2D->mTexture = new Texture;
+    sampler2D->mTexture->prepareTexture2D(sampler2D->mDaeSurface->mImage.get(), TF_UNKNOWN, use_mipmaps, false);
+    sampler2D->mTexture->getTexParameter()->setWrapS(sampler2D->mWrapS);
+    sampler2D->mTexture->getTexParameter()->setWrapT(sampler2D->mWrapT);
+    sampler2D->mTexture->getTexParameter()->setMinFilter(sampler2D->mMinFilter);
+    sampler2D->mTexture->getTexParameter()->setMagFilter(sampler2D->mMagFilter);
   }
 }
 //-----------------------------------------------------------------------------
@@ -1734,12 +1730,39 @@ ETexParamWrap COLLADALoader::translateWrapMode(domFx_sampler_wrap_common wrap)
   }
 }
 //-----------------------------------------------------------------------------
-void COLLADALoader::parseColor(domCommon_color_or_texture_typeRef color_or_texture, fvec4* out_col)
+template<class T_color_or_texture>
+void COLLADALoader::parseColor(const domProfile_COMMON* common, const T_color_or_texture& color_or_texture, DaeColorOrTexture* out_col)
 {
-  if (color_or_texture && color_or_texture->getColor())
+  if (!color_or_texture)
+    return;
+
+  if (color_or_texture->getColor())
   {
     domFx_color_common& col = color_or_texture->getColor()->getValue();
-    *out_col = fvec4( (float)col[0], (float)col[1], (float)col[2], (float)col[3] );
+    out_col->mColor = fvec4( (float)col[0], (float)col[1], (float)col[2], (float)col[3] );
+  }
+
+  if (color_or_texture->getTexture())
+  {
+    // <texture texture="...">
+    daeSIDResolver sid_res( const_cast<domProfile_COMMON*>(common), color_or_texture->getTexture()->getTexture() );
+    domElement* sampler2D_newparam = sid_res.getElement();
+    // mic fixme: issue error
+    VL_CHECK(sampler2D_newparam)
+
+    std::map<domElement*, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
+    if ( it != mDaeNewParams.end() )
+    {
+      VL_CHECK(it->second->mDaeSampler2D)
+      out_col->mSampler = it->second->mDaeSampler2D;
+    }
+    else
+    {
+      // mic fixme: issue error
+    }
+
+    // <texture texcoord="...">
+    out_col->mTexCoord = color_or_texture->getTexture()->getTexcoord();
   }
 }
 //-----------------------------------------------------------------------------
@@ -1867,6 +1890,9 @@ void COLLADALoader::generateGeometry(DaePrimitive* prim)
       continue;
     }
 
+    // name it as TEXCOORD@SET0 etc. to be recognized when binding (not used yet)
+    vert_attrib->setObjectName( String(Say("%s@SET%n") << getSemanticString(prim->mChannels[ich]->mSemantic) << prim->mChannels[ich]->mSet).toStdString() );
+
     // fill the vertex attribute array
     for(std::set<DaeVert>::iterator it = vert_set.begin(); it != vert_set.end(); ++it)
     {
@@ -1877,9 +1903,53 @@ void COLLADALoader::generateGeometry(DaePrimitive* prim)
     }
   }
 
-  // mic fixme:
-  if (!prim->mGeometry->normalArray())
+  // --- fix bad normals ---
+  if ( loadOptions()->fixBadNormals() && prim->mGeometry->normalArray() )
+  {
+    ref<ArrayFloat3> norm_old = vl::cast<ArrayFloat3>(prim->mGeometry->normalArray());
+    VL_CHECK(norm_old);
+
+    // recompute normals
     prim->mGeometry->computeNormals();
+    ref<ArrayFloat3> norm_new = vl::cast<ArrayFloat3>(prim->mGeometry->normalArray());
+    VL_CHECK(norm_new);
+
+    size_t flipped = 0;
+    for(size_t i=0; i<norm_new->size(); ++i)
+    {
+      // compare VL normals with original ones
+      float l = norm_old->at(i).length();
+      if ( l < 0.5f ) 
+      {
+        // mic fixme: issue these things as debug once things got stable
+        Log::warning( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
+        norm_old->at(i) = norm_new->at(i);
+      }
+      else
+      if ( l < 0.9f || l > 1.1f ) 
+      {
+        // mic fixme: issue these things as debug once things got stable
+        Log::warning( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
+        norm_old->at(i).normalize();
+      }
+      else
+      if ( dot(norm_new->at(i), norm_old->at(i)) < -0.1f )
+      {
+        norm_old->at(i) = -norm_old->at(i);
+        ++flipped;
+      }
+    }
+
+    if (flipped)
+      Log::warning( Say("LoadWriterCOLLADA: found %n flipped normals out of %n.\n") << flipped << norm_old->size() );
+
+    // reinstall fixed normals
+    prim->mGeometry->setNormalArray(norm_old.get());
+  }
+
+   // --- compute missing normals ---
+   if ( loadOptions()->computeMissingNormals() && !prim->mGeometry->normalArray() )
+     prim->mGeometry->computeNormals();
 }
 
 ref<ResourceDatabase> LoadWriterCOLLADA::load(const String& path, const LoadOptions* options)
