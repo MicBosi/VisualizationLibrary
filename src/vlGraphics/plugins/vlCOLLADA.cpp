@@ -458,7 +458,7 @@ struct DaeTechniqueCOMMON: public Object
     mReflective.mColor   = fvec4(1, 1, 1, 1);
     mReflectivity = 0;
 
-    mTransparent.mColor  = fvec4(1, 1, 1, 1);
+    mTransparent.mColor  = fvec4(0, 0, 0, 1);
     mOpaqueMode   = Opaque_A_ONE;
     mTransparency = 1;
 
@@ -963,8 +963,15 @@ ref<Effect> COLLADALoader::setup_vl_Effect( DaeMaterial* mat )
     fx->shader()->gocMaterial()->setEmission ( common_tech->mEmission.mColor );
     fx->shader()->gocMaterial()->setSpecular ( common_tech->mSpecular.mColor );
     fx->shader()->gocMaterial()->setShininess( common_tech->mShininess );
+    
     // this sets the alpha values of all material colors, front and back.
-    fx->shader()->gocMaterial()->setTransparency( common_tech->mTransparency );
+    float transparency = 0;
+    if ( common_tech->mOpaqueMode == DaeTechniqueCOMMON::Opaque_A_ONE )
+      transparency = common_tech->mTransparent.mColor.a() * common_tech->mTransparency;
+    else
+      transparency = (1.0f - dot( common_tech->mTransparent.mColor.rgb(), fvec3(0.2126f, 0.7152f, 0.0722f))) * common_tech->mTransparency;
+
+    fx->shader()->gocMaterial()->setTransparency( transparency );
 
     // mic fixme:
     // for the moment we ignore things like <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0"/>
@@ -975,7 +982,7 @@ ref<Effect> COLLADALoader::setup_vl_Effect( DaeMaterial* mat )
     }
 
     // check if alpha blending is required
-    if (common_tech->mTransparency != 1.0f || common_tech->mTransparent.mSampler)
+    if ( transparency != 1.0f || common_tech->mTransparent.mSampler )
     {
       fx->shader()->enable(EN_BLEND);
 
