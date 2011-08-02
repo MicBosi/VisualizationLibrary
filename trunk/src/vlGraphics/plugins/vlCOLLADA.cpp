@@ -46,12 +46,6 @@
 
 using namespace vl;
 
-// TODO
-// - support UP vector
-// - parse and use lights
-// - output more diagnostic messages with debug verbosity.
-// - parse and export cameras.
-
 // --- mic fixme: remove debug code ---
 bool debug_Wireframe = false;
 // ---
@@ -941,13 +935,15 @@ ref<Effect> COLLADALoader::setup_vl_Effect( DaeMaterial* mat )
   fx->shader()->setRenderState( new Light(0) ); // mic fixme: these should be all removed and add the ones present in the scene.
   fx->shader()->enable(EN_DEPTH_TEST);
 
+  // mic fixme: most of .dae files I tested require this even if no double_sided flag is set.
+#if 1
+  fx->shader()->gocLightModel()->setTwoSide(true);
+#else
   if (mat->mDaeEffect->mDoubleSided)
     fx->shader()->gocLightModel()->setTwoSide(true); // yes two side lighting, no culling
   else
-  {
-    // mic fixme
-    // fx->shader()->enable(EN_CULL_FACE); // no two sidelighting, yes culling
-  }
+    fx->shader()->enable(EN_CULL_FACE); // no two sidelighting, yes culling
+#endif
 
   // very basic material setup
   if (mat->mDaeEffect->mDaeTechniqueCOMMON)
