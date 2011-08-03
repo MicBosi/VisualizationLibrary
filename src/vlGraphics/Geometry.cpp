@@ -632,34 +632,35 @@ void Geometry::mergeTriangleStrips()
 void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
 {
   size_t total_index_count = 0;
-  std::vector< ref<DrawCall> > strip_calls;
-  for( size_t i=this->drawCalls()->size(); i--; )
+  std::vector< ref<DrawCall> > mergendo_calls;
+  for( size_t i=drawCalls()->size(); i--; )
   {
-    if (this->drawCalls()->at(i)->primitiveType() == primitive_type)
+    if (drawCalls()->at(i)->primitiveType() == primitive_type)
     {
-      int index_count = this->drawCalls()->at(i)->countIndices();
+      int index_count = drawCalls()->at(i)->countIndices();
       VL_CHECK(index_count >= 0);
       total_index_count += index_count;
-      strip_calls.push_back( this->drawCalls()->at(i) );
-      this->drawCalls()->eraseAt(i);
+      // insert at the head to preserve the primitive rendering order
+      mergendo_calls.insert( mergendo_calls.begin(), drawCalls()->at(i) );
+      drawCalls()->eraseAt(i);
     }
   }
 
-  Log::debug( Say("%n draw calls will be merged using primitive restart.\n") << strip_calls.size() );
+  Log::debug( Say("%n draw calls will be merged using primitive restart.\n") << mergendo_calls.size() );
 
   ref<DrawElementsUInt> de_prim_restart = new DrawElementsUInt(primitive_type);
   // make space for all the indices plus the primitive restart markers.
-  de_prim_restart->indexBuffer()->resize(total_index_count + strip_calls.size()-1);
+  de_prim_restart->indexBuffer()->resize(total_index_count + mergendo_calls.size()-1);
   GLuint* index = de_prim_restart->indexBuffer()->begin();
   // merge draw calls using primitive restart!
-  for( size_t i=0; i<strip_calls.size(); ++i )
+  for( size_t i=0; i<mergendo_calls.size(); ++i )
   {
-    for( IndexIterator it = strip_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
+    for( IndexIterator it = mergendo_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
     {
       *index = it.index();
-      VL_CHECK(*index < this->vertexArray()->size());
+      VL_CHECK(*index < vertexArray()->size());
     }
-    if ( i != strip_calls.size() -1 )
+    if ( i != mergendo_calls.size() -1 )
     {
       *index = DrawElementsUInt::primitive_restart_index;
       ++index;
@@ -670,40 +671,41 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
   // enable primitive restart!
   de_prim_restart->setPrimitiveRestartEnabled(true);
 
-  this->drawCalls()->push_back( de_prim_restart.get() );
+  drawCalls()->push_back( de_prim_restart.get() );
 }
 //-----------------------------------------------------------------------------
 void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type)
 {
   size_t total_index_count = 0;
-  std::vector< ref<DrawCall> > strip_calls;
+  std::vector< ref<DrawCall> > mergendo_calls;
   std::vector<GLsizei> count_vector;
-  for( size_t i=this->drawCalls()->size(); i--; )
+  for( size_t i=drawCalls()->size(); i--; )
   {
-    if (this->drawCalls()->at(i)->primitiveType() == primitive_type)
+    if (drawCalls()->at(i)->primitiveType() == primitive_type)
     {
-      int index_count = this->drawCalls()->at(i)->countIndices();
+      int index_count = drawCalls()->at(i)->countIndices();
       VL_CHECK(index_count >= 0);
       total_index_count += index_count;
       count_vector.push_back( index_count );
-      strip_calls.push_back( this->drawCalls()->at(i) );
-      this->drawCalls()->eraseAt(i);
+      // insert at the head to preserve the primitive rendering order
+      mergendo_calls.insert( mergendo_calls.begin(), drawCalls()->at(i) );
+      drawCalls()->eraseAt(i);
     }
   }
 
-  Log::debug( Say("%n draw calls will be merged using MultiDrawElements.\n") << strip_calls.size() );
+  Log::debug( Say("%n draw calls will be merged using MultiDrawElements.\n") << mergendo_calls.size() );
 
   ref<MultiDrawElementsUInt> de_multi = new MultiDrawElementsUInt(primitive_type);
   // make space for all the indices plus the primitive restart markers.
   de_multi->indexBuffer()->resize(total_index_count);
   GLuint* index = de_multi->indexBuffer()->begin();
   // merge draw calls using primitive restart!
-  for( size_t i=0; i<strip_calls.size(); ++i )
+  for( size_t i=0; i<mergendo_calls.size(); ++i )
   {
-    for( IndexIterator it = strip_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
+    for( IndexIterator it = mergendo_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
     {
       *index = it.index();
-      VL_CHECK(*index < this->vertexArray()->size());
+      VL_CHECK(*index < vertexArray()->size());
     }
   }
   VL_CHECK( index == de_multi->indexBuffer()->end() )
@@ -711,7 +713,7 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
   // Specify primitive boundaries. This must be done last!
   de_multi->setCountVector( count_vector );
 
-  this->drawCalls()->push_back( de_multi.get() );
+  drawCalls()->push_back( de_multi.get() );
 }
 //-----------------------------------------------------------------------------
 void Geometry::regenerateVertices(const std::vector<size_t>& map_new_to_old)
