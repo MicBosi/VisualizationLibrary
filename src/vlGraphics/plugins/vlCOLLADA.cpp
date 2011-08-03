@@ -1262,6 +1262,14 @@ bool DaeLoader::load(VirtualFile* file)
       if ( loadOptions()->flattenTransformHierarchy() )
         actor->transform()->removeFromParent();
 
+      // *** merge draw calls ***
+      if (loadOptions()->mergeDrawCallsWithTriangles())
+      {
+        Geometry* geom = actor->lod(0)->as<Geometry>();
+        if (geom)
+          geom->mergeDrawCallsWithTriangles(PT_UNKNOWN);
+      }
+
       // *** check for transforms that require normal rescaling ***
       mat4 nmatrix = actor->transform()->worldMatrix().as3x3().invert().transpose();
       Real len_x = nmatrix.getX().length();
