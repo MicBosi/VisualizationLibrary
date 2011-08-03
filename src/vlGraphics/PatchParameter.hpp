@@ -56,7 +56,7 @@ namespace vl
     void apply() const
     {
       VL_CHECK(Has_GL_ARB_tessellation_shader||Has_GL_Version_4_0);
-      if (Has_GL_ARB_tessellation_shader)
+      if (Has_GL_ARB_tessellation_shader||Has_GL_Version_4_0)
       {
         glPatchParameteri(GL_PATCH_VERTICES, mPatchVertices); VL_CHECK_OGL();
         glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, mPatchDefaultOuterLevel.ptr()); VL_CHECK_OGL();

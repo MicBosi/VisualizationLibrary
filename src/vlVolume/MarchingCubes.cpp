@@ -299,7 +299,7 @@ void MarchingCubes::reset()
   mVertsArray->clear();
   mNormsArray->clear();
   mColorArray->clear();
-  mDrawElements->indices()->clear();
+  mDrawElements->indexBuffer()->clear();
   mIndices.clear();
   mVerts.clear();
   mNorms.clear();
@@ -374,9 +374,9 @@ void MarchingCubes::run(bool generate_colors)
   else
     mColorArray->clear();
 
-  mDrawElements->indices()->resize(mIndices.size());
+  mDrawElements->indexBuffer()->resize(mIndices.size());
   if (mIndices.size())
-    memcpy(mDrawElements->indices()->ptr(), &mIndices[0], sizeof(mIndices[0]) * mIndices.size());
+    memcpy(mDrawElements->indexBuffer()->ptr(), &mIndices[0], sizeof(mIndices[0]) * mIndices.size());
 
   if (!mHighQualityNormals)
   {

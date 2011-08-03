@@ -73,9 +73,9 @@ class App_DrawCalls: public BaseDemo
     size_t torus1_index_count = torus1_dc->countIndices();
     size_t torus2_index_count = torus2_dc->countIndices();
     size_t torus3_index_count = torus3_dc->countIndices();
-    mde->indices()->resize( torus1_index_count + torus2_index_count + torus3_index_count );
+    mde->indexBuffer()->resize( torus1_index_count + torus2_index_count + torus3_index_count );
 
-    MultiDrawElementsUInt::index_type* p_idx = mde->indices()->begin();
+    MultiDrawElementsUInt::index_type* p_idx = mde->indexBuffer()->begin();
     for( IndexIterator it = torus1_dc->indexIterator(); it.hasNext(); it.next(), ++p_idx )
       *p_idx = it.index();
     
@@ -85,7 +85,7 @@ class App_DrawCalls: public BaseDemo
     for( IndexIterator it = torus3_dc->indexIterator(); it.hasNext(); it.next(), ++p_idx )
       *p_idx = it.index() + torus1_vert->size() + torus2_vert->size();
 
-    VL_CHECK(p_idx == mde->indices()->end());
+    VL_CHECK(p_idx == mde->indexBuffer()->end());
     
     // define how many indices for each draw call
     GLsizei count_vector[] = { torus1_index_count, torus2_index_count, torus3_index_count };
@@ -133,17 +133,17 @@ class App_DrawCalls: public BaseDemo
 
     // (1)
     ref<DrawElementsUInt> de1 = new DrawElementsUInt(PT_QUADS);
-    de1->setIndices( torus1_de->indices() );
+    de1->setIndexBuffer( torus1_de->indexBuffer() );
     de1->setBaseVertex(0);
     geom->drawCalls()->push_back( de1.get() );
     // (2)
     ref<DrawElementsUInt> de2 = new DrawElementsUInt(PT_QUADS);
-    de2->setIndices( torus1_de->indices() );
+    de2->setIndexBuffer( torus1_de->indexBuffer() );
     de2->setBaseVertex( torus1_vert->size() ); // skip the vertices of the first torus
     geom->drawCalls()->push_back( de2.get() );
     // (3)
     ref<DrawElementsUInt> de3 = new DrawElementsUInt(PT_QUADS);
-    de3->setIndices( torus1_de->indices() );
+    de3->setIndexBuffer( torus1_de->indexBuffer() );
     de3->setBaseVertex( torus1_vert->size() + torus2_vert->size() ); // skip the vertices of the first and second torus
     geom->drawCalls()->push_back( de3.get() );
 

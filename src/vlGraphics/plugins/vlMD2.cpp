@@ -212,7 +212,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
   ref<DrawElementsUInt> polygons = new DrawElementsUInt;
   ref<ArrayFloat2> tex_coords = new ArrayFloat2;
   tex_coords->resize( 3 * loader.header.numTriangles );
-  polygons->indices()->resize( 3 * loader.header.numTriangles );
+  polygons->indexBuffer()->resize( 3 * loader.header.numTriangles );
   geometry->setTexCoordArray(0, tex_coords.get());
   geometry->drawCalls()->push_back( polygons.get() );
 
@@ -238,7 +238,7 @@ ref<ResourceDatabase> vl::loadMD2(VirtualFile* file)
       }
       
       // add index
-      polygons->indices()->at( vert_idx ) = vert_idx;
+      polygons->indexBuffer()->at( vert_idx ) = vert_idx;
     }
   }
 

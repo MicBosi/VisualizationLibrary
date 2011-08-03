@@ -85,8 +85,8 @@ RaycastVolume::RaycastVolume()
   {
     0,1,2,3, 1,5,6,2, 5,4,7,6, 4,0,3,7, 3,2,6,7, 4,5,1,0
   };
-  de->indices()->resize( 4*6 );
-  memcpy( de->indices()->ptr(), de_indices, sizeof( de_indices ) );
+  de->indexBuffer()->resize( 4*6 );
+  memcpy( de->indexBuffer()->ptr(), de_indices, sizeof( de_indices ) );
 
   // generate default texture coordinates
   fvec3 texc[] = 

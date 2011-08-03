@@ -144,7 +144,7 @@ protected:
 
     points->resize( point_count );
     norms->resize( point_count );
-    draw_elements->indices()->resize( point_count );
+    draw_elements->indexBuffer()->resize( point_count );
     color->resize( point_count );
 
     for(int index = 0, z=0; z<img->depth(); ++z)
@@ -191,7 +191,7 @@ protected:
             transfer_func(img->pixels()[x + y*img->pitch() + z*img->height()*img->pitch()], r,g,b,a);
             color->at(index) = vl::ubvec4(r,g,b,a);
 
-            draw_elements->indices()->at(index) = index;
+            draw_elements->indexBuffer()->at(index) = index;
 
             ++index;
           }
@@ -208,7 +208,7 @@ protected:
       color->vbo()->setBufferData(vl::BU_STATIC_DRAW);
       points->vbo()->setBufferData(vl::BU_STATIC_DRAW);
       norms->vbo()->setBufferData(vl::BU_STATIC_DRAW);
-      draw_elements->indices()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW);
+      draw_elements->indexBuffer()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW);
     }
 
     eye_space_points->resize( points->size() );

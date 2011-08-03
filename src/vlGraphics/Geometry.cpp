@@ -623,8 +623,8 @@ void Geometry::mergeTriangleStrips()
   if (indices.size())
   {
     ref<DrawElementsUInt> draw_elems = new DrawElementsUInt(PT_TRIANGLE_STRIP);
-    draw_elems->indices()->resize(indices.size());
-    memcpy(draw_elems->indices()->ptr(), &indices[0], sizeof(indices[0])*indices.size());
+    draw_elems->indexBuffer()->resize(indices.size());
+    memcpy(draw_elems->indexBuffer()->ptr(), &indices[0], sizeof(indices[0])*indices.size());
     drawCalls()->push_back(draw_elems.get());
   }
 }
@@ -649,8 +649,8 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
 
   ref<DrawElementsUInt> de_prim_restart = new DrawElementsUInt(primitive_type);
   // make space for all the indices plus the primitive restart markers.
-  de_prim_restart->indices()->resize(total_index_count + strip_calls.size()-1);
-  GLuint* index = de_prim_restart->indices()->begin();
+  de_prim_restart->indexBuffer()->resize(total_index_count + strip_calls.size()-1);
+  GLuint* index = de_prim_restart->indexBuffer()->begin();
   // merge draw calls using primitive restart!
   for( size_t i=0; i<strip_calls.size(); ++i )
   {
@@ -665,7 +665,7 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
       ++index;
     }
   }
-  VL_CHECK( index == de_prim_restart->indices()->end() )
+  VL_CHECK( index == de_prim_restart->indexBuffer()->end() )
 
   // enable primitive restart!
   de_prim_restart->setPrimitiveRestartEnabled(true);
@@ -695,8 +695,8 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
 
   ref<MultiDrawElementsUInt> de_multi = new MultiDrawElementsUInt(primitive_type);
   // make space for all the indices plus the primitive restart markers.
-  de_multi->indices()->resize(total_index_count);
-  GLuint* index = de_multi->indices()->begin();
+  de_multi->indexBuffer()->resize(total_index_count);
+  GLuint* index = de_multi->indexBuffer()->begin();
   // merge draw calls using primitive restart!
   for( size_t i=0; i<strip_calls.size(); ++i )
   {
@@ -706,7 +706,7 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
       VL_CHECK(*index < this->vertexArray()->size());
     }
   }
-  VL_CHECK( index == de_multi->indices()->end() )
+  VL_CHECK( index == de_multi->indexBuffer()->end() )
 
   // Specify primitive boundaries. This must be done last!
   de_multi->setCountVector( count_vector );
@@ -775,12 +775,12 @@ void Geometry::makeGLESFriendly()
       {
         DrawElementsUInt* polygon = static_cast<DrawElementsUInt*>(dc);
         ref<DrawElementsUInt> triangles = new DrawElementsUInt(PT_TRIANGLES);
-        triangles->indices()->resize( (polygon->indices()->size()-2) * 3 );
-        for(size_t i=0, itri=0; i<polygon->indices()->size()-2; ++i, itri+=3)
+        triangles->indexBuffer()->resize( (polygon->indexBuffer()->size()-2) * 3 );
+        for(size_t i=0, itri=0; i<polygon->indexBuffer()->size()-2; ++i, itri+=3)
         {
-          triangles->indices()->at(itri+0) = polygon->indices()->at(0);
-          triangles->indices()->at(itri+1) = polygon->indices()->at(i+1);
-          triangles->indices()->at(itri+2) = polygon->indices()->at(i+2);
+          triangles->indexBuffer()->at(itri+0) = polygon->indexBuffer()->at(0);
+          triangles->indexBuffer()->at(itri+1) = polygon->indexBuffer()->at(i+1);
+          triangles->indexBuffer()->at(itri+2) = polygon->indexBuffer()->at(i+2);
         }
         // substitute the draw call
         this->drawCalls()->eraseAt(idraw);
@@ -796,10 +796,10 @@ void Geometry::makeGLESFriendly()
       {
         DrawElementsUInt* quads = static_cast<DrawElementsUInt*>(dc);
         ref<DrawElementsUInt> triangles = new DrawElementsUInt(PT_TRIANGLES);
-        triangles->indices()->resize( quads->indices()->size() / 4 * 6 );
-        unsigned int* triangle_idx = &triangles->indices()->at(0);
-        unsigned int* quad_idx = &quads->indices()->at(0);
-        unsigned int* quad_end = &quads->indices()->at(0) + quads->indices()->size();
+        triangles->indexBuffer()->resize( quads->indexBuffer()->size() / 4 * 6 );
+        unsigned int* triangle_idx = &triangles->indexBuffer()->at(0);
+        unsigned int* quad_idx = &quads->indexBuffer()->at(0);
+        unsigned int* quad_end = &quads->indexBuffer()->at(0) + quads->indexBuffer()->size();
         for( ; quad_idx < quad_end ; quad_idx += 4, triangle_idx += 6 )
         {
           triangle_idx[0] = quad_idx[0];
@@ -845,10 +845,10 @@ void Geometry::makeGLESFriendly()
       {
         // shrink to DrawElementsUByte
         ref<DrawElementsUByte> de = new DrawElementsUByte( dc->primitiveType() );
-        de->indices()->resize( idx_count );
+        de->indexBuffer()->resize( idx_count );
         int i=0;
         for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); it.next(), ++i )
-          de->indices()->at(i) = (GLubyte)it.index();
+          de->indexBuffer()->at(i) = (GLubyte)it.index();
 
         // substitute new draw call
         this->drawCalls()->eraseAt(idraw);
@@ -859,10 +859,10 @@ void Geometry::makeGLESFriendly()
       {
         // shrink to DrawElementsUShort
         ref<DrawElementsUShort> de = new DrawElementsUShort( dc->primitiveType() );
-        de->indices()->resize( idx_count );
+        de->indexBuffer()->resize( idx_count );
         int i=0;
         for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); it.next(), ++i )
-          de->indices()->at(i) = (GLushort)it.index();
+          de->indexBuffer()->at(i) = (GLushort)it.index();
 
         // substitute new draw call
         this->drawCalls()->eraseAt(idraw);
@@ -925,18 +925,18 @@ bool Geometry::sortVertices()
     {
       dei = new DrawElementsUInt(des->primitiveType(), des->instances());
       de_uint.push_back(dei);
-      dei->indices()->resize( des->indices()->size() );
-      for(unsigned int j=0; j<des->indices()->size(); ++j)
-        dei->indices()->at(j) = des->indices()->at(j);
+      dei->indexBuffer()->resize( des->indexBuffer()->size() );
+      for(unsigned int j=0; j<des->indexBuffer()->size(); ++j)
+        dei->indexBuffer()->at(j) = des->indexBuffer()->at(j);
     }
     else
     if(deb)
     {
       dei = new DrawElementsUInt(deb->primitiveType(), deb->instances());
       de_uint.push_back(dei);
-      dei->indices()->resize( deb->indices()->size() );
-      for(unsigned int j=0; j<deb->indices()->size(); ++j)
-        dei->indices()->at(j) = deb->indices()->at(j);
+      dei->indexBuffer()->resize( deb->indexBuffer()->size() );
+      for(unsigned int j=0; j<deb->indexBuffer()->size(); ++j)
+        dei->indexBuffer()->at(j) = deb->indexBuffer()->at(j);
     }
     else
       return false;
@@ -960,13 +960,13 @@ bool Geometry::sortVertices()
   size_t index = 0;
   for(int i=(int)de_uint.size(); i--; )
   {
-    for(size_t idx=0; idx<de_uint[i]->indices()->size(); ++idx)
-      if (!used[de_uint[i]->indices()->at(idx)])
+    for(size_t idx=0; idx<de_uint[i]->indexBuffer()->size(); ++idx)
+      if (!used[de_uint[i]->indexBuffer()->at(idx)])
       {
-        map_new_to_old[index] = de_uint[i]->indices()->at(idx);
-        map_old_to_new[de_uint[i]->indices()->at(idx)] = index;
+        map_new_to_old[index] = de_uint[i]->indexBuffer()->at(idx);
+        map_old_to_new[de_uint[i]->indexBuffer()->at(idx)] = index;
         index++;
-        used[de_uint[i]->indices()->at(idx)] = 1;
+        used[de_uint[i]->indexBuffer()->at(idx)] = 1;
       }
   }
 
@@ -976,9 +976,9 @@ bool Geometry::sortVertices()
   for(size_t i=0; i<de_uint.size(); ++i)
   {
     drawCalls()->push_back(de_uint[i].get());
-    for(size_t j=0; j<de_uint[i]->indices()->size(); ++j)
+    for(size_t j=0; j<de_uint[i]->indexBuffer()->size(); ++j)
     {
-      de_uint[i]->indices()->at(j) = (GLuint)map_old_to_new[de_uint[i]->indices()->at(j)];
+      de_uint[i]->indexBuffer()->at(j) = (GLuint)map_old_to_new[de_uint[i]->indexBuffer()->at(j)];
     }
   }
 
