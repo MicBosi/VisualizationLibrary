@@ -1263,11 +1263,23 @@ bool DaeLoader::load(VirtualFile* file)
         actor->transform()->removeFromParent();
 
       // *** merge draw calls ***
-      if (loadOptions()->mergeDrawCallsWithTriangles())
+      if (loadOptions()->mergeDrawCalls())
       {
         Geometry* geom = actor->lod(0)->as<Geometry>();
         if (geom)
+        {
+          // first merge all tristrips
+          ref<DrawCall> tristrips = geom->mergeTriangleStrips();
+          // keep it for later
+          geom->drawCalls()->erase( tristrips.get() );
+
+          // merge all non-tristrips
           geom->mergeDrawCallsWithTriangles(PT_UNKNOWN);
+
+          // put back the tristrips
+          if (tristrips.get())
+            geom->drawCalls()->push_back( tristrips.get() );
+        }
       }
 
       // *** check for transforms that require normal rescaling ***
@@ -1816,6 +1828,32 @@ void DaeLoader::generateGeometry(DaePrimitive* prim)
 
   prim->mGeometry = new Geometry;
 
+  // no primitives where specified so we treat it as a cloud of points simulating a single increasing <p>
+  if(prim->mP.size() == 0 && prim->mType == Dae::PT_UNKNOWN && prim->mChannels.size())
+  {
+    // some sanity checks
+    for(size_t i=0; i<prim->mChannels.size(); ++i)
+    {
+      if ( prim->mChannels[i]->mSource->count() != prim->mChannels[0]->mSource->count() )
+      {
+        Log::error("LoadWriterCOLLADA: cannot generate point cloud: channels have different sizes!\n");
+        return;
+      }
+      if ( prim->mChannels[i]->mOffset != 0 )
+      {
+        Log::error("LoadWriterCOLLADA: cannot generate point cloud: channels must have offset == 0!\n");
+        return;
+      }
+    }
+
+    // generate dummy <p>
+    prim->mP.resize(1);
+    prim->mP[0] = static_cast<domP*>(domP::create(mDAE).cast());
+    prim->mP[0]->getValue().setCount( prim->mChannels[0]->mSource->count() );
+    for (size_t i=0; i<prim->mChannels[0]->mSource->count(); ++i)
+      prim->mP[0]->getValue()[i] = i;
+  }
+
   // generate index buffers & DrawElements
   std::set<DaeVert> vert_set;
   for(size_t ip=0; ip<prim->mP.size(); ++ip)
@@ -1852,6 +1890,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim)
     ref<DrawElementsUInt> de;
     switch(prim->mType)
     {
+      case Dae::PT_UNKNOWN:    de = new DrawElementsUInt( PT_POINTS ); break; // of course we can do better than this but we would need a lot of extra logic
       case Dae::PT_LINES:      de = new DrawElementsUInt( PT_LINES ); break;
       case Dae::PT_LINE_STRIP: de = new DrawElementsUInt( PT_LINE_STRIP ); break;
       case Dae::PT_POLYGONS:   de = new DrawElementsUInt( PT_POLYGON ); break;
