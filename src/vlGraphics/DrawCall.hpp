@@ -92,8 +92,10 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::DrawCalls, Object)
 
   public:
+    /** Constructor. */
     DrawCall(): mType(PT_TRIANGLES), mEnabled(true) {}
 
+    /** Assignment operator. */
     DrawCall& operator=(const DrawCall& other)
     {
       mType      = other.mType;
@@ -101,29 +103,39 @@ namespace vl
       return *this;
     }
 
+    /** Sets the draw call's primitive type. */
     void setPrimitiveType(EPrimitiveType type) { mType = type; }
+
+    /** Returns the draw call's primitive type. */
     EPrimitiveType primitiveType() const { return mType; }
 
+    /** Executes the draw call. */
     virtual void render(bool use_vbo = true) const = 0;
+
+    /** Returns a clone of the draw call. */
     virtual ref<DrawCall> clone() const = 0;
 
-    //! Updates the VBO of the index buffer.
+    /** Updates the index buffer's VBO if marked as dirty. */
     virtual void updateDirtyVBO(EVBOUpdateMode) = 0;
 
-    //! Deletes the VBO of the index buffer.
+    /** Deletes the index buffer's VBO. */
     virtual void deleteVBO() = 0;
 
+    /** Enables/disables the draw call. */
     void setEnabled(bool enable) { mEnabled = enable; }
 
+    /** True if the draw call is enabled. */
     bool isEnabled() const { return mEnabled; }
 
-    //! Returns a TriangleIterator used to iterate through the triangles of a DrawCall.
-    //! Basically the iterator tesselates in triangles any DrawCall of type: PT_TRIANGLES, PT_TRIANGLE_STRIP
-    //! PT_TRIANGLE_FAN, PT_POLYGON, PT_QUADS, PT_QUAD_STRIP.
+    /** 
+     * Returns a TriangleIterator used to iterate through the triangles of a DrawCall.
+     * Basically the iterator tesselates in triangles any DrawCall of type: PT_TRIANGLES, PT_TRIANGLE_STRIP
+     * PT_TRIANGLE_FAN, PT_POLYGON, PT_QUADS, PT_QUAD_STRIP. */
     virtual TriangleIterator triangleIterator() const = 0;
 
-    //! Returns a IndexIterator used to iterate through the virtual indices of a DrawCall.
-    //! This \note The returned indices already take into account primitive restart and base vertex.
+    /** 
+     * Returns a IndexIterator used to iterate through the virtual indices of a DrawCall.
+     * This \note The returned indices already take into account primitive restart and base vertex. */
     virtual IndexIterator indexIterator() const = 0;
 
     /** Counts the number of virtual indices of a DrawCall., i.e. the number of indices you would retrieve by iterating over the iterator returned by indexIterator(). */
@@ -157,7 +169,7 @@ namespace vl
       {
         vl::Log::warning("PatchParameter used with non PT_PATCHES draw call!\n");
       }
-
+      else
       if (!mPatchParameter && mType == PT_PATCHES)
       {
         vl::Log::warning("No PatchParameter supplied while using PT_PATCHES draw call!\n");

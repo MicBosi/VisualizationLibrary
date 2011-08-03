@@ -210,10 +210,10 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
     ref<DrawElementsUInt> de = new DrawElementsUInt( draw_cmd[idraw]->primitiveType() );
     geom->drawCalls()->push_back(de.get());
     const int idx_count = draw_cmd[idraw]->countIndices();
-    de->indices()->resize(idx_count);
+    de->indexBuffer()->resize(idx_count);
     int i=0;
     for(IndexIterator it = draw_cmd[idraw]->indexIterator(); it.hasNext(); it.next(), ++i)
-      de->indices()->at(i) = mMapOldToNew[it.index()];
+      de->indexBuffer()->at(i) = mMapOldToNew[it.index()];
   }
 
   #if 0

@@ -141,15 +141,15 @@ ref<Geometry> Extrusion::extrude()
   int prof_count = silhouetteMode() == SilhouetteClosed ? (int)silhouette().size() : (int)silhouette().size()-1;
   ref<DrawElementsUInt> de = new DrawElementsUInt(PT_QUADS);
   geom->drawCalls()->push_back(de.get());
-  de->indices()->resize(4 * prof_count * (segments-1));
+  de->indexBuffer()->resize(4 * prof_count * (segments-1));
   for(size_t iseg=0; iseg<segments-1; ++iseg)
   {
     for(int iquad=0; iquad<prof_count; ++iquad)
     {
-      de->indices()->at(iquad*4+iseg*4*prof_count + 3) = (iseg + 0) * (GLuint)silhouette().size() + iquad;
-      de->indices()->at(iquad*4+iseg*4*prof_count + 2) = (iseg + 0) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size();
-      de->indices()->at(iquad*4+iseg*4*prof_count + 1) = (iseg + 1) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size();
-      de->indices()->at(iquad*4+iseg*4*prof_count + 0) = (iseg + 1) * (GLuint)silhouette().size() + iquad;
+      de->indexBuffer()->at(iquad*4+iseg*4*prof_count + 3) = (iseg + 0) * (GLuint)silhouette().size() + iquad;
+      de->indexBuffer()->at(iquad*4+iseg*4*prof_count + 2) = (iseg + 0) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size();
+      de->indexBuffer()->at(iquad*4+iseg*4*prof_count + 1) = (iseg + 1) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size();
+      de->indexBuffer()->at(iquad*4+iseg*4*prof_count + 0) = (iseg + 1) * (GLuint)silhouette().size() + iquad;
     }
   }
 

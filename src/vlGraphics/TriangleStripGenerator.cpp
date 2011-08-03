@@ -110,8 +110,8 @@ void TriangleStripGenerator::stripfy(Geometry* geom, int cache_size, bool merge_
             algo2_strip.push_back(out[s].Indices[p]);
 
           ref<DrawElementsUInt> draw_elems = new DrawElementsUInt(PT_TRIANGLE_STRIP);
-          draw_elems->indices()->resize(algo2_strip.size());
-          memcpy(draw_elems->indices()->ptr(), &algo2_strip[0], sizeof(unsigned int)*algo2_strip.size());
+          draw_elems->indexBuffer()->resize(algo2_strip.size());
+          memcpy(draw_elems->indexBuffer()->ptr(), &algo2_strip[0], sizeof(unsigned int)*algo2_strip.size());
           geom->drawCalls()->push_back(draw_elems.get());
         }
         else // TRIANGLES
@@ -121,8 +121,8 @@ void TriangleStripGenerator::stripfy(Geometry* geom, int cache_size, bool merge_
             algo2_tris.push_back(out[s].Indices[p]);
 
           ref<DrawElementsUInt> draw_elems = new DrawElementsUInt(PT_TRIANGLES);
-          draw_elems->indices()->resize(algo2_tris.size());
-          memcpy(draw_elems->indices()->ptr(), &algo2_tris[0], sizeof(unsigned int)*algo2_tris.size());
+          draw_elems->indexBuffer()->resize(algo2_tris.size());
+          memcpy(draw_elems->indexBuffer()->ptr(), &algo2_tris[0], sizeof(unsigned int)*algo2_tris.size());
           geom->drawCalls()->push_back(draw_elems.get());
         }
       }

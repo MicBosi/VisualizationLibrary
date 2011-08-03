@@ -408,8 +408,8 @@ ref<ResourceDatabase> PlyLoader::loadPly(VirtualFile* file)
   geom->setColorArray(mColors.get());
   ref<DrawElementsUInt> de = new DrawElementsUInt(PT_TRIANGLES);
   geom->drawCalls()->push_back(de.get());
-  de->indices()->resize(mIndices.size());
-  memcpy(de->indices()->ptr(), &mIndices[0], sizeof(unsigned int)*mIndices.size());
+  de->indexBuffer()->resize(mIndices.size());
+  memcpy(de->indexBuffer()->ptr(), &mIndices[0], sizeof(unsigned int)*mIndices.size());
   ref<ResourceDatabase> res_db = new ResourceDatabase;
   ref<Effect> effect = new Effect;
   if (mColors)

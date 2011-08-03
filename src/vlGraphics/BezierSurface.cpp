@@ -116,7 +116,7 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
     de = new DrawElementsUInt(PT_QUADS);
     drawCalls()->push_back(de.get());
   }
-  de->indices()->resize((detail()-1)*(detail()-1)*4*patch_count);
+  de->indexBuffer()->resize((detail()-1)*(detail()-1)*4*patch_count);
 
   int ivert = 0;
   int iquad = 0;
@@ -167,10 +167,10 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
       {
         for(unsigned x=0; x<detail()-1; ++x)
         {
-          de->indices()->at(iquad++) = istart + y    *detail() + x;
-          de->indices()->at(iquad++) = istart + y    *detail() + x+1;
-          de->indices()->at(iquad++) = istart + (y+1)*detail() + x+1;
-          de->indices()->at(iquad++) = istart + (y+1)*detail() + x;
+          de->indexBuffer()->at(iquad++) = istart + y    *detail() + x;
+          de->indexBuffer()->at(iquad++) = istart + y    *detail() + x+1;
+          de->indexBuffer()->at(iquad++) = istart + (y+1)*detail() + x+1;
+          de->indexBuffer()->at(iquad++) = istart + (y+1)*detail() + x;
         }
       }
       ++patch_num;

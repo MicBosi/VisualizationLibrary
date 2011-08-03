@@ -198,19 +198,19 @@ public:
     vert_array->at(7) = vl::fvec3(0, 0, -w1);
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_1_b->drawCalls()->push_back(de.get());
-    de->indices()->resize(12);
-    de->indices()->at(0) = 1; // a
-    de->indices()->at(1) = 0;
-    de->indices()->at(2) = 7;
-    de->indices()->at(3) = 6;
-    de->indices()->at(4) = 1; // b
-    de->indices()->at(5) = 6;
-    de->indices()->at(6) = 5;
-    de->indices()->at(7) = 2;
-    de->indices()->at(8)  = 5; // c
-    de->indices()->at(9)  = 4;
-    de->indices()->at(10) = 3;
-    de->indices()->at(11) = 2;
+    de->indexBuffer()->resize(12);
+    de->indexBuffer()->at(0) = 1; // a
+    de->indexBuffer()->at(1) = 0;
+    de->indexBuffer()->at(2) = 7;
+    de->indexBuffer()->at(3) = 6;
+    de->indexBuffer()->at(4) = 1; // b
+    de->indexBuffer()->at(5) = 6;
+    de->indexBuffer()->at(6) = 5;
+    de->indexBuffer()->at(7) = 2;
+    de->indexBuffer()->at(8)  = 5; // c
+    de->indexBuffer()->at(9)  = 4;
+    de->indexBuffer()->at(10) = 3;
+    de->indexBuffer()->at(11) = 2;
     wall_1_b->computeNormals();
 
     // wall_1_c
@@ -234,23 +234,23 @@ public:
     vert_array->at(7) = vl::fvec3(0, 0, -w1) + v1c;
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_1_c->drawCalls()->push_back(de.get());
-    de->indices()->resize(16);
-    de->indices()->at(0) = 1; // a
-    de->indices()->at(1) = 0;
-    de->indices()->at(2) = 7;
-    de->indices()->at(3) = 6;
-    de->indices()->at(4) = 1; // b
-    de->indices()->at(5) = 6;
-    de->indices()->at(6) = 5;
-    de->indices()->at(7) = 2;
-    de->indices()->at(8)  = 5; // c
-    de->indices()->at(9)  = 4;
-    de->indices()->at(10) = 3;
-    de->indices()->at(11) = 2;
-    de->indices()->at(12) = 0; // d
-    de->indices()->at(13) = 3;
-    de->indices()->at(14) = 4;
-    de->indices()->at(15) = 7;
+    de->indexBuffer()->resize(16);
+    de->indexBuffer()->at(0) = 1; // a
+    de->indexBuffer()->at(1) = 0;
+    de->indexBuffer()->at(2) = 7;
+    de->indexBuffer()->at(3) = 6;
+    de->indexBuffer()->at(4) = 1; // b
+    de->indexBuffer()->at(5) = 6;
+    de->indexBuffer()->at(6) = 5;
+    de->indexBuffer()->at(7) = 2;
+    de->indexBuffer()->at(8)  = 5; // c
+    de->indexBuffer()->at(9)  = 4;
+    de->indexBuffer()->at(10) = 3;
+    de->indexBuffer()->at(11) = 2;
+    de->indexBuffer()->at(12) = 0; // d
+    de->indexBuffer()->at(13) = 3;
+    de->indexBuffer()->at(14) = 4;
+    de->indexBuffer()->at(15) = 7;
     wall_1_c->computeNormals();
 
     // wall 2 b
@@ -273,19 +273,19 @@ public:
     vert_array->at(7) = vl::fvec3(-w1, 0, 0);
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_2_b->drawCalls()->push_back(de.get());
-    de->indices()->resize(12);
-    de->indices()->at(0) = 1; // a
-    de->indices()->at(1) = 0;
-    de->indices()->at(2) = 7;
-    de->indices()->at(3) = 6;
-    de->indices()->at(4) = 1; // b
-    de->indices()->at(5) = 6;
-    de->indices()->at(6) = 5;
-    de->indices()->at(7) = 2;
-    de->indices()->at(8)  = 5; // c
-    de->indices()->at(9)  = 4;
-    de->indices()->at(10) = 3;
-    de->indices()->at(11) = 2;
+    de->indexBuffer()->resize(12);
+    de->indexBuffer()->at(0) = 1; // a
+    de->indexBuffer()->at(1) = 0;
+    de->indexBuffer()->at(2) = 7;
+    de->indexBuffer()->at(3) = 6;
+    de->indexBuffer()->at(4) = 1; // b
+    de->indexBuffer()->at(5) = 6;
+    de->indexBuffer()->at(6) = 5;
+    de->indexBuffer()->at(7) = 2;
+    de->indexBuffer()->at(8)  = 5; // c
+    de->indexBuffer()->at(9)  = 4;
+    de->indexBuffer()->at(10) = 3;
+    de->indexBuffer()->at(11) = 2;
     wall_2_b->computeNormals();
 
     // wall_2_c
@@ -309,23 +309,23 @@ public:
     vert_array->at(7) = vl::fvec3(-w1, 0, 0) + v2c;
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_2_c->drawCalls()->push_back(de.get());
-    de->indices()->resize(16);
-    de->indices()->at(0) = 1; // a
-    de->indices()->at(1) = 0;
-    de->indices()->at(2) = 7;
-    de->indices()->at(3) = 6;
-    de->indices()->at(4) = 1; // b
-    de->indices()->at(5) = 6;
-    de->indices()->at(6) = 5;
-    de->indices()->at(7) = 2;
-    de->indices()->at(8)  = 5; // c
-    de->indices()->at(9)  = 4;
-    de->indices()->at(10) = 3;
-    de->indices()->at(11) = 2;
-    de->indices()->at(12) = 0; // d
-    de->indices()->at(13) = 3;
-    de->indices()->at(14) = 4;
-    de->indices()->at(15) = 7;
+    de->indexBuffer()->resize(16);
+    de->indexBuffer()->at(0) = 1; // a
+    de->indexBuffer()->at(1) = 0;
+    de->indexBuffer()->at(2) = 7;
+    de->indexBuffer()->at(3) = 6;
+    de->indexBuffer()->at(4) = 1; // b
+    de->indexBuffer()->at(5) = 6;
+    de->indexBuffer()->at(6) = 5;
+    de->indexBuffer()->at(7) = 2;
+    de->indexBuffer()->at(8)  = 5; // c
+    de->indexBuffer()->at(9)  = 4;
+    de->indexBuffer()->at(10) = 3;
+    de->indexBuffer()->at(11) = 2;
+    de->indexBuffer()->at(12) = 0; // d
+    de->indexBuffer()->at(13) = 3;
+    de->indexBuffer()->at(14) = 4;
+    de->indexBuffer()->at(15) = 7;
     wall_2_c->computeNormals();
 
     // very heavy spheres to be added to the sectors to outline more clearly the advantages of portal-based culling.
