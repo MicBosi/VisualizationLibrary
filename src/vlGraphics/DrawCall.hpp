@@ -107,11 +107,14 @@ namespace vl
     virtual void render(bool use_vbo = true) const = 0;
     virtual ref<DrawCall> clone() const = 0;
 
-    virtual void deleteVBOs() = 0;
-    virtual void updateVBOs(bool discard_local_data=false, bool force_update=false) = 0;
-    virtual unsigned int handle() const = 0;
+    //! Updates the VBO of the index buffer.
+    virtual void updateDirtyVBO(EVBOUpdateMode) = 0;
+
+    //! Deletes the VBO of the index buffer.
+    virtual void deleteVBO() = 0;
 
     void setEnabled(bool enable) { mEnabled = enable; }
+
     bool isEnabled() const { return mEnabled; }
 
     //! Returns a TriangleIterator used to iterate through the triangles of a DrawCall.

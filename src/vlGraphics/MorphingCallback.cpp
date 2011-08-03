@@ -100,17 +100,17 @@ void MorphingCallback::onActorRenderStarted(Actor*, Real frame_clock, const Came
     mGeometry->setVertexArray( mVertexFrames[mFrame1].get() );
     mGeometry->setNormalArray( mNormalFrames[mFrame1].get() );
 
-    if (!mVertexFrames[mFrame1]->gpuBuffer()->handle())
-      mVertexFrames[mFrame1]->updateVBO();
+    if (!mVertexFrames[mFrame1]->gpuBuffer()->handle() || mVertexFrames[mFrame1]->isVBODirty())
+      mVertexFrames[mFrame1]->updateVBO(VUM_KeepRamBuffer);
 
-    if (!mVertexFrames[mFrame2]->gpuBuffer()->handle())
-      mVertexFrames[mFrame2]->updateVBO();
+    if (!mVertexFrames[mFrame2]->gpuBuffer()->handle() || mVertexFrames[mFrame2]->isVBODirty())
+      mVertexFrames[mFrame2]->updateVBO(VUM_KeepRamBuffer);
 
-    if (!mNormalFrames[mFrame1]->gpuBuffer()->handle())
-      mNormalFrames[mFrame1]->updateVBO();
+    if (!mNormalFrames[mFrame1]->gpuBuffer()->handle() || mNormalFrames[mFrame1]->isVBODirty())
+      mNormalFrames[mFrame1]->updateVBO(VUM_KeepRamBuffer);
 
-    if (!mNormalFrames[mFrame2]->gpuBuffer()->handle())
-      mNormalFrames[mFrame2]->updateVBO();
+    if (!mNormalFrames[mFrame2]->gpuBuffer()->handle() || mNormalFrames[mFrame2]->isVBODirty())
+      mNormalFrames[mFrame2]->updateVBO(VUM_KeepRamBuffer);
 
     VL_CHECK( mVertexFrames[mFrame1]->gpuBuffer()->handle() )
     VL_CHECK( mVertexFrames[mFrame2]->gpuBuffer()->handle() )
