@@ -58,17 +58,17 @@ public:                                                                         
   /** Returns the name of the class. */                                                                               \
   static const char* staticName() { return VL_TO_STR(ClassName); }                                                    \
   /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo* staticType() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; } \
+  static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
                                                                                                                       \
   /* virtual functions */                                                                                             \
   /** Returns the name of the object's class. */                                                                      \
   virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
   /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo* classType() const { return staticType(); }                                                  \
+  virtual const TypeInfo* classType() const { return Type(); }                                                        \
   /** Returns \a true if \a type matches the object's class type. */                                                  \
   virtual bool isOfType(const TypeInfo* type) const                                                                   \
   {                                                                                                                   \
-    return type == staticType();                                                                                      \
+    return type == Type();                                                                                            \
   }                                                                                                                   \
 private:
 //---------------------------------------------------------------------------------------------------------------------
@@ -80,21 +80,21 @@ public:                                                                         
   /** Returns the name of the class. */                                                                               \
   static const char* staticName() { return VL_TO_STR(ClassName); }                                                    \
   /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo* staticType() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; } \
+  static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
                                                                                                                       \
   /* virtual functions */                                                                                             \
   /** Returns the name of the object's class. */                                                                      \
   virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
   /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo* classType() const { return staticType(); }                                                  \
+  virtual const TypeInfo* classType() const { return Type(); }                                                        \
   /** Returns \a true if \a type matches the object's class type. */                                                  \
   virtual bool isOfType(const TypeInfo* type) const                                                                   \
   {                                                                                                                   \
-    return type == staticType() || super::isOfType(type);                                                             \
+    return type == Type() || super::isOfType(type);                                                                   \
   }                                                                                                                   \
 private:
 //---------------------------------------------------------------------------------------------------------------------
-#define VL_INSTRUMENT_CLASS_2(ClassName, BaseClass1, BaseClass2)                                                       \
+#define VL_INSTRUMENT_CLASS_2(ClassName, BaseClass1, BaseClass2)                                                      \
 private:                                                                                                              \
   typedef BaseClass1 super1;                                                                                          \
   typedef BaseClass2 super2;                                                                                          \
@@ -103,17 +103,17 @@ public:                                                                         
   /** Returns the name of the class. */                                                                               \
   static const char* staticName() { return VL_TO_STR(ClassName); }                                                    \
   /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo* staticType() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; } \
+  static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
                                                                                                                       \
   /* virtual functions */                                                                                             \
   /** Returns the name of the object's class. */                                                                      \
   virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
   /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo* classType() const { return staticType(); }                                                  \
+  virtual const TypeInfo* classType() const { return Type(); }                                                        \
   /** Returns \a true if \a type matches the object's class type. */                                                  \
   virtual bool isOfType(const TypeInfo* type) const                                                                   \
   {                                                                                                                   \
-    return type == staticType() || super1::isOfType(type) || super2::isOfType(type);                                  \
+    return type == Type() || super1::isOfType(type) || super2::isOfType(type);                                        \
   }                                                                                                                   \
 private:
 //---------------------------------------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ namespace vl
   template<class B, class A>
   B* cast(A* obj)
   {
-    if(obj && obj->isOfType(B::staticType()))
+    if(obj && obj->isOfType(B::Type()))
       return static_cast<B*>(obj);
     else
       return NULL;
@@ -131,7 +131,7 @@ namespace vl
   template<class B, class A>
   const B* cast_const(const A* obj) // need rename to cast_const for GCC
   {
-    if(obj && obj->isOfType(B::staticType()))
+    if(obj && obj->isOfType(B::Type()))
       return static_cast<const B*>(obj);
     else
       return NULL;

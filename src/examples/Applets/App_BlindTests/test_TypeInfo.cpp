@@ -102,25 +102,25 @@ namespace blind_tests
     pBase = &AB;
 
     // exact type
-    CHECK_CONDITION( SubT.classType() == ns::ClassSubT::staticType() )
+    CHECK_CONDITION( SubT.classType() == ns::ClassSubT::Type() )
     CHECK_CONDITION( pBase->classType() == AB2.classType() )
     // template up cast
-    CHECK_CONDITION( SubT.isOfType(ns::ClassT<int, float>::staticType()) )
+    CHECK_CONDITION( SubT.isOfType(ns::ClassT<int, float>::Type()) )
     // up cast
-    CHECK_CONDITION( SubT.isOfType(ns::Base::staticType()) )
+    CHECK_CONDITION( SubT.isOfType(ns::Base::Type()) )
     // non related
-    CHECK_CONDITION( !SubT.isOfType(ns::ClassA::staticType()) )
+    CHECK_CONDITION( !SubT.isOfType(ns::ClassA::Type()) )
     // multiple inheritance
-    CHECK_CONDITION( AB.isOfType(ns::ClassA::staticType()) )
-    CHECK_CONDITION( AB.isOfType(ns::ClassB::staticType()) )
-    CHECK_CONDITION( AB.isOfType(ns::Base::staticType()) )
-    CHECK_CONDITION( !AB.isOfType(ns::ClassSubT::staticType()) )
+    CHECK_CONDITION( AB.isOfType(ns::ClassA::Type()) )
+    CHECK_CONDITION( AB.isOfType(ns::ClassB::Type()) )
+    CHECK_CONDITION( AB.isOfType(ns::Base::Type()) )
+    CHECK_CONDITION( !AB.isOfType(ns::ClassSubT::Type()) )
     // downcast from pBase class
-    CHECK_CONDITION( pBase->isOfType(ns::ClassAB::staticType()) )
-    CHECK_CONDITION( pBase->isOfType(ns::ClassA::staticType()) )
-    CHECK_CONDITION( pBase->isOfType(ns::ClassB::staticType()) )
-    CHECK_CONDITION( pBase->isOfType(ns::Base::staticType()) )
-    CHECK_CONDITION( !pBase->isOfType(ns::ClassSubT::staticType()) )
+    CHECK_CONDITION( pBase->isOfType(ns::ClassAB::Type()) )
+    CHECK_CONDITION( pBase->isOfType(ns::ClassA::Type()) )
+    CHECK_CONDITION( pBase->isOfType(ns::ClassB::Type()) )
+    CHECK_CONDITION( pBase->isOfType(ns::Base::Type()) )
+    CHECK_CONDITION( !pBase->isOfType(ns::ClassSubT::Type()) )
 
     // CHECK_CONDITION( vl::cast<ns::ClassA>(&B) == NULL ) // compilation error, Ok.
     // CHECK_CONDITION( vl::cast<ns::ClassB>(&A) == NULL ) // compilation error, Ok.
