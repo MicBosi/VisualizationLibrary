@@ -112,7 +112,7 @@ namespace vl
    *
    * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
    * The indices are stored in a VBO and thus they can be stored locally or on the GPU. 
-   * To gain direct access to the VBO use the indices() function.
+   * To gain direct access to the VBO use the indexBuffer() function.
    *
    * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
    * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
@@ -166,7 +166,7 @@ namespace vl
     DrawRangeElements& operator=(const DrawRangeElements& other)
     {
       DrawRangeElementsBase::operator=(other);
-      *indices()               = *other.indices();
+      *indexBuffer()               = *other.indexBuffer();
       mRangeStart              = other.mRangeStart;
       mRangeEnd                = other.mRangeEnd;
       mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
@@ -181,29 +181,29 @@ namespace vl
       return de;
     }
 
-    void setIndices(arr_type* index_buffer) { mIndexBuffer = index_buffer; }
+    void setIndexBuffer(arr_type* index_buffer) { mIndexBuffer = index_buffer; }
 
-    arr_type* indices() { return mIndexBuffer.get(); }
+    arr_type* indexBuffer() { return mIndexBuffer.get(); }
 
-    const arr_type* indices() const { return mIndexBuffer.get(); }
+    const arr_type* indexBuffer() const { return mIndexBuffer.get(); }
 
     virtual void updateDirtyVBO(EVBOUpdateMode mode)
     {
-      if (indices()->isVBODirty() || (mode & VUF_ForceUpdate) )
-        indices()->updateVBO(mode);
+      if (indexBuffer()->isVBODirty() || (mode & VUF_ForceUpdate))
+        indexBuffer()->updateVBO(mode);
     }
 
     virtual void deleteVBO()
     {
-      indices()->vbo()->deleteVBO();
+      indexBuffer()->vbo()->deleteVBO();
     }
 
     virtual void render(bool use_vbo) const
     {
       VL_CHECK_OGL()
       VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
-      use_vbo &= Has_VBO; // && indices()->vbo()->handle() && indices()->sizeVBO();
-      if ( !use_vbo && !indices()->size() )
+      use_vbo &= Has_VBO; // && indexBuffer()->vbo()->handle() && indexBuffer()->sizeVBO();
+      if ( !use_vbo && !indexBuffer()->size() )
         return;
 
       // apply patch parameters if any and if using PT_PATCHES
@@ -217,18 +217,18 @@ namespace vl
         glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
       }
 
-      const GLvoid* ptr = indices()->vbo()->ptr();
+      const GLvoid* ptr = indexBuffer()->vbo()->ptr();
 
-      if (use_vbo && indices()->vbo()->handle())
+      if (use_vbo && indexBuffer()->vbo()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->vbo()->handle()); VL_CHECK_OGL()
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->vbo()->handle()); VL_CHECK_OGL()
         ptr = 0;
       }
       else
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-      GLsizei count = (GLsizei)(use_vbo ? indices()->sizeVBO() : indices()->size());
-      GLenum type = indices()->glType();
+      GLsizei count = (GLsizei)(use_vbo ? indexBuffer()->sizeVBO() : indexBuffer()->size());
+      GLenum type = indexBuffer()->glType();
       if (mBaseVertex == 0)
       {
         glDrawRangeElements( primitiveType(), mRangeStart, mRangeEnd, count, type, ptr ); VL_CHECK_OGL()

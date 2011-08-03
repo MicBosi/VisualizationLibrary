@@ -202,16 +202,16 @@ namespace vl
       if (polys->primitiveType() == PT_QUADS)
       {
         // compute zetas
-        mPrimitiveZ.resize( polys->indices()->size() / 4 );
+        mPrimitiveZ.resize( polys->indexBuffer()->size() / 4 );
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indices()->size(); i+=4, ++iz)
+        for(unsigned iz=0, i=0; i<polys->indexBuffer()->size(); i+=4, ++iz)
         {
-          int a = polys->indices()->at(i+0);
-          int b = polys->indices()->at(i+1);
-          int c = polys->indices()->at(i+2);
-          int d = polys->indices()->at(i+2);
+          int a = polys->indexBuffer()->at(i+0);
+          int b = polys->indexBuffer()->at(i+1);
+          int c = polys->indexBuffer()->at(i+2);
+          int d = polys->indexBuffer()->at(i+2);
           mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[a].z() + (*mEyeSpaceVerts)[b].z() + (*mEyeSpaceVerts)[c].z() + (*mEyeSpaceVerts)[d].z();
           mPrimitiveZ[iz].mPrimitiveIndex = iz;
         }
@@ -223,8 +223,8 @@ namespace vl
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Front_To_Back() );
 
         // regenerate the sorted indices
-        sorted_quads.resize( polys->indices()->size() / 4 );
-        Quad<T>* tris = (Quad<T>*)polys->indices()->ptr();
+        sorted_quads.resize( polys->indexBuffer()->size() / 4 );
+        Quad<T>* tris = (Quad<T>*)polys->indexBuffer()->ptr();
         for(unsigned int i=0; i<mPrimitiveZ.size(); ++i)
           sorted_quads[i] = tris[ mPrimitiveZ[i].mPrimitiveIndex ];
         memcpy(&tris[0], &sorted_quads[0], sizeof(sorted_quads[0])*sorted_quads.size() );
@@ -233,15 +233,15 @@ namespace vl
       if (polys->primitiveType() == PT_TRIANGLES)
       {
         // compute zetas
-        mPrimitiveZ.resize( polys->indices()->size() / 3 );
+        mPrimitiveZ.resize( polys->indexBuffer()->size() / 3 );
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indices()->size(); i+=3, ++iz)
+        for(unsigned iz=0, i=0; i<polys->indexBuffer()->size(); i+=3, ++iz)
         {
-          int a = polys->indices()->at(i+0);
-          int b = polys->indices()->at(i+1);
-          int c = polys->indices()->at(i+2);
+          int a = polys->indexBuffer()->at(i+0);
+          int b = polys->indexBuffer()->at(i+1);
+          int c = polys->indexBuffer()->at(i+2);
           mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[a].z() + (*mEyeSpaceVerts)[b].z() + (*mEyeSpaceVerts)[c].z();
           mPrimitiveZ[iz].mPrimitiveIndex = iz;
         }
@@ -253,8 +253,8 @@ namespace vl
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Front_To_Back() );
 
         // regenerate the sorted indices
-        sorted_triangles.resize( polys->indices()->size() / 3 );
-        Triangle<T>* tris = (Triangle<T>*)polys->indices()->ptr();
+        sorted_triangles.resize( polys->indexBuffer()->size() / 3 );
+        Triangle<T>* tris = (Triangle<T>*)polys->indexBuffer()->ptr();
         for(unsigned int i=0; i<mPrimitiveZ.size(); ++i)
           sorted_triangles[i] = tris[ mPrimitiveZ[i].mPrimitiveIndex ];
         memcpy(&tris[0], &sorted_triangles[0], sizeof(sorted_triangles[0])*sorted_triangles.size() );
@@ -263,14 +263,14 @@ namespace vl
       if (polys->primitiveType() == PT_LINES)
       {
         // compute zetas
-        mPrimitiveZ.resize( polys->indices()->size() / 2 );
+        mPrimitiveZ.resize( polys->indexBuffer()->size() / 2 );
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indices()->size(); i+=2, ++iz)
+        for(unsigned iz=0, i=0; i<polys->indexBuffer()->size(); i+=2, ++iz)
         {
-          int a = polys->indices()->at(i+0);
-          int b = polys->indices()->at(i+1);
+          int a = polys->indexBuffer()->at(i+0);
+          int b = polys->indexBuffer()->at(i+1);
           mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[a].z() + (*mEyeSpaceVerts)[b].z();
           mPrimitiveZ[iz].mPrimitiveIndex = iz;
         }
@@ -282,8 +282,8 @@ namespace vl
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Front_To_Back() );
 
         // regenerate the sorted indices
-        sorted_lines.resize( polys->indices()->size() / 2 );
-        Line<T>* tris = (Line<T>*)polys->indices()->ptr();
+        sorted_lines.resize( polys->indexBuffer()->size() / 2 );
+        Line<T>* tris = (Line<T>*)polys->indexBuffer()->ptr();
         for(unsigned int i=0; i<mPrimitiveZ.size(); ++i)
           sorted_lines[i] = tris[ mPrimitiveZ[i].mPrimitiveIndex ];
         memcpy(&tris[0], &sorted_lines[0], sizeof(sorted_lines[0])*sorted_lines.size() );
@@ -292,13 +292,13 @@ namespace vl
       if (polys->primitiveType() == PT_POINTS)
       {
         // compute zetas
-        mPrimitiveZ.resize( polys->indices()->size() );
+        mPrimitiveZ.resize( polys->indexBuffer()->size() );
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indices()->size(); ++i, ++iz)
+        for(unsigned iz=0, i=0; i<polys->indexBuffer()->size(); ++i, ++iz)
         {
-          mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[polys->indices()->at(i)].z();
+          mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[polys->indexBuffer()->at(i)].z();
           mPrimitiveZ[iz].mPrimitiveIndex = iz;
         }
 
@@ -309,8 +309,8 @@ namespace vl
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Front_To_Back() );
 
         // regenerate the sorted indices
-        sorted_points.resize( polys->indices()->size() );
-        Point<T>* tris = (Point<T>*)polys->indices()->ptr();
+        sorted_points.resize( polys->indexBuffer()->size() );
+        Point<T>* tris = (Point<T>*)polys->indexBuffer()->ptr();
         for(unsigned int i=0; i<mPrimitiveZ.size(); ++i)
           sorted_points[i] = tris[ mPrimitiveZ[i].mPrimitiveIndex ];
         memcpy(&tris[0], &sorted_points[0], sizeof(sorted_points[0])*sorted_points.size() );
@@ -318,15 +318,15 @@ namespace vl
 
       if (Has_VBO)
       {
-        if (polys->indices()->vbo()->handle())
+        if (polys->indexBuffer()->vbo()->handle())
         {
-          if (polys->indices()->vbo()->usage() != vl::BU_DYNAMIC_DRAW)
+          if (polys->indexBuffer()->vbo()->usage() != vl::BU_DYNAMIC_DRAW)
           {
-            polys->indices()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW);
-            polys->indices()->setVBODirty(false);
+            polys->indexBuffer()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW);
+            polys->indexBuffer()->setVBODirty(false);
           }
           else
-            polys->indices()->setVBODirty(true);
+            polys->indexBuffer()->setVBODirty(true);
         }
       }
     }

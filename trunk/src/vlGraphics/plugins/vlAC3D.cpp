@@ -534,7 +534,7 @@ ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)
     // warning: this is a quite experimental importer.
 
     // !!! FIX !!! i vertici dovrebbero essere < degli indici in generale, vedi sotto
-    polys->indices()->resize( vert_count );
+    polys->indexBuffer()->resize( vert_count );
 
     int idx = 0;
     for(unsigned isurf=0; isurf<loader.meshes[imesh].Surface.size(); isurf++)
@@ -548,7 +548,7 @@ ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)
         for(int i=0; i<3; ++i, idx++)
         {
           // FIXME: a quanto pare i vertici non sono condivisi, ma lo dovrebbero essere
-          polys->indices()->at( idx ) = idx;
+          polys->indexBuffer()->at( idx ) = idx;
           int iv = loader.meshes[imesh].Surface[isurf].Vertex[ vert_idx[i] ].Vert;
           verts->at( idx ) = loader.meshes[imesh].Vert[ iv ];
           uv->at( idx )    = fvec2(loader.meshes[imesh].Surface[isurf].Vertex[ vert_idx[i] ].U, loader.meshes[imesh].Surface[isurf].Vertex[ vert_idx[i] ].V);

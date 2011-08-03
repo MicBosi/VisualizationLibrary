@@ -255,11 +255,11 @@ public:
 
         ref<DrawArrays> da = new DrawArrays(PT_POINTS, istart,16);
         ref<DrawElementsUInt> de = new DrawElementsUInt(PT_QUADS);
-        de->indices()->resize(4*9);
+        de->indexBuffer()->resize(4*9);
         unsigned int quads[] = { 0,1,5,4, 4,5,9,8, 8,9,13,12, 1,2,6,5, 5,6,10,9, 9,10,14,13, 2,3,7,6, 6,7,11,10, 10,11,15,14 };
         for(int q=0; q<4*9; ++q)
           quads[q] += istart;
-        memcpy(de->indices()->ptr(), quads, sizeof(quads));
+        memcpy(de->indexBuffer()->ptr(), quads, sizeof(quads));
         geom->drawCalls()->push_back(de.get());
         geom->drawCalls()->push_back(da.get());
         geom->makeGLESFriendly();

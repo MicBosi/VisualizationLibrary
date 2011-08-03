@@ -103,11 +103,11 @@ namespace vl
     /** Returns the list of base vertices, one for each primitive. */
     std::vector<GLint>& baseVertices() { return mBaseVertices; }
 
-    /** Computes the pointer vector to be used when VBOs are DISABLED. Call this function after having updated the count vector and the index buffer indices().
+    /** Computes the pointer vector to be used when VBOs are DISABLED. Call this function after having updated the count vector and the index buffer indexBuffer().
      * @note Normally you don't need to call this function as setCountVector() already calls it. */
     virtual void computePointerVector() = 0;
 
-    /** Computes the pointer vector to be used when VBOs are ENABLED. Call this function after having updated the count vector and the index buffer indices().
+    /** Computes the pointer vector to be used when VBOs are ENABLED. Call this function after having updated the count vector and the index buffer indexBuffer().
      * @note Normally you don't need to call this function as setCountVector() already calls it. */
     virtual void computeVBOPointerVector() = 0;
 
@@ -139,7 +139,7 @@ namespace vl
    *
    * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
    * The indices are stored in a VBO and thus they can be stored locally or on the GPU. 
-   * To gain direct access to the VBO use the indices() function.
+   * To gain direct access to the VBO use the indexBuffer() function.
    *
    * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
    * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
@@ -165,7 +165,7 @@ namespace vl
     MultiDrawElements& operator=(const MultiDrawElements& other)
     {
       DrawCall::operator=(other);
-      *indices() = *other.indices();
+      *indexBuffer() = *other.indexBuffer();
       mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
       setCountVector(other.mCountVector);
       return *this;
@@ -178,21 +178,21 @@ namespace vl
       return de;
     }
 
-    void setIndices(arr_type* index_buffer) { mIndexBuffer = index_buffer; }
+    void setIndexBuffer(arr_type* index_buffer) { mIndexBuffer = index_buffer; }
 
-    arr_type* indices() { return mIndexBuffer.get(); }
+    arr_type* indexBuffer() { return mIndexBuffer.get(); }
 
-    const arr_type* indices() const { return mIndexBuffer.get(); }
+    const arr_type* indexBuffer() const { return mIndexBuffer.get(); }
 
     virtual void updateDirtyVBO(EVBOUpdateMode mode)
     {
-      if (indices()->isVBODirty() || (mode & VUF_ForceUpdate) )
-        indices()->updateVBO(mode);
+      if (indexBuffer()->isVBODirty() || (mode & VUF_ForceUpdate))
+        indexBuffer()->updateVBO(mode);
     }
 
     virtual void deleteVBO()
     {
-      indices()->vbo()->deleteVBO();
+      indexBuffer()->vbo()->deleteVBO();
     }
 
     virtual void render(bool use_vbo) const
@@ -200,8 +200,8 @@ namespace vl
       VL_CHECK_OGL()
       VL_CHECK(Has_GL_EXT_multi_draw_arrays||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0);
       VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
-      use_vbo &= Has_VBO; // && indices()->vbo()->handle() && indices()->sizeVBO();
-      if ( !use_vbo && !indices()->size() )
+      use_vbo &= Has_VBO; // && indexBuffer()->vbo()->handle() && indexBuffer()->sizeVBO();
+      if ( !use_vbo && !indexBuffer()->size() )
         return;
 
       // apply patch parameters if any and if using PT_PATCHES
@@ -216,9 +216,9 @@ namespace vl
       }
 
       const GLvoid **indices_ptr = NULL;
-      if (use_vbo && indices()->vbo()->handle())
+      if (use_vbo && indexBuffer()->vbo()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->vbo()->handle()); VL_CHECK_OGL()
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->vbo()->handle()); VL_CHECK_OGL()
         VL_CHECK(!mVBOPointerVector.empty())
         indices_ptr = (const GLvoid**)&mVBOPointerVector[0];
       }
@@ -235,7 +235,7 @@ namespace vl
         VL_CHECK( baseVertices().size() == countVector().size() )
         if (Has_GL_ARB_draw_elements_base_vertex||Has_GL_Version_3_1||Has_GL_Version_4_0)
         {
-          glMultiDrawElementsBaseVertex( primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), indices_ptr, (GLsizei)mCountVector.size(), (GLint*)&mBaseVertices[0] ); VL_CHECK_OGL()
+          glMultiDrawElementsBaseVertex( primitiveType(), (GLsizei*)&mCountVector[0], indexBuffer()->glType(), indices_ptr, (GLsizei)mCountVector.size(), (GLint*)&mBaseVertices[0] ); VL_CHECK_OGL()
         }
         else
         {
@@ -246,7 +246,7 @@ namespace vl
       }
       else
       {
-        glMultiDrawElements( primitiveType(), (GLsizei*)&mCountVector[0], indices()->glType(), (const GLvoid**)indices_ptr, (GLsizei)mCountVector.size() ); VL_CHECK_OGL()
+        glMultiDrawElements( primitiveType(), (GLsizei*)&mCountVector[0], indexBuffer()->glType(), (const GLvoid**)indices_ptr, (GLsizei)mCountVector.size() ); VL_CHECK_OGL()
       }
 
       // primitive restart disable
@@ -284,7 +284,7 @@ namespace vl
     void computePointerVector()
     {
       mPointerVector.resize( mCountVector.size() );
-      const index_type* ptr = (const index_type*)indices()->vbo()->ptr();
+      const index_type* ptr = (const index_type*)indexBuffer()->vbo()->ptr();
       for(size_t i=0; i<mCountVector.size(); ++i)
       {
         mPointerVector[i]    = ptr;
@@ -296,7 +296,7 @@ namespace vl
     void computeVBOPointerVector()
     {
       mVBOPointerVector.resize( mPointerVector.size() );
-      const index_type* base_ptr = (const index_type*)indices()->ptr();
+      const index_type* base_ptr = (const index_type*)indexBuffer()->ptr();
       VL_CHECK(base_ptr)
       for(size_t i=0; i<mPointerVector.size(); ++i)
       {
