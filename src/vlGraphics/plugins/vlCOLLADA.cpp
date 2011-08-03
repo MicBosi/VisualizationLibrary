@@ -457,6 +457,8 @@ struct DaeTechniqueCOMMON: public Object
     mTransparency = 1;
 
     mIndexOfRefraction = 0;
+
+    mBlendingOn = false;
   }
 
   enum { Unknown, Blinn, Phong, Lambert } mMode;
@@ -471,6 +473,7 @@ struct DaeTechniqueCOMMON: public Object
   DaeColorOrTexture mTransparent;
   float mTransparency;
   float mIndexOfRefraction;
+  bool mBlendingOn;
 
   enum { Opaque_A_ONE, Opaque_RGB_ZERO } mOpaqueMode;
 };
@@ -965,20 +968,6 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
     fx->shader()->gocMaterial()->setSpecular ( common_tech->mSpecular.mColor );
     fx->shader()->gocMaterial()->setShininess( common_tech->mShininess );
     
-    // this sets the alpha values of all material colors, front and back.
-    float transparency = 0;
-    if (mAssumeOpaque)
-      transparency = 1.0f;
-    else
-    {
-      if ( common_tech->mOpaqueMode == DaeTechniqueCOMMON::Opaque_A_ONE )
-        transparency = common_tech->mTransparent.mColor.a() * common_tech->mTransparency;
-      else
-        transparency = (1.0f - dot( common_tech->mTransparent.mColor.rgb(), fvec3(0.2126f, 0.7152f, 0.0722f))) * common_tech->mTransparency;
-    }
-
-    fx->shader()->gocMaterial()->setTransparency( transparency );
-
     // mic fixme:
     // for the moment we ignore things like <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0"/>
     // instead we use the first texture with the first texture coordinate set installed.
@@ -987,13 +976,34 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
       fx->shader()->gocTextureSampler(0)->setTexture( common_tech->mDiffuse.mSampler->mTexture.get() );
     }
 
-    // check if alpha blending is required
-    if ( transparency != 1.0f || common_tech->mTransparent.mSampler )
-    {
-      fx->shader()->enable(EN_BLEND);
+    // alpha blending management
 
-      // mic fixme:
-      // debug level: if common_tech->mTransparent.mSampler != common_tech->mDiffuse.mSampler issue warning.
+    if (mAssumeOpaque)
+    {
+      // sets the alpha value of all material colors, front and back
+      fx->shader()->gocMaterial()->setTransparency( 1.0f );
+    }
+    else
+    {
+      float transparency = 0;
+      if ( common_tech->mOpaqueMode == DaeTechniqueCOMMON::Opaque_A_ONE )
+        transparency = common_tech->mTransparent.mColor.a() * common_tech->mTransparency;
+      else
+        transparency = (1.0f - dot( common_tech->mTransparent.mColor.rgb(), fvec3(0.2126f, 0.7152f, 0.0722f))) * common_tech->mTransparency;
+      
+      // sets the alpha value of all material colors, front and back
+      fx->shader()->gocMaterial()->multiplyTransparency( transparency );
+
+      // NOTE: to be pedantic with the specs we should enabled the alpha blending if common_tech->mBlendingOn == true however
+      // COLLADA transparency management is historically not reliable
+
+      // check if alpha blending is required
+      float total_alpha = common_tech->mDiffuse.mColor.a()  + common_tech->mAmbient.mColor.a() +
+                          common_tech->mEmission.mColor.a() + common_tech->mSpecular.mColor.a();
+
+      // enable if material is transparent or alpha is coming from the diffuse texture
+      if ( total_alpha < 1.0f || (common_tech->mTransparent.mSampler && common_tech->mTransparent.mSampler == common_tech->mDiffuse.mSampler) )
+        fx->shader()->enable(EN_BLEND);
     }
 
   }
@@ -1515,11 +1525,13 @@ void DaeLoader::parseEffects(daeElement* library)
 
           if (blinn->getTransparent())
           {
+            dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             parseColor( common, blinn->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
             dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = blinn->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
           }
           if (blinn->getTransparency())
           {
+            dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)blinn->getTransparency()->getFloat()->getValue();
             if(mInvertTransparency)
               dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
@@ -1546,11 +1558,13 @@ void DaeLoader::parseEffects(daeElement* library)
 
           if (phong->getTransparent())
           {
+            dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             parseColor( common, phong->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
             dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = phong->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
           }
           if (phong->getTransparency())
           {
+            dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)phong->getTransparency()->getFloat()->getValue();
             if(mInvertTransparency)
               dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
@@ -1574,11 +1588,13 @@ void DaeLoader::parseEffects(daeElement* library)
 
           if (lambert->getTransparent())
           {
+            dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             parseColor( common, lambert->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
             dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = lambert->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
           }
           if (lambert->getTransparency())
           {
+            dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)lambert->getTransparency()->getFloat()->getValue();
             if(mInvertTransparency)
               dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
@@ -1602,11 +1618,13 @@ void DaeLoader::parseEffects(daeElement* library)
 
           if (constant->getTransparent())
           {
+            dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             parseColor( common, constant->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
             dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = constant->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
           }
           if (constant->getTransparency())
           {
+            dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)constant->getTransparency()->getFloat()->getValue();
             if(mInvertTransparency)
               dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
@@ -1837,7 +1855,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim)
     }
 
     prim->mGeometry->drawCalls()->push_back(de.get());
-    de->setIndices( index_buffer.get() );
+    de->setIndexBuffer( index_buffer.get() );
   }
 
   // generate new vertex attrib info and install data
