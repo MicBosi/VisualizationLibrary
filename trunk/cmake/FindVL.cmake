@@ -2,7 +2,7 @@
 #
 #	Sample usage:
 #		find_package(VL COMPONENTS VLCore VLGraphics VLVolume REQUIRED)
-#		include(${VL_INCLUDE_DIRS})
+#		include_directories(${VL_INCLUDE_DIRS})
 #		target_link_libraries(myexe ${VL_LIBRARIES})
 #
 #	The following variables are accepted as input:
@@ -18,6 +18,33 @@
 #		VL_<component-name>_LIBRARIES - The component's libraries (or empty
 #			if the component is not available).
 #
+#   MODULES:
+#
+#	Visualization Library modules:
+#		VLCore:     core functionalities.
+#		VLGraphics: base graphics functionalities.
+#		VLVolume:   volume rendering.
+#		VLMolecule: molecule rendering.
+#		VLVG:       vector graphics.
+#        
+#   Modules required if VL was compiled as a static library:
+#       FreeType: FreeType library as compiled by VL.
+#       JPG:      JPG library as compiled by VL.
+#       PNG:      PNG library as compiled by VL.
+#       TIFF:     TIFF library as compiled by VL.
+#       ZLib:     zlib library as compiled by VL.
+#
+#       In this case remember to call 'add_definitions(-DVL_STATIC_LINKING)'
+#       before your library or executable.
+#
+#   GUI binding modules:
+#       VLWin32: Win32 gui bindings.
+#       VLQt4:   Qt4 gui bindings.
+#       VLMFC:   MFC gui bindings.
+#       VLWX:    wxWidgets gui bindings.
+#       VLGLUT:  GLUT gui bindings.
+#       VLSDL:   SDL gui bindings.
+#       VLEGL:   EGL support [EXPERIMENTAL]
 
 macro(_vl_find_library _var)
 	find_library( ${_var}
