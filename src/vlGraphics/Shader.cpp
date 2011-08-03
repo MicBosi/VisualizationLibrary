@@ -338,6 +338,30 @@ Material::Material()
   mColorMaterial = CM_AMBIENT_AND_DIFFUSE;
 }
 //------------------------------------------------------------------------------
+float Material::getMinimumAlpha() const
+{
+  float min_alpha = std::min( mFrontAmbient.a(),  mBackAmbient.a() );
+  min_alpha = std::min( min_alpha, mFrontDiffuse.a() );
+  min_alpha = std::min( min_alpha, mBackDiffuse.a()  );
+  min_alpha = std::min( min_alpha, mFrontSpecular.a());
+  min_alpha = std::min( min_alpha, mBackSpecular.a() );
+  min_alpha = std::min( min_alpha, mFrontEmission.a());
+  min_alpha = std::min( min_alpha, mBackEmission.a() );
+  return min_alpha;
+}
+//------------------------------------------------------------------------------
+void Material::multiplyTransparency(float alpha)
+{
+  mFrontAmbient.a()  *= alpha;
+  mBackAmbient.a()   *= alpha;
+  mFrontDiffuse.a()  *= alpha;
+  mBackDiffuse.a()   *= alpha;
+  mFrontSpecular.a() *= alpha;
+  mBackSpecular.a()  *= alpha;
+  mFrontEmission.a() *= alpha;
+  mBackEmission.a()  *= alpha;
+}
+//------------------------------------------------------------------------------
 void Material::setTransparency(float alpha)
 {
   mFrontAmbient.a()   = mBackAmbient.a()   = alpha;
@@ -458,7 +482,7 @@ void LightModel::apply(const Camera*, OpenGLContext*) const
 
   // Supported by GLES 1.x as well.
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, mAmbientColor.ptr()); VL_CHECK_OGL()
-  glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, mTwoSide ? 1 : 0 ); VL_CHECK_OGL()
+  glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, mTwoSide ? 1.0f : 0.0f ); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // Fog
