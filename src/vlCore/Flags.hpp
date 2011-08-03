@@ -35,24 +35,25 @@
 namespace vl
 {
   //! Simple class to manage flags in a type safe manner.
-  template <typename T_Flag>
+  template <typename T_FlagEnum>
   class Flags
   {
-    unsigned long long mFlags;
-
+    // friends:
     template <typename T> friend Flags<T> operator|(T flag1, T flag2);
-
     template <typename T> friend Flags<T> operator&(T flag1, T flag2);
 
   public:
-    typedef T_Flag flag_type;
+    typedef T_FlagEnum flag_type;
+    typedef unsigned int flag_storage;
 
   public:
     Flags(): mFlags(0)  { }
 
-    unsigned long long flags() const { return mFlags; }
+    flag_storage flags() const { return mFlags; }
 
     void reset() { mFlags = 0; }
+
+    // --- using Flags ---
 
     Flags operator|(const Flags& flag) const
     {
@@ -82,48 +83,48 @@ namespace vl
       return other;
     }
 
-    // ---
+    // --- using T_FlagEnum ---
 
-    Flags& set(T_Flag flag)
+    Flags& set(T_FlagEnum flag)
     {
-      mFlags |= flag;
+      mFlags |= (flag_storage)flag;
       return *this;
     }
 
-    Flags& unset(T_Flag flag)
+    Flags& unset(T_FlagEnum flag)
     {
-      mFlags &= ~(unsigned long long)flag;
+      mFlags &= ~(flag_storage)flag;
       return *this;
     }
 
-    Flags& operator=(T_Flag flag)
+    Flags& operator=(T_FlagEnum flag)
     {
       mFlags = flag;
       return this;
     }
 
-    Flags operator|(T_Flag flag) const
+    Flags operator|(T_FlagEnum flag) const
     {
       Flags other = *this;
-      other.mFlags |= flag;
+      other.mFlags |= (flag_storage)flag;
       return other;
     }
 
-    Flags operator&(T_Flag flag) const
+    Flags operator&(T_FlagEnum flag) const
     {
       Flags other = *this;
-      other.mFlags &= flag;
+      other.mFlags &= (flag_storage)flag;
       return other;
     }
 
-    Flags operator^(T_Flag flag) const
+    Flags operator^(T_FlagEnum flag) const
     {
       Flags other = *this;
-      other.mFlags ^= flag;
+      other.mFlags ^= (flag_storage)flag;
       return other;
     }
 
-    Flags operator-(T_Flag flag) const
+    Flags operator-(T_FlagEnum flag) const
     {
       Flags other = *this;
       other.unset(flag);
@@ -135,13 +136,15 @@ namespace vl
       return mFlags != 0;
     }
 
+  private:
+    flag_storage mFlags;
   };
 
   template <typename T>
   Flags<T> operator|(T flag1, T flag2)
   {
     Flags<T> flags;
-    flags.mFlags = (unsigned long long)flag1 | (unsigned long long)flag2;
+    flags.mFlags = (typename Flags<T>::flag_storage)flag1 | (typename Flags<T>::flag_storage)flag2;
     return flags;
   }
 
@@ -149,22 +152,33 @@ namespace vl
   Flags<T> operator&(T flag1, T flag2)
   {
     Flags<T> flags;
-    flags.mFlags = (unsigned long long)flag1 & (unsigned long long)flag2;
+    flags.mFlags = (typename Flags<T>::flag_storage)flag1 & (typename Flags<T>::flag_storage)flag2;
     return flags;
   }
-
 }
 
-// example:
-// 
-//  enum MyFlags
-// {
-//   Flag1 = 0x1,
-//   Flag2 = 0x2,
-//   Flag3 = 0x4,
-// };
-// 
-// template<MyFlags> Flags<MyFlags> operator|(MyFlags flag1, MyFlags flag2);
-// template<MyFlags> Flags<MyFlags> operator&(MyFlags flag1, MyFlags flag2);
+#define VL_DECLARE_FLAGS(EnumType, FlagTypeName)                                \
+  template<EnumType> Flags<EnumType> operator|(EnumType flag1, EnumType flag2); \
+  template<EnumType> Flags<EnumType> operator&(EnumType flag1, EnumType flag2); \
+  typedef Flags<EnumType> FlagTypeName;
+
+/*** 
+
+usage:
+ 
+enum MyFlagEnum
+{
+  Flag1 = 0x1,
+  Flag2 = 0x2,
+  Flag3 = 0x4,
+};
+ 
+VL_DECLARE_FLAGS(MyFlagEnum, MyFlags)
+
+...
+
+MyFlags f = Flag3 | Flag1;
+
+***/
 
 #endif
