@@ -79,7 +79,6 @@ namespace vl
     {
       gpuBuffer()->resize( other.gpuBuffer()->bytesUsed() );
       memcpy( ptr(), other.ptr(), bytesUsed() );
-      setVBODirty(true);
     }
 
     virtual ref<ArrayAbstract> clone() const = 0;
@@ -143,13 +142,12 @@ namespace vl
     //! BU_STATIC_DRAW by default
     void setUsage(EGLBufferUsage usage) { mVBOUsage = usage; }
 
-    void updateVBO(bool discard_local_storage=false)
+    //! Updates the VBO. 
+    //! @param mode Only the VUF_DiscardRamBuffer flag is checked as the VUF_ForceUpdate flag is considered always set for this function. By default mode is set to VUM_KeepRamBuffer.
+    void updateVBO(EVBOUpdateMode mode = VUM_KeepRamBuffer)
     {
-      if (isVBODirty())
-      {
-        gpuBuffer()->setBufferData(usage(),discard_local_storage);
-        setVBODirty(false);
-      }
+      gpuBuffer()->setBufferData(usage(), (mode & VUF_DiscardRamBuffer) !=  0);
+      setVBODirty(false);
     }
 
   protected:
@@ -196,7 +194,7 @@ namespace vl
 
     void clear() { resize(0); gpuBuffer()->deleteGLBufferObject(); }
     
-    void resize(size_t dim) { gpuBuffer()->resize(dim*bytesPerVector()); setVBODirty(true); }
+    void resize(size_t dim) { gpuBuffer()->resize(dim*bytesPerVector()); }
     
     size_t size() const { return bytesUsed() / bytesPerVector(); }
     

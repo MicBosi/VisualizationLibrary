@@ -202,11 +202,13 @@ namespace vl
     /** Removes all the previously installed arrays. */
     virtual void clearArrays(bool clear_draw_calls=true);
 
-    /** Updates all the vertex buffer objects of both vertex arrays and draw calls. */
-    void updateVBOs(bool discard_local_data=false, bool force_update=false);
+    // --- Renderable interface implementation ---
+
+    /** Updates all the vertex buffer objects of both vertex arrays and draw calls that are marked as dirty. */
+    virtual void updateDirtyVBO(EVBOUpdateMode mode);
 
     /** Deletes all the vertex buffer objects of both vertex arrays and draw calls. */
-    void deleteVBOs();
+    virtual void deleteVBO();
 
     // ------------------------------------------------------------------------
     // --- Geometry Utils --- 

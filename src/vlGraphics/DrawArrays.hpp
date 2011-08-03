@@ -88,9 +88,8 @@ namespace vl
       return new DrawArrays( primitiveType(), (int)start(), (int)count(), (int)instances() ); 
     }
 
-    virtual void deleteVBOs() {}
-    virtual void updateVBOs(bool,bool) {}
-    virtual unsigned int handle() const { return 0; }
+    virtual void deleteVBO() {}
+    virtual void updateDirtyVBO(EVBOUpdateMode) {}
 
     virtual void render(bool) const
     {

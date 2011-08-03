@@ -425,13 +425,13 @@ void Geometry::computeNormals(bool verbose)
     (*norm3f)[i].normalize();
 }
 //-----------------------------------------------------------------------------
-void Geometry::deleteVBOs()
+void Geometry::deleteVBO()
 {
   if (!Has_VBO)
     return;
 
   for(int i=0; i<(int)drawCalls()->size(); ++i)
-    drawCalls()->at(i)->deleteVBOs();
+    drawCalls()->at(i)->deleteVBO();
 
   if (mVertexArray)
     mVertexArray->gpuBuffer()->deleteGLBufferObject();
@@ -456,40 +456,40 @@ void Geometry::deleteVBOs()
       vertexAttribArrays()->at(i)->data()->gpuBuffer()->deleteGLBufferObject();
 }
 //-----------------------------------------------------------------------------
-void Geometry::updateVBOs(bool discard_local_data, bool force_update)
+void Geometry::updateDirtyVBO(EVBOUpdateMode mode)
 {
-  setVBODirty(false);
-
   if (!Has_VBO)
     return;
 
+  bool force_update = (mode & VUF_ForceUpdate) != 0;
+
   if ( mVertexArray && (mVertexArray->isVBODirty() || force_update) )
-    mVertexArray->updateVBO(discard_local_data);
+    mVertexArray->updateVBO(mode);
   
   if ( mNormalArray && (mNormalArray->isVBODirty() || force_update) )
-    mNormalArray->updateVBO(discard_local_data);
+    mNormalArray->updateVBO(mode);
   
   if ( mColorArray && (mColorArray->isVBODirty() || force_update) )
-    mColorArray->updateVBO(discard_local_data);
+    mColorArray->updateVBO(mode);
   
   if ( mSecondaryColorArray && (mSecondaryColorArray->isVBODirty() || force_update) )
-    mSecondaryColorArray->updateVBO(discard_local_data);
+    mSecondaryColorArray->updateVBO(mode);
   
   if ( mFogCoordArray && (mFogCoordArray->isVBODirty() || force_update) )
-    mFogCoordArray->updateVBO(discard_local_data);
+    mFogCoordArray->updateVBO(mode);
   
   for(int i=0; i<mTexCoordArrays.size(); ++i)
   {
     if ( mTexCoordArrays[i]->mTexCoordArray->isVBODirty() || force_update )
-      mTexCoordArrays[i]->mTexCoordArray->updateVBO(discard_local_data);
+      mTexCoordArrays[i]->mTexCoordArray->updateVBO(mode);
   }
   
   for(int i=0; i<vertexAttribArrays()->size(); ++i)
-    if ( vertexAttribArrays()->at(i)->data() )
-      vertexAttribArrays()->at(i)->data()->updateVBO(discard_local_data);
+    if ( vertexAttribArrays()->at(i)->data() && (vertexAttribArrays()->at(i)->data()->isVBODirty() || force_update) )
+      vertexAttribArrays()->at(i)->data()->updateVBO(mode);
 
   for(int i=0; i<drawCalls()->size(); ++i)
-    drawCalls()->at(i)->updateVBOs(discard_local_data, force_update);
+    drawCalls()->at(i)->updateDirtyVBO(mode);
 }
 //-----------------------------------------------------------------------------
 void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*, OpenGLContext* gl_context) const
