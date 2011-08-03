@@ -716,6 +716,67 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
   drawCalls()->push_back( de_multi.get() );
 }
 //-----------------------------------------------------------------------------
+void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
+{
+  size_t triangle_count = 0;
+  std::vector< ref<DrawCall> > mergendo_calls;
+  for( size_t i=drawCalls()->size(); i--; )
+  {
+    const DrawCall& dc = *drawCalls()->at(i);
+
+    // ignore primitives that cannot be triangulated
+    switch(dc.primitiveType())
+    {
+    case PT_TRIANGLES:
+    case PT_TRIANGLE_STRIP:
+    case PT_TRIANGLE_FAN:
+    case PT_QUADS:
+    case PT_QUAD_STRIP:
+    case PT_POLYGON:
+      break;
+    default:
+      continue;
+    }
+
+    if (primitive_type == PT_UNKNOWN || dc.primitiveType() == primitive_type || dc.primitiveType() == PT_TRIANGLES)
+    {
+      triangle_count += dc.countTriangles();
+      // insert at the head to preserve the primitive rendering order
+      mergendo_calls.insert( mergendo_calls.begin(), drawCalls()->at(i) );
+      drawCalls()->eraseAt(i);
+    }
+  }
+
+  // if there was one single PT_TRIANGLES draw calls then we are done.
+  if ( mergendo_calls.size() == 1 && mergendo_calls[0]->primitiveType() == PT_TRIANGLES )
+  {
+    drawCalls()->push_back( mergendo_calls[0].get() );
+    return;
+  }
+
+  ref<DrawElementsUInt> de = new DrawElementsUInt;
+  de->indexBuffer()->resize( triangle_count * 3 );
+  ArrayUInt1& index_buffer = *de->indexBuffer(); 
+  size_t idx = 0;
+  int max_idx = (int)vertexArray()->size();
+  for(size_t i=0; i<mergendo_calls.size(); ++i)
+  {
+    for(TriangleIterator it = mergendo_calls[i]->triangleIterator(); it.hasNext(); it.next(), idx+=3)
+    {
+      VL_CHECK( idx+2 < index_buffer.size() );
+      index_buffer[idx+0] = it.a();
+      index_buffer[idx+1] = it.b();
+      index_buffer[idx+2] = it.c();
+
+      // some sanity checks since we are here...
+      VL_CHECK( it.a() < max_idx && it.b() < max_idx && it.c() < max_idx );
+      VL_CHECK( it.a() >= 1 && it.b() >= 1 && it.c() >= 1 );
+    }
+  }
+  VL_CHECK( idx == index_buffer.size() );
+  drawCalls()->push_back(de.get());
+}
+//-----------------------------------------------------------------------------
 void Geometry::regenerateVertices(const std::vector<size_t>& map_new_to_old)
 {
   VertexMapper mapper;

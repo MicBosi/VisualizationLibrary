@@ -147,6 +147,15 @@ namespace vl
       return count;
     }
 
+    /** Counts the number of virtual triangles of a DrawCall., i.e. the number of triangles you would retrieve by iterating over the iterator returned by triangleIterator(). */
+    size_t countTriangles() const
+    {
+      size_t count = 0;
+      for( TriangleIterator it = triangleIterator(); it.hasNext(); it.next() )
+        ++count;
+      return count;
+    }
+
     /** Returns the number of instances for this set of primitives. */
     virtual int instances() const { return 1; }
 

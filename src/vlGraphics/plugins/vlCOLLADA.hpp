@@ -69,43 +69,50 @@ namespace vl
         mComputeMissingNormals = true;
         mFixBadNormals = true;
         mExtractSkins = true;
+        mMergeDrawCallsWithTriangles = true;
       }
 
-      //! If true then the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported in the resource database.
+      //! If true the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported. Enabled by default.
       void setFlattenTransformHierarchy(bool flatten) { mFlattenTransformHierarchy = flatten; }
 
-      //! If true then the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported in the resource database.
+      //! If true the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported. Enabled by default.
       bool flattenTransformHierarchy() const { return mFlattenTransformHierarchy; }
 
-      //! If true then TPF_LINEAR_MIPMAP_NEAREST filtering is used when a non-mipmapped filter is specified
+      //! If true then TPF_LINEAR_MIPMAP_NEAREST filtering is used when a non-mipmapped filter is specified. Enabled by default.
       void setUseAlwaysMipmapping(bool use) { mUseAlwaysMipmapping = use; }
 
-      //! If true then TPF_LINEAR_MIPMAP_NEAREST filtering is used when a non-mipmapped filter is specified
+      //! If true then TPF_LINEAR_MIPMAP_NEAREST filtering is used when a non-mipmapped filter is specified. Enabled by default.
       bool useAlwaysMipmapping() const { return mUseAlwaysMipmapping; }
 
-      //! Invert the value of the <transparency> tag
+      //! Invert the value of the <transparency> tag. Set to TransparencyAuto by default.
       void setInvertTransparency(TransparencyOption invert) { mInvertTransparency = invert; }
 
-      //! Invert the value of the <transparency> tag
+      //! Invert the value of the <transparency> tag. Set to TransparencyAuto by default.
       TransparencyOption invertTransparency() const { return mInvertTransparency; }
 
-      //! Compute normals for those objects that don't have
+      //! Compute normals for those objects that don't have. Enabled by default.
       void setComputeMissingNormals(bool compute) { mComputeMissingNormals = compute; }
 
-      //! Compute normals for those objects that don't have
+      //! Compute normals for those objects that don't have. Enabled by default.
       bool computeMissingNormals() const { return mComputeMissingNormals; }
 
-      //! Fix normals that are flipped compared to the polygon winding order
+      //! Fix normals that are flipped compared to the polygon winding order. Enabled by default.
       void setFixBadNormals(bool fix) { mFixBadNormals = fix; }
 
-      //! Fix normals that are flipped compared to the polygon winding order
+      //! Fix normals that are flipped compared to the polygon winding order. Enabled by default.
       bool fixBadNormals() const { return mFixBadNormals; }
 
-      //! If set to true the skinned geometries will be also exported.
+      //! If set to true the skinned geometries will be also exported. Enabled by default.
       void setExtractSkins(bool extract) { mExtractSkins = extract; }
 
-      //! If set to true the skinned geometries will be also exported.
+      //! If set to true the skinned geometries will be also exported. Enabled by default.
       bool extractSkins() const { return mExtractSkins; }
+
+      //! If set to true merges all the draw calls of each Geometry into one single draw call using triangles. Enabled by default.
+      void setMergeDrawCallsWithTriangles(bool merge) { mMergeDrawCallsWithTriangles = merge; }
+
+      //! If set to true merges all the draw calls of each Geometry into one single draw call using triangles. Enabled by default.
+      bool mergeDrawCallsWithTriangles() const { return mMergeDrawCallsWithTriangles; }
 
     protected:
       TransparencyOption mInvertTransparency;
@@ -114,6 +121,7 @@ namespace vl
       bool mComputeMissingNormals;
       bool mFixBadNormals;
       bool mExtractSkins;
+      bool mMergeDrawCallsWithTriangles;
     };
 
   public:
