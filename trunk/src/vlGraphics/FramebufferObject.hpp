@@ -62,10 +62,10 @@ namespace vl
     FBOAbstractAttachment() {}
 
     /** Destructor, removes automatically the FBO attachment from all bound FBO render targets and releases any OpenGL resource. */
-    virtual ~FBOAbstractAttachment() { destroy(); }
+    virtual ~FBOAbstractAttachment() { unbindFromAllFBO(); }
 
     /** Removes the FBO attachment from all bound FBO render targets and releases any associated OpenGL resource. */
-    virtual void destroy();
+    virtual void unbindFromAllFBO();
 
     /** Returns an std::set containing the FBORenderTarget that use this FBO attachment. */
     const std::set< ref<FBORenderTarget> >& fboRenderTargets() const { return mFBORenderTargets; }
@@ -93,19 +93,22 @@ namespace vl
   public:    
     /** Constructor. */
     FBORenderbufferAttachment(): mHandle( 0 ), mWidth( 0 ), mHeight( 0 ), mSamples( 0 ), mReallocateRenderbuffer( true ) {}
+
+    /** Destructor. */
+    ~FBORenderbufferAttachment() { deleteRenderBuffer(); }
     
     /**
      * Creates a renderbuffer object calling glGenRenderbuffers(). 
      * The identifier returned by glGenRenderbuffers() can be queried calling the handle() method.
      */
-    void create();
+    void createRenderBuffer();
     
     /** Deletes the renderbuffer object created with the create() method. */
-    void destroy();
+    void deleteRenderBuffer();
     
     /** 
      * Sets the handle for this attachment, the handle must have been created by glGenRenderbuffers().
-     * Normally you don't need to call this. See also: create(), handle().
+     * Normally you don't need to call this. See also: createRenderBuffer(), handle().
      */
     void setHandle( GLuint  handle ) { if ( mHandle != handle ) { mHandle = handle; mReallocateRenderbuffer = false; } }
     
@@ -520,19 +523,19 @@ namespace vl
 
   public:
     /** Destructor. */
-    ~FBORenderTarget() { if (openglContext()) destroy(); }
+    ~FBORenderTarget() { if (openglContext()) deleteFBO(); }
 
     /** 
      * Creates a framebuffer object by calling glGenFramebuffers(). 
      * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glGenFramebuffers.xml
      */
-    void create();
+    void createFBO();
 
     /** 
      * Deletes a framebuffer object by calling glDeleteFramebuffers(). 
      * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glDeleteFramebuffers.xml
      */
-    void destroy();
+    void deleteFBO();
 
     /** The handle of the framebuffer object as returned by glGenFramebuffers. */
     void setHandle( GLuint handle ) { mHandle = handle; }
