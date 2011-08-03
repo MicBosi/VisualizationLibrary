@@ -945,7 +945,8 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
 
   // mic fixme: most of .dae files I tested require this even if no double_sided flag is set.
 #if 1
-  fx->shader()->gocLightModel()->setTwoSide(false);
+  fx->shader()->gocLightModel()->setTwoSide(true);
+  // fx->shader()->enable(EN_CULL_FACE);
 #else
   if (mat->mDaeEffect->mDoubleSided)
     fx->shader()->gocLightModel()->setTwoSide(true); // yes two side lighting, no culling
