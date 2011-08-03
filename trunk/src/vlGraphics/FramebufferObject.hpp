@@ -58,13 +58,13 @@ namespace vl
     void operator=( const FBOAbstractAttachment& ) {}
 
   public:
-    /** Constructor */
+    /** Constructor  */
     FBOAbstractAttachment() {}
 
-    /** Destructor, removes automatically the FBO attachment from all bound FBO render targets and releases any OpenGL resource. */
-    virtual ~FBOAbstractAttachment() { unbindFromAllFBO(); }
+    /** Destructor. */
+    virtual ~FBOAbstractAttachment() { VL_CHECK(fboRenderTargets().size() == 0); }
 
-    /** Removes the FBO attachment from all bound FBO render targets and releases any associated OpenGL resource. */
+    /** Removes the FBO attachment from all bound FBO render targets. */
     virtual void unbindFromAllFBO();
 
     /** Returns an std::set containing the FBORenderTarget that use this FBO attachment. */
@@ -103,7 +103,7 @@ namespace vl
      */
     void createRenderBuffer();
     
-    /** Deletes the renderbuffer object created with the create() method. */
+    /** Deletes the renderbuffer object created with the createRenderBuffer() method. */
     void deleteRenderBuffer();
     
     /** 
@@ -112,7 +112,7 @@ namespace vl
      */
     void setHandle( GLuint  handle ) { if ( mHandle != handle ) { mHandle = handle; mReallocateRenderbuffer = false; } }
     
-    /** Returns the handle obtained by create() using glGenRenderbuffers() */
+    /** Returns the handle obtained by createRenderBuffer() using glGenRenderbuffers() */
     GLuint handle() const { return mHandle; }
     
     /**
