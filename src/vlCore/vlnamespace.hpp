@@ -888,14 +888,14 @@ namespace vl
     BU_DYNAMIC_DRAW = GL_DYNAMIC_DRAW, //!< Data is specified many times and used many times as the source of drawing and image specification commands.
     BU_DYNAMIC_READ = GL_DYNAMIC_READ, //!< Data is copied many times from an OpenGL buffer and is used many times by the application as data values.
     BU_DYNAMIC_COPY = GL_DYNAMIC_COPY  //!< Data is copied many times from an OpenGL buffer and is used many times as the source for drawing or image specification commands.
-  } EGLBufferUsage;
+  } EBufferObjectUsage;
 
   typedef enum
   {
-    GBA_READ_ONLY  = GL_READ_ONLY,
-    GBA_WRITE_ONLY = GL_WRITE_ONLY, 
-    GBA_READ_WRITE = GL_READ_WRITE
-  } EGLBufferAccess;
+    BA_READ_ONLY  = GL_READ_ONLY,
+    BA_WRITE_ONLY = GL_WRITE_ONLY, 
+    BA_READ_WRITE = GL_READ_WRITE
+  } EBufferObjectAccess;
 
   typedef enum
   {

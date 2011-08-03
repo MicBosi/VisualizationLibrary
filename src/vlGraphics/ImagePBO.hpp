@@ -33,7 +33,7 @@
 #define ImagePBO_INCLUDE_ONCE
 
 #include <vlCore/Image.hpp>
-#include <vlGraphics/GLBufferObject.hpp>
+#include <vlGraphics/VBO.hpp>
 
 namespace vl
 {
@@ -50,34 +50,34 @@ namespace vl
     ImagePBO()
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mPBO = new GLBufferObject;
+      mPBO = new VBO;
     }
 	
 	  //! Constructors: loads an image from the specified path.
     ImagePBO(const String& path): Image(path) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mPBO = new GLBufferObject;
+      mPBO = new VBO;
     }
 	
 	  //! Constructor: initializes an image with the specified parameters.
     ImagePBO(int x, int y, int z, int bytealign, EImageFormat format, EImageType type): Image(x, y, z, bytealign, format, type) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mPBO = new GLBufferObject;
+      mPBO = new VBO;
     }
 
 	  //! The associated OpenGL Buffer Object
-    const GLBufferObject* pixelBufferObject() const { return mPBO.get(); }
+    const VBO* pixelBufferObject() const { return mPBO.get(); }
     
 	  //! The associated OpenGL Buffer Object
-    GLBufferObject* pixelBufferObject() { return mPBO.get(); }
+    VBO* pixelBufferObject() { return mPBO.get(); }
     
 	  //! The associated OpenGL Buffer Object
-    void setPixelBufferObject(GLBufferObject* pbo) { mPBO = pbo; }
+    void setPixelBufferObject(VBO* pbo) { mPBO = pbo; }
 
   protected:
-    ref<GLBufferObject> mPBO;
+    ref<VBO> mPBO;
   };
   //-----------------------------------------------------------------------------
 }
