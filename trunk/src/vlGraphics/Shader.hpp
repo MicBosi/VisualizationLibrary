@@ -489,6 +489,9 @@ namespace vl
     virtual ERenderState type() const { return RS_Material; }
     virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
+    void multiplyTransparency(float alpha);
+    float getMinimumAlpha() const;
+
     void setTransparency(float alpha);
     void setFrontTransparency(float alpha);
     void setBackTransparency(float alpha);
