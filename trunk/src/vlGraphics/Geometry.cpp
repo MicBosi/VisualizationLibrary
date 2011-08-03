@@ -434,26 +434,26 @@ void Geometry::deleteVBO()
     drawCalls()->at(i)->deleteVBO();
 
   if (mVertexArray)
-    mVertexArray->gpuBuffer()->deleteGLBufferObject();
+    mVertexArray->vbo()->deleteVBO();
   
   if (mNormalArray)
-    mNormalArray->gpuBuffer()->deleteGLBufferObject();
+    mNormalArray->vbo()->deleteVBO();
   
   if (mColorArray)
-    mColorArray->gpuBuffer()->deleteGLBufferObject();
+    mColorArray->vbo()->deleteVBO();
   
   if (mSecondaryColorArray)
-    mSecondaryColorArray->gpuBuffer()->deleteGLBufferObject();
+    mSecondaryColorArray->vbo()->deleteVBO();
   
   if (mFogCoordArray)
-    mFogCoordArray->gpuBuffer()->deleteGLBufferObject();
+    mFogCoordArray->vbo()->deleteVBO();
   
   for (int i=0; i<mTexCoordArrays.size(); ++i)
-    mTexCoordArrays[i]->mTexCoordArray->gpuBuffer()->deleteGLBufferObject();
+    mTexCoordArrays[i]->mTexCoordArray->vbo()->deleteVBO();
 
   for(int i=0; i<vertexAttribArrays()->size(); ++i)
     if ( vertexAttribArrays()->at(i)->data() )
-      vertexAttribArrays()->at(i)->data()->gpuBuffer()->deleteGLBufferObject();
+      vertexAttribArrays()->at(i)->data()->vbo()->deleteVBO();
 }
 //-----------------------------------------------------------------------------
 void Geometry::updateDirtyVBO(EVBOUpdateMode mode)

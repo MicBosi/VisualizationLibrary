@@ -205,10 +205,10 @@ protected:
 
     if (vl::Has_GL_ARB_vertex_buffer_object)
     {
-      color->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
-      points->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
-      norms->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
-      draw_elements->indices()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW);
+      color->vbo()->setBufferData(vl::BU_STATIC_DRAW);
+      points->vbo()->setBufferData(vl::BU_STATIC_DRAW);
+      norms->vbo()->setBufferData(vl::BU_STATIC_DRAW);
+      draw_elements->indices()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW);
     }
 
     eye_space_points->resize( points->size() );

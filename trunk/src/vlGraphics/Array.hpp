@@ -32,7 +32,7 @@
 #ifndef Array_INCLUDE_ONCE
 #define Array_INCLUDE_ONCE
 
-#include <vlGraphics/GLBufferObject.hpp>
+#include <vlGraphics/VBO.hpp>
 #include <vlCore/half.hpp>
 #include <vector>
 
@@ -42,7 +42,7 @@ namespace vl
 // ArrayAbstract
 //-----------------------------------------------------------------------------
   /**
-   * The ArrayAbstract class defines an abstract interface to conveniently manipulate data stored in a GLBufferObject.
+   * The ArrayAbstract class defines an abstract interface to conveniently manipulate data stored in a VBO.
    * \sa
    *
    * - vl::Array
@@ -64,7 +64,7 @@ namespace vl
     ArrayAbstract()
     { 
       VL_DEBUG_SET_OBJECT_NAME()
-      mBufferGPU = new GLBufferObject;
+      mVBO = new VBO;
       mVBODirty = true;
       mVBOUsage = vl::BU_STATIC_DRAW;
     }
@@ -77,25 +77,25 @@ namespace vl
     //! Copies only the local data and not the VBO related fields
     void operator=(const ArrayAbstract& other) 
     {
-      gpuBuffer()->resize( other.gpuBuffer()->bytesUsed() );
+      vbo()->resize( other.vbo()->bytesUsed() );
       memcpy( ptr(), other.ptr(), bytesUsed() );
     }
 
     virtual ref<ArrayAbstract> clone() const = 0;
 
-    const GLBufferObject* gpuBuffer() const { return mBufferGPU.get(); }
-    GLBufferObject* gpuBuffer() { return mBufferGPU.get(); }
+    const VBO* vbo() const { return mVBO.get(); }
+    VBO* vbo() { return mVBO.get(); }
 
-    void clear() { if (gpuBuffer()) gpuBuffer()->clear(); }
+    void clear() { if (vbo()) vbo()->clear(); }
 
-    //! Returns the pointer to the first element of the local buffer. Equivalent to gpuBuffer()->ptr()
-    const unsigned char* ptr() const { return gpuBuffer() ? gpuBuffer()->ptr() : NULL; }
+    //! Returns the pointer to the first element of the local buffer. Equivalent to vbo()->ptr()
+    const unsigned char* ptr() const { return vbo() ? vbo()->ptr() : NULL; }
 
-    //! Returns the pointer to the first element of the local buffer. Equivalent to gpuBuffer()->ptr()
-    unsigned char* ptr() { return gpuBuffer() ? gpuBuffer()->ptr() : NULL; }
+    //! Returns the pointer to the first element of the local buffer. Equivalent to vbo()->ptr()
+    unsigned char* ptr() { return vbo() ? vbo()->ptr() : NULL; }
 
-    //! Returns the amount of memory in bytes used by an array. Equivalent to gpuBuffer()->bytesUsed().
-    virtual size_t bytesUsed() const { return gpuBuffer() ? gpuBuffer()->bytesUsed() : 0; }
+    //! Returns the amount of memory in bytes used by an array. Equivalent to vbo()->bytesUsed().
+    virtual size_t bytesUsed() const { return vbo() ? vbo()->bytesUsed() : 0; }
 
     //! Returns the number of scalar components for the array, ie 3 for ArrayFloat3, 1 for ArrayUInt1 etc.
     virtual size_t glSize() const = 0;
@@ -137,29 +137,29 @@ namespace vl
     void setVBODirty(bool dirty) { mVBODirty = dirty; }
 
     //! BU_STATIC_DRAW by default
-    EGLBufferUsage usage() const { return mVBOUsage; }
+    EBufferObjectUsage usage() const { return mVBOUsage; }
 
     //! BU_STATIC_DRAW by default
-    void setUsage(EGLBufferUsage usage) { mVBOUsage = usage; }
+    void setUsage(EBufferObjectUsage usage) { mVBOUsage = usage; }
 
     //! Updates the VBO. 
     //! @param mode Only the VUF_DiscardRamBuffer flag is checked as the VUF_ForceUpdate flag is considered always set for this function. By default mode is set to VUM_KeepRamBuffer.
     void updateVBO(EVBOUpdateMode mode = VUM_KeepRamBuffer)
     {
-      gpuBuffer()->setBufferData(usage(), (mode & VUF_DiscardRamBuffer) !=  0);
+      vbo()->setBufferData(usage(), (mode & VUF_DiscardRamBuffer) !=  0);
       setVBODirty(false);
     }
 
   protected:
-    ref<GLBufferObject> mBufferGPU;
-    EGLBufferUsage mVBOUsage;
+    ref<VBO> mVBO;
+    EBufferObjectUsage mVBOUsage;
     bool mVBODirty;
   };
 //-----------------------------------------------------------------------------
 // Array
 //-----------------------------------------------------------------------------
   /**
-   * The Array class is a template array used to conveniently manipulate data stored in a GLBufferObject.
+   * The Array class is a template array used to conveniently manipulate data stored in a VBO.
    * \sa
    *
    * - ArrayAbstract
@@ -192,17 +192,17 @@ namespace vl
 
     // ---
 
-    void clear() { resize(0); gpuBuffer()->deleteGLBufferObject(); }
+    void clear() { resize(0); vbo()->deleteVBO(); }
     
-    void resize(size_t dim) { gpuBuffer()->resize(dim*bytesPerVector()); }
+    void resize(size_t dim) { vbo()->resize(dim*bytesPerVector()); }
     
     size_t size() const { return bytesUsed() / bytesPerVector(); }
     
-    size_t sizeGPU() const { return gpuBuffer() ? gpuBuffer()->byteCountGPU() / bytesPerVector() : 0; }
+    size_t sizeVBO() const { return vbo() ? vbo()->byteCountVBO() / bytesPerVector() : 0; }
     
     size_t scalarCount() const { return size() * glSize(); }
     
-    size_t scalarCountGPU() const { return sizeGPU() * glSize(); }
+    size_t scalarCountVBO() const { return sizeVBO() * glSize(); }
 
     // ---
 

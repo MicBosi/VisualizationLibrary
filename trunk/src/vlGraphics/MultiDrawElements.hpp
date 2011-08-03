@@ -138,8 +138,8 @@ namespace vl
    * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glMultiDrawElementsBaseVertex.xml
    *
    * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
-   * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
-   * To gain direct access to the GLBufferObject use the indices() function.
+   * The indices are stored in a VBO and thus they can be stored locally or on the GPU. 
+   * To gain direct access to the VBO use the indices() function.
    *
    * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
    * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
@@ -192,7 +192,7 @@ namespace vl
 
     virtual void deleteVBO()
     {
-      indices()->gpuBuffer()->deleteGLBufferObject();
+      indices()->vbo()->deleteVBO();
     }
 
     virtual void render(bool use_vbo) const
@@ -200,7 +200,7 @@ namespace vl
       VL_CHECK_OGL()
       VL_CHECK(Has_GL_EXT_multi_draw_arrays||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0);
       VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
-      use_vbo &= Has_VBO; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
+      use_vbo &= Has_VBO; // && indices()->vbo()->handle() && indices()->sizeVBO();
       if ( !use_vbo && !indices()->size() )
         return;
 
@@ -216,9 +216,9 @@ namespace vl
       }
 
       const GLvoid **indices_ptr = NULL;
-      if (use_vbo && indices()->gpuBuffer()->handle())
+      if (use_vbo && indices()->vbo()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle()); VL_CHECK_OGL()
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->vbo()->handle()); VL_CHECK_OGL()
         VL_CHECK(!mVBOPointerVector.empty())
         indices_ptr = (const GLvoid**)&mVBOPointerVector[0];
       }
@@ -284,7 +284,7 @@ namespace vl
     void computePointerVector()
     {
       mPointerVector.resize( mCountVector.size() );
-      const index_type* ptr = (const index_type*)indices()->gpuBuffer()->ptr();
+      const index_type* ptr = (const index_type*)indices()->vbo()->ptr();
       for(size_t i=0; i<mCountVector.size(); ++i)
       {
         mPointerVector[i]    = ptr;

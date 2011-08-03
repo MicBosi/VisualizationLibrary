@@ -109,8 +109,8 @@ namespace vl
    * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glDrawElementsBaseVertex.xml
    *
    * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
-   * The indices are stored in a GLBufferObject and thus they can be stored locally or on the GPU. 
-   * To gain direct access to the GLBufferObject use the indices() function.
+   * The indices are stored in a VBO and thus they can be stored locally or on the GPU. 
+   * To gain direct access to the VBO use the indices() function.
    *
    * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
    * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
@@ -191,7 +191,7 @@ namespace vl
 
     virtual void deleteVBO()
     {
-      indices()->gpuBuffer()->deleteGLBufferObject();
+      indices()->vbo()->deleteVBO();
     }
 
     virtual void render(bool use_vbo) const
@@ -225,7 +225,7 @@ namespace vl
       VL_CHECK(!error)
 #endif
 
-      use_vbo &= Has_VBO; // && indices()->gpuBuffer()->handle() && indices()->sizeGPU();
+      use_vbo &= Has_VBO; // && indices()->vbo()->handle() && indices()->sizeVBO();
       if ( !use_vbo && !indices()->size() )
         return;
 
@@ -240,11 +240,11 @@ namespace vl
         glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
       }
 
-      const GLvoid* ptr = indices()->gpuBuffer()->ptr();
+      const GLvoid* ptr = indices()->vbo()->ptr();
 
-      if (use_vbo && indices()->gpuBuffer()->handle())
+      if (use_vbo && indices()->vbo()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->gpuBuffer()->handle()); VL_CHECK_OGL()
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices()->vbo()->handle()); VL_CHECK_OGL()
         ptr = 0;
       }
       else
@@ -252,7 +252,7 @@ namespace vl
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
       }
 
-      GLsizei count = (GLsizei)(use_vbo ? indices()->sizeGPU() : indices()->size());
+      GLsizei count = (GLsizei)(use_vbo ? indices()->sizeVBO() : indices()->size());
       GLenum type = indices()->glType();
 
       if (mBaseVertex == 0)

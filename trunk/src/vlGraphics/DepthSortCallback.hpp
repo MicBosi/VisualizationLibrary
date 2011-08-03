@@ -318,11 +318,11 @@ namespace vl
 
       if (Has_VBO)
       {
-        if (polys->indices()->gpuBuffer()->handle())
+        if (polys->indices()->vbo()->handle())
         {
-          if (polys->indices()->gpuBuffer()->usage() != vl::BU_DYNAMIC_DRAW)
+          if (polys->indices()->vbo()->usage() != vl::BU_DYNAMIC_DRAW)
           {
-            polys->indices()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW);
+            polys->indices()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW);
             polys->indices()->setVBODirty(false);
           }
           else

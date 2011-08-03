@@ -354,13 +354,13 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glUnmapBuffer.xml>glUnmapBuffer()</a>
 			</td>
 			<td valign=top>
-				- vl::GLBufferObject
-				- vl::GLBufferObject::createGLBufferObject()
-				- vl::GLBufferObject::deleteGLBufferObject()
-				- vl::GLBufferObject::setBufferData()
-				- vl::GLBufferObject::setBufferSubData()
-				- vl::GLBufferObject::mapGPUBuffer()
-				- vl::GLBufferObject::unmapGPUBuffer()
+				- vl::VBO
+				- vl::VBO::createVBO()
+				- vl::VBO::deleteVBO()
+				- vl::VBO::setBufferData()
+				- vl::VBO::setBufferSubData()
+				- vl::VBO::mapVBO()
+				- vl::VBO::unmapVBO()
 				- vl::Geometry::setVBOEnabled()
 				- vl::Image::readPixels()
 				- vl::DrawPixels

@@ -32,7 +32,7 @@
 #include <vlGraphics/DrawPixels.hpp>
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Camera.hpp>
-#include <vlGraphics/GLBufferObject.hpp>
+#include <vlGraphics/VBO.hpp>
 #include <vlCore/Log.hpp>
 #include <map>
 
@@ -88,10 +88,10 @@ DrawPixels::Pixels::~Pixels()
 //-----------------------------------------------------------------------------
 void DrawPixels::Pixels::deletePixelBufferObject()
 {
-  image()->pixelBufferObject()->deleteGLBufferObject();
+  image()->pixelBufferObject()->deleteVBO();
 }
 //-----------------------------------------------------------------------------
-bool DrawPixels::Pixels::generatePixelBufferObject(EGLBufferUsage usage, bool discard_local_storage)
+bool DrawPixels::Pixels::generatePixelBufferObject(EBufferObjectUsage usage, bool discard_local_storage)
 {
   VL_CHECK(image())
   if (!image())
@@ -140,7 +140,7 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
     if (cmd->image() == 0)
       continue;
 
-    const GLBufferObject* glbuf = cmd->image()->pixelBufferObject();
+    const VBO* glbuf = cmd->image()->pixelBufferObject();
 
     VL_CHECK( cmd->image() )
     VL_CHECK( glbuf )
@@ -261,7 +261,7 @@ void DrawPixels::deletePixelBufferObjects()
   VL_CHECK_OGL()
   for(int i=0; i<(int)mDraws.size(); ++i)
   {
-    mDraws[i]->image()->pixelBufferObject()->deleteGLBufferObject();
+    mDraws[i]->image()->pixelBufferObject()->deleteVBO();
   }
   VL_CHECK_OGL()
 }
@@ -273,7 +273,7 @@ void DrawPixels::releaseImages()
 }
 //-----------------------------------------------------------------------------
 //! generates PBOs only for Pixels objects without a PBO handle
-bool DrawPixels::generatePixelBufferObjects(EGLBufferUsage usage, bool discard_local_storage)
+bool DrawPixels::generatePixelBufferObjects(EBufferObjectUsage usage, bool discard_local_storage)
 {
   if ( !( Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object ) )
     return false;
