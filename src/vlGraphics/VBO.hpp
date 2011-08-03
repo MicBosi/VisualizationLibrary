@@ -128,11 +128,12 @@ namespace vl
 
     void deleteVBO()
     {
-      VL_CHECK_OGL();
+      // mic fixme: it would be nice to re-enable these
+      // VL_CHECK_OGL();
       VL_CHECK(Has_VBO)
       if (Has_VBO && handle() != 0)
       {
-        VL_glDeleteBuffers( 1, &mHandle ); VL_CHECK_OGL();
+        VL_glDeleteBuffers( 1, &mHandle ); // VL_CHECK_OGL();
         mHandle = 0;
         mByteCountVBO = 0;
       }
