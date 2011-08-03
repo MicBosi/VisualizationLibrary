@@ -223,6 +223,10 @@ namespace vl
     //! Merges all the draw calls that use the given primitive type into one single MultiDrawElements draw call.
     void mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type);
 
+    //! Merges all the draw calls that use the given primitive type or PT_TRIANGLES into one single PT_TRIANGLES draw call.
+    //! Use primitive_type = PT_UNKNOWN to merge all primitive types (with the obvious exclusion of lines, points and adjacency ones).
+    void mergeDrawCallsWithTriangles(EPrimitiveType primitive_type);
+
     //! Converts all the DrawCall objects bound to a Geometry into DrawArrays.
     void convertDrawCallToDrawArrays();
 

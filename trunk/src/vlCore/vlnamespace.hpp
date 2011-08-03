@@ -615,6 +615,8 @@ namespace vl
 
   typedef enum
   {
+    PT_UNKNOWN = 0,
+
     PT_POINTS         = GL_POINTS,
     PT_LINES          = GL_LINES,
     PT_LINE_LOOP      = GL_LINE_LOOP,
