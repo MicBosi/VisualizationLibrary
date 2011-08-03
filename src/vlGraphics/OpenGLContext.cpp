@@ -1474,15 +1474,15 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mVertexArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->vertexArray()->gpuBuffer()->handle() )
+          if ( use_vbo && vas->vertexArray()->vbo()->handle() )
           {
-            vbo = vas->vertexArray()->gpuBuffer()->handle();
+            vbo = vas->vertexArray()->vbo()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->vertexArray()->gpuBuffer()->ptr();
+            ptr = vas->vertexArray()->vbo()->ptr();
           }
           if ( mVertexArray.mPtr != ptr || mVertexArray.mVBO != vbo )
           {
@@ -1509,15 +1509,15 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mNormalArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->normalArray()->gpuBuffer()->handle() )
+          if ( use_vbo && vas->normalArray()->vbo()->handle() )
           {
-            vbo = vas->normalArray()->gpuBuffer()->handle();
+            vbo = vas->normalArray()->vbo()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->normalArray()->gpuBuffer()->ptr();
+            ptr = vas->normalArray()->vbo()->ptr();
           }
           if ( mNormalArray.mPtr != ptr || mNormalArray.mVBO != vbo )
           {
@@ -1544,15 +1544,15 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mColorArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->colorArray()->gpuBuffer()->handle() )
+          if ( use_vbo && vas->colorArray()->vbo()->handle() )
           {
-            vbo = vas->colorArray()->gpuBuffer()->handle();
+            vbo = vas->colorArray()->vbo()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->colorArray()->gpuBuffer()->ptr();
+            ptr = vas->colorArray()->vbo()->ptr();
           }
           if ( mColorArray.mPtr != ptr || mColorArray.mVBO != vbo )
           {
@@ -1579,15 +1579,15 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mSecondaryColorArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->secondaryColorArray()->gpuBuffer()->handle() )
+          if ( use_vbo && vas->secondaryColorArray()->vbo()->handle() )
           {
-            vbo = vas->secondaryColorArray()->gpuBuffer()->handle();
+            vbo = vas->secondaryColorArray()->vbo()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->secondaryColorArray()->gpuBuffer()->ptr();
+            ptr = vas->secondaryColorArray()->vbo()->ptr();
           }
           if ( mSecondaryColorArray.mPtr != ptr || mSecondaryColorArray.mVBO != vbo )
           {
@@ -1614,15 +1614,15 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mFogArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->fogCoordArray()->gpuBuffer()->handle() )
+          if ( use_vbo && vas->fogCoordArray()->vbo()->handle() )
           {
-            vbo = vas->fogCoordArray()->gpuBuffer()->handle();
+            vbo = vas->fogCoordArray()->vbo()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->fogCoordArray()->gpuBuffer()->ptr();
+            ptr = vas->fogCoordArray()->vbo()->ptr();
           }
           if ( mFogArray.mPtr != ptr || mFogArray.mVBO != vbo )
           {
@@ -1652,15 +1652,15 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mVertexAttrib[idx].mState += 1; // 0 -> 1; 1 -> 2;
         VL_CHECK( mVertexAttrib[idx].mState == 1 || mVertexAttrib[idx].mState == 2 );
 
-        if ( use_vbo && info->data()->gpuBuffer()->handle() )
+        if ( use_vbo && info->data()->vbo()->handle() )
         {
-          vbo = info->data()->gpuBuffer()->handle();
+          vbo = info->data()->vbo()->handle();
           ptr = 0;
         }
         else
         {
           vbo = 0;
-          ptr = info->data()->gpuBuffer()->ptr();
+          ptr = info->data()->vbo()->ptr();
         }
         if ( mVertexAttrib[idx].mPtr != ptr || mVertexAttrib[idx].mVBO != vbo )
         {
@@ -1726,15 +1726,15 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mTexCoordArray[tex_unit].mState += 1; // 0 -> 1; 1 -> 2;
         VL_CHECK( mTexCoordArray[tex_unit].mState == 1 || mTexCoordArray[tex_unit].mState == 2 );
 
-        if ( use_vbo && texarr->gpuBuffer()->handle() )
+        if ( use_vbo && texarr->vbo()->handle() )
         {
-          vbo = texarr->gpuBuffer()->handle();
+          vbo = texarr->vbo()->handle();
           ptr = 0;
         }
         else
         {
           vbo = 0;
-          ptr = texarr->gpuBuffer()->ptr();
+          ptr = texarr->vbo()->ptr();
         }
         if ( mTexCoordArray[tex_unit].mPtr != ptr || mTexCoordArray[tex_unit].mVBO != vbo )
         {

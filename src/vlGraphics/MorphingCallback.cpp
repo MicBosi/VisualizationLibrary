@@ -100,22 +100,22 @@ void MorphingCallback::onActorRenderStarted(Actor*, Real frame_clock, const Came
     mGeometry->setVertexArray( mVertexFrames[mFrame1].get() );
     mGeometry->setNormalArray( mNormalFrames[mFrame1].get() );
 
-    if (!mVertexFrames[mFrame1]->gpuBuffer()->handle() || mVertexFrames[mFrame1]->isVBODirty())
+    if (!mVertexFrames[mFrame1]->vbo()->handle() || mVertexFrames[mFrame1]->isVBODirty())
       mVertexFrames[mFrame1]->updateVBO(VUM_KeepRamBuffer);
 
-    if (!mVertexFrames[mFrame2]->gpuBuffer()->handle() || mVertexFrames[mFrame2]->isVBODirty())
+    if (!mVertexFrames[mFrame2]->vbo()->handle() || mVertexFrames[mFrame2]->isVBODirty())
       mVertexFrames[mFrame2]->updateVBO(VUM_KeepRamBuffer);
 
-    if (!mNormalFrames[mFrame1]->gpuBuffer()->handle() || mNormalFrames[mFrame1]->isVBODirty())
+    if (!mNormalFrames[mFrame1]->vbo()->handle() || mNormalFrames[mFrame1]->isVBODirty())
       mNormalFrames[mFrame1]->updateVBO(VUM_KeepRamBuffer);
 
-    if (!mNormalFrames[mFrame2]->gpuBuffer()->handle() || mNormalFrames[mFrame2]->isVBODirty())
+    if (!mNormalFrames[mFrame2]->vbo()->handle() || mNormalFrames[mFrame2]->isVBODirty())
       mNormalFrames[mFrame2]->updateVBO(VUM_KeepRamBuffer);
 
-    VL_CHECK( mVertexFrames[mFrame1]->gpuBuffer()->handle() )
-    VL_CHECK( mVertexFrames[mFrame2]->gpuBuffer()->handle() )
-    VL_CHECK( mNormalFrames[mFrame1]->gpuBuffer()->handle() )
-    VL_CHECK( mNormalFrames[mFrame2]->gpuBuffer()->handle() )
+    VL_CHECK( mVertexFrames[mFrame1]->vbo()->handle() )
+    VL_CHECK( mVertexFrames[mFrame2]->vbo()->handle() )
+    VL_CHECK( mNormalFrames[mFrame1]->vbo()->handle() )
+    VL_CHECK( mNormalFrames[mFrame2]->vbo()->handle() )
 
     #if 1 // faster method:
 
@@ -248,8 +248,8 @@ void MorphingCallback::blendFrames(int a, int b, float t)
     // mic fixme:
     // Come si vede qui' sta nomenclatura non e' chiara: 
     // sembra che stiamo semplicemente cambiano un po di flags invece stiamo updatando tutto il VBO!!!
-    mVertices->gpuBuffer()->setBufferData(BU_DYNAMIC_DRAW, false);
-    mNormals ->gpuBuffer()->setBufferData(BU_DYNAMIC_DRAW, false);
+    mVertices->vbo()->setBufferData(BU_DYNAMIC_DRAW, false);
+    mNormals ->vbo()->setBufferData(BU_DYNAMIC_DRAW, false);
   }
 }
 //-----------------------------------------------------------------------------

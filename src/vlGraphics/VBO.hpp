@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef GLBufferObject_INCLUDE_ONCE
-#define GLBufferObject_INCLUDE_ONCE
+#ifndef VBO_INCLUDE_ONCE
+#define VBO_INCLUDE_ONCE
 
 #include <vlCore/Vector2.hpp>
 #include <vlCore/Vector3.hpp>
@@ -45,112 +45,114 @@
 namespace vl
 {
 //-----------------------------------------------------------------------------
-// GLBufferObject
+// VBO
 //-----------------------------------------------------------------------------
   /**
-   * The GLBufferObject class is a Buffer that can upload its data on the GPU memory. 
+   * The VBO class is a Buffer that can upload its data on the GPU memory. 
    * \remarks
-   * GLBufferObject is the storage used by ArrayAbstract and subclasses like ArrayFloat3, ArrayUByte4 etc.
+   * VBO is the storage used by ArrayAbstract and subclasses like ArrayFloat3, ArrayUByte4 etc.
   */
-  class GLBufferObject: public Buffer
+  class VBO: public Buffer
   {
-    VL_INSTRUMENT_CLASS(vl::GLBufferObject, Buffer)
+    VL_INSTRUMENT_CLASS(vl::VBO, Buffer)
 
   public:
-    GLBufferObject()
+    VBO()
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mHandle = 0;
       mUsage = BU_STATIC_DRAW;
-      mByteCountGPU = 0;
+      mByteCountVBO = 0;
     }
 
-    GLBufferObject(const GLBufferObject& other): Buffer(other)
+    VBO(const VBO& other): Buffer(other)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mHandle = 0;
       mUsage = BU_STATIC_DRAW;
-      mByteCountGPU = 0;
+      mByteCountVBO = 0;
       // copy local data
       *this = other;
     }
 
-    // deletes the GPU data and copyes only the local data
-    GLBufferObject& operator=(const GLBufferObject& other) 
+    // deletes the VBO data and copyes only the local data
+    VBO& operator=(const VBO& other) 
     { 
-      deleteGLBufferObject();
+      deleteVBO();
       Buffer::operator=(other); 
       return *this;
     }
 
-    // swaps the gpu data and update state, as well as local data
-    void swap(GLBufferObject& other)
+    // swaps data with another VBO, including VBO handle, usage and local data.
+    void swap(VBO& other)
     {
       // swap local data
       Buffer::swap(other);
       // tmp
       unsigned int tmp_handle = mHandle;
-      EGLBufferUsage tmp_usage = mUsage;
-      GLsizeiptr tmp_bytes = mByteCountGPU;
+      EBufferObjectUsage tmp_usage = mUsage;
+      GLsizeiptr tmp_bytes = mByteCountVBO;
       // this <- other
       mHandle = other.mHandle;
       mUsage = tmp_usage;
-      mByteCountGPU = other.mByteCountGPU;
+      mByteCountVBO = other.mByteCountVBO;
       // other <- this
       other.mHandle = tmp_handle;
       other.mUsage = tmp_usage;
-      other.mByteCountGPU = tmp_bytes;
+      other.mByteCountVBO = tmp_bytes;
     }
 
-    ~GLBufferObject()
+    ~VBO()
     {
-      deleteGLBufferObject();
+      deleteVBO();
     }
 
     void setHandle(unsigned int handle) { mHandle = handle; }
 
     unsigned int handle() const { return mHandle; }
 
-    GLsizeiptr byteCountGPU() const { return mByteCountGPU; }
+    GLsizeiptr byteCountVBO() const { return mByteCountVBO; }
 
-    void createGLBufferObject()
+    void createVBO()
+    {
+      VL_CHECK_OGL();
+      VL_CHECK(Has_VBO)
+      if (Has_VBO && handle() == 0)
+      {
+        VL_CHECK(mByteCountVBO == 0)
+        VL_glGenBuffers( 1, &mHandle ); VL_CHECK_OGL();
+        mByteCountVBO = 0;
+        VL_CHECK(handle())
+      }
+    }
+
+    void deleteVBO()
+    {
+      VL_CHECK_OGL();
+      VL_CHECK(Has_VBO)
+      if (Has_VBO && handle() != 0)
+      {
+        VL_glDeleteBuffers( 1, &mHandle ); VL_CHECK_OGL();
+        mHandle = 0;
+        mByteCountVBO = 0;
+      }
+    }
+
+    void downloadVBO()
     {
       VL_CHECK(Has_VBO)
-      if(!Has_VBO)
-        return;
-      if (handle() == 0)
+      if ( Has_VBO && handle() )
       {
-        VL_CHECK(mByteCountGPU == 0)
-        VL_glGenBuffers( 1, &mHandle );
-        mByteCountGPU = 0;
-      }
-      VL_CHECK(handle())
-    }
-
-    void deleteGLBufferObject()
-    {
-      if (handle() != 0)
-      {
-        VL_glDeleteBuffers( 1, &mHandle );
-        mHandle = 0;
-        mByteCountGPU = 0;
+        resize( byteCountVBO() );
+        void* vbo_ptr = mapVBO(BA_READ_ONLY);
+        memcpy( ptr(), vbo_ptr, byteCountVBO() );
+        unmapVBO();
       }
     }
 
-    void downloadGLBufferObject()
-    {
-      if ( handle() )
-      {
-        resize( byteCountGPU() );
-        void* gpu_ptr = mapGPUBuffer(GBA_READ_ONLY);
-        memcpy( ptr(), gpu_ptr, byteCountGPU() );
-        unmapGPUBuffer();
-      }
-    }
-
-    // initializes the GPU Buffer from the local storage
-    // attention: discarding the local storage might delete data used by other interfaces
-    void setBufferData( EGLBufferUsage usage, bool discard_local_storage=false )
+    // Modifies the VBO using data from the local storage.
+    // @note Discarding the local storage might delete data used by other Arrays.
+    void setBufferData( EBufferObjectUsage usage, bool discard_local_storage=false )
     {
       setBufferData( (int)bytesUsed(), ptr(), usage );
       mUsage = usage;
@@ -158,63 +160,75 @@ namespace vl
         clear();
     }
 
-    // modifies the GPU Buffer from the local storage
-    // attention: discarding the local storage might delete data used by other interfaces
+    // Modifies the VBO using the supplied data.
+    // @note Use this function to initialize or resize the VBO and set it's usage flag.
+    // If data == NULL the buffer will be allocated but no data will be written to the VBO.
+    // If data != NULL such data will be copied into the VBO.
+    void setBufferData( GLsizeiptr byte_count, const GLvoid* data, EBufferObjectUsage usage )
+    {
+      VL_CHECK_OGL();
+      VL_CHECK(Has_VBO)
+      if ( Has_VBO )
+      {
+        createVBO();
+        // we use the GL_ARRAY_BUFFER slot to send the data for no special reason
+        VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
+        VL_glBufferData( GL_ARRAY_BUFFER, byte_count, data, usage ); VL_CHECK_OGL();
+        VL_glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
+        mByteCountVBO = byte_count;
+        mUsage = usage;
+      }
+    }
+
+    // Modifies an existing VBO using data from the local storage.
+    // @note You can use this function only on already initialized VBOs, use setBufferData() to initialize a VBO.
+    // @note Discarding the local storage might delete data used by other Arrays.
     void setBufferSubData( GLintptr offset=0, GLsizeiptr byte_count=-1, bool discard_local_storage=false )
     {
-      byte_count = byte_count < 0 ? byteCountGPU() : byte_count;
+      byte_count = byte_count < 0 ? byteCountVBO() : byte_count;
       setBufferSubData( offset, byte_count, ptr() );
       if (discard_local_storage)
         clear();
     }
 
-    // if data == NULL the buffer will be allocated but no data will be writte into
-    // if data != must point to a buffer of at least 'size' bytes
-    void setBufferData( GLsizeiptr byte_count, const GLvoid* data, EGLBufferUsage usage )
-    {
-      VL_CHECK_OGL();
-      VL_CHECK(Has_VBO)
-      if ( !Has_VBO )
-        return;
-      //if (!data || !byte_count)
-      //  return;
-      createGLBufferObject();
-      // we use the GL_ARRAY_BUFFER slot to send the data for no special reason
-      VL_glBindBuffer( GL_ARRAY_BUFFER, handle() );
-      VL_glBufferData( GL_ARRAY_BUFFER, byte_count, data, usage );
-      VL_glBindBuffer( GL_ARRAY_BUFFER, 0 );
-      mByteCountGPU = byte_count;
-      mUsage = usage;
-      VL_CHECK_OGL();
-    }
-
+    // Modifies an existing VBO using the supplied data.
+    // @note You can use this function only on already initialized VBOs, use setBufferData() to initialize a VBO.
+    // @param[in] data Must be != NULL, pointer to the data being written to the VBO.
     void setBufferSubData( GLintptr offset, GLsizeiptr byte_count, const GLvoid* data )
     {
+      VL_CHECK_OGL();
       VL_CHECK(Has_VBO)
-      if ( !Has_VBO )
-        return;
-      createGLBufferObject();
-      // we use the GL_ARRAY_BUFFER slot to send the data for no special reason
-      VL_glBindBuffer( GL_ARRAY_BUFFER, handle() );
-      VL_glBufferSubData( GL_ARRAY_BUFFER, offset, byte_count, data );
-      VL_glBindBuffer( GL_ARRAY_BUFFER, 0 );
+      VL_CHECK(data);
+      VL_CHECK(handle())
+      if (Has_VBO && data && handle())
+      {
+        // we use the GL_ARRAY_BUFFER slot to send the data for no special reason
+        VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
+        VL_glBufferSubData( GL_ARRAY_BUFFER, offset, byte_count, data ); VL_CHECK_OGL();
+        VL_glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
+      }
     }
 
-    // there can be only one GLBufferObject mapped at a time?
-    // you must unmapGPUBuffer before using the GPU Buffer again
-    void* mapGPUBuffer(EGLBufferAccess access)
+    // Maps a VBO so that it can be read or written by the CPU.
+    // @note You can map only one VBO at a time and you must unmap it before using the VBO again or mapping another one.
+    void* mapVBO(EBufferObjectAccess access)
     {
+      VL_CHECK_OGL();
       VL_CHECK(Has_VBO)
-      if ( !Has_VBO )
+      if ( Has_VBO )
+      {
+        createVBO();
+        VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
+        void* ptr = VL_glMapBuffer( GL_ARRAY_BUFFER, access ); VL_CHECK_OGL();
+        VL_glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
+        return ptr;
+      }
+      else
         return NULL;
-      createGLBufferObject(); VL_CHECK_OGL();
-      VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
-      void* ptr = VL_glMapBuffer( GL_ARRAY_BUFFER, access ); VL_CHECK_OGL();
-      VL_glBindBuffer( GL_ARRAY_BUFFER, 0 );
-      return ptr;
     }
 
-    // From OpenGL 3.0 specs:
+    // Unmaps a previously mapped VBO.
+    // @return Returs true or false based on what's specified in the OpenGL specs:
     // "UnmapBuffer returns TRUE unless data values in the buffer’s data store have
     // become corrupted during the period that the buffer was mapped. Such corruption
     // can be the result of a screen resolution change or other window system-dependent
@@ -223,27 +237,30 @@ namespace vl
     // occur only during the periods that a buffer’s data store is mapped. If such corruption
     // has occurred, UnmapBuffer returns FALSE, and the contents of the buffer’s
     // data store become undefined."
-    bool unmapGPUBuffer()
+    bool unmapVBO()
     {
+      VL_CHECK_OGL();
       VL_CHECK(Has_VBO)
-      if ( !Has_VBO )
+      if ( Has_VBO )
+      {
+        createVBO();
+        VL_glBindBuffer( GL_ARRAY_BUFFER, handle() ); VL_CHECK_OGL();
+        bool ok = VL_glUnmapBuffer( GL_ARRAY_BUFFER ) == GL_TRUE; VL_CHECK_OGL();
+        VL_glBindBuffer( GL_ARRAY_BUFFER, 0 ); VL_CHECK_OGL();
+        VL_CHECK_OGL();
+        return ok;
+      }
+      else
         return false;
-      VL_CHECK_OGL();
-      createGLBufferObject();
-      VL_glBindBuffer( GL_ARRAY_BUFFER, handle() );
-      bool ok = VL_glUnmapBuffer( GL_ARRAY_BUFFER ) == GL_TRUE;
-      VL_CHECK(ok);
-      VL_glBindBuffer( GL_ARRAY_BUFFER, 0 );
-      VL_CHECK_OGL();
-      return ok;
     }
 
-    EGLBufferUsage usage() const { return mUsage; }
+    //! VBO usage flag as specified by setBufferData().
+    EBufferObjectUsage usage() const { return mUsage; }
 
   protected:
     unsigned int mHandle;
-    GLsizeiptr mByteCountGPU;
-    EGLBufferUsage mUsage;
+    GLsizeiptr mByteCountVBO;
+    EBufferObjectUsage mUsage;
   };
 }
 

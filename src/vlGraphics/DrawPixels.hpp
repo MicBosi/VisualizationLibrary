@@ -110,11 +110,11 @@ namespace vl
       void setAlign(int align) { mAlign = align; }
 
       /** Generates a pixel buffer object for the associated Image
-       * calling image()->gpuBuffer()->setBufferData(usage, discard_local_storage);
+       * calling image()->vbo()->setBufferData(usage, discard_local_storage);
        *
        * \note
        * All the Pixels object sharing the same Image will use the Image's PBO */
-      bool generatePixelBufferObject(EGLBufferUsage usage, bool discard_local_storage);
+      bool generatePixelBufferObject(EBufferObjectUsage usage, bool discard_local_storage);
 
       void deletePixelBufferObject();
 
@@ -150,7 +150,7 @@ namespace vl
     void releaseImages();
 
     //! generates PBOs only for Pixels objects without a PBO handle
-    bool generatePixelBufferObjects(EGLBufferUsage usage, bool discard_local_storage);
+    bool generatePixelBufferObjects(EBufferObjectUsage usage, bool discard_local_storage);
 
     void setUsePixelBufferObject(bool use_pbo);
 

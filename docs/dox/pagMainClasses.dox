@@ -313,7 +313,7 @@
 	- vl::ref
 	- vl::Object
 	- vl::Buffer
-	- vl::GLBufferObject
+	- vl::VBO
 	- vl::ArrayAbstract
 	- vl::Array
 

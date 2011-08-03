@@ -33,7 +33,7 @@
 #define Geometry_INCLUDE_ONCE
 
 #include <vlGraphics/IVertexAttribSet.hpp>
-#include <vlGraphics/GLBufferObject.hpp>
+#include <vlGraphics/VBO.hpp>
 #include <vlCore/Vector2.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlGraphics/Renderable.hpp>
@@ -75,8 +75,8 @@ namespace vl
       TextureArray(int unit, ArrayAbstract* data): mTextureSampler(unit), mTexCoordArray(data) {}
       int mTextureSampler;
       ref<ArrayAbstract> mTexCoordArray;
-      const GLBufferObject* gpuBuffer() const { return mTexCoordArray->gpuBuffer(); }
-      GLBufferObject* gpuBuffer() { return mTexCoordArray->gpuBuffer(); }
+      const VBO* vbo() const { return mTexCoordArray->vbo(); }
+      VBO* vbo() { return mTexCoordArray->vbo(); }
     };
 
   public:
