@@ -102,7 +102,10 @@ namespace vl
       {
         // update VBOs
         if (vboEnabled() && isVBODirty())
-          updateVBOs(false,false);
+        {
+          updateDirtyVBO(VUM_KeepRamBuffer);
+          setVBODirty(false);
+        }
 
         // render
         render_Implementation( actor, shader, camera, gl_context ); VL_CHECK_OGL();
@@ -208,11 +211,11 @@ namespace vl
 
     //! Uploads the data stored in the local buffers on the GPU memory.
     //! If 'discard_local_data' is set to \p true the memory used by the local buffers is released.
-    virtual void updateVBOs(bool discard_local_data, bool force_update) = 0;
+    virtual void updateDirtyVBO(EVBOUpdateMode) = 0;
 
     //! Destroys the VBO (vertex buffer objects) associated to this a Renderable.
     //! \note This function does not touch the local (non GPU) data stored in the buffers associated to the vertex attributes and DrawCall.
-    virtual void deleteVBOs() {}
+    virtual void deleteVBO() = 0;
 
     //! Deletes the display list currently associated to a Renderable.
     void deleteDisplayList() 

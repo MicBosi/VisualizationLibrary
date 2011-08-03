@@ -177,28 +177,21 @@ namespace vl
       return de;
     }
 
-    virtual unsigned int handle() const { return indices()->gpuBuffer()->handle(); }
-
     void setIndices(arr_type* index_buffer) { mIndexBuffer = index_buffer; }
 
     arr_type* indices() { return mIndexBuffer.get(); }
 
     const arr_type* indices() const { return mIndexBuffer.get(); }
 
-    virtual void updateVBOs(bool discard_local_data=false, bool force_update=false)
+    virtual void updateDirtyVBO(EVBOUpdateMode mode)
     {
-      if (indices()->isVBODirty() || force_update)
-        indices()->updateVBO(discard_local_data);
+      if (indices()->isVBODirty() || (mode & VUF_ForceUpdate) )
+        indices()->updateVBO(mode);
     }
 
-    virtual void deleteVBOs()
+    virtual void deleteVBO()
     {
       indices()->gpuBuffer()->deleteGLBufferObject();
-    }
-
-    virtual void clearLocalBuffer()
-    {
-      indices()->gpuBuffer()->resize(0);
     }
 
     virtual void render(bool use_vbo) const

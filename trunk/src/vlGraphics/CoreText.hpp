@@ -151,7 +151,9 @@ namespace vl
 
     // --- Renderable interface implementation ---
 
-    void updateVBOs(bool,bool) {}
+    virtual void updateDirtyVBO(EVBOUpdateMode) {}
+
+    virtual void deleteVBO() {}
 
   protected:
     virtual void render_Implementation(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context) const;
