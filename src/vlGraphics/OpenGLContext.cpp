@@ -93,7 +93,7 @@ ref<FBORenderTarget> OpenGLContext::createFBORenderTarget(int width, int height)
 {
   makeCurrent();
   mFBORenderTarget.push_back(new FBORenderTarget(this, width, height));
-  mFBORenderTarget.back()->create();
+  mFBORenderTarget.back()->createFBO();
   return mFBORenderTarget.back();
 }
 //-----------------------------------------------------------------------------
@@ -104,10 +104,10 @@ void OpenGLContext::destroyFBORenderTarget(FBORenderTarget* fbort)
   {
     if (mFBORenderTarget[i] == fbort)
     {
-      mFBORenderTarget[i]->destroy();
+      mFBORenderTarget[i]->deleteFBO();
       mFBORenderTarget[i]->mOpenGLContext = NULL;
       mFBORenderTarget.erase(mFBORenderTarget.begin()+i);
-      break;
+      return;
     }
   }
 }
@@ -117,7 +117,7 @@ void OpenGLContext::destroyAllFBORenderTargets()
   makeCurrent();
   for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
   {
-    mFBORenderTarget[i]->destroy();
+    mFBORenderTarget[i]->deleteFBO();
     mFBORenderTarget[i]->mOpenGLContext = NULL;
   }
   mFBORenderTarget.clear();

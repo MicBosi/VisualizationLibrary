@@ -69,7 +69,7 @@ namespace
 //-----------------------------------------------------------------------------
 // FBORenderTarget
 //-----------------------------------------------------------------------------
-void FBORenderTarget::create()
+void FBORenderTarget::createFBO()
 {
   VL_CHECK_OGL();
   VL_CHECK(openglContext());
@@ -82,7 +82,7 @@ void FBORenderTarget::create()
   VL_CHECK( mHandle )
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::destroy()
+void FBORenderTarget::deleteFBO()
 {
   VL_CHECK_OGL();
   VL_CHECK(openglContext());
@@ -490,14 +490,14 @@ void FBOTextureLayerAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmen
   }
 }
 //-----------------------------------------------------------------------------
-void FBOAbstractAttachment::destroy()
+void FBOAbstractAttachment::unbindFromAllFBO()
 {
   std::set< ref<FBORenderTarget> > fbos = fboRenderTargets();
   for( std::set< ref<FBORenderTarget> >::iterator it = fbos.begin(); it != fbos.end(); ++it )
     it->get_writable()->removeAttachment( this );
 }
 //-----------------------------------------------------------------------------
-void FBORenderbufferAttachment::create()
+void FBORenderbufferAttachment::createRenderBuffer()
 {
   VL_CHECK_OGL()
   VL_CHECK( Has_FBO )
@@ -511,13 +511,15 @@ void FBORenderbufferAttachment::create()
   VL_CHECK( mHandle )
 }
 //-----------------------------------------------------------------------------
-void FBORenderbufferAttachment::destroy()
+void FBORenderbufferAttachment::deleteRenderBuffer()
 {
   VL_CHECK_OGL()
   VL_CHECK( Has_FBO )
   if( !Has_FBO )
     return;
-  FBOAbstractAttachment::destroy();
+
+  unbindFromAllFBO();
+
   mWidth  = 0;
   mHeight = 0;
   if ( mHandle )
@@ -567,7 +569,7 @@ void FBORenderbufferAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmen
     return;
 
   if (!handle())
-    create();
+    createRenderBuffer();
 
   // binds the FBO for this function call
   ScopedFBOBinding fbo_bind( fbo );
