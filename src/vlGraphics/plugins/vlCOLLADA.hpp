@@ -69,7 +69,7 @@ namespace vl
         mComputeMissingNormals = true;
         mFixBadNormals = true;
         mExtractSkins = true;
-        mMergeDrawCallsWithTriangles = true;
+        mMergeDrawCalls = true;
       }
 
       //! If true the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported. Enabled by default.
@@ -108,11 +108,11 @@ namespace vl
       //! If set to true the skinned geometries will be also exported. Enabled by default.
       bool extractSkins() const { return mExtractSkins; }
 
-      //! If set to true merges all the draw calls of each Geometry into one single draw call using triangles. Enabled by default.
-      void setMergeDrawCallsWithTriangles(bool merge) { mMergeDrawCallsWithTriangles = merge; }
+      //! If set to true merges all the draw calls of each Geometry into one triangle and/or one triangle strip draw call. Enabled by default.
+      void setMergeDrawCalls(bool merge) { mMergeDrawCalls = merge; }
 
-      //! If set to true merges all the draw calls of each Geometry into one single draw call using triangles. Enabled by default.
-      bool mergeDrawCallsWithTriangles() const { return mMergeDrawCallsWithTriangles; }
+      //! If set to true merges all the draw calls of each Geometry into one triangle and/or one triangle strip draw call. Enabled by default.
+      bool mergeDrawCalls() const { return mMergeDrawCalls; }
 
     protected:
       TransparencyOption mInvertTransparency;
@@ -121,7 +121,7 @@ namespace vl
       bool mComputeMissingNormals;
       bool mFixBadNormals;
       bool mExtractSkins;
-      bool mMergeDrawCallsWithTriangles;
+      bool mMergeDrawCalls;
     };
 
   public:

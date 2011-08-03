@@ -570,7 +570,7 @@ VertexAttribInfo* Geometry::vertexAttribArray(unsigned int attrib_location)
   return NULL;
 }
 //-----------------------------------------------------------------------------
-void Geometry::mergeTriangleStrips()
+DrawCall* Geometry::mergeTriangleStrips()
 {
   std::vector< ref<DrawElementsBase> > de_vector;
   std::vector<size_t> indices;
@@ -581,7 +581,8 @@ void Geometry::mergeTriangleStrips()
     ref<DrawElementsBase> deb = cast<DrawElementsBase>( drawCalls()->at(i) );
     if (deb && deb->primitiveType() == PT_TRIANGLE_STRIP)
     {
-      de_vector.push_back(deb);
+      // preserve order
+      de_vector.insert(de_vector.begin(), deb);
       drawCalls()->eraseAt(i);
     }
   }
@@ -605,7 +606,7 @@ void Geometry::mergeTriangleStrips()
     if ( i != de_vector.size()-1 )
     {
       // grab the first two indices of the next draw call
-      IndexIterator it=de_vector[i+1]->indexIterator();
+      IndexIterator it = de_vector[i+1]->indexIterator();
       int A = it.index();
       it.next();
       int B = it.index();
@@ -613,7 +614,7 @@ void Geometry::mergeTriangleStrips()
       if (A == -1 || B == -1)
         continue;
 
-      indices.push_back(indices.back());
+      indices.push_back( indices.back() );
       indices.push_back(A);
       indices.push_back(A);
       indices.push_back(B);
@@ -626,7 +627,10 @@ void Geometry::mergeTriangleStrips()
     draw_elems->indexBuffer()->resize(indices.size());
     memcpy(draw_elems->indexBuffer()->ptr(), &indices[0], sizeof(indices[0])*indices.size());
     drawCalls()->push_back(draw_elems.get());
+    return draw_elems.get();
   }
+  else
+    return NULL;
 }
 //-----------------------------------------------------------------------------
 void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
