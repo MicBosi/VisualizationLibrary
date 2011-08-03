@@ -769,7 +769,7 @@ void Geometry::makeGLESFriendly()
   for( int idraw=this->drawCalls()->size(); idraw--; )
   {
     DrawCall* dc = this->drawCalls()->at(idraw);
-    if( dc->classType() == vl::DrawElementsUInt::staticType() )
+    if( dc->classType() == vl::DrawElementsUInt::Type() )
     {
       if (dc->primitiveType() == PT_POLYGON)
       {
@@ -833,7 +833,7 @@ void Geometry::makeGLESFriendly()
   for( int idraw=this->drawCalls()->size(); idraw--; )
   {
     DrawCall* dc = this->drawCalls()->at(idraw);
-    if( dc->classType() == vl::DrawElementsUInt::staticType() )
+    if( dc->classType() == vl::DrawElementsUInt::Type() )
     {
       // find max index
       int max_idx = -1;
