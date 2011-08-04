@@ -364,13 +364,12 @@ struct DaePrimitive: public Object
 {
   DaePrimitive()
   {
-    mIndexStride = 0;
-    mCount = 0;
     mType = Dae::PT_UNKNOWN;
+    mCount = 0;
+    mIndexStride = 0;
   }
 
   Dae::EPrimitiveType mType;
-
   std::string mMaterial;
   std::vector< ref<DaeInput> > mChannels;
   size_t mCount;
@@ -446,7 +445,7 @@ struct DaeTechniqueCOMMON: public Object
 
     mEmission.mColor     = fvec4(0, 0, 0, 1);
     mAmbient.mColor      = fvec4(0, 0, 0, 1);
-    mDiffuse.mColor      = fvec4(1, 1, 1, 1);
+    mDiffuse.mColor      = fvec4(1, 0, 1, 1);
     mSpecular.mColor     = fvec4(0, 0, 0, 1);
     mShininess    = 40;
 
@@ -964,7 +963,7 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
     common_tech->mShininess = vl::clamp(common_tech->mShininess, 0.0f, 128.0f);
 
     // mic fixme: this vl::Effect can be put in mDaeTechniqueCOMMON and shared among all the materials that use it.
-    fx->shader()->gocMaterial()->setDiffuse  ( common_tech->mDiffuse.mColor  );
+    fx->shader()->gocMaterial()->setDiffuse  ( common_tech->mDiffuse.mColor  ); // this is fuchsia by default
     fx->shader()->gocMaterial()->setAmbient  ( common_tech->mAmbient.mColor  );
     fx->shader()->gocMaterial()->setEmission ( common_tech->mEmission.mColor );
     fx->shader()->gocMaterial()->setSpecular ( common_tech->mSpecular.mColor );
@@ -976,6 +975,7 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
     if ( common_tech->mDiffuse.mSampler && common_tech->mDiffuse.mSampler->mTexture )
     {
       fx->shader()->gocTextureSampler(0)->setTexture( common_tech->mDiffuse.mSampler->mTexture.get() );
+      fx->shader()->gocMaterial()->setDiffuse( vl::white );
     }
 
     // alpha blending management
@@ -1036,6 +1036,7 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
         else
         {
           // mic fixme: error
+          VL_TRAP();
           continue;
         }
       }
@@ -1043,6 +1044,7 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
     else
     {
       // mic fixme issue error
+      VL_TRAP();
     }
   }
 
@@ -1423,6 +1425,7 @@ void DaeLoader::parseEffects(daeElement* library)
             if ( !surface->getFx_surface_init_common()->getInit_from_array().getCount() )
             {
               // mic fixme: issue error
+              VL_TRAP();
               continue;
             }
 
@@ -1431,6 +1434,7 @@ void DaeLoader::parseEffects(daeElement* library)
             if (!ref_image)
             {
               // mic fixme report error
+              VL_TRAP();
               continue;
             }
 
@@ -1440,6 +1444,7 @@ void DaeLoader::parseEffects(daeElement* library)
             else
             {
               // mic fixme: issue error
+              VL_TRAP();
               continue;
             }
           }
@@ -1465,6 +1470,7 @@ void DaeLoader::parseEffects(daeElement* library)
             else
             {
               // mic fixme: issue error
+              VL_TRAP();
               continue;
             }
               
@@ -1716,6 +1722,7 @@ void DaeLoader::parseMaterials(daeElement* library)
     if (!effect)
     {
       // mic fixme: issue warning
+      VL_TRAP();
       continue;
     }
 
@@ -1730,6 +1737,7 @@ void DaeLoader::parseMaterials(daeElement* library)
     else
     {
       // mic fixme: issue warning
+      VL_TRAP();
       continue;
     }
   }
@@ -1812,6 +1820,7 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
     else
     {
       // mic fixme: issue error
+      VL_TRAP();
     }
 
     // <texture texcoord="...">
@@ -2148,12 +2157,12 @@ void DaeLoader::parseAsset(domElement* root)
         // - "Data exported with previous versions of our COLLADA tools may import with inverted transparency in ColladaMax 3.03 and ColladaMaya 3.03."
         // - Actually ColladaMax/ColladaMaya before 3.03 use unpredictable combinations of <transparent> and <transparency>, so... we assume opaque.
 
-        const char* colladamaya_str = strstr(tool, "ColladaMaya");
-        size_t colladamaya_str_len = strlen("ColladaMaya");
+        const char* colladamaya_str = strstr(tool, "ColladaMaya v");
+        size_t colladamaya_str_len = strlen("ColladaMaya v");
         if ( colladamaya_str )
         {
           float version = 1000;
-          if ( strlen(colladamaya_str) > colladamaya_str_len )
+          if ( strlen(colladamaya_str) > colladamaya_str_len  )
           {
             if ( sscanf( colladamaya_str + colladamaya_str_len, "%f", &version) )
             {
@@ -2174,8 +2183,8 @@ void DaeLoader::parseAsset(domElement* root)
           }
         }
 
-        const char* colladamax_str = strstr(tool, "ColladaMax");
-        size_t colladamax_str_len = strlen("ColladaMax");
+        const char* colladamax_str = strstr(tool, "ColladaMax v");
+        size_t colladamax_str_len = strlen("ColladaMax v");
         if ( colladamax_str )
         {
           float version = 1000;
