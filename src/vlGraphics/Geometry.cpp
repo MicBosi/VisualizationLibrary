@@ -774,7 +774,7 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
 
       // some sanity checks since we are here...
       VL_CHECK( it.a() < max_idx && it.b() < max_idx && it.c() < max_idx );
-      VL_CHECK( it.a() >= 1 && it.b() >= 1 && it.c() >= 1 );
+      VL_CHECK( it.a() >= 0 && it.b() >= 0 && it.c() >= 0 );
     }
   }
   VL_CHECK( idx == index_buffer.size() );
