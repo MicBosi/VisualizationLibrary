@@ -562,13 +562,13 @@ protected:
 
 protected:
   ref<ResourceDatabase> mResources;
-  std::map< daeElement*, ref<DaeMaterial> > mMaterials;
-  std::map< daeElement*, ref<DaeEffect> > mEffects;
-  std::map< daeElement*, ref<DaeMesh> > mMeshes; // daeElement* -> <geometry>
+  std::map< daeElementRef, ref<DaeMaterial> > mMaterials;
+  std::map< daeElementRef, ref<DaeEffect> > mEffects;
+  std::map< daeElementRef, ref<DaeMesh> > mMeshes; // daeElement* -> <geometry>
   std::vector< ref<DaeNode> > mNodes;
-  std::map< daeElement*, ref<DaeSource> > mSources; // daeElement* -> <source>
-  std::map< daeElement*, ref<Image> > mImages;
-  std::map< daeElement*, ref<DaeNewParam> > mDaeNewParams;
+  std::map< daeElementRef, ref<DaeSource> > mSources; // daeElement* -> <source>
+  std::map< daeElementRef, ref<Image> > mImages;
+  std::map< daeElementRef, ref<DaeNewParam> > mDaeNewParams;
   ref<Effect> mDefaultFX;
   ref<DaeNode> mScene;
   DAE mDAE;
@@ -653,7 +653,7 @@ void DaeLoader::parseInputs(DaePrimitive* dae_primitive, const domInputLocalOffs
 ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
 {
   // try to reuse the geometry in the library
-  std::map< daeElement*, ref<DaeMesh> >::iterator it = mMeshes.find( geometry );
+  std::map< daeElementRef, ref<DaeMesh> >::iterator it = mMeshes.find( geometry );
   if (it != mMeshes.end())
     return it->second;
 
@@ -888,7 +888,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
 //-----------------------------------------------------------------------------
 DaeSource* DaeLoader::getSource(daeElement* source_el)
 {
-  std::map< daeElement*, ref<DaeSource> >::iterator it = mSources.find(source_el);
+  std::map< daeElementRef, ref<DaeSource> >::iterator it = mSources.find(source_el);
   if (it != mSources.end())
     return it->second.get();
   else
@@ -1028,9 +1028,12 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
       {
         daeElement* material = material_instances[i]->getTarget().getElement();
         VL_CHECK(material)
-        std::map< daeElement*, ref<DaeMaterial> >::iterator it = mMaterials.find( material );
+        std::map< daeElementRef, ref<DaeMaterial> >::iterator it = mMaterials.find( material );
         if (it != mMaterials.end())
         {
+          // mic fixme: issue warning
+          VL_CHECK( material_map.find(material_instances[i]->getSymbol()) == material_map.end() )
+          VL_CHECK( material_instances[i]->getSymbol() )
           material_map[ material_instances[i]->getSymbol() ] = it->second.get();
         }
         else
@@ -1051,7 +1054,7 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
   // now we need to instance the material
   for(size_t iprim=0; iprim<dae_mesh->mPrimitives.size(); ++iprim)
   {
-    ref<DaeMaterial> dae_material; 
+    ref<DaeMaterial> dae_material;
 
     if (!dae_mesh->mPrimitives[iprim]->mMaterial.empty())
     {
@@ -1062,7 +1065,12 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
       }
       else
       {
-        Log::warning( Say("LoadWriterCOLLADA: material symbol %s could not be resolved.\n") << dae_mesh->mPrimitives[iprim]->mMaterial );
+        if ( dae_mesh->mPrimitives[iprim]->mMaterial != Dae::NO_MATERIAL_SPECIFIED)
+        {
+          Log::warning( Say("LoadWriterCOLLADA: material symbol %s could not be resolved.\n") << dae_mesh->mPrimitives[iprim]->mMaterial );
+          // mic fixme remove
+          VL_TRAP()
+        }
       }
     }
 
@@ -1438,7 +1446,7 @@ void DaeLoader::parseEffects(daeElement* library)
               continue;
             }
 
-            std::map< daeElement*, ref<Image> >::iterator it = mImages.find( ref_image );
+            std::map< daeElementRef, ref<Image> >::iterator it = mImages.find( ref_image );
             if (it != mImages.end())
               dae_newparam->mDaeSurface->mImage = it->second.get();
             else
@@ -1462,7 +1470,7 @@ void DaeLoader::parseEffects(daeElement* library)
             // mic fixme issue error
             VL_CHECK(surface_newparam);
 
-            std::map<domElement*, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(surface_newparam);
+            std::map< daeElementRef, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(surface_newparam);
             if ( it != mDaeNewParams.end() )
             {
               dae_newparam->mDaeSampler2D->mDaeSurface = it->second->mDaeSurface;
@@ -1726,7 +1734,7 @@ void DaeLoader::parseMaterials(daeElement* library)
       continue;
     }
 
-    std::map< daeElement*, ref<DaeEffect> >::iterator it = mEffects.find(effect);
+    std::map< daeElementRef, ref<DaeEffect> >::iterator it = mEffects.find(effect);
     if (it != mEffects.end())
     {
       domMaterial* material = materials[i].cast();
@@ -1811,16 +1819,35 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
     // mic fixme: issue error
     VL_CHECK(sampler2D_newparam)
 
-    std::map<domElement*, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
+    std::map< daeElementRef, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
     if ( it != mDaeNewParams.end() )
     {
       VL_CHECK(it->second->mDaeSampler2D)
       out_col->mSampler = it->second->mDaeSampler2D;
+      if ( it->second->mDaeSampler2D == NULL)
+      {
+        Log::error("LoadWriterCOLLADA: malformed file: <texture texture=..> points to a <newparam> that does not contain <sampler2D>!\n");
+      }
     }
     else
     {
-      // mic fixme: issue error
-      VL_TRAP();
+      std::map< daeElementRef, ref<Image> >::iterator it = mImages.find(sampler2D_newparam);
+      if ( it != mImages.end() )
+      {
+        // create dummy sampler
+        out_col->mSampler = new DaeSampler2D;
+        out_col->mSampler->mDaeSurface = new DaeSurface;
+        out_col->mSampler->mDaeSurface->mImage = it->second;
+        prepareTexture2D( out_col->mSampler.get() );
+        Log::warning("LoadWriterCOLLADA: malformed file: <texture texture=..> parameter points to an <image> instead of a <sampler2D>!\n"
+                     "VL will create a dummy sampler with the specified image.\n");
+      }
+      else
+      {
+        Log::error("LoadWriterCOLLADA: malformed file: <texture texture=..> could not be resolved to anything!\n");
+        // mic fixme: issue error
+        VL_TRAP();
+      }
     }
 
     // <texture texcoord="...">
@@ -2207,6 +2234,12 @@ void DaeLoader::parseAsset(domElement* root)
             // don't trust ColladaMax if we cannot read the version
             mAssumeOpaque = true;
           }
+        }
+
+        // MeshLab seem to flip the transparency also now.
+        if ( strstr(tool, "VCGLib | MeshLab") )
+        {
+          mInvertTransparency = true;
         }
 
         // stop at the first contributor
