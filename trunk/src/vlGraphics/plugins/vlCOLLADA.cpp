@@ -35,6 +35,7 @@
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Light.hpp>
+#include <vlGraphics/MultiDrawElements.hpp>
 #include <vlCore/Time.hpp>
 #include <vlCore/GLSLmath.hpp>
 #include <set>
@@ -1850,18 +1851,26 @@ void DaeLoader::generateGeometry(DaePrimitive* prim)
       prim->mP[0]->getValue()[i] = i;
   }
 
-  // generate index buffers & DrawElements
-  std::set<DaeVert> vert_set;
+  size_t total_index_count = 0;
   for(size_t ip=0; ip<prim->mP.size(); ++ip)
-  {
-    ref<ArrayUInt1> index_buffer = new ArrayUInt1;
-    index_buffer->resize( prim->mP[ip]->getValue().getCount() / prim->mIndexStride );
+    total_index_count += prim->mP[ip]->getValue().getCount();
 
-    for(size_t ivert=0, iidx=0; ivert<prim->mP[ip]->getValue().getCount(); ivert+=prim->mIndexStride, ++iidx)
+  ref<ArrayUInt1> index_buffer = new ArrayUInt1;
+  index_buffer->resize( total_index_count / prim->mIndexStride );
+
+  std::vector<GLint> vcount;
+
+  // generate index buffer for DrawElements or MultiDrawElements.
+  std::set<DaeVert> vert_set;
+  for(size_t ip=0, iidx=0; ip<prim->mP.size(); ++ip)
+  {
+    const domListOfUInts& p = prim->mP[ip]->getValue();
+
+    vcount.push_back( p.getCount() / prim->mIndexStride );
+
+    for(size_t ivert=0; ivert<p.getCount(); ivert+=prim->mIndexStride, ++iidx)
     {
       DaeVert vert;
-
-      const domListOfUInts& p = prim->mP[ip]->getValue();
 
       // fill vertex info
       for(size_t ichannel=0; ichannel<prim->mChannels.size(); ++ichannel)
@@ -1881,8 +1890,11 @@ void DaeLoader::generateGeometry(DaePrimitive* prim)
       // this is the actual index
       (*index_buffer)[iidx] = final_index;
     }
+  }
 
-    // fill the DrawElementsUInt
+  if (vcount.size() == 1)
+  {
+    // use DrawElements
     ref<DrawElementsUInt> de;
     switch(prim->mType)
     {
@@ -1895,11 +1907,31 @@ void DaeLoader::generateGeometry(DaePrimitive* prim)
       case Dae::PT_TRISTRIPS:  de = new DrawElementsUInt( PT_TRIANGLE_STRIP ); break;
       default:
         VL_TRAP()
-        continue;
     }
 
-    prim->mGeometry->drawCalls()->push_back(de.get());
     de->setIndexBuffer( index_buffer.get() );
+    prim->mGeometry->drawCalls()->push_back( de.get() );
+  }
+  else
+  {
+    // use MultiDrawElements
+    ref<MultiDrawElementsUInt> mde;
+    switch(prim->mType)
+    {
+      case Dae::PT_UNKNOWN:    mde = new MultiDrawElementsUInt( PT_POINTS ); break; // of course we can do better than this but we would need a lot of extra logic
+      case Dae::PT_LINES:      mde = new MultiDrawElementsUInt( PT_LINES ); break;
+      case Dae::PT_LINE_STRIP: mde = new MultiDrawElementsUInt( PT_LINE_STRIP ); break;
+      case Dae::PT_POLYGONS:   mde = new MultiDrawElementsUInt( PT_POLYGON ); break;
+      case Dae::PT_TRIFANS:    mde = new MultiDrawElementsUInt( PT_TRIANGLE_FAN ); break;
+      case Dae::PT_TRIANGLES:  mde = new MultiDrawElementsUInt( PT_TRIANGLES ); break;
+      case Dae::PT_TRISTRIPS:  mde = new MultiDrawElementsUInt( PT_TRIANGLE_STRIP ); break;
+      default:
+        VL_TRAP()
+    }
+
+    mde->setIndexBuffer( index_buffer.get() );
+    mde->setCountVector( vcount );
+    prim->mGeometry->drawCalls()->push_back( mde.get() );
   }
 
   // generate new vertex attrib info and install data
