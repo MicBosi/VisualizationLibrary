@@ -998,12 +998,8 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
       // NOTE: to be pedantic with the specs we should enabled the alpha blending if common_tech->mBlendingOn == true however
       // COLLADA transparency management is historically not reliable
 
-      // check if alpha blending is required
-      float total_alpha = common_tech->mDiffuse.mColor.a()  + common_tech->mAmbient.mColor.a() +
-                          common_tech->mEmission.mColor.a() + common_tech->mSpecular.mColor.a();
-
       // enable if material is transparent or alpha is coming from the diffuse texture
-      if ( total_alpha < 1.0f || (common_tech->mTransparent.mSampler && common_tech->mTransparent.mSampler == common_tech->mDiffuse.mSampler) )
+      if ( transparency < 1.0f || (common_tech->mTransparent.mSampler && common_tech->mTransparent.mSampler == common_tech->mDiffuse.mSampler) )
         fx->shader()->enable(EN_BLEND);
     }
 
@@ -2080,49 +2076,100 @@ void DaeLoader::parseAsset(domElement* root)
       for(size_t i=0; i<asset->getContributor_array().getCount(); ++i)
       {
         const char* tool = asset->getContributor_array()[i]->getAuthoring_tool()->getValue();
+        
+        if (!tool)
+          continue;
 
         // mic fixme: remove
         printf("TOOL = %s\n", tool);
 
         // Google SketchUp before 7.1 requires <transparency> inversion.
         // see http://www.collada.org/public_forum/viewtopic.php?f=12&t=1667
-        if ( tool && strstr(tool, "Google SketchUp") )
+        const char* google_str = strstr(tool, "Google SketchUp");
+        size_t google_str_len = strlen("Google SketchUp");
+        if ( google_str )
         {
-          float version = 1000;
-          if ( sscanf( strstr(tool, "Google SketchUp") + 16, "%f", &version) )
+          if ( strlen(google_str) > google_str_len )
           {
-            version = version * 100 + 0.5f;
-            if (version < 710)
-              mInvertTransparency = true;
+            float version = 1000;
+            if ( sscanf( google_str + google_str_len, "%f", &version) )
+            {
+              version = version * 100 + 0.5f;
+              if (version < 710)
+                mInvertTransparency = true;
+            }
+            else
+            {
+              // don't trust Google SketchUp if we cannot read the version
+              mAssumeOpaque = true;
+            }
+          }
+          else
+          {
+            // don't trust Google SketchUp if we cannot read the version
+            mAssumeOpaque = true;
           }
           break;
         }
 
         // See https://collada.org/mediawiki/index.php/ColladaMaya#ColladaMaya_3.03
         // - "Data exported with previous versions of our COLLADA tools may import with inverted transparency in ColladaMax 3.03 and ColladaMaya 3.03."
-        // - ColladaMax/ColladaMaya before 3.03 use unpredictable combinations of <transparent> and <transparency>, so... we assume opaque.
+        // - Actually ColladaMax/ColladaMaya before 3.03 use unpredictable combinations of <transparent> and <transparency>, so... we assume opaque.
 
-        if ( strstr(tool, "ColladaMaya") )
+        const char* colladamaya_str = strstr(tool, "ColladaMaya");
+        size_t colladamaya_str_len = strlen("ColladaMaya");
+        if ( colladamaya_str )
         {
           float version = 1000;
-          if ( sscanf( strstr(tool, "ColladaMaya") + 13, "%f", &version) )
+          if ( strlen(colladamaya_str) > colladamaya_str_len )
           {
-            version = version * 100 + 0.5f;
-            if (version < 303)
+            if ( sscanf( colladamaya_str + colladamaya_str_len, "%f", &version) )
+            {
+              version = version * 100 + 0.5f;
+              if (version < 303)
+                mAssumeOpaque = true;
+            }
+            else
+            {
+              // don't trust ColladaMaya if we cannot read the version
               mAssumeOpaque = true;
+            }
+          }
+          else
+          {
+            // don't trust ColladaMaya if we cannot read the version
+            mAssumeOpaque = true;
           }
         }
 
-        if ( strstr(tool, "ColladaMax") )
+        const char* colladamax_str = strstr(tool, "ColladaMax");
+        size_t colladamax_str_len = strlen("ColladaMax");
+        if ( colladamax_str )
         {
           float version = 1000;
-          if ( sscanf( strstr(tool, "ColladaMax") + 12, "%f", &version) )
+          if ( strlen(colladamax_str) > colladamax_str_len )
           {
-            version = version * 100 + 0.5f;
-            if (version < 303)
+            if ( sscanf( colladamax_str + colladamax_str_len, "%f", &version) )
+            {
+              version = version * 100 + 0.5f;
+              if (version < 303)
+                mAssumeOpaque = true;
+            }
+            else
+            {
+              // don't trust ColladaMax if we cannot read the version
               mAssumeOpaque = true;
+            }
+          }
+          else
+          {
+            // don't trust ColladaMax if we cannot read the version
+            mAssumeOpaque = true;
           }
         }
+
+        // stop at the first contributor
+        break;
       }
     }
   }
