@@ -42,7 +42,7 @@ class App_OcclusionCulling: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     if(!vl::Has_Occlusion_Query)
     {

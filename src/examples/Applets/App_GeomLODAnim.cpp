@@ -145,7 +145,7 @@ class App_GeomLODAnim: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     /* configure how many objects are there forming the ring */
     const int ring_obj_count = 20;

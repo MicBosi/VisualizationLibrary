@@ -40,7 +40,7 @@ class App_Lights: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     mCameraLightType = Disable;
 

@@ -44,7 +44,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     mTransform1 = new Transform;
     mTransform2 = new Transform;

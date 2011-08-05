@@ -46,7 +46,7 @@ class App_ShaderMultipassAlpha: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     /* effect to be applied to the sphere */
     vl::ref<vl::Effect> sphere_fx = new vl::Effect;

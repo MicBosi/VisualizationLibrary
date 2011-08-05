@@ -58,7 +58,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
     openglContext()->setContinuousUpdate(true);
 
     srand((unsigned int)time(NULL));
@@ -308,7 +308,7 @@ public:
   {
     if (!vl::Has_Texture_3D)
     {
-      vl::Log::info("textureVolumeColor() requires 3D texturing.\n");
+      vl::Log::notify("textureVolumeColor() requires 3D texturing.\n");
       return;
     }
 

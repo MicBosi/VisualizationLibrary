@@ -54,7 +54,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     // retrieve the default rendering
     mMainRendering = rendering()->as<Rendering>();

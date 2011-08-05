@@ -365,7 +365,7 @@ public:
   void initEvent()
   {
     // Log applet info
-    Log::info(appletInfo());
+    Log::notify(appletInfo());
 
     // Default values
     mMipmappingOn = true;
