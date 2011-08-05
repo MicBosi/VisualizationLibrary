@@ -284,6 +284,9 @@ namespace vl
 
     // transcoding routines
 
+    //! Creates a string representing the given pointer
+    static String fromPointer(const void* value);
+
     //! Creates a string representing the given integer value
     static String fromInt(int value);
 
