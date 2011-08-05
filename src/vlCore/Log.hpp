@@ -46,25 +46,111 @@ namespace vl
   {
     VL_INSTRUMENT_CLASS(vl::Log, Object)
 
-  protected:
-    typedef enum 
-    { 
-      LogBug,
-      LogError,
-      LogWarning,
-      LogNormal,
-      LogInfo,
-      LogDebug,
-    } ELogLevel;
-
   public:
     Log()
     {
       VL_DEBUG_SET_OBJECT_NAME()
+      mLogLevel = LL_LogPrint; // only used by operator<<()
+    }
+    
+    Log& operator<<( ELogLevel log_level ) { mLogLevel = log_level; return *this; }
+
+    Log& operator<<( const String& str )
+    { 
+      switch(mLogLevel)
+      {
+      case LL_LogNotify: notify(str); break;
+      case LL_LogPrint: print(str); break;
+      case LL_LogBug: bug(str); break;
+      case LL_LogError: error(str); break;
+      case LL_LogWarning: warning(str); break;
+      case LL_LogDebug: debug(str); break;
+      }
+      return *this; 
+    }
+
+    Log& operator<<( const std::string& v )
+    {
+      *this << String::fromStdString(v);
+      return *this;
+    }
+
+    Log& operator<<( const void* v )
+    {
+      *this << String::fromPointer(v);
+      return *this;
+    }
+
+    Log& operator<<( const char* v )
+    {
+      *this << String(v);
+      return *this;
+    }
+
+    Log& operator<<( char v )
+    {
+      *this << String(v);
+      return *this;
+    }
+
+    Log& operator<<( unsigned char v )
+    {
+      *this << String::fromUInt(v);
+      return *this;
+    }
+
+    Log& operator<<( short v )
+    {
+      *this << String::fromInt(v);
+      return *this;
+    }
+
+    Log& operator<<( unsigned short v )
+    {
+      *this << String::fromUInt(v);
+      return *this;
+    }
+
+    Log& operator<<( int v )
+    {
+      *this << String::fromInt(v);
+      return *this;
+    }
+
+    Log& operator<<( unsigned int v )
+    {
+      *this << String::fromUInt(v);
+      return *this;
+    }
+
+    Log& operator<<( long long v )
+    {
+      *this << String::fromLongLong(v);
+      return *this;
+    }
+
+    Log& operator<<( unsigned long long v )
+    {
+      *this << String::fromULongLong(v);
+      return *this;
+    }
+
+    Log& operator<<( double v )
+    {
+      *this << String::fromDouble(v);
+      return *this;
+    }
+
+    Log& operator<<( float v )
+    {
+      *this << String::fromDouble(v);
+      return *this;
     }
 
   protected:
     virtual void printImplementation(ELogLevel level, const String& message) = 0;
+
+    ELogLevel mLogLevel; // only used by operator<<()
 
     // ---  static methods ---
 
@@ -76,15 +162,15 @@ namespace vl
     //! The mutex used to synchronize concurrent calls to the log functions.
     static IMutex* logMutex() { return mLogMutex; }
 
-    /* Logs the specified message.
+    /** Important application message for the user.
+     * The message will be printed with an hightlighed color.
+     * \note Log generated only if verbosity level != vl::VEL_VERBOSITY_SILENT */
+    static void notify(const String& message);
+
+    /** Application message for the user.
      * \note Log generated only if verbosity level != vl::VEL_VERBOSITY_SILENT */
     static void print(const String& message);
     
-    /** Use this function to provide extra information useful to the end user.
-      * The string "Info: " is prepended to the \p message. 
-      * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_NORMAL */
-    static void info(const String& message);
-
     /** Use this function to provide extra information useful to investigate and solve problems.
       * The string "Debug: " is prepended to the \p message. 
       * \note Log generated only if verbosity level >= vl::VEL_VERBOSITY_DEBUG */
@@ -120,6 +206,15 @@ namespace vl
 
   //! Returns the currently installed default logger.
   VLCORE_EXPORT Log* defLogger();
+
+  // Log macros
+  #define VL_LOG (*::vl::defLogger())
+  #define VL_LOG_NOTIFY (VL_LOG << ::vl::LL_LogNotify)
+  #define VL_LOG_PRINT (VL_LOG << ::vl::LL_LogPrint)
+  #define VL_LOG_BUG (VL_LOG << ::vl::LL_LogBug)
+  #define VL_LOG_ERROR (VL_LOG << ::vl::LL_LogError)
+  #define VL_LOG_WARNING (VL_LOG << ::vl::LL_LogWarning)
+  #define VL_LOG_DEBUG (VL_LOG << ::vl::LL_LogDebug)
 
   //-----------------------------------------------------------------------------
   // StandardLog
