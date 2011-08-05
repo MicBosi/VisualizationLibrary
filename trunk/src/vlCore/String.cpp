@@ -1066,10 +1066,18 @@ String String::fromLatin1(const char* str, int character_count)
   return s;
 }
 //-----------------------------------------------------------------------------
+String String::fromPointer(const void* value)
+{
+  char buffer[32];
+  memset(buffer, 0, sizeof(buffer));
+  sprintf(buffer, "%p", value);
+  return fromAscii(buffer);
+}
+//-----------------------------------------------------------------------------
 String String::fromInt(int value)
 {
   char buffer[256];
-  memset(buffer, 0, 256);
+  memset(buffer, 0, sizeof(buffer));
   sprintf(buffer, "%d", value);
   return fromAscii(buffer);
 }
@@ -1077,7 +1085,7 @@ String String::fromInt(int value)
 String String::fromUInt(unsigned int value)
 {
   char buffer[256];
-  memset(buffer, 0, 256);
+  memset(buffer, 0, sizeof(buffer));
   sprintf(buffer, "%u", value);
   return fromAscii(buffer);
 }
@@ -1085,7 +1093,7 @@ String String::fromUInt(unsigned int value)
 String String::fromLongLong(long long value)
 {
   char buffer[256];
-  memset(buffer, 0, 256);
+  memset(buffer, 0, sizeof(buffer));
   sprintf(buffer, "%lld", value);
   return fromAscii(buffer);
 }
@@ -1093,7 +1101,7 @@ String String::fromLongLong(long long value)
 String String::fromULongLong(unsigned long long value)
 {
   char buffer[256];
-  memset(buffer, 0, 256);
+  memset(buffer, 0, sizeof(buffer));
   sprintf(buffer, "%llu", value);
   return fromAscii(buffer);
 }
@@ -1101,7 +1109,7 @@ String String::fromULongLong(unsigned long long value)
 String String::fromDouble(double value, int decimals)
 {
   char buffer[256];
-  memset(buffer, 0, 256);
+  memset(buffer, 0, sizeof(buffer));
   switch(decimals)
   {
     case 0: sprintf(buffer, "%.0lf", value); break;
