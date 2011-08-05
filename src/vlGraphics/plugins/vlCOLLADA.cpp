@@ -1331,16 +1331,17 @@ bool DaeLoader::load(VirtualFile* file)
       Real len_x = nmatrix.getX().length();
       Real len_y = nmatrix.getY().length();
       Real len_z = nmatrix.getZ().length();
-      if ( fabs(len_x - 1) > 0.1 || fabs(len_y - 1) > 0.1 || fabs(len_z - 1) > 0.1 )
+      if ( fabs(len_x - 1) > 0.05f || fabs(len_y - 1) > 0.05f || fabs(len_z - 1) > 0.05f )
       {
         // Log::warning("Detected mesh with scaled transform: enabled normal renormalization.\n");
         if ( actor->effect()->shader()->isEnabled(vl::EN_LIGHTING) )
           actor->effect()->shader()->enable(vl::EN_NORMALIZE); // or vl::EN_RESCALE_NORMAL
       }
 
-      // *** light association (only if lighting is on!) ***
+      // *** light association & normal computation (only if lighting is on!) ***
       if ( actor->effect()->shader()->isEnabled(EN_LIGHTING) )
       {
+        // *** light association ***
         // crete new effect/shader with it's own light set
         ref<Effect> fx = new Effect;
         fx->setObjectName( actor->effect()->objectName() );
@@ -1349,6 +1350,11 @@ bool DaeLoader::load(VirtualFile* file)
         actor->setEffect( fx.get() );
         for(size_t ilight=0; ilight<mLights.size() && ilight<8; ++ilight)
           fx->shader()->setRenderState( mLights[ilight].get() );
+
+       // *** compute missing normals ***
+        Geometry* geom = actor->lod(0)->as<Geometry>();
+       if ( loadOptions()->computeMissingNormals() && geom && !geom->normalArray() )
+         geom->computeNormals();
       }
     }
   }
@@ -2373,10 +2379,6 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
     // reinstall fixed normals
     prim->mGeometry->setNormalArray(norm_old.get());
   }
-
-   // --- compute missing normals ---
-   if ( loadOptions()->computeMissingNormals() && !prim->mGeometry->normalArray() )
-     prim->mGeometry->computeNormals();
 
    // disabled: we transform the root matrix instead
    // --- orient geometry based on up vector ---
