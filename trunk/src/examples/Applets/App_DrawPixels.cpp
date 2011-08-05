@@ -40,7 +40,7 @@ class App_DrawPixels: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     // transform used for the moving cube and star
 

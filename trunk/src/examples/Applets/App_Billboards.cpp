@@ -42,7 +42,7 @@ public:
   // initialization
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
     srand((unsigned int)time(NULL));
 
     generateTrees (100.0f, 500);

@@ -43,7 +43,7 @@ class App_MultipleCameras: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     // save to be used later
     ref<Renderer> renderer = rendering()->as<Rendering>()->renderer();

@@ -43,7 +43,7 @@ class App_ShaderOverride: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     // retrieve our vl::Rendering object
 

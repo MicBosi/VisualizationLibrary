@@ -39,7 +39,7 @@ class App_PointSplatting: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     trackball()->setTransform(NULL);
 

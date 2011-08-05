@@ -48,7 +48,7 @@ public:
       exit(1);
     }
 
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     const int actor_count = 1000;
 

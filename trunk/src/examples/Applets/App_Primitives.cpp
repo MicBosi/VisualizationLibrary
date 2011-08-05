@@ -40,7 +40,7 @@ class App_Primitives: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     const float objdim = 1;
     const float scene_radius = 4;

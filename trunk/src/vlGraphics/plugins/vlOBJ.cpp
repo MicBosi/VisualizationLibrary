@@ -313,7 +313,6 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
     Log::error( Say("loadOBJ(): could not open source file.\n") );
     return NULL;
   }
-  /*Log::info( Say("Loading '%s'.\n") << file->path() );*/
 
   mCoords.clear();
   // std::vector<float> mNormals;

@@ -142,7 +142,7 @@ public:
     glsl->attachShader( new vl::GLSLVertexShader("/glsl/perpixellight.vs") );
     if (vl::Has_GL_EXT_gpu_shader4||vl::Has_GL_Version_3_0||vl::Has_GL_Version_4_0)
     {
-      vl::Log::info("using glBindFragDataLocation()\n");
+      vl::Log::notify("using glBindFragDataLocation()\n");
       // see fragment shader sources for the details
       glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight_cartoon_mrt2.fs") );
       glsl->bindFragDataLocation(0, "FragDataOutputA"); // out varying variable writing on color attachment #0
@@ -150,7 +150,7 @@ public:
     }
     else
     {
-      vl::Log::info("glBindFragDataLocation() not supported.\n");
+      vl::Log::notify("glBindFragDataLocation() not supported.\n");
       // see fragment shader sources for the details
       glsl->attachShader( new vl::GLSLFragmentShader("/glsl/perpixellight_cartoon_mrt.fs") );
     }
@@ -565,7 +565,7 @@ public:
 
   virtual void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     if (!vl::Has_FBO)
     {

@@ -69,7 +69,7 @@ public:
   void initEvent()
   {
     // Basic initialization
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
     ghostCameraManipulator()->setMovementSpeed(5.0f);
 
     generateDungeon();
