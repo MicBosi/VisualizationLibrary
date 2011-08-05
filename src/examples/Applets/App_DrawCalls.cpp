@@ -270,7 +270,7 @@ class App_DrawCalls: public BaseDemo
 
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     if(!testTriangleIterators())
     {

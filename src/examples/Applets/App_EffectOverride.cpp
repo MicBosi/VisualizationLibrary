@@ -44,7 +44,7 @@ class App_EffectOverride: public BaseDemo
 {
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     // initialize solid & wire rendering with the default camera, transform root and scene manager.
     mSolidRendering = new Rendering;

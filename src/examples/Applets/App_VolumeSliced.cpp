@@ -75,7 +75,7 @@ public:
   /* initialize the applet with a default volume */
   virtual void initEvent()
   {
-    Log::info(appletInfo());
+    Log::notify(appletInfo());
     
     if (!Has_Texture_3D && !Has_GLSL)
     {
@@ -257,7 +257,7 @@ public:
 
       if (USE_GLSL)
       {
-        Log::info("IF_LUMINANCE image and GLSL supported: lighting and the transfer function will be computed in realtime.\n");
+        Log::notify("IF_LUMINANCE image and GLSL supported: lighting and the transfer function will be computed in realtime.\n");
 
         ref<Image> trfunc;
         if (COLORED_LIGHTS)
@@ -293,7 +293,7 @@ public:
       }
       else // precompute transfer function and illumination
       {
-        Log::info("IF_LUMINANCE image and GLSL not supported: transfer function and lighting will be precomputed.\n");
+        Log::notify("IF_LUMINANCE image and GLSL not supported: transfer function and lighting will be precomputed.\n");
 
         // generate simple transfer function
         ref<Image> trfunc = vl::makeColorSpectrum(128, vl::black, vl::blue, vl::green, vl::yellow, vl::red);
@@ -307,7 +307,7 @@ public:
     }
     else // if it's a color texture just display it as it is
     {
-      Log::info("Non IF_LUMINANCE image: not using GLSL.\n");
+      Log::notify("Non IF_LUMINANCE image: not using GLSL.\n");
       // install volume texture
       vol_fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( img.get() ) );
       mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );

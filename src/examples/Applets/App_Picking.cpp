@@ -85,7 +85,7 @@ public:
 
   virtual void initEvent()
   {
-    Log::info(appletInfo());
+    Log::notify(appletInfo());
 
     srand((int)time(NULL));
 

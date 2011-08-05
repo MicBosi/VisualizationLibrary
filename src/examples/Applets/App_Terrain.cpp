@@ -38,7 +38,7 @@ class App_Terrain: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     if (!vl::Has_Multitexture)
     {

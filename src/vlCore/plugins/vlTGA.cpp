@@ -131,7 +131,7 @@ ref<Image> vl::loadTGA( VirtualFile* file )
       case TGA_RGB_COMPRESSED:         type = "TGA_RGB_COMPRESSED"; break;
       case TGA_GRAYSCALE_COMPRESSED:   type = "TGA_GRAYSCALE_COMPRESSED"; break;
     }
-    Log::info( Say("TGA %s: w=%n, h=%n, bpp=%n/%n %s\n") << file->path() << w << h << bpp << header.ColMapEntrySize << type);
+    Log::debug( Say("TGA %s: w=%n, h=%n, bpp=%n/%n %s\n") << file->path() << w << h << bpp << header.ColMapEntrySize << type);
   #endif
 
   if (header.ImageType == TGA_NO_IMAGE_DATA)

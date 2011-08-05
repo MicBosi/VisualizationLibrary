@@ -74,7 +74,7 @@ class App_BlindTests: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
     String msg;
     Time time;
 

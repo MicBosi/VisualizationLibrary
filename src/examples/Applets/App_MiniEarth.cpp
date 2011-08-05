@@ -43,7 +43,7 @@ class App_MiniEarth: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     vl::ref<vl::Effect> fx = new vl::Effect;
     fx->shader()->enable(vl::EN_LIGHTING);

@@ -57,7 +57,7 @@ public:
       exit(1);
     }
 
-    Log::info(appletInfo());
+    Log::notify(appletInfo());
 
     rendering()->as<Rendering>()->transform()->addChild(mTransform1.get());
     rendering()->as<Rendering>()->transform()->addChild(mTransform2.get());

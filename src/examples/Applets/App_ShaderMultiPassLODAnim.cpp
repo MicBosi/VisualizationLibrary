@@ -88,7 +88,7 @@ class App_ShaderMultiPassLODAnim: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::info(appletInfo());
+    vl::Log::notify(appletInfo());
 
     // to be used later
     vl::ref<vl::Light> light = new vl::Light(0);
