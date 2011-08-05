@@ -97,7 +97,6 @@ public:
     vl::ref<vl::Geometry> box_set = vl::makeBox( vl::vec3(0,0,0), 2, 2, 2, false);
     box_set->computeNormals();
     box_set->setObjectName("Box Set");
-    box_set->setColor(vl::white);
 
     /* setting multiple instances is as easy as calling this function! */
     vl::DrawArrays* draw_arrays = vl::cast<vl::DrawArrays>( box_set->drawCalls()->at(0) );
@@ -115,7 +114,6 @@ public:
       fx->shader()->enable(vl::EN_LIGHTING);
       fx->shader()->enable(vl::EN_CULL_FACE);
       fx->shader()->enable(vl::EN_DEPTH_TEST);
-      fx->shader()->gocMaterial()->setColorMaterialEnabled(false);
 
       /* use a multi instancing vertex shader */
       vl::GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
@@ -144,11 +142,11 @@ public:
     box_fx->shader()->setRenderState( new vl::Light(0) );
     box_fx->shader()->enable(vl::EN_DEPTH_TEST);
     box_fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+    box_fx->shader()->gocColor()->setColor(vl::red);
 
     /* shows bounding box */
     vl::ref<vl::Geometry> box = vl::makeBox( box_set->boundingBox() );
     box->setObjectName("Wire box");
-    box->setColor(vl::red);
     box->computeNormals();
     sceneManager()->tree()->addActor( box.get(), box_fx.get() );
 

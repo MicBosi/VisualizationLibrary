@@ -111,7 +111,6 @@ void VolumePlot::compute(const Function& func, float threshold)
 
   // volume_box outline
   ref<Geometry> box_outline = makeBox(AABB((vec3)minCorner(),(vec3)maxCorner()));
-  box_outline->setColor(white);
 
   // setup isosurface and actors
 

@@ -54,7 +54,7 @@ Light::Light(int light_index)
   mSpotDirection = fvec3(0,0,-1);
   mSpotExponent = 0;
   mSpotCutoff = 180.0f;
-  mConstantAttenuation   = 1.0f;
+  mConstantAttenuation  = 1.0f;
   mLinearAttenuation    = 0.0f;
   mQuadraticAttenuation = 0.0f;
   mFollowedTransform = NULL;

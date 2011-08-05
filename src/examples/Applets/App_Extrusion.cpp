@@ -305,12 +305,12 @@ public:
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     geom->setVertexArray( vert_array.get() );
     *vert_array = ctrl_points;
-    geom->setColor(color);
     geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_LINE_STRIP, 0, (int)vert_array->size())); // lines
     geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_POINTS,     0, (int)vert_array->size())); // points
 
     // setup simple effect
     vl::ref<vl::Effect> effect = new vl::Effect;
+    effect->shader()->gocColor()->setColor(color);
     effect->shader()->enable(vl::EN_LINE_STIPPLE);
     effect->shader()->gocPointSize()->set(3);
     effect->shader()->gocLineStipple()->setPattern(0x3333);

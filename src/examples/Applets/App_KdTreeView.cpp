@@ -202,8 +202,8 @@ public:
         vl::ref<vl::Effect> effect = new vl::Effect;
         effect->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
         effect->shader()->enable(vl::EN_DEPTH_TEST);
+        effect->shader()->gocColor()->setColor(vl::gold);
         vl::ref<vl::Geometry> box = vl::makeBox(tree->aabb());
-        box->setColor(vl::gold);
         sceneManager()->tree()->addActor(box.get(), effect.get());
 
         if (mViewDepth != -1)

@@ -74,7 +74,7 @@ namespace vl
       fmat4 nmat = vmat.as3x3();
       nmat = nmat.getInverse().transpose();
 
-      ref<Geometry>         geom = cast<Geometry>(renderable);
+      ref<Geometry> geom = cast<Geometry>(renderable);
       ref<ArrayFloat3> vert_array = cast<ArrayFloat3>(geom->vertexArray());
       // VL_CHECK(vert_array->size() == edges().size()*2);
       for(unsigned i=0; i<edges().size(); ++i)

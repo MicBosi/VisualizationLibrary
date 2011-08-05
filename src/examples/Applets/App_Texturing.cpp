@@ -126,8 +126,6 @@ public:
 
     // Create a 2x2 vertices quad facing the camera
     mQuad3DTex = makeGrid( vec3(0,0,0), 10.0f, 10.0f, 2, 2 );
-    // Set one single color for all the vertices
-    mQuad3DTex->setColor(white);
     // Rotate plane toward the user, otherwise it would be on the x/z plane
     mQuad3DTex->transform( mat4::getRotation(90, 1,0,0), false );
 
@@ -163,8 +161,6 @@ public:
 
     // Create a 2x2 vertices quad facing the camera
     mQuad2DArrayTex = makeGrid( vec3(0,0,0), 10.0f, 10.0f, 2, 2 );
-    // Set one single color for all the vertices
-    mQuad2DArrayTex->setColor(white);
     // Rotate plane toward the user
     mQuad2DArrayTex->transform( mat4::getRotation(90, 1,0,0), false );
 
@@ -214,7 +210,6 @@ public:
 
     // Create a grid with img_holebox->height() slices
     mQuad1DArrayTex = makeGrid( vec3(0,0,0), 10, 10, 2, img_holebox->height() );
-    mQuad1DArrayTex->setColor(white);
     mQuad1DArrayTex->transform( mat4::getRotation(90, 1,0,0), false );
 
     // Texture coordinates to be animated in updateScene()
@@ -259,7 +254,6 @@ public:
     float s_max = (float)img_holebox->width();
     float t_max = (float)img_holebox->height();
     ref<Geometry> quad_rect = makeGrid( vec3(0,0,0), 10.0f, 10.0f, 2, 2, true, fvec2(0, 0), fvec2(s_max, t_max) );
-    quad_rect->setColor(white);
     quad_rect->transform( mat4::getRotation(90, 1,0,0), false );
 
     // Effect used by the actor
@@ -390,7 +384,7 @@ public:
   void updateScene()
   {
     // 5 seconds period
-    float t = sin( Time::currentTime()*dPi*2.0/5.0) * 0.5 + 0.5;
+    float t = sin( Time::currentTime()*fPi*2.0f/5.0f) * 0.5f + 0.5f;
     t = t * (1.0f - 0.02f*2) + 0.02f;
 
     // Rotating cubes
@@ -444,8 +438,8 @@ public:
         float x_offset = 0.1f * cos( t*3.14159265f + 10.0f*((float)i/m1DArraySize)*3.14159265f );
         // Note: the y texture coordinate is an integer value between 0 and N where N 
         // is the number of texture 1D layers present in the texture array
-        mTexCoords_1DArray->at(i*2+0) = fvec2(0+x_offset, i);
-        mTexCoords_1DArray->at(i*2+1) = fvec2(1+x_offset, i);
+        mTexCoords_1DArray->at(i*2+0) = fvec2(0+x_offset, (float)i);
+        mTexCoords_1DArray->at(i*2+1) = fvec2(1+x_offset, (float)i);
       }
       // Mark texture coords as dirty to update its VBOs.
       mTexCoords_1DArray->setVBODirty(true);
