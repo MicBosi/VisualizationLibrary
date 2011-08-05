@@ -547,7 +547,6 @@ public:
     mIsosurfGeom->setVertexArray(mMarchingCubes.mVertsArray.get());
     mIsosurfGeom->setNormalArray(mMarchingCubes.mNormsArray.get());
     mIsosurfGeom->drawCalls()->push_back(mMarchingCubes.mDrawElements.get());
-    mIsosurfGeom->setColor(vl::royalblue);
 
     #if 0
       time.start();
@@ -557,25 +556,28 @@ public:
       vl::Log::print( vl::Say("Simplification: time = %.2n\n") << time.elapsed() );
     #endif
 
-    // actor
-    vl::ref<vl::Actor> actor = new vl::Actor(mIsosurfGeom.get(), new vl::Effect);
-    
+    vl::ref<vl::Effect> fx = new vl::Effect;
+
     // effect
-    actor->effect()->shader()->setRenderState( new vl::Light(0) );
-    actor->effect()->shader()->enable(vl::EN_DEPTH_TEST);
-    actor->effect()->shader()->enable(vl::EN_LIGHTING);
-    actor->effect()->shader()->gocLightModel()->setTwoSide(true);
-    actor->effect()->shader()->gocMaterial()->setBackDiffuse(vl::green);
+    fx->shader()->setRenderState( new vl::Light(0) );
+    fx->shader()->enable(vl::EN_DEPTH_TEST);
+    fx->shader()->enable(vl::EN_LIGHTING);
+    fx->shader()->gocLightModel()->setTwoSide(true);
+    fx->shader()->gocMaterial()->setBackDiffuse(vl::green);
 
     // show the volume in wireframe to see the tessellation.
 #if defined(VL_OPENGL)
-    actor->effect()->lod(0)->push_back( new vl::Shader );
-    actor->effect()->shader(0,1)->enable(vl::EN_CULL_FACE);
-    actor->effect()->shader(0,1)->enable(vl::EN_DEPTH_TEST);
-    actor->effect()->shader(0,1)->enable(vl::EN_POLYGON_OFFSET_LINE);
-    actor->effect()->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
-    actor->effect()->shader(0,1)->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+    fx->lod(0)->push_back( new vl::Shader );
+    fx->shader(0,1)->enable(vl::EN_CULL_FACE);
+    fx->shader(0,1)->enable(vl::EN_DEPTH_TEST);
+    fx->shader(0,1)->enable(vl::EN_POLYGON_OFFSET_LINE);
+    fx->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
+    fx->shader(0,1)->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
+    fx->shader(0,1)->gocColor()->setColor(vl::royalblue);
 #endif
+
+    // actor
+    vl::ref<vl::Actor> actor = new vl::Actor(mIsosurfGeom.get(), fx.get());
 
     // add actor to the scene
     sceneManager()->tree()->addActor( actor.get() );

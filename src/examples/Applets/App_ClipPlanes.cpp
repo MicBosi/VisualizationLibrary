@@ -89,11 +89,10 @@ public:
     plane_fx->setRenderRank(1); // draw after the clipped model
     plane_fx->shader()->enable(vl::EN_DEPTH_TEST);
     plane_fx->shader()->enable(vl::EN_BLEND);
-    plane_fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
     plane_fx->shader()->gocLightModel()->setTwoSide(true);
+    plane_fx->shader()->gocColor()->setColor(vl::fvec4(1,0,0,0.3f)); // transparent red
     // add plane actor
     vl::ref<vl::Geometry> plane = vl::makeGrid( vl::vec3(0,0,0), 4,4, 2,2 );
-    plane->setColor(vl::fvec4(1,0,0,0.3f)); // transparent red
     sceneManager()->tree()->addActor( plane.get(), plane_fx.get(), mClipTr.get() );
   }
 

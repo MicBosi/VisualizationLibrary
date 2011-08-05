@@ -68,6 +68,7 @@ public:
     wirepass->gocHint()->setLineSmoothHint(vl::HM_NICEST);
     wirepass->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
     wirepass->gocPolygonOffset()->set(-1.0f, -1.0f);
+    wirepass->gocColor()->setColor(vl::green);
 
     /* set wireframe shader as second pass */
     sphere_fx->lod(0)->push_back(wirepass.get());
@@ -75,7 +76,6 @@ public:
     /* create template sphere */
     vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0,0,0), 6, 10, 10);
     sphere->computeNormals();
-    sphere->setColor(vl::green);
 
     /* generate a ring of spheres */
     const int actor_count = 20;

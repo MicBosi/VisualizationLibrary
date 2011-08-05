@@ -100,6 +100,12 @@ DepthFunc* Shader::gocDepthFunc() { GET_OR_CREATE(DepthFunc) }
 //------------------------------------------------------------------------------
 DepthMask* Shader::gocDepthMask() { GET_OR_CREATE(DepthMask) }
 //------------------------------------------------------------------------------
+Color* Shader::gocColor() { GET_OR_CREATE(Color) }
+//------------------------------------------------------------------------------
+SecondaryColor* Shader::gocSecondaryColor() { GET_OR_CREATE(SecondaryColor) }
+//------------------------------------------------------------------------------
+Normal* Shader::gocNormal() { GET_OR_CREATE(Normal) }
+//------------------------------------------------------------------------------
 ColorMask* Shader::gocColorMask() { GET_OR_CREATE(ColorMask) }
 //------------------------------------------------------------------------------
 PolygonMode* Shader::gocPolygonMode() { GET_OR_CREATE(PolygonMode) }
@@ -632,6 +638,30 @@ void StencilMask::apply(const Camera*, OpenGLContext*) const
 void BlendColor::apply(const Camera*, OpenGLContext*) const
 {
   VL_glBlendColor(mBlendColor.r(), mBlendColor.g(), mBlendColor.b(), mBlendColor.a()); VL_CHECK_OGL()
+}
+//------------------------------------------------------------------------------
+// Color
+//------------------------------------------------------------------------------
+void Color::apply(const Camera*, OpenGLContext* ctx) const
+{
+  glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() ); VL_CHECK_OGL()
+  ctx->mColor = mColor;
+}
+//------------------------------------------------------------------------------
+// SecondaryColor
+//------------------------------------------------------------------------------
+void SecondaryColor::apply(const Camera*, OpenGLContext* ctx) const
+{
+  glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() ); VL_CHECK_OGL()
+  ctx->mSecondaryColor = mSecondaryColor;
+}
+//------------------------------------------------------------------------------
+// Normal
+//------------------------------------------------------------------------------
+void Normal::apply(const Camera*, OpenGLContext* ctx) const
+{
+  glNormal3f( mNormal.x(), mNormal.y(), mNormal.z() ); VL_CHECK_OGL()
+  ctx->mNormal = mNormal;
 }
 //------------------------------------------------------------------------------
 // ColorMask

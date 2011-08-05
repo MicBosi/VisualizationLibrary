@@ -61,6 +61,7 @@ public:
     fx->shader(0,1)->enable(EN_POLYGON_OFFSET_LINE);
     fx->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
+    fx->shader(0,1)->gocColor()->setColor(vl::lightgreen);
 #endif
 
     /* create our primitives */
@@ -91,9 +92,6 @@ public:
       mGeometries[i]->computeBounds();
       m = mat4::getTranslation( -mGeometries[i]->boundingBox().center() );
       mGeometries[i]->transform( m );
-
-      /* sets the wireframe color */
-      mGeometries[i]->setColor(vl::lightgreen);
 
       /* computes normals if not present */
       if (!mGeometries[i]->normalArray())

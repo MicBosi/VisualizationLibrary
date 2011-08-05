@@ -479,7 +479,7 @@ public:
     // ground plane
     const vl::Real size = 50;
     vl::ref<vl::Geometry> ground = vl::makeGrid( vl::vec3(0,0,0), size, size, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
-    ground->setNormal( vl::fvec3(0,1,0) );
+    ground->computeNormals();
     mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( ground.get(), effect1.get() );
 
     if (texture2)

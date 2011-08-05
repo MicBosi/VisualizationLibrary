@@ -59,6 +59,8 @@ namespace vl
     class WFInfo: public Object
     {
     public:
+      WFInfo(): mColor( vl::black ) {}
+      fvec4 mColor;
       ref<Geometry> mGeometry;
       ref<EdgeUpdateCallback> mEdgeCallback;
     };

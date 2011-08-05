@@ -126,6 +126,9 @@ namespace vl
   class VLGRAPHICS_EXPORT OpenGLContext: public Object
   {
     VL_INSTRUMENT_CLASS(vl::OpenGLContext, Object)
+    friend class Color;
+    friend class SecondaryColor;
+    friend class Normal;
 
   public:
     //! Constructor.
@@ -490,6 +493,13 @@ namespace vl
     //! - <i>In general all OpenGL render states should be set to their default values.</i>
     bool isCleanState(bool verbose);
 
+  public:
+    // constant color
+    const fvec3& normal() const { return mNormal; }
+    const fvec4& color() const { return mColor; }
+    const fvec3& secondaryColor() const { return mSecondaryColor; }
+    const fvec4& vertexAttribValue(int i) const { VL_CHECK(i<VL_MAX_GENERIC_VERTEX_ATTRIB); return mVertexAttribValue[i]; }
+
   protected:
     ref<RenderTarget> mRenderTarget;
     std::vector< ref<FBORenderTarget> > mFBORenderTarget;
@@ -528,6 +538,7 @@ namespace vl
       int mState;
       bool mEnabled;
     };
+
   protected:
     // --- VertexAttribSet Management ---
     const IVertexAttribSet* mCurVAS;
@@ -538,6 +549,12 @@ namespace vl
     VertexArrayInfo mFogArray;
     VertexArrayInfo mTexCoordArray[VL_MAX_TEXTURE_UNITS];
     VertexArrayInfo mVertexAttrib[VL_MAX_GENERIC_VERTEX_ATTRIB];
+
+    // save and restore constant attributes
+    fvec3 mNormal;
+    fvec4 mColor;
+    fvec3 mSecondaryColor;
+    fvec4 mVertexAttribValue[VL_MAX_GENERIC_VERTEX_ATTRIB];
 
   private:
     void setupDefaultRenderStates();

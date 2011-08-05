@@ -170,8 +170,8 @@ public:
     ref<Effect> fx_box = new Effect;
     fx_box->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx_box->shader()->enable(EN_DEPTH_TEST);
+    fx_box->shader()->gocColor()->setColor(vl::red);
     ref<Geometry> box_outline = vl::makeBox(volume_box);
-    box_outline->setColor(vl::red);
     sceneManager()->tree()->addActor( box_outline.get(), fx_box.get(), mVolumeTr.get() );
 
     // bias text

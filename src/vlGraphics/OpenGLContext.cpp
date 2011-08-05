@@ -67,6 +67,10 @@ mHasDoubleBuffer(false), mIsInitialized(false), mCurVAS(NULL)
   memset( mRenderStateTable,   0xFF, sizeof(mRenderStateTable) );
   memset( mCurrentEnable,      0xFF, sizeof(mCurrentEnable) );
   memset( mEnableTable,        0xFF, sizeof(mEnableTable) );
+
+  mNormal = fvec3(0,1,0);
+  mColor  = fvec4(1,1,1,1);
+  mSecondaryColor = fvec3(1,1,1);
 }
 //-----------------------------------------------------------------------------
 OpenGLContext::~OpenGLContext()
@@ -570,6 +574,10 @@ void OpenGLContext::setupDefaultRenderStates()
 {
   if ( Has_Fixed_Function_Pipeline )
   {
+    mDefaultRenderStates[RS_Color]  = new Color;
+    mDefaultRenderStates[RS_SecondaryColor]  = new SecondaryColor;
+    mDefaultRenderStates[RS_Normal]  = new Normal;
+
     mDefaultRenderStates[RS_AlphaFunc]  = new AlphaFunc;
     mDefaultRenderStates[RS_Fog]        = new Fog;
     mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
@@ -1533,6 +1541,9 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
           mNormalArray.mPtr = 0;
           mNormalArray.mVBO = 0;
+
+          // restore constant normal
+          glNormal3f( mNormal.x(), mNormal.y(), mNormal.z() );
         }
       }
 
@@ -1568,6 +1579,9 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
           mColorArray.mPtr = 0;
           mColorArray.mVBO = 0;
+
+          // restore constant color
+          glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() );
         }
       }
 
@@ -1603,6 +1617,9 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
           mSecondaryColorArray.mPtr = 0;
           mSecondaryColorArray.mVBO = 0;
+
+          // restore constant color
+          glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() );
         }
       }
 

@@ -136,6 +136,10 @@ void Text::render_Implementation(const Actor* actor, const Shader*, const Camera
     if (Has_GL_Version_2_0)
       glStencilMaskSeparate(GL_BACK, stencil_back_mask);
   }
+  
+  // restore the right color and normal since we changed them
+  glColor4fv( gl_context->color().ptr() );
+  glNormal3fv( gl_context->normal().ptr() );
 }
 //-----------------------------------------------------------------------------
 void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& color, const fvec2& offset) const
