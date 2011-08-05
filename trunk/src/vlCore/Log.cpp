@@ -39,6 +39,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <strstream>
 
 using namespace vl;
 
@@ -69,6 +70,7 @@ namespace
   #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_INTENSITY);
   #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
   #define SET_TEXT_COLOR_GREEN() ScopedColor set_scoped_color(FOREGROUND_GREEN|FOREGROUND_INTENSITY);
+  #define SET_TEXT_COLOR_BLUE() ScopedColor set_scoped_color(FOREGROUND_BLUE);
 #else
   struct ScopedColor
   {
@@ -116,10 +118,21 @@ namespace
   #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color("\033[31m");
   #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color("\033[1;31m");
   #define SET_TEXT_COLOR_GREEN()  ScopedColor set_scoped_color("\033[1;32m");
+  #define SET_TEXT_COLOR_BLUE()  ScopedColor set_scoped_color("\033[34m");
 #endif
 }
 //-----------------------------------------------------------------------------
 // Log
+//-----------------------------------------------------------------------------
+void Log::notify(const String& log) 
+{ 
+  //! Synchronize log across threads.
+  ScopedMutex mutex(Log::logMutex());
+
+  SET_TEXT_COLOR_GREEN()
+  if(defLogger() && globalSettings()->verbosityLevel() != vl::VEL_VERBOSITY_SILENT)
+    defLogger()->printImplementation(LL_LogNotify, log); 
+}
 //-----------------------------------------------------------------------------
 void Log::print(const String& log) 
 { 
@@ -127,7 +140,7 @@ void Log::print(const String& log)
   ScopedMutex mutex(Log::logMutex());
 
   if(defLogger() && globalSettings()->verbosityLevel() != vl::VEL_VERBOSITY_SILENT)
-    defLogger()->printImplementation(LogNormal, log); 
+    defLogger()->printImplementation(LL_LogPrint, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::debug(const String& log) 
@@ -135,18 +148,9 @@ void Log::debug(const String& log)
   //! Synchronize log across threads.
   ScopedMutex mutex(Log::logMutex());
 
+  SET_TEXT_COLOR_BLUE()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_DEBUG)
-    defLogger()->printImplementation(LogDebug, log); 
-}
-//-----------------------------------------------------------------------------
-void Log::info(const String& log) 
-{ 
-  //! Synchronize log across threads.
-  ScopedMutex mutex(Log::logMutex());
-
-  SET_TEXT_COLOR_GREEN()
-  if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
-    defLogger()->printImplementation(LogInfo, log); 
+    defLogger()->printImplementation(LL_LogDebug, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::warning(const String& log) 
@@ -156,7 +160,7 @@ void Log::warning(const String& log)
 
   SET_TEXT_COLOR_YELLOW()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LogWarning, log); 
+    defLogger()->printImplementation(LL_LogWarning, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::error(const String& log) 
@@ -166,7 +170,7 @@ void Log::error(const String& log)
 
   SET_TEXT_COLOR_RED()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LogError, log); 
+    defLogger()->printImplementation(LL_LogError, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::bug(const String& log) 
@@ -176,7 +180,7 @@ void Log::bug(const String& log)
 
   SET_TEXT_COLOR_PURPLE()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LogBug, log); 
+    defLogger()->printImplementation(LL_LogBug, log); 
 }
 //------------------------------------------------------------------------------
 void Log::logSystemInfo()
@@ -245,7 +249,7 @@ void Log::logSystemInfo()
 //------------------------------------------------------------------------------
 void vl::log_failed_check(const char* expr, const char* file, int line)
 {
-  Log::error( Say("Condition \"%s\" failed at %s:%n\n") << expr << file << line );
+  VL_LOG_ERROR << "Condition \"" << expr << "\" failed at " << file << ":" << line << "\n" << 'a';
   fflush(stdout);
   fflush(stderr);
 
