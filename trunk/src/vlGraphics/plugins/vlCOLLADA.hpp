@@ -70,6 +70,7 @@ namespace vl
         mFixBadNormals = true;
         mExtractSkins = true;
         mMergeDrawCalls = true;
+        mLightMeshSize = 2.0f;
       }
 
       //! If true the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported. Enabled by default.
@@ -114,6 +115,16 @@ namespace vl
       //! If set to true merges all the draw calls of each Geometry into one triangle and/or one triangle strip draw call. Enabled by default.
       bool mergeDrawCalls() const { return mMergeDrawCalls; }
 
+      //! If size != 0 a mesh will be generated and exported for each light source. If size == 0 no light-mesh will be generated.
+      //! The generated meshes will be a sphere for point lights, a pyramid for directional light, a cone for spotlights, a torus for ambient lights.
+      //! Such meshes will be renamed "LightMesh-"+<name of the light object they represent>.
+      float setLightMeshSize(float size) { mLightMeshSize = size; }
+
+      //! If size != 0 a mesh will be generated and exported for each light source. If size == 0 no light-mesh will be generated.
+      //! The generated meshes will be a sphere for point lights, a pyramid for directional light, a cone for spotlights, a torus for ambient lights.
+      //! Such meshes will be renamed "LightMesh-"+<name of the light object they represent>.
+      float lightMeshSize() const { return mLightMeshSize; }
+
     protected:
       TransparencyOption mInvertTransparency;
       bool mFlattenTransformHierarchy;
@@ -122,6 +133,7 @@ namespace vl
       bool mFixBadNormals;
       bool mExtractSkins;
       bool mMergeDrawCalls;
+      float mLightMeshSize;
     };
 
   public:
