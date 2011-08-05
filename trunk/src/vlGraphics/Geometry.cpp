@@ -46,9 +46,6 @@ Geometry::Geometry()
   mVertexAttribArrays.setAutomaticDelete(false);
   mTexCoordArrays.setAutomaticDelete(false);
   mDrawCalls.setAutomaticDelete(false);
-  mColor = vl::white;
-  mSecondaryColor = vl::white;
-  mNormal = fvec3(0,0,1);
 }
 //-----------------------------------------------------------------------------
 Geometry::~Geometry()
@@ -131,9 +128,6 @@ void Geometry::deepCopyTo(Geometry* geom) const
   // primitives
   for(int i=0; i<mDrawCalls.size(); ++i)
     geom->mDrawCalls.push_back( mDrawCalls[i]->clone().get() );
-  geom->mColor = mColor;
-  geom->mSecondaryColor = mSecondaryColor;
-  geom->mNormal = mNormal;
 }
 //-----------------------------------------------------------------------------
 Geometry& Geometry::operator=(const Geometry& other)
@@ -148,9 +142,6 @@ Geometry& Geometry::operator=(const Geometry& other)
   mFogCoordArray = other.mFogCoordArray;
   mTexCoordArrays = other.mTexCoordArrays;
   mVertexAttribArrays = other.mVertexAttribArrays;
-  mColor = other.mColor;
-  mSecondaryColor = other.mSecondaryColor;
-  mNormal = other.mNormal;
   mDrawCalls = other.mDrawCalls;
   return *this;
 }
@@ -496,21 +487,6 @@ void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*,
 {
   VL_CHECK_OGL()
 
-  // set default normal, color and secondary colors
-  // note: Has_GL_Version_1_1 is false for GLES 1.x and GLES 2.x
-
-  if (Has_Fixed_Function_Pipeline) 
-  {
-    if (!normalArray())
-      glNormal3f(mNormal.x(), mNormal.y(), mNormal.z()); // also GLES 1.1
-
-    if (!colorArray())
-      glColor4f(mColor.r(), mColor.g(), mColor.b(), mColor.a()); // also GLES 1.1
-
-    if (!secondaryColorArray() && Has_GL_Version_1_4) // not GLES 1.1
-      glSecondaryColor3fv(mSecondaryColor.ptr());
-  }
-
   // bind Vertex Attrib Set
 
   bool vbo_on = Has_VBO && vboEnabled() && !isDisplayListEnabled();
@@ -582,7 +558,7 @@ DrawCall* Geometry::mergeTriangleStrips()
     if (deb && deb->primitiveType() == PT_TRIANGLE_STRIP)
     {
       // preserve order
-      de_vector.insert(de_vector.begin(), deb);
+      de_vector.push_back( deb );
       drawCalls()->eraseAt(i);
     }
   }
@@ -645,7 +621,7 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
       VL_CHECK(index_count >= 0);
       total_index_count += index_count;
       // insert at the head to preserve the primitive rendering order
-      mergendo_calls.insert( mergendo_calls.begin(), drawCalls()->at(i) );
+      mergendo_calls.push_back( drawCalls()->at(i) );
       drawCalls()->eraseAt(i);
     }
   }
@@ -692,7 +668,7 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
       total_index_count += index_count;
       count_vector.push_back( index_count );
       // insert at the head to preserve the primitive rendering order
-      mergendo_calls.insert( mergendo_calls.begin(), drawCalls()->at(i) );
+      mergendo_calls.push_back( drawCalls()->at(i) );
       drawCalls()->eraseAt(i);
     }
   }
