@@ -358,16 +358,19 @@ void MarchingCubes::run(bool generate_colors)
   }
 
   mVertsArray->resize(mVerts.size());
+  mVertsArray->setVBODirty();
   if (mVerts.size())
     memcpy(mVertsArray->ptr(), &mVerts[0], sizeof(mVerts[0]) * mVerts.size());
 
   mNormsArray->resize(mNorms.size());
+  mNormsArray->setVBODirty();
   if (mNorms.size())
     memcpy(mNormsArray->ptr(), &mNorms[0], sizeof(mNorms[0]) * mNorms.size());
 
   if (generate_colors)
   {
     mColorArray->resize(mColors.size());
+    mColorArray->setVBODirty();
     if (mColors.size())
       memcpy(mColorArray->ptr(), &mColors[0], sizeof(mColors[0]) * mColors.size());
   }
@@ -375,6 +378,7 @@ void MarchingCubes::run(bool generate_colors)
     mColorArray->clear();
 
   mDrawElements->indexBuffer()->resize(mIndices.size());
+  mDrawElements->indexBuffer()->setVBODirty(true);
   if (mIndices.size())
     memcpy(mDrawElements->indexBuffer()->ptr(), &mIndices[0], sizeof(mIndices[0]) * mIndices.size());
 
@@ -386,6 +390,7 @@ void MarchingCubes::run(bool generate_colors)
 
     geom->computeNormals();
     mNormsArray->resize( geom->normalArray()->size() );
+    mNormsArray->setVBODirty();
     memcpy(mNormsArray->ptr(), geom->normalArray()->ptr(), sizeof(mNormsArray->at(0)) * mNormsArray->size());
   }
 }

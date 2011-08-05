@@ -130,11 +130,11 @@ namespace vl
     //! Compares two vectors
     virtual int compare(int a, int b) const = 0;
 
-    //! true by default
+    //! Wether the VBO should be updated or not using the local storage. Initially set to true.
     bool isVBODirty() const { return mVBODirty; }
 
-    //! true by default
-    void setVBODirty(bool dirty) { mVBODirty = dirty; }
+    //! Wether the VBO should be updated or not using the local storage. Initially set to true.
+    void setVBODirty(bool dirty=true) { mVBODirty = dirty; }
 
     //! BU_STATIC_DRAW by default
     EBufferObjectUsage usage() const { return mVBOUsage; }

@@ -207,7 +207,7 @@ namespace vl
     bool isVBODirty() const { return mVBODirty; }
 
     //! Whether VBOs associated to a Renderable should be recomputed on the next rendering.
-    void setVBODirty(bool dirty) { mVBODirty = dirty; }
+    void setVBODirty(bool dirty=false) { mVBODirty = dirty; }
 
     //! Uploads the data stored in the local buffers on the GPU memory.
     //! If 'discard_local_data' is set to \p true the memory used by the local buffers is released.
