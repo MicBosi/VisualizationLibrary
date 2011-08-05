@@ -49,22 +49,10 @@ class App_ModelProfiler: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::info(appletInfo());
-    openglContext()->setContinuousUpdate(true);
+    vl::Log::notify(appletInfo());
+    openglContext()->setContinuousUpdate(false);
 
     rendering()->as<Rendering>()->camera()->setFarPlane(10000000.0f);
-
-    /* bind Transform */
-    mTransform = new Transform;
-    rendering()->as<Rendering>()->transform()->addChild( mTransform.get() );
-    
-    // geoms
-    ref< Effect > fx = new Effect;
-    fx->shader()->enable(EN_LIGHTING);
-    fx->shader()->enable(EN_DEPTH_TEST);
-    fx->shader()->enable(EN_CULL_FACE);
-    fx->shader()->setRenderState( new Light(0) );
-    // fx->shader()->gocLight(0)->setPosition(fvec4(0,0,1,1));
 
     // text setup
 
@@ -84,8 +72,8 @@ public:
     text_fx->shader()->enable(EN_BLEND);
 
     mOptionsActor = new Actor( mOptions.get(), text_fx.get() );
-
-    sceneManager()->tree()->addActor( mOptionsActor.get() );
+    
+    // sceneManager()->tree()->addActor( mOptionsActor.get() );
 
     updateText();
   }
@@ -339,6 +327,8 @@ public:
 
     Time timer;
     timer.start();
+
+    ref<Light> camera_light = new Light(0);
  
     for(unsigned int i=0; i<files.size(); ++i)
     {
@@ -357,6 +347,8 @@ public:
         continue;
       }
 
+      showStatistics(resource_db);
+
       std::vector< ref<Actor> > actors;
       resource_db->get<Actor>(actors);
       for(unsigned i=0; i<actors.size(); ++i)
@@ -366,25 +358,20 @@ public:
         if(std::find(mEffects.begin(), mEffects.end(), actor->effect()) == mEffects.end())
           mEffects.push_back(actor->effect());
 
-        actor->effect()->shader()->setRenderState( new Light(0) );
         actor->effect()->shader()->enable(EN_DEPTH_TEST);
-        actor->effect()->shader()->enable(EN_LIGHTING);
-        actor->effect()->shader()->enable(EN_CULL_FACE);
+        Geometry* geom = actor->lod(0)->as<Geometry>();
+        if (geom && geom->normalArray())
+        {
+          actor->effect()->shader()->setRenderState( camera_light.get() );
+          actor->effect()->shader()->enable(EN_LIGHTING);
+          // actor->effect()->shader()->enable(EN_CULL_FACE);
+        }
 
-        Geometry* geom = cast<Geometry>(actor->lod(0));
         if (geom)
           mActorGeomMap[actor] = geom->deepCopy();
 
         geom->setVBOEnabled(false);
         geom->setDisplayListEnabled(false);
-
-        if ( actor->transform() )
-        {
-          VL_CHECK(mTransform != actor->transform())
-          mTransform->addChild(actor->transform());
-        }
-        else
-          actor->setTransform(mTransform.get());
 
         sceneManager()->tree()->addActor( actor.get() );
       }
@@ -401,6 +388,43 @@ public:
 
     // update the rendering
     openglContext()->update();
+  }
+
+  void showStatistics(ref<ResourceDatabase> res_db)
+  {
+    std::set<Geometry*> geometries;
+    std::vector< ref<Geometry> > geom_db;
+    std::vector< ref<Actor> > actor_db;
+
+    res_db->get<Actor>(actor_db);
+    res_db->get<Geometry>(geom_db);
+
+    // find number of unique geometries
+
+    for(size_t i=0; i<geom_db.size(); ++i)
+      geometries.insert( geom_db[i].get() );
+
+    for(size_t i=0; i<actor_db.size(); ++i)
+    {
+      Geometry* geom = actor_db[i]->lod(0)->as<Geometry>();
+      if (geom)
+        geometries.insert( geom );
+    }
+
+    int total_triangles = 0;
+    int total_draw_calls = 0;
+    for( std::set<Geometry*>::iterator it = geometries.begin(); it != geometries.end(); ++it )
+    {
+      total_draw_calls += (*it)->drawCalls()->size();
+      for(size_t i=0; i < (*it)->drawCalls()->size(); ++i )
+        total_triangles += (*it)->drawCalls()->at(i)->countTriangles();
+    }
+
+    VL_LOG_PRINT << "+ Total triangles  = " << total_triangles << "\n";
+    VL_LOG_PRINT << "+ Total draw calls = " << total_draw_calls << "\n";
+    VL_LOG_PRINT << "+ Actors           = " << actor_db.size() << "\n";
+    VL_LOG_PRINT << "+ Geometries       = " << geometries.size() << "\n";
+
   }
 
   void fileDroppedEvent(const std::vector<String>& files)
@@ -446,7 +470,6 @@ public:
 
 protected:
   std::vector< ref<Effect> > mEffects;
-  ref<Transform> mTransform;
   ref< Text > mOptions;
   ref< Actor > mOptionsActor;
   std::map< ref<Actor>, ref<Geometry> > mActorGeomMap;
