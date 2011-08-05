@@ -50,16 +50,17 @@ public:
   void initEvent()
   {
     vl::Log::notify(appletInfo());
+
     openglContext()->setContinuousUpdate(false);
 
-    rendering()->as<Rendering>()->camera()->setFarPlane(10000000.0f);
+    rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(true);
 
     // text setup
 
     resetOptions();
 
     mOptions = new Text();
-    mOptions->setDisplayListEnabled(vl::Has_GL_Version_1_1);
+    // mOptions->setDisplayListEnabled(vl::Has_GL_Version_1_1);
     mOptions->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8) );
     mOptions->setMargin(0);
     mOptions->setViewportAlignment(AlignTop | AlignLeft);
@@ -362,7 +363,8 @@ public:
         Geometry* geom = actor->lod(0)->as<Geometry>();
         if (geom && geom->normalArray())
         {
-          actor->effect()->shader()->setRenderState( camera_light.get() );
+          if (!actor->effect()->shader()->getLight(0))
+            actor->effect()->shader()->setRenderState( camera_light.get() );
           actor->effect()->shader()->enable(EN_LIGHTING);
           // actor->effect()->shader()->enable(EN_CULL_FACE);
         }
@@ -370,8 +372,8 @@ public:
         if (geom)
           mActorGeomMap[actor] = geom->deepCopy();
 
-        geom->setVBOEnabled(false);
-        geom->setDisplayListEnabled(false);
+        // geom->setVBOEnabled(false);
+        // geom->setDisplayListEnabled(false);
 
         sceneManager()->tree()->addActor( actor.get() );
       }
