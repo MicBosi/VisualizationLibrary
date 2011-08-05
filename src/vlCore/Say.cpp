@@ -943,7 +943,7 @@ String Say::pipeline(const String& in_str, int base, int field, int decimals, in
   }
 
   // fill left
-  str.insert(0, fill, left);
+  str.insert(0, (wchar_t)fill, left);
 
   // fill right
   str.append(fill, right);
