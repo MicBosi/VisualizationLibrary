@@ -735,8 +735,8 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
   }
 
   ref<DrawElementsUInt> de = new DrawElementsUInt;
-  de->indexBuffer()->resize( triangle_count * 3 );
-  ArrayUInt1& index_buffer = *de->indexBuffer(); 
+  ArrayUInt1& index_buffer = *de->indexBuffer();
+  index_buffer.resize( triangle_count * 3 );
   size_t idx = 0;
   int max_idx = (int)vertexArray()->size();
   for(size_t i=0; i<mergendo_calls.size(); ++i)
