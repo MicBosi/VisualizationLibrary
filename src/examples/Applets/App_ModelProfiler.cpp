@@ -178,7 +178,8 @@ public:
 
   void applyChanges()
   {
-    Log::print("Applying changes...\n");
+    VL_LOG_PRINT << "Applying changes...\n";
+
     std::map< ref<Actor>, ref<Geometry> >::iterator it = mActorGeomMap.begin();
     int orig_primitives = 0;
     int resu_primitives = 0;
@@ -220,28 +221,28 @@ public:
         timer.start();
         DoubleVertexRemover dvr;
         dvr.removeDoubles(geom.get());
-        Log::print( Say("DoubleVertexRemover: %.3ns, ratio:%.3n\n") << timer.elapsed() << (float)geom->vertexArray()->size()/orig_vertc );
+        VL_LOG_PRINT << ( Say("DoubleVertexRemover: %.3ns, ratio:%.3n\n") << timer.elapsed() << (float)geom->vertexArray()->size()/orig_vertc );
       }
 
       if (mOptStripfy1)
       {
         timer.start();
         TriangleStripGenerator::stripfy(geom.get(), 0, false, false, false);
-        Log::print( Say("TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
+        VL_LOG_PRINT << ( Say("TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
       }
 
       if (mOptStripfy2)
       {
         timer.start();
         TriangleStripGenerator::stripfy(geom.get(), 24, false, false, false);
-        Log::print( Say("TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
+        VL_LOG_PRINT << ( Say("TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
       }
 
       if (mOptMergeTriangleStrips)
       {
         timer.start();
         geom->mergeTriangleStrips();
-        Log::print( Say("Merge triangle strips: %.3ns\n") << timer.elapsed() );
+        VL_LOG_PRINT << ( Say("Merge triangle strips: %.3ns\n") << timer.elapsed() );
       }
 
       if (mOptSortVertices)
@@ -249,23 +250,23 @@ public:
         timer.start();
         bool ok = geom->sortVertices();
         if (ok)
-          Log::print( Say("Sort Vertices: %.3ns\n") << timer.elapsed() );
+          VL_LOG_PRINT << ( Say("Sort Vertices: %.3ns\n") << timer.elapsed() );
         else
-          Log::print("Sort Vertices Not Performed.\n");
+          VL_LOG_PRINT << "Sort Vertices Not Performed.\n";
       }
 
       if (mOptConvertToDrawArrays)
       {
         geom->convertDrawCallToDrawArrays();
-        Log::print("Convert to DrawArrays.\n");
+        VL_LOG_PRINT << ("Convert to DrawArrays.\n");
       }
 
       if (mOptUseDL)
-        Log::print("Using display lists.\n");
+        VL_LOG_PRINT << ("Using display lists.\n");
       geom->setDisplayListEnabled(mOptUseDL);
 
       if (mOptUseVBO)
-        Log::print("Using vertex buffer objects.\n");
+        VL_LOG_PRINT << ("Using vertex buffer objects.\n");
       geom->setVBOEnabled(mOptUseVBO);
 
       if (!geom->normalArray())
@@ -289,9 +290,9 @@ public:
       resu_vertices += (int)geom->vertexArray()->size();
     }
 
-    Log::print( Say("\nPrimitives: %6n -> %6n (%3.1n%%)\n") << orig_primitives << resu_primitives << (float)resu_primitives/orig_primitives*100.0f );
-    Log::print( Say("Indices:    %6n -> %6n (%3.1n%%)\n") << orig_indices << resu_indices << (float)resu_indices/orig_indices*100.0f );
-    Log::print( Say("Vertices:   %6n -> %6n (%3.1n%%)\n\n") << orig_vertices << resu_vertices << (float)resu_vertices/orig_vertices*100.0f);
+    VL_LOG_PRINT << ( Say("\nPrimitives: %6n -> %6n (%3.1n%%)\n") << orig_primitives << resu_primitives << (float)resu_primitives/orig_primitives*100.0f );
+    VL_LOG_PRINT << ( Say("Indices:    %6n -> %6n (%3.1n%%)\n") << orig_indices << resu_indices << (float)resu_indices/orig_indices*100.0f );
+    VL_LOG_PRINT << ( Say("Vertices:   %6n -> %6n (%3.1n%%)\n\n") << orig_vertices << resu_vertices << (float)resu_vertices/orig_vertices*100.0f);
   }
 
   void updateText()
@@ -334,17 +335,17 @@ public:
     for(unsigned int i=0; i<files.size(); ++i)
     {
       if (files.size()>1)
-        Log::print( Say("[% 3n%%] Loading: '%s'\n") << (100*i/(files.size()-1)) << files[i] );
+        VL_LOG_PRINT << ( Say("[% 3n%%] Loading: '%s'\n") << (100*i/(files.size()-1)) << files[i] );
       else
-        Log::print( Say("Loading: '%s'\n") << files[i] );
+        VL_LOG_PRINT << ( Say("Loading: '%s'\n") << files[i] );
 
       ref<ResourceDatabase> resource_db = loadResource(files[i],true);
 
-      Log::print( Say("Import time = %.3ns\n") << timer.elapsed() );
+      VL_LOG_PRINT << ( Say("Import time = %.3ns\n") << timer.elapsed() );
 
       if (!resource_db || resource_db->count<Actor>() == 0)
       {
-        Log::error("No data found.\n");
+        VL_LOG_ERROR << "No data found.\n";
         continue;
       }
 
