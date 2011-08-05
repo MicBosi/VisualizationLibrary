@@ -343,12 +343,24 @@ namespace vl
         mChildren[i]->mParent = NULL;
       mChildren.clear();
     }
-    
+
     /** Removes all the children of a Transform recursively descending the hierarchy. */
     void eraseAllChildrenRecursive()
     {
       for(int i=0; i<(int)mChildren.size(); ++i)
       {
+        mChildren[i]->eraseAllChildrenRecursive();
+        mChildren[i]->mParent = NULL;
+      }
+      mChildren.clear();
+    }
+
+    /** Disassembles a hierarchy of Transforms like eraseAllChildrenRecursive() does plus assigns the local matrix to equal the world matrix. */
+    void flattenHierarchy()
+    {
+      for(int i=0; i<(int)mChildren.size(); ++i)
+      {
+        mChildren[i]->setLocalAndWorldMatrix( mChildren[i]->worldMatrix() );
         mChildren[i]->eraseAllChildrenRecursive();
         mChildren[i]->mParent = NULL;
       }
