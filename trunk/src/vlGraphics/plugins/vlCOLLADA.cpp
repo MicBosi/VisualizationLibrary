@@ -2428,8 +2428,7 @@ void DaeLoader::parseAsset(domElement* root)
         if (!tool)
           continue;
 
-        // mic fixme: remove
-        printf("TOOL = %s\n", tool);
+        VL_LOG_DEBUG << "Authoring tool = " << tool << "\n";
 
         // Google SketchUp before 7.1 requires <transparency> inversion.
         // see http://www.collada.org/public_forum/viewtopic.php?f=12&t=1667
@@ -2522,13 +2521,15 @@ void DaeLoader::parseAsset(domElement* root)
           mInvertTransparency = true;
         }
 
+        VL_LOG_DEBUG << "Invert transparency = " << (mInvertTransparency ? "yes" : "no.") << "\n";
+        VL_LOG_DEBUG << "Assume opaque = " << (mAssumeOpaque? "yes" : "no.") << "\n";
+
         // stop at the first contributor
         break;
       }
     }
   }
 }
-
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> LoadWriterCOLLADA::load(const String& path, const LoadOptions* options)
 {

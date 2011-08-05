@@ -70,7 +70,7 @@ namespace
   #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_INTENSITY);
   #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
   #define SET_TEXT_COLOR_GREEN() ScopedColor set_scoped_color(FOREGROUND_GREEN|FOREGROUND_INTENSITY);
-  #define SET_TEXT_COLOR_BLUE() ScopedColor set_scoped_color(FOREGROUND_BLUE);
+  #define SET_TEXT_COLOR_BLUE() ScopedColor set_scoped_color(FOREGROUND_BLUE|FOREGROUND_INTENSITY);
 #else
   struct ScopedColor
   {
@@ -118,7 +118,7 @@ namespace
   #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color("\033[31m");
   #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color("\033[1;31m");
   #define SET_TEXT_COLOR_GREEN()  ScopedColor set_scoped_color("\033[1;32m");
-  #define SET_TEXT_COLOR_BLUE()  ScopedColor set_scoped_color("\033[34m");
+  #define SET_TEXT_COLOR_BLUE()  ScopedColor set_scoped_color("\033[1;34m");
 #endif
 }
 //-----------------------------------------------------------------------------
