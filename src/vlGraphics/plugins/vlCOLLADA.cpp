@@ -36,6 +36,7 @@
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/MultiDrawElements.hpp>
+#include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlCore/Time.hpp>
 #include <vlCore/GLSLmath.hpp>
 #include <set>
@@ -136,7 +137,8 @@ namespace vl
   namespace Dae
   {
     //-----------------------------------------------------------------------------
-    const char* NO_MATERIAL_SPECIFIED = "<NO_MATERIAL_SPECIFIED>";
+    const char* VL_NO_MATERIAL_SPECIFIED = "<VL_NO_MATERIAL_SPECIFIED>";
+    const char* VL_DEFAULT_LIGHT = "<VL_DEFAULT_LIGHT>";
     //-----------------------------------------------------------------------------
     typedef enum { PT_UNKNOWN, PT_LINES, PT_LINE_STRIP, PT_POLYGONS, PT_POLYLIST, PT_TRIANGLES, PT_TRIFANS, PT_TRISTRIPS } EPrimitiveType;
     //-----------------------------------------------------------------------------
@@ -539,6 +541,10 @@ protected:
 
   void parseMaterials(daeElement* library);
 
+  ref<Light> parseLight(domLight*, Transform*);
+
+  void setupLights();
+
   ref<Effect> setup_vl_Effect( DaeMaterial* mat );
 
   static std::string percentDecode(const char* uri);
@@ -555,13 +561,14 @@ protected:
   template<class T_color_or_texture>
   void parseColor(const domProfile_COMMON* common, const T_color_or_texture& color_or_texture, DaeColorOrTexture* out_col);
 
-  void generateGeometry(DaePrimitive* primitive);
+  void generateGeometry(DaePrimitive* primitive, const char* name);
 
 protected:
   const LoadWriterCOLLADA::LoadOptions* mLoadOptions;
 
 protected:
   ref<ResourceDatabase> mResources;
+  std::vector< ref<Light> > mLights;
   std::map< daeElementRef, ref<DaeMaterial> > mMaterials;
   std::map< daeElementRef, ref<DaeEffect> > mEffects;
   std::map< daeElementRef, ref<DaeMesh> > mMeshes; // daeElement* -> <geometry>
@@ -585,7 +592,7 @@ DaeLoader::DaeLoader()
   // default material
 
   mDefaultFX = new Effect;
-  mDefaultFX->setObjectName("<COLLADA_Default_Material>");
+  mDefaultFX->setObjectName( Dae::VL_NO_MATERIAL_SPECIFIED );
   mDefaultFX->shader()->enable(EN_LIGHTING);
   mDefaultFX->shader()->setRenderState( new Light(0) );
   mDefaultFX->shader()->gocMaterial()->setFlatColor( vl::fuchsia );
@@ -713,10 +720,10 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
     dae_primitive->mP.push_back( triangles->getP() );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = triangles->getMaterial() ? triangles->getMaterial() : Dae::NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = triangles->getMaterial() ? triangles->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
-    generateGeometry( dae_primitive.get() );
+    generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
 
   // --- ---- triangles fan ---- ---
@@ -739,10 +746,10 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
       dae_primitive->mP.push_back( trifan->getP_array().get(ip) );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = trifan->getMaterial() ? trifan->getMaterial() : Dae::NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = trifan->getMaterial() ? trifan->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
 
     // --- ---- generates the geometry ---- ---
-    generateGeometry( dae_primitive.get() );
+    generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
 
   // --- ---- triangle strip ---- ---
@@ -765,10 +772,10 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
       dae_primitive->mP.push_back( tristrip->getP_array().get(ip) );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = tristrip->getMaterial() ? tristrip->getMaterial() : Dae::NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = tristrip->getMaterial() ? tristrip->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
-    generateGeometry( dae_primitive.get() );
+    generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
 
   // --- ---- polygons ---- ---
@@ -791,10 +798,10 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
       dae_primitive->mP.push_back( polygon->getP_array().get(ip) );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = polygon->getMaterial() ? polygon->getMaterial() : Dae::NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = polygon->getMaterial() ? polygon->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
-    generateGeometry( dae_primitive.get() );
+    generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
 
   // --- ---- polylists ---- ---
@@ -826,10 +833,10 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
     }
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = polylist->getMaterial() ? polylist->getMaterial() : Dae::NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = polylist->getMaterial() ? polylist->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
-    generateGeometry( dae_primitive.get() );
+    generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
 
   // --- ---- linestrips ---- ---
@@ -852,10 +859,10 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
       dae_primitive->mP.push_back( linestrip->getP_array().get(ip) );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = linestrip->getMaterial() ? linestrip->getMaterial() : Dae::NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = linestrip->getMaterial() ? linestrip->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
-    generateGeometry( dae_primitive.get() );
+    generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
 
   // --- ---- lines ---- ---
@@ -877,10 +884,10 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
     dae_primitive->mP.push_back( line->getP() );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = line->getMaterial() ? line->getMaterial() : Dae::NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = line->getMaterial() ? line->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
-    generateGeometry( dae_primitive.get() );
+    generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
   }
 
   return dae_mesh;
@@ -939,71 +946,85 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
   // VL_CHECK(mat->mDaeEffect->mDaeTechniqueCOMMON)
 
   ref<Effect> fx = new Effect;
-  fx->shader()->enable(EN_LIGHTING);
-  fx->shader()->setRenderState( new Light(0) ); // mic fixme: these should be all removed and add the ones present in the scene.
   fx->shader()->enable(EN_DEPTH_TEST);
-
-  // mic fixme: most of .dae files I tested require this even if no double_sided flag is set.
-#if 1
-  fx->shader()->gocLightModel()->setTwoSide(true);
-  // fx->shader()->enable(EN_CULL_FACE);
-#else
-  if (mat->mDaeEffect->mDoubleSided)
-    fx->shader()->gocLightModel()->setTwoSide(true); // yes two side lighting, no culling
-  else
-    fx->shader()->enable(EN_CULL_FACE); // no two sidelighting, yes culling
-#endif
 
   // very basic material setup
   if (mat->mDaeEffect->mDaeTechniqueCOMMON)
   {
     DaeTechniqueCOMMON* common_tech =mat->mDaeEffect->mDaeTechniqueCOMMON.get();
 
-    // material sanity checks: these are needed only when using fixed function pipeline
-    common_tech->mShininess = vl::clamp(common_tech->mShininess, 0.0f, 128.0f);
-
-    // mic fixme: this vl::Effect can be put in mDaeTechniqueCOMMON and shared among all the materials that use it.
-    fx->shader()->gocMaterial()->setDiffuse  ( common_tech->mDiffuse.mColor  ); // this is fuchsia by default
-    fx->shader()->gocMaterial()->setAmbient  ( common_tech->mAmbient.mColor  );
-    fx->shader()->gocMaterial()->setEmission ( common_tech->mEmission.mColor );
-    fx->shader()->gocMaterial()->setSpecular ( common_tech->mSpecular.mColor );
-    fx->shader()->gocMaterial()->setShininess( common_tech->mShininess );
-    
-    // mic fixme:
-    // for the moment we ignore things like <bind_vertex_input semantic="UVSET0" input_semantic="TEXCOORD" input_set="0"/>
-    // instead we use the first texture with the first texture coordinate set installed.
-    if ( common_tech->mDiffuse.mSampler && common_tech->mDiffuse.mSampler->mTexture )
-    {
-      fx->shader()->gocTextureSampler(0)->setTexture( common_tech->mDiffuse.mSampler->mTexture.get() );
-      fx->shader()->gocMaterial()->setDiffuse( vl::white );
-    }
-
-    // alpha blending management
-
-    if (mAssumeOpaque)
-    {
-      // sets the alpha value of all material colors, front and back
-      fx->shader()->gocMaterial()->setTransparency( 1.0f );
-    }
+    // compute the actual tranparency
+    float transparency = 0;
+    if ( common_tech->mOpaqueMode == DaeTechniqueCOMMON::Opaque_A_ONE )
+      transparency = common_tech->mTransparent.mColor.a() * common_tech->mTransparency;
     else
+      transparency = (1.0f - dot( common_tech->mTransparent.mColor.rgb(), fvec3(0.2126f, 0.7152f, 0.0722f))) * common_tech->mTransparency;
+
+    bool use_lighting = strstr(mat->mDaeEffect->objectName().c_str(), "blinn:") ||
+                        strstr(mat->mDaeEffect->objectName().c_str(), "phong:") ||
+                        strstr(mat->mDaeEffect->objectName().c_str(), "lambert:");
+
+    // enable lighting only if required
+    if ( use_lighting )
     {
-      float transparency = 0;
-      if ( common_tech->mOpaqueMode == DaeTechniqueCOMMON::Opaque_A_ONE )
-        transparency = common_tech->mTransparent.mColor.a() * common_tech->mTransparency;
-      else
-        transparency = (1.0f - dot( common_tech->mTransparent.mColor.rgb(), fvec3(0.2126f, 0.7152f, 0.0722f))) * common_tech->mTransparency;
-      
+      fx->shader()->enable(EN_LIGHTING);
+
+      // mic fixme: most of .dae files I tested require this even if no double_sided flag is set.
+      // fx->shader()->gocLightModel()->setTwoSide(true);
+
+      // material sanity checks: these are needed only when using fixed function pipeline
+      common_tech->mShininess = vl::clamp(common_tech->mShininess, 0.0f, 128.0f);
+
+      // mic fixme: this vl::Effect can be put in mDaeTechniqueCOMMON and shared among all the materials that use it.
+      fx->shader()->gocMaterial()->setDiffuse  ( common_tech->mDiffuse.mColor  ); // this is fuchsia by default
+      fx->shader()->gocMaterial()->setAmbient  ( common_tech->mAmbient.mColor  );
+      fx->shader()->gocMaterial()->setEmission ( common_tech->mEmission.mColor );
+      fx->shader()->gocMaterial()->setSpecular ( common_tech->mSpecular.mColor );
+      fx->shader()->gocMaterial()->setShininess( common_tech->mShininess );
+
+      // if a texture is bound to the diffuse channel use it
+      // mic fixme: for the moment we support only one texture, we also assume the texture coords #0 are the right ones...
+      if ( common_tech->mDiffuse.mSampler && common_tech->mDiffuse.mSampler->mTexture )
+      {
+        fx->shader()->gocTextureSampler(0)->setTexture( common_tech->mDiffuse.mSampler->mTexture.get() );
+        fx->shader()->gocMaterial()->setDiffuse( vl::white );
+      }
+
+      // alpha blending management
+
       // sets the alpha value of all material colors, front and back
       fx->shader()->gocMaterial()->multiplyTransparency( transparency );
+    }
+    else
+    if ( strstr(mat->mDaeEffect->objectName().c_str(), "constant:") )
+    {
 
-      // NOTE: to be pedantic with the specs we should enabled the alpha blending if common_tech->mBlendingOn == true however
-      // COLLADA transparency management is historically not reliable
-
-      // enable if material is transparent or alpha is coming from the diffuse texture
-      if ( transparency < 1.0f || (common_tech->mTransparent.mSampler && common_tech->mTransparent.mSampler == common_tech->mDiffuse.mSampler) )
-        fx->shader()->enable(EN_BLEND);
+      // constant can have only emission, check if there is a texture attached to it and use it
+      // mic fixme: for the moment we support only one texture, we also assume the texture coords #0 are the right ones...
+      if ( common_tech->mEmission.mSampler && common_tech->mEmission.mSampler->mTexture )
+      {
+        fx->shader()->gocTextureSampler(0)->setTexture( common_tech->mEmission.mSampler->mTexture.get() );
+        // this is already the default: fx->shader()->gocColor()->setColor( vl::white );
+      }
+      else
+        fx->shader()->gocColor()->setColor( common_tech->mEmission.mColor );
     }
 
+    // enable alpha blending if material is transparent or alpha is coming from the diffuse texture
+    // NOTE: to be pedantic with the specs we should enabled the alpha blending if common_tech->mBlendingOn == true however
+    // applications and exporters have historically misused the <transparency> and <transparent> tags...
+    if ( transparency < 1.0f || (common_tech->mTransparent.mSampler && common_tech->mTransparent.mSampler == common_tech->mDiffuse.mSampler) )
+      if (!mAssumeOpaque)
+        fx->shader()->enable(EN_BLEND);
+
+    // to be correct we should do this but most models are not made to render correctly this way...
+#if 0
+    if (!mat->mDaeEffect->mDoubleSided)
+      fx->shader()->enable(EN_CULL_FACE); // no two sidelighting, yes culling
+    else
+    if (use_lighting)
+      fx->shader()->gocLightModel()->setTwoSide(true); // yes two side lighting, no culling
+#endif
   }
   else
   {
@@ -1032,8 +1053,8 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
         if (it != mMaterials.end())
         {
           // mic fixme: issue warning
-          VL_CHECK( material_map.find(material_instances[i]->getSymbol()) == material_map.end() )
-          VL_CHECK( material_instances[i]->getSymbol() )
+          // VL_CHECK( material_map.find(material_instances[i]->getSymbol()) == material_map.end() )
+          // VL_CHECK( material_instances[i]->getSymbol() )
           material_map[ material_instances[i]->getSymbol() ] = it->second.get();
         }
         else
@@ -1058,14 +1079,14 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
 
     if (!dae_mesh->mPrimitives[iprim]->mMaterial.empty())
     {
-      std::map< std::string, DaeMaterial* >::iterator it = material_map.find(  dae_mesh->mPrimitives[iprim]->mMaterial );
+      std::map< std::string, DaeMaterial* >::iterator it = material_map.find( dae_mesh->mPrimitives[iprim]->mMaterial );
       if (it != material_map.end())
       {
         dae_material = it->second;
       }
       else
       {
-        if ( dae_mesh->mPrimitives[iprim]->mMaterial != Dae::NO_MATERIAL_SPECIFIED)
+        if ( dae_mesh->mPrimitives[iprim]->mMaterial != Dae::VL_NO_MATERIAL_SPECIFIED)
         {
           Log::warning( Say("LoadWriterCOLLADA: material symbol %s could not be resolved.\n") << dae_mesh->mPrimitives[iprim]->mMaterial );
           // mic fixme remove
@@ -1185,6 +1206,16 @@ void DaeLoader::parseNode(daeElement* el, DaeNode* parent)
       }
     }
 
+    // parse lights
+    domInstance_light_Array lights = node->getInstance_light_array();
+    for(size_t i=0; i<lights.getCount(); ++i)
+    {
+      daeElementRef dae_light = lights[i]->getUrl().getElement();
+      domLight* dom_light = dynamic_cast<domLight*>(dae_light.cast());
+      ref<Light> light = parseLight(dom_light, this_node->mTransform.get());
+      mLights.push_back( light );
+    }
+
     // --- --- --- parse children --- --- ---
 
     // parse instance nodes
@@ -1247,13 +1278,19 @@ bool DaeLoader::load(VirtualFile* file)
 
   // --- fill the resource database and final setup ---
 
-  // --- orient geometry based on up vector ---
+  // --- transform setup ---
+  // Up vector
   // Note that we don't touch the local space vertices and the intermediate matrices,
   // for proper reorientation of matrices and geometry the up-vector conditioner in
   // Refinery should do the job.
   mScene->mTransform->preMultiply( mUpMatrix );
-  // compute world matrices
+  // Setup world matrices
   mScene->mTransform->computeWorldMatrixRecursive();
+
+  // --- light setup ---
+  // Computes position and direction of lights, sorts them (direction -> spot -> point), 
+  // adds them to the resource database.
+  setupLights();
 
   // return the Actors
   for( size_t inode=0; inode<mNodes.size(); ++inode )
@@ -1300,11 +1337,24 @@ bool DaeLoader::load(VirtualFile* file)
         if ( actor->effect()->shader()->isEnabled(vl::EN_LIGHTING) )
           actor->effect()->shader()->enable(vl::EN_NORMALIZE); // or vl::EN_RESCALE_NORMAL
       }
+
+      // *** light association (only if lighting is on!) ***
+      if ( actor->effect()->shader()->isEnabled(EN_LIGHTING) )
+      {
+        // crete new effect/shader with it's own light set
+        ref<Effect> fx = new Effect;
+        fx->setObjectName( actor->effect()->objectName() );
+        fx->shader()->setEnableSet( actor->effect()->shader()->getEnableSet() );
+        fx->shader()->setRenderStateSet( actor->effect()->shader()->getRenderStateSet() );
+        actor->setEffect( fx.get() );
+        for(size_t ilight=0; ilight<mLights.size() && ilight<8; ++ilight)
+          fx->shader()->setRenderState( mLights[ilight].get() );
+      }
     }
   }
 
   if ( loadOptions()->flattenTransformHierarchy() )
-    mScene->mTransform->eraseAllChildrenRecursive();
+    mScene->mTransform->flattenHierarchy();
   else
     mResources->resources().push_back( mScene->mTransform );
 
@@ -1399,6 +1449,10 @@ void DaeLoader::parseEffects(daeElement* library)
     domEffect* effect = effects[i].cast();
 
     ref<DaeEffect> dae_effect = new DaeEffect;
+
+    std::string effect_name;
+    if (effect->getName())
+      effect_name = effect->getName();
 
     mEffects[effect] = dae_effect;
 
@@ -1541,6 +1595,9 @@ void DaeLoader::parseEffects(daeElement* library)
         // --- parse technique ---
         if (common->getTechnique()->getBlinn())
         {
+          // track effect name
+          effect_name = "blinn:"+effect_name;
+
           domProfile_COMMON::domTechnique::domBlinnRef blinn = common->getTechnique()->getBlinn();
 
           dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
@@ -1565,13 +1622,14 @@ void DaeLoader::parseEffects(daeElement* library)
           {
             dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)blinn->getTransparency()->getFloat()->getValue();
-            if(mInvertTransparency)
-              dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
           }
         }
         else
         if (common->getTechnique()->getPhong())
         {
+          // track effect name
+          effect_name = "phong:"+effect_name;
+
           domProfile_COMMON::domTechnique::domPhongRef phong = common->getTechnique()->getPhong();
 
           dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
@@ -1598,13 +1656,14 @@ void DaeLoader::parseEffects(daeElement* library)
           {
             dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)phong->getTransparency()->getFloat()->getValue();
-            if(mInvertTransparency)
-              dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
           }
         }
         else
         if (common->getTechnique()->getLambert())
         {
+          // track effect name
+          effect_name = "lambert:"+effect_name;
+
           domProfile_COMMON::domTechnique::domLambertRef lambert = common->getTechnique()->getLambert();
 
           dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
@@ -1628,19 +1687,20 @@ void DaeLoader::parseEffects(daeElement* library)
           {
             dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)lambert->getTransparency()->getFloat()->getValue();
-            if(mInvertTransparency)
-              dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
           }
         }
         else
         if (common->getTechnique()->getConstant())
         {
+          // track effect name
+          effect_name = "constant:"+effect_name;
+
           domProfile_COMMON::domTechnique::domConstantRef constant = common->getTechnique()->getConstant();
 
           dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
           parseColor( common, constant->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
-          dae_effect->mDaeTechniqueCOMMON->mAmbient.mColor = fvec4(0,0,0,1);
-          dae_effect->mDaeTechniqueCOMMON->mDiffuse.mColor = fvec4(0,0,0,1);
+          dae_effect->mDaeTechniqueCOMMON->mAmbient.mColor  = fvec4(0,0,0,1);
+          dae_effect->mDaeTechniqueCOMMON->mDiffuse.mColor  = fvec4(0,0,0,1);
           dae_effect->mDaeTechniqueCOMMON->mSpecular.mColor = fvec4(0,0,0,1);
           dae_effect->mDaeTechniqueCOMMON->mShininess = 0;
 
@@ -1658,13 +1718,29 @@ void DaeLoader::parseEffects(daeElement* library)
           {
             dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             dae_effect->mDaeTechniqueCOMMON->mTransparency = (float)constant->getTransparency()->getFloat()->getValue();
-            if(mInvertTransparency)
-              dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
           }
         }
         else
         {
           Log::error("LoadWriterCOLLADA: technique not supported.\n");
+        }
+
+        dae_effect->setObjectName( effect_name );
+
+        // trasparency override options
+        if (mAssumeOpaque)
+        {
+          dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f;
+          dae_effect->mDaeTechniqueCOMMON->mTransparent.mColor = fvec4(0, 0, 0, 1);
+          dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = DaeTechniqueCOMMON::Opaque_A_ONE; // mic fixme: metti questo dentro Dae:: namespace
+        }
+        else
+        if(mInvertTransparency)
+        {
+          dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
+          // and don't trust <transparent> values...
+          dae_effect->mDaeTechniqueCOMMON->mTransparent.mColor = fvec4(0, 0, 0, 1);
+          dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = DaeTechniqueCOMMON::Opaque_A_ONE;
         }
 
         // <extra>
@@ -1748,6 +1824,205 @@ void DaeLoader::parseMaterials(daeElement* library)
       VL_TRAP();
       continue;
     }
+  }
+}
+//-----------------------------------------------------------------------------
+ref<Light> DaeLoader::parseLight(domLight* dom_light, Transform* transform)
+{
+  domLight::domTechnique_commonRef light_common = dom_light->getTechnique_common();
+
+  ref<Light> light = new Light(0);
+  if (dom_light->getName())
+    light->setObjectName( dom_light->getName() );
+  else
+  if (dom_light->getID())
+    light->setObjectName( dom_light->getID() );
+
+  light->followTransform(transform);
+
+  if (light_common->getPoint())
+  {
+    domLight::domTechnique_common::domPointRef point = light_common->getPoint();
+
+    if (point->getColor())
+    {
+      domFloat3& c = point->getColor()->getValue();
+      fvec4 color((float)c[0], (float)c[1], (float)c[2], 1);
+      light->setAmbient( fvec4(0,0,0,1) );
+      light->setDiffuse(color);
+      light->setSpecular(color);
+    }
+
+    if (point->getConstant_attenuation())
+      light->setConstantAttenuation( (float)point->getConstant_attenuation()->getValue() );
+    if (point->getLinear_attenuation())
+      light->setLinearAttenuation( (float)point->getLinear_attenuation()->getValue() );
+    if (point->getQuadratic_attenuation())
+      light->setQuadraticAttenuation( (float)point->getQuadratic_attenuation()->getValue() );
+
+    light->setPosition( fvec4(0,0,0,1) );
+  }
+  else
+  if (light_common->getDirectional())
+  {
+    domLight::domTechnique_common::domDirectionalRef directional = light_common->getDirectional();
+
+    if (directional->getColor())
+    {
+      domFloat3& c = directional->getColor()->getValue();
+      fvec4 color((float)c[0], (float)c[1], (float)c[2], 1);
+      light->setAmbient( fvec4(0,0,0,1) );
+      light->setDiffuse(color);
+      light->setSpecular(color);
+    }
+
+    light->setPosition( fvec4( 0, 0, 1, 0) );
+  }
+  else
+  if (light_common->getSpot())
+  {
+    domLight::domTechnique_common::domSpotRef spot= light_common->getSpot();
+
+    if (spot->getColor())
+    {
+      domFloat3& c = spot->getColor()->getValue();
+      fvec4 color((float)c[0], (float)c[1], (float)c[2], 1);
+      light->setAmbient( fvec4(0,0,0,1) );
+      light->setDiffuse(color);
+      light->setSpecular(color);
+    }
+
+    if (spot->getConstant_attenuation())
+      light->setConstantAttenuation( (float)spot->getConstant_attenuation()->getValue() );
+    if (spot->getLinear_attenuation())
+      light->setLinearAttenuation( (float)spot->getLinear_attenuation()->getValue() );
+    if (spot->getQuadratic_attenuation())
+      light->setQuadraticAttenuation( (float)spot->getQuadratic_attenuation()->getValue() );
+
+    if (spot->getFalloff_angle())
+      light->setSpotCutoff( (float)spot->getFalloff_angle()->getValue() );
+    if (spot->getFalloff_exponent())
+      light->setSpotExponent( (float)spot->getFalloff_exponent()->getValue() );
+
+    light->setSpotDirection( fvec3(0,0,-1) );
+    light->setPosition( fvec4( 0, 0, 0, 1) );
+  }
+  else
+  if (light_common->getAmbient())
+  {
+    domLight::domTechnique_common::domAmbientRef ambient = light_common->getAmbient();
+
+    if (ambient->getColor())
+    {
+      domFloat3& c = ambient->getColor()->getValue();
+      fvec4 color((float)c[0], (float)c[1], (float)c[2], 1);
+      light->setAmbient( color );
+      light->setDiffuse( fvec4(0,0,0,1) );
+      light->setSpecular( fvec4(0,0,0,1) );
+    }
+
+    // this is actually irrelevant since the diffuse and specular colors are zeroed.
+    light->setPosition( fvec4( 0, 0, 0, 1) );
+
+    // just for clarity, no attenuation
+    light->setConstantAttenuation( 1 );
+    light->setLinearAttenuation( 0 );
+    light->setQuadraticAttenuation( 0 );
+  }
+
+  return light;
+}
+//-----------------------------------------------------------------------------
+void DaeLoader::setupLights()
+{
+  // generate light meshes
+  if (loadOptions()->lightMeshSize())
+  {
+    for(size_t i=0; i<mLights.size(); ++i)
+    {
+      // spot light
+      if (mLights[i]->spotCutoff() != 180)
+      {
+        ref<Geometry> light_mesh = vl::makeCone( fvec3(0,0,0), loadOptions()->lightMeshSize(), loadOptions()->lightMeshSize(), 10 );
+        light_mesh->transform( mat4::getTranslation(0,loadOptions()->lightMeshSize(),0) );
+        light_mesh->transform( mat4::getRotation(90, +1,0,0) );
+        light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
+        ref<Effect> fx = new Effect;
+        fx->shader()->enable(EN_DEPTH_TEST);
+        fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
+        fx->shader()->gocColor()->setColor(vl::fuchsia);
+        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->followedTransform() ) );
+      }
+      else
+      // directional light
+      if (mLights[i]->position().w() == 0)
+      {
+        ref<Geometry> light_mesh = vl::makePyramid( fvec3(0,0,0), loadOptions()->lightMeshSize() / 2, loadOptions()->lightMeshSize() );
+        light_mesh->transform( mat4::getRotation(90, -1,0,0) );
+        light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
+        ref<Effect> fx = new Effect;
+        fx->shader()->enable(EN_DEPTH_TEST);
+        fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
+        fx->shader()->gocColor()->setColor(vl::fuchsia);
+        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->followedTransform() ) );
+      }
+      else
+      // point light
+      if( mLights[i]->ambient() == fvec4(0,0,0,1) )
+      {
+        ref<Geometry> light_mesh = vl::makeUVSphere( fvec3(0,0,0), loadOptions()->lightMeshSize(), 10, 5);
+        light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
+        ref<Effect> fx = new Effect;
+        fx->shader()->enable(EN_DEPTH_TEST);
+        fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
+        fx->shader()->gocColor()->setColor(vl::fuchsia);
+        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->followedTransform() ) );
+      }
+      else
+      // ambient light
+      {
+        ref<Geometry> light_mesh = vl::makeTorus( fvec3(0,0,0), loadOptions()->lightMeshSize(), loadOptions()->lightMeshSize()/4, 8, 14);
+        light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
+        ref<Effect> fx = new Effect;
+        fx->shader()->enable(EN_DEPTH_TEST);
+        fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
+        fx->shader()->gocColor()->setColor(vl::fuchsia);
+        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->followedTransform() ) );
+      }
+    }
+  }
+
+  // sort lights
+  struct light_sorter
+  {
+    bool operator()(const ref<Light>& a, const ref<Light>& b) const
+    {
+      // ambient lights first
+      if (a->ambient() != b->ambient())
+        return b->ambient() < a->ambient();
+      else
+      // directional lights first
+      if (a->position().w() != b->position().w())
+        return a->position().w() < b->position().w();
+      else
+      // point lights first, spotlights last
+        return a->spotCutoff() > b->spotCutoff();
+    }
+  };
+  std::sort(mLights.begin(), mLights.end(), light_sorter());
+
+  // set light indices and adds to the resource database
+  for(size_t i=0; i<mLights.size(); ++i)
+  {
+    mLights[i]->setLightIndex( std::min((int)i, 7) );
+    mResources->resources().push_back( mLights[i].get() );
+  }
+
+  // default light if no lights were present in the scene
+  if (mLights.empty())
+  {
+    mLights.push_back( new Light(0) );
+    mLights[0]->setObjectName(Dae::VL_DEFAULT_LIGHT);
   }
 }
 //-----------------------------------------------------------------------------
@@ -1855,11 +2130,13 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
   }
 }
 //-----------------------------------------------------------------------------
-void DaeLoader::generateGeometry(DaePrimitive* prim)
+void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
 {
   VL_CHECK(prim->mIndexStride);
 
   prim->mGeometry = new Geometry;
+  if (name)
+    prim->mGeometry->setObjectName(name);
 
   // no primitives where specified so we treat it as a cloud of points simulating a single increasing <p>
   if(prim->mP.size() == 0 && prim->mType == Dae::PT_UNKNOWN && prim->mChannels.size())
