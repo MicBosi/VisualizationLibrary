@@ -115,18 +115,6 @@ namespace vl
     //! Returns the list of DrawCall objects bound to a Geometry
     const Collection<DrawCall>* drawCalls() const { return &mDrawCalls; }
 
-    //! Constant normal used when no normal array is defined.
-    void setNormal(const fvec3& normal) { mNormal = normal; }
-    
-    //! Constant normal used when no normal array is defined.
-    const fvec3& normal() { return mNormal; }
-
-    //! Constant color used when no color array is defined.
-    void setColor(const fvec4& color) { mColor = color; }
-
-    //! Constant color used when no color array is defined.
-    const fvec4& color() { return mColor; }
-
     //! Fills the color array with the given color
     void setColorArray(const fvec4& color)
     {
@@ -142,12 +130,6 @@ namespace vl
         setColorArray(color_array.get());
       #endif
     }
-
-    //! Geometry color used when no color array is defined. Requires OpenGL 1.4. Not supported under OpenGL ES.
-    void setSecondaryColor(const fvec4& color) { mSecondaryColor = color; }
-
-    //! Geometry color used when no color array is defined.
-    const fvec4& secondaryColor() { return mSecondaryColor; }
 
     // ------------------------------------------------------------------------
     // --- Vertex Array Manipulation ---
@@ -347,15 +329,6 @@ namespace vl
 
     // render calls
     Collection<DrawCall> mDrawCalls;
-
-    // geometry color when no color array is defined
-    fvec4 mColor;
-
-    // geometry color when no color array is defined
-    fvec4 mSecondaryColor;
-
-    // normal when no normal array is defined
-    fvec3 mNormal;
 
     //  --- IVertexAttribSet interface concrete implementation ---
 
