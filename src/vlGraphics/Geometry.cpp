@@ -34,6 +34,7 @@
 #include <vlGraphics/DoubleVertexRemover.hpp>
 #include <vlGraphics/MultiDrawElements.hpp>
 #include <cmath>
+#include <algorithm>
 
 using namespace vl;
 
@@ -562,6 +563,8 @@ DrawCall* Geometry::mergeTriangleStrips()
       drawCalls()->eraseAt(i);
     }
   }
+  // preseve rendering order
+  std::reverse(de_vector.begin(), de_vector.end());
 
   // generate new strip
   indices.reserve( vertexArray()->size()*2 );
@@ -625,6 +628,8 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
       drawCalls()->eraseAt(i);
     }
   }
+  // preseve rendering order
+  std::reverse(mergendo_calls.begin(), mergendo_calls.end());
 
   Log::debug( Say("%n draw calls will be merged using primitive restart.\n") << mergendo_calls.size() );
 
@@ -667,11 +672,13 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
       VL_CHECK(index_count >= 0);
       total_index_count += index_count;
       count_vector.push_back( index_count );
-      // insert at the head to preserve the primitive rendering order
       mergendo_calls.push_back( drawCalls()->at(i) );
       drawCalls()->eraseAt(i);
     }
   }
+  // preseve rendering order
+  std::reverse(mergendo_calls.begin(), mergendo_calls.end());
+  std::reverse(count_vector.begin(), count_vector.end());
 
   Log::debug( Say("%n draw calls will be merged using MultiDrawElements.\n") << mergendo_calls.size() );
 
@@ -726,6 +733,8 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
       drawCalls()->eraseAt(i);
     }
   }
+  // preseve rendering order
+  std::reverse(mergendo_calls.begin(), mergendo_calls.end());
 
   // if there was one single PT_TRIANGLES draw calls then we are done.
   if ( mergendo_calls.size() == 1 && mergendo_calls[0]->primitiveType() == PT_TRIANGLES )
