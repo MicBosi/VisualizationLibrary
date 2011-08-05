@@ -1310,6 +1310,16 @@ namespace vl
     VEL_VERBOSITY_DEBUG   //!<< Outputs extra information messages useful for debugging, plus all normal and error messages.
   } EVerbosityLevel;
 
+  typedef enum 
+  { 
+    LL_LogNotify,
+    LL_LogPrint,
+    LL_LogBug,
+    LL_LogError,
+    LL_LogWarning,
+    LL_LogDebug,
+  } ELogLevel;
+
   typedef enum
   {
     PPCO_LOWER_LEFT = GL_LOWER_LEFT,
@@ -1492,7 +1502,6 @@ namespace vl
     //! Discards the local buffer on RAM and updates the VBO always, even if it is not marked as dirty. The VBO is marked as clean after the update.
     VUM_DiscardRamBufferAndForceUpdate = VUF_DiscardRamBuffer | VUF_ForceUpdate
   } EVBOUpdateMode;
-
 }
 
 
