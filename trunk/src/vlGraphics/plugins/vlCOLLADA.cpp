@@ -1988,6 +1988,7 @@ void DaeLoader::setupLights()
       // ambient light
       {
         ref<Geometry> light_mesh = vl::makeTorus( fvec3(0,0,0), loadOptions()->lightMeshSize(), loadOptions()->lightMeshSize()/4, 8, 14);
+        light_mesh->setNormalArray(NULL); // remove normals
         light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
