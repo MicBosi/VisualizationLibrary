@@ -49,6 +49,78 @@ namespace vl
   class ClipPlane;
   class Shader;
   //------------------------------------------------------------------------------
+  // Color
+  //------------------------------------------------------------------------------
+  /** RenderState wrapping the OpenGL function glColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glColor.xml for more information.
+   * 
+   * \sa Shader, Effect, Actor */
+  class VLGRAPHICS_EXPORT Color: public RenderState
+  {
+    VL_INSTRUMENT_CLASS(vl::Color, RenderState)
+
+  public:
+    Color(): mColor( fvec4(1,1,1,1) ) {}
+
+    virtual ERenderState type() const { return RS_Color; }
+
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+
+    void setColor(const fvec4& color) { mColor = color; }
+
+    const fvec4& color() const { return mColor; }
+
+  protected:
+    fvec4 mColor;
+  };
+  //------------------------------------------------------------------------------
+  // SecondaryColor
+  //------------------------------------------------------------------------------
+  /** RenderState wrapping the OpenGL function glSecondaryColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glSecondaryColor.xml for more information.
+   * 
+   * \sa Shader, Effect, Actor */
+  class VLGRAPHICS_EXPORT SecondaryColor: public RenderState
+  {
+    VL_INSTRUMENT_CLASS(vl::SecondaryColor, RenderState)
+
+  public:
+    SecondaryColor(): mSecondaryColor( fvec3(1,1,1) ) {}
+
+    virtual ERenderState type() const { return RS_SecondaryColor; }
+
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+
+    void setSecondaryColor(const fvec3& color) { mSecondaryColor = color; }
+
+    const fvec3& secondaryColor() const { return mSecondaryColor; }
+
+  protected:
+    fvec3 mSecondaryColor;
+  };
+  //------------------------------------------------------------------------------
+  // Normal
+  //------------------------------------------------------------------------------
+  /** RenderState wrapping the OpenGL function glNormal(), see also http://www.opengl.org/sdk/docs/man/xhtml/glNormal.xml for more information.
+   * 
+   * \sa Shader, Effect, Actor */
+  class VLGRAPHICS_EXPORT Normal: public RenderState
+  {
+    VL_INSTRUMENT_CLASS(vl::Normal, RenderState)
+
+  public:
+    Normal(): mNormal( fvec3(0,1,0) ) {}
+
+    virtual ERenderState type() const { return RS_Normal; }
+
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+
+    void setNormal(const fvec3& color) { mNormal = color; }
+
+    const fvec3& normal() const { return mNormal; }
+
+  protected:
+    fvec3 mNormal;
+  };
+  //------------------------------------------------------------------------------
   // PixelTransfer
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glPixelTransfer(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPixelTransfer.xml for more information.
@@ -191,7 +263,6 @@ namespace vl
     float mPostConvolutionGreenBias;
     float mPostConvolutionBlueBias;
     float mPostConvolutionAlphaBias;
-
   };
   //------------------------------------------------------------------------------
   // Hint
@@ -1361,6 +1432,18 @@ namespace vl
     DepthMask* gocDepthMask();
     const DepthMask* getDepthMask() const { return static_cast<const DepthMask*>( getRenderStateSet()->renderState( RS_DepthMask ) ); }
     DepthMask* getDepthMask() { return static_cast<DepthMask*>( getRenderStateSet()->renderState( RS_DepthMask ) ); }
+
+    Color* gocColor();
+    const Color* getColor() const { return static_cast<const Color*>( getRenderStateSet()->renderState( RS_Color ) ); }
+    Color* getColor() { return static_cast<Color*>( getRenderStateSet()->renderState( RS_Color ) ); }
+
+    SecondaryColor* gocSecondaryColor();
+    const SecondaryColor* getSecondaryColor() const { return static_cast<const SecondaryColor*>( getRenderStateSet()->renderState( RS_SecondaryColor ) ); }
+    SecondaryColor* getSecondaryColor() { return static_cast<SecondaryColor*>( getRenderStateSet()->renderState( RS_SecondaryColor ) ); }
+
+    Normal* gocNormal();
+    const Normal* getNormal() const { return static_cast<const Normal*>( getRenderStateSet()->renderState( RS_Normal ) ); }
+    Normal* getNormal() { return static_cast<Normal*>( getRenderStateSet()->renderState( RS_Normal ) ); }
 
     ColorMask* gocColorMask();
     const ColorMask* getColorMask() const { return static_cast<const ColorMask*>( getRenderStateSet()->renderState( RS_ColorMask ) ); }

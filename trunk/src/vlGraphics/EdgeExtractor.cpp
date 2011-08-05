@@ -135,7 +135,6 @@ ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
   #else
     vert_array->resize(edges().size()*2);
   #endif
-  geom->setColor(vl::black);
   for(unsigned i=0; i<edges().size(); ++i)
   {
     vert_array->at(i*2+0) = edges()[i].vertex1();

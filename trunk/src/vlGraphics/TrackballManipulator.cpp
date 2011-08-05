@@ -229,7 +229,10 @@ void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, 
   for(int i=0; i<actors.size(); ++i)
   {
     if (actors.at(i)->transform())
+    {
+      mat4 m = actors.at(i)->transform()->worldMatrix();
       actors.at(i)->transform()->computeWorldMatrix();
+    }
     actors.at(i)->computeBounds();
     aabb += actors.at(i)->boundingBox();
   }

@@ -209,13 +209,13 @@ public:
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->gocPointSize()->set(4);
+    effect->shader()->gocColor()->setColor(color);
 
     // generates the line/points geometry
     vl::ref<vl::Geometry>   geom       = new vl::Geometry;
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     geom->setVertexArray( vert_array.get() );
     *vert_array = ctrl_points;
-    geom->setColor(color);
     geom->drawCalls()->push_back(new vl::DrawArrays(loop ? vl::PT_LINE_LOOP : vl::PT_LINE_STRIP, 0, (int)vert_array->size()));
     if (points) 
       geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_POINTS, 0, (int)vert_array->size()));

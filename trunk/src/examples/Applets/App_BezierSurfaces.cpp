@@ -70,6 +70,7 @@ public:
     fx->shader(0,1)->enable(EN_POLYGON_OFFSET_LINE);
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx->shader(0,1)->gocDepthMask()->set(false);
+    fx->shader(0,1)->gocColor()->setColor(gold);
 #endif
 
     /* Generate random Bézier patches
@@ -161,9 +162,6 @@ public:
     
     // Compute the normals as we have lighting activated
     mBezier->computeNormals();
-    
-    // Used by the line rendering
-    mBezier->setColor(gold);
     
     // Add the Bézier surface to our scene
     sceneManager()->tree()->addActor(mBezier.get(), fx.get(), NULL);

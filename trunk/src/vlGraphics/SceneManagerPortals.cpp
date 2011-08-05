@@ -105,12 +105,12 @@ void SceneManagerPortals::renderPortal(Portal* portal)
     portal_fx->shader()->gocDepthFunc()->set(vl::FU_LEQUAL);*/
     portal_fx->shader()->enable(vl::EN_BLEND);
     portal_fx->shader()->gocLineWidth()->set(2.0f);
+    portal_fx->shader()->gocColor()->setColor(portal_color);
 
     vl::ref<vl::Geometry> portal_geom = new vl::Geometry;
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     portal_geom->setVertexArray(vert_array.get());
     vert_array->resize(portal->geometry().size());
-    portal_geom->setColor(portal_color);
     for(unsigned int i=0; i<portal->geometry().size(); ++i)
       vert_array->at(i) = portal->geometry()[i];
     portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, (int)vert_array->size()) );

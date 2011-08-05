@@ -54,7 +54,7 @@ public:
 
     // LOD 0
     geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail, detail );
-    geom->setColor(vl::royalblue);
+    // geom->setColor(vl::royalblue);
     actor->setLod(0, geom.get());
 
     geom->setVBOEnabled(true);
@@ -65,7 +65,7 @@ public:
 
     // LOD 1
     geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail/2, detail/2 );
-    geom->setColor(vl::green);
+    // geom->setColor(vl::green);
     actor->setLod(1, geom.get());
 
     geom->setVBOEnabled(true);
@@ -76,7 +76,7 @@ public:
 
     // LOD 2
     geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail/4, detail/4 );
-    geom->setColor(vl::yellow);
+    // geom->setColor(vl::yellow);
     actor->setLod(2, geom.get());
 
     geom->setVBOEnabled(true);
