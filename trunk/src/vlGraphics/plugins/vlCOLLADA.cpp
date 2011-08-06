@@ -142,6 +142,7 @@ namespace vl
     //-----------------------------------------------------------------------------
     typedef enum { PT_UNKNOWN, PT_LINES, PT_LINE_STRIP, PT_POLYGONS, PT_POLYLIST, PT_TRIANGLES, PT_TRIFANS, PT_TRISTRIPS } EPrimitiveType;
     //-----------------------------------------------------------------------------
+    typedef enum { OM_A_ONE, OM_RGB_ZERO } EOpaqueMode;
     typedef enum
     {
       IS_UNKNOWN,
@@ -455,7 +456,7 @@ struct DaeTechniqueCOMMON: public Object
     mReflectivity = 0;
 
     mTransparent.mColor  = fvec4(0, 0, 0, 1);
-    mOpaqueMode   = Opaque_A_ONE;
+    mOpaqueMode   = Dae::OM_A_ONE;
     mTransparency = 1;
 
     mIndexOfRefraction = 0;
@@ -464,6 +465,8 @@ struct DaeTechniqueCOMMON: public Object
   }
 
   enum { Unknown, Blinn, Phong, Lambert } mMode;
+
+  Dae::EOpaqueMode mOpaqueMode;
 
   DaeColorOrTexture mEmission;
   DaeColorOrTexture mAmbient;
@@ -476,8 +479,6 @@ struct DaeTechniqueCOMMON: public Object
   float mTransparency;
   float mIndexOfRefraction;
   bool mBlendingOn;
-
-  enum { Opaque_A_ONE, Opaque_RGB_ZERO } mOpaqueMode;
 };
 //-----------------------------------------------------------------------------
 struct DaeEffect: public Object
@@ -955,7 +956,7 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
 
     // compute the actual tranparency
     float transparency = 0;
-    if ( common_tech->mOpaqueMode == DaeTechniqueCOMMON::Opaque_A_ONE )
+    if ( common_tech->mOpaqueMode == Dae::OM_A_ONE )
       transparency = common_tech->mTransparent.mColor.a() * common_tech->mTransparency;
     else
       transparency = (1.0f - dot( common_tech->mTransparent.mColor.rgb(), fvec3(0.2126f, 0.7152f, 0.0722f))) * common_tech->mTransparency;
@@ -1059,16 +1060,14 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
         }
         else
         {
-          // mic fixme: error
-          VL_TRAP();
+          VL_LOG_WARNING << "LoadWriterCOLLADA: material '" << material << "' not found!\n";
           continue;
         }
       }
     }
     else
     {
-      // mic fixme issue error
-      VL_TRAP();
+      VL_LOG_WARNING << "LoadWriterCOLLADA: technique_COMMON not found!\n";
     }
   }
 
@@ -1088,9 +1087,7 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
       {
         if ( dae_mesh->mPrimitives[iprim]->mMaterial != Dae::VL_NO_MATERIAL_SPECIFIED)
         {
-          Log::warning( Say("LoadWriterCOLLADA: material symbol %s could not be resolved.\n") << dae_mesh->mPrimitives[iprim]->mMaterial );
-          // mic fixme remove
-          VL_TRAP()
+          VL_LOG_WARNING << "LoadWriterCOLLADA: material symbol " << dae_mesh->mPrimitives[iprim]->mMaterial << " could not be resolved.\n";
         }
       }
     }
@@ -1138,12 +1135,16 @@ void DaeLoader::parseNode(daeElement* el, DaeNode* parent)
       {
         VL_CHECK(controllers[i]->getUrl().getElement()->typeID() == domController::ID())
         daeElement* controller_el = controllers[i]->getUrl().getElement();
-        // mic fixme issue warning
         VL_CHECK(controller_el)
+        if (!controller_el)
+          continue;
+
         domController* controller = static_cast<domController*>(controller_el);
         daeElement* geometry = controller->getSkin()->getSource().getElement();
-        // mic fixme issue warning
         VL_CHECK(geometry)
+        if (!geometry)
+          continue;
+
         ref<DaeMesh> dae_mesh = parseGeometry(geometry);
         if (dae_mesh)
           this_node->mMesh.push_back(dae_mesh.get());
@@ -1492,8 +1493,7 @@ void DaeLoader::parseEffects(daeElement* library)
 
             if ( !surface->getFx_surface_init_common()->getInit_from_array().getCount() )
             {
-              // mic fixme: issue error
-              VL_TRAP();
+              VL_LOG_WARNING << "'surface->getFx_surface_init_common()->getInit_from_array().getCount()' is 0: " << __FILE__ << ":" << __LINE__ << "\n";
               continue;
             }
 
@@ -1501,8 +1501,7 @@ void DaeLoader::parseEffects(daeElement* library)
             daeElement* ref_image = surface->getFx_surface_init_common()->getInit_from_array()[0]->getValue().getElement();
             if (!ref_image)
             {
-              // mic fixme report error
-              VL_TRAP();
+              VL_LOG_WARNING << "'surface->getFx_surface_init_common()->getInit_from_array()[0]->getValue().getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
               continue;
             }
 
@@ -1511,8 +1510,7 @@ void DaeLoader::parseEffects(daeElement* library)
               dae_newparam->mDaeSurface->mImage = it->second.get();
             else
             {
-              // mic fixme: issue error
-              VL_TRAP();
+              VL_LOG_WARNING << "'mImages.find( ref_image )' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
               continue;
             }
           }
@@ -1527,8 +1525,9 @@ void DaeLoader::parseEffects(daeElement* library)
             // --- <source> ---
             daeSIDResolver sid_res( effect, sampler2D->getSource()->getValue() );
             domElement* surface_newparam = sid_res.getElement();
-            // mic fixme issue error
-            VL_CHECK(surface_newparam);
+            VL_LOG_WARNING << "'sid_res.getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
+            if(!surface_newparam)
+              continue;
 
             std::map< daeElementRef, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(surface_newparam);
             if ( it != mDaeNewParams.end() )
@@ -1537,8 +1536,7 @@ void DaeLoader::parseEffects(daeElement* library)
             }
             else
             {
-              // mic fixme: issue error
-              VL_TRAP();
+              VL_LOG_WARNING << "'mDaeNewParams.find(surface_newparam)' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
               continue;
             }
               
@@ -1622,7 +1620,7 @@ void DaeLoader::parseEffects(daeElement* library)
           {
             dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             parseColor( common, blinn->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
-            dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = blinn->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
+            dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = blinn->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? Dae::OM_A_ONE : Dae::OM_RGB_ZERO;
           }
           if (blinn->getTransparency())
           {
@@ -1656,7 +1654,7 @@ void DaeLoader::parseEffects(daeElement* library)
           {
             dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             parseColor( common, phong->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
-            dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = phong->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
+            dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = phong->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? Dae::OM_A_ONE : Dae::OM_RGB_ZERO;
           }
           if (phong->getTransparency())
           {
@@ -1687,7 +1685,7 @@ void DaeLoader::parseEffects(daeElement* library)
           {
             dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             parseColor( common, lambert->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
-            dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = lambert->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
+            dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = lambert->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? Dae::OM_A_ONE : Dae::OM_RGB_ZERO;
           }
           if (lambert->getTransparency())
           {
@@ -1718,7 +1716,7 @@ void DaeLoader::parseEffects(daeElement* library)
           {
             dae_effect->mDaeTechniqueCOMMON->mBlendingOn = true;
             parseColor( common, constant->getTransparent(), &dae_effect->mDaeTechniqueCOMMON->mTransparent );
-            dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = constant->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? DaeTechniqueCOMMON::Opaque_A_ONE : DaeTechniqueCOMMON::Opaque_RGB_ZERO;
+            dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = constant->getTransparent()->getOpaque() == FX_OPAQUE_ENUM_A_ONE ? Dae::OM_A_ONE : Dae::OM_RGB_ZERO;
           }
           if (constant->getTransparency())
           {
@@ -1738,7 +1736,7 @@ void DaeLoader::parseEffects(daeElement* library)
         {
           dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f;
           dae_effect->mDaeTechniqueCOMMON->mTransparent.mColor = fvec4(0, 0, 0, 1);
-          dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = DaeTechniqueCOMMON::Opaque_A_ONE; // mic fixme: metti questo dentro Dae:: namespace
+          dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = Dae::OM_A_ONE; // mic fixme: metti questo dentro Dae:: namespace
         }
         else
         if(mInvertTransparency)
@@ -1746,7 +1744,7 @@ void DaeLoader::parseEffects(daeElement* library)
           dae_effect->mDaeTechniqueCOMMON->mTransparency = 1.0f - dae_effect->mDaeTechniqueCOMMON->mTransparency;
           // and don't trust <transparent> values...
           dae_effect->mDaeTechniqueCOMMON->mTransparent.mColor = fvec4(0, 0, 0, 1);
-          dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = DaeTechniqueCOMMON::Opaque_A_ONE;
+          dae_effect->mDaeTechniqueCOMMON->mOpaqueMode = Dae::OM_A_ONE;
         }
 
         // <extra>
@@ -1811,8 +1809,7 @@ void DaeLoader::parseMaterials(daeElement* library)
     domElement* effect = materials[i]->getInstance_effect()->getUrl().getElement();
     if (!effect)
     {
-      // mic fixme: issue warning
-      VL_TRAP();
+      VL_LOG_WARNING << "'materials[i]->getInstance_effect()->getUrl().getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
       continue;
     }
 
@@ -1826,8 +1823,7 @@ void DaeLoader::parseMaterials(daeElement* library)
     }
     else
     {
-      // mic fixme: issue warning
-      VL_TRAP();
+      VL_LOG_WARNING << "'mEffects.find(effect)' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
       continue;
     }
   }
@@ -2098,8 +2094,9 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
     // <texture texture="...">
     daeSIDResolver sid_res( const_cast<domProfile_COMMON*>(common), color_or_texture->getTexture()->getTexture() );
     domElement* sampler2D_newparam = sid_res.getElement();
-    // mic fixme: issue error
-    VL_CHECK(sampler2D_newparam)
+    VL_LOG_WARNING << "'sid_res.getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
+    if(!sampler2D_newparam)
+      return;
 
     std::map< daeElementRef, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
     if ( it != mDaeNewParams.end() )
@@ -2108,7 +2105,7 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
       out_col->mSampler = it->second->mDaeSampler2D;
       if ( it->second->mDaeSampler2D == NULL)
       {
-        Log::error("LoadWriterCOLLADA: malformed file: <texture texture=..> points to a <newparam> that does not contain <sampler2D>!\n");
+        VL_LOG_WARNING << "LoadWriterCOLLADA: malformed file: <texture texture=..> points to a <newparam> that does not contain <sampler2D>!\n";
       }
     }
     else
@@ -2121,14 +2118,12 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
         out_col->mSampler->mDaeSurface = new DaeSurface;
         out_col->mSampler->mDaeSurface->mImage = it->second;
         prepareTexture2D( out_col->mSampler.get() );
-        Log::warning("LoadWriterCOLLADA: malformed file: <texture texture=..> parameter points to an <image> instead of a <sampler2D>!\n"
-                     "VL will create a dummy sampler with the specified image.\n");
+        VL_LOG_WARNING << "LoadWriterCOLLADA: malformed file: <texture texture=..> parameter points to an <image> instead of a <sampler2D>!\n"
+                          "VL will create a dummy sampler with the specified image.\n";
       }
       else
       {
-        Log::error("LoadWriterCOLLADA: malformed file: <texture texture=..> could not be resolved to anything!\n");
-        // mic fixme: issue error
-        VL_TRAP();
+        VL_LOG_WARNING << "LoadWriterCOLLADA: malformed file: <texture texture=..> could not be resolved to anything!\n";
       }
     }
 
@@ -2153,12 +2148,12 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
     {
       if ( prim->mChannels[i]->mSource->count() != prim->mChannels[0]->mSource->count() )
       {
-        Log::error("LoadWriterCOLLADA: cannot generate point cloud: channels have different sizes!\n");
+        VL_LOG_WARNING << "LoadWriterCOLLADA: cannot generate point cloud: channels have different sizes!\n";
         return;
       }
       if ( prim->mChannels[i]->mOffset != 0 )
       {
-        Log::error("LoadWriterCOLLADA: cannot generate point cloud: channels must have offset == 0!\n");
+        VL_LOG_WARNING << "LoadWriterCOLLADA: cannot generate point cloud: channels must have offset == 0!\n";
         return;
       }
     }
@@ -2317,7 +2312,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
     case Dae::IS_COLOR:    prim->mGeometry->setColorArray( vert_attrib.get() ); break;
     case Dae::IS_TEXCOORD: prim->mGeometry->setTexCoordArray( tex_unit++, vert_attrib.get() ); break;
     default:
-      Log::warning( Say("LoadWriterCOLLADA: input semantic '%s' not supported.\n") << getSemanticString(prim->mChannels[ich]->mSemantic) );
+      VL_LOG_WARNING << ( Say("LoadWriterCOLLADA: input semantic '%s' not supported.\n") << getSemanticString(prim->mChannels[ich]->mSemantic) );
       continue;
     }
 
@@ -2361,7 +2356,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
       if ( l < 0.9f || l > 1.1f ) 
       {
         // mic fixme: issue these things as debug once things got stable
-        Log::warning( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
+        VL_LOG_WARNING << ( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
         norm_old->at(i).normalize();
         ++degenerate;
       }
@@ -2375,7 +2370,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
 
     // mic fixme: issue these things as debug once things got stable
     if (degenerate || flipped) 
-      Log::warning( Say("LoadWriterCOLLADA: fixed bad normals: %n degenerate and %n flipped (out of %n).\n") << degenerate << flipped << norm_old->size() );
+      VL_LOG_WARNING << ( Say("LoadWriterCOLLADA: fixed bad normals: %n degenerate and %n flipped (out of %n).\n") << degenerate << flipped << norm_old->size() );
 
     // reinstall fixed normals
     prim->mGeometry->setNormalArray(norm_old.get());
