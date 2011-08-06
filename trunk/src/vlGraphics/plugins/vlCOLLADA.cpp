@@ -2094,9 +2094,6 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
     // <texture texture="...">
     daeSIDResolver sid_res( const_cast<domProfile_COMMON*>(common), color_or_texture->getTexture()->getTexture() );
     domElement* sampler2D_newparam = sid_res.getElement();
-    VL_LOG_WARNING << "'sid_res.getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
-    if(!sampler2D_newparam)
-      return;
 
     std::map< daeElementRef, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
     if ( it != mDaeNewParams.end() )
@@ -2355,8 +2352,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
 
       if ( l < 0.9f || l > 1.1f ) 
       {
-        // mic fixme: issue these things as debug once things got stable
-        VL_LOG_WARNING << ( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
+        // VL_LOG_WARNING << ( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
         norm_old->at(i).normalize();
         ++degenerate;
       }
