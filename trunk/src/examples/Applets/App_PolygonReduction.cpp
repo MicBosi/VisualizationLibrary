@@ -60,7 +60,7 @@ public:
     mEffect = new Effect;
 
     /* solid shader */
-    mEffect->shader(0,0)->setRenderState( new Light(0) );
+    mEffect->shader(0,0)->setRenderState( new Light, 0 );
     mEffect->shader(0,0)->enable(EN_LIGHTING);
     mEffect->shader(0,0)->gocLightModel()->setTwoSide(true);
     mEffect->shader(0,0)->gocMaterial()->setDiffuse(vl::royalblue);
@@ -71,7 +71,7 @@ public:
     /* wireframe shader */
 #if defined(VL_OPENGL)
     mEffect->lod(0)->push_back( new Shader );
-    mEffect->shader(0,1)->setRenderState( new Light(0) );
+    mEffect->shader(0,1)->setRenderState( new Light, 0 );
     mEffect->shader(0,1)->enable(EN_LIGHTING);
     mEffect->shader(0,1)->gocLightModel()->setTwoSide(true);
     mEffect->shader(0,1)->gocMaterial()->setDiffuse(vl::lightgreen);

@@ -102,7 +102,7 @@ public:
     ax_effect->shader()->enable(vl::EN_LIGHTING);
     ax_effect->shader()->enable(vl::EN_DEPTH_TEST);
     ax_effect->shader()->enable(vl::EN_CULL_FACE);
-    ax_effect->shader()->setRenderState( new vl::Light(0) );
+    ax_effect->shader()->setRenderState( new vl::Light, 0 );
     ax_effect->shader()->gocMaterial()->setDiffuse(vl::red);
 
     vl::ref<vl::Geometry> axis1 = vl::makeCylinder( vl::vec3(-360,0,-360), 10, 360*2 );

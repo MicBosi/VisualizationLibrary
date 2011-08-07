@@ -36,7 +36,7 @@
 using namespace vl;
 
 //------------------------------------------------------------------------------
-void RenderStateSet::setRenderState(RenderState* renderstate)
+void RenderStateSet::setRenderState(RenderState* renderstate, int index)
 {
   if (renderstate)
   {
@@ -44,38 +44,39 @@ void RenderStateSet::setRenderState(RenderState* renderstate)
       mGLSLProgram = static_cast<GLSLProgram*>(renderstate);
     for(unsigned i=0; i<mRenderStates.size(); ++i)
     {
-      if (mRenderStates[i]->type() == renderstate->type())
+      if (mRenderStates[i].mRS->type() == renderstate->type() && mRenderStates[i].mIndex == index)
       {
-        mRenderStates[i] = renderstate;
+        mRenderStates[i].mRS = renderstate;
+        // mRenderStates[i].mIndex = index;
         return;
       }
     }
-    mRenderStates.push_back( renderstate );
+    mRenderStates.push_back( RenderStateSlot(renderstate, index) );
   }
 }
 //------------------------------------------------------------------------------
-RenderState* RenderStateSet::renderState( ERenderState type )
+RenderState* RenderStateSet::renderState( ERenderState type, int index )
 {
   for(unsigned i=0; i<mRenderStates.size(); ++i)
-    if ( mRenderStates[i]->type() == type )
-      return mRenderStates[i].get();
+    if (mRenderStates[i].mRS->type() == type && mRenderStates[i].mIndex == index)
+      return mRenderStates[i].mRS.get();
   return NULL;
 }
 //------------------------------------------------------------------------------
-const RenderState* RenderStateSet::renderState( ERenderState type ) const
+const RenderState* RenderStateSet::renderState( ERenderState type, int index ) const
 {
   for(unsigned i=0; i<mRenderStates.size(); ++i)
-    if ( mRenderStates[i]->type() == type )
-      return mRenderStates[i].get();
+    if (mRenderStates[i].mRS->type() == type && mRenderStates[i].mIndex == index)
+      return mRenderStates[i].mRS.get();
   return NULL;
 }
 //------------------------------------------------------------------------------
-void RenderStateSet::eraseRenderState(ERenderState type)
+void RenderStateSet::eraseRenderState(ERenderState type, int index)
 {
   if (type == RS_GLSLProgram)
     mGLSLProgram = NULL;
   for(unsigned i=0; i<mRenderStates.size(); ++i)
-    if (mRenderStates[i]->type() == type)
+    if (mRenderStates[i].mRS->type() == type && mRenderStates[i].mIndex == index)
     {
       mRenderStates.erase(mRenderStates.begin() + i);
       return;

@@ -41,6 +41,8 @@
 #include <vlGraphics/UniformSet.hpp>
 #include <vlGraphics/Texture.hpp>
 #include <vlGraphics/Scissor.hpp>
+#include <vlGraphics/Light.hpp>
+#include <vlGraphics/ClipPlane.hpp>
 #include <vector>
 
 namespace vl
@@ -54,16 +56,16 @@ namespace vl
   /** RenderState wrapping the OpenGL function glColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glColor.xml for more information.
    * 
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT Color: public RenderState
+  class VLGRAPHICS_EXPORT Color: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::Color, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Color, RenderStateNonIndexed)
 
   public:
     Color(): mColor( fvec4(1,1,1,1) ) {}
 
     virtual ERenderState type() const { return RS_Color; }
 
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     void setColor(const fvec4& color) { mColor = color; }
 
@@ -78,16 +80,16 @@ namespace vl
   /** RenderState wrapping the OpenGL function glSecondaryColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glSecondaryColor.xml for more information.
    * 
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT SecondaryColor: public RenderState
+  class VLGRAPHICS_EXPORT SecondaryColor: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::SecondaryColor, RenderState)
+    VL_INSTRUMENT_CLASS(vl::SecondaryColor, RenderStateNonIndexed)
 
   public:
     SecondaryColor(): mSecondaryColor( fvec3(1,1,1) ) {}
 
     virtual ERenderState type() const { return RS_SecondaryColor; }
 
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     void setSecondaryColor(const fvec3& color) { mSecondaryColor = color; }
 
@@ -102,16 +104,16 @@ namespace vl
   /** RenderState wrapping the OpenGL function glNormal(), see also http://www.opengl.org/sdk/docs/man/xhtml/glNormal.xml for more information.
    * 
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT Normal: public RenderState
+  class VLGRAPHICS_EXPORT Normal: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::Normal, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Normal, RenderStateNonIndexed)
 
   public:
     Normal(): mNormal( fvec3(0,1,0) ) {}
 
     virtual ERenderState type() const { return RS_Normal; }
 
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     void setNormal(const fvec3& color) { mNormal = color; }
 
@@ -126,9 +128,9 @@ namespace vl
   /** RenderState wrapping the OpenGL function glPixelTransfer(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPixelTransfer.xml for more information.
    * 
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT PixelTransfer: public RenderState
+  class VLGRAPHICS_EXPORT PixelTransfer: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::PixelTransfer, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PixelTransfer, RenderStateNonIndexed)
 
   public:
     PixelTransfer()
@@ -168,7 +170,7 @@ namespace vl
 
     virtual ERenderState type() const { return RS_PixelTransfer; }
 
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     bool mapColor() const { return mMapColor; }
     bool mapStencil() const { return mMapStencil; }
@@ -269,9 +271,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glHint(), see also http://www.opengl.org/sdk/docs/man/xhtml/glHint.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT Hint: public RenderState
+  class VLGRAPHICS_EXPORT Hint: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::Hint, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Hint, RenderStateNonIndexed)
 
   public:
     Hint(): mPerspectiveCorrectionHint(HM_DONT_CARE), mPointSmoothHint(HM_DONT_CARE), mLineSmoothHint(HM_DONT_CARE),
@@ -282,7 +284,7 @@ namespace vl
 
     virtual ERenderState type() const { return RS_Hint; }
 
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     void setPerspectiveCorrectionHint(EHintMode mode) { mPerspectiveCorrectionHint = mode; }
     void setPolygonSmoohtHint(EHintMode mode) { mPolygonSmoothHint = mode; }
@@ -311,9 +313,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glCullFace(), see also http://www.opengl.org/sdk/docs/man/xhtml/glCullFace.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_CULL_FACE */
-  class VLGRAPHICS_EXPORT CullFace: public RenderState
+  class VLGRAPHICS_EXPORT CullFace: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::CullFace, RenderState)
+    VL_INSTRUMENT_CLASS(vl::CullFace, RenderStateNonIndexed)
 
   public:
     CullFace(EPolygonFace cullface=PF_BACK): mFaceMode(cullface)
@@ -321,7 +323,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_CullFace; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonFace facemode) { mFaceMode = facemode; }
     EPolygonFace faceMode() const { return mFaceMode; }
   protected:
@@ -332,9 +334,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glFrontFace(), see also http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT FrontFace: public RenderState
+  class VLGRAPHICS_EXPORT FrontFace: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::FrontFace, RenderState)
+    VL_INSTRUMENT_CLASS(vl::FrontFace, RenderStateNonIndexed)
 
   public:
     FrontFace(EFrontFace frontface=FF_CCW): mFrontFace(frontface)
@@ -342,7 +344,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_FrontFace; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EFrontFace frontface) { mFrontFace = frontface; }
     EFrontFace frontFace() const { return mFrontFace; }
   protected:
@@ -353,9 +355,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glDepthFunc(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthFunc.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_DEPTH_TEST */
-  class VLGRAPHICS_EXPORT DepthFunc: public RenderState
+  class VLGRAPHICS_EXPORT DepthFunc: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::DepthFunc, RenderState)
+    VL_INSTRUMENT_CLASS(vl::DepthFunc, RenderStateNonIndexed)
 
   public:
     DepthFunc(EFunction depthfunc=FU_LESS): mDepthFunc(depthfunc)
@@ -363,7 +365,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_DepthFunc; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EFunction depthfunc) { mDepthFunc = depthfunc; }
     EFunction depthFunc() const { return mDepthFunc; }
   protected:
@@ -374,9 +376,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glDepthMask(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthMask.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT DepthMask: public RenderState
+  class VLGRAPHICS_EXPORT DepthMask: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::DepthMask, RenderState)
+    VL_INSTRUMENT_CLASS(vl::DepthMask, RenderStateNonIndexed)
 
   public:
     DepthMask(bool depthmask=true): mDepthMask(depthmask)
@@ -384,7 +386,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_DepthMask; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(bool depthmask) { mDepthMask = depthmask; }
     bool depthMask() const { return mDepthMask; }
   protected:
@@ -395,9 +397,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glPolygonMode(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPolygonMode.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT PolygonMode: public RenderState
+  class VLGRAPHICS_EXPORT PolygonMode: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::PolygonMode, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PolygonMode, RenderStateNonIndexed)
 
   public:
     PolygonMode(EPolygonMode frontface=PM_FILL, EPolygonMode backface=PM_FILL): mFrontFace(frontface), mBackFace(backface)
@@ -405,7 +407,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_PolygonMode; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonMode frontface, EPolygonMode backface) { mFrontFace = frontface; mBackFace = backface; }
     void setFrontFace(EPolygonMode frontface) { mFrontFace = frontface; }
     void setBackFace(EPolygonMode backface) { mBackFace = backface; }
@@ -420,9 +422,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glShadeModel(), see also http://www.opengl.org/sdk/docs/man/xhtml/glShadeModel.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT ShadeModel: public RenderState
+  class VLGRAPHICS_EXPORT ShadeModel: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::ShadeModel, RenderState)
+    VL_INSTRUMENT_CLASS(vl::ShadeModel, RenderStateNonIndexed)
 
   public:
     ShadeModel(EShadeModel shademodel=SM_SMOOTH): mShadeModel(shademodel)
@@ -430,7 +432,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_ShadeModel; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EShadeModel shademodel) { mShadeModel = shademodel; }
     EShadeModel shadeModel() const { return mShadeModel; }
   protected:
@@ -441,9 +443,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glBlendFunc(), see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendFunc.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_BLEND */
-  class VLGRAPHICS_EXPORT BlendFunc: public RenderState
+  class VLGRAPHICS_EXPORT BlendFunc: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::BlendFunc, RenderState)
+    VL_INSTRUMENT_CLASS(vl::BlendFunc, RenderStateNonIndexed)
 
   public:
     BlendFunc(EBlendFactor src_rgb=BF_SRC_ALPHA, EBlendFactor dst_rgb=BF_ONE_MINUS_SRC_ALPHA, EBlendFactor src_alpha=BF_SRC_ALPHA, EBlendFactor dst_alpha=BF_ONE_MINUS_SRC_ALPHA):
@@ -453,7 +455,7 @@ namespace vl
     }
     virtual ERenderState type() const { return RS_BlendFunc; }
     // if glBlendFuncSeparate is not supported uses RGB factor for both RGB and Alpha
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EBlendFactor src_rgb, EBlendFactor dst_rgb, EBlendFactor src_alpha, EBlendFactor dst_alpha) { mSrcRGB = src_rgb; mSrcAlpha = src_alpha; mDstRGB = dst_rgb; mDstAlpha = dst_alpha; }
     void set(EBlendFactor src_rgba, EBlendFactor dst_rgba) { mSrcRGB = src_rgba; mSrcAlpha = src_rgba; mDstRGB = dst_rgba; mDstAlpha = dst_rgba; }
     void setSrcRGB(EBlendFactor factor) { mSrcRGB = factor; }
@@ -477,9 +479,9 @@ namespace vl
    * http://www.opengl.org/sdk/docs/man/xhtml/glBlendEquation.xml and 
    * http://www.opengl.org/sdk/docs/man/xhtml/glBlendEquationSeparate.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT BlendEquation: public RenderState
+  class VLGRAPHICS_EXPORT BlendEquation: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::BlendEquation, RenderState)
+    VL_INSTRUMENT_CLASS(vl::BlendEquation, RenderStateNonIndexed)
 
   public:
     BlendEquation(EBlendEquation mode_rgb=BE_FUNC_ADD, EBlendEquation mode_alpha=BE_FUNC_ADD): mModeRGB(mode_rgb), mModeAlpha(mode_alpha)
@@ -488,7 +490,7 @@ namespace vl
     }
     virtual ERenderState type() const { return RS_BlendEquation; }
     // if glBlendEquationSeparate is not supported uses RGB mode for both RGB and Alpha
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EBlendEquation mode_rgba) { mModeRGB = mode_rgba; mModeAlpha = mode_rgba; }
     void set(EBlendEquation mode_rgb, EBlendEquation mode_alpha) { mModeRGB = mode_rgb; mModeAlpha = mode_alpha; }
     EBlendEquation modeRGB() const { return mModeRGB; }
@@ -502,9 +504,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glSampleCoverage(), see also http://www.opengl.org/sdk/docs/man/xhtml/glSampleCoverage.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_SAMPLE_ALPHA_TO_COVERAGE, vl::EN_SAMPLE_ALPHA_TO_ONE, vl::EN_SAMPLE_COVERAGE */
-  class VLGRAPHICS_EXPORT SampleCoverage: public RenderState
+  class VLGRAPHICS_EXPORT SampleCoverage: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::SampleCoverage, RenderState)
+    VL_INSTRUMENT_CLASS(vl::SampleCoverage, RenderStateNonIndexed)
 
   public:
     SampleCoverage(GLclampf value=1.0f, bool invert=false): mValue(value), mInvert(invert)
@@ -512,7 +514,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_SampleCoverage; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(GLclampf value, bool invert) { mValue = value; mInvert = invert; }
     void setValue(GLclampf value) { mValue = value; }
     void setInvert(bool invert) { mInvert = invert; }
@@ -527,9 +529,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glAlphaFunc(), see also http://www.opengl.org/sdk/docs/man/xhtml/glAlphaFunc.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_ALPHA_TEST */
-  class VLGRAPHICS_EXPORT AlphaFunc: public RenderState
+  class VLGRAPHICS_EXPORT AlphaFunc: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::AlphaFunc, RenderState)
+    VL_INSTRUMENT_CLASS(vl::AlphaFunc, RenderStateNonIndexed)
 
   public:
     AlphaFunc(EFunction alphafunc=FU_ALWAYS, float refvalue=0): mRefValue(refvalue), mAlphaFunc(alphafunc)
@@ -537,7 +539,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_AlphaFunc; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EFunction alphafunc, float ref_value) { mAlphaFunc = alphafunc; mRefValue = ref_value; }
     EFunction alphaFunc() const { return mAlphaFunc; }
     float refValue() const { return mRefValue; }
@@ -551,14 +553,14 @@ namespace vl
   /** RenderState wrapping the OpenGL function glMaterial() and glColorMaterial(), see also http://www.opengl.org/sdk/docs/man/xhtml/glMaterial.xml and http://www.opengl.org/sdk/docs/man/xhtml/glColorMaterial.xml for more information.
     * Under OpenGL ES 1.x the front material properties are used for both front and back faces.
    * \sa Shader, Effect, Actor, vl::EN_LIGHTING */
-  class VLGRAPHICS_EXPORT Material: public RenderState
+  class VLGRAPHICS_EXPORT Material: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::Material, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Material, RenderStateNonIndexed)
 
   public:
     Material();
     virtual ERenderState type() const { return RS_Material; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     void multiplyTransparency(float alpha);
     float getMinimumAlpha() const;
@@ -629,9 +631,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glLightModel(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLightModel.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_LIGHTING */
-  class VLGRAPHICS_EXPORT LightModel: public RenderState
+  class VLGRAPHICS_EXPORT LightModel: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::LightModel, RenderState)
+    VL_INSTRUMENT_CLASS(vl::LightModel, RenderStateNonIndexed)
 
   public:
     LightModel(): mAmbientColor(0.2f,0.2f,0.2f,1.0f), mColorControl(CC_SINGLE_COLOR), mLocalViewer(false), mTwoSide(false)
@@ -639,7 +641,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_LightModel; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void setLocalViewer(bool localviewer) { mLocalViewer = localviewer; }
     void setTwoSide(bool twoside) { mTwoSide = twoside; }
     void setColorControl(EColorControl colorcontrol) { mColorControl = colorcontrol; }
@@ -659,9 +661,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glFog(), see also http://www.opengl.org/sdk/docs/man/xhtml/glFog.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_FOG */
-  class VLGRAPHICS_EXPORT Fog: public RenderState
+  class VLGRAPHICS_EXPORT Fog: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::Fog, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Fog, RenderStateNonIndexed)
 
   public:
     Fog(EFogMode mode=FM_LINEAR, fvec4 color=fvec4(0,0,0,0), float density=1, float start=0, float end=1):
@@ -670,7 +672,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_Fog; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EFogMode mode, fvec4 color, float density, float start, float end) { mColor = color; mMode = mode; mDensity = density; mStart = start; mEnd = end; }
     void setColor(fvec4 color) { mColor = color; }
     void setMode(EFogMode mode) { mMode = mode; }
@@ -694,9 +696,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glPolygonOffset(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPolygonOffset.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_POLYGON_OFFSET_FILL, vl::EN_POLYGON_OFFSET_LINE, vl::EN_POLYGON_OFFSET_POINT */
-  class VLGRAPHICS_EXPORT PolygonOffset: public RenderState
+  class VLGRAPHICS_EXPORT PolygonOffset: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::PolygonOffset, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PolygonOffset, RenderStateNonIndexed)
 
   public:
     PolygonOffset(): mFactor(0.0f), mUnits(0.0f)
@@ -705,7 +707,7 @@ namespace vl
     }
     virtual ERenderState type() const { return RS_PolygonOffset; }
     PolygonOffset(float factor, float units): mFactor(factor), mUnits(units) {}
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(float factor, float units) { mFactor = factor; mUnits = units; }
     void setFactor(float factor) { mFactor = factor; }
     void setUnits(float units) { mUnits = units; }
@@ -720,9 +722,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glLogicOp(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLogicOp.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_COLOR_LOGIC_OP */
-  class VLGRAPHICS_EXPORT LogicOp: public RenderState
+  class VLGRAPHICS_EXPORT LogicOp: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::LogicOp, RenderState)
+    VL_INSTRUMENT_CLASS(vl::LogicOp, RenderStateNonIndexed)
 
   public:
     LogicOp(ELogicOp logicop=LO_COPY): mLogicOp(logicop)
@@ -730,7 +732,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_LogicOp; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(ELogicOp logicop) { mLogicOp = logicop; }
     ELogicOp logicOp() const { return mLogicOp; }
   protected:
@@ -741,9 +743,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glDepthRange(), see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthRange.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_DEPTH_TEST */
-  class VLGRAPHICS_EXPORT DepthRange: public RenderState
+  class VLGRAPHICS_EXPORT DepthRange: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::DepthRange, RenderState)
+    VL_INSTRUMENT_CLASS(vl::DepthRange, RenderStateNonIndexed)
 
   public:
     DepthRange(): mZNear(0), mZFar(1.0f)
@@ -755,7 +757,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_DepthRange; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(float znear, float zfar) { mZNear = znear; mZFar = zfar; }
     void setZNear(float znear) { mZNear = znear; }
     void setZFar(float zfar) { mZFar = zfar; }
@@ -770,9 +772,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glLineWidth(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLineWidth.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT LineWidth: public RenderState
+  class VLGRAPHICS_EXPORT LineWidth: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::LineWidth, RenderState)
+    VL_INSTRUMENT_CLASS(vl::LineWidth, RenderStateNonIndexed)
 
   public:
     LineWidth(float linewidth=1.0f): mLineWidth(linewidth)
@@ -780,7 +782,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_LineWidth; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(float linewidth) { mLineWidth = linewidth; }
     float lineWidth() const { return mLineWidth; }
   protected:
@@ -791,9 +793,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glPointSize(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPointSize.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_POINT_SMOOTH, vl::EN_POINT_SPRITE */
-  class VLGRAPHICS_EXPORT PointSize: public RenderState
+  class VLGRAPHICS_EXPORT PointSize: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::PointSize, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PointSize, RenderStateNonIndexed)
 
   public:
     PointSize(float pointsize=1.0f): mPointSize(pointsize)
@@ -801,7 +803,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_PointSize; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(float pointsize) { mPointSize = pointsize; }
     float pointSize() const { return mPointSize; }
   protected:
@@ -812,15 +814,15 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glPolygonStipple(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPolygonStipple.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_POLYGON_STIPPLE */
-  class VLGRAPHICS_EXPORT PolygonStipple: public RenderState
+  class VLGRAPHICS_EXPORT PolygonStipple: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::PolygonStipple, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PolygonStipple, RenderStateNonIndexed)
 
   public:
     PolygonStipple();
     PolygonStipple(const unsigned char* mask);
     virtual ERenderState type() const { return RS_PolygonStipple; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(const unsigned char* mask);
     const unsigned char* mask() const { return mMask; }
   protected:
@@ -831,9 +833,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glLineStipple(), see also http://www.opengl.org/sdk/docs/man/xhtml/glLineStipple.xml for more information.
    * \sa Shader, Effect, Actor, vl::EN_LINE_STIPPLE */
-  class VLGRAPHICS_EXPORT LineStipple: public RenderState
+  class VLGRAPHICS_EXPORT LineStipple: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::LineStipple, RenderState)
+    VL_INSTRUMENT_CLASS(vl::LineStipple, RenderStateNonIndexed)
 
   public:
     LineStipple(int factor=1, GLushort pattern=~(GLushort)0): mFactor(factor), mPattern(pattern)
@@ -841,7 +843,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_LineStipple; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(int factor, GLushort pattern) { mFactor = factor; mPattern = pattern; }
     void setFactor(int factor) { mFactor = factor; }
     void setPattern(GLushort pattern) { mPattern = pattern; }
@@ -856,9 +858,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glPointParameter(), see also http://www.opengl.org/sdk/docs/man/xhtml/glPointParameter.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT PointParameter: public RenderState
+  class VLGRAPHICS_EXPORT PointParameter: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::PointParameter, RenderState)
+    VL_INSTRUMENT_CLASS(vl::PointParameter, RenderStateNonIndexed)
 
   public:
     PointParameter(float sizemin=0, float sizemax=1024.0f, float fadethresholdsize=1.0f, fvec3 distanceattenuation=fvec3(1,0,0)):
@@ -868,7 +870,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_PointParameter; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(float sizemin, float sizemax, float fadethresholdsize, fvec3 distanceattenuation) { mDistanceAttenuation = distanceattenuation; mSizeMin = sizemin; mSizeMax = sizemax; mFadeThresholdSize = fadethresholdsize; }
     void setDistanceAttenuation(fvec3 attenuation) { mDistanceAttenuation = attenuation; }
     void setSizeMin(float sizemin) { mSizeMin = sizemin; }
@@ -894,9 +896,9 @@ namespace vl
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilFunc.xml and
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilFuncSeparate.xml for more information.
    * \sa Shader, Effect, Actor, StencilMask, StencilOp, vl::EN_STENCIL_TEST */
-  class VLGRAPHICS_EXPORT StencilFunc: public RenderState
+  class VLGRAPHICS_EXPORT StencilFunc: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::StencilFunc, RenderState)
+    VL_INSTRUMENT_CLASS(vl::StencilFunc, RenderStateNonIndexed)
 
   public:
     StencilFunc(EFunction function=FU_ALWAYS, int refvalue=0, unsigned int mask=~(unsigned int)0): 
@@ -907,7 +909,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_StencilFunc; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonFace face, EFunction function, int refvalue, unsigned int mask) 
     { 
       if (face == PF_FRONT || face == PF_FRONT_AND_BACK)
@@ -944,9 +946,9 @@ namespace vl
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilOp.xml and
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilOpSeparate.xml for more information.
    * \sa Shader, Effect, Actor, StencilMask, StencilFunc, vl::EN_STENCIL_TEST */
-  class VLGRAPHICS_EXPORT StencilOp: public RenderState
+  class VLGRAPHICS_EXPORT StencilOp: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::StencilOp, RenderState)
+    VL_INSTRUMENT_CLASS(vl::StencilOp, RenderStateNonIndexed)
 
   public:
     StencilOp(EStencilOp sfail=SO_KEEP, EStencilOp dpfail=SO_KEEP, EStencilOp dppass=SO_KEEP): 
@@ -957,7 +959,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_StencilOp; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonFace face, EStencilOp sfail, EStencilOp dpfail, EStencilOp dppass) 
     { 
       if (face == PF_FRONT || face == PF_FRONT_AND_BACK)
@@ -994,9 +996,9 @@ namespace vl
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilMask.xml and
    * http://www.opengl.org/sdk/docs/man/xhtml/glStencilMaskSeparate.xml for more information.
    * \sa Shader, Effect, Actor, StencilOp, StencilFunc, vl::EN_STENCIL_TEST */
-  class VLGRAPHICS_EXPORT StencilMask: public RenderState
+  class VLGRAPHICS_EXPORT StencilMask: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::StencilMask, RenderState)
+    VL_INSTRUMENT_CLASS(vl::StencilMask, RenderStateNonIndexed)
 
   public:
     StencilMask(unsigned int mask=~(unsigned int)0): mMask_Front(mask), mMask_Back(mask)
@@ -1004,7 +1006,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_StencilMask; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(EPolygonFace face, unsigned int mask) 
     { 
       if (face == PF_FRONT || face == PF_FRONT_AND_BACK)
@@ -1023,9 +1025,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glBlendColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendColor.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT BlendColor: public RenderState
+  class VLGRAPHICS_EXPORT BlendColor: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::BlendColor, RenderState)
+    VL_INSTRUMENT_CLASS(vl::BlendColor, RenderStateNonIndexed)
 
   public:
     BlendColor(fvec4 blendcolor=fvec4(0,0,0,0)): mBlendColor(blendcolor)
@@ -1033,7 +1035,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_BlendColor; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(fvec4 blendcolor) { mBlendColor = blendcolor; }
     fvec4 blendColor() const { return mBlendColor; }
   protected:
@@ -1044,9 +1046,9 @@ namespace vl
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glColorMask(), see also http://www.opengl.org/sdk/docs/man/xhtml/glColorMask.xml for more information.
    * \sa Shader, Effect, Actor */
-  class VLGRAPHICS_EXPORT ColorMask: public RenderState
+  class VLGRAPHICS_EXPORT ColorMask: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::ColorMask, RenderState)
+    VL_INSTRUMENT_CLASS(vl::ColorMask, RenderStateNonIndexed)
 
   public:
     ColorMask(bool red=true, bool green=true, bool blue=true, bool alpha=true): mRed(red), mGreen(green), mBlue(blue), mAlpha(alpha)
@@ -1054,7 +1056,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual ERenderState type() const { return RS_ColorMask; }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     void set(bool red, bool green, bool blue, bool alpha) { mRed = red; mGreen = green; mBlue = blue; mAlpha = alpha; }
     void setRed(bool red) { mRed = red; }
     void setGreen(bool green) { mGreen = green; }
@@ -1076,14 +1078,14 @@ namespace vl
   /** The TextureMatrix class uses a 4x4 matrix to transform the texture coordinates of a texture unit.
    *
    * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
-  class VLGRAPHICS_EXPORT TextureMatrix: public TextureState
+  class VLGRAPHICS_EXPORT TextureMatrix: public RenderStateIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::TextureMatrix, TextureState)
+    VL_INSTRUMENT_CLASS(vl::TextureMatrix, RenderStateIndexed)
 
   public:
-    TextureMatrix(int texunit) { mTextureSampler=texunit; mUseCameraRotationInverse = false; }
-    virtual ERenderState type() const { return (ERenderState)(RS_TextureMatrix0 + mTextureSampler); }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    TextureMatrix() { mUseCameraRotationInverse = false; }
+    virtual ERenderState type() const { return RS_TextureMatrix; }
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     const mat4& matrix() const { return mMatrix; }
     const TextureMatrix& setMatrix(const mat4& matrix)
     {
@@ -1112,14 +1114,14 @@ namespace vl
    * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
    * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
-  class VLGRAPHICS_EXPORT TexEnv: public TextureState
+  class VLGRAPHICS_EXPORT TexEnv: public RenderStateIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::TexEnv, TextureState)
+    VL_INSTRUMENT_CLASS(vl::TexEnv, RenderStateIndexed)
 
   public:
-    TexEnv(int texunit);
-    virtual ERenderState type() const { return (ERenderState)(RS_TexEnv0 + mTextureSampler); }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    TexEnv();
+    virtual ERenderState type() const { return RS_TexEnv; }
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     void setMode(ETexEnvMode mode) { mMode = mode; }
     ETexEnvMode mode() const { return mMode; }
@@ -1198,15 +1200,15 @@ namespace vl
    * TexGen and TexEnv define a set of variables associated to a TextureSampler.
    *
    * \sa Shader, TextureSampler, Texture, TexGen, TexParameter, Effect, Actor */
-  class VLGRAPHICS_EXPORT TexGen: public TextureState
+  class VLGRAPHICS_EXPORT TexGen: public RenderStateIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::TexGen, TextureState)
+    VL_INSTRUMENT_CLASS(vl::TexGen, RenderStateIndexed)
 
   public:
-    TexGen(int texunit);
+    TexGen();
 
-    virtual ERenderState type() const { return (ERenderState)(RS_TexGen0 + mTextureSampler); }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual ERenderState type() const { return RS_TexGen; }
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     void setEyePlaneS(fvec4 plane) { mEyePlaneS = plane; }
     void setObjectPlaneS(fvec4 plane) { mObjectPlaneS = plane; }
@@ -1256,19 +1258,18 @@ namespace vl
   /** The TextureSampler class associates a Texture object to an OpenGL texture unit.
    *
    * \sa Texture, TexParameter, Shader, TextureMatrix, TexEnv, TexGen, Effect, Actor */
-  class VLGRAPHICS_EXPORT TextureSampler: public TextureState
+  class VLGRAPHICS_EXPORT TextureSampler: public RenderStateIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::TextureSampler, TextureState)
+    VL_INSTRUMENT_CLASS(vl::TextureSampler, RenderStateIndexed)
 
   public:
-    TextureSampler(int texunit)
+    TextureSampler()
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mTextureSampler = texunit;
     }
 
-    virtual ERenderState type() const { return (ERenderState)(RS_TextureSampler0 + textureUnit()); }
-    virtual void apply(const Camera*, OpenGLContext* ctx) const;
+    virtual ERenderState type() const { return RS_TextureSampler; }
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     void setTexture(Texture* texture) { mTexture = texture; }
     Texture* texture() { return mTexture.get(); }
@@ -1410,12 +1411,12 @@ namespace vl
     GLSLProgram* getGLSLProgram();
 
     PixelTransfer* gocPixelTransfer();
-    const PixelTransfer* getPixelTransfer() const { return static_cast<const PixelTransfer*>( getRenderStateSet()->renderState( RS_PixelTransfer) ); }
-    PixelTransfer* getPixelTransfer() { return static_cast<PixelTransfer*>( getRenderStateSet()->renderState( RS_PixelTransfer) ); }
+    const PixelTransfer* getPixelTransfer() const { return static_cast<const PixelTransfer*>( getRenderStateSet()->renderState( RS_PixelTransfer ) ); }
+    PixelTransfer* getPixelTransfer() { return static_cast<PixelTransfer*>( getRenderStateSet()->renderState( RS_PixelTransfer ) ); }
 
     Hint* gocHint();
-    const Hint* getHint() const { return static_cast<const Hint*>( getRenderStateSet()->renderState( RS_Hint) ); }
-    Hint* getHint() { return static_cast<Hint*>( getRenderStateSet()->renderState( RS_Hint) ); }
+    const Hint* getHint() const { return static_cast<const Hint*>( getRenderStateSet()->renderState( RS_Hint ) ); }
+    Hint* getHint() { return static_cast<Hint*>( getRenderStateSet()->renderState( RS_Hint ) ); }
 
     CullFace* gocCullFace();
     const CullFace* getCullFace() const { return static_cast<const CullFace*>( getRenderStateSet()->renderState( RS_CullFace ) ); }
@@ -1555,33 +1556,33 @@ namespace vl
 
     TextureSampler* gocTextureSampler(int unit_index);
     
-    const TextureSampler* getTextureSampler(int unit_index) const { return static_cast<const TextureSampler*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureSampler0+unit_index) ) ); }
+    const TextureSampler* getTextureSampler(int unit_index) const { return static_cast<const TextureSampler*>( getRenderStateSet()->renderState( RS_TextureSampler, unit_index ) ); }
     
-    TextureSampler* getTextureSampler(int unit_index) { return static_cast<TextureSampler*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureSampler0+unit_index) ) ); }
+    TextureSampler* getTextureSampler(int unit_index) { return static_cast<TextureSampler*>( getRenderStateSet()->renderState( RS_TextureSampler, unit_index ) ); }
 
     // tex env
 
     TexEnv* gocTexEnv(int unit_index);
     
-    const TexEnv* getTexEnv(int unit_index) const { return static_cast<const TexEnv*>( getRenderStateSet()->renderState( (ERenderState)(RS_TexEnv0+unit_index) ) ); }
+    const TexEnv* getTexEnv(int unit_index) const { return static_cast<const TexEnv*>( getRenderStateSet()->renderState( RS_TexEnv, unit_index ) ); }
     
-    TexEnv* getTexEnv(int unit_index) { return static_cast<TexEnv*>( getRenderStateSet()->renderState( (ERenderState)(RS_TexEnv0+unit_index) ) ); }
+    TexEnv* getTexEnv(int unit_index) { return static_cast<TexEnv*>( getRenderStateSet()->renderState( RS_TexEnv, unit_index ) ); }
 
     // tex gen
     
     TexGen* gocTexGen(int unit_index);
     
-    const TexGen* getTexGen(int unit_index) const { return static_cast<const TexGen*>( getRenderStateSet()->renderState( (ERenderState)(RS_TexGen0+unit_index) ) ); }
+    const TexGen* getTexGen(int unit_index) const { return static_cast<const TexGen*>( getRenderStateSet()->renderState( RS_TexGen, unit_index ) ); }
     
-    TexGen* getTexGen(int unit_index) { return static_cast<TexGen*>( getRenderStateSet()->renderState( (ERenderState)(RS_TexGen0+unit_index) ) ); }
+    TexGen* getTexGen(int unit_index) { return static_cast<TexGen*>( getRenderStateSet()->renderState( RS_TexGen, unit_index ) ); }
 
     // texture matrix
 
     TextureMatrix* gocTextureMatrix(int unit_index);
     
-    const TextureMatrix* getTextureMatrix(int unit_index) const { return static_cast<const TextureMatrix*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureMatrix0+unit_index) ) ); }
+    const TextureMatrix* getTextureMatrix(int unit_index) const { return static_cast<const TextureMatrix*>( getRenderStateSet()->renderState( RS_TextureMatrix, unit_index ) ); }
     
-    TextureMatrix* getTextureMatrix(int unit_index) { return static_cast<TextureMatrix*>( getRenderStateSet()->renderState( (ERenderState)(RS_TextureMatrix0+unit_index) ) ); }
+    TextureMatrix* getTextureMatrix(int unit_index) { return static_cast<TextureMatrix*>( getRenderStateSet()->renderState( RS_TextureMatrix, unit_index ) ); }
 
     // enable methods
 
@@ -1599,21 +1600,23 @@ namespace vl
 
     // render states methods
 
-    void setRenderState(RenderState* renderstate) { gocRenderStateSet()->setRenderState(renderstate); }
+    void setRenderState(RenderStateNonIndexed* renderstate) { gocRenderStateSet()->setRenderState(renderstate, 0); }
     
-    const RenderState* renderState( ERenderState type ) const { if (!getRenderStateSet()) return NULL; return getRenderStateSet()->renderState(type); }
+    void setRenderState(RenderState* renderstate, int index) { gocRenderStateSet()->setRenderState(renderstate, index); }
     
-    RenderState* renderState( ERenderState type ) { return gocRenderStateSet()->renderState(type); }
+    const RenderState* renderState( ERenderState type, int index=0 ) const { if (!getRenderStateSet()) return NULL; return getRenderStateSet()->renderState(type, index); }
+    
+    RenderState* renderState( ERenderState type, int index=0 ) { return gocRenderStateSet()->renderState(type, index); }
     
     size_t renderStatesCount() const { return getRenderStateSet()->renderStatesCount(); }
 
-    const ref<RenderState>* renderStates() const { return getRenderStateSet()->renderStates(); }
+    const RenderStateSlot* renderStates() const { return getRenderStateSet()->renderStates(); }
 
-    ref<RenderState>* renderStates() { return getRenderStateSet()->renderStates(); }
+    RenderStateSlot* renderStates() { return getRenderStateSet()->renderStates(); }
 
-    void eraseRenderState(ERenderState type) { gocRenderStateSet()->eraseRenderState(type); }
+    void eraseRenderState(ERenderState type, int index) { gocRenderStateSet()->eraseRenderState(type, index); }
     
-    void eraseRenderState(RenderState* rs) { if (rs) gocRenderStateSet()->eraseRenderState(rs->type()); }
+    void eraseRenderState(RenderState* rs, int index) { if (rs) gocRenderStateSet()->eraseRenderState(rs->type(), index); }
     
     void eraseAllRenderStates() { if(getRenderStateSet()) getRenderStateSet()->eraseAllRenderStates(); }
     

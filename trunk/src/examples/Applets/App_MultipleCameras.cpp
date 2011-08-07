@@ -76,13 +76,13 @@ public:
         geom->computeNormals();
     }
 
-    ref<Light> light = new Light(0);
+    ref<Light> light = new Light;
     light->setAmbient( fvec4( .1f, .1f, .1f, 1.0f) );
     light->setSpecular( fvec4( .1f, .1f, .1f, 1.0f) );
 
     for(unsigned i=0, count=res_db->count<Actor>(); i<count; ++i)
     {
-      res_db->get<Actor>(i)->effect()->shader()->setRenderState( light.get() );
+      res_db->get<Actor>(i)->effect()->shader()->setRenderState( light.get(), 0 );
       res_db->get<Actor>(i)->effect()->shader()->enable(EN_LIGHTING);
       res_db->get<Actor>(i)->effect()->shader()->enable(EN_DEPTH_TEST);
     }
@@ -98,7 +98,7 @@ public:
     wirefx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
 #endif
     wirefx->shader()->gocMaterial()->setDiffuse( white );
-    wirefx->shader()->setRenderState( light.get() );
+    wirefx->shader()->setRenderState( light.get(), 0 );
 
     std::vector< ref<Actor> > moneky_w;
 

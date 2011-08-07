@@ -55,7 +55,7 @@ public:
   {
     // simple effect to render a tree billboard
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->gocDepthMask()->set(false);
@@ -125,7 +125,7 @@ public:
   {
     // orange effect using lighting
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->gocLight(0)->setLinearAttenuation(0.025f);
     effect->shader()->gocMaterial()->setDiffuse(vl::orange);
@@ -168,7 +168,7 @@ public:
   void generateLunapark()
   {
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->enable(vl::EN_LIGHTING);

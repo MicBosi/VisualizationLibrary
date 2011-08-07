@@ -91,7 +91,7 @@ public:
     vl::Log::notify(appletInfo());
 
     // to be used later
-    vl::ref<vl::Light> light = new vl::Light(0);
+    vl::ref<vl::Light> light = new vl::Light;
     vl::ref<vl::Texture> texture;
 
     // define LOD evaluator with 3 distance ranges: [0] --- 70 --- 100 --- [inf]
@@ -104,7 +104,7 @@ public:
     tex_rot_scale_sh->enable(vl::EN_DEPTH_TEST);
     tex_rot_scale_sh->enable(vl::EN_CULL_FACE);
     tex_rot_scale_sh->enable(vl::EN_LIGHTING);
-    tex_rot_scale_sh->setRenderState( light.get() );
+    tex_rot_scale_sh->setRenderState( light.get(), 0 );
     texture = new vl::Texture("/images/holebox.tif", vl::TF_RGBA);
     tex_rot_scale_sh->gocTextureSampler(0)->setTexture( texture.get() );
     // on this unit we'll apply the roto-scale effect
@@ -120,7 +120,7 @@ public:
     tex_sh->enable(vl::EN_DEPTH_TEST);
     tex_sh->enable(vl::EN_CULL_FACE);
     tex_sh->enable(vl::EN_LIGHTING);
-    tex_sh->setRenderState( light.get() );
+    tex_sh->setRenderState( light.get(), 0 );
     texture = new vl::Texture("/images/holebox.tif", vl::TF_RGBA);
     tex_sh->gocTextureSampler(0)->setTexture( texture.get() );
 
@@ -129,7 +129,7 @@ public:
     blink_sh->enable(vl::EN_DEPTH_TEST);
     blink_sh->enable(vl::EN_CULL_FACE);
     blink_sh->enable(vl::EN_LIGHTING);
-    blink_sh->setRenderState( light.get() );
+    blink_sh->setRenderState( light.get(), 0 );
     blink_sh->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
     blink_sh->gocFrontFace()->set(vl::FF_CW);
     blink_sh->gocLineWidth()->set(3.0f);

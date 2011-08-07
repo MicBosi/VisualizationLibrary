@@ -69,7 +69,7 @@ public:
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_CULL_FACE);
     effect->shader()->gocMaterial()->setDiffuse( vl::gold );

@@ -93,7 +93,7 @@ public:
   void setupScene()
   {
     // setup common states
-    ref<Light> camera_light = new Light(0);
+    ref<Light> camera_light = new Light;
     ref<EnableSet> enables = new EnableSet;
     enables->enable(EN_DEPTH_TEST);
     enables->enable(EN_LIGHTING);
@@ -102,19 +102,19 @@ public:
     ref<Effect> red_fx = new Effect;
     red_fx->shader()->setEnableSet(enables.get());
     red_fx->shader()->gocMaterial()->setDiffuse(red);
-    red_fx->shader()->setRenderState(camera_light.get());
+    red_fx->shader()->setRenderState(camera_light.get(), 0);
 
     // green material fx
     ref<Effect> green_fx = new Effect;
     green_fx->shader()->setEnableSet(enables.get());
     green_fx->shader()->gocMaterial()->setDiffuse(green);
-    green_fx->shader()->setRenderState(camera_light.get());
+    green_fx->shader()->setRenderState(camera_light.get(), 0);
 
     // blue material fx
     ref<Effect> yellow_fx = new Effect;
     yellow_fx->shader()->setEnableSet(enables.get());
     yellow_fx->shader()->gocMaterial()->setDiffuse(yellow);
-    yellow_fx->shader()->setRenderState(camera_light.get());
+    yellow_fx->shader()->setRenderState(camera_light.get(), 0);
 
     // add box, cylinder, cone actors to the scene
     ref<Geometry> geom1 = makeBox     (vec3(-7,0,0),5,5,5);
@@ -236,7 +236,7 @@ public:
       {
         ref<Actor> actor = actors[i].get();
         // define a reasonable Shader
-        actor->effect()->shader()->setRenderState( new Light(0) );
+        actor->effect()->shader()->setRenderState( new Light, 0 );
         actor->effect()->shader()->enable(EN_DEPTH_TEST);
         actor->effect()->shader()->enable(EN_LIGHTING);
         actor->effect()->shader()->gocLightModel()->setTwoSide(true);

@@ -104,7 +104,7 @@ public:
     vl::ref<vl::Effect> cube_fx = new vl::Effect;
     cube_fx->shader()->enable(vl::EN_DEPTH_TEST);
     cube_fx->shader()->enable(vl::EN_LIGHTING);
-    cube_fx->shader()->setRenderState( new vl::Light(0) );
+    cube_fx->shader()->setRenderState( new vl::Light, 0 );
 
     vl::ref<vl::Geometry> cube = vl::makeBox( vl::vec3(0,0,0), 1, 1, 1 );
     cube->computeNormals();

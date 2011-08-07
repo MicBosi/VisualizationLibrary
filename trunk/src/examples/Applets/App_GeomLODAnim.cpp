@@ -156,7 +156,7 @@ public:
     lod_eval->addDistanceRange(150);
 
     /* to be used later */
-    vl::ref<vl::Light> light = new vl::Light(0);
+    vl::ref<vl::Light> light = new vl::Light;
     vl::ref<vl::Shader> wire_sh = new vl::Shader;
     vl::ref<vl::Shader> fill_sh = new vl::Shader;
     vl::ref<vl::Shader> wave_sh = new vl::Shader;
@@ -167,7 +167,7 @@ public:
     fill_sh->enable(vl::EN_LIGHTING);
     fill_sh->gocMaterial()->setFrontDiffuse( vl::white );
     fill_sh->gocPolygonMode()->set(vl::PM_FILL, vl::PM_FILL); // note this is default
-    fill_sh->setRenderState( light.get() );
+    fill_sh->setRenderState( light.get(), 0 );
 
     /* wire pass */
     wire_sh->enable(vl::EN_DEPTH_TEST);
@@ -179,7 +179,7 @@ public:
     wire_sh->gocMaterial()->setFlatColor( vl::royalblue );
     wire_sh->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
     wire_sh->gocPolygonOffset()->set(-1.0f, -1.0f);
-    wire_sh->setRenderState( light.get() );
+    wire_sh->setRenderState( light.get(), 0 );
 
     /* wave pass */
     wave_sh->enable(vl::EN_BLEND); // for line smoothing

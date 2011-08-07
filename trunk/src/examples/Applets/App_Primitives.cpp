@@ -49,7 +49,7 @@ public:
     ref<Effect> fx = new Effect;
     fx->shader()->enable(EN_DEPTH_TEST);
     fx->shader()->enable(EN_LIGHTING);
-    fx->shader()->setRenderState( new Light(0) );
+    fx->shader()->setRenderState( new Light, 0 );
     fx->shader()->gocMaterial()->setDiffuse(vl::royalblue);
     
 #if defined(VL_OPENGL)

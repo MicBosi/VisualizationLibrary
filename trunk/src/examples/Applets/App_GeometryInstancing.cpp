@@ -110,7 +110,7 @@ public:
     {
       /* box effect */
       vl::ref<vl::Effect> fx = new vl::Effect;
-      fx->shader()->setRenderState( new vl::Light(0) );
+      fx->shader()->setRenderState( new vl::Light, 0 );
       fx->shader()->enable(vl::EN_LIGHTING);
       fx->shader()->enable(vl::EN_CULL_FACE);
       fx->shader()->enable(vl::EN_DEPTH_TEST);
@@ -139,7 +139,7 @@ public:
 
     /* aabb effect */
     vl::ref<vl::Effect> box_fx = new vl::Effect;
-    box_fx->shader()->setRenderState( new vl::Light(0) );
+    box_fx->shader()->setRenderState( new vl::Light, 0 );
     box_fx->shader()->enable(vl::EN_DEPTH_TEST);
     box_fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
     box_fx->shader()->gocColor()->setColor(vl::red);

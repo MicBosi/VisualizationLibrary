@@ -46,40 +46,40 @@ namespace vl
    *
    * \sa Shader, Effect, Actor
   */
-  class VLGRAPHICS_EXPORT ClipPlane: public RenderState
+  class VLGRAPHICS_EXPORT ClipPlane: public RenderStateIndexed
   {
     VL_INSTRUMENT_CLASS(vl::ClipPlane, RenderState)
 
   public:
+
     /** Constructor. */
-    ClipPlane(int plane_index, Real o=0.0f, vec3 n=vec3(0,0,0));
+    ClipPlane(Real o=0.0f, vec3 n=vec3(0,0,0));
+
     /** Constructor. */
-    ClipPlane(int plane_index, const vec3& o, const vec3& n);
-    /** Returns RS_ClipPlane0 + planeIndex() */
-    virtual ERenderState type() const { return (ERenderState)(RS_ClipPlane0 + planeIndex()); }
+    ClipPlane(const vec3& o, const vec3& n);
+
+    /** Returns RS_ClipPlane0 */
+    virtual ERenderState type() const { return RS_ClipPlane; }
+
     /** Applies the light render states. */
-    virtual void apply(const Camera* camera, OpenGLContext*) const;
+    virtual void apply(int index, const Camera* camera, OpenGLContext*) const;
+
     /** Attach the light to a vl::Transform. */
     void followTransform(Transform* transform) { mFollowedTransform = transform; }
+
     /** Returns the vl::Transform to which the Light is attached. */
     Transform* followedTransform() { return mFollowedTransform.get(); }
+
     /** Returns the vl::Transform to which the Light is attached. */
     const Transform* followedTransform() const { return mFollowedTransform.get(); }
-    /** Defines the index of the plane this ClipPlane applies.
-      * OpenGL supports up to 6 custom clip planes at the same time thus the index must be
-      * a number between 0 and 5. */
-    void setPlaneIndex(int plane_index) { mPlaneIndex = plane_index; }
-    /** Returns the index of the plane this ClipPlane applies.
-      * OpenGL supports up to 6 custom clip planes at the same time thus the index will be
-      * a number between 0 and 5. */
-    int planeIndex() const { return mPlaneIndex; }
+
     /** Returns the actual plane used to perform the clipping. */
     const Plane& plane() const { return mPlane; }
+
     /** Defines the actual plane used to perform the clipping. */
     void setPlane(const Plane& plane) { mPlane = plane; }
 
   protected:
-    int mPlaneIndex;
     ref<Transform> mFollowedTransform;
     Plane mPlane;
   };

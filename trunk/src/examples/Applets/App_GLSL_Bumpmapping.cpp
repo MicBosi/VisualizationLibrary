@@ -59,7 +59,7 @@ public:
 
     // setup effect
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->enable(vl::EN_CULL_FACE);

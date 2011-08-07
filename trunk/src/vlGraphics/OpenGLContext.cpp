@@ -529,13 +529,13 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
   {
     for( unsigned i=0; i<cur->renderStatesCount(); ++i )
     {
-      const RenderState* cur_rs = cur->renderStates()[i].get();
-      mRenderStateTable[cur_rs->type()] += 1; // 0 -> 1; 1 -> 2;
-      if ( mCurrentRenderState[cur_rs->type()] != cur_rs )
+      const RenderStateSlot& cur_rs = cur->renderStates()[i];
+      mRenderStateTable[cur_rs.type()] += 1; // 0 -> 1; 1 -> 2;
+      if ( mCurrentRenderState[cur_rs.type()] != cur_rs.mRS.get() )
       {
-        mCurrentRenderState[cur_rs->type()] = cur_rs;
-        VL_CHECK(cur_rs);
-        cur_rs->apply(camera, this); VL_CHECK_OGL()
+        mCurrentRenderState[cur_rs.type()] = cur_rs.mRS.get();
+        VL_CHECK(cur_rs.mRS.get());
+        cur_rs.apply(camera, this); VL_CHECK_OGL()
       }
     }
   }
@@ -546,116 +546,116 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
   {
     for( unsigned i=0; i<prev->renderStatesCount(); ++i )
     {
-      const RenderState* prev_rs = prev->renderStates()[i].get();
-      VL_CHECK(mRenderStateTable[prev_rs->type()] == 1 || mRenderStateTable[prev_rs->type()] == 2);
-      if ( mRenderStateTable[prev_rs->type()] == 1 )
+      const RenderStateSlot& prev_rs = prev->renderStates()[i];
+      VL_CHECK(mRenderStateTable[prev_rs.type()] == 1 || mRenderStateTable[prev_rs.type()] == 2);
+      if ( mRenderStateTable[prev_rs.type()] == 1 )
       {
-        mCurrentRenderState[prev_rs->type()] = mDefaultRenderStates[prev_rs->type()].get();
+        mCurrentRenderState[prev_rs.type()] = mDefaultRenderStates[prev_rs.type()].mRS.get();
         #ifndef NDEBUG
-        if (!mDefaultRenderStates[prev_rs->type()])
+        if (!mDefaultRenderStates[prev_rs.type()].mRS)
         {
-          vl::Log::error( Say("Render state type '%s' not supported by the current OpenGL implementation! (version=%s, vendor=%s)\n") << prev_rs->className() << glGetString(GL_VERSION) << glGetString(GL_VENDOR) );
+          vl::Log::error( Say("Render state type '%s' not supported by the current OpenGL implementation! (version=%s, vendor=%s)\n") << prev_rs.mRS->className() << glGetString(GL_VERSION) << glGetString(GL_VENDOR) );
           VL_TRAP()
         }
         #endif
         // if this fails you are using a render state that is not supported by the current OpenGL implementation (too old or Core profile)
-        mDefaultRenderStates[prev_rs->type()]->apply(NULL, this); VL_CHECK_OGL()
+        mDefaultRenderStates[prev_rs.type()].apply(NULL, this); VL_CHECK_OGL()
       }
-      mRenderStateTable[prev_rs->type()] >>= 1; // 1 -> 0; 2 -> 1;
+      mRenderStateTable[prev_rs.type()] >>= 1; // 1 -> 0; 2 -> 1;
     }
   }
   else
   {
     memset(mCurrentRenderState, 0, sizeof(mCurrentRenderState));
   }
-} 
+}
 //------------------------------------------------------------------------------
 void OpenGLContext::setupDefaultRenderStates()
 {
   if ( Has_Fixed_Function_Pipeline )
   {
-    mDefaultRenderStates[RS_Color]  = new Color;
-    mDefaultRenderStates[RS_SecondaryColor]  = new SecondaryColor;
-    mDefaultRenderStates[RS_Normal]  = new Normal;
+    mDefaultRenderStates[RS_Color]  = RenderStateSlot(new Color, 0);
+    mDefaultRenderStates[RS_SecondaryColor]  = RenderStateSlot(new SecondaryColor, 0);
+    mDefaultRenderStates[RS_Normal]  = RenderStateSlot(new Normal, 0);
 
-    mDefaultRenderStates[RS_AlphaFunc]  = new AlphaFunc;
-    mDefaultRenderStates[RS_Fog]        = new Fog;
-    mDefaultRenderStates[RS_ShadeModel] = new ShadeModel;
-    mDefaultRenderStates[RS_LightModel] = new LightModel;
-    mDefaultRenderStates[RS_Material]   = new Material;
+    mDefaultRenderStates[RS_AlphaFunc]  = RenderStateSlot(new AlphaFunc, 0);
+    mDefaultRenderStates[RS_Fog]        = RenderStateSlot(new Fog, 0);
+    mDefaultRenderStates[RS_ShadeModel] = RenderStateSlot(new ShadeModel, 0);
+    mDefaultRenderStates[RS_LightModel] = RenderStateSlot(new LightModel, 0);
+    mDefaultRenderStates[RS_Material]   = RenderStateSlot(new Material, 0);
     if(!Has_GLES_Version_1_1)
     {
-      mDefaultRenderStates[RS_PixelTransfer]  = new PixelTransfer;
-      mDefaultRenderStates[RS_LineStipple]    = new LineStipple;
-      mDefaultRenderStates[RS_PolygonStipple] = new PolygonStipple;
+      mDefaultRenderStates[RS_PixelTransfer]  = RenderStateSlot(new PixelTransfer, 0);
+      mDefaultRenderStates[RS_LineStipple]    = RenderStateSlot(new LineStipple, 0);
+      mDefaultRenderStates[RS_PolygonStipple] = RenderStateSlot(new PolygonStipple, 0);
     }
 
-    mDefaultRenderStates[RS_Light0] = new Light(0);
-    mDefaultRenderStates[RS_Light1] = new Light(1);
-    mDefaultRenderStates[RS_Light2] = new Light(2);
-    mDefaultRenderStates[RS_Light3] = new Light(3);
-    mDefaultRenderStates[RS_Light4] = new Light(4);
-    mDefaultRenderStates[RS_Light5] = new Light(5);
-    mDefaultRenderStates[RS_Light6] = new Light(6);
-    mDefaultRenderStates[RS_Light7] = new Light(7);
+    mDefaultRenderStates[RS_Light ] = RenderStateSlot(new Light, 0);
+    mDefaultRenderStates[RS_Light1] = RenderStateSlot(new Light, 1);
+    mDefaultRenderStates[RS_Light2] = RenderStateSlot(new Light, 2);
+    mDefaultRenderStates[RS_Light3] = RenderStateSlot(new Light, 3);
+    mDefaultRenderStates[RS_Light4] = RenderStateSlot(new Light, 4);
+    mDefaultRenderStates[RS_Light5] = RenderStateSlot(new Light, 5);
+    mDefaultRenderStates[RS_Light6] = RenderStateSlot(new Light, 6);
+    mDefaultRenderStates[RS_Light7] = RenderStateSlot(new Light, 7);
 
-    mDefaultRenderStates[RS_ClipPlane0] = new ClipPlane(0);
-    mDefaultRenderStates[RS_ClipPlane1] = new ClipPlane(1);
-    mDefaultRenderStates[RS_ClipPlane2] = new ClipPlane(2);
-    mDefaultRenderStates[RS_ClipPlane3] = new ClipPlane(3);
-    mDefaultRenderStates[RS_ClipPlane4] = new ClipPlane(4);
-    mDefaultRenderStates[RS_ClipPlane5] = new ClipPlane(5);
+    mDefaultRenderStates[RS_ClipPlane ] = RenderStateSlot(new ClipPlane, 0);
+    mDefaultRenderStates[RS_ClipPlane1] = RenderStateSlot(new ClipPlane, 1);
+    mDefaultRenderStates[RS_ClipPlane2] = RenderStateSlot(new ClipPlane, 2);
+    mDefaultRenderStates[RS_ClipPlane3] = RenderStateSlot(new ClipPlane, 3);
+    mDefaultRenderStates[RS_ClipPlane4] = RenderStateSlot(new ClipPlane, 4);
+    mDefaultRenderStates[RS_ClipPlane5] = RenderStateSlot(new ClipPlane, 5);
   }
 
   if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_0)
-    mDefaultRenderStates[RS_BlendColor] = new BlendColor;
+    mDefaultRenderStates[RS_BlendColor] = RenderStateSlot(new BlendColor, 0);
 
   if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_subtract||Has_GLES_Version_2_0)
-    mDefaultRenderStates[RS_BlendEquation] = new BlendEquation;
+    mDefaultRenderStates[RS_BlendEquation] = RenderStateSlot(new BlendEquation, 0);
 
   if(!Has_GLES)
-    mDefaultRenderStates[RS_PolygonMode] = new PolygonMode;
+    mDefaultRenderStates[RS_PolygonMode] = RenderStateSlot(new PolygonMode, 0);
 
   if(!Has_GLES_Version_2_0)
   {
-    mDefaultRenderStates[RS_LogicOp] = new LogicOp;
-    mDefaultRenderStates[RS_PointSize] = new PointSize;
+    mDefaultRenderStates[RS_LogicOp] = RenderStateSlot(new LogicOp, 0);
+    mDefaultRenderStates[RS_PointSize] = RenderStateSlot(new PointSize, 0);
   }
 
-  mDefaultRenderStates[RS_PolygonOffset] = new PolygonOffset;
-  mDefaultRenderStates[RS_BlendFunc]  = new BlendFunc;
-  mDefaultRenderStates[RS_ColorMask]  = new ColorMask;
-  mDefaultRenderStates[RS_CullFace]   = new CullFace;
-  mDefaultRenderStates[RS_DepthFunc]  = new DepthFunc;
-  mDefaultRenderStates[RS_DepthMask]  = new DepthMask;
-  mDefaultRenderStates[RS_DepthRange] = new DepthRange;
-  mDefaultRenderStates[RS_FrontFace]  = new FrontFace;
-  mDefaultRenderStates[RS_Hint]       = new Hint;
-  mDefaultRenderStates[RS_LineWidth]  = new LineWidth;
+  mDefaultRenderStates[RS_PolygonOffset] = RenderStateSlot(new PolygonOffset, 0);
+  mDefaultRenderStates[RS_BlendFunc]  = RenderStateSlot(new BlendFunc, 0);
+  mDefaultRenderStates[RS_ColorMask]  = RenderStateSlot(new ColorMask, 0);
+  mDefaultRenderStates[RS_CullFace]   = RenderStateSlot(new CullFace, 0);
+  mDefaultRenderStates[RS_DepthFunc]  = RenderStateSlot(new DepthFunc, 0);
+  mDefaultRenderStates[RS_DepthMask]  = RenderStateSlot(new DepthMask, 0);
+  mDefaultRenderStates[RS_DepthRange] = RenderStateSlot(new DepthRange, 0);
+  mDefaultRenderStates[RS_FrontFace]  = RenderStateSlot(new FrontFace, 0);
+  mDefaultRenderStates[RS_Hint]       = RenderStateSlot(new Hint, 0);
+  mDefaultRenderStates[RS_LineWidth]  = RenderStateSlot(new LineWidth, 0);
   
   if (Has_GL_ARB_point_parameters||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1) // note GLES 2.x is excluded
-    mDefaultRenderStates[RS_PointParameter] = new PointParameter;
+    mDefaultRenderStates[RS_PointParameter] = RenderStateSlot(new PointParameter, 0);
 
   if (Has_GL_ARB_multisample||Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1||Has_GLES_Version_2_0)
-    mDefaultRenderStates[RS_SampleCoverage] = new SampleCoverage;
+    mDefaultRenderStates[RS_SampleCoverage] = RenderStateSlot(new SampleCoverage, 0);
   
-  mDefaultRenderStates[RS_StencilFunc] = new StencilFunc;
-  mDefaultRenderStates[RS_StencilMask] = new StencilMask;
-  mDefaultRenderStates[RS_StencilOp]   = new StencilOp;
-  mDefaultRenderStates[RS_GLSLProgram] = new GLSLProgram;
+  mDefaultRenderStates[RS_StencilFunc] = RenderStateSlot(new StencilFunc, 0);
+  mDefaultRenderStates[RS_StencilMask] = RenderStateSlot(new StencilMask, 0);
+  mDefaultRenderStates[RS_StencilOp]   = RenderStateSlot(new StencilOp, 0);
+  mDefaultRenderStates[RS_GLSLProgram] = RenderStateSlot(new GLSLProgram, 0);
 
   for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
   {
     if (i < textureUnitCount())
     {
-      mDefaultRenderStates[RS_TextureSampler0   + i] = new TextureSampler(i);
+      mDefaultRenderStates[RS_TextureSampler + i] = RenderStateSlot(new TextureSampler, i);
       if( Has_Fixed_Function_Pipeline )
       {
         // TexGen under GLES is supported only if GL_OES_texture_cube_map is present
         if(!Has_GLES_Version_1_1 || Has_GL_OES_texture_cube_map)
-          mDefaultRenderStates[RS_TexGen0 + i] = new TexGen(i);
-        mDefaultRenderStates[RS_TexEnv0 + i] = new TexEnv(i);
-        mDefaultRenderStates[RS_TextureMatrix0 + i] = new TextureMatrix(i);
+          mDefaultRenderStates[RS_TexGen + i] = RenderStateSlot(new TexGen, i);
+        mDefaultRenderStates[RS_TexEnv + i] = RenderStateSlot(new TexEnv, i);
+        mDefaultRenderStates[RS_TextureMatrix + i] = RenderStateSlot(new TextureMatrix, i);
       }
     }
   }
@@ -666,9 +666,9 @@ void OpenGLContext::setupDefaultRenderStates()
   for( int i=RS_COUNT; i--; )
   {
     // the empty ones are the ones that are not supported by the current OpenGL implementation (too old or Core profile)
-    if (mDefaultRenderStates[i])
+    if (mDefaultRenderStates[i].mRS)
     {
-      mDefaultRenderStates[i]->apply(NULL, this); VL_CHECK_OGL();
+      mDefaultRenderStates[i].apply(NULL, this); VL_CHECK_OGL();
     }
   }
 }
