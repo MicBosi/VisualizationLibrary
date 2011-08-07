@@ -640,6 +640,14 @@ void BlendColor::apply(int index, const Camera*, OpenGLContext*) const
   VL_glBlendColor(mBlendColor.r(), mBlendColor.g(), mBlendColor.b(), mBlendColor.a()); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
+// VertexAttrib
+//------------------------------------------------------------------------------
+void VertexAttrib::apply(int index, const Camera*, OpenGLContext* ctx) const
+{
+  glVertexAttrib4fv( index, mValue.ptr() ); VL_CHECK_OGL()
+  ctx->mVertexAttribValue[index] = mValue;
+}
+//------------------------------------------------------------------------------
 // Color
 //------------------------------------------------------------------------------
 void Color::apply(int index, const Camera*, OpenGLContext* ctx) const
