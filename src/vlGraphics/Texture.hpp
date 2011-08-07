@@ -59,7 +59,7 @@ namespace vl
    * - Shader
    * - Effect
    * - Actor */
-  class TexParameter
+  class TexParameter: public Object
   {
     friend class Texture;
   public:
@@ -91,6 +91,8 @@ namespace vl
     void setTexCompareFunc(ETexCompareFunc func) { mDirty = true; mCompareFunc = func; }
     void setDepthTextureMode(EDepthTextureMode mode) { mDirty = true; mDepthTextureMode = mode; }
 
+    void setDirty(bool dirty) const { mDirty = dirty; }
+
     bool dirty() const { return mDirty; }
 
   protected:
@@ -108,6 +110,8 @@ namespace vl
 
     mutable bool mDirty;
   };
+  //------------------------------------------------------------------------------
+  class TextureSampler;
   //------------------------------------------------------------------------------
   // Texture
   //------------------------------------------------------------------------------
@@ -136,6 +140,7 @@ namespace vl
   class VLGRAPHICS_EXPORT Texture: public Object
   {
     VL_INSTRUMENT_CLASS(vl::Texture, Object)
+    friend class TextureSampler;
 
   public:
     /** The SetupParams function wraps all the parameters needed to crate a Texture.
@@ -234,10 +239,13 @@ namespace vl
     ~Texture();
 
     /** The TexParameter object associated to a Texture. */
-    TexParameter* getTexParameter() { return &mTexParameter; }
+    TexParameter* getTexParameter() { return mTexParameter.get(); }
 
     /** The TexParameter object associated to a Texture. */
-    const TexParameter* getTexParameter() const { return &mTexParameter; }
+    const TexParameter* getTexParameter() const { return mTexParameter.get(); }
+
+    /** The TexParameter belonging to a TextureSampler that is currently overriding the Texture's own TexParameter. */
+    const TexParameter* getTexParameterOverride() const { return mTexParameterOverride.get(); }
 
     /** The buffer object bound to a buffer object texture. */
     VBO* bufferObject() { return mBufferObject.get(); }
@@ -730,7 +738,8 @@ namespace vl
 
   protected:
     unsigned int mHandle;
-    TexParameter mTexParameter;
+    ref<TexParameter> mTexParameter;
+    mutable ref<TexParameter> mTexParameterOverride;
     ref<SetupParams> mSetupParams;
     ref<VBO> mBufferObject;
     ETextureFormat mFormat;
