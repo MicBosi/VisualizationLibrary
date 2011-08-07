@@ -344,7 +344,7 @@ void Texture::destroyTexture()
   if (mHandle)
     glDeleteTextures(1, &mHandle);
   reset();
-  getTexParameter()->mDirty = true;
+  // getTexParameter()->mDirty = true;
 }
 //-----------------------------------------------------------------------------
 Texture::~Texture()
@@ -354,6 +354,7 @@ Texture::~Texture()
 //-----------------------------------------------------------------------------
 void Texture::reset()
 {
+  mTexParameter = new TexParameter;
   setDimension(TD_TEXTURE_UNKNOWN);
   setInternalFormat(TF_UNKNOWN);
   setBorder(0);
@@ -369,7 +370,6 @@ void Texture::reset()
 //-----------------------------------------------------------------------------
 Texture::Texture(int width, ETextureFormat format, bool border)
 {
-  VL_CHECK_OGL()
   VL_DEBUG_SET_OBJECT_NAME()
   reset();
   if (!createTexture(vl::TD_TEXTURE_1D, format, width, 0, 0, border, NULL, 0, 0))
@@ -380,7 +380,6 @@ Texture::Texture(int width, ETextureFormat format, bool border)
 //-----------------------------------------------------------------------------
 Texture::Texture(int width, int height, ETextureFormat format, bool border)
 {
-  VL_CHECK_OGL()
   VL_DEBUG_SET_OBJECT_NAME()
   reset();
   if (!createTexture(vl::TD_TEXTURE_2D, format, width, height, 0, border, NULL, 0, 0))
@@ -391,7 +390,6 @@ Texture::Texture(int width, int height, ETextureFormat format, bool border)
 //-----------------------------------------------------------------------------
 Texture::Texture(int width, int height, int depth, ETextureFormat format, bool border)
 {
-  VL_CHECK_OGL()
   VL_DEBUG_SET_OBJECT_NAME()
   reset();
   if (!createTexture(vl::TD_TEXTURE_3D, format, width, height, depth, border, NULL, 0, 0))
@@ -403,7 +401,6 @@ Texture::Texture(int width, int height, int depth, ETextureFormat format, bool b
 Texture::Texture(const Image* image, ETextureFormat format, bool mipmaps , bool border)
 {
   VL_DEBUG_SET_OBJECT_NAME()
-
   reset();
 
   if (image && image->isValid())
@@ -431,7 +428,6 @@ Texture::Texture(const Image* image, ETextureFormat format, bool mipmaps , bool 
 Texture::Texture(const String& image_path, ETextureFormat format, bool mipmaps , bool border)
 {
   VL_DEBUG_SET_OBJECT_NAME()
-
   reset();
 
   ref<Image> image = vl::loadImage(image_path);
