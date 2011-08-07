@@ -34,31 +34,29 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-ClipPlane::ClipPlane(int plane_index, Real o, vec3 n)
+ClipPlane::ClipPlane(Real o, vec3 n)
 { 
   VL_DEBUG_SET_OBJECT_NAME()
-  mPlaneIndex = plane_index;
   mPlane.setNormal(n); 
   mPlane.setOrigin(o); 
 }
 //-----------------------------------------------------------------------------
-ClipPlane::ClipPlane(int plane_index, const vec3& o, const vec3& n)
+ClipPlane::ClipPlane(const vec3& o, const vec3& n)
 {
   VL_DEBUG_SET_OBJECT_NAME()
-  mPlaneIndex = plane_index;
   mPlane.setNormal(n); 
   mPlane.setOrigin(dot(o, n)); 
 }
 //-----------------------------------------------------------------------------
-void ClipPlane::apply(const Camera* camera, OpenGLContext*) const
+void ClipPlane::apply(int index, const Camera* camera, OpenGLContext*) const
 {
-  VL_CHECK(planeIndex()>=0 && planeIndex()<6);
+  VL_CHECK(index>=0 && index<6);
   
   // we do our own transformations
 
   if (camera)
   {
-    glEnable(GL_CLIP_PLANE0 + planeIndex());
+    glEnable(GL_CLIP_PLANE0 + index);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -80,17 +78,17 @@ void ClipPlane::apply(const Camera* camera, OpenGLContext*) const
 
 #if defined(VL_OPENGL_ES1)
     float equation[] = { n.x(), n.y(), n.z(), -orig };
-    glClipPlanef(GL_CLIP_PLANE0 + planeIndex(), equation);
+    glClipPlanef(GL_CLIP_PLANE0 + index, equation);
 #else
     double equation[] = { n.x(), n.y(), n.z(), -orig };
-    glClipPlane(GL_CLIP_PLANE0 + planeIndex(), equation);
+    glClipPlane(GL_CLIP_PLANE0 + index, equation);
 #endif
 
     glPopMatrix();
   }
   else
   {
-    glDisable(GL_CLIP_PLANE0 + planeIndex());
+    glDisable(GL_CLIP_PLANE0 + index);
   }
 }
 //-----------------------------------------------------------------------------

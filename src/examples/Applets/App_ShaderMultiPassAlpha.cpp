@@ -55,7 +55,7 @@ public:
     sphere_fx->shader()->enable(vl::EN_DEPTH_TEST);
     sphere_fx->shader()->enable(vl::EN_CULL_FACE);
     sphere_fx->shader()->enable(vl::EN_LIGHTING);
-    sphere_fx->shader()->setRenderState( new vl::Light(0) );
+    sphere_fx->shader()->setRenderState( new vl::Light, 0 );
     sphere_fx->shader()->enable(vl::EN_BLEND);
     sphere_fx->shader()->gocMaterial()->setFrontDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 0.6f) );
 

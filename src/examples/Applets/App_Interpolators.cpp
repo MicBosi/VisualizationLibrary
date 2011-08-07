@@ -197,7 +197,7 @@ public:
     vl::ref<vl::Effect> arrow_fx = new vl::Effect;
     arrow_fx->shader()->enable(vl::EN_DEPTH_TEST);
     arrow_fx->shader()->enable(vl::EN_LIGHTING);
-    arrow_fx->shader()->setRenderState(new vl::Light(0));
+    arrow_fx->shader()->setRenderState(new vl::Light, 0);
     sceneManager()->tree()->addActor( arrow.get(), arrow_fx.get(), mTransform1.get() );
     sceneManager()->tree()->addActor( arrow.get(), arrow_fx.get(), mTransform2.get() );
   }

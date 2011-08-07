@@ -47,7 +47,7 @@ public:
 
     vl::ref<vl::Effect> fx = new vl::Effect;
     fx->shader()->enable(vl::EN_LIGHTING);
-    fx->shader()->setRenderState( new vl::Light(0) );
+    fx->shader()->setRenderState( new vl::Light, 0 );
     fx->shader()->enable(vl::EN_DEPTH_TEST);
 
     // vl::ref<vl::Texture> texture = new vl::Texture("/images/world.topo.bathy.200406.3x8192x4096.png");

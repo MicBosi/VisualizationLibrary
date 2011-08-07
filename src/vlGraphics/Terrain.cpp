@@ -210,7 +210,7 @@ void Terrain::init()
     terr_tile->setBoundingSphere(aabb);
     terr_tile->setBoundsDirty(false);
 
-    shaderNode()->setRenderState(glsl.get());
+    shaderNode()->setRenderState(IN_Propagate, glsl.get());
   }
 
   shaderNode()->setEnable(EN_CULL_FACE, true);
@@ -218,9 +218,9 @@ void Terrain::init()
 
   if (!useGLSL())
   {
-    ref<TexEnv> texenv = new TexEnv(1);
+    ref<TexEnv> texenv = new TexEnv;
     texenv->setMode(TEM_MODULATE);
-    shaderNode()->setRenderState(texenv.get());
+    shaderNode()->setRenderState(IN_Propagate, texenv.get(), 1);
   }
 
   // generate chunks
@@ -236,8 +236,8 @@ void Terrain::init()
 
       // terrain texture
       ref<Image> tex_image = terrain_img->subImage(tx, tz, tx_xsize, tx_zsize);
-      ref<TextureSampler> tex_unit0 = new TextureSampler(0);
-      shader_node->setRenderState(tex_unit0.get());
+      ref<TextureSampler> tex_unit0 = new TextureSampler;
+      shader_node->setRenderState(IN_Propagate, tex_unit0.get(), 0);
       tex_unit0->setTexture(new Texture(tex_image.get(), terrainTextureFormat(), false));
       tex_unit0->texture()->getTexParameter()->setMagFilter(TPF_LINEAR);
       tex_unit0->texture()->getTexParameter()->setMinFilter(TPF_LINEAR);
@@ -247,8 +247,8 @@ void Terrain::init()
       // detail texture
       if (detail_img)
       {
-        ref<TextureSampler> tex_unit1 = new TextureSampler(1);
-        shader_node->setRenderState(tex_unit1.get());
+        ref<TextureSampler> tex_unit1 = new TextureSampler;
+        shader_node->setRenderState(IN_Propagate, tex_unit1.get(), 1);
         tex_unit1->setTexture(new Texture(detail_img.get(), detailTextureFormat(), true));
         tex_unit1->texture()->getTexParameter()->setMagFilter(TPF_LINEAR);
         tex_unit1->texture()->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
@@ -266,8 +266,8 @@ void Terrain::init()
       ref<Image> hmap_image = heightmap_img->subImage(mx, mz, xsize, zsize);
       if (useGLSL())
       {
-        ref<TextureSampler> tex_unit2 = new TextureSampler(2);
-        shader_node->setRenderState(tex_unit2.get());
+        ref<TextureSampler> tex_unit2 = new TextureSampler;
+        shader_node->setRenderState(IN_Propagate, tex_unit2.get(), 2);
         tex_unit2->setTexture(new Texture(hmap_image.get(), heightmapTextureFormat(), false));
         tex_unit2->texture()->getTexParameter()->setMagFilter(TPF_NEAREST);
         tex_unit2->texture()->getTexParameter()->setMinFilter(TPF_NEAREST);

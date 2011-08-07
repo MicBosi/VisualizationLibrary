@@ -33,36 +33,38 @@
 #include <vlCore/Colors.hpp>
 #include <vlGraphics/Terrain.hpp>
 
+using namespace vl;
+
 class App_Terrain: public BaseDemo
 {
 public:
   virtual void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    Log::notify(appletInfo());
 
-    if (!vl::Has_Multitexture)
+    if (!Has_Multitexture)
     {
-      vl::Log::error("This test requres multi texturing.\n");
-      vl::Time::sleep(2000);
+      Log::error("This test requres multi texturing.\n");
+      Time::sleep(2000);
       exit(1);
     }
 
     ghostCameraManipulator()->setMovementSpeed(5);
     // allocate terrain scene manager
-    vl::ref<vl::Terrain> terrain = new vl::Terrain;
+    ref<Terrain> terrain = new Terrain;
     // use GLSL?
-    terrain->setUseGLSL( vl::Has_GL_ARB_shading_language_100 ? true : false );
+    terrain->setUseGLSL( Has_GL_ARB_shading_language_100 ? true : false );
     // dimensions of the terrain
     terrain->setWidth(100);
     terrain->setDepth(100);
     terrain->setHeight(5.0f);
     // heightmap texture size used by the GLSL program
-    if (vl::Has_GL_ATI_texture_float || vl::Has_GL_ARB_texture_float)
-      terrain->setHeightmapTextureFormat(vl::TF_LUMINANCE16F);
+    if (Has_GL_ATI_texture_float || Has_GL_ARB_texture_float)
+      terrain->setHeightmapTextureFormat(TF_LUMINANCE16F);
     else
-      terrain->setHeightmapTextureFormat(vl::TF_LUMINANCE);
+      terrain->setHeightmapTextureFormat(TF_LUMINANCE);
     // origin of the terrain
-    terrain->setOrigin(vl::vec3(0,0,0));
+    terrain->setOrigin(vec3(0,0,0));
     // define textures
     terrain->setHeightmapTexture("/images/ps_height_4k.jpg");
     terrain->setTerrainTexture("/images/ps_texture_4k.jpg");
@@ -74,21 +76,21 @@ public:
     // initialize the terrain
     terrain->init();
     // add the terrain scene manager to the rendering
-    rendering()->as<vl::Rendering>()->sceneManagers()->push_back( terrain.get() );
+    rendering()->as<Rendering>()->sceneManagers()->push_back( terrain.get() );
 
     // adds fog if we are not using GLSL but the fixed function pipeline
     if (!terrain->useGLSL())
     {
       // set sky to white
-      rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::white);
+      rendering()->as<Rendering>()->camera()->viewport()->setClearColor(white);
       // set fog render state
-      vl::ref<vl::Fog> fog = new vl::Fog;
-      fog->setColor(vl::white);
+      ref<Fog> fog = new Fog;
+      fog->setColor(white);
       fog->setDensity(0.045f);
-      fog->setMode(vl::FM_EXP);
+      fog->setMode(FM_EXP);
       // install and enable fog
-      terrain->shaderNode()->setRenderState(fog.get());
-      terrain->shaderNode()->setEnable(vl::EN_FOG,true);
+      terrain->shaderNode()->setRenderState(IN_Propagate, fog.get());
+      terrain->shaderNode()->setEnable(EN_FOG, true);
       terrain->shaderNode()->updateHierarchy();
     }
 

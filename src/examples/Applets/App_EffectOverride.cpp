@@ -88,7 +88,7 @@ class App_EffectOverride: public BaseDemo
     ref<Effect> effect = new Effect;
     effect->shader()->enable(EN_BLEND);
     effect->shader()->enable(EN_DEPTH_TEST);
-    effect->shader()->setRenderState( new Light(0) );
+    effect->shader()->setRenderState( new Light, 0 );
     effect->shader()->enable(EN_LIGHTING);
     effect->shader()->enable(EN_CULL_FACE);
     effect->shader()->gocMaterial()->setDiffuse( gold );

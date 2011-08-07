@@ -59,9 +59,10 @@ namespace vl
     // --- --- ---
     struct RenderStateInfo
     {
-      RenderStateInfo(RenderState* rs=NULL, EInheritance inheritance=IN_Propagate): mRenderState(rs), mInheritance(inheritance) {}
+      RenderStateInfo(EInheritance inheritance=IN_Propagate, RenderState* rs=NULL, int index=0): mInheritance(inheritance), mRenderState(rs), mIndex(index) {}
 
       ref<RenderState> mRenderState;
+      int mIndex;
       EInheritance mInheritance;
     };
     // --- --- ---
@@ -246,7 +247,7 @@ namespace vl
         // we can speed this up even more by removing the duplication check
 
         for(RenderStatesMap::const_iterator rs_it = mRenderStates_Final.begin(); rs_it != mRenderStates_Final.end(); ++rs_it)
-          mShader->setRenderState(rs_it->second.mRenderState.get_writable());
+          mShader->setRenderState(rs_it->second.mRenderState.get_writable(), rs_it->second.mIndex);
         for(EnablesMap::const_iterator en_it = mEnables_Final.begin(); en_it != mEnables_Final.end(); ++en_it)
           mShader->enable(en_it->second.mEnable);
         for(UniformsMap::const_iterator rs_it = mUniforms_Final.begin(); rs_it != mUniforms_Final.end(); ++rs_it)
@@ -256,15 +257,21 @@ namespace vl
 
     // states setters
 
-    void setRenderState(RenderState* rs, EInheritance inheritance=IN_Propagate)
+    void setRenderState(EInheritance inheritance, RenderStateNonIndexed* rs)
     {
-      RenderStateInfo info(rs, inheritance);
-      mRenderStates[rs->type()] = info;
+      RenderStateInfo info(inheritance, rs, 0);
+      mRenderStates[ (ERenderState)(rs->type()+0) ] = info;
     }
 
-    void eraseRenderState(RenderState* rs)
+    void setRenderState(EInheritance inheritance, RenderState* rs, int index)
     {
-      mRenderStates.erase(rs->type());
+      RenderStateInfo info(inheritance, rs, index);
+      mRenderStates[ (ERenderState)(rs->type()+index) ] = info;
+    }
+
+    void eraseRenderState(RenderState* rs, int index)
+    {
+      mRenderStates.erase( (ERenderState)(rs->type()+index) );
     }
 
     void setEnable(EEnable en, bool on, EInheritance inheritance=IN_Propagate) 

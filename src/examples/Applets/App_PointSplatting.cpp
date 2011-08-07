@@ -53,7 +53,7 @@ public:
     vl::ref<vl::Effect> fx = new vl::Effect;
 
     fx->shader()->enable(vl::EN_LIGHTING);
-    fx->shader()->setRenderState( new vl::Light(0) );
+    fx->shader()->setRenderState( new vl::Light, 0 );
     fx->shader()->gocLightModel()->setTwoSide(true);
     // enable color material if you want to see per-point colors
     fx->shader()->gocMaterial()->setColorMaterialEnabled(true);

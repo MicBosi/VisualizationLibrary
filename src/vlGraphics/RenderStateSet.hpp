@@ -35,6 +35,7 @@
 #include <vlCore/Object.hpp>
 #include <vlCore/vlnamespace.hpp>
 #include <vlGraphics/link_config.hpp>
+#include <vlGraphics/RenderState.hpp>
 #include <vector>
 
 namespace vl
@@ -56,19 +57,19 @@ namespace vl
 
     // renderstates getters and setters
 
-    void setRenderState(RenderState* renderstate);
+    void setRenderState(RenderState* renderstate, int index);
 
-    RenderState* renderState( ERenderState type );
+    RenderState* renderState( ERenderState type, int index=0 );
 
-    const RenderState* renderState( ERenderState type ) const;
+    const RenderState* renderState( ERenderState type, int index=0 ) const;
 
     size_t renderStatesCount() const { return mRenderStates.size(); }
 
-    const ref<RenderState>* renderStates() const { if (mRenderStates.empty()) return NULL; else return &mRenderStates[0]; }
+    const RenderStateSlot* renderStates() const { if (mRenderStates.empty()) return NULL; else return &mRenderStates[0]; }
 
-    ref<RenderState>* renderStates() { if (mRenderStates.empty()) return NULL; else return &mRenderStates[0]; }
+    RenderStateSlot* renderStates() { if (mRenderStates.empty()) return NULL; else return &mRenderStates[0]; }
 
-    void eraseRenderState(ERenderState type);
+    void eraseRenderState(ERenderState type, int index);
 
     void eraseAllRenderStates() { mRenderStates.clear(); mGLSLProgram = NULL; }
     
@@ -79,7 +80,7 @@ namespace vl
     GLSLProgram* glslProgram() { return mGLSLProgram; }
 
   protected:
-    std::vector< ref<RenderState> > mRenderStates;
+    std::vector< RenderStateSlot > mRenderStates;
     GLSLProgram* mGLSLProgram;
   };
 }

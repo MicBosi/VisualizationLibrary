@@ -71,7 +71,7 @@ public:
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->enable(vl::EN_LIGHTING);
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
 
     vl::ref<vl::Geometry> ball = vl::makeUVSphere(vl::vec3(0,0,0),1,20,20);
     ball->computeNormals();

@@ -524,7 +524,7 @@ namespace vl
     bool mCurrentEnable[EN_EnableCount];
     const RenderState* mCurrentRenderState[RS_COUNT];
     // default render states
-    ref<RenderState> mDefaultRenderStates[RS_COUNT];
+    RenderStateSlot mDefaultRenderStates[RS_COUNT];
 
     // for each texture unit tells which target has been bound last.
     ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];

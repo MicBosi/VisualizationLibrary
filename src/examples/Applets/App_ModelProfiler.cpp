@@ -330,7 +330,7 @@ public:
     Time timer;
     timer.start();
 
-    ref<Light> camera_light = new Light(0);
+    ref<Light> camera_light = new Light;
  
     for(unsigned int i=0; i<files.size(); ++i)
     {
@@ -365,7 +365,7 @@ public:
         if (geom && geom->normalArray())
         {
           if (!actor->effect()->shader()->getLight(0))
-            actor->effect()->shader()->setRenderState( camera_light.get() );
+            actor->effect()->shader()->setRenderState( camera_light.get(), 0 );
           actor->effect()->shader()->enable(EN_LIGHTING);
           // actor->effect()->shader()->enable(EN_CULL_FACE);
         }

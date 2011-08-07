@@ -59,9 +59,9 @@ public:
 
     // common effect settings
 
-    vl::ref<vl::Light> light = new vl::Light(0);
+    vl::ref<vl::Light> light = new vl::Light;
     vl::ref<vl::Effect> ground_fx = new vl::Effect;
-    ground_fx->shader()->setRenderState( light.get() );
+    ground_fx->shader()->setRenderState( light.get(), 0 );
     ground_fx->shader()->enable(vl::EN_LIGHTING);
     ground_fx->shader()->enable(vl::EN_DEPTH_TEST);
 
@@ -82,7 +82,7 @@ public:
     const char* texname[] = { "/3rdparty/pknight/evil.tif", "/3rdparty/pknight/knight.tif", "/3rdparty/pknight/ctf_r.tif", "/3rdparty/pknight/ctf_b.tif" };
     for(int i=0; i<4; ++i)
     {
-      effect[i]->shader()->setRenderState( light.get() );
+      effect[i]->shader()->setRenderState( light.get(), 0 );
       effect[i]->shader()->enable(vl::EN_LIGHTING);
       effect[i]->shader()->enable(vl::EN_DEPTH_TEST);
       vl::ref<vl::Texture> texture = new vl::Texture;
