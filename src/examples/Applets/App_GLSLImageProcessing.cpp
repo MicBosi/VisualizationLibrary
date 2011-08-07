@@ -93,11 +93,11 @@ public:
     mTexture->getTexParameter()->setMinFilter(vl::TPF_LINEAR);
     mTexture->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
     mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
-    mTextureMatrix = new vl::TextureMatrix(0);
+    mTextureMatrix = new vl::TextureMatrix;
 
     vl::ref<vl::Effect> postproc_fx = new vl::Effect;
     postproc_fx->shader()->gocTextureSampler(0)->setTexture(mTexture.get());
-    postproc_fx->shader()->setRenderState( mTextureMatrix.get() );
+    postproc_fx->shader()->setRenderState( mTextureMatrix.get(), 0 );
 
     vl::ref<vl::Effect> original_fx = new vl::Effect;
     original_fx->shader()->gocTextureSampler(0)->setTexture(mTexture.get());
@@ -172,10 +172,10 @@ public:
 
     // set "image_width" uniform
     vl::ref<vl::Uniform> image_width = mGLSLProgram->gocUniform("image_width");
-    image_width->setUniformF(mImage->width());
+    image_width->setUniformF((float)mImage->width());
     // set "image_height" uniform
     vl::ref<vl::Uniform> image_height = mGLSLProgram->gocUniform("image_height");
-    image_height->setUniformF(mImage->width());
+    image_height->setUniformF((float)mImage->width());
 
     int w = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->width();
     int h = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->height();

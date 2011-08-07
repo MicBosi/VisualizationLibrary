@@ -380,12 +380,12 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
         if ( shader->gocRenderStateSet() )
         {
           size_t count = shader->gocRenderStateSet()->renderStatesCount();
-          ref<RenderState>* states = shader->gocRenderStateSet()->renderStates();
+          RenderStateSlot* states = shader->gocRenderStateSet()->renderStates();
           for( size_t i=0; i<count; ++i )
           {
-            if (states[i]->type() >= RS_TextureSampler0 && states[i]->type() < RS_TextureSampler0+VL_MAX_TEXTURE_UNITS)
+            if (states[i].mRS->type() == RS_TextureSampler)
             {
-              TextureSampler* tex_unit = static_cast<TextureSampler*>( states[i].get() );
+              TextureSampler* tex_unit = static_cast<TextureSampler*>( states[i].mRS.get() );
               VL_CHECK(tex_unit);
               if (tex_unit)
               {

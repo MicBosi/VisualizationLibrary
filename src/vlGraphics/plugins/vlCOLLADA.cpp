@@ -595,7 +595,7 @@ DaeLoader::DaeLoader()
   mDefaultFX = new Effect;
   mDefaultFX->setObjectName( Dae::VL_NO_MATERIAL_SPECIFIED );
   mDefaultFX->shader()->enable(EN_LIGHTING);
-  mDefaultFX->shader()->setRenderState( new Light(0) );
+  mDefaultFX->shader()->setRenderState( new Light, 0 );
   mDefaultFX->shader()->gocMaterial()->setFlatColor( vl::fuchsia );
   mDefaultFX->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
 }
@@ -1350,7 +1350,7 @@ bool DaeLoader::load(VirtualFile* file)
         fx->shader()->setRenderStateSet( actor->effect()->shader()->getRenderStateSet() );
         actor->setEffect( fx.get() );
         for(size_t ilight=0; ilight<mLights.size() && ilight<8; ++ilight)
-          fx->shader()->setRenderState( mLights[ilight].get() );
+          fx->shader()->setRenderState( mLights[ilight].get(), ilight );
 
        // *** compute missing normals ***
         Geometry* geom = actor->lod(0)->as<Geometry>();
@@ -1833,7 +1833,7 @@ ref<Light> DaeLoader::parseLight(domLight* dom_light, Transform* transform)
 {
   domLight::domTechnique_commonRef light_common = dom_light->getTechnique_common();
 
-  ref<Light> light = new Light(0);
+  ref<Light> light = new Light;
   if (dom_light->getName())
     light->setObjectName( dom_light->getName() );
   else
@@ -2017,14 +2017,13 @@ void DaeLoader::setupLights()
   // set light indices and adds to the resource database
   for(size_t i=0; i<mLights.size(); ++i)
   {
-    mLights[i]->setLightIndex( std::min((int)i, 7) );
     mResources->resources().push_back( mLights[i].get() );
   }
 
   // default light if no lights were present in the scene
   if (mLights.empty())
   {
-    mLights.push_back( new Light(0) );
+    mLights.push_back( new Light );
     mLights[0]->setObjectName(Dae::VL_DEFAULT_LIGHT);
   }
 }

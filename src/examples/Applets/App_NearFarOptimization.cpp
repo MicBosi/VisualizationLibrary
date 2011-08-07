@@ -58,7 +58,7 @@ public:
     // enable depth test and lighting 
     effect1->shader()->enable(EN_DEPTH_TEST);
     // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
-    effect1->shader()->setRenderState( new Light(0) );
+    effect1->shader()->setRenderState( new Light, 0 );
     // enable the standard OpenGL lighting 
     effect1->shader()->enable(EN_LIGHTING);
     // set the front and back material color of the cube 
@@ -70,7 +70,7 @@ public:
     // enable depth test and lighting 
     effect2->shader()->enable(EN_DEPTH_TEST);
     // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
-    effect2->shader()->setRenderState( new Light(0) );
+    effect2->shader()->setRenderState( new Light, 0 );
     // enable the standard OpenGL lighting 
     effect2->shader()->enable(EN_LIGHTING);
     // set the front and back material color of the cube 

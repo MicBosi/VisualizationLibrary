@@ -54,7 +54,7 @@ public:
     /* enable depth test and lighting */
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     /* enable lighting and material properties */
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f,1.0f,1.0f,0.5f) );
     effect->shader()->gocLightModel()->setTwoSide(true);

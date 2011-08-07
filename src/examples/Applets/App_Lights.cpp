@@ -76,17 +76,17 @@ public:
 
     // In our example each object will be lit up to 5 lights at the same time.
 
-    mLight0 = new vl::Light(0);
-    mLight1 = new vl::Light(1);
-    mLight2 = new vl::Light(2);
-    mLight3 = new vl::Light(3);
-    mLight4 = new vl::Light(4);
+    mLight0 = new vl::Light;
+    mLight1 = new vl::Light;
+    mLight2 = new vl::Light;
+    mLight3 = new vl::Light;
+    mLight4 = new vl::Light;
 
     // Add the lights to the shader in order to use them (we save light #4 for the camera)
-    mLightFx->shader()->setRenderState( mLight0.get() );
-    mLightFx->shader()->setRenderState( mLight1.get() );
-    mLightFx->shader()->setRenderState( mLight2.get() );
-    mLightFx->shader()->setRenderState( mLight3.get() );
+    mLightFx->shader()->setRenderState( mLight0.get(), 0 );
+    mLightFx->shader()->setRenderState( mLight1.get(), 1 );
+    mLightFx->shader()->setRenderState( mLight2.get(), 2 );
+    mLightFx->shader()->setRenderState( mLight3.get(), 3 );
 
     // Define the light diffuse color. 
     // See the OpenGL Programmer's Guide for more details about the OpenGL lighting model and equations.
@@ -185,7 +185,7 @@ public:
       {
       case Disable:
         // removes light #4 from the Shader
-        mLightFx->shader()->eraseRenderState(mLight4.get());
+        mLightFx->shader()->eraseRenderState(mLight4.get(), 4);
         // you can also do:
         // mLightFx->shader()->removeRenderState(vl::RS_Light4);
         // or even
@@ -193,7 +193,7 @@ public:
         break;
       case DirectionalLight:
         // add the light to the shader
-        mLightFx->shader()->setRenderState(mLight4.get());
+        mLightFx->shader()->setRenderState(mLight4.get(), 4);
         // since the fourth component is 0 OpenGL considers this a direction
         mLight4->setPosition(vl::fvec4(0,0,1,0));
         // disable spot light
@@ -201,7 +201,7 @@ public:
         break;
       case PositionalLight:
         // add the light to the shader (just for clarity)
-        mLightFx->shader()->setRenderState(mLight4.get());
+        mLightFx->shader()->setRenderState(mLight4.get(), 4);
         // since the fourth component is 1 OpenGL considers this a position
         mLight4->setPosition(vl::fvec4(0,0,0,1));
         // positional light attenuation
@@ -213,7 +213,7 @@ public:
         break;
       case SpotLight:
         // add the light to the shader (just for clarity)
-        mLightFx->shader()->setRenderState(mLight4.get());
+        mLightFx->shader()->setRenderState(mLight4.get(), 4);
         // since the fourth component is 1 OpenGL considers this a position
         mLight4->setPosition(vl::fvec4(0,0,0,1));
         // positional light attenuation

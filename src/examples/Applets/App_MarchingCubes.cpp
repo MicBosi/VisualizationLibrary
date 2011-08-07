@@ -259,7 +259,7 @@ public:
     geom->drawCalls()->push_back(mMarchingCubes.mDrawElements.get());
 
     vl::ref<vl::Effect> fx = new vl::Effect;
-    fx->shader()->setRenderState( new vl::Light(0) );
+    fx->shader()->setRenderState( new vl::Light, 0 );
     fx->shader()->enable(vl::EN_LIGHTING);
     fx->shader()->enable(vl::EN_DEPTH_TEST);
     // two side lighting
@@ -404,7 +404,7 @@ public:
     geom->setVBOEnabled(false);
 
     vl::ref<vl::Effect> fx = new vl::Effect;
-    fx->shader()->setRenderState( new vl::Light(0) );
+    fx->shader()->setRenderState( new vl::Light, 0 );
     fx->shader()->enable(vl::EN_LIGHTING);
     fx->shader()->enable(vl::EN_DEPTH_TEST);
     // two side lighting
@@ -447,7 +447,7 @@ public:
     geom->setVBOEnabled(false);
 
     vl::ref<vl::Effect> fx = new vl::Effect;
-    fx->shader()->setRenderState( new vl::Light(0) );
+    fx->shader()->setRenderState( new vl::Light, 0 );
     fx->shader()->enable(vl::EN_LIGHTING);
     fx->shader()->enable(vl::EN_DEPTH_TEST);
     // two side lighting
@@ -559,7 +559,7 @@ public:
     vl::ref<vl::Effect> fx = new vl::Effect;
 
     // effect
-    fx->shader()->setRenderState( new vl::Light(0) );
+    fx->shader()->setRenderState( new vl::Light, 0 );
     fx->shader()->enable(vl::EN_DEPTH_TEST);
     fx->shader()->enable(vl::EN_LIGHTING);
     fx->shader()->gocLightModel()->setTwoSide(true);

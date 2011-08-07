@@ -79,11 +79,11 @@ public:
 	  // GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR. However rembember that you can set the MagFilter only to 
     // GL_NEAREST or GL_LINEAR as mipmapping does not make any sense for texture magnification.
 
-    ref<Light> light = new Light(0);
+    ref<Light> light = new Light;
 
     // single texture effect with alpha testing
     ref<Effect> fx_right_cube = new Effect;
-    fx_right_cube->shader()->setRenderState( light.get() );
+    fx_right_cube->shader()->setRenderState( light.get(), 0 );
     fx_right_cube->shader()->enable(EN_LIGHTING);
     fx_right_cube->shader()->enable(EN_DEPTH_TEST);
     fx_right_cube->shader()->enable(EN_BLEND);
@@ -94,7 +94,7 @@ public:
 
     // multi-texture effect with alpha testing
     ref<Effect> fx_left_cube = new Effect;
-    fx_left_cube->shader()->setRenderState( light.get() );
+    fx_left_cube->shader()->setRenderState( light.get(), 0 );
     fx_left_cube->shader()->enable(EN_LIGHTING);
     fx_left_cube->shader()->enable(EN_DEPTH_TEST);
     fx_left_cube->shader()->enable(EN_BLEND);
@@ -291,7 +291,7 @@ public:
     mFXSpheric->shader()->enable(EN_DEPTH_TEST);
     mFXSpheric->shader()->enable(EN_CULL_FACE);
     mFXSpheric->shader()->enable(EN_LIGHTING);
-    mFXSpheric->shader()->setRenderState( new Light(0) );
+    mFXSpheric->shader()->setRenderState( new Light, 0 );
 
     // Add sphere mapped torus
     // makeTorus() also generates the normals which are needed by GL_SPHERE_MAP texture coordinate generation mode
@@ -332,7 +332,7 @@ public:
     mFXCubic->shader()->enable(EN_DEPTH_TEST);
     mFXCubic->shader()->enable(EN_CULL_FACE);
     mFXCubic->shader()->enable(EN_LIGHTING);
-    mFXCubic->shader()->setRenderState( new Light(0) );
+    mFXCubic->shader()->setRenderState( new Light, 0 );
 
     // Add cube-mapped torus
     // makeTorus() also generates the normals which are needed by GL_REFLECTION_MAP texture coordinate generation mode

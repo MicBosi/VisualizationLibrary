@@ -73,16 +73,16 @@ GLSLProgram* Shader::getGLSLProgram()
   if ( rs == NULL ) \
   { \
     rs = new RS; \
-    gocRenderStateSet()->setRenderState( rs ); \
+    gocRenderStateSet()->setRenderState( rs, 0 ); \
   } \
   return rs;
 //------------------------------------------------------------------------------
 #define GET_OR_CREATE_IDX(RS, index)\
-  RS* rs = static_cast<RS*>( gocRenderStateSet()->renderState( (ERenderState)(RS_##RS##0 + index) ) ); \
+  RS* rs = static_cast<RS*>( gocRenderStateSet()->renderState( RS_##RS, index ) ); \
   if ( rs == NULL ) \
   { \
-    rs = new RS(index); \
-    gocRenderStateSet()->setRenderState( rs ); \
+    rs = new RS; \
+    gocRenderStateSet()->setRenderState( rs, index ); \
   } \
   return rs;
 //------------------------------------------------------------------------------
@@ -152,15 +152,15 @@ SampleCoverage* Shader::gocSampleCoverage() { GET_OR_CREATE(SampleCoverage) }
 //------------------------------------------------------------------------------
 Light* Shader::gocLight(int light_index) { GET_OR_CREATE_IDX(Light, light_index) }
 //------------------------------------------------------------------------------
-const Light* Shader::getLight(int light_index) const { return static_cast<const Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
+const Light* Shader::getLight(int light_index) const { return static_cast<const Light*>( getRenderStateSet()->renderState( RS_Light, light_index ) ); }
 //------------------------------------------------------------------------------
-Light* Shader::getLight(int light_index) { return static_cast<Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
+Light* Shader::getLight(int light_index) { return static_cast<Light*>( getRenderStateSet()->renderState( RS_Light, light_index ) ); }
 //------------------------------------------------------------------------------
 ClipPlane* Shader::gocClipPlane(int plane_index) { GET_OR_CREATE_IDX(ClipPlane, plane_index) }
 //------------------------------------------------------------------------------
-const ClipPlane* Shader::getClipPlane(int plane_index) const { return static_cast<const ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
+const ClipPlane* Shader::getClipPlane(int plane_index) const { return static_cast<const ClipPlane*>( getRenderStateSet()->renderState( RS_ClipPlane, plane_index) ); }
 //------------------------------------------------------------------------------
-ClipPlane* Shader::getClipPlane(int plane_index) { return static_cast<ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
+ClipPlane* Shader::getClipPlane(int plane_index) { return static_cast<ClipPlane*>( getRenderStateSet()->renderState( RS_ClipPlane, plane_index) ); }
 //------------------------------------------------------------------------------
 TextureSampler* Shader::gocTextureSampler(int unit_index) { GET_OR_CREATE_IDX(TextureSampler, unit_index) }
 //------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ TextureMatrix* Shader::gocTextureMatrix(int unit_index) { GET_OR_CREATE_IDX(Text
 //------------------------------------------------------------------------------
 // PixelTransfer
 //------------------------------------------------------------------------------
-void PixelTransfer::apply(const Camera*, OpenGLContext*) const
+void PixelTransfer::apply(int index, const Camera*, OpenGLContext*) const
 {
   glPixelTransferi(GL_MAP_COLOR, mapColor() ? GL_TRUE : GL_FALSE);
   glPixelTransferi(GL_MAP_STENCIL, mapStencil() ? GL_TRUE : GL_FALSE);
@@ -213,7 +213,7 @@ void PixelTransfer::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // Hint
 //------------------------------------------------------------------------------
-void Hint::apply(const Camera*, OpenGLContext*) const
+void Hint::apply(int index, const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL()
 
@@ -242,35 +242,35 @@ void Hint::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // CullFace
 //------------------------------------------------------------------------------
-void CullFace::apply(const Camera*, OpenGLContext*) const
+void CullFace::apply(int index, const Camera*, OpenGLContext*) const
 {
   glCullFace(mFaceMode); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // FrontFace
 //------------------------------------------------------------------------------
-void FrontFace::apply(const Camera*, OpenGLContext*) const
+void FrontFace::apply(int index, const Camera*, OpenGLContext*) const
 {
   glFrontFace(mFrontFace); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // DepthFunc
 //------------------------------------------------------------------------------
-void DepthFunc::apply(const Camera*, OpenGLContext*) const
+void DepthFunc::apply(int index, const Camera*, OpenGLContext*) const
 {
   glDepthFunc(mDepthFunc); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // DepthMask
 //------------------------------------------------------------------------------
-void DepthMask::apply(const Camera*, OpenGLContext*) const
+void DepthMask::apply(int index, const Camera*, OpenGLContext*) const
 {
   glDepthMask(mDepthMask?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PolygonMode
 //------------------------------------------------------------------------------
-void PolygonMode::apply(const Camera*, OpenGLContext*) const
+void PolygonMode::apply(int index, const Camera*, OpenGLContext*) const
 {
   // required by GL 3.1 CORE
   if ( mFrontFace == mBackFace )
@@ -286,14 +286,14 @@ void PolygonMode::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // ShadeModel
 //------------------------------------------------------------------------------
-void ShadeModel::apply(const Camera*, OpenGLContext*) const
+void ShadeModel::apply(int index, const Camera*, OpenGLContext*) const
 {
   glShadeModel(mShadeModel); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // BlendFunc
 //------------------------------------------------------------------------------
-void BlendFunc::apply(const Camera*, OpenGLContext*) const
+void BlendFunc::apply(int index, const Camera*, OpenGLContext*) const
 {
   if (Has_GL_EXT_blend_func_separate||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_func_separate||Has_GLES_Version_2_0)
   { 
@@ -307,7 +307,7 @@ void BlendFunc::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // BlendEquation
 //------------------------------------------------------------------------------
-void BlendEquation::apply(const Camera*, OpenGLContext*) const
+void BlendEquation::apply(int index, const Camera*, OpenGLContext*) const
 {
   if (Has_GL_Version_2_0||Has_GL_EXT_blend_equation_separate)
     { VL_glBlendEquationSeparate(mModeRGB, mModeAlpha); VL_CHECK_OGL() }
@@ -317,7 +317,7 @@ void BlendEquation::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // AlphaFunc
 //------------------------------------------------------------------------------
-void AlphaFunc::apply(const Camera*, OpenGLContext*) const
+void AlphaFunc::apply(int index, const Camera*, OpenGLContext*) const
 {
   glAlphaFunc(mAlphaFunc, mRefValue); VL_CHECK_OGL()
 }
@@ -418,7 +418,7 @@ void Material::setFlatColor(const fvec4& color)
   setBackFlatColor(color);
 }
 //------------------------------------------------------------------------------
-void Material::apply(const Camera*, OpenGLContext*) const
+void Material::apply(int index, const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL();
 
@@ -476,7 +476,7 @@ void Material::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // LightModel
 //------------------------------------------------------------------------------
-void LightModel::apply(const Camera*, OpenGLContext*) const
+void LightModel::apply(int index, const Camera*, OpenGLContext*) const
 {
   if (Has_GL_Version_1_2||Has_GL_EXT_separate_specular_color)
   { 
@@ -493,7 +493,7 @@ void LightModel::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // Fog
 //------------------------------------------------------------------------------
-void Fog::apply(const Camera*, OpenGLContext*) const
+void Fog::apply(int index, const Camera*, OpenGLContext*) const
 {
   glFogf(GL_FOG_MODE, (float)mMode); VL_CHECK_OGL()
   glFogf(GL_FOG_DENSITY, mDensity); VL_CHECK_OGL()
@@ -504,35 +504,35 @@ void Fog::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // PolygonOffset
 //------------------------------------------------------------------------------
-void PolygonOffset::apply(const Camera*, OpenGLContext*) const
+void PolygonOffset::apply(int index, const Camera*, OpenGLContext*) const
 {
   glPolygonOffset(mFactor, mUnits); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // LogicOp
 //------------------------------------------------------------------------------
-void LogicOp::apply(const Camera*, OpenGLContext*) const
+void LogicOp::apply(int index, const Camera*, OpenGLContext*) const
 {
   glLogicOp(mLogicOp); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // DepthRange
 //------------------------------------------------------------------------------
-void DepthRange::apply(const Camera*, OpenGLContext*) const
+void DepthRange::apply(int index, const Camera*, OpenGLContext*) const
 {
   glDepthRange(mZNear, mZFar); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // LineWidth
 //------------------------------------------------------------------------------
-void LineWidth::apply(const Camera*, OpenGLContext*) const
+void LineWidth::apply(int index, const Camera*, OpenGLContext*) const
 {
   glLineWidth(mLineWidth); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PointSize
 //------------------------------------------------------------------------------
-void PointSize::apply(const Camera*, OpenGLContext*) const
+void PointSize::apply(int index, const Camera*, OpenGLContext*) const
 {
   glPointSize(mPointSize); VL_CHECK_OGL()
 }
@@ -556,21 +556,21 @@ void PolygonStipple::set(const unsigned char* mask)
   memcpy(mMask, mask, sizeof(unsigned char)*32*32/8);
 }
 //------------------------------------------------------------------------------
-void PolygonStipple::apply(const Camera*, OpenGLContext*) const
+void PolygonStipple::apply(int index, const Camera*, OpenGLContext*) const
 {
   glPolygonStipple(mask()); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // LineStipple
 //------------------------------------------------------------------------------
-void LineStipple::apply(const Camera*, OpenGLContext*) const
+void LineStipple::apply(int index, const Camera*, OpenGLContext*) const
 {
   glLineStipple(mFactor, mPattern); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PointParameter
 //------------------------------------------------------------------------------
-void PointParameter::apply(const Camera*, OpenGLContext*) const
+void PointParameter::apply(int index, const Camera*, OpenGLContext*) const
 {
   if (Has_GL_Version_1_4||Has_GLES_Version_1_1)
   {
@@ -590,7 +590,7 @@ void PointParameter::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // StencilFunc
 //------------------------------------------------------------------------------
-void StencilFunc::apply(const Camera*, OpenGLContext*) const
+void StencilFunc::apply(int index, const Camera*, OpenGLContext*) const
 {
   if(Has_GL_Version_2_0)
   {
@@ -605,7 +605,7 @@ void StencilFunc::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // StencilOp
 //------------------------------------------------------------------------------
-void StencilOp::apply(const Camera*, OpenGLContext*) const
+void StencilOp::apply(int index, const Camera*, OpenGLContext*) const
 {
   if(Has_GL_Version_2_0)
   {
@@ -620,7 +620,7 @@ void StencilOp::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // StencilMask
 //------------------------------------------------------------------------------
-void StencilMask::apply(const Camera*, OpenGLContext*) const
+void StencilMask::apply(int index, const Camera*, OpenGLContext*) const
 {
   if(Has_GL_Version_2_0)
   {
@@ -635,14 +635,14 @@ void StencilMask::apply(const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // BlendColor
 //------------------------------------------------------------------------------
-void BlendColor::apply(const Camera*, OpenGLContext*) const
+void BlendColor::apply(int index, const Camera*, OpenGLContext*) const
 {
   VL_glBlendColor(mBlendColor.r(), mBlendColor.g(), mBlendColor.b(), mBlendColor.a()); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // Color
 //------------------------------------------------------------------------------
-void Color::apply(const Camera*, OpenGLContext* ctx) const
+void Color::apply(int index, const Camera*, OpenGLContext* ctx) const
 {
   glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() ); VL_CHECK_OGL()
   ctx->mColor = mColor;
@@ -650,7 +650,7 @@ void Color::apply(const Camera*, OpenGLContext* ctx) const
 //------------------------------------------------------------------------------
 // SecondaryColor
 //------------------------------------------------------------------------------
-void SecondaryColor::apply(const Camera*, OpenGLContext* ctx) const
+void SecondaryColor::apply(int index, const Camera*, OpenGLContext* ctx) const
 {
   glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() ); VL_CHECK_OGL()
   ctx->mSecondaryColor = mSecondaryColor;
@@ -658,7 +658,7 @@ void SecondaryColor::apply(const Camera*, OpenGLContext* ctx) const
 //------------------------------------------------------------------------------
 // Normal
 //------------------------------------------------------------------------------
-void Normal::apply(const Camera*, OpenGLContext* ctx) const
+void Normal::apply(int index, const Camera*, OpenGLContext* ctx) const
 {
   glNormal3f( mNormal.x(), mNormal.y(), mNormal.z() ); VL_CHECK_OGL()
   ctx->mNormal = mNormal;
@@ -666,14 +666,14 @@ void Normal::apply(const Camera*, OpenGLContext* ctx) const
 //------------------------------------------------------------------------------
 // ColorMask
 //------------------------------------------------------------------------------
-void ColorMask::apply(const Camera*, OpenGLContext*) const
+void ColorMask::apply(int index, const Camera*, OpenGLContext*) const
 {
   glColorMask(mRed?GL_TRUE:GL_FALSE, mGreen?GL_TRUE:GL_FALSE, mBlue?GL_TRUE:GL_FALSE, mAlpha?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // SampleCoverage
 //------------------------------------------------------------------------------
-void SampleCoverage::apply(const Camera*, OpenGLContext*) const
+void SampleCoverage::apply(int index, const Camera*, OpenGLContext*) const
 {
   VL_glSampleCoverage(mValue, mInvert?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
@@ -822,11 +822,10 @@ namespace
 //------------------------------------------------------------------------------
 // TexEnv
 //------------------------------------------------------------------------------
-TexEnv::TexEnv(int texunit)
+TexEnv::TexEnv()
 {
   VL_DEBUG_SET_OBJECT_NAME()
 
-  mTextureSampler = texunit;
   mMode = TEM_MODULATE;
   mColor = fvec4(0,0,0,0);
 
@@ -853,14 +852,14 @@ TexEnv::TexEnv(int texunit)
   mPointSpriteCoordReplace = false;
 }
 //------------------------------------------------------------------------------
-void TexEnv::apply(const Camera*, OpenGLContext*) const
+void TexEnv::apply(int index, const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL()
-  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureSampler("TexEnv::apply",textureUnit()));
+  VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
+  VL_CHECK(checkTextureSampler("TexEnv::apply", index));
 
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
-  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() ); VL_CHECK_OGL();
+  VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL();
 
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode()); VL_CHECK_OGL()
 
@@ -916,10 +915,9 @@ void TexEnv::apply(const Camera*, OpenGLContext*) const
 //! The eye and object planes are not transformed by any matrix (unlike usually with OpenGL),
 //! which means that the object plane is specified in object coordinates and that,
 //! the eye plane is specified in camera coordinates.
-TexGen::TexGen(int texunit)
+TexGen::TexGen()
 {
   VL_DEBUG_SET_OBJECT_NAME()
-  mTextureSampler  = texunit;
   mEyePlaneS    = fvec4(1,0,0,0);
   mObjectPlaneS = fvec4(1,0,0,0);
   mEyePlaneT    = fvec4(0,1,0,0);
@@ -934,14 +932,14 @@ TexGen::TexGen(int texunit)
   mGenModeQ = TGM_DISABLED;
 }
 //-----------------------------------------------------------------------------
-void TexGen::apply(const Camera*, OpenGLContext*) const
+void TexGen::apply(int index, const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL();
 
-  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureSampler("TexGen::apply", textureUnit()));
+  VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
+  VL_CHECK(checkTextureSampler("TexGen::apply", index));
 
-  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
+  VL_glActiveTexture( GL_TEXTURE0 + index );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_CHECK_OGL();
 
@@ -1058,13 +1056,13 @@ void TexGen::apply(const Camera*, OpenGLContext*) const
 //-----------------------------------------------------------------------------
 // TextureMatrix
 //-----------------------------------------------------------------------------
-void TextureMatrix::apply(const Camera* camera, OpenGLContext*) const
+void TextureMatrix::apply(int index, const Camera* camera, OpenGLContext*) const
 {
   VL_CHECK_OGL();
-  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS);
-  VL_CHECK(checkTextureSampler("TextureMatrix::apply",textureUnit()));
+  VL_CHECK(index < VL_MAX_TEXTURE_UNITS);
+  VL_CHECK(checkTextureSampler("TextureMatrix::apply",index));
 
-  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
+  VL_glActiveTexture( GL_TEXTURE0 + index );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_CHECK_OGL();
   glMatrixMode(GL_TEXTURE);
@@ -1081,17 +1079,17 @@ bool TextureSampler::hasTexture() const
   return mTexture && mTexture->handle(); 
 }
 //------------------------------------------------------------------------------
-void TextureSampler::apply(const Camera* camera, OpenGLContext* ctx) const
+void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL();
-  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureSampler("TextureSampler::apply",textureUnit()));
+  VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
+  VL_CHECK(checkTextureSampler("TextureSampler::apply",index));
 
   // activate the appropriate texture unit
-  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() ); VL_CHECK_OGL()
+  VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL()
 
   // disable and unbind previous active texture target on this texture unit.
-  vl::ETextureDimension prev_tex_target = ctx->texUnitBinding( textureUnit() );
+  vl::ETextureDimension prev_tex_target = ctx->texUnitBinding( index );
   if (prev_tex_target)
   {
     // this is not strictly necessary, it also avoids interaction witht FBOs etc.
@@ -1173,7 +1171,7 @@ void TextureSampler::apply(const Camera* camera, OpenGLContext* ctx) const
     }
 
     // track currently used texture target
-    ctx->setTexUnitBinding( textureUnit(), texture()->dimension() );
+    ctx->setTexUnitBinding( index, texture()->dimension() );
 
     // texture parameters
     if ( texture()->getTexParameter()->dirty() )

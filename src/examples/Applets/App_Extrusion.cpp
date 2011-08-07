@@ -78,7 +78,7 @@ public:
 
     // Setup a simple white effect.
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
 
@@ -151,7 +151,7 @@ public:
 
     // Setup a simple white effect.
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
 
@@ -217,7 +217,7 @@ public:
 
     // Simple white effect.
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     // Enable color material to visualize the generated vertex colors.
@@ -286,7 +286,7 @@ public:
 
     // Simple effect
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     // Enable color material in order to see the generated vertex colors.

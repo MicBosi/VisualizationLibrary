@@ -40,7 +40,7 @@ using namespace vl;
 class EffectCache
 {
 public:
-  EffectCache(): mLight(new Light(0)) {}
+  EffectCache(): mLight(new Light) {}
 
   void clear() { effects().clear(); }
 
@@ -58,7 +58,7 @@ public:
     fx->shader()->enable(EN_DEPTH_TEST);
     fx->shader()->enable(EN_CULL_FACE);
     fx->shader()->enable(EN_LIGHTING);
-    fx->shader()->setRenderState(mLight.get());
+    fx->shader()->setRenderState(mLight.get(), 0);
     fx->shader()->gocMaterial()->setDiffuse(color);
     effects().push_back(fx.get());
     return fx.get();
@@ -346,7 +346,7 @@ void Molecule::ballAndStickStyle()
   fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
   fx->shader()->gocLightModel()->setTwoSide(false);
   fx->shader()->enable(EN_LIGHTING);
-  fx->shader()->setRenderState( fx_cache.light() );
+  fx->shader()->setRenderState( fx_cache.light(), 0 );
   // fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
 
   BondGeometryCache bond_geom_cache;
@@ -386,7 +386,7 @@ void Molecule::sticksStyle()
   fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
   fx->shader()->gocLightModel()->setTwoSide(false);
   fx->shader()->enable(EN_LIGHTING);
-  fx->shader()->setRenderState( new Light(0) );
+  fx->shader()->setRenderState( new Light, 0 );
   /*fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);*/
 
   BondGeometryCache bond_geom_cache;

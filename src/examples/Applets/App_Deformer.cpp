@@ -71,11 +71,11 @@ public:
     mTexture->getTexParameter()->setWrapT(vl::TPW_CLAMP);
     mTexture->getTexParameter()->setMinFilter(vl::TPF_LINEAR);
     mTexture->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    mTextureMatrix = new vl::TextureMatrix(0);
+    mTextureMatrix = new vl::TextureMatrix;
 
     vl::ref<vl::Effect> image_fx = new vl::Effect;
     image_fx->shader()->gocTextureSampler(0)->setTexture(mTexture.get());
-    image_fx->shader()->setRenderState( mTextureMatrix.get() );
+    image_fx->shader()->setRenderState( mTextureMatrix.get(), 0 );
     image_fx->shader()->enable(vl::EN_BLEND);
     image_fx->shader()->gocColor()->setColor(vl::white);
 
@@ -158,9 +158,7 @@ public:
     }
     else
     {
-      mText->setAlignment(vl::AlignHCenter | vl::AlignTop);
-      mText->setViewportAlignment(vl::AlignHCenter | vl::AlignTop);
-      mText->setText("http://www.VisualizationLibrary.com\n");
+      mText->setText("");
     }
   }
 

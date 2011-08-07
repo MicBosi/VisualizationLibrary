@@ -87,7 +87,7 @@ VolumePlot::VolumePlot()
 
   // defaults
 
-  mIsosurfaceEffect->shader()->setRenderState( new Light(0) );
+  mIsosurfaceEffect->shader()->setRenderState( new Light, 0 );
   mIsosurfaceEffect->shader()->gocMaterial()->setFrontDiffuse(red);
   mIsosurfaceEffect->shader()->gocMaterial()->setBackDiffuse(green);
   mIsosurfaceEffect->shader()->enable(EN_LIGHTING);

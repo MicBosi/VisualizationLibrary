@@ -91,9 +91,9 @@ public:
     PRECOMPUTE_GRADIENT &= USE_GLSL;
 
     // lights to be used later
-    mLight0 = new Light(0);
-    mLight1 = new Light(1);
-    mLight2 = new Light(2);
+    mLight0 = new Light;
+    mLight1 = new Light;
+    mLight2 = new Light;
 
     // you can color the lights!
     if (DYNAMIC_LIGHTS && COLORED_LIGHTS)
@@ -130,12 +130,12 @@ public:
     ref<Effect> vol_fx = new Effect;
     vol_fx->shader()->enable(EN_DEPTH_TEST);
     vol_fx->shader()->enable(EN_BLEND);
-    vol_fx->shader()->setRenderState( mLight0.get() );
+    vol_fx->shader()->setRenderState( mLight0.get(), 0 );
     // add the other lights only if dynamic lights have to be displayed
     if (DYNAMIC_LIGHTS)
     {
-      vol_fx->shader()->setRenderState( mLight1.get() );
-      vol_fx->shader()->setRenderState( mLight2.get() );
+      vol_fx->shader()->setRenderState( mLight1.get(), 1 );
+      vol_fx->shader()->setRenderState( mLight2.get(), 2 );
     }
 
     // The GLSL program used to perform the actual rendering.
@@ -239,12 +239,12 @@ public:
     // remove shader uniforms
     vol_fx->shader()->setUniformSet(NULL);
     // remove GLSLProgram
-    vol_fx->shader()->eraseRenderState(vl::RS_GLSLProgram);
+    vol_fx->shader()->eraseRenderState(vl::RS_GLSLProgram, 0);
     // keep texture unit #0
-    // vol_fx->shader()->eraseRenderState(RS_TextureSampler0); 
+    // vol_fx->shader()->eraseRenderState(RS_TextureSampler,0); 
     // remove texture unit #1 and #2
-    vol_fx->shader()->eraseRenderState(RS_TextureSampler1);
-    vol_fx->shader()->eraseRenderState(RS_TextureSampler2);
+    vol_fx->shader()->eraseRenderState(RS_TextureSampler, 1);
+    vol_fx->shader()->eraseRenderState(RS_TextureSampler, 2);
 
     if(img->format() == IF_LUMINANCE)
     {

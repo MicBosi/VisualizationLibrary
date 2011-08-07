@@ -247,7 +247,7 @@ namespace vl
    * - Effect
    * - Actor::renderEventCallbacks()
   */
-  class VLGRAPHICS_EXPORT GLSLProgram: public RenderState
+  class VLGRAPHICS_EXPORT GLSLProgram: public RenderStateNonIndexed
   {
     VL_INSTRUMENT_CLASS(vl::GLSLProgram, RenderState)
 
@@ -283,7 +283,7 @@ namespace vl
     bool useProgram() const;
 
     //! Calls useProgram()
-    void apply(const Camera*, OpenGLContext* ctx) const;
+    void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
     //! Links the GLSLProgram calling glLinkProgram(handle()) only if the program needs to be linked.
     //! \sa

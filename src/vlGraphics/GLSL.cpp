@@ -631,7 +631,7 @@ bool GLSLProgram::useProgram() const
   return true;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::apply(const Camera*, OpenGLContext*) const
+void GLSLProgram::apply(int /*index*/, const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL();
   if(Has_GLSL)

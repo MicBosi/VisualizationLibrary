@@ -459,11 +459,11 @@ public:
 
   void addCube(vl::Texture* texture1, vl::Texture* texture2)
   {
-    vl::ref<vl::Light> light = new vl::Light(0);
+    vl::ref<vl::Light> light = new vl::Light;
     light->setAmbient( vl::fvec4( .1f, .1f, .1f, 1.0f) );
     light->setSpecular( vl::fvec4( .1f, .1f, .1f, 1.0f) );
     vl::ref<vl::Effect> effect1 = new vl::Effect;
-    effect1->shader()->setRenderState( light.get() );
+    effect1->shader()->setRenderState( light.get(), 0 );
     effect1->shader()->gocLightModel()->setTwoSide(true);
     effect1->shader()->enable(vl::EN_LIGHTING);
     effect1->shader()->enable(vl::EN_DEPTH_TEST);
@@ -492,9 +492,9 @@ public:
       // box #2
       vl::ref<vl::Effect> effect2 = new vl::Effect;
       effect2->shader()->copy(*effect1->shader());
-      vl::ref<vl::TextureSampler> texture_unit = new vl::TextureSampler(0);
-      texture_unit->setTexture(texture2);
-      effect2->shader()->setRenderState(texture_unit.get());
+      vl::ref<vl::TextureSampler> texture_sampler = new vl::TextureSampler;
+      texture_sampler->setTexture(texture2);
+      effect2->shader()->setRenderState(texture_sampler.get(), 0);
 
       vl::ref<vl::Geometry> box2 = vl::makeBox( vl::vec3(+7,5,0), 10,10,10);
       box2->computeNormals();
@@ -521,10 +521,10 @@ public:
   {
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->setRenderState(glsl);
-    vl::ref<vl::Light> light = new vl::Light(0);
+    vl::ref<vl::Light> light = new vl::Light;
     light->setAmbient( vl::fvec4( .1f, .1f, .1f, 1.0f) );
     light->setSpecular( vl::fvec4( .9f, .9f, .9f, 1.0f) );
-    effect->shader()->setRenderState( light.get() );
+    effect->shader()->setRenderState( light.get(), 0 );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->enable(vl::EN_CULL_FACE);

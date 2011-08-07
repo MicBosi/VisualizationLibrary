@@ -127,9 +127,9 @@ public:
       exit(1);
     }
 
-    mLight0 = new Light( 0 );
-    mLight1 = new Light( 1 );
-    mLight2 = new Light( 2 );
+    mLight0 = new Light;
+    mLight1 = new Light;
+    mLight2 = new Light;
 
     mLight0Tr = new Transform;
     mLight1Tr = new Transform;
@@ -181,7 +181,7 @@ public:
       volume_fx->shader()->gocCullFace()->set( vl::PF_FRONT );
     }
 
-    volume_fx->shader()->setRenderState( mLight0.get() );
+    volume_fx->shader()->setRenderState( mLight0.get(), 0 );
 
     // light bulbs
     if ( DYNAMIC_LIGHTS )
@@ -198,8 +198,8 @@ public:
       }
 
       // add the other two lights
-      volume_fx->shader()->setRenderState( mLight1.get() );
-      volume_fx->shader()->setRenderState( mLight2.get() );
+      volume_fx->shader()->setRenderState( mLight1.get(), 1 );
+      volume_fx->shader()->setRenderState( mLight2.get(), 2 );
 
       // animate the three lights
       mLight0->followTransform( mLight0Tr.get() );

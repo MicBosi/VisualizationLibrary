@@ -99,7 +99,7 @@ class App_DrawCalls: public BaseDemo
     geom->computeNormals();
 
     ref<Effect> fx = new Effect;
-    fx->shader()->setRenderState( new Light(0) );
+    fx->shader()->setRenderState( new Light, 0 );
     fx->shader()->enable(vl::EN_LIGHTING);
     fx->shader()->enable(vl::EN_DEPTH_TEST);
     fx->shader()->gocMaterial()->setDiffuse( vl::pink );
@@ -151,7 +151,7 @@ class App_DrawCalls: public BaseDemo
     geom->computeNormals();
 
     ref<Effect> fx = new Effect;
-    fx->shader()->setRenderState( new Light(0) );
+    fx->shader()->setRenderState( new Light, 0 );
     fx->shader()->enable(vl::EN_LIGHTING);
     fx->shader()->enable(vl::EN_DEPTH_TEST);
     fx->shader()->gocMaterial()->setDiffuse( vl::yellow );
@@ -185,13 +185,13 @@ class App_DrawCalls: public BaseDemo
     teapot_multi->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
 
     ref<Effect> red_fx = new Effect;
-    red_fx->shader()->setRenderState( new Light(0) );
+    red_fx->shader()->setRenderState( new Light, 0 );
     red_fx->shader()->enable(vl::EN_LIGHTING);
     red_fx->shader()->enable(vl::EN_DEPTH_TEST);
     red_fx->shader()->gocMaterial()->setDiffuse( vl::crimson );
 
     ref<Effect> green_fx = new Effect;
-    green_fx->shader()->setRenderState( new Light(0) );
+    green_fx->shader()->setRenderState( new Light, 0 );
     green_fx->shader()->enable(vl::EN_LIGHTING);
     green_fx->shader()->enable(vl::EN_DEPTH_TEST);
     green_fx->shader()->gocMaterial()->setDiffuse( vl::green );

@@ -65,42 +65,42 @@ public:
 
     // simple red material
     vl::ref<vl::Effect> fx_red = new vl::Effect;
-    fx_red->shader()->setRenderState( new vl::Light(0) );
+    fx_red->shader()->setRenderState( new vl::Light, 0 );
     fx_red->shader()->enable(vl::EN_DEPTH_TEST);
     fx_red->shader()->enable(vl::EN_LIGHTING);
     fx_red->shader()->gocMaterial()->setDiffuse( vl::red );
 
     // simple gray material
     vl::ref<vl::Effect> fx_gray = new vl::Effect;
-    fx_gray->shader()->setRenderState( new vl::Light(0) );
+    fx_gray->shader()->setRenderState( new vl::Light, 0 );
     fx_gray->shader()->enable(vl::EN_DEPTH_TEST);
     fx_gray->shader()->enable(vl::EN_LIGHTING);
     fx_gray->shader()->gocMaterial()->setDiffuse( vl::gray );
 
     // simple crimson material
     vl::ref<vl::Effect> fx_crimson = new vl::Effect;
-    fx_crimson->shader()->setRenderState( new vl::Light(0) );
+    fx_crimson->shader()->setRenderState( new vl::Light, 0 );
     fx_crimson->shader()->enable(vl::EN_DEPTH_TEST);
     fx_crimson->shader()->enable(vl::EN_LIGHTING);
     fx_crimson->shader()->gocMaterial()->setDiffuse( vl::crimson );
 
     // simple orange material
     vl::ref<vl::Effect> fx_orange = new vl::Effect;
-    fx_orange->shader()->setRenderState( new vl::Light(0) );
+    fx_orange->shader()->setRenderState( new vl::Light, 0 );
     fx_orange->shader()->enable(vl::EN_DEPTH_TEST);
     fx_orange->shader()->enable(vl::EN_LIGHTING);
     fx_orange->shader()->gocMaterial()->setDiffuse( vl::orange );
 
     // simple green material
     vl::ref<vl::Effect> fx_green = new vl::Effect;
-    fx_green->shader()->setRenderState( new vl::Light(0) );
+    fx_green->shader()->setRenderState( new vl::Light, 0 );
     fx_green->shader()->enable(vl::EN_DEPTH_TEST);
     fx_green->shader()->enable(vl::EN_LIGHTING);
     fx_green->shader()->gocMaterial()->setDiffuse( vl::green );
 
     // simple blue material
     vl::ref<vl::Effect> fx_blue = new vl::Effect;
-    fx_blue->shader()->setRenderState( new vl::Light(0) );
+    fx_blue->shader()->setRenderState( new vl::Light, 0 );
     fx_blue->shader()->enable(vl::EN_DEPTH_TEST);
     fx_blue->shader()->enable(vl::EN_LIGHTING);
     fx_blue->shader()->gocMaterial()->setDiffuse( vl::blue );

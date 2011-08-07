@@ -69,38 +69,38 @@ public:
     ref<Geometry> model = res_db->get<Geometry>(0);
     model->computeNormals();
 
-    ref<Light> light = new Light(0);
+    ref<Light> light = new Light;
 
     ref<Effect> effect1 = new Effect;
-    effect1->shader()->setRenderState( light.get() );
+    effect1->shader()->setRenderState( light.get(), 0 );
     effect1->shader()->enable(EN_LIGHTING);
     effect1->shader()->enable(EN_DEPTH_TEST);
     effect1->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect1.get(), mTransform1.get() );
 
     ref<Effect> effect2 = new Effect;
-    effect2->shader()->setRenderState( light.get() );
+    effect2->shader()->setRenderState( light.get(), 0 );
     effect2->shader()->enable(EN_LIGHTING);
     effect2->shader()->enable(EN_DEPTH_TEST);
     effect2->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect2.get(), mTransform2.get() );
 
     ref<Effect> effect3 = new Effect;
-    effect3->shader()->setRenderState( light.get() );
+    effect3->shader()->setRenderState( light.get(), 0 );
     effect3->shader()->enable(EN_LIGHTING);
     effect3->shader()->enable(EN_DEPTH_TEST);
     effect3->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect3.get(), mTransform3.get() );
 
     ref<Effect> effect4 = new Effect;
-    effect4->shader()->setRenderState( light.get() );
+    effect4->shader()->setRenderState( light.get(), 0 );
     effect4->shader()->enable(EN_LIGHTING);
     effect4->shader()->enable(EN_DEPTH_TEST);
     effect4->shader()->enable(EN_CULL_FACE);
     sceneManager()->tree()->addActor( model.get(), effect4.get(), mTransform4.get() );
 
     ref<Effect> effect5 = new Effect;
-    effect5->shader()->setRenderState( light.get() );
+    effect5->shader()->setRenderState( light.get(), 0 );
     effect5->shader()->enable(EN_LIGHTING);
     effect5->shader()->enable(EN_DEPTH_TEST);
     effect5->shader()->enable(EN_CULL_FACE);

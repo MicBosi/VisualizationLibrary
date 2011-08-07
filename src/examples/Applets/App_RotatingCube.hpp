@@ -61,7 +61,7 @@ public:
     // enable depth test and lighting 
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
-    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->setRenderState( new vl::Light, 0 );
     // enable the standard OpenGL lighting 
     effect->shader()->enable(vl::EN_LIGHTING);
     // set the front and back material color of the cube 

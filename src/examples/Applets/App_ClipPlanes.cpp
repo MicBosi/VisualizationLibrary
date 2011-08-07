@@ -52,7 +52,7 @@ public:
     rendering()->as<vl::Rendering>()->transform()->addChild(mClipTr.get());
 
     // to be used later
-    vl::ref<vl::Light> light = new vl::Light(0);
+    vl::ref<vl::Light> light = new vl::Light;
 
     // demonstrates multipassing clipping
 
@@ -60,7 +60,7 @@ public:
     vl::ref<vl::Shader> clip1_sh = new vl::Shader; 
     vl::ref<vl::Shader> clip2_sh = new vl::Shader;
     // setup clipping pass 1
-    clip1_sh->setRenderState( light.get() );
+    clip1_sh->setRenderState( light.get(), 0 );
     clip1_sh->enable(vl::EN_LIGHTING);
     clip1_sh->enable(vl::EN_DEPTH_TEST);
     clip1_sh->gocMaterial()->setBackDiffuse(vl::yellow);
@@ -69,7 +69,7 @@ public:
     clip1_sh->gocClipPlane(0)->setPlane( vl::Plane(0.2f, vl::vec3(0,+1,0)) );
     clip1_sh->gocClipPlane(0)->followTransform( mClipTr.get() );
     // setup clipping pass 2
-    clip2_sh->setRenderState( light.get() );
+    clip2_sh->setRenderState( light.get(), 0 );
     clip2_sh->enable(vl::EN_LIGHTING);
     clip2_sh->enable(vl::EN_DEPTH_TEST);
     clip2_sh->gocMaterial()->setBackDiffuse(vl::green);
