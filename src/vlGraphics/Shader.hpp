@@ -56,6 +56,7 @@ namespace vl
   /** RenderState wrapping the OpenGL function glVertexAttrib(), see also http://www.opengl.org/sdk/docs/man3/xhtml/glVertexAttrib.xml for more information.
    * 
    * \sa Shader, Effect, Actor */
+  // todo: would be nice to support double, int and uint types as well.
   class VLGRAPHICS_EXPORT VertexAttrib: public RenderStateIndexed
   {
     VL_INSTRUMENT_CLASS(vl::VertexAttrib, RenderStateIndexed)
