@@ -1618,7 +1618,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           mSecondaryColorArray.mPtr = 0;
           mSecondaryColorArray.mVBO = 0;
 
-          // restore constant color
+          // restore constant secondary color
           glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() );
         }
       }
@@ -1716,7 +1716,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           // vertex array
           const VertexAttribInfo* info = mCurVAS->vertexAttribArrays()->at(i);
           VL_CHECK(info)
-            int idx = info->attribLocation();
+          int idx = info->attribLocation();
           // disable if not used by new VAS
           if ( mVertexAttrib[idx].mState == 1 )
           {
@@ -1726,6 +1726,9 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           mVertexAttrib[idx].mPtr = 0;
           mVertexAttrib[idx].mVBO = 0;
           mVertexAttrib[idx].mState >>= 1; // 1 -> 0; 2 -> 1;
+
+          // restore constant vertex attrib
+          glVertexAttrib4fv( idx, mVertexAttribValue[idx].ptr() );
         }
       }
 

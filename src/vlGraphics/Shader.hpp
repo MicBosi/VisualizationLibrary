@@ -51,6 +51,30 @@ namespace vl
   class ClipPlane;
   class Shader;
   //------------------------------------------------------------------------------
+  // VertexAttrib
+  //------------------------------------------------------------------------------
+  /** RenderState wrapping the OpenGL function glVertexAttrib(), see also http://www.opengl.org/sdk/docs/man3/xhtml/glVertexAttrib.xml for more information.
+   * 
+   * \sa Shader, Effect, Actor */
+  class VLGRAPHICS_EXPORT VertexAttrib: public RenderStateIndexed
+  {
+    VL_INSTRUMENT_CLASS(vl::VertexAttrib, RenderStateIndexed)
+
+  public:
+    VertexAttrib(): mValue( fvec4(0,0,0,0) ) {}
+
+    virtual ERenderState type() const { return RS_VertexAttrib; }
+
+    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
+
+    void setValue(const fvec4& value) { mValue = value; }
+
+    const fvec4& value() const { return mValue; }
+
+  protected:
+    fvec4 mValue;
+  };
+  //------------------------------------------------------------------------------
   // Color
   //------------------------------------------------------------------------------
   /** RenderState wrapping the OpenGL function glColor(), see also http://www.opengl.org/sdk/docs/man/xhtml/glColor.xml for more information.

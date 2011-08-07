@@ -958,6 +958,15 @@ namespace vl
 
   typedef enum
   {
+    RS_VertexAttrib/*0*/,
+    RS_VertexAttrib1,
+    RS_VertexAttrib2,
+    RS_VertexAttrib3,
+    RS_VertexAttrib4,
+    RS_VertexAttrib5,
+    RS_VertexAttrib6,
+    RS_VertexAttrib7,
+
     RS_AlphaFunc,
     RS_BlendColor,
     RS_BlendEquation,
