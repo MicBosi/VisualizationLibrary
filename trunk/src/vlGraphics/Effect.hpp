@@ -92,7 +92,7 @@ namespace vl
   {
     VL_INSTRUMENT_CLASS(vl::Effect, Object)
 
-    // mic fixme: define these?
+    // use deepCopy() and shallowCopy() instead
     Effect(const Effect&): Object() {}
     Effect& operator=(const Effect&) { return *this; }
 

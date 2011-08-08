@@ -68,6 +68,10 @@ namespace vl
   {
     VL_INSTRUMENT_CLASS(vl::Geometry, Renderable)
 
+    // use deepCopy() and shallowCopy() instead
+    // Geometry(const Geometry& other): Renderable(other) { }
+    Geometry& operator=(const Geometry&) { return *this; }
+
   private:
     class TextureArray: public Object
     {
@@ -105,9 +109,6 @@ namespace vl
      * Performs a deep copy of the specified Geometry.
      * @sa shallowCopy() */
     Geometry& deepCopyFrom(const Geometry&);
-
-    //! Performs a shallowCopy() of the Geometry
-    Geometry& operator=(const Geometry& other);
 
     //! Returns the list of DrawCall objects bound to a Geometry
     Collection<DrawCall>* drawCalls() { return &mDrawCalls; }
