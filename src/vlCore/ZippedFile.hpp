@@ -165,7 +165,7 @@ namespace vl
     ZippedFile& operator=(const ZippedFile& other) 
     { 
       close(); 
-      VirtualFile::operator=(other); 
+      super::operator=(other); 
       mZippedFileInfo = new ZippedFileInfo(*other.mZippedFileInfo); 
       if (mZippedFileInfo->sourceZipFile())
       {

@@ -107,6 +107,50 @@ namespace vl
       mLODShaders[0] = new ShaderSequence(new Shader);
     }
 
+    ref<Effect> shallowCopy(EShaderCopyMode shader_copy) const
+    {
+      ref<Effect> fx = new Effect;
+      fx->shallowCopyFrom(*this, shader_copy);
+      return fx;
+    }
+
+    Effect& shallowCopyFrom(const Effect& other, EShaderCopyMode shader_copy)
+    {
+      for(int i=0; i<VL_MAX_EFFECT_LOD; ++i)
+        mLODShaders[i] = other.mLODShaders[i];
+
+      if (shader_copy == SCM_OwnShaders)
+      {
+        // create local shallow copies of all the Shaders
+        for(int lod=0; lod<VL_MAX_EFFECT_LOD; ++lod)
+          for(int pass=0; mLODShaders[lod] && pass<mLODShaders[lod]->size(); ++pass)
+            (*mLODShaders[lod])[pass] = (*mLODShaders[lod])[pass]->shallowCopy();
+      }
+
+      mLODEvaluator = other.mLODEvaluator;
+
+      mActiveLod = other.mActiveLod;
+      mRenderRank = other.mRenderRank;
+      mEnableMask = other.mEnableMask;
+    }
+
+    ref<Effect> deepCopy() const
+    {
+      ref<Effect> fx = new Effect;
+      fx->deepCopyFrom(*this);
+      return fx;
+    }
+
+    Effect& deepCopyFrom(const Effect& other)
+    {
+      shallowCopyFrom(other, SCM_ShareShaders);
+
+      // create local clones of all the Shaders
+      for(int lod=0; lod<VL_MAX_EFFECT_LOD; ++lod)
+        for(int pass=0; mLODShaders[lod] && pass<mLODShaders[lod]->size(); ++pass)
+          (*mLODShaders[lod])[pass] = (*mLODShaders[lod])[pass]->deepCopy();
+    }
+
     /** Modifies the rendering rank of an Actor.
       * The rendering rank affects the order in which an Actor is rendered, the greater the rank the later the Actor is rendered. The default render rank is zero.
       *

@@ -231,6 +231,46 @@ GLSLProgram::~GLSLProgram()
     deleteProgram();
 }
 //-----------------------------------------------------------------------------
+GLSLProgram& GLSLProgram::operator=(const GLSLProgram& other)
+{
+  super::operator=(other);
+
+  // unsigned int mHandle;
+  // bool mScheduleLink;
+  deleteProgram();
+
+  // attach shader
+  mShaders.clear();
+  for(size_t i=0; i<other.mShaders.size(); ++i)
+    attachShader( other.mShaders[i].get_writable() );
+
+  mFragDataLocation = other.mFragDataLocation;
+  mActiveUniforms.clear();
+  mActiveAttribs.clear();
+  mAutoAttribLocation = other.mAutoAttribLocation;
+  if (other.mUniformSet)
+  {
+    if (mUniformSet.get() == NULL)
+      mUniformSet = new UniformSet;
+    *mUniformSet = *other.mUniformSet;
+  }
+  else
+    mUniformSet = NULL;
+
+  // glProgramParameter
+  mGeometryVerticesOut = other.mGeometryVerticesOut;
+  mGeometryInputType = other.mGeometryInputType;
+  mGeometryOutputType = other.mGeometryOutputType;
+  mProgramBinaryRetrievableHint = other.mProgramBinaryRetrievableHint;
+  mProgramSeparable = other.mProgramSeparable;
+
+  m_vl_ModelViewMatrix = -1;
+  m_vl_ProjectionMatrix = -1;
+  m_vl_ModelViewProjectionMatrix = -1;
+  m_vl_NormalMatrix = -1;
+
+  return *this;
+}
 void GLSLProgram::createProgram()
 {
   VL_CHECK_OGL();

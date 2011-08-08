@@ -48,7 +48,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT ClipPlane: public RenderStateIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::ClipPlane, RenderState)
+    VL_INSTRUMENT_CLASS(vl::ClipPlane, RenderStateIndexed)
 
   public:
 
@@ -78,6 +78,13 @@ namespace vl
 
     /** Defines the actual plane used to perform the clipping. */
     void setPlane(const Plane& plane) { mPlane = plane; }
+
+    virtual ref<RenderState> clone() const
+    {
+      ref<ClipPlane> rs = new ClipPlane;
+      *rs = *this;
+      return rs;
+    }
 
   protected:
     ref<Transform> mFollowedTransform;

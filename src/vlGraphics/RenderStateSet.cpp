@@ -36,6 +36,14 @@
 using namespace vl;
 
 //------------------------------------------------------------------------------
+RenderStateSet& RenderStateSet::deepCopyFrom(const RenderStateSet& other)
+{
+  mRenderStates = other.mRenderStates;
+  for(size_t i=0; i<mRenderStates.size(); ++i)
+    mRenderStates[i].mRS = mRenderStates[i].mRS->clone();
+  return *this;
+}
+//------------------------------------------------------------------------------
 void RenderStateSet::setRenderState(RenderState* renderstate, int index)
 {
   if (renderstate)

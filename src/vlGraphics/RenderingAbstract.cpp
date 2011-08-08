@@ -47,7 +47,7 @@ RenderingAbstract::RenderingAbstract()
 //------------------------------------------------------------------------------
 RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
 {
-  Object::operator=(other);
+  super::operator=(other);
 
   mFrameClock          = other.mFrameClock;
   mEnableMask          = other.mEnableMask;

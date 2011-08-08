@@ -491,7 +491,7 @@ public:
 
       // box #2
       vl::ref<vl::Effect> effect2 = new vl::Effect;
-      effect2->shader()->copy(*effect1->shader());
+      effect2->shader()->shallowCopyFrom(*effect1->shader());
       vl::ref<vl::TextureSampler> texture_sampler = new vl::TextureSampler;
       texture_sampler->setTexture(texture2);
       effect2->shader()->setRenderState(texture_sampler.get(), 0);

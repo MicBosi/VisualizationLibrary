@@ -1512,6 +1512,12 @@ namespace vl
     //! Discards the local buffer on RAM and updates the VBO always, even if it is not marked as dirty. The VBO is marked as clean after the update.
     VUM_DiscardRamBufferAndForceUpdate = VUF_DiscardRamBuffer | VUF_ForceUpdate
   } EVBOUpdateMode;
+
+  typedef enum
+  {
+    SCM_OwnShaders, //!< A local copy of the Shaders will be created but the contained render states will be shared.
+    SCM_ShareShaders //!< The Shader pointer will be copied as is.
+  } EShaderCopyMode;
 }
 
 

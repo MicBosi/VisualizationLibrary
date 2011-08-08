@@ -41,7 +41,7 @@ RenderingTree::RenderingTree()
 //------------------------------------------------------------------------------
 RenderingTree& RenderingTree::operator=(const RenderingTree& other)
 {
-  RenderingAbstract::operator=(other);
+  super::operator=(other);
   *mSubRendering = *other.mSubRendering;
   return *this;
 }

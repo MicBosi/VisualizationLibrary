@@ -87,7 +87,7 @@ namespace vl
 
     virtual bool exists() const;
 
-    DiskFile& operator=(const DiskFile& other) { close(); VirtualFile::operator=(other); return *this; }
+    DiskFile& operator=(const DiskFile& other) { close(); super::operator=(other); return *this; }
 
     virtual ref<VirtualFile> clone() const;
 

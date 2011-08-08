@@ -60,6 +60,8 @@ namespace vl
 
     /** The parameter cameara is NULL if we are disabling the state, non-NULL if we are enabling it. */
     virtual void apply(int index, const Camera* camera, OpenGLContext* ctx) const = 0;
+
+    virtual ref<RenderState> clone() const = 0;
   };
   //------------------------------------------------------------------------------
   // RenderStateIndexed

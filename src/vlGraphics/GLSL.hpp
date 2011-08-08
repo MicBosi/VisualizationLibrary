@@ -249,7 +249,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT GLSLProgram: public RenderStateNonIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::GLSLProgram, RenderState)
+    VL_INSTRUMENT_CLASS(vl::GLSLProgram, RenderStateNonIndexed)
 
     // applyUniform
     friend class Renderer;
@@ -262,6 +262,15 @@ namespace vl
 
     //! \internal
     virtual ERenderState type() const { return RS_GLSLProgram; }
+
+    virtual ref<RenderState> clone() const
+    {
+      ref<GLSLProgram> rs = new GLSLProgram;
+      *rs = *this;
+      return rs;
+    }
+
+    GLSLProgram& operator=(const GLSLProgram& other);
 
     //! Calls glCreateProgram() in order to acquire a GLSL program handle, see also http://www.opengl.org/sdk/docs/man/xhtml/glCreateProgram.xml for more information.
     //! \note
