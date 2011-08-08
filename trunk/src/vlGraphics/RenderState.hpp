@@ -98,7 +98,7 @@ namespace vl
 
     virtual void apply(const Camera* camera, OpenGLContext* ctx) const { mRS->apply( mIndex, camera, ctx ); }
 
-    int type() const { return mRS->type() + mIndex; }
+    ERenderState type() const { return (ERenderState)(mRS->type() + mIndex); }
 
     ref<RenderState> mRS;
     int mIndex;

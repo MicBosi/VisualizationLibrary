@@ -204,7 +204,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       if ( cur_render_state_set != shader->getRenderStateSet() )
       {
-        opengl_context->applyRenderStates(cur_render_state_set, shader->getRenderStateSet(), cur_camera );
+        opengl_context->applyRenderStates( shader->getRenderStateSet(), cur_camera );
         cur_render_state_set = shader->getRenderStateSet();
       }
 
@@ -214,7 +214,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       if ( cur_enable_set != shader->getEnableSet() )
       {
-        opengl_context->applyEnables(cur_enable_set, shader->getEnableSet() );
+        opengl_context->applyEnables( shader->getEnableSet() );
         cur_enable_set = shader->getEnableSet();
       }
 
@@ -371,10 +371,10 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
   }
 
   // clear enables
-  opengl_context->applyEnables(cur_enable_set, mDummyEnables.get() ); VL_CHECK_OGL();
+  opengl_context->applyEnables( mDummyEnables.get() ); VL_CHECK_OGL();
 
   // clear render states
-  opengl_context->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), cur_camera ); VL_CHECK_OGL();
+  opengl_context->applyRenderStates( mDummyStateSet.get(), cur_camera ); VL_CHECK_OGL();
 
   // enabled texture unit #0
   VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
