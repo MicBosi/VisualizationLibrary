@@ -739,26 +739,32 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
                (wrapR() != GL_CLAMP && wrapR() != GL_CLAMP_TO_EDGE && wrapR() != GL_CLAMP_TO_BORDER);
     if (err)
     {
-      Log::bug("ARB_texture_rectangle extension allows only the following wrapping modes: GL_CLAMP, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER.\n");
+      Log::bug("ARB_texture_rectangle extension allows only the following wrapping modes: GL_CLAMP, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER.\n"); VL_TRAP()
     }
   }
 
   if (wrapS() == GL_MIRRORED_REPEAT || wrapT() == GL_MIRRORED_REPEAT || wrapR() == GL_MIRRORED_REPEAT)
   {
     if( !(Has_GL_IBM_texture_mirrored_repeat || Has_GL_ARB_texture_mirrored_repeat || Has_GL_Version_1_4 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_2_0) )
-      Log::bug("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n");
+    {
+      Log::bug("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n"); VL_TRAP()
+    }
   }
 
   if (wrapS() == GL_CLAMP_TO_EDGE || wrapT() == GL_CLAMP_TO_EDGE || wrapR() == GL_CLAMP_TO_EDGE)
   {
     if( !(Has_GL_SGIS_texture_edge_clamp || Has_GL_Version_1_2 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_1_1 || Has_GLES_Version_2_0) )
-      Log::bug("GL_CLAMP_TO_EDGE not supported by your OpenGL implementation.\n");
+    {
+      Log::bug("GL_CLAMP_TO_EDGE not supported by your OpenGL implementation.\n"); VL_TRAP()
+    }
   }
 
   if (wrapS() == GL_CLAMP_TO_BORDER || wrapT() == GL_CLAMP_TO_BORDER || wrapR() == GL_CLAMP_TO_BORDER)
   {
     if( !(Has_GL_SGIS_texture_border_clamp || Has_GL_ARB_texture_border_clamp || Has_GL_Version_1_3 || Has_GL_Version_3_0 || Has_GL_Version_4_0) )
-      Log::bug("GL_CLAMP_TO_BORDER not supported by your OpenGL implementation.\n");
+    {
+      Log::bug("GL_CLAMP_TO_BORDER not supported by your OpenGL implementation.\n"); VL_TRAP()
+    }
   }
 #endif
 

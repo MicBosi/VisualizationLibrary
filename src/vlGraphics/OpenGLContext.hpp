@@ -442,11 +442,11 @@ namespace vl
     //! \param force Binds \p vas even if it was the last to be activated (this is also valid for NULL).
     void bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool force);
 
-    //! Applies an EnableSet to an OpenGLContext - For internal use only.
-    void applyEnables( const EnableSet* prev, const EnableSet* cur );
+    //! Applies an EnableSet to an OpenGLContext - Typically for internal use only.
+    void applyEnables( const EnableSet* cur );
 
-    //! Applies a RenderStateSet to an OpenGLContext - For internal use only.
-    void applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera );
+    //! Applies a RenderStateSet to an OpenGLContext - Typically for internal use only.
+    void applyRenderStates( const RenderStateSet* cur, const Camera* camera );
 
     //! Resets all the interanal enable-tables - For internal use only.
     void resetEnables();
@@ -520,12 +520,17 @@ namespace vl
     // --- Render States ---
     // state table
     int mEnableTable[EN_EnableCount];
-    int mRenderStateTable[RS_COUNT];
+    int mRenderStateTable[RS_RenderStateCount];
     // current state
     bool mCurrentEnable[EN_EnableCount];
-    const RenderState* mCurrentRenderState[RS_COUNT];
+    const RenderState* mCurrentRenderState[RS_RenderStateCount];
+    // previous state
+    EEnable mPrevEnables[EN_EnableCount];
+    int mPrevEnablesCount;
+    ERenderState mPrevRenderStates[RS_RenderStateCount];
+    int mPrevRenderStatesCount;
     // default render states
-    RenderStateSlot mDefaultRenderStates[RS_COUNT];
+    RenderStateSlot mDefaultRenderStates[RS_RenderStateCount];
 
     // for each texture unit tells which target has been bound last.
     ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];

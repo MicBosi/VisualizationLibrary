@@ -51,10 +51,7 @@ OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 //-----------------------------------------------------------------------------
 // OpenGLContext
 //-----------------------------------------------------------------------------
-OpenGLContext::OpenGLContext(int w, int h):
-mMaxVertexAttrib(0), mTextureSamplerCount(0), 
-mMouseVisible(true), mContinuousUpdate(true), mIgnoreNextMouseMoveEvent(false), mFullscreen(false),
-mHasDoubleBuffer(false), mIsInitialized(false), mCurVAS(NULL)
+OpenGLContext::OpenGLContext(int w, int h)
 {
   VL_DEBUG_SET_OBJECT_NAME()
   mRenderTarget = new RenderTarget(this, w, h);
@@ -67,10 +64,28 @@ mHasDoubleBuffer(false), mIsInitialized(false), mCurVAS(NULL)
   memset( mRenderStateTable,   0xFF, sizeof(mRenderStateTable) );
   memset( mCurrentEnable,      0xFF, sizeof(mCurrentEnable) );
   memset( mEnableTable,        0xFF, sizeof(mEnableTable) );
+  memset( mPrevRenderStates,   0xFF, sizeof(mPrevRenderStates) );
+  memset( mPrevEnables,        0xFF, sizeof(mPrevEnables) );
+
+  mPrevRenderStatesCount = 0;
+  mPrevEnablesCount = 0;
+
+  mIsInitialized = false;
+  mHasDoubleBuffer = false;
+  mMaxVertexAttrib = 0;
+  mTextureSamplerCount = 0;
+  mCurVAS = NULL;
 
   mNormal = fvec3(0,1,0);
   mColor  = fvec4(1,1,1,1);
   mSecondaryColor = fvec3(1,1,1);
+
+  // --- GUI ---
+
+  mMouseVisible = true;
+  mContinuousUpdate = true;
+  mIgnoreNextMouseMoveEvent = false;
+  mFullscreen = false;
 }
 //-----------------------------------------------------------------------------
 OpenGLContext::~OpenGLContext()
@@ -457,21 +472,48 @@ void OpenGLContext::logOpenGLInfo()
   VL_CHECK_OGL();
 }
 //------------------------------------------------------------------------------
-void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
+void OpenGLContext::applyEnables( const EnableSet* cur )
 {
   VL_CHECK_OGL()
 
-  if (prev == NULL)
-    memset( mEnableTable, 0, sizeof(mEnableTable) );
+  /* mark current */
 
-  /* iterate on current */
+  if (cur)
+    for( size_t i=0; i<cur->enables().size(); ++i )
+      mEnableTable[ cur->enables()[i] ] += 1; // 0 -> 1; 1 -> 2;
+
+  /* iterate on prev: reset to default only the unused ones */
+
+  for( int i=0; i<mPrevEnablesCount; ++i )
+  {
+    const EEnable& prev_en = mPrevEnables[i];
+    VL_CHECK(mEnableTable[prev_en] == 1 || mEnableTable[prev_en] == 2);
+    if ( mEnableTable[prev_en] == 1 )
+    {
+      mCurrentEnable[prev_en] = false;
+      glDisable( Translate_Enable[prev_en] ); VL_CHECK_OGL()
+      #ifndef NDEBUG
+        if (glGetError() != GL_NO_ERROR)
+        {
+          Log::error( Say("An unsupported enum has been disabled: %s.\n") << Translate_Enable_String[prev_en]);
+          VL_TRAP()
+        }
+      #endif
+    }
+    mEnableTable[prev_en] >>= 1; // 1 -> 0; 2 -> 1
+  }
+
+  /* enable currently used ones */
 
   if (cur)
   {
-    for( unsigned i=0; i<cur->enables().size(); ++i )
+    mPrevEnablesCount = cur->enables().size();
+    for( size_t i=0; i<cur->enables().size(); ++i )
     {
       const EEnable& cur_en = cur->enables()[i];
-      mEnableTable[cur_en] += 1; // 0 -> 1; 1 -> 2;
+      mPrevEnables[i] = cur_en;
+
+      VL_CHECK( mEnableTable[cur_en] == 1 );
       if ( !mCurrentEnable[cur_en] )
       {
         glEnable( Translate_Enable[cur_en] );
@@ -486,51 +528,57 @@ void OpenGLContext::applyEnables( const EnableSet* prev, const EnableSet* cur )
       }
     }
   }
-
-  /* iterate on prev: reset to default only the unused ones */
-
-  if (prev)
-  {
-    for( unsigned i=0; i<prev->enables().size(); ++i )
-    {
-      const EEnable& prev_en = prev->enables()[i];
-      VL_CHECK(mEnableTable[prev_en] == 1 || mEnableTable[prev_en] == 2);
-      if ( mEnableTable[prev_en] == 1 )
-      {
-        mCurrentEnable[prev_en] = false;
-        glDisable( Translate_Enable[prev_en] ); VL_CHECK_OGL()
-        #ifndef NDEBUG
-          if (glGetError() != GL_NO_ERROR)
-          {
-            Log::error( Say("An unsupported enum has been disabled: %s.\n") << Translate_Enable_String[prev_en]);
-            VL_TRAP()
-          }
-        #endif
-      }
-      mEnableTable[prev_en] >>= 1; // 1 -> 0; 2 -> 1
-    }
-  }
   else
   {
-    memset(mCurrentEnable, 0, sizeof(mCurrentEnable));
+    mPrevEnablesCount = 0;
   }
+
 }
 //------------------------------------------------------------------------------
-void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera )
+void OpenGLContext::applyRenderStates( const RenderStateSet* cur, const Camera* camera )
 {
   VL_CHECK_OGL()
 
-  if (prev == NULL)
-    memset( mRenderStateTable, 0, sizeof(mRenderStateTable) );
+  /* mark currently used ones */
 
-  /* iterate on current */
+  if (cur)
+    for( size_t i=0; i<cur->renderStatesCount(); ++i )
+      mRenderStateTable[ cur->renderStates()[i].type() ] += 1; // 0 -> 1; 1 -> 2;
+
+  /* iterate on prev: reset to default only the unused ones */
+
+  for( int i=0; i<mPrevRenderStatesCount; ++i )
+  {
+    const ERenderState& prev_rs = mPrevRenderStates[i];
+    VL_CHECK(mRenderStateTable[prev_rs] == 1 || mRenderStateTable[prev_rs] == 2);
+    if ( mRenderStateTable[prev_rs] == 1 )
+    {
+      mCurrentRenderState[prev_rs] = mDefaultRenderStates[prev_rs].mRS.get();
+      #ifndef NDEBUG
+      if (!mDefaultRenderStates[prev_rs].mRS)
+      {
+        // mic fixme: output string instead of type number.
+        vl::Log::error( Say("Render state type '%n' not supported by the current OpenGL implementation! (version=%s, vendor=%s)\n") << prev_rs << glGetString(GL_VERSION) << glGetString(GL_VENDOR) );
+        VL_TRAP()
+      }
+      #endif
+      // if this fails you are using a render state that is not supported by the current OpenGL implementation (too old or Core profile)
+      mDefaultRenderStates[prev_rs].apply(NULL, this); VL_CHECK_OGL()
+    }
+    mRenderStateTable[prev_rs] >>= 1; // 1 -> 0; 2 -> 1;
+  }
+
+  /* setup current render states */
 
   if (cur)
   {
-    for( unsigned i=0; i<cur->renderStatesCount(); ++i )
+    mPrevRenderStatesCount = cur->renderStatesCount();
+    for( size_t i=0; i<cur->renderStatesCount(); ++i )
     {
       const RenderStateSlot& cur_rs = cur->renderStates()[i];
-      mRenderStateTable[cur_rs.type()] += 1; // 0 -> 1; 1 -> 2;
+      mPrevRenderStates[i] = cur_rs.type();
+      VL_CHECK(mRenderStateTable[cur_rs.type()]  == 1)
+
       if ( mCurrentRenderState[cur_rs.type()] != cur_rs.mRS.get() )
       {
         mCurrentRenderState[cur_rs.type()] = cur_rs.mRS.get();
@@ -539,35 +587,11 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* prev, const RenderS
       }
     }
   }
-
-  /* iterate on prev: reset to default only the unused ones */
-
-  if (prev)
-  {
-    for( unsigned i=0; i<prev->renderStatesCount(); ++i )
-    {
-      const RenderStateSlot& prev_rs = prev->renderStates()[i];
-      VL_CHECK(mRenderStateTable[prev_rs.type()] == 1 || mRenderStateTable[prev_rs.type()] == 2);
-      if ( mRenderStateTable[prev_rs.type()] == 1 )
-      {
-        mCurrentRenderState[prev_rs.type()] = mDefaultRenderStates[prev_rs.type()].mRS.get();
-        #ifndef NDEBUG
-        if (!mDefaultRenderStates[prev_rs.type()].mRS)
-        {
-          vl::Log::error( Say("Render state type '%s' not supported by the current OpenGL implementation! (version=%s, vendor=%s)\n") << prev_rs.mRS->className() << glGetString(GL_VERSION) << glGetString(GL_VENDOR) );
-          VL_TRAP()
-        }
-        #endif
-        // if this fails you are using a render state that is not supported by the current OpenGL implementation (too old or Core profile)
-        mDefaultRenderStates[prev_rs.type()].apply(NULL, this); VL_CHECK_OGL()
-      }
-      mRenderStateTable[prev_rs.type()] >>= 1; // 1 -> 0; 2 -> 1;
-    }
-  }
   else
   {
-    memset(mCurrentRenderState, 0, sizeof(mCurrentRenderState));
+    mPrevRenderStatesCount = 0;
   }
+
 }
 //------------------------------------------------------------------------------
 void OpenGLContext::setupDefaultRenderStates()
@@ -663,7 +687,7 @@ void OpenGLContext::setupDefaultRenderStates()
   VL_CHECK_OGL();
 
   // applies default render states backwards so we don't need to call VL_glActiveTexture(GL_TEXTURE0) at the end.
-  for( int i=RS_COUNT; i--; )
+  for( int i=RS_RenderStateCount; i--; )
   {
     // the empty ones are the ones that are not supported by the current OpenGL implementation (too old or Core profile)
     if (mDefaultRenderStates[i].mRS)
@@ -678,12 +702,16 @@ void OpenGLContext::resetRenderStates()
   memset( mCurrentRenderState, 0, sizeof(mCurrentRenderState) );
   memset( mRenderStateTable,   0, sizeof(mRenderStateTable)   );
   memset( mTexUnitBinding,     0, sizeof( mTexUnitBinding )   ); // set to unknown texture target
+  memset( mPrevRenderStates,   0xFF, sizeof(mPrevRenderStates) ); // just for debugging
+  mPrevRenderStatesCount = 0;
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::resetEnables()
 {
   memset( mCurrentEnable, 0, sizeof(mCurrentEnable) );
   memset( mEnableTable,   0, sizeof(mEnableTable)   );
+  memset( mPrevEnables,   0xFF, sizeof(mPrevEnables) ); // just for debugging
+  mPrevEnablesCount = 0;
 }
 //------------------------------------------------------------------------------
 bool OpenGLContext::isCleanState(bool verbose)
@@ -1375,8 +1403,8 @@ void OpenGLContext::resetContextStates()
 #endif
 
   // reset internal VL enables & render states tables
-  resetEnables();      VL_CHECK_OGL()
-  resetRenderStates(); VL_CHECK_OGL()
+  resetEnables();
+  resetRenderStates();
 
   // reset Vertex Attrib Set tables
   bindVAS(NULL, false, true); VL_CHECK_OGL();
