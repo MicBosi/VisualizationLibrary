@@ -79,7 +79,7 @@ namespace vl
     VBO& operator=(const VBO& other) 
     { 
       deleteVBO();
-      Buffer::operator=(other); 
+      super::operator=(other); 
       return *this;
     }
 

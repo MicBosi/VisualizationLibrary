@@ -55,6 +55,10 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
+    RenderStateSet& deepCopyFrom(const RenderStateSet& other);
+
+    RenderStateSet& shallowCopyFrom(const RenderStateSet& other) { mRenderStates = other.mRenderStates; mGLSLProgram = other.mGLSLProgram; return *this; }
+
     // renderstates getters and setters
 
     void setRenderState(RenderState* renderstate, int index);

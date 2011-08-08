@@ -57,6 +57,10 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
+    UniformSet& deepCopyFrom(const UniformSet& other);
+
+    UniformSet& shallowCopyFrom(const UniformSet& other) { *this = other; return *this; }
+
     // uniform getters and setters
 
     void setUniform(Uniform* uniform, bool check_for_doubles = true);

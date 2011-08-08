@@ -164,7 +164,7 @@ namespace vl
 
     MultiDrawElements& operator=(const MultiDrawElements& other)
     {
-      DrawCall::operator=(other);
+      super::operator=(other);
       *indexBuffer() = *other.indexBuffer();
       mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
       setCountVector(other.mCountVector);

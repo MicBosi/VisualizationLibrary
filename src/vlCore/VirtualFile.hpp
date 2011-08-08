@@ -92,7 +92,7 @@ namespace vl
     //! Creates a clone of this class instance.
     virtual ref<VirtualFile> clone() const = 0;
 
-    VirtualFile& operator=(const VirtualFile& other) { Object::operator=(other); mPath = other.mPath; return *this; }
+    VirtualFile& operator=(const VirtualFile& other) { super::operator=(other); mPath = other.mPath; return *this; }
 
     //! Returns the \p path of the file.
     const String& path() const { return mPath; }

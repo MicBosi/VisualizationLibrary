@@ -76,7 +76,7 @@ namespace vl
 
     DrawArrays& operator=(const DrawArrays& other)
     {
-      DrawCall::operator=(other);
+      super::operator=(other);
       mStart     = other.mStart;
       mCount     = other.mCount;
       mInstances = other.mInstances;

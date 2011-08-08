@@ -60,7 +60,7 @@ Rendering::Rendering():
 //------------------------------------------------------------------------------
 Rendering& Rendering::operator=(const Rendering& other)
 {
-  RenderingAbstract::operator=(other);
+  super::operator=(other);
 
   mEnableMask               = other.mEnableMask;
   mAutomaticResourceInit    = other.mAutomaticResourceInit;
