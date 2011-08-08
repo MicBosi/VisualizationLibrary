@@ -106,7 +106,7 @@ ref<Geometry> Geometry::deepCopy() const
 void Geometry::deepCopyTo(Geometry* geom) const
 {
   // copy the base class Renderable
-  geom->Renderable::operator=(*this);
+  geom->super::operator=(*this);
   // copy Geometry
   geom->mVertexArray         = mVertexArray         ? mVertexArray->clone().get()         : NULL;
   geom->mNormalArray         = mNormalArray         ? mNormalArray->clone().get()         : NULL;
@@ -134,7 +134,7 @@ void Geometry::deepCopyTo(Geometry* geom) const
 Geometry& Geometry::operator=(const Geometry& other)
 {
   // copy the base class Renderable
-  Renderable::operator=(*this);
+  super::operator=(*this);
   // copy Geometry attributes
   mVertexArray = other.mVertexArray;
   mNormalArray = other.mNormalArray;

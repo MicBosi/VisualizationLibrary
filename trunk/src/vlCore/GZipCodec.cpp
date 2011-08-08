@@ -185,7 +185,7 @@ ref<VirtualFile> GZipCodec::clone() const
 GZipCodec& GZipCodec::operator=(const GZipCodec& other) 
 { 
   close(); 
-  VirtualFile::operator=(other); 
+  super::operator=(other); 
   mCompressionLevel = other.mCompressionLevel;
   if (other.mStream)
     mStream = other.mStream->clone();

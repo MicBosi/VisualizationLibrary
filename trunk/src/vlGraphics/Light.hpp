@@ -50,7 +50,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Light: public RenderStateIndexed
   {
-    VL_INSTRUMENT_CLASS(vl::Light, RenderState)
+    VL_INSTRUMENT_CLASS(vl::Light, RenderStateIndexed)
 
   public:
     Light();
@@ -112,6 +112,13 @@ namespace vl
     Transform* followedTransform();
     const Transform* followedTransform() const;
     
+    virtual ref<RenderState> clone() const
+    {
+      ref<Light> rs = new Light;
+      *rs = *this;
+      return rs;
+    }
+
   protected:
     fvec4 mAmbient;
     fvec4 mDiffuse;

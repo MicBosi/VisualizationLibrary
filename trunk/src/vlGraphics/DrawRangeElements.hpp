@@ -165,7 +165,7 @@ namespace vl
 
     DrawRangeElements& operator=(const DrawRangeElements& other)
     {
-      DrawRangeElementsBase::operator=(other);
+      super::operator=(other);
       *indexBuffer()               = *other.indexBuffer();
       mRangeStart              = other.mRangeStart;
       mRangeEnd                = other.mRangeEnd;

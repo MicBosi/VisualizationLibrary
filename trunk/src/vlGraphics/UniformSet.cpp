@@ -34,6 +34,14 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
+UniformSet& UniformSet::deepCopyFrom(const UniformSet& other)
+{
+  mUniforms = other.mUniforms;
+  for(size_t i=0; i<mUniforms.size(); ++i)
+    mUniforms[i] = mUniforms[i]->clone();
+  return *this;
+}
+//-----------------------------------------------------------------------------
 void UniformSet::setUniform(Uniform* uniform, bool check_for_doubles) 
 { 
   VL_CHECK(uniform)

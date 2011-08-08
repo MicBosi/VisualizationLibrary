@@ -85,7 +85,7 @@ namespace vl
     //! Copies the data of any kind of VirtualFile
     void copy(VirtualFile* file);
 
-    MemoryFile& operator=(const MemoryFile& other) { close(); VirtualFile::operator=(other); mBuffer = other.mBuffer; return *this; }
+    MemoryFile& operator=(const MemoryFile& other) { close(); super::operator=(other); mBuffer = other.mBuffer; return *this; }
 
     ref<VirtualFile> clone() const;
 

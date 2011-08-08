@@ -676,7 +676,7 @@ void Image::reset()
 //-----------------------------------------------------------------------------
 Image& Image::operator=(const Image& other)
 {
-  setObjectName(other.objectName());
+  super::operator=(other);
 
   // deep copy of the pixels
   *mPixels = *other.mPixels;

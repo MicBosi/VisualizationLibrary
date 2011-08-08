@@ -69,6 +69,7 @@ void Molecule::reset()
 Molecule& Molecule::operator=(const Molecule& other)
 {
   reset();
+  super::operator=(other);
 
   mMoleculeName  = other.mMoleculeName;
   *mTags         = *other.mTags;

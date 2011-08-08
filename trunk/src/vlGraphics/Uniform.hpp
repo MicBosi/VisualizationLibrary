@@ -75,10 +75,19 @@ namespace vl
       mName = name;
     }
 
+    ref<Uniform> clone() const
+    {
+      ref<Uniform> uniform  = new Uniform;
+      *uniform = *this;
+      return uniform;
+    }
+
     //! Returns the name of the uniform variable
     const std::string& name() const { return mName; }
+    
     //! Returns the name of the uniform variable
     std::string& name() { return mName; }
+    
     //! Sets the name of the uniform variable
     void setName(const std::string& name) { mName = name; }
 

@@ -96,7 +96,8 @@ public:
 
     // share all the states except for the glMaterial ones
 
-    *sh3 = *sh2 = *sh1;
+    sh2->shallowCopyFrom(*sh1);
+    sh3->shallowCopyFrom(*sh1);
 
     // assign a different flat material color to each shader
 

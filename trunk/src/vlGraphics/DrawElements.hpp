@@ -162,7 +162,7 @@ namespace vl
 
     DrawElements& operator=(const DrawElements& other)
     {
-      DrawElementsBase::operator=(other);
+      super::operator=(other);
       *indexBuffer() = *other.indexBuffer();
       mInstances = other.mInstances;
       mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
