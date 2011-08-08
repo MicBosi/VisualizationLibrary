@@ -325,6 +325,23 @@ namespace
       case TF_DEPTH24_STENCIL8:
         return GL_UNSIGNED_INT_24_8;
 
+      case TF_R16F:
+      case TF_R32F:
+      case TF_RG16F:
+      case TF_RG32F:
+      case TF_RGB16F:
+      case TF_RGB32F:
+      case TF_RGBA16F:
+      case TF_RGBA32F:
+      case TF_R11F_G11F_B10F:
+      case TF_ALPHA16F:
+      case TF_ALPHA32F:
+      case TF_INTENSITY16F:
+      case TF_INTENSITY32F:
+      case TF_LUMINANCE16F:
+      case TF_LUMINANCE32F:
+      case TF_LUMINANCE_ALPHA16F:
+      case TF_LUMINANCE_ALPHA32F:
       case TF_DEPTH_COMPONENT32F:
         return GL_FLOAT;
 
