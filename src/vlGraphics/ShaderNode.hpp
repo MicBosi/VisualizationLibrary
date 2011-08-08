@@ -61,9 +61,9 @@ namespace vl
     {
       RenderStateInfo(EInheritance inheritance=IN_Propagate, RenderState* rs=NULL, int index=0): mInheritance(inheritance), mRenderState(rs), mIndex(index) {}
 
+      EInheritance mInheritance;
       ref<RenderState> mRenderState;
       int mIndex;
-      EInheritance mInheritance;
     };
     // --- --- ---
     struct UniformInfo
