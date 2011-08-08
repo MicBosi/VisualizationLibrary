@@ -514,7 +514,7 @@ bool vl::initializeOpenGL()
   Is_Enable_Supported[EN_RESCALE_NORMAL] = Has_GL_Version_1_2||Has_GLES_Version_1_1;
 
   // Available only under OpenGL 2.x
-  Is_Enable_Supported[EN_VERTEX_PROGRAM_TWO_SIDE]   = (Has_GL_ARB_vertex_program||Has_GL_NV_vertex_program) && Has_GL_Version_1_1 || Has_GL_Version_2_0;
+  Is_Enable_Supported[EN_VERTEX_PROGRAM_TWO_SIDE]   = ((Has_GL_ARB_vertex_program||Has_GL_NV_vertex_program) && Has_GL_Version_1_1) || Has_GL_Version_2_0;
 
   // OpenGL 3.2
   Is_Enable_Supported[EN_TEXTURE_CUBE_MAP_SEAMLESS] = Has_GL_AMD_seamless_cubemap_per_texture||Has_GL_ARB_seamless_cube_map||Has_GL_Version_3_2||Has_GL_Version_4_0;
