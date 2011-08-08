@@ -480,16 +480,23 @@ void OpenGLContext::applyEnables( const EnableSet* cur )
 
   if (cur)
     for( size_t i=0; i<cur->enables().size(); ++i )
-      mEnableTable[ cur->enables()[i] ] += 1; // 0 -> 1; 1 -> 2;
+      mEnableTable[ cur->enables()[i] ] |= 2; // 0 -> 2; 1 -> 3;
+
+  // 0 = should not happen
+  // 1 = previously used but no more used, can be disabled
+  // 2 = new one, must be enabled
+  // 3 = previously used and used also by current one, keep enabled
 
   /* iterate on prev: reset to default only the unused ones */
 
   for( int i=0; i<mPrevEnablesCount; ++i )
   {
     const EEnable& prev_en = mPrevEnables[i];
-    VL_CHECK(mEnableTable[prev_en] == 1 || mEnableTable[prev_en] == 2);
+    VL_CHECK(mEnableTable[prev_en] == 1 || mEnableTable[prev_en] == 2 || mEnableTable[prev_en] == 3);
     if ( mEnableTable[prev_en] == 1 )
     {
+      mEnableTable[prev_en] = 0; // 1 -> 0
+      VL_CHECK( mCurrentEnable[prev_en] == true )
       mCurrentEnable[prev_en] = false;
       glDisable( Translate_Enable[prev_en] ); VL_CHECK_OGL()
       #ifndef NDEBUG
@@ -500,7 +507,6 @@ void OpenGLContext::applyEnables( const EnableSet* cur )
         }
       #endif
     }
-    mEnableTable[prev_en] >>= 1; // 1 -> 0; 2 -> 1
   }
 
   /* enable currently used ones */
@@ -512,8 +518,8 @@ void OpenGLContext::applyEnables( const EnableSet* cur )
     {
       const EEnable& cur_en = cur->enables()[i];
       mPrevEnables[i] = cur_en;
+      mEnableTable[cur_en] >>= 1; /* 2 -> 1; 3 -> 1 */ VL_CHECK( mEnableTable[cur_en] == 1 );
 
-      VL_CHECK( mEnableTable[cur_en] == 1 );
       if ( !mCurrentEnable[cur_en] )
       {
         glEnable( Translate_Enable[cur_en] );
@@ -543,17 +549,25 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* cur, const Camera* 
 
   if (cur)
     for( size_t i=0; i<cur->renderStatesCount(); ++i )
-      mRenderStateTable[ cur->renderStates()[i].type() ] += 1; // 0 -> 1; 1 -> 2;
+      mRenderStateTable[ cur->renderStates()[i].type() ] |= 2; // 0 -> 2; 1 -> 3;
+
+  // 0 = should not happen
+  // 1 = previously used but no more used, must be reset to default
+  // 2 = new one, must be setup
+  // 3 = previously used and used also by current one, must be setup to overwrite previous state
 
   /* iterate on prev: reset to default only the unused ones */
 
   for( int i=0; i<mPrevRenderStatesCount; ++i )
   {
     const ERenderState& prev_rs = mPrevRenderStates[i];
-    VL_CHECK(mRenderStateTable[prev_rs] == 1 || mRenderStateTable[prev_rs] == 2);
+    VL_CHECK(mRenderStateTable[prev_rs] == 1 || mRenderStateTable[prev_rs] == 2 || mRenderStateTable[prev_rs] == 3);
     if ( mRenderStateTable[prev_rs] == 1 )
     {
+      mRenderStateTable[prev_rs] = 0; // 1 -> 0
+      VL_CHECK( mCurrentRenderState[prev_rs] != mDefaultRenderStates[prev_rs].mRS.get() );
       mCurrentRenderState[prev_rs] = mDefaultRenderStates[prev_rs].mRS.get();
+
       #ifndef NDEBUG
       if (!mDefaultRenderStates[prev_rs].mRS)
       {
@@ -562,10 +576,10 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* cur, const Camera* 
         VL_TRAP()
       }
       #endif
+
       // if this fails you are using a render state that is not supported by the current OpenGL implementation (too old or Core profile)
       mDefaultRenderStates[prev_rs].apply(NULL, this); VL_CHECK_OGL()
     }
-    mRenderStateTable[prev_rs] >>= 1; // 1 -> 0; 2 -> 1;
   }
 
   /* setup current render states */
@@ -577,7 +591,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* cur, const Camera* 
     {
       const RenderStateSlot& cur_rs = cur->renderStates()[i];
       mPrevRenderStates[i] = cur_rs.type();
-      VL_CHECK(mRenderStateTable[cur_rs.type()]  == 1)
+      mRenderStateTable[cur_rs.type()] >>= 1; /* 2 -> 1; 3 -> 1 */ VL_CHECK(mRenderStateTable[cur_rs.type()] == 1)
 
       if ( mCurrentRenderState[cur_rs.type()] != cur_rs.mRS.get() )
       {
