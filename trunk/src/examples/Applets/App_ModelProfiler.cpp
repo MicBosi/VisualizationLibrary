@@ -419,7 +419,7 @@ public:
     for( std::set<Geometry*>::iterator it = geometries.begin(); it != geometries.end(); ++it )
     {
       total_draw_calls += (*it)->drawCalls()->size();
-      for(size_t i=0; i < (*it)->drawCalls()->size(); ++i )
+      for(int i=0; i < (*it)->drawCalls()->size(); ++i )
         total_triangles += (*it)->drawCalls()->at(i)->countTriangles();
     }
 

@@ -94,6 +94,7 @@ namespace vl
   {
     RenderStateSlot(): mRS(NULL), mIndex(0) {}
     RenderStateSlot(RenderState* rs, int index): mRS(rs), mIndex(index) {}
+    virtual ~RenderStateSlot() {}
 
     virtual void apply(const Camera* camera, OpenGLContext* ctx) const { mRS->apply( mIndex, camera, ctx ); }
 
