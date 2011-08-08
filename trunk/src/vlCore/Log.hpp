@@ -123,6 +123,18 @@ namespace vl
       return *this;
     }
 
+    Log& operator<<( long v )
+    {
+      *this << String::fromLongLong(v);
+      return *this;
+    }
+
+    Log& operator<<( unsigned long v )
+    {
+      *this << String::fromULongLong(v);
+      return *this;
+    }
+
     Log& operator<<( long long v )
     {
       *this << String::fromLongLong(v);
