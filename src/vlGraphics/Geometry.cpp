@@ -163,11 +163,6 @@ Geometry& Geometry::shallowCopyFrom(const Geometry& other)
   return *this;
 }
 //-----------------------------------------------------------------------------
-Geometry& Geometry::operator=(const Geometry& other)
-{
-  return shallowCopyFrom(other);
-}
-//-----------------------------------------------------------------------------
 void Geometry::setVertexArray(ArrayAbstract* data)
 {
   // if one of this checks fail read the OpenGL Programmers Guide or the Reference Manual 
