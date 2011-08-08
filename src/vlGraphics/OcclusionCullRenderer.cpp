@@ -231,8 +231,10 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
   GLSLProgram*   glsl_program   = mOcclusionShader->glslProgram();
   Transform*     cur_transform  = NULL;
 
-  opengl_context->applyRenderStates(NULL, mOcclusionShader->getRenderStateSet(), camera );
-  opengl_context->applyEnables(NULL, mOcclusionShader->getEnableSet() );
+  opengl_context->resetRenderStates();
+  opengl_context->resetEnables();
+  opengl_context->applyRenderStates( mOcclusionShader->getRenderStateSet(), camera );
+  opengl_context->applyEnables( mOcclusionShader->getEnableSet() );
   projViewTransfCallback()->updateMatrices( true, true, glsl_program, camera, cur_transform );
 
   // camera/eye position for later usage
@@ -320,10 +322,10 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
   glVertexPointer(3, GL_FLOAT, 0, NULL); VL_CHECK_OGL();
 
   // clear enables
-  opengl_context->applyEnables(mOcclusionShader->getEnableSet(), mDummyEnables.get() );
+  opengl_context->applyEnables( mDummyEnables.get() );
 
   // clear render states
-  opengl_context->applyRenderStates(mOcclusionShader->getRenderStateSet(), mDummyStateSet.get(), camera );
+  opengl_context->applyRenderStates( mDummyStateSet.get(), camera );
 
   glDisable(GL_SCISSOR_TEST);
 }
