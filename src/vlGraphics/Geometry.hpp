@@ -57,7 +57,7 @@ namespace vl
    * The Geometry class is a Renderable that implements a polygonal mesh made of
    * polygons, lines and points.
    *
-   * \sa 
+   * @sa 
    * - ArrayAbstract
    * - Renderable
    * - Actor
@@ -87,24 +87,24 @@ namespace vl
     virtual ~Geometry();
 
     /**
-     * Performs a shallow copy (as opposed to a deep copy) of the specified Geometry.
-     * \sa deepCopy() */
-    ref<Geometry> shallowCopy();
+     * Performs a shallow copy of a Geometry.
+     * @sa deepCopy() */
+    ref<Geometry> shallowCopy() const;
 
     /**
-     * Performs a shallow copy (as opposed to a deep copy) of the specified Geometry.
-     * \sa deepCopy() */
-    void shallowCopyTo(Geometry*);
+     * Performs a shallow copy of the specified Geometry.
+     * @sa deepCopy() */
+    Geometry& shallowCopyFrom(const Geometry&);
 
     /**
-     * Performs a deep copy (as opposed to a shallow copy) of the specified Geometry.
-     * \sa shallowCopy() */
+     * Performs a deep copy of a Geometry.
+     * @sa shallowCopy() */
     ref<Geometry> deepCopy() const;
 
     /**
-     * Performs a deep copy (as opposed to a shallow copy) of the specified Geometry.
-     * \sa shallowCopy() */
-    void deepCopyTo(Geometry* ) const;
+     * Performs a deep copy of the specified Geometry.
+     * @sa shallowCopy() */
+    Geometry& deepCopyFrom(const Geometry&);
 
     //! Performs a shallowCopy() of the Geometry
     Geometry& operator=(const Geometry& other);

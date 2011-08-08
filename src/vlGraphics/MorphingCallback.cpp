@@ -169,7 +169,7 @@ void MorphingCallback::init(ResourceDatabase* res_db)
     return;
 
   Geometry* geometry = res_db->get<Geometry>(0);
-  geometry->shallowCopyTo( mGeometry.get() );
+  mGeometry->shallowCopyFrom( *geometry );
   mVertices = new ArrayFloat3;
   mNormals  = new ArrayFloat3;
 
@@ -299,7 +299,7 @@ void MorphingCallback::initFrom(MorphingCallback* morph_cb)
     mGeometry = morph_cb->mGeometry;
   #else
     // Geometry copy method
-    morph_cb->mGeometry->shallowCopyTo( mGeometry.get() );
+    mGeometry->shallowCopyFrom( *morph_cb->mGeometry );
 
     // compute AABB using the first frame
 

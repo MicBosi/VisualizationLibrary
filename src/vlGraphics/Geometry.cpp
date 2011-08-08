@@ -99,42 +99,57 @@ void Geometry::computeBounds_Implementation()
 ref<Geometry> Geometry::deepCopy() const
 {
   ref<Geometry> geom = new Geometry;
-  deepCopyTo(geom.get());
+  geom->deepCopyFrom(*this);
   return geom;
 }
 //-----------------------------------------------------------------------------
-void Geometry::deepCopyTo(Geometry* geom) const
+Geometry& Geometry::deepCopyFrom(const Geometry& other)
 {
   // copy the base class Renderable
-  geom->super::operator=(*this);
+  super::operator=(other);
+
   // copy Geometry
-  geom->mVertexArray         = mVertexArray         ? mVertexArray->clone().get()         : NULL;
-  geom->mNormalArray         = mNormalArray         ? mNormalArray->clone().get()         : NULL;
-  geom->mColorArray          = mColorArray          ? mColorArray->clone().get()          : NULL;
-  geom->mSecondaryColorArray = mSecondaryColorArray ? mSecondaryColorArray->clone().get() : NULL;
-  geom->mFogCoordArray       = mFogCoordArray       ? mFogCoordArray->clone().get()       : NULL;
-  geom->mTexCoordArrays.resize(mTexCoordArrays.size());
+  mVertexArray         = other.mVertexArray         ? other.mVertexArray->clone().get()         : NULL;
+  mNormalArray         = other.mNormalArray         ? other.mNormalArray->clone().get()         : NULL;
+  mColorArray          = other.mColorArray          ? other.mColorArray->clone().get()          : NULL;
+  mSecondaryColorArray = other.mSecondaryColorArray ? other.mSecondaryColorArray->clone().get() : NULL;
+  mFogCoordArray       = other.mFogCoordArray       ? other.mFogCoordArray->clone().get()       : NULL;
+
+  mTexCoordArrays.resize( other.mTexCoordArrays.size() );
   for(int i=0; i<mTexCoordArrays.size(); ++i)
-    geom->mTexCoordArrays[i] = new TextureArray(mTexCoordArrays[i]->mTextureSampler, mTexCoordArrays[i]->mTexCoordArray ? mTexCoordArrays[i]->mTexCoordArray->clone().get() : NULL);
+    mTexCoordArrays[i] = new TextureArray(other.mTexCoordArrays[i]->mTextureSampler, other.mTexCoordArrays[i]->mTexCoordArray ? other.mTexCoordArrays[i]->mTexCoordArray->clone().get() : NULL);
+
   // custom arrays
-  geom->mVertexAttribArrays.resize(mVertexAttribArrays.size());
+  mVertexAttribArrays.resize( other.mVertexAttribArrays.size() );
   for(int i=0; i<mVertexAttribArrays.size(); ++i)
   {
-    geom->mVertexAttribArrays[i] = new VertexAttribInfo;
-    geom->mVertexAttribArrays[i]->setNormalize( mVertexAttribArrays[i]->normalize() );
-    geom->mVertexAttribArrays[i]->setDataBehavior( mVertexAttribArrays[i]->dataBehavior() );
-    geom->mVertexAttribArrays[i]->setAttribLocation( mVertexAttribArrays[i]->attribLocation() );
-    geom->mVertexAttribArrays[i]->setData( geom->mVertexAttribArrays[i]->data() ? geom->mVertexAttribArrays[i]->data()->clone().get() : NULL );
+    mVertexAttribArrays[i] = new VertexAttribInfo;
+    mVertexAttribArrays[i]->setNormalize( other.mVertexAttribArrays[i]->normalize() );
+    mVertexAttribArrays[i]->setDataBehavior( other.mVertexAttribArrays[i]->dataBehavior() );
+    mVertexAttribArrays[i]->setAttribLocation( other.mVertexAttribArrays[i]->attribLocation() );
+    mVertexAttribArrays[i]->setData( other.mVertexAttribArrays[i]->data() ? other.mVertexAttribArrays[i]->data()->clone().get() : NULL );
   }
+
   // primitives
+  mDrawCalls.clear();
   for(int i=0; i<mDrawCalls.size(); ++i)
-    geom->mDrawCalls.push_back( mDrawCalls[i]->clone().get() );
+    mDrawCalls.push_back( other.mDrawCalls[i]->clone().get() );
+
+  return *this;
 }
 //-----------------------------------------------------------------------------
-Geometry& Geometry::operator=(const Geometry& other)
+ref<Geometry> Geometry::shallowCopy() const
+{
+  ref<Geometry> geom = new Geometry;
+  geom->operator=(*this);
+  return geom;
+}
+//-----------------------------------------------------------------------------
+Geometry& Geometry::shallowCopyFrom(const Geometry& other)
 {
   // copy the base class Renderable
-  super::operator=(*this);
+  super::operator=(other);
+
   // copy Geometry attributes
   mVertexArray = other.mVertexArray;
   mNormalArray = other.mNormalArray;
@@ -144,19 +159,13 @@ Geometry& Geometry::operator=(const Geometry& other)
   mTexCoordArrays = other.mTexCoordArrays;
   mVertexAttribArrays = other.mVertexAttribArrays;
   mDrawCalls = other.mDrawCalls;
+
   return *this;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> Geometry::shallowCopy()
+Geometry& Geometry::operator=(const Geometry& other)
 {
-  ref<Geometry> geom = new Geometry;
-  geom->operator=(*this);
-  return geom;
-}
-//-----------------------------------------------------------------------------
-void Geometry::shallowCopyTo(Geometry* geom)
-{
-  geom->operator=(*this);
+  return shallowCopyFrom(other);
 }
 //-----------------------------------------------------------------------------
 void Geometry::setVertexArray(ArrayAbstract* data)
