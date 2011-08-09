@@ -32,6 +32,13 @@
 #ifndef DaHelpers_INCLUDE_ONCE
 #define DaHelpers_INCLUDE_ONCE
 
+// needs to be but here because the awesome geniouses that programmed collada-dom 2.3 cleverly decided to use the same macro names as OpenGL, see domTypes.h
+#include <dae.h>
+#include <dae/domAny.h>
+#include <dom.h>
+#include <dom/domCOLLADA.h>
+#include <dom/domProfile_COMMON.h>
+
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/Effect.hpp>
@@ -39,12 +46,6 @@
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/MultiDrawElements.hpp>
 #include <vlCore/GLSLmath.hpp>
-#include <set>
-#include <dae.h>
-#include <dae/domAny.h>
-#include <dom.h>
-#include <dom/domCOLLADA.h>
-#include <dom/domProfile_COMMON.h>
 
 namespace vl
 {
