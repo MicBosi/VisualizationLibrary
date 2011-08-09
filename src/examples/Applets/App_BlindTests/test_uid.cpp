@@ -53,7 +53,7 @@ namespace blind_tests
     vl::UUID guid, guid2;
     Random rnd;
 
-    for (size_t x=0; x<100000; x++)
+    for (size_t x=0; x<5000; x++)
     {
       guid.generateVersion4(rnd);
 
