@@ -15,9 +15,6 @@
 # Compile-time Plugins for VLCore
 ################################################################################
 
-# VLCore requires ZLib (not really a plugin, it's here for convenience)
-add_subdirectory("zlib")
-
 # List of "2D IO" plugins
 set(VLCORE_PLUGINS "BMP" "DAT" "DDS" "DICOM" "JPG" "PNG" "TGA" "TIFF")
 set(INSTALL_DIR "${VL_INCLUDE_INSTALL_DIR}/vlCore/plugins")
@@ -63,3 +60,7 @@ else()
 	unset(VL_IO_2D_GDCM_LIBRARIES CACHE)
 	unset(VL_IO_2D_GDCM_INC_DIR CACHE)
 endif()
+
+# VLCore requires ZLib (not really a plugin, it's here for convenience)
+add_subdirectory("zlib")
+
