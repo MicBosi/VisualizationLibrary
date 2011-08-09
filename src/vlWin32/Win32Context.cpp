@@ -47,13 +47,13 @@ void Win32Context::shareOpenGLResources(HGLRC hGLRC)
     wglShareLists(hglrc(), hGLRC);
 }
 //-----------------------------------------------------------------------------
-void Win32Context::makeCurrent() const
+void Win32Context::makeCurrent()
 {
   if (mHDC && mHGLRC)
     wglMakeCurrent(mHDC, mHGLRC);
 }
 //-----------------------------------------------------------------------------
-void Win32Context::update() const
+void Win32Context::update()
 {
   if (hwnd())
     PostMessage(hwnd(), WM_PAINT, 0, 0);
@@ -159,7 +159,7 @@ void Win32Context::setMousePosition(int x, int y)
   }
 }
 //-----------------------------------------------------------------------------
-void Win32Context::swapBuffers() const
+void Win32Context::swapBuffers()
 {
   if(hwnd() && hdc())
     SwapBuffers(hdc());

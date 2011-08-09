@@ -61,9 +61,9 @@ namespace vlEGL
 
     // *** OpenGLContext implementation ***
 
-    void swapBuffers() const;
-    void makeCurrent() const;
-    void update() const;
+    void swapBuffers();
+    void makeCurrent();
+    void update();
     void quitApplication();
     void setMouseVisible(bool visible);
     void setPosition(int x, int y);
