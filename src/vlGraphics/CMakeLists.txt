@@ -35,7 +35,8 @@ if( NOT VL_OPENGL )
 endif()
 
 # Handle extras added by plugins
-VL_PROJECT_GET(VLGRAPHICS _SOURCES _DEFINITIONS _INCLUDE_DIRS _LIBS)
+VL_PROJECT_GET(VLGRAPHICS _SOURCES _DEFINITIONS _INCLUDE_DIRS _EXTRA_LIBS_D _EXTRA_LIBS_R)
+
 add_definitions(${_DEFINITIONS})
 include_directories(${_INCLUDE_DIRS})
 
@@ -56,7 +57,15 @@ set(KHRONOS_INC ${KHRONOS_DIR}/GL/mesa_gl.h
 add_library(VLGraphics ${VL_SHARED_OR_STATIC} ${VLGRAPHICS_SRC} ${VLGRAPHICS_INC} ${KHRONOS_INC} ${_SOURCES})
 VL_DEFAULT_TARGET_PROPERTIES(VLGraphics)
 
-target_link_libraries(VLGraphics VLCore ${VL_OPENGL_LIBRARIES} ${_LIBS})
+target_link_libraries(VLGraphics VLCore ${VL_OPENGL_LIBRARIES})
+
+foreach(libName ${_EXTRA_LIBS_D})
+	target_link_libraries(VLGraphics debug ${libName})
+endforeach()
+
+foreach(libName ${_EXTRA_LIBS_R})
+	target_link_libraries(VLGraphics optimized ${libName})
+endforeach()
 
 ################################################################################
 # Source Groups

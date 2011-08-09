@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#if !defined(LoadCOLLADA_INCLUDE_ONCE)
-#define LoadCOLLADA_INCLUDE_ONCE
+#ifndef LoadWriterDae_INCLUDE_ONCE
+#define LoadWriterDae_INCLUDE_ONCE
 
 #include <vlGraphics/link_config.hpp>
 #include <vlCore/VirtualFile.hpp>
@@ -40,14 +40,14 @@
 namespace vl
 {
 //---------------------------------------------------------------------------
-// LoadWriterCOLLADA
+// LoadWriterDae
 //---------------------------------------------------------------------------
   /**
-   * The LoadWriterCOLLADA class is a ResourceLoadWriter capable of reading COLLADA files.
+   * The LoadWriterDae class is a ResourceLoadWriter capable of reading COLLADA files.
    */
-  class LoadWriterCOLLADA: public ResourceLoadWriter
+  class LoadWriterDae: public ResourceLoadWriter
   {
-    VL_INSTRUMENT_CLASS(vl::LoadWriterCOLLADA, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterDae, ResourceLoadWriter)
 
   public:
     class LoadOptions: public Object
@@ -118,7 +118,7 @@ namespace vl
       //! If size != 0 a mesh will be generated and exported for each light source. If size == 0 no light-mesh will be generated.
       //! The generated meshes will be a sphere for point lights, a pyramid for directional light, a cone for spotlights, a torus for ambient lights.
       //! Such meshes will be renamed "LightMesh-"+<name of the light object they represent>.
-      float setLightMeshSize(float size) { mLightMeshSize = size; }
+      void setLightMeshSize(float size) { mLightMeshSize = size; }
 
       //! If size != 0 a mesh will be generated and exported for each light source. If size == 0 no light-mesh will be generated.
       //! The generated meshes will be a sphere for point lights, a pyramid for directional light, a cone for spotlights, a torus for ambient lights.
@@ -141,7 +141,7 @@ namespace vl
 
     static VLGRAPHICS_EXPORT ref<ResourceDatabase> load(VirtualFile* file, const LoadOptions* options);
 
-    LoadWriterCOLLADA(): ResourceLoadWriter("|dae|", "|dae|") 
+    LoadWriterDae(): ResourceLoadWriter("|dae|", "|dae|") 
     { 
       mLoadOptions = new LoadOptions;
     }
