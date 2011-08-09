@@ -1484,6 +1484,7 @@ void DaeLoader::setupLights()
       }
     }
   }
+
   struct dummy
   {
     static bool light_sorter(const ref<Light>& a, const ref<Light>& b)
@@ -1500,6 +1501,7 @@ void DaeLoader::setupLights()
         return a->spotCutoff() > b->spotCutoff();
     }
   };
+
   std::sort(mLights.begin(), mLights.end(), dummy::light_sorter);
 
   // set light indices and adds to the resource database
