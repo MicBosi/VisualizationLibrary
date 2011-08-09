@@ -132,6 +132,8 @@ namespace vl
       mActiveLod = other.mActiveLod;
       mRenderRank = other.mRenderRank;
       mEnableMask = other.mEnableMask;
+
+      return *this;
     }
 
     ref<Effect> deepCopy() const
@@ -149,6 +151,8 @@ namespace vl
       for(int lod=0; lod<VL_MAX_EFFECT_LOD; ++lod)
         for(int pass=0; mLODShaders[lod] && pass<mLODShaders[lod]->size(); ++pass)
           (*mLODShaders[lod])[pass] = (*mLODShaders[lod])[pass]->deepCopy();
+
+      return *this;
     }
 
     /** Modifies the rendering rank of an Actor.
