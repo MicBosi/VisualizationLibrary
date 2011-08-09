@@ -139,26 +139,29 @@ namespace vl
     ~OpenGLContext();
 
     //! Swaps the back and front buffers to present the last rendering.
-    virtual void swapBuffers() = 0;
+    virtual void swapBuffers() const = 0;
 
     //! Sets the OpenGL context as current for the calling thread.
-    virtual void makeCurrent() = 0;
+    virtual void makeCurrent() const = 0;
+
+    //! If the OpenGLContext is a widget this function requests a redraw and generates an updateEvent().
+    virtual void update() const = 0;
 
     //! Initializes the supported OpenGL extensions.
     bool initGLContext(bool log=true);
 
     //! Logs some information about the OpenGL context
-    void logOpenGLInfo();
+    void logOpenGLInfo() const ;
 
     //! Returns the list of OpenGL extensions supported separated by '|' characters.
     const std::string& extensions() const { return mExtensions; }
     
     //! Returns true if the given extension is supported.
     //! \note This is a relatively slow function, don't use it inside loops and similar.
-    bool isExtensionSupported(const char* ext_name);
+    bool isExtensionSupported(const char* ext_name) const ;
 
     //! Returns the address of an OpenGL extension function
-    void* getProcAddress(const char* function_name);
+    void* getProcAddress(const char* function_name) const ;
 
     //! The render target representing this OpenGL context.
     //! The returned RenderTarget's dimensions will be automatically updated to the OpenGLContext's dimensions.
@@ -183,9 +186,6 @@ namespace vl
 
     //! Asks to the windowing system that is managing the OpenGLContext to quit the application.
     virtual void quitApplication() {}
-
-    //! If the OpenGLContext is a widget this function requests a redraw and generates an updateEvent().
-    virtual void update() = 0;
 
     //! If the OpenGL context is a top window this function sets its title.
     virtual void setWindowTitle(const String&) {}
