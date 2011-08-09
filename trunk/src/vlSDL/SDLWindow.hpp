@@ -66,7 +66,7 @@ namespace vlSDL
 
     void setPosition(int x, int y);
 
-    virtual void swapBuffers();
+    virtual void swapBuffers() const;
 
     void translateEvent(SDL_Event * ev);
 
@@ -86,9 +86,9 @@ namespace vlSDL
       SDL_WarpMouse((Uint16)x, (Uint16)y);
     }
 
-    void update();
+    void update() const;
 
-    void makeCurrent() { /*SDL can have only one window*/ }
+    void makeCurrent() const { /*SDL can have only one window*/ }
 
     static SDL_Surface* sdlSurface() { return mScreen; }
 
