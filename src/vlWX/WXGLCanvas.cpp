@@ -364,7 +364,7 @@ void WXGLCanvas::quitApplication()
   eraseAllEventListeners();
 }
 //-----------------------------------------------------------------------------
-void WXGLCanvas::makeCurrent()
+void WXGLCanvas::makeCurrent() const
 {
   #ifndef __WXMOTIF__
     if (!GetContext()) return;
@@ -373,7 +373,7 @@ void WXGLCanvas::makeCurrent()
   SetCurrent();
 }
 //-----------------------------------------------------------------------------
-void WXGLCanvas::swapBuffers()
+void WXGLCanvas::swapBuffers() const
 {
   #ifndef __WXMOTIF__
     if (!GetContext()) return;
@@ -392,7 +392,7 @@ void WXGLCanvas::setMousePosition(int x, int y)
   WarpPointer(x,y);
 }
 //-----------------------------------------------------------------------------
-void WXGLCanvas::update()
+void WXGLCanvas::update() const
 {
   Refresh(false);
 }

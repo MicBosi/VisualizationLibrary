@@ -277,7 +277,7 @@ bool OpenGLContext::initGLContext(bool log)
   return mIsInitialized = true;;
 }
 //-----------------------------------------------------------------------------
-bool OpenGLContext::isExtensionSupported(const char* ext_name)
+bool OpenGLContext::isExtensionSupported(const char* ext_name) const
 {
   makeCurrent();
   size_t len = strlen(ext_name);
@@ -295,13 +295,13 @@ bool OpenGLContext::isExtensionSupported(const char* ext_name)
   return false;
 }
 //-----------------------------------------------------------------------------
-void* OpenGLContext::getProcAddress(const char* function_name)
+void* OpenGLContext::getProcAddress(const char* function_name) const
 {
   makeCurrent();
   return getGLProcAddress(function_name);
 }
 //-----------------------------------------------------------------------------
-void OpenGLContext::logOpenGLInfo()
+void OpenGLContext::logOpenGLInfo() const
 {
   makeCurrent();
 
