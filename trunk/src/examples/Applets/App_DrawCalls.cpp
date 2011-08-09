@@ -78,15 +78,15 @@ class App_DrawCalls: public BaseDemo
     MultiDrawElementsUInt::index_type* p_idx = mde->indexBuffer()->begin();
     for( IndexIterator it = torus1_dc->indexIterator(); it.hasNext(); it.next(), ++p_idx )
       *p_idx = it.index();
-    
+
     for( IndexIterator it = torus2_dc->indexIterator(); it.hasNext(); it.next(), ++p_idx )
       *p_idx = it.index() + torus1_vert->size();
-    
+
     for( IndexIterator it = torus3_dc->indexIterator(); it.hasNext(); it.next(), ++p_idx )
       *p_idx = it.index() + torus1_vert->size() + torus2_vert->size();
 
     VL_CHECK(p_idx == mde->indexBuffer()->end());
-    
+
     // define how many indices for each draw call
     GLsizei count_vector[] = { torus1_index_count, torus2_index_count, torus3_index_count };
     mde->setCountVector( count_vector, 3 );
