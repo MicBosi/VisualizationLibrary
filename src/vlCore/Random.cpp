@@ -106,12 +106,28 @@ void Random::standardFillRandom(void* ptr, size_t bytes)
 void Random::standardRandomize()
 {
   Time time;
+
   int stack_pos = 0;
   static int static_pos = 0;
   int* dyn_pos = new int[10]; delete [] dyn_pos;
-  unsigned int rand_start = time.microsecond() ^ time.second() ^ time.minute() ^ time.hour() ^ 
-                            time.dayOfMonth() ^ time.month() ^ time.year() ^ 
-                            (unsigned long long)&static_pos ^ (unsigned long long)&stack_pos ^ (unsigned long long)dyn_pos;
+  
+  union
+  {
+    void* ptr;
+    unsigned long long ull;
+  } void_to_ull;
+
+  void_to_ull.ptr = &static_pos;
+  unsigned long long A = void_to_ull.ull;
+
+  void_to_ull.ptr = &stack_pos;
+  unsigned long long B = void_to_ull.ull;
+
+  void_to_ull.ptr = &dyn_pos;
+  unsigned long long C = void_to_ull.ull;
+
+  unsigned int rand_start = (unsigned int)(time.microsecond() ^ time.second() ^ time.minute() ^ time.hour() ^ time.dayOfMonth() ^ time.month() ^ time.year() ^ A ^ B ^ C);
+
   srand(rand_start);
 }
 //-----------------------------------------------------------------------------
