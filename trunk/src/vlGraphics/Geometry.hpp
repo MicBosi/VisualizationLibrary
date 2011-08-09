@@ -76,7 +76,7 @@ namespace vl
     class TextureArray: public Object
     {
     public:
-      TextureArray(int unit, ArrayAbstract* data): mTextureSampler(unit), mTexCoordArray(data) {}
+      TextureArray(int unit, ArrayAbstract* data): mTextureSampler(unit), mTexCoordArray(data) { }
       int mTextureSampler;
       ref<ArrayAbstract> mTexCoordArray;
       const VBO* vbo() const { return mTexCoordArray->vbo(); }
