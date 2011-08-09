@@ -55,7 +55,7 @@ using namespace vl;
   #include "plugins/vlMD2.hpp"
 #endif
 #if defined(VL_IO_3D_COLLADA)
-  #include "plugins/vlCOLLADA.hpp"
+  #include "plugins/COLLADA/vlDae.hpp"
 #endif
 
 //------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ void VisualizationLibrary::initGraphics()
     registerLoadWriter(new LoadWriterMD2);
   #endif
   #if defined(VL_IO_3D_COLLADA)
-    registerLoadWriter(new LoadWriterCOLLADA);
+    registerLoadWriter(new LoadWriterDae);
   #endif
 
   // ---

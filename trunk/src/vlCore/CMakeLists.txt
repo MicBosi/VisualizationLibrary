@@ -33,14 +33,21 @@ configure_file("platform.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/platform.hpp")
 list(APPEND VLCORE_INC "${CMAKE_CURRENT_BINARY_DIR}/platform.hpp")
 
 # Handle extras added by plugins
-VL_PROJECT_GET(VLCORE _SOURCES _DEFINITIONS _INCLUDE_DIRS _LIBS)
+VL_PROJECT_GET(VLCORE _SOURCES _DEFINITIONS _INCLUDE_DIRS _EXTRA_LIBS_D _EXTRA_LIBS_R)
 add_definitions(${_DEFINITIONS})
 include_directories(${_INCLUDE_DIRS})
 
 add_library(VLCore ${VL_SHARED_OR_STATIC} ${VLCORE_SRC} ${VLCORE_INC} ${_SOURCES})
 VL_DEFAULT_TARGET_PROPERTIES(VLCore)
 
-target_link_libraries(VLCore ${_LIBS})
+# We need to link them one by one because the 'debug' and 'optimized' tags have to be specifed before every library name
+foreach(libName ${_EXTRA_LIBS_D})
+	target_link_libraries(VLCore debug ${libName})
+endforeach()
+
+foreach(libName ${_EXTRA_LIBS_R})
+	target_link_libraries(VLCore optimized ${libName})
+endforeach()
 
 ################################################################################
 # Source Groups

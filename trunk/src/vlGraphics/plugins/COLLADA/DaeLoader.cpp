@@ -29,562 +29,50 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics/plugins/vlCOLLADA.hpp>
-#include <vlCore/FileSystem.hpp>
-#include <vlGraphics/Geometry.hpp>
-#include <vlGraphics/Actor.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/MultiDrawElements.hpp>
+#include <vlGraphics/plugins/COLLADA/DaeLoader.hpp>
 #include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlCore/Time.hpp>
-#include <vlCore/GLSLmath.hpp>
-#include <set>
-#include <dae.h>
-#include <dae/domAny.h>
-#include <dom.h>
-#include <dom/domCOLLADA.h>
-#include <dom/domProfile_COMMON.h>
 
 using namespace vl;
 
-// --- mic fixme: remove debug code ---
-bool debug_Wireframe = false;
-// ---
-int debug_IndentLevel = 0;
-// ---
-mat4 debug_WorldMatrix;
-// ---
-std::vector< ref<Actor> > debug_Actors;
-// ---
-float debug_GeometryTime = 0;
-// ---
-Time debug_Timer;
-// ---
-void debug_PrintIndent(const String& str)
+namespace
 {
-  for(int i=0; i<debug_IndentLevel; ++i)
-    Log::print("  ");
-  Log::print(str);
-}
-// ---
-bool debug_IsMatrixSane(const mat4& m)
-{
-  for(int i=0; i<16; i++)
-    if( m.ptr()[i] != m.ptr()[i] )
-      return false;
-  return true;
-}
-// ---
-void debug_PrintMatrix(const fmat4& m)
-{
-  debug_PrintIndent("<matrix>\n");
-  debug_PrintIndent( Say("%n %n %n %n\n") << m.e(0, 0) << m.e(0, 1) << m.e(0, 2) << m.e(0, 3) );
-  debug_PrintIndent( Say("%n %n %n %n\n") << m.e(1, 0) << m.e(1, 1) << m.e(1, 2) << m.e(1, 3) );
-  debug_PrintIndent( Say("%n %n %n %n\n") << m.e(2, 0) << m.e(2, 1) << m.e(2, 2) << m.e(2, 3) );
-  debug_PrintIndent( Say("%n %n %n %n\n") << m.e(3, 0) << m.e(3, 1) << m.e(3, 2) << m.e(3, 3) );
-}
-// ---
-int debug_ExtractGeometry = false;
-// ---
-void debug_PrintMatrices(const Transform* tr)
-{
-  debug_IndentLevel++;
-
-  debug_PrintMatrix( tr->worldMatrix() );
-  for(size_t i=0; i<tr->childrenCount(); ++i)
+  //-----------------------------------------------------------------------------
+  const char* VL_NO_MATERIAL_SPECIFIED = "<VL_NO_MATERIAL_SPECIFIED>";
+  const char* VL_DEFAULT_LIGHT = "<VL_DEFAULT_LIGHT>";
+  //-----------------------------------------------------------------------------
+  struct 
   {
-    debug_PrintMatrices( tr->children()[i].get() );
-  }
-
-  debug_IndentLevel--;
-}
-// ---
-void debug_PrintGometry(Actor* actor)
-{
-  Geometry* geom = actor->lod(0)->as<Geometry>();
-
-  debug_PrintIndent( "[VERTICES]\n" );
-  for(size_t i=0; i<geom->vertexArray()->size(); ++i)
-  {
-    vec3 v = geom->vertexArray()->getAsVec3(i);
-    debug_PrintIndent( Say("    %n %n %n \n") << v.x() << v.y() << v.z() );
-  }
-  debug_PrintIndent( "[/VERTICES]\n" );
-
-  debug_PrintIndent( "[NORMALS]\n" );
-  for(size_t i=0; i<geom->normalArray()->size(); ++i)
-  {
-    vec3 v = geom->normalArray()->getAsVec3(i);
-    debug_PrintIndent( Say("    %n %n %n \n") << v.x() << v.y() << v.z() );
-  }
-  debug_PrintIndent( "[/NORMALS]\n" );
-
-  debug_PrintIndent( "[TRIANGLES]\n" );
-  for(int i=0; i<geom->drawCalls()->size(); ++i)
-  {
-    DrawCall* dc = geom->drawCalls()->at(i);
-    TriangleIterator it = dc->triangleIterator();
-    for( ; it.hasNext(); it.next() )
-      debug_PrintIndent( Say("  %n %n %n \n") << it.a() << it.b() << it.c() );
-  }
-  debug_PrintIndent( "[/TRIANGLES]\n" );
-}
-// ---
-
-namespace vl
-{
-  namespace Dae
-  {
-    //-----------------------------------------------------------------------------
-    const char* VL_NO_MATERIAL_SPECIFIED = "<VL_NO_MATERIAL_SPECIFIED>";
-    const char* VL_DEFAULT_LIGHT = "<VL_DEFAULT_LIGHT>";
-    //-----------------------------------------------------------------------------
-    typedef enum { PT_UNKNOWN, PT_LINES, PT_LINE_STRIP, PT_POLYGONS, PT_POLYLIST, PT_TRIANGLES, PT_TRIFANS, PT_TRISTRIPS } EPrimitiveType;
-    //-----------------------------------------------------------------------------
-    typedef enum { OM_A_ONE, OM_RGB_ZERO } EOpaqueMode;
-    typedef enum
+    Dae::EInputSemantic mSemantic;
+    const char* mSemanticString;
+  } SemanticTable[] = 
     {
-      IS_UNKNOWN,
-      IS_BINORMAL,
-      IS_COLOR,
-      IS_CONTINUITY,
-      IS_IMAGE,
-      IS_INPUT,
-      IS_IN_TANGENT,
-      IS_INTERPOLATION,
-      IS_INV_BIND_MATRIX,
-      IS_JOINT,
-      IS_LINEAR_STEPS,
-      IS_MORPHS_TARGET,
-      IS_MORPH_WEIGHT,
-      IS_NORMAL,
-      IS_OUTPUT,
-      IS_OUT_TANGENT,
-      IS_POSITION,
-      IS_TANGENT,
-      IS_TEXBINORMAL,
-      IS_TEXCOORD,
-      IS_TEXTANGENT,
-      IS_UV,
-      IS_VERTEX,
-      IS_WEIGHT
-    } EInputSemantic;
-    //-----------------------------------------------------------------------------
-    struct 
-    {
-      EInputSemantic mSemantic;
-      const char* mSemanticString;
-    } SemanticTable[] = 
-      {
-        { IS_UNKNOWN,         "UNKNOWN"         },
-        { IS_BINORMAL,        "BINORMAL"        },
-        { IS_COLOR,           "COLOR"           },
-        { IS_CONTINUITY,      "CONTINUITY"      },
-        { IS_IMAGE,           "IMAGE"           },
-        { IS_INPUT,           "INPUT"           },
-        { IS_IN_TANGENT,      "IN_TANGENT"      },
-        { IS_INTERPOLATION,   "INTERPOLATION"   },
-        { IS_INV_BIND_MATRIX, "INV_BIND_MATRIX" },
-        { IS_JOINT,           "JOINT"           },
-        { IS_LINEAR_STEPS,    "LINEAR_STEPS"    },
-        { IS_MORPHS_TARGET,   "MORPHS_TARGET"   },
-        { IS_MORPH_WEIGHT,    "MORPH_WEIGHT"    },
-        { IS_NORMAL,          "NORMAL"          },
-        { IS_OUTPUT,          "OUTPUT"          },
-        { IS_OUT_TANGENT,     "OUT_TANGENT"     },
-        { IS_POSITION,        "POSITION"        },
-        { IS_TANGENT,         "TANGENT"         },
-        { IS_TEXBINORMAL,     "TEXBINORMAL"     },
-        { IS_TEXCOORD,        "TEXCOORD"        },
-        { IS_TEXTANGENT,      "TEXTANGENT"      },
-        { IS_UV,              "UV"              },
-        { IS_VERTEX,          "VERTEX"          },
-        { IS_WEIGHT,          "WEIGHT"          },
-        { IS_UNKNOWN,          NULL             }
-      };
-  }
+      { Dae::IS_UNKNOWN,         "UNKNOWN"         },
+      { Dae::IS_BINORMAL,        "BINORMAL"        },
+      { Dae::IS_COLOR,           "COLOR"           },
+      { Dae::IS_CONTINUITY,      "CONTINUITY"      },
+      { Dae::IS_IMAGE,           "IMAGE"           },
+      { Dae::IS_INPUT,           "INPUT"           },
+      { Dae::IS_IN_TANGENT,      "IN_TANGENT"      },
+      { Dae::IS_INTERPOLATION,   "INTERPOLATION"   },
+      { Dae::IS_INV_BIND_MATRIX, "INV_BIND_MATRIX" },
+      { Dae::IS_JOINT,           "JOINT"           },
+      { Dae::IS_LINEAR_STEPS,    "LINEAR_STEPS"    },
+      { Dae::IS_MORPHS_TARGET,   "MORPHS_TARGET"   },
+      { Dae::IS_MORPH_WEIGHT,    "MORPH_WEIGHT"    },
+      { Dae::IS_NORMAL,          "NORMAL"          },
+      { Dae::IS_OUTPUT,          "OUTPUT"          },
+      { Dae::IS_OUT_TANGENT,     "OUT_TANGENT"     },
+      { Dae::IS_POSITION,        "POSITION"        },
+      { Dae::IS_TANGENT,         "TANGENT"         },
+      { Dae::IS_TEXBINORMAL,     "TEXBINORMAL"     },
+      { Dae::IS_TEXCOORD,        "TEXCOORD"        },
+      { Dae::IS_TEXTANGENT,      "TEXTANGENT"      },
+      { Dae::IS_UV,              "UV"              },
+      { Dae::IS_VERTEX,          "VERTEX"          },
+      { Dae::IS_WEIGHT,          "WEIGHT"          },
+      { Dae::IS_UNKNOWN,          NULL             }
+    };
 }
-//-----------------------------------------------------------------------------
-struct DaeVert
-{
-  static const int MAX_ATTRIBS = 8;
-
-  DaeVert()
-  {
-    memset(mAttribIndex, 0xFF, sizeof(mAttribIndex));
-    mIndex = (size_t)-1;
-  }
-
-  bool operator<(const DaeVert& other) const
-  {
-    for(int i=0; i<MAX_ATTRIBS; ++i)
-    {
-      if (mAttribIndex[i] != other.mAttribIndex[i])
-        return mAttribIndex[i] < other.mAttribIndex[i];
-    }
-    return false;
-  }
-
-  size_t mAttribIndex[MAX_ATTRIBS];
-  size_t mIndex;
-};
-//-----------------------------------------------------------------------------
-class DaeSource: public Object
-{
-public:
-  DaeSource()
-  {
-    mFloatSource = NULL;
-    mIntSource   = NULL;
-    mBoolSource  = NULL;
-    mFieldsMask = 0;
-    mStride     = 0;
-    mOffset     = 0;
-    mCount      = 0;
-    mDataSize   = 0;
-  }
-
-  //! Initializes an accessor. An accessor can read only up to 32 floats.
-  void init(domFloat_arrayRef data_src, domUint count, domUint stride, domUint offset, size_t fields_mask)
-  {
-    mFloatSource = data_src;
-    mIntSource   = NULL;
-    mBoolSource  = NULL;
-    mCount       = (size_t)count;
-    mStride      = (size_t)stride;
-    mOffset      = (size_t)offset;
-    mFieldsMask  = fields_mask;
-
-    // count the number of scalars that will be read.
-    mDataSize = 0;
-    for(size_t i=0; i<32; ++i)
-      if (mFieldsMask & (1<<i))
-        mDataSize++;
-  }
-
-  //! Initializes an accessor. An accessor can read only up to 32 floats.
-  void init(domInt_arrayRef data_src, domUint count, domUint stride, domUint offset, size_t fields_mask)
-  {
-    mFloatSource = NULL;
-    mIntSource   = data_src;
-    mBoolSource  = NULL;
-    mCount       = (size_t)count;
-    mStride      = (size_t)stride;
-    mOffset      = (size_t)offset;
-    mFieldsMask  = fields_mask;
-
-    // count the number of scalars that will be read.
-    mDataSize = 0;
-    for(size_t i=0; i<32; ++i)
-      if (mFieldsMask & (1<<i))
-        mDataSize++;
-  }
-
-  //! Initializes an accessor. An accessor can read only up to 32 floats.
-  void init(domBool_arrayRef data_src, domUint count, domUint stride, domUint offset, size_t fields_mask)
-  {
-    mFloatSource = NULL;
-    mIntSource   = NULL;
-    mBoolSource  = data_src;
-    mCount       = (size_t)count;
-    mStride      = (size_t)stride;
-    mOffset      = (size_t)offset;
-    mFieldsMask  = fields_mask;
-
-    // count the number of scalars that will be read.
-    mDataSize = 0;
-    for(size_t i=0; i<32; ++i)
-      if (mFieldsMask & (1<<i))
-        mDataSize++;
-  }
-
-  //! Reads an element of data at the n-th position and writes it into 'output'. The number of elements that will be written can be queried by calling dataSize().
-  void readData(size_t n, float* output)
-  {
-    size_t read_pos = mOffset + n * mStride;
-
-    size_t pos = 0;
-
-    if(mFloatSource)
-    {
-      VL_CHECK( (n < mCount) || (read_pos < mFloatSource->getValue().getCount() - mDataSize) )
-      for(size_t i=0; i<32 && i<mStride; ++i)
-        if (mFieldsMask & (1<<i))
-          output[pos++] = (float)mFloatSource->getValue()[read_pos+i];
-    }
-    else
-    if(mIntSource)
-    {
-      VL_CHECK( (n < mCount) || (read_pos < mIntSource->getValue().getCount() - mDataSize) )
-      for(size_t i=0; i<32 && i<mStride; ++i)
-        if (mFieldsMask & (1<<i))
-          output[pos++] = (float)mIntSource->getValue()[read_pos+i];
-    }
-    else
-    if(mBoolSource)
-    {
-      VL_CHECK( (n < mCount) || (read_pos < mBoolSource->getValue().getCount() - mDataSize) )
-      for(size_t i=0; i<32 && i<mStride; ++i)
-        if (mFieldsMask & (1<<i))
-          output[pos++] = (float)mBoolSource->getValue()[read_pos+i];
-    }
-  }
-
-  //! The number of elements in the source.
-  size_t count() const { return mCount; }
-
-  //! The number of elements written by readData().
-  size_t dataSize() const { return mDataSize; }
-
-protected:
-  size_t mFieldsMask;
-  size_t mDataSize;
-  domFloat_arrayRef mFloatSource;
-  domInt_arrayRef  mIntSource;
-  domBool_arrayRef mBoolSource;
-  size_t mStride;
-  size_t mOffset;
-  size_t mCount;
-};
-//-----------------------------------------------------------------------------
-struct DaeInput: public Object
-{
-  DaeInput()
-  {
-    mSemantic = Dae::IS_UNKNOWN;
-    mOffset = 0;
-    mSet = 0;
-  }
-
-  ref<DaeSource> mSource;
-  Dae::EInputSemantic mSemantic;
-  size_t mOffset;
-  size_t mSet;
-};
-//-----------------------------------------------------------------------------
-struct DaePrimitive: public Object
-{
-  DaePrimitive()
-  {
-    mType = Dae::PT_UNKNOWN;
-    mCount = 0;
-    mIndexStride = 0;
-  }
-
-  Dae::EPrimitiveType mType;
-  std::string mMaterial;
-  std::vector< ref<DaeInput> > mChannels;
-  size_t mCount;
-  std::vector<domPRef> mP;
-  size_t mIndexStride;
-  ref<Geometry> mGeometry;
-};
-//-----------------------------------------------------------------------------
-struct DaeMesh: public Object
-{
-  std::vector< ref<DaeInput> > mVertexInputs;
-  std::vector< ref<DaePrimitive> > mPrimitives;
-};
-//-----------------------------------------------------------------------------
-struct DaeNode: public Object
-{
-  DaeNode()
-  {
-    mTransform = new Transform;
-  }
-
-  ref<Transform> mTransform;
-  std::vector< ref<DaeNode> > mChildren;
-  std::vector< ref<DaeMesh> > mMesh;
-  std::vector< ref<Actor> > mActors;
-};
-//-----------------------------------------------------------------------------
-struct DaeSurface: public Object
-{
-  // mic fixme: for the moment we only support 2D images.
-  ref<Image> mImage; // <init_from>
-};
-//-----------------------------------------------------------------------------
-struct DaeSampler2D: public Object
-{
-  DaeSampler2D()
-  {
-    // default values if no tags are found.
-    mMinFilter = TPF_LINEAR;
-    mMagFilter = TPF_LINEAR;
-    mWrapS     = TPW_REPEAT;
-    mWrapT     = TPW_REPEAT;
-  }
-
-  ref<DaeSurface> mDaeSurface;    // <source>
-  vl::ETexParamFilter mMinFilter; // <minfilter>
-  vl::ETexParamFilter mMagFilter; // <magfilter>
-  vl::ETexParamWrap   mWrapS;     // <wrap_s>
-  vl::ETexParamWrap   mWrapT;     // <wrap_t>
-
-  ref<Texture> mTexture; // actual VL texture implementing the sampler
-};
-//-----------------------------------------------------------------------------
-struct DaeNewParam: public Object
-{
-  ref<DaeSampler2D> mDaeSampler2D;
-  ref<DaeSurface> mDaeSurface;
-  fvec4 mFloat4;
-};
-//-----------------------------------------------------------------------------
-struct DaeColorOrTexture: public Object
-{
-  fvec4 mColor;
-  ref<DaeSampler2D> mSampler;
-  std::string mTexCoord;
-};
-//-----------------------------------------------------------------------------
-struct DaeTechniqueCOMMON: public Object
-{
-  DaeTechniqueCOMMON()
-  {
-    mMode = Unknown;
-
-    mEmission.mColor     = fvec4(0, 0, 0, 1);
-    mAmbient.mColor      = fvec4(0, 0, 0, 1);
-    mDiffuse.mColor      = fvec4(1, 0, 1, 1);
-    mSpecular.mColor     = fvec4(0, 0, 0, 1);
-    mShininess    = 40;
-
-    mReflective.mColor   = fvec4(1, 1, 1, 1);
-    mReflectivity = 0;
-
-    mTransparent.mColor  = fvec4(0, 0, 0, 1);
-    mOpaqueMode   = Dae::OM_A_ONE;
-    mTransparency = 1;
-
-    mIndexOfRefraction = 0;
-
-    mBlendingOn = false;
-  }
-
-  enum { Unknown, Blinn, Phong, Lambert } mMode;
-
-  Dae::EOpaqueMode mOpaqueMode;
-
-  DaeColorOrTexture mEmission;
-  DaeColorOrTexture mAmbient;
-  DaeColorOrTexture mDiffuse;
-  DaeColorOrTexture mSpecular;
-  float mShininess;
-  DaeColorOrTexture mReflective;
-  float mReflectivity;
-  DaeColorOrTexture mTransparent;
-  float mTransparency;
-  float mIndexOfRefraction;
-  bool mBlendingOn;
-};
-//-----------------------------------------------------------------------------
-struct DaeEffect: public Object
-{
-  DaeEffect()
-  {
-    mDoubleSided = false;
-  }
-
-  std::vector<ref<DaeNewParam> > mNewParams;
-  ref<DaeTechniqueCOMMON> mDaeTechniqueCOMMON;
-  bool mDoubleSided;
-};
-//-----------------------------------------------------------------------------
-struct DaeMaterial: public Object
-{
-  ref<DaeEffect> mDaeEffect;
-};
-//-----------------------------------------------------------------------------
-class DaeLoader
-{
-public:
-  DaeLoader();
-
-  bool load(VirtualFile* file);
-
-  const ResourceDatabase* resources() const { return mResources.get(); }
-
-  ResourceDatabase* resources() { return mResources.get(); }
-
-  // --- options ---
-
-  void setLoadOptions(const LoadWriterCOLLADA::LoadOptions* options) { mLoadOptions = options; }
-
-  const LoadWriterCOLLADA::LoadOptions* loadOptions() const { return mLoadOptions; }
-
-  // --- internal logic ---
-protected:
-
-  void reset();
-
-  void parseInputs(DaePrimitive* dae_primitive, const domInputLocalOffset_Array& input_arr, const std::vector< ref<DaeInput> >& vertex_inputs);
-
-  ref<DaeMesh> parseGeometry(daeElement* geometry);
-
-  DaeSource* getSource(daeElement* source_el);
-
-  void bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_materialRef bind_material);
-
-  void parseNode(daeElement* el, DaeNode* parent);
-
-  void parseAsset(domElement* root);
-
-  void loadImages(const domImage_Array& images);
-
-  void parseImages(daeElement* library);
-
-  void parseEffects(daeElement* library);
-
-  void prepareTexture2D(DaeSampler2D* sampler2D);
-
-  void parseMaterials(daeElement* library);
-
-  ref<Light> parseLight(domLight*, Transform*);
-
-  void setupLights();
-
-  ref<Effect> setup_vl_Effect( DaeMaterial* mat );
-
-  static std::string percentDecode(const char* uri);
-
-  static Dae::EInputSemantic getSemantic(const char* semantic);
-
-  static const char* getSemanticString(Dae::EInputSemantic semantic);
-
-  static ETexParamFilter translateSampleFilter(domFx_sampler_filter_common filter);
-
-  static ETexParamWrap translateWrapMode(domFx_sampler_wrap_common wrap);
-  
-  // template required becase Transparent is implemented as something different from domCommon_color_or_texture_typeRef!!!
-  template<class T_color_or_texture>
-  void parseColor(const domProfile_COMMON* common, const T_color_or_texture& color_or_texture, DaeColorOrTexture* out_col);
-
-  void generateGeometry(DaePrimitive* primitive, const char* name);
-
-protected:
-  const LoadWriterCOLLADA::LoadOptions* mLoadOptions;
-
-protected:
-  ref<ResourceDatabase> mResources;
-  std::vector< ref<Light> > mLights;
-  std::map< daeElementRef, ref<DaeMaterial> > mMaterials;
-  std::map< daeElementRef, ref<DaeEffect> > mEffects;
-  std::map< daeElementRef, ref<DaeMesh> > mMeshes; // daeElement* -> <geometry>
-  std::vector< ref<DaeNode> > mNodes;
-  std::map< daeElementRef, ref<DaeSource> > mSources; // daeElement* -> <source>
-  std::map< daeElementRef, ref<Image> > mImages;
-  std::map< daeElementRef, ref<DaeNewParam> > mDaeNewParams;
-  ref<Effect> mDefaultFX;
-  ref<DaeNode> mScene;
-  DAE mDAE;
-  String mFilePath;
-  fmat4 mUpMatrix;
-  bool mInvertTransparency;
-  bool mAssumeOpaque;
-};
 //-----------------------------------------------------------------------------
 DaeLoader::DaeLoader()
 {
@@ -593,7 +81,7 @@ DaeLoader::DaeLoader()
   // default material
 
   mDefaultFX = new Effect;
-  mDefaultFX->setObjectName( Dae::VL_NO_MATERIAL_SPECIFIED );
+  mDefaultFX->setObjectName( VL_NO_MATERIAL_SPECIFIED );
   mDefaultFX->shader()->enable(EN_LIGHTING);
   mDefaultFX->shader()->setRenderState( new Light, 0 );
   mDefaultFX->shader()->gocMaterial()->setFlatColor( vl::fuchsia );
@@ -608,7 +96,7 @@ void DaeLoader::reset()
   mResources = new ResourceDatabase;
 }
 //-----------------------------------------------------------------------------
-void DaeLoader::parseInputs(DaePrimitive* dae_primitive, const domInputLocalOffset_Array& input_arr, const std::vector< ref<DaeInput> >& vertex_inputs)
+void DaeLoader::parseInputs(Dae::Primitive* dae_primitive, const domInputLocalOffset_Array& input_arr, const std::vector< ref<Dae::Input> >& vertex_inputs)
 {
   dae_primitive->mIndexStride = 0;
 
@@ -622,7 +110,7 @@ void DaeLoader::parseInputs(DaePrimitive* dae_primitive, const domInputLocalOffs
       VL_CHECK(!vertex_inputs.empty())
       for(size_t ivert=0; ivert<vertex_inputs.size(); ++ivert)
       {
-        ref<DaeInput> dae_input = new DaeInput;
+        ref<Dae::Input> dae_input = new Dae::Input;
         dae_input->mSemantic = vertex_inputs[ivert]->mSemantic;
         dae_input->mSource   = vertex_inputs[ivert]->mSource;
         dae_input->mOffset   = (size_t)input->getOffset();
@@ -638,7 +126,7 @@ void DaeLoader::parseInputs(DaePrimitive* dae_primitive, const domInputLocalOffs
     }
     else
     {
-        ref<DaeInput> dae_input = new DaeInput;
+        ref<Dae::Input> dae_input = new Dae::Input;
         dae_input->mSemantic = getSemantic(input->getSemantic());
         dae_input->mSource   = getSource( input->getSource().getElement() );
         dae_input->mOffset   = (size_t)input->getOffset();
@@ -658,10 +146,10 @@ void DaeLoader::parseInputs(DaePrimitive* dae_primitive, const domInputLocalOffs
   dae_primitive->mIndexStride += 1;
 }
 //-----------------------------------------------------------------------------
-ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
+ref<Dae::Mesh> DaeLoader::parseGeometry(daeElement* geometry)
 {
   // try to reuse the geometry in the library
-  std::map< daeElementRef, ref<DaeMesh> >::iterator it = mMeshes.find( geometry );
+  std::map< daeElementRef, ref<Dae::Mesh> >::iterator it = mMeshes.find( geometry );
   if (it != mMeshes.end())
     return it->second;
 
@@ -671,7 +159,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   domMesh* mesh = static_cast<domMesh*>(geometry->getChild("mesh"));
 
   // add to dictionary
-  ref<DaeMesh> dae_mesh = new DaeMesh;
+  ref<Dae::Mesh> dae_mesh = new Dae::Mesh;
   mMeshes[geometry] = dae_mesh;
 
   // vertices
@@ -679,12 +167,12 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   domInputLocal_Array input_array = vertices->getInput_array();
   for(size_t i=0; i<input_array.getCount(); ++i)
   {
-    ref<DaeInput> dae_input = new DaeInput;
+    ref<Dae::Input> dae_input = new Dae::Input;
 
     dae_input->mSemantic = getSemantic(input_array[i]->getSemantic());
     if (dae_input->mSemantic == Dae::IS_UNKNOWN)
     {
-      Log::error( Say("LoadWriterCOLLADA: the following semantic is unknown: %s\n") << input_array[i]->getSemantic() );
+      Log::error( Say("LoadWriterDae: the following semantic is unknown: %s\n") << input_array[i]->getSemantic() );
       continue;
     }
 
@@ -708,7 +196,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   {
     domTrianglesRef triangles = triangles_arr.get(itri);
 
-    ref<DaePrimitive> dae_primitive = new DaePrimitive;
+    ref<Dae::Primitive> dae_primitive = new Dae::Primitive;
     dae_mesh->mPrimitives.push_back(dae_primitive);
     dae_primitive->mType = Dae::PT_TRIANGLES;
     dae_primitive->mCount = (size_t)triangles->getCount();
@@ -721,7 +209,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
     dae_primitive->mP.push_back( triangles->getP() );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = triangles->getMaterial() ? triangles->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = triangles->getMaterial() ? triangles->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
@@ -733,7 +221,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   {
     domTrifansRef trifan = trifan_arr.get(itri);
 
-    ref<DaePrimitive> dae_primitive = new DaePrimitive;
+    ref<Dae::Primitive> dae_primitive = new Dae::Primitive;
     dae_mesh->mPrimitives.push_back(dae_primitive);
     dae_primitive->mType = Dae::PT_TRIFANS;
     dae_primitive->mCount = (size_t)trifan->getCount();
@@ -747,7 +235,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
       dae_primitive->mP.push_back( trifan->getP_array().get(ip) );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = trifan->getMaterial() ? trifan->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = trifan->getMaterial() ? trifan->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
 
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
@@ -759,7 +247,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   {
     domTristripsRef tristrip = tristrip_arr.get(itri);
 
-    ref<DaePrimitive> dae_primitive = new DaePrimitive;
+    ref<Dae::Primitive> dae_primitive = new Dae::Primitive;
     dae_mesh->mPrimitives.push_back(dae_primitive);
     dae_primitive->mType = Dae::PT_TRISTRIPS;
     dae_primitive->mCount = (size_t)tristrip->getCount();
@@ -773,7 +261,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
       dae_primitive->mP.push_back( tristrip->getP_array().get(ip) );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = tristrip->getMaterial() ? tristrip->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = tristrip->getMaterial() ? tristrip->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
@@ -785,7 +273,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   {
     domPolygonsRef polygon = polygon_arr.get(itri);
 
-    ref<DaePrimitive> dae_primitive = new DaePrimitive;
+    ref<Dae::Primitive> dae_primitive = new Dae::Primitive;
     dae_mesh->mPrimitives.push_back(dae_primitive);
     dae_primitive->mType = Dae::PT_POLYGONS;
     dae_primitive->mCount = (size_t)polygon->getCount();
@@ -799,7 +287,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
       dae_primitive->mP.push_back( polygon->getP_array().get(ip) );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = polygon->getMaterial() ? polygon->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = polygon->getMaterial() ? polygon->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
@@ -811,7 +299,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   {
     domPolylistRef polylist = polylist_arr.get(itri);
 
-    ref<DaePrimitive> dae_primitive = new DaePrimitive;
+    ref<Dae::Primitive> dae_primitive = new Dae::Primitive;
     dae_mesh->mPrimitives.push_back(dae_primitive);
     dae_primitive->mType = Dae::PT_POLYGONS;
     dae_primitive->mCount = (size_t)polylist->getVcount()->getValue().getCount();
@@ -834,7 +322,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
     }
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = polylist->getMaterial() ? polylist->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = polylist->getMaterial() ? polylist->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
@@ -846,7 +334,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   {
     domLinestripsRef linestrip = linestrip_arr.get(itri);
 
-    ref<DaePrimitive> dae_primitive = new DaePrimitive;
+    ref<Dae::Primitive> dae_primitive = new Dae::Primitive;
     dae_mesh->mPrimitives.push_back(dae_primitive);
     dae_primitive->mType = Dae::PT_LINE_STRIP;
     dae_primitive->mCount = (size_t)linestrip->getCount();
@@ -860,7 +348,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
       dae_primitive->mP.push_back( linestrip->getP_array().get(ip) );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = linestrip->getMaterial() ? linestrip->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = linestrip->getMaterial() ? linestrip->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
@@ -872,7 +360,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   {
     domLinesRef line = line_arr.get(itri);
 
-    ref<DaePrimitive> dae_primitive = new DaePrimitive;
+    ref<Dae::Primitive> dae_primitive = new Dae::Primitive;
     dae_mesh->mPrimitives.push_back(dae_primitive);
     dae_primitive->mType = Dae::PT_LINES;
     dae_primitive->mCount = (size_t)line->getCount();
@@ -885,7 +373,7 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
     dae_primitive->mP.push_back( line->getP() );
 
     // --- ---- material ---- ---
-    dae_primitive->mMaterial = line->getMaterial() ? line->getMaterial() : Dae::VL_NO_MATERIAL_SPECIFIED;
+    dae_primitive->mMaterial = line->getMaterial() ? line->getMaterial() : VL_NO_MATERIAL_SPECIFIED;
       
     // --- ---- generates the geometry ---- ---
     generateGeometry( dae_primitive.get(), geometry->getAttribute("id").c_str() );
@@ -894,9 +382,9 @@ ref<DaeMesh> DaeLoader::parseGeometry(daeElement* geometry)
   return dae_mesh;
 }
 //-----------------------------------------------------------------------------
-DaeSource* DaeLoader::getSource(daeElement* source_el)
+Dae::Source* DaeLoader::getSource(daeElement* source_el)
 {
-  std::map< daeElementRef, ref<DaeSource> >::iterator it = mSources.find(source_el);
+  std::map< daeElementRef, ref<Dae::Source> >::iterator it = mSources.find(source_el);
   if (it != mSources.end())
     return it->second.get();
   else
@@ -917,7 +405,7 @@ DaeSource* DaeLoader::getSource(daeElement* source_el)
         mask |= 1<<ipar;
     }
 
-    ref<DaeSource> dae_source = new DaeSource;
+    ref<Dae::Source> dae_source = new Dae::Source;
 
     if (source->getFloat_array())
       dae_source->init(source->getFloat_array(), accessor->getCount(), accessor->getStride(), accessor->getOffset(), mask);
@@ -929,7 +417,7 @@ DaeSource* DaeLoader::getSource(daeElement* source_el)
       dae_source->init(source->getBool_array(), accessor->getCount(), accessor->getStride(), accessor->getOffset(), mask);
     else
     {
-      Log::error("LoadWriterCOLLADA: no supported source data found. Only Float_array, Int_array and Bool_array are supported as source data.\n");
+      Log::error("LoadWriterDae: no supported source data found. Only Float_array, Int_array and Bool_array are supported as source data.\n");
       return NULL;
     }
 
@@ -940,7 +428,7 @@ DaeSource* DaeLoader::getSource(daeElement* source_el)
   }
 }
 //-----------------------------------------------------------------------------
-ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
+ref<Effect> DaeLoader::setup_vl_Effect( Dae::Material* mat )
 {
   VL_CHECK(mat)
   VL_CHECK(mat->mDaeEffect)
@@ -952,7 +440,7 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
   // very basic material setup
   if (mat->mDaeEffect->mDaeTechniqueCOMMON)
   {
-    DaeTechniqueCOMMON* common_tech =mat->mDaeEffect->mDaeTechniqueCOMMON.get();
+    Dae::TechniqueCOMMON* common_tech =mat->mDaeEffect->mDaeTechniqueCOMMON.get();
 
     // compute the actual tranparency
     float transparency = 0;
@@ -1029,17 +517,17 @@ ref<Effect> DaeLoader::setup_vl_Effect( DaeMaterial* mat )
   }
   else
   {
-    Log::error("LoadWriterCOLLADA: technique or profile not supported.\n");
+    Log::error("LoadWriterDae: technique or profile not supported.\n");
     fx->shader()->gocMaterial()->setDiffuse( vl::fuchsia );
   }
 
   return fx;
 }
 //-----------------------------------------------------------------------------
-void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_materialRef bind_material)
+void DaeLoader::bindMaterials(Dae::Node* dae_node, Dae::Mesh* dae_mesh, domBind_materialRef bind_material)
 {
   // map symbols to actual materials
-  std::map< std::string, DaeMaterial* > material_map;
+  std::map< std::string, Dae::Material* > material_map;
 
   if ( bind_material )
   {
@@ -1050,7 +538,7 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
       {
         daeElement* material = material_instances[i]->getTarget().getElement();
         VL_CHECK(material)
-        std::map< daeElementRef, ref<DaeMaterial> >::iterator it = mMaterials.find( material );
+        std::map< daeElementRef, ref<Dae::Material> >::iterator it = mMaterials.find( material );
         if (it != mMaterials.end())
         {
           // mic fixme: issue warning
@@ -1060,34 +548,34 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
         }
         else
         {
-          VL_LOG_WARNING << "LoadWriterCOLLADA: material '" << material << "' not found!\n";
+          VL_LOG_WARNING << "LoadWriterDae: material '" << material << "' not found!\n";
           continue;
         }
       }
     }
     else
     {
-      VL_LOG_WARNING << "LoadWriterCOLLADA: technique_COMMON not found!\n";
+      VL_LOG_WARNING << "LoadWriterDae: technique_COMMON not found!\n";
     }
   }
 
   // now we need to instance the material
   for(size_t iprim=0; iprim<dae_mesh->mPrimitives.size(); ++iprim)
   {
-    ref<DaeMaterial> dae_material;
+    ref<Dae::Material> dae_material;
 
     if (!dae_mesh->mPrimitives[iprim]->mMaterial.empty())
     {
-      std::map< std::string, DaeMaterial* >::iterator it = material_map.find( dae_mesh->mPrimitives[iprim]->mMaterial );
+      std::map< std::string, Dae::Material* >::iterator it = material_map.find( dae_mesh->mPrimitives[iprim]->mMaterial );
       if (it != material_map.end())
       {
         dae_material = it->second;
       }
       else
       {
-        if ( dae_mesh->mPrimitives[iprim]->mMaterial != Dae::VL_NO_MATERIAL_SPECIFIED)
+        if ( dae_mesh->mPrimitives[iprim]->mMaterial != VL_NO_MATERIAL_SPECIFIED)
         {
-          VL_LOG_WARNING << "LoadWriterCOLLADA: material symbol " << dae_mesh->mPrimitives[iprim]->mMaterial << " could not be resolved.\n";
+          VL_LOG_WARNING << "LoadWriterDae: material symbol " << dae_mesh->mPrimitives[iprim]->mMaterial << " could not be resolved.\n";
         }
       }
     }
@@ -1099,14 +587,14 @@ void DaeLoader::bindMaterials(DaeNode* dae_node, DaeMesh* dae_mesh, domBind_mate
   }
 }
 //-----------------------------------------------------------------------------
-void DaeLoader::parseNode(daeElement* el, DaeNode* parent)
+void DaeLoader::parseNode(daeElement* el, Dae::Node* parent)
 {
   if (el->typeID() == domNode::ID())
   {
     // --- --- --- parse this node --- --- ---
 
     // create new node and add it to the library
-    ref<DaeNode> this_node = new DaeNode;
+    ref<Dae::Node> this_node = new Dae::Node;
     mNodes.push_back(this_node);
     parent->mChildren.push_back( this_node );
     parent->mTransform->addChild( this_node->mTransform.get() );
@@ -1119,7 +607,7 @@ void DaeLoader::parseNode(daeElement* el, DaeNode* parent)
     {
       VL_CHECK(geometries[i]->getUrl().getElement()->typeID() == domGeometry::ID())
       daeElement* geometry = geometries[i]->getUrl().getElement();
-      ref<DaeMesh> dae_mesh = parseGeometry(geometry);
+      ref<Dae::Mesh> dae_mesh = parseGeometry(geometry);
       if (dae_mesh)
         this_node->mMesh.push_back(dae_mesh.get());
         
@@ -1145,7 +633,7 @@ void DaeLoader::parseNode(daeElement* el, DaeNode* parent)
         if (!geometry)
           continue;
 
-        ref<DaeMesh> dae_mesh = parseGeometry(geometry);
+        ref<Dae::Mesh> dae_mesh = parseGeometry(geometry);
         if (dae_mesh)
           this_node->mMesh.push_back(dae_mesh.get());
         
@@ -1203,7 +691,7 @@ void DaeLoader::parseNode(daeElement* el, DaeNode* parent)
       {
         // mic fixme: support skew
         // domSkew* skew = static_cast<domSkew*>(child);
-        Log::error("LoadWriterCOLLADA: <skew> transform not supported yet. Call me if you know how to compute it.\n");
+        Log::error("LoadWriterDae: <skew> transform not supported yet. Call me if you know how to compute it.\n");
       }
     }
 
@@ -1251,7 +739,7 @@ bool DaeLoader::load(VirtualFile* file)
   daeElement* root = mDAE.openFromMemory(file->path().toStdString(), (char*)&buffer[0]);
   if (!root)
   {
-    Log::error( "LoadWriterCOLLADA: failed to open COLLADA document.\n" );
+    Log::error( "LoadWriterDae: failed to open COLLADA document.\n" );
     return false;
   }
 
@@ -1266,13 +754,13 @@ bool DaeLoader::load(VirtualFile* file)
   daeElement* visual_scene = root->getDescendant("visual_scene");
   if (!visual_scene)
   {
-    Log::error( "LoadWriterCOLLADA: <visual_scene> not found!\n" );
+    Log::error( "LoadWriterDae: <visual_scene> not found!\n" );
     return false;
   }
 
   // --- parse the visual scene ---
 
-  mScene = new DaeNode;
+  mScene = new Dae::Node;
   daeTArray< daeSmartRef<daeElement> > children = visual_scene->getChildren();
   for(size_t i=0; i<children.getCount(); ++i)
     parseNode(children[i], mScene.get());
@@ -1425,7 +913,7 @@ void DaeLoader::loadImages(const domImage_Array& images)
   {
     if ( strstr( images[i]->getInit_from()->getValue().getProtocol(), "file") == 0 )
     {
-      Log::error( Say("LoadWriterCOLLADA: protocol not supported: %s\n") << images[i]->getInit_from()->getValue().getURI() );
+      Log::error( Say("LoadWriterDae: protocol not supported: %s\n") << images[i]->getInit_from()->getValue().getURI() );
       continue;
     }
 
@@ -1455,7 +943,7 @@ void DaeLoader::parseEffects(daeElement* library)
   {
     domEffect* effect = effects[i].cast();
 
-    ref<DaeEffect> dae_effect = new DaeEffect;
+    ref<Dae::Effect> dae_effect = new Dae::Effect;
 
     std::string effect_name;
     if (effect->getName())
@@ -1479,7 +967,7 @@ void DaeLoader::parseEffects(daeElement* library)
         {
           domCommon_newparam_typeRef newparam = common->getNewparam_array()[ipar];
 
-          ref<DaeNewParam> dae_newparam = new DaeNewParam;
+          ref<Dae::NewParam> dae_newparam = new Dae::NewParam;
           dae_effect->mNewParams.push_back( dae_newparam );
 
           // insert in the map se can resolve references to <sampler2D> and <surface>
@@ -1497,7 +985,7 @@ void DaeLoader::parseEffects(daeElement* library)
               continue;
             }
 
-            dae_newparam->mDaeSurface = new DaeSurface;
+            dae_newparam->mDaeSurface = new Dae::Surface;
             daeElement* ref_image = surface->getFx_surface_init_common()->getInit_from_array()[0]->getValue().getElement();
             if (!ref_image)
             {
@@ -1520,7 +1008,7 @@ void DaeLoader::parseEffects(daeElement* library)
           {
             domFx_sampler2D_commonRef sampler2D = newparam->getSampler2D();
               
-            dae_newparam->mDaeSampler2D = new DaeSampler2D;
+            dae_newparam->mDaeSampler2D = new Dae::Sampler2D;
 
             // --- <source> ---
             daeSIDResolver sid_res( effect, sampler2D->getSource()->getValue() );
@@ -1529,7 +1017,7 @@ void DaeLoader::parseEffects(daeElement* library)
             if(!surface_newparam)
               continue;
 
-            std::map< daeElementRef, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(surface_newparam);
+            std::map< daeElementRef, ref<Dae::NewParam> >::iterator it = mDaeNewParams.find(surface_newparam);
             if ( it != mDaeNewParams.end() )
             {
               dae_newparam->mDaeSampler2D->mDaeSurface = it->second->mDaeSurface;
@@ -1604,7 +1092,7 @@ void DaeLoader::parseEffects(daeElement* library)
 
           domProfile_COMMON::domTechnique::domBlinnRef blinn = common->getTechnique()->getBlinn();
 
-          dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
+          dae_effect->mDaeTechniqueCOMMON = new Dae::TechniqueCOMMON;
           parseColor( common, blinn->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
           parseColor( common, blinn->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
           parseColor( common, blinn->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
@@ -1636,7 +1124,7 @@ void DaeLoader::parseEffects(daeElement* library)
 
           domProfile_COMMON::domTechnique::domPhongRef phong = common->getTechnique()->getPhong();
 
-          dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
+          dae_effect->mDaeTechniqueCOMMON = new Dae::TechniqueCOMMON;
           parseColor( common, phong->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
           parseColor( common, phong->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
           parseColor( common, phong->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
@@ -1670,7 +1158,7 @@ void DaeLoader::parseEffects(daeElement* library)
 
           domProfile_COMMON::domTechnique::domLambertRef lambert = common->getTechnique()->getLambert();
 
-          dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
+          dae_effect->mDaeTechniqueCOMMON = new Dae::TechniqueCOMMON;
           parseColor( common, lambert->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
           parseColor( common, lambert->getAmbient(),  &dae_effect->mDaeTechniqueCOMMON->mAmbient );
           parseColor( common, lambert->getDiffuse(),  &dae_effect->mDaeTechniqueCOMMON->mDiffuse );
@@ -1701,7 +1189,7 @@ void DaeLoader::parseEffects(daeElement* library)
 
           domProfile_COMMON::domTechnique::domConstantRef constant = common->getTechnique()->getConstant();
 
-          dae_effect->mDaeTechniqueCOMMON = new DaeTechniqueCOMMON;
+          dae_effect->mDaeTechniqueCOMMON = new Dae::TechniqueCOMMON;
           parseColor( common, constant->getEmission(), &dae_effect->mDaeTechniqueCOMMON->mEmission );
           dae_effect->mDaeTechniqueCOMMON->mAmbient.mColor  = fvec4(0,0,0,1);
           dae_effect->mDaeTechniqueCOMMON->mDiffuse.mColor  = fvec4(0,0,0,1);
@@ -1726,7 +1214,7 @@ void DaeLoader::parseEffects(daeElement* library)
         }
         else
         {
-          Log::error("LoadWriterCOLLADA: technique not supported.\n");
+          Log::error("LoadWriterDae: technique not supported.\n");
         }
 
         dae_effect->setObjectName( effect_name );
@@ -1774,7 +1262,7 @@ void DaeLoader::parseEffects(daeElement* library)
   }
 }
 //-----------------------------------------------------------------------------
-void DaeLoader::prepareTexture2D(DaeSampler2D* sampler2D)
+void DaeLoader::prepareTexture2D(Dae::Sampler2D* sampler2D)
 {
   if (sampler2D->mDaeSurface && sampler2D->mDaeSurface->mImage)
   {
@@ -1787,6 +1275,8 @@ void DaeLoader::prepareTexture2D(DaeSampler2D* sampler2D)
         sampler2D->mMinFilter = TPF_LINEAR_MIPMAP_NEAREST;
       else
         use_mipmaps = false;
+    default:
+      break;
     }
 
     sampler2D->mTexture = new Texture;
@@ -1813,11 +1303,11 @@ void DaeLoader::parseMaterials(daeElement* library)
       continue;
     }
 
-    std::map< daeElementRef, ref<DaeEffect> >::iterator it = mEffects.find(effect);
+    std::map< daeElementRef, ref<Dae::Effect> >::iterator it = mEffects.find(effect);
     if (it != mEffects.end())
     {
       domMaterial* material = materials[i].cast();
-      ref<DaeMaterial> dae_material = new DaeMaterial;
+      ref<Dae::Material> dae_material = new Dae::Material;
       dae_material->mDaeEffect = it->second;
       mMaterials[ material ] = dae_material;
     }
@@ -1994,11 +1484,9 @@ void DaeLoader::setupLights()
       }
     }
   }
-
-  // sort lights
-  struct light_sorter
+  struct dummy
   {
-    bool operator()(const ref<Light>& a, const ref<Light>& b) const
+    static bool light_sorter(const ref<Light>& a, const ref<Light>& b)
     {
       // ambient lights first
       if (a->ambient() != b->ambient())
@@ -2012,7 +1500,7 @@ void DaeLoader::setupLights()
         return a->spotCutoff() > b->spotCutoff();
     }
   };
-  std::sort(mLights.begin(), mLights.end(), light_sorter());
+  std::sort(mLights.begin(), mLights.end(), dummy::light_sorter);
 
   // set light indices and adds to the resource database
   for(size_t i=0; i<mLights.size(); ++i)
@@ -2024,16 +1512,16 @@ void DaeLoader::setupLights()
   if (mLights.empty())
   {
     mLights.push_back( new Light );
-    mLights[0]->setObjectName(Dae::VL_DEFAULT_LIGHT);
+    mLights[0]->setObjectName(VL_DEFAULT_LIGHT);
   }
 }
 //-----------------------------------------------------------------------------
 Dae::EInputSemantic DaeLoader::getSemantic(const char* semantic)
 {
-  for(int i=0; Dae::SemanticTable[i].mSemanticString; ++i)
+  for(int i=0; SemanticTable[i].mSemanticString; ++i)
   {
-    if (strcmp(semantic, Dae::SemanticTable[i].mSemanticString) == 0)
-      return Dae::SemanticTable[i].mSemantic;
+    if (strcmp(semantic, SemanticTable[i].mSemanticString) == 0)
+      return SemanticTable[i].mSemantic;
   }
 
   return Dae::IS_UNKNOWN;
@@ -2041,10 +1529,10 @@ Dae::EInputSemantic DaeLoader::getSemantic(const char* semantic)
 //-----------------------------------------------------------------------------
 const char* DaeLoader::getSemanticString(Dae::EInputSemantic semantic)
 {
-  for(int i=0; Dae::SemanticTable[i].mSemanticString; ++i)
+  for(int i=0; SemanticTable[i].mSemanticString; ++i)
   {
-    if ( semantic == Dae::SemanticTable[i].mSemantic )
-      return Dae::SemanticTable[i].mSemanticString;
+    if ( semantic == SemanticTable[i].mSemantic )
+      return SemanticTable[i].mSemanticString;
   }
 
   return NULL;
@@ -2077,7 +1565,7 @@ ETexParamWrap DaeLoader::translateWrapMode(domFx_sampler_wrap_common wrap)
 }
 //-----------------------------------------------------------------------------
 template<class T_color_or_texture>
-void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_texture& color_or_texture, DaeColorOrTexture* out_col)
+void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_texture& color_or_texture, Dae::ColorOrTexture* out_col)
 {
   if (!color_or_texture)
     return;
@@ -2094,14 +1582,14 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
     daeSIDResolver sid_res( const_cast<domProfile_COMMON*>(common), color_or_texture->getTexture()->getTexture() );
     domElement* sampler2D_newparam = sid_res.getElement();
 
-    std::map< daeElementRef, ref<DaeNewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
+    std::map< daeElementRef, ref<Dae::NewParam> >::iterator it = mDaeNewParams.find(sampler2D_newparam);
     if ( it != mDaeNewParams.end() )
     {
       VL_CHECK(it->second->mDaeSampler2D)
       out_col->mSampler = it->second->mDaeSampler2D;
-      if ( it->second->mDaeSampler2D == NULL)
+      if ( it->second->mDaeSampler2D.get() == NULL)
       {
-        VL_LOG_WARNING << "LoadWriterCOLLADA: malformed file: <texture texture=..> points to a <newparam> that does not contain <sampler2D>!\n";
+        VL_LOG_WARNING << "LoadWriterDae: malformed file: <texture texture=..> points to a <newparam> that does not contain <sampler2D>!\n";
       }
     }
     else
@@ -2110,16 +1598,16 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
       if ( it != mImages.end() )
       {
         // create dummy sampler
-        out_col->mSampler = new DaeSampler2D;
-        out_col->mSampler->mDaeSurface = new DaeSurface;
+        out_col->mSampler = new Dae::Sampler2D;
+        out_col->mSampler->mDaeSurface = new Dae::Surface;
         out_col->mSampler->mDaeSurface->mImage = it->second;
         prepareTexture2D( out_col->mSampler.get() );
-        VL_LOG_WARNING << "LoadWriterCOLLADA: malformed file: <texture texture=..> parameter points to an <image> instead of a <sampler2D>!\n"
+        VL_LOG_WARNING << "LoadWriterDae: malformed file: <texture texture=..> parameter points to an <image> instead of a <sampler2D>!\n"
                           "VL will create a dummy sampler with the specified image.\n";
       }
       else
       {
-        VL_LOG_WARNING << "LoadWriterCOLLADA: malformed file: <texture texture=..> could not be resolved to anything!\n";
+        VL_LOG_WARNING << "LoadWriterDae: malformed file: <texture texture=..> could not be resolved to anything!\n";
       }
     }
 
@@ -2128,7 +1616,7 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
   }
 }
 //-----------------------------------------------------------------------------
-void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
+void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
 {
   VL_CHECK(prim->mIndexStride);
 
@@ -2144,12 +1632,12 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
     {
       if ( prim->mChannels[i]->mSource->count() != prim->mChannels[0]->mSource->count() )
       {
-        VL_LOG_WARNING << "LoadWriterCOLLADA: cannot generate point cloud: channels have different sizes!\n";
+        VL_LOG_WARNING << "LoadWriterDae: cannot generate point cloud: channels have different sizes!\n";
         return;
       }
       if ( prim->mChannels[i]->mOffset != 0 )
       {
-        VL_LOG_WARNING << "LoadWriterCOLLADA: cannot generate point cloud: channels must have offset == 0!\n";
+        VL_LOG_WARNING << "LoadWriterDae: cannot generate point cloud: channels must have offset == 0!\n";
         return;
       }
     }
@@ -2172,7 +1660,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
   std::vector<GLint> vcount;
 
   // generate index buffer for DrawElements or MultiDrawElements.
-  std::set<DaeVert> vert_set;
+  std::set<Dae::Vert> vert_set;
   for(size_t ip=0, iidx=0; ip<prim->mP.size(); ++ip)
   {
     const domListOfUInts& p = prim->mP[ip]->getValue();
@@ -2181,7 +1669,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
 
     for(size_t ivert=0; ivert<p.getCount(); ivert+=prim->mIndexStride, ++iidx)
     {
-      DaeVert vert;
+      Dae::Vert vert;
 
       // fill vertex info
       for(size_t ichannel=0; ichannel<prim->mChannels.size(); ++ichannel)
@@ -2189,7 +1677,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
 
       size_t final_index = 0xFFFFFFFF;
       // retrieve/insert the vertex
-      std::set<DaeVert>::iterator it = vert_set.find(vert);
+      std::set<Dae::Vert>::iterator it = vert_set.find(vert);
       if (it == vert_set.end())
       {
         vert.mIndex = final_index = vert_set.size();
@@ -2296,7 +1784,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
         break;
       }
       default:
-        Log::warning( Say("LoadWriterCOLLADA: input '%s' skipped because parameter count is more than 4.\n") << getSemanticString(prim->mChannels[ich]->mSemantic) );
+        Log::warning( Say("LoadWriterDae: input '%s' skipped because parameter count is more than 4.\n") << getSemanticString(prim->mChannels[ich]->mSemantic) );
         continue;
     }
 
@@ -2308,7 +1796,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
     case Dae::IS_COLOR:    prim->mGeometry->setColorArray( vert_attrib.get() ); break;
     case Dae::IS_TEXCOORD: prim->mGeometry->setTexCoordArray( tex_unit++, vert_attrib.get() ); break;
     default:
-      VL_LOG_WARNING << ( Say("LoadWriterCOLLADA: input semantic '%s' not supported.\n") << getSemanticString(prim->mChannels[ich]->mSemantic) );
+      VL_LOG_WARNING << ( Say("LoadWriterDae: input semantic '%s' not supported.\n") << getSemanticString(prim->mChannels[ich]->mSemantic) );
       continue;
     }
 
@@ -2316,9 +1804,9 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
     vert_attrib->setObjectName( String(Say("%s@SET%n") << getSemanticString(prim->mChannels[ich]->mSemantic) << prim->mChannels[ich]->mSet).toStdString() );
 
     // fill the vertex attribute array
-    for(std::set<DaeVert>::iterator it = vert_set.begin(); it != vert_set.end(); ++it)
+    for(std::set<Dae::Vert>::iterator it = vert_set.begin(); it != vert_set.end(); ++it)
     {
-      const DaeVert& vert = *it;
+      const Dae::Vert& vert = *it;
       size_t idx = vert.mAttribIndex[ich];
       VL_CHECK(ptr + prim->mChannels[ich]->mSource->dataSize()*vert.mIndex < ptr_end);
       prim->mChannels[ich]->mSource->readData(idx, ptr +prim-> mChannels[ich]->mSource->dataSize()*vert.mIndex);
@@ -2344,14 +1832,14 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
       float l = norm_old->at(i).length();
       if ( l < 0.5f ) 
       {
-        // Log::warning( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
+        // Log::warning( Say("LoadWriterDae: degenerate normal #%n: len = %n\n") << i << l );
         norm_old->at(i) = norm_new->at(i);
         ++degenerate;
       }
 
       if ( l < 0.9f || l > 1.1f ) 
       {
-        // VL_LOG_WARNING << ( Say("LoadWriterCOLLADA: degenerate normal #%n: len = %n\n") << i << l );
+        // VL_LOG_WARNING << ( Say("LoadWriterDae: degenerate normal #%n: len = %n\n") << i << l );
         norm_old->at(i).normalize();
         ++degenerate;
       }
@@ -2365,7 +1853,7 @@ void DaeLoader::generateGeometry(DaePrimitive* prim, const char* name)
 
     // mic fixme: issue these things as debug once things got stable
     if (degenerate || flipped) 
-      VL_LOG_WARNING << ( Say("LoadWriterCOLLADA: fixed bad normals: %n degenerate and %n flipped (out of %n).\n") << degenerate << flipped << norm_old->size() );
+      VL_LOG_WARNING << ( Say("LoadWriterDae: fixed bad normals: %n degenerate and %n flipped (out of %n).\n") << degenerate << flipped << norm_old->size() );
 
     // reinstall fixed normals
     prim->mGeometry->setNormalArray(norm_old.get());
@@ -2406,10 +1894,10 @@ void DaeLoader::parseAsset(domElement* root)
     // try to fix the transparency written by crappy tools
     mInvertTransparency = false;
     mAssumeOpaque = false;
-    if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyInvert)
+    if (loadOptions()->invertTransparency() == LoadWriterDae::LoadOptions::TransparencyInvert)
       mInvertTransparency = true;
     else
-    if (loadOptions()->invertTransparency() == LoadWriterCOLLADA::LoadOptions::TransparencyAuto)
+    if (loadOptions()->invertTransparency() == LoadWriterDae::LoadOptions::TransparencyAuto)
     {
       for(size_t i=0; i<asset->getContributor_array().getCount(); ++i)
       {
@@ -2520,25 +2008,3 @@ void DaeLoader::parseAsset(domElement* root)
     }
   }
 }
-//-----------------------------------------------------------------------------
-ref<ResourceDatabase> LoadWriterCOLLADA::load(const String& path, const LoadOptions* options)
-{
-  ref<VirtualFile> file = defFileSystem()->locateFile(path);
-
-  if (file)
-    return load( file.get(), options );
-  else
-  {
-    Log::error( Say("Could not locate '%s'.\n") << path );
-    return NULL;
-  }
-}
-//-----------------------------------------------------------------------------
-ref<ResourceDatabase> LoadWriterCOLLADA::load(VirtualFile* file, const LoadOptions* options)
-{
-  DaeLoader loader;
-  loader.setLoadOptions(options);
-  loader.load(file);
-  return loader.resources();
-}
-//-----------------------------------------------------------------------------
