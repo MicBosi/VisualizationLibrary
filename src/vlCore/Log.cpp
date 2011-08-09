@@ -248,7 +248,7 @@ void Log::logSystemInfo()
 //------------------------------------------------------------------------------
 void vl::log_failed_check(const char* expr, const char* file, int line)
 {
-  VL_LOG_ERROR << "Condition \"" << expr << "\" failed at " << file << ":" << line << "\n" << 'a';
+  VL_LOG_ERROR << "Condition '" << expr << "' failed at " << file << ":" << line << "\n";
   fflush(stdout);
   fflush(stderr);
 

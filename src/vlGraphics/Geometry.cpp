@@ -141,7 +141,7 @@ Geometry& Geometry::deepCopyFrom(const Geometry& other)
 ref<Geometry> Geometry::shallowCopy() const
 {
   ref<Geometry> geom = new Geometry;
-  geom->operator=(*this);
+  geom->shallowCopyFrom(*this);
   return geom;
 }
 //-----------------------------------------------------------------------------
