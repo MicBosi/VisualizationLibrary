@@ -216,7 +216,7 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
   glEnableClientState( GL_VERTEX_ARRAY );
   glVertexPointer(3, GL_FLOAT, 0, vect[0].ptr());
 
-  FT_Long use_kerning = FT_HAS_KERNING( font()->mFT_Face );
+  FT_Long has_kerning = FT_HAS_KERNING( font()->mFT_Face );
   FT_UInt previous = 0;
 
   // viewport alignment
@@ -346,7 +346,7 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
       if (!glyph)
         continue;
 
-      if ( kerningEnabled() && use_kerning && previous && glyph->glyphIndex() )
+      if ( kerningEnabled() && has_kerning && previous && glyph->glyphIndex() )
       {
         FT_Vector delta; delta.y = 0;
         if (layout() == LeftToRightText)
@@ -593,7 +593,7 @@ AABB Text::rawboundingRect(const String& text) const
   fvec2 pen(0,0);
   fvec3 vect[4];
 
-  FT_Long use_kerning = FT_HAS_KERNING( font()->mFT_Face );
+  FT_Long has_kerning = FT_HAS_KERNING( font()->mFT_Face );
   FT_UInt previous = 0;
 
   for(int c=0; c<(int)text.length(); c++)
@@ -611,7 +611,7 @@ AABB Text::rawboundingRect(const String& text) const
     if (glyph.get() == NULL)
       continue;
 
-    if ( kerningEnabled() && use_kerning && previous && glyph->glyphIndex())
+    if ( kerningEnabled() && has_kerning && previous && glyph->glyphIndex())
     {
       FT_Vector delta; delta.y = 0;
       if (layout() == LeftToRightText)
