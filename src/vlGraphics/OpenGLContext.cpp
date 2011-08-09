@@ -224,12 +224,12 @@ bool OpenGLContext::initGLContext(bool log)
     return false;
   }
 
+  mExtensions = getOpenGLExtensions();
+
   if (log)
     logOpenGLInfo();
 
   VL_CHECK_OGL();
-
-  mExtensions = getOpenGLExtensions();
 
   // Find max number of texture units, see http://www.opengl.org/sdk/docs/man/xhtml/glActiveTexture.xml
   mTextureSamplerCount = 1;
