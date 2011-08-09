@@ -378,19 +378,14 @@ Glyph* Font::glyph(int character)
       img->allocate2D(w, h, 1, IF_RGBA, IT_UNSIGNED_BYTE);
 
       // init to all transparent white
-      for(int byte=0; byte<img->requiredMemory(); byte+=4)
+      unsigned char* px = img->pixels();
+      unsigned char* end = px + img->requiredMemory();
+      for(; px<end; px+=4)
       {
-#if (1)
-        img->pixels()[byte + 0] = 0xFF;
-        img->pixels()[byte + 1] = 0xFF;
-        img->pixels()[byte + 2] = 0xFF;
-        img->pixels()[byte + 3] = 0x0;
-#else
-        img->pixels()[byte + 0] = 0x0;
-        img->pixels()[byte + 1] = 0x0;
-        img->pixels()[byte + 2] = 0x0;
-        img->pixels()[byte + 3] = 0xFF;
-#endif
+        px[0] = 0xFF;
+        px[1] = 0xFF;
+        px[2] = 0xFF;
+        px[3] = 0x0;
       }
 
       // maps the glyph on the texture leaving a 1px margin
