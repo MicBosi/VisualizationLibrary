@@ -378,9 +378,7 @@ Glyph* Font::glyph(int character)
       img->allocate2D(w, h, 1, IF_RGBA, IT_UNSIGNED_BYTE);
 
       // init to all transparent white
-      unsigned char* px = img->pixels();
-      unsigned char* end = px + img->requiredMemory();
-      for(; px<end; px+=4)
+      for(unsigned char *px = img->pixels(), *end = px + img->requiredMemory(); px<end; px+=4)
       {
         px[0] = 0xFF;
         px[1] = 0xFF;
