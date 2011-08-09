@@ -66,7 +66,7 @@ namespace vl
       case LL_LogWarning: warning(str); break;
       case LL_LogDebug: debug(str); break;
       }
-      return *this; 
+      return *this;
     }
 
     Log& operator<<( const std::string& v )
