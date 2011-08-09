@@ -388,7 +388,7 @@ bool EGLWindow::initEGLWindow(HWND parent, const vl::String& title, const vl::Op
   return true;
 }
 //-----------------------------------------------------------------------------
-void EGLWindow::swapBuffers() const
+void EGLWindow::swapBuffers()
 {
   // Due to the fact that eglSwapBuffers() can call WM_DESTROY mEGL_Surface might become NULL after calling it.
   if ( !eglSwapBuffers(mEGL_Display, mEGL_Surface) && mEGL_Surface )
@@ -397,7 +397,7 @@ void EGLWindow::swapBuffers() const
   }
 }
 //-----------------------------------------------------------------------------
-void EGLWindow::makeCurrent() const
+void EGLWindow::makeCurrent()
 {
   if ( !eglMakeCurrent(mEGL_Display, mEGL_Surface, mEGL_Surface, mEGL_Context) )
   {
@@ -405,7 +405,7 @@ void EGLWindow::makeCurrent() const
   }
 }
 //-----------------------------------------------------------------------------
-void EGLWindow::update() const
+void EGLWindow::update()
 {
   if (mHWND)
     PostMessage(hwnd(), WM_PAINT, 0, 0);

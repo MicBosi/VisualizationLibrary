@@ -80,11 +80,11 @@ namespace vlWX
 
     bool setFullscreen(bool fullscreen);
     void quitApplication();
-    void makeCurrent() const;
-    void swapBuffers() const;
+    void makeCurrent();
+    void swapBuffers();
     void getFocus();
     void setMousePosition(int x, int y);
-    void update() const;
+    void update();
     void setWindowTitle(const vl::String& text);
     void show();
     void hide();

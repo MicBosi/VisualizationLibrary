@@ -325,13 +325,13 @@ void GLUTWindow::setMousePosition(int x, int y)
   glutWarpPointer(x,y);
 }
 //-----------------------------------------------------------------------------
-void GLUTWindow::update() const
+void GLUTWindow::update()
 {
   if ( handle() )
     glutPostWindowRedisplay( handle() );
 }
 //-----------------------------------------------------------------------------
-void GLUTWindow::makeCurrent() const
+void GLUTWindow::makeCurrent()
 {
   if ( handle() )
     glutSetWindow( handle() );
@@ -352,7 +352,7 @@ void GLUTWindow::updateOverlay()
   glutPostOverlayRedisplay();
 }
 //-----------------------------------------------------------------------------
-void GLUTWindow::swapBuffers() const
+void GLUTWindow::swapBuffers()
 {
   glutSwapBuffers();
 }

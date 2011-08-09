@@ -238,7 +238,7 @@ namespace vlQt4
       dispatchRunEvent();
     }
 
-    void update() const
+    void update()
     {
       QGLWidget::update();
       // QGLWidget::updateGL();
@@ -297,12 +297,12 @@ namespace vlQt4
       return vl::ivec2(QGLWidget::size().width(), QGLWidget::size().height());
     }
 
-    void swapBuffers() const
+    void swapBuffers()
     {
       QGLWidget::swapBuffers();
     }
 
-    void makeCurrent() const
+    void makeCurrent()
     {
       QGLWidget::makeCurrent();
     }
