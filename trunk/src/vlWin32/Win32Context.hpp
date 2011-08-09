@@ -65,11 +65,11 @@ namespace vlWin32
     //! before you start creating any resources.
     void shareOpenGLResources(HGLRC hGLRC);
 
-    void makeCurrent() const;
+    void makeCurrent();
 
-    void update() const;
+    void update();
 
-    void swapBuffers() const;
+    void swapBuffers();
 
     void setWindowTitle(const vl::String& title);
 

@@ -78,15 +78,15 @@ namespace vlGLUT
     //! Quits the progra calling the C function exit(0).
     void quitApplication() { eraseAllEventListeners(); exit(0); }
 
-    void update() const;
+    void update();
 
     bool setFullscreen(bool fs);
 
-    void makeCurrent() const;
+    void makeCurrent();
 
     void updateOverlay();
 
-    void swapBuffers() const;
+    void swapBuffers();
 
     void setWindowTitle(const vl::String& title) ;
 
