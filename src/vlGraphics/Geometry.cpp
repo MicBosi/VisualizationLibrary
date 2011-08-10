@@ -61,13 +61,13 @@ void Geometry::computeBounds_Implementation()
 
   if (coords == NULL)
   {
-    Log::error("Geometry::computeBounds_Implementation() failed! No vertex buffer present!\n");
+    Log::debug("Geometry::computeBounds_Implementation() failed! No vertex buffer present!\n");
     return;
   }
 
   if (coords->size() == 0)
   {
-    Log::error("Geometry::computeBounds_Implementation() failed! No vertices present in the local buffer! Did you forget to call setBoundingBox() and setBoundingSphere()?\n");
+    Log::debug("Geometry::computeBounds_Implementation() failed! No vertices present in the local buffer! Did you forget to call setBoundingBox() and setBoundingSphere()?\n");
     return;
   }
 
