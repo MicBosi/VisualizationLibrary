@@ -33,11 +33,21 @@
 #define DaHelpers_INCLUDE_ONCE
 
 // needs to be but here because the awesome geniouses that programmed collada-dom 2.3 cleverly decided to use the same macro names as OpenGL, see domTypes.h
-#include <dae.h>
-#include <dae/domAny.h>
-#include <dom.h>
-#include <dom/domCOLLADA.h>
-#include <dom/domProfile_COMMON.h>
+#ifdef _MSC_VER
+  #pragma warning(disable:4100)
+  #pragma warning(disable:4355)
+  #pragma warning(disable:4512)
+#endif
+  #include <dae.h>
+  #include <dae/domAny.h>
+  #include <dom.h>
+  #include <dom/domCOLLADA.h>
+  #include <dom/domProfile_COMMON.h>
+#ifdef _MSC_VER
+  #pragma warning(default:4100)
+  #pragma warning(default:4355)
+  #pragma warning(default:4512)
+#endif
 
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Geometry.hpp>

@@ -548,14 +548,14 @@ void DaeLoader::bindMaterials(Dae::Node* dae_node, Dae::Mesh* dae_mesh, domBind_
         }
         else
         {
-          VL_LOG_WARNING << "LoadWriterDae: material '" << material << "' not found!\n";
+          VL_LOG_DEBUG << "- LoadWriterDae: material '" << material << "' not found!\n";
           continue;
         }
       }
     }
     else
     {
-      VL_LOG_WARNING << "LoadWriterDae: technique_COMMON not found!\n";
+      VL_LOG_DEBUG << "- LoadWriterDae: technique_COMMON not found!\n";
     }
   }
 
@@ -575,7 +575,7 @@ void DaeLoader::bindMaterials(Dae::Node* dae_node, Dae::Mesh* dae_mesh, domBind_
       {
         if ( dae_mesh->mPrimitives[iprim]->mMaterial != VL_NO_MATERIAL_SPECIFIED)
         {
-          VL_LOG_WARNING << "LoadWriterDae: material symbol " << dae_mesh->mPrimitives[iprim]->mMaterial << " could not be resolved.\n";
+          VL_LOG_DEBUG << "- LoadWriterDae: material symbol " << dae_mesh->mPrimitives[iprim]->mMaterial << " could not be resolved.\n";
         }
       }
     }
@@ -981,7 +981,7 @@ void DaeLoader::parseEffects(daeElement* library)
 
             if ( !surface->getFx_surface_init_common()->getInit_from_array().getCount() )
             {
-              VL_LOG_WARNING << "'surface->getFx_surface_init_common()->getInit_from_array().getCount()' is 0: " << __FILE__ << ":" << __LINE__ << "\n";
+              VL_LOG_DEBUG << "- 'surface->getFx_surface_init_common()->getInit_from_array().getCount()' is 0: " << __FILE__ << ":" << __LINE__ << "\n";
               continue;
             }
 
@@ -989,7 +989,7 @@ void DaeLoader::parseEffects(daeElement* library)
             daeElement* ref_image = surface->getFx_surface_init_common()->getInit_from_array()[0]->getValue().getElement();
             if (!ref_image)
             {
-              VL_LOG_WARNING << "'surface->getFx_surface_init_common()->getInit_from_array()[0]->getValue().getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
+              VL_LOG_DEBUG << "- 'surface->getFx_surface_init_common()->getInit_from_array()[0]->getValue().getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
               continue;
             }
 
@@ -998,7 +998,7 @@ void DaeLoader::parseEffects(daeElement* library)
               dae_newparam->mDaeSurface->mImage = it->second.get();
             else
             {
-              VL_LOG_WARNING << "'mImages.find( ref_image )' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
+              VL_LOG_DEBUG << "- 'mImages.find( ref_image )' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
               continue;
             }
           }
@@ -1015,7 +1015,7 @@ void DaeLoader::parseEffects(daeElement* library)
             domElement* surface_newparam = sid_res.getElement();
             if(!surface_newparam)
             {
-              VL_LOG_WARNING << (Say("<surface> '%s' referenced by <sampler2D> '%s' not found!\n") << sampler2D->getSource()->getValue() << newparam->getSid() );
+              VL_LOG_DEBUG << (Say("- <surface> '%s' referenced by <sampler2D> '%s' not found!\n") << sampler2D->getSource()->getValue() << newparam->getSid() );
               continue;
             }
 
@@ -1026,7 +1026,7 @@ void DaeLoader::parseEffects(daeElement* library)
             }
             else
             {
-              VL_LOG_WARNING << "'mDaeNewParams.find(surface_newparam)' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
+              VL_LOG_DEBUG << "- 'mDaeNewParams.find(surface_newparam)' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
               continue;
             }
               
@@ -1301,7 +1301,7 @@ void DaeLoader::parseMaterials(daeElement* library)
     domElement* effect = materials[i]->getInstance_effect()->getUrl().getElement();
     if (!effect)
     {
-      VL_LOG_WARNING << "'materials[i]->getInstance_effect()->getUrl().getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
+      VL_LOG_DEBUG << "- 'materials[i]->getInstance_effect()->getUrl().getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
       continue;
     }
 
@@ -1315,7 +1315,7 @@ void DaeLoader::parseMaterials(daeElement* library)
     }
     else
     {
-      VL_LOG_WARNING << "'mEffects.find(effect)' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
+      VL_LOG_DEBUG << "- 'mEffects.find(effect)' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
       continue;
     }
   }
@@ -1512,7 +1512,10 @@ void DaeLoader::setupLights()
     mResources->resources().push_back( mLights[i].get() );
   }
 
-  // default light if no lights were present in the scene
+  if (loadOptions()->exportLights() == false)
+    mLights.clear();
+
+  // default light if no lights were present in the scene or exportLights() == false
   if (mLights.empty())
   {
     mLights.push_back( new Light );
@@ -1593,7 +1596,7 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
       out_col->mSampler = it->second->mDaeSampler2D;
       if ( it->second->mDaeSampler2D.get() == NULL)
       {
-        VL_LOG_WARNING << "LoadWriterDae: malformed file: <texture texture=..> points to a <newparam> that does not contain <sampler2D>!\n";
+        VL_LOG_DEBUG << "- LoadWriterDae: malformed file: <texture texture=..> points to a <newparam> that does not contain <sampler2D>!\n";
       }
     }
     else
@@ -1606,12 +1609,12 @@ void DaeLoader::parseColor(const domProfile_COMMON* common, const T_color_or_tex
         out_col->mSampler->mDaeSurface = new Dae::Surface;
         out_col->mSampler->mDaeSurface->mImage = it->second;
         prepareTexture2D( out_col->mSampler.get() );
-        VL_LOG_WARNING << "LoadWriterDae: malformed file: <texture texture=..> parameter points to an <image> instead of a <sampler2D>!\n"
+        VL_LOG_DEBUG << "- LoadWriterDae: malformed file: <texture texture=..> parameter points to an <image> instead of a <sampler2D>!\n"
                           "VL will create a dummy sampler with the specified image.\n";
       }
       else
       {
-        VL_LOG_WARNING << "LoadWriterDae: malformed file: <texture texture=..> could not be resolved to anything!\n";
+        VL_LOG_DEBUG << "- LoadWriterDae: malformed file: <texture texture=..> could not be resolved to anything!\n";
       }
     }
 
@@ -1636,12 +1639,12 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
     {
       if ( prim->mChannels[i]->mSource->count() != prim->mChannels[0]->mSource->count() )
       {
-        VL_LOG_WARNING << "LoadWriterDae: cannot generate point cloud: channels have different sizes!\n";
+        VL_LOG_DEBUG << "- LoadWriterDae: cannot generate point cloud: channels have different sizes!\n";
         return;
       }
       if ( prim->mChannels[i]->mOffset != 0 )
       {
-        VL_LOG_WARNING << "LoadWriterDae: cannot generate point cloud: channels must have offset == 0!\n";
+        VL_LOG_DEBUG << "- LoadWriterDae: cannot generate point cloud: channels must have offset == 0!\n";
         return;
       }
     }
@@ -1800,7 +1803,7 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
     case Dae::IS_COLOR:    prim->mGeometry->setColorArray( vert_attrib.get() ); break;
     case Dae::IS_TEXCOORD: prim->mGeometry->setTexCoordArray( tex_unit++, vert_attrib.get() ); break;
     default:
-      VL_LOG_WARNING << ( Say("LoadWriterDae: input semantic '%s' not supported.\n") << getSemanticString(prim->mChannels[ich]->mSemantic) );
+      VL_LOG_DEBUG << ( Say("- LoadWriterDae: input semantic '%s' not supported.\n") << getSemanticString(prim->mChannels[ich]->mSemantic) );
       continue;
     }
 
@@ -1855,7 +1858,7 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
 
     // mic fixme: issue these things as debug once things got stable
     if (degenerate || flipped) 
-      VL_LOG_WARNING << ( Say("LoadWriterDae: fixed bad normals in \"%s\": degenerate=%n, flipped=%n (out of %n).\n")  << prim->mGeometry->objectName() << degenerate << flipped << norm_old->size() );
+      VL_LOG_DEBUG << ( Say("- LoadWriterDae: fixed bad normals in \"%s\": degenerate=%n, flipped=%n (out of %n).\n")  << prim->mGeometry->objectName() << degenerate << flipped << norm_old->size() );
 
     // reinstall fixed normals
     prim->mGeometry->setNormalArray(norm_old.get());
@@ -1908,7 +1911,7 @@ void DaeLoader::parseAsset(domElement* root)
         if (!tool)
           continue;
 
-        VL_LOG_DEBUG << "Authoring tool = " << tool << "\n";
+        VL_LOG_DEBUG << "- Authoring tool = " << tool << "\n";
 
         // Google SketchUp before 7.1 requires <transparency> inversion.
         // see http://www.collada.org/public_forum/viewtopic.php?f=12&t=1667
@@ -2001,8 +2004,8 @@ void DaeLoader::parseAsset(domElement* root)
           mInvertTransparency = true;
         }
 
-        VL_LOG_DEBUG << "Invert transparency = " << (mInvertTransparency ? "yes" : "no.") << "\n";
-        VL_LOG_DEBUG << "Assume opaque = " << (mAssumeOpaque? "yes" : "no.") << "\n";
+        VL_LOG_DEBUG << "- Invert transparency = " << (mInvertTransparency ? "yes" : "no.") << "\n";
+        VL_LOG_DEBUG << "- Assume opaque = " << (mAssumeOpaque? "yes" : "no.") << "\n";
 
         // stop at the first contributor
         break;
