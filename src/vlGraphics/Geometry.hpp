@@ -214,6 +214,9 @@ namespace vl
     //! Converts all the DrawCall objects bound to a Geometry into DrawArrays.
     void convertDrawCallToDrawArrays();
 
+    //! Converts all draw calls to triangles and fixes their winding according to the Geometry's normals.
+    void fixTriangleWinding();
+
     //! Converts PT_QUADS, PT_QUADS_STRIP, PT_POLYGON into PT_TRIANGLE primitives and converts DrawElementsUInt into DrawElementsUByte and DrawElementsUShort.
     //! - Under OpenGL ES 2.0 this function also calls Geometry::convertToVertexAttribs().
     //! - Does not handle vl::MultiDrawElements* vl::DrawRangeElements*, primitive restart and draw call multi-instancing.
