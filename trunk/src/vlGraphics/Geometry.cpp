@@ -757,9 +757,89 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
     for(TriangleIterator it = mergendo_calls[i]->triangleIterator(); it.hasNext(); it.next(), idx+=3)
     {
       VL_CHECK( idx+2 < index_buffer.size() );
+
       index_buffer[idx+0] = it.a();
       index_buffer[idx+1] = it.b();
       index_buffer[idx+2] = it.c();
+
+      // some sanity checks since we are here...
+      VL_CHECK( it.a() < max_idx && it.b() < max_idx && it.c() < max_idx );
+      VL_CHECK( it.a() >= 0 && it.b() >= 0 && it.c() >= 0 );
+    }
+  }
+  VL_CHECK( idx == index_buffer.size() );
+  drawCalls()->push_back(de.get());
+}
+//-----------------------------------------------------------------------------
+void Geometry::fixTriangleWinding()
+{
+  // fixing the triangle winding requires normals
+  if ( normalArray() == NULL )
+    return;
+
+  size_t triangle_count = 0;
+  std::vector< ref<DrawCall> > mergendo_calls;
+  for( size_t i=drawCalls()->size(); i--; )
+  {
+    const DrawCall& dc = *drawCalls()->at(i);
+
+    // ignore primitives that cannot be triangulated
+    switch(dc.primitiveType())
+    {
+    case PT_TRIANGLES:
+    case PT_TRIANGLE_STRIP:
+    case PT_TRIANGLE_FAN:
+    case PT_QUADS:
+    case PT_QUAD_STRIP:
+    case PT_POLYGON:
+      break;
+    default:
+      continue;
+    }
+
+    triangle_count += dc.countTriangles();
+    // insert at the head to preserve the primitive rendering order
+    mergendo_calls.insert( mergendo_calls.begin(), drawCalls()->at(i) );
+    drawCalls()->eraseAt(i);
+  }
+  // preseve rendering order
+  std::reverse(mergendo_calls.begin(), mergendo_calls.end());
+
+  ref<DrawElementsUInt> de = new DrawElementsUInt;
+  ArrayUInt1& index_buffer = *de->indexBuffer();
+  index_buffer.resize( triangle_count * 3 );
+  size_t idx = 0;
+  int max_idx = (int)vertexArray()->size();
+  for(size_t i=0; i<mergendo_calls.size(); ++i)
+  {
+    for(TriangleIterator it = mergendo_calls[i]->triangleIterator(); it.hasNext(); it.next(), idx+=3)
+    {
+      VL_CHECK( idx+2 < index_buffer.size() );
+
+      vec3 p0 = vertexArray()->getAsVec3(it.a());
+      vec3 p1 = vertexArray()->getAsVec3(it.b());
+      vec3 p2 = vertexArray()->getAsVec3(it.c());
+      p1 = (p1 - p0).normalize();
+      p2 = (p2 - p0).normalize();
+      vec3 n1 = vl::cross(p1, p2);
+
+      vec3 v0 = normalArray()->getAsVec3(it.a());
+      vec3 v1 = normalArray()->getAsVec3(it.b());
+      vec3 v2 = normalArray()->getAsVec3(it.c());
+      vec3 n2 = (v0+v1+v2).normalize();
+
+      if (dot(n1, n2) > 0)
+      {
+        index_buffer[idx+0] = it.a();
+        index_buffer[idx+1] = it.b();
+        index_buffer[idx+2] = it.c();
+      }
+      else
+      {
+        index_buffer[idx+0] = it.a();
+        index_buffer[idx+1] = it.c();
+        index_buffer[idx+2] = it.b();
+      }
 
       // some sanity checks since we are here...
       VL_CHECK( it.a() < max_idx && it.b() < max_idx && it.c() < max_idx );
