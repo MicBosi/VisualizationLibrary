@@ -106,6 +106,12 @@ void PolygonSimplifier::simplify(int target_vertex_count, Geometry* geom)
     return;
   }
 
+  if (geom->drawCalls()->size() == 0)
+  {
+    Log::error("PolygonSimplifier::simplify() requires at least one DrawCall!\n");
+    return;
+  }
+
   Time timer;
   timer.start();
 
