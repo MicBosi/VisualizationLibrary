@@ -1013,9 +1013,11 @@ void DaeLoader::parseEffects(daeElement* library)
             // --- <source> ---
             daeSIDResolver sid_res( effect, sampler2D->getSource()->getValue() );
             domElement* surface_newparam = sid_res.getElement();
-            VL_LOG_WARNING << "'sid_res.getElement()' FAILED: " << __FILE__ << ":" << __LINE__ << "\n";
             if(!surface_newparam)
+            {
+              VL_LOG_WARNING << (Say("<surface> '%s' referenced by <sampler2D> '%s' not found!\n") << sampler2D->getSource()->getValue() << newparam->getSid() );
               continue;
+            }
 
             std::map< daeElementRef, ref<Dae::NewParam> >::iterator it = mDaeNewParams.find(surface_newparam);
             if ( it != mDaeNewParams.end() )
@@ -1834,14 +1836,12 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
       float l = norm_old->at(i).length();
       if ( l < 0.5f ) 
       {
-        // Log::warning( Say("LoadWriterDae: degenerate normal #%n: len = %n\n") << i << l );
         norm_old->at(i) = norm_new->at(i);
         ++degenerate;
       }
 
       if ( l < 0.9f || l > 1.1f ) 
       {
-        // VL_LOG_WARNING << ( Say("LoadWriterDae: degenerate normal #%n: len = %n\n") << i << l );
         norm_old->at(i).normalize();
         ++degenerate;
       }
@@ -1855,7 +1855,7 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
 
     // mic fixme: issue these things as debug once things got stable
     if (degenerate || flipped) 
-      VL_LOG_WARNING << ( Say("LoadWriterDae: fixed bad normals: %n degenerate and %n flipped (out of %n).\n") << degenerate << flipped << norm_old->size() );
+      VL_LOG_WARNING << ( Say("LoadWriterDae: fixed bad normals in \"%s\": degenerate=%n, flipped=%n (out of %n).\n")  << prim->mGeometry->objectName() << degenerate << flipped << norm_old->size() );
 
     // reinstall fixed normals
     prim->mGeometry->setNormalArray(norm_old.get());
