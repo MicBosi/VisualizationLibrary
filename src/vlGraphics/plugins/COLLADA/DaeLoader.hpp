@@ -37,6 +37,7 @@
 
 namespace vl
 {
+  //! COLLADA loader
   class DaeLoader
   {
   public:

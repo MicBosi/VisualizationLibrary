@@ -50,6 +50,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::LoadWriterDae, ResourceLoadWriter)
 
   public:
+    //! Loading options used by LoadWriterDae and DaeLoader
     class LoadOptions: public Object
     {
     public:
