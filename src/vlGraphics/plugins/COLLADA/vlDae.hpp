@@ -68,9 +68,10 @@ namespace vl
         mFlattenTransformHierarchy = true;
         mComputeMissingNormals = true;
         mFixBadNormals = true;
-        mExtractSkins = true;
         mMergeDrawCalls = true;
-        mLightMeshSize = 2.0f;
+        mExtractSkins = false;
+        mLightMeshSize = 0;
+        mExportLights = false;
       }
 
       //! If true the <node>'s transform hierachy is flattened and baked inside the Actor::transform(), otherwise the full transform tree is exported. Enabled by default.
@@ -125,6 +126,12 @@ namespace vl
       //! Such meshes will be renamed "LightMesh-"+<name of the light object they represent>.
       float lightMeshSize() const { return mLightMeshSize; }
 
+      //! If true the lights contained in the COLLADA file will be exported otherwise one single dummy light will be used to lit the models.
+      void setExportLights(bool exp_lights) { mExportLights = exp_lights; }
+
+      //! If true the lights contained in the COLLADA file will be exported otherwise one single dummy light will be used to lit the models.
+      bool exportLights() const { return mExportLights; }
+
     protected:
       TransparencyOption mInvertTransparency;
       bool mFlattenTransformHierarchy;
@@ -134,6 +141,7 @@ namespace vl
       bool mExtractSkins;
       bool mMergeDrawCalls;
       float mLightMeshSize;
+      bool mExportLights;
     };
 
   public:
