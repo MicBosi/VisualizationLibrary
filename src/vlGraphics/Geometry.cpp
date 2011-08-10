@@ -132,7 +132,7 @@ Geometry& Geometry::deepCopyFrom(const Geometry& other)
 
   // primitives
   mDrawCalls.clear();
-  for(int i=0; i<mDrawCalls.size(); ++i)
+  for(int i=0; i<other.mDrawCalls.size(); ++i)
     mDrawCalls.push_back( other.mDrawCalls[i]->clone().get() );
 
   return *this;
