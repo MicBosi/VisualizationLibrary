@@ -94,6 +94,7 @@ namespace vl
       IS_WEIGHT
     } EInputSemantic;
     //-----------------------------------------------------------------------------
+    //! COLLADA vertex
     struct Vert
     {
       static const int MAX_ATTRIBS = 8;
@@ -118,6 +119,7 @@ namespace vl
       size_t mIndex;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA data source
     struct Source: public Object
     {
       Source()
@@ -235,6 +237,7 @@ namespace vl
       size_t mCount;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA input stream
     struct Input: public Object
     {
       Input()
@@ -250,6 +253,7 @@ namespace vl
       size_t mSet;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA primitive
     struct Primitive: public Object
     {
       Primitive()
@@ -268,12 +272,14 @@ namespace vl
       ref<Geometry> mGeometry;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA mesh
     struct Mesh: public Object
     {
       std::vector< ref<Dae::Input> > mVertexInputs;
       std::vector< ref<Dae::Primitive> > mPrimitives;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA node
     struct Node: public Object
     {
       Node()
@@ -287,12 +293,14 @@ namespace vl
       std::vector< ref<Actor> > mActors;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA surface
     struct Surface: public Object
     {
       // mic fixme: for the moment we only support 2D images.
       ref<Image> mImage; // <init_from>
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA sampler2D
     struct Sampler2D: public Object
     {
       Sampler2D()
@@ -313,6 +321,7 @@ namespace vl
       ref<Texture> mTexture; // actual VL texture implementing the sampler
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA newparam
     struct NewParam: public Object
     {
       ref<Dae::Sampler2D> mDaeSampler2D;
@@ -320,6 +329,7 @@ namespace vl
       fvec4 mFloat4;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA color or texture input
     struct ColorOrTexture: public Object
     {
       fvec4 mColor;
@@ -327,6 +337,7 @@ namespace vl
       std::string mTexCoord;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA common technique
     struct TechniqueCOMMON: public Object
     {
       TechniqueCOMMON()
@@ -368,6 +379,7 @@ namespace vl
       bool mBlendingOn;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA effect
     struct Effect: public Object
     {
       Effect()
@@ -380,6 +392,7 @@ namespace vl
       bool mDoubleSided;
     };
     //-----------------------------------------------------------------------------
+    //! COLLADA material
     struct Material: public Object
     {
       ref<Dae::Effect> mDaeEffect;
