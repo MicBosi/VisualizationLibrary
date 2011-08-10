@@ -305,169 +305,166 @@ void OpenGLContext::logOpenGLInfo()
 {
   makeCurrent();
 
-  if (globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
-  {
-    Log::print(" --- OpenGL Info ---\n");
-    Log::print( Say("OpenGL version: %s\n") << glGetString(GL_VERSION) );
-    Log::print( Say("OpenGL vendor: %s\n") << glGetString(GL_VENDOR) );
-    Log::print( Say("OpenGL renderer: %s\n") << glGetString(GL_RENDERER) );
-    Log::print( Say("OpenGL profile: %s\n") << (Has_Fixed_Function_Pipeline ? "Compatible" : "Core") );
+  Log::debug(" --- OpenGL Info ---\n");
+  Log::debug( Say("OpenGL version: %s\n") << glGetString(GL_VERSION) );
+  Log::debug( Say("OpenGL vendor: %s\n") << glGetString(GL_VENDOR) );
+  Log::debug( Say("OpenGL renderer: %s\n") << glGetString(GL_RENDERER) );
+  Log::debug( Say("OpenGL profile: %s\n") << (Has_Fixed_Function_Pipeline ? "Compatible" : "Core") );
 
-    if (Has_GLSL)
-      Log::print( Say("GLSL version: %s\n") << glGetString(GL_SHADING_LANGUAGE_VERSION) );
+  if (Has_GLSL)
+    Log::debug( Say("GLSL version: %s\n") << glGetString(GL_SHADING_LANGUAGE_VERSION) );
     
-    int max_val = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_val);
-    Log::print( Say("Max texture size: %n\n")<<max_val);
+  int max_val = 0;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_val);
+  Log::debug( Say("Max texture size: %n\n")<<max_val);
 
-    max_val = 1;
-    if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_1)
-      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val); // deprecated enum
-    Log::print( Say("Texture units (legacy): %n\n") << max_val);
+  max_val = 1;
+  if (Has_GL_ARB_multitexture||Has_GL_Version_1_3||Has_GLES_Version_1_1)
+    glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_val); // deprecated enum
+  Log::debug( Say("Texture units (legacy): %n\n") << max_val);
 
-    max_val = 0;
+  max_val = 0;
+  if (Has_GL_Version_2_0)
+  {
+    glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_val); // deprecated enum
+    Log::debug( Say("Texture units (client): %n\n") << max_val);
+  }
+  if (Has_GLSL)
+  {
+    int tmp = 0;
+    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &tmp);
+    // max between GL_MAX_TEXTURE_COORDS and GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
+    max_val = tmp > max_val ? tmp : max_val;
+    Log::debug( Say("Texture units (combined): %n\n") << max_val);
+  }
+
+  max_val = 0;
+  if (Has_GLSL)
+  {
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
+    Log::debug( Say("Texture units (fragment shader): %n\n") << max_val);
+  }
+
+  max_val = 0;
+  if (Has_GL_EXT_texture_filter_anisotropic)
+    glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_val);
+  Log::debug( Say("Anisotropic texture filter: %s, ") << (Has_GL_EXT_texture_filter_anisotropic? "YES" : "NO") );
+  Has_GL_EXT_texture_filter_anisotropic ? Log::debug( Say("%nX\n") << max_val) : Log::debug("\n");
+  Log::debug( Say("S3 Texture Compression: %s\n") << (Has_GL_EXT_texture_compression_s3tc? "YES" : "NO") );
+  Log::debug( Say("Vertex Buffer Object: %s\n") << (Has_VBO? "YES" : "NO"));
+  Log::debug( Say("Pixel Buffer Object: %s\n") << (Has_PBO ? "YES" : "NO"));
+  Log::debug( Say("Framebuffer Object: %s\n") << (Has_FBO? "YES" : "NO"));
+
+  max_val = 0;
+  if(Has_GLSL)
+  {
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_val); VL_CHECK_OGL();
+    Log::debug( Say("Max vertex attributes: %n\n")<<max_val);      
+  }
+
+  VL_CHECK_OGL();
+
+  max_val = 0; 
+  if(Has_GLSL)
+  {
+    if (Has_GLES_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
+    {
+      glGetIntegerv(GL_MAX_VARYING_VECTORS, &max_val); VL_CHECK_OGL();
+    }
     if (Has_GL_Version_2_0)
     {
-      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_val); // deprecated enum
-      Log::print( Say("Texture units (client): %n\n") << max_val);
+      glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val); VL_CHECK_OGL();
+      max_val /= 4;
     }
-    if (Has_GLSL)
-    {
-      int tmp = 0;
-      glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &tmp);
-      // max between GL_MAX_TEXTURE_COORDS and GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
-      max_val = tmp > max_val ? tmp : max_val;
-      Log::print( Say("Texture units (combined): %n\n") << max_val);
-    }
+    Log::debug( Say("Max varying vectors: %n\n")<<max_val);
+  }
 
-    max_val = 0;
-    if (Has_GLSL)
+  max_val = 0;
+  if(Has_GLSL)
+  {
+    if (Has_GLES_Version_2_0)
     {
-      glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
-      Log::print( Say("Texture units (fragment shader): %n\n") << max_val);
-    }
-
-    max_val = 0;
-    if (Has_GL_EXT_texture_filter_anisotropic)
-      glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_val);
-    Log::print( Say("Anisotropic texture filter: %s, ") << (Has_GL_EXT_texture_filter_anisotropic? "YES" : "NO") );
-    Has_GL_EXT_texture_filter_anisotropic ? Log::print( Say("%nX\n") << max_val) : Log::print("\n");
-    Log::print( Say("S3 Texture Compression: %s\n") << (Has_GL_EXT_texture_compression_s3tc? "YES" : "NO") );
-    Log::print( Say("Vertex Buffer Object: %s\n") << (Has_VBO? "YES" : "NO"));
-    Log::print( Say("Pixel Buffer Object: %s\n") << (Has_PBO ? "YES" : "NO"));
-    Log::print( Say("Framebuffer Object: %s\n") << (Has_FBO? "YES" : "NO"));
-
-    max_val = 0;
-    if(Has_GLSL)
-    {
-      glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_val); VL_CHECK_OGL();
-      Log::print( Say("Max vertex attributes: %n\n")<<max_val);      
-    }
-
-    VL_CHECK_OGL();
-
-    max_val = 0; 
-    if(Has_GLSL)
-    {
-      if (Has_GLES_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
-      {
-        glGetIntegerv(GL_MAX_VARYING_VECTORS, &max_val); VL_CHECK_OGL();
-      }
-      if (Has_GL_Version_2_0)
-      {
-        glGetIntegerv(GL_MAX_VARYING_FLOATS, &max_val); VL_CHECK_OGL();
-        max_val /= 4;
-      }
-      Log::print( Say("Max varying vectors: %n\n")<<max_val);
-    }
-
-    max_val = 0;
-    if(Has_GLSL)
-    {
-      if (Has_GLES_Version_2_0)
-      {
-        glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
-      }
-      else
-      {
-        glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
-        max_val /= 4;
-      }
-      
-      Log::print( Say("Max fragment uniform vectors: %n\n")<<max_val);
-    }
-    
-    max_val = 0;
-    if(Has_GLSL)
-    {
-      if (Has_GLES_Version_2_0)
-      {
-        glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
-      }
-      else
-      {
-        glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
-        max_val /= 4;
-      }
-      
-      Log::print( Say("Max vertex uniform vectors: %n\n")<<max_val);
-    }
-    
-    max_val = 0;
-    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
-    {
-      glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val); VL_CHECK_OGL();
-      Log::print( Say("Max elements vertices: %n\n") << max_val );
-    }
-
-    max_val = 0;
-    if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
-    {
-      glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val ); VL_CHECK_OGL();
-      Log::print( Say("Max elements indices: %n\n") << max_val );
-    }
-
-    if (Has_Fixed_Function_Pipeline)
-    {
-      max_val = 0;
-      glGetIntegerv(GL_MAX_CLIP_PLANES,  &max_val ); VL_CHECK_OGL();
-      Log::print( Say("Max clipping planes: %n\n") << max_val );
+      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
     }
     else
-    if (Has_GLSL && !Has_GLES_Version_2_0)
     {
-      max_val = 0;
-      glGetIntegerv(GL_MAX_CLIP_DISTANCES,  &max_val ); VL_CHECK_OGL();
-      Log::print( Say("Max clip distances: %n\n") << max_val );
+      glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+      max_val /= 4;
     }
-
-    // --- log supported extensions on two columns ---
-
-    Log::print("\n --- OpenGL Extensions --- \n");
-
-    std::stringstream sstream;
-    sstream << extensions();
-    std::string ext, line;
-    for( int i=0; !sstream.eof(); ++i )
-    {
-      sstream >> ext;
-      if (sstream.eof())
-        break;
-
-      if (i && i % 2)
-      {
-        line.resize(40,' ');
-        line += ext;
-        Log::print( Say("%s\n") << line );
-        line.clear();
-      }
-      else
-        line = ext;
-    }
-    if (line.length())
-      Log::print( Say("%s\n") << line );
-    Log::print("\n");
+      
+    Log::debug( Say("Max fragment uniform vectors: %n\n")<<max_val);
   }
+    
+  max_val = 0;
+  if(Has_GLSL)
+  {
+    if (Has_GLES_Version_2_0)
+    {
+      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &max_val); VL_CHECK_OGL();
+    }
+    else
+    {
+      glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_val); VL_CHECK_OGL();
+      max_val /= 4;
+    }
+      
+    Log::debug( Say("Max vertex uniform vectors: %n\n")<<max_val);
+  }
+    
+  max_val = 0;
+  if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  {
+    glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &max_val); VL_CHECK_OGL();
+    Log::debug( Say("Max elements vertices: %n\n") << max_val );
+  }
+
+  max_val = 0;
+  if(Has_GL_Version_1_2||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  {
+    glGetIntegerv(GL_MAX_ELEMENTS_INDICES,  &max_val ); VL_CHECK_OGL();
+    Log::debug( Say("Max elements indices: %n\n") << max_val );
+  }
+
+  if (Has_Fixed_Function_Pipeline)
+  {
+    max_val = 0;
+    glGetIntegerv(GL_MAX_CLIP_PLANES,  &max_val ); VL_CHECK_OGL();
+    Log::debug( Say("Max clipping planes: %n\n") << max_val );
+  }
+  else
+  if (Has_GLSL && !Has_GLES_Version_2_0)
+  {
+    max_val = 0;
+    glGetIntegerv(GL_MAX_CLIP_DISTANCES,  &max_val ); VL_CHECK_OGL();
+    Log::debug( Say("Max clip distances: %n\n") << max_val );
+  }
+
+  // --- log supported extensions on two columns ---
+
+  Log::debug("\n --- OpenGL Extensions --- \n");
+
+  std::stringstream sstream;
+  sstream << extensions();
+  std::string ext, line;
+  for( int i=0; !sstream.eof(); ++i )
+  {
+    sstream >> ext;
+    if (sstream.eof())
+      break;
+
+    if (i && i % 2)
+    {
+      line.resize(40,' ');
+      line += ext;
+      Log::debug( Say("%s\n") << line );
+      line.clear();
+    }
+    else
+      line = ext;
+  }
+  if (line.length())
+    Log::debug( Say("%s\n") << line );
+  Log::debug("\n");
 
   VL_CHECK_OGL();
 }
