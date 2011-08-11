@@ -44,33 +44,37 @@ typedef enum
   TT_ERROR_TOKEN,
   TT_EOF,
 
+  TT_LeftRoundBracket, // (
+  TT_RightRoundBracket, // )
   TT_LeftSquareBracket, // [
   TT_RightSquareBracket, // ]
   TT_LeftCurlyBracket, // {
   TT_RightCurlyBracket, // }
   TT_LeftFancyBracket, // {<
   TT_RightFancyBracket, // >}
+  // TT_Column, // :
   TT_Equals, // =
   TT_String, // "ciccio \npippo]!!>" -> 'C' escape sequences are escaped
   TT_UID, // #Identifier_type001
   TT_Identifier, // Identifier_1001
-  TT_Number, // +123.456e+10
+  TT_Integer, // +123
+  TT_Float, // +123.456e+10
   TT_ObjectHeader // <ObjectHeader>
 
 } ETokenType;
 
-class Token
+class SRF_Token
 {
 public:
-  Token(): mType(TT_ERROR_TOKEN) {}
+  SRF_Token(): mType(TT_ERROR_TOKEN) {}
   std::string mString;
   ETokenType mType;
 };
 
-class Tokenizer: public BufferedStream<char, 128*1024>
+class SRF_Tokenizer: public BufferedStream<char, 128*1024>
 {
 public:
-  Tokenizer()
+  SRF_Tokenizer()
   {
     mLineNumber = 1;
   }
@@ -111,7 +115,7 @@ public:
     return true;
   }
 
-  bool getToken(Token& token) 
+  bool getToken(SRF_Token& token) 
   {
     token.mType = TT_ERROR_TOKEN;
     token.mString.clear();
@@ -177,6 +181,14 @@ public:
 
     switch(ch1)
     {
+    case '(':
+      token.mType = TT_LeftRoundBracket; 
+      return true;
+    
+    case ')':
+      token.mType = TT_RightRoundBracket; 
+      return true;
+
     case '[':
       token.mType = TT_LeftSquareBracket; 
       return true;
@@ -240,6 +252,10 @@ public:
     case '=':
       token.mType = TT_Equals; 
       return true;
+
+    /*case ':':
+      token.mType = TT_Column; 
+      return true;*/
 
     case '<':
       token.mType = TT_ObjectHeader;
@@ -352,7 +368,7 @@ public:
           return true;
       }
       else
-      // TT_Number - int, float and exponent
+      // TT_Integer / TT_Float - int, float and exponent
       //
       // ACCEPTED:
       // 123
@@ -370,7 +386,7 @@ public:
       // 123.123E/e+
       if ( ch1 >= '0' && ch1 <= '9' || ch1 == '.' || ch1 == '+' || ch1 == '-' )
       {
-        token.mType = TT_Number;
+        token.mType = TT_ERROR_TOKEN;
         token.mString.push_back(ch1);
         
         enum { sZERO, sPLUS_MINUS, sINT, sFRAC, sPOINT, sE, sPLUS_MINUS_EXP, sEXP } state = sINT;
@@ -442,6 +458,7 @@ public:
             }
             else
             {
+              token.mType = TT_Integer;
               ungetToken(ch1);
               return true;
             }
@@ -471,6 +488,7 @@ public:
             }
             else
             {
+              token.mType = TT_Float;
               ungetToken(ch1);
               return true;
             }
@@ -508,11 +526,17 @@ public:
             else
             {
               ungetToken(ch1);
+              token.mType = TT_Float;
               return true;
             }
             break;
           }
         }
+        if (state == sINT)
+          token.mType = TT_Integer;
+        else
+        if (state == sFRAC || state == sEXP)
+          token.mType = TT_Float;
         return state == sINT || state == sFRAC || state == sEXP;
       }
       else
@@ -527,71 +551,327 @@ public:
   int mLineNumber;
 };
 
-struct SRF_NameValue
+struct SRF_String;
+struct SRF_NumberOrIdentifier;
+struct SRF_UID;
+struct SRF_Object;
+struct SRF_List;
+struct SRF_ArrayUID;
+struct SRF_ArrayInt32;
+struct SRF_ArrayInt64;
+struct SRF_ArrayFloat;
+struct SRF_ArrayDouble;
+struct SRF_ArrayString;
+struct SRF_ArrayIdentifier;
+
+struct SRF_Visitor: public Object
 {
-  std::string mName;
-  ref<Object> mValue;
+  virtual void visitString(SRF_String*) {}
+  virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier*) {}
+  virtual void visitUID(SRF_UID*) {}
+  virtual void visitObject(SRF_Object*) {}
+  virtual void visitList(SRF_List*) {}
+  virtual void visitArray(SRF_ArrayUID*) {}
+  virtual void visitArray(SRF_ArrayInt32*) {}
+  virtual void visitArray(SRF_ArrayInt64*) {}
+  virtual void visitArray(SRF_ArrayFloat*) {}
+  virtual void visitArray(SRF_ArrayDouble*) {}
+  virtual void visitArray(SRF_ArrayString*) {}
+  virtual void visitArray(SRF_ArrayIdentifier*) {}
 };
 
-struct SRF_String: public Object
+struct SRF_Value: public Object
+{
+  virtual void acceptVisitor(SRF_Visitor*) = 0;
+};
+
+struct SRF_String: public SRF_Value
 {
   SRF_String() {}
   SRF_String(const std::string& str): mValue(str) {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitString(this); }
+
   std::string mValue;
 };
 
-struct SRF_Scalar: public Object
+struct SRF_NumberOrIdentifier: public SRF_Value
 {
-  SRF_Scalar(const std::string& str): mValue(str) {}
+  SRF_NumberOrIdentifier(const std::string& str): mValue(str) {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitNumberOrIdentifier(this); }
+
+  float getFloat() const
+  {
+    VL_CHECK(mValue.length());
+    return (float)atof(mValue.c_str());
+  }
+
+  double getDouble() const
+  {
+    VL_CHECK(mValue.length());
+    return atof(mValue.c_str());
+  }
+
+  int getInt32() const
+  {
+    VL_CHECK(mValue.length());
+    return atoi(mValue.c_str());
+  }
+
+  long long getInt64() const
+  {
+    VL_CHECK(mValue.length());
+    long long value = 0;
+    sscanf(mValue.c_str(), "%lld", &value);
+    return value;
+  }
+
   std::string mValue;
 };
 
-struct SRF_ID: public Object
+struct SRF_UID: public SRF_Value
 {
-  SRF_ID(const std::string& str): mValue(str) {}
+  SRF_UID(const std::string& str): mValue(str) {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitUID(this); }
+
   std::string mValue;
 };
 
-struct SRF_Object: public Object
+struct SRF_NameValue
+{
+  std::string mName;
+  ref<SRF_Value> mValue;
+};
+
+struct SRF_Object: public SRF_Value
 {
   SRF_Object()
   {
-    mNameValues.reserve(32);
+    mNameValues.reserve(10);
   }
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitObject(this); }
+
 
   std::string mName;
   std::string mID;
   std::vector<SRF_NameValue> mNameValues;
 };
 
-struct SRF_Array: public Object
+struct SRF_List: public SRF_Value
 {
-  SRF_Array()
+  SRF_List()
   {
-    mValues.reserve(32);
+    mValues.reserve(10);
   }
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitList(this); }
 
-  std::vector< ref<Object> > mValues;
-  std::string mValuesSimple; // array values as a simple string when no objects are encountered.
+  std::vector< ref<SRF_Value> > mValues;
 };
 
-class Parser
+struct SRF_ArrayInt32: public SRF_Value
+{
+  SRF_ArrayInt32() {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
+
+  std::vector<int> mValues;
+};
+
+struct SRF_ArrayInt64: public SRF_Value
+{
+  SRF_ArrayInt64() {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
+
+  std::vector<long long> mValues;
+};
+
+struct SRF_ArrayFloat: public SRF_Value
+{
+  SRF_ArrayFloat() {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
+
+  std::vector<float> mValues;
+};
+
+struct SRF_ArrayDouble: public SRF_Value
+{
+  SRF_ArrayDouble() {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
+
+  std::vector<double> mValues;
+};
+
+struct SRF_ArrayUID: public SRF_Value
+{
+  SRF_ArrayUID() {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
+
+  std::vector<std::string> mValues;
+};
+
+struct SRF_ArrayIdentifier: public SRF_Value
+{
+  SRF_ArrayIdentifier() {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
+
+  std::vector<std::string> mValues;
+};
+
+struct SRF_ArrayString: public SRF_Value
+{
+  SRF_ArrayString() {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
+
+  std::vector<std::string> mValues;
+};
+//-----------------------------------------------------------------------------
+// SRF_DumpVisitor
+//-----------------------------------------------------------------------------
+struct SRF_DumpVisitor: public SRF_Visitor
+{
+  SRF_DumpVisitor()
+  {
+    mIndentLevel = 0;
+    mAssignment = false;
+  }
+
+  void indent()
+  {
+    if (mAssignment)
+      mAssignment = false;
+    else
+    {
+      for(int i=0; i<mIndentLevel; ++i)
+        printf("  ");
+    }
+  }
+
+  virtual void visitString(SRF_String* str) 
+  {
+    indent(); printf("\"%s\"\n", str->mValue.c_str());
+  }
+  
+  virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier* data) 
+  {
+    indent(); printf("%s\n", data->mValue.c_str());
+  }
+  
+  virtual void visitUID(SRF_UID* uid) 
+  {
+    indent(); printf("%s\n", uid->mValue.c_str());
+  }
+  
+  virtual void visitObject(SRF_Object* obj) 
+  {
+    indent(); printf("%s\n", obj->mName.c_str());
+    indent(); printf("{\n");
+    mIndentLevel++;
+    if (obj->mID.length())
+    {
+      indent(); printf("ID = %s\n", obj->mID.c_str());
+    }
+    for(size_t i=0; i<obj->mNameValues.size(); ++i)
+    {
+      indent(); printf("%s = ", obj->mNameValues[i].mName.c_str());
+      mAssignment = true;
+      obj->mNameValues[i].mValue->acceptVisitor(this);
+    }
+    mIndentLevel--;
+    indent(); printf("}\n");
+  }
+
+  virtual void visitList(SRF_List* list) 
+  {
+    indent(); printf("[\n");
+    mIndentLevel++;
+    for(size_t i=0; i<list->mValues.size(); ++i)
+      list->mValues[i]->acceptVisitor(this);
+    mIndentLevel--;
+    indent(); printf("]\n");
+  }
+  
+  virtual void visitArray(SRF_ArrayInt32* arr) 
+  {
+    indent(); printf("( int32: ");
+    for(size_t i=0 ;i<arr->mValues.size(); ++i)
+      printf("%d ", arr->mValues[i]);
+    printf(")\n");
+  }
+
+  virtual void visitArray(SRF_ArrayInt64* arr) 
+  {
+    indent(); printf("( int64: ");
+    for(size_t i=0 ;i<arr->mValues.size(); ++i)
+      printf("%lld ", arr->mValues[i]);
+    printf(")\n");
+  }
+
+  virtual void visitArray(SRF_ArrayFloat* arr) 
+  {
+    indent(); printf("( float: ");
+    for(size_t i=0 ;i<arr->mValues.size(); ++i)
+      printf("%f ", arr->mValues[i]);
+    printf(")\n");
+  }
+
+  virtual void visitArray(SRF_ArrayDouble* arr) 
+  {
+    indent(); printf("( double: ");
+    for(size_t i=0 ;i<arr->mValues.size(); ++i)
+      printf("%llf ", arr->mValues[i]);
+    printf(")\n");
+  }
+
+  virtual void visitArray(SRF_ArrayIdentifier* arr) 
+  {
+    indent(); printf("( identifier: ");
+    for(size_t i=0 ;i<arr->mValues.size(); ++i)
+      printf("%s ", arr->mValues[i].c_str());
+    printf(")\n");
+  }
+
+  virtual void visitArray(SRF_ArrayString* arr) 
+  {
+    indent(); printf("( string: ");
+    for(size_t i=0 ;i<arr->mValues.size(); ++i)
+      printf("\"%s\" ", arr->mValues[i].c_str());
+    printf(")\n");
+  }
+
+  virtual void visitArray(SRF_ArrayUID* arr) 
+  {
+    indent(); printf("( uid: ");
+    for(size_t i=0 ;i<arr->mValues.size(); ++i)
+      printf("%s ", arr->mValues[i].c_str());
+    printf(")\n");
+  }
+
+private:
+  int mIndentLevel;
+  bool mAssignment;
+};
+//-----------------------------------------------------------------------------
+// SRF_Parser
+//-----------------------------------------------------------------------------
+class SRF_Parser
 {
 public:
 
-  bool getToken(Token& token) { return mTokenizer->getToken(token); }
+  bool getToken(SRF_Token& token) { return mTokenizer->getToken(token); }
 
   bool parse()
   {
     if(getToken(mToken) && mToken.mType == TT_ObjectHeader)
     {
-      ref<SRF_Object> object = new SRF_Object;
-      object->mName = mToken.mString;
-      if (parseObject(object.get()))
+      mRoot = new SRF_Object;
+      mRoot->mName = mToken.mString;
+      if (parseObject(mRoot.get()))
+      {
+        ref<SRF_DumpVisitor> dump_visitor = new SRF_DumpVisitor;
+        mRoot->acceptVisitor(dump_visitor.get());
         return true;
+      }
       else
       {
-        Log::error( Say("Line %n: parse error.\n") << mTokenizer->mLineNumber );
+        Log::error( Say("Line %n: parse error at '%s'.\n") << mTokenizer->mLineNumber << mToken.mString.c_str() );
         return false;
       }
     }
@@ -616,13 +896,38 @@ public:
       else
       if (mToken.mType == TT_Identifier)
       {
+        // ID field requires a proper #identifier
+        if (mToken.mString.length() == 2)
+        {
+          if (mToken.mString == "ID")
+          {
+            // Equals
+            if (!getToken(mToken) || mToken.mType != TT_Equals)
+              return false;
+
+            // #identifier
+            if (getToken(mToken) && mToken.mType == TT_UID)
+            {
+              object->mID = mToken.mString;
+              continue;
+            }
+            else
+              return false;
+          }
+          else
+          // ID is a reserved keyword: all the other case combinations are illegal
+          if (mToken.mString == "Id" || mToken.mString == "iD" || mToken.mString == "id")
+            return false;
+        }
+
+        // non-ID key-values
         object->mNameValues.resize( object->mNameValues.size() + 1 );
         SRF_NameValue& name_value = object->mNameValues.back();
 
-        // Member name
+        // Key
         name_value.mName = mToken.mString;
 
-        // = 
+        // Equals
         if (!getToken(mToken) || mToken.mType != TT_Equals)
           return false;
 
@@ -639,19 +944,29 @@ public:
               return false;
           }
           else
-          // An [ array ]
+          // An [ list ]
           if (mToken.mType == TT_LeftSquareBracket)
           {
-            ref<SRF_Array> arr = new SRF_Array;
-            name_value.mValue = arr;
-            if (!parseArray(arr.get()))
+            ref<SRF_List> list = new SRF_List;
+            name_value.mValue = list;
+            if (!parseList(list.get()))
+              return false;
+          }
+          else
+          // An ( array )
+          if (mToken.mType == TT_LeftRoundBracket)
+          {
+            ref<SRF_Value> arr;
+            if (parseArray(arr))
+              name_value.mValue = arr;
+            else
               return false;
           }
           else
           // An #id
           if (mToken.mType == TT_UID)
           {
-            name_value.mValue = new SRF_ID(mToken.mString);
+            name_value.mValue = new SRF_UID(mToken.mString);
           }
           else
           // A "string"
@@ -660,20 +975,20 @@ public:
             name_value.mValue = new SRF_String(mToken.mString);
           }
           else
-          // Get all the chars till the end of the line, allowing for \ line continuation.
+          // An Identifier or Integer or Float
+          if (mToken.mType == TT_Identifier || mToken.mType == TT_Integer || mToken.mType == TT_Float)
           {
-            ref<SRF_String> srf_str = new SRF_String;
-            name_value.mValue = srf_str;
-            if (!mTokenizer->getLine(srf_str->mValue))
-              return false;
+            name_value.mValue = new SRF_NumberOrIdentifier(mToken.mString);
           }
+          else
+            return false;
         }
       }
     }
     return false;
   }
 
-  bool parseArray(SRF_Array* arr)
+  bool parseList(SRF_List* list)
   {
     while(getToken(mToken))
     {
@@ -683,30 +998,56 @@ public:
       {
         switch( mToken.mType )
         {
+          // string
           case TT_String:
-            arr->mValues.push_back( new SRF_String(mToken.mString) );
+            list->mValues.push_back( new SRF_String(mToken.mString) );
             break;
 
+          // int, float, identifier
+          case TT_Float:
+          case TT_Integer:
           case TT_Identifier:
-            arr->mValues.push_back( new SRF_Scalar(mToken.mString) );
+            list->mValues.push_back( new SRF_NumberOrIdentifier(mToken.mString) );
             break;
 
-          // mic fixme
-          // this can be later replaced with a SRF_Object
+          // UID
           case TT_UID:
-            arr->mValues.push_back( new SRF_ID(mToken.mString) );
+            list->mValues.push_back( new SRF_UID(mToken.mString) );
             break;
 
+          // list
+          case TT_LeftSquareBracket:
+            {
+              ref<SRF_List> list = new SRF_List;
+              if (parseList(list.get()))
+                list->mValues.push_back( list );
+              else
+                return false;
+              break;
+            }
+
+          // array
+          case TT_LeftRoundBracket:
+            {
+              ref<SRF_Value> arr;
+              if (parseArray(arr))
+                list->mValues.push_back(arr);
+              else
+                return false;
+              break;
+            }
+
+          // object
           case TT_ObjectHeader:
-          {
-          ref<SRF_Object> object = new SRF_Object;
-          object->mName = mToken.mString;
-          if (parseObject(object.get()))
-            arr->mValues.push_back( object );
-          else
-            return false;
-          break;
-          }
+            {
+              ref<SRF_Object> object = new SRF_Object;
+              object->mName = mToken.mString;
+              if (parseObject(object.get()))
+                list->mValues.push_back( object );
+              else
+                return false;
+              break;
+            }
 
         default:
           return false;
@@ -716,23 +1057,122 @@ public:
     return false;
   }
 
+  bool parseArray(ref<SRF_Value>& arr)
+  {
+    if(getToken(mToken))
+    {
+      // from the fist token we decide what kind of array it is going to be
+      ref<SRF_ArrayUID> arr_uid; // mic fixme we should translate this into actual pointers
+      ref<SRF_ArrayString> arr_string;
+      ref<SRF_ArrayIdentifier> arr_identifier;
+      ref<SRF_ArrayInt32> arr_int32;
+      // ref<SRF_ArrayInt64> arr_int64; // mic fixme: support this
+      ref<SRF_ArrayFloat> arr_float;
+      // ref<SRF_ArrayDouble> arr_double; // mic fixme: support this
+
+      if (mToken.mType == TT_UID)
+        arr = arr_uid = new SRF_ArrayUID;
+      else
+      if (mToken.mType == TT_String)
+        arr = arr_string = new SRF_ArrayString;
+      else
+      if (mToken.mType == TT_Identifier)
+        arr = arr_identifier = new SRF_ArrayIdentifier;
+      else
+      if (mToken.mType == TT_Integer)
+        arr = arr_int32 = new SRF_ArrayInt32;
+      else
+      if (mToken.mType == TT_Float)
+        arr = arr_float = new SRF_ArrayFloat;
+
+      do
+      {
+        if (mToken.mType == TT_UID)
+        {
+          if (!arr_uid) return false;
+          arr_uid->mValues.push_back(mToken.mString);
+        }
+        else
+        if (mToken.mType == TT_String)
+        {
+          if (!arr_string) return false;
+          arr_string->mValues.push_back(mToken.mString);
+        }
+        else
+        if (mToken.mType == TT_Identifier)
+        {
+          if (!arr_identifier) return false;
+          arr_identifier->mValues.push_back(mToken.mString);
+        }
+        else
+        if (mToken.mType == TT_Integer)
+        {
+          if (arr_int32)
+            arr_int32->mValues.push_back( atoi( mToken.mString.c_str() ) );
+          else
+          if (arr_float)
+            arr_float->mValues.push_back( (float)atof( mToken.mString.c_str() ) );
+          else
+            return false;
+        }
+        else
+        if (mToken.mType == TT_Float)
+        {
+          // convert from int32 to float
+          if (arr_int32)
+          {
+            arr_float = new SRF_ArrayFloat;
+            arr_float->mValues.resize( arr_int32->mValues.size() );
+            for(size_t i=0; i<arr_int32->mValues.size(); ++i)
+              arr_float->mValues[i] = (float)arr_int32->mValues[i];
+
+            // delete arr_int32
+            arr_int32 = NULL;
+            // install the new arr_float
+            arr = arr_float;
+          }
+
+          if (arr_float)
+            arr_float->mValues.push_back( (float)atof( mToken.mString.c_str() ) );
+          else
+            return false;
+        }
+        else
+        if (mToken.mType == TT_RightRoundBracket)
+        {
+          // gne l'emo fatta!
+          return true;
+        }
+
+      } while(getToken(mToken));
+      
+      return false;
+    }
+    else
+      return false;
+  }
+
   void listTokens()
   {
     while(getToken(mToken) && mToken.mType != TT_EOF)
     {
       switch(mToken.mType)
       {
+        case TT_LeftRoundBracket:   printf("TT_LeftSquareBracket (\n"); break;
+        case TT_RightRoundBracket:  printf("TT_RightSquareBracket )\n"); break;
         case TT_LeftSquareBracket:  printf("TT_LeftSquareBracket [\n"); break;
         case TT_RightSquareBracket: printf("TT_RightSquareBracket ]\n"); break;
         case TT_LeftCurlyBracket:   printf("TT_LeftCurlyBracket {\n"); break;
         case TT_RightCurlyBracket:  printf("TT_RightCurlyBracket } \n"); break;
         case TT_LeftFancyBracket:   printf("TT_LeftFancyBracket >}\n"); break;
         case TT_RightFancyBracket:  printf("TT_RightFancyBracket {< \n"); break;
+        // case TT_Column:             printf("TT_Column :\n"); break;
         case TT_Equals:             printf("TT_Equals =\n"); break;
         case TT_String:             printf("TT_String = %s\n", mToken.mString.c_str()); break;
         case TT_UID:                printf("TT_UID = %s\n", mToken.mString.c_str()); break;
         case TT_Identifier:         printf("TT_Identifier = %s\n", mToken.mString.c_str()); break;
-        case TT_Number:             printf("TT_Number = %s\n", mToken.mString.c_str()); break;
+        case TT_Float:              printf("TT_Float = %s\n", mToken.mString.c_str()); break;
+        case TT_Integer:            printf("TT_Integer = %s\n", mToken.mString.c_str()); break;
         case TT_ObjectHeader:       printf("TT_ObjectHeader = %s\n", mToken.mString.c_str()); break;
         default:
           break;
@@ -744,9 +1184,14 @@ public:
     }
   }
 
+  void dump()
+  {
+  }
+
+  ref<SRF_Object> mRoot;
   std::vector< ref<SRF_Object> > mObjects;
-  ref<Tokenizer> mTokenizer;
-  Token mToken;
+  ref<SRF_Tokenizer> mTokenizer;
+  SRF_Token mToken;
 };
 
 class App_VLSRF: public BaseDemo
@@ -756,15 +1201,14 @@ public:
   {
     Log::notify(appletInfo());
 
-    Parser parser;
-    parser.mTokenizer = new Tokenizer;
+    SRF_Parser parser;
+    parser.mTokenizer = new SRF_Tokenizer;
     parser.mTokenizer->setInputFile( new DiskFile("D:/VL/test.vl") );
 
-    // parser.parse();
-    parser.listTokens();
+    parser.parse();
+    // parser.listTokens();
 
-    int a = 0;
-    Time::sleep(1000*5);
+    Time::sleep(1000*1000);
     exit(0);
   }
 
