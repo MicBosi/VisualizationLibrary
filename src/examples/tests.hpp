@@ -88,6 +88,7 @@ BaseDemo* Create_App_EffectOverride();
 BaseDemo* Create_App_ShaderOverride();
 BaseDemo* Create_App_Primitives();
 BaseDemo* Create_App_DrawCalls();
+BaseDemo* Create_App_VLSRF();
 
 // win32 console for sdtout output
 #if defined(WIN32) && !defined(NDEBUG)
@@ -134,6 +135,7 @@ public:
     TestEntry tests[] = 
     {
       { "Blind Tests", Create_App_BlindTests(), 10,10, 512, 512, vl::black, vl::vec3(0,0,1), vl::vec3(0,0,0) }, 
+      { "VLSRF", Create_App_VLSRF(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Primitives", Create_App_Primitives(), 10,10, 512, 512, vl::white, vl::vec3(0,0.75,-2.5), vl::vec3(0,0,-4) },
       { "DrawCall", Create_App_DrawCalls(), 10,10, 512, 512, vl::white, vl::vec3(0,0,30), vl::vec3(0,0,0) },
       { "Near/Far Planes Optimization", Create_App_NearFarOptimization(), 10, 10, 512, 512, vl::black, vl::vec3(0,1,5), vl::vec3(0,0,0) }, 
