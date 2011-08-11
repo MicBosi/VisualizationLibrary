@@ -183,25 +183,30 @@ public:
     switch(ch1)
     {
     case '(':
-      token.mType = TT_LeftRoundBracket; 
+      token.mType = TT_LeftRoundBracket;
+      token.mString = "(";
       return true;
     
     case ')':
-      token.mType = TT_RightRoundBracket; 
+      token.mType = TT_RightRoundBracket;
+      token.mString = ")";
       return true;
 
     case '[':
-      token.mType = TT_LeftSquareBracket; 
+      token.mType = TT_LeftSquareBracket;
+      token.mString = "[";
       return true;
     
     case ']':
-      token.mType = TT_RightSquareBracket; 
+      token.mType = TT_RightSquareBracket;
+      token.mString = "]";
       return true;
 
     case '{':
       if(readTextChar(ch2) && ch2 == '<')
       {
         token.mType = TT_LeftFancyBracket;
+        token.mString = "{<";
         // eat spaces on the right, nothing must follow {<
         while(readTextChar(ch1))
         {
@@ -220,7 +225,8 @@ public:
       }
       else
       {
-        token.mType = TT_LeftCurlyBracket; 
+        token.mType = TT_LeftCurlyBracket;
+        token.mString = "{";
         if(!isEndOfFile())
           ungetToken(ch2);
       }
@@ -228,6 +234,7 @@ public:
 
     case '}':
       token.mType = TT_RightCurlyBracket;
+      token.mString = "}";
       return true;
 
     case '>':
@@ -252,6 +259,7 @@ public:
 
     case '=':
       token.mType = TT_Equals; 
+      token.mString = "=";
       return true;
 
     /*case ':':
@@ -423,8 +431,9 @@ public:
             }
             else
             {
-              Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
-              return false;
+              token.mType = TT_Integer;
+              ungetToken(ch1);
+              return true;
             }
             break;
 
