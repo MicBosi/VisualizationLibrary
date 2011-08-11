@@ -103,22 +103,14 @@ namespace vl
       switch(ch)
       {
       case 10:
-        if (readToken(&ch2) && ch2 == 13)
-        {
-          ch = '\n';
-          return true;
-        }
-        else
+        ch = '\n';
+        if (readToken(&ch2) && ch2 != 13)
           ungetToken(ch2);
         break;
 
       case 13:
-        if (readToken(&ch2) && ch2 == 10)
-        {
-          ch = '\n';
-          return true;
-        }
-        else
+        ch = '\n';
+        if (readToken(&ch2) && ch2 != 10)
           ungetToken(ch2);
         break;
       }
