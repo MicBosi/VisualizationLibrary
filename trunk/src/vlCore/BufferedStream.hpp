@@ -56,6 +56,7 @@ namespace vl
       mSize = 0;
       mPtr  = 0;
       mBuffer.resize(Chunk_Size);
+      mIsEndOfFile = true;
     }
 
     void seek(long long pos)
@@ -76,15 +77,58 @@ namespace vl
       }
 
       if (bufferEmpty())
+      {
         fillBuffer();
+      }
+
       if (bufferEmpty())
+      {
+        mIsEndOfFile = true;
         return false;
+      }
       else
       {
         *token = mBuffer[mPtr];
         mPtr++;
         return true;
       }
+    }
+
+    bool readTextChar(char& ch)
+    {
+      if (!readToken(&ch))
+        return false;
+
+      char ch2 = 0;
+      switch(ch)
+      {
+      case 10:
+        if (readToken(&ch2) && ch2 == 13)
+        {
+          ch = '\n';
+          return true;
+        }
+        else
+          ungetToken(ch2);
+        break;
+
+      case 13:
+        if (readToken(&ch2) && ch2 == 10)
+        {
+          ch = '\n';
+          return true;
+        }
+        else
+          ungetToken(ch2);
+        break;
+      }
+
+      return true;
+    }
+
+    void ungetToken(const Element_Type& token)
+    {
+      mUngetBuffer.push_back(token);
     }
 
     bool bufferEmpty()
@@ -110,19 +154,17 @@ namespace vl
       }
     }
 
+    bool isEndOfFile() const { return mIsEndOfFile; }
+
     void setInputFile(VirtualFile* file)
     {
       mInputFile = file;
+      mIsEndOfFile = false;
     }
 
     VirtualFile* inputFile() { return mInputFile.get(); }
 
     const VirtualFile* inputFile() const { return mInputFile.get(); }
-
-    void ungetToken(const Element_Type& token)
-    {
-      mUngetBuffer.push_back(token);
-    }
 
   protected:
     ref<VirtualFile> mInputFile;
@@ -130,6 +172,7 @@ namespace vl
     std::vector<Element_Type> mBuffer;
     int mPtr;
     int mSize;
+    bool mIsEndOfFile;
   };
 }
 
