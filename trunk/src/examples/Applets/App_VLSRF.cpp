@@ -57,6 +57,7 @@ typedef enum
   TT_String, // "ciccio \npippo]!!>" -> 'C' escape sequences are escaped
   TT_UID, // #Identifier_type001
   TT_Identifier, // Identifier_1001
+  TT_Boolean, // true / false
   TT_Integer, // +123
   TT_Float, // +123.456e+10
   TT_ObjectHeader // <ObjectHeader>
@@ -365,7 +366,12 @@ public:
           return false;
         }
         else
+        {
+          // check if it's a book
+          if (token.mString == "true" || token.mString == "false")
+            token.mType = TT_Boolean;
           return true;
+        }
       }
       else
       // TT_Integer / TT_Float - int, float and exponent
@@ -551,11 +557,13 @@ public:
   int mLineNumber;
 };
 
+struct SRF_Boolean;
 struct SRF_String;
 struct SRF_NumberOrIdentifier;
 struct SRF_UID;
 struct SRF_Object;
 struct SRF_List;
+// struct SRF_ArrayBoolean; // use ArrayInt32 which makes the files also shorter
 struct SRF_ArrayUID;
 struct SRF_ArrayInt32;
 struct SRF_ArrayInt64;
@@ -566,6 +574,7 @@ struct SRF_ArrayIdentifier;
 
 struct SRF_Visitor: public Object
 {
+  virtual void visitBoolean(SRF_Boolean*) {}
   virtual void visitString(SRF_String*) {}
   virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier*) {}
   virtual void visitUID(SRF_UID*) {}
@@ -583,6 +592,15 @@ struct SRF_Visitor: public Object
 struct SRF_Value: public Object
 {
   virtual void acceptVisitor(SRF_Visitor*) = 0;
+};
+
+struct SRF_Boolean: public SRF_Value
+{
+  SRF_Boolean(): mValue(false) {}
+  SRF_Boolean(bool value): mValue(value) {}
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitBoolean(this); }
+
+  bool mValue;
 };
 
 struct SRF_String: public SRF_Value
@@ -744,6 +762,11 @@ struct SRF_DumpVisitor: public SRF_Visitor
     }
   }
 
+  virtual void visitBoolean(SRF_Boolean* str) 
+  {
+    indent(); printf("\"%s\"\n", str->mValue?"true":"false");
+  }
+  
   virtual void visitString(SRF_String* str) 
   {
     indent(); printf("\"%s\"\n", str->mValue.c_str());
@@ -940,7 +963,7 @@ public:
             ref<SRF_Object> object = new SRF_Object;
             object->mName = mToken.mString;
             name_value.mValue = object;
-            if (!parseObject(object.get()))
+            if (!parseObject( object.get() ) )
               return false;
           }
           else
@@ -949,7 +972,7 @@ public:
           {
             ref<SRF_List> list = new SRF_List;
             name_value.mValue = list;
-            if (!parseList(list.get()))
+            if ( !parseList( list.get() ) )
               return false;
           }
           else
@@ -957,7 +980,7 @@ public:
           if (mToken.mType == TT_LeftRoundBracket)
           {
             ref<SRF_Value> arr;
-            if (parseArray(arr))
+            if ( parseArray( arr ) )
               name_value.mValue = arr;
             else
               return false;
@@ -973,6 +996,12 @@ public:
           if (mToken.mType == TT_String)
           {
             name_value.mValue = new SRF_String(mToken.mString);
+          }
+          else
+          // A boolean (true/false)
+          if (mToken.mType == TT_Boolean)
+          {
+            name_value.mValue = new SRF_Boolean(mToken.mString == "true");
           }
           else
           // An Identifier or Integer or Float
@@ -998,6 +1027,11 @@ public:
       {
         switch( mToken.mType )
         {
+          // boolean
+          case TT_Boolean:
+            list->mValues.push_back( new SRF_Boolean(mToken.mString == "true") );
+            break;
+
           // string
           case TT_String:
             list->mValues.push_back( new SRF_String(mToken.mString) );
@@ -1018,9 +1052,9 @@ public:
           // list
           case TT_LeftSquareBracket:
             {
-              ref<SRF_List> list = new SRF_List;
-              if (parseList(list.get()))
-                list->mValues.push_back( list );
+              ref<SRF_List> sub_list = new SRF_List;
+              if ( parseList( sub_list.get() ) )
+                list->mValues.push_back( sub_list );
               else
                 return false;
               break;
@@ -1042,7 +1076,7 @@ public:
             {
               ref<SRF_Object> object = new SRF_Object;
               object->mName = mToken.mString;
-              if (parseObject(object.get()))
+              if ( parseObject( object.get() ) )
                 list->mValues.push_back( object );
               else
                 return false;
