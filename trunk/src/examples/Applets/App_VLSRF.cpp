@@ -42,7 +42,7 @@ using namespace vl;
 typedef enum
 {
   TT_ERROR_TOKEN,
-  TT_EOF_TOKEN,
+  TT_EOF,
 
   TT_LeftSquareBracket, // [
   TT_RightSquareBracket, // ]
@@ -52,9 +52,11 @@ typedef enum
   TT_RightFancyBracket, // >}
   TT_Equals, // =
   TT_String, // "ciccio \npippo]!!>" -> 'C' escape sequences are escaped
-  TT_ID, // #Identifier_type001
+  TT_UID, // #Identifier_type001
   TT_Identifier, // Identifier_1001
+  TT_Number, // +123.456e+10
   TT_ObjectHeader // <ObjectHeader>
+
 } ETokenType;
 
 class Token
@@ -73,6 +75,42 @@ public:
     mLineNumber = 1;
   }
 
+  bool getLine(std::string& str)
+  {
+    str.clear();
+    str.reserve(16);
+    char ch;
+    while(readTextChar(ch))
+    {
+      // reached the end of the line
+      if (ch == '\n')
+      {
+        ++mLineNumber;
+        return true;
+      }
+      else
+      // line continuation
+      if (ch == '\\')
+      {
+        // eat everything till the end of the line
+        while(readTextChar(ch) && ch != '\n')
+        {
+          if (ch != ' ' && ch != '\t')
+          {
+            Log::error( Say("Line %n: unexpected character '%c'.\n") << mLineNumber );
+            return false;
+          }
+        }
+        if (ch == '\n')
+          ++mLineNumber;
+      }
+      else
+        str.push_back(ch);
+    }
+
+    return true;
+  }
+
   bool getToken(Token& token) 
   {
     token.mType = TT_ERROR_TOKEN;
@@ -83,7 +121,7 @@ public:
     do {
       if (!readTextChar(ch1))
       {
-        token.mType = TT_EOF_TOKEN;
+        token.mType = TT_EOF;
         return true;
       }
 
@@ -225,7 +263,7 @@ public:
       return true;
 
     case '#':
-      token.mType = TT_ID;
+      token.mType = TT_UID;
       token.mString = "#";
       while(readTextChar(ch1))
       {
@@ -291,7 +329,7 @@ public:
 
     default:
       // identifier
-      if (ch1 >= 'a' && ch1 <= 'z' || ch1 >= 'A' && ch1 <= 'Z' || ch1 >= '0' && ch1 <= '9' || ch1 == '_' )
+      if (ch1 >= 'a' && ch1 <= 'z' || ch1 >= 'A' && ch1 <= 'Z' || ch1 == '_' )
       {
         token.mType = TT_Identifier;
         token.mString.push_back(ch1);
@@ -314,15 +352,401 @@ public:
           return true;
       }
       else
+      // TT_Number - int, float and exponent
+      //
+      // ACCEPTED:
+      // 123
+      // +123.123E+10 -123.123e-10
+      // +123
+      // +.123
+      // 0.123
+      // 123.123
+      //
+      // REJECTED:
+      // 01234
+      // 01.234
+      // 123.
+      // 123.123E/e
+      // 123.123E/e+
+      if ( ch1 >= '0' && ch1 <= '9' || ch1 == '.' || ch1 == '+' || ch1 == '-' )
       {
-        Log::error( Say("Line %n: unexpected character '%c'.\n") << mLineNumber << ch1 );
+        token.mType = TT_Number;
+        token.mString.push_back(ch1);
+        
+        enum { sZERO, sPLUS_MINUS, sINT, sFRAC, sPOINT, sE, sPLUS_MINUS_EXP, sEXP } state = sINT;
+
+        if ( ch1 >= '1' && ch1 <= '9' )
+          state = sINT;
+        else
+        if (ch1 == '0')
+          state = sZERO;
+        else
+        if (ch1 == '.')
+          state = sPOINT;
+        else
+        if (ch1 == '+' || ch1 == '-')
+          state = sPLUS_MINUS;
+
+        // for simplicity we don't deal with the cases when we reach EOF after +/-/./E/E+-
+        while(readTextChar(ch1))
+        {
+          switch(state)
+          {
+          // if starting with 0 must be 0.0-9
+          case sZERO:
+            if (ch1 == '.')
+            {
+              token.mString.push_back(ch1);
+              state = sPOINT;
+            }
+            else
+            {
+              Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+              return false;
+            }
+            break;
+
+          case sPLUS_MINUS:
+            if (ch1 == '0')
+            {
+              token.mString.push_back(ch1);
+              state = sZERO;
+            }
+            else
+            if (ch1 >= '1' && ch1 <= '9')
+            {
+              token.mString.push_back(ch1);
+              state = sINT;
+            }
+            else
+            if (ch1 == '.')
+            {
+              token.mString.push_back(ch1);
+              state = sPOINT;
+            }
+            else
+            {
+              Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+              return false;
+            }
+            break;
+
+          case sINT:
+            if (ch1 >= '0' && ch1 <= '9')
+              token.mString.push_back(ch1);
+            else
+            if (ch1 == '.')
+            {
+              token.mString.push_back(ch1);
+              state = sPOINT;
+            }
+            else
+            {
+              ungetToken(ch1);
+              return true;
+            }
+            break;
+
+          case sPOINT:
+            if (ch1 >= '0' && ch1 <= '9')
+            {
+              token.mString.push_back(ch1);
+              state = sFRAC;
+            }
+            else
+            {
+              Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+              return false;
+            }
+            break;
+
+          case sFRAC:
+            if (ch1 >= '0' && ch1 <= '9')
+              token.mString.push_back(ch1);
+            else
+            if (ch1 == 'E' || ch1 == 'e')
+            {
+              token.mString.push_back(ch1);
+              state = sE;
+            }
+            else
+            {
+              ungetToken(ch1);
+              return true;
+            }
+            break;
+
+          case sE:
+            if (ch1 == '+' || ch1 == '-')
+            {
+              token.mString.push_back(ch1);
+              state = sPLUS_MINUS_EXP;
+            }
+            else
+            {
+              Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+              return false;
+            }
+            break;
+
+          case sPLUS_MINUS_EXP:
+            if (ch1 >= '0' && ch1 <= '9')
+            {
+              token.mString.push_back(ch1);
+              state = sEXP;
+            }
+            else
+            {
+              Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+              return false;
+            }
+            break;
+
+          case sEXP:
+            if (ch1 >= '0' && ch1 <= '9')
+              token.mString.push_back(ch1);
+            else
+            {
+              ungetToken(ch1);
+              return true;
+            }
+            break;
+          }
+        }
+        return state == sINT || state == sFRAC || state == sEXP;
+      }
+      else
+      {
+        Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
         return false;
       }
     }
   }
 
-private:
+  // mic fixme
   int mLineNumber;
+};
+
+struct SRF_NameValue
+{
+  std::string mName;
+  ref<Object> mValue;
+};
+
+struct SRF_String: public Object
+{
+  SRF_String() {}
+  SRF_String(const std::string& str): mValue(str) {}
+  std::string mValue;
+};
+
+struct SRF_Scalar: public Object
+{
+  SRF_Scalar(const std::string& str): mValue(str) {}
+  std::string mValue;
+};
+
+struct SRF_ID: public Object
+{
+  SRF_ID(const std::string& str): mValue(str) {}
+  std::string mValue;
+};
+
+struct SRF_Object: public Object
+{
+  SRF_Object()
+  {
+    mNameValues.reserve(32);
+  }
+
+  std::string mName;
+  std::string mID;
+  std::vector<SRF_NameValue> mNameValues;
+};
+
+struct SRF_Array: public Object
+{
+  SRF_Array()
+  {
+    mValues.reserve(32);
+  }
+
+  std::vector< ref<Object> > mValues;
+  std::string mValuesSimple; // array values as a simple string when no objects are encountered.
+};
+
+class Parser
+{
+public:
+
+  bool getToken(Token& token) { return mTokenizer->getToken(token); }
+
+  bool parse()
+  {
+    if(getToken(mToken) && mToken.mType == TT_ObjectHeader)
+    {
+      ref<SRF_Object> object = new SRF_Object;
+      object->mName = mToken.mString;
+      if (parseObject(object.get()))
+        return true;
+      else
+      {
+        Log::error( Say("Line %n: parse error.\n") << mTokenizer->mLineNumber );
+        return false;
+      }
+    }
+    else
+    {
+      Log::error("No root object found!\n");
+      return false;
+    }
+  }
+
+  bool parseObject(SRF_Object* object)
+  {
+    if (!getToken(mToken) || mToken.mType != TT_LeftCurlyBracket)
+      return false;
+    while(getToken(mToken))
+    {
+      if (mToken.mType == TT_RightCurlyBracket)
+      {
+        mObjects.push_back(object);
+        return true;
+      }
+      else
+      if (mToken.mType == TT_Identifier)
+      {
+        object->mNameValues.resize( object->mNameValues.size() + 1 );
+        SRF_NameValue& name_value = object->mNameValues.back();
+
+        // Member name
+        name_value.mName = mToken.mString;
+
+        // = 
+        if (!getToken(mToken) || mToken.mType != TT_Equals)
+          return false;
+
+        // Member value
+        if (getToken(mToken))
+        {
+          // A new <Object>
+          if (mToken.mType == TT_ObjectHeader)
+          {
+            ref<SRF_Object> object = new SRF_Object;
+            object->mName = mToken.mString;
+            name_value.mValue = object;
+            if (!parseObject(object.get()))
+              return false;
+          }
+          else
+          // An [ array ]
+          if (mToken.mType == TT_LeftSquareBracket)
+          {
+            ref<SRF_Array> arr = new SRF_Array;
+            name_value.mValue = arr;
+            if (!parseArray(arr.get()))
+              return false;
+          }
+          else
+          // An #id
+          if (mToken.mType == TT_UID)
+          {
+            name_value.mValue = new SRF_ID(mToken.mString);
+          }
+          else
+          // A "string"
+          if (mToken.mType == TT_String)
+          {
+            name_value.mValue = new SRF_String(mToken.mString);
+          }
+          else
+          // Get all the chars till the end of the line, allowing for \ line continuation.
+          {
+            ref<SRF_String> srf_str = new SRF_String;
+            name_value.mValue = srf_str;
+            if (!mTokenizer->getLine(srf_str->mValue))
+              return false;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  bool parseArray(SRF_Array* arr)
+  {
+    while(getToken(mToken))
+    {
+      if (mToken.mType == TT_RightSquareBracket)
+        return true;
+      else
+      {
+        switch( mToken.mType )
+        {
+          case TT_String:
+            arr->mValues.push_back( new SRF_String(mToken.mString) );
+            break;
+
+          case TT_Identifier:
+            arr->mValues.push_back( new SRF_Scalar(mToken.mString) );
+            break;
+
+          // mic fixme
+          // this can be later replaced with a SRF_Object
+          case TT_UID:
+            arr->mValues.push_back( new SRF_ID(mToken.mString) );
+            break;
+
+          case TT_ObjectHeader:
+          {
+          ref<SRF_Object> object = new SRF_Object;
+          object->mName = mToken.mString;
+          if (parseObject(object.get()))
+            arr->mValues.push_back( object );
+          else
+            return false;
+          break;
+          }
+
+        default:
+          return false;
+        }
+      }
+    }
+    return false;
+  }
+
+  void listTokens()
+  {
+    while(getToken(mToken) && mToken.mType != TT_EOF)
+    {
+      switch(mToken.mType)
+      {
+        case TT_LeftSquareBracket:  printf("TT_LeftSquareBracket [\n"); break;
+        case TT_RightSquareBracket: printf("TT_RightSquareBracket ]\n"); break;
+        case TT_LeftCurlyBracket:   printf("TT_LeftCurlyBracket {\n"); break;
+        case TT_RightCurlyBracket:  printf("TT_RightCurlyBracket } \n"); break;
+        case TT_LeftFancyBracket:   printf("TT_LeftFancyBracket >}\n"); break;
+        case TT_RightFancyBracket:  printf("TT_RightFancyBracket {< \n"); break;
+        case TT_Equals:             printf("TT_Equals =\n"); break;
+        case TT_String:             printf("TT_String = %s\n", mToken.mString.c_str()); break;
+        case TT_UID:                printf("TT_UID = %s\n", mToken.mString.c_str()); break;
+        case TT_Identifier:         printf("TT_Identifier = %s\n", mToken.mString.c_str()); break;
+        case TT_Number:             printf("TT_Number = %s\n", mToken.mString.c_str()); break;
+        case TT_ObjectHeader:       printf("TT_ObjectHeader = %s\n", mToken.mString.c_str()); break;
+        default:
+          break;
+      }
+    }
+    if (mToken.mType != TT_EOF)
+    {
+      printf("Line %d: syntax error : '%s'.\n", mTokenizer->mLineNumber, mToken.mString.c_str());
+    }
+  }
+
+  std::vector< ref<SRF_Object> > mObjects;
+  ref<Tokenizer> mTokenizer;
+  Token mToken;
 };
 
 class App_VLSRF: public BaseDemo
@@ -332,66 +756,12 @@ public:
   {
     Log::notify(appletInfo());
 
-    Tokenizer tokenizer;
-    tokenizer.setInputFile( new DiskFile("D:/VL/test.vl") );
+    Parser parser;
+    parser.mTokenizer = new Tokenizer;
+    parser.mTokenizer->setInputFile( new DiskFile("D:/VL/test.vl") );
 
-    Token token;
-    while( tokenizer.getToken(token) && token.mType != TT_EOF_TOKEN )
-    {
-      switch(token.mType)
-      {
-        case TT_ERROR_TOKEN:
-          printf("TT_ERROR_TOKEN\n");
-          break;
-
-        case TT_LeftSquareBracket:
-          printf("TT_LeftSquareBracket '['\n");
-          break;
-
-        case TT_RightSquareBracket:
-          printf("TT_RightSquareBracket ']'\n");
-          break;
-
-        case TT_LeftCurlyBracket:
-          printf("TT_LeftCurlyBracket '{'\n");
-          break;
-
-        case TT_RightCurlyBracket:
-          printf("TT_RightCurlyBracket '}'\n");
-          break;
-
-        case TT_LeftFancyBracket:
-          printf("TT_LeftFancyBracket '{<'\n");
-          break;
-
-        case TT_RightFancyBracket:
-          printf("TT_RightFancyBracket '>}'\n");
-          break;
-
-        case TT_Equals:
-          printf("TT_Equals '='\n");
-          break;
-
-        case TT_String:
-          printf("TT_String '%s'\n", token.mString.c_str());
-          break;
-
-        case TT_ID:
-          printf("TT_ID '%s'\n", token.mString.c_str());
-          break;
-
-        case TT_Identifier:
-          printf("TT_Identifier '%s'\n", token.mString.c_str());
-          break;
-
-        case TT_ObjectHeader:
-          printf("TT_ObjectHeader '%s'\n", token.mString.c_str());
-          break;
-        
-        default:
-          VL_TRAP()
-      }
-    }
+    // parser.parse();
+    parser.listTokens();
 
     int a = 0;
     Time::sleep(1000*5);
