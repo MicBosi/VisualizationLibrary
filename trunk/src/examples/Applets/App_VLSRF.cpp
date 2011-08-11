@@ -764,19 +764,19 @@ struct SRF_DumpVisitor: public SRF_Visitor
 
   virtual void visitBoolean(SRF_Boolean* str) 
   {
-    indent(); printf("\"%s\"\n", str->mValue?"true":"false");
+    indent(); printf("bool: %s\n", str->mValue ? "true" : "false");
   }
-  
+
   virtual void visitString(SRF_String* str) 
   {
     indent(); printf("\"%s\"\n", str->mValue.c_str());
   }
-  
+
   virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier* data) 
   {
     indent(); printf("%s\n", data->mValue.c_str());
   }
-  
+
   virtual void visitUID(SRF_UID* uid) 
   {
     indent(); printf("%s\n", uid->mValue.c_str());
