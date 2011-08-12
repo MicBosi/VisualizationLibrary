@@ -1437,17 +1437,19 @@ public:
     ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
     geom->computeNormals();
     TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
-    geom->drawCalls()->at(0)->setPatchParameter( new PatchParameter );
-    geom->drawCalls()->at(1)->setPatchParameter( geom->drawCalls()->at(0)->patchParameter() );
-    geom->drawCalls()->at(2)->setPatchParameter( new PatchParameter );
-    geom->drawCalls()->at(3)->setPatchParameter( geom->drawCalls()->at(2)->patchParameter() );
-    geom->drawCalls()->at(4)->setPatchParameter( new PatchParameter );
+    // geom->drawCalls()->at(0)->setPatchParameter( new PatchParameter );
+    // geom->drawCalls()->at(1)->setPatchParameter( geom->drawCalls()->at(0)->patchParameter() );
+    // geom->drawCalls()->at(2)->setPatchParameter( new PatchParameter );
+    // geom->drawCalls()->at(3)->setPatchParameter( geom->drawCalls()->at(2)->patchParameter() );
+    // geom->drawCalls()->at(4)->setPatchParameter( new PatchParameter );
     // geom->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
+    // geom->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
 
     // geom->drawCalls()->push_back( geom->drawCalls()->at(0) );
     // geom->setColorArray( geom->vertexArray() );
+    // mic fixme: this does no realizes that we are using primitive restart
+    // mic fixme: make this manage also MultiDrawElements
     // geom->makeGLESFriendly();
-    // geom->convertToVertexAttribs();
 
     ref<Effect> fx = new Effect;
     fx->shader()->enable(EN_LIGHTING);
@@ -1461,6 +1463,7 @@ public:
     mEquals = 0;
     mIndent = 0;
 
+    srfPrelink_Geometry(geom.get());
     srfExport_Geometry(geom.get());
     std::fstream fout;
     fout.open("D:/VL/srf_export.vl", std::ios::out);
@@ -1470,7 +1473,7 @@ public:
     exit(0);
   }
 
-  void srfExport_Geometry(Geometry* geom)
+  void srfPrelink_Geometry(Geometry* geom)
   {
     // --- generate UIDs ---
     // geometry itself
@@ -1492,11 +1495,61 @@ public:
       generateUID(geom->drawCalls()->at(i), "drawcall_");
       generateUID(geom->drawCalls()->at(i)->patchParameter(), "patchparam_");
     }
+  }
 
-    // --- actual export ---
+  const char* getBoolCR(bool ok)
+  {
+    return ok ? "true\n" : "false\n";
+  }
+
+  void srfExport_Renderable(Renderable* ren)
+  {
+    if (mObject_Ref_Count[ren] > 1)
+      mSRFString += indent() + "ID = " + getUID(ren) + "\n";
+    mSRFString += indent() + "VBOEnabled = " + getBoolCR(ren->isVBOEnabled());
+    mSRFString += indent() + "DisplayListEnabled = " + getBoolCR(ren->isDisplayListEnabled());
+    mSRFString += indent() + "AABB = "; mEquals = true; srfExport_AABB(ren->boundingBox());
+    mSRFString += indent() + "Sphere= "; mEquals = true; srfExport_Sphere(ren->boundingSphere());
+  }
+
+  void srfExport_AABB(const AABB& aabb)
+  {
+    // AABBs are always inlined
+    mSRFString += indent() + "<AABB>\n";
+    mSRFString += indent() + "{\n"; 
+    ++mIndent;
+    mSRFString += indent() + String::printf("Min = %f %f %f\n", aabb.minCorner().x(), aabb.minCorner().y(), aabb.minCorner().z() );
+    mSRFString += indent() + String::printf("Max = %f %f %f\n", aabb.maxCorner().x(), aabb.maxCorner().y(), aabb.maxCorner().z() );
+    --mIndent;
+    mSRFString += indent() + "}\n"; 
+  }
+
+  void srfExport_Sphere(const Sphere& sphere)
+  {
+    // AABBs are always inlined
+    mSRFString += indent() + "<AABB>\n";
+    mSRFString += indent() + "{\n"; 
+    ++mIndent;
+    mSRFString += indent() + String::printf("Center = %f %f %f\n", sphere.center().x(), sphere.center().y(), sphere.center().z() );
+    mSRFString += indent() + String::printf("Radius = %f\n", sphere.radius() );
+    --mIndent;
+    mSRFString += indent() + "}\n"; 
+  }
+
+  void srfExport_Geometry(Geometry* geom)
+  {
+    if (isDefined(geom))
+    {
+      mSRFString += indent() + getUID(geom) + "\n";
+      return;
+    }
+    else
+      mAlreadyDefined.insert(geom);
+
     mSRFString += indent() + "<Geometry>\n";
     mSRFString += indent() + "{\n"; 
     ++mIndent;
+    srfExport_Renderable(geom);
     // vertex arrays
     if (geom->vertexArray()) { mSRFString += indent() + "VertexArray = ";  mEquals = true; srfExport_Array(geom->vertexArray()); }
     if (geom->normalArray()) { mSRFString += indent() + "NormalArray = ";  mEquals = true; srfExport_Array(geom->normalArray()); }
@@ -1537,19 +1590,19 @@ public:
       // mSRFString += indent() + String::printf("AttribLocation = %d\n", info->attribLocation());
       mSRFString += indent() + "Data = "; mEquals = true; srfExport_Array(info->data());
       mSRFString += indent() + "Normalize = " + (info->normalize() ? "true\n" : "false\n");
-      mSRFString += indent() + "DataBehavior = ";
-      switch(info->dataBehavior())
+      mSRFString += indent() + "Interpretation = ";
+      switch(info->interpretation())
       {
-      case VAB_NORMAL: mSRFString += "VAB_NORMAL\n"; break;
-      case VAB_PURE_INTEGER: mSRFString += "VAB_PURE_INTEGER\n"; break;
-      case VAB_PURE_DOUBLE: mSRFString += "VAB_PURE_DOUBLE\n"; break;
+      case VAI_NORMAL: mSRFString += "VAI_NORMAL\n"; break;
+      case VAI_INTEGER: mSRFString += "VAI_INTEGER\n"; break;
+      case VAI_DOUBLE: mSRFString += "VAI_DOUBLE\n"; break;
       }
       --mIndent;
       mSRFString += indent() + "}\n";
   }
 
   template<typename T_Array>
-  void srfExport_Array1(ArrayAbstract* arr_abstract, const char* name,const char* format)
+  void srfExport_Array1(ArrayAbstract* arr_abstract, const char* name,const char* format, int elems_per_line = 40)
   {
     T_Array* arr = arr_abstract->as<T_Array>();
     mSRFString += indent() + name + "\n";
@@ -1562,7 +1615,7 @@ public:
       for(size_t i=0; i<arr->size(); ++i)
       {
         mSRFString += String::printf(format, arr->at(i) );
-        if (i && (i % 10 == 0) && i != arr->size()-1)
+        if (i && (i % elems_per_line == 0) && i != arr->size()-1)
           mSRFString += "\n\t\t" + indent();
       }
       mSRFString += "\n" + indent() + "\t)\n";
@@ -1571,7 +1624,7 @@ public:
   }
 
   template<typename T_Array>
-  void srfExport_Array2(ArrayAbstract* arr_abstract, const char* name,const char* format)
+  void srfExport_Array2(ArrayAbstract* arr_abstract, const char* name,const char* format, int elems_per_line = 30)
   {
     T_Array* arr = arr_abstract->as<T_Array>();
     mSRFString += indent() + name + "\n";
@@ -1584,7 +1637,7 @@ public:
       for(size_t i=0; i<arr->size(); ++i)
       {
         mSRFString += String::printf(format, arr->at(i).x(), arr->at(i).y() );
-        if (i && (i % 10 == 0) && i != arr->size()-1)
+        if (i && (i % elems_per_line == 0) && i != arr->size()-1)
           mSRFString += "\n\t\t" + indent();
       }
       mSRFString += "\n" + indent() + "\t)\n";
@@ -1593,7 +1646,7 @@ public:
   }
 
   template<typename T_Array>
-  void srfExport_Array3(ArrayAbstract* arr_abstract, const char* name,const char* format)
+  void srfExport_Array3(ArrayAbstract* arr_abstract, const char* name,const char* format, int elems_per_line = 20)
   {
     T_Array* arr = arr_abstract->as<T_Array>();
     mSRFString += indent() + name + "\n";
@@ -1606,7 +1659,7 @@ public:
       for(size_t i=0; i<arr->size(); ++i)
       {
         mSRFString += String::printf(format, arr->at(i).x(), arr->at(i).y(), arr->at(i).z() );
-        if (i && (i % 10 == 0) && i != arr->size()-1)
+        if (i && (i % elems_per_line == 0) && i != arr->size()-1)
           mSRFString += "\n\t\t" + indent();
       }
       mSRFString += "\n" + indent() + "\t)\n";
@@ -1615,7 +1668,7 @@ public:
   }
 
   template<typename T_Array>
-  void srfExport_Array4(ArrayAbstract* arr_abstract, const char* name,const char* format)
+  void srfExport_Array4(ArrayAbstract* arr_abstract, const char* name,const char* format, int elems_per_line = 10)
   {
     T_Array* arr = arr_abstract->as<T_Array>();
     mSRFString += indent() + name + "\n";
@@ -1628,7 +1681,7 @@ public:
       for(size_t i=0; i<arr->size(); ++i)
       {
         mSRFString += String::printf(format, arr->at(i).x(), arr->at(i).y(), arr->at(i).z(), arr->at(i).w() );
-        if (i && (i % 10 == 0) && i != arr->size()-1)
+        if (i && (i % elems_per_line == 0) && i != arr->size()-1)
           mSRFString += "\n\t\t" + indent();
       }
       mSRFString += "\n" + indent() + "\t)\n";

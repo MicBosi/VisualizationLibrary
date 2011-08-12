@@ -243,7 +243,7 @@ void MorphingCallback::blendFrames(int a, int b, float t)
     mNormals->at(i)  = mNormalFrames[ a ]->at(i)*Ha + mNormalFrames[ b ]->at(i)*Hb;
   }
 
-  if (mGeometry->vboEnabled() && Has_VBO)
+  if (mGeometry->isVBOEnabled() && Has_VBO)
   {
     // mic fixme:
     // Come si vede qui' sta nomenclatura non e' chiara: 

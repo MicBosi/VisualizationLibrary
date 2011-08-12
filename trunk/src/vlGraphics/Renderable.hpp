@@ -101,7 +101,7 @@ namespace vl
       else
       {
         // update VBOs
-        if (vboEnabled() && isVBODirty())
+        if (isVBOEnabled() && isVBODirty())
         {
           updateDirtyVBO(VUM_KeepRamBuffer);
           setVBODirty(false);
@@ -198,7 +198,7 @@ namespace vl
     void setDisplayListDirty(bool dirty) { mDisplayListDirty = dirty; }
 
     //! Returns \p true if VBO (vertex buffer object) are enabled for a Renderable (enabled by default).
-    bool vboEnabled() const { return mVBOEnabled; }
+    bool isVBOEnabled() const { return mVBOEnabled; }
 
     //! Enable/disable VBO (vertex buffer object) (enabled by default).
     void setVBOEnabled(bool enabled) { mVBOEnabled = enabled; }
