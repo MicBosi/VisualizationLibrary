@@ -1038,9 +1038,7 @@ void Geometry::makeGLESFriendly()
   } // for()
 
   // converts legacy vertex arrays into generic vertex attributes
-#if defined(VL_OPENGL_ES2)
   convertToVertexAttribs();
-#endif
 }
 //-----------------------------------------------------------------------------
 bool Geometry::sortVertices()
