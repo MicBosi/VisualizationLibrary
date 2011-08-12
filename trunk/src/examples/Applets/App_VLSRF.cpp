@@ -37,6 +37,7 @@
 #include <vlCore/BufferedStream.hpp>
 #include <vlCore/DiskFile.hpp>
 #include <vlGraphics/MultiDrawElements.hpp>
+#include <vlGraphics/TriangleStripGenerator.hpp>
 
 using namespace vl;
 
@@ -1432,8 +1433,21 @@ public:
     parser.dump();
     parser.link();
 
-    ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
+    // ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
+    ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
     geom->computeNormals();
+    TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
+    geom->drawCalls()->at(0)->setPatchParameter( new PatchParameter );
+    geom->drawCalls()->at(1)->setPatchParameter( geom->drawCalls()->at(0)->patchParameter() );
+    geom->drawCalls()->at(2)->setPatchParameter( new PatchParameter );
+    geom->drawCalls()->at(3)->setPatchParameter( geom->drawCalls()->at(2)->patchParameter() );
+    geom->drawCalls()->at(4)->setPatchParameter( new PatchParameter );
+    // geom->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
+
+    // geom->drawCalls()->push_back( geom->drawCalls()->at(0) );
+    // geom->setColorArray( geom->vertexArray() );
+    // geom->makeGLESFriendly();
+    // geom->convertToVertexAttribs();
 
     ref<Effect> fx = new Effect;
     fx->shader()->enable(EN_LIGHTING);
@@ -1441,11 +1455,6 @@ public:
     fx->shader()->setRenderState( new Light, 0 );
 
     sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
-
-    geom->drawCalls()->push_back( geom->drawCalls()->at(0) );
-    geom->setColorArray( geom->vertexArray() );
-    geom->makeGLESFriendly();
-    geom->convertToVertexAttribs();
 
     // export init
     mUIDCounter = 0;
@@ -1479,7 +1488,10 @@ public:
         generateUID(geom->vertexAttribArray(i)->data(), "vertexattrib_array_");
     // draw elements
     for(int i=0; i<geom->drawCalls()->size(); ++i)
+    {
       generateUID(geom->drawCalls()->at(i), "drawcall_");
+      generateUID(geom->drawCalls()->at(i)->patchParameter(), "patchparam_");
+    }
 
     // --- actual export ---
     mSRFString += indent() + "<Geometry>\n";
@@ -1521,7 +1533,7 @@ public:
       mSRFString += indent() + "{\n";
       ++mIndent;
       if (mObject_Ref_Count[info] > 1)
-        mSRFString += indent() + "\tID = " + getUID(info) + "\n";
+        mSRFString += indent() + "ID = " + getUID(info) + "\n";
       // mSRFString += indent() + String::printf("AttribLocation = %d\n", info->attribLocation());
       mSRFString += indent() + "Data = "; mEquals = true; srfExport_Array(info->data());
       mSRFString += indent() + "Normalize = " + (info->normalize() ? "true\n" : "false\n");
@@ -1635,125 +1647,181 @@ public:
       mAlreadyDefined.insert(arr_abstract);
 
     if(arr_abstract->as<ArrayUInt1>())
-      srfExport_Array1<ArrayUInt1>(arr_abstract, "ArrayUInt1", "%u "); // mic fixme: these can actually be user specified
+      srfExport_Array1<ArrayUInt1>(arr_abstract, "<ArrayUInt1>", "%u "); // mic fixme: these can actually be user specified
     else
     if(arr_abstract->as<ArrayUInt2>())
-      srfExport_Array2<ArrayUInt2>(arr_abstract, "ArrayUInt2", "%u %u ");
+      srfExport_Array2<ArrayUInt2>(arr_abstract, "<ArrayUInt2>", "%u %u ");
     else
     if(arr_abstract->as<ArrayUInt3>())
-      srfExport_Array3<ArrayUInt3>(arr_abstract, "ArrayUInt3", "%u %u %u ");
+      srfExport_Array3<ArrayUInt3>(arr_abstract, "<ArrayUInt3>", "%u %u %u ");
     else
     if(arr_abstract->as<ArrayUInt4>())
-      srfExport_Array4<ArrayUInt4>(arr_abstract, "ArrayUInt4", "%u %u %u %u ");
+      srfExport_Array4<ArrayUInt4>(arr_abstract, "<ArrayUInt4>", "%u %u %u %u ");
     else
 
     if(arr_abstract->as<ArrayInt1>())
-      srfExport_Array1<ArrayInt1>(arr_abstract, "ArrayInt1", "%d ");
+      srfExport_Array1<ArrayInt1>(arr_abstract, "<ArrayInt1>", "%d ");
     else
     if(arr_abstract->as<ArrayInt2>())
-      srfExport_Array2<ArrayInt2>(arr_abstract, "ArrayInt2", "%d %d ");
+      srfExport_Array2<ArrayInt2>(arr_abstract, "<ArrayInt2>", "%d %d ");
     else
     if(arr_abstract->as<ArrayInt3>())
-      srfExport_Array3<ArrayInt3>(arr_abstract, "ArrayInt3", "%d %d %d ");
+      srfExport_Array3<ArrayInt3>(arr_abstract, "<ArrayInt3>", "%d %d %d ");
     else
     if(arr_abstract->as<ArrayInt4>())
-      srfExport_Array4<ArrayInt4>(arr_abstract, "ArrayInt4", "%d %d %d %d ");
+      srfExport_Array4<ArrayInt4>(arr_abstract, "<ArrayInt4>", "%d %d %d %d ");
     else
 
     if(arr_abstract->as<ArrayUShort1>())
-      srfExport_Array1<ArrayUShort1>(arr_abstract, "ArrayUShort1", "%u ");
+      srfExport_Array1<ArrayUShort1>(arr_abstract, "<ArrayUShort1>", "%u ");
     else
     if(arr_abstract->as<ArrayUShort2>())
-      srfExport_Array2<ArrayUShort2>(arr_abstract, "ArrayUShort2", "%u %u ");
+      srfExport_Array2<ArrayUShort2>(arr_abstract, "<ArrayUShort2>", "%u %u ");
     else
     if(arr_abstract->as<ArrayUShort3>())
-      srfExport_Array3<ArrayUShort3>(arr_abstract, "ArrayUShort3", "%u %u %u ");
+      srfExport_Array3<ArrayUShort3>(arr_abstract, "<ArrayUShort3>", "%u %u %u ");
     else
     if(arr_abstract->as<ArrayUShort4>())
-      srfExport_Array4<ArrayUShort4>(arr_abstract, "ArrayUShort4", "%u %u %u %u ");
+      srfExport_Array4<ArrayUShort4>(arr_abstract, "<ArrayUShort4>", "%u %u %u %u ");
     else
 
     if(arr_abstract->as<ArrayUShort1>())
-      srfExport_Array1<ArrayUShort1>(arr_abstract, "ArrayUShort1", "%u ");
+      srfExport_Array1<ArrayUShort1>(arr_abstract, "<ArrayUShort1>", "%u ");
     else
     if(arr_abstract->as<ArrayUShort2>())
-      srfExport_Array2<ArrayUShort2>(arr_abstract, "ArrayUShort2", "%u %u ");
+      srfExport_Array2<ArrayUShort2>(arr_abstract, "<ArrayUShort2>", "%u %u ");
     else
     if(arr_abstract->as<ArrayUShort3>())
-      srfExport_Array3<ArrayUShort3>(arr_abstract, "ArrayUShort3", "%u %u %u ");
+      srfExport_Array3<ArrayUShort3>(arr_abstract, "<ArrayUShort3>", "%u %u %u ");
     else
     if(arr_abstract->as<ArrayUShort4>())
-      srfExport_Array4<ArrayUShort4>(arr_abstract, "ArrayUShort4", "%u %u %u %u ");
+      srfExport_Array4<ArrayUShort4>(arr_abstract, "<ArrayUShort4>", "%u %u %u %u ");
     else
 
     if(arr_abstract->as<ArrayShort1>())
-      srfExport_Array1<ArrayShort1>(arr_abstract, "ArrayShort1", "%d ");
+      srfExport_Array1<ArrayShort1>(arr_abstract, "<ArrayShort1>", "%d ");
     else
     if(arr_abstract->as<ArrayShort2>())
-      srfExport_Array2<ArrayShort2>(arr_abstract, "ArrayShort2", "%d %d ");
+      srfExport_Array2<ArrayShort2>(arr_abstract, "<ArrayShort2>", "%d %d ");
     else
     if(arr_abstract->as<ArrayShort3>())
-      srfExport_Array3<ArrayShort3>(arr_abstract, "ArrayShort3", "%d %d %d ");
+      srfExport_Array3<ArrayShort3>(arr_abstract, "<ArrayShort3>", "%d %d %d ");
     else
     if(arr_abstract->as<ArrayShort4>())
-      srfExport_Array4<ArrayShort4>(arr_abstract, "ArrayShort4", "%d %d %d %d ");
+      srfExport_Array4<ArrayShort4>(arr_abstract, "<ArrayShort4>", "%d %d %d %d ");
     else
 
     if(arr_abstract->as<ArrayUByte1>())
-      srfExport_Array1<ArrayUByte1>(arr_abstract, "ArrayUByte1", "%u ");
+      srfExport_Array1<ArrayUByte1>(arr_abstract, "<ArrayUByte1>", "%u ");
     else
     if(arr_abstract->as<ArrayUByte2>())
-      srfExport_Array2<ArrayUByte2>(arr_abstract, "ArrayUByte2", "%u %u ");
+      srfExport_Array2<ArrayUByte2>(arr_abstract, "<ArrayUByte2>", "%u %u ");
     else
     if(arr_abstract->as<ArrayUByte3>())
-      srfExport_Array3<ArrayUByte3>(arr_abstract, "ArrayUByte3", "%u %u %u ");
+      srfExport_Array3<ArrayUByte3>(arr_abstract, "<ArrayUByte3>", "%u %u %u ");
     else
     if(arr_abstract->as<ArrayUByte4>())
-      srfExport_Array4<ArrayUByte4>(arr_abstract, "ArrayUByte4", "%u %u %u %u ");
+      srfExport_Array4<ArrayUByte4>(arr_abstract, "<ArrayUByte4>", "%u %u %u %u ");
     else
 
     if(arr_abstract->as<ArrayByte1>())
-      srfExport_Array1<ArrayByte1>(arr_abstract, "ArrayByte1", "%d ");
+      srfExport_Array1<ArrayByte1>(arr_abstract, "<ArrayByte1>", "%d ");
     else
     if(arr_abstract->as<ArrayByte2>())
-      srfExport_Array2<ArrayByte2>(arr_abstract, "ArrayByte2", "%d %d ");
+      srfExport_Array2<ArrayByte2>(arr_abstract, "<ArrayByte2>", "%d %d ");
     else
     if(arr_abstract->as<ArrayByte3>())
-      srfExport_Array3<ArrayByte3>(arr_abstract, "ArrayByte3", "%d %d %d ");
+      srfExport_Array3<ArrayByte3>(arr_abstract, "<ArrayByte3>", "%d %d %d ");
     else
     if(arr_abstract->as<ArrayByte4>())
-      srfExport_Array4<ArrayByte4>(arr_abstract, "ArrayByte4", "%d %d %d %d ");
+      srfExport_Array4<ArrayByte4>(arr_abstract, "<ArrayByte4>", "%d %d %d %d ");
     else
 
     if(arr_abstract->as<ArrayFloat1>())
-      srfExport_Array1<ArrayFloat1>(arr_abstract, "ArrayFloat1", "%f ");
+      srfExport_Array1<ArrayFloat1>(arr_abstract, "<ArrayFloat1>", "%f ");
     else
     if(arr_abstract->as<ArrayFloat2>())
-      srfExport_Array2<ArrayFloat2>(arr_abstract, "ArrayFloat2", "%f %f ");
+      srfExport_Array2<ArrayFloat2>(arr_abstract, "<ArrayFloat2>", "%f %f ");
     else
     if(arr_abstract->as<ArrayFloat3>())
-      srfExport_Array3<ArrayFloat3>(arr_abstract, "ArrayFloat3", "%f %f %f ");
+      srfExport_Array3<ArrayFloat3>(arr_abstract, "<ArrayFloat3>", "%f %f %f ");
     else
     if(arr_abstract->as<ArrayFloat4>())
-      srfExport_Array4<ArrayFloat4>(arr_abstract, "ArrayFloat3", "%f %f %f %f ");
+      srfExport_Array4<ArrayFloat4>(arr_abstract, "<ArrayFloat3>", "%f %f %f %f ");
     else
 
     if(arr_abstract->as<ArrayDouble1>())
-      srfExport_Array1<ArrayDouble1>(arr_abstract, "ArrayDouble1", "%Lf ");
+      srfExport_Array1<ArrayDouble1>(arr_abstract, "<ArrayDouble1>", "%Lf ");
     else
     if(arr_abstract->as<ArrayDouble2>())
-      srfExport_Array2<ArrayDouble2>(arr_abstract, "ArrayDouble2", "%Lf %Lf ");
+      srfExport_Array2<ArrayDouble2>(arr_abstract, "<ArrayDouble2>", "%Lf %Lf ");
     else
     if(arr_abstract->as<ArrayDouble3>())
-      srfExport_Array3<ArrayDouble3>(arr_abstract, "ArrayDouble3", "%Lf %Lf %Lf ");
+      srfExport_Array3<ArrayDouble3>(arr_abstract, "<ArrayDouble3>", "%Lf %Lf %Lf ");
     else
     if(arr_abstract->as<ArrayDouble4>())
-      srfExport_Array4<ArrayDouble4>(arr_abstract, "ArrayDouble3", "%Lf %Lf %Lf %Lf ");
+      srfExport_Array4<ArrayDouble4>(arr_abstract, "<ArrayDouble3>", "%Lf %Lf %Lf %Lf ");
     else
     {
       Log::error("Array type not supported for export.\n");
       VL_TRAP();
     }
+  }
+
+  void srfExport_DrawCallBase(DrawCall* dcall)
+  {
+      if (mObject_Ref_Count[dcall] > 1)
+        mSRFString += indent() + "ID = " + getUID(dcall) + "\n";
+      switch(dcall->primitiveType())
+      {
+        case PT_POINTS:                   mSRFString += indent() + "PrimitiveType = PT_POINTS\n"; break;
+        case PT_LINES:                    mSRFString += indent() + "PrimitiveType = PT_LINES\n"; break;
+        case PT_LINE_LOOP:                mSRFString += indent() + "PrimitiveType = PT_LINE_LOOP\n"; break;
+        case PT_LINE_STRIP:               mSRFString += indent() + "PrimitiveType = PT_LINE_STRIP\n"; break;
+        case PT_TRIANGLES:                mSRFString += indent() + "PrimitiveType = PT_TRIANGLES\n"; break;
+        case PT_TRIANGLE_STRIP:           mSRFString += indent() + "PrimitiveType = PT_TRIANGLE_STRIP\n"; break;
+        case PT_TRIANGLE_FAN:             mSRFString += indent() + "PrimitiveType = PT_TRIANGLE_FAN\n"; break;
+        case PT_QUADS:                    mSRFString += indent() + "PrimitiveType = PT_QUADS\n"; break;
+        case PT_QUAD_STRIP:               mSRFString += indent() + "PrimitiveType = PT_QUAD_STRIP\n"; break;
+        case PT_POLYGON:                  mSRFString += indent() + "PrimitiveType = PT_POLYGON\n"; break;
+
+        case PT_LINES_ADJACENCY:          mSRFString += indent() + "PrimitiveType = PT_LINES_ADJACENCY\n"; break;
+        case PT_LINE_STRIP_ADJACENCY:     mSRFString += indent() + "PrimitiveType = PT_LINE_STRIP_ADJACENCY\n"; break;
+        case PT_TRIANGLES_ADJACENCY:      mSRFString += indent() + "PrimitiveType = PT_TRIANGLES_ADJACENCY\n"; break;
+        case PT_TRIANGLE_STRIP_ADJACENCY: mSRFString += indent() + "PrimitiveType = PT_TRIANGLE_STRIP_ADJACENCY\n"; break;
+
+        case PT_PATCHES:                  mSRFString += indent() + "PrimitiveType = PT_PATCHES\n"; break;
+
+        case PT_UNKNOWN:                  mSRFString += indent() + "PrimitiveType = PT_UNKNOWN\n"; break;
+      }
+      mSRFString += indent() + "Enabled = " + (dcall->isEnabled() ? "true" : "false") + "\n";
+
+      if (dcall->patchParameter())
+      {
+        mSRFString += indent() + "PatchParameter = "; mEquals = true; srfExport_PatchParameter(dcall->patchParameter());
+      }
+  }
+
+  void srfExport_PatchParameter(PatchParameter* pp)
+  {
+    if (isDefined(pp))
+    {
+      mSRFString += indent() + getUID(pp) + "\n";
+      return;
+    }
+    else
+      mAlreadyDefined.insert(pp);
+
+    mSRFString += indent() + "<PatchParameter>\n";
+    mSRFString += indent() + "{\n";
+    ++mIndent;
+    if (mObject_Ref_Count[pp] > 1)
+      mSRFString += indent() + "ID = " + getUID(pp) + "\n";
+    mSRFString += indent() + String::printf("PatchVertices = %d\n", pp->patchVertices());
+    mSRFString += indent() + String::printf("PatchDefaultOuterLevel = ( %f %f %f %f )\n", pp->patchDefaultOuterLevel().x(), pp->patchDefaultOuterLevel().y(), pp->patchDefaultOuterLevel().z(), pp->patchDefaultOuterLevel().w() );
+    mSRFString += indent() + String::printf("PatchDefaultInnerLevel = ( %f %f )\n",       pp->patchDefaultInnerLevel().x(), pp->patchDefaultInnerLevel().y() );
+    --mIndent;
+    mSRFString += indent() + "}\n";
   }
 
   void srfExport_DrawCall(DrawCall* dcall)
@@ -1772,8 +1840,7 @@ public:
       mSRFString += indent() + "<DrawArrays>\n";
       mSRFString += indent() + "{\n";
       ++mIndent;
-      if (mObject_Ref_Count[da] > 1)
-        mSRFString += indent() + "ID = " + getUID(da) + "\n";
+      srfExport_DrawCallBase(da);
       mSRFString += indent() + String::printf("Instances = %d\n", da->instances());
       mSRFString += indent() + String::printf("Start = %d\n", da->start());
       mSRFString += indent() + String::printf("Count= %d\n", da->count());
@@ -1787,8 +1854,7 @@ public:
       mSRFString += indent() + "<DrawElementsUInt>\n";
       mSRFString += indent() + "{\n";
       ++mIndent;
-      if (mObject_Ref_Count[de] > 1)
-        mSRFString += indent() + "ID = " + getUID(de) + "\n";
+      srfExport_DrawCallBase(de);
       mSRFString += indent() + String::printf("Instances = %d\n", de->instances());
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
       mSRFString += indent() + String::printf("BaseVertex = %d\n", de->baseVertex());
@@ -1803,8 +1869,7 @@ public:
       mSRFString += indent() + "<DrawElementsUShort>\n";
       mSRFString += indent() + "{\n";
       ++mIndent;
-      if (mObject_Ref_Count[de] > 1)
-        mSRFString += indent() + "ID = " + getUID(de) + "\n";
+      srfExport_DrawCallBase(de);
       mSRFString += indent() + String::printf("Instances = %d\n", de->instances());
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
       mSRFString += indent() + String::printf("BaseVertex = %d\n", de->baseVertex());
@@ -1819,8 +1884,7 @@ public:
       mSRFString += indent() + "<DrawElementsUByte>\n";
       mSRFString += indent() + "{\n";
       ++mIndent;
-      if (mObject_Ref_Count[de] > 1)
-        mSRFString += indent() + "ID = " + getUID(de) + "\n";
+      srfExport_DrawCallBase(de);
       mSRFString += indent() + String::printf("Instances = %d\n", de->instances());
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
       mSRFString += indent() + String::printf("BaseVertex = %d\n", de->baseVertex());
@@ -1835,8 +1899,7 @@ public:
       mSRFString += indent() + "<MultiDrawElementsUInt>\n";
       mSRFString += indent() + "{\n";
       ++mIndent;
-      if (mObject_Ref_Count[de] > 1)
-        mSRFString += indent() + "ID = " + getUID(de) + "\n";
+      srfExport_DrawCallBase(de);
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
       mSRFString += indent() + "IndexBuffer = "; mEquals = true; srfExport_Array(de->indexBuffer());
       mSRFString += indent() + "CountVector = "; srfExport_vector1(de->countVector(), "%u ");
@@ -1851,8 +1914,7 @@ public:
       mSRFString += indent() + "<MultiDrawElementsUShort>\n";
       mSRFString += indent() + "{\n";
       ++mIndent;
-      if (mObject_Ref_Count[de] > 1)
-        mSRFString += indent() + "ID = " + getUID(de) + "\n";
+      srfExport_DrawCallBase(de);
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
       mSRFString += indent() + "IndexBuffer = "; mEquals = true; srfExport_Array(de->indexBuffer());
       mSRFString += indent() + "CountVector = "; srfExport_vector1(de->countVector(), "%u ");
@@ -1867,8 +1929,7 @@ public:
       mSRFString += indent() + "<MultiDrawElementsUByte>\n";
       mSRFString += indent() + "{\n";
       ++mIndent;
-      if (mObject_Ref_Count[de] > 1)
-        mSRFString += indent() + "ID = " + getUID(de) + "\n";
+      srfExport_DrawCallBase(de);
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
       mSRFString += indent() + "IndexBuffer = "; mEquals = true; srfExport_Array(de->indexBuffer());
       mSRFString += indent() + "CountVector = "; srfExport_vector1(de->countVector(), "%u ");
