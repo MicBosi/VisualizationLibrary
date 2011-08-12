@@ -615,8 +615,6 @@ namespace vl
 
   typedef enum
   {
-    PT_UNKNOWN = 0,
-
     PT_POINTS         = GL_POINTS,
     PT_LINES          = GL_LINES,
     PT_LINE_LOOP      = GL_LINE_LOOP,
@@ -635,7 +633,9 @@ namespace vl
     PT_TRIANGLE_STRIP_ADJACENCY = GL_TRIANGLE_STRIP_ADJACENCY_EXT,
 
     // GL_ARB_tessellation_shader
-    PT_PATCHES = GL_PATCHES
+    PT_PATCHES = GL_PATCHES,
+
+    PT_UNKNOWN,
 
   } EPrimitiveType;
 
