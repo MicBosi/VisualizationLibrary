@@ -1127,6 +1127,8 @@ public:
       else
       if (mToken.mType == TT_Float)
         arr = arr_float = new SRF_ArrayFloat;
+      else
+        return false;
 
       do
       {
@@ -1186,6 +1188,8 @@ public:
           // gne l'emo fatta!
           return true;
         }
+        else
+          return false;
 
       } while(getToken(mToken));
       
