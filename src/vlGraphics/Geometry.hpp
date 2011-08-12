@@ -217,8 +217,8 @@ namespace vl
     //! Converts all draw calls to triangles and fixes their winding according to the Geometry's normals.
     void fixTriangleWinding();
 
-    //! Converts PT_QUADS, PT_QUADS_STRIP, PT_POLYGON into PT_TRIANGLE primitives, converts DrawElementsUInt into DrawElementsUByte and DrawElementsUShort and 
-    // calls Geometry::convertToVertexAttribs().
+    //! Converts PT_QUADS, PT_QUADS_STRIP, PT_POLYGON into PT_TRIANGLE primitives, converts DrawElementsUInt 
+    //! into DrawElementsUByte and DrawElementsUShort and calls Geometry::convertToVertexAttribs().
     //! - Does not handle vl::MultiDrawElements* vl::DrawRangeElements*, primitive restart and draw call multi-instancing.
     void makeGLESFriendly();
 
