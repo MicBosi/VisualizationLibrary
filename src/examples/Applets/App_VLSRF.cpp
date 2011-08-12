@@ -694,10 +694,14 @@ struct SRF_NumberOrIdentifier: public SRF_Value
 
 struct SRF_UID: public SRF_Value
 {
-  SRF_UID(const std::string& str): mValue(str) {}
+  SRF_UID(const std::string& str) { mValue.mUID = str; }
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitUID(this); }
 
-  std::string mValue;
+  struct ValueElem
+  {
+    std::string mUID; // the UID string
+    ref<SRF_Value> mPtr; // the linked object
+  } mValue;
 };
 
 struct SRF_NameValue
@@ -716,7 +720,7 @@ struct SRF_Object: public SRF_Value
 
 
   std::string mName;
-  std::string mID;
+  std::string mUID;
   std::vector<SRF_NameValue> mNameValues;
 };
 
@@ -832,7 +836,7 @@ struct SRF_DumpVisitor: public SRF_Visitor
 
   virtual void visitUID(SRF_UID* uid) 
   {
-    indent(); printf("%s\n", uid->mValue.c_str());
+    indent(); printf("%s\n", uid->mValue.mUID.c_str());
   }
   
   virtual void visitObject(SRF_Object* obj) 
@@ -840,9 +844,9 @@ struct SRF_DumpVisitor: public SRF_Visitor
     indent(); printf("%s\n", obj->mName.c_str());
     indent(); printf("{\n");
     mIndentLevel++;
-    if (obj->mID.length())
+    if (obj->mUID.length())
     {
-      indent(); printf("ID = %s\n", obj->mID.c_str());
+      indent(); printf("ID = %s\n", obj->mUID.c_str());
     }
     for(size_t i=0; i<obj->mNameValues.size(); ++i)
     {
@@ -925,6 +929,83 @@ private:
   bool mAssignment;
 };
 //-----------------------------------------------------------------------------
+// SRF_DumpVisitor
+//-----------------------------------------------------------------------------
+struct SRF_LinkVisitor: public SRF_Visitor
+{
+  SRF_LinkVisitor(const std::map< std::string, ref<SRF_Object> >* map)
+  {
+    mLinkMap = map;
+  }
+
+  void setLinkMap(const std::map< std::string, ref<SRF_Object> >* map)
+  {
+    mLinkMap = map;
+  }
+
+  SRF_Object* link(const std::string& uid)
+  {
+    VL_CHECK(mLinkMap)
+      VL_CHECK(!uid.empty())
+    std::map< std::string, ref<SRF_Object> >::const_iterator it = mLinkMap->find(uid);
+    if( it != mLinkMap->end() )
+    {
+      printf("linked UID = '%s'.\n", uid.c_str());
+      return it->second.get_writable();
+    }
+    else
+    {
+      if (uid != "#NULL")
+        Log::error( Say("Could not link UID = '%s'.\n") << uid );
+      return NULL;
+    }
+  }
+
+  virtual void visitBoolean(SRF_Boolean*) {}
+
+  virtual void visitString(SRF_String*) {}
+
+  virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier*) {}
+
+  virtual void visitUID(SRF_UID* uid)
+  {
+    uid->mValue.mPtr = link(uid->mValue.mUID);
+  }
+
+  virtual void visitObject(SRF_Object* obj)
+  {
+    for(size_t i=0; i<obj->mNameValues.size(); ++i)
+      obj->mNameValues[i].mValue->acceptVisitor(this);
+  }
+
+  virtual void visitList(SRF_List* list) 
+  {
+    for(size_t i=0; i<list->mValue.size(); ++i)
+      list->mValue[i]->acceptVisitor(this);
+  }
+  
+  virtual void visitArray(SRF_ArrayUID* arr) 
+  {
+    for(size_t i=0 ;i<arr->mValue.size(); ++i)
+      arr->mValue[i].mPtr = link(arr->mValue[i].mUID);
+  }
+
+  virtual void visitArray(SRF_ArrayIdentifier*) {}
+
+  virtual void visitArray(SRF_ArrayString*)  {}
+
+  virtual void visitArray(SRF_ArrayInt32*)  {}
+
+  virtual void visitArray(SRF_ArrayInt64*)  {}
+
+  virtual void visitArray(SRF_ArrayFloat*)  {}
+
+  virtual void visitArray(SRF_ArrayDouble*)  {}
+
+private:
+  const std::map< std::string, ref<SRF_Object> >* mLinkMap;
+};
+//-----------------------------------------------------------------------------
 // SRF_Parser
 //-----------------------------------------------------------------------------
 class SRF_Parser
@@ -935,18 +1016,18 @@ public:
 
   bool parse()
   {
+    mRoot = NULL;
     if(getToken(mToken) && mToken.mType == TT_ObjectHeader)
     {
       mRoot = new SRF_Object;
       mRoot->mName = mToken.mString;
       if (parseObject(mRoot.get()))
       {
-        ref<SRF_DumpVisitor> dump_visitor = new SRF_DumpVisitor;
-        mRoot->acceptVisitor(dump_visitor.get());
         return true;
       }
       else
       {
+        mRoot = NULL;
         if (mToken.mString.length())
           Log::error( Say("Line %n: parse error at '%s'.\n") << mTokenizer->mLineNumber << mToken.mString.c_str() );
         else
@@ -969,7 +1050,6 @@ public:
     {
       if (mToken.mType == TT_RightCurlyBracket)
       {
-        mObjects.push_back(object);
         return true;
       }
       else
@@ -980,6 +1060,10 @@ public:
         {
           if (mToken.mString == "ID")
           {
+            // Check if ID has already been set
+            if (!object->mUID.empty())
+              return false;
+
             // Equals
             if (!getToken(mToken) || mToken.mType != TT_Equals)
               return false;
@@ -987,7 +1071,19 @@ public:
             // #identifier
             if (getToken(mToken) && mToken.mType == TT_UID)
             {
-              object->mID = mToken.mString;
+              object->mUID = mToken.mString;
+
+              // UID to Object Map, #NULL is not mapped to anything
+              if( object->mUID != "#NULL")
+              {
+                if (mUID_To_Object_Map.find(object->mUID) == mUID_To_Object_Map.end())
+                  mUID_To_Object_Map[ object->mUID ] = object;
+                else
+                {
+                  Log::error( Say("Duplicate UID = '%s'.\n") << object->mUID );
+                  return false;
+                }
+              }
               continue;
             }
             else
@@ -1069,6 +1165,8 @@ public:
             return false;
         }
       }
+      else
+        return false;
     }
     return false;
   }
@@ -1296,10 +1394,24 @@ public:
 
   void dump()
   {
+    if (mRoot)
+    {
+      SRF_DumpVisitor dump_visitor;
+      mRoot->acceptVisitor(&dump_visitor);
+    }
+  }
+
+  void link()
+  {
+    if (mRoot)
+    {
+      SRF_LinkVisitor linker(&mUID_To_Object_Map);
+      mRoot->acceptVisitor(&linker);
+    }
   }
 
   ref<SRF_Object> mRoot;
-  std::vector< ref<SRF_Object> > mObjects;
+  std::map< std::string, ref<SRF_Object> > mUID_To_Object_Map;
   ref<SRF_Tokenizer> mTokenizer;
   SRF_Token mToken;
 };
@@ -1316,9 +1428,10 @@ public:
     parser.mTokenizer->setInputFile( new DiskFile("D:/VL/test.vl") );
 
     parser.parse();
+    parser.dump();
+    parser.link();
     // parser.listTokens();
 
-    Time::sleep(1000*1000);
     exit(0);
   }
 
