@@ -39,9 +39,13 @@
 
 using namespace vl;
 
+#ifdef _MSC_VER
+#define atoll _atoi64
+#endif
+
 typedef enum
 {
-  TT_ERROR_TOKEN,
+  TT_ERROR,
   TT_EOF,
 
   TT_LeftRoundBracket, // (
@@ -58,8 +62,10 @@ typedef enum
   TT_UID, // #Identifier_type001
   TT_Identifier, // Identifier_1001
   TT_Boolean, // true / false
-  TT_Integer, // +123
+  TT_Int32, // +123
+  TT_Int64, // +123
   TT_Float, // +123.456e+10
+  TT_Double, // +123.456e+10
   TT_ObjectHeader // <ObjectHeader>
 
 } ETokenType;
@@ -67,7 +73,7 @@ typedef enum
 class SRF_Token
 {
 public:
-  SRF_Token(): mType(TT_ERROR_TOKEN) {}
+  SRF_Token(): mType(TT_ERROR) {}
   std::string mString;
   ETokenType mType;
 };
@@ -118,7 +124,7 @@ public:
 
   bool getToken(SRF_Token& token) 
   {
-    token.mType = TT_ERROR_TOKEN;
+    token.mType = TT_ERROR;
     token.mString.clear();
 
     // read chars skipping spaces
@@ -382,7 +388,7 @@ public:
         }
       }
       else
-      // TT_Integer / TT_Float - int, float and exponent
+      // TT_Int32 / TT_Int64 / TT_Float / TT_Double
       //
       // ACCEPTED:
       // 123
@@ -400,9 +406,9 @@ public:
       // 123.123E/e+
       if ( ch1 >= '0' && ch1 <= '9' || ch1 == '.' || ch1 == '+' || ch1 == '-' )
       {
-        token.mType = TT_ERROR_TOKEN;
+        token.mType = TT_ERROR;
         token.mString.push_back(ch1);
-        
+
         enum { sZERO, sPLUS_MINUS, sINT, sFRAC, sPOINT, sE, sPLUS_MINUS_EXP, sEXP } state = sINT;
 
         if ( ch1 >= '1' && ch1 <= '9' )
@@ -431,8 +437,13 @@ public:
             }
             else
             {
-              token.mType = TT_Integer;
-              ungetToken(ch1);
+              if (ch1 == 'L')
+                token.mType = TT_Int64;
+              else
+              {
+                token.mType = TT_Int32;
+                ungetToken(ch1);
+              }
               return true;
             }
             break;
@@ -473,8 +484,13 @@ public:
             }
             else
             {
-              token.mType = TT_Integer;
-              ungetToken(ch1);
+              if (ch1 == 'L')
+                token.mType = TT_Int64;
+              else
+              {
+                token.mType = TT_Int32;
+                ungetToken(ch1);
+              }
               return true;
             }
             break;
@@ -503,8 +519,13 @@ public:
             }
             else
             {
-              token.mType = TT_Float;
-              ungetToken(ch1);
+              if (ch1 == 'L')
+                token.mType = TT_Double;
+              else
+              {
+                token.mType = TT_Float;
+                ungetToken(ch1);
+              }
               return true;
             }
             break;
@@ -540,23 +561,36 @@ public:
               token.mString.push_back(ch1);
             else
             {
-              ungetToken(ch1);
-              token.mType = TT_Float;
+              if (ch1 == 'L')
+                token.mType = TT_Double;
+              else
+              {
+                token.mType = TT_Float;
+                ungetToken(ch1);
+              }
               return true;
             }
             break;
           }
         }
+        // reached EOF in the middle of the parsing so we check where we were, note that it cannot be a Int64 or a Double
         if (state == sINT)
-          token.mType = TT_Integer;
+        {
+          token.mType = TT_Int32;
+          return true;
+        }
         else
         if (state == sFRAC || state == sEXP)
+        {
           token.mType = TT_Float;
-        return state == sINT || state == sFRAC || state == sEXP;
+          return true;
+        }
+        else
+          return false;
       }
       else
       {
-        Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+        Log::error( Say("Line %n: unexpected character '%c'.\n") << mLineNumber << ch1 );
         return false;
       }
     }
@@ -623,35 +657,38 @@ struct SRF_String: public SRF_Value
 
 struct SRF_NumberOrIdentifier: public SRF_Value
 {
-  SRF_NumberOrIdentifier(const std::string& str): mValue(str) {}
+  SRF_NumberOrIdentifier(const std::string& str, ETokenType type): mValue(str), mType(type) {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitNumberOrIdentifier(this); }
 
   float getFloat() const
   {
     VL_CHECK(mValue.length());
+    // this is ok for int32, int64, float and double
     return (float)atof(mValue.c_str());
   }
 
   double getDouble() const
   {
     VL_CHECK(mValue.length());
+    // this is ok for int32, int64, float and double
     return atof(mValue.c_str());
   }
 
   int getInt32() const
   {
     VL_CHECK(mValue.length());
+    VL_CHECK(mType == TT_Int32 || mType == TT_Int64)
     return atoi(mValue.c_str());
   }
 
   long long getInt64() const
   {
     VL_CHECK(mValue.length());
-    long long value = 0;
-    sscanf(mValue.c_str(), "%lld", &value);
-    return value;
+    VL_CHECK(mType == TT_Int32 || mType == TT_Int64)
+    return atoll(mValue.c_str());
   }
 
+  ETokenType mType;
   std::string mValue;
 };
 
@@ -687,11 +724,11 @@ struct SRF_List: public SRF_Value
 {
   SRF_List()
   {
-    mValues.reserve(10);
+    mValue.reserve(10);
   }
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitList(this); }
 
-  std::vector< ref<SRF_Value> > mValues;
+  std::vector< ref<SRF_Value> > mValue;
 };
 
 struct SRF_ArrayInt32: public SRF_Value
@@ -699,7 +736,7 @@ struct SRF_ArrayInt32: public SRF_Value
   SRF_ArrayInt32() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  std::vector<int> mValues;
+  std::vector<int> mValue;
 };
 
 struct SRF_ArrayInt64: public SRF_Value
@@ -707,7 +744,7 @@ struct SRF_ArrayInt64: public SRF_Value
   SRF_ArrayInt64() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  std::vector<long long> mValues;
+  std::vector<long long> mValue;
 };
 
 struct SRF_ArrayFloat: public SRF_Value
@@ -715,7 +752,7 @@ struct SRF_ArrayFloat: public SRF_Value
   SRF_ArrayFloat() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  std::vector<float> mValues;
+  std::vector<float> mValue;
 };
 
 struct SRF_ArrayDouble: public SRF_Value
@@ -723,7 +760,7 @@ struct SRF_ArrayDouble: public SRF_Value
   SRF_ArrayDouble() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  std::vector<double> mValues;
+  std::vector<double> mValue;
 };
 
 struct SRF_ArrayUID: public SRF_Value
@@ -731,7 +768,7 @@ struct SRF_ArrayUID: public SRF_Value
   SRF_ArrayUID() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  std::vector<std::string> mValues;
+  std::vector<std::string> mValue;
 };
 
 struct SRF_ArrayIdentifier: public SRF_Value
@@ -739,7 +776,7 @@ struct SRF_ArrayIdentifier: public SRF_Value
   SRF_ArrayIdentifier() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  std::vector<std::string> mValues;
+  std::vector<std::string> mValue;
 };
 
 struct SRF_ArrayString: public SRF_Value
@@ -747,7 +784,7 @@ struct SRF_ArrayString: public SRF_Value
   SRF_ArrayString() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  std::vector<std::string> mValues;
+  std::vector<std::string> mValue;
 };
 //-----------------------------------------------------------------------------
 // SRF_DumpVisitor
@@ -814,8 +851,8 @@ struct SRF_DumpVisitor: public SRF_Visitor
   {
     indent(); printf("[\n");
     mIndentLevel++;
-    for(size_t i=0; i<list->mValues.size(); ++i)
-      list->mValues[i]->acceptVisitor(this);
+    for(size_t i=0; i<list->mValue.size(); ++i)
+      list->mValue[i]->acceptVisitor(this);
     mIndentLevel--;
     indent(); printf("]\n");
   }
@@ -823,56 +860,56 @@ struct SRF_DumpVisitor: public SRF_Visitor
   virtual void visitArray(SRF_ArrayInt32* arr) 
   {
     indent(); printf("( int32: ");
-    for(size_t i=0 ;i<arr->mValues.size(); ++i)
-      printf("%d ", arr->mValues[i]);
+    for(size_t i=0 ;i<arr->mValue.size(); ++i)
+      printf("%d ", arr->mValue[i]);
     printf(")\n");
   }
 
   virtual void visitArray(SRF_ArrayInt64* arr) 
   {
     indent(); printf("( int64: ");
-    for(size_t i=0 ;i<arr->mValues.size(); ++i)
-      printf("%lld ", arr->mValues[i]);
+    for(size_t i=0 ;i<arr->mValue.size(); ++i)
+      printf("%lld ", arr->mValue[i]);
     printf(")\n");
   }
 
   virtual void visitArray(SRF_ArrayFloat* arr) 
   {
     indent(); printf("( float: ");
-    for(size_t i=0 ;i<arr->mValues.size(); ++i)
-      printf("%f ", arr->mValues[i]);
+    for(size_t i=0 ;i<arr->mValue.size(); ++i)
+      printf("%f ", arr->mValue[i]);
     printf(")\n");
   }
 
   virtual void visitArray(SRF_ArrayDouble* arr) 
   {
     indent(); printf("( double: ");
-    for(size_t i=0 ;i<arr->mValues.size(); ++i)
-      printf("%llf ", arr->mValues[i]);
+    for(size_t i=0 ;i<arr->mValue.size(); ++i)
+      printf("%llf ", arr->mValue[i]);
     printf(")\n");
   }
 
   virtual void visitArray(SRF_ArrayIdentifier* arr) 
   {
     indent(); printf("( identifier: ");
-    for(size_t i=0 ;i<arr->mValues.size(); ++i)
-      printf("%s ", arr->mValues[i].c_str());
+    for(size_t i=0 ;i<arr->mValue.size(); ++i)
+      printf("%s ", arr->mValue[i].c_str());
     printf(")\n");
   }
 
   virtual void visitArray(SRF_ArrayString* arr) 
   {
     indent(); printf("( string: ");
-    for(size_t i=0 ;i<arr->mValues.size(); ++i)
-      printf("\"%s\" ", arr->mValues[i].c_str());
+    for(size_t i=0 ;i<arr->mValue.size(); ++i)
+      printf("\"%s\" ", arr->mValue[i].c_str());
     printf(")\n");
   }
 
   virtual void visitArray(SRF_ArrayUID* arr) 
   {
     indent(); printf("( uid: ");
-    for(size_t i=0 ;i<arr->mValues.size(); ++i)
-      printf("%s ", arr->mValues[i].c_str());
+    for(size_t i=0 ;i<arr->mValue.size(); ++i)
+      printf("%s ", arr->mValue[i].c_str());
     printf(")\n");
   }
 
@@ -903,7 +940,10 @@ public:
       }
       else
       {
-        Log::error( Say("Line %n: parse error at '%s'.\n") << mTokenizer->mLineNumber << mToken.mString.c_str() );
+        if (mToken.mString.length())
+          Log::error( Say("Line %n: parse error at '%s'.\n") << mTokenizer->mLineNumber << mToken.mString.c_str() );
+        else
+          Log::error( Say("Line %n: parse error.\n") << mTokenizer->mLineNumber );
         return false;
       }
     }
@@ -1014,9 +1054,9 @@ public:
           }
           else
           // An Identifier or Integer or Float
-          if (mToken.mType == TT_Identifier || mToken.mType == TT_Integer || mToken.mType == TT_Float)
+          if (mToken.mType == TT_Identifier || mToken.mType == TT_Int32 || mToken.mType == TT_Int64 || mToken.mType == TT_Float || mToken.mType == TT_Double)
           {
-            name_value.mValue = new SRF_NumberOrIdentifier(mToken.mString);
+            name_value.mValue = new SRF_NumberOrIdentifier(mToken.mString, mToken.mType);
           }
           else
             return false;
@@ -1038,24 +1078,26 @@ public:
         {
           // boolean
           case TT_Boolean:
-            list->mValues.push_back( new SRF_Boolean(mToken.mString == "true") );
+            list->mValue.push_back( new SRF_Boolean(mToken.mString == "true") );
             break;
 
           // string
           case TT_String:
-            list->mValues.push_back( new SRF_String(mToken.mString) );
+            list->mValue.push_back( new SRF_String(mToken.mString) );
             break;
 
           // int, float, identifier
+          case TT_Int32:
+          case TT_Int64:
           case TT_Float:
-          case TT_Integer:
+          case TT_Double:
           case TT_Identifier:
-            list->mValues.push_back( new SRF_NumberOrIdentifier(mToken.mString) );
+            list->mValue.push_back( new SRF_NumberOrIdentifier(mToken.mString, mToken.mType) );
             break;
 
           // UID
           case TT_UID:
-            list->mValues.push_back( new SRF_UID(mToken.mString) );
+            list->mValue.push_back( new SRF_UID(mToken.mString) );
             break;
 
           // list
@@ -1063,7 +1105,7 @@ public:
             {
               ref<SRF_List> sub_list = new SRF_List;
               if ( parseList( sub_list.get() ) )
-                list->mValues.push_back( sub_list );
+                list->mValue.push_back( sub_list );
               else
                 return false;
               break;
@@ -1074,7 +1116,7 @@ public:
             {
               ref<SRF_Value> arr;
               if (parseArray(arr))
-                list->mValues.push_back(arr);
+                list->mValue.push_back(arr);
               else
                 return false;
               break;
@@ -1086,7 +1128,7 @@ public:
               ref<SRF_Object> object = new SRF_Object;
               object->mName = mToken.mString;
               if ( parseObject( object.get() ) )
-                list->mValues.push_back( object );
+                list->mValue.push_back( object );
               else
                 return false;
               break;
@@ -1105,98 +1147,110 @@ public:
     if(getToken(mToken))
     {
       // from the fist token we decide what kind of array it is going to be
-      ref<SRF_ArrayUID> arr_uid; // mic fixme we should translate this into actual pointers
-      ref<SRF_ArrayString> arr_string;
-      ref<SRF_ArrayIdentifier> arr_identifier;
-      ref<SRF_ArrayInt32> arr_int32;
-      // ref<SRF_ArrayInt64> arr_int64; // mic fixme: support this
-      ref<SRF_ArrayFloat> arr_float;
-      // ref<SRF_ArrayDouble> arr_double; // mic fixme: support this
-
       if (mToken.mType == TT_UID)
+      {
+        ref<SRF_ArrayUID> arr_uid;
         arr = arr_uid = new SRF_ArrayUID;
+        do
+          arr_uid->mValue.push_back(mToken.mString);
+        while(getToken(mToken) && mToken.mType == TT_UID);
+        return mToken.mType == TT_RightRoundBracket;
+      }
       else
       if (mToken.mType == TT_String)
+      {
+        ref<SRF_ArrayString> arr_string;
         arr = arr_string = new SRF_ArrayString;
+        do 
+          arr_string->mValue.push_back(mToken.mString);
+        while(getToken(mToken) && mToken.mType == TT_String);
+        return mToken.mType == TT_RightRoundBracket;
+      }
       else
       if (mToken.mType == TT_Identifier)
+      {
+        ref<SRF_ArrayIdentifier> arr_identifier;
         arr = arr_identifier = new SRF_ArrayIdentifier;
+        do 
+          arr_identifier->mValue.push_back(mToken.mString);
+        while(getToken(mToken) && mToken.mType == TT_Identifier);
+        return mToken.mType == TT_RightRoundBracket;
+      }
       else
-      if (mToken.mType == TT_Integer)
+      if (mToken.mType == TT_Int32)
+      {
+        ref<SRF_ArrayInt32> arr_int32;
         arr = arr_int32 = new SRF_ArrayInt32;
+        do
+          arr_int32->mValue.push_back( atoi( mToken.mString.c_str() ) );
+        while(getToken(mToken) && mToken.mType == TT_Int32);
+        return mToken.mType == TT_RightRoundBracket;
+      }
+      else
+      if (mToken.mType == TT_Int64)
+      {
+        ref<SRF_ArrayInt64> arr_int64;
+        arr = arr_int64 = new SRF_ArrayInt64;
+        do
+        {
+          switch(mToken.mType)
+          {
+          case TT_Int32:
+          case TT_Int64: arr_int64->mValue.push_back( atoll( mToken.mString.c_str() ) ); break;
+          case TT_RightRoundBracket: return true;
+          default:
+            return false;
+          }
+        }
+        while(getToken(mToken));
+        return false;
+      }
       else
       if (mToken.mType == TT_Float)
+      {
+        ref<SRF_ArrayFloat> arr_float;
         arr = arr_float = new SRF_ArrayFloat;
+        do
+        {
+          switch(mToken.mType)
+          {
+          case TT_Int32:
+          case TT_Int64:
+          case TT_Float: arr_float->mValue.push_back( (float)atof( mToken.mString.c_str() ) ); break;
+          case TT_RightRoundBracket: return true;
+          default:
+            return false;
+          }
+        }
+        while(getToken(mToken));
+        return false;
+      }
+      else
+      if (mToken.mType == TT_Double)
+      {
+        ref<SRF_ArrayDouble> arr_double;
+        arr = arr_double = new SRF_ArrayDouble;
+        do
+        {
+          switch(mToken.mType)
+          {
+          case TT_Int32:
+          case TT_Int64:
+          case TT_Float: 
+          case TT_Double: arr_double->mValue.push_back( atof( mToken.mString.c_str() ) ); break;
+          case TT_RightRoundBracket: return true;
+          default:
+            return false;
+          }
+        }
+        while(getToken(mToken));
+        return false;
+      }
       else
         return false;
-
-      do
-      {
-        if (mToken.mType == TT_UID)
-        {
-          if (!arr_uid) return false;
-          arr_uid->mValues.push_back(mToken.mString);
-        }
-        else
-        if (mToken.mType == TT_String)
-        {
-          if (!arr_string) return false;
-          arr_string->mValues.push_back(mToken.mString);
-        }
-        else
-        if (mToken.mType == TT_Identifier)
-        {
-          if (!arr_identifier) return false;
-          arr_identifier->mValues.push_back(mToken.mString);
-        }
-        else
-        if (mToken.mType == TT_Integer)
-        {
-          if (arr_int32)
-            arr_int32->mValues.push_back( atoi( mToken.mString.c_str() ) );
-          else
-          if (arr_float)
-            arr_float->mValues.push_back( (float)atof( mToken.mString.c_str() ) );
-          else
-            return false;
-        }
-        else
-        if (mToken.mType == TT_Float)
-        {
-          // convert from int32 to float
-          if (arr_int32)
-          {
-            arr_float = new SRF_ArrayFloat;
-            arr_float->mValues.resize( arr_int32->mValues.size() );
-            for(size_t i=0; i<arr_int32->mValues.size(); ++i)
-              arr_float->mValues[i] = (float)arr_int32->mValues[i];
-
-            // delete arr_int32
-            arr_int32 = NULL;
-            // install the new arr_float
-            arr = arr_float;
-          }
-
-          if (arr_float)
-            arr_float->mValues.push_back( (float)atof( mToken.mString.c_str() ) );
-          else
-            return false;
-        }
-        else
-        if (mToken.mType == TT_RightRoundBracket)
-        {
-          // gne l'emo fatta!
-          return true;
-        }
-        else
-          return false;
-
-      } while(getToken(mToken));
-      
-      return false;
     }
-    else
-      return false;
+
+    return false;
   }
 
   void listTokens()
@@ -1219,7 +1273,9 @@ public:
         case TT_UID:                printf("TT_UID = %s\n", mToken.mString.c_str()); break;
         case TT_Identifier:         printf("TT_Identifier = %s\n", mToken.mString.c_str()); break;
         case TT_Float:              printf("TT_Float = %s\n", mToken.mString.c_str()); break;
-        case TT_Integer:            printf("TT_Integer = %s\n", mToken.mString.c_str()); break;
+        case TT_Double:             printf("TT_Double = %s\n", mToken.mString.c_str()); break;
+        case TT_Int32:              printf("TT_Int32 = %s\n", mToken.mString.c_str()); break;
+        case TT_Int64:              printf("TT_Int64 = %s\n", mToken.mString.c_str()); break;
         case TT_ObjectHeader:       printf("TT_ObjectHeader = %s\n", mToken.mString.c_str()); break;
         default:
           break;
