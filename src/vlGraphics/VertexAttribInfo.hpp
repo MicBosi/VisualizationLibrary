@@ -49,9 +49,9 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VertexAttribInfo, Object)
 
   public:
-    VertexAttribInfo(unsigned int location, ArrayAbstract* data, bool normalize=true, EVertexAttribBehavior data_behav=VAB_NORMAL): mData(data), mAttribLocation(location), mDataBehavior(data_behav), mNormalize(normalize) {}
+    VertexAttribInfo(unsigned int location, ArrayAbstract* data, bool normalize=true, EVertexAttribInterpretation data_behav=VAI_NORMAL): mData(data), mAttribLocation(location), mInterpretation(data_behav), mNormalize(normalize) {}
     
-    VertexAttribInfo(): mAttribLocation((unsigned int)-1), mDataBehavior(VAB_NORMAL), mNormalize(false) {}
+    VertexAttribInfo(): mAttribLocation((unsigned int)-1), mInterpretation(VAI_NORMAL), mNormalize(false) {}
 
     //! The GPU buffer that stores the data
     void setData(ArrayAbstract* data) { mData = data; }
@@ -84,16 +84,16 @@ namespace vl
     //! - http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
     bool normalize() const { return mNormalize; }
     
-    //! How the data is interpreted by the OpenGL, see EVertexAttribBehavior.
-    void setDataBehavior(EVertexAttribBehavior behavior) { mDataBehavior = behavior; }
+    //! How the data is interpreted by the OpenGL, see EVertexAttribInterpretation.
+    void setInterpretation(EVertexAttribInterpretation behavior) { mInterpretation = behavior; }
 
-    //! How the data is interpreted by the OpenGL, see EVertexAttribBehavior.
-    EVertexAttribBehavior dataBehavior() const { return mDataBehavior; }
+    //! How the data is interpreted by the OpenGL, see EVertexAttribInterpretation.
+    EVertexAttribInterpretation interpretation() const { return mInterpretation; }
 
   protected:
     ref<ArrayAbstract> mData;
     unsigned int mAttribLocation;
-    EVertexAttribBehavior mDataBehavior;
+    EVertexAttribInterpretation mInterpretation;
     bool mNormalize;
   };
 }

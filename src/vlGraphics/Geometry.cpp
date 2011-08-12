@@ -125,7 +125,7 @@ Geometry& Geometry::deepCopyFrom(const Geometry& other)
   {
     mVertexAttribArrays[i] = new VertexAttribInfo;
     mVertexAttribArrays[i]->setNormalize( other.mVertexAttribArrays[i]->normalize() );
-    mVertexAttribArrays[i]->setDataBehavior( other.mVertexAttribArrays[i]->dataBehavior() );
+    mVertexAttribArrays[i]->setInterpretation( other.mVertexAttribArrays[i]->interpretation() );
     mVertexAttribArrays[i]->setAttribLocation( other.mVertexAttribArrays[i]->attribLocation() );
     mVertexAttribArrays[i]->setData( other.mVertexAttribArrays[i]->data() ? other.mVertexAttribArrays[i]->data()->clone().get() : NULL );
   }
@@ -494,7 +494,7 @@ void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*,
 
   // bind Vertex Attrib Set
 
-  bool vbo_on = Has_VBO && vboEnabled() && !isDisplayListEnabled();
+  bool vbo_on = Has_VBO && isVBOEnabled() && !isDisplayListEnabled();
   gl_context->bindVAS(this, vbo_on, false);
 
   // actual draw
