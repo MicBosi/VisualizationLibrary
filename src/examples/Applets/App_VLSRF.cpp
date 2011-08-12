@@ -768,7 +768,14 @@ struct SRF_ArrayUID: public SRF_Value
   SRF_ArrayUID() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  std::vector<std::string> mValue;
+  struct ValueElem
+  {
+    ValueElem(const std::string& uid): mUID(uid) {}
+    std::string mUID; // the UID string
+    ref<SRF_Value> mPtr; // the linked object
+  };
+
+  std::vector<ValueElem> mValue;
 };
 
 struct SRF_ArrayIdentifier: public SRF_Value
@@ -909,7 +916,7 @@ struct SRF_DumpVisitor: public SRF_Visitor
   {
     indent(); printf("( uid: ");
     for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      printf("%s ", arr->mValue[i].c_str());
+      printf("%s ", arr->mValue[i].mUID.c_str());
     printf(")\n");
   }
 
