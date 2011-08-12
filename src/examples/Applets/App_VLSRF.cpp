@@ -807,128 +807,154 @@ struct SRF_DumpVisitor: public SRF_Visitor
   SRF_DumpVisitor()
   {
     mIndent = 0;
-    mAssignment = false;
+    mAssign = false;
   }
 
   void indent()
   {
-    if (mAssignment)
-      mAssignment = false;
+    if (mAssign)
+      mAssign = false;
     else
     {
       for(int i=0; i<mIndent; ++i)
-        printf("  ");
+        mDump += "  ";
     }
   }
 
   virtual void visitBoolean(SRF_Boolean* str) 
   {
-    indent(); printf("bool: %s\n", str->mValue ? "true" : "false");
+    indent(); mDump += String::printf("%s\n", str->mValue ? "true" : "false");
   }
 
-  virtual void visitString(SRF_String* str) 
+  virtual void visitString(SRF_String* str)
   {
-    indent(); printf("\"%s\"\n", str->mValue.c_str());
+    indent(); mDump += String::printf("\"%s\"\n", str->mValue.c_str());
   }
 
-  virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier* data) 
+  virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier* data)
   {
-    indent(); printf("%s\n", data->mValue.c_str());
+    indent(); mDump += String::printf("%s\n", data->mValue.c_str());
   }
 
-  virtual void visitUID(SRF_UID* uid) 
+  virtual void visitUID(SRF_UID* uid)
   {
-    indent(); printf("%s\n", uid->mValue.mUID.c_str());
+    indent(); mDump += String::printf("%s\n", uid->mValue.mUID.c_str());
   }
-  
-  virtual void visitObject(SRF_Object* obj) 
+
+  virtual void visitObject(SRF_Object* obj)
   {
-    indent(); printf("%s\n", obj->mName.c_str());
-    indent(); printf("{\n");
+    indent(); mDump += String::printf("%s\n", obj->mName.c_str());
+    indent(); mDump += "{\n";
     mIndent++;
     if (obj->mUID.length())
     {
-      indent(); printf("ID = %s\n", obj->mUID.c_str());
+      indent(); mDump += String::printf("ID = %s\n", obj->mUID.c_str());
     }
     for(size_t i=0; i<obj->mNameValues.size(); ++i)
     {
-      indent(); printf("%s = ", obj->mNameValues[i].mName.c_str());
-      mAssignment = true;
+      indent(); mDump += String::printf("%s = ", obj->mNameValues[i].mName.c_str());
+      mAssign = true;
       obj->mNameValues[i].mValue->acceptVisitor(this);
     }
     mIndent--;
-    indent(); printf("}\n");
+    indent(); mDump += "}\n";
   }
 
-  virtual void visitList(SRF_List* list) 
+  virtual void visitList(SRF_List* list)
   {
-    indent(); printf("[\n");
+    indent(); mDump += "[\n";
     mIndent++;
     for(size_t i=0; i<list->mValue.size(); ++i)
       list->mValue[i]->acceptVisitor(this);
     mIndent--;
-    indent(); printf("]\n");
+    indent(); mDump += "]\n";
   }
   
-  virtual void visitArray(SRF_ArrayInt32* arr) 
+  virtual void visitArray(SRF_ArrayInt32* arr)
   {
-    indent(); printf("( int32: ");
+    indent(); mDump += "( ";
     for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      printf("%d ", arr->mValue[i]);
-    printf(")\n");
+      mDump += String::printf("%d ", arr->mValue[i]);
+    mDump += ")\n";
   }
 
-  virtual void visitArray(SRF_ArrayInt64* arr) 
+  virtual void visitArray(SRF_ArrayInt64* arr)
   {
-    indent(); printf("( int64: ");
+    indent(); mDump += "( ";
     for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      printf("%lld ", arr->mValue[i]);
-    printf(")\n");
+      mDump += String::printf("%lld ", arr->mValue[i]);
+    mDump += ")\n";
   }
 
-  virtual void visitArray(SRF_ArrayFloat* arr) 
+  virtual void visitArray(SRF_ArrayFloat* arr)
   {
-    indent(); printf("( float: ");
+    indent(); mDump += "( ";
     for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      printf("%f ", arr->mValue[i]);
-    printf(")\n");
+      mDump += String::printf("%f ", arr->mValue[i]);
+    mDump += ")\n";
   }
 
-  virtual void visitArray(SRF_ArrayDouble* arr) 
+  virtual void visitArray(SRF_ArrayDouble* arr)
   {
-    indent(); printf("( double: ");
+    indent(); mDump += "( ";
     for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      printf("%llf ", arr->mValue[i]);
-    printf(")\n");
+      mDump += String::printf("%Lf ", arr->mValue[i]);
+    mDump += ")\n";
   }
 
-  virtual void visitArray(SRF_ArrayIdentifier* arr) 
+  virtual void visitArray(SRF_ArrayIdentifier* arr)
   {
-    indent(); printf("( identifier: ");
+    indent(); mDump += "( ";
     for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      printf("%s ", arr->mValue[i].c_str());
-    printf(")\n");
+      mDump += String::printf("%s ", arr->mValue[i].c_str());
+    mDump += ")\n";
   }
 
-  virtual void visitArray(SRF_ArrayString* arr) 
+  virtual void visitArray(SRF_ArrayString* arr)
   {
-    indent(); printf("( string: ");
+    indent(); mDump += "( ";
     for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      printf("\"%s\" ", arr->mValue[i].c_str());
-    printf(")\n");
+      mDump += "\"" + encodeString(arr->mValue[i]) + "\" ";
+    mDump += ")\n";
   }
 
-  virtual void visitArray(SRF_ArrayUID* arr) 
+  virtual void visitArray(SRF_ArrayUID* arr)
   {
-    indent(); printf("( uid: ");
+    indent(); mDump += "( ";
     for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      printf("%s ", arr->mValue[i].mUID.c_str());
-    printf(")\n");
+      mDump += String::printf("%s ", arr->mValue[i].mUID.c_str());
+    mDump += ")\n";
   }
+
+  String encodeString(const std::string& str)
+  {
+    String out;
+    for(size_t i=0; i<str.length(); ++i)
+    {
+      if (str[i] == '\n')
+        out += "\\n";
+      else
+      if (str[i] == '\r')
+        out += "\\r";
+      else
+      if (str[i] == '\t')
+        out += "\\t";
+      else
+        out += str[i];
+    }
+    return out;
+  }
+
+  const String& dumpString() const { return mDump; }
+
+  String& dumpString() { return mDump; }
+
+  void setDumpString(const String& str) { mDump = str; }
 
 private:
   int mIndent;
-  bool mAssignment;
+  bool mAssign;
+  String mDump;
 };
 //-----------------------------------------------------------------------------
 // SRF_DumpVisitor
@@ -1394,13 +1420,16 @@ public:
     }
   }
 
-  void dump()
+  String dump()
   {
     if (mRoot)
     {
       SRF_DumpVisitor dump_visitor;
       mRoot->acceptVisitor(&dump_visitor);
+      return dump_visitor.dumpString();
     }
+    else
+      return "";
   }
 
   void link()
@@ -1425,28 +1454,10 @@ public:
   {
     Log::notify(appletInfo());
 
-    SRF_Parser parser;
-    parser.mTokenizer = new SRF_Tokenizer;
-    parser.mTokenizer->setInputFile( new DiskFile("D:/VL/test.vl") );
-
-    parser.parse();
-    parser.dump();
-    parser.link();
-
     // ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
     ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
-    geom->computeNormals();
-    TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
-    // geom->drawCalls()->at(0)->setPatchParameter( new PatchParameter );
-    // geom->drawCalls()->at(1)->setPatchParameter( geom->drawCalls()->at(0)->patchParameter() );
-    // geom->drawCalls()->at(2)->setPatchParameter( new PatchParameter );
-    // geom->drawCalls()->at(3)->setPatchParameter( geom->drawCalls()->at(2)->patchParameter() );
-    // geom->drawCalls()->at(4)->setPatchParameter( new PatchParameter );
-    // geom->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
-    // geom->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
-
-    // geom->drawCalls()->push_back( geom->drawCalls()->at(0) );
-    // geom->setColorArray( geom->vertexArray() );
+    // geom->computeNormals();
+    // TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
     // mic fixme: this does no realizes that we are using primitive restart
     // mic fixme: make this manage also MultiDrawElements
     // geom->makeGLESFriendly();
@@ -1460,7 +1471,7 @@ public:
 
     // export init
     mUIDCounter = 0;
-    mEquals = 0;
+    mAssign = 0;
     mIndent = 0;
 
     srfPrelink_Geometry(geom.get());
@@ -1468,6 +1479,19 @@ public:
     std::fstream fout;
     fout.open("D:/VL/srf_export.vl", std::ios::out);
     fout.write( mSRFString.toStdString().c_str(), mSRFString.length() );
+    fout.close();
+
+    SRF_Parser parser;
+    parser.mTokenizer = new SRF_Tokenizer;
+    parser.mTokenizer->setInputFile( new DiskFile("D:/VL/srf_export.vl") );
+
+    parser.parse();
+    String dump = parser.dump();
+    parser.link();
+    
+    // dump the dump
+    fout.open("D:/VL/srf_export_dump.vl", std::ios::out);
+    fout.write( dump.toStdString().c_str(), dump.length() );
     fout.close();
 
     exit(0);
@@ -1508,8 +1532,8 @@ public:
       mSRFString += indent() + "ID = " + getUID(ren) + "\n";
     mSRFString += indent() + "VBOEnabled = " + getBoolCR(ren->isVBOEnabled());
     mSRFString += indent() + "DisplayListEnabled = " + getBoolCR(ren->isDisplayListEnabled());
-    mSRFString += indent() + "AABB = "; mEquals = true; srfExport_AABB(ren->boundingBox());
-    mSRFString += indent() + "Sphere= "; mEquals = true; srfExport_Sphere(ren->boundingSphere());
+    mSRFString += indent() + "AABB = "; mAssign = true; srfExport_AABB(ren->boundingBox());
+    mSRFString += indent() + "Sphere= "; mAssign = true; srfExport_Sphere(ren->boundingSphere());
   }
 
   void srfExport_AABB(const AABB& aabb)
@@ -1518,8 +1542,8 @@ public:
     mSRFString += indent() + "<AABB>\n";
     mSRFString += indent() + "{\n"; 
     ++mIndent;
-    mSRFString += indent() + String::printf("Min = %f %f %f\n", aabb.minCorner().x(), aabb.minCorner().y(), aabb.minCorner().z() );
-    mSRFString += indent() + String::printf("Max = %f %f %f\n", aabb.maxCorner().x(), aabb.maxCorner().y(), aabb.maxCorner().z() );
+    mSRFString += indent() + String::printf("Min = ( %f %f %f )\n", aabb.minCorner().x(), aabb.minCorner().y(), aabb.minCorner().z() );
+    mSRFString += indent() + String::printf("Max = ( %f %f %f )\n", aabb.maxCorner().x(), aabb.maxCorner().y(), aabb.maxCorner().z() );
     --mIndent;
     mSRFString += indent() + "}\n"; 
   }
@@ -1530,7 +1554,7 @@ public:
     mSRFString += indent() + "<AABB>\n";
     mSRFString += indent() + "{\n"; 
     ++mIndent;
-    mSRFString += indent() + String::printf("Center = %f %f %f\n", sphere.center().x(), sphere.center().y(), sphere.center().z() );
+    mSRFString += indent() + String::printf("Center = ( %f %f %f )\n", sphere.center().x(), sphere.center().y(), sphere.center().z() );
     mSRFString += indent() + String::printf("Radius = %f\n", sphere.radius() );
     --mIndent;
     mSRFString += indent() + "}\n"; 
@@ -1551,22 +1575,22 @@ public:
     ++mIndent;
     srfExport_Renderable(geom);
     // vertex arrays
-    if (geom->vertexArray()) { mSRFString += indent() + "VertexArray = ";  mEquals = true; srfExport_Array(geom->vertexArray()); }
-    if (geom->normalArray()) { mSRFString += indent() + "NormalArray = ";  mEquals = true; srfExport_Array(geom->normalArray()); }
-    if (geom->colorArray()) { mSRFString += indent() + "ColorArray = ";  mEquals = true; srfExport_Array(geom->colorArray()); }
-    if (geom->secondaryColorArray()) { mSRFString += indent() + "SecondaryArray = ";  mEquals = true; srfExport_Array(geom->secondaryColorArray()); }
-    if (geom->fogCoordArray()) { mSRFString += indent() + "FogCoordArray = ";  mEquals = true; srfExport_Array(geom->fogCoordArray()); }
+    if (geom->vertexArray()) { mSRFString += indent() + "VertexArray = ";  mAssign = true; srfExport_Array(geom->vertexArray()); }
+    if (geom->normalArray()) { mSRFString += indent() + "NormalArray = ";  mAssign = true; srfExport_Array(geom->normalArray()); }
+    if (geom->colorArray()) { mSRFString += indent() + "ColorArray = ";  mAssign = true; srfExport_Array(geom->colorArray()); }
+    if (geom->secondaryColorArray()) { mSRFString += indent() + "SecondaryArray = ";  mAssign = true; srfExport_Array(geom->secondaryColorArray()); }
+    if (geom->fogCoordArray()) { mSRFString += indent() + "FogCoordArray = ";  mAssign = true; srfExport_Array(geom->fogCoordArray()); }
     for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-      if (geom->texCoordArray(i)) { mSRFString += indent() + String::printf("TexCoordArray%d = ", i);  mEquals = true; srfExport_Array(geom->texCoordArray(i)); }
+      if (geom->texCoordArray(i)) { mSRFString += indent() + String::printf("TexCoordArray%d = ", i);  mAssign = true; srfExport_Array(geom->texCoordArray(i)); }
     for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
       if (geom->vertexAttribArray(i))
       {
-        if (geom->vertexAttribArray(i)) { mSRFString += indent() + String::printf("VertexAttribArray%d = ",i); mEquals = true; srfExport_VertexAttribInfo(geom->vertexAttribArray(i)); }
+        if (geom->vertexAttribArray(i)) { mSRFString += indent() + String::printf("VertexAttribArray%d = ",i); mAssign = true; srfExport_VertexAttribInfo(geom->vertexAttribArray(i)); }
       }
       // draw calls
     for(int i=0; i<geom->drawCalls()->size(); ++i)
     {
-      mSRFString += indent() + "DrawCall = ";  mEquals = true; srfExport_DrawCall(geom->drawCalls()->at(i));
+      mSRFString += indent() + "DrawCall = ";  mAssign = true; srfExport_DrawCall(geom->drawCalls()->at(i));
     }
     --mIndent;
     mSRFString += indent() + "}\n";
@@ -1588,7 +1612,7 @@ public:
       if (mObject_Ref_Count[info] > 1)
         mSRFString += indent() + "ID = " + getUID(info) + "\n";
       // mSRFString += indent() + String::printf("AttribLocation = %d\n", info->attribLocation());
-      mSRFString += indent() + "Data = "; mEquals = true; srfExport_Array(info->data());
+      mSRFString += indent() + "Data = "; mAssign = true; srfExport_Array(info->data());
       mSRFString += indent() + "Normalize = " + (info->normalize() ? "true\n" : "false\n");
       mSRFString += indent() + "Interpretation = ";
       switch(info->interpretation())
@@ -1851,7 +1875,7 @@ public:
 
       if (dcall->patchParameter())
       {
-        mSRFString += indent() + "PatchParameter = "; mEquals = true; srfExport_PatchParameter(dcall->patchParameter());
+        mSRFString += indent() + "PatchParameter = "; mAssign = true; srfExport_PatchParameter(dcall->patchParameter());
       }
   }
 
@@ -1911,7 +1935,7 @@ public:
       mSRFString += indent() + String::printf("Instances = %d\n", de->instances());
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
       mSRFString += indent() + String::printf("BaseVertex = %d\n", de->baseVertex());
-      mSRFString += indent() + "IndexBuffer = "; mEquals = true; srfExport_Array(de->indexBuffer());
+      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
       --mIndent;
       mSRFString += indent() + "}\n";
     }
@@ -1926,7 +1950,7 @@ public:
       mSRFString += indent() + String::printf("Instances = %d\n", de->instances());
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
       mSRFString += indent() + String::printf("BaseVertex = %d\n", de->baseVertex());
-      mSRFString += indent() + "IndexBuffer = "; mEquals = true; srfExport_Array(de->indexBuffer());
+      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
       --mIndent;
       mSRFString += indent() + "}\n";
     }
@@ -1941,7 +1965,7 @@ public:
       mSRFString += indent() + String::printf("Instances = %d\n", de->instances());
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
       mSRFString += indent() + String::printf("BaseVertex = %d\n", de->baseVertex());
-      mSRFString += indent() + "IndexBuffer = "; mEquals = true; srfExport_Array(de->indexBuffer());
+      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
       --mIndent;
       mSRFString += indent() + "}\n";
     }
@@ -1954,7 +1978,7 @@ public:
       ++mIndent;
       srfExport_DrawCallBase(de);
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
-      mSRFString += indent() + "IndexBuffer = "; mEquals = true; srfExport_Array(de->indexBuffer());
+      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
       mSRFString += indent() + "CountVector = "; srfExport_vector1(de->countVector(), "%u ");
       mSRFString += indent() + "BaseVertices = "; srfExport_vector1(de->baseVertices(), "%u ");
       --mIndent;
@@ -1969,7 +1993,7 @@ public:
       ++mIndent;
       srfExport_DrawCallBase(de);
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
-      mSRFString += indent() + "IndexBuffer = "; mEquals = true; srfExport_Array(de->indexBuffer());
+      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
       mSRFString += indent() + "CountVector = "; srfExport_vector1(de->countVector(), "%u ");
       mSRFString += indent() + "BaseVertices = "; srfExport_vector1(de->baseVertices(), "%u ");
       --mIndent;
@@ -1984,7 +2008,7 @@ public:
       ++mIndent;
       srfExport_DrawCallBase(de);
       mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
-      mSRFString += indent() + "IndexBuffer = "; mEquals = true; srfExport_Array(de->indexBuffer());
+      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
       mSRFString += indent() + "CountVector = "; srfExport_vector1(de->countVector(), "%u ");
       mSRFString += indent() + "BaseVertices = "; srfExport_vector1(de->baseVertices(), "%u ");
       --mIndent;
@@ -2013,8 +2037,8 @@ public:
   String indent()
   {
     String str;
-    if (mEquals)  
-      mEquals = false;
+    if (mAssign)  
+      mAssign = false;
     else
       for(int i=0; i<mIndent; ++i)
         str += '\t';
@@ -2059,7 +2083,7 @@ protected:
   int mUIDCounter;
   String mSRFString;
   int mIndent;
-  bool mEquals;
+  bool mAssign;
 };
 
 // Have fun!
