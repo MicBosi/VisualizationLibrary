@@ -1340,15 +1340,15 @@ namespace vl
   //! see also http://www.opengl.org/sdk/docs/man4/xhtml/glVertexAttribPointer.xml
   typedef enum
   {
-    VAB_NORMAL,       //!< Data will be sent using glVertexAttribPointer(), that is,
-                      //!< data will be converted to floating point precision and eventually normalized.
+    VAI_NORMAL,  //!< Data will be sent using glVertexAttribPointer(), that is,
+                 //!< data will be converted to floating point precision and eventually normalized.
 
-    VAB_PURE_INTEGER, //!< Data will be sent using glVertexAttribIPointer(), that is, 
-                      //!< values are always left as integer values, data format must be an \a integer type.
+    VAI_INTEGER, //!< Data will be sent using glVertexAttribIPointer(), that is, 
+                 //!< values are always left as integer values, data format must be an \a integer type.
 
-    VAB_PURE_DOUBLE,  //!< Data will be sent using glVertexAttribLPointer(), that is, it will be associated with a 
-                      //!< shader attribute variable declared with 64-bit double precision components, data format must be \a double.
-  } EVertexAttribBehavior;
+    VAI_DOUBLE,  //!< Data will be sent using glVertexAttribLPointer(), that is, it will be associated with a 
+                 //!< shader attribute variable declared with 64-bit double precision components, data format must be \a double.
+  } EVertexAttribInterpretation;
 
   //! Default vertex attribute bindings
   typedef enum

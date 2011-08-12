@@ -314,7 +314,7 @@ namespace vl
       tex_array = mTexCoordArrays[i]->mTexCoordArray.get();
     }
 
-    void setVertexAttribArray(unsigned int attrib_location, ArrayAbstract* data, bool normalize=true, EVertexAttribBehavior data_behav=VAB_NORMAL) { setVertexAttribArray(VertexAttribInfo(attrib_location, data, normalize, data_behav)); }
+    void setVertexAttribArray(unsigned int attrib_location, ArrayAbstract* data, bool normalize=true, EVertexAttribInterpretation data_behav=VAI_NORMAL) { setVertexAttribArray(VertexAttribInfo(attrib_location, data, normalize, data_behav)); }
 
     void setVertexAttribArray(const VertexAttribInfo& info);
 
