@@ -1504,7 +1504,7 @@ std::string String::trimStdString(const std::string& text)
   return trimmed;
 }
 //-----------------------------------------------------------------------------
-String& String::printf(const char* fmt, ...)
+String String::printf(const char* fmt, ...)
 {
   std::vector<char> buffer;
   buffer.resize(1024 + strlen(fmt));
@@ -1514,7 +1514,6 @@ String& String::printf(const char* fmt, ...)
   va_start(ap, fmt);
   vsnprintf(&buffer[0], buffer.size(), fmt, ap);
   va_end(ap);
-  *this = &buffer[0];
-  return *this;
+  return &buffer[0];
 }
 //-----------------------------------------------------------------------------
