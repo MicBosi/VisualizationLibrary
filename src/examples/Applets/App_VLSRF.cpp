@@ -804,7 +804,7 @@ struct SRF_DumpVisitor: public SRF_Visitor
 {
   SRF_DumpVisitor()
   {
-    mIndentLevel = 0;
+    mIndent = 0;
     mAssignment = false;
   }
 
@@ -814,7 +814,7 @@ struct SRF_DumpVisitor: public SRF_Visitor
       mAssignment = false;
     else
     {
-      for(int i=0; i<mIndentLevel; ++i)
+      for(int i=0; i<mIndent; ++i)
         printf("  ");
     }
   }
@@ -843,7 +843,7 @@ struct SRF_DumpVisitor: public SRF_Visitor
   {
     indent(); printf("%s\n", obj->mName.c_str());
     indent(); printf("{\n");
-    mIndentLevel++;
+    mIndent++;
     if (obj->mUID.length())
     {
       indent(); printf("ID = %s\n", obj->mUID.c_str());
@@ -854,17 +854,17 @@ struct SRF_DumpVisitor: public SRF_Visitor
       mAssignment = true;
       obj->mNameValues[i].mValue->acceptVisitor(this);
     }
-    mIndentLevel--;
+    mIndent--;
     indent(); printf("}\n");
   }
 
   virtual void visitList(SRF_List* list) 
   {
     indent(); printf("[\n");
-    mIndentLevel++;
+    mIndent++;
     for(size_t i=0; i<list->mValue.size(); ++i)
       list->mValue[i]->acceptVisitor(this);
-    mIndentLevel--;
+    mIndent--;
     indent(); printf("]\n");
   }
   
@@ -925,7 +925,7 @@ struct SRF_DumpVisitor: public SRF_Visitor
   }
 
 private:
-  int mIndentLevel;
+  int mIndent;
   bool mAssignment;
 };
 //-----------------------------------------------------------------------------
@@ -1430,12 +1430,282 @@ public:
     parser.parse();
     parser.dump();
     parser.link();
-    // parser.listTokens();
+
+    ref<Geometry> geom = makeBox( vec3(0,0,0), 10, 10, 10 );
+    geom->computeNormals();
+
+    ref<Effect> fx = new Effect;
+    fx->shader()->enable(EN_LIGHTING);
+    fx->shader()->enable(EN_DEPTH_TEST);
+    fx->shader()->setRenderState( new Light, 0 );
+
+    sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
+
+    geom->drawCalls()->push_back( geom->drawCalls()->at(0) );
+    geom->setColorArray( geom->vertexArray() );
+    // geom->makeGLESFriendly();
+    geom->convertToVertexAttribs();
+
+    // export init
+    mUIDCounter = 0;
+    mEquals = 0;
+    mIndent = 0;
+
+    srfExport_Geometry(geom.get());
+    std::fstream fout;
+    fout.open("D:/VL/srf_export.vl", std::ios::out);
+    fout.write( mSRFString.toStdString().c_str(), mSRFString.length() );
+    fout.close();
 
     exit(0);
   }
 
+  void srfExport_Geometry(Geometry* geom)
+  {
+    // --- generate UIDs ---
+    // geometry itself
+    generateUID(geom, "geometry_");
+    // vertex arrays
+    generateUID(geom->vertexArray(), "vertex_array_");
+    generateUID(geom->normalArray(), "normal_array");
+    generateUID(geom->colorArray(),  "color_array");
+    generateUID(geom->secondaryColorArray(), "secondary_color_array");
+    generateUID(geom->fogCoordArray(), "fogcoord_array");
+    for(size_t i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+      generateUID(geom->texCoordArray(i), "texcoord_array_");
+    for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
+      if (geom->vertexAttribArray(i))
+        generateUID(geom->vertexAttribArray(i)->data(), "vertexattrib_array_");
+    // draw elements
+    for(int i=0; i<geom->drawCalls()->size(); ++i)
+      generateUID(geom->drawCalls()->at(i), "drawcall_");
+
+    // --- actual export ---
+    mSRFString += indent() + "<Geometry>\n";
+    mSRFString += indent() + "{\n"; 
+    ++mIndent;
+    // vertex arrays
+    if (geom->vertexArray()) { mSRFString += indent() + "VertexArray = ";  mEquals = true; srfExport_Array(geom->vertexArray()); }
+    if (geom->normalArray()) { mSRFString += indent() + "NormalArray = ";  mEquals = true; srfExport_Array(geom->normalArray()); }
+    if (geom->colorArray()) { mSRFString += indent() + "ColorArray = ";  mEquals = true; srfExport_Array(geom->colorArray()); }
+    if (geom->secondaryColorArray()) { mSRFString += indent() + "SecondaryArray = ";  mEquals = true; srfExport_Array(geom->secondaryColorArray()); }
+    if (geom->fogCoordArray()) { mSRFString += indent() + "FogCoordArray = ";  mEquals = true; srfExport_Array(geom->fogCoordArray()); }
+    for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+      if (geom->texCoordArray(i)) { mSRFString += indent() + String::printf("TexCoordArray%d = ", i);  mEquals = true; srfExport_Array(geom->texCoordArray(i)); }
+    for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
+      if (geom->vertexAttribArray(i))
+      {
+        if (geom->vertexAttribArray(i)) { mSRFString += indent() + String::printf("VertexAttribArray%d = ", i);  mEquals = true; srfExport_VertexAttribInfo(geom->vertexAttribArray(i)); }
+      }
+      // draw calls
+    for(int i=0; i<geom->drawCalls()->size(); ++i)
+    {
+      mSRFString += indent() + "DrawCall = ";  mEquals = true; srfExport_DrawCall(geom->drawCalls()->at(i));
+    }
+    --mIndent;
+    mSRFString += indent() + "}\n";
+  }
+
+  void srfExport_VertexAttribInfo(VertexAttribInfo* info)
+  {
+    if (isDefined(info))
+    {
+      mSRFString += indent() + getUID(info) + "\n";
+      return;
+    }
+    else
+      mAlreadyDefined.insert(info);
+
+      mSRFString += indent() + "<VertexAttribInfo>\n";
+      mSRFString += indent() + "{\n";
+      ++mIndent;
+      if (mObject_Ref_Count[info] > 1)
+        mSRFString += indent() + "\tID = " + getUID(info) + "\n";
+      mSRFString += indent() + String::printf("AttribLocation = %d\n", info->attribLocation());
+      mSRFString += indent() + "Data = "; mEquals = true; srfExport_Array(info->data());
+      mSRFString += indent() + "Normalize = " + (info->normalize() ? "true\n" : "false\n");
+      mSRFString += indent() + "DataBehavior = ";
+      switch(info->dataBehavior())
+      {
+      case VAB_NORMAL: mSRFString += "VAB_NORMAL\n"; break;
+      case VAB_PURE_INTEGER: mSRFString += "VAB_PURE_INTEGER\n"; break;
+      case VAB_PURE_DOUBLE: mSRFString += "VAB_PURE_DOUBLE\n"; break;
+      }
+      --mIndent;
+      mSRFString += indent() + "}\n";
+  }
+
+  void srfExport_Array(ArrayAbstract* arr_abstract)
+  {
+    if (isDefined(arr_abstract))
+    {
+      mSRFString += indent() + getUID(arr_abstract) + "\n";
+      return;
+    }
+    else
+      mAlreadyDefined.insert(arr_abstract);
+
+    // mic fixme: support other arrays
+    if(arr_abstract->as<ArrayFloat1>())
+    {
+      ArrayFloat1* arr = arr_abstract->as<ArrayFloat1>();
+      mSRFString += indent() + "<ArrayFloat1>\n";
+      mSRFString += indent() + "{\n";
+      if (mObject_Ref_Count[arr] > 1)
+        mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
+      if (arr->size()) // allow empty arrays this way
+      {
+        mSRFString += indent() + "\tValue = (\n\t\t" + indent();
+        for(size_t i=0; i<arr->size(); ++i)
+        {
+          mSRFString += String::printf("%f ", arr->at(i) );
+          if (i && (i % 10 == 0) && i != arr->size()-1)
+            mSRFString += "\n\t\t" + indent();
+        }
+        mSRFString += "\n" + indent() + "\t)\n";
+      }
+      mSRFString += indent() + "}\n";
+    }
+    else
+    if(arr_abstract->as<ArrayFloat2>())
+    {
+      ArrayFloat2* arr = arr_abstract->as<ArrayFloat2>();
+      mSRFString += indent() + "<ArrayFloat2>\n";
+      mSRFString += indent() + "{\n";
+      if (mObject_Ref_Count[arr] > 1)
+        mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
+      if (arr->size()) // allow empty arrays this way
+      {
+        mSRFString += indent() + "\tValue = (\n\t\t" + indent();
+        for(size_t i=0; i<arr->size(); ++i)
+        {
+          mSRFString += String::printf("%f %f ", arr->at(i).x(), arr->at(i).y() );
+          if (i && (i % 10 == 0) && i != arr->size()-1)
+            mSRFString += "\n\t\t" + indent();
+        }
+        mSRFString += "\n" + indent() + "\t)\n";
+      }
+      mSRFString += indent() + "}\n";
+    }
+    else
+    if(arr_abstract->as<ArrayFloat3>())
+    {
+      ArrayFloat3* arr = arr_abstract->as<ArrayFloat3>();
+      mSRFString += indent() + "<ArrayFloat3>\n";
+      mSRFString += indent() + "{\n";
+      if (mObject_Ref_Count[arr] > 1)
+        mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
+      if (arr->size()) // allow empty arrays this way
+      {
+        mSRFString += indent() + "\tValue = (\n\t\t" + indent();
+        for(size_t i=0; i<arr->size(); ++i)
+        {
+          mSRFString += String::printf("%f %f %f ", arr->at(i).x(), arr->at(i).y(), arr->at(i).z() );
+          if (i && (i % 10 == 0) && i != arr->size()-1)
+            mSRFString += "\n\t\t" + indent();
+        }
+        mSRFString += "\n" + indent() + "\t)\n";
+      }
+      mSRFString += indent() + "}\n";
+    }
+    else
+    if(arr_abstract->as<ArrayFloat4>())
+    {
+      ArrayFloat4* arr = arr_abstract->as<ArrayFloat4>();
+      mSRFString += indent() + "<ArrayFloat4>\n";
+      mSRFString += indent() + "{\n";
+      if (mObject_Ref_Count[arr] > 1)
+        mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
+      if (arr->size()) // allow empty arrays this way
+      {
+        mSRFString += indent() + "\tValue = (\n\t\t" + indent();
+        for(size_t i=0; i<arr->size(); ++i)
+        {
+          mSRFString += String::printf("%f %f %f %f", arr->at(i).x(), arr->at(i).y(), arr->at(i).z(), arr->at(i).w() );
+          if (i && (i % 10 == 0) && i != arr->size()-1)
+            mSRFString += "\n\t\t" + indent();
+        }
+        mSRFString += "\n" + indent() + "\t)\n";
+      }
+      mSRFString += indent() + "}\n";
+    }
+  }
+
+  void srfExport_DrawCall(DrawCall* dcall)
+  {
+    if (isDefined(dcall))
+    {
+      mSRFString += indent() + getUID(dcall) + "\n";
+      return;
+    }
+    else
+      mAlreadyDefined.insert(dcall);
+
+    if (dcall->as<DrawArrays>())
+    {
+      DrawArrays* da = dcall->as<DrawArrays>();
+      mSRFString += indent() + "<DrawArrays>\n";
+      mSRFString += indent() + "{\n";
+      if (mObject_Ref_Count[da] > 1)
+        mSRFString += indent() + "\tID = " + getUID(da) + "\n";
+      mSRFString += indent() + String::printf("\tStart = %d\n", da->start());
+      mSRFString += indent() + String::printf("\tCount= %d\n", da->count());
+      mSRFString += indent() + String::printf("\tInstances = %d\n", da->instances());
+      mSRFString += indent() + "}\n";
+    }
+  }
+
+
+  String indent()
+  {
+    String str;
+    if (mEquals)  
+      mEquals = false;
+    else
+      for(int i=0; i<mIndent; ++i)
+        str += '\t';
+    return str;
+  }
+
+  String getUID(Object* object)
+  {
+    std::map< ref<Object>, String >::iterator it = mObject_To_UID.find(object);
+    if( it != mObject_To_UID.end() )
+      return it->second;
+    else
+    {
+      VL_TRAP();
+      return "";
+    }
+  }
+
+  void generateUID(Object* object, const char* prefix)
+  {
+    if (object)
+    {
+      // add reference count
+      ++mObject_Ref_Count[object];
+      if (mObject_To_UID.find(object) == mObject_To_UID.end())
+      {
+        String uid = String::printf("#%sid%d", prefix, ++mUIDCounter);
+        mObject_To_UID[object] = uid;
+      }
+    }
+  }
+
+  bool isDefined(Object* obj)
+  {
+    return mAlreadyDefined.find(obj) != mAlreadyDefined.end();
+  }
+
 protected:
+  std::map< ref<Object>, String > mObject_To_UID;
+  std::map< ref<Object>, int > mObject_Ref_Count;
+  std::set< ref<Object> > mAlreadyDefined;
+  int mUIDCounter;
+  String mSRFString;
+  int mIndent;
+  bool mEquals;
 };
 
 // Have fun!
