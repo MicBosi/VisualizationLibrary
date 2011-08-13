@@ -333,17 +333,26 @@ public:
         // escape sequences
         if (ch1 == '\\' && readTextChar(ch2))
         {
-          if (ch2 == 't')
-            ch1 = '\t';
+          if (ch2 == '"')
+            ch1 = '"';
           else
-          if (ch2 == 'n')
-            ch1 = '\n';
+          if (ch2 == '\\')
+            ch1 = '\\';
+          else
+          if (ch2 == 'b')
+            ch1 = '\b';
+          else
+          if (ch2 == 'f')
+            ch1 = '\f';
           else
           if (ch2 == 'r')
             ch1 = '\r';
           else
-          if (ch2 == '"')
-            ch1 = '"';
+          if (ch2 == 'n')
+            ch1 = '\n';
+          else
+          if (ch2 == 't')
+            ch1 = '\t';
           else
             ungetToken(ch2);
           token.mString.push_back(ch1);
@@ -602,27 +611,20 @@ public:
   int mLineNumber;
 };
 
-struct SRF_Boolean;
-struct SRF_String;
-struct SRF_NumberOrIdentifier;
-struct SRF_UID;
-struct SRF_Object;
-struct SRF_List;
-// struct SRF_ArrayBoolean; // use ArrayInt32 which makes the files also shorter
-struct SRF_ArrayUID;
-struct SRF_ArrayInt32;
-struct SRF_ArrayInt64;
-struct SRF_ArrayFloat;
-struct SRF_ArrayDouble;
-struct SRF_ArrayString;
-struct SRF_ArrayIdentifier;
+class SRF_Object;
+class SRF_List;
+class SRF_Array;
+class SRF_ArrayString;
+class SRF_ArrayIdentifier;
+class SRF_ArrayUID;
+class SRF_ArrayInt32;
+class SRF_ArrayInt64;
+class SRF_ArrayFloat;
+class SRF_ArrayDouble;
 
-struct SRF_Visitor: public Object
+class SRF_Visitor: public Object
 {
-  virtual void visitBoolean(SRF_Boolean*) {}
-  virtual void visitString(SRF_String*) {}
-  virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier*) {}
-  virtual void visitUID(SRF_UID*) {}
+public:
   virtual void visitObject(SRF_Object*) {}
   virtual void visitList(SRF_List*) {}
   virtual void visitArray(SRF_ArrayUID*) {}
@@ -633,177 +635,436 @@ struct SRF_Visitor: public Object
   virtual void visitArray(SRF_ArrayString*) {}
   virtual void visitArray(SRF_ArrayIdentifier*) {}
 };
+//-----------------------------------------------------------------------------
+// Arrays
+//-----------------------------------------------------------------------------
+class SRF_Array: public Object 
+{ 
+  VL_INSTRUMENT_CLASS(vl::SRF_Array, Object)
 
-struct SRF_Value: public Object
-{
-  virtual void acceptVisitor(SRF_Visitor*) = 0;
+public:
 };
 
-struct SRF_Boolean: public SRF_Value
+class SRF_ArrayInt32: public SRF_Array
 {
-  SRF_Boolean(): mValue(false) {}
-  SRF_Boolean(bool value): mValue(value) {}
-  virtual void acceptVisitor(SRF_Visitor* v) { v->visitBoolean(this); }
+  VL_INSTRUMENT_CLASS(vl::SRF_ArrayInt32, SRF_Array)
 
-  bool mValue;
-};
-
-struct SRF_String: public SRF_Value
-{
-  SRF_String() {}
-  SRF_String(const std::string& str): mValue(str) {}
-  virtual void acceptVisitor(SRF_Visitor* v) { v->visitString(this); }
-
-  std::string mValue;
-};
-
-struct SRF_NumberOrIdentifier: public SRF_Value
-{
-  SRF_NumberOrIdentifier(const std::string& str, ETokenType type): mValue(str), mType(type) {}
-  virtual void acceptVisitor(SRF_Visitor* v) { v->visitNumberOrIdentifier(this); }
-
-  float getFloat() const
-  {
-    VL_CHECK(mValue.length());
-    // this is ok for int32, int64, float and double
-    return (float)atof(mValue.c_str());
-  }
-
-  double getDouble() const
-  {
-    VL_CHECK(mValue.length());
-    // this is ok for int32, int64, float and double
-    return atof(mValue.c_str());
-  }
-
-  int getInt32() const
-  {
-    VL_CHECK(mValue.length());
-    VL_CHECK(mType == TT_Int32 || mType == TT_Int64)
-    return atoi(mValue.c_str());
-  }
-
-  long long getInt64() const
-  {
-    VL_CHECK(mValue.length());
-    VL_CHECK(mType == TT_Int32 || mType == TT_Int64)
-    return atoll(mValue.c_str());
-  }
-
-  ETokenType mType;
-  std::string mValue;
-};
-
-struct SRF_UID: public SRF_Value
-{
-  SRF_UID(const std::string& str) { mValue.mUID = str; }
-  virtual void acceptVisitor(SRF_Visitor* v) { v->visitUID(this); }
-
-  struct ValueElem
-  {
-    std::string mUID; // the UID string
-    ref<SRF_Value> mPtr; // the linked object
-  } mValue;
-};
-
-struct SRF_NameValue
-{
-  std::string mName;
-  ref<SRF_Value> mValue;
-};
-
-struct SRF_Object: public SRF_Value
-{
-  SRF_Object()
-  {
-    mNameValues.reserve(10);
-  }
-  virtual void acceptVisitor(SRF_Visitor* v) { v->visitObject(this); }
-
-
-  std::string mName;
-  std::string mUID;
-  std::vector<SRF_NameValue> mNameValues;
-};
-
-struct SRF_List: public SRF_Value
-{
-  SRF_List()
-  {
-    mValue.reserve(10);
-  }
-  virtual void acceptVisitor(SRF_Visitor* v) { v->visitList(this); }
-
-  std::vector< ref<SRF_Value> > mValue;
-};
-
-struct SRF_ArrayInt32: public SRF_Value
-{
+public:
   SRF_ArrayInt32() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
   std::vector<int> mValue;
 };
 
-struct SRF_ArrayInt64: public SRF_Value
+class SRF_ArrayInt64: public SRF_Array
 {
+  VL_INSTRUMENT_CLASS(vl::SRF_ArrayInt64, SRF_Array)
+
+public:
   SRF_ArrayInt64() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
   std::vector<long long> mValue;
 };
 
-struct SRF_ArrayFloat: public SRF_Value
+class SRF_ArrayFloat: public SRF_Array
 {
+  VL_INSTRUMENT_CLASS(vl::SRF_ArrayFloat, SRF_Array)
+
+public:
   SRF_ArrayFloat() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
   std::vector<float> mValue;
 };
 
-struct SRF_ArrayDouble: public SRF_Value
+class SRF_ArrayDouble: public SRF_Array
 {
+  VL_INSTRUMENT_CLASS(vl::SRF_ArrayDouble, SRF_Array)
+
+public:
   SRF_ArrayDouble() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
   std::vector<double> mValue;
 };
 
-struct SRF_ArrayUID: public SRF_Value
+class SRF_ArrayUID: public SRF_Array
 {
+  VL_INSTRUMENT_CLASS(vl::SRF_ArrayUID, SRF_Array)
+
+public:
   SRF_ArrayUID() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  struct ValueElem
+  struct Value
   {
-    ValueElem(const std::string& uid): mUID(uid) {}
+    Value(const std::string& uid): mUID(uid) {}
     std::string mUID; // the UID string
-    ref<SRF_Value> mPtr; // the linked object
+    ref<SRF_Object> mPtr; // the linked object
   };
 
-  std::vector<ValueElem> mValue;
+  std::vector<Value> mValue;
 };
 
-struct SRF_ArrayIdentifier: public SRF_Value
+class SRF_ArrayIdentifier: public SRF_Array
 {
+  VL_INSTRUMENT_CLASS(vl::SRF_ArrayIdentifier, SRF_Array)
+
+public:
   SRF_ArrayIdentifier() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
   std::vector<std::string> mValue;
 };
 
-struct SRF_ArrayString: public SRF_Value
+class SRF_ArrayString: public SRF_Array
 {
+  VL_INSTRUMENT_CLASS(vl::SRF_ArrayString, SRF_Array)
+
+public:
   SRF_ArrayString() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
+  // mic fixme: metti sti mValue nascosti e ritorna const char*
   std::vector<std::string> mValue;
 };
 //-----------------------------------------------------------------------------
+// SRF_Value
+//-----------------------------------------------------------------------------
+class SRF_Value
+{
+public:
+  enum EType 
+  {
+    Bool,
+    Int64,
+    Double,
+    String,
+    Identifier,
+    UID,
+    List,
+    Object,
+    ArrayString,
+    ArrayIdentifier,
+    ArrayUID,
+    ArrayInt32,
+    ArrayInt64,
+    ArrayFloat,
+    ArrayDouble
+  };
+
+private:
+  union
+  {
+    bool mBool;
+    long long mInt64;
+    double mDouble;
+    const char* mString;
+    SRF_Object* mObject;
+    SRF_List* mList;
+    SRF_Array* mArray;
+  } mUnion;
+
+private:
+  void release();
+
+private:
+  EType mType;
+
+public:
+  SRF_Value()
+  {
+    mType = Int64;
+    mUnion.mInt64 = 0;
+  }
+
+  ~SRF_Value() { release(); }
+
+  SRF_Value(const SRF_Value& other)
+  {
+    mType = Int64;
+    mUnion.mInt64 = 0;
+    *this = other;
+  }
+
+  SRF_Value& operator=(const SRF_Value& other);
+
+  EType type() const { return mType; }
+
+  // object
+
+  void setObject(SRF_Object* obj);
+
+  SRF_Object* getObject() { VL_CHECK(mType == Object); return mUnion.mObject; }
+
+  const SRF_Object* getObject() const { VL_CHECK(mType == Object); return mUnion.mObject; }
+
+  // list
+
+  void setList(SRF_List* list);
+
+  SRF_List* getList() { VL_CHECK(mType == List); return mUnion.mList; }
+
+  const SRF_List* getList() const { VL_CHECK(mType == List); return mUnion.mList; }
+
+  // array
+
+  void setArray(SRF_Array*);
+
+  SRF_ArrayString* getArrayString() { VL_CHECK(mType == ArrayString); return mUnion.mArray->as<SRF_ArrayString>(); }
+  const SRF_ArrayString* getArrayString() const { VL_CHECK(mType == ArrayString); return mUnion.mArray->as<SRF_ArrayString>(); }
+
+  SRF_ArrayIdentifier* getArrayIdentifier() { VL_CHECK(mType == ArrayIdentifier); return mUnion.mArray->as<SRF_ArrayIdentifier>(); }
+  const SRF_ArrayIdentifier* getArrayIdentifier() const { VL_CHECK(mType == ArrayIdentifier); return mUnion.mArray->as<SRF_ArrayIdentifier>(); }
+
+  SRF_ArrayUID* getArrayUID() { VL_CHECK(mType == ArrayUID); return mUnion.mArray->as<SRF_ArrayUID>(); }
+  const SRF_ArrayUID* getArrayUID() const { VL_CHECK(mType == ArrayUID); return mUnion.mArray->as<SRF_ArrayUID>(); }
+
+  SRF_ArrayInt32* getArrayInt32() { VL_CHECK(mType == ArrayInt32); return mUnion.mArray->as<SRF_ArrayInt32>(); }
+  const SRF_ArrayInt32* getArrayInt32() const { VL_CHECK(mType == ArrayInt32); return mUnion.mArray->as<SRF_ArrayInt32>(); }
+
+  SRF_ArrayInt64* getArrayInt64() { VL_CHECK(mType == ArrayInt64); return mUnion.mArray->as<SRF_ArrayInt64>(); }
+  const SRF_ArrayInt64* getArrayInt64() const { VL_CHECK(mType == ArrayInt64); return mUnion.mArray->as<SRF_ArrayInt64>(); }
+
+  SRF_ArrayFloat* getArrayFloat() { VL_CHECK(mType == ArrayFloat); return mUnion.mArray->as<SRF_ArrayFloat>(); }
+  const SRF_ArrayFloat* getArrayFloat() const { VL_CHECK(mType == ArrayFloat); return mUnion.mArray->as<SRF_ArrayFloat>(); }
+
+  SRF_ArrayDouble* getArrayDouble() { VL_CHECK(mType == ArrayDouble); return mUnion.mArray->as<SRF_ArrayDouble>(); }
+  const SRF_ArrayDouble* getArrayDouble() const { VL_CHECK(mType == ArrayDouble); return mUnion.mArray->as<SRF_ArrayDouble>(); }
+
+  void setString(const char* str)
+  {
+    release();
+    mType = String;
+    mUnion.mString = _strdup(str);
+  }
+
+  const char* getString() const { VL_CHECK(mType == String); return mUnion.mString; }
+
+  void setIdentifier(const char* str)
+  {
+    release();
+    mType = Identifier;
+    mUnion.mString = _strdup(str);
+  }
+
+  const char* getIdentifier() const { VL_CHECK(mType == Identifier); return mUnion.mString; }
+
+  void setUID(const char* str)
+  {
+    release();
+    mType = UID;
+    mUnion.mString = _strdup(str);
+  }
+
+  const char* getUID() const { VL_CHECK(mType == UID); return mUnion.mString; }
+
+  void setInt64(long long val)
+  {
+    release();
+    mType = Int64;
+    mUnion.mInt64 = val;
+  }
+
+  long long getInt64() const { VL_CHECK(mType == Int64); return mUnion.mInt64; }
+
+  void setDouble(double val)
+  {
+    release();
+    mType = Double;
+    mUnion.mDouble = val;
+  }
+
+  double getDouble() const { VL_CHECK(mType == Double); return mUnion.mDouble; }
+
+  void setBool(bool val)
+  {
+    release();
+    mType = Bool;
+    mUnion.mBool = val;
+  }
+
+  double getBool() const { VL_CHECK(mType == Bool); return mUnion.mBool; }
+};
+//-----------------------------------------------------------------------------
+// SRF_Object
+//-----------------------------------------------------------------------------
+class SRF_Object: public Object
+{
+  VL_INSTRUMENT_CLASS(vl::SRF_Object, Object)
+
+public:
+  SRF_Object()
+  {
+    mKeyValue.reserve(10);
+    mUID = "#NULL";
+  }
+
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitObject(this); }
+
+  struct Value
+  {
+    std::string mKey;
+    SRF_Value mValue;
+  };
+
+  std::string mName;
+  std::string mUID;
+  std::vector<Value> mKeyValue;
+  // mic fixme: add a multimap for quick access
+};
+//-----------------------------------------------------------------------------
+// SRF_List
+//-----------------------------------------------------------------------------
+class SRF_List: public Object
+{
+  VL_INSTRUMENT_CLASS(vl::SRF_List, Object)
+
+public:
+  SRF_List()
+  {
+    mValue.reserve(16);
+  }
+
+  virtual void acceptVisitor(SRF_Visitor* v) { v->visitList(this); }
+
+  std::vector< SRF_Value > mValue;
+};
+//-----------------------------------------------------------------------------
+void SRF_Value::release()
+{
+  switch(mType)
+  {
+  case Object: 
+    mUnion.mObject->decReference(); 
+    break;
+
+  case List:
+    mUnion.mList->decReference(); 
+    break;
+
+  case ArrayString:
+  case ArrayUID:
+  case ArrayIdentifier:
+  case ArrayInt32:
+  case ArrayInt64:
+  case ArrayFloat:
+  case ArrayDouble:
+    mUnion.mArray->decReference(); 
+    break;
+
+  case String:
+  case UID:
+  case Identifier:
+    VL_CHECK(mUnion.mString)
+    free((void*)mUnion.mString);
+    mUnion.mString = NULL; break;
+    break;
+
+  default:
+    break;
+  }
+
+  mType = Int64;
+  mUnion.mInt64 = 0;
+}
+//-----------------------------------------------------------------------------
+SRF_Value& SRF_Value::operator=(const SRF_Value& other)
+{
+  // must be done first
+  switch(other.mType)
+  {
+  case Object:
+    other.mUnion.mObject->incReference(); 
+    break;
+
+  case List:
+    other.mUnion.mList->incReference(); 
+    break;
+
+  case ArrayString:
+  case ArrayUID:
+  case ArrayIdentifier:
+  case ArrayInt32:
+  case ArrayInt64:
+  case ArrayFloat:
+  case ArrayDouble:
+    other.mUnion.mArray->incReference(); 
+    break;
+
+  default:
+    break;
+  }
+
+  // must be done after
+  release();
+
+  mUnion = other.mUnion;
+  mType = mType;
+
+  // make local copy of the string
+  if (mType == String || mType == Identifier || mType == UID)
+    mUnion.mString = _strdup(mUnion.mString);
+
+  return *this;
+}
+//-----------------------------------------------------------------------------
+void SRF_Value::setObject(SRF_Object* obj)
+{
+  release();
+  mType = Object;
+  mUnion.mObject = obj;
+  mUnion.mObject->incReference();
+}
+//-----------------------------------------------------------------------------
+void SRF_Value::setList(SRF_List* list)
+{
+  release();
+  mType = List;
+  mUnion.mList = list;
+  mUnion.mList->incReference();
+}
+//-----------------------------------------------------------------------------
+void SRF_Value::setArray(SRF_Array* arr)
+{
+  release();
+
+  if(arr->classType() == SRF_ArrayString::Type())
+    mType = ArrayString;
+  else
+  if(arr->classType() == SRF_ArrayIdentifier::Type())
+    mType = ArrayIdentifier;
+  else
+  if(arr->classType() == SRF_ArrayUID::Type())
+    mType = ArrayUID;
+  else
+  if(arr->classType() == SRF_ArrayInt32::Type())
+    mType = ArrayInt32;
+  else
+  if(arr->classType() == SRF_ArrayInt64::Type())
+    mType = ArrayInt64;
+  else
+  if(arr->classType() == SRF_ArrayFloat::Type())
+    mType = ArrayFloat;
+  else
+  if(arr->classType() == SRF_ArrayDouble::Type())
+    mType = ArrayDouble;
+  else
+  {
+    VL_TRAP();
+    mUnion.mArray = NULL;
+  }
+
+  mUnion.mArray = arr;
+  mUnion.mArray->incReference();
+}
+//-----------------------------------------------------------------------------
 // SRF_DumpVisitor
 //-----------------------------------------------------------------------------
-struct SRF_DumpVisitor: public SRF_Visitor
+class SRF_DumpVisitor: public SRF_Visitor
 {
+public:
   SRF_DumpVisitor()
   {
     mIndent = 0;
@@ -821,40 +1082,75 @@ struct SRF_DumpVisitor: public SRF_Visitor
     }
   }
 
-  virtual void visitBoolean(SRF_Boolean* str) 
-  {
-    indent(); mDump += String::printf("%s\n", str->mValue ? "true" : "false");
-  }
-
-  virtual void visitString(SRF_String* str)
-  {
-    indent(); mDump += String::printf("\"%s\"\n", str->mValue.c_str());
-  }
-
-  virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier* data)
-  {
-    indent(); mDump += String::printf("%s\n", data->mValue.c_str());
-  }
-
-  virtual void visitUID(SRF_UID* uid)
-  {
-    indent(); mDump += String::printf("%s\n", uid->mValue.mUID.c_str());
-  }
-
   virtual void visitObject(SRF_Object* obj)
   {
     indent(); mDump += String::printf("%s\n", obj->mName.c_str());
     indent(); mDump += "{\n";
     mIndent++;
-    if (obj->mUID.length())
+    if (obj->mUID.length() && obj->mUID != "#NULL")
     {
       indent(); mDump += String::printf("ID = %s\n", obj->mUID.c_str());
     }
-    for(size_t i=0; i<obj->mNameValues.size(); ++i)
+    for(size_t i=0; i<obj->mKeyValue.size(); ++i)
     {
-      indent(); mDump += String::printf("%s = ", obj->mNameValues[i].mName.c_str());
-      mAssign = true;
-      obj->mNameValues[i].mValue->acceptVisitor(this);
+      indent(); mDump += String::printf("%s = ", obj->mKeyValue[i].mKey.c_str());
+      switch(obj->mKeyValue[i].mValue.type())
+      {
+      case SRF_Value::Object:
+        mAssign = true;
+        obj->mKeyValue[i].mValue.getObject()->acceptVisitor(this);
+        break;
+      case SRF_Value::List:
+        mAssign = true;
+        obj->mKeyValue[i].mValue.getList()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayString:
+        mAssign = true;
+        obj->mKeyValue[i].mValue.getArrayString()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayIdentifier:
+        mAssign = true;
+        obj->mKeyValue[i].mValue.getArrayIdentifier()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayUID:
+        mAssign = true;
+        obj->mKeyValue[i].mValue.getArrayUID()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayInt32:
+        mAssign = true;
+        obj->mKeyValue[i].mValue.getArrayInt32()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayInt64:
+        mAssign = true;
+        obj->mKeyValue[i].mValue.getArrayInt64()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayFloat:
+        mAssign = true;
+        obj->mKeyValue[i].mValue.getArrayFloat()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayDouble:
+        mAssign = true;
+        obj->mKeyValue[i].mValue.getArrayDouble()->acceptVisitor(this);
+        break;
+      case SRF_Value::String:
+        mDump += String::printf("%s\n", obj->mKeyValue[i].mValue.getString());
+        break;
+      case SRF_Value::Identifier:
+        mDump += String::printf("%s\n", obj->mKeyValue[i].mValue.getIdentifier());
+        break;
+      case SRF_Value::UID:
+        mDump += String::printf("%s\n", obj->mKeyValue[i].mValue.getUID());
+        break;
+      case SRF_Value::Bool:
+        mDump += String::printf("%s\n", obj->mKeyValue[i].mValue.getBool() ? "true" : "false");
+        break;
+      case SRF_Value::Int64:
+        mDump += String::printf("%lld\n", obj->mKeyValue[i].mValue.getInt64());
+        break;
+      case SRF_Value::Double:
+        mDump += String::printf("%Lf\n", obj->mKeyValue[i].mValue.getDouble());
+        break;
+      }
     }
     mIndent--;
     indent(); mDump += "}\n";
@@ -865,11 +1161,60 @@ struct SRF_DumpVisitor: public SRF_Visitor
     indent(); mDump += "[\n";
     mIndent++;
     for(size_t i=0; i<list->mValue.size(); ++i)
-      list->mValue[i]->acceptVisitor(this);
+    {
+      switch(list->mValue[i].type())
+      {
+      case SRF_Value::Object:
+        list->mValue[i].getObject()->acceptVisitor(this);
+        break;
+      case SRF_Value::List:
+        list->mValue[i].getList()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayString:
+        list->mValue[i].getArrayString()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayIdentifier:
+        list->mValue[i].getArrayIdentifier()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayUID:
+        list->mValue[i].getArrayUID()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayInt32:
+        list->mValue[i].getArrayInt32()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayInt64:
+        list->mValue[i].getArrayInt64()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayFloat:
+        list->mValue[i].getArrayFloat()->acceptVisitor(this);
+        break;
+      case SRF_Value::ArrayDouble:
+        list->mValue[i].getArrayDouble()->acceptVisitor(this);
+        break;
+      case SRF_Value::String:
+        mDump += String::printf("%s\n", list->mValue[i].getString());
+        break;
+      case SRF_Value::Identifier:
+        mDump += String::printf("%s\n", list->mValue[i].getIdentifier());
+        break;
+      case SRF_Value::UID:
+        mDump += String::printf("%s\n", list->mValue[i].getUID());
+        break;
+      case SRF_Value::Bool:
+        mDump += String::printf("%s\n", list->mValue[i].getBool() ? "true" : "false");
+        break;
+      case SRF_Value::Int64:
+        mDump += String::printf("%lld\n", list->mValue[i].getInt64());
+        break;
+      case SRF_Value::Double:
+        mDump += String::printf("%Lf\n", list->mValue[i].getDouble());
+        break;
+      }
+    }
     mIndent--;
     indent(); mDump += "]\n";
   }
-  
+
   virtual void visitArray(SRF_ArrayInt32* arr)
   {
     indent(); mDump += "( ";
@@ -926,11 +1271,25 @@ struct SRF_DumpVisitor: public SRF_Visitor
     mDump += ")\n";
   }
 
+  // mic fixme: test this both as input and as output!
+  // support \xHH hex notation both input and output.
   String encodeString(const std::string& str)
   {
     String out;
     for(size_t i=0; i<str.length(); ++i)
     {
+      if (str[i] == '"')
+        out += "\"";
+      else
+      if (str[i] == '\\')
+        out += "\\";
+      else
+      if (str[i] == '\b')
+        out += "\\b";
+      else
+      if (str[i] == '\f')
+        out += "\\f";
+      else
       if (str[i] == '\n')
         out += "\\n";
       else
@@ -959,8 +1318,9 @@ private:
 //-----------------------------------------------------------------------------
 // SRF_DumpVisitor
 //-----------------------------------------------------------------------------
-struct SRF_LinkVisitor: public SRF_Visitor
+class SRF_LinkVisitor: public SRF_Visitor
 {
+public:
   SRF_LinkVisitor(const std::map< std::string, ref<SRF_Object> >* map)
   {
     mLinkMap = map;
@@ -989,30 +1349,49 @@ struct SRF_LinkVisitor: public SRF_Visitor
     }
   }
 
-  virtual void visitBoolean(SRF_Boolean*) {}
-
-  virtual void visitString(SRF_String*) {}
-
-  virtual void visitNumberOrIdentifier(SRF_NumberOrIdentifier*) {}
-
-  virtual void visitUID(SRF_UID* uid)
-  {
-    uid->mValue.mPtr = link(uid->mValue.mUID);
-  }
-
   virtual void visitObject(SRF_Object* obj)
   {
-    for(size_t i=0; i<obj->mNameValues.size(); ++i)
-      obj->mNameValues[i].mValue->acceptVisitor(this);
+    for(size_t i=0; i<obj->mKeyValue.size(); ++i)
+    {
+      if (obj->mKeyValue[i].mValue.type() == SRF_Value::Object)
+        obj->mKeyValue[i].mValue.getObject()->acceptVisitor(this);
+      else
+      if (obj->mKeyValue[i].mValue.type() == SRF_Value::List)
+        obj->mKeyValue[i].mValue.getList()->acceptVisitor(this);
+      else
+      if (obj->mKeyValue[i].mValue.type() == SRF_Value::ArrayUID)
+        obj->mKeyValue[i].mValue.getArrayUID()->acceptVisitor(this);
+      else
+      if (obj->mKeyValue[i].mValue.type() == SRF_Value::UID)
+      {
+        SRF_Object* ptr = link( obj->mKeyValue[i].mValue.getUID() );
+        obj->mKeyValue[i].mValue.setObject( ptr );
+      }
+    }
   }
 
-  virtual void visitList(SRF_List* list) 
+  virtual void visitList(SRF_List* list)
   {
     for(size_t i=0; i<list->mValue.size(); ++i)
-      list->mValue[i]->acceptVisitor(this);
+    {
+      if (list->mValue[i].type() == SRF_Value::Object)
+        list->mValue[i].getObject()->acceptVisitor(this);
+      else
+      if (list->mValue[i].type() == SRF_Value::List)
+        list->mValue[i].getList()->acceptVisitor(this);
+      else
+      if (list->mValue[i].type() == SRF_Value::ArrayUID)
+        list->mValue[i].getArrayUID()->acceptVisitor(this);
+      else
+      if (list->mValue[i].type() == SRF_Value::UID)
+      {
+        SRF_Object* obj = link( list->mValue[i].getUID() );
+        list->mValue[i].setObject( obj );
+      }
+    }
   }
-  
-  virtual void visitArray(SRF_ArrayUID* arr) 
+
+  virtual void visitArray(SRF_ArrayUID* arr)
   {
     for(size_t i=0 ;i<arr->mValue.size(); ++i)
       arr->mValue[i].mPtr = link(arr->mValue[i].mUID);
@@ -1089,8 +1468,11 @@ public:
           if (mToken.mString == "ID")
           {
             // Check if ID has already been set
-            if (!object->mUID.empty())
+            if (!object->mUID.empty() && object->mUID != "#NULL")
+            {
+              Log::error("ID already set.\n");
               return false;
+            }
 
             // Equals
             if (!getToken(mToken) || mToken.mType != TT_Equals)
@@ -1124,11 +1506,11 @@ public:
         }
 
         // non-ID key-values
-        object->mNameValues.resize( object->mNameValues.size() + 1 );
-        SRF_NameValue& name_value = object->mNameValues.back();
+        object->mKeyValue.push_back( SRF_Object::Value() );
+        SRF_Object::Value& name_value = object->mKeyValue.back();
 
         // Key
-        name_value.mName = mToken.mString;
+        name_value.mKey = mToken.mString;
 
         // Equals
         if (!getToken(mToken) || mToken.mType != TT_Equals)
@@ -1142,7 +1524,7 @@ public:
           {
             ref<SRF_Object> object = new SRF_Object;
             object->mName = mToken.mString;
-            name_value.mValue = object;
+            name_value.mValue.setObject(object.get());
             if (!parseObject( object.get() ) )
               return false;
           }
@@ -1151,7 +1533,7 @@ public:
           if (mToken.mType == TT_LeftSquareBracket)
           {
             ref<SRF_List> list = new SRF_List;
-            name_value.mValue = list;
+            name_value.mValue.setList(list.get());
             if ( !parseList( list.get() ) )
               return false;
           }
@@ -1159,35 +1541,47 @@ public:
           // An ( array )
           if (mToken.mType == TT_LeftRoundBracket)
           {
-            ref<SRF_Value> arr;
+            ref<SRF_Array> arr;
             if ( parseArray( arr ) )
-              name_value.mValue = arr;
+              name_value.mValue.setArray(arr.get());
             else
               return false;
-          }
-          else
-          // An #id
-          if (mToken.mType == TT_UID)
-          {
-            name_value.mValue = new SRF_UID(mToken.mString);
           }
           else
           // A "string"
           if (mToken.mType == TT_String)
           {
-            name_value.mValue = new SRF_String(mToken.mString);
+            name_value.mValue.setString(mToken.mString.c_str());
+          }
+          else
+          // An Identifier
+          if (mToken.mType == TT_Identifier)
+          {
+            name_value.mValue.setIdentifier(mToken.mString.c_str());
+          }
+          else
+          // An #id
+          if (mToken.mType == TT_UID)
+          {
+            name_value.mValue.setUID(mToken.mString.c_str());
           }
           else
           // A boolean (true/false)
           if (mToken.mType == TT_Boolean)
           {
-            name_value.mValue = new SRF_Boolean(mToken.mString == "true");
+            name_value.mValue.setBool(mToken.mString == "true");
           }
           else
-          // An Identifier or Integer or Float
-          if (mToken.mType == TT_Identifier || mToken.mType == TT_Int32 || mToken.mType == TT_Int64 || mToken.mType == TT_Float || mToken.mType == TT_Double)
+          // An integer
+          if (mToken.mType == TT_Int32 || mToken.mType == TT_Int64)
           {
-            name_value.mValue = new SRF_NumberOrIdentifier(mToken.mString, mToken.mType);
+            name_value.mValue.setInt64( atoll(mToken.mString.c_str()) );
+          }
+          else
+          // An float
+          if (mToken.mType == TT_Float || mToken.mType == TT_Double)
+          {
+            name_value.mValue.setDouble( atof(mToken.mString.c_str()) );
           }
           else
             return false;
@@ -1207,38 +1601,33 @@ public:
         return true;
       else
       {
+        SRF_Value value;
         switch( mToken.mType )
         {
-          // boolean
-          case TT_Boolean:
-            list->mValue.push_back( new SRF_Boolean(mToken.mString == "true") );
-            break;
-
-          // string
-          case TT_String:
-            list->mValue.push_back( new SRF_String(mToken.mString) );
-            break;
-
-          // int, float, identifier
-          case TT_Int32:
-          case TT_Int64:
-          case TT_Float:
-          case TT_Double:
-          case TT_Identifier:
-            list->mValue.push_back( new SRF_NumberOrIdentifier(mToken.mString, mToken.mType) );
-            break;
-
-          // UID
-          case TT_UID:
-            list->mValue.push_back( new SRF_UID(mToken.mString) );
-            break;
+          // object
+          case TT_ObjectHeader:
+            {
+              ref<SRF_Object> object = new SRF_Object;
+              object->mName = mToken.mString;
+              if ( parseObject( object.get() ) )
+              {
+                value.setObject(object.get());
+                list->mValue.push_back( value );
+              }
+              else
+                return false;
+              break;
+            }
 
           // list
           case TT_LeftSquareBracket:
             {
               ref<SRF_List> sub_list = new SRF_List;
               if ( parseList( sub_list.get() ) )
-                list->mValue.push_back( sub_list );
+              {
+                value.setList( sub_list.get() );
+                list->mValue.push_back( value );
+              }
               else
                 return false;
               break;
@@ -1247,25 +1636,48 @@ public:
           // array
           case TT_LeftRoundBracket:
             {
-              ref<SRF_Value> arr;
+              ref<SRF_Array> arr;
               if (parseArray(arr))
-                list->mValue.push_back(arr);
+              {
+                value.setArray(arr.get());
+                list->mValue.push_back(value);
+              }
               else
                 return false;
               break;
             }
 
-          // object
-          case TT_ObjectHeader:
-            {
-              ref<SRF_Object> object = new SRF_Object;
-              object->mName = mToken.mString;
-              if ( parseObject( object.get() ) )
-                list->mValue.push_back( object );
-              else
-                return false;
-              break;
-            }
+          // string
+          case TT_String:
+            value.setString( mToken.mString.c_str() ); list->mValue.push_back( value );
+            break;
+
+          // identifier
+          case TT_Identifier:
+            value.setIdentifier( mToken.mString.c_str() ); list->mValue.push_back( value );
+            break;
+
+          // UID
+          case TT_UID:
+            value.setUID( mToken.mString.c_str() ); list->mValue.push_back( value );
+            break;
+
+          // boolean
+          case TT_Boolean:
+            value.setBool( mToken.mString == "true" ); list->mValue.push_back( value );
+            break;
+
+          // int
+          case TT_Int32:
+          case TT_Int64:
+            value.setInt64( atoll(mToken.mString.c_str()) ); list->mValue.push_back( value );
+            break;
+
+          // float
+          case TT_Float:
+          case TT_Double:
+            value.setDouble( atof(mToken.mString.c_str()) ); list->mValue.push_back( value );
+            break;
 
         default:
           return false;
@@ -1275,7 +1687,7 @@ public:
     return false;
   }
 
-  bool parseArray(ref<SRF_Value>& arr)
+  bool parseArray(ref<SRF_Array>& arr)
   {
     if(getToken(mToken))
     {
@@ -1450,53 +1862,6 @@ public:
 class App_VLSRF: public BaseDemo
 {
 public:
-  virtual void initEvent()
-  {
-    Log::notify(appletInfo());
-
-    // ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
-    ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
-    // geom->computeNormals();
-    // TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
-    // mic fixme: this does no realizes that we are using primitive restart
-    // mic fixme: make this manage also MultiDrawElements
-    // geom->makeGLESFriendly();
-
-    ref<Effect> fx = new Effect;
-    fx->shader()->enable(EN_LIGHTING);
-    fx->shader()->enable(EN_DEPTH_TEST);
-    fx->shader()->setRenderState( new Light, 0 );
-
-    sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
-
-    // export init
-    mUIDCounter = 0;
-    mAssign = 0;
-    mIndent = 0;
-
-    srfPrelink_Geometry(geom.get());
-    srfExport_Geometry(geom.get());
-    std::fstream fout;
-    fout.open("D:/VL/srf_export.vl", std::ios::out);
-    fout.write( mSRFString.toStdString().c_str(), mSRFString.length() );
-    fout.close();
-
-    SRF_Parser parser;
-    parser.mTokenizer = new SRF_Tokenizer;
-    parser.mTokenizer->setInputFile( new DiskFile("D:/VL/srf_export.vl") );
-
-    parser.parse();
-    String dump = parser.dump();
-    parser.link();
-    
-    // dump the dump
-    fout.open("D:/VL/srf_export_dump.vl", std::ios::out);
-    fout.write( dump.toStdString().c_str(), dump.length() );
-    fout.close();
-
-    exit(0);
-  }
-
   void srfPrelink_Geometry(Geometry* geom)
   {
     // --- generate UIDs ---
@@ -1551,13 +1916,13 @@ public:
   void srfExport_Sphere(const Sphere& sphere)
   {
     // AABBs are always inlined
-    mSRFString += indent() + "<AABB>\n";
+    mSRFString += indent() + "<Sphere>\n";
     mSRFString += indent() + "{\n"; 
     ++mIndent;
     mSRFString += indent() + String::printf("Center = ( %f %f %f )\n", sphere.center().x(), sphere.center().y(), sphere.center().z() );
     mSRFString += indent() + String::printf("Radius = %f\n", sphere.radius() );
     --mIndent;
-    mSRFString += indent() + "}\n"; 
+    mSRFString += indent() + "}\n";
   }
 
   void srfExport_Geometry(Geometry* geom)
@@ -2074,6 +2439,54 @@ public:
   bool isDefined(Object* obj)
   {
     return mAlreadyDefined.find(obj) != mAlreadyDefined.end();
+  }
+
+  virtual void initEvent()
+  {
+    Log::notify(appletInfo());
+
+    ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
+    // ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
+    geom->computeNormals();
+    geom->setColorArray( geom->normalArray() );
+    // TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
+    // mic fixme: this does no realizes that we are using primitive restart
+    // mic fixme: make this manage also MultiDrawElements
+    // geom->makeGLESFriendly();
+
+    ref<Effect> fx = new Effect;
+    fx->shader()->enable(EN_LIGHTING);
+    fx->shader()->enable(EN_DEPTH_TEST);
+    fx->shader()->setRenderState( new Light, 0 );
+
+    sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
+
+    // export init
+    mUIDCounter = 0;
+    mAssign = 0;
+    mIndent = 0;
+
+    srfPrelink_Geometry(geom.get());
+    srfExport_Geometry(geom.get());
+    std::fstream fout;
+    fout.open("D:/VL/srf_export.vl", std::ios::out);
+    fout.write( mSRFString.toStdString().c_str(), mSRFString.length() );
+    fout.close();
+
+    SRF_Parser parser;
+    parser.mTokenizer = new SRF_Tokenizer;
+    parser.mTokenizer->setInputFile( new DiskFile("D:/VL/srf_export.vl") );
+
+    parser.parse();
+    String dump = parser.dump();
+    parser.link();
+
+    // dump the dump
+    fout.open( "D:/VL/srf_export_dump.vl", std::ios::out );
+    fout.write( dump.toStdString().c_str(), dump.length() );
+    fout.close();
+
+    exit(0);
   }
 
 protected:
