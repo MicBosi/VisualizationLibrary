@@ -462,8 +462,8 @@ namespace vl
     long long mBoundsUpdateTick;
     unsigned int mEnableMask;
     GLuint mOcclusionQuery;
-    bool mIsOccludee;
     unsigned mOcclusionQueryTick;
+    bool mIsOccludee;
   };
   //---------------------------------------------------------------------------
   /** Defined as a simple subclass of Collection<Actor>, see Collection for more information. */

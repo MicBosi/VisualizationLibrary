@@ -31,6 +31,7 @@
 
 // mic fixme
 #include <vlCore/SRF.hpp>
+
 #include "BaseDemo.hpp"
 #include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/DrawPixels.hpp>
@@ -40,36 +41,13 @@
 #include <vlCore/DiskFile.hpp>
 #include <vlGraphics/MultiDrawElements.hpp>
 #include <vlGraphics/TriangleStripGenerator.hpp>
+#include <vlCore/ResourceDatabase.hpp>
 
 using namespace vl;
 
 class App_VLSRF: public BaseDemo
 {
 public:
-  void srfPrelink_Geometry(Geometry* geom)
-  {
-    // --- generate UIDs ---
-    // geometry itself
-    generateUID(geom, "geometry_");
-    // vertex arrays
-    generateUID(geom->vertexArray(), "vertex_array_");
-    generateUID(geom->normalArray(), "normal_array");
-    generateUID(geom->colorArray(),  "color_array");
-    generateUID(geom->secondaryColorArray(), "secondary_color_array");
-    generateUID(geom->fogCoordArray(), "fogcoord_array");
-    for(size_t i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-      generateUID(geom->texCoordArray(i), "texcoord_array_");
-    for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
-      if (geom->vertexAttribArray(i))
-        generateUID(geom->vertexAttribArray(i)->data(), "vertexattrib_array_");
-    // draw elements
-    for(int i=0; i<geom->drawCalls()->size(); ++i)
-    {
-      generateUID(geom->drawCalls()->at(i), "drawcall_");
-      generateUID(geom->drawCalls()->at(i)->patchParameter(), "patchparam_");
-    }
-  }
-
   const char* getBoolCR(bool ok)
   {
     return ok ? "true\n" : "false\n";
@@ -109,6 +87,30 @@ public:
     mSRFString += indent() + "}\n";
   }
 
+  void srfPrelink_Geometry(const Geometry* geom)
+  {
+    // --- generate UIDs ---
+    // geometry itself
+    generateUID(geom, "geometry_");
+    // vertex arrays
+    generateUID(geom->vertexArray(), "vertex_array_");
+    generateUID(geom->normalArray(), "normal_array");
+    generateUID(geom->colorArray(),  "color_array");
+    generateUID(geom->secondaryColorArray(), "secondary_color_array");
+    generateUID(geom->fogCoordArray(), "fogcoord_array");
+    for(size_t i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+      generateUID(geom->texCoordArray(i), "texcoord_array_");
+    for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
+      if (geom->vertexAttribArray(i))
+        generateUID(geom->vertexAttribArray(i)->data(), "vertexattrib_array_");
+    // draw elements
+    for(int i=0; i<geom->drawCalls()->size(); ++i)
+    {
+      generateUID(geom->drawCalls()->at(i), "drawcall_");
+      generateUID(geom->drawCalls()->at(i)->patchParameter(), "patchparam_");
+    }
+  }
+
   void srfExport_Geometry(Geometry* geom)
   {
     if (isDefined(geom))
@@ -122,8 +124,10 @@ public:
     mSRFString += indent() + "<Geometry>\n";
     mSRFString += indent() + "{\n"; 
     ++mIndent;
+    mSRFString += indent() + "// renderable\n";
     srfExport_Renderable(geom);
     // vertex arrays
+    mSRFString += "\n" + indent() + "// vertex arrays\n";
     if (geom->vertexArray()) { mSRFString += indent() + "VertexArray = ";  mAssign = true; srfExport_Array(geom->vertexArray()); }
     if (geom->normalArray()) { mSRFString += indent() + "NormalArray = ";  mAssign = true; srfExport_Array(geom->normalArray()); }
     if (geom->colorArray()) { mSRFString += indent() + "ColorArray = ";  mAssign = true; srfExport_Array(geom->colorArray()); }
@@ -136,13 +140,64 @@ public:
       {
         if (geom->vertexAttribArray(i)) { mSRFString += indent() + String::printf("VertexAttribArray%d = ",i); mAssign = true; srfExport_VertexAttribInfo(geom->vertexAttribArray(i)); }
       }
-      // draw calls
+    // draw calls
+    mSRFString += "\n" + indent() + "// draw calls\n";
     for(int i=0; i<geom->drawCalls()->size(); ++i)
     {
       mSRFString += indent() + "DrawCall = ";  mAssign = true; srfExport_DrawCall(geom->drawCalls()->at(i));
     }
     --mIndent;
     mSRFString += indent() + "}\n";
+  }
+
+  void srfPrelink_Effect(const Effect*)
+  {
+    // mic fixme: implement
+  }
+
+  void srfExport_Effect(const Effect*)
+  {
+    // mic fixme: implement
+  }
+
+  void srfPrelink_Shader(const Shader* )
+  {
+    // mic fixme: implement
+  }
+
+  void srfExport_Shader(const Shader* )
+  {
+    // mic fixme: implement
+  }
+
+  void srfPrelink_Transform(const Transform*)
+  {
+    // mic fixme: implement
+  }
+
+  void srfExport_Transform(const Transform*)
+  {
+    // mic fixme: implement
+  }
+
+  void srfPrelink_Actor(const Actor*)
+  {
+    // mic fixme: implement
+  }
+
+  void srfExport_Actor(const Actor*)
+  {
+    // mic fixme: implement
+  }
+
+  void srfPrelink_Camera(const Camera*)
+  {
+    // mic fixme: implement
+  }
+
+  void srfExport_Camera(const Camera*)
+  {
+    // mic fixme: implement
   }
 
   void srfExport_VertexAttribInfo(VertexAttribInfo* info)
@@ -184,14 +239,14 @@ public:
       mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
     if (arr->size()) // allow empty arrays this way
     {
-      mSRFString += indent() + "\tValue = (\n\t\t" + indent();
+      mSRFString += indent() + "\tValue = ( ";
       for(size_t i=0; i<arr->size(); ++i)
       {
         mSRFString += String::printf(format, arr->at(i) );
         if (i && (i % elems_per_line == 0) && i != arr->size()-1)
-          mSRFString += "\n\t\t" + indent();
+          mSRFString += "\n" + indent();
       }
-      mSRFString += "\n" + indent() + "\t)\n";
+      mSRFString += " )\n";
     }
     mSRFString += indent() + "}\n";
   }
@@ -206,14 +261,14 @@ public:
       mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
     if (arr->size()) // allow empty arrays this way
     {
-      mSRFString += indent() + "\tValue = (\n\t\t" + indent();
+      mSRFString += indent() + "\tValue = ( ";
       for(size_t i=0; i<arr->size(); ++i)
       {
         mSRFString += String::printf(format, arr->at(i).x(), arr->at(i).y() );
         if (i && (i % elems_per_line == 0) && i != arr->size()-1)
-          mSRFString += "\n\t\t" + indent();
+          mSRFString += "\n" + indent();
       }
-      mSRFString += "\n" + indent() + "\t)\n";
+      mSRFString += " )\n";
     }
     mSRFString += indent() + "}\n";
   }
@@ -228,14 +283,14 @@ public:
       mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
     if (arr->size()) // allow empty arrays this way
     {
-      mSRFString += indent() + "\tValue = (\n\t\t" + indent();
+      mSRFString += indent() + "\tValue = ( ";
       for(size_t i=0; i<arr->size(); ++i)
       {
         mSRFString += String::printf(format, arr->at(i).x(), arr->at(i).y(), arr->at(i).z() );
         if (i && (i % elems_per_line == 0) && i != arr->size()-1)
-          mSRFString += "\n\t\t" + indent();
+          mSRFString += "\n" + indent();
       }
-      mSRFString += "\n" + indent() + "\t)\n";
+      mSRFString += " )\n";
     }
     mSRFString += indent() + "}\n";
   }
@@ -250,14 +305,14 @@ public:
       mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
     if (arr->size()) // allow empty arrays this way
     {
-      mSRFString += indent() + "\tValue = (\n\t\t" + indent();
+      mSRFString += indent() + "\tValue = ( ";
       for(size_t i=0; i<arr->size(); ++i)
       {
         mSRFString += String::printf(format, arr->at(i).x(), arr->at(i).y(), arr->at(i).z(), arr->at(i).w() );
         if (i && (i % elems_per_line == 0) && i != arr->size()-1)
-          mSRFString += "\n\t\t" + indent();
+          mSRFString += "\n" + indent();
       }
-      mSRFString += "\n" + indent() + "\t)\n";
+      mSRFString += " )\n";
     }
     mSRFString += indent() + "}\n";
   }
@@ -373,7 +428,7 @@ public:
       srfExport_Array3<ArrayFloat3>(arr_abstract, "<ArrayFloat3>", "%f %f %f ");
     else
     if(arr_abstract->classType() == ArrayFloat4::Type())
-      srfExport_Array4<ArrayFloat4>(arr_abstract, "<ArrayFloat3>", "%f %f %f %f ");
+      srfExport_Array4<ArrayFloat4>(arr_abstract, "<ArrayFloat4>", "%f %f %f %f ");
     else
 
     if(arr_abstract->classType() == ArrayDouble1::Type())
@@ -386,7 +441,7 @@ public:
       srfExport_Array3<ArrayDouble3>(arr_abstract, "<ArrayDouble3>", "%Lf %Lf %Lf ");
     else
     if(arr_abstract->classType() == ArrayDouble4::Type())
-      srfExport_Array4<ArrayDouble4>(arr_abstract, "<ArrayDouble3>", "%Lf %Lf %Lf %Lf ");
+      srfExport_Array4<ArrayDouble4>(arr_abstract, "<ArrayDouble4>", "%Lf %Lf %Lf %Lf ");
     else
     {
       Log::error("Array type not supported for export.\n");
@@ -606,7 +661,7 @@ public:
     }
   }
 
-  void generateUID(Object* object, const char* prefix)
+  void generateUID(const Object* object, const char* prefix)
   {
     if (object)
     {
@@ -625,14 +680,76 @@ public:
     return mAlreadyDefined.find(obj) != mAlreadyDefined.end();
   }
 
+  void srfExport_ResourceDatabase(ResourceDatabase* res_db)
+  {
+    mSRFString += indent() + "<ResourceDatabase>\n";
+    mSRFString += indent() + "{\n";
+    ++mIndent;
+    {
+      mSRFString += indent() + "Resources = [\n";
+      ++mIndent;
+      {
+        for(size_t i=0; i<res_db->resources().size(); ++i)
+        {
+          if(res_db->resources()[i]->classType() == Geometry::Type())
+            srfExport_Geometry(res_db->resources()[i]->as<Geometry>());
+          else
+          if(res_db->resources()[i]->classType() == Effect::Type())
+            srfExport_Effect(res_db->resources()[i]->as<Effect>());
+          else
+          if(res_db->resources()[i]->classType() == Shader::Type())
+            srfExport_Shader(res_db->resources()[i]->as<Shader>());
+          else
+          if(res_db->resources()[i]->classType() == Transform::Type())
+            srfExport_Transform(res_db->resources()[i]->as<Transform>());
+          else
+          if(res_db->resources()[i]->classType() == Actor::Type())
+            srfExport_Actor(res_db->resources()[i]->as<Actor>());
+          else
+          if(res_db->resources()[i]->classType() == Camera::Type())
+            srfExport_Camera(res_db->resources()[i]->as<Camera>());
+        }
+      }
+      --mIndent;
+      mSRFString += indent() + "]\n";
+    }
+    --mIndent;
+    mSRFString += indent() + "}\n";
+  }
+
+  void srfPrelink_ResourceDatabase(ResourceDatabase* res_db)
+  {
+    for(size_t i=0; i<res_db->resources().size(); ++i)
+    {
+      if(res_db->resources()[i]->classType() == Geometry::Type())
+        srfPrelink_Geometry(res_db->resources()[i]->as<Geometry>());
+      else
+      if(res_db->resources()[i]->classType() == Effect::Type())
+        srfPrelink_Effect(res_db->resources()[i]->as<Effect>());
+      else
+      if(res_db->resources()[i]->classType() == Shader::Type())
+        srfPrelink_Shader(res_db->resources()[i]->as<Shader>());
+      else
+      if(res_db->resources()[i]->classType() == Transform::Type())
+        srfPrelink_Transform(res_db->resources()[i]->as<Transform>());
+      else
+      if(res_db->resources()[i]->classType() == Actor::Type())
+        srfPrelink_Actor(res_db->resources()[i]->as<Actor>());
+      else
+      if(res_db->resources()[i]->classType() == Camera::Type())
+        srfPrelink_Camera(res_db->resources()[i]->as<Camera>());
+    }
+  }
+
   virtual void initEvent()
   {
     Log::notify(appletInfo());
-
+#if 1
     ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
     // ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
     geom->computeNormals();
-    geom->setColorArray( geom->normalArray() );
+    geom->setColorArray( vl::crimson );
+    geom->setSecondaryColorArray( geom->normalArray() );
     // TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
     // mic fixme: this does no realizes that we are using primitive restart
     // mic fixme: make this manage also MultiDrawElements
@@ -645,25 +762,26 @@ public:
 
     sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
 
-    // export init
+    // @@@ @@@ @@@ EXPORT @@@ @@@ @@@
     mUIDCounter = 0;
     mAssign = 0;
     mIndent = 0;
+    ref<ResourceDatabase> res_db = new ResourceDatabase;
+    res_db->resources().push_back(geom);
 
-    //srfPrelink_Geometry(geom.get());
-    //srfExport_Geometry(geom.get());
-    //std::fstream fout;
-    //fout.open("D:/VL/srf_export.vl", std::ios::out);
-    //fout.write( mSRFString.toStdString().c_str(), mSRFString.length() );
-    //fout.close();
+    srfPrelink_ResourceDatabase(res_db.get());
+    srfExport_ResourceDatabase(res_db.get());
+    std::fstream fout;
+    fout.open("D:/VL/srf_export.vl", std::ios::out);
+    fout.write( mSRFString.toStdString().c_str(), mSRFString.length() );
+    fout.close();
+#endif
 
     SRF_Parser parser;
     parser.tokenizer()->setInputFile( new DiskFile("D:/VL/srf_export.vl") );
-
     parser.parse();
     String dump = parser.dump();
     parser.link();
-
     // dump the dump
     {
       std::fstream fout;
