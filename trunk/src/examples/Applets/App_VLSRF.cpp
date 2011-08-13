@@ -644,7 +644,7 @@ class SRF_Array: public Object
 
 public:
 };
-
+//-----------------------------------------------------------------------------
 class SRF_ArrayInt32: public SRF_Array
 {
   VL_INSTRUMENT_CLASS(vl::SRF_ArrayInt32, SRF_Array)
@@ -653,9 +653,13 @@ public:
   SRF_ArrayInt32() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
+  std::vector<int>& value() { return mValue; }
+  const std::vector<int>& value() const { return mValue; }
+
+private:
   std::vector<int> mValue;
 };
-
+//-----------------------------------------------------------------------------
 class SRF_ArrayInt64: public SRF_Array
 {
   VL_INSTRUMENT_CLASS(vl::SRF_ArrayInt64, SRF_Array)
@@ -664,9 +668,13 @@ public:
   SRF_ArrayInt64() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
+  std::vector<long long>& value() { return mValue; }
+  const std::vector<long long>& value() const { return mValue; }
+
+private:
   std::vector<long long> mValue;
 };
-
+//-----------------------------------------------------------------------------
 class SRF_ArrayFloat: public SRF_Array
 {
   VL_INSTRUMENT_CLASS(vl::SRF_ArrayFloat, SRF_Array)
@@ -675,9 +683,13 @@ public:
   SRF_ArrayFloat() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
+  std::vector<float>& value() { return mValue; }
+  const std::vector<float>& value() const { return mValue; }
+
+private:
   std::vector<float> mValue;
 };
-
+//-----------------------------------------------------------------------------
 class SRF_ArrayDouble: public SRF_Array
 {
   VL_INSTRUMENT_CLASS(vl::SRF_ArrayDouble, SRF_Array)
@@ -686,15 +698,20 @@ public:
   SRF_ArrayDouble() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
+  std::vector<double>& value() { return mValue; }
+  const std::vector<double>& value() const { return mValue; }
+
+public:
   std::vector<double> mValue;
 };
-
+//-----------------------------------------------------------------------------
 class SRF_ArrayUID: public SRF_Array
 {
   VL_INSTRUMENT_CLASS(vl::SRF_ArrayUID, SRF_Array)
 
 public:
   SRF_ArrayUID() {}
+
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
   struct Value
@@ -704,9 +721,13 @@ public:
     ref<SRF_Object> mPtr; // the linked object
   };
 
+  std::vector<Value>& value() { return mValue; }
+  const std::vector<Value>& value() const { return mValue; }
+
+public:
   std::vector<Value> mValue;
 };
-
+//-----------------------------------------------------------------------------
 class SRF_ArrayIdentifier: public SRF_Array
 {
   VL_INSTRUMENT_CLASS(vl::SRF_ArrayIdentifier, SRF_Array)
@@ -715,9 +736,13 @@ public:
   SRF_ArrayIdentifier() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
+  std::vector<std::string>& value() { return mValue; }
+  const std::vector<std::string>& value() const { return mValue; }
+
+public:
   std::vector<std::string> mValue;
 };
-
+//-----------------------------------------------------------------------------
 class SRF_ArrayString: public SRF_Array
 {
   VL_INSTRUMENT_CLASS(vl::SRF_ArrayString, SRF_Array)
@@ -726,7 +751,10 @@ public:
   SRF_ArrayString() {}
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-  // mic fixme: metti sti mValue nascosti e ritorna const char*
+  std::vector<std::string>& value() { return mValue; }
+  const std::vector<std::string>& value() const { return mValue; }
+
+public:
   std::vector<std::string> mValue;
 };
 //-----------------------------------------------------------------------------
@@ -897,7 +925,8 @@ class SRF_Object: public Object
 public:
   SRF_Object()
   {
-    mKeyValue.reserve(10);
+    // mic fixme: reenable
+    // mKeyValue.reserve(16);
     mUID = "#NULL";
   }
 
@@ -909,10 +938,20 @@ public:
     SRF_Value mValue;
   };
 
+  void setName(const std::string& name) { mName = name; }
+  const std::string& name() const { return mName; }
+
+  void setUID(const std::string& uid) { mUID = uid; }
+  const std::string& uid() const { return mUID; }
+
+  std::vector<Value>& value() { return mKeyValue; }
+  const std::vector<Value>& value() const { return mKeyValue; }
+
+private:
+  // mic fixme: add a multimap for quick access
   std::string mName;
   std::string mUID;
   std::vector<Value> mKeyValue;
-  // mic fixme: add a multimap for quick access
 };
 //-----------------------------------------------------------------------------
 // SRF_List
@@ -924,11 +963,16 @@ class SRF_List: public Object
 public:
   SRF_List()
   {
-    mValue.reserve(16);
+    // mic fixme: reenable
+    // mValue.reserve(16);
   }
 
   virtual void acceptVisitor(SRF_Visitor* v) { v->visitList(this); }
 
+  std::vector< SRF_Value >& value() { return mValue; }
+  const std::vector< SRF_Value >& value() const { return mValue; }
+
+private:
   std::vector< SRF_Value > mValue;
 };
 //-----------------------------------------------------------------------------
@@ -1084,71 +1128,71 @@ public:
 
   virtual void visitObject(SRF_Object* obj)
   {
-    indent(); mDump += String::printf("%s\n", obj->mName.c_str());
+    indent(); mDump += String::printf("%s\n", obj->name().c_str());
     indent(); mDump += "{\n";
     mIndent++;
-    if (obj->mUID.length() && obj->mUID != "#NULL")
+    if (obj->uid().length() && obj->uid() != "#NULL")
     {
-      indent(); mDump += String::printf("ID = %s\n", obj->mUID.c_str());
+      indent(); mDump += String::printf("ID = %s\n", obj->uid().c_str());
     }
-    for(size_t i=0; i<obj->mKeyValue.size(); ++i)
+    for(size_t i=0; i<obj->value().size(); ++i)
     {
-      indent(); mDump += String::printf("%s = ", obj->mKeyValue[i].mKey.c_str());
-      switch(obj->mKeyValue[i].mValue.type())
+      indent(); mDump += String::printf("%s = ", obj->value()[i].mKey.c_str());
+      switch(obj->value()[i].mValue.type())
       {
       case SRF_Value::Object:
         mAssign = true;
-        obj->mKeyValue[i].mValue.getObject()->acceptVisitor(this);
+        obj->value()[i].mValue.getObject()->acceptVisitor(this);
         break;
       case SRF_Value::List:
         mAssign = true;
-        obj->mKeyValue[i].mValue.getList()->acceptVisitor(this);
+        obj->value()[i].mValue.getList()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayString:
         mAssign = true;
-        obj->mKeyValue[i].mValue.getArrayString()->acceptVisitor(this);
+        obj->value()[i].mValue.getArrayString()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayIdentifier:
         mAssign = true;
-        obj->mKeyValue[i].mValue.getArrayIdentifier()->acceptVisitor(this);
+        obj->value()[i].mValue.getArrayIdentifier()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayUID:
         mAssign = true;
-        obj->mKeyValue[i].mValue.getArrayUID()->acceptVisitor(this);
+        obj->value()[i].mValue.getArrayUID()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayInt32:
         mAssign = true;
-        obj->mKeyValue[i].mValue.getArrayInt32()->acceptVisitor(this);
+        obj->value()[i].mValue.getArrayInt32()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayInt64:
         mAssign = true;
-        obj->mKeyValue[i].mValue.getArrayInt64()->acceptVisitor(this);
+        obj->value()[i].mValue.getArrayInt64()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayFloat:
         mAssign = true;
-        obj->mKeyValue[i].mValue.getArrayFloat()->acceptVisitor(this);
+        obj->value()[i].mValue.getArrayFloat()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayDouble:
         mAssign = true;
-        obj->mKeyValue[i].mValue.getArrayDouble()->acceptVisitor(this);
+        obj->value()[i].mValue.getArrayDouble()->acceptVisitor(this);
         break;
       case SRF_Value::String:
-        mDump += String::printf("%s\n", obj->mKeyValue[i].mValue.getString());
+        mDump += String::printf("%s\n", obj->value()[i].mValue.getString());
         break;
       case SRF_Value::Identifier:
-        mDump += String::printf("%s\n", obj->mKeyValue[i].mValue.getIdentifier());
+        mDump += String::printf("%s\n", obj->value()[i].mValue.getIdentifier());
         break;
       case SRF_Value::UID:
-        mDump += String::printf("%s\n", obj->mKeyValue[i].mValue.getUID());
+        mDump += String::printf("%s\n", obj->value()[i].mValue.getUID());
         break;
       case SRF_Value::Bool:
-        mDump += String::printf("%s\n", obj->mKeyValue[i].mValue.getBool() ? "true" : "false");
+        mDump += String::printf("%s\n", obj->value()[i].mValue.getBool() ? "true" : "false");
         break;
       case SRF_Value::Int64:
-        mDump += String::printf("%lld\n", obj->mKeyValue[i].mValue.getInt64());
+        mDump += String::printf("%lld\n", obj->value()[i].mValue.getInt64());
         break;
       case SRF_Value::Double:
-        mDump += String::printf("%Lf\n", obj->mKeyValue[i].mValue.getDouble());
+        mDump += String::printf("%Lf\n", obj->value()[i].mValue.getDouble());
         break;
       }
     }
@@ -1160,54 +1204,54 @@ public:
   {
     indent(); mDump += "[\n";
     mIndent++;
-    for(size_t i=0; i<list->mValue.size(); ++i)
+    for(size_t i=0; i<list->value().size(); ++i)
     {
-      switch(list->mValue[i].type())
+      switch(list->value()[i].type())
       {
       case SRF_Value::Object:
-        list->mValue[i].getObject()->acceptVisitor(this);
+        list->value()[i].getObject()->acceptVisitor(this);
         break;
       case SRF_Value::List:
-        list->mValue[i].getList()->acceptVisitor(this);
+        list->value()[i].getList()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayString:
-        list->mValue[i].getArrayString()->acceptVisitor(this);
+        list->value()[i].getArrayString()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayIdentifier:
-        list->mValue[i].getArrayIdentifier()->acceptVisitor(this);
+        list->value()[i].getArrayIdentifier()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayUID:
-        list->mValue[i].getArrayUID()->acceptVisitor(this);
+        list->value()[i].getArrayUID()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayInt32:
-        list->mValue[i].getArrayInt32()->acceptVisitor(this);
+        list->value()[i].getArrayInt32()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayInt64:
-        list->mValue[i].getArrayInt64()->acceptVisitor(this);
+        list->value()[i].getArrayInt64()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayFloat:
-        list->mValue[i].getArrayFloat()->acceptVisitor(this);
+        list->value()[i].getArrayFloat()->acceptVisitor(this);
         break;
       case SRF_Value::ArrayDouble:
-        list->mValue[i].getArrayDouble()->acceptVisitor(this);
+        list->value()[i].getArrayDouble()->acceptVisitor(this);
         break;
       case SRF_Value::String:
-        mDump += String::printf("%s\n", list->mValue[i].getString());
+        mDump += String::printf("%s\n", list->value()[i].getString());
         break;
       case SRF_Value::Identifier:
-        mDump += String::printf("%s\n", list->mValue[i].getIdentifier());
+        mDump += String::printf("%s\n", list->value()[i].getIdentifier());
         break;
       case SRF_Value::UID:
-        mDump += String::printf("%s\n", list->mValue[i].getUID());
+        mDump += String::printf("%s\n", list->value()[i].getUID());
         break;
       case SRF_Value::Bool:
-        mDump += String::printf("%s\n", list->mValue[i].getBool() ? "true" : "false");
+        mDump += String::printf("%s\n", list->value()[i].getBool() ? "true" : "false");
         break;
       case SRF_Value::Int64:
-        mDump += String::printf("%lld\n", list->mValue[i].getInt64());
+        mDump += String::printf("%lld\n", list->value()[i].getInt64());
         break;
       case SRF_Value::Double:
-        mDump += String::printf("%Lf\n", list->mValue[i].getDouble());
+        mDump += String::printf("%Lf\n", list->value()[i].getDouble());
         break;
       }
     }
@@ -1218,56 +1262,56 @@ public:
   virtual void visitArray(SRF_ArrayInt32* arr)
   {
     indent(); mDump += "( ";
-    for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      mDump += String::printf("%d ", arr->mValue[i]);
+    for(size_t i=0 ;i<arr->value().size(); ++i)
+      mDump += String::printf("%d ", arr->value()[i]);
     mDump += ")\n";
   }
 
   virtual void visitArray(SRF_ArrayInt64* arr)
   {
     indent(); mDump += "( ";
-    for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      mDump += String::printf("%lld ", arr->mValue[i]);
+    for(size_t i=0 ;i<arr->value().size(); ++i)
+      mDump += String::printf("%lld ", arr->value()[i]);
     mDump += ")\n";
   }
 
   virtual void visitArray(SRF_ArrayFloat* arr)
   {
     indent(); mDump += "( ";
-    for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      mDump += String::printf("%f ", arr->mValue[i]);
+    for(size_t i=0 ;i<arr->value().size(); ++i)
+      mDump += String::printf("%f ", arr->value()[i]);
     mDump += ")\n";
   }
 
   virtual void visitArray(SRF_ArrayDouble* arr)
   {
     indent(); mDump += "( ";
-    for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      mDump += String::printf("%Lf ", arr->mValue[i]);
+    for(size_t i=0 ;i<arr->value().size(); ++i)
+      mDump += String::printf("%Lf ", arr->value()[i]);
     mDump += ")\n";
   }
 
   virtual void visitArray(SRF_ArrayIdentifier* arr)
   {
     indent(); mDump += "( ";
-    for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      mDump += String::printf("%s ", arr->mValue[i].c_str());
+    for(size_t i=0 ;i<arr->value().size(); ++i)
+      mDump += String::printf("%s ", arr->value()[i].c_str());
     mDump += ")\n";
   }
 
   virtual void visitArray(SRF_ArrayString* arr)
   {
     indent(); mDump += "( ";
-    for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      mDump += "\"" + encodeString(arr->mValue[i]) + "\" ";
+    for(size_t i=0 ;i<arr->value().size(); ++i)
+      mDump += "\"" + encodeString(arr->value()[i]) + "\" ";
     mDump += ")\n";
   }
 
   virtual void visitArray(SRF_ArrayUID* arr)
   {
     indent(); mDump += "( ";
-    for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      mDump += String::printf("%s ", arr->mValue[i].mUID.c_str());
+    for(size_t i=0 ;i<arr->value().size(); ++i)
+      mDump += String::printf("%s ", arr->value()[i].mUID.c_str());
     mDump += ")\n";
   }
 
@@ -1351,50 +1395,50 @@ public:
 
   virtual void visitObject(SRF_Object* obj)
   {
-    for(size_t i=0; i<obj->mKeyValue.size(); ++i)
+    for(size_t i=0; i<obj->value().size(); ++i)
     {
-      if (obj->mKeyValue[i].mValue.type() == SRF_Value::Object)
-        obj->mKeyValue[i].mValue.getObject()->acceptVisitor(this);
+      if (obj->value()[i].mValue.type() == SRF_Value::Object)
+        obj->value()[i].mValue.getObject()->acceptVisitor(this);
       else
-      if (obj->mKeyValue[i].mValue.type() == SRF_Value::List)
-        obj->mKeyValue[i].mValue.getList()->acceptVisitor(this);
+      if (obj->value()[i].mValue.type() == SRF_Value::List)
+        obj->value()[i].mValue.getList()->acceptVisitor(this);
       else
-      if (obj->mKeyValue[i].mValue.type() == SRF_Value::ArrayUID)
-        obj->mKeyValue[i].mValue.getArrayUID()->acceptVisitor(this);
+      if (obj->value()[i].mValue.type() == SRF_Value::ArrayUID)
+        obj->value()[i].mValue.getArrayUID()->acceptVisitor(this);
       else
-      if (obj->mKeyValue[i].mValue.type() == SRF_Value::UID)
+      if (obj->value()[i].mValue.type() == SRF_Value::UID)
       {
-        SRF_Object* ptr = link( obj->mKeyValue[i].mValue.getUID() );
-        obj->mKeyValue[i].mValue.setObject( ptr );
+        SRF_Object* ptr = link( obj->value()[i].mValue.getUID() );
+        obj->value()[i].mValue.setObject( ptr );
       }
     }
   }
 
   virtual void visitList(SRF_List* list)
   {
-    for(size_t i=0; i<list->mValue.size(); ++i)
+    for(size_t i=0; i<list->value().size(); ++i)
     {
-      if (list->mValue[i].type() == SRF_Value::Object)
-        list->mValue[i].getObject()->acceptVisitor(this);
+      if (list->value()[i].type() == SRF_Value::Object)
+        list->value()[i].getObject()->acceptVisitor(this);
       else
-      if (list->mValue[i].type() == SRF_Value::List)
-        list->mValue[i].getList()->acceptVisitor(this);
+      if (list->value()[i].type() == SRF_Value::List)
+        list->value()[i].getList()->acceptVisitor(this);
       else
-      if (list->mValue[i].type() == SRF_Value::ArrayUID)
-        list->mValue[i].getArrayUID()->acceptVisitor(this);
+      if (list->value()[i].type() == SRF_Value::ArrayUID)
+        list->value()[i].getArrayUID()->acceptVisitor(this);
       else
-      if (list->mValue[i].type() == SRF_Value::UID)
+      if (list->value()[i].type() == SRF_Value::UID)
       {
-        SRF_Object* obj = link( list->mValue[i].getUID() );
-        list->mValue[i].setObject( obj );
+        SRF_Object* obj = link( list->value()[i].getUID() );
+        list->value()[i].setObject( obj );
       }
     }
   }
 
   virtual void visitArray(SRF_ArrayUID* arr)
   {
-    for(size_t i=0 ;i<arr->mValue.size(); ++i)
-      arr->mValue[i].mPtr = link(arr->mValue[i].mUID);
+    for(size_t i=0 ;i<arr->value().size(); ++i)
+      arr->value()[i].mPtr = link(arr->value()[i].mUID);
   }
 
   virtual void visitArray(SRF_ArrayIdentifier*) {}
@@ -1427,7 +1471,7 @@ public:
     if(getToken(mToken) && mToken.mType == TT_ObjectHeader)
     {
       mRoot = new SRF_Object;
-      mRoot->mName = mToken.mString;
+      mRoot->setName(mToken.mString);
       if (parseObject(mRoot.get()))
       {
         return true;
@@ -1468,7 +1512,7 @@ public:
           if (mToken.mString == "ID")
           {
             // Check if ID has already been set
-            if (!object->mUID.empty() && object->mUID != "#NULL")
+            if (!object->uid().empty() && object->uid() != "#NULL")
             {
               Log::error("ID already set.\n");
               return false;
@@ -1481,16 +1525,16 @@ public:
             // #identifier
             if (getToken(mToken) && mToken.mType == TT_UID)
             {
-              object->mUID = mToken.mString;
+              object->setUID(mToken.mString);
 
               // UID to Object Map, #NULL is not mapped to anything
-              if( object->mUID != "#NULL")
+              if( object->uid() != "#NULL")
               {
-                if (mUID_To_Object_Map.find(object->mUID) == mUID_To_Object_Map.end())
-                  mUID_To_Object_Map[ object->mUID ] = object;
+                if (mUID_To_Object_Map.find(object->uid()) == mUID_To_Object_Map.end())
+                  mUID_To_Object_Map[ object->uid() ] = object;
                 else
                 {
-                  Log::error( Say("Duplicate UID = '%s'.\n") << object->mUID );
+                  Log::error( Say("Duplicate UID = '%s'.\n") << object->uid() );
                   return false;
                 }
               }
@@ -1506,8 +1550,8 @@ public:
         }
 
         // non-ID key-values
-        object->mKeyValue.push_back( SRF_Object::Value() );
-        SRF_Object::Value& name_value = object->mKeyValue.back();
+        object->value().push_back( SRF_Object::Value() );
+        SRF_Object::Value& name_value = object->value().back();
 
         // Key
         name_value.mKey = mToken.mString;
@@ -1523,7 +1567,7 @@ public:
           if (mToken.mType == TT_ObjectHeader)
           {
             ref<SRF_Object> object = new SRF_Object;
-            object->mName = mToken.mString;
+            object->setName(mToken.mString);
             name_value.mValue.setObject(object.get());
             if (!parseObject( object.get() ) )
               return false;
@@ -1608,11 +1652,11 @@ public:
           case TT_ObjectHeader:
             {
               ref<SRF_Object> object = new SRF_Object;
-              object->mName = mToken.mString;
+              object->setName(mToken.mString);
               if ( parseObject( object.get() ) )
               {
                 value.setObject(object.get());
-                list->mValue.push_back( value );
+                list->value().push_back( value );
               }
               else
                 return false;
@@ -1626,7 +1670,7 @@ public:
               if ( parseList( sub_list.get() ) )
               {
                 value.setList( sub_list.get() );
-                list->mValue.push_back( value );
+                list->value().push_back( value );
               }
               else
                 return false;
@@ -1640,7 +1684,7 @@ public:
               if (parseArray(arr))
               {
                 value.setArray(arr.get());
-                list->mValue.push_back(value);
+                list->value().push_back(value);
               }
               else
                 return false;
@@ -1649,34 +1693,34 @@ public:
 
           // string
           case TT_String:
-            value.setString( mToken.mString.c_str() ); list->mValue.push_back( value );
+            value.setString( mToken.mString.c_str() ); list->value().push_back( value );
             break;
 
           // identifier
           case TT_Identifier:
-            value.setIdentifier( mToken.mString.c_str() ); list->mValue.push_back( value );
+            value.setIdentifier( mToken.mString.c_str() ); list->value().push_back( value );
             break;
 
           // UID
           case TT_UID:
-            value.setUID( mToken.mString.c_str() ); list->mValue.push_back( value );
+            value.setUID( mToken.mString.c_str() ); list->value().push_back( value );
             break;
 
           // boolean
           case TT_Boolean:
-            value.setBool( mToken.mString == "true" ); list->mValue.push_back( value );
+            value.setBool( mToken.mString == "true" ); list->value().push_back( value );
             break;
 
           // int
           case TT_Int32:
           case TT_Int64:
-            value.setInt64( atoll(mToken.mString.c_str()) ); list->mValue.push_back( value );
+            value.setInt64( atoll(mToken.mString.c_str()) ); list->value().push_back( value );
             break;
 
           // float
           case TT_Float:
           case TT_Double:
-            value.setDouble( atof(mToken.mString.c_str()) ); list->mValue.push_back( value );
+            value.setDouble( atof(mToken.mString.c_str()) ); list->value().push_back( value );
             break;
 
         default:
@@ -1727,7 +1771,7 @@ public:
         ref<SRF_ArrayInt32> arr_int32;
         arr = arr_int32 = new SRF_ArrayInt32;
         do
-          arr_int32->mValue.push_back( atoi( mToken.mString.c_str() ) );
+          arr_int32->value().push_back( atoi( mToken.mString.c_str() ) );
         while(getToken(mToken) && mToken.mType == TT_Int32);
         return mToken.mType == TT_RightRoundBracket;
       }
@@ -1741,7 +1785,7 @@ public:
           switch(mToken.mType)
           {
           case TT_Int32:
-          case TT_Int64: arr_int64->mValue.push_back( atoll( mToken.mString.c_str() ) ); break;
+          case TT_Int64: arr_int64->value().push_back( atoll( mToken.mString.c_str() ) ); break;
           case TT_RightRoundBracket: return true;
           default:
             return false;
@@ -1761,7 +1805,7 @@ public:
           {
           case TT_Int32:
           case TT_Int64:
-          case TT_Float: arr_float->mValue.push_back( (float)atof( mToken.mString.c_str() ) ); break;
+          case TT_Float: arr_float->value().push_back( (float)atof( mToken.mString.c_str() ) ); break;
           case TT_RightRoundBracket: return true;
           default:
             return false;
