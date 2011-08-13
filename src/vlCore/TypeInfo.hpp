@@ -147,38 +147,38 @@ namespace vl
 
 namespace ns
 {
-  // >>> NO INHERITANCE FROM INSTRUMENTED BASE CLASS
+  // NO INHERITANCE FROM INSTRUMENTED BASE CLASS
   class Base
   {
     VL_INSTRUMENT_BASE_CLASS(Base)
   };
 
-  // >>> SIMPLE INHERITANCE OF INSTRUMENTED CLASS
+  // SIMPLE INHERITANCE OF INSTRUMENTED CLASS
   class ClassA: public virtual Base
   {
     VL_INSTRUMENT_CLASS(ns::ClassA, Base)
   };
 
-  // >>> SIMPLE INHERITANCE OF INSTRUMENTED CLASS
+  // SIMPLE INHERITANCE OF INSTRUMENTED CLASS
   class ClassB: public virtual Base
   {
     VL_INSTRUMENT_CLASS(ns::ClassB, Base)
   };
 
-  // >>> MULTIPLE INHERITANCE
+  // MULTIPLE INHERITANCE
   class ClassAB: public ClassA, public ClassB
   {
     VL_INSTRUMENT_CLASS_2(ns::ClassAB, ClassA, ClassB)
   };
 
-  // >>> TEMPLATE CLASSES WITH MORE THAN 1 PARAMS
+  // TEMPLATE CLASSES WITH MORE THAN 1 PARAMS
   template<class T1, class T2>
   class ClassT: public Base
   {
     VL_INSTRUMENT_CLASS(VL_GROUP(ns::ClassT<class T1, class T2>), Base)
   };
 
-  // >>> SUBCLASSES OF TEMPLATES WITH MORE THAN 1 PARAMS
+  // SUBCLASSES OF TEMPLATES WITH MORE THAN 1 PARAMS
   class ClassSubT: public ClassT<int, float>
   {
     VL_INSTRUMENT_CLASS(ns::ClassSubT, VL_GROUP(ClassT<int, float>))
