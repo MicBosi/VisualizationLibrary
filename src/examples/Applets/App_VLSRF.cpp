@@ -1001,7 +1001,7 @@ SRF_Value& SRF_Value::operator=(const SRF_Value& other)
   release();
 
   mUnion = other.mUnion;
-  mType = mType;
+  mType = other.mType;
 
   // make local copy of the string
   if (mType == String || mType == Identifier || mType == UID)
@@ -2088,120 +2088,120 @@ public:
     else
       mAlreadyDefined.insert(arr_abstract);
 
-    if(arr_abstract->as<ArrayUInt1>())
+    if(arr_abstract->classType() == ArrayUInt1::Type())
       srfExport_Array1<ArrayUInt1>(arr_abstract, "<ArrayUInt1>", "%u "); // mic fixme: these can actually be user specified
     else
-    if(arr_abstract->as<ArrayUInt2>())
+    if(arr_abstract->classType() == ArrayUInt2::Type())
       srfExport_Array2<ArrayUInt2>(arr_abstract, "<ArrayUInt2>", "%u %u ");
     else
-    if(arr_abstract->as<ArrayUInt3>())
+    if(arr_abstract->classType() == ArrayUInt3::Type())
       srfExport_Array3<ArrayUInt3>(arr_abstract, "<ArrayUInt3>", "%u %u %u ");
     else
-    if(arr_abstract->as<ArrayUInt4>())
+    if(arr_abstract->classType() == ArrayUInt4::Type())
       srfExport_Array4<ArrayUInt4>(arr_abstract, "<ArrayUInt4>", "%u %u %u %u ");
     else
 
-    if(arr_abstract->as<ArrayInt1>())
+    if(arr_abstract->classType() == ArrayInt1::Type())
       srfExport_Array1<ArrayInt1>(arr_abstract, "<ArrayInt1>", "%d ");
     else
-    if(arr_abstract->as<ArrayInt2>())
+    if(arr_abstract->classType() == ArrayInt2::Type())
       srfExport_Array2<ArrayInt2>(arr_abstract, "<ArrayInt2>", "%d %d ");
     else
-    if(arr_abstract->as<ArrayInt3>())
+    if(arr_abstract->classType() == ArrayInt3::Type())
       srfExport_Array3<ArrayInt3>(arr_abstract, "<ArrayInt3>", "%d %d %d ");
     else
-    if(arr_abstract->as<ArrayInt4>())
+    if(arr_abstract->classType() == ArrayInt4::Type())
       srfExport_Array4<ArrayInt4>(arr_abstract, "<ArrayInt4>", "%d %d %d %d ");
     else
 
-    if(arr_abstract->as<ArrayUShort1>())
+    if(arr_abstract->classType() == ArrayUShort1::Type())
       srfExport_Array1<ArrayUShort1>(arr_abstract, "<ArrayUShort1>", "%u ");
     else
-    if(arr_abstract->as<ArrayUShort2>())
+    if(arr_abstract->classType() == ArrayUShort2::Type())
       srfExport_Array2<ArrayUShort2>(arr_abstract, "<ArrayUShort2>", "%u %u ");
     else
-    if(arr_abstract->as<ArrayUShort3>())
+    if(arr_abstract->classType() == ArrayUShort3::Type())
       srfExport_Array3<ArrayUShort3>(arr_abstract, "<ArrayUShort3>", "%u %u %u ");
     else
-    if(arr_abstract->as<ArrayUShort4>())
+    if(arr_abstract->classType() == ArrayUShort4::Type())
       srfExport_Array4<ArrayUShort4>(arr_abstract, "<ArrayUShort4>", "%u %u %u %u ");
     else
 
-    if(arr_abstract->as<ArrayUShort1>())
+    if(arr_abstract->classType() == ArrayUShort1::Type())
       srfExport_Array1<ArrayUShort1>(arr_abstract, "<ArrayUShort1>", "%u ");
     else
-    if(arr_abstract->as<ArrayUShort2>())
+    if(arr_abstract->classType() == ArrayUShort2::Type())
       srfExport_Array2<ArrayUShort2>(arr_abstract, "<ArrayUShort2>", "%u %u ");
     else
-    if(arr_abstract->as<ArrayUShort3>())
+    if(arr_abstract->classType() == ArrayUShort3::Type())
       srfExport_Array3<ArrayUShort3>(arr_abstract, "<ArrayUShort3>", "%u %u %u ");
     else
-    if(arr_abstract->as<ArrayUShort4>())
+    if(arr_abstract->classType() == ArrayUShort4::Type())
       srfExport_Array4<ArrayUShort4>(arr_abstract, "<ArrayUShort4>", "%u %u %u %u ");
     else
 
-    if(arr_abstract->as<ArrayShort1>())
+    if(arr_abstract->classType() == ArrayShort1::Type())
       srfExport_Array1<ArrayShort1>(arr_abstract, "<ArrayShort1>", "%d ");
     else
-    if(arr_abstract->as<ArrayShort2>())
+    if(arr_abstract->classType() == ArrayShort2::Type())
       srfExport_Array2<ArrayShort2>(arr_abstract, "<ArrayShort2>", "%d %d ");
     else
-    if(arr_abstract->as<ArrayShort3>())
+    if(arr_abstract->classType() == ArrayShort3::Type())
       srfExport_Array3<ArrayShort3>(arr_abstract, "<ArrayShort3>", "%d %d %d ");
     else
-    if(arr_abstract->as<ArrayShort4>())
+    if(arr_abstract->classType() == ArrayShort4::Type())
       srfExport_Array4<ArrayShort4>(arr_abstract, "<ArrayShort4>", "%d %d %d %d ");
     else
 
-    if(arr_abstract->as<ArrayUByte1>())
+    if(arr_abstract->classType() == ArrayUByte1::Type())
       srfExport_Array1<ArrayUByte1>(arr_abstract, "<ArrayUByte1>", "%u ");
     else
-    if(arr_abstract->as<ArrayUByte2>())
+    if(arr_abstract->classType() == ArrayUByte2::Type())
       srfExport_Array2<ArrayUByte2>(arr_abstract, "<ArrayUByte2>", "%u %u ");
     else
-    if(arr_abstract->as<ArrayUByte3>())
+    if(arr_abstract->classType() == ArrayUByte3::Type())
       srfExport_Array3<ArrayUByte3>(arr_abstract, "<ArrayUByte3>", "%u %u %u ");
     else
-    if(arr_abstract->as<ArrayUByte4>())
+    if(arr_abstract->classType() == ArrayUByte4::Type())
       srfExport_Array4<ArrayUByte4>(arr_abstract, "<ArrayUByte4>", "%u %u %u %u ");
     else
 
-    if(arr_abstract->as<ArrayByte1>())
+    if(arr_abstract->classType() == ArrayByte1::Type())
       srfExport_Array1<ArrayByte1>(arr_abstract, "<ArrayByte1>", "%d ");
     else
-    if(arr_abstract->as<ArrayByte2>())
+    if(arr_abstract->classType() == ArrayByte2::Type())
       srfExport_Array2<ArrayByte2>(arr_abstract, "<ArrayByte2>", "%d %d ");
     else
-    if(arr_abstract->as<ArrayByte3>())
+    if(arr_abstract->classType() == ArrayByte3::Type())
       srfExport_Array3<ArrayByte3>(arr_abstract, "<ArrayByte3>", "%d %d %d ");
     else
-    if(arr_abstract->as<ArrayByte4>())
+    if(arr_abstract->classType() == ArrayByte4::Type())
       srfExport_Array4<ArrayByte4>(arr_abstract, "<ArrayByte4>", "%d %d %d %d ");
     else
 
-    if(arr_abstract->as<ArrayFloat1>())
+    if(arr_abstract->classType() == ArrayFloat1::Type())
       srfExport_Array1<ArrayFloat1>(arr_abstract, "<ArrayFloat1>", "%f ");
     else
-    if(arr_abstract->as<ArrayFloat2>())
+    if(arr_abstract->classType() == ArrayFloat2::Type())
       srfExport_Array2<ArrayFloat2>(arr_abstract, "<ArrayFloat2>", "%f %f ");
     else
-    if(arr_abstract->as<ArrayFloat3>())
+    if(arr_abstract->classType() == ArrayFloat3::Type())
       srfExport_Array3<ArrayFloat3>(arr_abstract, "<ArrayFloat3>", "%f %f %f ");
     else
-    if(arr_abstract->as<ArrayFloat4>())
+    if(arr_abstract->classType() == ArrayFloat4::Type())
       srfExport_Array4<ArrayFloat4>(arr_abstract, "<ArrayFloat3>", "%f %f %f %f ");
     else
 
-    if(arr_abstract->as<ArrayDouble1>())
+    if(arr_abstract->classType() == ArrayDouble1::Type())
       srfExport_Array1<ArrayDouble1>(arr_abstract, "<ArrayDouble1>", "%Lf ");
     else
-    if(arr_abstract->as<ArrayDouble2>())
+    if(arr_abstract->classType() == ArrayDouble2::Type())
       srfExport_Array2<ArrayDouble2>(arr_abstract, "<ArrayDouble2>", "%Lf %Lf ");
     else
-    if(arr_abstract->as<ArrayDouble3>())
+    if(arr_abstract->classType() == ArrayDouble3::Type())
       srfExport_Array3<ArrayDouble3>(arr_abstract, "<ArrayDouble3>", "%Lf %Lf %Lf ");
     else
-    if(arr_abstract->as<ArrayDouble4>())
+    if(arr_abstract->classType() == ArrayDouble4::Type())
       srfExport_Array4<ArrayDouble4>(arr_abstract, "<ArrayDouble3>", "%Lf %Lf %Lf %Lf ");
     else
     {
@@ -2276,7 +2276,7 @@ public:
     else
       mAlreadyDefined.insert(dcall);
 
-    if (dcall->as<DrawArrays>())
+    if (dcall->classType() == DrawArrays::Type())
     {
       DrawArrays* da = dcall->as<DrawArrays>();
       mSRFString += indent() + "<DrawArrays>\n";
@@ -2290,7 +2290,7 @@ public:
       mSRFString += indent() + "}\n";
     }
     else
-    if (dcall->as<DrawElementsUInt>())
+    if (dcall->classType() == DrawElementsUInt::Type())
     {
       DrawElementsUInt* de = dcall->as<DrawElementsUInt>();
       mSRFString += indent() + "<DrawElementsUInt>\n";
@@ -2305,7 +2305,7 @@ public:
       mSRFString += indent() + "}\n";
     }
     else
-    if (dcall->as<DrawElementsUShort>())
+    if (dcall->classType() == DrawElementsUShort::Type())
     {
       DrawElementsUShort* de = dcall->as<DrawElementsUShort>();
       mSRFString += indent() + "<DrawElementsUShort>\n";
@@ -2320,7 +2320,7 @@ public:
       mSRFString += indent() + "}\n";
     }
     else
-    if (dcall->as<DrawElementsUByte>())
+    if (dcall->classType() == DrawElementsUByte::Type())
     {
       DrawElementsUByte* de = dcall->as<DrawElementsUByte>();
       mSRFString += indent() + "<DrawElementsUByte>\n";
@@ -2335,7 +2335,7 @@ public:
       mSRFString += indent() + "}\n";
     }
     else
-    if (dcall->as<MultiDrawElementsUInt>())
+    if (dcall->classType() == MultiDrawElementsUInt::Type())
     {
       MultiDrawElementsUInt* de = dcall->as<MultiDrawElementsUInt>();
       mSRFString += indent() + "<MultiDrawElementsUInt>\n";
@@ -2350,7 +2350,7 @@ public:
       mSRFString += indent() + "}\n";
     }
     else
-    if (dcall->as<MultiDrawElementsUShort>())
+    if (dcall->classType() == MultiDrawElementsUShort::Type())
     {
       MultiDrawElementsUShort* de = dcall->as<MultiDrawElementsUShort>();
       mSRFString += indent() + "<MultiDrawElementsUShort>\n";
@@ -2365,7 +2365,7 @@ public:
       mSRFString += indent() + "}\n";
     }
     else
-    if (dcall->as<MultiDrawElementsUByte>())
+    if (dcall->classType() == MultiDrawElementsUByte::Type())
     {
       MultiDrawElementsUByte* de = dcall->as<MultiDrawElementsUByte>();
       mSRFString += indent() + "<MultiDrawElementsUByte>\n";
@@ -2466,12 +2466,12 @@ public:
     mAssign = 0;
     mIndent = 0;
 
-    srfPrelink_Geometry(geom.get());
-    srfExport_Geometry(geom.get());
-    std::fstream fout;
-    fout.open("D:/VL/srf_export.vl", std::ios::out);
-    fout.write( mSRFString.toStdString().c_str(), mSRFString.length() );
-    fout.close();
+    //srfPrelink_Geometry(geom.get());
+    //srfExport_Geometry(geom.get());
+    //std::fstream fout;
+    //fout.open("D:/VL/srf_export.vl", std::ios::out);
+    //fout.write( mSRFString.toStdString().c_str(), mSRFString.length() );
+    //fout.close();
 
     SRF_Parser parser;
     parser.mTokenizer = new SRF_Tokenizer;
@@ -2482,9 +2482,12 @@ public:
     parser.link();
 
     // dump the dump
-    fout.open( "D:/VL/srf_export_dump.vl", std::ios::out );
-    fout.write( dump.toStdString().c_str(), dump.length() );
-    fout.close();
+    {
+      std::fstream fout;
+      fout.open( "D:/VL/srf_export_dump.vl", std::ios::out );
+      fout.write( dump.toStdString().c_str(), dump.length() );
+      fout.close();
+    }
 
     exit(0);
   }
