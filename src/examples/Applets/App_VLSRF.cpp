@@ -69,8 +69,8 @@ public:
     mSRFString += indent() + "<AABB>\n";
     mSRFString += indent() + "{\n"; 
     ++mIndent;
-    mSRFString += indent() + String::printf("Min = ( %f %f %f )\n", aabb.minCorner().x(), aabb.minCorner().y(), aabb.minCorner().z() );
-    mSRFString += indent() + String::printf("Max = ( %f %f %f )\n", aabb.maxCorner().x(), aabb.maxCorner().y(), aabb.maxCorner().z() );
+    mSRFString += indent() + String::printf("MinCorner = ( %f %f %f )\n", aabb.minCorner().x(), aabb.minCorner().y(), aabb.minCorner().z() );
+    mSRFString += indent() + String::printf("MaxCorner = ( %f %f %f )\n", aabb.maxCorner().x(), aabb.maxCorner().y(), aabb.maxCorner().z() );
     --mIndent;
     mSRFString += indent() + "}\n"; 
   }
@@ -741,6 +741,210 @@ public:
     }
   }
 
+  //-----------------------------------------------------------------------------
+  // IMPORT FUNCTIONS
+  //-----------------------------------------------------------------------------
+
+  ResourceDatabase* srfImport_ResourceDatabase(const SRF_Object* srf_res_db)
+  {
+    if (srf_res_db->tag() != "<ResourceDatabase>")
+      return NULL;
+
+    // mic fixme: output errors with line
+    // <ResourceDatabase> must have at least one "Resources" key and must be the first one and must be a list!
+    if (srf_res_db->value().size() < 1 || srf_res_db->value()[0].key() != "Resources" || srf_res_db->value()[0].value().type() != SRF_Value::List)
+      return NULL;
+
+    // link the SRF to the VL object
+    ref<ResourceDatabase> res_db = new ResourceDatabase;
+    mSRF_To_VL[srf_res_db] = res_db;
+
+    // get the list
+    const SRF_List* list = srf_res_db->value()[0].value().getList();
+    for(size_t i=0; i<list->value().size(); ++i)
+    {
+      const SRF_Value& value = list->value()[i];
+
+      // the member of this list must be all objects!
+      // mic fixme: issue error
+      if (value.type() != SRF_Value::Object)
+        return false;
+
+      const SRF_Object* obj = value.getObject();
+      
+      if (obj->tag() == "<Geometry>")
+      {
+        Geometry* geom = srfImport_Geometry(obj);
+        if (geom)
+          res_db->resources().push_back(geom);
+      }
+      else
+      if (obj->tag() == "<Effect>")
+      {
+        Effect* fx = srfImport_Effect(obj);
+        if (fx)
+          res_db->resources().push_back(fx);
+      }
+      else
+      if (obj->tag() == "<Shader>")
+      {
+        Shader* sh = srfImport_Shader(obj);
+        if (sh)
+          res_db->resources().push_back(sh);
+      }
+      else
+      if (obj->tag() == "<Transform>")
+      {
+        Transform* tr = srfImport_Transform(obj);
+        if (tr)
+          res_db->resources().push_back(tr);
+      }
+      else
+      if (obj->tag() == "<Actor>")
+      {
+        Actor* act = srfImport_Actor(obj);
+        if (act)
+          res_db->resources().push_back(act);
+      }
+      else
+      if (obj->tag() == "<Camera>")
+      {
+        Camera* cam = srfImport_Camera(obj);
+        if (cam)
+          res_db->resources().push_back(cam);
+      }
+      else
+      {
+        // debug: this should not be an error, maybe a Log::debug()
+        Log::error( Say("Skipping SRF_Object = %s\n") << obj->tag() );
+      }
+    }
+
+    return res_db.get();
+  }
+
+  bool srfImport_AABB(const SRF_Object* srf_obj, AABB& aabb)
+  {
+    // mic fixme: we should check that the members are exactly two and are the two required
+    // would be nice to have a validator...
+
+    for(size_t i=0; i<srf_obj->value().size(); ++i)
+    {
+      const std::string& key = srf_obj->value()[i].key();
+      const SRF_Value& value = srf_obj->value()[i].value();
+      if (key == "MinCorner")
+      {
+        VL_CHECK(value.type() == SRF_Value::ArrayFloat)
+        aabb.setMinCorner( value.getArrayFloat()->getFloat3() );
+      }
+      else
+      if (key == "MaxCorner")
+      {
+        VL_CHECK(value.type() == SRF_Value::ArrayFloat)
+        aabb.setMaxCorner( value.getArrayFloat()->getFloat3() );
+      }
+      else
+        return false; // mic fixme
+    }
+    return true;
+  }
+
+  bool srfImport_Sphere(const SRF_Object* srf_obj, Sphere& sphere)
+  {
+    for(size_t i=0; i<srf_obj->value().size(); ++i)
+    {
+      const std::string& key = srf_obj->value()[i].key();
+      const SRF_Value& value = srf_obj->value()[i].value();
+      if (key == "Center")
+      {
+        VL_CHECK(value.type() == SRF_Value::ArrayFloat)
+        sphere.setCenter( value.getArrayFloat()->getFloat3() );
+      }
+      else
+      if (key == "Radius")
+      {
+        VL_CHECK(value.type() == SRF_Value::Double)
+        sphere.setRadius( (Real)value.getDouble() );
+      }
+      else
+        return false; // mic fixme
+    }
+    return true;
+  }
+
+  Geometry* srfImport_Geometry(const SRF_Object* srf_obj)
+  {
+    if (srf_obj->tag() != "<Geometry>")
+      return false;
+
+    // link the SRF to the VL object
+    ref<Geometry> geom = new Geometry;
+    mSRF_To_VL[srf_obj] = geom;
+
+    for(size_t i=0; i<srf_obj->value().size(); ++i)
+    {
+      const std::string& key = srf_obj->value()[i].key();
+      const SRF_Value& value = srf_obj->value()[i].value();
+
+      if (key == "VBOEnabled")
+      {
+        VL_CHECK(value.type() == SRF_Value::Bool) // mic fixme: issue error
+        geom->setVBOEnabled( value.getBool() );
+      }
+      else
+      if (key == "DisplayListEnabled")
+      {
+        VL_CHECK(value.type() == SRF_Value::Bool) // mic fixme: issue error
+        geom->setDisplayListEnabled( value.getBool() );
+      }
+      else
+      if (key == "AABB")
+      {
+        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
+        AABB aabb;
+        if (!srfImport_AABB(value.getObject(), aabb))
+          return NULL;
+      }
+      else
+      if (key == "Sphere")
+      {
+        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
+      }
+      else
+      {
+        // ...
+      }
+
+    }
+
+    return geom.get();
+  }
+
+  Effect* srfImport_Effect(const SRF_Object* srf_obj)
+  {
+    return NULL;
+  }
+
+  Shader* srfImport_Shader(const SRF_Object* srf_obj)
+  {
+    return NULL;
+  }
+
+  Transform* srfImport_Transform(const SRF_Object* srf_obj)
+  {
+    return NULL;
+  }
+
+  Actor* srfImport_Actor(const SRF_Object* srf_obj)
+  {
+    return NULL;
+  }
+
+  Camera* srfImport_Camera(const SRF_Object* srf_obj)
+  {
+    return NULL;
+  }
+
   virtual void initEvent()
   {
     Log::notify(appletInfo());
@@ -794,9 +998,13 @@ public:
   }
 
 protected:
+  // export
   std::map< ref<Object>, String > mObject_To_UID;
   std::map< ref<Object>, int > mObject_Ref_Count;
   std::set< ref<Object> > mAlreadyDefined;
+  // import
+  std::map< ref<Object>, ref<Object> > mSRF_To_VL;
+
   int mUIDCounter;
   String mSRFString;
   int mIndent;
