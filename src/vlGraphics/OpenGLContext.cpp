@@ -1500,7 +1500,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
 
         // not supported under GLES
-#if defined(VL_OPENG)
+#if defined(VL_OPENGL)
         glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
         glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
 #endif
