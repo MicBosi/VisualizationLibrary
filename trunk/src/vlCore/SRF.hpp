@@ -37,6 +37,7 @@
 #include <vlCore\Say.hpp>
 #include <vlCore\Log.hpp>
 #include <vlCore\BufferedStream.hpp>
+#include <vlCore\Vector4.hpp>
 
 // mic fixme
 #ifdef _MSC_VER
@@ -655,6 +656,9 @@ namespace vl
     std::vector<int>& value() { return mValue; }
     const std::vector<int>& value() const { return mValue; }
 
+    int* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    const int* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
+
   private:
     std::vector<int> mValue;
   };
@@ -669,6 +673,9 @@ namespace vl
 
     std::vector<long long>& value() { return mValue; }
     const std::vector<long long>& value() const { return mValue; }
+
+    long long* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    const long long* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
   private:
     std::vector<long long> mValue;
@@ -685,6 +692,13 @@ namespace vl
     std::vector<float>& value() { return mValue; }
     const std::vector<float>& value() const { return mValue; }
 
+    float* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    const float* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
+
+    fvec2 getFloat2() const { VL_CHECK(mValue.size() == 2); return fvec2(mValue[0], mValue[1]); }
+    fvec3 getFloat3() const { VL_CHECK(mValue.size() == 3); return fvec3(mValue[0], mValue[1], mValue[2]); }
+    fvec4 getFloat4() const { VL_CHECK(mValue.size() == 4); return fvec4(mValue[0], mValue[1], mValue[2], mValue[3]); }
+
   private:
     std::vector<float> mValue;
   };
@@ -699,6 +713,13 @@ namespace vl
 
     std::vector<double>& value() { return mValue; }
     const std::vector<double>& value() const { return mValue; }
+
+    double* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    const double* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
+
+    dvec2 getDouble2() const { VL_CHECK(mValue.size() == 2); return dvec2(mValue[0], mValue[1]); }
+    dvec3 getDouble3() const { VL_CHECK(mValue.size() == 3); return dvec3(mValue[0], mValue[1], mValue[2]); }
+    dvec4 getDouble4() const { VL_CHECK(mValue.size() == 4); return dvec4(mValue[0], mValue[1], mValue[2], mValue[3]); }
 
   public:
     std::vector<double> mValue;
@@ -723,6 +744,9 @@ namespace vl
     std::vector<Value>& value() { return mValue; }
     const std::vector<Value>& value() const { return mValue; }
 
+    Value* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    const Value* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
+
   public:
     std::vector<Value> mValue;
   };
@@ -738,6 +762,9 @@ namespace vl
     std::vector<std::string>& value() { return mValue; }
     const std::vector<std::string>& value() const { return mValue; }
 
+    std::string* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    const std::string* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
+
   public:
     std::vector<std::string> mValue;
   };
@@ -752,6 +779,9 @@ namespace vl
 
     std::vector<std::string>& value() { return mValue; }
     const std::vector<std::string>& value() const { return mValue; }
+
+    std::string* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    const std::string* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
   public:
     std::vector<std::string> mValue;
@@ -912,7 +942,7 @@ namespace vl
       mUnion.mBool = val;
     }
 
-    double getBool() const { VL_CHECK(mType == Bool); return mUnion.mBool; }
+    bool getBool() const { VL_CHECK(mType == Bool); return mUnion.mBool; }
   };
   //-----------------------------------------------------------------------------
   // SRF_Object
@@ -931,14 +961,26 @@ namespace vl
 
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitObject(this); }
 
-    struct Value
+    class Value
     {
+      friend class SRF_Object;
+
+    public:
+      std::string& key() { return mKey; }
+      const std::string& key() const { return mKey; }
+      void setKey(const std::string& key) { mKey = key; }
+
+      SRF_Value& value() { return mValue; }
+      const SRF_Value& value() const { return mValue; }
+      void setValue(const SRF_Value& value) { mValue = value; }
+
+    private:
       std::string mKey;
       SRF_Value mValue;
     };
 
-    void setName(const std::string& name) { mName = name; }
-    const std::string& name() const { return mName; }
+    void setTag(const std::string& tag) { mTag = tag; }
+    const std::string& tag() const { return mTag; }
 
     void setUID(const std::string& uid) { mUID = uid; }
     const std::string& uid() const { return mUID; }
@@ -948,7 +990,7 @@ namespace vl
 
   private:
     // mic fixme: add a multimap for quick access
-    std::string mName;
+    std::string mTag;
     std::string mUID;
     std::vector<Value> mKeyValue;
   };
@@ -1132,7 +1174,7 @@ namespace vl
 
     virtual void visitObject(SRF_Object* obj)
     {
-      indent(); mDump += String::printf("%s\n", obj->name().c_str());
+      indent(); mDump += String::printf("%s\n", obj->tag().c_str());
       indent(); mDump += "{\n";
       mIndent++;
       if (obj->uid().length() && obj->uid() != "#NULL")
@@ -1141,62 +1183,62 @@ namespace vl
       }
       for(size_t i=0; i<obj->value().size(); ++i)
       {
-        indent(); mDump += String::printf("%s = ", obj->value()[i].mKey.c_str());
-        switch(obj->value()[i].mValue.type())
+        indent(); mDump += String::printf("%s = ", obj->value()[i].key().c_str());
+        switch(obj->value()[i].value().type())
         {
         case SRF_Value::Object:
           mAssign = true;
-          obj->value()[i].mValue.getObject()->acceptVisitor(this);
+          obj->value()[i].value().getObject()->acceptVisitor(this);
           break;
         case SRF_Value::List:
           mAssign = true;
-          obj->value()[i].mValue.getList()->acceptVisitor(this);
+          obj->value()[i].value().getList()->acceptVisitor(this);
           break;
         case SRF_Value::ArrayString:
           mAssign = true;
-          obj->value()[i].mValue.getArrayString()->acceptVisitor(this);
+          obj->value()[i].value().getArrayString()->acceptVisitor(this);
           break;
         case SRF_Value::ArrayIdentifier:
           mAssign = true;
-          obj->value()[i].mValue.getArrayIdentifier()->acceptVisitor(this);
+          obj->value()[i].value().getArrayIdentifier()->acceptVisitor(this);
           break;
         case SRF_Value::ArrayUID:
           mAssign = true;
-          obj->value()[i].mValue.getArrayUID()->acceptVisitor(this);
+          obj->value()[i].value().getArrayUID()->acceptVisitor(this);
           break;
         case SRF_Value::ArrayInt32:
           mAssign = true;
-          obj->value()[i].mValue.getArrayInt32()->acceptVisitor(this);
+          obj->value()[i].value().getArrayInt32()->acceptVisitor(this);
           break;
         case SRF_Value::ArrayInt64:
           mAssign = true;
-          obj->value()[i].mValue.getArrayInt64()->acceptVisitor(this);
+          obj->value()[i].value().getArrayInt64()->acceptVisitor(this);
           break;
         case SRF_Value::ArrayFloat:
           mAssign = true;
-          obj->value()[i].mValue.getArrayFloat()->acceptVisitor(this);
+          obj->value()[i].value().getArrayFloat()->acceptVisitor(this);
           break;
         case SRF_Value::ArrayDouble:
           mAssign = true;
-          obj->value()[i].mValue.getArrayDouble()->acceptVisitor(this);
+          obj->value()[i].value().getArrayDouble()->acceptVisitor(this);
           break;
         case SRF_Value::String:
-          mDump += String::printf("%s\n", obj->value()[i].mValue.getString());
+          mDump += String::printf("%s\n", obj->value()[i].value().getString());
           break;
         case SRF_Value::Identifier:
-          mDump += String::printf("%s\n", obj->value()[i].mValue.getIdentifier());
+          mDump += String::printf("%s\n", obj->value()[i].value().getIdentifier());
           break;
         case SRF_Value::UID:
-          mDump += String::printf("%s\n", obj->value()[i].mValue.getUID());
+          mDump += String::printf("%s\n", obj->value()[i].value().getUID());
           break;
         case SRF_Value::Bool:
-          mDump += String::printf("%s\n", obj->value()[i].mValue.getBool() ? "true" : "false");
+          mDump += String::printf("%s\n", obj->value()[i].value().getBool() ? "true" : "false");
           break;
         case SRF_Value::Int64:
-          mDump += String::printf("%lld\n", obj->value()[i].mValue.getInt64());
+          mDump += String::printf("%lld\n", obj->value()[i].value().getInt64());
           break;
         case SRF_Value::Double:
-          mDump += String::printf("%Lf\n", obj->value()[i].mValue.getDouble());
+          mDump += String::printf("%Lf\n", obj->value()[i].value().getDouble());
           break;
         }
       }
@@ -1401,19 +1443,19 @@ namespace vl
     {
       for(size_t i=0; i<obj->value().size(); ++i)
       {
-        if (obj->value()[i].mValue.type() == SRF_Value::Object)
-          obj->value()[i].mValue.getObject()->acceptVisitor(this);
+        if (obj->value()[i].value().type() == SRF_Value::Object)
+          obj->value()[i].value().getObject()->acceptVisitor(this);
         else
-        if (obj->value()[i].mValue.type() == SRF_Value::List)
-          obj->value()[i].mValue.getList()->acceptVisitor(this);
+        if (obj->value()[i].value().type() == SRF_Value::List)
+          obj->value()[i].value().getList()->acceptVisitor(this);
         else
-        if (obj->value()[i].mValue.type() == SRF_Value::ArrayUID)
-          obj->value()[i].mValue.getArrayUID()->acceptVisitor(this);
+        if (obj->value()[i].value().type() == SRF_Value::ArrayUID)
+          obj->value()[i].value().getArrayUID()->acceptVisitor(this);
         else
-        if (obj->value()[i].mValue.type() == SRF_Value::UID)
+        if (obj->value()[i].value().type() == SRF_Value::UID)
         {
-          SRF_Object* ptr = link( obj->value()[i].mValue.getUID() );
-          obj->value()[i].mValue.setObject( ptr );
+          SRF_Object* ptr = link( obj->value()[i].value().getUID() );
+          obj->value()[i].value().setObject( ptr );
         }
       }
     }
@@ -1479,7 +1521,7 @@ namespace vl
       if(getToken(mToken) && mToken.mType == SRF_Token::ObjectHeader)
       {
         mRoot = new SRF_Object;
-        mRoot->setName(mToken.mString);
+        mRoot->setTag(mToken.mString);
         if (parseObject(mRoot.get()))
         {
           return true;
@@ -1562,7 +1604,7 @@ namespace vl
           SRF_Object::Value& name_value = object->value().back();
 
           // Key
-          name_value.mKey = mToken.mString;
+          name_value.setKey( mToken.mString );
 
           // Equals
           if (!getToken(mToken) || mToken.mType != SRF_Token::Equals)
@@ -1575,8 +1617,8 @@ namespace vl
             if (mToken.mType == SRF_Token::ObjectHeader)
             {
               ref<SRF_Object> object = new SRF_Object;
-              object->setName(mToken.mString);
-              name_value.mValue.setObject(object.get());
+              object->setTag(mToken.mString);
+              name_value.value().setObject(object.get());
               if (!parseObject( object.get() ) )
                 return false;
             }
@@ -1585,7 +1627,7 @@ namespace vl
             if (mToken.mType == SRF_Token::LeftSquareBracket)
             {
               ref<SRF_List> list = new SRF_List;
-              name_value.mValue.setList(list.get());
+              name_value.value().setList(list.get());
               if ( !parseList( list.get() ) )
                 return false;
             }
@@ -1595,7 +1637,7 @@ namespace vl
             {
               ref<SRF_Array> arr;
               if ( parseArray( arr ) )
-                name_value.mValue.setArray(arr.get());
+                name_value.value().setArray(arr.get());
               else
                 return false;
             }
@@ -1603,37 +1645,37 @@ namespace vl
             // A "string"
             if (mToken.mType == SRF_Token::String)
             {
-              name_value.mValue.setString(mToken.mString.c_str());
+              name_value.value().setString(mToken.mString.c_str());
             }
             else
             // An Identifier
             if (mToken.mType == SRF_Token::Identifier)
             {
-              name_value.mValue.setIdentifier(mToken.mString.c_str());
+              name_value.value().setIdentifier(mToken.mString.c_str());
             }
             else
             // An #id
             if (mToken.mType == SRF_Token::UID)
             {
-              name_value.mValue.setUID(mToken.mString.c_str());
+              name_value.value().setUID(mToken.mString.c_str());
             }
             else
             // A boolean (true/false)
             if (mToken.mType == SRF_Token::Boolean)
             {
-              name_value.mValue.setBool(mToken.mString == "true");
+              name_value.value().setBool(mToken.mString == "true");
             }
             else
             // An integer
             if (mToken.mType == SRF_Token::Int32 || mToken.mType == SRF_Token::Int64)
             {
-              name_value.mValue.setInt64( atoll(mToken.mString.c_str()) );
+              name_value.value().setInt64( atoll(mToken.mString.c_str()) );
             }
             else
             // An float
             if (mToken.mType == SRF_Token::Float || mToken.mType == SRF_Token::Double)
             {
-              name_value.mValue.setDouble( atof(mToken.mString.c_str()) );
+              name_value.value().setDouble( atof(mToken.mString.c_str()) );
             }
             else
               return false;
@@ -1660,7 +1702,7 @@ namespace vl
             case SRF_Token::ObjectHeader:
               {
                 ref<SRF_Object> object = new SRF_Object;
-                object->setName(mToken.mString);
+                object->setTag(mToken.mString);
                 if ( parseObject( object.get() ) )
                 {
                   value.setObject(object.get());
