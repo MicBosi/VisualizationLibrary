@@ -988,6 +988,23 @@ namespace vl
     std::vector<Value>& value() { return mKeyValue; }
     const std::vector<Value>& value() const { return mKeyValue; }
 
+    // mic fixme: we can speed this guys up with multimaps
+    SRF_Value* getValue(const std::string& key)
+    {
+      for(size_t i=0; i<mKeyValue.size(); ++i)
+        if (mKeyValue[i].key() == key)
+          return &mKeyValue[i].value();
+      return NULL;
+    }
+
+    const SRF_Value* getValue(const std::string& key) const
+    {
+      for(size_t i=0; i<mKeyValue.size(); ++i)
+        if (mKeyValue[i].key() == key)
+          return &mKeyValue[i].value();
+      return NULL;
+    }
+
   private:
     // mic fixme: add a multimap for quick access
     std::string mTag;
@@ -1959,6 +1976,8 @@ namespace vl
     const SRF_Tokenizer* tokenizer() const { return mTokenizer.get(); }
 
     const std::map< std::string, ref<SRF_Object> >& linkMap() const { return mLinkMap; }
+
+    const SRF_Object* root() const { return mRoot.get(); }
 
   private:
     ref<SRF_Object> mRoot;
