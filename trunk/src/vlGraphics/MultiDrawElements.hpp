@@ -68,7 +68,7 @@ namespace vl
       computePointerVector();
       computeVBOPointerVector();
       // set default base vertices to 0
-      if (mBaseVertices.empty())
+      if (mBaseVertices.size() != mCountVector.size())
         mBaseVertices.resize(mCountVector.size());
     }
 
