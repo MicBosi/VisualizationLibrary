@@ -53,38 +53,29 @@ public:
     return ok ? "true\n" : "false\n";
   }
 
-  void srfExport_Renderable(Renderable* ren)
+  void srfExport_Renderable(const Renderable* ren, SRF_Object* renderable_subclass)
   {
-    if (mObject_Ref_Count[ren] > 1)
-      mSRFString += indent() + "ID = " + getUID(ren) + "\n";
-    mSRFString += indent() + "VBOEnabled = " + getBoolCR(ren->isVBOEnabled());
-    mSRFString += indent() + "DisplayListEnabled = " + getBoolCR(ren->isDisplayListEnabled());
-    mSRFString += indent() + "AABB = "; mAssign = true; srfExport_AABB(ren->boundingBox());
-    mSRFString += indent() + "Sphere = "; mAssign = true; srfExport_Sphere(ren->boundingSphere());
+    renderable_subclass->setUID( getUID(ren) );
+    renderable_subclass->value().push_back( SRF_Object::Value("VBOEnabled", ren->isVBOEnabled()) );
+    renderable_subclass->value().push_back( SRF_Object::Value("DisplayListEnabled", ren->isDisplayListEnabled()) );
+    renderable_subclass->value().push_back( SRF_Object::Value("AABB", srfExport_AABB(ren->boundingBox())) );
+    renderable_subclass->value().push_back( SRF_Object::Value("Sphere", srfExport_Sphere(ren->boundingSphere())) );
   }
 
-  void srfExport_AABB(const AABB& aabb)
+  SRF_Value srfExport_AABB(const AABB& aabb)
   {
-    // AABBs are always inlined
-    mSRFString += indent() + "<AABB>\n";
-    mSRFString += indent() + "{\n"; 
-    ++mIndent;
-    mSRFString += indent() + String::printf("MinCorner = ( %f %f %f )\n", aabb.minCorner().x(), aabb.minCorner().y(), aabb.minCorner().z() );
-    mSRFString += indent() + String::printf("MaxCorner = ( %f %f %f )\n", aabb.maxCorner().x(), aabb.maxCorner().y(), aabb.maxCorner().z() );
-    --mIndent;
-    mSRFString += indent() + "}\n"; 
+    SRF_Value value ( new SRF_Object("<AABB>") );
+    value.getObject()->value().push_back( SRF_Object::Value("MinCorner", aabb.minCorner()) );
+    value.getObject()->value().push_back( SRF_Object::Value("MaxCorner", aabb.maxCorner()) );
+    return value;
   }
 
-  void srfExport_Sphere(const Sphere& sphere)
+  SRF_Value srfExport_Sphere(const Sphere& sphere)
   {
-    // AABBs are always inlined
-    mSRFString += indent() + "<Sphere>\n";
-    mSRFString += indent() + "{\n"; 
-    ++mIndent;
-    mSRFString += indent() + String::printf("Center = ( %f %f %f )\n", sphere.center().x(), sphere.center().y(), sphere.center().z() );
-    mSRFString += indent() + String::printf("Radius = %f\n", sphere.radius() );
-    --mIndent;
-    mSRFString += indent() + "}\n";
+    SRF_Value value ( new SRF_Object("<Sphere>") );
+    value.getObject()->value().push_back( SRF_Object::Value("Center", sphere.center()) );
+    value.getObject()->value().push_back( SRF_Object::Value("Radius", sphere.radius()) );
+    return value;
   }
 
   void srfPrelink_Geometry(const Geometry* geom)
@@ -102,52 +93,94 @@ public:
       generateUID(geom->texCoordArray(i), "texcoord_array_");
     for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
       if (geom->vertexAttribArray(i))
-        generateUID(geom->vertexAttribArray(i)->data(), "vertexattrib_array_");
+      {
+        generateUID(geom->vertexAttribArray(i), "vertexattribinfo_");
+        if ( geom->vertexAttribArray(i)->data() )
+          generateUID(geom->vertexAttribArray(i)->data(), "vertexattrib_array_");
+      }
     // draw elements
     for(int i=0; i<geom->drawCalls()->size(); ++i)
     {
+      // draw call
       generateUID(geom->drawCalls()->at(i), "drawcall_");
+
+      // index buffer
+      if (geom->drawCalls()->at(i)->classType() == DrawElementsUInt::Type())
+        generateUID(geom->drawCalls()->at(i)->as<DrawElementsUInt>()->indexBuffer(), "indexbuffer_");
+      else
+      if (geom->drawCalls()->at(i)->classType() == DrawElementsUShort::Type())
+        generateUID(geom->drawCalls()->at(i)->as<DrawElementsUShort>()->indexBuffer(), "indexbuffer_");
+      else
+      if (geom->drawCalls()->at(i)->classType() == DrawElementsUByte::Type())
+        generateUID(geom->drawCalls()->at(i)->as<DrawElementsUByte>()->indexBuffer(), "indexbuffer_");
+      else
+      if (geom->drawCalls()->at(i)->classType() == MultiDrawElementsUInt::Type())
+        generateUID(geom->drawCalls()->at(i)->as<MultiDrawElementsUInt>()->indexBuffer(), "indexbuffer_");
+      else
+      if (geom->drawCalls()->at(i)->classType() == MultiDrawElementsUShort::Type())
+        generateUID(geom->drawCalls()->at(i)->as<MultiDrawElementsUShort>()->indexBuffer(), "indexbuffer_");
+      else
+      if (geom->drawCalls()->at(i)->classType() == MultiDrawElementsUByte::Type())
+        generateUID(geom->drawCalls()->at(i)->as<MultiDrawElementsUByte>()->indexBuffer(), "indexbuffer_");
+
+      // patch paramter
       generateUID(geom->drawCalls()->at(i)->patchParameter(), "patchparam_");
     }
   }
 
-  void srfExport_Geometry(Geometry* geom)
+  SRF_Value srfExport_Geometry(const Geometry* geom)
   {
+    SRF_Value value;
     if (isDefined(geom))
     {
-      mSRFString += indent() + getUID(geom) + "\n";
-      return;
+      value.setUID( getUID(geom) );
+      return value;
     }
     else
       mAlreadyDefined.insert(geom);
 
-    mSRFString += indent() + "<Geometry>\n";
-    mSRFString += indent() + "{\n"; 
-    ++mIndent;
-    mSRFString += indent() + "// renderable\n";
-    srfExport_Renderable(geom);
-    // vertex arrays
-    mSRFString += "\n" + indent() + "// vertex arrays\n";
-    if (geom->vertexArray()) { mSRFString += indent() + "VertexArray = ";  mAssign = true; srfExport_Array(geom->vertexArray()); }
-    if (geom->normalArray()) { mSRFString += indent() + "NormalArray = ";  mAssign = true; srfExport_Array(geom->normalArray()); }
-    if (geom->colorArray()) { mSRFString += indent() + "ColorArray = ";  mAssign = true; srfExport_Array(geom->colorArray()); }
-    if (geom->secondaryColorArray()) { mSRFString += indent() + "SecondaryColorArray = ";  mAssign = true; srfExport_Array(geom->secondaryColorArray()); }
-    if (geom->fogCoordArray()) { mSRFString += indent() + "FogCoordArray = ";  mAssign = true; srfExport_Array(geom->fogCoordArray()); }
+    value.setObject( new SRF_Object("<Geometry>") );
+    std::vector<SRF_Object::Value>& values = value.getObject()->value();
+
+    srfExport_Renderable( geom, value.getObject() );
+
+    if (geom->vertexArray()) 
+      values.push_back( SRF_Object::Value("VertexArray", srfExport_Array(geom->vertexArray())) );
+    
+    if (geom->normalArray()) 
+      values.push_back( SRF_Object::Value("NormalArray", srfExport_Array(geom->normalArray())) );
+    
+    if (geom->colorArray()) 
+      values.push_back( SRF_Object::Value("ColorArray", srfExport_Array(geom->colorArray())) );
+    
+    if (geom->secondaryColorArray()) 
+      values.push_back( SRF_Object::Value("SecondaryColorArray", srfExport_Array(geom->secondaryColorArray())) );
+    
+    if (geom->fogCoordArray()) 
+      values.push_back( SRF_Object::Value("FogCoordArray", srfExport_Array(geom->fogCoordArray())) );
+
     for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-      if (geom->texCoordArray(i)) { mSRFString += indent() + String::printf("TexCoordArray%d = ", i);  mAssign = true; srfExport_Array(geom->texCoordArray(i)); }
+    {
+      if (geom->texCoordArray(i)) 
+      {
+        std::string TexCoordArray = String::printf("TexCoordArray%d", i).toStdString();
+        values.push_back( SRF_Object::Value(TexCoordArray.c_str(), srfExport_Array(geom->texCoordArray(i))) ); 
+      }
+    }
+    
     for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
+    {
       if (geom->vertexAttribArray(i))
       {
-        if (geom->vertexAttribArray(i)) { mSRFString += indent() + String::printf("VertexAttribArray%d = ",i); mAssign = true; srfExport_VertexAttribInfo(geom->vertexAttribArray(i)); }
+        std::string VertexAttribArray = String::printf("VertexAttribArray%d", i).toStdString();
+        values.push_back( SRF_Object::Value(VertexAttribArray.c_str(), srfExport_VertexAttribInfo(geom->vertexAttribArray(i))) );
       }
-    // draw calls
-    mSRFString += "\n" + indent() + "// draw calls\n";
-    for(int i=0; i<geom->drawCalls()->size(); ++i)
-    {
-      mSRFString += indent() + "DrawCall = ";  mAssign = true; srfExport_DrawCall(geom->drawCalls()->at(i));
     }
-    --mIndent;
-    mSRFString += indent() + "}\n";
+
+    for(int i=0; i<geom->drawCalls()->size(); ++i)
+      values.push_back( SRF_Object::Value("DrawCall", srfExport_DrawCall(geom->drawCalls()->at(i))) );
+
+    return value;
   }
 
   void srfPrelink_Effect(const Effect*)
@@ -155,19 +188,43 @@ public:
     // mic fixme: implement
   }
 
-  void srfExport_Effect(const Effect*)
+  SRF_Value srfExport_Effect(const Effect* fx)
+  {
+    SRF_Value value;
+    if (isDefined(fx))
+    {
+      value.setUID( getUID(fx) );
+      return value;
+    }
+    else
+      mAlreadyDefined.insert(fx);
+
+    // mic fixme: this is just a stub, complete the implementation
+    value.setObject( new SRF_Object("<Effect>") );
+
+    return value;
+  }
+
+  void srfPrelink_Shader(const Shader*)
   {
     // mic fixme: implement
   }
 
-  void srfPrelink_Shader(const Shader* )
+  SRF_Value srfExport_Shader(const Shader* sh)
   {
-    // mic fixme: implement
-  }
+    SRF_Value value;
+    if (isDefined(sh))
+    {
+      value.setUID( getUID(sh) );
+      return value;
+    }
+    else
+      mAlreadyDefined.insert(sh);
 
-  void srfExport_Shader(const Shader* )
-  {
-    // mic fixme: implement
+    // mic fixme: this is just a stub, complete the implementation
+    value.setObject( new SRF_Object("<Shader>") );
+
+    return value;
   }
 
   void srfPrelink_Transform(const Transform*)
@@ -175,9 +232,21 @@ public:
     // mic fixme: implement
   }
 
-  void srfExport_Transform(const Transform*)
+  SRF_Value srfExport_Transform(const Transform* tr)
   {
-    // mic fixme: implement
+    SRF_Value value;
+    if (isDefined(tr))
+    {
+      value.setUID( getUID(tr) );
+      return value;
+    }
+    else
+      mAlreadyDefined.insert(tr);
+
+    // mic fixme: this is just a stub, complete the implementation
+    value.setObject( new SRF_Object("<Transform>") );
+
+    return value;
   }
 
   void srfPrelink_Actor(const Actor*)
@@ -185,9 +254,21 @@ public:
     // mic fixme: implement
   }
 
-  void srfExport_Actor(const Actor*)
+  SRF_Value srfExport_Actor(const Actor* act)
   {
-    // mic fixme: implement
+    SRF_Value value;
+    if (isDefined(act))
+    {
+      value.setUID( getUID(act) );
+      return value;
+    }
+    else
+      mAlreadyDefined.insert(act);
+
+    // mic fixme: this is just a stub, complete the implementation
+    value.setObject( new SRF_Object("<Actor>") );
+
+    return value;
   }
 
   void srfPrelink_Camera(const Camera*)
@@ -195,447 +276,361 @@ public:
     // mic fixme: implement
   }
 
-  void srfExport_Camera(const Camera*)
+  SRF_Value srfExport_Camera(const Camera* cam)
   {
-    // mic fixme: implement
+    SRF_Value value;
+    if (isDefined(cam))
+    {
+      value.setUID( getUID(cam) );
+      return value;
+    }
+    else
+      mAlreadyDefined.insert(cam);
+
+    // mic fixme: this is just a stub, complete the implementation
+    value.setObject( new SRF_Object("<Camera>") );
+
+    return value;
   }
 
-  void srfExport_VertexAttribInfo(VertexAttribInfo* info)
+  SRF_Value srfExport_VertexAttribInfo(const VertexAttribInfo* info)
   {
+    SRF_Value value;
     if (isDefined(info))
     {
-      mSRFString += indent() + getUID(info) + "\n";
-      return;
+      value.setUID( getUID(info) );
+      return value;
     }
     else
       mAlreadyDefined.insert(info);
 
-      mSRFString += indent() + "<VertexAttribInfo>\n";
-      mSRFString += indent() + "{\n";
-      ++mIndent;
-      if (mObject_Ref_Count[info] > 1)
-        mSRFString += indent() + "ID = " + getUID(info) + "\n";
-      // mSRFString += indent() + String::printf("AttribLocation = %d\n", info->attribLocation());
-      mSRFString += indent() + "Data = "; mAssign = true; srfExport_Array(info->data());
-      mSRFString += indent() + "Normalize = " + (info->normalize() ? "true\n" : "false\n");
-      mSRFString += indent() + "Interpretation = ";
-      switch(info->interpretation())
-      {
-      case VAI_NORMAL: mSRFString += "VAI_NORMAL\n"; break;
-      case VAI_INTEGER: mSRFString += "VAI_INTEGER\n"; break;
-      case VAI_DOUBLE: mSRFString += "VAI_DOUBLE\n"; break;
-      }
-      --mIndent;
-      mSRFString += indent() + "}\n";
-  }
+    SRF_Object* srf_obj = value.setObject( new SRF_Object("<VertexAttribInfo>") );
+    std::vector<SRF_Object::Value>& values = srf_obj->value();
 
-  template<typename T_Array>
-  void srfExport_Array1(ArrayAbstract* arr_abstract, const char* name,const char* format, int elems_per_line = 40)
-  {
-    T_Array* arr = arr_abstract->as<T_Array>();
-    mSRFString += indent() + name + "\n";
-    mSRFString += indent() + "{\n";
-    if (mObject_Ref_Count[arr] > 1)
-      mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
-    if (arr->size()) // allow empty arrays this way
+    srf_obj->setUID( getUID(info) );
+    values.push_back( SRF_Object::Value("Data", srfExport_Array(info->data())) );
+    values.push_back( SRF_Object::Value("Normalize", info->normalize()) );
+    std::string interpretation;
+    switch(info->interpretation())
     {
-      mSRFString += indent() + "\tValue = ( ";
-      for(size_t i=0; i<arr->size(); ++i)
-      {
-        mSRFString += String::printf(format, arr->at(i) );
-        if (i && (i % elems_per_line == 0) && i != arr->size()-1)
-          mSRFString += "\n" + indent();
-      }
-      mSRFString += " )\n";
+    case VAI_NORMAL:  interpretation = "VAI_NORMAL";  break;
+    case VAI_INTEGER: interpretation = "VAI_INTEGER"; break;
+    case VAI_DOUBLE:  interpretation = "VAI_DOUBLE";  break;
     }
-    mSRFString += indent() + "}\n";
+    values.push_back( SRF_Object::Value("Interpretation", SRF_Value(interpretation.c_str(), SRF_Value::Identifier)) );
+
+    return value;
   }
 
-  template<typename T_Array>
-  void srfExport_Array2(ArrayAbstract* arr_abstract, const char* name,const char* format, int elems_per_line = 30)
+  template<typename T_Array, typename T_SRF_Array>
+  SRF_Value srfExport_ArrayT(const ArrayAbstract* arr_abstract, const char* name)
   {
-    T_Array* arr = arr_abstract->as<T_Array>();
-    mSRFString += indent() + name + "\n";
-    mSRFString += indent() + "{\n";
-    if (mObject_Ref_Count[arr] > 1)
-      mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
-    if (arr->size()) // allow empty arrays this way
+    const T_Array* arr = arr_abstract->as<T_Array>();
+    SRF_Value value( new SRF_Object(name) );
+    value.getObject()->setUID( getUID(arr_abstract) );
+    ref<T_SRF_Array> srf_array = new T_SRF_Array;
+    if (arr->size())
     {
-      mSRFString += indent() + "\tValue = ( ";
-      for(size_t i=0; i<arr->size(); ++i)
-      {
-        mSRFString += String::printf(format, arr->at(i).x(), arr->at(i).y() );
-        if (i && (i % elems_per_line == 0) && i != arr->size()-1)
-          mSRFString += "\n" + indent();
-      }
-      mSRFString += " )\n";
+      srf_array->value().resize( arr->size() * arr->glSize() );
+      typename T_SRF_Array::scalar_type* dst = &srf_array->value()[0];
+      const typename T_Array::scalar_type* src = (const T_Array::scalar_type*)arr->begin();
+      const typename T_Array::scalar_type* end = (const T_Array::scalar_type*)arr->end();
+      for(; src<end; ++src, ++dst)
+        *dst = (T_SRF_Array::scalar_type)*src;
     }
-    mSRFString += indent() + "}\n";
+    value.getObject()->value().push_back( SRF_Object::Value("Value", srf_array.get() ) );
+    return value;
   }
 
-  template<typename T_Array>
-  void srfExport_Array3(ArrayAbstract* arr_abstract, const char* name,const char* format, int elems_per_line = 20)
+  SRF_Value srfExport_Array(const ArrayAbstract* arr_abstract)
   {
-    T_Array* arr = arr_abstract->as<T_Array>();
-    mSRFString += indent() + name + "\n";
-    mSRFString += indent() + "{\n";
-    if (mObject_Ref_Count[arr] > 1)
-      mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
-    if (arr->size()) // allow empty arrays this way
-    {
-      mSRFString += indent() + "\tValue = ( ";
-      for(size_t i=0; i<arr->size(); ++i)
-      {
-        mSRFString += String::printf(format, arr->at(i).x(), arr->at(i).y(), arr->at(i).z() );
-        if (i && (i % elems_per_line == 0) && i != arr->size()-1)
-          mSRFString += "\n" + indent();
-      }
-      mSRFString += " )\n";
-    }
-    mSRFString += indent() + "}\n";
-  }
-
-  template<typename T_Array>
-  void srfExport_Array4(ArrayAbstract* arr_abstract, const char* name,const char* format, int elems_per_line = 10)
-  {
-    T_Array* arr = arr_abstract->as<T_Array>();
-    mSRFString += indent() + name + "\n";
-    mSRFString += indent() + "{\n";
-    if (mObject_Ref_Count[arr] > 1)
-      mSRFString += indent() + "\tID = " + getUID(arr) + "\n";
-    if (arr->size()) // allow empty arrays this way
-    {
-      mSRFString += indent() + "\tValue = ( ";
-      for(size_t i=0; i<arr->size(); ++i)
-      {
-        mSRFString += String::printf(format, arr->at(i).x(), arr->at(i).y(), arr->at(i).z(), arr->at(i).w() );
-        if (i && (i % elems_per_line == 0) && i != arr->size()-1)
-          mSRFString += "\n" + indent();
-      }
-      mSRFString += " )\n";
-    }
-    mSRFString += indent() + "}\n";
-  }
-
-  void srfExport_Array(ArrayAbstract* arr_abstract)
-  {
+    SRF_Value value;
     if (isDefined(arr_abstract))
     {
-      mSRFString += indent() + getUID(arr_abstract) + "\n";
-      return;
+      value.setUID( getUID(arr_abstract) );
+      return value;
     }
     else
       mAlreadyDefined.insert(arr_abstract);
 
     if(arr_abstract->classType() == ArrayUInt1::Type())
-      srfExport_Array1<ArrayUInt1>(arr_abstract, "<ArrayUInt1>", "%u "); // mic fixme: these can actually be user specified
+      value = srfExport_ArrayT<ArrayUInt1, SRF_ArrayInt32>(arr_abstract, "<ArrayUInt1>");
     else
     if(arr_abstract->classType() == ArrayUInt2::Type())
-      srfExport_Array2<ArrayUInt2>(arr_abstract, "<ArrayUInt2>", "%u %u ");
+      value = srfExport_ArrayT<ArrayUInt2, SRF_ArrayInt32>(arr_abstract, "<ArrayUInt2>");
     else
     if(arr_abstract->classType() == ArrayUInt3::Type())
-      srfExport_Array3<ArrayUInt3>(arr_abstract, "<ArrayUInt3>", "%u %u %u ");
+      value = srfExport_ArrayT<ArrayUInt3, SRF_ArrayInt32>(arr_abstract, "<ArrayUInt3>");
     else
     if(arr_abstract->classType() == ArrayUInt4::Type())
-      srfExport_Array4<ArrayUInt4>(arr_abstract, "<ArrayUInt4>", "%u %u %u %u ");
+      value = srfExport_ArrayT<ArrayUInt4, SRF_ArrayInt32>(arr_abstract, "<ArrayUInt4>");
     else
 
     if(arr_abstract->classType() == ArrayInt1::Type())
-      srfExport_Array1<ArrayInt1>(arr_abstract, "<ArrayInt1>", "%d ");
+      value = srfExport_ArrayT<ArrayInt1, SRF_ArrayInt32>(arr_abstract, "<ArrayInt1>");
     else
     if(arr_abstract->classType() == ArrayInt2::Type())
-      srfExport_Array2<ArrayInt2>(arr_abstract, "<ArrayInt2>", "%d %d ");
+      value = srfExport_ArrayT<ArrayInt2, SRF_ArrayInt32>(arr_abstract, "<ArrayInt2>");
     else
     if(arr_abstract->classType() == ArrayInt3::Type())
-      srfExport_Array3<ArrayInt3>(arr_abstract, "<ArrayInt3>", "%d %d %d ");
+      value = srfExport_ArrayT<ArrayInt3, SRF_ArrayInt32>(arr_abstract, "<ArrayInt3>");
     else
     if(arr_abstract->classType() == ArrayInt4::Type())
-      srfExport_Array4<ArrayInt4>(arr_abstract, "<ArrayInt4>", "%d %d %d %d ");
+      value = srfExport_ArrayT<ArrayInt4, SRF_ArrayInt32>(arr_abstract, "<ArrayInt4>");
     else
 
     if(arr_abstract->classType() == ArrayUShort1::Type())
-      srfExport_Array1<ArrayUShort1>(arr_abstract, "<ArrayUShort1>", "%u ");
+      value = srfExport_ArrayT<ArrayUShort1, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort1>");
     else
     if(arr_abstract->classType() == ArrayUShort2::Type())
-      srfExport_Array2<ArrayUShort2>(arr_abstract, "<ArrayUShort2>", "%u %u ");
+      value = srfExport_ArrayT<ArrayUShort2, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort2>");
     else
     if(arr_abstract->classType() == ArrayUShort3::Type())
-      srfExport_Array3<ArrayUShort3>(arr_abstract, "<ArrayUShort3>", "%u %u %u ");
+      value = srfExport_ArrayT<ArrayUShort3, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort3>");
     else
     if(arr_abstract->classType() == ArrayUShort4::Type())
-      srfExport_Array4<ArrayUShort4>(arr_abstract, "<ArrayUShort4>", "%u %u %u %u ");
+      value = srfExport_ArrayT<ArrayUShort4, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort4>");
     else
 
     if(arr_abstract->classType() == ArrayUShort1::Type())
-      srfExport_Array1<ArrayUShort1>(arr_abstract, "<ArrayUShort1>", "%u ");
+      value = srfExport_ArrayT<ArrayUShort1, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort1>");
     else
     if(arr_abstract->classType() == ArrayUShort2::Type())
-      srfExport_Array2<ArrayUShort2>(arr_abstract, "<ArrayUShort2>", "%u %u ");
+      value = srfExport_ArrayT<ArrayUShort2, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort2>");
     else
     if(arr_abstract->classType() == ArrayUShort3::Type())
-      srfExport_Array3<ArrayUShort3>(arr_abstract, "<ArrayUShort3>", "%u %u %u ");
+      value = srfExport_ArrayT<ArrayUShort3, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort3>");
     else
     if(arr_abstract->classType() == ArrayUShort4::Type())
-      srfExport_Array4<ArrayUShort4>(arr_abstract, "<ArrayUShort4>", "%u %u %u %u ");
+      value = srfExport_ArrayT<ArrayUShort4, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort4>");
     else
 
     if(arr_abstract->classType() == ArrayShort1::Type())
-      srfExport_Array1<ArrayShort1>(arr_abstract, "<ArrayShort1>", "%d ");
+      value = srfExport_ArrayT<ArrayShort1, SRF_ArrayInt32>(arr_abstract, "<ArrayShort1>");
     else
     if(arr_abstract->classType() == ArrayShort2::Type())
-      srfExport_Array2<ArrayShort2>(arr_abstract, "<ArrayShort2>", "%d %d ");
+      value = srfExport_ArrayT<ArrayShort2, SRF_ArrayInt32>(arr_abstract, "<ArrayShort2>");
     else
     if(arr_abstract->classType() == ArrayShort3::Type())
-      srfExport_Array3<ArrayShort3>(arr_abstract, "<ArrayShort3>", "%d %d %d ");
+      value = srfExport_ArrayT<ArrayShort3, SRF_ArrayInt32>(arr_abstract, "<ArrayShort3>");
     else
     if(arr_abstract->classType() == ArrayShort4::Type())
-      srfExport_Array4<ArrayShort4>(arr_abstract, "<ArrayShort4>", "%d %d %d %d ");
+      value = srfExport_ArrayT<ArrayShort4, SRF_ArrayInt32>(arr_abstract, "<ArrayShort4>");
     else
 
     if(arr_abstract->classType() == ArrayUByte1::Type())
-      srfExport_Array1<ArrayUByte1>(arr_abstract, "<ArrayUByte1>", "%u ");
+      value = srfExport_ArrayT<ArrayUByte1, SRF_ArrayInt32>(arr_abstract, "<ArrayUByte1>");
     else
     if(arr_abstract->classType() == ArrayUByte2::Type())
-      srfExport_Array2<ArrayUByte2>(arr_abstract, "<ArrayUByte2>", "%u %u ");
+      value = srfExport_ArrayT<ArrayUByte2, SRF_ArrayInt32>(arr_abstract, "<ArrayUByte2>");
     else
     if(arr_abstract->classType() == ArrayUByte3::Type())
-      srfExport_Array3<ArrayUByte3>(arr_abstract, "<ArrayUByte3>", "%u %u %u ");
+      value = srfExport_ArrayT<ArrayUByte3, SRF_ArrayInt32>(arr_abstract, "<ArrayUByte3>");
     else
     if(arr_abstract->classType() == ArrayUByte4::Type())
-      srfExport_Array4<ArrayUByte4>(arr_abstract, "<ArrayUByte4>", "%u %u %u %u ");
+      value = srfExport_ArrayT<ArrayUByte4, SRF_ArrayInt32>(arr_abstract, "<ArrayUByte4>");
     else
 
     if(arr_abstract->classType() == ArrayByte1::Type())
-      srfExport_Array1<ArrayByte1>(arr_abstract, "<ArrayByte1>", "%d ");
+      value = srfExport_ArrayT<ArrayByte1, SRF_ArrayInt32>(arr_abstract, "<ArrayByte1>");
     else
     if(arr_abstract->classType() == ArrayByte2::Type())
-      srfExport_Array2<ArrayByte2>(arr_abstract, "<ArrayByte2>", "%d %d ");
+      value = srfExport_ArrayT<ArrayByte2, SRF_ArrayInt32>(arr_abstract, "<ArrayByte2>");
     else
     if(arr_abstract->classType() == ArrayByte3::Type())
-      srfExport_Array3<ArrayByte3>(arr_abstract, "<ArrayByte3>", "%d %d %d ");
+      value = srfExport_ArrayT<ArrayByte3, SRF_ArrayInt32>(arr_abstract, "<ArrayByte3>");
     else
     if(arr_abstract->classType() == ArrayByte4::Type())
-      srfExport_Array4<ArrayByte4>(arr_abstract, "<ArrayByte4>", "%d %d %d %d ");
+      value = srfExport_ArrayT<ArrayByte4, SRF_ArrayInt32>(arr_abstract, "<ArrayByte4>");
     else
 
     if(arr_abstract->classType() == ArrayFloat1::Type())
-      srfExport_Array1<ArrayFloat1>(arr_abstract, "<ArrayFloat1>", "%f ");
+      value = srfExport_ArrayT<ArrayFloat1, SRF_ArrayFloat>(arr_abstract, "<ArrayFloat1>");
     else
     if(arr_abstract->classType() == ArrayFloat2::Type())
-      srfExport_Array2<ArrayFloat2>(arr_abstract, "<ArrayFloat2>", "%f %f ");
+      value = srfExport_ArrayT<ArrayFloat2, SRF_ArrayFloat>(arr_abstract, "<ArrayFloat2>");
     else
     if(arr_abstract->classType() == ArrayFloat3::Type())
-      srfExport_Array3<ArrayFloat3>(arr_abstract, "<ArrayFloat3>", "%f %f %f ");
+      value = srfExport_ArrayT<ArrayFloat3, SRF_ArrayFloat>(arr_abstract, "<ArrayFloat3>");
     else
     if(arr_abstract->classType() == ArrayFloat4::Type())
-      srfExport_Array4<ArrayFloat4>(arr_abstract, "<ArrayFloat4>", "%f %f %f %f ");
+      value = srfExport_ArrayT<ArrayFloat4, SRF_ArrayFloat>(arr_abstract, "<ArrayFloat4>");
     else
 
     if(arr_abstract->classType() == ArrayDouble1::Type())
-      srfExport_Array1<ArrayDouble1>(arr_abstract, "<ArrayDouble1>", "%Lf ");
+      value = srfExport_ArrayT<ArrayDouble1, SRF_ArrayDouble>(arr_abstract, "<ArrayDouble1>");
     else
     if(arr_abstract->classType() == ArrayDouble2::Type())
-      srfExport_Array2<ArrayDouble2>(arr_abstract, "<ArrayDouble2>", "%Lf %Lf ");
+      value = srfExport_ArrayT<ArrayDouble2, SRF_ArrayDouble>(arr_abstract, "<ArrayDouble2>");
     else
     if(arr_abstract->classType() == ArrayDouble3::Type())
-      srfExport_Array3<ArrayDouble3>(arr_abstract, "<ArrayDouble3>", "%Lf %Lf %Lf ");
+      value = srfExport_ArrayT<ArrayDouble3, SRF_ArrayDouble>(arr_abstract, "<ArrayDouble3>");
     else
     if(arr_abstract->classType() == ArrayDouble4::Type())
-      srfExport_Array4<ArrayDouble4>(arr_abstract, "<ArrayDouble4>", "%Lf %Lf %Lf %Lf ");
+      value = srfExport_ArrayT<ArrayDouble4, SRF_ArrayDouble>(arr_abstract, "<ArrayDouble4>");
     else
     {
       Log::error("Array type not supported for export.\n");
       VL_TRAP();
     }
+
+    return value;
   }
 
-  void srfExport_DrawCallBase(DrawCall* dcall)
+  void srfExport_DrawCallBase(const DrawCall* dcall, SRF_Object* srf_obj)
   {
-      if (mObject_Ref_Count[dcall] > 1)
-        mSRFString += indent() + "ID = " + getUID(dcall) + "\n";
-      switch(dcall->primitiveType())
-      {
-        case PT_POINTS:                   mSRFString += indent() + "PrimitiveType = PT_POINTS\n"; break;
-        case PT_LINES:                    mSRFString += indent() + "PrimitiveType = PT_LINES\n"; break;
-        case PT_LINE_LOOP:                mSRFString += indent() + "PrimitiveType = PT_LINE_LOOP\n"; break;
-        case PT_LINE_STRIP:               mSRFString += indent() + "PrimitiveType = PT_LINE_STRIP\n"; break;
-        case PT_TRIANGLES:                mSRFString += indent() + "PrimitiveType = PT_TRIANGLES\n"; break;
-        case PT_TRIANGLE_STRIP:           mSRFString += indent() + "PrimitiveType = PT_TRIANGLE_STRIP\n"; break;
-        case PT_TRIANGLE_FAN:             mSRFString += indent() + "PrimitiveType = PT_TRIANGLE_FAN\n"; break;
-        case PT_QUADS:                    mSRFString += indent() + "PrimitiveType = PT_QUADS\n"; break;
-        case PT_QUAD_STRIP:               mSRFString += indent() + "PrimitiveType = PT_QUAD_STRIP\n"; break;
-        case PT_POLYGON:                  mSRFString += indent() + "PrimitiveType = PT_POLYGON\n"; break;
+    srf_obj->setUID( getUID(dcall) );
 
-        case PT_LINES_ADJACENCY:          mSRFString += indent() + "PrimitiveType = PT_LINES_ADJACENCY\n"; break;
-        case PT_LINE_STRIP_ADJACENCY:     mSRFString += indent() + "PrimitiveType = PT_LINE_STRIP_ADJACENCY\n"; break;
-        case PT_TRIANGLES_ADJACENCY:      mSRFString += indent() + "PrimitiveType = PT_TRIANGLES_ADJACENCY\n"; break;
-        case PT_TRIANGLE_STRIP_ADJACENCY: mSRFString += indent() + "PrimitiveType = PT_TRIANGLE_STRIP_ADJACENCY\n"; break;
+    std::string primitive_type = "PRIMITIVE_TYPE_ERROR";
+    switch(dcall->primitiveType())
+    {
+      case PT_POINTS:                   primitive_type =  "PT_POINTS\n"; break;
+      case PT_LINES:                    primitive_type =  "PT_LINES\n"; break;
+      case PT_LINE_LOOP:                primitive_type =  "PT_LINE_LOOP\n"; break;
+      case PT_LINE_STRIP:               primitive_type =  "PT_LINE_STRIP\n"; break;
+      case PT_TRIANGLES:                primitive_type =  "PT_TRIANGLES\n"; break;
+      case PT_TRIANGLE_STRIP:           primitive_type =  "PT_TRIANGLE_STRIP\n"; break;
+      case PT_TRIANGLE_FAN:             primitive_type =  "PT_TRIANGLE_FAN\n"; break;
+      case PT_QUADS:                    primitive_type =  "PT_QUADS\n"; break;
+      case PT_QUAD_STRIP:               primitive_type =  "PT_QUAD_STRIP\n"; break;
+      case PT_POLYGON:                  primitive_type =  "PT_POLYGON\n"; break;
+      case PT_LINES_ADJACENCY:          primitive_type =  "PT_LINES_ADJACENCY\n"; break;
+      case PT_LINE_STRIP_ADJACENCY:     primitive_type =  "PT_LINE_STRIP_ADJACENCY\n"; break;
+      case PT_TRIANGLES_ADJACENCY:      primitive_type =  "PT_TRIANGLES_ADJACENCY\n"; break;
+      case PT_TRIANGLE_STRIP_ADJACENCY: primitive_type =  "PT_TRIANGLE_STRIP_ADJACENCY\n"; break;
+      case PT_PATCHES:                  primitive_type =  "PT_PATCHES\n"; break;
+      case PT_UNKNOWN:                  primitive_type =  "PT_UNKNOWN\n"; break;
+    }
 
-        case PT_PATCHES:                  mSRFString += indent() + "PrimitiveType = PT_PATCHES\n"; break;
-
-        case PT_UNKNOWN:                  mSRFString += indent() + "PrimitiveType = PT_UNKNOWN\n"; break;
-      }
-      mSRFString += indent() + "Enabled = " + (dcall->isEnabled() ? "true" : "false") + "\n";
-
-      if (dcall->patchParameter())
-      {
-        mSRFString += indent() + "PatchParameter = "; mAssign = true; srfExport_PatchParameter(dcall->patchParameter());
-      }
+    srf_obj->value().push_back( SRF_Object::Value("PrimitiveType", SRF_Value(primitive_type.c_str(), SRF_Value::Identifier) ) );
+    srf_obj->value().push_back( SRF_Object::Value("Enabled", dcall->isEnabled()) );
+    if (dcall->patchParameter())
+      srf_obj->value().push_back( SRF_Object::Value("PatchParameter", srfExport_PatchParameter(dcall->patchParameter())) );
   }
 
-  void srfExport_PatchParameter(PatchParameter* pp)
+  SRF_Value srfExport_PatchParameter(const PatchParameter* pp)
   {
+    SRF_Value value;
     if (isDefined(pp))
     {
-      mSRFString += indent() + getUID(pp) + "\n";
-      return;
+      value.setUID( getUID(pp) );
+      return value;
     }
     else
       mAlreadyDefined.insert(pp);
 
-    mSRFString += indent() + "<PatchParameter>\n";
-    mSRFString += indent() + "{\n";
-    ++mIndent;
-    if (mObject_Ref_Count[pp] > 1)
-      mSRFString += indent() + "ID = " + getUID(pp) + "\n";
-    mSRFString += indent() + String::printf("PatchVertices = %d\n", pp->patchVertices());
-    mSRFString += indent() + String::printf("PatchDefaultOuterLevel = ( %f %f %f %f )\n", pp->patchDefaultOuterLevel().x(), pp->patchDefaultOuterLevel().y(), pp->patchDefaultOuterLevel().z(), pp->patchDefaultOuterLevel().w() );
-    mSRFString += indent() + String::printf("PatchDefaultInnerLevel = ( %f %f )\n",       pp->patchDefaultInnerLevel().x(), pp->patchDefaultInnerLevel().y() );
-    --mIndent;
-    mSRFString += indent() + "}\n";
+    SRF_Object* srf_obj = value.setObject( new SRF_Object("<PatchParameter>") );
+    srf_obj->setUID( getUID(pp) );
+    srf_obj->value().push_back( SRF_Object::Value("PatchVertices", (long long)pp->patchVertices()) );
+    srf_obj->value().push_back( SRF_Object::Value("PatchDefaultOuterLevel", pp->patchDefaultOuterLevel()) );
+    srf_obj->value().push_back( SRF_Object::Value("PatchDefaultInnerLevel", pp->patchDefaultInnerLevel()) );
+
+    return value;
   }
 
-  void srfExport_DrawCall(DrawCall* dcall)
+  SRF_Value srfExport_DrawCall(const DrawCall* dcall)
   {
+    SRF_Value value;
     if (isDefined(dcall))
     {
-      mSRFString += indent() + getUID(dcall) + "\n";
-      return;
+      value.setUID( getUID(dcall) );
+      return value;
     }
     else
       mAlreadyDefined.insert(dcall);
 
     if (dcall->classType() == DrawArrays::Type())
     {
-      DrawArrays* da = dcall->as<DrawArrays>();
-      mSRFString += indent() + "<DrawArrays>\n";
-      mSRFString += indent() + "{\n";
-      ++mIndent;
-      srfExport_DrawCallBase(da);
-      mSRFString += indent() + String::printf("Instances = %d\n", da->instances());
-      mSRFString += indent() + String::printf("Start = %d\n", da->start());
-      mSRFString += indent() + String::printf("Count= %d\n", da->count());
-      --mIndent;
-      mSRFString += indent() + "}\n";
+      const DrawArrays* da = dcall->as<DrawArrays>();
+      SRF_Object* srf_obj = value.setObject( new SRF_Object("<DrawArrays>") );
+      srfExport_DrawCallBase(da, srf_obj);
+      srf_obj->value().push_back( SRF_Object::Value("Instances", (long long)da->instances()) );
+      srf_obj->value().push_back( SRF_Object::Value("Start", (long long)da->start()) );
+      srf_obj->value().push_back( SRF_Object::Value("Count", (long long)da->count()) );
     }
     else
     if (dcall->classType() == DrawElementsUInt::Type())
     {
-      DrawElementsUInt* de = dcall->as<DrawElementsUInt>();
-      mSRFString += indent() + "<DrawElementsUInt>\n";
-      mSRFString += indent() + "{\n";
-      ++mIndent;
-      srfExport_DrawCallBase(de);
-      mSRFString += indent() + String::printf("Instances = %d\n", de->instances());
-      mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
-      mSRFString += indent() + String::printf("BaseVertex = %d\n", de->baseVertex());
-      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
-      --mIndent;
-      mSRFString += indent() + "}\n";
+      const DrawElementsUInt* de = dcall->as<DrawElementsUInt>();
+      SRF_Object* srf_obj = value.setObject( new SRF_Object("<DrawElementsUInt>") );
+      srfExport_DrawCallBase(de, srf_obj);
+      srf_obj->value().push_back( SRF_Object::Value("Instances", (long long)de->instances()) );
+      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Object::Value("BaseVertex", (long long)de->baseVertex()) );
+      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == DrawElementsUShort::Type())
     {
-      DrawElementsUShort* de = dcall->as<DrawElementsUShort>();
-      mSRFString += indent() + "<DrawElementsUShort>\n";
-      mSRFString += indent() + "{\n";
-      ++mIndent;
-      srfExport_DrawCallBase(de);
-      mSRFString += indent() + String::printf("Instances = %d\n", de->instances());
-      mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
-      mSRFString += indent() + String::printf("BaseVertex = %d\n", de->baseVertex());
-      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
-      --mIndent;
-      mSRFString += indent() + "}\n";
+      const DrawElementsUShort* de = dcall->as<DrawElementsUShort>();
+      SRF_Object* srf_obj = value.setObject( new SRF_Object("<DrawElementsUShort>") );
+      srfExport_DrawCallBase(de, srf_obj);
+      srf_obj->value().push_back( SRF_Object::Value("Instances", (long long)de->instances()) );
+      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Object::Value("BaseVertex", (long long)de->baseVertex()) );
+      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == DrawElementsUByte::Type())
     {
-      DrawElementsUByte* de = dcall->as<DrawElementsUByte>();
-      mSRFString += indent() + "<DrawElementsUByte>\n";
-      mSRFString += indent() + "{\n";
-      ++mIndent;
-      srfExport_DrawCallBase(de);
-      mSRFString += indent() + String::printf("Instances = %d\n", de->instances());
-      mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
-      mSRFString += indent() + String::printf("BaseVertex = %d\n", de->baseVertex());
-      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
-      --mIndent;
-      mSRFString += indent() + "}\n";
+      const DrawElementsUByte* de = dcall->as<DrawElementsUByte>();
+      SRF_Object* srf_obj = value.setObject( new SRF_Object("<DrawElementsUByte>") );
+      srfExport_DrawCallBase(de, srf_obj);
+      srf_obj->value().push_back( SRF_Object::Value("Instances", (long long)de->instances()) );
+      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Object::Value("BaseVertex", (long long)de->baseVertex()) );
+      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == MultiDrawElementsUInt::Type())
     {
-      MultiDrawElementsUInt* de = dcall->as<MultiDrawElementsUInt>();
-      mSRFString += indent() + "<MultiDrawElementsUInt>\n";
-      mSRFString += indent() + "{\n";
-      ++mIndent;
-      srfExport_DrawCallBase(de);
-      mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
-      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
-      mSRFString += indent() + "CountVector = "; srfExport_vector1(de->countVector(), "%u ");
-      mSRFString += indent() + "BaseVertices = "; srfExport_vector1(de->baseVertices(), "%u ");
-      --mIndent;
-      mSRFString += indent() + "}\n";
+      const MultiDrawElementsUInt* de = dcall->as<MultiDrawElementsUInt>();
+      SRF_Object* srf_obj = value.setObject( new SRF_Object("<MultiDrawElementsUInt>") );
+      srfExport_DrawCallBase(de, srf_obj);
+      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Object::Value("BaseVertices", srfExport_vector_int32(de->baseVertices())) );
+      srf_obj->value().push_back( SRF_Object::Value("CountVector", srfExport_vector_int32(de->countVector())) );
+      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == MultiDrawElementsUShort::Type())
     {
-      MultiDrawElementsUShort* de = dcall->as<MultiDrawElementsUShort>();
-      mSRFString += indent() + "<MultiDrawElementsUShort>\n";
-      mSRFString += indent() + "{\n";
-      ++mIndent;
-      srfExport_DrawCallBase(de);
-      mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
-      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
-      mSRFString += indent() + "CountVector = "; srfExport_vector1(de->countVector(), "%u ");
-      mSRFString += indent() + "BaseVertices = "; srfExport_vector1(de->baseVertices(), "%u ");
-      --mIndent;
-      mSRFString += indent() + "}\n";
+      const MultiDrawElementsUShort* de = dcall->as<MultiDrawElementsUShort>();
+      SRF_Object* srf_obj = value.setObject( new SRF_Object("<MultiDrawElementsUShort>") );
+      srfExport_DrawCallBase(de, srf_obj);
+      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Object::Value("BaseVertices", srfExport_vector_int32(de->baseVertices())) );
+      srf_obj->value().push_back( SRF_Object::Value("CountVector", srfExport_vector_int32(de->countVector())) );
+      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == MultiDrawElementsUByte::Type())
     {
-      MultiDrawElementsUByte* de = dcall->as<MultiDrawElementsUByte>();
-      mSRFString += indent() + "<MultiDrawElementsUByte>\n";
-      mSRFString += indent() + "{\n";
-      ++mIndent;
-      srfExport_DrawCallBase(de);
-      mSRFString += indent() + "PrimitiveRestartEnabled = " + (de->primitiveRestartEnabled() ? "true\n" : "false\n");
-      mSRFString += indent() + "IndexBuffer = "; mAssign = true; srfExport_Array(de->indexBuffer());
-      mSRFString += indent() + "CountVector = "; srfExport_vector1(de->countVector(), "%u ");
-      mSRFString += indent() + "BaseVertices = "; srfExport_vector1(de->baseVertices(), "%u ");
-      --mIndent;
-      mSRFString += indent() + "}\n";
+      const MultiDrawElementsUByte* de = dcall->as<MultiDrawElementsUByte>();
+      SRF_Object* srf_obj = value.setObject( new SRF_Object("<MultiDrawElementsUByte>") );
+      srfExport_DrawCallBase(de, srf_obj);
+      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Object::Value("BaseVertices", srfExport_vector_int32(de->baseVertices())) );
+      srf_obj->value().push_back( SRF_Object::Value("CountVector", srfExport_vector_int32(de->countVector())) );
+      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     {
       Log::error("DrawCall type not supported for export.\n");
       VL_TRAP();
     }
+
+    return value;
   }
 
-  template<typename T>
-  void srfExport_vector1(const std::vector<T>& vec, const char* format)
+  SRF_Value srfExport_vector_int32(const std::vector<int>& vec)
   {
-    mSRFString += "( ";
-    for(size_t i=0; i<vec.size(); ++i)
-    {
-      mSRFString += String::printf(format, vec[i]);
-      /*if (i && (i%10==0) && i!=vec.size()-1)
-        mSRFString += indent() + "\n"*/
-    }
-    mSRFString += " )\n";
+    SRF_Value value;
+    value.setArray( new SRF_ArrayInt32 );
+    value.getArrayInt32()->value().resize( vec.size() );
+    if (vec.size())
+      memcpy( &value.getArrayInt32()->value()[0], &vec[0], sizeof(vec[0])*vec.size() );
+    return value;
   }
 
   String indent()
@@ -649,15 +644,15 @@ public:
     return str;
   }
 
-  String getUID(Object* object)
+  const char* getUID(const Object* object)
   {
-    std::map< ref<Object>, String >::iterator it = mObject_To_UID.find(object);
+    std::map< ref<Object>, std::string >::iterator it = mObject_To_UID.find(object);
     if( it != mObject_To_UID.end() )
-      return it->second;
+      return it->second.c_str();
     else
     {
       VL_TRAP();
-      return "";
+      return "ID_ERROR";
     }
   }
 
@@ -669,74 +664,80 @@ public:
       ++mObject_Ref_Count[object];
       if (mObject_To_UID.find(object) == mObject_To_UID.end())
       {
-        String uid = String::printf("#%sid%d", prefix, ++mUIDCounter);
+        std::string uid = String::printf("#%sid%d", prefix, ++mUIDCounter).toStdString();
         mObject_To_UID[object] = uid;
       }
     }
   }
 
-  bool isDefined(Object* obj)
+  bool isDefined(const Object* obj)
   {
     return mAlreadyDefined.find(obj) != mAlreadyDefined.end();
   }
 
-  void srfExport_ResourceDatabase(ResourceDatabase* res_db)
+  SRF_Value srfExport_ResourceDatabase(const ResourceDatabase* res_db)
   {
-    mSRFString += indent() + "<ResourceDatabase>\n";
-    mSRFString += indent() + "{\n";
-    ++mIndent;
+    SRF_Value value;
+    if (isDefined(res_db))
     {
-      mSRFString += indent() + "Resources = [\n";
-      ++mIndent;
-      {
-        for(size_t i=0; i<res_db->resources().size(); ++i)
-        {
-          if(res_db->resources()[i]->classType() == Geometry::Type())
-            srfExport_Geometry(res_db->resources()[i]->as<Geometry>());
-          else
-          if(res_db->resources()[i]->classType() == Effect::Type())
-            srfExport_Effect(res_db->resources()[i]->as<Effect>());
-          else
-          if(res_db->resources()[i]->classType() == Shader::Type())
-            srfExport_Shader(res_db->resources()[i]->as<Shader>());
-          else
-          if(res_db->resources()[i]->classType() == Transform::Type())
-            srfExport_Transform(res_db->resources()[i]->as<Transform>());
-          else
-          if(res_db->resources()[i]->classType() == Actor::Type())
-            srfExport_Actor(res_db->resources()[i]->as<Actor>());
-          else
-          if(res_db->resources()[i]->classType() == Camera::Type())
-            srfExport_Camera(res_db->resources()[i]->as<Camera>());
-        }
-      }
-      --mIndent;
-      mSRFString += indent() + "]\n";
+      value.setUID( getUID(res_db) );
+      return value;
     }
-    --mIndent;
-    mSRFString += indent() + "}\n";
+    else
+      mAlreadyDefined.insert(res_db);
+
+    value.setObject( new SRF_Object("<ResourceDatabase>") );
+    SRF_Object::Value srf_resource_list("Resources", new SRF_List);
+    value.getObject()->value().push_back( srf_resource_list );
+
+    for(size_t i=0; i<res_db->resources().size(); ++i)
+    {
+      SRF_Value resource;
+
+      if(res_db->resources()[i]->isOfType(Geometry::Type()))
+        resource = srfExport_Geometry(res_db->resources()[i]->as<Geometry>());
+      else
+      if(res_db->resources()[i]->isOfType(Effect::Type()))
+        resource = srfExport_Effect(res_db->resources()[i]->as<Effect>());
+      else
+      if(res_db->resources()[i]->isOfType(Shader::Type()))
+        resource = srfExport_Shader(res_db->resources()[i]->as<Shader>());
+      else
+      if(res_db->resources()[i]->isOfType(Transform::Type()))
+        resource = srfExport_Transform(res_db->resources()[i]->as<Transform>());
+      else
+      if(res_db->resources()[i]->isOfType(Actor::Type()))
+        resource = srfExport_Actor(res_db->resources()[i]->as<Actor>());
+      else
+      if(res_db->resources()[i]->isOfType(Camera::Type()))
+        resource = srfExport_Camera(res_db->resources()[i]->as<Camera>());
+
+      srf_resource_list.value().getList()->value().push_back( resource );
+    }
+
+    return value;
   }
 
   void srfPrelink_ResourceDatabase(ResourceDatabase* res_db)
   {
     for(size_t i=0; i<res_db->resources().size(); ++i)
     {
-      if(res_db->resources()[i]->classType() == Geometry::Type())
+      if(res_db->resources()[i]->isOfType(Geometry::Type()))
         srfPrelink_Geometry(res_db->resources()[i]->as<Geometry>());
       else
-      if(res_db->resources()[i]->classType() == Effect::Type())
+      if(res_db->resources()[i]->isOfType(Effect::Type()))
         srfPrelink_Effect(res_db->resources()[i]->as<Effect>());
       else
-      if(res_db->resources()[i]->classType() == Shader::Type())
+      if(res_db->resources()[i]->isOfType(Shader::Type()))
         srfPrelink_Shader(res_db->resources()[i]->as<Shader>());
       else
-      if(res_db->resources()[i]->classType() == Transform::Type())
+      if(res_db->resources()[i]->isOfType(Transform::Type()))
         srfPrelink_Transform(res_db->resources()[i]->as<Transform>());
       else
-      if(res_db->resources()[i]->classType() == Actor::Type())
+      if(res_db->resources()[i]->isOfType(Actor::Type()))
         srfPrelink_Actor(res_db->resources()[i]->as<Actor>());
       else
-      if(res_db->resources()[i]->classType() == Camera::Type())
+      if(res_db->resources()[i]->isOfType(Camera::Type()))
         srfPrelink_Camera(res_db->resources()[i]->as<Camera>());
     }
   }
@@ -745,22 +746,26 @@ public:
   // IMPORT FUNCTIONS
   //-----------------------------------------------------------------------------
 
-  ResourceDatabase* srfImport_ResourceDatabase(const SRF_Object* srf_res_db)
+  ResourceDatabase* srfImport_ResourceDatabase(const SRF_Object* srf_obj)
   {
-    if (srf_res_db->tag() != "<ResourceDatabase>")
+    if (srf_obj->tag() != "<ResourceDatabase>")
       return NULL;
 
     // mic fixme: output errors with line
     // <ResourceDatabase> must have at least one "Resources" key and must be the first one and must be a list!
-    if (srf_res_db->value().size() < 1 || srf_res_db->value()[0].key() != "Resources" || srf_res_db->value()[0].value().type() != SRF_Value::List)
+    if (srf_obj->value().size() < 1 || srf_obj->value()[0].key() != "Resources" || srf_obj->value()[0].value().type() != SRF_Value::List)
       return NULL;
+
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<ResourceDatabase>();
 
     // link the SRF to the VL object
     ref<ResourceDatabase> res_db = new ResourceDatabase;
-    mSRF_To_VL[srf_res_db] = res_db;
+    registerImportedObject(srf_obj, res_db.get());
 
     // get the list
-    const SRF_List* list = srf_res_db->value()[0].value().getList();
+    const SRF_List* list = srf_obj->value()[0].value().getList();
     for(size_t i=0; i<list->value().size(); ++i)
     {
       const SRF_Value& value = list->value()[i];
@@ -825,9 +830,6 @@ public:
 
   bool srfImport_AABB(const SRF_Object* srf_obj, AABB& aabb)
   {
-    // mic fixme: we should check that the members are exactly two and are the two required
-    // would be nice to have a validator...
-
     for(size_t i=0; i<srf_obj->value().size(); ++i)
     {
       const std::string& key = srf_obj->value()[i].key();
@@ -876,6 +878,10 @@ public:
 
   ArrayAbstract* srfImport_Array(const SRF_Object* srf_obj)
   {
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<ArrayAbstract>();
+
     const SRF_Value* value = srf_obj->getValue("Value");
     
     // mic fixme
@@ -1235,7 +1241,7 @@ public:
     }
 
     // link the SRF to the VL object
-    mSRF_To_VL[srf_obj] = arr_abstract;
+    registerImportedObject(srf_obj, arr_abstract.get());
 
     return arr_abstract.get();
   }
@@ -1265,9 +1271,11 @@ public:
 
   DrawCall* srfImport_DrawCall(const SRF_Object* srf_obj)
   {
-    ref<DrawCall> draw_call;
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<DrawCall>();
 
-    // mic fixme: support MultiDrawElements
+    ref<DrawCall> draw_call;
 
     if(srf_obj->tag() == "<DrawElementsUInt>" || srf_obj->tag() == "<DrawElementsUShort>" || srf_obj->tag() == "<DrawElementsUByte>")
     {
@@ -1345,6 +1353,93 @@ public:
       }
     }
     else
+    if(srf_obj->tag() == "<MultiDrawElementsUInt>" || srf_obj->tag() == "<MultiDrawElementsUShort>" || srf_obj->tag() == "<MultiDrawElementsUByte>")
+    {
+      ref<MultiDrawElementsBase> de;
+
+      if (srf_obj->tag() == "<MultiDrawElementsUInt>")
+        draw_call = de = new MultiDrawElementsUInt;
+
+      if (srf_obj->tag() == "<MultiDrawElementsUShort>")
+        draw_call = de = new MultiDrawElementsUShort;
+
+      if (srf_obj->tag() == "<MultiDrawElementsUByte>")
+        draw_call = de = new MultiDrawElementsUByte;
+
+      VL_CHECK(de)
+      VL_CHECK(draw_call)
+
+      for(size_t i=0; i<srf_obj->value().size(); ++i)
+      {
+        const std::string& key = srf_obj->value()[i].key();
+        const SRF_Value& value = srf_obj->value()[i].value();
+        if( key == "PrimitiveType" )
+        {
+          VL_CHECK( value.type() == SRF_Value::Identifier ) // mic fixme
+          de->setPrimitiveType( srfImport_EPrimitiveType( value.getIdentifier() ) );
+        }
+        else
+        if( key == "Enabled" )
+        {
+          VL_CHECK( value.type() == SRF_Value::Bool ) // mic fixme
+          de->setEnabled( value.getBool() );
+        }
+        else
+        if( key == "PrimitiveRestartEnabled" )
+        {
+          VL_CHECK( value.type() == SRF_Value::Bool ) // mic fixme
+          de->setPrimitiveRestartEnabled( value.getBool() );
+        }
+        else
+        if( key == "BaseVertices" )
+        {
+          VL_CHECK( value.type() == SRF_Value::ArrayInt32 ) // mic fixme
+          de->setBaseVertices( value.getArrayInt32()->value() );
+        }
+        else
+        if( key == "CountVector" )
+        {
+          VL_CHECK( value.type() == SRF_Value::ArrayInt32 ) // mic fixme
+          de->countVector() = value.getArrayInt32()->value();
+        }
+        else
+        if( key == "IndexBuffer" )
+        {
+          VL_CHECK( value.type() == SRF_Value::Object ) // mic fixme
+          ArrayAbstract* arr_abstract = srfImport_Array(value.getObject());
+
+          if ( de->classType() == MultiDrawElementsUInt::Type() )
+          {
+            VL_CHECK(arr_abstract->classType() == ArrayUInt1::Type());
+            de->as<MultiDrawElementsUInt>()->setIndexBuffer( arr_abstract->as<ArrayUInt1>() );
+          }
+          else
+          if ( de->classType() == MultiDrawElementsUShort::Type() )
+          {
+            VL_CHECK(arr_abstract->classType() == ArrayUShort1::Type());
+            de->as<MultiDrawElementsUShort>()->setIndexBuffer( arr_abstract->as<ArrayUShort1>() );
+          }
+          else
+          if ( de->classType() == MultiDrawElementsUByte::Type() )
+          {
+            VL_CHECK(arr_abstract->classType() == ArrayUByte1::Type());
+            de->as<MultiDrawElementsUByte>()->setIndexBuffer( arr_abstract->as<ArrayUByte1>() );
+          }
+        }
+        else
+        {
+          // mic fixme
+          Log::error( Say("Ignoring %s\n") << key );
+        }
+      }
+
+      // finalize setup
+      de->computePointerVector();
+      de->computeVBOPointerVector();
+      if ( de->baseVertices().size() != de->countVector().size() )
+        de->baseVertices().resize( de->countVector().size() );
+    }
+    else
     {
       // mic fixme
       VL_TRAP();
@@ -1352,19 +1447,72 @@ public:
     }
 
     // link the SRF to the VL object
-    mSRF_To_VL[srf_obj] = draw_call;
+    registerImportedObject(srf_obj, draw_call.get());
     
     return draw_call.get();
   }
 
+  VertexAttribInfo* srfImport_VertexAttribInfo(const SRF_Object* srf_obj)
+  {
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<VertexAttribInfo>();
+
+    if (srf_obj->tag() != "<VertexAttribInfo>")
+      return NULL;
+
+    // link the SRF to the VL object
+    ref<VertexAttribInfo> info = new VertexAttribInfo;
+    registerImportedObject(srf_obj, info.get());
+
+    for(size_t i=0; i<srf_obj->value().size(); ++i)
+    {
+      const std::string& key = srf_obj->value()[i].key();
+      const SRF_Value& value = srf_obj->value()[i].value();
+
+      if (key == "Data")
+      {
+        ArrayAbstract* arr = srfImport_Array( value.getObject() );
+        info->setData(arr);
+      }
+      else
+      if (key == "Normalize")
+      {
+        info->setNormalize( value.getBool() );
+      }
+      else
+      if (key == "Interpretation")
+      {
+        if (strcmp(value.getIdentifier(), "VAI_NORMAL") == 0)
+          info->setInterpretation(VAI_NORMAL);
+        else
+        if (strcmp(value.getIdentifier(), "VAI_INTEGER") == 0)
+          info->setInterpretation(VAI_INTEGER);
+        else
+        if (strcmp(value.getIdentifier(), "VAI_DOUBLE") == 0)
+          info->setInterpretation(VAI_DOUBLE);
+        else
+        {
+          VL_TRAP() // mic fixme error
+        }
+      }
+    }
+    
+    return info.get();
+  }
+
   Geometry* srfImport_Geometry(const SRF_Object* srf_obj)
   {
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<Geometry>();
+
     if (srf_obj->tag() != "<Geometry>")
-      return false;
+      return NULL;
 
     // link the SRF to the VL object
     ref<Geometry> geom = new Geometry;
-    mSRF_To_VL[srf_obj] = geom;
+    registerImportedObject(srf_obj, geom.get());
 
     for(size_t i=0; i<srf_obj->value().size(); ++i)
     {
@@ -1448,6 +1596,54 @@ public:
         else
           return NULL;
       }
+      else
+      if (strstr(key.c_str(), "TexCoordArray") == key.c_str())
+      {
+        const char* ch = key.c_str() + 13/*strlen("TexCoordArray")*/;
+        int tex_unit = 0;
+        for(; *ch; ++ch)
+        {
+          if (*ch>='0' && *ch<='9')
+            tex_unit = tex_unit*10 + (*ch - '0');
+          else
+          {
+            Log::error( "TexCoordArray must end with a number!\n" ); // mic fixme test this
+          }
+        }
+
+        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
+        ArrayAbstract* arr = srfImport_Array(value.getObject());
+        if (arr)
+          geom->setTexCoordArray(tex_unit, arr);
+        else
+          return NULL;
+      }
+      else
+      if (strstr(key.c_str(), "VertexAttribArray") == key.c_str())
+      {
+        const char* ch = key.c_str() + 17/*strlen("VertexAttribArray")*/;
+        int attrib_location = 0;
+        for(; *ch; ++ch)
+        {
+          if (*ch>='0' && *ch<='9')
+            attrib_location = attrib_location*10 + (*ch - '0');
+          else
+          {
+            Log::error( "VertexAttribArray must end with a number!\n" ); // mic fixme test this
+          }
+        }
+        
+        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
+        VertexAttribInfo* info_ptr = srfImport_VertexAttribInfo(value.getObject());
+        if (info_ptr)
+        {
+          VertexAttribInfo info = *info_ptr;
+          info.setAttribLocation(attrib_location);
+          geom->setVertexAttribArray(info);
+        }
+        else
+          return NULL;
+      }
       // ... textures and vertex attribs ...
       else
       if (key == "DrawCall")
@@ -1464,7 +1660,6 @@ public:
         VL_TRAP()
         // mic fixme
       }
-
     }
 
     return geom.get();
@@ -1472,27 +1667,53 @@ public:
 
   Effect* srfImport_Effect(const SRF_Object* srf_obj)
   {
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<Effect>();
+
     return NULL;
   }
 
   Shader* srfImport_Shader(const SRF_Object* srf_obj)
   {
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<Shader>();
+
     return NULL;
   }
 
   Transform* srfImport_Transform(const SRF_Object* srf_obj)
   {
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<Transform>();
+
     return NULL;
   }
 
   Actor* srfImport_Actor(const SRF_Object* srf_obj)
   {
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<Actor>();
+
     return NULL;
   }
 
   Camera* srfImport_Camera(const SRF_Object* srf_obj)
   {
+    // return already parsed object
+    if (srfToVL(srf_obj))
+      return srfToVL(srf_obj)->as<Camera>();
+
     return NULL;
+  }
+
+  void registerImportedObject(const Object* srf_obj, const Object* vl_obj)
+  {
+    VL_CHECK( mSRF_To_VL.find(srf_obj) == mSRF_To_VL.end() );
+    mSRF_To_VL[srf_obj] = vl_obj;
   }
 
   Object* srfToVL(const Object* srf_obj)
@@ -1508,15 +1729,17 @@ public:
   {
     Log::notify(appletInfo());
 #if 1
-    ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
-    // ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
+    // ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
+    ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
     geom->computeNormals();
     geom->setColorArray( vl::crimson );
     // geom->setSecondaryColorArray( geom->normalArray() );
-    // TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
+    TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
+    // geom->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
+    geom->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
     // mic fixme: this does no realizes that we are using primitive restart
     // mic fixme: make this manage also MultiDrawElements
-    // geom->makeGLESFriendly();
+    geom->makeGLESFriendly();
 
     ref<Effect> fx = new Effect;
     fx->shader()->enable(EN_LIGHTING);
@@ -1534,10 +1757,12 @@ public:
     res_db->resources().push_back(geom);
 
     srfPrelink_ResourceDatabase(res_db.get());
-    srfExport_ResourceDatabase(res_db.get());
+    SRF_Value value = srfExport_ResourceDatabase(res_db.get());
+    SRF_DumpVisitor dump_visitor;
+    value.getObject()->acceptVisitor(&dump_visitor);
     std::fstream fout;
     fout.open("D:/VL/srf_export.vl", std::ios::out);
-    fout.write( mSRFString.toStdString().c_str(), mSRFString.length() );
+    fout.write( dump_visitor.dumpString().toStdString().c_str(), dump_visitor.dumpString().length() );
     fout.close();
 #endif
 
@@ -1567,21 +1792,20 @@ public:
       VL_CHECK(db == res_db.get())
 
       ref<Geometry> geom = res_db->get<Geometry>(0);
+      VL_CHECK(geom)
       sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
     }
-
   }
 
 protected:
   // export
-  std::map< ref<Object>, String > mObject_To_UID;
+  std::map< ref<Object>, std::string > mObject_To_UID;
   std::map< ref<Object>, int > mObject_Ref_Count;
   std::set< ref<Object> > mAlreadyDefined;
   // import
   std::map< ref<Object>, ref<Object> > mSRF_To_VL;
 
   int mUIDCounter;
-  String mSRFString;
   int mIndent;
   bool mAssign;
 };
