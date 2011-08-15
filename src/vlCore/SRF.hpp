@@ -650,6 +650,9 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SRF_ArrayInt32, SRF_Array)
 
   public:
+    typedef int scalar_type;
+
+  public:
     SRF_ArrayInt32() {}
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
@@ -668,6 +671,9 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SRF_ArrayInt64, SRF_Array)
 
   public:
+    typedef long long scalar_type;
+
+  public:
     SRF_ArrayInt64() {}
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
@@ -684,6 +690,9 @@ namespace vl
   class SRF_ArrayFloat: public SRF_Array
   {
     VL_INSTRUMENT_CLASS(vl::SRF_ArrayFloat, SRF_Array)
+
+  public:
+    typedef float scalar_type;
 
   public:
     SRF_ArrayFloat() {}
@@ -706,6 +715,9 @@ namespace vl
   class SRF_ArrayDouble: public SRF_Array
   {
     VL_INSTRUMENT_CLASS(vl::SRF_ArrayDouble, SRF_Array)
+
+  public:
+    typedef double scalar_type;
 
   public:
     SRF_ArrayDouble() {}
@@ -836,6 +848,130 @@ namespace vl
       mUnion.mInt64 = 0;
     }
 
+    SRF_Value(SRF_Object* obj)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setObject(obj);
+    }
+
+    SRF_Value(SRF_List* list)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setList(list);
+    }
+
+    SRF_Value(SRF_Array* arr)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setArray(arr);
+    }
+
+    SRF_Value(const char* str, EType type)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      switch(type)
+      {
+      case String: setString(str); break;
+      case Identifier: setIdentifier(str); break;
+      case UID: setUID(str); break;
+      default:
+        VL_TRAP();
+        break;
+      }
+    }
+
+    SRF_Value(bool boolean)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setBool(boolean);
+    }
+
+    SRF_Value(long long int64)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setInt64(int64);
+    }
+
+    SRF_Value(double d)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setDouble(d);
+    }
+
+    SRF_Value(const fvec4& vec)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setArray( new SRF_ArrayFloat );
+      getArrayFloat()->value().resize(4);
+      memcpy(&getArrayFloat()->value()[0], vec.ptr(), sizeof(vec));
+    }
+
+    SRF_Value(const fvec3& vec)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setArray( new SRF_ArrayFloat );
+      getArrayFloat()->value().resize(3);
+      memcpy(&getArrayFloat()->value()[0], vec.ptr(), sizeof(vec));
+    }
+
+    SRF_Value(const fvec2& vec)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setArray( new SRF_ArrayFloat );
+      getArrayFloat()->value().resize(2);
+      memcpy(&getArrayFloat()->value()[0], vec.ptr(), sizeof(vec));
+    }
+
+    SRF_Value(const dvec4& vec)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setArray( new SRF_ArrayDouble );
+      getArrayDouble()->value().resize(4);
+      memcpy(&getArrayDouble()->value()[0], vec.ptr(), sizeof(vec));
+    }
+
+    SRF_Value(const dvec3& vec)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setArray( new SRF_ArrayDouble );
+      getArrayDouble()->value().resize(3);
+      memcpy(&getArrayDouble()->value()[0], vec.ptr(), sizeof(vec));
+    }
+
+    SRF_Value(const dvec2& vec)
+    {
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setArray( new SRF_ArrayDouble );
+      getArrayDouble()->value().resize(2);
+      memcpy(&getArrayDouble()->value()[0], vec.ptr(), sizeof(vec));
+    }
+
     ~SRF_Value() { release(); }
 
     SRF_Value(const SRF_Value& other)
@@ -851,7 +987,7 @@ namespace vl
 
     // object
 
-    void setObject(SRF_Object* obj);
+    SRF_Object* setObject(SRF_Object*);
 
     SRF_Object* getObject() { VL_CHECK(mType == Object); return mUnion.mObject; }
 
@@ -859,7 +995,7 @@ namespace vl
 
     // list
 
-    void setList(SRF_List* list);
+    SRF_List* setList(SRF_List*);
 
     SRF_List* getList() { VL_CHECK(mType == List); return mUnion.mList; }
 
@@ -867,7 +1003,7 @@ namespace vl
 
     // array
 
-    void setArray(SRF_Array*);
+    SRF_Array* setArray(SRF_Array*);
 
     SRF_ArrayString* getArrayString() { VL_CHECK(mType == ArrayString); return mUnion.mArray->as<SRF_ArrayString>(); }
     const SRF_ArrayString* getArrayString() const { VL_CHECK(mType == ArrayString); return mUnion.mArray->as<SRF_ArrayString>(); }
@@ -890,56 +1026,56 @@ namespace vl
     SRF_ArrayDouble* getArrayDouble() { VL_CHECK(mType == ArrayDouble); return mUnion.mArray->as<SRF_ArrayDouble>(); }
     const SRF_ArrayDouble* getArrayDouble() const { VL_CHECK(mType == ArrayDouble); return mUnion.mArray->as<SRF_ArrayDouble>(); }
 
-    void setString(const char* str)
+    const char*  setString(const char* str)
     {
       release();
       mType = String;
-      mUnion.mString = _strdup(str);
+      return mUnion.mString = _strdup(str);
     }
 
     const char* getString() const { VL_CHECK(mType == String); return mUnion.mString; }
 
-    void setIdentifier(const char* str)
+    const char* setIdentifier(const char* str)
     {
       release();
       mType = Identifier;
-      mUnion.mString = _strdup(str);
+      return mUnion.mString = _strdup(str);
     }
 
     const char* getIdentifier() const { VL_CHECK(mType == Identifier); return mUnion.mString; }
 
-    void setUID(const char* str)
+    const char* setUID(const char* str)
     {
       release();
       mType = UID;
-      mUnion.mString = _strdup(str);
+      return mUnion.mString = _strdup(str);
     }
 
     const char* getUID() const { VL_CHECK(mType == UID); return mUnion.mString; }
 
-    void setInt64(long long val)
+    long long  setInt64(long long val)
     {
       release();
       mType = Int64;
-      mUnion.mInt64 = val;
+      return mUnion.mInt64 = val;
     }
 
     long long getInt64() const { VL_CHECK(mType == Int64); return mUnion.mInt64; }
 
-    void setDouble(double val)
+    double setDouble(double val)
     {
       release();
       mType = Double;
-      mUnion.mDouble = val;
+      return mUnion.mDouble = val;
     }
 
     double getDouble() const { VL_CHECK(mType == Double); return mUnion.mDouble; }
 
-    void setBool(bool val)
+    bool setBool(bool val)
     {
       release();
       mType = Bool;
-      mUnion.mBool = val;
+      return mUnion.mBool = val;
     }
 
     bool getBool() const { VL_CHECK(mType == Bool); return mUnion.mBool; }
@@ -952,11 +1088,13 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SRF_Object, Object)
 
   public:
-    SRF_Object()
+    SRF_Object(const char* tag=NULL)
     {
       // mic fixme: reenable
       // mKeyValue.reserve(16);
       mUID = "#NULL";
+      if (tag)
+        setTag(tag);
     }
 
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitObject(this); }
@@ -966,6 +1104,9 @@ namespace vl
       friend class SRF_Object;
 
     public:
+      Value() {}
+      Value(const char* key, SRF_Value value): mKey(key), mValue(value) {}
+
       std::string& key() { return mKey; }
       const std::string& key() const { return mKey; }
       void setKey(const std::string& key) { mKey = key; }
@@ -979,10 +1120,10 @@ namespace vl
       SRF_Value mValue;
     };
 
-    void setTag(const std::string& tag) { mTag = tag; }
+    void setTag(const char* tag) { mTag = tag; }
     const std::string& tag() const { return mTag; }
 
-    void setUID(const std::string& uid) { mUID = uid; }
+    void setUID(const char* uid) { mUID = uid; }
     const std::string& uid() const { return mUID; }
 
     std::vector<Value>& value() { return mKeyValue; }
@@ -1112,16 +1253,17 @@ namespace vl
     return *this;
   }
   //-----------------------------------------------------------------------------
-  void SRF_Value::setObject(SRF_Object* obj)
+  SRF_Object* SRF_Value::setObject(SRF_Object* obj)
   {
     release();
     mType = Object;
     mUnion.mObject = obj;
     if (obj)
       mUnion.mObject->incReference();
+    return obj;
   }
   //-----------------------------------------------------------------------------
-  void SRF_Value::setList(SRF_List* list)
+  SRF_List* SRF_Value::setList(SRF_List* list)
   {
     VL_CHECK(list);
 
@@ -1129,9 +1271,10 @@ namespace vl
     mType = List;
     mUnion.mList = list;
     mUnion.mList->incReference();
+    return list;
   }
   //-----------------------------------------------------------------------------
-  void SRF_Value::setArray(SRF_Array* arr)
+  SRF_Array* SRF_Value::setArray(SRF_Array* arr)
   {
     release();
 
@@ -1165,6 +1308,8 @@ namespace vl
 
     mUnion.mArray = arr;
     mUnion.mArray->incReference();
+    
+    return arr;
   }
   //-----------------------------------------------------------------------------
   // SRF_DumpVisitor
@@ -1240,13 +1385,13 @@ namespace vl
           obj->value()[i].value().getArrayDouble()->acceptVisitor(this);
           break;
         case SRF_Value::String:
-          mDump += String::printf("%s\n", obj->value()[i].value().getString());
+          mDump += String::printf("%s\n", obj->value()[i].value().getString()); VL_CHECK( strlen(obj->value()[i].value().getString()) )
           break;
         case SRF_Value::Identifier:
-          mDump += String::printf("%s\n", obj->value()[i].value().getIdentifier());
+          mDump += String::printf("%s\n", obj->value()[i].value().getIdentifier()); VL_CHECK( strlen(obj->value()[i].value().getIdentifier()) )
           break;
         case SRF_Value::UID:
-          mDump += String::printf("%s\n", obj->value()[i].value().getUID());
+          mDump += String::printf("%s\n", obj->value()[i].value().getUID()); VL_CHECK( strlen(obj->value()[i].value().getUID()) )
           break;
         case SRF_Value::Bool:
           mDump += String::printf("%s\n", obj->value()[i].value().getBool() ? "true" : "false");
@@ -1299,13 +1444,13 @@ namespace vl
           list->value()[i].getArrayDouble()->acceptVisitor(this);
           break;
         case SRF_Value::String:
-          mDump += String::printf("%s\n", list->value()[i].getString());
+          mDump += String::printf("%s\n", list->value()[i].getString()); VL_CHECK( strlen(list->value()[i].getString()) )
           break;
         case SRF_Value::Identifier:
-          mDump += String::printf("%s\n", list->value()[i].getIdentifier());
+          mDump += String::printf("%s\n", list->value()[i].getIdentifier()); VL_CHECK( strlen(list->value()[i].getIdentifier()) )
           break;
         case SRF_Value::UID:
-          mDump += String::printf("%s\n", list->value()[i].getUID());
+          mDump += String::printf("%s\n", list->value()[i].getUID()); VL_CHECK( strlen(list->value()[i].getUID()) )
           break;
         case SRF_Value::Bool:
           mDump += String::printf("%s\n", list->value()[i].getBool() ? "true" : "false");
@@ -1538,7 +1683,7 @@ namespace vl
       if(getToken(mToken) && mToken.mType == SRF_Token::ObjectHeader)
       {
         mRoot = new SRF_Object;
-        mRoot->setTag(mToken.mString);
+        mRoot->setTag(mToken.mString.c_str());
         if (parseObject(mRoot.get()))
         {
           return true;
@@ -1592,7 +1737,7 @@ namespace vl
               // #identifier
               if (getToken(mToken) && mToken.mType == SRF_Token::UID)
               {
-                object->setUID(mToken.mString);
+                object->setUID(mToken.mString.c_str());
 
                 // UID to Object Map, #NULL is not mapped to anything
                 if( object->uid() != "#NULL")
@@ -1634,7 +1779,7 @@ namespace vl
             if (mToken.mType == SRF_Token::ObjectHeader)
             {
               ref<SRF_Object> object = new SRF_Object;
-              object->setTag(mToken.mString);
+              object->setTag(mToken.mString.c_str());
               name_value.value().setObject(object.get());
               if (!parseObject( object.get() ) )
                 return false;
@@ -1719,7 +1864,7 @@ namespace vl
             case SRF_Token::ObjectHeader:
               {
                 ref<SRF_Object> object = new SRF_Object;
-                object->setTag(mToken.mString);
+                object->setTag(mToken.mString.c_str());
                 if ( parseObject( object.get() ) )
                 {
                   value.setObject(object.get());
