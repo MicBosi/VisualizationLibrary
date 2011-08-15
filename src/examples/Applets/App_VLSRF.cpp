@@ -1787,11 +1787,11 @@ public:
     // geom->setSecondaryColorArray( geom->normalArray() );
     // TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
     // geom->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
-    geom->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
+    // geom->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
     // mic fixme: this does no realizes that we are using primitive restart
     // mic fixme: make this manage also MultiDrawElements
     // geom->makeGLESFriendly();
-    geom->drawCalls()->push_back( geom->drawCalls()->back() );
+    // geom->drawCalls()->push_back( geom->drawCalls()->back() );
 
     ref<Effect> fx = new Effect;
     fx->shader()->enable(EN_LIGHTING);
@@ -1806,7 +1806,19 @@ public:
     mAssign = 0;
     mIndent = 0;
     ref<ResourceDatabase> res_db = new ResourceDatabase;
-    res_db->resources().push_back(geom);
+#if 0
+    for (int i=0; i<100; ++i)
+    {
+      ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 16 );
+      geom->computeNormals();
+      res_db->resources().push_back( geom.get() );
+    }
+#else
+    res_db->resources().push_back( geom.get() );
+#endif
+
+    Time timer;
+    timer.start();
 
     SRF_Value value = srfExport_ResourceDatabase(res_db.get());
 
@@ -1823,6 +1835,7 @@ public:
     SRF_TextExportVisitor text_export_visitor;
     text_export_visitor.setUIDSet(&uid_set);
     value.getStructure()->acceptVisitor(&text_export_visitor);
+    printf("Export time = %f\n", timer.elapsed());
 
     std::fstream fout;
     fout.open("D:/VL/srf_export.vl", std::ios::out);
@@ -1831,23 +1844,25 @@ public:
 #endif
 
     // @@@ @@@ @@@ IMPORT @@@ @@@ @@@
+    timer.start();
     SRF_Parser parser;
     parser.tokenizer()->setInputFile( new DiskFile("D:/VL/srf_export.vl") );
     parser.parse();
 
-    // export to text and save again
-    {
-      String srf_text = parser.exportToText();
-      std::fstream fout;
-      fout.open( "D:/VL/srf_export_dump.vl", std::ios::out );
-      fout.write( srf_text.toStdString().c_str(), srf_text.length() );
-      fout.close();
-    }
+    //// export to text and save again
+    //{
+    //  String srf_text = parser.exportToText();
+    //  std::fstream fout;
+    //  fout.open( "D:/VL/srf_export_dump.vl", std::ios::out );
+    //  fout.write( srf_text.toStdString().c_str(), srf_text.length() );
+    //  fout.close();
+    //}
 
     if (parser.link())
     {
       // first import
       ResourceDatabase* db = srfImport_ResourceDatabase( parser.root() );
+      printf("Import time = %f\n", timer.elapsed());
 
       // the retrieve the imported objects
       Object* red_db_obj = srfToVL( parser.root() );
