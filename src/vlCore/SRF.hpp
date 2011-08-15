@@ -1428,8 +1428,23 @@ namespace vl
         mAssign = false;
       else
       {
-        for(int i=0; i<mIndent; ++i)
-          output("\t");
+        switch(mIndent)
+        {
+        case 0: break;
+        case 1: output("\t"); break;
+        case 2: output("\t\t"); break;
+        case 3: output("\t\t\t"); break;
+        case 4: output("\t\t\t\t"); break;
+        case 5: output("\t\t\t\t\t"); break;
+        case 6: output("\t\t\t\t\t\t"); break;
+        case 7: output("\t\t\t\t\t\t\t"); break;
+        case 8: output("\t\t\t\t\t\t\t\t"); break;
+        case 9: output("\t\t\t\t\t\t\t\t\t"); break;
+        default:
+          output("\t\t\t\t\t\t\t\t\t");
+          for(int i=9; i<mIndent; ++i)
+            output("\t");
+        }
       }
     }
 
@@ -1583,32 +1598,64 @@ namespace vl
     virtual void visitArray(SRF_ArrayInt32* arr)
     {
       indent(); output("( ");
-      for(size_t i=0 ;i<arr->value().size(); ++i)
+      // output in chunks of 10 numbers
+      int i = 0;
+      int size = arr->value().size() - 10;
+      for( ; i < size; i += 10)
+        output(String::printf("%d %d %d %d %d %d %d %d %d %d ",
+          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4], 
+          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] ) );
+      for( ; i<arr->value().size(); ++i )
         output(String::printf("%d ", arr->value()[i]));
+      VL_CHECK( i == arr->value().size() )
       output(")\n");
     }
 
     virtual void visitArray(SRF_ArrayInt64* arr)
     {
       indent(); output("( ");
-      for(size_t i=0 ;i<arr->value().size(); ++i)
+      // output in chunks of 10 numbers
+      int i = 0;
+      int size = arr->value().size() - 10;
+      for( ; i < size; i += 10)
+        output(String::printf("%lld %lld %lld %lld %lld %lld %lld %lld %lld %lld ",
+          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4], 
+          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] ) );
+      for( ; i<arr->value().size(); ++i )
         output(String::printf("%lld ", arr->value()[i]));
+      VL_CHECK( i == arr->value().size() )
       output(")\n");
     }
 
     virtual void visitArray(SRF_ArrayFloat* arr)
     {
       indent(); output("( ");
-      for(size_t i=0 ;i<arr->value().size(); ++i)
+      // output in chunks of 10 numbers
+      int i = 0;
+      int size = arr->value().size() - 10;
+      for( ; i < size; i += 10)
+        output(String::printf("%f %f %f %f %f %f %f %f %f %f ",
+          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4], 
+          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] ) );
+      for( ; i<arr->value().size(); ++i )
         output(String::printf("%f ", arr->value()[i]));
-      output(")\n");
+      VL_CHECK( i == arr->value().size() )
+      output(")\n"); 
     }
 
     virtual void visitArray(SRF_ArrayDouble* arr)
     {
       indent(); output("( ");
-      for(size_t i=0 ;i<arr->value().size(); ++i)
+      // output in chunks of 10 numbers
+      int i = 0;
+      int size = arr->value().size() - 10;
+      for( ; i < size; i += 10)
+        output(String::printf("%Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf ",
+          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4], 
+          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] ) );
+      for( ; i<arr->value().size(); ++i )
         output(String::printf("%Lf ", arr->value()[i]));
+      VL_CHECK( i == arr->value().size() )
       output(")\n");
     }
 
@@ -1674,6 +1721,12 @@ namespace vl
     String& srfText() { return mText; }
 
     virtual void output(const String& str)
+    {
+      // printf("%s", str.toStdString().c_str());
+      mText += str;
+    }
+
+    virtual void output(const char* str)
     {
       // printf("%s", str.toStdString().c_str());
       mText += str;
@@ -1811,6 +1864,7 @@ namespace vl
     SRF_LinkVisitor(const std::map< std::string, ref<SRF_Structure> >* map)
     {
       mLinkMap = map;
+      mError = NoError;
     }
 
     void setLinkMap(const std::map< std::string, ref<SRF_Structure> >* map)
