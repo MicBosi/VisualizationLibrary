@@ -38,6 +38,8 @@
 #include <vlCore\Log.hpp>
 #include <vlCore\BufferedStream.hpp>
 #include <vlCore\Vector4.hpp>
+#include <map>
+#include <set>
 
 // mic fixme
 #ifdef _MSC_VER
@@ -72,7 +74,7 @@ namespace vl
       Int64,              //  +123
       Float,              //  +123.456e+10
       Double,             //  +123.456e+10
-      ObjectHeader        //  <ObjectHeader>
+      StructureHeader          //  <StructureHeader>
 
     } EType;
 
@@ -273,7 +275,7 @@ namespace vl
         return true;
 
       case '<':
-        token.mType = SRF_Token::ObjectHeader;
+        token.mType = SRF_Token::StructureHeader;
         token.mString = "<";
         while(readTextChar(ch1) && ch1 != '>')
         {
@@ -611,7 +613,7 @@ namespace vl
     int mLineNumber;
   };
   //-----------------------------------------------------------------------------
-  class SRF_Object;
+  class SRF_Structure;
   class SRF_List;
   class SRF_Array;
   class SRF_ArrayString;
@@ -625,7 +627,7 @@ namespace vl
   class SRF_Visitor: public Object
   {
   public:
-    virtual void visitObject(SRF_Object*) {}
+    virtual void visitStructur(SRF_Structure*) {}
     virtual void visitList(SRF_List*) {}
     virtual void visitArray(SRF_ArrayUID*) {}
     virtual void visitArray(SRF_ArrayInt32*) {}
@@ -634,13 +636,40 @@ namespace vl
     virtual void visitArray(SRF_ArrayDouble*) {}
     virtual void visitArray(SRF_ArrayString*) {}
     virtual void visitArray(SRF_ArrayIdentifier*) {}
+
+    bool isVisited(void* node)
+    {
+      std::set< void* >::iterator it = mVisited.find(node);
+      if (it == mVisited.end())
+      {
+        mVisited.insert(node);
+        return false;
+      }
+      else 
+        return true;
+    }
+    
+    void resetVisitedNodes() { mVisited.clear(); };
+
+  private:
+    std::set< void* > mVisited;
+  };
+  //-----------------------------------------------------------------------------
+  class SRF_AbstractComplexValue: public Object
+  {
+    VL_INSTRUMENT_CLASS(vl::SRF_AbstractComplexValue, Object)
+
+  public:
+    virtual ~SRF_AbstractComplexValue() {}
+
+    virtual void acceptVisitor(SRF_Visitor*) = 0;
   };
   //-----------------------------------------------------------------------------
   // Arrays
   //-----------------------------------------------------------------------------
-  class SRF_Array: public Object 
+  class SRF_Array: public SRF_AbstractComplexValue 
   { 
-    VL_INSTRUMENT_CLASS(vl::SRF_Array, Object)
+    VL_INSTRUMENT_CLASS(vl::SRF_Array, SRF_AbstractComplexValue)
 
   public:
   };
@@ -654,12 +683,15 @@ namespace vl
 
   public:
     SRF_ArrayInt32() {}
+
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
     std::vector<int>& value() { return mValue; }
+
     const std::vector<int>& value() const { return mValue; }
 
     int* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    
     const int* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
   private:
@@ -675,12 +707,15 @@ namespace vl
 
   public:
     SRF_ArrayInt64() {}
+    
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
     std::vector<long long>& value() { return mValue; }
+    
     const std::vector<long long>& value() const { return mValue; }
 
     long long* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    
     const long long* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
   private:
@@ -696,16 +731,21 @@ namespace vl
 
   public:
     SRF_ArrayFloat() {}
+    
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
     std::vector<float>& value() { return mValue; }
+    
     const std::vector<float>& value() const { return mValue; }
 
     float* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    
     const float* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
     fvec2 getFloat2() const { VL_CHECK(mValue.size() == 2); return fvec2(mValue[0], mValue[1]); }
+    
     fvec3 getFloat3() const { VL_CHECK(mValue.size() == 3); return fvec3(mValue[0], mValue[1], mValue[2]); }
+    
     fvec4 getFloat4() const { VL_CHECK(mValue.size() == 4); return fvec4(mValue[0], mValue[1], mValue[2], mValue[3]); }
 
   private:
@@ -721,16 +761,21 @@ namespace vl
 
   public:
     SRF_ArrayDouble() {}
+    
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
     std::vector<double>& value() { return mValue; }
+    
     const std::vector<double>& value() const { return mValue; }
 
     double* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    
     const double* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
     dvec2 getDouble2() const { VL_CHECK(mValue.size() == 2); return dvec2(mValue[0], mValue[1]); }
+    
     dvec3 getDouble3() const { VL_CHECK(mValue.size() == 3); return dvec3(mValue[0], mValue[1], mValue[2]); }
+    
     dvec4 getDouble4() const { VL_CHECK(mValue.size() == 4); return dvec4(mValue[0], mValue[1], mValue[2], mValue[3]); }
 
   public:
@@ -746,17 +791,32 @@ namespace vl
 
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
-    struct Value
+    class Value
     {
+    public:
       Value(const std::string& uid): mUID(uid) {}
+
+      void setUID(const char* uid) { mUID = uid; }
+
+      const char* uid() const { return mUID.c_str(); }
+
+      void setStructure(SRF_Structure* obj) { mObj = obj; }
+
+      SRF_Structure* object() { return mObj.get(); }
+
+      const SRF_Structure* object() const { return mObj.get(); }
+
+    private:
       std::string mUID; // the UID string
-      ref<SRF_Object> mPtr; // the linked object
+      ref<SRF_Structure> mObj; // the linked object
     };
 
     std::vector<Value>& value() { return mValue; }
+
     const std::vector<Value>& value() const { return mValue; }
 
     Value* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+
     const Value* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
   public:
@@ -772,9 +832,11 @@ namespace vl
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
     std::vector<std::string>& value() { return mValue; }
+
     const std::vector<std::string>& value() const { return mValue; }
 
     std::string* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+
     const std::string* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
   public:
@@ -790,9 +852,11 @@ namespace vl
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
     std::vector<std::string>& value() { return mValue; }
+
     const std::vector<std::string>& value() const { return mValue; }
 
     std::string* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+
     const std::string* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
   public:
@@ -813,7 +877,7 @@ namespace vl
       Identifier,
       UID,
       List,
-      Object,
+      Structure,
       ArrayString,
       ArrayIdentifier,
       ArrayUID,
@@ -830,7 +894,7 @@ namespace vl
       long long mInt64;
       double mDouble;
       const char* mString;
-      SRF_Object* mObject;
+      SRF_Structure* mStructure;
       SRF_List* mList;
       SRF_Array* mArray;
     } mUnion;
@@ -848,12 +912,12 @@ namespace vl
       mUnion.mInt64 = 0;
     }
 
-    SRF_Value(SRF_Object* obj)
+    SRF_Value(SRF_Structure* obj)
     {
       mType = Int64;
       mUnion.mInt64 = 0;
 
-      setObject(obj);
+      setStructure(obj);
     }
 
     SRF_Value(SRF_List* list)
@@ -987,11 +1051,11 @@ namespace vl
 
     // object
 
-    SRF_Object* setObject(SRF_Object*);
+    SRF_Structure* setStructure(SRF_Structure*);
 
-    SRF_Object* getObject() { VL_CHECK(mType == Object); return mUnion.mObject; }
+    SRF_Structure* getStructure() { VL_CHECK(mType == Structure); return mUnion.mStructure; }
 
-    const SRF_Object* getObject() const { VL_CHECK(mType == Object); return mUnion.mObject; }
+    const SRF_Structure* getStructure() const { VL_CHECK(mType == Structure); return mUnion.mStructure; }
 
     // list
 
@@ -1081,27 +1145,41 @@ namespace vl
     bool getBool() const { VL_CHECK(mType == Bool); return mUnion.mBool; }
   };
   //-----------------------------------------------------------------------------
-  // SRF_Object
+  // SRF_Structure
   //-----------------------------------------------------------------------------
-  class SRF_Object: public Object
+  class SRF_Structure: public SRF_AbstractComplexValue
   {
-    VL_INSTRUMENT_CLASS(vl::SRF_Object, Object)
+    VL_INSTRUMENT_CLASS(vl::SRF_Structure, SRF_AbstractComplexValue)
 
   public:
-    SRF_Object(const char* tag=NULL)
+    SRF_Structure()
     {
       // mic fixme: reenable
       // mKeyValue.reserve(16);
-      mUID = "#NULL";
-      if (tag)
-        setTag(tag);
+      setUID("#NULL");
     }
 
-    virtual void acceptVisitor(SRF_Visitor* v) { v->visitObject(this); }
+    SRF_Structure(const char* tag)
+    {
+      // mic fixme: reenable
+      // mKeyValue.reserve(16);
+      setUID("#NULL");
+      setTag(tag);
+    }
+
+    SRF_Structure(const char* tag, const std::string& uid)
+    {
+      // mic fixme: reenable
+      // mKeyValue.reserve(16);
+      setUID(uid.c_str());
+      setTag(tag);
+    }
+
+    virtual void acceptVisitor(SRF_Visitor* v) { v->visitStructur(this); }
 
     class Value
     {
-      friend class SRF_Object;
+      friend class SRF_Structure;
 
     public:
       Value() {}
@@ -1121,12 +1199,15 @@ namespace vl
     };
 
     void setTag(const char* tag) { mTag = tag; }
+
     const std::string& tag() const { return mTag; }
 
     void setUID(const char* uid) { mUID = uid; }
+
     const std::string& uid() const { return mUID; }
 
     std::vector<Value>& value() { return mKeyValue; }
+
     const std::vector<Value>& value() const { return mKeyValue; }
 
     // mic fixme: we can speed this guys up with multimaps
@@ -1155,9 +1236,9 @@ namespace vl
   //-----------------------------------------------------------------------------
   // SRF_List
   //-----------------------------------------------------------------------------
-  class SRF_List: public Object
+  class SRF_List: public SRF_AbstractComplexValue
   {
-    VL_INSTRUMENT_CLASS(vl::SRF_List, Object)
+    VL_INSTRUMENT_CLASS(vl::SRF_List, SRF_AbstractComplexValue)
 
   public:
     SRF_List()
@@ -1169,6 +1250,7 @@ namespace vl
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitList(this); }
 
     std::vector< SRF_Value >& value() { return mValue; }
+
     const std::vector< SRF_Value >& value() const { return mValue; }
 
   private:
@@ -1179,12 +1261,14 @@ namespace vl
   {
     switch(mType)
     {
-    case Object: 
-      mUnion.mObject->decReference(); 
+    case Structure: 
+      if (mUnion.mStructure)
+        mUnion.mStructure->decReference(); 
       break;
 
     case List:
-      mUnion.mList->decReference(); 
+      if (mUnion.mList)
+        mUnion.mList->decReference(); 
       break;
 
     case ArrayString:
@@ -1194,7 +1278,8 @@ namespace vl
     case ArrayInt64:
     case ArrayFloat:
     case ArrayDouble:
-      mUnion.mArray->decReference(); 
+      if (mUnion.mArray)
+        mUnion.mArray->decReference(); 
       break;
 
     case String:
@@ -1218,12 +1303,14 @@ namespace vl
     // must be done first
     switch(other.mType)
     {
-    case Object:
-      other.mUnion.mObject->incReference(); 
+    case Structure:
+      if (other.mUnion.mStructure)
+        other.mUnion.mStructure->incReference(); 
       break;
 
     case List:
-      other.mUnion.mList->incReference(); 
+      if (other.mUnion.mList)
+        other.mUnion.mList->incReference(); 
       break;
 
     case ArrayString:
@@ -1233,7 +1320,8 @@ namespace vl
     case ArrayInt64:
     case ArrayFloat:
     case ArrayDouble:
-      other.mUnion.mArray->incReference(); 
+      if (other.mUnion.mArray)
+        other.mUnion.mArray->incReference(); 
       break;
 
     default:
@@ -1253,13 +1341,13 @@ namespace vl
     return *this;
   }
   //-----------------------------------------------------------------------------
-  SRF_Object* SRF_Value::setObject(SRF_Object* obj)
+  SRF_Structure* SRF_Value::setStructure(SRF_Structure* obj)
   {
     release();
-    mType = Object;
-    mUnion.mObject = obj;
-    if (obj)
-      mUnion.mObject->incReference();
+    mType = Structure;
+    mUnion.mStructure = obj;
+    if (mUnion.mStructure)
+      mUnion.mStructure->incReference();
     return obj;
   }
   //-----------------------------------------------------------------------------
@@ -1270,7 +1358,8 @@ namespace vl
     release();
     mType = List;
     mUnion.mList = list;
-    mUnion.mList->incReference();
+    if (mUnion.mList)
+      mUnion.mList->incReference();
     return list;
   }
   //-----------------------------------------------------------------------------
@@ -1307,20 +1396,30 @@ namespace vl
     }
 
     mUnion.mArray = arr;
-    mUnion.mArray->incReference();
+    if (mUnion.mArray)
+      mUnion.mArray->incReference();
     
     return arr;
   }
   //-----------------------------------------------------------------------------
-  // SRF_DumpVisitor
+  // SRF_TextExportVisitor
   //-----------------------------------------------------------------------------
-  class SRF_DumpVisitor: public SRF_Visitor
+  class SRF_TextExportVisitor: public SRF_Visitor
   {
   public:
-    SRF_DumpVisitor()
+    SRF_TextExportVisitor()
     {
       mIndent = 0;
       mAssign = false;
+      mUIDSet = NULL;
+    }
+
+    bool isUsed(const std::string& uid)
+    {
+      if (mUIDSet)
+        return mUIDSet->find(uid) != mUIDSet->end();
+      else
+        return true;
     }
 
     void indent()
@@ -1330,27 +1429,34 @@ namespace vl
       else
       {
         for(int i=0; i<mIndent; ++i)
-          mDump += "\t";
+          output("\t");
       }
     }
 
-    virtual void visitObject(SRF_Object* obj)
+    virtual void visitStructur(SRF_Structure* obj)
     {
-      indent(); mDump += String::printf("%s\n", obj->tag().c_str());
-      indent(); mDump += "{\n";
-      mIndent++;
-      if (obj->uid().length() && obj->uid() != "#NULL")
+      // mic fixme: check this
+      if (isVisited(obj))
       {
-        indent(); mDump += String::printf("ID = %s\n", obj->uid().c_str());
+        indent(); output(String::printf("%s\n", obj->uid().c_str()));
+        return;
+      }
+
+      indent(); output(String::printf("%s\n", obj->tag().c_str()));
+      indent(); output("{\n");
+      mIndent++;
+      if ( obj->uid().length() && obj->uid() != "#NULL" && isUsed(obj->uid()) )
+      {
+        indent(); output(String::printf("ID = %s\n", obj->uid().c_str()));
       }
       for(size_t i=0; i<obj->value().size(); ++i)
       {
-        indent(); mDump += String::printf("%s = ", obj->value()[i].key().c_str());
+        indent(); output(String::printf("%s = ", obj->value()[i].key().c_str()));
         switch(obj->value()[i].value().type())
         {
-        case SRF_Value::Object:
+        case SRF_Value::Structure:
           mAssign = true;
-          obj->value()[i].value().getObject()->acceptVisitor(this);
+          obj->value()[i].value().getStructure()->acceptVisitor(this);
           break;
         case SRF_Value::List:
           mAssign = true;
@@ -1385,39 +1491,46 @@ namespace vl
           obj->value()[i].value().getArrayDouble()->acceptVisitor(this);
           break;
         case SRF_Value::String:
-          mDump += String::printf("%s\n", obj->value()[i].value().getString()); VL_CHECK( strlen(obj->value()[i].value().getString()) )
+          output(String::printf("%s\n", obj->value()[i].value().getString())); VL_CHECK( strlen(obj->value()[i].value().getString()) )
           break;
         case SRF_Value::Identifier:
-          mDump += String::printf("%s\n", obj->value()[i].value().getIdentifier()); VL_CHECK( strlen(obj->value()[i].value().getIdentifier()) )
+          output(String::printf("%s\n", obj->value()[i].value().getIdentifier())); VL_CHECK( strlen(obj->value()[i].value().getIdentifier()) )
           break;
         case SRF_Value::UID:
-          mDump += String::printf("%s\n", obj->value()[i].value().getUID()); VL_CHECK( strlen(obj->value()[i].value().getUID()) )
+          output(String::printf("%s\n", obj->value()[i].value().getUID())); VL_CHECK( strlen(obj->value()[i].value().getUID()) )
           break;
         case SRF_Value::Bool:
-          mDump += String::printf("%s\n", obj->value()[i].value().getBool() ? "true" : "false");
+          output(String::printf("%s\n", obj->value()[i].value().getBool() ? "true" : "false"));
           break;
         case SRF_Value::Int64:
-          mDump += String::printf("%lld\n", obj->value()[i].value().getInt64());
+          output(String::printf("%lld\n", obj->value()[i].value().getInt64()));
           break;
         case SRF_Value::Double:
-          mDump += String::printf("%Lf\n", obj->value()[i].value().getDouble());
+          output(String::printf("%Lf\n", obj->value()[i].value().getDouble()));
           break;
         }
       }
       mIndent--;
-      indent(); mDump += "}\n";
+      indent(); output("}\n");
     }
 
     virtual void visitList(SRF_List* list)
     {
-      indent(); mDump += "[\n";
+      // this should happen only if the user manually creates loops
+      if (isVisited(list))
+      {
+        Log::warning("SRF_TextExportVisitor: cycle detected on SRF_List.\n");
+        return;
+      }
+
+      indent(); output("[\n");
       mIndent++;
       for(size_t i=0; i<list->value().size(); ++i)
       {
         switch(list->value()[i].type())
         {
-        case SRF_Value::Object:
-          list->value()[i].getObject()->acceptVisitor(this);
+        case SRF_Value::Structure:
+          list->value()[i].getStructure()->acceptVisitor(this);
           break;
         case SRF_Value::List:
           list->value()[i].getList()->acceptVisitor(this);
@@ -1444,83 +1557,83 @@ namespace vl
           list->value()[i].getArrayDouble()->acceptVisitor(this);
           break;
         case SRF_Value::String:
-          mDump += String::printf("%s\n", list->value()[i].getString()); VL_CHECK( strlen(list->value()[i].getString()) )
+          output(String::printf("%s\n", list->value()[i].getString())); VL_CHECK( strlen(list->value()[i].getString()) )
           break;
         case SRF_Value::Identifier:
-          mDump += String::printf("%s\n", list->value()[i].getIdentifier()); VL_CHECK( strlen(list->value()[i].getIdentifier()) )
+          output(String::printf("%s\n", list->value()[i].getIdentifier())); VL_CHECK( strlen(list->value()[i].getIdentifier()) )
           break;
         case SRF_Value::UID:
-          mDump += String::printf("%s\n", list->value()[i].getUID()); VL_CHECK( strlen(list->value()[i].getUID()) )
+          output(String::printf("%s\n", list->value()[i].getUID())); VL_CHECK( strlen(list->value()[i].getUID()) )
           break;
         case SRF_Value::Bool:
-          mDump += String::printf("%s\n", list->value()[i].getBool() ? "true" : "false");
+          output(String::printf("%s\n", list->value()[i].getBool() ? "true" : "false"));
           break;
         case SRF_Value::Int64:
-          mDump += String::printf("%lld\n", list->value()[i].getInt64());
+          output(String::printf("%lld\n", list->value()[i].getInt64()));
           break;
         case SRF_Value::Double:
-          mDump += String::printf("%Lf\n", list->value()[i].getDouble());
+          output(String::printf("%Lf\n", list->value()[i].getDouble()));
           break;
         }
       }
       mIndent--;
-      indent(); mDump += "]\n";
+      indent(); output("]\n");
     }
 
     virtual void visitArray(SRF_ArrayInt32* arr)
     {
-      indent(); mDump += "( ";
+      indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        mDump += String::printf("%d ", arr->value()[i]);
-      mDump += ")\n";
+        output(String::printf("%d ", arr->value()[i]));
+      output(")\n");
     }
 
     virtual void visitArray(SRF_ArrayInt64* arr)
     {
-      indent(); mDump += "( ";
+      indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        mDump += String::printf("%lld ", arr->value()[i]);
-      mDump += ")\n";
+        output(String::printf("%lld ", arr->value()[i]));
+      output(")\n");
     }
 
     virtual void visitArray(SRF_ArrayFloat* arr)
     {
-      indent(); mDump += "( ";
+      indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        mDump += String::printf("%f ", arr->value()[i]);
-      mDump += ")\n";
+        output(String::printf("%f ", arr->value()[i]));
+      output(")\n");
     }
 
     virtual void visitArray(SRF_ArrayDouble* arr)
     {
-      indent(); mDump += "( ";
+      indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        mDump += String::printf("%Lf ", arr->value()[i]);
-      mDump += ")\n";
+        output(String::printf("%Lf ", arr->value()[i]));
+      output(")\n");
     }
 
     virtual void visitArray(SRF_ArrayIdentifier* arr)
     {
-      indent(); mDump += "( ";
+      indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        mDump += String::printf("%s ", arr->value()[i].c_str());
-      mDump += ")\n";
+        output(String::printf("%s ", arr->value()[i].c_str()));
+      output(")\n");
     }
 
     virtual void visitArray(SRF_ArrayString* arr)
     {
-      indent(); mDump += "( ";
+      indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        mDump += "\"" + encodeString(arr->value()[i]) + "\" ";
-      mDump += ")\n";
+        output("\"" + encodeString(arr->value()[i]) + "\" ");
+      output(")\n");
     }
 
     virtual void visitArray(SRF_ArrayUID* arr)
     {
-      indent(); mDump += "( ";
+      indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        mDump += String::printf("%s ", arr->value()[i].mUID.c_str());
-      mDump += ")\n";
+        output(String::printf("%s ", arr->value()[i].uid()));
+      output(")\n");
     }
 
     // mic fixme: test this both as input and as output!
@@ -1556,57 +1669,190 @@ namespace vl
       return out;
     }
 
-    const String& dumpString() const { return mDump; }
+    const String& srfText() const { return mText; }
 
-    String& dumpString() { return mDump; }
+    String& srfText() { return mText; }
 
-    void setDumpString(const String& str) { mDump = str; }
+    virtual void output(const String& str)
+    {
+      // printf("%s", str.toStdString().c_str());
+      mText += str;
+    }
+
+    void setUIDSet(std::set< std::string >* uids) { mUIDSet = uids; }
+
+    std::set< std::string >* uidSet() { return mUIDSet; }
+
+    const std::set< std::string >* uidSet() const { return mUIDSet; }
 
   private:
     int mIndent;
     bool mAssign;
-    String mDump;
+    String mText;
+    std::set< std::string >* mUIDSet;
   };
   //-----------------------------------------------------------------------------
-  // SRF_LinkVisitor
+  // SRF_LinkMapperVisitor: 
+  // Compiles the link-map which associates an SRF_Structure to it's UID.
+  // Can be called multiple times
+  //-----------------------------------------------------------------------------
+  class SRF_LinkMapperVisitor: public SRF_Visitor
+  {
+  public:
+    typedef enum 
+    {
+      NoError,
+      DuplicateUID
+    } EError;
+
+  public:
+    SRF_LinkMapperVisitor(std::map< std::string, ref<SRF_Structure> >* map)
+    {
+      mLinkMap = map;
+      mError = NoError;
+    }
+
+    void setLinkMap(std::map< std::string, ref<SRF_Structure> >* map)
+    {
+      mLinkMap = map;
+    }
+
+    void declareUID(SRF_Structure* obj)
+    {
+      if (obj->uid() != "#NULL")
+      {
+        const std::map< std::string, ref<SRF_Structure> >::const_iterator it = mLinkMap->find(obj->uid());
+        if (it == mLinkMap->end())
+          (*mLinkMap)[obj->uid()] = obj;
+        else
+        {
+          if ( it->second != obj )
+          {
+            mError = DuplicateUID;
+            Log::error( Say("UID '%s' used by '%s' is already assigned to another node '%s'!\n") << obj->uid() << obj->tag() << it->second->tag() );
+          }
+        }
+      }
+    }
+
+    virtual void visitStructur(SRF_Structure* obj)
+    {
+      // mic fixme: test this
+      if (isVisited(obj))
+        return;
+
+      declareUID(obj);
+
+      for(size_t i=0; i<obj->value().size(); ++i)
+      {
+        if (obj->value()[i].value().type() == SRF_Value::Structure)
+          obj->value()[i].value().getStructure()->acceptVisitor(this);
+        else
+        if (obj->value()[i].value().type() == SRF_Value::List)
+          obj->value()[i].value().getList()->acceptVisitor(this);
+      }
+    }
+
+    virtual void visitList(SRF_List* list)
+    {
+      // this should happen only if the user manually creates loops
+      if (isVisited(list))
+      {
+        Log::warning("SRF_LinkMapperVisitor: cycle detected on SRF_List.\n");
+        return;
+      }
+
+      for(size_t i=0; i<list->value().size(); ++i)
+      {
+        if (list->value()[i].type() == SRF_Value::Structure)
+          list->value()[i].getStructure()->acceptVisitor(this);
+        else
+        if (list->value()[i].type() == SRF_Value::List)
+          list->value()[i].getList()->acceptVisitor(this);
+      }
+    }
+
+    virtual void visitArray(SRF_ArrayUID*) {}
+
+    virtual void visitArray(SRF_ArrayIdentifier*) {}
+
+    virtual void visitArray(SRF_ArrayString*)  {}
+
+    virtual void visitArray(SRF_ArrayInt32*)  {}
+
+    virtual void visitArray(SRF_ArrayInt64*)  {}
+
+    virtual void visitArray(SRF_ArrayFloat*)  {}
+
+    virtual void visitArray(SRF_ArrayDouble*)  {}
+
+    EError error() const { return mError; }
+
+    void setError(EError err) { mError = err; }
+
+  private:
+    std::map< std::string, ref<SRF_Structure> >* mLinkMap;
+    EError mError;
+  };
+  //-----------------------------------------------------------------------------
+  // SRF_LinkVisitor:
+  // Translates UIDs into SRF_Structures
   //-----------------------------------------------------------------------------
   class SRF_LinkVisitor: public SRF_Visitor
   {
   public:
-    SRF_LinkVisitor(const std::map< std::string, ref<SRF_Object> >* map)
+    typedef enum 
+    {
+      NoError,
+      UnresolvedUID
+    } EError;
+
+  public:
+    SRF_LinkVisitor(const std::map< std::string, ref<SRF_Structure> >* map)
     {
       mLinkMap = map;
     }
 
-    void setLinkMap(const std::map< std::string, ref<SRF_Object> >* map)
+    void setLinkMap(const std::map< std::string, ref<SRF_Structure> >* map)
     {
       mLinkMap = map;
     }
 
-    SRF_Object* link(const std::string& uid)
+    SRF_Structure* link(const std::string& uid)
     {
       VL_CHECK(mLinkMap)
-        VL_CHECK(!uid.empty())
-      std::map< std::string, ref<SRF_Object> >::const_iterator it = mLinkMap->find(uid);
+      VL_CHECK(!uid.empty())
+      std::map< std::string, ref<SRF_Structure> >::const_iterator it = mLinkMap->find(uid);
       if( it != mLinkMap->end() )
       {
-        printf("linked UID = '%s'.\n", uid.c_str());
+        // this should never happen
+        VL_CHECK(uid != "#NULL")
+
+        // mic fixme: just for debugging
+        printf( "- UID '%s' linked to '%s'.\n", uid.c_str(), it->second->tag().c_str() );
         return it->second.get_writable();
       }
       else
       {
         if (uid != "#NULL")
-          Log::error( Say("Could not link UID = '%s'.\n") << uid );
+        {
+          mError = UnresolvedUID;
+          Log::error( Say("Could not link UID '%s' to anything!\n") << uid );
+        }
         return NULL;
       }
     }
 
-    virtual void visitObject(SRF_Object* obj)
+    virtual void visitStructur(SRF_Structure* obj)
     {
+      // mic fixme: test this
+      if (isVisited(obj))
+        return;
+
       for(size_t i=0; i<obj->value().size(); ++i)
       {
-        if (obj->value()[i].value().type() == SRF_Value::Object)
-          obj->value()[i].value().getObject()->acceptVisitor(this);
+        if (obj->value()[i].value().type() == SRF_Value::Structure)
+          obj->value()[i].value().getStructure()->acceptVisitor(this);
         else
         if (obj->value()[i].value().type() == SRF_Value::List)
           obj->value()[i].value().getList()->acceptVisitor(this);
@@ -1616,19 +1862,26 @@ namespace vl
         else
         if (obj->value()[i].value().type() == SRF_Value::UID)
         {
-          SRF_Object* ptr = link( obj->value()[i].value().getUID() );
-          obj->value()[i].value().setObject( ptr );
+          // transform UID -> Structure
+          SRF_Structure* lnk_obj = link( obj->value()[i].value().getUID() );
+          obj->value()[i].value().setStructure( lnk_obj );
         }
       }
     }
 
     virtual void visitList(SRF_List* list)
     {
+      // this should happen only if the user manually creates loops
+      if (isVisited(list))
+      {
+        Log::warning("SRF_LinkVisitor: cycle detected on SRF_List.\n");
+        return;
+      }
+
       for(size_t i=0; i<list->value().size(); ++i)
       {
-        if (list->value()[i].type() == SRF_Value::Object)
-          list->value()[i].getObject()->acceptVisitor(this);
-        else
+        if (list->value()[i].type() == SRF_Value::Structure)
+          list->value()[i].getStructure()->acceptVisitor(this);
         if (list->value()[i].type() == SRF_Value::List)
           list->value()[i].getList()->acceptVisitor(this);
         else
@@ -1637,16 +1890,18 @@ namespace vl
         else
         if (list->value()[i].type() == SRF_Value::UID)
         {
-          SRF_Object* obj = link( list->value()[i].getUID() );
-          list->value()[i].setObject( obj );
+          // transform UID -> Structure
+          SRF_Structure* lnk_obj = link( list->value()[i].getUID() );
+          list->value()[i].setStructure( lnk_obj );
         }
       }
     }
 
     virtual void visitArray(SRF_ArrayUID* arr)
     {
+      // retrieves the assigned Structure
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        arr->value()[i].mPtr = link(arr->value()[i].mUID);
+        arr->value()[i].setStructure ( link(arr->value()[i].uid()) );
     }
 
     virtual void visitArray(SRF_ArrayIdentifier*) {}
@@ -1661,8 +1916,138 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayDouble*)  {}
 
+    EError error() const { return mError; }
+
+    void setError(EError err) { mError = err; }
+
   private:
-    const std::map< std::string, ref<SRF_Object> >* mLinkMap;
+    const std::map< std::string, ref<SRF_Structure> >* mLinkMap;
+    EError mError;
+  };
+  //-----------------------------------------------------------------------------
+  // SRF_UIDCollectorVisitor:
+  // Sets to #NULL the UID of those objects that are not referenced by anybody.
+  // Useful before exporting.
+  //-----------------------------------------------------------------------------
+  class SRF_UIDCollectorVisitor: public SRF_Visitor
+  {
+  public:
+    SRF_UIDCollectorVisitor(): mUIDSet(NULL) {}
+
+    virtual void visitStructur(SRF_Structure* obj)
+    {
+      // mic fixme: test this
+      if (isVisited(obj))
+        return;
+
+      for(size_t i=0; i<obj->value().size(); ++i)
+      {
+        if (obj->value()[i].value().type() == SRF_Value::Structure)
+          obj->value()[i].value().getStructure()->acceptVisitor(this);
+        else
+        if (obj->value()[i].value().type() == SRF_Value::List)
+          obj->value()[i].value().getList()->acceptVisitor(this);
+        else
+        if (obj->value()[i].value().type() == SRF_Value::ArrayUID)
+          obj->value()[i].value().getArrayUID()->acceptVisitor(this);
+        else
+        if (obj->value()[i].value().type() == SRF_Value::UID)
+          mUIDSet->insert(obj->value()[i].value().getUID());
+      }
+    }
+
+    virtual void visitList(SRF_List* list)
+    {
+      // this should happen only if the user manually creates loops
+      if (isVisited(list))
+      {
+        Log::warning("SRF_UIDCollectorVisitor: cycle detected on SRF_List.\n");
+        return;
+      }
+
+      for(size_t i=0; i<list->value().size(); ++i)
+      {
+        if (list->value()[i].type() == SRF_Value::Structure)
+          list->value()[i].getStructure()->acceptVisitor(this);
+        if (list->value()[i].type() == SRF_Value::List)
+          list->value()[i].getList()->acceptVisitor(this);
+        else
+        if (list->value()[i].type() == SRF_Value::ArrayUID)
+          list->value()[i].getArrayUID()->acceptVisitor(this);
+        else
+        if (list->value()[i].type() == SRF_Value::UID)
+          mUIDSet->insert(list->value()[i].getUID());
+      }
+    }
+
+    virtual void visitArray(SRF_ArrayUID* arr)
+    {
+      // retrieves the assigned Structure
+      for(size_t i=0 ;i<arr->value().size(); ++i)
+        mUIDSet->insert(arr->value()[i].uid());
+    }
+
+    virtual void visitArray(SRF_ArrayIdentifier*) {}
+
+    virtual void visitArray(SRF_ArrayString*)  {}
+
+    virtual void visitArray(SRF_ArrayInt32*)  {}
+
+    virtual void visitArray(SRF_ArrayInt64*)  {}
+
+    virtual void visitArray(SRF_ArrayFloat*)  {}
+
+    virtual void visitArray(SRF_ArrayDouble*)  {}
+
+    void setUIDSet(std::set< std::string >* uids) { mUIDSet = uids; }
+
+    std::set< std::string >* uidSet() { return mUIDSet; }
+
+    const std::set< std::string >* uidSet() const { return mUIDSet; }
+
+  private:
+    std::set< std::string >* mUIDSet;
+  };
+  //-----------------------------------------------------------------------------
+  // Links several hierachies also resolving UIDs across them.
+  //-----------------------------------------------------------------------------
+  class SRF_Linker
+  {
+  public:
+    void add(SRF_AbstractComplexValue* module)
+    {
+      mModules.push_back(module);
+    }
+
+    bool link()
+    {
+      std::map< std::string, ref<SRF_Structure> > link_map;
+
+      // map all the UIDs to the appropriate SRF_Structures
+      SRF_LinkMapperVisitor link_mapper(&link_map);
+      for(size_t i=0; i<mModules.size(); ++i)
+        mModules[i]->acceptVisitor(&link_mapper);
+
+      if (link_mapper.error())
+        return false;
+
+      // link all the UIDs to the associated SRF_Structure
+      SRF_LinkVisitor linker(&link_map);
+      for(size_t i=0; i<mModules.size(); ++i)
+        mModules[i]->acceptVisitor(&linker);
+
+      if (linker.error())
+        return false;
+
+      return true;
+    }
+
+    std::vector< ref<SRF_AbstractComplexValue> >& modules() { return mModules; }
+
+    const std::vector< ref<SRF_AbstractComplexValue> >& modules() const { return mModules; }
+
+  public:
+    std::vector< ref<SRF_AbstractComplexValue> > mModules;
   };
   //-----------------------------------------------------------------------------
   // SRF_Parser
@@ -1677,14 +2062,45 @@ namespace vl
 
     bool getToken(SRF_Token& token) { return mTokenizer->getToken(token); }
 
+    String exportToText()
+    {
+      if (mRoot)
+      {
+        std::set< std::string > uid_set;
+        SRF_UIDCollectorVisitor uid_collector;
+        uid_collector.setUIDSet(&uid_set);
+        mRoot->acceptVisitor(&uid_collector);
+
+        SRF_TextExportVisitor text_export_visitor;
+        text_export_visitor.setUIDSet(&uid_set);
+        mRoot->acceptVisitor(&text_export_visitor);
+
+        return text_export_visitor.srfText();
+      }
+      else
+        return "";
+    }
+
+    bool link()
+    {
+      if (mRoot)
+      {
+        SRF_Linker linker;
+        linker.add(mRoot.get());
+        return linker.link();
+      }
+      else
+        return false;
+    }
+
     bool parse()
     {
       mRoot = NULL;
-      if(getToken(mToken) && mToken.mType == SRF_Token::ObjectHeader)
+      if(getToken(mToken) && mToken.mType == SRF_Token::StructureHeader)
       {
-        mRoot = new SRF_Object;
+        mRoot = new SRF_Structure;
         mRoot->setTag(mToken.mString.c_str());
-        if (parseObject(mRoot.get()))
+        if (parseStructure(mRoot.get()))
         {
           return true;
         }
@@ -1705,7 +2121,7 @@ namespace vl
       }
     }
 
-    bool parseObject(SRF_Object* object)
+    bool parseStructure(SRF_Structure* object)
     {
       if (!getToken(mToken) || mToken.mType != SRF_Token::LeftCurlyBracket)
         return false;
@@ -1739,7 +2155,7 @@ namespace vl
               {
                 object->setUID(mToken.mString.c_str());
 
-                // UID to Object Map, #NULL is not mapped to anything
+                // UID to Structure Map, #NULL is not mapped to anything
                 if( object->uid() != "#NULL")
                 {
                   if (mLinkMap.find(object->uid()) == mLinkMap.end())
@@ -1762,8 +2178,8 @@ namespace vl
           }
 
           // non-ID key-values
-          object->value().push_back( SRF_Object::Value() );
-          SRF_Object::Value& name_value = object->value().back();
+          object->value().push_back( SRF_Structure::Value() );
+          SRF_Structure::Value& name_value = object->value().back();
 
           // Key
           name_value.setKey( mToken.mString );
@@ -1775,13 +2191,13 @@ namespace vl
           // Member value
           if (getToken(mToken))
           {
-            // A new <Object>
-            if (mToken.mType == SRF_Token::ObjectHeader)
+            // A new <Structure>
+            if (mToken.mType == SRF_Token::StructureHeader)
             {
-              ref<SRF_Object> object = new SRF_Object;
+              ref<SRF_Structure> object = new SRF_Structure;
               object->setTag(mToken.mString.c_str());
-              name_value.value().setObject(object.get());
-              if (!parseObject( object.get() ) )
+              name_value.value().setStructure(object.get());
+              if (!parseStructure( object.get() ) )
                 return false;
             }
             else
@@ -1861,13 +2277,13 @@ namespace vl
           switch( mToken.mType )
           {
             // object
-            case SRF_Token::ObjectHeader:
+            case SRF_Token::StructureHeader:
               {
-                ref<SRF_Object> object = new SRF_Object;
+                ref<SRF_Structure> object = new SRF_Structure;
                 object->setTag(mToken.mString.c_str());
-                if ( parseObject( object.get() ) )
+                if ( parseStructure( object.get() ) )
                 {
-                  value.setObject(object.get());
+                  value.setStructure(object.get());
                   list->value().push_back( value );
                 }
                 else
@@ -2084,7 +2500,7 @@ namespace vl
           case SRF_Token::Double:             printf("Double = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Int32:              printf("Int32 = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Int64:              printf("Int64 = %s\n", mToken.mString.c_str()); break;
-          case SRF_Token::ObjectHeader:       printf("ObjectHeader = %s\n", mToken.mString.c_str()); break;
+          case SRF_Token::StructureHeader:       printf("StructureHeader = %s\n", mToken.mString.c_str()); break;
           default:
             break;
         }
@@ -2095,38 +2511,17 @@ namespace vl
       }
     }
 
-    String dump()
-    {
-      if (mRoot)
-      {
-        SRF_DumpVisitor dump_visitor;
-        mRoot->acceptVisitor(&dump_visitor);
-        return dump_visitor.dumpString();
-      }
-      else
-        return "";
-    }
-
-    void link()
-    {
-      if (mRoot)
-      {
-        SRF_LinkVisitor linker(&mLinkMap);
-        mRoot->acceptVisitor(&linker);
-      }
-    }
-  
     SRF_Tokenizer* tokenizer() { return mTokenizer.get(); }
 
     const SRF_Tokenizer* tokenizer() const { return mTokenizer.get(); }
 
-    const std::map< std::string, ref<SRF_Object> >& linkMap() const { return mLinkMap; }
+    const std::map< std::string, ref<SRF_Structure> >& linkMap() const { return mLinkMap; }
 
-    const SRF_Object* root() const { return mRoot.get(); }
+    const SRF_Structure* root() const { return mRoot.get(); }
 
   private:
-    ref<SRF_Object> mRoot;
-    std::map< std::string, ref<SRF_Object> > mLinkMap;
+    ref<SRF_Structure> mRoot;
+    std::map< std::string, ref<SRF_Structure> > mLinkMap;
     ref<SRF_Tokenizer> mTokenizer;
     SRF_Token mToken;
   };

@@ -637,6 +637,9 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
 
   Log::debug( Say("%n draw calls will be merged using primitive restart.\n") << mergendo_calls.size() );
 
+  if (mergendo_calls.empty())
+    return;
+
   ref<DrawElementsUInt> de_prim_restart = new DrawElementsUInt(primitive_type);
   // make space for all the indices plus the primitive restart markers.
   de_prim_restart->indexBuffer()->resize(total_index_count + mergendo_calls.size()-1);
@@ -685,6 +688,9 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
   std::reverse(count_vector.begin(), count_vector.end());
 
   Log::debug( Say("%n draw calls will be merged using MultiDrawElements.\n") << mergendo_calls.size() );
+
+  if (mergendo_calls.empty())
+    return;
 
   ref<MultiDrawElementsUInt> de_multi = new MultiDrawElementsUInt(primitive_type);
   // make space for all the indices plus the primitive restart markers.
@@ -739,6 +745,9 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
   }
   // preseve rendering order
   std::reverse(mergendo_calls.begin(), mergendo_calls.end());
+
+  if (mergendo_calls.empty())
+    return;
 
   // if there was one single PT_TRIANGLES draw calls then we are done.
   if ( mergendo_calls.size() == 1 && mergendo_calls[0]->primitiveType() == PT_TRIANGLES )

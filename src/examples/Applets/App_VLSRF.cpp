@@ -48,123 +48,126 @@ using namespace vl;
 class App_VLSRF: public BaseDemo
 {
 public:
-  const char* getBoolCR(bool ok)
+  void srfExport_Renderable(const Renderable* ren, SRF_Structure* renderable_subclass)
   {
-    return ok ? "true\n" : "false\n";
-  }
-
-  void srfExport_Renderable(const Renderable* ren, SRF_Object* renderable_subclass)
-  {
-    renderable_subclass->setUID( getUID(ren) );
-    renderable_subclass->value().push_back( SRF_Object::Value("VBOEnabled", ren->isVBOEnabled()) );
-    renderable_subclass->value().push_back( SRF_Object::Value("DisplayListEnabled", ren->isDisplayListEnabled()) );
-    renderable_subclass->value().push_back( SRF_Object::Value("AABB", srfExport_AABB(ren->boundingBox())) );
-    renderable_subclass->value().push_back( SRF_Object::Value("Sphere", srfExport_Sphere(ren->boundingSphere())) );
+    renderable_subclass->value().push_back( SRF_Structure::Value("VBOEnabled", ren->isVBOEnabled()) );
+    renderable_subclass->value().push_back( SRF_Structure::Value("DisplayListEnabled", ren->isDisplayListEnabled()) );
+    renderable_subclass->value().push_back( SRF_Structure::Value("AABB", srfExport_AABB(ren->boundingBox())) );
+    renderable_subclass->value().push_back( SRF_Structure::Value("Sphere", srfExport_Sphere(ren->boundingSphere())) );
   }
 
   SRF_Value srfExport_AABB(const AABB& aabb)
   {
-    SRF_Value value ( new SRF_Object("<AABB>") );
-    value.getObject()->value().push_back( SRF_Object::Value("MinCorner", aabb.minCorner()) );
-    value.getObject()->value().push_back( SRF_Object::Value("MaxCorner", aabb.maxCorner()) );
+    SRF_Value value ( new SRF_Structure("<AABB>", generateUID("aabb_")) );
+    value.getStructure()->value().push_back( SRF_Structure::Value("MinCorner", aabb.minCorner()) );
+    value.getStructure()->value().push_back( SRF_Structure::Value("MaxCorner", aabb.maxCorner()) );
     return value;
   }
 
   SRF_Value srfExport_Sphere(const Sphere& sphere)
   {
-    SRF_Value value ( new SRF_Object("<Sphere>") );
-    value.getObject()->value().push_back( SRF_Object::Value("Center", sphere.center()) );
-    value.getObject()->value().push_back( SRF_Object::Value("Radius", sphere.radius()) );
+    SRF_Value value ( new SRF_Structure("<Sphere>", generateUID("sphere_")) );
+    value.getStructure()->value().push_back( SRF_Structure::Value("Center", sphere.center()) );
+    value.getStructure()->value().push_back( SRF_Structure::Value("Radius", sphere.radius()) );
     return value;
   }
 
-  void srfPrelink_Geometry(const Geometry* geom)
-  {
-    // --- generate UIDs ---
-    // geometry itself
-    generateUID(geom, "geometry_");
-    // vertex arrays
-    generateUID(geom->vertexArray(), "vertex_array_");
-    generateUID(geom->normalArray(), "normal_array");
-    generateUID(geom->colorArray(),  "color_array");
-    generateUID(geom->secondaryColorArray(), "secondary_color_array");
-    generateUID(geom->fogCoordArray(), "fogcoord_array");
-    for(size_t i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-      generateUID(geom->texCoordArray(i), "texcoord_array_");
-    for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
-      if (geom->vertexAttribArray(i))
-      {
-        generateUID(geom->vertexAttribArray(i), "vertexattribinfo_");
-        if ( geom->vertexAttribArray(i)->data() )
-          generateUID(geom->vertexAttribArray(i)->data(), "vertexattrib_array_");
-      }
-    // draw elements
-    for(int i=0; i<geom->drawCalls()->size(); ++i)
-    {
-      // draw call
-      generateUID(geom->drawCalls()->at(i), "drawcall_");
+  //void srfProcessUIDs_Geometry(const Geometry* geom)
+  //{
+  //  // --- generate UIDs ---
+  //  // geometry itself
+  //  generateUID(geom, "geometry_");
 
-      // index buffer
-      if (geom->drawCalls()->at(i)->classType() == DrawElementsUInt::Type())
-        generateUID(geom->drawCalls()->at(i)->as<DrawElementsUInt>()->indexBuffer(), "indexbuffer_");
-      else
-      if (geom->drawCalls()->at(i)->classType() == DrawElementsUShort::Type())
-        generateUID(geom->drawCalls()->at(i)->as<DrawElementsUShort>()->indexBuffer(), "indexbuffer_");
-      else
-      if (geom->drawCalls()->at(i)->classType() == DrawElementsUByte::Type())
-        generateUID(geom->drawCalls()->at(i)->as<DrawElementsUByte>()->indexBuffer(), "indexbuffer_");
-      else
-      if (geom->drawCalls()->at(i)->classType() == MultiDrawElementsUInt::Type())
-        generateUID(geom->drawCalls()->at(i)->as<MultiDrawElementsUInt>()->indexBuffer(), "indexbuffer_");
-      else
-      if (geom->drawCalls()->at(i)->classType() == MultiDrawElementsUShort::Type())
-        generateUID(geom->drawCalls()->at(i)->as<MultiDrawElementsUShort>()->indexBuffer(), "indexbuffer_");
-      else
-      if (geom->drawCalls()->at(i)->classType() == MultiDrawElementsUByte::Type())
-        generateUID(geom->drawCalls()->at(i)->as<MultiDrawElementsUByte>()->indexBuffer(), "indexbuffer_");
+  //  // vertex arrays
+  //  generateUID(geom->vertexArray(), "vertex_array_");
 
-      // patch paramter
-      generateUID(geom->drawCalls()->at(i)->patchParameter(), "patchparam_");
-    }
-  }
+  //  generateUID(geom->normalArray(), "normal_array");
+
+  //  generateUID(geom->colorArray(),  "color_array");
+
+  //  generateUID(geom->secondaryColorArray(), "secondary_color_array");
+
+  //  generateUID(geom->fogCoordArray(), "fogcoord_array");
+
+  //  for(size_t i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+  //    generateUID(geom->texCoordArray(i), "texcoord_array_");
+
+  //  for(size_t i=0; i<VL_MAX_GENERIC_VERTEX_ATTRIB; ++i)
+  //  {
+  //    if (geom->vertexAttribArray(i))
+  //    {
+  //      generateUID(geom->vertexAttribArray(i), "vertexattribinfo_");
+  //      if ( geom->vertexAttribArray(i)->data() )
+  //        generateUID(geom->vertexAttribArray(i)->data(), "vertexattrib_array_");
+  //    }
+  //  }
+
+  //  // draw elements
+  //  for(int i=0; i<geom->drawCalls()->size(); ++i)
+  //  {
+  //    // draw call
+  //    generateUID(geom->drawCalls()->at(i), "drawcall_");
+
+  //    // index buffer
+  //    if (geom->drawCalls()->at(i)->classType() == DrawElementsUInt::Type())
+  //      generateUID(geom->drawCalls()->at(i)->as<DrawElementsUInt>()->indexBuffer(), "indexbuffer_");
+  //    else
+  //    if (geom->drawCalls()->at(i)->classType() == DrawElementsUShort::Type())
+  //      generateUID(geom->drawCalls()->at(i)->as<DrawElementsUShort>()->indexBuffer(), "indexbuffer_");
+  //    else
+  //    if (geom->drawCalls()->at(i)->classType() == DrawElementsUByte::Type())
+  //      generateUID(geom->drawCalls()->at(i)->as<DrawElementsUByte>()->indexBuffer(), "indexbuffer_");
+  //    else
+  //    if (geom->drawCalls()->at(i)->classType() == MultiDrawElementsUInt::Type())
+  //      generateUID(geom->drawCalls()->at(i)->as<MultiDrawElementsUInt>()->indexBuffer(), "indexbuffer_");
+  //    else
+  //    if (geom->drawCalls()->at(i)->classType() == MultiDrawElementsUShort::Type())
+  //      generateUID(geom->drawCalls()->at(i)->as<MultiDrawElementsUShort>()->indexBuffer(), "indexbuffer_");
+  //    else
+  //    if (geom->drawCalls()->at(i)->classType() == MultiDrawElementsUByte::Type())
+  //      generateUID(geom->drawCalls()->at(i)->as<MultiDrawElementsUByte>()->indexBuffer(), "indexbuffer_");
+
+  //    // patch paramter
+  //    generateUID(geom->drawCalls()->at(i)->patchParameter(), "patchparam_");
+  //  }
+  //}
 
   SRF_Value srfExport_Geometry(const Geometry* geom)
   {
     SRF_Value value;
-    if (isDefined(geom))
+    if (vlToSRF(geom))
     {
-      value.setUID( getUID(geom) );
+      value.setUID( vlToSRF(geom)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(geom);
 
-    value.setObject( new SRF_Object("<Geometry>") );
-    std::vector<SRF_Object::Value>& values = value.getObject()->value();
+    value.setStructure( new SRF_Structure( "<Geometry>", generateUID("geometry_") ) );
+    registerExportedStructure(geom, value.getStructure());
+    std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
 
-    srfExport_Renderable( geom, value.getObject() );
+    srfExport_Renderable( geom, value.getStructure() );
 
     if (geom->vertexArray()) 
-      values.push_back( SRF_Object::Value("VertexArray", srfExport_Array(geom->vertexArray())) );
+      values.push_back( SRF_Structure::Value("VertexArray", srfExport_Array(geom->vertexArray())) );
     
     if (geom->normalArray()) 
-      values.push_back( SRF_Object::Value("NormalArray", srfExport_Array(geom->normalArray())) );
+      values.push_back( SRF_Structure::Value("NormalArray", srfExport_Array(geom->normalArray())) );
     
     if (geom->colorArray()) 
-      values.push_back( SRF_Object::Value("ColorArray", srfExport_Array(geom->colorArray())) );
+      values.push_back( SRF_Structure::Value("ColorArray", srfExport_Array(geom->colorArray())) );
     
     if (geom->secondaryColorArray()) 
-      values.push_back( SRF_Object::Value("SecondaryColorArray", srfExport_Array(geom->secondaryColorArray())) );
+      values.push_back( SRF_Structure::Value("SecondaryColorArray", srfExport_Array(geom->secondaryColorArray())) );
     
     if (geom->fogCoordArray()) 
-      values.push_back( SRF_Object::Value("FogCoordArray", srfExport_Array(geom->fogCoordArray())) );
+      values.push_back( SRF_Structure::Value("FogCoordArray", srfExport_Array(geom->fogCoordArray())) );
 
     for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
     {
       if (geom->texCoordArray(i)) 
       {
         std::string TexCoordArray = String::printf("TexCoordArray%d", i).toStdString();
-        values.push_back( SRF_Object::Value(TexCoordArray.c_str(), srfExport_Array(geom->texCoordArray(i))) ); 
+        values.push_back( SRF_Structure::Value(TexCoordArray.c_str(), srfExport_Array(geom->texCoordArray(i))) ); 
       }
     }
     
@@ -173,122 +176,117 @@ public:
       if (geom->vertexAttribArray(i))
       {
         std::string VertexAttribArray = String::printf("VertexAttribArray%d", i).toStdString();
-        values.push_back( SRF_Object::Value(VertexAttribArray.c_str(), srfExport_VertexAttribInfo(geom->vertexAttribArray(i))) );
+        values.push_back( SRF_Structure::Value(VertexAttribArray.c_str(), srfExport_VertexAttribInfo(geom->vertexAttribArray(i))) );
       }
     }
 
     for(int i=0; i<geom->drawCalls()->size(); ++i)
-      values.push_back( SRF_Object::Value("DrawCall", srfExport_DrawCall(geom->drawCalls()->at(i))) );
+      values.push_back( SRF_Structure::Value("DrawCall", srfExport_DrawCall(geom->drawCalls()->at(i))) );
 
     return value;
   }
 
-  void srfPrelink_Effect(const Effect*)
-  {
-    // mic fixme: implement
-  }
+  //void srfProcessUIDs_Effect(const Effect*)
+  //{
+  //  // mic fixme: implement
+  //}
 
   SRF_Value srfExport_Effect(const Effect* fx)
   {
     SRF_Value value;
-    if (isDefined(fx))
+    if (vlToSRF(fx))
     {
-      value.setUID( getUID(fx) );
+      value.setUID( vlToSRF(fx)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(fx);
 
     // mic fixme: this is just a stub, complete the implementation
-    value.setObject( new SRF_Object("<Effect>") );
+    value.setStructure( new SRF_Structure("<Effect>", generateUID("effect_")) );
+    registerExportedStructure(fx, value.getStructure());
 
     return value;
   }
 
-  void srfPrelink_Shader(const Shader*)
-  {
-    // mic fixme: implement
-  }
+  //void srfProcessUIDs_Shader(const Shader*)
+  //{
+  //  // mic fixme: implement
+  //}
 
   SRF_Value srfExport_Shader(const Shader* sh)
   {
     SRF_Value value;
-    if (isDefined(sh))
+    if (vlToSRF(sh))
     {
-      value.setUID( getUID(sh) );
+      value.setUID( vlToSRF(sh)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(sh);
 
     // mic fixme: this is just a stub, complete the implementation
-    value.setObject( new SRF_Object("<Shader>") );
+    value.setStructure( new SRF_Structure("<Shader>", generateUID("shader_")) );
+    registerExportedStructure(sh, value.getStructure());
 
     return value;
   }
 
-  void srfPrelink_Transform(const Transform*)
-  {
-    // mic fixme: implement
-  }
+  //void srfProcessUIDs_Transform(const Transform*)
+  //{
+  //  // mic fixme: implement
+  //}
 
   SRF_Value srfExport_Transform(const Transform* tr)
   {
     SRF_Value value;
-    if (isDefined(tr))
+    if (vlToSRF(tr))
     {
-      value.setUID( getUID(tr) );
+      value.setUID( vlToSRF(tr)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(tr);
 
     // mic fixme: this is just a stub, complete the implementation
-    value.setObject( new SRF_Object("<Transform>") );
+    value.setStructure( new SRF_Structure("<Transform>", generateUID("transform_")) );
+    registerExportedStructure(tr, value.getStructure());
 
     return value;
   }
 
-  void srfPrelink_Actor(const Actor*)
-  {
-    // mic fixme: implement
-  }
+  //void srfProcessUIDs_Actor(const Actor*)
+  //{
+  //  // mic fixme: implement
+  //}
 
   SRF_Value srfExport_Actor(const Actor* act)
   {
     SRF_Value value;
-    if (isDefined(act))
+    if (vlToSRF(act))
     {
-      value.setUID( getUID(act) );
+      value.setUID( vlToSRF(act)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(act);
 
     // mic fixme: this is just a stub, complete the implementation
-    value.setObject( new SRF_Object("<Actor>") );
+    value.setStructure( new SRF_Structure("<Actor>", generateUID("actor_")) );
+    registerExportedStructure(act, value.getStructure());
 
     return value;
   }
 
-  void srfPrelink_Camera(const Camera*)
-  {
-    // mic fixme: implement
-  }
+  //void srfProcessUIDs_Camera(const Camera*)
+  //{
+  //  // mic fixme: implement
+  //}
 
   SRF_Value srfExport_Camera(const Camera* cam)
   {
     SRF_Value value;
-    if (isDefined(cam))
+    if (vlToSRF(cam))
     {
-      value.setUID( getUID(cam) );
+      value.setUID( vlToSRF(cam)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(cam);
 
     // mic fixme: this is just a stub, complete the implementation
-    value.setObject( new SRF_Object("<Camera>") );
+    value.setStructure( new SRF_Structure("<Camera>", generateUID("camera_")) );
+    registerExportedStructure(cam, value.getStructure());
 
     return value;
   }
@@ -296,20 +294,18 @@ public:
   SRF_Value srfExport_VertexAttribInfo(const VertexAttribInfo* info)
   {
     SRF_Value value;
-    if (isDefined(info))
+    if (vlToSRF(info))
     {
-      value.setUID( getUID(info) );
+      value.setUID( vlToSRF(info)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(info);
 
-    SRF_Object* srf_obj = value.setObject( new SRF_Object("<VertexAttribInfo>") );
-    std::vector<SRF_Object::Value>& values = srf_obj->value();
+    SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<VertexAttribInfo>", generateUID("vertexattribinfo_")) );
+    registerExportedStructure(info, srf_obj);
+    std::vector<SRF_Structure::Value>& values = srf_obj->value();
 
-    srf_obj->setUID( getUID(info) );
-    values.push_back( SRF_Object::Value("Data", srfExport_Array(info->data())) );
-    values.push_back( SRF_Object::Value("Normalize", info->normalize()) );
+    values.push_back( SRF_Structure::Value("Data", srfExport_Array(info->data())) );
+    values.push_back( SRF_Structure::Value("Normalize", info->normalize()) );
     std::string interpretation;
     switch(info->interpretation())
     {
@@ -317,7 +313,7 @@ public:
     case VAI_INTEGER: interpretation = "VAI_INTEGER"; break;
     case VAI_DOUBLE:  interpretation = "VAI_DOUBLE";  break;
     }
-    values.push_back( SRF_Object::Value("Interpretation", SRF_Value(interpretation.c_str(), SRF_Value::Identifier)) );
+    values.push_back( SRF_Structure::Value("Interpretation", SRF_Value(interpretation.c_str(), SRF_Value::Identifier)) );
 
     return value;
   }
@@ -326,8 +322,7 @@ public:
   SRF_Value srfExport_ArrayT(const ArrayAbstract* arr_abstract, const char* name)
   {
     const T_Array* arr = arr_abstract->as<T_Array>();
-    SRF_Value value( new SRF_Object(name) );
-    value.getObject()->setUID( getUID(arr_abstract) );
+    SRF_Value value( new SRF_Structure(name, generateUID("array_")) );
     ref<T_SRF_Array> srf_array = new T_SRF_Array;
     if (arr->size())
     {
@@ -338,20 +333,18 @@ public:
       for(; src<end; ++src, ++dst)
         *dst = (T_SRF_Array::scalar_type)*src;
     }
-    value.getObject()->value().push_back( SRF_Object::Value("Value", srf_array.get() ) );
+    value.getStructure()->value().push_back( SRF_Structure::Value("Value", srf_array.get() ) );
     return value;
   }
 
   SRF_Value srfExport_Array(const ArrayAbstract* arr_abstract)
   {
     SRF_Value value;
-    if (isDefined(arr_abstract))
+    if (vlToSRF(arr_abstract))
     {
-      value.setUID( getUID(arr_abstract) );
+      value.setUID( vlToSRF(arr_abstract)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(arr_abstract);
 
     if(arr_abstract->classType() == ArrayUInt1::Type())
       value = srfExport_ArrayT<ArrayUInt1, SRF_ArrayInt32>(arr_abstract, "<ArrayUInt1>");
@@ -474,56 +467,53 @@ public:
       VL_TRAP();
     }
 
+    registerExportedStructure(arr_abstract, value.getStructure());
     return value;
   }
 
-  void srfExport_DrawCallBase(const DrawCall* dcall, SRF_Object* srf_obj)
+  void srfExport_DrawCallBase(const DrawCall* dcall, SRF_Structure* srf_obj)
   {
-    srf_obj->setUID( getUID(dcall) );
-
     std::string primitive_type = "PRIMITIVE_TYPE_ERROR";
     switch(dcall->primitiveType())
     {
-      case PT_POINTS:                   primitive_type =  "PT_POINTS\n"; break;
-      case PT_LINES:                    primitive_type =  "PT_LINES\n"; break;
-      case PT_LINE_LOOP:                primitive_type =  "PT_LINE_LOOP\n"; break;
-      case PT_LINE_STRIP:               primitive_type =  "PT_LINE_STRIP\n"; break;
-      case PT_TRIANGLES:                primitive_type =  "PT_TRIANGLES\n"; break;
-      case PT_TRIANGLE_STRIP:           primitive_type =  "PT_TRIANGLE_STRIP\n"; break;
-      case PT_TRIANGLE_FAN:             primitive_type =  "PT_TRIANGLE_FAN\n"; break;
-      case PT_QUADS:                    primitive_type =  "PT_QUADS\n"; break;
-      case PT_QUAD_STRIP:               primitive_type =  "PT_QUAD_STRIP\n"; break;
-      case PT_POLYGON:                  primitive_type =  "PT_POLYGON\n"; break;
-      case PT_LINES_ADJACENCY:          primitive_type =  "PT_LINES_ADJACENCY\n"; break;
-      case PT_LINE_STRIP_ADJACENCY:     primitive_type =  "PT_LINE_STRIP_ADJACENCY\n"; break;
-      case PT_TRIANGLES_ADJACENCY:      primitive_type =  "PT_TRIANGLES_ADJACENCY\n"; break;
-      case PT_TRIANGLE_STRIP_ADJACENCY: primitive_type =  "PT_TRIANGLE_STRIP_ADJACENCY\n"; break;
-      case PT_PATCHES:                  primitive_type =  "PT_PATCHES\n"; break;
-      case PT_UNKNOWN:                  primitive_type =  "PT_UNKNOWN\n"; break;
+      case PT_POINTS:                   primitive_type =  "PT_POINTS"; break;
+      case PT_LINES:                    primitive_type =  "PT_LINES"; break;
+      case PT_LINE_LOOP:                primitive_type =  "PT_LINE_LOOP"; break;
+      case PT_LINE_STRIP:               primitive_type =  "PT_LINE_STRIP"; break;
+      case PT_TRIANGLES:                primitive_type =  "PT_TRIANGLES"; break;
+      case PT_TRIANGLE_STRIP:           primitive_type =  "PT_TRIANGLE_STRIP"; break;
+      case PT_TRIANGLE_FAN:             primitive_type =  "PT_TRIANGLE_FAN"; break;
+      case PT_QUADS:                    primitive_type =  "PT_QUADS"; break;
+      case PT_QUAD_STRIP:               primitive_type =  "PT_QUAD_STRIP"; break;
+      case PT_POLYGON:                  primitive_type =  "PT_POLYGON"; break;
+      case PT_LINES_ADJACENCY:          primitive_type =  "PT_LINES_ADJACENCY"; break;
+      case PT_LINE_STRIP_ADJACENCY:     primitive_type =  "PT_LINE_STRIP_ADJACENCY"; break;
+      case PT_TRIANGLES_ADJACENCY:      primitive_type =  "PT_TRIANGLES_ADJACENCY"; break;
+      case PT_TRIANGLE_STRIP_ADJACENCY: primitive_type =  "PT_TRIANGLE_STRIP_ADJACENCY"; break;
+      case PT_PATCHES:                  primitive_type =  "PT_PATCHES"; break;
+      case PT_UNKNOWN:                  primitive_type =  "PT_UNKNOWN"; break;
     }
 
-    srf_obj->value().push_back( SRF_Object::Value("PrimitiveType", SRF_Value(primitive_type.c_str(), SRF_Value::Identifier) ) );
-    srf_obj->value().push_back( SRF_Object::Value("Enabled", dcall->isEnabled()) );
+    srf_obj->value().push_back( SRF_Structure::Value("PrimitiveType", SRF_Value(primitive_type.c_str(), SRF_Value::Identifier) ) );
+    srf_obj->value().push_back( SRF_Structure::Value("Enabled", dcall->isEnabled()) );
     if (dcall->patchParameter())
-      srf_obj->value().push_back( SRF_Object::Value("PatchParameter", srfExport_PatchParameter(dcall->patchParameter())) );
+      srf_obj->value().push_back( SRF_Structure::Value("PatchParameter", srfExport_PatchParameter(dcall->patchParameter())) );
   }
 
   SRF_Value srfExport_PatchParameter(const PatchParameter* pp)
   {
     SRF_Value value;
-    if (isDefined(pp))
+    if (vlToSRF(pp))
     {
-      value.setUID( getUID(pp) );
+      value.setUID( vlToSRF(pp)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(pp);
 
-    SRF_Object* srf_obj = value.setObject( new SRF_Object("<PatchParameter>") );
-    srf_obj->setUID( getUID(pp) );
-    srf_obj->value().push_back( SRF_Object::Value("PatchVertices", (long long)pp->patchVertices()) );
-    srf_obj->value().push_back( SRF_Object::Value("PatchDefaultOuterLevel", pp->patchDefaultOuterLevel()) );
-    srf_obj->value().push_back( SRF_Object::Value("PatchDefaultInnerLevel", pp->patchDefaultInnerLevel()) );
+    SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<PatchParameter>", generateUID("patchparam_")) );
+    registerExportedStructure(pp, srf_obj);
+    srf_obj->value().push_back( SRF_Structure::Value("PatchVertices", (long long)pp->patchVertices()) );
+    srf_obj->value().push_back( SRF_Structure::Value("PatchDefaultOuterLevel", pp->patchDefaultOuterLevel()) );
+    srf_obj->value().push_back( SRF_Structure::Value("PatchDefaultInnerLevel", pp->patchDefaultInnerLevel()) );
 
     return value;
   }
@@ -531,88 +521,93 @@ public:
   SRF_Value srfExport_DrawCall(const DrawCall* dcall)
   {
     SRF_Value value;
-    if (isDefined(dcall))
+    if (vlToSRF(dcall))
     {
-      value.setUID( getUID(dcall) );
+      value.setUID( vlToSRF(dcall)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(dcall);
 
     if (dcall->classType() == DrawArrays::Type())
     {
       const DrawArrays* da = dcall->as<DrawArrays>();
-      SRF_Object* srf_obj = value.setObject( new SRF_Object("<DrawArrays>") );
+      SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<DrawArrays>", generateUID("drawarrays_")) );
+      registerExportedStructure(dcall, srf_obj);
       srfExport_DrawCallBase(da, srf_obj);
-      srf_obj->value().push_back( SRF_Object::Value("Instances", (long long)da->instances()) );
-      srf_obj->value().push_back( SRF_Object::Value("Start", (long long)da->start()) );
-      srf_obj->value().push_back( SRF_Object::Value("Count", (long long)da->count()) );
+      srf_obj->value().push_back( SRF_Structure::Value("Instances", (long long)da->instances()) );
+      srf_obj->value().push_back( SRF_Structure::Value("Start", (long long)da->start()) );
+      srf_obj->value().push_back( SRF_Structure::Value("Count", (long long)da->count()) );
     }
     else
     if (dcall->classType() == DrawElementsUInt::Type())
     {
       const DrawElementsUInt* de = dcall->as<DrawElementsUInt>();
-      SRF_Object* srf_obj = value.setObject( new SRF_Object("<DrawElementsUInt>") );
+      SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<DrawElementsUInt>", generateUID("drawelems_")) );
+      registerExportedStructure(dcall, srf_obj);
       srfExport_DrawCallBase(de, srf_obj);
-      srf_obj->value().push_back( SRF_Object::Value("Instances", (long long)de->instances()) );
-      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
-      srf_obj->value().push_back( SRF_Object::Value("BaseVertex", (long long)de->baseVertex()) );
-      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
+      srf_obj->value().push_back( SRF_Structure::Value("Instances", (long long)de->instances()) );
+      srf_obj->value().push_back( SRF_Structure::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Structure::Value("BaseVertex", (long long)de->baseVertex()) );
+      srf_obj->value().push_back( SRF_Structure::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == DrawElementsUShort::Type())
     {
       const DrawElementsUShort* de = dcall->as<DrawElementsUShort>();
-      SRF_Object* srf_obj = value.setObject( new SRF_Object("<DrawElementsUShort>") );
+      SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<DrawElementsUShort>", generateUID("drawelems_")) );
+      registerExportedStructure(dcall, srf_obj);
       srfExport_DrawCallBase(de, srf_obj);
-      srf_obj->value().push_back( SRF_Object::Value("Instances", (long long)de->instances()) );
-      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
-      srf_obj->value().push_back( SRF_Object::Value("BaseVertex", (long long)de->baseVertex()) );
-      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
+      srf_obj->value().push_back( SRF_Structure::Value("Instances", (long long)de->instances()) );
+      srf_obj->value().push_back( SRF_Structure::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Structure::Value("BaseVertex", (long long)de->baseVertex()) );
+      srf_obj->value().push_back( SRF_Structure::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == DrawElementsUByte::Type())
     {
       const DrawElementsUByte* de = dcall->as<DrawElementsUByte>();
-      SRF_Object* srf_obj = value.setObject( new SRF_Object("<DrawElementsUByte>") );
+      SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<DrawElementsUByte>", generateUID("drawelems_")) );
+      registerExportedStructure(dcall, srf_obj);
       srfExport_DrawCallBase(de, srf_obj);
-      srf_obj->value().push_back( SRF_Object::Value("Instances", (long long)de->instances()) );
-      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
-      srf_obj->value().push_back( SRF_Object::Value("BaseVertex", (long long)de->baseVertex()) );
-      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
+      srf_obj->value().push_back( SRF_Structure::Value("Instances", (long long)de->instances()) );
+      srf_obj->value().push_back( SRF_Structure::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Structure::Value("BaseVertex", (long long)de->baseVertex()) );
+      srf_obj->value().push_back( SRF_Structure::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == MultiDrawElementsUInt::Type())
     {
       const MultiDrawElementsUInt* de = dcall->as<MultiDrawElementsUInt>();
-      SRF_Object* srf_obj = value.setObject( new SRF_Object("<MultiDrawElementsUInt>") );
+      SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<MultiDrawElementsUInt>", generateUID("multidrawelems_")) );
+      registerExportedStructure(dcall, srf_obj);
       srfExport_DrawCallBase(de, srf_obj);
-      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
-      srf_obj->value().push_back( SRF_Object::Value("BaseVertices", srfExport_vector_int32(de->baseVertices())) );
-      srf_obj->value().push_back( SRF_Object::Value("CountVector", srfExport_vector_int32(de->countVector())) );
-      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
+      srf_obj->value().push_back( SRF_Structure::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Structure::Value("BaseVertices", srfExport_vector_int32(de->baseVertices())) );
+      srf_obj->value().push_back( SRF_Structure::Value("CountVector", srfExport_vector_int32(de->countVector())) );
+      srf_obj->value().push_back( SRF_Structure::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == MultiDrawElementsUShort::Type())
     {
       const MultiDrawElementsUShort* de = dcall->as<MultiDrawElementsUShort>();
-      SRF_Object* srf_obj = value.setObject( new SRF_Object("<MultiDrawElementsUShort>") );
+      SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<MultiDrawElementsUShort>", generateUID("multidrawelems_")) );
+      registerExportedStructure(dcall, srf_obj);
       srfExport_DrawCallBase(de, srf_obj);
-      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
-      srf_obj->value().push_back( SRF_Object::Value("BaseVertices", srfExport_vector_int32(de->baseVertices())) );
-      srf_obj->value().push_back( SRF_Object::Value("CountVector", srfExport_vector_int32(de->countVector())) );
-      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
+      srf_obj->value().push_back( SRF_Structure::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Structure::Value("BaseVertices", srfExport_vector_int32(de->baseVertices())) );
+      srf_obj->value().push_back( SRF_Structure::Value("CountVector", srfExport_vector_int32(de->countVector())) );
+      srf_obj->value().push_back( SRF_Structure::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     if (dcall->classType() == MultiDrawElementsUByte::Type())
     {
       const MultiDrawElementsUByte* de = dcall->as<MultiDrawElementsUByte>();
-      SRF_Object* srf_obj = value.setObject( new SRF_Object("<MultiDrawElementsUByte>") );
+      SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<MultiDrawElementsUByte>", generateUID("multidrawelems_")) );
+      registerExportedStructure(dcall, srf_obj);
       srfExport_DrawCallBase(de, srf_obj);
-      srf_obj->value().push_back( SRF_Object::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
-      srf_obj->value().push_back( SRF_Object::Value("BaseVertices", srfExport_vector_int32(de->baseVertices())) );
-      srf_obj->value().push_back( SRF_Object::Value("CountVector", srfExport_vector_int32(de->countVector())) );
-      srf_obj->value().push_back( SRF_Object::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
+      srf_obj->value().push_back( SRF_Structure::Value("PrimitiveRestartEnabled", de->primitiveRestartEnabled()) );
+      srf_obj->value().push_back( SRF_Structure::Value("BaseVertices", srfExport_vector_int32(de->baseVertices())) );
+      srf_obj->value().push_back( SRF_Structure::Value("CountVector", srfExport_vector_int32(de->countVector())) );
+      srf_obj->value().push_back( SRF_Structure::Value("IndexBuffer", srfExport_Array(de->indexBuffer())) );
     }
     else
     {
@@ -644,51 +639,24 @@ public:
     return str;
   }
 
-  const char* getUID(const Object* object)
+  std::string generateUID(const char* prefix)
   {
-    std::map< ref<Object>, std::string >::iterator it = mObject_To_UID.find(object);
-    if( it != mObject_To_UID.end() )
-      return it->second.c_str();
-    else
-    {
-      VL_TRAP();
-      return "ID_ERROR";
-    }
-  }
-
-  void generateUID(const Object* object, const char* prefix)
-  {
-    if (object)
-    {
-      // add reference count
-      ++mObject_Ref_Count[object];
-      if (mObject_To_UID.find(object) == mObject_To_UID.end())
-      {
-        std::string uid = String::printf("#%sid%d", prefix, ++mUIDCounter).toStdString();
-        mObject_To_UID[object] = uid;
-      }
-    }
-  }
-
-  bool isDefined(const Object* obj)
-  {
-    return mAlreadyDefined.find(obj) != mAlreadyDefined.end();
+    return String::printf("#%sid%d", prefix, ++mUIDCounter).toStdString();
   }
 
   SRF_Value srfExport_ResourceDatabase(const ResourceDatabase* res_db)
   {
     SRF_Value value;
-    if (isDefined(res_db))
+    if (vlToSRF(res_db))
     {
-      value.setUID( getUID(res_db) );
+      value.setUID( vlToSRF(res_db)->uid().c_str() );
       return value;
     }
-    else
-      mAlreadyDefined.insert(res_db);
 
-    value.setObject( new SRF_Object("<ResourceDatabase>") );
-    SRF_Object::Value srf_resource_list("Resources", new SRF_List);
-    value.getObject()->value().push_back( srf_resource_list );
+    value.setStructure( new SRF_Structure("<ResourceDatabase>", generateUID("resourcedb_")) );
+    registerExportedStructure(res_db, value.getStructure());
+    SRF_Structure::Value srf_resource_list("Resources", new SRF_List);
+    value.getStructure()->value().push_back( srf_resource_list );
 
     for(size_t i=0; i<res_db->resources().size(); ++i)
     {
@@ -718,35 +686,35 @@ public:
     return value;
   }
 
-  void srfPrelink_ResourceDatabase(ResourceDatabase* res_db)
-  {
-    for(size_t i=0; i<res_db->resources().size(); ++i)
-    {
-      if(res_db->resources()[i]->isOfType(Geometry::Type()))
-        srfPrelink_Geometry(res_db->resources()[i]->as<Geometry>());
-      else
-      if(res_db->resources()[i]->isOfType(Effect::Type()))
-        srfPrelink_Effect(res_db->resources()[i]->as<Effect>());
-      else
-      if(res_db->resources()[i]->isOfType(Shader::Type()))
-        srfPrelink_Shader(res_db->resources()[i]->as<Shader>());
-      else
-      if(res_db->resources()[i]->isOfType(Transform::Type()))
-        srfPrelink_Transform(res_db->resources()[i]->as<Transform>());
-      else
-      if(res_db->resources()[i]->isOfType(Actor::Type()))
-        srfPrelink_Actor(res_db->resources()[i]->as<Actor>());
-      else
-      if(res_db->resources()[i]->isOfType(Camera::Type()))
-        srfPrelink_Camera(res_db->resources()[i]->as<Camera>());
-    }
-  }
+  //void srfProcessUIDs_ResourceDatabase(ResourceDatabase* res_db)
+  //{
+  //  for(size_t i=0; i<res_db->resources().size(); ++i)
+  //  {
+  //    if(res_db->resources()[i]->isOfType(Geometry::Type()))
+  //      srfProcessUIDs_Geometry(res_db->resources()[i]->as<Geometry>());
+  //    else
+  //    if(res_db->resources()[i]->isOfType(Effect::Type()))
+  //      srfProcessUIDs_Effect(res_db->resources()[i]->as<Effect>());
+  //    else
+  //    if(res_db->resources()[i]->isOfType(Shader::Type()))
+  //      srfProcessUIDs_Shader(res_db->resources()[i]->as<Shader>());
+  //    else
+  //    if(res_db->resources()[i]->isOfType(Transform::Type()))
+  //      srfProcessUIDs_Transform(res_db->resources()[i]->as<Transform>());
+  //    else
+  //    if(res_db->resources()[i]->isOfType(Actor::Type()))
+  //      srfProcessUIDs_Actor(res_db->resources()[i]->as<Actor>());
+  //    else
+  //    if(res_db->resources()[i]->isOfType(Camera::Type()))
+  //      srfProcessUIDs_Camera(res_db->resources()[i]->as<Camera>());
+  //  }
+  //}
 
   //-----------------------------------------------------------------------------
   // IMPORT FUNCTIONS
   //-----------------------------------------------------------------------------
 
-  ResourceDatabase* srfImport_ResourceDatabase(const SRF_Object* srf_obj)
+  ResourceDatabase* srfImport_ResourceDatabase(const SRF_Structure* srf_obj)
   {
     if (srf_obj->tag() != "<ResourceDatabase>")
       return NULL;
@@ -762,7 +730,7 @@ public:
 
     // link the SRF to the VL object
     ref<ResourceDatabase> res_db = new ResourceDatabase;
-    registerImportedObject(srf_obj, res_db.get());
+    registerImportedStructure(srf_obj, res_db.get());
 
     // get the list
     const SRF_List* list = srf_obj->value()[0].value().getList();
@@ -772,10 +740,10 @@ public:
 
       // the member of this list must be all objects!
       // mic fixme: issue error
-      if (value.type() != SRF_Value::Object)
+      if (value.type() != SRF_Value::Structure)
         return false;
 
-      const SRF_Object* obj = value.getObject();
+      const SRF_Structure* obj = value.getStructure();
       
       if (obj->tag() == "<Geometry>")
       {
@@ -821,14 +789,14 @@ public:
       else
       {
         // debug: this should not be an error, maybe a Log::debug()
-        Log::error( Say("Skipping SRF_Object = %s\n") << obj->tag() );
+        Log::error( Say("Skipping SRF_Structure = %s\n") << obj->tag() );
       }
     }
 
     return res_db.get();
   }
 
-  bool srfImport_AABB(const SRF_Object* srf_obj, AABB& aabb)
+  bool srfImport_AABB(const SRF_Structure* srf_obj, AABB& aabb)
   {
     for(size_t i=0; i<srf_obj->value().size(); ++i)
     {
@@ -852,7 +820,7 @@ public:
     return true;
   }
 
-  bool srfImport_Sphere(const SRF_Object* srf_obj, Sphere& sphere)
+  bool srfImport_Sphere(const SRF_Structure* srf_obj, Sphere& sphere)
   {
     for(size_t i=0; i<srf_obj->value().size(); ++i)
     {
@@ -876,7 +844,7 @@ public:
     return true;
   }
 
-  ArrayAbstract* srfImport_Array(const SRF_Object* srf_obj)
+  ArrayAbstract* srfImport_Array(const SRF_Structure* srf_obj)
   {
     // return already parsed object
     if (srfToVL(srf_obj))
@@ -1241,7 +1209,7 @@ public:
     }
 
     // link the SRF to the VL object
-    registerImportedObject(srf_obj, arr_abstract.get());
+    registerImportedStructure(srf_obj, arr_abstract.get());
 
     return arr_abstract.get();
   }
@@ -1269,7 +1237,7 @@ public:
     return PT_UNKNOWN;
   }
 
-  DrawCall* srfImport_DrawCall(const SRF_Object* srf_obj)
+  DrawCall* srfImport_DrawCall(const SRF_Structure* srf_obj)
   {
     // return already parsed object
     if (srfToVL(srf_obj))
@@ -1329,8 +1297,8 @@ public:
         else
         if( key == "IndexBuffer" )
         {
-          VL_CHECK( value.type() == SRF_Value::Object ) // mic fixme
-          ArrayAbstract* arr_abstract = srfImport_Array(value.getObject());
+          VL_CHECK( value.type() == SRF_Value::Structure ) // mic fixme
+          ArrayAbstract* arr_abstract = srfImport_Array(value.getStructure());
 
           if ( de->classType() == DrawElementsUInt::Type() )
           {
@@ -1405,8 +1373,8 @@ public:
         else
         if( key == "IndexBuffer" )
         {
-          VL_CHECK( value.type() == SRF_Value::Object ) // mic fixme
-          ArrayAbstract* arr_abstract = srfImport_Array(value.getObject());
+          VL_CHECK( value.type() == SRF_Value::Structure ) // mic fixme
+          ArrayAbstract* arr_abstract = srfImport_Array(value.getStructure());
 
           if ( de->classType() == MultiDrawElementsUInt::Type() )
           {
@@ -1440,6 +1408,54 @@ public:
         de->baseVertices().resize( de->countVector().size() );
     }
     else
+    if(srf_obj->tag() == "<DrawArrays>")
+    {
+      ref<DrawArrays> da;
+
+      draw_call = da = new DrawArrays;
+
+      for(size_t i=0; i<srf_obj->value().size(); ++i)
+      {
+        const std::string& key = srf_obj->value()[i].key();
+        const SRF_Value& value = srf_obj->value()[i].value();
+
+        if( key == "PrimitiveType" )
+        {
+          VL_CHECK( value.type() == SRF_Value::Identifier ) // mic fixme
+          da->setPrimitiveType( srfImport_EPrimitiveType( value.getIdentifier() ) );
+        }
+        else
+        if( key == "Enabled" )
+        {
+          VL_CHECK( value.type() == SRF_Value::Bool ) // mic fixme
+          da->setEnabled( value.getBool() );
+        }
+        else
+        if( key == "Instances" )
+        {
+          VL_CHECK( value.type() == SRF_Value::Int64 ) // mic fixme
+          da->setInstances( (int)value.getInt64() );
+        }
+        else
+        if( key == "Start" )
+        {
+          VL_CHECK( value.type() == SRF_Value::Int64 ) // mic fixme
+          da->setStart( (int)value.getInt64() );
+        }
+        else
+        if( key == "Count" )
+        {
+          VL_CHECK( value.type() == SRF_Value::Int64 ) // mic fixme
+          da->setCount( (int)value.getInt64() );
+        }
+        else
+        {
+          // 
+          VL_TRAP()
+        }
+      }
+    }
+    else
     {
       // mic fixme
       VL_TRAP();
@@ -1447,12 +1463,12 @@ public:
     }
 
     // link the SRF to the VL object
-    registerImportedObject(srf_obj, draw_call.get());
+    registerImportedStructure(srf_obj, draw_call.get());
     
     return draw_call.get();
   }
 
-  VertexAttribInfo* srfImport_VertexAttribInfo(const SRF_Object* srf_obj)
+  VertexAttribInfo* srfImport_VertexAttribInfo(const SRF_Structure* srf_obj)
   {
     // return already parsed object
     if (srfToVL(srf_obj))
@@ -1463,7 +1479,7 @@ public:
 
     // link the SRF to the VL object
     ref<VertexAttribInfo> info = new VertexAttribInfo;
-    registerImportedObject(srf_obj, info.get());
+    registerImportedStructure(srf_obj, info.get());
 
     for(size_t i=0; i<srf_obj->value().size(); ++i)
     {
@@ -1472,7 +1488,7 @@ public:
 
       if (key == "Data")
       {
-        ArrayAbstract* arr = srfImport_Array( value.getObject() );
+        ArrayAbstract* arr = srfImport_Array( value.getStructure() );
         info->setData(arr);
       }
       else
@@ -1501,7 +1517,7 @@ public:
     return info.get();
   }
 
-  Geometry* srfImport_Geometry(const SRF_Object* srf_obj)
+  Geometry* srfImport_Geometry(const SRF_Structure* srf_obj)
   {
     // return already parsed object
     if (srfToVL(srf_obj))
@@ -1512,7 +1528,7 @@ public:
 
     // link the SRF to the VL object
     ref<Geometry> geom = new Geometry;
-    registerImportedObject(srf_obj, geom.get());
+    registerImportedStructure(srf_obj, geom.get());
 
     for(size_t i=0; i<srf_obj->value().size(); ++i)
     {
@@ -1533,24 +1549,24 @@ public:
       else
       if (key == "AABB")
       {
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
         AABB aabb;
-        if (!srfImport_AABB(value.getObject(), aabb))
+        if (!srfImport_AABB(value.getStructure(), aabb))
           return NULL;
       }
       else
       if (key == "Sphere")
       {
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
         Sphere sphere;
-        if (!srfImport_Sphere(value.getObject(), sphere))
+        if (!srfImport_Sphere(value.getStructure(), sphere))
           return NULL;
       }
       else
       if (key == "VertexArray")
       {
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
-        ArrayAbstract* arr = srfImport_Array(value.getObject());
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+        ArrayAbstract* arr = srfImport_Array(value.getStructure());
         if (arr)
           geom->setVertexArray(arr);
         else
@@ -1559,8 +1575,8 @@ public:
       else
       if (key == "NormalArray")
       {
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
-        ArrayAbstract* arr = srfImport_Array(value.getObject());
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+        ArrayAbstract* arr = srfImport_Array(value.getStructure());
         if (arr)
           geom->setNormalArray(arr);
         else
@@ -1569,8 +1585,8 @@ public:
       else
       if (key == "ColorArray")
       {
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
-        ArrayAbstract* arr = srfImport_Array(value.getObject());
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+        ArrayAbstract* arr = srfImport_Array(value.getStructure());
         if (arr)
           geom->setColorArray(arr);
         else
@@ -1579,8 +1595,8 @@ public:
       else
       if (key == "SecondaryColorArray")
       {
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
-        ArrayAbstract* arr = srfImport_Array(value.getObject());
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+        ArrayAbstract* arr = srfImport_Array(value.getStructure());
         if (arr)
           geom->setSecondaryColorArray(arr);
         else
@@ -1589,8 +1605,8 @@ public:
       else
       if (key == "FogCoordArray")
       {
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
-        ArrayAbstract* arr = srfImport_Array(value.getObject());
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+        ArrayAbstract* arr = srfImport_Array(value.getStructure());
         if (arr)
           geom->setFogCoordArray(arr);
         else
@@ -1611,8 +1627,8 @@ public:
           }
         }
 
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
-        ArrayAbstract* arr = srfImport_Array(value.getObject());
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+        ArrayAbstract* arr = srfImport_Array(value.getStructure());
         if (arr)
           geom->setTexCoordArray(tex_unit, arr);
         else
@@ -1633,8 +1649,8 @@ public:
           }
         }
         
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
-        VertexAttribInfo* info_ptr = srfImport_VertexAttribInfo(value.getObject());
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+        VertexAttribInfo* info_ptr = srfImport_VertexAttribInfo(value.getStructure());
         if (info_ptr)
         {
           VertexAttribInfo info = *info_ptr;
@@ -1648,8 +1664,8 @@ public:
       else
       if (key == "DrawCall")
       {
-        VL_CHECK(value.type() == SRF_Value::Object) // mic fixme: issue error
-        DrawCall* draw_call = srfImport_DrawCall(value.getObject());
+        VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+        DrawCall* draw_call = srfImport_DrawCall(value.getStructure());
         if (draw_call)
           geom->drawCalls()->push_back(draw_call);
         else
@@ -1665,7 +1681,7 @@ public:
     return geom.get();
   }
 
-  Effect* srfImport_Effect(const SRF_Object* srf_obj)
+  Effect* srfImport_Effect(const SRF_Structure* srf_obj)
   {
     // return already parsed object
     if (srfToVL(srf_obj))
@@ -1674,7 +1690,7 @@ public:
     return NULL;
   }
 
-  Shader* srfImport_Shader(const SRF_Object* srf_obj)
+  Shader* srfImport_Shader(const SRF_Structure* srf_obj)
   {
     // return already parsed object
     if (srfToVL(srf_obj))
@@ -1683,7 +1699,7 @@ public:
     return NULL;
   }
 
-  Transform* srfImport_Transform(const SRF_Object* srf_obj)
+  Transform* srfImport_Transform(const SRF_Structure* srf_obj)
   {
     // return already parsed object
     if (srfToVL(srf_obj))
@@ -1692,7 +1708,7 @@ public:
     return NULL;
   }
 
-  Actor* srfImport_Actor(const SRF_Object* srf_obj)
+  Actor* srfImport_Actor(const SRF_Structure* srf_obj)
   {
     // return already parsed object
     if (srfToVL(srf_obj))
@@ -1701,19 +1717,13 @@ public:
     return NULL;
   }
 
-  Camera* srfImport_Camera(const SRF_Object* srf_obj)
+  Camera* srfImport_Camera(const SRF_Structure* srf_obj)
   {
     // return already parsed object
     if (srfToVL(srf_obj))
       return srfToVL(srf_obj)->as<Camera>();
 
     return NULL;
-  }
-
-  void registerImportedObject(const Object* srf_obj, const Object* vl_obj)
-  {
-    VL_CHECK( mSRF_To_VL.find(srf_obj) == mSRF_To_VL.end() );
-    mSRF_To_VL[srf_obj] = vl_obj;
   }
 
   Object* srfToVL(const Object* srf_obj)
@@ -1725,21 +1735,63 @@ public:
       return NULL;
   }
 
+  void registerImportedStructure(const Object* srf_obj, const Object* vl_obj)
+  {
+    VL_CHECK( mSRF_To_VL.find(srf_obj) == mSRF_To_VL.end() );
+    mSRF_To_VL[srf_obj] = vl_obj;
+  }
+
+  SRF_Structure* vlToSRF(const Object* srf_obj)
+  {
+    std::map< ref<Object>, ref<SRF_Structure> >::iterator it = mVL_To_SRF.find(srf_obj);
+    if (it != mVL_To_SRF.end())
+      return it->second.get();
+    else
+      return NULL;
+  }
+
+  void registerExportedStructure(const Object* vl_obj, const SRF_Structure* srf_obj)
+  {
+    VL_CHECK( mVL_To_SRF.find(vl_obj) == mVL_To_SRF.end() );
+    mVL_To_SRF[vl_obj] = srf_obj;
+  }
+
+  String srfExport(const ResourceDatabase* res_db)
+  {
+    SRF_Value value = srfExport_ResourceDatabase(res_db);
+
+    // do not link!
+
+    // collect the UIDs that need to be visible
+    std::set< std::string > uid_set;
+    SRF_UIDCollectorVisitor uid_collector;
+    uid_collector.setUIDSet(&uid_set);
+    value.getStructure()->acceptVisitor(&uid_collector);
+
+    SRF_TextExportVisitor text_export_visitor;
+    text_export_visitor.setUIDSet(&uid_set);
+    value.getStructure()->acceptVisitor(&text_export_visitor);
+
+    return text_export_visitor.srfText();
+  }
+
   virtual void initEvent()
   {
     Log::notify(appletInfo());
 #if 1
+    // ref<Geometry> geom = makeBox( vec3(0,0,0), 10, 10, 10 );
     // ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
     ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
     geom->computeNormals();
-    geom->setColorArray( vl::crimson );
+    geom->setColorArray( geom->normalArray() );
     // geom->setSecondaryColorArray( geom->normalArray() );
-    TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
+    // TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
     // geom->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
     geom->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
     // mic fixme: this does no realizes that we are using primitive restart
     // mic fixme: make this manage also MultiDrawElements
-    geom->makeGLESFriendly();
+    // geom->makeGLESFriendly();
+    geom->drawCalls()->push_back( geom->drawCalls()->back() );
 
     ref<Effect> fx = new Effect;
     fx->shader()->enable(EN_LIGHTING);
@@ -1756,30 +1808,43 @@ public:
     ref<ResourceDatabase> res_db = new ResourceDatabase;
     res_db->resources().push_back(geom);
 
-    srfPrelink_ResourceDatabase(res_db.get());
     SRF_Value value = srfExport_ResourceDatabase(res_db.get());
-    SRF_DumpVisitor dump_visitor;
-    value.getObject()->acceptVisitor(&dump_visitor);
+
+    //SRF_Linker linker;
+    //linker.add(value.getStructure());
+    //linker.link();
+
+    // do not link when using this!
+    std::set< std::string > uid_set;
+    SRF_UIDCollectorVisitor uid_collector;
+    uid_collector.setUIDSet(&uid_set);
+    value.getStructure()->acceptVisitor(&uid_collector);
+
+    SRF_TextExportVisitor text_export_visitor;
+    text_export_visitor.setUIDSet(&uid_set);
+    value.getStructure()->acceptVisitor(&text_export_visitor);
+
     std::fstream fout;
     fout.open("D:/VL/srf_export.vl", std::ios::out);
-    fout.write( dump_visitor.dumpString().toStdString().c_str(), dump_visitor.dumpString().length() );
+    fout.write( text_export_visitor.srfText().toStdString().c_str(), text_export_visitor.srfText().length() );
     fout.close();
 #endif
 
+    // @@@ @@@ @@@ IMPORT @@@ @@@ @@@
     SRF_Parser parser;
     parser.tokenizer()->setInputFile( new DiskFile("D:/VL/srf_export.vl") );
     parser.parse();
-    String dump = parser.dump();
-    parser.link();
-    // dump the dump
+
+    // export to text and save again
     {
+      String srf_text = parser.exportToText();
       std::fstream fout;
       fout.open( "D:/VL/srf_export_dump.vl", std::ios::out );
-      fout.write( dump.toStdString().c_str(), dump.length() );
+      fout.write( srf_text.toStdString().c_str(), srf_text.length() );
       fout.close();
     }
 
-    // @@@@@@@@@@@@@@@@@@@@@@@@
+    if (parser.link())
     {
       // first import
       ResourceDatabase* db = srfImport_ResourceDatabase( parser.root() );
@@ -1799,9 +1864,7 @@ public:
 
 protected:
   // export
-  std::map< ref<Object>, std::string > mObject_To_UID;
-  std::map< ref<Object>, int > mObject_Ref_Count;
-  std::set< ref<Object> > mAlreadyDefined;
+  std::map< ref<Object>, ref<SRF_Structure> > mVL_To_SRF;
   // import
   std::map< ref<Object>, ref<Object> > mSRF_To_VL;
 
