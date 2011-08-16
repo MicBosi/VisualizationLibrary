@@ -83,13 +83,13 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
         }
         else
         {
-          Log::error( Say("Line %n: unexpected character '%c' after '/'.\n") << mLineNumber << ch2 );
+          Log::error( Say("Line %n : unexpected character '%c' after '/'.\n") << mLineNumber << ch2 );
           return false;
         }
       }
       else
       {
-        Log::error( Say("Line %n: unexpected end of file in comment.\n") << mLineNumber);
+        Log::error( Say("Line %n : unexpected end of file in comment.\n") << mLineNumber);
         return false;
       }
       continue;
@@ -135,7 +135,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
 
         if (ch1 != ' ' && ch1 != '\t')
         {
-          Log::error( Say("Line %n: unexpected character '%c' after '{<'. A new line should follow instead.\n") << mLineNumber << ch1 );
+          Log::error( Say("Line %n : unexpected character '%c' after '{<'. A new line should follow instead.\n") << mLineNumber << ch1 );
           return false;
         }
       }
@@ -164,13 +164,13 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       }
       else
       {
-        Log::error( Say("Line %n: expected '}' instead of '%c' after '>'.\n") << mLineNumber << ch2 );
+        Log::error( Say("Line %n : expected '}' instead of '%c' after '>'.\n") << mLineNumber << ch2 );
         return false;
       }
     }
     else
     {
-        Log::error( Say("Line %n: unexpected end of file.\n") << mLineNumber );
+        Log::error( Say("Line %n : unexpected end of file.\n") << mLineNumber );
         return false;
     }
 
@@ -188,14 +188,14 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
         token.mString.push_back(ch1);
       else
       {
-        Log::error( Say("Line %n: unexpected character '%c'.\n") << mLineNumber << ch1 );
+        Log::error( Say("Line %n : unexpected character '%c'.\n") << mLineNumber << ch1 );
         return false;
       }
     }
     token.mString.push_back('>');
     if (isEndOfFile())
     {
-      Log::error( Say("Line %n: unexpected end of file while reading object header.\n") << mLineNumber );
+      Log::error( Say("Line %n : unexpected end of file while reading object header.\n") << mLineNumber );
       return false;
     }
     return true;
@@ -215,7 +215,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     }
     if (token.mString == "#_")
     {
-      Log::error( Say("Line %n: illegal id '#_' found.\n") << mLineNumber );
+      Log::error( Say("Line %n : illegal id '#_' found.\n") << mLineNumber );
       return false;
     }
     return true;
@@ -231,7 +231,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       // return found before end of string
       if (ch1 == '\n')
       {
-        Log::error( Say("Line %n: end of line found before end of string, did you forget a \"?.\n") << mLineNumber );
+        Log::error( Say("Line %n : end of line found before end of string, did you forget a \"?.\n") << mLineNumber );
         return false;
       }
       else
@@ -268,7 +268,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     }
     if (isEndOfFile())
     {
-      Log::error( Say("Line %n: end of file found before end of string, did you forget a \"?.\n") << mLineNumber );
+      Log::error( Say("Line %n : end of file found before end of string, did you forget a \"?.\n") << mLineNumber );
       return false;
     }
     else
@@ -292,7 +292,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       }
       if (token.mString == "_")
       {
-        Log::error( Say("Line %n: unexpected character '_'.\n") << mLineNumber );
+        Log::error( Say("Line %n : unexpected character '_'.\n") << mLineNumber );
         return false;
       }
       else
@@ -384,7 +384,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+            Log::error( Say("Line %n :unexpected character '%c'.\n") << mLineNumber << ch1 );
             return false;
           }
           break;
@@ -419,7 +419,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+            Log::error( Say("Line %n :unexpected character '%c'.\n") << mLineNumber << ch1 );
             return false;
           }
           break;
@@ -454,7 +454,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+            Log::error( Say("Line %n :unexpected character '%c'.\n") << mLineNumber << ch1 );
             return false;
           }
           break;
@@ -467,7 +467,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            Log::error( Say("Line %n:unexpected character '%c'.\n") << mLineNumber << ch1 );
+            Log::error( Say("Line %n :unexpected character '%c'.\n") << mLineNumber << ch1 );
             return false;
           }
           break;
@@ -506,7 +506,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     }
     else
     {
-      Log::error( Say("Line %n: unexpected character '%c'.\n") << mLineNumber << ch1 );
+      Log::error( Say("Line %n : unexpected character '%c'.\n") << mLineNumber << ch1 );
       return false;
     }
   }
@@ -555,6 +555,8 @@ void SRF_Value::release()
 //-----------------------------------------------------------------------------
 SRF_Value& SRF_Value::operator=(const SRF_Value& other)
 {
+  mLineNumber = other.mLineNumber;
+
   // must be done first
   switch(other.mType)
   {

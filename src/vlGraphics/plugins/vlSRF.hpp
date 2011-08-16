@@ -48,6 +48,13 @@
 #include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/DiskFile.hpp>
 
+#define VL_SRF_CHECK_ERROR(Condition) \
+  if (!(Condition))                   \
+  {                                   \
+  Log::error( Say("Line %n : condition failed : %s\n") << value.lineNumber() << #Condition ); \
+    return NULL;                      \
+  }
+
 namespace vl
 {
   static const int VL_SERIALIZER_VERSION = 100;
@@ -675,7 +682,7 @@ namespace vl
       {
         if (srf_obj->value()[0].key() != "SerializerVersion" || srf_obj->value()[0].value().type() != SRF_Value::Int64)
         {
-          Log::error("No serializer version found.\n");
+          Log::error( Say("Line %n : no serializer version found.\n") << srf_obj->value()[0].value().lineNumber() );
           return NULL;
         }
         else
@@ -686,7 +693,10 @@ namespace vl
         }
 
         if (srf_obj->value()[1].key() != "Resources" || srf_obj->value()[1].value().type() != SRF_Value::List)
+        {
+          Log::error( Say("Line %n : 'Resources' key/value expected.\n") << srf_obj->value()[1].value().lineNumber() );
           return NULL;
+        }
       }
 
       // return already parsed object
@@ -703,10 +713,13 @@ namespace vl
       {
         const SRF_Value& value = list->value()[i];
 
-        // the member of this list must be all objects!
-        // mic fixme: issue error
+        // the member of this list must be all structures, unknown ones are silently skipped
+
         if (value.type() != SRF_Value::Structure)
-          return false;
+        {
+          Log::error( Say("Line %n : structure expected.\n") << value.lineNumber() );
+          return NULL;
+        }
 
         const SRF_Structure* obj = value.getStructure();
       
@@ -753,8 +766,8 @@ namespace vl
         }
         else
         {
-          // debug: this should not be an error, maybe a Log::debug()
-          Log::error( Say("Skipping SRF_Structure = %s\n") << obj->tag() );
+          // mic fixme: metti questo in debug
+          Log::warning( Say("Line %n : skipping unknown structure '%s'.\n") << obj->lineNumber() << obj->tag() );
         }
       }
 
@@ -763,6 +776,8 @@ namespace vl
 
     bool import_AABB(const SRF_Structure* srf_obj, AABB& aabb)
     {
+      VL_CHECK( srf_obj->tag() == "<AABB>" )
+
       for(size_t i=0; i<srf_obj->value().size(); ++i)
       {
         const std::string& key = srf_obj->value()[i].key();
@@ -779,7 +794,13 @@ namespace vl
           aabb.setMaxCorner( value.getArrayFloat()->getFloat3() );
         }
         else
-          return false; // mic fixme
+        if (key == "Extension")
+          continue;
+        else
+        {
+          Log::error( Say("Line %n : error.\n") << value.lineNumber() );
+          return false;
+        }
       }
 
       return true;
@@ -787,6 +808,8 @@ namespace vl
 
     bool import_Sphere(const SRF_Structure* srf_obj, Sphere& sphere)
     {
+      VL_CHECK( srf_obj->tag() == "<Sphere>" )
+
       for(size_t i=0; i<srf_obj->value().size(); ++i)
       {
         const std::string& key = srf_obj->value()[i].key();
@@ -803,7 +826,13 @@ namespace vl
           sphere.setRadius( (Real)value.getDouble() );
         }
         else
-          return false; // mic fixme
+        if (key == "Extension")
+          continue;
+        else
+        {
+          Log::error( Say("Line %n : error.\n") << value.lineNumber() );
+          return false;
+        }
       }
 
       return true;
@@ -815,18 +844,20 @@ namespace vl
       if (srfToVL(srf_obj))
         return srfToVL(srf_obj)->as<ArrayAbstract>();
 
-      const SRF_Value* value = srf_obj->getValue("Value");
-    
-      // mic fixme
-      if (!value)
+      if (!srf_obj->getValue("Value"))
+      {
+        Log::error( Say("Line %n : error. 'Value' expected in object '%s'. \n") << srf_obj->lineNumber() << srf_obj->tag() );
         return NULL;
+      }
 
+      const SRF_Value& value = *srf_obj->getValue("Value");
+    
       ref<ArrayAbstract> arr_abstract;
 
       if (srf_obj->tag() == "<ArrayFloat1>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayFloat); // mic fixme
-        const SRF_ArrayFloat* srf_arr_float = value->getArrayFloat();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayFloat);
+        const SRF_ArrayFloat* srf_arr_float = value.getArrayFloat();
         ref<ArrayFloat1> arr_float1 = new ArrayFloat1; arr_abstract = arr_float1;
         arr_float1->resize( srf_arr_float->value().size() );
         memcpy(arr_float1->ptr(), srf_arr_float->ptr(), arr_float1->bytesUsed());
@@ -834,9 +865,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayFloat2>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayFloat); // mic fixme
-        const SRF_ArrayFloat* srf_arr_float = value->getArrayFloat();
-        VL_CHECK( srf_arr_float->value().size() % 2 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayFloat);
+        const SRF_ArrayFloat* srf_arr_float = value.getArrayFloat();
+        VL_SRF_CHECK_ERROR( srf_arr_float->value().size() % 2 == 0)
         ref<ArrayFloat2> arr_float2 = new ArrayFloat2; arr_abstract = arr_float2;
         arr_float2->resize( srf_arr_float->value().size() / 2 );
         memcpy(arr_float2->ptr(), srf_arr_float->ptr(), arr_float2->bytesUsed());
@@ -844,9 +875,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayFloat3>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayFloat); // mic fixme
-        const SRF_ArrayFloat* srf_arr_float = value->getArrayFloat();
-        VL_CHECK( srf_arr_float->value().size() % 3 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayFloat);
+        const SRF_ArrayFloat* srf_arr_float = value.getArrayFloat();
+        VL_SRF_CHECK_ERROR( srf_arr_float->value().size() % 3 == 0)
         ref<ArrayFloat3> arr_float3 = new ArrayFloat3; arr_abstract = arr_float3;
         arr_float3->resize( srf_arr_float->value().size() / 3 );
         memcpy(arr_float3->ptr(), srf_arr_float->ptr(), arr_float3->bytesUsed());
@@ -854,9 +885,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayFloat4>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayFloat); // mic fixme
-        const SRF_ArrayFloat* srf_arr_float = value->getArrayFloat();
-        VL_CHECK( srf_arr_float->value().size() % 4 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayFloat);
+        const SRF_ArrayFloat* srf_arr_float = value.getArrayFloat();
+        VL_SRF_CHECK_ERROR( srf_arr_float->value().size() % 4 == 0)
         ref<ArrayFloat4> arr_float4 = new ArrayFloat4; arr_abstract = arr_float4;
         arr_float4->resize( srf_arr_float->value().size() / 4 );
         memcpy(arr_float4->ptr(), srf_arr_float->ptr(), arr_float4->bytesUsed());
@@ -864,8 +895,8 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayDouble1>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayDouble); // mic fixme
-        const SRF_ArrayDouble* srf_arr_double = value->getArrayDouble();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayDouble);
+        const SRF_ArrayDouble* srf_arr_double = value.getArrayDouble();
         ref<ArrayDouble1> arr_double1 = new ArrayDouble1; arr_abstract = arr_double1;
         arr_double1->resize( srf_arr_double->value().size() );
         memcpy(arr_double1->ptr(), srf_arr_double->ptr(), arr_double1->bytesUsed());
@@ -873,9 +904,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayDouble2>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayDouble); // mic fixme
-        const SRF_ArrayDouble* srf_arr_double = value->getArrayDouble();
-        VL_CHECK( srf_arr_double->value().size() % 2 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayDouble);
+        const SRF_ArrayDouble* srf_arr_double = value.getArrayDouble();
+        VL_SRF_CHECK_ERROR( srf_arr_double->value().size() % 2 == 0)
         ref<ArrayDouble2> arr_double2 = new ArrayDouble2; arr_abstract = arr_double2;
         arr_double2->resize( srf_arr_double->value().size() / 2 );
         memcpy(arr_double2->ptr(), srf_arr_double->ptr(), arr_double2->bytesUsed());
@@ -883,9 +914,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayDouble3>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayDouble); // mic fixme
-        const SRF_ArrayDouble* srf_arr_double = value->getArrayDouble();
-        VL_CHECK( srf_arr_double->value().size() % 3 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayDouble);
+        const SRF_ArrayDouble* srf_arr_double = value.getArrayDouble();
+        VL_SRF_CHECK_ERROR( srf_arr_double->value().size() % 3 == 0)
         ref<ArrayDouble3> arr_double3 = new ArrayDouble3; arr_abstract = arr_double3;
         arr_double3->resize( srf_arr_double->value().size() / 3 );
         memcpy(arr_double3->ptr(), srf_arr_double->ptr(), arr_double3->bytesUsed());
@@ -893,9 +924,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayDouble4>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayDouble); // mic fixme
-        const SRF_ArrayDouble* srf_arr_double = value->getArrayDouble();
-        VL_CHECK( srf_arr_double->value().size() % 4 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayDouble);
+        const SRF_ArrayDouble* srf_arr_double = value.getArrayDouble();
+        VL_SRF_CHECK_ERROR( srf_arr_double->value().size() % 4 == 0)
         ref<ArrayDouble4> arr_double4 = new ArrayDouble4; arr_abstract = arr_double4;
         arr_double4->resize( srf_arr_double->value().size() / 4 );
         memcpy(arr_double4->ptr(), srf_arr_double->ptr(), arr_double4->bytesUsed());
@@ -903,8 +934,8 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayInt1>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
         ref<ArrayInt1> arr_int1 = new ArrayInt1; arr_abstract = arr_int1;
         arr_int1->resize( srf_arr_int->value().size() );
         memcpy(arr_int1->ptr(), srf_arr_int->ptr(), arr_int1->bytesUsed());
@@ -912,9 +943,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayInt2>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 2 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayInt2> arr_int2 = new ArrayInt2; arr_abstract = arr_int2;
         arr_int2->resize( srf_arr_int->value().size() / 2 );
         memcpy(arr_int2->ptr(), srf_arr_int->ptr(), arr_int2->bytesUsed());
@@ -922,9 +953,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayInt3>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 3 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayInt3> arr_int3 = new ArrayInt3; arr_abstract = arr_int3;
         arr_int3->resize( srf_arr_int->value().size() / 3 );
         memcpy(arr_int3->ptr(), srf_arr_int->ptr(), arr_int3->bytesUsed());
@@ -932,18 +963,18 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayInt4>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 4 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayInt4> arr_int4 = new ArrayInt4; arr_abstract = arr_int4;
         arr_int4->resize( srf_arr_int->value().size() / 4 );
         memcpy(arr_int4->ptr(), srf_arr_int->ptr(), arr_int4->bytesUsed());
       }
       else
-      if (srf_obj->tag() == "<ArrayUInt1>") // mic fixme: make this read the full unsigned int field
+      if (srf_obj->tag() == "<ArrayUInt1>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
         ref<ArrayUInt1> arr_int1 = new ArrayUInt1; arr_abstract = arr_int1;
         arr_int1->resize( srf_arr_int->value().size() );
         memcpy(arr_int1->ptr(), srf_arr_int->ptr(), arr_int1->bytesUsed());
@@ -951,9 +982,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUInt2>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 2 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayUInt2> arr_int2 = new ArrayUInt2; arr_abstract = arr_int2;
         arr_int2->resize( srf_arr_int->value().size() / 2 );
         memcpy(arr_int2->ptr(), srf_arr_int->ptr(), arr_int2->bytesUsed());
@@ -961,9 +992,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUInt3>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 3 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayUInt3> arr_int3 = new ArrayUInt3; arr_abstract = arr_int3;
         arr_int3->resize( srf_arr_int->value().size() / 3 );
         memcpy(arr_int3->ptr(), srf_arr_int->ptr(), arr_int3->bytesUsed());
@@ -971,9 +1002,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUInt4>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 4 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayUInt4> arr_int4 = new ArrayUInt4; arr_abstract = arr_int4;
         arr_int4->resize( srf_arr_int->value().size() / 4 );
         memcpy(arr_int4->ptr(), srf_arr_int->ptr(), arr_int4->bytesUsed());
@@ -981,8 +1012,8 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayShort1>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
         ref<ArrayShort1> arr_short1 = new ArrayShort1; arr_abstract = arr_short1;
         arr_short1->resize( srf_arr_int->value().size() );
         typedef ArrayShort1::scalar_type type;
@@ -992,9 +1023,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayShort2>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 2 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayShort2> arr_short2 = new ArrayShort2; arr_abstract = arr_short2;
         arr_short2->resize( srf_arr_int->value().size() / 2 );
         typedef ArrayShort2::scalar_type type;
@@ -1004,9 +1035,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayShort3>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 3 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayShort3> arr_short3 = new ArrayShort3; arr_abstract = arr_short3;
         arr_short3->resize( srf_arr_int->value().size() / 3 );
         typedef ArrayShort3::scalar_type type;
@@ -1016,9 +1047,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayShort4>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 4 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayShort4> arr_short4 = new ArrayShort4; arr_abstract = arr_short4;
         arr_short4->resize( srf_arr_int->value().size() / 4 );
         typedef ArrayShort4::scalar_type type;
@@ -1028,8 +1059,8 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUShort1>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
         ref<ArrayUShort1> arr_short1 = new ArrayUShort1; arr_abstract = arr_short1;
         arr_short1->resize( srf_arr_int->value().size() );
         typedef ArrayUShort1::scalar_type type;
@@ -1039,9 +1070,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUShort2>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 2 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayUShort2> arr_short2 = new ArrayUShort2; arr_abstract = arr_short2;
         arr_short2->resize( srf_arr_int->value().size() / 2 );
         typedef ArrayUShort2::scalar_type type;
@@ -1051,9 +1082,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUShort3>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 3 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayUShort3> arr_short3 = new ArrayUShort3; arr_abstract = arr_short3;
         arr_short3->resize( srf_arr_int->value().size() / 3 );
         typedef ArrayUShort3::scalar_type type;
@@ -1063,9 +1094,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUShort4>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 4 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayUShort4> arr_short4 = new ArrayUShort4; arr_abstract = arr_short4;
         arr_short4->resize( srf_arr_int->value().size() / 4 );
         typedef ArrayUShort4::scalar_type type;
@@ -1075,8 +1106,8 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayByte1>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
         ref<ArrayByte1> arr_byte1 = new ArrayByte1; arr_abstract = arr_byte1;
         arr_byte1->resize( srf_arr_int->value().size() );
         typedef ArrayByte1::scalar_type type;
@@ -1086,9 +1117,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayByte2>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 2 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayByte2> arr_byte2 = new ArrayByte2; arr_abstract = arr_byte2;
         arr_byte2->resize( srf_arr_int->value().size() / 2 );
         typedef ArrayByte2::scalar_type type;
@@ -1098,9 +1129,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayByte3>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 3 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayByte3> arr_byte3 = new ArrayByte3; arr_abstract = arr_byte3;
         arr_byte3->resize( srf_arr_int->value().size() / 3 );
         typedef ArrayByte3::scalar_type type;
@@ -1110,9 +1141,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayByte4>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 4 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayByte4> arr_byte4 = new ArrayByte4; arr_abstract = arr_byte4;
         arr_byte4->resize( srf_arr_int->value().size() / 4 );
         typedef ArrayByte4::scalar_type type;
@@ -1122,8 +1153,8 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUByte1>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
         ref<ArrayUByte1> arr_byte1 = new ArrayUByte1; arr_abstract = arr_byte1;
         arr_byte1->resize( srf_arr_int->value().size() );
         typedef ArrayUByte1::scalar_type type;
@@ -1133,9 +1164,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUByte2>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 2 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayUByte2> arr_byte2 = new ArrayUByte2; arr_abstract = arr_byte2;
         arr_byte2->resize( srf_arr_int->value().size() / 2 );
         typedef ArrayUByte2::scalar_type type;
@@ -1145,9 +1176,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUByte3>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 3 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayUByte3> arr_byte3 = new ArrayUByte3; arr_abstract = arr_byte3;
         arr_byte3->resize( srf_arr_int->value().size() / 3 );
         typedef ArrayUByte3::scalar_type type;
@@ -1157,9 +1188,9 @@ namespace vl
       else
       if (srf_obj->tag() == "<ArrayUByte4>")
       {
-        VL_CHECK(value->type() == SRF_Value::ArrayInt32); // mic fixme
-        const SRF_ArrayInt32* srf_arr_int = value->getArrayInt32();
-        VL_CHECK( srf_arr_int->value().size() % 4 == 0) // mic fixme
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
+        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayUByte4> arr_byte4 = new ArrayUByte4; arr_abstract = arr_byte4;
         arr_byte4->resize( srf_arr_int->value().size() / 4 );
         typedef ArrayUByte4::scalar_type type;
@@ -1168,8 +1199,7 @@ namespace vl
       }
       else
       {
-        // mic fixme
-        VL_TRAP();
+        Log::error( Say("Line %n : unknown array '%s'.\n") << srf_obj->lineNumber() << srf_obj->tag() );
         return NULL;
       }
 
@@ -1179,7 +1209,7 @@ namespace vl
       return arr_abstract.get();
     }
 
-    EPrimitiveType import_EPrimitiveType(const std::string& str)
+    EPrimitiveType import_EPrimitiveType(const std::string& str, int line_num)
     {
       if ("PT_POINTS" == str) return PT_POINTS;
       if ("PT_LINES" == str)  return PT_LINES;
@@ -1196,9 +1226,9 @@ namespace vl
       if ("PT_TRIANGLES_ADJACENCY" == str) return PT_TRIANGLES_ADJACENCY;
       if ("PT_TRIANGLE_STRIP_ADJACENCY" == str) return PT_TRIANGLES_ADJACENCY;
       if ("PT_PATCHES" == str) return PT_PATCHES;
-      if ("PT_UNKNOWN" == str) return PT_UNKNOWN;
+      // if ("PT_UNKNOWN" == str) return PT_UNKNOWN;
     
-      VL_TRAP();
+      Log::error( Say("Line %n : error : unknown primitive type '%s'\n") << line_num << str);
       return PT_UNKNOWN;
     }
 
@@ -1232,56 +1262,67 @@ namespace vl
           const SRF_Value& value = srf_obj->value()[i].value();
           if( key == "PrimitiveType" )
           {
-            VL_CHECK( value.type() == SRF_Value::Identifier ) // mic fixme
-            de->setPrimitiveType( import_EPrimitiveType( value.getIdentifier() ) );
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Identifier )
+            de->setPrimitiveType( import_EPrimitiveType( value.getIdentifier(), value.lineNumber() ) );
+            VL_SRF_CHECK_ERROR( de->primitiveType() != PT_UNKNOWN );
           }
           else
           if( key == "Enabled" )
           {
-            VL_CHECK( value.type() == SRF_Value::Bool ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Bool )
             de->setEnabled( value.getBool() );
           }
           else
           if( key == "Instances" )
           {
-            VL_CHECK( value.type() == SRF_Value::Int64 ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
             de->setInstances( (int)value.getInt64() );
           }
           else
           if( key == "PrimitiveRestartEnabled" )
           {
-            VL_CHECK( value.type() == SRF_Value::Bool ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Bool )
             de->setPrimitiveRestartEnabled( value.getBool() );
           }
           else
           if( key == "BaseVertex" )
           {
-            VL_CHECK( value.type() == SRF_Value::Int64 ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
             de->setBaseVertex( (int)value.getInt64() );
           }
           else
           if( key == "IndexBuffer" )
           {
-            VL_CHECK( value.type() == SRF_Value::Structure ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Structure )
             ArrayAbstract* arr_abstract = import_Array(value.getStructure());
+            if(!arr_abstract)
+              return NULL;
 
             if ( de->classType() == DrawElementsUInt::Type() )
             {
-              VL_CHECK(arr_abstract->classType() == ArrayUInt1::Type());
+              VL_SRF_CHECK_ERROR(arr_abstract->classType() == ArrayUInt1::Type());
               de->as<DrawElementsUInt>()->setIndexBuffer( arr_abstract->as<ArrayUInt1>() );
             }
             else
             if ( de->classType() == DrawElementsUShort::Type() )
             {
-              VL_CHECK(arr_abstract->classType() == ArrayUShort1::Type());
+              VL_SRF_CHECK_ERROR(arr_abstract->classType() == ArrayUShort1::Type());
               de->as<DrawElementsUShort>()->setIndexBuffer( arr_abstract->as<ArrayUShort1>() );
             }
             else
             if ( de->classType() == DrawElementsUByte::Type() )
             {
-              VL_CHECK(arr_abstract->classType() == ArrayUByte1::Type());
+              VL_SRF_CHECK_ERROR(arr_abstract->classType() == ArrayUByte1::Type());
               de->as<DrawElementsUByte>()->setIndexBuffer( arr_abstract->as<ArrayUByte1>() );
             }
+          }
+          else
+          if ( key == "Extension" )
+            continue;
+          else
+          {
+            Log::error( Say("Line %n : error.\n") << value.lineNumber() );
+            return NULL;
           }
         }
       }
@@ -1308,61 +1349,67 @@ namespace vl
           const SRF_Value& value = srf_obj->value()[i].value();
           if( key == "PrimitiveType" )
           {
-            VL_CHECK( value.type() == SRF_Value::Identifier ) // mic fixme
-            de->setPrimitiveType( import_EPrimitiveType( value.getIdentifier() ) );
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Identifier )
+            de->setPrimitiveType( import_EPrimitiveType( value.getIdentifier(), value.lineNumber() ) );
+            VL_SRF_CHECK_ERROR( de->primitiveType() != PT_UNKNOWN );
           }
           else
           if( key == "Enabled" )
           {
-            VL_CHECK( value.type() == SRF_Value::Bool ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Bool )
             de->setEnabled( value.getBool() );
           }
           else
           if( key == "PrimitiveRestartEnabled" )
           {
-            VL_CHECK( value.type() == SRF_Value::Bool ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Bool )
             de->setPrimitiveRestartEnabled( value.getBool() );
           }
           else
           if( key == "BaseVertices" )
           {
-            VL_CHECK( value.type() == SRF_Value::ArrayInt32 ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::ArrayInt32 )
             de->setBaseVertices( value.getArrayInt32()->value() );
           }
           else
           if( key == "CountVector" )
           {
-            VL_CHECK( value.type() == SRF_Value::ArrayInt32 ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::ArrayInt32 )
             de->countVector() = value.getArrayInt32()->value();
           }
           else
           if( key == "IndexBuffer" )
           {
-            VL_CHECK( value.type() == SRF_Value::Structure ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Structure )
             ArrayAbstract* arr_abstract = import_Array(value.getStructure());
+            if( !arr_abstract )
+              return NULL;
 
             if ( de->classType() == MultiDrawElementsUInt::Type() )
             {
-              VL_CHECK(arr_abstract->classType() == ArrayUInt1::Type());
+              VL_SRF_CHECK_ERROR(arr_abstract->classType() == ArrayUInt1::Type());
               de->as<MultiDrawElementsUInt>()->setIndexBuffer( arr_abstract->as<ArrayUInt1>() );
             }
             else
             if ( de->classType() == MultiDrawElementsUShort::Type() )
             {
-              VL_CHECK(arr_abstract->classType() == ArrayUShort1::Type());
+              VL_SRF_CHECK_ERROR(arr_abstract->classType() == ArrayUShort1::Type());
               de->as<MultiDrawElementsUShort>()->setIndexBuffer( arr_abstract->as<ArrayUShort1>() );
             }
             else
             if ( de->classType() == MultiDrawElementsUByte::Type() )
             {
-              VL_CHECK(arr_abstract->classType() == ArrayUByte1::Type());
+              VL_SRF_CHECK_ERROR(arr_abstract->classType() == ArrayUByte1::Type());
               de->as<MultiDrawElementsUByte>()->setIndexBuffer( arr_abstract->as<ArrayUByte1>() );
             }
           }
           else
+          if ( key == "Extension" )
+            continue;
+          else
           {
-            // mic fixme
-            Log::error( Say("Ignoring %s\n") << key );
+            Log::error( Say("Line %n : error.\n") << value.lineNumber() );
+            return NULL;
           }
         }
 
@@ -1386,44 +1433,47 @@ namespace vl
 
           if( key == "PrimitiveType" )
           {
-            VL_CHECK( value.type() == SRF_Value::Identifier ) // mic fixme
-            da->setPrimitiveType( import_EPrimitiveType( value.getIdentifier() ) );
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Identifier )
+            da->setPrimitiveType( import_EPrimitiveType( value.getIdentifier(), value.lineNumber() ) );
+            VL_SRF_CHECK_ERROR( da->primitiveType() != PT_UNKNOWN );
           }
           else
           if( key == "Enabled" )
           {
-            VL_CHECK( value.type() == SRF_Value::Bool ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Bool )
             da->setEnabled( value.getBool() );
           }
           else
           if( key == "Instances" )
           {
-            VL_CHECK( value.type() == SRF_Value::Int64 ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
             da->setInstances( (int)value.getInt64() );
           }
           else
           if( key == "Start" )
           {
-            VL_CHECK( value.type() == SRF_Value::Int64 ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
             da->setStart( (int)value.getInt64() );
           }
           else
           if( key == "Count" )
           {
-            VL_CHECK( value.type() == SRF_Value::Int64 ) // mic fixme
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
             da->setCount( (int)value.getInt64() );
           }
           else
+          if ( key == "Extension" )
+            continue;
+          else
           {
-            // 
-            VL_TRAP()
+            Log::error( Say("Line %n : error.\n") << value.lineNumber() );
+            return NULL;
           }
         }
       }
       else
       {
-        // mic fixme
-        VL_TRAP();
+        Log::error( Say("Line %n : error. Unknown draw call.\n") << srf_obj->lineNumber() );
         return NULL;
       }
 
@@ -1440,7 +1490,10 @@ namespace vl
         return srfToVL(srf_obj)->as<VertexAttribInfo>();
 
       if (srf_obj->tag() != "<VertexAttribInfo>")
+      {
+        Log::error( Say("Line %n : <VertexAttribInfo> expected.\n") << srf_obj->lineNumber() );
         return NULL;
+      }
 
       // link the SRF to the VL object
       ref<VertexAttribInfo> info = new VertexAttribInfo;
@@ -1453,17 +1506,23 @@ namespace vl
 
         if (key == "Data")
         {
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           ArrayAbstract* arr = import_Array( value.getStructure() );
-          info->setData(arr);
+          if(arr)
+            info->setData(arr);
+          else
+            return NULL;
         }
         else
         if (key == "Normalize")
         {
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Bool) 
           info->setNormalize( value.getBool() );
         }
         else
         if (key == "Interpretation")
         {
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Identifier) 
           if (strcmp(value.getIdentifier(), "VAI_NORMAL") == 0)
             info->setInterpretation(VAI_NORMAL);
           else
@@ -1474,8 +1533,17 @@ namespace vl
             info->setInterpretation(VAI_DOUBLE);
           else
           {
-            VL_TRAP() // mic fixme error
+            Log::error( Say("Line %n : error.\n") << value.lineNumber() );
+            return NULL;
           }
+        }
+        else
+        if (key == "Extension")
+          continue;
+        else
+        {
+          Log::error( Say("Line %n : error.\n") << value.lineNumber() );
+          return NULL;
         }
       }
     
@@ -1489,7 +1557,10 @@ namespace vl
         return srfToVL(srf_obj)->as<Geometry>();
 
       if (srf_obj->tag() != "<Geometry>")
+      {
+        Log::error( Say("Line %n : <Geometry> expected.\n") << srf_obj->lineNumber() );
         return NULL;
+      }
 
       // link the SRF to the VL object
       ref<Geometry> geom = new Geometry;
@@ -1502,19 +1573,19 @@ namespace vl
 
         if (key == "VBOEnabled")
         {
-          VL_CHECK(value.type() == SRF_Value::Bool) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Bool) 
           geom->setVBOEnabled( value.getBool() );
         }
         else
         if (key == "DisplayListEnabled")
         {
-          VL_CHECK(value.type() == SRF_Value::Bool) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Bool) 
           geom->setDisplayListEnabled( value.getBool() );
         }
         else
         if (key == "AABB")
         {
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           AABB aabb;
           if (!import_AABB(value.getStructure(), aabb))
             return NULL;
@@ -1522,7 +1593,7 @@ namespace vl
         else
         if (key == "Sphere")
         {
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           Sphere sphere;
           if (!import_Sphere(value.getStructure(), sphere))
             return NULL;
@@ -1530,7 +1601,7 @@ namespace vl
         else
         if (key == "VertexArray")
         {
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           ArrayAbstract* arr = import_Array(value.getStructure());
           if (arr)
             geom->setVertexArray(arr);
@@ -1540,7 +1611,7 @@ namespace vl
         else
         if (key == "NormalArray")
         {
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           ArrayAbstract* arr = import_Array(value.getStructure());
           if (arr)
             geom->setNormalArray(arr);
@@ -1550,7 +1621,7 @@ namespace vl
         else
         if (key == "ColorArray")
         {
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           ArrayAbstract* arr = import_Array(value.getStructure());
           if (arr)
             geom->setColorArray(arr);
@@ -1560,7 +1631,7 @@ namespace vl
         else
         if (key == "SecondaryColorArray")
         {
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           ArrayAbstract* arr = import_Array(value.getStructure());
           if (arr)
             geom->setSecondaryColorArray(arr);
@@ -1570,7 +1641,7 @@ namespace vl
         else
         if (key == "FogCoordArray")
         {
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           ArrayAbstract* arr = import_Array(value.getStructure());
           if (arr)
             geom->setFogCoordArray(arr);
@@ -1588,11 +1659,13 @@ namespace vl
               tex_unit = tex_unit*10 + (*ch - '0');
             else
             {
-              Log::error( "TexCoordArray must end with a number!\n" ); // mic fixme test this
+              Log::error( Say("Line %n : error. ") << value.lineNumber() );
+              Log::error( "TexCoordArray must end with a number!\n" );
+              return NULL;
             }
           }
 
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           ArrayAbstract* arr = import_Array(value.getStructure());
           if (arr)
             geom->setTexCoordArray(tex_unit, arr);
@@ -1610,11 +1683,13 @@ namespace vl
               attrib_location = attrib_location*10 + (*ch - '0');
             else
             {
-              Log::error( "VertexAttribArray must end with a number!\n" ); // mic fixme test this
+              Log::error( Say("Line %n : error. ") << value.lineNumber() );
+              Log::error( "VertexAttribArray must end with a number!\n" );
+              return NULL;
             }
           }
         
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           VertexAttribInfo* info_ptr = import_VertexAttribInfo(value.getStructure());
           if (info_ptr)
           {
@@ -1628,7 +1703,7 @@ namespace vl
         else
         if (key == "DrawCall")
         {
-          VL_CHECK(value.type() == SRF_Value::Structure) // mic fixme: issue error
+          VL_SRF_CHECK_ERROR(value.type() == SRF_Value::Structure) 
           DrawCall* draw_call = import_DrawCall(value.getStructure());
           if (draw_call)
             geom->drawCalls()->push_back(draw_call);
@@ -1636,9 +1711,12 @@ namespace vl
             return NULL;
         }
         else
+        if (key == "Extension")
+          continue;
+        else
         {
-          VL_TRAP()
-          // mic fixme
+          Log::error( Say("Line %n : error.\n") << value.lineNumber() );
+          return NULL;
         }
       }
 
@@ -1778,5 +1856,7 @@ namespace vl
   };
 //-----------------------------------------------------------------------------
 }
+
+#undef VL_SRF_CHECK_ERROR
 
 #endif
