@@ -332,7 +332,7 @@ namespace vl
     };
 
   private:
-    void release();
+    VLCORE_EXPORT void release();
 
   public:
     SRF_Value()
@@ -486,13 +486,13 @@ namespace vl
 
     ~SRF_Value() { release(); }
 
-    SRF_Value& operator=(const SRF_Value& other);
+    VLCORE_EXPORT SRF_Value& operator=(const SRF_Value& other);
 
     EType type() const { return mType; }
 
     // object
 
-    SRF_Structure* setStructure(SRF_Structure*);
+    VLCORE_EXPORT SRF_Structure* setStructure(SRF_Structure*);
 
     SRF_Structure* getStructure() { VL_CHECK(mType == Structure); return mUnion.mStructure; }
 
@@ -500,7 +500,7 @@ namespace vl
 
     // list
 
-    SRF_List* setList(SRF_List*);
+    VLCORE_EXPORT SRF_List* setList(SRF_List*);
 
     SRF_List* getList() { VL_CHECK(mType == List); return mUnion.mList; }
 
@@ -508,7 +508,7 @@ namespace vl
 
     // array
 
-    SRF_Array* setArray(SRF_Array*);
+    VLCORE_EXPORT SRF_Array* setArray(SRF_Array*);
 
     SRF_ArrayString* getArrayString() { VL_CHECK(mType == ArrayString); return mUnion.mArray->as<SRF_ArrayString>(); }
     const SRF_ArrayString* getArrayString() const { VL_CHECK(mType == ArrayString); return mUnion.mArray->as<SRF_ArrayString>(); }
@@ -1474,7 +1474,8 @@ namespace vl
       Int64,              //  +123
       Float,              //  +123.456e+10
       Double,             //  +123.456e+10
-      StructureHeader          //  <StructureHeader>
+      StructureHeader,    //  <StructureHeader>
+      FancyBlock,         // {< blabla >}
 
     } EType;
 
@@ -1487,14 +1488,17 @@ namespace vl
   class SRF_Tokenizer: public BufferedStream<char, 128*1024>
   {
   public:
-    SRF_Tokenizer(): mLineNumber(1) {}
+    SRF_Tokenizer(): mLineNumber(1), mFancyBlock(false) {}
 
-    bool getToken(SRF_Token& token);
+    VLCORE_EXPORT bool getToken(SRF_Token& token);
+
+    VLCORE_EXPORT bool getFancyBlock(SRF_Token& token);
 
     int lineNumber() const { return mLineNumber; }
 
   private:
     int mLineNumber;
+    bool mFancyBlock;
   };
   //-----------------------------------------------------------------------------
   // SRF_Parser
