@@ -142,7 +142,7 @@ namespace vl
     */
     Actor(Renderable* renderable = NULL, Effect* effect = NULL, Transform* transform = NULL, int block = 0, int rank = 0):
       mEffect(effect), mTransform(transform), mRenderBlock(block), mRenderRank(rank),
-      mTransformUpdateTick(-1), mBoundsUpdateTick(-1), mEnableMask(0xFFFFFFFF), mOcclusionQuery(0), mIsOccludee(true), mOcclusionQueryTick(0xFFFFFFFF)
+      mTransformUpdateTick(-1), mBoundsUpdateTick(-1), mEnableMask(0xFFFFFFFF), mOcclusionQuery(0), mOcclusionQueryTick(0xFFFFFFFF), mIsOccludee(true)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mActorEventCallbacks.setAutomaticDelete(false);
