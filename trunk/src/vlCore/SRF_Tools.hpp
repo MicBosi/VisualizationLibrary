@@ -699,6 +699,7 @@ namespace vl
       mAssign = false;
       mUIDSet = NULL;
       mFormatBuffer.resize(4096);
+      setHeader();
     }
 
     bool isUsed(const std::string& uid)
@@ -1034,8 +1035,15 @@ namespace vl
 
     virtual void output(const char* str)
     {
-      // printf("%s", str.toStdString().c_str());
       mText += str;
+    }
+
+    void setHeader()
+    {
+      mText = "Simple_Runtime_Format_Text\n"
+              "Version = 100\n"
+              "Encoding = ascii\n"
+              "\n";
     }
 
     void setUIDSet(std::set< std::string >* uids) { mUIDSet = uids; }
@@ -1502,8 +1510,68 @@ namespace vl
         return false;
     }
 
+    bool parseHeader(int& version, std::string& encoding)
+    {
+      version = 0;
+      encoding = "";
+
+      // Simple_Runtime_Format_Text
+      if (!getToken(mToken) || mToken.mType != SRF_Token::Identifier || mToken.mString != "Simple_Runtime_Format_Text")
+      {
+        Log::error("'Simple_Runtime_Format_Text' header not found!\n");
+        return false;
+      }
+
+      // Version
+      if (!getToken(mToken) || mToken.mType != SRF_Token::Identifier || mToken.mString != "Version")
+        return false;
+
+      if (!getToken(mToken) || mToken.mType != SRF_Token::Equals)
+        return false;
+
+      if (!getToken(mToken) || mToken.mType != SRF_Token::Int32 || mToken.mString != "100")
+        return false;
+      else
+        version = atoi( mToken.mString.c_str() );
+
+      // Encoding
+      if (!getToken(mToken) || mToken.mType != SRF_Token::Identifier || mToken.mString != "Encoding")
+        return false;
+
+      if (!getToken(mToken) || mToken.mType != SRF_Token::Equals)
+        return false;
+
+      if (!getToken(mToken) || mToken.mType != SRF_Token::Identifier || mToken.mString != "ascii")
+        return false;
+      else
+        encoding = mToken.mString;
+
+      return true;
+    }
+
     bool parse()
     {
+      int version = 0;
+      std::string encoding;
+
+      if (!parseHeader(version, encoding))
+      {
+        Log::error( Say("Line %n: error parsing header at '%s'.\n") << tokenizer()->lineNumber() << mToken.mString );
+        return false;
+      }
+
+      if (version != 100)
+      {
+        Log::error("SRF version not supported.\n");
+        return false;
+      }
+
+      if (encoding != "ascii")
+      {
+        Log::error("Encoding not supported.\n");
+        return false;
+      }
+
       mRoot = NULL;
       if(getToken(mToken) && mToken.mType == SRF_Token::StructureHeader)
       {
