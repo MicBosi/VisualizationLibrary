@@ -1756,7 +1756,7 @@ public:
     mVL_To_SRF[vl_obj] = srf_obj;
   }
 
-  String srfExport(const ResourceDatabase* res_db)
+  std::string srfExport(const ResourceDatabase* res_db)
   {
     SRF_Value value = srfExport_ResourceDatabase(res_db);
 
@@ -1806,7 +1806,7 @@ public:
     mAssign = 0;
     mIndent = 0;
     ref<ResourceDatabase> res_db = new ResourceDatabase;
-#if 0
+#if 1
     for (int i=0; i<100; ++i)
     {
       ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 16 );
@@ -1839,7 +1839,7 @@ public:
 
     std::fstream fout;
     fout.open("D:/VL/srf_export.vl", std::ios::out);
-    fout.write( text_export_visitor.srfText().toStdString().c_str(), text_export_visitor.srfText().length() );
+    fout.write( text_export_visitor.srfText().c_str(), text_export_visitor.srfText().length() );
     fout.close();
 #endif
 
