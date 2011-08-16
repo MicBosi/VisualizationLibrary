@@ -88,8 +88,8 @@ public:
     res_db->resources().push_back( geom.get() );
 #endif
 
-    // bool ok = writeSRF("D:/VL/srf_export.vl", res_db.get());
-    // VL_CHECK(ok);
+    bool ok = writeSRF("D:/VL/srf_export.vl", res_db.get());
+    VL_CHECK(ok); 
 
     res_db = loadSRF("D:/VL/srf_export.vl");
     VL_CHECK(res_db);
