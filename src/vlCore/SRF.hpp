@@ -33,7 +33,6 @@
 #define SRF_INCLUDE_ONCE
 
 #include <vlCore\Object.hpp>
-#include <vlCore\String.hpp>
 #include <vlCore\Say.hpp>
 #include <vlCore\Log.hpp>
 #include <vlCore\BufferedStream.hpp>
@@ -794,7 +793,7 @@ namespace vl
     class Value
     {
     public:
-      Value(const std::string& uid): mUID(uid) {}
+      Value(const char* uid): mUID(uid) {}
 
       void setUID(const char* uid) { mUID = uid; }
 
@@ -1187,7 +1186,7 @@ namespace vl
 
       std::string& key() { return mKey; }
       const std::string& key() const { return mKey; }
-      void setKey(const std::string& key) { mKey = key; }
+      void setKey(const char* key) { mKey = key; }
 
       SRF_Value& value() { return mValue; }
       const SRF_Value& value() const { return mValue; }
@@ -1211,7 +1210,7 @@ namespace vl
     const std::vector<Value>& value() const { return mKeyValue; }
 
     // mic fixme: we can speed this guys up with multimaps
-    SRF_Value* getValue(const std::string& key)
+    SRF_Value* getValue(const char* key)
     {
       for(size_t i=0; i<mKeyValue.size(); ++i)
         if (mKeyValue[i].key() == key)
@@ -1219,7 +1218,7 @@ namespace vl
       return NULL;
     }
 
-    const SRF_Value* getValue(const std::string& key) const
+    const SRF_Value* getValue(const char* key) const
     {
       for(size_t i=0; i<mKeyValue.size(); ++i)
         if (mKeyValue[i].key() == key)
@@ -1412,6 +1411,7 @@ namespace vl
       mIndent = 0;
       mAssign = false;
       mUIDSet = NULL;
+      mFormatBuffer.resize(4096);
     }
 
     bool isUsed(const std::string& uid)
@@ -1448,25 +1448,37 @@ namespace vl
       }
     }
 
+    void format(const char* fmt, ...)
+    {
+      mFormatBuffer[0] = 0;
+
+      va_list ap;
+      va_start(ap, fmt);
+      vsnprintf(&mFormatBuffer[0], mFormatBuffer.size(), fmt, ap);
+      va_end(ap);
+
+      output(&mFormatBuffer[0]);
+    }
+
     virtual void visitStructur(SRF_Structure* obj)
     {
       // mic fixme: check this
       if (isVisited(obj))
       {
-        indent(); output(String::printf("%s\n", obj->uid().c_str()));
+        indent(); format("%s\n", obj->uid().c_str());
         return;
       }
 
-      indent(); output(String::printf("%s\n", obj->tag().c_str()));
+      indent(); format("%s\n", obj->tag().c_str());
       indent(); output("{\n");
       mIndent++;
       if ( obj->uid().length() && obj->uid() != "#NULL" && isUsed(obj->uid()) )
       {
-        indent(); output(String::printf("ID = %s\n", obj->uid().c_str()));
+        indent(); format("ID = %s\n", obj->uid().c_str());
       }
       for(size_t i=0; i<obj->value().size(); ++i)
       {
-        indent(); output(String::printf("%s = ", obj->value()[i].key().c_str()));
+        indent(); format("%s = ", obj->value()[i].key().c_str());
         switch(obj->value()[i].value().type())
         {
         case SRF_Value::Structure:
@@ -1506,22 +1518,22 @@ namespace vl
           obj->value()[i].value().getArrayDouble()->acceptVisitor(this);
           break;
         case SRF_Value::String:
-          output(String::printf("%s\n", obj->value()[i].value().getString())); VL_CHECK( strlen(obj->value()[i].value().getString()) )
+          format("%s\n", obj->value()[i].value().getString()); VL_CHECK( strlen(obj->value()[i].value().getString()) )
           break;
         case SRF_Value::Identifier:
-          output(String::printf("%s\n", obj->value()[i].value().getIdentifier())); VL_CHECK( strlen(obj->value()[i].value().getIdentifier()) )
+          format("%s\n", obj->value()[i].value().getIdentifier()); VL_CHECK( strlen(obj->value()[i].value().getIdentifier()) )
           break;
         case SRF_Value::UID:
-          output(String::printf("%s\n", obj->value()[i].value().getUID())); VL_CHECK( strlen(obj->value()[i].value().getUID()) )
+          format("%s\n", obj->value()[i].value().getUID()); VL_CHECK( strlen(obj->value()[i].value().getUID()) )
           break;
         case SRF_Value::Bool:
-          output(String::printf("%s\n", obj->value()[i].value().getBool() ? "true" : "false"));
+          format("%s\n", obj->value()[i].value().getBool() ? "true" : "false");
           break;
         case SRF_Value::Int64:
-          output(String::printf("%lld\n", obj->value()[i].value().getInt64()));
+          format("%lld\n", obj->value()[i].value().getInt64());
           break;
         case SRF_Value::Double:
-          output(String::printf("%Lf\n", obj->value()[i].value().getDouble()));
+          format("%Lf\n", obj->value()[i].value().getDouble());
           break;
         }
       }
@@ -1572,22 +1584,22 @@ namespace vl
           list->value()[i].getArrayDouble()->acceptVisitor(this);
           break;
         case SRF_Value::String:
-          output(String::printf("%s\n", list->value()[i].getString())); VL_CHECK( strlen(list->value()[i].getString()) )
+          format("%s\n", list->value()[i].getString()); VL_CHECK( strlen(list->value()[i].getString()) )
           break;
         case SRF_Value::Identifier:
-          output(String::printf("%s\n", list->value()[i].getIdentifier())); VL_CHECK( strlen(list->value()[i].getIdentifier()) )
+          format("%s\n", list->value()[i].getIdentifier()); VL_CHECK( strlen(list->value()[i].getIdentifier()) )
           break;
         case SRF_Value::UID:
-          output(String::printf("%s\n", list->value()[i].getUID())); VL_CHECK( strlen(list->value()[i].getUID()) )
+          format("%s\n", list->value()[i].getUID()); VL_CHECK( strlen(list->value()[i].getUID()) )
           break;
         case SRF_Value::Bool:
-          output(String::printf("%s\n", list->value()[i].getBool() ? "true" : "false"));
+          format("%s\n", list->value()[i].getBool() ? "true" : "false");
           break;
         case SRF_Value::Int64:
-          output(String::printf("%lld\n", list->value()[i].getInt64()));
+          format("%lld\n", list->value()[i].getInt64());
           break;
         case SRF_Value::Double:
-          output(String::printf("%Lf\n", list->value()[i].getDouble()));
+          format("%Lf\n", list->value()[i].getDouble());
           break;
         }
       }
@@ -1602,11 +1614,13 @@ namespace vl
       int i = 0;
       int size = arr->value().size() - 10;
       for( ; i < size; i += 10)
-        output(String::printf("%d %d %d %d %d %d %d %d %d %d ",
-          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4], 
-          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] ) );
-      for( ; i<arr->value().size(); ++i )
-        output(String::printf("%d ", arr->value()[i]));
+      {
+        format("%d %d %d %d %d %d %d %d %d %d ",
+          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
+          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
+      }
+      for( ; i < (int)arr->value().size(); ++i )
+        format("%d ", arr->value()[i]);
       VL_CHECK( i == arr->value().size() )
       output(")\n");
     }
@@ -1618,11 +1632,13 @@ namespace vl
       int i = 0;
       int size = arr->value().size() - 10;
       for( ; i < size; i += 10)
-        output(String::printf("%lld %lld %lld %lld %lld %lld %lld %lld %lld %lld ",
-          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4], 
-          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] ) );
-      for( ; i<arr->value().size(); ++i )
-        output(String::printf("%lld ", arr->value()[i]));
+      {
+        format("%lld %lld %lld %lld %lld %lld %lld %lld %lld %lld ",
+          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
+          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
+      }
+      for( ; i < (int)arr->value().size(); ++i )
+        format("%lld ", arr->value()[i]);
       VL_CHECK( i == arr->value().size() )
       output(")\n");
     }
@@ -1634,11 +1650,13 @@ namespace vl
       int i = 0;
       int size = arr->value().size() - 10;
       for( ; i < size; i += 10)
-        output(String::printf("%f %f %f %f %f %f %f %f %f %f ",
-          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4], 
-          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] ) );
-      for( ; i<arr->value().size(); ++i )
-        output(String::printf("%f ", arr->value()[i]));
+      {
+        format("%f %f %f %f %f %f %f %f %f %f ",
+          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
+          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
+      }
+      for( ; i < (int)arr->value().size(); ++i )
+        format("%f ", arr->value()[i]);
       VL_CHECK( i == arr->value().size() )
       output(")\n"); 
     }
@@ -1650,11 +1668,13 @@ namespace vl
       int i = 0;
       int size = arr->value().size() - 10;
       for( ; i < size; i += 10)
-        output(String::printf("%Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf ",
-          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4], 
-          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] ) );
-      for( ; i<arr->value().size(); ++i )
-        output(String::printf("%Lf ", arr->value()[i]));
+      {
+        format("%Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf ",
+          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
+          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
+      }
+      for( ; i < (int)arr->value().size(); ++i )
+        format("%Lf ", arr->value()[i]);
       VL_CHECK( i == arr->value().size() )
       output(")\n");
     }
@@ -1663,7 +1683,7 @@ namespace vl
     {
       indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        output(String::printf("%s ", arr->value()[i].c_str()));
+        format("%s ", arr->value()[i].c_str());
       output(")\n");
     }
 
@@ -1671,7 +1691,7 @@ namespace vl
     {
       indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        output("\"" + encodeString(arr->value()[i]) + "\" ");
+        output(std::string("\"") + encodeString(arr->value()[i].c_str()) + "\" ");
       output(")\n");
     }
 
@@ -1679,16 +1699,16 @@ namespace vl
     {
       indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        output(String::printf("%s ", arr->value()[i].uid()));
+        format("%s ", arr->value()[i].uid());
       output(")\n");
     }
 
     // mic fixme: test this both as input and as output!
     // support \xHH hex notation both input and output.
-    String encodeString(const std::string& str)
+    std::string encodeString(const char* str)
     {
-      String out;
-      for(size_t i=0; i<str.length(); ++i)
+      std::string out;
+      for(size_t i=0; str[i]; ++i)
       {
         if (str[i] == '"')
           out += "\"";
@@ -1716,14 +1736,13 @@ namespace vl
       return out;
     }
 
-    const String& srfText() const { return mText; }
+    const std::string& srfText() const { return mText; }
 
-    String& srfText() { return mText; }
+    std::string& srfText() { return mText; }
 
-    virtual void output(const String& str)
+    virtual void output(const std::string& str)
     {
-      // printf("%s", str.toStdString().c_str());
-      mText += str;
+      output(str.c_str());
     }
 
     virtual void output(const char* str)
@@ -1741,8 +1760,9 @@ namespace vl
   private:
     int mIndent;
     bool mAssign;
-    String mText;
+    std::string mText;
     std::set< std::string >* mUIDSet;
+    std::vector<char> mFormatBuffer;
   };
   //-----------------------------------------------------------------------------
   // SRF_LinkMapperVisitor: 
@@ -2116,7 +2136,7 @@ namespace vl
 
     bool getToken(SRF_Token& token) { return mTokenizer->getToken(token); }
 
-    String exportToText()
+    std::string exportToText()
     {
       if (mRoot)
       {
@@ -2236,7 +2256,7 @@ namespace vl
           SRF_Structure::Value& name_value = object->value().back();
 
           // Key
-          name_value.setKey( mToken.mString );
+          name_value.setKey( mToken.mString.c_str() );
 
           // Equals
           if (!getToken(mToken) || mToken.mType != SRF_Token::Equals)
@@ -2431,7 +2451,7 @@ namespace vl
           ref<SRF_ArrayUID> arr_uid;
           arr = arr_uid = new SRF_ArrayUID;
           do
-            arr_uid->mValue.push_back(mToken.mString);
+            arr_uid->mValue.push_back(mToken.mString.c_str());
           while(getToken(mToken) && mToken.mType == SRF_Token::UID);
           return mToken.mType == SRF_Token::RightRoundBracket;
         }
