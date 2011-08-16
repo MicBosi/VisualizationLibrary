@@ -29,77 +29,62 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-// mic fixme
-#include <vlCore/SRF_Tools.hpp>
-
-#include "BaseDemo.hpp"
-#include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlGraphics/plugins/vlSRF.hpp>
-//#include <vlGraphics/DrawPixels.hpp>
-//#include <vlGraphics/Light.hpp>
-//#include <vlGraphics/Geometry.hpp>
-//#include <vlCore/BufferedStream.hpp>
-//#include <vlCore/DiskFile.hpp>
-//#include <vlGraphics/MultiDrawElements.hpp>
-//#include <vlGraphics/TriangleStripGenerator.hpp>
-//#include <vlCore/ResourceDatabase.hpp>
+#include <vlGraphics\plugins\vlSRF.hpp>
+#include <vlCore\Time.hpp>
 
 using namespace vl;
 
-class App_VLSRF: public BaseDemo
+//-----------------------------------------------------------------------------
+ref<ResourceDatabase> vl::loadSRF(const String& path)
 {
-public:
-  virtual void initEvent()
+  ref<DiskFile> file = new DiskFile(path);
+  return loadSRF(file.get());
+}
+//-----------------------------------------------------------------------------
+ref<ResourceDatabase> vl::loadSRF(VirtualFile* file)
+{
+  SRFSerializer serializer;
+
+  // mic fixme: debug only
+  Time timer;
+  timer.start();
+
+  ref<ResourceDatabase> res_db = serializer.importFromText(file); // mic fixme: test error conditions
+
+  printf("Export time = %f\n", timer.elapsed());
+
+  return res_db;
+}
+//-----------------------------------------------------------------------------
+bool vl::writeSRF(const String& path, const ResourceDatabase* res_db)
+{
+  ref<DiskFile> file = new DiskFile(path);
+  return writeSRF(file.get(), res_db);
+}
+//-----------------------------------------------------------------------------
+bool vl::writeSRF(VirtualFile* file, const ResourceDatabase* res_db)
+{
+  SRFSerializer serializer;
+
+  // mic fixme: debug only
+  Time timer;
+  timer.start();
+
+  std::string text_srf = serializer.exportToText(res_db);
+
+  printf("Import time = %f\n", timer.elapsed());
+
+  if (serializer.error())
   {
-    Log::notify(appletInfo());
-
-    // ref<Geometry> geom = makeBox( vec3(0,0,0), 10, 10, 10 );
-    // ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
-    ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
-    geom->computeNormals();
-
-    geom->setColorArray( geom->normalArray() );
-    // geom->setSecondaryColorArray( geom->normalArray() );
-    // TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
-    // geom->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
-    // geom->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
-    // mic fixme: this does no realizes that we are using primitive restart
-    // mic fixme: make this manage also MultiDrawElements
-    // geom->makeGLESFriendly();
-    geom->drawCalls()->push_back( geom->drawCalls()->back() );
-
-    ref<Effect> fx = new Effect;
-    fx->shader()->enable(EN_LIGHTING);
-    fx->shader()->enable(EN_DEPTH_TEST);
-    fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
-    fx->shader()->setRenderState( new Light, 0 );
-
-    // sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
-
-    ref<ResourceDatabase> res_db = new ResourceDatabase;
-#if 0
-    for (int i=0; i<100; ++i)
-    {
-      ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 16 );
-      geom->computeNormals();
-      res_db->resources().push_back( geom.get() );
-    }
-#else
-    res_db->resources().push_back( geom.get() );
-#endif
-
-    bool ok = writeSRF("D:/VL/srf_export.vl", res_db.get());
-    VL_CHECK(ok);
-
-    res_db = loadSRF("D:/VL/srf_export.vl");
-    VL_CHECK(res_db);
-
-    geom = res_db->get<Geometry>(0);
-    VL_CHECK(geom)
-    sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
+    Log::error("LoadWriterSRF: serialization error.\n"); // mic fixme: test error conditions
+    return false;
   }
-};
-
-// Have fun!
-
-BaseDemo* Create_App_VLSRF() { return new App_VLSRF; }
+  else
+  {
+    file->open(vl::OM_WriteOnly);
+    file->write( text_srf.c_str(), text_srf.size() );
+    file->close();
+    return true;
+  }
+}
+//-----------------------------------------------------------------------------
