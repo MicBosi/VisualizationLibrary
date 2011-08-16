@@ -1043,6 +1043,10 @@ void Geometry::makeGLESFriendly()
       dc->setEnabled(false);
       Log::error("Geometry::makeGLESFriendly(): primitive type illegal under GLES, draw call disabled.\n");
       break;
+
+    default:
+      VL_TRAP();
+      break;
     }
   } // for()
 

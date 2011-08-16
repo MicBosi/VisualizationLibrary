@@ -35,6 +35,9 @@ using namespace vl;
 
 bool SRF_Tokenizer::getToken(SRF_Token& token)
 {
+  if (mFancyBlock)
+    return getFancyBlock(token);
+
   token.mType = SRF_Token::TOKEN_ERROR;
   token.mString.clear();
 
@@ -124,21 +127,8 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     {
       token.mType = SRF_Token::LeftFancyBracket;
       token.mString = "{<";
-      // eat spaces on the right, nothing must follow {<
-      while(readTextChar(ch1))
-      {
-        if (ch1 == '\n')
-        {
-          ++mLineNumber;
-          break;
-        }
-
-        if (ch1 != ' ' && ch1 != '\t')
-        {
-          Log::error( Say("Line %n : unexpected character '%c' after '{<'. A new line should follow instead.\n") << mLineNumber << ch1 );
-          return false;
-        }
-      }
+      mFancyBlock = true;
+      return true;
     }
     else
     {
@@ -160,6 +150,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       if(ch2 == '}')
       {
         token.mType = SRF_Token::RightFancyBracket;
+        token.mString = ">}";
         return true;
       }
       else
@@ -511,7 +502,51 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     }
   }
 }
-  //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+bool SRF_Tokenizer::getFancyBlock(SRF_Token& token)
+{
+  mFancyBlock = false;
+
+  token.mString.clear();
+  token.mType = SRF_Token::TOKEN_ERROR;
+
+  char ch =0;
+  while(readTextChar(ch))
+  {
+    if (ch == '>')
+    {
+      // check for fancy block end >}
+      char ch2 = 0;
+      if (readTextChar(ch2))
+      {
+        if(ch2 == '}')
+        {
+          // check if it was escaped
+          if (token.mString.back() == '\\')
+          {
+            token.mString.pop_back();
+            token.mString += ">}";
+            continue;
+          }
+          else
+          {
+            token.mType = SRF_Token::FancyBlock;
+            ungetToken('}');
+            ungetToken('>');
+            return true;
+          }
+        }
+        else
+          ungetToken(ch2);
+      }
+    }
+    
+    token.mString.push_back(ch);
+  }
+
+  return false;
+}
+//-----------------------------------------------------------------------------
 void SRF_Value::release()
 {
   switch(mType)
