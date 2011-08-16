@@ -19,7 +19,7 @@
 add_subdirectory("freetype")
 
 # List of "3D IO" plugins
-set(VLGRAPHICS_PLUGINS "3DS" "AC3D" "MD2" "OBJ" "PLY" "STL")
+set(VLGRAPHICS_PLUGINS "SRF" "3DS" "AC3D" "MD2" "OBJ" "PLY" "STL")
 set(INSTALL_DIR "${VL_INCLUDE_INSTALL_DIR}/vlGraphics/plugins")
 
 # Process plugins
