@@ -62,7 +62,7 @@ namespace vl
   class SRF_Visitor: public Object
   {
   public:
-    virtual void visitStructur(SRF_Structure*) {}
+    virtual void visitStructure(SRF_Structure*) {}
     virtual void visitList(SRF_List*) {}
     virtual void visitArray(SRF_ArrayUID*) {}
     virtual void visitArray(SRF_ArrayInt32*) {}
@@ -320,6 +320,7 @@ namespace vl
       String,
       Identifier,
       UID,
+      FancyBlock,
       List,
       Structure,
       ArrayString,
@@ -394,6 +395,7 @@ namespace vl
       case String: setString(str); break;
       case Identifier: setIdentifier(str); break;
       case UID: setUID(str); break;
+      case FancyBlock: setFancyBlock(str); break;
       default:
         VL_TRAP();
         break;
@@ -558,6 +560,15 @@ namespace vl
 
     const char* getUID() const { VL_CHECK(mType == UID); return mUnion.mString; }
 
+    const char* setFancyBlock(const char* str)
+    {
+      release();
+      mType = FancyBlock;
+      return mUnion.mString = _strdup(str);
+    }
+
+    const char* getFancyBlock() const { VL_CHECK(mType == FancyBlock); return mUnion.mString; }
+
     long long  setInt64(long long val)
     {
       release();
@@ -636,7 +647,7 @@ namespace vl
       setTag(tag);
     }
 
-    virtual void acceptVisitor(SRF_Visitor* v) { v->visitStructur(this); }
+    virtual void acceptVisitor(SRF_Visitor* v) { v->visitStructure(this); }
 
     class Value
     {
@@ -778,7 +789,7 @@ namespace vl
       output(&mFormatBuffer[0]);
     }
 
-    virtual void visitStructur(SRF_Structure* obj)
+    virtual void visitStructure(SRF_Structure* obj)
     {
       // mic fixme: check this
       if (isVisited(obj))
@@ -836,13 +847,16 @@ namespace vl
           obj->value()[i].value().getArrayDouble()->acceptVisitor(this);
           break;
         case SRF_Value::String:
-          format("%s\n", obj->value()[i].value().getString()); VL_CHECK( strlen(obj->value()[i].value().getString()) )
+          format("\"%s\"\n", stringEncode(obj->value()[i].value().getString()).c_str()); VL_CHECK( strlen(obj->value()[i].value().getString()) )
           break;
         case SRF_Value::Identifier:
           format("%s\n", obj->value()[i].value().getIdentifier()); VL_CHECK( strlen(obj->value()[i].value().getIdentifier()) )
           break;
         case SRF_Value::UID:
           format("%s\n", obj->value()[i].value().getUID()); VL_CHECK( strlen(obj->value()[i].value().getUID()) )
+          break;
+        case SRF_Value::FancyBlock:
+          format("{<%s>}\n", fancyEncode(obj->value()[i].value().getFancyBlock()).c_str()); VL_CHECK( strlen(obj->value()[i].value().getFancyBlock()) )
           break;
         case SRF_Value::Bool:
           format("%s\n", obj->value()[i].value().getBool() ? "true" : "false");
@@ -902,22 +916,25 @@ namespace vl
           list->value()[i].getArrayDouble()->acceptVisitor(this);
           break;
         case SRF_Value::String:
-          format("%s\n", list->value()[i].getString()); VL_CHECK( strlen(list->value()[i].getString()) )
+          indent(); format("\"%s\"\n", stringEncode(list->value()[i].getString()).c_str()); VL_CHECK( strlen(list->value()[i].getString()) )
           break;
         case SRF_Value::Identifier:
-          format("%s\n", list->value()[i].getIdentifier()); VL_CHECK( strlen(list->value()[i].getIdentifier()) )
+          indent(); format("%s\n", list->value()[i].getIdentifier()); VL_CHECK( strlen(list->value()[i].getIdentifier()) )
           break;
         case SRF_Value::UID:
-          format("%s\n", list->value()[i].getUID()); VL_CHECK( strlen(list->value()[i].getUID()) )
+          indent(); format("%s\n", list->value()[i].getUID()); VL_CHECK( strlen(list->value()[i].getUID()) )
+          break;
+        case SRF_Value::FancyBlock:
+          indent(); format("{<%s>}\n", fancyEncode(list->value()[i].getFancyBlock()).c_str()); VL_CHECK( strlen(list->value()[i].getFancyBlock()) )
           break;
         case SRF_Value::Bool:
-          format("%s\n", list->value()[i].getBool() ? "true" : "false");
+          indent(); format("%s\n", list->value()[i].getBool() ? "true" : "false");
           break;
         case SRF_Value::Int64:
-          format("%lld\n", list->value()[i].getInt64());
+          indent(); format("%lld\n", list->value()[i].getInt64());
           break;
         case SRF_Value::Double:
-          format("%Lf\n", list->value()[i].getDouble());
+          indent(); format("%Lf\n", list->value()[i].getDouble());
           break;
         }
       }
@@ -1009,7 +1026,7 @@ namespace vl
     {
       indent(); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        output(std::string("\"") + encodeString(arr->value()[i].c_str()) + "\" ");
+        output(std::string("\"") + stringEncode(arr->value()[i].c_str()) + "\" ");
       output(")\n");
     }
 
@@ -1021,18 +1038,36 @@ namespace vl
       output(")\n");
     }
 
+    std::string fancyEncode(const char* str)
+    {
+      std::string out;
+      out.reserve(32);
+
+      for(size_t i=0; str[i]; ++i)
+      {
+        if ( str[i] == '}' && !out.empty() && out.back() == '>')
+        {
+          out.pop_back();
+          out += "\\>}";
+        }
+        else
+          out.push_back( str[i] );
+      }
+      return out;
+    }
+
     // mic fixme: test this both as input and as output!
     // support \xHH hex notation both input and output.
-    std::string encodeString(const char* str)
+    std::string stringEncode(const char* str)
     {
       std::string out;
       for(size_t i=0; str[i]; ++i)
       {
         if (str[i] == '"')
-          out += "\"";
+          out += "\\\"";
         else
         if (str[i] == '\\')
-          out += "\\";
+          out += "\\\\";
         else
         if (str[i] == '\b')
           out += "\\b";
@@ -1070,10 +1105,7 @@ namespace vl
 
     void setHeader()
     {
-      mText = "Simple_Runtime_Format_Text\n"
-              "Version = 100\n"
-              "Encoding = ascii\n"
-              "\n";
+      mText = "Simple_Runtime_Format_Text Version=100 Encoding=ascii\n\n";
     }
 
     void setUIDSet(std::set< std::string >* uids) { mUIDSet = uids; }
@@ -1133,7 +1165,7 @@ namespace vl
       }
     }
 
-    virtual void visitStructur(SRF_Structure* obj)
+    virtual void visitStructure(SRF_Structure* obj)
     {
       // mic fixme: test this
       if (isVisited(obj))
@@ -1242,7 +1274,7 @@ namespace vl
       }
     }
 
-    virtual void visitStructur(SRF_Structure* obj)
+    virtual void visitStructure(SRF_Structure* obj)
     {
       // mic fixme: test this
       if (isVisited(obj))
@@ -1333,7 +1365,7 @@ namespace vl
   public:
     SRF_UIDCollectorVisitor(): mUIDSet(NULL) {}
 
-    virtual void visitStructur(SRF_Structure* obj)
+    virtual void visitStructure(SRF_Structure* obj)
     {
       // mic fixme: test this
       if (isVisited(obj))
@@ -1607,30 +1639,35 @@ namespace vl
       }
 
       mRoot = NULL;
-      if(getToken(mToken) && mToken.mType == SRF_Token::StructureHeader)
+      if(getToken(mToken))
       {
-        mRoot = new SRF_Structure;
-        mRoot->setLineNumber( tokenizer()->lineNumber() );
-        mRoot->setTag(mToken.mString.c_str());
-        if (parseStructure(mRoot.get()))
+        if(mToken.mType == SRF_Token::StructureHeader)
         {
-          return true;
+          mRoot = new SRF_Structure;
+          mRoot->setLineNumber( tokenizer()->lineNumber() );
+          mRoot->setTag(mToken.mString.c_str());
+          if (parseStructure(mRoot.get()))
+          {
+            return true;
+          }
+          else
+          {
+            mRoot = NULL;
+            if (mToken.mString.length())
+              Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
+            else
+              Log::error( Say("Line %n : parse error.\n") << mTokenizer->lineNumber() );
+            return false;
+          }
         }
         else
         {
-          mRoot = NULL;
-          if (mToken.mString.length())
-            Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
-          else
-            Log::error( Say("Line %n : parse error.\n") << mTokenizer->lineNumber() );
+          Log::error("No root object found!\n");
           return false;
         }
       }
       else
-      {
-        Log::error("No root object found!\n");
         return false;
-      }
     }
 
     bool parseStructure(SRF_Structure* object)
@@ -1754,7 +1791,17 @@ namespace vl
               name_value.value().setUID(mToken.mString.c_str());
             }
             else
-            // A boolean (true/false)
+            // A {< fancy block >}
+            if (mToken.mType == SRF_Token::LeftFancyBracket)
+            {
+              if(!getToken(mToken) || mToken.mType != SRF_Token::FancyBlock)
+                return false;
+              name_value.value().setFancyBlock(mToken.mString.c_str());
+              if(!getToken(mToken) || mToken.mType != SRF_Token::RightFancyBracket)
+                return false;
+            }
+            else
+            // A boolean true/false
             if (mToken.mType == SRF_Token::Boolean)
             {
               name_value.value().setBool(mToken.mString == "true");
@@ -1766,7 +1813,7 @@ namespace vl
               name_value.value().setInt64( atoll(mToken.mString.c_str()) );
             }
             else
-            // An float
+            // A float
             if (mToken.mType == SRF_Token::Float || mToken.mType == SRF_Token::Double)
             {
               name_value.value().setDouble( atof(mToken.mString.c_str()) );
@@ -1847,6 +1894,17 @@ namespace vl
             case SRF_Token::Identifier:
               value.setIdentifier( mToken.mString.c_str() ); list->value().push_back( value );
               break;
+
+            // A {< fancy block >}
+            case SRF_Token::LeftFancyBracket:
+            {
+              if(!getToken(mToken) || mToken.mType != SRF_Token::FancyBlock)
+                return false;
+              value.setFancyBlock( mToken.mString.c_str() ); list->value().push_back( value );
+              if(!getToken(mToken) || mToken.mType != SRF_Token::RightFancyBracket)
+                return false;
+              break;
+            }
 
             // UID
             case SRF_Token::UID:
@@ -2015,6 +2073,7 @@ namespace vl
           case SRF_Token::String:             printf("String = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::UID:                printf("UID = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Identifier:         printf("Identifier = %s\n", mToken.mString.c_str()); break;
+          case SRF_Token::FancyBlock:         printf("FancyBlock = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Float:              printf("Float = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Double:             printf("Double = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Int32:              printf("Int32 = %s\n", mToken.mString.c_str()); break;
@@ -2035,6 +2094,8 @@ namespace vl
     const SRF_Tokenizer* tokenizer() const { return mTokenizer.get(); }
 
     const std::map< std::string, ref<SRF_Structure> >& linkMap() const { return mLinkMap; }
+
+    SRF_Structure* root() { return mRoot.get(); }
 
     const SRF_Structure* root() const { return mRoot.get(); }
 
