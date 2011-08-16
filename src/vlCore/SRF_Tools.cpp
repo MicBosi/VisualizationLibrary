@@ -43,7 +43,8 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
 
   // read chars skipping spaces
   char ch1=0, ch2=0;
-  do {
+  do 
+  {
     if (!readTextChar(ch1))
     {
       token.mType = SRF_Token::TOKEN_EOF;
@@ -171,11 +172,10 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     return true;
 
   case '<':
-    token.mType = SRF_Token::StructureHeader;
     token.mString = "<";
     while(readTextChar(ch1) && ch1 != '>')
     {
-      if (ch1 >= 'a' && ch1 <= 'z' || ch1 >= 'A' && ch1 <= 'Z' || ch1 >= '0' && ch1 <= '9' || ch1 == '_' )
+      if (ch1 >= 'a' && ch1 <= 'z' || ch1 >= 'A' && ch1 <= 'Z' || ch1 >= '0' && ch1 <= '9' || ch1 == '_' || ch1 == ':')
         token.mString.push_back(ch1);
       else
       {
@@ -189,10 +189,10 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       Log::error( Say("Line %n : unexpected end of file while reading object header.\n") << mLineNumber );
       return false;
     }
+    token.mType = SRF_Token::StructureHeader;
     return true;
 
   case '#':
-    token.mType = SRF_Token::UID;
     token.mString = "#";
     while(readTextChar(ch1))
     {
@@ -209,10 +209,10 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       Log::error( Say("Line %n : illegal id '#_' found.\n") << mLineNumber );
       return false;
     }
+    token.mType = SRF_Token::UID;
     return true;
 
   case '"':
-    token.mType = SRF_Token::String;
     while(readTextChar(ch1))
     {
       // end string
@@ -263,13 +263,15 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       return false;
     }
     else
+    {
+      token.mType = SRF_Token::String;
       return true;
+    }
 
   default:
     // identifier
     if (ch1 >= 'a' && ch1 <= 'z' || ch1 >= 'A' && ch1 <= 'Z' || ch1 == '_' )
     {
-      token.mType = SRF_Token::Identifier;
       token.mString.push_back(ch1);
       while(readTextChar(ch1))
       {
@@ -288,9 +290,11 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       }
       else
       {
-        // check if it's a book
+        // check if it's a boolean
         if (token.mString == "true" || token.mString == "false")
           token.mType = SRF_Token::Boolean;
+        else
+          token.mType = SRF_Token::Identifier;
         return true;
       }
     }
@@ -330,7 +334,6 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       if (ch1 == '+' || ch1 == '-')
         state = sPLUS_MINUS;
 
-      // for simplicity we don't deal with the cases when we reach TOKEN_EOF after +/-/./E/E+-
       while(readTextChar(ch1))
       {
         switch(state)
@@ -522,7 +525,7 @@ bool SRF_Tokenizer::getFancyBlock(SRF_Token& token)
         if(ch2 == '}')
         {
           // check if it was escaped
-          if (token.mString.back() == '\\')
+          if (!token.mString.empty() && token.mString.back() == '\\')
           {
             token.mString.pop_back();
             token.mString += ">}";
