@@ -95,9 +95,18 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SRF_AbstractComplexValue, Object)
 
   public:
+    SRF_AbstractComplexValue(): mLineNumber(0) {}
+
     virtual ~SRF_AbstractComplexValue() {}
 
+    int lineNumber() const { return mLineNumber; }
+
+    void setLineNumber(int line) { mLineNumber = line; }
+
     virtual void acceptVisitor(SRF_Visitor*) = 0;
+  
+  private:
+    int mLineNumber; // the line number coming from the tokenizer
   };
   //-----------------------------------------------------------------------------
   // Arrays
@@ -323,32 +332,19 @@ namespace vl
     };
 
   private:
-    union
-    {
-      bool mBool;
-      long long mInt64;
-      double mDouble;
-      const char* mString;
-      SRF_Structure* mStructure;
-      SRF_List* mList;
-      SRF_Array* mArray;
-    } mUnion;
-
-  private:
     void release();
-
-  private:
-    EType mType;
 
   public:
     SRF_Value()
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
     }
 
     SRF_Value(SRF_Structure* obj)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -357,6 +353,7 @@ namespace vl
 
     SRF_Value(SRF_List* list)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -365,6 +362,7 @@ namespace vl
 
     SRF_Value(SRF_Array* arr)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -373,18 +371,21 @@ namespace vl
 
     SRF_Value(long long i)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = i;
     }
 
     SRF_Value(double d)
     {
+      mLineNumber = 0;
       mType = Double;
       mUnion.mDouble  = d;
     }
 
     SRF_Value(const char* str, EType type)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -401,6 +402,7 @@ namespace vl
 
     SRF_Value(bool boolean)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -409,6 +411,7 @@ namespace vl
 
     SRF_Value(const fvec4& vec)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -419,6 +422,7 @@ namespace vl
 
     SRF_Value(const fvec3& vec)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -429,6 +433,7 @@ namespace vl
 
     SRF_Value(const fvec2& vec)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -439,6 +444,7 @@ namespace vl
 
     SRF_Value(const dvec4& vec)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -449,6 +455,7 @@ namespace vl
 
     SRF_Value(const dvec3& vec)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -459,6 +466,7 @@ namespace vl
 
     SRF_Value(const dvec2& vec)
     {
+      mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
@@ -467,14 +475,16 @@ namespace vl
       memcpy(&getArrayDouble()->value()[0], vec.ptr(), sizeof(vec));
     }
 
-    ~SRF_Value() { release(); }
-
     SRF_Value(const SRF_Value& other)
     {
       mType = Int64;
       mUnion.mInt64 = 0;
+      mLineNumber = 0;
+
       *this = other;
     }
+
+    ~SRF_Value() { release(); }
 
     SRF_Value& operator=(const SRF_Value& other);
 
@@ -574,6 +584,26 @@ namespace vl
     }
 
     bool getBool() const { VL_CHECK(mType == Bool); return mUnion.mBool; }
+
+    int lineNumber() const { return mLineNumber; }
+
+    void setLineNumber(int line) { mLineNumber = line; }
+
+  private:
+    union
+    {
+      bool mBool;
+      long long mInt64;
+      double mDouble;
+      const char* mString;
+      SRF_Structure* mStructure;
+      SRF_List* mList;
+      SRF_Array* mArray;
+    } mUnion;
+
+  private:
+    EType mType;
+    int mLineNumber; // the line number coming from the tokenizer
   };
   //-----------------------------------------------------------------------------
   // SRF_Structure
@@ -1556,7 +1586,7 @@ namespace vl
 
       if (!parseHeader(version, encoding))
       {
-        Log::error( Say("Line %n: error parsing header at '%s'.\n") << tokenizer()->lineNumber() << mToken.mString );
+        Log::error( Say("Line %n : error parsing header at '%s'.\n") << tokenizer()->lineNumber() << mToken.mString );
         return false;
       }
 
@@ -1576,6 +1606,7 @@ namespace vl
       if(getToken(mToken) && mToken.mType == SRF_Token::StructureHeader)
       {
         mRoot = new SRF_Structure;
+        mRoot->setLineNumber( tokenizer()->lineNumber() );
         mRoot->setTag(mToken.mString.c_str());
         if (parseStructure(mRoot.get()))
         {
@@ -1585,9 +1616,9 @@ namespace vl
         {
           mRoot = NULL;
           if (mToken.mString.length())
-            Log::error( Say("Line %n: parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
+            Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
           else
-            Log::error( Say("Line %n: parse error.\n") << mTokenizer->lineNumber() );
+            Log::error( Say("Line %n : parse error.\n") << mTokenizer->lineNumber() );
           return false;
         }
       }
@@ -1668,10 +1699,13 @@ namespace vl
           // Member value
           if (getToken(mToken))
           {
+            name_value.value().setLineNumber( tokenizer()->lineNumber() );
+
             // A new <Structure>
             if (mToken.mType == SRF_Token::StructureHeader)
             {
               ref<SRF_Structure> object = new SRF_Structure;
+              object->setLineNumber( tokenizer()->lineNumber() );
               object->setTag(mToken.mString.c_str());
               name_value.value().setStructure(object.get());
               if (!parseStructure( object.get() ) )
@@ -1682,6 +1716,7 @@ namespace vl
             if (mToken.mType == SRF_Token::LeftSquareBracket)
             {
               ref<SRF_List> list = new SRF_List;
+              list->setLineNumber( tokenizer()->lineNumber() );
               name_value.value().setList(list.get());
               if ( !parseList( list.get() ) )
                 return false;
@@ -1751,12 +1786,14 @@ namespace vl
         else
         {
           SRF_Value value;
+          value.setLineNumber( tokenizer()->lineNumber() );
           switch( mToken.mType )
           {
             // object
             case SRF_Token::StructureHeader:
               {
                 ref<SRF_Structure> object = new SRF_Structure;
+                object->setLineNumber( tokenizer()->lineNumber() );
                 object->setTag(mToken.mString.c_str());
                 if ( parseStructure( object.get() ) )
                 {
@@ -1772,6 +1809,7 @@ namespace vl
             case SRF_Token::LeftSquareBracket:
               {
                 ref<SRF_List> sub_list = new SRF_List;
+                sub_list->setLineNumber( tokenizer()->lineNumber() );
                 if ( parseList( sub_list.get() ) )
                 {
                   value.setList( sub_list.get() );
