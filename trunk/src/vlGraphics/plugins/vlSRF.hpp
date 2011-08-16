@@ -50,6 +50,8 @@
 
 namespace vl
 {
+  static const int VL_SERIALIZER_VERSION = 100;
+
   class SRFSerializer
   {
   public:
@@ -64,6 +66,83 @@ namespace vl
     {
       mError = NoError;
       mUIDCounter = 0;
+    }
+
+    EError error() const { return mError; }
+
+    void resetError() { mError = NoError; }
+
+    //-----------------------------------------------------------------------------
+    // EXPORT
+    //-----------------------------------------------------------------------------
+
+    void registerExportedStructure(const Object* vl_obj, const SRF_Structure* srf_obj)
+    {
+      VL_CHECK( mVL_To_SRF.find(vl_obj) == mVL_To_SRF.end() );
+      mVL_To_SRF[vl_obj] = srf_obj;
+    }
+
+    SRF_Structure* vlToSRF(const Object* srf_obj)
+    {
+      std::map< ref<Object>, ref<SRF_Structure> >::iterator it = mVL_To_SRF.find(srf_obj);
+      if (it != mVL_To_SRF.end())
+        return it->second.get();
+      else
+        return NULL;
+    }
+
+    const std::map< ref<Object>, ref<SRF_Structure> >& vlToSRF() const { return mVL_To_SRF; }
+
+    //-----------------------------------------------------------------------------
+
+    std::string generateUID(const char* prefix)
+    {
+      return String::printf("#%sid%d", prefix, ++mUIDCounter).toStdString();
+    }
+
+    SRF_Value export_ResourceDatabase(const ResourceDatabase* res_db)
+    {
+      SRF_Value value;
+      if (vlToSRF(res_db))
+      {
+        value.setUID( vlToSRF(res_db)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<ResourceDatabase>", generateUID("resourcedb_")) );
+      registerExportedStructure(res_db, value.getStructure());
+
+      value.getStructure()->value().push_back( SRF_Structure::Value("SerializerVersion", (long long)VL_SERIALIZER_VERSION) );
+
+      SRF_Structure::Value srf_resource_list("Resources", new SRF_List);
+      value.getStructure()->value().push_back( srf_resource_list );
+
+      for(size_t i=0; i<res_db->resources().size(); ++i)
+      {
+        SRF_Value resource;
+
+        if(res_db->resources()[i]->isOfType(Geometry::Type()))
+          resource = export_Geometry(res_db->resources()[i]->as<Geometry>());
+        else
+        if(res_db->resources()[i]->isOfType(Effect::Type()))
+          resource = export_Effect(res_db->resources()[i]->as<Effect>());
+        else
+        if(res_db->resources()[i]->isOfType(Shader::Type()))
+          resource = export_Shader(res_db->resources()[i]->as<Shader>());
+        else
+        if(res_db->resources()[i]->isOfType(Transform::Type()))
+          resource = export_Transform(res_db->resources()[i]->as<Transform>());
+        else
+        if(res_db->resources()[i]->isOfType(Actor::Type()))
+          resource = export_Actor(res_db->resources()[i]->as<Actor>());
+        else
+        if(res_db->resources()[i]->isOfType(Camera::Type()))
+          resource = export_Camera(res_db->resources()[i]->as<Camera>());
+
+        srf_resource_list.value().getList()->value().push_back( resource );
+      }
+
+      return value;
     }
 
     void export_Renderable(const Renderable* ren, SRF_Structure* renderable_subclass)
@@ -561,55 +640,27 @@ namespace vl
       return value;
     }
 
-    std::string generateUID(const char* prefix)
-    {
-      return String::printf("#%sid%d", prefix, ++mUIDCounter).toStdString();
-    }
-
-    SRF_Value export_ResourceDatabase(const ResourceDatabase* res_db)
-    {
-      SRF_Value value;
-      if (vlToSRF(res_db))
-      {
-        value.setUID( vlToSRF(res_db)->uid().c_str() );
-        return value;
-      }
-
-      value.setStructure( new SRF_Structure("<ResourceDatabase>", generateUID("resourcedb_")) );
-      registerExportedStructure(res_db, value.getStructure());
-      SRF_Structure::Value srf_resource_list("Resources", new SRF_List);
-      value.getStructure()->value().push_back( srf_resource_list );
-
-      for(size_t i=0; i<res_db->resources().size(); ++i)
-      {
-        SRF_Value resource;
-
-        if(res_db->resources()[i]->isOfType(Geometry::Type()))
-          resource = export_Geometry(res_db->resources()[i]->as<Geometry>());
-        else
-        if(res_db->resources()[i]->isOfType(Effect::Type()))
-          resource = export_Effect(res_db->resources()[i]->as<Effect>());
-        else
-        if(res_db->resources()[i]->isOfType(Shader::Type()))
-          resource = export_Shader(res_db->resources()[i]->as<Shader>());
-        else
-        if(res_db->resources()[i]->isOfType(Transform::Type()))
-          resource = export_Transform(res_db->resources()[i]->as<Transform>());
-        else
-        if(res_db->resources()[i]->isOfType(Actor::Type()))
-          resource = export_Actor(res_db->resources()[i]->as<Actor>());
-        else
-        if(res_db->resources()[i]->isOfType(Camera::Type()))
-          resource = export_Camera(res_db->resources()[i]->as<Camera>());
-
-        srf_resource_list.value().getList()->value().push_back( resource );
-      }
-
-      return value;
-    }
-
     //-----------------------------------------------------------------------------
     // IMPORT FUNCTIONS
+    //-----------------------------------------------------------------------------
+
+    void registerImportedStructure(const SRF_Structure* srf_obj, const Object* vl_obj)
+    {
+      VL_CHECK( mSRF_To_VL.find(srf_obj) == mSRF_To_VL.end() );
+      mSRF_To_VL[srf_obj] = vl_obj;
+    }
+
+    Object* srfToVL(const SRF_Structure* srf_obj)
+    {
+      std::map< ref<SRF_Structure>, ref<Object> >::iterator it = mSRF_To_VL.find(srf_obj);
+      if (it != mSRF_To_VL.end())
+        return it->second.get();
+      else
+        return NULL;
+    }
+
+    const std::map< ref<SRF_Structure>, ref<Object> >& srfToVL() const { return mSRF_To_VL; }
+
     //-----------------------------------------------------------------------------
 
     ResourceDatabase* import_ResourceDatabase(const SRF_Structure* srf_obj)
@@ -617,10 +668,26 @@ namespace vl
       if (srf_obj->tag() != "<ResourceDatabase>")
         return NULL;
 
-      // mic fixme: output errors with line
-      // <ResourceDatabase> must have at least one "Resources" key and must be the first one and must be a list!
-      if (srf_obj->value().size() < 1 || srf_obj->value()[0].key() != "Resources" || srf_obj->value()[0].value().type() != SRF_Value::List)
+      // <ResourceDatabase> must have at least one "SerializerVersion" and one "Resources" keys in this order.
+      if (srf_obj->value().size() < 2)
         return NULL;
+      else
+      {
+        if (srf_obj->value()[0].key() != "SerializerVersion" || srf_obj->value()[0].value().type() != SRF_Value::Int64)
+        {
+          Log::error("No serializer version found.\n");
+          return NULL;
+        }
+        else
+        if (srf_obj->value()[0].value().getInt64() != VL_SERIALIZER_VERSION )
+        {
+          Log::error("Unsupported serializer version.\n");
+          return NULL;
+        }
+
+        if (srf_obj->value()[1].key() != "Resources" || srf_obj->value()[1].value().type() != SRF_Value::List)
+          return NULL;
+      }
 
       // return already parsed object
       if (srfToVL(srf_obj))
@@ -631,7 +698,7 @@ namespace vl
       registerImportedStructure(srf_obj, res_db.get());
 
       // get the list
-      const SRF_List* list = srf_obj->value()[0].value().getList();
+      const SRF_List* list = srf_obj->value()[1].value().getList();
       for(size_t i=0; i<list->value().size(); ++i)
       {
         const SRF_Value& value = list->value()[i];
@@ -1558,7 +1625,6 @@ namespace vl
           else
             return NULL;
         }
-        // ... textures and vertex attribs ...
         else
         if (key == "DrawCall")
         {
@@ -1624,35 +1690,7 @@ namespace vl
       return NULL;
     }
 
-    Object* srfToVL(const Object* srf_obj)
-    {
-      std::map< ref<Object>, ref<Object> >::iterator it = mSRF_To_VL.find(srf_obj);
-      if (it != mSRF_To_VL.end())
-        return it->second.get();
-      else
-        return NULL;
-    }
-
-    void registerImportedStructure(const Object* srf_obj, const Object* vl_obj)
-    {
-      VL_CHECK( mSRF_To_VL.find(srf_obj) == mSRF_To_VL.end() );
-      mSRF_To_VL[srf_obj] = vl_obj;
-    }
-
-    SRF_Structure* vlToSRF(const Object* srf_obj)
-    {
-      std::map< ref<Object>, ref<SRF_Structure> >::iterator it = mVL_To_SRF.find(srf_obj);
-      if (it != mVL_To_SRF.end())
-        return it->second.get();
-      else
-        return NULL;
-    }
-
-    void registerExportedStructure(const Object* vl_obj, const SRF_Structure* srf_obj)
-    {
-      VL_CHECK( mVL_To_SRF.find(vl_obj) == mVL_To_SRF.end() );
-      mVL_To_SRF[vl_obj] = srf_obj;
-    }
+    //-----------------------------------------------------------------------------
 
     std::string exportToText(const ResourceDatabase* res_db)
     {
@@ -1673,6 +1711,8 @@ namespace vl
       return text_export_visitor.srfText();
     }
 
+    //-----------------------------------------------------------------------------
+
     ref<ResourceDatabase> importFromText(VirtualFile* file)
     {
       SRF_Parser parser;
@@ -1688,19 +1728,9 @@ namespace vl
       return res_db;
     }
 
-    EError error() const
-    {
-      return mError;
-    }
-
-    void resetError()
-    {
-      mError = NoError;
-    }
-
   protected:
     // import
-    std::map< ref<Object>, ref<Object> > mSRF_To_VL;
+    std::map< ref<SRF_Structure>, ref<Object> > mSRF_To_VL;
 
     // export
     std::map< ref<Object>, ref<SRF_Structure> > mVL_To_SRF;
