@@ -371,6 +371,18 @@ namespace vl
       setArray(arr);
     }
 
+    SRF_Value(long long i)
+    {
+      mType = Int64;
+      mUnion.mInt64 = i;
+    }
+
+    SRF_Value(double d)
+    {
+      mType = Double;
+      mUnion.mDouble  = d;
+    }
+
     SRF_Value(const char* str, EType type)
     {
       mType = Int64;
@@ -393,22 +405,6 @@ namespace vl
       mUnion.mInt64 = 0;
 
       setBool(boolean);
-    }
-
-    SRF_Value(long long int64)
-    {
-      mType = Int64;
-      mUnion.mInt64 = 0;
-
-      setInt64(int64);
-    }
-
-    SRF_Value(double d)
-    {
-      mType = Int64;
-      mUnion.mInt64 = 0;
-
-      setDouble(d);
     }
 
     SRF_Value(const fvec4& vec)
@@ -912,7 +908,7 @@ namespace vl
       }
       for( ; i < (int)arr->value().size(); ++i )
         format("%d ", arr->value()[i]);
-      VL_CHECK( i == arr->value().size() )
+      VL_CHECK( i == (int)arr->value().size() )
       output(")\n");
     }
 
@@ -930,7 +926,7 @@ namespace vl
       }
       for( ; i < (int)arr->value().size(); ++i )
         format("%lld ", arr->value()[i]);
-      VL_CHECK( i == arr->value().size() )
+      VL_CHECK( i == (int)arr->value().size() )
       output(")\n");
     }
 
@@ -948,7 +944,7 @@ namespace vl
       }
       for( ; i < (int)arr->value().size(); ++i )
         format("%f ", arr->value()[i]);
-      VL_CHECK( i == arr->value().size() )
+      VL_CHECK( i == (int)arr->value().size() )
       output(")\n"); 
     }
 
@@ -966,7 +962,7 @@ namespace vl
       }
       for( ; i < (int)arr->value().size(); ++i )
         format("%Lf ", arr->value()[i]);
-      VL_CHECK( i == arr->value().size() )
+      VL_CHECK( i == (int)arr->value().size() )
       output(")\n");
     }
 
