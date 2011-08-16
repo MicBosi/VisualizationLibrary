@@ -347,10 +347,10 @@ namespace vl
       {
         srf_array->value().resize( arr->size() * arr->glSize() );
         typename T_SRF_Array::scalar_type* dst = &srf_array->value()[0];
-        const typename T_Array::scalar_type* src = (const T_Array::scalar_type*)arr->begin();
-        const typename T_Array::scalar_type* end = (const T_Array::scalar_type*)arr->end();
+        const typename T_Array::scalar_type* src = (const typename T_Array::scalar_type*)arr->begin();
+        const typename T_Array::scalar_type* end = (const typename T_Array::scalar_type*)arr->end();
         for(; src<end; ++src, ++dst)
-          *dst = (T_SRF_Array::scalar_type)*src;
+          *dst = (typename T_SRF_Array::scalar_type)*src;
       }
       value.getStructure()->value().push_back( SRF_Structure::Value("Value", srf_array.get() ) );
       return value;
