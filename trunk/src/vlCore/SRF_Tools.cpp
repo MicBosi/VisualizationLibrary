@@ -35,11 +35,11 @@ using namespace vl;
 
 bool SRF_Tokenizer::getToken(SRF_Token& token)
 {
-  if (mFancyBlock)
-    return getFancyBlock(token);
-
   token.mType = SRF_Token::TOKEN_ERROR;
   token.mString.clear();
+
+  if (mRawtextBlock)
+    return getRawtextBlock(token);
 
   // read chars skipping spaces
   char ch1=0, ch2=0;
@@ -128,7 +128,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     {
       token.mType = SRF_Token::LeftFancyBracket;
       token.mString = "{<";
-      mFancyBlock = true;
+      mRawtextBlock = true;
       return true;
     }
     else
@@ -506,9 +506,9 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
   }
 }
 //-----------------------------------------------------------------------------
-bool SRF_Tokenizer::getFancyBlock(SRF_Token& token)
+bool SRF_Tokenizer::getRawtextBlock(SRF_Token& token)
 {
-  mFancyBlock = false;
+  mRawtextBlock = false;
 
   token.mString.clear();
   token.mType = SRF_Token::TOKEN_ERROR;
@@ -516,9 +516,12 @@ bool SRF_Tokenizer::getFancyBlock(SRF_Token& token)
   char ch =0;
   while(readTextChar(ch))
   {
+    if (ch == '\n')
+      ++mLineNumber;
+
     if (ch == '>')
     {
-      // check for fancy block end >}
+      // check for rawtext block end >}
       char ch2 = 0;
       if (readTextChar(ch2))
       {
@@ -533,7 +536,7 @@ bool SRF_Tokenizer::getFancyBlock(SRF_Token& token)
           }
           else
           {
-            token.mType = SRF_Token::FancyBlock;
+            token.mType = SRF_Token::RawtextBlock;
             ungetToken('}');
             ungetToken('>');
             return true;
@@ -564,9 +567,9 @@ void SRF_Value::release()
       mUnion.mList->decReference(); 
     break;
 
-  case FancyBlock:
-    if (mUnion.mFancyBlock)
-      mUnion.mFancyBlock->decReference(); 
+  case RawtextBlock:
+    if (mUnion.mRawtextBlock)
+      mUnion.mRawtextBlock->decReference(); 
     break;
 
   case ArrayString:
@@ -613,9 +616,9 @@ SRF_Value& SRF_Value::operator=(const SRF_Value& other)
       other.mUnion.mList->incReference(); 
     break;
 
-  case FancyBlock:
-    if (other.mUnion.mFancyBlock)
-      other.mUnion.mFancyBlock->incReference(); 
+  case RawtextBlock:
+    if (other.mUnion.mRawtextBlock)
+      other.mUnion.mRawtextBlock->incReference(); 
     break;
 
   case ArrayString:
@@ -668,15 +671,15 @@ SRF_List* SRF_Value::setList(SRF_List* list)
   return list;
 }
 //-----------------------------------------------------------------------------
-SRF_FancyBlock* SRF_Value::setFancyBlock(SRF_FancyBlock* fblock)
+SRF_RawtextBlock* SRF_Value::setRawtextBlock(SRF_RawtextBlock* fblock)
 {
   VL_CHECK(fblock);
 
   release();
-  mType = FancyBlock;
-  mUnion.mFancyBlock = fblock;
-  if (mUnion.mFancyBlock)
-    mUnion.mFancyBlock->incReference();
+  mType = RawtextBlock;
+  mUnion.mRawtextBlock = fblock;
+  if (mUnion.mRawtextBlock)
+    mUnion.mRawtextBlock->incReference();
   return fblock;
 }
 //-----------------------------------------------------------------------------
