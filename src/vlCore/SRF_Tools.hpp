@@ -50,6 +50,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   class SRF_Structure;
   class SRF_List;
+  class SRF_FancyBlock;
   class SRF_Array;
   class SRF_ArrayString;
   class SRF_ArrayIdentifier;
@@ -64,6 +65,7 @@ namespace vl
   public:
     virtual void visitStructure(SRF_Structure*) {}
     virtual void visitList(SRF_List*) {}
+    virtual void visitFancyBlock(SRF_FancyBlock*) {}
     virtual void visitArray(SRF_ArrayUID*) {}
     virtual void visitArray(SRF_ArrayInt32*) {}
     virtual void visitArray(SRF_ArrayInt64*) {}
@@ -90,14 +92,18 @@ namespace vl
     std::set< void* > mVisited;
   };
   //-----------------------------------------------------------------------------
-  class SRF_AbstractComplexValue: public Object
+  class SRF_TaggedValue: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::SRF_AbstractComplexValue, Object)
+    VL_INSTRUMENT_CLASS(vl::SRF_TaggedValue, Object)
 
   public:
-    SRF_AbstractComplexValue(): mLineNumber(0) {}
+    SRF_TaggedValue(const char* tag=NULL): mLineNumber(0) 
+    {
+      if (tag)
+        mTag = tag;
+    }
 
-    virtual ~SRF_AbstractComplexValue() {}
+    virtual ~SRF_TaggedValue() {}
 
     int lineNumber() const { return mLineNumber; }
 
@@ -105,17 +111,45 @@ namespace vl
 
     virtual void acceptVisitor(SRF_Visitor*) = 0;
   
+    void setTag(const char* tag) { mTag = tag; }
+
+    const std::string& tag() const { return mTag; }
+
   private:
+    std::string mTag;
     int mLineNumber; // the line number coming from the tokenizer
+  };
+  //-----------------------------------------------------------------------------
+  // FancyBlock
+  //-----------------------------------------------------------------------------
+  class SRF_FancyBlock: public SRF_TaggedValue 
+  { 
+    VL_INSTRUMENT_CLASS(vl::SRF_FancyBlock, SRF_TaggedValue)
+
+  public:
+    SRF_FancyBlock(const char* tag=NULL): SRF_TaggedValue(tag) {}
+
+    virtual void acceptVisitor(SRF_Visitor* v) { v->visitFancyBlock(this); }
+
+    std::string& value() { return mValue; }
+
+    const std::string& value() const { return mValue; }
+
+    void setValue(const char* value) { mValue = value; }
+
+  private:
+    std::string mValue;
   };
   //-----------------------------------------------------------------------------
   // Arrays
   //-----------------------------------------------------------------------------
-  class SRF_Array: public SRF_AbstractComplexValue 
+  class SRF_Array: public SRF_TaggedValue 
   { 
-    VL_INSTRUMENT_CLASS(vl::SRF_Array, SRF_AbstractComplexValue)
+    VL_INSTRUMENT_CLASS(vl::SRF_Array, SRF_TaggedValue)
 
   public:
+    SRF_Array(const char* tag=NULL): SRF_TaggedValue(tag) {}
+
   };
   //-----------------------------------------------------------------------------
   class SRF_ArrayInt32: public SRF_Array
@@ -126,7 +160,7 @@ namespace vl
     typedef int scalar_type;
 
   public:
-    SRF_ArrayInt32() {}
+    SRF_ArrayInt32(const char* tag=NULL): SRF_Array(tag) { }
 
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
@@ -150,7 +184,7 @@ namespace vl
     typedef long long scalar_type;
 
   public:
-    SRF_ArrayInt64() {}
+    SRF_ArrayInt64(const char* tag=NULL): SRF_Array(tag) { }
     
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
@@ -174,7 +208,7 @@ namespace vl
     typedef float scalar_type;
 
   public:
-    SRF_ArrayFloat() {}
+    SRF_ArrayFloat(const char* tag=NULL): SRF_Array(tag) { }
     
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
@@ -204,7 +238,7 @@ namespace vl
     typedef double scalar_type;
 
   public:
-    SRF_ArrayDouble() {}
+    SRF_ArrayDouble(const char* tag=NULL): SRF_Array(tag) { }
     
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
@@ -231,7 +265,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SRF_ArrayUID, SRF_Array)
 
   public:
-    SRF_ArrayUID() {}
+    SRF_ArrayUID(const char* tag=NULL): SRF_Array(tag) { }
 
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
@@ -272,7 +306,8 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SRF_ArrayIdentifier, SRF_Array)
 
   public:
-    SRF_ArrayIdentifier() {}
+    SRF_ArrayIdentifier(const char* tag=NULL): SRF_Array(tag) { }
+
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
     std::vector<std::string>& value() { return mValue; }
@@ -292,7 +327,8 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SRF_ArrayString, SRF_Array)
 
   public:
-    SRF_ArrayString() {}
+    SRF_ArrayString(const char* tag=NULL): SRF_Array(tag) { }
+
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
     std::vector<std::string>& value() { return mValue; }
@@ -361,6 +397,15 @@ namespace vl
       setList(list);
     }
 
+    SRF_Value(SRF_FancyBlock* fancy)
+    {
+      mLineNumber = 0;
+      mType = Int64;
+      mUnion.mInt64 = 0;
+
+      setFancyBlock(fancy);
+    }
+
     SRF_Value(SRF_Array* arr)
     {
       mLineNumber = 0;
@@ -395,7 +440,6 @@ namespace vl
       case String: setString(str); break;
       case Identifier: setIdentifier(str); break;
       case UID: setUID(str); break;
-      case FancyBlock: setFancyBlock(str); break;
       default:
         VL_TRAP();
         break;
@@ -508,6 +552,14 @@ namespace vl
 
     const SRF_List* getList() const { VL_CHECK(mType == List); return mUnion.mList; }
 
+    // fancy block
+
+    VLCORE_EXPORT SRF_FancyBlock* setFancyBlock(SRF_FancyBlock*);
+
+    SRF_FancyBlock* getFancyBlock() { VL_CHECK(mType == FancyBlock); return mUnion.mFancyBlock; }
+
+    const SRF_FancyBlock* getFancyBlock() const { VL_CHECK(mType == FancyBlock); return mUnion.mFancyBlock; }
+
     // array
 
     VLCORE_EXPORT SRF_Array* setArray(SRF_Array*);
@@ -533,7 +585,9 @@ namespace vl
     SRF_ArrayDouble* getArrayDouble() { VL_CHECK(mType == ArrayDouble); return mUnion.mArray->as<SRF_ArrayDouble>(); }
     const SRF_ArrayDouble* getArrayDouble() const { VL_CHECK(mType == ArrayDouble); return mUnion.mArray->as<SRF_ArrayDouble>(); }
 
-    const char*  setString(const char* str)
+    // string
+
+    const char* setString(const char* str)
     {
       release();
       mType = String;
@@ -541,6 +595,8 @@ namespace vl
     }
 
     const char* getString() const { VL_CHECK(mType == String); return mUnion.mString; }
+
+    // identifier
 
     const char* setIdentifier(const char* str)
     {
@@ -551,6 +607,8 @@ namespace vl
 
     const char* getIdentifier() const { VL_CHECK(mType == Identifier); return mUnion.mString; }
 
+    // uid
+
     const char* setUID(const char* str)
     {
       release();
@@ -560,14 +618,7 @@ namespace vl
 
     const char* getUID() const { VL_CHECK(mType == UID); return mUnion.mString; }
 
-    const char* setFancyBlock(const char* str)
-    {
-      release();
-      mType = FancyBlock;
-      return mUnion.mString = _strdup(str);
-    }
-
-    const char* getFancyBlock() const { VL_CHECK(mType == FancyBlock); return mUnion.mString; }
+    // int64
 
     long long  setInt64(long long val)
     {
@@ -577,6 +628,8 @@ namespace vl
     }
 
     long long getInt64() const { VL_CHECK(mType == Int64); return mUnion.mInt64; }
+    
+    // double
 
     double setDouble(double val)
     {
@@ -586,6 +639,8 @@ namespace vl
     }
 
     double getDouble() const { VL_CHECK(mType == Double); return mUnion.mDouble; }
+
+    // bool
 
     bool setBool(bool val)
     {
@@ -610,6 +665,7 @@ namespace vl
       SRF_Structure* mStructure;
       SRF_List* mList;
       SRF_Array* mArray;
+      SRF_FancyBlock* mFancyBlock;
     } mUnion;
 
   private:
@@ -619,9 +675,9 @@ namespace vl
   //-----------------------------------------------------------------------------
   // SRF_Structure
   //-----------------------------------------------------------------------------
-  class SRF_Structure: public SRF_AbstractComplexValue
+  class SRF_Structure: public SRF_TaggedValue
   {
-    VL_INSTRUMENT_CLASS(vl::SRF_Structure, SRF_AbstractComplexValue)
+    VL_INSTRUMENT_CLASS(vl::SRF_Structure, SRF_TaggedValue)
 
   public:
     SRF_Structure()
@@ -670,10 +726,6 @@ namespace vl
       SRF_Value mValue;
     };
 
-    void setTag(const char* tag) { mTag = tag; }
-
-    const std::string& tag() const { return mTag; }
-
     void setUID(const char* uid) { mUID = uid; }
 
     const std::string& uid() const { return mUID; }
@@ -701,16 +753,15 @@ namespace vl
 
   private:
     // mic fixme: add a multimap for quick access
-    std::string mTag;
     std::string mUID;
     std::vector<Value> mKeyValue;
   };
   //-----------------------------------------------------------------------------
   // SRF_List
   //-----------------------------------------------------------------------------
-  class SRF_List: public SRF_AbstractComplexValue
+  class SRF_List: public SRF_TaggedValue
   {
-    VL_INSTRUMENT_CLASS(vl::SRF_List, SRF_AbstractComplexValue)
+    VL_INSTRUMENT_CLASS(vl::SRF_List, SRF_TaggedValue)
 
   public:
     SRF_List()
@@ -798,72 +849,110 @@ namespace vl
         return;
       }
 
-      indent(); format("%s\n", obj->tag().c_str());
-      indent(); output("{\n");
+      // header tag
+      if (obj->tag().empty())
+      {
+        if (mAssign)
+        {
+          mAssign = false;
+          output("\n");
+        }
+      }
+      else
+      {
+        indent();
+        format("%s", obj->tag().c_str()); 
+        output("\n");
+      }
+      indent();
+      output("{\n");
+
       mIndent++;
       if ( obj->uid().length() && obj->uid() != "#NULL" && isUsed(obj->uid()) )
       {
         indent(); format("ID = %s\n", obj->uid().c_str());
       }
+
       for(size_t i=0; i<obj->value().size(); ++i)
       {
         indent(); format("%s = ", obj->value()[i].key().c_str());
         switch(obj->value()[i].value().type())
         {
+
         case SRF_Value::Structure:
           mAssign = true;
           obj->value()[i].value().getStructure()->acceptVisitor(this);
           break;
+
         case SRF_Value::List:
           mAssign = true;
           obj->value()[i].value().getList()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayString:
           mAssign = true;
           obj->value()[i].value().getArrayString()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayIdentifier:
           mAssign = true;
           obj->value()[i].value().getArrayIdentifier()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayUID:
           mAssign = true;
           obj->value()[i].value().getArrayUID()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayInt32:
           mAssign = true;
           obj->value()[i].value().getArrayInt32()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayInt64:
           mAssign = true;
           obj->value()[i].value().getArrayInt64()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayFloat:
           mAssign = true;
           obj->value()[i].value().getArrayFloat()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayDouble:
           mAssign = true;
           obj->value()[i].value().getArrayDouble()->acceptVisitor(this);
           break;
+
+        case SRF_Value::FancyBlock:
+        {
+          SRF_FancyBlock* fblock = obj->value()[i].value().getFancyBlock();
+          if (!fblock->tag().empty())
+            format("%s", fblock->tag().c_str());
+          output("\n"); indent(); format("{<%s>}\n", fancyEncode(fblock->value().c_str()).c_str());
+        }
+        break;
+
         case SRF_Value::String:
-          format("\"%s\"\n", stringEncode(obj->value()[i].value().getString()).c_str()); VL_CHECK( strlen(obj->value()[i].value().getString()) )
+          format("\"%s\"\n", stringEncode(obj->value()[i].value().getString()).c_str());
           break;
+
         case SRF_Value::Identifier:
           format("%s\n", obj->value()[i].value().getIdentifier()); VL_CHECK( strlen(obj->value()[i].value().getIdentifier()) )
           break;
+
         case SRF_Value::UID:
           format("%s\n", obj->value()[i].value().getUID()); VL_CHECK( strlen(obj->value()[i].value().getUID()) )
           break;
-        case SRF_Value::FancyBlock:
-          format("{<%s>}\n", fancyEncode(obj->value()[i].value().getFancyBlock()).c_str()); VL_CHECK( strlen(obj->value()[i].value().getFancyBlock()) )
-          break;
+
         case SRF_Value::Bool:
           format("%s\n", obj->value()[i].value().getBool() ? "true" : "false");
           break;
+
         case SRF_Value::Int64:
           format("%lld\n", obj->value()[i].value().getInt64());
           break;
+
         case SRF_Value::Double:
           format("%Lf\n", obj->value()[i].value().getDouble());
           break;
@@ -882,57 +971,103 @@ namespace vl
         return;
       }
 
-      indent(); output("[\n");
+      if (list->value().size() == 0)
+      {
+        indent(); output("[ ]\n");
+        return;
+      }
+
+      // header tag
+      if (list->tag().empty())
+      {
+        if (mAssign)
+        {
+          mAssign = false;
+          output("\n");
+        }
+      }
+      else
+      {
+        indent();
+        format("%s", list->tag().c_str()); 
+        output("\n");
+      }
+      indent();
+      output("[\n");
+
       mIndent++;
       for(size_t i=0; i<list->value().size(); ++i)
       {
         switch(list->value()[i].type())
         {
+
         case SRF_Value::Structure:
           list->value()[i].getStructure()->acceptVisitor(this);
           break;
+
         case SRF_Value::List:
           list->value()[i].getList()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayString:
           list->value()[i].getArrayString()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayIdentifier:
           list->value()[i].getArrayIdentifier()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayUID:
           list->value()[i].getArrayUID()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayInt32:
           list->value()[i].getArrayInt32()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayInt64:
           list->value()[i].getArrayInt64()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayFloat:
           list->value()[i].getArrayFloat()->acceptVisitor(this);
           break;
+
         case SRF_Value::ArrayDouble:
           list->value()[i].getArrayDouble()->acceptVisitor(this);
           break;
+
         case SRF_Value::String:
-          indent(); format("\"%s\"\n", stringEncode(list->value()[i].getString()).c_str()); VL_CHECK( strlen(list->value()[i].getString()) )
+          indent(); format("\"%s\"\n", stringEncode(list->value()[i].getString()).c_str());
           break;
+
         case SRF_Value::Identifier:
           indent(); format("%s\n", list->value()[i].getIdentifier()); VL_CHECK( strlen(list->value()[i].getIdentifier()) )
           break;
+
         case SRF_Value::UID:
           indent(); format("%s\n", list->value()[i].getUID()); VL_CHECK( strlen(list->value()[i].getUID()) )
           break;
+
         case SRF_Value::FancyBlock:
-          indent(); format("{<%s>}\n", fancyEncode(list->value()[i].getFancyBlock()).c_str()); VL_CHECK( strlen(list->value()[i].getFancyBlock()) )
-          break;
+        {
+          SRF_FancyBlock* fblock = list->value()[i].getFancyBlock();
+          if (!fblock->tag().empty())
+          {
+            indent(); format("%s\n", fblock->tag().c_str());
+          }
+          indent(); format("{<%s>}\n", fancyEncode(fblock->value().c_str()).c_str());
+        }
+        break;
+
         case SRF_Value::Bool:
           indent(); format("%s\n", list->value()[i].getBool() ? "true" : "false");
           break;
+
         case SRF_Value::Int64:
           indent(); format("%lld\n", list->value()[i].getInt64());
           break;
+
         case SRF_Value::Double:
           indent(); format("%Lf\n", list->value()[i].getDouble());
           break;
@@ -944,7 +1079,7 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayInt32* arr)
     {
-      indent(); output("( ");
+      indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       // output in chunks of 10 numbers
       int i = 0;
       int size = arr->value().size() - 10;
@@ -962,7 +1097,7 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayInt64* arr)
     {
-      indent(); output("( ");
+      indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       // output in chunks of 10 numbers
       int i = 0;
       int size = arr->value().size() - 10;
@@ -980,7 +1115,7 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayFloat* arr)
     {
-      indent(); output("( ");
+      indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       // output in chunks of 10 numbers
       int i = 0;
       int size = arr->value().size() - 10;
@@ -998,7 +1133,7 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayDouble* arr)
     {
-      indent(); output("( ");
+      indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       // output in chunks of 10 numbers
       int i = 0;
       int size = arr->value().size() - 10;
@@ -1016,7 +1151,7 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayIdentifier* arr)
     {
-      indent(); output("( ");
+      indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
         format("%s ", arr->value()[i].c_str());
       output(")\n");
@@ -1024,7 +1159,7 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayString* arr)
     {
-      indent(); output("( ");
+      indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
         output(std::string("\"") + stringEncode(arr->value()[i].c_str()) + "\" ");
       output(")\n");
@@ -1032,7 +1167,7 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayUID* arr)
     {
-      indent(); output("( ");
+      indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
         format("%s ", arr->value()[i].uid());
       output(")\n");
@@ -1045,9 +1180,9 @@ namespace vl
 
       for(size_t i=0; str[i]; ++i)
       {
-        if ( str[i] == '}' && !out.empty() && out.back() == '>')
+        if ( str[i] == '}' && !out.empty() && out[ out.size()-1 ] == '>')
         {
-          out.pop_back();
+          out.resize( out.size() - 1 );
           out += "\\>}";
         }
         else
@@ -1100,6 +1235,7 @@ namespace vl
 
     virtual void output(const char* str)
     {
+      printf(str);
       mText += str;
     }
 
@@ -1445,7 +1581,7 @@ namespace vl
   class SRF_Linker
   {
   public:
-    void add(SRF_AbstractComplexValue* module)
+    void add(SRF_TaggedValue* module)
     {
       mModules.push_back(module);
     }
@@ -1473,12 +1609,12 @@ namespace vl
       return true;
     }
 
-    std::vector< ref<SRF_AbstractComplexValue> >& modules() { return mModules; }
+    std::vector< ref<SRF_TaggedValue> >& modules() { return mModules; }
 
-    const std::vector< ref<SRF_AbstractComplexValue> >& modules() const { return mModules; }
+    const std::vector< ref<SRF_TaggedValue> >& modules() const { return mModules; }
 
   public:
-    std::vector< ref<SRF_AbstractComplexValue> > mModules;
+    std::vector< ref<SRF_TaggedValue> > mModules;
   };
   //-----------------------------------------------------------------------------
   class SRF_Token
@@ -1506,7 +1642,7 @@ namespace vl
       Int64,              //  +123
       Float,              //  +123.456e+10
       Double,             //  +123.456e+10
-      StructureHeader,    //  <StructureHeader>
+      TagHeader,          //  <TagHeader>
       FancyBlock,         // {< blabla >}
 
     } EType;
@@ -1641,22 +1777,31 @@ namespace vl
       mRoot = NULL;
       if(getToken(mToken))
       {
-        if(mToken.mType == SRF_Token::StructureHeader)
+        if(mToken.mType == SRF_Token::TagHeader)
         {
-          mRoot = new SRF_Structure;
-          mRoot->setLineNumber( tokenizer()->lineNumber() );
-          mRoot->setTag(mToken.mString.c_str());
-          if (parseStructure(mRoot.get()))
+          mLastTag = mToken.mString;
+          
+          if(getToken(mToken) && mToken.mType == SRF_Token::LeftCurlyBracket)
           {
-            return true;
+            mRoot = new SRF_Structure;
+            mRoot->setLineNumber( tokenizer()->lineNumber() );
+            if (parseStructure(mRoot.get()))
+            {
+              return true;
+            }
+            else
+            {
+              mRoot = NULL;
+              if (mToken.mString.length())
+                Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
+              else
+                Log::error( Say("Line %n : parse error.\n") << mTokenizer->lineNumber() );
+              return false;
+            }
           }
           else
           {
-            mRoot = NULL;
-            if (mToken.mString.length())
-              Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
-            else
-              Log::error( Say("Line %n : parse error.\n") << mTokenizer->lineNumber() );
+            Log::error("No root object found!\n");
             return false;
           }
         }
@@ -1672,8 +1817,13 @@ namespace vl
 
     bool parseStructure(SRF_Structure* object)
     {
-      if (!getToken(mToken) || mToken.mType != SRF_Token::LeftCurlyBracket)
-        return false;
+      // consume last tag if there was one
+      if (!mLastTag.empty())
+      {
+        object->setTag(mLastTag.c_str());
+        mLastTag.clear();
+      }
+
       while(getToken(mToken))
       {
         if (mToken.mType == SRF_Token::RightCurlyBracket)
@@ -1742,12 +1892,24 @@ namespace vl
           {
             name_value.value().setLineNumber( tokenizer()->lineNumber() );
 
-            // A new <Structure>
-            if (mToken.mType == SRF_Token::StructureHeader)
+            // A new <Tag>
+            if (mToken.mType == SRF_Token::TagHeader)
+            {
+              if (mLastTag.empty())
+              {
+                mLastTag = mToken.mString;
+                if (!getToken(mToken))
+                  return false;
+              }
+              else
+                return false;
+            }
+
+            // A new { Structure }
+            if (mToken.mType == SRF_Token::LeftCurlyBracket)
             {
               ref<SRF_Structure> object = new SRF_Structure;
               object->setLineNumber( tokenizer()->lineNumber() );
-              object->setTag(mToken.mString.c_str());
               name_value.value().setStructure(object.get());
               if (!parseStructure( object.get() ) )
                 return false;
@@ -1773,49 +1935,64 @@ namespace vl
                 return false;
             }
             else
+            // A {< fancy block >}
+            if (mToken.mType == SRF_Token::LeftFancyBracket)
+            {
+              if(!getToken(mToken) || mToken.mType != SRF_Token::FancyBlock)
+                return false;
+              name_value.value().setFancyBlock( new SRF_FancyBlock(mLastTag.c_str()) );
+              name_value.value().getFancyBlock()->setValue( mToken.mString.c_str() );
+              // consume the tag
+              mLastTag.clear();
+              if(!getToken(mToken) || mToken.mType != SRF_Token::RightFancyBracket)
+                return false;
+            }
+            else
             // A "string"
             if (mToken.mType == SRF_Token::String)
             {
+              if (!mLastTag.empty())
+                return false;
               name_value.value().setString(mToken.mString.c_str());
             }
             else
             // An Identifier
             if (mToken.mType == SRF_Token::Identifier)
             {
+              if (!mLastTag.empty())
+                return false;
               name_value.value().setIdentifier(mToken.mString.c_str());
             }
             else
             // An #id
             if (mToken.mType == SRF_Token::UID)
             {
+              if (!mLastTag.empty())
+                return false;
               name_value.value().setUID(mToken.mString.c_str());
-            }
-            else
-            // A {< fancy block >}
-            if (mToken.mType == SRF_Token::LeftFancyBracket)
-            {
-              if(!getToken(mToken) || mToken.mType != SRF_Token::FancyBlock)
-                return false;
-              name_value.value().setFancyBlock(mToken.mString.c_str());
-              if(!getToken(mToken) || mToken.mType != SRF_Token::RightFancyBracket)
-                return false;
             }
             else
             // A boolean true/false
             if (mToken.mType == SRF_Token::Boolean)
             {
+              if (!mLastTag.empty())
+                return false;
               name_value.value().setBool(mToken.mString == "true");
             }
             else
             // An integer
             if (mToken.mType == SRF_Token::Int32 || mToken.mType == SRF_Token::Int64)
             {
+              if (!mLastTag.empty())
+                return false;
               name_value.value().setInt64( atoll(mToken.mString.c_str()) );
             }
             else
             // A float
             if (mToken.mType == SRF_Token::Float || mToken.mType == SRF_Token::Double)
             {
+              if (!mLastTag.empty())
+                return false;
               name_value.value().setDouble( atof(mToken.mString.c_str()) );
             }
             else
@@ -1830,6 +2007,13 @@ namespace vl
 
     bool parseList(SRF_List* list)
     {
+      // consume last tag if there was one
+      if (!mLastTag.empty())
+      {
+        list->setTag(mLastTag.c_str());
+        mLastTag.clear();
+      }
+
       while(getToken(mToken))
       {
         if (mToken.mType == SRF_Token::RightSquareBracket)
@@ -1840,12 +2024,21 @@ namespace vl
           value.setLineNumber( tokenizer()->lineNumber() );
           switch( mToken.mType )
           {
+            // <tag>
+            case SRF_Token::TagHeader:
+              {
+                if (mLastTag.empty())
+                  mLastTag = mToken.mString;
+                else
+                  return false;
+                break;
+              }
+
             // object
-            case SRF_Token::StructureHeader:
+            case SRF_Token::LeftCurlyBracket:
               {
                 ref<SRF_Structure> object = new SRF_Structure;
                 object->setLineNumber( tokenizer()->lineNumber() );
-                object->setTag(mToken.mString.c_str());
                 if ( parseStructure( object.get() ) )
                 {
                   value.setStructure(object.get());
@@ -1887,11 +2080,15 @@ namespace vl
 
             // string
             case SRF_Token::String:
+              if (!mLastTag.empty())
+                return false;
               value.setString( mToken.mString.c_str() ); list->value().push_back( value );
               break;
 
             // identifier
             case SRF_Token::Identifier:
+              if (!mLastTag.empty())
+                return false;
               value.setIdentifier( mToken.mString.c_str() ); list->value().push_back( value );
               break;
 
@@ -1900,7 +2097,13 @@ namespace vl
             {
               if(!getToken(mToken) || mToken.mType != SRF_Token::FancyBlock)
                 return false;
-              value.setFancyBlock( mToken.mString.c_str() ); list->value().push_back( value );
+              
+              value.setFancyBlock( new SRF_FancyBlock(mLastTag.c_str()) );
+              value.getFancyBlock()->setValue( mToken.mString.c_str() );
+              list->value().push_back( value );
+              // consume the tag
+              mLastTag.clear();
+
               if(!getToken(mToken) || mToken.mType != SRF_Token::RightFancyBracket)
                 return false;
               break;
@@ -1908,23 +2111,31 @@ namespace vl
 
             // UID
             case SRF_Token::UID:
+              if (!mLastTag.empty())
+                return false;
               value.setUID( mToken.mString.c_str() ); list->value().push_back( value );
               break;
 
             // boolean
             case SRF_Token::Boolean:
+              if (!mLastTag.empty())
+                return false;
               value.setBool( mToken.mString == "true" ); list->value().push_back( value );
               break;
 
             // int
             case SRF_Token::Int32:
             case SRF_Token::Int64:
+              if (!mLastTag.empty())
+                return false;
               value.setInt64( atoll(mToken.mString.c_str()) ); list->value().push_back( value );
               break;
 
             // float
             case SRF_Token::Float:
             case SRF_Token::Double:
+              if (!mLastTag.empty())
+                return false;
               value.setDouble( atof(mToken.mString.c_str()) ); list->value().push_back( value );
               break;
 
@@ -1938,6 +2149,24 @@ namespace vl
 
     bool parseArray(ref<SRF_Array>& arr)
     {
+      // consume last tag if there was one
+      struct struct_consume_tag
+      {
+        struct_consume_tag(ref<SRF_Array>* p1, std::string* p2): p_arr(p1), p_tag(p2) {}
+
+       ~struct_consume_tag()
+        {
+          if ((*p_arr).get() && !p_tag->empty())
+          {
+            (*p_arr)->setTag(p_tag->c_str());
+            p_tag->clear();
+          }
+        }
+
+        ref<SRF_Array>* p_arr;
+        std::string* p_tag;
+      } consume_tag(&arr, &mLastTag);
+
       if(getToken(mToken))
       {
         // (1) from the fist token we decide what kind of array it is going to be
@@ -2078,7 +2307,7 @@ namespace vl
           case SRF_Token::Double:             printf("Double = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Int32:              printf("Int32 = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Int64:              printf("Int64 = %s\n", mToken.mString.c_str()); break;
-          case SRF_Token::StructureHeader:       printf("StructureHeader = %s\n", mToken.mString.c_str()); break;
+          case SRF_Token::TagHeader:       printf("TagHeader = %s\n", mToken.mString.c_str()); break;
           default:
             break;
         }
@@ -2100,6 +2329,7 @@ namespace vl
     const SRF_Structure* root() const { return mRoot.get(); }
 
   private:
+    std::string mLastTag;
     ref<SRF_Structure> mRoot;
     std::map< std::string, ref<SRF_Structure> > mLinkMap;
     ref<SRF_Tokenizer> mTokenizer;

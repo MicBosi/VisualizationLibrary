@@ -189,7 +189,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       Log::error( Say("Line %n : unexpected end of file while reading object header.\n") << mLineNumber );
       return false;
     }
-    token.mType = SRF_Token::StructureHeader;
+    token.mType = SRF_Token::TagHeader;
     return true;
 
   case '#':
@@ -525,9 +525,9 @@ bool SRF_Tokenizer::getFancyBlock(SRF_Token& token)
         if(ch2 == '}')
         {
           // check if it was escaped
-          if (!token.mString.empty() && token.mString.back() == '\\')
+          if (!token.mString.empty() && token.mString[ token.mString.size() - 1 ] == '\\')
           {
-            token.mString.pop_back();
+            token.mString.resize( token.mString.size() - 1 );
             token.mString += ">}";
             continue;
           }
@@ -562,6 +562,11 @@ void SRF_Value::release()
   case List:
     if (mUnion.mList)
       mUnion.mList->decReference(); 
+    break;
+
+  case FancyBlock:
+    if (mUnion.mFancyBlock)
+      mUnion.mFancyBlock->decReference(); 
     break;
 
   case ArrayString:
@@ -606,6 +611,11 @@ SRF_Value& SRF_Value::operator=(const SRF_Value& other)
   case List:
     if (other.mUnion.mList)
       other.mUnion.mList->incReference(); 
+    break;
+
+  case FancyBlock:
+    if (other.mUnion.mFancyBlock)
+      other.mUnion.mFancyBlock->incReference(); 
     break;
 
   case ArrayString:
@@ -656,6 +666,18 @@ SRF_List* SRF_Value::setList(SRF_List* list)
   if (mUnion.mList)
     mUnion.mList->incReference();
   return list;
+}
+//-----------------------------------------------------------------------------
+SRF_FancyBlock* SRF_Value::setFancyBlock(SRF_FancyBlock* fblock)
+{
+  VL_CHECK(fblock);
+
+  release();
+  mType = FancyBlock;
+  mUnion.mFancyBlock = fblock;
+  if (mUnion.mFancyBlock)
+    mUnion.mFancyBlock->incReference();
+  return fblock;
 }
 //-----------------------------------------------------------------------------
 SRF_Array* SRF_Value::setArray(SRF_Array* arr)

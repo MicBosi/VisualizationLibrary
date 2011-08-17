@@ -128,8 +128,11 @@ namespace vl
       {
         SRF_Value resource;
 
-        if(res_db->resources()[i]->isOfType(Geometry::Type()))
-          resource = export_Geometry(res_db->resources()[i]->as<Geometry>());
+        if(res_db->resources()[i]->isOfType(Actor::Type()))
+          resource = export_Actor(res_db->resources()[i]->as<Actor>());
+        else
+        if(res_db->resources()[i]->isOfType(Renderable::Type()))
+          resource = export_Renderable(res_db->resources()[i]->as<Renderable>());
         else
         if(res_db->resources()[i]->isOfType(Effect::Type()))
           resource = export_Effect(res_db->resources()[i]->as<Effect>());
@@ -152,14 +155,6 @@ namespace vl
       return value;
     }
 
-    void export_Renderable(const Renderable* ren, SRF_Structure* renderable_subclass)
-    {
-      renderable_subclass->value().push_back( SRF_Structure::Value("VBOEnabled", ren->isVBOEnabled()) );
-      renderable_subclass->value().push_back( SRF_Structure::Value("DisplayListEnabled", ren->isDisplayListEnabled()) );
-      renderable_subclass->value().push_back( SRF_Structure::Value("AABB", export_AABB(ren->boundingBox())) );
-      renderable_subclass->value().push_back( SRF_Structure::Value("Sphere", export_Sphere(ren->boundingSphere())) );
-    }
-
     SRF_Value export_AABB(const AABB& aabb)
     {
       SRF_Value value ( new SRF_Structure("<AABB>", generateUID("aabb_")) );
@@ -176,21 +171,36 @@ namespace vl
       return value;
     }
 
-    SRF_Value export_Geometry(const Geometry* geom)
+    SRF_Value export_Renderable(const Renderable* ren)
     {
       SRF_Value value;
-      if (vlToSRF(geom))
+      if (vlToSRF(ren))
       {
-        value.setUID( vlToSRF(geom)->uid().c_str() );
+        value.setUID( vlToSRF(ren)->uid().c_str() );
         return value;
       }
 
       value.setStructure( new SRF_Structure( "<Geometry>", generateUID("geometry_") ) );
-      registerExportedStructure(geom, value.getStructure());
+      registerExportedStructure(ren, value.getStructure());
       std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
 
-      export_Renderable( geom, value.getStructure() );
+      values.push_back( SRF_Structure::Value("VBOEnabled", ren->isVBOEnabled()) );
+      values.push_back( SRF_Structure::Value("DisplayListEnabled", ren->isDisplayListEnabled()) );
+      values.push_back( SRF_Structure::Value("AABB", export_AABB(ren->boundingBox())) );
+      values.push_back( SRF_Structure::Value("Sphere", export_Sphere(ren->boundingSphere())) );
 
+      if( ren->isOfType( Geometry::Type() ) )
+        export_Geometry( ren->as<Geometry>(), values );
+      else
+      {
+        VL_TRAP(); // mic fixme: support also the others
+      }
+
+      return value;
+    }
+
+    void export_Geometry(const Geometry* geom, std::vector<SRF_Structure::Value>& values)
+    {
       if (geom->vertexArray()) 
         values.push_back( SRF_Structure::Value("VertexArray", export_Array(geom->vertexArray())) );
     
@@ -226,6 +236,110 @@ namespace vl
 
       for(int i=0; i<geom->drawCalls()->size(); ++i)
         values.push_back( SRF_Structure::Value("DrawCall", export_DrawCall(geom->drawCalls()->at(i))) );
+    }
+
+    SRF_Value export_Actor(const Actor* act)
+    {
+      SRF_Value value;
+      if (vlToSRF(act))
+      {
+        value.setUID( vlToSRF(act)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<Actor>", generateUID("actor_")) );
+      registerExportedStructure(act, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      SRF_Value renderables;
+      renderables.setList( new SRF_List );
+      for(size_t i=0; i<VL_MAX_ACTOR_LOD && act->lod(i); ++i)
+        renderables.getList()->value().push_back( export_Renderable(act->lod(i)) );
+      values.push_back( SRF_Structure::Value("Lods", renderables) );
+
+      values.push_back( SRF_Structure::Value("AABB", export_AABB(act->boundingBox())) );
+      values.push_back( SRF_Structure::Value("Sphere", export_Sphere(act->boundingSphere())) );
+      if (act->effect())
+        values.push_back( SRF_Structure::Value("Effect", export_Effect(act->effect())) );
+      if (act->transform())
+        values.push_back( SRF_Structure::Value("Transform", export_Transform(act->transform())) );
+
+      SRF_Value uniforms;
+      uniforms.setList( new SRF_List );
+      for(size_t i=0; act->getUniformSet() && i<act->uniforms().size(); ++i)
+        uniforms.getList()->value().push_back( export_Uniform(act->uniforms()[i].get()) );
+      values.push_back( SRF_Structure::Value("Uniforms", uniforms) );
+
+      // mic fixme: export distance-lod-evaluator e polygon-sorting-callback
+
+      // LODEvaluator
+
+      // Scissor
+
+      // ActorEventCallback
+
+      values.push_back( SRF_Structure::Value("RenderBlock", (long long)act->renderBlock() ) );
+      values.push_back( SRF_Structure::Value("RenderRank", (long long)act->renderRank() ) );
+      values.push_back( SRF_Structure::Value("EnableMask", (long long)act->enableMask() ) );
+      values.push_back( SRF_Structure::Value("IsOccludee", act->isOccludee() ) );
+
+      return value;
+    }
+
+    SRF_Value export_Transform(const Transform* tr)
+    {
+      SRF_Value value;
+      if (vlToSRF(tr))
+      {
+        value.setUID( vlToSRF(tr)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<Transform>", generateUID("transform_")) );
+      registerExportedStructure(tr, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("LocalMatrix", export_Matrix(tr->localMatrix()) ) );
+      // values.push_back( SRF_Structure::Value("WorldMatrix", export_Matrix(tr->worldMatrix()) ) );
+
+      if (tr->parent())
+        values.push_back( SRF_Structure::Value("Parent", export_Transform(tr->parent()) ) );
+
+      SRF_Value childs;
+      childs.setList( new SRF_List );
+      for(size_t i=0; i<tr->childrenCount(); ++i)
+        childs.getList()->value().push_back( export_Transform(tr->children()[i].get()) );
+      values.push_back( SRF_Structure::Value("Children", childs) );
+
+      return value;
+    }
+
+    SRF_Value export_Matrix(const fmat4& mat)
+    {
+      SRF_Value value;
+      value.setStructure( new SRF_Structure("<Matrix>") );
+
+      SRF_Value float_arr( new SRF_ArrayFloat );
+      float_arr.getArrayFloat()->value().resize(4*4);
+      memcpy(&float_arr.getArrayFloat()->value()[0], mat.ptr(), sizeof(mat));
+
+      value.getStructure()->value().push_back( SRF_Structure::Value("Value", float_arr) );
+      return value;
+    }
+
+    SRF_Value export_Uniform(const Uniform* uniform)
+    {
+      SRF_Value value;
+      if (vlToSRF(uniform))
+      {
+        value.setUID( vlToSRF(uniform)->uid().c_str() );
+        return value;
+      }
+
+      // mic fixme: this is just a stub, complete the implementation
+      value.setStructure( new SRF_Structure("<Uniform>", generateUID("uniform_")) );
+      registerExportedStructure(uniform, value.getStructure());
+      // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
 
       return value;
     }
@@ -242,6 +356,7 @@ namespace vl
       // mic fixme: this is just a stub, complete the implementation
       value.setStructure( new SRF_Structure("<Effect>", generateUID("effect_")) );
       registerExportedStructure(fx, value.getStructure());
+      // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
 
       return value;
     }
@@ -258,38 +373,7 @@ namespace vl
       // mic fixme: this is just a stub, complete the implementation
       value.setStructure( new SRF_Structure("<Shader>", generateUID("shader_")) );
       registerExportedStructure(sh, value.getStructure());
-
-      return value;
-    }
-
-    SRF_Value export_Transform(const Transform* tr)
-    {
-      SRF_Value value;
-      if (vlToSRF(tr))
-      {
-        value.setUID( vlToSRF(tr)->uid().c_str() );
-        return value;
-      }
-
-      // mic fixme: this is just a stub, complete the implementation
-      value.setStructure( new SRF_Structure("<Transform>", generateUID("transform_")) );
-      registerExportedStructure(tr, value.getStructure());
-
-      return value;
-    }
-
-    SRF_Value export_Actor(const Actor* act)
-    {
-      SRF_Value value;
-      if (vlToSRF(act))
-      {
-        value.setUID( vlToSRF(act)->uid().c_str() );
-        return value;
-      }
-
-      // mic fixme: this is just a stub, complete the implementation
-      value.setStructure( new SRF_Structure("<Actor>", generateUID("actor_")) );
-      registerExportedStructure(act, value.getStructure());
+      // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
 
       return value;
     }
@@ -306,6 +390,7 @@ namespace vl
       // mic fixme: this is just a stub, complete the implementation
       value.setStructure( new SRF_Structure("<Camera>", generateUID("camera_")) );
       registerExportedStructure(cam, value.getStructure());
+      // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
 
       return value;
     }
