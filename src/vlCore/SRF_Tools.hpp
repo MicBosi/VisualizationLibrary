@@ -50,7 +50,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   class SRF_Structure;
   class SRF_List;
-  class SRF_FancyBlock;
+  class SRF_RawtextBlock;
   class SRF_Array;
   class SRF_ArrayString;
   class SRF_ArrayIdentifier;
@@ -65,7 +65,7 @@ namespace vl
   public:
     virtual void visitStructure(SRF_Structure*) {}
     virtual void visitList(SRF_List*) {}
-    virtual void visitFancyBlock(SRF_FancyBlock*) {}
+    virtual void visitRawtextBlock(SRF_RawtextBlock*) {}
     virtual void visitArray(SRF_ArrayUID*) {}
     virtual void visitArray(SRF_ArrayInt32*) {}
     virtual void visitArray(SRF_ArrayInt64*) {}
@@ -120,16 +120,16 @@ namespace vl
     int mLineNumber; // the line number coming from the tokenizer
   };
   //-----------------------------------------------------------------------------
-  // FancyBlock
+  // RawtextBlock
   //-----------------------------------------------------------------------------
-  class SRF_FancyBlock: public SRF_TaggedValue 
+  class SRF_RawtextBlock: public SRF_TaggedValue 
   { 
-    VL_INSTRUMENT_CLASS(vl::SRF_FancyBlock, SRF_TaggedValue)
+    VL_INSTRUMENT_CLASS(vl::SRF_RawtextBlock, SRF_TaggedValue)
 
   public:
-    SRF_FancyBlock(const char* tag=NULL): SRF_TaggedValue(tag) {}
+    SRF_RawtextBlock(const char* tag=NULL): SRF_TaggedValue(tag) {}
 
-    virtual void acceptVisitor(SRF_Visitor* v) { v->visitFancyBlock(this); }
+    virtual void acceptVisitor(SRF_Visitor* v) { v->visitRawtextBlock(this); }
 
     std::string& value() { return mValue; }
 
@@ -356,7 +356,7 @@ namespace vl
       String,
       Identifier,
       UID,
-      FancyBlock,
+      RawtextBlock,
       List,
       Structure,
       ArrayString,
@@ -397,13 +397,13 @@ namespace vl
       setList(list);
     }
 
-    SRF_Value(SRF_FancyBlock* fancy)
+    SRF_Value(SRF_RawtextBlock* rawtext)
     {
       mLineNumber = 0;
       mType = Int64;
       mUnion.mInt64 = 0;
 
-      setFancyBlock(fancy);
+      setRawtextBlock(rawtext);
     }
 
     SRF_Value(SRF_Array* arr)
@@ -552,13 +552,13 @@ namespace vl
 
     const SRF_List* getList() const { VL_CHECK(mType == List); return mUnion.mList; }
 
-    // fancy block
+    // rawtext block
 
-    VLCORE_EXPORT SRF_FancyBlock* setFancyBlock(SRF_FancyBlock*);
+    VLCORE_EXPORT SRF_RawtextBlock* setRawtextBlock(SRF_RawtextBlock*);
 
-    SRF_FancyBlock* getFancyBlock() { VL_CHECK(mType == FancyBlock); return mUnion.mFancyBlock; }
+    SRF_RawtextBlock* getRawtextBlock() { VL_CHECK(mType == RawtextBlock); return mUnion.mRawtextBlock; }
 
-    const SRF_FancyBlock* getFancyBlock() const { VL_CHECK(mType == FancyBlock); return mUnion.mFancyBlock; }
+    const SRF_RawtextBlock* getRawtextBlock() const { VL_CHECK(mType == RawtextBlock); return mUnion.mRawtextBlock; }
 
     // array
 
@@ -665,7 +665,7 @@ namespace vl
       SRF_Structure* mStructure;
       SRF_List* mList;
       SRF_Array* mArray;
-      SRF_FancyBlock* mFancyBlock;
+      SRF_RawtextBlock* mRawtextBlock;
     } mUnion;
 
   private:
@@ -924,12 +924,12 @@ namespace vl
           obj->value()[i].value().getArrayDouble()->acceptVisitor(this);
           break;
 
-        case SRF_Value::FancyBlock:
+        case SRF_Value::RawtextBlock:
         {
-          SRF_FancyBlock* fblock = obj->value()[i].value().getFancyBlock();
+          SRF_RawtextBlock* fblock = obj->value()[i].value().getRawtextBlock();
           if (!fblock->tag().empty())
             format("%s", fblock->tag().c_str());
-          output("\n"); indent(); format("{<%s>}\n", fancyEncode(fblock->value().c_str()).c_str());
+          output("\n"); indent(); format("{<%s>}\n", rawtextEncode(fblock->value().c_str()).c_str());
         }
         break;
 
@@ -1049,14 +1049,14 @@ namespace vl
           indent(); format("%s\n", list->value()[i].getUID()); VL_CHECK( strlen(list->value()[i].getUID()) )
           break;
 
-        case SRF_Value::FancyBlock:
+        case SRF_Value::RawtextBlock:
         {
-          SRF_FancyBlock* fblock = list->value()[i].getFancyBlock();
+          SRF_RawtextBlock* fblock = list->value()[i].getRawtextBlock();
           if (!fblock->tag().empty())
           {
             indent(); format("%s\n", fblock->tag().c_str());
           }
-          indent(); format("{<%s>}\n", fancyEncode(fblock->value().c_str()).c_str());
+          indent(); format("{<%s>}\n", rawtextEncode(fblock->value().c_str()).c_str());
         }
         break;
 
@@ -1103,12 +1103,12 @@ namespace vl
       int size = arr->value().size() - 10;
       for( ; i < size; i += 10)
       {
-        format("%lld %lld %lld %lld %lld %lld %lld %lld %lld %lld ",
+        format("%lldL %lldL %lldL %lldL %lldL %lldL %lldL %lldL %lldL %lldL ",
           arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
           arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
       }
       for( ; i < (int)arr->value().size(); ++i )
-        format("%lld ", arr->value()[i]);
+        format("%lldL ", arr->value()[i]);
       VL_CHECK( i == (int)arr->value().size() )
       output(")\n");
     }
@@ -1139,12 +1139,12 @@ namespace vl
       int size = arr->value().size() - 10;
       for( ; i < size; i += 10)
       {
-        format("%Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf ",
+        format("%LfL %LfL %LfL %LfL %LfL %LfL %LfL %LfL %LfL %LfL ",
           arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
           arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
       }
       for( ; i < (int)arr->value().size(); ++i )
-        format("%Lf ", arr->value()[i]);
+        format("%LfL ", arr->value()[i]);
       VL_CHECK( i == (int)arr->value().size() )
       output(")\n");
     }
@@ -1173,7 +1173,7 @@ namespace vl
       output(")\n");
     }
 
-    std::string fancyEncode(const char* str)
+    std::string rawtextEncode(const char* str)
     {
       std::string out;
       out.reserve(32);
@@ -1643,7 +1643,7 @@ namespace vl
       Float,              //  +123.456e+10
       Double,             //  +123.456e+10
       TagHeader,          //  <TagHeader>
-      FancyBlock,         // {< blabla >}
+      RawtextBlock,         // {< blabla >}
 
     } EType;
 
@@ -1656,17 +1656,17 @@ namespace vl
   class SRF_Tokenizer: public BufferedStream<char, 128*1024>
   {
   public:
-    SRF_Tokenizer(): mLineNumber(1), mFancyBlock(false) {}
+    SRF_Tokenizer(): mLineNumber(1), mRawtextBlock(false) {}
 
     VLCORE_EXPORT bool getToken(SRF_Token& token);
 
-    VLCORE_EXPORT bool getFancyBlock(SRF_Token& token);
+    VLCORE_EXPORT bool getRawtextBlock(SRF_Token& token);
 
     int lineNumber() const { return mLineNumber; }
 
   private:
     int mLineNumber;
-    bool mFancyBlock;
+    bool mRawtextBlock;
   };
   //-----------------------------------------------------------------------------
   // SRF_Parser
@@ -1935,13 +1935,13 @@ namespace vl
                 return false;
             }
             else
-            // A {< fancy block >}
+            // A {< rawtext block >}
             if (mToken.mType == SRF_Token::LeftFancyBracket)
             {
-              if(!getToken(mToken) || mToken.mType != SRF_Token::FancyBlock)
+              if(!getToken(mToken) || mToken.mType != SRF_Token::RawtextBlock)
                 return false;
-              name_value.value().setFancyBlock( new SRF_FancyBlock(mLastTag.c_str()) );
-              name_value.value().getFancyBlock()->setValue( mToken.mString.c_str() );
+              name_value.value().setRawtextBlock( new SRF_RawtextBlock(mLastTag.c_str()) );
+              name_value.value().getRawtextBlock()->setValue( mToken.mString.c_str() );
               // consume the tag
               mLastTag.clear();
               if(!getToken(mToken) || mToken.mType != SRF_Token::RightFancyBracket)
@@ -2092,14 +2092,14 @@ namespace vl
               value.setIdentifier( mToken.mString.c_str() ); list->value().push_back( value );
               break;
 
-            // A {< fancy block >}
+            // A {< rawtext block >}
             case SRF_Token::LeftFancyBracket:
             {
-              if(!getToken(mToken) || mToken.mType != SRF_Token::FancyBlock)
+              if(!getToken(mToken) || mToken.mType != SRF_Token::RawtextBlock)
                 return false;
               
-              value.setFancyBlock( new SRF_FancyBlock(mLastTag.c_str()) );
-              value.getFancyBlock()->setValue( mToken.mString.c_str() );
+              value.setRawtextBlock( new SRF_RawtextBlock(mLastTag.c_str()) );
+              value.getRawtextBlock()->setValue( mToken.mString.c_str() );
               list->value().push_back( value );
               // consume the tag
               mLastTag.clear();
@@ -2302,7 +2302,7 @@ namespace vl
           case SRF_Token::String:             printf("String = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::UID:                printf("UID = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Identifier:         printf("Identifier = %s\n", mToken.mString.c_str()); break;
-          case SRF_Token::FancyBlock:         printf("FancyBlock = %s\n", mToken.mString.c_str()); break;
+          case SRF_Token::RawtextBlock:         printf("RawtextBlock = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Float:              printf("Float = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Double:             printf("Double = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Int32:              printf("Int32 = %s\n", mToken.mString.c_str()); break;
