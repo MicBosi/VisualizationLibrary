@@ -45,6 +45,9 @@
 #include <vlGraphics/MultiDrawElements.hpp>
 #include <vlGraphics/DrawArrays.hpp>
 #include <vlGraphics/SceneManagerActorTree.hpp>
+#include <vlGraphics/DistanceLODEvaluator.hpp>
+#include <vlGraphics/PixelLODEvaluator.hpp>
+#include <vlGraphics/DepthSortCallback.hpp>
 #include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/DiskFile.hpp>
 
@@ -309,18 +312,117 @@ namespace vl
         uniforms.getList()->value().push_back( export_Uniform(act->uniforms()[i].get()) );
       values.push_back( SRF_Structure::Value("Uniforms", uniforms) );
 
-      // mic fixme: export distance-lod-evaluator e polygon-sorting-callback
+      if (act->lodEvaluator())
+          values.push_back( SRF_Structure::Value("LodEvaluator", export_LODEvaluator(act->lodEvaluator())) );
 
-      // LODEvaluator
+      // mic fixme:
+      // Scissor: scissorts might go away from the Actor
 
-      // Scissor
-
-      // ActorEventCallback
+      SRF_Value callbacks;
+      callbacks.setList( new SRF_List );
+      for(int i=0; i<act->actorEventCallbacks()->size(); ++i)
+        callbacks.getList()->value().push_back( export_ActorEventCallback(act->actorEventCallbacks()->at(i)) );
+      values.push_back( SRF_Structure::Value("ActorEventCallbacks", callbacks) );
 
       values.push_back( SRF_Structure::Value("RenderBlock", (long long)act->renderBlock() ) );
       values.push_back( SRF_Structure::Value("RenderRank", (long long)act->renderRank() ) );
       values.push_back( SRF_Structure::Value("EnableMask", (long long)act->enableMask() ) );
       values.push_back( SRF_Structure::Value("IsOccludee", act->isOccludee() ) );
+
+      return value;
+    }
+
+    SRF_Value export_ActorEventCallback(const ActorEventCallback* cb)
+    {
+      SRF_Value value;
+      if (vlToSRF(cb))
+      {
+        value.setUID( vlToSRF(cb)->uid().c_str() );
+        return value;
+      }
+
+      // mic fixme: allow other callbacks to be exported and imported
+      if (cb->classType() == DepthSortCallback::Type())
+      {
+        const DepthSortCallback* dsc = cb->as<DepthSortCallback>();
+
+        value.setStructure( new SRF_Structure("<DepthSortCallback>", generateUID("actorcallbk_")) );
+        registerExportedStructure(cb, value.getStructure());
+        std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+        if (dsc->sortMode() == SM_SortBackToFront)
+          values.push_back( SRF_Structure::Value("SortMode", toIdentifier("SM_SortBackToFront")) );
+        else
+          values.push_back( SRF_Structure::Value("SortMode", toIdentifier("SM_SortFrontToBack")) );
+      }
+      else
+      {
+        // mic fixme: we should not output unknown objects at all
+        value.setStructure( new SRF_Structure("<UnknownObjectType>", generateUID("actorcallbk_")) );
+        return value;
+      }
+
+      return value;
+    }
+
+    SRF_Value export_LODEvaluator(const LODEvaluator* lod)
+    {
+      SRF_Value value;
+      if (lod->classType() == DistanceLODEvaluator::Type())
+        return export_DistanceLODEvaluator(lod->as<DistanceLODEvaluator>());
+      else
+      if (lod->classType() == PixelLODEvaluator::Type())
+        return export_PixelLODEvaluator(lod->as<PixelLODEvaluator>());
+      else
+      {
+        // mic fixme: we should not output unknown objects at all
+        value.setStructure( new SRF_Structure("<UnknownObjectType>", generateUID("lodeval_")) );
+        return value;
+      }
+    }
+
+    SRF_Value export_DistanceLODEvaluator(const DistanceLODEvaluator* lod)
+    {
+      SRF_Value value;
+      if (vlToSRF(lod))
+      {
+        value.setUID( vlToSRF(lod)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<DistanceLODEvaluator>", generateUID("lodeval_")) );
+      registerExportedStructure(lod, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      SRF_Value distances( new SRF_ArrayReal );
+      distances.getArrayReal()->value().resize( lod->distanceRangeSet().size() );
+      if (lod->distanceRangeSet().size() != 0)
+        distances.getArrayReal()->copyFrom( &lod->distanceRangeSet()[0] );
+
+      values.push_back( SRF_Structure::Value("DistanceRageSet", distances) );
+
+      return value;
+    }
+
+    SRF_Value export_PixelLODEvaluator(const PixelLODEvaluator* lod)
+    {
+      SRF_Value value;
+      if (vlToSRF(lod))
+      {
+        value.setUID( vlToSRF(lod)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<PixelLODEvaluator>", generateUID("lodeval_")) );
+      registerExportedStructure(lod, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      SRF_Value distances( new SRF_ArrayReal );
+      distances.getArrayReal()->value().resize( lod->pixelRangeSet().size() );
+      if (lod->pixelRangeSet().size() != 0)
+        distances.getArrayReal()->copyFrom( &lod->pixelRangeSet()[0] );
+
+      values.push_back( SRF_Structure::Value("PixelRageSet", distances) );
 
       return value;
     }
@@ -560,7 +662,7 @@ namespace vl
           return "UT_NONE";
       }
     }
-          
+
     SRF_Value export_Effect(const Effect* fx)
     {
       SRF_Value value;
@@ -570,7 +672,6 @@ namespace vl
         return value;
       }
 
-      // mic fixme: this is just a stub, complete the implementation
       value.setStructure( new SRF_Structure("<Effect>", generateUID("effect_")) );
       registerExportedStructure(fx, value.getStructure());
       // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
