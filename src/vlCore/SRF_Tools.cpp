@@ -299,7 +299,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       }
     }
     else
-    // Int32 / Int64 / Float / Double
+    // Integer / Real
     //
     // ACCEPTED:
     // 123
@@ -347,13 +347,8 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            if (ch1 == 'L')
-              token.mType = SRF_Token::Int64;
-            else
-            {
-              token.mType = SRF_Token::Int32;
-              ungetToken(ch1);
-            }
+            token.mType = SRF_Token::Integer;
+            ungetToken(ch1);
             return true;
           }
           break;
@@ -394,13 +389,8 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            if (ch1 == 'L')
-              token.mType = SRF_Token::Int64;
-            else
-            {
-              token.mType = SRF_Token::Int32;
-              ungetToken(ch1);
-            }
+            token.mType = SRF_Token::Integer;
+            ungetToken(ch1);
             return true;
           }
           break;
@@ -429,13 +419,8 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            if (ch1 == 'L')
-              token.mType = SRF_Token::Double;
-            else
-            {
-              token.mType = SRF_Token::Float;
-              ungetToken(ch1);
-            }
+            token.mType = SRF_Token::Real;
+            ungetToken(ch1);
             return true;
           }
           break;
@@ -471,28 +456,23 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
             token.mString.push_back(ch1);
           else
           {
-            if (ch1 == 'L')
-              token.mType = SRF_Token::Double;
-            else
-            {
-              token.mType = SRF_Token::Float;
-              ungetToken(ch1);
-            }
+            token.mType = SRF_Token::Real;
+            ungetToken(ch1);
             return true;
           }
           break;
         }
       }
-      // reached TOKEN_EOF in the middle of the parsing so we check where we were, note that it cannot be a Int64 or a Double
+      // reached TOKEN_EOF in the middle of the parsing so we check where we were, note that it cannot be a Integer or a Real
       if (state == sINT)
       {
-        token.mType = SRF_Token::Int32;
+        token.mType = SRF_Token::Integer;
         return true;
       }
       else
       if (state == sFRAC || state == sEXP)
       {
-        token.mType = SRF_Token::Float;
+        token.mType = SRF_Token::Real;
         return true;
       }
       else
@@ -575,10 +555,8 @@ void SRF_Value::release()
   case ArrayString:
   case ArrayUID:
   case ArrayIdentifier:
-  case ArrayInt32:
-  case ArrayInt64:
-  case ArrayFloat:
-  case ArrayDouble:
+  case ArrayInteger:
+  case ArrayReal:
     if (mUnion.mArray)
       mUnion.mArray->decReference(); 
     break;
@@ -595,8 +573,8 @@ void SRF_Value::release()
     break;
   }
 
-  mType = Int64;
-  mUnion.mInt64 = 0;
+  mType = Integer;
+  mUnion.mInteger = 0;
 }
 //-----------------------------------------------------------------------------
 SRF_Value& SRF_Value::operator=(const SRF_Value& other)
@@ -624,10 +602,8 @@ SRF_Value& SRF_Value::operator=(const SRF_Value& other)
   case ArrayString:
   case ArrayUID:
   case ArrayIdentifier:
-  case ArrayInt32:
-  case ArrayInt64:
-  case ArrayFloat:
-  case ArrayDouble:
+  case ArrayInteger:
+  case ArrayReal:
     if (other.mUnion.mArray)
       other.mUnion.mArray->incReference(); 
     break;
@@ -683,42 +659,81 @@ SRF_RawtextBlock* SRF_Value::setRawtextBlock(SRF_RawtextBlock* fblock)
   return fblock;
 }
 //-----------------------------------------------------------------------------
-SRF_Array* SRF_Value::setArray(SRF_Array* arr)
+SRF_ArrayInteger* SRF_Value::setArrayInteger(SRF_ArrayInteger* arr)
 {
-  release();
-
   VL_CHECK(arr);
-
-  if(arr->classType() == SRF_ArrayString::Type())
-    mType = ArrayString;
-  else
-  if(arr->classType() == SRF_ArrayIdentifier::Type())
-    mType = ArrayIdentifier;
-  else
-  if(arr->classType() == SRF_ArrayUID::Type())
-    mType = ArrayUID;
-  else
-  if(arr->classType() == SRF_ArrayInt32::Type())
-    mType = ArrayInt32;
-  else
-  if(arr->classType() == SRF_ArrayInt64::Type())
-    mType = ArrayInt64;
-  else
-  if(arr->classType() == SRF_ArrayFloat::Type())
-    mType = ArrayFloat;
-  else
-  if(arr->classType() == SRF_ArrayDouble::Type())
-    mType = ArrayDouble;
-  else
-  {
-    VL_TRAP();
-    mUnion.mArray = NULL;
-  }
-
+  release();
+  mType = ArrayInteger;
   mUnion.mArray = arr;
   if (mUnion.mArray)
     mUnion.mArray->incReference();
-    
   return arr;
+}
+//-----------------------------------------------------------------------------
+SRF_ArrayReal* SRF_Value::setArrayReal(SRF_ArrayReal* arr)
+{
+  VL_CHECK(arr);
+  release();
+  mType = ArrayReal;
+  mUnion.mArray = arr;
+  if (mUnion.mArray)
+    mUnion.mArray->incReference();
+  return arr;
+}
+//-----------------------------------------------------------------------------
+SRF_ArrayIdentifier* SRF_Value::setArrayIdentifier(SRF_ArrayIdentifier* arr)
+{
+  VL_CHECK(arr);
+  release();
+  mType = ArrayIdentifier;
+  mUnion.mArray = arr;
+  if (mUnion.mArray)
+    mUnion.mArray->incReference();
+  return arr;
+}
+//-----------------------------------------------------------------------------
+SRF_ArrayString* SRF_Value::setArrayString(SRF_ArrayString* arr)
+{
+  VL_CHECK(arr);
+  release();
+  mType = ArrayString;
+  mUnion.mArray = arr;
+  if (mUnion.mArray)
+    mUnion.mArray->incReference();
+  return arr;
+}
+//-----------------------------------------------------------------------------
+SRF_ArrayUID* SRF_Value::setArrayUID(SRF_ArrayUID* arr)
+{
+  VL_CHECK(arr);
+  release();
+  mType = ArrayUID;
+  mUnion.mArray = arr;
+  if (mUnion.mArray)
+    mUnion.mArray->incReference();
+  return arr;
+}
+//-----------------------------------------------------------------------------
+SRF_Array* SRF_Value::setArray(SRF_Array* arr)
+{
+  if (arr->classType() == SRF_ArrayInteger::Type())
+    return setArrayInteger(arr->as<SRF_ArrayInteger>());
+  else
+  if (arr->classType() == SRF_ArrayReal::Type())
+    return setArrayReal(arr->as<SRF_ArrayReal>());
+  else
+  if (arr->classType() == SRF_ArrayIdentifier::Type())
+    return setArrayIdentifier(arr->as<SRF_ArrayIdentifier>());
+  else
+  if (arr->classType() == SRF_ArrayString::Type())
+    return setArrayString(arr->as<SRF_ArrayString>());
+  else
+  if (arr->classType() == SRF_ArrayUID::Type())
+    return setArrayUID(arr->as<SRF_ArrayUID>());
+  else
+  {
+    VL_TRAP();
+    return NULL;
+  }
 }
 //-----------------------------------------------------------------------------

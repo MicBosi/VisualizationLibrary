@@ -300,7 +300,6 @@ namespace vl
       std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
 
       values.push_back( SRF_Structure::Value("LocalMatrix", export_Matrix(tr->localMatrix()) ) );
-      // values.push_back( SRF_Structure::Value("WorldMatrix", export_Matrix(tr->worldMatrix()) ) );
 
       if (tr->parent())
         values.push_back( SRF_Structure::Value("Parent", export_Transform(tr->parent()) ) );
@@ -314,17 +313,55 @@ namespace vl
       return value;
     }
 
+    bool isTranslation(const fmat4& mat)
+    {
+      fmat4 tmp = mat;
+      tmp.setT( fvec3(0,0,0) );
+      return tmp.isIdentity();
+    }
+
+    bool isScaling(const fmat4& mat)
+    {
+      fmat4 tmp = mat;
+      tmp.e(0,0) = 1;
+      tmp.e(1,1) = 1;
+      tmp.e(2,2) = 1;
+      return tmp.isIdentity();
+    }
+
     SRF_Value export_Matrix(const fmat4& mat)
     {
-      SRF_Value value;
-      value.setStructure( new SRF_Structure("<Matrix>") );
+      SRF_Value matrix_list( new SRF_List );
 
-      SRF_Value float_arr( new SRF_ArrayFloat );
-      float_arr.getArrayFloat()->value().resize(4*4);
-      memcpy(&float_arr.getArrayFloat()->value()[0], mat.ptr(), sizeof(mat));
+      if (isTranslation(mat))
+      {
+        SRF_Value value( new SRF_ArrayReal("<Translation>") );
+        value.getArrayReal()->value().resize(3);
+        value.getArrayReal()->value()[0] = mat.getT().x();
+        value.getArrayReal()->value()[1] = mat.getT().y();
+        value.getArrayReal()->value()[2] = mat.getT().z();
+        matrix_list.getList()->value().push_back( value );
+      }
+      else
+      if (isScaling(mat))
+      {
+        SRF_Value value( new SRF_ArrayReal("<Scaling>") );
+        value.getArrayReal()->value().resize(3);
+        value.getArrayReal()->value()[0] = mat.e(0,0);
+        value.getArrayReal()->value()[1] = mat.e(1,1);
+        value.getArrayReal()->value()[2] = mat.e(2,2);
+        matrix_list.getList()->value().push_back( value );
+      }
+      else
+      {
+        SRF_Value value( new SRF_ArrayReal("<Matrix>") );
+        value.getArrayReal()->value().resize(4*4);
+        // note: we output the transposed of the matrix to comply with the mathematical standard (and COLLADA)
+        value.getArrayReal()->copyFrom(mat.getTransposed().ptr());
+        matrix_list.getList()->value().push_back( value );
+      }
 
-      value.getStructure()->value().push_back( SRF_Structure::Value("Value", float_arr) );
-      return value;
+      return matrix_list;
     }
 
     SRF_Value export_Uniform(const Uniform* uniform)
@@ -451,120 +488,120 @@ namespace vl
       }
 
       if(arr_abstract->classType() == ArrayUInt1::Type())
-        value = export_ArrayT<ArrayUInt1, SRF_ArrayInt32>(arr_abstract, "<ArrayUInt1>");
+        value = export_ArrayT<ArrayUInt1, SRF_ArrayInteger>(arr_abstract, "<ArrayUInt1>");
       else
       if(arr_abstract->classType() == ArrayUInt2::Type())
-        value = export_ArrayT<ArrayUInt2, SRF_ArrayInt32>(arr_abstract, "<ArrayUInt2>");
+        value = export_ArrayT<ArrayUInt2, SRF_ArrayInteger>(arr_abstract, "<ArrayUInt2>");
       else
       if(arr_abstract->classType() == ArrayUInt3::Type())
-        value = export_ArrayT<ArrayUInt3, SRF_ArrayInt32>(arr_abstract, "<ArrayUInt3>");
+        value = export_ArrayT<ArrayUInt3, SRF_ArrayInteger>(arr_abstract, "<ArrayUInt3>");
       else
       if(arr_abstract->classType() == ArrayUInt4::Type())
-        value = export_ArrayT<ArrayUInt4, SRF_ArrayInt32>(arr_abstract, "<ArrayUInt4>");
+        value = export_ArrayT<ArrayUInt4, SRF_ArrayInteger>(arr_abstract, "<ArrayUInt4>");
       else
 
       if(arr_abstract->classType() == ArrayInt1::Type())
-        value = export_ArrayT<ArrayInt1, SRF_ArrayInt32>(arr_abstract, "<ArrayInt1>");
+        value = export_ArrayT<ArrayInt1, SRF_ArrayInteger>(arr_abstract, "<ArrayInt1>");
       else
       if(arr_abstract->classType() == ArrayInt2::Type())
-        value = export_ArrayT<ArrayInt2, SRF_ArrayInt32>(arr_abstract, "<ArrayInt2>");
+        value = export_ArrayT<ArrayInt2, SRF_ArrayInteger>(arr_abstract, "<ArrayInt2>");
       else
       if(arr_abstract->classType() == ArrayInt3::Type())
-        value = export_ArrayT<ArrayInt3, SRF_ArrayInt32>(arr_abstract, "<ArrayInt3>");
+        value = export_ArrayT<ArrayInt3, SRF_ArrayInteger>(arr_abstract, "<ArrayInt3>");
       else
       if(arr_abstract->classType() == ArrayInt4::Type())
-        value = export_ArrayT<ArrayInt4, SRF_ArrayInt32>(arr_abstract, "<ArrayInt4>");
+        value = export_ArrayT<ArrayInt4, SRF_ArrayInteger>(arr_abstract, "<ArrayInt4>");
       else
 
       if(arr_abstract->classType() == ArrayUShort1::Type())
-        value = export_ArrayT<ArrayUShort1, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort1>");
+        value = export_ArrayT<ArrayUShort1, SRF_ArrayInteger>(arr_abstract, "<ArrayUShort1>");
       else
       if(arr_abstract->classType() == ArrayUShort2::Type())
-        value = export_ArrayT<ArrayUShort2, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort2>");
+        value = export_ArrayT<ArrayUShort2, SRF_ArrayInteger>(arr_abstract, "<ArrayUShort2>");
       else
       if(arr_abstract->classType() == ArrayUShort3::Type())
-        value = export_ArrayT<ArrayUShort3, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort3>");
+        value = export_ArrayT<ArrayUShort3, SRF_ArrayInteger>(arr_abstract, "<ArrayUShort3>");
       else
       if(arr_abstract->classType() == ArrayUShort4::Type())
-        value = export_ArrayT<ArrayUShort4, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort4>");
+        value = export_ArrayT<ArrayUShort4, SRF_ArrayInteger>(arr_abstract, "<ArrayUShort4>");
       else
 
       if(arr_abstract->classType() == ArrayUShort1::Type())
-        value = export_ArrayT<ArrayUShort1, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort1>");
+        value = export_ArrayT<ArrayUShort1, SRF_ArrayInteger>(arr_abstract, "<ArrayUShort1>");
       else
       if(arr_abstract->classType() == ArrayUShort2::Type())
-        value = export_ArrayT<ArrayUShort2, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort2>");
+        value = export_ArrayT<ArrayUShort2, SRF_ArrayInteger>(arr_abstract, "<ArrayUShort2>");
       else
       if(arr_abstract->classType() == ArrayUShort3::Type())
-        value = export_ArrayT<ArrayUShort3, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort3>");
+        value = export_ArrayT<ArrayUShort3, SRF_ArrayInteger>(arr_abstract, "<ArrayUShort3>");
       else
       if(arr_abstract->classType() == ArrayUShort4::Type())
-        value = export_ArrayT<ArrayUShort4, SRF_ArrayInt32>(arr_abstract, "<ArrayUShort4>");
+        value = export_ArrayT<ArrayUShort4, SRF_ArrayInteger>(arr_abstract, "<ArrayUShort4>");
       else
 
       if(arr_abstract->classType() == ArrayShort1::Type())
-        value = export_ArrayT<ArrayShort1, SRF_ArrayInt32>(arr_abstract, "<ArrayShort1>");
+        value = export_ArrayT<ArrayShort1, SRF_ArrayInteger>(arr_abstract, "<ArrayShort1>");
       else
       if(arr_abstract->classType() == ArrayShort2::Type())
-        value = export_ArrayT<ArrayShort2, SRF_ArrayInt32>(arr_abstract, "<ArrayShort2>");
+        value = export_ArrayT<ArrayShort2, SRF_ArrayInteger>(arr_abstract, "<ArrayShort2>");
       else
       if(arr_abstract->classType() == ArrayShort3::Type())
-        value = export_ArrayT<ArrayShort3, SRF_ArrayInt32>(arr_abstract, "<ArrayShort3>");
+        value = export_ArrayT<ArrayShort3, SRF_ArrayInteger>(arr_abstract, "<ArrayShort3>");
       else
       if(arr_abstract->classType() == ArrayShort4::Type())
-        value = export_ArrayT<ArrayShort4, SRF_ArrayInt32>(arr_abstract, "<ArrayShort4>");
+        value = export_ArrayT<ArrayShort4, SRF_ArrayInteger>(arr_abstract, "<ArrayShort4>");
       else
 
       if(arr_abstract->classType() == ArrayUByte1::Type())
-        value = export_ArrayT<ArrayUByte1, SRF_ArrayInt32>(arr_abstract, "<ArrayUByte1>");
+        value = export_ArrayT<ArrayUByte1, SRF_ArrayInteger>(arr_abstract, "<ArrayUByte1>");
       else
       if(arr_abstract->classType() == ArrayUByte2::Type())
-        value = export_ArrayT<ArrayUByte2, SRF_ArrayInt32>(arr_abstract, "<ArrayUByte2>");
+        value = export_ArrayT<ArrayUByte2, SRF_ArrayInteger>(arr_abstract, "<ArrayUByte2>");
       else
       if(arr_abstract->classType() == ArrayUByte3::Type())
-        value = export_ArrayT<ArrayUByte3, SRF_ArrayInt32>(arr_abstract, "<ArrayUByte3>");
+        value = export_ArrayT<ArrayUByte3, SRF_ArrayInteger>(arr_abstract, "<ArrayUByte3>");
       else
       if(arr_abstract->classType() == ArrayUByte4::Type())
-        value = export_ArrayT<ArrayUByte4, SRF_ArrayInt32>(arr_abstract, "<ArrayUByte4>");
+        value = export_ArrayT<ArrayUByte4, SRF_ArrayInteger>(arr_abstract, "<ArrayUByte4>");
       else
 
       if(arr_abstract->classType() == ArrayByte1::Type())
-        value = export_ArrayT<ArrayByte1, SRF_ArrayInt32>(arr_abstract, "<ArrayByte1>");
+        value = export_ArrayT<ArrayByte1, SRF_ArrayInteger>(arr_abstract, "<ArrayByte1>");
       else
       if(arr_abstract->classType() == ArrayByte2::Type())
-        value = export_ArrayT<ArrayByte2, SRF_ArrayInt32>(arr_abstract, "<ArrayByte2>");
+        value = export_ArrayT<ArrayByte2, SRF_ArrayInteger>(arr_abstract, "<ArrayByte2>");
       else
       if(arr_abstract->classType() == ArrayByte3::Type())
-        value = export_ArrayT<ArrayByte3, SRF_ArrayInt32>(arr_abstract, "<ArrayByte3>");
+        value = export_ArrayT<ArrayByte3, SRF_ArrayInteger>(arr_abstract, "<ArrayByte3>");
       else
       if(arr_abstract->classType() == ArrayByte4::Type())
-        value = export_ArrayT<ArrayByte4, SRF_ArrayInt32>(arr_abstract, "<ArrayByte4>");
+        value = export_ArrayT<ArrayByte4, SRF_ArrayInteger>(arr_abstract, "<ArrayByte4>");
       else
 
       if(arr_abstract->classType() == ArrayFloat1::Type())
-        value = export_ArrayT<ArrayFloat1, SRF_ArrayFloat>(arr_abstract, "<ArrayFloat1>");
+        value = export_ArrayT<ArrayFloat1, SRF_ArrayReal>(arr_abstract, "<ArrayFloat1>");
       else
       if(arr_abstract->classType() == ArrayFloat2::Type())
-        value = export_ArrayT<ArrayFloat2, SRF_ArrayFloat>(arr_abstract, "<ArrayFloat2>");
+        value = export_ArrayT<ArrayFloat2, SRF_ArrayReal>(arr_abstract, "<ArrayFloat2>");
       else
       if(arr_abstract->classType() == ArrayFloat3::Type())
-        value = export_ArrayT<ArrayFloat3, SRF_ArrayFloat>(arr_abstract, "<ArrayFloat3>");
+        value = export_ArrayT<ArrayFloat3, SRF_ArrayReal>(arr_abstract, "<ArrayFloat3>");
       else
       if(arr_abstract->classType() == ArrayFloat4::Type())
-        value = export_ArrayT<ArrayFloat4, SRF_ArrayFloat>(arr_abstract, "<ArrayFloat4>");
+        value = export_ArrayT<ArrayFloat4, SRF_ArrayReal>(arr_abstract, "<ArrayFloat4>");
       else
 
       if(arr_abstract->classType() == ArrayDouble1::Type())
-        value = export_ArrayT<ArrayDouble1, SRF_ArrayDouble>(arr_abstract, "<ArrayDouble1>");
+        value = export_ArrayT<ArrayDouble1, SRF_ArrayReal>(arr_abstract, "<ArrayDouble1>");
       else
       if(arr_abstract->classType() == ArrayDouble2::Type())
-        value = export_ArrayT<ArrayDouble2, SRF_ArrayDouble>(arr_abstract, "<ArrayDouble2>");
+        value = export_ArrayT<ArrayDouble2, SRF_ArrayReal>(arr_abstract, "<ArrayDouble2>");
       else
       if(arr_abstract->classType() == ArrayDouble3::Type())
-        value = export_ArrayT<ArrayDouble3, SRF_ArrayDouble>(arr_abstract, "<ArrayDouble3>");
+        value = export_ArrayT<ArrayDouble3, SRF_ArrayReal>(arr_abstract, "<ArrayDouble3>");
       else
       if(arr_abstract->classType() == ArrayDouble4::Type())
-        value = export_ArrayT<ArrayDouble4, SRF_ArrayDouble>(arr_abstract, "<ArrayDouble4>");
+        value = export_ArrayT<ArrayDouble4, SRF_ArrayReal>(arr_abstract, "<ArrayDouble4>");
       else
       {
         Log::error("Array type not supported for export.\n");
@@ -725,10 +762,10 @@ namespace vl
     SRF_Value export_vector_int32(const std::vector<int>& vec)
     {
       SRF_Value value;
-      value.setArray( new SRF_ArrayInt32 );
-      value.getArrayInt32()->value().resize( vec.size() );
+      value.setArray( new SRF_ArrayInteger );
+      value.getArrayInteger()->value().resize( vec.size() );
       if (vec.size())
-        memcpy( &value.getArrayInt32()->value()[0], &vec[0], sizeof(vec[0])*vec.size() );
+        value.getArrayInteger()->copyFrom(&vec[0]);
       return value;
     }
 
@@ -765,13 +802,13 @@ namespace vl
         return NULL;
       else
       {
-        if (srf_obj->value()[0].key() != "SerializerVersion" || srf_obj->value()[0].value().type() != SRF_Value::Int64)
+        if (srf_obj->value()[0].key() != "SerializerVersion" || srf_obj->value()[0].value().type() != SRF_Value::Integer)
         {
           Log::error( Say("Line %n : no serializer version found.\n") << srf_obj->value()[0].value().lineNumber() );
           return NULL;
         }
         else
-        if (srf_obj->value()[0].value().getInt64() != VL_SERIALIZER_VERSION )
+        if (srf_obj->value()[0].value().getInteger() != VL_SERIALIZER_VERSION )
         {
           Log::error("Unsupported serializer version.\n");
           return NULL;
@@ -869,14 +906,14 @@ namespace vl
         const SRF_Value& value = srf_obj->value()[i].value();
         if (key == "MinCorner")
         {
-          VL_CHECK(value.type() == SRF_Value::ArrayFloat)
-          aabb.setMinCorner( value.getArrayFloat()->getFloat3() );
+          VL_CHECK(value.type() == SRF_Value::ArrayReal)
+          aabb.setMinCorner( value.getArrayReal()->getFloat3() );
         }
         else
         if (key == "MaxCorner")
         {
-          VL_CHECK(value.type() == SRF_Value::ArrayFloat)
-          aabb.setMaxCorner( value.getArrayFloat()->getFloat3() );
+          VL_CHECK(value.type() == SRF_Value::ArrayReal)
+          aabb.setMaxCorner( value.getArrayReal()->getFloat3() );
         }
         else
         if (key == "Extension")
@@ -901,14 +938,14 @@ namespace vl
         const SRF_Value& value = srf_obj->value()[i].value();
         if (key == "Center")
         {
-          VL_CHECK(value.type() == SRF_Value::ArrayFloat)
-          sphere.setCenter( value.getArrayFloat()->getFloat3() );
+          VL_CHECK(value.type() == SRF_Value::ArrayReal)
+          sphere.setCenter( value.getArrayReal()->getFloat3() );
         }
         else
         if (key == "Radius")
         {
-          VL_CHECK(value.type() == SRF_Value::Double)
-          sphere.setRadius( (Real)value.getDouble() );
+          VL_CHECK(value.type() == SRF_Value::Real)
+          sphere.setRadius( (Real)value.getReal() );
         }
         else
         if (key == "Extension")
@@ -941,346 +978,314 @@ namespace vl
 
       if (srf_obj->tag() == "<ArrayFloat1>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayFloat);
-        const SRF_ArrayFloat* srf_arr_float = value.getArrayFloat();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayReal);
+        const SRF_ArrayReal* srf_arr_float = value.getArrayReal();
         ref<ArrayFloat1> arr_float1 = new ArrayFloat1; arr_abstract = arr_float1;
         arr_float1->resize( srf_arr_float->value().size() );
-        memcpy(arr_float1->ptr(), srf_arr_float->ptr(), arr_float1->bytesUsed());
+        srf_arr_float->copyTo((float*)arr_float1->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayFloat2>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayFloat);
-        const SRF_ArrayFloat* srf_arr_float = value.getArrayFloat();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayReal);
+        const SRF_ArrayReal* srf_arr_float = value.getArrayReal();
         VL_SRF_CHECK_ERROR( srf_arr_float->value().size() % 2 == 0)
         ref<ArrayFloat2> arr_float2 = new ArrayFloat2; arr_abstract = arr_float2;
         arr_float2->resize( srf_arr_float->value().size() / 2 );
-        memcpy(arr_float2->ptr(), srf_arr_float->ptr(), arr_float2->bytesUsed());
+        srf_arr_float->copyTo((float*)arr_float2->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayFloat3>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayFloat);
-        const SRF_ArrayFloat* srf_arr_float = value.getArrayFloat();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayReal);
+        const SRF_ArrayReal* srf_arr_float = value.getArrayReal();
         VL_SRF_CHECK_ERROR( srf_arr_float->value().size() % 3 == 0)
         ref<ArrayFloat3> arr_float3 = new ArrayFloat3; arr_abstract = arr_float3;
         arr_float3->resize( srf_arr_float->value().size() / 3 );
-        memcpy(arr_float3->ptr(), srf_arr_float->ptr(), arr_float3->bytesUsed());
+        srf_arr_float->copyTo((float*)arr_float3->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayFloat4>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayFloat);
-        const SRF_ArrayFloat* srf_arr_float = value.getArrayFloat();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayReal);
+        const SRF_ArrayReal* srf_arr_float = value.getArrayReal();
         VL_SRF_CHECK_ERROR( srf_arr_float->value().size() % 4 == 0)
         ref<ArrayFloat4> arr_float4 = new ArrayFloat4; arr_abstract = arr_float4;
         arr_float4->resize( srf_arr_float->value().size() / 4 );
-        memcpy(arr_float4->ptr(), srf_arr_float->ptr(), arr_float4->bytesUsed());
+        srf_arr_float->copyTo((float*)arr_float4->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayDouble1>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayDouble);
-        const SRF_ArrayDouble* srf_arr_double = value.getArrayDouble();
-        ref<ArrayDouble1> arr_double1 = new ArrayDouble1; arr_abstract = arr_double1;
-        arr_double1->resize( srf_arr_double->value().size() );
-        memcpy(arr_double1->ptr(), srf_arr_double->ptr(), arr_double1->bytesUsed());
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayReal);
+        const SRF_ArrayReal* srf_arr_floating = value.getArrayReal();
+        ref<ArrayDouble1> arr_floating1 = new ArrayDouble1; arr_abstract = arr_floating1;
+        arr_floating1->resize( srf_arr_floating->value().size() );
+        srf_arr_floating->copyTo((double*)arr_floating1->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayDouble2>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayDouble);
-        const SRF_ArrayDouble* srf_arr_double = value.getArrayDouble();
-        VL_SRF_CHECK_ERROR( srf_arr_double->value().size() % 2 == 0)
-        ref<ArrayDouble2> arr_double2 = new ArrayDouble2; arr_abstract = arr_double2;
-        arr_double2->resize( srf_arr_double->value().size() / 2 );
-        memcpy(arr_double2->ptr(), srf_arr_double->ptr(), arr_double2->bytesUsed());
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayReal);
+        const SRF_ArrayReal* srf_arr_floating = value.getArrayReal();
+        VL_SRF_CHECK_ERROR( srf_arr_floating->value().size() % 2 == 0)
+        ref<ArrayDouble2> arr_floating2 = new ArrayDouble2; arr_abstract = arr_floating2;
+        arr_floating2->resize( srf_arr_floating->value().size() / 2 );
+        srf_arr_floating->copyTo((double*)arr_floating2->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayDouble3>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayDouble);
-        const SRF_ArrayDouble* srf_arr_double = value.getArrayDouble();
-        VL_SRF_CHECK_ERROR( srf_arr_double->value().size() % 3 == 0)
-        ref<ArrayDouble3> arr_double3 = new ArrayDouble3; arr_abstract = arr_double3;
-        arr_double3->resize( srf_arr_double->value().size() / 3 );
-        memcpy(arr_double3->ptr(), srf_arr_double->ptr(), arr_double3->bytesUsed());
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayReal);
+        const SRF_ArrayReal* srf_arr_floating = value.getArrayReal();
+        VL_SRF_CHECK_ERROR( srf_arr_floating->value().size() % 3 == 0)
+        ref<ArrayDouble3> arr_floating3 = new ArrayDouble3; arr_abstract = arr_floating3;
+        arr_floating3->resize( srf_arr_floating->value().size() / 3 );
+        srf_arr_floating->copyTo((double*)arr_floating3->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayDouble4>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayDouble);
-        const SRF_ArrayDouble* srf_arr_double = value.getArrayDouble();
-        VL_SRF_CHECK_ERROR( srf_arr_double->value().size() % 4 == 0)
-        ref<ArrayDouble4> arr_double4 = new ArrayDouble4; arr_abstract = arr_double4;
-        arr_double4->resize( srf_arr_double->value().size() / 4 );
-        memcpy(arr_double4->ptr(), srf_arr_double->ptr(), arr_double4->bytesUsed());
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayReal);
+        const SRF_ArrayReal* srf_arr_floating = value.getArrayReal();
+        VL_SRF_CHECK_ERROR( srf_arr_floating->value().size() % 4 == 0)
+        ref<ArrayDouble4> arr_floating4 = new ArrayDouble4; arr_abstract = arr_floating4;
+        arr_floating4->resize( srf_arr_floating->value().size() / 4 );
+        srf_arr_floating->copyTo((double*)arr_floating4->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayInt1>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         ref<ArrayInt1> arr_int1 = new ArrayInt1; arr_abstract = arr_int1;
         arr_int1->resize( srf_arr_int->value().size() );
-        memcpy(arr_int1->ptr(), srf_arr_int->ptr(), arr_int1->bytesUsed());
+        srf_arr_int->copyTo((int*)arr_int1->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayInt2>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayInt2> arr_int2 = new ArrayInt2; arr_abstract = arr_int2;
         arr_int2->resize( srf_arr_int->value().size() / 2 );
-        memcpy(arr_int2->ptr(), srf_arr_int->ptr(), arr_int2->bytesUsed());
+        srf_arr_int->copyTo((int*)arr_int2->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayInt3>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayInt3> arr_int3 = new ArrayInt3; arr_abstract = arr_int3;
         arr_int3->resize( srf_arr_int->value().size() / 3 );
-        memcpy(arr_int3->ptr(), srf_arr_int->ptr(), arr_int3->bytesUsed());
+        srf_arr_int->copyTo((int*)arr_int3->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayInt4>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayInt4> arr_int4 = new ArrayInt4; arr_abstract = arr_int4;
         arr_int4->resize( srf_arr_int->value().size() / 4 );
-        memcpy(arr_int4->ptr(), srf_arr_int->ptr(), arr_int4->bytesUsed());
+        srf_arr_int->copyTo((int*)arr_int4->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUInt1>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         ref<ArrayUInt1> arr_int1 = new ArrayUInt1; arr_abstract = arr_int1;
         arr_int1->resize( srf_arr_int->value().size() );
-        memcpy(arr_int1->ptr(), srf_arr_int->ptr(), arr_int1->bytesUsed());
+        srf_arr_int->copyTo((unsigned int*)arr_int1->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUInt2>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayUInt2> arr_int2 = new ArrayUInt2; arr_abstract = arr_int2;
         arr_int2->resize( srf_arr_int->value().size() / 2 );
-        memcpy(arr_int2->ptr(), srf_arr_int->ptr(), arr_int2->bytesUsed());
+        srf_arr_int->copyTo((unsigned int*)arr_int2->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUInt3>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayUInt3> arr_int3 = new ArrayUInt3; arr_abstract = arr_int3;
         arr_int3->resize( srf_arr_int->value().size() / 3 );
-        memcpy(arr_int3->ptr(), srf_arr_int->ptr(), arr_int3->bytesUsed());
+        srf_arr_int->copyTo((unsigned int*)arr_int3->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUInt4>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayUInt4> arr_int4 = new ArrayUInt4; arr_abstract = arr_int4;
         arr_int4->resize( srf_arr_int->value().size() / 4 );
-        memcpy(arr_int4->ptr(), srf_arr_int->ptr(), arr_int4->bytesUsed());
+        srf_arr_int->copyTo((unsigned int*)arr_int4->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayShort1>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         ref<ArrayShort1> arr_short1 = new ArrayShort1; arr_abstract = arr_short1;
         arr_short1->resize( srf_arr_int->value().size() );
-        typedef ArrayShort1::scalar_type type;
-        for(size_t i=0; i<arr_short1->size(); ++i)
-          arr_short1->at(i) = (type)srf_arr_int->value()[i];
+        srf_arr_int->copyTo((short*)arr_short1->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayShort2>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayShort2> arr_short2 = new ArrayShort2; arr_abstract = arr_short2;
         arr_short2->resize( srf_arr_int->value().size() / 2 );
-        typedef ArrayShort2::scalar_type type;
-        for(size_t i=0; i<arr_short2->size(); ++i)
-          arr_short2->at(i) = svec2((type)srf_arr_int->value()[i*2+0], (type)srf_arr_int->value()[i*2+1]);
+        srf_arr_int->copyTo((short*)arr_short2->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayShort3>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayShort3> arr_short3 = new ArrayShort3; arr_abstract = arr_short3;
         arr_short3->resize( srf_arr_int->value().size() / 3 );
-        typedef ArrayShort3::scalar_type type;
-        for(size_t i=0; i<arr_short3->size(); ++i)
-          arr_short3->at(i) = svec3((type)srf_arr_int->value()[i*3+0], (type)srf_arr_int->value()[i*3+1], (type)srf_arr_int->value()[i*3+2]);
+        srf_arr_int->copyTo((short*)arr_short3->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayShort4>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayShort4> arr_short4 = new ArrayShort4; arr_abstract = arr_short4;
         arr_short4->resize( srf_arr_int->value().size() / 4 );
-        typedef ArrayShort4::scalar_type type;
-        for(size_t i=0; i<arr_short4->size(); ++i)
-          arr_short4->at(i) = svec4((type)srf_arr_int->value()[i*4+0], (type)srf_arr_int->value()[i*4+1], (type)srf_arr_int->value()[i*4+2], (type)srf_arr_int->value()[i*4+3]);
+        srf_arr_int->copyTo((short*)arr_short4->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUShort1>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         ref<ArrayUShort1> arr_short1 = new ArrayUShort1; arr_abstract = arr_short1;
         arr_short1->resize( srf_arr_int->value().size() );
-        typedef ArrayUShort1::scalar_type type;
-        for(size_t i=0; i<arr_short1->size(); ++i)
-          arr_short1->at(i) = (type)srf_arr_int->value()[i];
+        srf_arr_int->copyTo((unsigned short*)arr_short1->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUShort2>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayUShort2> arr_short2 = new ArrayUShort2; arr_abstract = arr_short2;
         arr_short2->resize( srf_arr_int->value().size() / 2 );
-        typedef ArrayUShort2::scalar_type type;
-        for(size_t i=0; i<arr_short2->size(); ++i)
-          arr_short2->at(i) = usvec2((type)srf_arr_int->value()[i*2+0], (type)srf_arr_int->value()[i*2+1]);
+        srf_arr_int->copyTo((unsigned short*)arr_short2->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUShort3>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayUShort3> arr_short3 = new ArrayUShort3; arr_abstract = arr_short3;
         arr_short3->resize( srf_arr_int->value().size() / 3 );
-        typedef ArrayUShort3::scalar_type type;
-        for(size_t i=0; i<arr_short3->size(); ++i)
-          arr_short3->at(i) = usvec3((type)srf_arr_int->value()[i*3+0], (type)srf_arr_int->value()[i*3+1], (type)srf_arr_int->value()[i*3+2]);
+        srf_arr_int->copyTo((unsigned short*)arr_short3->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUShort4>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayUShort4> arr_short4 = new ArrayUShort4; arr_abstract = arr_short4;
         arr_short4->resize( srf_arr_int->value().size() / 4 );
-        typedef ArrayUShort4::scalar_type type;
-        for(size_t i=0; i<arr_short4->size(); ++i)
-          arr_short4->at(i) = usvec4((type)srf_arr_int->value()[i*4+0], (type)srf_arr_int->value()[i*4+1], (type)srf_arr_int->value()[i*4+2], (type)srf_arr_int->value()[i*4+3]);
+        srf_arr_int->copyTo((unsigned short*)arr_short4->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayByte1>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         ref<ArrayByte1> arr_byte1 = new ArrayByte1; arr_abstract = arr_byte1;
         arr_byte1->resize( srf_arr_int->value().size() );
-        typedef ArrayByte1::scalar_type type;
-        for(size_t i=0; i<arr_byte1->size(); ++i)
-          arr_byte1->at(i) = (type)srf_arr_int->value()[i];
+        srf_arr_int->copyTo((char*)arr_byte1->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayByte2>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayByte2> arr_byte2 = new ArrayByte2; arr_abstract = arr_byte2;
         arr_byte2->resize( srf_arr_int->value().size() / 2 );
-        typedef ArrayByte2::scalar_type type;
-        for(size_t i=0; i<arr_byte2->size(); ++i)
-          arr_byte2->at(i) = bvec2((type)srf_arr_int->value()[i*2+0], (type)srf_arr_int->value()[i*2+1]);
+        srf_arr_int->copyTo((char*)arr_byte2->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayByte3>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayByte3> arr_byte3 = new ArrayByte3; arr_abstract = arr_byte3;
         arr_byte3->resize( srf_arr_int->value().size() / 3 );
-        typedef ArrayByte3::scalar_type type;
-        for(size_t i=0; i<arr_byte3->size(); ++i)
-          arr_byte3->at(i) = bvec3((type)srf_arr_int->value()[i*3+0], (type)srf_arr_int->value()[i*3+1], (type)srf_arr_int->value()[i*3+2]);
+        srf_arr_int->copyTo((char*)arr_byte3->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayByte4>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayByte4> arr_byte4 = new ArrayByte4; arr_abstract = arr_byte4;
         arr_byte4->resize( srf_arr_int->value().size() / 4 );
-        typedef ArrayByte4::scalar_type type;
-        for(size_t i=0; i<arr_byte4->size(); ++i)
-          arr_byte4->at(i) = bvec4((type)srf_arr_int->value()[i*4+0], (type)srf_arr_int->value()[i*4+1], (type)srf_arr_int->value()[i*4+2], (type)srf_arr_int->value()[i*4+3]);
+        srf_arr_int->copyTo((char*)arr_byte4->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUByte1>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         ref<ArrayUByte1> arr_byte1 = new ArrayUByte1; arr_abstract = arr_byte1;
         arr_byte1->resize( srf_arr_int->value().size() );
-        typedef ArrayUByte1::scalar_type type;
-        for(size_t i=0; i<arr_byte1->size(); ++i)
-          arr_byte1->at(i) = (type)srf_arr_int->value()[i];
+        srf_arr_int->copyTo((unsigned char*)arr_byte1->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUByte2>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 2 == 0)
         ref<ArrayUByte2> arr_byte2 = new ArrayUByte2; arr_abstract = arr_byte2;
         arr_byte2->resize( srf_arr_int->value().size() / 2 );
-        typedef ArrayUByte2::scalar_type type;
-        for(size_t i=0; i<arr_byte2->size(); ++i)
-          arr_byte2->at(i) = ubvec2((type)srf_arr_int->value()[i*2+0], (type)srf_arr_int->value()[i*2+1]);
+        srf_arr_int->copyTo((unsigned char*)arr_byte2->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUByte3>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 3 == 0)
         ref<ArrayUByte3> arr_byte3 = new ArrayUByte3; arr_abstract = arr_byte3;
         arr_byte3->resize( srf_arr_int->value().size() / 3 );
-        typedef ArrayUByte3::scalar_type type;
-        for(size_t i=0; i<arr_byte3->size(); ++i)
-          arr_byte3->at(i) = ubvec3((type)srf_arr_int->value()[i*3+0], (type)srf_arr_int->value()[i*3+1], (type)srf_arr_int->value()[i*3+2]);
+        srf_arr_int->copyTo((unsigned char*)arr_byte3->ptr());
       }
       else
       if (srf_obj->tag() == "<ArrayUByte4>")
       {
-        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInt32);
-        const SRF_ArrayInt32* srf_arr_int = value.getArrayInt32();
+        VL_SRF_CHECK_ERROR(value.type() == SRF_Value::ArrayInteger);
+        const SRF_ArrayInteger* srf_arr_int = value.getArrayInteger();
         VL_SRF_CHECK_ERROR( srf_arr_int->value().size() % 4 == 0)
         ref<ArrayUByte4> arr_byte4 = new ArrayUByte4; arr_abstract = arr_byte4;
         arr_byte4->resize( srf_arr_int->value().size() / 4 );
-        typedef ArrayUByte4::scalar_type type;
-        for(size_t i=0; i<arr_byte4->size(); ++i)
-          arr_byte4->at(i) = ubvec4((type)srf_arr_int->value()[i*4+0], (type)srf_arr_int->value()[i*4+1], (type)srf_arr_int->value()[i*4+2], (type)srf_arr_int->value()[i*4+3]);
+        srf_arr_int->copyTo((unsigned char*)arr_byte4->ptr());
       }
       else
       {
@@ -1360,8 +1365,8 @@ namespace vl
           else
           if( key == "Instances" )
           {
-            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
-            de->setInstances( (int)value.getInt64() );
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Integer )
+            de->setInstances( (int)value.getInteger() );
           }
           else
           if( key == "PrimitiveRestartEnabled" )
@@ -1372,8 +1377,8 @@ namespace vl
           else
           if( key == "BaseVertex" )
           {
-            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
-            de->setBaseVertex( (int)value.getInt64() );
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Integer )
+            de->setBaseVertex( (int)value.getInteger() );
           }
           else
           if( key == "IndexBuffer" )
@@ -1453,14 +1458,20 @@ namespace vl
           else
           if( key == "BaseVertices" )
           {
-            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::ArrayInt32 )
-            de->setBaseVertices( value.getArrayInt32()->value() );
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::ArrayInteger )
+            de->baseVertices().resize( value.getArrayInteger()->value().size() );
+            if (de->baseVertices().size())
+              value.getArrayInteger()->copyTo( &de->baseVertices()[0] );
+            // de->setBaseVertices( value.getArrayInt32()->value() );
           }
           else
           if( key == "CountVector" )
           {
-            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::ArrayInt32 )
-            de->countVector() = value.getArrayInt32()->value();
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::ArrayInteger )
+            de->countVector().resize( value.getArrayInteger()->value().size() );
+            if (de->countVector().size())
+              value.getArrayInteger()->copyTo( &de->countVector()[0] );
+            // de->countVector() = value.getArrayInt32()->value();
           }
           else
           if( key == "IndexBuffer" )
@@ -1531,20 +1542,20 @@ namespace vl
           else
           if( key == "Instances" )
           {
-            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
-            da->setInstances( (int)value.getInt64() );
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Integer )
+            da->setInstances( (int)value.getInteger() );
           }
           else
           if( key == "Start" )
           {
-            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
-            da->setStart( (int)value.getInt64() );
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Integer )
+            da->setStart( (int)value.getInteger() );
           }
           else
           if( key == "Count" )
           {
-            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Int64 )
-            da->setCount( (int)value.getInt64() );
+            VL_SRF_CHECK_ERROR( value.type() == SRF_Value::Integer )
+            da->setCount( (int)value.getInteger() );
           }
           else
           if ( key == "Extension" )
