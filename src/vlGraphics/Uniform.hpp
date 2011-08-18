@@ -91,7 +91,7 @@ namespace vl
     //! Sets the name of the uniform variable
     void setName(const std::string& name) { mName = name; }
 
-    // array setters
+    // generic array setters
 
     void setUniform1i(int count, const int* value) { initData(count*1); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_INT;  VL_CHECK(Has_GLSL); }
     void setUniform2i(int count, const int* value) { initData(count*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_INT_VEC2; VL_CHECK(Has_GLSL); }
@@ -113,7 +113,7 @@ namespace vl
     void setUniform3d(int count, const double* value) { initDouble(count*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_VEC3; VL_CHECK(Has_GL_Version_4_0); }
     void setUniform4d(int count, const double* value) { initDouble(count*4); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_DOUBLE_VEC4; VL_CHECK(Has_GL_Version_4_0); }
 
-    // matrix array setters
+    // generic matrix array setters
 
     void setUniformMatrix2f(int count, const float* value) { initData(count*2*2); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT2; VL_CHECK(Has_GLSL); }
     void setUniformMatrix3f(int count, const float* value) { initData(count*3*3); memcpy(&mData[0], value, sizeof(mData[0]) * mData.size()); mType = UT_FLOAT_MAT3; VL_CHECK(Has_GLSL); }
@@ -139,14 +139,17 @@ namespace vl
 
     // vector/matrix array setters
 
+    void setUniform(int count, const int* value)   { setUniform1i(count, value); }
     void setUniform(int count, const ivec2* value) { setUniform2i(count, value->ptr()); }
     void setUniform(int count, const ivec3* value) { setUniform3i(count, value->ptr()); }
     void setUniform(int count, const ivec4* value) { setUniform4i(count, value->ptr()); }
 
+    void setUniform(int count, const unsigned int* value) { setUniform1ui(count, value); }
     void setUniform(int count, const uvec2* value) { setUniform2ui(count, value->ptr()); }
     void setUniform(int count, const uvec3* value) { setUniform3ui(count, value->ptr()); }
     void setUniform(int count, const uvec4* value) { setUniform4ui(count, value->ptr()); }
 
+    void setUniform(int count, const float* value)  { setUniform1f(count, value); }
     void setUniform(int count, const fvec2* value)  { setUniform2f(count, value->ptr()); }
     void setUniform(int count, const fvec3* value)  { setUniform3f(count, value->ptr()); }
     void setUniform(int count, const fvec4* value)  { setUniform4f(count, value->ptr()); }
@@ -155,6 +158,7 @@ namespace vl
     void setUniform(int count, const fmat3* value)  { setUniformMatrix3f(count, value->ptr()); }
     void setUniform(int count, const fmat4* value)  { setUniformMatrix4f(count, value->ptr()); }
 
+    void setUniform(int count, const double* value) { setUniform1d(count, value); }
     void setUniform(int count, const dvec2* value)  { setUniform2d(count, value->ptr()); }
     void setUniform(int count, const dvec3* value)  { setUniform3d(count, value->ptr()); }
     void setUniform(int count, const dvec4* value)  { setUniform4d(count, value->ptr()); }
@@ -165,89 +169,92 @@ namespace vl
 
     // single value setters
 
-    void setUniformI(const int& value) { setUniform1i(1, &value); }
+    void setUniformI(const int& value)  { setUniform1i(1, &value); }
     void setUniform(const ivec2& value) { setUniform2i(1, value.ptr()); }
     void setUniform(const ivec3& value) { setUniform3i(1, value.ptr()); }
     void setUniform(const ivec4& value) { setUniform4i(1, value.ptr()); }
 
-    void setUniformU(const unsigned int& value){ setUniform1ui(1, &value); }
+    void setUniformU(const unsigned int& value) { setUniform1ui(1, &value); }
     void setUniform(const uvec2& value) { setUniform2ui(1, value.ptr()); }
     void setUniform(const uvec3& value) { setUniform3ui(1, value.ptr()); }
     void setUniform(const uvec4& value) { setUniform4ui(1, value.ptr()); }
 
-    void setUniformF(const float& value)  { setUniform1f(1, &value); }
+    void setUniformF(const float& value) { setUniform1f(1, &value); }
     void setUniform(const fvec2& value)  { setUniform2f(1, value.ptr()); }
     void setUniform(const fvec3& value)  { setUniform3f(1, value.ptr()); }
     void setUniform(const fvec4& value)  { setUniform4f(1, value.ptr()); }
 
-    void setUniform(const fmat2& value)  { setUniformMatrix2f(1, value.ptr()); }
-    void setUniform(const fmat3& value)  { setUniformMatrix3f(1, value.ptr()); }
-    void setUniform(const fmat4& value)  { setUniformMatrix4f(1, value.ptr()); }
+    void setUniform(const fmat2& value) { setUniformMatrix2f(1, value.ptr()); }
+    void setUniform(const fmat3& value) { setUniformMatrix3f(1, value.ptr()); }
+    void setUniform(const fmat4& value) { setUniformMatrix4f(1, value.ptr()); }
 
     void setUniformD(const double& value) { setUniform1d(1, &value); }
-    void setUniform(const dvec2& value)  { setUniform2d(1, value.ptr()); }
-    void setUniform(const dvec3& value)  { setUniform3d(1, value.ptr()); }
-    void setUniform(const dvec4& value)  { setUniform4d(1, value.ptr()); }
+    void setUniform(const dvec2& value)   { setUniform2d(1, value.ptr()); }
+    void setUniform(const dvec3& value)   { setUniform3d(1, value.ptr()); }
+    void setUniform(const dvec4& value)   { setUniform4d(1, value.ptr()); }
 
-    void setUniform(const dmat2& value)  { setUniformMatrix2d(1, value.ptr()); }
-    void setUniform(const dmat3& value)  { setUniformMatrix3d(1, value.ptr()); }
-    void setUniform(const dmat4& value)  { setUniformMatrix4d(1, value.ptr()); }
+    void setUniform(const dmat2& value) { setUniformMatrix2d(1, value.ptr()); }
+    void setUniform(const dmat3& value) { setUniformMatrix3d(1, value.ptr()); }
+    void setUniform(const dmat4& value) { setUniformMatrix4d(1, value.ptr()); }
 
     // getters
 
-    void getUniform(double* value)       { VL_CHECK(type() != UT_NONE); VL_CHECK(mData.size()); memcpy( value, &mData[0], sizeof(mData[0]) * mData.size()); }
-    void getUniform(float* value)        { VL_CHECK(type() != UT_NONE); VL_CHECK(mData.size()); memcpy( value, &mData[0], sizeof(mData[0]) * mData.size()); }
-    void getUniform(int* value)          { VL_CHECK(type() != UT_NONE); VL_CHECK(mData.size()); memcpy( value, &mData[0], sizeof(mData[0]) * mData.size()); }
-    void getUniform(unsigned int* value) { VL_CHECK(type() != UT_NONE); VL_CHECK(mData.size()); memcpy( value, &mData[0], sizeof(mData[0]) * mData.size()); }
+    void getUniform(double* value) const { VL_CHECK(type() != UT_NONE); VL_CHECK(mData.size()); memcpy( value, &mData[0], sizeof(mData[0]) * mData.size()); }
+    void getUniform(float* value) const { VL_CHECK(type() != UT_NONE); VL_CHECK(mData.size()); memcpy( value, &mData[0], sizeof(mData[0]) * mData.size()); }
+    void getUniform(int* value) const { VL_CHECK(type() != UT_NONE); VL_CHECK(mData.size()); memcpy( value, &mData[0], sizeof(mData[0]) * mData.size()); }
+    void getUniform(unsigned int* value) const { VL_CHECK(type() != UT_NONE); VL_CHECK(mData.size()); memcpy( value, &mData[0], sizeof(mData[0]) * mData.size()); }
 
-    void getUniform(ivec2* value) { getUniform(value->ptr()); }
-    void getUniform(ivec3* value) { getUniform(value->ptr()); }
-    void getUniform(ivec4* value) { getUniform(value->ptr()); }
+    void getUniform(ivec2* value) const { getUniform(value->ptr()); }
+    void getUniform(ivec3* value) const { getUniform(value->ptr()); }
+    void getUniform(ivec4* value) const { getUniform(value->ptr()); }
 
-    void getUniform(uvec2* value) { getUniform(value->ptr()); }
-    void getUniform(uvec3* value) { getUniform(value->ptr()); }
-    void getUniform(uvec4* value) { getUniform(value->ptr()); }
+    void getUniform(uvec2* value) const { getUniform(value->ptr()); }
+    void getUniform(uvec3* value) const { getUniform(value->ptr()); }
+    void getUniform(uvec4* value) const { getUniform(value->ptr()); }
 
-    void getUniform(fvec2* value) { getUniform(value->ptr()); }
-    void getUniform(fvec3* value) { getUniform(value->ptr()); }
-    void getUniform(fvec4* value) { getUniform(value->ptr()); }
+    void getUniform(fvec2* value) const { getUniform(value->ptr()); }
+    void getUniform(fvec3* value) const { getUniform(value->ptr()); }
+    void getUniform(fvec4* value) const { getUniform(value->ptr()); }
 
-    void getUniform(fmat2* value) { getUniform(value->ptr()); }
-    void getUniform(fmat3* value) { getUniform(value->ptr()); }
-    void getUniform(fmat4* value) { getUniform(value->ptr()); }
+    void getUniform(fmat2* value) const { getUniform(value->ptr()); }
+    void getUniform(fmat3* value) const { getUniform(value->ptr()); }
+    void getUniform(fmat4* value) const { getUniform(value->ptr()); }
 
-    void getUniform(dvec2* value) { getUniform(value->ptr()); }
-    void getUniform(dvec3* value) { getUniform(value->ptr()); }
-    void getUniform(dvec4* value) { getUniform(value->ptr()); }
+    void getUniform(dvec2* value) const { getUniform(value->ptr()); }
+    void getUniform(dvec3* value) const { getUniform(value->ptr()); }
+    void getUniform(dvec4* value) const { getUniform(value->ptr()); }
 
-    void getUniform(dmat2* value) { getUniform(value->ptr()); }
-    void getUniform(dmat3* value) { getUniform(value->ptr()); }
-    void getUniform(dmat4* value) { getUniform(value->ptr()); }
+    void getUniform(dmat2* value) const { getUniform(value->ptr()); }
+    void getUniform(dmat3* value) const { getUniform(value->ptr()); }
+    void getUniform(dmat4* value) const { getUniform(value->ptr()); }
 
     EUniformType type() const { return mType; }
 
     int count() const
     {
+      if (mData.empty())
+        return 0;
+
       switch(mType)
       {
-        case UT_INT:     return singleCount();      
-        case UT_INT_VEC2:    return singleCount() / 2;      
-        case UT_INT_VEC3:    return singleCount() / 3;      
-        case UT_INT_VEC4:    return singleCount() / 4;
+        case UT_INT:      return singleCount();      
+        case UT_INT_VEC2: return singleCount() / 2;      
+        case UT_INT_VEC3: return singleCount() / 3;      
+        case UT_INT_VEC4: return singleCount() / 4;
 
-        case UT_UNSIGNED_INT:    return singleCount();      
-        case UT_UNSIGNED_INT_VEC2:   return singleCount() / 2;      
-        case UT_UNSIGNED_INT_VEC3:   return singleCount() / 3;      
-        case UT_UNSIGNED_INT_VEC4:   return singleCount() / 4;
+        case UT_UNSIGNED_INT:      return singleCount();      
+        case UT_UNSIGNED_INT_VEC2: return singleCount() / 2;      
+        case UT_UNSIGNED_INT_VEC3: return singleCount() / 3;      
+        case UT_UNSIGNED_INT_VEC4: return singleCount() / 4;
 
-        case UT_FLOAT:   return singleCount();
-        case UT_FLOAT_VEC2:  return singleCount() / 2;
-        case UT_FLOAT_VEC3:  return singleCount() / 3;
-        case UT_FLOAT_VEC4:  return singleCount() / 4;      
+        case UT_FLOAT:      return singleCount();
+        case UT_FLOAT_VEC2: return singleCount() / 2;
+        case UT_FLOAT_VEC3: return singleCount() / 3;
+        case UT_FLOAT_VEC4: return singleCount() / 4;      
 
-        case UT_FLOAT_MAT2:   return singleCount() / (2*2);
-        case UT_FLOAT_MAT3:   return singleCount() / (3*3);      
-        case UT_FLOAT_MAT4:   return singleCount() / (4*4);      
+        case UT_FLOAT_MAT2: return singleCount() / (2*2);
+        case UT_FLOAT_MAT3: return singleCount() / (3*3);      
+        case UT_FLOAT_MAT4: return singleCount() / (4*4);      
 
         case UT_FLOAT_MAT2x3: return singleCount() / (2*3);
         case UT_FLOAT_MAT3x2: return singleCount() / (3*2);
@@ -256,14 +263,14 @@ namespace vl
         case UT_FLOAT_MAT3x4: return singleCount() / (3*4);
         case UT_FLOAT_MAT4x3: return singleCount() / (4*3);
 
-        case UT_DOUBLE:  return doubleCount();
+        case UT_DOUBLE:      return doubleCount();
         case UT_DOUBLE_VEC2: return doubleCount() / 2;
         case UT_DOUBLE_VEC3: return doubleCount() / 3;
         case UT_DOUBLE_VEC4: return doubleCount() / 4;
 
-        case UT_DOUBLE_MAT2:   return doubleCount() / (2*2);
-        case UT_DOUBLE_MAT3:   return doubleCount() / (3*3);
-        case UT_DOUBLE_MAT4:   return doubleCount() / (4*4);
+        case UT_DOUBLE_MAT2: return doubleCount() / (2*2);
+        case UT_DOUBLE_MAT3: return doubleCount() / (3*3);
+        case UT_DOUBLE_MAT4: return doubleCount() / (4*4);
 
         case UT_DOUBLE_MAT2x3: return doubleCount() / (2*3);
         case UT_DOUBLE_MAT3x2: return doubleCount() / (3*2);
@@ -277,6 +284,10 @@ namespace vl
         return -1;
       }
     }
+
+    void* rawData() { if (mData.empty()) return NULL; else return &mData[0]; }
+
+    const void* rawData() const { if (mData.empty()) return NULL; else return &mData[0]; }
 
   protected:
     VL_COMPILE_TIME_CHECK( sizeof(int) == sizeof(float) )
