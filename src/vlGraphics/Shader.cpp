@@ -73,7 +73,7 @@ GLSLProgram* Shader::getGLSLProgram()
   if ( rs == NULL ) \
   { \
     rs = new RS; \
-    gocRenderStateSet()->setRenderState( rs, 0 ); \
+    gocRenderStateSet()->setRenderState( rs, -1 ); \
   } \
   return rs;
 //------------------------------------------------------------------------------
