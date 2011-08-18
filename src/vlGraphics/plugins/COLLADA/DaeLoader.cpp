@@ -1332,7 +1332,7 @@ ref<Light> DaeLoader::parseLight(domLight* dom_light, Transform* transform)
   if (dom_light->getID())
     light->setObjectName( dom_light->getID() );
 
-  light->followTransform(transform);
+  light->bindTransform(transform);
 
   if (light_common->getPoint())
   {
@@ -1445,7 +1445,7 @@ void DaeLoader::setupLights()
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
         fx->shader()->gocColor()->setColor(vl::fuchsia);
-        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->followedTransform() ) );
+        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->boundTransform() ) );
       }
       else
       // directional light
@@ -1458,7 +1458,7 @@ void DaeLoader::setupLights()
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
         fx->shader()->gocColor()->setColor(vl::fuchsia);
-        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->followedTransform() ) );
+        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->boundTransform() ) );
       }
       else
       // point light
@@ -1470,7 +1470,7 @@ void DaeLoader::setupLights()
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
         fx->shader()->gocColor()->setColor(vl::fuchsia);
-        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->followedTransform() ) );
+        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->boundTransform() ) );
       }
       else
       // ambient light
@@ -1482,7 +1482,7 @@ void DaeLoader::setupLights()
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
         fx->shader()->gocColor()->setColor(vl::fuchsia);
-        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->followedTransform() ) );
+        mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->boundTransform() ) );
       }
     }
   }

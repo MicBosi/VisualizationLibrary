@@ -53,7 +53,7 @@ Light::Light()
   mConstantAttenuation  = 1.0f;
   mLinearAttenuation    = 0.0f;
   mQuadraticAttenuation = 0.0f;
-  mFollowedTransform = NULL;
+  mBoundTransform = NULL;
 }
 //------------------------------------------------------------------------------
 void Light::apply(int index, const Camera* camera, OpenGLContext*) const
@@ -68,8 +68,8 @@ void Light::apply(int index, const Camera* camera, OpenGLContext*) const
     glPushMatrix();
 
     // follows the given node
-    if ( followedTransform() )
-      camera->applyModelViewMatrix( followedTransform()->worldMatrix() );
+    if ( boundTransform() )
+      camera->applyModelViewMatrix( boundTransform()->worldMatrix() );
     else
     {
       // follows the camera
@@ -110,18 +110,18 @@ void Light::apply(int index, const Camera* camera, OpenGLContext*) const
   }
 }
 //------------------------------------------------------------------------------
-void Light::followTransform(Transform* transform) 
+void Light::bindTransform(Transform* transform) 
 { 
-  mFollowedTransform = transform; 
+  mBoundTransform = transform; 
 }
 //------------------------------------------------------------------------------
-Transform* Light::followedTransform()
+Transform* Light::boundTransform()
 { 
-  return mFollowedTransform.get(); 
+  return mBoundTransform.get(); 
 }
 //------------------------------------------------------------------------------
-const Transform* Light::followedTransform() const
+const Transform* Light::boundTransform() const
 { 
-  return mFollowedTransform.get(); 
+  return mBoundTransform.get(); 
 }
 //------------------------------------------------------------------------------

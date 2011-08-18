@@ -65,13 +65,13 @@ namespace vl
     virtual void apply(int index, const Camera* camera, OpenGLContext*) const;
 
     /** Attach the light to a vl::Transform. */
-    void followTransform(Transform* transform) { mFollowedTransform = transform; }
+    void bindTransform(Transform* transform) { mBoundTransform = transform; }
 
     /** Returns the vl::Transform to which the Light is attached. */
-    Transform* followedTransform() { return mFollowedTransform.get(); }
+    Transform* boundTransform() { return mBoundTransform.get(); }
 
     /** Returns the vl::Transform to which the Light is attached. */
-    const Transform* followedTransform() const { return mFollowedTransform.get(); }
+    const Transform* boundTransform() const { return mBoundTransform.get(); }
 
     /** Returns the actual plane used to perform the clipping. */
     const Plane& plane() const { return mPlane; }
@@ -87,7 +87,7 @@ namespace vl
     }
 
   protected:
-    ref<Transform> mFollowedTransform;
+    ref<Transform> mBoundTransform;
     Plane mPlane;
   };
   //-----------------------------------------------------------------------------

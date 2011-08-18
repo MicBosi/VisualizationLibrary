@@ -108,9 +108,11 @@ namespace vl
     float constantAttenuation() const { return mConstantAttenuation; }
 
     //! If NULL follows the camera otherwise the given transformation node
-    void followTransform(Transform* transform);
-    Transform* followedTransform();
-    const Transform* followedTransform() const;
+    void bindTransform(Transform* transform);
+
+    Transform* boundTransform();
+
+    const Transform* boundTransform() const;
     
     virtual ref<RenderState> clone() const
     {
@@ -130,7 +132,7 @@ namespace vl
     float mConstantAttenuation;
     float mLinearAttenuation;
     float mQuadraticAttenuation;
-    ref<Transform> mFollowedTransform;
+    ref<Transform> mBoundTransform;
   };
 }
 
