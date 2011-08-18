@@ -200,20 +200,6 @@ namespace vl
 
     template<typename T> void copyFrom(const T*ptr) { for(size_t i=0; i<mValue.size(); ++i, ++ptr) mValue[i] = (scalar_type)*ptr; }
 
-    // mic fixme: these guys should not be here
-
-    dvec2 getReal2() const { VL_CHECK(mValue.size() == 2); return dvec2(mValue[0], mValue[1]); }
-
-    dvec3 getReal3() const { VL_CHECK(mValue.size() == 3); return dvec3(mValue[0], mValue[1], mValue[2]); }
-
-    dvec4 getReal4() const { VL_CHECK(mValue.size() == 4); return dvec4(mValue[0], mValue[1], mValue[2], mValue[3]); }
-
-    fvec2 getFloat2() const { VL_CHECK(mValue.size() == 2); return fvec2((float)mValue[0], (float)mValue[1]); }
-
-    fvec3 getFloat3() const { VL_CHECK(mValue.size() == 3); return fvec3((float)mValue[0], (float)mValue[1], (float)mValue[2]); }
-
-    fvec4 getFloat4() const { VL_CHECK(mValue.size() == 4); return fvec4((float)mValue[0], (float)mValue[1], (float)mValue[2], (float)mValue[3]); }
-
   public:
     std::vector<double> mValue;
   };
@@ -440,47 +426,6 @@ namespace vl
       mUnion.mInteger = 0;
 
       setBool(boolean);
-    }
-
-    // mic fixme: these should not be here
-
-    SRF_Value(const fvec4& vec)
-    {
-      mLineNumber = 0;
-      mType = Integer;
-      mUnion.mInteger = 0;
-
-      SRF_ArrayReal* arr = setArrayReal( new SRF_ArrayReal );
-      getArrayReal()->value().resize(4);
-      arr->value()[0] = vec.x();
-      arr->value()[1] = vec.y();
-      arr->value()[2] = vec.z();
-      arr->value()[3] = vec.w();
-    }
-
-    SRF_Value(const fvec3& vec)
-    {
-      mLineNumber = 0;
-      mType = Integer;
-      mUnion.mInteger = 0;
-
-      SRF_ArrayReal* arr = setArrayReal( new SRF_ArrayReal );
-      getArrayReal()->value().resize(3);
-      arr->value()[0] = vec.x();
-      arr->value()[1] = vec.y();
-      arr->value()[2] = vec.z();
-    }
-
-    SRF_Value(const fvec2& vec)
-    {
-      mLineNumber = 0;
-      mType = Integer;
-      mUnion.mInteger = 0;
-
-      SRF_ArrayReal* arr = setArrayReal( new SRF_ArrayReal );
-      getArrayReal()->value().resize(2);
-      arr->value()[0] = vec.x();
-      arr->value()[1] = vec.y();
     }
 
     SRF_Value(const SRF_Value& other)
@@ -713,7 +658,6 @@ namespace vl
     }
 
   private:
-    // mic fixme: add a multimap for quick access
     std::string mUID;
     std::vector<Value> mKeyValue;
   };

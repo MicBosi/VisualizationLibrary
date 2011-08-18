@@ -107,6 +107,39 @@ namespace vl
       return String::printf("#%sid%d", prefix, ++mUIDCounter).toStdString();
     }
 
+    SRF_Value toValue(const fvec4& vec)
+    {
+      SRF_Value val( new SRF_ArrayReal );
+      SRF_ArrayReal* arr = val.getArrayReal();
+      arr->value().resize(4);
+      arr->value()[0] = vec.x();
+      arr->value()[1] = vec.y();
+      arr->value()[2] = vec.z();
+      arr->value()[3] = vec.w();
+      return val;
+    }
+
+    SRF_Value toValue(const fvec3& vec)
+    {
+      SRF_Value val( new SRF_ArrayReal );
+      SRF_ArrayReal* arr = val.getArrayReal();
+      arr->value().resize(3);
+      arr->value()[0] = vec.x();
+      arr->value()[1] = vec.y();
+      arr->value()[2] = vec.z();
+      return val;
+    }
+
+    SRF_Value toValue(const fvec2& vec)
+    {
+      SRF_Value val( new SRF_ArrayReal );
+      SRF_ArrayReal* arr = val.getArrayReal();
+      arr->value().resize(2);
+      arr->value()[0] = vec.x();
+      arr->value()[1] = vec.y();
+      return val;
+    }
+
     SRF_Value export_ResourceDatabase(const ResourceDatabase* res_db)
     {
       SRF_Value value;
@@ -158,15 +191,15 @@ namespace vl
     SRF_Value export_AABB(const AABB& aabb)
     {
       SRF_Value value ( new SRF_Structure("<AABB>", generateUID("aabb_")) );
-      value.getStructure()->value().push_back( SRF_Structure::Value("MinCorner", aabb.minCorner()) );
-      value.getStructure()->value().push_back( SRF_Structure::Value("MaxCorner", aabb.maxCorner()) );
+      value.getStructure()->value().push_back( SRF_Structure::Value("MinCorner", toValue(aabb.minCorner())) );
+      value.getStructure()->value().push_back( SRF_Structure::Value("MaxCorner", toValue(aabb.maxCorner())) );
       return value;
     }
 
     SRF_Value export_Sphere(const Sphere& sphere)
     {
       SRF_Value value ( new SRF_Structure("<Sphere>", generateUID("sphere_")) );
-      value.getStructure()->value().push_back( SRF_Structure::Value("Center", sphere.center()) );
+      value.getStructure()->value().push_back( SRF_Structure::Value("Center", toValue(sphere.center())) );
       value.getStructure()->value().push_back( SRF_Structure::Value("Radius", sphere.radius()) );
       return value;
     }
@@ -193,7 +226,7 @@ namespace vl
         export_Geometry( ren->as<Geometry>(), values );
       else
       {
-        VL_TRAP(); // mic fixme: support also the others
+        VL_TRAP(); // mic fixme: support also the other renderables
       }
 
       return value;
@@ -653,8 +686,8 @@ namespace vl
       SRF_Structure* srf_obj = value.setStructure( new SRF_Structure("<PatchParameter>", generateUID("patchparam_")) );
       registerExportedStructure(pp, srf_obj);
       srf_obj->value().push_back( SRF_Structure::Value("PatchVertices", (long long)pp->patchVertices()) );
-      srf_obj->value().push_back( SRF_Structure::Value("PatchDefaultOuterLevel", pp->patchDefaultOuterLevel()) );
-      srf_obj->value().push_back( SRF_Structure::Value("PatchDefaultInnerLevel", pp->patchDefaultInnerLevel()) );
+      srf_obj->value().push_back( SRF_Structure::Value("PatchDefaultOuterLevel", toValue(pp->patchDefaultOuterLevel())) );
+      srf_obj->value().push_back( SRF_Structure::Value("PatchDefaultInnerLevel", toValue(pp->patchDefaultInnerLevel())) );
 
       return value;
     }
@@ -896,6 +929,12 @@ namespace vl
       return res_db.get();
     }
 
+    fvec2 to_fvec2(const SRF_ArrayReal* arr) { VL_CHECK(arr->value().size() == 2); return fvec2( (float)arr->value()[0], (float)arr->value()[1] ); }
+
+    fvec3 to_fvec3(const SRF_ArrayReal* arr) { VL_CHECK(arr->value().size() == 3); return fvec3( (float)arr->value()[0], (float)arr->value()[1], (float)arr->value()[2] ); }
+
+    fvec4 to_fvec4(const SRF_ArrayReal* arr) { VL_CHECK(arr->value().size() == 4); return fvec4( (float)arr->value()[0], (float)arr->value()[1], (float)arr->value()[2], (float)arr->value()[3] ); }
+
     bool import_AABB(const SRF_Structure* srf_obj, AABB& aabb)
     {
       VL_CHECK( srf_obj->tag() == "<AABB>" )
@@ -907,13 +946,13 @@ namespace vl
         if (key == "MinCorner")
         {
           VL_CHECK(value.type() == SRF_Value::ArrayReal)
-          aabb.setMinCorner( value.getArrayReal()->getFloat3() );
+          aabb.setMinCorner( to_fvec3(value.getArrayReal()) );
         }
         else
         if (key == "MaxCorner")
         {
           VL_CHECK(value.type() == SRF_Value::ArrayReal)
-          aabb.setMaxCorner( value.getArrayReal()->getFloat3() );
+          aabb.setMaxCorner( to_fvec3(value.getArrayReal()) );
         }
         else
         if (key == "Extension")
@@ -939,7 +978,7 @@ namespace vl
         if (key == "Center")
         {
           VL_CHECK(value.type() == SRF_Value::ArrayReal)
-          sphere.setCenter( value.getArrayReal()->getFloat3() );
+          sphere.setCenter( to_fvec3(value.getArrayReal()) );
         }
         else
         if (key == "Radius")
