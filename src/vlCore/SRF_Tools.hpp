@@ -55,10 +55,8 @@ namespace vl
   class SRF_ArrayString;
   class SRF_ArrayIdentifier;
   class SRF_ArrayUID;
-  class SRF_ArrayInt32;
-  class SRF_ArrayInt64;
-  class SRF_ArrayFloat;
-  class SRF_ArrayDouble;
+  class SRF_ArrayInteger;
+  class SRF_ArrayReal;
   //-----------------------------------------------------------------------------
   class SRF_Visitor: public Object
   {
@@ -67,10 +65,8 @@ namespace vl
     virtual void visitList(SRF_List*) {}
     virtual void visitRawtextBlock(SRF_RawtextBlock*) {}
     virtual void visitArray(SRF_ArrayUID*) {}
-    virtual void visitArray(SRF_ArrayInt32*) {}
-    virtual void visitArray(SRF_ArrayInt64*) {}
-    virtual void visitArray(SRF_ArrayFloat*) {}
-    virtual void visitArray(SRF_ArrayDouble*) {}
+    virtual void visitArray(SRF_ArrayInteger*) {}
+    virtual void visitArray(SRF_ArrayReal*) {}
     virtual void visitArray(SRF_ArrayString*) {}
     virtual void visitArray(SRF_ArrayIdentifier*) {}
 
@@ -152,39 +148,15 @@ namespace vl
 
   };
   //-----------------------------------------------------------------------------
-  class SRF_ArrayInt32: public SRF_Array
+  class SRF_ArrayInteger: public SRF_Array
   {
-    VL_INSTRUMENT_CLASS(vl::SRF_ArrayInt32, SRF_Array)
-
-  public:
-    typedef int scalar_type;
-
-  public:
-    SRF_ArrayInt32(const char* tag=NULL): SRF_Array(tag) { }
-
-    virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
-
-    std::vector<int>& value() { return mValue; }
-
-    const std::vector<int>& value() const { return mValue; }
-
-    int* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
-    
-    const int* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
-
-  private:
-    std::vector<int> mValue;
-  };
-  //-----------------------------------------------------------------------------
-  class SRF_ArrayInt64: public SRF_Array
-  {
-    VL_INSTRUMENT_CLASS(vl::SRF_ArrayInt64, SRF_Array)
+    VL_INSTRUMENT_CLASS(vl::SRF_ArrayInteger, SRF_Array)
 
   public:
     typedef long long scalar_type;
 
   public:
-    SRF_ArrayInt64(const char* tag=NULL): SRF_Array(tag) { }
+    SRF_ArrayInteger(const char* tag=NULL): SRF_Array(tag) { }
     
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
@@ -196,49 +168,23 @@ namespace vl
     
     const long long* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
+    template<typename T> void copyTo(T*ptr) const { for(size_t i=0; i<mValue.size(); ++i, ++ptr) *ptr = (T)mValue[i]; }
+
+    template<typename T> void copyFrom(const T*ptr) { for(size_t i=0; i<mValue.size(); ++i, ++ptr) mValue[i] = (scalar_type)*ptr; }
+
   private:
     std::vector<long long> mValue;
   };
   //-----------------------------------------------------------------------------
-  class SRF_ArrayFloat: public SRF_Array
+  class SRF_ArrayReal: public SRF_Array
   {
-    VL_INSTRUMENT_CLASS(vl::SRF_ArrayFloat, SRF_Array)
-
-  public:
-    typedef float scalar_type;
-
-  public:
-    SRF_ArrayFloat(const char* tag=NULL): SRF_Array(tag) { }
-    
-    virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
-
-    std::vector<float>& value() { return mValue; }
-    
-    const std::vector<float>& value() const { return mValue; }
-
-    float* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
-    
-    const float* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
-
-    fvec2 getFloat2() const { VL_CHECK(mValue.size() == 2); return fvec2(mValue[0], mValue[1]); }
-    
-    fvec3 getFloat3() const { VL_CHECK(mValue.size() == 3); return fvec3(mValue[0], mValue[1], mValue[2]); }
-    
-    fvec4 getFloat4() const { VL_CHECK(mValue.size() == 4); return fvec4(mValue[0], mValue[1], mValue[2], mValue[3]); }
-
-  private:
-    std::vector<float> mValue;
-  };
-  //-----------------------------------------------------------------------------
-  class SRF_ArrayDouble: public SRF_Array
-  {
-    VL_INSTRUMENT_CLASS(vl::SRF_ArrayDouble, SRF_Array)
+    VL_INSTRUMENT_CLASS(vl::SRF_ArrayReal, SRF_Array)
 
   public:
     typedef double scalar_type;
 
   public:
-    SRF_ArrayDouble(const char* tag=NULL): SRF_Array(tag) { }
+    SRF_ArrayReal(const char* tag=NULL): SRF_Array(tag) { }
     
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitArray(this); }
 
@@ -247,14 +193,26 @@ namespace vl
     const std::vector<double>& value() const { return mValue; }
 
     double* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
-    
+
     const double* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
-    dvec2 getDouble2() const { VL_CHECK(mValue.size() == 2); return dvec2(mValue[0], mValue[1]); }
-    
-    dvec3 getDouble3() const { VL_CHECK(mValue.size() == 3); return dvec3(mValue[0], mValue[1], mValue[2]); }
-    
-    dvec4 getDouble4() const { VL_CHECK(mValue.size() == 4); return dvec4(mValue[0], mValue[1], mValue[2], mValue[3]); }
+    template<typename T> void copyTo(T*ptr) const { for(size_t i=0; i<mValue.size(); ++i, ++ptr) *ptr = (T)mValue[i]; }
+
+    template<typename T> void copyFrom(const T*ptr) { for(size_t i=0; i<mValue.size(); ++i, ++ptr) mValue[i] = (scalar_type)*ptr; }
+
+    // mic fixme: these guys should not be here
+
+    dvec2 getReal2() const { VL_CHECK(mValue.size() == 2); return dvec2(mValue[0], mValue[1]); }
+
+    dvec3 getReal3() const { VL_CHECK(mValue.size() == 3); return dvec3(mValue[0], mValue[1], mValue[2]); }
+
+    dvec4 getReal4() const { VL_CHECK(mValue.size() == 4); return dvec4(mValue[0], mValue[1], mValue[2], mValue[3]); }
+
+    fvec2 getFloat2() const { VL_CHECK(mValue.size() == 2); return fvec2((float)mValue[0], (float)mValue[1]); }
+
+    fvec3 getFloat3() const { VL_CHECK(mValue.size() == 3); return fvec3((float)mValue[0], (float)mValue[1], (float)mValue[2]); }
+
+    fvec4 getFloat4() const { VL_CHECK(mValue.size() == 4); return fvec4((float)mValue[0], (float)mValue[1], (float)mValue[2], (float)mValue[3]); }
 
   public:
     std::vector<double> mValue;
@@ -351,8 +309,8 @@ namespace vl
     enum EType 
     {
       Bool,
-      Int64,
-      Double,
+      Integer,
+      Real,
       String,
       Identifier,
       UID,
@@ -362,10 +320,8 @@ namespace vl
       ArrayString,
       ArrayIdentifier,
       ArrayUID,
-      ArrayInt32,
-      ArrayInt64,
-      ArrayFloat,
-      ArrayDouble
+      ArrayInteger,
+      ArrayReal
     };
 
   private:
@@ -375,15 +331,15 @@ namespace vl
     SRF_Value()
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
     }
 
     SRF_Value(SRF_Structure* obj)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
 
       setStructure(obj);
     }
@@ -391,8 +347,8 @@ namespace vl
     SRF_Value(SRF_List* list)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
 
       setList(list);
     }
@@ -400,40 +356,71 @@ namespace vl
     SRF_Value(SRF_RawtextBlock* rawtext)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
 
       setRawtextBlock(rawtext);
     }
 
-    SRF_Value(SRF_Array* arr)
+    SRF_Value(SRF_ArrayInteger* arr)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
+      setArrayInteger(arr);
+    }
 
-      setArray(arr);
+    SRF_Value(SRF_ArrayReal* arr)
+    {
+      mLineNumber = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
+      setArrayReal(arr);
+    }
+
+    SRF_Value(SRF_ArrayIdentifier* arr)
+    {
+      mLineNumber = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
+      setArrayIdentifier(arr);
+    }
+
+    SRF_Value(SRF_ArrayString* arr)
+    {
+      mLineNumber = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
+      setArrayString(arr);
+    }
+
+    SRF_Value(SRF_ArrayUID* arr)
+    {
+      mLineNumber = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
+      setArrayUID(arr);
     }
 
     SRF_Value(long long i)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = i;
+      mType = Integer;
+      mUnion.mInteger = i;
     }
 
     SRF_Value(double d)
     {
       mLineNumber = 0;
-      mType = Double;
-      mUnion.mDouble  = d;
+      mType = Real;
+      mUnion.mReal  = d;
     }
 
     SRF_Value(const char* str, EType type)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
 
       switch(type)
       {
@@ -449,82 +436,57 @@ namespace vl
     SRF_Value(bool boolean)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
 
       setBool(boolean);
     }
 
+    // mic fixme: these should not be here
+
     SRF_Value(const fvec4& vec)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
 
-      setArray( new SRF_ArrayFloat );
-      getArrayFloat()->value().resize(4);
-      memcpy(&getArrayFloat()->value()[0], vec.ptr(), sizeof(vec));
+      SRF_ArrayReal* arr = setArrayReal( new SRF_ArrayReal );
+      getArrayReal()->value().resize(4);
+      arr->value()[0] = vec.x();
+      arr->value()[1] = vec.y();
+      arr->value()[2] = vec.z();
+      arr->value()[3] = vec.w();
     }
 
     SRF_Value(const fvec3& vec)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
 
-      setArray( new SRF_ArrayFloat );
-      getArrayFloat()->value().resize(3);
-      memcpy(&getArrayFloat()->value()[0], vec.ptr(), sizeof(vec));
+      SRF_ArrayReal* arr = setArrayReal( new SRF_ArrayReal );
+      getArrayReal()->value().resize(3);
+      arr->value()[0] = vec.x();
+      arr->value()[1] = vec.y();
+      arr->value()[2] = vec.z();
     }
 
     SRF_Value(const fvec2& vec)
     {
       mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
 
-      setArray( new SRF_ArrayFloat );
-      getArrayFloat()->value().resize(2);
-      memcpy(&getArrayFloat()->value()[0], vec.ptr(), sizeof(vec));
-    }
-
-    SRF_Value(const dvec4& vec)
-    {
-      mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
-
-      setArray( new SRF_ArrayDouble );
-      getArrayDouble()->value().resize(4);
-      memcpy(&getArrayDouble()->value()[0], vec.ptr(), sizeof(vec));
-    }
-
-    SRF_Value(const dvec3& vec)
-    {
-      mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
-
-      setArray( new SRF_ArrayDouble );
-      getArrayDouble()->value().resize(3);
-      memcpy(&getArrayDouble()->value()[0], vec.ptr(), sizeof(vec));
-    }
-
-    SRF_Value(const dvec2& vec)
-    {
-      mLineNumber = 0;
-      mType = Int64;
-      mUnion.mInt64 = 0;
-
-      setArray( new SRF_ArrayDouble );
-      getArrayDouble()->value().resize(2);
-      memcpy(&getArrayDouble()->value()[0], vec.ptr(), sizeof(vec));
+      SRF_ArrayReal* arr = setArrayReal( new SRF_ArrayReal );
+      getArrayReal()->value().resize(2);
+      arr->value()[0] = vec.x();
+      arr->value()[1] = vec.y();
     }
 
     SRF_Value(const SRF_Value& other)
     {
-      mType = Int64;
-      mUnion.mInt64 = 0;
+      mType = Integer;
+      mUnion.mInteger = 0;
       mLineNumber = 0;
 
       *this = other;
@@ -562,7 +524,12 @@ namespace vl
 
     // array
 
-    VLCORE_EXPORT SRF_Array* setArray(SRF_Array*);
+    VLCORE_EXPORT SRF_Array*           setArray(SRF_Array*);
+    VLCORE_EXPORT SRF_ArrayInteger*    setArrayInteger(SRF_ArrayInteger*);
+    VLCORE_EXPORT SRF_ArrayReal*       setArrayReal(SRF_ArrayReal*);
+    VLCORE_EXPORT SRF_ArrayIdentifier* setArrayIdentifier(SRF_ArrayIdentifier*);
+    VLCORE_EXPORT SRF_ArrayString*     setArrayString(SRF_ArrayString*);
+    VLCORE_EXPORT SRF_ArrayUID*        setArrayUID(SRF_ArrayUID*);
 
     SRF_ArrayString* getArrayString() { VL_CHECK(mType == ArrayString); return mUnion.mArray->as<SRF_ArrayString>(); }
     const SRF_ArrayString* getArrayString() const { VL_CHECK(mType == ArrayString); return mUnion.mArray->as<SRF_ArrayString>(); }
@@ -573,17 +540,11 @@ namespace vl
     SRF_ArrayUID* getArrayUID() { VL_CHECK(mType == ArrayUID); return mUnion.mArray->as<SRF_ArrayUID>(); }
     const SRF_ArrayUID* getArrayUID() const { VL_CHECK(mType == ArrayUID); return mUnion.mArray->as<SRF_ArrayUID>(); }
 
-    SRF_ArrayInt32* getArrayInt32() { VL_CHECK(mType == ArrayInt32); return mUnion.mArray->as<SRF_ArrayInt32>(); }
-    const SRF_ArrayInt32* getArrayInt32() const { VL_CHECK(mType == ArrayInt32); return mUnion.mArray->as<SRF_ArrayInt32>(); }
+    SRF_ArrayInteger* getArrayInteger() { VL_CHECK(mType == ArrayInteger); return mUnion.mArray->as<SRF_ArrayInteger>(); }
+    const SRF_ArrayInteger* getArrayInteger() const { VL_CHECK(mType == ArrayInteger); return mUnion.mArray->as<SRF_ArrayInteger>(); }
 
-    SRF_ArrayInt64* getArrayInt64() { VL_CHECK(mType == ArrayInt64); return mUnion.mArray->as<SRF_ArrayInt64>(); }
-    const SRF_ArrayInt64* getArrayInt64() const { VL_CHECK(mType == ArrayInt64); return mUnion.mArray->as<SRF_ArrayInt64>(); }
-
-    SRF_ArrayFloat* getArrayFloat() { VL_CHECK(mType == ArrayFloat); return mUnion.mArray->as<SRF_ArrayFloat>(); }
-    const SRF_ArrayFloat* getArrayFloat() const { VL_CHECK(mType == ArrayFloat); return mUnion.mArray->as<SRF_ArrayFloat>(); }
-
-    SRF_ArrayDouble* getArrayDouble() { VL_CHECK(mType == ArrayDouble); return mUnion.mArray->as<SRF_ArrayDouble>(); }
-    const SRF_ArrayDouble* getArrayDouble() const { VL_CHECK(mType == ArrayDouble); return mUnion.mArray->as<SRF_ArrayDouble>(); }
+    SRF_ArrayReal* getArrayReal() { VL_CHECK(mType == ArrayReal); return mUnion.mArray->as<SRF_ArrayReal>(); }
+    const SRF_ArrayReal* getArrayReal() const { VL_CHECK(mType == ArrayReal); return mUnion.mArray->as<SRF_ArrayReal>(); }
 
     // string
 
@@ -618,27 +579,27 @@ namespace vl
 
     const char* getUID() const { VL_CHECK(mType == UID); return mUnion.mString; }
 
-    // int64
+    // integer
 
-    long long  setInt64(long long val)
+    long long  setInteger(long long val)
     {
       release();
-      mType = Int64;
-      return mUnion.mInt64 = val;
+      mType = Integer;
+      return mUnion.mInteger = val;
     }
 
-    long long getInt64() const { VL_CHECK(mType == Int64); return mUnion.mInt64; }
+    long long getInteger() const { VL_CHECK(mType == Integer); return mUnion.mInteger; }
     
-    // double
+    // floating point
 
-    double setDouble(double val)
+    double setReal(double val)
     {
       release();
-      mType = Double;
-      return mUnion.mDouble = val;
+      mType = Real;
+      return mUnion.mReal = val;
     }
 
-    double getDouble() const { VL_CHECK(mType == Double); return mUnion.mDouble; }
+    double getReal() const { VL_CHECK(mType == Real); return mUnion.mReal; }
 
     // bool
 
@@ -659,8 +620,8 @@ namespace vl
     union
     {
       bool mBool;
-      long long mInt64;
-      double mDouble;
+      long long mInteger;
+      double mReal;
       const char* mString;
       SRF_Structure* mStructure;
       SRF_List* mList;
@@ -904,24 +865,14 @@ namespace vl
           obj->value()[i].value().getArrayUID()->acceptVisitor(this);
           break;
 
-        case SRF_Value::ArrayInt32:
+        case SRF_Value::ArrayInteger:
           mAssign = true;
-          obj->value()[i].value().getArrayInt32()->acceptVisitor(this);
+          obj->value()[i].value().getArrayInteger()->acceptVisitor(this);
           break;
 
-        case SRF_Value::ArrayInt64:
+        case SRF_Value::ArrayReal:
           mAssign = true;
-          obj->value()[i].value().getArrayInt64()->acceptVisitor(this);
-          break;
-
-        case SRF_Value::ArrayFloat:
-          mAssign = true;
-          obj->value()[i].value().getArrayFloat()->acceptVisitor(this);
-          break;
-
-        case SRF_Value::ArrayDouble:
-          mAssign = true;
-          obj->value()[i].value().getArrayDouble()->acceptVisitor(this);
+          obj->value()[i].value().getArrayReal()->acceptVisitor(this);
           break;
 
         case SRF_Value::RawtextBlock:
@@ -949,12 +900,12 @@ namespace vl
           format("%s\n", obj->value()[i].value().getBool() ? "true" : "false");
           break;
 
-        case SRF_Value::Int64:
-          format("%lld\n", obj->value()[i].value().getInt64());
+        case SRF_Value::Integer:
+          format("%lld\n", obj->value()[i].value().getInteger());
           break;
 
-        case SRF_Value::Double:
-          format("%Lf\n", obj->value()[i].value().getDouble());
+        case SRF_Value::Real:
+          format("%Lf\n", obj->value()[i].value().getReal());
           break;
         }
       }
@@ -1021,20 +972,12 @@ namespace vl
           list->value()[i].getArrayUID()->acceptVisitor(this);
           break;
 
-        case SRF_Value::ArrayInt32:
-          list->value()[i].getArrayInt32()->acceptVisitor(this);
+        case SRF_Value::ArrayInteger:
+          list->value()[i].getArrayInteger()->acceptVisitor(this);
           break;
 
-        case SRF_Value::ArrayInt64:
-          list->value()[i].getArrayInt64()->acceptVisitor(this);
-          break;
-
-        case SRF_Value::ArrayFloat:
-          list->value()[i].getArrayFloat()->acceptVisitor(this);
-          break;
-
-        case SRF_Value::ArrayDouble:
-          list->value()[i].getArrayDouble()->acceptVisitor(this);
+        case SRF_Value::ArrayReal:
+          list->value()[i].getArrayReal()->acceptVisitor(this);
           break;
 
         case SRF_Value::String:
@@ -1064,12 +1007,12 @@ namespace vl
           indent(); format("%s\n", list->value()[i].getBool() ? "true" : "false");
           break;
 
-        case SRF_Value::Int64:
-          indent(); format("%lld\n", list->value()[i].getInt64());
+        case SRF_Value::Integer:
+          indent(); format("%lld\n", list->value()[i].getInteger());
           break;
 
-        case SRF_Value::Double:
-          indent(); format("%Lf\n", list->value()[i].getDouble());
+        case SRF_Value::Real:
+          indent(); format("%Lf\n", list->value()[i].getReal());
           break;
         }
       }
@@ -1077,7 +1020,7 @@ namespace vl
       indent(); output("]\n");
     }
 
-    virtual void visitArray(SRF_ArrayInt32* arr)
+    virtual void visitArray(SRF_ArrayInteger* arr)
     {
       indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       // output in chunks of 10 numbers
@@ -1085,17 +1028,17 @@ namespace vl
       int size = arr->value().size() - 10;
       for( ; i < size; i += 10)
       {
-        format("%d %d %d %d %d %d %d %d %d %d ",
+        format("%lld %lld %lld %lld %lld %lld %lld %lld %lld %lld ",
           arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
           arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
       }
       for( ; i < (int)arr->value().size(); ++i )
-        format("%d ", arr->value()[i]);
+        format("%lld ", arr->value()[i]);
       VL_CHECK( i == (int)arr->value().size() )
       output(")\n");
     }
 
-    virtual void visitArray(SRF_ArrayInt64* arr)
+    virtual void visitArray(SRF_ArrayReal* arr)
     {
       indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       // output in chunks of 10 numbers
@@ -1103,48 +1046,12 @@ namespace vl
       int size = arr->value().size() - 10;
       for( ; i < size; i += 10)
       {
-        format("%lldL %lldL %lldL %lldL %lldL %lldL %lldL %lldL %lldL %lldL ",
+        format("%Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf ",
           arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
           arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
       }
       for( ; i < (int)arr->value().size(); ++i )
-        format("%lldL ", arr->value()[i]);
-      VL_CHECK( i == (int)arr->value().size() )
-      output(")\n");
-    }
-
-    virtual void visitArray(SRF_ArrayFloat* arr)
-    {
-      indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
-      // output in chunks of 10 numbers
-      int i = 0;
-      int size = arr->value().size() - 10;
-      for( ; i < size; i += 10)
-      {
-        format("%f %f %f %f %f %f %f %f %f %f ",
-          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
-          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
-      }
-      for( ; i < (int)arr->value().size(); ++i )
-        format("%f ", arr->value()[i]);
-      VL_CHECK( i == (int)arr->value().size() )
-      output(")\n"); 
-    }
-
-    virtual void visitArray(SRF_ArrayDouble* arr)
-    {
-      indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
-      // output in chunks of 10 numbers
-      int i = 0;
-      int size = arr->value().size() - 10;
-      for( ; i < size; i += 10)
-      {
-        format("%LfL %LfL %LfL %LfL %LfL %LfL %LfL %LfL %LfL %LfL ",
-          arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
-          arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
-      }
-      for( ; i < (int)arr->value().size(); ++i )
-        format("%LfL ", arr->value()[i]);
+        format("%Lf ", arr->value()[i]);
       VL_CHECK( i == (int)arr->value().size() )
       output(")\n");
     }
@@ -1235,7 +1142,7 @@ namespace vl
 
     virtual void output(const char* str)
     {
-      printf(str);
+      // printf(str);
       mText += str;
     }
 
@@ -1344,13 +1251,9 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayString*)  {}
 
-    virtual void visitArray(SRF_ArrayInt32*)  {}
+    virtual void visitArray(SRF_ArrayInteger*)  {}
 
-    virtual void visitArray(SRF_ArrayInt64*)  {}
-
-    virtual void visitArray(SRF_ArrayFloat*)  {}
-
-    virtual void visitArray(SRF_ArrayDouble*)  {}
+    virtual void visitArray(SRF_ArrayReal*)  {}
 
     EError error() const { return mError; }
 
@@ -1475,13 +1378,9 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayString*)  {}
 
-    virtual void visitArray(SRF_ArrayInt32*)  {}
+    virtual void visitArray(SRF_ArrayInteger*)  {}
 
-    virtual void visitArray(SRF_ArrayInt64*)  {}
-
-    virtual void visitArray(SRF_ArrayFloat*)  {}
-
-    virtual void visitArray(SRF_ArrayDouble*)  {}
+    virtual void visitArray(SRF_ArrayReal*)  {}
 
     EError error() const { return mError; }
 
@@ -1558,13 +1457,9 @@ namespace vl
 
     virtual void visitArray(SRF_ArrayString*)  {}
 
-    virtual void visitArray(SRF_ArrayInt32*)  {}
+    virtual void visitArray(SRF_ArrayInteger*)  {}
 
-    virtual void visitArray(SRF_ArrayInt64*)  {}
-
-    virtual void visitArray(SRF_ArrayFloat*)  {}
-
-    virtual void visitArray(SRF_ArrayDouble*)  {}
+    virtual void visitArray(SRF_ArrayReal*)  {}
 
     void setUIDSet(std::set< std::string >* uids) { mUIDSet = uids; }
 
@@ -1638,10 +1533,8 @@ namespace vl
       UID,                //  #unique_id123
       Identifier,         //  Identifier_123
       Boolean,            //  true | false
-      Int32,              //  +123
-      Int64,              //  +123
-      Float,              //  +123.456e+10
-      Double,             //  +123.456e+10
+      Integer,            //  +123
+      Real,               //  +123.456e+10
       TagHeader,          //  <TagHeader>
       RawtextBlock,         // {< blabla >}
 
@@ -1731,7 +1624,7 @@ namespace vl
       if (!getToken(mToken) || mToken.mType != SRF_Token::Equals)
         return false;
 
-      if (!getToken(mToken) || mToken.mType != SRF_Token::Int32 || mToken.mString != "100")
+      if (!getToken(mToken) || mToken.mType != SRF_Token::Integer || mToken.mString != "100")
         return false;
       else
         version = atoi( mToken.mString.c_str() );
@@ -1981,19 +1874,19 @@ namespace vl
             }
             else
             // An integer
-            if (mToken.mType == SRF_Token::Int32 || mToken.mType == SRF_Token::Int64)
+            if (mToken.mType == SRF_Token::Integer)
             {
               if (!mLastTag.empty())
                 return false;
-              name_value.value().setInt64( atoll(mToken.mString.c_str()) );
+              name_value.value().setInteger( atoll(mToken.mString.c_str()) );
             }
             else
             // A float
-            if (mToken.mType == SRF_Token::Float || mToken.mType == SRF_Token::Double)
+            if (mToken.mType == SRF_Token::Real)
             {
               if (!mLastTag.empty())
                 return false;
-              name_value.value().setDouble( atof(mToken.mString.c_str()) );
+              name_value.value().setReal( atof(mToken.mString.c_str()) );
             }
             else
               return false;
@@ -2124,19 +2017,17 @@ namespace vl
               break;
 
             // int
-            case SRF_Token::Int32:
-            case SRF_Token::Int64:
+            case SRF_Token::Integer:
               if (!mLastTag.empty())
                 return false;
-              value.setInt64( atoll(mToken.mString.c_str()) ); list->value().push_back( value );
+              value.setInteger( atoll(mToken.mString.c_str()) ); list->value().push_back( value );
               break;
 
             // float
-            case SRF_Token::Float:
-            case SRF_Token::Double:
+            case SRF_Token::Real:
               if (!mLastTag.empty())
                 return false;
-              value.setDouble( atof(mToken.mString.c_str()) ); list->value().push_back( value );
+              value.setReal( atof(mToken.mString.c_str()) ); list->value().push_back( value );
               break;
 
           default:
@@ -2170,11 +2061,11 @@ namespace vl
       if(getToken(mToken))
       {
         // (1) from the fist token we decide what kind of array it is going to be
-        // (2) empty arrays default to empty SRF_ArrayInt32
+        // (2) empty arrays default to empty SRF_ArrayInteger
 
         if (mToken.mType == SRF_Token::RightRoundBracket)
         {
-          arr = new SRF_ArrayInt32;
+          arr = new SRF_ArrayInteger;
           return true;
         }
         else
@@ -2208,26 +2099,15 @@ namespace vl
           return mToken.mType == SRF_Token::RightRoundBracket;
         }
         else
-        if (mToken.mType == SRF_Token::Int32)
+        if (mToken.mType == SRF_Token::Integer)
         {
-          ref<SRF_ArrayInt32> arr_int32;
-          arr = arr_int32 = new SRF_ArrayInt32;
-          do
-            arr_int32->value().push_back( atoi( mToken.mString.c_str() ) );
-          while(getToken(mToken) && mToken.mType == SRF_Token::Int32);
-          return mToken.mType == SRF_Token::RightRoundBracket;
-        }
-        else
-        if (mToken.mType == SRF_Token::Int64)
-        {
-          ref<SRF_ArrayInt64> arr_int64;
-          arr = arr_int64 = new SRF_ArrayInt64;
+          ref<SRF_ArrayInteger> arr_integer;
+          arr = arr_integer = new SRF_ArrayInteger;
           do
           {
             switch(mToken.mType)
             {
-            case SRF_Token::Int32:
-            case SRF_Token::Int64: arr_int64->value().push_back( atoll( mToken.mString.c_str() ) ); break;
+            case SRF_Token::Integer: arr_integer->value().push_back( atoll( mToken.mString.c_str() ) ); break;
             case SRF_Token::RightRoundBracket: return true;
             default:
               return false;
@@ -2237,38 +2117,16 @@ namespace vl
           return false;
         }
         else
-        if (mToken.mType == SRF_Token::Float)
+        if (mToken.mType == SRF_Token::Real)
         {
-          ref<SRF_ArrayFloat> arr_float;
-          arr = arr_float = new SRF_ArrayFloat;
+          ref<SRF_ArrayReal> arr_floating;
+          arr = arr_floating = new SRF_ArrayReal;
           do
           {
             switch(mToken.mType)
             {
-            case SRF_Token::Int32:
-            case SRF_Token::Int64:
-            case SRF_Token::Float: arr_float->value().push_back( (float)atof( mToken.mString.c_str() ) ); break;
-            case SRF_Token::RightRoundBracket: return true;
-            default:
-              return false;
-            }
-          }
-          while(getToken(mToken));
-          return false;
-        }
-        else
-        if (mToken.mType == SRF_Token::Double)
-        {
-          ref<SRF_ArrayDouble> arr_double;
-          arr = arr_double = new SRF_ArrayDouble;
-          do
-          {
-            switch(mToken.mType)
-            {
-            case SRF_Token::Int32:
-            case SRF_Token::Int64:
-            case SRF_Token::Float: 
-            case SRF_Token::Double: arr_double->mValue.push_back( atof( mToken.mString.c_str() ) ); break;
+            case SRF_Token::Integer:
+            case SRF_Token::Real: arr_floating->mValue.push_back( atof( mToken.mString.c_str() ) ); break;
             case SRF_Token::RightRoundBracket: return true;
             default:
               return false;
@@ -2302,12 +2160,10 @@ namespace vl
           case SRF_Token::String:             printf("String = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::UID:                printf("UID = %s\n", mToken.mString.c_str()); break;
           case SRF_Token::Identifier:         printf("Identifier = %s\n", mToken.mString.c_str()); break;
-          case SRF_Token::RawtextBlock:         printf("RawtextBlock = %s\n", mToken.mString.c_str()); break;
-          case SRF_Token::Float:              printf("Float = %s\n", mToken.mString.c_str()); break;
-          case SRF_Token::Double:             printf("Double = %s\n", mToken.mString.c_str()); break;
-          case SRF_Token::Int32:              printf("Int32 = %s\n", mToken.mString.c_str()); break;
-          case SRF_Token::Int64:              printf("Int64 = %s\n", mToken.mString.c_str()); break;
-          case SRF_Token::TagHeader:       printf("TagHeader = %s\n", mToken.mString.c_str()); break;
+          case SRF_Token::RawtextBlock:       printf("RawtextBlock = %s\n", mToken.mString.c_str()); break;
+          case SRF_Token::Real:               printf("Real = %s\n", mToken.mString.c_str()); break;
+          case SRF_Token::Integer:            printf("Integer = %s\n", mToken.mString.c_str()); break;
+          case SRF_Token::TagHeader:          printf("TagHeader = %s\n", mToken.mString.c_str()); break;
           default:
             break;
         }
