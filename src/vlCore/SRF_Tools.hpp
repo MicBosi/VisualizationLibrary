@@ -880,7 +880,7 @@ namespace vl
           SRF_RawtextBlock* fblock = obj->value()[i].value().getRawtextBlock();
           if (!fblock->tag().empty())
             format("%s", fblock->tag().c_str());
-          output("\n"); indent(); format("{<%s>}\n", rawtextEncode(fblock->value().c_str()).c_str());
+          output("\n"); indent(); format("{<\n%s>}\n", rawtextEncode(fblock->value().c_str()).c_str());
         }
         break;
 
@@ -999,7 +999,7 @@ namespace vl
           {
             indent(); format("%s\n", fblock->tag().c_str());
           }
-          indent(); format("{<%s>}\n", rawtextEncode(fblock->value().c_str()).c_str());
+          indent(); format("{<\n%s>}\n", rawtextEncode(fblock->value().c_str()).c_str());
         }
         break;
 

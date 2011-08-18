@@ -126,10 +126,41 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
   case '{':
     if(readTextChar(ch2) && ch2 == '<')
     {
-      token.mType = SRF_Token::LeftFancyBracket;
-      token.mString = "{<";
-      mRawtextBlock = true;
-      return true;
+      // actual data starts at the next new line
+      // eat all the spaces until the end of the current line
+      while(ch2 != '\n' && readTextChar(ch2)) 
+      { 
+        switch(ch2)
+        {
+        case '\f':
+        case '\b':
+        case '\v':
+        case '\t':
+        case ' ':
+          continue;
+
+        case '\n':
+          ++mLineNumber;
+          break;
+
+        default:
+          token.mString = ch2;
+          return false;
+        }
+      }
+
+      if (ch2 == '\n')
+      {
+        token.mType = SRF_Token::LeftFancyBracket;
+        token.mString = "{<";
+        mRawtextBlock = true;
+        return true;
+      }
+      else
+      {
+        token.mString = ch2;
+        return false;
+      }
     }
     else
     {
