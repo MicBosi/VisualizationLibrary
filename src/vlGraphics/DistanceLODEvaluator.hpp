@@ -75,14 +75,9 @@ namespace vl
       return i; // == mDistanceRangeSet.size()
     }
 
-    const std::vector<double>& distanceRangeSet() { return mDistanceRangeSet; }
-    void clearDistanceRangeSet() { mDistanceRangeSet.clear(); }
-    int distanceRangeCount() const { return (int)mDistanceRangeSet.size(); }
-    double distanceRange(int index) const { return mDistanceRangeSet[index]; }
+    const std::vector<double>& distanceRangeSet() const { return mDistanceRangeSet; }
 
-    void setDistanceRangeSet(const std::vector<double>& distance_set) { mDistanceRangeSet = distance_set; std::sort(mDistanceRangeSet.begin(), mDistanceRangeSet.end()); }
-    void addDistanceRange(double distance) { mDistanceRangeSet.push_back(distance); std::sort(mDistanceRangeSet.begin(), mDistanceRangeSet.end()); }
-    void setDistanceRange(int index, double distance) { mDistanceRangeSet[index] = distance; std::sort(mDistanceRangeSet.begin(), mDistanceRangeSet.end()); }
+    std::vector<double>& distanceRangeSet() { return mDistanceRangeSet; }
 
   protected:
     std::vector<double> mDistanceRangeSet;

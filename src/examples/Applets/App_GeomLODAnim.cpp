@@ -152,8 +152,8 @@ public:
 
     /* define a LOD evaluator with 3 disance ranges: [0] --- 70 --- 150 --- [inf] */
     vl::ref<vl::DistanceLODEvaluator> lod_eval = new vl::DistanceLODEvaluator;
-    lod_eval->addDistanceRange(70);
-    lod_eval->addDistanceRange(150);
+    lod_eval->distanceRangeSet().push_back(70);
+    lod_eval->distanceRangeSet().push_back(150);
 
     /* to be used later */
     vl::ref<vl::Light> light = new vl::Light;
