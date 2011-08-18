@@ -683,6 +683,7 @@ namespace vl
       if (fx->lodEvaluator())
         values.push_back( SRF_Structure::Value("LODEvaluator", export_LODEvaluator(fx->lodEvaluator())) );
 
+      // shaders
       ref<SRF_List> lod_list = new SRF_List;
       for(int i=0; fx->lod(i) && i<VL_MAX_EFFECT_LOD; ++i)
         lod_list->value().push_back( export_ShaderSequence(fx->lod(i).get()) );
@@ -716,12 +717,107 @@ namespace vl
         return value;
       }
 
-      // mic fixme: this is just a stub, complete the implementation
       value.setStructure( new SRF_Structure("<Shader>", generateUID("shader_")) );
       registerExportedStructure(sh, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      // uniforms
+      SRF_Value uniforms;
+      uniforms.setList( new SRF_List );
+      if (sh->getUniformSet())
+      {
+        for(size_t i=0; i<sh->uniforms().size(); ++i)
+          uniforms.getList()->value().push_back( export_Uniform(sh->uniforms()[i].get()) );
+      }
+      values.push_back( SRF_Structure::Value("Uniforms", uniforms) );
+
+      // enables
+      ref<SRF_List> enables = new SRF_List;
+      if (sh->getEnableSet() )
+      {
+        for(size_t i=0; i<sh->getEnableSet()->enables().size(); ++i)
+          enables->value().push_back( toIdentifier(export_Enable(sh->getEnableSet()->enables()[i])) );
+      }
+      values.push_back( SRF_Structure::Value("Enables", enables.get()) );
+
+      // renderstates
+      SRF_Value renderstates;
+      renderstates.setList( new SRF_List );
+      if (sh->getRenderStateSet())
+      {
+        for(size_t i=0; i<sh->getRenderStateSet()->renderStatesCount(); ++i)
+        {
+          int index = sh->getRenderStateSet()->renderStates()[i].mIndex;
+          if (index != -1)
+            renderstates.getList()->value().push_back( (long long)index );
+          const RenderState* rs = sh->getRenderStateSet()->renderStates()[i].mRS.get();
+          renderstates.getList()->value().push_back( export_RenderState(rs) );
+        }
+      }
+      values.push_back( SRF_Structure::Value("RenderStates", renderstates) );
+
+      return value;
+    }
+
+    SRF_Value export_RenderState(const RenderState* rs)
+    {
+      SRF_Value value;
+      if (vlToSRF(rs))
+      {
+        value.setUID( vlToSRF(rs)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<RenderStateX>", generateUID("rs_")) );
+      registerExportedStructure(rs, value.getStructure());
       // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
 
       return value;
+    }
+
+    std::string export_Enable(EEnable en)
+    {
+      switch(en)
+      {
+      case EN_BLEND: return "EN_BLEND";
+      case EN_CULL_FACE: return "EN_CULL_FACE";
+      case EN_DEPTH_TEST: return "EN_DEPTH_TEST";
+      case EN_STENCIL_TEST: return "EN_STENCIL_TEST";
+      case EN_DITHER: return "EN_DITHER";
+      case EN_POLYGON_OFFSET_FILL: return "EN_POLYGON_OFFSET_FILL";
+      case EN_POLYGON_OFFSET_LINE: return "EN_POLYGON_OFFSET_LINE";
+      case EN_POLYGON_OFFSET_POINT: return "EN_POLYGON_OFFSET_POINT";
+      case EN_COLOR_LOGIC_OP: return "EN_COLOR_LOGIC_OP";
+      case EN_MULTISAMPLE: return "EN_MULTISAMPLE";
+      case EN_POINT_SMOOTH: return "EN_POINT_SMOOTH";
+      case EN_LINE_SMOOTH: return "EN_LINE_SMOOTH";
+      case EN_POLYGON_SMOOTH: return "EN_POLYGON_SMOOTH";
+      case EN_LINE_STIPPLE: return "EN_LINE_STIPPLE";
+      case EN_POLYGON_STIPPLE: return "EN_POLYGON_STIPPLE";
+      case EN_POINT_SPRITE: return "EN_POINT_SPRITE";
+      case EN_PROGRAM_POINT_SIZE: return "EN_PROGRAM_POINT_SIZE";
+      case EN_ALPHA_TEST: return "EN_ALPHA_TEST";
+      case EN_LIGHTING: return "EN_LIGHTING";
+      case EN_COLOR_SUM: return "EN_COLOR_SUM";
+      case EN_FOG: return "EN_FOG";
+      case EN_NORMALIZE: return "EN_NORMALIZE";
+      case EN_RESCALE_NORMAL: return "EN_RESCALE_NORMAL";
+      case EN_VERTEX_PROGRAM_TWO_SIDE: return "EN_VERTEX_PROGRAM_TWO_SIDE";
+      case EN_TEXTURE_CUBE_MAP_SEAMLESS: return "EN_TEXTURE_CUBE_MAP_SEAMLESS";
+      case EN_CLIP_DISTANCE0: return "EN_CLIP_DISTANCE0";
+      case EN_CLIP_DISTANCE1: return "EN_CLIP_DISTANCE1";
+      case EN_CLIP_DISTANCE2: return "EN_CLIP_DISTANCE2";
+      case EN_CLIP_DISTANCE3: return "EN_CLIP_DISTANCE3";
+      case EN_CLIP_DISTANCE4: return "EN_CLIP_DISTANCE4";
+      case EN_CLIP_DISTANCE5: return "EN_CLIP_DISTANCE5";
+      case EN_CLIP_DISTANCE6: return "EN_CLIP_DISTANCE6";
+      case EN_CLIP_DISTANCE7: return "EN_CLIP_DISTANCE7";
+      case EN_SAMPLE_ALPHA_TO_COVERAGE: return "EN_SAMPLE_ALPHA_TO_COVERAGE";
+      case EN_SAMPLE_ALPHA_TO_ONE: return "EN_SAMPLE_ALPHA_TO_ONE";
+      case EN_SAMPLE_COVERAGE: return "EN_SAMPLE_COVERAGE";
+      default:
+        return "EN_UnknownEnable";
+      }
     }
 
     SRF_Value export_Camera(const Camera* cam)
