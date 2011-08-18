@@ -94,13 +94,19 @@ namespace vl
   //------------------------------------------------------------------------------
   struct RenderStateSlot
   {
-    RenderStateSlot(): mRS(NULL), mIndex(0) {}
+    RenderStateSlot(): mRS(NULL), mIndex(-1) {}
     RenderStateSlot(RenderState* rs, int index): mRS(rs), mIndex(index) {}
     virtual ~RenderStateSlot() {}
 
     virtual void apply(const Camera* camera, OpenGLContext* ctx) const { mRS->apply( mIndex, camera, ctx ); }
 
-    ERenderState type() const { return (ERenderState)(mRS->type() + mIndex); }
+    ERenderState type() const 
+    { 
+      if (mIndex > 0)
+        return (ERenderState)(mRS->type() + mIndex); 
+      else
+        return mRS->type();
+    }
 
     ref<RenderState> mRS;
     int mIndex;
