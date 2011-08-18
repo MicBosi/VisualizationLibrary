@@ -64,8 +64,8 @@ void ClipPlane::apply(int index, const Camera* camera, OpenGLContext*) const
     glLoadIdentity();
 
     mat4 mat;
-    if ( followedTransform() )
-      mat = camera->viewMatrix() * followedTransform()->worldMatrix();
+    if ( boundTransform() )
+      mat = camera->viewMatrix() * boundTransform()->worldMatrix();
 
     vec3 pt1 = mPlane.normal() * mPlane.origin();
     vec3 pt2 = mPlane.normal() * mPlane.origin() + mPlane.normal();
