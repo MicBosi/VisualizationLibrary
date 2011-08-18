@@ -96,8 +96,8 @@ public:
 
     // define LOD evaluator with 3 distance ranges: [0] --- 70 --- 100 --- [inf]
     vl::ref<vl::DistanceLODEvaluator> lod_eval = new vl::DistanceLODEvaluator;
-    lod_eval->addDistanceRange(70);
-    lod_eval->addDistanceRange(100);
+    lod_eval->distanceRangeSet().push_back(70);
+    lod_eval->distanceRangeSet().push_back(100);
 
     // texture roto-scaling effect
     vl::ref<vl::Shader> tex_rot_scale_sh = new vl::Shader;

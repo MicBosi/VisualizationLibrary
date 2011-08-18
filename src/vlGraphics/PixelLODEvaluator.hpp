@@ -59,14 +59,9 @@ namespace vl
 
     virtual int evaluate(Actor* actor, Camera* camera);
 
-    const std::vector<float>& distanceRangeSet() { return mPixelRangeSet; }
-    void clearPixelRangeSet() { mPixelRangeSet.clear(); }
-    int distanceRangeCount() const { return (int)mPixelRangeSet.size(); }
-    float distanceRange(int index) const { return mPixelRangeSet[index]; }
+    const std::vector<float>& pixelRangeSet() const { return mPixelRangeSet; }
 
-    void setPixelRangeSet(const std::vector<float>& distance_set);
-    void addPixelRange(float distance);
-    void setPixelRange(int index, float distance);
+    std::vector<float>& pixelRangeSet() { return mPixelRangeSet; }
 
   protected:
     std::vector<float> mPixelRangeSet;
