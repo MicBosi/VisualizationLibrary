@@ -107,6 +107,12 @@ namespace vl
       return String::printf("#%sid%d", prefix, ++mUIDCounter).toStdString();
     }
 
+    SRF_Value toIdentifier(const std::string& str) { return SRF_Value(str.c_str(), SRF_Value::Identifier); }
+
+    SRF_Value toUID(const std::string& str)        { return SRF_Value(str.c_str(), SRF_Value::UID); }
+
+    SRF_Value toString(const std::string& str)     { return SRF_Value(str.c_str(), SRF_Value::String); }
+    
     SRF_Value toValue(const fvec4& vec)
     {
       SRF_Value val( new SRF_ArrayReal );
@@ -389,8 +395,8 @@ namespace vl
       {
         SRF_Value value( new SRF_ArrayReal("<Matrix>") );
         value.getArrayReal()->value().resize(4*4);
-        // note: we output the transposed of the matrix to comply with the mathematical standard (and COLLADA)
-        value.getArrayReal()->copyFrom(mat.getTransposed().ptr());
+        // if we transpose this we have to transpose also the uniform matrices
+        value.getArrayReal()->copyFrom(mat.ptr());
         matrix_list.getList()->value().push_back( value );
       }
 
@@ -406,14 +412,155 @@ namespace vl
         return value;
       }
 
-      // mic fixme: this is just a stub, complete the implementation
       value.setStructure( new SRF_Structure("<Uniform>", generateUID("uniform_")) );
       registerExportedStructure(uniform, value.getStructure());
-      // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("Name", toIdentifier(uniform->name())) );
+      values.push_back( SRF_Structure::Value("Type", toIdentifier(export_UniformType(uniform->type()))) );
+      values.push_back( SRF_Structure::Value("Count", (long long)uniform->count()) );
+
+      const int count = uniform->count();
+      ref<SRF_ArrayInteger> arr_int = new SRF_ArrayInteger;
+      ref<SRF_ArrayReal> arr_real = new SRF_ArrayReal;
+
+      switch(uniform->type())
+      {
+      case UT_INT:
+        {
+          if (count == 1)
+            { int val = 0; uniform->getUniform(&val); values.push_back( SRF_Structure::Value("Data", (long long)val) ); break; }
+          else
+            { arr_int->value().resize(count*1); arr_int->copyFrom( (int*)uniform->rawData() ); break; }
+        }
+      case UT_INT_VEC2: arr_int->value().resize(count*2); arr_int->copyFrom( (int*)uniform->rawData() ); break;
+      case UT_INT_VEC3: arr_int->value().resize(count*3); arr_int->copyFrom( (int*)uniform->rawData() ); break;
+      case UT_INT_VEC4: arr_int->value().resize(count*4); arr_int->copyFrom( (int*)uniform->rawData() ); break;
+
+      case UT_UNSIGNED_INT:
+        {
+          if (count == 1)
+            { unsigned int val = 0; uniform->getUniform(&val); values.push_back( SRF_Structure::Value("Data", (long long)val) ); break; }
+          else
+            { arr_int->value().resize(count*1); arr_int->copyFrom( (int*)uniform->rawData() ); break; }
+        }
+      case UT_UNSIGNED_INT_VEC2: arr_int->value().resize(count*2); arr_int->copyFrom( (int*)uniform->rawData() ); break;
+      case UT_UNSIGNED_INT_VEC3: arr_int->value().resize(count*3); arr_int->copyFrom( (int*)uniform->rawData() ); break;
+      case UT_UNSIGNED_INT_VEC4: arr_int->value().resize(count*4); arr_int->copyFrom( (int*)uniform->rawData() ); break;
+
+      case UT_FLOAT:
+        {
+          if (count == 1)
+            { float val = 0; uniform->getUniform(&val); values.push_back( SRF_Structure::Value("Data", (double)val) ); break; }
+          else
+            { arr_real->value().resize(count*1); arr_real->copyFrom( (float*)uniform->rawData() ); break; }
+        }
+      case UT_FLOAT_VEC2: arr_real->value().resize(count*2); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+      case UT_FLOAT_VEC3: arr_real->value().resize(count*3); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+      case UT_FLOAT_VEC4: arr_real->value().resize(count*4); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+
+      case UT_FLOAT_MAT2: arr_real->value().resize(count*2*2); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+      case UT_FLOAT_MAT3: arr_real->value().resize(count*3*3); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+      case UT_FLOAT_MAT4: arr_real->value().resize(count*4*4); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+
+      case UT_FLOAT_MAT2x3: arr_real->value().resize(count*2*3); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+      case UT_FLOAT_MAT3x2: arr_real->value().resize(count*3*2); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+      case UT_FLOAT_MAT2x4: arr_real->value().resize(count*2*4); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+      case UT_FLOAT_MAT4x2: arr_real->value().resize(count*4*2); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+      case UT_FLOAT_MAT3x4: arr_real->value().resize(count*3*4); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+      case UT_FLOAT_MAT4x3: arr_real->value().resize(count*4*3); arr_real->copyFrom( (float*)uniform->rawData() ); break;
+
+      case UT_DOUBLE:
+        {
+          if (count == 1)
+            { double val = 0; uniform->getUniform(&val); values.push_back( SRF_Structure::Value("Data", (double)val) ); break; }
+          else
+            { arr_real->value().resize(count*1); arr_real->copyFrom( (double*)uniform->rawData() ); break; }
+        }
+      case UT_DOUBLE_VEC2: arr_real->value().resize(count*2); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+      case UT_DOUBLE_VEC3: arr_real->value().resize(count*3); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+      case UT_DOUBLE_VEC4: arr_real->value().resize(count*4); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+
+      case UT_DOUBLE_MAT2: arr_real->value().resize(count*2*2); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+      case UT_DOUBLE_MAT3: arr_real->value().resize(count*3*3); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+      case UT_DOUBLE_MAT4: arr_real->value().resize(count*4*4); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+
+      case UT_DOUBLE_MAT2x3: arr_real->value().resize(count*2*3); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+      case UT_DOUBLE_MAT3x2: arr_real->value().resize(count*3*2); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+      case UT_DOUBLE_MAT2x4: arr_real->value().resize(count*2*4); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+      case UT_DOUBLE_MAT4x2: arr_real->value().resize(count*4*2); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+      case UT_DOUBLE_MAT3x4: arr_real->value().resize(count*3*4); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+      case UT_DOUBLE_MAT4x3: arr_real->value().resize(count*4*3); arr_real->copyFrom( (double*)uniform->rawData() ); break;
+
+      case UT_NONE:
+        Log::warning("Error exporting uniform : uninitialized uniform.\n");
+        break;
+
+      default:
+        Log::warning("Error exporting uniform : illegal uniform type.\n");
+        break;
+      }
+
+      if (!arr_int->value().empty())
+        values.push_back( SRF_Structure::Value("Data", arr_int.get()) );
+      else
+      if (!arr_real->value().empty())
+        values.push_back( SRF_Structure::Value("Data", arr_real.get()) );
 
       return value;
     }
 
+    std::string export_UniformType(EUniformType type)
+    {
+      switch(type)
+      {
+        case UT_INT:      return "UT_INT";
+        case UT_INT_VEC2: return "UT_INT_VEC2";
+        case UT_INT_VEC3: return "UT_INT_VEC3";
+        case UT_INT_VEC4: return "UT_INT_VEC4";
+
+        case UT_UNSIGNED_INT:      return "UT_UNSIGNED_INT";
+        case UT_UNSIGNED_INT_VEC2: return "UT_UNSIGNED_INT_VEC2";
+        case UT_UNSIGNED_INT_VEC3: return "UT_UNSIGNED_INT_VEC3";
+        case UT_UNSIGNED_INT_VEC4: return "UT_UNSIGNED_INT_VEC4";
+
+        case UT_FLOAT:      return "UT_FLOAT";
+        case UT_FLOAT_VEC2: return "UT_FLOAT_VEC2";
+        case UT_FLOAT_VEC3: return "UT_FLOAT_VEC3";
+        case UT_FLOAT_VEC4: return "UT_FLOAT_VEC4";
+
+        case UT_FLOAT_MAT2: return "UT_FLOAT_MAT2";
+        case UT_FLOAT_MAT3: return "UT_FLOAT_MAT3";
+        case UT_FLOAT_MAT4: return "UT_FLOAT_MAT4";
+
+        case UT_FLOAT_MAT2x3: return "UT_FLOAT_MAT2x3";
+        case UT_FLOAT_MAT3x2: return "UT_FLOAT_MAT3x2";
+        case UT_FLOAT_MAT2x4: return "UT_FLOAT_MAT2x4";
+        case UT_FLOAT_MAT4x2: return "UT_FLOAT_MAT4x2";
+        case UT_FLOAT_MAT3x4: return "UT_FLOAT_MAT3x4";
+        case UT_FLOAT_MAT4x3: return "UT_FLOAT_MAT4x3";
+
+        case UT_DOUBLE:      return "UT_DOUBLE";
+        case UT_DOUBLE_VEC2: return "UT_DOUBLE_VEC2";
+        case UT_DOUBLE_VEC3: return "UT_DOUBLE_VEC3";
+        case UT_DOUBLE_VEC4: return "UT_DOUBLE_VEC4";
+
+        case UT_DOUBLE_MAT2: return "UT_DOUBLE_MAT2";
+        case UT_DOUBLE_MAT3: return "UT_DOUBLE_MAT3";
+        case UT_DOUBLE_MAT4: return "UT_DOUBLE_MAT4";
+
+        case UT_DOUBLE_MAT2x3: return "UT_DOUBLE_MAT2x3";
+        case UT_DOUBLE_MAT3x2: return "UT_DOUBLE_MAT3x2";
+        case UT_DOUBLE_MAT2x4: return "UT_DOUBLE_MAT2x4";
+        case UT_DOUBLE_MAT4x2: return "UT_DOUBLE_MAT4x2";
+        case UT_DOUBLE_MAT3x4: return "UT_DOUBLE_MAT3x4";
+        case UT_DOUBLE_MAT4x3: return "UT_DOUBLE_MAT4x3";
+
+        default:
+          return "UT_NONE";
+      }
+    }
+          
     SRF_Value export_Effect(const Effect* fx)
     {
       SRF_Value value;
@@ -487,7 +634,7 @@ namespace vl
       case VAI_INTEGER: interpretation = "VAI_INTEGER"; break;
       case VAI_DOUBLE:  interpretation = "VAI_DOUBLE";  break;
       }
-      values.push_back( SRF_Structure::Value("Interpretation", SRF_Value(interpretation.c_str(), SRF_Value::Identifier)) );
+      values.push_back( SRF_Structure::Value("Interpretation", toIdentifier(interpretation)) );
 
       return value;
     }
@@ -668,7 +815,7 @@ namespace vl
         case PT_UNKNOWN:                  primitive_type =  "PT_UNKNOWN"; break;
       }
 
-      srf_obj->value().push_back( SRF_Structure::Value("PrimitiveType", SRF_Value(primitive_type.c_str(), SRF_Value::Identifier) ) );
+      srf_obj->value().push_back( SRF_Structure::Value("PrimitiveType", toIdentifier(primitive_type) ) );
       srf_obj->value().push_back( SRF_Structure::Value("Enabled", dcall->isEnabled()) );
       if (dcall->patchParameter())
         srf_obj->value().push_back( SRF_Structure::Value("PatchParameter", export_PatchParameter(dcall->patchParameter())) );
