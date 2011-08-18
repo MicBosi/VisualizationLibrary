@@ -115,9 +115,9 @@ public:
       rendering()->as<Rendering>()->transform()->addChild( mLight0Tr.get() );
       rendering()->as<Rendering>()->transform()->addChild( mLight1Tr.get() );
       rendering()->as<Rendering>()->transform()->addChild( mLight2Tr.get() );
-      mLight0->followTransform( mLight0Tr.get() );
-      mLight1->followTransform( mLight1Tr.get() );
-      mLight2->followTransform( mLight2Tr.get() );
+      mLight0->bindTransform( mLight0Tr.get() );
+      mLight1->bindTransform( mLight1Tr.get() );
+      mLight2->bindTransform( mLight2Tr.get() );
 
       ref<Effect> fx_bulb = new Effect;
       fx_bulb->shader()->enable(EN_DEPTH_TEST);

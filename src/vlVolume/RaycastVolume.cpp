@@ -134,8 +134,8 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera*
       {
         has_lights = true;
         // light position following transform
-        if ( light->followedTransform() )
-          light_position[i] = ( fmat4 )light->followedTransform()->worldMatrix() * light->position().xyz();
+        if ( light->boundTransform() )
+          light_position[i] = ( fmat4 )light->boundTransform()->worldMatrix() * light->position().xyz();
         // light position following camera
         else
           light_position[i] = ( ( fmat4 )camera->localMatrix() * light->position() ).xyz();

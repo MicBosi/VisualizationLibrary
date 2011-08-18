@@ -176,8 +176,8 @@ void Rendering::render()
 
   // camera transform update (can be redundant)
 
-  if (camera()->followedTransform())
-    camera()->setLocalMatrix( camera()->followedTransform()->worldMatrix() );
+  if (camera()->boundTransform())
+    camera()->setLocalMatrix( camera()->boundTransform()->worldMatrix() );
 
   VL_CHECK_OGL()
 

@@ -133,12 +133,12 @@ public:
     rendering()->as<vl::Rendering>()->transform()->addChild(mLight2_Transform.get());
     rendering()->as<vl::Rendering>()->transform()->addChild(mLight3_Transform.get());
     // light 0..3 follow the relative transform
-    mLight0->followTransform(mLight0_Transform.get());
-    mLight1->followTransform(mLight1_Transform.get());
-    mLight2->followTransform(mLight2_Transform.get());
-    mLight3->followTransform(mLight3_Transform.get());
+    mLight0->bindTransform(mLight0_Transform.get());
+    mLight1->bindTransform(mLight1_Transform.get());
+    mLight2->bindTransform(mLight2_Transform.get());
+    mLight3->bindTransform(mLight3_Transform.get());
     // light 4 follows the camera
-    mLight4->followTransform(NULL);
+    mLight4->bindTransform(NULL);
 
     // add a white sphere for each light to have a better visual feedback of the light animation.
     vl::ref<vl::Geometry> bulb = vl::makeUVSphere(vl::vec3(0,0,0), 0.5f);

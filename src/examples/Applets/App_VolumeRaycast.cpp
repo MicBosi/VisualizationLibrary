@@ -162,9 +162,9 @@ public:
     // scrap previous scene
     sceneManager()->tree()->eraseAllChildren();
     sceneManager()->tree()->actors()->clear();
-    mLight0->followTransform( NULL );
-    mLight1->followTransform( NULL );
-    mLight2->followTransform( NULL );
+    mLight0->bindTransform( NULL );
+    mLight1->bindTransform( NULL );
+    mLight2->bindTransform( NULL );
   
     ref<Effect> volume_fx = new Effect;
     // we don't necessarily need this:
@@ -202,9 +202,9 @@ public:
       volume_fx->shader()->setRenderState( mLight2.get(), 2 );
 
       // animate the three lights
-      mLight0->followTransform( mLight0Tr.get() );
-      mLight1->followTransform( mLight1Tr.get() );
-      mLight2->followTransform( mLight2Tr.get() );
+      mLight0->bindTransform( mLight0Tr.get() );
+      mLight1->bindTransform( mLight1Tr.get() );
+      mLight2->bindTransform( mLight2Tr.get() );
 
       // add also a light bulb actor
       ref<Effect> fx_bulb = new Effect;

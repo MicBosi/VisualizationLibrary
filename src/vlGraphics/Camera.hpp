@@ -140,13 +140,13 @@ namespace vl
     const Viewport* viewport() const { return mViewport.get(); }
 
     /** Bind the camera to a Transform. */
-    void followTransform(Transform* transform) { mFollowTransform = transform; }
+    void bindTransform(Transform* transform) { mBoundTransform = transform; }
 
     /** Returns the Transform bound to a camera. */
-    const Transform* followedTransform() const { return mFollowTransform.get(); }
+    const Transform* boundTransform() const { return mBoundTransform.get(); }
 
     /** Returns the Transform bound to a camera. */
-    Transform* followedTransform() { return mFollowTransform.get(); }
+    Transform* boundTransform() { return mBoundTransform.get(); }
 
     /** Sets the Camera's view matrix. The local matrix is also set as the inverse of the view matrix. */
     void setViewMatrix(const mat4& mat) { mViewMatrix = mat; mViewMatrix.getInverse(mLocalMatrix); }
@@ -161,13 +161,13 @@ namespace vl
     const mat4& localMatrix() const { return mLocalMatrix; }
 
     /** The Camera's projection matrix. */
-    void setProjectionMatrix(const mat4& mat, EProjectionMatrixType proj_type) { mProjectionMatrix = mat; mProjectionType = proj_type; }
+    void setProjectionMatrix(const mat4& mat, EProjectionType proj_type) { mProjectionMatrix = mat; mProjectionType = proj_type; }
 
     /** The Camera's projection matrix. */
     const mat4& projectionMatrix() const { return mProjectionMatrix; }
 
     /** The Camera's projection matrix type. */
-    EProjectionMatrixType projectionMatrixType() const { return mProjectionType; }
+    EProjectionType projectionType() const { return mProjectionType; }
 
     /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings. 
     See also http://www.opengl.org/sdk/docs/man/xhtml/gluPerspective.xml for more information. */
@@ -267,12 +267,12 @@ namespace vl
     mat4 mProjectionMatrix;
     ref<Viewport> mViewport;
     Frustum mFrustum;
-    ref<Transform> mFollowTransform;
+    ref<Transform> mBoundTransform;
     Real mFOV;
     Real mLeft, mRight, mBottom, mTop;
     Real mNearPlane;
     Real mFarPlane;
-    EProjectionMatrixType mProjectionType;
+    EProjectionType mProjectionType;
   };
 }
 

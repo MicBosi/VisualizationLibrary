@@ -54,6 +54,7 @@ Camera::Camera()
   mViewport = new Viewport;
 
   mProjectionMatrix  = mat4::getPerspective(fov(), 640.0f/480.0f, nearPlane(), farPlane());
+  mProjectionType = PMT_PerspectiveProjection;
 }
 //-----------------------------------------------------------------------------
 void Camera::applyModelViewMatrix(const mat4& model_matrix) const
@@ -114,7 +115,7 @@ void Camera::computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphe
     mFarPlane  = max(mFarPlane,  epsilon * 2); // alway more than the near
     mNearPlane = max(mNearPlane, epsilon * 1);
 
-    switch(projectionMatrixType())
+    switch(projectionType())
     {
     case PMT_OrthographicProjection: setProjectionAsOrtho(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane);
       break;

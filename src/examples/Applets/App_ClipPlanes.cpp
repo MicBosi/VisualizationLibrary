@@ -67,7 +67,7 @@ public:
     clip1_sh->gocLightModel()->setTwoSide(true);
     // clipping plane 1 setup
     clip1_sh->gocClipPlane(0)->setPlane( vl::Plane(0.2f, vl::vec3(0,+1,0)) );
-    clip1_sh->gocClipPlane(0)->followTransform( mClipTr.get() );
+    clip1_sh->gocClipPlane(0)->bindTransform( mClipTr.get() );
     // setup clipping pass 2
     clip2_sh->setRenderState( light.get(), 0 );
     clip2_sh->enable(vl::EN_LIGHTING);
@@ -76,7 +76,7 @@ public:
     clip2_sh->gocLightModel()->setTwoSide(true);
     // clipping plane 2 setup
     clip2_sh->gocClipPlane(0)->setPlane( vl::Plane(0.2f, vl::vec3(0,-1,0)) );
-    clip2_sh->gocClipPlane(0)->followTransform( mClipTr.get() );
+    clip2_sh->gocClipPlane(0)->bindTransform( mClipTr.get() );
     // install the two passes for LOD 0
     clip_fx->setLOD(0, clip1_sh.get(), clip2_sh.get());
     // add model to the scene
