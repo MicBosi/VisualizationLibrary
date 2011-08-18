@@ -669,7 +669,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SRF_List, SRF_TaggedValue)
 
   public:
-    SRF_List()
+    SRF_List(const char* tag=NULL): SRF_TaggedValue(tag)
     {
       // mic fixme: reenable
       // mValue.reserve(16);
