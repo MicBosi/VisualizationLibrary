@@ -583,9 +583,11 @@ void SRF_Value::release()
       mUnion.mRawtextBlock->decReference(); 
     break;
 
+  /*
   case ArrayString:
   case ArrayUID:
   case ArrayIdentifier:
+  */
   case ArrayInteger:
   case ArrayReal:
     if (mUnion.mArray)
@@ -630,9 +632,11 @@ SRF_Value& SRF_Value::operator=(const SRF_Value& other)
       other.mUnion.mRawtextBlock->incReference(); 
     break;
 
+  /*
   case ArrayString:
   case ArrayUID:
   case ArrayIdentifier:
+  */
   case ArrayInteger:
   case ArrayReal:
     if (other.mUnion.mArray)
@@ -712,22 +716,23 @@ SRF_ArrayReal* SRF_Value::setArrayReal(SRF_ArrayReal* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-SRF_ArrayIdentifier* SRF_Value::setArrayIdentifier(SRF_ArrayIdentifier* arr)
+/*
+SRF_ArrayString* SRF_Value::setArrayString(SRF_ArrayString* arr)
 {
   VL_CHECK(arr);
   release();
-  mType = ArrayIdentifier;
+  mType = ArrayString;
   mUnion.mArray = arr;
   if (mUnion.mArray)
     mUnion.mArray->incReference();
   return arr;
 }
 //-----------------------------------------------------------------------------
-SRF_ArrayString* SRF_Value::setArrayString(SRF_ArrayString* arr)
+SRF_ArrayIdentifier* SRF_Value::setArrayIdentifier(SRF_ArrayIdentifier* arr)
 {
   VL_CHECK(arr);
   release();
-  mType = ArrayString;
+  mType = ArrayIdentifier;
   mUnion.mArray = arr;
   if (mUnion.mArray)
     mUnion.mArray->incReference();
@@ -744,6 +749,7 @@ SRF_ArrayUID* SRF_Value::setArrayUID(SRF_ArrayUID* arr)
     mUnion.mArray->incReference();
   return arr;
 }
+*/
 //-----------------------------------------------------------------------------
 SRF_Array* SRF_Value::setArray(SRF_Array* arr)
 {
@@ -752,15 +758,17 @@ SRF_Array* SRF_Value::setArray(SRF_Array* arr)
   else
   if (arr->classType() == SRF_ArrayReal::Type())
     return setArrayReal(arr->as<SRF_ArrayReal>());
-  else
-  if (arr->classType() == SRF_ArrayIdentifier::Type())
-    return setArrayIdentifier(arr->as<SRF_ArrayIdentifier>());
+  /*
   else
   if (arr->classType() == SRF_ArrayString::Type())
     return setArrayString(arr->as<SRF_ArrayString>());
   else
+  if (arr->classType() == SRF_ArrayIdentifier::Type())
+    return setArrayIdentifier(arr->as<SRF_ArrayIdentifier>());
+  else
   if (arr->classType() == SRF_ArrayUID::Type())
     return setArrayUID(arr->as<SRF_ArrayUID>());
+  */
   else
   {
     VL_TRAP();
