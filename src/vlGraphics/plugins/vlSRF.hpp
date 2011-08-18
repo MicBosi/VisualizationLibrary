@@ -313,7 +313,7 @@ namespace vl
       values.push_back( SRF_Structure::Value("Uniforms", uniforms) );
 
       if (act->lodEvaluator())
-          values.push_back( SRF_Structure::Value("LodEvaluator", export_LODEvaluator(act->lodEvaluator())) );
+          values.push_back( SRF_Structure::Value("LODEvaluator", export_LODEvaluator(act->lodEvaluator())) );
 
       // mic fixme:
       // Scissor: scissorts might go away from the Actor
@@ -674,7 +674,35 @@ namespace vl
 
       value.setStructure( new SRF_Structure("<Effect>", generateUID("effect_")) );
       registerExportedStructure(fx, value.getStructure());
-      // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("RenderRank", (long long)fx->renderRank()) );
+      values.push_back( SRF_Structure::Value("EnableMask", (long long)fx->enableMask()) );
+      values.push_back( SRF_Structure::Value("ActiveLod", (long long)fx->activeLod()) );
+
+      if (fx->lodEvaluator())
+        values.push_back( SRF_Structure::Value("LODEvaluator", export_LODEvaluator(fx->lodEvaluator())) );
+
+      ref<SRF_List> lod_list = new SRF_List;
+      for(int i=0; fx->lod(i) && i<VL_MAX_EFFECT_LOD; ++i)
+        lod_list->value().push_back( export_ShaderSequence(fx->lod(i).get()) );
+      values.push_back( SRF_Structure::Value("Lods", lod_list.get()) );
+
+      return value;
+    }
+
+    SRF_Value export_ShaderSequence(const ShaderPasses* sh_seq)
+    {
+      SRF_Value value;
+      if (vlToSRF(sh_seq))
+      {
+        value.setUID( vlToSRF(sh_seq)->uid().c_str() );
+        return value;
+      }
+
+      value.setList( new SRF_List("<ShaderPasses>") );
+      for(int i=0; i<sh_seq->size(); ++i)
+        value.getList()->value().push_back( export_Shader(sh_seq->at(i)) );
 
       return value;
     }
