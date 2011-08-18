@@ -48,6 +48,7 @@
 #include <vlGraphics/DistanceLODEvaluator.hpp>
 #include <vlGraphics/PixelLODEvaluator.hpp>
 #include <vlGraphics/DepthSortCallback.hpp>
+#include <vlGraphics/GLSL.hpp>
 #include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/DiskFile.hpp>
 
@@ -116,7 +117,17 @@ namespace vl
 
     SRF_Value toString(const std::string& str)     { return SRF_Value(str.c_str(), SRF_Value::String); }
     
-    SRF_Value toValue(const fvec4& vec)
+    SRF_Value toValue(const mat4& mat)
+    {
+      SRF_Value val( new SRF_ArrayReal );
+      SRF_ArrayReal* arr = val.getArrayReal();
+      arr->value().resize(4*4);
+      for(size_t i=0; i<arr->value().size(); ++i)
+        arr->value()[i] = mat.ptr()[i];
+      return val;
+    }
+
+    SRF_Value toValue(const vec4& vec)
     {
       SRF_Value val( new SRF_ArrayReal );
       SRF_ArrayReal* arr = val.getArrayReal();
@@ -128,7 +139,31 @@ namespace vl
       return val;
     }
 
-    SRF_Value toValue(const fvec3& vec)
+    SRF_Value toValue(const ivec4& vec)
+    {
+      SRF_Value val( new SRF_ArrayReal );
+      SRF_ArrayReal* arr = val.getArrayReal();
+      arr->value().resize(4);
+      arr->value()[0] = vec.x();
+      arr->value()[1] = vec.y();
+      arr->value()[2] = vec.z();
+      arr->value()[3] = vec.w();
+      return val;
+    }
+
+    SRF_Value toValue(const uvec4& vec)
+    {
+      SRF_Value val( new SRF_ArrayReal );
+      SRF_ArrayReal* arr = val.getArrayReal();
+      arr->value().resize(4);
+      arr->value()[0] = vec.x();
+      arr->value()[1] = vec.y();
+      arr->value()[2] = vec.z();
+      arr->value()[3] = vec.w();
+      return val;
+    }
+
+    SRF_Value toValue(const vec3& vec)
     {
       SRF_Value val( new SRF_ArrayReal );
       SRF_ArrayReal* arr = val.getArrayReal();
@@ -139,7 +174,7 @@ namespace vl
       return val;
     }
 
-    SRF_Value toValue(const fvec2& vec)
+    SRF_Value toValue(const vec2& vec)
     {
       SRF_Value val( new SRF_ArrayReal );
       SRF_ArrayReal* arr = val.getArrayReal();
@@ -184,9 +219,6 @@ namespace vl
         else
         if(res_db->resources()[i]->isOfType(Transform::Type()))
           resource = export_Transform(res_db->resources()[i]->as<Transform>());
-        else
-        if(res_db->resources()[i]->isOfType(Actor::Type()))
-          resource = export_Actor(res_db->resources()[i]->as<Actor>());
         else
         if(res_db->resources()[i]->isOfType(Camera::Type()))
           resource = export_Camera(res_db->resources()[i]->as<Camera>());
@@ -383,6 +415,8 @@ namespace vl
 
     SRF_Value export_DistanceLODEvaluator(const DistanceLODEvaluator* lod)
     {
+      VL_CHECK(lod);
+
       SRF_Value value;
       if (vlToSRF(lod))
       {
@@ -406,6 +440,8 @@ namespace vl
 
     SRF_Value export_PixelLODEvaluator(const PixelLODEvaluator* lod)
     {
+      VL_CHECK(lod);
+
       SRF_Value value;
       if (vlToSRF(lod))
       {
@@ -429,6 +465,8 @@ namespace vl
 
     SRF_Value export_Transform(const Transform* tr)
     {
+      VL_CHECK(tr);
+
       SRF_Value value;
       if (vlToSRF(tr))
       {
@@ -768,9 +806,141 @@ namespace vl
         return value;
       }
 
-      value.setStructure( new SRF_Structure("<RenderStateX>", generateUID("rs_")) );
-      registerExportedStructure(rs, value.getStructure());
-      // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+      if (rs->classType() == Light::Type())
+        return export_Light(rs->as<Light>());
+      else
+      if (rs->classType() == ClipPlane::Type())
+        return export_ClipPlane(rs->as<ClipPlane>());
+      else
+      if (rs->classType() == Material::Type())
+        return export_Material(rs->as<Material>());
+      else
+      if (rs->classType() == GLSLProgram::Type())
+        return export_GLSLProgram(rs->as<GLSLProgram>());
+      else
+      {
+        VL_TRAP();
+        return SRF_Value( new SRF_Structure("<UnknownObjectType>", generateUID("renderstate_")) );
+      }
+    }
+
+    SRF_Value export_Light(const Light* light)
+    {
+      SRF_Value value;
+      if (vlToSRF(light))
+      {
+        value.setUID( vlToSRF(light)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<Light>", generateUID("light_")) );
+      registerExportedStructure(light, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("Ambient", toValue(light->ambient()) ) );
+      values.push_back( SRF_Structure::Value("Diffuse", toValue(light->diffuse()) ) );
+      values.push_back( SRF_Structure::Value("Specular", toValue(light->specular()) ) );
+      values.push_back( SRF_Structure::Value("Position", toValue(light->position()) ) );
+      values.push_back( SRF_Structure::Value("SpotDirection", toValue(light->spotDirection()) ) );
+      values.push_back( SRF_Structure::Value("SpotExponent", (double)light->spotExponent() ) );
+      values.push_back( SRF_Structure::Value("SpotCutoff", (double)light->spotCutoff() ) );
+      values.push_back( SRF_Structure::Value("ConstantAttenuation", (double)light->constantAttenuation() ) );
+      values.push_back( SRF_Structure::Value("LinearAttenuation", (double)light->linearAttenuation() ) );
+      values.push_back( SRF_Structure::Value("QuadraticAttenuation", (double)light->quadraticAttenuation() ) );
+      if (light->boundTransform())
+        values.push_back( SRF_Structure::Value("BoundTransform", export_Transform(light->boundTransform()) ) );
+
+      return value;
+    }
+
+    SRF_Value export_ClipPlane(const ClipPlane* clip)
+    {
+      SRF_Value value;
+      if (vlToSRF(clip))
+      {
+        value.setUID( vlToSRF(clip)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<ClipPlane>", generateUID("clip_")) );
+      registerExportedStructure(clip, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("PlaneNormal", toValue(clip->plane().normal()) ) );
+      values.push_back( SRF_Structure::Value("PlaneOrigin", (double)(clip->plane().origin()) ) );
+      if (clip->boundTransform())
+        values.push_back( SRF_Structure::Value("BoundTransform", export_Transform(clip->boundTransform()) ) );
+
+      return value;
+    }
+
+    SRF_Value export_Material(const Material* mat)
+    {
+      SRF_Value value;
+      if (vlToSRF(mat))
+      {
+        value.setUID( vlToSRF(mat)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<Material>", generateUID("material_")) );
+      registerExportedStructure(mat, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("FrontAmbient", toValue(mat->frontAmbient()) ) );
+      values.push_back( SRF_Structure::Value("FrontDiffuse", toValue(mat->frontDiffuse()) ) );
+      values.push_back( SRF_Structure::Value("FrontEmission", toValue(mat->frontEmission()) ) );
+      values.push_back( SRF_Structure::Value("FrontSpecular", toValue(mat->frontSpecular()) ) );
+      values.push_back( SRF_Structure::Value("FrontShininess", (double)mat->frontShininess() ) );
+
+      values.push_back( SRF_Structure::Value("BackAmbient", toValue(mat->backAmbient()) ) );
+      values.push_back( SRF_Structure::Value("BackDiffuse", toValue(mat->backDiffuse()) ) );
+      values.push_back( SRF_Structure::Value("BackEmission", toValue(mat->backEmission()) ) );
+      values.push_back( SRF_Structure::Value("BackSpecular", toValue(mat->backSpecular()) ) );
+      values.push_back( SRF_Structure::Value("BackShininess", (double)mat->backShininess() ) );
+
+      values.push_back( SRF_Structure::Value("ColorMaterial", toIdentifier(export_ColorMaterial(mat->colorMaterial())) ) );
+      values.push_back( SRF_Structure::Value("ColorMaterialFace", toIdentifier(export_PolygonFace(mat->colorMaterialFace())) ) );
+
+      values.push_back( SRF_Structure::Value("ColorMaterialEnabled", mat->colorMaterialEnabled() ) );
+
+      return value;
+    }
+
+    std::string export_PolygonFace(EPolygonFace pf)
+    {
+      switch(pf)
+      {
+      case PF_FRONT: return "PF_FRONT";
+      case PF_BACK:  return "PF_BACK";
+      case PF_FRONT_AND_BACK: 
+      default:
+        return "PF_FRONT_AND_BACK";
+      }
+    }
+
+    std::string export_ColorMaterial(EColorMaterial cm)
+    {
+      switch(cm)
+      {
+      case CM_EMISSION: return "CM_EMISSION";
+      case CM_AMBIENT: return "CM_AMBIENT";
+      case CM_DIFFUSE: return "CM_DIFFUSE";
+      case CM_SPECULAR: return "CM_SPECULAR";
+      case CM_AMBIENT_AND_DIFFUSE:
+      default:
+        return "CM_AMBIENT_AND_DIFFUSE";
+      }
+    }
+
+    SRF_Value export_GLSLProgram(const GLSLProgram* glsl)
+    {
+      SRF_Value value;
+      if (vlToSRF(glsl))
+      {
+        value.setUID( vlToSRF(glsl)->uid().c_str() );
+        return value;
+      }
 
       return value;
     }
@@ -829,12 +999,94 @@ namespace vl
         return value;
       }
 
-      // mic fixme: this is just a stub, complete the implementation
       value.setStructure( new SRF_Structure("<Camera>", generateUID("camera_")) );
       registerExportedStructure(cam, value.getStructure());
-      // std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("ViewMatrix", toValue(cam->viewMatrix()) ) );
+      values.push_back( SRF_Structure::Value("ProjectionMatrix", toValue(cam->projectionMatrix()) ) );
+      values.push_back( SRF_Structure::Value("Viewport", export_Viewport(cam->viewport()) ) );
+      if (cam->boundTransform())
+        values.push_back( SRF_Structure::Value("BoundTransfrm", export_Transform(cam->boundTransform()) ) );
+      values.push_back( SRF_Structure::Value("FOV", (double)cam->fov() ) );
+      values.push_back( SRF_Structure::Value("Left", (double)cam->left() ) );
+      values.push_back( SRF_Structure::Value("Right", (double)cam->right() ) );
+      values.push_back( SRF_Structure::Value("Bottom", (double)cam->bottom() ) );
+      values.push_back( SRF_Structure::Value("Top", (double)cam->top() ) );
+      values.push_back( SRF_Structure::Value("NearPlane", (double)cam->nearPlane() ) );
+      values.push_back( SRF_Structure::Value("FarPlane", (double)cam->farPlane() ) );
+      values.push_back( SRF_Structure::Value("ProjectionType", toIdentifier(export_ProjectionType(cam->projectionType())) ) );
 
       return value;
+    }
+
+    std::string export_ProjectionType(EProjectionType pt)
+    {
+      switch(pt)
+      {
+      case PMT_UserProjection: return "PMT_UserProjection";
+      case PMT_OrthographicProjection: return "PMT_OrthographicProjection";
+      case PMT_PerspectiveProjection: return "PMT_PerspectiveProjection";
+      case PMT_PerspectiveProjectionFrustum: 
+      default:
+        return "PMT_PerspectiveProjectionFrustum";
+      }
+    }
+
+    SRF_Value export_Viewport(const Viewport* viewp)
+    {
+      SRF_Value value;
+      if (vlToSRF(viewp))
+      {
+        value.setUID( vlToSRF(viewp)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<Viewport>", generateUID("viewp_")) );
+      registerExportedStructure(viewp, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("ClearColor", toValue(viewp->clearColor()) ) );
+      values.push_back( SRF_Structure::Value("ClearColorInt", toValue(viewp->clearColorInt()) ) );
+      values.push_back( SRF_Structure::Value("ClearColorUInt", toValue(viewp->clearColorUInt()) ) );
+      values.push_back( SRF_Structure::Value("ClearDepth", (double)viewp->clearDepth() ) );
+      values.push_back( SRF_Structure::Value("ClearStecil", (long long)viewp->clearStencil() ) );
+      values.push_back( SRF_Structure::Value("ClearColorMode", toIdentifier(export_ClearColorMode(viewp->clearColorMode())) ) );
+      values.push_back( SRF_Structure::Value("ClearFlags", toIdentifier(export_ClearFlags(viewp->clearFlags())) ) );
+      values.push_back( SRF_Structure::Value("X", (double)viewp->x() ) );
+      values.push_back( SRF_Structure::Value("Y", (double)viewp->y() ) );
+      values.push_back( SRF_Structure::Value("Width", (double)viewp->width() ) );
+      values.push_back( SRF_Structure::Value("Height", (double)viewp->height() ) );
+
+      return value;
+    }
+
+    std::string export_ClearColorMode(EClearColorMode ccm)
+    {
+      switch(ccm)
+      {
+      case CCM_Float: return "CCM_Float";
+      case CCM_Int: return "CCM_Int";
+      default:
+        return "CCM_UInt";
+      }
+    }
+
+    std::string export_ClearFlags(EClearFlags cf)
+    {
+      switch(cf)
+      {
+      case CF_DO_NOT_CLEAR: return "CF_DO_NOT_CLEAR";
+      case CF_CLEAR_COLOR: return "CF_CLEAR_COLOR";
+      case CF_CLEAR_DEPTH: return "CF_CLEAR_DEPTH";
+      case CF_CLEAR_STENCIL: return "CF_CLEAR_STENCIL";
+      case CF_CLEAR_COLOR_DEPTH: return "CF_CLEAR_COLOR_DEPTH";
+      case CF_CLEAR_COLOR_STENCIL: return "CF_CLEAR_COLOR_STENCIL";
+      case CF_CLEAR_DEPTH_STENCIL: return "CF_CLEAR_DEPTH_STENCIL";
+      case CF_CLEAR_COLOR_DEPTH_STENCIL: 
+      default:
+        return "CF_CLEAR_COLOR_DEPTH_STENCIL";
+      }
     }
 
     SRF_Value export_VertexAttribInfo(const VertexAttribInfo* info)
