@@ -46,7 +46,7 @@ Viewport::Viewport()
   mY = 0;
   mWidth = 0;
   mHeight = 0;
-  mClearColor = fvec4(0.8f,0,0.1f,1);
+  mClearColor = fvec4(0,0,0,1);
   mClearDepth = 1.0f;
   mClearStencil = 0;
   mClearFlags = CF_CLEAR_COLOR_DEPTH;
