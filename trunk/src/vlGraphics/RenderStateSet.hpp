@@ -63,9 +63,9 @@ namespace vl
 
     void setRenderState(RenderState* renderstate, int index);
 
-    RenderState* renderState( ERenderState type, int index=0 );
+    RenderState* renderState( ERenderState type, int index=-1 );
 
-    const RenderState* renderState( ERenderState type, int index=0 ) const;
+    const RenderState* renderState( ERenderState type, int index=-1 ) const;
 
     size_t renderStatesCount() const { return mRenderStates.size(); }
 
