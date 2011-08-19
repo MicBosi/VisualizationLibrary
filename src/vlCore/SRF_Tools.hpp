@@ -127,7 +127,11 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SRF_RawtextBlock, SRF_TaggedValue)
 
   public:
-    SRF_RawtextBlock(const char* tag=NULL): SRF_TaggedValue(tag) {}
+    SRF_RawtextBlock(const char* tag=NULL, const char* value=NULL): SRF_TaggedValue(tag) 
+    {
+      if (value)
+        mValue = value;
+    }
 
     virtual void acceptVisitor(SRF_Visitor* v) { v->visitRawtextBlock(this); }
 
