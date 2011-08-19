@@ -1639,7 +1639,7 @@ namespace vl
 
       if (version != 100)
       {
-        Log::error("SRF version not supported.\n");
+        Log::error("VRF version not supported.\n");
         return false;
       }
 
