@@ -89,20 +89,20 @@ namespace vl
 
     void registerExportedStructure(const Object* vl_obj, const VRF_Structure* srf_obj)
     {
-      VL_CHECK( mVL_To_SRF.find(vl_obj) == mVL_To_SRF.end() );
-      mVL_To_SRF[vl_obj] = srf_obj;
+      VL_CHECK( mVL_To_VRF.find(vl_obj) == mVL_To_VRF.end() );
+      mVL_To_VRF[vl_obj] = srf_obj;
     }
 
-    VRF_Structure* vlToSRF(const Object* srf_obj)
+    VRF_Structure* vlToVRF(const Object* srf_obj)
     {
-      std::map< ref<Object>, ref<VRF_Structure> >::iterator it = mVL_To_SRF.find(srf_obj);
-      if (it != mVL_To_SRF.end())
+      std::map< ref<Object>, ref<VRF_Structure> >::iterator it = mVL_To_VRF.find(srf_obj);
+      if (it != mVL_To_VRF.end())
         return it->second.get();
       else
         return NULL;
     }
 
-    const std::map< ref<Object>, ref<VRF_Structure> >& vlToSRF() const { return mVL_To_SRF; }
+    const std::map< ref<Object>, ref<VRF_Structure> >& vlToVRF() const { return mVL_To_VRF; }
 
     //-----------------------------------------------------------------------------
 
@@ -189,9 +189,9 @@ namespace vl
     VRF_Value export_ResourceDatabase(const ResourceDatabase* res_db)
     {
       VRF_Value value;
-      if (vlToSRF(res_db))
+      if (vlToVRF(res_db))
       {
-        value.setUID( vlToSRF(res_db)->uid().c_str() );
+        value.setUID( vlToVRF(res_db)->uid().c_str() );
         return value;
       }
 
@@ -250,9 +250,9 @@ namespace vl
     VRF_Value export_Renderable(const Renderable* ren)
     {
       VRF_Value value;
-      if (vlToSRF(ren))
+      if (vlToVRF(ren))
       {
-        value.setUID( vlToSRF(ren)->uid().c_str() );
+        value.setUID( vlToVRF(ren)->uid().c_str() );
         return value;
       }
 
@@ -317,9 +317,9 @@ namespace vl
     VRF_Value export_Actor(const Actor* act)
     {
       VRF_Value value;
-      if (vlToSRF(act))
+      if (vlToVRF(act))
       {
-        value.setUID( vlToSRF(act)->uid().c_str() );
+        value.setUID( vlToVRF(act)->uid().c_str() );
         return value;
       }
 
@@ -369,9 +369,9 @@ namespace vl
     VRF_Value export_ActorEventCallback(const ActorEventCallback* cb)
     {
       VRF_Value value;
-      if (vlToSRF(cb))
+      if (vlToVRF(cb))
       {
-        value.setUID( vlToSRF(cb)->uid().c_str() );
+        value.setUID( vlToVRF(cb)->uid().c_str() );
         return value;
       }
 
@@ -420,9 +420,9 @@ namespace vl
       VL_CHECK(lod);
 
       VRF_Value value;
-      if (vlToSRF(lod))
+      if (vlToVRF(lod))
       {
-        value.setUID( vlToSRF(lod)->uid().c_str() );
+        value.setUID( vlToVRF(lod)->uid().c_str() );
         return value;
       }
 
@@ -445,9 +445,9 @@ namespace vl
       VL_CHECK(lod);
 
       VRF_Value value;
-      if (vlToSRF(lod))
+      if (vlToVRF(lod))
       {
-        value.setUID( vlToSRF(lod)->uid().c_str() );
+        value.setUID( vlToVRF(lod)->uid().c_str() );
         return value;
       }
 
@@ -470,9 +470,9 @@ namespace vl
       VL_CHECK(tr);
 
       VRF_Value value;
-      if (vlToSRF(tr))
+      if (vlToVRF(tr))
       {
-        value.setUID( vlToSRF(tr)->uid().c_str() );
+        value.setUID( vlToVRF(tr)->uid().c_str() );
         return value;
       }
 
@@ -548,9 +548,9 @@ namespace vl
     VRF_Value export_Uniform(const Uniform* uniform)
     {
       VRF_Value value;
-      if (vlToSRF(uniform))
+      if (vlToVRF(uniform))
       {
-        value.setUID( vlToSRF(uniform)->uid().c_str() );
+        value.setUID( vlToVRF(uniform)->uid().c_str() );
         return value;
       }
 
@@ -706,9 +706,9 @@ namespace vl
     VRF_Value export_Effect(const Effect* fx)
     {
       VRF_Value value;
-      if (vlToSRF(fx))
+      if (vlToVRF(fx))
       {
-        value.setUID( vlToSRF(fx)->uid().c_str() );
+        value.setUID( vlToVRF(fx)->uid().c_str() );
         return value;
       }
 
@@ -735,9 +735,9 @@ namespace vl
     VRF_Value export_ShaderSequence(const ShaderPasses* sh_seq)
     {
       VRF_Value value;
-      if (vlToSRF(sh_seq))
+      if (vlToVRF(sh_seq))
       {
-        value.setUID( vlToSRF(sh_seq)->uid().c_str() );
+        value.setUID( vlToVRF(sh_seq)->uid().c_str() );
         return value;
       }
 
@@ -751,9 +751,9 @@ namespace vl
     VRF_Value export_Shader(const Shader* sh)
     {
       VRF_Value value;
-      if (vlToSRF(sh))
+      if (vlToVRF(sh))
       {
-        value.setUID( vlToSRF(sh)->uid().c_str() );
+        value.setUID( vlToVRF(sh)->uid().c_str() );
         return value;
       }
 
@@ -802,9 +802,9 @@ namespace vl
     VRF_Value export_RenderState(const RenderState* rs)
     {
       VRF_Value value;
-      if (vlToSRF(rs))
+      if (vlToVRF(rs))
       {
-        value.setUID( vlToSRF(rs)->uid().c_str() );
+        value.setUID( vlToVRF(rs)->uid().c_str() );
         return value;
       }
 
@@ -844,9 +844,9 @@ namespace vl
     VRF_Value export_VertexAttrib(const VertexAttrib* vertattrib)
     {
       VRF_Value value;
-      if (vlToSRF(vertattrib))
+      if (vlToVRF(vertattrib))
       {
-        value.setUID( vlToSRF(vertattrib)->uid().c_str() );
+        value.setUID( vlToVRF(vertattrib)->uid().c_str() );
         return value;
       }
 
@@ -862,9 +862,9 @@ namespace vl
     VRF_Value export_Color(const Color* color)
     {
       VRF_Value value;
-      if (vlToSRF(color))
+      if (vlToVRF(color))
       {
-        value.setUID( vlToSRF(color)->uid().c_str() );
+        value.setUID( vlToVRF(color)->uid().c_str() );
         return value;
       }
 
@@ -880,9 +880,9 @@ namespace vl
     VRF_Value export_SecondaryColor(const SecondaryColor* seccolor)
     {
       VRF_Value value;
-      if (vlToSRF(seccolor))
+      if (vlToVRF(seccolor))
       {
-        value.setUID( vlToSRF(seccolor)->uid().c_str() );
+        value.setUID( vlToVRF(seccolor)->uid().c_str() );
         return value;
       }
 
@@ -898,9 +898,9 @@ namespace vl
     VRF_Value export_Normal(const Normal* normal)
     {
       VRF_Value value;
-      if (vlToSRF(normal))
+      if (vlToVRF(normal))
       {
-        value.setUID( vlToSRF(normal)->uid().c_str() );
+        value.setUID( vlToVRF(normal)->uid().c_str() );
         return value;
       }
 
@@ -916,9 +916,9 @@ namespace vl
     VRF_Value export_TextureSampler(const TextureSampler* tex_sampler)
     {
       VRF_Value value;
-      if (vlToSRF(tex_sampler))
+      if (vlToVRF(tex_sampler))
       {
-        value.setUID( vlToSRF(tex_sampler)->uid().c_str() );
+        value.setUID( vlToVRF(tex_sampler)->uid().c_str() );
         return value;
       }
 
@@ -939,9 +939,9 @@ namespace vl
     VRF_Value export_Texture(const Texture* tex)
     {
       VRF_Value value;
-      if (vlToSRF(tex))
+      if (vlToVRF(tex))
       {
-        value.setUID( vlToSRF(tex)->uid().c_str() );
+        value.setUID( vlToVRF(tex)->uid().c_str() );
         return value;
       }
 
@@ -1247,9 +1247,9 @@ namespace vl
     VRF_Value export_TexParameter(const TexParameter* texparam)
     {
       VRF_Value value;
-      if (vlToSRF(texparam))
+      if (vlToVRF(texparam))
       {
-        value.setUID( vlToSRF(texparam)->uid().c_str() );
+        value.setUID( vlToVRF(texparam)->uid().c_str() );
         return value;
       }
 
@@ -1346,9 +1346,9 @@ namespace vl
     VRF_Value export_Light(const Light* light)
     {
       VRF_Value value;
-      if (vlToSRF(light))
+      if (vlToVRF(light))
       {
-        value.setUID( vlToSRF(light)->uid().c_str() );
+        value.setUID( vlToVRF(light)->uid().c_str() );
         return value;
       }
 
@@ -1375,9 +1375,9 @@ namespace vl
     VRF_Value export_ClipPlane(const ClipPlane* clip)
     {
       VRF_Value value;
-      if (vlToSRF(clip))
+      if (vlToVRF(clip))
       {
-        value.setUID( vlToSRF(clip)->uid().c_str() );
+        value.setUID( vlToVRF(clip)->uid().c_str() );
         return value;
       }
 
@@ -1396,9 +1396,9 @@ namespace vl
     VRF_Value export_Material(const Material* mat)
     {
       VRF_Value value;
-      if (vlToSRF(mat))
+      if (vlToVRF(mat))
       {
-        value.setUID( vlToSRF(mat)->uid().c_str() );
+        value.setUID( vlToVRF(mat)->uid().c_str() );
         return value;
       }
 
@@ -1455,9 +1455,9 @@ namespace vl
     VRF_Value export_GLSLProgram(const GLSLProgram* glsl)
     {
       VRF_Value value;
-      if (vlToSRF(glsl))
+      if (vlToVRF(glsl))
       {
-        value.setUID( vlToSRF(glsl)->uid().c_str() );
+        value.setUID( vlToVRF(glsl)->uid().c_str() );
         return value;
       }
 
@@ -1508,9 +1508,9 @@ namespace vl
     VRF_Value export_GLSLShader(const GLSLShader* glslsh)
     {
       VRF_Value value;
-      if (vlToSRF(glslsh))
+      if (vlToVRF(glslsh))
       {
-        value.setUID( vlToSRF(glslsh)->uid().c_str() );
+        value.setUID( vlToVRF(glslsh)->uid().c_str() );
         return value;
       }
 
@@ -1596,9 +1596,9 @@ namespace vl
     VRF_Value export_Camera(const Camera* cam)
     {
       VRF_Value value;
-      if (vlToSRF(cam))
+      if (vlToVRF(cam))
       {
-        value.setUID( vlToSRF(cam)->uid().c_str() );
+        value.setUID( vlToVRF(cam)->uid().c_str() );
         return value;
       }
 
@@ -1639,9 +1639,9 @@ namespace vl
     VRF_Value export_Viewport(const Viewport* viewp)
     {
       VRF_Value value;
-      if (vlToSRF(viewp))
+      if (vlToVRF(viewp))
       {
-        value.setUID( vlToSRF(viewp)->uid().c_str() );
+        value.setUID( vlToVRF(viewp)->uid().c_str() );
         return value;
       }
 
@@ -1695,9 +1695,9 @@ namespace vl
     VRF_Value export_VertexAttribInfo(const VertexAttribInfo* info)
     {
       VRF_Value value;
-      if (vlToSRF(info))
+      if (vlToVRF(info))
       {
-        value.setUID( vlToSRF(info)->uid().c_str() );
+        value.setUID( vlToVRF(info)->uid().c_str() );
         return value;
       }
 
@@ -1741,9 +1741,9 @@ namespace vl
     VRF_Value export_Array(const ArrayAbstract* arr_abstract)
     {
       VRF_Value value;
-      if (vlToSRF(arr_abstract))
+      if (vlToVRF(arr_abstract))
       {
-        value.setUID( vlToSRF(arr_abstract)->uid().c_str() );
+        value.setUID( vlToVRF(arr_abstract)->uid().c_str() );
         return value;
       }
 
@@ -1904,9 +1904,9 @@ namespace vl
     VRF_Value export_PatchParameter(const PatchParameter* pp)
     {
       VRF_Value value;
-      if (vlToSRF(pp))
+      if (vlToVRF(pp))
       {
-        value.setUID( vlToSRF(pp)->uid().c_str() );
+        value.setUID( vlToVRF(pp)->uid().c_str() );
         return value;
       }
 
@@ -1922,9 +1922,9 @@ namespace vl
     VRF_Value export_DrawCall(const DrawCall* dcall)
     {
       VRF_Value value;
-      if (vlToSRF(dcall))
+      if (vlToVRF(dcall))
       {
-        value.setUID( vlToSRF(dcall)->uid().c_str() );
+        value.setUID( vlToVRF(dcall)->uid().c_str() );
         return value;
       }
 
@@ -2085,7 +2085,7 @@ namespace vl
       if (srfToVL(srf_obj))
         return srfToVL(srf_obj)->as<ResourceDatabase>();
 
-      // link the SRF to the VL object
+      // link the VRF to the VL object
       ref<ResourceDatabase> res_db = new ResourceDatabase;
       registerImportedStructure(srf_obj, res_db.get());
 
@@ -2559,7 +2559,7 @@ namespace vl
         return NULL;
       }
 
-      // link the SRF to the VL object
+      // link the VRF to the VL object
       registerImportedStructure(srf_obj, arr_abstract.get());
 
       return arr_abstract.get();
@@ -2839,7 +2839,7 @@ namespace vl
         return NULL;
       }
 
-      // link the SRF to the VL object
+      // link the VRF to the VL object
       registerImportedStructure(srf_obj, draw_call.get());
     
       return draw_call.get();
@@ -2857,7 +2857,7 @@ namespace vl
         return NULL;
       }
 
-      // link the SRF to the VL object
+      // link the VRF to the VL object
       ref<VertexAttribInfo> info = new VertexAttribInfo;
       registerImportedStructure(srf_obj, info.get());
 
@@ -2924,7 +2924,7 @@ namespace vl
         return NULL;
       }
 
-      // link the SRF to the VL object
+      // link the VRF to the VL object
       ref<Geometry> geom = new Geometry;
       registerImportedStructure(srf_obj, geom.get());
 
@@ -3173,47 +3173,47 @@ namespace vl
     std::map< ref<VRF_Structure>, ref<Object> > mVRF_To_VL;
 
     // export
-    std::map< ref<Object>, ref<VRF_Structure> > mVL_To_SRF;
+    std::map< ref<Object>, ref<VRF_Structure> > mVL_To_VRF;
     int mUIDCounter;
 
     EError mError;
   };
 //-----------------------------------------------------------------------------
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadSRF(VirtualFile* file);
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadSRF(const String& path);
-  VLGRAPHICS_EXPORT bool writeSRF(VirtualFile* file, const ResourceDatabase*);
-  VLGRAPHICS_EXPORT bool writeSRF(const String& file, const ResourceDatabase*);
+  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVRF(VirtualFile* file);
+  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVRF(const String& path);
+  VLGRAPHICS_EXPORT bool writeVRF(VirtualFile* file, const ResourceDatabase*);
+  VLGRAPHICS_EXPORT bool writeVRF(const String& file, const ResourceDatabase*);
 //---------------------------------------------------------------------------
-// LoadWriterSRF
+// LoadWriterVRF
 //---------------------------------------------------------------------------
   /**
-   * The LoadWriterSRF class is a ResourceLoadWriter capable of reading Visualization Library's SRF files.
+   * The LoadWriterVRF class is a ResourceLoadWriter capable of reading Visualization Library's VRF files.
    */
-  class LoadWriterSRF: public ResourceLoadWriter
+  class LoadWriterVRF: public ResourceLoadWriter
   {
-    VL_INSTRUMENT_CLASS(vl::LoadWriterSRF, ResourceLoadWriter)
+    VL_INSTRUMENT_CLASS(vl::LoadWriterVRF, ResourceLoadWriter)
 
   public:
-    LoadWriterSRF(): ResourceLoadWriter("|srf|", "|srf|") {}
+    LoadWriterVRF(): ResourceLoadWriter("|srf|", "|srf|") {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 
     {
-      return loadSRF(path);
+      return loadVRF(path);
     }
 
     ref<ResourceDatabase> loadResource(VirtualFile* file) const
     {
-      return loadSRF(file);
+      return loadVRF(file);
     }
 
     bool writeResource(const String& path, ResourceDatabase* res_db) const
     {
-      return writeSRF(path, res_db);
+      return writeVRF(path, res_db);
     }
 
     bool writeResource(VirtualFile* file, ResourceDatabase* res_db) const
     {
-      return writeSRF(file, res_db);
+      return writeVRF(file, res_db);
     }
   };
 //-----------------------------------------------------------------------------
