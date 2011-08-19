@@ -55,29 +55,55 @@ GLSLShader::~GLSLShader()
   deleteShader();
 }
 //-----------------------------------------------------------------------------
-void GLSLShader::setSource( const String& source )
+std::string GLSLShader::getShaderSource() const
+{
+  if (handle())
+  {
+    GLint len = 0;
+    glGetShaderiv(handle(), GL_SHADER_SOURCE_LENGTH, &len);
+    if (len)
+    {
+      std::vector<char> src;
+      src.resize(len);
+      GLint len_written = 0;
+      glGetShaderSource(handle(), len, &len_written, &src[0]);
+      return &src[0];
+    }
+  }
+
+  return "";
+}
+//-----------------------------------------------------------------------------
+void GLSLShader::setSource( const String& source_or_path )
 {
   std::string new_src = "ERROR";
 
-  if (vl::locateFile(source))
+  if (source_or_path.empty())
   {
-    new_src = vl::String::loadText(source).toStdString();
-    setObjectName( source.toStdString() );
+    mSource.clear();
+    return;
+  }
+  else
+  if (vl::locateFile(source_or_path))
+  {
+    new_src = vl::String::loadText(source_or_path).toStdString();
+    setObjectName( source_or_path.toStdString() );
+    setPath( source_or_path.toStdString() );
   }
   else
   {
-    int cn = source.count('\n');
-    int cr = source.count('\r');
-    int cf = source.count('\f');
+    int cn = source_or_path.count('\n');
+    int cr = source_or_path.count('\r');
+    int cf = source_or_path.count('\f');
     int line_count = vl::max( vl::max( cn, cr ), cf );
     if(line_count == 0)
     {
-      Log::error("GLSLShader::setSource('" + source + "') error: file not found!\n");
+      Log::error("GLSLShader::setSource('" + source_or_path + "') error: file not found!\n");
       mSource = "";
       VL_TRAP();
     }
     else
-      new_src = source.toStdString();
+      new_src = source_or_path.toStdString();
   }
   
   // update only if the source is actually different
@@ -621,18 +647,6 @@ void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name
   glBindAttribLocation(handle(), index, name.c_str()); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
-int GLSLProgram::maxVertexAttribs()
-{
-  VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
-    return 0;
-
-  int max = 0;
-  glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &max ); VL_CHECK_OGL()
-  return max;
-}
-//-----------------------------------------------------------------------------
 bool GLSLProgram::useProgram() const
 {
   VL_CHECK_OGL()
@@ -806,7 +820,7 @@ void GLSLProgram::unbindFragDataLocation(const std::string& name)
   mFragDataLocation.erase(name);
 }
 //-----------------------------------------------------------------------------
-int GLSLProgram::fragDataLocationBinding(const std::string& name) const
+int GLSLProgram::fragDataLocation(const std::string& name) const
 {
   std::map<std::string, int>::const_iterator it = mFragDataLocation.find(name);
   if (it != mFragDataLocation.end())

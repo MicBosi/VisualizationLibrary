@@ -116,7 +116,9 @@ namespace vl
     SRF_Value toUID(const std::string& str)        { return SRF_Value(str.c_str(), SRF_Value::UID); }
 
     SRF_Value toString(const std::string& str)     { return SRF_Value(str.c_str(), SRF_Value::String); }
-    
+
+    SRF_Value toRawtext(const std::string& str)    { return SRF_Value( new SRF_RawtextBlock(NULL, str.c_str()) ); }
+
     SRF_Value toValue(const mat4& mat)
     {
       SRF_Value val( new SRF_ArrayReal );
@@ -941,6 +943,90 @@ namespace vl
         value.setUID( vlToSRF(glsl)->uid().c_str() );
         return value;
       }
+
+      value.setStructure( new SRF_Structure("<GLSLProgram>", generateUID("glsl_")) );
+      registerExportedStructure(glsl, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      // export glsl shaders
+      for(int i=0; i<glsl->shaderCount(); ++i)
+        values.push_back( SRF_Structure::Value("AttachShader", export_GLSLShader(glsl->shader(i)) ) );
+
+      // export uniforms
+      SRF_Value uniforms;
+      uniforms.setList( new SRF_List );
+      for(size_t i=0; glsl->getUniformSet() && i<glsl->getUniformSet()->uniforms().size(); ++i)
+        uniforms.getList()->value().push_back( export_Uniform(glsl->getUniformSet()->uniforms()[i].get()) );
+      values.push_back( SRF_Structure::Value("Uniforms", uniforms) );
+
+      // frag data location
+      SRF_Value frag_data_locations;
+      frag_data_locations.setList( new SRF_List );
+      for(std::map<std::string, int>::const_iterator it = glsl->fragDataLocations().begin(); it != glsl->fragDataLocations().end(); ++it)
+      {
+        SRF_Value location( new SRF_Structure("<FragDataLocation>") );
+        location.getStructure()->value().push_back( SRF_Structure::Value("Name", toIdentifier(it->first) ) );
+        location.getStructure()->value().push_back( SRF_Structure::Value("Location", (long long)it->second ) );
+        frag_data_locations.getList()->value().push_back( location );
+      }
+      values.push_back( SRF_Structure::Value("FragDataLocations", frag_data_locations) );
+
+      // auto attrib locations
+      SRF_Value attrib_locations;
+      attrib_locations.setList( new SRF_List );
+      for(std::map<std::string, int>::const_iterator it = glsl->autoAttribLocations().begin(); it != glsl->autoAttribLocations().end(); ++it)
+      {
+        SRF_Value location( new SRF_Structure("<AttribLocation>") );
+        location.getStructure()->value().push_back( SRF_Structure::Value("Name", toIdentifier(it->first) ) );
+        location.getStructure()->value().push_back( SRF_Structure::Value("Location", (long long)it->second ) );
+        attrib_locations.getList()->value().push_back( location );
+      }
+      values.push_back( SRF_Structure::Value("AttribLocations", attrib_locations) );
+
+
+
+      return value;
+    }
+
+    SRF_Value export_GLSLShader(const GLSLShader* glslsh)
+    {
+      SRF_Value value;
+      if (vlToSRF(glslsh))
+      {
+        value.setUID( vlToSRF(glslsh)->uid().c_str() );
+        return value;
+      }
+
+      std::string name = "<GLSLShaderError>";
+      if (glslsh->type() == vl::ST_VERTEX_SHADER)
+        name = "<VertexShader>";
+      else
+      if (glslsh->type() == vl::ST_FRAGMENT_SHADER)
+        name = "<FragmentShader>";
+      else
+      if (glslsh->type() == vl::ST_GEOMETRY_SHADER)
+        name = "<GeometryShader>";
+      else
+      if (glslsh->type() == vl::ST_TESS_CONTROL_SHADER)
+        name = "<TessControlShader>";
+      else
+      if (glslsh->type() == vl::ST_TESS_EVALUATION_SHADER)
+        name = "<TessEvaluationShader>";
+
+      value.setStructure( new SRF_Structure(name.c_str(), generateUID("glslsh_")) );
+      registerExportedStructure(glslsh, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      if (!glslsh->path().empty())
+        values.push_back( SRF_Structure::Value("Path", toString(glslsh->path()) ) );
+      else
+      if (!glslsh->source().empty())
+        values.push_back( SRF_Structure::Value("Source", toRawtext(glslsh->source()) ) );
+      else
+      if (glslsh->handle())
+        values.push_back( SRF_Structure::Value("Source", toRawtext(glslsh->getShaderSource()) ) );
+      else
+        values.push_back( SRF_Structure::Value("Source", toIdentifier("NO_SOURCE_FOUND") ) );
 
       return value;
     }
