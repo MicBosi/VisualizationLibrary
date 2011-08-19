@@ -29,19 +29,19 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics\plugins\vlSRF.hpp>
+#include <vlGraphics\plugins\vlVRF.hpp>
 #include <vlCore\Time.hpp>
 
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadSRF(const String& path)
+ref<ResourceDatabase> vl::loadVRF(const String& path)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return loadSRF(file.get());
+  return loadVRF(file.get());
 }
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadSRF(VirtualFile* file)
+ref<ResourceDatabase> vl::loadVRF(VirtualFile* file)
 {
   VRF_Serializer serializer;
 
@@ -56,13 +56,13 @@ ref<ResourceDatabase> vl::loadSRF(VirtualFile* file)
   return res_db;
 }
 //-----------------------------------------------------------------------------
-bool vl::writeSRF(const String& path, const ResourceDatabase* res_db)
+bool vl::writeVRF(const String& path, const ResourceDatabase* res_db)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return writeSRF(file.get(), res_db);
+  return writeVRF(file.get(), res_db);
 }
 //-----------------------------------------------------------------------------
-bool vl::writeSRF(VirtualFile* file, const ResourceDatabase* res_db)
+bool vl::writeVRF(VirtualFile* file, const ResourceDatabase* res_db)
 {
   VRF_Serializer serializer;
 
@@ -76,7 +76,7 @@ bool vl::writeSRF(VirtualFile* file, const ResourceDatabase* res_db)
 
   if (serializer.error())
   {
-    Log::error("LoadWriterSRF: serialization error.\n"); // mic fixme: test error conditions
+    Log::error("LoadWriterVRF: serialization error.\n"); // mic fixme: test error conditions
     return false;
   }
   else
