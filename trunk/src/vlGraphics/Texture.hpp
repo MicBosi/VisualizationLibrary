@@ -143,10 +143,11 @@ namespace vl
     friend class TextureSampler;
 
   public:
-    /** The SetupParams function wraps all the parameters needed to crate a Texture.
+    /** SetupParams wraps all the parameters needed to crate a Texture.
      * A SetupParams object is automatically setup and bound to a Texture after calling prepareTexture2D() and similar functions.
      * Once the SetupParams are bound to a Texture calling Texture::createTexture() will create a new Texture according 
-     * to what specified in the SetupParams objects. After Texture::createTexture() the SetupParams object is removed. */
+     * to what specified in the SetupParams objects. After Texture::createTexture() the SetupParams object is kept but eventual
+     * Image and BufferObjects will be released. If an Image was used it's filePath() is assigned to SetupParam::imagePath(). */
     class SetupParams: public Object
     {
     public:

@@ -91,6 +91,7 @@ Image::Image(const String& path)
   mIsCubemap = img->mIsCubemap;
   mIsNormalMap = img->mIsNormalMap;
   mHasAlpha    = img->mHasAlpha;
+  mFilePath    = img->mFilePath;
 }
 //-----------------------------------------------------------------------------
 //! Note that the image is not allocated
@@ -1185,14 +1186,16 @@ ref<Image> vl::loadImage( VirtualFile* file )
 
   ref<Image> img;
 
-  if (res_db->count<Image>())
-    img = res_db->get<Image>(0);
+  img = res_db->get<Image>(0);
 
   VL_CHECK( !file->isOpen() )
   file->close();
 
   if (img)
+  {
     img->setObjectName( file->path().toStdString() );
+    img->setFilePath( file->path() );
+  }
 
   return img;
 }
