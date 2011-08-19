@@ -93,7 +93,7 @@ public:
     mGLSL->gocUniform("tex_heghtmap")->setUniformI(0);
     mGLSL->gocUniform("tex_diffuse")->setUniformI(1);
 
-    mGLSL->addAutoAttribLocation( "vl_Position", 0 );
+    mGLSL->addAutoAttribLocation( 0, "vl_Position" );
 
     // tessellated patches fx_wire
     vl::ref<vl::Effect> fx_wire = new vl::Effect;
@@ -117,7 +117,7 @@ public:
     mGLSLWire->gocUniform("tex_heghtmap")->setUniformI(0);
     mGLSLWire->gocUniform("wire_color")->setUniform(vl::lightgreen);
 
-    mGLSLWire->addAutoAttribLocation( "vl_Position", 0 );
+    mGLSLWire->addAutoAttribLocation( 0, "vl_Position" );
 
     sceneManager()->tree()->addActor( geom_patch.get(), fx.get(), NULL )->setRenderRank(0);
     

@@ -253,8 +253,8 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
         cur_glsl_program = shader->glslProgram();
 
         // consider them NULL if they are empty
-        if (cur_glsl_program->uniformSet() && !cur_glsl_program->uniformSet()->uniforms().empty())
-          cur_glsl_prog_uniform_set = cur_glsl_program->uniformSet();
+        if (cur_glsl_program->getUniformSet() && !cur_glsl_program->getUniformSet()->uniforms().empty())
+          cur_glsl_prog_uniform_set = cur_glsl_program->getUniformSet();
 
         if (shader->getUniformSet() && !shader->getUniformSet()->uniforms().empty())
           cur_shader_uniform_set = shader->getUniformSet();

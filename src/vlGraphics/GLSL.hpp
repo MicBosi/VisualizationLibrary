@@ -82,17 +82,26 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::GLSLShader, Object)
 
   public:
-    GLSLShader(EShaderType type, const String& source=String());
+    GLSLShader(EShaderType type, const String& source_or_path=String());
 
     ~GLSLShader();
 
     EShaderType type() const { return mType; }
 
-    //! Sets the sources for this shader and schedules a recompilation for it
-    void setSource( const String& source );
-    
+    //! Sets the sources for this shader and schedules a recompilation for it. If the string passed is a file path the source is loaded from it.
+    void setSource( const String& source_or_path );
+
     //! Returns the sources for this shader
     const std::string& source() const { return mSource; }
+
+    //! The path from which the shader was loaded
+    void setPath(const std::string& path) { mPath = path; }
+
+    //! The path from which the shader was loaded
+    const std::string& path() const { return mPath; }
+
+    //! Retrieves the shader source using glGetShaderSource()
+    std::string getShaderSource() const;
 
     //! Compiles the shader, see also http://www.opengl.org/sdk/docs/man/xhtml/glCompileShader.xml for more information.
     //! This function also create the shader if handle() == 0 using the OpenGL function glCreateShader(), see also http://www.opengl.org/sdk/docs/man/xhtml/glCreateShader.xml
@@ -117,6 +126,7 @@ namespace vl
   protected:
     EShaderType mType;
     std::string mSource;
+    std::string mPath;
     unsigned int mHandle;
     bool mCompiled;
   };
@@ -220,9 +230,9 @@ namespace vl
    * \par Uniforms
    * You have 5 ways to set the value of a uniform:
    * -# call useProgram() to activate the GLSLProgram and directly call glUniform* (see also getUniformLocation()).
-   * -# add a Uniform to the GLSLProgram UniformSet, see vl::GLSLProgram::uniformSet().
-   * -# add a Uniform to the Actor's UniformSet, see vl::Actor::uniformSet().
-   * -# add a Uniform to the Actor's Shader UniformSet, see vl::Shader::uniformSet().
+   * -# add a Uniform to the GLSLProgram UniformSet, see vl::GLSLProgram::getUniformSet().
+   * -# add a Uniform to the Actor's UniformSet, see vl::Actor::getUniformSet().
+   * -# add a Uniform to the Actor's Shader UniformSet, see vl::Shader::getUniformSet().
    * -# directly update the uniform value from ActorEventCallback::onActorRenderStarted() using the standard glUniform*() OpenGL functions.
    *    In this case you have to make sure that <i>all</i> the Actors using a given GLSLProgram/Shader write such uniform.
    *
@@ -339,7 +349,7 @@ namespace vl
     /** Adds an attribute name / index pair to the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
     * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
     *     bindAttribLocation(), removeAutoAttribLocation() */
-    void addAutoAttribLocation(const char* attr_name, int attr_index) { mAutoAttribLocation[attr_name] = attr_index; mScheduleLink = true; }
+    void addAutoAttribLocation(int attr_index, const char* attr_name) { mAutoAttribLocation[attr_name] = attr_index; mScheduleLink = true; }
 
     /** Removes an attribute from the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
     * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
@@ -374,23 +384,27 @@ namespace vl
       return location;
     }
 
-    //! Equivalent to glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &max )
-    static int maxVertexAttribs();
-
     //! Returns the number of GLSLShader objects bound to this GLSLProgram
     int shaderCount() const { return (int)mShaders.size(); }
+
     //! Returns the i-th GLSLShader objects bound to this GLSLProgram
     const GLSLShader* shader(int i) const { return mShaders[i].get(); }
+
     //! Returns the i-th GLSLShader objects bound to this GLSLProgram
     GLSLShader* shader(int i) { return mShaders[i].get(); }
+
     //! Removes all the previously linked shaders and schedules a relinking
     void detachAllShaders();
 
     // --------------- bind frag data location ---------------
 
     void bindFragDataLocation(int color_number, const std::string& name);
+
     void unbindFragDataLocation(const std::string& name);
-    int fragDataLocationBinding(const std::string& name) const;
+
+    int fragDataLocation(const std::string& name) const;
+
+    const std::map<std::string, int>& fragDataLocations() const { return mFragDataLocation; }
 
     // --------------- geometry shader ---------------
 
@@ -555,23 +569,23 @@ namespace vl
     void getUniform(const std::string& name, ivec4& vec) const { getUniform(getUniformLocation(name), vec); }
 
     //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
-    UniformSet* uniformSet() { return mUniformSet.get(); }
+    UniformSet* getUniformSet() { return mUniformSet.get(); }
     //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
-    const UniformSet* uniformSet() const { return mUniformSet.get(); }
+    const UniformSet* getUniformSet() const { return mUniformSet.get(); }
     //! Sets a GLSLProgram's \p static UniformSet.
     void setUniformSet(UniformSet* uniforms) { mUniformSet = uniforms; }
-    //! Utility function using uniformSet(). Adds a Uniform to this program's \p static uniform set.
-    void setUniform(Uniform* uniform) { if (!uniformSet()) setUniformSet(new UniformSet); uniformSet()->setUniform(uniform); }
-    //! Utility function using uniformSet(). Returns the specified Uniform. Returns NULL if there isn't such a Uniform
-    Uniform* getUniform(const std::string& name) { if (!uniformSet()) return NULL; return uniformSet()->getUniform(name); }
-    //! Utility function using uniformSet(). Gets or creates the specified Uniform.
-    Uniform* gocUniform(const std::string& name) { if (!uniformSet()) setUniformSet(new UniformSet); return uniformSet()->gocUniform(name); }
-    //! Utility function using uniformSet(). Erases the specified uniform.
-    void eraseUniform(const std::string& name) { if(uniformSet()) uniformSet()->eraseUniform(name); }
-    //! Utility function using uniformSet(). Erases the specified uniform.
-    void eraseUniform(const Uniform* uniform) { if(uniformSet()) uniformSet()->eraseUniform(uniform); }
-    //! Utility function using uniformSet(). Erases all the uniforms.
-    void eraseAllUniforms() { if(uniformSet()) uniformSet()->eraseAllUniforms(); }
+    //! Utility function using getUniformSet(). Adds a Uniform to this program's \p static uniform set.
+    void setUniform(Uniform* uniform) { if (!getUniformSet()) setUniformSet(new UniformSet); getUniformSet()->setUniform(uniform); }
+    //! Utility function using getUniformSet(). Returns the specified Uniform. Returns NULL if there isn't such a Uniform
+    Uniform* getUniform(const std::string& name) { if (!getUniformSet()) return NULL; return getUniformSet()->getUniform(name); }
+    //! Utility function using getUniformSet(). Gets or creates the specified Uniform.
+    Uniform* gocUniform(const std::string& name) { if (!getUniformSet()) setUniformSet(new UniformSet); return getUniformSet()->gocUniform(name); }
+    //! Utility function using getUniformSet(). Erases the specified uniform.
+    void eraseUniform(const std::string& name) { if(getUniformSet()) getUniformSet()->eraseUniform(name); }
+    //! Utility function using getUniformSet(). Erases the specified uniform.
+    void eraseUniform(const Uniform* uniform) { if(getUniformSet()) getUniformSet()->eraseUniform(uniform); }
+    //! Utility function using getUniformSet(). Erases all the uniforms.
+    void eraseAllUniforms() { if(getUniformSet()) getUniformSet()->eraseAllUniforms(); }
 
     //! Returns a map containing name, type, size and location of all the uniforms that were active last time the GLSL program was linked.
     //! - See also vl::GLSLProgram::activeUniformInfo(), vl::UniformInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
