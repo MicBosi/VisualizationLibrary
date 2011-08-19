@@ -43,7 +43,7 @@ ref<ResourceDatabase> vl::loadSRF(const String& path)
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadSRF(VirtualFile* file)
 {
-  SRFSerializer serializer;
+  VRF_Serializer serializer;
 
   // mic fixme: debug only
   Time timer;
@@ -64,7 +64,7 @@ bool vl::writeSRF(const String& path, const ResourceDatabase* res_db)
 //-----------------------------------------------------------------------------
 bool vl::writeSRF(VirtualFile* file, const ResourceDatabase* res_db)
 {
-  SRFSerializer serializer;
+  VRF_Serializer serializer;
 
   // mic fixme: debug only
   Time timer;
