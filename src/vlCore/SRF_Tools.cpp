@@ -29,13 +29,13 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore\SRF_Tools.hpp>
+#include <vlCore\VRF_Tools.hpp>
 
 using namespace vl;
 
-bool SRF_Tokenizer::getToken(SRF_Token& token)
+bool VRF_Tokenizer::getToken(VRF_Token& token)
 {
-  token.mType = SRF_Token::TOKEN_ERROR;
+  token.mType = VRF_Token::TOKEN_ERROR;
   token.mString.clear();
 
   if (mRawtextBlock)
@@ -47,7 +47,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
   {
     if (!readTextChar(ch1))
     {
-      token.mType = SRF_Token::TOKEN_EOF;
+      token.mType = VRF_Token::TOKEN_EOF;
       return true;
     }
 
@@ -104,22 +104,22 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
   switch(ch1)
   {
   case '(':
-    token.mType = SRF_Token::LeftRoundBracket;
+    token.mType = VRF_Token::LeftRoundBracket;
     token.mString = "(";
     return true;
     
   case ')':
-    token.mType = SRF_Token::RightRoundBracket;
+    token.mType = VRF_Token::RightRoundBracket;
     token.mString = ")";
     return true;
 
   case '[':
-    token.mType = SRF_Token::LeftSquareBracket;
+    token.mType = VRF_Token::LeftSquareBracket;
     token.mString = "[";
     return true;
     
   case ']':
-    token.mType = SRF_Token::RightSquareBracket;
+    token.mType = VRF_Token::RightSquareBracket;
     token.mString = "]";
     return true;
 
@@ -151,7 +151,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
 
       if (ch2 == '\n')
       {
-        token.mType = SRF_Token::LeftFancyBracket;
+        token.mType = VRF_Token::LeftFancyBracket;
         token.mString = "{<";
         mRawtextBlock = true;
         return true;
@@ -164,7 +164,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     }
     else
     {
-      token.mType = SRF_Token::LeftCurlyBracket;
+      token.mType = VRF_Token::LeftCurlyBracket;
       token.mString = "{";
       if(!isEndOfFile())
         ungetToken(ch2);
@@ -172,7 +172,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     return true;
 
   case '}':
-    token.mType = SRF_Token::RightCurlyBracket;
+    token.mType = VRF_Token::RightCurlyBracket;
     token.mString = "}";
     return true;
 
@@ -181,7 +181,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     {
       if(ch2 == '}')
       {
-        token.mType = SRF_Token::RightFancyBracket;
+        token.mType = VRF_Token::RightFancyBracket;
         token.mString = ">}";
         return true;
       }
@@ -198,7 +198,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     }
 
   case '=':
-    token.mType = SRF_Token::Equals; 
+    token.mType = VRF_Token::Equals; 
     token.mString = "=";
     return true;
 
@@ -220,7 +220,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       Log::error( Say("Line %n : unexpected end of file while reading object header.\n") << mLineNumber );
       return false;
     }
-    token.mType = SRF_Token::TagHeader;
+    token.mType = VRF_Token::TagHeader;
     return true;
 
   case '#':
@@ -240,7 +240,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       Log::error( Say("Line %n : illegal id '#_' found.\n") << mLineNumber );
       return false;
     }
-    token.mType = SRF_Token::UID;
+    token.mType = VRF_Token::UID;
     return true;
 
   case '"':
@@ -295,7 +295,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     }
     else
     {
-      token.mType = SRF_Token::String;
+      token.mType = VRF_Token::String;
       return true;
     }
 
@@ -323,9 +323,9 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       {
         // check if it's a boolean
         if (token.mString == "true" || token.mString == "false")
-          token.mType = SRF_Token::Boolean;
+          token.mType = VRF_Token::Boolean;
         else
-          token.mType = SRF_Token::Identifier;
+          token.mType = VRF_Token::Identifier;
         return true;
       }
     }
@@ -348,7 +348,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
     // 123.123e+
     if ( ch1 >= '0' && ch1 <= '9' || ch1 == '.' || ch1 == '+' || ch1 == '-' )
     {
-      token.mType = SRF_Token::TOKEN_ERROR;
+      token.mType = VRF_Token::TOKEN_ERROR;
       token.mString.push_back(ch1);
 
       enum { sZERO, sPLUS_MINUS, sINT, sFRAC, sPOINT, sE, sPLUS_MINUS_EXP, sEXP } state = sINT;
@@ -378,7 +378,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            token.mType = SRF_Token::Integer;
+            token.mType = VRF_Token::Integer;
             ungetToken(ch1);
             return true;
           }
@@ -420,7 +420,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            token.mType = SRF_Token::Integer;
+            token.mType = VRF_Token::Integer;
             ungetToken(ch1);
             return true;
           }
@@ -450,7 +450,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
           }
           else
           {
-            token.mType = SRF_Token::Real;
+            token.mType = VRF_Token::Real;
             ungetToken(ch1);
             return true;
           }
@@ -487,7 +487,7 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
             token.mString.push_back(ch1);
           else
           {
-            token.mType = SRF_Token::Real;
+            token.mType = VRF_Token::Real;
             ungetToken(ch1);
             return true;
           }
@@ -497,13 +497,13 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
       // reached TOKEN_EOF in the middle of the parsing so we check where we were, note that it cannot be a Integer or a Real
       if (state == sINT)
       {
-        token.mType = SRF_Token::Integer;
+        token.mType = VRF_Token::Integer;
         return true;
       }
       else
       if (state == sFRAC || state == sEXP)
       {
-        token.mType = SRF_Token::Real;
+        token.mType = VRF_Token::Real;
         return true;
       }
       else
@@ -517,12 +517,12 @@ bool SRF_Tokenizer::getToken(SRF_Token& token)
   }
 }
 //-----------------------------------------------------------------------------
-bool SRF_Tokenizer::getRawtextBlock(SRF_Token& token)
+bool VRF_Tokenizer::getRawtextBlock(VRF_Token& token)
 {
   mRawtextBlock = false;
 
   token.mString.clear();
-  token.mType = SRF_Token::TOKEN_ERROR;
+  token.mType = VRF_Token::TOKEN_ERROR;
 
   char ch =0;
   while(readTextChar(ch))
@@ -547,7 +547,7 @@ bool SRF_Tokenizer::getRawtextBlock(SRF_Token& token)
           }
           else
           {
-            token.mType = SRF_Token::RawtextBlock;
+            token.mType = VRF_Token::RawtextBlock;
             ungetToken('}');
             ungetToken('>');
             return true;
@@ -564,7 +564,7 @@ bool SRF_Tokenizer::getRawtextBlock(SRF_Token& token)
   return false;
 }
 //-----------------------------------------------------------------------------
-void SRF_Value::release()
+void VRF_Value::release()
 {
   switch(mType)
   {
@@ -610,7 +610,7 @@ void SRF_Value::release()
   mUnion.mInteger = 0;
 }
 //-----------------------------------------------------------------------------
-SRF_Value& SRF_Value::operator=(const SRF_Value& other)
+VRF_Value& VRF_Value::operator=(const VRF_Value& other)
 {
   mLineNumber = other.mLineNumber;
 
@@ -660,7 +660,7 @@ SRF_Value& SRF_Value::operator=(const SRF_Value& other)
   return *this;
 }
 //-----------------------------------------------------------------------------
-SRF_Structure* SRF_Value::setStructure(SRF_Structure* obj)
+VRF_Structure* VRF_Value::setStructure(VRF_Structure* obj)
 {
   release();
   mType = Structure;
@@ -670,7 +670,7 @@ SRF_Structure* SRF_Value::setStructure(SRF_Structure* obj)
   return obj;
 }
 //-----------------------------------------------------------------------------
-SRF_List* SRF_Value::setList(SRF_List* list)
+VRF_List* VRF_Value::setList(VRF_List* list)
 {
   VL_CHECK(list);
 
@@ -682,7 +682,7 @@ SRF_List* SRF_Value::setList(SRF_List* list)
   return list;
 }
 //-----------------------------------------------------------------------------
-SRF_RawtextBlock* SRF_Value::setRawtextBlock(SRF_RawtextBlock* fblock)
+VRF_RawtextBlock* VRF_Value::setRawtextBlock(VRF_RawtextBlock* fblock)
 {
   VL_CHECK(fblock);
 
@@ -694,7 +694,7 @@ SRF_RawtextBlock* SRF_Value::setRawtextBlock(SRF_RawtextBlock* fblock)
   return fblock;
 }
 //-----------------------------------------------------------------------------
-SRF_ArrayInteger* SRF_Value::setArrayInteger(SRF_ArrayInteger* arr)
+VRF_ArrayInteger* VRF_Value::setArrayInteger(VRF_ArrayInteger* arr)
 {
   VL_CHECK(arr);
   release();
@@ -705,7 +705,7 @@ SRF_ArrayInteger* SRF_Value::setArrayInteger(SRF_ArrayInteger* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-SRF_ArrayReal* SRF_Value::setArrayReal(SRF_ArrayReal* arr)
+VRF_ArrayReal* VRF_Value::setArrayReal(VRF_ArrayReal* arr)
 {
   VL_CHECK(arr);
   release();
@@ -717,7 +717,7 @@ SRF_ArrayReal* SRF_Value::setArrayReal(SRF_ArrayReal* arr)
 }
 //-----------------------------------------------------------------------------
 /*
-SRF_ArrayString* SRF_Value::setArrayString(SRF_ArrayString* arr)
+VRF_ArrayString* VRF_Value::setArrayString(VRF_ArrayString* arr)
 {
   VL_CHECK(arr);
   release();
@@ -728,7 +728,7 @@ SRF_ArrayString* SRF_Value::setArrayString(SRF_ArrayString* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-SRF_ArrayIdentifier* SRF_Value::setArrayIdentifier(SRF_ArrayIdentifier* arr)
+VRF_ArrayIdentifier* VRF_Value::setArrayIdentifier(VRF_ArrayIdentifier* arr)
 {
   VL_CHECK(arr);
   release();
@@ -739,7 +739,7 @@ SRF_ArrayIdentifier* SRF_Value::setArrayIdentifier(SRF_ArrayIdentifier* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-SRF_ArrayUID* SRF_Value::setArrayUID(SRF_ArrayUID* arr)
+VRF_ArrayUID* VRF_Value::setArrayUID(VRF_ArrayUID* arr)
 {
   VL_CHECK(arr);
   release();
@@ -751,23 +751,23 @@ SRF_ArrayUID* SRF_Value::setArrayUID(SRF_ArrayUID* arr)
 }
 */
 //-----------------------------------------------------------------------------
-SRF_Array* SRF_Value::setArray(SRF_Array* arr)
+VRF_Array* VRF_Value::setArray(VRF_Array* arr)
 {
-  if (arr->classType() == SRF_ArrayInteger::Type())
-    return setArrayInteger(arr->as<SRF_ArrayInteger>());
+  if (arr->classType() == VRF_ArrayInteger::Type())
+    return setArrayInteger(arr->as<VRF_ArrayInteger>());
   else
-  if (arr->classType() == SRF_ArrayReal::Type())
-    return setArrayReal(arr->as<SRF_ArrayReal>());
+  if (arr->classType() == VRF_ArrayReal::Type())
+    return setArrayReal(arr->as<VRF_ArrayReal>());
   /*
   else
-  if (arr->classType() == SRF_ArrayString::Type())
-    return setArrayString(arr->as<SRF_ArrayString>());
+  if (arr->classType() == VRF_ArrayString::Type())
+    return setArrayString(arr->as<VRF_ArrayString>());
   else
-  if (arr->classType() == SRF_ArrayIdentifier::Type())
-    return setArrayIdentifier(arr->as<SRF_ArrayIdentifier>());
+  if (arr->classType() == VRF_ArrayIdentifier::Type())
+    return setArrayIdentifier(arr->as<VRF_ArrayIdentifier>());
   else
-  if (arr->classType() == SRF_ArrayUID::Type())
-    return setArrayUID(arr->as<SRF_ArrayUID>());
+  if (arr->classType() == VRF_ArrayUID::Type())
+    return setArrayUID(arr->as<VRF_ArrayUID>());
   */
   else
   {
