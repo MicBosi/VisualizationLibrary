@@ -1099,8 +1099,14 @@ bool Texture::createTexture()
       // make sure no errors were generated
       VL_CHECK_OGL()
 
-      // uninstall setup parameters
-      mTex->mSetupParams = NULL;
+      // release Image and BufferObject from SetupParams
+      if (mTex->mSetupParams)
+      {
+        if (mTex->mSetupParams->imagePath().empty() && mTex->mSetupParams->image())
+          mTex->mSetupParams->setImagePath( mTex->mSetupParams->image()->filePath() );
+        mTex->mSetupParams->setImage(NULL);
+        mTex->mSetupParams->setBufferObject(NULL);
+      }
     }
   };
 

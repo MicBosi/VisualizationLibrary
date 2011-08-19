@@ -1535,9 +1535,9 @@ namespace vl
     
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
     
-    const mat4& matrix() const { return mMatrix; }
+    const fmat4& matrix() const { return mMatrix; }
     
-    const TextureMatrix& setMatrix(const mat4& matrix)
+    const TextureMatrix& setMatrix(const fmat4& matrix)
     {
       mMatrix = matrix;
       return *this;
@@ -1561,7 +1561,7 @@ namespace vl
     }
 
   protected:
-    mat4 mMatrix;
+    fmat4 mMatrix;
     bool mUseCameraRotationInverse;
   };
   //------------------------------------------------------------------------------

@@ -352,13 +352,19 @@ namespace vl
 
     void substituteColorGreenKey(unsigned int col0, unsigned int col1);
 
+    /** The file from which the image was loaded. */
+    const String& filePath() const { return mFilePath; }
+
+    /** The file from which the image was loaded. */
+    void setFilePath(const String& path) { mFilePath = path; }
+
   protected:
     void updatePitch();
 
   protected:
     ref<Buffer> mPixels;
     ref<KeyValues> mTags;
-
+    String mFilePath;
     std::vector< ref<Image> > mMipmaps;
     int mWidth;
     int mHeight;

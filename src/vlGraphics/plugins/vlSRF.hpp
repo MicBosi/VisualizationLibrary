@@ -820,9 +820,523 @@ namespace vl
       if (rs->classType() == GLSLProgram::Type())
         return export_GLSLProgram(rs->as<GLSLProgram>());
       else
+      if (rs->classType() == TextureSampler::Type())
+        return export_TextureSampler(rs->as<TextureSampler>());
+      else
+      if (rs->classType() == VertexAttrib::Type())
+        return export_VertexAttrib(rs->as<VertexAttrib>());
+      else
+      if (rs->classType() == Color::Type())
+        return export_Color(rs->as<Color>());
+      else
+      if (rs->classType() == SecondaryColor::Type())
+        return export_SecondaryColor(rs->as<SecondaryColor>());
+      else
+      if (rs->classType() == Normal::Type())
+        return export_Normal(rs->as<Normal>());
+      else
       {
         VL_TRAP();
         return SRF_Value( new SRF_Structure("<UnknownObjectType>", generateUID("renderstate_")) );
+      }
+    }
+
+    SRF_Value export_VertexAttrib(const VertexAttrib* vertattrib)
+    {
+      SRF_Value value;
+      if (vlToSRF(vertattrib))
+      {
+        value.setUID( vlToSRF(vertattrib)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<VertexAttrib>", generateUID("vertattrib_")) );
+      registerExportedStructure(vertattrib, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("VertexAttrib", toValue(vertattrib->value()) ) );
+
+      return value;
+    }
+
+    SRF_Value export_Color(const Color* color)
+    {
+      SRF_Value value;
+      if (vlToSRF(color))
+      {
+        value.setUID( vlToSRF(color)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<Color>", generateUID("color_")) );
+      registerExportedStructure(color, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("Color", toValue(color->color()) ) );
+
+      return value;
+    }
+
+    SRF_Value export_SecondaryColor(const SecondaryColor* seccolor)
+    {
+      SRF_Value value;
+      if (vlToSRF(seccolor))
+      {
+        value.setUID( vlToSRF(seccolor)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<SecondaryColor>", generateUID("seccolor_")) );
+      registerExportedStructure(seccolor, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("SecondaryColor", toValue(seccolor->secondaryColor()) ) );
+
+      return value;
+    }
+
+    SRF_Value export_Normal(const Normal* normal)
+    {
+      SRF_Value value;
+      if (vlToSRF(normal))
+      {
+        value.setUID( vlToSRF(normal)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<Normal>", generateUID("normal_")) );
+      registerExportedStructure(normal, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("Normal", toValue(normal->normal()) ) );
+
+      return value;
+    }
+
+    SRF_Value export_TextureSampler(const TextureSampler* tex_sampler)
+    {
+      SRF_Value value;
+      if (vlToSRF(tex_sampler))
+      {
+        value.setUID( vlToSRF(tex_sampler)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<TextureSampler>", generateUID("texsampler_")) );
+      registerExportedStructure(tex_sampler, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      if (tex_sampler->texture())
+      {
+        values.push_back( SRF_Structure::Value("Texture", export_Texture(tex_sampler->texture()) ) );
+      }
+      if (tex_sampler->getTexParameter())
+        values.push_back( SRF_Structure::Value("TexParameter", export_TexParameter(tex_sampler->getTexParameter()) ) );
+
+      return value;
+    }
+
+    SRF_Value export_Texture(const Texture* tex)
+    {
+      SRF_Value value;
+      if (vlToSRF(tex))
+      {
+        value.setUID( vlToSRF(tex)->uid().c_str() );
+        return value;
+      }
+
+      std::string name;
+      switch(tex->dimension())
+      {
+      case TD_TEXTURE_1D: name = "<Texture1D>"; break;
+      default:
+      case TD_TEXTURE_2D: name = "<Texture2D>"; break;
+      case TD_TEXTURE_3D: name = "<Texture3D>"; break;
+      case TD_TEXTURE_CUBE_MAP: name = "<TextureCubeMap>"; break;
+      case TD_TEXTURE_RECTANGLE: name = "<TextureRectangle>"; break;
+      case TD_TEXTURE_1D_ARRAY: name = "<Texture1DArray>"; break;
+      case TD_TEXTURE_2D_ARRAY: name = "<Texture2DArray>"; break;
+      case TD_TEXTURE_BUFFER: name = "<TextureBuffer>"; break;
+      case TD_TEXTURE_2D_MULTISAMPLE: name = "<Texture2DMultisample>"; break;
+      case TD_TEXTURE_2D_MULTISAMPLE_ARRAY: name = "<Texture2DMultisampleArray>"; break;
+      }
+
+      value.setStructure( new SRF_Structure(name.c_str(), generateUID("texture_")) );
+      registerExportedStructure(tex, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      if (tex->getTexParameter())
+        values.push_back( SRF_Structure::Value("TexParameter", export_TexParameter(tex->getTexParameter()) ) );
+
+      if (tex->setupParams())
+      {
+        const Texture::SetupParams* par = tex->setupParams();
+
+        //if (!par->imagePath().empty())
+          values.push_back( SRF_Structure::Value("ImagePath", toString(par->imagePath().toStdString()) ) );
+
+        values.push_back( SRF_Structure::Value("Format", toIdentifier(export_TextureFormat(par->format())) ) );
+
+        //if (par->width())
+          values.push_back( SRF_Structure::Value("Width", (long long)par->width() ) );
+
+        //if (par->height())
+          values.push_back( SRF_Structure::Value("Height", (long long)par->height() ) );
+
+        //if (par->depth())
+          values.push_back( SRF_Structure::Value("Depth", (long long)par->depth() ) );
+
+        values.push_back( SRF_Structure::Value("GenMipmaps", par->genMipmaps() ) );
+
+        //if(par->samples())
+        {
+          values.push_back( SRF_Structure::Value("Samples", (long long)par->samples() ) );
+          values.push_back( SRF_Structure::Value("FixedSamplesLocation", par->fixedSamplesLocations() ) );
+        }
+      }
+
+
+      return value;
+    }
+
+    std::string export_TextureFormat(ETextureFormat tf)
+    {
+      switch(tf)
+      {
+      default:
+      case TF_UNKNOWN: return "TF_UNKNOWN";
+
+      case TF_ALPHA  : return "ALPHA";
+      case TF_ALPHA4 : return "ALPHA4";
+      case TF_ALPHA8 : return "ALPHA8";
+      case TF_ALPHA12: return "ALPHA12";
+      case TF_ALPHA16: return "ALPHA16";
+
+      case TF_INTENSITY  : return "INTENSITY";
+      case TF_INTENSITY4 : return "INTENSITY4";
+      case TF_INTENSITY8 : return "INTENSITY8";
+      case TF_INTENSITY12: return "INTENSITY12";
+      case TF_INTENSITY16: return "INTENSITY16";
+      case TF_LUMINANCE  : return "LUMINANCE";
+      case TF_LUMINANCE4 : return "LUMINANCE4";
+      case TF_LUMINANCE8 : return "LUMINANCE8";
+      case TF_LUMINANCE12: return "LUMINANCE12";
+      case TF_LUMINANCE16: return "LUMINANCE16";
+      case TF_LUMINANCE_ALPHA    : return "LUMINANCE_ALPHA";
+      case TF_LUMINANCE4_ALPHA4  : return "LUMINANCE4_ALPHA4";
+      case TF_LUMINANCE6_ALPHA2  : return "LUMINANCE6_ALPHA2";
+      case TF_LUMINANCE8_ALPHA8  : return "LUMINANCE8_ALPHA8";
+      case TF_LUMINANCE12_ALPHA4 : return "LUMINANCE12_ALPHA4";
+      case TF_LUMINANCE12_ALPHA12: return "LUMINANCE12_ALPHA12";
+      case TF_LUMINANCE16_ALPHA16: return "LUMINANCE16_ALPHA16";
+      case TF_R3_G3_B2: return "R3_G3_B2";
+      case TF_RGB     : return "RGB";
+      case TF_RGB4    : return "RGB4";
+      case TF_RGB5    : return "RGB5";
+      case TF_RGB8    : return "RGB8";
+      case TF_RGB10   : return "RGB10";
+      case TF_RGB12   : return "RGB12";
+      case TF_RGB16   : return "RGB16";
+      case TF_RGBA    : return "RGBA";
+      case TF_RGBA2   : return "RGBA2";
+      case TF_RGBA4   : return "RGBA4";
+      case TF_RGB5_A1 : return "RGB5_A1";
+      case TF_RGBA8   : return "RGBA8";
+      case TF_RGB10_A2: return "RGB10_A2";
+      case TF_RGBA12  : return "RGBA12";
+      case TF_RGBA16  : return "RGBA16";
+
+      // ARB_texture_float / OpenGL 3
+      case TF_RGBA32F: return "RGBA32F";
+      case TF_RGB32F: return "RGB32F";
+      case TF_ALPHA32F: return "ALPHA32F";
+      case TF_INTENSITY32F: return "INTENSITY32F";
+      case TF_LUMINANCE32F: return "LUMINANCE32F";
+      case TF_LUMINANCE_ALPHA32F: return "LUMINANCE_ALPHA32F";
+      case TF_RGBA16F: return "RGBA16F";
+      case TF_RGB16F: return "RGB16F";
+      case TF_ALPHA16F: return "ALPHA16F";
+      case TF_INTENSITY16F: return "INTENSITY16F";
+      case TF_LUMINANCE16F: return "LUMINANCE16F";
+      case TF_LUMINANCE_ALPHA16F: return "LUMINANCE_ALPHA16F";
+
+      // from table 3.12 opengl api specs 4.1
+      case TF_R8_SNORM: return "R8_SNORM";
+      case TF_R16_SNORM: return "R16_SNORM";
+      case TF_RG8_SNORM: return "RG8_SNORM";
+      case TF_RG16_SNORM: return "RG16_SNORM";
+      case TF_RGB8_SNORM: return "RGB8_SNORM";
+      case TF_RGBA8_SNORM: return "RGBA8_SNORM";
+      case TF_RGB10_A2UI: return "RGB10_A2UI";
+      case TF_RGBA16_SNORM: return "RGBA16_SNORM";
+      case TF_R11F_G11F_B10F: return "R11F_G11F_B10F";
+      case TF_RGB9_E5: return "RGB9_E5";
+      case TF_RGB8I: return "RGB8I";
+      case TF_RGB8UI: return "RGB8UI";
+      case TF_RGB16I: return "RGB16I";
+      case TF_RGB16UI: return "RGB16UI";
+      case TF_RGB32I: return "RGB32I";
+      case TF_RGB32UI: return "RGB32UI";
+      case TF_RGBA8I: return "RGBA8I";
+      case TF_RGBA8UI: return "RGBA8UI";
+      case TF_RGBA16I: return "RGBA16I";
+      case TF_RGBA16UI: return "RGBA16UI";
+      case TF_RGBA32I: return "RGBA32I";
+      case TF_RGBA32UI: return "TF_RGBA32UI";
+
+      // ATI_texture_float (the enums are the same as ARB_texture_float)
+      //case TF_RGBA_FLOAT32_ATI: return "RGBA_FLOAT32_ATI";
+      //case TF_RGB_FLOAT32_ATI: return "RGB_FLOAT32_ATI";
+      //case TF_ALPHA_FLOAT32_ATI: return "ALPHA_FLOAT32_ATI";
+      //case TF_INTENSITY_FLOAT32_ATI: return "INTENSITY_FLOAT32_ATI";
+      //case TF_LUMINANCE_FLOAT32_ATI: return "LUMINANCE_FLOAT32_ATI";
+      //case TF_LUMINANCE_ALPHA_FLOAT32_ATI: return "LUMINANCE_ALPHA_FLOAT32_ATI";
+      //case TF_RGBA_FLOAT16_ATI: return "RGBA_FLOAT16_ATI";
+      //case TF_RGB_FLOAT16_ATI: return "RGB_FLOAT16_ATI";
+      //case TF_ALPHA_FLOAT16_ATI: return "ALPHA_FLOAT16_ATI";
+      //case TF_INTENSITY_FLOAT16_ATI: return "INTENSITY_FLOAT16_ATI";
+      //case TF_LUMINANCE_FLOAT16_ATI: return "LUMINANCE_FLOAT16_ATI";
+      //case TF_LUMINANCE_ALPHA_FLOAT16_ATI: return "LUMINANCE_ALPHA_FLOAT16_ATI";
+
+      // EXT_texture_shared_exponent
+      // case TF_RGB9_E5_EXT: return "RGB9_E5_EXT";
+
+      // EXT_packed_float
+      // case TF_11F_G11F_B10F_EXT: return "11F_G11F_B10F_EXT";
+
+      // EXT_packed_depth_stencil / GL_ARB_framebuffer_object
+      case TF_DEPTH_STENCIL   : return "DEPTH_STENCIL";
+      case TF_DEPTH24_STENCIL8: return "DEPTH24_STENCIL8";
+
+      // ARB_depth_buffer_float
+      case TF_DEPTH_COMPONENT32F: return "DEPTH_COMPONENT32F";
+      case TF_DEPTH32F_STENCIL8 : return "DEPTH32F_STENCIL8";
+
+      // ARB_depth_texture
+      case TF_DEPTH_COMPONENT  : return "DEPTH_COMPONENT";
+      case TF_DEPTH_COMPONENT16: return "DEPTH_COMPONENT16";
+      case TF_DEPTH_COMPONENT24: return "DEPTH_COMPONENT24";
+      case TF_DEPTH_COMPONENT32: return "DEPTH_COMPONENT32";
+
+      // ARB_texture_compression
+      case TF_COMPRESSED_ALPHA          : return "COMPRESSED_ALPHA";
+      case TF_COMPRESSED_INTENSITY      : return "COMPRESSED_INTENSITY";
+      case TF_COMPRESSED_LUMINANCE      : return "COMPRESSED_LUMINANCE";
+      case TF_COMPRESSED_LUMINANCE_ALPHA: return "COMPRESSED_LUMINANCE_ALPHA";
+      case TF_COMPRESSED_RGB            : return "COMPRESSED_RGB";
+      case TF_COMPRESSED_RGBA           : return "COMPRESSED_RGBA";
+
+      // 3DFX_texture_compression_FXT1
+      case TF_COMPRESSED_RGB_FXT1_3DFX : return "COMPRESSED_RGB_FXT1_3DFX";
+      case TF_COMPRESSED_RGBA_FXT1_3DFX: return "COMPRESSED_RGBA_FXT1_3DFX";
+
+      // EXT_texture_compression_s3tc
+      case TF_COMPRESSED_RGB_S3TC_DXT1_EXT : return "COMPRESSED_RGB_S3TC_DXT1_EXT";
+      case TF_COMPRESSED_RGBA_S3TC_DXT1_EXT: return "COMPRESSED_RGBA_S3TC_DXT1_EXT";
+      case TF_COMPRESSED_RGBA_S3TC_DXT3_EXT: return "COMPRESSED_RGBA_S3TC_DXT3_EXT";
+      case TF_COMPRESSED_RGBA_S3TC_DXT5_EXT: return "COMPRESSED_RGBA_S3TC_DXT5_EXT";
+
+      // EXT_texture_compression_latc
+      case TF_COMPRESSED_LUMINANCE_LATC1_EXT             : return "COMPRESSED_LUMINANCE_LATC1_EXT";
+      case TF_COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT      : return "COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT";
+      case TF_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT       : return "COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT";
+      case TF_COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2_EXT: return "COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2_EXT";
+
+      // EXT_texture_compression_rgtc
+      case TF_COMPRESSED_RED_RGTC1_EXT             : return "COMPRESSED_RED_RGTC1_EXT";
+      case TF_COMPRESSED_SIGNED_RED_RGTC1_EXT      : return "COMPRESSED_SIGNED_RED_RGTC1_EXT";
+      case TF_COMPRESSED_RED_GREEN_RGTC2_EXT       : return "COMPRESSED_RED_GREEN_RGTC2_EXT";
+      case TF_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT: return "COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT";
+
+      // EXT_texture_integer
+      // case TF_RGBA32UI_EXT: return "RGBA32UI_EXT";
+      // case TF_RGB32UI_EXT: return "RGB32UI_EXT";
+      case TF_ALPHA32UI_EXT: return "ALPHA32UI_EXT";
+      case TF_INTENSITY32UI_EXT: return "INTENSITY32UI_EXT";
+      case TF_LUMINANCE32UI_EXT: return "LUMINANCE32UI_EXT";
+      case TF_LUMINANCE_ALPHA32UI_EXT: return "LUMINANCE_ALPHA32UI_EXT";
+
+      // case TF_RGBA16UI_EXT: return "RGBA16UI_EXT";
+      // case TF_RGB16UI_EXT: return "RGB16UI_EXT";
+      case TF_ALPHA16UI_EXT: return "ALPHA16UI_EXT";
+      case TF_INTENSITY16UI_EXT: return "INTENSITY16UI_EXT";
+      case TF_LUMINANCE16UI_EXT: return "LUMINANCE16UI_EXT";
+      case TF_LUMINANCE_ALPHA16UI_EXT: return "LUMINANCE_ALPHA16UI_EXT";
+
+      // case TF_RGBA8UI_EXT: return "RGBA8UI_EXT";
+      // case TF_RGB8UI_EXT: return "RGB8UI_EXT";
+      case TF_ALPHA8UI_EXT: return "ALPHA8UI_EXT";
+      case TF_INTENSITY8UI_EXT: return "INTENSITY8UI_EXT";
+      case TF_LUMINANCE8UI_EXT: return "LUMINANCE8UI_EXT";
+      case TF_LUMINANCE_ALPHA8UI_EXT: return "LUMINANCE_ALPHA8UI_EXT";
+
+      // case TF_RGBA32I_EXT: return "RGBA32I_EXT";
+      // case TF_RGB32I_EXT: return "RGB32I_EXT";
+      case TF_ALPHA32I_EXT: return "ALPHA32I_EXT";
+      case TF_INTENSITY32I_EXT: return "INTENSITY32I_EXT";
+      case TF_LUMINANCE32I_EXT: return "LUMINANCE32I_EXT";
+      case TF_LUMINANCE_ALPHA32I_EXT: return "LUMINANCE_ALPHA32I_EXT";
+
+      // case TF_RGBA16I_EXT: return "RGBA16I_EXT";
+      // case TF_RGB16I_EXT: return "RGB16I_EXT";
+      case TF_ALPHA16I_EXT: return "ALPHA16I_EXT";
+      case TF_INTENSITY16I_EXT: return "INTENSITY16I_EXT";
+      case TF_LUMINANCE16I_EXT: return "LUMINANCE16I_EXT";
+      case TF_LUMINANCE_ALPHA16I_EXT: return "LUMINANCE_ALPHA16I_EXT";
+
+      // case TF_RGBA8I_EXT: return "RGBA8I_EXT";
+      // case TF_RGB8I_EXT: return "RGB8I_EXT";
+      case TF_ALPHA8I_EXT: return "ALPHA8I_EXT";
+      case TF_INTENSITY8I_EXT: return "INTENSITY8I_EXT";
+      case TF_LUMINANCE8I_EXT: return "LUMINANCE8I_EXT";
+      case TF_LUMINANCE_ALPHA8I_EXT: return "LUMINANCE_ALPHA8I_EXT";
+
+      // GL_ARB_texture_rg
+      case TF_RED: return "RED";
+      case TF_COMPRESSED_RED: return "COMPRESSED_RED";
+      case TF_COMPRESSED_RG: return "COMPRESSED_RG";
+      case TF_RG: return "RG";
+      case TF_R8: return "R8";
+      case TF_R16: return "R16";
+      case TF_RG8: return "RG8";
+      case TF_RG16: return "RG16";
+      case TF_R16F: return "R16F";
+      case TF_R32F: return "R32F";
+      case TF_RG16F: return "RG16F";
+      case TF_RG32F: return "RG32F";
+      case TF_R8I: return "R8I";
+      case TF_R8UI: return "R8UI";
+      case TF_R16I: return "R16I";
+      case TF_R16UI: return "R16UI";
+      case TF_R32I: return "R32I";
+      case TF_R32UI: return "R32UI";
+      case TF_RG8I: return "RG8I";
+      case TF_RG8UI: return "RG8UI";
+      case TF_RG16I: return "RG16I";
+      case TF_RG16UI: return "RG16UI";
+      case TF_RG32I: return "RG32I";
+      case TF_RG32UI: return "RG32UI";
+
+      // sRGB OpenGL 2.1
+      case TF_SLUMINANCE_ALPHA: return "SLUMINANCE_ALPHA";
+      case TF_SLUMINANCE8_ALPHA8: return "SLUMINANCE8_ALPHA8";
+      case TF_SLUMINANCE: return "SLUMINANCE";
+      case TF_SLUMINANCE8: return "SLUMINANCE8";
+      case TF_COMPRESSED_SLUMINANCE: return "COMPRESSED_SLUMINANCE";
+      case TF_COMPRESSED_SLUMINANCE_ALPHA: return "COMPRESSED_SLUMINANCE_ALPHA";
+
+      // sRGB OpenGL 2.1 / 3.x
+      case TF_SRGB: return "SRGB";
+      case TF_SRGB8: return "SRGB8";
+      case TF_SRGB_ALPHA: return "SRGB_ALPHA";
+      case TF_SRGB8_ALPHA8: return "SRGB8_ALPHA8";
+      case TF_COMPRESSED_SRGB: return "COMPRESSED_SRGB";
+      case TF_COMPRESSED_SRGB_ALPHA: return "COMPRESSED_SRGB_ALPHA";
+
+      // GL_EXT_texture_sRGB compressed formats
+      case TF_COMPRESSED_SRGB_S3TC_DXT1_EXT: return "COMPRESSED_SRGB_S3TC_DXT1_EXT";
+      case TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT: return "COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT";
+      case TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT: return "COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT";
+      case TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT: return "COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT";
+      }
+    }
+
+    SRF_Value export_TexParameter(const TexParameter* texparam)
+    {
+      SRF_Value value;
+      if (vlToSRF(texparam))
+      {
+        value.setUID( vlToSRF(texparam)->uid().c_str() );
+        return value;
+      }
+
+      value.setStructure( new SRF_Structure("<TexParameter>", generateUID("texparam_")) );
+      registerExportedStructure(texparam, value.getStructure());
+      std::vector<SRF_Structure::Value>& values = value.getStructure()->value();
+
+      values.push_back( SRF_Structure::Value("MinFilter", toIdentifier(export_TexParamFilter(texparam->minFilter())) ) );
+      values.push_back( SRF_Structure::Value("MagFilter", toIdentifier(export_TexParamFilter(texparam->magFilter())) ) );
+      values.push_back( SRF_Structure::Value("WrapS", toIdentifier(export_TexParamWrap(texparam->wrapS())) ) );
+      values.push_back( SRF_Structure::Value("WrapT", toIdentifier(export_TexParamWrap(texparam->wrapT())) ) );
+      values.push_back( SRF_Structure::Value("WrapR", toIdentifier(export_TexParamWrap(texparam->wrapR())) ) );
+      values.push_back( SRF_Structure::Value("CompareMode", toIdentifier(export_TexCompareMode(texparam->compareMode())) ) );
+      values.push_back( SRF_Structure::Value("CompareFunc", toIdentifier(export_TexCompareFunc(texparam->compareFunc())) ) );
+      values.push_back( SRF_Structure::Value("DepthTextureMode", toIdentifier(export_DepthTextureMode(texparam->depthTextureMode())) ) );
+      values.push_back( SRF_Structure::Value("BorderColor", toValue(texparam->borderColor()) ) );
+      values.push_back( SRF_Structure::Value("Anisotropy", texparam->anisotropy() ) );
+      values.push_back( SRF_Structure::Value("GenerateMipmap", texparam->generateMipmap() ) );
+
+      return value;
+    }
+
+    std::string export_DepthTextureMode(EDepthTextureMode dtm)
+    {
+      switch(dtm)
+      {
+      case DTM_LUMINANCE: return "DTM_LUMINANCE";
+      case DTM_INTENSITY: return "DTM_INTENSITY";
+      case DTM_ALPHA: return "DTM_ALPHA";
+      case DTM_RED:
+      default:
+        return "DTM_RED";
+      }
+    }
+
+    std::string export_TexCompareMode(ETexCompareMode tcm)
+    {
+      switch(tcm)
+      {
+      case TCM_NONE: return "TCM_NONE";
+      // case TCM_COMPARE_R_TO_TEXTURE: return "TCM_COMPARE_R_TO_TEXTURE";
+      default:
+      case TCM_COMPARE_REF_DEPTH_TO_TEXTURE: 
+        return "TCM_COMPARE_REF_DEPTH_TO_TEXTURE";
+      }
+    }
+
+    std::string export_TexCompareFunc(ETexCompareFunc tcf)
+    {
+      switch(tcf)
+      {
+      case TCF_LEQUAL: return "TCF_LEQUAL";
+      case TCF_GEQUAL: return "TCF_GEQUAL";
+      case TCF_LESS: return "TCF_LESS";
+      case TCF_GREATER: return "TCF_GREATER";
+      case TCF_EQUAL: return "TCF_EQUAL";
+      case TCF_NOTEQUAL: return "TCF_NOTEQUAL";
+      case TCF_ALWAYS: return "TCF_ALWAYS";
+      default:
+      case TCF_NEVER: 
+        return "TCF_NEVER";
+      }
+    }
+
+    std::string export_TexParamFilter(ETexParamFilter tpf)
+    {
+      switch(tpf)
+      {
+      case TPF_NEAREST: return "TPF_NEAREST";
+      case TPF_LINEAR: return "TPF_LINEAR";
+      case TPF_NEAREST_MIPMAP_NEAREST: return "TPF_NEAREST_MIPMAP_NEAREST";
+      case TPF_LINEAR_MIPMAP_NEAREST: return "TPF_LINEAR_MIPMAP_NEAREST";
+      case TPF_NEAREST_MIPMAP_LINEAR: return "TPF_NEAREST_MIPMAP_LINEAR";
+      case TPF_LINEAR_MIPMAP_LINEAR: 
+      default:
+        return "TPF_LINEAR_MIPMAP_LINEAR";
+      }
+    }
+
+    std::string export_TexParamWrap(ETexParamWrap tpw)
+    {
+      switch(tpw)
+      {
+      case TPW_CLAMP: return "TPW_CLAMP";
+      case TPW_CLAMP_TO_BORDER: return "TPW_CLAMP_TO_BORDER";
+      case TPW_CLAMP_TO_EDGE: return "TPW_CLAMP_TO_EDGE";
+      case TPW_MIRRORED_REPEAT: return "TPW_MIRRORED_REPEAT";
+      case TPW_REPEAT: 
+      default:
+        return "TPW_REPEAT";
       }
     }
 
