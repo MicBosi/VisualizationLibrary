@@ -191,7 +191,7 @@ ref<Geometry> Extrusion::extrude()
 
   ref<ArrayFloat3> vert_array = new ArrayFloat3;
   geom->setVertexArray( vert_array.get() );
-  *vert_array = verts;
+  vert_array->initFrom(verts);
 
   if (!colorPath().empty())
   {
