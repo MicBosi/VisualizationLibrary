@@ -284,8 +284,8 @@ void Molecule::wireframeStyle()
       }
     }
   }
-  *points = pt;
-  *colors = cols;
+  points->initFrom(pt);
+  colors->initFrom(cols);
   geom->drawCalls()->push_back(new DrawArrays(PT_LINES, 0, (int)points->size()));
 
   ref<Effect> fx = new Effect;
@@ -449,8 +449,8 @@ void Molecule::generateRings()
         cols.push_back( aromaticRingColor() );
       }
     }
-    *points = pt;
-    *colors = cols;
+    points->initFrom(pt);
+    colors->initFrom(cols);
     geom->drawCalls()->push_back(new DrawArrays(PT_LINES, 0, (int)points->size()));
 
     ref<Effect> fx = new Effect;

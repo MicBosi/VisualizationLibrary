@@ -162,7 +162,7 @@ ref<Geometry> Tessellator::tessellateGeometry(bool append_tessellated_tris)
   ref<Geometry> geom = new Geometry;
   ref<ArrayFloat3> vert_array = new ArrayFloat3;
   
-  *vert_array = mTessellatedTris;
+  vert_array->initFrom(mTessellatedTris);
 
   geom->setVertexArray(vert_array.get());
   geom->drawCalls()->push_back( new vl::DrawArrays(PT_TRIANGLES,0,vert_array->size()) );

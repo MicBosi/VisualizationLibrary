@@ -266,11 +266,11 @@ public:
 
     ref<ArrayFloat3> vert_array = new ArrayFloat3;
     geom->setVertexArray(vert_array.get());
-    *vert_array = verts;
+    vert_array->initFrom(verts);
 
     ref<ArrayFloat4> cols_array = new ArrayFloat4;
     geom->setColorArray(cols_array.get());
-    *cols_array = colos;
+    cols_array->initFrom(colos);
 
     mCtrlPoints_Actor = sceneManager()->tree()->addActor(geom.get(), fx.get(), NULL);
   }

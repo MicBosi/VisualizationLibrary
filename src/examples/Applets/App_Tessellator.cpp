@@ -116,7 +116,7 @@ public:
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     tess_poly->setVertexArray(vert_array.get());
     // Fill the vertex array with the tessellated triangles
-    *vert_array = tess.tessellatedTris();
+    vert_array->initFrom(tess.tessellatedTris());
     // Add the primitive description
     tess_poly->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLES, 0, (int)vert_array->size()) );
 

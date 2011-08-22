@@ -350,11 +350,11 @@ namespace vl
       const T_Scalar* pb = reinterpret_cast<const T_Scalar*>(&at(b));
       for( size_t i=0; i<T_GL_Size; ++i )
         if ( pa[i] != pb[i] )
-          return pa[i] < pb[i] ? -1 : +1;        
+          return pa[i] < pb[i] ? -1 : +1;
       return 0;
     }
 
-    void operator=(const std::vector<T_VectorType>& vector)
+    void initFrom(const std::vector<T_VectorType>& vector)
     {
       resize(vector.size());
       if (vector.empty())
@@ -366,113 +366,115 @@ namespace vl
 //-----------------------------------------------------------------------------
 // Array typedefs
 //-----------------------------------------------------------------------------
+
+
   //! An array of \p GLfloat
-  typedef Array<GLfloat, GLfloat, 1, GL_FLOAT> ArrayFloat1;
+  class ArrayFloat1: public Array<GLfloat, GLfloat, 1, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat1, VL_GROUP(Array<GLfloat, GLfloat, 1, GL_FLOAT>)) };
   //! An array of vl::fvec2
-  typedef Array<fvec2,   GLfloat, 2, GL_FLOAT> ArrayFloat2;
+  class ArrayFloat2: public Array<fvec2,   GLfloat, 2, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat2, VL_GROUP(Array<fvec2,   GLfloat, 2, GL_FLOAT>)) };
   //! An array of vl::fvec3
-  typedef Array<fvec3,   GLfloat, 3, GL_FLOAT> ArrayFloat3;
+  class ArrayFloat3: public Array<fvec3,   GLfloat, 3, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat3, VL_GROUP(Array<fvec3,   GLfloat, 3, GL_FLOAT>)) };
   //! An array of vl::fvec4
-  typedef Array<fvec4,   GLfloat, 4, GL_FLOAT> ArrayFloat4;
+  class ArrayFloat4: public Array<fvec4,   GLfloat, 4, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat4, VL_GROUP(Array<fvec4,   GLfloat, 4, GL_FLOAT>)) };
 
   //! An array of \p GLdouble
-  typedef Array<GLdouble, GLdouble, 1, GL_DOUBLE> ArrayDouble1;
+  class ArrayDouble1: public Array<GLdouble, GLdouble, 1, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble1, VL_GROUP(Array<GLdouble, GLdouble, 1, GL_DOUBLE>)) };
   //! An array of vl::dvec2
-  typedef Array<dvec2,    GLdouble, 2, GL_DOUBLE> ArrayDouble2;
+  class ArrayDouble2: public Array<dvec2,    GLdouble, 2, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble2, VL_GROUP(Array<dvec2,    GLdouble, 2, GL_DOUBLE>)) };
   //! An array of vl::dvec3
-  typedef Array<dvec3,    GLdouble, 3, GL_DOUBLE> ArrayDouble3;
+  class ArrayDouble3: public Array<dvec3,    GLdouble, 3, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble3, VL_GROUP(Array<dvec3,    GLdouble, 3, GL_DOUBLE>)) };
   //! An array of vl::dvec4
-  typedef Array<dvec4,    GLdouble, 4, GL_DOUBLE> ArrayDouble4;
+  class ArrayDouble4: public Array<dvec4,    GLdouble, 4, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble4, VL_GROUP(Array<dvec4,    GLdouble, 4, GL_DOUBLE>)) };
 
   //! An array of \p GLint
-  typedef Array<GLint, GLint, 1, GL_INT> ArrayInt1;
+  class ArrayInt1: public Array<GLint, GLint, 1, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt1, VL_GROUP(Array<GLint, GLint, 1, GL_INT>)) };
   //! An array of vl::ivec2
-  typedef Array<ivec2, GLint, 2, GL_INT> ArrayInt2;
+  class ArrayInt2: public Array<ivec2, GLint, 2, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt2, VL_GROUP(Array<ivec2, GLint, 2, GL_INT>)) };
   //! An array of vl::ivec3
-  typedef Array<ivec3, GLint, 3, GL_INT> ArrayInt3;
+  class ArrayInt3: public Array<ivec3, GLint, 3, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt3, VL_GROUP(Array<ivec3, GLint, 3, GL_INT>)) };
   //! An array of vl::ivec4
-  typedef Array<ivec4, GLint, 4, GL_INT> ArrayInt4;
+  class ArrayInt4: public Array<ivec4, GLint, 4, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt4, VL_GROUP(Array<ivec4, GLint, 4, GL_INT>)) };
 
   //! An array of \p GLuint
-  typedef Array<GLuint,GLuint, 1, GL_UNSIGNED_INT> ArrayUInt1;
+  class ArrayUInt1: public Array<GLuint,GLuint, 1, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt1, VL_GROUP(Array<GLuint,GLuint, 1, GL_UNSIGNED_INT>)) };
   //! An array of vl::uvec2
-  typedef Array<uvec2, GLuint, 2, GL_UNSIGNED_INT> ArrayUInt2;
+  class ArrayUInt2: public Array<uvec2, GLuint, 2, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt2, VL_GROUP(Array<uvec2, GLuint, 2, GL_UNSIGNED_INT>)) };
   //! An array of vl::uvec3
-  typedef Array<uvec3, GLuint, 3, GL_UNSIGNED_INT> ArrayUInt3;
+  class ArrayUInt3: public Array<uvec3, GLuint, 3, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt3, VL_GROUP(Array<uvec3, GLuint, 3, GL_UNSIGNED_INT>)) };
   //! An array of vl::uvec4
-  typedef Array<uvec4, GLuint, 4, GL_UNSIGNED_INT> ArrayUInt4;
+  class ArrayUInt4: public Array<uvec4, GLuint, 4, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt4, VL_GROUP(Array<uvec4, GLuint, 4, GL_UNSIGNED_INT>)) };
 
   //! An array of \p GLbyte
-  typedef Array<GLbyte, GLbyte, 1, GL_BYTE> ArrayByte1;
+  class ArrayByte1: public Array<GLbyte, GLbyte, 1, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte1, VL_GROUP(Array<GLbyte, GLbyte, 1, GL_BYTE>)) };
   //! An array of vl::bvec2
-  typedef Array<bvec2,  GLbyte, 2, GL_BYTE> ArrayByte2;
+  class ArrayByte2: public Array<bvec2,  GLbyte, 2, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte2, VL_GROUP(Array<bvec2,  GLbyte, 2, GL_BYTE>)) };
   //! An array of vl::bvec3
-  typedef Array<bvec3,  GLbyte, 3, GL_BYTE> ArrayByte3;
+  class ArrayByte3: public Array<bvec3,  GLbyte, 3, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte3, VL_GROUP(Array<bvec3,  GLbyte, 3, GL_BYTE>)) };
   //! An array of vl::bvec4
-  typedef Array<bvec4,  GLbyte, 4, GL_BYTE> ArrayByte4;
+  class ArrayByte4: public Array<bvec4,  GLbyte, 4, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte4, VL_GROUP(Array<bvec4,  GLbyte, 4, GL_BYTE>)) };
 
   //! An array of \p GLubyte
-  typedef Array<GLubyte, GLubyte, 1, GL_UNSIGNED_BYTE> ArrayUByte1;
+  class ArrayUByte1: public Array<GLubyte, GLubyte, 1, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte1, VL_GROUP(Array<GLubyte, GLubyte, 1, GL_UNSIGNED_BYTE>)) };
   //! An array of vl::ubvec2
-  typedef Array<ubvec2,  GLubyte, 2, GL_UNSIGNED_BYTE> ArrayUByte2;
+  class ArrayUByte2: public Array<ubvec2,  GLubyte, 2, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte2, VL_GROUP(Array<ubvec2,  GLubyte, 2, GL_UNSIGNED_BYTE>)) };
   //! An array of vl::ubvec3
-  typedef Array<ubvec3,  GLubyte, 3, GL_UNSIGNED_BYTE> ArrayUByte3;
+  class ArrayUByte3: public Array<ubvec3,  GLubyte, 3, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte3, VL_GROUP(Array<ubvec3,  GLubyte, 3, GL_UNSIGNED_BYTE>)) };
   //! An array of vl::ubvec4
-  typedef Array<ubvec4,  GLubyte, 4, GL_UNSIGNED_BYTE> ArrayUByte4;
+  class ArrayUByte4: public Array<ubvec4,  GLubyte, 4, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte4, VL_GROUP(Array<ubvec4,  GLubyte, 4, GL_UNSIGNED_BYTE>)) };
 
   //! An array of \p GLshort
-  typedef Array<GLshort, GLshort, 1, GL_SHORT> ArrayShort1;
+  class ArrayShort1: public Array<GLshort, GLshort, 1, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort1, VL_GROUP(Array<GLshort, GLshort, 1, GL_SHORT>)) };
   //! An array of vl::svec2
-  typedef Array<svec2,   GLshort, 2, GL_SHORT> ArrayShort2;
+  class ArrayShort2: public Array<svec2,   GLshort, 2, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort2, VL_GROUP(Array<svec2,   GLshort, 2, GL_SHORT>)) };
   //! An array of vl::svec3
-  typedef Array<svec3,   GLshort, 3, GL_SHORT> ArrayShort3;
+  class ArrayShort3: public Array<svec3,   GLshort, 3, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort3, VL_GROUP(Array<svec3,   GLshort, 3, GL_SHORT>)) };
   //! An array of vl::svec4
-  typedef Array<svec4,   GLshort, 4, GL_SHORT> ArrayShort4;
+  class ArrayShort4: public Array<svec4,   GLshort, 4, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort4, VL_GROUP(Array<svec4,   GLshort, 4, GL_SHORT>)) };
 
   //! An array of \p GLushort
-  typedef Array<GLushort, GLushort, 1, GL_UNSIGNED_SHORT> ArrayUShort1;
+  class ArrayUShort1: public Array<GLushort, GLushort, 1, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort1, VL_GROUP(Array<GLushort, GLushort, 1, GL_UNSIGNED_SHORT>)) };
   //! An array of vl::usvec2
-  typedef Array<usvec2,   GLushort, 2, GL_UNSIGNED_SHORT> ArrayUShort2;
+  class ArrayUShort2: public Array<usvec2,   GLushort, 2, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort2, VL_GROUP(Array<usvec2,   GLushort, 2, GL_UNSIGNED_SHORT>)) };
   //! An array of vl::usvec3
-  typedef Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT> ArrayUShort3;
+  class ArrayUShort3: public Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort3, VL_GROUP(Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT>)) };
   //! An array of vl::usvec4
-  typedef Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT> ArrayUShort4;
+  class ArrayUShort4: public Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort4, VL_GROUP(Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT>)) };
 
   //! An array of \p GL_HALF_FLOAT
-  typedef Array<half,  half, 1, GL_HALF_FLOAT> ArrayHFloat1;
+  class ArrayHFloat1: public Array<half,  half, 1, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat1, VL_GROUP(Array<half,  half, 1, GL_HALF_FLOAT>)) };
   //! A 2d array of GL_HALF_FLOAT vectors
-  typedef Array<hvec2, half, 2, GL_HALF_FLOAT> ArrayHFloat2;
+  class ArrayHFloat2: public Array<hvec2, half, 2, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat2, VL_GROUP(Array<hvec2, half, 2, GL_HALF_FLOAT>)) };
   //! A 3d array of GL_HALF_FLOAT vectors
-  typedef Array<hvec3, half, 3, GL_HALF_FLOAT> ArrayHFloat3;
+  class ArrayHFloat3: public Array<hvec3, half, 3, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat3, VL_GROUP(Array<hvec3, half, 3, GL_HALF_FLOAT>)) };
   //! A 4d array of GL_HALF_FLOAT vectors
-  typedef Array<hvec4, half, 4, GL_HALF_FLOAT> ArrayHFloat4;
+  class ArrayHFloat4: public Array<hvec4, half, 4, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat4, VL_GROUP(Array<hvec4, half, 4, GL_HALF_FLOAT>)) };
 
   //! An array of \p GL_FIXED
-  typedef Array<GLuint,GLuint, 1, GL_FIXED> ArrayFixed1;
+  class ArrayFixed1: public Array<GLuint,GLuint, 1, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed1, VL_GROUP(Array<GLuint,GLuint, 1, GL_FIXED>)) };
   //! An array 2d GL_FIXED vectors
-  typedef Array<uvec2, GLuint, 2, GL_FIXED> ArrayFixed2;
+  class ArrayFixed2: public Array<uvec2, GLuint, 2, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed2, VL_GROUP(Array<uvec2, GLuint, 2, GL_FIXED>)) };
   //! An array 3d GL_FIXED vectors
-  typedef Array<uvec3, GLuint, 3, GL_FIXED> ArrayFixed3;
+  class ArrayFixed3: public Array<uvec3, GLuint, 3, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed3, VL_GROUP(Array<uvec3, GLuint, 3, GL_FIXED>)) };
   //! An array 4d GL_FIXED vectors
-  typedef Array<uvec4, GLuint, 4, GL_FIXED> ArrayFixed4;
+  class ArrayFixed4: public Array<uvec4, GLuint, 4, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed4, VL_GROUP(Array<uvec4, GLuint, 4, GL_FIXED>)) };
 
   //! An array of \p GL_INT_2_10_10_10_REV
-  typedef Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV1;
+  class ArrayInt_2_10_10_10_REV1: public Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV1, VL_GROUP(Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV>)) };
   //! A 2d array of GL_INT_2_10_10_10_REV vectors
-  typedef Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV2;
+  class ArrayInt_2_10_10_10_REV2: public Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV2, VL_GROUP(Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV>)) };
   //! A 3d array of GL_INT_2_10_10_10_REV vectors
-  typedef Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV3;
+  class ArrayInt_2_10_10_10_REV3: public Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV3, VL_GROUP(Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV>)) };
   //! A 4d array of GL_INT_2_10_10_10_REV vectors
-  typedef Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV> ArrayInt_2_10_10_10_REV4;
+  class ArrayInt_2_10_10_10_REV4: public Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV4, VL_GROUP(Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV>)) };
 
   //! An array of \p GL_UNSIGNED_INT_2_10_10_10_REV
-  typedef Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV1;
+  class ArrayUInt_2_10_10_10_REV1: public Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV1, VL_GROUP(Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV>)) };
   //! A 2d array of GL_UNSIGNED_INT_2_10_10_10_REV vectors
-  typedef Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV2;
+  class ArrayUInt_2_10_10_10_REV2: public Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV2, VL_GROUP(Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV>)) };
   //! A 3d array of GL_UNSIGNED_INT_2_10_10_10_REV vectors
-  typedef Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV3;
+  class ArrayUInt_2_10_10_10_REV3: public Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV3, VL_GROUP(Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV>)) };
   //! A 4d array of GL_UNSIGNED_INT_2_10_10_10_REV vectors
-  typedef Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV> ArrayUInt_2_10_10_10_REV4;
+  class ArrayUInt_2_10_10_10_REV4: public Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV4, VL_GROUP(Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV>)) };
 }
 
 #endif
