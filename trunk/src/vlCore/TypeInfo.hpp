@@ -46,6 +46,9 @@ struct TypeInfo
     // just for debugging
     // printf("Initializing TypeInfo \"%s\" at %p\n", name, this);
   }
+  const char* name() const { return Name; }
+
+private:
   const char* Name;
 };
 //---------------------------------------------------------------------------------------------------------------------

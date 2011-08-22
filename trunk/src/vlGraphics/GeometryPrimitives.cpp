@@ -1097,8 +1097,8 @@ ref<Geometry> vl::makeCapsule(float radius, float height, int segments, ECapsule
       de->indexBuffer()->at(i+1) = (GLuint)verts.size()-1-segments+i%segments;
   }
 
-  *vert_array = verts;
-  *colr_array = cols;
+  vert_array->initFrom(verts);
+  colr_array->initFrom(cols);
 
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
   geom->makeGLESFriendly();
