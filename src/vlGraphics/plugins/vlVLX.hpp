@@ -206,6 +206,14 @@ namespace vl
     }
   }
 
+  inline EProjectionType destringfy_EProjectionType(const char* str)
+  {
+    if (strcmp(str, "PMT_OrthographicProjection") == 0) return PMT_OrthographicProjection;
+    if (strcmp(str, "PMT_PerspectiveProjection") == 0) return PMT_PerspectiveProjection;
+    if (strcmp(str, "PMT_PerspectiveProjectionFrustum") == 0) return PMT_PerspectiveProjectionFrustum;
+    /*if (strcmp(str, "PMT_UserProjection") == 0)*/ return PMT_UserProjection;
+  }
+
   inline const char* stringfy_EClearColorMode(EClearColorMode ccm)
   {
     switch(ccm)
@@ -215,6 +223,13 @@ namespace vl
     case CCM_Int: return "CCM_Int";
     case CCM_UInt: return "CCM_UInt";
     }
+  }
+
+  inline EClearColorMode destringfy_EClearColorMode(const char* str)
+  {
+    if (strcmp(str, "CCM_Int") == 0) return CCM_Int;
+    if (strcmp(str, "CCM_UInt") == 0) return CCM_UInt;
+    /*if (strcmp(str, "CCM_Float") == 0)*/ return CCM_Float;
   }
 
   inline const char* stringfy_EClearFlags(EClearFlags cf)
@@ -233,6 +248,18 @@ namespace vl
     }
   }
 
+  inline EClearFlags destringfy_EClearFlags(const char* str)
+  {
+    if (strcmp(str, "CF_DO_NOT_CLEAR") == 0) return CF_DO_NOT_CLEAR;
+    if (strcmp(str, "CF_CLEAR_COLOR") == 0) return CF_CLEAR_COLOR;
+    if (strcmp(str, "CF_CLEAR_DEPTH") == 0) return CF_CLEAR_DEPTH;
+    if (strcmp(str, "CF_CLEAR_STENCIL") == 0) return CF_CLEAR_STENCIL;
+    if (strcmp(str, "CF_CLEAR_COLOR_DEPTH") == 0) return CF_CLEAR_COLOR_DEPTH;
+    if (strcmp(str, "CF_CLEAR_COLOR_STENCIL") == 0) return CF_CLEAR_COLOR_STENCIL;
+    if (strcmp(str, "CF_CLEAR_DEPTH_STENCIL") == 0) return CF_CLEAR_DEPTH_STENCIL;
+    /*if (strcmp(str, "CF_CLEAR_COLOR_DEPTH_STENCIL") == 0)*/ return CF_CLEAR_COLOR_DEPTH_STENCIL;
+  }
+
   inline const char* stringfy_EPolygonFace(EPolygonFace pf)
   {
     switch(pf)
@@ -242,6 +269,13 @@ namespace vl
     case PF_FRONT: return "PF_FRONT";
     case PF_BACK:  return "PF_BACK";
     }
+  }
+
+  inline EPolygonFace destringfy_EPolygonFace(const char* str)
+  {
+    if (strcmp(str, "PF_FRONT") == 0) return PF_FRONT;
+    if (strcmp(str, "PF_BACK") == 0) return PF_BACK;
+    /*if (strcmp(str, "PF_FRONT_AND_BACK") == 0)*/ return PF_FRONT_AND_BACK;
   }
 
   inline const char* stringfy_EColorMaterial(EColorMaterial cm)
@@ -255,6 +289,15 @@ namespace vl
     case CM_DIFFUSE: return "CM_DIFFUSE";
     case CM_SPECULAR: return "CM_SPECULAR";
     }
+  }
+
+  inline EColorMaterial destringfy_EColorMaterial(const char* str)
+  {
+    if (strcmp(str, "CM_EMISSION") == 0) return CM_EMISSION;
+    if (strcmp(str, "CM_AMBIENT") == 0) return CM_AMBIENT;
+    if (strcmp(str, "CM_DIFFUSE") == 0) return CM_DIFFUSE;
+    if (strcmp(str, "CM_SPECULAR") == 0) return CM_SPECULAR;
+    /*if (strcmp(str, "CM_AMBIENT_AND_DIFFUSE") == 0) */return CM_AMBIENT_AND_DIFFUSE;
   }
 
   inline const char* stringfy_TextureFormat(ETextureFormat tf)
@@ -499,6 +542,244 @@ namespace vl
     }
   }
 
+  inline ETextureFormat destringfy_TextureFormat(const char* str)
+  {
+    if (strcmp(str, "TF_ALPHA  ") == 0) return TF_ALPHA  ;
+    if (strcmp(str, "TF_ALPHA4 ") == 0) return TF_ALPHA4 ;
+    if (strcmp(str, "TF_ALPHA8 ") == 0) return TF_ALPHA8 ;
+    if (strcmp(str, "TF_ALPHA12") == 0) return TF_ALPHA12;
+    if (strcmp(str, "TF_ALPHA16") == 0) return TF_ALPHA16;
+
+    if (strcmp(str, "TF_INTENSITY  ") == 0) return TF_INTENSITY  ;
+    if (strcmp(str, "TF_INTENSITY4 ") == 0) return TF_INTENSITY4 ;
+    if (strcmp(str, "TF_INTENSITY8 ") == 0) return TF_INTENSITY8 ;
+    if (strcmp(str, "TF_INTENSITY12") == 0) return TF_INTENSITY12;
+    if (strcmp(str, "TF_INTENSITY16") == 0) return TF_INTENSITY16;
+    if (strcmp(str, "TF_LUMINANCE  ") == 0) return TF_LUMINANCE  ;
+    if (strcmp(str, "TF_LUMINANCE4 ") == 0) return TF_LUMINANCE4 ;
+    if (strcmp(str, "TF_LUMINANCE8 ") == 0) return TF_LUMINANCE8 ;
+    if (strcmp(str, "TF_LUMINANCE12") == 0) return TF_LUMINANCE12;
+    if (strcmp(str, "TF_LUMINANCE16") == 0) return TF_LUMINANCE16;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA    ") == 0) return TF_LUMINANCE_ALPHA    ;
+    if (strcmp(str, "TF_LUMINANCE4_ALPHA4  ") == 0) return TF_LUMINANCE4_ALPHA4  ;
+    if (strcmp(str, "TF_LUMINANCE6_ALPHA2  ") == 0) return TF_LUMINANCE6_ALPHA2  ;
+    if (strcmp(str, "TF_LUMINANCE8_ALPHA8  ") == 0) return TF_LUMINANCE8_ALPHA8  ;
+    if (strcmp(str, "TF_LUMINANCE12_ALPHA4 ") == 0) return TF_LUMINANCE12_ALPHA4 ;
+    if (strcmp(str, "TF_LUMINANCE12_ALPHA12") == 0) return TF_LUMINANCE12_ALPHA12;
+    if (strcmp(str, "TF_LUMINANCE16_ALPHA16") == 0) return TF_LUMINANCE16_ALPHA16;
+    if (strcmp(str, "TF_R3_G3_B2") == 0) return TF_R3_G3_B2;
+    if (strcmp(str, "TF_RGB     ") == 0) return TF_RGB     ;
+    if (strcmp(str, "TF_RGB4    ") == 0) return TF_RGB4    ;
+    if (strcmp(str, "TF_RGB5    ") == 0) return TF_RGB5    ;
+    if (strcmp(str, "TF_RGB8    ") == 0) return TF_RGB8    ;
+    if (strcmp(str, "TF_RGB10   ") == 0) return TF_RGB10   ;
+    if (strcmp(str, "TF_RGB12   ") == 0) return TF_RGB12   ;
+    if (strcmp(str, "TF_RGB16   ") == 0) return TF_RGB16   ;
+    if (strcmp(str, "TF_RGBA    ") == 0) return TF_RGBA    ;
+    if (strcmp(str, "TF_RGBA2   ") == 0) return TF_RGBA2   ;
+    if (strcmp(str, "TF_RGBA4   ") == 0) return TF_RGBA4   ;
+    if (strcmp(str, "TF_RGB5_A1 ") == 0) return TF_RGB5_A1 ;
+    if (strcmp(str, "TF_RGBA8   ") == 0) return TF_RGBA8   ;
+    if (strcmp(str, "TF_RGB10_A2") == 0) return TF_RGB10_A2;
+    if (strcmp(str, "TF_RGBA12  ") == 0) return TF_RGBA12  ;
+    if (strcmp(str, "TF_RGBA16  ") == 0) return TF_RGBA16  ;
+
+    // ARB_texture_float / OpenGL 3
+    if (strcmp(str, "TF_RGBA32F") == 0) return TF_RGBA32F;
+    if (strcmp(str, "TF_RGB32F") == 0) return TF_RGB32F;
+    if (strcmp(str, "TF_ALPHA32F") == 0) return TF_ALPHA32F;
+    if (strcmp(str, "TF_INTENSITY32F") == 0) return TF_INTENSITY32F;
+    if (strcmp(str, "TF_LUMINANCE32F") == 0) return TF_LUMINANCE32F;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA32F") == 0) return TF_LUMINANCE_ALPHA32F;
+    if (strcmp(str, "TF_RGBA16F") == 0) return TF_RGBA16F;
+    if (strcmp(str, "TF_RGB16F") == 0) return TF_RGB16F;
+    if (strcmp(str, "TF_ALPHA16F") == 0) return TF_ALPHA16F;
+    if (strcmp(str, "TF_INTENSITY16F") == 0) return TF_INTENSITY16F;
+    if (strcmp(str, "TF_LUMINANCE16F") == 0) return TF_LUMINANCE16F;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA16F") == 0) return TF_LUMINANCE_ALPHA16F;
+
+    // from table 3.12 opengl api specs 4.1
+    if (strcmp(str, "TF_R8_SNORM") == 0) return TF_R8_SNORM;
+    if (strcmp(str, "TF_R16_SNORM") == 0) return TF_R16_SNORM;
+    if (strcmp(str, "TF_RG8_SNORM") == 0) return TF_RG8_SNORM;
+    if (strcmp(str, "TF_RG16_SNORM") == 0) return TF_RG16_SNORM;
+    if (strcmp(str, "TF_RGB8_SNORM") == 0) return TF_RGB8_SNORM;
+    if (strcmp(str, "TF_RGBA8_SNORM") == 0) return TF_RGBA8_SNORM;
+    if (strcmp(str, "TF_RGB10_A2UI") == 0) return TF_RGB10_A2UI;
+    if (strcmp(str, "TF_RGBA16_SNORM") == 0) return TF_RGBA16_SNORM;
+    if (strcmp(str, "TF_R11F_G11F_B10F") == 0) return TF_R11F_G11F_B10F;
+    if (strcmp(str, "TF_RGB9_E5") == 0) return TF_RGB9_E5;
+    if (strcmp(str, "TF_RGB8I") == 0) return TF_RGB8I;
+    if (strcmp(str, "TF_RGB8UI") == 0) return TF_RGB8UI;
+    if (strcmp(str, "TF_RGB16I") == 0) return TF_RGB16I;
+    if (strcmp(str, "TF_RGB16UI") == 0) return TF_RGB16UI;
+    if (strcmp(str, "TF_RGB32I") == 0) return TF_RGB32I;
+    if (strcmp(str, "TF_RGB32UI") == 0) return TF_RGB32UI;
+    if (strcmp(str, "TF_RGBA8I") == 0) return TF_RGBA8I;
+    if (strcmp(str, "TF_RGBA8UI") == 0) return TF_RGBA8UI;
+    if (strcmp(str, "TF_RGBA16I") == 0) return TF_RGBA16I;
+    if (strcmp(str, "TF_RGBA16UI") == 0) return TF_RGBA16UI;
+    if (strcmp(str, "TF_RGBA32I") == 0) return TF_RGBA32I;
+    if (strcmp(str, "TF_RGBA32UI") == 0) return TF_RGBA32UI;
+
+    // ATI_texture_float (the enums are the same as ARB_texture_float)
+    if (strcmp(str, "TF_RGBA_FLOAT32_ATI") == 0) return TF_RGBA_FLOAT32_ATI;
+    if (strcmp(str, "TF_RGB_FLOAT32_ATI") == 0) return TF_RGB_FLOAT32_ATI;
+    if (strcmp(str, "TF_ALPHA_FLOAT32_ATI") == 0) return TF_ALPHA_FLOAT32_ATI;
+    if (strcmp(str, "TF_INTENSITY_FLOAT32_ATI") == 0) return TF_INTENSITY_FLOAT32_ATI;
+    if (strcmp(str, "TF_LUMINANCE_FLOAT32_ATI") == 0) return TF_LUMINANCE_FLOAT32_ATI;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA_FLOAT32_ATI") == 0) return TF_LUMINANCE_ALPHA_FLOAT32_ATI;
+    if (strcmp(str, "TF_RGBA_FLOAT16_ATI") == 0) return TF_RGBA_FLOAT16_ATI;
+    if (strcmp(str, "TF_RGB_FLOAT16_ATI") == 0) return TF_RGB_FLOAT16_ATI;
+    if (strcmp(str, "TF_ALPHA_FLOAT16_ATI") == 0) return TF_ALPHA_FLOAT16_ATI;
+    if (strcmp(str, "TF_INTENSITY_FLOAT16_ATI") == 0) return TF_INTENSITY_FLOAT16_ATI;
+    if (strcmp(str, "TF_LUMINANCE_FLOAT16_ATI") == 0) return TF_LUMINANCE_FLOAT16_ATI;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA_FLOAT16_ATI") == 0) return TF_LUMINANCE_ALPHA_FLOAT16_ATI;
+
+    // EXT_texture_shared_exponent
+    if (strcmp(str, "TF_RGB9_E5_EXT") == 0) return TF_RGB9_E5_EXT;
+
+    // EXT_packed_float
+    if (strcmp(str, "TF_11F_G11F_B10F_EXT") == 0) return TF_11F_G11F_B10F_EXT;
+
+    // EXT_packed_depth_stencil / GL_ARB_framebuffer_object
+    if (strcmp(str, "TF_DEPTH_STENCIL   ") == 0) return TF_DEPTH_STENCIL   ;
+    if (strcmp(str, "TF_DEPTH24_STENCIL8") == 0) return TF_DEPTH24_STENCIL8;
+
+    // ARB_depth_buffer_float
+    if (strcmp(str, "TF_DEPTH_COMPONENT32F") == 0) return TF_DEPTH_COMPONENT32F;
+    if (strcmp(str, "TF_DEPTH32F_STENCIL8 ") == 0) return TF_DEPTH32F_STENCIL8 ;
+
+    // ARB_depth_texture
+    if (strcmp(str, "TF_DEPTH_COMPONENT  ") == 0) return TF_DEPTH_COMPONENT  ;
+    if (strcmp(str, "TF_DEPTH_COMPONENT16") == 0) return TF_DEPTH_COMPONENT16;
+    if (strcmp(str, "TF_DEPTH_COMPONENT24") == 0) return TF_DEPTH_COMPONENT24;
+    if (strcmp(str, "TF_DEPTH_COMPONENT32") == 0) return TF_DEPTH_COMPONENT32;
+
+    // ARB_texture_compression
+    if (strcmp(str, "TF_COMPRESSED_ALPHA          ") == 0) return TF_COMPRESSED_ALPHA          ;
+    if (strcmp(str, "TF_COMPRESSED_INTENSITY      ") == 0) return TF_COMPRESSED_INTENSITY      ;
+    if (strcmp(str, "TF_COMPRESSED_LUMINANCE      ") == 0) return TF_COMPRESSED_LUMINANCE      ;
+    if (strcmp(str, "TF_COMPRESSED_LUMINANCE_ALPHA") == 0) return TF_COMPRESSED_LUMINANCE_ALPHA;
+    if (strcmp(str, "TF_COMPRESSED_RGB            ") == 0) return TF_COMPRESSED_RGB            ;
+    if (strcmp(str, "TF_COMPRESSED_RGBA           ") == 0) return TF_COMPRESSED_RGBA           ;
+
+    // 3DFX_texture_compression_FXT1
+    if (strcmp(str, "TF_COMPRESSED_RGB_FXT1_3DFX ") == 0) return TF_COMPRESSED_RGB_FXT1_3DFX ;
+    if (strcmp(str, "TF_COMPRESSED_RGBA_FXT1_3DFX") == 0) return TF_COMPRESSED_RGBA_FXT1_3DFX;
+
+    // EXT_texture_compression_s3tc
+    if (strcmp(str, "TF_COMPRESSED_RGB_S3TC_DXT1_EXT ") == 0) return TF_COMPRESSED_RGB_S3TC_DXT1_EXT ;
+    if (strcmp(str, "TF_COMPRESSED_RGBA_S3TC_DXT1_EXT") == 0) return TF_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+    if (strcmp(str, "TF_COMPRESSED_RGBA_S3TC_DXT3_EXT") == 0) return TF_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+    if (strcmp(str, "TF_COMPRESSED_RGBA_S3TC_DXT5_EXT") == 0) return TF_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+
+    // EXT_texture_compression_latc
+    if (strcmp(str, "TF_COMPRESSED_LUMINANCE_LATC1_EXT             ") == 0) return TF_COMPRESSED_LUMINANCE_LATC1_EXT             ;
+    if (strcmp(str, "TF_COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT      ") == 0) return TF_COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT      ;
+    if (strcmp(str, "TF_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT       ") == 0) return TF_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT       ;
+    if (strcmp(str, "TF_COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2_EXT") == 0) return TF_COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2_EXT;
+
+    // EXT_texture_compression_rgtc
+    if (strcmp(str, "TF_COMPRESSED_RED_RGTC1_EXT             ") == 0) return TF_COMPRESSED_RED_RGTC1_EXT             ;
+    if (strcmp(str, "TF_COMPRESSED_SIGNED_RED_RGTC1_EXT      ") == 0) return TF_COMPRESSED_SIGNED_RED_RGTC1_EXT      ;
+    if (strcmp(str, "TF_COMPRESSED_RED_GREEN_RGTC2_EXT       ") == 0) return TF_COMPRESSED_RED_GREEN_RGTC2_EXT       ;
+    if (strcmp(str, "TF_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT") == 0) return TF_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT;
+
+    // EXT_texture_integer
+    if (strcmp(str, "TF_RGBA32UI_EXT") == 0) return TF_RGBA32UI_EXT;
+    if (strcmp(str, "TF_RGB32UI_EXT") == 0) return TF_RGB32UI_EXT;
+    if (strcmp(str, "TF_ALPHA32UI_EXT") == 0) return TF_ALPHA32UI_EXT;
+    if (strcmp(str, "TF_INTENSITY32UI_EXT") == 0) return TF_INTENSITY32UI_EXT;
+    if (strcmp(str, "TF_LUMINANCE32UI_EXT") == 0) return TF_LUMINANCE32UI_EXT;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA32UI_EXT") == 0) return TF_LUMINANCE_ALPHA32UI_EXT;
+
+    if (strcmp(str, "TF_RGBA16UI_EXT") == 0) return TF_RGBA16UI_EXT;
+    if (strcmp(str, "TF_RGB16UI_EXT") == 0) return TF_RGB16UI_EXT;
+    if (strcmp(str, "TF_ALPHA16UI_EXT") == 0) return TF_ALPHA16UI_EXT;
+    if (strcmp(str, "TF_INTENSITY16UI_EXT") == 0) return TF_INTENSITY16UI_EXT;
+    if (strcmp(str, "TF_LUMINANCE16UI_EXT") == 0) return TF_LUMINANCE16UI_EXT;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA16UI_EXT") == 0) return TF_LUMINANCE_ALPHA16UI_EXT;
+
+    if (strcmp(str, "TF_RGBA8UI_EXT") == 0) return TF_RGBA8UI_EXT;
+    if (strcmp(str, "TF_RGB8UI_EXT") == 0) return TF_RGB8UI_EXT;
+    if (strcmp(str, "TF_ALPHA8UI_EXT") == 0) return TF_ALPHA8UI_EXT;
+    if (strcmp(str, "TF_INTENSITY8UI_EXT") == 0) return TF_INTENSITY8UI_EXT;
+    if (strcmp(str, "TF_LUMINANCE8UI_EXT") == 0) return TF_LUMINANCE8UI_EXT;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA8UI_EXT") == 0) return TF_LUMINANCE_ALPHA8UI_EXT;
+
+    if (strcmp(str, "TF_RGBA32I_EXT") == 0) return TF_RGBA32I_EXT;
+    if (strcmp(str, "TF_RGB32I_EXT") == 0) return TF_RGB32I_EXT;
+    if (strcmp(str, "TF_ALPHA32I_EXT") == 0) return TF_ALPHA32I_EXT;
+    if (strcmp(str, "TF_INTENSITY32I_EXT") == 0) return TF_INTENSITY32I_EXT;
+    if (strcmp(str, "TF_LUMINANCE32I_EXT") == 0) return TF_LUMINANCE32I_EXT;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA32I_EXT") == 0) return TF_LUMINANCE_ALPHA32I_EXT;
+
+    if (strcmp(str, "TF_RGBA16I_EXT") == 0) return TF_RGBA16I_EXT;
+    if (strcmp(str, "TF_RGB16I_EXT") == 0) return TF_RGB16I_EXT;
+    if (strcmp(str, "TF_ALPHA16I_EXT") == 0) return TF_ALPHA16I_EXT;
+    if (strcmp(str, "TF_INTENSITY16I_EXT") == 0) return TF_INTENSITY16I_EXT;
+    if (strcmp(str, "TF_LUMINANCE16I_EXT") == 0) return TF_LUMINANCE16I_EXT;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA16I_EXT") == 0) return TF_LUMINANCE_ALPHA16I_EXT;
+
+    if (strcmp(str, "TF_RGBA8I_EXT") == 0) return TF_RGBA8I_EXT;
+    if (strcmp(str, "TF_RGB8I_EXT") == 0) return TF_RGB8I_EXT;
+    if (strcmp(str, "TF_ALPHA8I_EXT") == 0) return TF_ALPHA8I_EXT;
+    if (strcmp(str, "TF_INTENSITY8I_EXT") == 0) return TF_INTENSITY8I_EXT;
+    if (strcmp(str, "TF_LUMINANCE8I_EXT") == 0) return TF_LUMINANCE8I_EXT;
+    if (strcmp(str, "TF_LUMINANCE_ALPHA8I_EXT") == 0) return TF_LUMINANCE_ALPHA8I_EXT;
+
+    // GL_ARB_texture_rg
+    if (strcmp(str, "TF_RED") == 0) return TF_RED;
+    if (strcmp(str, "TF_COMPRESSED_RED") == 0) return TF_COMPRESSED_RED;
+    if (strcmp(str, "TF_COMPRESSED_RG") == 0) return TF_COMPRESSED_RG;
+    if (strcmp(str, "TF_RG") == 0) return TF_RG;
+    if (strcmp(str, "TF_R8") == 0) return TF_R8;
+    if (strcmp(str, "TF_R16") == 0) return TF_R16;
+    if (strcmp(str, "TF_RG8") == 0) return TF_RG8;
+    if (strcmp(str, "TF_RG16") == 0) return TF_RG16;
+    if (strcmp(str, "TF_R16F") == 0) return TF_R16F;
+    if (strcmp(str, "TF_R32F") == 0) return TF_R32F;
+    if (strcmp(str, "TF_RG16F") == 0) return TF_RG16F;
+    if (strcmp(str, "TF_RG32F") == 0) return TF_RG32F;
+    if (strcmp(str, "TF_R8I") == 0) return TF_R8I;
+    if (strcmp(str, "TF_R8UI") == 0) return TF_R8UI;
+    if (strcmp(str, "TF_R16I") == 0) return TF_R16I;
+    if (strcmp(str, "TF_R16UI") == 0) return TF_R16UI;
+    if (strcmp(str, "TF_R32I") == 0) return TF_R32I;
+    if (strcmp(str, "TF_R32UI") == 0) return TF_R32UI;
+    if (strcmp(str, "TF_RG8I") == 0) return TF_RG8I;
+    if (strcmp(str, "TF_RG8UI") == 0) return TF_RG8UI;
+    if (strcmp(str, "TF_RG16I") == 0) return TF_RG16I;
+    if (strcmp(str, "TF_RG16UI") == 0) return TF_RG16UI;
+    if (strcmp(str, "TF_RG32I") == 0) return TF_RG32I;
+    if (strcmp(str, "TF_RG32UI") == 0) return TF_RG32UI;
+
+    // sRGB OpenGL 2.1
+    if (strcmp(str, "TF_SLUMINANCE_ALPHA") == 0) return TF_SLUMINANCE_ALPHA;
+    if (strcmp(str, "TF_SLUMINANCE8_ALPHA8") == 0) return TF_SLUMINANCE8_ALPHA8;
+    if (strcmp(str, "TF_SLUMINANCE") == 0) return TF_SLUMINANCE;
+    if (strcmp(str, "TF_SLUMINANCE8") == 0) return TF_SLUMINANCE8;
+    if (strcmp(str, "TF_COMPRESSED_SLUMINANCE") == 0) return TF_COMPRESSED_SLUMINANCE;
+    if (strcmp(str, "TF_COMPRESSED_SLUMINANCE_ALPHA") == 0) return TF_COMPRESSED_SLUMINANCE_ALPHA;
+
+    // sRGB OpenGL 2.1 / 3.x
+    if (strcmp(str, "TF_SRGB") == 0) return TF_SRGB;
+    if (strcmp(str, "TF_SRGB8") == 0) return TF_SRGB8;
+    if (strcmp(str, "TF_SRGB_ALPHA") == 0) return TF_SRGB_ALPHA;
+    if (strcmp(str, "TF_SRGB8_ALPHA8") == 0) return TF_SRGB8_ALPHA8;
+    if (strcmp(str, "TF_COMPRESSED_SRGB") == 0) return TF_COMPRESSED_SRGB;
+    if (strcmp(str, "TF_COMPRESSED_SRGB_ALPHA") == 0) return TF_COMPRESSED_SRGB_ALPHA;
+
+    // GL_EXT_texture_sRGB compressed formats
+    if (strcmp(str, "TF_COMPRESSED_SRGB_S3TC_DXT1_EXT") == 0) return TF_COMPRESSED_SRGB_S3TC_DXT1_EXT;
+    if (strcmp(str, "TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT") == 0) return TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+    if (strcmp(str, "TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT") == 0) return TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+    if (strcmp(str, "TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT") == 0) return TF_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+
+    /*if (strcmp(str, "TF_UNKNOWN") == 0)*/ return TF_UNKNOWN;
+  }
+
   inline const char* stringfy_EUniformType(EUniformType type)
   {
     switch(type)
@@ -550,6 +831,53 @@ namespace vl
     }
   }
 
+  inline EUniformType destringfy_EUniformType(const char* type)
+  {
+    if (strcmp(type, "UT_INT") == 0) return UT_INT;
+    if (strcmp(type, "UT_INT_VEC2") == 0) return UT_INT_VEC2;
+    if (strcmp(type, "UT_INT_VEC3") == 0) return UT_INT_VEC3;
+    if (strcmp(type, "UT_INT_VEC4") == 0) return UT_INT_VEC4;
+
+    if (strcmp(type, "UT_UNSIGNED_INT") == 0) return UT_UNSIGNED_INT;
+    if (strcmp(type, "UT_UNSIGNED_INT_VEC2") == 0) return UT_UNSIGNED_INT_VEC2;
+    if (strcmp(type, "UT_UNSIGNED_INT_VEC3") == 0) return UT_UNSIGNED_INT_VEC3;
+    if (strcmp(type, "UT_UNSIGNED_INT_VEC4") == 0) return UT_UNSIGNED_INT_VEC4;
+
+    if (strcmp(type, "UT_FLOAT") == 0) return UT_FLOAT;
+    if (strcmp(type, "UT_FLOAT_VEC2") == 0) return UT_FLOAT_VEC2;
+    if (strcmp(type, "UT_FLOAT_VEC3") == 0) return UT_FLOAT_VEC3;
+    if (strcmp(type, "UT_FLOAT_VEC4") == 0) return UT_FLOAT_VEC4;
+
+    if (strcmp(type, "UT_FLOAT_MAT2") == 0) return UT_FLOAT_MAT2;
+    if (strcmp(type, "UT_FLOAT_MAT3") == 0) return UT_FLOAT_MAT3;
+    if (strcmp(type, "UT_FLOAT_MAT4") == 0) return UT_FLOAT_MAT4;
+
+    if (strcmp(type, "UT_FLOAT_MAT2x3") == 0) return UT_FLOAT_MAT2x3;
+    if (strcmp(type, "UT_FLOAT_MAT3x2") == 0) return UT_FLOAT_MAT3x2;
+    if (strcmp(type, "UT_FLOAT_MAT2x4") == 0) return UT_FLOAT_MAT2x4;
+    if (strcmp(type, "UT_FLOAT_MAT4x2") == 0) return UT_FLOAT_MAT4x2;
+    if (strcmp(type, "UT_FLOAT_MAT3x4") == 0) return UT_FLOAT_MAT3x4;
+    if (strcmp(type, "UT_FLOAT_MAT4x3") == 0) return UT_FLOAT_MAT4x3;
+
+    if (strcmp(type, "UT_DOUBLE") == 0) return UT_DOUBLE;
+    if (strcmp(type, "UT_DOUBLE_VEC2") == 0) return UT_DOUBLE_VEC2;
+    if (strcmp(type, "UT_DOUBLE_VEC3") == 0) return UT_DOUBLE_VEC3;
+    if (strcmp(type, "UT_DOUBLE_VEC4") == 0) return UT_DOUBLE_VEC4;
+
+    if (strcmp(type, "UT_DOUBLE_MAT2") == 0) return UT_DOUBLE_MAT2;
+    if (strcmp(type, "UT_DOUBLE_MAT3") == 0) return UT_DOUBLE_MAT3;
+    if (strcmp(type, "UT_DOUBLE_MAT4") == 0) return UT_DOUBLE_MAT4;
+
+    if (strcmp(type, "UT_DOUBLE_MAT2x3") == 0) return UT_DOUBLE_MAT2x3;
+    if (strcmp(type, "UT_DOUBLE_MAT3x2") == 0) return UT_DOUBLE_MAT3x2;
+    if (strcmp(type, "UT_DOUBLE_MAT2x4") == 0) return UT_DOUBLE_MAT2x4;
+    if (strcmp(type, "UT_DOUBLE_MAT4x2") == 0) return UT_DOUBLE_MAT4x2;
+    if (strcmp(type, "UT_DOUBLE_MAT3x4") == 0) return UT_DOUBLE_MAT3x4;
+    if (strcmp(type, "UT_DOUBLE_MAT4x3") == 0) return UT_DOUBLE_MAT4x3;
+
+    /*if (strcmp(type, "UT_NONE") == 0)*/ return UT_NONE;
+  }
+
   inline const char* stringfy_EDepthTextureMode(EDepthTextureMode dtm)
   {
     switch(dtm)
@@ -562,6 +890,14 @@ namespace vl
     }
   }
 
+  inline EDepthTextureMode destringfy_EDepthTextureMode(const char* str)
+  {
+    if (strcmp(str, "DTM_LUMINANCE") == 0) return DTM_LUMINANCE;
+    if (strcmp(str, "DTM_INTENSITY") == 0) return DTM_INTENSITY;
+    if (strcmp(str, "DTM_ALPHA") == 0) return DTM_ALPHA;
+    /*if (strcmp(str, "DTM_RED") == 0)*/ return DTM_RED;
+  }
+
   inline const char* stringfy_ETexCompareMode(ETexCompareMode tcm)
   {
     switch(tcm)
@@ -571,6 +907,13 @@ namespace vl
     // case TCM_COMPARE_R_TO_TEXTURE: return "TCM_COMPARE_R_TO_TEXTURE";
     case TCM_COMPARE_REF_DEPTH_TO_TEXTURE: return "TCM_COMPARE_REF_DEPTH_TO_TEXTURE";
     }
+  }
+
+  inline ETexCompareMode destringfy_ETexCompareMode(const char* str)
+  {
+    if (strcmp(str, "TCM_COMPARE_R_TO_TEXTURE") == 0) return TCM_COMPARE_R_TO_TEXTURE;
+    if (strcmp(str, "TCM_COMPARE_REF_DEPTH_TO_TEXTURE") == 0) return TCM_COMPARE_REF_DEPTH_TO_TEXTURE;
+    /*if (strcmp(str, "TCM_NONE") == 0)*/ return TCM_NONE;
   }
 
   inline const char* stringfy_ETexCompareFunc(ETexCompareFunc tcf)
@@ -589,6 +932,18 @@ namespace vl
     }
   }
 
+  inline ETexCompareFunc destringfy_ETexCompareFunc(const char* str)
+  {
+    if (strcmp(str, "TCF_GEQUAL") == 0) return TCF_GEQUAL;
+    if (strcmp(str, "TCF_LESS") == 0) return TCF_LESS;
+    if (strcmp(str, "TCF_GREATER") == 0) return TCF_GREATER;
+    if (strcmp(str, "TCF_EQUAL") == 0) return TCF_EQUAL;
+    if (strcmp(str, "TCF_NOTEQUAL") == 0) return TCF_NOTEQUAL;
+    if (strcmp(str, "TCF_ALWAYS") == 0) return TCF_ALWAYS;
+    if (strcmp(str, "TCF_NEVER") == 0) return TCF_NEVER;
+    /*if (strcmp(str, "TCF_LEQUAL") == 0)*/ return TCF_LEQUAL;
+  }
+
   inline const char* stringfy_ETexParamFilter(ETexParamFilter tpf)
   {
     switch(tpf)
@@ -603,6 +958,16 @@ namespace vl
     }
   }
 
+  inline ETexParamFilter destringfy_ETexParamFilter(const char* str)
+  {
+    if (strcmp(str, "TPF_LINEAR") == 0) return TPF_LINEAR;
+    if (strcmp(str, "TPF_NEAREST_MIPMAP_NEAREST") == 0) return TPF_NEAREST_MIPMAP_NEAREST;
+    if (strcmp(str, "TPF_LINEAR_MIPMAP_NEAREST") == 0) return TPF_LINEAR_MIPMAP_NEAREST;
+    if (strcmp(str, "TPF_NEAREST_MIPMAP_LINEAR") == 0) return TPF_NEAREST_MIPMAP_LINEAR;
+    if (strcmp(str, "TPF_LINEAR_MIPMAP_LINEAR") == 0) return TPF_LINEAR_MIPMAP_LINEAR;
+    /*if (strcmp(str, "TPF_NEAREST") == 0)*/ return TPF_NEAREST;
+  }
+
   inline const char* stringfy_ETexParamWrap(ETexParamWrap tpw)
   {
     switch(tpw)
@@ -614,6 +979,15 @@ namespace vl
     case TPW_CLAMP_TO_EDGE: return "TPW_CLAMP_TO_EDGE";
     case TPW_MIRRORED_REPEAT: return "TPW_MIRRORED_REPEAT";
     }
+  }
+
+  inline ETexParamWrap destringfy_ETexParamWrap(const char* str)
+  {
+    if (strcmp(str, "TPW_CLAMP") == 0) return TPW_CLAMP;
+    if (strcmp(str, "TPW_CLAMP_TO_BORDER") == 0) return TPW_CLAMP_TO_BORDER;
+    if (strcmp(str, "TPW_CLAMP_TO_EDGE") == 0) return TPW_CLAMP_TO_EDGE;
+    if (strcmp(str, "TPW_MIRRORED_REPEAT") == 0) return TPW_MIRRORED_REPEAT;
+    /*if (strcmp(str, "TPW_REPEAT") == 0)*/ return TPW_REPEAT;
   }
 
   inline const char* stringfy_EEnable(EEnable en)
@@ -661,6 +1035,48 @@ namespace vl
     }
   }
 
+  inline EEnable destringfy_EEnable(const char* str)
+  {
+    if (strcmp(str, "EN_BLEND") == 0) return EN_BLEND;
+    if (strcmp(str, "EN_CULL_FACE") == 0) return EN_CULL_FACE;
+    if (strcmp(str, "EN_DEPTH_TEST") == 0) return EN_DEPTH_TEST;
+    if (strcmp(str, "EN_STENCIL_TEST") == 0) return EN_STENCIL_TEST;
+    if (strcmp(str, "EN_DITHER") == 0) return EN_DITHER;
+    if (strcmp(str, "EN_POLYGON_OFFSET_FILL") == 0) return EN_POLYGON_OFFSET_FILL;
+    if (strcmp(str, "EN_POLYGON_OFFSET_LINE") == 0) return EN_POLYGON_OFFSET_LINE;
+    if (strcmp(str, "EN_POLYGON_OFFSET_POINT") == 0) return EN_POLYGON_OFFSET_POINT;
+    if (strcmp(str, "EN_COLOR_LOGIC_OP") == 0) return EN_COLOR_LOGIC_OP;
+    if (strcmp(str, "EN_MULTISAMPLE") == 0) return EN_MULTISAMPLE;
+    if (strcmp(str, "EN_POINT_SMOOTH") == 0) return EN_POINT_SMOOTH;
+    if (strcmp(str, "EN_LINE_SMOOTH") == 0) return EN_LINE_SMOOTH;
+    if (strcmp(str, "EN_POLYGON_SMOOTH") == 0) return EN_POLYGON_SMOOTH;
+    if (strcmp(str, "EN_LINE_STIPPLE") == 0) return EN_LINE_STIPPLE;
+    if (strcmp(str, "EN_POLYGON_STIPPLE") == 0) return EN_POLYGON_STIPPLE;
+    if (strcmp(str, "EN_POINT_SPRITE") == 0) return EN_POINT_SPRITE;
+    if (strcmp(str, "EN_PROGRAM_POINT_SIZE") == 0) return EN_PROGRAM_POINT_SIZE;
+    if (strcmp(str, "EN_ALPHA_TEST") == 0) return EN_ALPHA_TEST;
+    if (strcmp(str, "EN_LIGHTING") == 0) return EN_LIGHTING;
+    if (strcmp(str, "EN_COLOR_SUM") == 0) return EN_COLOR_SUM;
+    if (strcmp(str, "EN_FOG") == 0) return EN_FOG;
+    if (strcmp(str, "EN_NORMALIZE") == 0) return EN_NORMALIZE;
+    if (strcmp(str, "EN_RESCALE_NORMAL") == 0) return EN_RESCALE_NORMAL;
+    if (strcmp(str, "EN_VERTEX_PROGRAM_TWO_SIDE") == 0) return EN_VERTEX_PROGRAM_TWO_SIDE;
+    if (strcmp(str, "EN_TEXTURE_CUBE_MAP_SEAMLESS") == 0) return EN_TEXTURE_CUBE_MAP_SEAMLESS;
+    if (strcmp(str, "EN_CLIP_DISTANCE0") == 0) return EN_CLIP_DISTANCE0;
+    if (strcmp(str, "EN_CLIP_DISTANCE1") == 0) return EN_CLIP_DISTANCE1;
+    if (strcmp(str, "EN_CLIP_DISTANCE2") == 0) return EN_CLIP_DISTANCE2;
+    if (strcmp(str, "EN_CLIP_DISTANCE3") == 0) return EN_CLIP_DISTANCE3;
+    if (strcmp(str, "EN_CLIP_DISTANCE4") == 0) return EN_CLIP_DISTANCE4;
+    if (strcmp(str, "EN_CLIP_DISTANCE5") == 0) return EN_CLIP_DISTANCE5;
+    if (strcmp(str, "EN_CLIP_DISTANCE6") == 0) return EN_CLIP_DISTANCE6;
+    if (strcmp(str, "EN_CLIP_DISTANCE7") == 0) return EN_CLIP_DISTANCE7;
+    if (strcmp(str, "EN_SAMPLE_ALPHA_TO_COVERAGE") == 0) return EN_SAMPLE_ALPHA_TO_COVERAGE;
+    if (strcmp(str, "EN_SAMPLE_ALPHA_TO_ONE") == 0) return EN_SAMPLE_ALPHA_TO_ONE;
+    if (strcmp(str, "EN_SAMPLE_COVERAGE") == 0) return EN_SAMPLE_COVERAGE;
+
+    return EN_UnknownEnable;
+  }
+
   //---------------------------------------------------------------------------
   // Import Tools
   //---------------------------------------------------------------------------
@@ -682,10 +1098,9 @@ namespace vl
     if ("PT_TRIANGLES_ADJACENCY" == str) return PT_TRIANGLES_ADJACENCY;
     if ("PT_TRIANGLE_STRIP_ADJACENCY" == str) return PT_TRIANGLES_ADJACENCY;
     if ("PT_PATCHES" == str) return PT_PATCHES;
-    // if ("PT_UNKNOWN" == str) return PT_UNKNOWN;
     
     Log::error( Say("Line %n : error : unknown primitive type '%s'\n") << line_num << str);
-    return PT_UNKNOWN;
+    /*if ("PT_UNKNOWN" == str)*/ return PT_UNKNOWN;
   }
 
   inline fvec2 to_fvec2(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 2); return fvec2( (float)arr->value()[0], (float)arr->value()[1] ); }
@@ -2262,8 +2677,223 @@ namespace vl
 
   struct VLX_IO_Uniform: public VLX_IO
   {
-    void importUniform(const VLX_Structure* vlx, Uniform* obj)
+    void importUniform(const VLX_Structure* vlx, Uniform* uniform)
     {
+      const VLX_Value* val = vlx->getValue("Name");
+      if (val)
+      {
+        VL_CHECK( val->type() == VLX_Value::Identifier );
+        uniform->setName( val->getIdentifier() );
+      }
+      else
+      {
+        signalImportError( Say("Line %d : uniform without 'Name'.\n") << vlx->lineNumber() );
+        return;
+      }
+
+      // 'Count' is optional
+      int count = 1;
+      val = vlx->getValue("Count");
+      if (val)
+      {
+        VL_CHECK( val->type() == VLX_Value::Integer );
+        count = (int)val->getInteger();
+      }
+
+      EUniformType type = UT_NONE;
+      val = vlx->getValue("Type");
+      if (val)
+      {
+        VL_CHECK( val->type() == VLX_Value::Identifier );
+        type= destringfy_EUniformType( val->getIdentifier() );
+      }
+      else
+      {
+        signalImportError( Say("Line %d : uniform without 'Type'.\n") << vlx->lineNumber() );
+        return;
+      }
+
+      val = vlx->getValue("Data");
+      const VLX_ArrayReal* arr_real = NULL;
+      const VLX_ArrayInteger* arr_int = NULL;
+      if (!val)
+      {
+        signalImportError( Say("Line %d : uniform without 'Data'.\n") << vlx->lineNumber() );
+        return;
+      }
+      else
+      {
+        if (val->type() == VLX_Value::ArrayReal)
+          arr_real = val->getArrayReal();
+        else
+        if (val->type() == VLX_Value::ArrayInteger)
+          arr_int = val->getArrayInteger();
+      }
+
+      std::vector<int> int_vec;
+      std::vector<unsigned int> uint_vec;
+      std::vector<float> float_vec;
+      std::vector<double> double_vec;
+
+#define VL_CHECK_UNIFORM(Condition) if (!(Condition)) { Log::error( Say("Line %n : uniform data does not match it's Type and Count.\n") << val->lineNumber() ); return; }
+
+      // mic fixme: gli scalar versions
+
+      switch(type)
+      {
+      case UT_INT:
+        int_vec.resize(count*1); if (arr_int) arr_int->copyTo(&int_vec[0]); else int_vec[0] = (int)val->getInteger();
+        uniform->setUniform1i(count, &int_vec[0]);
+        break; // mic fixme: test this
+      case UT_INT_VEC2: 
+        int_vec.resize(count*2); arr_int->copyTo(&int_vec[0]); VL_CHECK_UNIFORM(int_vec.size() == arr_int->value().size()); 
+        uniform->setUniform2i(count, &int_vec[0]);
+        break;
+      case UT_INT_VEC3: 
+        int_vec.resize(count*3); arr_int->copyTo(&int_vec[0]); VL_CHECK_UNIFORM(int_vec.size() == arr_int->value().size()); 
+        uniform->setUniform3i(count, &int_vec[0]);
+        break;
+      case UT_INT_VEC4: 
+        int_vec.resize(count*4); arr_int->copyTo(&int_vec[0]); VL_CHECK_UNIFORM(int_vec.size() == arr_int->value().size()); 
+        uniform->setUniform4i(count, &int_vec[0]);
+        break;
+
+      case UT_UNSIGNED_INT:
+        uint_vec.resize(count*1); if (arr_int) arr_int->copyTo(&uint_vec[0]); else uint_vec[0] = (unsigned int)val->getInteger(); 
+        uniform->setUniform1ui(count, &uint_vec[0]);
+        break; // mic fixme: test this
+      case UT_UNSIGNED_INT_VEC2: 
+        uint_vec.resize(count*2); arr_int->copyTo(&uint_vec[0]); VL_CHECK_UNIFORM(uint_vec.size() == arr_int->value().size()); 
+        uniform->setUniform2ui(count, &uint_vec[0]);
+        break;
+      case UT_UNSIGNED_INT_VEC3: 
+        uint_vec.resize(count*3); arr_int->copyTo(&uint_vec[0]); VL_CHECK_UNIFORM(uint_vec.size() == arr_int->value().size()); 
+        uniform->setUniform3ui(count, &uint_vec[0]);
+        break;
+      case UT_UNSIGNED_INT_VEC4: 
+        uint_vec.resize(count*4); arr_int->copyTo(&uint_vec[0]); VL_CHECK_UNIFORM(uint_vec.size() == arr_int->value().size()); 
+        uniform->setUniform4ui(count, &uint_vec[0]);
+        break;
+
+      case UT_FLOAT: 
+        float_vec.resize(count*1); if (arr_real) arr_real->copyTo(&float_vec[0]); else float_vec[0] = (float)val->getReal(); 
+        uniform->setUniform1f(count, &float_vec[0]);
+        break; // mic fixme: test this
+      case UT_FLOAT_VEC2: 
+        float_vec.resize(count*2); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size()); 
+        uniform->setUniform2f(count, &float_vec[0]);
+        break;
+      case UT_FLOAT_VEC3: 
+        float_vec.resize(count*3); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size()); 
+        uniform->setUniform3f(count, &float_vec[0]);
+        break;
+      case UT_FLOAT_VEC4: 
+        float_vec.resize(count*4); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size()); 
+        uniform->setUniform4f(count, &float_vec[0]);
+        break;
+
+      case UT_FLOAT_MAT2: 
+        float_vec.resize(count*2*2); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size());
+        uniform->setUniformMatrix2f(count, &float_vec[0]);
+        break;
+      case UT_FLOAT_MAT3: 
+        float_vec.resize(count*3*3); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size());
+        uniform->setUniformMatrix3f(count, &float_vec[0]);
+        break;
+      case UT_FLOAT_MAT4: 
+        float_vec.resize(count*4*4); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size());
+        uniform->setUniformMatrix4f(count, &float_vec[0]);
+        break;
+
+      case UT_FLOAT_MAT2x3: 
+        float_vec.resize(count*2*3); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix2x3f(count, &float_vec[0]);
+        break;
+      case UT_FLOAT_MAT3x2: 
+        float_vec.resize(count*3*2); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix3x2f(count, &float_vec[0]);
+        break;
+      case UT_FLOAT_MAT2x4: 
+        float_vec.resize(count*2*4); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix2x4f(count, &float_vec[0]);
+        break;
+      case UT_FLOAT_MAT4x2: 
+        float_vec.resize(count*4*2); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix4x2f(count, &float_vec[0]);
+        break;
+      case UT_FLOAT_MAT3x4: 
+        float_vec.resize(count*3*4); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix3x4f(count, &float_vec[0]);
+        break;
+      case UT_FLOAT_MAT4x3: 
+        float_vec.resize(count*4*3); arr_int->copyTo(&float_vec[0]); VL_CHECK_UNIFORM(float_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix4x3f(count, &float_vec[0]);
+        break;
+
+      case UT_DOUBLE: 
+        double_vec.resize(count*1); if (arr_real) arr_real->copyTo(&double_vec[0]); else double_vec[0] = (double)val->getReal(); 
+        uniform->setUniform1d(count, &double_vec[0]);
+        break; // mic fixme: test this
+      case UT_DOUBLE_VEC2: 
+        double_vec.resize(count*2); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size()); 
+        uniform->setUniform2d(count, &double_vec[0]);
+        break;
+      case UT_DOUBLE_VEC3: 
+        double_vec.resize(count*3); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size()); 
+        uniform->setUniform3d(count, &double_vec[0]);
+        break;
+      case UT_DOUBLE_VEC4:
+        double_vec.resize(count*4); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size()); 
+        uniform->setUniform4d(count, &double_vec[0]);
+        break;
+
+      case UT_DOUBLE_MAT2: 
+        double_vec.resize(count*2*2); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size());
+        uniform->setUniformMatrix2d(count, &double_vec[0]);
+        break;
+      case UT_DOUBLE_MAT3: 
+        double_vec.resize(count*3*3); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size());
+        uniform->setUniformMatrix3d(count, &double_vec[0]);
+        break;
+      case UT_DOUBLE_MAT4: 
+        double_vec.resize(count*4*4); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size());
+        uniform->setUniformMatrix4d(count, &double_vec[0]);
+        break;
+
+      case UT_DOUBLE_MAT2x3:
+        double_vec.resize(count*2*3); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix2x3d(count, &double_vec[0]);
+        break;
+      case UT_DOUBLE_MAT3x2:
+        double_vec.resize(count*3*2); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix3x2d(count, &double_vec[0]);
+        break;
+      case UT_DOUBLE_MAT2x4:
+        double_vec.resize(count*2*4); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix2x4d(count, &double_vec[0]);
+        break;
+      case UT_DOUBLE_MAT4x2:
+        double_vec.resize(count*4*2); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix4x2d(count, &double_vec[0]);
+        break;
+      case UT_DOUBLE_MAT3x4:
+        double_vec.resize(count*3*4); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix3x4d(count, &double_vec[0]);
+        break;
+      case UT_DOUBLE_MAT4x3:
+        double_vec.resize(count*4*3); arr_int->copyTo(&double_vec[0]); VL_CHECK_UNIFORM(double_vec.size() == arr_real->value().size()); 
+        uniform->setUniformMatrix4x3d(count, &double_vec[0]);
+        break;
+
+      case UT_NONE:
+        Log::warning("Error importing uniform : uninitialized uniform.\n");
+        break;
+
+      default:
+        Log::warning("Error importing uniform : illegal uniform type.\n");
+        break;
+      }
+
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
