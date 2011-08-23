@@ -29,13 +29,13 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore\VRF_Tools.hpp>
+#include <vlCore\VLX_Tools.hpp>
 
 using namespace vl;
 
-bool VRF_Tokenizer::getToken(VRF_Token& token)
+bool VLX_Tokenizer::getToken(VLX_Token& token)
 {
-  token.mType = VRF_Token::TOKEN_ERROR;
+  token.mType = VLX_Token::TOKEN_ERROR;
   token.mString.clear();
 
   if (mRawtextBlock)
@@ -47,7 +47,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
   {
     if (!readTextChar(ch1))
     {
-      token.mType = VRF_Token::TOKEN_EOF;
+      token.mType = VLX_Token::TOKEN_EOF;
       return true;
     }
 
@@ -104,22 +104,22 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
   switch(ch1)
   {
   case '(':
-    token.mType = VRF_Token::LeftRoundBracket;
+    token.mType = VLX_Token::LeftRoundBracket;
     token.mString = "(";
     return true;
     
   case ')':
-    token.mType = VRF_Token::RightRoundBracket;
+    token.mType = VLX_Token::RightRoundBracket;
     token.mString = ")";
     return true;
 
   case '[':
-    token.mType = VRF_Token::LeftSquareBracket;
+    token.mType = VLX_Token::LeftSquareBracket;
     token.mString = "[";
     return true;
     
   case ']':
-    token.mType = VRF_Token::RightSquareBracket;
+    token.mType = VLX_Token::RightSquareBracket;
     token.mString = "]";
     return true;
 
@@ -151,7 +151,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
 
       if (ch2 == '\n')
       {
-        token.mType = VRF_Token::LeftFancyBracket;
+        token.mType = VLX_Token::LeftFancyBracket;
         token.mString = "{<";
         mRawtextBlock = true;
         return true;
@@ -164,7 +164,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
     }
     else
     {
-      token.mType = VRF_Token::LeftCurlyBracket;
+      token.mType = VLX_Token::LeftCurlyBracket;
       token.mString = "{";
       if(!isEndOfFile())
         ungetToken(ch2);
@@ -172,7 +172,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
     return true;
 
   case '}':
-    token.mType = VRF_Token::RightCurlyBracket;
+    token.mType = VLX_Token::RightCurlyBracket;
     token.mString = "}";
     return true;
 
@@ -181,7 +181,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
     {
       if(ch2 == '}')
       {
-        token.mType = VRF_Token::RightFancyBracket;
+        token.mType = VLX_Token::RightFancyBracket;
         token.mString = ">}";
         return true;
       }
@@ -198,7 +198,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
     }
 
   case '=':
-    token.mType = VRF_Token::Equals; 
+    token.mType = VLX_Token::Equals; 
     token.mString = "=";
     return true;
 
@@ -220,7 +220,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
       Log::error( Say("Line %n : unexpected end of file while reading object header.\n") << mLineNumber );
       return false;
     }
-    token.mType = VRF_Token::TagHeader;
+    token.mType = VLX_Token::TagHeader;
     return true;
 
   case '#':
@@ -240,7 +240,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
       Log::error( Say("Line %n : illegal id '#_' found.\n") << mLineNumber );
       return false;
     }
-    token.mType = VRF_Token::UID;
+    token.mType = VLX_Token::UID;
     return true;
 
   case '"':
@@ -295,7 +295,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
     }
     else
     {
-      token.mType = VRF_Token::String;
+      token.mType = VLX_Token::String;
       return true;
     }
 
@@ -323,9 +323,9 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
       {
         // check if it's a boolean
         if (token.mString == "true" || token.mString == "false")
-          token.mType = VRF_Token::Boolean;
+          token.mType = VLX_Token::Boolean;
         else
-          token.mType = VRF_Token::Identifier;
+          token.mType = VLX_Token::Identifier;
         return true;
       }
     }
@@ -348,7 +348,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
     // 123.123e+
     if ( ch1 >= '0' && ch1 <= '9' || ch1 == '.' || ch1 == '+' || ch1 == '-' )
     {
-      token.mType = VRF_Token::TOKEN_ERROR;
+      token.mType = VLX_Token::TOKEN_ERROR;
       token.mString.push_back(ch1);
 
       enum { sZERO, sPLUS_MINUS, sINT, sFRAC, sPOINT, sE, sPLUS_MINUS_EXP, sEXP } state = sINT;
@@ -378,7 +378,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
           }
           else
           {
-            token.mType = VRF_Token::Integer;
+            token.mType = VLX_Token::Integer;
             ungetToken(ch1);
             return true;
           }
@@ -420,7 +420,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
           }
           else
           {
-            token.mType = VRF_Token::Integer;
+            token.mType = VLX_Token::Integer;
             ungetToken(ch1);
             return true;
           }
@@ -450,7 +450,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
           }
           else
           {
-            token.mType = VRF_Token::Real;
+            token.mType = VLX_Token::Real;
             ungetToken(ch1);
             return true;
           }
@@ -487,7 +487,7 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
             token.mString.push_back(ch1);
           else
           {
-            token.mType = VRF_Token::Real;
+            token.mType = VLX_Token::Real;
             ungetToken(ch1);
             return true;
           }
@@ -497,13 +497,13 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
       // reached TOKEN_EOF in the middle of the parsing so we check where we were, note that it cannot be a Integer or a Real
       if (state == sINT)
       {
-        token.mType = VRF_Token::Integer;
+        token.mType = VLX_Token::Integer;
         return true;
       }
       else
       if (state == sFRAC || state == sEXP)
       {
-        token.mType = VRF_Token::Real;
+        token.mType = VLX_Token::Real;
         return true;
       }
       else
@@ -517,12 +517,12 @@ bool VRF_Tokenizer::getToken(VRF_Token& token)
   }
 }
 //-----------------------------------------------------------------------------
-bool VRF_Tokenizer::getRawtextBlock(VRF_Token& token)
+bool VLX_Tokenizer::getRawtextBlock(VLX_Token& token)
 {
   mRawtextBlock = false;
 
   token.mString.clear();
-  token.mType = VRF_Token::TOKEN_ERROR;
+  token.mType = VLX_Token::TOKEN_ERROR;
 
   char ch =0;
   while(readTextChar(ch))
@@ -547,7 +547,7 @@ bool VRF_Tokenizer::getRawtextBlock(VRF_Token& token)
           }
           else
           {
-            token.mType = VRF_Token::RawtextBlock;
+            token.mType = VLX_Token::RawtextBlock;
             ungetToken('}');
             ungetToken('>');
             return true;
@@ -564,7 +564,7 @@ bool VRF_Tokenizer::getRawtextBlock(VRF_Token& token)
   return false;
 }
 //-----------------------------------------------------------------------------
-void VRF_Value::release()
+void VLX_Value::release()
 {
   switch(mType)
   {
@@ -610,7 +610,7 @@ void VRF_Value::release()
   mUnion.mInteger = 0;
 }
 //-----------------------------------------------------------------------------
-VRF_Value& VRF_Value::operator=(const VRF_Value& other)
+VLX_Value& VLX_Value::operator=(const VLX_Value& other)
 {
   mLineNumber = other.mLineNumber;
 
@@ -660,7 +660,7 @@ VRF_Value& VRF_Value::operator=(const VRF_Value& other)
   return *this;
 }
 //-----------------------------------------------------------------------------
-VRF_Structure* VRF_Value::setStructure(VRF_Structure* obj)
+VLX_Structure* VLX_Value::setStructure(VLX_Structure* obj)
 {
   release();
   mType = Structure;
@@ -670,7 +670,7 @@ VRF_Structure* VRF_Value::setStructure(VRF_Structure* obj)
   return obj;
 }
 //-----------------------------------------------------------------------------
-VRF_List* VRF_Value::setList(VRF_List* list)
+VLX_List* VLX_Value::setList(VLX_List* list)
 {
   VL_CHECK(list);
 
@@ -682,7 +682,7 @@ VRF_List* VRF_Value::setList(VRF_List* list)
   return list;
 }
 //-----------------------------------------------------------------------------
-VRF_RawtextBlock* VRF_Value::setRawtextBlock(VRF_RawtextBlock* fblock)
+VLX_RawtextBlock* VLX_Value::setRawtextBlock(VLX_RawtextBlock* fblock)
 {
   VL_CHECK(fblock);
 
@@ -694,7 +694,7 @@ VRF_RawtextBlock* VRF_Value::setRawtextBlock(VRF_RawtextBlock* fblock)
   return fblock;
 }
 //-----------------------------------------------------------------------------
-VRF_ArrayInteger* VRF_Value::setArrayInteger(VRF_ArrayInteger* arr)
+VLX_ArrayInteger* VLX_Value::setArrayInteger(VLX_ArrayInteger* arr)
 {
   VL_CHECK(arr);
   release();
@@ -705,7 +705,7 @@ VRF_ArrayInteger* VRF_Value::setArrayInteger(VRF_ArrayInteger* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-VRF_ArrayReal* VRF_Value::setArrayReal(VRF_ArrayReal* arr)
+VLX_ArrayReal* VLX_Value::setArrayReal(VLX_ArrayReal* arr)
 {
   VL_CHECK(arr);
   release();
@@ -717,7 +717,7 @@ VRF_ArrayReal* VRF_Value::setArrayReal(VRF_ArrayReal* arr)
 }
 //-----------------------------------------------------------------------------
 /*
-VRF_ArrayString* VRF_Value::setArrayString(VRF_ArrayString* arr)
+VLX_ArrayString* VLX_Value::setArrayString(VLX_ArrayString* arr)
 {
   VL_CHECK(arr);
   release();
@@ -728,7 +728,7 @@ VRF_ArrayString* VRF_Value::setArrayString(VRF_ArrayString* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-VRF_ArrayIdentifier* VRF_Value::setArrayIdentifier(VRF_ArrayIdentifier* arr)
+VLX_ArrayIdentifier* VLX_Value::setArrayIdentifier(VLX_ArrayIdentifier* arr)
 {
   VL_CHECK(arr);
   release();
@@ -739,7 +739,7 @@ VRF_ArrayIdentifier* VRF_Value::setArrayIdentifier(VRF_ArrayIdentifier* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-VRF_ArrayUID* VRF_Value::setArrayUID(VRF_ArrayUID* arr)
+VLX_ArrayUID* VLX_Value::setArrayUID(VLX_ArrayUID* arr)
 {
   VL_CHECK(arr);
   release();
@@ -751,23 +751,23 @@ VRF_ArrayUID* VRF_Value::setArrayUID(VRF_ArrayUID* arr)
 }
 */
 //-----------------------------------------------------------------------------
-VRF_Array* VRF_Value::setArray(VRF_Array* arr)
+VLX_Array* VLX_Value::setArray(VLX_Array* arr)
 {
-  if (arr->classType() == VRF_ArrayInteger::Type())
-    return setArrayInteger(arr->as<VRF_ArrayInteger>());
+  if (arr->classType() == VLX_ArrayInteger::Type())
+    return setArrayInteger(arr->as<VLX_ArrayInteger>());
   else
-  if (arr->classType() == VRF_ArrayReal::Type())
-    return setArrayReal(arr->as<VRF_ArrayReal>());
+  if (arr->classType() == VLX_ArrayReal::Type())
+    return setArrayReal(arr->as<VLX_ArrayReal>());
   /*
   else
-  if (arr->classType() == VRF_ArrayString::Type())
-    return setArrayString(arr->as<VRF_ArrayString>());
+  if (arr->classType() == VLX_ArrayString::Type())
+    return setArrayString(arr->as<VLX_ArrayString>());
   else
-  if (arr->classType() == VRF_ArrayIdentifier::Type())
-    return setArrayIdentifier(arr->as<VRF_ArrayIdentifier>());
+  if (arr->classType() == VLX_ArrayIdentifier::Type())
+    return setArrayIdentifier(arr->as<VLX_ArrayIdentifier>());
   else
-  if (arr->classType() == VRF_ArrayUID::Type())
-    return setArrayUID(arr->as<VRF_ArrayUID>());
+  if (arr->classType() == VLX_ArrayUID::Type())
+    return setArrayUID(arr->as<VLX_ArrayUID>());
   */
   else
   {
