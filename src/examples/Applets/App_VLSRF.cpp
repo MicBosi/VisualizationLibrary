@@ -97,7 +97,7 @@ public:
     registry->addSerializer( BezierSurface::Type(), new VLX_IO_Geometry ); // mic fixme
 
     // PatchParameter
-    registry->addSerializer( PatchParameter::Type(), new VLX_IO_PatchParameter ); // mic fixme
+    registry->addSerializer( PatchParameter::Type(), new VLX_IO_PatchParameter );
 
     // DrawCall
     ref<VLX_IO_DrawCall> drawcall_serializer = new VLX_IO_DrawCall;
@@ -108,6 +108,72 @@ public:
     registry->addSerializer( MultiDrawElementsUInt::Type(), drawcall_serializer.get() );
     registry->addSerializer( MultiDrawElementsUShort::Type(), drawcall_serializer.get() );
     registry->addSerializer( MultiDrawElementsUByte::Type(), drawcall_serializer.get() );
+
+    // ResourceDatabase
+    registry->addSerializer( ResourceDatabase::Type(), new VLX_IO_ResourceDatabase );
+
+    // Uniform
+    registry->addSerializer( Uniform::Type(), new VLX_IO_Uniform );
+
+    // LODEvaluator
+    registry->addSerializer( LODEvaluator::Type(), new VLX_IO_LODEvaluator );
+
+    // Transform
+    registry->addSerializer( Transform::Type(), new VLX_IO_Transform );
+
+    // Material
+    registry->addSerializer( Material::Type(), new VLX_IO_Material );
+
+    // Texture
+    registry->addSerializer( Texture::Type(), new VLX_IO_Texture );
+
+    // TextureSampler
+    registry->addSerializer( TextureSampler::Type(), new VLX_IO_TextureSampler );
+
+    // TexParameter
+    registry->addSerializer( TexParameter::Type(), new VLX_IO_TexParameter );
+
+    // ActorEventCallback
+    registry->addSerializer( ActorEventCallback::Type(), new VLX_IO_ActorEventCallback );
+
+    // Actor
+    registry->addSerializer( Actor::Type(), new VLX_IO_Actor );
+
+    // Effect
+    registry->addSerializer( Effect::Type(), new VLX_IO_Effect );
+
+    // Shader
+    registry->addSerializer( Shader::Type(), new VLX_IO_Shader );
+
+    // Camera
+    registry->addSerializer( Camera::Type(), new VLX_IO_Camera );
+
+    // Light
+    registry->addSerializer( Light::Type(), new VLX_IO_Light );
+
+    // ClipPlane
+    registry->addSerializer( ClipPlane::Type(), new VLX_IO_ClipPlane );
+
+    // Color
+    registry->addSerializer( Color::Type(), new VLX_IO_Color );
+
+    // SecondaryColor
+    registry->addSerializer( SecondaryColor::Type(), new VLX_IO_SecondaryColor );
+
+    // Normal
+    registry->addSerializer( Normal::Type(), new VLX_IO_Normal );
+
+    // VertexAttrib
+    registry->addSerializer( VertexAttrib::Type(), new VLX_IO_VertexAttrib );
+
+    // Viewport
+    registry->addSerializer( Viewport::Type(), new VLX_IO_Viewport );
+
+    // GLSLProgram
+    registry->addSerializer( GLSLProgram::Type(), new VLX_IO_GLSLProgram );
+
+    // GLSLShader
+    registry->addSerializer( GLSLShader::Type(), new VLX_IO_GLSLShader );
 
     // Array serializer
     ref<VLX_IO_Array> array_serializer = new VLX_IO_Array;
@@ -156,7 +222,7 @@ public:
     ref<VLX_Structure> st = registry->exportVLX( geom.get() );
     if (st)
     {
-#if 0
+#if 1
       {
         std::map< std::string, int > uid_set;
         VLX_UIDCollectorVisitor uid_collector;
