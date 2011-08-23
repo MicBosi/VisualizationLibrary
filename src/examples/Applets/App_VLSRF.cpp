@@ -218,65 +218,6 @@ public:
     registry->addSerializer( ArrayUByte3::Type(), array_serializer.get() );
     registry->addSerializer( ArrayUByte4::Type(), array_serializer.get() );
 
-    // serialize
-    ref<VLX_Structure> st = registry->exportVLX( geom.get() );
-    if (st)
-    {
-#if 1
-      {
-        std::map< std::string, int > uid_set;
-        VLX_UIDCollectorVisitor uid_collector;
-        uid_collector.setUIDSet(&uid_set);
-        st->acceptVisitor(&uid_collector);
-
-        VLX_TextExportVisitor text_export_visitor;
-        text_export_visitor.setUIDSet(&uid_set);
-        st->acceptVisitor(&text_export_visitor);
-
-        ref<DiskFile> file = new DiskFile("D:/VL/export.vlx");
-        file->open(vl::OM_WriteOnly);
-        file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
-        file->close();
-      }
-#endif
-
-      // import
-      VLX_Parser parser;
-      parser.tokenizer()->setInputFile( new DiskFile("D:/VL/export.vlx") );
-
-      if (!parser.parse())
-        VL_TRAP()
-
-      if (!parser.link())
-        VL_TRAP()
-
-      ref<Object> obj = registry->importVLX( parser.root() );
-      geom = obj->as<Geometry>();
-
-      // re-export
-      ref<VLX_Structure> st = registry->exportVLX( geom.get() );
-      {
-        std::map< std::string, int > uid_set;
-        VLX_UIDCollectorVisitor uid_collector;
-        uid_collector.setUIDSet(&uid_set);
-        st->acceptVisitor(&uid_collector);
-
-        VLX_TextExportVisitor text_export_visitor;
-        text_export_visitor.setUIDSet(&uid_set);
-        st->acceptVisitor(&text_export_visitor);
-
-        ref<DiskFile> file = new DiskFile("D:/VL/re-export.vlx");
-        file->open(vl::OM_WriteOnly);
-        file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
-        file->close();
-      }
-
-    }
-    else
-      VL_TRAP();
-
-    // exit(0);
-
     ref<Effect> fx = new Effect;
     fx->shader()->enable(EN_LIGHTING);
     fx->shader()->enable(EN_DEPTH_TEST);
@@ -394,7 +335,66 @@ public:
     VL_CHECK(geom)
 #endif
 
-    sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
+    // serialize
+    ref<VLX_Structure> st = registry->exportVLX( act.get()/*geom.get()*/ );
+    if (st)
+    {
+#if 1
+      {
+        std::map< std::string, int > uid_set;
+        VLX_UIDCollectorVisitor uid_collector;
+        uid_collector.setUIDSet(&uid_set);
+        st->acceptVisitor(&uid_collector);
+
+        VLX_TextExportVisitor text_export_visitor;
+        text_export_visitor.setUIDSet(&uid_set);
+        st->acceptVisitor(&text_export_visitor);
+
+        ref<DiskFile> file = new DiskFile("D:/VL/export.vlx");
+        file->open(vl::OM_WriteOnly);
+        file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
+        file->close();
+      }
+#endif
+
+      // import
+      VLX_Parser parser;
+      parser.tokenizer()->setInputFile( new DiskFile("D:/VL/export.vlx") );
+
+      if (!parser.parse())
+        VL_TRAP()
+
+      if (!parser.link())
+        VL_TRAP()
+
+      ref<Object> obj = registry->importVLX( parser.root() );
+      // geom = obj->as<Geometry>();
+      act =obj->as<Actor>();
+
+      // re-export
+      ref<VLX_Structure> st = registry->exportVLX( act->lod(0) );
+      {
+        std::map< std::string, int > uid_set;
+        VLX_UIDCollectorVisitor uid_collector;
+        uid_collector.setUIDSet(&uid_set);
+        st->acceptVisitor(&uid_collector);
+
+        VLX_TextExportVisitor text_export_visitor;
+        text_export_visitor.setUIDSet(&uid_set);
+        st->acceptVisitor(&text_export_visitor);
+
+        ref<DiskFile> file = new DiskFile("D:/VL/re-export.vlx");
+        file->open(vl::OM_WriteOnly);
+        file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
+        file->close();
+      }
+
+    }
+    else
+      VL_TRAP();
+
+    // sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
+    sceneManager()->tree()->addActor( act.get() );
   }
 };
 

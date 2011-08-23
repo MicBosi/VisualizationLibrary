@@ -825,8 +825,6 @@ namespace vl
           VL_CHECK(serializer);
           // import structure
           ref<Object> obj = serializer->importVLX(st);
-          // register imported structure
-          registerImportedStructure(st, obj.get());
           if (!obj)
           {
             setError(ImportError);
@@ -862,8 +860,6 @@ namespace vl
           VL_CHECK(serializer);
           // export object
           ref<VLX_Structure> st = serializer->exportVLX(obj);
-          // register export object
-          registerExportedObject(obj, st.get());
           if (!st)
           {
             setError(ExportError);
@@ -1320,6 +1316,8 @@ namespace vl
         signalImportError( Say("Line %n : unknown array '%s'.\n") << vlx->lineNumber() << vlx->tag() );
       }
 
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, arr_abstract.get());
       return arr_abstract.get();
     }
 
@@ -1342,130 +1340,132 @@ namespace vl
       return st;
     }
 
-    virtual ref<VLX_Structure> exportVLX(const Object* arr_abstract)
+    virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
-      ref<VLX_Structure> st;
-      if(arr_abstract->classType() == ArrayUInt1::Type())
-        st = export_ArrayT<ArrayUInt1, VLX_ArrayInteger>(arr_abstract);
+      ref<VLX_Structure> vlx;
+      if(obj->classType() == ArrayUInt1::Type())
+        vlx = export_ArrayT<ArrayUInt1, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayUInt2::Type())
-        st = export_ArrayT<ArrayUInt2, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUInt2::Type())
+        vlx = export_ArrayT<ArrayUInt2, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayUInt3::Type())
-        st = export_ArrayT<ArrayUInt3, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUInt3::Type())
+        vlx = export_ArrayT<ArrayUInt3, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayUInt4::Type())
-        st = export_ArrayT<ArrayUInt4, VLX_ArrayInteger>(arr_abstract);
-      else
-
-      if(arr_abstract->classType() == ArrayInt1::Type())
-        st = export_ArrayT<ArrayInt1, VLX_ArrayInteger>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayInt2::Type())
-        st = export_ArrayT<ArrayInt2, VLX_ArrayInteger>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayInt3::Type())
-        st = export_ArrayT<ArrayInt3, VLX_ArrayInteger>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayInt4::Type())
-        st = export_ArrayT<ArrayInt4, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUInt4::Type())
+        vlx = export_ArrayT<ArrayUInt4, VLX_ArrayInteger>(obj);
       else
 
-      if(arr_abstract->classType() == ArrayUShort1::Type())
-        st = export_ArrayT<ArrayUShort1, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayInt1::Type())
+        vlx = export_ArrayT<ArrayInt1, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayUShort2::Type())
-        st = export_ArrayT<ArrayUShort2, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayInt2::Type())
+        vlx = export_ArrayT<ArrayInt2, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayUShort3::Type())
-        st = export_ArrayT<ArrayUShort3, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayInt3::Type())
+        vlx = export_ArrayT<ArrayInt3, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayUShort4::Type())
-        st = export_ArrayT<ArrayUShort4, VLX_ArrayInteger>(arr_abstract);
-      else
-
-      if(arr_abstract->classType() == ArrayUShort1::Type())
-        st = export_ArrayT<ArrayUShort1, VLX_ArrayInteger>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayUShort2::Type())
-        st = export_ArrayT<ArrayUShort2, VLX_ArrayInteger>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayUShort3::Type())
-        st = export_ArrayT<ArrayUShort3, VLX_ArrayInteger>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayUShort4::Type())
-        st = export_ArrayT<ArrayUShort4, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayInt4::Type())
+        vlx = export_ArrayT<ArrayInt4, VLX_ArrayInteger>(obj);
       else
 
-      if(arr_abstract->classType() == ArrayShort1::Type())
-        st = export_ArrayT<ArrayShort1, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUShort1::Type())
+        vlx = export_ArrayT<ArrayUShort1, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayShort2::Type())
-        st = export_ArrayT<ArrayShort2, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUShort2::Type())
+        vlx = export_ArrayT<ArrayUShort2, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayShort3::Type())
-        st = export_ArrayT<ArrayShort3, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUShort3::Type())
+        vlx = export_ArrayT<ArrayUShort3, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayShort4::Type())
-        st = export_ArrayT<ArrayShort4, VLX_ArrayInteger>(arr_abstract);
-      else
-
-      if(arr_abstract->classType() == ArrayUByte1::Type())
-        st = export_ArrayT<ArrayUByte1, VLX_ArrayInteger>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayUByte2::Type())
-        st = export_ArrayT<ArrayUByte2, VLX_ArrayInteger>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayUByte3::Type())
-        st = export_ArrayT<ArrayUByte3, VLX_ArrayInteger>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayUByte4::Type())
-        st = export_ArrayT<ArrayUByte4, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUShort4::Type())
+        vlx = export_ArrayT<ArrayUShort4, VLX_ArrayInteger>(obj);
       else
 
-      if(arr_abstract->classType() == ArrayByte1::Type())
-        st = export_ArrayT<ArrayByte1, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUShort1::Type())
+        vlx = export_ArrayT<ArrayUShort1, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayByte2::Type())
-        st = export_ArrayT<ArrayByte2, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUShort2::Type())
+        vlx = export_ArrayT<ArrayUShort2, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayByte3::Type())
-        st = export_ArrayT<ArrayByte3, VLX_ArrayInteger>(arr_abstract);
+      if(obj->classType() == ArrayUShort3::Type())
+        vlx = export_ArrayT<ArrayUShort3, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayByte4::Type())
-        st = export_ArrayT<ArrayByte4, VLX_ArrayInteger>(arr_abstract);
-      else
-
-      if(arr_abstract->classType() == ArrayFloat1::Type())
-        st = export_ArrayT<ArrayFloat1, VLX_ArrayReal>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayFloat2::Type())
-        st = export_ArrayT<ArrayFloat2, VLX_ArrayReal>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayFloat3::Type())
-        st = export_ArrayT<ArrayFloat3, VLX_ArrayReal>(arr_abstract);
-      else
-      if(arr_abstract->classType() == ArrayFloat4::Type())
-        st = export_ArrayT<ArrayFloat4, VLX_ArrayReal>(arr_abstract);
+      if(obj->classType() == ArrayUShort4::Type())
+        vlx = export_ArrayT<ArrayUShort4, VLX_ArrayInteger>(obj);
       else
 
-      if(arr_abstract->classType() == ArrayDouble1::Type())
-        st = export_ArrayT<ArrayDouble1, VLX_ArrayReal>(arr_abstract);
+      if(obj->classType() == ArrayShort1::Type())
+        vlx = export_ArrayT<ArrayShort1, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayDouble2::Type())
-        st = export_ArrayT<ArrayDouble2, VLX_ArrayReal>(arr_abstract);
+      if(obj->classType() == ArrayShort2::Type())
+        vlx = export_ArrayT<ArrayShort2, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayDouble3::Type())
-        st = export_ArrayT<ArrayDouble3, VLX_ArrayReal>(arr_abstract);
+      if(obj->classType() == ArrayShort3::Type())
+        vlx = export_ArrayT<ArrayShort3, VLX_ArrayInteger>(obj);
       else
-      if(arr_abstract->classType() == ArrayDouble4::Type())
-        st = export_ArrayT<ArrayDouble4, VLX_ArrayReal>(arr_abstract);
+      if(obj->classType() == ArrayShort4::Type())
+        vlx = export_ArrayT<ArrayShort4, VLX_ArrayInteger>(obj);
+      else
+
+      if(obj->classType() == ArrayUByte1::Type())
+        vlx = export_ArrayT<ArrayUByte1, VLX_ArrayInteger>(obj);
+      else
+      if(obj->classType() == ArrayUByte2::Type())
+        vlx = export_ArrayT<ArrayUByte2, VLX_ArrayInteger>(obj);
+      else
+      if(obj->classType() == ArrayUByte3::Type())
+        vlx = export_ArrayT<ArrayUByte3, VLX_ArrayInteger>(obj);
+      else
+      if(obj->classType() == ArrayUByte4::Type())
+        vlx = export_ArrayT<ArrayUByte4, VLX_ArrayInteger>(obj);
+      else
+
+      if(obj->classType() == ArrayByte1::Type())
+        vlx = export_ArrayT<ArrayByte1, VLX_ArrayInteger>(obj);
+      else
+      if(obj->classType() == ArrayByte2::Type())
+        vlx = export_ArrayT<ArrayByte2, VLX_ArrayInteger>(obj);
+      else
+      if(obj->classType() == ArrayByte3::Type())
+        vlx = export_ArrayT<ArrayByte3, VLX_ArrayInteger>(obj);
+      else
+      if(obj->classType() == ArrayByte4::Type())
+        vlx = export_ArrayT<ArrayByte4, VLX_ArrayInteger>(obj);
+      else
+
+      if(obj->classType() == ArrayFloat1::Type())
+        vlx = export_ArrayT<ArrayFloat1, VLX_ArrayReal>(obj);
+      else
+      if(obj->classType() == ArrayFloat2::Type())
+        vlx = export_ArrayT<ArrayFloat2, VLX_ArrayReal>(obj);
+      else
+      if(obj->classType() == ArrayFloat3::Type())
+        vlx = export_ArrayT<ArrayFloat3, VLX_ArrayReal>(obj);
+      else
+      if(obj->classType() == ArrayFloat4::Type())
+        vlx = export_ArrayT<ArrayFloat4, VLX_ArrayReal>(obj);
+      else
+
+      if(obj->classType() == ArrayDouble1::Type())
+        vlx = export_ArrayT<ArrayDouble1, VLX_ArrayReal>(obj);
+      else
+      if(obj->classType() == ArrayDouble2::Type())
+        vlx = export_ArrayT<ArrayDouble2, VLX_ArrayReal>(obj);
+      else
+      if(obj->classType() == ArrayDouble3::Type())
+        vlx = export_ArrayT<ArrayDouble3, VLX_ArrayReal>(obj);
+      else
+      if(obj->classType() == ArrayDouble4::Type())
+        vlx = export_ArrayT<ArrayDouble4, VLX_ArrayReal>(obj);
       else
       {
         signalExportError("Array type not supported for export.\n");
       }
 
-      return st;
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
+      return vlx;
     }
   };
 
@@ -1639,6 +1639,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Geometry> geom = new Geometry;
+      // registration must be done here to avoid loops
+      registry()->registerImportedStructure(vlx, geom.get());
       importGeometry(vlx, geom.get());
       return geom;
     }
@@ -1690,6 +1692,8 @@ namespace vl
     {
       const Geometry* cast_obj = obj->as<Geometry>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("geometry_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportGeometry(cast_obj, vlx.get());
       return vlx;
     }
@@ -1709,6 +1713,8 @@ namespace vl
 
       // link the VLX to the VL object
       ref<VertexAttribInfo> info = new VertexAttribInfo;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, info.get());
 
       for(size_t i=0; i<vlx->value().size(); ++i)
       {
@@ -1770,6 +1776,8 @@ namespace vl
     {
       const VertexAttribInfo* cast_obj = obj->as<VertexAttribInfo>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("vertattrinfo_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportVertexAttribInfo(cast_obj, vlx.get());
       return vlx;
     }
@@ -1998,6 +2006,8 @@ namespace vl
         dc = new DrawArrays;
       else
         signalImportError( Say("Line %n : error. Unknown draw call.\n") << vlx->lineNumber() );
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, dc.get());
       importDrawCall(vlx, dc.get());
       return dc;
     }
@@ -2106,6 +2116,8 @@ namespace vl
     {
       const DrawCall* cast_obj = obj->as<DrawCall>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("drawcall_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportDrawCall(cast_obj, vlx.get());
       return vlx;
     }
@@ -2140,6 +2152,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<PatchParameter> pp = new PatchParameter;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, pp.get());
       importPatchParameter(vlx, pp.get());
       return pp;
     }
@@ -2155,6 +2169,8 @@ namespace vl
     {
       const PatchParameter* cast_obj = obj->as<PatchParameter>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("patchparam_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportPatchParameter(cast_obj, vlx.get());
       return vlx;
     }
@@ -2214,6 +2230,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<ResourceDatabase> resdb = new ResourceDatabase;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, resdb.get());
       importResourceDatabase(vlx, resdb.get());
       return resdb;
     }
@@ -2233,6 +2251,8 @@ namespace vl
     {
       const ResourceDatabase* cast_obj = obj->as<ResourceDatabase>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("resdb_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportResourceDatabase(cast_obj, vlx.get());
       return vlx;
     }
@@ -2249,6 +2269,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Uniform> obj = new Uniform;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importUniform(vlx, obj.get());
       return obj;
     }
@@ -2351,6 +2373,8 @@ namespace vl
     {
       const Uniform* cast_obj = obj->as<Uniform>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportUniform(cast_obj, vlx.get());
       return vlx;
     }
@@ -2367,6 +2391,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Shader> obj = new Shader;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importShader(vlx, obj.get());
       return obj;
     }
@@ -2413,6 +2439,8 @@ namespace vl
     {
       const Shader* cast_obj = obj->as<Shader>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("shader_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportShader(cast_obj, vlx.get());
       return vlx;
     }
@@ -2429,6 +2457,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<LODEvaluator> obj /*= new LODEvaluator*/; // mic fixme
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importLODEvaluator(vlx, obj.get());
       return obj;
     }
@@ -2464,6 +2494,8 @@ namespace vl
     {
       const LODEvaluator* cast_obj = obj->as<LODEvaluator>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("lodeval_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportLODEvaluator(cast_obj, vlx.get());
       return vlx;
     }
@@ -2480,6 +2512,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Effect> obj = new Effect;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importEffect(vlx, obj.get());
       return obj;
     }
@@ -2513,6 +2547,8 @@ namespace vl
     {
       const Effect* cast_obj = obj->as<Effect>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("effect_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportEffect(cast_obj, vlx.get());
       return vlx;
     }
@@ -2529,6 +2565,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Actor> obj = new Actor;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importActor(vlx, obj.get());
       return obj;
     }
@@ -2576,6 +2614,8 @@ namespace vl
     {
       const Actor* cast_obj = obj->as<Actor>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("actor_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportActor(cast_obj, vlx.get());
       return vlx;
     }
@@ -2592,6 +2632,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Camera> obj = new Camera;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importCamera(vlx, obj.get());
       return obj;
     }
@@ -2617,6 +2659,8 @@ namespace vl
     {
       const Camera* cast_obj = obj->as<Camera>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("camera_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportCamera(cast_obj, vlx.get());
       return vlx;
     }
@@ -2634,6 +2678,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Viewport> obj = new Viewport;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importViewport(vlx, obj.get());
       return obj;
     }
@@ -2657,6 +2703,8 @@ namespace vl
     {
       const Viewport* cast_obj = obj->as<Viewport>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("camera_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportViewport(cast_obj, vlx.get());
       return vlx;
     }
@@ -2673,6 +2721,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Transform> obj = new Transform;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importTransform(vlx, obj.get());
       return obj;
     }
@@ -2695,6 +2745,8 @@ namespace vl
     {
       const Transform* cast_obj = obj->as<Transform>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("transform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportTransform(cast_obj, vlx.get());
       return vlx;
     }
@@ -2711,6 +2763,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Light> obj = new Light;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importLight(vlx, obj.get());
       return obj;
     }
@@ -2735,6 +2789,8 @@ namespace vl
     {
       const Light* cast_obj = obj->as<Light>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("light_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportLight(cast_obj, vlx.get());
       return vlx;
     }
@@ -2751,6 +2807,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<ClipPlane> obj = new ClipPlane;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importClipPlane(vlx, obj.get());
       return obj;
     }
@@ -2768,6 +2826,8 @@ namespace vl
     {
       const ClipPlane* cast_obj = obj->as<ClipPlane>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportClipPlane(cast_obj, vlx.get());
       return vlx;
     }
@@ -2784,6 +2844,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<GLSLProgram> obj = new GLSLProgram;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importGLSLProgram(vlx, obj.get());
       return obj;
     }
@@ -2830,6 +2892,8 @@ namespace vl
     {
       const GLSLProgram* cast_obj = obj->as<GLSLProgram>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("glslprog_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportGLSLProgram(cast_obj, vlx.get());
       return vlx;
     }
@@ -2846,6 +2910,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<GLSLShader> obj /*= new GLSLShader*/; // mic fixme
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importGLSLShader(vlx, obj.get());
       return obj;
     }
@@ -2884,6 +2950,8 @@ namespace vl
     {
       const GLSLShader* cast_obj = obj->as<GLSLShader>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("glslsh_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportGLSLShader(cast_obj, vlx.get());
       return vlx;
     }
@@ -2900,6 +2968,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Color> obj = new Color;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importColor(vlx, obj.get());
       return obj;
     }
@@ -2913,6 +2983,8 @@ namespace vl
     {
       const Color* cast_obj = obj->as<Color>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportColor(cast_obj, vlx.get());
       return vlx;
     }
@@ -2929,6 +3001,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<SecondaryColor> obj = new SecondaryColor;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importSecondaryColor(vlx, obj.get());
       return obj;
     }
@@ -2942,6 +3016,8 @@ namespace vl
     {
       const SecondaryColor* cast_obj = obj->as<SecondaryColor>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportSecondaryColor(cast_obj, vlx.get());
       return vlx;
     }
@@ -2958,6 +3034,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Normal> obj = new Normal;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importNormal(vlx, obj.get());
       return obj;
     }
@@ -2971,6 +3049,8 @@ namespace vl
     {
       const Normal* cast_obj = obj->as<Normal>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportNormal(cast_obj, vlx.get());
       return vlx;
     }
@@ -2987,6 +3067,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Material> obj = new Material;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importMaterial(vlx, obj.get());
       return obj;
     }
@@ -3015,6 +3097,8 @@ namespace vl
     {
       const Material* cast_obj = obj->as<Material>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportMaterial(cast_obj, vlx.get());
       return vlx;
     }
@@ -3031,6 +3115,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<VertexAttrib> obj = new VertexAttrib;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importVertexAttrib(vlx, obj.get());
       return obj;
     }
@@ -3044,6 +3130,8 @@ namespace vl
     {
       const VertexAttrib* cast_obj = obj->as<VertexAttrib>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportVertexAttrib(cast_obj, vlx.get());
       return vlx;
     }
@@ -3061,6 +3149,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<ActorEventCallback> obj/* = new ActorEventCallback*/; // mic fixme
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importActorEventCallback(vlx, obj.get());
       return obj;
     }
@@ -3086,6 +3176,8 @@ namespace vl
     {
       const ActorEventCallback* cast_obj = obj->as<ActorEventCallback>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportActorEventCallback(cast_obj, vlx.get());
       return vlx;
     }
@@ -3102,6 +3194,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<Texture> obj = new Texture;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importTexture(vlx, obj.get());
       return obj;
     }
@@ -3162,6 +3256,8 @@ namespace vl
     {
       const Texture* cast_obj = obj->as<Texture>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportTexture(cast_obj, vlx.get());
       return vlx;
     }
@@ -3178,6 +3274,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<TextureSampler> obj = new TextureSampler;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importTextureSampler(vlx, obj.get());
       return obj;
     }
@@ -3194,6 +3292,8 @@ namespace vl
     {
       const TextureSampler* cast_obj = obj->as<TextureSampler>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportTextureSampler(cast_obj, vlx.get());
       return vlx;
     }
@@ -3210,6 +3310,8 @@ namespace vl
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
       ref<TexParameter> obj = new TexParameter;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
       importTexParameter(vlx, obj.get());
       return obj;
     }
@@ -3233,6 +3335,8 @@ namespace vl
     {
       const TexParameter* cast_obj = obj->as<TexParameter>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      // register export object
+      registry()->registerExportedObject(obj, vlx.get());
       exportTexParameter(cast_obj, vlx.get());
       return vlx;
     }
@@ -3281,953 +3385,6 @@ namespace vl
 
     //-----------------------------------------------------------------------------
 
-    //ResourceDatabase* import_ResourceDatabase(const VLX_Structure* vlx)
-    //{
-    //  if (vlx->tag() != "<vl::ResourceDatabase>")
-    //    return NULL;
-
-    //  // <ResourceDatabase> must have at least one "SerializerVersion" and one "Resources" keys in this order.
-    //  if (vlx->value().size() < 2)
-    //    return NULL;
-    //  else
-    //  {
-    //    if (vlx->value()[0].key() != "SerializerVersion" || vlx->value()[0].value().type() != VLX_Value::Integer)
-    //    {
-    //      Log::error( Say("Line %n : no serializer version found.\n") << vlx->value()[0].value().lineNumber() );
-    //      return NULL;
-    //    }
-    //    else
-    //    if (vlx->value()[0].value().getInteger() != VL_SERIALIZER_VERSION )
-    //    {
-    //      Log::error("Unsupported serializer version.\n");
-    //      return NULL;
-    //    }
-
-    //    if (vlx->value()[1].key() != "Resources" || vlx->value()[1].value().type() != VLX_Value::List)
-    //    {
-    //      Log::error( Say("Line %n : 'Resources' key/value expected.\n") << vlx->value()[1].value().lineNumber() );
-    //      return NULL;
-    //    }
-    //  }
-
-    //  // return already parsed object
-    //  if (vlxToVL(vlx))
-    //    return vlxToVL(vlx)->as<ResourceDatabase>();
-
-    //  // link the VLX to the VL object
-    //  ref<ResourceDatabase> res_db = new ResourceDatabase;
-    //  registerImportedStructure(vlx, res_db.get());
-
-    //  // get the list
-    //  const VLX_List* list = vlx->value()[1].value().getList();
-    //  for(size_t i=0; i<list->value().size(); ++i)
-    //  {
-    //    const VLX_Value& value = list->value()[i];
-
-    //    // the member of this list must be all structures, unknown ones are silently skipped
-
-    //    if (value.type() != VLX_Value::Structure)
-    //    {
-    //      Log::error( Say("Line %n : structure expected.\n") << value.lineNumber() );
-    //      return NULL;
-    //    }
-
-    //    const VLX_Structure* obj = value.getStructure();
-    //  
-    //    if (obj->tag() == "<vl::Geometry>")
-    //    {
-    //      Geometry* geom = import_Geometry(obj);
-    //      if (geom)
-    //        res_db->resources().push_back(geom);
-    //    }
-    //    else
-    //    if (obj->tag() == "<vl::Effect>")
-    //    {
-    //      Effect* fx = import_Effect(obj);
-    //      if (fx)
-    //        res_db->resources().push_back(fx);
-    //    }
-    //    else
-    //    if (obj->tag() == "<vl::Shader>")
-    //    {
-    //      Shader* sh = import_Shader(obj);
-    //      if (sh)
-    //        res_db->resources().push_back(sh);
-    //    }
-    //    else
-    //    if (obj->tag() == "<vl::Transform>")
-    //    {
-    //      Transform* tr = import_Transform(obj);
-    //      if (tr)
-    //        res_db->resources().push_back(tr);
-    //    }
-    //    else
-    //    if (obj->tag() == "<vl::Actor>")
-    //    {
-    //      Actor* act = import_Actor(obj);
-    //      if (act)
-    //        res_db->resources().push_back(act);
-    //    }
-    //    else
-    //    if (obj->tag() == "<vl::Camera>")
-    //    {
-    //      Camera* cam = import_Camera(obj);
-    //      if (cam)
-    //        res_db->resources().push_back(cam);
-    //    }
-    //    else
-    //    {
-    //      // mic fixme: metti questo in debug
-    //      Log::warning( Say("Line %n : skipping unknown structure '%s'.\n") << obj->lineNumber() << obj->tag() );
-    //    }
-    //  }
-
-    //  return res_db.get();
-    //}
-
-    //ArrayAbstract* import_Array(const VLX_Structure* vlx)
-    //{
-    //  // return already parsed object
-    //  if (vlxToVL(vlx))
-    //    return vlxToVL(vlx)->as<ArrayAbstract>();
-
-    //  if (!vlx->getValue("Value"))
-    //  {
-    //    Log::error( Say("Line %n : error. 'Value' expected in object '%s'. \n") << vlx->lineNumber() << vlx->tag() );
-    //    return NULL;
-    //  }
-
-    //  const VLX_Value& value = *vlx->getValue("Value");
-    //
-    //  ref<ArrayAbstract> arr_abstract;
-
-    //  if (vlx->tag() == "<vl::ArrayFloat1>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayReal);
-    //    const VLX_ArrayReal* vlx_arr_float = value.getArrayReal();
-    //    ref<ArrayFloat1> arr_float1 = new ArrayFloat1; arr_abstract = arr_float1;
-    //    arr_float1->resize( vlx_arr_float->value().size() );
-    //    vlx_arr_float->copyTo((float*)arr_float1->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayFloat2>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayReal);
-    //    const VLX_ArrayReal* vlx_arr_float = value.getArrayReal();
-    //    VLX_CHECK_ERROR( vlx_arr_float->value().size() % 2 == 0)
-    //    ref<ArrayFloat2> arr_float2 = new ArrayFloat2; arr_abstract = arr_float2;
-    //    arr_float2->resize( vlx_arr_float->value().size() / 2 );
-    //    vlx_arr_float->copyTo((float*)arr_float2->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayFloat3>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayReal);
-    //    const VLX_ArrayReal* vlx_arr_float = value.getArrayReal();
-    //    VLX_CHECK_ERROR( vlx_arr_float->value().size() % 3 == 0)
-    //    ref<ArrayFloat3> arr_float3 = new ArrayFloat3; arr_abstract = arr_float3;
-    //    arr_float3->resize( vlx_arr_float->value().size() / 3 );
-    //    vlx_arr_float->copyTo((float*)arr_float3->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayFloat4>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayReal);
-    //    const VLX_ArrayReal* vlx_arr_float = value.getArrayReal();
-    //    VLX_CHECK_ERROR( vlx_arr_float->value().size() % 4 == 0)
-    //    ref<ArrayFloat4> arr_float4 = new ArrayFloat4; arr_abstract = arr_float4;
-    //    arr_float4->resize( vlx_arr_float->value().size() / 4 );
-    //    vlx_arr_float->copyTo((float*)arr_float4->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayDouble1>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayReal);
-    //    const VLX_ArrayReal* vlx_arr_floating = value.getArrayReal();
-    //    ref<ArrayDouble1> arr_floating1 = new ArrayDouble1; arr_abstract = arr_floating1;
-    //    arr_floating1->resize( vlx_arr_floating->value().size() );
-    //    vlx_arr_floating->copyTo((double*)arr_floating1->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayDouble2>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayReal);
-    //    const VLX_ArrayReal* vlx_arr_floating = value.getArrayReal();
-    //    VLX_CHECK_ERROR( vlx_arr_floating->value().size() % 2 == 0)
-    //    ref<ArrayDouble2> arr_floating2 = new ArrayDouble2; arr_abstract = arr_floating2;
-    //    arr_floating2->resize( vlx_arr_floating->value().size() / 2 );
-    //    vlx_arr_floating->copyTo((double*)arr_floating2->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayDouble3>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayReal);
-    //    const VLX_ArrayReal* vlx_arr_floating = value.getArrayReal();
-    //    VLX_CHECK_ERROR( vlx_arr_floating->value().size() % 3 == 0)
-    //    ref<ArrayDouble3> arr_floating3 = new ArrayDouble3; arr_abstract = arr_floating3;
-    //    arr_floating3->resize( vlx_arr_floating->value().size() / 3 );
-    //    vlx_arr_floating->copyTo((double*)arr_floating3->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayDouble4>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayReal);
-    //    const VLX_ArrayReal* vlx_arr_floating = value.getArrayReal();
-    //    VLX_CHECK_ERROR( vlx_arr_floating->value().size() % 4 == 0)
-    //    ref<ArrayDouble4> arr_floating4 = new ArrayDouble4; arr_abstract = arr_floating4;
-    //    arr_floating4->resize( vlx_arr_floating->value().size() / 4 );
-    //    vlx_arr_floating->copyTo((double*)arr_floating4->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayInt1>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    ref<ArrayInt1> arr_int1 = new ArrayInt1; arr_abstract = arr_int1;
-    //    arr_int1->resize( vlx_arr_int->value().size() );
-    //    vlx_arr_int->copyTo((int*)arr_int1->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayInt2>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 2 == 0)
-    //    ref<ArrayInt2> arr_int2 = new ArrayInt2; arr_abstract = arr_int2;
-    //    arr_int2->resize( vlx_arr_int->value().size() / 2 );
-    //    vlx_arr_int->copyTo((int*)arr_int2->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayInt3>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 3 == 0)
-    //    ref<ArrayInt3> arr_int3 = new ArrayInt3; arr_abstract = arr_int3;
-    //    arr_int3->resize( vlx_arr_int->value().size() / 3 );
-    //    vlx_arr_int->copyTo((int*)arr_int3->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayInt4>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 4 == 0)
-    //    ref<ArrayInt4> arr_int4 = new ArrayInt4; arr_abstract = arr_int4;
-    //    arr_int4->resize( vlx_arr_int->value().size() / 4 );
-    //    vlx_arr_int->copyTo((int*)arr_int4->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUInt1>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    ref<ArrayUInt1> arr_int1 = new ArrayUInt1; arr_abstract = arr_int1;
-    //    arr_int1->resize( vlx_arr_int->value().size() );
-    //    vlx_arr_int->copyTo((unsigned int*)arr_int1->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUInt2>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 2 == 0)
-    //    ref<ArrayUInt2> arr_int2 = new ArrayUInt2; arr_abstract = arr_int2;
-    //    arr_int2->resize( vlx_arr_int->value().size() / 2 );
-    //    vlx_arr_int->copyTo((unsigned int*)arr_int2->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUInt3>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 3 == 0)
-    //    ref<ArrayUInt3> arr_int3 = new ArrayUInt3; arr_abstract = arr_int3;
-    //    arr_int3->resize( vlx_arr_int->value().size() / 3 );
-    //    vlx_arr_int->copyTo((unsigned int*)arr_int3->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUInt4>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 4 == 0)
-    //    ref<ArrayUInt4> arr_int4 = new ArrayUInt4; arr_abstract = arr_int4;
-    //    arr_int4->resize( vlx_arr_int->value().size() / 4 );
-    //    vlx_arr_int->copyTo((unsigned int*)arr_int4->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayShort1>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    ref<ArrayShort1> arr_short1 = new ArrayShort1; arr_abstract = arr_short1;
-    //    arr_short1->resize( vlx_arr_int->value().size() );
-    //    vlx_arr_int->copyTo((short*)arr_short1->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayShort2>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 2 == 0)
-    //    ref<ArrayShort2> arr_short2 = new ArrayShort2; arr_abstract = arr_short2;
-    //    arr_short2->resize( vlx_arr_int->value().size() / 2 );
-    //    vlx_arr_int->copyTo((short*)arr_short2->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayShort3>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 3 == 0)
-    //    ref<ArrayShort3> arr_short3 = new ArrayShort3; arr_abstract = arr_short3;
-    //    arr_short3->resize( vlx_arr_int->value().size() / 3 );
-    //    vlx_arr_int->copyTo((short*)arr_short3->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayShort4>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 4 == 0)
-    //    ref<ArrayShort4> arr_short4 = new ArrayShort4; arr_abstract = arr_short4;
-    //    arr_short4->resize( vlx_arr_int->value().size() / 4 );
-    //    vlx_arr_int->copyTo((short*)arr_short4->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUShort1>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    ref<ArrayUShort1> arr_short1 = new ArrayUShort1; arr_abstract = arr_short1;
-    //    arr_short1->resize( vlx_arr_int->value().size() );
-    //    vlx_arr_int->copyTo((unsigned short*)arr_short1->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUShort2>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 2 == 0)
-    //    ref<ArrayUShort2> arr_short2 = new ArrayUShort2; arr_abstract = arr_short2;
-    //    arr_short2->resize( vlx_arr_int->value().size() / 2 );
-    //    vlx_arr_int->copyTo((unsigned short*)arr_short2->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUShort3>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 3 == 0)
-    //    ref<ArrayUShort3> arr_short3 = new ArrayUShort3; arr_abstract = arr_short3;
-    //    arr_short3->resize( vlx_arr_int->value().size() / 3 );
-    //    vlx_arr_int->copyTo((unsigned short*)arr_short3->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUShort4>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 4 == 0)
-    //    ref<ArrayUShort4> arr_short4 = new ArrayUShort4; arr_abstract = arr_short4;
-    //    arr_short4->resize( vlx_arr_int->value().size() / 4 );
-    //    vlx_arr_int->copyTo((unsigned short*)arr_short4->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayByte1>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    ref<ArrayByte1> arr_byte1 = new ArrayByte1; arr_abstract = arr_byte1;
-    //    arr_byte1->resize( vlx_arr_int->value().size() );
-    //    vlx_arr_int->copyTo((char*)arr_byte1->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayByte2>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 2 == 0)
-    //    ref<ArrayByte2> arr_byte2 = new ArrayByte2; arr_abstract = arr_byte2;
-    //    arr_byte2->resize( vlx_arr_int->value().size() / 2 );
-    //    vlx_arr_int->copyTo((char*)arr_byte2->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayByte3>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 3 == 0)
-    //    ref<ArrayByte3> arr_byte3 = new ArrayByte3; arr_abstract = arr_byte3;
-    //    arr_byte3->resize( vlx_arr_int->value().size() / 3 );
-    //    vlx_arr_int->copyTo((char*)arr_byte3->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayByte4>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 4 == 0)
-    //    ref<ArrayByte4> arr_byte4 = new ArrayByte4; arr_abstract = arr_byte4;
-    //    arr_byte4->resize( vlx_arr_int->value().size() / 4 );
-    //    vlx_arr_int->copyTo((char*)arr_byte4->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUByte1>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    ref<ArrayUByte1> arr_byte1 = new ArrayUByte1; arr_abstract = arr_byte1;
-    //    arr_byte1->resize( vlx_arr_int->value().size() );
-    //    vlx_arr_int->copyTo((unsigned char*)arr_byte1->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUByte2>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 2 == 0)
-    //    ref<ArrayUByte2> arr_byte2 = new ArrayUByte2; arr_abstract = arr_byte2;
-    //    arr_byte2->resize( vlx_arr_int->value().size() / 2 );
-    //    vlx_arr_int->copyTo((unsigned char*)arr_byte2->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUByte3>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 3 == 0)
-    //    ref<ArrayUByte3> arr_byte3 = new ArrayUByte3; arr_abstract = arr_byte3;
-    //    arr_byte3->resize( vlx_arr_int->value().size() / 3 );
-    //    vlx_arr_int->copyTo((unsigned char*)arr_byte3->ptr());
-    //  }
-    //  else
-    //  if (vlx->tag() == "<vl::ArrayUByte4>")
-    //  {
-    //    VLX_CHECK_ERROR(value.type() == VLX_Value::ArrayInteger);
-    //    const VLX_ArrayInteger* vlx_arr_int = value.getArrayInteger();
-    //    VLX_CHECK_ERROR( vlx_arr_int->value().size() % 4 == 0)
-    //    ref<ArrayUByte4> arr_byte4 = new ArrayUByte4; arr_abstract = arr_byte4;
-    //    arr_byte4->resize( vlx_arr_int->value().size() / 4 );
-    //    vlx_arr_int->copyTo((unsigned char*)arr_byte4->ptr());
-    //  }
-    //  else
-    //  {
-    //    Log::error( Say("Line %n : unknown array '%s'.\n") << vlx->lineNumber() << vlx->tag() );
-    //    return NULL;
-    //  }
-
-    //  // link the VLX to the VL object
-    //  registerImportedStructure(vlx, arr_abstract.get());
-
-    //  return arr_abstract.get();
-    //}
-
-    //DrawCall* import_DrawCall(const VLX_Structure* vlx)
-    //{
-    //  // return already parsed object
-    //  if (vlxToVL(vlx))
-    //    return vlxToVL(vlx)->as<DrawCall>();
-
-    //  ref<DrawCall> draw_call;
-
-    //  if(vlx->tag() == "<vl::DrawElementsUInt>" || vlx->tag() == "<vl::DrawElementsUShort>" || vlx->tag() == "<vl::DrawElementsUByte>")
-    //  {
-    //    ref<DrawElementsBase> de;
-
-    //    if (vlx->tag() == "<vl::DrawElementsUInt>")
-    //      draw_call = de = new DrawElementsUInt;
-
-    //    if (vlx->tag() == "<vl::DrawElementsUShort>")
-    //      draw_call = de = new DrawElementsUShort;
-
-    //    if (vlx->tag() == "<vl::DrawElementsUByte>")
-    //      draw_call = de = new DrawElementsUByte;
-
-    //    VL_CHECK(de)
-    //    VL_CHECK(draw_call)
-
-    //    for(size_t i=0; i<vlx->value().size(); ++i)
-    //    {
-    //      const std::string& key = vlx->value()[i].key();
-    //      const VLX_Value& value = vlx->value()[i].value();
-    //      if( key == "PrimitiveType" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Identifier )
-    //        de->setPrimitiveType( destringfy_EPrimitiveType( value.getIdentifier(), value.lineNumber() ) );
-    //        VLX_CHECK_ERROR( de->primitiveType() != PT_UNKNOWN );
-    //      }
-    //      else
-    //      if( key == "Enabled" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Bool )
-    //        de->setEnabled( value.getBool() );
-    //      }
-    //      else
-    //      if( key == "Instances" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Integer )
-    //        de->setInstances( (int)value.getInteger() );
-    //      }
-    //      else
-    //      if( key == "PrimitiveRestartEnabled" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Bool )
-    //        de->setPrimitiveRestartEnabled( value.getBool() );
-    //      }
-    //      else
-    //      if( key == "BaseVertex" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Integer )
-    //        de->setBaseVertex( (int)value.getInteger() );
-    //      }
-    //      else
-    //      if( key == "IndexBuffer" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Structure )
-    //        ArrayAbstract* arr_abstract = import_Array(value.getStructure());
-    //        if(!arr_abstract)
-    //          return NULL;
-
-    //        if ( de->classType() == DrawElementsUInt::Type() )
-    //        {
-    //          VLX_CHECK_ERROR(arr_abstract->classType() == ArrayUInt1::Type());
-    //          de->as<DrawElementsUInt>()->setIndexBuffer( arr_abstract->as<ArrayUInt1>() );
-    //        }
-    //        else
-    //        if ( de->classType() == DrawElementsUShort::Type() )
-    //        {
-    //          VLX_CHECK_ERROR(arr_abstract->classType() == ArrayUShort1::Type());
-    //          de->as<DrawElementsUShort>()->setIndexBuffer( arr_abstract->as<ArrayUShort1>() );
-    //        }
-    //        else
-    //        if ( de->classType() == DrawElementsUByte::Type() )
-    //        {
-    //          VLX_CHECK_ERROR(arr_abstract->classType() == ArrayUByte1::Type());
-    //          de->as<DrawElementsUByte>()->setIndexBuffer( arr_abstract->as<ArrayUByte1>() );
-    //        }
-    //      }
-    //    }
-    //  }
-    //  else
-    //  if(vlx->tag() == "<vl::MultiDrawElementsUInt>" || vlx->tag() == "<vl::MultiDrawElementsUShort>" || vlx->tag() == "<vl::MultiDrawElementsUByte>")
-    //  {
-    //    ref<MultiDrawElementsBase> de;
-
-    //    if (vlx->tag() == "<vl::MultiDrawElementsUInt>")
-    //      draw_call = de = new MultiDrawElementsUInt;
-
-    //    if (vlx->tag() == "<vl::MultiDrawElementsUShort>")
-    //      draw_call = de = new MultiDrawElementsUShort;
-
-    //    if (vlx->tag() == "<vl::MultiDrawElementsUByte>")
-    //      draw_call = de = new MultiDrawElementsUByte;
-
-    //    VL_CHECK(de)
-    //    VL_CHECK(draw_call)
-
-    //    for(size_t i=0; i<vlx->value().size(); ++i)
-    //    {
-    //      const std::string& key = vlx->value()[i].key();
-    //      const VLX_Value& value = vlx->value()[i].value();
-    //      if( key == "PrimitiveType" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Identifier )
-    //        de->setPrimitiveType( destringfy_EPrimitiveType( value.getIdentifier(), value.lineNumber() ) );
-    //        VLX_CHECK_ERROR( de->primitiveType() != PT_UNKNOWN );
-    //      }
-    //      else
-    //      if( key == "Enabled" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Bool )
-    //        de->setEnabled( value.getBool() );
-    //      }
-    //      else
-    //      if( key == "PrimitiveRestartEnabled" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Bool )
-    //        de->setPrimitiveRestartEnabled( value.getBool() );
-    //      }
-    //      else
-    //      if( key == "BaseVertices" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::ArrayInteger )
-    //        de->baseVertices().resize( value.getArrayInteger()->value().size() );
-    //        if (de->baseVertices().size())
-    //          value.getArrayInteger()->copyTo( &de->baseVertices()[0] );
-    //        // de->setBaseVertices( value.getArrayInt32()->value() );
-    //      }
-    //      else
-    //      if( key == "CountVector" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::ArrayInteger )
-    //        de->countVector().resize( value.getArrayInteger()->value().size() );
-    //        if (de->countVector().size())
-    //          value.getArrayInteger()->copyTo( &de->countVector()[0] );
-    //        // de->countVector() = value.getArrayInt32()->value();
-    //      }
-    //      else
-    //      if( key == "IndexBuffer" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Structure )
-    //        ArrayAbstract* arr_abstract = import_Array(value.getStructure());
-    //        if( !arr_abstract )
-    //          return NULL;
-
-    //        if ( de->classType() == MultiDrawElementsUInt::Type() )
-    //        {
-    //          VLX_CHECK_ERROR(arr_abstract->classType() == ArrayUInt1::Type());
-    //          de->as<MultiDrawElementsUInt>()->setIndexBuffer( arr_abstract->as<ArrayUInt1>() );
-    //        }
-    //        else
-    //        if ( de->classType() == MultiDrawElementsUShort::Type() )
-    //        {
-    //          VLX_CHECK_ERROR(arr_abstract->classType() == ArrayUShort1::Type());
-    //          de->as<MultiDrawElementsUShort>()->setIndexBuffer( arr_abstract->as<ArrayUShort1>() );
-    //        }
-    //        else
-    //        if ( de->classType() == MultiDrawElementsUByte::Type() )
-    //        {
-    //          VLX_CHECK_ERROR(arr_abstract->classType() == ArrayUByte1::Type());
-    //          de->as<MultiDrawElementsUByte>()->setIndexBuffer( arr_abstract->as<ArrayUByte1>() );
-    //        }
-    //      }
-    //    }
-
-    //    // finalize setup
-    //    de->computePointerVector();
-    //    de->computeVBOPointerVector();
-    //    if ( de->baseVertices().size() != de->countVector().size() )
-    //      de->baseVertices().resize( de->countVector().size() );
-    //  }
-    //  else
-    //  if(vlx->tag() == "<vl::DrawArrays>")
-    //  {
-    //    ref<DrawArrays> da;
-
-    //    draw_call = da = new DrawArrays;
-
-    //    for(size_t i=0; i<vlx->value().size(); ++i)
-    //    {
-    //      const std::string& key = vlx->value()[i].key();
-    //      const VLX_Value& value = vlx->value()[i].value();
-
-    //      if( key == "PrimitiveType" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Identifier )
-    //        da->setPrimitiveType( destringfy_EPrimitiveType( value.getIdentifier(), value.lineNumber() ) );
-    //        VLX_CHECK_ERROR( da->primitiveType() != PT_UNKNOWN );
-    //      }
-    //      else
-    //      if( key == "Enabled" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Bool )
-    //        da->setEnabled( value.getBool() );
-    //      }
-    //      else
-    //      if( key == "Instances" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Integer )
-    //        da->setInstances( (int)value.getInteger() );
-    //      }
-    //      else
-    //      if( key == "Start" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Integer )
-    //        da->setStart( (int)value.getInteger() );
-    //      }
-    //      else
-    //      if( key == "Count" )
-    //      {
-    //        VLX_CHECK_ERROR( value.type() == VLX_Value::Integer )
-    //        da->setCount( (int)value.getInteger() );
-    //      }
-    //    }
-    //  }
-    //  else
-    //  {
-    //    Log::error( Say("Line %n : error. Unknown draw call.\n") << vlx->lineNumber() );
-    //    return NULL;
-    //  }
-
-    //  // link the VLX to the VL object
-    //  registerImportedStructure(vlx, draw_call.get());
-    //
-    //  return draw_call.get();
-    //}
-
-    //VertexAttribInfo* import_VertexAttribInfo(const VLX_Structure* vlx)
-    //{
-    //  // return already parsed object
-    //  if (vlxToVL(vlx))
-    //    return vlxToVL(vlx)->as<VertexAttribInfo>();
-
-    //  if (vlx->tag() != "<vl::VertexAttribInfo>")
-    //  {
-    //    Log::error( Say("Line %n : <VertexAttribInfo> expected.\n") << vlx->lineNumber() );
-    //    return NULL;
-    //  }
-
-    //  // link the VLX to the VL object
-    //  ref<VertexAttribInfo> info = new VertexAttribInfo;
-    //  registerImportedStructure(vlx, info.get());
-
-    //  for(size_t i=0; i<vlx->value().size(); ++i)
-    //  {
-    //    const std::string& key = vlx->value()[i].key();
-    //    const VLX_Value& value = vlx->value()[i].value();
-
-    //    if (key == "Data")
-    //    {
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //      ArrayAbstract* arr = import_Array( value.getStructure() );
-    //      if(arr)
-    //        info->setData(arr);
-    //      else
-    //        return NULL;
-    //    }
-    //    else
-    //    if (key == "Normalize")
-    //    {
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Bool) 
-    //      info->setNormalize( value.getBool() );
-    //    }
-    //    else
-    //    if (key == "Interpretation")
-    //    {
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Identifier) 
-    //      if (strcmp(value.getIdentifier(), "VAI_NORMAL") == 0)
-    //        info->setInterpretation(VAI_NORMAL);
-    //      else
-    //      if (strcmp(value.getIdentifier(), "VAI_INTEGER") == 0)
-    //        info->setInterpretation(VAI_INTEGER);
-    //      else
-    //      if (strcmp(value.getIdentifier(), "VAI_DOUBLE") == 0)
-    //        info->setInterpretation(VAI_DOUBLE);
-    //      else
-    //      {
-    //        Log::error( Say("Line %n : error.\n") << value.lineNumber() );
-    //        return NULL;
-    //      }
-    //    }
-    //  }
-    //
-    //  return info.get();
-    //}
-
-    //Geometry* import_Geometry(const VLX_Structure* vlx)
-    //{
-    //  // return already parsed object
-    //  if (vlxToVL(vlx))
-    //    return vlxToVL(vlx)->as<Geometry>();
-
-    //  if (vlx->tag() != "<vl::Geometry>")
-    //  {
-    //    Log::error( Say("Line %n : <Geometry> expected.\n") << vlx->lineNumber() );
-    //    return NULL;
-    //  }
-
-    //  // link the VLX to the VL object
-    //  ref<Geometry> geom = new Geometry;
-    //  registerImportedStructure(vlx, geom.get());
-
-    //  for(size_t i=0; i<vlx->value().size(); ++i)
-    //  {
-    //    const std::string& key = vlx->value()[i].key();
-    //    const VLX_Value& value = vlx->value()[i].value();
-
-    //    //if (key == "VBOEnabled")
-    //    //{
-    //    //  VLX_CHECK_ERROR(value.type() == VLX_Value::Bool) 
-    //    //  geom->setVBOEnabled( value.getBool() );
-    //    //}
-    //    //else
-    //    //if (key == "DisplayListEnabled")
-    //    //{
-    //    //  VLX_CHECK_ERROR(value.type() == VLX_Value::Bool) 
-    //    //  geom->setDisplayListEnabled( value.getBool() );
-    //    //}
-    //    //else
-    //    //if (key == "AABB")
-    //    //{
-    //    //  VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //    //  AABB aabb;
-    //    //  if (!import_AABB(value.getStructure(), aabb))
-    //    //    return NULL;
-    //    //}
-    //    //else
-    //    //if (key == "Sphere")
-    //    //{
-    //    //  VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //    //  Sphere sphere;
-    //    //  if (!import_Sphere(value.getStructure(), sphere))
-    //    //    return NULL;
-    //    //}
-    //    //else
-    //    if (key == "VertexArray")
-    //    {
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //      ArrayAbstract* arr = import_Array(value.getStructure());
-    //      if (arr)
-    //        geom->setVertexArray(arr);
-    //      else
-    //        return NULL;
-    //    }
-    //    else
-    //    if (key == "NormalArray")
-    //    {
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //      ArrayAbstract* arr = import_Array(value.getStructure());
-    //      if (arr)
-    //        geom->setNormalArray(arr);
-    //      else
-    //        return NULL;
-    //    }
-    //    else
-    //    if (key == "ColorArray")
-    //    {
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //      ArrayAbstract* arr = import_Array(value.getStructure());
-    //      if (arr)
-    //        geom->setColorArray(arr);
-    //      else
-    //        return NULL;
-    //    }
-    //    else
-    //    if (key == "SecondaryColorArray")
-    //    {
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //      ArrayAbstract* arr = import_Array(value.getStructure());
-    //      if (arr)
-    //        geom->setSecondaryColorArray(arr);
-    //      else
-    //        return NULL;
-    //    }
-    //    else
-    //    if (key == "FogCoordArray")
-    //    {
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //      ArrayAbstract* arr = import_Array(value.getStructure());
-    //      if (arr)
-    //        geom->setFogCoordArray(arr);
-    //      else
-    //        return NULL;
-    //    }
-    //    else
-    //    if (strstr(key.c_str(), "TexCoordArray") == key.c_str())
-    //    {
-    //      const char* ch = key.c_str() + 13/*strlen("TexCoordArray")*/;
-    //      int tex_unit = 0;
-    //      for(; *ch; ++ch)
-    //      {
-    //        if (*ch>='0' && *ch<='9')
-    //          tex_unit = tex_unit*10 + (*ch - '0');
-    //        else
-    //        {
-    //          Log::error( Say("Line %n : error. ") << value.lineNumber() );
-    //          Log::error( "TexCoordArray must end with a number!\n" );
-    //          return NULL;
-    //        }
-    //      }
-
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //      ArrayAbstract* arr = import_Array(value.getStructure());
-    //      if (arr)
-    //        geom->setTexCoordArray(tex_unit, arr);
-    //      else
-    //        return NULL;
-    //    }
-    //    else
-    //    if (strstr(key.c_str(), "VertexAttribArray") == key.c_str())
-    //    {
-    //      const char* ch = key.c_str() + 17/*strlen("VertexAttribArray")*/;
-    //      int attrib_location = 0;
-    //      for(; *ch; ++ch)
-    //      {
-    //        if (*ch>='0' && *ch<='9')
-    //          attrib_location = attrib_location*10 + (*ch - '0');
-    //        else
-    //        {
-    //          Log::error( Say("Line %n : error. ") << value.lineNumber() );
-    //          Log::error( "VertexAttribArray must end with a number!\n" );
-    //          return NULL;
-    //        }
-    //      }
-    //    
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //      VertexAttribInfo* info_ptr = import_VertexAttribInfo(value.getStructure());
-    //      if (info_ptr)
-    //      {
-    //        VertexAttribInfo info = *info_ptr;
-    //        info.setAttribLocation(attrib_location);
-    //        geom->setVertexAttribArray(info);
-    //      }
-    //      else
-    //        return NULL;
-    //    }
-    //    else
-    //    if (key == "DrawCall")
-    //    {
-    //      VLX_CHECK_ERROR(value.type() == VLX_Value::Structure) 
-    //      DrawCall* draw_call = import_DrawCall(value.getStructure());
-    //      if (draw_call)
-    //        geom->drawCalls()->push_back(draw_call);
-    //      else
-    //        return NULL;
-    //    }
-    //  }
-
-    //  return geom.get();
-    //}
-
-    Effect* import_Effect(const VLX_Structure* vlx)
-    {
-      // return already parsed object
-      if (vlxToVL(vlx))
-        return vlxToVL(vlx)->as<Effect>();
-
-      return NULL;
-    }
-
-    Shader* import_Shader(const VLX_Structure* vlx)
-    {
-      // return already parsed object
-      if (vlxToVL(vlx))
-        return vlxToVL(vlx)->as<Shader>();
-
-      return NULL;
-    }
-
-    Transform* import_Transform(const VLX_Structure* vlx)
-    {
-      // return already parsed object
-      if (vlxToVL(vlx))
-        return vlxToVL(vlx)->as<Transform>();
-
-      return NULL;
-    }
-
-    Actor* import_Actor(const VLX_Structure* vlx)
-    {
-      // return already parsed object
-      if (vlxToVL(vlx))
-        return vlxToVL(vlx)->as<Actor>();
-
-      return NULL;
-    }
-
-    Camera* import_Camera(const VLX_Structure* vlx)
-    {
-      // return already parsed object
-      if (vlxToVL(vlx))
-        return vlxToVL(vlx)->as<Camera>();
-
-      return NULL;
-    }
-
-    //-----------------------------------------------------------------------------
-
     ref<ResourceDatabase> importFromText(VirtualFile* file)
     {
       VLX_Parser parser;
@@ -4273,955 +3430,9 @@ namespace vl
 
     //-----------------------------------------------------------------------------
 
-    void registerExportedStructure(const Object* vl_obj, const VLX_Structure* vlx)
-    {
-      VL_CHECK( mVL_To_VLX.find(vl_obj) == mVL_To_VLX.end() );
-      mVL_To_VLX[vl_obj] = vlx;
-    }
-
-    VLX_Structure* vlToVLX(const Object* vlx)
-    {
-      std::map< ref<Object>, ref<VLX_Structure> >::iterator it = mVL_To_VLX.find(vlx);
-      if (it != mVL_To_VLX.end())
-        return it->second.get();
-      else
-        return NULL;
-    }
-
-    const std::map< ref<Object>, ref<VLX_Structure> >& vlToVLX() const { return mVL_To_VLX; }
-
-    std::string generateUID(const char* prefix)
-    {
-      return String::printf("#%sid%d", prefix, ++mUIDCounter).toStdString();
-    }
-
-    VLX_Value export_ResourceDatabase(const ResourceDatabase* res_db)
-    {
-      VLX_Value value;
-      if (vlToVLX(res_db))
-      {
-        value.setUID( vlToVLX(res_db)->uid().c_str() );
-        return value;
-      }
-
-      //value.setStructure( new VLX_Structure("<vl::ResourceDatabase>", generateUID("resourcedb_")) );
-      //registerExportedStructure(res_db, value.getStructure());
-
-      //value.getStructure()->value().push_back( VLX_Structure::Value("SerializerVersion", (long long)VL_SERIALIZER_VERSION) );
-
-      //VLX_Structure::Value vlx_resource_list("Resources", new VLX_List);
-      //value.getStructure()->value().push_back( vlx_resource_list );
-
-      //for(size_t i=0; i<res_db->resources().size(); ++i)
-      //{
-      //  VLX_Value resource;
-
-      //  if(res_db->resources()[i]->isOfType(Actor::Type()))
-      //    resource = export_Actor(res_db->resources()[i]->as<Actor>());
-      //  else
-      //  if(res_db->resources()[i]->isOfType(Renderable::Type()))
-      //    resource = export_Renderable(res_db->resources()[i]->as<Renderable>());
-      //  else
-      //  if(res_db->resources()[i]->isOfType(Effect::Type()))
-      //    resource = export_Effect(res_db->resources()[i]->as<Effect>());
-      //  else
-      //  if(res_db->resources()[i]->isOfType(Shader::Type()))
-      //    resource = export_Shader(res_db->resources()[i]->as<Shader>());
-      //  else
-      //  if(res_db->resources()[i]->isOfType(Transform::Type()))
-      //    resource = export_Transform(res_db->resources()[i]->as<Transform>());
-      //  else
-      //  if(res_db->resources()[i]->isOfType(Camera::Type()))
-      //    resource = export_Camera(res_db->resources()[i]->as<Camera>());
-
-      //  vlx_resource_list.value().getList()->value().push_back( resource );
-      //}
-
-      return value;
-    }
-
-    //VLX_Value export_Actor(const Actor* act)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(act))
-    //  {
-    //    value.setUID( vlToVLX(act)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Actor>", generateUID("actor_")) );
-    //  registerExportedStructure(act, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  VLX_Value renderables;
-    //  renderables.setList( new VLX_List );
-    //  for(size_t i=0; i<VL_MAX_ACTOR_LOD && act->lod(i); ++i)
-    //    *renderables.getList() << export_Renderable(act->lod(i));
-    //  *vlx << "Lods" << renderables;
-
-    //  *vlx << "AABB" << export_AABB(act->boundingBox());
-    //  *vlx << "Sphere" << export_Sphere(act->boundingSphere());
-    //  if (act->effect())
-    //    *vlx << "Effect" << export_Effect(act->effect());
-    //  if (act->transform())
-    //    *vlx << "Transform" << export_Transform(act->transform());
-
-    //  VLX_Value uniforms;
-    //  uniforms.setList( new VLX_List );
-    //  for(size_t i=0; act->getUniformSet() && i<act->uniforms().size(); ++i)
-    //    *uniforms.getList() << export_Uniform(act->uniforms()[i].get());
-    //  *vlx << "Uniforms" << uniforms);
-
-    //  if (act->lodEvaluator())
-    //      *vlx << "LODEvaluator" << export_LODEvaluator(act->lodEvaluator());
-
-    //  // mic fixme:
-    //  // Scissor: scissors might go away from the Actor
-
-    //  VLX_Value callbacks;
-    //  callbacks.setList( new VLX_List;
-    //  for(int i=0; i<act->actorEventCallbacks()->size(); ++i)
-    //    *callbacks.getList() << export_ActorEventCallback(act->actorEventCallbacks()->at(i));
-    //  *vlx << "ActorEventCallbacks" << callbacks);
-
-    //  *vlx << "RenderBlock" << (long long)act->renderBlock();
-    //  *vlx << "RenderRank" << (long long)act->renderRank();
-    //  *vlx << "EnableMask" << (long long)act->enableMask();
-    //  *vlx << "IsOccludee" << act->isOccludee();
-
-    //  return value;
-    //}
-
-    //VLX_Value export_ActorEventCallback(const ActorEventCallback* cb)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(cb))
-    //  {
-    //    value.setUID( vlToVLX(cb)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  // mic fixme: allow other callbacks to be exported and imported
-    //  if (cb->classType() == DepthSortCallback::Type())
-    //  {
-    //    const DepthSortCallback* dsc = cb->as<DepthSortCallback>();
-
-    //    value.setStructure( new VLX_Structure("<DepthSortCallback>", generateUID("actorcallbk_")) );
-    //    registerExportedStructure(cb, value.getStructure());
-    //    std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //    if (dsc->sortMode() == SM_SortBackToFront)
-    //      *vlx << "SortMode" << toIdentifier("SM_SortBackToFront");
-    //    else
-    //      *vlx << "SortMode" << toIdentifier("SM_SortFrontToBack");
-    //  }
-    //  else
-    //  {
-    //    // mic fixme: we should not output unknown objects at all
-    //    value.setStructure( new VLX_Structure(VLX_UNKNOWN_OBJECT, generateUID("actorcallbk_")) );
-    //    return value;
-    //  }
-
-    //  return value;
-    //}
-
-    //VLX_Value export_LODEvaluator(const LODEvaluator* lod)
-    //{
-    //  VLX_Value value;
-    //  if (lod->classType() == DistanceLODEvaluator::Type())
-    //    return export_DistanceLODEvaluator(lod->as<DistanceLODEvaluator>());
-    //  else
-    //  if (lod->classType() == PixelLODEvaluator::Type())
-    //    return export_PixelLODEvaluator(lod->as<PixelLODEvaluator>());
-    //  else
-    //  {
-    //    // mic fixme: we should not output unknown objects at all
-    //    value.setStructure( new VLX_Structure(VLX_UNKNOWN_OBJECT, generateUID("lodeval_")) );
-    //    return value;
-    //  }
-    //}
-
-    //VLX_Value export_DistanceLODEvaluator(const DistanceLODEvaluator* lod)
-    //{
-    //  VL_CHECK(lod);
-
-    //  VLX_Value value;
-    //  if (vlToVLX(lod))
-    //  {
-    //    value.setUID( vlToVLX(lod)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<DistanceLODEvaluator>", generateUID("lodeval_")) );
-    //  registerExportedStructure(lod, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  VLX_Value distances( new VLX_ArrayReal );
-    //  distances.getArrayReal()->value().resize( lod->distanceRangeSet().size() );
-    //  if (lod->distanceRangeSet().size() != 0)
-    //    distances.getArrayReal()->copyFrom( &lod->distanceRangeSet()[0] );
-
-    //  *vlx << "DistanceRageSet" << distances;
-
-    //  return value;
-    //}
-
-    //VLX_Value export_PixelLODEvaluator(const PixelLODEvaluator* lod)
-    //{
-    //  VL_CHECK(lod);
-
-    //  VLX_Value value;
-    //  if (vlToVLX(lod))
-    //  {
-    //    value.setUID( vlToVLX(lod)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<PixelLODEvaluator>", generateUID("lodeval_")) );
-    //  registerExportedStructure(lod, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  VLX_Value distances( new VLX_ArrayReal );
-    //  distances.getArrayReal()->value().resize( lod->pixelRangeSet().size() );
-    //  if (lod->pixelRangeSet().size() != 0)
-    //    distances.getArrayReal()->copyFrom( &lod->pixelRangeSet()[0] );
-
-    //  *vlx << "PixelRageSet" << distances;
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Transform(const Transform* tr)
-    //{
-    //  VL_CHECK(tr);
-
-    //  VLX_Value value;
-    //  if (vlToVLX(tr))
-    //  {
-    //    value.setUID( vlToVLX(tr)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Transform>", generateUID("transform_")) );
-    //  registerExportedStructure(tr, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "LocalMatrix", toValue(tr->localMatrix()) ) );
-
-    //  if (tr->parent())
-    //    *vlx << "Parent", export_Transform(tr->parent()) ) );
-
-    //  VLX_Value childs;
-    //  childs.setList( new VLX_List );
-    //  for(size_t i=0; i<tr->childrenCount(); ++i)
-    //    childs.getList()->value().push_back( export_Transform(tr->children()[i].get()) );
-    //  *vlx << "Children", childs) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Uniform(const Uniform* uniform)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(uniform))
-    //  {
-    //    value.setUID( vlToVLX(uniform)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Uniform>", generateUID("uniform_")) );
-    //  registerExportedStructure(uniform, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "Name", toIdentifier(uniform->name())) );
-    //  *vlx << "Type", toIdentifier(stringfy_EUniformType(uniform->type()))) );
-    //  *vlx << "Count", (long long)uniform->count()) );
-
-    //  const int count = uniform->count();
-    //  ref<VLX_ArrayInteger> arr_int = new VLX_ArrayInteger;
-    //  ref<VLX_ArrayReal> arr_real = new VLX_ArrayReal;
-
-    //  switch(uniform->type())
-    //  {
-    //  case UT_INT:
-    //    {
-    //      if (count == 1)
-    //        { int val = 0; uniform->getUniform(&val); *vlx << "Data", (long long)val) ); break; }
-    //      else
-    //        { arr_int->value().resize(count*1); arr_int->copyFrom( (int*)uniform->rawData() ); break; }
-    //    }
-    //  case UT_INT_VEC2: arr_int->value().resize(count*2); arr_int->copyFrom( (int*)uniform->rawData() ); break;
-    //  case UT_INT_VEC3: arr_int->value().resize(count*3); arr_int->copyFrom( (int*)uniform->rawData() ); break;
-    //  case UT_INT_VEC4: arr_int->value().resize(count*4); arr_int->copyFrom( (int*)uniform->rawData() ); break;
-
-    //  case UT_UNSIGNED_INT:
-    //    {
-    //      if (count == 1)
-    //        { unsigned int val = 0; uniform->getUniform(&val); *vlx << "Data", (long long)val) ); break; }
-    //      else
-    //        { arr_int->value().resize(count*1); arr_int->copyFrom( (int*)uniform->rawData() ); break; }
-    //    }
-    //  case UT_UNSIGNED_INT_VEC2: arr_int->value().resize(count*2); arr_int->copyFrom( (int*)uniform->rawData() ); break;
-    //  case UT_UNSIGNED_INT_VEC3: arr_int->value().resize(count*3); arr_int->copyFrom( (int*)uniform->rawData() ); break;
-    //  case UT_UNSIGNED_INT_VEC4: arr_int->value().resize(count*4); arr_int->copyFrom( (int*)uniform->rawData() ); break;
-
-    //  case UT_FLOAT:
-    //    {
-    //      if (count == 1)
-    //        { float val = 0; uniform->getUniform(&val); *vlx << "Data", (double)val) ); break; }
-    //      else
-    //        { arr_real->value().resize(count*1); arr_real->copyFrom( (float*)uniform->rawData() ); break; }
-    //    }
-    //  case UT_FLOAT_VEC2: arr_real->value().resize(count*2); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-    //  case UT_FLOAT_VEC3: arr_real->value().resize(count*3); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-    //  case UT_FLOAT_VEC4: arr_real->value().resize(count*4); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-
-    //  case UT_FLOAT_MAT2: arr_real->value().resize(count*2*2); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-    //  case UT_FLOAT_MAT3: arr_real->value().resize(count*3*3); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-    //  case UT_FLOAT_MAT4: arr_real->value().resize(count*4*4); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-
-    //  case UT_FLOAT_MAT2x3: arr_real->value().resize(count*2*3); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-    //  case UT_FLOAT_MAT3x2: arr_real->value().resize(count*3*2); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-    //  case UT_FLOAT_MAT2x4: arr_real->value().resize(count*2*4); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-    //  case UT_FLOAT_MAT4x2: arr_real->value().resize(count*4*2); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-    //  case UT_FLOAT_MAT3x4: arr_real->value().resize(count*3*4); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-    //  case UT_FLOAT_MAT4x3: arr_real->value().resize(count*4*3); arr_real->copyFrom( (float*)uniform->rawData() ); break;
-
-    //  case UT_DOUBLE:
-    //    {
-    //      if (count == 1)
-    //        { double val = 0; uniform->getUniform(&val); *vlx << "Data", (double)val) ); break; }
-    //      else
-    //        { arr_real->value().resize(count*1); arr_real->copyFrom( (double*)uniform->rawData() ); break; }
-    //    }
-    //  case UT_DOUBLE_VEC2: arr_real->value().resize(count*2); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-    //  case UT_DOUBLE_VEC3: arr_real->value().resize(count*3); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-    //  case UT_DOUBLE_VEC4: arr_real->value().resize(count*4); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-
-    //  case UT_DOUBLE_MAT2: arr_real->value().resize(count*2*2); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-    //  case UT_DOUBLE_MAT3: arr_real->value().resize(count*3*3); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-    //  case UT_DOUBLE_MAT4: arr_real->value().resize(count*4*4); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-
-    //  case UT_DOUBLE_MAT2x3: arr_real->value().resize(count*2*3); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-    //  case UT_DOUBLE_MAT3x2: arr_real->value().resize(count*3*2); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-    //  case UT_DOUBLE_MAT2x4: arr_real->value().resize(count*2*4); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-    //  case UT_DOUBLE_MAT4x2: arr_real->value().resize(count*4*2); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-    //  case UT_DOUBLE_MAT3x4: arr_real->value().resize(count*3*4); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-    //  case UT_DOUBLE_MAT4x3: arr_real->value().resize(count*4*3); arr_real->copyFrom( (double*)uniform->rawData() ); break;
-
-    //  case UT_NONE:
-    //    Log::warning("Error exporting uniform : uninitialized uniform.\n");
-    //    break;
-
-    //  default:
-    //    Log::warning("Error exporting uniform : illegal uniform type.\n");
-    //    break;
-    //  }
-
-    //  if (!arr_int->value().empty())
-    //    *vlx << "Data", arr_int.get()) );
-    //  else
-    //  if (!arr_real->value().empty())
-    //    *vlx << "Data", arr_real.get()) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Effect(const Effect* fx)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(fx))
-    //  {
-    //    value.setUID( vlToVLX(fx)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Effect>", generateUID("effect_")) );
-    //  registerExportedStructure(fx, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "RenderRank" << (long long)fx->renderRank();
-    //  *vlx << "EnableMask" << (long long)fx->enableMask();
-    //  *vlx << "ActiveLod" << (long long)fx->activeLod();
-
-    //  if (fx->lodEvaluator())
-    //    *vlx << "LODEvaluator" << export_LODEvaluator(fx->lodEvaluator());
-
-    //  // shaders
-    //  ref<VLX_List> lod_list = new VLX_List;
-    //  for(int i=0; fx->lod(i) && i<VL_MAX_EFFECT_LOD; ++i)
-    //    *lod_list << export_ShaderSequence(fx->lod(i).get());
-    //  *vlx << "Lods" << lod_list.get();
-
-    //  return value;
-    //}
-
-    //VLX_Value export_ShaderSequence(const ShaderPasses* sh_seq)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(sh_seq))
-    //  {
-    //    value.setUID( vlToVLX(sh_seq)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setList( new VLX_List("<ShaderPasses>") );
-    //  for(int i=0; i<sh_seq->size(); ++i)
-    //    value.getList()->value().push_back( export_Shader(sh_seq->at(i)) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Shader(const Shader* sh)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(sh))
-    //  {
-    //    value.setUID( vlToVLX(sh)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Shader>", generateUID("shader_")) );
-    //  registerExportedStructure(sh, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  // uniforms
-    //  VLX_Value uniforms;
-    //  uniforms.setList( new VLX_List );
-    //  if (sh->getUniformSet())
-    //  {
-    //    for(size_t i=0; i<sh->uniforms().size(); ++i)
-    //      *uniforms.getList() << export_Uniform(sh->uniforms()[i].get());
-    //  }
-    //  *vlx << "Uniforms" < uniforms;
-
-    //  // enables
-    //  ref<VLX_List> enables = new VLX_List;
-    //  if (sh->getEnableSet() )
-    //  {
-    //    for(size_t i=0; i<sh->getEnableSet()->enables().size(); ++i)
-    //      enables->value().push_back( toIdentifier(stringfy_EEnable(sh->getEnableSet()->enables()[i])) );
-    //  }
-    //  *vlx << "Enables" << enables.get();
-
-    //  // renderstates
-    //  VLX_Value renderstates;
-    //  renderstates.setList( new VLX_List );
-    //  if (sh->getRenderStateSet())
-    //  {
-    //    for(size_t i=0; i<sh->getRenderStateSet()->renderStatesCount(); ++i)
-    //    {
-    //      int index = sh->getRenderStateSet()->renderStates()[i].mIndex;
-    //      if (index != -1)
-    //        renderstates.getList()->value().push_back( (long long)index );
-    //      const RenderState* rs = sh->getRenderStateSet()->renderStates()[i].mRS.get();
-    //      renderstates.getList()->value().push_back( export_RenderState(rs) );
-    //    }
-    //  }
-    //  *vlx << "RenderStates", renderstates;
-
-    //  return value;
-    //}
-
-    //VLX_Value export_RenderState(const RenderState* rs)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(rs))
-    //  {
-    //    value.setUID( vlToVLX(rs)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  if (rs->classType() == Light::Type())
-    //    return export_Light(rs->as<Light>());
-    //  else
-    //  if (rs->classType() == ClipPlane::Type())
-    //    return export_ClipPlane(rs->as<ClipPlane>());
-    //  else
-    //  if (rs->classType() == Material::Type())
-    //    return export_Material(rs->as<Material>());
-    //  else
-    //  if (rs->classType() == GLSLProgram::Type())
-    //    return export_GLSLProgram(rs->as<GLSLProgram>());
-    //  else
-    //  if (rs->classType() == TextureSampler::Type())
-    //    return export_TextureSampler(rs->as<TextureSampler>());
-    //  else
-    //  if (rs->classType() == VertexAttrib::Type())
-    //    return export_VertexAttrib(rs->as<VertexAttrib>());
-    //  else
-    //  if (rs->classType() == Color::Type())
-    //    return export_Color(rs->as<Color>());
-    //  else
-    //  if (rs->classType() == SecondaryColor::Type())
-    //    return export_SecondaryColor(rs->as<SecondaryColor>());
-    //  else
-    //  if (rs->classType() == Normal::Type())
-    //    return export_Normal(rs->as<Normal>());
-    //  else
-    //  {
-    //    VL_TRAP();
-    //    return VLX_Value( new VLX_Structure(VLX_UNKNOWN_OBJECT, generateUID("renderstate_")) );
-    //  }
-    //}
-
-    //VLX_Value export_VertexAttrib(const VertexAttrib* vertattrib)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(vertattrib))
-    //  {
-    //    value.setUID( vlToVLX(vertattrib)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<VertexAttrib>", generateUID("vertattrib_")) );
-    //  registerExportedStructure(vertattrib, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "VertexAttrib", toValue(vertattrib->value()) ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Color(const Color* color)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(color))
-    //  {
-    //    value.setUID( vlToVLX(color)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Color>", generateUID("color_")) );
-    //  registerExportedStructure(color, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "Color", toValue(color->color()) ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_SecondaryColor(const SecondaryColor* seccolor)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(seccolor))
-    //  {
-    //    value.setUID( vlToVLX(seccolor)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<SecondaryColor>", generateUID("seccolor_")) );
-    //  registerExportedStructure(seccolor, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "SecondaryColor", toValue(seccolor->secondaryColor()) ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Normal(const Normal* normal)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(normal))
-    //  {
-    //    value.setUID( vlToVLX(normal)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Normal>", generateUID("normal_")) );
-    //  registerExportedStructure(normal, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "Normal", toValue(normal->normal()) ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_TextureSampler(const TextureSampler* tex_sampler)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(tex_sampler))
-    //  {
-    //    value.setUID( vlToVLX(tex_sampler)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<TextureSampler>", generateUID("texsampler_")) );
-    //  registerExportedStructure(tex_sampler, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  if (tex_sampler->texture())
-    //  {
-    //    *vlx << "Texture", export_Texture(tex_sampler->texture()) ) );
-    //  }
-    //  if (tex_sampler->getTexParameter())
-    //    *vlx << "TexParameter", export_TexParameter(tex_sampler->getTexParameter()) ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Texture(const Texture* tex)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(tex))
-    //  {
-    //    value.setUID( vlToVLX(tex)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  std::string name;
-    //  switch(tex->dimension())
-    //  {
-    //  case TD_TEXTURE_1D: name = "<Texture1D>"; break;
-    //  default:
-    //  case TD_TEXTURE_2D: name = "<Texture2D>"; break;
-    //  case TD_TEXTURE_3D: name = "<Texture3D>"; break;
-    //  case TD_TEXTURE_CUBE_MAP: name = "<TextureCubeMap>"; break;
-    //  case TD_TEXTURE_RECTANGLE: name = "<TextureRectangle>"; break;
-    //  case TD_TEXTURE_1D_ARRAY: name = "<Texture1DArray>"; break;
-    //  case TD_TEXTURE_2D_ARRAY: name = "<Texture2DArray>"; break;
-    //  case TD_TEXTURE_BUFFER: name = "<TextureBuffer>"; break;
-    //  case TD_TEXTURE_2D_MULTISAMPLE: name = "<Texture2DMultisample>"; break;
-    //  case TD_TEXTURE_2D_MULTISAMPLE_ARRAY: name = "<Texture2DMultisampleArray>"; break;
-    //  }
-
-    //  value.setStructure( new VLX_Structure(name.c_str(), generateUID("texture_")) );
-    //  registerExportedStructure(tex, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  if (tex->getTexParameter())
-    //    *vlx << "TexParameter", export_TexParameter(tex->getTexParameter()) ) );
-
-    //  if (tex->setupParams())
-    //  {
-    //    const Texture::SetupParams* par = tex->setupParams();
-
-    //    if (!par->imagePath().empty())
-    //      *vlx << "ImagePath", toString(par->imagePath().toStdString()) ) );
-    //    else
-    //    if (par->image())
-    //      *vlx << "ImagePath", toString(par->image()->filePath().toStdString()) ) );
-
-    //    *vlx << "Format", toIdentifier(stringfy_TextureFormat(par->format())) ) );
-
-    //    if (par->width())
-    //      *vlx << "Width", (long long)par->width() ) );
-
-    //    if (par->height())
-    //      *vlx << "Height", (long long)par->height() ) );
-
-    //    if (par->depth())
-    //      *vlx << "Depth", (long long)par->depth() ) );
-
-    //    *vlx << "GenMipmaps", par->genMipmaps() ) );
-
-    //    if(par->samples())
-    //    {
-    //      *vlx << "Samples", (long long)par->samples() ) );
-    //      *vlx << "FixedSamplesLocation", par->fixedSamplesLocations() ) );
-    //    }
-    //  }
-
-
-    //  return value;
-    //}
-
-    //VLX_Value export_TexParameter(const TexParameter* texparam)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(texparam))
-    //  {
-    //    value.setUID( vlToVLX(texparam)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<TexParameter>", generateUID("texparam_")) );
-    //  registerExportedStructure(texparam, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "MinFilter", toIdentifier(stringfy_ETexParamFilter(texparam->minFilter())) ) );
-    //  *vlx << "MagFilter", toIdentifier(stringfy_ETexParamFilter(texparam->magFilter())) ) );
-    //  *vlx << "WrapS", toIdentifier(stringfy_ETexParamWrap(texparam->wrapS())) ) );
-    //  *vlx << "WrapT", toIdentifier(stringfy_ETexParamWrap(texparam->wrapT())) ) );
-    //  *vlx << "WrapR", toIdentifier(stringfy_ETexParamWrap(texparam->wrapR())) ) );
-    //  *vlx << "CompareMode", toIdentifier(stringfy_ETexCompareMode(texparam->compareMode())) ) );
-    //  *vlx << "CompareFunc", toIdentifier(stringfy_ETexCompareFunc(texparam->compareFunc())) ) );
-    //  *vlx << "DepthTextureMode", toIdentifier(stringfy_EDepthTextureMode(texparam->depthTextureMode())) ) );
-    //  *vlx << "BorderColor", toValue(texparam->borderColor()) ) );
-    //  *vlx << "Anisotropy", texparam->anisotropy() ) );
-    //  *vlx << "GenerateMipmap", texparam->generateMipmap() ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Light(const Light* light)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(light))
-    //  {
-    //    value.setUID( vlToVLX(light)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Light>", generateUID("light_")) );
-    //  registerExportedStructure(light, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "Ambient", toValue(light->ambient()) ) );
-    //  *vlx << "Diffuse", toValue(light->diffuse()) ) );
-    //  *vlx << "Specular", toValue(light->specular()) ) );
-    //  *vlx << "Position", toValue(light->position()) ) );
-    //  *vlx << "SpotDirection", toValue(light->spotDirection()) ) );
-    //  *vlx << "SpotExponent", (double)light->spotExponent() ) );
-    //  *vlx << "SpotCutoff", (double)light->spotCutoff() ) );
-    //  *vlx << "ConstantAttenuation", (double)light->constantAttenuation() ) );
-    //  *vlx << "LinearAttenuation", (double)light->linearAttenuation() ) );
-    //  *vlx << "QuadraticAttenuation", (double)light->quadraticAttenuation() ) );
-    //  if (light->boundTransform())
-    //    *vlx << "BoundTransform", export_Transform(light->boundTransform()) ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_ClipPlane(const ClipPlane* clip)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(clip))
-    //  {
-    //    value.setUID( vlToVLX(clip)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<ClipPlane>", generateUID("clip_")) );
-    //  registerExportedStructure(clip, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "PlaneNormal", toValue(clip->plane().normal()) ) );
-    //  *vlx << "PlaneOrigin", (double)(clip->plane().origin()) ) );
-    //  if (clip->boundTransform())
-    //    *vlx << "BoundTransform", export_Transform(clip->boundTransform()) ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Material(const Material* mat)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(mat))
-    //  {
-    //    value.setUID( vlToVLX(mat)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Material>", generateUID("material_")) );
-    //  registerExportedStructure(mat, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "FrontAmbient", toValue(mat->frontAmbient()) ) );
-    //  *vlx << "FrontDiffuse", toValue(mat->frontDiffuse()) ) );
-    //  *vlx << "FrontEmission", toValue(mat->frontEmission()) ) );
-    //  *vlx << "FrontSpecular", toValue(mat->frontSpecular()) ) );
-    //  *vlx << "FrontShininess", (double)mat->frontShininess() ) );
-
-    //  *vlx << "BackAmbient", toValue(mat->backAmbient()) ) );
-    //  *vlx << "BackDiffuse", toValue(mat->backDiffuse()) ) );
-    //  *vlx << "BackEmission", toValue(mat->backEmission()) ) );
-    //  *vlx << "BackSpecular", toValue(mat->backSpecular()) ) );
-    //  *vlx << "BackShininess", (double)mat->backShininess() ) );
-
-    //  *vlx << "ColorMaterial", toIdentifier(stringfy_EColorMaterial(mat->colorMaterial())) ) );
-    //  *vlx << "ColorMaterialFace", toIdentifier(stringfy_EPolygonFace(mat->colorMaterialFace())) ) );
-
-    //  *vlx << "ColorMaterialEnabled", mat->colorMaterialEnabled() ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_GLSLProgram(const GLSLProgram* glsl)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(glsl))
-    //  {
-    //    value.setUID( vlToVLX(glsl)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<GLSLProgram>", generateUID("glsl_")) );
-    //  registerExportedStructure(glsl, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  // export glsl shaders
-    //  for(int i=0; i<glsl->shaderCount(); ++i)
-    //    *vlx << "AttachShader", export_GLSLShader(glsl->shader(i)) ) );
-
-    //  // export uniforms
-    //  VLX_Value uniforms;
-    //  uniforms.setList( new VLX_List );
-    //  for(size_t i=0; glsl->getUniformSet() && i<glsl->getUniformSet()->uniforms().size(); ++i)
-    //    uniforms.getList()->value().push_back( export_Uniform(glsl->getUniformSet()->uniforms()[i].get()) );
-    //  *vlx << "Uniforms", uniforms) );
-
-    //  // frag data location
-    //  VLX_Value frag_data_locations;
-    //  frag_data_locations.setList( new VLX_List );
-    //  for(std::map<std::string, int>::const_iterator it = glsl->fragDataLocations().begin(); it != glsl->fragDataLocations().end(); ++it)
-    //  {
-    //    VLX_Value location( new VLX_Structure("<FragDataLocation>") );
-    //    location.getStructure()->value().push_back( VLX_Structure::Value("Name", toIdentifier(it->first) ) );
-    //    location.getStructure()->value().push_back( VLX_Structure::Value("Location", (long long)it->second ) );
-    //    frag_data_locations.getList()->value().push_back( location );
-    //  }
-    //  *vlx << "FragDataLocations", frag_data_locations) );
-
-    //  // auto attrib locations
-    //  VLX_Value attrib_locations;
-    //  attrib_locations.setList( new VLX_List );
-    //  for(std::map<std::string, int>::const_iterator it = glsl->autoAttribLocations().begin(); it != glsl->autoAttribLocations().end(); ++it)
-    //  {
-    //    VLX_Value location( new VLX_Structure("<AttribLocation>") );
-    //    location.getStructure()->value().push_back( VLX_Structure::Value("Name", toIdentifier(it->first) ) );
-    //    location.getStructure()->value().push_back( VLX_Structure::Value("Location", (long long)it->second ) );
-    //    attrib_locations.getList()->value().push_back( location );
-    //  }
-    //  *vlx << "AttribLocations", attrib_locations) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_GLSLShader(const GLSLShader* glslsh)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(glslsh))
-    //  {
-    //    value.setUID( vlToVLX(glslsh)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  std::string name = "<GLSLShaderError>";
-    //  if (glslsh->type() == vl::ST_VERTEX_SHADER)
-    //    name = "<VertexShader>";
-    //  else
-    //  if (glslsh->type() == vl::ST_FRAGMENT_SHADER)
-    //    name = "<FragmentShader>";
-    //  else
-    //  if (glslsh->type() == vl::ST_GEOMETRY_SHADER)
-    //    name = "<GeometryShader>";
-    //  else
-    //  if (glslsh->type() == vl::ST_TESS_CONTROL_SHADER)
-    //    name = "<TessControlShader>";
-    //  else
-    //  if (glslsh->type() == vl::ST_TESS_EVALUATION_SHADER)
-    //    name = "<TessEvaluationShader>";
-
-    //  value.setStructure( new VLX_Structure(name.c_str(), generateUID("glslsh_")) );
-    //  registerExportedStructure(glslsh, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  if (!glslsh->path().empty())
-    //    *vlx << "Path", toString(glslsh->path()) ) );
-    //  else
-    //  if (!glslsh->source().empty())
-    //    *vlx << "Source", toRawtext(glslsh->source()) ) );
-    //  else
-    //  if (glslsh->handle())
-    //    *vlx << "Source", toRawtext(glslsh->getShaderSource()) ) );
-    //  else
-    //    *vlx << "Source", toIdentifier("NO_SOURCE_FOUND") ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Camera(const Camera* cam)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(cam))
-    //  {
-    //    value.setUID( vlToVLX(cam)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Camera>", generateUID("camera_")) );
-    //  registerExportedStructure(cam, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "ViewMatrix" << toValue(cam->viewMatrix());
-    //  *vlx << "ProjectionMatrix" << toValue(cam->projectionMatrix());
-    //  *vlx << "Viewport" << export_Viewport(cam->viewport());
-    //  if (cam->boundTransform())
-    //    *vlx << "BoundTransfrm" << export_Transform(cam->boundTransform());
-    //  *vlx << "FOV" << (double)cam->fov();
-    //  *vlx << "Left" << (double)cam->left();
-    //  *vlx << "Right" << (double)cam->right();
-    //  *vlx << "Bottom" << (double)cam->bottom();
-    //  *vlx << "Top" << (double)cam->top();
-    //  *vlx << "NearPlane" << (double)cam->nearPlane();
-    //  *vlx << "FarPlane" << (double)cam->farPlane();
-    //  *vlx << "ProjectionType" << toIdentifier(stringfy_EProjectionType(cam->projectionType()));
-
-    //  return value;
-    //}
-
-    //VLX_Value export_Viewport(const Viewport* viewp)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(viewp))
-    //  {
-    //    value.setUID( vlToVLX(viewp)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  value.setStructure( new VLX_Structure("<Viewport>", generateUID("viewp_")) );
-    //  registerExportedStructure(viewp, value.getStructure());
-    //  std::vector<VLX_Structure::Value>& values = value.getStructure()->value();
-
-    //  *vlx << "ClearColor", toValue(viewp->clearColor()) ) );
-    //  *vlx << "ClearColorInt", toValue(viewp->clearColorInt()) ) );
-    //  *vlx << "ClearColorUInt", toValue(viewp->clearColorUInt()) ) );
-    //  *vlx << "ClearDepth", (double)viewp->clearDepth() ) );
-    //  *vlx << "ClearStecil", (long long)viewp->clearStencil() ) );
-    //  *vlx << "ClearColorMode", toIdentifier(stringfy_EClearColorMode(viewp->clearColorMode())) ) );
-    //  *vlx << "ClearFlags", toIdentifier(stringfy_EClearFlags(viewp->clearFlags())) ) );
-    //  *vlx << "X", (double)viewp->x() ) );
-    //  *vlx << "Y", (double)viewp->y() ) );
-    //  *vlx << "Width", (double)viewp->width() ) );
-    //  *vlx << "Height", (double)viewp->height() ) );
-
-    //  return value;
-    //}
-
-    //VLX_Value export_VertexAttribInfo(const VertexAttribInfo* info)
-    //{
-    //  VLX_Value value;
-    //  if (vlToVLX(info))
-    //  {
-    //    value.setUID( vlToVLX(info)->uid().c_str() );
-    //    return value;
-    //  }
-
-    //  VLX_Structure* vlx = value.setStructure( new VLX_Structure("<VertexAttribInfo>", generateUID("vertexattribinfo_")) );
-    //  registerExportedStructure(info, vlx);
-    //  std::vector<VLX_Structure::Value>& values = vlx->value();
-
-    //  // mic fixme
-    //  // *vlx << "Data", export_Array(info->data())) );
-    //  *vlx << "Normalize", info->normalize()) );
-    //  std::string interpretation;
-    //  switch(info->interpretation())
-    //  {
-    //  case VAI_NORMAL:  interpretation = "VAI_NORMAL";  break;
-    //  case VAI_INTEGER: interpretation = "VAI_INTEGER"; break;
-    //  case VAI_DOUBLE:  interpretation = "VAI_DOUBLE";  break;
-    //  }
-    //  *vlx << "Interpretation", toIdentifier(interpretation)) );
-
-    //  return value;
-    //}
-
-    //-----------------------------------------------------------------------------
-
     std::string exportToText(const ResourceDatabase* res_db)
     {
-      VLX_Value value = export_ResourceDatabase(res_db);
+      VLX_Value value /*= export_ResourceDatabase(res_db)*/; // mic fixme
 
       // do not link!
 
