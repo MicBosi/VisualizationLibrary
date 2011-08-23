@@ -977,7 +977,7 @@ void Geometry::makeGLESFriendly()
   // Pass #2: shrink DrawElementsUInt to UByte or UShort
   for( int idraw=this->drawCalls()->size(); idraw--; )
   {
-    DrawCall* dc = this->drawCalls()->at(idraw);
+    ref<DrawCall> dc = this->drawCalls()->at(idraw);
     if( dc->classType() == vl::DrawElementsUInt::Type() )
     {
       // find max index
@@ -998,6 +998,7 @@ void Geometry::makeGLESFriendly()
         // substitute new draw call
         this->drawCalls()->eraseAt(idraw);
         this->drawCalls()->push_back(de.get());
+        dc = de;
       }
       else
       if(max_idx <= 0xFFFF)
@@ -1012,6 +1013,7 @@ void Geometry::makeGLESFriendly()
         // substitute new draw call
         this->drawCalls()->eraseAt(idraw);
         this->drawCalls()->push_back(de.get());
+        dc = de;
       }
       else
       {

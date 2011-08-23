@@ -29,21 +29,21 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics\plugins\vlVRF.hpp>
+#include <vlGraphics\plugins\vlVLX.hpp>
 #include <vlCore\Time.hpp>
 
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadVRF(const String& path)
+ref<ResourceDatabase> vl::loadVLX(const String& path)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return loadVRF(file.get());
+  return loadVLX(file.get());
 }
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadVRF(VirtualFile* file)
+ref<ResourceDatabase> vl::loadVLX(VirtualFile* file)
 {
-  VRF_Importer serializer;
+  VLX_Importer serializer;
 
   // mic fixme: debug only
   Time timer;
@@ -56,33 +56,33 @@ ref<ResourceDatabase> vl::loadVRF(VirtualFile* file)
   return res_db;
 }
 //-----------------------------------------------------------------------------
-bool vl::writeVRF(const String& path, const ResourceDatabase* res_db)
+bool vl::writeVLX(const String& path, const ResourceDatabase* res_db)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return writeVRF(file.get(), res_db);
+  return writeVLX(file.get(), res_db);
 }
 //-----------------------------------------------------------------------------
-bool vl::writeVRF(VirtualFile* file, const ResourceDatabase* res_db)
+bool vl::writeVLX(VirtualFile* file, const ResourceDatabase* res_db)
 {
-  VRF_Exporter serializer;
+  VLX_Exporter serializer;
 
   // mic fixme: debug only
   Time timer;
   timer.start();
 
-  std::string text_srf = serializer.exportToText(res_db);
+  std::string text_vlx = serializer.exportToText(res_db);
 
   printf("Import time = %f\n", timer.elapsed());
 
   if (serializer.error())
   {
-    Log::error("LoadWriterVRF: serialization error.\n"); // mic fixme: test error conditions
+    Log::error("LoadWriterVLX: serialization error.\n"); // mic fixme: test error conditions
     return false;
   }
   else
   {
     file->open(vl::OM_WriteOnly);
-    file->write( text_srf.c_str(), text_srf.size() );
+    file->write( text_vlx.c_str(), text_vlx.size() );
     file->close();
     return true;
   }
