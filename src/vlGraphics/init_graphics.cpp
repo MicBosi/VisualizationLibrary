@@ -36,8 +36,8 @@
 
 using namespace vl;
 
-#if defined(VL_IO_3D_VRF)
-  #include "plugins/vlVRF.hpp"
+#if defined(VL_IO_3D_VLX)
+  #include "plugins/vlVLX.hpp"
 #endif
 #if defined(VL_IO_3D_3DS)
   #include "plugins/vl3DS.hpp"
@@ -100,8 +100,8 @@ void VisualizationLibrary::initGraphics()
   gDefaultFontManager = new FontManager;
 
   // Register 3D modules
-  #if defined(VL_IO_3D_VRF)
-    registerLoadWriter(new LoadWriterVRF);
+  #if defined(VL_IO_3D_VLX)
+    registerLoadWriter(new LoadWriterVLX);
   #endif
   #if defined(VL_IO_3D_OBJ)
     registerLoadWriter(new LoadWriterOBJ);
