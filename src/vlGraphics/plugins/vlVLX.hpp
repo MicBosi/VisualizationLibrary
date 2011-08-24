@@ -96,11 +96,15 @@ namespace vl
 
   inline VLX_Value toRawtext(const std::string& str)    { return VLX_Value( new VLX_RawtextBlock(NULL, str.c_str()) ); }
 
-  inline fvec2 to_fvec2(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 2); return fvec2( (float)arr->value()[0], (float)arr->value()[1] ); }
+  inline fvec2 to_fvec2(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 2); fvec2 v; arr->copyTo(v.ptr()); return v;  }
 
-  inline fvec3 to_fvec3(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 3); return fvec3( (float)arr->value()[0], (float)arr->value()[1], (float)arr->value()[2] ); }
+  inline fvec3 to_fvec3(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 3); fvec3 v; arr->copyTo(v.ptr()); return v;  }
 
-  inline fvec4 to_fvec4(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 4); return fvec4( (float)arr->value()[0], (float)arr->value()[1], (float)arr->value()[2], (float)arr->value()[3] ); }
+  inline fvec4 to_fvec4(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 4); fvec4 v; arr->copyTo(v.ptr()); return v;  }
+
+  inline ivec4 to_ivec4(const VLX_ArrayInteger* arr) { VL_CHECK(arr->value().size() == 4); ivec4 v; arr->copyTo(v.ptr()); return v; }
+
+  inline uvec4 to_uivec4(const VLX_ArrayInteger* arr) { VL_CHECK(arr->value().size() == 4); uvec4 v; arr->copyTo(v.ptr()); return v; }
 
   inline VLX_Value toValue(const vec4& vec)
   {
@@ -3725,6 +3729,76 @@ namespace vl
   {
     void importViewport(const VLX_Structure* vlx, Viewport* obj)
     {
+      for(size_t i=0; i<vlx->value().size(); ++i)
+      {
+        const std::string& key = vlx->value()[i].key();
+        const VLX_Value& value = vlx->value()[i].value();
+        if (key == "ClearColor")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setClearColor( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "ClearColorInt")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayInteger, value );
+          obj->setClearColorInt( to_ivec4( value.getArrayInteger() ) );
+        }
+        else
+        if (key == "ClearColorUInt")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayInteger, value );
+          obj->setClearColorUInt( to_uivec4( value.getArrayInteger() ) );
+        }
+        else
+        if (key == "ClearDepth")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setClearDepth( (float)value.getReal() );
+        }
+        else
+        if (key == "ClearStecil")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayInteger, value );
+          obj->setClearStencil( (int)value.getInteger() );
+        }
+        else
+        if (key == "ClearColorMode")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setClearColorMode( destringfy_EClearColorMode(value.getIdentifier()) );
+        }
+        else
+        if (key == "ClearFlags")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setClearFlags( destringfy_EClearFlags(value.getIdentifier()) );
+        }
+        else
+        if (key == "X")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Integer, value );
+          obj->setX( (int)value.getInteger()  );
+        }
+        else
+        if (key == "Y")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Integer, value );
+          obj->setY( (int)value.getInteger()  );
+        }
+        else
+        if (key == "Width")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Integer, value );
+          obj->setWidth( (int)value.getInteger()  );
+        }
+        else
+        if (key == "Height")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Integer, value );
+          obj->setHeight( (int)value.getInteger()  );
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -3745,10 +3819,10 @@ namespace vl
       *vlx << "ClearStecil" << (long long)viewp->clearStencil();
       *vlx << "ClearColorMode" << toIdentifier(stringfy_EClearColorMode(viewp->clearColorMode()));
       *vlx << "ClearFlags" << toIdentifier(stringfy_EClearFlags(viewp->clearFlags()));
-      *vlx << "X" << (double)viewp->x();
-      *vlx << "Y" << (double)viewp->y();
-      *vlx << "Width" << (double)viewp->width();
-      *vlx << "Height" << (double)viewp->height();
+      *vlx << "X" << (long long)viewp->x();
+      *vlx << "Y" << (long long)viewp->y();
+      *vlx << "Width" << (long long)viewp->width();
+      *vlx << "Height" << (long long)viewp->height();
     }
 
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
@@ -4547,5 +4621,6 @@ namespace vl
 }
 
 #undef VLX_IMPORT_CHECK_RETURN
+#undef VLX_IMPORT_CHECK_RETURN_NULL
 
 #endif
