@@ -68,7 +68,7 @@ public:
     wirepass->gocHint()->setLineSmoothHint(vl::HM_NICEST);
     wirepass->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
     wirepass->gocPolygonOffset()->set(-1.0f, -1.0f);
-    wirepass->gocColor()->setColor(vl::green);
+    wirepass->gocColor()->setValue(vl::green);
 
     /* set wireframe shader as second pass */
     sphere_fx->lod(0)->push_back(wirepass.get());

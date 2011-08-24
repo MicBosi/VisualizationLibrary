@@ -170,7 +170,7 @@ public:
     ref<Effect> fx_box = new Effect;
     fx_box->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx_box->shader()->enable(EN_DEPTH_TEST);
-    fx_box->shader()->gocColor()->setColor(vl::red);
+    fx_box->shader()->gocColor()->setValue(vl::red);
     ref<Geometry> box_outline = vl::makeBox(volume_box);
     sceneManager()->tree()->addActor( box_outline.get(), fx_box.get(), mVolumeTr.get() );
 

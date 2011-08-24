@@ -90,7 +90,7 @@ public:
     plane_fx->shader()->enable(vl::EN_DEPTH_TEST);
     plane_fx->shader()->enable(vl::EN_BLEND);
     plane_fx->shader()->gocLightModel()->setTwoSide(true);
-    plane_fx->shader()->gocColor()->setColor(vl::fvec4(1,0,0,0.3f)); // transparent red
+    plane_fx->shader()->gocColor()->setValue(vl::fvec4(1,0,0,0.3f)); // transparent red
     // add plane actor
     vl::ref<vl::Geometry> plane = vl::makeGrid( vl::vec3(0,0,0), 4,4, 2,2 );
     sceneManager()->tree()->addActor( plane.get(), plane_fx.get(), mClipTr.get() );

@@ -70,7 +70,7 @@ public:
     fx->shader(0,1)->enable(EN_POLYGON_OFFSET_LINE);
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx->shader(0,1)->gocDepthMask()->set(false);
-    fx->shader(0,1)->gocColor()->setColor(gold);
+    fx->shader(0,1)->gocColor()->setValue(gold);
 #endif
 
     /* Generate random Bézier patches

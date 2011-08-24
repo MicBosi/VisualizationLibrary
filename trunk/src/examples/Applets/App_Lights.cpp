@@ -144,7 +144,7 @@ public:
     vl::ref<vl::Geometry> bulb = vl::makeUVSphere(vl::vec3(0,0,0), 0.5f);
     vl::ref<vl::Effect> bulb_fx = new vl::Effect;
     bulb_fx->shader()->enable(vl::EN_DEPTH_TEST);
-    bulb_fx->shader()->gocColor()->setColor(vl::white);
+    bulb_fx->shader()->gocColor()->setValue(vl::white);
     sceneManager()->tree()->addActor(bulb.get(), bulb_fx.get(), mLight0_Transform.get());
     sceneManager()->tree()->addActor(bulb.get(), bulb_fx.get(), mLight1_Transform.get());
     sceneManager()->tree()->addActor(bulb.get(), bulb_fx.get(), mLight2_Transform.get());
