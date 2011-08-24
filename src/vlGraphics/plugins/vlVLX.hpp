@@ -4214,8 +4214,7 @@ namespace vl
       VLX_IMPORT_CHECK_RETURN( path != NULL || source != NULL, *vlx )
       if (path)
       {
-        String source = String::loadText(path->getString()); // mic fixme: check this
-        obj->setSource(source);
+        obj->setSource(source); // this automatically loads the source and sets the path
       }
       else
       if (source)

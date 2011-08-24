@@ -77,7 +77,7 @@ public:
     image_fx->shader()->gocTextureSampler(0)->setTexture(mTexture.get());
     image_fx->shader()->setRenderState( mTextureMatrix.get(), 0 );
     image_fx->shader()->enable(vl::EN_BLEND);
-    image_fx->shader()->gocColor()->setColor(vl::white);
+    image_fx->shader()->gocColor()->setValue(vl::white);
 
     mGrid = vl::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, mSlices, mSlices, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     mGrid->setVBOEnabled(false);

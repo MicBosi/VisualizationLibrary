@@ -105,7 +105,7 @@ void SceneManagerPortals::renderPortal(Portal* portal)
     portal_fx->shader()->gocDepthFunc()->set(vl::FU_LEQUAL);*/
     portal_fx->shader()->enable(vl::EN_BLEND);
     portal_fx->shader()->gocLineWidth()->set(2.0f);
-    portal_fx->shader()->gocColor()->setColor(portal_color);
+    portal_fx->shader()->gocColor()->setValue(portal_color);
 
     vl::ref<vl::Geometry> portal_geom = new vl::Geometry;
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;

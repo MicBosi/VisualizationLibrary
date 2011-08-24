@@ -496,7 +496,7 @@ ref<Effect> DaeLoader::setup_vl_Effect( Dae::Material* mat )
         // this is already the default: fx->shader()->gocColor()->setColor( vl::white );
       }
       else
-        fx->shader()->gocColor()->setColor( common_tech->mEmission.mColor );
+        fx->shader()->gocColor()->setValue( common_tech->mEmission.mColor );
     }
 
     // enable alpha blending if material is transparent or alpha is coming from the diffuse texture
@@ -1444,7 +1444,7 @@ void DaeLoader::setupLights()
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
-        fx->shader()->gocColor()->setColor(vl::fuchsia);
+        fx->shader()->gocColor()->setValue(vl::fuchsia);
         mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->boundTransform() ) );
       }
       else
@@ -1457,7 +1457,7 @@ void DaeLoader::setupLights()
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
-        fx->shader()->gocColor()->setColor(vl::fuchsia);
+        fx->shader()->gocColor()->setValue(vl::fuchsia);
         mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->boundTransform() ) );
       }
       else
@@ -1469,7 +1469,7 @@ void DaeLoader::setupLights()
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
-        fx->shader()->gocColor()->setColor(vl::fuchsia);
+        fx->shader()->gocColor()->setValue(vl::fuchsia);
         mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->boundTransform() ) );
       }
       else
@@ -1481,7 +1481,7 @@ void DaeLoader::setupLights()
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
-        fx->shader()->gocColor()->setColor(vl::fuchsia);
+        fx->shader()->gocColor()->setValue(vl::fuchsia);
         mResources->resources().push_back( new Actor( light_mesh.get(), fx.get(), mLights[i]->boundTransform() ) );
       }
     }

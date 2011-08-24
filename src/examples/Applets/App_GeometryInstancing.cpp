@@ -142,7 +142,7 @@ public:
     box_fx->shader()->setRenderState( new vl::Light, 0 );
     box_fx->shader()->enable(vl::EN_DEPTH_TEST);
     box_fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
-    box_fx->shader()->gocColor()->setColor(vl::red);
+    box_fx->shader()->gocColor()->setValue(vl::red);
 
     /* shows bounding box */
     vl::ref<vl::Geometry> box = vl::makeBox( box_set->boundingBox() );

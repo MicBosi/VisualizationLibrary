@@ -310,7 +310,7 @@ public:
 
     // setup simple effect
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->gocColor()->setColor(color);
+    effect->shader()->gocColor()->setValue(color);
     effect->shader()->enable(vl::EN_LINE_STIPPLE);
     effect->shader()->gocPointSize()->set(3);
     effect->shader()->gocLineStipple()->setPattern(0x3333);
