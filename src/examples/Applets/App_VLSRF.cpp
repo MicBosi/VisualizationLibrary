@@ -223,7 +223,7 @@ public:
     fx->shader()->enable(EN_DEPTH_TEST);
     fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
     fx->shader()->setRenderState( new Light, 0 );
-    fx->shader()->setRenderState( new ClipPlane, 3 );
+    fx->shader()->setRenderState( new ClipPlane(10, fvec3(1,2,3)), 3 );
 
     ref<Actor> act = new Actor( geom.get(), fx.get(), new Transform );
     act->transform()->translate(10, 20 ,30);
@@ -368,11 +368,11 @@ public:
         VL_TRAP()
 
       ref<Object> obj = registry->importVLX( parser.root() );
-      // geom = obj->as<Geometry>();
-      act =obj->as<Actor>();
+      ref<Actor> act2 = obj->as<Actor>();
+      // act2->effect()->shader()->eraseRenderState(RS_TextureSampler, 0);
 
       // re-export
-      ref<VLX_Structure> st = registry->exportVLX( act->lod(0) );
+      ref<VLX_Structure> st = registry->exportVLX( act2.get() );
       {
         std::map< std::string, int > uid_set;
         VLX_UIDCollectorVisitor uid_collector;
@@ -387,6 +387,9 @@ public:
         file->open(vl::OM_WriteOnly);
         file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
         file->close();
+        
+        // put into scene
+        sceneManager()->tree()->addActor( act2.get() );
       }
 
     }
@@ -394,7 +397,7 @@ public:
       VL_TRAP();
 
     // sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
-    sceneManager()->tree()->addActor( act.get() );
+    // sceneManager()->tree()->addActor( act.get() );
   }
 };
 
