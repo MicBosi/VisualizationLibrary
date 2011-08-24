@@ -3607,7 +3607,7 @@ namespace vl
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value);
           obj->setViewMatrix( to_fmat4(value.getList()) );
-          VLX_IMPORT_CHECK_RETURN( !obj->viewMatrix().isNull(), value )
+          // VLX_IMPORT_CHECK_RETURN( !obj->viewMatrix().isNull(), value )
         }
         else
         if (key == "ProjectionMatrix")
@@ -3622,7 +3622,7 @@ namespace vl
 
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value);
           obj->setProjectionMatrix( to_fmat4(value.getList()), ptype );
-          VLX_IMPORT_CHECK_RETURN( !obj->projectionMatrix().isNull(), value )
+          // VLX_IMPORT_CHECK_RETURN( !obj->projectionMatrix().isNull(), value )
         }
         else
         if (key == "Viewport")
@@ -3842,6 +3842,41 @@ namespace vl
   {
     void importTransform(const VLX_Structure* vlx, Transform* obj)
     {
+      for(size_t i=0; i<vlx->value().size(); ++i)
+      {
+        const std::string& key = vlx->value()[i].key();
+        const VLX_Value& value = vlx->value()[i].value();
+        if (key == "LocalMatrix")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value )
+          obj->setLocalAndWorldMatrix( to_fmat4( value.getList() ) );
+        }
+        else
+        // let the "Children" property take care of children binding
+        /*
+        if (key == "Parent")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Structure, value )
+          Transform* tr = do_import( value.getStructure() )->as<Transform>();
+          VLX_IMPORT_CHECK_RETURN( tr != NULL, value )
+          tr->addChild(obj);
+        }
+        else
+        */
+        if (key == "Children")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value )
+          const VLX_List* list = value.getList();
+          for(size_t ich=0; ich<list->value().size(); ++ich)
+          {
+            VLX_IMPORT_CHECK_RETURN( list->value()[ich].type() == VLX_Value::Structure, list->value()[ich] )
+            const VLX_Structure* vlx_tr = list->value()[ich].getStructure();
+            Transform* child = do_import( vlx_tr )->as<Transform>();
+            VLX_IMPORT_CHECK_RETURN( child != NULL, *vlx_tr )
+            obj->addChild(child);
+          }
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -3857,8 +3892,9 @@ namespace vl
     {
       *vlx << "LocalMatrix" << toValue(tr->localMatrix());
 
-      if (tr->parent())
-        *vlx << "Parent" << do_export(tr->parent());
+      // not needed
+      /*if (tr->parent())
+        *vlx << "Parent" << do_export(tr->parent());*/
 
       VLX_Value childs;
       childs.setList( new VLX_List );
