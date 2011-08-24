@@ -76,6 +76,9 @@ namespace vl
     /** Returns the actual plane used to perform the clipping. */
     const Plane& plane() const { return mPlane; }
 
+    /** Returns the actual plane used to perform the clipping. */
+    Plane& plane() { return mPlane; }
+
     /** Defines the actual plane used to perform the clipping. */
     void setPlane(const Plane& plane) { mPlane = plane; }
 

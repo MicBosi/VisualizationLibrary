@@ -3828,7 +3828,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const Viewport* cast_obj = obj->as<Viewport>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("camera_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("viewport_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportViewport(cast_obj, vlx.get());
@@ -3920,6 +3920,79 @@ namespace vl
   {
     void importLight(const VLX_Structure* vlx, Light* obj)
     {
+      for(size_t i=0; i<vlx->value().size(); ++i)
+      {
+        const std::string& key = vlx->value()[i].key();
+        const VLX_Value& value = vlx->value()[i].value();
+        if (key == "Ambient")
+        {
+          // mic fixme: what if the user specifies ( 1 0 0 0 ) -> becomes a ArrayInteger!!!
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value )
+          obj->setAmbient( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "Diffuse")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value )
+          obj->setDiffuse( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "Specular")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value )
+          obj->setSpecular( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "Position")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value )
+          obj->setPosition( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "SpotDirection")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value )
+          obj->setSpotDirection( to_fvec3( value.getArrayReal() ) );
+        }
+        else
+        if (key == "SpotExponent")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setSpotExponent( (float)value.getReal() );
+        }
+        else
+        if (key == "SpotCutoff")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setSpotCutoff( (float)value.getReal() );
+        }
+        else
+        if (key == "ConstantAttenuation")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setConstantAttenuation( (float)value.getReal() );
+        }
+        else
+        if (key == "LinearAttenuation")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setLinearAttenuation( (float)value.getReal() );
+        }
+        else
+        if (key == "QuadraticAttenuation")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setQuadraticAttenuation( (float)value.getReal() );
+        }
+        else
+        if (key == "BoundTransform")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Structure, value)
+          Transform* tr= do_import( value.getStructure() )->as<Transform>();
+          VLX_IMPORT_CHECK_RETURN( tr != NULL, value )
+          obj->bindTransform(tr);
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -3964,6 +4037,32 @@ namespace vl
   {
     void importClipPlane(const VLX_Structure* vlx, ClipPlane* obj)
     {
+      for(size_t i=0; i<vlx->value().size(); ++i)
+      {
+        const std::string& key = vlx->value()[i].key();
+        const VLX_Value& value = vlx->value()[i].value();
+        if (key == "PlaneNormal")
+        {
+          // mic fixme: what if the user specifies ( 1 0 0 0 ) -> becomes a ArrayInteger!!!
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value )
+          obj->plane().setNormal( to_fvec3( value.getArrayReal() ) );
+        }
+        else
+        if (key == "PlaneOrigin")
+        {
+          // mic fixme: what if the user specifies ( 1 0 0 0 ) -> becomes a ArrayInteger!!!
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->plane().setOrigin( (float)value.getReal() );
+        }
+        else
+        if (key == "BoundTransform")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Structure, value)
+          Transform* tr= do_import( value.getStructure() )->as<Transform>();
+          VLX_IMPORT_CHECK_RETURN( tr != NULL, value )
+          obj->bindTransform(tr);
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -3978,16 +4077,15 @@ namespace vl
     void exportClipPlane(const ClipPlane* clip, VLX_Structure* vlx)
     {
       *vlx << "PlaneNormal" << toValue(clip->plane().normal());
-      *vlx << "PlaneOrigin" << (clip->plane().origin());
+      *vlx << "PlaneOrigin" << clip->plane().origin();
       if (clip->boundTransform())
         *vlx << "BoundTransform" << do_export(clip->boundTransform());
-
     }
 
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const ClipPlane* cast_obj = obj->as<ClipPlane>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("clipplane_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportClipPlane(cast_obj, vlx.get());
