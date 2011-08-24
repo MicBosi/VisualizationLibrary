@@ -700,8 +700,8 @@ TexParameter::TexParameter()
   setBorderColor(fvec4(0,0,0,0));
   setAnisotropy(1.0f);
   setGenerateMipmap(false);
-  setTexCompareFunc(TCF_LEQUAL);
-  setTexCompareMode(TCM_NONE);
+  setCompareFunc(TCF_LEQUAL);
+  setCompareMode(TCM_NONE);
   setDepthTextureMode(DTM_LUMINANCE);
 }
 //------------------------------------------------------------------------------

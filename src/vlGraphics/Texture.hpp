@@ -87,8 +87,8 @@ namespace vl
     void setBorderColor(fvec4 bordercolor)       { mDirty = true; mBorderColor = bordercolor; }
     void setAnisotropy(float anisotropy)         { mDirty = true; mAnisotropy = anisotropy; }
     void setGenerateMipmap(bool generate_mipmap) { mDirty = true; mGenerateMipmap = generate_mipmap; }
-    void setTexCompareMode(ETexCompareMode mode) { mDirty = true; mCompareMode = mode; }
-    void setTexCompareFunc(ETexCompareFunc func) { mDirty = true; mCompareFunc = func; }
+    void setCompareMode(ETexCompareMode mode) { mDirty = true; mCompareMode = mode; }
+    void setCompareFunc(ETexCompareFunc func) { mDirty = true; mCompareFunc = func; }
     void setDepthTextureMode(EDepthTextureMode mode) { mDirty = true; mDepthTextureMode = mode; }
 
     void setDirty(bool dirty) const { mDirty = dirty; }
