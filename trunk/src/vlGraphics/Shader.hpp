@@ -99,9 +99,9 @@ namespace vl
 
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
-    void setColor(const fvec4& color) { mColor = color; }
+    void setValue(const fvec4& color) { mColor = color; }
 
-    const fvec4& color() const { return mColor; }
+    const fvec4& value() const { return mColor; }
 
     virtual ref<RenderState> clone() const
     {
@@ -130,9 +130,9 @@ namespace vl
 
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
-    void setSecondaryColor(const fvec3& color) { mSecondaryColor = color; }
+    void setValue(const fvec3& color) { mSecondaryColor = color; }
 
-    const fvec3& secondaryColor() const { return mSecondaryColor; }
+    const fvec3& value() const { return mSecondaryColor; }
 
     virtual ref<RenderState> clone() const
     {
@@ -161,9 +161,9 @@ namespace vl
 
     virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
 
-    void setNormal(const fvec3& color) { mNormal = color; }
+    void setValue(const fvec3& color) { mNormal = color; }
 
-    const fvec3& normal() const { return mNormal; }
+    const fvec3& value() const { return mNormal; }
 
     virtual ref<RenderState> clone() const
     {
