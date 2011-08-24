@@ -111,15 +111,19 @@ namespace vl
 
     /** 'left' parameter as passed to the last setProjectionAsFrustum() or setProjectionAsOrtho*() */
     Real left() const { return mLeft; }
+    void setLeft(Real v) { mLeft = v; }
 
     /** 'right' parameter as passed to the last setProjectionAsFrustum() or setProjectionAsOrtho*() */
     Real right() const { return mRight; }
+    void setRight(Real v) { mRight = v; }
 
     /** 'bottom' parameter as passed to the last setProjectionAsFrustum() or setProjectionAsOrtho*() */
     Real bottom() const { return mBottom; }
+    void setBottom(Real v) { mBottom = v; }
 
     /** 'top' parameter as passed to the last setProjectionAsFrustum() or setProjectionAsOrtho*() */
     Real top() const { return mTop; }
+    void setTop(Real v) { mTop = v; }
 
     /** The view frustum of the camera used to perform frustum culling. */
     void setFrustum(const Frustum& frustum) { mFrustum = frustum; }
@@ -161,13 +165,13 @@ namespace vl
     const mat4& localMatrix() const { return mLocalMatrix; }
 
     /** The Camera's projection matrix. */
-    void setProjectionMatrix(const mat4& mat, EProjectionType proj_type) { mProjectionMatrix = mat; mProjectionType = proj_type; }
+    void setProjectionMatrix(const mat4& mat, EProjectionMatrixType proj_type) { mProjectionMatrix = mat; mProjectionType = proj_type; }
 
     /** The Camera's projection matrix. */
     const mat4& projectionMatrix() const { return mProjectionMatrix; }
 
     /** The Camera's projection matrix type. */
-    EProjectionType projectionType() const { return mProjectionType; }
+    EProjectionMatrixType projectionMatrixType() const { return mProjectionType; }
 
     /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings. 
     See also http://www.opengl.org/sdk/docs/man/xhtml/gluPerspective.xml for more information. */
@@ -272,7 +276,7 @@ namespace vl
     Real mLeft, mRight, mBottom, mTop;
     Real mNearPlane;
     Real mFarPlane;
-    EProjectionType mProjectionType;
+    EProjectionMatrixType mProjectionType;
   };
 }
 
