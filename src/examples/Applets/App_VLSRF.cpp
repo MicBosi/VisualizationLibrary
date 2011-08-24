@@ -134,7 +134,12 @@ public:
     registry->addSerializer( TexParameter::Type(), new VLX_IO_TexParameter );
 
     // ActorEventCallback
-    registry->addSerializer( ActorEventCallback::Type(), new VLX_IO_ActorEventCallback );
+    registry->addSerializer( DepthSortCallback::Type(), new VLX_IO_ActorEventCallback );
+
+    // LODEvaluator
+    ref<VLX_IO_LODEvaluator> lod_evaluator = new VLX_IO_LODEvaluator;
+    registry->addSerializer( PixelLODEvaluator::Type(), lod_evaluator.get() );
+    registry->addSerializer( DistanceLODEvaluator::Type(), lod_evaluator.get() );
 
     // Actor
     registry->addSerializer( Actor::Type(), new VLX_IO_Actor );
@@ -242,7 +247,7 @@ public:
     glsl->attachShader( new GLSLFragmentShader("/glsl/bumpmap.fs") );
     glsl->shader(1)->setPath("");
     glsl->shader(1)->setSource("");
-    glsl->gocUniform("vibrazione")->setUniformF(164.314f);
+    glsl->gocUniform("vibrazione")->setUniformF(164.314159265f);
     glsl->bindFragDataLocation(0, "color_buffer");
     glsl->bindFragDataLocation(1, "normal_buffer");
     glsl->addAutoAttribLocation(0, "posizione");
@@ -255,7 +260,7 @@ public:
     fx->shader()->gocTextureSampler(0)->texture()->prepareTexture2D( "/images/spheremap_klimt.jpg", TF_UNKNOWN );
     // fx->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setWrapS(TWM_REPEAT);
 
-#if 0
+#if 1
     ref<PixelLODEvaluator> lod_eval = new PixelLODEvaluator;
     act->setLODEvaluator( lod_eval.get() );
     lod_eval->pixelRangeSet().push_back(11);
@@ -263,7 +268,7 @@ public:
     lod_eval->pixelRangeSet().push_back(33);
 #endif
 
-#if 0
+#if 1
     act->actorEventCallbacks()->push_back( new DepthSortCallback );
 #endif
 

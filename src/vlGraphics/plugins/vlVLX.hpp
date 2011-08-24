@@ -3521,7 +3521,7 @@ namespace vl
           {
             const VLX_Value& elem = list->value()[i];
             VLX_IMPORT_CHECK_RETURN( elem.type() == VLX_Value::Structure, elem )
-            if (registry()->canExport(elem.getStructure()))
+            if (registry()->canImport(elem.getStructure()))
             {
               ActorEventCallback* cb = do_import( elem.getStructure() )->as<ActorEventCallback>();
               VLX_IMPORT_CHECK_RETURN( cb != NULL, elem )
@@ -4214,11 +4214,13 @@ namespace vl
       VLX_IMPORT_CHECK_RETURN( path != NULL || source != NULL, *vlx )
       if (path)
       {
-        obj->setSource(source); // this automatically loads the source and sets the path
+        VLX_IMPORT_CHECK_RETURN( path->type() == VLX_Value::String, *path )
+        obj->setSource(path->getString()); // this automatically loads the source and sets the path
       }
       else
       if (source)
       {
+        VLX_IMPORT_CHECK_RETURN( source->type() == VLX_Value::RawtextBlock, *source )
         obj->setSource(source->getRawtextBlock()->value().c_str()); // mic fixme: check this
       }
       else
@@ -4309,7 +4311,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const VertexAttrib* cast_obj = obj->as<VertexAttrib>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("vertexattrib_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportVertexAttrib(cast_obj, vlx.get());
@@ -4345,7 +4347,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const Color* cast_obj = obj->as<Color>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("color_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportColor(cast_obj, vlx.get());
@@ -4381,7 +4383,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const SecondaryColor* cast_obj = obj->as<SecondaryColor>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("seccolor_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportSecondaryColor(cast_obj, vlx.get());
@@ -4417,7 +4419,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const Normal* cast_obj = obj->as<Normal>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("normal_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportNormal(cast_obj, vlx.get());
@@ -4555,7 +4557,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const Material* cast_obj = obj->as<Material>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("material_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportMaterial(cast_obj, vlx.get());
@@ -4569,11 +4571,36 @@ namespace vl
   {
     void importActorEventCallback(const VLX_Structure* vlx, ActorEventCallback* obj)
     {
+      if (obj->isOfType(DepthSortCallback::Type()))
+      {
+        ESortMode sm = SM_SortBackToFront;
+        const VLX_Value* vlx_sm = vlx->getValue("SortMode");
+        VLX_IMPORT_CHECK_RETURN( vlx_sm->type() == VLX_Value::Identifier, *vlx_sm )
+        if (vlx_sm)
+        {
+          if ( strcmp(vlx_sm->getIdentifier(), "SM_SortBackToFront") == 0 )
+            sm = SM_SortBackToFront;
+          else
+          if ( strcmp(vlx_sm->getIdentifier(), "SM_SortFrontToBack") == 0 )
+            sm = SM_SortFrontToBack;
+          else
+            signalImportError( Say("Line %n : unknown sort mode '%s'.\n") << vlx_sm->lineNumber() << vlx_sm->getIdentifier() );
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
-      ref<ActorEventCallback> obj/* = new ActorEventCallback*/; // mic fixme
+      ref<ActorEventCallback> obj = NULL;
+
+      if (vlx->tag() == "<vl::DepthSortCallback>") // mic fixme: support more stuff
+        obj = new DepthSortCallback;
+      else
+      {
+        signalImportError( Say("Line %n : ActorEventCallback type not supported for import.\n") << vlx->lineNumber() );
+        return NULL;
+      }
+
       // register imported structure asap
       registry()->registerImportedStructure(vlx, obj.get());
       importActorEventCallback(vlx, obj.get());
@@ -4600,7 +4627,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const ActorEventCallback* cast_obj = obj->as<ActorEventCallback>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("actorcallback_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportActorEventCallback(cast_obj, vlx.get());
@@ -4680,7 +4707,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const Texture* cast_obj = obj->as<Texture>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("texture_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportTexture(cast_obj, vlx.get());
@@ -4716,7 +4743,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const TextureSampler* cast_obj = obj->as<TextureSampler>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("texsampler_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportTextureSampler(cast_obj, vlx.get());
@@ -4759,7 +4786,7 @@ namespace vl
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const TexParameter* cast_obj = obj->as<TexParameter>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("texparam_"));
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportTexParameter(cast_obj, vlx.get());
