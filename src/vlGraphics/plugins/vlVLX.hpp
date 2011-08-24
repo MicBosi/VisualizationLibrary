@@ -396,7 +396,7 @@ namespace vl
     /*if (strcmp(str, "CM_AMBIENT_AND_DIFFUSE") == 0) */return CM_AMBIENT_AND_DIFFUSE;
   }
 
-  inline const char* stringfy_TextureFormat(ETextureFormat tf)
+  inline const char* stringfy_ETextureFormat(ETextureFormat tf)
   {
     switch(tf)
     {
@@ -638,7 +638,7 @@ namespace vl
     }
   }
 
-  inline ETextureFormat destringfy_TextureFormat(const char* str)
+  inline ETextureFormat destringfy_ETextureFormat(const char* str)
   {
     if (strcmp(str, "TF_ALPHA  ") == 0) return TF_ALPHA  ;
     if (strcmp(str, "TF_ALPHA4 ") == 0) return TF_ALPHA4 ;
@@ -3102,21 +3102,6 @@ namespace vl
   {
     void importShader(const VLX_Structure* vlx, Shader* sh)
     {
-      // uniforms
-      const VLX_Value* uniforms = vlx->getValue("Uniforms");
-      if (uniforms)
-      {
-        VLX_IMPORT_CHECK_RETURN( uniforms->type() == VLX_Value::List, *uniforms )
-        const VLX_List* list = uniforms->getList();
-        for(size_t i=0; i<list->value().size(); ++i)
-        {
-          VLX_IMPORT_CHECK_RETURN( list->value()[i].type() == VLX_Value::Structure, list->value()[i] );
-          Uniform* uniform = do_import( list->value()[i].getStructure() )->as<Uniform>();
-          VLX_IMPORT_CHECK_RETURN( uniform != NULL, list->value()[i] )
-          sh->setUniform(uniform);
-        }
-      }
-      
       // enables
       const VLX_Value* enables = vlx->getValue("Enables");
       if (enables)
@@ -3160,6 +3145,20 @@ namespace vl
         }
       }
       
+      // uniforms
+      const VLX_Value* uniforms = vlx->getValue("Uniforms");
+      if (uniforms)
+      {
+        VLX_IMPORT_CHECK_RETURN( uniforms->type() == VLX_Value::List, *uniforms )
+        const VLX_List* list = uniforms->getList();
+        for(size_t i=0; i<list->value().size(); ++i)
+        {
+          VLX_IMPORT_CHECK_RETURN( list->value()[i].type() == VLX_Value::Structure, list->value()[i] );
+          Uniform* uniform = do_import( list->value()[i].getStructure() )->as<Uniform>();
+          VLX_IMPORT_CHECK_RETURN( uniform != NULL, list->value()[i] )
+          sh->setUniform(uniform);
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -3543,6 +3542,11 @@ namespace vl
 
     void exportActor(const Actor* act, VLX_Structure* vlx)
     {
+      *vlx << "EnableMask" << (long long)act->enableMask();
+      *vlx << "RenderBlock" << (long long)act->renderBlock();
+      *vlx << "RenderRank" << (long long)act->renderRank();
+      *vlx << "IsOccludee" << act->isOccludee();
+
       VLX_Value renderables;
       renderables.setList( new VLX_List );
       for(size_t i=0; i<VL_MAX_ACTOR_LOD && act->lod(i); ++i)
@@ -3575,11 +3579,6 @@ namespace vl
       for(int i=0; i<act->actorEventCallbacks()->size(); ++i)
         *callbacks.getList() << do_export(act->actorEventCallbacks()->at(i));
       *vlx << "ActorEventCallbacks" << callbacks;
-
-      *vlx << "RenderBlock" << (long long)act->renderBlock();
-      *vlx << "RenderRank" << (long long)act->renderRank();
-      *vlx << "EnableMask" << (long long)act->enableMask();
-      *vlx << "IsOccludee" << act->isOccludee();
     }
 
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
@@ -4641,6 +4640,72 @@ namespace vl
   {
     void importTexture(const VLX_Structure* vlx, Texture* obj)
     {
+      obj->setSetupParams( new Texture::SetupParams );
+
+      for(size_t i=0; i<vlx->value().size(); ++i)
+      {
+        const std::string& key = vlx->value()[i].key();
+        const VLX_Value& value = vlx->value()[i].value();
+
+        // mic fixme: document how these guys are to be used by examples
+
+        if (key == "TexParameter")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Structure, value );
+          TexParameter* tex_param = do_import( value.getStructure() )->as<TexParameter>();
+          VLX_IMPORT_CHECK_RETURN( tex_param != NULL, value );
+          // copy the content over
+          *obj->getTexParameter() = *tex_param;
+        }
+        else
+        if (key == "ImagePath")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::String, value );
+          obj->setupParams()->setImagePath( value.getString() );
+        }
+        else
+        if (key == "Format")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setupParams()->setFormat( destringfy_ETextureFormat(value.getIdentifier()) );
+        }
+        else
+        if (key == "Width")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Integer, value );
+          obj->setupParams()->setWidth( (int)value.getInteger() );
+        }
+        else
+        if (key == "Height")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Integer, value );
+          obj->setupParams()->setHeight( (int)value.getInteger() );
+        }
+        else
+        if (key == "Depth")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Integer, value );
+          obj->setupParams()->setDepth( (int)value.getInteger() );
+        }
+        else
+        if (key == "GenMipmaps")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Bool, value );
+          obj->setupParams()->setGenMipmaps( (int)value.getBool() );
+        }
+        else
+        if (key == "Samples")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Integer, value );
+          obj->setupParams()->setSamples( (int)value.getInteger() );
+        }
+        else
+        if (key == "FixedSamplesLocations")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Bool, value );
+          obj->setupParams()->setFixedSamplesLocations( (int)value.getBool() );
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -4654,21 +4719,9 @@ namespace vl
 
     void exportTexture(const Texture* tex, VLX_Structure* vlx)
     {
-      std::string name;
-      switch(tex->dimension())
-      {
-      case TD_TEXTURE_1D: name = "<Texture1D>"; break;
-      default:
-      case TD_TEXTURE_2D: name = "<Texture2D>"; break;
-      case TD_TEXTURE_3D: name = "<Texture3D>"; break;
-      case TD_TEXTURE_CUBE_MAP: name = "<TextureCubeMap>"; break;
-      case TD_TEXTURE_RECTANGLE: name = "<TextureRectangle>"; break;
-      case TD_TEXTURE_1D_ARRAY: name = "<Texture1DArray>"; break;
-      case TD_TEXTURE_2D_ARRAY: name = "<Texture2DArray>"; break;
-      case TD_TEXTURE_BUFFER: name = "<TextureBuffer>"; break;
-      case TD_TEXTURE_2D_MULTISAMPLE: name = "<Texture2DMultisample>"; break;
-      case TD_TEXTURE_2D_MULTISAMPLE_ARRAY: name = "<Texture2DMultisampleArray>"; break;
-      }
+      // mic fixme:
+      // - we should allow patterns such as initializing a texture from an image filled by a shader or procedure.
+      // - we should allow avoid loading twice the same image or shader source or any externa resource etc. time for a resource manager?
 
       if (tex->getTexParameter())
         *vlx << "TexParameter" << do_export(tex->getTexParameter());
@@ -4683,7 +4736,7 @@ namespace vl
         if (par->image())
           *vlx << "ImagePath" << toString(par->image()->filePath().toStdString());
 
-        *vlx << "Format" << toIdentifier(stringfy_TextureFormat(par->format()));
+        *vlx << "Format" << toIdentifier(stringfy_ETextureFormat(par->format()));
 
         if (par->width())
           *vlx << "Width" << (long long)par->width();
@@ -4699,7 +4752,7 @@ namespace vl
         if(par->samples())
         {
           *vlx << "Samples" << (long long)par->samples();
-          *vlx << "FixedSamplesLocation" << par->fixedSamplesLocations();
+          *vlx << "FixedSamplesLocations" << par->fixedSamplesLocations();
         }
       }
     }
@@ -4717,46 +4770,81 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLX_IO_TextureSampler: public VLX_IO
-  {
-    void importTextureSampler(const VLX_Structure* vlx, TextureSampler* obj)
-    {
-    }
-
-    virtual ref<Object> importVLX(const VLX_Structure* vlx)
-    {
-      ref<TextureSampler> obj = new TextureSampler;
-      // register imported structure asap
-      registry()->registerImportedStructure(vlx, obj.get());
-      importTextureSampler(vlx, obj.get());
-      return obj;
-    }
-
-    void exportTextureSampler(const TextureSampler* tex_sampler, VLX_Structure* vlx)
-    {
-      if (tex_sampler->texture())
-        *vlx << "Texture" << do_export(tex_sampler->texture());
-      if (tex_sampler->getTexParameter())
-        *vlx << "TexParameter" << do_export(tex_sampler->getTexParameter());
-    }
-
-    virtual ref<VLX_Structure> exportVLX(const Object* obj)
-    {
-      const TextureSampler* cast_obj = obj->as<TextureSampler>(); VL_CHECK(cast_obj)
-      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("texsampler_"));
-      // register exported object asap
-      registry()->registerExportedObject(obj, vlx.get());
-      exportTextureSampler(cast_obj, vlx.get());
-      return vlx;
-    }
-  };
-
-  //---------------------------------------------------------------------------
-
   struct VLX_IO_TexParameter: public VLX_IO
   {
     void importTexParameter(const VLX_Structure* vlx, TexParameter* obj)
     {
+      for(size_t i=0; i<vlx->value().size(); ++i)
+      {
+        const std::string& key = vlx->value()[i].key();
+        const VLX_Value& value = vlx->value()[i].value();
+
+        if (key == "MinFilter")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setMinFilter( destringfy_ETexParamFilter( value.getIdentifier() ) );
+        }
+        else
+        if (key == "MagFilter")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setMagFilter( destringfy_ETexParamFilter( value.getIdentifier() ) );
+        }
+        else
+        if (key == "WrapS")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setWrapS( destringfy_ETexParamWrap( value.getIdentifier() ) );
+        }
+        else
+        if (key == "WrapT")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setWrapT( destringfy_ETexParamWrap( value.getIdentifier() ) );
+        }
+        else
+        if (key == "WrapR")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setWrapR( destringfy_ETexParamWrap( value.getIdentifier() ) );
+        }
+        else
+        if (key == "CompareMode")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setCompareMode( destringfy_ETexCompareMode( value.getIdentifier() ) );
+        }
+        else
+        if (key == "CompareFunc")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setCompareFunc( destringfy_ETexCompareFunc( value.getIdentifier() ) );
+        }
+        else
+        if (key == "DepthTextureMode")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
+          obj->setDepthTextureMode( destringfy_EDepthTextureMode( value.getIdentifier() ) );
+        }
+        else
+        if (key == "BorderColor")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setBorderColor( to_fvec4(value.getArrayReal()) );
+        }
+        else
+        if (key == "Anisotropy")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value );
+          obj->setAnisotropy( (float)value.getReal() );
+        }
+        else
+        if (key == "GenerateMipmap")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Bool, value );
+          obj->setGenerateMipmap( value.getBool() );
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -4790,6 +4878,59 @@ namespace vl
       // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportTexParameter(cast_obj, vlx.get());
+      return vlx;
+    }
+  };
+
+  //---------------------------------------------------------------------------
+
+  struct VLX_IO_TextureSampler: public VLX_IO
+  {
+    void importTextureSampler(const VLX_Structure* vlx, TextureSampler* obj)
+    {
+      const VLX_Value* vlx_texture = vlx->getValue("Texture");
+      if (vlx_texture)
+      {
+        VLX_IMPORT_CHECK_RETURN(vlx_texture->type() == VLX_Value::Structure, *vlx_texture);
+        Texture* texture = do_import(vlx_texture->getStructure())->as<Texture>();
+        VLX_IMPORT_CHECK_RETURN( texture != NULL , *vlx_texture);
+        obj->setTexture(texture);
+      }
+
+      const VLX_Value* vlx_texp = vlx->getValue("TexParameter");
+      if (vlx_texp)
+      {
+        VLX_IMPORT_CHECK_RETURN(vlx_texp->type() == VLX_Value::Structure, *vlx_texp);
+        TexParameter* texp = do_import(vlx_texp->getStructure())->as<TexParameter>();
+        VLX_IMPORT_CHECK_RETURN( texp != NULL , *vlx_texp);
+        obj->setTexParameter(texp);
+      }
+    }
+
+    virtual ref<Object> importVLX(const VLX_Structure* vlx)
+    {
+      ref<TextureSampler> obj = new TextureSampler;
+      // register imported structure asap
+      registry()->registerImportedStructure(vlx, obj.get());
+      importTextureSampler(vlx, obj.get());
+      return obj;
+    }
+
+    void exportTextureSampler(const TextureSampler* tex_sampler, VLX_Structure* vlx)
+    {
+      if (tex_sampler->texture())
+        *vlx << "Texture" << do_export(tex_sampler->texture());
+      if (tex_sampler->getTexParameter())
+        *vlx << "TexParameter" << do_export(tex_sampler->getTexParameter());
+    }
+
+    virtual ref<VLX_Structure> exportVLX(const Object* obj)
+    {
+      const TextureSampler* cast_obj = obj->as<TextureSampler>(); VL_CHECK(cast_obj)
+      ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("texsampler_"));
+      // register exported object asap
+      registry()->registerExportedObject(obj, vlx.get());
+      exportTextureSampler(cast_obj, vlx.get());
       return vlx;
     }
   };
