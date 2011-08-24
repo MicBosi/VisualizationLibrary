@@ -169,8 +169,14 @@ public:
     // Viewport
     registry->addSerializer( Viewport::Type(), new VLX_IO_Viewport );
 
-    // GLSLProgram
+    // GLSL
     registry->addSerializer( GLSLProgram::Type(), new VLX_IO_GLSLProgram );
+    ref<VLX_IO_GLSLShader> sh_serializer = new VLX_IO_GLSLShader;
+    registry->addSerializer( GLSLVertexShader::Type(), sh_serializer.get() );
+    registry->addSerializer( GLSLFragmentShader::Type(), sh_serializer.get() );
+    registry->addSerializer( GLSLGeometryShader::Type(), sh_serializer.get() );
+    registry->addSerializer( GLSLTessControlShader::Type(), sh_serializer.get() );
+    registry->addSerializer( GLSLTessEvaluationShader::Type(), sh_serializer.get() );
 
     // GLSLShader
     registry->addSerializer( GLSLShader::Type(), new VLX_IO_GLSLShader );
@@ -230,7 +236,7 @@ public:
     act->transform()->rotate(90, 0, 1, 0);
     act->transform()->addChild( new Transform( mat4::getScaling(4, 5, 6) ) );
 
-#if 0
+#if 1
     GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
     glsl->attachShader( new GLSLVertexShader("/glsl/bumpmap.vs") );
     glsl->attachShader( new GLSLFragmentShader("/glsl/bumpmap.fs") );

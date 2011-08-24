@@ -3386,9 +3386,9 @@ namespace vl
       return obj;
     }
 
-    VLX_Value export_ShaderSequence(const ShaderPasses* sh_seq)
+    VLX_Value export_ShaderPasses(const ShaderPasses* sh_seq)
     {
-      VLX_Value value( new VLX_List("<ShaderPasses>") );
+      VLX_Value value( new VLX_List(makeObjectTag(sh_seq).c_str()) );
       for(int i=0; i<sh_seq->size(); ++i)
         *value.getList() << do_export(sh_seq->at(i));
       return value;
@@ -3406,7 +3406,7 @@ namespace vl
       // shaders
       ref<VLX_List> lod_list = new VLX_List;
       for(int i=0; fx->lod(i) && i<VL_MAX_EFFECT_LOD; ++i)
-        *lod_list << export_ShaderSequence(fx->lod(i).get());
+        *lod_list << export_ShaderPasses(fx->lod(i).get());
       *vlx << "Lods" << lod_list.get();
     }
 
@@ -4099,6 +4099,56 @@ namespace vl
   {
     void importGLSLProgram(const VLX_Structure* vlx, GLSLProgram* obj)
     {
+      for(size_t i=0; i<vlx->value().size(); ++i)
+      {
+        const std::string& key = vlx->value()[i].key();
+        const VLX_Value& value = vlx->value()[i].value();
+        if (key == "AttachShader")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Structure, value )
+          const VLX_Structure* st = value.getStructure();
+          GLSLShader* glsl_sh = do_import(st)->as<GLSLShader>();
+          VLX_IMPORT_CHECK_RETURN( glsl_sh != NULL, *st )
+          obj->attachShader(glsl_sh);
+        }
+        else
+        if (key == "FragDataLocation")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value )
+          const VLX_List* list = value.getList();
+          VLX_IMPORT_CHECK_RETURN( list->value().size() == 2, *list )
+          VLX_IMPORT_CHECK_RETURN( list->value()[0].type() == VLX_Value::Identifier, *list )
+          VLX_IMPORT_CHECK_RETURN( list->value()[1].type() == VLX_Value::Integer, *list )
+          const char* name = list->value()[0].getIdentifier();
+          int index = (int)list->value()[1].getInteger();
+          obj->bindFragDataLocation(index, name);
+        }
+        else
+        if (key == "AttribLocation")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value )
+          const VLX_List* list = value.getList();
+          VLX_IMPORT_CHECK_RETURN( list->value().size() == 2, *list )
+          VLX_IMPORT_CHECK_RETURN( list->value()[0].type() == VLX_Value::Identifier, *list )
+          VLX_IMPORT_CHECK_RETURN( list->value()[1].type() == VLX_Value::Integer, *list )
+          const char* name = list->value()[0].getIdentifier();
+          int index = (int)list->value()[1].getInteger();
+          obj->addAutoAttribLocation(index, name);
+        }
+        else
+        if (key == "Uniforms")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value )
+          const VLX_List* list = value.getList();
+          for(size_t i=0; i<list->value().size(); ++i)
+          {
+            VLX_IMPORT_CHECK_RETURN( list->value()[i].type() == VLX_Value::Structure, list->value()[i] )
+            Uniform* uniform = do_import( list->value()[i].getStructure() )->as<Uniform>();
+            VLX_IMPORT_CHECK_RETURN( uniform != NULL, list->value()[i] )
+            obj->setUniform(uniform);
+          }
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -4124,28 +4174,22 @@ namespace vl
       *vlx << "Uniforms" << uniforms;
 
       // frag data location
-      VLX_Value frag_data_locations;
-      frag_data_locations.setList( new VLX_List );
       for(std::map<std::string, int>::const_iterator it = glsl->fragDataLocations().begin(); it != glsl->fragDataLocations().end(); ++it)
       {
-        VLX_Value location( new VLX_Structure("<FragDataLocation>") );
-        *location.getStructure() << "Name" << toIdentifier(it->first);
-        *location.getStructure() << "Location" << (long long)it->second;
-        *frag_data_locations.getList() << location;
+        VLX_List* location = new VLX_List;
+        *location << toIdentifier(it->first); // Name
+        *location << (long long)it->second;   // Location
+        *vlx << "FragDataLocation" << location;
       }
-      *vlx << "FragDataLocations" << frag_data_locations;
 
       // auto attrib locations
-      VLX_Value attrib_locations;
-      attrib_locations.setList( new VLX_List );
       for(std::map<std::string, int>::const_iterator it = glsl->autoAttribLocations().begin(); it != glsl->autoAttribLocations().end(); ++it)
       {
-        VLX_Value location( new VLX_Structure("<AttribLocation>") );
-        *location.getStructure() << "Name" << toIdentifier(it->first);
-        *location.getStructure() << "Location" << (long long)it->second;
-        *attrib_locations.getList() << location;
+        VLX_List* location = new VLX_List;
+        *location << toIdentifier(it->first); // Name
+        *location << (long long)it->second;   // Location
+        *vlx << "AttribLocation" << location;
       }
-      *vlx << "AttribLocations" << attrib_locations;
     }
 
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
@@ -4165,11 +4209,48 @@ namespace vl
   {
     void importGLSLShader(const VLX_Structure* vlx, GLSLShader* obj)
     {
+      const VLX_Value* path   = vlx->getValue("Path");
+      const VLX_Value* source = vlx->getValue("Source");
+      VLX_IMPORT_CHECK_RETURN( path != NULL || source != NULL, *vlx )
+      if (path)
+      {
+        String source = String::loadText(path->getString()); // mic fixme: check this
+        obj->setSource(source);
+      }
+      else
+      if (source)
+      {
+        obj->setSource(source->getRawtextBlock()->value().c_str()); // mic fixme: check this
+      }
+      else
+      {
+        Log::warning( Say("Line %n : no source or path specified for glsl shader.\n") << vlx->lineNumber() );
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
-      ref<GLSLShader> obj /*= new GLSLShader*/; // mic fixme
+      ref<GLSLShader> obj = NULL;
+      if (vlx->tag() == "<vl::GLSLVertexShader>")
+        obj = new GLSLVertexShader;
+      else
+      if (vlx->tag() == "<vl::GLSLFragmentShader>")
+        obj = new GLSLFragmentShader;
+      else
+      if (vlx->tag() == "<vl::GLSLGeometryShader>")
+        obj = new GLSLGeometryShader;
+      else
+      if (vlx->tag() == "<vl::GLSLTessControlShader>")
+        obj = new GLSLTessControlShader;
+      else
+      if (vlx->tag() == "<vl::GLSLTessEvaluationShader>")
+        obj = new GLSLTessEvaluationShader;
+      else
+      {
+        signalImportError( Say("Line %n : shader type '%s' not supported.\n") << vlx->tag() );
+        return NULL;
+      }
+
       // register imported structure asap
       registry()->registerImportedStructure(vlx, obj.get());
       importGLSLShader(vlx, obj.get());
@@ -4178,22 +4259,6 @@ namespace vl
 
     void exportGLSLShader(const GLSLShader* glslsh, VLX_Structure* vlx)
     {
-      std::string name = "<GLSLShaderError>";
-      if (glslsh->type() == vl::ST_VERTEX_SHADER)
-        name = "<VertexShader>";
-      else
-      if (glslsh->type() == vl::ST_FRAGMENT_SHADER)
-        name = "<FragmentShader>";
-      else
-      if (glslsh->type() == vl::ST_GEOMETRY_SHADER)
-        name = "<GeometryShader>";
-      else
-      if (glslsh->type() == vl::ST_TESS_CONTROL_SHADER)
-        name = "<TessControlShader>";
-      else
-      if (glslsh->type() == vl::ST_TESS_EVALUATION_SHADER)
-        name = "<TessEvaluationShader>";
-
       if (!glslsh->path().empty())
         *vlx << "Path" << toString(glslsh->path());
       else
@@ -4223,6 +4288,9 @@ namespace vl
   {
     void importVertexAttrib(const VLX_Structure* vlx, VertexAttrib* obj)
     {
+      const VLX_Value* value = vlx->getValue("Value");
+      VLX_IMPORT_CHECK_RETURN( value->type() == VLX_Value::ArrayReal, *value )
+      obj->setValue( to_fvec4( value->getArrayReal() ) );
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -4236,7 +4304,7 @@ namespace vl
 
     void exportVertexAttrib(const VertexAttrib* obj, VLX_Structure* vlx)
     {
-      *vlx << "VertexAttrib" << toValue(obj->value());
+      *vlx << "Value" << toValue(obj->value());
     }
 
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
@@ -4256,6 +4324,9 @@ namespace vl
   {
     void importColor(const VLX_Structure* vlx, Color* obj)
     {
+      const VLX_Value* value = vlx->getValue("Value");
+      VLX_IMPORT_CHECK_RETURN( value->type() == VLX_Value::ArrayReal, *value )
+      obj->setValue( to_fvec4( value->getArrayReal() ) );
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -4269,7 +4340,7 @@ namespace vl
 
     void exportColor(const Color* obj, VLX_Structure* vlx)
     {
-      *vlx << "Color" << toValue(obj->color());
+      *vlx << "Value" << toValue(obj->value());
     }
 
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
@@ -4289,6 +4360,9 @@ namespace vl
   {
     void importSecondaryColor(const VLX_Structure* vlx, SecondaryColor* obj)
     {
+      const VLX_Value* value = vlx->getValue("Value");
+      VLX_IMPORT_CHECK_RETURN( value->type() == VLX_Value::ArrayReal, *value )
+      obj->setValue( to_fvec3( value->getArrayReal() ) );
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -4302,7 +4376,7 @@ namespace vl
 
     void exportSecondaryColor(const SecondaryColor* obj, VLX_Structure* vlx)
     {
-      *vlx << "SecondaryColor" << toValue(obj->secondaryColor());
+      *vlx << "Value" << toValue(obj->value());
     }
 
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
@@ -4322,6 +4396,9 @@ namespace vl
   {
     void importNormal(const VLX_Structure* vlx, Normal* obj)
     {
+      const VLX_Value* value = vlx->getValue("Value");
+      VLX_IMPORT_CHECK_RETURN( value->type() == VLX_Value::ArrayReal, *value )
+      obj->setValue( to_fvec3( value->getArrayReal() ) );
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -4335,7 +4412,7 @@ namespace vl
 
     void exportNormal(const Normal* obj, VLX_Structure* vlx)
     {
-      *vlx << "Normal" << toValue(obj->normal());
+      *vlx << "Value" << toValue(obj->value());
     }
 
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
@@ -4355,6 +4432,96 @@ namespace vl
   {
     void importMaterial(const VLX_Structure* vlx, Material* obj)
     {
+      for(size_t i=0; i<vlx->value().size(); ++i)
+      {
+        const std::string& key = vlx->value()[i].key();
+        const VLX_Value& value = vlx->value()[i].value();
+        if (key == "FrontAmbient")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setFrontAmbient( to_fvec4( value.getArrayReal() ) ); // mic fixme: what if this guy is interpreted as integer!!!
+        }
+        else
+        if (key == "FrontDiffuse")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setFrontDiffuse( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "FrontEmission")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setFrontEmission( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "FrontSpecular")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setFrontSpecular( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "FrontShininess")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value );
+          obj->setFrontShininess( (float)value.getReal() ); 
+        }
+        else
+        if (key == "BackAmbient")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setBackAmbient( to_fvec4( value.getArrayReal() ) ); // mic fixme: what if this guy is interpreted as integer!!!
+        }
+        else
+        if (key == "BackDiffuse")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setBackDiffuse( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "BackEmission")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setBackEmission( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "BackSpecular")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::ArrayReal, value );
+          obj->setBackSpecular( to_fvec4( value.getArrayReal() ) );
+        }
+        else
+        if (key == "BackShininess")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value );
+          obj->setBackShininess( (float)value.getReal() ); 
+        }
+        else
+        if (key == "ColorMaterialEnabled")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Bool, value );
+          obj->setColorMaterialEnabled( value.getBool() ); 
+        }
+      }
+
+      // mic fixme check these all
+
+      EColorMaterial col_mat = CM_AMBIENT_AND_DIFFUSE;
+      const VLX_Value* vlx_col_mat = vlx->getValue("ColorMaterial");
+      if (vlx_col_mat)
+      {
+        VLX_IMPORT_CHECK_RETURN( vlx_col_mat->type() == VLX_Value::Identifier, *vlx_col_mat );
+        col_mat = destringfy_EColorMaterial( vlx_col_mat->getIdentifier() );
+      }
+
+      EPolygonFace poly_face = PF_FRONT_AND_BACK;
+      const VLX_Value* vlx_poly_mat = vlx->getValue("ColorMaterialFace");
+      if (vlx_poly_mat)
+      {
+        VLX_IMPORT_CHECK_RETURN( vlx_poly_mat->type() == VLX_Value::Identifier, *vlx_poly_mat );
+        poly_face = destringfy_EPolygonFace( vlx_poly_mat->getIdentifier() );
+      }
+
+      obj->setColorMaterial( poly_face, col_mat );
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
