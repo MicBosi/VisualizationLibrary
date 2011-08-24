@@ -59,7 +59,7 @@ private:
 public:                                                                                                               \
   /* static functions */                                                                                              \
   /** Returns the name of the class. */                                                                               \
-  static const char* staticName() { return VL_TO_STR(ClassName); }                                                    \
+  static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
   /** Returns the TypeInfo of the class. */                                                                           \
   static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
                                                                                                                       \
@@ -81,7 +81,7 @@ private:                                                                        
 public:                                                                                                               \
   /* static functions */                                                                                              \
   /** Returns the name of the class. */                                                                               \
-  static const char* staticName() { return VL_TO_STR(ClassName); }                                                    \
+  static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
   /** Returns the TypeInfo of the class. */                                                                           \
   static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
                                                                                                                       \
@@ -104,7 +104,7 @@ private:                                                                        
 public:                                                                                                               \
   /* static functions */                                                                                              \
   /** Returns the name of the class. */                                                                               \
-  static const char* staticName() { return VL_TO_STR(ClassName); }                                                    \
+  static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
   /** Returns the TypeInfo of the class. */                                                                           \
   static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
                                                                                                                       \
