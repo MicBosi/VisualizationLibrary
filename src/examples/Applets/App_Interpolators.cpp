@@ -209,7 +209,7 @@ public:
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->gocPointSize()->set(4);
-    effect->shader()->gocColor()->setColor(color);
+    effect->shader()->gocColor()->setValue(color);
 
     // generates the line/points geometry
     vl::ref<vl::Geometry>   geom       = new vl::Geometry;

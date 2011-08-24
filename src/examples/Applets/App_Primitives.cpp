@@ -61,7 +61,7 @@ public:
     fx->shader(0,1)->enable(EN_POLYGON_OFFSET_LINE);
     fx->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
-    fx->shader(0,1)->gocColor()->setColor(vl::lightgreen);
+    fx->shader(0,1)->gocColor()->setValue(vl::lightgreen);
 #endif
 
     /* create our primitives */
