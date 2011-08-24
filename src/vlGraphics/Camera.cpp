@@ -115,7 +115,7 @@ void Camera::computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphe
     mFarPlane  = max(mFarPlane,  epsilon * 2); // alway more than the near
     mNearPlane = max(mNearPlane, epsilon * 1);
 
-    switch(projectionType())
+    switch(projectionMatrixType())
     {
     case PMT_OrthographicProjection: setProjectionAsOrtho(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane);
       break;

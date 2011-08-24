@@ -96,6 +96,12 @@ namespace vl
 
   inline VLX_Value toRawtext(const std::string& str)    { return VLX_Value( new VLX_RawtextBlock(NULL, str.c_str()) ); }
 
+  inline fvec2 to_fvec2(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 2); return fvec2( (float)arr->value()[0], (float)arr->value()[1] ); }
+
+  inline fvec3 to_fvec3(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 3); return fvec3( (float)arr->value()[0], (float)arr->value()[1], (float)arr->value()[2] ); }
+
+  inline fvec4 to_fvec4(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 4); return fvec4( (float)arr->value()[0], (float)arr->value()[1], (float)arr->value()[2], (float)arr->value()[3] ); }
+
   inline VLX_Value toValue(const vec4& vec)
   {
     VLX_Value val( new VLX_ArrayReal );
@@ -175,7 +181,7 @@ namespace vl
 
     if (isTranslation(mat))
     {
-      VLX_Value value( new VLX_ArrayReal("<Translation>") );
+      VLX_Value value( new VLX_ArrayReal("<Translate>") );
       value.getArrayReal()->value().resize(3);
       value.getArrayReal()->value()[0] = mat.getT().x();
       value.getArrayReal()->value()[1] = mat.getT().y();
@@ -185,7 +191,7 @@ namespace vl
     else
     if (isScaling(mat))
     {
-      VLX_Value value( new VLX_ArrayReal("<Scaling>") );
+      VLX_Value value( new VLX_ArrayReal("<Scale>") );
       value.getArrayReal()->value().resize(3);
       value.getArrayReal()->value()[0] = mat.e(0,0);
       value.getArrayReal()->value()[1] = mat.e(1,1);
@@ -204,7 +210,83 @@ namespace vl
     return matrix_list;
   }
 
-  inline const char* stringfy_EProjectionType(EProjectionType pt)
+  inline fmat4 to_fmat4( const VLX_ArrayReal* arr )
+  {
+    fmat4 mat;
+    arr->copyTo(mat.ptr());
+    return mat;
+  }
+
+  inline fmat4 to_fmat4( const VLX_List* list )
+  {
+    fmat4 mat;
+
+    for(size_t i=0; i<list->value().size(); ++i)
+    {
+      const VLX_Value& value = list->value()[i];
+      if (value.type() != VLX_Value::ArrayReal)
+      {
+        Log::error( Say("Line %n : parse error during matrix import.\n") << value.lineNumber() );
+        return mat4::getNull();
+      }
+      // composition of subtransforms is made by post multiplication like for COLLADA.
+      const VLX_ArrayReal* arr = value.getArrayReal();
+      if (arr->tag() == "<Translate>")
+      {
+        fvec3 tr = to_fvec3( arr );
+        mat = mat * fmat4::getTranslation(tr);
+      }
+      else
+      if (arr->tag() == "<Scale>")
+      {
+        fvec3 sc = to_fvec3( arr );
+        mat = mat * fmat4::getScaling(sc);
+      }
+      else
+      if (arr->tag() == "<Matrix>")
+      {
+        fmat4 m = to_fmat4( arr );
+        mat = mat * m;
+      }
+      else
+      if (arr->tag() == "<LookAt>")
+      {
+        // implements the camera's view-matrix look-at as specified by COLLADA
+        if (arr->value().size() != 9)
+        {
+          Log::error( Say("Line %n : <LookAt> must have 9 floats, 3 for 'eye', 3 for 'look' and 3 for 'up'.\n") << arr->lineNumber() << arr->tag() ); // mic fixme: test
+        }
+        else
+        {
+          // mic fixme: test this
+          fvec3 eye, look, up;
+          eye.x()  = (float)arr->value()[0];
+          eye.y()  = (float)arr->value()[1];
+          eye.z()  = (float)arr->value()[2];
+          look.x() = (float)arr->value()[3];
+          look.y() = (float)arr->value()[4];
+          look.z() = (float)arr->value()[5];
+          up.x()   = (float)arr->value()[6];
+          up.y()   = (float)arr->value()[7];
+          up.z()   = (float)arr->value()[8];
+          mat = mat * fmat4::getLookAt(eye, look, up).invert();
+        }
+      }
+      else
+      if (arr->tag() == "<Skew>")
+      {
+        Log::error("<Skew> tag not yet supported.\n"); // mic fixme: test these two
+      }
+      else
+      {
+        Log::error( Say("Line %n : unknown tag '%s' ignored.\n") << arr->lineNumber() << arr->tag() );
+      }
+    }
+
+    return mat;
+  }
+
+  inline const char* stringfy_EProjectionMatrixType(EProjectionMatrixType pt)
   {
     switch(pt)
     {
@@ -216,7 +298,7 @@ namespace vl
     }
   }
 
-  inline EProjectionType destringfy_EProjectionType(const char* str)
+  inline EProjectionMatrixType destringfy_EProjectionMatrixType(const char* str)
   {
     if (strcmp(str, "PMT_OrthographicProjection") == 0) return PMT_OrthographicProjection;
     if (strcmp(str, "PMT_PerspectiveProjection") == 0) return PMT_PerspectiveProjection;
@@ -1087,10 +1169,6 @@ namespace vl
     return EN_UnknownEnable;
   }
 
-  //---------------------------------------------------------------------------
-  // Import Tools
-  //---------------------------------------------------------------------------
-
   inline EPrimitiveType destringfy_EPrimitiveType(const std::string& str, int line_num)
   {
     if ("PT_POINTS" == str) return PT_POINTS;
@@ -1112,12 +1190,6 @@ namespace vl
     Log::error( Say("Line %n : error : unknown primitive type '%s'\n") << line_num << str);
     /*if ("PT_UNKNOWN" == str)*/ return PT_UNKNOWN;
   }
-
-  inline fvec2 to_fvec2(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 2); return fvec2( (float)arr->value()[0], (float)arr->value()[1] ); }
-
-  inline fvec3 to_fvec3(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 3); return fvec3( (float)arr->value()[0], (float)arr->value()[1], (float)arr->value()[2] ); }
-
-  inline fvec4 to_fvec4(const VLX_ArrayReal* arr) { VL_CHECK(arr->value().size() == 4); return fvec4( (float)arr->value()[0], (float)arr->value()[1], (float)arr->value()[2], (float)arr->value()[3] ); }
 
   inline VLX_Value export_AABB(const AABB& aabb)
   {
@@ -1888,7 +1960,7 @@ namespace vl
         signalExportError("Array type not supported for export.\n");
       }
 
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       return vlx;
     }
@@ -2118,7 +2190,7 @@ namespace vl
     {
       const Geometry* cast_obj = obj->as<Geometry>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("geometry_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportGeometry(cast_obj, vlx.get());
       return vlx;
@@ -2202,7 +2274,7 @@ namespace vl
     {
       const VertexAttribInfo* cast_obj = obj->as<VertexAttribInfo>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("vertattrinfo_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportVertexAttribInfo(cast_obj, vlx.get());
       return vlx;
@@ -2542,7 +2614,7 @@ namespace vl
     {
       const DrawCall* cast_obj = obj->as<DrawCall>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("drawcall_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportDrawCall(cast_obj, vlx.get());
       return vlx;
@@ -2596,7 +2668,7 @@ namespace vl
     {
       const PatchParameter* cast_obj = obj->as<PatchParameter>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("patchparam_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportPatchParameter(cast_obj, vlx.get());
       return vlx;
@@ -2678,7 +2750,7 @@ namespace vl
     {
       const ResourceDatabase* cast_obj = obj->as<ResourceDatabase>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("resdb_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportResourceDatabase(cast_obj, vlx.get());
       return vlx;
@@ -3013,7 +3085,7 @@ namespace vl
     {
       const Uniform* cast_obj = obj->as<Uniform>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportUniform(cast_obj, vlx.get());
       return vlx;
@@ -3137,7 +3209,7 @@ namespace vl
     {
       const Shader* cast_obj = obj->as<Shader>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("shader_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportShader(cast_obj, vlx.get());
       return vlx;
@@ -3150,15 +3222,58 @@ namespace vl
   {
     void importLODEvaluator(const VLX_Structure* vlx, LODEvaluator* obj)
     {
+      if (obj->isOfType(DistanceLODEvaluator::Type()))
+      {
+        DistanceLODEvaluator* lod = obj->as<DistanceLODEvaluator>();
+        const VLX_Value* vlx_distances = vlx->getValue("DistanceRageSet");
+        VLX_IMPORT_CHECK_RETURN( vlx_distances != NULL, *vlx );
+        VLX_IMPORT_CHECK_RETURN( vlx_distances->type() == VLX_Value::ArrayReal, *vlx_distances );
+        const VLX_ArrayReal* arr = vlx_distances->getArrayReal();
+        if (arr->value().size())
+        {
+          lod->distanceRangeSet().resize( arr->value().size() );
+          arr->copyTo( &lod->distanceRangeSet()[0] );
+        }
+      }
+      else
+      if (obj->isOfType(PixelLODEvaluator::Type()))
+      {
+        PixelLODEvaluator* lod = obj->as<PixelLODEvaluator>();
+        const VLX_Value* vlx_pixels = vlx->getValue("PixelRageSet");
+        VLX_IMPORT_CHECK_RETURN( vlx_pixels != NULL, *vlx );
+        VLX_IMPORT_CHECK_RETURN( vlx_pixels->type() == VLX_Value::ArrayReal, *vlx_pixels );
+        const VLX_ArrayReal* arr = vlx_pixels->getArrayReal();
+        if (arr->value().size())
+        {
+          lod->pixelRangeSet().resize( arr->value().size() );
+          arr->copyTo( &lod->pixelRangeSet()[0] );
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
     {
-      ref<LODEvaluator> obj /*= new LODEvaluator*/; // mic fixme
-      // register imported structure asap
-      registry()->registerImportedStructure(vlx, obj.get());
-      importLODEvaluator(vlx, obj.get());
-      return obj;
+      if (vlx->tag() == "<vl::DistanceLODEvaluator>")
+      {
+        ref<LODEvaluator> obj = new DistanceLODEvaluator;
+        // register imported structure asap
+        registry()->registerImportedStructure(vlx, obj.get());
+        importLODEvaluator(vlx, obj.get());
+        return obj;
+      }
+      else
+      if (vlx->tag() == "<vl::PixelLODEvaluator>")
+      {
+        ref<LODEvaluator> obj = new PixelLODEvaluator;
+        // register imported structure asap
+        registry()->registerImportedStructure(vlx, obj.get());
+        importLODEvaluator(vlx, obj.get());
+        return obj;
+      }
+      else
+      {
+        return NULL;
+      }
     }
 
     void exportLODEvaluator(const LODEvaluator* obj, VLX_Structure* vlx)
@@ -3192,7 +3307,7 @@ namespace vl
     {
       const LODEvaluator* cast_obj = obj->as<LODEvaluator>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("lodeval_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportLODEvaluator(cast_obj, vlx.get());
       return vlx;
@@ -3295,7 +3410,7 @@ namespace vl
     {
       const Effect* cast_obj = obj->as<Effect>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("effect_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportEffect(cast_obj, vlx.get());
       return vlx;
@@ -3467,7 +3582,7 @@ namespace vl
     {
       const Actor* cast_obj = obj->as<Actor>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("actor_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportActor(cast_obj, vlx.get());
       return vlx;
@@ -3480,6 +3595,90 @@ namespace vl
   {
     void importCamera(const VLX_Structure* vlx, Camera* obj)
     {
+      for(size_t i=0; i<vlx->value().size(); ++i)
+      {
+        const std::string& key = vlx->value()[i].key();
+        const VLX_Value& value = vlx->value()[i].value();
+        if (key == "ViewMatrix")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value);
+          obj->setViewMatrix( to_fmat4(value.getList()) );
+          VLX_IMPORT_CHECK_RETURN( !obj->viewMatrix().isNull(), value )
+        }
+        else
+        if (key == "ProjectionMatrix")
+        {
+          EProjectionMatrixType ptype = PMT_UserProjection;
+          const VLX_Value* pmtype = vlx->getValue("ProjectionMatrixType");
+          if ( pmtype )
+          {
+            VLX_IMPORT_CHECK_RETURN( pmtype->type() == VLX_Value::Identifier, *pmtype );
+            ptype = destringfy_EProjectionMatrixType( pmtype->getIdentifier() );
+          }
+
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value);
+          obj->setProjectionMatrix( to_fmat4(value.getList()), ptype );
+          VLX_IMPORT_CHECK_RETURN( !obj->projectionMatrix().isNull(), value )
+        }
+        else
+        if (key == "Viewport")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Structure, value)
+          Viewport* viewp = do_import( value.getStructure() )->as<Viewport>();
+          VLX_IMPORT_CHECK_RETURN( viewp != NULL, value )
+          obj->setViewport(viewp);
+        }
+        else
+        if (key == "FOV")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setFOV( (float)value.getReal() );
+        }
+        else
+        if (key == "NearPlane")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setNearPlane( (float)value.getReal() );
+        }
+        else
+        if (key == "FarPlane")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setFarPlane( (float)value.getReal() );
+        }
+        else
+        if (key == "Left")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setLeft( (float)value.getReal() );
+        }
+        else
+        if (key == "Right")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setRight( (float)value.getReal() );
+        }
+        else
+        if (key == "Bottom")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setBottom( (float)value.getReal() );
+        }
+        else
+        if (key == "Top")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Real, value )
+          obj->setTop( (float)value.getReal() );
+        }
+        else
+        if (key == "BoundTransform")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Structure, value)
+          Transform* tr= do_import( value.getStructure() )->as<Transform>();
+          VLX_IMPORT_CHECK_RETURN( tr != NULL, value )
+          obj->bindTransform(tr);
+        }
+      }
     }
 
     virtual ref<Object> importVLX(const VLX_Structure* vlx)
@@ -3495,24 +3694,24 @@ namespace vl
     {
       *vlx << "ViewMatrix" << toValue(cam->viewMatrix());
       *vlx << "ProjectionMatrix" << toValue(cam->projectionMatrix());
+      *vlx << "ProjectionMatrixType" << toIdentifier(stringfy_EProjectionMatrixType(cam->projectionMatrixType()));
       *vlx << "Viewport" << do_export(cam->viewport());
-      if (cam->boundTransform())
-        *vlx << "BoundTransfrm" << do_export(cam->boundTransform());
+      *vlx << "NearPlane" << (double)cam->nearPlane();
+      *vlx << "FarPlane" << (double)cam->farPlane();
       *vlx << "FOV" << (double)cam->fov();
       *vlx << "Left" << (double)cam->left();
       *vlx << "Right" << (double)cam->right();
       *vlx << "Bottom" << (double)cam->bottom();
       *vlx << "Top" << (double)cam->top();
-      *vlx << "NearPlane" << (double)cam->nearPlane();
-      *vlx << "FarPlane" << (double)cam->farPlane();
-      *vlx << "ProjectionType" << toIdentifier(stringfy_EProjectionType(cam->projectionType()));
+      if (cam->boundTransform())
+        *vlx << "BoundTransfrm" << do_export(cam->boundTransform());
     }
 
     virtual ref<VLX_Structure> exportVLX(const Object* obj)
     {
       const Camera* cast_obj = obj->as<Camera>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("camera_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportCamera(cast_obj, vlx.get());
       return vlx;
@@ -3556,7 +3755,7 @@ namespace vl
     {
       const Viewport* cast_obj = obj->as<Viewport>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("camera_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportViewport(cast_obj, vlx.get());
       return vlx;
@@ -3598,7 +3797,7 @@ namespace vl
     {
       const Transform* cast_obj = obj->as<Transform>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("transform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportTransform(cast_obj, vlx.get());
       return vlx;
@@ -3642,7 +3841,7 @@ namespace vl
     {
       const Light* cast_obj = obj->as<Light>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("light_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportLight(cast_obj, vlx.get());
       return vlx;
@@ -3679,7 +3878,7 @@ namespace vl
     {
       const ClipPlane* cast_obj = obj->as<ClipPlane>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportClipPlane(cast_obj, vlx.get());
       return vlx;
@@ -3745,7 +3944,7 @@ namespace vl
     {
       const GLSLProgram* cast_obj = obj->as<GLSLProgram>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("glslprog_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportGLSLProgram(cast_obj, vlx.get());
       return vlx;
@@ -3803,7 +4002,7 @@ namespace vl
     {
       const GLSLShader* cast_obj = obj->as<GLSLShader>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("glslsh_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportGLSLShader(cast_obj, vlx.get());
       return vlx;
@@ -3836,7 +4035,7 @@ namespace vl
     {
       const VertexAttrib* cast_obj = obj->as<VertexAttrib>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportVertexAttrib(cast_obj, vlx.get());
       return vlx;
@@ -3869,7 +4068,7 @@ namespace vl
     {
       const Color* cast_obj = obj->as<Color>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportColor(cast_obj, vlx.get());
       return vlx;
@@ -3902,7 +4101,7 @@ namespace vl
     {
       const SecondaryColor* cast_obj = obj->as<SecondaryColor>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportSecondaryColor(cast_obj, vlx.get());
       return vlx;
@@ -3935,7 +4134,7 @@ namespace vl
     {
       const Normal* cast_obj = obj->as<Normal>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportNormal(cast_obj, vlx.get());
       return vlx;
@@ -3983,7 +4182,7 @@ namespace vl
     {
       const Material* cast_obj = obj->as<Material>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportMaterial(cast_obj, vlx.get());
       return vlx;
@@ -4028,7 +4227,7 @@ namespace vl
     {
       const ActorEventCallback* cast_obj = obj->as<ActorEventCallback>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportActorEventCallback(cast_obj, vlx.get());
       return vlx;
@@ -4108,7 +4307,7 @@ namespace vl
     {
       const Texture* cast_obj = obj->as<Texture>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportTexture(cast_obj, vlx.get());
       return vlx;
@@ -4144,7 +4343,7 @@ namespace vl
     {
       const TextureSampler* cast_obj = obj->as<TextureSampler>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportTextureSampler(cast_obj, vlx.get());
       return vlx;
@@ -4187,7 +4386,7 @@ namespace vl
     {
       const TexParameter* cast_obj = obj->as<TexParameter>(); VL_CHECK(cast_obj)
       ref<VLX_Structure> vlx = new VLX_Structure(makeObjectTag(obj).c_str(), generateUID("uniform_"));
-      // register export object
+      // register exported object asap
       registry()->registerExportedObject(obj, vlx.get());
       exportTexParameter(cast_obj, vlx.get());
       return vlx;
