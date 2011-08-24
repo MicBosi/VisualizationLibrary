@@ -1131,7 +1131,7 @@ void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) 
   {
     if( !hasTexture() )
     {
-      Log::bug( Say("TextureSampler::apply() error: null texture! (%s) \n") << texture()->objectName() );
+      Log::bug( "TextureSampler::apply() error: null texture!\n" );
       VL_TRAP();
       return;
     }

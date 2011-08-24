@@ -2157,7 +2157,7 @@ namespace vl
 
     // render states methods
 
-    void setRenderState(RenderStateNonIndexed* renderstate) { gocRenderStateSet()->setRenderState(renderstate, 0); }
+    void setRenderState(RenderStateNonIndexed* renderstate) { gocRenderStateSet()->setRenderState(renderstate, -1); }
     
     void setRenderState(RenderState* renderstate, int index) { gocRenderStateSet()->setRenderState(renderstate, index); }
     
