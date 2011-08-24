@@ -234,14 +234,14 @@ public:
     fx->shader()->enable(EN_DEPTH_TEST);
     fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
     fx->shader()->setRenderState( new Light, 0 );
-    fx->shader()->setRenderState( new ClipPlane(10, fvec3(1,2,3)), 3 );
+    // fx->shader()->setRenderState( new ClipPlane(10, fvec3(1,2,3)), 3 );
 
     ref<Actor> act = new Actor( geom.get(), fx.get(), new Transform );
     act->transform()->translate(10, 20 ,30);
     act->transform()->rotate(90, 0, 1, 0);
     act->transform()->addChild( new Transform( mat4::getScaling(4, 5, 6) ) );
 
-#if 1
+#if 0
     GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
     glsl->attachShader( new GLSLVertexShader("/glsl/bumpmap.vs") );
     glsl->attachShader( new GLSLFragmentShader("/glsl/bumpmap.fs") );
@@ -259,8 +259,11 @@ public:
     // fx->shader()->gocTextureSampler(0)->texture()->prepareTexture2D( new Image("/images/spheremap_klimt.jpg"), TF_UNKNOWN );
     fx->shader()->gocTextureSampler(0)->texture()->prepareTexture2D( "/images/spheremap_klimt.jpg", TF_UNKNOWN );
     // fx->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setWrapS(TWM_REPEAT);
+    // fx->shader()->gocTextureSampler(0)->setTexParameter( new TexParameter );
+    // fx->shader()->gocTextureSampler(0)->getTexParameter()->setMinFilter(TPF_NEAREST);
+    // fx->shader()->gocTextureSampler(0)->getTexParameter()->setMagFilter(TPF_NEAREST);
 
-#if 1
+#if 0
     ref<PixelLODEvaluator> lod_eval = new PixelLODEvaluator;
     act->setLODEvaluator( lod_eval.get() );
     lod_eval->pixelRangeSet().push_back(11);
@@ -268,7 +271,7 @@ public:
     lod_eval->pixelRangeSet().push_back(33);
 #endif
 
-#if 1
+#if 0
     act->actorEventCallbacks()->push_back( new DepthSortCallback );
 #endif
 
@@ -379,7 +382,7 @@ public:
         VL_TRAP()
 
       ref<Object> obj = registry->importVLX( parser.root() );
-      ref<Actor> act2 = obj->as<Actor>();
+      ref<Actor> act2 = obj->as<Actor>(); VL_CHECK(act2);
       // act2->effect()->shader()->eraseRenderState(RS_TextureSampler, 0);
 
       // re-export
