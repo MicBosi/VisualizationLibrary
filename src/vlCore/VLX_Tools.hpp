@@ -32,11 +32,11 @@
 #ifndef VLX_INCLUDE_ONCE
 #define VLX_INCLUDE_ONCE
 
-#include <vlCore\Object.hpp>
-#include <vlCore\Say.hpp>
-#include <vlCore\Log.hpp>
-#include <vlCore\BufferedStream.hpp>
-#include <vlCore\Vector4.hpp>
+#include <vlCore/Object.hpp>
+#include <vlCore/Say.hpp>
+#include <vlCore/Log.hpp>
+#include <vlCore/BufferedStream.hpp>
+#include <vlCore/Vector4.hpp>
 #include <map>
 #include <set>
 
