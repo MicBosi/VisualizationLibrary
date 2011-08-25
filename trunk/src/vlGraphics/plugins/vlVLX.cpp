@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics\plugins\vlVLX.hpp>
-#include <vlCore\Time.hpp>
+#include <vlGraphics/plugins/vlVLX.hpp>
+#include <vlCore/Time.hpp>
 
 using namespace vl;
 
