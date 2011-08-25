@@ -39,28 +39,34 @@
 namespace vl
 {
   /**
-   * The DepthSortCallback class sorts the primitives of the Geometry object bound to the Actor in which the callback is installed.
+   * DepthSortCallback sorts the primitives of the Geometry bound to the Actor in which the callback is installed.
    * 
-   * This callback in order to work requires the following conditions:
-   * - The Actor must be bound to a Geometry
-   * - The bound Geometry must have a Geometry::vertexArray() of type ArrayFloat3
-   * - Sorts only DrawElementsUInt/UShort/UByte objects with primitive type: PT_POINTS, PT_LINES, PT_TRIANGLES, PT_QUADS
+   * In order to work properly DepthSortCallback requires the following:
+   * - The Actor must be bound to a Geometry or subclass.
+   * - Sorts only draw calls of type DrawElementsUInt/UShort/UByte.
+   * - Sorts only draw calls with primitive type PT_POINTS, PT_LINES, PT_TRIANGLES, PT_QUADS.
+   * - The draw calls should not use primitive restart.
    *
    * Despite the fact that the condition list seems to be quite limiting it actually covers the most common usage cases.
-   * Furthermore the use of DrawElements* and the primitive types PT_POINTS, PT_LINES, PT_TRIANGLES, PT_QUADS grant 
+   * Furthermore the use of DrawElements* and the primitive types PT_POINTS, PT_LINES, PT_TRIANGLES, PT_QUADS grants
    * the maximum flexibility.
    *
    * \note
    *
    * - This callback works well with different LODs.
    * - This callback works well with multipassing, the sorting is done only once.
+   * - Using DrawElementsUShort or DrawElementsUByte might result in a quicker sorting compared to DrawElementsUInt.
+   *   Is therefore advisable to use them whenever possible.
+   *
    *
    * \remarks
    *
    * - The sorting is based on the position of the vertices as specified by Geometry::vertexArray() and for obvious
-   * reasons cannot take into consideration transformations made in the vertex shader or in the geometry shader.
+   *   reasons cannot take into consideration transformations made in the vertex shader or in the geometry shader.
    * - The sorting is performed on a per DrawCall basis. For example, if a Geometry has 2 DrawCall A and B bound to it, 
-   *   then the polygons, lines or points of A will alway be rendered before the ones specified by B.
+   *   then the polygons, lines or points of A will alway be rendered before the ones specified by B. If you need the
+   *   two sets of polygons to be correctly sorted with respect to one another you will need to merge them in one single
+   *   draw call.
    *
    * \sa \ref pagGuidePolygonDepthSorting "Transparency and Polygon Depth Sorting Tutorial"
    */
@@ -111,7 +117,6 @@ namespace vl
     {
     public:
       PrimitiveZ(int tri=0, float z=0.0f): mPrimitiveIndex(tri), mZ(z) {}
-      bool operator<(const PrimitiveZ& other) const { return mZ < other.mZ; }
       unsigned int mPrimitiveIndex;
       float mZ;
     };
@@ -131,7 +136,6 @@ namespace vl
     DepthSortCallback()
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mEyeSpaceVerts = new ArrayFloat3;
       setSortMode(SM_SortBackToFront);
     }
 
@@ -154,45 +158,41 @@ namespace vl
         mCacheMatrix = matrix;
 
       // this works well with LOD
-      ref<Geometry> geometry = cast<Geometry>(renderable);
+      Geometry* geometry = renderable->as<Geometry>();
 
       if (!geometry)
         return;
 
-      geometry->setDisplayListDirty(true);
-
-      ref<ArrayFloat3> verts = cast<ArrayFloat3>(geometry->vertexArray());
-
-      if (!verts)
+      if (!geometry->vertexArray())
         return;
 
+      const ArrayAbstract* verts = geometry->vertexArray();
+
       // computes eye-space vertex positions
-      fmat4 m;
+      mat4 m;
       if (actor->transform())
-        m = (fmat4)(cam->viewMatrix() * actor->transform()->worldMatrix());
+        m = cam->viewMatrix() * actor->transform()->worldMatrix();
       else
-        m = (fmat4)cam->viewMatrix();
-      mEyeSpaceVerts->resize( verts->size() );
+        m = cam->viewMatrix();
+      mEyeSpaceVerts.resize( verts->size() );
       // would be nice to optimize this with SEE2
       for(size_t i=0; i<verts->size(); ++i)
-        (*mEyeSpaceVerts)[i] = m * (*verts)[i];
+        mEyeSpaceVerts[i] = m * verts->getAsVec3(i);
 
       geometry->setVBODirty(true);
+      geometry->setDisplayListDirty(true);
 
       for(int idraw=0; idraw<geometry->drawCalls()->size(); ++idraw)
       {
-        ref<DrawElementsUInt>   polys_uint   = cast<DrawElementsUInt>  (geometry->drawCalls()->at(idraw));
-        ref<DrawElementsUShort> polys_ushort = cast<DrawElementsUShort>(geometry->drawCalls()->at(idraw));
-        ref<DrawElementsUByte>  polys_ubyte  = cast<DrawElementsUByte> (geometry->drawCalls()->at(idraw));
-
-        if (polys_uint)
-          sort<unsigned int,DrawElementsUInt>(polys_uint.get(), mSortedPointsUInt, mSortedLinesUInt, mSortedTrianglesUInt, mSortedQuadsUInt);
+        DrawCall* dc = geometry->drawCalls()->at(idraw);
+        if (dc->classType() == DrawElementsUInt::Type())
+          sort<unsigned int, DrawElementsUInt>(dc->as<DrawElementsUInt>(), mSortedPointsUInt, mSortedLinesUInt, mSortedTrianglesUInt, mSortedQuadsUInt);
         else
-        if (polys_ushort)
-          sort<unsigned short,DrawElementsUShort>(polys_ushort.get(), mSortedPointsUShort, mSortedLinesUShort, mSortedTrianglesUShort, mSortedQuadsUShort);
+        if (dc->classType() == DrawElementsUShort::Type())
+          sort<unsigned short, DrawElementsUShort>(dc->as<DrawElementsUShort>(), mSortedPointsUShort, mSortedLinesUShort, mSortedTrianglesUShort, mSortedQuadsUShort);
         else
-        if (polys_ubyte)
-          sort<unsigned char,DrawElementsUByte>(polys_ubyte.get(), mSortedPointsUByte, mSortedLinesUByte, mSortedTrianglesUByte, mSortedQuadsUByte);
+        if (dc->classType() == DrawElementsUByte::Type())
+          sort<unsigned char, DrawElementsUByte>(dc->as<DrawElementsUByte>(), mSortedPointsUByte, mSortedLinesUByte, mSortedTrianglesUByte, mSortedQuadsUByte);
       }
     }
 
@@ -206,17 +206,15 @@ namespace vl
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indexBuffer()->size(); i+=4, ++iz)
+        const typename deT::index_type* it  = polys->indexBuffer()->begin();
+        const typename deT::index_type* end = polys->indexBuffer()->end();
+        for(unsigned iz=0; it != end; it+=4, ++iz)
         {
-          int a = polys->indexBuffer()->at(i+0);
-          int b = polys->indexBuffer()->at(i+1);
-          int c = polys->indexBuffer()->at(i+2);
-          int d = polys->indexBuffer()->at(i+2);
-          mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[a].z() + (*mEyeSpaceVerts)[b].z() + (*mEyeSpaceVerts)[c].z() + (*mEyeSpaceVerts)[d].z();
+          mPrimitiveZ[iz].mZ = (float)(mEyeSpaceVerts[it[0]].z() + mEyeSpaceVerts[it[1]].z() + mEyeSpaceVerts[it[2]].z() + mEyeSpaceVerts[it[3]].z());
           mPrimitiveZ[iz].mPrimitiveIndex = iz;
         }
 
-        // sort triangles based on mPrimitiveZ
+        // sort based on mPrimitiveZ
         if (sortMode() == SM_SortBackToFront)
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Back_To_Front() );
         else
@@ -237,16 +235,15 @@ namespace vl
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indexBuffer()->size(); i+=3, ++iz)
+        const typename deT::index_type* it  = polys->indexBuffer()->begin();
+        const typename deT::index_type* end = polys->indexBuffer()->end();
+        for(unsigned iz=0; it != end; it+=3, ++iz)
         {
-          int a = polys->indexBuffer()->at(i+0);
-          int b = polys->indexBuffer()->at(i+1);
-          int c = polys->indexBuffer()->at(i+2);
-          mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[a].z() + (*mEyeSpaceVerts)[b].z() + (*mEyeSpaceVerts)[c].z();
+          mPrimitiveZ[iz].mZ = (float)(mEyeSpaceVerts[it[0]].z() + mEyeSpaceVerts[it[1]].z() + mEyeSpaceVerts[it[2]].z());
           mPrimitiveZ[iz].mPrimitiveIndex = iz;
         }
 
-        // sort triangles based on mPrimitiveZ
+        // sort based on mPrimitiveZ
         if (sortMode() == SM_SortBackToFront)
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Back_To_Front() );
         else
@@ -267,15 +264,15 @@ namespace vl
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indexBuffer()->size(); i+=2, ++iz)
+        const typename deT::index_type* it  = polys->indexBuffer()->begin();
+        const typename deT::index_type* end = polys->indexBuffer()->end();
+        for(unsigned iz=0; it != end; it+=2, ++iz)
         {
-          int a = polys->indexBuffer()->at(i+0);
-          int b = polys->indexBuffer()->at(i+1);
-          mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[a].z() + (*mEyeSpaceVerts)[b].z();
+          mPrimitiveZ[iz].mZ = (float)(mEyeSpaceVerts[it[0]].z() + mEyeSpaceVerts[it[1]].z());
           mPrimitiveZ[iz].mPrimitiveIndex = iz;
         }
 
-        // sort triangles based on mPrimitiveZ
+        // sort based on mPrimitiveZ
         if (sortMode() == SM_SortBackToFront)
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Back_To_Front() );
         else
@@ -296,13 +293,15 @@ namespace vl
         if (mPrimitiveZ.empty())
           return;
 
-        for(unsigned iz=0, i=0; i<polys->indexBuffer()->size(); ++i, ++iz)
+        const typename deT::index_type* it  = polys->indexBuffer()->begin();
+        const typename deT::index_type* end = polys->indexBuffer()->end();
+        for(unsigned iz=0; it != end; ++it, ++iz)
         {
-          mPrimitiveZ[iz].mZ = (*mEyeSpaceVerts)[polys->indexBuffer()->at(i)].z();
+          mPrimitiveZ[iz].mZ = (float)mEyeSpaceVerts[it[0]].z();
           mPrimitiveZ[iz].mPrimitiveIndex = iz;
         }
 
-        // sort triangles based on mPrimitiveZ
+        // sort based on mPrimitiveZ
         if (sortMode() == SM_SortBackToFront)
           std::sort( mPrimitiveZ.begin(), mPrimitiveZ.end(), Sorter_Back_To_Front() );
         else
@@ -340,7 +339,7 @@ namespace vl
     void invalidateCache() { mCacheMatrix = vl::mat4(); }
 
   protected:
-    ref<ArrayFloat3> mEyeSpaceVerts;
+    std::vector<vec3> mEyeSpaceVerts;
     std::vector<PrimitiveZ> mPrimitiveZ;
 
     std::vector<PointUInt> mSortedPointsUInt;
