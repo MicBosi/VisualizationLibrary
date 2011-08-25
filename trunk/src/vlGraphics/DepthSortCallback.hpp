@@ -64,11 +64,11 @@ namespace vl
    * - The sorting is based on the position of the vertices as specified by Geometry::vertexArray() and for obvious
    *   reasons cannot take into consideration transformations made in the vertex shader or in the geometry shader.
    * - The sorting is performed on a per DrawCall basis. For example, if a Geometry has 2 DrawCall A and B bound to it, 
-   *   then the polygons, lines or points of A will alway be rendered before the ones specified by B. If you need the
+   *   then the polygons, lines or points of A will always be rendered before the ones specified by B. If you need the
    *   two sets of polygons to be correctly sorted with respect to one another you will need to merge them in one single
    *   draw call.
    *
-   * \sa \ref pagGuidePolygonDepthSorting "Transparency and Polygon Depth Sorting Tutorial"
+   * \sa \ref pagGuidePolygonDepthSorting
    */
   class DepthSortCallback: public ActorEventCallback
   {
