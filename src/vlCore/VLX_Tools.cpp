@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore\VLX_Tools.hpp>
+#include <vlCore/VLX_Tools.hpp>
 
 using namespace vl;
 
