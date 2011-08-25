@@ -237,9 +237,10 @@ public:
     // fx->shader()->setRenderState( new ClipPlane(10, fvec3(1,2,3)), 3 );
 
     ref<Actor> act = new Actor( geom.get(), fx.get(), new Transform );
-    act->transform()->translate(10, 20 ,30);
+    act->transform()->translate(1, 2 ,3);
     act->transform()->rotate(90, 0, 1, 0);
-    act->transform()->addChild( new Transform( mat4::getScaling(4, 5, 6) ) );
+    act->transform()->addChild( new Transform( mat4::getScaling(1, 2, 3) ) );
+    act->transform()->computeWorldMatrixRecursive();
 
 #if 0
     GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
@@ -349,8 +350,10 @@ public:
     VL_CHECK(geom)
 #endif
 
+    VLX_Serializer serializer;
+    serializer.setRegistry( registry.get() );
     // serialize
-    ref<VLX_Structure> st = registry->exportVLX( act.get()/*geom.get()*/ );
+    ref<VLX_Structure> st = serializer.exportVLX( act.get()/*geom.get()*/ );
     if (st)
     {
 #if 1
@@ -381,12 +384,12 @@ public:
       if (!parser.link())
         VL_TRAP()
 
-      ref<Object> obj = registry->importVLX( parser.root() );
+      ref<Object> obj = serializer.importVLX( parser.root() );
       ref<Actor> act2 = obj->as<Actor>(); VL_CHECK(act2);
       // act2->effect()->shader()->eraseRenderState(RS_TextureSampler, 0);
 
       // re-export
-      ref<VLX_Structure> st = registry->exportVLX( act2.get() );
+      ref<VLX_Structure> st = serializer.exportVLX( act2.get() );
       {
         std::map< std::string, int > uid_set;
         VLX_UIDCollectorVisitor uid_collector;
