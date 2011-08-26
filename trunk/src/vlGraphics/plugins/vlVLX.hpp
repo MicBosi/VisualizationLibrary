@@ -2493,10 +2493,8 @@ namespace vl
 
     void exportResourceDatabase(VLX_Serializer& s, const ResourceDatabase* resdb, VLX_Structure* vlx)
     {
-      *vlx << "SerializerVersion" << (long long)VL_SERIALIZER_VERSION;
-
       ref<VLX_List> list = new VLX_List;
-      *vlx << "Resources" << new VLX_List;
+      *vlx << "Resources" << list.get();
 
       for(size_t i=0; i<resdb->resources().size(); ++i)
         *list << s.exportVLX(resdb->resources().at(i).get());
@@ -4691,8 +4689,8 @@ namespace vl
 
   VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLX(VirtualFile* file);
   VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLX(const String& path);
-  VLGRAPHICS_EXPORT bool writeVLX(VirtualFile* file, const ResourceDatabase*);
-  VLGRAPHICS_EXPORT bool writeVLX(const String& file, const ResourceDatabase*);
+  VLGRAPHICS_EXPORT bool saveVLX(VirtualFile* file, const ResourceDatabase*);
+  VLGRAPHICS_EXPORT bool saveVLX(const String& file, const ResourceDatabase*);
 
   //---------------------------------------------------------------------------
   // LoadWriterVLX
@@ -4719,12 +4717,12 @@ namespace vl
 
     bool writeResource(const String& path, ResourceDatabase* res_db) const
     {
-      return writeVLX(path, res_db);
+      return saveVLX(path, res_db);
     }
 
     bool writeResource(VirtualFile* file, ResourceDatabase* res_db) const
     {
-      return writeVLX(file, res_db);
+      return saveVLX(file, res_db);
     }
   };
 //-----------------------------------------------------------------------------
