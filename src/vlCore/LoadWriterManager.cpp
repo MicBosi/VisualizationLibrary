@@ -165,5 +165,9 @@ ref<ResourceDatabase> vl::loadResource(const String& path, bool quick) { return 
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadResource(VirtualFile* file, bool quick)  { return defLoadWriterManager()->loadResource(file,quick); }
 //-----------------------------------------------------------------------------
+bool vl::writeResource(const String& path, ResourceDatabase* resource) { return defLoadWriterManager()->writeResource(path, resource); }
+//-----------------------------------------------------------------------------
+bool vl::writeResource(VirtualFile* file, ResourceDatabase* resource) { return defLoadWriterManager()->writeResource(file, resource); }
+//-----------------------------------------------------------------------------
 
 

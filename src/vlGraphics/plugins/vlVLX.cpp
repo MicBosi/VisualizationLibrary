@@ -35,13 +35,13 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadVLX(const String& path)
+ref<ResourceDatabase> vl::loadVLT(const String& path)
 {
-  ref<DiskFile> file = new DiskFile(path);
-  return loadVLX(file.get());
+  ref<VirtualFile> file = vl::locateFile(path);
+  return loadVLT(file.get());
 }
 //-----------------------------------------------------------------------------
-ref<ResourceDatabase> vl::loadVLX(VirtualFile* file)
+ref<ResourceDatabase> vl::loadVLT(VirtualFile* file)
 {
   // mic fixme: debug only
   Time timer;
@@ -55,14 +55,38 @@ ref<ResourceDatabase> vl::loadVLX(VirtualFile* file)
   return res_db;
 }
 //-----------------------------------------------------------------------------
-bool vl::saveVLX(const String& path, const ResourceDatabase* res_db)
+ref<ResourceDatabase> vl::loadVLB(const String& path)
 {
-  ref<DiskFile> file = new DiskFile(path);
-  return saveVLX(file.get(), res_db);
+  ref<VirtualFile> file = vl::locateFile(path);
+  return loadVLB(file.get());
 }
 //-----------------------------------------------------------------------------
-bool vl::saveVLX(VirtualFile* file, const ResourceDatabase* res_db)
+ref<ResourceDatabase> vl::loadVLB(VirtualFile* file)
 {
+  // mic fixme: debug only
+  Time timer;
+  timer.start();
+
+  VLX_Serializer serializer;
+  ref<ResourceDatabase> res_db = serializer.loadBinary(file)->as<ResourceDatabase>();
+
+  printf("Export time = %f\n", timer.elapsed());
+
+  return res_db;
+}
+//-----------------------------------------------------------------------------
+bool vl::saveVLT(const String& path, const ResourceDatabase* res_db)
+{
+  ref<DiskFile> file = new DiskFile(path);
+  return saveVLT(file.get(), res_db);
+}
+//-----------------------------------------------------------------------------
+bool vl::saveVLT(VirtualFile* file, const ResourceDatabase* res_db)
+{
+  VL_CHECK(res_db);
+  if (!res_db)
+    return false;
+
   // mic fixme: debug only
   Time timer;
   timer.start();
@@ -72,9 +96,75 @@ bool vl::saveVLX(VirtualFile* file, const ResourceDatabase* res_db)
 
   printf("Import time = %f\n", timer.elapsed());
 
-  if (ok)
+  if (!ok)
     Log::error("LoadWriterVLX: serialization error.\n");
 
   return ok;
+}
+//-----------------------------------------------------------------------------
+bool vl::saveVLB(const String& path, const ResourceDatabase* res_db)
+{
+  ref<DiskFile> file = new DiskFile(path);
+  return saveVLB(file.get(), res_db);
+}
+//-----------------------------------------------------------------------------
+bool vl::saveVLB(VirtualFile* file, const ResourceDatabase* res_db)
+{
+  VL_CHECK(res_db);
+  if (!res_db)
+    return false;
+
+  // mic fixme: debug only
+  Time timer;
+  timer.start();
+
+  VLX_Serializer serializer;
+  bool ok = serializer.saveBinary( file, res_db );
+
+  printf("Import time = %f\n", timer.elapsed());
+
+  if (!ok)
+    Log::error("LoadWriterVLX: serialization error.\n");
+
+  return ok;
+}
+//-----------------------------------------------------------------------------
+bool vl::isVLT(const String& path)
+{
+  ref<VirtualFile> file = vl::locateFile(path);
+  return isVLT(file.get());
+}
+//-----------------------------------------------------------------------------
+bool vl::isVLT(VirtualFile* file)
+{
+  if (!file)
+    return false;
+  char vlx[12] = { 0 };
+  memset(vlx, 0, sizeof(vlx));
+  file->close();
+  file->open(OM_ReadOnly);
+  file->read(vlx, sizeof(vlx));
+  file->close();
+  return memcmp(vlx, "VLX version=", sizeof(vlx)) == 0;
+}
+//-----------------------------------------------------------------------------
+bool vl::isVLB(const String& path)
+{
+  ref<VirtualFile> file = vl::locateFile(path);
+  return isVLT(file.get());
+}
+//-----------------------------------------------------------------------------
+bool vl::isVLB(VirtualFile* file)
+{
+  if (!file)
+    return false;
+  unsigned char vlx_identifier[] = { 0xAB, 'V', 'L', 'X', 0xBB, 0x0D, 0x0A, 0x1A, 0x0A };
+  unsigned char vlx[sizeof(vlx_identifier)];
+  memset(vlx, 0, sizeof(vlx));
+  file->close();
+  file->open(OM_ReadOnly);
+  file->read(vlx, sizeof(vlx));
+  file->close();
+  return memcmp(vlx, vlx_identifier, sizeof(vlx_identifier)) == 0;
 }
 //-----------------------------------------------------------------------------

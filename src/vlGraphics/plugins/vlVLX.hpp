@@ -4687,10 +4687,18 @@ namespace vl
 
   //-----------------------------------------------------------------------------
 
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLX(VirtualFile* file);
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLX(const String& path);
-  VLGRAPHICS_EXPORT bool saveVLX(VirtualFile* file, const ResourceDatabase*);
-  VLGRAPHICS_EXPORT bool saveVLX(const String& file, const ResourceDatabase*);
+  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLT(VirtualFile* file);
+  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLT(const String& path);
+  VLGRAPHICS_EXPORT bool saveVLT(VirtualFile* file, const ResourceDatabase*);
+  VLGRAPHICS_EXPORT bool saveVLT(const String& file, const ResourceDatabase*);
+  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLB(VirtualFile* file);
+  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLB(const String& path);
+  VLGRAPHICS_EXPORT bool saveVLB(VirtualFile* file, const ResourceDatabase*);
+  VLGRAPHICS_EXPORT bool saveVLB(const String& file, const ResourceDatabase*);
+  VLGRAPHICS_EXPORT bool isVLT(VirtualFile* file);
+  VLGRAPHICS_EXPORT bool isVLT(const String& file);
+  VLGRAPHICS_EXPORT bool isVLB(VirtualFile* file);
+  VLGRAPHICS_EXPORT bool isVLB(const String& file);
 
   //---------------------------------------------------------------------------
   // LoadWriterVLX
@@ -4707,22 +4715,46 @@ namespace vl
 
     ref<ResourceDatabase> loadResource(const String& path) const 
     {
-      return loadVLX(path);
+      if (isVLT(path))
+        return loadVLT(path);
+      else
+      if (isVLB(path))
+        return loadVLB(path);
+      else
+        return NULL;
     }
 
     ref<ResourceDatabase> loadResource(VirtualFile* file) const
     {
-      return loadVLX(file);
+      if (isVLT(file))
+        return loadVLT(file);
+      else
+      if (isVLB(file))
+        return loadVLB(file);
+      else
+        return NULL;
     }
 
     bool writeResource(const String& path, ResourceDatabase* res_db) const
     {
-      return saveVLX(path, res_db);
+      if (path.extractFileExtension().toLowerCase() == "vlt")
+        return saveVLT(path, res_db);
+      else
+      if (path.extractFileExtension().toLowerCase() == "vlb")
+        return saveVLB(path, res_db);
+      else
+        return false;
     }
 
     bool writeResource(VirtualFile* file, ResourceDatabase* res_db) const
     {
-      return saveVLX(file, res_db);
+      if (file->path().extractFileExtension().toLowerCase() == "vlt")
+        return saveVLT(file, res_db);
+      else
+      if (file->path().extractFileExtension().toLowerCase() == "vlb")
+        return saveVLB(file, res_db);
+      else
+        return false;
     }
   };
 //-----------------------------------------------------------------------------
