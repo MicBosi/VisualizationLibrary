@@ -43,13 +43,12 @@ ref<ResourceDatabase> vl::loadVLX(const String& path)
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadVLX(VirtualFile* file)
 {
-  VLX_Importer serializer;
-
   // mic fixme: debug only
   Time timer;
   timer.start();
 
-  ref<ResourceDatabase> res_db = serializer.importFromText(file); // mic fixme: test error conditions
+  VLX_Serializer serializer;
+  ref<ResourceDatabase> res_db = serializer.loadText(file)->as<ResourceDatabase>();
 
   printf("Export time = %f\n", timer.elapsed());
 
@@ -64,27 +63,18 @@ bool vl::writeVLX(const String& path, const ResourceDatabase* res_db)
 //-----------------------------------------------------------------------------
 bool vl::writeVLX(VirtualFile* file, const ResourceDatabase* res_db)
 {
-  VLX_Exporter serializer;
-
   // mic fixme: debug only
   Time timer;
   timer.start();
 
-  std::string text_vlx = serializer.exportToText(res_db);
+  VLX_Serializer serializer;
+  bool ok = serializer.saveText( file, res_db );
 
   printf("Import time = %f\n", timer.elapsed());
 
-  if (serializer.error())
-  {
-    Log::error("LoadWriterVLX: serialization error.\n"); // mic fixme: test error conditions
-    return false;
-  }
-  else
-  {
-    file->open(vl::OM_WriteOnly);
-    file->write( text_vlx.c_str(), text_vlx.size() );
-    file->close();
-    return true;
-  }
+  if (ok)
+    Log::error("LoadWriterVLX: serialization error.\n");
+
+  return ok;
 }
 //-----------------------------------------------------------------------------
