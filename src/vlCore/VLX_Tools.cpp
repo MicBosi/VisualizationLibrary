@@ -779,15 +779,15 @@ VLX_Array* VLX_Value::setArray(VLX_Array* arr)
   }
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveText(const String& path, Object* obj, bool reset_document)
+bool VLX_Serializer::saveText(const String& path, const Object* obj, bool reset_serializer)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return saveText(file.get(), obj, reset_document);
+  return saveText(file.get(), obj, reset_serializer);
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveText(VirtualFile* file, Object* obj, bool reset_document)
+bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool reset_serializer)
 {
-  if (reset_document)
+  if (reset_serializer)
     reset();
 
   if (mError)
@@ -799,19 +799,27 @@ bool VLX_Serializer::saveText(VirtualFile* file, Object* obj, bool reset_documen
   ref<VLX_Structure> meta = new VLX_Structure("<Metadata>");
   std::map< std::string, VLX_Value >::iterator it = metadata().begin();
   for( ; it != metadata().end(); ++it )
+  {
+    if (it->first == "VLT_Version")
+      continue;
+    if (it->first == "VLX_Writer")
+      continue;
+    if (it->first == "Creation_Date")
+      continue;
     meta->value().push_back( VLX_Structure::Value(it->first.c_str(), it->second) );
+  }
 
   // add VL metadata
   *meta << "VLT_Version" << VLX_Value( (long long) 100 );
 
   String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
   *meta << "VLX_Writer" << VLX_Value( auth.toStdString().c_str(), VLX_Value::String );
-  
+
   time_t rawtime;
   time( &rawtime );
   std::string str = ctime(&rawtime);
   str.resize(str.size()-1); // remove the trailing \n
-  *meta << "CreationDate" << VLX_Value( str.c_str(), VLX_Value::String );
+  *meta << "Creation_Date" << VLX_Value( str.c_str(), VLX_Value::String );
 
   ref<VLX_Structure> st = exportVLX( obj );
   if (st)
@@ -841,15 +849,15 @@ bool VLX_Serializer::saveText(VirtualFile* file, Object* obj, bool reset_documen
   }
 }
 //-----------------------------------------------------------------------------
-Object* VLX_Serializer::loadText(const String& path, bool reset_document)
+Object* VLX_Serializer::loadText(const String& path, bool reset_serializer)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return loadText(file.get(), reset_document);
+  return loadText(file.get(), reset_serializer);
 }
 //-----------------------------------------------------------------------------
-Object* VLX_Serializer::loadText(VirtualFile* file, bool reset_document)
+Object* VLX_Serializer::loadText(VirtualFile* file, bool reset_serializer)
 {
-  if (reset_document)
+  if (reset_serializer)
     reset();
 
   if (mError)

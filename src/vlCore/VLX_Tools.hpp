@@ -2651,13 +2651,21 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  VLX_Registry* defVLXRegistry();
+  void setVLXRegistry(VLX_Registry* reg);
+
+  //---------------------------------------------------------------------------
+
   class VLX_Serializer: public Object
   {
   public:
     typedef enum { NoError, ImportError, ExportError } EError;
 
   public:
-    VLX_Serializer(): mUIDCounter(0), mError(NoError) {}
+    VLX_Serializer(): mUIDCounter(0), mError(NoError) 
+    {
+      setRegistry( defVLXRegistry() );
+    }
 
     void signalImportError(const String& str) 
     { 
@@ -2809,21 +2817,26 @@ namespace vl
       }
     }
     
-    bool saveText(const String& path, Object* obj, bool reset_document=true);
+    bool saveText(const String& path, const Object* obj, bool reset_serializer=true);
 
-    bool saveText(VirtualFile* file, Object* obj, bool reset_document=true);
+    bool saveText(VirtualFile* file, const Object* obj, bool reset_serializer=true);
 
-    Object* loadText(const String& path, bool reset_document=true);
+    Object* loadText(const String& path, bool reset_serializer=true);
 
-    Object* loadText(VirtualFile* file, bool reset_document=true);
+    Object* loadText(VirtualFile* file, bool reset_serializer=true);
 
     int getNewUID() { return ++mUIDCounter; }
 
     EError error() const { return mError; }
     void setError(EError err) { mError = err; }
 
+    //! The VLX_Registry used by the serializer, by default set to vl::defVLXRegistry().
     VLX_Registry* registry() { return mRegistry.get(); }
+
+    //! The VLX_Registry used by the serializer, by default set to vl::defVLXRegistry().
     const VLX_Registry* registry() const { return mRegistry.get(); }
+    
+    //! The VLX_Registry used by the serializer, by default set to vl::defVLXRegistry().
     void setRegistry(const VLX_Registry* registry) { mRegistry = registry; }
 
     void reset()
