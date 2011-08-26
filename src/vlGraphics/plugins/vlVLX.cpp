@@ -55,13 +55,13 @@ ref<ResourceDatabase> vl::loadVLX(VirtualFile* file)
   return res_db;
 }
 //-----------------------------------------------------------------------------
-bool vl::writeVLX(const String& path, const ResourceDatabase* res_db)
+bool vl::saveVLX(const String& path, const ResourceDatabase* res_db)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return writeVLX(file.get(), res_db);
+  return saveVLX(file.get(), res_db);
 }
 //-----------------------------------------------------------------------------
-bool vl::writeVLX(VirtualFile* file, const ResourceDatabase* res_db)
+bool vl::saveVLX(VirtualFile* file, const ResourceDatabase* res_db)
 {
   // mic fixme: debug only
   Time timer;
