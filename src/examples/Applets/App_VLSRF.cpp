@@ -194,7 +194,7 @@ public:
 #endif
 
 #if 0
-    bool ok = writeVLX("D:/VL/export.vl", res_db.get());
+    bool ok = saveVLX("D:/VL/export.vl", res_db.get());
     VL_CHECK(ok);
 
     sceneManager()->tree()->actors()->clear();
@@ -206,19 +206,25 @@ public:
     VL_CHECK(geom)
 #endif
 
-    VLX_Serializer serializer;
+    res_db->resources().push_back(act.get());
+    vl::saveVLX("D:/VL/export.vlx", res_db.get());
+    res_db = vl::loadVLX("D:/VL/export.vlx");
+    vl::saveVLX("D:/VL/re-export.vlx", res_db .get());
 
-    // serialize
-    serializer.saveText( "D:/VL/export.vlx", act.get() );
+    //VLX_Serializer serializer;
 
-    ref<Object> obj = serializer.loadText("D:/VL/export.vlx");
-    ref<Actor> act2 = obj->as<Actor>(); VL_CHECK(act2);
+    //// serialize
+    //serializer.saveText( "D:/VL/export.vlx", act.get() );
 
-    // re-export
-    serializer.saveText( "D:/VL/re-export.vlx", act2.get() );
+    //ref<Object> obj = serializer.loadText("D:/VL/export.vlx");
+    //ref<Actor> act2 = obj->as<Actor>(); VL_CHECK(act2);
+
+    //// re-export
+    //serializer.saveText( "D:/VL/re-export.vlx", act2.get() );
 
     // put into scene
-    sceneManager()->tree()->addActor( act2.get() );
+    Actor* act2 = res_db->get<Actor>(0); VL_CHECK(act2);
+    sceneManager()->tree()->addActor( act2 );
 
     // sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
     // sceneManager()->tree()->addActor( act.get() );
