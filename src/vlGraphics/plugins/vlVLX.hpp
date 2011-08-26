@@ -2459,48 +2459,26 @@ namespace vl
   {
     void importResourceDatabase(VLX_Serializer& s, const VLX_Structure* vlx, ResourceDatabase* resdb)
     {
-      // <vl::ResourceDatabase> must have at least one "SerializerVersion" and one "Resources" keys in this order.
-      if (vlx->value().size() < 2)
+      const VLX_Value* vlx_res = vlx->getValue("Resources");
+      if (vlx_res)
       {
-        s.signalImportError("<vl::ResourceDatabase> must have at least one \"SerializerVersion\" and one \"Resources\" keys (in this order).\n");
-        return;
-      }
-      else
-      {
-        if (vlx->value()[0].key() != "SerializerVersion" || vlx->value()[0].value().type() != VLX_Value::Integer)
+        VLX_IMPORT_CHECK_RETURN( vlx_res->type() == VLX_Value::List, *vlx_res );
+        // get the list
+        const VLX_List* list = vlx_res->getList();
+        for(size_t i=0; i<list->value().size(); ++i)
         {
-          s.signalImportError( Say("Line %n : no serializer version found.\n") << vlx->value()[0].value().lineNumber() );
-          return;
+          const VLX_Value& value = list->value()[i];
+
+          // the member of this list must be all structures.
+
+          if (value.type() != VLX_Value::Structure)
+          {
+            s.signalImportError( Say("Line %n : structure expected.\n") << value.lineNumber() );
+            return;
+          }
+
+          resdb->resources().push_back( s.importVLX(value.getStructure()) );
         }
-        else
-        if (vlx->value()[0].value().getInteger() != VL_SERIALIZER_VERSION )
-        {
-          s.signalImportError("Unsupported serializer version.\n");
-          return;
-        }
-
-        if (vlx->value()[1].key() != "Resources" || vlx->value()[1].value().type() != VLX_Value::List)
-        {
-          s.signalImportError( Say("Line %n : 'Resources' key/value expected.\n") << vlx->value()[1].value().lineNumber() );
-          return;
-        }
-      }
-
-      // get the list
-      const VLX_List* list = vlx->value()[1].value().getList();
-      for(size_t i=0; i<list->value().size(); ++i)
-      {
-        const VLX_Value& value = list->value()[i];
-
-        // the member of this list must be all structures, unknown ones are silently skipped
-
-        if (value.type() != VLX_Value::Structure)
-        {
-          s.signalImportError( Say("Line %n : structure expected.\n") << value.lineNumber() );
-          return;
-        }
-
-        resdb->resources().push_back( s.importVLX(value.getStructure()) );
       }
     }
 
@@ -4710,125 +4688,15 @@ namespace vl
   };
 
   //-----------------------------------------------------------------------------
-  // IMPORTER
-  //-----------------------------------------------------------------------------
 
-  class VLX_Importer
-  {
-  public:
-    typedef enum
-    {
-      NoError,
-      ImportError
-    } EError;
-
-    VLX_Importer()
-    {
-      mError = NoError;
-    }
-
-    EError error() const { return mError; }
-
-    void resetError() { mError = NoError; }
-
-    //-----------------------------------------------------------------------------
-
-    void registerImportedStructure(const VLX_Structure* vlx, const Object* vl_obj)
-    {
-      VL_CHECK( mVLX_To_VL.find(vlx) == mVLX_To_VL.end() );
-      mVLX_To_VL[vlx] = vl_obj;
-    }
-
-    Object* vlxToVL(const VLX_Structure* vlx)
-    {
-      std::map< ref<VLX_Structure>, ref<Object> >::iterator it = mVLX_To_VL.find(vlx);
-      if (it != mVLX_To_VL.end())
-        return it->second.get();
-      else
-        return NULL;
-    }
-
-    const std::map< ref<VLX_Structure>, ref<Object> >& vlxToVL() const { return mVLX_To_VL; }
-
-    //-----------------------------------------------------------------------------
-
-    ref<ResourceDatabase> importFromText(VirtualFile* file)
-    {
-      VLX_Parser parser;
-      parser.tokenizer()->setInputFile( file );
-
-      if (!parser.parse())
-        return NULL;
-
-      if (!parser.link())
-        return NULL;
-
-      ref<ResourceDatabase> res_db /*= import_ResourceDatabase( parser.root() )*/; // mic fixme
-      return res_db;
-    }
-
-  private:
-    std::map< ref<VLX_Structure>, ref<Object> > mVLX_To_VL;
-    EError mError;
-  };
-
-  //-----------------------------------------------------------------------------
-  // EXPORT
-  //-----------------------------------------------------------------------------
-
-  class VLX_Exporter
-  {
-  public:
-    typedef enum
-    {
-      NoError,
-      ExportError,
-    } EError;
-
-    VLX_Exporter()
-    {
-      mError = NoError;
-      mUIDCounter = 0;
-    }
-
-    EError error() const { return mError; }
-
-    void resetError() { mError = NoError; }
-
-    //-----------------------------------------------------------------------------
-
-    std::string exportToText(const ResourceDatabase* res_db)
-    {
-      VLX_Value value /*= export_ResourceDatabase(res_db)*/; // mic fixme
-
-      // do not link!
-
-      // collect the UIDs that need to be visible
-      std::map< std::string, int > uid_set;
-      VLX_UIDCollectorVisitor uid_collector;
-      uid_collector.setUIDSet(&uid_set);
-      value.getStructure()->acceptVisitor(&uid_collector);
-
-      VLX_TextExportVisitor text_export_visitor;
-      text_export_visitor.setUIDSet(&uid_set);
-      value.getStructure()->acceptVisitor(&text_export_visitor);
-
-      return text_export_visitor.text();
-    }
-
-  protected:
-    std::map< ref<Object>, ref<VLX_Structure> > mVL_To_VLX;
-    int mUIDCounter;
-    EError mError;
-  };
-//-----------------------------------------------------------------------------
   VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLX(VirtualFile* file);
   VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLX(const String& path);
   VLGRAPHICS_EXPORT bool writeVLX(VirtualFile* file, const ResourceDatabase*);
   VLGRAPHICS_EXPORT bool writeVLX(const String& file, const ResourceDatabase*);
-//---------------------------------------------------------------------------
-// LoadWriterVLX
-//---------------------------------------------------------------------------
+
+  //---------------------------------------------------------------------------
+  // LoadWriterVLX
+  //---------------------------------------------------------------------------
   /**
    * The LoadWriterVLX class is a ResourceLoadWriter capable of reading Visualization Library's VLX files.
    */
@@ -4837,7 +4705,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::LoadWriterVLX, ResourceLoadWriter)
 
   public:
-    LoadWriterVLX(): ResourceLoadWriter("|vlx|", "|vlx|") {}
+    LoadWriterVLX(): ResourceLoadWriter("|vlx|vlt|vlb|", "|vlx|vlt|vlb|") {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 
     {
