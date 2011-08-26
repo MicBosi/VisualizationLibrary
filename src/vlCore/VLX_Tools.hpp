@@ -39,6 +39,7 @@
 #include <vlCore/Vector4.hpp>
 #include <map>
 #include <set>
+#include <sstream>
 #include <cstdlib>
 #include <cstdarg>
 #include <cstring>
@@ -1164,6 +1165,359 @@ namespace vl
     std::map< std::string, int >* mUIDSet;
     std::vector<char> mFormatBuffer;
   };
+  class VLX_Binary
+  {
+  public:
+    typedef enum
+    {
+      ChunkStructure = 1,
+      ChunkList,
+      ChunkArrayReal,
+      ChunkArrayInteger,
+      ChunkRawtext,
+      ChunkString,
+      ChunkIdentifier,
+      ChunkUID,
+      ChunkRealDouble,
+      ChunkInteger,
+      ChunkBool,
+
+    } EChunkType;
+  };
+  //-----------------------------------------------------------------------------
+  // VLX_TextExportVisitor
+  //-----------------------------------------------------------------------------
+  class VLX_BinaryExportVisitor: public VLX_Visitor
+  {
+  public:
+    VLX_BinaryExportVisitor()
+    {
+      mUIDSet = NULL;
+    }
+
+    bool isUsed(const std::string& uid)
+    {
+      if (mUIDSet)
+      {
+        std::map< std::string, int >::iterator it = mUIDSet->find(uid);
+        if (it != mUIDSet->end())
+          return it->second > 1;
+        else
+        {
+          // should not happen
+          VL_TRAP()
+          return false;
+        }
+      }
+      else
+        return true;
+    }
+
+    virtual void visitStructure(VLX_Structure* obj)
+    {
+      if (isVisited(obj))
+      {
+        mOutputFile->writeUInt8( VLX_Binary::ChunkUID );
+        writeString( obj->uid().c_str() );
+        return;
+      }
+
+      // header
+      mOutputFile->writeUInt8( VLX_Binary::ChunkStructure );
+      
+      // tag
+      writeString( obj->tag().c_str() );
+      
+      // key/value pairs count
+      writeInteger( obj->value().size() );
+
+      // key/value pairs list
+
+      // ID is the first one
+      if ( obj->uid().length() && obj->uid() != "#NULL" && isUsed(obj->uid()) )
+      {
+        writeString("ID");
+        mOutputFile->writeUInt8( VLX_Binary::ChunkUID );
+        writeString( obj->uid().c_str() );
+      }
+
+      for(size_t i=0; i<obj->value().size(); ++i)
+      {
+        // key
+        writeString(obj->value()[i].key().c_str());
+
+        // value
+        switch(obj->value()[i].value().type())
+        {
+
+        case VLX_Value::Structure:
+          obj->value()[i].value().getStructure()->acceptVisitor(this);
+          break;
+
+        case VLX_Value::List:
+          obj->value()[i].value().getList()->acceptVisitor(this);
+          break;
+
+        /*
+        case VLX_Value::ArrayString:
+          break;
+
+        case VLX_Value::ArrayIdentifier:
+          break;
+
+        case VLX_Value::ArrayUID:
+          break;
+        */
+
+        case VLX_Value::ArrayInteger:
+          obj->value()[i].value().getArrayInteger()->acceptVisitor(this);
+          break;
+
+        case VLX_Value::ArrayReal:
+          obj->value()[i].value().getArrayReal()->acceptVisitor(this);
+          break;
+
+        case VLX_Value::RawtextBlock:
+        {
+          VLX_RawtextBlock* fblock = obj->value()[i].value().getRawtextBlock();
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkRawtext); // no decoding needed
+          // tag
+          writeString( fblock->tag().c_str() );
+          // value
+          writeString( fblock->value().c_str() );
+        }
+        break;
+
+        case VLX_Value::String:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkString );
+          // value
+          writeString( obj->value()[i].value().getString() );
+          break;
+
+        case VLX_Value::Identifier:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkIdentifier );
+          // value
+          writeString( obj->value()[i].value().getIdentifier() );
+          break;
+
+        case VLX_Value::UID:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkUID );
+          // value
+          writeString( obj->value()[i].value().getUID() );
+          break;
+
+        case VLX_Value::Bool:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkBool );
+          // value
+          mOutputFile->writeUInt8( obj->value()[i].value().getBool() );
+          break;
+
+        case VLX_Value::Integer:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkInteger);
+          // value
+          writeInteger( obj->value()[i].value().getInteger() );
+          break;
+
+        case VLX_Value::Real:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkRealDouble);
+          // value
+          mOutputFile->writeDouble( obj->value()[i].value().getReal() ); // mic fixme: write float optionally
+          break;
+        }
+      }
+    }
+
+    virtual void visitList(VLX_List* list)
+    {
+      // this should happen only if the user manually creates loops
+      if (isVisited(list))
+      {
+        Log::warning("VLX_TextExportVisitor: cycle detected on VLX_List.\n");
+        return;
+      }
+
+      // header
+      mOutputFile->writeUInt8( VLX_Binary::ChunkList );
+      
+      // tag
+      writeString( list->tag().c_str() );
+      
+      // value count
+      writeInteger( list->value().size() );
+
+      for(size_t i=0; i<list->value().size(); ++i)
+      {
+        switch(list->value()[i].type())
+        {
+
+        case VLX_Value::Structure:
+          list->value()[i].getStructure()->acceptVisitor(this);
+          break;
+
+        case VLX_Value::List:
+          list->value()[i].getList()->acceptVisitor(this);
+          break;
+
+        /*
+        case VLX_Value::ArrayString:
+          break;
+
+        case VLX_Value::ArrayIdentifier:
+          break;
+
+        case VLX_Value::ArrayUID:
+          break;
+        */
+
+        case VLX_Value::ArrayInteger:
+          list->value()[i].getArrayInteger()->acceptVisitor(this);
+          break;
+
+        case VLX_Value::ArrayReal:
+          list->value()[i].getArrayReal()->acceptVisitor(this);
+          break;
+
+        case VLX_Value::RawtextBlock:
+        {
+          VLX_RawtextBlock* fblock = list->value()[i].getRawtextBlock();
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkRawtext ); // no decoding needed
+          // tag
+          writeString( fblock->tag().c_str() );
+          // value
+          writeString( fblock->value().c_str() );
+        }
+        break;
+
+        case VLX_Value::String:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkString );
+          // value
+          writeString( list->value()[i].getString() );
+          break;
+
+        case VLX_Value::Identifier:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkIdentifier );
+          // value
+          writeString( list->value()[i].getIdentifier() );
+          break;
+
+        case VLX_Value::UID:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkUID );
+          // value
+          writeString( list->value()[i].getUID() );
+          break;
+
+        case VLX_Value::Bool:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkBool );
+          // value
+          mOutputFile->writeUInt8( list->value()[i].getBool() );
+          break;
+
+        case VLX_Value::Integer:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkInteger);
+          // value
+          writeInteger( list->value()[i].getInteger() );
+          break;
+
+        case VLX_Value::Real:
+          // header
+          mOutputFile->writeUInt8( VLX_Binary::ChunkRealDouble);
+          // value
+          mOutputFile->writeDouble( list->value()[i].getReal() ); // mic fixme: write float optionally
+          break;
+        }
+      }
+    }
+
+    virtual void visitArray(VLX_ArrayInteger* arr)
+    {
+      // header
+      mOutputFile->writeUInt8( VLX_Binary::ChunkArrayInteger );
+      // tag
+      writeString(arr->tag().c_str());
+      // value count
+      writeInteger(arr->value().size());
+      // value
+      for(size_t i=0; i<arr->value().size(); ++i)
+        writeInteger(arr->value()[i]);
+    }
+
+    virtual void visitArray(VLX_ArrayReal* arr)
+    {
+      // header
+      mOutputFile->writeUInt8( VLX_Binary::ChunkArrayReal );
+      // tag
+      writeString(arr->tag().c_str());
+      // value count
+      writeInteger(arr->value().size());
+      // value
+      if (arr->value().size())
+        mOutputFile->writeDouble(&arr->value()[0], arr->value().size());
+    }
+
+    /*
+    virtual void visitArray(VLX_ArrayString* arr)
+    {
+    }
+
+    virtual void visitArray(VLX_ArrayIdentifier* arr)
+    {
+    }
+
+    virtual void visitArray(VLX_ArrayUID* arr)
+    {
+    }
+    */
+
+    void setHeader()
+    {
+      // see http://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/ for more info on why I choose these characters.
+      unsigned char vlx_identifier[] = { 0xAB, 'V', 'L', 'X', 0xBB, 0x0D, 0x0A, 0x1A, 0x0A };
+
+      mOutputFile->write(vlx_identifier, sizeof(vlx_identifier));
+      mOutputFile->writeUInt16(100);    // "version" (16 bits uint)
+      mOutputFile->write("ascii", 5+1); // "encoding" (zero terminated string)
+      mOutputFile->writeUInt32(0);      // "flags" (reserved for the future)
+    }
+
+    void writeString(const char* str)
+    {
+      size_t len = strlen(str);
+      writeInteger(len);
+      mOutputFile->write(str, len);
+    }
+
+    void writeInteger(long long i)
+    {
+      mOutputFile->writeUInt64((int)i); // mic fixme: encode this
+    }
+
+    void setUIDSet(std::map< std::string, int >* uids) { mUIDSet = uids; }
+
+    std::map< std::string, int >* uidSet() { return mUIDSet; }
+
+    const std::map< std::string, int >* uidSet() const { return mUIDSet; }
+
+    VirtualFile* outputFile() { return mOutputFile.get(); }
+
+    const VirtualFile* outputFile() const { return mOutputFile.get(); }
+
+  private:
+    std::map< std::string, int >* mUIDSet;
+    ref<VirtualFile> mOutputFile;
+  };
   //-----------------------------------------------------------------------------
   // VLX_LinkMapperVisitor: 
   // Compiles the link-map which associates an VLX_Structure to it's UID.
@@ -1587,39 +1941,37 @@ namespace vl
     VLX_Parser()
     {
       mTokenizer = new VLX_Tokenizer;
+      mVersion = 0;
     }
 
     bool getToken(VLX_Token& token) { return mTokenizer->getToken(token); }
 
     std::string exportToText()
     {
-      if (mRoot)
-      {
-        std::map< std::string, int > uid_set;
-        VLX_UIDCollectorVisitor uid_collector;
-        uid_collector.setUIDSet(&uid_set);
-        mRoot->acceptVisitor(&uid_collector);
+      std::map< std::string, int > uid_set;
+      VLX_UIDCollectorVisitor uid_collector;
+      uid_collector.setUIDSet(&uid_set);
 
-        VLX_TextExportVisitor text_export_visitor;
-        text_export_visitor.setUIDSet(&uid_set);
-        mRoot->acceptVisitor(&text_export_visitor);
+      for(size_t i=0; i<mStructures.size(); ++i)
+        mStructures[i]->acceptVisitor(&uid_collector);
 
-        return text_export_visitor.text();
-      }
-      else
-        return "";
+      VLX_TextExportVisitor text_export_visitor;
+      text_export_visitor.setUIDSet(&uid_set);
+
+      for(size_t i=0; i<mStructures.size(); ++i)
+        mStructures[i]->acceptVisitor(&text_export_visitor);
+
+      return text_export_visitor.text();
     }
 
     bool link()
     {
-      if (mRoot)
-      {
-        VLX_Linker linker;
-        linker.add(mRoot.get());
-        return linker.link();
-      }
-      else
-        return false;
+      VLX_Linker linker;
+
+      for(size_t i=0; i<mStructures.size(); ++i)
+        linker.add(mStructures[i].get());
+
+      return linker.link();
     }
 
     bool parseHeader(int& version, std::string& encoding)
@@ -1661,6 +2013,25 @@ namespace vl
       return true;
     }
 
+    // Moves the <Metadata> key/value pairs in the Metadata map for quick and easy access and removes the <Metadata> structure.
+    void parseMetadata()
+    {
+      mMetadata.clear();
+
+      for(size_t i=0; i<mStructures.size(); ++i)
+      {
+        if (mStructures[i]->tag() == "<Metadata>")
+        {
+          const VLX_Structure* st = mStructures[i].get();
+
+          for(size_t ikey=0; ikey<st->value().size(); ++ikey)
+            mMetadata[st->value()[ikey].key()] = st->value()[ikey].value();
+
+          mStructures.erase( mStructures.begin() + i );
+        }
+      }
+    }
+
     bool parse()
     {
       class CloseFileClass
@@ -1676,66 +2047,70 @@ namespace vl
         ref<VirtualFile> mFile;
       } CloseFile(tokenizer()->inputFile());
 
-      int version = 0;
-      std::string encoding;
+      // clear metadata
+      mMetadata.clear();
 
-      if (!parseHeader(version, encoding))
+      // read version and encoding
+      mVersion = 0;
+      mEncoding.clear();
+
+      if (!parseHeader(mVersion, mEncoding))
       {
         Log::error( Say("Line %n : error parsing header at '%s'.\n") << tokenizer()->lineNumber() << mToken.mString );
         return false;
       }
 
-      if (version != 100)
+      if (mVersion != 100)
       {
         Log::error("VLX version not supported.\n");
         return false;
       }
 
-      if (encoding != "ascii")
+      if (mEncoding != "ascii")
       {
         Log::error("Encoding not supported.\n");
         return false;
       }
 
-      mRoot = NULL;
-      if(getToken(mToken))
+      while(getToken(mToken) && mToken.mType != VLX_Token::TOKEN_EOF)
       {
         if(mToken.mType == VLX_Token::TagHeader)
         {
           mLastTag = mToken.mString;
-          
+
           if(getToken(mToken) && mToken.mType == VLX_Token::LeftCurlyBracket)
           {
-            mRoot = new VLX_Structure;
-            mRoot->setLineNumber( tokenizer()->lineNumber() );
-            if (parseStructure(mRoot.get()))
+            ref<VLX_Structure> st = new VLX_Structure;
+            st->setLineNumber( tokenizer()->lineNumber() );
+
+            if (!parseStructure(st.get()))
             {
-              return true;
-            }
-            else
-            {
-              mRoot = NULL;
               if (mToken.mString.length())
                 Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
               else
                 Log::error( Say("Line %n : parse error.\n") << mTokenizer->lineNumber() );
               return false;
             }
+
+            mStructures.push_back(st);
           }
           else
           {
-            Log::error("No root object found!\n");
+            Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
             return false;
           }
         }
         else
         {
-          Log::error("No root object found!\n");
+          Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
           return false;
         }
       }
-      else
-        return false;
+
+      parseMetadata();
+
+      VL_CHECK(mToken.mType == VLX_Token::TOKEN_EOF)
+      return mToken.mType == VLX_Token::TOKEN_EOF;
     }
 
     bool parseStructure(VLX_Structure* object)
@@ -2212,17 +2587,288 @@ namespace vl
 
     const std::map< std::string, ref<VLX_Structure> >& linkMap() const { return mLinkMap; }
 
-    VLX_Structure* root() { return mRoot.get(); }
+    std::vector< ref<VLX_Structure> >& structures() { return mStructures; }
 
-    const VLX_Structure* root() const { return mRoot.get(); }
+    const std::vector< ref<VLX_Structure> >& structures() const { return mStructures; }
+
+    //! The imported metadata
+    const std::map< std::string, VLX_Value >& metadata() const { return mMetadata; }
 
   private:
+    std::string mEncoding;
+    int mVersion;
     std::string mLastTag;
-    ref<VLX_Structure> mRoot;
+    std::vector< ref<VLX_Structure> > mStructures;
     std::map< std::string, ref<VLX_Structure> > mLinkMap;
+    std::map< std::string, VLX_Value > mMetadata;
     ref<VLX_Tokenizer> mTokenizer;
     VLX_Token mToken;
   };
+
+  //---------------------------------------------------------------------------
+
+  class VLX_Serializer;
+
+  //---------------------------------------------------------------------------
+
+  class VLX_IO: public Object
+  {
+  public:
+    virtual ref<Object> importVLX(VLX_Serializer& s, const VLX_Structure* st) = 0;
+
+    virtual ref<VLX_Structure> exportVLX(VLX_Serializer& s, const Object* obj) = 0;
+
+    std::string generateUID(VLX_Serializer& s, const char* prefix);
+
+    static std::string makeObjectTag(const Object* obj)
+    {
+      return std::string("<") + obj->classType()->name() + ">";
+    }
+  };
+
+  //---------------------------------------------------------------------------
+
+  class VLX_Registry: public Object
+  {
+  public:
+    void addSerializer(const TypeInfo* type, VLX_IO* serializer)
+    {
+      std::string tag = std::string("<") + type->name() + ">";
+      mExportRegistry[type] = serializer; 
+      mImportRegistry[tag]  = serializer; 
+    }
+
+    std::map< std::string, ref<VLX_IO> >& importRegistry() { return mImportRegistry; }
+    std::map< const TypeInfo*, ref<VLX_IO> >& exportRegistry() { return mExportRegistry; }
+
+    const std::map< std::string, ref<VLX_IO> >& importRegistry() const { return mImportRegistry; }
+    const std::map< const TypeInfo*, ref<VLX_IO> >& exportRegistry() const { return mExportRegistry; }
+
+  private:
+    std::map< std::string, ref<VLX_IO> > mImportRegistry;     // <tag> --> VLX_IO
+    std::map< const TypeInfo*, ref<VLX_IO> > mExportRegistry; // TypeInfo --> VLX_IO
+  };
+
+  //---------------------------------------------------------------------------
+
+  class VLX_Serializer: public Object
+  {
+  public:
+    typedef enum { NoError, ImportError, ExportError } EError;
+
+  public:
+    VLX_Serializer(): mUIDCounter(0), mError(NoError) {}
+
+    void signalImportError(const String& str) 
+    { 
+      // signal only the first one
+      if (!error())
+      {
+        Log::error( str );
+        setError( VLX_Serializer::ImportError );
+      }
+    }
+
+    void signalExportError(const String& str)
+    { 
+      // signal only the first one
+      if (!error())
+      {
+        Log::error( str );
+        setError( VLX_Serializer::ExportError ); 
+      }
+    }
+
+    // mic fixme: this should be part of VLX_Serializer
+    std::string generateUID(const char* prefix)
+    {
+      std::stringstream strstr;
+      strstr << "#" << prefix << "id" << getNewUID();
+      return strstr.str();
+    }
+
+    Object* importVLX(const VLX_Structure* st)
+    {
+      if (error())
+        return NULL;
+
+      Object* obj = getImportedStructure(st);
+      if (obj)
+        return obj;
+      else
+      {
+        std::map< std::string, ref<VLX_IO> >::iterator it = registry()->importRegistry().find(st->tag());
+        if (it != registry()->importRegistry().end())
+        {
+          VLX_IO* serializer = it->second.get_writable();
+          VL_CHECK(serializer);
+          // import structure
+          ref<Object> obj = serializer->importVLX(*this, st);
+          if (!obj)
+          {
+            setError(ImportError);
+            Log::error( Say("Error importing structure '%s'.") << st->tag() );
+            VL_TRAP()
+          }
+          return obj.get();
+        }
+        else
+        {
+          setError(ImportError);
+          Log::error( Say("No serializer found for structure '%s'.") << st->tag() );
+          VL_TRAP();
+          return NULL;
+        }
+      }
+    }
+
+    VLX_Structure* exportVLX(const Object* obj)
+    {
+      if (error())
+        return NULL;
+
+      VLX_Structure* st = getExportedObject(obj);
+      if (st)
+        return st;
+      else
+      {
+        std::map< const TypeInfo*, ref<VLX_IO> >::iterator it = registry()->exportRegistry().find(obj->classType());
+        if (it != registry()->exportRegistry().end())
+        {
+          VLX_IO* serializer = it->second.get_writable();
+          VL_CHECK(serializer);
+          // export object
+          ref<VLX_Structure> st = serializer->exportVLX(*this, obj);
+          if (!st)
+          {
+            setError(ExportError);
+            Log::error( Say("Error exporting '%s'.") << obj->classType()->name() );
+            VL_TRAP()
+          }
+          return st.get();
+        }
+        else
+        {
+          setError(ExportError);
+          Log::error( Say("No serializer found for '%s'.") << obj->classType()->name() );
+          VL_TRAP()
+          return NULL;
+        }
+      }
+    }
+
+    bool canExport(const Object* obj) const 
+    { 
+      if (!registry())
+        return false;
+      else
+        return registry()->exportRegistry().find(obj->classType()) != registry()->exportRegistry().end(); 
+    }
+
+    bool canImport(const VLX_Structure* st) const 
+    { 
+      if (!registry())
+        return false;
+      else
+        return registry()->importRegistry().find(st->tag()) != registry()->importRegistry().end(); 
+    }
+
+    void registerImportedStructure(const VLX_Structure* st, Object* obj) 
+    {
+      VL_CHECK( mImportedStructures.find(st) == mImportedStructures.end() )
+      mImportedStructures[st] = obj;
+    }
+
+    void registerExportedObject(const Object* obj, VLX_Structure* st)
+    {
+      VL_CHECK(mExportedObjects.find(obj) == mExportedObjects.end())
+      mExportedObjects[obj] = st;
+    }
+
+    Object* getImportedStructure(const VLX_Structure* st)
+    {
+      std::map< ref<VLX_Structure>, ref<Object> >::iterator it = mImportedStructures.find(st);
+      if (it == mImportedStructures.end())
+        return NULL;
+      else
+      {
+        VL_CHECK(it->second.get_writable() != NULL)
+        return it->second.get_writable();
+      }
+    }
+
+    VLX_Structure* getExportedObject(const Object* obj)
+    {
+      std::map< ref<Object>, ref<VLX_Structure> >::iterator it = mExportedObjects.find(obj);
+      if (it == mExportedObjects.end())
+        return NULL;
+      else
+      {
+        VL_CHECK(it->second.get_writable() != NULL)
+        return it->second.get_writable();
+      }
+    }
+    
+    bool saveText(const String& path, Object* obj, bool reset_document=true);
+
+    bool saveText(VirtualFile* file, Object* obj, bool reset_document=true);
+
+    Object* loadText(const String& path, bool reset_document=true);
+
+    Object* loadText(VirtualFile* file, bool reset_document=true);
+
+    int getNewUID() { return ++mUIDCounter; }
+
+    EError error() const { return mError; }
+    void setError(EError err) { mError = err; }
+
+    VLX_Registry* registry() { return mRegistry.get(); }
+    const VLX_Registry* registry() const { return mRegistry.get(); }
+    void setRegistry(const VLX_Registry* registry) { mRegistry = registry; }
+
+    void reset()
+    {
+      mError = NoError;
+      mUIDCounter = 0;
+      mImportedStructures.clear();
+      mExportedObjects.clear();
+    }
+
+    //! The metadata to be imported or exported.
+    std::map< std::string, VLX_Value >& metadata() { return mMetadata; }
+
+    //! The metadata to be imported or exported.
+    const std::map< std::string, VLX_Value >& metadata() const { return mMetadata; }
+
+    //! Returns the value of the given metadata key or NULL if no such metadata was found.
+    VLX_Value* getMetadata(const char* key)
+    {
+      std::map< std::string, VLX_Value >::iterator it = metadata().find(key);
+      if (it == metadata().end())
+        return NULL;
+      else
+        return &it->second;
+    }
+
+    //! Returns the value of the given metadata key or NULL if no such metadata was found.
+    const VLX_Value* getMetadata(const char* key) const
+    {
+      std::map< std::string, VLX_Value >::const_iterator it = metadata().find(key);
+      if (it == metadata().end())
+        return NULL;
+      else
+        return &it->second;
+    }
+
+  private:
+    EError mError;
+    int mUIDCounter;
+    std::map< ref<VLX_Structure>, ref<Object> > mImportedStructures; // structure --> object
+    std::map< ref<Object>, ref<VLX_Structure> > mExportedObjects;    // object --> structure
+    std::map< std::string, VLX_Value > mMetadata; // metadata to import or to export
+    ref<VLX_Registry> mRegistry;
+  };
+
   //-----------------------------------------------------------------------------
 }
 

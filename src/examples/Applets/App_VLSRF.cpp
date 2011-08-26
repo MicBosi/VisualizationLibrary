@@ -352,66 +352,20 @@ public:
 
     VLX_Serializer serializer;
     serializer.setRegistry( registry.get() );
+
     // serialize
-    ref<VLX_Structure> st = serializer.exportVLX( act.get()/*geom.get()*/ );
-    if (st)
-    {
-#if 1
-      {
-        std::map< std::string, int > uid_set;
-        VLX_UIDCollectorVisitor uid_collector;
-        uid_collector.setUIDSet(&uid_set);
-        st->acceptVisitor(&uid_collector);
+    serializer.metadata()["VLT"] = VLX_Value( (long long) 100 );
+    serializer.metadata()["AuthoringTool"] = VLX_Value( "Visualization Library", VLX_Value::String );
+    serializer.saveText( "D:/VL/export.vlx", act.get() );
 
-        VLX_TextExportVisitor text_export_visitor;
-        text_export_visitor.setUIDSet(&uid_set);
-        st->acceptVisitor(&text_export_visitor);
+    ref<Object> obj = serializer.loadText("D:/VL/export.vlx");
+    ref<Actor> act2 = obj->as<Actor>(); VL_CHECK(act2);
 
-        ref<DiskFile> file = new DiskFile("D:/VL/export.vlx");
-        file->open(vl::OM_WriteOnly);
-        file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
-        file->close();
-      }
-#endif
+    // re-export
+    serializer.saveText( "D:/VL/re-export.vlx", act2.get() );
 
-      // import
-      VLX_Parser parser;
-      parser.tokenizer()->setInputFile( new DiskFile("D:/VL/export.vlx") );
-
-      if (!parser.parse())
-        VL_TRAP()
-
-      if (!parser.link())
-        VL_TRAP()
-
-      ref<Object> obj = serializer.importVLX( parser.root() );
-      ref<Actor> act2 = obj->as<Actor>(); VL_CHECK(act2);
-      // act2->effect()->shader()->eraseRenderState(RS_TextureSampler, 0);
-
-      // re-export
-      ref<VLX_Structure> st = serializer.exportVLX( act2.get() );
-      {
-        std::map< std::string, int > uid_set;
-        VLX_UIDCollectorVisitor uid_collector;
-        uid_collector.setUIDSet(&uid_set);
-        st->acceptVisitor(&uid_collector);
-
-        VLX_TextExportVisitor text_export_visitor;
-        text_export_visitor.setUIDSet(&uid_set);
-        st->acceptVisitor(&text_export_visitor);
-
-        ref<DiskFile> file = new DiskFile("D:/VL/re-export.vlx");
-        file->open(vl::OM_WriteOnly);
-        file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
-        file->close();
-        
-        // put into scene
-        sceneManager()->tree()->addActor( act2.get() );
-      }
-
-    }
-    else
-      VL_TRAP();
+    // put into scene
+    sceneManager()->tree()->addActor( act2.get() );
 
     // sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
     // sceneManager()->tree()->addActor( act.get() );
