@@ -55,7 +55,7 @@ public:
     //  printf(">> %s\n", token.mString.c_str());
 
 #if 0 // general input/output tests
-    VLX_Parser parser;
+    VLX_TextParser parser;
     parser.tokenizer()->setInputFile( new DiskFile("D:/VL/in.vlx") );
     if ( parser.parse() )
     {
@@ -194,12 +194,12 @@ public:
 #endif
 
 #if 0
-    bool ok = saveVLX("D:/VL/export.vl", res_db.get());
+    bool ok = saveVLT("D:/VL/export.vl", res_db.get());
     VL_CHECK(ok);
 
     sceneManager()->tree()->actors()->clear();
 
-    res_db = loadVLX("D:/VL/export.vl");
+    res_db = loadVLT("D:/VL/export.vl");
     VL_CHECK(res_db);
 
     geom = res_db->get<Geometry>(0);
@@ -207,9 +207,14 @@ public:
 #endif
 
     res_db->resources().push_back(act.get());
-    vl::saveVLX("D:/VL/export.vlx", res_db.get());
-    res_db = vl::loadVLX("D:/VL/export.vlx");
-    vl::saveVLX("D:/VL/re-export.vlx", res_db .get());
+    // vl::saveVLB("D:/VL/export.vlb", res_db.get());
+    vl::writeResource("D:/VL/export.vlb", res_db.get());
+
+    // res_db = vl::loadVLB("D:/VL/export.vlb");
+    res_db = vl::loadResource("D:/VL/export.vlb");
+    
+    // vl::saveVLT("D:/VL/re-export.vlt", res_db .get());
+    vl::writeResource("D:/VL/re-export.vlt", res_db .get());
 
     //VLX_Serializer serializer;
 
