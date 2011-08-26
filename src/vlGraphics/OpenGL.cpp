@@ -540,16 +540,18 @@ bool vl::initializeOpenGL()
   Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_ONE]      = Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1;
   Is_Enable_Supported[EN_SAMPLE_COVERAGE]          = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline||Has_GLES;
 
-  // Enables management debug code (mic fixme: comment out on next stable release)
+  // mic fixme: comment out on next stable release?
+#if 1
+  // Enables management debug code
   VL_CHECK_OGL();
   bool got_error = false;
   for(int i=0; i<EN_EnableCount; ++i)
   {
-    glDisable(Translate_Enable[i]); // glIsEnabled() for some reason is not reliable!!
+    glDisable(Translate_Enable[i]); // glIsEnabled() for some reason is not reliable!
     bool supported = glGetError() == GL_NO_ERROR;
     if (supported != Is_Enable_Supported[i])
     {
-      Log::error( Say("%s: capability %s supported!\n") << Translate_Enable_String[i] << (supported? "*IS*" : "*IS NOT*") );
+      Log::error( Say("%s: capability %s supported! Please report this error to http://www.visualizationlibrary.org/forum/\n") << Translate_Enable_String[i] << (supported? "*IS*" : "*IS NOT*") );
       got_error = true;
     }
   }
@@ -572,8 +574,9 @@ bool vl::initializeOpenGL()
     PRINT_INFO(Has_GL_Version_1_3);
     PRINT_INFO(Has_GL_Version_1_2);
     PRINT_INFO(Has_GL_Version_1_1);
-    VL_TRAP();
+    // VL_TRAP();
   }
+#endif
 
   VL_CHECK_OGL();
   return Is_OpenGL_Initialized = true;
