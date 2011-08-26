@@ -1312,7 +1312,7 @@ namespace vl
     typedef enum { NoError, ImportError, ExportError } EError;
 
   public:
-    VLX_Serializer(): mVersion(100), mUIDCounter(0), mError(NoError) {}
+    VLX_Serializer(): mError(NoError), mVersion(100), mUIDCounter(0) {}
 
     void signalImportError(const String& str) 
     { 
