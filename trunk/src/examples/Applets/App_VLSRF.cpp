@@ -354,8 +354,6 @@ public:
     serializer.setRegistry( registry.get() );
 
     // serialize
-    serializer.metadata()["VLT"] = VLX_Value( (long long) 100 );
-    serializer.metadata()["AuthoringTool"] = VLX_Value( "Visualization Library", VLX_Value::String );
     serializer.saveText( "D:/VL/export.vlx", act.get() );
 
     ref<Object> obj = serializer.loadText("D:/VL/export.vlx");

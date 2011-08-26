@@ -31,6 +31,8 @@
 
 #include <vlCore/VLX_Tools.hpp>
 #include <vlCore/DiskFile.hpp>
+#include <vlCore/version.hpp>
+#include <ctime>
 
 using namespace vl;
 
@@ -798,6 +800,18 @@ bool VLX_Serializer::saveText(VirtualFile* file, Object* obj, bool reset_documen
   std::map< std::string, VLX_Value >::iterator it = metadata().begin();
   for( ; it != metadata().end(); ++it )
     meta->value().push_back( VLX_Structure::Value(it->first.c_str(), it->second) );
+
+  // add VL metadata
+  *meta << "VLT_Version" << VLX_Value( (long long) 100 );
+
+  String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
+  *meta << "VLX_Writer" << VLX_Value( auth.toStdString().c_str(), VLX_Value::String );
+  
+  time_t rawtime;
+  time( &rawtime );
+  std::string str = ctime(&rawtime);
+  str.resize(str.size()-1); // remove the trailing \n
+  *meta << "CreationDate" << VLX_Value( str.c_str(), VLX_Value::String );
 
   ref<VLX_Structure> st = exportVLX( obj );
   if (st)

@@ -1149,7 +1149,7 @@ namespace vl
 
     void setHeader()
     {
-      mText = "VLX_TEXT version=100 encoding=ascii\n\n";
+      mText = "VLX version=100 encoding=ascii\n\n";
     }
 
     void setUIDSet(std::map< std::string, int >* uids) { mUIDSet = uids; }
@@ -1979,10 +1979,10 @@ namespace vl
       version = 0;
       encoding = "";
 
-      // VLX_TEXT
-      if (!getToken(mToken) || mToken.mType != VLX_Token::Identifier || mToken.mString != "VLX_TEXT")
+      // VLX
+      if (!getToken(mToken) || mToken.mType != VLX_Token::Identifier || mToken.mString != "VLX")
       {
-        Log::error("'VLX_TEXT' header not found!\n");
+        Log::error("'VLX' header not found!\n");
         return false;
       }
 
