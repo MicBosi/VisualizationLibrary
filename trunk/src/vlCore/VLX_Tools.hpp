@@ -39,6 +39,9 @@
 #include <vlCore/Vector4.hpp>
 #include <map>
 #include <set>
+#include <cstdlib>
+#include <cstdarg>
+#include <cstring>
 
 // mic fixme
 #ifdef _MSC_VER
@@ -515,7 +518,7 @@ namespace vl
     {
       release();
       mType = String;
-      return mUnion.mString = _strdup(str);
+      return mUnion.mString = strdup(str);
     }
 
     const char* getString() const { VL_CHECK(mType == String); return mUnion.mString; }
@@ -526,7 +529,7 @@ namespace vl
     {
       release();
       mType = Identifier;
-      return mUnion.mString = _strdup(str);
+      return mUnion.mString = strdup(str);
     }
 
     const char* getIdentifier() const { VL_CHECK(mType == Identifier); return mUnion.mString; }
@@ -537,7 +540,7 @@ namespace vl
     {
       release();
       mType = UID;
-      return mUnion.mString = _strdup(str);
+      return mUnion.mString = strdup(str);
     }
 
     const char* getUID() const { VL_CHECK(mType == UID); return mUnion.mString; }
