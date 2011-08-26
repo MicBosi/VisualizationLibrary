@@ -30,6 +30,7 @@
 /**************************************************************************************/
 
 #include <vlCore/VLX_Tools.hpp>
+#include <vlCore/DiskFile.hpp>
 
 using namespace vl;
 
@@ -774,5 +775,99 @@ VLX_Array* VLX_Value::setArray(VLX_Array* arr)
     VL_TRAP();
     return NULL;
   }
+}
+//-----------------------------------------------------------------------------
+bool VLX_Serializer::saveText(const String& path, Object* obj, bool reset_document)
+{
+  ref<DiskFile> file = new DiskFile(path);
+  return saveText(file.get(), obj, reset_document);
+}
+//-----------------------------------------------------------------------------
+bool VLX_Serializer::saveText(VirtualFile* file, Object* obj, bool reset_document)
+{
+  if (reset_document)
+    reset();
+
+  if (mError)
+  {
+    file->close();
+    return false;
+  }
+
+  ref<VLX_Structure> meta = new VLX_Structure("<Metadata>");
+  std::map< std::string, VLX_Value >::iterator it = metadata().begin();
+  for( ; it != metadata().end(); ++it )
+    meta->value().push_back( VLX_Structure::Value(it->first.c_str(), it->second) );
+
+  ref<VLX_Structure> st = exportVLX( obj );
+  if (st)
+  {
+    std::map< std::string, int > uid_set;
+    VLX_UIDCollectorVisitor uid_collector;
+    uid_collector.setUIDSet(&uid_set);
+    meta->acceptVisitor(&uid_collector);
+    st->acceptVisitor(&uid_collector);
+
+    VLX_TextExportVisitor text_export_visitor;
+    text_export_visitor.setUIDSet(&uid_set);
+    meta->acceptVisitor(&text_export_visitor);
+    st->acceptVisitor(&text_export_visitor);
+
+    file->open(vl::OM_WriteOnly);
+    file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
+    file->close();
+
+    file->close();
+    return mError == NoError;
+  }
+  else
+  {
+    file->close();
+    return false;
+  }
+}
+//-----------------------------------------------------------------------------
+Object* VLX_Serializer::loadText(const String& path, bool reset_document)
+{
+  ref<DiskFile> file = new DiskFile(path);
+  return loadText(file.get(), reset_document);
+}
+//-----------------------------------------------------------------------------
+Object* VLX_Serializer::loadText(VirtualFile* file, bool reset_document)
+{
+  if (reset_document)
+    reset();
+
+  if (mError)
+  {
+    file->close();
+    return NULL;
+  }
+
+  VLX_Parser parser;
+  parser.tokenizer()->setInputFile( file );
+
+  bool ok = parser.parse();
+  file->close();
+
+  if (!ok)
+  {
+    setError(ImportError);
+    return NULL;
+  }
+
+  // copy metadata over
+  metadata() = parser.metadata();
+
+  if (!parser.link())
+  {
+    setError(ImportError);
+    return NULL;
+  }
+
+  if (parser.structures().empty())
+    return NULL;
+  else
+    return importVLX( parser.structures()[0].get() ); // note that we ignore the other structures
 }
 //-----------------------------------------------------------------------------
