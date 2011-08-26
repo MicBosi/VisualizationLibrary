@@ -206,7 +206,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
     token.mString = "<";
     while(readTextChar(ch1) && ch1 != '>')
     {
-      if (ch1 >= 'a' && ch1 <= 'z' || ch1 >= 'A' && ch1 <= 'Z' || ch1 >= '0' && ch1 <= '9' || ch1 == '_' || ch1 == ':')
+      if ( (ch1 >= 'a' && ch1 <= 'z') || (ch1 >= 'A' && ch1 <= 'Z') || (ch1 >= '0' && ch1 <= '9') || ch1 == '_' || ch1 == ':' )
         token.mString.push_back(ch1);
       else
       {
@@ -227,7 +227,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
     token.mString = "#";
     while(readTextChar(ch1))
     {
-      if (ch1 >= 'a' && ch1 <= 'z' || ch1 >= 'A' && ch1 <= 'Z' || ch1 >= '0' && ch1 <= '9' || ch1 == '_' )
+      if ( (ch1 >= 'a' && ch1 <= 'z') || (ch1 >= 'A' && ch1 <= 'Z') || (ch1 >= '0' && ch1 <= '9') || ch1 == '_' )
         token.mString.push_back(ch1);
       else
       {
@@ -301,12 +301,12 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
 
   default:
     // identifier
-    if (ch1 >= 'a' && ch1 <= 'z' || ch1 >= 'A' && ch1 <= 'Z' || ch1 == '_' )
+    if ( (ch1 >= 'a' && ch1 <= 'z') || (ch1 >= 'A' && ch1 <= 'Z') || ch1 == '_' )
     {
       token.mString.push_back(ch1);
       while(readTextChar(ch1))
       {
-        if (ch1 >= 'a' && ch1 <= 'z' || ch1 >= 'A' && ch1 <= 'Z' || ch1 >= '0' && ch1 <= '9' || ch1 == '_' )
+        if ( (ch1 >= 'a' && ch1 <= 'z') || (ch1 >= 'A' && ch1 <= 'Z') || (ch1 >= '0' && ch1 <= '9') || ch1 == '_' )
           token.mString.push_back(ch1);
         else
         {
@@ -346,7 +346,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
     // 123.
     // 123.123E
     // 123.123e+
-    if ( ch1 >= '0' && ch1 <= '9' || ch1 == '.' || ch1 == '+' || ch1 == '-' )
+    if ( (ch1 >= '0' && ch1 <= '9') || ch1 == '.' || ch1 == '+' || ch1 == '-' )
     {
       token.mType = VLX_Token::TOKEN_ERROR;
       token.mString.push_back(ch1);
@@ -655,7 +655,7 @@ VLX_Value& VLX_Value::operator=(const VLX_Value& other)
 
   // make local copy of the string
   if (mType == String || mType == Identifier || mType == UID)
-    mUnion.mString = _strdup(mUnion.mString);
+    mUnion.mString = strdup(mUnion.mString);
 
   return *this;
 }
