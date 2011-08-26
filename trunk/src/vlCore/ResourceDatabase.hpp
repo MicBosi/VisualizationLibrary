@@ -175,11 +175,17 @@ namespace vl
   //! Short version of defLoadWriterManager()->canWrite(file).
   VLCORE_EXPORT bool canWrite(VirtualFile* file);
 
-  //! Short version of defLoadWriterManager()->loadResource(path,quick).
+  //! Short version of defLoadWriterManager()->loadResource(path, quick).
   VLCORE_EXPORT ref<ResourceDatabase> loadResource(const String& path, bool quick=true);
 
-  //! Short version of defLoadWriterManager()->loadResource(file,quick).
+  //! Short version of defLoadWriterManager()->loadResource(file, quick).
   VLCORE_EXPORT ref<ResourceDatabase> loadResource(VirtualFile* file, bool quick=true);
+
+  //! Short version of defLoadWriterManager()->writeResource(path, resource).
+  VLCORE_EXPORT bool writeResource(const String& path, ResourceDatabase* resource);
+
+  //! Short version of defLoadWriterManager()->writeResource(file, resource).
+  VLCORE_EXPORT bool writeResource(VirtualFile* file, ResourceDatabase* resource);
 }
 
 #endif

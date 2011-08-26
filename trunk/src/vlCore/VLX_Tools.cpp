@@ -779,22 +779,19 @@ VLX_Array* VLX_Value::setArray(VLX_Array* arr)
   }
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveText(const String& path, const Object* obj, bool reset_serializer)
+bool VLX_Serializer::saveText(const String& path, const Object* obj, bool start_fresh)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return saveText(file.get(), obj, reset_serializer);
+  return saveText(file.get(), obj, start_fresh);
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool reset_serializer)
+bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool start_fresh)
 {
-  if (reset_serializer)
+  if (start_fresh)
     reset();
 
   if (mError)
-  {
-    file->close();
     return false;
-  }
 
   ref<VLX_Structure> meta = new VLX_Structure("<Metadata>");
   std::map< std::string, VLX_Value >::iterator it = metadata().begin();
@@ -832,6 +829,7 @@ bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool reset_s
 
     VLX_TextExportVisitor text_export_visitor;
     text_export_visitor.setUIDSet(&uid_set);
+    text_export_visitor.writeHeader();
     meta->acceptVisitor(&text_export_visitor);
     st->acceptVisitor(&text_export_visitor);
 
@@ -839,35 +837,130 @@ bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool reset_s
     file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
     file->close();
 
-    file->close();
     return mError == NoError;
   }
   else
-  {
-    file->close();
     return false;
-  }
 }
 //-----------------------------------------------------------------------------
-Object* VLX_Serializer::loadText(const String& path, bool reset_serializer)
+bool VLX_Serializer::saveBinary(const String& path, const Object* obj, bool start_fresh)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return loadText(file.get(), reset_serializer);
+  return saveText(file.get(), obj, start_fresh);
 }
 //-----------------------------------------------------------------------------
-Object* VLX_Serializer::loadText(VirtualFile* file, bool reset_serializer)
+bool VLX_Serializer::saveBinary(VirtualFile* file, const Object* obj, bool start_fresh)
 {
-  if (reset_serializer)
+  if (start_fresh)
     reset();
 
   if (mError)
+    return false;
+
+  ref<VLX_Structure> meta = new VLX_Structure("<Metadata>");
+  std::map< std::string, VLX_Value >::iterator it = metadata().begin();
+  for( ; it != metadata().end(); ++it )
   {
+    if (it->first == "VLT_Version")
+      continue;
+    if (it->first == "VLX_Writer")
+      continue;
+    if (it->first == "Creation_Date")
+      continue;
+    meta->value().push_back( VLX_Structure::Value(it->first.c_str(), it->second) );
+  }
+
+  // add VL metadata
+  *meta << "VLT_Version" << VLX_Value( (long long) 100 );
+
+  String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
+  *meta << "VLX_Writer" << VLX_Value( auth.toStdString().c_str(), VLX_Value::String );
+
+  time_t rawtime;
+  time( &rawtime );
+  std::string str = ctime(&rawtime);
+  str.resize(str.size()-1); // remove the trailing \n
+  *meta << "Creation_Date" << VLX_Value( str.c_str(), VLX_Value::String );
+
+  ref<VLX_Structure> st = exportVLX( obj );
+  if (st)
+  {
+    std::map< std::string, int > uid_set;
+    VLX_UIDCollectorVisitor uid_collector;
+    uid_collector.setUIDSet(&uid_set);
+    meta->acceptVisitor(&uid_collector);
+    st->acceptVisitor(&uid_collector);
+
+    VLX_BinaryExportVisitor bin_export_visitor(file);
+    bin_export_visitor.setUIDSet(&uid_set);
+    bin_export_visitor.writeHeader();
+    meta->acceptVisitor(&bin_export_visitor);
+    st->acceptVisitor(&bin_export_visitor);
     file->close();
+
+    return mError == NoError;
+  }
+  else
+    return false;
+}
+//-----------------------------------------------------------------------------
+Object* VLX_Serializer::loadText(const String& path, bool start_fresh)
+{
+  ref<VirtualFile> file = vl::locateFile(path);
+  return loadText(file.get(), start_fresh);
+}
+//-----------------------------------------------------------------------------
+Object* VLX_Serializer::loadText(VirtualFile* file, bool start_fresh)
+{
+  if (start_fresh)
+    reset();
+
+  if (mError)
+    return NULL;
+
+  VLX_TextParser parser;
+  parser.tokenizer()->setInputFile( file );
+
+  bool ok = parser.parse();
+  file->close();
+
+  if (!ok)
+  {
+    setError(ImportError);
     return NULL;
   }
 
-  VLX_Parser parser;
-  parser.tokenizer()->setInputFile( file );
+  // copy metadata over
+  metadata() = parser.metadata();
+
+  if (!parser.link())
+  {
+    setError(ImportError);
+    return NULL;
+  }
+
+  if (parser.structures().empty())
+    return NULL;
+  else
+    return importVLX( parser.structures()[0].get() ); // note that we ignore the other structures
+}
+//-----------------------------------------------------------------------------
+Object* VLX_Serializer::loadBinary(const String& path, bool start_fresh)
+{
+  ref<VirtualFile> file = vl::locateFile(path);
+  return loadBinary(file.get(), start_fresh);
+}
+//-----------------------------------------------------------------------------
+Object* VLX_Serializer::loadBinary(VirtualFile* file, bool start_fresh)
+{
+  if (start_fresh)
+    reset();
+
+  if (mError)
+    return NULL;
+
+  VLX_BinaryParser parser;
+  parser.setInputFile( file );
 
   bool ok = parser.parse();
   file->close();
