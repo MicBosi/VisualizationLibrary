@@ -2016,13 +2016,13 @@ namespace vl
         if (key == "Interpretation")
         {
           VLX_IMPORT_CHECK_RETURN_NULL(value.type() == VLX_Value::Identifier, value) 
-          if (strcmp(value.getIdentifier(), "VAI_NORMAL") == 0)
+          if ( value.getIdentifier() == "VAI_NORMAL" )
             info->setInterpretation(VAI_NORMAL);
           else
-          if (strcmp(value.getIdentifier(), "VAI_INTEGER") == 0)
+          if ( value.getIdentifier() == "VAI_INTEGER" )
             info->setInterpretation(VAI_INTEGER);
           else
-          if (strcmp(value.getIdentifier(), "VAI_DOUBLE") == 0)
+          if ( value.getIdentifier() == "VAI_DOUBLE" )
             info->setInterpretation(VAI_DOUBLE);
           else
           {
@@ -2543,7 +2543,7 @@ namespace vl
       if (val)
       {
         VL_CHECK( val->type() == VLX_Value::Identifier );
-        type= destringfy_EUniformType( val->getIdentifier() );
+        type = destringfy_EUniformType( val->getIdentifier().c_str() );
       }
       else
       {
@@ -2862,7 +2862,7 @@ namespace vl
         for(size_t i=0; i<list->value().size(); ++i)
         {
           VLX_IMPORT_CHECK_RETURN( list->value()[i].type() == VLX_Value::Identifier, list->value()[i] );
-          EEnable en = destringfy_EEnable( list->value()[i].getIdentifier() );
+          EEnable en = destringfy_EEnable( list->value()[i].getIdentifier().c_str() );
           VLX_IMPORT_CHECK_RETURN( en != EN_UnknownEnable, list->value()[i] );
           sh->enable(en);
         }
@@ -3366,7 +3366,7 @@ namespace vl
           if ( pmtype )
           {
             VLX_IMPORT_CHECK_RETURN( pmtype->type() == VLX_Value::Identifier, *pmtype );
-            ptype = destringfy_EProjectionMatrixType( pmtype->getIdentifier() );
+            ptype = destringfy_EProjectionMatrixType( pmtype->getIdentifier().c_str() );
           }
 
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::List, value);
@@ -3515,13 +3515,13 @@ namespace vl
         if (key == "ClearColorMode")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setClearColorMode( destringfy_EClearColorMode(value.getIdentifier()) );
+          obj->setClearColorMode( destringfy_EClearColorMode(value.getIdentifier().c_str()) );
         }
         else
         if (key == "ClearFlags")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setClearFlags( destringfy_EClearFlags(value.getIdentifier()) );
+          obj->setClearFlags( destringfy_EClearFlags(value.getIdentifier().c_str()) );
         }
         else
         if (key == "X")
@@ -3868,7 +3868,7 @@ namespace vl
           VLX_IMPORT_CHECK_RETURN( list->value().size() == 2, *list )
           VLX_IMPORT_CHECK_RETURN( list->value()[0].type() == VLX_Value::Identifier, *list )
           VLX_IMPORT_CHECK_RETURN( list->value()[1].type() == VLX_Value::Integer, *list )
-          const char* name = list->value()[0].getIdentifier();
+          const char* name = list->value()[0].getIdentifier().c_str();
           int index = (int)list->value()[1].getInteger();
           obj->bindFragDataLocation(index, name);
         }
@@ -3880,7 +3880,7 @@ namespace vl
           VLX_IMPORT_CHECK_RETURN( list->value().size() == 2, *list )
           VLX_IMPORT_CHECK_RETURN( list->value()[0].type() == VLX_Value::Identifier, *list )
           VLX_IMPORT_CHECK_RETURN( list->value()[1].type() == VLX_Value::Integer, *list )
-          const char* name = list->value()[0].getIdentifier();
+          const char* name = list->value()[0].getIdentifier().c_str();
           int index = (int)list->value()[1].getInteger();
           obj->addAutoAttribLocation(index, name);
         }
@@ -3964,7 +3964,7 @@ namespace vl
       if (path)
       {
         VLX_IMPORT_CHECK_RETURN( path->type() == VLX_Value::String, *path )
-        obj->setSource(path->getString()); // this automatically loads the source and sets the path
+        obj->setSource(path->getString().c_str()); // this automatically loads the source and sets the path
       }
       else
       if (source)
@@ -4260,7 +4260,7 @@ namespace vl
       if (vlx_col_mat)
       {
         VLX_IMPORT_CHECK_RETURN( vlx_col_mat->type() == VLX_Value::Identifier, *vlx_col_mat );
-        col_mat = destringfy_EColorMaterial( vlx_col_mat->getIdentifier() );
+        col_mat = destringfy_EColorMaterial( vlx_col_mat->getIdentifier().c_str() );
       }
 
       EPolygonFace poly_face = PF_FRONT_AND_BACK;
@@ -4268,7 +4268,7 @@ namespace vl
       if (vlx_poly_mat)
       {
         VLX_IMPORT_CHECK_RETURN( vlx_poly_mat->type() == VLX_Value::Identifier, *vlx_poly_mat );
-        poly_face = destringfy_EPolygonFace( vlx_poly_mat->getIdentifier() );
+        poly_face = destringfy_EPolygonFace( vlx_poly_mat->getIdentifier().c_str() );
       }
 
       obj->setColorMaterial( poly_face, col_mat );
@@ -4327,10 +4327,10 @@ namespace vl
         VLX_IMPORT_CHECK_RETURN( vlx_sm->type() == VLX_Value::Identifier, *vlx_sm )
         if (vlx_sm)
         {
-          if ( strcmp(vlx_sm->getIdentifier(), "SM_SortBackToFront") == 0 )
+          if ( vlx_sm->getIdentifier() == "SM_SortBackToFront" )
             sm = SM_SortBackToFront;
           else
-          if ( strcmp(vlx_sm->getIdentifier(), "SM_SortFrontToBack") == 0 )
+          if ( vlx_sm->getIdentifier() == "SM_SortFrontToBack" )
             sm = SM_SortFrontToBack;
           else
             s.signalImportError( Say("Line %n : unknown sort mode '%s'.\n") << vlx_sm->lineNumber() << vlx_sm->getIdentifier() );
@@ -4411,13 +4411,13 @@ namespace vl
         if (key == "ImagePath")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::String, value );
-          obj->setupParams()->setImagePath( value.getString() );
+          obj->setupParams()->setImagePath( value.getString().c_str() );
         }
         else
         if (key == "Format")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setupParams()->setFormat( destringfy_ETextureFormat(value.getIdentifier()) );
+          obj->setupParams()->setFormat( destringfy_ETextureFormat(value.getIdentifier().c_str()) );
         }
         else
         if (key == "Width")
@@ -4532,49 +4532,49 @@ namespace vl
         if (key == "MinFilter")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setMinFilter( destringfy_ETexParamFilter( value.getIdentifier() ) );
+          obj->setMinFilter( destringfy_ETexParamFilter( value.getIdentifier().c_str() ) );
         }
         else
         if (key == "MagFilter")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setMagFilter( destringfy_ETexParamFilter( value.getIdentifier() ) );
+          obj->setMagFilter( destringfy_ETexParamFilter( value.getIdentifier().c_str() ) );
         }
         else
         if (key == "WrapS")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setWrapS( destringfy_ETexParamWrap( value.getIdentifier() ) );
+          obj->setWrapS( destringfy_ETexParamWrap( value.getIdentifier().c_str() ) );
         }
         else
         if (key == "WrapT")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setWrapT( destringfy_ETexParamWrap( value.getIdentifier() ) );
+          obj->setWrapT( destringfy_ETexParamWrap( value.getIdentifier().c_str() ) );
         }
         else
         if (key == "WrapR")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setWrapR( destringfy_ETexParamWrap( value.getIdentifier() ) );
+          obj->setWrapR( destringfy_ETexParamWrap( value.getIdentifier().c_str() ) );
         }
         else
         if (key == "CompareMode")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setCompareMode( destringfy_ETexCompareMode( value.getIdentifier() ) );
+          obj->setCompareMode( destringfy_ETexCompareMode( value.getIdentifier().c_str() ) );
         }
         else
         if (key == "CompareFunc")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setCompareFunc( destringfy_ETexCompareFunc( value.getIdentifier() ) );
+          obj->setCompareFunc( destringfy_ETexCompareFunc( value.getIdentifier().c_str() ) );
         }
         else
         if (key == "DepthTextureMode")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLX_Value::Identifier, value );
-          obj->setDepthTextureMode( destringfy_EDepthTextureMode( value.getIdentifier() ) );
+          obj->setDepthTextureMode( destringfy_EDepthTextureMode( value.getIdentifier().c_str() ) );
         }
         else
         if (key == "BorderColor")
@@ -4711,7 +4711,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::LoadWriterVLX, ResourceLoadWriter)
 
   public:
-    LoadWriterVLX(): ResourceLoadWriter("|vlx|vlt|vlb|", "|vlx|vlt|vlb|") {}
+    LoadWriterVLX(): ResourceLoadWriter("|vlt|vlb|", "|vlt|vlb|") {}
 
     ref<ResourceDatabase> loadResource(const String& path) const 
     {
