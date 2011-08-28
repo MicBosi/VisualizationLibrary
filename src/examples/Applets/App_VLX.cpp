@@ -41,7 +41,7 @@
 
 using namespace vl;
 
-class App_VLSRF: public BaseDemo
+class App_VLX: public BaseDemo
 {
 public:
   virtual void initEvent()
@@ -238,4 +238,4 @@ public:
 
 // Have fun!
 
-BaseDemo* Create_App_VLSRF() { return new App_VLSRF; }
+BaseDemo* Create_App_VLX() { return new App_VLX; }
