@@ -515,36 +515,39 @@ namespace vl
 
     // string
 
-    const char* setString(const char* str)
+    const std::string& setString(const char* str)
     {
       release();
       mType = String;
-      return mUnion.mString = strdup(str);
+      mUnion.mString = new std::string(str);
+      return *mUnion.mString;
     }
 
-    const char* getString() const { VL_CHECK(mType == String); return mUnion.mString; }
+    const std::string& getString() const { VL_CHECK(mType == String); return *mUnion.mString; }
 
     // identifier
 
-    const char* setIdentifier(const char* str)
+    const std::string& setIdentifier(const char* str)
     {
       release();
       mType = Identifier;
-      return mUnion.mString = strdup(str);
+      mUnion.mString = new std::string(str);
+      return *mUnion.mString;
     }
 
-    const char* getIdentifier() const { VL_CHECK(mType == Identifier); return mUnion.mString; }
+    const std::string& getIdentifier() const { VL_CHECK(mType == Identifier); return *mUnion.mString; }
 
     // uid
 
-    const char* setUID(const char* str)
+    const std::string& setUID(const char* str)
     {
       release();
       mType = UID;
-      return mUnion.mString = strdup(str);
+      mUnion.mString = new std::string(str);
+      return *mUnion.mString;
     }
 
-    const char* getUID() const { VL_CHECK(mType == UID); return mUnion.mString; }
+    const std::string& getUID() const { VL_CHECK(mType == UID); return *mUnion.mString; }
 
     // integer
 
@@ -589,7 +592,7 @@ namespace vl
       bool mBool;
       long long mInteger;
       double mReal;
-      const char* mString;
+      std::string* mString;
       VLX_Structure* mStructure;
       VLX_List* mList;
       VLX_Array* mArray;
@@ -881,15 +884,15 @@ namespace vl
         break;
 
         case VLX_Value::String:
-          format("\"%s\"\n", stringEncode(obj->value()[i].value().getString()).c_str());
+          format("\"%s\"\n", stringEncode(obj->value()[i].value().getString().c_str()).c_str());
           break;
 
         case VLX_Value::Identifier:
-          format("%s\n", obj->value()[i].value().getIdentifier()); VL_CHECK( strlen(obj->value()[i].value().getIdentifier()) )
+          format("%s\n", obj->value()[i].value().getIdentifier()); VL_CHECK( !obj->value()[i].value().getIdentifier().empty() )
           break;
 
         case VLX_Value::UID:
-          format("%s\n", obj->value()[i].value().getUID()); VL_CHECK( strlen(obj->value()[i].value().getUID()) )
+          format("%s\n", obj->value()[i].value().getUID()); VL_CHECK( !obj->value()[i].value().getUID().empty() )
           break;
 
         case VLX_Value::Bool:
@@ -979,15 +982,15 @@ namespace vl
           break;
 
         case VLX_Value::String:
-          indent(); format("\"%s\"\n", stringEncode(list->value()[i].getString()).c_str());
+          indent(); format("\"%s\"\n", stringEncode(list->value()[i].getString().c_str()).c_str());
           break;
 
         case VLX_Value::Identifier:
-          indent(); format("%s\n", list->value()[i].getIdentifier()); VL_CHECK( strlen(list->value()[i].getIdentifier()) )
+          indent(); format("%s\n", list->value()[i].getIdentifier()); VL_CHECK( !list->value()[i].getIdentifier().empty() )
           break;
 
         case VLX_Value::UID:
-          indent(); format("%s\n", list->value()[i].getUID()); VL_CHECK( strlen(list->value()[i].getUID()) )
+          indent(); format("%s\n", list->value()[i].getUID()); VL_CHECK( !list->value()[i].getUID().empty() )
           break;
 
         case VLX_Value::RawtextBlock:
@@ -1213,6 +1216,94 @@ namespace vl
         return true;
     }
 
+    void writeValue(VLX_Value& value)
+    {
+      switch(value.type())
+      {
+
+      case VLX_Value::Structure:
+        value.getStructure()->acceptVisitor(this);
+        break;
+
+      case VLX_Value::List:
+        value.getList()->acceptVisitor(this);
+        break;
+
+      /*
+      case VLX_Value::ArrayString:
+        break;
+
+      case VLX_Value::ArrayIdentifier:
+        break;
+
+      case VLX_Value::ArrayUID:
+        break;
+      */
+
+      case VLX_Value::ArrayInteger:
+        value.getArrayInteger()->acceptVisitor(this);
+        break;
+
+      case VLX_Value::ArrayReal:
+        value.getArrayReal()->acceptVisitor(this);
+        break;
+
+      case VLX_Value::RawtextBlock:
+      {
+        VLX_RawtextBlock* fblock = value.getRawtextBlock();
+        // header
+        mOutputFile->writeUInt8( VLX_Binary::ChunkRawtext); // no decoding needed
+        // tag
+        writeString( fblock->tag().c_str() );
+        // value
+        writeString( fblock->value().c_str() );
+      }
+      break;
+
+      case VLX_Value::String:
+        // header
+        mOutputFile->writeUInt8( VLX_Binary::ChunkString );
+        // value
+        writeString( value.getString().c_str() );
+        break;
+
+      case VLX_Value::Identifier:
+        // header
+        mOutputFile->writeUInt8( VLX_Binary::ChunkIdentifier );
+        // value
+        writeString( value.getIdentifier().c_str() );
+        break;
+
+      case VLX_Value::UID:
+        // header
+        mOutputFile->writeUInt8( VLX_Binary::ChunkUID );
+        // value
+        writeString( value.getUID().c_str() );
+        break;
+
+      case VLX_Value::Bool:
+        // header
+        mOutputFile->writeUInt8( VLX_Binary::ChunkBool );
+        // value
+        mOutputFile->writeUInt8( value.getBool() );
+        break;
+
+      case VLX_Value::Integer:
+        // header
+        mOutputFile->writeUInt8( VLX_Binary::ChunkInteger);
+        // value
+        writeInteger( value.getInteger() );
+        break;
+
+      case VLX_Value::Real:
+        // header
+        mOutputFile->writeUInt8( VLX_Binary::ChunkRealDouble);
+        // value
+        mOutputFile->writeDouble( value.getReal() ); // mic fixme: write float optionally
+        break;
+      }
+    }
+
     virtual void visitStructure(VLX_Structure* obj)
     {
       if (isVisited(obj))
@@ -1228,10 +1319,8 @@ namespace vl
       // tag
       writeString( obj->tag().c_str() );
       
-      // key/value pairs count
-      writeInteger( obj->value().size() );
-
       // key/value pairs list
+      int key_value_count = obj->value().size() - 1;
 
       // ID is the first one
       if ( obj->uid().length() && obj->uid() != "#NULL" && isUsed(obj->uid()) )
@@ -1239,7 +1328,11 @@ namespace vl
         writeString("ID");
         mOutputFile->writeUInt8( VLX_Binary::ChunkUID );
         writeString( obj->uid().c_str() );
+        ++key_value_count;
       }
+
+      // key/value pairs count, including the ID
+      writeInteger( key_value_count );
 
       for(size_t i=0; i<obj->value().size(); ++i)
       {
@@ -1247,90 +1340,7 @@ namespace vl
         writeString(obj->value()[i].key().c_str());
 
         // value
-        switch(obj->value()[i].value().type())
-        {
-
-        case VLX_Value::Structure:
-          obj->value()[i].value().getStructure()->acceptVisitor(this);
-          break;
-
-        case VLX_Value::List:
-          obj->value()[i].value().getList()->acceptVisitor(this);
-          break;
-
-        /*
-        case VLX_Value::ArrayString:
-          break;
-
-        case VLX_Value::ArrayIdentifier:
-          break;
-
-        case VLX_Value::ArrayUID:
-          break;
-        */
-
-        case VLX_Value::ArrayInteger:
-          obj->value()[i].value().getArrayInteger()->acceptVisitor(this);
-          break;
-
-        case VLX_Value::ArrayReal:
-          obj->value()[i].value().getArrayReal()->acceptVisitor(this);
-          break;
-
-        case VLX_Value::RawtextBlock:
-        {
-          VLX_RawtextBlock* fblock = obj->value()[i].value().getRawtextBlock();
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkRawtext); // no decoding needed
-          // tag
-          writeString( fblock->tag().c_str() );
-          // value
-          writeString( fblock->value().c_str() );
-        }
-        break;
-
-        case VLX_Value::String:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkString );
-          // value
-          writeString( obj->value()[i].value().getString() );
-          break;
-
-        case VLX_Value::Identifier:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkIdentifier );
-          // value
-          writeString( obj->value()[i].value().getIdentifier() );
-          break;
-
-        case VLX_Value::UID:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkUID );
-          // value
-          writeString( obj->value()[i].value().getUID() );
-          break;
-
-        case VLX_Value::Bool:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkBool );
-          // value
-          mOutputFile->writeUInt8( obj->value()[i].value().getBool() );
-          break;
-
-        case VLX_Value::Integer:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkInteger);
-          // value
-          writeInteger( obj->value()[i].value().getInteger() );
-          break;
-
-        case VLX_Value::Real:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkRealDouble);
-          // value
-          mOutputFile->writeDouble( obj->value()[i].value().getReal() ); // mic fixme: write float optionally
-          break;
-        }
+        writeValue(obj->value()[i].value());
       }
     }
 
@@ -1353,92 +1363,7 @@ namespace vl
       writeInteger( list->value().size() );
 
       for(size_t i=0; i<list->value().size(); ++i)
-      {
-        switch(list->value()[i].type())
-        {
-
-        case VLX_Value::Structure:
-          list->value()[i].getStructure()->acceptVisitor(this);
-          break;
-
-        case VLX_Value::List:
-          list->value()[i].getList()->acceptVisitor(this);
-          break;
-
-        /*
-        case VLX_Value::ArrayString:
-          break;
-
-        case VLX_Value::ArrayIdentifier:
-          break;
-
-        case VLX_Value::ArrayUID:
-          break;
-        */
-
-        case VLX_Value::ArrayInteger:
-          list->value()[i].getArrayInteger()->acceptVisitor(this);
-          break;
-
-        case VLX_Value::ArrayReal:
-          list->value()[i].getArrayReal()->acceptVisitor(this);
-          break;
-
-        case VLX_Value::RawtextBlock:
-        {
-          VLX_RawtextBlock* fblock = list->value()[i].getRawtextBlock();
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkRawtext ); // no decoding needed
-          // tag
-          writeString( fblock->tag().c_str() );
-          // value
-          writeString( fblock->value().c_str() );
-        }
-        break;
-
-        case VLX_Value::String:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkString );
-          // value
-          writeString( list->value()[i].getString() );
-          break;
-
-        case VLX_Value::Identifier:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkIdentifier );
-          // value
-          writeString( list->value()[i].getIdentifier() );
-          break;
-
-        case VLX_Value::UID:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkUID );
-          // value
-          writeString( list->value()[i].getUID() );
-          break;
-
-        case VLX_Value::Bool:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkBool );
-          // value
-          mOutputFile->writeUInt8( list->value()[i].getBool() );
-          break;
-
-        case VLX_Value::Integer:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkInteger);
-          // value
-          writeInteger( list->value()[i].getInteger() );
-          break;
-
-        case VLX_Value::Real:
-          // header
-          mOutputFile->writeUInt8( VLX_Binary::ChunkRealDouble);
-          // value
-          mOutputFile->writeDouble( list->value()[i].getReal() ); // mic fixme: write float optionally
-          break;
-        }
-      }
+        writeValue(list->value()[i]);
     }
 
     virtual void visitArray(VLX_ArrayInteger* arr)
@@ -2643,42 +2568,6 @@ namespace vl
         return false;
 
       return true;
-
-      //version = 0;
-      //encoding = "";
-
-      //// VLX
-      //if (!getToken(mToken) || mToken.mType != VLX_Token::Identifier || mToken.mString != "VLX")
-      //{
-      //  Log::error("'VLX' header not found!\n");
-      //  return false;
-      //}
-
-      //// version
-      //if (!getToken(mToken) || mToken.mType != VLX_Token::Identifier || mToken.mString != "version")
-      //  return false;
-
-      //if (!getToken(mToken) || mToken.mType != VLX_Token::Equals)
-      //  return false;
-
-      //if (!getToken(mToken) || mToken.mType != VLX_Token::Integer || mToken.mString != "100")
-      //  return false;
-      //else
-      //  version = atoi( mToken.mString.c_str() );
-
-      //// encoding
-      //if (!getToken(mToken) || mToken.mType != VLX_Token::Identifier || mToken.mString != "encoding")
-      //  return false;
-
-      //if (!getToken(mToken) || mToken.mType != VLX_Token::Equals)
-      //  return false;
-
-      //if (!getToken(mToken) || mToken.mType != VLX_Token::Identifier || mToken.mString != "ascii")
-      //  return false;
-      //else
-      //  encoding = mToken.mString;
-
-      //return true;
     }
 
     // Moves the <Metadata> key/value pairs in the Metadata map for quick and easy access and removes the <Metadata> structure.
@@ -2698,6 +2587,11 @@ namespace vl
           mStructures.erase( mStructures.begin() + i );
         }
       }
+    }
+
+    bool getChunk(unsigned char& chunk)
+    {
+      return inputFile()->read(&chunk, 1) == 1;
     }
 
     bool parse()
@@ -2743,10 +2637,10 @@ namespace vl
         return false;
       }
 
-      return true;
+      unsigned char chunk;
 
-      //while(getToken(mToken) && mToken.mType != VLX_Token::TOKEN_EOF)
-      //{
+      while(getChunk(chunk))
+      {
       //  if(mToken.mType == VLX_Token::TagHeader)
       //  {
       //    mLastTag = mToken.mString;
@@ -2778,12 +2672,13 @@ namespace vl
       //    Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
       //    return false;
       //  }
-      //}
+      }
 
       //parseMetadata();
 
       //VL_CHECK(mToken.mType == VLX_Token::TOKEN_EOF)
       //return mToken.mType == VLX_Token::TOKEN_EOF;
+      return false; // mic fixme
     }
 
     bool parseStructure(VLX_Structure* object)
@@ -3224,8 +3119,10 @@ namespace vl
 
     const std::map< std::string, ref<VLX_Structure> >& linkMap() const { return mLinkMap; }
 
+    //! The imported structures
     std::vector< ref<VLX_Structure> >& structures() { return mStructures; }
 
+    //! The imported structures
     const std::vector< ref<VLX_Structure> >& structures() const { return mStructures; }
 
     //! The imported metadata

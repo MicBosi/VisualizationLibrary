@@ -601,8 +601,8 @@ void VLX_Value::release()
   case UID:
   case Identifier:
     VL_CHECK(mUnion.mString)
-    free((void*)mUnion.mString);
-    mUnion.mString = NULL; break;
+    delete mUnion.mString; 
+    mUnion.mString = NULL; 
     break;
 
   default:
@@ -658,7 +658,7 @@ VLX_Value& VLX_Value::operator=(const VLX_Value& other)
 
   // make local copy of the string
   if (mType == String || mType == Identifier || mType == UID)
-    mUnion.mString = strdup(mUnion.mString);
+    mUnion.mString = new std::string(*mUnion.mString);
 
   return *this;
 }
