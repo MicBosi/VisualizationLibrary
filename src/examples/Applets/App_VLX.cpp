@@ -176,9 +176,9 @@ public:
     // mic fixme: we should need a mechanism that user_made objects are exported by user_made exporters.
 
     ref<ResourceDatabase> res_db = new ResourceDatabase;
-#if 0
-  #if 0
-      for (int i=0; i<100; ++i)
+#if 1
+  #if 1
+      for (int i=0; i<1; ++i)
       {
         ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 16 );
         geom->computeNormals();
@@ -207,14 +207,21 @@ public:
 #endif
 
     res_db->resources().push_back(act.get());
-    // vl::saveVLB("D:/VL/export.vlb", res_db.get());
-    vl::writeResource("D:/VL/export.vlb", res_db.get());
 
-    // res_db = vl::loadVLB("D:/VL/export.vlb");
+    vl::writeResource("D:/VL/export.vlb", res_db.get());
     res_db = vl::loadResource("D:/VL/export.vlb");
-    
+
+    vl::writeResource("D:/VL/export.vlt", res_db.get());
+    res_db = vl::loadResource("D:/VL/export.vlt");
+
+    vl::writeResource("D:/VL/export.vlb", res_db.get());
+    res_db = vl::loadResource("D:/VL/export.vlb");
+
+    vl::writeResource("D:/VL/export.vlt", res_db.get());
+
+    // vl::saveVLB("D:/VL/export.vlb", res_db.get());
+    // res_db = vl::loadVLB("D:/VL/export.vlb");
     // vl::saveVLT("D:/VL/re-export.vlt", res_db .get());
-    vl::writeResource("D:/VL/re-export.vlt", res_db .get());
 
     //VLX_Serializer serializer;
 

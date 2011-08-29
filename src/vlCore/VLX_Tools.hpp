@@ -951,6 +951,7 @@ namespace vl
         switch(list->value()[i].type())
         {
 
+          // mic fixme: unify this switch with the Structure one
         case VLX_Value::Structure:
           list->value()[i].getStructure()->acceptVisitor(this);
           break;
@@ -982,15 +983,15 @@ namespace vl
           break;
 
         case VLX_Value::String:
-          indent(); format("\"%s\"\n", stringEncode(list->value()[i].getString().c_str()).c_str());
+          indent(); format("\"%s\"\n", stringEncode( list->value()[i].getString().c_str() ).c_str() );
           break;
 
         case VLX_Value::Identifier:
-          indent(); format("%s\n", list->value()[i].getIdentifier()); VL_CHECK( !list->value()[i].getIdentifier().empty() )
+          indent(); format("%s\n", list->value()[i].getIdentifier().c_str() ); VL_CHECK( !list->value()[i].getIdentifier().empty() )
           break;
 
         case VLX_Value::UID:
-          indent(); format("%s\n", list->value()[i].getUID()); VL_CHECK( !list->value()[i].getUID().empty() )
+          indent(); format("%s\n", list->value()[i].getUID().c_str() ); VL_CHECK( !list->value()[i].getUID().empty() )
           break;
 
         case VLX_Value::RawtextBlock:
@@ -1363,13 +1364,21 @@ namespace vl
     {
       // header
       mOutputFile->writeUInt8( VLX_Binary::ChunkArrayInteger );
+
       // tag
       writeString(arr->tag().c_str());
+
       // value count
       writeInteger(arr->value().size());
+
       // value
-      for(size_t i=0; i<arr->value().size(); ++i)
-        writeInteger(arr->value()[i]);
+      if (arr->value().size() > 0)
+      {
+        std::vector<unsigned char> encoded;
+        encodeIntegers(&arr->value()[0], arr->value().size(), encoded); VL_CHECK(encoded.size())
+        writeInteger(encoded.size());
+        mOutputFile->writeUInt8(&encoded[0], encoded.size());
+      }
     }
 
     virtual void visitArray(VLX_ArrayReal* arr)
@@ -1417,9 +1426,61 @@ namespace vl
       mOutputFile->write(str, len);
     }
 
-    void writeInteger(long long i)
+    void writeInteger(long long n)
     {
-      mOutputFile->writeSInt64(i); // mic fixme: encode this
+#if 0
+      mOutputFile->writeSInt64(n);
+#else
+      const unsigned char nxt_flag = 0x80;
+      const unsigned char neg_flag = 0x40;
+      unsigned char bytes[12]; memset(bytes, 0, sizeof(bytes)); // should take maximum 10 bytes
+      unsigned char* byte = bytes;
+      if (n < 0)
+      {
+        n = -n;
+        *byte = neg_flag;
+      }
+      // lower 6 bits
+      *byte |= n & 0x3F; n >>= 6;
+      *byte |= n ? nxt_flag : 0;
+      ++byte; // --> output
+      // rest of the bytes
+      while (n)
+      {
+        *byte = n & 0x7F; n >>= 7;
+        *byte |= n ? nxt_flag : 0;
+        ++byte; // --> output
+      }
+      mOutputFile->write(bytes, byte - bytes);
+#endif
+    }
+
+    void encodeIntegers(long long* val, int count, std::vector<unsigned char>& out)
+    {
+      const unsigned char nxt_flag = 0x80;
+      const unsigned char neg_flag = 0x40;
+      out.reserve(count);
+      for( int i=0; i<count; ++i)
+      {
+        unsigned char byte = 0;
+        long long n = val[i];
+        if (n < 0)
+        {
+          n = -n;
+          byte = neg_flag;
+        }
+        // lower 6 bits
+        byte |= n & 0x3F; n >>= 6;
+        byte |= n ? nxt_flag : 0;
+        out.push_back(byte);
+        // rest of the bytes
+        while (n)
+        {
+          byte = n & 0x7F; n >>= 7;
+          byte |= n ? nxt_flag : 0;
+          out.push_back(byte);
+        }
+      }
     }
 
     void setUIDSet(std::map< std::string, int >* uids) { mUIDSet = uids; }
@@ -2587,16 +2648,63 @@ namespace vl
       return inputFile()->read(&chunk, 1) == 1;
     }
 
-    bool readInteger(long long& i)
+    bool readInteger(long long& n)
     {
-      // mic fixme: decode integer
-      return inputFile()->read(&i, sizeof(i)) == sizeof(i);
+#if 0
+      return inputFile()->read(&n, sizeof(n)) == sizeof(n);
+#else
+      const unsigned char nxt_flag = 0x80;
+      const unsigned char neg_flag = 0x40;
+      unsigned char byte = 0;
+      if ( inputFile()->read(&byte, 1) != 1 )
+        return false;
+      bool is_neg = (byte & neg_flag) != 0;
+      n = byte & 0x3F;
+      int shift = 6;
+      while(byte & nxt_flag)
+      {
+        if ( inputFile()->read(&byte, 1) != 1 )
+          return false;
+        n |= (long long)(byte & 0x7F) << shift;
+        shift += 7;
+      }
+      if (is_neg)
+        n = -n;
+      return true;
+#endif
+    }
+
+    void decodeIntegers(const std::vector<unsigned char>& in, std::vector<long long>& out)
+    {
+      out.reserve(in.size());
+      const unsigned char nxt_flag = 0x80;
+      const unsigned char neg_flag = 0x40;
+      for( size_t i=0 ; i<in.size() ; )
+      {
+        unsigned char byte = in[i++];
+        bool is_neg = (byte & neg_flag) != 0;
+        long long n = byte & 0x3F;
+        int shift = 6;
+        while(byte & nxt_flag)
+        {
+          byte = in[i++];
+          n |= (long long)(byte & 0x7F) << shift;
+          shift += 7;
+        }
+        if (is_neg)
+          n = -n;
+        // --> output
+        out.push_back(n);
+      }
     }
 
     bool readString(std::string& str)
     {
       long long len = 0;
       if (!readInteger(len))
+        return false;
+      VL_CHECK(len >= 0 );
+      if (len < 0)
         return false;
       if (len == 0)
         return true;
@@ -2778,15 +2886,22 @@ namespace vl
 
           // values
           VLX_ArrayInteger& arr = *val.getArrayInteger();
-          arr.value().resize( (size_t)count );
-          for(int i=0; i<count; ++i)
+          if (count)
           {
-            long long v = 0;
-            if (!readInteger(v))
+            long long encode_count = 0;
+            if (!readInteger(encode_count))
               return false;
-            arr.value()[i] = v;
+            VL_CHECK(encode_count >= 0)
+            if (encode_count)
+            {
+              std::vector<unsigned char> encoded;
+              encoded.resize(encode_count);
+              inputFile()->readUInt8(&encoded[0], encode_count);
+              decodeIntegers(encoded, arr.value());
+            }
           }
-          return true;
+          VL_CHECK(count == arr.value().size())
+          return count == arr.value().size();
         }
 
       case VLX_Binary::ChunkArrayRealDouble:
