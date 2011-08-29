@@ -200,6 +200,11 @@ namespace vl
     std::vector<char> mUncompressedBuffer;
     int mUncompressedBufferPtr;
   };
+  //---------------------------------------------------------------------------
+  // utilty functions
+  bool compress(const void* data, size_t size, std::vector<unsigned char>& out, int level);
+  bool decompress(const void* cdata, size_t csize, void* data_out);
+  //---------------------------------------------------------------------------
 }
 
 #endif
