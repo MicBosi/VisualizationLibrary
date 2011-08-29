@@ -884,15 +884,15 @@ namespace vl
         break;
 
         case VLX_Value::String:
-          format("\"%s\"\n", stringEncode(obj->value()[i].value().getString().c_str()).c_str());
+          format("\"%s\"\n", stringEncode( obj->value()[i].value().getString().c_str() ).c_str() );
           break;
 
         case VLX_Value::Identifier:
-          format("%s\n", obj->value()[i].value().getIdentifier()); VL_CHECK( !obj->value()[i].value().getIdentifier().empty() )
+          format("%s\n", obj->value()[i].value().getIdentifier().c_str() ); VL_CHECK( !obj->value()[i].value().getIdentifier().empty() )
           break;
 
         case VLX_Value::UID:
-          format("%s\n", obj->value()[i].value().getUID()); VL_CHECK( !obj->value()[i].value().getUID().empty() )
+          format("%s\n", obj->value()[i].value().getUID().c_str()); VL_CHECK( !obj->value()[i].value().getUID().empty() )
           break;
 
         case VLX_Value::Bool:
@@ -1174,7 +1174,7 @@ namespace vl
     {
       ChunkStructure = 1,
       ChunkList,
-      ChunkArrayReal,
+      ChunkArrayRealDouble,
       ChunkArrayInteger,
       ChunkRawtext,
       ChunkString,
@@ -1252,11 +1252,11 @@ namespace vl
       {
         VLX_RawtextBlock* fblock = value.getRawtextBlock();
         // header
-        mOutputFile->writeUInt8( VLX_Binary::ChunkRawtext); // no decoding needed
+        mOutputFile->writeUInt8( VLX_Binary::ChunkRawtext );
         // tag
         writeString( fblock->tag().c_str() );
         // value
-        writeString( fblock->value().c_str() );
+        writeString( fblock->value().c_str() ); // no decoding needed
       }
       break;
 
@@ -1319,21 +1319,13 @@ namespace vl
       // tag
       writeString( obj->tag().c_str() );
       
-      // key/value pairs list
-      int key_value_count = obj->value().size() - 1;
+      // ID
+      writeString( obj->uid().c_str() );
 
-      // ID is the first one
-      if ( obj->uid().length() && obj->uid() != "#NULL" && isUsed(obj->uid()) )
-      {
-        writeString("ID");
-        mOutputFile->writeUInt8( VLX_Binary::ChunkUID );
-        writeString( obj->uid().c_str() );
-        ++key_value_count;
-      }
+      // key/value count
+      writeInteger( obj->value().size() );
 
-      // key/value pairs count, including the ID
-      writeInteger( key_value_count );
-
+      // values
       for(size_t i=0; i<obj->value().size(); ++i)
       {
         // key
@@ -1362,6 +1354,7 @@ namespace vl
       // value count
       writeInteger( list->value().size() );
 
+      // values
       for(size_t i=0; i<list->value().size(); ++i)
         writeValue(list->value()[i]);
     }
@@ -1382,14 +1375,14 @@ namespace vl
     virtual void visitArray(VLX_ArrayReal* arr)
     {
       // header
-      mOutputFile->writeUInt8( VLX_Binary::ChunkArrayReal );
+      mOutputFile->writeUInt8( VLX_Binary::ChunkArrayRealDouble );
       // tag
       writeString(arr->tag().c_str());
-      // value count
+      // count
       writeInteger(arr->value().size());
       // value
       if (arr->value().size())
-        mOutputFile->writeDouble(&arr->value()[0], arr->value().size());
+        mOutputFile->writeDouble(&arr->value().front(), arr->value().size());
     }
 
     /*
@@ -1426,7 +1419,7 @@ namespace vl
 
     void writeInteger(long long i)
     {
-      mOutputFile->writeUInt64((int)i); // mic fixme: encode this
+      mOutputFile->writeSInt64(i); // mic fixme: encode this
     }
 
     void setUIDSet(std::map< std::string, int >* uids) { mUIDSet = uids; }
@@ -2589,9 +2582,27 @@ namespace vl
       }
     }
 
-    bool getChunk(unsigned char& chunk)
+    bool readChunk(unsigned char& chunk)
     {
       return inputFile()->read(&chunk, 1) == 1;
+    }
+
+    bool readInteger(long long& i)
+    {
+      // mic fixme: decode integer
+      return inputFile()->read(&i, sizeof(i)) == sizeof(i);
+    }
+
+    bool readString(std::string& str)
+    {
+      long long len = 0;
+      if (!readInteger(len))
+        return false;
+      if (len == 0)
+        return true;
+      str.resize((size_t)len);
+      bool ok = inputFile()->read(&str.front(), str.length()) == str.length();
+      return ok;
     }
 
     bool parse()
@@ -2638,483 +2649,252 @@ namespace vl
       }
 
       unsigned char chunk;
+      std::string str;
 
-      while(getChunk(chunk))
+      while(readChunk(chunk))
       {
-      //  if(mToken.mType == VLX_Token::TagHeader)
-      //  {
-      //    mLastTag = mToken.mString;
+        if(chunk == VLX_Binary::ChunkStructure)
+        {
+          ref<VLX_Structure> st = new VLX_Structure;
 
-      //    if(getToken(mToken) && mToken.mType == VLX_Token::LeftCurlyBracket)
-      //    {
-      //      ref<VLX_Structure> st = new VLX_Structure;
-      //      st->setLineNumber( tokenizer()->lineNumber() );
+          if (!parseStructure(st.get()))
+          {
+            Log::error( Say("Error parsing binary file at offset %n.\n") << inputFile()->position() );
+            return false;
+          }
 
-      //      if (!parseStructure(st.get()))
-      //      {
-      //        if (mToken.mString.length())
-      //          Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
-      //        else
-      //          Log::error( Say("Line %n : parse error.\n") << mTokenizer->lineNumber() );
-      //        return false;
-      //      }
-
-      //      mStructures.push_back(st);
-      //    }
-      //    else
-      //    {
-      //      Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
-      //      return false;
-      //    }
-      //  }
-      //  else
-      //  {
-      //    Log::error( Say("Line %n : parse error at '%s'.\n") << mTokenizer->lineNumber() << mToken.mString.c_str() );
-      //    return false;
-      //  }
+          mStructures.push_back(st);
+        }
+        else
+        {
+          Log::error( Say("Error parsing binary file at offset %n. Expected chunk structure.\n") << inputFile()->position() );
+          return false;
+        }
       }
 
-      //parseMetadata();
+      parseMetadata();
 
-      //VL_CHECK(mToken.mType == VLX_Token::TOKEN_EOF)
-      //return mToken.mType == VLX_Token::TOKEN_EOF;
-      return false; // mic fixme
+      return true;
     }
 
-    bool parseStructure(VLX_Structure* object)
+    bool parseStructure(VLX_Structure* st)
     {
-      //// consume last tag if there was one
-      //if (!mLastTag.empty())
-      //{
-      //  object->setTag(mLastTag.c_str());
-      //  mLastTag.clear();
-      //}
+      std::string str;
+      
+      // tag
+      if (!readString(str))
+        return false;
+      st->setTag(str.c_str());
 
-      //while(getToken(mToken))
-      //{
-      //  if (mToken.mType == VLX_Token::RightCurlyBracket)
-      //  {
-      //    return true;
-      //  }
-      //  else
-      //  if (mToken.mType == VLX_Token::Identifier)
-      //  {
-      //    // ID field requires a proper #identifier
-      //    if (mToken.mString.length() == 2)
-      //    {
-      //      if (mToken.mString == "ID")
-      //      {
-      //        // Check if ID has already been set
-      //        if (!object->uid().empty() && object->uid() != "#NULL")
-      //        {
-      //          Log::error("ID already set.\n");
-      //          return false;
-      //        }
+      // ID
+      if (!readString(str))
+        return false;
+      st->setUID(str.c_str());
 
-      //        // Equals
-      //        if (!getToken(mToken) || mToken.mType != VLX_Token::Equals)
-      //          return false;
+      // read key/value count
+      long long count = 0;
+      if (!readInteger(count))
+        return false;
 
-      //        // #identifier
-      //        if (getToken(mToken) && mToken.mType == VLX_Token::UID)
-      //        {
-      //          object->setUID(mToken.mString.c_str());
+      // values
+      for(int i=0; i<count; ++i)
+      {
+        VLX_Structure::Value val;
+        
+        // key
+        if (!readString(str))
+          return false;
+        val.setKey(str.c_str());
 
-      //          // UID to Structure Map, #NULL is not mapped to anything
-      //          if( object->uid() != "#NULL")
-      //          {
-      //            if (mLinkMap.find(object->uid()) == mLinkMap.end())
-      //              mLinkMap[ object->uid() ] = object;
-      //            else
-      //            {
-      //              Log::error( Say("Duplicate UID = '%s'.\n") << object->uid() );
-      //              return false;
-      //            }
-      //          }
-      //          continue;
-      //        }
-      //        else
-      //          return false;
-      //      }
-      //      else
-      //      // ID is a reserved keyword: all the other case combinations are illegal
-      //      if (mToken.mString == "Id" || mToken.mString == "iD" || mToken.mString == "id")
-      //        return false;
-      //    }
-
-      //    // non-ID key-values
-      //    object->value().push_back( VLX_Structure::Value() );
-      //    VLX_Structure::Value& name_value = object->value().back();
-
-      //    // Key
-      //    name_value.setKey( mToken.mString.c_str() );
-
-      //    // Equals
-      //    if (!getToken(mToken) || mToken.mType != VLX_Token::Equals)
-      //      return false;
-
-      //    // Member value
-      //    if (getToken(mToken))
-      //    {
-      //      name_value.value().setLineNumber( tokenizer()->lineNumber() );
-
-      //      // A new <Tag>
-      //      if (mToken.mType == VLX_Token::TagHeader)
-      //      {
-      //        if (mLastTag.empty())
-      //        {
-      //          mLastTag = mToken.mString;
-      //          if (!getToken(mToken))
-      //            return false;
-      //        }
-      //        else
-      //          return false;
-      //      }
-
-      //      // A new { Structure }
-      //      if (mToken.mType == VLX_Token::LeftCurlyBracket)
-      //      {
-      //        ref<VLX_Structure> object = new VLX_Structure;
-      //        object->setLineNumber( tokenizer()->lineNumber() );
-      //        name_value.value().setStructure(object.get());
-      //        if (!parseStructure( object.get() ) )
-      //          return false;
-      //      }
-      //      else
-      //      // An [ list ]
-      //      if (mToken.mType == VLX_Token::LeftSquareBracket)
-      //      {
-      //        ref<VLX_List> list = new VLX_List;
-      //        list->setLineNumber( tokenizer()->lineNumber() );
-      //        name_value.value().setList(list.get());
-      //        if ( !parseList( list.get() ) )
-      //          return false;
-      //      }
-      //      else
-      //      // An ( array )
-      //      if (mToken.mType == VLX_Token::LeftRoundBracket)
-      //      {
-      //        ref<VLX_Array> arr;
-      //        if ( parseArray( arr ) )
-      //          name_value.value().setArray(arr.get());
-      //        else
-      //          return false;
-      //      }
-      //      else
-      //      // A {< rawtext block >}
-      //      if (mToken.mType == VLX_Token::LeftFancyBracket)
-      //      {
-      //        if(!getToken(mToken) || mToken.mType != VLX_Token::RawtextBlock)
-      //          return false;
-      //        name_value.value().setRawtextBlock( new VLX_RawtextBlock(mLastTag.c_str()) );
-      //        name_value.value().getRawtextBlock()->setValue( mToken.mString.c_str() );
-      //        // consume the tag
-      //        mLastTag.clear();
-      //        if(!getToken(mToken) || mToken.mType != VLX_Token::RightFancyBracket)
-      //          return false;
-      //      }
-      //      else
-      //      // A "string"
-      //      if (mToken.mType == VLX_Token::String)
-      //      {
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        name_value.value().setString(mToken.mString.c_str());
-      //      }
-      //      else
-      //      // An Identifier
-      //      if (mToken.mType == VLX_Token::Identifier)
-      //      {
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        name_value.value().setIdentifier(mToken.mString.c_str());
-      //      }
-      //      else
-      //      // An #id
-      //      if (mToken.mType == VLX_Token::UID)
-      //      {
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        name_value.value().setUID(mToken.mString.c_str());
-      //      }
-      //      else
-      //      // A boolean true/false
-      //      if (mToken.mType == VLX_Token::Boolean)
-      //      {
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        name_value.value().setBool(mToken.mString == "true");
-      //      }
-      //      else
-      //      // An integer
-      //      if (mToken.mType == VLX_Token::Integer)
-      //      {
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        name_value.value().setInteger( atoll(mToken.mString.c_str()) );
-      //      }
-      //      else
-      //      // A float
-      //      if (mToken.mType == VLX_Token::Real)
-      //      {
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        name_value.value().setReal( atof(mToken.mString.c_str()) );
-      //      }
-      //      else
-      //        return false;
-      //    }
-      //  }
-      //  else
-      //    return false;
-      //}
-      return false;
+        // value
+        if (!readValue(val.value()))
+          return false;
+        st->value().push_back(val);
+      }
+      
+      return true;
     }
 
     bool parseList(VLX_List* list)
     {
-      //// consume last tag if there was one
-      //if (!mLastTag.empty())
-      //{
-      //  list->setTag(mLastTag.c_str());
-      //  mLastTag.clear();
-      //}
+      std::string str;
+      
+      // tag
+      if (!readString(str))
+        return false;
+      list->setTag(str.c_str());
 
-      //while(getToken(mToken))
-      //{
-      //  if (mToken.mType == VLX_Token::RightSquareBracket)
-      //    return true;
-      //  else
-      //  {
-      //    VLX_Value value;
-      //    value.setLineNumber( tokenizer()->lineNumber() );
-      //    switch( mToken.mType )
-      //    {
-      //      // <tag>
-      //      case VLX_Token::TagHeader:
-      //        {
-      //          if (mLastTag.empty())
-      //            mLastTag = mToken.mString;
-      //          else
-      //            return false;
-      //          break;
-      //        }
+      // read value count
+      long long count = 0;
+      if (!readInteger(count))
+        return false;
 
-      //      // object
-      //      case VLX_Token::LeftCurlyBracket:
-      //        {
-      //          ref<VLX_Structure> object = new VLX_Structure;
-      //          object->setLineNumber( tokenizer()->lineNumber() );
-      //          if ( parseStructure( object.get() ) )
-      //          {
-      //            value.setStructure(object.get());
-      //            list->value().push_back( value );
-      //          }
-      //          else
-      //            return false;
-      //          break;
-      //        }
+      // values
+      for(int i=0; i<count; ++i)
+      {
+        VLX_Value val;
+        
+        if (!readValue(val))
+          return false;
+        else
+          list->value().push_back(val);
+      }
 
-      //      // list
-      //      case VLX_Token::LeftSquareBracket:
-      //        {
-      //          ref<VLX_List> sub_list = new VLX_List;
-      //          sub_list->setLineNumber( tokenizer()->lineNumber() );
-      //          if ( parseList( sub_list.get() ) )
-      //          {
-      //            value.setList( sub_list.get() );
-      //            list->value().push_back( value );
-      //          }
-      //          else
-      //            return false;
-      //          break;
-      //        }
-
-      //      // array
-      //      case VLX_Token::LeftRoundBracket:
-      //        {
-      //          ref<VLX_Array> arr;
-      //          if (parseArray(arr))
-      //          {
-      //            value.setArray(arr.get());
-      //            list->value().push_back(value);
-      //          }
-      //          else
-      //            return false;
-      //          break;
-      //        }
-
-      //      // string
-      //      case VLX_Token::String:
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        value.setString( mToken.mString.c_str() ); list->value().push_back( value );
-      //        break;
-
-      //      // identifier
-      //      case VLX_Token::Identifier:
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        value.setIdentifier( mToken.mString.c_str() ); list->value().push_back( value );
-      //        break;
-
-      //      // A {< rawtext block >}
-      //      case VLX_Token::LeftFancyBracket:
-      //      {
-      //        if(!getToken(mToken) || mToken.mType != VLX_Token::RawtextBlock)
-      //          return false;
-      //        
-      //        value.setRawtextBlock( new VLX_RawtextBlock(mLastTag.c_str()) );
-      //        value.getRawtextBlock()->setValue( mToken.mString.c_str() );
-      //        list->value().push_back( value );
-      //        // consume the tag
-      //        mLastTag.clear();
-
-      //        if(!getToken(mToken) || mToken.mType != VLX_Token::RightFancyBracket)
-      //          return false;
-      //        break;
-      //      }
-
-      //      // UID
-      //      case VLX_Token::UID:
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        value.setUID( mToken.mString.c_str() ); list->value().push_back( value );
-      //        break;
-
-      //      // boolean
-      //      case VLX_Token::Boolean:
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        value.setBool( mToken.mString == "true" ); list->value().push_back( value );
-      //        break;
-
-      //      // int
-      //      case VLX_Token::Integer:
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        value.setInteger( atoll(mToken.mString.c_str()) ); list->value().push_back( value );
-      //        break;
-
-      //      // float
-      //      case VLX_Token::Real:
-      //        if (!mLastTag.empty())
-      //          return false;
-      //        value.setReal( atof(mToken.mString.c_str()) ); list->value().push_back( value );
-      //        break;
-
-      //    default:
-      //      return false;
-      //    }
-      //  }
-      //}
-      return false;
+      return true;
     }
 
-    bool parseArray(ref<VLX_Array>& arr)
+    bool readValue(VLX_Value& val)
     {
-      //// consume last tag if there was one
-      //struct struct_consume_tag
-      //{
-      //  struct_consume_tag(ref<VLX_Array>* p1, std::string* p2): p_arr(p1), p_tag(p2) {}
+      unsigned char chunk = 0;
 
-      // ~struct_consume_tag()
-      //  {
-      //    if ((*p_arr).get() && !p_tag->empty())
-      //    {
-      //      (*p_arr)->setTag(p_tag->c_str());
-      //      p_tag->clear();
-      //    }
-      //  }
+      if (!readChunk(chunk))
+        return false;
 
-      //  ref<VLX_Array>* p_arr;
-      //  std::string* p_tag;
-      //} consume_tag(&arr, &mLastTag);
+      std::string str;
 
-      //if(getToken(mToken))
-      //{
-      //  // (1) from the fist token we decide what kind of array it is going to be
-      //  // (2) empty arrays default to empty VLX_ArrayInteger
+      switch(chunk)
+      {
 
-      //  if (mToken.mType == VLX_Token::RightRoundBracket)
-      //  {
-      //    arr = new VLX_ArrayInteger;
-      //    return true;
-      //  }
-      //  /*
-      //  else
-      //  if (mToken.mType == VLX_Token::String)
-      //  {
-      //    ref<VLX_ArrayString> arr_string;
-      //    arr = arr_string = new VLX_ArrayString;
-      //    do 
-      //      arr_string->mValue.push_back(mToken.mString);
-      //    while(getToken(mToken) && mToken.mType == VLX_Token::String);
-      //    return mToken.mType == VLX_Token::RightRoundBracket;
-      //  }
-      //  else
-      //  if (mToken.mType == VLX_Token::Identifier)
-      //  {
-      //    ref<VLX_ArrayIdentifier> arr_identifier;
-      //    arr = arr_identifier = new VLX_ArrayIdentifier;
-      //    do 
-      //      arr_identifier->mValue.push_back(mToken.mString);
-      //    while(getToken(mToken) && mToken.mType == VLX_Token::Identifier);
-      //    return mToken.mType == VLX_Token::RightRoundBracket;
-      //  }
-      //  else
-      //  if (mToken.mType == VLX_Token::UID)
-      //  {
-      //    ref<VLX_ArrayUID> arr_uid;
-      //    arr = arr_uid = new VLX_ArrayUID;
-      //    do
-      //      arr_uid->mValue.push_back(mToken.mString.c_str());
-      //    while(getToken(mToken) && mToken.mType == VLX_Token::UID);
-      //    return mToken.mType == VLX_Token::RightRoundBracket;
-      //  }
-      //  */
-      //  else
-      //  if (mToken.mType == VLX_Token::Integer)
-      //  {
-      //    ref<VLX_ArrayInteger> arr_integer;
-      //    arr = arr_integer = new VLX_ArrayInteger;
-      //    do
-      //    {
-      //      switch(mToken.mType)
-      //      {
-      //      case VLX_Token::Integer: arr_integer->value().push_back( atoll( mToken.mString.c_str() ) ); break;
-      //      case VLX_Token::RightRoundBracket: return true;
-      //      default:
-      //        return false;
-      //      }
-      //    }
-      //    while(getToken(mToken));
-      //    return false;
-      //  }
-      //  else
-      //  if (mToken.mType == VLX_Token::Real)
-      //  {
-      //    ref<VLX_ArrayReal> arr_floating;
-      //    arr = arr_floating = new VLX_ArrayReal;
-      //    do
-      //    {
-      //      switch(mToken.mType)
-      //      {
-      //      case VLX_Token::Integer:
-      //      case VLX_Token::Real: arr_floating->mValue.push_back( atof( mToken.mString.c_str() ) ); break;
-      //      case VLX_Token::RightRoundBracket: return true;
-      //      default:
-      //        return false;
-      //      }
-      //    }
-      //    while(getToken(mToken));
-      //    return false;
-      //  }
-      //  else
-      //    return false;
-      //}
+      case VLX_Binary::ChunkStructure:
+        val.setStructure( new VLX_Structure );
+        return parseStructure( val.getStructure() );
+      
+      case VLX_Binary::ChunkList:
+        val.setList( new VLX_List );
+        return parseList( val.getList() );
 
-      return false;
+      case VLX_Binary::ChunkArrayInteger:
+        {
+          // tag
+          if (!readString(str))
+            return false;
+          else
+            val.setArrayInteger( new VLX_ArrayInteger( str.c_str() ) );
+
+          // count
+          long long count = 0;
+          if (!readInteger(count))
+            return false;
+
+          // values
+          VLX_ArrayInteger& arr = *val.getArrayInteger();
+          arr.value().resize( (size_t)count );
+          for(int i=0; i<count; ++i)
+          {
+            long long v = 0;
+            if (!readInteger(v))
+              return false;
+            arr.value()[i] = v;
+          }
+          return true;
+        }
+
+      case VLX_Binary::ChunkArrayRealDouble:
+        {
+          // tag
+          if (!readString(str))
+            return false;
+          else
+            val.setArrayReal( new VLX_ArrayReal( str.c_str() ) );
+          // count
+          long long count = 0;
+          if (!readInteger(count))
+            return false;
+          // values
+          VLX_ArrayReal& arr = *val.getArrayReal();
+          arr.value().resize( (size_t)count );
+          if (count)
+          {
+            long long c = inputFile()->readDouble( &arr.value().front(), count );
+            VL_CHECK(c == count * sizeof(double))
+            return c == count * sizeof(double);
+          }
+          else
+            return true;
+        }
+
+      case VLX_Binary::ChunkRawtext:
+        // tag
+        if (!readString(str))
+          return false;
+        else
+          val.setRawtextBlock( new VLX_RawtextBlock( str.c_str() ) );
+        // value
+        if (!readString(str))
+          return false;
+        else
+        {
+          val.getRawtextBlock()->setValue( str.c_str() );
+          return true;
+        }
+
+      case VLX_Binary::ChunkInteger:
+        {
+          long long i = 0;
+          if (!readInteger(i))
+            return false;
+          else
+          {
+            val.setInteger(i);
+            return true;
+          }
+        }
+     
+      case VLX_Binary::ChunkRealDouble:
+        {
+          double d = 0;
+          if (inputFile()->readDouble(&d, 1) != sizeof(double))
+            return false;
+          else
+          {
+            val.setReal(d);
+            return true;
+          }
+        }
+
+      case VLX_Binary::ChunkString:
+        if (!readString(str))
+          return false;
+        else
+        {
+          val.setString(str.c_str());
+          return true;
+        }
+
+      case VLX_Binary::ChunkIdentifier:
+        if (!readString(str))
+          return false;
+        else
+        {
+          val.setIdentifier(str.c_str());
+          return true;
+        }
+
+      case VLX_Binary::ChunkUID:
+        if (!readString(str))
+          return false;
+        else
+        {
+          val.setUID(str.c_str());
+          return true;
+        }
+
+      case VLX_Binary::ChunkBool:
+        {
+          unsigned char boolean = false;
+          if ( inputFile()->readUInt8(&boolean, 1) != 1 )
+            return false;
+          else
+          {
+            val.setBool( boolean != 0 );
+            return true;
+          }
+        }
+
+      default:
+        return false;
+
+      }
     }
 
     const std::map< std::string, ref<VLX_Structure> >& linkMap() const { return mLinkMap; }
