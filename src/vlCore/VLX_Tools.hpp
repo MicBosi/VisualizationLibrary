@@ -51,6 +51,10 @@
 
 namespace vl
 {
+  //---------------------------------------------------------------------------
+  // utilty functions
+  bool compress(const void* data, size_t size, std::vector<unsigned char>& out, int level);
+  bool decompress(const void* cdata, size_t csize, void* data_out);
   //-----------------------------------------------------------------------------
   class VLX_Structure;
   class VLX_List;
@@ -599,7 +603,6 @@ namespace vl
       VLX_RawtextBlock* mRawtextBlock;
     } mUnion;
 
-  private:
     EType mType;
     int mLineNumber; // the line number coming from the tokenizer
   };
@@ -1176,6 +1179,7 @@ namespace vl
       ChunkStructure = 1,
       ChunkList,
       ChunkArrayRealDouble,
+      ChunkArrayRealFloat,
       ChunkArrayInteger,
       ChunkRawtext,
       ChunkString,
@@ -1381,17 +1385,49 @@ namespace vl
       }
     }
 
+    bool needsDoublePrecision(const double* in, size_t count)
+    {
+      for(size_t i=0; i<count; ++i)
+      {
+        float f = (float)in[i];
+        if ((double)f != in[i])
+          return true;
+      }
+
+      return false;
+    }
+
     virtual void visitArray(VLX_ArrayReal* arr)
     {
+      bool needs_double = arr->value().empty() ? false : needsDoublePrecision(&arr->value()[0], arr->value().size());
+
       // header
-      mOutputFile->writeUInt8( VLX_Binary::ChunkArrayRealDouble );
+      mOutputFile->writeUInt8( (unsigned char)(needs_double ? VLX_Binary::ChunkArrayRealDouble : VLX_Binary::ChunkArrayRealFloat) );
       // tag
       writeString(arr->tag().c_str());
       // count
       writeInteger(arr->value().size());
       // value
       if (arr->value().size())
-        mOutputFile->writeDouble(&arr->value().front(), arr->value().size());
+      {
+#if 1
+        if (needs_double)
+          mOutputFile->writeDouble(&arr->value().front(), arr->value().size());
+        else
+        {
+          std::vector<float> floats;
+          floats.resize(arr->value().size());
+          for(size_t i=0; i<arr->value().size(); ++i)
+            floats[i] = (float)arr->value()[i];
+          mOutputFile->writeFloat(&floats[0], floats.size());
+        }
+#else
+        std::vector<unsigned char> zipped;
+        compress( &arr->value()[0], arr->value().size() * sizeof(arr->value()[0]), zipped, 1 );
+        writeInteger( zipped.size() );
+        mOutputFile->write(&zipped[0], zipped.size());
+#endif
+      }
     }
 
     /*
@@ -2895,7 +2931,7 @@ namespace vl
             if (encode_count)
             {
               std::vector<unsigned char> encoded;
-              encoded.resize(encode_count);
+              encoded.resize((size_t)encode_count);
               inputFile()->readUInt8(&encoded[0], encode_count);
               decodeIntegers(encoded, arr.value());
             }
@@ -2920,9 +2956,60 @@ namespace vl
           arr.value().resize( (size_t)count );
           if (count)
           {
+#if 1
             long long c = inputFile()->readDouble( &arr.value().front(), count );
             VL_CHECK(c == count * sizeof(double))
             return c == count * sizeof(double);
+#elif 0
+            long long zsize = 0;
+            readInteger(zsize);
+            std::vector<unsigned char> zipped;
+            zipped.resize((size_t)zsize);
+            inputFile()->read(&zipped[0], zipped.size());
+            bool ok = decompress(&zipped[0], (size_t)zsize, &arr.value()[0]);
+            VL_CHECK(ok);
+            return ok;
+#endif
+          }
+          else
+            return true;
+        }
+
+      case VLX_Binary::ChunkArrayRealFloat:
+        {
+          // tag
+          if (!readString(str))
+            return false;
+          else
+            val.setArrayReal( new VLX_ArrayReal( str.c_str() ) );
+          // count
+          long long count = 0;
+          if (!readInteger(count))
+            return false;
+          // values
+          VLX_ArrayReal& arr = *val.getArrayReal();
+          arr.value().resize( (size_t)count );
+          if (count)
+          {
+#if 1
+            std::vector<float> floats;
+            floats.resize( (size_t)count );
+            long long c = inputFile()->readFloat( &floats[0], count );
+            // copy over floats to doubles
+            for(size_t i=0; i<floats.size(); ++i)
+              arr.value()[i] = floats[i];
+            VL_CHECK(c == count * sizeof(float))
+            return c == count * sizeof(float);
+#elif 0
+            long long zsize = 0;
+            readInteger(zsize);
+            std::vector<unsigned char> zipped;
+            zipped.resize((size_t)zsize);
+            inputFile()->read(&zipped[0], zipped.size());
+            bool ok = decompress(&zipped[0], (size_t)zsize, &arr.value()[0]);
+            VL_CHECK(ok);
+            return ok;
+#endif
           }
           else
             return true;

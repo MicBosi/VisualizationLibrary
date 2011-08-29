@@ -38,8 +38,21 @@
 #include <vlGraphics/BezierSurface.hpp>
 #include <vlGraphics/plugins/vlVLX.hpp>
 #include <vlCore/VLX_Tools.hpp>
+#include <vlCore/ZippedFile.hpp>
 
 using namespace vl;
+
+bool checkFloatness(const double* in, size_t count)
+{
+  for(size_t i=0; i<count; ++i)
+  {
+    float f = (float)in[i];
+    if ((double)f != in[i])
+      return false;
+  }
+
+  return true;
+}
 
 class App_VLX: public BaseDemo
 {
@@ -47,6 +60,41 @@ public:
   virtual void initEvent()
   {
     Log::notify(appletInfo());
+
+#if 0
+    std::vector<unsigned char> compressed;
+    std::vector<double> double_in;
+    std::vector<double> double_out;
+    for(size_t i=0; i<1000; ++i)
+    {
+      double_in.push_back( ((rand() - RAND_MAX / 2) / double(rand() - RAND_MAX / 2)) );
+      // double_in.push_back( i );
+      if (i > 0)
+      {
+        long long* prev = (long long*)&double_in[i-1];
+        long long* cur  = (long long*)&double_in[i];
+        long long xor = (*prev) ^ (*cur);
+        // xor = 0xFFFFFFFFFFFFFFFF;
+        // printf("%8.2Lf -> %8.2Lf : %016llx -> %016llx: %016llx\n", *prev, *cur, *prev, *cur, xor);
+      }
+    }
+    
+    double_out.resize(double_in.size());
+
+    VL_CHECK(checkFloatness(&double_in[0], double_in.size()))
+
+    vl::compress( &double_in[0], sizeof(double_in[0]) * double_in.size(), compressed, 1 );
+    vl::decompress( &compressed[0], compressed.size(), &double_out[0] );
+
+    float bytes_c = (float)compressed.size();
+    float bytes_d = (float)sizeof(double) * double_out.size();
+    
+    printf("compression = %.2f%%\n", bytes_c / bytes_d);
+
+    VL_CHECK( memcmp(&double_in[0], &double_out[0], sizeof(double)*double_out.size()) == 0 );
+#endif
+
+    // VL_TRAP();
 
     //VLX_Tokenizer tokenizer;
     //tokenizer.setInputFile( new DiskFile("D:/VL/test.vl") );
@@ -176,9 +224,9 @@ public:
     // mic fixme: we should need a mechanism that user_made objects are exported by user_made exporters.
 
     ref<ResourceDatabase> res_db = new ResourceDatabase;
-#if 1
+#if 0
   #if 1
-      for (int i=0; i<1; ++i)
+      for (int i=0; i<100; ++i)
       {
         ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 16 );
         geom->computeNormals();
