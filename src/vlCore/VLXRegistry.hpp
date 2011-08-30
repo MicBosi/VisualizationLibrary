@@ -60,8 +60,8 @@ namespace vl
     std::map< const TypeInfo*, ref<VLXClassWrapper> > mExportRegistry; // TypeInfo --> VLXClassWrapper
   };
 
-  VLXRegistry* defVLXRegistry();
-  void setVLXRegistry(VLXRegistry* reg);
+  VLCORE_EXPORT VLXRegistry* defVLXRegistry();
+  VLCORE_EXPORT void setVLXRegistry(VLXRegistry* reg);
 }
 
 #endif
