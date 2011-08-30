@@ -33,6 +33,7 @@
 #define VLXVisitor_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
+#include <set>
 
 namespace vl
 {

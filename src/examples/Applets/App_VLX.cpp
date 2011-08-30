@@ -29,15 +29,11 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-// mic fixme
-#include <vlCore/VLXTools.hpp>
-
 #include "BaseDemo.hpp"
 #include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/DistanceLODEvaluator.hpp>
 #include <vlGraphics/BezierSurface.hpp>
 #include <vlGraphics/plugins/vlVLX.hpp>
-#include <vlCore/VLXTools.hpp>
 #include <vlCore/ZippedFile.hpp>
 
 using namespace vl;
@@ -96,18 +92,18 @@ public:
 
     // VL_TRAP();
 
-    //VLXTokenizer tokenizer;
+    //VLTTokenizer tokenizer;
     //tokenizer.setInputFile( new DiskFile("D:/VL/test.vl") );
-    //VLXToken token;
-    //while(tokenizer.getToken(token) && token.mType != VLXToken::TOKEN_EOF)
+    //VLTToken token;
+    //while(tokenizer.getToken(token) && token.mType != VLTToken::TOKEN_EOF)
     //  printf(">> %s\n", token.mString.c_str());
 
 #if 0 // general input/output tests
-    VLT_Parser parser;
+    VLXParserVLT parser;
     parser.tokenizer()->setInputFile( new DiskFile("D:/VL/in.vlx") );
     if ( parser.parse() )
     {
-      VLT_ExportVisitor exporter;
+      VLXVisitorExportToVLT exporter;
       exporter.visitStructure( parser.root() );
       DiskFile file;
       file.open("D:/VL/out.vlx", OM_WriteOnly);

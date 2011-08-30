@@ -34,11 +34,13 @@
 
 #include <vlCore/VLXRegistry.hpp>
 #include <vlCore/VLXValue.hpp>
+#include <vlCore/String.hpp>
 #include <string>
 #include <map>
 
 namespace vl
 {
+  class VirtualFile;
   class VLXSerializer: public Object
   {
   public:
@@ -50,155 +52,6 @@ namespace vl
       setRegistry( defVLXRegistry() );
     }
 
-    void signalImportError(const String& str) 
-    { 
-      // signal only the first one
-      if (!error())
-      {
-        Log::error( str );
-        setError( VLXSerializer::ImportError );
-      }
-    }
-
-    void signalExportError(const String& str)
-    { 
-      // signal only the first one
-      if (!error())
-      {
-        Log::error( str );
-        setError( VLXSerializer::ExportError ); 
-      }
-    }
-
-    std::string generateUID(const char* prefix)
-    {
-      std::stringstream strstr;
-      strstr << "#" << prefix << "id" << getNewUID();
-      return strstr.str();
-    }
-
-    Object* importVLX(const VLXStructure* st)
-    {
-      if (error())
-        return NULL;
-
-      Object* obj = getImportedStructure(st);
-      if (obj)
-        return obj;
-      else
-      {
-        std::map< std::string, ref<VLXIO> >::iterator it = registry()->importRegistry().find(st->tag());
-        if (it != registry()->importRegistry().end())
-        {
-          VLXIO* serializer = it->second.get_writable();
-          VL_CHECK(serializer);
-          // import structure
-          ref<Object> obj = serializer->importVLX(*this, st);
-          if (!obj)
-          {
-            setError(ImportError);
-            Log::error( Say("Error importing structure '%s'.") << st->tag() );
-            VL_TRAP()
-          }
-          return obj.get();
-        }
-        else
-        {
-          setError(ImportError);
-          Log::error( Say("No serializer found for structure '%s'.") << st->tag() );
-          VL_TRAP();
-          return NULL;
-        }
-      }
-    }
-
-    VLXStructure* exportVLX(const Object* obj)
-    {
-      if (error())
-        return NULL;
-
-      VLXStructure* st = getExportedObject(obj);
-      if (st)
-        return st;
-      else
-      {
-        std::map< const TypeInfo*, ref<VLXIO> >::iterator it = registry()->exportRegistry().find(obj->classType());
-        if (it != registry()->exportRegistry().end())
-        {
-          VLXIO* serializer = it->second.get_writable();
-          VL_CHECK(serializer);
-          // export object
-          ref<VLXStructure> st = serializer->exportVLX(*this, obj);
-          if (!st)
-          {
-            setError(ExportError);
-            Log::error( Say("Error exporting '%s'.") << obj->classType()->name() );
-            VL_TRAP()
-          }
-          return st.get();
-        }
-        else
-        {
-          setError(ExportError);
-          Log::error( Say("No serializer found for '%s'.") << obj->classType()->name() );
-          VL_TRAP()
-          return NULL;
-        }
-      }
-    }
-
-    bool canExport(const Object* obj) const 
-    { 
-      if (!registry())
-        return false;
-      else
-        return registry()->exportRegistry().find(obj->classType()) != registry()->exportRegistry().end(); 
-    }
-
-    bool canImport(const VLXStructure* st) const 
-    { 
-      if (!registry())
-        return false;
-      else
-        return registry()->importRegistry().find(st->tag()) != registry()->importRegistry().end(); 
-    }
-
-    void registerImportedStructure(const VLXStructure* st, Object* obj) 
-    {
-      VL_CHECK( mImportedStructures.find(st) == mImportedStructures.end() )
-      mImportedStructures[st] = obj;
-    }
-
-    void registerExportedObject(const Object* obj, VLXStructure* st)
-    {
-      VL_CHECK(mExportedObjects.find(obj) == mExportedObjects.end())
-      mExportedObjects[obj] = st;
-    }
-
-    Object* getImportedStructure(const VLXStructure* st)
-    {
-      std::map< ref<VLXStructure>, ref<Object> >::iterator it = mImportedStructures.find(st);
-      if (it == mImportedStructures.end())
-        return NULL;
-      else
-      {
-        VL_CHECK(it->second.get_writable() != NULL)
-        return it->second.get_writable();
-      }
-    }
-
-    VLXStructure* getExportedObject(const Object* obj)
-    {
-      std::map< ref<Object>, ref<VLXStructure> >::iterator it = mExportedObjects.find(obj);
-      if (it == mExportedObjects.end())
-        return NULL;
-      else
-      {
-        VL_CHECK(it->second.get_writable() != NULL)
-        return it->second.get_writable();
-      }
-    }
-    
     bool saveVLT(const String& path, const Object* obj, bool start_fresh=true);
 
     bool saveVLT(VirtualFile* file, const Object* obj, bool start_fresh=true);
@@ -215,11 +68,22 @@ namespace vl
 
     ref<Object> loadVLB(VirtualFile* file, bool start_fresh=true);
 
-    int getNewUID() { return ++mUIDCounter; }
+    Object* importVLX(const VLXStructure* st);
 
-    EError error() const { return mError; }
-    void setError(EError err) { mError = err; }
+    VLXStructure* exportVLX(const Object* obj);
 
+    bool canExport(const Object* obj) const;
+
+    bool canImport(const VLXStructure* st) const;
+
+    void registerImportedStructure(const VLXStructure* st, Object* obj);
+
+    void registerExportedObject(const Object* obj, VLXStructure* st);
+
+    Object* getImportedStructure(const VLXStructure* st);
+
+    VLXStructure* getExportedObject(const Object* obj);
+    
     //! The VLXRegistry used by the serializer, by default set to vl::defVLXRegistry().
     VLXRegistry* registry() { return mRegistry.get(); }
 
@@ -228,14 +92,6 @@ namespace vl
     
     //! The VLXRegistry used by the serializer, by default set to vl::defVLXRegistry().
     void setRegistry(const VLXRegistry* registry) { mRegistry = registry; }
-
-    void reset()
-    {
-      mError = NoError;
-      mUIDCounter = 0;
-      mImportedStructures.clear();
-      mExportedObjects.clear();
-    }
 
     //! The metadata to be imported or exported.
     std::map< std::string, VLXValue >& metadata() { return mMetadata; }
@@ -262,6 +118,26 @@ namespace vl
       else
         return &it->second;
     }
+
+    void reset()
+    {
+      mError = NoError;
+      mUIDCounter = 0;
+      mImportedStructures.clear();
+      mExportedObjects.clear();
+    }
+
+    std::string generateUID(const char* prefix);
+
+    //! Sets a serialization error.
+    void setError(EError err) { mError = err; }
+
+    //! The last signaled error
+    EError error() const { return mError; }
+
+    void signalImportError(const String& str);
+
+    void signalExportError(const String& str);
 
   private:
     EError mError;
