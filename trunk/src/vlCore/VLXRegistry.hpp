@@ -29,33 +29,38 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLX_INCLUDE_ONCE
-#define VLX_INCLUDE_ONCE
+#ifndef VLXRegistry_INCLUDE_ONCE
+#define VLXRegistry_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
-#include <vlCore/Say.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/BufferedStream.hpp>
-#include <vlCore/Vector4.hpp>
-#include <map>
-#include <set>
-#include <sstream>
-#include <cstdlib>
-#include <cstdarg>
-#include <cstring>
-
-#include <vlCore/VLXSerializer.hpp>
-#include <vlCore/VLXVisitorLinker.hpp>
-#include <vlCore/VLXVisitorCollectUID.hpp>
-#include <vlCore/VLXValue.hpp>
-#include <vlCore/VLXRegistry.hpp>
-#include <vlCore/VLXParserVLT.hpp>
-#include <vlCore/VLXParserVLB.hpp>
-#include <vlCore/VLXParser.hpp>
-#include <vlCore/VLXLinker.hpp>
 #include <vlCore/VLXIO.hpp>
-#include <vlCore/VLTTokenizer.hpp>
-#include <vlCore/VLXVisitorExportToVLT.hpp>
-#include <vlCore/VLXVisitorExportToVLB.hpp>
+#include <string>
+#include <map>
+
+namespace vl
+{
+  class VLXRegistry: public Object
+  {
+  public:
+    void addSerializer(const TypeInfo* type, VLXIO* serializer)
+    {
+      std::string tag = std::string("<") + type->name() + ">";
+      mExportRegistry[type] = serializer; 
+      mImportRegistry[tag]  = serializer; 
+    }
+
+    std::map< std::string, ref<VLXIO> >& importRegistry() { return mImportRegistry; }
+    std::map< const TypeInfo*, ref<VLXIO> >& exportRegistry() { return mExportRegistry; }
+
+    const std::map< std::string, ref<VLXIO> >& importRegistry() const { return mImportRegistry; }
+    const std::map< const TypeInfo*, ref<VLXIO> >& exportRegistry() const { return mExportRegistry; }
+
+  private:
+    std::map< std::string, ref<VLXIO> > mImportRegistry;     // <tag> --> VLXIO
+    std::map< const TypeInfo*, ref<VLXIO> > mExportRegistry; // TypeInfo --> VLXIO
+  };
+
+  VLXRegistry* defVLXRegistry();
+  void setVLXRegistry(VLXRegistry* reg);
+}
 
 #endif

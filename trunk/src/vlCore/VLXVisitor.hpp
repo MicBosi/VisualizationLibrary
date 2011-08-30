@@ -29,33 +29,56 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLX_INCLUDE_ONCE
-#define VLX_INCLUDE_ONCE
+#ifndef VLXVisitor_INCLUDE_ONCE
+#define VLXVisitor_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlCore/Say.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/BufferedStream.hpp>
-#include <vlCore/Vector4.hpp>
-#include <map>
-#include <set>
-#include <sstream>
-#include <cstdlib>
-#include <cstdarg>
-#include <cstring>
 
-#include <vlCore/VLXSerializer.hpp>
-#include <vlCore/VLXVisitorLinker.hpp>
-#include <vlCore/VLXVisitorCollectUID.hpp>
-#include <vlCore/VLXValue.hpp>
-#include <vlCore/VLXRegistry.hpp>
-#include <vlCore/VLXParserVLT.hpp>
-#include <vlCore/VLXParserVLB.hpp>
-#include <vlCore/VLXParser.hpp>
-#include <vlCore/VLXLinker.hpp>
-#include <vlCore/VLXIO.hpp>
-#include <vlCore/VLTTokenizer.hpp>
-#include <vlCore/VLXVisitorExportToVLT.hpp>
-#include <vlCore/VLXVisitorExportToVLB.hpp>
+namespace vl
+{
+  class VLXStructure;
+  class VLXList;
+  class VLXRawtextBlock;
+  class VLXArray;
+  class VLXArrayInteger;
+  class VLXArrayReal;
+  /*
+  class VLXArrayString;
+  class VLXArrayIdentifier;
+  class VLXArrayUID;
+  */
+  //-----------------------------------------------------------------------------
+  class VLXVisitor: public Object
+  {
+  public:
+    virtual void visitStructure(VLXStructure*) {}
+    virtual void visitList(VLXList*) {}
+    virtual void visitRawtextBlock(VLXRawtextBlock*) {}
+    virtual void visitArray(VLXArrayInteger*) {}
+    virtual void visitArray(VLXArrayReal*) {}
+    /*
+    virtual void visitArray(VLXArrayString*) {}
+    virtual void visitArray(VLXArrayIdentifier*) {}
+    virtual void visitArray(VLXArrayUID*) {}
+    */
+
+    bool isVisited(void* node)
+    {
+      std::set< void* >::iterator it = mVisited.find(node);
+      if (it == mVisited.end())
+      {
+        mVisited.insert(node);
+        return false;
+      }
+      else 
+        return true;
+    }
+    
+    void resetVisitedNodes() { mVisited.clear(); };
+
+  private:
+    std::set< void* > mVisited;
+  };
+}
 
 #endif

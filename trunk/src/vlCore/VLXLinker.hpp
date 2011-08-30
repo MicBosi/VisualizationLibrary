@@ -29,33 +29,55 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLX_INCLUDE_ONCE
-#define VLX_INCLUDE_ONCE
+#ifndef VLXLinker_INCLUDE_ONCE
+#define VLXLinker_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
-#include <vlCore/Say.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/BufferedStream.hpp>
-#include <vlCore/Vector4.hpp>
-#include <map>
-#include <set>
-#include <sstream>
-#include <cstdlib>
-#include <cstdarg>
-#include <cstring>
-
-#include <vlCore/VLXSerializer.hpp>
 #include <vlCore/VLXVisitorLinker.hpp>
-#include <vlCore/VLXVisitorCollectUID.hpp>
-#include <vlCore/VLXValue.hpp>
-#include <vlCore/VLXRegistry.hpp>
-#include <vlCore/VLXParserVLT.hpp>
-#include <vlCore/VLXParserVLB.hpp>
-#include <vlCore/VLXParser.hpp>
-#include <vlCore/VLXLinker.hpp>
-#include <vlCore/VLXIO.hpp>
-#include <vlCore/VLTTokenizer.hpp>
-#include <vlCore/VLXVisitorExportToVLT.hpp>
-#include <vlCore/VLXVisitorExportToVLB.hpp>
+#include <vlCore/VLXVisitorLinkMapper.hpp>
+
+namespace vl
+{
+  //-----------------------------------------------------------------------------
+  // Links several hierachies also resolving UIDs across them.
+  //-----------------------------------------------------------------------------
+  class VLXLinker
+  {
+  public:
+    void add(VLXTaggedValue* module)
+    {
+      mModules.push_back(module);
+    }
+
+    bool link()
+    {
+      std::map< std::string, ref<VLXStructure> > link_map;
+
+      // map all the UIDs to the appropriate VLXStructures
+      VLXVisitorLinkMapper link_mapper(&link_map);
+      for(size_t i=0; i<mModules.size(); ++i)
+        mModules[i]->acceptVisitor(&link_mapper);
+
+      if (link_mapper.error())
+        return false;
+
+      // link all the UIDs to the associated VLXStructure
+      VLXVisitorLinker linker(&link_map);
+      for(size_t i=0; i<mModules.size(); ++i)
+        mModules[i]->acceptVisitor(&linker);
+
+      if (linker.error())
+        return false;
+
+      return true;
+    }
+
+    std::vector< ref<VLXTaggedValue> >& modules() { return mModules; }
+
+    const std::vector< ref<VLXTaggedValue> >& modules() const { return mModules; }
+
+  public:
+    std::vector< ref<VLXTaggedValue> > mModules;
+  };
+}
 
 #endif
