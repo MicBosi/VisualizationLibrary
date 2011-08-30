@@ -103,11 +103,11 @@ public:
     //  printf(">> %s\n", token.mString.c_str());
 
 #if 0 // general input/output tests
-    VLX_TextParser parser;
+    VLT_Parser parser;
     parser.tokenizer()->setInputFile( new DiskFile("D:/VL/in.vlx") );
     if ( parser.parse() )
     {
-      VLX_TextExportVisitor exporter;
+      VLT_ExportVisitor exporter;
       exporter.visitStructure( parser.root() );
       DiskFile file;
       file.open("D:/VL/out.vlx", OM_WriteOnly);
@@ -274,13 +274,13 @@ public:
     //VLX_Serializer serializer;
 
     //// serialize
-    //serializer.saveText( "D:/VL/export.vlx", act.get() );
+    //serializer.saveVLT( "D:/VL/export.vlx", act.get() );
 
-    //ref<Object> obj = serializer.loadText("D:/VL/export.vlx");
+    //ref<Object> obj = serializer.loadVLT("D:/VL/export.vlx");
     //ref<Actor> act2 = obj->as<Actor>(); VL_CHECK(act2);
 
     //// re-export
-    //serializer.saveText( "D:/VL/re-export.vlx", act2.get() );
+    //serializer.saveVLT( "D:/VL/re-export.vlx", act2.get() );
 
     // put into scene
     Actor* act2 = res_db->get<Actor>(0); VL_CHECK(act2);
