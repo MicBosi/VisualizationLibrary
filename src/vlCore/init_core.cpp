@@ -33,7 +33,7 @@
 #include <vlCore/VLSettings.hpp>
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/LoadWriterManager.hpp>
-#include <vlCore/VLX_Tools.hpp>
+#include <vlCore/VLXTools.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Time.hpp>
@@ -156,17 +156,17 @@ void vl::setDefFileSystem(FileSystem* fs)
   gDefaultFileSystem = fs;
 }
 //-----------------------------------------------------------------------------
-// Default VLX_Registry
+// Default VLXRegistry
 //-----------------------------------------------------------------------------
 namespace 
 {
-  ref<VLX_Registry> gDefaultVLXRegistry = NULL;
+  ref<VLXRegistry> gDefaultVLXRegistry = NULL;
 }
-VLX_Registry* vl::defVLXRegistry()
+VLXRegistry* vl::defVLXRegistry()
 {
   return gDefaultVLXRegistry.get();
 }
-void vl::setVLXRegistry(VLX_Registry* reg)
+void vl::setVLXRegistry(VLXRegistry* reg)
 {
   gDefaultVLXRegistry = reg;
 }
@@ -197,8 +197,8 @@ void VisualizationLibrary::initCore(bool log_info)
   gDefaultFileSystem = new FileSystem;
   gDefaultFileSystem->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
 
-  // Install default VLX_Registry
-  gDefaultVLXRegistry = new VLX_Registry;
+  // Install default VLXRegistry
+  gDefaultVLXRegistry = new VLXRegistry;
   
   // Register 2D modules
   #if defined(VL_IO_2D_JPG)
@@ -241,7 +241,7 @@ void VisualizationLibrary::shutdownCore()
 
   // --- Dispose Core ---
 
-  // Dispose default VLX_Registry
+  // Dispose default VLXRegistry
   gDefaultVLXRegistry = NULL;
 
   // Dispose default LoadWriterManager

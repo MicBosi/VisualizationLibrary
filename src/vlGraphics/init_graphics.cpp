@@ -90,19 +90,19 @@ namespace
   void registerVLXSerializers()
   {
     // Geometry serializer
-    defVLXRegistry()->addSerializer( Geometry::Type(), new VLX_IO_Geometry );
+    defVLXRegistry()->addSerializer( Geometry::Type(), new VLXIO_Geometry );
 
     // VertexAttribInfo
-    defVLXRegistry()->addSerializer( VertexAttribInfo::Type(), new VLX_IO_VertexAttribInfo );
+    defVLXRegistry()->addSerializer( VertexAttribInfo::Type(), new VLXIO_VertexAttribInfo );
 
     // BezierSurface
-    defVLXRegistry()->addSerializer( BezierSurface::Type(), new VLX_IO_Geometry );
+    defVLXRegistry()->addSerializer( BezierSurface::Type(), new VLXIO_Geometry );
 
     // PatchParameter
-    defVLXRegistry()->addSerializer( PatchParameter::Type(), new VLX_IO_PatchParameter );
+    defVLXRegistry()->addSerializer( PatchParameter::Type(), new VLXIO_PatchParameter );
 
     // DrawCall
-    ref<VLX_IO_DrawCall> drawcall_serializer = new VLX_IO_DrawCall;
+    ref<VLXIO_DrawCall> drawcall_serializer = new VLXIO_DrawCall;
     defVLXRegistry()->addSerializer( DrawArrays::Type(), drawcall_serializer.get() );
     defVLXRegistry()->addSerializer( DrawElementsUInt::Type(), drawcall_serializer.get() );
     defVLXRegistry()->addSerializer( DrawElementsUShort::Type(), drawcall_serializer.get() );
@@ -112,73 +112,73 @@ namespace
     defVLXRegistry()->addSerializer( MultiDrawElementsUByte::Type(), drawcall_serializer.get() );
 
     // ResourceDatabase
-    defVLXRegistry()->addSerializer( ResourceDatabase::Type(), new VLX_IO_ResourceDatabase );
+    defVLXRegistry()->addSerializer( ResourceDatabase::Type(), new VLXIO_ResourceDatabase );
 
     // Uniform
-    defVLXRegistry()->addSerializer( Uniform::Type(), new VLX_IO_Uniform );
+    defVLXRegistry()->addSerializer( Uniform::Type(), new VLXIO_Uniform );
 
     // LODEvaluator
-    defVLXRegistry()->addSerializer( LODEvaluator::Type(), new VLX_IO_LODEvaluator );
+    defVLXRegistry()->addSerializer( LODEvaluator::Type(), new VLXIO_LODEvaluator );
 
     // Transform
-    defVLXRegistry()->addSerializer( Transform::Type(), new VLX_IO_Transform );
+    defVLXRegistry()->addSerializer( Transform::Type(), new VLXIO_Transform );
 
     // Material
-    defVLXRegistry()->addSerializer( Material::Type(), new VLX_IO_Material );
+    defVLXRegistry()->addSerializer( Material::Type(), new VLXIO_Material );
 
     // Texture
-    defVLXRegistry()->addSerializer( Texture::Type(), new VLX_IO_Texture );
+    defVLXRegistry()->addSerializer( Texture::Type(), new VLXIO_Texture );
 
     // TextureSampler
-    defVLXRegistry()->addSerializer( TextureSampler::Type(), new VLX_IO_TextureSampler );
+    defVLXRegistry()->addSerializer( TextureSampler::Type(), new VLXIO_TextureSampler );
 
     // TexParameter
-    defVLXRegistry()->addSerializer( TexParameter::Type(), new VLX_IO_TexParameter );
+    defVLXRegistry()->addSerializer( TexParameter::Type(), new VLXIO_TexParameter );
 
     // ActorEventCallback
-    defVLXRegistry()->addSerializer( DepthSortCallback::Type(), new VLX_IO_ActorEventCallback );
+    defVLXRegistry()->addSerializer( DepthSortCallback::Type(), new VLXIO_ActorEventCallback );
 
     // LODEvaluator
-    ref<VLX_IO_LODEvaluator> lod_evaluator = new VLX_IO_LODEvaluator;
+    ref<VLXIO_LODEvaluator> lod_evaluator = new VLXIO_LODEvaluator;
     defVLXRegistry()->addSerializer( PixelLODEvaluator::Type(), lod_evaluator.get() );
     defVLXRegistry()->addSerializer( DistanceLODEvaluator::Type(), lod_evaluator.get() );
 
     // Actor
-    defVLXRegistry()->addSerializer( Actor::Type(), new VLX_IO_Actor );
+    defVLXRegistry()->addSerializer( Actor::Type(), new VLXIO_Actor );
 
     // Effect
-    defVLXRegistry()->addSerializer( Effect::Type(), new VLX_IO_Effect );
+    defVLXRegistry()->addSerializer( Effect::Type(), new VLXIO_Effect );
 
     // Shader
-    defVLXRegistry()->addSerializer( Shader::Type(), new VLX_IO_Shader );
+    defVLXRegistry()->addSerializer( Shader::Type(), new VLXIO_Shader );
 
     // Camera
-    defVLXRegistry()->addSerializer( Camera::Type(), new VLX_IO_Camera );
+    defVLXRegistry()->addSerializer( Camera::Type(), new VLXIO_Camera );
 
     // Light
-    defVLXRegistry()->addSerializer( Light::Type(), new VLX_IO_Light );
+    defVLXRegistry()->addSerializer( Light::Type(), new VLXIO_Light );
 
     // ClipPlane
-    defVLXRegistry()->addSerializer( ClipPlane::Type(), new VLX_IO_ClipPlane );
+    defVLXRegistry()->addSerializer( ClipPlane::Type(), new VLXIO_ClipPlane );
 
     // Color
-    defVLXRegistry()->addSerializer( Color::Type(), new VLX_IO_Color );
+    defVLXRegistry()->addSerializer( Color::Type(), new VLXIO_Color );
 
     // SecondaryColor
-    defVLXRegistry()->addSerializer( SecondaryColor::Type(), new VLX_IO_SecondaryColor );
+    defVLXRegistry()->addSerializer( SecondaryColor::Type(), new VLXIO_SecondaryColor );
 
     // Normal
-    defVLXRegistry()->addSerializer( Normal::Type(), new VLX_IO_Normal );
+    defVLXRegistry()->addSerializer( Normal::Type(), new VLXIO_Normal );
 
     // VertexAttrib
-    defVLXRegistry()->addSerializer( VertexAttrib::Type(), new VLX_IO_VertexAttrib );
+    defVLXRegistry()->addSerializer( VertexAttrib::Type(), new VLXIO_VertexAttrib );
 
     // Viewport
-    defVLXRegistry()->addSerializer( Viewport::Type(), new VLX_IO_Viewport );
+    defVLXRegistry()->addSerializer( Viewport::Type(), new VLXIO_Viewport );
 
     // GLSL
-    defVLXRegistry()->addSerializer( GLSLProgram::Type(), new VLX_IO_GLSLProgram );
-    ref<VLX_IO_GLSLShader> sh_serializer = new VLX_IO_GLSLShader;
+    defVLXRegistry()->addSerializer( GLSLProgram::Type(), new VLXIO_GLSLProgram );
+    ref<VLXIO_GLSLShader> sh_serializer = new VLXIO_GLSLShader;
     defVLXRegistry()->addSerializer( GLSLVertexShader::Type(), sh_serializer.get() );
     defVLXRegistry()->addSerializer( GLSLFragmentShader::Type(), sh_serializer.get() );
     defVLXRegistry()->addSerializer( GLSLGeometryShader::Type(), sh_serializer.get() );
@@ -186,10 +186,10 @@ namespace
     defVLXRegistry()->addSerializer( GLSLTessEvaluationShader::Type(), sh_serializer.get() );
 
     // GLSLShader
-    defVLXRegistry()->addSerializer( GLSLShader::Type(), new VLX_IO_GLSLShader );
+    defVLXRegistry()->addSerializer( GLSLShader::Type(), new VLXIO_GLSLShader );
 
     // Array serializer
-    ref<VLX_IO_Array> array_serializer = new VLX_IO_Array;
+    ref<VLXIO_Array> array_serializer = new VLXIO_Array;
 
     defVLXRegistry()->addSerializer( ArrayFloat1::Type(), array_serializer.get() );
     defVLXRegistry()->addSerializer( ArrayFloat2::Type(), array_serializer.get() );
