@@ -47,7 +47,7 @@ ref<ResourceDatabase> vl::loadVLT(VirtualFile* file)
   Time timer;
   timer.start();
 
-  VLX_Serializer serializer;
+  VLXSerializer serializer;
   ref<ResourceDatabase> res_db = serializer.loadVLT(file)->as<ResourceDatabase>();
 
   printf("VLT import = %f\n", timer.elapsed());
@@ -67,7 +67,7 @@ ref<ResourceDatabase> vl::loadVLB(VirtualFile* file)
   Time timer;
   timer.start();
 
-  VLX_Serializer serializer;
+  VLXSerializer serializer;
   ref<ResourceDatabase> res_db = serializer.loadVLB(file)->as<ResourceDatabase>();
 
   printf("VLB import = %f\n", timer.elapsed());
@@ -91,7 +91,7 @@ bool vl::saveVLT(VirtualFile* file, const ResourceDatabase* res_db)
   Time timer;
   timer.start();
 
-  VLX_Serializer serializer;
+  VLXSerializer serializer;
   bool ok = serializer.saveVLT( file, res_db );
 
   printf("VLT export = %f\n", timer.elapsed());
@@ -118,7 +118,7 @@ bool vl::saveVLB(VirtualFile* file, const ResourceDatabase* res_db)
   Time timer;
   timer.start();
 
-  VLX_Serializer serializer;
+  VLXSerializer serializer;
   bool ok = serializer.saveVLB( file, res_db );
 
   printf("VLB export = %f\n", timer.elapsed());

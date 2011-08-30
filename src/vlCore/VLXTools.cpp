@@ -29,16 +29,16 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VLX_Tools.hpp>
+#include <vlCore/VLXTools.hpp>
 #include <vlCore/DiskFile.hpp>
 #include <vlCore/version.hpp>
 #include <ctime>
 
 using namespace vl;
 
-bool VLX_Tokenizer::getToken(VLX_Token& token)
+bool VLXTokenizer::getToken(VLXToken& token)
 {
-  token.mType = VLX_Token::TOKEN_ERROR;
+  token.mType = VLXToken::TOKEN_ERROR;
   token.mString.clear();
 
   if (mRawtextBlock)
@@ -50,7 +50,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
   {
     if (!readTextChar(ch1))
     {
-      token.mType = VLX_Token::TOKEN_EOF;
+      token.mType = VLXToken::TOKEN_EOF;
       return true;
     }
 
@@ -107,22 +107,22 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
   switch(ch1)
   {
   case '(':
-    token.mType = VLX_Token::LeftRoundBracket;
+    token.mType = VLXToken::LeftRoundBracket;
     token.mString = "(";
     return true;
     
   case ')':
-    token.mType = VLX_Token::RightRoundBracket;
+    token.mType = VLXToken::RightRoundBracket;
     token.mString = ")";
     return true;
 
   case '[':
-    token.mType = VLX_Token::LeftSquareBracket;
+    token.mType = VLXToken::LeftSquareBracket;
     token.mString = "[";
     return true;
     
   case ']':
-    token.mType = VLX_Token::RightSquareBracket;
+    token.mType = VLXToken::RightSquareBracket;
     token.mString = "]";
     return true;
 
@@ -154,7 +154,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
 
       if (ch2 == '\n')
       {
-        token.mType = VLX_Token::LeftFancyBracket;
+        token.mType = VLXToken::LeftFancyBracket;
         token.mString = "{<";
         mRawtextBlock = true;
         return true;
@@ -167,7 +167,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
     }
     else
     {
-      token.mType = VLX_Token::LeftCurlyBracket;
+      token.mType = VLXToken::LeftCurlyBracket;
       token.mString = "{";
       if(!isEndOfFile())
         ungetToken(ch2);
@@ -175,7 +175,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
     return true;
 
   case '}':
-    token.mType = VLX_Token::RightCurlyBracket;
+    token.mType = VLXToken::RightCurlyBracket;
     token.mString = "}";
     return true;
 
@@ -184,7 +184,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
     {
       if(ch2 == '}')
       {
-        token.mType = VLX_Token::RightFancyBracket;
+        token.mType = VLXToken::RightFancyBracket;
         token.mString = ">}";
         return true;
       }
@@ -201,7 +201,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
     }
 
   case '=':
-    token.mType = VLX_Token::Equals; 
+    token.mType = VLXToken::Equals; 
     token.mString = "=";
     return true;
 
@@ -223,7 +223,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
       Log::error( Say("Line %n : unexpected end of file while reading object header.\n") << mLineNumber );
       return false;
     }
-    token.mType = VLX_Token::TagHeader;
+    token.mType = VLXToken::TagHeader;
     return true;
 
   case '#':
@@ -243,7 +243,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
       Log::error( Say("Line %n : illegal id '#_' found.\n") << mLineNumber );
       return false;
     }
-    token.mType = VLX_Token::UID;
+    token.mType = VLXToken::UID;
     return true;
 
   case '"':
@@ -298,7 +298,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
     }
     else
     {
-      token.mType = VLX_Token::String;
+      token.mType = VLXToken::String;
       return true;
     }
 
@@ -326,9 +326,9 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
       {
         // check if it's a boolean
         if (token.mString == "true" || token.mString == "false")
-          token.mType = VLX_Token::Boolean;
+          token.mType = VLXToken::Boolean;
         else
-          token.mType = VLX_Token::Identifier;
+          token.mType = VLXToken::Identifier;
         return true;
       }
     }
@@ -351,7 +351,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
     // 123.123e+
     if ( (ch1 >= '0' && ch1 <= '9') || ch1 == '.' || ch1 == '+' || ch1 == '-' )
     {
-      token.mType = VLX_Token::TOKEN_ERROR;
+      token.mType = VLXToken::TOKEN_ERROR;
       token.mString.push_back(ch1);
 
       enum { sZERO, sPLUS_MINUS, sINT, sFRAC, sPOINT, sE, sPLUS_MINUS_EXP, sEXP } state = sINT;
@@ -381,7 +381,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
           }
           else
           {
-            token.mType = VLX_Token::Integer;
+            token.mType = VLXToken::Integer;
             ungetToken(ch1);
             return true;
           }
@@ -423,7 +423,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
           }
           else
           {
-            token.mType = VLX_Token::Integer;
+            token.mType = VLXToken::Integer;
             ungetToken(ch1);
             return true;
           }
@@ -453,7 +453,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
           }
           else
           {
-            token.mType = VLX_Token::Real;
+            token.mType = VLXToken::Real;
             ungetToken(ch1);
             return true;
           }
@@ -490,7 +490,7 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
             token.mString.push_back(ch1);
           else
           {
-            token.mType = VLX_Token::Real;
+            token.mType = VLXToken::Real;
             ungetToken(ch1);
             return true;
           }
@@ -500,13 +500,13 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
       // reached TOKEN_EOF in the middle of the parsing so we check where we were, note that it cannot be a Integer or a Real
       if (state == sINT)
       {
-        token.mType = VLX_Token::Integer;
+        token.mType = VLXToken::Integer;
         return true;
       }
       else
       if (state == sFRAC || state == sEXP)
       {
-        token.mType = VLX_Token::Real;
+        token.mType = VLXToken::Real;
         return true;
       }
       else
@@ -520,12 +520,12 @@ bool VLX_Tokenizer::getToken(VLX_Token& token)
   }
 }
 //-----------------------------------------------------------------------------
-bool VLX_Tokenizer::getRawtextBlock(VLX_Token& token)
+bool VLXTokenizer::getRawtextBlock(VLXToken& token)
 {
   mRawtextBlock = false;
 
   token.mString.clear();
-  token.mType = VLX_Token::TOKEN_ERROR;
+  token.mType = VLXToken::TOKEN_ERROR;
 
   char ch =0;
   while(readTextChar(ch))
@@ -550,7 +550,7 @@ bool VLX_Tokenizer::getRawtextBlock(VLX_Token& token)
           }
           else
           {
-            token.mType = VLX_Token::RawtextBlock;
+            token.mType = VLXToken::RawtextBlock;
             ungetToken('}');
             ungetToken('>');
             return true;
@@ -567,7 +567,7 @@ bool VLX_Tokenizer::getRawtextBlock(VLX_Token& token)
   return false;
 }
 //-----------------------------------------------------------------------------
-void VLX_Value::release()
+void VLXValue::release()
 {
   switch(mType)
   {
@@ -613,7 +613,7 @@ void VLX_Value::release()
   mUnion.mInteger = 0;
 }
 //-----------------------------------------------------------------------------
-VLX_Value& VLX_Value::operator=(const VLX_Value& other)
+VLXValue& VLXValue::operator=(const VLXValue& other)
 {
   mLineNumber = other.mLineNumber;
 
@@ -663,7 +663,7 @@ VLX_Value& VLX_Value::operator=(const VLX_Value& other)
   return *this;
 }
 //-----------------------------------------------------------------------------
-VLX_Structure* VLX_Value::setStructure(VLX_Structure* obj)
+VLXStructure* VLXValue::setStructure(VLXStructure* obj)
 {
   release();
   mType = Structure;
@@ -673,7 +673,7 @@ VLX_Structure* VLX_Value::setStructure(VLX_Structure* obj)
   return obj;
 }
 //-----------------------------------------------------------------------------
-VLX_List* VLX_Value::setList(VLX_List* list)
+VLXList* VLXValue::setList(VLXList* list)
 {
   VL_CHECK(list);
 
@@ -685,7 +685,7 @@ VLX_List* VLX_Value::setList(VLX_List* list)
   return list;
 }
 //-----------------------------------------------------------------------------
-VLX_RawtextBlock* VLX_Value::setRawtextBlock(VLX_RawtextBlock* fblock)
+VLXRawtextBlock* VLXValue::setRawtextBlock(VLXRawtextBlock* fblock)
 {
   VL_CHECK(fblock);
 
@@ -697,7 +697,7 @@ VLX_RawtextBlock* VLX_Value::setRawtextBlock(VLX_RawtextBlock* fblock)
   return fblock;
 }
 //-----------------------------------------------------------------------------
-VLX_ArrayInteger* VLX_Value::setArrayInteger(VLX_ArrayInteger* arr)
+VLXArrayInteger* VLXValue::setArrayInteger(VLXArrayInteger* arr)
 {
   VL_CHECK(arr);
   release();
@@ -708,7 +708,7 @@ VLX_ArrayInteger* VLX_Value::setArrayInteger(VLX_ArrayInteger* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-VLX_ArrayReal* VLX_Value::setArrayReal(VLX_ArrayReal* arr)
+VLXArrayReal* VLXValue::setArrayReal(VLXArrayReal* arr)
 {
   VL_CHECK(arr);
   release();
@@ -720,7 +720,7 @@ VLX_ArrayReal* VLX_Value::setArrayReal(VLX_ArrayReal* arr)
 }
 //-----------------------------------------------------------------------------
 /*
-VLX_ArrayString* VLX_Value::setArrayString(VLX_ArrayString* arr)
+VLXArrayString* VLXValue::setArrayString(VLXArrayString* arr)
 {
   VL_CHECK(arr);
   release();
@@ -731,7 +731,7 @@ VLX_ArrayString* VLX_Value::setArrayString(VLX_ArrayString* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-VLX_ArrayIdentifier* VLX_Value::setArrayIdentifier(VLX_ArrayIdentifier* arr)
+VLXArrayIdentifier* VLXValue::setArrayIdentifier(VLXArrayIdentifier* arr)
 {
   VL_CHECK(arr);
   release();
@@ -742,7 +742,7 @@ VLX_ArrayIdentifier* VLX_Value::setArrayIdentifier(VLX_ArrayIdentifier* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-VLX_ArrayUID* VLX_Value::setArrayUID(VLX_ArrayUID* arr)
+VLXArrayUID* VLXValue::setArrayUID(VLXArrayUID* arr)
 {
   VL_CHECK(arr);
   release();
@@ -754,23 +754,23 @@ VLX_ArrayUID* VLX_Value::setArrayUID(VLX_ArrayUID* arr)
 }
 */
 //-----------------------------------------------------------------------------
-VLX_Array* VLX_Value::setArray(VLX_Array* arr)
+VLXArray* VLXValue::setArray(VLXArray* arr)
 {
-  if (arr->classType() == VLX_ArrayInteger::Type())
-    return setArrayInteger(arr->as<VLX_ArrayInteger>());
+  if (arr->classType() == VLXArrayInteger::Type())
+    return setArrayInteger(arr->as<VLXArrayInteger>());
   else
-  if (arr->classType() == VLX_ArrayReal::Type())
-    return setArrayReal(arr->as<VLX_ArrayReal>());
+  if (arr->classType() == VLXArrayReal::Type())
+    return setArrayReal(arr->as<VLXArrayReal>());
   /*
   else
-  if (arr->classType() == VLX_ArrayString::Type())
-    return setArrayString(arr->as<VLX_ArrayString>());
+  if (arr->classType() == VLXArrayString::Type())
+    return setArrayString(arr->as<VLXArrayString>());
   else
-  if (arr->classType() == VLX_ArrayIdentifier::Type())
-    return setArrayIdentifier(arr->as<VLX_ArrayIdentifier>());
+  if (arr->classType() == VLXArrayIdentifier::Type())
+    return setArrayIdentifier(arr->as<VLXArrayIdentifier>());
   else
-  if (arr->classType() == VLX_ArrayUID::Type())
-    return setArrayUID(arr->as<VLX_ArrayUID>());
+  if (arr->classType() == VLXArrayUID::Type())
+    return setArrayUID(arr->as<VLXArrayUID>());
   */
   else
   {
@@ -779,13 +779,13 @@ VLX_Array* VLX_Value::setArray(VLX_Array* arr)
   }
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveVLT(const String& path, const Object* obj, bool start_fresh)
+bool VLXSerializer::saveVLT(const String& path, const Object* obj, bool start_fresh)
 {
   ref<DiskFile> file = new DiskFile(path);
   return saveVLT(file.get(), obj, start_fresh);
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fresh)
+bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -793,36 +793,36 @@ bool VLX_Serializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fr
   if (mError)
     return false;
 
-  ref<VLX_Structure> meta = new VLX_Structure("<Metadata>");
-  std::map< std::string, VLX_Value >::iterator it = metadata().begin();
+  ref<VLXStructure> meta = new VLXStructure("<Metadata>");
+  std::map< std::string, VLXValue >::iterator it = metadata().begin();
   for( ; it != metadata().end(); ++it )
   {
     if (it->first == "VL_Serializer_Version")
       continue;
-    if (it->first == "VLX_Writer")
+    if (it->first == "VLXWriter")
       continue;
     if (it->first == "Creation_Date")
       continue;
-    meta->value().push_back( VLX_Structure::Value(it->first.c_str(), it->second) );
+    meta->value().push_back( VLXStructure::Value(it->first.c_str(), it->second) );
   }
 
   // add VL metadata
-  *meta << "VL_Serializer_Version" << VLX_Value( (long long) 100 );
+  *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
 
   String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
-  *meta << "VLX_Writer" << VLX_Value( auth.toStdString().c_str(), VLX_Value::String );
+  *meta << "VLXWriter" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
 
   time_t rawtime;
   time( &rawtime );
   std::string str = ctime(&rawtime);
   str.resize(str.size()-1); // remove the trailing \n
-  *meta << "Creation_Date" << VLX_Value( str.c_str(), VLX_Value::String );
+  *meta << "Creation_Date" << VLXValue( str.c_str(), VLXValue::String );
 
-  ref<VLX_Structure> st = exportVLX( obj );
+  ref<VLXStructure> st = exportVLX( obj );
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLX_UIDCollectorVisitor uid_collector;
+    VLXUIDCollectorVisitor uid_collector;
     uid_collector.setUIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
@@ -843,13 +843,13 @@ bool VLX_Serializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fr
     return false;
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveVLB(const String& path, const Object* obj, bool start_fresh)
+bool VLXSerializer::saveVLB(const String& path, const Object* obj, bool start_fresh)
 {
   ref<DiskFile> file = new DiskFile(path);
   return saveVLT(file.get(), obj, start_fresh);
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fresh)
+bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -857,36 +857,36 @@ bool VLX_Serializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fr
   if (mError)
     return false;
 
-  ref<VLX_Structure> meta = new VLX_Structure("<Metadata>");
-  std::map< std::string, VLX_Value >::iterator it = metadata().begin();
+  ref<VLXStructure> meta = new VLXStructure("<Metadata>");
+  std::map< std::string, VLXValue >::iterator it = metadata().begin();
   for( ; it != metadata().end(); ++it )
   {
     if (it->first == "VL_Serializer_Version")
       continue;
-    if (it->first == "VLX_Writer")
+    if (it->first == "VLXWriter")
       continue;
     if (it->first == "Creation_Date")
       continue;
-    meta->value().push_back( VLX_Structure::Value(it->first.c_str(), it->second) );
+    meta->value().push_back( VLXStructure::Value(it->first.c_str(), it->second) );
   }
 
   // add VL metadata
-  *meta << "VL_Serializer_Version" << VLX_Value( (long long) 100 );
+  *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
 
   String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
-  *meta << "VLX_Writer" << VLX_Value( auth.toStdString().c_str(), VLX_Value::String );
+  *meta << "VLXWriter" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
 
   time_t rawtime;
   time( &rawtime );
   std::string str = ctime(&rawtime);
   str.resize(str.size()-1); // remove the trailing \n
-  *meta << "Creation_Date" << VLX_Value( str.c_str(), VLX_Value::String );
+  *meta << "Creation_Date" << VLXValue( str.c_str(), VLXValue::String );
 
-  ref<VLX_Structure> st = exportVLX( obj );
+  ref<VLXStructure> st = exportVLX( obj );
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLX_UIDCollectorVisitor uid_collector;
+    VLXUIDCollectorVisitor uid_collector;
     uid_collector.setUIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
@@ -904,13 +904,13 @@ bool VLX_Serializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fr
     return false;
 }
 //-----------------------------------------------------------------------------
-ref<Object> VLX_Serializer::loadVLT(const String& path, bool start_fresh)
+ref<Object> VLXSerializer::loadVLT(const String& path, bool start_fresh)
 {
   ref<VirtualFile> file = vl::locateFile(path);
   return loadVLT(file.get(), start_fresh);
 }
 //-----------------------------------------------------------------------------
-ref<Object> VLX_Serializer::loadVLT(VirtualFile* file, bool start_fresh)
+ref<Object> VLXSerializer::loadVLT(VirtualFile* file, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -945,13 +945,13 @@ ref<Object> VLX_Serializer::loadVLT(VirtualFile* file, bool start_fresh)
     return importVLX( parser.structures()[0].get() ); // note that we ignore the other structures
 }
 //-----------------------------------------------------------------------------
-ref<Object> VLX_Serializer::loadVLB(const String& path, bool start_fresh)
+ref<Object> VLXSerializer::loadVLB(const String& path, bool start_fresh)
 {
   ref<VirtualFile> file = vl::locateFile(path);
   return loadVLB(file.get(), start_fresh);
 }
 //-----------------------------------------------------------------------------
-ref<Object> VLX_Serializer::loadVLB(VirtualFile* file, bool start_fresh)
+ref<Object> VLXSerializer::loadVLB(VirtualFile* file, bool start_fresh)
 {
   if (start_fresh)
     reset();

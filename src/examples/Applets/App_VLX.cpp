@@ -30,14 +30,14 @@
 /**************************************************************************************/
 
 // mic fixme
-#include <vlCore/VLX_Tools.hpp>
+#include <vlCore/VLXTools.hpp>
 
 #include "BaseDemo.hpp"
 #include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/DistanceLODEvaluator.hpp>
 #include <vlGraphics/BezierSurface.hpp>
 #include <vlGraphics/plugins/vlVLX.hpp>
-#include <vlCore/VLX_Tools.hpp>
+#include <vlCore/VLXTools.hpp>
 #include <vlCore/ZippedFile.hpp>
 
 using namespace vl;
@@ -96,10 +96,10 @@ public:
 
     // VL_TRAP();
 
-    //VLX_Tokenizer tokenizer;
+    //VLXTokenizer tokenizer;
     //tokenizer.setInputFile( new DiskFile("D:/VL/test.vl") );
-    //VLX_Token token;
-    //while(tokenizer.getToken(token) && token.mType != VLX_Token::TOKEN_EOF)
+    //VLXToken token;
+    //while(tokenizer.getToken(token) && token.mType != VLXToken::TOKEN_EOF)
     //  printf(">> %s\n", token.mString.c_str());
 
 #if 0 // general input/output tests
@@ -271,7 +271,7 @@ public:
     // res_db = vl::loadVLB("D:/VL/export.vlb");
     // vl::saveVLT("D:/VL/re-export.vlt", res_db .get());
 
-    //VLX_Serializer serializer;
+    //VLXSerializer serializer;
 
     //// serialize
     //serializer.saveVLT( "D:/VL/export.vlx", act.get() );
