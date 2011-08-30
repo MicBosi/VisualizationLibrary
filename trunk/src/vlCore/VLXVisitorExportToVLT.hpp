@@ -47,16 +47,16 @@ namespace vl
     {
       mIndent = 0;
       mAssign = false;
-      mUIDSet = NULL;
+      mIDSet = NULL;
       mFormatBuffer.resize(4096);
     }
 
     bool isUsed(const std::string& uid)
     {
-      if (mUIDSet)
+      if (mIDSet)
       {
-        std::map< std::string, int >::iterator it = mUIDSet->find(uid);
-        if (it != mUIDSet->end())
+        std::map< std::string, int >::iterator it = mIDSet->find(uid);
+        if (it != mIDSet->end())
           return it->second > 1;
         else
         {
@@ -136,8 +136,8 @@ namespace vl
           value.getArrayIdentifier()->acceptVisitor(this);
           break;
 
-        case VLXValue::ArrayUID:
-          value.getArrayUID()->acceptVisitor(this);
+        case VLXValue::ArrayID:
+          value.getArrayID()->acceptVisitor(this);
           break;
         */
 
@@ -158,8 +158,8 @@ namespace vl
           indent(); format("%s\n", value.getIdentifier().c_str() ); VL_CHECK( !value.getIdentifier().empty() )
           break;
 
-        case VLXValue::UID:
-          indent(); format("%s\n", value.getUID().c_str()); VL_CHECK( !value.getUID().empty() )
+        case VLXValue::ID:
+          indent(); format("%s\n", value.getID().c_str()); VL_CHECK( !value.getID().empty() )
           break;
 
         case VLXValue::Bool:
@@ -312,7 +312,7 @@ namespace vl
       output(")\n");
     }
 
-    virtual void visitArray(VLXArrayUID* arr)
+    virtual void visitArray(VLXArrayID* arr)
     {
       indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       for(size_t i=0 ;i<arr->value().size(); ++i)
@@ -392,17 +392,17 @@ namespace vl
       mText = "VLX version=100 encoding=ascii\n\n";
     }
 
-    void setUIDSet(std::map< std::string, int >* uids) { mUIDSet = uids; }
+    void setIDSet(std::map< std::string, int >* uids) { mIDSet = uids; }
 
-    std::map< std::string, int >* uidSet() { return mUIDSet; }
+    std::map< std::string, int >* uidSet() { return mIDSet; }
 
-    const std::map< std::string, int >* uidSet() const { return mUIDSet; }
+    const std::map< std::string, int >* uidSet() const { return mIDSet; }
 
   private:
     int mIndent;
     bool mAssign;
     std::string mText;
-    std::map< std::string, int >* mUIDSet;
+    std::map< std::string, int >* mIDSet;
     std::vector<char> mFormatBuffer;
   };
 }

@@ -46,7 +46,7 @@ namespace vl
   /*
   class VLXArrayString;
   class VLXArrayIdentifier;
-  class VLXArrayUID;
+  class VLXArrayID;
   */
   //-----------------------------------------------------------------------------
   class VLXVisitor: public Object
@@ -60,7 +60,7 @@ namespace vl
     /*
     virtual void visitArray(VLXArrayString*) {}
     virtual void visitArray(VLXArrayIdentifier*) {}
-    virtual void visitArray(VLXArrayUID*) {}
+    virtual void visitArray(VLXArrayID*) {}
     */
 
     bool isVisited(void* node)

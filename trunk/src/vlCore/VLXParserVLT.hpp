@@ -207,9 +207,9 @@ namespace vl
                 return false;
 
               // #identifier
-              if (getToken(mToken) && mToken.mType == VLTToken::UID)
+              if (getToken(mToken) && mToken.mType == VLTToken::ID)
               {
-                object->setUID(mToken.mString.c_str());
+                object->setID(mToken.mString.c_str());
                 continue;
               }
               else
@@ -310,11 +310,11 @@ namespace vl
             }
             else
             // An #id
-            if (mToken.mType == VLTToken::UID)
+            if (mToken.mType == VLTToken::ID)
             {
               if (!mLastTag.empty())
                 return false;
-              name_value.value().setUID(mToken.mString.c_str());
+              name_value.value().setID(mToken.mString.c_str());
             }
             else
             // A boolean true/false
@@ -454,11 +454,11 @@ namespace vl
               break;
             }
 
-            // UID
-            case VLTToken::UID:
+            // ID
+            case VLTToken::ID:
               if (!mLastTag.empty())
                 return false;
-              value.setUID( mToken.mString.c_str() ); list->value().push_back( value );
+              value.setID( mToken.mString.c_str() ); list->value().push_back( value );
               break;
 
             // boolean
@@ -542,13 +542,13 @@ namespace vl
           return mToken.mType == VLTToken::RightRoundBracket;
         }
         else
-        if (mToken.mType == VLTToken::UID)
+        if (mToken.mType == VLTToken::ID)
         {
-          ref<VLXArrayUID> arr_uid;
-          arr = arr_uid = new VLXArrayUID;
+          ref<VLXArrayID> arr_uid;
+          arr = arr_uid = new VLXArrayID;
           do
             arr_uid->mValue.push_back(mToken.mString.c_str());
-          while(getToken(mToken) && mToken.mType == VLTToken::UID);
+          while(getToken(mToken) && mToken.mType == VLTToken::ID);
           return mToken.mType == VLTToken::RightRoundBracket;
         }
         */
@@ -613,7 +613,7 @@ namespace vl
           case VLTToken::RightFancyBracket:  printf("RightFancyBracket {< \n"); break;
           case VLTToken::Equals:             printf("Equals =\n"); break;
           case VLTToken::String:             printf("String = %s\n", mToken.mString.c_str()); break;
-          case VLTToken::UID:                printf("UID = %s\n", mToken.mString.c_str()); break;
+          case VLTToken::ID:                printf("ID = %s\n", mToken.mString.c_str()); break;
           case VLTToken::Identifier:         printf("Identifier = %s\n", mToken.mString.c_str()); break;
           case VLTToken::RawtextBlock:       printf("RawtextBlock = %s\n", mToken.mString.c_str()); break;
           case VLTToken::Real:               printf("Real = %s\n", mToken.mString.c_str()); break;

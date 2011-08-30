@@ -47,7 +47,7 @@ namespace vl
     typedef enum { NoError, ImportError, ExportError } EError;
 
   public:
-    VLXSerializer(): mUIDCounter(0), mError(NoError) 
+    VLXSerializer(): mIDCounter(0), mError(NoError) 
     {
       setRegistry( defVLXRegistry() );
     }
@@ -122,12 +122,12 @@ namespace vl
     void reset()
     {
       mError = NoError;
-      mUIDCounter = 0;
+      mIDCounter = 0;
       mImportedStructures.clear();
       mExportedObjects.clear();
     }
 
-    std::string generateUID(const char* prefix);
+    std::string generateID(const char* prefix);
 
     //! Sets a serialization error.
     void setError(EError err) { mError = err; }
@@ -141,7 +141,7 @@ namespace vl
 
   private:
     EError mError;
-    int mUIDCounter;
+    int mIDCounter;
     std::map< ref<VLXStructure>, ref<Object> > mImportedStructures; // structure --> object
     std::map< ref<Object>, ref<VLXStructure> > mExportedObjects;    // object --> structure
     std::map< std::string, VLXValue > mMetadata; // metadata to import or to export

@@ -39,7 +39,7 @@ namespace vl
 {
   //-----------------------------------------------------------------------------
   // VLXVisitorLinker:
-  // Translates UIDs into VLXStructures
+  // Translates IDs into VLXStructures
   //-----------------------------------------------------------------------------
   class VLXVisitorLinker: public VLXVisitor
   {
@@ -47,7 +47,7 @@ namespace vl
     typedef enum 
     {
       NoError,
-      UnresolvedUID
+      UnresolvedID
     } EError;
 
   public:
@@ -73,15 +73,15 @@ namespace vl
         VL_CHECK(uid != "#NULL")
 
         // mic fixme: just for debugging
-        printf( "- UID '%s' linked to '%s'.\n", uid.c_str(), it->second->tag().c_str() );
+        printf( "- ID '%s' linked to '%s'.\n", uid.c_str(), it->second->tag().c_str() );
         return it->second.get_writable();
       }
       else
       {
         if (uid != "#NULL")
         {
-          mError = UnresolvedUID;
-          Log::error( Say("Could not link UID '%s' to anything!\n") << uid );
+          mError = UnresolvedID;
+          Log::error( Say("Could not link ID '%s' to anything!\n") << uid );
         }
         return NULL;
       }
@@ -102,14 +102,14 @@ namespace vl
           obj->value()[i].value().getList()->acceptVisitor(this);
         else
         /*
-        if (obj->value()[i].value().type() == VLXValue::ArrayUID)
-          obj->value()[i].value().getArrayUID()->acceptVisitor(this);
+        if (obj->value()[i].value().type() == VLXValue::ArrayID)
+          obj->value()[i].value().getArrayID()->acceptVisitor(this);
         else
         */
-        if (obj->value()[i].value().type() == VLXValue::UID)
+        if (obj->value()[i].value().type() == VLXValue::ID)
         {
-          // transform UID -> Structure
-          VLXStructure* lnk_obj = link( obj->value()[i].value().getUID() );
+          // transform ID -> Structure
+          VLXStructure* lnk_obj = link( obj->value()[i].value().getID() );
           obj->value()[i].value().setStructure( lnk_obj );
         }
       }
@@ -132,14 +132,14 @@ namespace vl
           list->value()[i].getList()->acceptVisitor(this);
         else
         /*
-        if (list->value()[i].type() == VLXValue::ArrayUID)
-          list->value()[i].getArrayUID()->acceptVisitor(this);
+        if (list->value()[i].type() == VLXValue::ArrayID)
+          list->value()[i].getArrayID()->acceptVisitor(this);
         else
         */
-        if (list->value()[i].type() == VLXValue::UID)
+        if (list->value()[i].type() == VLXValue::ID)
         {
-          // transform UID -> Structure
-          VLXStructure* lnk_obj = link( list->value()[i].getUID() );
+          // transform ID -> Structure
+          VLXStructure* lnk_obj = link( list->value()[i].getID() );
           list->value()[i].setStructure( lnk_obj );
         }
       }
@@ -148,7 +148,7 @@ namespace vl
     /*
     virtual void visitArray(VLXArrayString*)  {}
 
-    virtual void visitArray(VLXArrayUID* arr)
+    virtual void visitArray(VLXArrayID* arr)
     {
       // retrieves the assigned Structure
       for(size_t i=0 ;i<arr->value().size(); ++i)

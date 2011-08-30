@@ -55,7 +55,7 @@ namespace vl
       RightFancyBracket,  //  >}
       Equals,             //  =
       String,             //  "nel mezzo del cammin di nostra vita\n"
-      UID,                //  #unique_id123
+      ID,                 //  #unique_id123
       Identifier,         //  Identifier_123
       Boolean,            //  true | false
       Integer,            //  +123

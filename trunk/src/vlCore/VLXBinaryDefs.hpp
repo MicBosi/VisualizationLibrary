@@ -48,7 +48,7 @@ namespace vl
     VLB_ChunkRawtext,
     VLB_ChunkString,
     VLB_ChunkIdentifier,
-    VLB_ChunkUID,
+    VLB_ChunkID,
     VLB_ChunkRealDouble,
     VLB_ChunkInteger,
     VLB_ChunkBool
