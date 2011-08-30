@@ -29,33 +29,63 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLX_INCLUDE_ONCE
-#define VLX_INCLUDE_ONCE
+#ifndef VLTTokenizer_INCLUDE_ONCE
+#define VLTTokenizer_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
-#include <vlCore/Say.hpp>
-#include <vlCore/Log.hpp>
 #include <vlCore/BufferedStream.hpp>
-#include <vlCore/Vector4.hpp>
-#include <map>
-#include <set>
-#include <sstream>
-#include <cstdlib>
-#include <cstdarg>
-#include <cstring>
 
-#include <vlCore/VLXSerializer.hpp>
-#include <vlCore/VLXVisitorLinker.hpp>
-#include <vlCore/VLXVisitorCollectUID.hpp>
-#include <vlCore/VLXValue.hpp>
-#include <vlCore/VLXRegistry.hpp>
-#include <vlCore/VLXParserVLT.hpp>
-#include <vlCore/VLXParserVLB.hpp>
-#include <vlCore/VLXParser.hpp>
-#include <vlCore/VLXLinker.hpp>
-#include <vlCore/VLXIO.hpp>
-#include <vlCore/VLTTokenizer.hpp>
-#include <vlCore/VLXVisitorExportToVLT.hpp>
-#include <vlCore/VLXVisitorExportToVLB.hpp>
+namespace vl
+{
+  //-----------------------------------------------------------------------------
+  class VLTToken
+  {
+  public:
+    typedef enum
+    {
+      TOKEN_ERROR,
+      TOKEN_EOF,
+
+      LeftRoundBracket,   //  (
+      RightRoundBracket,  //  )
+      LeftSquareBracket,  //  [
+      RightSquareBracket, //  ]
+      LeftCurlyBracket,   //  {
+      RightCurlyBracket,  //  }
+      LeftFancyBracket,   //  {<
+      RightFancyBracket,  //  >}
+      Equals,             //  =
+      String,             //  "nel mezzo del cammin di nostra vita\n"
+      UID,                //  #unique_id123
+      Identifier,         //  Identifier_123
+      Boolean,            //  true | false
+      Integer,            //  +123
+      Real,               //  +123.456e+10
+      TagHeader,          //  <TagHeader>
+      RawtextBlock,         // {< blabla >}
+
+    } EType;
+
+    VLTToken(): mType(TOKEN_ERROR) {}
+
+    std::string mString;
+    EType mType;
+  };
+  //-----------------------------------------------------------------------------
+  class VLTTokenizer: public BufferedStream<char, 128*1024>
+  {
+  public:
+    VLTTokenizer(): mLineNumber(1), mRawtextBlock(false) {}
+
+    VLCORE_EXPORT bool getToken(VLTToken& token);
+
+    VLCORE_EXPORT bool getRawtextBlock(VLTToken& token);
+
+    int lineNumber() const { return mLineNumber; }
+
+  private:
+    int mLineNumber;
+    bool mRawtextBlock;
+  };
+}
 
 #endif

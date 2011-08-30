@@ -36,9 +36,9 @@
 
 using namespace vl;
 
-bool VLXTokenizer::getToken(VLXToken& token)
+bool VLTTokenizer::getToken(VLTToken& token)
 {
-  token.mType = VLXToken::TOKEN_ERROR;
+  token.mType = VLTToken::TOKEN_ERROR;
   token.mString.clear();
 
   if (mRawtextBlock)
@@ -50,7 +50,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
   {
     if (!readTextChar(ch1))
     {
-      token.mType = VLXToken::TOKEN_EOF;
+      token.mType = VLTToken::TOKEN_EOF;
       return true;
     }
 
@@ -107,22 +107,22 @@ bool VLXTokenizer::getToken(VLXToken& token)
   switch(ch1)
   {
   case '(':
-    token.mType = VLXToken::LeftRoundBracket;
+    token.mType = VLTToken::LeftRoundBracket;
     token.mString = "(";
     return true;
     
   case ')':
-    token.mType = VLXToken::RightRoundBracket;
+    token.mType = VLTToken::RightRoundBracket;
     token.mString = ")";
     return true;
 
   case '[':
-    token.mType = VLXToken::LeftSquareBracket;
+    token.mType = VLTToken::LeftSquareBracket;
     token.mString = "[";
     return true;
     
   case ']':
-    token.mType = VLXToken::RightSquareBracket;
+    token.mType = VLTToken::RightSquareBracket;
     token.mString = "]";
     return true;
 
@@ -154,7 +154,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
 
       if (ch2 == '\n')
       {
-        token.mType = VLXToken::LeftFancyBracket;
+        token.mType = VLTToken::LeftFancyBracket;
         token.mString = "{<";
         mRawtextBlock = true;
         return true;
@@ -167,7 +167,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
     }
     else
     {
-      token.mType = VLXToken::LeftCurlyBracket;
+      token.mType = VLTToken::LeftCurlyBracket;
       token.mString = "{";
       if(!isEndOfFile())
         ungetToken(ch2);
@@ -175,7 +175,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
     return true;
 
   case '}':
-    token.mType = VLXToken::RightCurlyBracket;
+    token.mType = VLTToken::RightCurlyBracket;
     token.mString = "}";
     return true;
 
@@ -184,7 +184,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
     {
       if(ch2 == '}')
       {
-        token.mType = VLXToken::RightFancyBracket;
+        token.mType = VLTToken::RightFancyBracket;
         token.mString = ">}";
         return true;
       }
@@ -201,7 +201,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
     }
 
   case '=':
-    token.mType = VLXToken::Equals; 
+    token.mType = VLTToken::Equals; 
     token.mString = "=";
     return true;
 
@@ -223,7 +223,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
       Log::error( Say("Line %n : unexpected end of file while reading object header.\n") << mLineNumber );
       return false;
     }
-    token.mType = VLXToken::TagHeader;
+    token.mType = VLTToken::TagHeader;
     return true;
 
   case '#':
@@ -243,7 +243,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
       Log::error( Say("Line %n : illegal id '#_' found.\n") << mLineNumber );
       return false;
     }
-    token.mType = VLXToken::UID;
+    token.mType = VLTToken::UID;
     return true;
 
   case '"':
@@ -298,7 +298,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
     }
     else
     {
-      token.mType = VLXToken::String;
+      token.mType = VLTToken::String;
       return true;
     }
 
@@ -326,9 +326,9 @@ bool VLXTokenizer::getToken(VLXToken& token)
       {
         // check if it's a boolean
         if (token.mString == "true" || token.mString == "false")
-          token.mType = VLXToken::Boolean;
+          token.mType = VLTToken::Boolean;
         else
-          token.mType = VLXToken::Identifier;
+          token.mType = VLTToken::Identifier;
         return true;
       }
     }
@@ -351,7 +351,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
     // 123.123e+
     if ( (ch1 >= '0' && ch1 <= '9') || ch1 == '.' || ch1 == '+' || ch1 == '-' )
     {
-      token.mType = VLXToken::TOKEN_ERROR;
+      token.mType = VLTToken::TOKEN_ERROR;
       token.mString.push_back(ch1);
 
       enum { sZERO, sPLUS_MINUS, sINT, sFRAC, sPOINT, sE, sPLUS_MINUS_EXP, sEXP } state = sINT;
@@ -381,7 +381,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
           }
           else
           {
-            token.mType = VLXToken::Integer;
+            token.mType = VLTToken::Integer;
             ungetToken(ch1);
             return true;
           }
@@ -423,7 +423,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
           }
           else
           {
-            token.mType = VLXToken::Integer;
+            token.mType = VLTToken::Integer;
             ungetToken(ch1);
             return true;
           }
@@ -453,7 +453,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
           }
           else
           {
-            token.mType = VLXToken::Real;
+            token.mType = VLTToken::Real;
             ungetToken(ch1);
             return true;
           }
@@ -490,7 +490,7 @@ bool VLXTokenizer::getToken(VLXToken& token)
             token.mString.push_back(ch1);
           else
           {
-            token.mType = VLXToken::Real;
+            token.mType = VLTToken::Real;
             ungetToken(ch1);
             return true;
           }
@@ -500,13 +500,13 @@ bool VLXTokenizer::getToken(VLXToken& token)
       // reached TOKEN_EOF in the middle of the parsing so we check where we were, note that it cannot be a Integer or a Real
       if (state == sINT)
       {
-        token.mType = VLXToken::Integer;
+        token.mType = VLTToken::Integer;
         return true;
       }
       else
       if (state == sFRAC || state == sEXP)
       {
-        token.mType = VLXToken::Real;
+        token.mType = VLTToken::Real;
         return true;
       }
       else
@@ -520,12 +520,12 @@ bool VLXTokenizer::getToken(VLXToken& token)
   }
 }
 //-----------------------------------------------------------------------------
-bool VLXTokenizer::getRawtextBlock(VLXToken& token)
+bool VLTTokenizer::getRawtextBlock(VLTToken& token)
 {
   mRawtextBlock = false;
 
   token.mString.clear();
-  token.mType = VLXToken::TOKEN_ERROR;
+  token.mType = VLTToken::TOKEN_ERROR;
 
   char ch =0;
   while(readTextChar(ch))
@@ -550,7 +550,7 @@ bool VLXTokenizer::getRawtextBlock(VLXToken& token)
           }
           else
           {
-            token.mType = VLXToken::RawtextBlock;
+            token.mType = VLTToken::RawtextBlock;
             ungetToken('}');
             ungetToken('>');
             return true;
@@ -822,12 +822,12 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLXUIDCollectorVisitor uid_collector;
+    VLXVisitorCollectUID uid_collector;
     uid_collector.setUIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
 
-    VLT_ExportVisitor text_export_visitor;
+    VLXVisitorExportToVLT text_export_visitor;
     text_export_visitor.setUIDSet(&uid_set);
     text_export_visitor.writeHeader();
     meta->acceptVisitor(&text_export_visitor);
@@ -886,12 +886,12 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLXUIDCollectorVisitor uid_collector;
+    VLXVisitorCollectUID uid_collector;
     uid_collector.setUIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
 
-    VLB_ExportVisitor bin_export_visitor(file);
+    VLXVisitorExportToVLB bin_export_visitor(file);
     bin_export_visitor.setUIDSet(&uid_set);
     bin_export_visitor.writeHeader();
     meta->acceptVisitor(&bin_export_visitor);
@@ -918,7 +918,7 @@ ref<Object> VLXSerializer::loadVLT(VirtualFile* file, bool start_fresh)
   if (mError)
     return NULL;
 
-  VLT_Parser parser;
+  VLXParserVLT parser;
   parser.tokenizer()->setInputFile( file );
 
   bool ok = parser.parse();
@@ -959,7 +959,7 @@ ref<Object> VLXSerializer::loadVLB(VirtualFile* file, bool start_fresh)
   if (mError)
     return NULL;
 
-  VLB_Parser parser;
+  VLXParserVLB parser;
   parser.setInputFile( file );
 
   bool ok = parser.parse();

@@ -29,33 +29,33 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLX_INCLUDE_ONCE
-#define VLX_INCLUDE_ONCE
+#ifndef VLXIO_INCLUDE_ONCE
+#define VLXIO_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlCore/Say.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/BufferedStream.hpp>
-#include <vlCore/Vector4.hpp>
-#include <map>
-#include <set>
-#include <sstream>
-#include <cstdlib>
-#include <cstdarg>
-#include <cstring>
+#include <string>
 
-#include <vlCore/VLXSerializer.hpp>
-#include <vlCore/VLXVisitorLinker.hpp>
-#include <vlCore/VLXVisitorCollectUID.hpp>
-#include <vlCore/VLXValue.hpp>
-#include <vlCore/VLXRegistry.hpp>
-#include <vlCore/VLXParserVLT.hpp>
-#include <vlCore/VLXParserVLB.hpp>
-#include <vlCore/VLXParser.hpp>
-#include <vlCore/VLXLinker.hpp>
-#include <vlCore/VLXIO.hpp>
-#include <vlCore/VLTTokenizer.hpp>
-#include <vlCore/VLXVisitorExportToVLT.hpp>
-#include <vlCore/VLXVisitorExportToVLB.hpp>
+namespace vl
+{
+  //---------------------------------------------------------------------------
+  class VLXSerializer;
+  class VLXStructure;
+  //---------------------------------------------------------------------------
+  class VLXIO: public Object
+  {
+  public:
+    virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* st) = 0;
+
+    virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj) = 0;
+
+    std::string generateUID(VLXSerializer& s, const char* prefix);
+
+    static std::string makeObjectTag(const Object* obj)
+    {
+      return std::string("<") + obj->classType()->name() + ">";
+    }
+  };
+  //---------------------------------------------------------------------------
+}
 
 #endif

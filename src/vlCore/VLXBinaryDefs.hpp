@@ -29,33 +29,30 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLX_INCLUDE_ONCE
-#define VLX_INCLUDE_ONCE
+#ifndef VLXBinaryDefs_INCLUDE_ONCE
+#define VLXBinaryDefs_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
-#include <vlCore/Say.hpp>
-#include <vlCore/Log.hpp>
-#include <vlCore/BufferedStream.hpp>
-#include <vlCore/Vector4.hpp>
-#include <map>
-#include <set>
-#include <sstream>
-#include <cstdlib>
-#include <cstdarg>
-#include <cstring>
+namespace vl
+{
+  bool compress(const void* data, size_t size, std::vector<unsigned char>& out, int level);
+  
+  bool decompress(const void* cdata, size_t csize, void* data_out);
 
-#include <vlCore/VLXSerializer.hpp>
-#include <vlCore/VLXVisitorLinker.hpp>
-#include <vlCore/VLXVisitorCollectUID.hpp>
-#include <vlCore/VLXValue.hpp>
-#include <vlCore/VLXRegistry.hpp>
-#include <vlCore/VLXParserVLT.hpp>
-#include <vlCore/VLXParserVLB.hpp>
-#include <vlCore/VLXParser.hpp>
-#include <vlCore/VLXLinker.hpp>
-#include <vlCore/VLXIO.hpp>
-#include <vlCore/VLTTokenizer.hpp>
-#include <vlCore/VLXVisitorExportToVLT.hpp>
-#include <vlCore/VLXVisitorExportToVLB.hpp>
+  typedef enum
+  {
+    VLB_ChunkStructure = 1,
+    VLB_ChunkList,
+    VLB_ChunkArrayRealDouble,
+    VLB_ChunkArrayRealFloat,
+    VLB_ChunkArrayInteger,
+    VLB_ChunkRawtext,
+    VLB_ChunkString,
+    VLB_ChunkIdentifier,
+    VLB_ChunkUID,
+    VLB_ChunkRealDouble,
+    VLB_ChunkInteger,
+    VLB_ChunkBool
+  } EVLBChunkType;
+}
 
 #endif
