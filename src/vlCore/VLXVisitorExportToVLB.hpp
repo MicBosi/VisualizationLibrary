@@ -35,6 +35,7 @@
 #include <vlCore/VLXVisitor.hpp>
 #include <vlCore/VLXValue.hpp>
 #include <vlCore/VLXBinaryDefs.hpp>
+#include <vlCore/VirtualFile.hpp>
 
 namespace vl
 {

@@ -34,6 +34,8 @@
 
 #include <vlCore/VLXVisitor.hpp>
 #include <vlCore/VLXValue.hpp>
+#include <vlCore/Log.hpp>
+#include <vlCore/Say.hpp>
 
 namespace vl
 {

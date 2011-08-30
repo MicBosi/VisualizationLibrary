@@ -29,32 +29,14 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef LoadWriterVLX_INCLUDE_ONCE
-#define LoadWriterVLX_INCLUDE_ONCE
+#ifndef VLXWrapper_Core_INCLUDE_ONCE
+#define VLXWrapper_Core_INCLUDE_ONCE
 
 #include <vlCore/VLXIO.hpp>
 #include <vlCore/VLXRegistry.hpp>
 #include <vlCore/VLXSerializer.hpp>
 #include <vlCore/VLXValue.hpp>
 #include <vlCore/VLXUtils.hpp>
-#include <vlCore/LoadWriterManager.hpp>
-#include <vlGraphics/Actor.hpp>
-#include <vlGraphics/Effect.hpp>
-#include <vlGraphics/Shader.hpp>
-#include <vlGraphics/Geometry.hpp>
-#include <vlGraphics/Light.hpp>
-#include <vlGraphics/ClipPlane.hpp>
-#include <vlGraphics/Camera.hpp>
-#include <vlGraphics/DrawElements.hpp>
-#include <vlGraphics/MultiDrawElements.hpp>
-#include <vlGraphics/DrawArrays.hpp>
-#include <vlGraphics/SceneManagerActorTree.hpp>
-#include <vlGraphics/DistanceLODEvaluator.hpp>
-#include <vlGraphics/PixelLODEvaluator.hpp>
-#include <vlGraphics/DepthSortCallback.hpp>
-#include <vlGraphics/GLSL.hpp>
-#include <vlCore/ResourceDatabase.hpp>
-#include <vlCore/DiskFile.hpp>
 
 #define VL_SERIALIZER_VERSION 100
 
@@ -74,79 +56,73 @@
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
-
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLT(VirtualFile* file);
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLT(const String& path);
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLB(VirtualFile* file);
-  VLGRAPHICS_EXPORT ref<ResourceDatabase> loadVLB(const String& path);
-  VLGRAPHICS_EXPORT bool saveVLT(VirtualFile* file, const ResourceDatabase*);
-  VLGRAPHICS_EXPORT bool saveVLT(const String& file, const ResourceDatabase*);
-  VLGRAPHICS_EXPORT bool saveVLB(VirtualFile* file, const ResourceDatabase*);
-  VLGRAPHICS_EXPORT bool saveVLB(const String& file, const ResourceDatabase*);
-  VLGRAPHICS_EXPORT bool isVLT(VirtualFile* file);
-  VLGRAPHICS_EXPORT bool isVLT(const String& file);
-  VLGRAPHICS_EXPORT bool isVLB(VirtualFile* file);
-  VLGRAPHICS_EXPORT bool isVLB(const String& file);
-
-  //---------------------------------------------------------------------------
-  // LoadWriterVLX
-  //---------------------------------------------------------------------------
-  /**
-   * A ResourceLoadWriter capable of reading Visualization Library's VLT and VLB files.
-   */
-  class LoadWriterVLX: public ResourceLoadWriter
+  inline VLXValue export_AABB(const AABB& aabb)
   {
-    VL_INSTRUMENT_CLASS(vl::LoadWriterVLX, ResourceLoadWriter)
+    VLXValue value ( new VLXStructure("<vl::AABB>") );
+    *value.getStructure() << "MinCorner" << toValue(aabb.minCorner());
+    *value.getStructure() << "MaxCorner" << toValue(aabb.maxCorner());
+    return value;
+  }
 
-  public:
-    LoadWriterVLX(): ResourceLoadWriter("|vlt|vlb|", "|vlt|vlb|") {}
+  inline AABB import_AABB(const VLXStructure* vlx)
+  {
+    AABB aabb;
 
-    ref<ResourceDatabase> loadResource(const String& path) const 
+    VL_CHECK( vlx->tag() == "<vl::AABB>" )
+
+    for(size_t i=0; i<vlx->value().size(); ++i)
     {
-      if (isVLT(path))
-        return loadVLT(path);
+      const std::string& key = vlx->value()[i].key();
+      const VLXValue& value = vlx->value()[i].value();
+      if (key == "MinCorner")
+      {
+        VL_CHECK(value.type() == VLXValue::ArrayReal)
+        aabb.setMinCorner( to_fvec3(value.getArrayReal()) );
+      }
       else
-      if (isVLB(path))
-        return loadVLB(path);
-      else
-        return NULL;
+      if (key == "MaxCorner")
+      {
+        VL_CHECK(value.type() == VLXValue::ArrayReal)
+        aabb.setMaxCorner( to_fvec3(value.getArrayReal()) );
+      }
     }
 
-    ref<ResourceDatabase> loadResource(VirtualFile* file) const
+    return aabb;
+  }
+
+  inline VLXValue export_Sphere(const Sphere& sphere)
+  {
+    VLXValue value ( new VLXStructure("<vl::Sphere>") );
+    *value.getStructure() << "Center" << toValue(sphere.center());
+    *value.getStructure() << "Radius" << sphere.radius();
+    return value;
+  }
+
+  inline Sphere import_Sphere(const VLXStructure* vlx)
+  {
+    Sphere sphere;
+
+    VL_CHECK( vlx->tag() == "<vl::Sphere>" )
+
+    for(size_t i=0; i<vlx->value().size(); ++i)
     {
-      if (isVLT(file))
-        return loadVLT(file);
+      const std::string& key = vlx->value()[i].key();
+      const VLXValue& value = vlx->value()[i].value();
+      if (key == "Center")
+      {
+        VL_CHECK(value.type() == VLXValue::ArrayReal)
+        sphere.setCenter( to_fvec3(value.getArrayReal()) );
+      }
       else
-      if (isVLB(file))
-        return loadVLB(file);
-      else
-        return NULL;
+      if (key == "Radius")
+      {
+        VL_CHECK(value.type() == VLXValue::Real)
+        sphere.setRadius( (Real)value.getReal() );
+      }
     }
 
-    bool writeResource(const String& path, ResourceDatabase* res_db) const
-    {
-      if (path.extractFileExtension().toLowerCase() == "vlt")
-        return saveVLT(path, res_db);
-      else
-      if (path.extractFileExtension().toLowerCase() == "vlb")
-        return saveVLB(path, res_db);
-      else
-        return false;
-    }
-
-    bool writeResource(VirtualFile* file, ResourceDatabase* res_db) const
-    {
-      if (file->path().extractFileExtension().toLowerCase() == "vlt")
-        return saveVLT(file, res_db);
-      else
-      if (file->path().extractFileExtension().toLowerCase() == "vlb")
-        return saveVLB(file, res_db);
-      else
-        return false;
-    }
-  };
-//-----------------------------------------------------------------------------
+    return sphere;
+  }
 }
 
 #endif

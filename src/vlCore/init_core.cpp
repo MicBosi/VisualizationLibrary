@@ -31,9 +31,9 @@
 
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/VLSettings.hpp>
+#include <vlCore/VLXRegistry.hpp>
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/LoadWriterManager.hpp>
-#include <vlCore/VLXTools.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Time.hpp>
