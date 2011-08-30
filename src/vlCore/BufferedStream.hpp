@@ -94,12 +94,12 @@ namespace vl
       }
     }
 
-    bool readTextChar(char& ch)
+    bool readTextChar(Element_Type& ch)
     {
       if (!readToken(&ch))
         return false;
 
-      char ch2 = 0;
+      Element_Type ch2 = 0;
       switch(ch)
       {
       case 10:

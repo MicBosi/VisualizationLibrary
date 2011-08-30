@@ -52,37 +52,37 @@ namespace vl
       setRegistry( defVLXRegistry() );
     }
 
-    bool saveVLT(const String& path, const Object* obj, bool start_fresh=true);
+    VLCORE_EXPORT bool saveVLT(const String& path, const Object* obj, bool start_fresh=true);
 
-    bool saveVLT(VirtualFile* file, const Object* obj, bool start_fresh=true);
+    VLCORE_EXPORT bool saveVLT(VirtualFile* file, const Object* obj, bool start_fresh=true);
 
-    bool saveVLB(const String& path, const Object* obj, bool start_fresh=true);
+    VLCORE_EXPORT bool saveVLB(const String& path, const Object* obj, bool start_fresh=true);
 
-    bool saveVLB(VirtualFile* file, const Object* obj, bool start_fresh=true);
+    VLCORE_EXPORT bool saveVLB(VirtualFile* file, const Object* obj, bool start_fresh=true);
 
-    ref<Object> loadVLT(const String& path, bool start_fresh=true);
+    VLCORE_EXPORT ref<Object> loadVLT(const String& path, bool start_fresh=true);
 
-    ref<Object> loadVLT(VirtualFile* file, bool start_fresh=true);
+    VLCORE_EXPORT ref<Object> loadVLT(VirtualFile* file, bool start_fresh=true);
 
-    ref<Object> loadVLB(const String& path, bool start_fresh=true);
+    VLCORE_EXPORT ref<Object> loadVLB(const String& path, bool start_fresh=true);
 
-    ref<Object> loadVLB(VirtualFile* file, bool start_fresh=true);
+    VLCORE_EXPORT ref<Object> loadVLB(VirtualFile* file, bool start_fresh=true);
 
-    Object* importVLX(const VLXStructure* st);
+    VLCORE_EXPORT Object* importVLX(const VLXStructure* st);
 
-    VLXStructure* exportVLX(const Object* obj);
+    VLCORE_EXPORT VLXStructure* exportVLX(const Object* obj);
 
-    bool canExport(const Object* obj) const;
+    VLCORE_EXPORT bool canExport(const Object* obj) const;
 
-    bool canImport(const VLXStructure* st) const;
+    VLCORE_EXPORT bool canImport(const VLXStructure* st) const;
 
-    void registerImportedStructure(const VLXStructure* st, Object* obj);
+    VLCORE_EXPORT void registerImportedStructure(const VLXStructure* st, Object* obj);
 
-    void registerExportedObject(const Object* obj, VLXStructure* st);
+    VLCORE_EXPORT void registerExportedObject(const Object* obj, VLXStructure* st);
 
-    Object* getImportedStructure(const VLXStructure* st);
+    VLCORE_EXPORT Object* getImportedStructure(const VLXStructure* st);
 
-    VLXStructure* getExportedObject(const Object* obj);
+    VLCORE_EXPORT VLXStructure* getExportedObject(const Object* obj);
     
     //! The VLXRegistry used by the serializer, by default set to vl::defVLXRegistry().
     VLXRegistry* registry() { return mRegistry.get(); }
@@ -127,7 +127,7 @@ namespace vl
       mExportedObjects.clear();
     }
 
-    std::string generateID(const char* prefix);
+    VLCORE_EXPORT std::string generateID(const char* prefix);
 
     //! Sets a serialization error.
     void setError(EError err) { mError = err; }
@@ -135,9 +135,9 @@ namespace vl
     //! The last signaled error
     EError error() const { return mError; }
 
-    void signalImportError(const String& str);
+    VLCORE_EXPORT void signalImportError(const String& str);
 
-    void signalExportError(const String& str);
+    VLCORE_EXPORT void signalExportError(const String& str);
 
   private:
     EError mError;
