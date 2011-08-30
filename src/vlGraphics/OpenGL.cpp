@@ -551,7 +551,7 @@ bool vl::initializeOpenGL()
     bool supported = glGetError() == GL_NO_ERROR;
     if (supported != Is_Enable_Supported[i])
     {
-      Log::error( Say("%s: capability %s supported! Please report this error to http://www.visualizationlibrary.org/forum/\n") << Translate_Enable_String[i] << (supported? "*IS*" : "*IS NOT*") );
+      Log::error( Say("%s: capability %s supported! This is a harmless glitch either in your GL driver or in VL.\n") << Translate_Enable_String[i] << (supported? "*IS*" : "*IS NOT*") );
       got_error = true;
     }
   }
