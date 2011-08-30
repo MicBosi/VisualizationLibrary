@@ -54,7 +54,7 @@
 
 namespace vl
 {
-  struct VLXIO_Array: public VLXIO
+  struct VLXClassWrapper_Array: public VLXClassWrapper
   {
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
     {
@@ -393,7 +393,7 @@ namespace vl
     ref<VLXStructure> export_ArrayT(VLXSerializer& s, const Object* arr_abstract)
     {
       const T_Array* arr = arr_abstract->as<T_Array>();
-      ref<VLXStructure> st =new VLXStructure(makeObjectTag(arr_abstract).c_str(), s.generateUID("array_"));
+      ref<VLXStructure> st =new VLXStructure(makeVLXTag(arr_abstract).c_str(), s.generateID("array_"));
       ref<T_VLXArray> vlx_array = new T_VLXArray;
       if (arr->size())
       {
@@ -539,7 +539,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Renderable: public VLXIO
+  struct VLXClassWrapper_Renderable: public VLXClassWrapper
   {
     virtual void exportRenderable(const Renderable* ren, VLXStructure* vlx)
     {
@@ -580,11 +580,11 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Geometry: public VLXIO_Renderable
+  struct VLXClassWrapper_Geometry: public VLXClassWrapper_Renderable
   {
     void importGeometry(VLXSerializer& s, const VLXStructure* vlx, Geometry* geom)
     {
-      VLXIO_Renderable::importRenderable(vlx, geom);
+      VLXClassWrapper_Renderable::importRenderable(vlx, geom);
 
       for(size_t i=0; i<vlx->value().size(); ++i)
       {
@@ -717,7 +717,7 @@ namespace vl
     void exportGeometry(VLXSerializer& s, const Geometry* geom, VLXStructure* vlx)
     {
       // Renderable
-      VLXIO_Renderable::exportRenderable(geom, vlx);
+      VLXClassWrapper_Renderable::exportRenderable(geom, vlx);
 
       // Geometry
       if (geom->vertexArray()) 
@@ -760,7 +760,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Geometry* cast_obj = obj->as<Geometry>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("geometry_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("geometry_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportGeometry(s, cast_obj, vlx.get());
@@ -770,7 +770,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_VertexAttribInfo: public VLXIO
+  struct VLXClassWrapper_VertexAttribInfo: public VLXClassWrapper
   {
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
     {
@@ -844,7 +844,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const VertexAttribInfo* cast_obj = obj->as<VertexAttribInfo>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("vertattrinfo_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("vertattrinfo_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportVertexAttribInfo(s, cast_obj, vlx.get());
@@ -854,7 +854,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_DrawCall: public VLXIO
+  struct VLXClassWrapper_DrawCall: public VLXClassWrapper
   {
     void importDrawCall(VLXSerializer& s, const VLXStructure* vlx, DrawCall* draw_call)
     {
@@ -1184,7 +1184,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const DrawCall* cast_obj = obj->as<DrawCall>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("drawcall_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("drawcall_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportDrawCall(s, cast_obj, vlx.get());
@@ -1194,7 +1194,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_PatchParameter: public VLXIO
+  struct VLXClassWrapper_PatchParameter: public VLXClassWrapper
   {
     void importPatchParameter(const VLXStructure* vlx, PatchParameter* pp)
     {
@@ -1238,7 +1238,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const PatchParameter* cast_obj = obj->as<PatchParameter>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("patchparam_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("patchparam_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportPatchParameter(cast_obj, vlx.get());
@@ -1248,7 +1248,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_ResourceDatabase: public VLXIO
+  struct VLXClassWrapper_ResourceDatabase: public VLXClassWrapper
   {
     void importResourceDatabase(VLXSerializer& s, const VLXStructure* vlx, ResourceDatabase* resdb)
     {
@@ -1296,7 +1296,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const ResourceDatabase* cast_obj = obj->as<ResourceDatabase>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("resdb_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("resdb_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportResourceDatabase(s, cast_obj, vlx.get());
@@ -1306,7 +1306,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Uniform: public VLXIO
+  struct VLXClassWrapper_Uniform: public VLXClassWrapper
   {
     void importUniform(VLXSerializer& s, const VLXStructure* vlx, Uniform* uniform)
     {
@@ -1631,7 +1631,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Uniform* cast_obj = obj->as<Uniform>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("uniform_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("uniform_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportUniform(cast_obj, vlx.get());
@@ -1641,7 +1641,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Shader: public VLXIO
+  struct VLXClassWrapper_Shader: public VLXClassWrapper
   {
     void importShader(VLXSerializer& s, const VLXStructure* vlx, Shader* sh)
     {
@@ -1754,7 +1754,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Shader* cast_obj = obj->as<Shader>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("shader_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("shader_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportShader(s, cast_obj, vlx.get());
@@ -1764,7 +1764,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_LODEvaluator: public VLXIO
+  struct VLXClassWrapper_LODEvaluator: public VLXClassWrapper
   {
     void importLODEvaluator(VLXSerializer& s, const VLXStructure* vlx, LODEvaluator* obj)
     {
@@ -1852,7 +1852,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const LODEvaluator* cast_obj = obj->as<LODEvaluator>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("lodeval_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("lodeval_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportLODEvaluator(s, cast_obj, vlx.get());
@@ -1862,7 +1862,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Effect: public VLXIO
+  struct VLXClassWrapper_Effect: public VLXClassWrapper
   {
     void importEffect(VLXSerializer& s, const VLXStructure* vlx, Effect* obj)
     {
@@ -1930,7 +1930,7 @@ namespace vl
 
     VLXValue export_ShaderPasses(VLXSerializer& s, const ShaderPasses* sh_seq)
     {
-      VLXValue value( new VLXList(makeObjectTag(sh_seq).c_str()) );
+      VLXValue value( new VLXList(makeVLXTag(sh_seq).c_str()) );
       for(int i=0; i<sh_seq->size(); ++i)
         *value.getList() << s.exportVLX(sh_seq->at(i));
       return value;
@@ -1955,7 +1955,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Effect* cast_obj = obj->as<Effect>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("effect_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("effect_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportEffect(s, cast_obj, vlx.get());
@@ -1965,7 +1965,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Actor: public VLXIO
+  struct VLXClassWrapper_Actor: public VLXClassWrapper
   {
     void importActor(VLXSerializer& s, const VLXStructure* vlx, Actor* obj)
     {
@@ -2127,7 +2127,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Actor* cast_obj = obj->as<Actor>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("actor_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("actor_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportActor(s, cast_obj, vlx.get());
@@ -2137,7 +2137,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Camera: public VLXIO
+  struct VLXClassWrapper_Camera: public VLXClassWrapper
   {
     void importCamera(VLXSerializer& s, const VLXStructure* vlx, Camera* obj)
     {
@@ -2256,7 +2256,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Camera* cast_obj = obj->as<Camera>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("camera_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("camera_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportCamera(s, cast_obj, vlx.get());
@@ -2267,7 +2267,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Viewport: public VLXIO
+  struct VLXClassWrapper_Viewport: public VLXClassWrapper
   {
     void importViewport(VLXSerializer& s, const VLXStructure* vlx, Viewport* obj)
     {
@@ -2370,7 +2370,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Viewport* cast_obj = obj->as<Viewport>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("viewport_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("viewport_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportViewport(cast_obj, vlx.get());
@@ -2380,7 +2380,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Transform: public VLXIO
+  struct VLXClassWrapper_Transform: public VLXClassWrapper
   {
     void importTransform(VLXSerializer& s, const VLXStructure* vlx, Transform* obj)
     {
@@ -2448,7 +2448,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Transform* cast_obj = obj->as<Transform>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("transform_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("transform_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportTransform(s, cast_obj, vlx.get());
@@ -2458,7 +2458,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Light: public VLXIO
+  struct VLXClassWrapper_Light: public VLXClassWrapper
   {
     void importLight(VLXSerializer& s, const VLXStructure* vlx, Light* obj)
     {
@@ -2565,7 +2565,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Light* cast_obj = obj->as<Light>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("light_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("light_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportLight(s, cast_obj, vlx.get());
@@ -2575,7 +2575,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_ClipPlane: public VLXIO
+  struct VLXClassWrapper_ClipPlane: public VLXClassWrapper
   {
     void importClipPlane(VLXSerializer& s, const VLXStructure* vlx, ClipPlane* obj)
     {
@@ -2627,7 +2627,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const ClipPlane* cast_obj = obj->as<ClipPlane>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("clipplane_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("clipplane_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportClipPlane(s, cast_obj, vlx.get());
@@ -2637,7 +2637,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_GLSLProgram: public VLXIO
+  struct VLXClassWrapper_GLSLProgram: public VLXClassWrapper
   {
     void importGLSLProgram(VLXSerializer& s, const VLXStructure* vlx, GLSLProgram* obj)
     {
@@ -2737,7 +2737,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const GLSLProgram* cast_obj = obj->as<GLSLProgram>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("glslprog_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("glslprog_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportGLSLProgram(s, cast_obj, vlx.get());
@@ -2747,7 +2747,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_GLSLShader: public VLXIO
+  struct VLXClassWrapper_GLSLShader: public VLXClassWrapper
   {
     void importGLSLShader(VLXSerializer& s, const VLXStructure* vlx, GLSLShader* obj)
     {
@@ -2817,7 +2817,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const GLSLShader* cast_obj = obj->as<GLSLShader>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("glslsh_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("glslsh_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportGLSLShader(cast_obj, vlx.get());
@@ -2827,7 +2827,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_VertexAttrib: public VLXIO
+  struct VLXClassWrapper_VertexAttrib: public VLXClassWrapper
   {
     void importVertexAttrib(VLXSerializer& s, const VLXStructure* vlx, VertexAttrib* obj)
     {
@@ -2853,7 +2853,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const VertexAttrib* cast_obj = obj->as<VertexAttrib>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("vertexattrib_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("vertexattrib_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportVertexAttrib(cast_obj, vlx.get());
@@ -2863,7 +2863,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Color: public VLXIO
+  struct VLXClassWrapper_Color: public VLXClassWrapper
   {
     void importColor(VLXSerializer& s, const VLXStructure* vlx, Color* obj)
     {
@@ -2889,7 +2889,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Color* cast_obj = obj->as<Color>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("color_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("color_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportColor(cast_obj, vlx.get());
@@ -2899,7 +2899,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_SecondaryColor: public VLXIO
+  struct VLXClassWrapper_SecondaryColor: public VLXClassWrapper
   {
     void importSecondaryColor(VLXSerializer& s, const VLXStructure* vlx, SecondaryColor* obj)
     {
@@ -2925,7 +2925,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const SecondaryColor* cast_obj = obj->as<SecondaryColor>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("seccolor_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("seccolor_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportSecondaryColor(cast_obj, vlx.get());
@@ -2935,7 +2935,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Normal: public VLXIO
+  struct VLXClassWrapper_Normal: public VLXClassWrapper
   {
     void importNormal(VLXSerializer& s, const VLXStructure* vlx, Normal* obj)
     {
@@ -2961,7 +2961,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Normal* cast_obj = obj->as<Normal>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("normal_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("normal_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportNormal(cast_obj, vlx.get());
@@ -2971,7 +2971,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Material: public VLXIO
+  struct VLXClassWrapper_Material: public VLXClassWrapper
   {
     void importMaterial(VLXSerializer& s, const VLXStructure* vlx, Material* obj)
     {
@@ -3099,7 +3099,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Material* cast_obj = obj->as<Material>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("material_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("material_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportMaterial(cast_obj, vlx.get());
@@ -3109,7 +3109,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_ActorEventCallback: public VLXIO
+  struct VLXClassWrapper_ActorEventCallback: public VLXClassWrapper
   {
     void importActorEventCallback(VLXSerializer& s, const VLXStructure* vlx, ActorEventCallback* obj)
     {
@@ -3169,7 +3169,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const ActorEventCallback* cast_obj = obj->as<ActorEventCallback>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("actorcallback_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("actorcallback_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportActorEventCallback(s, cast_obj, vlx.get());
@@ -3179,7 +3179,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_Texture: public VLXIO
+  struct VLXClassWrapper_Texture: public VLXClassWrapper
   {
     void importTexture(VLXSerializer& s, const VLXStructure* vlx, Texture* obj)
     {
@@ -3303,7 +3303,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const Texture* cast_obj = obj->as<Texture>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("texture_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("texture_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportTexture(s, cast_obj, vlx.get());
@@ -3313,7 +3313,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_TexParameter: public VLXIO
+  struct VLXClassWrapper_TexParameter: public VLXClassWrapper
   {
     void importTexParameter(VLXSerializer& s, const VLXStructure* vlx, TexParameter* obj)
     {
@@ -3417,7 +3417,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const TexParameter* cast_obj = obj->as<TexParameter>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("texparam_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("texparam_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportTexParameter(cast_obj, vlx.get());
@@ -3427,7 +3427,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
-  struct VLXIO_TextureSampler: public VLXIO
+  struct VLXClassWrapper_TextureSampler: public VLXClassWrapper
   {
     void importTextureSampler(VLXSerializer& s, const VLXStructure* vlx, TextureSampler* obj)
     {
@@ -3470,7 +3470,7 @@ namespace vl
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
     {
       const TextureSampler* cast_obj = obj->as<TextureSampler>(); VL_CHECK(cast_obj)
-      ref<VLXStructure> vlx = new VLXStructure(makeObjectTag(obj).c_str(), s.generateUID("texsampler_"));
+      ref<VLXStructure> vlx = new VLXStructure(makeVLXTag(obj).c_str(), s.generateID("texsampler_"));
       // register exported object asap
       s.registerExportedObject(obj, vlx.get());
       exportTextureSampler(s, cast_obj, vlx.get());

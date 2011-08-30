@@ -40,6 +40,8 @@
 
 namespace vl
 {
+  inline std::string makeVLXTag(const Object* obj) { return std::string("<") + obj->classType()->name() + ">"; }
+
   inline VLXValue toValue(const std::vector<int>& vec)
   {
     VLXValue value;
@@ -52,7 +54,7 @@ namespace vl
 
   inline VLXValue toIdentifier(const std::string& str) { return VLXValue(str.c_str(), VLXValue::Identifier); }
 
-  inline VLXValue toUID(const std::string& str)        { return VLXValue(str.c_str(), VLXValue::UID); }
+  inline VLXValue toID(const std::string& str)        { return VLXValue(str.c_str(), VLXValue::ID); }
 
   inline VLXValue toString(const std::string& str)     { return VLXValue(str.c_str(), VLXValue::String); }
 

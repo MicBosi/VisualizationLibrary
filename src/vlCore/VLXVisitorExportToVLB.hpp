@@ -47,16 +47,16 @@ namespace vl
   public:
     VLXVisitorExportToVLB(VirtualFile* file = NULL)
     {
-      mUIDSet = NULL;
+      mIDSet = NULL;
       setOutputFile(file);
     }
 
     bool isUsed(const std::string& uid)
     {
-      if (mUIDSet)
+      if (mIDSet)
       {
-        std::map< std::string, int >::iterator it = mUIDSet->find(uid);
-        if (it != mUIDSet->end())
+        std::map< std::string, int >::iterator it = mIDSet->find(uid);
+        if (it != mIDSet->end())
           return it->second > 1;
         else
         {
@@ -89,7 +89,7 @@ namespace vl
       case VLXValue::ArrayIdentifier:
         break;
 
-      case VLXValue::ArrayUID:
+      case VLXValue::ArrayID:
         break;
       */
 
@@ -127,11 +127,11 @@ namespace vl
         writeString( value.getIdentifier().c_str() );
         break;
 
-      case VLXValue::UID:
+      case VLXValue::ID:
         // header
-        mOutputFile->writeUInt8( VLB_ChunkUID );
+        mOutputFile->writeUInt8( VLB_ChunkID );
         // value
-        writeString( value.getUID().c_str() );
+        writeString( value.getID().c_str() );
         break;
 
       case VLXValue::Bool:
@@ -161,7 +161,7 @@ namespace vl
     {
       if (isVisited(obj))
       {
-        mOutputFile->writeUInt8( VLB_ChunkUID );
+        mOutputFile->writeUInt8( VLB_ChunkID );
         writeString( obj->uid().c_str() );
         return;
       }
@@ -287,7 +287,7 @@ namespace vl
     {
     }
 
-    virtual void visitArray(VLXArrayUID* arr)
+    virtual void visitArray(VLXArrayID* arr)
     {
     }
     */
@@ -367,11 +367,11 @@ namespace vl
       }
     }
 
-    void setUIDSet(std::map< std::string, int >* uids) { mUIDSet = uids; }
+    void setIDSet(std::map< std::string, int >* uids) { mIDSet = uids; }
 
-    std::map< std::string, int >* uidSet() { return mUIDSet; }
+    std::map< std::string, int >* uidSet() { return mIDSet; }
 
-    const std::map< std::string, int >* uidSet() const { return mUIDSet; }
+    const std::map< std::string, int >* uidSet() const { return mIDSet; }
 
     void setOutputFile(VirtualFile* file) 
     { 
@@ -388,7 +388,7 @@ namespace vl
     const VirtualFile* outputFile() const { return mOutputFile.get(); }
 
   private:
-    std::map< std::string, int >* mUIDSet;
+    std::map< std::string, int >* mIDSet;
     ref<VirtualFile> mOutputFile;
   };
 }

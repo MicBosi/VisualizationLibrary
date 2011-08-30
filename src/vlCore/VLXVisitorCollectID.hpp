@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLXVisitorCollectUID_INCLUDE_ONCE
-#define VLXVisitorCollectUID_INCLUDE_ONCE
+#ifndef VLXVisitorCollectID_INCLUDE_ONCE
+#define VLXVisitorCollectID_INCLUDE_ONCE
 
 #include <vlCore/VLXVisitor.hpp>
 #include <vlCore/VLXValue.hpp>
@@ -40,19 +40,19 @@
 namespace vl
 {
   //-----------------------------------------------------------------------------
-  // VLXVisitorCollectUID:
-  // Sets to #NULL the UID of those objects that are not referenced by anybody.
+  // VLXVisitorCollectID:
+  // Sets to #NULL the ID of those objects that are not referenced by anybody.
   // Useful before exporting.
   //-----------------------------------------------------------------------------
-  class VLXVisitorCollectUID: public VLXVisitor
+  class VLXVisitorCollectID: public VLXVisitor
   {
   public:
-    VLXVisitorCollectUID(): mUIDSet(NULL) {}
+    VLXVisitorCollectID(): mIDSet(NULL) {}
 
     virtual void visitStructure(VLXStructure* obj)
     {
       if(!obj->uid().empty() && obj->uid() != "#NULL")
-        (*mUIDSet)[obj->uid()]++;
+        (*mIDSet)[obj->uid()]++;
 
       if (isVisited(obj))
         return;
@@ -67,12 +67,12 @@ namespace vl
           keyval.value().getList()->acceptVisitor(this);
         else
         /*
-        if (keyval.value().type() == VLXValue::ArrayUID)
-          keyval.value().getArrayUID()->acceptVisitor(this);
+        if (keyval.value().type() == VLXValue::ArrayID)
+          keyval.value().getArrayID()->acceptVisitor(this);
         else
         */
-        if (keyval.value().type() == VLXValue::UID)
-          (*mUIDSet)[keyval.value().getUID()]++;
+        if (keyval.value().type() == VLXValue::ID)
+          (*mIDSet)[keyval.value().getID()]++;
       }
     }
 
@@ -81,7 +81,7 @@ namespace vl
       // this should happen only if the user manually creates loops
       if (isVisited(list))
       {
-        Log::warning("VLXVisitorCollectUID: cycle detected on VLXList.\n");
+        Log::warning("VLXVisitorCollectID: cycle detected on VLXList.\n");
         return;
       }
 
@@ -93,23 +93,23 @@ namespace vl
           list->value()[i].getList()->acceptVisitor(this);
         else
         /*
-        if (list->value()[i].type() == VLXValue::ArrayUID)
-          list->value()[i].getArrayUID()->acceptVisitor(this);
+        if (list->value()[i].type() == VLXValue::ArrayID)
+          list->value()[i].getArrayID()->acceptVisitor(this);
         else
         */
-        if (list->value()[i].type() == VLXValue::UID)
-          (*mUIDSet)[list->value()[i].getUID()]++;
+        if (list->value()[i].type() == VLXValue::ID)
+          (*mIDSet)[list->value()[i].getID()]++;
       }
     }
 
     /*
     virtual void visitArray(VLXArrayString*)  {}
 
-    virtual void visitArray(VLXArrayUID* arr)
+    virtual void visitArray(VLXArrayID* arr)
     {
       // retrieves the assigned Structure
       for(size_t i=0 ;i<arr->value().size(); ++i)
-        (*mUIDSet)[arr->value()[i].uid()]++;
+        (*mIDSet)[arr->value()[i].uid()]++;
     }
 
     virtual void visitArray(VLXArrayIdentifier*) {}
@@ -119,14 +119,14 @@ namespace vl
 
     virtual void visitArray(VLXArrayReal*)  {}
 
-    void setUIDSet(std::map< std::string, int >* uids) { mUIDSet = uids; }
+    void setIDSet(std::map< std::string, int >* uids) { mIDSet = uids; }
 
-    std::map< std::string, int >* uidSet() { return mUIDSet; }
+    std::map< std::string, int >* uidSet() { return mIDSet; }
 
-    const std::map< std::string, int >* uidSet() const { return mUIDSet; }
+    const std::map< std::string, int >* uidSet() const { return mIDSet; }
 
   private:
-    std::map< std::string, int >* mUIDSet;
+    std::map< std::string, int >* mIDSet;
   };
 }
 

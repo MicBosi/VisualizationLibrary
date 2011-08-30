@@ -38,7 +38,7 @@ namespace vl
 {
   //-----------------------------------------------------------------------------
   // VLXVisitorLinkMapper: 
-  // Compiles the link-map which associates an VLXStructure to it's UID.
+  // Compiles the link-map which associates an VLXStructure to it's ID.
   // Can be called multiple times
   //-----------------------------------------------------------------------------
   class VLXVisitorLinkMapper: public VLXVisitor
@@ -47,7 +47,7 @@ namespace vl
     typedef enum 
     {
       NoError,
-      DuplicateUID
+      DuplicateID
     } EError;
 
   public:
@@ -62,7 +62,7 @@ namespace vl
       mLinkMap = map;
     }
 
-    void declareUID(VLXStructure* obj)
+    void declareID(VLXStructure* obj)
     {
       if (obj->uid() != "#NULL")
       {
@@ -73,8 +73,8 @@ namespace vl
         {
           if ( it->second != obj )
           {
-            mError = DuplicateUID;
-            Log::error( Say("UID '%s' used by '%s' is already assigned to another node '%s'!\n") << obj->uid() << obj->tag() << it->second->tag() );
+            mError = DuplicateID;
+            Log::error( Say("ID '%s' used by '%s' is already assigned to another node '%s'!\n") << obj->uid() << obj->tag() << it->second->tag() );
           }
         }
       }
@@ -86,7 +86,7 @@ namespace vl
       if (isVisited(obj))
         return;
 
-      declareUID(obj);
+      declareID(obj);
 
       for(size_t i=0; i<obj->value().size(); ++i)
       {
@@ -122,7 +122,7 @@ namespace vl
 
     virtual void visitArray(VLXArrayIdentifier*) {}
 
-    virtual void visitArray(VLXArrayUID*) {}
+    virtual void visitArray(VLXArrayID*) {}
     */
 
     virtual void visitArray(VLXArrayInteger*)  {}

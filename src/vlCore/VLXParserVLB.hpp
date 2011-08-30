@@ -228,7 +228,7 @@ namespace vl
       // ID
       if (!readString(str))
         return false;
-      st->setUID(str.c_str());
+      st->setID(str.c_str());
 
       // read key/value count
       long long count = 0;
@@ -467,12 +467,12 @@ namespace vl
           return true;
         }
 
-      case VLB_ChunkUID:
+      case VLB_ChunkID:
         if (!readString(str))
           return false;
         else
         {
-          val.setUID(str.c_str());
+          val.setID(str.c_str());
           return true;
         }
 

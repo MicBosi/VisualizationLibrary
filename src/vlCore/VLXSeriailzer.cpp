@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vlCore/VLXSerializer.hpp>
-#include <vlCore/VLXVisitorCollectUID.hpp>
+#include <vlCore/VLXVisitorCollectID.hpp>
 #include <vlCore/VLXVisitorLinker.hpp>
 #include <vlCore/VLXParserVLT.hpp>
 #include <vlCore/VLXParserVLB.hpp>
@@ -53,10 +53,10 @@ Object* VLXSerializer::importVLX(const VLXStructure* st)
     return obj;
   else
   {
-    std::map< std::string, ref<VLXIO> >::iterator it = registry()->importRegistry().find(st->tag());
+    std::map< std::string, ref<VLXClassWrapper> >::iterator it = registry()->importRegistry().find(st->tag());
     if (it != registry()->importRegistry().end())
     {
-      VLXIO* serializer = it->second.get_writable();
+      VLXClassWrapper* serializer = it->second.get_writable();
       VL_CHECK(serializer);
       // import structure
       ref<Object> obj = serializer->importVLX(*this, st);
@@ -88,10 +88,10 @@ VLXStructure* VLXSerializer::exportVLX(const Object* obj)
     return st;
   else
   {
-    std::map< const TypeInfo*, ref<VLXIO> >::iterator it = registry()->exportRegistry().find(obj->classType());
+    std::map< const TypeInfo*, ref<VLXClassWrapper> >::iterator it = registry()->exportRegistry().find(obj->classType());
     if (it != registry()->exportRegistry().end())
     {
-      VLXIO* serializer = it->second.get_writable();
+      VLXClassWrapper* serializer = it->second.get_writable();
       VL_CHECK(serializer);
       // export object
       ref<VLXStructure> st = serializer->exportVLX(*this, obj);
@@ -185,10 +185,10 @@ void VLXSerializer::signalExportError(const String& str)
   }
 }
 //-----------------------------------------------------------------------------
-std::string VLXSerializer::generateUID(const char* prefix)
+std::string VLXSerializer::generateID(const char* prefix)
 {
   char buffer[sizeof(int)*8+1];
-  return std::string("#") + prefix + "id" + itoa(++mUIDCounter, buffer, 10);
+  return std::string("#") + prefix + "id" + itoa(++mIDCounter, buffer, 10);
 }
 //-----------------------------------------------------------------------------
 bool VLXSerializer::saveVLT(const String& path, const Object* obj, bool start_fresh)
@@ -234,13 +234,13 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLXVisitorCollectUID uid_collector;
-    uid_collector.setUIDSet(&uid_set);
+    VLXVisitorCollectID uid_collector;
+    uid_collector.setIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
 
     VLXVisitorExportToVLT text_export_visitor;
-    text_export_visitor.setUIDSet(&uid_set);
+    text_export_visitor.setIDSet(&uid_set);
     text_export_visitor.writeHeader();
     meta->acceptVisitor(&text_export_visitor);
     st->acceptVisitor(&text_export_visitor);
@@ -298,13 +298,13 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLXVisitorCollectUID uid_collector;
-    uid_collector.setUIDSet(&uid_set);
+    VLXVisitorCollectID uid_collector;
+    uid_collector.setIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
 
     VLXVisitorExportToVLB bin_export_visitor(file);
-    bin_export_visitor.setUIDSet(&uid_set);
+    bin_export_visitor.setIDSet(&uid_set);
     bin_export_visitor.writeHeader();
     meta->acceptVisitor(&bin_export_visitor);
     st->acceptVisitor(&bin_export_visitor);
