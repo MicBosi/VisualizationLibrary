@@ -38,7 +38,7 @@
 namespace vl
 {
   //-----------------------------------------------------------------------------
-  // Links several hierachies also resolving UIDs across them.
+  // Links several hierachies also resolving IDs across them.
   //-----------------------------------------------------------------------------
   class VLXLinker
   {
@@ -52,7 +52,7 @@ namespace vl
     {
       std::map< std::string, ref<VLXStructure> > link_map;
 
-      // map all the UIDs to the appropriate VLXStructures
+      // map all the IDs to the appropriate VLXStructures
       VLXVisitorLinkMapper link_mapper(&link_map);
       for(size_t i=0; i<mModules.size(); ++i)
         mModules[i]->acceptVisitor(&link_mapper);
@@ -60,7 +60,7 @@ namespace vl
       if (link_mapper.error())
         return false;
 
-      // link all the UIDs to the associated VLXStructure
+      // link all the IDs to the associated VLXStructure
       VLXVisitorLinker linker(&link_map);
       for(size_t i=0; i<mModules.size(); ++i)
         mModules[i]->acceptVisitor(&linker);

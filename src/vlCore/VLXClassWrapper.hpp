@@ -41,19 +41,12 @@ namespace vl
   class VLXSerializer;
   class VLXStructure;
   //---------------------------------------------------------------------------
-  class VLXIO: public Object
+  class VLXClassWrapper: public Object
   {
   public:
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* st) = 0;
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj) = 0;
-
-    std::string generateUID(VLXSerializer& s, const char* prefix);
-
-    static std::string makeObjectTag(const Object* obj)
-    {
-      return std::string("<") + obj->classType()->name() + ">";
-    }
   };
   //---------------------------------------------------------------------------
 }

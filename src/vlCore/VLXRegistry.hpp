@@ -32,31 +32,32 @@
 #ifndef VLXRegistry_INCLUDE_ONCE
 #define VLXRegistry_INCLUDE_ONCE
 
-#include <vlCore/VLXIO.hpp>
+#include <vlCore/VLXClassWrapper.hpp>
 #include <string>
 #include <map>
 
 namespace vl
 {
+  //! Registry of vl::VLXClassWrapper objects, used by vl::VLXSerializer, see also vl::defVLXRegistry().
   class VLXRegistry: public Object
   {
   public:
-    void addSerializer(const TypeInfo* type, VLXIO* serializer)
+    void registerClassWrapper(const TypeInfo* type, VLXClassWrapper* wrapper)
     {
       std::string tag = std::string("<") + type->name() + ">";
-      mExportRegistry[type] = serializer; 
-      mImportRegistry[tag]  = serializer; 
+      mExportRegistry[type] = wrapper; 
+      mImportRegistry[tag]  = wrapper; 
     }
 
-    std::map< std::string, ref<VLXIO> >& importRegistry() { return mImportRegistry; }
-    std::map< const TypeInfo*, ref<VLXIO> >& exportRegistry() { return mExportRegistry; }
+    std::map< std::string, ref<VLXClassWrapper> >& importRegistry() { return mImportRegistry; }
+    std::map< const TypeInfo*, ref<VLXClassWrapper> >& exportRegistry() { return mExportRegistry; }
 
-    const std::map< std::string, ref<VLXIO> >& importRegistry() const { return mImportRegistry; }
-    const std::map< const TypeInfo*, ref<VLXIO> >& exportRegistry() const { return mExportRegistry; }
+    const std::map< std::string, ref<VLXClassWrapper> >& importRegistry() const { return mImportRegistry; }
+    const std::map< const TypeInfo*, ref<VLXClassWrapper> >& exportRegistry() const { return mExportRegistry; }
 
   private:
-    std::map< std::string, ref<VLXIO> > mImportRegistry;     // <tag> --> VLXIO
-    std::map< const TypeInfo*, ref<VLXIO> > mExportRegistry; // TypeInfo --> VLXIO
+    std::map< std::string, ref<VLXClassWrapper> > mImportRegistry;     // <tag> --> VLXClassWrapper
+    std::map< const TypeInfo*, ref<VLXClassWrapper> > mExportRegistry; // TypeInfo --> VLXClassWrapper
   };
 
   VLXRegistry* defVLXRegistry();

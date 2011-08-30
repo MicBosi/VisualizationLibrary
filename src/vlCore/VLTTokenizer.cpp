@@ -243,7 +243,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
       Log::error( Say("Line %n : illegal id '#_' found.\n") << mLineNumber );
       return false;
     }
-    token.mType = VLTToken::UID;
+    token.mType = VLTToken::ID;
     return true;
 
   case '"':

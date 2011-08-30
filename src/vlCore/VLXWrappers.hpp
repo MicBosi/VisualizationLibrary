@@ -32,7 +32,7 @@
 #ifndef VLXWrapper_Core_INCLUDE_ONCE
 #define VLXWrapper_Core_INCLUDE_ONCE
 
-#include <vlCore/VLXIO.hpp>
+#include <vlCore/VLXClassWrapper.hpp>
 #include <vlCore/VLXRegistry.hpp>
 #include <vlCore/VLXSerializer.hpp>
 #include <vlCore/VLXValue.hpp>

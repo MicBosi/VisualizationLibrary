@@ -55,7 +55,7 @@ void VLXValue::release()
 
   /*
   case ArrayString:
-  case ArrayUID:
+  case ArrayID:
   case ArrayIdentifier:
   */
   case ArrayInteger:
@@ -65,7 +65,7 @@ void VLXValue::release()
     break;
 
   case String:
-  case UID:
+  case ID:
   case Identifier:
     VL_CHECK(mUnion.mString)
     delete mUnion.mString; 
@@ -104,7 +104,7 @@ VLXValue& VLXValue::operator=(const VLXValue& other)
 
   /*
   case ArrayString:
-  case ArrayUID:
+  case ArrayID:
   case ArrayIdentifier:
   */
   case ArrayInteger:
@@ -124,7 +124,7 @@ VLXValue& VLXValue::operator=(const VLXValue& other)
   mType = other.mType;
 
   // make local copy of the string
-  if (mType == String || mType == Identifier || mType == UID)
+  if (mType == String || mType == Identifier || mType == ID)
     mUnion.mString = new std::string(*mUnion.mString);
 
   return *this;
@@ -209,11 +209,11 @@ VLXArrayIdentifier* VLXValue::setArrayIdentifier(VLXArrayIdentifier* arr)
   return arr;
 }
 //-----------------------------------------------------------------------------
-VLXArrayUID* VLXValue::setArrayUID(VLXArrayUID* arr)
+VLXArrayID* VLXValue::setArrayID(VLXArrayID* arr)
 {
   VL_CHECK(arr);
   release();
-  mType = ArrayUID;
+  mType = ArrayID;
   mUnion.mArray = arr;
   if (mUnion.mArray)
     mUnion.mArray->incReference();
@@ -236,8 +236,8 @@ VLXArray* VLXValue::setArray(VLXArray* arr)
   if (arr->classType() == VLXArrayIdentifier::Type())
     return setArrayIdentifier(arr->as<VLXArrayIdentifier>());
   else
-  if (arr->classType() == VLXArrayUID::Type())
-    return setArrayUID(arr->as<VLXArrayUID>());
+  if (arr->classType() == VLXArrayID::Type())
+    return setArrayID(arr->as<VLXArrayID>());
   */
   else
   {

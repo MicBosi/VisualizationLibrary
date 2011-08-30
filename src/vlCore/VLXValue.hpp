@@ -200,23 +200,23 @@ namespace vl
     std::vector<std::string> mValue;
   };
   //-----------------------------------------------------------------------------
-  class VLXArrayUID: public VLXArray
+  class VLXArrayID: public VLXArray
   {
-    VL_INSTRUMENT_CLASS(vl::VLXArrayUID, VLXArray)
+    VL_INSTRUMENT_CLASS(vl::VLXArrayID, VLXArray)
 
   public:
-    VLXArrayUID(const char* tag=NULL): VLXArray(tag) { }
+    VLXArrayID(const char* tag=NULL): VLXArray(tag) { }
 
     virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
 
     class Value
     {
     public:
-      Value(const char* uid): mUID(uid) {}
+      Value(const char* uid): mID(uid) {}
 
-      void setUID(const char* uid) { mUID = uid; }
+      void setID(const char* uid) { mID = uid; }
 
-      const char* uid() const { return mUID.c_str(); }
+      const char* uid() const { return mID.c_str(); }
 
       void setStructure(VLXStructure* obj) { mObj = obj; }
 
@@ -225,7 +225,7 @@ namespace vl
       const VLXStructure* object() const { return mObj.get(); }
 
     private:
-      std::string mUID; // the UID string
+      std::string mID; // the ID string
       ref<VLXStructure> mObj; // the linked object
     };
 
@@ -254,7 +254,7 @@ namespace vl
       Real,
       String,
       Identifier,
-      UID,
+      ID,
       RawtextBlock,
       List,
       Structure,
@@ -263,7 +263,7 @@ namespace vl
       /*
       ArrayString,
       ArrayIdentifier,
-      ArrayUID,
+      ArrayID,
       */
     };
 
@@ -338,12 +338,12 @@ namespace vl
       setArrayIdentifier(arr);
     }
 
-    VLXValue(VLXArrayUID* arr)
+    VLXValue(VLXArrayID* arr)
     {
       mLineNumber = 0;
       mType = Integer;
       mUnion.mInteger = 0;
-      setArrayUID(arr);
+      setArrayID(arr);
     }
     */
 
@@ -371,7 +371,7 @@ namespace vl
       {
       case String: setString(str); break;
       case Identifier: setIdentifier(str); break;
-      case UID: setUID(str); break;
+      case ID: setID(str); break;
       default:
         VL_TRAP();
         break;
@@ -434,7 +434,7 @@ namespace vl
     /*
     VLCORE_EXPORT VLXArrayString*     setArrayString(VLXArrayString*);
     VLCORE_EXPORT VLXArrayIdentifier* setArrayIdentifier(VLXArrayIdentifier*);
-    VLCORE_EXPORT VLXArrayUID*        setArrayUID(VLXArrayUID*);
+    VLCORE_EXPORT VLXArrayID*        setArrayID(VLXArrayID*);
     */
 
     /*
@@ -444,8 +444,8 @@ namespace vl
     VLXArrayIdentifier* getArrayIdentifier() { VL_CHECK(mType == ArrayIdentifier); return mUnion.mArray->as<VLXArrayIdentifier>(); }
     const VLXArrayIdentifier* getArrayIdentifier() const { VL_CHECK(mType == ArrayIdentifier); return mUnion.mArray->as<VLXArrayIdentifier>(); }
 
-    VLXArrayUID* getArrayUID() { VL_CHECK(mType == ArrayUID); return mUnion.mArray->as<VLXArrayUID>(); }
-    const VLXArrayUID* getArrayUID() const { VL_CHECK(mType == ArrayUID); return mUnion.mArray->as<VLXArrayUID>(); }
+    VLXArrayID* getArrayID() { VL_CHECK(mType == ArrayID); return mUnion.mArray->as<VLXArrayID>(); }
+    const VLXArrayID* getArrayID() const { VL_CHECK(mType == ArrayID); return mUnion.mArray->as<VLXArrayID>(); }
     */
 
     VLXArrayInteger* getArrayInteger() { VL_CHECK(mType == ArrayInteger); return mUnion.mArray->as<VLXArrayInteger>(); }
@@ -480,15 +480,15 @@ namespace vl
 
     // uid
 
-    const std::string& setUID(const char* str)
+    const std::string& setID(const char* str)
     {
       release();
-      mType = UID;
+      mType = ID;
       mUnion.mString = new std::string(str);
       return *mUnion.mString;
     }
 
-    const std::string& getUID() const { VL_CHECK(mType == UID); return *mUnion.mString; }
+    const std::string& getID() const { VL_CHECK(mType == ID); return *mUnion.mString; }
 
     // integer
 
@@ -555,14 +555,14 @@ namespace vl
     {
       // mic fixme: reenable
       // mKeyValue.reserve(16);
-      setUID("#NULL");
+      setID("#NULL");
     }
 
     VLXStructure(const char* tag)
     {
       // mic fixme: reenable
       // mKeyValue.reserve(16);
-      setUID("#NULL");
+      setID("#NULL");
       setTag(tag);
     }
 
@@ -570,7 +570,7 @@ namespace vl
     {
       // mic fixme: reenable
       // mKeyValue.reserve(16);
-      setUID(uid.c_str());
+      setID(uid.c_str());
       setTag(tag);
     }
 
@@ -610,9 +610,9 @@ namespace vl
       VLXValue mValue;
     };
 
-    void setUID(const char* uid) { mUID = uid; }
+    void setID(const char* uid) { mID = uid; }
 
-    const std::string& uid() const { return mUID; }
+    const std::string& uid() const { return mID; }
 
     std::vector<Value>& value() { return mKeyValue; }
 
@@ -636,7 +636,7 @@ namespace vl
     }
 
   private:
-    std::string mUID;
+    std::string mID;
     std::vector<Value> mKeyValue;
   };
   //-----------------------------------------------------------------------------
