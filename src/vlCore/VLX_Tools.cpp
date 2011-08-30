@@ -779,13 +779,13 @@ VLX_Array* VLX_Value::setArray(VLX_Array* arr)
   }
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveText(const String& path, const Object* obj, bool start_fresh)
+bool VLX_Serializer::saveVLT(const String& path, const Object* obj, bool start_fresh)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return saveText(file.get(), obj, start_fresh);
+  return saveVLT(file.get(), obj, start_fresh);
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool start_fresh)
+bool VLX_Serializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -797,7 +797,7 @@ bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool start_f
   std::map< std::string, VLX_Value >::iterator it = metadata().begin();
   for( ; it != metadata().end(); ++it )
   {
-    if (it->first == "VLT_Version")
+    if (it->first == "VL_Serializer_Version")
       continue;
     if (it->first == "VLX_Writer")
       continue;
@@ -807,7 +807,7 @@ bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool start_f
   }
 
   // add VL metadata
-  *meta << "VLT_Version" << VLX_Value( (long long) 100 );
+  *meta << "VL_Serializer_Version" << VLX_Value( (long long) 100 );
 
   String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
   *meta << "VLX_Writer" << VLX_Value( auth.toStdString().c_str(), VLX_Value::String );
@@ -827,7 +827,7 @@ bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool start_f
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
 
-    VLX_TextExportVisitor text_export_visitor;
+    VLT_ExportVisitor text_export_visitor;
     text_export_visitor.setUIDSet(&uid_set);
     text_export_visitor.writeHeader();
     meta->acceptVisitor(&text_export_visitor);
@@ -843,13 +843,13 @@ bool VLX_Serializer::saveText(VirtualFile* file, const Object* obj, bool start_f
     return false;
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveBinary(const String& path, const Object* obj, bool start_fresh)
+bool VLX_Serializer::saveVLB(const String& path, const Object* obj, bool start_fresh)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return saveText(file.get(), obj, start_fresh);
+  return saveVLT(file.get(), obj, start_fresh);
 }
 //-----------------------------------------------------------------------------
-bool VLX_Serializer::saveBinary(VirtualFile* file, const Object* obj, bool start_fresh)
+bool VLX_Serializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -861,7 +861,7 @@ bool VLX_Serializer::saveBinary(VirtualFile* file, const Object* obj, bool start
   std::map< std::string, VLX_Value >::iterator it = metadata().begin();
   for( ; it != metadata().end(); ++it )
   {
-    if (it->first == "VLT_Version")
+    if (it->first == "VL_Serializer_Version")
       continue;
     if (it->first == "VLX_Writer")
       continue;
@@ -871,7 +871,7 @@ bool VLX_Serializer::saveBinary(VirtualFile* file, const Object* obj, bool start
   }
 
   // add VL metadata
-  *meta << "VLT_Version" << VLX_Value( (long long) 100 );
+  *meta << "VL_Serializer_Version" << VLX_Value( (long long) 100 );
 
   String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
   *meta << "VLX_Writer" << VLX_Value( auth.toStdString().c_str(), VLX_Value::String );
@@ -891,7 +891,7 @@ bool VLX_Serializer::saveBinary(VirtualFile* file, const Object* obj, bool start
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
 
-    VLX_BinaryExportVisitor bin_export_visitor(file);
+    VLB_ExportVisitor bin_export_visitor(file);
     bin_export_visitor.setUIDSet(&uid_set);
     bin_export_visitor.writeHeader();
     meta->acceptVisitor(&bin_export_visitor);
@@ -904,13 +904,13 @@ bool VLX_Serializer::saveBinary(VirtualFile* file, const Object* obj, bool start
     return false;
 }
 //-----------------------------------------------------------------------------
-Object* VLX_Serializer::loadText(const String& path, bool start_fresh)
+ref<Object> VLX_Serializer::loadVLT(const String& path, bool start_fresh)
 {
   ref<VirtualFile> file = vl::locateFile(path);
-  return loadText(file.get(), start_fresh);
+  return loadVLT(file.get(), start_fresh);
 }
 //-----------------------------------------------------------------------------
-Object* VLX_Serializer::loadText(VirtualFile* file, bool start_fresh)
+ref<Object> VLX_Serializer::loadVLT(VirtualFile* file, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -918,7 +918,7 @@ Object* VLX_Serializer::loadText(VirtualFile* file, bool start_fresh)
   if (mError)
     return NULL;
 
-  VLX_TextParser parser;
+  VLT_Parser parser;
   parser.tokenizer()->setInputFile( file );
 
   bool ok = parser.parse();
@@ -945,13 +945,13 @@ Object* VLX_Serializer::loadText(VirtualFile* file, bool start_fresh)
     return importVLX( parser.structures()[0].get() ); // note that we ignore the other structures
 }
 //-----------------------------------------------------------------------------
-Object* VLX_Serializer::loadBinary(const String& path, bool start_fresh)
+ref<Object> VLX_Serializer::loadVLB(const String& path, bool start_fresh)
 {
   ref<VirtualFile> file = vl::locateFile(path);
-  return loadBinary(file.get(), start_fresh);
+  return loadVLB(file.get(), start_fresh);
 }
 //-----------------------------------------------------------------------------
-Object* VLX_Serializer::loadBinary(VirtualFile* file, bool start_fresh)
+ref<Object> VLX_Serializer::loadVLB(VirtualFile* file, bool start_fresh)
 {
   if (start_fresh)
     reset();
@@ -959,7 +959,7 @@ Object* VLX_Serializer::loadBinary(VirtualFile* file, bool start_fresh)
   if (mError)
     return NULL;
 
-  VLX_BinaryParser parser;
+  VLB_Parser parser;
   parser.setInputFile( file );
 
   bool ok = parser.parse();
