@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLXVisitorCollectID_INCLUDE_ONCE
-#define VLXVisitorCollectID_INCLUDE_ONCE
+#ifndef VLXVisitorCountIDs_INCLUDE_ONCE
+#define VLXVisitorCountIDs_INCLUDE_ONCE
 
 #include <vlCore/VLXVisitor.hpp>
 #include <vlCore/VLXValue.hpp>
@@ -39,15 +39,11 @@
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
-  // VLXVisitorCollectID:
-  // Sets to #NULL the ID of those objects that are not referenced by anybody.
-  // Useful before exporting.
-  //-----------------------------------------------------------------------------
-  class VLXVisitorCollectID: public VLXVisitor
+  /** Counts the number of occurrencies of each ID. If an ID is occurring more than 1 it means that belongs to a VLXStructure which is referenced by somebody. */
+  class VLXVisitorCountIDs: public VLXVisitor
   {
   public:
-    VLXVisitorCollectID(): mIDSet(NULL) {}
+    VLXVisitorCountIDs(): mIDSet(NULL) {}
 
     virtual void visitStructure(VLXStructure* obj)
     {
@@ -81,7 +77,7 @@ namespace vl
       // this should happen only if the user manually creates loops
       if (isVisited(list))
       {
-        Log::warning("VLXVisitorCollectID: cycle detected on VLXList.\n");
+        Log::warning("VLXVisitorCountIDs: cycle detected on VLXList.\n");
         return;
       }
 

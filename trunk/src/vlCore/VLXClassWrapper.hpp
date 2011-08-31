@@ -41,6 +41,7 @@ namespace vl
   class VLXSerializer;
   class VLXStructure;
   //---------------------------------------------------------------------------
+  /** Base cass for all class wrappers implementing the translation to/from its VLX representation. */
   class VLXClassWrapper: public Object
   {
   public:

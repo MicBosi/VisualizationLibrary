@@ -41,6 +41,7 @@
 namespace vl
 {
   class VirtualFile;
+  /** Translates an arbitrary set of vl::Object (and subclasses) into VLB and VLT format. */
   class VLXSerializer: public Object
   {
   public:

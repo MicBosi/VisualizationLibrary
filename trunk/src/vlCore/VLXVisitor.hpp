@@ -49,6 +49,7 @@ namespace vl
   class VLXArrayID;
   */
   //-----------------------------------------------------------------------------
+  /** Base class for all visitors visiting a VLX hierarchy. */
   class VLXVisitor: public Object
   {
   public:

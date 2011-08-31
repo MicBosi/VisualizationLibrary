@@ -37,10 +37,7 @@
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
-  // VLXVisitorLinker:
-  // Translates IDs into VLXStructures
-  //-----------------------------------------------------------------------------
+  /** Substitutes IDs into VLXStructures using the provided link map.*/
   class VLXVisitorLinker: public VLXVisitor
   {
   public:

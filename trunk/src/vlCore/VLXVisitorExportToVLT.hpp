@@ -38,9 +38,7 @@
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
-  // VLXVisitorExportToVLT
-  //-----------------------------------------------------------------------------
+  /** Translates a VLX hierarchy into VLT notation. */
   class VLXVisitorExportToVLT: public VLXVisitor
   {
   public:
@@ -340,8 +338,7 @@ namespace vl
       return out;
     }
 
-    // mic fixme: test this both as input and as output!
-    // support \xHH hex notation both input and output.
+    // mic fixme: support \xHH hex notation both input and output.
     std::string stringEncode(const char* str)
     {
       std::string out;

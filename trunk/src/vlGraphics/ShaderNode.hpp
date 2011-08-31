@@ -47,7 +47,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::ShaderNode, Object)
 
   public:
-    // --- --- ---
+    /** ShaderNode's representation of an enable. */
     struct EnableInfo
     {
       EnableInfo(EEnable en=EN_UnknownEnable, bool on=false, EInheritance inheritance=IN_Propagate): mEnable(en), mOn(on), mInheritance(inheritance) {}
@@ -56,7 +56,7 @@ namespace vl
       bool mOn;
       EInheritance mInheritance;
     };
-    // --- --- ---
+    /** ShaderNode's representation of a RenderState. */
     struct RenderStateInfo
     {
       RenderStateInfo(EInheritance inheritance=IN_Propagate, RenderState* rs=NULL, int index=0): mInheritance(inheritance), mRenderState(rs), mIndex(index) {}
@@ -65,7 +65,7 @@ namespace vl
       ref<RenderState> mRenderState;
       int mIndex;
     };
-    // --- --- ---
+    /** ShaderNode's representation of a Uniform. */
     struct UniformInfo
     {
       UniformInfo(Uniform* unif=NULL, EInheritance inheritance=IN_Propagate): mUniform(unif), mInheritance(inheritance) {}

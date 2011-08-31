@@ -36,7 +36,7 @@
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
+  /** A token of information as defined by VLT specification. */
   class VLTToken
   {
   public:
@@ -71,6 +71,7 @@ namespace vl
     EType mType;
   };
   //-----------------------------------------------------------------------------
+  /** Tokenizer used to parse VLT files. */
   class VLTTokenizer: public BufferedStream<char, 128*1024>
   {
   public:
