@@ -40,9 +40,27 @@
 
 namespace vl
 {
-  inline std::string makeVLXTag(const Object* obj) { return std::string("<") + obj->classType()->name() + ">"; }
+  inline std::string vlx_makeTag(const Object* obj) { return std::string("<") + obj->classType()->name() + ">"; }
 
-  inline VLXValue toValue(const std::vector<int>& vec)
+  inline VLXValue vlx_Identifier(const std::string& str) { return VLXValue(str.c_str(), VLXValue::Identifier); }
+
+  inline VLXValue vlx_ID(const std::string& str)        { return VLXValue(str.c_str(), VLXValue::ID); }
+
+  inline VLXValue vlx_String(const std::string& str)     { return VLXValue(str.c_str(), VLXValue::String); }
+
+  inline VLXValue vlx_Rawtext(const std::string& str)    { return VLXValue( new VLXRawtextBlock(NULL, str.c_str()) ); }
+
+  inline fvec2 vlx_fvec2(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 2); fvec2 v; arr->copyTo(v.ptr()); return v;  }
+
+  inline fvec3 vlx_fvec3(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 3); fvec3 v; arr->copyTo(v.ptr()); return v;  }
+
+  inline fvec4 vlx_fvec4(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 4); fvec4 v; arr->copyTo(v.ptr()); return v;  }
+
+  inline ivec4 vlx_ivec4(const VLXArrayInteger* arr) { VL_CHECK(arr->value().size() == 4); ivec4 v; arr->copyTo(v.ptr()); return v; }
+
+  inline uvec4 vlx_uivec4(const VLXArrayInteger* arr) { VL_CHECK(arr->value().size() == 4); uvec4 v; arr->copyTo(v.ptr()); return v; }
+
+  inline VLXValue vlx_toValue(const std::vector<int>& vec)
   {
     VLXValue value;
     value.setArray( new VLXArrayInteger );
@@ -52,25 +70,7 @@ namespace vl
     return value;
   }
 
-  inline VLXValue toIdentifier(const std::string& str) { return VLXValue(str.c_str(), VLXValue::Identifier); }
-
-  inline VLXValue toID(const std::string& str)        { return VLXValue(str.c_str(), VLXValue::ID); }
-
-  inline VLXValue toString(const std::string& str)     { return VLXValue(str.c_str(), VLXValue::String); }
-
-  inline VLXValue toRawtext(const std::string& str)    { return VLXValue( new VLXRawtextBlock(NULL, str.c_str()) ); }
-
-  inline fvec2 to_fvec2(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 2); fvec2 v; arr->copyTo(v.ptr()); return v;  }
-
-  inline fvec3 to_fvec3(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 3); fvec3 v; arr->copyTo(v.ptr()); return v;  }
-
-  inline fvec4 to_fvec4(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 4); fvec4 v; arr->copyTo(v.ptr()); return v;  }
-
-  inline ivec4 to_ivec4(const VLXArrayInteger* arr) { VL_CHECK(arr->value().size() == 4); ivec4 v; arr->copyTo(v.ptr()); return v; }
-
-  inline uvec4 to_uivec4(const VLXArrayInteger* arr) { VL_CHECK(arr->value().size() == 4); uvec4 v; arr->copyTo(v.ptr()); return v; }
-
-  inline VLXValue toValue(const vec4& vec)
+  inline VLXValue vlx_toValue(const vec4& vec)
   {
     VLXValue val( new VLXArrayReal );
     VLXArrayReal* arr = val.getArrayReal();
@@ -82,7 +82,7 @@ namespace vl
     return val;
   }
 
-  inline VLXValue toValue(const ivec4& vec)
+  inline VLXValue vlx_toValue(const ivec4& vec)
   {
     VLXValue val( new VLXArrayReal );
     VLXArrayReal* arr = val.getArrayReal();
@@ -94,7 +94,7 @@ namespace vl
     return val;
   }
 
-  inline VLXValue toValue(const uvec4& vec)
+  inline VLXValue vlx_toValue(const uvec4& vec)
   {
     VLXValue val( new VLXArrayReal );
     VLXArrayReal* arr = val.getArrayReal();
@@ -106,7 +106,7 @@ namespace vl
     return val;
   }
 
-  inline VLXValue toValue(const vec3& vec)
+  inline VLXValue vlx_toValue(const vec3& vec)
   {
     VLXValue val( new VLXArrayReal );
     VLXArrayReal* arr = val.getArrayReal();
@@ -117,7 +117,7 @@ namespace vl
     return val;
   }
 
-  inline VLXValue toValue(const vec2& vec)
+  inline VLXValue vlx_toValue(const vec2& vec)
   {
     VLXValue val( new VLXArrayReal );
     VLXArrayReal* arr = val.getArrayReal();
@@ -127,14 +127,14 @@ namespace vl
     return val;
   }
 
-  inline bool isTranslation(const fmat4& mat)
+  inline bool vlx_isTranslation(const fmat4& mat)
   {
     fmat4 tmp = mat;
     tmp.setT( fvec3(0,0,0) );
     return tmp.isIdentity();
   }
 
-  inline bool isScaling(const fmat4& mat)
+  inline bool vlx_isScaling(const fmat4& mat)
   {
     fmat4 tmp = mat;
     tmp.e(0,0) = 1;
@@ -143,11 +143,11 @@ namespace vl
     return tmp.isIdentity();
   }
 
-  inline VLXValue toValue(const fmat4& mat)
+  inline VLXValue vlx_toValue(const fmat4& mat)
   {
     VLXValue matrix_list( new VLXList );
 
-    if (isTranslation(mat))
+    if (vlx_isTranslation(mat))
     {
       VLXValue value( new VLXArrayReal("<Translate>") );
       value.getArrayReal()->value().resize(3);
@@ -157,7 +157,7 @@ namespace vl
       matrix_list.getList()->value().push_back( value );
     }
     else
-    if (isScaling(mat))
+    if (vlx_isScaling(mat))
     {
       VLXValue value( new VLXArrayReal("<Scale>") );
       value.getArrayReal()->value().resize(3);
@@ -178,14 +178,14 @@ namespace vl
     return matrix_list;
   }
 
-  inline fmat4 to_fmat4( const VLXArrayReal* arr )
+  inline fmat4 vlx_fmat4( const VLXArrayReal* arr )
   {
     fmat4 mat;
     arr->copyTo(mat.ptr());
     return mat;
   }
 
-  inline fmat4 to_fmat4( const VLXList* list )
+  inline fmat4 vlx_fmat4( const VLXList* list )
   {
     fmat4 mat;
 
@@ -201,19 +201,19 @@ namespace vl
       const VLXArrayReal* arr = value.getArrayReal();
       if (arr->tag() == "<Translate>")
       {
-        fvec3 tr = to_fvec3( arr );
+        fvec3 tr = vlx_fvec3( arr );
         mat = mat * fmat4::getTranslation(tr);
       }
       else
       if (arr->tag() == "<Scale>")
       {
-        fvec3 sc = to_fvec3( arr );
+        fvec3 sc = vlx_fvec3( arr );
         mat = mat * fmat4::getScaling(sc);
       }
       else
       if (arr->tag() == "<Matrix>")
       {
-        fmat4 m = to_fmat4( arr );
+        fmat4 m = vlx_fmat4( arr );
         mat = mat * m;
       }
       else
@@ -254,7 +254,7 @@ namespace vl
     return mat;
   }
 
-  inline const char* stringfy_EProjectionMatrixType(EProjectionMatrixType pt)
+  inline const char* vlx_EProjectionMatrixType(EProjectionMatrixType pt)
   {
     switch(pt)
     {
@@ -266,7 +266,7 @@ namespace vl
     }
   }
 
-  inline EProjectionMatrixType destringfy_EProjectionMatrixType(const char* str)
+  inline EProjectionMatrixType vlx_EProjectionMatrixType(const char* str)
   {
     if (strcmp(str, "PMT_OrthographicProjection") == 0) return PMT_OrthographicProjection;
     if (strcmp(str, "PMT_PerspectiveProjection") == 0) return PMT_PerspectiveProjection;
@@ -274,7 +274,7 @@ namespace vl
     /*if (strcmp(str, "PMT_UserProjection") == 0)*/ return PMT_UserProjection;
   }
 
-  inline const char* stringfy_EClearColorMode(EClearColorMode ccm)
+  inline const char* vlx_EClearColorMode(EClearColorMode ccm)
   {
     switch(ccm)
     {
@@ -285,14 +285,14 @@ namespace vl
     }
   }
 
-  inline EClearColorMode destringfy_EClearColorMode(const char* str)
+  inline EClearColorMode vlx_EClearColorMode(const char* str)
   {
     if (strcmp(str, "CCM_Int") == 0) return CCM_Int;
     if (strcmp(str, "CCM_UInt") == 0) return CCM_UInt;
     /*if (strcmp(str, "CCM_Float") == 0)*/ return CCM_Float;
   }
 
-  inline const char* stringfy_EClearFlags(EClearFlags cf)
+  inline const char* vlx_EClearFlags(EClearFlags cf)
   {
     switch(cf)
     {
@@ -308,7 +308,7 @@ namespace vl
     }
   }
 
-  inline EClearFlags destringfy_EClearFlags(const char* str)
+  inline EClearFlags vlx_EClearFlags(const char* str)
   {
     if (strcmp(str, "CF_DO_NOT_CLEAR") == 0) return CF_DO_NOT_CLEAR;
     if (strcmp(str, "CF_CLEAR_COLOR") == 0) return CF_CLEAR_COLOR;
@@ -320,7 +320,7 @@ namespace vl
     /*if (strcmp(str, "CF_CLEAR_COLOR_DEPTH_STENCIL") == 0)*/ return CF_CLEAR_COLOR_DEPTH_STENCIL;
   }
 
-  inline const char* stringfy_EPolygonFace(EPolygonFace pf)
+  inline const char* vlx_EPolygonFace(EPolygonFace pf)
   {
     switch(pf)
     {
@@ -331,14 +331,14 @@ namespace vl
     }
   }
 
-  inline EPolygonFace destringfy_EPolygonFace(const char* str)
+  inline EPolygonFace vlx_EPolygonFace(const char* str)
   {
     if (strcmp(str, "PF_FRONT") == 0) return PF_FRONT;
     if (strcmp(str, "PF_BACK") == 0) return PF_BACK;
     /*if (strcmp(str, "PF_FRONT_AND_BACK") == 0)*/ return PF_FRONT_AND_BACK;
   }
 
-  inline const char* stringfy_EColorMaterial(EColorMaterial cm)
+  inline const char* vlx_EColorMaterial(EColorMaterial cm)
   {
     switch(cm)
     {
@@ -351,7 +351,7 @@ namespace vl
     }
   }
 
-  inline EColorMaterial destringfy_EColorMaterial(const char* str)
+  inline EColorMaterial vlx_EColorMaterial(const char* str)
   {
     if (strcmp(str, "CM_EMISSION") == 0) return CM_EMISSION;
     if (strcmp(str, "CM_AMBIENT") == 0) return CM_AMBIENT;
@@ -360,7 +360,7 @@ namespace vl
     /*if (strcmp(str, "CM_AMBIENT_AND_DIFFUSE") == 0) */return CM_AMBIENT_AND_DIFFUSE;
   }
 
-  inline const char* stringfy_ETextureFormat(ETextureFormat tf)
+  inline const char* vlx_ETextureFormat(ETextureFormat tf)
   {
     switch(tf)
     {
@@ -602,7 +602,7 @@ namespace vl
     }
   }
 
-  inline ETextureFormat destringfy_ETextureFormat(const char* str)
+  inline ETextureFormat vlx_ETextureFormat(const char* str)
   {
     if (strcmp(str, "TF_ALPHA  ") == 0) return TF_ALPHA  ;
     if (strcmp(str, "TF_ALPHA4 ") == 0) return TF_ALPHA4 ;
@@ -840,7 +840,7 @@ namespace vl
     /*if (strcmp(str, "TF_UNKNOWN") == 0)*/ return TF_UNKNOWN;
   }
 
-  inline const char* stringfy_EUniformType(EUniformType type)
+  inline const char* vlx_EUniformType(EUniformType type)
   {
     switch(type)
     {
@@ -891,7 +891,7 @@ namespace vl
     }
   }
 
-  inline EUniformType destringfy_EUniformType(const char* type)
+  inline EUniformType vlx_EUniformType(const char* type)
   {
     if (strcmp(type, "UT_INT") == 0) return UT_INT;
     if (strcmp(type, "UT_INT_VEC2") == 0) return UT_INT_VEC2;
@@ -938,7 +938,7 @@ namespace vl
     /*if (strcmp(type, "UT_NONE") == 0)*/ return UT_NONE;
   }
 
-  inline const char* stringfy_EDepthTextureMode(EDepthTextureMode dtm)
+  inline const char* vlx_EDepthTextureMode(EDepthTextureMode dtm)
   {
     switch(dtm)
     {
@@ -950,7 +950,7 @@ namespace vl
     }
   }
 
-  inline EDepthTextureMode destringfy_EDepthTextureMode(const char* str)
+  inline EDepthTextureMode vlx_EDepthTextureMode(const char* str)
   {
     if (strcmp(str, "DTM_LUMINANCE") == 0) return DTM_LUMINANCE;
     if (strcmp(str, "DTM_INTENSITY") == 0) return DTM_INTENSITY;
@@ -958,7 +958,7 @@ namespace vl
     /*if (strcmp(str, "DTM_RED") == 0)*/ return DTM_RED;
   }
 
-  inline const char* stringfy_ETexCompareMode(ETexCompareMode tcm)
+  inline const char* vlx_ETexCompareMode(ETexCompareMode tcm)
   {
     switch(tcm)
     {
@@ -969,14 +969,14 @@ namespace vl
     }
   }
 
-  inline ETexCompareMode destringfy_ETexCompareMode(const char* str)
+  inline ETexCompareMode vlx_ETexCompareMode(const char* str)
   {
     if (strcmp(str, "TCM_COMPARE_R_TO_TEXTURE") == 0) return TCM_COMPARE_R_TO_TEXTURE;
     if (strcmp(str, "TCM_COMPARE_REF_DEPTH_TO_TEXTURE") == 0) return TCM_COMPARE_REF_DEPTH_TO_TEXTURE;
     /*if (strcmp(str, "TCM_NONE") == 0)*/ return TCM_NONE;
   }
 
-  inline const char* stringfy_ETexCompareFunc(ETexCompareFunc tcf)
+  inline const char* vlx_ETexCompareFunc(ETexCompareFunc tcf)
   {
     switch(tcf)
     {
@@ -992,7 +992,7 @@ namespace vl
     }
   }
 
-  inline ETexCompareFunc destringfy_ETexCompareFunc(const char* str)
+  inline ETexCompareFunc vlx_ETexCompareFunc(const char* str)
   {
     if (strcmp(str, "TCF_GEQUAL") == 0) return TCF_GEQUAL;
     if (strcmp(str, "TCF_LESS") == 0) return TCF_LESS;
@@ -1004,7 +1004,7 @@ namespace vl
     /*if (strcmp(str, "TCF_LEQUAL") == 0)*/ return TCF_LEQUAL;
   }
 
-  inline const char* stringfy_ETexParamFilter(ETexParamFilter tpf)
+  inline const char* vlx_ETexParamFilter(ETexParamFilter tpf)
   {
     switch(tpf)
     {
@@ -1018,7 +1018,7 @@ namespace vl
     }
   }
 
-  inline ETexParamFilter destringfy_ETexParamFilter(const char* str)
+  inline ETexParamFilter vlx_ETexParamFilter(const char* str)
   {
     if (strcmp(str, "TPF_LINEAR") == 0) return TPF_LINEAR;
     if (strcmp(str, "TPF_NEAREST_MIPMAP_NEAREST") == 0) return TPF_NEAREST_MIPMAP_NEAREST;
@@ -1028,7 +1028,7 @@ namespace vl
     /*if (strcmp(str, "TPF_NEAREST") == 0)*/ return TPF_NEAREST;
   }
 
-  inline const char* stringfy_ETexParamWrap(ETexParamWrap tpw)
+  inline const char* vlx_ETexParamWrap(ETexParamWrap tpw)
   {
     switch(tpw)
     {
@@ -1041,7 +1041,7 @@ namespace vl
     }
   }
 
-  inline ETexParamWrap destringfy_ETexParamWrap(const char* str)
+  inline ETexParamWrap vlx_ETexParamWrap(const char* str)
   {
     if (strcmp(str, "TPW_CLAMP") == 0) return TPW_CLAMP;
     if (strcmp(str, "TPW_CLAMP_TO_BORDER") == 0) return TPW_CLAMP_TO_BORDER;
@@ -1050,7 +1050,7 @@ namespace vl
     /*if (strcmp(str, "TPW_REPEAT") == 0)*/ return TPW_REPEAT;
   }
 
-  inline const char* stringfy_EEnable(EEnable en)
+  inline const char* vlx_EEnable(EEnable en)
   {
     switch(en)
     {
@@ -1095,7 +1095,7 @@ namespace vl
     }
   }
 
-  inline EEnable destringfy_EEnable(const char* str)
+  inline EEnable vlx_EEnable(const char* str)
   {
     if (strcmp(str, "EN_BLEND") == 0) return EN_BLEND;
     if (strcmp(str, "EN_CULL_FACE") == 0) return EN_CULL_FACE;
@@ -1137,7 +1137,7 @@ namespace vl
     return EN_UnknownEnable;
   }
 
-  inline EPrimitiveType destringfy_EPrimitiveType(const std::string& str, int line_num)
+  inline EPrimitiveType vlx_EPrimitiveType(const std::string& str, int line_num)
   {
     if ("PT_POINTS" == str) return PT_POINTS;
     if ("PT_LINES" == str)  return PT_LINES;
@@ -1158,7 +1158,6 @@ namespace vl
     Log::error( Say("Line %n : error : unknown primitive type '%s'\n") << line_num << str);
     /*if ("PT_UNKNOWN" == str)*/ return PT_UNKNOWN;
   }
-
 }
 
 #endif
