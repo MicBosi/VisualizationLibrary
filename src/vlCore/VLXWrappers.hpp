@@ -59,8 +59,8 @@ namespace vl
   inline VLXValue export_AABB(const AABB& aabb)
   {
     VLXValue value ( new VLXStructure("<vl::AABB>") );
-    *value.getStructure() << "MinCorner" << toValue(aabb.minCorner());
-    *value.getStructure() << "MaxCorner" << toValue(aabb.maxCorner());
+    *value.getStructure() << "MinCorner" << vlx_toValue(aabb.minCorner());
+    *value.getStructure() << "MaxCorner" << vlx_toValue(aabb.maxCorner());
     return value;
   }
 
@@ -77,13 +77,13 @@ namespace vl
       if (key == "MinCorner")
       {
         VL_CHECK(value.type() == VLXValue::ArrayReal)
-        aabb.setMinCorner( to_fvec3(value.getArrayReal()) );
+        aabb.setMinCorner( vlx_fvec3(value.getArrayReal()) );
       }
       else
       if (key == "MaxCorner")
       {
         VL_CHECK(value.type() == VLXValue::ArrayReal)
-        aabb.setMaxCorner( to_fvec3(value.getArrayReal()) );
+        aabb.setMaxCorner( vlx_fvec3(value.getArrayReal()) );
       }
     }
 
@@ -93,7 +93,7 @@ namespace vl
   inline VLXValue export_Sphere(const Sphere& sphere)
   {
     VLXValue value ( new VLXStructure("<vl::Sphere>") );
-    *value.getStructure() << "Center" << toValue(sphere.center());
+    *value.getStructure() << "Center" << vlx_toValue(sphere.center());
     *value.getStructure() << "Radius" << sphere.radius();
     return value;
   }
@@ -111,7 +111,7 @@ namespace vl
       if (key == "Center")
       {
         VL_CHECK(value.type() == VLXValue::ArrayReal)
-        sphere.setCenter( to_fvec3(value.getArrayReal()) );
+        sphere.setCenter( vlx_fvec3(value.getArrayReal()) );
       }
       else
       if (key == "Radius")
