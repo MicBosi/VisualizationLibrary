@@ -42,6 +42,8 @@ namespace vl
   /** Counts the number of occurrencies of each ID. If an ID is occurring more than 1 it means that belongs to a VLXStructure which is referenced by somebody. */
   class VLXVisitorCountIDs: public VLXVisitor
   {
+    VL_INSTRUMENT_CLASS(vl::VLXVisitorCountIDs, VLXVisitor)
+
   public:
     VLXVisitorCountIDs(): mIDSet(NULL) {}
 

@@ -39,6 +39,8 @@ namespace vl
   /** Compiles the link-map which associates a VLXStructure to it's ID, to be used later by other visitors. Can be called multiple times. */
   class VLXVisitorLinkMapper: public VLXVisitor
   {
+    VL_INSTRUMENT_CLASS(vl::VLXVisitorLinkMapper, VLXVisitor)
+
   public:
     typedef enum 
     {

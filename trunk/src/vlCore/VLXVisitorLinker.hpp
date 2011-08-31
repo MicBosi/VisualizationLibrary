@@ -40,6 +40,8 @@ namespace vl
   /** Substitutes IDs into VLXStructures using the provided link map.*/
   class VLXVisitorLinker: public VLXVisitor
   {
+    VL_INSTRUMENT_CLASS(vl::VLXVisitorLinker, VLXVisitor)
+
   public:
     typedef enum 
     {

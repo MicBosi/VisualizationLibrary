@@ -42,6 +42,8 @@ namespace vl
   /** Translates a VLX hierarchy into VLB format writing to the provided VirtualFile. */
   class VLXVisitorExportToVLB: public VLXVisitor
   {
+    VL_INSTRUMENT_CLASS(vl::VLXVisitorExportToVLB, VLXVisitor)
+
   public:
     VLXVisitorExportToVLB(VirtualFile* file = NULL)
     {

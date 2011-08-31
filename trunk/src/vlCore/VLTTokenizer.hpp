@@ -74,6 +74,8 @@ namespace vl
   /** Tokenizer used to parse VLT files. */
   class VLTTokenizer: public BufferedStream<char, 128*1024>
   {
+    VL_INSTRUMENT_CLASS(vl::VLTTokenizer, VL_GROUP(BufferedStream<char, 128*1024>))
+
   public:
     VLTTokenizer(): mLineNumber(1), mRawtextBlock(false) {}
 
