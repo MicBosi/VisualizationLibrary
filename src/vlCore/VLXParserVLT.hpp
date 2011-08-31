@@ -42,9 +42,7 @@
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
-  // VLXParserVLT
-  //-----------------------------------------------------------------------------
+  /** Parses a VLT file translating it into a VLX hierarchy. */
   class VLXParserVLT: public VLXParser
   {
   public:

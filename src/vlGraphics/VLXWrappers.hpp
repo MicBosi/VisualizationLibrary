@@ -54,6 +54,7 @@
 
 namespace vl
 {
+  /** VLX wrapper of vl::Array */
   struct VLXClassWrapper_Array: public VLXClassWrapper
   {
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
@@ -539,6 +540,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Renderable */
   struct VLXClassWrapper_Renderable: public VLXClassWrapper
   {
     virtual void exportRenderable(const Renderable* ren, VLXStructure* vlx)
@@ -580,6 +582,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Geometry */
   struct VLXClassWrapper_Geometry: public VLXClassWrapper_Renderable
   {
     void importGeometry(VLXSerializer& s, const VLXStructure* vlx, Geometry* geom)
@@ -770,6 +773,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::VertexAttribInfo */
   struct VLXClassWrapper_VertexAttribInfo: public VLXClassWrapper
   {
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
@@ -854,6 +858,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::DrawCall and subclasses. */
   struct VLXClassWrapper_DrawCall: public VLXClassWrapper
   {
     void importDrawCall(VLXSerializer& s, const VLXStructure* vlx, DrawCall* draw_call)
@@ -1194,6 +1199,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::PatchParameter */
   struct VLXClassWrapper_PatchParameter: public VLXClassWrapper
   {
     void importPatchParameter(const VLXStructure* vlx, PatchParameter* pp)
@@ -1248,6 +1254,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::ResourceDatabase */
   struct VLXClassWrapper_ResourceDatabase: public VLXClassWrapper
   {
     void importResourceDatabase(VLXSerializer& s, const VLXStructure* vlx, ResourceDatabase* resdb)
@@ -1306,6 +1313,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Uniform */
   struct VLXClassWrapper_Uniform: public VLXClassWrapper
   {
     void importUniform(VLXSerializer& s, const VLXStructure* vlx, Uniform* uniform)
@@ -1641,6 +1649,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Shader */
   struct VLXClassWrapper_Shader: public VLXClassWrapper
   {
     void importShader(VLXSerializer& s, const VLXStructure* vlx, Shader* sh)
@@ -1764,6 +1773,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::DistanceLODEvaluator and vl::PixelLODEvaluator */
   struct VLXClassWrapper_LODEvaluator: public VLXClassWrapper
   {
     void importLODEvaluator(VLXSerializer& s, const VLXStructure* vlx, LODEvaluator* obj)
@@ -1862,6 +1872,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Effect */
   struct VLXClassWrapper_Effect: public VLXClassWrapper
   {
     void importEffect(VLXSerializer& s, const VLXStructure* vlx, Effect* obj)
@@ -1965,6 +1976,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Actor */
   struct VLXClassWrapper_Actor: public VLXClassWrapper
   {
     void importActor(VLXSerializer& s, const VLXStructure* vlx, Actor* obj)
@@ -2137,6 +2149,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Camera */
   struct VLXClassWrapper_Camera: public VLXClassWrapper
   {
     void importCamera(VLXSerializer& s, const VLXStructure* vlx, Camera* obj)
@@ -2267,6 +2280,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Viewport */
   struct VLXClassWrapper_Viewport: public VLXClassWrapper
   {
     void importViewport(VLXSerializer& s, const VLXStructure* vlx, Viewport* obj)
@@ -2380,6 +2394,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Transform */
   struct VLXClassWrapper_Transform: public VLXClassWrapper
   {
     void importTransform(VLXSerializer& s, const VLXStructure* vlx, Transform* obj)
@@ -2458,6 +2473,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Light */
   struct VLXClassWrapper_Light: public VLXClassWrapper
   {
     void importLight(VLXSerializer& s, const VLXStructure* vlx, Light* obj)
@@ -2575,6 +2591,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::ClipPlane*/
   struct VLXClassWrapper_ClipPlane: public VLXClassWrapper
   {
     void importClipPlane(VLXSerializer& s, const VLXStructure* vlx, ClipPlane* obj)
@@ -2637,6 +2654,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::GLSLProgram */
   struct VLXClassWrapper_GLSLProgram: public VLXClassWrapper
   {
     void importGLSLProgram(VLXSerializer& s, const VLXStructure* vlx, GLSLProgram* obj)
@@ -2747,6 +2765,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::GLSLVertexShader, vl::GLSLFragmentShader, vl::GLSLGeometryShader, vl::GLSLTessControlShader, vl::GLSLTessEvaluationShader. */
   struct VLXClassWrapper_GLSLShader: public VLXClassWrapper
   {
     void importGLSLShader(VLXSerializer& s, const VLXStructure* vlx, GLSLShader* obj)
@@ -2827,6 +2846,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::VertexAttrib */
   struct VLXClassWrapper_VertexAttrib: public VLXClassWrapper
   {
     void importVertexAttrib(VLXSerializer& s, const VLXStructure* vlx, VertexAttrib* obj)
@@ -2863,6 +2883,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Color */
   struct VLXClassWrapper_Color: public VLXClassWrapper
   {
     void importColor(VLXSerializer& s, const VLXStructure* vlx, Color* obj)
@@ -2899,6 +2920,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::SecondaryColor */
   struct VLXClassWrapper_SecondaryColor: public VLXClassWrapper
   {
     void importSecondaryColor(VLXSerializer& s, const VLXStructure* vlx, SecondaryColor* obj)
@@ -2935,6 +2957,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Normal */
   struct VLXClassWrapper_Normal: public VLXClassWrapper
   {
     void importNormal(VLXSerializer& s, const VLXStructure* vlx, Normal* obj)
@@ -2971,6 +2994,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Material */
   struct VLXClassWrapper_Material: public VLXClassWrapper
   {
     void importMaterial(VLXSerializer& s, const VLXStructure* vlx, Material* obj)
@@ -3109,6 +3133,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::DepthSortCallback */
   struct VLXClassWrapper_ActorEventCallback: public VLXClassWrapper
   {
     void importActorEventCallback(VLXSerializer& s, const VLXStructure* vlx, ActorEventCallback* obj)
@@ -3179,6 +3204,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::Texture */
   struct VLXClassWrapper_Texture: public VLXClassWrapper
   {
     void importTexture(VLXSerializer& s, const VLXStructure* vlx, Texture* obj)
@@ -3313,6 +3339,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::TexParameter */
   struct VLXClassWrapper_TexParameter: public VLXClassWrapper
   {
     void importTexParameter(VLXSerializer& s, const VLXStructure* vlx, TexParameter* obj)
@@ -3427,6 +3454,7 @@ namespace vl
 
   //---------------------------------------------------------------------------
 
+  /** VLX wrapper of vl::TextureSampler */
   struct VLXClassWrapper_TextureSampler: public VLXClassWrapper
   {
     void importTextureSampler(VLXSerializer& s, const VLXStructure* vlx, TextureSampler* obj)
