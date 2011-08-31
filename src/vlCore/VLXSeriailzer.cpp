@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vlCore/VLXSerializer.hpp>
-#include <vlCore/VLXVisitorCollectID.hpp>
+#include <vlCore/VLXVisitorCountIDs.hpp>
 #include <vlCore/VLXVisitorLinker.hpp>
 #include <vlCore/VLXParserVLT.hpp>
 #include <vlCore/VLXParserVLB.hpp>
@@ -41,6 +41,10 @@
 #include <ctime>
 
 using namespace vl;
+
+#if _MSC_VER
+  #define snprintf _snprintf
+#endif
 
 //-----------------------------------------------------------------------------
 Object* VLXSerializer::importVLX(const VLXStructure* st)
@@ -206,13 +210,15 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
   if (mError)
     return false;
 
+  // metadata
+
   ref<VLXStructure> meta = new VLXStructure("<Metadata>");
   std::map< std::string, VLXValue >::iterator it = metadata().begin();
   for( ; it != metadata().end(); ++it )
   {
     if (it->first == "VL_Serializer_Version")
       continue;
-    if (it->first == "VLXWriter")
+    if (it->first == "VLX_Writer")
       continue;
     if (it->first == "Creation_Date")
       continue;
@@ -220,10 +226,11 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
   }
 
   // add VL metadata
+
   *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
 
   String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
-  *meta << "VLXWriter" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
+  *meta << "VLX_Writer" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
 
   time_t rawtime;
   time( &rawtime );
@@ -235,7 +242,7 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLXVisitorCollectID uid_collector;
+    VLXVisitorCountIDs uid_collector;
     uid_collector.setIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);
@@ -270,13 +277,15 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
   if (mError)
     return false;
 
+  // metadata
+
   ref<VLXStructure> meta = new VLXStructure("<Metadata>");
   std::map< std::string, VLXValue >::iterator it = metadata().begin();
   for( ; it != metadata().end(); ++it )
   {
     if (it->first == "VL_Serializer_Version")
       continue;
-    if (it->first == "VLXWriter")
+    if (it->first == "VLX_Writer")
       continue;
     if (it->first == "Creation_Date")
       continue;
@@ -284,10 +293,11 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
   }
 
   // add VL metadata
+
   *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
 
   String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
-  *meta << "VLXWriter" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
+  *meta << "VLX_Writer" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
 
   time_t rawtime;
   time( &rawtime );
@@ -299,7 +309,7 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
   if (st)
   {
     std::map< std::string, int > uid_set;
-    VLXVisitorCollectID uid_collector;
+    VLXVisitorCountIDs uid_collector;
     uid_collector.setIDSet(&uid_set);
     meta->acceptVisitor(&uid_collector);
     st->acceptVisitor(&uid_collector);

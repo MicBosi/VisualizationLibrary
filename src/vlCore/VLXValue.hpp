@@ -37,6 +37,7 @@
 
 namespace vl
 {
+  /** Base class for VLX values with a tag. */
   class VLXTaggedValue: public Object
   {
     VL_INSTRUMENT_CLASS(vl::VLXTaggedValue, Object)
@@ -65,8 +66,7 @@ namespace vl
     int mLineNumber; // the line number coming from the tokenizer
   };
   //-----------------------------------------------------------------------------
-  // RawtextBlock
-  //-----------------------------------------------------------------------------
+  /** A block of raw text. */
   class VLXRawtextBlock: public VLXTaggedValue 
   { 
     VL_INSTRUMENT_CLASS(vl::VLXRawtextBlock, VLXTaggedValue)
@@ -90,8 +90,7 @@ namespace vl
     std::string mValue;
   };
   //-----------------------------------------------------------------------------
-  // Arrays
-  //-----------------------------------------------------------------------------
+  /** Base class for all arrays of VLX values. */
   class VLXArray: public VLXTaggedValue 
   { 
     VL_INSTRUMENT_CLASS(vl::VLXArray, VLXTaggedValue)
@@ -101,6 +100,7 @@ namespace vl
 
   };
   //-----------------------------------------------------------------------------
+  /** An array of 64 bits integers, can also have a tag. */
   class VLXArrayInteger: public VLXArray
   {
     VL_INSTRUMENT_CLASS(vl::VLXArrayInteger, VLXArray)
@@ -129,6 +129,7 @@ namespace vl
     std::vector<long long> mValue;
   };
   //-----------------------------------------------------------------------------
+  /** An array of 64 bits floating point numbers, can also have a tag. */
   class VLXArrayReal: public VLXArray
   {
     VL_INSTRUMENT_CLASS(vl::VLXArrayReal, VLXArray)
@@ -242,8 +243,7 @@ namespace vl
   };
   */
   //-----------------------------------------------------------------------------
-  // VLXValue
-  //-----------------------------------------------------------------------------
+  /** Wrapper for all VLX value types. */
   class VLXValue
   {
   public:
@@ -544,8 +544,7 @@ namespace vl
     int mLineNumber; // the line number coming from the tokenizer
   };
   //-----------------------------------------------------------------------------
-  // VLXStructure
-  //-----------------------------------------------------------------------------
+  /** A list of key/VLXValue pairs, can also have a tag. */
   class VLXStructure: public VLXTaggedValue
   {
     VL_INSTRUMENT_CLASS(vl::VLXStructure, VLXTaggedValue)
@@ -589,6 +588,7 @@ namespace vl
       return *this;
     }
 
+    /** Key/value pair used by VLXStructure. */
     class Value
     {
       friend class VLXStructure;
@@ -640,8 +640,7 @@ namespace vl
     std::vector<Value> mKeyValue;
   };
   //-----------------------------------------------------------------------------
-  // VLXList
-  //-----------------------------------------------------------------------------
+  /** A simple sequence of VLXValue objects, can also have a tag. */
   class VLXList: public VLXTaggedValue
   {
     VL_INSTRUMENT_CLASS(vl::VLXList, VLXTaggedValue)

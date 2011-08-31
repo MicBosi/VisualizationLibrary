@@ -38,7 +38,7 @@
 
 namespace vl
 {
-  //! Registry of vl::VLXClassWrapper objects, used by vl::VLXSerializer, see also vl::defVLXRegistry().
+  /** Registry of vl::VLXClassWrapper objects, used by vl::VLXSerializer, see also vl::defVLXRegistry(). */
   class VLXRegistry: public Object
   {
   public:

@@ -39,9 +39,7 @@
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
-  // VLXVisitorExportToVLB
-  //-----------------------------------------------------------------------------
+  /** Translates a VLX hierarchy into VLB format writing to the provided VirtualFile. */
   class VLXVisitorExportToVLB: public VLXVisitor
   {
   public:

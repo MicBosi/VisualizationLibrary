@@ -36,11 +36,7 @@
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
-  // VLXVisitorLinkMapper: 
-  // Compiles the link-map which associates an VLXStructure to it's ID.
-  // Can be called multiple times
-  //-----------------------------------------------------------------------------
+  /** Compiles the link-map which associates a VLXStructure to it's ID, to be used later by other visitors. Can be called multiple times. */
   class VLXVisitorLinkMapper: public VLXVisitor
   {
   public:

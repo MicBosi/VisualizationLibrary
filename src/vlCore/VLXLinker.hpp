@@ -37,9 +37,7 @@
 
 namespace vl
 {
-  //-----------------------------------------------------------------------------
-  // Links several hierachies also resolving IDs across them.
-  //-----------------------------------------------------------------------------
+  /** Links several VLX hierachies also resolving IDs across them. */
   class VLXLinker
   {
   public:
