@@ -45,6 +45,8 @@ namespace vl
   /** Parses a VLT file translating it into a VLX hierarchy. */
   class VLXParserVLT: public VLXParser
   {
+    VL_INSTRUMENT_CLASS(vl::VLXParserVLT, VLXParser)
+
   public:
     VLXParserVLT()
     {
@@ -579,7 +581,7 @@ namespace vl
             switch(mToken.mType)
             {
             case VLTToken::Integer:
-            case VLTToken::Real: arr_floating->mValue.push_back( atof( mToken.mString.c_str() ) ); break;
+            case VLTToken::Real: arr_floating->value().push_back( atof( mToken.mString.c_str() ) ); break;
             case VLTToken::RightRoundBracket: return true;
             default:
               return false;

@@ -41,6 +41,8 @@ namespace vl
   /** Translates a VLX hierarchy into VLT notation. */
   class VLXVisitorExportToVLT: public VLXVisitor
   {
+    VL_INSTRUMENT_CLASS(vl::VLXVisitorExportToVLT, VLXVisitor)
+
   public:
     VLXVisitorExportToVLT()
     {

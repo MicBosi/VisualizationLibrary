@@ -41,6 +41,8 @@ namespace vl
   /** Registry of vl::VLXClassWrapper objects, used by vl::VLXSerializer, see also vl::defVLXRegistry(). */
   class VLXRegistry: public Object
   {
+    VL_INSTRUMENT_CLASS(vl::VLXRegistry, Object)
+
   public:
     void registerClassWrapper(const TypeInfo* type, VLXClassWrapper* wrapper)
     {

@@ -40,6 +40,8 @@ namespace vl
   /** Parses a VLT file translating it into a VLX hierarchy. */
   class VLXParserVLB: public VLXParser
   {
+    VL_INSTRUMENT_CLASS(vl::VLXParserVLB, VLXParser)
+
   public:
     VLXParserVLB()
     {

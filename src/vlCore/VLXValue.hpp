@@ -100,62 +100,54 @@ namespace vl
 
   };
   //-----------------------------------------------------------------------------
-  /** An array of 64 bits integers, can also have a tag. */
-  class VLXArrayInteger: public VLXArray
+  /** A templated VLXArray. */
+  template<typename T>
+  class VLXArrayTemplate: public VLXArray
   {
-    VL_INSTRUMENT_CLASS(vl::VLXArrayInteger, VLXArray)
+    VL_INSTRUMENT_CLASS(vl::VLXArrayTemplate, VLXArray)
 
   public:
-    typedef long long scalar_type;
+    typedef T scalar_type;
 
   public:
-    VLXArrayInteger(const char* tag=NULL): VLXArray(tag) { }
+    VLXArrayTemplate(const char* tag=NULL): VLXArray(tag) { }
     
-    virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
-
-    std::vector<long long>& value() { return mValue; }
+    std::vector<T>& value() { return mValue; }
     
-    const std::vector<long long>& value() const { return mValue; }
+    const std::vector<T>& value() const { return mValue; }
 
-    long long* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    T* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
     
-    const long long* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
+    const T* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
 
-    template<typename T> void copyTo(T*ptr) const { for(size_t i=0; i<mValue.size(); ++i, ++ptr) *ptr = (T)mValue[i]; }
+    template<typename T2> void copyTo(T2*ptr) const { for(size_t i=0; i<mValue.size(); ++i, ++ptr) *ptr = (T2)mValue[i]; }
 
-    template<typename T> void copyFrom(const T*ptr) { for(size_t i=0; i<mValue.size(); ++i, ++ptr) mValue[i] = (scalar_type)*ptr; }
+    template<typename T2> void copyFrom(const T2*ptr) { for(size_t i=0; i<mValue.size(); ++i, ++ptr) mValue[i] = (scalar_type)*ptr; }
 
   private:
-    std::vector<long long> mValue;
+    std::vector<T> mValue;
+  };
+  //-----------------------------------------------------------------------------
+  /** An array of 64 bits integers, can also have a tag. */
+  class VLXArrayInteger: public VLXArrayTemplate<long long>
+  {
+    VL_INSTRUMENT_CLASS(vl::VLXArrayInteger, VLXArrayTemplate<long long>)
+
+  public:
+    VLXArrayInteger(const char* tag=NULL): VLXArrayTemplate(tag) { }
+    
+    virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
   };
   //-----------------------------------------------------------------------------
   /** An array of 64 bits floating point numbers, can also have a tag. */
-  class VLXArrayReal: public VLXArray
+  class VLXArrayReal: public VLXArrayTemplate<double>
   {
-    VL_INSTRUMENT_CLASS(vl::VLXArrayReal, VLXArray)
+    VL_INSTRUMENT_CLASS(vl::VLXArrayReal, VLXArrayTemplate<double>)
 
   public:
-    typedef double scalar_type;
-
-  public:
-    VLXArrayReal(const char* tag=NULL): VLXArray(tag) { }
+    VLXArrayReal(const char* tag=NULL): VLXArrayTemplate(tag) { }
     
     virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
-
-    std::vector<double>& value() { return mValue; }
-    
-    const std::vector<double>& value() const { return mValue; }
-
-    double* ptr() { if (mValue.empty()) return NULL; else return &mValue[0]; }
-
-    const double* ptr() const { if (mValue.empty()) return NULL; else return &mValue[0]; }
-
-    template<typename T> void copyTo(T*ptr) const { for(size_t i=0; i<mValue.size(); ++i, ++ptr) *ptr = (T)mValue[i]; }
-
-    template<typename T> void copyFrom(const T*ptr) { for(size_t i=0; i<mValue.size(); ++i, ++ptr) mValue[i] = (scalar_type)*ptr; }
-
-  public:
-    std::vector<double> mValue;
   };
   //-----------------------------------------------------------------------------
   /*
