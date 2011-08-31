@@ -47,7 +47,7 @@ namespace vl
     typedef enum { NoError, ImportError, ExportError } EError;
 
   public:
-    VLXSerializer(): mIDCounter(0), mError(NoError) 
+    VLXSerializer(): mError(NoError), mIDCounter(0)
     {
       setRegistry( defVLXRegistry() );
     }

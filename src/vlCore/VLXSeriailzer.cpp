@@ -187,8 +187,9 @@ void VLXSerializer::signalExportError(const String& str)
 //-----------------------------------------------------------------------------
 std::string VLXSerializer::generateID(const char* prefix)
 {
-  char buffer[sizeof(int)*8+1];
-  return std::string("#") + prefix + "id" + itoa(++mIDCounter, buffer, 10);
+  char number[sizeof(int)*8+1];
+  snprintf(number, sizeof(number), "%d", ++mIDCounter);
+  return std::string("#") + prefix + "id" + number;
 }
 //-----------------------------------------------------------------------------
 bool VLXSerializer::saveVLT(const String& path, const Object* obj, bool start_fresh)

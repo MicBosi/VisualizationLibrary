@@ -34,6 +34,7 @@
 
 #include <vlCore/VLXParser.hpp>
 #include <vlCore/VLTTokenizer.hpp>
+#include <cstdlib>
 
 #ifdef _MSC_VER
   #define atoll _atoi64
