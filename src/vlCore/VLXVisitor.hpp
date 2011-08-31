@@ -52,6 +52,8 @@ namespace vl
   /** Base class for all visitors visiting a VLX hierarchy. */
   class VLXVisitor: public Object
   {
+    VL_INSTRUMENT_CLASS(vl::VLXVisitor, Object)
+
   public:
     virtual void visitStructure(VLXStructure*) {}
     virtual void visitList(VLXList*) {}

@@ -40,6 +40,8 @@ namespace vl
   /** Base class for VLX parsers. */
   class VLXParser: public Object
   {
+    VL_INSTRUMENT_CLASS(vl::VLXParser, Object)
+
   public:
 
     virtual bool parseHeader() = 0;

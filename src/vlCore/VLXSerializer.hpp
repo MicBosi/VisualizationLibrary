@@ -44,6 +44,8 @@ namespace vl
   /** Translates an arbitrary set of vl::Object (and subclasses) into VLB and VLT format. */
   class VLXSerializer: public Object
   {
+    VL_INSTRUMENT_CLASS(vl::VLXSerializer, Object)
+
   public:
     typedef enum { NoError, ImportError, ExportError } EError;
 
