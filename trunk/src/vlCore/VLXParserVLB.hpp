@@ -140,7 +140,7 @@ namespace vl
       if (len == 0)
         return true;
       str.resize((size_t)len);
-      bool ok = inputFile()->read(&str.front(), str.length()) == str.length();
+      bool ok = (size_t)inputFile()->read(&str[0], str.length()) == str.length();
       return ok;
     }
 
@@ -331,8 +331,8 @@ namespace vl
               decodeIntegers(encoded, arr.value());
             }
           }
-          VL_CHECK(count == arr.value().size())
-          return count == arr.value().size();
+          VL_CHECK((size_t)count == arr.value().size())
+          return (size_t)count == arr.value().size();
         }
 
       case VLB_ChunkArrayRealDouble:
@@ -352,9 +352,9 @@ namespace vl
           if (count)
           {
 #if 1
-            long long c = inputFile()->readDouble( &arr.value().front(), count );
-            VL_CHECK(c == count * sizeof(double))
-            return c == count * sizeof(double);
+            long long c = inputFile()->readDouble( &arr.value()[0], count );
+            VL_CHECK(c == count * (int)sizeof(double))
+            return c == count * (int)sizeof(double);
 #elif 0
             long long zsize = 0;
             readInteger(zsize);
@@ -393,8 +393,8 @@ namespace vl
             // copy over floats to doubles
             for(size_t i=0; i<floats.size(); ++i)
               arr.value()[i] = floats[i];
-            VL_CHECK(c == count * sizeof(float))
-            return c == count * sizeof(float);
+            VL_CHECK(c == count * (int)sizeof(float))
+            return c == count * (int)sizeof(float);
 #elif 0
             long long zsize = 0;
             readInteger(zsize);

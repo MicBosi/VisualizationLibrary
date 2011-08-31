@@ -34,6 +34,7 @@
 
 #include <vlCore/VLXVisitor.hpp>
 #include <vlCore/VLXValue.hpp>
+#include <cstdarg>
 
 namespace vl
 {
