@@ -150,6 +150,12 @@ BlendFunc* Shader::gocBlendFunc() { GET_OR_CREATE(BlendFunc) }
 //------------------------------------------------------------------------------
 SampleCoverage* Shader::gocSampleCoverage() { GET_OR_CREATE(SampleCoverage) }
 //------------------------------------------------------------------------------
+VertexAttrib* Shader::gocVertexAttrib(int attr_index) { GET_OR_CREATE_IDX(VertexAttrib, attr_index) }
+//------------------------------------------------------------------------------
+const VertexAttrib* Shader::getVertexAttrib(int attr_index) const { return static_cast<const VertexAttrib*>( getRenderStateSet()->renderState( RS_VertexAttrib, attr_index ) ); }
+//------------------------------------------------------------------------------
+VertexAttrib* Shader::getVertexAttrib(int attr_index) { return static_cast<VertexAttrib*>( getRenderStateSet()->renderState( RS_VertexAttrib, attr_index ) ); }
+//------------------------------------------------------------------------------
 Light* Shader::gocLight(int light_index) { GET_OR_CREATE_IDX(Light, light_index) }
 //------------------------------------------------------------------------------
 const Light* Shader::getLight(int light_index) const { return static_cast<const Light*>( getRenderStateSet()->renderState( RS_Light, light_index ) ); }

@@ -56,22 +56,6 @@
 #include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/DiskFile.hpp>
 
-#define VL_SERIALIZER_VERSION 100
-
-#define VLX_IMPORT_CHECK_RETURN(Condition, Obj)                                                          \
-  if (!(Condition))                                                                                      \
-  {                                                                                                      \
-    s.signalImportError( Say("Line %n : condition failed : %s\n") << (Obj).lineNumber() << #Condition ); \
-    return;                                                                                              \
-  }
-
-#define VLX_IMPORT_CHECK_RETURN_NULL(Condition, Obj)                                                     \
-  if (!(Condition))                                                                                      \
-  {                                                                                                      \
-    s.signalImportError( Say("Line %n : condition failed : %s\n") << (Obj).lineNumber() << #Condition ); \
-    return NULL;                                                                                         \
-  }
-
 namespace vl
 {
   //-----------------------------------------------------------------------------

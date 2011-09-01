@@ -32,7 +32,7 @@
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlGraphics/FramebufferObject.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
-#include <vlCore/VLSettings.hpp>
+#include <vlCore/GlobalSettings.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Log.hpp>
 

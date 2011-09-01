@@ -47,7 +47,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VLXSerializer, Object)
 
   public:
-    typedef enum { NoError, ImportError, ExportError } EError;
+    typedef enum { NoError, ImportError, ExportError, ReadError, WriteError } EError;
 
   public:
     VLXSerializer(): mError(NoError), mIDCounter(0)

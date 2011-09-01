@@ -1417,53 +1417,53 @@ namespace vl
         uniform->setUniform1f(count, &float_vec[0]);
         break; // mic fixme: test this
       case UT_FLOAT_VEC2: 
-        float_vec.resize(count*2); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
+        float_vec.resize(count*2); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniform2f(count, &float_vec[0]);
         break;
       case UT_FLOAT_VEC3: 
-        float_vec.resize(count*3); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
+        float_vec.resize(count*3); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniform3f(count, &float_vec[0]);
         break;
       case UT_FLOAT_VEC4: 
-        float_vec.resize(count*4); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
+        float_vec.resize(count*4); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniform4f(count, &float_vec[0]);
         break;
 
       case UT_FLOAT_MAT2: 
-        float_vec.resize(count*2*2); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val);
+        float_vec.resize(count*2*2); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val);
         uniform->setUniformMatrix2f(count, &float_vec[0]);
         break;
       case UT_FLOAT_MAT3: 
-        float_vec.resize(count*3*3); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val);
+        float_vec.resize(count*3*3); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val);
         uniform->setUniformMatrix3f(count, &float_vec[0]);
         break;
       case UT_FLOAT_MAT4: 
-        float_vec.resize(count*4*4); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val);
+        float_vec.resize(count*4*4); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val);
         uniform->setUniformMatrix4f(count, &float_vec[0]);
         break;
 
       case UT_FLOAT_MAT2x3: 
-        float_vec.resize(count*2*3); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
+        float_vec.resize(count*2*3); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix2x3f(count, &float_vec[0]);
         break;
       case UT_FLOAT_MAT3x2: 
-        float_vec.resize(count*3*2); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
+        float_vec.resize(count*3*2); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix3x2f(count, &float_vec[0]);
         break;
       case UT_FLOAT_MAT2x4: 
-        float_vec.resize(count*2*4); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
+        float_vec.resize(count*2*4); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix2x4f(count, &float_vec[0]);
         break;
       case UT_FLOAT_MAT4x2: 
-        float_vec.resize(count*4*2); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
+        float_vec.resize(count*4*2); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix4x2f(count, &float_vec[0]);
         break;
       case UT_FLOAT_MAT3x4: 
-        float_vec.resize(count*3*4); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
+        float_vec.resize(count*3*4); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix3x4f(count, &float_vec[0]);
         break;
       case UT_FLOAT_MAT4x3: 
-        float_vec.resize(count*4*3); arr_int->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
+        float_vec.resize(count*4*3); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix4x3f(count, &float_vec[0]);
         break;
 
@@ -1472,62 +1472,62 @@ namespace vl
         uniform->setUniform1d(count, &double_vec[0]);
         break; // mic fixme: test this
       case UT_DOUBLE_VEC2: 
-        double_vec.resize(count*2); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
+        double_vec.resize(count*2); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniform2d(count, &double_vec[0]);
         break;
       case UT_DOUBLE_VEC3: 
-        double_vec.resize(count*3); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
+        double_vec.resize(count*3); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniform3d(count, &double_vec[0]);
         break;
       case UT_DOUBLE_VEC4:
-        double_vec.resize(count*4); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
+        double_vec.resize(count*4); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniform4d(count, &double_vec[0]);
         break;
 
       case UT_DOUBLE_MAT2: 
-        double_vec.resize(count*2*2); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val);
+        double_vec.resize(count*2*2); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val);
         uniform->setUniformMatrix2d(count, &double_vec[0]);
         break;
       case UT_DOUBLE_MAT3: 
-        double_vec.resize(count*3*3); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val);
+        double_vec.resize(count*3*3); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val);
         uniform->setUniformMatrix3d(count, &double_vec[0]);
         break;
       case UT_DOUBLE_MAT4: 
-        double_vec.resize(count*4*4); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val);
+        double_vec.resize(count*4*4); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val);
         uniform->setUniformMatrix4d(count, &double_vec[0]);
         break;
 
       case UT_DOUBLE_MAT2x3:
-        double_vec.resize(count*2*3); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
+        double_vec.resize(count*2*3); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix2x3d(count, &double_vec[0]);
         break;
       case UT_DOUBLE_MAT3x2:
-        double_vec.resize(count*3*2); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
+        double_vec.resize(count*3*2); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix3x2d(count, &double_vec[0]);
         break;
       case UT_DOUBLE_MAT2x4:
-        double_vec.resize(count*2*4); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
+        double_vec.resize(count*2*4); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix2x4d(count, &double_vec[0]);
         break;
       case UT_DOUBLE_MAT4x2:
-        double_vec.resize(count*4*2); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
+        double_vec.resize(count*4*2); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix4x2d(count, &double_vec[0]);
         break;
       case UT_DOUBLE_MAT3x4:
-        double_vec.resize(count*3*4); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
+        double_vec.resize(count*3*4); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix3x4d(count, &double_vec[0]);
         break;
       case UT_DOUBLE_MAT4x3:
-        double_vec.resize(count*4*3); arr_int->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
+        double_vec.resize(count*4*3); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniformMatrix4x3d(count, &double_vec[0]);
         break;
 
       case UT_NONE:
-        Log::warning("Error importing uniform : uninitialized uniform.\n");
+        Log::error( Say("Error importing uniform : uninitialized uniform (%s).\n") << uniform->name() );
         break;
 
       default:
-        Log::warning("Error importing uniform : illegal uniform type.\n");
+        Log::error( Say("Error importing uniform : illegal uniform type (%s).\n") << uniform->name() );
         break;
       }
 
@@ -1621,11 +1621,11 @@ namespace vl
       case UT_DOUBLE_MAT4x3: arr_real->value().resize(count*4*3); arr_real->copyFrom( (double*)uniform->rawData() ); break;
 
       case UT_NONE:
-        Log::warning("Error exporting uniform : uninitialized uniform.\n");
+        Log::error( Say("Error exporting uniform : uninitialized uniform (%s).\n") << uniform->name() );
         break;
 
       default:
-        Log::warning("Error exporting uniform : illegal uniform type.\n");
+        Log::error( Say("Error exporting uniform : illegal uniform type (%s).\n") << uniform->name() );
         break;
       }
 
@@ -2309,13 +2309,13 @@ namespace vl
         else
         if (key == "ClearDepth")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value );
           obj->setClearDepth( (float)value.getReal() );
         }
         else
         if (key == "ClearStecil")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayInteger, value );
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Integer, value );
           obj->setClearStencil( (int)value.getInteger() );
         }
         else
@@ -3218,6 +3218,12 @@ namespace vl
 
         // mic fixme: document how these guys are to be used by examples
 
+        if (key == "Dimension")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
+          obj->setupParams()->setDimension( vlx_ETextureDimension(value.getIdentifier().c_str(), value.lineNumber()) );
+        }
+        else
         if (key == "TexParameter")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Structure, value );
@@ -3263,6 +3269,14 @@ namespace vl
           obj->setupParams()->setGenMipmaps( (int)value.getBool() );
         }
         else
+        if (key == "VBO")
+        {
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Structure, value );
+          VBO* vbo = s.importVLX( value.getStructure() )->as<VBO>();
+          VLX_IMPORT_CHECK_RETURN( vbo, value );
+          obj->setupParams()->setBufferObject( vbo );
+        }
+        else
         if (key == "Samples")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Integer, value );
@@ -3299,29 +3313,43 @@ namespace vl
       {
         const Texture::SetupParams* par = tex->setupParams();
 
-        if (!par->imagePath().empty())
-          *vlx << "ImagePath" << vlx_String(par->imagePath().toStdString());
-        else
-        if (par->image())
-          *vlx << "ImagePath" << vlx_String(par->image()->filePath().toStdString());
-
-        *vlx << "Format" << vlx_Identifier(vlx_ETextureFormat(par->format()));
-
-        if (par->width())
-          *vlx << "Width" << (long long)par->width();
-
-        if (par->height())
-          *vlx << "Height" << (long long)par->height();
-
-        if (par->depth())
-          *vlx << "Depth" << (long long)par->depth();
-
-        *vlx << "GenMipmaps" << par->genMipmaps();
-
-        if(par->samples())
+        if (par)
         {
-          *vlx << "Samples" << (long long)par->samples();
-          *vlx << "FixedSamplesLocations" << par->fixedSamplesLocations();
+          *vlx << "Dimension" << vlx_Identifier(vlx_ETextureDimension(par->dimension()));
+
+          *vlx << "Format" << vlx_Identifier(vlx_ETextureFormat(par->format()));
+
+          if (!par->imagePath().empty())
+            *vlx << "ImagePath" << vlx_String(par->imagePath().toStdString());
+          else
+          if (par->image())
+            *vlx << "ImagePath" << vlx_String(par->image()->filePath().toStdString());
+
+          if (par->width())
+            *vlx << "Width" << (long long)par->width();
+
+          if (par->height())
+            *vlx << "Height" << (long long)par->height();
+
+          if (par->depth())
+            *vlx << "Depth" << (long long)par->depth();
+
+          *vlx << "GenMipmaps" << par->genMipmaps();
+          
+          // mic fixme: implement VBO importer/exporter
+          // mic fixme: rename bufferObject() to vbo()
+#if 0
+          if (par->bufferObject())
+          {
+            *vlx << "VBO" << s.exportVLX(par->bufferObject());
+          }
+#endif
+
+          if(par->samples())
+          {
+            *vlx << "Samples" << (long long)par->samples();
+            *vlx << "FixedSamplesLocations" << par->fixedSamplesLocations();
+          }
         }
       }
     }

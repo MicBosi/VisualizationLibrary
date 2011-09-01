@@ -171,7 +171,7 @@ namespace vl
 
       if (!parseHeader())
       {
-        Log::error("VLXParserVLB error.\n");
+        Log::error("VLXParserVLB : error parsing VLB header.\n");
         return false;
       }
 

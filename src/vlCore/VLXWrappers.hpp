@@ -43,14 +43,14 @@
 #define VLX_IMPORT_CHECK_RETURN(Condition, Obj)                                                          \
   if (!(Condition))                                                                                      \
   {                                                                                                      \
-    s.signalImportError( Say("Line %n : condition failed : %s\n") << (Obj).lineNumber() << #Condition ); \
+    s.signalImportError( Say("Line %n : condition failed : %s\n\tsee %s : %n\n") << (Obj).lineNumber() << #Condition <<  __FILE__ << __LINE__ ); \
     return;                                                                                              \
   }
 
 #define VLX_IMPORT_CHECK_RETURN_NULL(Condition, Obj)                                                     \
   if (!(Condition))                                                                                      \
   {                                                                                                      \
-    s.signalImportError( Say("Line %n : condition failed : %s\n") << (Obj).lineNumber() << #Condition ); \
+    s.signalImportError( Say("Line %n : condition failed : %s\n\tsee %s : %n\n") << (Obj).lineNumber() << #Condition <<  __FILE__ << __LINE__ ); \
     return NULL;                                                                                         \
   }
 

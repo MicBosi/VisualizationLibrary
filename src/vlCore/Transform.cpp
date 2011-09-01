@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vlCore/Transform.hpp>
-#include <vlCore/VLSettings.hpp>
+#include <vlCore/GlobalSettings.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/Log.hpp>
 #include <algorithm>
