@@ -31,7 +31,7 @@
 
 #include <vlCore/Log.hpp>
 #include <vlCore/checks.hpp>
-#include <vlCore/VLSettings.hpp>
+#include <vlCore/GlobalSettings.hpp>
 #include <vlCore/Vector3.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/ScopedMutex.hpp>

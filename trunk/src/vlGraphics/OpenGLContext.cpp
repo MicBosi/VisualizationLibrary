@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VLSettings.hpp>
+#include <vlCore/GlobalSettings.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlGraphics/OpenGL.hpp>
 #include <vlGraphics/IVertexAttribSet.hpp>

@@ -2093,6 +2093,14 @@ namespace vl
 
     // indexed render states
 
+    // vertex attrib
+
+    VertexAttrib* gocVertexAttrib(int attr_index);
+    
+    const VertexAttrib* getVertexAttrib(int attr_index) const;
+    
+    VertexAttrib* getVertexAttrib(int attr_index);
+
     // lights
 
     Light* gocLight(int light_index);

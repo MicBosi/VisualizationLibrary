@@ -77,7 +77,10 @@ Image::Image(const String& path)
   setObjectName(path.toStdString());
   ref<Image> img = loadImage(path);
   if (!img)
+  {
+    mFilePath = path;
     return;
+  }
   // quicker than *this = *img;
   mPixels->swap(*img->mPixels);
   mMipmaps.swap(img->mMipmaps);

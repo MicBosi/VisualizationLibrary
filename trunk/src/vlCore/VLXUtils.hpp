@@ -84,8 +84,8 @@ namespace vl
 
   inline VLXValue vlx_toValue(const ivec4& vec)
   {
-    VLXValue val( new VLXArrayReal );
-    VLXArrayReal* arr = val.getArrayReal();
+    VLXValue val( new VLXArrayInteger );
+    VLXArrayInteger* arr = val.getArrayInteger();
     arr->value().resize(4);
     arr->value()[0] = vec.x();
     arr->value()[1] = vec.y();
@@ -96,8 +96,8 @@ namespace vl
 
   inline VLXValue vlx_toValue(const uvec4& vec)
   {
-    VLXValue val( new VLXArrayReal );
-    VLXArrayReal* arr = val.getArrayReal();
+    VLXValue val( new VLXArrayInteger );
+    VLXArrayInteger* arr = val.getArrayInteger();
     arr->value().resize(4);
     arr->value()[0] = vec.x();
     arr->value()[1] = vec.y();
@@ -1158,6 +1158,48 @@ namespace vl
     Log::error( Say("Line %n : error : unknown primitive type '%s'\n") << line_num << str);
     /*if ("PT_UNKNOWN" == str)*/ return PT_UNKNOWN;
   }
+
+  // mic fixme: armonizza: devono tutti avere il line number e strcmp()
+  inline ETextureDimension vlx_ETextureDimension(const std::string& str, int line_num)
+  {
+    if ("TD_TEXTURE_1D" == str) return TD_TEXTURE_1D;
+    if ("TD_TEXTURE_2D" == str)  return TD_TEXTURE_2D;
+    if ("TD_TEXTURE_3D" == str) return TD_TEXTURE_3D;
+    if ("TD_TEXTURE_CUBE_MAP" == str) return TD_TEXTURE_CUBE_MAP;
+    if ("TD_TEXTURE_RECTANGLE" == str) return TD_TEXTURE_RECTANGLE;
+    if ("TD_TEXTURE_1D_ARRAY" == str) return TD_TEXTURE_1D_ARRAY;
+    if ("TD_TEXTURE_2D_ARRAY" == str) return TD_TEXTURE_2D_ARRAY;
+    if ("TD_TEXTURE_BUFFER" == str) return TD_TEXTURE_BUFFER;
+    if ("TD_TEXTURE_2D_MULTISAMPLE" == str) return TD_TEXTURE_2D_MULTISAMPLE;
+    if ("TD_TEXTURE_2D_MULTISAMPLE_ARRAY" == str) return TD_TEXTURE_2D_MULTISAMPLE_ARRAY;
+    if ("TD_TEXTURE_UNKNOWN" == str) return TD_TEXTURE_UNKNOWN;
+
+    Log::error( Say("Line %n : error : unknown texture dimension '%s'\n") << line_num << str);
+    return TD_TEXTURE_UNKNOWN;
+  }
+
+  inline const char* vlx_ETextureDimension(ETextureDimension td)
+  {
+    switch(td)
+    {
+    case TD_TEXTURE_1D: return "TD_TEXTURE_1D";
+    case TD_TEXTURE_2D:  return "TD_TEXTURE_2D";
+    case TD_TEXTURE_3D: return "TD_TEXTURE_3D";
+    case TD_TEXTURE_CUBE_MAP: return "TD_TEXTURE_CUBE_MAP";
+    case TD_TEXTURE_RECTANGLE: return "TD_TEXTURE_RECTANGLE";
+    case TD_TEXTURE_1D_ARRAY: return "TD_TEXTURE_1D_ARRAY";
+    case TD_TEXTURE_2D_ARRAY: return "TD_TEXTURE_2D_ARRAY";
+    case TD_TEXTURE_BUFFER: return "TD_TEXTURE_BUFFER";
+    case TD_TEXTURE_2D_MULTISAMPLE: return "TD_TEXTURE_2D_MULTISAMPLE";
+    case TD_TEXTURE_2D_MULTISAMPLE_ARRAY: return "TD_TEXTURE_2D_MULTISAMPLE_ARRAY";
+    case TD_TEXTURE_UNKNOWN: return "TD_TEXTURE_UNKNOWN";
+    default:
+      Log::error( Say("Invalid texture dimension %n\n") << td );
+      VL_TRAP()
+      return "TD_TEXTURE_UNKNOWN";
+    }
+  }
+
 }
 
 #endif

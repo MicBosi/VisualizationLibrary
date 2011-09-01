@@ -31,7 +31,7 @@
 
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/DiskDirectory.hpp>
-#include <vlCore/VLSettings.hpp>
+#include <vlCore/GlobalSettings.hpp>
 
 using namespace vl;
 

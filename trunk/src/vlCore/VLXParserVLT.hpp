@@ -116,7 +116,7 @@ namespace vl
       // read version and encoding
       if (!parseHeader())
       {
-        Log::error( Say("Line %n : error parsing header at '%s'.\n") << tokenizer()->lineNumber() << mToken.mString );
+        Log::error( Say("Line %n : error parsing VLT header at '%s'.\n") << tokenizer()->lineNumber() << mToken.mString );
         return false;
       }
 
