@@ -27,7 +27,7 @@ uniform vec3 gradient_delta;    // for on-the-fly gradient computation
 uniform bool precomputed_gradient; // whether the gradient has been precomputed or not
 
 // computes a simplified lighting equation
-vec3 blinn_phong(vec3 N, vec3 V, vec3 L, int light)
+vec3 blinn(vec3 N, vec3 V, vec3 L, int light)
 {
 	// material properties
 	// you might want to put this into a bunch or uniforms
@@ -56,9 +56,6 @@ vec4 computeFragColor(vec3 iso_pos)
 	// compute lighting at isosurface point
 	float val = texture3D(volume_texunit, iso_pos).r;
 
-	vec4 color = texture1D(trfunc_texunit, val);
-	vec3 color_tmp; // mic fixme: if I initialize this to vec3(0,0,0) the whole volume disappears!
-
 	// compute the gradient and lighting only if the pixel is visible "enough"
 	vec3 N;
 	if (precomputed_gradient)
@@ -80,16 +77,18 @@ vec4 computeFragColor(vec3 iso_pos)
 	}
 
 	vec3 V  = normalize(eye_position - frag_position);
-	for(int i=0; i<4; ++i)
+	vec4 color = texture1D(trfunc_texunit, val);
+	vec3 final_color /*= vec3(0.0, 0.0, 0.0)*/; // mic fixme: if I initialize this to vec3(0,0,0) the whole volume disappears!
+	for( int i=0; i<4; i++ )
 	{
 		if (light_enable[i])
 		{
 			vec3 L = normalize(light_position[i] - frag_position);
-			color_tmp.rgb += color.rgb * blinn_phong(N,V,L,i);
+			final_color = final_color + color.rgb * blinn(N, V, L, i);
 		}
-	}
+	}	
 
-	return vec4(color_tmp,color.a);
+	return vec4(final_color, color.a);
 }
 
 void main(void)
@@ -102,9 +101,7 @@ void main(void)
 	
 	float val = texture3D(volume_texunit, gl_TexCoord[0].xyz ).r;
 	bool sign_prev = val > val_threshold;
-	bool isosurface_found = false;
 	vec3 prev_pos = ray_pos;
-	vec4 frag_color = vec4(0.0, 0.0, 0.0, 0.0);
 	do
 	{
 		// note: 
