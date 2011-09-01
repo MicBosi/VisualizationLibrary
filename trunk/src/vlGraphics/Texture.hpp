@@ -605,7 +605,7 @@ namespace vl
       return createTexture();
     }
 
-    /** Prepares a texture buffer texture. */
+    /** Prepares a texture buffer texture. The VBO can come from an Array* or from ImagePBO or can be a stand-alone VBO as well. */
     void prepareTextureBuffer(vl::ETextureFormat format, VBO* bo)
     {
       mSetupParams = new SetupParams;
@@ -616,7 +616,7 @@ namespace vl
       mSetupParams->setBorder(false);
     }
 
-    /** Creates a texture buffer texture. */
+    /** Creates a texture buffer texture. The VBO can come from an Array* or from ImagePBO or can be a stand-alone VBO as well. */
     bool createTextureBuffer(vl::ETextureFormat format, VBO* bo)
     {
       prepareTextureBuffer(format, bo);
