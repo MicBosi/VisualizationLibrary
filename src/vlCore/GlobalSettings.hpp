@@ -38,14 +38,14 @@
 namespace vl
 {
   //! Global application settings controlling how Visualization Library behaves.
-  class VLCORE_EXPORT VLSettings: public Object
+  class VLCORE_EXPORT GlobalSettings: public Object
   {
     friend class VisualizationLibrary;
 
-    VL_INSTRUMENT_CLASS(vl::VLSettings, Object)
+    VL_INSTRUMENT_CLASS(vl::GlobalSettings, Object)
 
   public:
-    VLSettings();
+    GlobalSettings();
 
     /** If \p true VL checks at the beginning of each rendering that the OpenGL states are
       * clean and ready to be used by VL. If the test fails it can mean that either there 
@@ -81,7 +81,7 @@ namespace vl
   };
 
   //! Returns VisulizationLibrary's global settings.
-  VLCORE_EXPORT VLSettings* globalSettings();
+  VLCORE_EXPORT GlobalSettings* globalSettings();
 }
 
 #endif

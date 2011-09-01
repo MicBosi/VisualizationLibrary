@@ -29,14 +29,14 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/VLSettings.hpp>
+#include <vlCore/GlobalSettings.hpp>
 #include <cstdlib>
 #include <cstdio>
 
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-VLSettings::VLSettings()
+GlobalSettings::GlobalSettings()
 {
   VL_DEBUG_SET_OBJECT_NAME()
 

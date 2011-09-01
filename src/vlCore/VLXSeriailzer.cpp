@@ -75,7 +75,7 @@ Object* VLXSerializer::importVLX(const VLXStructure* st)
     else
     {
       setError(ImportError);
-      Log::error( Say("No serializer found for structure '%s'.") << st->tag() );
+      Log::error( Say("No importing serializer found for structure '%s'.") << st->tag() );
       VL_TRAP();
       return NULL;
     }
@@ -110,7 +110,7 @@ VLXStructure* VLXSerializer::exportVLX(const Object* obj)
     else
     {
       setError(ExportError);
-      Log::error( Say("No serializer found for '%s'.") << obj->classType()->name() );
+      Log::error( Say("No exporting serializer found for '%s'.") << obj->classType()->name() );
       VL_TRAP()
       return NULL;
     }
@@ -218,7 +218,7 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
   {
     if (it->first == "VL_Serializer_Version")
       continue;
-    if (it->first == "VLX_Writer")
+    if (it->first == "Authoring_Tool")
       continue;
     if (it->first == "Creation_Date")
       continue;
@@ -227,16 +227,16 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
 
   // add VL metadata
 
-  *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
-
   String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
-  *meta << "VLX_Writer" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
+  *meta << "Authoring_Tool" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
 
   time_t rawtime;
   time( &rawtime );
   std::string str = ctime(&rawtime);
   str.resize(str.size()-1); // remove the trailing \n
   *meta << "Creation_Date" << VLXValue( str.c_str(), VLXValue::String );
+
+  *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
 
   ref<VLXStructure> st = exportVLX( obj );
   if (st)
@@ -254,7 +254,11 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
     st->acceptVisitor(&text_export_visitor);
 
     file->open(vl::OM_WriteOnly);
-    file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() );
+    if ( file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() ) != text_export_visitor.text().size() )
+    {
+      Log::error( Say("VLXSerializer::saveVLT() write error : %s\n") << file->path() );
+      mError = WriteError;
+    }
     file->close();
 
     return mError == NoError;
@@ -266,7 +270,7 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
 bool VLXSerializer::saveVLB(const String& path, const Object* obj, bool start_fresh)
 {
   ref<DiskFile> file = new DiskFile(path);
-  return saveVLT(file.get(), obj, start_fresh);
+  return saveVLB(file.get(), obj, start_fresh);
 }
 //-----------------------------------------------------------------------------
 bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fresh)
@@ -285,7 +289,7 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
   {
     if (it->first == "VL_Serializer_Version")
       continue;
-    if (it->first == "VLX_Writer")
+    if (it->first == "Authoring_Tool")
       continue;
     if (it->first == "Creation_Date")
       continue;
@@ -294,16 +298,16 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
 
   // add VL metadata
 
-  *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
-
   String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
-  *meta << "VLX_Writer" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
+  *meta << "Authoring_Tool" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
 
   time_t rawtime;
   time( &rawtime );
   std::string str = ctime(&rawtime);
   str.resize(str.size()-1); // remove the trailing \n
   *meta << "Creation_Date" << VLXValue( str.c_str(), VLXValue::String );
+
+  *meta << "VL_Serializer_Version" << VLXValue( (long long) 100 );
 
   ref<VLXStructure> st = exportVLX( obj );
   if (st)

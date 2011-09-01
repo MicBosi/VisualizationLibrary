@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vlCore/VisualizationLibrary.hpp>
-#include <vlCore/VLSettings.hpp>
+#include <vlCore/GlobalSettings.hpp>
 #include <vlCore/VLXRegistry.hpp>
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/LoadWriterManager.hpp>
@@ -100,13 +100,13 @@ bool VisualizationLibrary::isCoreInitialized() { return gInitializedCore; }
 //------------------------------------------------------------------------------
 const char* VisualizationLibrary::versionString() { return gVersionString.c_str(); }
 //------------------------------------------------------------------------------
-// Global VLSettings
+// Global GlobalSettings
 //------------------------------------------------------------------------------
 namespace
 {
-  ref<VLSettings> gSettings = NULL;
+  ref<GlobalSettings> gSettings = NULL;
 }
-VLSettings* vl::globalSettings()
+GlobalSettings* vl::globalSettings()
 {
   return gSettings.get();
 }
@@ -183,7 +183,7 @@ void VisualizationLibrary::initCore(bool log_info)
   // --- Init Core ---
 
   // Install globabl settings
-  gSettings = new VLSettings;
+  gSettings = new GlobalSettings;
 
   // Install default logger
   ref<StandardLog> logger = new StandardLog;

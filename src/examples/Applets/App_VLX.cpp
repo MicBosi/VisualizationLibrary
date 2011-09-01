@@ -35,148 +35,193 @@
 #include <vlGraphics/BezierSurface.hpp>
 #include <vlGraphics/plugins/vlVLX.hpp>
 #include <vlCore/ZippedFile.hpp>
+#include <vlCore/GlobalSettings.hpp>
+#include <vlGraphics/DistanceLODEvaluator.hpp>
+#include <vlGraphics/PixelLODEvaluator.hpp>
+#include <vlGraphics/TriangleStripGenerator.hpp>
 
 using namespace vl;
-
-bool checkFloatness(const double* in, size_t count)
-{
-  for(size_t i=0; i<count; ++i)
-  {
-    float f = (float)in[i];
-    if ((double)f != in[i])
-      return false;
-  }
-
-  return true;
-}
 
 class App_VLX: public BaseDemo
 {
 public:
+
   virtual void initEvent()
   {
     Log::notify(appletInfo());
 
-#if 0
-    std::vector<unsigned char> compressed;
-    std::vector<double> double_in;
-    std::vector<double> double_out;
-    for(size_t i=0; i<1000; ++i)
-    {
-      double_in.push_back( ((rand() - RAND_MAX / 2) / double(rand() - RAND_MAX / 2)) );
-      // double_in.push_back( i );
-      if (i > 0)
-      {
-        long long* prev = (long long*)&double_in[i-1];
-        long long* cur  = (long long*)&double_in[i];
-        long long xor = (*prev) ^ (*cur);
-        // xor = 0xFFFFFFFFFFFFFFFF;
-        // printf("%8.2Lf -> %8.2Lf : %016llx -> %016llx: %016llx\n", *prev, *cur, *prev, *cur, xor);
-      }
-    }
-    
-    double_out.resize(double_in.size());
+    smokeTest();
+    teapotTest();
+  }
 
-    VL_CHECK(checkFloatness(&double_in[0], double_in.size()))
+  // VLX serialization test using VLXSerializer directly.
+  void teapotTest()
+  {
+    sceneManager()->tree()->actors()->clear();
 
-    vl::compress( &double_in[0], sizeof(double_in[0]) * double_in.size(), compressed, 1 );
-    vl::decompress( &compressed[0], compressed.size(), &double_out[0] );
-
-    float bytes_c = (float)compressed.size();
-    float bytes_d = (float)sizeof(double) * double_out.size();
-    
-    printf("compression = %.2f%%\n", bytes_c / bytes_d);
-
-    VL_CHECK( memcmp(&double_in[0], &double_out[0], sizeof(double)*double_out.size()) == 0 );
-#endif
-
-    // VL_TRAP();
-
-    //VLTTokenizer tokenizer;
-    //tokenizer.setInputFile( new DiskFile("D:/VL/test.vl") );
-    //VLTToken token;
-    //while(tokenizer.getToken(token) && token.mType != VLTToken::TOKEN_EOF)
-    //  printf(">> %s\n", token.mString.c_str());
-
-#if 0 // general input/output tests
-    VLXParserVLT parser;
-    parser.tokenizer()->setInputFile( new DiskFile("D:/VL/in.vlx") );
-    if ( parser.parse() )
-    {
-      VLXVisitorExportToVLT exporter;
-      exporter.visitStructure( parser.root() );
-      DiskFile file;
-      file.open("D:/VL/out.vlx", OM_WriteOnly);
-      file.write( exporter.text().c_str(), exporter.text().length() );
-      file.close();
-    }
-#endif
-
-    // ref<Geometry> geom = makeBox( vec3(0,0,0), 10, 10, 10 );
-    ref<Geometry> geom = makeIcosphere( vec3(0,0,0), 10, 0 );
-    // ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 4 );
+    ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 6 );
     geom->computeNormals();
+    geom->setColorArray( geom->normalArray() );
 
-    // geom->setColorArray( geom->normalArray() );
-    geom->setTexCoordArray( 0, geom->normalArray() );
-    // geom->setSecondaryColorArray( geom->normalArray() );
-    // TriangleStripGenerator::stripfy(geom.get(), 22, false, false, true);
-    // geom->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
-    // geom->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
-    // mic fixme: this does no realizes that we are using primitive restart
-    // mic fixme: make this manage also MultiDrawElements
-    // geom->makeGLESFriendly();
-    geom->drawCalls()->push_back( geom->drawCalls()->back() );
-
-    // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     ref<Effect> fx = new Effect;
     fx->shader()->enable(EN_LIGHTING);
     fx->shader()->enable(EN_DEPTH_TEST);
     fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
     fx->shader()->setRenderState( new Light, 0 );
-    // fx->shader()->setRenderState( new ClipPlane(10, fvec3(1,2,3)), 3 );
 
     ref<Actor> act = new Actor( geom.get(), fx.get(), new Transform );
-    act->transform()->translate(1, 2 ,3);
-    act->transform()->rotate(90, 0, 1, 0);
-    act->transform()->addChild( new Transform( mat4::getScaling(1, 2, 3) ) );
-    act->transform()->computeWorldMatrixRecursive();
 
-#if 0
     GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
-    glsl->attachShader( new GLSLVertexShader("/glsl/bumpmap.vs") );
-    glsl->attachShader( new GLSLFragmentShader("/glsl/bumpmap.fs") );
+    glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight.fs") );
+
+    VLXSerializer vlx_serializer;
+    String vlt_path;
+    String vlb_path;
+
+    act->transform()->setLocalMatrix( mat4::getTranslation(+10, +10, 0) );
+    vlt_path = globalSettings()->defaultDataPath() + "/vlx/teapot1.vlt";
+    vlx_serializer.saveVLT(vlt_path, act.get()); VL_CHECK(!vlx_serializer.error());
+    ref<Actor> act1 = vlx_serializer.loadVLT(vlt_path)->as<Actor>(); VL_CHECK(!vlx_serializer.error()); VL_CHECK(act1.get())
+
+    act->transform()->setLocalMatrix( mat4::getTranslation(+10, -10, 0) );
+    vlb_path = globalSettings()->defaultDataPath() + "/vlx/teapot2.vlb";
+    vlx_serializer.saveVLB(vlb_path, act.get()); VL_CHECK(!vlx_serializer.error());
+    ref<Actor> act2 = vlx_serializer.loadVLB(vlb_path)->as<Actor>(); VL_CHECK(!vlx_serializer.error()); VL_CHECK(act2.get())
+
+    glsl->shader(0)->setPath("");
+    glsl->shader(0)->setSource("");
     glsl->shader(1)->setPath("");
     glsl->shader(1)->setSource("");
-    glsl->gocUniform("vibrazione")->setUniformF(164.314159265f);
-    glsl->bindFragDataLocation(0, "color_buffer");
-    glsl->bindFragDataLocation(1, "normal_buffer");
-    glsl->addAutoAttribLocation(0, "posizione");
-    glsl->addAutoAttribLocation(1, "normale");
-    glsl->addAutoAttribLocation(3, "colore");
-#endif
 
-    fx->shader()->gocTextureSampler(0)->setTexture( new Texture );
-    // fx->shader()->gocTextureSampler(0)->texture()->prepareTexture2D( new Image("/images/spheremap_klimt.jpg"), TF_UNKNOWN );
-    fx->shader()->gocTextureSampler(0)->texture()->prepareTexture2D( "/images/spheremap_klimt.jpg", TF_UNKNOWN );
-    // fx->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setWrapS(TWM_REPEAT);
-    // fx->shader()->gocTextureSampler(0)->setTexParameter( new TexParameter );
-    // fx->shader()->gocTextureSampler(0)->getTexParameter()->setMinFilter(TPF_NEAREST);
-    // fx->shader()->gocTextureSampler(0)->getTexParameter()->setMagFilter(TPF_NEAREST);
+    act->transform()->setLocalMatrix( mat4::getTranslation(-10, +10, 0) );
+    vlt_path = globalSettings()->defaultDataPath() + "/vlx/teapot3.vlt";
+    vlx_serializer.saveVLT(vlt_path, act.get()); VL_CHECK(!vlx_serializer.error());
+    ref<Actor> act3 = vlx_serializer.loadVLT(vlt_path)->as<Actor>(); VL_CHECK(!vlx_serializer.error()); VL_CHECK(act3.get())
 
+    act->transform()->setLocalMatrix( mat4::getTranslation(-10, -10, 0) );
+    vlb_path = globalSettings()->defaultDataPath() + "/vlx/teapot4.vlb";
+    vlx_serializer.saveVLB(vlb_path, act.get()); VL_CHECK(!vlx_serializer.error());
+    ref<Actor> act4 = vlx_serializer.loadVLB(vlb_path)->as<Actor>(); VL_CHECK(!vlx_serializer.error()); VL_CHECK(act4.get())
+
+    ref<Camera> cam = new Camera;
+    cam->setLocalMatrix( mat4::getLookAt( vec3(0,0,50), vec3(0,0,0), vec3(0,1,0) ) );
+    vlt_path = globalSettings()->defaultDataPath() + "/vlx/camera.vlt";
+    vlx_serializer.saveVLT(vlt_path, cam.get()); VL_CHECK(!vlx_serializer.error());
+    cam = vlx_serializer.loadVLT(vlt_path)->as<Camera>(); VL_CHECK(!vlx_serializer.error());
+
+    sceneManager()->tree()->actors()->push_back(act1.get());
+    sceneManager()->tree()->actors()->push_back(act2.get());
+    sceneManager()->tree()->actors()->push_back(act3.get());
+    sceneManager()->tree()->actors()->push_back(act4.get());
+    rendering()->as<Rendering>()->camera()->setLocalMatrix( cam->localMatrix() );
+
+    // mic fixme:
+    // TODO
+    // ... load and save objectName() if non empty ...
+    // ... implement VBO importer/exporter ...
+    // ... implement Billboard importer/exporter ...
+    // ... rename bufferObject() to vbo() ...
+    // ... test shaders: bumpmap, toyball, noise GLSL/CPU, tess shader, geom shader, vertex displace, environmapping, raycast, reflection/refraction, shadowmapping, HDR & bloom ...
+    // ... test vertex attrib bindings, uniforms, generic vertex arrays ...
+    // ... test textures ...
+    // ... test lights, material and camera ...
+    // ... test transforms and all matrix tags ...
+    // ... test transparency & polysort ...
+    // ... test lod evaluators ...
+  }
+
+  // raw i/o serialization test with no visualization using writeResource()/loadResource()
+  void smokeTest()
+  {
+    Log::notify(appletInfo());
+
+    // --- --- ResourceDatabase --- ---
+    ref<ResourceDatabase> res_db = new ResourceDatabase;
+
+    ref<Geometry> geom1 = makeTeapot( vec3(0,0,0), 10, 4 );
+    geom1->computeNormals();
+    geom1->setColorArray( geom1->normalArray() );
+    geom1->setTexCoordArray( 0, geom1->normalArray() );
+    // PatchParameter
+    geom1->drawCalls()->at(0)->setPatchParameter( new PatchParameter );
+
+    ref<Geometry> geom2 = makeTeapot( vec3(0,0,0), 10, 4 );
+    TriangleStripGenerator::stripfy(geom2.get(), 22, false, false, true);
+    geom2->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
+    res_db->resources().push_back( geom2.get() );
+
+    ref<Geometry> geom3 = makeTeapot( vec3(0,0,0), 10, 4 );
+    TriangleStripGenerator::stripfy(geom3.get(), 22, false, false, true);
+    geom3->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
+    res_db->resources().push_back( geom3.get() );
+
+    ref<Geometry> geom4 = makeBox( vec3(0,0,0), 10, 10, 10 );
+    res_db->resources().push_back( geom4.get() );
+
+    ref<Geometry> geom5 = makeIcosphere( vec3(0,0,0), 10, 0 );
+    geom5->computeNormals();
+    geom5->setColorArray( geom5->normalArray() );
+    geom5->makeGLESFriendly();
+    geom5->drawCalls()->push_back( geom5->drawCalls()->back() );
+    res_db->resources().push_back( geom5.get() );
+
+    ref<Effect> fx = new Effect;
+    fx->shader()->enable(EN_LIGHTING);
+    fx->shader()->enable(EN_DEPTH_TEST);
+    fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
+    fx->shader()->setRenderState( new Light, 0 );
+    fx->shader()->setRenderState( new Light, 1 );
+    fx->shader()->setRenderState( new ClipPlane(10, fvec3(1,2,3)), 0 );
+    fx->shader()->setRenderState( new ClipPlane(10, fvec3(1,2,3)), 1 );
+
+    fx->shader()->gocColor()->setValue( vl::crimson );
+    fx->shader()->gocSecondaryColor()->setValue( vl::yellow.rgb() );
+    fx->shader()->gocNormal()->setValue( fvec3(1,2,3) );
+    fx->shader()->gocVertexAttrib(0)->setValue( vl::royalblue );
+    fx->shader()->gocVertexAttrib(1)->setValue( vl::red );
+
+    ref<Actor> act = new Actor( geom1.get(), fx.get(), new Transform );
+    act->transform()->translate(1, 2 ,3);
+    for(int i=0; i<10; ++i)
+    {
+      ref<Transform> tr = new Transform;
+      switch( rand() % 4 )
+      {
+      case 0: tr->translate( rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5 ); break;
+      case 1: tr->rotate( rand() % 360 - 180, rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5 ); break;
+      case 2: tr->scale( rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5 ); break;
+      case 3: tr->setLocalMatrix( mat4::getPerspective(30, 1, 1, 1000) ); break;
+      }
+      act->transform()->addChild( tr.get() );
+    }
+
+    GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
+    glsl->attachShader( new GLSLVertexShader        ("/glsl/smooth_triangle.vs") );
+    glsl->attachShader( new GLSLTessControlShader   ("/glsl/smooth_triangle.tcs") );
+    glsl->attachShader( new GLSLTessEvaluationShader("/glsl/smooth_triangle.tes") );
+    glsl->attachShader( new GLSLGeometryShader      ("/glsl/smooth_triangle.gs") );
+    glsl->attachShader( new GLSLFragmentShader      ("/glsl/perpixellight.fs") );
 #if 0
-    ref<PixelLODEvaluator> lod_eval = new PixelLODEvaluator;
-    act->setLODEvaluator( lod_eval.get() );
-    lod_eval->pixelRangeSet().push_back(11);
-    lod_eval->pixelRangeSet().push_back(22);
-    lod_eval->pixelRangeSet().push_back(33);
+    glsl->shader(0)->setPath(""); glsl->shader(0)->setSource("");
+    glsl->shader(1)->setPath(""); glsl->shader(1)->setSource("");
+    glsl->shader(2)->setPath(""); glsl->shader(2)->setSource("");
+    glsl->shader(3)->setPath(""); glsl->shader(3)->setSource("");
+    glsl->shader(4)->setPath(""); glsl->shader(4)->setSource("");
 #endif
+    // glslprogram uniforms
+    glsl->gocUniform("dummy_uniform1")->setUniformF(123.456);
+    glsl->gocUniform("dummy_uniform2")->setUniformD(789.123);
+    glsl->gocUniform("dummy_uniform2")->setUniformI(3141592);
 
-#if 0
-    act->actorEventCallbacks()->push_back( new DepthSortCallback );
-#endif
+    glsl->bindFragDataLocation(0, "frag_data_location_dummy1");
+    glsl->bindFragDataLocation(1, "frag_data_location_dummy2");
+    glsl->addAutoAttribLocation(0, "attrib_position");
+    glsl->addAutoAttribLocation(1, "attrib_normal");
+    glsl->addAutoAttribLocation(3, "attrib_color");
 
-#if 0 // uniform tests
+    // actor uniforms
+#if 1 
     act->gocUniform("mic_uniform1")->setUniformF(24.0f);
     act->gocUniform("mic_uniform2")->setUniformI(11);
     act->gocUniform("mic_uniform3")->setUniformD(100);
@@ -212,79 +257,74 @@ public:
     mat4 mat4_arr[] = { mat4::getTranslation(10,20,30), mat4::getTranslation(40,50,60), mat4::getTranslation(70,80,90) };
     act->gocUniform("mat4x4_array")->setUniform( 3, mat4_arr );
 
-    act->gocUniform("empty");
+    // act->gocUniform("empty");
 #endif
 
-    // mic fixme: test <Rotation> <Translation> <Scaling>
-    // mic fixme: matrix should be formatted
-    // mic fixme: we should need a mechanism that user_made objects are exported by user_made exporters.
+    // Textures
+    fx->shader()->gocTextureSampler(0)->setTexture( new Texture );
+    fx->shader()->gocTextureSampler(0)->texture()->prepareTexture2D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN );
+    fx->shader()->gocTextureSampler(0)->setTexture( new Texture );
+    fx->shader()->gocTextureSampler(0)->texture()->prepareTexture3D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN );
+    ref<Texture> tex;
+    tex = new Texture; tex->prepareTexture1D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture1D( 10, TF_RGBA ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture2D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture2D( 10, 20, TF_RGBA ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture3D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture3D( 10, 20, 30, TF_RGBA ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTextureCubemap( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTextureCubemap( 10, 20, TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTextureRectangle( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTextureRectangle( 10, 20, TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture1DArray( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture1DArray( 10, 100, TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture2DArray( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture2DArray( 10, 20, 100, TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture2DMultisample( 10, 20, TF_RGBA, 16, false ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTexture2DMultisampleArray( 10, 20, 100, TF_RGBA, 16, false ); res_db->resources().push_back( tex.get() );
+    ref<ArrayFloat3> arr = new ArrayFloat3; arr->resize(10);
+    tex = new Texture; tex->prepareTextureBuffer( TF_RGBA, arr->vbo() ); res_db->resources().push_back( tex.get() );
 
-    ref<ResourceDatabase> res_db = new ResourceDatabase;
-#if 0
-  #if 1
-      for (int i=0; i<100; ++i)
-      {
-        ref<Geometry> geom = makeTeapot( vec3(0,0,0), 10, 16 );
-        geom->computeNormals();
-        res_db->resources().push_back( geom.get() );
-      }
-  #else
-      res_db->resources().push_back( geom.get() );
-  #endif
-#elif 0
-    res_db->resources().push_back( sceneManager()->tree()->actors()->at(0)->lod(0) );
-    res_db->resources().push_back( sceneManager()->tree()->actors()->at(0) );
-    res_db->resources().push_back( new Camera );
-#endif
+    // PixelLODEvaluator
+    ref<PixelLODEvaluator> pix_eval = new PixelLODEvaluator;
+    pix_eval->pixelRangeSet().push_back(11);
+    pix_eval->pixelRangeSet().push_back(22);
+    pix_eval->pixelRangeSet().push_back(33);
+    act->setLODEvaluator( pix_eval.get() );
 
-#if 0
-    bool ok = saveVLT("D:/VL/export.vl", res_db.get());
-    VL_CHECK(ok);
+    // DistanceLODEvaluator
+    ref<DistanceLODEvaluator> dist_eval = new DistanceLODEvaluator;
+    dist_eval->distanceRangeSet().push_back(11);
+    dist_eval->distanceRangeSet().push_back(22);
+    dist_eval->distanceRangeSet().push_back(33);
+    act->setLODEvaluator( dist_eval.get() );
 
-    sceneManager()->tree()->actors()->clear();
+    // DepthSortCallback
+    act->actorEventCallbacks()->push_back( new DepthSortCallback );
 
-    res_db = loadVLT("D:/VL/export.vl");
-    VL_CHECK(res_db);
-
-    geom = res_db->get<Geometry>(0);
-    VL_CHECK(geom)
-#endif
-
+    // Actor
     res_db->resources().push_back(act.get());
 
-    vl::writeResource("D:/VL/export.vlb", res_db.get());
-    res_db = vl::loadResource("D:/VL/export.vlb");
+    // Camera
+    res_db->resources().push_back( new Camera );
 
-    vl::writeResource("D:/VL/export.vlt", res_db.get());
-    res_db = vl::loadResource("D:/VL/export.vlt");
+    // Viewport
+    res_db->resources().push_back( new Viewport );
 
-    vl::writeResource("D:/VL/export.vlb", res_db.get());
-    res_db = vl::loadResource("D:/VL/export.vlb");
+    // Expand resources: extracts and sorts Shaders, Effects, Renderables, RenderStates, Transforms etc. so that the resulting VLX files look more readable.
+    // Without this the resources are inlined in the VLXStructure that uses it the first time.
+    res_db->expand();
 
-    vl::writeResource("D:/VL/export.vlt", res_db.get());
+    String vlt_path;
+    vlt_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlt";
+    vl::writeResource(vlt_path, res_db.get());
+    res_db = vl::loadResource(vlt_path);
 
-    // vl::saveVLB("D:/VL/export.vlb", res_db.get());
-    // res_db = vl::loadVLB("D:/VL/export.vlb");
-    // vl::saveVLT("D:/VL/re-export.vlt", res_db .get());
-
-    //VLXSerializer serializer;
-
-    //// serialize
-    //serializer.saveVLT( "D:/VL/export.vlx", act.get() );
-
-    //ref<Object> obj = serializer.loadVLT("D:/VL/export.vlx");
-    //ref<Actor> act2 = obj->as<Actor>(); VL_CHECK(act2);
-
-    //// re-export
-    //serializer.saveVLT( "D:/VL/re-export.vlx", act2.get() );
-
-    // put into scene
-    Actor* act2 = res_db->get<Actor>(0); VL_CHECK(act2);
-    sceneManager()->tree()->addActor( act2 );
-
-    // sceneManager()->tree()->addActor( geom.get(), fx.get(), NULL);
-    // sceneManager()->tree()->addActor( act.get() );
+    vlt_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlb";
+    vl::writeResource(vlt_path, res_db.get());
+    res_db = vl::loadResource(vlt_path);
   }
+
 };
 
 // Have fun!
