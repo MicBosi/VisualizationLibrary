@@ -115,20 +115,6 @@ public:
     sceneManager()->tree()->actors()->push_back(act3.get());
     sceneManager()->tree()->actors()->push_back(act4.get());
     rendering()->as<Rendering>()->camera()->setLocalMatrix( cam->localMatrix() );
-
-    // mic fixme:
-    // TODO
-    // ... load and save objectName() if non empty ...
-    // ... implement VBO importer/exporter ...
-    // ... implement Billboard importer/exporter ...
-    // ... rename bufferObject() to vbo() ...
-    // ... test shaders: bumpmap, toyball, noise GLSL/CPU, tess shader, geom shader, vertex displace, environmapping, raycast, reflection/refraction, shadowmapping, HDR & bloom ...
-    // ... test vertex attrib bindings, uniforms, generic vertex arrays ...
-    // ... test textures ...
-    // ... test lights, material and camera ...
-    // ... test transforms and all matrix tags ...
-    // ... test transparency & polysort ...
-    // ... test lod evaluators ...
   }
 
   // raw i/o serialization test with no visualization using writeResource()/loadResource()
@@ -188,9 +174,9 @@ public:
       ref<Transform> tr = new Transform;
       switch( rand() % 4 )
       {
-      case 0: tr->translate( rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5 ); break;
-      case 1: tr->rotate( rand() % 360 - 180, rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5 ); break;
-      case 2: tr->scale( rand() % 10 - 5, rand() % 10 - 5, rand() % 10 - 5 ); break;
+      case 0: tr->translate( randomMinMax(-5,+5), randomMinMax(-5,+5), randomMinMax(-5,+5) ); break;
+      case 1: tr->rotate( randomMinMax(0, 360), randomMinMax(0,1), randomMinMax(0,1), randomMinMax(0,1) ); break;
+      case 2: tr->scale( randomMinMax(1,10), randomMinMax(1,10), randomMinMax(1,10) ); break;
       case 3: tr->setLocalMatrix( mat4::getPerspective(30, 1, 1, 1000) ); break;
       }
       act->transform()->addChild( tr.get() );
@@ -210,7 +196,7 @@ public:
     glsl->shader(4)->setPath(""); glsl->shader(4)->setSource("");
 #endif
     // glslprogram uniforms
-    glsl->gocUniform("dummy_uniform1")->setUniformF(123.456);
+    glsl->gocUniform("dummy_uniform1")->setUniformF(123.456f);
     glsl->gocUniform("dummy_uniform2")->setUniformD(789.123);
     glsl->gocUniform("dummy_uniform2")->setUniformI(3141592);
 
@@ -263,8 +249,8 @@ public:
     // Textures
     fx->shader()->gocTextureSampler(0)->setTexture( new Texture );
     fx->shader()->gocTextureSampler(0)->texture()->prepareTexture2D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN );
-    fx->shader()->gocTextureSampler(0)->setTexture( new Texture );
-    fx->shader()->gocTextureSampler(0)->texture()->prepareTexture3D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN );
+    // TextureSampler can override a Texture's TexParameter with this.
+    fx->shader()->gocTextureSampler(0)->setTexParameter( new TexParameter );
     ref<Texture> tex;
     tex = new Texture; tex->prepareTexture1D( new Image("ignore_file_not_found.jpg"), TF_UNKNOWN ); res_db->resources().push_back( tex.get() );
     tex = new Texture; tex->prepareTexture1D( 10, TF_RGBA ); res_db->resources().push_back( tex.get() );
