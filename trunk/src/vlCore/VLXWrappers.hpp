@@ -36,7 +36,7 @@
 #include <vlCore/VLXRegistry.hpp>
 #include <vlCore/VLXSerializer.hpp>
 #include <vlCore/VLXValue.hpp>
-#include <vlCore/VLXUtils.hpp>
+#include <vlCore/vlxutils.hpp>
 
 #define VL_SERIALIZER_VERSION 100
 

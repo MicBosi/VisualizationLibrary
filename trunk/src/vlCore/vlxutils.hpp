@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLXUtils_INCLUDE_ONCE
-#define VLXUtils_INCLUDE_ONCE
+#ifndef vlxutils_INCLUDE_ONCE
+#define vlxutils_INCLUDE_ONCE
 
 #include <vlCore/VLXValue.hpp>
 #include <vlCore/Matrix4.hpp>

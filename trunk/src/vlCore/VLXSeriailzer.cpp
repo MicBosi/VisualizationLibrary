@@ -413,3 +413,17 @@ ref<Object> VLXSerializer::loadVLB(VirtualFile* file, bool start_fresh)
     return importVLX( parser.structures()[0].get() ); // note that we ignore the other structures
 }
 //-----------------------------------------------------------------------------
+const char* VLXSerializer::errorString() const
+{
+  switch(mError)
+  {
+  case NoError:     return "NoError";
+  case ImportError: return "ImportError";
+  case ExportError: return "ExportError";
+  case ReadError:   return "ReadError";
+  default:
+  case WriteError:  return "WriteError";
+  }
+}
+//-----------------------------------------------------------------------------
+
