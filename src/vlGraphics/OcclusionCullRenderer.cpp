@@ -130,18 +130,18 @@ void OcclusionCullRenderer::setWrappedRenderer(Renderer* renderer)
   mWrappedRenderer = renderer; 
 }
 //-----------------------------------------------------------------------------
-const RenderTarget* OcclusionCullRenderer::renderTarget() const
+const Framebuffer* OcclusionCullRenderer::framebuffer() const
 {
   if (mWrappedRenderer)
-    return mWrappedRenderer->renderTarget();
+    return mWrappedRenderer->framebuffer();
   else
     return NULL;
 }
 //-----------------------------------------------------------------------------
-RenderTarget* OcclusionCullRenderer::renderTarget()
+Framebuffer* OcclusionCullRenderer::framebuffer()
 {
   if (mWrappedRenderer)
-    return mWrappedRenderer->renderTarget();
+    return mWrappedRenderer->framebuffer();
   else
     return NULL;
 }
@@ -205,7 +205,7 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
   // --------------- render target activation --------------- 
 
   /* keep the currently active render target */
-  // renderTarget()->activate();
+  // framebuffer()->activate();
 
   // --------------- viewport activation --------------- 
 
@@ -227,7 +227,7 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
 
   // --------------- setup occlusion shader once and for all ---------------
 
-  OpenGLContext* opengl_context = renderTarget()->openglContext();
+  OpenGLContext* opengl_context = framebuffer()->openglContext();
   GLSLProgram*   glsl_program   = mOcclusionShader->glslProgram();
   Transform*     cur_transform  = NULL;
 

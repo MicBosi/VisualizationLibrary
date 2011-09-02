@@ -37,7 +37,7 @@
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/RenderQueue.hpp>
 #include <vlGraphics/Renderer.hpp>
-#include <vlGraphics/RenderTarget.hpp>
+#include <vlGraphics/Framebuffer.hpp>
 #include <vlGraphics/Camera.hpp>
 #include <vlGraphics/SceneManager.hpp>
 #include <vlCore/Transform.hpp>
@@ -49,7 +49,7 @@ namespace vl
   The Rendering class performs the following steps:
   -# activates the appropriate OpenGLContext
   -# dispatches the onRenderingStarted() event (see RenderEventCallback class).
-  -# activates the RenderTarget's framebuffer and draw buffers
+  -# activates the Framebuffer's framebuffer and draw buffers
   -# recursively computes the world matrix of the installed Transform hierarchy
   -# setups the Camera transform and the Viewport
   -# extracts all the visible Actor[s] from the installed SceneManager[s]

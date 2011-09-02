@@ -47,7 +47,7 @@ public:
 
     // save to be used later
     ref<Renderer> renderer = rendering()->as<Rendering>()->renderer();
-    ref<RenderTarget> render_target = rendering()->as<Rendering>()->renderer()->renderTarget();
+    ref<Framebuffer> render_target = rendering()->as<Rendering>()->renderer()->framebuffer();
     // install new rendering tree
     mRenderingTree = new RenderingTree;
     setRendering(mRenderingTree.get());
@@ -111,7 +111,7 @@ public:
 
     for( int i=0; i<mRenderingTree->subRenderings()->size(); ++i )
     {
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->setRenderTarget( render_target.get() );
+      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->setFramebuffer( render_target.get() );
       mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setRenderer( renderer.get() );
       mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setCamera( new Camera );
       mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setTransform( _tr1.get() );
@@ -170,23 +170,23 @@ public:
     int hw = w/2;
     int hh = h/2;
 
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
+    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
     mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->viewport()->set(0,0,hw,hh);
     mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
+    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
     mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->viewport()->set(hw,hh,w-hw,h-hh);
     mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
+    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
     mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->viewport()->set(0,hh,hw,h-hh);
     mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
+    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
+    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
     mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->viewport()->set(hw,0,w-hw,hh);
     mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
@@ -198,7 +198,7 @@ public:
   {
     for( int i=0; i<mRenderingTree->subRenderings()->size(); ++i )
     {
-      int height = mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->renderTarget()->height();
+      int height = mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->framebuffer()->height();
       if ( mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->viewport()->isPointInside(x,y,height) )
       {
         Rendering* rend = mRenderingTree->subRenderings()->at(i)->as<Rendering>();

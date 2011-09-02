@@ -29,8 +29,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef RenderTarget_INCLUDE_ONCE
-#define RenderTarget_INCLUDE_ONCE
+#ifndef Framebuffer_INCLUDE_ONCE
+#define Framebuffer_INCLUDE_ONCE
 
 #include <vlCore/vlnamespace.hpp>
 #include <vlCore/Object.hpp>
@@ -41,20 +41,20 @@ namespace vl
 {
   class OpenGLContext;
   //-----------------------------------------------------------------------------
-  // RenderTarget
+  // Framebuffer
   //-----------------------------------------------------------------------------
-  /** The RenderTarget class defines an abstract 'surface' where OpenGL can render into.
-   * \sa OpenGLContext::renderTarget() and FBORenderTarget
+  /** The Framebuffer class defines an abstract 'surface' where OpenGL can render into.
+   * \sa OpenGLContext::framebuffer() and FramebufferObject
    */
-  class VLGRAPHICS_EXPORT RenderTarget: public Object
+  class VLGRAPHICS_EXPORT Framebuffer: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::RenderTarget, Object)
+    VL_INSTRUMENT_CLASS(vl::Framebuffer, Object)
 
     friend class OpenGLContext;
 
   protected:
     /** Constructor. */
-    RenderTarget(): mWidth(0), mHeight(0), mOpenGLContext(NULL)
+    Framebuffer(): mWidth(0), mHeight(0), mOpenGLContext(NULL)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       setDrawBuffer(RDB_BACK_LEFT);
@@ -62,7 +62,7 @@ namespace vl
     }
 
     /** Constructor. */
-    RenderTarget(OpenGLContext* ctx, int w, int h): mWidth(w), mHeight(h), mOpenGLContext(ctx)
+    Framebuffer(OpenGLContext* ctx, int w, int h): mWidth(w), mHeight(h), mOpenGLContext(ctx)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       setDrawBuffer(RDB_BACK_LEFT);
@@ -88,10 +88,10 @@ namespace vl
     /** The height of a render target. */
     void setHeight(int height) { mHeight = height; }
 
-    /** The framebuffer object id as used by glBindFramebuffer, RenderTarget::handle() always returns 0, i.e., the standard OpenGL framebuffer. */
+    /** The framebuffer object id as used by glBindFramebuffer, Framebuffer::handle() always returns 0, i.e., the standard OpenGL framebuffer. */
     virtual GLuint handle() const { return 0; }
 
-    /** Activates the RenderTarget by calling bindFramebuffer() and bindDrawBuffers() */
+    /** Activates the Framebuffer by calling bindFramebuffer() and bindDrawBuffers() */
     void activate(EFrameBufferBind target = FBB_FRAMEBUFFER)
     {
       bindFramebuffer(target);
@@ -99,7 +99,7 @@ namespace vl
 
     /** 
       * Calls glBindFramebuffer(target, 0) thus activating the the framebuffer 0, that is, the normal OpenGL buffers.
-      * \note This method is overridden in FBORenderTarget in order to activate the appropriate framebuffer object.
+      * \note This method is overridden in FramebufferObject in order to activate the appropriate framebuffer object.
       */
     virtual void bindFramebuffer(EFrameBufferBind target = FBB_FRAMEBUFFER)
     {

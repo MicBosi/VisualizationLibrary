@@ -54,7 +54,7 @@ OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 OpenGLContext::OpenGLContext(int w, int h)
 {
   VL_DEBUG_SET_OBJECT_NAME()
-  mRenderTarget = new RenderTarget(this, w, h);
+  mFramebuffer = new Framebuffer(this, w, h);
 
   // set to unknown texture target
   memset( mTexUnitBinding, 0, sizeof(mTexUnitBinding) );
@@ -90,56 +90,56 @@ OpenGLContext::OpenGLContext(int w, int h)
 //-----------------------------------------------------------------------------
 OpenGLContext::~OpenGLContext()
 {
-  if (mFBORenderTarget.size() || mEventListeners.size())
+  if (mFramebufferObject.size() || mEventListeners.size())
     Log::warning("~OpenGLContext(): you should have called dispatchDestroyEvent() before destroying the OpenGLContext!\nNow it's too late to cleanup things!\n");
 
   // invalidate the render target
-  mRenderTarget->mOpenGLContext = NULL;
+  mFramebuffer->mOpenGLContext = NULL;
 
   // invalidate FBOs
-  for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
+  for(unsigned i=0; i<mFramebufferObject.size(); ++i)
   {
     // note, we can't destroy the FBOs here because it's too late to call makeCurrent().
-    // mFBORenderTarget[i]->destroy();
-    mFBORenderTarget[i]->mOpenGLContext = NULL;
+    // mFramebufferObject[i]->destroy();
+    mFramebufferObject[i]->mOpenGLContext = NULL;
   }
 
   // remove all the event listeners
   eraseAllEventListeners();
 }
 //-----------------------------------------------------------------------------
-ref<FBORenderTarget> OpenGLContext::createFBORenderTarget(int width, int height)
+ref<FramebufferObject> OpenGLContext::createFramebufferObject(int width, int height)
 {
   makeCurrent();
-  mFBORenderTarget.push_back(new FBORenderTarget(this, width, height));
-  mFBORenderTarget.back()->createFBO();
-  return mFBORenderTarget.back();
+  mFramebufferObject.push_back(new FramebufferObject(this, width, height));
+  mFramebufferObject.back()->createFBO();
+  return mFramebufferObject.back();
 }
 //-----------------------------------------------------------------------------
-void OpenGLContext::destroyFBORenderTarget(FBORenderTarget* fbort)
+void OpenGLContext::destroyFramebufferObject(FramebufferObject* fbort)
 {
   makeCurrent();
-  for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
+  for(unsigned i=0; i<mFramebufferObject.size(); ++i)
   {
-    if (mFBORenderTarget[i] == fbort)
+    if (mFramebufferObject[i] == fbort)
     {
-      mFBORenderTarget[i]->deleteFBO();
-      mFBORenderTarget[i]->mOpenGLContext = NULL;
-      mFBORenderTarget.erase(mFBORenderTarget.begin()+i);
+      mFramebufferObject[i]->deleteFBO();
+      mFramebufferObject[i]->mOpenGLContext = NULL;
+      mFramebufferObject.erase(mFramebufferObject.begin()+i);
       return;
     }
   }
 }
 //-----------------------------------------------------------------------------
-void OpenGLContext::destroyAllFBORenderTargets()
+void OpenGLContext::destroyAllFramebufferObjects()
 {
   makeCurrent();
-  for(unsigned i=0; i<mFBORenderTarget.size(); ++i)
+  for(unsigned i=0; i<mFramebufferObject.size(); ++i)
   {
-    mFBORenderTarget[i]->deleteFBO();
-    mFBORenderTarget[i]->mOpenGLContext = NULL;
+    mFramebufferObject[i]->deleteFBO();
+    mFramebufferObject[i]->mOpenGLContext = NULL;
   }
-  mFBORenderTarget.clear();
+  mFramebufferObject.clear();
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::addEventListener(UIEventListener* el)

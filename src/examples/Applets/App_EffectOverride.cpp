@@ -68,7 +68,7 @@ class App_EffectOverride: public BaseDemo
     // don't clear color buffer otherwise we loose the results of the solid renderer
     wire_renderer->setClearFlags(CF_CLEAR_DEPTH);
     // target the same OpenGL window
-    wire_renderer->setRenderTarget( mSolidRendering->renderer()->renderTarget() );
+    wire_renderer->setFramebuffer( mSolidRendering->renderer()->framebuffer() );
     // install the renderer
     mWireRendering->setRenderer( wire_renderer.get() );
 

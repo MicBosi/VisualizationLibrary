@@ -44,7 +44,7 @@ namespace
   {
     GLint mPrevFBO;
   public:
-    ScopedFBOBinding( FBORenderTarget* fbo )
+    ScopedFBOBinding( FramebufferObject* fbo )
     {
       VL_CHECK( fbo );
       VL_CHECK( fbo->handle() );
@@ -67,9 +67,9 @@ namespace
   };
 }
 //-----------------------------------------------------------------------------
-// FBORenderTarget
+// FramebufferObject
 //-----------------------------------------------------------------------------
-void FBORenderTarget::createFBO()
+void FramebufferObject::createFBO()
 {
   VL_CHECK_OGL();
   VL_CHECK(openglContext());
@@ -82,7 +82,7 @@ void FBORenderTarget::createFBO()
   VL_CHECK( mHandle )
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::deleteFBO()
+void FramebufferObject::deleteFBO()
 {
   VL_CHECK_OGL();
   VL_CHECK(openglContext());
@@ -99,7 +99,7 @@ void FBORenderTarget::deleteFBO()
   setHeight( 0 );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
+void FramebufferObject::bindFramebuffer( EFrameBufferBind target )
 {
   VL_CHECK_OGL();
   VL_CHECK(openglContext());
@@ -107,25 +107,25 @@ void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
 
   if ( !Has_FBO )
   {
-    Log::error( "FBORenderTarget::bindFramebuffer(): framebuffer object not supported.\n" );
+    Log::error( "FramebufferObject::bindFramebuffer(): framebuffer object not supported.\n" );
     return;
   }
 
   if ( width() <= 0 || height() <= 0 )
   {
-    Log::error( Say( "FBORenderTarget::bindFramebuffer() called with illegal dimensions: width = %n, height = %n\n" ) << width() << height() );
+    Log::error( Say( "FramebufferObject::bindFramebuffer() called with illegal dimensions: width = %n, height = %n\n" ) << width() << height() );
     VL_TRAP()
   }
 
   if ( mFBOAttachments.empty() )
   {
-    Log::error( "FBORenderTarget::bindFramebuffer() called with no attachment points!\n" );
+    Log::error( "FramebufferObject::bindFramebuffer() called with no attachment points!\n" );
     VL_TRAP()
   }
 
   if ( !handle() )
   {
-    Log::error( "FBORenderTarget::bindFramebuffer() called but handle() == NULL!\n" );
+    Log::error( "FramebufferObject::bindFramebuffer() called but handle() == NULL!\n" );
     VL_TRAP()
   }
 
@@ -152,7 +152,7 @@ void FBORenderTarget::bindFramebuffer( EFrameBufferBind target )
 }
 //-----------------------------------------------------------------------------
 //! Returns 0 if no FBO support is found otherwise returns the value obtained by VL_glCheckFramebufferStatus()
-GLenum FBORenderTarget::checkFramebufferStatus()
+GLenum FramebufferObject::checkFramebufferStatus()
 {
   VL_CHECK_OGL();
   VL_CHECK(openglContext());
@@ -160,25 +160,25 @@ GLenum FBORenderTarget::checkFramebufferStatus()
 
   if ( !Has_FBO )
   {
-    Log::error( "FBORenderTarget::checkFramebufferStatus(): framebuffer object not supported.\n" );
+    Log::error( "FramebufferObject::checkFramebufferStatus(): framebuffer object not supported.\n" );
     return 0;
   }
 
   if ( width() <= 0 || height() <= 0 )
   {
-    Log::error( Say( "FBORenderTarget::checkFramebufferStatus() called with illegal dimensions: width = %n, height = %n\n" ) << width() << height() );
+    Log::error( Say( "FramebufferObject::checkFramebufferStatus() called with illegal dimensions: width = %n, height = %n\n" ) << width() << height() );
     return 0;
   }
 
   if ( mFBOAttachments.empty() )
   {
-    Log::error( "FBORenderTarget::checkFramebufferStatus() called with no attachment points!\n" );
+    Log::error( "FramebufferObject::checkFramebufferStatus() called with no attachment points!\n" );
     return 0;
   }
 
   if ( !handle() )
   {
-    Log::error( "FBORenderTarget::checkFramebufferStatus() called but handle() == NULL!\n" );
+    Log::error( "FramebufferObject::checkFramebufferStatus() called but handle() == NULL!\n" );
     return 0;
   }
 
@@ -197,46 +197,46 @@ GLenum FBORenderTarget::checkFramebufferStatus()
   return status;
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::printFramebufferError( GLenum status ) const
+void FramebufferObject::printFramebufferError( GLenum status ) const
 {
   switch( status )
   {
   case GL_FRAMEBUFFER_COMPLETE:
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_UNSUPPORTED:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_UNSUPPORTED\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_UNSUPPORTED\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS_ARB:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS_ARB\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS_ARB\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_LAYER_COUNT_ARB:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_LAYER_COUNT_ARB\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_INCOMPLETE_LAYER_COUNT_ARB\n" ); VL_TRAP()
     break;
   case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-    Log::bug( "FBORenderTarget::activate(): GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE\n" ); VL_TRAP()
+    Log::bug( "FramebufferObject::activate(): GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE\n" ); VL_TRAP()
     break;
   }
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addColorAttachment( EAttachmentPoint attach_point, FBOColorBufferAttachment* attachment )
+void FramebufferObject::addColorAttachment( EAttachmentPoint attach_point, FBOColorBufferAttachment* attachment )
 {
   VL_CHECK( attach_point >= AP_COLOR_ATTACHMENT0 && attach_point <= AP_COLOR_ATTACHMENT15 );
   VL_CHECK( Has_FBO )
@@ -244,11 +244,11 @@ void FBORenderTarget::addColorAttachment( EAttachmentPoint attach_point, FBOColo
     return;
   removeAttachment( attach_point );
   mFBOAttachments[attach_point] = attachment;
-  attachment->mFBORenderTargets.insert( this );
+  attachment->mFramebufferObjects.insert( this );
   attachment->bindAttachment( this, attach_point );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addTextureAttachment( EAttachmentPoint attach_point, FBOAbstractTextureAttachment* attachment )
+void FramebufferObject::addTextureAttachment( EAttachmentPoint attach_point, FBOAbstractTextureAttachment* attachment )
 {
   VL_CHECK( attach_point >= AP_COLOR_ATTACHMENT0 && attach_point <= AP_COLOR_ATTACHMENT15 );
   VL_CHECK( Has_FBO )
@@ -256,44 +256,44 @@ void FBORenderTarget::addTextureAttachment( EAttachmentPoint attach_point, FBOAb
     return;
   removeAttachment( attach_point );
   mFBOAttachments[attach_point] = attachment;
-  attachment->mFBORenderTargets.insert( this );
+  attachment->mFramebufferObjects.insert( this );
   attachment->bindAttachment( this, attach_point );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addDepthAttachment( FBOAbstractAttachment* attachment )
+void FramebufferObject::addDepthAttachment( FBOAbstractAttachment* attachment )
 {
   VL_CHECK( Has_FBO )
   if( !Has_FBO )
     return;
   removeAttachment( AP_DEPTH_ATTACHMENT );
   mFBOAttachments[AP_DEPTH_ATTACHMENT] = attachment;
-  attachment->mFBORenderTargets.insert( this );
+  attachment->mFramebufferObjects.insert( this );
   attachment->bindAttachment( this, AP_DEPTH_ATTACHMENT );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addStencilAttachment( FBOAbstractAttachment* attachment )
+void FramebufferObject::addStencilAttachment( FBOAbstractAttachment* attachment )
 {
   VL_CHECK( Has_FBO )
   if( !Has_FBO )
     return;
   removeAttachment( AP_STENCIL_ATTACHMENT );
   mFBOAttachments[AP_STENCIL_ATTACHMENT] = attachment;
-  attachment->mFBORenderTargets.insert( this );
+  attachment->mFramebufferObjects.insert( this );
   attachment->bindAttachment( this, AP_STENCIL_ATTACHMENT );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::addDepthStencilAttachment( FBOAbstractAttachment* attachment )
+void FramebufferObject::addDepthStencilAttachment( FBOAbstractAttachment* attachment )
 {
   VL_CHECK( Has_FBO )
   if( !Has_FBO )
     return;
   removeAttachment( AP_DEPTH_STENCIL_ATTACHMENT );
   mFBOAttachments[AP_DEPTH_STENCIL_ATTACHMENT] = attachment;
-  attachment->mFBORenderTargets.insert( this );
+  attachment->mFramebufferObjects.insert( this );
   attachment->bindAttachment( this, AP_DEPTH_STENCIL_ATTACHMENT );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::removeAttachment( FBOAbstractAttachment* attachment )
+void FramebufferObject::removeAttachment( FBOAbstractAttachment* attachment )
 {
   VL_CHECK( Has_FBO )
   if( !Has_FBO )
@@ -310,7 +310,7 @@ void FBORenderTarget::removeAttachment( FBOAbstractAttachment* attachment )
     removeAttachment( attachment_points[i] );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::removeAttachment( EAttachmentPoint attach_point )
+void FramebufferObject::removeAttachment( EAttachmentPoint attach_point )
 {
   VL_CHECK( vl::VisualizationLibrary::isGraphicsInitialized() )
 
@@ -333,14 +333,14 @@ void FBORenderTarget::removeAttachment( EAttachmentPoint attach_point )
     // restore fbo
     VL_glBindFramebuffer( GL_FRAMEBUFFER, fbo ); VL_CHECK_OGL()
   }
-  // remove FBORenderTarget from FBOAbstractAttachment
+  // remove FramebufferObject from FBOAbstractAttachment
   FBOAbstractAttachment* fbo_attachment = /* mFBOAttachments.find( attachment ) != mFBOAttachments.end() ? */ mFBOAttachments[attach_point].get() /* : NULL */;
   if ( fbo_attachment )
-    fbo_attachment->mFBORenderTargets.erase( this );
+    fbo_attachment->mFramebufferObjects.erase( this );
   mFBOAttachments.erase( attach_point );
 }
 //-----------------------------------------------------------------------------
-void FBORenderTarget::removeAllAttachments()
+void FramebufferObject::removeAllAttachments()
 {
   VL_CHECK( Has_FBO )
   if( !Has_FBO )
@@ -356,7 +356,7 @@ void FBORenderTarget::removeAllAttachments()
     removeAttachment( attachment_points[i] );
 }
 //-----------------------------------------------------------------------------
-void FBOTexture1DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point )
+void FBOTexture1DAttachment::bindAttachment( FramebufferObject* fbo, EAttachmentPoint attach_point )
 {
   VL_CHECK_OGL()
   VL_CHECK( Has_FBO )
@@ -378,7 +378,7 @@ void FBOTexture1DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPo
   glBindTexture( texture()->dimension(), 0 ); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
-void FBOTexture2DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point )
+void FBOTexture2DAttachment::bindAttachment( FramebufferObject* fbo, EAttachmentPoint attach_point )
 {
   VL_CHECK_OGL()
   VL_CHECK( Has_FBO )
@@ -412,7 +412,7 @@ void FBOTexture2DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPo
   }
 }
 //-----------------------------------------------------------------------------
-void FBOTextureAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point )
+void FBOTextureAttachment::bindAttachment( FramebufferObject* fbo, EAttachmentPoint attach_point )
 {
   VL_CHECK_OGL()
   VL_CHECK( Has_GL_NV_geometry_shader4||Has_GL_EXT_geometry_shader4||Has_GL_ARB_geometry_shader4||Has_GL_Version_3_2||Has_GL_Version_4_0 )
@@ -433,7 +433,7 @@ void FBOTextureAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoin
   }
 }
 //-----------------------------------------------------------------------------
-void FBOTexture3DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point )
+void FBOTexture3DAttachment::bindAttachment( FramebufferObject* fbo, EAttachmentPoint attach_point )
 {
   VL_CHECK_OGL()
   VL_CHECK( Has_FBO )
@@ -460,7 +460,7 @@ void FBOTexture3DAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPo
   }
 }
 //-----------------------------------------------------------------------------
-void FBOTextureLayerAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point )
+void FBOTextureLayerAttachment::bindAttachment( FramebufferObject* fbo, EAttachmentPoint attach_point )
 {
   VL_CHECK_OGL()
   VL_CHECK( Has_FBO )
@@ -492,8 +492,8 @@ void FBOTextureLayerAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmen
 //-----------------------------------------------------------------------------
 void FBOAbstractAttachment::unbindFromAllFBO()
 {
-  std::set< ref<FBORenderTarget> > fbos = fboRenderTargets();
-  for( std::set< ref<FBORenderTarget> >::iterator it = fbos.begin(); it != fbos.end(); ++it )
+  std::set< ref<FramebufferObject> > fbos = fboFramebuffers();
+  for( std::set< ref<FramebufferObject> >::iterator it = fbos.begin(); it != fbos.end(); ++it )
     it->get_writable()->removeAttachment( this );
 }
 //-----------------------------------------------------------------------------
@@ -561,7 +561,7 @@ void FBORenderbufferAttachment::initStorage( int w, int h, int samp )
   }
 }
 //-----------------------------------------------------------------------------
-void FBORenderbufferAttachment::bindAttachment( FBORenderTarget* fbo, EAttachmentPoint attach_point )
+void FBORenderbufferAttachment::bindAttachment( FramebufferObject* fbo, EAttachmentPoint attach_point )
 {
   VL_CHECK_OGL()
   VL_CHECK( Has_FBO )

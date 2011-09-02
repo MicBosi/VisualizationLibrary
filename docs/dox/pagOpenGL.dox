@@ -390,14 +390,14 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- vl::FBOTextureAttachment
 				- vl::FBOTexture3DAttachment
 				- vl::FBOTextureLayerAttachment
-				- vl::FBORenderTarget::checkFramebufferStatus()
+				- vl::FramebufferObject::checkFramebufferStatus()
 				- vl::FBORenderbufferAttachment::create()
 				- vl::FBORenderbufferAttachment::destroy()
 				- automatically called inside vl::FBOAttachmentAbstract::bindAttachment()
 				- automatically called inside vl::FBOAttachmentAbstract::bindAttachment()
-				- vl::FBORenderTarget::create()
-				- vl::FBORenderTarget::destroy()
-				- vl::FBORenderTarget::bindFrameBuffer() (initializes also the attachment points)
+				- vl::FramebufferObject::create()
+				- vl::FramebufferObject::destroy()
+				- vl::FramebufferObject::bindFrameBuffer() (initializes also the attachment points)
 			</td>
 		</tr>
 *******************************************************************************

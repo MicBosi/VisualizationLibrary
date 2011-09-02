@@ -111,7 +111,7 @@ public:
     // keep the color buffer from the solid rendering but clear the depth buffer
     wire_renderer->setClearFlags(vl::CF_DO_NOT_CLEAR);
     // target the same render target
-    wire_renderer->setRenderTarget( mRendering->renderers()[0]->renderTarget() );
+    wire_renderer->setFramebuffer( mRendering->renderers()[0]->framebuffer() );
     // add wireframe renderer
     mRendering->renderers().push_back(wire_renderer.get());
 

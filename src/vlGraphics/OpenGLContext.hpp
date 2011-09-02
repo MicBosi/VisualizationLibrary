@@ -34,7 +34,7 @@
 
 #include <vlCore/Object.hpp>
 #include <vlGraphics/UIEventListener.hpp>
-#include <vlGraphics/FramebufferObject.hpp> // RenderTarget and FBORenderTarget
+#include <vlGraphics/FramebufferObject.hpp> // Framebuffer and FramebufferObject
 #include <vlGraphics/RenderState.hpp>
 #include <vector>
 #include <set>
@@ -161,25 +161,25 @@ namespace vl
     void* getProcAddress(const char* function_name);
 
     //! The render target representing this OpenGL context.
-    //! The returned RenderTarget's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    RenderTarget* renderTarget() { return mRenderTarget.get(); }
+    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    Framebuffer* framebuffer() { return mFramebuffer.get(); }
 
     //! The render target representing this OpenGL context.
-    //! The returned RenderTarget's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    const RenderTarget* renderTarget() const { return mRenderTarget.get(); }
+    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    const Framebuffer* framebuffer() const { return mFramebuffer.get(); }
 
-    //! Equivalent to \p "createFBORenderTarget(0,0);".
-    ref<FBORenderTarget> createFBORenderTarget() { return createFBORenderTarget(0,0); }
+    //! Equivalent to \p "createFramebufferObject(0,0);".
+    ref<FramebufferObject> createFramebufferObject() { return createFramebufferObject(0,0); }
 
-    //! Creates a new FBORenderTarget (framebuffer object RenderTarget).
+    //! Creates a new FramebufferObject (framebuffer object Framebuffer).
     //! \note A framebuffer object always belongs to an OpenGL context and in order to render on it the appropriate OpenGL context must be active.
-    ref<FBORenderTarget> createFBORenderTarget(int width, int height);
+    ref<FramebufferObject> createFramebufferObject(int width, int height);
 
-    //! Destroys the specified FBORenderTarget.
-    void destroyFBORenderTarget(FBORenderTarget* fbort);
+    //! Destroys the specified FramebufferObject.
+    void destroyFramebufferObject(FramebufferObject* fbort);
 
-    //! Removes all FBORenderTargets belonging to an OpenGLContext.
-    void destroyAllFBORenderTargets();
+    //! Removes all FramebufferObjects belonging to an OpenGLContext.
+    void destroyAllFramebufferObjects();
 
     //! Asks to the windowing system that is managing the OpenGLContext to quit the application.
     virtual void quitApplication() {}
@@ -212,10 +212,10 @@ namespace vl
     virtual void setSize(int /*w*/, int /*h*/) {}
 
     //! Returns the width in pixels of an OpenGLContext.
-    int width() const { return mRenderTarget->width(); }
+    int width() const { return mFramebuffer->width(); }
     
     //! Returns the height in pixels of an OpenGLContext.
-    int height() const { return mRenderTarget->height(); }
+    int height() const { return mFramebuffer->height(); }
 
     //! If the OpenGL context is a widget this function sets whether the mouse is visible over it or not.
     virtual void setMouseVisible(bool) { mMouseVisible=false; }
@@ -278,8 +278,8 @@ namespace vl
     void dispatchResizeEvent(int w, int h) 
     {
       makeCurrent();
-      mRenderTarget->setWidth(w);
-      mRenderTarget->setHeight(h);
+      mFramebuffer->setWidth(w);
+      mFramebuffer->setHeight(h);
 
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
@@ -355,7 +355,7 @@ namespace vl
     }
 
     //! Dispatches the UIEventListener::destroyEvent() notification to the subscribed UIEventListener(s), 
-    //! calls destroyAllFBORenderTargets() and eraseAllEventListeners()
+    //! calls destroyAllFramebufferObjects() and eraseAllEventListeners()
     //! This event must be issued just before the actual GL context is destroyed.
     void dispatchDestroyEvent()
     {
@@ -364,7 +364,7 @@ namespace vl
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
           temp_clients[i]->destroyEvent();
-      destroyAllFBORenderTargets();
+      destroyAllFramebufferObjects();
       eraseAllEventListeners();
     }
 
@@ -502,8 +502,8 @@ namespace vl
     const fvec4& vertexAttribValue(int i) const { VL_CHECK(i<VL_MAX_GENERIC_VERTEX_ATTRIB); return mVertexAttribValue[i]; }
 
   protected:
-    ref<RenderTarget> mRenderTarget;
-    std::vector< ref<FBORenderTarget> > mFBORenderTarget;
+    ref<Framebuffer> mFramebuffer;
+    std::vector< ref<FramebufferObject> > mFramebufferObject;
     std::vector< ref<UIEventListener> > mEventListeners;
     std::set<EKey> mKeyboard;
     OpenGLContextFormat mGLContextInfo;

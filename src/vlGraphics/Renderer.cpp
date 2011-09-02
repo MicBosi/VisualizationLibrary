@@ -104,7 +104,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       // render-target activation.
       // note: an OpenGL context can have multiple rendering targets!
-      mRenderer->renderTarget()->activate();
+      mRenderer->framebuffer()->activate();
 
       // viewport setup.
       camera->viewport()->setClearFlags( mRenderer->clearFlags() );
@@ -133,7 +133,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
   std::map<const GLSLProgram*, GLSLProgState> glslprogram_map;
 
-  OpenGLContext* opengl_context = renderTarget()->openglContext();
+  OpenGLContext* opengl_context = framebuffer()->openglContext();
 
   // --------------- default scissor ---------------
 
