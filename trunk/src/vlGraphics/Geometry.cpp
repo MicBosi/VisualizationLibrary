@@ -457,7 +457,7 @@ void Geometry::updateDirtyBufferObject(EBufferObjectUpdateMode mode)
   if (!Has_BufferObject)
     return;
 
-  bool force_update = (mode & VUF_ForceUpdate) != 0;
+  bool force_update = (mode & BUF_ForceUpdate) != 0;
 
   if ( mVertexArray && (mVertexArray->isBufferObjectDirty() || force_update) )
     mVertexArray->updateBufferObject(mode);

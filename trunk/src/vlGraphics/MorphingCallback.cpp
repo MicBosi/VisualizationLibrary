@@ -101,16 +101,16 @@ void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Came
     mGeometry->setNormalArray( mNormalFrames[mFrame1].get() );
 
     if (!mVertexFrames[mFrame1]->bufferObject()->handle() || mVertexFrames[mFrame1]->isBufferObjectDirty())
-      mVertexFrames[mFrame1]->updateBufferObject(VUM_KeepRamBuffer);
+      mVertexFrames[mFrame1]->updateBufferObject(BUM_KeepRamBuffer);
 
     if (!mVertexFrames[mFrame2]->bufferObject()->handle() || mVertexFrames[mFrame2]->isBufferObjectDirty())
-      mVertexFrames[mFrame2]->updateBufferObject(VUM_KeepRamBuffer);
+      mVertexFrames[mFrame2]->updateBufferObject(BUM_KeepRamBuffer);
 
     if (!mNormalFrames[mFrame1]->bufferObject()->handle() || mNormalFrames[mFrame1]->isBufferObjectDirty())
-      mNormalFrames[mFrame1]->updateBufferObject(VUM_KeepRamBuffer);
+      mNormalFrames[mFrame1]->updateBufferObject(BUM_KeepRamBuffer);
 
     if (!mNormalFrames[mFrame2]->bufferObject()->handle() || mNormalFrames[mFrame2]->isBufferObjectDirty())
-      mNormalFrames[mFrame2]->updateBufferObject(VUM_KeepRamBuffer);
+      mNormalFrames[mFrame2]->updateBufferObject(BUM_KeepRamBuffer);
 
     VL_CHECK( mVertexFrames[mFrame1]->bufferObject()->handle() )
     VL_CHECK( mVertexFrames[mFrame2]->bufferObject()->handle() )
