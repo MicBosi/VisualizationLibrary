@@ -117,8 +117,8 @@ LONG WINAPI Win32Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 
     case WM_SIZE:
     {
-      win->renderTarget()->setWidth( LOWORD(lParam) );
-      win->renderTarget()->setHeight( HIWORD(lParam) );
+      win->framebuffer()->setWidth( LOWORD(lParam) );
+      win->framebuffer()->setHeight( HIWORD(lParam) );
       win->dispatchResizeEvent( LOWORD(lParam), HIWORD(lParam) );
       break;
     }

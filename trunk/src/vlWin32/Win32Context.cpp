@@ -95,8 +95,8 @@ void Win32Context::setSize(int w, int h)
 void Win32Context::setWindowSize(int w, int h)
 {
   // this are set by WM_SIZE event handler
-  // mRenderTarget->setWidth(w);
-  // mRenderTarget->setHeight(h);
+  // mFramebuffer->setWidth(w);
+  // mFramebuffer->setHeight(h);
 	SetWindowPos(hwnd(), 0, 0, 0, w, h, SWP_NOMOVE);
 }
 //-----------------------------------------------------------------------------
@@ -293,8 +293,8 @@ bool Win32Context::initWin32GLContext(HGLRC share_context, const vl::String& tit
   if (!contract.mOK)
     return false;
 
-  renderTarget()->setWidth(width);
-  renderTarget()->setHeight(height);
+  framebuffer()->setWidth(width);
+  framebuffer()->setHeight(height);
 
   if (!hwnd())
   {
