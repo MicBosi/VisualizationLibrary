@@ -29,11 +29,11 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef GLSL_MATH_INCLUDE_ONCE
-#define GLSL_MATH_INCLUDE_ONCE
+#ifndef glslmath_INCLUDE_ONCE
+#define glslmath_INCLUDE_ONCE
 
 /**
-  \file GLSLmath.hpp Implements the OpenGL Shading Language convenience functions for scalar and vector operations.
+  \file glslmath.hpp Implements the OpenGL Shading Language convenience functions for scalar and vector operations.
 
   This functions are particularly useful when you want to port C++ code to GLSL and vice versa, or when you want to quickly 
   prototype in C++ an algorithm that will be ported later to GLSL. 
