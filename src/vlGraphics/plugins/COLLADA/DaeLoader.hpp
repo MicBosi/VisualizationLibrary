@@ -33,7 +33,7 @@
 #define DaeHelpers_INCLUDE_ONCE
 
 #include <vlGraphics/plugins/COLLADA/DaeHelpers.hpp>
-#include <vlGraphics/plugins/COLLADA/vlDae.hpp>
+#include <vlGraphics/plugins/COLLADA/ioDae.hpp>
 
 namespace vl
 {

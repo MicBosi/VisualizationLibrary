@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlBMP.hpp"
+#include "ioBMP.hpp"
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/FileSystem.hpp>

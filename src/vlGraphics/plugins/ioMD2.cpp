@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlMD2.hpp"
+#include "ioMD2.hpp"
 #include <vlCore/Time.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>

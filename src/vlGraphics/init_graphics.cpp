@@ -38,29 +38,29 @@
 using namespace vl;
 
 #if defined(VL_IO_3D_VLX)
-  #include "plugins/vlVLX.hpp"
+  #include "plugins/ioVLX.hpp"
 #include <vlGraphics/VLXWrappers.hpp>
 #endif
 #if defined(VL_IO_3D_3DS)
-  #include "plugins/vl3DS.hpp"
+  #include "plugins/io3DS.hpp"
 #endif
 #if defined(VL_IO_3D_OBJ)
-  #include "plugins/vlOBJ.hpp"
+  #include "plugins/ioOBJ.hpp"
 #endif
 #if defined(VL_IO_3D_AC3D)
-  #include "plugins/vlAC3D.hpp"
+  #include "plugins/ioAC3D.hpp"
 #endif
 #if defined(VL_IO_3D_PLY)
-  #include "plugins/vlPLY.hpp"
+  #include "plugins/ioPLY.hpp"
 #endif
 #if defined(VL_IO_3D_STL)
-  #include "plugins/vlSTL.hpp"
+  #include "plugins/ioSTL.hpp"
 #endif
 #if defined(VL_IO_3D_MD2)
-  #include "plugins/vlMD2.hpp"
+  #include "plugins/ioMD2.hpp"
 #endif
 #if defined(VL_IO_3D_COLLADA)
-  #include "plugins/COLLADA/vlDae.hpp"
+  #include "plugins/COLLADA/ioDae.hpp"
 #endif
 
 //------------------------------------------------------------------------------

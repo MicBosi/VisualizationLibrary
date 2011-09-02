@@ -32,8 +32,8 @@
 #include "BaseDemo.hpp"
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlCore/plugins/vlPNG.hpp>
-#include <vlCore/plugins/vlJPG.hpp>
+#include <vlCore/plugins/ioPNG.hpp>
+#include <vlCore/plugins/ioJPG.hpp>
 
 class App_ImageFunctions: public BaseDemo
 {

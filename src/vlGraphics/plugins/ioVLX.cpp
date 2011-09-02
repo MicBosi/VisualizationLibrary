@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics/plugins/vlVLX.hpp>
+#include <vlGraphics/plugins/ioVLX.hpp>
 #include <vlCore/Time.hpp>
 
 using namespace vl;

@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vl3DS.hpp"
+#include "io3DS.hpp"
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Geometry.hpp>
 #include <vlGraphics/Actor.hpp>
