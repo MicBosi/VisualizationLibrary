@@ -70,17 +70,17 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( framebuffer_object.get() );
 
     /* bind a depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
-    fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
+    framebuffer_object->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* use texture as color buffer */
     vl::ref<vl::Texture> texture = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA);
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm = new vl::FBOTexture2DAttachment(texture.get(), 0, vl::T2DT_TEXTURE_2D);
-    fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
+    framebuffer_object->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
     mRTT_Rendering->renderer()->framebuffer()->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
   
     // Main rendering
@@ -130,12 +130,12 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( framebuffer_object.get() );
 
     /* bind a depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
-    fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
+    framebuffer_object->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* use a per-pixel-light GLSL shader which renders on two color attachments at the same time */
     vl::ref<vl::GLSLProgram> glsl = new vl::GLSLProgram;
@@ -160,8 +160,8 @@ public:
     vl::ref<vl::Texture> texture2 = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA);
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm1 = new vl::FBOTexture2DAttachment(texture1.get(), 0, vl::T2DT_TEXTURE_2D);
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm2 = new vl::FBOTexture2DAttachment(texture2.get(), 0, vl::T2DT_TEXTURE_2D);
-    fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm1.get() );
-    fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT1, fbo_tex_attachm2.get() );
+    framebuffer_object->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm1.get() );
+    framebuffer_object->addTextureAttachment( vl::AP_COLOR_ATTACHMENT1, fbo_tex_attachm2.get() );
 
     /* draw on colorbuffers #0 and #1 */
     mRTT_Rendering->renderer()->framebuffer()->setDrawBuffers(vl::RDB_COLOR_ATTACHMENT0, vl::RDB_COLOR_ATTACHMENT1);
@@ -222,16 +222,16 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( framebuffer_object.get() );
 
     /* bind a depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
-    fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
+    framebuffer_object->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* bind a normal color buffer as color attachment #0 */
     vl::ref<vl::FBOColorBufferAttachment> fbo_col_buf_attachm = new vl::FBOColorBufferAttachment(vl::CBF_RGBA8);
-    fbo_render_target->addColorAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_col_buf_attachm.get() );
+    framebuffer_object->addColorAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_col_buf_attachm.get() );
     mRTT_Rendering->renderer()->framebuffer()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
 
     /* at the end of the rendering copy the color attachment pixels into the texture */
@@ -290,18 +290,18 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( framebuffer_object.get() );
 
     /* bind a multisampled depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
     fbo_depth_attachm->setSamples(samples);
-    fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
+    framebuffer_object->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* bind a multisampled color buffer */
     vl::ref<vl::FBOColorBufferAttachment> fbo_col_buf_attachm = new vl::FBOColorBufferAttachment(vl::CBF_RGBA);
     fbo_col_buf_attachm->setSamples(samples);
-    fbo_render_target->addColorAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_col_buf_attachm.get() );
+    framebuffer_object->addColorAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_col_buf_attachm.get() );
     mRTT_Rendering->renderer()->framebuffer()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
 
     /* create a new FBO with 'texture' as its color attachment */
@@ -321,7 +321,7 @@ public:
     //blit_fbo->setSrcRect( center-side, center-side, center+side, center+side );
     blit_fbo->setSrcRect( 0, 0, mFBO_Size, mFBO_Size );
     blit_fbo->setDstRect( 0, 0, mFBO_Size, mFBO_Size );
-    blit_fbo->setReadFramebuffer( fbo_render_target.get() );
+    blit_fbo->setReadFramebuffer( framebuffer_object.get() );
     blit_fbo->setDrawFramebuffer( fbo_rt_texture.get() );
 
     // Main rendering
@@ -374,20 +374,20 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( framebuffer_object.get() );
 
     /* bind a multisampled depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
     fbo_depth_attachm->setSamples(samples);
-    fbo_render_target->addDepthAttachment( fbo_depth_attachm.get() );
+    framebuffer_object->addDepthAttachment( fbo_depth_attachm.get() );
 
     /* use multisample texture as color buffer */
     vl::ref<vl::Texture> texture = new vl::Texture;
     texture->prepareTexture2DMultisample(mFBO_Size, mFBO_Size, vl::TF_RGBA, samples, true);
     texture->createTexture();
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm = new vl::FBOTexture2DAttachment(texture.get(), 0, vl::T2DT_TEXTURE_2D_MULTISAMPLE);
-    fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
+    framebuffer_object->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
     mRTT_Rendering->renderer()->framebuffer()->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
 
     // Main rendering
