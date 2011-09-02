@@ -47,7 +47,7 @@ public:
 
     // save to be used later
     ref<Renderer> renderer = rendering()->as<Rendering>()->renderer();
-    ref<Framebuffer> render_target = rendering()->as<Rendering>()->renderer()->framebuffer();
+    ref<Framebuffer> framebuffer = rendering()->as<Rendering>()->renderer()->framebuffer();
     // install new rendering tree
     mRenderingTree = new RenderingTree;
     setRendering(mRenderingTree.get());
@@ -111,7 +111,7 @@ public:
 
     for( int i=0; i<mRenderingTree->subRenderings()->size(); ++i )
     {
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->setFramebuffer( render_target.get() );
+      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->setFramebuffer( framebuffer.get() );
       mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setRenderer( renderer.get() );
       mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setCamera( new Camera );
       mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setTransform( _tr1.get() );

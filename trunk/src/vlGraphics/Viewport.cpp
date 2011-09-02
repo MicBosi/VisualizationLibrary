@@ -135,11 +135,11 @@ void Viewport::activate() const
   }
 }
 //-----------------------------------------------------------------------------
-bool Viewport::isPointInside(int x, int y, int render_target_height) const
+bool Viewport::isPointInside(int x, int y, int framebuffer_height) const
 {
   // set x/y relative to the viewport
   x -= this->x();
-  y -= render_target_height - 1 - (this->y() + height() -1);
+  y -= framebuffer_height - 1 - (this->y() + height() -1);
 
   // check that the click is in the viewport
 
