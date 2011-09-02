@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlTGA.hpp"
+#include "ioTGA.hpp"
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/VisualizationLibrary.hpp>

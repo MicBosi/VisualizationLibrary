@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlAC3D.hpp"
+#include "ioAC3D.hpp"
 #include <vlCore/checks.hpp>
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Geometry.hpp>

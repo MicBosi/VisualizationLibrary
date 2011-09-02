@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlOBJ.hpp"
+#include "ioOBJ.hpp"
 #include <vlCore/TextStream.hpp>
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/VirtualDirectory.hpp>

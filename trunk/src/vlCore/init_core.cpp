@@ -46,28 +46,28 @@
 using namespace vl;
 
 #if defined(VL_IO_2D_JPG)
-  #include "plugins/vlJPG.hpp"
+  #include "plugins/ioJPG.hpp"
 #endif
 #if defined(VL_IO_2D_PNG)
-  #include "plugins/vlPNG.hpp"
+  #include "plugins/ioPNG.hpp"
 #endif
 #if defined(VL_IO_2D_TIFF)
-  #include "plugins/vlTIFF.hpp"
+  #include "plugins/ioTIFF.hpp"
 #endif
 #if defined(VL_IO_2D_TGA)
-  #include "plugins/vlTGA.hpp"
+  #include "plugins/ioTGA.hpp"
 #endif
 #if defined(VL_IO_2D_DAT)
-  #include "plugins/vlDAT.hpp"
+  #include "plugins/ioDAT.hpp"
 #endif
 #if defined(VL_IO_2D_DDS)
-  #include "plugins/vlDDS.hpp"
+  #include "plugins/ioDDS.hpp"
 #endif
 #if defined(VL_IO_2D_BMP)
-  #include "plugins/vlBMP.hpp"
+  #include "plugins/ioBMP.hpp"
 #endif
 #if defined(VL_IO_2D_DICOM)
-  #include "plugins/vlDICOM.hpp"
+  #include "plugins/ioDICOM.hpp"
 #endif
 
 //------------------------------------------------------------------------------

@@ -48,7 +48,7 @@ endmacro(VL_DEFAULT_TARGET_PROPERTIES)
 # Defines a CMake option for every plugin in a list, then adds the enabled
 # plugins to a specified project. For every enabled plugin, the project gets
 # a preprocessor definition based on a prefix and the plugin's name, as well as
-# an extra pair o sources (named "vl${pluginName}.h/cpp" in the current dir).
+# an extra pair o sources (named "io${pluginName}.h/cpp" in the current dir).
 #
 # Parameters:
 #    projectName    Name of the project the plugins should be added to.
@@ -70,10 +70,10 @@ macro(VL_PROCESS_PROJECT_PLUGINS projectName prefix installDir)
 			VL_PROJECT_ADD(${projectName}
 				DEFINITIONS "-D${prefixedName}"
 				SOURCES
-					"${CMAKE_CURRENT_SOURCE_DIR}/vl${pluginName}.hpp"
-					"${CMAKE_CURRENT_SOURCE_DIR}/vl${pluginName}.cpp"
+					"${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.hpp"
+					"${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.cpp"
 			)
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/vl${pluginName}.hpp" DESTINATION ${installDir})
+		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.hpp" DESTINATION ${installDir})
 		endif()
 	endforeach()
 endmacro(VL_PROCESS_PROJECT_PLUGINS)
