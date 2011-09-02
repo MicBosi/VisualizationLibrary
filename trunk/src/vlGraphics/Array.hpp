@@ -226,9 +226,11 @@ namespace vl
 
     // ---
 
+    virtual ref<ArrayAbstract> createArray() const { return new Array; }
+
     virtual ref<ArrayAbstract> clone() const
     {
-      ref<Array> arr = new Array;
+      ref<Array> arr = createArray()->as<Array>(); VL_CHECK(arr);
       if (size())
       {
         arr->resize(size());
@@ -369,112 +371,112 @@ namespace vl
 
 
   //! An array of \p GLfloat
-  class ArrayFloat1: public Array<GLfloat, GLfloat, 1, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat1, VL_GROUP(Array<GLfloat, GLfloat, 1, GL_FLOAT>)) };
+  class ArrayFloat1: public Array<GLfloat, GLfloat, 1, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat1, VL_GROUP(Array<GLfloat, GLfloat, 1, GL_FLOAT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayFloat1; } };
   //! An array of vl::fvec2
-  class ArrayFloat2: public Array<fvec2,   GLfloat, 2, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat2, VL_GROUP(Array<fvec2,   GLfloat, 2, GL_FLOAT>)) };
+  class ArrayFloat2: public Array<fvec2,   GLfloat, 2, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat2, VL_GROUP(Array<fvec2,   GLfloat, 2, GL_FLOAT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayFloat2; } };
   //! An array of vl::fvec3
-  class ArrayFloat3: public Array<fvec3,   GLfloat, 3, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat3, VL_GROUP(Array<fvec3,   GLfloat, 3, GL_FLOAT>)) };
+  class ArrayFloat3: public Array<fvec3,   GLfloat, 3, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat3, VL_GROUP(Array<fvec3,   GLfloat, 3, GL_FLOAT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayFloat3; } };
   //! An array of vl::fvec4
-  class ArrayFloat4: public Array<fvec4,   GLfloat, 4, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat4, VL_GROUP(Array<fvec4,   GLfloat, 4, GL_FLOAT>)) };
+  class ArrayFloat4: public Array<fvec4,   GLfloat, 4, GL_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayFloat4, VL_GROUP(Array<fvec4,   GLfloat, 4, GL_FLOAT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayFloat4; } };
 
   //! An array of \p GLdouble
-  class ArrayDouble1: public Array<GLdouble, GLdouble, 1, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble1, VL_GROUP(Array<GLdouble, GLdouble, 1, GL_DOUBLE>)) };
+  class ArrayDouble1: public Array<GLdouble, GLdouble, 1, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble1, VL_GROUP(Array<GLdouble, GLdouble, 1, GL_DOUBLE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayDouble1; } };
   //! An array of vl::dvec2
-  class ArrayDouble2: public Array<dvec2,    GLdouble, 2, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble2, VL_GROUP(Array<dvec2,    GLdouble, 2, GL_DOUBLE>)) };
+  class ArrayDouble2: public Array<dvec2,    GLdouble, 2, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble2, VL_GROUP(Array<dvec2,    GLdouble, 2, GL_DOUBLE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayDouble2; } };
   //! An array of vl::dvec3
-  class ArrayDouble3: public Array<dvec3,    GLdouble, 3, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble3, VL_GROUP(Array<dvec3,    GLdouble, 3, GL_DOUBLE>)) };
+  class ArrayDouble3: public Array<dvec3,    GLdouble, 3, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble3, VL_GROUP(Array<dvec3,    GLdouble, 3, GL_DOUBLE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayDouble3; } };
   //! An array of vl::dvec4
-  class ArrayDouble4: public Array<dvec4,    GLdouble, 4, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble4, VL_GROUP(Array<dvec4,    GLdouble, 4, GL_DOUBLE>)) };
+  class ArrayDouble4: public Array<dvec4,    GLdouble, 4, GL_DOUBLE> { VL_INSTRUMENT_CLASS(vl::ArrayDouble4, VL_GROUP(Array<dvec4,    GLdouble, 4, GL_DOUBLE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayDouble4; } };
 
   //! An array of \p GLint
-  class ArrayInt1: public Array<GLint, GLint, 1, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt1, VL_GROUP(Array<GLint, GLint, 1, GL_INT>)) };
+  class ArrayInt1: public Array<GLint, GLint, 1, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt1, VL_GROUP(Array<GLint, GLint, 1, GL_INT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayInt1; } };
   //! An array of vl::ivec2
-  class ArrayInt2: public Array<ivec2, GLint, 2, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt2, VL_GROUP(Array<ivec2, GLint, 2, GL_INT>)) };
+  class ArrayInt2: public Array<ivec2, GLint, 2, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt2, VL_GROUP(Array<ivec2, GLint, 2, GL_INT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayInt2; } };
   //! An array of vl::ivec3
-  class ArrayInt3: public Array<ivec3, GLint, 3, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt3, VL_GROUP(Array<ivec3, GLint, 3, GL_INT>)) };
+  class ArrayInt3: public Array<ivec3, GLint, 3, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt3, VL_GROUP(Array<ivec3, GLint, 3, GL_INT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayInt3; } };
   //! An array of vl::ivec4
-  class ArrayInt4: public Array<ivec4, GLint, 4, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt4, VL_GROUP(Array<ivec4, GLint, 4, GL_INT>)) };
+  class ArrayInt4: public Array<ivec4, GLint, 4, GL_INT> { VL_INSTRUMENT_CLASS(vl::ArrayInt4, VL_GROUP(Array<ivec4, GLint, 4, GL_INT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayInt4; } };
 
   //! An array of \p GLuint
-  class ArrayUInt1: public Array<GLuint,GLuint, 1, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt1, VL_GROUP(Array<GLuint,GLuint, 1, GL_UNSIGNED_INT>)) };
+  class ArrayUInt1: public Array<GLuint,GLuint, 1, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt1, VL_GROUP(Array<GLuint,GLuint, 1, GL_UNSIGNED_INT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUInt1; } };
   //! An array of vl::uvec2
-  class ArrayUInt2: public Array<uvec2, GLuint, 2, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt2, VL_GROUP(Array<uvec2, GLuint, 2, GL_UNSIGNED_INT>)) };
+  class ArrayUInt2: public Array<uvec2, GLuint, 2, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt2, VL_GROUP(Array<uvec2, GLuint, 2, GL_UNSIGNED_INT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUInt2; } };
   //! An array of vl::uvec3
-  class ArrayUInt3: public Array<uvec3, GLuint, 3, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt3, VL_GROUP(Array<uvec3, GLuint, 3, GL_UNSIGNED_INT>)) };
+  class ArrayUInt3: public Array<uvec3, GLuint, 3, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt3, VL_GROUP(Array<uvec3, GLuint, 3, GL_UNSIGNED_INT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUInt3; } };
   //! An array of vl::uvec4
-  class ArrayUInt4: public Array<uvec4, GLuint, 4, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt4, VL_GROUP(Array<uvec4, GLuint, 4, GL_UNSIGNED_INT>)) };
+  class ArrayUInt4: public Array<uvec4, GLuint, 4, GL_UNSIGNED_INT> { VL_INSTRUMENT_CLASS(vl::ArrayUInt4, VL_GROUP(Array<uvec4, GLuint, 4, GL_UNSIGNED_INT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUInt4; } };
 
   //! An array of \p GLbyte
-  class ArrayByte1: public Array<GLbyte, GLbyte, 1, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte1, VL_GROUP(Array<GLbyte, GLbyte, 1, GL_BYTE>)) };
+  class ArrayByte1: public Array<GLbyte, GLbyte, 1, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte1, VL_GROUP(Array<GLbyte, GLbyte, 1, GL_BYTE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayByte1; } };
   //! An array of vl::bvec2
-  class ArrayByte2: public Array<bvec2,  GLbyte, 2, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte2, VL_GROUP(Array<bvec2,  GLbyte, 2, GL_BYTE>)) };
+  class ArrayByte2: public Array<bvec2,  GLbyte, 2, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte2, VL_GROUP(Array<bvec2,  GLbyte, 2, GL_BYTE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayByte2; } };
   //! An array of vl::bvec3
-  class ArrayByte3: public Array<bvec3,  GLbyte, 3, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte3, VL_GROUP(Array<bvec3,  GLbyte, 3, GL_BYTE>)) };
+  class ArrayByte3: public Array<bvec3,  GLbyte, 3, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte3, VL_GROUP(Array<bvec3,  GLbyte, 3, GL_BYTE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayByte3; } };
   //! An array of vl::bvec4
-  class ArrayByte4: public Array<bvec4,  GLbyte, 4, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte4, VL_GROUP(Array<bvec4,  GLbyte, 4, GL_BYTE>)) };
+  class ArrayByte4: public Array<bvec4,  GLbyte, 4, GL_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayByte4, VL_GROUP(Array<bvec4,  GLbyte, 4, GL_BYTE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayByte4; } };
 
   //! An array of \p GLubyte
-  class ArrayUByte1: public Array<GLubyte, GLubyte, 1, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte1, VL_GROUP(Array<GLubyte, GLubyte, 1, GL_UNSIGNED_BYTE>)) };
+  class ArrayUByte1: public Array<GLubyte, GLubyte, 1, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte1, VL_GROUP(Array<GLubyte, GLubyte, 1, GL_UNSIGNED_BYTE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUByte1; } };
   //! An array of vl::ubvec2
-  class ArrayUByte2: public Array<ubvec2,  GLubyte, 2, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte2, VL_GROUP(Array<ubvec2,  GLubyte, 2, GL_UNSIGNED_BYTE>)) };
+  class ArrayUByte2: public Array<ubvec2,  GLubyte, 2, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte2, VL_GROUP(Array<ubvec2,  GLubyte, 2, GL_UNSIGNED_BYTE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUByte2; } };
   //! An array of vl::ubvec3
-  class ArrayUByte3: public Array<ubvec3,  GLubyte, 3, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte3, VL_GROUP(Array<ubvec3,  GLubyte, 3, GL_UNSIGNED_BYTE>)) };
+  class ArrayUByte3: public Array<ubvec3,  GLubyte, 3, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte3, VL_GROUP(Array<ubvec3,  GLubyte, 3, GL_UNSIGNED_BYTE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUByte3; } };
   //! An array of vl::ubvec4
-  class ArrayUByte4: public Array<ubvec4,  GLubyte, 4, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte4, VL_GROUP(Array<ubvec4,  GLubyte, 4, GL_UNSIGNED_BYTE>)) };
+  class ArrayUByte4: public Array<ubvec4,  GLubyte, 4, GL_UNSIGNED_BYTE> { VL_INSTRUMENT_CLASS(vl::ArrayUByte4, VL_GROUP(Array<ubvec4,  GLubyte, 4, GL_UNSIGNED_BYTE>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUByte4; } };
 
   //! An array of \p GLshort
-  class ArrayShort1: public Array<GLshort, GLshort, 1, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort1, VL_GROUP(Array<GLshort, GLshort, 1, GL_SHORT>)) };
+  class ArrayShort1: public Array<GLshort, GLshort, 1, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort1, VL_GROUP(Array<GLshort, GLshort, 1, GL_SHORT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayShort1; } };
   //! An array of vl::svec2
-  class ArrayShort2: public Array<svec2,   GLshort, 2, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort2, VL_GROUP(Array<svec2,   GLshort, 2, GL_SHORT>)) };
+  class ArrayShort2: public Array<svec2,   GLshort, 2, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort2, VL_GROUP(Array<svec2,   GLshort, 2, GL_SHORT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayShort2; } };
   //! An array of vl::svec3
-  class ArrayShort3: public Array<svec3,   GLshort, 3, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort3, VL_GROUP(Array<svec3,   GLshort, 3, GL_SHORT>)) };
+  class ArrayShort3: public Array<svec3,   GLshort, 3, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort3, VL_GROUP(Array<svec3,   GLshort, 3, GL_SHORT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayShort3; } };
   //! An array of vl::svec4
-  class ArrayShort4: public Array<svec4,   GLshort, 4, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort4, VL_GROUP(Array<svec4,   GLshort, 4, GL_SHORT>)) };
+  class ArrayShort4: public Array<svec4,   GLshort, 4, GL_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayShort4, VL_GROUP(Array<svec4,   GLshort, 4, GL_SHORT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayShort4; } };
 
   //! An array of \p GLushort
-  class ArrayUShort1: public Array<GLushort, GLushort, 1, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort1, VL_GROUP(Array<GLushort, GLushort, 1, GL_UNSIGNED_SHORT>)) };
+  class ArrayUShort1: public Array<GLushort, GLushort, 1, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort1, VL_GROUP(Array<GLushort, GLushort, 1, GL_UNSIGNED_SHORT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUShort1; } };
   //! An array of vl::usvec2
-  class ArrayUShort2: public Array<usvec2,   GLushort, 2, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort2, VL_GROUP(Array<usvec2,   GLushort, 2, GL_UNSIGNED_SHORT>)) };
+  class ArrayUShort2: public Array<usvec2,   GLushort, 2, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort2, VL_GROUP(Array<usvec2,   GLushort, 2, GL_UNSIGNED_SHORT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUShort2; } };
   //! An array of vl::usvec3
-  class ArrayUShort3: public Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort3, VL_GROUP(Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT>)) };
+  class ArrayUShort3: public Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort3, VL_GROUP(Array<usvec3,   GLushort, 3, GL_UNSIGNED_SHORT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUShort3; } };
   //! An array of vl::usvec4
-  class ArrayUShort4: public Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort4, VL_GROUP(Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT>)) };
+  class ArrayUShort4: public Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT> { VL_INSTRUMENT_CLASS(vl::ArrayUShort4, VL_GROUP(Array<usvec4,   GLushort, 4, GL_UNSIGNED_SHORT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUShort4; } };
 
   //! An array of \p GL_HALF_FLOAT
-  class ArrayHFloat1: public Array<half,  half, 1, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat1, VL_GROUP(Array<half,  half, 1, GL_HALF_FLOAT>)) };
+  class ArrayHFloat1: public Array<half,  half, 1, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat1, VL_GROUP(Array<half,  half, 1, GL_HALF_FLOAT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayHFloat1; } };
   //! A 2d array of GL_HALF_FLOAT vectors
-  class ArrayHFloat2: public Array<hvec2, half, 2, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat2, VL_GROUP(Array<hvec2, half, 2, GL_HALF_FLOAT>)) };
+  class ArrayHFloat2: public Array<hvec2, half, 2, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat2, VL_GROUP(Array<hvec2, half, 2, GL_HALF_FLOAT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayHFloat2; } };
   //! A 3d array of GL_HALF_FLOAT vectors
-  class ArrayHFloat3: public Array<hvec3, half, 3, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat3, VL_GROUP(Array<hvec3, half, 3, GL_HALF_FLOAT>)) };
+  class ArrayHFloat3: public Array<hvec3, half, 3, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat3, VL_GROUP(Array<hvec3, half, 3, GL_HALF_FLOAT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayHFloat3; } };
   //! A 4d array of GL_HALF_FLOAT vectors
-  class ArrayHFloat4: public Array<hvec4, half, 4, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat4, VL_GROUP(Array<hvec4, half, 4, GL_HALF_FLOAT>)) };
+  class ArrayHFloat4: public Array<hvec4, half, 4, GL_HALF_FLOAT> { VL_INSTRUMENT_CLASS(vl::ArrayHFloat4, VL_GROUP(Array<hvec4, half, 4, GL_HALF_FLOAT>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayHFloat4; } };
 
   //! An array of \p GL_FIXED
-  class ArrayFixed1: public Array<GLuint,GLuint, 1, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed1, VL_GROUP(Array<GLuint,GLuint, 1, GL_FIXED>)) };
+  class ArrayFixed1: public Array<GLuint,GLuint, 1, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed1, VL_GROUP(Array<GLuint,GLuint, 1, GL_FIXED>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayFixed1; } };
   //! An array 2d GL_FIXED vectors
-  class ArrayFixed2: public Array<uvec2, GLuint, 2, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed2, VL_GROUP(Array<uvec2, GLuint, 2, GL_FIXED>)) };
+  class ArrayFixed2: public Array<uvec2, GLuint, 2, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed2, VL_GROUP(Array<uvec2, GLuint, 2, GL_FIXED>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayFixed2; } };
   //! An array 3d GL_FIXED vectors
-  class ArrayFixed3: public Array<uvec3, GLuint, 3, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed3, VL_GROUP(Array<uvec3, GLuint, 3, GL_FIXED>)) };
+  class ArrayFixed3: public Array<uvec3, GLuint, 3, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed3, VL_GROUP(Array<uvec3, GLuint, 3, GL_FIXED>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayFixed3; } };
   //! An array 4d GL_FIXED vectors
-  class ArrayFixed4: public Array<uvec4, GLuint, 4, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed4, VL_GROUP(Array<uvec4, GLuint, 4, GL_FIXED>)) };
+  class ArrayFixed4: public Array<uvec4, GLuint, 4, GL_FIXED> { VL_INSTRUMENT_CLASS(vl::ArrayFixed4, VL_GROUP(Array<uvec4, GLuint, 4, GL_FIXED>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayFixed4; } };
 
   //! An array of \p GL_INT_2_10_10_10_REV
-  class ArrayInt_2_10_10_10_REV1: public Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV1, VL_GROUP(Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV>)) };
+  class ArrayInt_2_10_10_10_REV1: public Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV1, VL_GROUP(Array<GLint, GLint, 1, GL_INT_2_10_10_10_REV>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayInt_2_10_10_10_REV1; } };
   //! A 2d array of GL_INT_2_10_10_10_REV vectors
-  class ArrayInt_2_10_10_10_REV2: public Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV2, VL_GROUP(Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV>)) };
+  class ArrayInt_2_10_10_10_REV2: public Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV2, VL_GROUP(Array<ivec2, GLint, 2, GL_INT_2_10_10_10_REV>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayInt_2_10_10_10_REV2; } };
   //! A 3d array of GL_INT_2_10_10_10_REV vectors
-  class ArrayInt_2_10_10_10_REV3: public Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV3, VL_GROUP(Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV>)) };
+  class ArrayInt_2_10_10_10_REV3: public Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV3, VL_GROUP(Array<ivec3, GLint, 3, GL_INT_2_10_10_10_REV>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayInt_2_10_10_10_REV3; } };
   //! A 4d array of GL_INT_2_10_10_10_REV vectors
-  class ArrayInt_2_10_10_10_REV4: public Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV4, VL_GROUP(Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV>)) };
+  class ArrayInt_2_10_10_10_REV4: public Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayInt_2_10_10_10_REV4, VL_GROUP(Array<ivec4, GLint, 4, GL_INT_2_10_10_10_REV>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayInt_2_10_10_10_REV4; } };
 
   //! An array of \p GL_UNSIGNED_INT_2_10_10_10_REV
-  class ArrayUInt_2_10_10_10_REV1: public Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV1, VL_GROUP(Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV>)) };
+  class ArrayUInt_2_10_10_10_REV1: public Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV1, VL_GROUP(Array<GLuint,GLuint, 1, GL_UNSIGNED_INT_2_10_10_10_REV>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUInt_2_10_10_10_REV1; } };
   //! A 2d array of GL_UNSIGNED_INT_2_10_10_10_REV vectors
-  class ArrayUInt_2_10_10_10_REV2: public Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV2, VL_GROUP(Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV>)) };
+  class ArrayUInt_2_10_10_10_REV2: public Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV2, VL_GROUP(Array<uvec2, GLuint, 2, GL_UNSIGNED_INT_2_10_10_10_REV>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUInt_2_10_10_10_REV2; } };
   //! A 3d array of GL_UNSIGNED_INT_2_10_10_10_REV vectors
-  class ArrayUInt_2_10_10_10_REV3: public Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV3, VL_GROUP(Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV>)) };
+  class ArrayUInt_2_10_10_10_REV3: public Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV3, VL_GROUP(Array<uvec3, GLuint, 3, GL_UNSIGNED_INT_2_10_10_10_REV>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUInt_2_10_10_10_REV3; } };
   //! A 4d array of GL_UNSIGNED_INT_2_10_10_10_REV vectors
-  class ArrayUInt_2_10_10_10_REV4: public Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV4, VL_GROUP(Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV>)) };
+  class ArrayUInt_2_10_10_10_REV4: public Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV> { VL_INSTRUMENT_CLASS(vl::ArrayUInt_2_10_10_10_REV4, VL_GROUP(Array<uvec4, GLuint, 4, GL_UNSIGNED_INT_2_10_10_10_REV>)) virtual ref<ArrayAbstract> createArray() const { return new ArrayUInt_2_10_10_10_REV4; } };
 }
 
 #endif
