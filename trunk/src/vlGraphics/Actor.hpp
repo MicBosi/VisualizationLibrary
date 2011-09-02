@@ -288,7 +288,7 @@ namespace vl
     /** Equivalent to getUniformSet()->eraseUniform(name)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
-    void eraseUniform(const std::string& name);
+    void eraseUniform(const char* name);
 
     /** Equivalent to getUniformSet()->eraseUniform(uniform)
      \remarks
@@ -303,23 +303,23 @@ namespace vl
     /** Equivalent to getUniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
-    Uniform* gocUniform(const std::string& name);
+    Uniform* gocUniform(const char* name);
 
     /** Equivalent to getUniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
-    Uniform* getUniform(const std::string& name);
+    Uniform* getUniform(const char* name);
     
     /** Equivalent to getUniformSet()->getUniform(name, get_mode)
      \remarks
      You must install a UniformSet with setUniformSet() before calling this function. */
-    const Uniform* getUniform(const std::string& name) const;
+    const Uniform* getUniform(const char* name) const;
 
     /** Installs a new UniformSet
      \sa
      - setUniform()
      - uniforms()
-     - eraseUniform(const std::string& name)
+     - eraseUniform(const char* name)
      - eraseUniform(const Uniform* uniform)
      - eraseAllUniforms()
      - getUniform() */
@@ -329,7 +329,7 @@ namespace vl
      \sa
      - setUniform()
      - uniforms()
-     - eraseUniform(const std::string& name)
+     - eraseUniform(const char* name)
      - eraseUniform(const Uniform* uniform)
      - eraseAllUniforms()
      - getUniform()
@@ -340,7 +340,7 @@ namespace vl
      \sa
      - setUniform()
      - uniforms()
-     - eraseUniform(const std::string& name)
+     - eraseUniform(const char* name)
      - eraseUniform(const Uniform* uniform)
      - eraseAllUniforms()
      - getUniform()
@@ -351,7 +351,7 @@ namespace vl
      \sa
      - setUniform()
      - uniforms()
-     - eraseUniform(const std::string& name)
+     - eraseUniform(const char* name)
      - eraseUniform(const Uniform* uniform)
      - eraseAllUniforms()
      - getUniform()

@@ -1322,7 +1322,7 @@ namespace vl
       if (val)
       {
         VL_CHECK( val->type() == VLXValue::Identifier );
-        uniform->setName( val->getIdentifier() );
+        uniform->setName( val->getIdentifier().c_str() );
       }
       else
       {

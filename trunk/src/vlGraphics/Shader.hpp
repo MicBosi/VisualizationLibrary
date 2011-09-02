@@ -2200,7 +2200,7 @@ namespace vl
     const std::vector< ref<Uniform> >& uniforms() const { return getUniformSet()->uniforms(); }
     
     //! Equivalent to gocUniformSet()->eraseUniform(...)
-    void eraseUniform(const std::string& name) { gocUniformSet()->eraseUniform(name); }
+    void eraseUniform(const char* name) { gocUniformSet()->eraseUniform(name); }
     
     //! Equivalent to gocUniformSet()->eraseUniform(...)
     void eraseUniform(const Uniform* uniform) { gocUniformSet()->eraseUniform(uniform); }
@@ -2209,13 +2209,13 @@ namespace vl
     void eraseAllUniforms() { if (getUniformSet()) getUniformSet()->eraseAllUniforms(); }
     
     //! Equivalent to gocUniformSet()->gocUniform(...)
-    Uniform* gocUniform(const std::string& name) { return gocUniformSet()->gocUniform(name); }
+    Uniform* gocUniform(const char* name) { return gocUniformSet()->gocUniform(name); }
     
     //! Equivalent to gocUniformSet()->getUniform(...)
-    Uniform* getUniform(const std::string& name) { return getUniformSet()->getUniform(name); }
+    Uniform* getUniform(const char* name) { return getUniformSet()->getUniform(name); }
     
     //! Equivalent to gocUniformSet()->getUniform(...)
-    const Uniform* getUniform(const std::string& name) const { return getUniformSet()->getUniform(name); }
+    const Uniform* getUniform(const char* name) const { return getUniformSet()->getUniform(name); }
 
     // sets
 
@@ -2236,7 +2236,7 @@ namespace vl
      * \sa
      * - setUniform()
      * - uniforms()
-     * - eraseUniform(const std::string& name)
+     * - eraseUniform(const char* name)
      * - eraseUniform(const Uniform* uniform)
      * - eraseAllUniforms()
      * - getUniform()
@@ -2248,7 +2248,7 @@ namespace vl
      * \sa
      * - setUniform()
      * - uniforms()
-     * - eraseUniform(const std::string& name)
+     * - eraseUniform(const char* name)
      * - eraseUniform(const Uniform* uniform)
      * - eraseAllUniforms()
      * - getUniform()
@@ -2260,7 +2260,7 @@ namespace vl
      * \sa
      * - setUniform()
      * - uniforms()
-     * - eraseUniform(const std::string& name)
+     * - eraseUniform(const char* name)
      * - eraseUniform(const Uniform* uniform)
      * - eraseAllUniforms()
      * - getUniform()
@@ -2276,7 +2276,7 @@ namespace vl
      * \sa
      * - setUniform()
      * - uniforms()
-     * - eraseUniform(const std::string& name)
+     * - eraseUniform(const char* name)
      * - eraseUniform(const Uniform* uniform)
      * - eraseAllUniforms()
      * - getUniform()

@@ -96,7 +96,7 @@ void GLSLShader::setSource( const String& source_or_path )
   {
     new_src = vl::String::loadText(source_or_path).toStdString();
     setObjectName( source_or_path.toStdString() );
-    setPath( source_or_path.toStdString() );
+    setPath( source_or_path.toStdString().c_str() );
   }
   else
   {
@@ -645,14 +645,14 @@ bool GLSLProgram::validateProgram() const
   return status == GL_TRUE;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name)
+void GLSLProgram::bindAttribLocation(unsigned int index, const char* name)
 {
   VL_CHECK_OGL();
   VL_CHECK( Has_GLSL )
 
   createProgram();
   scheduleRelinking();
-  glBindAttribLocation(handle(), index, name.c_str()); VL_CHECK_OGL()
+  glBindAttribLocation(handle(), index, name); VL_CHECK_OGL()
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::useProgram() const
@@ -732,7 +732,7 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     const Uniform* uniform = uniforms->uniforms()[i].get();
 
     #if 1
-      const UniformInfo* uinfo = activeUniformInfo(uniform->name());
+      const UniformInfo* uinfo = activeUniformInfo(uniform->name().c_str());
       int location = uinfo ? uinfo->Location : -1;
     #else
       int location = glGetUniformLocation(handle(), uniform->name().c_str());
@@ -816,19 +816,19 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
   return true;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::bindFragDataLocation(int color_number, const std::string& name)
+void GLSLProgram::bindFragDataLocation(int color_number, const char* name)
 {
   scheduleRelinking();
   mFragDataLocation[name] = color_number;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::unbindFragDataLocation(const std::string& name)
+void GLSLProgram::unbindFragDataLocation(const char* name)
 {
   scheduleRelinking();
   mFragDataLocation.erase(name);
 }
 //-----------------------------------------------------------------------------
-int GLSLProgram::fragDataLocation(const std::string& name) const
+int GLSLProgram::fragDataLocation(const char* name) const
 {
   std::map<std::string, int>::const_iterator it = mFragDataLocation.find(name);
   if (it != mFragDataLocation.end())

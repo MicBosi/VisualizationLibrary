@@ -69,17 +69,17 @@ namespace vl
 
     std::vector< ref<Uniform> >& uniforms() { return mUniforms; }
 
-    void eraseUniform(const std::string& name);
+    void eraseUniform(const char* name);
 
     void eraseUniform(const Uniform* uniform);
 
     void eraseAllUniforms() { mUniforms.clear(); }
 
-    Uniform* gocUniform(const std::string& name);
+    Uniform* gocUniform(const char* name);
 
-    Uniform* getUniform(const std::string& name);
+    Uniform* getUniform(const char* name);
 
-    const Uniform* getUniform(const std::string& name) const;
+    const Uniform* getUniform(const char* name) const;
 
   protected:
     std::vector< ref<Uniform> > mUniforms;

@@ -99,7 +99,7 @@ namespace vl
     const std::string& source() const { return mSource; }
 
     //! The path from which the shader was loaded
-    void setPath(const std::string& path) { mPath = path; }
+    void setPath(const char* path) { mPath = path; }
 
     //! The path from which the shader was loaded
     const std::string& path() const { return mPath; }
@@ -348,7 +348,7 @@ namespace vl
       * and it will schedule a re-link since the new specified bindings take effect after linking the GLSL program.
       * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
       *     removeAutoAttribLocation(), addAutoAttribLocation() */
-    void bindAttribLocation(unsigned int index, const std::string& name);
+    void bindAttribLocation(unsigned int index, const char* name);
 
     /** Adds an attribute name / index pair to the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
     * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
@@ -402,11 +402,11 @@ namespace vl
 
     // --------------- bind frag data location ---------------
 
-    void bindFragDataLocation(int color_number, const std::string& name);
+    void bindFragDataLocation(int color_number, const char* name);
 
-    void unbindFragDataLocation(const std::string& name);
+    void unbindFragDataLocation(const char* name);
 
-    int fragDataLocation(const std::string& name) const;
+    int fragDataLocation(const char* name) const;
 
     const std::map<std::string, int>& fragDataLocations() const { return mFragDataLocation; }
 
@@ -496,20 +496,6 @@ namespace vl
     /**
     * Returns the binding index of the given uniform.
     */
-    int getUniformLocation(const std::string& name) const
-    {
-      VL_CHECK( Has_GLSL )
-      if( !Has_GLSL )
-        return -1;
-      VL_CHECK(linked())
-
-      int location = glGetUniformLocation(handle(), name.c_str());
-      return location;
-    }
-
-    /**
-    * Returns the binding index of the given uniform.
-    */
     int getUniformLocation(const char* name) const
     {
       VL_CHECK( Has_GLSL )
@@ -537,7 +523,7 @@ namespace vl
       glGetUniformfv(handle(), location, params); VL_CHECK_OGL()
     }
     //! Equivalent to getUniformfv(getUniformLocation(name), params)
-    void getUniformfv(const std::string& name, float* params) const { getUniformfv(getUniformLocation(name), params); }
+    void getUniformfv(const char* name, float* params) const { getUniformfv(getUniformLocation(name), params); }
     //! Equivalent to glGetUniformiv(handle(), location, params)
     void getUniformiv(int location, int* params) const
     {
@@ -549,7 +535,7 @@ namespace vl
       glGetUniformiv(handle(), location, params); VL_CHECK_OGL()
     }
     //! Equivalent to getUniformiv(getUniformLocation(name)
-    void getUniformiv(const std::string& name, int* params) const { getUniformiv(getUniformLocation(name), params); }
+    void getUniformiv(const char* name, int* params) const { getUniformiv(getUniformLocation(name), params); }
 
     // utility functions for fvec2, fvec3, fvec4, ivec2, ivec3, ivec4, fmat2, fmat3, fmat4
 
@@ -562,15 +548,15 @@ namespace vl
     void getUniform(int location, ivec2& vec) const { getUniformiv(location, vec.ptr()); }
     void getUniform(int location, ivec3& vec) const { getUniformiv(location, vec.ptr()); }
     void getUniform(int location, ivec4& vec) const { getUniformiv(location, vec.ptr()); }
-    void getUniform(const std::string& name, fvec2& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const std::string& name, fvec3& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const std::string& name, fvec4& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const std::string& name, fmat2& mat) const { getUniform(getUniformLocation(name), mat); }
-    void getUniform(const std::string& name, fmat3& mat) const { getUniform(getUniformLocation(name), mat); }
-    void getUniform(const std::string& name, fmat4& mat) const { getUniform(getUniformLocation(name), mat); }
-    void getUniform(const std::string& name, ivec2& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const std::string& name, ivec3& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const std::string& name, ivec4& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const char* name, fvec2& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const char* name, fvec3& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const char* name, fvec4& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const char* name, fmat2& mat) const { getUniform(getUniformLocation(name), mat); }
+    void getUniform(const char* name, fmat3& mat) const { getUniform(getUniformLocation(name), mat); }
+    void getUniform(const char* name, fmat4& mat) const { getUniform(getUniformLocation(name), mat); }
+    void getUniform(const char* name, ivec2& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const char* name, ivec3& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const char* name, ivec4& vec) const { getUniform(getUniformLocation(name), vec); }
 
     //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
     UniformSet* getUniformSet() { return mUniformSet.get(); }
@@ -581,11 +567,11 @@ namespace vl
     //! Utility function using getUniformSet(). Adds a Uniform to this program's \p static uniform set.
     void setUniform(Uniform* uniform) { if (!getUniformSet()) setUniformSet(new UniformSet); getUniformSet()->setUniform(uniform); }
     //! Utility function using getUniformSet(). Returns the specified Uniform. Returns NULL if there isn't such a Uniform
-    Uniform* getUniform(const std::string& name) { if (!getUniformSet()) return NULL; return getUniformSet()->getUniform(name); }
+    Uniform* getUniform(const char* name) { if (!getUniformSet()) return NULL; return getUniformSet()->getUniform(name); }
     //! Utility function using getUniformSet(). Gets or creates the specified Uniform.
-    Uniform* gocUniform(const std::string& name) { if (!getUniformSet()) setUniformSet(new UniformSet); return getUniformSet()->gocUniform(name); }
+    Uniform* gocUniform(const char* name) { if (!getUniformSet()) setUniformSet(new UniformSet); return getUniformSet()->gocUniform(name); }
     //! Utility function using getUniformSet(). Erases the specified uniform.
-    void eraseUniform(const std::string& name) { if(getUniformSet()) getUniformSet()->eraseUniform(name); }
+    void eraseUniform(const char* name) { if(getUniformSet()) getUniformSet()->eraseUniform(name); }
     //! Utility function using getUniformSet(). Erases the specified uniform.
     void eraseUniform(const Uniform* uniform) { if(getUniformSet()) getUniformSet()->eraseUniform(uniform); }
     //! Utility function using getUniformSet(). Erases all the uniforms.
@@ -597,7 +583,7 @@ namespace vl
 
     //! Returns the info (name, type, size and location) regarding the specified uniform or NULL if such uniform is not currently active since last time the GLSL program was linked.
     //! - See also vl::GLSLProgram::activeUniforms(), vl::UniformInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
-    const UniformInfo* activeUniformInfo(const std::string& name) const 
+    const UniformInfo* activeUniformInfo(const char* name) const 
     { 
       std::map<std::string, ref<UniformInfo> >::const_iterator it = mActiveUniforms.find(name);
       if (it == mActiveUniforms.end())
@@ -612,7 +598,7 @@ namespace vl
 
     //! Returns the info regarding the specified attribute or NULL if such attribute is not currently active since last time the GLSL program was linked.
     //! - See also vl::GLSLProgram::activeAttribs(), vl::AttribInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
-    const AttribInfo* activeAttribInfo(const std::string& name) const 
+    const AttribInfo* activeAttribInfo(const char* name) const 
     { 
       std::map<std::string, ref<AttribInfo> >::const_iterator it = mActiveAttribs.find(name);
       if (it == mActiveAttribs.end())
