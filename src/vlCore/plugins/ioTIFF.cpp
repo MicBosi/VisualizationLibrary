@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include "vlTIFF.hpp"
+#include "ioTIFF.hpp"
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/FileSystem.hpp>
@@ -45,7 +45,7 @@ namespace
 {
   void tiff_error(const char*, const char*, va_list)
   {
-    vl::Log::error("vlTIFF unspecified error.\n");
+    vl::Log::error("ioTIFF unspecified error.\n");
   }
   void tiff_warning(const char *, const char *, va_list)
   {
