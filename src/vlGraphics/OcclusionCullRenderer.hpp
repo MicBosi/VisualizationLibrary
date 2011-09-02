@@ -50,7 +50,7 @@ namespace vl
     OcclusionCullRenderer();
 
     /** Renders using the wrapped renderer but also performing occlusion culling. */
-    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock);
+    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock);
 
     /** The renderer to be wrapped by this occlusion culling renderer */
     void setWrappedRenderer(Renderer* renderer);

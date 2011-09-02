@@ -88,7 +88,7 @@ void Applet::updateEvent()
   updateScene();
 
   // set frame time for all the rendering
-  Real now_time = Time::currentTime();
+  real now_time = Time::currentTime();
   rendering()->setFrameClock( now_time );
 
   // execute rendering

@@ -108,7 +108,7 @@ RaycastVolume::RaycastVolume()
  * - The \p "uniform vec3 eye_position" variable contains the camera position in object space, useful to compute 
  *   specular highlights, raycast direction etc. 
  * - The \p "uniform vec3 eye_look" variable contains the camera look vector in object space. */
-void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera* camera, vl::Renderable*, const vl::Shader* shader )
+void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera* camera, vl::Renderable*, const vl::Shader* shader )
 {
   const GLSLProgram* glsl = shader->getGLSLProgram();
   VL_CHECK( glsl );
@@ -185,7 +185,7 @@ void RaycastVolume::bindActor( Actor* actor )
   actor->setLod( 0, mGeometry.get() );
 }
 //-----------------------------------------------------------------------------
-void RaycastVolume::onActorRenderStarted( Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass )
+void RaycastVolume::onActorRenderStarted( Actor* actor, real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass )
 {
   if ( pass>0 )
     return;

@@ -84,7 +84,7 @@ public:
       ref<Transform> tr = new Transform;
       rendering()->as<Rendering>()->transform()->addChild( tr.get() );
 
-      mat4 m = mat4::getRotation( 360 * i / (Real)mGeometries.size(), 0, 1, 0) * 
+      mat4 m = mat4::getRotation( 360 * i / (real)mGeometries.size(), 0, 1, 0) * 
                mat4::getTranslation(0,0,-scene_radius);
       tr->setLocalMatrix( m );
 

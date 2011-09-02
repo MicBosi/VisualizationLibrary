@@ -51,7 +51,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::Plane, Object)
 
   public:
-    Plane( Real o=0.0f, vec3 n=vec3(0,0,0) ): mNormal(n), mOrigin(o) 
+    Plane( real o=0.0f, vec3 n=vec3(0,0,0) ): mNormal(n), mOrigin(o) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -63,7 +63,7 @@ namespace vl
       mOrigin = dot(o, n);
     }
 
-    Real distance(const vec3 &v) const;
+    real distance(const vec3 &v) const;
 
     //! returns 0 if the AABB intersects the plane, 1 if it's in the positive side, 
     //! -1 if it's in the negative side.
@@ -73,15 +73,15 @@ namespace vl
 
     const vec3& normal() const { return mNormal; }
 
-    Real origin() const { return mOrigin; }
+    real origin() const { return mOrigin; }
 
     void setNormal(const vec3& normal) { mNormal = normal; }
 
-    void setOrigin(Real origin) { mOrigin = origin; }
+    void setOrigin(real origin) { mOrigin = origin; }
 
   protected:
     vec3 mNormal;
-    Real mOrigin;
+    real mOrigin;
   };
 }
 

@@ -57,7 +57,7 @@ MorphingCallback::~MorphingCallback()
 {
 }
 //-----------------------------------------------------------------------------
-void MorphingCallback::onActorRenderStarted(Actor*, Real frame_clock, const Camera*, Renderable*, const Shader* shader, int pass)
+void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Camera*, Renderable*, const Shader* shader, int pass)
 {
   // perform only on the first pass
   if (pass>0)
@@ -72,7 +72,7 @@ void MorphingCallback::onActorRenderStarted(Actor*, Real frame_clock, const Came
   if ( do_update )
   {
     mLastUpdate = mElapsedTime;
-    Real ft = mElapsedTime / mAnimationPeriod;
+    real ft = mElapsedTime / mAnimationPeriod;
     ft = ft - (int)ft;
     int frame_count = mAnimationEnd - mAnimationStart + 1;
     mAnim_t  = (float)(ft * frame_count - (int)(ft * frame_count));
@@ -266,7 +266,7 @@ void MorphingCallback::setAnimation(int start, int end, float period)
   mAnimationStarted = false;
 }
 //-----------------------------------------------------------------------------
-void MorphingCallback::startAnimation(Real start_time)
+void MorphingCallback::startAnimation(real start_time)
 {
   mAnimationStarted = true;
   mFrame1 = -1;

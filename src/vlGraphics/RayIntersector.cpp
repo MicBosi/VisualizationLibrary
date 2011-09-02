@@ -145,10 +145,10 @@ void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, Actor
   T v1 = b-a;
   T v2 = c-a;
   T n = cross(v1,v2).normalize();
-  Real det = (Real)dot(n,(T)ray().direction());
+  real det = (real)dot(n,(T)ray().direction());
   if(det == 0)
     return;
-  Real t = (Real)dot(n, a-(T)ray().origin()) / det;
+  real t = (real)dot(n, a-(T)ray().origin()) / det;
   if (t<0)
     return;
   vec3  rp = ray().origin() + ray().direction() * t;

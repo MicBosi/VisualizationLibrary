@@ -36,7 +36,7 @@
 
 namespace vl
 {
-  /** The Ray class defines a ray as an origin and direction using Real precision.
+  /** The Ray class defines a ray as an origin and direction using real precision.
    */
   class Ray
   {

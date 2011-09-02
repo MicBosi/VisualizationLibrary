@@ -36,7 +36,7 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera, Real frame_clock)
+const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera, real frame_clock)
 {
   // skip if renderer is disabled
 
@@ -142,7 +142,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   return render_queue;
 }
 //-----------------------------------------------------------------------------
-void EdgeRenderer::renderSolids(Camera* camera, Real frame_clock)
+void EdgeRenderer::renderSolids(Camera* camera, real frame_clock)
 {
   // transform
   const Transform* cur_transform = NULL;

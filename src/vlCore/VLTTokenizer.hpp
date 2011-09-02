@@ -59,7 +59,7 @@ namespace vl
       Identifier,         //  Identifier_123
       Boolean,            //  true | false
       Integer,            //  +123
-      Real,               //  +123.456e+10
+      real,               //  +123.456e+10
       TagHeader,          //  <TagHeader>
       RawtextBlock,         // {< blabla >}
 

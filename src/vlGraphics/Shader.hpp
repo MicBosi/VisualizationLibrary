@@ -1797,7 +1797,7 @@ namespace vl
     \param camera the camera used for the current rendering.
     \param cur_time the current animation time.
     \sa Shader::setShaderAnimator(); */
-    virtual void updateShader(Shader* shader, Camera* camera, Real cur_time) = 0;
+    virtual void updateShader(Shader* shader, Camera* camera, real cur_time) = 0;
 
     /** Whether the ShaderAnimator is enabled or not. */
     void setEnabled(bool enable) { mEnabled = enable; }
@@ -2322,10 +2322,10 @@ namespace vl
     const ShaderAnimator* shaderAnimator() const { return mShaderAnimator.get(); }
 
     /** Last time this Actor was animated/updated using a shaderAnimator(). */
-    Real lastUpdateTime() const { return mLastUpdateTime; }
+    real lastUpdateTime() const { return mLastUpdateTime; }
 
     //! Used internally.
-    void setLastUpdateTime(Real time) { mLastUpdateTime = time; }
+    void setLastUpdateTime(real time) { mLastUpdateTime = time; }
 
 #if VL_SHADER_USER_DATA
   public:
@@ -2343,7 +2343,7 @@ namespace vl
     ref<UniformSet> mUniformSet;
     ref<Scissor> mScissor;
     ref<ShaderAnimator> mShaderAnimator;
-    Real mLastUpdateTime;
+    real mLastUpdateTime;
   };
 }
 

@@ -87,7 +87,7 @@ namespace vl
     \param renderable The currently selected Actor LOD.
     \param shader The currently active Shader.
     \param pass The current Actor[s] rendering pass. */
-    virtual void onActorRenderStarted(Actor* actor, Real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass) = 0;
+    virtual void onActorRenderStarted(Actor* actor, real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass) = 0;
 
     /** Event notifying that an Actor is being deleted. */
     virtual void onActorDelete(Actor* actor) = 0;
@@ -365,7 +365,7 @@ namespace vl
     Collection<ActorEventCallback>* actorEventCallbacks() { return &mActorEventCallbacks; }
 
     /** Calls all the onActorRenderStarted() of all the ActorEventCallback installed on this Actor. */
-    void dispatchOnActorRenderStarted( Real frame_clock, const Camera* camera, Renderable* renderable, const Shader* shader, int pass)
+    void dispatchOnActorRenderStarted( real frame_clock, const Camera* camera, Renderable* renderable, const Shader* shader, int pass)
     {
       for(int i=0; i<actorEventCallbacks()->size(); ++i)
       {

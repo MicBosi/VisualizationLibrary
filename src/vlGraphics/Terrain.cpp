@@ -204,8 +204,8 @@ void Terrain::init()
     glsl->setUniform(heightmap_tex.get());
 
     AABB aabb;
-    aabb.setMinCorner((Real)-0.5, 0, (Real)-0.5);
-    aabb.setMaxCorner((Real)+0.5, (Real)height(), (Real)+0.5);
+    aabb.setMinCorner((real)-0.5, 0, (real)-0.5);
+    aabb.setMaxCorner((real)+0.5, (real)height(), (real)+0.5);
     terr_tile->setBoundingBox( aabb );
     terr_tile->setBoundingSphere(aabb);
     terr_tile->setBoundsDirty(false);

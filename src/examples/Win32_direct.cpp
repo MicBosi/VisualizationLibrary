@@ -116,7 +116,7 @@ public:
     // --- scene update ---
 
     // rotates the teapot around the Y axis 15 degrees per second 
-    vl::Real degrees = vl::Time::currentTime() * 15;
+    vl::real degrees = vl::Time::currentTime() * 15;
     vl::mat4 matrix = vl::mat4::getRotation( degrees, 0,1,0 );
     mCubeTransform->setLocalMatrix( matrix );
 

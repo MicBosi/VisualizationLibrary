@@ -80,7 +80,7 @@ void Geometry::computeBounds_Implementation()
     }
   }
 
-  Real radius = 0, r = 0;
+  real radius = 0, r = 0;
   vec3 center = aabb.center();
   for(int i=0; i<drawCalls()->size(); ++i)
   {

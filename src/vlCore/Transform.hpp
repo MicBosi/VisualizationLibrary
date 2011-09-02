@@ -108,7 +108,7 @@ namespace vl
 
     /** Utility function equivalent to \p setLocalMatrix( mat4::getTranslation(x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
-    void translate(Real x, Real y, Real z);
+    void translate(real x, real y, real z);
     
     /** Utility function equivalent to \p setLocalMatrix( mat4::getTranslation(t)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
@@ -116,11 +116,11 @@ namespace vl
     
     /** Utility function equivalent to \p setLocalMatrix( mat4::getScaling(x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
-    void scale(Real x, Real y, Real z);
+    void scale(real x, real y, real z);
     
     /** Utility function equivalent to \p setLocalMatrix( mat4::getRotation(degrees,x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
-    void rotate(Real degrees, Real x, Real y, Real z);
+    void rotate(real degrees, real x, real y, real z);
     
     /** Utility function equivalent to \p setLocalMatrix( mat4::getRotation(from,to)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */

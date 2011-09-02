@@ -82,7 +82,7 @@ namespace
   };
 }
 //------------------------------------------------------------------------------
-const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur_camera, Real frame_clock)
+const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur_camera, real frame_clock)
 {
   VL_CHECK_OGL()
 
