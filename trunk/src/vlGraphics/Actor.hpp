@@ -74,7 +74,7 @@ namespace vl
   - Actor::actorEventCallbacks() */
   class VLGRAPHICS_EXPORT ActorEventCallback: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::ActorEventCallback, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::ActorEventCallback, Object)
 
   public:
     ActorEventCallback(): mEnabled(true) {}

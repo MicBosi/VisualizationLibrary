@@ -164,12 +164,11 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VolumeInfo, Object)
 
   public:
-    VolumeInfo(Volume* vol, float threshold, const fvec4& color)
+    VolumeInfo()
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mColor = color;
-      mThreshold = threshold;
-      mVolume = vol;
+      mThreshold = 0;
+      mVolume = NULL;
       mVert0 = -1;
       mVertC = -1;
     }
@@ -177,6 +176,16 @@ namespace vl
     VolumeInfo(Volume* vol, float threshold)
     {
       VL_DEBUG_SET_OBJECT_NAME()
+      mThreshold = threshold;
+      mVolume = vol;
+      mVert0 = -1;
+      mVertC = -1;
+    }
+
+    VolumeInfo(Volume* vol, float threshold, const fvec4& color)
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+      mColor = color;
       mThreshold = threshold;
       mVolume = vol;
       mVert0 = -1;

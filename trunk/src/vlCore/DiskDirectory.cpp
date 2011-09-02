@@ -103,7 +103,7 @@ bool DiskDirectory::exists() const
   #if defined(VL_PLATFORM_WINDOWS)
     WIN32_FIND_DATA FindFileData;
     memset( &FindFileData, 0, sizeof(FindFileData) );
-    String wild = path() + "/*";
+    String wild = path() + "*";
     HANDLE hFind = FindFirstFile( (wchar_t*)wild.ptr(), &FindFileData );
     if( hFind == INVALID_HANDLE_VALUE )
       return false;
@@ -138,7 +138,7 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
   #if defined(VL_PLATFORM_WINDOWS)
     WIN32_FIND_DATA FindFileData;
     memset( &FindFileData, 0, sizeof(FindFileData) );
-    String wild = path() + "/*";
+    String wild = path() + "*";
     HANDLE hFind = FindFirstFile( (wchar_t*)wild.ptr(), &FindFileData );
     if( hFind == INVALID_HANDLE_VALUE )
       Log::error( Say("Cannot open directory '%s' for directory listing.\n") << path() );
@@ -151,7 +151,7 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
           String name;
           name = FindFileData.cFileName;
           if (name != L"." && name != L"..")
-            dirs.push_back( path() + '/' + name );
+            dirs.push_back( path() + name + '/' );
         }
       } while( FindNextFile(hFind, &FindFileData) != 0 );
 
@@ -177,8 +177,9 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
         if (name == ".." || name == ".")
           continue;
 
+        name = path() + name + '/';
         // To discover the linked directories we try to open them instead of reading 'dirp.d_type'
-        (path()+'/'+name).toUTF8( utf8, false );
+        name.toUTF8( utf8, false );
         DIR* is_dir = opendir((char*)&utf8[0]);
         if (is_dir)
           closedir(is_dir);
@@ -188,7 +189,7 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
         // to discover directory links you can try to open them with opendir()
         // if (dirp.d_type == 4 )
         if (is_dir)
-          dirs.push_back( path() + '/' + name );
+          dirs.push_back( name );
       }
       closedir(dp);
     }
@@ -207,7 +208,7 @@ void DiskDirectory::listFiles(std::vector< ref<DiskFile> >& file_list, bool appe
   for(unsigned i=0; i<file_names.size(); ++i)
   {
     ref<DiskFile> file = new DiskFile;
-    // file->setPath( path() + '/' + file_names[i] );
+    // file->setPath( path() + file_names[i] );
     file->setPath( file_names[i] );
     file_list.push_back(file);
   }
@@ -240,7 +241,7 @@ void DiskDirectory::listFiles(std::vector<String>& files, bool append) const
           String name;
           name = FindFileData.cFileName;
           // the paths are relative
-          files.push_back( path() + '/' + name );
+          files.push_back( path() + name );
         }
       } while( FindNextFile(hFind, &FindFileData) != 0 );
 
@@ -266,8 +267,9 @@ void DiskDirectory::listFiles(std::vector<String>& files, bool append) const
         if (name == ".." || name == ".")
           continue;
 
+        name = path() + name;
         // whatever is not a directory is a file for us
-        (path()+'/'+name).toUTF8( utf8, false );
+        name.toUTF8( utf8, false );
         DIR* is_dir = opendir((char*)&utf8[0]);
         if (is_dir)
           closedir(is_dir);

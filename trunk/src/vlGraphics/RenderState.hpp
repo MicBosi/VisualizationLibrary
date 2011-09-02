@@ -49,7 +49,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT RenderState: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::RenderState, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::RenderState, Object)
 
   public:
     RenderState() 
@@ -69,7 +69,7 @@ namespace vl
   /** Base class for those render states which have more than one binding points like lights, clipping planes and texture unit states. */
   class VLGRAPHICS_EXPORT RenderStateIndexed: public RenderState
   {
-    VL_INSTRUMENT_CLASS(vl::RenderStateIndexed, RenderState)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::RenderStateIndexed, RenderState)
 
   public:
     RenderStateIndexed() 
@@ -83,7 +83,7 @@ namespace vl
   /** Base class for those render states which have only one binding point (the vast majority). */
   class VLGRAPHICS_EXPORT RenderStateNonIndexed: public RenderState
   {
-    VL_INSTRUMENT_CLASS(vl::RenderStateNonIndexed, RenderState)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::RenderStateNonIndexed, RenderState)
 
   public:
     RenderStateNonIndexed() 

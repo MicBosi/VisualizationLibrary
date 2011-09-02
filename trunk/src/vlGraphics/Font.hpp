@@ -139,7 +139,7 @@ namespace vl
     Font(const Font& other): Object(other) { VL_TRAP() } // should never get used
     
     //! Constructor.
-    Font(FontManager* fm);
+    Font(FontManager* fm = NULL);
     
     //! Constructor. The specified 'font_file' is immediately loaded.
     Font(FontManager* fm, const String& font_file, int size );

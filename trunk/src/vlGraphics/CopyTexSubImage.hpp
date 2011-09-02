@@ -55,7 +55,7 @@ namespace vl
     * FBORenderTarget, FBOAbstractAttachment, Rendering, RenderEventCallback, CopyTexSubImage1D, CopyTexSubImage2D, CopyTexSubImage3D */
   class CopyTexSubImage: public RenderEventCallback
   {
-    VL_INSTRUMENT_CLASS(vl::CopyTexSubImage, RenderEventCallback)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::CopyTexSubImage, RenderEventCallback)
 
   public:
     CopyTexSubImage(): mReadBuffer(RDB_BACK_LEFT) 

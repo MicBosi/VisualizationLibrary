@@ -44,7 +44,7 @@ namespace vl
   */
   class RenderQueueSorter: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::RenderQueueSorter, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::RenderQueueSorter, Object)
 
   public:
     RenderQueueSorter()
@@ -110,6 +110,7 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
+    virtual bool mightNeedZCameraDistance() const { return true; }
     virtual bool confirmZCameraDistanceNeed(const RenderToken*) const { return false; }
     virtual bool operator()(const RenderToken* a, const RenderToken* b) const
     {

@@ -31,7 +31,7 @@
 
 #include <vlGraphics/Extrusion.hpp>
 #include <vlGraphics/Tessellator.hpp>
-#include <vlCore/GLSLmath.hpp>
+#include <vlCore/glslmath.hpp>
 
 using namespace vl;
 

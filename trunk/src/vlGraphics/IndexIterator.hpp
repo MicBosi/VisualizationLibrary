@@ -42,7 +42,7 @@ namespace vl
   /** Abstract class used as base for all the index iterators specializations. */
   class IndexIteratorAbstract: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::IndexIteratorAbstract, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::IndexIteratorAbstract, Object)
 
   public:
     IndexIteratorAbstract(): mIndex(-1) 
@@ -124,7 +124,7 @@ namespace vl
   template<class TArray>
   class IndexIteratorElements: public IndexIteratorAbstract
   {
-    VL_INSTRUMENT_CLASS(vl::IndexIteratorElements<class TArray>, IndexIteratorAbstract)
+    VL_INSTRUMENT_CLASS(vl::IndexIteratorElements<TArray>, IndexIteratorAbstract)
 
   public:
     IndexIteratorElements()

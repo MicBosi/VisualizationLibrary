@@ -51,7 +51,7 @@ namespace vl
    * vl::MultiDrawElementsUInt, vl::MultiDrawElementsUShort or vl::MultiDrawElementsUByte. */
   class MultiDrawElementsBase: public DrawCall
   {
-    VL_INSTRUMENT_CLASS(vl::MultiDrawElementsBase, DrawCall)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::MultiDrawElementsBase, DrawCall)
 
   public:
     /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
@@ -146,7 +146,7 @@ namespace vl
   template <class arr_type>
   class MultiDrawElements: public MultiDrawElementsBase
   {
-    VL_INSTRUMENT_CLASS(vl::MultiDrawElements, MultiDrawElementsBase)
+    VL_INSTRUMENT_CLASS(vl::MultiDrawElements<arr_type>, MultiDrawElementsBase)
 
   public:
     typedef typename arr_type::scalar_type index_type;
