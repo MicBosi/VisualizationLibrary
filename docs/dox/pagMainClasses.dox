@@ -8,6 +8,7 @@
 
 	\par Math
 	
+	- vl::half
 	- vl::real
 	- vl::degree
 	- vl::radian
@@ -31,7 +32,7 @@
 	- vl::RectI
 	- vl::RectF
 	
-	- glslmath.hpp
+	- glsl_math.hpp
 	
 	\par Text manipulation and rendering
 	

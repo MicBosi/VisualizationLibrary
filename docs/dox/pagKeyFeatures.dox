@@ -190,7 +190,7 @@ vl::Actor, vl::Effect, vl::Shader
 
 <div class="featuretitle">OpenGL Shading Language Based C++ Math Library</div>
 
-Visualization Library features a complete vector and matrix math library designed to replicate as closely as possible in C++ the OpenGL Shading Language types and functons. VL's math library provides the developer with 2, 3, and 4 components vector (\p float, \p double, \p int, \p unsigned \p int etc.), 2x2, 3x3, 4x4 \p float and \p double matrices, vector/vector, vector/matrix and matrix/matrix operations, a quaternion class to conveniently represent and manipulate rotations and orientations and much more. The glslmath.hpp module also provides C++ implementations of the most important OpenGL Shading Language scalar and vector functions.
+Visualization Library features a complete vector and matrix math library designed to replicate as closely as possible in C++ the OpenGL Shading Language types and functons. VL's math library provides the developer with 2, 3, and 4 components vector (\p float, \p double, \p int, \p unsigned \p int etc.), 2x2, 3x3, 4x4 \p float and \p double matrices, vector/vector, vector/matrix and matrix/matrix operations, a quaternion class to conveniently represent and manipulate rotations and orientations and much more. The glsl_math.hpp module also provides C++ implementations of the most important OpenGL Shading Language scalar and vector functions.
 
 \par Classes
 
