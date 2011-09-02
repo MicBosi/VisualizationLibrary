@@ -32,7 +32,7 @@
 #include <vlGraphics/Texture.hpp>
 #include <vlCore/checks.hpp>
 #include <vlCore/Image.hpp>
-#include <vlCore/mathutils.hpp>
+#include <vlCore/math_utils.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Log.hpp>
 

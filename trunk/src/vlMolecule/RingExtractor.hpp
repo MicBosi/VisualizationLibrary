@@ -32,7 +32,7 @@
 #ifndef RingExtractor_INCLUDE_ONCE
 #define RingExtractor_INCLUDE_ONCE
 
-#include <vlCore/glslmath.hpp>
+#include <vlCore/glsl_math.hpp>
 #include <vector>
 #include <algorithm>
 #include <map>

@@ -33,7 +33,7 @@
 #define GLSL_INCLUDE_ONCE
 
 #include <vlGraphics/UniformSet.hpp>
-#include <vlCore/glslmath.hpp>
+#include <vlCore/glsl_math.hpp>
 #include <vlGraphics/RenderState.hpp>
 #include <vlCore/String.hpp>
 

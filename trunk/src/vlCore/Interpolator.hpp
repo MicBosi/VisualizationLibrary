@@ -33,7 +33,7 @@
 #define Interpolator_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlCore/glslmath.hpp>
+#include <vlCore/glsl_math.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vector>
 
