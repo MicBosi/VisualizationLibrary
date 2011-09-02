@@ -1494,23 +1494,23 @@ namespace vl
 
   typedef enum
   {
-    VUF_ForceUpdate   = 0x1,
-    VUF_DiscardRamBuffer = 0x2,
+    BUF_ForceUpdate   = 0x1,
+    BUF_DiscardRamBuffer = 0x2,
   } EBufferObjectUpdateFlags;
 
   typedef enum
   {
     //! Keeps the local buffer on RAM and updates the BufferObject only if it is marked as dirty. The BufferObject is marked as clean after the update.
-    VUM_KeepRamBuffer = 0x0,
+    BUM_KeepRamBuffer = 0x0,
 
     //! Keeps the local buffer on RAM and updates the BufferObject always, even if it is not marked as dirty. The BufferObject is marked as clean after the update.
-    VUM_KeepRamBufferAndForceUpdate = VUF_ForceUpdate, 
+    BUM_KeepRamBufferAndForceUpdate = BUF_ForceUpdate, 
 
     //! Discards the local buffer on RAM and updates the BufferObject only if it is marked as dirty. The BufferObject is marked as clean after the update.
-    VUM_DiscardRamBuffer = VUF_DiscardRamBuffer,
+    BUM_DiscardRamBuffer = BUF_DiscardRamBuffer,
 
     //! Discards the local buffer on RAM and updates the BufferObject always, even if it is not marked as dirty. The BufferObject is marked as clean after the update.
-    VUM_DiscardRamBufferAndForceUpdate = VUF_DiscardRamBuffer | VUF_ForceUpdate
+    BUM_DiscardRamBufferAndForceUpdate = BUF_DiscardRamBuffer | BUF_ForceUpdate
   } EBufferObjectUpdateMode;
 
   typedef enum

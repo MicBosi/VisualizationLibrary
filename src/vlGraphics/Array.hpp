@@ -143,10 +143,10 @@ namespace vl
     void setUsage(EBufferObjectUsage usage) { mBufferObjectUsage = usage; }
 
     //! Updates the BufferObject. 
-    //! @param mode Only the VUF_DiscardRamBuffer flag is checked as the VUF_ForceUpdate flag is considered always set for this function. By default mode is set to VUM_KeepRamBuffer.
-    void updateBufferObject(EBufferObjectUpdateMode mode = VUM_KeepRamBuffer)
+    //! @param mode Only the BUF_DiscardRamBuffer flag is checked as the BUF_ForceUpdate flag is considered always set for this function. By default mode is set to BUM_KeepRamBuffer.
+    void updateBufferObject(EBufferObjectUpdateMode mode = BUM_KeepRamBuffer)
     {
-      bufferObject()->setBufferData(usage(), (mode & VUF_DiscardRamBuffer) !=  0);
+      bufferObject()->setBufferData(usage(), (mode & BUF_DiscardRamBuffer) !=  0);
       setBufferObjectDirty(false);
     }
 
