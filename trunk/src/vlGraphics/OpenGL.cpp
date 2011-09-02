@@ -79,7 +79,7 @@ namespace vl
   bool Has_GLSL_400_Or_More = false;
   bool Has_GLSL_410_Or_More = false;
   bool Has_Geometry_Shader = false;
-  bool Has_VBO = false;
+  bool Has_BufferObject = false;
   bool Has_FBO = false;
   bool Has_PBO = false;
   bool Has_FBO_Multisample = false;
@@ -453,7 +453,7 @@ bool vl::initializeOpenGL()
   Has_GLSL_400_Or_More = Has_GL_Version_4_0;
   Has_GLSL_410_Or_More = Has_GL_Version_4_1;
   Has_Geometry_Shader  = Has_GL_NV_geometry_shader4 || Has_GL_EXT_geometry_shader4 || Has_GL_ARB_geometry_shader4 || Has_GL_Version_3_2 || Has_GL_Version_4_0;
-  Has_VBO = Has_GL_ARB_vertex_buffer_object || Has_GL_Version_1_5 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES;
+  Has_BufferObject = Has_GL_ARB_vertex_buffer_object || Has_GL_Version_1_5 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES;
   Has_FBO = Has_GL_EXT_framebuffer_object || Has_GL_ARB_framebuffer_object || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GL_OES_framebuffer_object || Has_GLES_Version_2_0;
   Has_PBO = Has_GL_ARB_pixel_buffer_object || Has_GL_EXT_pixel_buffer_object || Has_GL_Version_2_1 || Has_GL_Version_3_0 || Has_GL_Version_4_0;
   // We only support GL_ANGLE_framebuffer_blit for GLES, see also:

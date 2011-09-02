@@ -698,7 +698,7 @@ bool Texture::supports(ETextureDimension tex_dimension, ETextureFormat tex_forma
 #endif
 }
 //-----------------------------------------------------------------------------
-bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_format, int w, int h, int d, bool border, VBO* buffer_object, int samples, bool fixedsamplelocations)
+bool Texture::createTexture(ETextureDimension tex_dimension, ETextureFormat tex_format, int w, int h, int d, bool border, BufferObject* buffer_object, int samples, bool fixedsamplelocations)
 {
   VL_CHECK_OGL()
 

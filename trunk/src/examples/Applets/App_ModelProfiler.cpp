@@ -90,7 +90,7 @@ public:
     mOptConvertToDrawArrays = false;
     mOptRecomputeNormals = false;
     mOptHighlightStrips = false;
-    mOptUseVBO = false;
+    mOptUseBufferObject = false;
     mOptUseDL = false;
   }
 
@@ -159,14 +159,14 @@ public:
       else
       if( y < h / 14 * 10) 
       {
-        mOptUseVBO = !mOptUseVBO; 
-        if (mOptUseVBO) mOptUseDL = false;
+        mOptUseBufferObject = !mOptUseBufferObject; 
+        if (mOptUseBufferObject) mOptUseDL = false;
       }
       else
       if( y < h / 14 * 11) 
       {
         mOptUseDL = !mOptUseDL;
-        if (mOptUseDL) mOptUseVBO = false;
+        if (mOptUseDL) mOptUseBufferObject = false;
       }
       else
       if( y < h / 14 * 12) 
@@ -265,9 +265,9 @@ public:
         VL_LOG_PRINT << ("Using display lists.\n");
       geom->setDisplayListEnabled(mOptUseDL);
 
-      if (mOptUseVBO)
+      if (mOptUseBufferObject)
         VL_LOG_PRINT << ("Using vertex buffer objects.\n");
-      geom->setVBOEnabled(mOptUseVBO);
+      geom->setBufferObjectEnabled(mOptUseBufferObject);
 
       if (!geom->normalArray())
         geom->computeNormals();
@@ -308,7 +308,7 @@ public:
     str += mOptConvertToDrawArrays? "[x]" : "[ ]"; str += " Convert To DrawArrays\n";
     str += mOptRecomputeNormals ? "[x]" : "[ ]"; str += " Recompute Normals\n";
     str += mOptHighlightStrips ? "[x]" : "[ ]"; str += " Highlight Strips\n";
-    str += mOptUseVBO? "[x]" : "[ ]"; str += " Use Vertex Buffer Objects\n";
+    str += mOptUseBufferObject? "[x]" : "[ ]"; str += " Use Vertex Buffer Objects\n";
     str += mOptUseDL? "[x]" : "[ ]"; str += " Use Display Lists\n";
     str += "<APPLY CHANGES>";
 
@@ -373,7 +373,7 @@ public:
         if (geom)
           mActorGeomMap[actor] = geom->deepCopy();
 
-        // geom->setVBOEnabled(false);
+        // geom->setBufferObjectEnabled(false);
         // geom->setDisplayListEnabled(false);
 
         sceneManager()->tree()->addActor( actor.get() );
@@ -487,7 +487,7 @@ protected:
   bool mOptConvertToDrawArrays;
   bool mOptRecomputeNormals;
   bool mOptHighlightStrips;
-  bool mOptUseVBO;
+  bool mOptUseBufferObject;
   bool mOptUseDL;
 };
 

@@ -80,7 +80,7 @@ public:
     image_fx->shader()->gocColor()->setValue(vl::white);
 
     mGrid = vl::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, mSlices, mSlices, true, vl::fvec2(0,0), vl::fvec2(1,1) );
-    mGrid->setVBOEnabled(false);
+    mGrid->setBufferObjectEnabled(false);
     mGrid->transform(vl::mat4::getRotation(-90,1,0,0));
     mPoints = vl::cast<vl::ArrayFloat3>(mGrid->vertexArray());
 

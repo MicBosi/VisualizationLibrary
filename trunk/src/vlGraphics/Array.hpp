@@ -32,7 +32,7 @@
 #ifndef Array_INCLUDE_ONCE
 #define Array_INCLUDE_ONCE
 
-#include <vlGraphics/VBO.hpp>
+#include <vlGraphics/BufferObject.hpp>
 #include <vlCore/half.hpp>
 #include <vector>
 
@@ -42,7 +42,7 @@ namespace vl
 // ArrayAbstract
 //-----------------------------------------------------------------------------
   /**
-   * The ArrayAbstract class defines an abstract interface to conveniently manipulate data stored in a VBO.
+   * The ArrayAbstract class defines an abstract interface to conveniently manipulate data stored in a BufferObject.
    * \sa
    *
    * - vl::Array
@@ -64,38 +64,38 @@ namespace vl
     ArrayAbstract()
     { 
       VL_DEBUG_SET_OBJECT_NAME()
-      mVBO = new VBO;
-      mVBODirty = true;
-      mVBOUsage = vl::BU_STATIC_DRAW;
+      mBufferObject = new BufferObject;
+      mBufferObjectDirty = true;
+      mBufferObjectUsage = vl::BU_STATIC_DRAW;
     }
 
-    //! Copies only the local data and not the VBO related fields
+    //! Copies only the local data and not the BufferObject related fields
     ArrayAbstract(const ArrayAbstract& other): Object(other) 
     {
       operator=(other);
     }
-    //! Copies only the local data and not the VBO related fields
+    //! Copies only the local data and not the BufferObject related fields
     void operator=(const ArrayAbstract& other) 
     {
-      vbo()->resize( other.vbo()->bytesUsed() );
+      bufferObject()->resize( other.bufferObject()->bytesUsed() );
       memcpy( ptr(), other.ptr(), bytesUsed() );
     }
 
     virtual ref<ArrayAbstract> clone() const = 0;
 
-    const VBO* vbo() const { return mVBO.get(); }
-    VBO* vbo() { return mVBO.get(); }
+    const BufferObject* bufferObject() const { return mBufferObject.get(); }
+    BufferObject* bufferObject() { return mBufferObject.get(); }
 
-    void clear() { if (vbo()) vbo()->clear(); }
+    void clear() { if (bufferObject()) bufferObject()->clear(); }
 
-    //! Returns the pointer to the first element of the local buffer. Equivalent to vbo()->ptr()
-    const unsigned char* ptr() const { return vbo() ? vbo()->ptr() : NULL; }
+    //! Returns the pointer to the first element of the local buffer. Equivalent to bufferObject()->ptr()
+    const unsigned char* ptr() const { return bufferObject() ? bufferObject()->ptr() : NULL; }
 
-    //! Returns the pointer to the first element of the local buffer. Equivalent to vbo()->ptr()
-    unsigned char* ptr() { return vbo() ? vbo()->ptr() : NULL; }
+    //! Returns the pointer to the first element of the local buffer. Equivalent to bufferObject()->ptr()
+    unsigned char* ptr() { return bufferObject() ? bufferObject()->ptr() : NULL; }
 
-    //! Returns the amount of memory in bytes used by an array. Equivalent to vbo()->bytesUsed().
-    virtual size_t bytesUsed() const { return vbo() ? vbo()->bytesUsed() : 0; }
+    //! Returns the amount of memory in bytes used by an array. Equivalent to bufferObject()->bytesUsed().
+    virtual size_t bytesUsed() const { return bufferObject() ? bufferObject()->bytesUsed() : 0; }
 
     //! Returns the number of scalar components for the array, ie 3 for ArrayFloat3, 1 for ArrayUInt1 etc.
     virtual size_t glSize() const = 0;
@@ -130,36 +130,36 @@ namespace vl
     //! Compares two vectors
     virtual int compare(int a, int b) const = 0;
 
-    //! Wether the VBO should be updated or not using the local storage. Initially set to true.
-    bool isVBODirty() const { return mVBODirty; }
+    //! Wether the BufferObject should be updated or not using the local storage. Initially set to true.
+    bool isBufferObjectDirty() const { return mBufferObjectDirty; }
 
-    //! Wether the VBO should be updated or not using the local storage. Initially set to true.
-    void setVBODirty(bool dirty=true) { mVBODirty = dirty; }
-
-    //! BU_STATIC_DRAW by default
-    EBufferObjectUsage usage() const { return mVBOUsage; }
+    //! Wether the BufferObject should be updated or not using the local storage. Initially set to true.
+    void setBufferObjectDirty(bool dirty=true) { mBufferObjectDirty = dirty; }
 
     //! BU_STATIC_DRAW by default
-    void setUsage(EBufferObjectUsage usage) { mVBOUsage = usage; }
+    EBufferObjectUsage usage() const { return mBufferObjectUsage; }
 
-    //! Updates the VBO. 
+    //! BU_STATIC_DRAW by default
+    void setUsage(EBufferObjectUsage usage) { mBufferObjectUsage = usage; }
+
+    //! Updates the BufferObject. 
     //! @param mode Only the VUF_DiscardRamBuffer flag is checked as the VUF_ForceUpdate flag is considered always set for this function. By default mode is set to VUM_KeepRamBuffer.
-    void updateVBO(EVBOUpdateMode mode = VUM_KeepRamBuffer)
+    void updateBufferObject(EBufferObjectUpdateMode mode = VUM_KeepRamBuffer)
     {
-      vbo()->setBufferData(usage(), (mode & VUF_DiscardRamBuffer) !=  0);
-      setVBODirty(false);
+      bufferObject()->setBufferData(usage(), (mode & VUF_DiscardRamBuffer) !=  0);
+      setBufferObjectDirty(false);
     }
 
   protected:
-    ref<VBO> mVBO;
-    EBufferObjectUsage mVBOUsage;
-    bool mVBODirty;
+    ref<BufferObject> mBufferObject;
+    EBufferObjectUsage mBufferObjectUsage;
+    bool mBufferObjectDirty;
   };
 //-----------------------------------------------------------------------------
 // Array
 //-----------------------------------------------------------------------------
   /**
-   * The Array class is a template array used to conveniently manipulate data stored in a VBO.
+   * The Array class is a template array used to conveniently manipulate data stored in a BufferObject.
    * \sa
    *
    * - ArrayAbstract
@@ -192,17 +192,17 @@ namespace vl
 
     // ---
 
-    void clear() { resize(0); vbo()->deleteVBO(); }
+    void clear() { resize(0); bufferObject()->deleteBufferObject(); }
     
-    void resize(size_t dim) { vbo()->resize(dim*bytesPerVector()); }
+    void resize(size_t dim) { bufferObject()->resize(dim*bytesPerVector()); }
     
     size_t size() const { return bytesUsed() / bytesPerVector(); }
     
-    size_t sizeVBO() const { return vbo() ? vbo()->byteCountVBO() / bytesPerVector() : 0; }
+    size_t sizeBufferObject() const { return bufferObject() ? bufferObject()->byteCountBufferObject() / bytesPerVector() : 0; }
     
     size_t scalarCount() const { return size() * glSize(); }
     
-    size_t scalarCountVBO() const { return sizeVBO() * glSize(); }
+    size_t scalarCountBufferObject() const { return sizeBufferObject() * glSize(); }
 
     // ---
 

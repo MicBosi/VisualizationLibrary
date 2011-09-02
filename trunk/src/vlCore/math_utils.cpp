@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlCore/mathutils.hpp>
+#include <vlCore/math_utils.hpp>
 #include <vlCore/AABB.hpp>
 #include <vlCore/Vector2.hpp>
 #include <vlCore/Vector4.hpp>

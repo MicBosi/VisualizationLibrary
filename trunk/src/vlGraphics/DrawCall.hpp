@@ -115,11 +115,11 @@ namespace vl
     /** Returns a clone of the draw call. */
     virtual ref<DrawCall> clone() const = 0;
 
-    /** Updates the index buffer's VBO if marked as dirty. */
-    virtual void updateDirtyVBO(EVBOUpdateMode) = 0;
+    /** Updates the index buffer's BufferObject if marked as dirty. */
+    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode) = 0;
 
-    /** Deletes the index buffer's VBO. */
-    virtual void deleteVBO() = 0;
+    /** Deletes the index buffer's BufferObject. */
+    virtual void deleteBufferObject() = 0;
 
     /** Enables/disables the draw call. */
     void setEnabled(bool enable) { mEnabled = enable; }

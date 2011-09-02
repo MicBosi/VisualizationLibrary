@@ -404,10 +404,10 @@ public:
       mTexCoords_3D->at(1) = fvec3(0, 1, t);
       mTexCoords_3D->at(2) = fvec3(1, 0, t);
       mTexCoords_3D->at(3) = fvec3(1, 1, t);
-      // Mark texture coords as dirty to update its VBOs.
-      mTexCoords_3D->setVBODirty(true);
-      // Request the quad geometry to check its VBOs at the next rendering.
-      mQuad3DTex->setVBODirty(true);
+      // Mark texture coords as dirty to update its BufferObjects.
+      mTexCoords_3D->setBufferObjectDirty(true);
+      // Request the quad geometry to check its BufferObjects at the next rendering.
+      mQuad3DTex->setBufferObjectDirty(true);
     }
 
     // 2D texture array coordinates animation
@@ -422,10 +422,10 @@ public:
       mTexCoords_2DArray->at(1) = fvec3(0, 1, t*m2DArraySize);
       mTexCoords_2DArray->at(2) = fvec3(1, 0, t*m2DArraySize);
       mTexCoords_2DArray->at(3) = fvec3(1, 1, t*m2DArraySize);
-      // Mark texture coords as dirty to update its VBOs.
-      mTexCoords_2DArray->setVBODirty(true);
-      // Request the quad geometry to check its VBOs at the next rendering.
-      mQuad2DArrayTex->setVBODirty(true);
+      // Mark texture coords as dirty to update its BufferObjects.
+      mTexCoords_2DArray->setBufferObjectDirty(true);
+      // Request the quad geometry to check its BufferObjects at the next rendering.
+      mQuad2DArrayTex->setBufferObjectDirty(true);
     }
 
     // 1D texture array coordinates animation
@@ -441,10 +441,10 @@ public:
         mTexCoords_1DArray->at(i*2+0) = fvec2(0+x_offset, (float)i);
         mTexCoords_1DArray->at(i*2+1) = fvec2(1+x_offset, (float)i);
       }
-      // Mark texture coords as dirty to update its VBOs.
-      mTexCoords_1DArray->setVBODirty(true);
-      // Request the quad geometry to check its VBOs at the next rendering.
-      mQuad1DArrayTex->setVBODirty(true);
+      // Mark texture coords as dirty to update its BufferObjects.
+      mTexCoords_1DArray->setBufferObjectDirty(true);
+      // Request the quad geometry to check its BufferObjects at the next rendering.
+      mQuad1DArrayTex->setBufferObjectDirty(true);
     }
 
     // Spherical mapped torus animation

@@ -400,8 +400,8 @@ public:
     geom->setVertexArray(mMarchingCubes.mVertsArray.get());
     geom->setNormalArray(mMarchingCubes.mNormsArray.get());
     geom->drawCalls()->push_back(mMarchingCubes.mDrawElements.get());
-    // disable VBO since we update the vertices every frame
-    geom->setVBOEnabled(false);
+    // disable BufferObject since we update the vertices every frame
+    geom->setBufferObjectEnabled(false);
 
     vl::ref<vl::Effect> fx = new vl::Effect;
     fx->shader()->setRenderState( new vl::Light, 0 );
@@ -443,8 +443,8 @@ public:
     geom->setVertexArray(mMarchingCubes.mVertsArray.get());
     geom->setNormalArray(mMarchingCubes.mNormsArray.get());
     geom->drawCalls()->push_back(mMarchingCubes.mDrawElements.get());
-    // disable VBO since we update the vertices every frame
-    geom->setVBOEnabled(false);
+    // disable BufferObject since we update the vertices every frame
+    geom->setBufferObjectEnabled(false);
 
     vl::ref<vl::Effect> fx = new vl::Effect;
     fx->shader()->setRenderState( new vl::Light, 0 );
@@ -654,7 +654,7 @@ public:
     mMarchingCubes.volumeInfo()->at(0)->setThreshold(mThreshold);
     mMarchingCubes.run(false);
     if (mIsosurfGeom)
-      mIsosurfGeom->setVBODirty(true);
+      mIsosurfGeom->setBufferObjectDirty(true);
 
     vl::Log::print( vl::Say("Marching cubes: time = %.2n, verts = %n\n") << time.elapsed() << mMarchingCubes.mVertsArray->size() );
 

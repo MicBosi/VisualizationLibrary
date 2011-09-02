@@ -36,7 +36,7 @@
 #include <vlCore/Say.hpp>
 #include <vlCore/Log.hpp>
 #include <vlGraphics/RenderEventCallback.hpp>
-#include <vlGraphics/VBO.hpp>
+#include <vlGraphics/BufferObject.hpp>
 #include <vlCore/Image.hpp>
 
 namespace vl
@@ -97,7 +97,7 @@ namespace vl
     if (store_in_pixel_buffer_object && supports_pbo)
     {
       // mic fixme: test
-      VBO* glbuf = cast<VBO>(image->imageBuffer()); VL_CHECK(glbuf);
+      BufferObject* glbuf = cast<BufferObject>(image->imageBuffer()); VL_CHECK(glbuf);
 
       int bytes = image->requiredMemory2D(w, h, 1, image->format(), image->type());
       // allocates the PBO
@@ -115,7 +115,7 @@ namespace vl
       // test GPU -> local copy
       //if (w != image->width() || h != image->height() || image->dimension() != ID_2D || image->pixels() == NULL)
       //  image->allocate2D( w, h, 1, image->format(), image->type() );
-      //glbuf->downloadVBO();
+      //glbuf->downloadBufferObject();
     }
     else
     {

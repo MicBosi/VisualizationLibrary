@@ -421,71 +421,71 @@ void Geometry::computeNormals(bool verbose)
     (*norm3f)[i].normalize();
 }
 //-----------------------------------------------------------------------------
-void Geometry::deleteVBO()
+void Geometry::deleteBufferObject()
 {
-  if (!Has_VBO)
+  if (!Has_BufferObject)
     return;
 
   for(int i=0; i<(int)drawCalls()->size(); ++i)
-    drawCalls()->at(i)->deleteVBO();
+    drawCalls()->at(i)->deleteBufferObject();
 
   if (mVertexArray)
-    mVertexArray->vbo()->deleteVBO();
+    mVertexArray->bufferObject()->deleteBufferObject();
   
   if (mNormalArray)
-    mNormalArray->vbo()->deleteVBO();
+    mNormalArray->bufferObject()->deleteBufferObject();
   
   if (mColorArray)
-    mColorArray->vbo()->deleteVBO();
+    mColorArray->bufferObject()->deleteBufferObject();
   
   if (mSecondaryColorArray)
-    mSecondaryColorArray->vbo()->deleteVBO();
+    mSecondaryColorArray->bufferObject()->deleteBufferObject();
   
   if (mFogCoordArray)
-    mFogCoordArray->vbo()->deleteVBO();
+    mFogCoordArray->bufferObject()->deleteBufferObject();
   
   for (int i=0; i<mTexCoordArrays.size(); ++i)
-    mTexCoordArrays[i]->mTexCoordArray->vbo()->deleteVBO();
+    mTexCoordArrays[i]->mTexCoordArray->bufferObject()->deleteBufferObject();
 
   for(int i=0; i<vertexAttribArrays()->size(); ++i)
     if ( vertexAttribArrays()->at(i)->data() )
-      vertexAttribArrays()->at(i)->data()->vbo()->deleteVBO();
+      vertexAttribArrays()->at(i)->data()->bufferObject()->deleteBufferObject();
 }
 //-----------------------------------------------------------------------------
-void Geometry::updateDirtyVBO(EVBOUpdateMode mode)
+void Geometry::updateDirtyBufferObject(EBufferObjectUpdateMode mode)
 {
-  if (!Has_VBO)
+  if (!Has_BufferObject)
     return;
 
   bool force_update = (mode & VUF_ForceUpdate) != 0;
 
-  if ( mVertexArray && (mVertexArray->isVBODirty() || force_update) )
-    mVertexArray->updateVBO(mode);
+  if ( mVertexArray && (mVertexArray->isBufferObjectDirty() || force_update) )
+    mVertexArray->updateBufferObject(mode);
   
-  if ( mNormalArray && (mNormalArray->isVBODirty() || force_update) )
-    mNormalArray->updateVBO(mode);
+  if ( mNormalArray && (mNormalArray->isBufferObjectDirty() || force_update) )
+    mNormalArray->updateBufferObject(mode);
   
-  if ( mColorArray && (mColorArray->isVBODirty() || force_update) )
-    mColorArray->updateVBO(mode);
+  if ( mColorArray && (mColorArray->isBufferObjectDirty() || force_update) )
+    mColorArray->updateBufferObject(mode);
   
-  if ( mSecondaryColorArray && (mSecondaryColorArray->isVBODirty() || force_update) )
-    mSecondaryColorArray->updateVBO(mode);
+  if ( mSecondaryColorArray && (mSecondaryColorArray->isBufferObjectDirty() || force_update) )
+    mSecondaryColorArray->updateBufferObject(mode);
   
-  if ( mFogCoordArray && (mFogCoordArray->isVBODirty() || force_update) )
-    mFogCoordArray->updateVBO(mode);
+  if ( mFogCoordArray && (mFogCoordArray->isBufferObjectDirty() || force_update) )
+    mFogCoordArray->updateBufferObject(mode);
   
   for(int i=0; i<mTexCoordArrays.size(); ++i)
   {
-    if ( mTexCoordArrays[i]->mTexCoordArray->isVBODirty() || force_update )
-      mTexCoordArrays[i]->mTexCoordArray->updateVBO(mode);
+    if ( mTexCoordArrays[i]->mTexCoordArray->isBufferObjectDirty() || force_update )
+      mTexCoordArrays[i]->mTexCoordArray->updateBufferObject(mode);
   }
   
   for(int i=0; i<vertexAttribArrays()->size(); ++i)
-    if ( vertexAttribArrays()->at(i)->data() && (vertexAttribArrays()->at(i)->data()->isVBODirty() || force_update) )
-      vertexAttribArrays()->at(i)->data()->updateVBO(mode);
+    if ( vertexAttribArrays()->at(i)->data() && (vertexAttribArrays()->at(i)->data()->isBufferObjectDirty() || force_update) )
+      vertexAttribArrays()->at(i)->data()->updateBufferObject(mode);
 
   for(int i=0; i<drawCalls()->size(); ++i)
-    drawCalls()->at(i)->updateDirtyVBO(mode);
+    drawCalls()->at(i)->updateDirtyBufferObject(mode);
 }
 //-----------------------------------------------------------------------------
 void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*, OpenGLContext* gl_context) const
@@ -494,7 +494,7 @@ void Geometry::render_Implementation(const Actor*, const Shader*, const Camera*,
 
   // bind Vertex Attrib Set
 
-  bool vbo_on = Has_VBO && isVBOEnabled() && !isDisplayListEnabled();
+  bool vbo_on = Has_BufferObject && isBufferObjectEnabled() && !isDisplayListEnabled();
   gl_context->bindVAS(this, vbo_on, false);
 
   // actual draw

@@ -51,7 +51,7 @@ namespace vl
     {
       mMakeGLESFriendly    = false;
       mComputeNormals    = true;
-      mUseVBOs           = true;
+      mUseBufferObjects           = true;
       mUseDisplayLists   = false;
       mTransformGeometry = false;
       mDiscardOriginalNormals = false;
@@ -89,7 +89,7 @@ namespace vl
           geom[i]->convertDrawCallToDrawArrays();
 
         geom[i]->setDisplayListEnabled(useDisplayLists());
-        geom[i]->setVBOEnabled(useVBOs());
+        geom[i]->setBufferObjectEnabled(useBufferObjects());
 
         if (transformGeometry())
           geom[i]->transform(transformMatrix(),true);
@@ -129,15 +129,15 @@ namespace vl
     //! Converts the Geometry DrawCall into DrawArrays. Useful in conjuction with \p setStripfy(true).
     void setConvertToDrawArrays(bool on) { mConvertToDrawArrays = on; }
 
-    //! Enable display lists usage (overrides VBOs)
+    //! Enable display lists usage (overrides BufferObjects)
     void setUseDisplayLists(bool on) { mUseDisplayLists = on; }
-    //! Enable display lists usage (overrides VBOs)
+    //! Enable display lists usage (overrides BufferObjects)
     bool useDisplayLists() const { return mUseDisplayLists; }
 
-    //! Enable VBO usage if display lists are disabled
-    void setUseVBOs(bool on) { mUseVBOs = on; }
-    //! Enable VBO usage if display lists are disabled
-    bool useVBOs() const { return mUseVBOs; }
+    //! Enable BufferObject usage if display lists are disabled
+    void setUseBufferObjects(bool on) { mUseBufferObjects = on; }
+    //! Enable BufferObject usage if display lists are disabled
+    bool useBufferObjects() const { return mUseBufferObjects; }
 
     const mat4& transformMatrix() const { return mMatrix; }
     void setTransformMatrix(const mat4& m) { mMatrix = m; }
@@ -162,7 +162,7 @@ namespace vl
     bool mStripfy;
     bool mConvertToDrawArrays;
     bool mUseDisplayLists;
-    bool mUseVBOs;
+    bool mUseBufferObjects;
     bool mMakeGLESFriendly;
   };
 }
