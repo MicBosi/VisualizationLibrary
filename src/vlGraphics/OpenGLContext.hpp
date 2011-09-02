@@ -538,8 +538,8 @@ namespace vl
   private:
     struct VertexArrayInfo
     {
-      VertexArrayInfo(): mVBO(0), mPtr(0), mState(0), mEnabled(false) {}
-      int   mVBO;
+      VertexArrayInfo(): mBufferObject(0), mPtr(0), mState(0), mEnabled(false) {}
+      int   mBufferObject;
       const unsigned char* mPtr;
       int mState;
       bool mEnabled;

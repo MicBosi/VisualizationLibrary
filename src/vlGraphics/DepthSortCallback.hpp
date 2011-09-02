@@ -179,7 +179,7 @@ namespace vl
       for(size_t i=0; i<verts->size(); ++i)
         mEyeSpaceVerts[i] = m * verts->getAsVec3(i);
 
-      geometry->setVBODirty(true);
+      geometry->setBufferObjectDirty(true);
       geometry->setDisplayListDirty(true);
 
       for(int idraw=0; idraw<geometry->drawCalls()->size(); ++idraw)
@@ -315,17 +315,17 @@ namespace vl
         memcpy(&tris[0], &sorted_points[0], sizeof(sorted_points[0])*sorted_points.size() );
       }
 
-      if (Has_VBO)
+      if (Has_BufferObject)
       {
-        if (polys->indexBuffer()->vbo()->handle())
+        if (polys->indexBuffer()->bufferObject()->handle())
         {
-          if (polys->indexBuffer()->vbo()->usage() != vl::BU_DYNAMIC_DRAW)
+          if (polys->indexBuffer()->bufferObject()->usage() != vl::BU_DYNAMIC_DRAW)
           {
-            polys->indexBuffer()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW);
-            polys->indexBuffer()->setVBODirty(false);
+            polys->indexBuffer()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW);
+            polys->indexBuffer()->setBufferObjectDirty(false);
           }
           else
-            polys->indexBuffer()->setVBODirty(true);
+            polys->indexBuffer()->setBufferObjectDirty(true);
         }
       }
     }

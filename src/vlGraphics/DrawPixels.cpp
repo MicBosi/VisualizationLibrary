@@ -32,7 +32,7 @@
 #include <vlGraphics/DrawPixels.hpp>
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Camera.hpp>
-#include <vlGraphics/VBO.hpp>
+#include <vlGraphics/BufferObject.hpp>
 #include <vlCore/Log.hpp>
 #include <map>
 
@@ -88,7 +88,7 @@ DrawPixels::Pixels::~Pixels()
 //-----------------------------------------------------------------------------
 void DrawPixels::Pixels::deletePixelBufferObject()
 {
-  image()->pixelBufferObject()->deleteVBO();
+  image()->pixelBufferObject()->deleteBufferObject();
 }
 //-----------------------------------------------------------------------------
 bool DrawPixels::Pixels::generatePixelBufferObject(EBufferObjectUsage usage, bool discard_local_storage)
@@ -140,7 +140,7 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
     if (cmd->image() == 0)
       continue;
 
-    const VBO* glbuf = cmd->image()->pixelBufferObject();
+    const BufferObject* glbuf = cmd->image()->pixelBufferObject();
 
     VL_CHECK( cmd->image() )
     VL_CHECK( glbuf )
@@ -261,7 +261,7 @@ void DrawPixels::deletePixelBufferObjects()
   VL_CHECK_OGL()
   for(int i=0; i<(int)mDraws.size(); ++i)
   {
-    mDraws[i]->image()->pixelBufferObject()->deleteVBO();
+    mDraws[i]->image()->pixelBufferObject()->deleteBufferObject();
   }
   VL_CHECK_OGL()
 }

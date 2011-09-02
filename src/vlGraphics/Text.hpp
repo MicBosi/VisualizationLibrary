@@ -136,9 +136,9 @@ namespace vl
 
     // Renderable interface implementation.
 
-    virtual void updateDirtyVBO(EVBOUpdateMode) {}
+    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode) {}
 
-    virtual void deleteVBO() {}
+    virtual void deleteBufferObject() {}
 
   protected:
     void renderText(const Actor*, const Camera* camera, const fvec4& color, const fvec2& offset) const;

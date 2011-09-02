@@ -97,7 +97,7 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
     setVertexArray(vert_array.get());
   }
   vert_array->resize(detail()*detail()*patch_count);
-  vert_array->setVBODirty();
+  vert_array->setBufferObjectDirty();
 
   ref<ArrayFloat2> texc_array = cast<ArrayFloat2>(texCoordArray(0));
   if ( gen_tex_coords )
@@ -108,7 +108,7 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
       setTexCoordArray(0,texc_array.get());
     }
     texc_array->resize(detail()*detail()*patch_count);
-    texc_array->setVBODirty();
+    texc_array->setBufferObjectDirty();
   }
 
   ref<DrawElementsUInt> de = drawCalls()->size() == 1 ? cast<DrawElementsUInt>(drawCalls()->at(0)) : NULL;
@@ -119,7 +119,7 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
     drawCalls()->push_back(de.get());
   }
   de->indexBuffer()->resize((detail()-1)*(detail()-1)*4*patch_count);
-  de->indexBuffer()->setVBODirty();
+  de->indexBuffer()->setBufferObjectDirty();
 
   int ivert = 0;
   int iquad = 0;

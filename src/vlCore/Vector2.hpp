@@ -33,7 +33,7 @@
 #define Vector2_INCLUDE_ONCE
 
 #include <vlCore/OpenGLDefs.hpp>
-#include <vlCore/stdtypes.hpp>
+#include <vlCore/std_types.hpp>
 #include <cmath>
 
 #ifdef min

@@ -343,7 +343,7 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 			</td>
 		</tr>
 *******************************************************************************
-		<tr> <th colspan=2 align=left> Vertex and pixel buffer objects (VBO, PBO) </th> </tr>
+		<tr> <th colspan=2 align=left> Vertex and pixel buffer objects (BufferObject, PBO) </th> </tr>
 		<tr>
 			<td valign=top>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glGenBuffers.xml>glGenBuffers()</a>
@@ -354,14 +354,14 @@ glTexSubImage2D(GL_TEXTURE_2D, ...);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glUnmapBuffer.xml>glUnmapBuffer()</a>
 			</td>
 			<td valign=top>
-				- vl::VBO
-				- vl::VBO::createVBO()
-				- vl::VBO::deleteVBO()
-				- vl::VBO::setBufferData()
-				- vl::VBO::setBufferSubData()
-				- vl::VBO::mapVBO()
-				- vl::VBO::unmapVBO()
-				- vl::Geometry::setVBOEnabled()
+				- vl::BufferObject
+				- vl::BufferObject::createBufferObject()
+				- vl::BufferObject::deleteBufferObject()
+				- vl::BufferObject::setBufferData()
+				- vl::BufferObject::setBufferSubData()
+				- vl::BufferObject::mapBufferObject()
+				- vl::BufferObject::unmapBufferObject()
+				- vl::Geometry::setBufferObjectEnabled()
 				- vl::Image::readPixels()
 				- vl::DrawPixels
 			</td>

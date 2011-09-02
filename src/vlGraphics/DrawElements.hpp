@@ -109,8 +109,8 @@ namespace vl
    * Requires OpenGL 3.2 or GL_ARB_draw_elements_base_vertex. For more information see http://www.opengl.org/sdk/docs/man3/xhtml/glDrawElementsBaseVertex.xml
    *
    * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
-   * The indices are stored in a VBO and thus they can be stored locally or on the GPU. 
-   * To gain direct access to the VBO use the indexBuffer() function.
+   * The indices are stored in a BufferObject and thus they can be stored locally or on the GPU. 
+   * To gain direct access to the BufferObject use the indexBuffer() function.
    *
    * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
    * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
@@ -183,21 +183,21 @@ namespace vl
 
     const arr_type* indexBuffer() const { return mIndexBuffer.get(); }
 
-    virtual void updateDirtyVBO(EVBOUpdateMode mode)
+    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode mode)
     {
-      if (indexBuffer()->isVBODirty() || (mode & VUF_ForceUpdate))
-        indexBuffer()->updateVBO(mode);
+      if (indexBuffer()->isBufferObjectDirty() || (mode & VUF_ForceUpdate))
+        indexBuffer()->updateBufferObject(mode);
     }
 
-    virtual void deleteVBO()
+    virtual void deleteBufferObject()
     {
-      indexBuffer()->vbo()->deleteVBO();
+      indexBuffer()->bufferObject()->deleteBufferObject();
     }
 
     virtual void render(bool use_vbo) const
     {
       VL_CHECK_OGL()
-      VL_CHECK(!use_vbo || (use_vbo && Has_VBO))
+      VL_CHECK(!use_vbo || (use_vbo && Has_BufferObject))
 
 #if !defined(NDEBUG) && (defined(VL_OPENGL_ES1) || defined(GL_OPENGL_ES2))
       bool error = true;
@@ -225,7 +225,7 @@ namespace vl
       VL_CHECK(!error)
 #endif
 
-      use_vbo &= Has_VBO; // && indexBuffer()->vbo()->handle() && indexBuffer()->sizeVBO();
+      use_vbo &= Has_BufferObject; // && indexBuffer()->bufferObject()->handle() && indexBuffer()->sizeBufferObject();
       if ( !use_vbo && !indexBuffer()->size() )
         return;
 
@@ -240,11 +240,11 @@ namespace vl
         glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
       }
 
-      const GLvoid* ptr = indexBuffer()->vbo()->ptr();
+      const GLvoid* ptr = indexBuffer()->bufferObject()->ptr();
 
-      if (use_vbo && indexBuffer()->vbo()->handle())
+      if (use_vbo && indexBuffer()->bufferObject()->handle())
       {
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->vbo()->handle()); VL_CHECK_OGL()
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
         ptr = 0;
       }
       else
@@ -252,7 +252,7 @@ namespace vl
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
       }
 
-      GLsizei count = (GLsizei)(use_vbo ? indexBuffer()->sizeVBO() : indexBuffer()->size());
+      GLsizei count = (GLsizei)(use_vbo ? indexBuffer()->sizeBufferObject() : indexBuffer()->size());
       GLenum type = indexBuffer()->glType();
 
       if (mBaseVertex == 0)

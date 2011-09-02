@@ -33,7 +33,7 @@
 #define Geometry_INCLUDE_ONCE
 
 #include <vlGraphics/IVertexAttribSet.hpp>
-#include <vlGraphics/VBO.hpp>
+#include <vlGraphics/BufferObject.hpp>
 #include <vlCore/Vector2.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlGraphics/Renderable.hpp>
@@ -77,8 +77,8 @@ namespace vl
     {
     public:
       TextureArray(int unit, ArrayAbstract* data): mTextureSampler(unit), mTexCoordArray(data) { }
-      const VBO* vbo() const { return mTexCoordArray->vbo(); }
-      VBO* vbo() { return mTexCoordArray->vbo(); }
+      const BufferObject* bufferObject() const { return mTexCoordArray->bufferObject(); }
+      BufferObject* bufferObject() { return mTexCoordArray->bufferObject(); }
       int mTextureSampler;
       ref<ArrayAbstract> mTexCoordArray;
     };
@@ -188,10 +188,10 @@ namespace vl
     // --- Renderable interface implementation ---
 
     /** Updates all the vertex buffer objects of both vertex arrays and draw calls that are marked as dirty. */
-    virtual void updateDirtyVBO(EVBOUpdateMode mode);
+    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode mode);
 
     /** Deletes all the vertex buffer objects of both vertex arrays and draw calls. */
-    virtual void deleteVBO();
+    virtual void deleteBufferObject();
 
     // ------------------------------------------------------------------------
     // --- Geometry Utils --- 

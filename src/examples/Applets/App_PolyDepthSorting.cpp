@@ -81,10 +81,10 @@ public:
 
      or
 
-     geom_sorted->setVBOEnabled(true);
+     geom_sorted->setBufferObjectEnabled(true);
 
-     but note that in this case the DepthSortCallback will schedule an update of the VBO or of the display list
-     at every frame! This will almost centainly make the use of VBOs or display lists useful if not harmful, performance-wise.
+     but note that in this case the DepthSortCallback will schedule an update of the BufferObject or of the display list
+     at every frame! This will almost centainly make the use of BufferObjects or display lists useful if not harmful, performance-wise.
     */
 
     /* add the two objects to the scene manager */

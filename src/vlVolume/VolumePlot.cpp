@@ -178,7 +178,7 @@ void VolumePlot::setupLabels(const String& format, const fvec3& min_corner, cons
   {
     ref<Text> text = new Text;
     text->setDisplayListEnabled(false);
-    text->setVBOEnabled(false);
+    text->setBufferObjectEnabled(false);
     text->setFont( font );
     text->setAlignment(AlignHCenter| AlignVCenter);
     text->setText(coord_label[i]);
