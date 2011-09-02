@@ -1509,7 +1509,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
 
     if (vas)
     {
-      int vbo = 0;
+      int buf_obj = 0;
       const unsigned char* ptr = 0;
       bool enabled = false;
 
@@ -1523,19 +1523,19 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if ( use_vbo && vas->vertexArray()->bufferObject()->handle() )
           {
-            vbo = vas->vertexArray()->bufferObject()->handle();
+            buf_obj = vas->vertexArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
-            vbo = 0;
+            buf_obj = 0;
             ptr = vas->vertexArray()->bufferObject()->ptr();
           }
-          if ( mVertexArray.mPtr != ptr || mVertexArray.mBufferObject != vbo )
+          if ( mVertexArray.mPtr != ptr || mVertexArray.mBufferObject != buf_obj )
           {
             mVertexArray.mPtr = ptr;
-            mVertexArray.mBufferObject = vbo;
-            VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
+            mVertexArray.mBufferObject = buf_obj;
+            VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
             glVertexPointer((int)vas->vertexArray()->glSize(), vas->vertexArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
           }
@@ -1558,19 +1558,19 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if ( use_vbo && vas->normalArray()->bufferObject()->handle() )
           {
-            vbo = vas->normalArray()->bufferObject()->handle();
+            buf_obj = vas->normalArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
-            vbo = 0;
+            buf_obj = 0;
             ptr = vas->normalArray()->bufferObject()->ptr();
           }
-          if ( mNormalArray.mPtr != ptr || mNormalArray.mBufferObject != vbo )
+          if ( mNormalArray.mPtr != ptr || mNormalArray.mBufferObject != buf_obj )
           {
             mNormalArray.mPtr = ptr;
-            mNormalArray.mBufferObject = vbo;
-            VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL(); 
+            mNormalArray.mBufferObject = buf_obj;
+            VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL(); 
             glNormalPointer(vas->normalArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
           }
@@ -1596,19 +1596,19 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if ( use_vbo && vas->colorArray()->bufferObject()->handle() )
           {
-            vbo = vas->colorArray()->bufferObject()->handle();
+            buf_obj = vas->colorArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
-            vbo = 0;
+            buf_obj = 0;
             ptr = vas->colorArray()->bufferObject()->ptr();
           }
-          if ( mColorArray.mPtr != ptr || mColorArray.mBufferObject != vbo )
+          if ( mColorArray.mPtr != ptr || mColorArray.mBufferObject != buf_obj )
           {
             mColorArray.mPtr = ptr;
-            mColorArray.mBufferObject = vbo;
-            VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
+            mColorArray.mBufferObject = buf_obj;
+            VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
             glColorPointer((int)vas->colorArray()->glSize(), vas->colorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
           }
@@ -1634,19 +1634,19 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if ( use_vbo && vas->secondaryColorArray()->bufferObject()->handle() )
           {
-            vbo = vas->secondaryColorArray()->bufferObject()->handle();
+            buf_obj = vas->secondaryColorArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
-            vbo = 0;
+            buf_obj = 0;
             ptr = vas->secondaryColorArray()->bufferObject()->ptr();
           }
-          if ( mSecondaryColorArray.mPtr != ptr || mSecondaryColorArray.mBufferObject != vbo )
+          if ( mSecondaryColorArray.mPtr != ptr || mSecondaryColorArray.mBufferObject != buf_obj )
           {
             mSecondaryColorArray.mPtr = ptr;
-            mSecondaryColorArray.mBufferObject = vbo;
-            VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
+            mSecondaryColorArray.mBufferObject = buf_obj;
+            VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
             glSecondaryColorPointer((int)vas->secondaryColorArray()->glSize(), vas->secondaryColorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
           }
@@ -1672,19 +1672,19 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if ( use_vbo && vas->fogCoordArray()->bufferObject()->handle() )
           {
-            vbo = vas->fogCoordArray()->bufferObject()->handle();
+            buf_obj = vas->fogCoordArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
-            vbo = 0;
+            buf_obj = 0;
             ptr = vas->fogCoordArray()->bufferObject()->ptr();
           }
-          if ( mFogArray.mPtr != ptr || mFogArray.mBufferObject != vbo )
+          if ( mFogArray.mPtr != ptr || mFogArray.mBufferObject != buf_obj )
           {
             mFogArray.mPtr = ptr;
-            mFogArray.mBufferObject = vbo;
-            VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
+            mFogArray.mBufferObject = buf_obj;
+            VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
             glFogCoordPointer(vas->fogCoordArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
           }
@@ -1710,19 +1710,19 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
 
         if ( use_vbo && info->data()->bufferObject()->handle() )
         {
-          vbo = info->data()->bufferObject()->handle();
+          buf_obj = info->data()->bufferObject()->handle();
           ptr = 0;
         }
         else
         {
-          vbo = 0;
+          buf_obj = 0;
           ptr = info->data()->bufferObject()->ptr();
         }
-        if ( mVertexAttrib[idx].mPtr != ptr || mVertexAttrib[idx].mBufferObject != vbo )
+        if ( mVertexAttrib[idx].mPtr != ptr || mVertexAttrib[idx].mBufferObject != buf_obj )
         {
           mVertexAttrib[idx].mPtr = ptr;
-          mVertexAttrib[idx].mBufferObject = vbo;
-          VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
+          mVertexAttrib[idx].mBufferObject = buf_obj;
+          VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
 
           if ( info->interpretation() == VAI_NORMAL )
           {
@@ -1787,21 +1787,21 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
 
         if ( use_vbo && texarr->bufferObject()->handle() )
         {
-          vbo = texarr->bufferObject()->handle();
+          buf_obj = texarr->bufferObject()->handle();
           ptr = 0;
         }
         else
         {
-          vbo = 0;
+          buf_obj = 0;
           ptr = texarr->bufferObject()->ptr();
         }
-        if ( mTexCoordArray[tex_unit].mPtr != ptr || mTexCoordArray[tex_unit].mBufferObject != vbo )
+        if ( mTexCoordArray[tex_unit].mPtr != ptr || mTexCoordArray[tex_unit].mBufferObject != buf_obj )
         {
           mTexCoordArray[tex_unit].mPtr = ptr;
-          mTexCoordArray[tex_unit].mBufferObject = vbo;
+          mTexCoordArray[tex_unit].mBufferObject = buf_obj;
 
           VL_glClientActiveTexture(GL_TEXTURE0 + tex_unit); VL_CHECK_OGL();
-          VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
+          VL_glBindBuffer(GL_ARRAY_BUFFER, buf_obj); VL_CHECK_OGL();
 #if !defined(NDEBUG)
           if ( Has_GLES_Version_1_1 && texarr->glSize() == 1)
           {

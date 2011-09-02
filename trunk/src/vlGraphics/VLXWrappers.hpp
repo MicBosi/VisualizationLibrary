@@ -3272,9 +3272,9 @@ namespace vl
         if (key == "BufferObject")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Structure, value );
-          BufferObject* vbo = s.importVLX( value.getStructure() )->as<BufferObject>();
-          VLX_IMPORT_CHECK_RETURN( vbo, value );
-          obj->setupParams()->setBufferObject( vbo );
+          BufferObject* buf_obj = s.importVLX( value.getStructure() )->as<BufferObject>();
+          VLX_IMPORT_CHECK_RETURN( buf_obj, value );
+          obj->setupParams()->setBufferObject( buf_obj );
         }
         else
         if (key == "Samples")
