@@ -202,14 +202,14 @@ protected:
 
     actor->setLod(0, geometry.get());
     geometry->setDisplayListEnabled(false);
-    geometry->setVBOEnabled(true);
+    geometry->setBufferObjectEnabled(true);
 
     if (vl::Has_GL_ARB_vertex_buffer_object)
     {
-      color->vbo()->setBufferData(vl::BU_STATIC_DRAW);
-      points->vbo()->setBufferData(vl::BU_STATIC_DRAW);
-      norms->vbo()->setBufferData(vl::BU_STATIC_DRAW);
-      draw_elements->indexBuffer()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW);
+      color->bufferObject()->setBufferData(vl::BU_STATIC_DRAW);
+      points->bufferObject()->setBufferData(vl::BU_STATIC_DRAW);
+      norms->bufferObject()->setBufferData(vl::BU_STATIC_DRAW);
+      draw_elements->indexBuffer()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW);
     }
 
     eye_space_points->resize( points->size() );

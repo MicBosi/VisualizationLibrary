@@ -35,7 +35,7 @@
 #include <vlCore/String.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/Image.hpp>
-#include <vlGraphics/VBO.hpp>
+#include <vlGraphics/BufferObject.hpp>
 
 namespace vl
 {
@@ -168,9 +168,9 @@ namespace vl
       void setImage(const Image* image) { mImage = image; }
       const Image* image() const { return mImage.get(); }
 
-      const VBO* bufferObject() const { return mBufferObject.get(); }
-      VBO* bufferObject() { return mBufferObject.get(); }
-      void setBufferObject(VBO* bo) { mBufferObject = bo; }
+      const BufferObject* bufferObject() const { return mBufferObject.get(); }
+      BufferObject* bufferObject() { return mBufferObject.get(); }
+      void setBufferObject(BufferObject* bo) { mBufferObject = bo; }
 
       void setDimension(ETextureDimension dimension) { mDimension = dimension; }
       ETextureDimension dimension() const { return mDimension; }
@@ -201,7 +201,7 @@ namespace vl
 
     protected:
       String mImagePath;
-      ref<VBO> mBufferObject;
+      ref<BufferObject> mBufferObject;
       ref<Image> mImage;
       ETextureDimension mDimension;
       ETextureFormat mFormat;
@@ -249,10 +249,10 @@ namespace vl
     const TexParameter* getTexParameterOverride() const { return mTexParameterOverride.get(); }
 
     /** The buffer object bound to a buffer object texture. */
-    VBO* bufferObject() { return mBufferObject.get(); }
+    BufferObject* bufferObject() { return mBufferObject.get(); }
     
     /** The buffer object bound to a buffer object texture. */
-    const VBO* bufferObject() const { return mBufferObject.get(); }
+    const BufferObject* bufferObject() const { return mBufferObject.get(); }
 
     /** Destroys the texture. */
     void destroyTexture();
@@ -264,7 +264,7 @@ namespace vl
 
     /** Creates an empty texture, with no mipmaps, of the specified type, format and dimensions.
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this function. */
-    bool createTexture(ETextureDimension tex_dimension, ETextureFormat tex_format, int w, int h, int d, bool border, VBO* bo, int samples, bool fixedsamplelocations);
+    bool createTexture(ETextureDimension tex_dimension, ETextureFormat tex_format, int w, int h, int d, bool border, BufferObject* bo, int samples, bool fixedsamplelocations);
 
     /** Copies the texture image to the specified mip-maping level. This function can be useful to 
     specify one by one the mipmapping images or to create texture animation effects.
@@ -605,8 +605,8 @@ namespace vl
       return createTexture();
     }
 
-    /** Prepares a texture buffer texture. The VBO can come from an Array* or from ImagePBO or can be a stand-alone VBO as well. */
-    void prepareTextureBuffer(vl::ETextureFormat format, VBO* bo)
+    /** Prepares a texture buffer texture. The BufferObject can come from an Array* or from ImagePBO or can be a stand-alone BufferObject as well. */
+    void prepareTextureBuffer(vl::ETextureFormat format, BufferObject* bo)
     {
       mSetupParams = new SetupParams;
       mSetupParams->setDimension(TD_TEXTURE_BUFFER);
@@ -616,8 +616,8 @@ namespace vl
       mSetupParams->setBorder(false);
     }
 
-    /** Creates a texture buffer texture. The VBO can come from an Array* or from ImagePBO or can be a stand-alone VBO as well. */
-    bool createTextureBuffer(vl::ETextureFormat format, VBO* bo)
+    /** Creates a texture buffer texture. The BufferObject can come from an Array* or from ImagePBO or can be a stand-alone BufferObject as well. */
+    bool createTextureBuffer(vl::ETextureFormat format, BufferObject* bo)
     {
       prepareTextureBuffer(format, bo);
       return createTexture();
@@ -742,7 +742,7 @@ namespace vl
     ref<TexParameter> mTexParameter;
     mutable ref<TexParameter> mTexParameterOverride;
     ref<SetupParams> mSetupParams;
-    ref<VBO> mBufferObject;
+    ref<BufferObject> mBufferObject;
     ETextureFormat mFormat;
     ETextureDimension mDimension;
     int mWidth;

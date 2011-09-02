@@ -57,10 +57,10 @@ public:
     // geom->setColor(vl::royalblue);
     actor->setLod(0, geom.get());
 
-    geom->setVBOEnabled(true);
+    geom->setBufferObjectEnabled(true);
     if (vl::Has_GL_ARB_vertex_buffer_object)
     {
-      geom->vertexArray()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
+      geom->vertexArray()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
     }
 
     // LOD 1
@@ -68,10 +68,10 @@ public:
     // geom->setColor(vl::green);
     actor->setLod(1, geom.get());
 
-    geom->setVBOEnabled(true);
+    geom->setBufferObjectEnabled(true);
     if (vl::Has_GL_ARB_vertex_buffer_object)
     {
-      geom->vertexArray()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
+      geom->vertexArray()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
     }
 
     // LOD 2
@@ -79,10 +79,10 @@ public:
     // geom->setColor(vl::yellow);
     actor->setLod(2, geom.get());
 
-    geom->setVBOEnabled(true);
+    geom->setBufferObjectEnabled(true);
     if (vl::Has_GL_ARB_vertex_buffer_object)
     {
-      geom->vertexArray()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
+      geom->vertexArray()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
     }
   }
 
@@ -121,7 +121,7 @@ public:
 
       if (vl::Has_GL_ARB_vertex_buffer_object)
       {
-        geom->vertexArray()->vbo()->setBufferData(vl::BU_DYNAMIC_DRAW, false);
+        geom->vertexArray()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW, false);
       }
 
       // when modifying the vertices of a geometry always remember to update the bounding volumes!

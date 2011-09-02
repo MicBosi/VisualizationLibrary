@@ -91,7 +91,7 @@ namespace vl
   VLGRAPHICS_EXPORT extern bool Has_GLSL_400_Or_More;
   VLGRAPHICS_EXPORT extern bool Has_GLSL_410_Or_More;
   VLGRAPHICS_EXPORT extern bool Has_Geometry_Shader;
-  VLGRAPHICS_EXPORT extern bool Has_VBO;
+  VLGRAPHICS_EXPORT extern bool Has_BufferObject;
   VLGRAPHICS_EXPORT extern bool Has_FBO;
   VLGRAPHICS_EXPORT extern bool Has_PBO;
   VLGRAPHICS_EXPORT extern bool Has_FBO_Multisample;

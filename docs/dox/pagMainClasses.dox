@@ -316,7 +316,7 @@
 	- vl::ref
 	- vl::Object
 	- vl::Buffer
-	- vl::VBO
+	- vl::BufferObject
 	- vl::ArrayAbstract
 	- vl::Array
 

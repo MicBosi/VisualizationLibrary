@@ -351,7 +351,7 @@ void OpenGLContext::logOpenGLInfo()
   Log::debug( Say("Anisotropic texture filter: %s, ") << (Has_GL_EXT_texture_filter_anisotropic? "YES" : "NO") );
   Has_GL_EXT_texture_filter_anisotropic ? Log::debug( Say("%nX\n") << max_val) : Log::debug("\n");
   Log::debug( Say("S3 Texture Compression: %s\n") << (Has_GL_EXT_texture_compression_s3tc? "YES" : "NO") );
-  Log::debug( Say("Vertex Buffer Object: %s\n") << (Has_VBO? "YES" : "NO"));
+  Log::debug( Say("Vertex Buffer Object: %s\n") << (Has_BufferObject? "YES" : "NO"));
   Log::debug( Say("Pixel Buffer Object: %s\n") << (Has_PBO ? "YES" : "NO"));
   Log::debug( Say("Framebuffer Object: %s\n") << (Has_FBO? "YES" : "NO"));
 
@@ -1252,7 +1252,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   // buffer object bindings
 
   GLint buf_bind = 0;
-  if (Has_VBO)
+  if (Has_BufferObject)
   {
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buf_bind); VL_CHECK_OGL();
     if (buf_bind != 0)
@@ -1439,7 +1439,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
       {
         mVertexAttrib[i].mEnabled = false; // not used
         mVertexAttrib[i].mPtr = 0;
-        mVertexAttrib[i].mVBO = 0;
+        mVertexAttrib[i].mBufferObject = 0;
         mVertexAttrib[i].mState = 0;
       }
 
@@ -1447,33 +1447,33 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
       {
         mTexCoordArray[i].mEnabled = false; // not used
         mTexCoordArray[i].mPtr = 0;
-        mTexCoordArray[i].mVBO = 0;
+        mTexCoordArray[i].mBufferObject = 0;
         mTexCoordArray[i].mState = 0;
       }
 
       mVertexArray.mEnabled = false;
       mVertexArray.mPtr = 0;
-      mVertexArray.mVBO = 0;
+      mVertexArray.mBufferObject = 0;
       mVertexArray.mState = 0; // not used
 
       mNormalArray.mEnabled = false;
       mNormalArray.mPtr = 0;
-      mNormalArray.mVBO = 0;
+      mNormalArray.mBufferObject = 0;
       mNormalArray.mState = 0; // not used
 
       mColorArray.mEnabled = false;
       mColorArray.mPtr = 0;
-      mColorArray.mVBO = 0;
+      mColorArray.mBufferObject = 0;
       mColorArray.mState = 0; // not used
 
       mSecondaryColorArray.mEnabled = false;
       mSecondaryColorArray.mPtr = 0;
-      mSecondaryColorArray.mVBO = 0;
+      mSecondaryColorArray.mBufferObject = 0;
       mSecondaryColorArray.mState = 0; // not used
 
       mFogArray.mEnabled = false;
       mFogArray.mPtr = 0;
-      mFogArray.mVBO = 0;
+      mFogArray.mBufferObject = 0;
       mFogArray.mState = 0; // not used
 
       // reset all gl states
@@ -1521,20 +1521,20 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mVertexArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->vertexArray()->vbo()->handle() )
+          if ( use_vbo && vas->vertexArray()->bufferObject()->handle() )
           {
-            vbo = vas->vertexArray()->vbo()->handle();
+            vbo = vas->vertexArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->vertexArray()->vbo()->ptr();
+            ptr = vas->vertexArray()->bufferObject()->ptr();
           }
-          if ( mVertexArray.mPtr != ptr || mVertexArray.mVBO != vbo )
+          if ( mVertexArray.mPtr != ptr || mVertexArray.mBufferObject != vbo )
           {
             mVertexArray.mPtr = ptr;
-            mVertexArray.mVBO = vbo;
+            mVertexArray.mBufferObject = vbo;
             VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
             glVertexPointer((int)vas->vertexArray()->glSize(), vas->vertexArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
@@ -1544,7 +1544,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           glDisableClientState(GL_VERTEX_ARRAY); VL_CHECK_OGL();
           mVertexArray.mPtr = 0;
-          mVertexArray.mVBO = 0;
+          mVertexArray.mBufferObject = 0;
         }
       }
 
@@ -1556,20 +1556,20 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mNormalArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->normalArray()->vbo()->handle() )
+          if ( use_vbo && vas->normalArray()->bufferObject()->handle() )
           {
-            vbo = vas->normalArray()->vbo()->handle();
+            vbo = vas->normalArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->normalArray()->vbo()->ptr();
+            ptr = vas->normalArray()->bufferObject()->ptr();
           }
-          if ( mNormalArray.mPtr != ptr || mNormalArray.mVBO != vbo )
+          if ( mNormalArray.mPtr != ptr || mNormalArray.mBufferObject != vbo )
           {
             mNormalArray.mPtr = ptr;
-            mNormalArray.mVBO = vbo;
+            mNormalArray.mBufferObject = vbo;
             VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL(); 
             glNormalPointer(vas->normalArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
@@ -1579,7 +1579,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           glDisableClientState(GL_NORMAL_ARRAY); VL_CHECK_OGL();
           mNormalArray.mPtr = 0;
-          mNormalArray.mVBO = 0;
+          mNormalArray.mBufferObject = 0;
 
           // restore constant normal
           glNormal3f( mNormal.x(), mNormal.y(), mNormal.z() );
@@ -1594,20 +1594,20 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mColorArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->colorArray()->vbo()->handle() )
+          if ( use_vbo && vas->colorArray()->bufferObject()->handle() )
           {
-            vbo = vas->colorArray()->vbo()->handle();
+            vbo = vas->colorArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->colorArray()->vbo()->ptr();
+            ptr = vas->colorArray()->bufferObject()->ptr();
           }
-          if ( mColorArray.mPtr != ptr || mColorArray.mVBO != vbo )
+          if ( mColorArray.mPtr != ptr || mColorArray.mBufferObject != vbo )
           {
             mColorArray.mPtr = ptr;
-            mColorArray.mVBO = vbo;
+            mColorArray.mBufferObject = vbo;
             VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
             glColorPointer((int)vas->colorArray()->glSize(), vas->colorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
@@ -1617,7 +1617,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           glDisableClientState(GL_COLOR_ARRAY); VL_CHECK_OGL();
           mColorArray.mPtr = 0;
-          mColorArray.mVBO = 0;
+          mColorArray.mBufferObject = 0;
 
           // restore constant color
           glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() );
@@ -1632,20 +1632,20 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mSecondaryColorArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->secondaryColorArray()->vbo()->handle() )
+          if ( use_vbo && vas->secondaryColorArray()->bufferObject()->handle() )
           {
-            vbo = vas->secondaryColorArray()->vbo()->handle();
+            vbo = vas->secondaryColorArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->secondaryColorArray()->vbo()->ptr();
+            ptr = vas->secondaryColorArray()->bufferObject()->ptr();
           }
-          if ( mSecondaryColorArray.mPtr != ptr || mSecondaryColorArray.mVBO != vbo )
+          if ( mSecondaryColorArray.mPtr != ptr || mSecondaryColorArray.mBufferObject != vbo )
           {
             mSecondaryColorArray.mPtr = ptr;
-            mSecondaryColorArray.mVBO = vbo;
+            mSecondaryColorArray.mBufferObject = vbo;
             VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
             glSecondaryColorPointer((int)vas->secondaryColorArray()->glSize(), vas->secondaryColorArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
@@ -1655,7 +1655,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
           mSecondaryColorArray.mPtr = 0;
-          mSecondaryColorArray.mVBO = 0;
+          mSecondaryColorArray.mBufferObject = 0;
 
           // restore constant secondary color
           glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() );
@@ -1670,20 +1670,20 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mFogArray.mEnabled = enabled;
         if (enabled)
         {
-          if ( use_vbo && vas->fogCoordArray()->vbo()->handle() )
+          if ( use_vbo && vas->fogCoordArray()->bufferObject()->handle() )
           {
-            vbo = vas->fogCoordArray()->vbo()->handle();
+            vbo = vas->fogCoordArray()->bufferObject()->handle();
             ptr = 0;
           }
           else
           {
             vbo = 0;
-            ptr = vas->fogCoordArray()->vbo()->ptr();
+            ptr = vas->fogCoordArray()->bufferObject()->ptr();
           }
-          if ( mFogArray.mPtr != ptr || mFogArray.mVBO != vbo )
+          if ( mFogArray.mPtr != ptr || mFogArray.mBufferObject != vbo )
           {
             mFogArray.mPtr = ptr;
-            mFogArray.mVBO = vbo;
+            mFogArray.mBufferObject = vbo;
             VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
             glFogCoordPointer(vas->fogCoordArray()->glType(), /*stride*/0, ptr); VL_CHECK_OGL();
             glEnableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
@@ -1693,7 +1693,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           glDisableClientState(GL_FOG_COORD_ARRAY); VL_CHECK_OGL();
           mFogArray.mPtr = 0;
-          mFogArray.mVBO = 0;
+          mFogArray.mBufferObject = 0;
         }
       }
 
@@ -1708,20 +1708,20 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mVertexAttrib[idx].mState += 1; // 0 -> 1; 1 -> 2;
         VL_CHECK( mVertexAttrib[idx].mState == 1 || mVertexAttrib[idx].mState == 2 );
 
-        if ( use_vbo && info->data()->vbo()->handle() )
+        if ( use_vbo && info->data()->bufferObject()->handle() )
         {
-          vbo = info->data()->vbo()->handle();
+          vbo = info->data()->bufferObject()->handle();
           ptr = 0;
         }
         else
         {
           vbo = 0;
-          ptr = info->data()->vbo()->ptr();
+          ptr = info->data()->bufferObject()->ptr();
         }
-        if ( mVertexAttrib[idx].mPtr != ptr || mVertexAttrib[idx].mVBO != vbo )
+        if ( mVertexAttrib[idx].mPtr != ptr || mVertexAttrib[idx].mBufferObject != vbo )
         {
           mVertexAttrib[idx].mPtr = ptr;
-          mVertexAttrib[idx].mVBO = vbo;
+          mVertexAttrib[idx].mBufferObject = vbo;
           VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
 
           if ( info->interpretation() == VAI_NORMAL )
@@ -1763,7 +1763,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           }
 
           mVertexAttrib[idx].mPtr = 0;
-          mVertexAttrib[idx].mVBO = 0;
+          mVertexAttrib[idx].mBufferObject = 0;
           mVertexAttrib[idx].mState >>= 1; // 1 -> 0; 2 -> 1;
 
           // restore constant vertex attrib
@@ -1785,20 +1785,20 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mTexCoordArray[tex_unit].mState += 1; // 0 -> 1; 1 -> 2;
         VL_CHECK( mTexCoordArray[tex_unit].mState == 1 || mTexCoordArray[tex_unit].mState == 2 );
 
-        if ( use_vbo && texarr->vbo()->handle() )
+        if ( use_vbo && texarr->bufferObject()->handle() )
         {
-          vbo = texarr->vbo()->handle();
+          vbo = texarr->bufferObject()->handle();
           ptr = 0;
         }
         else
         {
           vbo = 0;
-          ptr = texarr->vbo()->ptr();
+          ptr = texarr->bufferObject()->ptr();
         }
-        if ( mTexCoordArray[tex_unit].mPtr != ptr || mTexCoordArray[tex_unit].mVBO != vbo )
+        if ( mTexCoordArray[tex_unit].mPtr != ptr || mTexCoordArray[tex_unit].mBufferObject != vbo )
         {
           mTexCoordArray[tex_unit].mPtr = ptr;
-          mTexCoordArray[tex_unit].mVBO = vbo;
+          mTexCoordArray[tex_unit].mBufferObject = vbo;
 
           VL_glClientActiveTexture(GL_TEXTURE0 + tex_unit); VL_CHECK_OGL();
           VL_glBindBuffer(GL_ARRAY_BUFFER, vbo); VL_CHECK_OGL();
@@ -1841,7 +1841,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           }
 
           mTexCoordArray[tex_unit].mPtr = 0;
-          mTexCoordArray[tex_unit].mVBO = 0;
+          mTexCoordArray[tex_unit].mBufferObject = 0;
           mTexCoordArray[tex_unit].mState >>= 1; // 1 -> 0; 2 -> 1;
         }
       }

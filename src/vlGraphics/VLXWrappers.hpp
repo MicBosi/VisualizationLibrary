@@ -545,7 +545,7 @@ namespace vl
   {
     virtual void exportRenderable(const Renderable* ren, VLXStructure* vlx)
     {
-      *vlx << "VBOEnabled" << ren->isVBOEnabled();
+      *vlx << "BufferObjectEnabled" << ren->isBufferObjectEnabled();
       *vlx << "DisplayListEnabled" << ren->isDisplayListEnabled();
       *vlx << "AABB" << export_AABB(ren->boundingBox());
       *vlx << "Sphere" << export_Sphere(ren->boundingSphere());
@@ -557,9 +557,9 @@ namespace vl
       for(size_t i=0; i<values.size(); ++i)
       {
         const std::string& key = values[i].key();
-        if (key == "VBOEnabled")
+        if (key == "BufferObjectEnabled")
         {
-          ren->setVBOEnabled( values[i].value().getBool() );
+          ren->setBufferObjectEnabled( values[i].value().getBool() );
         }
         else
         if (key == "DisplayListEnabled")
@@ -1007,7 +1007,7 @@ namespace vl
 
         // finalize setup
         de->computePointerVector();
-        de->computeVBOPointerVector();
+        de->computeBufferObjectPointerVector();
         if ( de->baseVertices().size() != de->countVector().size() )
           de->baseVertices().resize( de->countVector().size() );
       }
@@ -3269,10 +3269,10 @@ namespace vl
           obj->setupParams()->setGenMipmaps( (int)value.getBool() );
         }
         else
-        if (key == "VBO")
+        if (key == "BufferObject")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Structure, value );
-          VBO* vbo = s.importVLX( value.getStructure() )->as<VBO>();
+          BufferObject* vbo = s.importVLX( value.getStructure() )->as<BufferObject>();
           VLX_IMPORT_CHECK_RETURN( vbo, value );
           obj->setupParams()->setBufferObject( vbo );
         }
@@ -3336,12 +3336,12 @@ namespace vl
 
           *vlx << "GenMipmaps" << par->genMipmaps();
           
-          // mic fixme: implement VBO importer/exporter
-          // mic fixme: rename bufferObject() to vbo()
+          // mic fixme: implement BufferObject importer/exporter
+          // mic fixme: rename bufferObject() to bufferObject()
 #if 0
           if (par->bufferObject())
           {
-            *vlx << "VBO" << s.exportVLX(par->bufferObject());
+            *vlx << "BufferObject" << s.exportVLX(par->bufferObject());
           }
 #endif
 

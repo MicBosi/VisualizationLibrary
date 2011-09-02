@@ -189,7 +189,7 @@ public:
       mBezier->setDetail(mDetail);
       mBezier->updateBezierSurface(false);
       mBezier->computeNormals();
-      mBezier->setVBODirty(true);
+      mBezier->setBufferObjectDirty(true);
     }
     else
     if (key == Key_Down)
@@ -199,7 +199,7 @@ public:
       mBezier->setDetail(mDetail);
       mBezier->updateBezierSurface(false);
       mBezier->computeNormals();
-      mBezier->setVBODirty(true);
+      mBezier->setBufferObjectDirty(true);
     }
     else
     if(key == Key_Space)

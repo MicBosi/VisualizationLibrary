@@ -359,7 +359,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       // --------------- Actor rendering ---------------
 
-      // also compiles display lists and updates VBOs if necessary
+      // also compiles display lists and updates BufferObjects if necessary
       tok->mRenderable->render( actor, shader, cur_camera, opengl_context );
 
       VL_CHECK_OGL()

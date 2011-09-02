@@ -105,9 +105,9 @@ namespace vl
 
     // Renderable interface implementation.
 
-    virtual void updateDirtyVBO(EVBOUpdateMode) {}
+    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode) {}
 
-    virtual void deleteVBO() {}
+    virtual void deleteBufferObject() {}
 
   protected:
     virtual void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }

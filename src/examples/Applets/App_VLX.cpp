@@ -269,7 +269,7 @@ public:
     tex = new Texture; tex->prepareTexture2DMultisample( 10, 20, TF_RGBA, 16, false ); res_db->resources().push_back( tex.get() );
     tex = new Texture; tex->prepareTexture2DMultisampleArray( 10, 20, 100, TF_RGBA, 16, false ); res_db->resources().push_back( tex.get() );
     ref<ArrayFloat3> arr = new ArrayFloat3; arr->resize(10);
-    tex = new Texture; tex->prepareTextureBuffer( TF_RGBA, arr->vbo() ); res_db->resources().push_back( tex.get() );
+    tex = new Texture; tex->prepareTextureBuffer( TF_RGBA, arr->bufferObject() ); res_db->resources().push_back( tex.get() );
 
     // PixelLODEvaluator
     ref<PixelLODEvaluator> pix_eval = new PixelLODEvaluator;

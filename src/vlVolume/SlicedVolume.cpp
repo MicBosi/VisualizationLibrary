@@ -316,15 +316,15 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, real clock, const Camera* 
   ref<ArrayFloat3> texcoo_array = new ArrayFloat3;
   vertex_array->resize(polygons.size());
   texcoo_array->resize(polygons_t.size());
-  VL_CHECK((size_t)vertex_array->vbo()->bytesUsed() == sizeof(polygons  [0])*polygons.  size());
-  VL_CHECK((size_t)texcoo_array->vbo()->bytesUsed() == sizeof(polygons_t[0])*polygons_t.size());
-  memcpy(vertex_array->ptr(), &polygons  [0], vertex_array->vbo()->bytesUsed());
-  memcpy(texcoo_array->ptr(), &polygons_t[0], texcoo_array->vbo()->bytesUsed());
+  VL_CHECK((size_t)vertex_array->bufferObject()->bytesUsed() == sizeof(polygons  [0])*polygons.  size());
+  VL_CHECK((size_t)texcoo_array->bufferObject()->bytesUsed() == sizeof(polygons_t[0])*polygons_t.size());
+  memcpy(vertex_array->ptr(), &polygons  [0], vertex_array->bufferObject()->bytesUsed());
+  memcpy(texcoo_array->ptr(), &polygons_t[0], texcoo_array->bufferObject()->bytesUsed());
   mGeometry->setVertexArray(vertex_array.get());
   mGeometry->setTexCoordArray(0,texcoo_array.get());
 
   mGeometry->setDisplayListDirty(true);
-  mGeometry->setVBODirty(true);
+  mGeometry->setBufferObjectDirty(true);
 
   // fixme: 
   // it seems we have some problems with camera clipping/culling when the camera is close to the volume: the slices disappear or degenerate.

@@ -110,7 +110,7 @@ namespace vl
       void setAlign(int align) { mAlign = align; }
 
       /** Generates a pixel buffer object for the associated Image
-       * calling image()->vbo()->setBufferData(usage, discard_local_storage);
+       * calling image()->bufferObject()->setBufferData(usage, discard_local_storage);
        *
        * \note
        * All the Pixels object sharing the same Image will use the Image's PBO */
@@ -158,9 +158,9 @@ namespace vl
 
     // Renderable interface implementation.
 
-    virtual void updateDirtyVBO(EVBOUpdateMode) {}
+    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode) {}
 
-    virtual void deleteVBO() {}
+    virtual void deleteBufferObject() {}
 
   protected:
     Collection<Pixels> mDraws;
