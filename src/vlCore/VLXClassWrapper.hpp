@@ -44,7 +44,7 @@ namespace vl
   /** Base cass for all class wrappers implementing the translation to/from its VLX representation. */
   class VLXClassWrapper: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::VLXClassWrapper, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXClassWrapper, Object)
 
   public:
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* st) = 0;

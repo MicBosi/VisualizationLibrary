@@ -40,7 +40,7 @@ namespace vl
   /** Base class for VLX values with a tag. */
   class VLXTaggedValue: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::VLXTaggedValue, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXTaggedValue, Object)
 
   public:
     VLXTaggedValue(const char* tag=NULL): mLineNumber(0) 
@@ -93,7 +93,7 @@ namespace vl
   /** Base class for all arrays of VLX values. */
   class VLXArray: public VLXTaggedValue 
   { 
-    VL_INSTRUMENT_CLASS(vl::VLXArray, VLXTaggedValue)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXArray, VLXTaggedValue)
 
   public:
     VLXArray(const char* tag=NULL): VLXTaggedValue(tag) {}
@@ -104,7 +104,7 @@ namespace vl
   template<typename T>
   class VLXArrayTemplate: public VLXArray
   {
-    VL_INSTRUMENT_CLASS(vl::VLXArrayTemplate, VLXArray)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXArrayTemplate<T>, VLXArray)
 
   public:
     typedef T scalar_type;

@@ -55,6 +55,8 @@ namespace vl
       setRegistry( defVLXRegistry() );
     }
 
+    VLCORE_EXPORT const char* errorString() const;
+
     VLCORE_EXPORT bool saveVLT(const String& path, const Object* obj, bool start_fresh=true);
 
     VLCORE_EXPORT bool saveVLT(VirtualFile* file, const Object* obj, bool start_fresh=true);

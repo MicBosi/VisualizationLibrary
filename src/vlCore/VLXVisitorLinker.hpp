@@ -50,7 +50,7 @@ namespace vl
     } EError;
 
   public:
-    VLXVisitorLinker(const std::map< std::string, ref<VLXStructure> >* map)
+    VLXVisitorLinker(const std::map< std::string, ref<VLXStructure> >* map=NULL)
     {
       mLinkMap = map;
       mError = NoError;
@@ -72,7 +72,7 @@ namespace vl
         VL_CHECK(uid != "#NULL")
 
         // mic fixme: just for debugging
-        printf( "- ID '%s' linked to '%s'.\n", uid.c_str(), it->second->tag().c_str() );
+        Log::debug( Say("- ID '%s' linked to '%s'.\n") << uid << it->second->tag() );
         return it->second.get_writable();
       }
       else
