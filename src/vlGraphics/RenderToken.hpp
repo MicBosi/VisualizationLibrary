@@ -46,7 +46,7 @@ namespace vl
   //! Internally used by the rendering engine
   class RenderToken: public Object
   {
-    VL_INSTRUMENT_CLASS(vl:RenderToken, Object)
+    VL_INSTRUMENT_CLASS(vl::RenderToken, Object)
 
   public:
     RenderToken(): mNextPass(NULL), mActor(NULL), mShader(NULL), mEffectRenderRank(0), mCameraDistance(0.0)

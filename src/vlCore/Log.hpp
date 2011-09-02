@@ -44,7 +44,7 @@ namespace vl
   /** Utility class to generate logs. */
   class VLCORE_EXPORT Log: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Log, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::Log, Object)
 
   public:
     Log()

@@ -71,7 +71,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT SceneManager: public Object
   {
-    VL_INSTRUMENT_CLASS(vl:SceneManager, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::SceneManager, Object)
 
   public:
     //! Constructor.

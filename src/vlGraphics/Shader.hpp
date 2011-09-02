@@ -1787,7 +1787,7 @@ namespace vl
   \sa Shader::setUpdater(); */
   class VLGRAPHICS_EXPORT ShaderAnimator: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::ShaderAnimator, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::ShaderAnimator, Object)
 
   public:
     ShaderAnimator(): mEnabled(true) {}

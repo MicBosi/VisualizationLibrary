@@ -31,7 +31,7 @@
 
 #include <vlVolume/VolumeUtils.hpp>
 #include <vlCore/Log.hpp>
-#include <vlCore/GLSLmath.hpp>
+#include <vlCore/glslmath.hpp>
 
 using namespace vl;
 

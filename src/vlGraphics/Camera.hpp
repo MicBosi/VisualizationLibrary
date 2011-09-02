@@ -33,7 +33,7 @@
 #define Camera_INCLUDE_ONCE
 
 #include <vlCore/checks.hpp>
-#include <vlCore/math3D.hpp>
+#include <vlCore/mathutils.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlGraphics/RenderTarget.hpp>
 #include <vlGraphics/Viewport.hpp>

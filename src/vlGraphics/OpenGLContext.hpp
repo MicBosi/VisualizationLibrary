@@ -125,7 +125,7 @@ namespace vl
   //!   the EventListeners can safely add/remove themselves or other EventListeners to the OpenGLContext itself. */
   class VLGRAPHICS_EXPORT OpenGLContext: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::OpenGLContext, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::OpenGLContext, Object)
     friend class VertexAttrib;
     friend class Color;
     friend class SecondaryColor;
