@@ -141,7 +141,7 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
   {
     float t = (y-mMouseStart.y()) / 200.0f;
     t *= zoomSpeed();
-    Real distance = (mStartCameraPos - mPivot).length();
+    real distance = (mStartCameraPos - mPivot).length();
     vec3 camera_pos = mStartCameraPos - camera()->localMatrix().getZ()*t*distance;
     mat4 m = camera()->localMatrix();
     m.setT(camera_pos);
@@ -154,7 +154,7 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
     float ty = -(mMouseStart.y() - y) / 400.0f;
     tx *= translationSpeed();
     ty *= translationSpeed();
-    Real distance = (mStartCameraPos - mPivot).length();
+    real distance = (mStartCameraPos - mPivot).length();
     vec3 up    = camera()->localMatrix().getY();
     vec3 right = camera()->localMatrix().getX();
     mat4 m = camera()->localMatrix();
@@ -179,15 +179,15 @@ mat4 TrackballManipulator::trackballRotation(int x, int y)
   n.normalize();
   a.normalize();
   b.normalize();
-  Real dot_a_b = dot(a,b);
-  dot_a_b = clamp(dot_a_b,(Real)-1.0,(Real)+1.0);
-  Real alpha = acos(dot_a_b) * (mTransform ? 1 : -1);
+  real dot_a_b = dot(a,b);
+  dot_a_b = clamp(dot_a_b,(real)-1.0,(real)+1.0);
+  real alpha = acos(dot_a_b) * (mTransform ? 1 : -1);
   alpha = alpha * rotationSpeed();
   vec3 nc =  camera()->localMatrix().get3x3() * n;
   if (mTransform && mTransform->parent())
     nc = mTransform->parent()->getComputedWorldMatrix().getInverse() * nc;
   nc.normalize();
-  return mat4::getRotation(alpha*(Real)dRAD_TO_DEG, nc);
+  return mat4::getRotation(alpha*(real)dRAD_TO_DEG, nc);
 }
 //-----------------------------------------------------------------------------
 vec3 TrackballManipulator::computeVector(int x, int y)
@@ -198,7 +198,7 @@ vec3 TrackballManipulator::computeVector(int x, int y)
   float sphere_y = camera()->viewport()->height() * 0.5f;
 
   VL_CHECK(camera())
-  vec3 v((Real)x,(Real)y,0);
+  vec3 v((real)x,(real)y,0);
   v -= c;
   v.x() /= sphere_x;
   v.y() /= sphere_y;
@@ -206,7 +206,7 @@ vec3 TrackballManipulator::computeVector(int x, int y)
   //if (v.length() > 1.0f)
   //  v.normalize();
 
-  Real z2 = 1.0f - v.x()*v.x() - v.y()*v.y();
+  real z2 = 1.0f - v.x()*v.x() - v.y()*v.y();
   if (z2 < 0) 
     z2 = 0;
   v.z() = sqrt( z2 );
@@ -214,7 +214,7 @@ vec3 TrackballManipulator::computeVector(int x, int y)
   return v;
 }
 //-----------------------------------------------------------------------------
-void TrackballManipulator::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias)
+void TrackballManipulator::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real bias)
 {
   VL_CHECK(camera())
   VL_CHECK(!aabb.isNull())
@@ -223,7 +223,7 @@ void TrackballManipulator::adjustView(const AABB& aabb, const vec3& dir, const v
   camera()->adjustView(aabb, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
-void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, Real bias)
+void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, real bias)
 {
   AABB aabb;
   for(int i=0; i<actors.size(); ++i)
@@ -239,14 +239,14 @@ void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, 
   adjustView(aabb, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
-void TrackballManipulator::adjustView(SceneManager* scene, const vec3& dir, const vec3& up, Real bias)
+void TrackballManipulator::adjustView(SceneManager* scene, const vec3& dir, const vec3& up, real bias)
 {
   ActorCollection actors;
   scene->extractActors(actors);
   adjustView(actors, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
-void TrackballManipulator::adjustView(Rendering* rendering, const vec3& dir, const vec3& up, Real bias)
+void TrackballManipulator::adjustView(Rendering* rendering, const vec3& dir, const vec3& up, real bias)
 {
   ActorCollection actors;
   for(int i=0; i<rendering->sceneManagers()->size(); ++i)

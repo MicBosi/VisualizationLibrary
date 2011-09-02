@@ -51,7 +51,7 @@ public:
     }
     if (mTestNumber == 4)
     {
-      static vl::Real velocity[] = {
+      static vl::real velocity[] = {
         vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10,
         vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10 };
 

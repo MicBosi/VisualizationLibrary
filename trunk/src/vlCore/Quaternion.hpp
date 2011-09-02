@@ -750,7 +750,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   typedef Quaternion<float>  fquat;
   typedef Quaternion<double> dquat;
-  typedef Quaternion<Real>   quat;
+  typedef Quaternion<real>   quat;
   //-----------------------------------------------------------------------------
 }
 

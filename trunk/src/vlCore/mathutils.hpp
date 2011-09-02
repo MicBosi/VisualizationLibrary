@@ -43,7 +43,7 @@ namespace vl
   /** 
    * Returns a random number N that between 'min' and 'max' included.
    */
-  VLCORE_EXPORT Real randomMinMax(Real min, Real max);
+  VLCORE_EXPORT real randomMinMax(real min, real max);
 
   /** 
    * Returns a number N that is a power of 2 and that is equal to or greater than 'n'.

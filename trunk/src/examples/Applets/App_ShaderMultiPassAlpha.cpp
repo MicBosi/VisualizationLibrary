@@ -82,7 +82,7 @@ public:
     for(int i=0;i<actor_count; i++)
     {
       vl::ref<vl::Transform> tr = new vl::Transform;
-      vl::Real t = 360.0f / actor_count * i;
+      vl::real t = 360.0f / actor_count * i;
       vl::vec3 v = vl::mat4::getRotation(t, 0,1,0) * vl::vec3(30,0,0);
       tr->setLocalMatrix( vl::mat4::getTranslation(v) );
       rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());

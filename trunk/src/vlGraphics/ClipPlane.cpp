@@ -34,7 +34,7 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-ClipPlane::ClipPlane(Real o, vec3 n)
+ClipPlane::ClipPlane(real o, vec3 n)
 { 
   VL_DEBUG_SET_OBJECT_NAME()
   mPlane.setNormal(n); 
@@ -74,7 +74,7 @@ void ClipPlane::apply(int index, const Camera* camera, OpenGLContext*) const
     pt2 = mat * pt2;
 
     vec3 n = pt2 - pt1;
-    Real orig = dot(n, pt1);
+    real orig = dot(n, pt1);
 
 #if defined(VL_OPENGL_ES1)
     float equation[] = { n.x(), n.y(), n.z(), -orig };

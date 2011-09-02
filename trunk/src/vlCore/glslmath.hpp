@@ -1117,11 +1117,11 @@ namespace vl
 
   // ....................................
 
-  inline Real dot(int a, int b) { return (Real)a*b; }
+  inline real dot(int a, int b) { return (real)a*b; }
 
   // ....................................
 
-  inline Real dot(unsigned int a, unsigned int b) { return (Real)a*b; }
+  inline real dot(unsigned int a, unsigned int b) { return (real)a*b; }
 
   // --------------- normalize ---------------
 

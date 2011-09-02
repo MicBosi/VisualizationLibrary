@@ -8,7 +8,9 @@
 
 	\par Math
 	
-	- vl::Real
+	- vl::real
+	- vl::degree
+	- vl::radian
 	- vl::vec4, vl::vec3, vl::vec2
 	- vl::dvec4, vl::dvec3, vl::dvec2
 	- vl::fvec4, vl::fvec3, vl::fvec2

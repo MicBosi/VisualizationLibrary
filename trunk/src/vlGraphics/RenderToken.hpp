@@ -60,7 +60,7 @@ namespace vl
     const Shader* mShader;
     int mEffectRenderRank;
     // Z distance from the camera. Used for object Z-sorting.
-    Real mCameraDistance;
+    real mCameraDistance;
   };
   //------------------------------------------------------------------------------
 }

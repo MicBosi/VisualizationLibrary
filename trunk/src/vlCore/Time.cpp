@@ -111,7 +111,7 @@ namespace vl
 //-----------------------------------------------------------------------------
 //! Seconds passed from an arbitrary origin
 //! QueryPerformanceFrequency should be called only once in the application lifetime
-Real Time::currentTime()
+real Time::currentTime()
 {
   if (gStartTime == 0)
     initStartTime();
@@ -128,7 +128,7 @@ Real Time::currentTime()
       // DWORD_PTR oldmask = ::SetThreadAffinityMask(::GetCurrentThread(), 1);
       QueryPerformanceCounter( &PerformanceCount );
       // ::SetThreadAffinityMask(::GetCurrentThread(), oldmask);
-      return (Real)(PerformanceCount.QuadPart-gStartTime)/Frequency.QuadPart;
+      return (real)(PerformanceCount.QuadPart-gStartTime)/Frequency.QuadPart;
     }
     else
     {

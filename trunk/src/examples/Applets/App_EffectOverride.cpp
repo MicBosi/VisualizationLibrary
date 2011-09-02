@@ -79,7 +79,7 @@ class App_EffectOverride: public BaseDemo
     mSolidRendering->transform()->addChild( mCubeTransform2.get() );
     mSolidRendering->transform()->addChild( mCubeTransform3.get() );
 
-    const Real fsize = 8;
+    const real fsize = 8;
     ref<Geometry> ball = makeUVSphere( vec3(0,0,0), fsize, 8, 8 );
     ball->computeNormals();
 
@@ -138,7 +138,7 @@ class App_EffectOverride: public BaseDemo
 
   virtual void updateScene()
   {
-    Real degrees = Time::currentTime() * 45.0f;
+    real degrees = Time::currentTime() * 45.0f;
     mat4 matrix;
     
     matrix.rotate( degrees, 0,1,0 );

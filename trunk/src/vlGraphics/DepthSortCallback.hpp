@@ -142,7 +142,7 @@ namespace vl
     void onActorDelete(Actor*) {}
 
     //! Performs the actual sorting
-    virtual void onActorRenderStarted(Actor* actor, Real /*frame_clock*/, const Camera* cam, Renderable* renderable, const Shader*, int pass)
+    virtual void onActorRenderStarted(Actor* actor, real /*frame_clock*/, const Camera* cam, Renderable* renderable, const Shader*, int pass)
     {
       // need to sort only for the first pass
       if (pass > 0)

@@ -80,50 +80,50 @@ namespace vl
 
     /** Returns the aspect ratio computed as viewport()->width()/viewport()->height(). 
     If viewport() == NULL the function returns 0. */
-    Real aspectRatio() const 
+    real aspectRatio() const 
     {
       if (viewport())
-        return (Real)viewport()->width()/viewport()->height();
+        return (real)viewport()->width()/viewport()->height();
       else
         return 0;
     }
 
     /** The field of view of the camera. 
     \note This setting will not take effect until setProjectionAsPerspective() is called. */
-    void setFOV(Real fov) { mFOV = fov; }
+    void setFOV(real fov) { mFOV = fov; }
     
     /** The field of view of the camera. */
-    Real fov() const { return mFOV; }
+    real fov() const { return mFOV; }
 
     /** The near clipping plane.
     \note This setting will not take effect until setProjectionAsPerspective() or setProjectionAsOrtho() is called. */
-    void setNearPlane(Real nearplane) { mNearPlane = nearplane; }
+    void setNearPlane(real nearplane) { mNearPlane = nearplane; }
 
     /** The near clipping plane. */
-    Real nearPlane() const { return mNearPlane; }
+    real nearPlane() const { return mNearPlane; }
 
     /** The far clipping plane. 
     \note This setting will not take effect until setProjectionAsPerspective() or setProjectionAsOrtho() is called. */
-    void setFarPlane(Real farplane) { mFarPlane = farplane; }
+    void setFarPlane(real farplane) { mFarPlane = farplane; }
 
     /** The far clipping plane. */
-    Real farPlane() const { return mFarPlane; }
+    real farPlane() const { return mFarPlane; }
 
     /** 'left' parameter as passed to the last setProjectionAsFrustum() or setProjectionAsOrtho*() */
-    Real left() const { return mLeft; }
-    void setLeft(Real v) { mLeft = v; }
+    real left() const { return mLeft; }
+    void setLeft(real v) { mLeft = v; }
 
     /** 'right' parameter as passed to the last setProjectionAsFrustum() or setProjectionAsOrtho*() */
-    Real right() const { return mRight; }
-    void setRight(Real v) { mRight = v; }
+    real right() const { return mRight; }
+    void setRight(real v) { mRight = v; }
 
     /** 'bottom' parameter as passed to the last setProjectionAsFrustum() or setProjectionAsOrtho*() */
-    Real bottom() const { return mBottom; }
-    void setBottom(Real v) { mBottom = v; }
+    real bottom() const { return mBottom; }
+    void setBottom(real v) { mBottom = v; }
 
     /** 'top' parameter as passed to the last setProjectionAsFrustum() or setProjectionAsOrtho*() */
-    Real top() const { return mTop; }
-    void setTop(Real v) { mTop = v; }
+    real top() const { return mTop; }
+    void setTop(real v) { mTop = v; }
 
     /** The view frustum of the camera used to perform frustum culling. */
     void setFrustum(const Frustum& frustum) { mFrustum = frustum; }
@@ -179,7 +179,7 @@ namespace vl
 
     /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings. 
     See also http://www.opengl.org/sdk/docs/man/xhtml/gluPerspective.xml for more information. */
-    void setProjectionAsPerspective(Real fov, Real near, Real far);
+    void setProjectionAsPerspective(real fov, real near, real far);
 
     /** Produces a perspective projection matrix. 
     The <left, bottom, zfar> and <right, top, znear> parameters specify the points on the near clipping plane that are mapped to the lower-left and upper-right corners of the viewport, 
@@ -191,7 +191,7 @@ namespace vl
     \sa
     - http://www.opengl.org/sdk/docs/man/xhtml/glFrustum.xml 
     - http://www.opengl.org/resources/faq/technical/transformations.htm */
-    void setProjectionAsFrustum(Real left, Real right, Real bottom, Real top, Real znear, Real zfar);
+    void setProjectionAsFrustum(real left, real right, real bottom, real top, real znear, real zfar);
 
     /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings. 
     - See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml and http://www.opengl.org/sdk/docs/man/xhtml/glOrtho2D.xml for more information.
@@ -199,7 +199,7 @@ namespace vl
     \code
     setProjectionMatrix( mat4::getOrtho(left, right, bottom, top, znear, zfar), PMT_OrthographicProjection );
     \endcode */
-    void setProjectionAsOrtho(Real left, Real right, Real bottom, Real top, Real znear, Real zfar);
+    void setProjectionAsOrtho(real left, real right, real bottom, real top, real znear, real zfar);
 
     /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings. 
     - See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml and http://www.opengl.org/sdk/docs/man/xhtml/glOrtho2D.xml for more information.
@@ -217,7 +217,7 @@ namespace vl
     \code
     setProjectionMatrix( mat4::getOrtho(offset, viewport()->width() + offset, offset, viewport()->height() + offset, -1.0, +1.0), PMT_OrthographicProjection );
     \endcode */
-    void setProjectionAsOrtho2D(Real offset);
+    void setProjectionAsOrtho2D(real offset);
 
     /** Setup the modelview transform of the camera based on look-at parameters. 
     \param eye The position of the camera.
@@ -263,7 +263,7 @@ namespace vl
     \param dir The direction (in world coords) along which the camera should be displaced to view the given AABB.
     \param up The vector that defines the \p up direction (in world coords). Used to properly compute the new camera matrix.
     \param bias A bias factor used to adjust the computed camera distance from the given AABB. Values between 0 and 1 make the camera closer to the AABB center, values greater than 1 position the camera further away. */
-    void adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias=1.0f);
+    void adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real bias=1.0f);
 
   protected:
     mat4 mViewMatrix;
@@ -272,10 +272,10 @@ namespace vl
     ref<Viewport> mViewport;
     Frustum mFrustum;
     ref<Transform> mBoundTransform;
-    Real mFOV;
-    Real mLeft, mRight, mBottom, mTop;
-    Real mNearPlane;
-    Real mFarPlane;
+    real mFOV;
+    real mLeft, mRight, mBottom, mTop;
+    real mNearPlane;
+    real mFarPlane;
     EProjectionMatrixType mProjectionType;
   };
 }

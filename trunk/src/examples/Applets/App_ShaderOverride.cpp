@@ -60,7 +60,7 @@ public:
 
     // setup sphere geometry
 
-    const vl::Real fsize = 8;
+    const vl::real fsize = 8;
     vl::ref<vl::Geometry> ball = vl::makeUVSphere( vl::vec3(0,0,0), fsize, 8, 8 );
     ball->computeNormals();
 
@@ -130,7 +130,7 @@ public:
 
   virtual void updateScene()
   {
-    vl::Real degrees = vl::Time::currentTime() * 45.0f;
+    vl::real degrees = vl::Time::currentTime() * 45.0f;
     vl::mat4 matrix;
     
     matrix.rotate( degrees, 0,1,0 );

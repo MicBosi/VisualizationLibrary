@@ -78,9 +78,9 @@ public:
       // bind billboard to the transform tree
       rendering()->as<vl::Rendering>()->transform()->addChild(billboard.get());
       // generate a random position
-      vl::Real x = vl::randomMinMax(-side/2.0f,+side/2.0f);
-      vl::Real y = 0;
-      vl::Real z = vl::randomMinMax(-side/2.0f,+side/2.0f);
+      vl::real x = vl::randomMinMax(-side/2.0f,+side/2.0f);
+      vl::real y = 0;
+      vl::real z = vl::randomMinMax(-side/2.0f,+side/2.0f);
       billboard->setPosition( vl::vec3(x,y,z) );
       // add the tree actor
       sceneManager()->tree()->addActor(tree.get(), effect.get(), billboard.get());
@@ -106,9 +106,9 @@ public:
       // add billboard to the transform tree
       rendering()->as<vl::Rendering>()->transform()->addChild(billboard.get());
       // compute a random point on the skydome
-      vl::Real x = vl::randomMinMax(-1.0f,+1.0f);
-      vl::Real y = vl::randomMinMax(0,2.0f);
-      vl::Real z = vl::randomMinMax(-1.0f,+1.0f);
+      vl::real x = vl::randomMinMax(-1.0f,+1.0f);
+      vl::real y = vl::randomMinMax(0,2.0f);
+      vl::real z = vl::randomMinMax(-1.0f,+1.0f);
       vl::vec3 n(x,y,z);
       n.normalize();
       n = n * sqrt(side*side/2.0f);

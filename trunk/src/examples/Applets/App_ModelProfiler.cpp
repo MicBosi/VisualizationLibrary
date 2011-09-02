@@ -97,7 +97,7 @@ public:
   void mouseUpEvent(EMouseButton, int x, int y)
   {
     AABB bbox = mOptions->boundingRect();
-    Real h = bbox.height();
+    real h = bbox.height();
 
     // implement exclusion logic
     if( x < bbox.width() )
@@ -386,7 +386,7 @@ public:
     // throttle ghost camera manipulator speed based on the scene size, using a simple euristic formula
     sceneManager()->computeBounds();
     const AABB& scene_aabb = sceneManager()->boundingBox();
-    Real speed = (scene_aabb.width() + scene_aabb.height() + scene_aabb.depth()) / 20.0f;
+    real speed = (scene_aabb.width() + scene_aabb.height() + scene_aabb.depth()) / 20.0f;
     ghostCameraManipulator()->setMovementSpeed(speed);
 
     // update the rendering

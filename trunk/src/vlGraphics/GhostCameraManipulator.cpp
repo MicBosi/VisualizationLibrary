@@ -81,7 +81,7 @@ void GhostCameraManipulator::updateEvent()
     mLastTime = Time::currentTime();
     return;
   }
-  Real dt = Time::currentTime() - mLastTime;
+  real dt = Time::currentTime() - mLastTime;
   mLastTime = Time::currentTime();
 
   mat4 m = mat4::getTranslation(mPosition);
@@ -121,7 +121,7 @@ void GhostCameraManipulator::updateEvent()
   dir += camera()->localMatrix().getY() * direction.y();
   dir -= camera()->localMatrix().getZ() * direction.z();
   dir.normalize();
-  mPosition += dir * (Real)(dt * mMovementSpeed);
+  mPosition += dir * (real)(dt * mMovementSpeed);
 }
 //-----------------------------------------------------------------------------
 void GhostCameraManipulator::setCamera(Camera* camera) { mCamera = camera; }
@@ -137,7 +137,7 @@ void GhostCameraManipulator::enableEvent(bool enabled)
       return;
 
     setPosition( camera()->localMatrix().getT() );
-    Real x, y;
+    real x, y;
     camera()->localMatrix().getYXRotationAngles( y, x );
     setXDegrees(x);
     setYDegrees(y);

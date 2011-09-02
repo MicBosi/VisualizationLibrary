@@ -243,7 +243,7 @@ namespace vl
     {
       Bool,
       Integer,
-      Real,
+      real,
       String,
       Identifier,
       ID,
@@ -349,7 +349,7 @@ namespace vl
     VLXValue(double d)
     {
       mLineNumber = 0;
-      mType = Real;
+      mType = real;
       mUnion.mReal  = d;
     }
 
@@ -498,11 +498,11 @@ namespace vl
     double setReal(double val)
     {
       release();
-      mType = Real;
+      mType = real;
       return mUnion.mReal = val;
     }
 
-    double getReal() const { VL_CHECK(mType == Real); return mUnion.mReal; }
+    double getReal() const { VL_CHECK(mType == real); return mUnion.mReal; }
 
     // bool
 

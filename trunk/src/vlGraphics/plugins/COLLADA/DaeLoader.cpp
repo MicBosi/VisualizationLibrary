@@ -652,7 +652,7 @@ void DaeLoader::parseNode(daeElement* el, Dae::Node* parent)
         domMatrix* matrix = static_cast<domMatrix*>(child);
         mat4 local_matrix;
         for(int i=0; i<16; ++i)
-          local_matrix.ptr()[i] = (Real)matrix->getValue().get(i);
+          local_matrix.ptr()[i] = (real)matrix->getValue().get(i);
         local_matrix.transpose();
         this_node->mTransform->postMultiply(local_matrix);
       }
@@ -660,30 +660,30 @@ void DaeLoader::parseNode(daeElement* el, Dae::Node* parent)
       if ( 0 == strcmp(child->getElementName(), "translate") )
       {
         domTranslate* tr = static_cast<domTranslate*>(child);
-        mat4 m = mat4::getTranslation((Real)tr->getValue()[0], (Real)tr->getValue()[1], (Real)tr->getValue()[2]);
+        mat4 m = mat4::getTranslation((real)tr->getValue()[0], (real)tr->getValue()[1], (real)tr->getValue()[2]);
         this_node->mTransform->postMultiply( m );
       }
       else
       if ( 0 == strcmp(child->getElementName(), "rotate") )
       {
         domRotate* rot = static_cast<domRotate*>(child);
-        mat4 m = mat4::getRotation((Real)rot->getValue()[3], (Real)rot->getValue()[0], (Real)rot->getValue()[1], (Real)rot->getValue()[2]);
+        mat4 m = mat4::getRotation((real)rot->getValue()[3], (real)rot->getValue()[0], (real)rot->getValue()[1], (real)rot->getValue()[2]);
         this_node->mTransform->postMultiply( m );
       }
       else
       if ( 0 == strcmp(child->getElementName(), "scale") )
       {
         domScale* sc = static_cast<domScale*>(child);
-        mat4 m = mat4::getScaling((Real)sc->getValue()[0], (Real)sc->getValue()[1], (Real)sc->getValue()[2]);
+        mat4 m = mat4::getScaling((real)sc->getValue()[0], (real)sc->getValue()[1], (real)sc->getValue()[2]);
         this_node->mTransform->postMultiply( m );
       }
       else
       if ( 0 == strcmp(child->getElementName(), "lookat") )
       {
         domLookat* lookat = static_cast<domLookat*>(child);
-        vec3 eye ((Real)lookat->getValue()[0], (Real)lookat->getValue()[1], (Real)lookat->getValue()[2]);
-        vec3 look((Real)lookat->getValue()[3], (Real)lookat->getValue()[4], (Real)lookat->getValue()[5]);
-        vec3 up  ((Real)lookat->getValue()[6], (Real)lookat->getValue()[7], (Real)lookat->getValue()[8]);
+        vec3 eye ((real)lookat->getValue()[0], (real)lookat->getValue()[1], (real)lookat->getValue()[2]);
+        vec3 look((real)lookat->getValue()[3], (real)lookat->getValue()[4], (real)lookat->getValue()[5]);
+        vec3 up  ((real)lookat->getValue()[6], (real)lookat->getValue()[7], (real)lookat->getValue()[8]);
         this_node->mTransform->preMultiply( mat4::getLookAt(eye, look, up).invert() );
       }
       else
@@ -817,9 +817,9 @@ bool DaeLoader::load(VirtualFile* file)
 
       // *** check for transforms that require normal rescaling ***
       mat4 nmatrix = actor->transform()->worldMatrix().as3x3().invert().transpose();
-      Real len_x = nmatrix.getX().length();
-      Real len_y = nmatrix.getY().length();
-      Real len_z = nmatrix.getZ().length();
+      real len_x = nmatrix.getX().length();
+      real len_y = nmatrix.getY().length();
+      real len_z = nmatrix.getZ().length();
       if ( fabs(len_x - 1) > 0.05f || fabs(len_y - 1) > 0.05f || fabs(len_z - 1) > 0.05f )
       {
         // Log::warning("Detected mesh with scaled transform: enabled normal renormalization.\n");

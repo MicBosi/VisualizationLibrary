@@ -40,9 +40,9 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-Real vl::randomMinMax(Real min, Real max)
+real vl::randomMinMax(real min, real max)
 {
-  Real t = rand() / (Real)RAND_MAX;
+  real t = rand() / (real)RAND_MAX;
   return min + (max-min)*t;
 }
 //-----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ void vl::extractPlanes( Plane* planes, const mat4& modelviewproj )
   // 2) because of 1) "d" becomes the distance of the plane from the origin
 
   vec3 n;
-  Real d;
+  real d;
 
   // left clipping plane
   n.x() = modelviewproj.e(3,0) + modelviewproj.e(0,0);

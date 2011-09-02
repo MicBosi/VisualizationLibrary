@@ -69,7 +69,7 @@ namespace vl
     
     int microsecond() const { return mMicrosecond; }
 
-    static Real currentTime();
+    static real currentTime();
     
     static void sleep(unsigned int milliseconds);
 
@@ -79,7 +79,7 @@ namespace vl
     
     bool isStarted(int index=0) const { return mStart[index] != -1; }
     
-    Real elapsed(int index=0) const { return mStart[index] >= 0 ? currentTime() - mStart[index] : -1; }
+    real elapsed(int index=0) const { return mStart[index] >= 0 ? currentTime() - mStart[index] : -1; }
 
   protected:
     int mYear; // 1601 through 30827.
@@ -91,7 +91,7 @@ namespace vl
     int mSecond; // 0..59
     int mMicrosecond; // 0 ... 999999
 
-    Real mStart[VL_MAX_TIMERS];
+    real mStart[VL_MAX_TIMERS];
   };
 }
 

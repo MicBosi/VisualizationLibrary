@@ -40,7 +40,7 @@
 class BlinkShaderAnimator: public vl::ShaderAnimator
 {
 public:
-  void updateShader(vl::Shader* shader, vl::Camera*, vl::Real cur_time)
+  void updateShader(vl::Shader* shader, vl::Camera*, vl::real cur_time)
   {
     int c = (int)( cur_time * 15.0 ) % 2;
     vl::fvec4 color;
@@ -56,7 +56,7 @@ public:
 class TexRotScaleShaderAnimator: public vl::ShaderAnimator
 {
 public:
-  void updateShader(vl::Shader* shader, vl::Camera*, vl::Real cur_time)
+  void updateShader(vl::Shader* shader, vl::Camera*, vl::real cur_time)
   {
     vl::mat4 mat;
     mat.translate(-0.5,-0.5,0.0f);
@@ -72,7 +72,7 @@ public:
 class MyShaderAnimator1: public vl::ShaderAnimator
 {
 public:
-  void updateShader(vl::Shader* shader, vl::Camera* , vl::Real cur_time)
+  void updateShader(vl::Shader* shader, vl::Camera* , vl::real cur_time)
   {
     float t = (float)sin( cur_time*vl::fPi*2.0f )*0.5f + 0.5f;
     vl::fvec4 col = vl::red*t + vl::blue*(1-t);
@@ -170,7 +170,7 @@ public:
   // animate the scene
   void updateScene()
   {
-    vl::Real t = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 8.0f ) * 0.5f + 0.5f;
+    vl::real t = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 8.0f ) * 0.5f + 0.5f;
     vl::vec3 eye( 130*t+5, t*20+5, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 15.0f, 0, 1, 0 ) * eye;
     vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );

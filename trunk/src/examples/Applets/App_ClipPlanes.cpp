@@ -99,7 +99,7 @@ public:
   virtual void updateScene()
   {
     // animate the clipping planes and the rendered plane
-    vl::Real t = (vl::Real)vl::Time::currentTime();
+    vl::real t = (vl::real)vl::Time::currentTime();
     mClipTr->setLocalMatrix( vl::mat4::getRotation(t*90.0f, sin(t*(vl::fPi-3.0f)),1,cos(t)) );
   }
 

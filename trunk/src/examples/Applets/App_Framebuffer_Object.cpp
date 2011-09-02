@@ -477,7 +477,7 @@ public:
     }
 
     // ground plane
-    const vl::Real size = 50;
+    const vl::real size = 50;
     vl::ref<vl::Geometry> ground = vl::makeGrid( vl::vec3(0,0,0), size, size, 2, 2, true, vl::fvec2(0,0), vl::fvec2(1,1) );
     ground->computeNormals();
     mMainRendering->sceneManagers()->at(0)->as<vl::SceneManagerActorTree>()->tree()->addActor( ground.get(), effect1.get() );
@@ -629,7 +629,7 @@ public:
 
 protected:
   int mTestNum;
-  vl::Real mX, mY, mX2, mY2, mX3;
+  vl::real mX, mY, mX2, mY2, mX3;
   vl::ref<vl::Transform> mTransfRing1;
   vl::ref<vl::Transform> mTransfRing2;
   vl::ref<vl::Transform> mTransfRing3;

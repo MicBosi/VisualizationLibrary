@@ -248,18 +248,18 @@ namespace vl
         vec3 v;
         const T_Scalar* pv = reinterpret_cast<const T_Scalar*>(&at(i));
         for( int j=0; j<count; ++j )
-          v.ptr()[j] = (Real)pv[j];
+          v.ptr()[j] = (real)pv[j];
         aabb += v;
       }
-      Real radius = 0;
+      real radius = 0;
       vec3 center = aabb.center();
       for(size_t i=0; i<size(); ++i)
       {
         vec3 v;
         const T_Scalar* pv = reinterpret_cast<const T_Scalar*>(&at(i));
         for( int j=0; j<count; ++j )
-          v.ptr()[j] = (Real)pv[j];
-        Real r = (v-center).lengthSquared();
+          v.ptr()[j] = (real)pv[j];
+        real r = (v-center).lengthSquared();
         if (r > radius)
           radius = r;
       }
@@ -275,7 +275,7 @@ namespace vl
         vec3 v;
         const T_Scalar* pv = reinterpret_cast<const T_Scalar*>(&at(i));
         for( int j=0; j<count; ++j )
-          v.ptr()[j] = (Real)pv[j];
+          v.ptr()[j] = (real)pv[j];
         aabb += v;
       }
       return aabb;
@@ -289,7 +289,7 @@ namespace vl
         T_Scalar* pv = reinterpret_cast<T_Scalar*>(&at(i));
         // read
         for( size_t j=0; j<T_GL_Size; ++j )
-          v.ptr()[j] = (Real)pv[j];
+          v.ptr()[j] = (real)pv[j];
         // transform
         v = m * v;
         // write
@@ -306,7 +306,7 @@ namespace vl
         T_Scalar* pv = reinterpret_cast<T_Scalar*>(&at(i));
         // read
         for( size_t j=0; j<T_GL_Size; ++j )
-          v.ptr()[j] = (Real)pv[j];
+          v.ptr()[j] = (real)pv[j];
         // normalize
         v.normalize();
         // write
@@ -320,7 +320,7 @@ namespace vl
       vec4 v(0,0,0,1);
       const T_Scalar* pv = reinterpret_cast<const T_Scalar*>(&at(vector_index));
       for( size_t j=0; j<T_GL_Size; ++j )
-        v.ptr()[j] = (Real)pv[j];
+        v.ptr()[j] = (real)pv[j];
       return v;
     }
 
@@ -330,7 +330,7 @@ namespace vl
       const T_Scalar* pv = reinterpret_cast<const T_Scalar*>(&at(vector_index));
       const int count = T_GL_Size <= 3 ? T_GL_Size : 3;
       for( int j=0; j<count; ++j )
-        v.ptr()[j] = (Real)pv[j];
+        v.ptr()[j] = (real)pv[j];
       return v;
     }
 
@@ -340,7 +340,7 @@ namespace vl
       const T_Scalar* pv = reinterpret_cast<const T_Scalar*>(&at(vector_index));
       const int count = T_GL_Size <= 2 ? T_GL_Size : 2;
       for( int j=0; j<count; ++j )
-        v.ptr()[j] = (Real)pv[j];
+        v.ptr()[j] = (real)pv[j];
       return v;
     }
 

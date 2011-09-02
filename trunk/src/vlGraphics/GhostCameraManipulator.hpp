@@ -122,38 +122,38 @@ namespace vl
     void setKeysDown(EKey key, EKey modifier = Key_None)     { mKeysDown[0] = key; mKeysDown[1] = modifier; };
 
     /** The camera rotation speed (default = 0.5). */
-    void setRotationSpeed(Real speed) { mRotationSpeed = speed; }
+    void setRotationSpeed(real speed) { mRotationSpeed = speed; }
     
     /** The camera rotation speed (default = 0.5). */
-    Real rotationSpeed() const { return mRotationSpeed; }
+    real rotationSpeed() const { return mRotationSpeed; }
     
     /** The camera translation speed (default = 50). */
-    void setMovementSpeed(Real speed) { mMovementSpeed = speed; }
+    void setMovementSpeed(real speed) { mMovementSpeed = speed; }
 
     /** The camera translation speed (default = 50). */
-    Real movementSpeed() const { return mMovementSpeed; }
+    real movementSpeed() const { return mMovementSpeed; }
 
   protected:
     void setPosition(vec3 position) { mPosition = position; }
 
     const vec3& position() const { return mPosition; }
 
-    void setXDegrees(Real degree) { mXDegrees = degree; }
+    void setXDegrees(real degree) { mXDegrees = degree; }
 
-    Real xDegrees() { return mXDegrees; }
+    real xDegrees() { return mXDegrees; }
 
-    void setYDegrees(Real degree) { mYDegrees = degree; }
+    void setYDegrees(real degree) { mYDegrees = degree; }
 
-    Real yDegrees() { return mYDegrees; }
+    real yDegrees() { return mYDegrees; }
 
   protected:
     ref<Camera> mCamera;
     vec3 mPosition;
-    Real mLastTime;
-    Real mRotationSpeed;
-    Real mMovementSpeed;
-    Real mXDegrees;
-    Real mYDegrees;
+    real mLastTime;
+    real mRotationSpeed;
+    real mMovementSpeed;
+    real mXDegrees;
+    real mYDegrees;
     EKey mKeysForward[2];
     EKey mKeysBackward[2];
     EKey mKeysUp[2];

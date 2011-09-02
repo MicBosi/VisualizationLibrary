@@ -87,7 +87,7 @@ public:
   }
 
   // respond to onActorRenderStarted() event by animating the wave
-  virtual void onActorRenderStarted(vl::Actor*, vl::Real frame_clock, const vl::Camera*, vl::Renderable* renderable, const vl::Shader*, int pass)
+  virtual void onActorRenderStarted(vl::Actor*, vl::real frame_clock, const vl::Camera*, vl::Renderable* renderable, const vl::Shader*, int pass)
   {
     /* the beauty of this function is that in a few lines of code we update 3 different LOD levels!  */
 
@@ -96,7 +96,7 @@ public:
       return;
 
     // clamp animation to 30 FPS
-    const vl::Real fps = 30.0f;
+    const vl::real fps = 30.0f;
 
     if ( frame_clock - mLastUpdate > 1.0f/fps || mLastUpdatedLod != renderable )
     {
@@ -115,7 +115,7 @@ public:
       {
         // flatten to xz plane and compute distance
         vec[i].y() = 0;
-        vl::Real d = (vl::vec3(vec[i])-center).length();
+        vl::real d = (vl::vec3(vec[i])-center).length();
         vec[i].y() = (float)cos( -frame_clock * vl::fPi * theta + d * phi ) * 2.0f;
       }
 
@@ -133,7 +133,7 @@ public:
   virtual void onActorDelete(vl::Actor*) { }
 
 protected:
-  vl::Real mLastUpdate;
+  vl::real mLastUpdate;
   vl::Renderable* mLastUpdatedLod;
 };
 
@@ -224,7 +224,7 @@ public:
     {
       /* define actor position and add it to the scene */
       vl::ref<vl::Transform> tr = new vl::Transform;
-      vl::Real t = 360.0f / ring_obj_count * i;
+      vl::real t = 360.0f / ring_obj_count * i;
       vl::vec3 v = vl::mat4::getRotation(t,0,1,0) * vl::vec3(35,0,0);
       tr->setLocalMatrix( vl::mat4::getTranslation(v) );
 
@@ -246,8 +246,8 @@ public:
   {
     /* animate the camera to rotate around the scene and bounce near/far */
     float s = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 10.0f );
-    vl::Real t = pow((s+1.0f)/2.0f,2);
-    vl::Real x = t * 200 + 5;
+    vl::real t = pow((s+1.0f)/2.0f,2);
+    vl::real x = t * 200 + 5;
     vl::vec3 eye( x, 0, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 30.0f, 0, 1, 0 ) * eye;
     eye += vl::vec3(0,10+70*t,0);

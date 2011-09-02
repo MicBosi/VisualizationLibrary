@@ -52,7 +52,7 @@ namespace vl
     //! The billboard position and rotation center
     void setPosition(const vec3& pos);
     //! The billboard position and rotation center
-    void setPosition(Real x, Real y, Real z) { setPosition( vec3(x,y,z) ); }
+    void setPosition(real x, real y, real z) { setPosition( vec3(x,y,z) ); }
     //! The billboard position and rotation center
     vec3 position();
     //! The rotation axis in world coordinates. Used only for axis aligned billboards.
