@@ -34,7 +34,7 @@
 
 #include <vlCore/AABB.hpp>
 #include <vlGraphics/Actor.hpp>
-#include <vlCore/mathutils.hpp>
+#include <vlCore/math_utils.hpp>
 #include <vlCore/Plane.hpp>
 #include <vlCore/Collection.hpp>
 #include <vlGraphics/ActorTreeAbstract.hpp>

@@ -55,7 +55,7 @@
 #include <vlGraphics/Shader.hpp>
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/MultiDrawElements.hpp>
-#include <vlCore/glslmath.hpp>
+#include <vlCore/glsl_math.hpp>
 
 namespace vl
 {
