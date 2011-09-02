@@ -103,7 +103,7 @@ namespace vl
         // update BufferObjects
         if (isBufferObjectEnabled() && isBufferObjectDirty())
         {
-          updateDirtyBufferObject(VUM_KeepRamBuffer);
+          updateDirtyBufferObject(BUM_KeepRamBuffer);
           setBufferObjectDirty(false);
         }
 

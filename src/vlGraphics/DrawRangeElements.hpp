@@ -189,7 +189,7 @@ namespace vl
 
     virtual void updateDirtyBufferObject(EBufferObjectUpdateMode mode)
     {
-      if (indexBuffer()->isBufferObjectDirty() || (mode & VUF_ForceUpdate))
+      if (indexBuffer()->isBufferObjectDirty() || (mode & BUF_ForceUpdate))
         indexBuffer()->updateBufferObject(mode);
     }
 
