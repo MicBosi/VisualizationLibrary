@@ -52,7 +52,7 @@ namespace vl
    * vl::DrawRangeElementsUInt, vl::DrawRangeElementsUShort or vl::DrawRangeElementsUByte. */
   class DrawRangeElementsBase: public DrawCall
   {
-    VL_INSTRUMENT_CLASS(vl::DrawRangeElementsBase, DrawCall)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::DrawRangeElementsBase, DrawCall)
 
   public:
     /** Sets the range start. See also http://www.opengl.org/sdk/docs/man3/xhtml/glDrawRangeElements.xml */
@@ -119,7 +119,7 @@ namespace vl
   template <class arr_type>
   class DrawRangeElements: public DrawRangeElementsBase
   {
-    VL_INSTRUMENT_CLASS(vl::DrawRangeElements, DrawRangeElementsBase)
+    VL_INSTRUMENT_CLASS(vl::DrawRangeElements<arr_type>, DrawRangeElementsBase)
 
   public:
     typedef typename arr_type::scalar_type index_type;

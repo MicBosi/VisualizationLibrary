@@ -41,6 +41,14 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // GLSLShader
 //-----------------------------------------------------------------------------
+GLSLShader::GLSLShader()
+{
+  VL_DEBUG_SET_OBJECT_NAME()
+  mType = ST_VERTEX_SHADER;
+  mHandle = 0;
+  mCompiled = false;
+}
+//-----------------------------------------------------------------------------
 GLSLShader::GLSLShader(EShaderType type, const String& source)
 {
   VL_DEBUG_SET_OBJECT_NAME()

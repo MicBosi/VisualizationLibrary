@@ -48,7 +48,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOAbstractAttachment: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::FBOAbstractAttachment, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::FBOAbstractAttachment, Object)
 
     friend class FBORenderTarget;
 
@@ -86,7 +86,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBORenderbufferAttachment: public FBOAbstractAttachment
   {
-    VL_INSTRUMENT_CLASS(vl::FBORenderbufferAttachment, FBOAbstractAttachment)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::FBORenderbufferAttachment, FBOAbstractAttachment)
 
     friend class FBORenderTarget;
 
@@ -191,7 +191,7 @@ namespace vl
 
   public:
     /** Constructor */
-    FBOColorBufferAttachment( EColorBufferFormat type )
+    FBOColorBufferAttachment( EColorBufferFormat type = CBF_RGBA )
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mType = type;
@@ -221,7 +221,7 @@ namespace vl
 
   public:
     /** Constructor */
-    FBODepthBufferAttachment( EDepthBufferFormat type )
+    FBODepthBufferAttachment( EDepthBufferFormat type = DBF_DEPTH_COMPONENT )
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mType = type;
@@ -251,7 +251,7 @@ namespace vl
 
   public:
     /** Constructor */
-    FBOStencilBufferAttachment( EStencilBufferFormat type )
+    FBOStencilBufferAttachment( EStencilBufferFormat type = SBF_STENCIL_INDEX8 )
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mType = type;
@@ -281,7 +281,7 @@ namespace vl
 
   public:
     /** Constructor */
-    FBODepthStencilBufferAttachment( EDepthStencilBufferFormat type )
+    FBODepthStencilBufferAttachment( EDepthStencilBufferFormat type = DSBT_DEPTH_STENCIL )
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mType = type;
@@ -307,7 +307,7 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT FBOAbstractTextureAttachment: public FBOAbstractAttachment
   {
-    VL_INSTRUMENT_CLASS(vl::FBOAbstractTextureAttachment, FBOAbstractAttachment)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::FBOAbstractTextureAttachment, FBOAbstractAttachment)
 
   public:
     /** Constructor. */
@@ -348,6 +348,12 @@ namespace vl
 
   public:
     /** Constructor. */
+    FBOTexture1DAttachment(): FBOAbstractTextureAttachment( NULL, 0 )
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
+
+    /** Constructor. */
     FBOTexture1DAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -368,6 +374,13 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::FBOTexture2DAttachment, FBOAbstractTextureAttachment)
 
   public:
+    /** Constructor. */
+    FBOTexture2DAttachment( ): FBOAbstractTextureAttachment( NULL, 0 )
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+      mTextureTarget = T2DT_TEXTURE_2D;
+    }
+
     /** Constructor. */
     FBOTexture2DAttachment( Texture* texture, int mipmap_level, ETex2DTarget target ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
@@ -400,6 +413,12 @@ namespace vl
 
   public:
     /** Constructor. */
+    FBOTextureAttachment(): FBOAbstractTextureAttachment( NULL, 0 )
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
+
+    /** Constructor. */
     FBOTextureAttachment( Texture* texture, int mipmap_level ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -421,6 +440,12 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::FBOTexture3DAttachment, FBOAbstractTextureAttachment)
 
   public:
+    FBOTexture3DAttachment(): FBOAbstractTextureAttachment( NULL, 0 )
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+      mLayer = 0;
+    }
+
     FBOTexture3DAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -451,6 +476,13 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::FBOTextureLayerAttachment, FBOAbstractTextureAttachment)
 
   public:
+    /** Constructor. */
+    FBOTextureLayerAttachment(): FBOAbstractTextureAttachment( NULL, 0 )
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+      mLayer = 0;
+    }
+
     /** Constructor. */
     FBOTextureLayerAttachment( Texture* texture, int mipmap_level, int layer ): FBOAbstractTextureAttachment( texture, mipmap_level )
     {
@@ -514,6 +546,13 @@ namespace vl
     
     void operator=( const FBORenderTarget& ) {}
     
+    FBORenderTarget(): RenderTarget( NULL, 0, 0 ), mHandle( 0 )
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+      setDrawBuffer( RDB_COLOR_ATTACHMENT0 );
+      setReadBuffer( RDB_COLOR_ATTACHMENT0 );
+    }
+
     FBORenderTarget( OpenGLContext* ctx, int w, int h ): RenderTarget( ctx, w, h ), mHandle( 0 )
     {
       VL_DEBUG_SET_OBJECT_NAME()

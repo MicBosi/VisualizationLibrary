@@ -52,7 +52,7 @@ namespace vl
    * - vl::RendererAbstract, vl::Renderer */
   class RenderEventCallback: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::RenderEventCallback, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::RenderEventCallback, Object)
 
   public:
     RenderEventCallback(): mRemoveAfterCall(false), mEnabled(true)

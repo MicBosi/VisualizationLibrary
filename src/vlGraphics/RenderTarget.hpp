@@ -54,6 +54,14 @@ namespace vl
 
   protected:
     /** Constructor. */
+    RenderTarget(): mWidth(0), mHeight(0), mOpenGLContext(NULL)
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+      setDrawBuffer(RDB_BACK_LEFT);
+      setReadBuffer(RDB_BACK_LEFT);
+    }
+
+    /** Constructor. */
     RenderTarget(OpenGLContext* ctx, int w, int h): mWidth(w), mHeight(h), mOpenGLContext(ctx)
     {
       VL_DEBUG_SET_OBJECT_NAME()

@@ -58,23 +58,28 @@ bool ZippedDirectory::setPath(const String& name)
   String root = name;
   root.trim();
   root.normalizeSlashes();
-  while(root.endsWith('/'))
-    root = root.left(-1);
-  root.trim();
   if (root.empty())
   {
-    vl::Log::error("Directory path must be a non null string and must not be '/'.\n");
+    Log::error("ZippedDirectory::setPath() given an empty path.\n");
     return false;
   }
+  if (!root.endsWith('/'))
+  {
+    // Log::warning( Say("ZippedDirectory::setPath() : path (%s) must end with a '/'.\n") << root );
+    root += '/';
+  }
+
   std::map< String, ref<ZippedFile> > file_map;
   for( std::map< String, ref<ZippedFile> >::iterator it = mFiles.begin(); it != mFiles.end(); ++it )
   {
     String p = it->first;
-    if (path().length())
-      p = p.right(-path().length());
-    while(p.startsWith('/'))
-      p = p.right(-1);
-    it->second->setPath(root + '/' + p);
+    if ( !p.startsWith(path()) )
+    {
+      Log::warning( Say("ZippedDirectory::setPath() : invalid path file '%s'.\n") << p );
+      continue;
+    }
+    p = p.right(-path().length());
+    it->second->setPath(root + p);
     file_map[it->second->path()] = it->second;
   }
   mFiles = file_map;
@@ -167,7 +172,7 @@ bool ZippedDirectory::init()
     zipped_file->setZippedFileInfo( zfile_info.get() );
 
     zfile_info->mFileName = name;
-    zipped_file->setPath( path() + '/' + name );
+    zipped_file->setPath( path() + name );
     mFiles[zipped_file->path()] = zipped_file;
 
     // extra field
@@ -296,7 +301,7 @@ void ZippedDirectory::listFilesRecursive( std::vector<String>& file_list ) const
   }
   for( std::map< String, ref<ZippedFile> >::const_iterator it = mFiles.begin(); it != mFiles.end();  ++it)
   {
-    if (!it->first.startsWith(path()+'/'))
+    if (!it->first.startsWith(path()))
       vl::Log::warning( Say("ZippedFile '%s' does not belong to ZippedDirectory '%s'.\n") << it->first << path() );
     file_list.push_back( it->first );
   }
@@ -314,7 +319,7 @@ void ZippedDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
   std::set<String> sub_dirs;
   for( std::map< String, ref<ZippedFile> >::const_iterator it = mFiles.begin(); it != mFiles.end(); ++it )
   {
-    VL_CHECK(it->first.startsWith(path()+'/'))
+    VL_CHECK(it->first.startsWith(path()))
     String p = it->first.extractPath();
     if (path().length())
       p = p.right(-path().length());
@@ -331,7 +336,7 @@ void ZippedDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
     std::vector<String> tokens;
     p.split('/',tokens,true);
     if (tokens.size())
-      sub_dirs.insert(path() + '/' + tokens[0]);
+      sub_dirs.insert(path() + tokens[0]);
   }
   for(std::set<String>::const_iterator it = sub_dirs.begin(); it != sub_dirs.end(); ++it)
     dirs.push_back(*it);

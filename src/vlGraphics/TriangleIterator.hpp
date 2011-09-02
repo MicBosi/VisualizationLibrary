@@ -43,7 +43,7 @@ namespace vl
   /** For internal use only. See vl::TriangleIterator instead. */
   class TriangleIteratorAbstract: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::TriangleIteratorAbstract, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::TriangleIteratorAbstract, Object)
 
   public:
     virtual bool next() = 0;
@@ -59,9 +59,24 @@ namespace vl
   template<class TArray>
   class TriangleIteratorIndexed: public TriangleIteratorAbstract
   {
-    VL_INSTRUMENT_CLASS(vl::TriangleIteratorIndexed<class TArray>, TriangleIteratorAbstract)
+    VL_INSTRUMENT_CLASS(vl::TriangleIteratorIndexed<TArray>, TriangleIteratorAbstract)
 
   public:
+
+    TriangleIteratorIndexed()
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+      mCurrentIndex = 0;
+      mEnd    = 0;
+      mA = mB = mC = -1;
+      mEven = true;
+      mIndex0 = 0;
+      mArray            = NULL;
+      mPrimRestartIndex = (unsigned int)-1;
+      mPrimRestartOn    = false;
+      mBaseVertex       = 0;
+      mPrimType         = PT_UNKNOWN;
+    }
 
     TriangleIteratorIndexed(const TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, unsigned int prim_restart_idx)
     {
@@ -319,7 +334,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::TriangleIteratorDirect, TriangleIteratorAbstract)
 
   public:
-    TriangleIteratorDirect(EPrimitiveType prim_type)
+    TriangleIteratorDirect(EPrimitiveType prim_type=PT_UNKNOWN)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mCurrentIndex = mStart = mEnd = 0;

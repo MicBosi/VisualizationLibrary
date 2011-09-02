@@ -33,7 +33,7 @@
 #define GLSL_INCLUDE_ONCE
 
 #include <vlGraphics/UniformSet.hpp>
-#include <vlCore/GLSLmath.hpp>
+#include <vlCore/glslmath.hpp>
 #include <vlGraphics/RenderState.hpp>
 #include <vlCore/String.hpp>
 
@@ -82,9 +82,13 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::GLSLShader, Object)
 
   public:
-    GLSLShader(EShaderType type, const String& source_or_path=String());
+    GLSLShader();
+
+    GLSLShader(EShaderType type, const String& source_or_path);
 
     ~GLSLShader();
+
+    void setType(EShaderType type) { mType = type; }
 
     EShaderType type() const { return mType; }
 

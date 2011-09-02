@@ -49,7 +49,7 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT LODEvaluator: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::LODEvaluator, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::LODEvaluator, Object)
 
   public:
     LODEvaluator()

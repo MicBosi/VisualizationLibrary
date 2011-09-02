@@ -49,6 +49,8 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::Scissor, Object)
 
   public:
+    Scissor() {}
+
     Scissor(int x, int y, int width, int height)
     {
       setScissor(x,y,width,height);

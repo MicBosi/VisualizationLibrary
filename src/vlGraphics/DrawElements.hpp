@@ -52,7 +52,7 @@ namespace vl
    * vl::DrawElementsUInt, vl::DrawElementsUShort or vl::DrawElementsUByte. */
   class DrawElementsBase: public DrawCall
   {
-    VL_INSTRUMENT_CLASS(vl::DrawElementsBase, DrawCall)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::DrawElementsBase, DrawCall)
 
   public:
     /** Returns whether the primitive-restart functionality is enabled or not (requires OpenGL 3.1). See http://www.opengl.org/sdk/docs/man3/xhtml/glPrimitiveRestartIndex.xml */
@@ -117,7 +117,7 @@ namespace vl
   template <class arr_type>
   class DrawElements: public DrawElementsBase
   {
-    VL_INSTRUMENT_CLASS(vl::DrawElements, DrawElementsBase)
+    VL_INSTRUMENT_CLASS(vl::DrawElements<arr_type>, DrawElementsBase)
 
   public:
     typedef typename arr_type::scalar_type index_type;
