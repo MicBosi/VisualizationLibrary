@@ -69,7 +69,7 @@ namespace vl
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    Uniform(const std::string& name): mType(UT_NONE) 
+    Uniform(const char* name): mType(UT_NONE) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mName = name;
@@ -89,7 +89,7 @@ namespace vl
     std::string& name() { return mName; }
     
     //! Sets the name of the uniform variable
-    void setName(const std::string& name) { mName = name; }
+    void setName(const char* name) { mName = name; }
 
     // generic array setters
 
