@@ -29,7 +29,7 @@
 	- vl::RectI
 	- vl::RectF
 	
-	- GLSLmath.hpp
+	- glslmath.hpp
 	
 	\par Text manipulation and rendering
 	
