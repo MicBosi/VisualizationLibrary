@@ -29,10 +29,10 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef math3D_INCLUDE_ONCE
-#define math3D_INCLUDE_ONCE
+#ifndef mathutils_INCLUDE_ONCE
+#define mathutils_INCLUDE_ONCE
 
-#include <vlCore/GLSLmath.hpp>
+#include <vlCore/glslmath.hpp>
 #include <vlCore/Plane.hpp>
 #include <cstdio>
 #include <memory.h>
