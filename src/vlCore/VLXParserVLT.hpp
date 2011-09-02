@@ -335,7 +335,7 @@ namespace vl
             }
             else
             // A float
-            if (mToken.mType == VLTToken::Real)
+            if (mToken.mType == VLTToken::real)
             {
               if (!mLastTag.empty())
                 return false;
@@ -477,7 +477,7 @@ namespace vl
               break;
 
             // float
-            case VLTToken::Real:
+            case VLTToken::real:
               if (!mLastTag.empty())
                 return false;
               value.setReal( atof(mToken.mString.c_str()) ); list->value().push_back( value );
@@ -572,7 +572,7 @@ namespace vl
           return false;
         }
         else
-        if (mToken.mType == VLTToken::Real)
+        if (mToken.mType == VLTToken::real)
         {
           ref<VLXArrayReal> arr_floating;
           arr = arr_floating = new VLXArrayReal;
@@ -581,7 +581,7 @@ namespace vl
             switch(mToken.mType)
             {
             case VLTToken::Integer:
-            case VLTToken::Real: arr_floating->value().push_back( atof( mToken.mString.c_str() ) ); break;
+            case VLTToken::real: arr_floating->value().push_back( atof( mToken.mString.c_str() ) ); break;
             case VLTToken::RightRoundBracket: return true;
             default:
               return false;
@@ -617,7 +617,7 @@ namespace vl
           case VLTToken::ID:                printf("ID = %s\n", mToken.mString.c_str()); break;
           case VLTToken::Identifier:         printf("Identifier = %s\n", mToken.mString.c_str()); break;
           case VLTToken::RawtextBlock:       printf("RawtextBlock = %s\n", mToken.mString.c_str()); break;
-          case VLTToken::Real:               printf("Real = %s\n", mToken.mString.c_str()); break;
+          case VLTToken::real:               printf("real = %s\n", mToken.mString.c_str()); break;
           case VLTToken::Integer:            printf("Integer = %s\n", mToken.mString.c_str()); break;
           case VLTToken::TagHeader:          printf("TagHeader = %s\n", mToken.mString.c_str()); break;
           default:

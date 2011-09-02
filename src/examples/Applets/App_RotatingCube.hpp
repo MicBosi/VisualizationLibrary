@@ -79,7 +79,7 @@ public:
   virtual void updateScene()
   {
     // rotates the cube around the Y axis 45 degrees per second 
-    vl::Real degrees = vl::Time::currentTime() * 45.0f;
+    vl::real degrees = vl::Time::currentTime() * 45.0f;
     vl::mat4 matrix = vl::mat4::getRotation( degrees, 0,1,0 );
     mCubeTransform->setLocalMatrix( matrix );
   }

@@ -50,7 +50,7 @@ namespace vl
 
     ~MorphingCallback();
 
-    virtual void onActorRenderStarted(Actor* actor, Real frame_clock, const Camera* cam, Renderable* renderable, const Shader*, int pass);
+    virtual void onActorRenderStarted(Actor* actor, real frame_clock, const Camera* cam, Renderable* renderable, const Shader*, int pass);
 
     virtual void onActorDelete(Actor*) {}
 
@@ -72,7 +72,7 @@ namespace vl
 
     void setAnimation(int start, int end, float period);
 
-    void startAnimation(Real time = -1);
+    void startAnimation(real time = -1);
 
     void stopAnimation();
 
@@ -95,9 +95,9 @@ namespace vl
     std::vector< ref<ArrayFloat3> > mVertexFrames;
     std::vector< ref<ArrayFloat3> > mNormalFrames;
 
-    Real mLastUpdate;
-    Real mElapsedTime;
-    Real mAnimationStartTime;
+    real mLastUpdate;
+    real mElapsedTime;
+    real mAnimationStartTime;
     int mAnimationStart;
     int mAnimationEnd;
     float mAnimationPeriod;

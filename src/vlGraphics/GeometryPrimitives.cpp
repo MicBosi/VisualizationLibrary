@@ -39,7 +39,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 //! \p detail can be between 0 ( = icosahedron) and 8 (extremely detailed sphere)
 //! a value of 2 yelds already very good results.
-ref<Geometry> vl::makeIcosphere(const vec3& pos, Real diameter, int detail, bool remove_doubles)
+ref<Geometry> vl::makeIcosphere(const vec3& pos, real diameter, int detail, bool remove_doubles)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Icosphere");
@@ -49,8 +49,8 @@ ref<Geometry> vl::makeIcosphere(const vec3& pos, Real diameter, int detail, bool
 
   ref<DrawElementsUInt> polys = new DrawElementsUInt(PT_TRIANGLES);
 
-  const Real X = (Real)0.525731112119133606;
-  const Real Z = (Real)0.850650808352039932;
+  const real X = (real)0.525731112119133606;
+  const real Z = (real)0.850650808352039932;
   std::vector< vec3 > verts;
   verts.push_back( vec3(-X, 0, Z) );
   verts.push_back( vec3(X, 0, Z) );
@@ -109,7 +109,7 @@ ref<Geometry> vl::makeIcosphere(const vec3& pos, Real diameter, int detail, bool
 
   // generate sphere vertices and connection information
 
-  Real radius = diameter / 2;
+  real radius = diameter / 2;
 
   coords->resize( (int)verts.size() );
   norms->resize( (int)verts.size() );
@@ -145,7 +145,7 @@ ref<Geometry> vl::makeIcosphere(const vec3& pos, Real diameter, int detail, bool
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vl::makeTeapot( const vec3& origin, Real diameter, int detail)
+ref<Geometry> vl::makeTeapot( const vec3& origin, real diameter, int detail)
 {
   // 32 patches 4x4
   static const int patch_idx[] = { 
@@ -264,7 +264,7 @@ ref<Geometry> vl::makeTeapot( const vec3& origin, Real diameter, int detail)
   }
   teapot->setDetail(detail);
   teapot->updateBezierSurface(false);
-  Real s = Real(1.0) / teapot->boundingBox().width() * diameter;
+  real s = real(1.0) / teapot->boundingBox().width() * diameter;
   mat4 m = mat4::getTranslation( origin )  *
            mat4::getRotation(-90, 1, 0, 0) * 
            mat4::getScaling(s, s, s)       * 
@@ -281,7 +281,7 @@ ref<Geometry> vl::makeTeapot( const vec3& origin, Real diameter, int detail)
   return teapot;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vl::makeUVSphere( const vec3& origin, Real diameter, int phi, int theta)
+ref<Geometry> vl::makeUVSphere( const vec3& origin, real diameter, int phi, int theta)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("UVSphere");
@@ -298,7 +298,7 @@ ref<Geometry> vl::makeUVSphere( const vec3& origin, Real diameter, int phi, int 
   {
     for(int j=0; j<phi; ++j)
     {
-      // vec3 v(1*radius,radius - radius*2*((Real)i/(theta-1)),0);
+      // vec3 v(1*radius,radius - radius*2*((real)i/(theta-1)),0);
       vec3 v(0,1*diameter,0);
       v = mat4::getRotation(180.0f/(theta+1)*(i+1),0,0,1) * v;
       v = mat4::getRotation(360.0f/phi*j,0,1,0)  * v;
@@ -353,7 +353,7 @@ ref<Geometry> vl::makeUVSphere( const vec3& origin, Real diameter, int phi, int 
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vl::makeCylinder( const vec3& origin, Real diameter, Real height, int phi, int theta, bool top, bool bottom)
+ref<Geometry> vl::makeCylinder( const vec3& origin, real diameter, real height, int phi, int theta, bool top, bool bottom)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Cylinder");
@@ -370,7 +370,7 @@ ref<Geometry> vl::makeCylinder( const vec3& origin, Real diameter, Real height, 
   {
     for(int j=0; j<phi; ++j)
     {
-      vec3 v(1*diameter, 1*height - 2*height*((Real)i/(theta-1)), 0);
+      vec3 v(1*diameter, 1*height - 2*height*((real)i/(theta-1)), 0);
       v = mat4::getRotation(360.0f/phi*j,0,1,0) * v;
       vert3->at(vert_idx++) = (fvec3)(v + origin);
     }
@@ -446,14 +446,14 @@ ref<Geometry> vl::makeCylinder( const vec3& origin, Real diameter, Real height, 
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vl::makeTorus( const vec3& origin, Real diameter, Real thickness, int phi, int theta, float tex_coords )
+ref<Geometry> vl::makeTorus( const vec3& origin, real diameter, real thickness, int phi, int theta, float tex_coords )
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Torus");
 
   // create vertices
   thickness /= 2.0f;
-  const Real radius = diameter / 2.0f - thickness;
+  const real radius = diameter / 2.0f - thickness;
 
   // vertices
   ref<ArrayFloat3> vert3 = new ArrayFloat3;
@@ -529,7 +529,7 @@ ref<Geometry> vl::makeBox( const vec3& min, const vec3& max, bool tex_coords )
   return makeBox( (min+max)*0.5, max.x()-min.x(), max.y()-min.y(), max.z()-min.z(), tex_coords );
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zside, bool tex_coords)
+ref<Geometry> vl::makeBox( const vec3& origin, real xside, real yside, real zside, bool tex_coords)
 {
   /*
   1--------0 
@@ -546,9 +546,9 @@ ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zsid
   ref<ArrayFloat3> vert3 = new ArrayFloat3;
   geom->setVertexArray(vert3.get());
 
-  Real x=xside/2.0f;
-  Real y=yside/2.0f;
-  Real z=zside/2.0f;
+  real x=xside/2.0f;
+  real y=yside/2.0f;
+  real z=zside/2.0f;
 
   fvec3 a0( (fvec3)(vec3(+x,+y,+z) + origin) );
   fvec3 a1( (fvec3)(vec3(-x,+y,+z) + origin) );
@@ -632,7 +632,7 @@ ref<Geometry> vl::makeBox( const vec3& origin, Real xside, Real yside, Real zsid
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vl::makePyramid( const vec3& origin, Real side, Real height)
+ref<Geometry> vl::makePyramid( const vec3& origin, real side, real height)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Pyramid");
@@ -640,9 +640,9 @@ ref<Geometry> vl::makePyramid( const vec3& origin, Real side, Real height)
   ref<ArrayFloat3> vert3 = new ArrayFloat3;
   geom->setVertexArray(vert3.get());
 
-  Real x = side   / 2.0f;
-  Real y = height;
-  Real z = side   / 2.0f;
+  real x = side   / 2.0f;
+  real y = height;
+  real z = side   / 2.0f;
 
   fvec3 a0( (fvec3)(vec3(+0,+y,+0) + origin) );
   fvec3 a1( (fvec3)(vec3(-x,+0,-z) + origin) );
@@ -669,7 +669,7 @@ ref<Geometry> vl::makePyramid( const vec3& origin, Real side, Real height)
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vl::makeCone( const vec3& origin, Real diameter, Real height, int phi, bool bottom)
+ref<Geometry> vl::makeCone( const vec3& origin, real diameter, real height, int phi, bool bottom)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Cone");
@@ -728,7 +728,7 @@ ref<Geometry> vl::makeCone( const vec3& origin, Real diameter, Real height, int 
 }
 //-----------------------------------------------------------------------------
 //! \note if tex_coord_scale_u and tex_coord_scale_v are both == 0 no texture coordinate is generated
-ref<Geometry> vl::makeGrid( const vec3& origin, Real xside, Real zside, int x, int z, bool gen_texcoords, fvec2 uv0, fvec2 uv1)
+ref<Geometry> vl::makeGrid( const vec3& origin, real xside, real zside, int x, int z, bool gen_texcoords, fvec2 uv0, fvec2 uv1)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Grid");
@@ -739,8 +739,8 @@ ref<Geometry> vl::makeGrid( const vec3& origin, Real xside, Real zside, int x, i
 
   VL_CHECK(x>=2)
   VL_CHECK(z>=2)
-  Real dx = xside / (x-1);
-  Real dz = zside / (z-1);
+  real dx = xside / (x-1);
+  real dz = zside / (z-1);
   xside /= 2.0f;
   zside /= 2.0f;
 
@@ -816,7 +816,7 @@ ref<Geometry> vl::makePoints( const std::vector< vec3>& pos, const fvec4& color 
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vl::makeIcosahedron( const vec3& origin, Real diameter )
+ref<Geometry> vl::makeIcosahedron( const vec3& origin, real diameter )
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Icosahedron");
@@ -826,9 +826,9 @@ ref<Geometry> vl::makeIcosahedron( const vec3& origin, Real diameter )
 
   // red book 1.4 p89
 
-  const Real x = 0.525731112119133606f / 1.0f;
-  const Real z = 0.850650808352039932f / 1.0f;
-  const Real radius = diameter / 2.0f;
+  const real x = 0.525731112119133606f / 1.0f;
+  const real z = 0.850650808352039932f / 1.0f;
+  const real radius = diameter / 2.0f;
 
   vert3->resize( 12 );
 
@@ -867,7 +867,7 @@ ref<Geometry> vl::makeIcosahedron( const vec3& origin, Real diameter )
   return geom;
 }
 //-----------------------------------------------------------------------------
-ref<Geometry> vl::makeCircle( vec3 origin, Real radius, int slices )
+ref<Geometry> vl::makeCircle( vec3 origin, real radius, int slices )
 {
   ref< Geometry > geom = new Geometry;
   geom->setObjectName("Circle");
@@ -877,7 +877,7 @@ ref<Geometry> vl::makeCircle( vec3 origin, Real radius, int slices )
   points->resize( slices );
   for(int i=0; i<slices; ++i)
   {
-    Real t = 360.0f * i / slices;
+    real t = 360.0f * i / slices;
     vec3 v = mat4::getRotation(t,0,1,0) * vec3(radius,0,0) + origin;
     points->at(i) = (fvec3)v;
   }

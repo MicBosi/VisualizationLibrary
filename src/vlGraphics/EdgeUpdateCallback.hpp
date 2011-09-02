@@ -63,7 +63,7 @@ namespace vl
 
     virtual void onActorDelete(Actor*) {}
 
-    virtual void onActorRenderStarted(Actor* act, Real /*frame_clock*/, const Camera* cam, Renderable* renderable, const Shader*, int pass)
+    virtual void onActorRenderStarted(Actor* act, real /*frame_clock*/, const Camera* cam, Renderable* renderable, const Shader*, int pass)
     {
       if (pass != 0)
         return;

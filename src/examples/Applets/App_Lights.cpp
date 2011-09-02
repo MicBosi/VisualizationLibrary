@@ -233,7 +233,7 @@ public:
   // Animate the lights
   virtual void updateScene()
   {
-    vl::Real phase = 120.0f;
+    vl::real phase = 120.0f;
     vl::mat4 m;
 
     m.translate(5,1,0);

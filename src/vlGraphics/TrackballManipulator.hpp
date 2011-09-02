@@ -163,16 +163,16 @@ namespace vl
     void setTranslationSpeed(float speed) { mTranslationSpeed = speed; }
 
     //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB. See also Camera::adjustView().
-    void adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias=1.0f);
+    void adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real bias=1.0f);
 
     //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing the Actor[s]. See also Camera::adjustView().
-    void adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, Real bias=1.0f);
+    void adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, real bias=1.0f);
 
     //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing the given scene manager. See also Camera::adjustView().
-    void adjustView(SceneManager* scene, const vec3& dir, const vec3& up, Real bias=1.0f);
+    void adjustView(SceneManager* scene, const vec3& dir, const vec3& up, real bias=1.0f);
 
     //! Adjusts the camera position in order to nicely see the scene. It also position the rotation pivot to the center of the AABB containing all the scene managers part of the given rendering. See also Camera::adjustView().
-    void adjustView(Rendering* rendering, const vec3& dir, const vec3& up, Real bias=1.0f);
+    void adjustView(Rendering* rendering, const vec3& dir, const vec3& up, real bias=1.0f);
 
     // --- Advanced methods ---
 

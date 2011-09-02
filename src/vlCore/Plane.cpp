@@ -37,7 +37,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // Plane
 //-----------------------------------------------------------------------------
-Real Plane::distance(const vec3 &v) const 
+real Plane::distance(const vec3 &v) const 
 {
   return dot(v, mNormal) - mOrigin;
 }
@@ -67,8 +67,8 @@ int Plane::classify(const AABB& aabb) const
 
   int left  = 0;
   int right = 0;
-  Real const NEPS = -0.0001f;
-  Real const PEPS = +0.0001f;
+  real const NEPS = -0.0001f;
+  real const PEPS = +0.0001f;
 
   for(int i=0;i<8; ++i)
   {

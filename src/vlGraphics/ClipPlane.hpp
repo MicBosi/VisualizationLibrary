@@ -53,7 +53,7 @@ namespace vl
   public:
 
     /** Constructor. */
-    ClipPlane(Real o=0.0f, vec3 n=vec3(0,0,0));
+    ClipPlane(real o=0.0f, vec3 n=vec3(0,0,0));
 
     /** Constructor. */
     ClipPlane(const vec3& o, const vec3& n);

@@ -47,7 +47,7 @@ namespace vl
     //! Constructor.
     SlicedVolume();
     
-    void onActorRenderStarted(Actor* actor, Real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass);
+    void onActorRenderStarted(Actor* actor, real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass);
 
     void onActorDelete(Actor* ) {}
 
@@ -55,7 +55,7 @@ namespace vl
     void bindActor(Actor*);
 
     //! Updates the uniforms used by the GLSLProgram to render the volume each time the onActorRenderStarted() method is called.
-    virtual void updateUniforms(Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader);
+    virtual void updateUniforms(Actor* actor, real clock, const Camera* camera, Renderable* rend, const Shader* shader);
     
     //! Defines the number of slices used to render the volume: more slices generate a better (and slower) rendering.
     void setSliceCount(int count) { mSliceCount = count; }

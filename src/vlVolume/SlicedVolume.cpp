@@ -98,7 +98,7 @@ SlicedVolume::SlicedVolume()
  * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
  * object space, useful to compute specular highlights etc.
  */
-void SlicedVolume::updateUniforms(Actor*actor, Real, const Camera* camera, Renderable*, const Shader* shader)
+void SlicedVolume::updateUniforms(Actor*actor, real, const Camera* camera, Renderable*, const Shader* shader)
 {
   const GLSLProgram* glsl = shader->getGLSLProgram();
 
@@ -164,7 +164,7 @@ void SlicedVolume::bindActor(Actor* actor)
   actor->setLod(0, mGeometry.get());
 }
 //-----------------------------------------------------------------------------
-void SlicedVolume::onActorRenderStarted(Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass)
+void SlicedVolume::onActorRenderStarted(Actor* actor, real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass)
 {
   if (pass>0)
     return;

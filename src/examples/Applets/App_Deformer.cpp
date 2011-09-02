@@ -291,7 +291,7 @@ public:
     mBrushSize = vl::clamp(mBrushSize, 10, 1000);
 
     vl::mat4 m;
-    m.scale((vl::Real)mBrushSize/2.0f, (vl::Real)mBrushSize/2.0f, (vl::Real)mBrushSize/2.0f);
+    m.scale((vl::real)mBrushSize/2.0f, (vl::real)mBrushSize/2.0f, (vl::real)mBrushSize/2.0f);
     m.translate(mCursorTransform->localMatrix().getT());
     mCursorTransform->setLocalMatrix(m);
   }
@@ -306,11 +306,11 @@ public:
     mCursorActor->setEnableMask(0xFFFFFFFF);
 
     vl::mat4 m;
-    m.scale((vl::Real)mBrushSize/2.0f, (vl::Real)mBrushSize/2.0f, (vl::Real)mBrushSize/2.0f);
+    m.scale((vl::real)mBrushSize/2.0f, (vl::real)mBrushSize/2.0f, (vl::real)mBrushSize/2.0f);
     if (mMode == ScaleMode)
       m.translate(mCursorTransform->localMatrix().getT());
     else
-      m.translate((vl::Real)x, (vl::Real)rendering()->as<vl::Rendering>()->camera()->viewport()->height()-y, 0);
+      m.translate((vl::real)x, (vl::real)rendering()->as<vl::Rendering>()->camera()->viewport()->height()-y, 0);
 
     mCursorTransform->setLocalMatrix(m);
 
@@ -419,7 +419,7 @@ protected:
   vl::ref<vl::Geometry> mGrid;
   vl::ref<vl::Text> mText;
   vl::ivec2 mMouseStart;
-  vl::Real mStartTime;
+  vl::real mStartTime;
   int mBrushSize;
   enum { NoMode, TranslateMode, ScaleMode, AnimateMode } mMode;
   bool mHelpOn;

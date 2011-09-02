@@ -41,13 +41,13 @@ AABB::AABB()
   setNull();
 }
 //-----------------------------------------------------------------------------
-AABB::AABB( const vec3& center, Real radius ) 
+AABB::AABB( const vec3& center, real radius ) 
 {
   mMax = center + radius;
   mMin = center - radius;
 }
 //-----------------------------------------------------------------------------
-AABB::AABB( const vec3& pt1, const vec3& pt2, Real displace) 
+AABB::AABB( const vec3& pt1, const vec3& pt2, real displace) 
 {
   mMax = mMin = pt1;
   if ( mMax.x() < pt2.x() ) mMax.x() = pt2.x();
@@ -61,7 +61,7 @@ AABB::AABB( const vec3& pt1, const vec3& pt2, Real displace)
   mMin = mMin - displace;
 }
 //-----------------------------------------------------------------------------
-void AABB::enlarge(Real displace) {
+void AABB::enlarge(real displace) {
   if ( isNull() )
     return;
 
@@ -132,7 +132,7 @@ bool AABB::isInside(const vec3& v) const
          v.z() >= minCorner().z() && v.z() <= maxCorner().z();
 }
 //-----------------------------------------------------------------------------
-void AABB::addPoint(const vec3& v, Real radius) 
+void AABB::addPoint(const vec3& v, real radius) 
 {
   if (isNull())
   {
@@ -148,21 +148,21 @@ void AABB::addPoint(const vec3& v, Real radius)
   if ( mMin.z() > v.z() - radius) mMin.z() = v.z() - radius;
 }
 //-----------------------------------------------------------------------------
-Real AABB::width() const {
+real AABB::width() const {
   if (isNull())
     return 0;
   else
     return mMax.x() - mMin.x();
 }
 //-----------------------------------------------------------------------------
-Real AABB::height() const {
+real AABB::height() const {
   if (isNull())
     return 0;
   else
     return mMax.y() - mMin.y();
 }
 //-----------------------------------------------------------------------------
-Real AABB::depth() const {
+real AABB::depth() const {
   if (isNull())
     return 0;
   else

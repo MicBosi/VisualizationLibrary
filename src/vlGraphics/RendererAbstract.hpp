@@ -77,7 +77,7 @@ namespace vl
 
     /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
       * Renderer's implementation of this function always returns \p in_render_queue. */
-    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock) = 0;
+    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock) = 0;
 
     /** The RenderTarget on which the rendering is performed. */
     virtual const RenderTarget* renderTarget() const = 0;
@@ -144,10 +144,10 @@ namespace vl
     unsigned int enableMask() const { return mEnableMask; }
 
     /** The current rendring frame time. vl::Renderer passes this value to ActorEventCallback::onActorRenderStarted() */
-    void setFrameClock(Real t) { mFrameClock = t; }
+    void setFrameClock(real t) { mFrameClock = t; }
 
     /** The current rendring frame time. vl::Renderer passes this value to ActorEventCallback::onActorRenderStarted() */
-    Real frameClock() const { return mFrameClock; }
+    real frameClock() const { return mFrameClock; }
 
   protected:
     ref< Collection<RenderEventCallback> > mOnFinishedCallbacks;
@@ -155,7 +155,7 @@ namespace vl
     unsigned long mRenderTick;
     unsigned int mEnableMask;
     EClearFlags mClearFlags;
-    Real mFrameClock;
+    real mFrameClock;
   };
   //------------------------------------------------------------------------------
 }

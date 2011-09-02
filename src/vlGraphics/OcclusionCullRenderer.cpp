@@ -65,7 +65,7 @@ OcclusionCullRenderer::OcclusionCullRenderer()
   // mOcclusionShader->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
 }
 //-----------------------------------------------------------------------------
-const RenderQueue* OcclusionCullRenderer::render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock)
+const RenderQueue* OcclusionCullRenderer::render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock)
 {
   // skip if renderer is disabled
   if (enableMask() == 0)

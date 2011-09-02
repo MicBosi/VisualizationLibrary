@@ -333,7 +333,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
       }
     }
     else
-    // Integer / Real
+    // Integer / real
     //
     // ACCEPTED:
     // 123
@@ -453,7 +453,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
           }
           else
           {
-            token.mType = VLTToken::Real;
+            token.mType = VLTToken::real;
             ungetToken(ch1);
             return true;
           }
@@ -490,14 +490,14 @@ bool VLTTokenizer::getToken(VLTToken& token)
             token.mString.push_back(ch1);
           else
           {
-            token.mType = VLTToken::Real;
+            token.mType = VLTToken::real;
             ungetToken(ch1);
             return true;
           }
           break;
         }
       }
-      // reached TOKEN_EOF in the middle of the parsing so we check where we were, note that it cannot be a Integer or a Real
+      // reached TOKEN_EOF in the middle of the parsing so we check where we were, note that it cannot be a Integer or a real
       if (state == sINT)
       {
         token.mType = VLTToken::Integer;
@@ -506,7 +506,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
       else
       if (state == sFRAC || state == sEXP)
       {
-        token.mType = VLTToken::Real;
+        token.mType = VLTToken::real;
         return true;
       }
       else
