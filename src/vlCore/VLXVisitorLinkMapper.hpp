@@ -49,7 +49,7 @@ namespace vl
     } EError;
 
   public:
-    VLXVisitorLinkMapper(std::map< std::string, ref<VLXStructure> >* map)
+    VLXVisitorLinkMapper(std::map< std::string, ref<VLXStructure> >* map=NULL)
     {
       mLinkMap = map;
       mError = NoError;

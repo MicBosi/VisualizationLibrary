@@ -40,7 +40,7 @@ namespace vl
   /** Base class for VLX parsers. */
   class VLXParser: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::VLXParser, Object)
+    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VLXParser, Object)
 
   public:
 

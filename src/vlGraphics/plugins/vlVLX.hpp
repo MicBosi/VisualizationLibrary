@@ -36,7 +36,7 @@
 #include <vlCore/VLXRegistry.hpp>
 #include <vlCore/VLXSerializer.hpp>
 #include <vlCore/VLXValue.hpp>
-#include <vlCore/VLXUtils.hpp>
+#include <vlCore/vlxutils.hpp>
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Effect.hpp>
