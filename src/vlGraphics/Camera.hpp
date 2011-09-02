@@ -35,7 +35,7 @@
 #include <vlCore/checks.hpp>
 #include <vlCore/math_utils.hpp>
 #include <vlCore/Vector4.hpp>
-#include <vlGraphics/RenderTarget.hpp>
+#include <vlGraphics/Framebuffer.hpp>
 #include <vlGraphics/Viewport.hpp>
 #include <vlGraphics/Frustum.hpp>
 #include <vlCore/Ray.hpp>

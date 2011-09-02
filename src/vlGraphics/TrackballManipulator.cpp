@@ -57,11 +57,11 @@ void TrackballManipulator::mouseDownEvent(EMouseButton btn, int x, int y)
   if (btn == zoomButton())
     mMode = ZoomMode;
 
-  VL_CHECK(openglContext()->renderTarget())
+  VL_CHECK(openglContext()->framebuffer())
 
   // set x/y relative to the viewport
   x -= camera()->viewport()->x();
-  y -= openglContext()->renderTarget()->height() - 1 - (camera()->viewport()->y() + camera()->viewport()->height() -1);
+  y -= openglContext()->framebuffer()->height() - 1 - (camera()->viewport()->y() + camera()->viewport()->height() -1);
 
   // check that the click is in the viewport
   int w = camera()->viewport()->width();
@@ -114,10 +114,10 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
   if (mode() == NoMode)
     return;
 
-  VL_CHECK(openglContext()->renderTarget())
+  VL_CHECK(openglContext()->framebuffer())
   // set x/y relative to the top/left cornder of the viewport
   x -= camera()->viewport()->x();
-  y -= openglContext()->renderTarget()->height() - 1 - (camera()->viewport()->y() + camera()->viewport()->height() -1);
+  y -= openglContext()->framebuffer()->height() - 1 - (camera()->viewport()->y() + camera()->viewport()->height() -1);
 
   if (mode() == RotationMode)
   {

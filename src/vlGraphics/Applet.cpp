@@ -148,8 +148,8 @@ void Applet::resizeEvent(int w, int h)
   Rendering* rend = cast<Rendering>(rendering());
   if (rend)
   {
-    VL_CHECK( w == rend->renderer()->renderTarget()->width() );
-    VL_CHECK( h == rend->renderer()->renderTarget()->height() );
+    VL_CHECK( w == rend->renderer()->framebuffer()->width() );
+    VL_CHECK( h == rend->renderer()->framebuffer()->height() );
     rend->camera()->viewport()->setWidth( w );
     rend->camera()->viewport()->setHeight( h );
     rend->camera()->setProjectionAsPerspective();

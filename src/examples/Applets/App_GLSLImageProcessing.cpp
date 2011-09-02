@@ -177,8 +177,8 @@ public:
     vl::ref<vl::Uniform> image_height = mGLSLProgram->gocUniform("image_height");
     image_height->setUniformF((float)mImage->width());
 
-    int w = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->width();
-    int h = rendering()->as<vl::Rendering>()->renderer()->renderTarget()->height();
+    int w = rendering()->as<vl::Rendering>()->renderer()->framebuffer()->width();
+    int h = rendering()->as<vl::Rendering>()->renderer()->framebuffer()->height();
     resizeEvent( w, h );
     mTimer.start();
     mTest = 0;

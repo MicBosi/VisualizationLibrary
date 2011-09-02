@@ -64,7 +64,7 @@ void GhostCameraManipulator::mouseMoveEvent(int x, int y)
   VL_CHECK(openglContext());
 
   int cx = (int)camera()->viewport()->center().x();
-  int cy = openglContext()->renderTarget()->height() - camera()->viewport()->height()/2 - camera()->viewport()->y();
+  int cy = openglContext()->framebuffer()->height() - camera()->viewport()->height()/2 - camera()->viewport()->y();
   mXDegrees -= (y - cy) * mRotationSpeed;
   mYDegrees -= (x - cx) * mRotationSpeed;
   openglContext()->ignoreNextMouseMoveEvent();
@@ -145,10 +145,10 @@ void GhostCameraManipulator::enableEvent(bool enabled)
     if (openglContext())
       openglContext()->setMouseVisible(false);
 
-    if ( openglContext() && openglContext()->renderTarget() )
+    if ( openglContext() && openglContext()->framebuffer() )
     {
       int cx = (int)camera()->viewport()->center().x();
-      int cy = openglContext()->renderTarget()->height() - camera()->viewport()->height() / 2 - camera()->viewport()->y();
+      int cy = openglContext()->framebuffer()->height() - camera()->viewport()->height() / 2 - camera()->viewport()->y();
       openglContext()->ignoreNextMouseMoveEvent();
       openglContext()->setMousePosition(cx, cy);
     }

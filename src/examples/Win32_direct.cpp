@@ -86,7 +86,7 @@ public:
     // --- render target, viewport, camera position ---
 
     // install the render target belonging to the opengl window
-    rendering()->renderer()->setRenderTarget( openglContext()->renderTarget() );
+    rendering()->renderer()->setFramebuffer( openglContext()->framebuffer() );
 
     // set clear color to white
     rendering()->camera()->viewport()->setClearColor( vl::white );

@@ -40,7 +40,7 @@ namespace vl
 {
   class Camera;
   class RenderQueue;
-  class RenderTarget;
+  class Framebuffer;
 
   //-----------------------------------------------------------------------------
   // RendererAbstract
@@ -79,11 +79,11 @@ namespace vl
       * Renderer's implementation of this function always returns \p in_render_queue. */
     virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock) = 0;
 
-    /** The RenderTarget on which the rendering is performed. */
-    virtual const RenderTarget* renderTarget() const = 0;
+    /** The Framebuffer on which the rendering is performed. */
+    virtual const Framebuffer* framebuffer() const = 0;
 
-    /** The RenderTarget on which the rendering is performed. */
-    virtual RenderTarget* renderTarget() = 0;
+    /** The Framebuffer on which the rendering is performed. */
+    virtual Framebuffer* framebuffer() = 0;
 
     /** Dispatches the onRendererStarted() event to the registered RenderEventCallback objects. */
     void dispatchOnRendererStarted()

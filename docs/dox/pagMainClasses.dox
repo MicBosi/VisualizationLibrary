@@ -125,7 +125,7 @@
 	
 	\par Framebuffer Objects
 	
-	- vl::FBORenderTarget
+	- vl::FramebufferObject
 	- vl::FBOAbstractAttachment
 		- vl::FBORenderbufferAttachment
 			- vl::FBOColorBufferAttachment
@@ -139,7 +139,7 @@
 			- vl::FBOTextureAttachment
 			- vl::FBOTextureLayerAttachment
 	- vl::BlitFramebuffer
-	- vl::OpenGLContext::createFBORenderTarget()
+	- vl::OpenGLContext::createFramebufferObject()
 	
 	\par Renderables
 	
@@ -185,10 +185,10 @@
 	- vl::Renderer
 	- vl::Camera
 	- vl::Viewport
-	- vl::RenderTarget
+	- vl::Framebuffer
 	- vl::OpenGLContext
 	- vl::OpenGLContextFormat
-	- vl::OpenGLContext::renderTarget()
+	- vl::OpenGLContext::framebuffer()
 	- vl::Actor
 	- vl::Effect
 	- vl::Shader

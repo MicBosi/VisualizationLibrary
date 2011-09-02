@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics/RenderTarget.hpp>
+#include <vlGraphics/Framebuffer.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 
@@ -39,9 +39,9 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-// RenderTarget
+// Framebuffer
 //-----------------------------------------------------------------------------
-bool RenderTarget::checkDrawBuffers() const
+bool Framebuffer::checkDrawBuffers() const
 {
   std::map<int, const char*> fbo_attachments;
   
@@ -99,7 +99,7 @@ bool RenderTarget::checkDrawBuffers() const
     {
       if(legal.find(mDrawBuffers[i]) == legal.end())
       {
-        Log::error(Say("FBO bound but RenderTarget::setDrawBuffers() called with non FBO compatible draw buffer '%s'.\n") << fbo_attachments[mDrawBuffers[i]]);
+        Log::error(Say("FBO bound but Framebuffer::setDrawBuffers() called with non FBO compatible draw buffer '%s'.\n") << fbo_attachments[mDrawBuffers[i]]);
         return false;
       }
     }
@@ -120,7 +120,7 @@ bool RenderTarget::checkDrawBuffers() const
     {
       if(legal.find(mDrawBuffers[i]) == legal.end())
       {
-        Log::error(Say("FBO not bound or not supported but RenderTarget::setDrawBuffers() called with FBO specific draw buffer '%s'.\n") << fbo_attachments[mDrawBuffers[i]]);
+        Log::error(Say("FBO not bound or not supported but Framebuffer::setDrawBuffers() called with FBO specific draw buffer '%s'.\n") << fbo_attachments[mDrawBuffers[i]]);
         return false;
       }
     }
@@ -128,7 +128,7 @@ bool RenderTarget::checkDrawBuffers() const
   return true;
 }
 //-----------------------------------------------------------------------------
-void RenderTarget::bindDrawBuffers() const
+void Framebuffer::bindDrawBuffers() const
 {
   VL_CHECK_OGL()
 
@@ -142,21 +142,21 @@ void RenderTarget::bindDrawBuffers() const
   {
     glDrawBuffers( (GLsizei)mDrawBuffers.size(), (const GLenum*)&mDrawBuffers[0] );
     VL_CHECK_OGL() // If you are using RDB_BACK_LEFT/RIGHT make sure sure you have a double buffered gl context.
-                   // Otherwise use RenderTarget::setDrawBuffer(RDB_FRONT_LEFT).
+                   // Otherwise use Framebuffer::setDrawBuffer(RDB_FRONT_LEFT).
   }
   else
   {
     glDrawBuffer( mDrawBuffers[0] );
     VL_CHECK_OGL() // If you are using RDB_BACK_LEFT/RIGHT make sure sure you have a double buffered gl context.
-                   // Otherwise use RenderTarget::setDrawBuffer(RDB_FRONT_LEFT).
+                   // Otherwise use Framebuffer::setDrawBuffer(RDB_FRONT_LEFT).
     if ( mDrawBuffers.size() > 1 )
     {
-      Log::error( "RenderTarget::bindDrawBuffers() error:\nglDrawBuffers() not supported by the current OpenGL driver. GL_ARB_draw_buffers or OpenGL 2.0 required.\n" );
+      Log::error( "Framebuffer::bindDrawBuffers() error:\nglDrawBuffers() not supported by the current OpenGL driver. GL_ARB_draw_buffers or OpenGL 2.0 required.\n" );
     }
   }
 }
 //-----------------------------------------------------------------------------
-void RenderTarget::bindReadBuffer()
+void Framebuffer::bindReadBuffer()
 {
   VL_CHECK_OGL();
 

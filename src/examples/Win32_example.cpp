@@ -65,7 +65,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   win32_window->addEventListener(applet.get());
   
   /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( win32_window->renderTarget() );
+  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( win32_window->framebuffer() );
   
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );

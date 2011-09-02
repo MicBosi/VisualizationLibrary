@@ -101,11 +101,11 @@ void Rendering::render()
     InOutContract(Rendering* rendering): mRendering(rendering)
     {
       VL_CHECK(mRendering->renderers().size());
-      VL_CHECK(mRendering->renderers()[0]->renderTarget());
-      VL_CHECK(mRendering->renderers()[0]->renderTarget()->openglContext());
+      VL_CHECK(mRendering->renderers()[0]->framebuffer());
+      VL_CHECK(mRendering->renderers()[0]->framebuffer()->openglContext());
 
       // as stated in the documentation all the renderers must target the same OpenGLContext
-      mOpenGLContext = mRendering->renderers()[0]->renderTarget()->openglContext();
+      mOpenGLContext = mRendering->renderers()[0]->framebuffer()->openglContext();
 
       // activate OpenGL context
       mOpenGLContext->makeCurrent();
@@ -146,16 +146,16 @@ void Rendering::render()
     return;
   }
 
-  if (!renderers()[0]->renderTarget())
+  if (!renderers()[0]->framebuffer())
   {
     vl::Log::error("Rendering::render(): no RendererTarget specified for Renderer #0!\n");
     VL_TRAP();
     return;
   }
 
-  if (!renderers()[0]->renderTarget()->openglContext())
+  if (!renderers()[0]->framebuffer()->openglContext())
   {
-    vl::Log::error("Rendering::render(): invalid RenderTarget for Renderer #0, OpenGLContext is NULL!\n");
+    vl::Log::error("Rendering::render(): invalid Framebuffer for Renderer #0, OpenGLContext is NULL!\n");
     VL_TRAP();
     return;
   }
@@ -245,16 +245,16 @@ void Rendering::render()
   {
     if (renderers()[i])
     {
-      if (renderers()[i]->renderTarget() == NULL)
+      if (renderers()[i]->framebuffer() == NULL)
       {
         vl::Log::error( Say("Rendering::render(): no RendererTarget specified for Renderer #%n!\n") << i );
         VL_TRAP();
         continue;
       }
       
-      if (renderers()[i]->renderTarget()->openglContext() == NULL)
+      if (renderers()[i]->framebuffer()->openglContext() == NULL)
       {
-        vl::Log::error( Say("Rendering::render(): invalid RenderTarget for Renderer #%n, OpenGLContext is NULL!\n") << i );
+        vl::Log::error( Say("Rendering::render(): invalid Framebuffer for Renderer #%n, OpenGLContext is NULL!\n") << i );
         VL_TRAP();
         continue;
       }

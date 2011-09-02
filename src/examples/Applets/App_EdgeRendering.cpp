@@ -69,7 +69,7 @@ public:
     // implemented by EdgeRenderer.
     mEdgeRenderer->setClearFlags(CF_CLEAR_DEPTH);
     // target the same opengl window
-    mEdgeRenderer->setRenderTarget(mSolidRenderer->renderTarget());
+    mEdgeRenderer->setFramebuffer(mSolidRenderer->framebuffer());
     // enqueue the EdgeRenderer in the rendering, will be executed after mSolidRenderer
     mMainRendering->renderers().push_back( mEdgeRenderer.get() );
 

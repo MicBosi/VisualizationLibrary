@@ -56,7 +56,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
 
       // render-target activation.
       // note: an OpenGL context can have multiple rendering targets!
-      mRenderer->renderTarget()->activate();
+      mRenderer->framebuffer()->activate();
 
       // viewport setup.
       camera->viewport()->setClearFlags( mRenderer->clearFlags() );
@@ -136,8 +136,8 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   glLineWidth(1.0f);
 
   // disable all vertex arrays
-  renderTarget()->openglContext()->bindVAS(NULL, false, true);
-  VL_CHECK( renderTarget()->openglContext()->isCleanState(true) );
+  framebuffer()->openglContext()->bindVAS(NULL, false, true);
+  VL_CHECK( framebuffer()->openglContext()->isCleanState(true) );
 
   return render_queue;
 }
@@ -187,7 +187,7 @@ void EdgeRenderer::renderSolids(Camera* camera, real frame_clock)
     // note: the color is not important here
     wfinfo->mEdgeCallback->setShowCreases(showCreases());
     wfinfo->mEdgeCallback->onActorRenderStarted( actor.get(), frame_clock, camera, wfinfo->mGeometry.get(), NULL, 0 );
-    actor->lod(0)->render( actor.get(), NULL, camera, renderTarget()->openglContext() );
+    actor->lod(0)->render( actor.get(), NULL, camera, framebuffer()->openglContext() );
   }
 }
 //-----------------------------------------------------------------------------
@@ -232,7 +232,7 @@ void EdgeRenderer::renderLines(Camera* camera)
 
     // note: no rendering callbacks here
     glColor4fv( wfinfo->mColor.ptr() );
-    wfinfo->mGeometry->render( actor.get(), NULL, camera, renderTarget()->openglContext() );
+    wfinfo->mGeometry->render( actor.get(), NULL, camera, framebuffer()->openglContext() );
   }
 }
 //-----------------------------------------------------------------------------

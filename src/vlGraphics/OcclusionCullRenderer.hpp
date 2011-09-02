@@ -67,11 +67,11 @@ namespace vl
     /** The number of pixels visible for an actor to be considered occluded (default = 0) */
     int occlusionThreshold() const { return mOcclusionThreshold; }
 
-    /** Returns the wrapped Renderer's RenderTarget */
-    const RenderTarget* renderTarget() const;
+    /** Returns the wrapped Renderer's Framebuffer */
+    const Framebuffer* framebuffer() const;
 
-    /** Returns the wrapped Renderer's RenderTarget */
-    RenderTarget* renderTarget();
+    /** Returns the wrapped Renderer's Framebuffer */
+    Framebuffer* framebuffer();
 
     /** Returns the total number or objects candidate for rendering before occlusion culling. */
     int statsTotalObjects() const { return mStatsTotalObjects; }

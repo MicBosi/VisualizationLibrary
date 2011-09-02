@@ -71,17 +71,17 @@ namespace vl
 
     bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
 
-    /** The RenderTarget on which the rendering is performed. */
-    void setRenderTarget(RenderTarget* render_target) { mRenderTarget = render_target; }
+    /** The Framebuffer on which the rendering is performed. */
+    void setFramebuffer(Framebuffer* render_target) { mFramebuffer = render_target; }
 
-    /** The RenderTarget on which the rendering is performed. */
-    const RenderTarget* renderTarget() const { return mRenderTarget.get(); }
+    /** The Framebuffer on which the rendering is performed. */
+    const Framebuffer* framebuffer() const { return mFramebuffer.get(); }
     
-    /** The RenderTarget on which the rendering is performed. */
-    RenderTarget* renderTarget() { return mRenderTarget.get(); }
+    /** The Framebuffer on which the rendering is performed. */
+    Framebuffer* framebuffer() { return mFramebuffer.get(); }
 
   protected:
-    ref<RenderTarget> mRenderTarget;
+    ref<Framebuffer> mFramebuffer;
 
     // used to reset the OpenGL states & enables at the end of the rendering.
     vl::ref<EnableSet> mDummyEnables;

@@ -216,7 +216,7 @@ Modern OpenGL applications make heavy use of framebuffer objects (\p EXT_framebu
 
 \par Classes
 
-vl::FBORenderTarget, vl::FBOAttachmentAbstract, vl::FBORenderbufferAttachment, vl::FBOColorBufferAttachment, vl::FBODepthBufferAttachment, vl::FBODepthStencilBufferAttachment, vl::FBOStencilBufferAttachment, vl::FBOTexture1DAttachment, vl::FBOTexture2DAttachment, vl::FBOTexture3DAttachment, vl::FBOTextureAttachment, vl::FBOTextureLayerAttachment, vl::BlitFramebuffer
+vl::FramebufferObject, vl::FBOAttachmentAbstract, vl::FBORenderbufferAttachment, vl::FBOColorBufferAttachment, vl::FBODepthBufferAttachment, vl::FBODepthStencilBufferAttachment, vl::FBOStencilBufferAttachment, vl::FBOTexture1DAttachment, vl::FBOTexture2DAttachment, vl::FBOTexture3DAttachment, vl::FBOTextureAttachment, vl::FBOTextureLayerAttachment, vl::BlitFramebuffer
 
 \par Related Pages
 

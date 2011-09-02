@@ -70,8 +70,8 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
 
     /* bind a depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
@@ -81,18 +81,18 @@ public:
     vl::ref<vl::Texture> texture = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA);
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm = new vl::FBOTexture2DAttachment(texture.get(), 0, vl::T2DT_TEXTURE_2D);
     fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
-    mRTT_Rendering->renderer()->renderTarget()->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
+    mRTT_Rendering->renderer()->framebuffer()->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
   
     // Main rendering
 
     /* setup camera */
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
-    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
+    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
-    mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
+    mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
 
     /* populate the scene */
     addRings(NULL);
@@ -130,8 +130,8 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
 
     /* bind a depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
@@ -164,7 +164,7 @@ public:
     fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT1, fbo_tex_attachm2.get() );
 
     /* draw on colorbuffers #0 and #1 */
-    mRTT_Rendering->renderer()->renderTarget()->setDrawBuffers(vl::RDB_COLOR_ATTACHMENT0, vl::RDB_COLOR_ATTACHMENT1);
+    mRTT_Rendering->renderer()->framebuffer()->setDrawBuffers(vl::RDB_COLOR_ATTACHMENT0, vl::RDB_COLOR_ATTACHMENT1);
 
     /* screen shot grabbing on color attachment #0 */
     vl::ref<vl::ReadPixels> read_pixels_0 = new vl::ReadPixels;
@@ -184,12 +184,12 @@ public:
 
     /* setup camera */
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
-    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
+    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
-    mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
+    mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
 
     /* populate the scene */
     addRings(glsl.get());
@@ -222,8 +222,8 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
 
     /* bind a depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
@@ -232,7 +232,7 @@ public:
     /* bind a normal color buffer as color attachment #0 */
     vl::ref<vl::FBOColorBufferAttachment> fbo_col_buf_attachm = new vl::FBOColorBufferAttachment(vl::CBF_RGBA8);
     fbo_render_target->addColorAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_col_buf_attachm.get() );
-    mRTT_Rendering->renderer()->renderTarget()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
+    mRTT_Rendering->renderer()->framebuffer()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
 
     /* at the end of the rendering copy the color attachment pixels into the texture */
     vl::ref<vl::Texture> texture = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA, false); // note that mipmapping is off
@@ -243,12 +243,12 @@ public:
 
     /* setup camera */
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
-    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
+    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
-    mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
+    mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
 
     /* populate the scene */
     addRings(NULL);
@@ -290,8 +290,8 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
 
     /* bind a multisampled depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
@@ -302,10 +302,10 @@ public:
     vl::ref<vl::FBOColorBufferAttachment> fbo_col_buf_attachm = new vl::FBOColorBufferAttachment(vl::CBF_RGBA);
     fbo_col_buf_attachm->setSamples(samples);
     fbo_render_target->addColorAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_col_buf_attachm.get() );
-    mRTT_Rendering->renderer()->renderTarget()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
+    mRTT_Rendering->renderer()->framebuffer()->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
 
     /* create a new FBO with 'texture' as its color attachment */
-    vl::ref<vl::FBORenderTarget> fbo_rt_texture = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
+    vl::ref<vl::FramebufferObject> fbo_rt_texture = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
     vl::ref<vl::Texture> texture = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA);
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm = new vl::FBOTexture2DAttachment(texture.get(), 0, vl::T2DT_TEXTURE_2D);
     fbo_rt_texture->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
@@ -321,19 +321,19 @@ public:
     //blit_fbo->setSrcRect( center-side, center-side, center+side, center+side );
     blit_fbo->setSrcRect( 0, 0, mFBO_Size, mFBO_Size );
     blit_fbo->setDstRect( 0, 0, mFBO_Size, mFBO_Size );
-    blit_fbo->setReadRenderTarget( fbo_render_target.get() );
-    blit_fbo->setDrawRenderTarget( fbo_rt_texture.get() );
+    blit_fbo->setReadFramebuffer( fbo_render_target.get() );
+    blit_fbo->setDrawFramebuffer( fbo_rt_texture.get() );
 
     // Main rendering
 
     /* setup camera */
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
-    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
+    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
-    mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
+    mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
 
     /* populate the scene */
     addRings(NULL);
@@ -374,8 +374,8 @@ public:
     mRTT_Rendering->camera()->setLocalMatrix(m);
 
     /* use a framebuffer object as render target */
-    vl::ref<vl::FBORenderTarget> fbo_render_target = openglContext()->createFBORenderTarget(mFBO_Size, mFBO_Size);
-    mRTT_Rendering->renderer()->setRenderTarget( fbo_render_target.get() );
+    vl::ref<vl::FramebufferObject> fbo_render_target = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
+    mRTT_Rendering->renderer()->setFramebuffer( fbo_render_target.get() );
 
     /* bind a multisampled depth buffer */
     vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attachm = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT16);
@@ -388,18 +388,18 @@ public:
     texture->createTexture();
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm = new vl::FBOTexture2DAttachment(texture.get(), 0, vl::T2DT_TEXTURE_2D_MULTISAMPLE);
     fbo_render_target->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
-    mRTT_Rendering->renderer()->renderTarget()->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
+    mRTT_Rendering->renderer()->framebuffer()->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
 
     // Main rendering
 
     /* setup camera */
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
-    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->renderTarget()->width(), openglContext()->renderTarget()->height());
+    mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
     mMainRendering->camera()->setLocalMatrix(m);
 
     /* use the opengl window as render target */
-    mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
+    mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
 
     /* populate the scene */
     addRings(NULL);
@@ -426,8 +426,8 @@ public:
     mRTT_Rendering->sceneManagers()->push_back(new vl::SceneManagerActorTree);
 
     /* both render to the screen */
-    mMainRendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
-    mRTT_Rendering->renderer()->setRenderTarget( openglContext()->renderTarget() );
+    mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
+    mRTT_Rendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
 
     // Render to texture rendering
 
