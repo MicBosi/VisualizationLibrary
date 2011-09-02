@@ -103,6 +103,28 @@ namespace vl
   inline radian::operator degree() { return mValue*(real)dRAD_TO_DEG; }
   inline degree::operator radian() { return mValue*(real)dDEG_TO_RAD; }
 
+  //! Swaps the byte order of the given object.
+  template<typename T>
+  void swapBytes(T& value)
+  {
+    union 
+    {
+      T* value;
+      char* ptr;
+    } u;
+    u.value = &value;
+    char* a = u.ptr;
+    char* b = u.ptr + sizeof(T) - 1;
+    while(a<b)
+    {
+      char tmp = *a;
+      *a = *b;
+      *b = tmp;
+      ++a;
+      --b;
+    }
+  }
+
   VL_COMPILE_TIME_CHECK( sizeof(i8)*8  == 8 );
   VL_COMPILE_TIME_CHECK( sizeof(u8)*8  == 8 );
   VL_COMPILE_TIME_CHECK( sizeof(i16)*8 == 16 );
