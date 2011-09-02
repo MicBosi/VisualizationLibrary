@@ -103,7 +103,7 @@ namespace vl
     /**
      * Returns true if the given point is inside the Viewport
     */
-    bool isPointInside(int x, int y, int render_target_height) const;
+    bool isPointInside(int x, int y, int framebuffer_height) const;
 
   protected:
     fvec4 mClearColor;

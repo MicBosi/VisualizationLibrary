@@ -72,7 +72,7 @@ namespace vl
     bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
 
     /** The Framebuffer on which the rendering is performed. */
-    void setFramebuffer(Framebuffer* render_target) { mFramebuffer = render_target; }
+    void setFramebuffer(Framebuffer* framebuffer) { mFramebuffer = framebuffer; }
 
     /** The Framebuffer on which the rendering is performed. */
     const Framebuffer* framebuffer() const { return mFramebuffer.get(); }
