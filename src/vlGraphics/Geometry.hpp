@@ -132,8 +132,19 @@ namespace vl
       #endif
     }
 
+    /** Removes all the previously installed arrays. */
+    virtual void clearArrays(bool clear_draw_calls=true);
+
+    // --- Renderable interface implementation ---
+
+    /** Updates all the vertex buffer objects of both vertex arrays and draw calls that are marked as dirty. */
+    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode mode);
+
+    /** Deletes all the vertex buffer objects of both vertex arrays and draw calls. */
+    virtual void deleteBufferObject();
+
     // ------------------------------------------------------------------------
-    // --- Vertex Array Manipulation ---
+    // Geometry Tools
     // ------------------------------------------------------------------------
 
     /** Converts the fixed function pipeline arrays (vertex array, normal arrays) into the generic ones.
@@ -170,6 +181,9 @@ namespace vl
      *  are defined in a format other than ArrayFloat3. */
     bool flipNormals();
 
+    //! Converts all draw calls to triangles and fixes their winding according to the Geometry's normals.
+    void fixTriangleWinding();
+
     /** 
     * Transforms vertices and normals belonging to this geometry.
     * If 'normalize' == true the normals are normalized after being transformed
@@ -182,20 +196,8 @@ namespace vl
     */
     void transform(const mat4&matr, bool normalize = true);
 
-    /** Removes all the previously installed arrays. */
-    virtual void clearArrays(bool clear_draw_calls=true);
-
-    // --- Renderable interface implementation ---
-
-    /** Updates all the vertex buffer objects of both vertex arrays and draw calls that are marked as dirty. */
-    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode mode);
-
-    /** Deletes all the vertex buffer objects of both vertex arrays and draw calls. */
-    virtual void deleteBufferObject();
-
-    // ------------------------------------------------------------------------
-    // --- Geometry Utils --- 
-    // ------------------------------------------------------------------------
+    //! Converts all the DrawCall objects bound to a Geometry into DrawArrays.
+    void convertDrawCallToDrawArrays();
 
     //! Merges all the PT_TRIANGLE_STRIP DrawElementsUInt objects into one single PT_TRIANGLE_STRIP DrawElementsUInt.
     //! @return The DrawCall containing the merged strips or NULL of none was merged.
@@ -211,16 +213,6 @@ namespace vl
     //! Use primitive_type = PT_UNKNOWN to merge all primitive types (with the obvious exclusion of lines, points and adjacency ones).
     void mergeDrawCallsWithTriangles(EPrimitiveType primitive_type);
 
-    //! Converts all the DrawCall objects bound to a Geometry into DrawArrays.
-    void convertDrawCallToDrawArrays();
-
-    //! Converts all draw calls to triangles and fixes their winding according to the Geometry's normals.
-    void fixTriangleWinding();
-
-    //! Calls triangulateDrawCalls(), shrinkDrawCalls() and convertToVertexAttribs().
-    //! @note At the moment this method does support MultiDrawElements nor DrawRangeElements but only DrawElements.
-    void makeGLESFriendly();
-
     //! Converts PT_QUADS, PT_QUADS_STRIP and PT_POLYGON into PT_TRIANGLE primitives.
     //! @note Eventual base vertex and primitive restart are baked into the resulting triangle soup.
     void triangulateDrawCalls();
@@ -230,17 +222,23 @@ namespace vl
     //! @note Primitive type can be any.
     void shrinkDrawCalls();
 
-    //! Sorts the vertices of the geometry to maximize vertex-cache coherency.
-    //! This function will work only if all the DrawCall are DrawElements.
-    //! \returns true if all the DrawCall are DrawElements and the sorting took place.
+    //! Calls triangulateDrawCalls(), shrinkDrawCalls() and convertToVertexAttribs().
+    //! @note At the moment this method does support MultiDrawElements nor DrawRangeElements but only DrawElements.
+    void makeGLESFriendly();
+
+    //! Sorts the vertices of the geometry (position, normals, textures, colors etc.) to maximize vertex-cache coherency.
+    //! This function will work only if all the DrawCalls are DrawElements* and will generate a new set of DrawElementsUInt.
+    //! This function will fail if any of the DrawCalls is using primitive restart functionality.
+    //! \returns true if all the DrawCall are DrawElements* and none of the DrawCalls is using primitive restart.
     bool sortVertices();
+
+    //! Regenerates the vertex position and attributes using the given new-to-old map.
+    //! Where 'map_new_to_old[i] == j' means that the i-th new vertex attribute should take it's value from the old j-th vertex attribute.
+    void regenerateVertices(const std::vector<size_t>& map_new_to_old);
 
     //! Assigns a random color to each vertex of each DrawCall object. If a vertex is shared among more than one DrawCall object its color is undefined.
     void colorizePrimitives();
 
-    void regenerateVertices(const std::vector<size_t>& map_new_to_old);
-
-    // mic fixme: move somewhere else?
     //! Computes the tangent (and optionally bitangent) vectors used to form a TBN matrix to be used for bumpmapping.
     //! @param vert_count The number of elements stored in @a vertex, @a normal, @a texcoord, @a tangent and @a bitangent.
     //! @param vertex Array containing the vertex positions.
@@ -262,7 +260,7 @@ namespace vl
       vl::fvec3 *bitangent );
 
     // ------------------------------------------------------------------------
-    // --- IVertexAttribSet Interface Implementation ---
+    // IVertexAttribSet Interface Implementation
     // ------------------------------------------------------------------------
 
     void setVertexArray(ArrayAbstract* data);

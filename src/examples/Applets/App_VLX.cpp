@@ -149,6 +149,7 @@ public:
     geom5->computeNormals();
     geom5->setColorArray( geom5->normalArray() );
     geom5->makeGLESFriendly();
+    geom5->convertToVertexAttribs();
     geom5->drawCalls()->push_back( geom5->drawCalls()->back() );
     res_db->resources().push_back( geom5.get() );
 
