@@ -580,6 +580,8 @@ namespace vl
     /** Requires the next triangle. Returns \p false the iterator reached the end of the triangle list. */
     bool next() { return mIterator->next(); }
 
+    bool operator++() { return next(); }
+
     /** Returns true if the iterator reached the end of the triangle list. In this case a(), b() and c() return -1. */
     bool hasNext() { return mIterator->hasNext(); }
 

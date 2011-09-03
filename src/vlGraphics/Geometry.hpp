@@ -217,10 +217,18 @@ namespace vl
     //! Converts all draw calls to triangles and fixes their winding according to the Geometry's normals.
     void fixTriangleWinding();
 
-    //! Converts PT_QUADS, PT_QUADS_STRIP, PT_POLYGON into PT_TRIANGLE primitives, converts DrawElementsUInt 
-    //! into DrawElementsUByte and DrawElementsUShort and calls Geometry::convertToVertexAttribs().
-    //! - Does not handle vl::MultiDrawElements* vl::DrawRangeElements*, primitive restart and draw call multi-instancing.
+    //! Calls triangulateDrawCalls(), shrinkDrawCalls() and convertToVertexAttribs().
+    //! @note At the moment this method does support MultiDrawElements nor DrawRangeElements but only DrawElements.
     void makeGLESFriendly();
+
+    //! Converts PT_QUADS, PT_QUADS_STRIP and PT_POLYGON into PT_TRIANGLE primitives.
+    //! @note Eventual base vertex and primitive restart are baked into the resulting triangle soup.
+    void triangulateDrawCalls();
+
+    //! Shrinks DrawElements*/DrawRangeElements*/MultiDrawElements* to the best fitting of *UInt/UShort/UByte
+    //! taking into account: primitive restart, instancing and base vertex.
+    //! @note Primitive type can be any.
+    void shrinkDrawCalls();
 
     //! Sorts the vertices of the geometry to maximize vertex-cache coherency.
     //! This function will work only if all the DrawCall are DrawElements.

@@ -159,6 +159,12 @@ namespace vl
     /** Returns the number of instances for this set of primitives. */
     virtual int instances() const { return 1; }
 
+    /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
+    virtual bool primitiveRestartEnabled() const { return false; }
+
+    /** Returns the primitive restart index used by the draw call or 0 if primitive restart is not supported. */
+    virtual unsigned int primitiveRestartIndex() { return 0; }
+
     /** Attach a PatchParameter to a DrawCall to be used when using primitive-type PT_PATCHES */
     void setPatchParameter(PatchParameter* patch_param) { mPatchParameter = patch_param; }
 

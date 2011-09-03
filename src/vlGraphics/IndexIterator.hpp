@@ -73,6 +73,7 @@ namespace vl
     int  index() { return mIterator->index(); }
     bool hasNext() { return mIterator->hasNext(); }
     bool next()  { return mIterator->next();  }
+    bool operator++() { return next(); }
 
   protected:
     ref<IndexIteratorAbstract> mIterator;
