@@ -84,10 +84,15 @@ void RenderStateSet::eraseRenderState(ERenderState type, int index)
   if (type == RS_GLSLProgram)
     mGLSLProgram = NULL;
   for(unsigned i=0; i<mRenderStates.size(); ++i)
-    if (mRenderStates[i].mRS->type() == type && mRenderStates[i].mIndex == index)
+  {
+    if (mRenderStates[i].mRS->type() == type && (index == mRenderStates[i].mIndex || index == -1))
     {
       mRenderStates.erase(mRenderStates.begin() + i);
-      return;
+      if (index == -1)
+        continue; // just for clarity
+      else
+        return;
     }
+  }
 }
 //------------------------------------------------------------------------------
