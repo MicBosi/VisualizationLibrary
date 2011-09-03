@@ -59,15 +59,17 @@ namespace
   {
     std::vector< ref<RenderState> > rs;
     rs.insert( rs.end(), rs_set.begin(), rs_set.end() );
-    struct sorter
+    
+    // for some reason GCC 3.4.5 does not allow operator() to sort
+    struct rs_less
     {
-      bool operator()(const ref<RenderState>& a, const ref<RenderState>& b) const
+      static bool compare(const ref<RenderState>& a, const ref<RenderState>& b)
       {
         return a->type() < b->type();
       }
     };
 
-    std::sort( rs.begin(), rs.end(), sorter() );
+    std::sort( rs.begin(), rs.end(), rs_less::compare );
     return rs;
   }
 
