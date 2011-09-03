@@ -68,7 +68,7 @@ namespace vl
     int rangeEnd() const { return mRangeEnd; }
 
     /** Returns whether the primitive-restart functionality is enabled or not. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
-    bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
+    virtual bool primitiveRestartEnabled() const { return mPrimitiveRestartEnabled; }
 
     /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
@@ -125,6 +125,7 @@ namespace vl
     typedef typename arr_type::scalar_type index_type;
     //! The special index which identifies a primitive restart. By default it is set to ~0 that is 0xFF, 0xFFFF, 0xFFFFFFFF respectively for GLubyte, GLushort, GLuint index types. */
     static const index_type primitive_restart_index = index_type(~0);
+    virtual unsigned int primitiveRestartIndex() { return (unsigned int)primitive_restart_index; }
 
   private:
     template<typename T>

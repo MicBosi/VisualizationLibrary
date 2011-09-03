@@ -33,6 +33,7 @@
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlGraphics/DoubleVertexRemover.hpp>
 #include <vlGraphics/MultiDrawElements.hpp>
+#include <vlGraphics/DrawRangeElements.hpp>
 #include <cmath>
 #include <algorithm>
 
@@ -908,120 +909,242 @@ void Geometry::convertDrawCallToDrawArrays()
   regenerateVertices(map_new_to_old);
 }
 //-----------------------------------------------------------------------------
-void Geometry::makeGLESFriendly()
+void Geometry::triangulateDrawCalls()
 {
-  // Pass#1: remove PT_QUADS, PT_QUADS_STRIP, PT_POLYGON
+  // converts PT_QUADS, PT_QUADS_STRIP and PT_POLYGON into PT_TRIANGLES
   for( int idraw=this->drawCalls()->size(); idraw--; )
   {
     DrawCall* dc = this->drawCalls()->at(idraw);
-    if( dc->classType() == vl::DrawElementsUInt::Type() )
+    switch(dc->primitiveType())
     {
-      if (dc->primitiveType() == PT_POLYGON)
-      {
-        DrawElementsUInt* polygon = static_cast<DrawElementsUInt*>(dc);
-        ref<DrawElementsUInt> triangles = new DrawElementsUInt(PT_TRIANGLES);
-        triangles->indexBuffer()->resize( (polygon->indexBuffer()->size()-2) * 3 );
-        for(size_t i=0, itri=0; i<polygon->indexBuffer()->size()-2; ++i, itri+=3)
-        {
-          triangles->indexBuffer()->at(itri+0) = polygon->indexBuffer()->at(0);
-          triangles->indexBuffer()->at(itri+1) = polygon->indexBuffer()->at(i+1);
-          triangles->indexBuffer()->at(itri+2) = polygon->indexBuffer()->at(i+2);
-        }
-        // substitute the draw call
-        this->drawCalls()->eraseAt(idraw);
-        this->drawCalls()->push_back(triangles.get());
-      }
-      else
-      if (dc->primitiveType() == PT_QUAD_STRIP)
-      {
-        dc->setPrimitiveType(vl::PT_TRIANGLE_STRIP);
-      }
-      else
-      if (dc->primitiveType() == PT_QUADS)
-      {
-        DrawElementsUInt* quads = static_cast<DrawElementsUInt*>(dc);
-        ref<DrawElementsUInt> triangles = new DrawElementsUInt(PT_TRIANGLES);
-        triangles->indexBuffer()->resize( quads->indexBuffer()->size() / 4 * 6 );
-        unsigned int* triangle_idx = &triangles->indexBuffer()->at(0);
-        unsigned int* quad_idx = &quads->indexBuffer()->at(0);
-        unsigned int* quad_end = &quads->indexBuffer()->at(0) + quads->indexBuffer()->size();
-        for( ; quad_idx < quad_end ; quad_idx += 4, triangle_idx += 6 )
-        {
-          triangle_idx[0] = quad_idx[0];
-          triangle_idx[1] = quad_idx[1];
-          triangle_idx[2] = quad_idx[2];
+    case PT_QUADS:
+    case PT_QUAD_STRIP:
+    case PT_POLYGON:
+      break;
+    default:
+      continue;
+    }
 
-          triangle_idx[3] = quad_idx[2];
-          triangle_idx[4] = quad_idx[3];
-          triangle_idx[5] = quad_idx[0];
-        }
-        // substitute the draw call
-        this->drawCalls()->eraseAt(idraw);
-        this->drawCalls()->push_back(triangles.get());
-      }
-    }
-    else
-    if ( strstr(dc->className(), "vl::MultiDrawElements") )
-    {
-        dc->setEnabled(false);
-        Log::warning( "Geometry::makeGLESFriendly(): cannot convert vl::MultiDrawElements, draw call disabled.\n" );
-    }
-    else
-    if ( strstr(dc->className(), "vl::DrawRangeElements") )
-    {
-        dc->setEnabled(false);
-        Log::warning( "Geometry::makeGLESFriendly(): cannot convert vl::DrawRangeElements, draw call disabled.\n" );
-    }
-  } // for()
+    size_t tri_count = dc->countTriangles();
 
-  // Pass #2: shrink DrawElementsUInt to UByte or UShort
+    ref<DrawElementsUInt> triangles = new DrawElementsUInt(PT_TRIANGLES, dc->instances());
+    triangles->indexBuffer()->resize( tri_count*3 );
+    unsigned int* ptr = triangles->indexBuffer()->begin();
+    for( TriangleIterator it = dc->triangleIterator(); it.hasNext(); ++it, ptr+=3 )
+    {
+      ptr[0] = it.a();
+      ptr[1] = it.b();
+      ptr[2] = it.c();
+    }
+    VL_CHECK( ptr == triangles->indexBuffer()->end() )
+    // substitute the draw call
+    (*drawCalls())[idraw] = triangles;
+  }
+}
+//-----------------------------------------------------------------------------
+void Geometry::shrinkDrawCalls()
+{
   for( int idraw=this->drawCalls()->size(); idraw--; )
   {
     ref<DrawCall> dc = this->drawCalls()->at(idraw);
-    if( dc->classType() == vl::DrawElementsUInt::Type() )
+
+    unsigned int restart_idx = dc->primitiveRestartIndex();
+    bool restart_on = dc->primitiveRestartEnabled();
+
+    // find max index
+    int max_idx = -1;
+    int idx_count = 0;
+    for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); it.next(), ++idx_count )
     {
-      // find max index
-      int max_idx = -1;
-      int idx_count = 0;
-      for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); it.next(), ++idx_count )
+      // skip primitive restart indices
+      if (restart_on && it.index() == (int)restart_idx)
+        continue;
+      else
         max_idx = it.index() > max_idx ? it.index() : max_idx;
-
-      if(max_idx <= 0xFF)
-      {
-        // shrink to DrawElementsUByte
-        ref<DrawElementsUByte> de = new DrawElementsUByte( dc->primitiveType() );
-        de->indexBuffer()->resize( idx_count );
-        int i=0;
-        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); it.next(), ++i )
-          de->indexBuffer()->at(i) = (GLubyte)it.index();
-
-        // substitute new draw call
-        this->drawCalls()->eraseAt(idraw);
-        this->drawCalls()->push_back(de.get());
-        dc = de;
-      }
-      else
-      if(max_idx <= 0xFFFF)
-      {
-        // shrink to DrawElementsUShort
-        ref<DrawElementsUShort> de = new DrawElementsUShort( dc->primitiveType() );
-        de->indexBuffer()->resize( idx_count );
-        int i=0;
-        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); it.next(), ++i )
-          de->indexBuffer()->at(i) = (GLushort)it.index();
-
-        // substitute new draw call
-        this->drawCalls()->eraseAt(idraw);
-        this->drawCalls()->push_back(de.get());
-        dc = de;
-      }
-      else
-      {
-        dc->setEnabled(false);
-        Log::error( Say("Geometry::makeGLESFriendly(): could not shrink DrawElementsUInt, max index found is %n! Draw call disabled.\n") << max_idx );
-      }
     }
+    
+    // can use UByte
+    if ( max_idx < 0xFF || (max_idx == 0xFF && !restart_on) )
+    {
+      if (dc->isOfType(DrawElementsBase::Type()))
+      {
+        ref<DrawElementsUByte> de = new DrawElementsUByte( dc->primitiveType(), dc->instances() );
+        // prim restart
+        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
+        // base vertex
+        de->setBaseVertex( dc->as<DrawElementsBase>()->baseVertex() );
+        // regenerate indices
+        de->indexBuffer()->resize( idx_count );
+        size_t i=0;
+        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
+        {
+          // skip primitive restart indices
+          if (restart_on && it.index() == (int)restart_idx)
+            de->indexBuffer()->at(i) = DrawElementsUByte::primitive_restart_index;
+          else
+          {
+            VL_CHECK( it.index() >= 0 && it.index() < (int)vertexArray()->size() );
+            de->indexBuffer()->at(i) = (DrawElementsUByte::index_type)it.index();
+          }
+        }
+        VL_CHECK( i == de->indexBuffer()->size() );
+        // substitute new draw call
+        (*drawCalls())[idraw] = de;
+      }
+      else
+      if (dc->isOfType(DrawRangeElementsBase::Type()))
+      {
+        ref<DrawRangeElementsUByte> de = new DrawRangeElementsUByte( dc->primitiveType(), dc->instances() );
+        // prim restart
+        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
+        // base vertex
+        de->setBaseVertex( dc->as<DrawRangeElementsBase>()->baseVertex() );
+        // range
+        de->setRangeStart( dc->as<DrawRangeElementsBase>()->rangeStart() );
+        de->setRangeEnd( dc->as<DrawRangeElementsBase>()->rangeEnd() );
+        // regenerate indices
+        de->indexBuffer()->resize( idx_count );
+        size_t i=0;
+        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
+        {
+          // skip primitive restart indices
+          if (restart_on && it.index() == (int)restart_idx)
+            de->indexBuffer()->at(i) = DrawRangeElementsUByte::primitive_restart_index;
+          else
+            de->indexBuffer()->at(i) = (DrawRangeElementsUByte::index_type)it.index();
+        }
+        VL_CHECK( i == de->indexBuffer()->size() );
+        // substitute new draw call
+        (*drawCalls())[idraw] = de;
+      }
+      else
+      if (dc->isOfType(MultiDrawElementsBase::Type()))
+      {
+        ref<MultiDrawElementsUByte> de = new MultiDrawElementsUByte( dc->primitiveType() );
+        // prim restart
+        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
+        // base vertex
+        de->setBaseVertices( dc->as<MultiDrawElementsBase>()->baseVertices() );
+        // count vector
+        de->setCountVector( dc->as<MultiDrawElementsBase>()->countVector() );
+        // regenerate indices
+        de->indexBuffer()->resize( idx_count );
+        size_t i=0;
+        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
+        {
+          // skip primitive restart indices
+          if (restart_on && it.index() == (int)restart_idx)
+            de->indexBuffer()->at(i) = DrawElementsUByte::primitive_restart_index;
+          else
+            de->indexBuffer()->at(i) = (MultiDrawElementsUByte::index_type)it.index();
+        }
+        VL_CHECK( i == de->indexBuffer()->size() );
+        // substitute new draw call
+        (*drawCalls())[idraw] = de;
+      }
+    } // can use UByte
+    else
+    // can use UShort
+    if ( max_idx < 0xFFFF || (max_idx == 0xFFFF && !restart_on) )
+    {
+      if (dc->isOfType(DrawElementsBase::Type()))
+      {
+        ref<DrawElementsUShort> de = new DrawElementsUShort( dc->primitiveType(), dc->instances() );
+        // prim restart
+        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
+        // base vertex
+        de->setBaseVertex( dc->as<DrawElementsBase>()->baseVertex() );
+        // regenerate indices
+        de->indexBuffer()->resize( idx_count );
+        size_t i=0;
+        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
+        {
+          // skip primitive restart indices
+          if (restart_on && it.index() == (int)restart_idx)
+            de->indexBuffer()->at(i) = DrawElementsUShort::primitive_restart_index;
+          else
+          {
+            VL_CHECK( it.index() >= 0 && it.index() < (int)vertexArray()->size() );
+            de->indexBuffer()->at(i) = (DrawElementsUShort::index_type)it.index();
+          }
+        }
+        VL_CHECK( i == de->indexBuffer()->size() );
+        // substitute new draw call
+        (*drawCalls())[idraw] = de;
+      }
+      else
+      if (dc->isOfType(DrawRangeElementsBase::Type()))
+      {
+        ref<DrawRangeElementsUShort> de = new DrawRangeElementsUShort( dc->primitiveType(), dc->instances() );
+        // prim restart
+        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
+        // base vertex
+        de->setBaseVertex( dc->as<DrawRangeElementsBase>()->baseVertex() );
+        // range
+        de->setRangeStart( dc->as<DrawRangeElementsBase>()->rangeStart() );
+        de->setRangeEnd( dc->as<DrawRangeElementsBase>()->rangeEnd() );
+        // regenerate indices
+        de->indexBuffer()->resize( idx_count );
+        size_t i=0;
+        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
+        {
+          // skip primitive restart indices
+          if (restart_on && it.index() == (int)restart_idx)
+            de->indexBuffer()->at(i) = DrawRangeElementsUShort::primitive_restart_index;
+          else
+            de->indexBuffer()->at(i) = (DrawRangeElementsUShort::index_type)it.index();
+        }
+        VL_CHECK( i == de->indexBuffer()->size() );
+        // substitute new draw call
+        (*drawCalls())[idraw] = de;
+      }
+      else
+      if (dc->isOfType(MultiDrawElementsBase::Type()))
+      {
+        ref<MultiDrawElementsUShort> de = new MultiDrawElementsUShort( dc->primitiveType() );
+        // prim restart
+        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
+        // base vertex
+        de->setBaseVertices( dc->as<MultiDrawElementsBase>()->baseVertices() );
+        // count vector
+        de->setCountVector( dc->as<MultiDrawElementsBase>()->countVector() );
+        // regenerate indices
+        de->indexBuffer()->resize( idx_count );
+        size_t i=0;
+        for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
+        {
+          // skip primitive restart indices
+          if (restart_on && it.index() == (int)restart_idx)
+            de->indexBuffer()->at(i) = DrawElementsUShort::primitive_restart_index;
+          else
+            de->indexBuffer()->at(i) = (MultiDrawElementsUShort::index_type)it.index();
+        }
+        VL_CHECK( i == de->indexBuffer()->size() );
+        // substitute new draw call
+        (*drawCalls())[idraw] = de;
+      }
+    } // can use UShort
 
+  } // for()
+}
+//-----------------------------------------------------------------------------
+void Geometry::makeGLESFriendly()
+{
+  // converts legacy vertex arrays into generic vertex attributes
+#if defined(VL_OPENGL_ES2)
+  convertToVertexAttribs();
+#endif
+
+  // converts quads and polygons into triangles
+  triangulateDrawCalls();
+  
+  // use short or byte instead of int
+  shrinkDrawCalls();
+
+  // check primitive type is supported by OpenGL ES
+  for(int i=0; i<drawCalls()->size(); ++i)
+  {
+    DrawCall* dc = drawCalls()->at(i);
     // check supported primitive types
     switch(dc->primitiveType())
     {
@@ -1050,10 +1173,7 @@ void Geometry::makeGLESFriendly()
       VL_TRAP();
       break;
     }
-  } // for()
-
-  // converts legacy vertex arrays into generic vertex attributes
-  convertToVertexAttribs();
+  }
 }
 //-----------------------------------------------------------------------------
 bool Geometry::sortVertices()
