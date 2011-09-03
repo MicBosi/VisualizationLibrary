@@ -84,6 +84,9 @@ vec4 computeFragColor(vec3 iso_pos)
 		if (light_enable[i])
 		{
 			vec3 L = normalize(light_position[i] - frag_position);
+			// double sided lighting
+			if (dot(L,N) < 0.0)
+				L = -L;
 			final_color = final_color + color.rgb * blinn(N, V, L, i);
 		}
 	}	
