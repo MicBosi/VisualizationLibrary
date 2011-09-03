@@ -68,7 +68,7 @@ void main(void)
 	// to properly sample the texture clamp bewteen trfunc_delta...1.0-trfunc_delta
 	float clamped_val = trfunc_delta+(1.0-2.0*trfunc_delta)*val;
 	vec4 color = texture1D(trfunc_texunit, clamped_val);
-	vec3 color_tmp;
+	vec3 color_tmp = vec3(0.0, 0.0, 0.0);
 
 	// compute the gradient and lighting only if the pixel is visible "enough"
 	if (color.a > LIGHTING_ALPHA_THRESHOLD)

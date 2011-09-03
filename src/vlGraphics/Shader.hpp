@@ -2179,7 +2179,8 @@ namespace vl
 
     RenderStateSlot* renderStates() { return getRenderStateSet()->renderStates(); }
 
-    void eraseRenderState(ERenderState type, int index) { gocRenderStateSet()->eraseRenderState(type, index); }
+    //! If index == -1 all the renderstates of the given type are removed regardless of their binding index.
+    void eraseRenderState(ERenderState type, int index=-1) { gocRenderStateSet()->eraseRenderState(type, index); }
     
     void eraseRenderState(RenderState* rs, int index) { if (rs) gocRenderStateSet()->eraseRenderState(rs->type(), index); }
     

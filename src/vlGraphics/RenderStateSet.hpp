@@ -73,6 +73,7 @@ namespace vl
 
     RenderStateSlot* renderStates() { if (mRenderStates.empty()) return NULL; else return &mRenderStates[0]; }
 
+    //! If index == -1 all the renderstates of the given type are removed regardless of their binding index.
     void eraseRenderState(ERenderState type, int index);
 
     void eraseAllRenderStates() { mRenderStates.clear(); mGLSLProgram = NULL; }
