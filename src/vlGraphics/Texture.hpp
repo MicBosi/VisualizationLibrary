@@ -213,11 +213,11 @@ namespace vl
     };
 
   public:
-    /** Constructs a texture from the specified file. 
+    /** Constructs a 1D, 2D, 3D or Cubemap texture from the specified file. 
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this constructor. */
     Texture(const String& image_path, ETextureFormat format = TF_RGBA, bool mipmaps = true, bool border=false);
     
-    /** Constructs a texture from the specified image. 
+    /** Constructs a 1D, 2D, 3D or Cubemap texture from the specified image. 
     \note The OpenGL texture object is created immediately therefore an OpenGL context must be active when calling this constructor. */
     Texture(const Image* image, ETextureFormat format = TF_RGBA, bool mipmaps = true, bool border=false);
     
