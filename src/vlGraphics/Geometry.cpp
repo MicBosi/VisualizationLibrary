@@ -1021,12 +1021,6 @@ void Geometry::shrinkDrawCalls()
       if (dc->isOfType(MultiDrawElementsBase::Type()))
       {
         ref<MultiDrawElementsUByte> de = new MultiDrawElementsUByte( dc->primitiveType() );
-        // prim restart
-        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
-        // base vertex
-        de->setBaseVertices( dc->as<MultiDrawElementsBase>()->baseVertices() );
-        // count vector
-        de->setCountVector( dc->as<MultiDrawElementsBase>()->countVector() );
         // regenerate indices
         de->indexBuffer()->resize( idx_count );
         size_t i=0;
@@ -1039,6 +1033,12 @@ void Geometry::shrinkDrawCalls()
             de->indexBuffer()->at(i) = (MultiDrawElementsUByte::index_type)it.index();
         }
         VL_CHECK( i == de->indexBuffer()->size() );
+        // prim restart
+        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
+        // base vertex
+        de->setBaseVertices( dc->as<MultiDrawElementsBase>()->baseVertices() );
+        // count vector
+        de->setCountVector( dc->as<MultiDrawElementsBase>()->countVector() );
         // substitute new draw call
         (*drawCalls())[idraw] = de;
       }
@@ -1102,12 +1102,6 @@ void Geometry::shrinkDrawCalls()
       if (dc->isOfType(MultiDrawElementsBase::Type()))
       {
         ref<MultiDrawElementsUShort> de = new MultiDrawElementsUShort( dc->primitiveType() );
-        // prim restart
-        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
-        // base vertex
-        de->setBaseVertices( dc->as<MultiDrawElementsBase>()->baseVertices() );
-        // count vector
-        de->setCountVector( dc->as<MultiDrawElementsBase>()->countVector() );
         // regenerate indices
         de->indexBuffer()->resize( idx_count );
         size_t i=0;
@@ -1120,6 +1114,12 @@ void Geometry::shrinkDrawCalls()
             de->indexBuffer()->at(i) = (MultiDrawElementsUShort::index_type)it.index();
         }
         VL_CHECK( i == de->indexBuffer()->size() );
+        // prim restart
+        de->setPrimitiveRestartEnabled( dc->primitiveRestartEnabled() );
+        // base vertex
+        de->setBaseVertices( dc->as<MultiDrawElementsBase>()->baseVertices() );
+        // count vector
+        de->setCountVector( dc->as<MultiDrawElementsBase>()->countVector() );
         // substitute new draw call
         (*drawCalls())[idraw] = de;
       }
