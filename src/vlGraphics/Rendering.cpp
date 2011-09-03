@@ -370,7 +370,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
         shader_set.insert(shader);
 
         // link GLSLProgram
-        if (shader->glslProgram())
+        if (shader->glslProgram() && !shader->glslProgram()->linked())
         {
           shader->glslProgram()->linkProgram();
           VL_CHECK( shader->glslProgram()->linked() );
