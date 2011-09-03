@@ -239,7 +239,7 @@ public:
     // remove shader uniforms
     vol_fx->shader()->setUniformSet(NULL);
     // remove GLSLProgram
-    vol_fx->shader()->eraseRenderState(vl::RS_GLSLProgram, 0);
+    vol_fx->shader()->eraseRenderState(vl::RS_GLSLProgram);
     // keep texture unit #0
     // vol_fx->shader()->eraseRenderState(RS_TextureSampler,0); 
     // remove texture unit #1 and #2
