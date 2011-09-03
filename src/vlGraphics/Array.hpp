@@ -184,6 +184,8 @@ namespace vl
   public:
     typedef T_Scalar scalar_type;
     typedef T_VectorType vector_type;
+    static const size_t gl_size = T_GL_Size;
+    static const GLenum gl_type = T_GL_Type;
 
     virtual size_t glSize() const { return T_GL_Size; }
 
@@ -201,9 +203,9 @@ namespace vl
     
     size_t sizeBufferObject() const { return bufferObject() ? bufferObject()->byteCountBufferObject() / bytesPerVector() : 0; }
     
-    size_t scalarCount() const { return size() * glSize(); }
+    size_t scalarCount() const { return size() * T_GL_Size; }
     
-    size_t scalarCountBufferObject() const { return sizeBufferObject() * glSize(); }
+    size_t scalarCountBufferObject() const { return sizeBufferObject() * T_GL_Size; }
 
     // ---
 
