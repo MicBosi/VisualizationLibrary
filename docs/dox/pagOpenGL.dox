@@ -70,11 +70,12 @@
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glCompressedTexSubImage3D.xml>glCompressedTexSubImage3D()</a>
 			</td>
 			<td valign=top>
-				Not mapped, you can use them like this:
+				You can use them as usual:
 				<pre>
 vl::Texture* texture = ... init texture ...
 glBindTexture(GL_TEXTURE_2D, texture->handle());
 glTexSubImage2D(GL_TEXTURE_2D, ...);
+glBindTexture(GL_TEXTURE_2D, 0);
 				</pre>
 			</td>
 		</tr>
