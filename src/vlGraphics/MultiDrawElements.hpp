@@ -60,10 +60,10 @@ namespace vl
     /** Enables the primitive-restart functionality. See http://www.opengl.org/registry/specs/NV/primitive_restart.txt */
     void setPrimitiveRestartEnabled(bool enabled) { mPrimitiveRestartEnabled = enabled; }
 
-    /** Sets the vector defining the length of each primitive and automatically computes the pointer vectors used to exectue glMultiDrawElements(). */
-    void setCountVector(const std::vector<GLsizei>& vcount)
+    /** Calls computePointerVector(), computeBufferObjectPointerVector() and resizes the base vertex array to fit the count vector.
+      * @note Must be called after the index buffer has been filled. */
+    void finalizeSetup()
     {
-      mCountVector = vcount;
       // update pointers
       computePointerVector();
       computeBufferObjectPointerVector();
@@ -72,18 +72,22 @@ namespace vl
         mBaseVertices.resize(mCountVector.size());
     }
 
-    /** Sets the vector defining the length of each primitive and automatically computes the pointer vectors used to exectue glMultiDrawElements(). */
+    /** Sets the vector defining the length of each primitive and automatically computes the pointer vectors used to exectue glMultiDrawElements(). 
+      * @note Must be called after the index buffer has been filled. */
+    void setCountVector(const std::vector<GLsizei>& vcount)
+    {
+      mCountVector = vcount;
+      finalizeSetup();
+    }
+
+    /** Sets the vector defining the length of each primitive and automatically computes the pointer vectors used to exectue glMultiDrawElements().
+      * @note Must be called after the index buffer has been filled. */
     void setCountVector(const GLsizei* vcount, size_t size)
     {
       mCountVector.resize(size);
       for(size_t i=0; i<size; ++i)
         mCountVector[i] = vcount[i];
-      // update pointers
-      computePointerVector();
-      computeBufferObjectPointerVector();
-      // set default base vertices to 0
-      if (mBaseVertices.empty())
-        mBaseVertices.resize(mCountVector.size());
+      finalizeSetup();
     }
 
     /** The count vector used as 'count' parameter of glMultiDrawElements. */
@@ -284,11 +288,12 @@ namespace vl
     /** Computes pointerVector() based on the values contained on countVector(). */
     void computePointerVector()
     {
+      VL_CHECK( indexBuffer() && indexBuffer()->size() )
       mPointerVector.resize( mCountVector.size() );
       const index_type* ptr = (const index_type*)indexBuffer()->bufferObject()->ptr();
       for(size_t i=0; i<mCountVector.size(); ++i)
       {
-        mPointerVector[i]    = ptr;
+        mPointerVector[i] = ptr;
         ptr += mCountVector[i];
       }
     }
@@ -296,6 +301,7 @@ namespace vl
     //! Computes vboPointerVector() based on the values contained in pointerVector().
     void computeBufferObjectPointerVector()
     {
+      VL_CHECK( indexBuffer() && indexBuffer()->size() )
       mBufferObjectPointerVector.resize( mPointerVector.size() );
       const index_type* base_ptr = (const index_type*)indexBuffer()->ptr();
       VL_CHECK(base_ptr)
