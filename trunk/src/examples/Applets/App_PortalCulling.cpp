@@ -41,12 +41,12 @@
 const int map_size = 7;
 const char* map[map_size] = 
 {
-  "       ",
-  " XXXXX ",
-  " XXXXX ",
-  " XXXXX ",
-  " XXXXX ",
-  " XXXXX ",
+  "       ", 
+  " XXXXX ", 
+  " XXXXX ", 
+  " XXXXX ", 
+  " XXXXX ", 
+  " XXXXX ", 
   "       "
 };
 const float room_h        = 5.0f;
@@ -111,12 +111,12 @@ public:
     // Initialize the Sectors.
     vl::ref<vl::Sector> sectors[map_size][map_size] =
     {
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
       { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }
     };
 
@@ -163,13 +163,13 @@ public:
 
     // boring code to generate the gometry of various kinds of walls, with out door, with door, with the passage and portal.
 
-    vl::ref<vl::Geometry> wall_1_a = vl::makeGrid(vl::vec3(room_h/2.0f,0,0),room_h,room_size_in,20,20);
+    vl::ref<vl::Geometry> wall_1_a = vl::makeGrid(vl::vec3(room_h/2.0f, 0, 0), room_h, room_size_in, 20, 20);
     wall_1_a->computeNormals();
-    wall_1_a->transform(vl::mat4::getRotation(90,0,0,1));
+    wall_1_a->transform(vl::mat4::getRotation(90, 0, 0, 1));
 
-    vl::ref<vl::Geometry> wall_2_a = vl::makeGrid(vl::vec3(0,0,room_h/2.0f),room_size_in,room_h,20,20);
+    vl::ref<vl::Geometry> wall_2_a = vl::makeGrid(vl::vec3(0, 0, room_h/2.0f), room_size_in, room_h, 20, 20);
     wall_2_a->computeNormals();
-    wall_2_a->transform(vl::mat4::getRotation(-90,1,0,0));
+    wall_2_a->transform(vl::mat4::getRotation(-90, 1, 0, 0));
 
     float w1 = room_size_in / 6.0f;
     float h1 = room_h       / 3.0f * 2.0f;
@@ -189,12 +189,12 @@ public:
     // |   |   |   |
     // 0---7   4---3
     vert_array->at(0) = vl::fvec3(0, 0, -w2);
-    vert_array->at(1) = vl::fvec3(0,+h2,-w2);
-    vert_array->at(2) = vl::fvec3(0,+h2,+w2);
+    vert_array->at(1) = vl::fvec3(0, +h2, -w2);
+    vert_array->at(2) = vl::fvec3(0, +h2, +w2);
     vert_array->at(3) = vl::fvec3(0, 0, +w2);
     vert_array->at(4) = vl::fvec3(0, 0, +w1);
-    vert_array->at(5) = vl::fvec3(0,h1, +w1);
-    vert_array->at(6) = vl::fvec3(0,h1, -w1);
+    vert_array->at(5) = vl::fvec3(0, h1, +w1);
+    vert_array->at(6) = vl::fvec3(0, h1, -w1);
     vert_array->at(7) = vl::fvec3(0, 0, -w1);
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_1_b->drawCalls()->push_back(de.get());
@@ -214,7 +214,7 @@ public:
     wall_1_b->computeNormals();
 
     // wall_1_c
-    vl::fvec3 v1c(room_size_out-room_size_in,0,0);
+    vl::fvec3 v1c(room_size_out-room_size_in, 0, 0);
     vl::ref<vl::Geometry> wall_1_c = new vl::Geometry;
     vert_array = new vl::ArrayFloat3;
     wall_1_c->setVertexArray(vert_array.get());
@@ -225,12 +225,12 @@ public:
     // |   7---4   |
     // 0-----------3
     vert_array->at(0) = vl::fvec3(0, 0, -w1);
-    vert_array->at(1) = vl::fvec3(0,h1, -w1);
-    vert_array->at(2) = vl::fvec3(0,h1, +w1);
+    vert_array->at(1) = vl::fvec3(0, h1, -w1);
+    vert_array->at(2) = vl::fvec3(0, h1, +w1);
     vert_array->at(3) = vl::fvec3(0, 0, +w1);
     vert_array->at(4) = vl::fvec3(0, 0, +w1) + v1c;
-    vert_array->at(5) = vl::fvec3(0,h1, +w1) + v1c;
-    vert_array->at(6) = vl::fvec3(0,h1, -w1) + v1c;
+    vert_array->at(5) = vl::fvec3(0, h1, +w1) + v1c;
+    vert_array->at(6) = vl::fvec3(0, h1, -w1) + v1c;
     vert_array->at(7) = vl::fvec3(0, 0, -w1) + v1c;
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_1_c->drawCalls()->push_back(de.get());
@@ -264,12 +264,12 @@ public:
     // |   |   |   |
     // 0---7   4---3
     vert_array->at(0) = vl::fvec3(-w2, 0, 0);
-    vert_array->at(1) = vl::fvec3(-w2,+h2,0);
-    vert_array->at(2) = vl::fvec3(+w2,+h2,0);
+    vert_array->at(1) = vl::fvec3(-w2, +h2, 0);
+    vert_array->at(2) = vl::fvec3(+w2, +h2, 0);
     vert_array->at(3) = vl::fvec3(+w2, 0, 0);
     vert_array->at(4) = vl::fvec3(+w1, 0, 0);
-    vert_array->at(5) = vl::fvec3(+w1,h1, 0);
-    vert_array->at(6) = vl::fvec3(-w1,h1, 0);
+    vert_array->at(5) = vl::fvec3(+w1, h1, 0);
+    vert_array->at(6) = vl::fvec3(-w1, h1, 0);
     vert_array->at(7) = vl::fvec3(-w1, 0, 0);
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_2_b->drawCalls()->push_back(de.get());
@@ -289,7 +289,7 @@ public:
     wall_2_b->computeNormals();
 
     // wall_2_c
-    vl::fvec3 v2c(0,0,room_size_out-room_size_in);
+    vl::fvec3 v2c(0, 0, room_size_out-room_size_in);
     vl::ref<vl::Geometry> wall_2_c = new vl::Geometry;
     vert_array = new vl::ArrayFloat3;
     wall_2_c->setVertexArray(vert_array.get());
@@ -300,12 +300,12 @@ public:
     // |   7---4   |
     // 0-----------3
     vert_array->at(0) = vl::fvec3(-w1, 0, 0);
-    vert_array->at(1) = vl::fvec3(-w1,h1, 0);
-    vert_array->at(2) = vl::fvec3(+w1,h1, 0);
+    vert_array->at(1) = vl::fvec3(-w1, h1, 0);
+    vert_array->at(2) = vl::fvec3(+w1, h1, 0);
     vert_array->at(3) = vl::fvec3(+w1, 0, 0);
     vert_array->at(4) = vl::fvec3(+w1, 0, 0) + v2c;
-    vert_array->at(5) = vl::fvec3(+w1,h1, 0) + v2c;
-    vert_array->at(6) = vl::fvec3(-w1,h1, 0) + v2c;
+    vert_array->at(5) = vl::fvec3(+w1, h1, 0) + v2c;
+    vert_array->at(6) = vl::fvec3(-w1, h1, 0) + v2c;
     vert_array->at(7) = vl::fvec3(-w1, 0, 0) + v2c;
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_2_c->drawCalls()->push_back(de.get());
@@ -329,7 +329,7 @@ public:
     wall_2_c->computeNormals();
 
     // very heavy spheres to be added to the sectors to outline more clearly the advantages of portal-based culling.
-    vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0,3,0),1,200,200);
+    vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0, 3, 0), 1, 200, 200);
     sphere->computeNormals();
     vl::ref<vl::Effect> ball_fx = new vl::Effect;
     ball_fx->shader()->enable(vl::EN_DEPTH_TEST);
@@ -337,13 +337,6 @@ public:
     ball_fx->shader()->gocLight(0);
     if (!vl::Has_GLES_Version_1_1)
       ball_fx->shader()->setRenderState(mPolygonMode.get());
-
-    wall_1_a->makeGLESFriendly();
-    wall_2_a->makeGLESFriendly();
-    wall_1_b->makeGLESFriendly();
-    wall_1_c->makeGLESFriendly();
-    wall_2_b->makeGLESFriendly();
-    wall_2_c->makeGLESFriendly();
 
     // for each cell of the dungeon
     for(int y=0; y<map_size; ++y)
@@ -375,14 +368,14 @@ public:
 
           if(map[y][x-1] == 'X') // west door: the two sectors comunicate
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f,0,0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f, 0, 0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             // add to the sector
             sector1->actors()->push_back( new vl::Actor(wall_1_b.get(), wall_fx.get(), tr.get()) );
           }
           else
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f,0,0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f, 0, 0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             // add to the sector
             sector1->actors()->push_back( new vl::Actor(wall_1_a.get(), wall_fx.get(), tr.get()) );
@@ -390,7 +383,7 @@ public:
 
           if(map[y][x+1] == 'X') // east door: the two sectors comunicate
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f,0,0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f, 0, 0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             // add to the sector
             sector1->actors()->push_back( new vl::Actor(wall_1_b.get(), wall_fx.get(), tr.get()) );
@@ -414,39 +407,39 @@ public:
             sector2->portals().push_back(portal2.get()); portal2->setTargetSector( sector1 );
             // setup portal geometry - note: the portal geometry must be a planar, convex polygon, in world space coordinates.
             portal1->geometry().resize(4);
-            portal1->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(0, 0,+w1) + v1c);
-            portal1->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(0,h1,+w1) + v1c);
-            portal1->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(0,h1,-w1) + v1c);
-            portal1->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(0, 0,-w1) + v1c);
+            portal1->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(0, 0, +w1) + v1c);
+            portal1->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(0, h1, +w1) + v1c);
+            portal1->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(0, h1, -w1) + v1c);
+            portal1->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(0, 0, -w1) + v1c);
             portal2->geometry().resize(4);
-            portal2->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(0, 0,+w1) + v1c);
-            portal2->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(0,h1,+w1) + v1c);
-            portal2->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(0,h1,-w1) + v1c);
-            portal2->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(0, 0,-w1) + v1c);
+            portal2->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(0, 0, +w1) + v1c);
+            portal2->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(0, h1, +w1) + v1c);
+            portal2->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(0, h1, -w1) + v1c);
+            portal2->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(0, 0, -w1) + v1c);
           }
           else
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f,0,0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f, 0, 0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_1_a.get(), wall_fx.get(), tr.get()) );
           }
 
           if(map[y-1][x] == 'X') // south door: the two sectors comunicate
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,-room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0, 0, -room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_b.get(), wall_fx.get(), tr.get()) );
           }
           else
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,-room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0, 0, -room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_a.get(), wall_fx.get(), tr.get()) );
           }
 
           if(map[y+1][x] == 'X') // north door: the two sectors comunicate
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,+room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0, 0, +room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_b.get(), wall_fx.get(), tr.get()) );
             sector1->actors()->push_back( new vl::Actor(wall_2_c.get(), wall_fx.get(), tr.get()) );
@@ -471,18 +464,18 @@ public:
             // setup portal geometry - note: the portal geometry must be a planar, convex polygon, in world space coordinates.
             portal1->geometry().resize(4);
             portal1->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(+w1, 0, 0) + v2c);
-            portal1->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(+w1,h1, 0) + v2c);
-            portal1->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(-w1,h1, 0) + v2c);
+            portal1->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(+w1, h1, 0) + v2c);
+            portal1->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(-w1, h1, 0) + v2c);
             portal1->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(-w1, 0, 0) + v2c);
             portal2->geometry().resize(4);
             portal2->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(+w1, 0, 0) + v2c);
-            portal2->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(+w1,h1, 0) + v2c);
-            portal2->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(-w1,h1, 0) + v2c);
+            portal2->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(+w1, h1, 0) + v2c);
+            portal2->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(-w1, h1, 0) + v2c);
             portal2->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(-w1, 0, 0) + v2c);
           }
           else
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,+room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0, 0, +room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_a.get(), wall_fx.get(), tr.get()) );
           }
@@ -493,7 +486,7 @@ public:
             vl::ref<vl::Transform> tr = new vl::Transform;
             float tx = (rand()%100) / 100.0f * room_size_in - room_size_in / 2.0f;
             float tz = (rand()%100) / 100.0f * room_size_in - room_size_in / 2.0f;
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(tx,0,tz));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(tx, 0, tz));
             tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(sphere.get(), ball_fx.get(), tr.get()) );
           }
