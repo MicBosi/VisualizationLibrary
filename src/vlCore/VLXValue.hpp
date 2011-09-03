@@ -134,7 +134,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VLXArrayInteger, VLXArrayTemplate<long long>)
 
   public:
-    VLXArrayInteger(const char* tag=NULL): VLXArrayTemplate(tag) { }
+    VLXArrayInteger(const char* tag=NULL): VLXArrayTemplate<long long>(tag) { }
     
     virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
   };
@@ -145,7 +145,7 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VLXArrayReal, VLXArrayTemplate<double>)
 
   public:
-    VLXArrayReal(const char* tag=NULL): VLXArrayTemplate(tag) { }
+    VLXArrayReal(const char* tag=NULL): VLXArrayTemplate<double>(tag) { }
     
     virtual void acceptVisitor(VLXVisitor* v) { v->visitArray(this); }
   };
