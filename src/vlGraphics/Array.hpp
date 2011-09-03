@@ -101,7 +101,7 @@ namespace vl
     virtual size_t glSize() const = 0;
 
     //! Returns the OpenGL type for the array, ie GL_FLOAT for ArrayFloat3, GL_UNSIGNED_INT for ArrayUInt1 etc.
-    virtual int glType() const = 0;
+    virtual GLenum glType() const = 0;
 
     //! Returns the number of elements of an array
     virtual size_t size() const = 0;
@@ -176,17 +176,18 @@ namespace vl
    * - vl::ArrayInt_2_10_10_10_REV1, ArrayInt_2_10_10_10_REV2, ArrayInt_2_10_10_10_REV3, ArrayInt_2_10_10_10_REV4
    * - vl::ArrayUInt_2_10_10_10_REV1, ArrayUInt_2_10_10_10_REV2, ArrayUInt_2_10_10_10_REV3, ArrayUInt_2_10_10_10_REV4
   */
-  template <typename T_VectorType, typename T_Scalar, int T_GL_Size, GLenum T_GL_Type>
+  template <typename T_VectorType, typename T_Scalar, size_t T_GL_Size, GLenum T_GL_Type>
   class Array: public ArrayAbstract
   {
     VL_INSTRUMENT_ABSTRACT_CLASS(vl::Array, ArrayAbstract)
 
   public:
     typedef T_Scalar scalar_type;
+    typedef T_VectorType vector_type;
 
     virtual size_t glSize() const { return T_GL_Size; }
 
-    virtual int glType() const { return T_GL_Type; }
+    virtual GLenum glType() const { return T_GL_Type; }
 
     virtual size_t bytesPerVector() const { return sizeof(T_VectorType); }
 
