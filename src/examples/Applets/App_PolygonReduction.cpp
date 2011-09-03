@@ -40,8 +40,9 @@
 
 using namespace vl;
 
-static const int stages = 5;
-static const float ratios[] = { 1.0f, 0.5f, 0.20f, 0.05f, 0.01f };
+static const float golden = (1.0f + sqrt(5.0f)) / 2.0f; // sezione aurea
+static const float ratios[] = { 1.0f, 1.0f / pow(golden, 1), 1.0f / pow(golden, 2), 1.0f / pow(golden, 3), 1.0f / pow(golden, 4), 1.0f / pow(golden, 5) };
+static const int stages = sizeof(ratios) / sizeof(ratios[0]);
 
 class App_PolygonReduction: public BaseDemo
 {
@@ -103,20 +104,21 @@ public:
 
   void loadSimplifyGeometry(Geometry* geom)
   {
-    mGeom[0] = geom;
-    for(int i=1; i<stages; ++i)
-      mGeom[i] = mGeom[0]->deepCopy();
-
     // -------------- simplification -------------------
 
     PolygonSimplifier simplifier;
     simplifier.setQuick(false);
     simplifier.setVerbose(true);
-    for(int i=1; i<stages; ++i)
-    {
-      simplifier.simplify( ratios[i], mGeom[i].get() );
-      Log::print("\n");
-    }
+
+    simplifier.setIntput( geom );
+
+    for(int i=0; i<stages; ++i)
+      simplifier.targets().push_back( size_t(geom->vertexArray()->size() * ratios[i]) );
+
+    simplifier.simplify();
+
+    for(int i=0; i<stages; ++i)
+      mGeom[i] = simplifier.output()[i];
 
     // -------------- simplification end -------------------
 
@@ -158,7 +160,7 @@ protected:
   ref<Transform> mTransform;
   String mFileName;
   ref<Effect> mEffect;
-  ref<Actor> mActors[5];
+  ref<Actor> mActors[stages];
   int mActiveActor;
   ref<Actor> mTextActor; 
   ref<Text> mText;
