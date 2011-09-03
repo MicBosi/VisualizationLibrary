@@ -209,15 +209,28 @@
 	- vl::ActorTree
 	- vl::ActorKdTree
 	
+	\par Geometry Tools
+	- vl::Geometry::convertToVertexAttribs()
+	- vl::Geometry::computeNormals()
+	- vl::Geometry::flipNormals()
+	- vl::Geometry::fixTriangleWinding()
+	- vl::Geometry::transform()
+	- vl::Geometry::mergeTriangleStrips()
+	- vl::Geometry::mergeDrawCallsWithPrimitiveRestart()
+	- vl::Geometry::mergeDrawCallsWithMultiDrawElements()
+	- vl::Geometry::mergeDrawCallsWithTriangles()
+	- vl::Geometry::convertDrawCallToDrawArrays()
+	- vl::Geometry::triangulateDrawCalls()
+	- vl::Geometry::shrinkDrawCalls()
+	- vl::Geometry::makeGLESFriendly()
+	- vl::Geometry::sortVertices()
+	- vl::Geometry::regenerateVertices()
+	- vl::Geometry::colorizePrimitives()
+	- vl::Geometry::computeTangentSpace()
+	
 	\par Geometry
 	
 	- vl::Geometry
-	- vl::Geometry::computeNormals()
-	- vl::Geometry::flipNormals()
-	- vl::Geometry::transform()
-	- vl::Geometry::convertToVertexAttribs()
-	- vl::Geometry::makeGLESFriendly()
-	- vl::Geometry::computeTangentSpace()
 	- vl::BezierSurface
 	- vl::Tessellator
 	- vl::Extrusion

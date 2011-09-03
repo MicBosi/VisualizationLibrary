@@ -1178,76 +1178,101 @@ void Geometry::makeGLESFriendly()
 //-----------------------------------------------------------------------------
 bool Geometry::sortVertices()
 {
-  // works only if the primitive types are all DrawElements
-  std::vector< ref<DrawElementsUInt> >   de_uint;
+  // supports only DrawElements* and generates DrawElementsUInt
+
+  std::vector< ref<DrawElementsUInt> > de_u32_set;
 
   // collect DrawElements
   for(int i=0; i<drawCalls()->size(); ++i)
   {
-    DrawElementsUInt*   dei = cast<DrawElementsUInt>(drawCalls()->at(i));
-    DrawElementsUShort* des = cast<DrawElementsUShort>(drawCalls()->at(i));
-    DrawElementsUByte*  deb = cast<DrawElementsUByte>(drawCalls()->at(i));
-    if (dei)
-      de_uint.push_back(dei);
-    else
-    if(des)
+    DrawCall* dc = drawCalls()->at(i);
+    if (dc->primitiveRestartEnabled())
     {
-      dei = new DrawElementsUInt(des->primitiveType(), des->instances());
-      de_uint.push_back(dei);
-      dei->indexBuffer()->resize( des->indexBuffer()->size() );
-      for(unsigned int j=0; j<des->indexBuffer()->size(); ++j)
-        dei->indexBuffer()->at(j) = des->indexBuffer()->at(j);
-    }
-    else
-    if(deb)
-    {
-      dei = new DrawElementsUInt(deb->primitiveType(), deb->instances());
-      de_uint.push_back(dei);
-      dei->indexBuffer()->resize( deb->indexBuffer()->size() );
-      for(unsigned int j=0; j<deb->indexBuffer()->size(); ++j)
-        dei->indexBuffer()->at(j) = deb->indexBuffer()->at(j);
-    }
-    else
+      Log::error("Geometry::sortVertices() does not support DrawCalls with primitive restart enabled.\n");
       return false;
+    }
+
+    DrawElementsUInt*   de_u32 = dc->as<DrawElementsUInt>();
+    DrawElementsUShort* de_u16 = dc->as<DrawElementsUShort>();
+    DrawElementsUByte*  de_u8  = dc->as<DrawElementsUByte>();
+    if (de_u32)
+    {
+      ref<DrawElementsUInt> de = new DrawElementsUInt(de_u32->primitiveType(), de_u32->instances());
+      de_u32_set.push_back(de);
+      de->indexBuffer()->resize( de_u32->indexBuffer()->size() );
+      for(unsigned int j=0; j<de_u32->indexBuffer()->size(); ++j)
+        de->indexBuffer()->at(j) = de_u32->indexBuffer()->at(j) + de_u32->baseVertex(); // bake base vertex
+    }
+    else
+    if(de_u16)
+    {
+      ref<DrawElementsUInt> de = new DrawElementsUInt(de_u16->primitiveType(), de_u16->instances());
+      de_u32_set.push_back(de);
+      de->indexBuffer()->resize( de_u16->indexBuffer()->size() );
+      for(unsigned int j=0; j<de_u16->indexBuffer()->size(); ++j)
+        de->indexBuffer()->at(j) = de_u16->indexBuffer()->at(j) + de_u16->baseVertex(); // bake base vertex
+    }
+    else
+    if(de_u8)
+    {
+      ref<DrawElementsUInt> de = new DrawElementsUInt(de_u8->primitiveType(), de_u8->instances());
+      de_u32_set.push_back(de);
+      de->indexBuffer()->resize( de_u8->indexBuffer()->size() );
+      for(unsigned int j=0; j<de_u8->indexBuffer()->size(); ++j)
+        de->indexBuffer()->at(j) = de_u8->indexBuffer()->at(j) + de_u8->baseVertex(); // bake base vertex
+    }
+    else
+    {
+      Log::error("Geometry::sortVertices() supports only DrawElements* draw calls.\n");
+      return false;
+    }
   }
 
+  // erase all draw calls
   drawCalls()->clear();
 
-  // generate mapping 
+  // reset tables
   std::vector<size_t> map_new_to_old;
   map_new_to_old.resize( vertexArray()->size() );
-  memset(&map_new_to_old[0], 0xFF, map_new_to_old.size()*sizeof(map_new_to_old[0]));
+  memset(&map_new_to_old[0], 0xFF, map_new_to_old.size()*sizeof(map_new_to_old[0])); // fill with 0xFF for debugging
 
   std::vector<size_t> map_old_to_new;
   map_old_to_new.resize( vertexArray()->size() );
-  memset(&map_old_to_new[0], 0xFF, map_old_to_new.size()*sizeof(map_old_to_new[0]));
+  memset(&map_old_to_new[0], 0xFF, map_old_to_new.size()*sizeof(map_old_to_new[0])); // fill with 0xFF for debugging
 
   std::vector<size_t> used;
   used.resize( vertexArray()->size() );
   memset(&used[0], 0, used.size()*sizeof(used[0]));
 
-  size_t index = 0;
-  for(int i=(int)de_uint.size(); i--; )
+  // assign new vertex indices in order of appearence
+  size_t new_idx = 0;
+  for(size_t i=0; i<de_u32_set.size(); ++i)
   {
-    for(size_t idx=0; idx<de_uint[i]->indexBuffer()->size(); ++idx)
-      if (!used[de_uint[i]->indexBuffer()->at(idx)])
+    ArrayUInt1* index_buffer = de_u32_set[i]->indexBuffer();
+    for(size_t idx=0; idx<index_buffer->size(); ++idx)
+    {
+      if (!used[index_buffer->at(idx)])
       {
-        map_new_to_old[index] = de_uint[i]->indexBuffer()->at(idx);
-        map_old_to_new[de_uint[i]->indexBuffer()->at(idx)] = index;
-        index++;
-        used[de_uint[i]->indexBuffer()->at(idx)] = 1;
+        const DrawElementsUInt::index_type& old_idx = index_buffer->at(idx);
+        map_new_to_old[new_idx] = old_idx;
+        map_old_to_new[old_idx] = new_idx;
+        used[old_idx] = 1;
+        ++new_idx;
       }
+    }
   }
 
+  // regenerate vertices
   regenerateVertices(map_new_to_old);
 
-  // remap DrawElements
-  for(size_t i=0; i<de_uint.size(); ++i)
+  // regenerate draw calls
+  for(size_t i=0; i<de_u32_set.size(); ++i)
   {
-    drawCalls()->push_back(de_uint[i].get());
-    for(size_t j=0; j<de_uint[i]->indexBuffer()->size(); ++j)
+    drawCalls()->push_back(de_u32_set[i].get());
+    ArrayUInt1* index_buffer = de_u32_set[i]->indexBuffer();
+    for(size_t j=0; j<index_buffer->size(); ++j)
     {
-      de_uint[i]->indexBuffer()->at(j) = (GLuint)map_old_to_new[de_uint[i]->indexBuffer()->at(j)];
+      index_buffer->at(j) = map_old_to_new[index_buffer->at(j)];
     }
   }
 
