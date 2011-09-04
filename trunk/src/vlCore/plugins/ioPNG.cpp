@@ -149,7 +149,7 @@ ref<Image> vl::loadPNG(VirtualFile* file)
   png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL/*&interlace_type*/, NULL/*int_p_NULL*/, NULL/*int_p_NULL*/);
 
   ref<Image> img = new Image;
-  img->setObjectName(file->path().toStdString());
+  img->setObjectName(file->path().toStdString().c_str());
 
   if (bit_depth == 16)
   {

@@ -750,8 +750,8 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
 
       ref<Geometry> geom = new Geometry;
       ref<Actor>    act  = new Actor(geom.get());
-      geom->setObjectName( loader.mObjects[iobj].mObjName.toStdString() );
-      act ->setObjectName( loader.mObjects[iobj].mObjName.toStdString() );
+      geom->setObjectName( loader.mObjects[iobj].mObjName.toStdString().c_str() );
+      act ->setObjectName( loader.mObjects[iobj].mObjName.toStdString().c_str() );
 
       // builds the vertex sets: a vertex belongs to a single group
 
@@ -840,7 +840,7 @@ ref<ResourceDatabase> vl::load3DS(VirtualFile* file)
           mat_map[mat_name] = new Effect;
           res_db->resources().push_back(mat_map[mat_name].get());
 
-          mat_map[mat_name]->setObjectName(mat_name.toStdString());
+          mat_map[mat_name]->setObjectName(mat_name.toStdString().c_str());
 
           float alpha = 1.0f - loader.mMaterials[mat_index].mTransparency;
           fvec4 ambient( loader.mMaterials[mat_index].mAmbient.r(), loader.mMaterials[mat_index].mAmbient.g(), loader.mMaterials[mat_index].mAmbient.b(), alpha );

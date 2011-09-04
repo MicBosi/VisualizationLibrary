@@ -207,7 +207,7 @@ void ObjLoader::loadObjMaterials(VirtualFile* input, std::vector<ObjMaterial>& m
       if (line.startsWith("newmtl"))
       {
         materials.push_back(ObjMaterial());
-        materials.back().setObjectName( line.field(' ', 1).toStdString() );
+        materials.back().setObjectName( line.field(' ', 1).toStdString().c_str() );
       }
       else
       if (line.startsWith("Ns"))
@@ -404,7 +404,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
       if (starts_new_geom)
       {
         cur_mesh = new ObjMesh;
-        cur_mesh->setObjectName(object_name);
+        cur_mesh->setObjectName(object_name.c_str());
         mMeshes.push_back( cur_mesh );
         starts_new_geom = false;
         cur_mesh->setMaterial(cur_material.get());
@@ -690,7 +690,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
     if (obj_mat)
     {
       // sets the name
-      effect->shader()->gocMaterial()->setObjectName(obj_mat->objectName());
+      effect->shader()->gocMaterial()->setObjectName(obj_mat->objectName().c_str());
       // add the Material to the ResourceDatabase
       res_db->resources().push_back(effect->shader()->gocMaterial());
       // setup the material
@@ -842,7 +842,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
     ref<Geometry> geom = new Geometry;
     res_db->resources().push_back(geom);
 
-    geom->setObjectName(mMeshes[imesh]->objectName());
+    geom->setObjectName(mMeshes[imesh]->objectName().c_str());
     geom->setVertexArray( v_coords.get() );
     if ( mMeshes[imesh]->faceNormalIndex().size() )
       geom->setNormalArray( n_coords.get() );
@@ -868,7 +868,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
 
     ref<Actor> actor = new Actor(geom.get(),NULL);
     res_db->resources().push_back(actor);
-    actor->setObjectName(mMeshes[imesh]->objectName());
+    actor->setObjectName(mMeshes[imesh]->objectName().c_str());
     actor->setEffect(effect.get());
   }
 

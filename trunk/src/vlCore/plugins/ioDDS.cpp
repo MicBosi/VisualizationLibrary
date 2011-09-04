@@ -329,7 +329,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
   for(int i=0; i<mipmaps; ++i)
   {
     image.push_back( new Image );
-    image.back()->setObjectName(file->path().toStdString());
+    image.back()->setObjectName(file->path().toStdString().c_str());
   }
 
   if (IS_BGRA8(header.ddpfPixelFormat) || IS_BGRX8(header.ddpfPixelFormat))
@@ -657,7 +657,7 @@ ref<Image> vl::loadDDS(VirtualFile* file)
   VL_CHECK(image.size());
 
   ref<Image> img = new Image;
-  img->setObjectName(file->path().toStdString());
+  img->setObjectName(file->path().toStdString().c_str());
   *img = *image[0];
   image.erase(image.begin());
   img->setMipmaps(image);

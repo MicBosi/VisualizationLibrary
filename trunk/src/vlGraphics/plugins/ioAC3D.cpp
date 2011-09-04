@@ -491,10 +491,10 @@ ref<ResourceDatabase> vl::loadAC3D( VirtualFile* file)
       continue;
 
     ref<Actor> act = new Actor;
-    act->setObjectName( loader.meshes[imesh].Name.toStdString() );
+    act->setObjectName( loader.meshes[imesh].Name.toStdString().c_str() );
 
     ref<Geometry> geom = new Geometry;
-    geom->setObjectName( loader.meshes[imesh].Name.toStdString() );
+    geom->setObjectName( loader.meshes[imesh].Name.toStdString().c_str() );
 
     ref<ArrayFloat3> verts = new ArrayFloat3;
     ref<ArrayFloat2> uv    = new ArrayFloat2;
