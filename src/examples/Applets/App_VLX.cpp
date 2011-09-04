@@ -159,8 +159,8 @@ public:
     fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
     fx->shader()->setRenderState( new Light, 0 );
     fx->shader()->setRenderState( new Light, 1 );
-    fx->shader()->setRenderState( new ClipPlane(10, fvec3(1,2,3)), 0 );
-    fx->shader()->setRenderState( new ClipPlane(10, fvec3(1,2,3)), 1 );
+    fx->shader()->setRenderState( new ClipPlane(10, vec3(1,2,3)), 0 );
+    fx->shader()->setRenderState( new ClipPlane(10, vec3(1,2,3)), 1 );
 
     fx->shader()->gocColor()->setValue( vl::crimson );
     fx->shader()->gocSecondaryColor()->setValue( vl::yellow.rgb() );

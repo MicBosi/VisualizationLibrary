@@ -1437,7 +1437,7 @@ void DaeLoader::setupLights()
       // spot light
       if (mLights[i]->spotCutoff() != 180)
       {
-        ref<Geometry> light_mesh = vl::makeCone( fvec3(0,0,0), loadOptions()->lightMeshSize(), loadOptions()->lightMeshSize(), 10 );
+        ref<Geometry> light_mesh = vl::makeCone( vec3(0,0,0), loadOptions()->lightMeshSize(), loadOptions()->lightMeshSize(), 10 );
         light_mesh->transform( mat4::getTranslation(0,loadOptions()->lightMeshSize(),0) );
         light_mesh->transform( mat4::getRotation(90, +1,0,0) );
         light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
@@ -1451,7 +1451,7 @@ void DaeLoader::setupLights()
       // directional light
       if (mLights[i]->position().w() == 0)
       {
-        ref<Geometry> light_mesh = vl::makePyramid( fvec3(0,0,0), loadOptions()->lightMeshSize() / 2, loadOptions()->lightMeshSize() );
+        ref<Geometry> light_mesh = vl::makePyramid( vec3(0,0,0), loadOptions()->lightMeshSize() / 2, loadOptions()->lightMeshSize() );
         light_mesh->transform( mat4::getRotation(90, -1,0,0) );
         light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
         ref<Effect> fx = new Effect;
@@ -1464,7 +1464,7 @@ void DaeLoader::setupLights()
       // point light
       if( mLights[i]->ambient() == fvec4(0,0,0,1) )
       {
-        ref<Geometry> light_mesh = vl::makeUVSphere( fvec3(0,0,0), loadOptions()->lightMeshSize(), 10, 5);
+        ref<Geometry> light_mesh = vl::makeUVSphere( vec3(0,0,0), loadOptions()->lightMeshSize(), 10, 5);
         light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
@@ -1475,7 +1475,7 @@ void DaeLoader::setupLights()
       else
       // ambient light
       {
-        ref<Geometry> light_mesh = vl::makeTorus( fvec3(0,0,0), loadOptions()->lightMeshSize(), loadOptions()->lightMeshSize()/4, 8, 14);
+        ref<Geometry> light_mesh = vl::makeTorus( vec3(0,0,0), loadOptions()->lightMeshSize(), loadOptions()->lightMeshSize()/4, 8, 14);
         light_mesh->setNormalArray(NULL); // remove normals
         light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
         ref<Effect> fx = new Effect;
@@ -1882,17 +1882,17 @@ void DaeLoader::parseAsset(domElement* root)
       if( asset->getUp_axis()->getValue() == UPAXISTYPE_X_UP )
       {
         // X_UP Negative y Positive x Positive z
-        mUpMatrix.setX( fvec3( 0, 1, 0) );
-        mUpMatrix.setY( fvec3(-1, 0, 0) );
-        mUpMatrix.setZ( fvec3( 0, 0, 1) );
+        mUpMatrix.setX( vec3( 0, 1, 0) );
+        mUpMatrix.setY( vec3(-1, 0, 0) );
+        mUpMatrix.setZ( vec3( 0, 0, 1) );
       }
       else
       if( asset->getUp_axis()->getValue() == UPAXISTYPE_Z_UP )
       {
         // Z_UP Positive x Positive z Negative y
-        mUpMatrix.setX( fvec3(1, 0, 0) );
-        mUpMatrix.setY( fvec3(0, 0,-1) );
-        mUpMatrix.setZ( fvec3(0, 1, 0) );
+        mUpMatrix.setX( vec3(1, 0, 0) );
+        mUpMatrix.setY( vec3(0, 0,-1) );
+        mUpMatrix.setZ( vec3(0, 1, 0) );
       }
     }
 

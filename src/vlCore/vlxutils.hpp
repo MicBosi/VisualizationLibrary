@@ -50,11 +50,11 @@ namespace vl
 
   inline VLXValue vlx_Rawtext(const std::string& str)    { return VLXValue( new VLXRawtextBlock(NULL, str.c_str()) ); }
 
-  inline fvec2 vlx_fvec2(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 2); fvec2 v; arr->copyTo(v.ptr()); return v;  }
+  inline vec2 vlx_vec2(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 2); vec2 v; arr->copyTo(v.ptr()); return v;  }
 
-  inline fvec3 vlx_fvec3(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 3); fvec3 v; arr->copyTo(v.ptr()); return v;  }
+  inline vec3 vlx_vec3(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 3); vec3 v; arr->copyTo(v.ptr()); return v;  }
 
-  inline fvec4 vlx_fvec4(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 4); fvec4 v; arr->copyTo(v.ptr()); return v;  }
+  inline vec4 vlx_vec4(const VLXArrayReal* arr) { VL_CHECK(arr->value().size() == 4); vec4 v; arr->copyTo(v.ptr()); return v;  }
 
   inline ivec4 vlx_ivec4(const VLXArrayInteger* arr) { VL_CHECK(arr->value().size() == 4); ivec4 v; arr->copyTo(v.ptr()); return v; }
 
@@ -127,23 +127,23 @@ namespace vl
     return val;
   }
 
-  inline bool vlx_isTranslation(const fmat4& mat)
+  inline bool vlx_isTranslation(const mat4& mat)
   {
-    fmat4 tmp = mat;
-    tmp.setT( fvec3(0,0,0) );
+    mat4 tmp = mat;
+    tmp.setT( vec3(0,0,0) );
     return tmp.isIdentity();
   }
 
-  inline bool vlx_isScaling(const fmat4& mat)
+  inline bool vlx_isScaling(const mat4& mat)
   {
-    fmat4 tmp = mat;
+    mat4 tmp = mat;
     tmp.e(0,0) = 1;
     tmp.e(1,1) = 1;
     tmp.e(2,2) = 1;
     return tmp.isIdentity();
   }
 
-  inline VLXValue vlx_toValue(const fmat4& mat)
+  inline VLXValue vlx_toValue(const mat4& mat)
   {
     VLXValue matrix_list( new VLXList );
 
@@ -178,16 +178,16 @@ namespace vl
     return matrix_list;
   }
 
-  inline fmat4 vlx_fmat4( const VLXArrayReal* arr )
+  inline mat4 vlx_mat4( const VLXArrayReal* arr )
   {
-    fmat4 mat;
+    mat4 mat;
     arr->copyTo(mat.ptr());
     return mat;
   }
 
-  inline fmat4 vlx_fmat4( const VLXList* list )
+  inline mat4 vlx_mat4( const VLXList* list )
   {
-    fmat4 mat;
+    mat4 mat;
 
     for(size_t i=0; i<list->value().size(); ++i)
     {
@@ -201,19 +201,19 @@ namespace vl
       const VLXArrayReal* arr = value.getArrayReal();
       if (arr->tag() == "<Translate>")
       {
-        fvec3 tr = vlx_fvec3( arr );
-        mat = mat * fmat4::getTranslation(tr);
+        vec3 tr = vlx_vec3( arr );
+        mat = mat * mat4::getTranslation(tr);
       }
       else
       if (arr->tag() == "<Scale>")
       {
-        fvec3 sc = vlx_fvec3( arr );
-        mat = mat * fmat4::getScaling(sc);
+        vec3 sc = vlx_vec3( arr );
+        mat = mat * mat4::getScaling(sc);
       }
       else
       if (arr->tag() == "<Matrix>")
       {
-        fmat4 m = vlx_fmat4( arr );
+        mat4 m = vlx_mat4( arr );
         mat = mat * m;
       }
       else
@@ -227,7 +227,7 @@ namespace vl
         else
         {
           // mic fixme: test this
-          fvec3 eye, look, up;
+          vec3 eye, look, up;
           eye.x()  = (float)arr->value()[0];
           eye.y()  = (float)arr->value()[1];
           eye.z()  = (float)arr->value()[2];
@@ -237,7 +237,7 @@ namespace vl
           up.x()   = (float)arr->value()[6];
           up.y()   = (float)arr->value()[7];
           up.z()   = (float)arr->value()[8];
-          mat = mat * fmat4::getLookAt(eye, look, up).invert();
+          mat = mat * mat4::getLookAt(eye, look, up).invert();
         }
       }
       else
