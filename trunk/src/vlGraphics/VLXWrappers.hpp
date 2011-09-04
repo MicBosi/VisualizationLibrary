@@ -2823,7 +2823,9 @@ namespace vl
       if (path)
       {
         VLX_IMPORT_CHECK_RETURN( path->type() == VLXValue::String, *path )
-        obj->setSource(path->getString().c_str()); // this automatically loads the source and sets the path
+        std::string resolved_path = path->getString();
+        s.resolvePath(resolved_path);
+        obj->setSource(resolved_path.c_str()); // this automatically loads the source and sets the path
       }
       else
       if (source)
@@ -3300,7 +3302,9 @@ namespace vl
         if (key == "ImagePath")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::String, value );
-          obj->setupParams()->setImagePath( value.getString().c_str() );
+          std::string resolved_path = value.getString();
+          s.resolvePath( resolved_path );
+          obj->setupParams()->setImagePath( resolved_path.c_str() );
         }
         else
         if (key == "Format")

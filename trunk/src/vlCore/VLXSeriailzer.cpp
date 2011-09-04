@@ -349,6 +349,9 @@ ref<Object> VLXSerializer::loadVLT(VirtualFile* file, bool start_fresh)
   if (mError)
     return NULL;
 
+  // set the base document URL to resolve document-relative paths
+  setDocumentURL( file->path() );
+
   VLXParserVLT parser;
   parser.tokenizer()->setInputFile( file );
 
@@ -390,6 +393,9 @@ ref<Object> VLXSerializer::loadVLB(VirtualFile* file, bool start_fresh)
   if (mError)
     return NULL;
 
+  // set the base document URL to resolve document-relative paths
+  setDocumentURL( file->path() );
+
   VLXParserVLB parser;
   parser.setInputFile( file );
 
@@ -430,4 +436,13 @@ const char* VLXSerializer::errorString() const
   }
 }
 //-----------------------------------------------------------------------------
-
+void VLXSerializer::resolvePath(std::string& path)
+{
+  String str = String::fromStdString( path );
+  if (str.startsWith("this:"))
+  {
+    str = documentURL().extractPath() + str.right(-5);
+    path = str.normalizeSlashes().toStdString();
+  }
+}
+//-----------------------------------------------------------------------------
