@@ -74,7 +74,7 @@ Image::Image(const String& path)
   mPixels = new Buffer;
   reset();
 
-  setObjectName(path.toStdString());
+  setObjectName(path.toStdString().c_str());
   ref<Image> img = loadImage(path);
   if (!img)
   {
@@ -1196,7 +1196,7 @@ ref<Image> vl::loadImage( VirtualFile* file )
 
   if (img)
   {
-    img->setObjectName( file->path().toStdString() );
+    img->setObjectName( file->path().toStdString().c_str() );
     img->setFilePath( file->path() );
   }
 
@@ -1318,7 +1318,7 @@ ref<Image> vl::Image::convertType(EImageType new_type) const
   }
 
   ref<Image> img = new Image;
-  img->setObjectName( objectName() );
+  img->setObjectName( objectName().c_str() );
   img->setFormat(format());
   img->setType(new_type);
   img->setWidth(width());
@@ -1736,7 +1736,7 @@ ref<Image> vl::Image::convertFormat(EImageFormat new_format) const
   }
 
   ref<Image> img = new Image;
-  img->setObjectName( objectName() );
+  img->setObjectName( objectName().c_str() );
   img->setFormat(new_format);
   img->setType(type());
   img->setWidth(width());
