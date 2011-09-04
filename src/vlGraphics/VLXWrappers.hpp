@@ -818,18 +818,7 @@ namespace vl
         if (key == "Interpretation")
         {
           VLX_IMPORT_CHECK_RETURN_NULL(value.type() == VLXValue::Identifier, value) 
-          if ( value.getIdentifier() == "VAI_NORMAL" )
-            info->setInterpretation(VAI_NORMAL);
-          else
-          if ( value.getIdentifier() == "VAI_INTEGER" )
-            info->setInterpretation(VAI_INTEGER);
-          else
-          if ( value.getIdentifier() == "VAI_DOUBLE" )
-            info->setInterpretation(VAI_DOUBLE);
-          else
-          {
-            s.signalImportError( Say("Line %n : import error.\n") << value.lineNumber() );
-          }
+          info->setInterpretation( vlx_EVertexAttribInterpretation(value, s) );
         }
       }
     
@@ -840,14 +829,7 @@ namespace vl
     {
       *vlx << "Data" << s.exportVLX(info->data());
       *vlx << "Normalize" << info->normalize();
-      std::string interpretation;
-      switch(info->interpretation())
-      {
-      case VAI_NORMAL:  interpretation = "VAI_NORMAL";  break;
-      case VAI_INTEGER: interpretation = "VAI_INTEGER"; break;
-      case VAI_DOUBLE:  interpretation = "VAI_DOUBLE";  break;
-      }
-      *vlx << "Interpretation" << vlx_Identifier(interpretation);
+      *vlx << "Interpretation" << vlx_Identifier(vlx_EVertexAttribInterpretation(info->interpretation()));
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -1093,28 +1075,7 @@ namespace vl
 
     void exportDrawCallBase(VLXSerializer& s, const DrawCall* dcall, VLXStructure* vlx)
     {
-      std::string primitive_type = "PRIMITIVE_TYPE_ERROR";
-      switch(dcall->primitiveType())
-      {
-        case PT_POINTS:                   primitive_type = "PT_POINTS"; break;
-        case PT_LINES:                    primitive_type = "PT_LINES"; break;
-        case PT_LINE_LOOP:                primitive_type = "PT_LINE_LOOP"; break;
-        case PT_LINE_STRIP:               primitive_type = "PT_LINE_STRIP"; break;
-        case PT_TRIANGLES:                primitive_type = "PT_TRIANGLES"; break;
-        case PT_TRIANGLE_STRIP:           primitive_type = "PT_TRIANGLE_STRIP"; break;
-        case PT_TRIANGLE_FAN:             primitive_type = "PT_TRIANGLE_FAN"; break;
-        case PT_QUADS:                    primitive_type = "PT_QUADS"; break;
-        case PT_QUAD_STRIP:               primitive_type = "PT_QUAD_STRIP"; break;
-        case PT_POLYGON:                  primitive_type = "PT_POLYGON"; break;
-        case PT_LINES_ADJACENCY:          primitive_type = "PT_LINES_ADJACENCY"; break;
-        case PT_LINE_STRIP_ADJACENCY:     primitive_type = "PT_LINE_STRIP_ADJACENCY"; break;
-        case PT_TRIANGLES_ADJACENCY:      primitive_type = "PT_TRIANGLES_ADJACENCY"; break;
-        case PT_TRIANGLE_STRIP_ADJACENCY: primitive_type = "PT_TRIANGLE_STRIP_ADJACENCY"; break;
-        case PT_PATCHES:                  primitive_type = "PT_PATCHES"; break;
-        case PT_UNKNOWN:                  primitive_type = "PT_UNKNOWN"; break;
-      }
-
-      *vlx << "PrimitiveType" << vlx_Identifier(primitive_type);
+      *vlx << "PrimitiveType" << vlx_Identifier(vlx_EPrimitiveType(dcall->primitiveType()));
       *vlx << "Enabled" << dcall->isEnabled();
       if (dcall->patchParameter())
         *vlx << "PatchParameter" << s.exportVLX(dcall->patchParameter());

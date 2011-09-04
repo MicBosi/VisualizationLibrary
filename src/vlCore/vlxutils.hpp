@@ -625,45 +625,47 @@ namespace vl
 
   inline ETextureFormat vlx_ETextureFormat(const VLXValue& value, VLXSerializer& s)
   {
-    if( value.getIdentifier() == "TF_ALPHA  ") return TF_ALPHA  ;
-    if( value.getIdentifier() == "TF_ALPHA4 ") return TF_ALPHA4 ;
-    if( value.getIdentifier() == "TF_ALPHA8 ") return TF_ALPHA8 ;
+    if( value.getIdentifier() == "TF_UNKNOWN") return TF_UNKNOWN;
+
+    if( value.getIdentifier() == "TF_ALPHA") return TF_ALPHA;
+    if( value.getIdentifier() == "TF_ALPHA4") return TF_ALPHA4;
+    if( value.getIdentifier() == "TF_ALPHA8") return TF_ALPHA8;
     if( value.getIdentifier() == "TF_ALPHA12") return TF_ALPHA12;
     if( value.getIdentifier() == "TF_ALPHA16") return TF_ALPHA16;
 
-    if( value.getIdentifier() == "TF_INTENSITY  ") return TF_INTENSITY  ;
-    if( value.getIdentifier() == "TF_INTENSITY4 ") return TF_INTENSITY4 ;
-    if( value.getIdentifier() == "TF_INTENSITY8 ") return TF_INTENSITY8 ;
+    if( value.getIdentifier() == "TF_INTENSITY") return TF_INTENSITY;
+    if( value.getIdentifier() == "TF_INTENSITY4") return TF_INTENSITY4;
+    if( value.getIdentifier() == "TF_INTENSITY8") return TF_INTENSITY8;
     if( value.getIdentifier() == "TF_INTENSITY12") return TF_INTENSITY12;
     if( value.getIdentifier() == "TF_INTENSITY16") return TF_INTENSITY16;
-    if( value.getIdentifier() == "TF_LUMINANCE  ") return TF_LUMINANCE  ;
-    if( value.getIdentifier() == "TF_LUMINANCE4 ") return TF_LUMINANCE4 ;
-    if( value.getIdentifier() == "TF_LUMINANCE8 ") return TF_LUMINANCE8 ;
+    if( value.getIdentifier() == "TF_LUMINANCE") return TF_LUMINANCE;
+    if( value.getIdentifier() == "TF_LUMINANCE4") return TF_LUMINANCE4;
+    if( value.getIdentifier() == "TF_LUMINANCE8") return TF_LUMINANCE8;
     if( value.getIdentifier() == "TF_LUMINANCE12") return TF_LUMINANCE12;
     if( value.getIdentifier() == "TF_LUMINANCE16") return TF_LUMINANCE16;
-    if( value.getIdentifier() == "TF_LUMINANCE_ALPHA    ") return TF_LUMINANCE_ALPHA    ;
-    if( value.getIdentifier() == "TF_LUMINANCE4_ALPHA4  ") return TF_LUMINANCE4_ALPHA4  ;
-    if( value.getIdentifier() == "TF_LUMINANCE6_ALPHA2  ") return TF_LUMINANCE6_ALPHA2  ;
-    if( value.getIdentifier() == "TF_LUMINANCE8_ALPHA8  ") return TF_LUMINANCE8_ALPHA8  ;
-    if( value.getIdentifier() == "TF_LUMINANCE12_ALPHA4 ") return TF_LUMINANCE12_ALPHA4 ;
+    if( value.getIdentifier() == "TF_LUMINANCE_ALPHA") return TF_LUMINANCE_ALPHA;
+    if( value.getIdentifier() == "TF_LUMINANCE4_ALPHA4") return TF_LUMINANCE4_ALPHA4;
+    if( value.getIdentifier() == "TF_LUMINANCE6_ALPHA2") return TF_LUMINANCE6_ALPHA2;
+    if( value.getIdentifier() == "TF_LUMINANCE8_ALPHA8") return TF_LUMINANCE8_ALPHA8;
+    if( value.getIdentifier() == "TF_LUMINANCE12_ALPHA4") return TF_LUMINANCE12_ALPHA4;
     if( value.getIdentifier() == "TF_LUMINANCE12_ALPHA12") return TF_LUMINANCE12_ALPHA12;
     if( value.getIdentifier() == "TF_LUMINANCE16_ALPHA16") return TF_LUMINANCE16_ALPHA16;
     if( value.getIdentifier() == "TF_R3_G3_B2") return TF_R3_G3_B2;
-    if( value.getIdentifier() == "TF_RGB     ") return TF_RGB     ;
-    if( value.getIdentifier() == "TF_RGB4    ") return TF_RGB4    ;
-    if( value.getIdentifier() == "TF_RGB5    ") return TF_RGB5    ;
-    if( value.getIdentifier() == "TF_RGB8    ") return TF_RGB8    ;
-    if( value.getIdentifier() == "TF_RGB10   ") return TF_RGB10   ;
-    if( value.getIdentifier() == "TF_RGB12   ") return TF_RGB12   ;
-    if( value.getIdentifier() == "TF_RGB16   ") return TF_RGB16   ;
-    if( value.getIdentifier() == "TF_RGBA    ") return TF_RGBA    ;
-    if( value.getIdentifier() == "TF_RGBA2   ") return TF_RGBA2   ;
-    if( value.getIdentifier() == "TF_RGBA4   ") return TF_RGBA4   ;
-    if( value.getIdentifier() == "TF_RGB5_A1 ") return TF_RGB5_A1 ;
-    if( value.getIdentifier() == "TF_RGBA8   ") return TF_RGBA8   ;
+    if( value.getIdentifier() == "TF_RGB") return TF_RGB;
+    if( value.getIdentifier() == "TF_RGB4") return TF_RGB4;
+    if( value.getIdentifier() == "TF_RGB5") return TF_RGB5;
+    if( value.getIdentifier() == "TF_RGB8") return TF_RGB8;
+    if( value.getIdentifier() == "TF_RGB10") return TF_RGB10;
+    if( value.getIdentifier() == "TF_RGB12") return TF_RGB12;
+    if( value.getIdentifier() == "TF_RGB16") return TF_RGB16;
+    if( value.getIdentifier() == "TF_RGBA") return TF_RGBA;
+    if( value.getIdentifier() == "TF_RGBA2") return TF_RGBA2;
+    if( value.getIdentifier() == "TF_RGBA4") return TF_RGBA4;
+    if( value.getIdentifier() == "TF_RGB5_A1") return TF_RGB5_A1;
+    if( value.getIdentifier() == "TF_RGBA8") return TF_RGBA8;
     if( value.getIdentifier() == "TF_RGB10_A2") return TF_RGB10_A2;
-    if( value.getIdentifier() == "TF_RGBA12  ") return TF_RGBA12  ;
-    if( value.getIdentifier() == "TF_RGBA16  ") return TF_RGBA16  ;
+    if( value.getIdentifier() == "TF_RGBA12") return TF_RGBA12;
+    if( value.getIdentifier() == "TF_RGBA16") return TF_RGBA16;
 
     // ARB_texture_float / OpenGL 3
     if( value.getIdentifier() == "TF_RGBA32F") return TF_RGBA32F;
@@ -724,47 +726,47 @@ namespace vl
     if( value.getIdentifier() == "TF_11F_G11F_B10F_EXT") return TF_11F_G11F_B10F_EXT;
 
     // EXT_packed_depth_stencil / GL_ARB_framebuffer_object
-    if( value.getIdentifier() == "TF_DEPTH_STENCIL   ") return TF_DEPTH_STENCIL   ;
+    if( value.getIdentifier() == "TF_DEPTH_STENCIL") return TF_DEPTH_STENCIL;
     if( value.getIdentifier() == "TF_DEPTH24_STENCIL8") return TF_DEPTH24_STENCIL8;
 
     // ARB_depth_buffer_float
     if( value.getIdentifier() == "TF_DEPTH_COMPONENT32F") return TF_DEPTH_COMPONENT32F;
-    if( value.getIdentifier() == "TF_DEPTH32F_STENCIL8 ") return TF_DEPTH32F_STENCIL8 ;
+    if( value.getIdentifier() == "TF_DEPTH32F_STENCIL8") return TF_DEPTH32F_STENCIL8;
 
     // ARB_depth_texture
-    if( value.getIdentifier() == "TF_DEPTH_COMPONENT  ") return TF_DEPTH_COMPONENT  ;
+    if( value.getIdentifier() == "TF_DEPTH_COMPONENT") return TF_DEPTH_COMPONENT;
     if( value.getIdentifier() == "TF_DEPTH_COMPONENT16") return TF_DEPTH_COMPONENT16;
     if( value.getIdentifier() == "TF_DEPTH_COMPONENT24") return TF_DEPTH_COMPONENT24;
     if( value.getIdentifier() == "TF_DEPTH_COMPONENT32") return TF_DEPTH_COMPONENT32;
 
     // ARB_texture_compression
-    if( value.getIdentifier() == "TF_COMPRESSED_ALPHA          ") return TF_COMPRESSED_ALPHA          ;
-    if( value.getIdentifier() == "TF_COMPRESSED_INTENSITY      ") return TF_COMPRESSED_INTENSITY      ;
-    if( value.getIdentifier() == "TF_COMPRESSED_LUMINANCE      ") return TF_COMPRESSED_LUMINANCE      ;
+    if( value.getIdentifier() == "TF_COMPRESSED_ALPHA") return TF_COMPRESSED_ALPHA;
+    if( value.getIdentifier() == "TF_COMPRESSED_INTENSITY") return TF_COMPRESSED_INTENSITY;
+    if( value.getIdentifier() == "TF_COMPRESSED_LUMINANCE") return TF_COMPRESSED_LUMINANCE;
     if( value.getIdentifier() == "TF_COMPRESSED_LUMINANCE_ALPHA") return TF_COMPRESSED_LUMINANCE_ALPHA;
-    if( value.getIdentifier() == "TF_COMPRESSED_RGB            ") return TF_COMPRESSED_RGB            ;
-    if( value.getIdentifier() == "TF_COMPRESSED_RGBA           ") return TF_COMPRESSED_RGBA           ;
+    if( value.getIdentifier() == "TF_COMPRESSED_RGB") return TF_COMPRESSED_RGB;
+    if( value.getIdentifier() == "TF_COMPRESSED_RGBA") return TF_COMPRESSED_RGBA;
 
     // 3DFX_texture_compression_FXT1
-    if( value.getIdentifier() == "TF_COMPRESSED_RGB_FXT1_3DFX ") return TF_COMPRESSED_RGB_FXT1_3DFX ;
+    if( value.getIdentifier() == "TF_COMPRESSED_RGB_FXT1_3DFX") return TF_COMPRESSED_RGB_FXT1_3DFX;
     if( value.getIdentifier() == "TF_COMPRESSED_RGBA_FXT1_3DFX") return TF_COMPRESSED_RGBA_FXT1_3DFX;
 
     // EXT_texture_compression_s3tc
-    if( value.getIdentifier() == "TF_COMPRESSED_RGB_S3TC_DXT1_EXT ") return TF_COMPRESSED_RGB_S3TC_DXT1_EXT ;
+    if( value.getIdentifier() == "TF_COMPRESSED_RGB_S3TC_DXT1_EXT") return TF_COMPRESSED_RGB_S3TC_DXT1_EXT;
     if( value.getIdentifier() == "TF_COMPRESSED_RGBA_S3TC_DXT1_EXT") return TF_COMPRESSED_RGBA_S3TC_DXT1_EXT;
     if( value.getIdentifier() == "TF_COMPRESSED_RGBA_S3TC_DXT3_EXT") return TF_COMPRESSED_RGBA_S3TC_DXT3_EXT;
     if( value.getIdentifier() == "TF_COMPRESSED_RGBA_S3TC_DXT5_EXT") return TF_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 
     // EXT_texture_compression_latc
-    if( value.getIdentifier() == "TF_COMPRESSED_LUMINANCE_LATC1_EXT             ") return TF_COMPRESSED_LUMINANCE_LATC1_EXT             ;
-    if( value.getIdentifier() == "TF_COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT      ") return TF_COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT      ;
-    if( value.getIdentifier() == "TF_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT       ") return TF_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT       ;
+    if( value.getIdentifier() == "TF_COMPRESSED_LUMINANCE_LATC1_EXT") return TF_COMPRESSED_LUMINANCE_LATC1_EXT;
+    if( value.getIdentifier() == "TF_COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT") return TF_COMPRESSED_SIGNED_LUMINANCE_LATC1_EXT;
+    if( value.getIdentifier() == "TF_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT") return TF_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT;
     if( value.getIdentifier() == "TF_COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2_EXT") return TF_COMPRESSED_SIGNED_LUMINANCE_ALPHA_LATC2_EXT;
 
     // EXT_texture_compression_rgtc
-    if( value.getIdentifier() == "TF_COMPRESSED_RED_RGTC1_EXT             ") return TF_COMPRESSED_RED_RGTC1_EXT             ;
-    if( value.getIdentifier() == "TF_COMPRESSED_SIGNED_RED_RGTC1_EXT      ") return TF_COMPRESSED_SIGNED_RED_RGTC1_EXT      ;
-    if( value.getIdentifier() == "TF_COMPRESSED_RED_GREEN_RGTC2_EXT       ") return TF_COMPRESSED_RED_GREEN_RGTC2_EXT       ;
+    if( value.getIdentifier() == "TF_COMPRESSED_RED_RGTC1_EXT") return TF_COMPRESSED_RED_RGTC1_EXT;
+    if( value.getIdentifier() == "TF_COMPRESSED_SIGNED_RED_RGTC1_EXT") return TF_COMPRESSED_SIGNED_RED_RGTC1_EXT;
+    if( value.getIdentifier() == "TF_COMPRESSED_RED_GREEN_RGTC2_EXT") return TF_COMPRESSED_RED_GREEN_RGTC2_EXT;
     if( value.getIdentifier() == "TF_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT") return TF_COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT;
 
     // EXT_texture_integer
@@ -1208,7 +1210,52 @@ namespace vl
     return PT_UNKNOWN;
   }
 
-  // mic fixme: armonizza: devono tutti avere il line number e strcmp()
+  inline const char* vlx_EPrimitiveType(EPrimitiveType type)
+  {
+    switch(type)
+    {
+      case PT_POINTS:                   return "PT_POINTS"; break;
+      case PT_LINES:                    return "PT_LINES"; break;
+      case PT_LINE_LOOP:                return "PT_LINE_LOOP"; break;
+      case PT_LINE_STRIP:               return "PT_LINE_STRIP"; break;
+      case PT_TRIANGLES:                return "PT_TRIANGLES"; break;
+      case PT_TRIANGLE_STRIP:           return "PT_TRIANGLE_STRIP"; break;
+      case PT_TRIANGLE_FAN:             return "PT_TRIANGLE_FAN"; break;
+      case PT_QUADS:                    return "PT_QUADS"; break;
+      case PT_QUAD_STRIP:               return "PT_QUAD_STRIP"; break;
+      case PT_POLYGON:                  return "PT_POLYGON"; break;
+      case PT_LINES_ADJACENCY:          return "PT_LINES_ADJACENCY"; break;
+      case PT_LINE_STRIP_ADJACENCY:     return "PT_LINE_STRIP_ADJACENCY"; break;
+      case PT_TRIANGLES_ADJACENCY:      return "PT_TRIANGLES_ADJACENCY"; break;
+      case PT_TRIANGLE_STRIP_ADJACENCY: return "PT_TRIANGLE_STRIP_ADJACENCY"; break;
+      case PT_PATCHES:                  return "PT_PATCHES"; break;
+      default:
+      case PT_UNKNOWN:                  return "PT_UNKNOWN"; break;
+    }
+  }
+
+  inline EVertexAttribInterpretation vlx_EVertexAttribInterpretation(const VLXValue& value, VLXSerializer& s)
+  {
+    if( value.getIdentifier() == "VAI_NORMAL") return VAI_NORMAL;
+    if( value.getIdentifier() == "VAI_INTEGER")  return VAI_INTEGER;
+    if( value.getIdentifier() == "VAI_DOUBLE") return VAI_DOUBLE;
+
+    Log::error( Say("Line %n : unknown token '%s'.\n") << value.lineNumber() << value.getIdentifier() );
+    s.setError(VLXSerializer::ImportError);
+    return VAI_NORMAL;
+  }
+
+  inline const char* vlx_EVertexAttribInterpretation(EVertexAttribInterpretation type)
+  {
+    switch(type)
+    {
+      default:
+      case VAI_NORMAL:  return "VAI_NORMAL";  break;
+      case VAI_INTEGER: return "VAI_INTEGER"; break;
+      case VAI_DOUBLE:  return "VAI_DOUBLE";  break;
+    }
+  }
+
   inline ETextureDimension vlx_ETextureDimension(const VLXValue& value, VLXSerializer& s)
   {
     if( value.getIdentifier() == "TD_TEXTURE_1D") return TD_TEXTURE_1D;
