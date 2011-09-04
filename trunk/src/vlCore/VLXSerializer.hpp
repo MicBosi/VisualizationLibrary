@@ -150,11 +150,35 @@ namespace vl
     //! The URL of the document used to resolve document-relative file paths
     const String& documentURL() const { return mDocumentURL; }
 
-    //! If the given path starts with "this:" then "this:" is replaced with the documentURL(), otherwise the path is left unchanged.
+    //! If the given path starts with "this:" then the "this:" prefix is replaced with the documentURL(), otherwise the path is left unchanged.
     void resolvePath(std::string& path);
+
+    //! Sets a serialization directive that can be used by VLXClassWrapper objects to program the serialization process.
+    //! Directives are essentially a way to pass options to VLXClassWrapper objects, which can read them from the VLXSerializer they are using.
+    void setDirective(const char* directive, const char* value) { mDirectives[directive] = value; }
+
+    //! Removes a serialization directive.
+    void eraseDirective(const char* directive) { mDirectives.erase(directive); }
+
+    //! Returns the value of a serialization directive.
+    const std::string& directive(const char* directive) const
+    {
+      std::map<std::string, std::string>::const_iterator it = mDirectives.find(directive);
+      if (it != mDirectives.end())
+        return it->second;
+      else
+        return "NO_SUCH_DIRECTIVE";
+    }
+
+    //! Returns true if the given directive has been set.
+    bool hasDirective(const char* directive) { return mDirectives.find(directive) != mDirectives.end(); }
+
+    //! Erases all previously set directives
+    void eraseAllDirectives() { mDirectives.clear(); }
 
   private:
     String mDocumentURL;
+    std::map<std::string, std::string> mDirectives;
     EError mError;
     int mIDCounter;
     std::map< ref<VLXStructure>, ref<Object> > mImportedStructures; // structure --> object
