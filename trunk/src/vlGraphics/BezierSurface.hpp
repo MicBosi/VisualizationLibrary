@@ -49,9 +49,16 @@ namespace vl
     //! The control points grid defining the bicubic Bézier patch(es).
     typedef std::vector< vec3 > Points;
     //! Constructor
-    BezierPatch(): mX(0), mY(0) {}
+    BezierPatch(): mX(0), mY(0) 
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
     //! Constructor
-    BezierPatch(int x, int y): mX(0), mY(0) { resize(x,y); }
+    BezierPatch(int x, int y): mX(0), mY(0) 
+    { 
+      VL_DEBUG_SET_OBJECT_NAME()
+      resize(x,y);
+    }
     //! Defines the x and y dimensions of the control point grid defining the patch.
     //! The \p x and \p y parameters must be of the form 3*n+1 with \p n integer positive, i.e 4 (n=1), 7 (n=2), 10 (n=3) and so on.
     void resize(int x, int y);
@@ -90,7 +97,10 @@ namespace vl
 
   public:
     //! Constructor
-    BezierSurface(): mDetail(16) {}
+    BezierSurface(): mDetail(16) 
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
 
     //! Returns the Bézier patches that are part of this Bézier surface.
     std::vector< ref<BezierPatch> >& patches() { return mPatches; }

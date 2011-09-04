@@ -62,7 +62,10 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VertexAttrib, RenderStateIndexed)
 
   public:
-    VertexAttrib(): mValue( fvec4(0,0,0,0) ) {}
+    VertexAttrib(): mValue( fvec4(0,0,0,0) ) 
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
 
     virtual ERenderState type() const { return RS_VertexAttrib; }
 
@@ -93,7 +96,10 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::Color, RenderStateNonIndexed)
 
   public:
-    Color(): mColor( fvec4(1,1,1,1) ) {}
+    Color(): mColor( fvec4(1,1,1,1) )
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
 
     virtual ERenderState type() const { return RS_Color; }
 
@@ -124,7 +130,10 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::SecondaryColor, RenderStateNonIndexed)
 
   public:
-    SecondaryColor(): mSecondaryColor( fvec3(1,1,1) ) {}
+    SecondaryColor(): mSecondaryColor( fvec3(1,1,1) )
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
 
     virtual ERenderState type() const { return RS_SecondaryColor; }
 
@@ -155,7 +164,10 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::Normal, RenderStateNonIndexed)
 
   public:
-    Normal(): mNormal( fvec3(0,1,0) ) {}
+    Normal(): mNormal( fvec3(0,1,0) )
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
 
     virtual ERenderState type() const { return RS_Normal; }
 
