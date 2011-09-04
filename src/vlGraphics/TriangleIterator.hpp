@@ -582,7 +582,7 @@ namespace vl
 
     bool operator++() { return next(); }
 
-    /** Returns true if the iterator reached the end of the triangle list. In this case a(), b() and c() return -1. */
+    /** Returns false if the iterator has reached the end of the triangle list. In this case a(), b() and c() return -1. */
     bool hasNext() { return mIterator->hasNext(); }
 
     /** First index of the triangle. */
