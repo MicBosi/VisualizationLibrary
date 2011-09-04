@@ -718,8 +718,8 @@ void GLUTWindow::glut_reshape_func(int w, int h)
   GLUTWindow* win = mWinMap[cur_win];
   VL_CHECK(win);
 
-  win->renderTarget()->setWidth(w);
-  win->renderTarget()->setHeight(h);
+  win->framebuffer()->setWidth(w);
+  win->framebuffer()->setHeight(h);
 
   if (win->mInited == false)
   {

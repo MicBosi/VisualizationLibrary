@@ -188,8 +188,8 @@ bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFo
     return false;
   }
 
-  mRenderTarget->setWidth(width);
-  mRenderTarget->setHeight(height);
+  mFramebuffer->setWidth(width);
+  mFramebuffer->setHeight(height);
   mSDLWindow = this;
 
   // init key translation map

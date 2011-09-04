@@ -65,7 +65,7 @@ int main ( int argc, char *argv[] )
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   glut_window->addEventListener(applet.get());
   /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( glut_window->renderTarget() );
+  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( glut_window->framebuffer() );
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
   /* define the camera position and orientation */
