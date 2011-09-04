@@ -58,7 +58,7 @@ class TexRotScaleShaderAnimator: public vl::ShaderAnimator
 public:
   void updateShader(vl::Shader* shader, vl::Camera*, vl::real cur_time)
   {
-    vl::mat4 mat;
+    vl::fmat4 mat;
     mat.translate(-0.5,-0.5,0.0f);
     mat.rotate( cur_time * 90, 0, 0, 1 );
     float s = 0.5f + (float)sin( cur_time * vl::fPi * 2.0f )*0.5f + 0.5f;

@@ -121,7 +121,7 @@ namespace vl
     ref<Dae::Node> mScene;
     DAE mDAE;
     String mFilePath;
-    fmat4 mUpMatrix;
+    mat4 mUpMatrix;
     bool mInvertTransparency;
     bool mAssumeOpaque;
   };

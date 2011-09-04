@@ -1220,12 +1220,12 @@ namespace vl
         else
         if (key == "PatchDefaultOuterLevel")
         {
-          pp->setPatchDefaultOuterLevel( vlx_fvec4(values[i].value().getArrayReal()) );
+          pp->setPatchDefaultOuterLevel( (fvec4)vlx_vec4(values[i].value().getArrayReal()) );
         }
         else
         if (key == "PatchDefaultInnerLevel")
         {
-          pp->setPatchDefaultInnerLevel( vlx_fvec2(values[i].value().getArrayReal()) );
+          pp->setPatchDefaultInnerLevel( (fvec2)vlx_vec2(values[i].value().getArrayReal()) );
         }
       }
     }
@@ -1242,8 +1242,8 @@ namespace vl
     void exportPatchParameter(const PatchParameter* pp, VLXStructure* vlx)
     {
       *vlx << "PatchVertices" << (long long)pp->patchVertices();
-      *vlx << "PatchDefaultOuterLevel" << vlx_toValue(pp->patchDefaultOuterLevel());
-      *vlx << "PatchDefaultInnerLevel" << vlx_toValue(pp->patchDefaultInnerLevel());
+      *vlx << "PatchDefaultOuterLevel" << vlx_toValue((vec4)pp->patchDefaultOuterLevel());
+      *vlx << "PatchDefaultInnerLevel" << vlx_toValue((vec2)pp->patchDefaultInnerLevel());
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -2166,7 +2166,7 @@ namespace vl
         if (key == "ViewMatrix")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::List, value);
-          obj->setViewMatrix( vlx_fmat4(value.getList()) );
+          obj->setViewMatrix( vlx_mat4(value.getList()) );
           // VLX_IMPORT_CHECK_RETURN( !obj->viewMatrix().isNull(), value )
         }
         else
@@ -2181,7 +2181,7 @@ namespace vl
           }
 
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::List, value);
-          obj->setProjectionMatrix( vlx_fmat4(value.getList()), ptype );
+          obj->setProjectionMatrix( vlx_mat4(value.getList()), ptype );
           // VLX_IMPORT_CHECK_RETURN( !obj->projectionMatrix().isNull(), value )
         }
         else
@@ -2297,7 +2297,7 @@ namespace vl
         if (key == "ClearColor")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setClearColor( vlx_fvec4( value.getArrayReal() ) );
+          obj->setClearColor( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "ClearColorInt")
@@ -2373,7 +2373,7 @@ namespace vl
 
     void exportViewport(const Viewport* viewp, VLXStructure* vlx)
     {
-      *vlx << "ClearColor" << vlx_toValue(viewp->clearColor());
+      *vlx << "ClearColor" << vlx_toValue((vec4)viewp->clearColor());
       *vlx << "ClearColorInt" << vlx_toValue(viewp->clearColorInt());
       *vlx << "ClearColorUInt" << vlx_toValue(viewp->clearColorUInt());
       *vlx << "ClearDepth" << (double)viewp->clearDepth();
@@ -2411,7 +2411,7 @@ namespace vl
         if (key == "LocalMatrix")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::List, value )
-          obj->setLocalAndWorldMatrix( vlx_fmat4( value.getList() ) );
+          obj->setLocalAndWorldMatrix( vlx_mat4( value.getList() ) );
         }
         else
         // let the "Children" property take care of children binding
@@ -2491,31 +2491,31 @@ namespace vl
         {
           // mic fixme: what if the user specifies ( 1 0 0 0 ) -> becomes a ArrayInteger!!!
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value )
-          obj->setAmbient( vlx_fvec4( value.getArrayReal() ) );
+          obj->setAmbient( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "Diffuse")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value )
-          obj->setDiffuse( vlx_fvec4( value.getArrayReal() ) );
+          obj->setDiffuse( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "Specular")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value )
-          obj->setSpecular( vlx_fvec4( value.getArrayReal() ) );
+          obj->setSpecular( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "Position")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value )
-          obj->setPosition( vlx_fvec4( value.getArrayReal() ) );
+          obj->setPosition( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "SpotDirection")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value )
-          obj->setSpotDirection( vlx_fvec3( value.getArrayReal() ) );
+          obj->setSpotDirection( (fvec3)vlx_vec3( value.getArrayReal() ) );
         }
         else
         if (key == "SpotExponent")
@@ -2569,11 +2569,11 @@ namespace vl
 
     void exportLight(VLXSerializer& s, const Light* light, VLXStructure* vlx)
     {
-      *vlx << "Ambient" << vlx_toValue(light->ambient());
-      *vlx << "Diffuse" << vlx_toValue(light->diffuse());
-      *vlx << "Specular" << vlx_toValue(light->specular());
-      *vlx << "Position" << vlx_toValue(light->position());
-      *vlx << "SpotDirection" << vlx_toValue(light->spotDirection());
+      *vlx << "Ambient" << vlx_toValue((vec4)light->ambient());
+      *vlx << "Diffuse" << vlx_toValue((vec4)light->diffuse());
+      *vlx << "Specular" << vlx_toValue((vec4)light->specular());
+      *vlx << "Position" << vlx_toValue((vec4)light->position());
+      *vlx << "SpotDirection" << vlx_toValue((vec3)light->spotDirection());
       *vlx << "SpotExponent" << light->spotExponent();
       *vlx << "SpotCutoff" << light->spotCutoff();
       *vlx << "ConstantAttenuation" << light->constantAttenuation();
@@ -2609,7 +2609,7 @@ namespace vl
         {
           // mic fixme: what if the user specifies ( 1 0 0 0 ) -> becomes a ArrayInteger!!!
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value )
-          obj->plane().setNormal( vlx_fvec3( value.getArrayReal() ) );
+          obj->plane().setNormal( vlx_vec3( value.getArrayReal() ) );
         }
         else
         if (key == "PlaneOrigin")
@@ -2858,7 +2858,7 @@ namespace vl
     {
       const VLXValue* value = vlx->getValue("Value");
       VLX_IMPORT_CHECK_RETURN( value->type() == VLXValue::ArrayReal, *value )
-      obj->setValue( vlx_fvec4( value->getArrayReal() ) );
+      obj->setValue( (fvec4)vlx_vec4( value->getArrayReal() ) );
     }
 
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
@@ -2872,7 +2872,7 @@ namespace vl
 
     void exportVertexAttrib(const VertexAttrib* obj, VLXStructure* vlx)
     {
-      *vlx << "Value" << vlx_toValue(obj->value());
+      *vlx << "Value" << vlx_toValue((vec4)obj->value());
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -2895,7 +2895,7 @@ namespace vl
     {
       const VLXValue* value = vlx->getValue("Value");
       VLX_IMPORT_CHECK_RETURN( value->type() == VLXValue::ArrayReal, *value )
-      obj->setValue( vlx_fvec4( value->getArrayReal() ) );
+      obj->setValue( (fvec4)vlx_vec4( value->getArrayReal() ) );
     }
 
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
@@ -2909,7 +2909,7 @@ namespace vl
 
     void exportColor(const Color* obj, VLXStructure* vlx)
     {
-      *vlx << "Value" << vlx_toValue(obj->value());
+      *vlx << "Value" << vlx_toValue((vec4)obj->value());
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -2932,7 +2932,7 @@ namespace vl
     {
       const VLXValue* value = vlx->getValue("Value");
       VLX_IMPORT_CHECK_RETURN( value->type() == VLXValue::ArrayReal, *value )
-      obj->setValue( vlx_fvec3( value->getArrayReal() ) );
+      obj->setValue( (fvec3)vlx_vec3( value->getArrayReal() ) );
     }
 
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
@@ -2946,7 +2946,7 @@ namespace vl
 
     void exportSecondaryColor(const SecondaryColor* obj, VLXStructure* vlx)
     {
-      *vlx << "Value" << vlx_toValue(obj->value());
+      *vlx << "Value" << vlx_toValue((vec3)obj->value());
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -2969,7 +2969,7 @@ namespace vl
     {
       const VLXValue* value = vlx->getValue("Value");
       VLX_IMPORT_CHECK_RETURN( value->type() == VLXValue::ArrayReal, *value )
-      obj->setValue( vlx_fvec3( value->getArrayReal() ) );
+      obj->setValue( (fvec3)vlx_vec3( value->getArrayReal() ) );
     }
 
     virtual ref<Object> importVLX(VLXSerializer& s, const VLXStructure* vlx)
@@ -2983,7 +2983,7 @@ namespace vl
 
     void exportNormal(const Normal* obj, VLXStructure* vlx)
     {
-      *vlx << "Value" << vlx_toValue(obj->value());
+      *vlx << "Value" << vlx_toValue((vec3)obj->value());
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -3011,25 +3011,25 @@ namespace vl
         if (key == "FrontAmbient")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setFrontAmbient( vlx_fvec4( value.getArrayReal() ) ); // mic fixme: what if this guy is interpreted as integer!!!
+          obj->setFrontAmbient( (fvec4)vlx_vec4( value.getArrayReal() ) ); // mic fixme: what if this guy is interpreted as integer!!!
         }
         else
         if (key == "FrontDiffuse")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setFrontDiffuse( vlx_fvec4( value.getArrayReal() ) );
+          obj->setFrontDiffuse( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "FrontEmission")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setFrontEmission( vlx_fvec4( value.getArrayReal() ) );
+          obj->setFrontEmission( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "FrontSpecular")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setFrontSpecular( vlx_fvec4( value.getArrayReal() ) );
+          obj->setFrontSpecular( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "FrontShininess")
@@ -3041,25 +3041,25 @@ namespace vl
         if (key == "BackAmbient")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setBackAmbient( vlx_fvec4( value.getArrayReal() ) ); // mic fixme: what if this guy is interpreted as integer!!!
+          obj->setBackAmbient( (fvec4)vlx_vec4( value.getArrayReal() ) ); // mic fixme: what if this guy is interpreted as integer!!!
         }
         else
         if (key == "BackDiffuse")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setBackDiffuse( vlx_fvec4( value.getArrayReal() ) );
+          obj->setBackDiffuse( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "BackEmission")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setBackEmission( vlx_fvec4( value.getArrayReal() ) );
+          obj->setBackEmission( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "BackSpecular")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setBackSpecular( vlx_fvec4( value.getArrayReal() ) );
+          obj->setBackSpecular( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "BackShininess")
@@ -3107,16 +3107,16 @@ namespace vl
 
     void exportMaterial(const Material* mat, VLXStructure* vlx)
     {
-      *vlx << "FrontAmbient" << vlx_toValue(mat->frontAmbient());
-      *vlx << "FrontDiffuse" << vlx_toValue(mat->frontDiffuse());
-      *vlx << "FrontEmission" << vlx_toValue(mat->frontEmission());
-      *vlx << "FrontSpecular" << vlx_toValue(mat->frontSpecular());
+      *vlx << "FrontAmbient" << vlx_toValue((vec4)mat->frontAmbient());
+      *vlx << "FrontDiffuse" << vlx_toValue((vec4)mat->frontDiffuse());
+      *vlx << "FrontEmission" << vlx_toValue((vec4)mat->frontEmission());
+      *vlx << "FrontSpecular" << vlx_toValue((vec4)mat->frontSpecular());
       *vlx << "FrontShininess" << (double)mat->frontShininess();
 
-      *vlx << "BackAmbient" << vlx_toValue(mat->backAmbient());
-      *vlx << "BackDiffuse" << vlx_toValue(mat->backDiffuse());
-      *vlx << "BackEmission" << vlx_toValue(mat->backEmission());
-      *vlx << "BackSpecular" << vlx_toValue(mat->backSpecular());
+      *vlx << "BackAmbient" << vlx_toValue((vec4)mat->backAmbient());
+      *vlx << "BackDiffuse" << vlx_toValue((vec4)mat->backDiffuse());
+      *vlx << "BackEmission" << vlx_toValue((vec4)mat->backEmission());
+      *vlx << "BackSpecular" << vlx_toValue((vec4)mat->backSpecular());
       *vlx << "BackShininess" << (double)mat->backShininess();
 
       *vlx << "ColorMaterial" << vlx_Identifier(vlx_EColorMaterial(mat->colorMaterial()));
@@ -3433,7 +3433,7 @@ namespace vl
         if (key == "BorderColor")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setBorderColor( vlx_fvec4(value.getArrayReal()) );
+          obj->setBorderColor( (fvec4)vlx_vec4(value.getArrayReal()) );
         }
         else
         if (key == "Anisotropy")
@@ -3469,7 +3469,7 @@ namespace vl
       *vlx << "CompareMode" << vlx_Identifier(vlx_ETexCompareMode(texparam->compareMode()));
       *vlx << "CompareFunc" << vlx_Identifier(vlx_ETexCompareFunc(texparam->compareFunc()));
       *vlx << "DepthTextureMode" << vlx_Identifier(vlx_EDepthTextureMode(texparam->depthTextureMode()));
-      *vlx << "BorderColor" << vlx_toValue(texparam->borderColor());
+      *vlx << "BorderColor" << vlx_toValue((vec4)texparam->borderColor());
       *vlx << "Anisotropy" << texparam->anisotropy();
       *vlx << "GenerateMipmap" << texparam->generateMipmap();
     }

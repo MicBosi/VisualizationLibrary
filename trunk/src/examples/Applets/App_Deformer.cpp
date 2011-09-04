@@ -363,7 +363,7 @@ public:
     mTexture->prepareTexture2D(mImage.get(), vl::TF_UNKNOWN);
 
     // perfectly center the texture texels (see GL_CLAMP documentation)
-    vl::mat4 m;
+    vl::fmat4 m;
     float x_texel = 1.0f/mImage->width();
     float y_texel = 1.0f/mImage->height();
     float x_scale = 1.0f - x_texel;
