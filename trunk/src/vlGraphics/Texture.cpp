@@ -1133,7 +1133,7 @@ bool Texture::createTexture()
   int d = setupParams()->depth();
   if (img)
   {
-    setObjectName( img->objectName() );
+    setObjectName( img->objectName().c_str() );
     w = img->width();
     h = img->height();
     d = img->depth();

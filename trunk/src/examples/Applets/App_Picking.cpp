@@ -106,7 +106,7 @@ public:
 
       ref<Geometry> geom = randomObject();
       Actor* act = sceneManager()->tree()->addActor( geom.get(), fx.get(), new Transform );
-      act->setObjectName(geom->objectName());
+      act->setObjectName(geom->objectName().c_str());
       act->transform()->translate(x*displace, y*displace, z*displace);
       act->transform()->computeWorldMatrix();
     }
