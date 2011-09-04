@@ -45,7 +45,7 @@ namespace vl
    * The ResourceDatabase class contains and manipulates a set of resources. It works with 
    * any kind of resources derived from vl::Object, even user-customized ones.
   */
-  class ResourceDatabase: public Object
+  class VLCORE_EXPORT ResourceDatabase: public Object
   {
     VL_INSTRUMENT_CLASS(vl::ResourceDatabase, Object)
 
