@@ -35,7 +35,6 @@
 #include <vlCore/ResourceLoadWriter.hpp>
 #include <vlCore/ResourceDatabase.hpp>
 #include <vlCore/VirtualFile.hpp>
-#include <vlCore/Collection.hpp>
 #include <vlCore/MemoryFile.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 
@@ -65,33 +64,24 @@ namespace vl
   public:
     LoadWriterManager()
     { 
-      mLoadWriters.setAutomaticDelete(false); 
-      mLoadCallbacks.setAutomaticDelete(false);
-      mWriteCallbacks.setAutomaticDelete(false);
-    }
-
-    LoadWriterManager(const LoadWriterManager& other): Object(other) 
-    { 
-      mLoadWriters.setAutomaticDelete(false); 
-      mLoadCallbacks.setAutomaticDelete(false);
-      mWriteCallbacks.setAutomaticDelete(false);
+      VL_DEBUG_SET_OBJECT_NAME()
     }
 
     void registerLoadWriter(ResourceLoadWriter*);
 
     //! Returns the set of registered ResourceLoadWriter objects
-    Collection<ResourceLoadWriter>* loadWriters() { return &mLoadWriters; }
+    std::vector< ref<ResourceLoadWriter> >& loadWriters() { return mLoadWriters; }
 
     //! Returns the set of registered ResourceLoadWriter objects
-    const Collection<ResourceLoadWriter>* loadWriters() const { return &mLoadWriters; }
+    const std::vector< ref<ResourceLoadWriter> >& loadWriters() const { return mLoadWriters; }
 
     //! Returns the first ResourceLoadWriter of the specified type found.
     template<class T>
     T* loadWriter()
     {
-      for(int i=0; i<loadWriters()->size(); ++i)
+      for(size_t i=0; i<loadWriters().size(); ++i)
       {
-        T* load_writer = cast<T>(loadWriters()->at(i));
+        T* load_writer = loadWriters()[i]->as<T>();
         if (load_writer)
           return load_writer;
       }
@@ -134,18 +124,18 @@ namespace vl
     //! Writes the resource specified by the given file using the appropriate ResourceLoadWriter.
     bool writeResource(VirtualFile* file, ResourceDatabase* resource) const;
 
-    const Collection<LoadCallback>* loadCallbacks() const { return &mLoadCallbacks; }
+    const std::vector< ref<LoadCallback> >& loadCallbacks() const { return mLoadCallbacks; }
 
-    const Collection<WriteCallback>* writeCallbacks() const { return &mWriteCallbacks; }
+    const std::vector< ref<WriteCallback> >& writeCallbacks() const { return mWriteCallbacks; }
 
-    Collection<LoadCallback>* loadCallbacks() { return &mLoadCallbacks; }
+    std::vector< ref<LoadCallback> >& loadCallbacks() { return mLoadCallbacks; }
 
-    Collection<WriteCallback>* writeCallbacks() { return &mWriteCallbacks; }
+    std::vector< ref<WriteCallback> >& writeCallbacks() { return mWriteCallbacks; }
 
   protected:
-    Collection<ResourceLoadWriter> mLoadWriters;
-    Collection<LoadCallback> mLoadCallbacks;
-    Collection<WriteCallback> mWriteCallbacks;
+    std::vector< ref<ResourceLoadWriter> > mLoadWriters;
+    std::vector< ref<LoadCallback> > mLoadCallbacks;
+    std::vector< ref<WriteCallback> > mWriteCallbacks;
   };
 
   //! Returs the default LoadWriterManager used by Visualization Library.
