@@ -106,7 +106,7 @@ ref<Image> vl::loadTGA( VirtualFile* file )
   }
 
   ref<Image> img = new Image;
-  img->setObjectName(file->path().toStdString());
+  img->setObjectName(file->path().toStdString().c_str());
 
   STGAHeader header;
   memset(&header, 0, sizeof(header));

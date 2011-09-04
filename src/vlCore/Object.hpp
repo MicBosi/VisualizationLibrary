@@ -113,8 +113,8 @@ namespace vl
     //! The name of the object, by default set to the object's class name.
     const std::string& objectName() const { return mObjectName; }
 
-    //! The name of the object, by default set to the object's class name.
-    void setObjectName(const std::string& name) { mObjectName = name; }
+    //! The name of the object, by default set to the object's class name in debug builds.
+    void setObjectName(const char* name) { mObjectName = name; }
 
     //! The mutex used to protect the reference counting of an Object across multiple threads.
     void setRefCountMutex(IMutex* mutex) { mRefCountMutex = mutex; }

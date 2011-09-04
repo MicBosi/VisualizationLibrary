@@ -122,7 +122,7 @@ ref<Image> vl::loadBMP( VirtualFile* file )
   }
 
   ref<Image> img = new Image;
-  img->setObjectName(file->path().toStdString());
+  img->setObjectName(file->path().toStdString().c_str());
 
   BitmapFileHeader bfh;
   memset(&bfh, 0, sizeof(bfh));
