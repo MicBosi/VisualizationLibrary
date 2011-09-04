@@ -587,7 +587,7 @@ namespace vl
      * and initializes all the previously defined attachment points.
      * \sa http://www.opengl.org/sdk/docs/man3/xhtml/glBindFramebuffer.xml
      */
-    virtual void bindFramebuffer( EFrameBufferBind target = FBB_FRAMEBUFFER );
+    virtual void bindFramebuffer( EFramebufferBind target = FBB_FRAMEBUFFER );
 
     /** Checks the framebuffer status and returns the value of glCheckFramebufferStatus() */
     GLenum checkFramebufferStatus();

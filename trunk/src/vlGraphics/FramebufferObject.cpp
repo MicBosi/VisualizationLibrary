@@ -99,7 +99,7 @@ void FramebufferObject::deleteFBO()
   setHeight( 0 );
 }
 //-----------------------------------------------------------------------------
-void FramebufferObject::bindFramebuffer( EFrameBufferBind target )
+void FramebufferObject::bindFramebuffer( EFramebufferBind target )
 {
   VL_CHECK_OGL();
   VL_CHECK(openglContext());

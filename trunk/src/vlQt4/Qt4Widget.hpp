@@ -155,8 +155,8 @@ namespace vlQt4
 
       initGLContext();
 
-      mRenderTarget->setWidth(width);
-      mRenderTarget->setHeight(height);
+      mFramebuffer->setWidth(width);
+      mFramebuffer->setHeight(height);
 
       #ifndef NDEBUG
         printf("--------------------------------------------\n");

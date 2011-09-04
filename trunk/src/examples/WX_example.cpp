@@ -107,7 +107,7 @@ bool MyApp::OnInit()
   applet->initialize();
 
   /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
+  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( vl_gl_canvas->framebuffer() );
   
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );

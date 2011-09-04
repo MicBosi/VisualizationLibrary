@@ -75,7 +75,7 @@ int main ( int argc, char *argv[] )
   egl_window->addEventListener( applet.get() );
 
   /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( egl_window->renderTarget() );
+  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( egl_window->framebuffer() );
   
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );

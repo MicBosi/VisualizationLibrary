@@ -119,8 +119,8 @@ LONG WINAPI EGLWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
     case WM_SIZE:
     {
-      win->renderTarget()->setWidth( LOWORD(lParam) );
-      win->renderTarget()->setHeight( HIWORD(lParam) );
+      win->framebuffer()->setWidth( LOWORD(lParam) );
+      win->framebuffer()->setHeight( HIWORD(lParam) );
       win->dispatchResizeEvent( LOWORD(lParam), HIWORD(lParam) );
       break;
     }
@@ -447,8 +447,8 @@ void EGLWindow::setSize(int w, int h)
 void EGLWindow::setWindowSize(int w, int h)
 {
   // Sset by WM_SIZE event handler:
-  // mRenderTarget->setWidth(w);
-  // mRenderTarget->setHeight(h);
+  // mFramebuffer->setWidth(w);
+  // mFramebuffer->setHeight(h);
 
 	SetWindowPos(hwnd(), 0, 0, 0, w, h, SWP_NOMOVE);
 }

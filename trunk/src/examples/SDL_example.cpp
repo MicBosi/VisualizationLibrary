@@ -58,7 +58,7 @@ int main(int argc, char* args[])
   /* bind the applet so it receives all the GUI events related to the OpenGLContext */
   sdl_window->addEventListener(applet.get());
   /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( sdl_window->renderTarget() );
+  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( sdl_window->framebuffer() );
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
   /* define the camera position and orientation */
