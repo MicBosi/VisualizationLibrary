@@ -97,8 +97,8 @@ if (VL_GUI_MFC_EXAMPLES)
 	# Example
 	add_executable(vlMFC_example WIN32 MFC_example/MFC_example.cpp MFC_example/StdAfx.cpp )
 	target_link_libraries(vlMFC_example VLApplets VLMFC ${VL_LIBS_EXAMPLE})
-	set_target_properties(MFC_example PROPERTIES COMPILE_FLAGS -D_AFXDLL)
-	set_target_properties(MFC_example PROPERTIES LINK_FLAGS /ENTRY:wWinMainCRTStartup)
+	set_target_properties(vlMFC_example PROPERTIES COMPILE_FLAGS -D_AFXDLL)
+	set_target_properties(vlMFC_example PROPERTIES LINK_FLAGS /ENTRY:wWinMainCRTStartup)
 	VL_INSTALL_TARGET(vlMFC_example)
 
 	# MDI Example
@@ -107,15 +107,15 @@ if (VL_GUI_MFC_EXAMPLES)
 	file(GLOB MFC_MDI_RC "MFC_MDI_example/*.rc")
 	add_executable(vlMFC_MDI_example WIN32 ${MFC_MDI_SRC} ${MFC_MDI_INC} ${MFC_MDI_RC})
 	target_link_libraries(vlMFC_MDI_example VLApplets VLMFC ${VL_LIBS_TESTS})
-	set_target_properties(MFC_MDI_example PROPERTIES COMPILE_FLAGS -D_AFXDLL)
-	set_target_properties(MFC_MDI_example PROPERTIES LINK_FLAGS /ENTRY:wWinMainCRTStartup)
+	set_target_properties(vlMFC_MDI_example PROPERTIES COMPILE_FLAGS -D_AFXDLL)
+	set_target_properties(vlMFC_MDI_example PROPERTIES LINK_FLAGS /ENTRY:wWinMainCRTStartup)
 	VL_INSTALL_TARGET(vlMFC_MDI_example)
 
 	# Tests
 	add_executable(vlMFC_tests WIN32 MFC_tests/MFC_tests.cpp MFC_tests/StdAfx.cpp )
 	target_link_libraries(vlMFC_tests VLApplets VLMFC ${VL_LIBS_TESTS})
-	set_target_properties(MFC_tests PROPERTIES COMPILE_FLAGS -D_AFXDLL)
-	set_target_properties(MFC_tests PROPERTIES LINK_FLAGS /ENTRY:wWinMainCRTStartup)
+	set_target_properties(vlMFC_tests PROPERTIES COMPILE_FLAGS -D_AFXDLL)
+	set_target_properties(vlMFC_tests PROPERTIES LINK_FLAGS /ENTRY:wWinMainCRTStartup)
 	VL_INSTALL_TARGET(vlMFC_tests)
 endif()
 
