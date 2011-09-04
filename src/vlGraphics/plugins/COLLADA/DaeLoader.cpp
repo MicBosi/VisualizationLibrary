@@ -833,7 +833,7 @@ bool DaeLoader::load(VirtualFile* file)
         // *** light association ***
         // crete new effect/shader with it's own light set
         ref<Effect> fx = new Effect;
-        fx->setObjectName( actor->effect()->objectName() );
+        fx->setObjectName( actor->effect()->objectName().c_str() );
         fx->shader()->setEnableSet( actor->effect()->shader()->getEnableSet() );
         fx->shader()->setRenderStateSet( actor->effect()->shader()->getRenderStateSet() );
         actor->setEffect( fx.get() );
@@ -1219,7 +1219,7 @@ void DaeLoader::parseEffects(daeElement* library)
           Log::error("LoadWriterDae: technique not supported.\n");
         }
 
-        dae_effect->setObjectName( effect_name );
+        dae_effect->setObjectName( effect_name.c_str() );
 
         // trasparency override options
         if (mAssumeOpaque)
@@ -1440,7 +1440,7 @@ void DaeLoader::setupLights()
         ref<Geometry> light_mesh = vl::makeCone( vec3(0,0,0), loadOptions()->lightMeshSize(), loadOptions()->lightMeshSize(), 10 );
         light_mesh->transform( mat4::getTranslation(0,loadOptions()->lightMeshSize(),0) );
         light_mesh->transform( mat4::getRotation(90, +1,0,0) );
-        light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
+        light_mesh->setObjectName( ("LightMesh-" + mLights[i]->objectName()).c_str() );
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
@@ -1453,7 +1453,7 @@ void DaeLoader::setupLights()
       {
         ref<Geometry> light_mesh = vl::makePyramid( vec3(0,0,0), loadOptions()->lightMeshSize() / 2, loadOptions()->lightMeshSize() );
         light_mesh->transform( mat4::getRotation(90, -1,0,0) );
-        light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
+        light_mesh->setObjectName( ("LightMesh-" + mLights[i]->objectName()).c_str() );
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
@@ -1465,7 +1465,7 @@ void DaeLoader::setupLights()
       if( mLights[i]->ambient() == fvec4(0,0,0,1) )
       {
         ref<Geometry> light_mesh = vl::makeUVSphere( vec3(0,0,0), loadOptions()->lightMeshSize(), 10, 5);
-        light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
+        light_mesh->setObjectName( ("LightMesh-" + mLights[i]->objectName()).c_str() );
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
@@ -1477,7 +1477,7 @@ void DaeLoader::setupLights()
       {
         ref<Geometry> light_mesh = vl::makeTorus( vec3(0,0,0), loadOptions()->lightMeshSize(), loadOptions()->lightMeshSize()/4, 8, 14);
         light_mesh->setNormalArray(NULL); // remove normals
-        light_mesh->setObjectName( "LightMesh-" + mLights[i]->objectName() );
+        light_mesh->setObjectName( ("LightMesh-" + mLights[i]->objectName()).c_str() );
         ref<Effect> fx = new Effect;
         fx->shader()->enable(EN_DEPTH_TEST);
         fx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
@@ -1808,7 +1808,7 @@ void DaeLoader::generateGeometry(Dae::Primitive* prim, const char* name)
     }
 
     // name it as TEXCOORD@SET0 etc. to be recognized when binding (not used yet)
-    vert_attrib->setObjectName( String(Say("%s@SET%n") << getSemanticString(prim->mChannels[ich]->mSemantic) << prim->mChannels[ich]->mSet).toStdString() );
+    vert_attrib->setObjectName( String(Say("%s@SET%n") << getSemanticString(prim->mChannels[ich]->mSemantic) << prim->mChannels[ich]->mSet).toStdString().c_str() );
 
     // fill the vertex attribute array
     for(std::set<Dae::Vert>::iterator it = vert_set.begin(); it != vert_set.end(); ++it)
