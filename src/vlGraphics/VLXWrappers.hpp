@@ -547,8 +547,13 @@ namespace vl
     {
       *vlx << "BufferObjectEnabled" << ren->isBufferObjectEnabled();
       *vlx << "DisplayListEnabled" << ren->isDisplayListEnabled();
-      *vlx << "AABB" << export_AABB(ren->boundingBox());
-      *vlx << "Sphere" << export_Sphere(ren->boundingSphere());
+      if (!ren->boundsDirty())
+      {
+        *vlx << "AABB" << export_AABB(ren->boundingBox());
+        *vlx << "Sphere" << export_Sphere(ren->boundingSphere());
+      }
+      else
+        Log::debug("VLXClassWrapper_Renderable : skipping dirty bounds.\n");
     }
 
     void importRenderable(const VLXStructure* vlx, Renderable* ren)

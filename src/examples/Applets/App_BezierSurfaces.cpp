@@ -260,7 +260,6 @@ public:
         memcpy(de->indexBuffer()->ptr(), quads, sizeof(quads));
         geom->drawCalls()->push_back(de.get());
         geom->drawCalls()->push_back(da.get());
-        geom->makeGLESFriendly();
       }
     }
 
@@ -271,6 +270,8 @@ public:
     ref<ArrayFloat4> cols_array = new ArrayFloat4;
     geom->setColorArray(cols_array.get());
     cols_array->initFrom(colos);
+
+    geom->makeGLESFriendly();
 
     mCtrlPoints_Actor = sceneManager()->tree()->addActor(geom.get(), fx.get(), NULL);
   }
