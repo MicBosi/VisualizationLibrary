@@ -761,7 +761,9 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
   ArrayUInt1& index_buffer = *de->indexBuffer();
   index_buffer.resize( triangle_count * 3 );
   size_t idx = 0;
+#ifndef NDEBUG
   int max_idx = (int)vertexArray()->size();
+#endif
   for(size_t i=0; i<mergendo_calls.size(); ++i)
   {
     for(TriangleIterator it = mergendo_calls[i]->triangleIterator(); it.hasNext(); it.next(), idx+=3)
