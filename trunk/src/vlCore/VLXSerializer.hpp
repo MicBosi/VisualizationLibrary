@@ -163,11 +163,12 @@ namespace vl
     //! Returns the value of a serialization directive.
     const std::string& directive(const char* directive) const
     {
+      static const std::string no_directive = "NO_SUCH_DIRECTIVE";
       std::map<std::string, std::string>::const_iterator it = mDirectives.find(directive);
       if (it != mDirectives.end())
         return it->second;
       else
-        return "NO_SUCH_DIRECTIVE";
+        return no_directive;
     }
 
     //! Returns true if the given directive has been set.
