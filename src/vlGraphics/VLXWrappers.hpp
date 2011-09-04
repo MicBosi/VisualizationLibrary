@@ -1755,10 +1755,15 @@ namespace vl
       {
         for(size_t i=0; i<sh->getRenderStateSet()->renderStatesCount(); ++i)
         {
+          const RenderState* rs = sh->getRenderStateSet()->renderStates()[i].mRS.get();
+          if ( !s.canExport(rs) )
+          {
+            Log::debug( Say("VLXClassWrapper_Shader : skipping '%s'.\n") << rs->className() );
+            continue;
+          }
           int index = sh->getRenderStateSet()->renderStates()[i].mIndex;
           if (index != -1)
             *renderstates.getList() << (long long)index;
-          const RenderState* rs = sh->getRenderStateSet()->renderStates()[i].mRS.get();
           *renderstates.getList() << s.exportVLX(rs);
         }
       }

@@ -162,6 +162,9 @@ public:
     fx->shader()->setRenderState( new ClipPlane(10, vec3(1,2,3)), 0 );
     fx->shader()->setRenderState( new ClipPlane(10, vec3(1,2,3)), 1 );
 
+    // mic fixme: check unsupported renderstate
+    fx->shader()->gocBlendEquation();
+
     fx->shader()->gocColor()->setValue( vl::crimson );
     fx->shader()->gocSecondaryColor()->setValue( vl::yellow.rgb() );
     fx->shader()->gocNormal()->setValue( fvec3(1,2,3) );
@@ -311,12 +314,14 @@ public:
 
     String vlt_path;
     vlt_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlt";
-    vl::writeResource(vlt_path, res_db.get());
-    res_db = vl::loadResource(vlt_path);
+    res_db = vl::loadResource(vlt_path); // load first (backwards compatibility check)
+    vl::writeResource(vlt_path, res_db.get()); // write after
+    res_db = vl::loadResource(vlt_path); // load again
 
     vlt_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlb";
-    vl::writeResource(vlt_path, res_db.get());
-    res_db = vl::loadResource(vlt_path);
+    res_db = vl::loadResource(vlt_path); // load first (backwards compatibility check)
+    vl::writeResource(vlt_path, res_db.get()); // write after
+    res_db = vl::loadResource(vlt_path); // load again
   }
 
 };
