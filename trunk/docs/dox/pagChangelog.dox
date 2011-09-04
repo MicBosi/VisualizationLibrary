@@ -26,9 +26,10 @@
 	- Added vl::DrawElements::setIndexBuffer() to allow the sharing of index buffers among several draw calls.
 	- Added std_types.hpp file exposing basic typedefs, the new vl::degree and vl::radian classes and swapBytes() function to easily swap te byte order of common types.
 	- vl::DepthSortCallback code and comments update + allows use of any kind of vertex array.
-	- Fixed lag when starting to render text.
+	- Bug: fixed lag when starting to render text.
 	- Various 'const'-ness fixes for better consness enforcing. In particular vl::ref<> now enforces the constness much more strictly.
-	- CMake scrips updated to allow debug/release extra library linking and fixed missing plug-in headers when installing.
+	- CMake scrips updated to allow debug/release extra library linking.
+	- Bug: fixed missing plug-in headers when installing.
 	- vl::TexParameter can now be specified also at the vl::TextureSampler level to allow easy COLLADA/DirectX-like effects specification. Essentially this allows a vl::Texture to use more than one vl::TexParameter which might be required in particular use cases.
 	- Automatic tracking of previous render states and enables.
 	- <b>New indexed render states management</b>:
@@ -43,14 +44,15 @@
 		- Update children local matrix to their world matrix when orphaning.
 		- Added vl::Transform::preMultiply() and vl::Transform::postMultiply() methods.
 		- Added vl::Transform::flattenHierarchy().
-		- Fixed crash when destroying Transforms with children.
-	- Fixed vl::Matrix3::getInverse() function, was returning the transpose inverse.
+		- Bug: fixed crash when destroying Transforms with children.
+	- Bug: fixed vl::Matrix3::getInverse() function, was returning the transpose inverse.
 	- Finalized App_DrawCalls demo-test: checks primitive restart, base vertex, MultiDrawElements, index iterators, triangle iterators.
 	- Added vl::String::fromPointer() to create a string representing the given pointer.
 	- vl::String::normalizeSlashes() now takes care also of . and ..
 	- Added VL_UNIX_INSTALL_MODE option to allow VL installation to be done into unix path structure
-	- FindVL.cmake: fixed bugs and added VL module comments.
-	- Fixed installation of vlGraphics/GL folder.
+	- FindVL.cmake: added VL module comments.
+	- Bug: fixed FindVL.cmake errors.
+	- Bug: fixed installation of vlGraphics/GL folder.
 	- pagInstall.dox updated with instructions on how to use VL with a CMake-based project.
 	- Several other minor fixes, enhancements and documentation updates.
 	- <b>API CHANGES</b>
