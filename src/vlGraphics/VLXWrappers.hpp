@@ -879,7 +879,7 @@ namespace vl
           if( key == "PrimitiveType" )
           {
             VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier , value)
-            de->setPrimitiveType( vlx_EPrimitiveType( value.getIdentifier(), value.lineNumber() ) );
+            de->setPrimitiveType( vlx_EPrimitiveType( value, s ) );
             VLX_IMPORT_CHECK_RETURN( de->primitiveType() != PT_UNKNOWN , value);
           }
           else
@@ -949,7 +949,7 @@ namespace vl
           if( key == "PrimitiveType" )
           {
             VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier , value)
-            de->setPrimitiveType( vlx_EPrimitiveType( value.getIdentifier(), value.lineNumber() ) );
+            de->setPrimitiveType( vlx_EPrimitiveType( value, s ) );
             VLX_IMPORT_CHECK_RETURN( de->primitiveType() != PT_UNKNOWN , value);
           }
           else
@@ -1029,7 +1029,7 @@ namespace vl
           if( key == "PrimitiveType" )
           {
             VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier , value)
-            da->setPrimitiveType( vlx_EPrimitiveType( value.getIdentifier(), value.lineNumber() ) );
+            da->setPrimitiveType( vlx_EPrimitiveType( value, s ) );
             VLX_IMPORT_CHECK_RETURN( da->primitiveType() != PT_UNKNOWN , value);
           }
           else
@@ -1349,7 +1349,7 @@ namespace vl
       if (val)
       {
         VL_CHECK( val->type() == VLXValue::Identifier );
-        type = vlx_EUniformType( val->getIdentifier().c_str() );
+        type = vlx_EUniformType( *val, s );
       }
       else
       {
@@ -1669,7 +1669,7 @@ namespace vl
         for(size_t i=0; i<list->value().size(); ++i)
         {
           VLX_IMPORT_CHECK_RETURN( list->value()[i].type() == VLXValue::Identifier, list->value()[i] );
-          EEnable en = vlx_EEnable( list->value()[i].getIdentifier().c_str() );
+          EEnable en = vlx_EEnable( list->value()[i], s );
           VLX_IMPORT_CHECK_RETURN( en != EN_UnknownEnable, list->value()[i] );
           sh->enable(en);
         }
@@ -2182,7 +2182,7 @@ namespace vl
           if ( pmtype )
           {
             VLX_IMPORT_CHECK_RETURN( pmtype->type() == VLXValue::Identifier, *pmtype );
-            ptype = vlx_EProjectionMatrixType( pmtype->getIdentifier().c_str() );
+            ptype = vlx_EProjectionMatrixType( *pmtype, s );
           }
 
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::List, value);
@@ -2332,13 +2332,13 @@ namespace vl
         if (key == "ClearColorMode")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setClearColorMode( vlx_EClearColorMode(value.getIdentifier().c_str()) );
+          obj->setClearColorMode( vlx_EClearColorMode( value, s) );
         }
         else
         if (key == "ClearFlags")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setClearFlags( vlx_EClearFlags(value.getIdentifier().c_str()) );
+          obj->setClearFlags( vlx_EClearFlags( value, s ) );
         }
         else
         if (key == "X")
@@ -3087,7 +3087,7 @@ namespace vl
       if (vlx_col_mat)
       {
         VLX_IMPORT_CHECK_RETURN( vlx_col_mat->type() == VLXValue::Identifier, *vlx_col_mat );
-        col_mat = vlx_EColorMaterial( vlx_col_mat->getIdentifier().c_str() );
+        col_mat = vlx_EColorMaterial( *vlx_col_mat, s );
       }
 
       EPolygonFace poly_face = PF_FRONT_AND_BACK;
@@ -3095,7 +3095,7 @@ namespace vl
       if (vlx_poly_mat)
       {
         VLX_IMPORT_CHECK_RETURN( vlx_poly_mat->type() == VLXValue::Identifier, *vlx_poly_mat );
-        poly_face = vlx_EPolygonFace( vlx_poly_mat->getIdentifier().c_str() );
+        poly_face = vlx_EPolygonFace( *vlx_poly_mat, s );
       }
 
       obj->setColorMaterial( poly_face, col_mat );
@@ -3231,7 +3231,7 @@ namespace vl
         if (key == "Dimension")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setupParams()->setDimension( vlx_ETextureDimension(value.getIdentifier().c_str(), value.lineNumber()) );
+          obj->setupParams()->setDimension( vlx_ETextureDimension( value, s ) );
         }
         else
         if (key == "TexParameter")
@@ -3252,7 +3252,7 @@ namespace vl
         if (key == "Format")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setupParams()->setFormat( vlx_ETextureFormat(value.getIdentifier().c_str()) );
+          obj->setupParams()->setFormat( vlx_ETextureFormat( value, s ) );
         }
         else
         if (key == "Width")
@@ -3390,49 +3390,49 @@ namespace vl
         if (key == "MinFilter")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setMinFilter( vlx_ETexParamFilter( value.getIdentifier().c_str() ) );
+          obj->setMinFilter( vlx_ETexParamFilter( value, s ) );
         }
         else
         if (key == "MagFilter")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setMagFilter( vlx_ETexParamFilter( value.getIdentifier().c_str() ) );
+          obj->setMagFilter( vlx_ETexParamFilter( value, s ) );
         }
         else
         if (key == "WrapS")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setWrapS( vlx_ETexParamWrap( value.getIdentifier().c_str() ) );
+          obj->setWrapS( vlx_ETexParamWrap( value, s ) );
         }
         else
         if (key == "WrapT")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setWrapT( vlx_ETexParamWrap( value.getIdentifier().c_str() ) );
+          obj->setWrapT( vlx_ETexParamWrap( value, s ) );
         }
         else
         if (key == "WrapR")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setWrapR( vlx_ETexParamWrap( value.getIdentifier().c_str() ) );
+          obj->setWrapR( vlx_ETexParamWrap( value, s ) );
         }
         else
         if (key == "CompareMode")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setCompareMode( vlx_ETexCompareMode( value.getIdentifier().c_str() ) );
+          obj->setCompareMode( vlx_ETexCompareMode( value, s ) );
         }
         else
         if (key == "CompareFunc")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setCompareFunc( vlx_ETexCompareFunc( value.getIdentifier().c_str() ) );
+          obj->setCompareFunc( vlx_ETexCompareFunc( value, s ) );
         }
         else
         if (key == "DepthTextureMode")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
-          obj->setDepthTextureMode( vlx_EDepthTextureMode( value.getIdentifier().c_str() ) );
+          obj->setDepthTextureMode( vlx_EDepthTextureMode( value, s ) );
         }
         else
         if (key == "BorderColor")
