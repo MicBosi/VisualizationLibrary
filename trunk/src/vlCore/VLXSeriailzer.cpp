@@ -49,6 +49,8 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 Object* VLXSerializer::importVLX(const VLXStructure* st)
 {
+  VL_CHECK(st)
+
   if (error())
     return NULL;
 
@@ -84,6 +86,8 @@ Object* VLXSerializer::importVLX(const VLXStructure* st)
 //-----------------------------------------------------------------------------
 VLXStructure* VLXSerializer::exportVLX(const Object* obj)
 {
+  VL_CHECK(obj)
+
   if (error())
     return NULL;
 
