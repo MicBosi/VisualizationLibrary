@@ -61,7 +61,10 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::FileSystem, Object)
 
   public:
-    FileSystem() { mDirectories.setAutomaticDelete(false); }
+    FileSystem() 
+    { 
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
 
     /** Looks for a VirtualFile on the disk and in the currently active FileSystem. */
     virtual ref<VirtualFile> locateFile(const String& full_path, const String& alternate_path=String()) const;
@@ -79,13 +82,13 @@ namespace vl
     virtual void listFilesRecursive(std::vector<String>& file_list, const String& match) const;
 
     //! Returns the list of VirtualDirectory objects added to a FileSystem
-    Collection<VirtualDirectory>* directories() { return &mDirectories; }
+    std::vector< ref<VirtualDirectory> >& directories() { return mDirectories; }
     
     //! Returns the list of VirtualDirectory objects added to a FileSystem
-    const Collection<VirtualDirectory>* directories() const { return &mDirectories; }
+    const std::vector< ref<VirtualDirectory> >& directories() const { return mDirectories; }
 
   protected:
-    Collection<VirtualDirectory> mDirectories;
+    std::vector< ref<VirtualDirectory> > mDirectories;
   };
 
   //! Returns the default FileSystem used by VisualizationLibrary
