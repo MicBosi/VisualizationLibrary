@@ -59,9 +59,10 @@ namespace vl
    * - Shader
    * - Effect
    * - Actor */
-  class TexParameter: public Object
+  class VLGRAPHICS_EXPORT TexParameter: public Object
   {
     friend class Texture;
+
   public:
     TexParameter();
 
@@ -80,7 +81,7 @@ namespace vl
     EDepthTextureMode depthTextureMode() const { return mDepthTextureMode; }
 
     void setMinFilter(ETexParamFilter minfilter) { mDirty = true; mMinFilter = minfilter; }
-	  VLGRAPHICS_EXPORT void setMagFilter(ETexParamFilter magfilter);
+	  void setMagFilter(ETexParamFilter magfilter);
     void setWrapS(ETexParamWrap texturewrap)     { mDirty = true; mWrapS = texturewrap; }
     void setWrapT(ETexParamWrap texturewrap)     { mDirty = true; mWrapT = texturewrap; }
     void setWrapR(ETexParamWrap texturewrap)     { mDirty = true; mWrapR = texturewrap; }
