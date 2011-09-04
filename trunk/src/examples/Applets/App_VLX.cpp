@@ -183,29 +183,36 @@ public:
       act->transform()->addChild( tr.get() );
     }
 
-    GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
-    glsl->attachShader( new GLSLVertexShader        ("/glsl/smooth_triangle.vs") );
-    glsl->attachShader( new GLSLTessControlShader   ("/glsl/smooth_triangle.tcs") );
-    glsl->attachShader( new GLSLTessEvaluationShader("/glsl/smooth_triangle.tes") );
-    glsl->attachShader( new GLSLGeometryShader      ("/glsl/smooth_triangle.gs") );
-    glsl->attachShader( new GLSLFragmentShader      ("/glsl/perpixellight.fs") );
-#if 0
-    glsl->shader(0)->setPath(""); glsl->shader(0)->setSource("");
-    glsl->shader(1)->setPath(""); glsl->shader(1)->setSource("");
-    glsl->shader(2)->setPath(""); glsl->shader(2)->setSource("");
-    glsl->shader(3)->setPath(""); glsl->shader(3)->setSource("");
-    glsl->shader(4)->setPath(""); glsl->shader(4)->setSource("");
-#endif
-    // glslprogram uniforms
-    glsl->gocUniform("dummy_uniform1")->setUniformF(123.456f);
-    glsl->gocUniform("dummy_uniform2")->setUniformD(789.123);
-    glsl->gocUniform("dummy_uniform2")->setUniformI(3141592);
+    if (vl::Has_GLSL)
+    {
+      GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
+      glsl->attachShader( new GLSLVertexShader        ("/glsl/smooth_triangle.vs") );
+      glsl->attachShader( new GLSLFragmentShader      ("/glsl/perpixellight.fs") );
+      if (vl::Has_GL_ARB_tessellation_shader)
+      {
+        glsl->attachShader( new GLSLTessControlShader   ("/glsl/smooth_triangle.tcs") );
+        glsl->attachShader( new GLSLTessEvaluationShader("/glsl/smooth_triangle.tes") );
+      }
+      if (vl::Has_Geometry_Shader)
+        glsl->attachShader( new GLSLGeometryShader      ("/glsl/smooth_triangle.gs") );
+  #if 0
+      glsl->shader(0)->setPath(""); glsl->shader(0)->setSource("");
+      glsl->shader(1)->setPath(""); glsl->shader(1)->setSource("");
+      glsl->shader(2)->setPath(""); glsl->shader(2)->setSource("");
+      glsl->shader(3)->setPath(""); glsl->shader(3)->setSource("");
+      glsl->shader(4)->setPath(""); glsl->shader(4)->setSource("");
+  #endif
+      // glslprogram uniforms
+      glsl->gocUniform("dummy_uniform1")->setUniformF(123.456f);
+      glsl->gocUniform("dummy_uniform2")->setUniformD(789.123);
+      glsl->gocUniform("dummy_uniform2")->setUniformI(3141592);
 
-    glsl->bindFragDataLocation(0, "frag_data_location_dummy1");
-    glsl->bindFragDataLocation(1, "frag_data_location_dummy2");
-    glsl->addAutoAttribLocation(0, "attrib_position");
-    glsl->addAutoAttribLocation(1, "attrib_normal");
-    glsl->addAutoAttribLocation(3, "attrib_color");
+      glsl->bindFragDataLocation(0, "frag_data_location_dummy1");
+      glsl->bindFragDataLocation(1, "frag_data_location_dummy2");
+      glsl->addAutoAttribLocation(0, "attrib_position");
+      glsl->addAutoAttribLocation(1, "attrib_normal");
+      glsl->addAutoAttribLocation(3, "attrib_color");
+    }
 
     // actor uniforms
 #if 1 
