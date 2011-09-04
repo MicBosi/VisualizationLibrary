@@ -878,9 +878,12 @@ String String::fromStdWString(const std::wstring& str)
   return s;
 }
 //-----------------------------------------------------------------------------
-String String::fromStdString(const std::string& str)
+String String::fromStdString(const std::string& str, bool utf8)
 {
-  return fromAscii( str.c_str() );
+  if (utf8)
+    return fromUTF8( str.c_str(), str.length());
+  else
+    return fromAscii( str.c_str() );
 }
 //-----------------------------------------------------------------------------
 String String::fromAscii(const char* str, int size)
