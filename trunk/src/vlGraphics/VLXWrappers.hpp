@@ -543,14 +543,16 @@ namespace vl
   /** VLX wrapper of vl::Renderable */
   struct VLXClassWrapper_Renderable: public VLXClassWrapper
   {
-    virtual void exportRenderable(const Renderable* ren, VLXStructure* vlx)
+    virtual void exportRenderable(const Renderable* obj, VLXStructure* vlx)
     {
-      *vlx << "BufferObjectEnabled" << ren->isBufferObjectEnabled();
-      *vlx << "DisplayListEnabled" << ren->isDisplayListEnabled();
-      if (!ren->boundsDirty())
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+      *vlx << "BufferObjectEnabled" << obj->isBufferObjectEnabled();
+      *vlx << "DisplayListEnabled" << obj->isDisplayListEnabled();
+      if (!obj->boundsDirty())
       {
-        *vlx << "AABB" << export_AABB(ren->boundingBox());
-        *vlx << "Sphere" << export_Sphere(ren->boundingSphere());
+        *vlx << "AABB" << export_AABB(obj->boundingBox());
+        *vlx << "Sphere" << export_Sphere(obj->boundingSphere());
       }
       else
         Log::debug("VLXClassWrapper_Renderable : skipping dirty bounds.\n");
@@ -558,6 +560,10 @@ namespace vl
 
     void importRenderable(const VLXStructure* vlx, Renderable* ren)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        ren->setObjectName( name->getString().c_str() );
+
       const std::vector<VLXStructure::Value>& values = vlx->value();
       for(size_t i=0; i<values.size(); ++i)
       {
@@ -854,6 +860,10 @@ namespace vl
       {
         DrawElementsBase* de= draw_call->as<DrawElementsBase>();
 
+        const VLXValue* name = vlx->getValue("ObjectName");
+        if (name)
+          de->setObjectName( name->getString().c_str() );
+
         for(size_t i=0; i<vlx->value().size(); ++i)
         {
           const std::string& key = vlx->value()[i].key();
@@ -923,6 +933,10 @@ namespace vl
 
         VL_CHECK(de)
         VL_CHECK(draw_call)
+
+        const VLXValue* name = vlx->getValue("ObjectName");
+        if (name)
+          de->setObjectName( name->getString().c_str() );
 
         for(size_t i=0; i<vlx->value().size(); ++i)
         {
@@ -1003,6 +1017,10 @@ namespace vl
       {
         ref<DrawArrays> da = draw_call->as<DrawArrays>();
 
+        const VLXValue* name = vlx->getValue("ObjectName");
+        if (name)
+          da->setObjectName( name->getString().c_str() );
+
         for(size_t i=0; i<vlx->value().size(); ++i)
         {
           const std::string& key = vlx->value()[i].key();
@@ -1073,12 +1091,14 @@ namespace vl
       return dc;
     }
 
-    void exportDrawCallBase(VLXSerializer& s, const DrawCall* dcall, VLXStructure* vlx)
+    void exportDrawCallBase(VLXSerializer& s, const DrawCall* obj, VLXStructure* vlx)
     {
-      *vlx << "PrimitiveType" << vlx_Identifier(vlx_EPrimitiveType(dcall->primitiveType()));
-      *vlx << "Enabled" << dcall->isEnabled();
-      if (dcall->patchParameter())
-        *vlx << "PatchParameter" << s.exportVLX(dcall->patchParameter());
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+      *vlx << "PrimitiveType" << vlx_Identifier(vlx_EPrimitiveType(obj->primitiveType()));
+      *vlx << "Enabled" << obj->isEnabled();
+      if (obj->patchParameter())
+        *vlx << "PatchParameter" << s.exportVLX(obj->patchParameter());
     }
 
     void exportDrawCall(VLXSerializer& s, const DrawCall* dcall, VLXStructure* vlx)
@@ -1225,6 +1245,10 @@ namespace vl
   {
     void importResourceDatabase(VLXSerializer& s, const VLXStructure* vlx, ResourceDatabase* resdb)
     {
+      const VLXValue* vlx_obj_name = vlx->getValue("ObjectName");
+      if (vlx_obj_name)
+        resdb->setObjectName( vlx_obj_name->getString().c_str() );
+
       const VLXValue* vlx_res = vlx->getValue("Resources");
       if (vlx_res)
       {
@@ -1257,13 +1281,15 @@ namespace vl
       return resdb;
     }
 
-    void exportResourceDatabase(VLXSerializer& s, const ResourceDatabase* resdb, VLXStructure* vlx)
+    void exportResourceDatabase(VLXSerializer& s, const ResourceDatabase* obj, VLXStructure* vlx)
     {
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
       ref<VLXList> list = new VLXList;
       *vlx << "Resources" << list.get();
 
-      for(size_t i=0; i<resdb->resources().size(); ++i)
-        *list << s.exportVLX(resdb->resources().at(i).get());
+      for(size_t i=0; i<obj->resources().size(); ++i)
+        *list << s.exportVLX(obj->resources().at(i).get());
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -1620,6 +1646,10 @@ namespace vl
   {
     void importShader(VLXSerializer& s, const VLXStructure* vlx, Shader* sh)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        sh->setObjectName( name->getString().c_str() );
+
       // enables
       const VLXValue* enables = vlx->getValue("Enables");
       if (enables)
@@ -1688,41 +1718,44 @@ namespace vl
       return obj;
     }
 
-    void exportShader(VLXSerializer& s, const Shader* sh, VLXStructure* vlx)
+    void exportShader(VLXSerializer& s, const Shader* obj, VLXStructure* vlx)
     {
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+
       // uniforms
       VLXValue uniforms;
       uniforms.setList( new VLXList );
-      if (sh->getUniformSet())
+      if (obj->getUniformSet())
       {
-        for(size_t i=0; i<sh->uniforms().size(); ++i)
-          *uniforms.getList() << s.exportVLX(sh->uniforms()[i].get());
+        for(size_t i=0; i<obj->uniforms().size(); ++i)
+          *uniforms.getList() << s.exportVLX(obj->uniforms()[i].get());
       }
       *vlx << "Uniforms" << uniforms;
 
       // enables
       ref<VLXList> enables = new VLXList;
-      if (sh->getEnableSet() )
+      if (obj->getEnableSet() )
       {
-        for(size_t i=0; i<sh->getEnableSet()->enables().size(); ++i)
-          *enables << vlx_Identifier(vlx_EEnable(sh->getEnableSet()->enables()[i]));
+        for(size_t i=0; i<obj->getEnableSet()->enables().size(); ++i)
+          *enables << vlx_Identifier(vlx_EEnable(obj->getEnableSet()->enables()[i]));
       }
       *vlx << "Enables" << enables.get();
 
       // renderstates
       VLXValue renderstates;
       renderstates.setList( new VLXList );
-      if (sh->getRenderStateSet())
+      if (obj->getRenderStateSet())
       {
-        for(size_t i=0; i<sh->getRenderStateSet()->renderStatesCount(); ++i)
+        for(size_t i=0; i<obj->getRenderStateSet()->renderStatesCount(); ++i)
         {
-          const RenderState* rs = sh->getRenderStateSet()->renderStates()[i].mRS.get();
+          const RenderState* rs = obj->getRenderStateSet()->renderStates()[i].mRS.get();
           if ( !s.canExport(rs) )
           {
             Log::debug( Say("VLXClassWrapper_Shader : skipping '%s'.\n") << rs->className() );
             continue;
           }
-          int index = sh->getRenderStateSet()->renderStates()[i].mIndex;
+          int index = obj->getRenderStateSet()->renderStates()[i].mIndex;
           if (index != -1)
             *renderstates.getList() << (long long)index;
           *renderstates.getList() << s.exportVLX(rs);
@@ -1848,6 +1881,10 @@ namespace vl
   {
     void importEffect(VLXSerializer& s, const VLXStructure* vlx, Effect* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       const std::vector<VLXStructure::Value>& values = vlx->value();
       for(size_t i=0; i<values.size(); ++i)
       {
@@ -1918,19 +1955,21 @@ namespace vl
       return value;
     }
 
-    void exportEffect(VLXSerializer& s, const Effect* fx, VLXStructure* vlx)
+    void exportEffect(VLXSerializer& s, const Effect* obj, VLXStructure* vlx)
     {
-      *vlx << "RenderRank" << (long long)fx->renderRank();
-      *vlx << "EnableMask" << (long long)fx->enableMask();
-      *vlx << "ActiveLod" << (long long)fx->activeLod();
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+      *vlx << "RenderRank" << (long long)obj->renderRank();
+      *vlx << "EnableMask" << (long long)obj->enableMask();
+      *vlx << "ActiveLod" << (long long)obj->activeLod();
 
-      if (fx->lodEvaluator())
-        *vlx << "LODEvaluator" << s.exportVLX(fx->lodEvaluator());
+      if (obj->lodEvaluator())
+        *vlx << "LODEvaluator" << s.exportVLX(obj->lodEvaluator());
 
       // shaders
       ref<VLXList> lod_list = new VLXList;
-      for(int i=0; fx->lod(i) && i<VL_MAX_EFFECT_LOD; ++i)
-        *lod_list << export_ShaderPasses(s, fx->lod(i).get());
+      for(int i=0; obj->lod(i) && i<VL_MAX_EFFECT_LOD; ++i)
+        *lod_list << export_ShaderPasses(s, obj->lod(i).get());
       *vlx << "Lods" << lod_list.get();
     }
 
@@ -1952,6 +1991,10 @@ namespace vl
   {
     void importActor(VLXSerializer& s, const VLXStructure* vlx, Actor* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       const std::vector<VLXStructure::Value>& values = vlx->value();
       for(size_t i=0; i<values.size(); ++i)
       {
@@ -2066,44 +2109,46 @@ namespace vl
       return obj;
     }
 
-    void exportActor(VLXSerializer& s, const Actor* act, VLXStructure* vlx)
+    void exportActor(VLXSerializer& s, const Actor* obj, VLXStructure* vlx)
     {
-      *vlx << "EnableMask" << (long long)act->enableMask();
-      *vlx << "RenderBlock" << (long long)act->renderBlock();
-      *vlx << "RenderRank" << (long long)act->renderRank();
-      *vlx << "IsOccludee" << act->isOccludee();
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+      *vlx << "EnableMask" << (long long)obj->enableMask();
+      *vlx << "RenderBlock" << (long long)obj->renderBlock();
+      *vlx << "RenderRank" << (long long)obj->renderRank();
+      *vlx << "IsOccludee" << obj->isOccludee();
 
       VLXValue renderables;
       renderables.setList( new VLXList );
-      for(size_t i=0; i<VL_MAX_ACTOR_LOD && act->lod(i); ++i)
-        *renderables.getList() << s.exportVLX(act->lod(i));
+      for(size_t i=0; i<VL_MAX_ACTOR_LOD && obj->lod(i); ++i)
+        *renderables.getList() << s.exportVLX(obj->lod(i));
       *vlx << "Lods" << renderables;
 
       // bounding volumes are not serialized, they are computed based on the geometry's bounds
-      // *vlx << "AABB" << export_AABB(act->boundingBox());
-      // *vlx << "Sphere" << export_Sphere(act->boundingSphere());
+      // *vlx << "AABB" << export_AABB(obj->boundingBox());
+      // *vlx << "Sphere" << export_Sphere(obj->boundingSphere());
 
-      if (act->effect())
-        *vlx << "Effect" << s.exportVLX(act->effect());
-      if (act->transform())
-        *vlx << "Transform" << s.exportVLX(act->transform());
+      if (obj->effect())
+        *vlx << "Effect" << s.exportVLX(obj->effect());
+      if (obj->transform())
+        *vlx << "Transform" << s.exportVLX(obj->transform());
 
       VLXValue uniforms;
       uniforms.setList( new VLXList );
-      for(size_t i=0; act->getUniformSet() && i<act->uniforms().size(); ++i)
-        *uniforms.getList() << s.exportVLX(act->uniforms()[i].get());
+      for(size_t i=0; obj->getUniformSet() && i<obj->uniforms().size(); ++i)
+        *uniforms.getList() << s.exportVLX(obj->uniforms()[i].get());
       *vlx << "Uniforms" << uniforms;
 
-      if (act->lodEvaluator())
-        *vlx << "LODEvaluator" << s.exportVLX(act->lodEvaluator());
+      if (obj->lodEvaluator())
+        *vlx << "LODEvaluator" << s.exportVLX(obj->lodEvaluator());
 
       // mic fixme:
       // Scissor: scissors might go away from the Actor
 
       VLXValue callbacks;
       callbacks.setList( new VLXList );
-      for(int i=0; i<act->actorEventCallbacks()->size(); ++i)
-        *callbacks.getList() << s.exportVLX(act->actorEventCallbacks()->at(i));
+      for(int i=0; i<obj->actorEventCallbacks()->size(); ++i)
+        *callbacks.getList() << s.exportVLX(obj->actorEventCallbacks()->at(i));
       *vlx << "ActorEventCallbacks" << callbacks;
     }
 
@@ -2125,6 +2170,10 @@ namespace vl
   {
     void importCamera(VLXSerializer& s, const VLXStructure* vlx, Camera* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       for(size_t i=0; i<vlx->value().size(); ++i)
       {
         const std::string& key = vlx->value()[i].key();
@@ -2220,21 +2269,23 @@ namespace vl
       return obj;
     }
 
-    void exportCamera(VLXSerializer& s, const Camera* cam, VLXStructure* vlx)
+    void exportCamera(VLXSerializer& s, const Camera* obj, VLXStructure* vlx)
     {
-      *vlx << "ViewMatrix" << vlx_toValue(cam->viewMatrix());
-      *vlx << "ProjectionMatrix" << vlx_toValue(cam->projectionMatrix());
-      *vlx << "ProjectionMatrixType" << vlx_Identifier(vlx_EProjectionMatrixType(cam->projectionMatrixType()));
-      *vlx << "Viewport" << s.exportVLX(cam->viewport());
-      *vlx << "NearPlane" << (double)cam->nearPlane();
-      *vlx << "FarPlane" << (double)cam->farPlane();
-      *vlx << "FOV" << (double)cam->fov();
-      *vlx << "Left" << (double)cam->left();
-      *vlx << "Right" << (double)cam->right();
-      *vlx << "Bottom" << (double)cam->bottom();
-      *vlx << "Top" << (double)cam->top();
-      if (cam->boundTransform())
-        *vlx << "BoundTransfrm" << s.exportVLX(cam->boundTransform());
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+      *vlx << "ViewMatrix" << vlx_toValue(obj->viewMatrix());
+      *vlx << "ProjectionMatrix" << vlx_toValue(obj->projectionMatrix());
+      *vlx << "ProjectionMatrixType" << vlx_Identifier(vlx_EProjectionMatrixType(obj->projectionMatrixType()));
+      *vlx << "Viewport" << s.exportVLX(obj->viewport());
+      *vlx << "NearPlane" << (double)obj->nearPlane();
+      *vlx << "FarPlane" << (double)obj->farPlane();
+      *vlx << "FOV" << (double)obj->fov();
+      *vlx << "Left" << (double)obj->left();
+      *vlx << "Right" << (double)obj->right();
+      *vlx << "Bottom" << (double)obj->bottom();
+      *vlx << "Top" << (double)obj->top();
+      if (obj->boundTransform())
+        *vlx << "BoundTransfrm" << s.exportVLX(obj->boundTransform());
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -2256,6 +2307,10 @@ namespace vl
   {
     void importViewport(VLXSerializer& s, const VLXStructure* vlx, Viewport* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       for(size_t i=0; i<vlx->value().size(); ++i)
       {
         const std::string& key = vlx->value()[i].key();
@@ -2337,19 +2392,21 @@ namespace vl
       return obj;
     }
 
-    void exportViewport(const Viewport* viewp, VLXStructure* vlx)
+    void exportViewport(const Viewport* obj, VLXStructure* vlx)
     {
-      *vlx << "ClearColor" << vlx_toValue((vec4)viewp->clearColor());
-      *vlx << "ClearColorInt" << vlx_toValue(viewp->clearColorInt());
-      *vlx << "ClearColorUInt" << vlx_toValue(viewp->clearColorUInt());
-      *vlx << "ClearDepth" << (double)viewp->clearDepth();
-      *vlx << "ClearStecil" << (long long)viewp->clearStencil();
-      *vlx << "ClearColorMode" << vlx_Identifier(vlx_EClearColorMode(viewp->clearColorMode()));
-      *vlx << "ClearFlags" << vlx_Identifier(vlx_EClearFlags(viewp->clearFlags()));
-      *vlx << "X" << (long long)viewp->x();
-      *vlx << "Y" << (long long)viewp->y();
-      *vlx << "Width" << (long long)viewp->width();
-      *vlx << "Height" << (long long)viewp->height();
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+      *vlx << "ClearColor" << vlx_toValue((vec4)obj->clearColor());
+      *vlx << "ClearColorInt" << vlx_toValue(obj->clearColorInt());
+      *vlx << "ClearColorUInt" << vlx_toValue(obj->clearColorUInt());
+      *vlx << "ClearDepth" << (double)obj->clearDepth();
+      *vlx << "ClearStecil" << (long long)obj->clearStencil();
+      *vlx << "ClearColorMode" << vlx_Identifier(vlx_EClearColorMode(obj->clearColorMode()));
+      *vlx << "ClearFlags" << vlx_Identifier(vlx_EClearFlags(obj->clearFlags()));
+      *vlx << "X" << (long long)obj->x();
+      *vlx << "Y" << (long long)obj->y();
+      *vlx << "Width" << (long long)obj->width();
+      *vlx << "Height" << (long long)obj->height();
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -2370,6 +2427,10 @@ namespace vl
   {
     void importTransform(VLXSerializer& s, const VLXStructure* vlx, Transform* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       for(size_t i=0; i<vlx->value().size(); ++i)
       {
         const std::string& key = vlx->value()[i].key();
@@ -2416,18 +2477,20 @@ namespace vl
       return obj;
     }
 
-    void exportTransform(VLXSerializer& s, const Transform* tr, VLXStructure* vlx)
+    void exportTransform(VLXSerializer& s, const Transform* obj, VLXStructure* vlx)
     {
-      *vlx << "LocalMatrix" << vlx_toValue(tr->localMatrix());
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+      *vlx << "LocalMatrix" << vlx_toValue(obj->localMatrix());
 
       // not needed
-      /*if (tr->parent())
-        *vlx << "Parent" << s.exportVLX(tr->parent());*/
+      /*if (obj->parent())
+        *vlx << "Parent" << s.exportVLX(obj->parent());*/
 
       VLXValue childs;
       childs.setList( new VLXList );
-      for(size_t i=0; i<tr->childrenCount(); ++i)
-        childs.getList()->value().push_back( s.exportVLX(tr->children()[i].get()) );
+      for(size_t i=0; i<obj->childrenCount(); ++i)
+        childs.getList()->value().push_back( s.exportVLX(obj->children()[i].get()) );
       *vlx << "Children" << childs;
     }
 
@@ -2449,6 +2512,10 @@ namespace vl
   {
     void importLight(VLXSerializer& s, const VLXStructure* vlx, Light* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       for(size_t i=0; i<vlx->value().size(); ++i)
       {
         const std::string& key = vlx->value()[i].key();
@@ -2533,20 +2600,22 @@ namespace vl
       return obj;
     }
 
-    void exportLight(VLXSerializer& s, const Light* light, VLXStructure* vlx)
+    void exportLight(VLXSerializer& s, const Light* obj, VLXStructure* vlx)
     {
-      *vlx << "Ambient" << vlx_toValue((vec4)light->ambient());
-      *vlx << "Diffuse" << vlx_toValue((vec4)light->diffuse());
-      *vlx << "Specular" << vlx_toValue((vec4)light->specular());
-      *vlx << "Position" << vlx_toValue((vec4)light->position());
-      *vlx << "SpotDirection" << vlx_toValue((vec3)light->spotDirection());
-      *vlx << "SpotExponent" << light->spotExponent();
-      *vlx << "SpotCutoff" << light->spotCutoff();
-      *vlx << "ConstantAttenuation" << light->constantAttenuation();
-      *vlx << "LinearAttenuation" << light->linearAttenuation();
-      *vlx << "QuadraticAttenuation" << light->quadraticAttenuation();
-      if (light->boundTransform())
-        *vlx << "BoundTransform" << s.exportVLX(light->boundTransform());
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+      *vlx << "Ambient" << vlx_toValue((vec4)obj->ambient());
+      *vlx << "Diffuse" << vlx_toValue((vec4)obj->diffuse());
+      *vlx << "Specular" << vlx_toValue((vec4)obj->specular());
+      *vlx << "Position" << vlx_toValue((vec4)obj->position());
+      *vlx << "SpotDirection" << vlx_toValue((vec3)obj->spotDirection());
+      *vlx << "SpotExponent" << obj->spotExponent();
+      *vlx << "SpotCutoff" << obj->spotCutoff();
+      *vlx << "ConstantAttenuation" << obj->constantAttenuation();
+      *vlx << "LinearAttenuation" << obj->linearAttenuation();
+      *vlx << "QuadraticAttenuation" << obj->quadraticAttenuation();
+      if (obj->boundTransform())
+        *vlx << "BoundTransform" << s.exportVLX(obj->boundTransform());
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -2630,6 +2699,10 @@ namespace vl
   {
     void importGLSLProgram(VLXSerializer& s, const VLXStructure* vlx, GLSLProgram* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       for(size_t i=0; i<vlx->value().size(); ++i)
       {
         const std::string& key = vlx->value()[i].key();
@@ -2691,21 +2764,24 @@ namespace vl
       return obj;
     }
 
-    void exportGLSLProgram(VLXSerializer& s, const GLSLProgram* glsl, VLXStructure* vlx)
+    void exportGLSLProgram(VLXSerializer& s, const GLSLProgram* obj, VLXStructure* vlx)
     {
-      // export glsl shaders
-      for(int i=0; i<glsl->shaderCount(); ++i)
-        *vlx << "AttachShader" << s.exportVLX(glsl->shader(i));
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
+
+      // export obj shaders
+      for(int i=0; i<obj->shaderCount(); ++i)
+        *vlx << "AttachShader" << s.exportVLX(obj->shader(i));
 
       // export uniforms
       VLXValue uniforms;
       uniforms.setList( new VLXList );
-      for(size_t i=0; glsl->getUniformSet() && i<glsl->getUniformSet()->uniforms().size(); ++i)
-        *uniforms.getList() << s.exportVLX(glsl->getUniformSet()->uniforms()[i].get());
+      for(size_t i=0; obj->getUniformSet() && i<obj->getUniformSet()->uniforms().size(); ++i)
+        *uniforms.getList() << s.exportVLX(obj->getUniformSet()->uniforms()[i].get());
       *vlx << "Uniforms" << uniforms;
 
       // frag data location
-      for(std::map<std::string, int>::const_iterator it = glsl->fragDataLocations().begin(); it != glsl->fragDataLocations().end(); ++it)
+      for(std::map<std::string, int>::const_iterator it = obj->fragDataLocations().begin(); it != obj->fragDataLocations().end(); ++it)
       {
         VLXList* location = new VLXList;
         *location << vlx_Identifier(it->first); // Name
@@ -2714,7 +2790,7 @@ namespace vl
       }
 
       // auto attrib locations
-      for(std::map<std::string, int>::const_iterator it = glsl->autoAttribLocations().begin(); it != glsl->autoAttribLocations().end(); ++it)
+      for(std::map<std::string, int>::const_iterator it = obj->autoAttribLocations().begin(); it != obj->autoAttribLocations().end(); ++it)
       {
         VLXList* location = new VLXList;
         *location << vlx_Identifier(it->first); // Name
@@ -2822,6 +2898,10 @@ namespace vl
   {
     void importVertexAttrib(VLXSerializer& s, const VLXStructure* vlx, VertexAttrib* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       const VLXValue* value = vlx->getValue("Value");
       VLX_IMPORT_CHECK_RETURN( value->type() == VLXValue::ArrayReal, *value )
       obj->setValue( (fvec4)vlx_vec4( value->getArrayReal() ) );
@@ -2838,6 +2918,8 @@ namespace vl
 
     void exportVertexAttrib(const VertexAttrib* obj, VLXStructure* vlx)
     {
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
       *vlx << "Value" << vlx_toValue((vec4)obj->value());
     }
 
@@ -2970,6 +3052,10 @@ namespace vl
   {
     void importMaterial(VLXSerializer& s, const VLXStructure* vlx, Material* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       for(size_t i=0; i<vlx->value().size(); ++i)
       {
         const std::string& key = vlx->value()[i].key();
@@ -3071,24 +3157,27 @@ namespace vl
       return obj;
     }
 
-    void exportMaterial(const Material* mat, VLXStructure* vlx)
+    void exportMaterial(const Material* obj, VLXStructure* vlx)
     {
-      *vlx << "FrontAmbient" << vlx_toValue((vec4)mat->frontAmbient());
-      *vlx << "FrontDiffuse" << vlx_toValue((vec4)mat->frontDiffuse());
-      *vlx << "FrontEmission" << vlx_toValue((vec4)mat->frontEmission());
-      *vlx << "FrontSpecular" << vlx_toValue((vec4)mat->frontSpecular());
-      *vlx << "FrontShininess" << (double)mat->frontShininess();
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
 
-      *vlx << "BackAmbient" << vlx_toValue((vec4)mat->backAmbient());
-      *vlx << "BackDiffuse" << vlx_toValue((vec4)mat->backDiffuse());
-      *vlx << "BackEmission" << vlx_toValue((vec4)mat->backEmission());
-      *vlx << "BackSpecular" << vlx_toValue((vec4)mat->backSpecular());
-      *vlx << "BackShininess" << (double)mat->backShininess();
+      *vlx << "FrontAmbient" << vlx_toValue((vec4)obj->frontAmbient());
+      *vlx << "FrontDiffuse" << vlx_toValue((vec4)obj->frontDiffuse());
+      *vlx << "FrontEmission" << vlx_toValue((vec4)obj->frontEmission());
+      *vlx << "FrontSpecular" << vlx_toValue((vec4)obj->frontSpecular());
+      *vlx << "FrontShininess" << (double)obj->frontShininess();
 
-      *vlx << "ColorMaterial" << vlx_Identifier(vlx_EColorMaterial(mat->colorMaterial()));
-      *vlx << "ColorMaterialFace" << vlx_Identifier(vlx_EPolygonFace(mat->colorMaterialFace()));
+      *vlx << "BackAmbient" << vlx_toValue((vec4)obj->backAmbient());
+      *vlx << "BackDiffuse" << vlx_toValue((vec4)obj->backDiffuse());
+      *vlx << "BackEmission" << vlx_toValue((vec4)obj->backEmission());
+      *vlx << "BackSpecular" << vlx_toValue((vec4)obj->backSpecular());
+      *vlx << "BackShininess" << (double)obj->backShininess();
 
-      *vlx << "ColorMaterialEnabled" << mat->colorMaterialEnabled();
+      *vlx << "ColorMaterial" << vlx_Identifier(vlx_EColorMaterial(obj->colorMaterial()));
+      *vlx << "ColorMaterialFace" << vlx_Identifier(vlx_EPolygonFace(obj->colorMaterialFace()));
+
+      *vlx << "ColorMaterialEnabled" << obj->colorMaterialEnabled();
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
@@ -3180,6 +3269,10 @@ namespace vl
   {
     void importTexture(VLXSerializer& s, const VLXStructure* vlx, Texture* obj)
     {
+      const VLXValue* name = vlx->getValue("ObjectName");
+      if (name)
+        obj->setObjectName( name->getString().c_str() );
+
       obj->setSetupParams( new Texture::SetupParams );
 
       for(size_t i=0; i<vlx->value().size(); ++i)
@@ -3271,18 +3364,21 @@ namespace vl
       return obj;
     }
 
-    void exportTexture(VLXSerializer& s, const Texture* tex, VLXStructure* vlx)
+    void exportTexture(VLXSerializer& s, const Texture* obj, VLXStructure* vlx)
     {
       // mic fixme:
       // - we should allow patterns such as initializing a texture from an image filled by a shader or procedure.
       // - we should allow avoid loading twice the same image or shader source or any externa resource etc. time for a resource manager?
 
-      if (tex->getTexParameter())
-        *vlx << "TexParameter" << s.exportVLX(tex->getTexParameter());
+      if (!obj->objectName().empty() && obj->objectName() != obj->className())
+        *vlx << "ObjectName" << vlx_String(obj->objectName().c_str());
 
-      if (tex->setupParams())
+      if (obj->getTexParameter())
+        *vlx << "TexParameter" << s.exportVLX(obj->getTexParameter());
+
+      if (obj->setupParams())
       {
-        const Texture::SetupParams* par = tex->setupParams();
+        const Texture::SetupParams* par = obj->setupParams();
 
         if (par)
         {

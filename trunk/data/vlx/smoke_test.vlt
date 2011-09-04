@@ -3,15 +3,17 @@ VLX version=100 encoding=ascii
 <Metadata>
 {
 	Authoring_Tool = "Visualization Library 2011.9.1155"
-	Creation_Date = "Sun Sep 04 03:37:06 2011"
+	Creation_Date = "Sun Sep 04 14:35:24 2011"
 	VL_Serializer_Version = 100
 }
 <vl::ResourceDatabase>
 {
+	ObjectName = "resource db name"
 	Resources = 
 	[
 		<vl::Geometry>
 		{
+			ObjectName = "teapot without normals"
 			BufferObjectEnabled = true
 			DisplayListEnabled = false
 			AABB = <vl::AABB>
@@ -59,6 +61,7 @@ VLX version=100 encoding=ascii
 		}
 		<vl::Geometry>
 		{
+			ObjectName = "teapot without normals again"
 			BufferObjectEnabled = true
 			DisplayListEnabled = false
 			AABB = <vl::AABB>
@@ -106,6 +109,7 @@ VLX version=100 encoding=ascii
 		}
 		<vl::Geometry>
 		{
+			ObjectName = "Box"
 			BufferObjectEnabled = true
 			DisplayListEnabled = false
 			VertexArray = <vl::ArrayFloat3>
@@ -131,6 +135,7 @@ VLX version=100 encoding=ascii
 		}
 		<vl::Geometry>
 		{
+			ObjectName = "Icosphere"
 			BufferObjectEnabled = true
 			DisplayListEnabled = false
 			VertexAttribArray0 = <vl::VertexAttribInfo>
@@ -213,7 +218,7 @@ VLX version=100 encoding=ascii
 				GenerateMipmap = false
 			}
 			Dimension = TD_TEXTURE_1D
-			Format = TF_UNKNOWN
+			Format = TF_RGBA
 			Width = 10
 			GenMipmaps = false
 		}
@@ -255,7 +260,7 @@ VLX version=100 encoding=ascii
 				GenerateMipmap = false
 			}
 			Dimension = TD_TEXTURE_2D
-			Format = TF_UNKNOWN
+			Format = TF_RGBA
 			Width = 10
 			Height = 20
 			GenMipmaps = false
@@ -298,7 +303,7 @@ VLX version=100 encoding=ascii
 				GenerateMipmap = false
 			}
 			Dimension = TD_TEXTURE_3D
-			Format = TF_UNKNOWN
+			Format = TF_RGBA
 			Width = 10
 			Height = 20
 			Depth = 30
@@ -494,7 +499,7 @@ VLX version=100 encoding=ascii
 				GenerateMipmap = false
 			}
 			Dimension = TD_TEXTURE_2D_MULTISAMPLE
-			Format = TF_UNKNOWN
+			Format = TF_RGBA
 			Width = 10
 			Height = 20
 			GenMipmaps = false
@@ -518,7 +523,7 @@ VLX version=100 encoding=ascii
 				GenerateMipmap = false
 			}
 			Dimension = TD_TEXTURE_2D_MULTISAMPLE_ARRAY
-			Format = TF_UNKNOWN
+			Format = TF_RGBA
 			Width = 10
 			Height = 20
 			Depth = 100
@@ -528,6 +533,7 @@ VLX version=100 encoding=ascii
 		}
 		<vl::Texture>
 		{
+			ObjectName = "some texture's name"
 			TexParameter = <vl::Object>
 			{
 				MinFilter = TPF_LINEAR
@@ -543,11 +549,12 @@ VLX version=100 encoding=ascii
 				GenerateMipmap = false
 			}
 			Dimension = TD_TEXTURE_BUFFER
-			Format = TF_UNKNOWN
+			Format = TF_RGBA
 			GenMipmaps = false
 		}
 		<vl::Actor>
 		{
+			ObjectName = "actor's name"
 			EnableMask = 4294967295
 			RenderBlock = 0
 			RenderRank = 0
@@ -556,6 +563,7 @@ VLX version=100 encoding=ascii
 			[
 				<vl::Geometry>
 				{
+					ObjectName = "teapot with normals"
 					BufferObjectEnabled = true
 					DisplayListEnabled = false
 					AABB = <vl::AABB>
@@ -595,6 +603,7 @@ VLX version=100 encoding=ascii
 			]
 			Effect = <vl::Effect>
 			{
+				ObjectName = "effect's name"
 				RenderRank = 0
 				EnableMask = 4294967295
 				ActiveLod = 0
@@ -604,6 +613,7 @@ VLX version=100 encoding=ascii
 					[
 						<vl::Shader>
 						{
+							ObjectName = "shader's name"
 							Uniforms = [ ]
 							Enables = 
 							[
@@ -633,6 +643,7 @@ VLX version=100 encoding=ascii
 								0
 								<vl::Light>
 								{
+									ObjectName = "light's name"
 									Ambient = ( 0.000000 0.000000 0.000000 1.000000 )
 									Diffuse = ( 1.000000 1.000000 1.000000 1.000000 )
 									Specular = ( 1.000000 1.000000 1.000000 1.000000 )
@@ -690,10 +701,12 @@ VLX version=100 encoding=ascii
 								1
 								<vl::VertexAttrib>
 								{
+									ObjectName = "my vertex attrib name"
 									Value = ( 1.000000 0.000000 0.000000 1.000000 )
 								}
 								<vl::GLSLProgram>
 								{
+									ObjectName = "glsl shader name"
 									AttachShader = <vl::GLSLVertexShader>
 									{
 										Path = "/glsl/smooth_triangle.vs"
@@ -811,6 +824,7 @@ VLX version=100 encoding=ascii
 				[
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Matrix> ( 0.345385 0.002654 0.938457 0.000000 0.573906 -0.791808 -0.208979 0.000000 0.742523 0.610765 -0.275001 0.000000 0.000000 0.000000 0.000000 1.000000 )
@@ -819,6 +833,7 @@ VLX version=100 encoding=ascii
 					}
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Translate> ( 3.228400 3.959624 -1.497085 )
@@ -827,6 +842,7 @@ VLX version=100 encoding=ascii
 					}
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Translate> ( 2.105014 3.589435 -3.258919 )
@@ -835,6 +851,7 @@ VLX version=100 encoding=ascii
 					}
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Matrix> ( 3.732051 0.000000 0.000000 0.000000 0.000000 3.732051 0.000000 0.000000 0.000000 0.000000 -1.002002 -1.000000 0.000000 0.000000 -2.002002 0.000000 )
@@ -843,6 +860,7 @@ VLX version=100 encoding=ascii
 					}
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Matrix> ( 0.975814 0.125750 -0.178811 0.000000 0.062073 0.624913 0.778223 0.000000 0.209602 -0.770501 0.601993 0.000000 0.000000 0.000000 0.000000 1.000000 )
@@ -851,6 +869,7 @@ VLX version=100 encoding=ascii
 					}
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Translate> ( -3.809168 -0.543077 4.885250 )
@@ -859,6 +878,7 @@ VLX version=100 encoding=ascii
 					}
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Matrix> ( 0.361534 0.891890 0.271709 0.000000 0.903706 -0.263522 -0.337448 0.000000 -0.229365 0.367544 -0.901279 0.000000 0.000000 0.000000 0.000000 1.000000 )
@@ -867,6 +887,7 @@ VLX version=100 encoding=ascii
 					}
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Scale> ( 6.967406 2.496109 6.464492 )
@@ -875,6 +896,7 @@ VLX version=100 encoding=ascii
 					}
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Matrix> ( 3.732051 0.000000 0.000000 0.000000 0.000000 3.732051 0.000000 0.000000 0.000000 0.000000 -1.002002 -1.000000 0.000000 0.000000 -2.002002 0.000000 )
@@ -883,6 +905,7 @@ VLX version=100 encoding=ascii
 					}
 					<vl::Transform>
 					{
+						ObjectName = "some transform's name"
 						LocalMatrix = 
 						[
 							<Scale> ( 8.049868 6.469161 1.513352 )
@@ -1020,6 +1043,7 @@ VLX version=100 encoding=ascii
 		}
 		<vl::Camera>
 		{
+			ObjectName = "camera's name"
 			ViewMatrix = 
 			[
 				<Translate> ( 0.000000 0.000000 0.000000 )
@@ -1053,6 +1077,7 @@ VLX version=100 encoding=ascii
 		}
 		<vl::Viewport>
 		{
+			ObjectName = "viewport's name"
 			ClearColor = ( 0.000000 0.000000 0.000000 1.000000 )
 			ClearColorInt = ( 0 0 0 0 )
 			ClearColorUInt = ( 0 0 0 0 )

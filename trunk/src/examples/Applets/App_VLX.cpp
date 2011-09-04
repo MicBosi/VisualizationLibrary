@@ -124,8 +124,10 @@ public:
 
     // --- --- ResourceDatabase --- ---
     ref<ResourceDatabase> res_db = new ResourceDatabase;
+    res_db->setObjectName("resource db name");
 
     ref<Geometry> geom1 = makeTeapot( vec3(0,0,0), 10, 4 );
+    geom1->setObjectName("teapot with normals");
     geom1->computeNormals();
     geom1->setColorArray( geom1->normalArray() );
     geom1->setTexCoordArray( 0, geom1->normalArray() );
@@ -133,11 +135,13 @@ public:
     geom1->drawCalls()->at(0)->setPatchParameter( new PatchParameter );
 
     ref<Geometry> geom2 = makeTeapot( vec3(0,0,0), 10, 4 );
+    geom2->setObjectName("teapot without normals");
     TriangleStripGenerator::stripfy(geom2.get(), 22, false, false, true);
     geom2->mergeDrawCallsWithMultiDrawElements(PT_TRIANGLE_STRIP);
     res_db->resources().push_back( geom2.get() );
 
     ref<Geometry> geom3 = makeTeapot( vec3(0,0,0), 10, 4 );
+    geom3->setObjectName("teapot without normals again");
     TriangleStripGenerator::stripfy(geom3.get(), 22, false, false, true);
     geom3->mergeDrawCallsWithPrimitiveRestart(PT_TRIANGLE_STRIP);
     res_db->resources().push_back( geom3.get() );
@@ -154,10 +158,12 @@ public:
     res_db->resources().push_back( geom5.get() );
 
     ref<Effect> fx = new Effect;
+    fx->setObjectName("effect's name");
+    fx->shader()->setObjectName("shader's name");
     fx->shader()->enable(EN_LIGHTING);
     fx->shader()->enable(EN_DEPTH_TEST);
     fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
-    fx->shader()->setRenderState( new Light, 0 );
+    fx->shader()->setRenderState( new Light, 0 ); fx->shader()->gocLight(0)->setObjectName("light's name");
     fx->shader()->setRenderState( new Light, 1 );
     fx->shader()->setRenderState( new ClipPlane(10, vec3(1,2,3)), 0 );
     fx->shader()->setRenderState( new ClipPlane(10, vec3(1,2,3)), 1 );
@@ -170,12 +176,16 @@ public:
     fx->shader()->gocNormal()->setValue( fvec3(1,2,3) );
     fx->shader()->gocVertexAttrib(0)->setValue( vl::royalblue );
     fx->shader()->gocVertexAttrib(1)->setValue( vl::red );
+    fx->shader()->gocVertexAttrib(1)->setObjectName("my vertex attrib name");
 
     ref<Actor> act = new Actor( geom1.get(), fx.get(), new Transform );
+    act->setObjectName("actor's name");
+    act->setObjectName("actor's name");
     act->transform()->translate(1, 2 ,3);
     for(int i=0; i<10; ++i)
     {
       ref<Transform> tr = new Transform;
+      tr->setObjectName("some transform's name");
       switch( rand() % 4 )
       {
       case 0: tr->translate( randomMinMax(-5,+5), randomMinMax(-5,+5), randomMinMax(-5,+5) ); break;
@@ -189,6 +199,7 @@ public:
     if (vl::Has_GLSL)
     {
       GLSLProgram* glsl = fx->shader()->gocGLSLProgram();
+      glsl->setObjectName("glsl shader name");
       glsl->attachShader( new GLSLVertexShader        ("/glsl/smooth_triangle.vs") );
       glsl->attachShader( new GLSLFragmentShader      ("/glsl/perpixellight.fs") );
       if (vl::Has_GL_ARB_tessellation_shader)
@@ -281,6 +292,7 @@ public:
     tex = new Texture; tex->prepareTexture2DMultisampleArray( 10, 20, 100, TF_RGBA, 16, false ); res_db->resources().push_back( tex.get() );
     ref<ArrayFloat3> arr = new ArrayFloat3; arr->resize(10);
     tex = new Texture; tex->prepareTextureBuffer( TF_RGBA, arr->bufferObject() ); res_db->resources().push_back( tex.get() );
+    tex->setObjectName("some texture's name");
 
     // PixelLODEvaluator
     ref<PixelLODEvaluator> pix_eval = new PixelLODEvaluator;
@@ -304,9 +316,11 @@ public:
 
     // Camera
     res_db->resources().push_back( new Camera );
+    res_db->resources().back()->setObjectName("camera's name");
 
     // Viewport
     res_db->resources().push_back( new Viewport );
+    res_db->resources().back()->setObjectName("viewport's name");
 
     // Expand resources: extracts and sorts Shaders, Effects, Renderables, RenderStates, Transforms etc. so that the resulting VLX files look more readable.
     // Without this the resources are inlined in the VLXStructure that uses it the first time.
@@ -314,14 +328,16 @@ public:
 
     String vlt_path;
     vlt_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlt";
-    res_db = vl::loadResource(vlt_path); // load first (backwards compatibility check)
-    vl::writeResource(vlt_path, res_db.get()); // write after
-    res_db = vl::loadResource(vlt_path); // load again
+    /*res_db =*/ vl::loadResource(vlt_path); // load first (backwards compatibility check)
+    vl::writeResource(vlt_path, res_db.get()); // save
+    res_db = vl::loadResource(vlt_path); // load
+    vl::writeResource(vlt_path, res_db.get()); // save again
 
     vlt_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlb";
-    res_db = vl::loadResource(vlt_path); // load first (backwards compatibility check)
-    vl::writeResource(vlt_path, res_db.get()); // write after
-    res_db = vl::loadResource(vlt_path); // load again
+    /*res_db =*/ vl::loadResource(vlt_path); // load first (backwards compatibility check)
+    vl::writeResource(vlt_path, res_db.get()); // save
+    res_db = vl::loadResource(vlt_path); // load
+    vl::writeResource(vlt_path, res_db.get()); // save
   }
 
 };
