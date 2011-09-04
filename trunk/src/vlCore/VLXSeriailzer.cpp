@@ -254,7 +254,7 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
     st->acceptVisitor(&text_export_visitor);
 
     file->open(vl::OM_WriteOnly);
-    if ( file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() ) != text_export_visitor.text().size() )
+    if ( file->write( text_export_visitor.text().c_str(), text_export_visitor.text().size() ) != (int)text_export_visitor.text().size() )
     {
       Log::error( Say("VLXSerializer::saveVLT() write error : %s\n") << file->path() );
       mError = WriteError;
