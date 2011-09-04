@@ -34,7 +34,6 @@
 
 #include <vlCore/VirtualDirectory.hpp>
 #include <vlCore/DiskFile.hpp>
-#include <vlCore/Collection.hpp>
 #include <vector>
 
 namespace vl

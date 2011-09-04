@@ -245,9 +245,9 @@ void VisualizationLibrary::shutdownCore()
   gDefaultVLXRegistry = NULL;
 
   // Dispose default LoadWriterManager
-  gDefaultLoadWriterManager->loadCallbacks()->clear();
-  gDefaultLoadWriterManager->writeCallbacks()->clear();
-  gDefaultLoadWriterManager->loadWriters()->clear();
+  gDefaultLoadWriterManager->loadCallbacks().clear();
+  gDefaultLoadWriterManager->writeCallbacks().clear();
+  gDefaultLoadWriterManager->loadWriters().clear();
   gDefaultLoadWriterManager = NULL;
 
   // Dispose default FileSystem

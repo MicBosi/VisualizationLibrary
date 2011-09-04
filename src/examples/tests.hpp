@@ -213,7 +213,7 @@ public:
 #if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
       glc->setMakeGLESFriendly(true);
 #endif
-      vl::defLoadWriterManager()->loadCallbacks()->push_back(glc.get());
+      vl::defLoadWriterManager()->loadCallbacks().push_back(glc.get());
 
       /* run test */
       runGUI(tests[test-1].title, tests[test-1].applet.get(), format, tests[test-1].x, tests[test-1].y, tests[test-1].width, tests[test-1].height, tests[test-1].bk_color, tests[test-1].eye, tests[test-1].center );

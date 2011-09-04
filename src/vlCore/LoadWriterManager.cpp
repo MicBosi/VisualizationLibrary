@@ -79,8 +79,8 @@ ref<ResourceDatabase> LoadWriterManager::loadResource(VirtualFile* file, bool qu
     else
       db = loadwriter->loadResource(file);
     // load callbacks
-    for(int i=0; db && i<loadCallbacks()->size(); ++i)
-      const_cast<LoadCallback*>(loadCallbacks()->at(i))->operator()(db.get());
+    for(size_t i=0; db && i<loadCallbacks().size(); ++i)
+      loadCallbacks()[i].get_writable()->operator()(db.get());
     return db;
   }
   else
@@ -96,8 +96,8 @@ bool LoadWriterManager::writeResource(const String& path, ResourceDatabase* reso
   if (loadwriter)
   {
     // write callbacks
-    for(int i=0; i<writeCallbacks()->size(); ++i)
-      const_cast<WriteCallback*>(writeCallbacks()->at(i))->operator()(resource);
+    for(size_t i=0; i<writeCallbacks().size(); ++i)
+      writeCallbacks()[i].get_writable()->operator()(resource);
     // write resource
     return loadwriter->writeResource(path,resource);
   }
@@ -114,8 +114,8 @@ bool LoadWriterManager::writeResource(VirtualFile* file, ResourceDatabase* resou
   if (loadwriter)
   {
     // write callbacks
-    for(int i=0; i<writeCallbacks()->size(); ++i)
-      const_cast<WriteCallback*>(writeCallbacks()->at(i))->operator()(resource);
+    for(size_t i=0; i<writeCallbacks().size(); ++i)
+      writeCallbacks()[i].get_writable()->operator()(resource);
     // write resource
     return loadwriter->writeResource(file,resource);
   }
@@ -129,9 +129,9 @@ bool LoadWriterManager::writeResource(VirtualFile* file, ResourceDatabase* resou
 const ResourceLoadWriter* LoadWriterManager::findLoader(const String& path) const 
 {
   String ext = path.extractFileExtension(false).toLowerCase();
-  for(int i=0; i<loadWriters()->size(); ++i)
-    if (loadWriters()->at(i)->canLoad(ext))
-      return loadWriters()->at(i);
+  for(size_t i=0; i<loadWriters().size(); ++i)
+    if (loadWriters()[i]->canLoad(ext))
+      return loadWriters()[i].get();
 
   return NULL;
 }
@@ -139,9 +139,9 @@ const ResourceLoadWriter* LoadWriterManager::findLoader(const String& path) cons
 const ResourceLoadWriter* LoadWriterManager::findWriter(const String& path) const 
 {
   String ext = path.extractFileExtension(false).toLowerCase();
-  for(int i=0; i<loadWriters()->size(); ++i)
-    if (loadWriters()->at(i)->canWrite(ext))
-      return loadWriters()->at(i);
+  for(size_t i=0; i<loadWriters().size(); ++i)
+    if (loadWriters()[i]->canWrite(ext))
+      return loadWriters()[i].get();
 
   return NULL;
 }
@@ -149,8 +149,12 @@ const ResourceLoadWriter* LoadWriterManager::findWriter(const String& path) cons
 void LoadWriterManager::registerLoadWriter(ResourceLoadWriter* load_writer)
 {
   ref<ResourceLoadWriter> lowr = load_writer;
-  LoadWriterManager::loadWriters()->erase( load_writer );
-  LoadWriterManager::loadWriters()->push_back( load_writer );
+  // remove load writer
+  std::vector< ref<ResourceLoadWriter> >::iterator it = std::find( loadWriters().begin(), loadWriters().end(), load_writer );
+  if( it != loadWriters().end() )
+    loadWriters().erase( it );
+  // insert load writer
+  loadWriters().push_back( load_writer );
 }
 //-----------------------------------------------------------------------------
 bool vl::canLoad(const String& path)  { return defLoadWriterManager()->canLoad(path);  }
