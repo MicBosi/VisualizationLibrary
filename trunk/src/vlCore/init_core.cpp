@@ -195,7 +195,7 @@ void VisualizationLibrary::initCore(bool log_info)
 
   // Install default FileSystem
   gDefaultFileSystem = new FileSystem;
-  gDefaultFileSystem->directories()->push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
+  gDefaultFileSystem->directories().push_back( new DiskDirectory( globalSettings()->defaultDataPath() ) );
 
   // Install default VLXRegistry
   gDefaultVLXRegistry = new VLXRegistry;
@@ -251,7 +251,7 @@ void VisualizationLibrary::shutdownCore()
   gDefaultLoadWriterManager = NULL;
 
   // Dispose default FileSystem
-  gDefaultFileSystem->directories()->clear();
+  gDefaultFileSystem->directories().clear();
   gDefaultFileSystem = NULL;
 
   // Dispose default logger

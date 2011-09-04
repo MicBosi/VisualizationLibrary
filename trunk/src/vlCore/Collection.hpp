@@ -153,6 +153,7 @@ namespace vl
         mVector.erase(it);
     
     }
+
     void eraseAt(int index) { mVector.erase(mVector.begin()+index); }
 
     const std::vector< ref<T> >& vector() const { return mVector; }
