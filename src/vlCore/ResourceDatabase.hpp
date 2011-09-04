@@ -50,6 +50,11 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::ResourceDatabase, Object)
 
   public:
+    ResourceDatabase()
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+    }
+
     const std::vector< ref<Object> >& resources() const { return mResources; }
 
     std::vector< ref<Object> >& resources() { return mResources; }

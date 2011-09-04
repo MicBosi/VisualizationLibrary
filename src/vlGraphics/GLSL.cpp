@@ -95,7 +95,7 @@ void GLSLShader::setSource( const String& source_or_path )
   if (vl::locateFile(source_or_path))
   {
     new_src = vl::String::loadText(source_or_path).toStdString();
-    setObjectName( source_or_path.toStdString() );
+    setObjectName( source_or_path.toStdString().c_str() );
     setPath( source_or_path.toStdString().c_str() );
   }
   else
