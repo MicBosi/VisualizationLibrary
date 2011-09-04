@@ -332,7 +332,7 @@ public:
       vl::mat4 tex_mat = vl::mat4::getTranslation( vl::vec3(0.5f,0.5f,0.5f) ) * 
                          vl::mat4::getScaling(1.0f/box.width(),1.0f/box.height(),1.0f/box.depth()) * 
                          vl::mat4::getTranslation( -box.center() );
-      fx->shader()->gocTextureMatrix(0)->setMatrix(tex_mat);
+      fx->shader()->gocTextureMatrix(0)->setMatrix((vl::fmat4)tex_mat);
     #endif
 
     // the above code is equivalent to the code below that manually generates the texture coordinates.

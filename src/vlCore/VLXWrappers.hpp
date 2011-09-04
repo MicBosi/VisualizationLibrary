@@ -77,13 +77,13 @@ namespace vl
       if (key == "MinCorner")
       {
         VL_CHECK(value.type() == VLXValue::ArrayReal)
-        aabb.setMinCorner( vlx_fvec3(value.getArrayReal()) );
+        aabb.setMinCorner( vlx_vec3(value.getArrayReal()) );
       }
       else
       if (key == "MaxCorner")
       {
         VL_CHECK(value.type() == VLXValue::ArrayReal)
-        aabb.setMaxCorner( vlx_fvec3(value.getArrayReal()) );
+        aabb.setMaxCorner( vlx_vec3(value.getArrayReal()) );
       }
     }
 
@@ -111,7 +111,7 @@ namespace vl
       if (key == "Center")
       {
         VL_CHECK(value.type() == VLXValue::ArrayReal)
-        sphere.setCenter( vlx_fvec3(value.getArrayReal()) );
+        sphere.setCenter( vlx_vec3(value.getArrayReal()) );
       }
       else
       if (key == "Radius")
