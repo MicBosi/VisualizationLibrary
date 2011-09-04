@@ -580,7 +580,7 @@ namespace vl
     FBB_FRAMEBUFFER      = GL_FRAMEBUFFER,
     FBB_DRAW_FRAMEBUFFER = GL_DRAW_FRAMEBUFFER,
     FBB_READ_FRAMEBUFFER = GL_READ_FRAMEBUFFER,
-  } EFrameBufferBind;
+  } EFramebufferBind;
 
   typedef enum
   {
@@ -618,6 +618,7 @@ namespace vl
     PT_POINTS         = GL_POINTS,
     PT_LINES          = GL_LINES,
     PT_LINE_LOOP      = GL_LINE_LOOP,
+
     PT_LINE_STRIP     = GL_LINE_STRIP,
     PT_TRIANGLES      = GL_TRIANGLES,
     PT_TRIANGLE_STRIP = GL_TRIANGLE_STRIP,

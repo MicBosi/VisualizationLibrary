@@ -92,7 +92,7 @@ namespace vl
     virtual GLuint handle() const { return 0; }
 
     /** Activates the Framebuffer by calling bindFramebuffer() and bindDrawBuffers() */
-    void activate(EFrameBufferBind target = FBB_FRAMEBUFFER)
+    void activate(EFramebufferBind target = FBB_FRAMEBUFFER)
     {
       bindFramebuffer(target);
     }
@@ -101,7 +101,7 @@ namespace vl
       * Calls glBindFramebuffer(target, 0) thus activating the the framebuffer 0, that is, the normal OpenGL buffers.
       * \note This method is overridden in FramebufferObject in order to activate the appropriate framebuffer object.
       */
-    virtual void bindFramebuffer(EFrameBufferBind target = FBB_FRAMEBUFFER)
+    virtual void bindFramebuffer(EFramebufferBind target = FBB_FRAMEBUFFER)
     {
       VL_CHECK_OGL()
 

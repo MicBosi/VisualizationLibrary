@@ -44,7 +44,7 @@ void CMDI_AppView::OnInitialUpdate()
 
 	/* create a new vl::Rendering for this window */
 	vl::ref<vl::Rendering> rend = new vl::Rendering;
-	rend->renderer()->setRenderTarget( this->OpenGLContext::renderTarget() );
+	rend->renderer()->setFramebuffer( this->OpenGLContext::framebuffer() );
 
 	/* black background */
 	rend->camera()->viewport()->setClearColor( vl::black );

@@ -276,8 +276,8 @@ void MFCWindow::OnSize (UINT nType, int cx, int cy)
   if (0 >= cx || 0 >= cy || nType == SIZE_MINIMIZED)
     return;
 
-  renderTarget()->setWidth(cx);
-  renderTarget()->setHeight(cy);
+  framebuffer()->setWidth(cx);
+  framebuffer()->setHeight(cy);
   dispatchResizeEvent(cx, cy);
 }
 //-----------------------------------------------------------------------------
