@@ -131,7 +131,7 @@ namespace blind_tests
 
     // OBJ and material loading from zip file
 
-    vl::defFileSystem()->directories()->push_back(zdir.get());
+    vl::defFileSystem()->directories().push_back(zdir.get());
     vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/obj_test_mesh.obj");
 
     vl::Log::print( vl::Say("obj geometries = %n\n") << res_db->count<vl::Geometry>() );
