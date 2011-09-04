@@ -303,8 +303,8 @@ namespace vl
     //! The value of 'decimals' can be between 0 and 20.
     static String fromDouble(double value, int decimals=6);
 
-    //! Initializes the string from a std::string using the fromAscii() function.
-    static String fromStdString(const std::string& str);
+    //! Initializes the string from a std::string using fromUTF() if \a utf8 == true (default) otherwise uses fromAscii().
+    static String fromStdString(const std::string& str, bool utf8=true);
 
     //! Initializes the string from a std::string using the fromAscii() function.
     static String fromStdWString(const std::wstring& str);
