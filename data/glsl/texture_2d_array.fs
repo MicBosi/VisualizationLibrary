@@ -12,6 +12,7 @@
 /**************************************************************************************/
 
 #extension GL_ARB_texture_array: enable
+#extension GL_EXT_gpu_shader4: enable
 uniform sampler2DArray sampler0;
 void main(void)
 {
