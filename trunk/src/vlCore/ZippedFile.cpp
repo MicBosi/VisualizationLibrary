@@ -149,8 +149,7 @@ bool vl::decompress(const void* cdata, size_t csize, void* data_out)
 
   inflateEnd(&strm);
 
-  // mic fixme REMOVE
-  VL_CHECK(ret == Z_STREAM_END)
+  /*VL_CHECK(ret == Z_STREAM_END)*/
   return ret == Z_STREAM_END;
 }
 
