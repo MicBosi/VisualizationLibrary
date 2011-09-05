@@ -53,15 +53,15 @@
     
     Instead of using fancy version numbers VL uses a very simple scheme, for example:
 	Version 2010.10.1500 actually means YEAR.MONTH.BUILD_NUMBER. Bug fix versions which retain API compatibility with an older version
-	differ only in their build number. An even build number identifies a \a stable \a official release, while an odd build number identifies
+	differ only in their build number. An even build number identifies an \a officially \a stable release, while an odd build number identifies
 	a \a development \a milestone release. No garbage releases are publicly distributed so even the \a development \a milestone releases are 
-	usually quite stable as they must pass all the regression tests (with the possible exception of some GUI bindings not properly working) and     
-	don't contain known major bugs, however their API might undergo several modifications from one release to another.
+	usually quite stable as they must pass all the regression tests (with the possible exception of some GUI bindings not properly working) and 
+	don't contain known major bugs. I personally advice VL users to keep up to date with the dev milestone releases as much as possible.
      
 	<h2>Does VL support DirectX? Does VL support OpenGL ES?</h2>
 	
-	VL does not support DirectX and most likely will never support it. With regard to OpenGL ES 1.x/2.0, VL does not support it yet but there 
-	are plans to support it in the future and every architecture revision brings VL closer and closer to this objective.
+	VL does not support DirectX and most likely will never support it. 
+	VL provides experimental support to OpenGL ES 1.1 and 2.0 which I tested only under PowerVL emulators at the moment.
 	
 	<h2>What background knowledge is needed to use VL?</h2>
 	
@@ -82,7 +82,7 @@
      
 	<h2>Are there binary distributions?</h2>
 	
-	No, for simplicity VL is distributed in source code format only.
+	No, for simplicity VL is distributed in source code format only. However the source code provides all the most common dependencies such as libz, libpng, libjpeg, freetype etc. which are automatically built for you.
 	
 	<h2>How do I compile and install Visualization Library?</h2>
     
