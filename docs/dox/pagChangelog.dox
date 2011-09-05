@@ -65,7 +65,7 @@
 		- followTransform() methods renamed boundTransform() for coherency with vl::Camera
 		- Removed vl::Log::info() which didn't seem to fit anywhere, added vl::Log::notify() which is a high importance vl::Log::print()
 		- vl::DrawElements::indices() renamed vl::DrawElements::indexBuffer()
-		- TriangleIterator::isEnd() changed to the more intuitive vl::TriangleIterator::hasNext() and IndexIterator::isEnd() to vl::IndexIterator::hasNext().
+		- TriangleIterator::isEnd() changed to vl::TriangleIterator::hasNext() and IndexIterator::isEnd() to vl::IndexIterator::hasNext() for better similarity with other APIs (such as Java iterators etc.).
 		- FBO API made coherent with other GL resources:
 			- create() -> createFBO() and createFBORenderTarget()
 			- destroy() -> deleteFBO() and deleteRenderBuffer()		
