@@ -544,23 +544,20 @@ namespace vl
   public:
     VLXStructure()
     {
-      // mic fixme: reenable
-      // mKeyValue.reserve(16);
+      mKeyValue.reserve(16);
       setID("#NULL");
     }
 
     VLXStructure(const char* tag)
     {
-      // mic fixme: reenable
-      // mKeyValue.reserve(16);
+      mKeyValue.reserve(16);
       setID("#NULL");
       setTag(tag);
     }
 
     VLXStructure(const char* tag, const std::string& uid)
     {
-      // mic fixme: reenable
-      // mKeyValue.reserve(16);
+      mKeyValue.reserve(16);
       setID(uid.c_str());
       setTag(tag);
     }
@@ -640,8 +637,7 @@ namespace vl
   public:
     VLXList(const char* tag=NULL): VLXTaggedValue(tag)
     {
-      // mic fixme: reenable
-      // mValue.reserve(16);
+      mValue.reserve(16);
     }
 
     VLXList& operator<<(const VLXValue& val)

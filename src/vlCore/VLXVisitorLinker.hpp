@@ -71,8 +71,7 @@ namespace vl
         // this should never happen
         VL_CHECK(uid != "#NULL")
 
-        // mic fixme: just for debugging
-        Log::debug( Say("- ID '%s' linked to '%s'.\n") << uid << it->second->tag() );
+        /* Log::debug( Say("- ID '%s' linked to '%s'.\n") << uid << it->second->tag() ); */
         return it->second.get_writable();
       }
       else
@@ -88,7 +87,6 @@ namespace vl
 
     virtual void visitStructure(VLXStructure* obj)
     {
-      // mic fixme: test this
       if (isVisited(obj))
         return;
 

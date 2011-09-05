@@ -152,7 +152,7 @@ namespace vl
         // header
         mOutputFile->writeUInt8( VLB_ChunkRealDouble);
         // value
-        mOutputFile->writeDouble( value.getReal() ); // mic fixme: write float optionally
+        mOutputFile->writeDouble( value.getReal() );
         break;
       }
     }

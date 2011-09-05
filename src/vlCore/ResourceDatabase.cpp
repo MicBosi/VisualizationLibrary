@@ -39,7 +39,7 @@
 
 using namespace vl;
 
-// mic fixme
+// mic fixme!
 void ResourceDatabase::expand() {}
 
 //namespace

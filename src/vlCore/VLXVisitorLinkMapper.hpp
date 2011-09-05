@@ -80,7 +80,6 @@ namespace vl
 
     virtual void visitStructure(VLXStructure* obj)
     {
-      // mic fixme: test this
       if (isVisited(obj))
         return;
 
