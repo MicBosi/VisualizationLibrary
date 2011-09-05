@@ -172,7 +172,7 @@ namespace vl
           break;
 
         case VLXValue::real:
-          indent(); format("%Lf\n", value.getReal());
+          indent(); format("%f\n", value.getReal());
           break;
       }
     }
@@ -197,7 +197,7 @@ namespace vl
       else
       {
         indent();
-        format("%s", obj->tag().c_str()); 
+        format("%s", obj->tag().c_str());
         output("\n");
       }
       indent();
@@ -246,7 +246,7 @@ namespace vl
       else
       {
         indent();
-        format("%s", list->tag().c_str()); 
+        format("%s", list->tag().c_str());
         output("\n");
       }
       indent();
@@ -285,12 +285,12 @@ namespace vl
       int size = arr->value().size() - 10;
       for( ; i < size; i += 10)
       {
-        format("%Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf %Lf ",
+        format("%f %f %f %f %f %f %f %f %f %f ",
           arr->value()[i+0], arr->value()[i+1], arr->value()[i+2], arr->value()[i+3], arr->value()[i+4],
           arr->value()[i+5], arr->value()[i+6], arr->value()[i+7], arr->value()[i+8], arr->value()[i+9] );
       }
       for( ; i < (int)arr->value().size(); ++i )
-        format("%Lf ", arr->value()[i]);
+        format("%f ", arr->value()[i]);
       VL_CHECK( i == (int)arr->value().size() )
       output(")\n");
     }
