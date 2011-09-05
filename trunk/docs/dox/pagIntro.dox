@@ -71,8 +71,9 @@ notified via email about the latest VL developments.
 
 - Support OpenGL 1.x, 2.x, 3.x and 4.1.
 - Experimental support to OpenGL ES 1.1, OpenGL ES 2.0.
-- <b>3D file formats</b>: 3DS, OBJ, PLY (binary and ascii), STL (binary and ascii), AC3D, MD2.
+- <b>3D file formats</b>: 3DS, OBJ, PLY (binary and ascii), STL (binary and ascii), AC3D, MD2, COLLADA, VLT and VLB proprietary formats.
 - <b>2D Image file formats</b>: JPG, PNG, TGA, TIFF, BMP, DDS, DICOM, RAW.
+- <b>VLX serialization framework to load/save VL classes to/from VLT and VLB files.</b>
 - <b>GUI bindings</b>: Win32, MFC, Qt4, wxWidgets, SDL, GLUT.
 - <b>Volume rendering</b> facilities: direct volume rendering via \b screen \b aligned \b slices, \b ray \b casting (transfer functions, isosurface, MIP etc.) and \b marching \b cubes for isosurface extraction.
 - \b Virtual \b File \b System: read/write \b disk files and directories, read <b>.ZIP</b> files and directories, read/write \b memory files and directories, read/write <b>.GZ</b> files.
