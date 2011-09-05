@@ -43,10 +43,6 @@ ref<ResourceDatabase> vl::loadVLT(const String& path)
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadVLT(VirtualFile* file)
 {
-  // mic fixme: debug only
-  Time timer;
-  timer.start();
-
   VLXSerializer serializer;
 
   ref<Object> obj = serializer.loadVLT(file);
@@ -59,8 +55,6 @@ ref<ResourceDatabase> vl::loadVLT(VirtualFile* file)
 
   ref<ResourceDatabase> res_db = obj->as<ResourceDatabase>();
 
-  Log::debug( Say("VLT import = %n\n") << timer.elapsed() );
-
   return res_db;
 }
 //-----------------------------------------------------------------------------
@@ -72,10 +66,6 @@ ref<ResourceDatabase> vl::loadVLB(const String& path)
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadVLB(VirtualFile* file)
 {
-  // mic fixme: debug only
-  Time timer;
-  timer.start();
-
   VLXSerializer serializer;
 
   ref<Object> obj = serializer.loadVLB(file);
@@ -87,8 +77,6 @@ ref<ResourceDatabase> vl::loadVLB(VirtualFile* file)
     return NULL;
 
   ref<ResourceDatabase> res_db = obj->as<ResourceDatabase>();
-
-  Log::debug( Say("VLB import = %n\n") << timer.elapsed() );
 
   return res_db;
 }
@@ -105,17 +93,11 @@ bool vl::saveVLT(VirtualFile* file, const ResourceDatabase* res_db)
   if (!res_db)
     return false;
 
-  // mic fixme: debug only
-  Time timer;
-  timer.start();
-
   VLXSerializer serializer;
   serializer.saveVLT( file, res_db );
 
   if (serializer.error())
     Log::error( Say("vl::saveVLT : VLXSerializer reported: %s.\n") << serializer.errorString() );
-
-  Log::debug( Say("VLT export = %n\n") << timer.elapsed() );
 
   return serializer.error() == VLXSerializer::NoError;
 }
@@ -132,17 +114,11 @@ bool vl::saveVLB(VirtualFile* file, const ResourceDatabase* res_db)
   if (!res_db)
     return false;
 
-  // mic fixme: debug only
-  Time timer;
-  timer.start();
-
   VLXSerializer serializer;
   serializer.saveVLB( file, res_db );
 
   if (serializer.error())
     Log::error( Say("vl::saveVLB : VLXSerializer reported: %s.\n") << serializer.errorString() );
-
-  Log::debug( Say("VLB export = %n\n") << timer.elapsed() );
 
   return serializer.error() == VLXSerializer::NoError;
 }

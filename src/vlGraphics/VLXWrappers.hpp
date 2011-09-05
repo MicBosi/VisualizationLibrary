@@ -1366,14 +1366,12 @@ namespace vl
       std::vector<float> float_vec;
       std::vector<double> double_vec;
 
-      // mic fixme: gli scalar versions
-
       switch(type)
       {
       case UT_INT:
         int_vec.resize(count*1); if (arr_int) arr_int->copyTo(&int_vec[0]); else int_vec[0] = (int)val->getInteger();
         uniform->setUniform1i(count, &int_vec[0]);
-        break; // mic fixme: test this
+        break;
       case UT_INT_VEC2: 
         int_vec.resize(count*2); arr_int->copyTo(&int_vec[0]); VLX_IMPORT_CHECK_RETURN(int_vec.size() == arr_int->value().size(), *val); 
         uniform->setUniform2i(count, &int_vec[0]);
@@ -1390,7 +1388,7 @@ namespace vl
       case UT_UNSIGNED_INT:
         uint_vec.resize(count*1); if (arr_int) arr_int->copyTo(&uint_vec[0]); else uint_vec[0] = (unsigned int)val->getInteger(); 
         uniform->setUniform1ui(count, &uint_vec[0]);
-        break; // mic fixme: test this
+        break;
       case UT_UNSIGNED_INT_VEC2: 
         uint_vec.resize(count*2); arr_int->copyTo(&uint_vec[0]); VLX_IMPORT_CHECK_RETURN(uint_vec.size() == arr_int->value().size(), *val); 
         uniform->setUniform2ui(count, &uint_vec[0]);
@@ -1407,7 +1405,7 @@ namespace vl
       case UT_FLOAT: 
         float_vec.resize(count*1); if (arr_real) arr_real->copyTo(&float_vec[0]); else float_vec[0] = (float)val->getReal(); 
         uniform->setUniform1f(count, &float_vec[0]);
-        break; // mic fixme: test this
+        break;
       case UT_FLOAT_VEC2: 
         float_vec.resize(count*2); arr_real->copyTo(&float_vec[0]); VLX_IMPORT_CHECK_RETURN(float_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniform2f(count, &float_vec[0]);
@@ -1462,7 +1460,7 @@ namespace vl
       case UT_DOUBLE: 
         double_vec.resize(count*1); if (arr_real) arr_real->copyTo(&double_vec[0]); else double_vec[0] = (double)val->getReal(); 
         uniform->setUniform1d(count, &double_vec[0]);
-        break; // mic fixme: test this
+        break;
       case UT_DOUBLE_VEC2: 
         double_vec.resize(count*2); arr_real->copyTo(&double_vec[0]); VLX_IMPORT_CHECK_RETURN(double_vec.size() == arr_real->value().size(), *val); 
         uniform->setUniform2d(count, &double_vec[0]);
@@ -1654,7 +1652,6 @@ namespace vl
       const VLXValue* enables = vlx->getValue("Enables");
       if (enables)
       {
-        // mic fixme: check these errors
         VLX_IMPORT_CHECK_RETURN( enables->type() == VLXValue::List, *enables )
         const VLXList* list = enables->getList();
         for(size_t i=0; i<list->value().size(); ++i)
@@ -1685,7 +1682,7 @@ namespace vl
           {
             RenderState* renderstate = s.importVLX( list->value()[i].getStructure() )->as<RenderState>();
             VLX_IMPORT_CHECK_RETURN( renderstate != NULL, list->value()[i] )
-            VLX_IMPORT_CHECK_RETURN( index == -1 || renderstate->isOfType(RenderStateIndexed::Type()), list->value()[i] ) // mic fixme: check this
+            VLX_IMPORT_CHECK_RETURN( (index == -1 && !renderstate->isOfType(RenderStateIndexed::Type())) || (index >= 0 && renderstate->isOfType(RenderStateIndexed::Type())), list->value()[i] )
             sh->setRenderState(renderstate, index);
             // consume index in any case
             index = -1;
@@ -2522,7 +2519,7 @@ namespace vl
         const VLXValue& value = vlx->value()[i].value();
         if (key == "Ambient")
         {
-          // mic fixme: what if the user specifies ( 1 0 0 0 ) -> becomes a ArrayInteger!!!
+          // note: what if the user specifies ( 1 0 0 0 ) -> becomes a ArrayInteger and an error is issued.
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value )
           obj->setAmbient( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
@@ -2642,14 +2639,12 @@ namespace vl
         const VLXValue& value = vlx->value()[i].value();
         if (key == "PlaneNormal")
         {
-          // mic fixme: what if the user specifies ( 1 0 0 0 ) -> becomes a ArrayInteger!!!
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value )
           obj->plane().setNormal( vlx_vec3( value.getArrayReal() ) );
         }
         else
         if (key == "PlaneOrigin")
         {
-          // mic fixme: what if the user specifies ( 1 0 0 0 ) -> becomes a ArrayInteger!!!
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
           obj->plane().setOrigin( (float)value.getReal() );
         }
@@ -2831,7 +2826,7 @@ namespace vl
       if (source)
       {
         VLX_IMPORT_CHECK_RETURN( source->type() == VLXValue::RawtextBlock, *source )
-        obj->setSource(source->getRawtextBlock()->value().c_str()); // mic fixme: check this
+        obj->setSource(source->getRawtextBlock()->value().c_str());
       }
       else
       {
@@ -3065,7 +3060,7 @@ namespace vl
         if (key == "FrontAmbient")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setFrontAmbient( (fvec4)vlx_vec4( value.getArrayReal() ) ); // mic fixme: what if this guy is interpreted as integer!!!
+          obj->setFrontAmbient( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "FrontDiffuse")
@@ -3095,7 +3090,7 @@ namespace vl
         if (key == "BackAmbient")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::ArrayReal, value );
-          obj->setBackAmbient( (fvec4)vlx_vec4( value.getArrayReal() ) ); // mic fixme: what if this guy is interpreted as integer!!!
+          obj->setBackAmbient( (fvec4)vlx_vec4( value.getArrayReal() ) );
         }
         else
         if (key == "BackDiffuse")
@@ -3128,8 +3123,6 @@ namespace vl
           obj->setColorMaterialEnabled( value.getBool() ); 
         }
       }
-
-      // mic fixme check these all
 
       EColorMaterial col_mat = CM_AMBIENT_AND_DIFFUSE;
       const VLXValue* vlx_col_mat = vlx->getValue("ColorMaterial");
@@ -3282,8 +3275,6 @@ namespace vl
         const std::string& key = vlx->value()[i].key();
         const VLXValue& value = vlx->value()[i].value();
 
-        // mic fixme: document how these guys are to be used by examples
-
         if (key == "Dimension")
         {
           VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Identifier, value );
@@ -3408,7 +3399,6 @@ namespace vl
           *vlx << "GenMipmaps" << par->genMipmaps();
           
           // mic fixme: implement BufferObject importer/exporter
-          // mic fixme: rename bufferObject() to bufferObject()
 #if 0
           if (par->bufferObject())
           {

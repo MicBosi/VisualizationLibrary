@@ -179,7 +179,6 @@ namespace vl
 
     virtual void visitStructure(VLXStructure* obj)
     {
-      // mic fixme: check this
       if (isVisited(obj))
       {
         indent(); format("%s\n", obj->uid().c_str());
