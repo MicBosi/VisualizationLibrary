@@ -50,298 +50,28 @@ public:
   void initEvent()
   {
     vl::Log::notify(appletInfo());
-
     openglContext()->setContinuousUpdate(false);
-
     rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(true);
-
-    // text setup
-
-    resetOptions();
-
-    mOptions = new Text();
-    // mOptions->setDisplayListEnabled(vl::Has_GL_Version_1_1);
-    mOptions->setFont( defFontManager()->acquireFont("/font/bitstream-vera/VeraMono.ttf", 8) );
-    mOptions->setMargin(0);
-    mOptions->setViewportAlignment(AlignTop | AlignLeft);
-    mOptions->setAlignment(AlignTop | AlignLeft);
-    mOptions->setColor(white);
-    mOptions->setBackgroundColor(fvec4(0,0,0,.75f));
-    mOptions->setBackgroundEnabled(true);
-
-    ref< Effect > text_fx = new Effect;
-    text_fx->shader()->enable(EN_BLEND);
-
-    mOptionsActor = new Actor( mOptions.get(), text_fx.get() );
-    
-    // sceneManager()->tree()->addActor( mOptionsActor.get() );
-
-    updateText();
-  }
-
-  void resetOptions()
-  {
-    mOptDoubleFace = false;
-    mOptRemoveDoubles = false;
-    mOptStripfy1 = false;
-    mOptStripfy2 = false;
-    mOptMergeTriangleStrips = false;
-    mOptSortVertices = false;
-    mOptConvertToDrawArrays = false;
-    mOptRecomputeNormals = false;
-    mOptHighlightStrips = false;
-    mOptUseBufferObject = false;
-    mOptUseDL = false;
-  }
-
-  void mouseUpEvent(EMouseButton, int x, int y)
-  {
-    AABB bbox = mOptions->boundingRect();
-    real h = bbox.height();
-
-    // implement exclusion logic
-    if( x < bbox.width() )
-    {
-      if( y < h / 14 * 1 ) 
-      {
-        mOptDoubleFace = !mOptDoubleFace;
-      }
-      else
-      if( y < h / 14 * 2 ) 
-      {
-        mOptRemoveDoubles = !mOptRemoveDoubles;
-        if(!mOptRemoveDoubles)
-        {
-          mOptStripfy1 = false;
-          mOptStripfy2 = false;
-        }
-      } 
-      else
-      if( y < h / 14 * 3 ) 
-      { 
-        mOptStripfy1 = !mOptStripfy1; 
-        if (mOptStripfy1) mOptStripfy2 = false;
-        if (mOptStripfy1) mOptRemoveDoubles = true;
-      }
-      else
-      if( y < h / 14 * 4 ) 
-      {
-        mOptStripfy2 = !mOptStripfy2; 
-        if (mOptStripfy2) mOptStripfy1 = false;
-        if (mOptStripfy2) mOptRemoveDoubles = true;
-      }
-      else
-      if( y < h / 14 * 5 ) 
-      {
-        mOptMergeTriangleStrips = !mOptMergeTriangleStrips; 
-      }
-      else
-      if( y < h / 14 * 6 ) 
-      {
-        mOptSortVertices = !mOptSortVertices; 
-      }
-      else
-      if( y < h / 14 * 7 ) 
-      {
-        mOptConvertToDrawArrays = !mOptConvertToDrawArrays; 
-      }
-      else
-      if( y < h / 14 * 8 ) 
-      {
-        mOptRecomputeNormals = !mOptRecomputeNormals;
-      }
-      else
-      if( y < h / 14 * 9) 
-      {
-        mOptHighlightStrips = !mOptHighlightStrips;
-        mOptConvertToDrawArrays = true;
-      }
-      else
-      if( y < h / 14 * 10) 
-      {
-        mOptUseBufferObject = !mOptUseBufferObject; 
-        if (mOptUseBufferObject) mOptUseDL = false;
-      }
-      else
-      if( y < h / 14 * 11) 
-      {
-        mOptUseDL = !mOptUseDL;
-        if (mOptUseDL) mOptUseBufferObject = false;
-      }
-      else
-      if( y < h / 14 * 12) 
-        applyChanges();
-    }
-
-    updateText();
-  }
-
-  void applyChanges()
-  {
-    VL_LOG_PRINT << "Applying changes...\n";
-
-    std::map< ref<Actor>, ref<Geometry> >::iterator it = mActorGeomMap.begin();
-    int orig_primitives = 0;
-    int resu_primitives = 0;
-    int orig_indices = 0;
-    int resu_indices = 0;
-    int orig_vertices = 0;
-    int resu_vertices = 0;
-    for(; it != mActorGeomMap.end(); ++it)
-    {
-      ref<Geometry> geom = it->second->deepCopy();
-      it->first.get_writable()->setLod(0, geom.get());
-
-      if (mOptRecomputeNormals)
-        geom->setNormalArray(NULL);
-
-      // apply changes
-      Time timer;
-
-      if (mOptDoubleFace)
-      {
-        for(unsigned i=0; i<mEffects.size(); ++i)
-        {
-          mEffects[i]->shader()->gocLightModel()->setTwoSide(true);
-          mEffects[i]->shader()->disable(EN_CULL_FACE);
-        }
-      }
-      else
-      {
-        for(unsigned i=0; i<mEffects.size(); ++i)
-        {
-          mEffects[i]->shader()->gocLightModel()->setTwoSide(false);
-          mEffects[i]->shader()->enable(EN_CULL_FACE);
-        }
-      }
-
-      if (mOptRemoveDoubles)
-      {
-        int orig_vertc = (int)geom->vertexArray()->size();
-        timer.start();
-        DoubleVertexRemover dvr;
-        dvr.removeDoubles(geom.get());
-        VL_LOG_PRINT << ( Say("DoubleVertexRemover: %.3ns, ratio:%.3n\n") << timer.elapsed() << (float)geom->vertexArray()->size()/orig_vertc );
-      }
-
-      if (mOptStripfy1)
-      {
-        timer.start();
-        TriangleStripGenerator::stripfy(geom.get(), 0, false, false, false);
-        VL_LOG_PRINT << ( Say("TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
-      }
-
-      if (mOptStripfy2)
-      {
-        timer.start();
-        TriangleStripGenerator::stripfy(geom.get(), 24, false, false, false);
-        VL_LOG_PRINT << ( Say("TriangleStripGenerator::stripfy: %.3ns\n") << timer.elapsed() );
-      }
-
-      if (mOptMergeTriangleStrips)
-      {
-        timer.start();
-        geom->mergeTriangleStrips();
-        VL_LOG_PRINT << ( Say("Merge triangle strips: %.3ns\n") << timer.elapsed() );
-      }
-
-      if (mOptSortVertices)
-      {
-        timer.start();
-        bool ok = geom->sortVertices();
-        if (ok)
-          VL_LOG_PRINT << ( Say("Sort Vertices: %.3ns\n") << timer.elapsed() );
-        else
-          VL_LOG_PRINT << "Sort Vertices Not Performed.\n";
-      }
-
-      if (mOptConvertToDrawArrays)
-      {
-        geom->convertDrawCallToDrawArrays();
-        VL_LOG_PRINT << ("Convert to DrawArrays.\n");
-      }
-
-      if (mOptUseDL)
-        VL_LOG_PRINT << ("Using display lists.\n");
-      geom->setDisplayListEnabled(mOptUseDL);
-
-      if (mOptUseBufferObject)
-        VL_LOG_PRINT << ("Using vertex buffer objects.\n");
-      geom->setBufferObjectEnabled(mOptUseBufferObject);
-
-      if (!geom->normalArray())
-        geom->computeNormals();
-
-      if (mOptStripfy1 || mOptStripfy2)
-      {
-        for(unsigned i=0; i<mEffects.size(); ++i)
-          mEffects[i]->shader()->gocMaterial()->setColorMaterialEnabled(mOptHighlightStrips);
-        if (mOptHighlightStrips)
-          geom->colorizePrimitives();
-      }
-
-      orig_primitives += it->second->drawCalls()->size();
-      resu_primitives += geom->drawCalls()->size();
-      for(int iprim=0; iprim<it->second->drawCalls()->size(); ++iprim)
-        orig_indices += it->second->drawCalls()->at(iprim)->countIndices();
-      for(int iprim=0; iprim<geom->drawCalls()->size(); ++iprim)
-        resu_indices += geom->drawCalls()->at(iprim)->countIndices();
-      orig_vertices += (int)it->second->vertexArray()->size();
-      resu_vertices += (int)geom->vertexArray()->size();
-    }
-
-    VL_LOG_PRINT << ( Say("\nPrimitives: %6n -> %6n (%3.1n%%)\n") << orig_primitives << resu_primitives << (float)resu_primitives/orig_primitives*100.0f );
-    VL_LOG_PRINT << ( Say("Indices:    %6n -> %6n (%3.1n%%)\n") << orig_indices << resu_indices << (float)resu_indices/orig_indices*100.0f );
-    VL_LOG_PRINT << ( Say("Vertices:   %6n -> %6n (%3.1n%%)\n\n") << orig_vertices << resu_vertices << (float)resu_vertices/orig_vertices*100.0f);
-  }
-
-  void updateText()
-  {
-    String str;
-    mOptions->setText("");
-    str += mOptDoubleFace ? "[x]" : "[ ]"; str += " Double Face\n";
-    str += mOptRemoveDoubles? "[x]" : "[ ]"; str += " Remove Doubles\n";
-    str += mOptStripfy1? "[x]" : "[ ]"; str += " Stripfy 0\n";
-    str += mOptStripfy2? "[x]" : "[ ]"; str += " Stripfy 24\n";
-    str += mOptMergeTriangleStrips? "[x]" : "[ ]"; str += " Merge Triangle Strips\n";
-    str += mOptSortVertices? "[x]" : "[ ]"; str += " Sort Vertices\n";
-    str += mOptConvertToDrawArrays? "[x]" : "[ ]"; str += " Convert To DrawArrays\n";
-    str += mOptRecomputeNormals ? "[x]" : "[ ]"; str += " Recompute Normals\n";
-    str += mOptHighlightStrips ? "[x]" : "[ ]"; str += " Highlight Strips\n";
-    str += mOptUseBufferObject? "[x]" : "[ ]"; str += " Use Vertex Buffer Objects\n";
-    str += mOptUseDL? "[x]" : "[ ]"; str += " Use Display Lists\n";
-    str += "<APPLY CHANGES>";
-
-    mOptions->setText(str);
-    mOptions->setDisplayListDirty(true);
   }
 
   void loadModel(const std::vector<String>& files)
   {
-    // load the model
-    resetOptions();
-    updateText();
-
     sceneManager()->tree()->actors()->clear();
-    sceneManager()->tree()->addActor( mOptionsActor.get() );
-    mEffects.clear();
-    mActorGeomMap.clear();
 
-    Time timer;
-    timer.start();
+    // default effects
 
     ref<Light> camera_light = new Light;
- 
+    ref<Effect> fx_lit = new Effect;
+    fx_lit->shader()->enable(EN_DEPTH_TEST);
+    fx_lit->shader()->enable(EN_LIGHTING);
+    fx_lit->shader()->setRenderState(camera_light.get(), 0);
+
+    ref<Effect> fx_solid = new Effect;
+    fx_solid->shader()->enable(EN_DEPTH_TEST);
+
     for(unsigned int i=0; i<files.size(); ++i)
     {
-      if (files.size()>1)
-        VL_LOG_PRINT << ( Say("[% 3n%%] Loading: '%s'\n") << (100*i/(files.size()-1)) << files[i] );
-      else
-        VL_LOG_PRINT << ( Say("Loading: '%s'\n") << files[i] );
-
-      ref<ResourceDatabase> resource_db = loadResource(files[i],true);
-
-      VL_LOG_PRINT << ( Say("Import time = %.3ns\n") << timer.elapsed() );
+      ref<ResourceDatabase> resource_db = loadResource(files[i], false);
 
       if (!resource_db || resource_db->count<Actor>() == 0)
       {
@@ -351,32 +81,25 @@ public:
 
       showStatistics(resource_db);
 
-      std::vector< ref<Actor> > actors;
-      resource_db->get<Actor>(actors);
-      for(unsigned i=0; i<actors.size(); ++i)
+      for(size_t i=0; i<resource_db->resources().size(); ++i)
       {
-        ref<Actor> actor = actors[i].get();
+        Actor* act     = resource_db->resources()[i]->as<Actor>();
+        Geometry* geom = resource_db->resources()[i]->as<Geometry>();
 
-        if(std::find(mEffects.begin(), mEffects.end(), actor->effect()) == mEffects.end())
-          mEffects.push_back(actor->effect());
-
-        actor->effect()->shader()->enable(EN_DEPTH_TEST);
-        Geometry* geom = actor->lod(0)->as<Geometry>();
+        if (act)
+        {
+          sceneManager()->tree()->addActor(act);
+        }
+        else
         if (geom && geom->normalArray())
         {
-          if (!actor->effect()->shader()->getLight(0))
-            actor->effect()->shader()->setRenderState( camera_light.get(), 0 );
-          actor->effect()->shader()->enable(EN_LIGHTING);
-          // actor->effect()->shader()->enable(EN_CULL_FACE);
+          sceneManager()->tree()->addActor(geom, fx_lit.get(), NULL);
         }
-
-        if (geom)
-          mActorGeomMap[actor] = geom->deepCopy();
-
-        // geom->setBufferObjectEnabled(false);
-        // geom->setDisplayListEnabled(false);
-
-        sceneManager()->tree()->addActor( actor.get() );
+        else
+        if (geom && !geom->normalArray())
+        {
+          sceneManager()->tree()->addActor(geom, fx_solid.get(), NULL);
+        }
       }
     }
 
@@ -423,11 +146,11 @@ public:
         total_triangles += (*it)->drawCalls()->at(i)->countTriangles();
     }
 
+    VL_LOG_PRINT << "Statistics:\n";
     VL_LOG_PRINT << "+ Total triangles  = " << total_triangles << "\n";
     VL_LOG_PRINT << "+ Total draw calls = " << total_draw_calls << "\n";
     VL_LOG_PRINT << "+ Actors           = " << actor_db.size() << "\n";
     VL_LOG_PRINT << "+ Geometries       = " << geometries.size() << "\n";
-
   }
 
   void fileDroppedEvent(const std::vector<String>& files)
@@ -435,60 +158,8 @@ public:
     loadModel(files);
   }
 
-  void resizeEvent(int w, int h)
-  {
-    BaseDemo::resizeEvent(w,h);
-    mOptions->setDisplayListDirty(true);
-  }
-
-  void keyPressEvent(unsigned short ch, EKey key)
-  {
-    BaseDemo::keyPressEvent(ch,key);
-
-    for(unsigned i=0; i<mEffects.size(); ++i)
-    {
-      if (key == Key_1)
-      {
-        if (mEffects[i]->shader()->gocShadeModel()->shadeModel() == SM_FLAT)
-          mEffects[i]->shader()->gocShadeModel()->set(SM_SMOOTH);
-        else
-          mEffects[i]->shader()->gocShadeModel()->set(SM_FLAT);
-      }
-      if (key == Key_2)
-      {
-        if (mEffects[i]->shader()->gocPolygonMode()->frontFace() == PM_FILL)
-          mEffects[i]->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
-        else
-          mEffects[i]->shader()->gocPolygonMode()->set(PM_FILL, PM_FILL);
-      }
-      if (key == Key_3)
-      {
-        if (mEffects[i]->shader()->isEnabled(EN_CULL_FACE) )
-          mEffects[i]->shader()->disable(EN_CULL_FACE);
-        else
-          mEffects[i]->shader()->enable(EN_CULL_FACE);
-      }
-    }
-  }
-
 protected:
-  std::vector< ref<Effect> > mEffects;
-  ref< Text > mOptions;
-  ref< Actor > mOptionsActor;
-  std::map< ref<Actor>, ref<Geometry> > mActorGeomMap;
-
-  // options
-  bool mOptDoubleFace;
-  bool mOptRemoveDoubles;
-  bool mOptStripfy1;
-  bool mOptStripfy2;
-  bool mOptMergeTriangleStrips;
-  bool mOptSortVertices;
-  bool mOptConvertToDrawArrays;
-  bool mOptRecomputeNormals;
-  bool mOptHighlightStrips;
-  bool mOptUseBufferObject;
-  bool mOptUseDL;
+  // nothing
 };
 
 // Have fun!
