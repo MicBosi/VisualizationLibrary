@@ -432,7 +432,7 @@ namespace vl
 
     //! Returns \p true if an OpenGLContext supports double buffering.
     bool hasDoubleBuffer() const { return mHasDoubleBuffer; }
-    
+
     // --- render states management ---
 
     //! Activates the specified vertex attribute set - For internal use only.
@@ -455,7 +455,7 @@ namespace vl
     void resetRenderStates();
 
     //! Resets the OpenGL states necessary to begin and finish a rendering. - For internal use only.
-    void resetContextStates();
+    void resetContextStates(EResetContextStates start_or_finish);
 
     //! Declares that texture unit \p unit_i is currently bound to the specified texture target. - For internal use only.
     void setTexUnitBinding(int unit_i, ETextureDimension target) 
