@@ -96,6 +96,14 @@ void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Came
 
   if ( glslVertexBlendEnabled() && glslprogram )
   {
+    // memo:
+    // Since every character is in a different stage of the animation they all have different vertex/normal/etc. arrays pointers,
+    // thus the lazy-vertex-array setup is forced to call glVertexAttribPointer/glVertexPointer/glBindBuffer continuously.
+    // We may be able to partially solve this by putting all the animations in a single ArrayFloat3 and let the draw_calls 
+    // switch the frame by using the base-vertex functionality.
+    // I modified the App_MorphAnimation test so that all the characters share the same animation (thus the same vertex arrays) and don't have
+    // transforms attached to eliminate the cost of glLoadMatrix/glMatrixMode. The resulting frame to frame time resulted only 1.2% reduced.
+
     // vertex/normals frame 1
     mGeometry->setVertexArray( mVertexFrames[mFrame1].get() );
     mGeometry->setNormalArray( mNormalFrames[mFrame1].get() );

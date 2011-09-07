@@ -55,6 +55,8 @@ public:
   {
     // simple effect to render a tree billboard
     vl::ref<vl::Effect> effect = new vl::Effect;
+    // speedup tip: this allows VL to batch all the trees together greatly speeding up the rendering and avoiding switching textures back and forth with the stars.
+    effect->setRenderRank(2);
     effect->shader()->setRenderState( new vl::Light, 0 );
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
@@ -91,6 +93,8 @@ public:
   {
     // simple effect to render a star billboard
     vl::ref<vl::Effect> effect = new vl::Effect;
+    // speedup tip: this allows VL to batch all the stars together greatly speeding up the rendering and avoiding switching textures back and forth with the trees.
+    effect->setRenderRank(1);
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->gocTextureSampler(0)->setTexture( new vl::Texture("images/sun.png", vl::TF_RGBA, true) );

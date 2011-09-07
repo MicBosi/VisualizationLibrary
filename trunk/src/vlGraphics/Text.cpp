@@ -201,8 +201,8 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
 
   float texc[] = { 0,0, 0,0, 0,0, 0,0 };
   VL_glActiveTexture( GL_TEXTURE0 );
-  VL_glClientActiveTexture( GL_TEXTURE0 );
   glEnable(GL_TEXTURE_2D);
+  VL_glClientActiveTexture( GL_TEXTURE0 );
   glEnableClientState( GL_TEXTURE_COORD_ARRAY );
   glTexCoordPointer(2, GL_FLOAT, 0, texc);
 

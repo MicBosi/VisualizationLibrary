@@ -62,6 +62,12 @@ public:
     fx->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx->shader(0,1)->gocColor()->setValue(vl::lightgreen);
+
+    // speedup tricks: 
+    // we don't use lighting here so these won't be used, however including them in the second pass 
+    // will allow VL to avoid restoring and resetting them back and forth all the time.
+    fx->shader(0,1)->setRenderState( fx->shader()->getMaterial() );
+    fx->shader(0,1)->setRenderState( fx->shader()->getLight(0), 0 );
 #endif
 
     /* create our primitives */
