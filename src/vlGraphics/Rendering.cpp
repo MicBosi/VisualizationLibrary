@@ -112,7 +112,7 @@ void Rendering::render()
       VL_CHECK_OGL(); // the first check must be done when the context is active!
 
       // render states ]shield[
-      mOpenGLContext->resetContextStates(); 
+      mOpenGLContext->resetContextStates(RCS_RenderingStarted);
 
       // pre rendering callback
       mRendering->dispatchOnRenderingStarted(); 
@@ -133,7 +133,7 @@ void Rendering::render()
       VL_CHECK_OGL()
 
       // render states ]shield[
-      mOpenGLContext->resetContextStates(); 
+      mOpenGLContext->resetContextStates(RCS_RenderingFinished); 
     }
   } contract(this);
 
