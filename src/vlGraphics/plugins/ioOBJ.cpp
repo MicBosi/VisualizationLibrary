@@ -292,7 +292,7 @@ void ObjLoader::loadObjMaterials(VirtualFile* input, std::vector<ObjMaterial>& m
       if (line.startsWith("disp"))
         materials.back().setMap_Disp(ObjTexture().parseLine(line,file));
       else
-      if (line.startsWith("bump"))
+      if (line.startsWith("bump") || line.startsWith("map_bump"))
         materials.back().setMap_Bump(ObjTexture().parseLine(line,file));
       else
         Log::error( Say("Unknown field '%s' in file %s'.\n") << line << file );
@@ -703,25 +703,72 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
       effect->shader()->gocMaterial()->setSpecular( specular );
       effect->shader()->gocMaterial()->setEmission( emission );
       effect->shader()->gocMaterial()->setShininess( obj_mat->ns());
+
       // setup transparency
-      if (obj_mat->tr() < 1.0f)
+      if (obj_mat->tr() > 0 || obj_mat->map_d().valid())
       {
         effect->shader()->enable(EN_BLEND);
-        effect->shader()->enable(EN_CULL_FACE);
-        effect->shader()->gocLightModel()->setTwoSide(false);
+
+        // if it has a mask map use alpha testing (typically for vegetation).
+        if ( obj_mat->map_d().valid() )
+        {
+          effect->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.5);
+          effect->shader()->enable(EN_ALPHA_TEST);
+          // disable cull face
+          // enable two side
+        }
+        else
+        {
+          effect->shader()->enable(EN_CULL_FACE);
+          effect->shader()->gocLightModel()->setTwoSide(false);
+        }
       }
+
       // setup texture
       if (obj_mat->map_Kd().valid())
       {
-        ref<Texture> texture = new Texture;
-        // locate texture
-        String tex_path = obj_mat->map_Kd().path();
-        ref<VirtualFile> tex_file = defFileSystem()->locateFile(obj_mat->map_Kd().path(),file->path().extractPath());
-        if (tex_file)
-          tex_path = tex_file->path();
-        texture->prepareTexture2D( tex_path, TF_RGBA );
-        effect->shader()->gocTexEnv(0)->setMode(TEM_DECAL);
-        effect->shader()->gocTextureSampler(0)->setTexture( texture.get() );
+        // diffuse
+        ref<VirtualFile> diff_file = defFileSystem()->locateFile(obj_mat->map_Kd().path(), file->path().extractPath());
+        ref<Image> diff_img;
+        if (diff_file)
+          diff_img = loadImage( diff_file.get() );
+
+        // mask
+        if (obj_mat->map_d().valid())
+        {
+          ref<VirtualFile> mask_file = defFileSystem()->locateFile(obj_mat->map_d().path(), file->path().extractPath());
+          ref<Image> mask_img;
+          if (mask_file)
+            mask_img = loadImage( mask_file.get() );
+          if (mask_img)
+          {
+            if (mask_img->width() == diff_img->width() && mask_img->height() == diff_img->height())
+            {
+              diff_img = diff_img->convertFormat(IF_RGBA); VL_CHECK(diff_img)
+              diff_img = diff_img->convertType(IT_UNSIGNED_BYTE); VL_CHECK(diff_img)
+              mask_img = mask_img->convertType(IT_UNSIGNED_BYTE);
+              int bpp = mask_img->bitsPerPixel() / 8;
+              unsigned char* mask_px  = mask_img->pixels();
+              unsigned char* mask_end = mask_img->pixels() + mask_img->requiredMemory();
+              unsigned char* diff_px  = diff_img->pixels() + 3;
+              while( mask_px != mask_end )
+              {
+                diff_px[0] = mask_px[0];
+                mask_px += bpp;
+                diff_px += 4;
+              }
+            }
+          }
+        }
+
+        if ( diff_img )
+        {
+          ref<Texture> texture = new Texture;
+          texture->getTexParameter()->setMinFilter(TPF_LINEAR_MIPMAP_LINEAR);
+          texture->getTexParameter()->setMagFilter(TPF_LINEAR);
+          texture->prepareTexture2D( diff_img.get(), TF_RGBA, true );
+          effect->shader()->gocTextureSampler(0)->setTexture( texture.get() );
+        }
       }
     }
   }
@@ -840,8 +887,6 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
     // Geometry
 
     ref<Geometry> geom = new Geometry;
-    res_db->resources().push_back(geom);
-
     geom->setObjectName(mMeshes[imesh]->objectName().c_str());
     geom->setVertexArray( v_coords.get() );
     if ( mMeshes[imesh]->faceNormalIndex().size() )
@@ -866,7 +911,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
 
     // Actor
 
-    ref<Actor> actor = new Actor(geom.get(),NULL);
+    ref<Actor> actor = new Actor(geom.get(), NULL);
     res_db->resources().push_back(actor);
     actor->setObjectName(mMeshes[imesh]->objectName().c_str());
     actor->setEffect(effect.get());
