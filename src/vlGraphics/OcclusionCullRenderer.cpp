@@ -202,6 +202,12 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
   if (enableMask() == 0)
     return;
 
+#ifndef NDEBUG
+  GLint buffer = 0;
+  glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buffer);
+  VL_CHECK(buffer == 0);
+#endif
+
   // --------------- render target activation --------------- 
 
   /* keep the currently active render target */
