@@ -440,17 +440,56 @@ void Material::apply(int, const Camera*, OpenGLContext*) const
     glDisable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
   }
 
-  glMaterialfv(GL_FRONT, GL_AMBIENT, mFrontAmbient.ptr()); 
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, mFrontDiffuse.ptr()); 
-  glMaterialfv(GL_FRONT, GL_SPECULAR, mFrontSpecular.ptr()); 
-  glMaterialfv(GL_FRONT, GL_EMISSION, mFrontEmission.ptr()); 
-  glMaterialf(GL_FRONT, GL_SHININESS, mFrontShininess); VL_CHECK_OGL();
+  if ( mFrontAmbient == mBackAmbient )
+  {
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr()); 
+  }
+  else
+  {
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mFrontAmbient.ptr()); 
+    glMaterialfv(GL_BACK, GL_AMBIENT, mBackAmbient.ptr());
+  }
 
-  glMaterialfv(GL_BACK, GL_AMBIENT, mBackAmbient.ptr());
-  glMaterialfv(GL_BACK, GL_DIFFUSE, mBackDiffuse.ptr());
-  glMaterialfv(GL_BACK, GL_SPECULAR, mBackSpecular.ptr());
-  glMaterialfv(GL_BACK, GL_EMISSION, mBackEmission.ptr());
-  glMaterialf(GL_BACK, GL_SHININESS, mBackShininess); VL_CHECK_OGL();
+  if ( mFrontDiffuse == mBackDiffuse )
+  {
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr()); 
+  }
+  else
+  {
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mFrontDiffuse.ptr()); 
+    glMaterialfv(GL_BACK, GL_DIFFUSE, mBackDiffuse.ptr());
+  }
+
+  if ( mFrontSpecular == mBackSpecular )
+  {
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr()); 
+  }
+  else
+  {
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mFrontSpecular.ptr()); 
+    glMaterialfv(GL_BACK, GL_SPECULAR, mBackSpecular.ptr());
+  }
+
+  if ( mFrontEmission == mBackEmission )
+  {
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mFrontEmission.ptr()); 
+  }
+  else
+  {
+    glMaterialfv(GL_FRONT, GL_EMISSION, mFrontEmission.ptr()); 
+    glMaterialfv(GL_BACK, GL_EMISSION, mBackEmission.ptr());
+  }
+
+  if ( mFrontShininess == mBackShininess )
+  {
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, mFrontShininess); VL_CHECK_OGL();
+  }
+  else
+  {
+    glMaterialf(GL_FRONT, GL_SHININESS, mFrontShininess); VL_CHECK_OGL();
+    glMaterialf(GL_BACK, GL_SHININESS, mBackShininess); VL_CHECK_OGL();
+  }
+
 
 #else
 
