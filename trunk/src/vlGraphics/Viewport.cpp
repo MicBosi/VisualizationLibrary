@@ -105,14 +105,9 @@ void Viewport::activate() const
     glDepthMask(GL_TRUE);
     glStencilMask(GL_TRUE);
 
-    // save scissor settings
-    GLboolean scissor_on = glIsEnabled(GL_SCISSOR_TEST);
-    int scissor_box[4] = {0,0,-1,-1};
-    glGetIntegerv(GL_SCISSOR_BOX, scissor_box);
-
     // setup scissor
-    glScissor(x, y, w, h);
     glEnable(GL_SCISSOR_TEST);
+    glScissor(x, y, w, h);
 
     switch( clearColorMode() )
     {
@@ -125,11 +120,6 @@ void Viewport::activate() const
     glClearStencil( mClearStencil );
 
     glClear(mClearFlags);
-
-    // restore scissor settings
-    if (!scissor_on)
-      glDisable(GL_SCISSOR_TEST);
-    glScissor(scissor_box[0], scissor_box[1], scissor_box[2], scissor_box[3]); VL_CHECK_OGL()
 
     VL_CHECK_OGL()
   }
