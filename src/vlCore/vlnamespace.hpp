@@ -1519,6 +1519,12 @@ namespace vl
     SCM_OwnShaders, //!< A local copy of the Shaders will be created but the contained render states will be shared.
     SCM_ShareShaders //!< The Shader pointer will be copied as is.
   } EShaderCopyMode;
+
+  typedef enum
+  {
+    RCS_RenderingStarted,
+    RCS_RenderingFinished
+  } EResetContextStates;
 }
 
 
