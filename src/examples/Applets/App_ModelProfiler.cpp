@@ -89,6 +89,8 @@ public:
         if (act)
         {
           sceneManager()->tree()->addActor(act);
+          if ( act->effect()->shader()->isEnabled(EN_LIGHTING) && !act->effect()->shader()->getLight(0) )
+            act->effect()->shader()->setRenderState(camera_light.get(), 0);
         }
         else
         if (geom && geom->normalArray())
