@@ -59,7 +59,7 @@ namespace vl
     /** ShaderNode's representation of a RenderState. */
     struct RenderStateInfo
     {
-      RenderStateInfo(EInheritance inheritance=IN_Propagate, RenderState* rs=NULL, int index=0): mInheritance(inheritance), mRenderState(rs), mIndex(index) {}
+      RenderStateInfo(EInheritance inheritance=IN_Propagate, RenderState* rs=NULL, int index=-1): mInheritance(inheritance), mRenderState(rs), mIndex(index) {}
 
       EInheritance mInheritance;
       ref<RenderState> mRenderState;
@@ -259,8 +259,8 @@ namespace vl
 
     void setRenderState(EInheritance inheritance, RenderStateNonIndexed* rs)
     {
-      RenderStateInfo info(inheritance, rs, 0);
-      mRenderStates[ (ERenderState)(rs->type()+0) ] = info;
+      RenderStateInfo info(inheritance, rs, -1);
+      mRenderStates[ rs->type() ] = info;
     }
 
     void setRenderState(EInheritance inheritance, RenderState* rs, int index)
@@ -269,14 +269,22 @@ namespace vl
       mRenderStates[ (ERenderState)(rs->type()+index) ] = info;
     }
 
+    void eraseRenderState(RenderStateNonIndexed* rs)
+    {
+      mRenderStates.erase( rs->type() );
+    }
+
     void eraseRenderState(RenderState* rs, int index)
     {
+      VL_CHECK(index >= -1)
+      if (index == -1)
+        index = 0;
       mRenderStates.erase( (ERenderState)(rs->type()+index) );
     }
 
     void setEnable(EEnable en, bool on, EInheritance inheritance=IN_Propagate) 
     {
-      EnableInfo info(en,on,inheritance);
+      EnableInfo info(en, on, inheritance);
       mEnables[en] = info;
     }
 
