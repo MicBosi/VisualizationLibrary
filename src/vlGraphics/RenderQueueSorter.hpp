@@ -160,7 +160,7 @@ namespace vl
     virtual bool confirmZCameraDistanceNeed(const RenderToken* a) const
     { 
       return mDepthSortMode != NeverDepthSort && (mDepthSortMode == AlwaysDepthSort  ||
-      (a->mShader->blendingEnabled() && (mDepthSortMode == AlphaDepthSort)) ); 
+      (a->mShader->isBlendingEnabled() && (mDepthSortMode == AlphaDepthSort)) ); 
     }
 
     virtual bool operator()(const RenderToken* a, const RenderToken* b) const
@@ -182,10 +182,10 @@ namespace vl
 
       // --------------- shader based sorting ---------------
 
-      if ( mDepthSortMode != AlwaysDepthSort && (a->mShader->blendingEnabled() != b->mShader->blendingEnabled()))
+      if ( mDepthSortMode != AlwaysDepthSort && (a->mShader->isBlendingEnabled() != b->mShader->isBlendingEnabled()))
       {
         // first render opaque objects
-        return !a->mShader->blendingEnabled();
+        return !a->mShader->isBlendingEnabled();
       }
       // A/b->mShader->isEnabled(OGL_BLEND) are equal or AlwaysDepthSort
       else
@@ -260,19 +260,19 @@ namespace vl
 
       // --------------- shader based sorting ---------------
 
-      if ( a->mShader->blendingEnabled() != b->mShader->blendingEnabled() )
+      if ( a->mShader->isBlendingEnabled() != b->mShader->isBlendingEnabled() )
       {
         // first render opaque objects
-        return !a->mShader->blendingEnabled();
+        return !a->mShader->isBlendingEnabled();
       }
       else
       // blending on: render first far objects then the close ones
-      if ( a->mShader->blendingEnabled() )
+      if ( a->mShader->isBlendingEnabled() )
       {
         return a->mCameraDistance > b->mCameraDistance;
       }
       else
-      // blending off: render first close objects then far ones -> i.e. -> if ( !a->mShader->blendingEnabled() )
+      // blending off: render first close objects then far ones -> i.e. -> if ( !a->mShader->isBlendingEnabled() )
       if (a->mCameraDistance != b->mCameraDistance)
       {
         return a->mCameraDistance < b->mCameraDistance;
@@ -305,7 +305,7 @@ namespace vl
     virtual bool confirmZCameraDistanceNeed(const RenderToken* a) const
     {
       return mDepthSortMode != NeverDepthSort &&
-        (mDepthSortMode == AlwaysDepthSort  || (a->mShader->blendingEnabled() && (mDepthSortMode == AlphaDepthSort)) );
+        (mDepthSortMode == AlwaysDepthSort  || (a->mShader->isBlendingEnabled() && (mDepthSortMode == AlphaDepthSort)) );
     }
 
     virtual bool operator()(const RenderToken* a, const RenderToken* b) const
@@ -327,9 +327,9 @@ namespace vl
 
       // --------------- shader based sorting ---------------
 
-      if ( mDepthSortMode != AlwaysDepthSort && (a->mShader->blendingEnabled() != b->mShader->blendingEnabled()))
+      if ( mDepthSortMode != AlwaysDepthSort && (a->mShader->isBlendingEnabled() != b->mShader->isBlendingEnabled()))
       {
-        return !a->mShader->blendingEnabled(); // first render opaque objects
+        return !a->mShader->isBlendingEnabled(); // first render opaque objects
       }
       else // A/b->mShader->isEnabled(OGL_BLEND) are equal or AlwaysDepthSort
       if ( confirmZCameraDistanceNeed(a) )

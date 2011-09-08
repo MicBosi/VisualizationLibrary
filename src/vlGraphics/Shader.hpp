@@ -2158,7 +2158,7 @@ namespace vl
     TextureMatrix* gocTextureMatrix(int unit_index);
     
     const TextureMatrix* getTextureMatrix(int unit_index) const { return static_cast<const TextureMatrix*>( getRenderStateSet()->renderState( RS_TextureMatrix, unit_index ) ); }
-    
+
     TextureMatrix* getTextureMatrix(int unit_index) { return static_cast<TextureMatrix*>( getRenderStateSet()->renderState( RS_TextureMatrix, unit_index ) ); }
 
     // enable methods
@@ -2173,7 +2173,7 @@ namespace vl
     
     void disableAll() { if (getEnableSet()) getEnableSet()->disableAll(); }
     
-    bool blendingEnabled() const { if (!getEnableSet()) return false; return getEnableSet()->blendingEnabled(); }
+    bool isBlendingEnabled() const { if (!getEnableSet()) return false; return getEnableSet()->isBlendingEnabled(); }
 
     // render states methods
 

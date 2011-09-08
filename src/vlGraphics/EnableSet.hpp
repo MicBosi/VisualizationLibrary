@@ -98,7 +98,7 @@ namespace vl
 
     void disableAll() { mEnables.clear(); mBlendingEnabled=false; }
 
-    bool blendingEnabled() const { return mBlendingEnabled; }
+    bool isBlendingEnabled() const { return mBlendingEnabled; }
 
   protected:
     std::vector<EEnable> mEnables;
