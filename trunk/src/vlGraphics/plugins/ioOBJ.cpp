@@ -685,6 +685,7 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
 
     effect->shader()->enable(EN_DEPTH_TEST);
     effect->shader()->disable(EN_CULL_FACE);
+    effect->shader()->enable(EN_LIGHTING);
     effect->shader()->gocLightModel()->setTwoSide(true);
 
     if (obj_mat)
@@ -905,12 +906,12 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
 
       effect->shader()->enable(EN_DEPTH_TEST);
       effect->shader()->disable(EN_CULL_FACE);
+      effect->shader()->enable(EN_LIGHTING);
       effect->shader()->gocLightModel()->setTwoSide(true);
     }
     VL_CHECK(effect)
 
     // Actor
-
     ref<Actor> actor = new Actor(geom.get(), NULL);
     res_db->resources().push_back(actor);
     actor->setObjectName(mMeshes[imesh]->objectName().c_str());
@@ -918,11 +919,6 @@ ref<ResourceDatabase> ObjLoader::loadOBJ( VirtualFile* file )
   }
 
   stream->inputFile()->close();
-
-  /* now managed by GeometryLoadCallback */
-  /*for(unsigned i=0; i<res_db->count<Geometry>(); ++i)
-    if (res_db->get<Geometry>(i)->normalArray() == NULL)
-      res_db->get<Geometry>(i)->computeNormals();*/
 
   return res_db;
 }
