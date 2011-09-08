@@ -86,6 +86,7 @@ void vl::setDefFontManager(FontManager* fm)
   gDefaultFontManager = fm;
 }
 //-----------------------------------------------------------------------------
+#if defined(VL_IO_3D_VLX)
 namespace
 {
   void registerVLXWrappers()
@@ -233,6 +234,7 @@ namespace
     defVLXRegistry()->registerClassWrapper( ArrayUByte4::Type(), array_serializer.get() );
   }
 }
+#endif
 //------------------------------------------------------------------------------
 void VisualizationLibrary::initGraphics()
 {
@@ -248,11 +250,9 @@ void VisualizationLibrary::initGraphics()
   // Install default FontManager
   gDefaultFontManager = new FontManager;
 
-  // Register VLX serializers
-  registerVLXWrappers();
-
   // Register 3D modules
   #if defined(VL_IO_3D_VLX)
+    registerVLXWrappers();
     registerLoadWriter(new LoadWriterVLX);
   #endif
   #if defined(VL_IO_3D_OBJ)
