@@ -70,7 +70,7 @@ Font* FontManager::acquireFont(const String& path, int size, bool smooth)
   ref<Font> font;
   for(unsigned i=0; !font && i<mFonts.size(); ++i)
     if (fonts()[i]->filePath() == path && fonts()[i]->size() == size && fonts()[i]->smooth() == smooth)
-      font = fonts()[0];
+      font = fonts()[i];
 
   if (!font)
   {
