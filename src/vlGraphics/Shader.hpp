@@ -1558,7 +1558,7 @@ namespace vl
     /** Set this to \a true when you want your cubemap to appear in world space rather than eye space.
      *
      * When setUseCameraRotationInverse() is true the texture matrix is computed as:
-     * \code matrix()*camera->localMatrix().as3x3() \endcode
+     * \code matrix()*camera->modelingMatrix().as3x3() \endcode
      * This way matrix() represents the transform of the texture in world coordinates, for example if you want to reorient 
      * your cubemap in world space or when you want to rotate the direction of one or more highlights prerendered in a cubemap. */
     void setUseCameraRotationInverse(bool use) { mUseCameraRotationInverse = use; }

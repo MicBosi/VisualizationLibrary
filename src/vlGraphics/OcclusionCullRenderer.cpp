@@ -245,7 +245,7 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
 
   // camera/eye position for later usage
 
-  vec3 eye = camera->localMatrix().getT();
+  vec3 eye = camera->modelingMatrix().getT();
 
   // --------------- rendering ---------------
 

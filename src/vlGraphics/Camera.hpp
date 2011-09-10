@@ -152,17 +152,21 @@ namespace vl
     /** Returns the Transform bound to a camera. */
     Transform* boundTransform() { return mBoundTransform.get(); }
 
-    /** Sets the Camera's view matrix. The local matrix is also set as the inverse of the view matrix. */
-    void setViewMatrix(const mat4& mat) { mViewMatrix = mat; mViewMatrix.getInverse(mLocalMatrix); }
+    /** Sets the Camera's view matrix (inverse of the modeling matrix). The modelingMatrix() is also set as the inverse of the viewMatrix().
+        @remarks The modelingMatrix() bring points from camera space to world space, where the viewMatrix() brings points from world space to camera space. */
+    void setViewMatrix(const mat4& mat) { mViewMatrix = mat; mViewMatrix.getInverse(mModelingMatrix); }
 
-    /** The Camera's view matrix. This is what you would pass to OpenGL with "glMatrixMode(GL_MODELVIEW);glLoadMatrix(camera.viewMatrix().ptr());" */
+    /** Returns the Camera's view matrix (inverse of the modeling matrix). This is what you would pass to OpenGL with "glMatrixMode(GL_MODELVIEW); glLoadMatrix(camera.viewMatrix().ptr());"
+        @remarks The modelingMatrix() bring points from camera space to world space, where the viewMatrix() brings points from world space to camera space. */
     const mat4& viewMatrix() const { return mViewMatrix; }
 
-    /** The Camera's local matrix (inverse of the view matrix). The view matrix is also set as the inverse of the local matrix. */
-    void setLocalMatrix(const mat4& mat) { mLocalMatrix = mat; mLocalMatrix.getInverse(mViewMatrix); }
+    /** Sets the Camera's modelingMatrix() (inverse of the view matrix). The view matrix is also set as the inverse of the modelingMatrix().
+        @remarks The modelingMatrix() bring points from camera space to world space, where the viewMatrix() brings points from world space to camera space. */
+    void setModelingMatrix(const mat4& mat) { mModelingMatrix = mat; mModelingMatrix.getInverse(mViewMatrix); }
 
-    /** The Camera's local matrix (inverse of the view matrix). */
-    const mat4& localMatrix() const { return mLocalMatrix; }
+    /** Returns the Camera's modelingMatrix() (inverse of the view matrix).
+        @remarks The modelingMatrix() bring points from camera space to world space, where the viewMatrix() brings points from world space to camera space. */
+    const mat4& modelingMatrix() const { return mModelingMatrix; }
 
     /** The Camera's projection matrix. */
     void setProjectionMatrix(const mat4& mat, EProjectionMatrixType proj_type) { mProjectionMatrix = mat; mProjectionType = proj_type; }
@@ -267,7 +271,7 @@ namespace vl
 
   protected:
     mat4 mViewMatrix;
-    mat4 mLocalMatrix;
+    mat4 mModelingMatrix;
     mat4 mProjectionMatrix;
     ref<Viewport> mViewport;
     Frustum mFrustum;

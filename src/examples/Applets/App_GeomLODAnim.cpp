@@ -253,7 +253,7 @@ public:
     eye += vl::vec3(0,10+70*t,0);
     vl::mat4 m;
     m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    rendering()->as<vl::Rendering>()->camera()->setLocalMatrix(m);
+    rendering()->as<vl::Rendering>()->camera()->setModelingMatrix(m);
   }
 };
 
