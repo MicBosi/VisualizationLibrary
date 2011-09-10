@@ -169,7 +169,7 @@ bool GLSLShader::compile()
       Log::bug( Say("\nGLSLShader::compile() failed! '%s':\n\n") << objectName().c_str() );
       // Log::bug( Say("Source:\n%s\n\n") << mSource.c_str() );
       Log::bug( Say("Info log:\n%s\n\n") << infoLog() );
-      VL_TRAP()
+      // VL_TRAP()
     }
   }
 
