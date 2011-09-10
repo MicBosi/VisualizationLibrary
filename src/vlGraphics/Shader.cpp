@@ -152,21 +152,21 @@ SampleCoverage* Shader::gocSampleCoverage() { GET_OR_CREATE(SampleCoverage) }
 //------------------------------------------------------------------------------
 VertexAttrib* Shader::gocVertexAttrib(int attr_index) { GET_OR_CREATE_IDX(VertexAttrib, attr_index) }
 //------------------------------------------------------------------------------
-const VertexAttrib* Shader::getVertexAttrib(int attr_index) const { return static_cast<const VertexAttrib*>( getRenderStateSet()->renderState( RS_VertexAttrib, attr_index ) ); }
+const VertexAttrib* Shader::getVertexAttrib(int attr_index) const { if (!getRenderStateSet()) return NULL; else return static_cast<const VertexAttrib*>( getRenderStateSet()->renderState( RS_VertexAttrib, attr_index ) ); }
 //------------------------------------------------------------------------------
-VertexAttrib* Shader::getVertexAttrib(int attr_index) { return static_cast<VertexAttrib*>( getRenderStateSet()->renderState( RS_VertexAttrib, attr_index ) ); }
+VertexAttrib* Shader::getVertexAttrib(int attr_index) { if (!getRenderStateSet()) return NULL; else return static_cast<VertexAttrib*>( getRenderStateSet()->renderState( RS_VertexAttrib, attr_index ) ); }
 //------------------------------------------------------------------------------
 Light* Shader::gocLight(int light_index) { GET_OR_CREATE_IDX(Light, light_index) }
 //------------------------------------------------------------------------------
-const Light* Shader::getLight(int light_index) const { return static_cast<const Light*>( getRenderStateSet()->renderState( RS_Light, light_index ) ); }
+const Light* Shader::getLight(int light_index) const { if (!getRenderStateSet()) return NULL; else return static_cast<const Light*>( getRenderStateSet()->renderState( RS_Light, light_index ) ); }
 //------------------------------------------------------------------------------
-Light* Shader::getLight(int light_index) { return static_cast<Light*>( getRenderStateSet()->renderState( RS_Light, light_index ) ); }
+Light* Shader::getLight(int light_index) { if (!getRenderStateSet()) return NULL; else return static_cast<Light*>( getRenderStateSet()->renderState( RS_Light, light_index ) ); }
 //------------------------------------------------------------------------------
 ClipPlane* Shader::gocClipPlane(int plane_index) { GET_OR_CREATE_IDX(ClipPlane, plane_index) }
 //------------------------------------------------------------------------------
-const ClipPlane* Shader::getClipPlane(int plane_index) const { return static_cast<const ClipPlane*>( getRenderStateSet()->renderState( RS_ClipPlane, plane_index) ); }
+const ClipPlane* Shader::getClipPlane(int plane_index) const { if (!getRenderStateSet()) return NULL; else return static_cast<const ClipPlane*>( getRenderStateSet()->renderState( RS_ClipPlane, plane_index) ); }
 //------------------------------------------------------------------------------
-ClipPlane* Shader::getClipPlane(int plane_index) { return static_cast<ClipPlane*>( getRenderStateSet()->renderState( RS_ClipPlane, plane_index) ); }
+ClipPlane* Shader::getClipPlane(int plane_index) { if (!getRenderStateSet()) return NULL; else return static_cast<ClipPlane*>( getRenderStateSet()->renderState( RS_ClipPlane, plane_index) ); }
 //------------------------------------------------------------------------------
 TextureSampler* Shader::gocTextureSampler(int unit_index) { GET_OR_CREATE_IDX(TextureSampler, unit_index) }
 //------------------------------------------------------------------------------
