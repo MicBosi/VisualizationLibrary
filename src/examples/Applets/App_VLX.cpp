@@ -106,7 +106,7 @@ public:
     ref<Actor> act4 = vlx_serializer.loadVLB(vlb_path)->as<Actor>(); VL_CHECK(!vlx_serializer.error()); VL_CHECK(act4.get())
 
     ref<Camera> cam = new Camera;
-    cam->setLocalMatrix( mat4::getLookAt( vec3(0,0,50), vec3(0,0,0), vec3(0,1,0) ) );
+    cam->setModelingMatrix( mat4::getLookAt( vec3(0,0,50), vec3(0,0,0), vec3(0,1,0) ) );
     vlt_path = globalSettings()->defaultDataPath() + "/vlx/camera.vlt";
     vlx_serializer.saveVLT(vlt_path, cam.get()); VL_CHECK(!vlx_serializer.error());
     cam = vlx_serializer.loadVLT(vlt_path)->as<Camera>(); VL_CHECK(!vlx_serializer.error());
@@ -115,7 +115,7 @@ public:
     sceneManager()->tree()->actors()->push_back(act2.get());
     sceneManager()->tree()->actors()->push_back(act3.get());
     sceneManager()->tree()->actors()->push_back(act4.get());
-    rendering()->as<Rendering>()->camera()->setLocalMatrix( cam->localMatrix() );
+    rendering()->as<Rendering>()->camera()->setModelingMatrix( cam->modelingMatrix() );
   }
 
   // raw i/o serialization test with no visualization using writeResource()/loadResource()
