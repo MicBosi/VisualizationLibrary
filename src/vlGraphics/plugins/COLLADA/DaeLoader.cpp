@@ -684,7 +684,7 @@ void DaeLoader::parseNode(daeElement* el, Dae::Node* parent)
         vec3 eye ((real)lookat->getValue()[0], (real)lookat->getValue()[1], (real)lookat->getValue()[2]);
         vec3 look((real)lookat->getValue()[3], (real)lookat->getValue()[4], (real)lookat->getValue()[5]);
         vec3 up  ((real)lookat->getValue()[6], (real)lookat->getValue()[7], (real)lookat->getValue()[8]);
-        this_node->mTransform->preMultiply( mat4::getLookAt(eye, look, up).invert() );
+        this_node->mTransform->preMultiply( mat4::getLookAt(eye, look, up) );
       }
       else
       if ( 0 == strcmp(child->getElementName(), "skew") )

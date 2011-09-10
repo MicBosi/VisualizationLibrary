@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
   vec3 eye    = vec3(0,10,35); // camera position
   vec3 center = vec3(0,0,0);   // point the camera is looking at
   vec3 up     = vec3(0,1,0);   // up direction
-  mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
+  mat4 view_mat = mat4::getLookAt(eye, center, up);
   applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
   /* Initialize the OpenGL context and window properties */
   int x = 10;

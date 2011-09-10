@@ -53,7 +53,7 @@ void CMDI_AppView::OnInitialUpdate()
 	vl::vec3 eye    = vl::vec3(0,10,35); // camera position
 	vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
 	vl::vec3 up     = vl::vec3(0,1,0);   // up direction
-	vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
+	vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up);
 	rend->camera()->setViewMatrix( view_mat );
 
 	/* create the applet to be run */

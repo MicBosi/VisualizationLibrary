@@ -153,7 +153,7 @@ public:
       case 2: m = mat4::getLookAt( vec3(3.5,1,0), vec3(0,0,0), vec3(0,1,0) ); break;
       case 3: m = mat4::getLookAt( vec3(0,3.5,0), vec3(0,0,0), vec3(0,0,-1) ); break;
       }
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->setModelingMatrix(m);
+      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->setViewMatrix(m);
     }
   }
 
@@ -173,22 +173,22 @@ public:
     mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
     mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
     mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->viewport()->set(0,0,hw,hh);
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->setProjectionAsPerspective();
+    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->setProjectionPerspective();
 
     mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
     mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
     mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->viewport()->set(hw,hh,w-hw,h-hh);
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->setProjectionAsPerspective();
+    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->setProjectionPerspective();
 
     mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
     mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
     mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->viewport()->set(0,hh,hw,h-hh);
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->setProjectionAsPerspective();
+    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->setProjectionPerspective();
 
     mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
     mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
     mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->viewport()->set(hw,0,w-hw,hh);
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->setProjectionAsPerspective();
+    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->setProjectionPerspective();
 
     Rendering* rend = mRenderingTree->subRenderings()->at(0)->as<Rendering>();
     bindManipulators( rend->camera() );

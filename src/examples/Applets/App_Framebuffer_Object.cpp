@@ -65,9 +65,9 @@ public:
 
     mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
-    mRTT_Rendering->camera()->setProjectionAsPerspective();
+    mRTT_Rendering->camera()->setProjectionPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setModelingMatrix(m);
+    mRTT_Rendering->camera()->setViewMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
@@ -89,7 +89,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setModelingMatrix(m);
+    mMainRendering->camera()->setViewMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
@@ -125,9 +125,9 @@ public:
 
     mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
-    mRTT_Rendering->camera()->setProjectionAsPerspective();
+    mRTT_Rendering->camera()->setProjectionPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setModelingMatrix(m);
+    mRTT_Rendering->camera()->setViewMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
@@ -186,7 +186,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setModelingMatrix(m);
+    mMainRendering->camera()->setViewMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
@@ -217,9 +217,9 @@ public:
 
     mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
-    mRTT_Rendering->camera()->setProjectionAsPerspective();
+    mRTT_Rendering->camera()->setProjectionPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setModelingMatrix(m);
+    mRTT_Rendering->camera()->setViewMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
@@ -245,7 +245,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setModelingMatrix(m);
+    mMainRendering->camera()->setViewMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
@@ -285,9 +285,9 @@ public:
 
     mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
-    mRTT_Rendering->camera()->setProjectionAsPerspective();
+    mRTT_Rendering->camera()->setProjectionPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setModelingMatrix(m);
+    mRTT_Rendering->camera()->setViewMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
@@ -330,7 +330,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setModelingMatrix(m);
+    mMainRendering->camera()->setViewMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
@@ -369,9 +369,9 @@ public:
 
     mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0, 0, mFBO_Size, mFBO_Size);
-    mRTT_Rendering->camera()->setProjectionAsPerspective();
+    mRTT_Rendering->camera()->setProjectionPerspective();
     vl::mat4 m = vl::mat4::getLookAt(vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mRTT_Rendering->camera()->setModelingMatrix(m);
+    mRTT_Rendering->camera()->setViewMatrix(m);
 
     /* use a framebuffer object as render target */
     vl::ref<vl::FramebufferObject> framebuffer_object = openglContext()->createFramebufferObject(mFBO_Size, mFBO_Size);
@@ -396,7 +396,7 @@ public:
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0, 0, openglContext()->framebuffer()->width(), openglContext()->framebuffer()->height());
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setModelingMatrix(m);
+    mMainRendering->camera()->setViewMatrix(m);
 
     /* use the opengl window as render target */
     mMainRendering->renderer()->setFramebuffer( openglContext()->framebuffer() );
@@ -434,9 +434,9 @@ public:
     /* setup render-to-texture rendering: render to screen then copies to texture. */
     mRTT_Rendering->camera()->viewport()->setClearColor( vl::crimson );
     mRTT_Rendering->camera()->viewport()->set(0,0,512,512);
-    mRTT_Rendering->camera()->setProjectionAsPerspective();
+    mRTT_Rendering->camera()->setProjectionPerspective();
     vl::mat4 m = vl::mat4::getLookAt( vl::vec3(0,0,10.5f), vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    mRTT_Rendering->camera()->setModelingMatrix( m );
+    mRTT_Rendering->camera()->setViewMatrix( m );
 
     /* install copy to texture callback */
     vl::ref<vl::Texture> texture = new vl::Texture( 512, 512, vl::TF_RGBA, false );
@@ -448,9 +448,9 @@ public:
     /* setup main rendering */
     mMainRendering->camera()->viewport()->setClearColor( vl::midnightblue );
     mMainRendering->camera()->viewport()->set(0,0,512,512);
-    mMainRendering->camera()->setProjectionAsPerspective();
+    mMainRendering->camera()->setProjectionPerspective();
     m = vl::mat4::getLookAt(vl::vec3(0,15,25), vl::vec3(0,0,0), vl::vec3(0,1,0));
-    mMainRendering->camera()->setModelingMatrix( m );
+    mMainRendering->camera()->setViewMatrix( m );
 
     /* populate the scene */
     addCube(texture.get(), NULL);
@@ -599,7 +599,7 @@ public:
   {
     mMainRendering->camera()->viewport()->setWidth ( w );
     mMainRendering->camera()->viewport()->setHeight( h );
-    mMainRendering->camera()->setProjectionAsPerspective();
+    mMainRendering->camera()->setProjectionPerspective();
   }
 
   virtual void updateScene()

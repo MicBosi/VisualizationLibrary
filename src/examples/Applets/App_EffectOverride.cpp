@@ -162,7 +162,7 @@ class App_EffectOverride: public BaseDemo
     Camera* camera = mSolidRendering->camera();
     camera->viewport()->setWidth ( w );
     camera->viewport()->setHeight( h );
-    camera->setProjectionAsPerspective();
+    camera->setProjectionPerspective();
   }
 
 protected:

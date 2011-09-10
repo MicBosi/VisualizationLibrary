@@ -210,7 +210,7 @@ public:
     Camera* camera = mMainRendering->camera();
     camera->viewport()->setWidth ( w );
     camera->viewport()->setHeight( h );
-    camera->setProjectionAsPerspective();
+    camera->setProjectionPerspective();
   }
 
   void loadModel(const std::vector<String>& files)

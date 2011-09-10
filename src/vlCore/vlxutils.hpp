@@ -238,7 +238,7 @@ namespace vl
           up.x()   = (float)arr->value()[6];
           up.y()   = (float)arr->value()[7];
           up.z()   = (float)arr->value()[8];
-          mat = mat * mat4::getLookAt(eye, look, up).invert();
+          mat = mat * mat4::getLookAt(eye, look, up);
         }
       }
       else
