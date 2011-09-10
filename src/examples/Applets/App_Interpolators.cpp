@@ -236,10 +236,10 @@ public:
       float look = vl::fract(eye+delta); // we have to remain in the range 0..1
       vl::fmat4 m;
       // linear interpolation
-      m = vl::fmat4::getLookAt(mLinearInterpolator->computePoint(eye),mLinearInterpolator->computePoint(look),up);
+      m = vl::fmat4::getLookAtModeling(mLinearInterpolator->computePoint(eye),mLinearInterpolator->computePoint(look),up);
       mTransform1->setLocalMatrix((vl::mat4)m);
       // Catmull-Rom interpolation
-      m = vl::fmat4::getLookAt(mCatmullRomInterpolator->computePoint(eye)*1.2f,mCatmullRomInterpolator->computePoint(look)*1.2f,up);
+      m = vl::fmat4::getLookAtModeling(mCatmullRomInterpolator->computePoint(eye)*1.2f,mCatmullRomInterpolator->computePoint(look)*1.2f,up);
       mTransform2->setLocalMatrix((vl::mat4)m);
     }
   }

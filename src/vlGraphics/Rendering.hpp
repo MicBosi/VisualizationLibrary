@@ -187,7 +187,7 @@ namespace vl
     /** Enabled/disables near/far planes optimization. When enabled, the automatic near/far clipping planes optimization
       * modifies the projection matrix of the current camera to minimize z-fighting artifacts. If later you disable
       * this feature you might want to recompute the original projection matrix of the camera using the method 
-      * vl::Camera::setProjectionAsPerspective(). */
+      * vl::Camera::setProjectionPerspective(). */
     void setNearFarClippingPlanesOptimized(bool enabled) { mNearFarClippingPlanesOptimized = enabled; }
 
     /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */

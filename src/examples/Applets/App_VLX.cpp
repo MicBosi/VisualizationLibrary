@@ -106,7 +106,7 @@ public:
     ref<Actor> act4 = vlx_serializer.loadVLB(vlb_path)->as<Actor>(); VL_CHECK(!vlx_serializer.error()); VL_CHECK(act4.get())
 
     ref<Camera> cam = new Camera;
-    cam->setModelingMatrix( mat4::getLookAt( vec3(0,0,50), vec3(0,0,0), vec3(0,1,0) ) );
+    cam->setViewMatrix( mat4::getLookAt( vec3(0,0,50), vec3(0,0,0), vec3(0,1,0) ) );
     vlt_path = globalSettings()->defaultDataPath() + "/vlx/camera.vlt";
     vlx_serializer.saveVLT(vlt_path, cam.get()); VL_CHECK(!vlx_serializer.error());
     cam = vlx_serializer.loadVLT(vlt_path)->as<Camera>(); VL_CHECK(!vlx_serializer.error());
