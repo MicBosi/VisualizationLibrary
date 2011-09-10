@@ -178,7 +178,7 @@ public:
       { "Vector Graphics", Create_App_VectorGraphics(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
       { "Culling Benchmark", Create_App_CullingBenchmark(), 10,10, 512, 512, vl::black, vl::vec3(0,500,-250), vl::vec3(0,500,-250-1) }, 
       { "ActorKdTree View", Create_App_KdTreeView(), 10,10, 512, 512, vl::black, vl::vec3(10,10,-10), vl::vec3(0,0,0) }, 
-      { "Model Profiler", Create_App_ModelProfiler(), 10,10, 640, 480, vl::skyblue, vl::vec3(0,0,0), vl::vec3(0,0,-1) }, 
+      { "Model Profiler", Create_App_ModelProfiler(), 10,10, 512, 512, vl::black, vl::vec3(0,0,0), vl::vec3(0,0,-1) }, 
       { "Deformer", Create_App_Deformer(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
       { "Volume Point Splatting", Create_App_PointSplatting(), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
       { "Volume Sliced", Create_App_VolumeSliced(), 10,10, 512, 512, vl::black, vl::vec3(0,10,35), vl::vec3(0,0,0) }, 
