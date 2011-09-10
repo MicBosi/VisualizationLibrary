@@ -66,8 +66,8 @@ public:
     rendering()->as<Rendering>()->transform()->addChild(mTransform5.get());
 
     ref<ResourceDatabase> res_db = loadResource("/models/3ds/monkey.3ds");
-    ref<Geometry> model = res_db->get<Geometry>(0);
-    model->computeNormals();
+    mModel = res_db->get<Geometry>(0);
+    mModel->computeNormals();
 
     ref<Light> light = new Light;
 
@@ -76,35 +76,35 @@ public:
     effect1->shader()->enable(EN_LIGHTING);
     effect1->shader()->enable(EN_DEPTH_TEST);
     effect1->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( model.get(), effect1.get(), mTransform1.get() );
+    sceneManager()->tree()->addActor( mModel.get(), effect1.get(), mTransform1.get() );
 
     ref<Effect> effect2 = new Effect;
     effect2->shader()->setRenderState( light.get(), 0 );
     effect2->shader()->enable(EN_LIGHTING);
     effect2->shader()->enable(EN_DEPTH_TEST);
     effect2->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( model.get(), effect2.get(), mTransform2.get() );
+    sceneManager()->tree()->addActor( mModel.get(), effect2.get(), mTransform2.get() );
 
     ref<Effect> effect3 = new Effect;
     effect3->shader()->setRenderState( light.get(), 0 );
     effect3->shader()->enable(EN_LIGHTING);
     effect3->shader()->enable(EN_DEPTH_TEST);
     effect3->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( model.get(), effect3.get(), mTransform3.get() );
+    sceneManager()->tree()->addActor( mModel.get(), effect3.get(), mTransform3.get() );
 
     ref<Effect> effect4 = new Effect;
     effect4->shader()->setRenderState( light.get(), 0 );
     effect4->shader()->enable(EN_LIGHTING);
     effect4->shader()->enable(EN_DEPTH_TEST);
     effect4->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( model.get(), effect4.get(), mTransform4.get() );
+    sceneManager()->tree()->addActor( mModel.get(), effect4.get(), mTransform4.get() );
 
     ref<Effect> effect5 = new Effect;
     effect5->shader()->setRenderState( light.get(), 0 );
     effect5->shader()->enable(EN_LIGHTING);
     effect5->shader()->enable(EN_DEPTH_TEST);
     effect5->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( model.get(), effect5.get(), mTransform5.get() );
+    sceneManager()->tree()->addActor( mModel.get(), effect5.get(), mTransform5.get() );
 
     if (Has_GLSL)
     {
@@ -144,14 +144,33 @@ public:
     }
   }
 
+  void fileDroppedEvent(const std::vector<String>& files)
+  {
+    ref<ResourceDatabase> db = loadResource(files[0]);
+    Geometry* geom = db->get<Geometry>(0);
+    if (!geom)
+      geom = db->get<Actor>(0)->lod(0)->as<Geometry>();
+    if (geom)
+    {
+      mModel->shallowCopyFrom( *geom );
+      mModel->computeBounds();
+      AABB aabb = mModel->boundingBox();
+      real norm = aabb.width() > aabb.height() ? aabb.width() : aabb.height();
+      norm = norm > aabb.depth() ? norm : aabb.depth();
+      real scale = 1.5;
+      mModel->transform( vl::mat4::getTranslation( -aabb.center() ) );
+      mModel->transform( vl::mat4::getScaling( scale / norm, scale / norm, scale / norm ) );
+    }
+  }
+
   void updateScene()
   {
     // animate the transforms
-    mTransform1->setLocalMatrix( mat4::getTranslation(-2,2,0)  * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
-    mTransform2->setLocalMatrix( mat4::getTranslation(+2,2,0)  * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
-    mTransform3->setLocalMatrix( mat4::getTranslation(-2,-2,0) * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
-    mTransform4->setLocalMatrix( mat4::getTranslation(+2,-2,0) * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
-    mTransform5->setLocalMatrix( mat4::getTranslation(0,0,0)   * mat4::getRotation( Time::currentTime()*45, 0, 1, 0) );
+    mTransform1->setLocalMatrix( mat4::getTranslation(-2,2,0)  );
+    mTransform2->setLocalMatrix( mat4::getTranslation(+2,2,0)  );
+    mTransform3->setLocalMatrix( mat4::getTranslation(-2,-2,0) );
+    mTransform4->setLocalMatrix( mat4::getTranslation(+2,-2,0) );
+    mTransform5->setLocalMatrix( mat4::getTranslation(0,0,0)   );
   }
 
 protected:
@@ -160,6 +179,7 @@ protected:
   ref<Transform> mTransform3;
   ref<Transform> mTransform4;
   ref<Transform> mTransform5;
+  ref<Geometry> mModel;
 };
 
 // Have fun!
