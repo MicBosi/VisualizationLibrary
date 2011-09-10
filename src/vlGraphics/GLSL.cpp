@@ -489,7 +489,7 @@ void GLSLProgram::preLink()
     }
   }
 
-  // Note that OpenGL 3 and 4 do not use glProgramParameter to define the layout of the 
+  // Note that OpenGL 3.2 and 4 do not use glProgramParameter to define the layout of the 
   // input/output geometry but something like this in the geometry shader:
   //
   // layout(triangles) in;
