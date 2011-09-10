@@ -133,6 +133,7 @@ void Applet::keyReleaseEvent(unsigned short, EKey key)
     String filename = Say( appletName() + " - %n%02n%02n%02n%02n.png") << time.year() << time.month() << time.dayOfMonth() << time.hour() << time.second();
     mReadPixels->setSavePath( filename );
     Log::print( Say("Saved screenshot: '%s'\n") << filename );
+    openglContext()->update();
   }
   else
   if (key == Key_U)
