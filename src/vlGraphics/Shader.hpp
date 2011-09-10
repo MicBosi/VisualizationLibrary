@@ -1980,128 +1980,128 @@ namespace vl
     GLSLProgram* getGLSLProgram();
 
     PixelTransfer* gocPixelTransfer();
-    const PixelTransfer* getPixelTransfer() const { return static_cast<const PixelTransfer*>( getRenderStateSet()->renderState( RS_PixelTransfer ) ); }
-    PixelTransfer* getPixelTransfer() { return static_cast<PixelTransfer*>( getRenderStateSet()->renderState( RS_PixelTransfer ) ); }
+    const PixelTransfer* getPixelTransfer() const { if (!getRenderStateSet()) return NULL; else return static_cast<const PixelTransfer*>( getRenderStateSet()->renderState( RS_PixelTransfer ) ); }
+    PixelTransfer* getPixelTransfer() { if (!getRenderStateSet()) return NULL; else return static_cast<PixelTransfer*>( getRenderStateSet()->renderState( RS_PixelTransfer ) ); }
 
     Hint* gocHint();
-    const Hint* getHint() const { return static_cast<const Hint*>( getRenderStateSet()->renderState( RS_Hint ) ); }
-    Hint* getHint() { return static_cast<Hint*>( getRenderStateSet()->renderState( RS_Hint ) ); }
+    const Hint* getHint() const { if (!getRenderStateSet()) return NULL; else return static_cast<const Hint*>( getRenderStateSet()->renderState( RS_Hint ) ); }
+    Hint* getHint() { if (!getRenderStateSet()) return NULL; else return static_cast<Hint*>( getRenderStateSet()->renderState( RS_Hint ) ); }
 
     CullFace* gocCullFace();
-    const CullFace* getCullFace() const { return static_cast<const CullFace*>( getRenderStateSet()->renderState( RS_CullFace ) ); }
-    CullFace* getCullFace() { return static_cast<CullFace*>( getRenderStateSet()->renderState( RS_CullFace ) ); }
+    const CullFace* getCullFace() const { if (!getRenderStateSet()) return NULL; else return static_cast<const CullFace*>( getRenderStateSet()->renderState( RS_CullFace ) ); }
+    CullFace* getCullFace() { if (!getRenderStateSet()) return NULL; else return static_cast<CullFace*>( getRenderStateSet()->renderState( RS_CullFace ) ); }
 
     FrontFace* gocFrontFace();
-    const FrontFace* getFrontFace() const { return static_cast<const FrontFace*>( getRenderStateSet()->renderState( RS_FrontFace ) ); }
-    FrontFace* getFrontFace() { return static_cast<FrontFace*>( getRenderStateSet()->renderState( RS_FrontFace ) ); }
+    const FrontFace* getFrontFace() const { if (!getRenderStateSet()) return NULL; else return static_cast<const FrontFace*>( getRenderStateSet()->renderState( RS_FrontFace ) ); }
+    FrontFace* getFrontFace() { if (!getRenderStateSet()) return NULL; else return static_cast<FrontFace*>( getRenderStateSet()->renderState( RS_FrontFace ) ); }
 
     DepthFunc* gocDepthFunc();
-    const DepthFunc* getDepthFunc() const { return static_cast<const DepthFunc*>( getRenderStateSet()->renderState( RS_DepthFunc ) ); }
-    DepthFunc* getDepthFunc() { return static_cast<DepthFunc*>( getRenderStateSet()->renderState( RS_DepthFunc ) ); }
+    const DepthFunc* getDepthFunc() const { if (!getRenderStateSet()) return NULL; else return static_cast<const DepthFunc*>( getRenderStateSet()->renderState( RS_DepthFunc ) ); }
+    DepthFunc* getDepthFunc() { if (!getRenderStateSet()) return NULL; else return static_cast<DepthFunc*>( getRenderStateSet()->renderState( RS_DepthFunc ) ); }
 
     DepthMask* gocDepthMask();
-    const DepthMask* getDepthMask() const { return static_cast<const DepthMask*>( getRenderStateSet()->renderState( RS_DepthMask ) ); }
-    DepthMask* getDepthMask() { return static_cast<DepthMask*>( getRenderStateSet()->renderState( RS_DepthMask ) ); }
+    const DepthMask* getDepthMask() const { if (!getRenderStateSet()) return NULL; else return static_cast<const DepthMask*>( getRenderStateSet()->renderState( RS_DepthMask ) ); }
+    DepthMask* getDepthMask() { if (!getRenderStateSet()) return NULL; else return static_cast<DepthMask*>( getRenderStateSet()->renderState( RS_DepthMask ) ); }
 
     Color* gocColor();
-    const Color* getColor() const { return static_cast<const Color*>( getRenderStateSet()->renderState( RS_Color ) ); }
-    Color* getColor() { return static_cast<Color*>( getRenderStateSet()->renderState( RS_Color ) ); }
+    const Color* getColor() const { if (!getRenderStateSet()) return NULL; else return static_cast<const Color*>( getRenderStateSet()->renderState( RS_Color ) ); }
+    Color* getColor() { if (!getRenderStateSet()) return NULL; else return static_cast<Color*>( getRenderStateSet()->renderState( RS_Color ) ); }
 
     SecondaryColor* gocSecondaryColor();
-    const SecondaryColor* getSecondaryColor() const { return static_cast<const SecondaryColor*>( getRenderStateSet()->renderState( RS_SecondaryColor ) ); }
-    SecondaryColor* getSecondaryColor() { return static_cast<SecondaryColor*>( getRenderStateSet()->renderState( RS_SecondaryColor ) ); }
+    const SecondaryColor* getSecondaryColor() const { if (!getRenderStateSet()) return NULL; else return static_cast<const SecondaryColor*>( getRenderStateSet()->renderState( RS_SecondaryColor ) ); }
+    SecondaryColor* getSecondaryColor() { if (!getRenderStateSet()) return NULL; else return static_cast<SecondaryColor*>( getRenderStateSet()->renderState( RS_SecondaryColor ) ); }
 
     Normal* gocNormal();
-    const Normal* getNormal() const { return static_cast<const Normal*>( getRenderStateSet()->renderState( RS_Normal ) ); }
-    Normal* getNormal() { return static_cast<Normal*>( getRenderStateSet()->renderState( RS_Normal ) ); }
+    const Normal* getNormal() const { if (!getRenderStateSet()) return NULL; else return static_cast<const Normal*>( getRenderStateSet()->renderState( RS_Normal ) ); }
+    Normal* getNormal() { if (!getRenderStateSet()) return NULL; else return static_cast<Normal*>( getRenderStateSet()->renderState( RS_Normal ) ); }
 
     ColorMask* gocColorMask();
-    const ColorMask* getColorMask() const { return static_cast<const ColorMask*>( getRenderStateSet()->renderState( RS_ColorMask ) ); }
-    ColorMask* getColorMask() { return static_cast<ColorMask*>( getRenderStateSet()->renderState( RS_ColorMask ) ); }
+    const ColorMask* getColorMask() const { if (!getRenderStateSet()) return NULL; else return static_cast<const ColorMask*>( getRenderStateSet()->renderState( RS_ColorMask ) ); }
+    ColorMask* getColorMask() { if (!getRenderStateSet()) return NULL; else return static_cast<ColorMask*>( getRenderStateSet()->renderState( RS_ColorMask ) ); }
 
     PolygonMode* gocPolygonMode();
-    const PolygonMode* getPolygonMode() const { return static_cast<const PolygonMode*>( getRenderStateSet()->renderState( RS_PolygonMode ) ); }
-    PolygonMode* getPolygonMode() { return static_cast<PolygonMode*>( getRenderStateSet()->renderState( RS_PolygonMode ) ); }
+    const PolygonMode* getPolygonMode() const { if (!getRenderStateSet()) return NULL; else return static_cast<const PolygonMode*>( getRenderStateSet()->renderState( RS_PolygonMode ) ); }
+    PolygonMode* getPolygonMode() { if (!getRenderStateSet()) return NULL; else return static_cast<PolygonMode*>( getRenderStateSet()->renderState( RS_PolygonMode ) ); }
 
     ShadeModel* gocShadeModel();
-    const ShadeModel* getShadeModel() const { return static_cast<const ShadeModel*>( getRenderStateSet()->renderState( RS_ShadeModel ) ); }
-    ShadeModel* getShadeModel() { return static_cast<ShadeModel*>( getRenderStateSet()->renderState( RS_ShadeModel ) ); }
+    const ShadeModel* getShadeModel() const { if (!getRenderStateSet()) return NULL; else return static_cast<const ShadeModel*>( getRenderStateSet()->renderState( RS_ShadeModel ) ); }
+    ShadeModel* getShadeModel() { if (!getRenderStateSet()) return NULL; else return static_cast<ShadeModel*>( getRenderStateSet()->renderState( RS_ShadeModel ) ); }
 
     BlendEquation* gocBlendEquation();
-    const BlendEquation* getBlendEquation() const { return static_cast<const BlendEquation*>( getRenderStateSet()->renderState( RS_BlendEquation ) ); }
-    BlendEquation* getBlendEquation() { return static_cast<BlendEquation*>( getRenderStateSet()->renderState( RS_BlendEquation ) ); }
+    const BlendEquation* getBlendEquation() const { if (!getRenderStateSet()) return NULL; else return static_cast<const BlendEquation*>( getRenderStateSet()->renderState( RS_BlendEquation ) ); }
+    BlendEquation* getBlendEquation() { if (!getRenderStateSet()) return NULL; else return static_cast<BlendEquation*>( getRenderStateSet()->renderState( RS_BlendEquation ) ); }
 
     AlphaFunc* gocAlphaFunc();
-    const AlphaFunc* getAlphaFunc() const { return static_cast<const AlphaFunc*>( getRenderStateSet()->renderState( RS_AlphaFunc ) ); }
-    AlphaFunc* getAlphaFunc() { return static_cast<AlphaFunc*>( getRenderStateSet()->renderState( RS_AlphaFunc ) ); }
+    const AlphaFunc* getAlphaFunc() const { if (!getRenderStateSet()) return NULL; else return static_cast<const AlphaFunc*>( getRenderStateSet()->renderState( RS_AlphaFunc ) ); }
+    AlphaFunc* getAlphaFunc() { if (!getRenderStateSet()) return NULL; else return static_cast<AlphaFunc*>( getRenderStateSet()->renderState( RS_AlphaFunc ) ); }
 
     Material* gocMaterial();
-    const Material* getMaterial() const { return static_cast<const Material*>( getRenderStateSet()->renderState( RS_Material ) ); }
-    Material* getMaterial() { return static_cast<Material*>( getRenderStateSet()->renderState( RS_Material ) ); }
+    const Material* getMaterial() const { if (!getRenderStateSet()) return NULL; else return static_cast<const Material*>( getRenderStateSet()->renderState( RS_Material ) ); }
+    Material* getMaterial() { if (!getRenderStateSet()) return NULL; else return static_cast<Material*>( getRenderStateSet()->renderState( RS_Material ) ); }
 
     LightModel* gocLightModel();
-    const LightModel* getLightModel() const { return static_cast<const LightModel*>( getRenderStateSet()->renderState( RS_LightModel ) ); }
-    LightModel* getLightModel() { return static_cast<LightModel*>( getRenderStateSet()->renderState( RS_LightModel ) ); }
+    const LightModel* getLightModel() const { if (!getRenderStateSet()) return NULL; else return static_cast<const LightModel*>( getRenderStateSet()->renderState( RS_LightModel ) ); }
+    LightModel* getLightModel() { if (!getRenderStateSet()) return NULL; else return static_cast<LightModel*>( getRenderStateSet()->renderState( RS_LightModel ) ); }
 
     Fog* gocFog();
-    const Fog* getFog() const { return static_cast<const Fog*>( getRenderStateSet()->renderState( RS_Fog ) ); }
-    Fog* getFog() { return static_cast<Fog*>( getRenderStateSet()->renderState( RS_Fog ) ); }
+    const Fog* getFog() const { if (!getRenderStateSet()) return NULL; else return static_cast<const Fog*>( getRenderStateSet()->renderState( RS_Fog ) ); }
+    Fog* getFog() { if (!getRenderStateSet()) return NULL; else return static_cast<Fog*>( getRenderStateSet()->renderState( RS_Fog ) ); }
 
     PolygonOffset* gocPolygonOffset();
-    const PolygonOffset* getPolygonOffset() const { return static_cast<const PolygonOffset*>( getRenderStateSet()->renderState( RS_PolygonOffset ) ); }
-    PolygonOffset* getPolygonOffset() { return static_cast<PolygonOffset*>( getRenderStateSet()->renderState( RS_PolygonOffset ) ); }
+    const PolygonOffset* getPolygonOffset() const { if (!getRenderStateSet()) return NULL; else return static_cast<const PolygonOffset*>( getRenderStateSet()->renderState( RS_PolygonOffset ) ); }
+    PolygonOffset* getPolygonOffset() { if (!getRenderStateSet()) return NULL; else return static_cast<PolygonOffset*>( getRenderStateSet()->renderState( RS_PolygonOffset ) ); }
 
     LogicOp* gocLogicOp();
-    const LogicOp* getLogicOp() const { return static_cast<const LogicOp*>( getRenderStateSet()->renderState( RS_LogicOp ) ); }
-    LogicOp* getLogicOp() { return static_cast<LogicOp*>( getRenderStateSet()->renderState( RS_LogicOp ) ); }
+    const LogicOp* getLogicOp() const { if (!getRenderStateSet()) return NULL; else return static_cast<const LogicOp*>( getRenderStateSet()->renderState( RS_LogicOp ) ); }
+    LogicOp* getLogicOp() { if (!getRenderStateSet()) return NULL; else return static_cast<LogicOp*>( getRenderStateSet()->renderState( RS_LogicOp ) ); }
 
     DepthRange* gocDepthRange();
-    const DepthRange* getDepthRange() const { return static_cast<const DepthRange*>( getRenderStateSet()->renderState( RS_DepthRange ) ); }
-    DepthRange* getDepthRange() { return static_cast<DepthRange*>( getRenderStateSet()->renderState( RS_DepthRange ) ); }
+    const DepthRange* getDepthRange() const { if (!getRenderStateSet()) return NULL; else return static_cast<const DepthRange*>( getRenderStateSet()->renderState( RS_DepthRange ) ); }
+    DepthRange* getDepthRange() { if (!getRenderStateSet()) return NULL; else return static_cast<DepthRange*>( getRenderStateSet()->renderState( RS_DepthRange ) ); }
 
     LineWidth* gocLineWidth();
-    const LineWidth* getLineWidth() const { return static_cast<const LineWidth*>( getRenderStateSet()->renderState( RS_LineWidth ) ); }
-    LineWidth* getLineWidth() { return static_cast<LineWidth*>( getRenderStateSet()->renderState( RS_LineWidth ) ); }
+    const LineWidth* getLineWidth() const { if (!getRenderStateSet()) return NULL; else return static_cast<const LineWidth*>( getRenderStateSet()->renderState( RS_LineWidth ) ); }
+    LineWidth* getLineWidth() { if (!getRenderStateSet()) return NULL; else return static_cast<LineWidth*>( getRenderStateSet()->renderState( RS_LineWidth ) ); }
 
     PointSize* gocPointSize();
-    const PointSize* getPointSize() const { return static_cast<const PointSize*>( getRenderStateSet()->renderState( RS_PointSize ) ); }
-    PointSize* getPointSize() { return static_cast<PointSize*>( getRenderStateSet()->renderState( RS_PointSize ) ); }
+    const PointSize* getPointSize() const { if (!getRenderStateSet()) return NULL; else return static_cast<const PointSize*>( getRenderStateSet()->renderState( RS_PointSize ) ); }
+    PointSize* getPointSize() { if (!getRenderStateSet()) return NULL; else return static_cast<PointSize*>( getRenderStateSet()->renderState( RS_PointSize ) ); }
 
     LineStipple* gocLineStipple();
-    const LineStipple* getLineStipple() const { return static_cast<const LineStipple*>( getRenderStateSet()->renderState( RS_LineStipple ) ); }
-    LineStipple* getLineStipple() { return static_cast<LineStipple*>( getRenderStateSet()->renderState( RS_LineStipple ) ); }
+    const LineStipple* getLineStipple() const { if (!getRenderStateSet()) return NULL; else return static_cast<const LineStipple*>( getRenderStateSet()->renderState( RS_LineStipple ) ); }
+    LineStipple* getLineStipple() { if (!getRenderStateSet()) return NULL; else return static_cast<LineStipple*>( getRenderStateSet()->renderState( RS_LineStipple ) ); }
 
     PolygonStipple* gocPolygonStipple();
-    const PolygonStipple* getPolygonStipple() const { return static_cast<const PolygonStipple*>( getRenderStateSet()->renderState( RS_PolygonStipple ) ); }
-    PolygonStipple* getPolygonStipple() { return static_cast<PolygonStipple*>( getRenderStateSet()->renderState( RS_PolygonStipple ) ); }
+    const PolygonStipple* getPolygonStipple() const { if (!getRenderStateSet()) return NULL; else return static_cast<const PolygonStipple*>( getRenderStateSet()->renderState( RS_PolygonStipple ) ); }
+    PolygonStipple* getPolygonStipple() { if (!getRenderStateSet()) return NULL; else return static_cast<PolygonStipple*>( getRenderStateSet()->renderState( RS_PolygonStipple ) ); }
 
     PointParameter* gocPointParameter();
-    const PointParameter* getPointParameter() const { return static_cast<const PointParameter*>( getRenderStateSet()->renderState( RS_PointParameter ) ); }
-    PointParameter* getPointParameter() { return static_cast<PointParameter*>( getRenderStateSet()->renderState( RS_PointParameter ) ); }
+    const PointParameter* getPointParameter() const { if (!getRenderStateSet()) return NULL; else return static_cast<const PointParameter*>( getRenderStateSet()->renderState( RS_PointParameter ) ); }
+    PointParameter* getPointParameter() { if (!getRenderStateSet()) return NULL; else return static_cast<PointParameter*>( getRenderStateSet()->renderState( RS_PointParameter ) ); }
 
     StencilFunc* gocStencilFunc();
-    const StencilFunc* getStencilFunc() const { return static_cast<const StencilFunc*>( getRenderStateSet()->renderState( RS_StencilFunc ) ); }
-    StencilFunc* getStencilFunc() { return static_cast<StencilFunc*>( getRenderStateSet()->renderState( RS_StencilFunc ) ); }
+    const StencilFunc* getStencilFunc() const { if (!getRenderStateSet()) return NULL; else return static_cast<const StencilFunc*>( getRenderStateSet()->renderState( RS_StencilFunc ) ); }
+    StencilFunc* getStencilFunc() { if (!getRenderStateSet()) return NULL; else return static_cast<StencilFunc*>( getRenderStateSet()->renderState( RS_StencilFunc ) ); }
 
     StencilOp* gocStencilOp();
-    const StencilOp* getStencilOp() const { return static_cast<const StencilOp*>( getRenderStateSet()->renderState( RS_StencilOp ) ); }
-    StencilOp* getStencilOp() { return static_cast<StencilOp*>( getRenderStateSet()->renderState( RS_StencilOp ) ); }
+    const StencilOp* getStencilOp() const { if (!getRenderStateSet()) return NULL; else return static_cast<const StencilOp*>( getRenderStateSet()->renderState( RS_StencilOp ) ); }
+    StencilOp* getStencilOp() { if (!getRenderStateSet()) return NULL; else return static_cast<StencilOp*>( getRenderStateSet()->renderState( RS_StencilOp ) ); }
 
     StencilMask* gocStencilMask();
-    const StencilMask* getStencilMask() const { return static_cast<const StencilMask*>( getRenderStateSet()->renderState( RS_StencilMask ) ); }
-    StencilMask* getStencilMask() { return static_cast<StencilMask*>( getRenderStateSet()->renderState( RS_StencilMask ) ); }
+    const StencilMask* getStencilMask() const { if (!getRenderStateSet()) return NULL; else return static_cast<const StencilMask*>( getRenderStateSet()->renderState( RS_StencilMask ) ); }
+    StencilMask* getStencilMask() { if (!getRenderStateSet()) return NULL; else return static_cast<StencilMask*>( getRenderStateSet()->renderState( RS_StencilMask ) ); }
 
     BlendColor* gocBlendColor();
-    const BlendColor* getBlendColor() const { return static_cast<const BlendColor*>( getRenderStateSet()->renderState( RS_BlendColor ) ); }
-    BlendColor* getBlendColor() { return static_cast<BlendColor*>( getRenderStateSet()->renderState( RS_BlendColor ) ); }
+    const BlendColor* getBlendColor() const { if (!getRenderStateSet()) return NULL; else return static_cast<const BlendColor*>( getRenderStateSet()->renderState( RS_BlendColor ) ); }
+    BlendColor* getBlendColor() { if (!getRenderStateSet()) return NULL; else return static_cast<BlendColor*>( getRenderStateSet()->renderState( RS_BlendColor ) ); }
 
     BlendFunc* gocBlendFunc();
-    const BlendFunc* getBlendFunc() const { return static_cast<const BlendFunc*>( getRenderStateSet()->renderState( RS_BlendFunc ) ); }
-    BlendFunc* getBlendFunc() { return static_cast<BlendFunc*>( getRenderStateSet()->renderState( RS_BlendFunc ) ); }
+    const BlendFunc* getBlendFunc() const { if (!getRenderStateSet()) return NULL; else return static_cast<const BlendFunc*>( getRenderStateSet()->renderState( RS_BlendFunc ) ); }
+    BlendFunc* getBlendFunc() { if (!getRenderStateSet()) return NULL; else return static_cast<BlendFunc*>( getRenderStateSet()->renderState( RS_BlendFunc ) ); }
 
     SampleCoverage* gocSampleCoverage();
-    const SampleCoverage* getSampleCoverage() const { return static_cast<const SampleCoverage*>( getRenderStateSet()->renderState( RS_SampleCoverage ) ); }
-    SampleCoverage* getSampleCoverage() { return static_cast<SampleCoverage*>( getRenderStateSet()->renderState( RS_SampleCoverage ) ); }
+    const SampleCoverage* getSampleCoverage() const { if (!getRenderStateSet()) return NULL; else return static_cast<const SampleCoverage*>( getRenderStateSet()->renderState( RS_SampleCoverage ) ); }
+    SampleCoverage* getSampleCoverage() { if (!getRenderStateSet()) return NULL; else return static_cast<SampleCoverage*>( getRenderStateSet()->renderState( RS_SampleCoverage ) ); }
 
     // indexed render states
 
