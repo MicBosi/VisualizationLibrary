@@ -66,10 +66,8 @@ void RayIntersector::intersect(Actor* act)
 //-----------------------------------------------------------------------------
 void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
 {
-  ArrayFloat3* vert3f  = cast<ArrayFloat3>(geom->vertexArray());
-  ArrayDouble3* vert3d = cast<ArrayDouble3>(geom->vertexArray());
-  ArrayHFloat3* vert3h = cast<ArrayHFloat3>(geom->vertexArray());
-  if (vert3f)
+  ArrayAbstract* vertices = geom->vertexArray();
+  if (vertices)
   {
     fmat4 matrix = act->transform() ? (fmat4)act->transform()->worldMatrix() : fmat4();
     for(int i=0; i<geom->drawCalls()->size(); ++i)
@@ -78,55 +76,9 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
       int itri = 0;
       for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next(), ++itri)
       {
-        fvec3 a = vert3f->at(trit.a());
-        fvec3 b = vert3f->at(trit.b());
-        fvec3 c = vert3f->at(trit.c());
-        if (act->transform())
-        {
-          a = matrix * a;
-          b = matrix * b;
-          c = matrix * c;
-        }
-        intersectTriangle(a, b, c, act, geom, prim, itri);
-      }
-    }
-  }
-  else
-  if (vert3d)
-  {
-    dmat4 matrix = act->transform() ? (dmat4)act->transform()->worldMatrix() : dmat4();
-    for(int i=0; i<geom->drawCalls()->size(); ++i)
-    {
-      DrawCall* prim = geom->drawCalls()->at(i);
-      int itri = 0;
-      for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next(), ++itri)
-      {
-        dvec3 a = vert3d->at(trit.a());
-        dvec3 b = vert3d->at(trit.b());
-        dvec3 c = vert3d->at(trit.c());
-        if (act->transform())
-        {
-          a = matrix * a;
-          b = matrix * b;
-          c = matrix * c;
-        }
-        intersectTriangle(a, b, c, act, geom, prim, itri);
-      }
-    }
-  }
-  else
-  if (vert3h)
-  {
-    fmat4 matrix = act->transform() ? (fmat4)act->transform()->worldMatrix() : fmat4();
-    for(int i=0; i<geom->drawCalls()->size(); ++i)
-    {
-      DrawCall* prim = geom->drawCalls()->at(i);
-      int itri = 0;
-      for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next(), ++itri)
-      {
-        fvec3 a = (fvec3)vert3h->at(trit.a());
-        fvec3 b = (fvec3)vert3h->at(trit.b());
-        fvec3 c = (fvec3)vert3h->at(trit.c());
+        fvec3 a = vertices->getAsVec3(trit.a());
+        fvec3 b = vertices->getAsVec3(trit.b());
+        fvec3 c = vertices->getAsVec3(trit.c());
         if (act->transform())
         {
           a = matrix * a;
