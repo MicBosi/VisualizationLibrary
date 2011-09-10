@@ -393,15 +393,20 @@ bool PlyLoader::readHeader(TextStream* line_reader)
 ref<ResourceDatabase> PlyLoader::loadPly(VirtualFile* file)
 {
   ref<TextStream> line_reader = new TextStream;
+
   line_reader->setInputFile(file);
+
   readHeader(line_reader.get());
+
   if (binary())
     readElements(file);
   else
     readElements(line_reader.get());
   file->close();
+
   if (mIndices.empty() || !mVerts)
     return NULL;
+
   ref<Geometry> geom = new Geometry;
   geom->setVertexArray(mVerts.get());
   geom->setNormalArray(mNormals.get());
@@ -410,13 +415,23 @@ ref<ResourceDatabase> PlyLoader::loadPly(VirtualFile* file)
   geom->drawCalls()->push_back(de.get());
   de->indexBuffer()->resize(mIndices.size());
   memcpy(de->indexBuffer()->ptr(), &mIndices[0], sizeof(unsigned int)*mIndices.size());
-  ref<ResourceDatabase> res_db = new ResourceDatabase;
+
+  // Effect
   ref<Effect> effect = new Effect;
+
+  // Detph test
+  effect->shader()->enable(EN_DEPTH_TEST);
+
+  // Lighting
+  if( mNormals )
+    effect->shader()->enable(EN_LIGHTING);
+
+  // note: we don't insert any light
   if (mColors)
     effect->shader()->gocMaterial()->setColorMaterialEnabled(true);
-  res_db->resources().push_back( geom );
+
+  ref<ResourceDatabase> res_db = new ResourceDatabase;
   res_db->resources().push_back( new Actor(geom.get(), effect.get(), NULL ) );
-  res_db->resources().push_back( effect.get() );
   return res_db;
 }
 //-----------------------------------------------------------------------------
