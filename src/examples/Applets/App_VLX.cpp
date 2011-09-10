@@ -39,6 +39,7 @@
 #include <vlGraphics/DistanceLODEvaluator.hpp>
 #include <vlGraphics/PixelLODEvaluator.hpp>
 #include <vlGraphics/TriangleStripGenerator.hpp>
+#include <vlGraphics/expandResourceDatabase.hpp>
 
 using namespace vl;
 
@@ -324,7 +325,7 @@ public:
 
     // Expand resources: extracts and sorts Shaders, Effects, Renderables, RenderStates, Transforms etc. so that the resulting VLX files look more readable.
     // Without this the resources are inlined in the VLXStructure that uses it the first time.
-    res_db->expand();
+    expandResourceDatabase(res_db.get());
 
     String vlt_path;
     vlt_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlt";
