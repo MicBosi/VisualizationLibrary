@@ -59,9 +59,6 @@ namespace vl
 
     std::vector< ref<Object> >& resources() { return mResources; }
 
-    // Extracts and sorts Shaders, Effects, Renderables, RenderStates, Transforms etc. from their parent objects.
-    void expand();
-
     //! Starts to look for the next object of the specified type from the given position.
     template<class T>
     T* next(int& cur_pos) const
