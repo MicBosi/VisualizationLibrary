@@ -100,7 +100,7 @@ public:
     {
       rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
       // restore default perspective near/far values
-      rendering()->as<Rendering>()->camera()->setProjectionAsPerspective(60.0f, 0.5f, 10000.0f);
+      rendering()->as<Rendering>()->camera()->setProjectionPerspective(60.0f, 0.5f, 10000.0f);
     }
   }
 

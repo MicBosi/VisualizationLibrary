@@ -153,7 +153,7 @@ public:
     vl::Camera* camera = mRendering->camera();
     camera->viewport()->setWidth ( w );
     camera->viewport()->setHeight( h );
-    camera->setProjectionAsPerspective();
+    camera->setProjectionPerspective();
   }
 
 protected:

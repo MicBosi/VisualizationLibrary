@@ -491,7 +491,7 @@ public:
     // reset actors and camera
     sceneManager()->tree()->actors()->clear();
     sceneManager()->tree()->addActor( mTextActor.get() );
-    rendering()->as<vl::Rendering>()->camera()->setModelingMatrix( vl::mat4::getLookAt( vl::vec3(5,10,20), vl::vec3(0,0,0), vl::vec3(0,1,0)) );
+    rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4::getLookAt( vl::vec3(5,10,20), vl::vec3(0,0,0), vl::vec3(0,1,0)) );
 
     float range = 5.0f;
     vl::fvec3 min_corner(-range,-range,-range);
