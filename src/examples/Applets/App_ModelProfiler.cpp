@@ -41,6 +41,7 @@
 #include <vlGraphics/TriangleStripGenerator.hpp>
 #include <vlGraphics/DoubleVertexRemover.hpp>
 #include <vlGraphics/FontManager.hpp>
+#include <vlGraphics/plugins/ioVLX.hpp>
 
 using namespace vl;
 
@@ -69,6 +70,8 @@ public:
     ref<Effect> fx_solid = new Effect;
     fx_solid->shader()->enable(EN_DEPTH_TEST);
 
+    mEffects.clear();
+
     for(unsigned int i=0; i<files.size(); ++i)
     {
       ref<ResourceDatabase> resource_db = loadResource(files[i], false);
@@ -79,29 +82,46 @@ public:
         continue;
       }
 
+#if 0
+      // VLX save
+      String save_path = files[i].extractPath() + files[i].extractFileName() + ".vlb";
+      saveVLB(save_path, resource_db.get());
+#endif
+
       showStatistics(resource_db);
 
       for(size_t i=0; i<resource_db->resources().size(); ++i)
       {
-        Actor* act     = resource_db->resources()[i]->as<Actor>();
-        Geometry* geom = resource_db->resources()[i]->as<Geometry>();
+        Actor* act = resource_db->resources()[i]->as<Actor>();
 
-        if (act)
-        {
-          sceneManager()->tree()->addActor(act);
-          if ( act->effect()->shader()->isEnabled(EN_LIGHTING) && !act->effect()->shader()->getLight(0) )
-            act->effect()->shader()->setRenderState(camera_light.get(), 0);
-        }
-        else
+        if (!act)
+          continue;
+
+        Geometry* geom = act->lod(0)->as<Geometry>();
+        geom->computeNormals();
+
+        sceneManager()->tree()->addActor(act);
+
         if (geom && geom->normalArray())
         {
-          sceneManager()->tree()->addActor(geom, fx_lit.get(), NULL);
+          act->effect()->shader()->enable(EN_LIGHTING);
+          act->effect()->shader()->gocLightModel()->setTwoSide(true);
         }
-        else
+
         if (geom && !geom->normalArray())
         {
-          sceneManager()->tree()->addActor(geom, fx_solid.get(), NULL);
+          act->effect()->shader()->disable(EN_LIGHTING);
         }
+
+        if ( act->effect()->shader()->isEnabled(EN_LIGHTING) && !act->effect()->shader()->getLight(0) )
+          act->effect()->shader()->setRenderState(camera_light.get(), 0);
+
+        act->effect()->shader()->enable(EN_DEPTH_TEST);
+
+        VL_CHECK(act);
+        VL_CHECK(act->effect());
+
+        mEffects.insert( act->effect() );
       }
     }
 
@@ -113,9 +133,6 @@ public:
     const AABB& scene_aabb = sceneManager()->boundingBox();
     real speed = (scene_aabb.width() + scene_aabb.height() + scene_aabb.depth()) / 20.0f;
     ghostCameraManipulator()->setMovementSpeed(speed);
-
-    // update the rendering
-    openglContext()->update();
   }
 
   void showStatistics(ref<ResourceDatabase> res_db)
@@ -157,11 +174,50 @@ public:
 
   void fileDroppedEvent(const std::vector<String>& files)
   {
-    loadModel(files);
+    if (!loadShaders(files))
+    {
+      loadModel(files);
+      loadShaders(mLastShaders);
+    }
+
+    // update the rendering
+    openglContext()->update();
+  }
+
+  bool loadShaders(const std::vector<String>& files)
+  {
+    ref<GLSLProgram> glsl = new GLSLProgram;
+    for(size_t i=0; i<files.size(); ++i)
+    {
+      if (files[i].endsWith(".fs"))
+        glsl->attachShader( new GLSLFragmentShader( files[i] ) );
+      else
+      if (files[i].endsWith(".vs"))
+        glsl->attachShader( new GLSLVertexShader( files[i] ) );
+      else
+      if (files[i].endsWith(".gs"))
+        glsl->attachShader( new GLSLGeometryShader( files[i] ) );
+      else
+      if (files[i].endsWith(".tcs"))
+        glsl->attachShader( new GLSLTessControlShader( files[i] ) );
+      else
+      if (files[i].endsWith(".tes"))
+        glsl->attachShader( new GLSLTessEvaluationShader( files[i] ) );
+    }
+
+    if ( glsl->shaderCount() && glsl->linkProgram())
+    {
+      for( std::set< ref<Effect> >::iterator it = mEffects.begin(); it != mEffects.end() ; ++it )
+        it->get_writable()->shader()->setRenderState( glsl.get() );
+      mLastShaders = files;
+    }
+
+    return glsl->shaderCount() != 0;
   }
 
 protected:
-  // nothing
+  std::set< ref<Effect> > mEffects;
+  std::vector<String> mLastShaders;
 };
 
 // Have fun!
