@@ -13,6 +13,7 @@
 
 varying vec3 N;
 varying vec3 L;
+
 void main(void)
 {
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
