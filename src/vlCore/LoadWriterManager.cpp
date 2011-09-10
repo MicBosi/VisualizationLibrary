@@ -32,6 +32,7 @@
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
+#include <vlCore/Time.hpp>
 
 using namespace vl;
 
@@ -52,6 +53,20 @@ const ResourceLoadWriter* LoadWriterManager::findWriter(VirtualFile* file) const
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> LoadWriterManager::loadResource(const String& path, bool quick) const 
 {
+  struct TimerClass
+  {
+    TimerClass(const String* path): mPath(path)
+    {
+      mTimer.start();
+    }
+    ~TimerClass()
+    {
+      Log::debug( Say("loadResource('%s'): %ns\n") << *mPath << mTimer.elapsed() );
+    }
+    Time mTimer;
+    const String* mPath;
+  } timer(&path);
+
   ref<VirtualFile> file = locateFile(path);
   if (file)
     return loadResource(file.get(), quick);
