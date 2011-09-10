@@ -177,7 +177,7 @@ void Rendering::render()
   // camera transform update (can be redundant)
 
   if (camera()->boundTransform())
-    camera()->setLocalMatrix( camera()->boundTransform()->worldMatrix() );
+    camera()->setModelingMatrix( camera()->boundTransform()->worldMatrix() );
 
   VL_CHECK_OGL()
 
@@ -190,8 +190,8 @@ void Rendering::render()
   {
     // perform only near culling with plane at distance 0
     camera()->frustum().planes().resize(5);
-    camera()->frustum().planes()[4] = Plane( camera()->localMatrix().getT(), 
-                                             camera()->localMatrix().getZ());
+    camera()->frustum().planes()[4] = Plane( camera()->modelingMatrix().getT(), 
+                                             camera()->modelingMatrix().getZ());
   }
 
   actorQueue()->clear();

@@ -62,7 +62,7 @@ namespace vl
         return 0;
 
       vec3 center = actor->transform() ? actor->transform()->worldMatrix() * actor->lod(0)->boundingBox().center() : actor->lod(0)->boundingBox().center();
-      double dist = (camera->localMatrix().getT() - center).length();
+      double dist = (camera->modelingMatrix().getT() - center).length();
 
       // we assume the distances are sorted in increasing order
       int i=0;

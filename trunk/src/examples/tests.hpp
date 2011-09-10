@@ -116,7 +116,7 @@ public:
     /* define the camera position and orientation */
     vl::vec3 up = vl::vec3(0,1,0);
     vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up);
-    applet->rendering()->as<vl::Rendering>()->camera()->setLocalMatrix( view_mat );
+    applet->rendering()->as<vl::Rendering>()->camera()->setModelingMatrix( view_mat );
   }
 
   class TestEntry
@@ -214,9 +214,11 @@ public:
       glc->setMakeGLESFriendly(true);
 #endif
       vl::defLoadWriterManager()->loadCallbacks().push_back(glc.get());
+      
+      int itest = test-1;
 
       /* run test */
-      runGUI(tests[test-1].title, tests[test-1].applet.get(), format, tests[test-1].x, tests[test-1].y, tests[test-1].width, tests[test-1].height, tests[test-1].bk_color, tests[test-1].eye, tests[test-1].center );
+      runGUI(tests[itest].title, tests[itest].applet.get(), format, tests[itest].x, tests[itest].y, tests[itest].width, tests[itest].height, tests[itest].bk_color, tests[itest].eye, tests[itest].center );
 
       /* shutdown Visualization Library */
       vl::VisualizationLibrary::shutdown();

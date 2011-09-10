@@ -174,7 +174,7 @@ public:
     vl::vec3 eye( 130*t+5, t*20+5, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 15.0f, 0, 1, 0 ) * eye;
     vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    rendering()->as<vl::Rendering>()->camera()->setLocalMatrix(m);
+    rendering()->as<vl::Rendering>()->camera()->setModelingMatrix(m);
   }
 };
 

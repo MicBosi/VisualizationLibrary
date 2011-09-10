@@ -142,8 +142,8 @@ void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real 
   vec3 center = aabb.center();
 
   Sphere sphere(aabb);
-  const vec3& C = localMatrix().getT();
-  const vec3& V = -localMatrix().getZ();
+  const vec3& C = modelingMatrix().getT();
+  const vec3& V = -modelingMatrix().getZ();
   const real  R = sphere.radius();
 
   // extract the frustum planes based on the current view and projection matrices
@@ -163,7 +163,7 @@ void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real 
   }
   real dist = max_t;
   mat4 m = mat4::getLookAt(center+dir*dist*bias,center,up);
-  setLocalMatrix(m);
+  setModelingMatrix(m);
 }
 //-----------------------------------------------------------------------------
 void Camera::computeFrustumPlanes()
@@ -234,12 +234,12 @@ void Camera::setProjectionAsOrtho2D(real offset)
 void Camera::setViewMatrixAsLookAt( const vec3& eye, const vec3& center, const vec3& up)
 {
   // note: this sets both the local matrix and the view matrix
-  setLocalMatrix( mat4::getLookAt(eye, center, up) );
+  setModelingMatrix( mat4::getLookAt(eye, center, up) );
 }
 //-----------------------------------------------------------------------------
 void Camera::getViewMatrixAsLookAt( vec3& eye, vec3& look, vec3& up, vec3& right) const
 {
-  mLocalMatrix.getAsLookAt(eye, look, up, right);
+  mModelingMatrix.getAsLookAt(eye, look, up, right);
 }
 //-----------------------------------------------------------------------------
 bool Camera::project(const vec4& in, vec4& out) const
@@ -338,7 +338,7 @@ Ray Camera::computeRay(int winx, int winy)
   {
     vl::Ray ray;
     ray.setOrigin(out.xyz());
-    ray.setDirection( (out.xyz() - localMatrix().getT()).normalize() );
+    ray.setDirection( (out.xyz() - modelingMatrix().getT()).normalize() );
     return ray;
   }
 }

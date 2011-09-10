@@ -187,7 +187,7 @@ public:
 
     // camera setup
     rendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4::getIdentity(), vl::PMT_UserProjection );
-    rendering()->as<Rendering>()->camera()->setLocalMatrix( mat4::getIdentity() );
+    rendering()->as<Rendering>()->camera()->setModelingMatrix( mat4::getIdentity() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
