@@ -33,6 +33,7 @@
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/Time.hpp>
+#include <vlCore/GZipCodec.hpp>
 
 using namespace vl;
 
@@ -68,8 +69,19 @@ ref<ResourceDatabase> LoadWriterManager::loadResource(const String& path, bool q
   } timer(&path);
 
   ref<VirtualFile> file = locateFile(path);
+
   if (file)
+  {
+    if (path.endsWith(".gz") || path.endsWith(".GZ"))
+    {
+      ref<GZipCodec> gz = new GZipCodec;
+      gz->setStream(file.get());
+      // remove .gz suffix so that correct loader can be picked up
+      gz->setPath( file->path().left(-3) );
+      file = gz;
+    }
     return loadResource(file.get(), quick);
+  }
   else
     return NULL;
 }
