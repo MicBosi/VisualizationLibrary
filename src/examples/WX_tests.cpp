@@ -133,10 +133,10 @@ bool MyApp::OnInit()
   wxChar** argv = GetInstance()->argv;
 
   if (argc >= 2)
-    test = vl::String(argv[1]).toInt();
+    test = atoi(argv[1]);
 
   TestBatteryWX test_battery;
-  test_battery.run(test, vl::OpenGLContextFormat()/*not used*/);
+  test_battery.run(test, argv[1], vl::OpenGLContextFormat()/*not used*/);
 
   return true;
 }
