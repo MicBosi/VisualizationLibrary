@@ -15,13 +15,15 @@ using namespace vl;
 
 void printHelp()
 {
+  printf("\nusage:\n");
+  printf("  vlxtool -in file1 file file3 ... -out file_out\n");
   printf("\nexamples:\n");
-  printf("- Merges the contents of file1.obj, file2.3ds and file3.vlb into file_out.vlt:\n");
-  printf("  vlxtool -in file1.obj file2.3ds file3.vlb -out file_out.vlt\n\n");
-  printf("- Converts a VLT file to its VLB representation:\n");
-  printf("  vlxtool -in file.vlt -out file.vlb\n\n");
-  printf("- Converts a VLB file to its VLT representation:\n");
-  printf("  vlxtool -in file.vlb -out file.vlt\n\n");
+  printf("  >  vlxtool -in file1.obj file2.3ds file3.vlb -out file_out.vlt\n");
+  printf("     Merges the contents of file1.obj, file2.3ds and file3.vlb into file_out.vlt:\n\n");
+  printf("  >  vlxtool -in file.vlt -out file.vlb\n");
+  printf("     Converts a VLT file to its VLB representation:\n\n");
+  printf("  >  vlxtool -in file.vlb -out file.vlt\n");
+  printf("     Converts a VLB file to its VLT representation:\n\n");
 }
 
 int main(int argc, const char* argv[])
@@ -125,7 +127,7 @@ int main(int argc, const char* argv[])
   }
   else
   {
-    printf("output file must be either a .vlt or .vlb\n");
+    printf("FAILED: output file must be either a .vlt or .vlb\n");
     return 1;
   }
 
