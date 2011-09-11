@@ -35,15 +35,26 @@
 #include <vlCore/Vector4.hpp>
 #include <vlCore/Plane.hpp>
 #include <vlCore/checks.hpp>
+#include <vlCore/MersenneTwister.hpp>
 #include <cstdlib>
 
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-real vl::randomMinMax(real min, real max)
+real vl::random(real min, real max)
 {
-  real t = rand() / (real)RAND_MAX;
+  real t = (real)defMersenneTwister()->rand53();
   return min + (max-min)*t;
+}
+//-----------------------------------------------------------------------------
+u32 vl::randomU32(u32 min, u32 max)
+{
+  return defMersenneTwister()->randInt(max-min) + min;
+}
+//-----------------------------------------------------------------------------
+i32 vl::randomI32(i32 min, i32 max)
+{
+  return defMersenneTwister()->randInt(max-min) + min;
 }
 //-----------------------------------------------------------------------------
 int vl::greaterEqualPow2(int n)

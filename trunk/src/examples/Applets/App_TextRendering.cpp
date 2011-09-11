@@ -52,8 +52,8 @@ public:
     if (mTestNumber == 4)
     {
       static vl::real velocity[] = {
-        vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10,
-        vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10 };
+        vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10,
+        vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10 };
 
       /* planets */
       for(int i=0; i<9; i++)
