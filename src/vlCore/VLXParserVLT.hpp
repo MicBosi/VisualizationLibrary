@@ -576,6 +576,16 @@ namespace vl
         {
           ref<VLXArrayReal> arr_floating;
           arr = arr_floating = new VLXArrayReal;
+          arr_floating->value().reserve(1024);
+          // mic fixme: 
+          // READING ARRAYS OF NUMBERS IS THE MAIN HOT SPOT FOR THE VLT PARSER
+          // - we could speed things up by quickly tokenizing and aotf-ing all the numbers here
+          // - we could also use a quicker atof() that works for numbers of the type +1234.1234 using the tokenizer to determine the sub-type
+          // - ideally we should mix the following: 
+          //   - read big chunks of bytes instead of one by one like now
+          //   - merge the quick atof with the tokenizer in one single operation, fall back to standard atof() when complex numbers are detected
+          //   - proceed until we find ")"
+          //   - we could disallow comments in Arrays to speedup the parsing
           do
           {
             switch(mToken.mType)
