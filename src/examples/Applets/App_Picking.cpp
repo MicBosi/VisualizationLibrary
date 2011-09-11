@@ -102,7 +102,7 @@ public:
       fx->shader()->enable(EN_DEPTH_TEST);
       fx->shader()->enable(EN_LIGHTING);
       fx->shader()->gocLight(0)->setLinearAttenuation(0.025f);
-      fx->shader()->gocMaterial()->setDiffuse( fvec4((float)randomMinMax(0,1), (float)randomMinMax(0,1), (float)randomMinMax(0,1),1.0f) );
+      fx->shader()->gocMaterial()->setDiffuse( fvec4((float)random(0,1), (float)random(0,1), (float)random(0,1),1.0f) );
 
       ref<Geometry> geom = randomObject();
       Actor* act = sceneManager()->tree()->addActor( geom.get(), fx.get(), new Transform );

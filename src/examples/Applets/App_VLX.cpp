@@ -189,9 +189,9 @@ public:
       tr->setObjectName("some transform's name");
       switch( rand() % 4 )
       {
-      case 0: tr->translate( randomMinMax(-5,+5), randomMinMax(-5,+5), randomMinMax(-5,+5) ); break;
-      case 1: tr->rotate( randomMinMax(0, 360), randomMinMax(0,1), randomMinMax(0,1), randomMinMax(0,1) ); break;
-      case 2: tr->scale( randomMinMax(1,10), randomMinMax(1,10), randomMinMax(1,10) ); break;
+      case 0: tr->translate( random(-5,+5), random(-5,+5), random(-5,+5) ); break;
+      case 1: tr->rotate( random(0, 360), random(0,1), random(0,1), random(0,1) ); break;
+      case 2: tr->scale( random(1,10), random(1,10), random(1,10) ); break;
       case 3: tr->setLocalMatrix( mat4::getPerspective(30, 1, 1, 1000) ); break;
       }
       act->transform()->addChild( tr.get() );

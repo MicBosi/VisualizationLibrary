@@ -87,9 +87,9 @@ public:
     for(int i=0; i<100000; i++)
     {
       vl::vec3 v;
-      v.x() = vl::randomMinMax(-1,+1)*320;
-      v.y() = vl::randomMinMax(-1,+1)*320;
-      v.z() = vl::randomMinMax(-1,+1)*320;
+      v.x() = vl::random(-1,+1)*320;
+      v.y() = vl::random(-1,+1)*320;
+      v.z() = vl::random(-1,+1)*320;
       pointset.push_back(v);
     }
 

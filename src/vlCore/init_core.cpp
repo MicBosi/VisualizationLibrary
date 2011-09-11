@@ -41,6 +41,7 @@
 #include <vlCore/AABB.hpp>
 #include <vlCore/Sphere.hpp>
 #include <vlCore/version.hpp>
+#include <vlCore/MersenneTwister.hpp>
 #include <cassert>
 
 using namespace vl;
@@ -166,9 +167,24 @@ VLXRegistry* vl::defVLXRegistry()
 {
   return gDefaultVLXRegistry.get();
 }
-void vl::setVLXRegistry(VLXRegistry* reg)
+void vl::setDefVLXRegistry(VLXRegistry* reg)
 {
   gDefaultVLXRegistry = reg;
+}
+//-----------------------------------------------------------------------------
+// Default MersenneTwister
+//-----------------------------------------------------------------------------
+namespace 
+{
+  ref<MersenneTwister> gDefaultMersenneTwister = NULL;
+}
+MersenneTwister* vl::defMersenneTwister()
+{
+  return gDefaultMersenneTwister.get();
+}
+void vl::setDefMersenneTwister(MersenneTwister* reg)
+{
+  gDefaultMersenneTwister= reg;
 }
 //------------------------------------------------------------------------------
 void VisualizationLibrary::initCore(bool log_info)
@@ -199,6 +215,9 @@ void VisualizationLibrary::initCore(bool log_info)
 
   // Install default VLXRegistry
   gDefaultVLXRegistry = new VLXRegistry;
+
+  // Install default MersenneTwister (seed done automatically)
+  gDefaultMersenneTwister = new MersenneTwister;
   
   // Register 2D modules
   #if defined(VL_IO_2D_JPG)
@@ -241,6 +260,9 @@ void VisualizationLibrary::shutdownCore()
 
   // --- Dispose Core ---
 
+  // Dispose default MersenneTwister
+  gDefaultMersenneTwister = NULL;
+  
   // Dispose default VLXRegistry
   gDefaultVLXRegistry = NULL;
 

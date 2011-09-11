@@ -50,13 +50,16 @@
 			<td>Michele Bosi</td>
 		</tr>
 		<tr>
+			<td>Richard J. Wagner - Mersenne Twister implementation (MersenneTwister.hpp)</td>
+		</tr>
+		<tr>
+			<td>Colin Plumb - MD5 implementation (md5.h, md5.c)</td>
+		</tr>
+		<tr>
+			<td>Tanguy Fautré - tri_stripper implementation (tri_stripper.h, tri_stripper.cpp)</td>
+		</tr>
+		<tr>
 			<td>Brent Fulgham</td>
-		</tr>
-		<tr>
-			<td>Colin Plumb</td>
-		</tr>
-		<tr>
-			<td>Tanguy Fautré</td>
 		</tr>
 		<tr>
 			<td>Emil Salling</td>
