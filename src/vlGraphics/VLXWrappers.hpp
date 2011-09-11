@@ -2217,43 +2217,43 @@ namespace vl
         else
         if (key == "FOV")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setFOV( (float)value.getReal() );
         }
         else
         if (key == "NearPlane")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setNearPlane( (float)value.getReal() );
         }
         else
         if (key == "FarPlane")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setFarPlane( (float)value.getReal() );
         }
         else
         if (key == "Left")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setLeft( (float)value.getReal() );
         }
         else
         if (key == "Right")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setRight( (float)value.getReal() );
         }
         else
         if (key == "Bottom")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setBottom( (float)value.getReal() );
         }
         else
         if (key == "Top")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setTop( (float)value.getReal() );
         }
         else
@@ -2342,7 +2342,7 @@ namespace vl
         else
         if (key == "ClearDepth")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value );
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value );
           obj->setClearDepth( (float)value.getReal() );
         }
         else
@@ -2560,31 +2560,31 @@ namespace vl
         else
         if (key == "SpotExponent")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setSpotExponent( (float)value.getReal() );
         }
         else
         if (key == "SpotCutoff")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setSpotCutoff( (float)value.getReal() );
         }
         else
         if (key == "ConstantAttenuation")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setConstantAttenuation( (float)value.getReal() );
         }
         else
         if (key == "LinearAttenuation")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setLinearAttenuation( (float)value.getReal() );
         }
         else
         if (key == "QuadraticAttenuation")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->setQuadraticAttenuation( (float)value.getReal() );
         }
         else
@@ -2655,7 +2655,7 @@ namespace vl
         else
         if (key == "PlaneOrigin")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value )
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value )
           obj->plane().setOrigin( (float)value.getReal() );
         }
         else
@@ -3093,7 +3093,7 @@ namespace vl
         else
         if (key == "FrontShininess")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value );
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value );
           obj->setFrontShininess( (float)value.getReal() ); 
         }
         else
@@ -3123,7 +3123,7 @@ namespace vl
         else
         if (key == "BackShininess")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value );
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value );
           obj->setBackShininess( (float)value.getReal() ); 
         }
         else
@@ -3504,7 +3504,7 @@ namespace vl
         else
         if (key == "Anisotropy")
         {
-          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::real, value );
+          VLX_IMPORT_CHECK_RETURN( value.type() == VLXValue::Real, value );
           obj->setAnisotropy( (float)value.getReal() );
         }
         else

@@ -116,7 +116,7 @@ namespace vl
       else
       if (key == "Radius")
       {
-        VL_CHECK(value.type() == VLXValue::real)
+        VL_CHECK(value.type() == VLXValue::Real)
         sphere.setRadius( (real)value.getReal() );
       }
     }
