@@ -39,10 +39,56 @@ using namespace vl;
 bool VLTTokenizer::getToken(VLTToken& token)
 {
   token.mType = VLTToken::TOKEN_ERROR;
-  token.mString.clear();
+  /*token.mString.resize(0);*/
 
+  // Must be done before StringTurbo is declared
   if (mRawtextBlock)
     return getRawtextBlock(token);
+
+  struct StringTurbo
+  {
+    inline StringTurbo(std::string* str): mString(str)
+    {
+      mPosition = 0;
+    }
+    
+    inline ~StringTurbo()
+    {
+      mBuffer[mPosition] = '\0';
+      *mString = mBuffer;
+    }
+
+    inline void push_back(const char& ch)
+    {
+      mBuffer[mPosition++] = ch;
+    }
+
+    inline void operator=(const char& ch)
+    {
+      mBuffer[0] = ch;
+      mPosition = 1;
+    }
+
+    inline void operator=(const char* s)
+    {
+      int len = strlen(s);
+      memcpy( mBuffer, s, len);
+      mPosition = len;
+    }
+
+    inline bool operator==(const char* str)
+    {
+      size_t len = strlen(str);
+      if (len != mPosition)
+        return false;
+      else
+        return memcmp(mBuffer, str, len) == 0;
+    }
+
+    char mBuffer[1024*4];
+    size_t mPosition;
+    std::string* mString;
+  } string_turbo(&token.mString);
 
   // read chars skipping spaces
   char ch1=0, ch2=0;
@@ -108,22 +154,22 @@ bool VLTTokenizer::getToken(VLTToken& token)
   {
   case '(':
     token.mType = VLTToken::LeftRoundBracket;
-    token.mString = "(";
+    string_turbo = "(";
     return true;
     
   case ')':
     token.mType = VLTToken::RightRoundBracket;
-    token.mString = ")";
+    string_turbo = ")";
     return true;
 
   case '[':
     token.mType = VLTToken::LeftSquareBracket;
-    token.mString = "[";
+    string_turbo = "[";
     return true;
     
   case ']':
     token.mType = VLTToken::RightSquareBracket;
-    token.mString = "]";
+    string_turbo = "]";
     return true;
 
   case '{':
@@ -147,7 +193,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
           break;
 
         default:
-          token.mString = ch2;
+          string_turbo = ch2;
           return false;
         }
       }
@@ -155,20 +201,20 @@ bool VLTTokenizer::getToken(VLTToken& token)
       if (ch2 == '\n')
       {
         token.mType = VLTToken::LeftFancyBracket;
-        token.mString = "{<";
+        string_turbo = "{<";
         mRawtextBlock = true;
         return true;
       }
       else
       {
-        token.mString = ch2;
+        string_turbo = ch2;
         return false;
       }
     }
     else
     {
       token.mType = VLTToken::LeftCurlyBracket;
-      token.mString = "{";
+      string_turbo = "{";
       if(!isEndOfFile())
         ungetToken(ch2);
     }
@@ -176,7 +222,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
 
   case '}':
     token.mType = VLTToken::RightCurlyBracket;
-    token.mString = "}";
+    string_turbo = "}";
     return true;
 
   case '>':
@@ -185,7 +231,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
       if(ch2 == '}')
       {
         token.mType = VLTToken::RightFancyBracket;
-        token.mString = ">}";
+        string_turbo = ">}";
         return true;
       }
       else
@@ -202,22 +248,22 @@ bool VLTTokenizer::getToken(VLTToken& token)
 
   case '=':
     token.mType = VLTToken::Equals; 
-    token.mString = "=";
+    string_turbo = "=";
     return true;
 
   case '<':
-    token.mString = "<";
+    string_turbo = "<";
     while(readTextChar(ch1) && ch1 != '>')
     {
       if ( (ch1 >= 'a' && ch1 <= 'z') || (ch1 >= 'A' && ch1 <= 'Z') || (ch1 >= '0' && ch1 <= '9') || ch1 == '_' || ch1 == ':' )
-        token.mString.push_back(ch1);
+        string_turbo.push_back(ch1);
       else
       {
         Log::error( Say("Line %n : unexpected character '%c'.\n") << mLineNumber << ch1 );
         return false;
       }
     }
-    token.mString.push_back('>');
+    string_turbo.push_back('>');
     if (isEndOfFile())
     {
       Log::error( Say("Line %n : unexpected end of file while reading object header.\n") << mLineNumber );
@@ -227,18 +273,18 @@ bool VLTTokenizer::getToken(VLTToken& token)
     return true;
 
   case '#':
-    token.mString = "#";
+    string_turbo = "#";
     while(readTextChar(ch1))
     {
       if ( (ch1 >= 'a' && ch1 <= 'z') || (ch1 >= 'A' && ch1 <= 'Z') || (ch1 >= '0' && ch1 <= '9') || ch1 == '_' )
-        token.mString.push_back(ch1);
+        string_turbo.push_back(ch1);
       else
       {
         ungetToken(ch1);
         break;
       }
     }
-    if (token.mString == "#_")
+    if (string_turbo == "#_")
     {
       Log::error( Say("Line %n : illegal id '#_' found.\n") << mLineNumber );
       return false;
@@ -285,11 +331,11 @@ bool VLTTokenizer::getToken(VLTToken& token)
           ch1 = '\t';
         else
           ungetToken(ch2);
-        token.mString.push_back(ch1);
+        string_turbo.push_back(ch1);
       }
       else
       // accept everyhing else
-        token.mString.push_back(ch1);
+        string_turbo.push_back(ch1);
     }
     if (isEndOfFile())
     {
@@ -306,18 +352,18 @@ bool VLTTokenizer::getToken(VLTToken& token)
     // identifier
     if ( (ch1 >= 'a' && ch1 <= 'z') || (ch1 >= 'A' && ch1 <= 'Z') || ch1 == '_' )
     {
-      token.mString.push_back(ch1);
+      string_turbo.push_back(ch1);
       while(readTextChar(ch1))
       {
         if ( (ch1 >= 'a' && ch1 <= 'z') || (ch1 >= 'A' && ch1 <= 'Z') || (ch1 >= '0' && ch1 <= '9') || ch1 == '_' )
-          token.mString.push_back(ch1);
+          string_turbo.push_back(ch1);
         else
         {
           ungetToken(ch1);
           break;
         }
       }
-      if (token.mString == "_")
+      if (string_turbo == "_")
       {
         Log::error( Say("Line %n : unexpected character '_'.\n") << mLineNumber );
         return false;
@@ -325,7 +371,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
       else
       {
         // check if it's a boolean
-        if (token.mString == "true" || token.mString == "false")
+        if (string_turbo == "true" || string_turbo == "false")
           token.mType = VLTToken::Boolean;
         else
           token.mType = VLTToken::Identifier;
@@ -352,7 +398,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
     if ( (ch1 >= '0' && ch1 <= '9') || ch1 == '.' || ch1 == '+' || ch1 == '-' )
     {
       token.mType = VLTToken::TOKEN_ERROR;
-      token.mString.push_back(ch1);
+      string_turbo.push_back(ch1);
 
       enum { sZERO, sPLUS_MINUS, sINT, sFRAC, sPOINT, sE, sPLUS_MINUS_EXP, sEXP } state = sINT;
 
@@ -376,7 +422,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
         case sZERO:
           if (ch1 == '.')
           {
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
             state = sPOINT;
           }
           else
@@ -390,19 +436,19 @@ bool VLTTokenizer::getToken(VLTToken& token)
         case sPLUS_MINUS:
           if (ch1 == '0')
           {
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
             state = sZERO;
           }
           else
           if (ch1 >= '1' && ch1 <= '9')
           {
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
             state = sINT;
           }
           else
           if (ch1 == '.')
           {
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
             state = sPOINT;
           }
           else
@@ -414,11 +460,11 @@ bool VLTTokenizer::getToken(VLTToken& token)
 
         case sINT:
           if (ch1 >= '0' && ch1 <= '9')
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
           else
           if (ch1 == '.')
           {
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
             state = sPOINT;
           }
           else
@@ -432,7 +478,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
         case sPOINT:
           if (ch1 >= '0' && ch1 <= '9')
           {
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
             state = sFRAC;
           }
           else
@@ -444,11 +490,11 @@ bool VLTTokenizer::getToken(VLTToken& token)
 
         case sFRAC:
           if (ch1 >= '0' && ch1 <= '9')
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
           else
           if (ch1 == 'E' || ch1 == 'e')
           {
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
             state = sE;
           }
           else
@@ -462,7 +508,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
         case sE:
           if (ch1 == '+' || ch1 == '-')
           {
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
             state = sPLUS_MINUS_EXP;
           }
           else
@@ -475,7 +521,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
         case sPLUS_MINUS_EXP:
           if (ch1 >= '0' && ch1 <= '9')
           {
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
             state = sEXP;
           }
           else
@@ -487,7 +533,7 @@ bool VLTTokenizer::getToken(VLTToken& token)
 
         case sEXP:
           if (ch1 >= '0' && ch1 <= '9')
-            token.mString.push_back(ch1);
+            string_turbo.push_back(ch1);
           else
           {
             token.mType = VLTToken::real;
@@ -524,8 +570,8 @@ bool VLTTokenizer::getRawtextBlock(VLTToken& token)
 {
   mRawtextBlock = false;
 
-  token.mString.clear();
   token.mType = VLTToken::TOKEN_ERROR;
+  token.mString.resize(0);
 
   char ch =0;
   while(readTextChar(ch))
