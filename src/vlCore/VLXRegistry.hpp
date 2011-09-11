@@ -63,7 +63,7 @@ namespace vl
   };
 
   VLCORE_EXPORT VLXRegistry* defVLXRegistry();
-  VLCORE_EXPORT void setVLXRegistry(VLXRegistry* reg);
+  VLCORE_EXPORT void setDefVLXRegistry(VLXRegistry* reg);
 }
 
 #endif

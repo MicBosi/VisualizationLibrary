@@ -178,11 +178,11 @@ public:
         mMetaball[iball].y() = 0;
         mMetaball[iball].x() = 0.5f;
         mMetaball[iball].z() = 0.5f;
-        mMetaballVelocity[iball].x() = (float)vl::randomMinMax(-12,+12);
-        mMetaballVelocity[iball].z() = (float)vl::randomMinMax(-12,+12);
+        mMetaballVelocity[iball].x() = (float)vl::random(-12,+12);
+        mMetaballVelocity[iball].z() = (float)vl::random(-12,+12);
         mMetaballVelocity[iball].y() = 100;
         mMetaballVelocity[iball].normalize();
-        mMetaballVelocity[iball] *= (17.0f + (float)vl::randomMinMax(0,5))*0.05f*mFountainSpeed;
+        mMetaballVelocity[iball] *= (17.0f + (float)vl::random(0,5))*0.05f*mFountainSpeed;
       }
     }
     mTimer.start();
@@ -461,11 +461,11 @@ public:
       mMetaball[iball].y() = 0;
       mMetaball[iball].x() = 0.5f;
       mMetaball[iball].z() = 0.5f;
-      mMetaballVelocity[iball].x() = (float)vl::randomMinMax(-15,+15);
-      mMetaballVelocity[iball].z() = (float)vl::randomMinMax(-15,+15);
+      mMetaballVelocity[iball].x() = (float)vl::random(-15,+15);
+      mMetaballVelocity[iball].z() = (float)vl::random(-15,+15);
       mMetaballVelocity[iball].y() = 100;
       mMetaballVelocity[iball].normalize();
-      mMetaballVelocity[iball] *= (5.0f + (float)vl::randomMinMax(0,20))*0.05f*mFountainSpeed;
+      mMetaballVelocity[iball] *= (5.0f + (float)vl::random(0,20))*0.05f*mFountainSpeed;
     }
 
     mTransform->setLocalMatrix(vl::mat4());
