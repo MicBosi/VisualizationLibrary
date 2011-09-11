@@ -327,18 +327,18 @@ public:
     // Without this the resources are inlined in the VLXStructure that uses it the first time.
     expandResourceDatabase(res_db.get());
 
-    String vlt_path;
-    vlt_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlt";
-    /*res_db =*/ vl::loadResource(vlt_path); // load first (backwards compatibility check)
-    vl::writeResource(vlt_path, res_db.get()); // save
-    res_db = vl::loadResource(vlt_path); // load
-    vl::writeResource(vlt_path, res_db.get()); // save again
+    String vlx_path;
+    vlx_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlt";
+    /*res_db =*/ vl::loadResource(vlx_path); // load first (backwards compatibility check)
+    vl::writeResource(vlx_path, res_db.get()); // save
+    res_db = vl::loadResource(vlx_path); // load
+    vl::writeResource(vlx_path, res_db.get()); // save again
 
-    vlt_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlb";
-    /*res_db =*/ vl::loadResource(vlt_path); // load first (backwards compatibility check)
-    vl::writeResource(vlt_path, res_db.get()); // save
-    res_db = vl::loadResource(vlt_path); // load
-    vl::writeResource(vlt_path, res_db.get()); // save
+    vlx_path = globalSettings()->defaultDataPath() + "/vlx/smoke_test.vlb";
+    /*res_db =*/ vl::loadResource(vlx_path); // load first (backwards compatibility check)
+    vl::writeResource(vlx_path, res_db.get()); // save
+    res_db = vl::loadResource(vlx_path); // load
+    vl::writeResource(vlx_path, res_db.get()); // save
   }
 
 };
