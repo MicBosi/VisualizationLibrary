@@ -3,7 +3,7 @@ VLX version=100 encoding=ascii
 <Metadata>
 {
 	Authoring_Tool = "Visualization Library 2011.9.1155"
-	Creation_Date = "Sun Sep 11 16:24:24 2011"
+	Creation_Date = "Sun Sep 11 17:09:34 2011"
 	VL_Serializer_Version = 100
 }
 <vl::ResourceDatabase>
@@ -76,7 +76,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Matrix> ( -0.515490 -0.843233 0.152409 0.000000 0.856845 -0.509180 0.080948 0.000000 0.009345 0.172319 0.984997 0.000000 0.000000 0.000000 0.000000 1.000000 )
+						<Matrix> ( 0.174756 -0.191142 0.965880 0.000000 0.984523 0.047091 -0.168810 0.000000 -0.013218 0.980432 0.196413 0.000000 0.000000 0.000000 0.000000 1.000000 )
 					]
 					Children = [ ]
 				}
@@ -94,7 +94,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Scale> ( 6.091202 5.282797 8.787062 )
+						<Scale> ( 7.070799 6.686309 3.005666 )
 					]
 					Children = [ ]
 				}
@@ -103,7 +103,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Translate> ( 1.714357 -0.135622 1.303754 )
+						<Translate> ( -1.099151 -3.690430 -0.275864 )
 					]
 					Children = [ ]
 				}
@@ -112,7 +112,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Matrix> ( 0.795931 -0.226199 0.561540 0.000000 0.435944 0.857764 -0.272386 0.000000 -0.420056 0.461601 0.781331 0.000000 0.000000 0.000000 0.000000 1.000000 )
+						<Matrix> ( 0.922978 0.227810 -0.310183 0.000000 -0.135678 0.946845 0.291677 0.000000 0.360143 -0.227127 0.904826 0.000000 0.000000 0.000000 0.000000 1.000000 )
 					]
 					Children = [ ]
 				}
@@ -121,7 +121,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Translate> ( 3.315367 3.128418 -0.495899 )
+						<Translate> ( -0.707677 4.785462 -1.199419 )
 					]
 					Children = [ ]
 				}
@@ -130,7 +130,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Scale> ( 1.746104 3.041175 4.625906 )
+						<Scale> ( 2.911039 5.871495 7.629946 )
 					]
 					Children = [ ]
 				}
@@ -139,7 +139,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Scale> ( 2.320403 8.825808 7.987324 )
+						<Scale> ( 6.470659 6.949619 4.098377 )
 					]
 					Children = [ ]
 				}
@@ -148,7 +148,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Scale> ( 1.438411 3.236779 4.963628 )
+						<Scale> ( 9.540174 7.400856 4.333831 )
 					]
 					Children = [ ]
 				}
@@ -157,7 +157,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Translate> ( -4.804129 2.469921 -0.418096 )
+						<Translate> ( -0.509236 3.646994 -0.366807 )
 					]
 					Children = [ ]
 				}
@@ -276,6 +276,7 @@ VLX version=100 encoding=ascii
 		<vl::Light>
 		{
 			ID = #light_id30
+			ObjectName = "light's name"
 			Ambient = ( 0.000000 0.000000 0.000000 1.000000 )
 			Diffuse = ( 1.000000 1.000000 1.000000 1.000000 )
 			Specular = ( 1.000000 1.000000 1.000000 1.000000 )
@@ -290,7 +291,6 @@ VLX version=100 encoding=ascii
 		<vl::Light>
 		{
 			ID = #light_id31
-			ObjectName = "light's name"
 			Ambient = ( 0.000000 0.000000 0.000000 1.000000 )
 			Diffuse = ( 1.000000 1.000000 1.000000 1.000000 )
 			Specular = ( 1.000000 1.000000 1.000000 1.000000 )
@@ -497,13 +497,13 @@ VLX version=100 encoding=ascii
 			[
 				#material_id19
 				0
-				#light_id31
-				1
 				#light_id30
-				0
-				#clipplane_id32
 				1
+				#light_id31
+				0
 				#clipplane_id33
+				1
+				#clipplane_id32
 				#color_id18
 				#seccolor_id21
 				#normal_id20
@@ -668,32 +668,6 @@ VLX version=100 encoding=ascii
 		}
 		<vl::Geometry>
 		{
-			ObjectName = "Box"
-			BufferObjectEnabled = true
-			DisplayListEnabled = false
-			VertexArray = <vl::ArrayFloat3>
-			{
-				Value = ( -5.000000 5.000000 5.000000 -5.000000 -5.000000 5.000000 5.000000 -5.000000 5.000000 5.000000 5.000000 5.000000 -5.000000 -5.000000 5.000000 -5.000000 -5.000000 -5.000000 5.000000 -5.000000 -5.000000 5.000000 -5.000000 5.000000 -5.000000 -5.000000 -5.000000 -5.000000 5.000000 -5.000000 5.000000 5.000000 -5.000000 5.000000 -5.000000 -5.000000 -5.000000 5.000000 -5.000000 -5.000000 5.000000 5.000000 5.000000 5.000000 5.000000 5.000000 5.000000 -5.000000 5.000000 5.000000 5.000000 5.000000 -5.000000 5.000000 5.000000 -5.000000 -5.000000 5.000000 5.000000 -5.000000 -5.000000 5.000000 -5.000000 -5.000000 -5.000000 -5.000000 -5.000000 -5.000000 5.000000 -5.000000 5.000000 5.000000 )
-			}
-			NormalArray = <vl::ArrayFloat3>
-			{
-				Value = ( 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 )
-			}
-			TexCoordArray0 = <vl::ArrayFloat2>
-			{
-				Value = ( 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 1.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 1.000000 1.000000 0.000000 1.000000 1.000000 0.000000 1.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 1.000000 0.000000 1.000000 1.000000 1.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 )
-			}
-			DrawCall = <vl::DrawArrays>
-			{
-				PrimitiveType = PT_QUADS
-				Enabled = true
-				Instances = 1
-				Start = 0
-				Count = 24
-			}
-		}
-		<vl::Geometry>
-		{
 			ObjectName = "teapot without normals again"
 			BufferObjectEnabled = true
 			DisplayListEnabled = false
@@ -740,6 +714,32 @@ VLX version=100 encoding=ascii
 				}
 			}
 		}
+		<vl::Geometry>
+		{
+			ObjectName = "Box"
+			BufferObjectEnabled = true
+			DisplayListEnabled = false
+			VertexArray = <vl::ArrayFloat3>
+			{
+				Value = ( -5.000000 5.000000 5.000000 -5.000000 -5.000000 5.000000 5.000000 -5.000000 5.000000 5.000000 5.000000 5.000000 -5.000000 -5.000000 5.000000 -5.000000 -5.000000 -5.000000 5.000000 -5.000000 -5.000000 5.000000 -5.000000 5.000000 -5.000000 -5.000000 -5.000000 -5.000000 5.000000 -5.000000 5.000000 5.000000 -5.000000 5.000000 -5.000000 -5.000000 -5.000000 5.000000 -5.000000 -5.000000 5.000000 5.000000 5.000000 5.000000 5.000000 5.000000 5.000000 -5.000000 5.000000 5.000000 5.000000 5.000000 -5.000000 5.000000 5.000000 -5.000000 -5.000000 5.000000 5.000000 -5.000000 -5.000000 5.000000 -5.000000 -5.000000 -5.000000 -5.000000 -5.000000 -5.000000 5.000000 -5.000000 5.000000 5.000000 )
+			}
+			NormalArray = <vl::ArrayFloat3>
+			{
+				Value = ( 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 )
+			}
+			TexCoordArray0 = <vl::ArrayFloat2>
+			{
+				Value = ( 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 1.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 1.000000 1.000000 0.000000 1.000000 1.000000 0.000000 1.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 1.000000 0.000000 0.000000 1.000000 0.000000 1.000000 1.000000 0.000000 1.000000 1.000000 1.000000 0.000000 1.000000 0.000000 0.000000 1.000000 0.000000 )
+			}
+			DrawCall = <vl::DrawArrays>
+			{
+				PrimitiveType = PT_QUADS
+				Enabled = true
+				Instances = 1
+				Start = 0
+				Count = 24
+			}
+		}
 		<vl::Actor>
 		{
 			ObjectName = "actor's name"
@@ -783,6 +783,91 @@ VLX version=100 encoding=ascii
 					SortMode = SM_SortBackToFront
 				}
 			]
+		}
+		<vl::Texture>
+		{
+			TexParameter = <vl::Object>
+			{
+				MinFilter = TPF_LINEAR
+				MagFilter = TPF_LINEAR
+				WrapS = TPW_REPEAT
+				WrapT = TPW_REPEAT
+				WrapR = TPW_REPEAT
+				CompareMode = TCM_NONE
+				CompareFunc = TCF_LEQUAL
+				DepthTextureMode = DTM_LUMINANCE
+				BorderColor = ( 0.000000 0.000000 0.000000 0.000000 )
+				Anisotropy = 1.000000
+				GenerateMipmap = false
+			}
+			Dimension = TD_TEXTURE_1D
+			Format = TF_UNKNOWN
+			ImagePath = "ignore_file_not_found.jpg"
+			GenMipmaps = true
+		}
+		<vl::Texture>
+		{
+			TexParameter = <vl::Object>
+			{
+				MinFilter = TPF_LINEAR
+				MagFilter = TPF_LINEAR
+				WrapS = TPW_REPEAT
+				WrapT = TPW_REPEAT
+				WrapR = TPW_REPEAT
+				CompareMode = TCM_NONE
+				CompareFunc = TCF_LEQUAL
+				DepthTextureMode = DTM_LUMINANCE
+				BorderColor = ( 0.000000 0.000000 0.000000 0.000000 )
+				Anisotropy = 1.000000
+				GenerateMipmap = false
+			}
+			Dimension = TD_TEXTURE_1D
+			Format = TF_RGBA
+			Width = 10
+			GenMipmaps = false
+		}
+		<vl::Texture>
+		{
+			TexParameter = <vl::Object>
+			{
+				MinFilter = TPF_LINEAR
+				MagFilter = TPF_LINEAR
+				WrapS = TPW_REPEAT
+				WrapT = TPW_REPEAT
+				WrapR = TPW_REPEAT
+				CompareMode = TCM_NONE
+				CompareFunc = TCF_LEQUAL
+				DepthTextureMode = DTM_LUMINANCE
+				BorderColor = ( 0.000000 0.000000 0.000000 0.000000 )
+				Anisotropy = 1.000000
+				GenerateMipmap = false
+			}
+			Dimension = TD_TEXTURE_2D
+			Format = TF_UNKNOWN
+			ImagePath = "ignore_file_not_found.jpg"
+			GenMipmaps = true
+		}
+		<vl::Texture>
+		{
+			TexParameter = <vl::Object>
+			{
+				MinFilter = TPF_LINEAR
+				MagFilter = TPF_LINEAR
+				WrapS = TPW_REPEAT
+				WrapT = TPW_REPEAT
+				WrapR = TPW_REPEAT
+				CompareMode = TCM_NONE
+				CompareFunc = TCF_LEQUAL
+				DepthTextureMode = DTM_LUMINANCE
+				BorderColor = ( 0.000000 0.000000 0.000000 0.000000 )
+				Anisotropy = 1.000000
+				GenerateMipmap = false
+			}
+			Dimension = TD_TEXTURE_2D
+			Format = TF_RGBA
+			Width = 10
+			Height = 20
+			GenMipmaps = false
 		}
 		<vl::Texture>
 		{
@@ -1069,91 +1154,6 @@ VLX version=100 encoding=ascii
 			}
 			Dimension = TD_TEXTURE_BUFFER
 			Format = TF_RGBA
-			GenMipmaps = false
-		}
-		<vl::Texture>
-		{
-			TexParameter = <vl::Object>
-			{
-				MinFilter = TPF_LINEAR
-				MagFilter = TPF_LINEAR
-				WrapS = TPW_REPEAT
-				WrapT = TPW_REPEAT
-				WrapR = TPW_REPEAT
-				CompareMode = TCM_NONE
-				CompareFunc = TCF_LEQUAL
-				DepthTextureMode = DTM_LUMINANCE
-				BorderColor = ( 0.000000 0.000000 0.000000 0.000000 )
-				Anisotropy = 1.000000
-				GenerateMipmap = false
-			}
-			Dimension = TD_TEXTURE_1D
-			Format = TF_UNKNOWN
-			ImagePath = "ignore_file_not_found.jpg"
-			GenMipmaps = true
-		}
-		<vl::Texture>
-		{
-			TexParameter = <vl::Object>
-			{
-				MinFilter = TPF_LINEAR
-				MagFilter = TPF_LINEAR
-				WrapS = TPW_REPEAT
-				WrapT = TPW_REPEAT
-				WrapR = TPW_REPEAT
-				CompareMode = TCM_NONE
-				CompareFunc = TCF_LEQUAL
-				DepthTextureMode = DTM_LUMINANCE
-				BorderColor = ( 0.000000 0.000000 0.000000 0.000000 )
-				Anisotropy = 1.000000
-				GenerateMipmap = false
-			}
-			Dimension = TD_TEXTURE_1D
-			Format = TF_RGBA
-			Width = 10
-			GenMipmaps = false
-		}
-		<vl::Texture>
-		{
-			TexParameter = <vl::Object>
-			{
-				MinFilter = TPF_LINEAR
-				MagFilter = TPF_LINEAR
-				WrapS = TPW_REPEAT
-				WrapT = TPW_REPEAT
-				WrapR = TPW_REPEAT
-				CompareMode = TCM_NONE
-				CompareFunc = TCF_LEQUAL
-				DepthTextureMode = DTM_LUMINANCE
-				BorderColor = ( 0.000000 0.000000 0.000000 0.000000 )
-				Anisotropy = 1.000000
-				GenerateMipmap = false
-			}
-			Dimension = TD_TEXTURE_2D
-			Format = TF_UNKNOWN
-			ImagePath = "ignore_file_not_found.jpg"
-			GenMipmaps = true
-		}
-		<vl::Texture>
-		{
-			TexParameter = <vl::Object>
-			{
-				MinFilter = TPF_LINEAR
-				MagFilter = TPF_LINEAR
-				WrapS = TPW_REPEAT
-				WrapT = TPW_REPEAT
-				WrapR = TPW_REPEAT
-				CompareMode = TCM_NONE
-				CompareFunc = TCF_LEQUAL
-				DepthTextureMode = DTM_LUMINANCE
-				BorderColor = ( 0.000000 0.000000 0.000000 0.000000 )
-				Anisotropy = 1.000000
-				GenerateMipmap = false
-			}
-			Dimension = TD_TEXTURE_2D
-			Format = TF_RGBA
-			Width = 10
-			Height = 20
 			GenMipmaps = false
 		}
 	]
