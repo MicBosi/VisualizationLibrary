@@ -89,7 +89,7 @@ int main ( int argc, char *argv[] )
   format.setContextClientVersion(1);
 
   TestBatteryEGL test_battery;
-  test_battery.run(test, format);
+  test_battery.run(test, argv[1], format);
 
   return 0;
 }
