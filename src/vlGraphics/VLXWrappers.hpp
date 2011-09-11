@@ -1289,7 +1289,17 @@ namespace vl
       *vlx << "Resources" << list.get();
 
       for(size_t i=0; i<obj->resources().size(); ++i)
-        *list << s.exportVLX(obj->resources().at(i).get());
+      {
+        if ( !s.canExport(obj->resources().at(i).get()) )
+        {
+          Log::debug( Say("VLXClassWrapper_ResourceDatabase : skipping '%s'.\n") << obj->resources().at(i).get()->className() );
+          continue;
+        }
+        else
+        {
+          *list << s.exportVLX(obj->resources().at(i).get());
+        }
+      }
     }
 
     virtual ref<VLXStructure> exportVLX(VLXSerializer& s, const Object* obj)
