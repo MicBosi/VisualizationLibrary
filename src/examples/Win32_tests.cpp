@@ -89,7 +89,7 @@ public:
 int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LPSTR lpszCmdLine, int /*nCmdShow*/)
 {
   /* parse command line arguments */
-  int   test = 0;
+  int test = 0;
   String cmd = lpszCmdLine;
   std::vector<String> parms;
   cmd.split(' ', parms);
@@ -107,7 +107,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   format.setMultisample(true);*/
 
   TestBatteryWin32 test_battery;
-  test_battery.run(test, format);
+  test_battery.run(test, parms[0].toStdString(), format);
 
   return 0;
 }

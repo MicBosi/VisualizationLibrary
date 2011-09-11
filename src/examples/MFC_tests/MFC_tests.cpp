@@ -105,9 +105,12 @@ BOOL MFC_Test::InitInstance()
   CWinApp::InitInstance();
 
   /* parse the command line */
-  vl::String cmdline = m_lpCmdLine;
-  int   test  = 0;
-  /*int   count = */sscanf(cmdline.toStdString().c_str(), "%d", &test);
+  vl::String cmd = m_lpCmdLine;
+  int test  = 0;
+  std::vector<String> parms;
+  cmd.split(' ', parms);
+  if (parms.size()>=1)
+    test = parms[0].toInt();
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -120,7 +123,7 @@ BOOL MFC_Test::InitInstance()
   format.setMultisample(true);*/
 
   TestBatteryMFC test_battery(mVLCWin.get());
-  test_battery.run(test, format);
+  test_battery.run(test, parms[0].toStdString(), format);
 
   /* MFC specific stuff */
   if (mVLCWin->m_hWnd)
