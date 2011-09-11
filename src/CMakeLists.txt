@@ -30,6 +30,9 @@ add_subdirectory("vlMolecule")
 # VLVolume
 add_subdirectory("vlVolume")
 
+# tools
+add_subdirectory("tools")
+
 ################################################################################
 # GUI Modules (automatically enabled when their requirements are met)
 ################################################################################
