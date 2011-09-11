@@ -148,7 +148,7 @@ namespace vl
         writeInteger( value.getInteger() );
         break;
 
-      case VLXValue::real:
+      case VLXValue::Real:
         // header
         mOutputFile->writeUInt8( VLB_ChunkRealDouble);
         // value
