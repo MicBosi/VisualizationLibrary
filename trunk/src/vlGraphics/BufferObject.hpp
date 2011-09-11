@@ -130,7 +130,7 @@ namespace vl
     {
       // mic fixme: it would be nice to re-enable these
       // VL_CHECK_OGL();
-      VL_CHECK(Has_BufferObject)
+      VL_CHECK(Has_BufferObject || handle() == 0)
       if (Has_BufferObject && handle() != 0)
       {
         VL_glDeleteBuffers( 1, &mHandle ); // VL_CHECK_OGL();
