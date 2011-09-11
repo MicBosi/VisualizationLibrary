@@ -15,15 +15,21 @@ using namespace vl;
 
 void printHelp()
 {
-  printf("\nusage:\n");
-  printf("\tvlxtool -in file1 file2 file3 -out file_out\n");
+  printf("\nexamples:\n");
+  printf("- Merges the contents of file1.obj, file2.3ds and file3.vlb into file_out.vlt:\n");
+  printf("  vlxtool -in file1.obj file2.3ds file3.vlb -out file_out.vlt\n\n");
+  printf("- Converts a VLT file to its VLB representation:\n");
+  printf("  vlxtool -in file.vlt -out file.vlb\n\n");
+  printf("- Converts a VLB file to its VLT representation:\n");
+  printf("  vlxtool -in file.vlb -out file.vlt\n\n");
 }
 
 int main(int argc, const char* argv[])
 {
   VisualizationLibrary::init(true);
 
-  printf("vlxtool 1.0\n");
+  printf("vlxtool 1.0 - Visualization Library VLX Utility\n");
+  printf("Converts any type of resource to .vlt/.vlb\n\n");
 
   std::vector<std::string> in_files;
   String out_file;
@@ -62,6 +68,7 @@ int main(int argc, const char* argv[])
     }
     else
     {
+      printf("Unknown option:'%s'\n", argv[i]);
       printHelp();
       return 1;
     }
@@ -69,6 +76,12 @@ int main(int argc, const char* argv[])
 
   if (in_files.empty() || out_file.empty())
   {
+    if (in_files.empty())
+      printf("Missing input file list.\n");
+    
+    if (out_file.empty())
+      printf("Missing output file.\n");
+
     printHelp();
     return 1;
   }
@@ -85,6 +98,11 @@ int main(int argc, const char* argv[])
       printf("\t... %.2fs\n", timer.elapsed());
       db->resources().insert(db->resources().end(), res->resources().begin(), res->resources().end());
     }
+    else
+    {
+      printf("\t... FAILED\n");
+      return 1;
+    }
   }
 
   expandResourceDatabase(db.get());
@@ -92,7 +110,7 @@ int main(int argc, const char* argv[])
   Time timer; timer.start();
   if (out_file.endsWith(".vlt"))
   {
-    printf("Saving...\n");
+    printf("Saving VLT...\n");
     printf("\t%s ", out_file.toStdString().c_str());
     vl::saveVLT(out_file, db.get());
     printf("\t... %.2fs\n", timer.elapsed());
@@ -100,7 +118,7 @@ int main(int argc, const char* argv[])
   else
   if (out_file.endsWith(".vlb"))
   {
-    printf("Saving...\n");
+    printf("Saving VLB...\n");
     printf("\t%s ", out_file.toStdString().c_str());
     vl::saveVLB(out_file, db.get());
     printf("\t... %.2fs\n", timer.elapsed());
