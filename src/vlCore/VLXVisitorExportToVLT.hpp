@@ -171,7 +171,7 @@ namespace vl
           indent(); format("%lld\n", value.getInteger());
           break;
 
-        case VLXValue::real:
+        case VLXValue::Real:
           indent(); format("%f\n", value.getReal());
           break;
       }
