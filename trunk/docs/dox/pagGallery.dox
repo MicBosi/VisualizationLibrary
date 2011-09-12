@@ -13,6 +13,7 @@
 	<p>
 	Using tessellation shaders it is possible to control directly on the GPU the LOD and tessellation level of primitives.<br>
 	The example below shows how to use tesselation shaders to implement a simple terrain rendering system with dynamic LOD (see <tt>App_TessellationShader.cpp</tt>).
+	Note how the size of the triangles in pixels remain roughly constant at different zoom levels.
 	</p>
 	
 	<p>
@@ -23,17 +24,121 @@
 	<tr>
 		<td>
 			<a href="gallery/tess01.jpg" class="highslide" onclick="return hs.expand(this)"> 
-				<img src="gallery_small/tess01.jpg" alt="Tesselation Shaders" title="" />
+				<img src="gallery_small/tess01.jpg" alt="Tessellation Shaders" title="" />
 			</a>
 		</td>
 		<td>
 			<a href="gallery/tess02.jpg" class="highslide" onclick="return hs.expand(this)"> 
-				<img src="gallery_small/tess02.jpg" alt="Tesselation Shaders" title="" />
+				<img src="gallery_small/tess02.jpg" alt="Tessellation Shaders" title="" />
 			</a>
 		</td>
 		<td>
 			<a href="gallery/tess03.jpg" class="highslide" onclick="return hs.expand(this)"> 
-				<img src="gallery_small/tess03.jpg" alt="Tesselation Shaders" title="" />
+				<img src="gallery_small/tess03.jpg" alt="Tessellation Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/tess04.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/tess04.jpg" alt="Tessellation Shaders" title="" />
+			</a>
+		</td>
+	</tr>
+	</table>
+	
+
+	<!-- ----------------------------------------------------------------------------------------------------------------------------- -->
+
+	<h2 style="font-size: 20px">GLSL Shaders</h2>
+	
+	<p>
+	Using GLSL it is possible to create a variety of effects. The source code used to generate images below can be found <a href="http://code.google.com/p/visualizationlibrary/source/browse/#svn%2Ftrunk%2Fdata%2Fglsl%2Fexamples">here</a>.
+	</p>
+	
+	<p>
+	For more info on how to use GLSL shaders with Visualization Library see vl::GLSLProgram, <a href="http://code.google.com/p/visualizationlibrary/source/browse/trunk/src/vlGraphics/GLSL.hpp">GLSL.h</a> and <a href="http://code.google.com/p/visualizationlibrary/source/browse/trunk/src/examples/Applets/App_GLSL.cpp">App_GLSL.cpp</a>.
+	</p>
+	
+	<table border=0 cellspacing=0 cellpadding=5 width=1%>
+	<tr>
+		<td>
+			<a href="gallery/glsl01.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl01.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl02.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl02.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl03.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl03.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl04.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl04.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl05.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl05.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<a href="gallery/glsl06.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl06.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl07.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl07.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl08.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl08.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl09.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl09.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl10.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl10.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+			<a href="gallery/glsl11.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl11.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl12.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl12.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl13.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl13.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl14.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl14.jpg" alt="GLSL Shaders" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="gallery/glsl15.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/glsl15.jpg" alt="GLSL Shaders" title="" />
 			</a>
 		</td>
 	</tr>
