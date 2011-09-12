@@ -264,7 +264,7 @@ namespace vl
       indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       // output in chunks of 10 numbers
       int i = 0;
-      int size = arr->value().size() - 10;
+      int size = (int)arr->value().size() - 10;
       for( ; i < size; i += 10)
       {
         format("%lld %lld %lld %lld %lld %lld %lld %lld %lld %lld ",
@@ -282,7 +282,7 @@ namespace vl
       indent(); if (!arr->tag().empty()) format("%s ", arr->tag().c_str()); output("( ");
       // output in chunks of 10 numbers
       int i = 0;
-      int size = arr->value().size() - 10;
+      int size = (int)arr->value().size() - 10;
       for( ; i < size; i += 10)
       {
         format("%f %f %f %f %f %f %f %f %f %f ",
