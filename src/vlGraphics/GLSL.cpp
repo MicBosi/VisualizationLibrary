@@ -108,7 +108,7 @@ void GLSLShader::setSource( const String& source_or_path )
     {
       Log::error("GLSLShader::setSource('" + source_or_path + "') error: file not found!\n");
       mSource = "";
-      VL_TRAP();
+      // VL_TRAP();
     }
     else
       new_src = source_or_path.toStdString();

@@ -11,6 +11,9 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+// requires "noisebump.vs"
+// requires "noise3D.glsl"
+
 varying vec3 V;
 varying vec3 N;
 varying vec3 L;
@@ -19,12 +22,12 @@ float snoise(vec3 v);
 
 // const float base_freq = 0.05; // DINO
 // const float base_freq = 0.0004; // CAT
-const float base_freq = 15.0; // COW
+// const float base_freq = 15.0; // COW
 // const float base_freq = 12.5; // HORSE
 // const float base_freq = 50.0; // DRAGON
 // const float base_freq = 15.0; // CANE
 // const float base_freq = 1.7; // HAND
-// const float base_freq = 2.9; // SPIDER
+const float base_freq = 2.9; // SPIDER
 
 float F(vec3 v)
 {

@@ -11,6 +11,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+// requires "perpixellight.vs"
+
 varying vec3 N;
 varying vec3 L;
 void main(void)
