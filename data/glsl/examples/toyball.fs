@@ -1,31 +1,37 @@
-varying vec4 ECposition; // surface position in eye coordinates
-varying vec4 ECballCenter; // ball center in eye coordinates
+/**************************************************************************************/
+/*                                                                                    */
+/*  Copyright (c) 2005-2011, Michele Bosi.                                            */
+/*  All rights reserved.                                                              */
+/*                                                                                    */
+/*  This file is part of Visualization Library                                        */
+/*  http://www.visualizationlibrary.org                                               */
+/*                                                                                    */
+/*  Released under the OSI approved Simplified BSD License                            */
+/*  http://www.opensource.org/licenses/bsd-license.php                                */
+/*                                                                                    */
+/**************************************************************************************/
+
+// adaptation from the "Orange Book" (http://www.3dshaders.com)
+
+varying vec3 N; // normal in object space
+varying vec3 L; // light direction in camera space from the vertex
 
 void main()
 {
-	const vec4 LightDir      = vec4(0.577, 0.577, 0.577, 0.0); // light direction, should be normalized.
-	const vec4 HVector       = vec4(0.325, 0.325, 0.888, 0.0); // reflection vector for infinite light.
-	const vec4 BallCenter    = vec4(0.0, 0.0, 0.0, 1.0);     // ball center in modeling coordinates
 	const vec4 SpecularColor = vec4(0.4, 0.4, 0.4, 60.0);
 	const vec4 Red    = vec4(0.6, 0.0, 0.0, 1.0);
 	const vec4 Blue   = vec4(0.0, 0.3, 0.6, 1.0);
 	const vec4 Yellow = vec4(0.6, 0.5, 0.0, 1.0);
 	
 	// half spaces used to define the star
-	/*const*/ vec4 HalfSpace0 = vec4(1.0, 0.0, 0.0, 0.2);
-	/*const*/ vec4 HalfSpace1 = vec4(0.309016994, 0.951056516, 0.0, 0.2);
-	/*const*/ vec4 HalfSpace2 = vec4(-0.809016994, 0.587785252, 0.0, 0.2);
-	/*const*/ vec4 HalfSpace3 = vec4(-0.809016994, -0.587785252, 0.0, 0.2);
-	/*const*/ vec4 HalfSpace4 = vec4(0.309016994, -0.951056516, 0.0, 0.2);
-	
-	HalfSpace0.xyz = gl_NormalMatrix * HalfSpace0.xyz;
-	HalfSpace1.xyz = gl_NormalMatrix * HalfSpace1.xyz;
-	HalfSpace2.xyz = gl_NormalMatrix * HalfSpace2.xyz;
-	HalfSpace3.xyz = gl_NormalMatrix * HalfSpace3.xyz;
-	HalfSpace4.xyz = gl_NormalMatrix * HalfSpace4.xyz;
+	const vec4 HalfSpace0 = vec4(1.0, 0.0, 0.0, 0.2);
+	const vec4 HalfSpace1 = vec4(0.309016994, 0.951056516, 0.0, 0.2);
+	const vec4 HalfSpace2 = vec4(-0.809016994, 0.587785252, 0.0, 0.2);
+	const vec4 HalfSpace3 = vec4(-0.809016994, -0.587785252, 0.0, 0.2);
+	const vec4 HalfSpace4 = vec4(0.309016994, -0.951056516, 0.0, 0.2);
 	
 	const float InOrOutInit = -3.0;
-	const float StripeWidth = 0.5;
+	const float StripeWidth = 0.2;
 	const float FWidth = 0.005;
 	
 	vec4 normal;
@@ -35,7 +41,7 @@ void main()
 	vec4 distance;
 	float inorout;
 	
-	p.xyz = normalize(ECposition.xyz - ECballCenter.xyz);
+	p.xyz = normalize(N);
 	p.w = 1.0;
 	
 	inorout = InOrOutInit;
@@ -60,14 +66,16 @@ void main()
 	surfColor = mix(surfColor, Blue, distance.y);
 	
 	// normal = point on surface for sphere at (0,0,0)
-	normal = p;
+	normal.xyz = gl_NormalMatrix * p.xyz;
+	normal.w = 1.0;
 	
 	// Per-fragment diffuse lighting
 	intensity = 0.2; // ambient
-	intensity += 0.8 * clamp(dot(LightDir, normal), 0.0, 1.0);
+	intensity += 0.8 * clamp(dot(L, normal), 0.0, 1.0);
 	surfColor *= intensity;
 
 	// Per-framgment specular lighting
+	vec4 HVector = vec4( normalize(L+vec3(0.0, 0.0, 1.0)), 0.0);
 	intensity = clamp(dot(HVector, normal), 0.0, 1.0);
 	intensity = pow(intensity, SpecularColor.a);
 	
