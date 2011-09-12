@@ -44,22 +44,22 @@ namespace vl
     VL_INSTRUMENT_CLASS(vl::VLXRegistry, Object)
 
   public:
-    void registerClassWrapper(const TypeInfo* type, VLXClassWrapper* wrapper)
+    void registerClassWrapper(const TypeInfo& type, VLXClassWrapper* wrapper)
     {
-      std::string tag = std::string("<") + type->name() + ">";
+      std::string tag = std::string("<") + type.name() + ">";
       mExportRegistry[type] = wrapper; 
       mImportRegistry[tag]  = wrapper; 
     }
 
     std::map< std::string, ref<VLXClassWrapper> >& importRegistry() { return mImportRegistry; }
-    std::map< const TypeInfo*, ref<VLXClassWrapper> >& exportRegistry() { return mExportRegistry; }
+    std::map< TypeInfo, ref<VLXClassWrapper> >& exportRegistry() { return mExportRegistry; }
 
     const std::map< std::string, ref<VLXClassWrapper> >& importRegistry() const { return mImportRegistry; }
-    const std::map< const TypeInfo*, ref<VLXClassWrapper> >& exportRegistry() const { return mExportRegistry; }
+    const std::map< TypeInfo, ref<VLXClassWrapper> >& exportRegistry() const { return mExportRegistry; }
 
   private:
     std::map< std::string, ref<VLXClassWrapper> > mImportRegistry;     // <tag> --> VLXClassWrapper
-    std::map< const TypeInfo*, ref<VLXClassWrapper> > mExportRegistry; // TypeInfo --> VLXClassWrapper
+    std::map< TypeInfo, ref<VLXClassWrapper> > mExportRegistry; // TypeInfo --> VLXClassWrapper
   };
 
   VLCORE_EXPORT VLXRegistry* defVLXRegistry();

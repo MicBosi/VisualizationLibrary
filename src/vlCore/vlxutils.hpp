@@ -41,7 +41,7 @@
 
 namespace vl
 {
-  inline std::string vlx_makeTag(const Object* obj) { return std::string("<") + obj->classType()->name() + ">"; }
+  inline std::string vlx_makeTag(const Object* obj) { return std::string("<") + obj->classType().name() + ">"; }
 
   inline VLXValue vlx_Identifier(const std::string& str) { return VLXValue(str.c_str(), VLXValue::Identifier); }
 

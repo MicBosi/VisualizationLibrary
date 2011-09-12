@@ -96,7 +96,7 @@ VLXStructure* VLXSerializer::exportVLX(const Object* obj)
     return st;
   else
   {
-    std::map< const TypeInfo*, ref<VLXClassWrapper> >::iterator it = registry()->exportRegistry().find(obj->classType());
+    std::map< TypeInfo, ref<VLXClassWrapper> >::iterator it = registry()->exportRegistry().find(obj->classType());
     if (it != registry()->exportRegistry().end())
     {
       VLXClassWrapper* serializer = it->second.get_writable();
@@ -106,7 +106,7 @@ VLXStructure* VLXSerializer::exportVLX(const Object* obj)
       if (!st)
       {
         setError(ExportError);
-        Log::error( Say("Error exporting '%s'.") << obj->classType()->name() );
+        Log::error( Say("Error exporting '%s'.") << obj->classType().name() );
         VL_TRAP()
       }
       return st.get();
@@ -114,7 +114,7 @@ VLXStructure* VLXSerializer::exportVLX(const Object* obj)
     else
     {
       setError(ExportError);
-      Log::error( Say("No exporting serializer found for '%s'.") << obj->classType()->name() );
+      Log::error( Say("No exporting serializer found for '%s'.") << obj->classType().name() );
       VL_TRAP()
       return NULL;
     }
