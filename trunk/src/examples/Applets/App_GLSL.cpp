@@ -41,11 +41,6 @@ class App_GLSL: public BaseDemo
 public:
   App_GLSL()
   {
-    mTransform1 = new Transform;
-    mTransform2 = new Transform;
-    mTransform3 = new Transform;
-    mTransform4 = new Transform;
-    mTransform5 = new Transform;
   }
 
   void initEvent()
@@ -59,87 +54,143 @@ public:
 
     Log::notify(appletInfo());
 
-    rendering()->as<Rendering>()->transform()->addChild(mTransform1.get());
-    rendering()->as<Rendering>()->transform()->addChild(mTransform2.get());
-    rendering()->as<Rendering>()->transform()->addChild(mTransform3.get());
-    rendering()->as<Rendering>()->transform()->addChild(mTransform4.get());
-    rendering()->as<Rendering>()->transform()->addChild(mTransform5.get());
-
     ref<ResourceDatabase> res_db = loadResource("/models/3ds/monkey.3ds");
     mModel = res_db->get<Geometry>(0);
     mModel->computeNormals();
+    AABB aabb = mModel->boundingBox();
+    mModel->transform( mat4::getTranslation(-aabb.center()) );
 
     ref<Light> light = new Light;
 
-    ref<Effect> effect1 = new Effect;
-    effect1->shader()->setRenderState( light.get(), 0 );
-    effect1->shader()->enable(EN_LIGHTING);
-    effect1->shader()->enable(EN_DEPTH_TEST);
-    effect1->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( mModel.get(), effect1.get(), mTransform1.get() );
+    ref<GLSLProgram> glsl;
 
-    ref<Effect> effect2 = new Effect;
-    effect2->shader()->setRenderState( light.get(), 0 );
-    effect2->shader()->enable(EN_LIGHTING);
-    effect2->shader()->enable(EN_DEPTH_TEST);
-    effect2->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( mModel.get(), effect2.get(), mTransform2.get() );
+    ref<GLSLVertexShader> perpixellight_vs = new GLSLVertexShader("/glsl/perpixellight.vs");
 
-    ref<Effect> effect3 = new Effect;
-    effect3->shader()->setRenderState( light.get(), 0 );
-    effect3->shader()->enable(EN_LIGHTING);
-    effect3->shader()->enable(EN_DEPTH_TEST);
-    effect3->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( mModel.get(), effect3.get(), mTransform3.get() );
+    // SIMPLE
 
-    ref<Effect> effect4 = new Effect;
-    effect4->shader()->setRenderState( light.get(), 0 );
-    effect4->shader()->enable(EN_LIGHTING);
-    effect4->shader()->enable(EN_DEPTH_TEST);
-    effect4->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( mModel.get(), effect4.get(), mTransform4.get() );
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( perpixellight_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight.fs") );
 
-    ref<Effect> effect5 = new Effect;
-    effect5->shader()->setRenderState( light.get(), 0 );
-    effect5->shader()->enable(EN_LIGHTING);
-    effect5->shader()->enable(EN_DEPTH_TEST);
-    effect5->shader()->enable(EN_CULL_FACE);
-    sceneManager()->tree()->addActor( mModel.get(), effect5.get(), mTransform5.get() );
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( perpixellight_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/perpixellight_toon.fs") );
 
-    if (Has_GLSL)
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( perpixellight_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/heat.fs") );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( perpixellight_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/perpixellight_interlaced.fs") );
+
+    // NOISE
+
+    ref<GLSLVertexShader>   noise_vs   = new GLSLVertexShader("/glsl/examples/noise.vs");
+    ref<GLSLFragmentShader> noise3D_fs = new GLSLFragmentShader("/glsl/noise3D.glsl");
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( noise_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/alien.fs") );
+    glsl->attachShader( noise3D_fs.get() );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( noise_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/cloud.fs") );
+    glsl->attachShader( noise3D_fs.get() );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( noise_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/granite.fs") );
+    glsl->attachShader( noise3D_fs.get() );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( noise_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/marble.fs") );
+    glsl->attachShader( noise3D_fs.get() );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( noise_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/marble2.fs") );
+    glsl->attachShader( noise3D_fs.get() );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( noise_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/turbulence.fs") );
+    glsl->attachShader( noise3D_fs.get() );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( noise_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/woody.fs") );
+    glsl->attachShader( noise3D_fs.get() );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( noise_vs.get() );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/ribbon.fs") );
+    glsl->attachShader( noise3D_fs.get() );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( new GLSLVertexShader("/glsl/examples/noisebump.vs") );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/noisebump.fs") );
+    glsl->attachShader( noise3D_fs.get() );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( new GLSLVertexShader("/glsl/examples/hatching.vs") );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/hatching.fs") );
+
+    glsl = new GLSLProgram;
+    mGLSL.push_back(glsl);
+    glsl->attachShader( new GLSLVertexShader("/glsl/examples/stripes.vs") );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/stripes.fs") );
+
+    if (Has_Geometry_Shader)
     {
-      ref<GLSLProgram> glsl;
+      glsl = new GLSLProgram;
+      mGLSL.push_back(glsl);
+      // a vertex shader is always needed when using geometry shaders
+      glsl->attachShader( new GLSLVertexShader("/glsl/examples/diffuse.vs") );
+      glsl->attachShader( new GLSLGeometryShader("/glsl/examples/triangle_fur.gs") );
+      glsl->setGeometryInputType(GIT_TRIANGLES);
+      glsl->setGeometryOutputType(GOT_TRIANGLE_STRIP);
+      glsl->setGeometryVerticesOut( 3*6 );
+    }
+    else
+    {
+      Log::print("Geomery shaders not supported.\n");
+    }
 
-      glsl = effect1->shader()->gocGLSLProgram();
-      glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
-      glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight_cartoon.fs") );
+    mGLSL.resize(4*4);
 
-      glsl = effect2->shader()->gocGLSLProgram();
-      glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
-      glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight.fs") );
-
-      glsl = effect3->shader()->gocGLSLProgram();
-      glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
-      glsl->attachShader( new GLSLFragmentShader("/glsl/heat.fs") );
-
-      glsl = effect4->shader()->gocGLSLProgram();
-      glsl->attachShader( new GLSLVertexShader("/glsl/perpixellight.vs") );
-      glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight_interlaced.fs") );
-
-      if (Has_Geometry_Shader)
+    for(int y=0; y<4; ++y)
+    {
+      for(int x=0; x<4; ++x)
       {
-        glsl = effect5->shader()->gocGLSLProgram();
-        // a vertex shader is always needed when using geometry shaders
-        glsl->attachShader( new GLSLVertexShader("/glsl/diffuse.vs") );
-        glsl->attachShader( new GLSLGeometryShader("/glsl/triangle_fur.gs") );
-        glsl->setGeometryInputType(GIT_TRIANGLES);
-        glsl->setGeometryOutputType(GOT_TRIANGLE_STRIP);
-        glsl->setGeometryVerticesOut( 3*6 );
-      }
-      else
-      {
-        effect5->shader()->gocMaterial()->setDiffuse(red);
-        Log::print("GL_NV_geometry_shader4 not supported.\n");
+        ref<Effect> fx = new Effect;
+        fx->shader()->setRenderState( light.get(), 0 );
+        fx->shader()->enable(EN_LIGHTING);
+        fx->shader()->enable(EN_DEPTH_TEST);
+        // fx->shader()->enable(EN_CULL_FACE);
+        GLSLProgram* glsl = mGLSL[x + y*4].get();
+        if (glsl)
+          fx->shader()->setRenderState(glsl);
+        ref<Transform> tr = new Transform;
+        real grid= 3.0;
+        tr->setLocalAndWorldMatrix( mat4::getTranslation(x*grid, y*grid, 0) );
+        sceneManager()->tree()->addActor( mModel.get(), fx.get(), tr.get() );
       }
     }
   }
@@ -165,21 +216,11 @@ public:
 
   void updateScene()
   {
-    // animate the transforms
-    mTransform1->setLocalMatrix( mat4::getTranslation(-2,2,0)  );
-    mTransform2->setLocalMatrix( mat4::getTranslation(+2,2,0)  );
-    mTransform3->setLocalMatrix( mat4::getTranslation(-2,-2,0) );
-    mTransform4->setLocalMatrix( mat4::getTranslation(+2,-2,0) );
-    mTransform5->setLocalMatrix( mat4::getTranslation(0,0,0)   );
   }
 
 protected:
-  ref<Transform> mTransform1;
-  ref<Transform> mTransform2;
-  ref<Transform> mTransform3;
-  ref<Transform> mTransform4;
-  ref<Transform> mTransform5;
   ref<Geometry> mModel;
+  std::vector< ref<GLSLProgram> > mGLSL;
 };
 
 // Have fun!

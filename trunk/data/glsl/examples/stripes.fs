@@ -1,9 +1,11 @@
+// requires "stripes.vs"
+
 varying float V;
 varying float LightIntensity;
 
 void main()
 {
-	const float Frequency = 13;
+	const float Frequency = 3.0;
 	
 	float sawtooth = fract(V * Frequency);
 	float triangle = abs(2.0 * sawtooth - 1.0);

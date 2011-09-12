@@ -1,3 +1,6 @@
+// requires "noise.vs"
+// requires "noise3D.glsl"
+
 varying float LightIntensity;
 varying vec3 MCposition;
 

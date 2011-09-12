@@ -3,7 +3,7 @@ VLX version=100 encoding=ascii
 <Metadata>
 {
 	Authoring_Tool = "Visualization Library 2011.9.1155"
-	Creation_Date = "Sun Sep 11 17:09:34 2011"
+	Creation_Date = "Sun Sep 11 17:44:55 2011"
 	VL_Serializer_Version = 100
 }
 <vl::ResourceDatabase>
@@ -76,7 +76,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Matrix> ( 0.174756 -0.191142 0.965880 0.000000 0.984523 0.047091 -0.168810 0.000000 -0.013218 0.980432 0.196413 0.000000 0.000000 0.000000 0.000000 1.000000 )
+						<Matrix> ( 0.956685 0.291097 -0.003973 0.000000 -0.278852 0.920193 0.274747 0.000000 0.083634 -0.261739 0.961508 0.000000 0.000000 0.000000 0.000000 1.000000 )
 					]
 					Children = [ ]
 				}
@@ -94,7 +94,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Scale> ( 7.070799 6.686309 3.005666 )
+						<Scale> ( 2.954781 6.936882 3.394159 )
 					]
 					Children = [ ]
 				}
@@ -103,7 +103,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Translate> ( -1.099151 -3.690430 -0.275864 )
+						<Translate> ( -3.805411 0.346061 1.856497 )
 					]
 					Children = [ ]
 				}
@@ -112,7 +112,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Matrix> ( 0.922978 0.227810 -0.310183 0.000000 -0.135678 0.946845 0.291677 0.000000 0.360143 -0.227127 0.904826 0.000000 0.000000 0.000000 0.000000 1.000000 )
+						<Matrix> ( 0.798101 0.399326 -0.451192 0.000000 0.049113 0.703229 0.709265 0.000000 0.600519 -0.588224 0.541636 0.000000 0.000000 0.000000 0.000000 1.000000 )
 					]
 					Children = [ ]
 				}
@@ -121,7 +121,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Translate> ( -0.707677 4.785462 -1.199419 )
+						<Translate> ( 4.493945 4.400562 4.579254 )
 					]
 					Children = [ ]
 				}
@@ -130,7 +130,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Scale> ( 2.911039 5.871495 7.629946 )
+						<Scale> ( 2.580672 1.158360 1.363518 )
 					]
 					Children = [ ]
 				}
@@ -139,7 +139,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Scale> ( 6.470659 6.949619 4.098377 )
+						<Scale> ( 3.125955 8.884190 3.746814 )
 					]
 					Children = [ ]
 				}
@@ -148,7 +148,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Scale> ( 9.540174 7.400856 4.333831 )
+						<Scale> ( 2.033372 1.320524 9.535257 )
 					]
 					Children = [ ]
 				}
@@ -157,7 +157,7 @@ VLX version=100 encoding=ascii
 					ObjectName = "some transform's name"
 					LocalMatrix = 
 					[
-						<Translate> ( -0.509236 3.646994 -0.366807 )
+						<Translate> ( 3.660144 -3.975732 -0.497298 )
 					]
 					Children = [ ]
 				}
@@ -501,9 +501,9 @@ VLX version=100 encoding=ascii
 				1
 				#light_id31
 				0
-				#clipplane_id33
-				1
 				#clipplane_id32
+				1
+				#clipplane_id33
 				#color_id18
 				#seccolor_id21
 				#normal_id20
@@ -621,53 +621,6 @@ VLX version=100 encoding=ascii
 		}
 		<vl::Geometry>
 		{
-			ObjectName = "Icosphere"
-			BufferObjectEnabled = true
-			DisplayListEnabled = false
-			VertexAttribArray0 = <vl::VertexAttribInfo>
-			{
-				Data = <vl::ArrayFloat3>
-				{
-					Value = ( -4.253254 -2.628655 0.000000 -4.253254 2.628655 0.000000 -2.628655 0.000000 -4.253254 -2.628655 0.000000 4.253254 0.000000 -4.253254 -2.628655 0.000000 -4.253254 2.628655 0.000000 4.253254 -2.628655 0.000000 4.253254 2.628655 2.628655 0.000000 -4.253254 2.628655 0.000000 4.253254 4.253254 -2.628655 0.000000 4.253254 2.628655 0.000000 )
-				}
-				Normalize = true
-				Interpretation = VAI_NORMAL
-			}
-			VertexAttribArray1 = <vl::VertexAttribInfo>
-			{
-				Data = <vl::ArrayFloat3>
-				{
-					Value = ( -0.850651 -0.525731 0.000000 -0.850651 0.525731 0.000000 -0.525731 0.000000 -0.850651 -0.525731 0.000000 0.850651 0.000000 -0.850651 -0.525731 0.000000 -0.850651 0.525731 0.000000 0.850651 -0.525731 0.000000 0.850651 0.525731 0.525731 0.000000 -0.850651 0.525731 0.000000 0.850651 0.850651 -0.525731 0.000000 0.850651 0.525731 0.000000 )
-				}
-				Normalize = true
-				Interpretation = VAI_NORMAL
-			}
-			VertexAttribArray2 = <vl::VertexAttribInfo>
-			{
-				Data = <vl::ArrayFloat3>
-				{
-					Value = ( -0.850651 -0.525731 0.000000 -0.850651 0.525731 0.000000 -0.525731 0.000000 -0.850651 -0.525731 0.000000 0.850651 0.000000 -0.850651 -0.525731 0.000000 -0.850651 0.525731 0.000000 0.850651 -0.525731 0.000000 0.850651 0.525731 0.525731 0.000000 -0.850651 0.525731 0.000000 0.850651 0.850651 -0.525731 0.000000 0.850651 0.525731 0.000000 )
-				}
-				Normalize = true
-				Interpretation = VAI_NORMAL
-			}
-			DrawCall = <vl::DrawElementsUByte>
-			{
-				ID = #drawcall_id75
-				PrimitiveType = PT_TRIANGLES
-				Enabled = true
-				Instances = 1
-				PrimitiveRestartEnabled = false
-				BaseVertex = 0
-				IndexBuffer = <vl::ArrayUByte1>
-				{
-					Value = ( 9 7 3 7 1 3 7 6 1 11 6 7 9 11 7 9 10 11 10 8 11 11 8 6 8 2 6 8 4 2 8 10 4 10 5 4 5 0 4 5 3 0 5 9 3 10 9 5 0 3 1 2 0 1 6 2 1 0 2 4 )
-				}
-			}
-			DrawCall = #drawcall_id75
-		}
-		<vl::Geometry>
-		{
 			ObjectName = "teapot without normals again"
 			BufferObjectEnabled = true
 			DisplayListEnabled = false
@@ -739,6 +692,53 @@ VLX version=100 encoding=ascii
 				Start = 0
 				Count = 24
 			}
+		}
+		<vl::Geometry>
+		{
+			ObjectName = "Icosphere"
+			BufferObjectEnabled = true
+			DisplayListEnabled = false
+			VertexAttribArray0 = <vl::VertexAttribInfo>
+			{
+				Data = <vl::ArrayFloat3>
+				{
+					Value = ( -4.253254 -2.628655 0.000000 -4.253254 2.628655 0.000000 -2.628655 0.000000 -4.253254 -2.628655 0.000000 4.253254 0.000000 -4.253254 -2.628655 0.000000 -4.253254 2.628655 0.000000 4.253254 -2.628655 0.000000 4.253254 2.628655 2.628655 0.000000 -4.253254 2.628655 0.000000 4.253254 4.253254 -2.628655 0.000000 4.253254 2.628655 0.000000 )
+				}
+				Normalize = true
+				Interpretation = VAI_NORMAL
+			}
+			VertexAttribArray1 = <vl::VertexAttribInfo>
+			{
+				Data = <vl::ArrayFloat3>
+				{
+					Value = ( -0.850651 -0.525731 0.000000 -0.850651 0.525731 0.000000 -0.525731 0.000000 -0.850651 -0.525731 0.000000 0.850651 0.000000 -0.850651 -0.525731 0.000000 -0.850651 0.525731 0.000000 0.850651 -0.525731 0.000000 0.850651 0.525731 0.525731 0.000000 -0.850651 0.525731 0.000000 0.850651 0.850651 -0.525731 0.000000 0.850651 0.525731 0.000000 )
+				}
+				Normalize = true
+				Interpretation = VAI_NORMAL
+			}
+			VertexAttribArray2 = <vl::VertexAttribInfo>
+			{
+				Data = <vl::ArrayFloat3>
+				{
+					Value = ( -0.850651 -0.525731 0.000000 -0.850651 0.525731 0.000000 -0.525731 0.000000 -0.850651 -0.525731 0.000000 0.850651 0.000000 -0.850651 -0.525731 0.000000 -0.850651 0.525731 0.000000 0.850651 -0.525731 0.000000 0.850651 0.525731 0.525731 0.000000 -0.850651 0.525731 0.000000 0.850651 0.850651 -0.525731 0.000000 0.850651 0.525731 0.000000 )
+				}
+				Normalize = true
+				Interpretation = VAI_NORMAL
+			}
+			DrawCall = <vl::DrawElementsUByte>
+			{
+				ID = #drawcall_id87
+				PrimitiveType = PT_TRIANGLES
+				Enabled = true
+				Instances = 1
+				PrimitiveRestartEnabled = false
+				BaseVertex = 0
+				IndexBuffer = <vl::ArrayUByte1>
+				{
+					Value = ( 9 7 3 7 1 3 7 6 1 11 6 7 9 11 7 9 10 11 10 8 11 11 8 6 8 2 6 8 4 2 8 10 4 10 5 4 5 0 4 5 3 0 5 9 3 10 9 5 0 3 1 2 0 1 6 2 1 0 2 4 )
+				}
+			}
+			DrawCall = #drawcall_id87
 		}
 		<vl::Actor>
 		{

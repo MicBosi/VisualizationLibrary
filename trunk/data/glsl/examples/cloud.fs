@@ -1,3 +1,6 @@
+// requires "noise.vs"
+// requires "noise3D.glsl"
+
 varying float LightIntensity;
 varying vec3 MCposition;
 
@@ -9,6 +12,7 @@ void main(void)
 	const vec3 CloudColor = vec3(0.8, 0.8, 0.8);
 	const vec3 CloudColorDark = vec3(0.6, 0.6, 0.6);
 
+	const float base_freq = 0.2; // SPIDER
 	// const float base_freq = 0.0004; // CAT
 	// const float base_freq = 1.0; // COW
 	// const float base_freq = 0.005; // DINO
@@ -18,7 +22,7 @@ void main(void)
 	// const float base_freq = 4.0; // DRAGON
 	// const float base_freq = 1.5; // CANE
 	// const float base_freq = 0.2; // HAND
-	const float base_freq = 1.5; // RINO
+	// const float base_freq = 1.5; // RINO
 
 	float noise = snoise(MCposition * base_freq) * 8.0 + snoise(MCposition * base_freq*2.0) * 4.0 + snoise(MCposition * base_freq*4.0) * 2.0 + snoise(MCposition * base_freq * 8.0);
 	noise = (noise / 8.0 + 1.0) / 2.0;
