@@ -32,11 +32,13 @@
 #ifndef expandResourceDatabase_INCLUDE_ONCE
 #define expandResourceDatabase_INCLUDE_ONCE
 
+#include <vlGraphics/link_config.hpp>
+
 namespace vl
 {
   class ResourceDatabase;
   //! Extracts and sorts Shaders, Effects, Renderables, RenderStates, Transforms etc. from their parent objects.
-  void expandResourceDatabase(ResourceDatabase* db);
+  VLGRAPHICS_EXPORT void expandResourceDatabase(ResourceDatabase* db);
 }
 
 #endif
