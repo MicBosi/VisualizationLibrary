@@ -58,7 +58,7 @@ void main()
 	
 	// Per-fragment diffuse lighting
 	intensity = 0.2; // ambient
-	intensity += 0.8 * clamp(dot(L, normal), 0.0, 1.0);
+	intensity += 0.8 * clamp(dot(L, normal.xyz), 0.0, 1.0);
 	surfColor *= intensity;
 
 	// Per-framgment specular lighting
