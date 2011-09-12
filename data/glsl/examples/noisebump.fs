@@ -11,6 +11,8 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+// inspired by http://http.developer.nvidia.com/GPUGems/gpugems_ch05.html
+
 // requires "noisebump.vs"
 // requires "noise3D.glsl"
 
