@@ -135,8 +135,12 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   glDisable(GL_BLEND);
   glLineWidth(1.0f);
 
+  // was enabled by viewport
+  glDisable(GL_SCISSOR_TEST);
+
   // disable all vertex arrays
   framebuffer()->openglContext()->bindVAS(NULL, false, true);
+
   VL_CHECK( framebuffer()->openglContext()->isCleanState(true) );
 
   return render_queue;
