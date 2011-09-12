@@ -32,25 +32,47 @@
 #ifndef TypInfo_INCLUDE_ONCE
 #define TypInfo_INCLUDE_ONCE
 
-/**
- * \file TypeInfo.hpp
- * Set of macros and templates implementing a simple and portable RTTI system.
-*/
+#include <vlCore/MurmurHash3.hpp>
 
-//---------------------------------------------------------------------------------------------------------------------
-//! Represents a class type.
-struct TypeInfo
+namespace vl
 {
-  TypeInfo(const char* name): Name(name) 
-  {
-    // just for debugging
-    // printf("Initializing TypeInfo \"%s\" at %p\n", name, this);
-  }
-  const char* name() const { return Name; }
+  /**
+   * \file TypeInfo.hpp
+   * Set of macros and templates implementing a simple and portable RTTI system.
+  */
 
-private:
-  const char* Name;
-};
+  //---------------------------------------------------------------------------------------------------------------------
+  //! Represents a class type.
+  struct TypeInfo
+  {
+    //! Constructor.
+    TypeInfo(const char* name): mName(name)
+    {
+      // compute string length
+      const char* ptr = name;
+      while( *ptr ) ++ptr;
+      vl::MurmurHash3_x86_32(name, (int)(ptr - name), 0, &mHash);
+      // printf("--- --- TypeInfo : %s = %x\n", name, mHash);
+    }
+
+    //! Equal operator
+    bool operator==(const TypeInfo& other) const { return mHash == other.mHash; }
+
+    //! Less operator
+    bool operator<(const  TypeInfo& other) const { return mHash < other.mHash; }
+
+    //! The name of the class including the namespace.
+    const char* name() const { return mName; }
+
+    //! The 32 bit hash of the name of the class including the namespace.
+    u32 hash() const { return mHash; }
+
+  private:
+    // we could also use u32 mHash[4] and MurmurHash3_x86_128() for extra safety.
+    u32 mHash;
+    const char* mName;
+  };
+}
 //---------------------------------------------------------------------------------------------------------------------
 #define VL_GROUP(...) __VA_ARGS__
 #define VL_TO_STR(...) #__VA_ARGS__
@@ -61,15 +83,15 @@ public:                                                                         
   /** Returns the name of the class. */                                                                               \
   static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
   /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
+  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
                                                                                                                       \
   /* virtual functions */                                                                                             \
   /** Returns the name of the object's class. */                                                                      \
   virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
   /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo* classType() const { return Type(); }                                                        \
+  virtual const TypeInfo& classType() const { return Type(); }                                                        \
   /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo* type) const                                                                   \
+  virtual bool isOfType(const TypeInfo& type) const                                                                   \
   {                                                                                                                   \
     return type == Type();                                                                                            \
   }                                                                                                                   \
@@ -82,15 +104,15 @@ public:                                                                         
   /** Returns the name of the class. */                                                                               \
   static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
   /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
+  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
                                                                                                                       \
   /* virtual functions */                                                                                             \
   /** Returns the name of the object's class. */                                                                      \
   virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
   /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo* classType() const { return Type(); }                                                        \
+  virtual const TypeInfo& classType() const { return Type(); }                                                        \
   /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo* type) const                                                                   \
+  virtual bool isOfType(const TypeInfo& type) const                                                                   \
   {                                                                                                                   \
     return type == Type();                                                                                            \
   }                                                                                                                   \
@@ -105,15 +127,15 @@ public:                                                                         
   /** Returns the name of the class. */                                                                               \
   static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
   /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
+  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
                                                                                                                       \
   /* virtual functions */                                                                                             \
   /** Returns the name of the object's class. */                                                                      \
   virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
   /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo* classType() const { return Type(); }                                                        \
+  virtual const TypeInfo& classType() const { return Type(); }                                                        \
   /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo* type) const                                                                   \
+  virtual bool isOfType(const TypeInfo& type) const                                                                   \
   {                                                                                                                   \
     return type == Type() || super::isOfType(type);                                                                   \
   }                                                                                                                   \
@@ -128,15 +150,15 @@ public:                                                                         
   /** Returns the name of the class. */                                                                               \
   static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
   /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
+  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
                                                                                                                       \
   /* virtual functions */                                                                                             \
   /** Returns the name of the object's class. */                                                                      \
   virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
   /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo* classType() const { return Type(); }                                                        \
+  virtual const TypeInfo& classType() const { return Type(); }                                                        \
   /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo* type) const                                                                   \
+  virtual bool isOfType(const TypeInfo& type) const                                                                   \
   {                                                                                                                   \
     return type == Type() || super::isOfType(type);                                                                   \
   }                                                                                                                   \
@@ -152,15 +174,15 @@ public:                                                                         
   /** Returns the name of the class. */                                                                               \
   static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
   /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
+  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
                                                                                                                       \
   /* virtual functions */                                                                                             \
   /** Returns the name of the object's class. */                                                                      \
   virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
   /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo* classType() const { return Type(); }                                                        \
+  virtual const TypeInfo& classType() const { return Type(); }                                                        \
   /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo* type) const                                                                   \
+  virtual bool isOfType(const TypeInfo& type) const                                                                   \
   {                                                                                                                   \
     return type == Type() || super1::isOfType(type) || super2::isOfType(type);                                        \
   }                                                                                                                   \
@@ -176,15 +198,15 @@ public:                                                                         
   /** Returns the name of the class. */                                                                               \
   static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
   /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo* Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return &class_type; }       \
+  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
                                                                                                                       \
   /* virtual functions */                                                                                             \
   /** Returns the name of the object's class. */                                                                      \
   virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
   /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo* classType() const { return Type(); }                                                        \
+  virtual const TypeInfo& classType() const { return Type(); }                                                        \
   /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo* type) const                                                                   \
+  virtual bool isOfType(const TypeInfo& type) const                                                                   \
   {                                                                                                                   \
     return type == Type() || super1::isOfType(type) || super2::isOfType(type);                                        \
   }                                                                                                                   \
@@ -260,7 +282,7 @@ namespace ns
 }
 
 IMPORTANT NOTE:
-  - The "ClassName" parameter of VL_INSTRUMENT_* should ALWAYS specify the full namespace.
+  - The "ClassName" parameter of VL_INSTRUMENT_* should ALWAYS specify the full NAMESPACE.
   - The "BaseClass" parameter of VL_INSTRUMENT_* should not specify the namespace unless strictly necessary.
 
 --- dynamic casting example ---
@@ -272,6 +294,12 @@ assert( vl::cast<ns::ClassAB>(pA)   != NULL )
 assert( vl::cast<ns::ClassAB>(pB)   != NULL )
 assert( vl::cast<ns::ClassSubT>(pA) == NULL )
 
+or
+
+assert( pA->as<ns::ClassAB>()   != NULL )
+assert( pB->as<ns::ClassAB>()   != NULL )
+assert( pA->as<ns::ClassSubT>() == NULL )
+
 NOTE THAT UNLIKE dynamic_cast<> AND static_cast<> WE USE:
 
   vl::cast<ns::ClassAB>(pB)
@@ -279,6 +307,11 @@ NOTE THAT UNLIKE dynamic_cast<> AND static_cast<> WE USE:
 INSTEAD OF:
 
   vl::cast<ns::ClassAB*>(pB)
+
+REMARKS:
+  
+  There is no need to say that, similarly to dynamic_cast<>, one should avoid using VL TypeInfo facilities
+  inside "fast" loops otherwise they won't be that "fast" anymore!
 
 ***/
 
