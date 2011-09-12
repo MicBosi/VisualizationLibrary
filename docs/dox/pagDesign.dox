@@ -79,7 +79,7 @@
 	   a framebuffer object (possibly a texture), a pbuffer for offscreen rendering etc. Each rendering target belongs to an OpenGL context.
 	-# A set of vl::SceneManager objects: a scene manager contains a set of Actors and implements a specific spatial organization algorithm used to accelerate visibility/culling, picking, intersection/collision computations etc.
 	-# A set of vl::RenderEventCallback objects: called at the beginning and at the end of a rendering to perform user-specific actions.
-	-# vl::Renderer: performs the actual rendering.
+	-# vl::Renderer: performs the actual rendering. A vl::Rendering can have multiple vl::Renderer objects that consume in cascade the objects to be rendered.
 	
 	As you can see Visualization Library can seamlessly use multiple scene managers, each of which can implement 
 	its own visibility and spatial organization algorithm. You can for example implement a PVS or portal-based scene manager and just drop it 
