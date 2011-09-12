@@ -1,8 +1,9 @@
+// requires "hatching.vs"
+
 const float frequency = 2.0;
 
 varying float V;
 varying float LightIntensity;
-// varying vec3 MCposition;
 
 void main()
 {

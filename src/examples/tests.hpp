@@ -161,7 +161,7 @@ public:
       { "text_rotation", Create_App_TextRendering(2), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
       { "text_multilingual", Create_App_TextRendering(3), 10, 10, 512, 512, vl::gold, vl::vec3(0,0,30), vl::vec3(0,0,0) }, 
       { "text_solar_system", Create_App_TextRendering(4), 10, 10, 512, 512, vl::black, vl::vec3(0,35,40), vl::vec3(0,0,0) }, 
-      { "glsl", Create_App_GLSL(), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,7), vl::vec3(0,0,0) }, 
+      { "glsl", Create_App_GLSL(), 10, 10, 512, 512, vl::black, vl::vec3(4.5,4.5,12), vl::vec3(4.5,4.5,0) }, 
       { "glsl_normal_map", Create_App_GLSL_Bumpmapping(), 10, 10, 512, 512, vl::skyblue, vl::vec3(0,0,10), vl::vec3(0,0,0) }, 
       { "glsl_image_proc", Create_App_GLSLImageProcessing(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 
       { "glsl_mandelbrot", Create_App_Fractals(), 10,10, 512, 512, vl::black, vl::vec3(0,0,35), vl::vec3(0,0,0) }, 

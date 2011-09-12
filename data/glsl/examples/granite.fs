@@ -1,3 +1,6 @@
+// requires "noise.vs"
+// requires "noise3D.glsl"
+
 varying float LightIntensity;
 varying vec3 MCposition;
 
@@ -7,6 +10,7 @@ void main(void)
 {
 	const vec3 Color1 = vec3(0.35, 0.3, 0.2);
 	const vec3 Color2 = vec3(0.7, 0.7, 0.7);
+
 	// const float base_freq = 0.01; // DINO
 	// const float base_freq = 0.0004; // CAT
 	// const float base_freq = 2.0; // COW
@@ -15,7 +19,7 @@ void main(void)
 	// const float base_freq = 1.5; // CANE
 	// const float base_freq = 0.2; // HAND
 	// const float base_freq = 2.1; // RINO
-	const float base_freq = 0.3; // SPIDER
+	const float base_freq = 0.2; // SPIDER
 
 	
 	vec4 noisevec;

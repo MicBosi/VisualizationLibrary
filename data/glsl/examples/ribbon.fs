@@ -1,3 +1,6 @@
+// requires "noise.vs"
+// requires "noise3D.glsl"
+
 varying float LightIntensity;
 varying vec3 MCposition;
 
@@ -8,13 +11,13 @@ void main(void)
 	const vec3 SkinColor1 = vec3(0.9, 0.7, 0.2);
 	const vec3 SkinColor2 = vec3(0.2, 0.5, 0.2);
 
-	// const float base_freq = 0.1; // SPIDER
+	const float base_freq = 0.15; // SPIDER
 	// const float base_freq = 1.0; // COW
 	// const float base_freq = 0.005; // DINO
 	// const float base_freq = 0.0004; // CAT
 	// const float base_freq = 0.5; // COW
 	// const float base_freq = 0.5; // HORSE
-	const float base_freq = 1.7; // DRAGON
+	// const float base_freq = 1.7; // DRAGON
 	// const float base_freq = 1.5; // CANE
 	// const float base_freq = 0.05; // HAND
 	// const float base_freq = 1.5; // RINO
@@ -32,7 +35,7 @@ void main(void)
 	if ( abs(intensity - 0.5) > 0.1 )
 		discard;
 	
-	if (LightIntensity > 0)
+	if (LightIntensity > 0.0)
 		color = SkinColor1 * LightIntensity;
 	else
 		color = SkinColor2 * -LightIntensity;
