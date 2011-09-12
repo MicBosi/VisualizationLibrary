@@ -66,12 +66,15 @@ public:
 
     ref<GLSLVertexShader> perpixellight_vs = new GLSLVertexShader("/glsl/perpixellight.vs");
 
-    // SIMPLE
+    //glsl = new GLSLProgram;
+    //mGLSL.push_back(glsl);
+    //glsl->attachShader( perpixellight_vs.get() );
+    //glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight.fs") );
 
     glsl = new GLSLProgram;
     mGLSL.push_back(glsl);
-    glsl->attachShader( perpixellight_vs.get() );
-    glsl->attachShader( new GLSLFragmentShader("/glsl/perpixellight.fs") );
+    glsl->attachShader( new GLSLVertexShader("/glsl/examples/toyball.vs") );
+    glsl->attachShader( new GLSLFragmentShader("/glsl/examples/toyball.fs") );
 
     glsl = new GLSLProgram;
     mGLSL.push_back(glsl);
@@ -87,8 +90,6 @@ public:
     mGLSL.push_back(glsl);
     glsl->attachShader( perpixellight_vs.get() );
     glsl->attachShader( new GLSLFragmentShader("/glsl/examples/perpixellight_interlaced.fs") );
-
-    // NOISE
 
     ref<GLSLVertexShader>   noise_vs   = new GLSLVertexShader("/glsl/examples/noise.vs");
     ref<GLSLFragmentShader> noise3D_fs = new GLSLFragmentShader("/glsl/noise3D.glsl");
