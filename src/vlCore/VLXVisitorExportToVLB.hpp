@@ -227,7 +227,7 @@ namespace vl
       if (arr->value().size() > 0)
       {
         std::vector<unsigned char> encoded;
-        encodeIntegers(&arr->value()[0], arr->value().size(), encoded); VL_CHECK(encoded.size())
+        encodeIntegers(&arr->value()[0], (int)arr->value().size(), encoded); VL_CHECK(encoded.size())
         writeInteger(encoded.size());
         mOutputFile->writeUInt8(&encoded[0], encoded.size());
       }
