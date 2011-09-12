@@ -52,6 +52,8 @@ public:
       exit(1);
     }
 
+    trackball()->setPivot(vl::vec3(4.5f, 4.5f, 0.0f));
+
     Log::notify(appletInfo());
 
     ref<ResourceDatabase> res_db = loadResource("/models/3ds/monkey.3ds");
