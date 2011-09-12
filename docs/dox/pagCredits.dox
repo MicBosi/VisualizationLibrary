@@ -59,6 +59,9 @@
 			<td>Tanguy Fautré - tri_stripper implementation (tri_stripper.h, tri_stripper.cpp)</td>
 		</tr>
 		<tr>
+			<td>Austin Appleby - MurmurHash3 functions (MurmurHash3.hpp, MurmurHash3.cpp)</td>
+		</tr>
+		<tr>
 			<td>Brent Fulgham</td>
 		</tr>
 		<tr>
