@@ -2,6 +2,18 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.04.1144 (maintenance release of VL 2011.04.1142)</div>
+
+	- Bug: fixed FontManager::acquireFont() always returning entry #0.
+	- Bug: fixed Matrix3::getInverse() returning the transpose of the inverse.
+	- Bug: fixed bug when destroying a Transform with children did not set mParent to NULL.
+	- Bug: fixed lag when starting font rendering with many glyphs.
+	- Bug: fixed problems and typos in FindVL.cmake.
+	- Bug: fixed vl::Time precision when system is up for several days.
+	- Bug: fixed partial GLSLProgState sorting in Renderer.cpp.
+	- actorQueue() cleared after rendering to potentially release rendered objects.
+	- Matrix4::getInverse() implemented using cofactors method give 3.5X speedup.
+	
 	<div class="featuretitle">Visualization Library 2011.09.1157</div>
 
 	- Added new tool: vlxtool.exe: convert data to vlt/vlb format.
