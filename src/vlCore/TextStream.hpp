@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -36,7 +36,6 @@
 
 namespace vl
 {
-
 //-----------------------------------------------------------------------------
 // TextStream
 //-----------------------------------------------------------------------------
@@ -45,9 +44,8 @@ namespace vl
   */
   class VLCORE_EXPORT TextStream: public BufferedStream<unsigned char, 128*1024>
   {
-    VL_INSTRUMENT_CLASS(vl::TextStream, VL_GROUP(BufferedStream<unsigned char, 128*1024>))
-
   public:
+    virtual const char* className() { return "vl::TextStream"; }
     TextStream(VirtualFile* file=NULL)
     {
       setInputFile(file);

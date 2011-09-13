@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -33,7 +33,7 @@
 #define Geometry_INCLUDE_ONCE
 
 #include <vlGraphics/IVertexAttribSet.hpp>
-#include <vlGraphics/BufferObject.hpp>
+#include <vlGraphics/GLBufferObject.hpp>
 #include <vlCore/Vector2.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlGraphics/Renderable.hpp>
@@ -57,7 +57,7 @@ namespace vl
    * The Geometry class is a Renderable that implements a polygonal mesh made of
    * polygons, lines and points.
    *
-   * @sa 
+   * \sa 
    * - ArrayAbstract
    * - Renderable
    * - Actor
@@ -66,24 +66,20 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Geometry: public Renderable, public IVertexAttribSet
   {
-    VL_INSTRUMENT_CLASS(vl::Geometry, Renderable)
-
-    // use deepCopy() and shallowCopy() instead
-    // Geometry(const Geometry& other): Renderable(other) { }
-    Geometry& operator=(const Geometry&) { return *this; }
-
   private:
     class TextureArray: public Object
     {
     public:
-      TextureArray(int unit, ArrayAbstract* data): mTextureSampler(unit), mTexCoordArray(data) { }
-      const BufferObject* bufferObject() const { return mTexCoordArray->bufferObject(); }
-      BufferObject* bufferObject() { return mTexCoordArray->bufferObject(); }
-      int mTextureSampler;
+      TextureArray(int unit, ArrayAbstract* data): mTextureUnit(unit), mTexCoordArray(data) {}
+      int mTextureUnit;
       ref<ArrayAbstract> mTexCoordArray;
+      const GLBufferObject* gpuBuffer() const { return mTexCoordArray->gpuBuffer(); }
+      GLBufferObject* gpuBuffer() { return mTexCoordArray->gpuBuffer(); }
     };
 
   public:
+    virtual const char* className() { return "vl::Geometry"; }
+    
     /** Constructor. */
     Geometry();
 
@@ -91,24 +87,27 @@ namespace vl
     virtual ~Geometry();
 
     /**
-     * Performs a shallow copy of a Geometry.
-     * @sa deepCopy() */
-    ref<Geometry> shallowCopy() const;
+     * Performs a shallow copy (as opposed to a deep copy) of the specified Geometry.
+     * \sa deepCopy() */
+    ref<Geometry> shallowCopy();
 
     /**
-     * Performs a shallow copy of the specified Geometry.
-     * @sa deepCopy() */
-    Geometry& shallowCopyFrom(const Geometry&);
+     * Performs a shallow copy (as opposed to a deep copy) of the specified Geometry.
+     * \sa deepCopy() */
+    void shallowCopy(Geometry*);
 
     /**
-     * Performs a deep copy of a Geometry.
-     * @sa shallowCopy() */
+     * Performs a deep copy (as opposed to a shallow copy) of the specified Geometry.
+     * \sa shallowCopy() */
     ref<Geometry> deepCopy() const;
 
     /**
-     * Performs a deep copy of the specified Geometry.
-     * @sa shallowCopy() */
-    Geometry& deepCopyFrom(const Geometry&);
+     * Performs a deep copy (as opposed to a shallow copy) of the specified Geometry.
+     * \sa shallowCopy() */
+    void deepCopy(Geometry* ) const;
+
+    //! Performs a shallowCopy() of the Geometry
+    Geometry& operator=(const Geometry& other);
 
     //! Returns the list of DrawCall objects bound to a Geometry
     Collection<DrawCall>* drawCalls() { return &mDrawCalls; }
@@ -116,51 +115,41 @@ namespace vl
     //! Returns the list of DrawCall objects bound to a Geometry
     const Collection<DrawCall>* drawCalls() const { return &mDrawCalls; }
 
-    //! Fills the color array with the given color
-    void setColorArray(const fvec4& color)
-    {
-      size_t vert_count = vertexArray() ? vertexArray()->size() : vertexAttribArray(VA_Position) ? vertexAttribArray(VA_Position)->data()->size() : 0;
-      VL_CHECK( vert_count )
-      ref<ArrayFloat4> color_array = new ArrayFloat4;
-      color_array->resize(vert_count);
-      for(size_t i=0; i<color_array->size(); ++i)
-        color_array->at(i) = color;
-      #if defined(VL_OPENGL_ES2)
-        setVertexAttribArray(VA_Color, color_array.get());
-      #else
-        setColorArray(color_array.get());
-      #endif
-    }
+    //! Geometry normal used when no normal array is defined.
+    void setNormal(const fvec3& normal) { mNormal = normal; }
 
-    /** Removes all the previously installed arrays. */
-    virtual void clearArrays(bool clear_draw_calls=true);
+    //! Geometry normal used when no normal array is defined.
+    const fvec3& normal() { return mNormal; }
 
-    // --- Renderable interface implementation ---
+    //! Geometry color used when no color array is defined.
+    void setColor(const fvec4& color) { mColor = color; }
 
-    /** Updates all the vertex buffer objects of both vertex arrays and draw calls that are marked as dirty. */
-    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode mode);
+    //! Geometry color used when no color array is defined.
+    const fvec4& color() { return mColor; }
 
-    /** Deletes all the vertex buffer objects of both vertex arrays and draw calls. */
-    virtual void deleteBufferObject();
+    //! Geometry color used when no color array is defined.
+    void setSecondaryColor(const fvec4& color) { mSecondaryColor = color; }
+
+    //! Geometry color used when no color array is defined.
+    const fvec4& secondaryColor() { return mSecondaryColor; }
 
     // ------------------------------------------------------------------------
-    // Geometry Tools
+    // --- Vertex Array Manipulation ---
     // ------------------------------------------------------------------------
 
     /** Converts the fixed function pipeline arrays (vertex array, normal arrays) into the generic ones.
-    * The generic attribute indices are allocated in the following way:
-    * - vertex array -> vl::VA_Position
-    * - normal array -> vl::VA_Normal
-    * - color array  -> vl::VA_Color
-    * - texture array 0..N -> vl::VA_TexCoord0 .. N
-    * - secondary color array -> at the first free position from vl::VA_TexCoord0 (included)
-    * - fog coord array  -> at the first free position from vl::VA_TexCoord0 (included)
+    * The generic attribute indices are allocated in the following order:
+    * - vertex array
+    * - normal array
+    * - color array
+    * - texture array 0 .. N
+    * - secondary color array
+    * - fog coord array
     *
     * \remarks
-    * - Already existing generic vertex attributes are overwritten if their binding location collides with one of the non-NULL fixed function pipeline arrays being converted. 
-    * - After this function all the fixed function pipeline arrays are set to NULL.
+    * The previously installed generic vertex attributes are removed. The fixed function attributes are set to NULL.
     */
-    void convertToVertexAttribs();
+    void toGenericVertexAttribs();
 
     /**
      * Computes the normals in a "smooth" way, i.e. averaging the normals of those 
@@ -181,9 +170,6 @@ namespace vl
      *  are defined in a format other than ArrayFloat3. */
     bool flipNormals();
 
-    //! Converts all draw calls to triangles and fixes their winding according to the Geometry's normals.
-    void fixTriangleWinding();
-
     /** 
     * Transforms vertices and normals belonging to this geometry.
     * If 'normalize' == true the normals are normalized after being transformed
@@ -196,49 +182,36 @@ namespace vl
     */
     void transform(const mat4&matr, bool normalize = true);
 
+    /** Removes all the previously installed arrays. */
+    virtual void clearArrays(bool clear_draw_calls=true);
+
+    /** Updates all the vertex buffer objects of both vertex arrays and draw calls. */
+    void updateVBOs(bool discard_local_data=false, bool force_update=false);
+
+    /** Deletes all the vertex buffer objects of both vertex arrays and draw calls. */
+    void deleteVBOs();
+
+    // ------------------------------------------------------------------------
+    // --- Geometry Utils --- 
+    // ------------------------------------------------------------------------
+
+    //! Merges all the PT_TRIANGLE_STRIP DrawElementsUInt objects into one single PT_TRIANGLE_STRIP DrawElementsUInt.
+    void mergeTriangleStrips();
+
     //! Converts all the DrawCall objects bound to a Geometry into DrawArrays.
     void convertDrawCallToDrawArrays();
 
-    //! Merges all the PT_TRIANGLE_STRIP DrawElementsUInt objects into one single PT_TRIANGLE_STRIP DrawElementsUInt.
-    //! @return The DrawCall containing the merged strips or NULL of none was merged.
-    DrawCall* mergeTriangleStrips();
-
-    //! Merges all the draw calls that use the given primitive type into one single draw call using primitive restart.
-    void mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type);
-
-    //! Merges all the draw calls that use the given primitive type into one single MultiDrawElements draw call.
-    void mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type);
-
-    //! Merges all the draw calls that use the given primitive type or PT_TRIANGLES into one single PT_TRIANGLES draw call.
-    //! Use primitive_type = PT_UNKNOWN to merge all primitive types (with the obvious exclusion of lines, points and adjacency ones).
-    void mergeDrawCallsWithTriangles(EPrimitiveType primitive_type);
-
-    //! Converts PT_QUADS, PT_QUADS_STRIP and PT_POLYGON into PT_TRIANGLE primitives.
-    //! @note Eventual base vertex and primitive restart are baked into the resulting triangle soup.
-    void triangulateDrawCalls();
-
-    //! Shrinks DrawElements*/DrawRangeElements*/MultiDrawElements* to the best fitting of *UInt/UShort/UByte
-    //! taking into account: primitive restart, instancing and base vertex.
-    //! @note Primitive type can be any.
-    void shrinkDrawCalls();
-
-    //! Calls triangulateDrawCalls(), shrinkDrawCalls() and convertToVertexAttribs().
-    //! @note At the moment this method does support MultiDrawElements nor DrawRangeElements but only DrawElements.
-    void makeGLESFriendly();
-
-    //! Sorts the vertices of the geometry (position, normals, textures, colors etc.) to maximize vertex-cache coherency.
-    //! This function will work only if all the DrawCalls are DrawElements* and will generate a new set of DrawElementsUInt.
-    //! This function will fail if any of the DrawCalls is using primitive restart functionality.
-    //! \returns true if all the DrawCall are DrawElements* and none of the DrawCalls is using primitive restart.
+    //! Sorts the vertices of the geometry to maximize vertex-cache coherency.
+    //! This function will work only if all the DrawCall are DrawElements.
+    //! \returns true if all the DrawCall are DrawElements and the sorting took place.
     bool sortVertices();
-
-    //! Regenerates the vertex position and attributes using the given new-to-old map.
-    //! Where 'map_new_to_old[i] == j' means that the i-th new vertex attribute should take it's value from the old j-th vertex attribute.
-    void regenerateVertices(const std::vector<size_t>& map_new_to_old);
 
     //! Assigns a random color to each vertex of each DrawCall object. If a vertex is shared among more than one DrawCall object its color is undefined.
     void colorizePrimitives();
 
+    void regenerateVertices(const std::vector<size_t>& map_new_to_old);
+
+    // mic fixme: move somewhere else?
     //! Computes the tangent (and optionally bitangent) vectors used to form a TBN matrix to be used for bumpmapping.
     //! @param vert_count The number of elements stored in @a vertex, @a normal, @a texcoord, @a tangent and @a bitangent.
     //! @param vertex Array containing the vertex positions.
@@ -260,7 +233,7 @@ namespace vl
       vl::fvec3 *bitangent );
 
     // ------------------------------------------------------------------------
-    // IVertexAttribSet Interface Implementation
+    // --- IVertexAttribSet Interface Implementation ---
     // ------------------------------------------------------------------------
 
     void setVertexArray(ArrayAbstract* data);
@@ -298,7 +271,7 @@ namespace vl
     const ArrayAbstract* texCoordArray(int tex_unit) const
     { 
       for(int i=0; i<mTexCoordArrays.size(); ++i)
-        if (mTexCoordArrays.at(i)->mTextureSampler == tex_unit)
+        if (mTexCoordArrays.at(i)->mTextureUnit == tex_unit)
           return mTexCoordArrays.at(i)->mTexCoordArray.get();
       return NULL;
     }
@@ -306,7 +279,7 @@ namespace vl
     ArrayAbstract* texCoordArray(int tex_unit) 
     { 
       for(int i=0; i<mTexCoordArrays.size(); ++i)
-        if (mTexCoordArrays.at(i)->mTextureSampler == tex_unit)
+        if (mTexCoordArrays.at(i)->mTextureUnit == tex_unit)
           return mTexCoordArrays.at(i)->mTexCoordArray.get();
       return NULL;
     }
@@ -316,20 +289,32 @@ namespace vl
     void getTexCoordArrayAt(int i, int& out_tex_unit, const ArrayAbstract* &tex_array) const
     {
       VL_CHECK(i<mTexCoordArrays.size());
-      out_tex_unit = mTexCoordArrays[i]->mTextureSampler;
+      out_tex_unit = mTexCoordArrays[i]->mTextureUnit;
       tex_array = mTexCoordArrays[i]->mTexCoordArray.get();
     }
 
-    void setVertexAttribArray(unsigned int attrib_location, ArrayAbstract* data, bool normalize=true, EVertexAttribInterpretation data_behav=VAI_NORMAL) { setVertexAttribArray(VertexAttribInfo(attrib_location, data, normalize, data_behav)); }
+    void setVertexAttribArray(unsigned int attrib_idx, ArrayAbstract* data, bool normalize=true, EVertexAttribBehavior data_behav=VAB_NORMAL) { setVertexAttribArray(VertexAttribInfo(attrib_idx, data, normalize, data_behav)); }
 
     void setVertexAttribArray(const VertexAttribInfo& info);
 
-    const VertexAttribInfo* vertexAttribArray(unsigned int attrib_location) const;
+    const ArrayAbstract* vertexAttrib(unsigned int attrib_idx) const;
 
-    VertexAttribInfo* vertexAttribArray(unsigned int attrib_location);
+    ArrayAbstract* vertexAttrib(unsigned int attrib_idx);
 
+    const VertexAttribInfo* vertexAttribInfo(unsigned int attrib_idx) const;
+
+    VertexAttribInfo* vertexAttribInfo(unsigned int attrib_idx);
+
+    ref<VertexAttribInfo> eraseVertexAttrib(unsigned int attrib_idx);
+
+    int vertexAttribInfoCount() const { return mVertexAttribArrays.size(); }
+    
+    const VertexAttribInfo* getVertexAttribInfoAt(int i) const { return mVertexAttribArrays[i].get(); }
+
+    /** The list of VertexAttribInfo objects bound to a Geometry. */
     Collection<VertexAttribInfo>* vertexAttribArrays() { return &mVertexAttribArrays; }
 
+    /** The list of VertexAttribInfo objects bound to a Geometry. */
     const Collection<VertexAttribInfo>* vertexAttribArrays() const { return &mVertexAttribArrays; }
 
   protected:
@@ -339,6 +324,15 @@ namespace vl
 
     // render calls
     Collection<DrawCall> mDrawCalls;
+
+    // geometry color when no color array is defined
+    fvec4 mColor;
+
+    // geometry color when no color array is defined
+    fvec4 mSecondaryColor;
+
+    // normal when no normal array is defined
+    fvec3 mNormal;
 
     //  --- IVertexAttribSet interface concrete implementation ---
 

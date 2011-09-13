@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -55,10 +55,10 @@ namespace vl
   */
   class VLCORE_EXPORT MemoryDirectory: public VirtualDirectory
   {
-    VL_INSTRUMENT_CLASS(vl::MemoryDirectory, VirtualDirectory)
-
   public:
     MemoryDirectory(const String& path="."): VirtualDirectory(path) {}
+
+    virtual const char* className() { return "vl::MemoryDirectory"; }
 
     virtual bool setPath(const String& name);
 

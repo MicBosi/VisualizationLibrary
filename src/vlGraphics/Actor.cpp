@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -63,7 +63,7 @@ int Actor::evaluateLOD(Camera* camera)
 void Actor::createOcclusionQuery()
 {
   VL_CHECK_OGL();
-  if (!mOcclusionQuery && Has_Occlusion_Query)
+  if (!mOcclusionQuery && (GLEW_ARB_occlusion_query || GLEW_VERSION_1_5))
     glGenQueries(1, &mOcclusionQuery);
   VL_CHECK_OGL();
   VL_CHECK(mOcclusionQuery)
@@ -71,7 +71,7 @@ void Actor::createOcclusionQuery()
 //-----------------------------------------------------------------------------
 void Actor::deleteOcclusionQuery()
 {
-  if(Has_Occlusion_Query)
+  if(GLEW_ARB_occlusion_query || GLEW_VERSION_1_5)
   {
     if (mOcclusionQuery)
     {
@@ -94,7 +94,7 @@ bool Actor::boundsDirty() const
 //-----------------------------------------------------------------------------
 void Actor::computeBounds()
 {
-  if ( lod(0) == NULL )
+  if ( lod(0).get() == NULL )
     return;
 
   bool geom_update = lod(0)->boundsDirty() || lod(0)->boundsUpdateTick() != mBoundsUpdateTick;
@@ -121,15 +121,15 @@ const std::vector< ref<Uniform> >& Actor::uniforms() const { return getUniformSe
 //-----------------------------------------------------------------------------
 std::vector< ref<Uniform> >& Actor::uniforms() { return gocUniformSet()->uniforms(); }
 //-----------------------------------------------------------------------------
-void Actor::eraseUniform(const char* name) { if(getUniformSet()) getUniformSet()->eraseUniform(name); }
+void Actor::eraseUniform(const std::string& name) { if(getUniformSet()) getUniformSet()->eraseUniform(name); }
 //-----------------------------------------------------------------------------
 void Actor::eraseUniform(const Uniform* uniform) { if(getUniformSet()) getUniformSet()->eraseUniform(uniform); }
 //-----------------------------------------------------------------------------
 void Actor::eraseAllUniforms() { if(getUniformSet()) getUniformSet()->eraseAllUniforms(); }
 //-----------------------------------------------------------------------------
-Uniform* Actor::gocUniform(const char* name) { return gocUniformSet()->gocUniform(name); }
+Uniform* Actor::gocUniform(const std::string& name) { return gocUniformSet()->gocUniform(name); }
 //-----------------------------------------------------------------------------
-Uniform* Actor::getUniform(const char* name) { if (getUniformSet()) return getUniformSet()->getUniform(name); else return NULL; }
+Uniform* Actor::getUniform(const std::string& name) { if (getUniformSet()) return getUniformSet()->getUniform(name); else return NULL; }
 //-----------------------------------------------------------------------------
-const Uniform* Actor::getUniform(const char* name) const { if (getUniformSet()) return getUniformSet()->getUniform(name); else return NULL; }
+const Uniform* Actor::getUniform(const std::string& name) const { if (getUniformSet()) return getUniformSet()->getUniform(name); else return NULL; }
 //-----------------------------------------------------------------------------

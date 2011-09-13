@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -34,14 +34,6 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-UniformSet& UniformSet::deepCopyFrom(const UniformSet& other)
-{
-  mUniforms = other.mUniforms;
-  for(size_t i=0; i<mUniforms.size(); ++i)
-    mUniforms[i] = mUniforms[i]->clone();
-  return *this;
-}
-//-----------------------------------------------------------------------------
 void UniformSet::setUniform(Uniform* uniform, bool check_for_doubles) 
 { 
   VL_CHECK(uniform)
@@ -61,7 +53,7 @@ void UniformSet::setUniform(Uniform* uniform, bool check_for_doubles)
   mUniforms.push_back( uniform );
 }
 //-----------------------------------------------------------------------------
-void UniformSet::eraseUniform(const char* name) 
+void UniformSet::eraseUniform(const std::string& name) 
 { 
   for(unsigned i=0; i<mUniforms.size(); ++i)
     if (mUniforms[i]->name() == name)
@@ -81,7 +73,7 @@ void UniformSet::eraseUniform(const Uniform* uniform)
     }
 }
 //-----------------------------------------------------------------------------
-Uniform* UniformSet::gocUniform(const char* name)
+Uniform* UniformSet::gocUniform(const std::string& name)
 { 
   for(unsigned i=0; i<mUniforms.size(); ++i)
     if (mUniforms[i]->name() == name)
@@ -92,7 +84,7 @@ Uniform* UniformSet::gocUniform(const char* name)
   return uniform.get();
 }
 //-----------------------------------------------------------------------------
-Uniform* UniformSet::getUniform(const char* name)
+Uniform* UniformSet::getUniform(const std::string& name)
 { 
   for(unsigned i=0; i<mUniforms.size(); ++i)
     if (mUniforms[i]->name() == name)
@@ -100,7 +92,7 @@ Uniform* UniformSet::getUniform(const char* name)
   return NULL;
 }
 //-----------------------------------------------------------------------------
-const Uniform* UniformSet::getUniform(const char* name) const
+const Uniform* UniformSet::getUniform(const std::string& name) const
 { 
   for(unsigned i=0; i<mUniforms.size(); ++i)
     if (mUniforms[i]->name() == name)

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -64,7 +64,7 @@ void GhostCameraManipulator::mouseMoveEvent(int x, int y)
   VL_CHECK(openglContext());
 
   int cx = (int)camera()->viewport()->center().x();
-  int cy = openglContext()->framebuffer()->height() - camera()->viewport()->height()/2 - camera()->viewport()->y();
+  int cy = openglContext()->renderTarget()->height() - camera()->viewport()->height()/2 - camera()->viewport()->y();
   mXDegrees -= (y - cy) * mRotationSpeed;
   mYDegrees -= (x - cx) * mRotationSpeed;
   openglContext()->ignoreNextMouseMoveEvent();
@@ -81,12 +81,12 @@ void GhostCameraManipulator::updateEvent()
     mLastTime = Time::currentTime();
     return;
   }
-  real dt = Time::currentTime() - mLastTime;
+  Real dt = Time::currentTime() - mLastTime;
   mLastTime = Time::currentTime();
 
   mat4 m = mat4::getTranslation(mPosition);
   m *= mat4::getRotation( mYDegrees, vec3(0,1,0), mXDegrees, vec3(1,0,0) );
-  camera()->setModelingMatrix(m);
+  camera()->setInverseViewMatrix(m);
 
   vec3 direction;
   bool okmodifier;
@@ -117,11 +117,11 @@ void GhostCameraManipulator::updateEvent()
     direction.y() = -1;
 
   vec3 dir;
-  dir += camera()->modelingMatrix().getX() * direction.x();
-  dir += camera()->modelingMatrix().getY() * direction.y();
-  dir -= camera()->modelingMatrix().getZ() * direction.z();
+  dir += camera()->inverseViewMatrix().getX() * direction.x();
+  dir += camera()->inverseViewMatrix().getY() * direction.y();
+  dir -= camera()->inverseViewMatrix().getZ() * direction.z();
   dir.normalize();
-  mPosition += dir * (real)(dt * mMovementSpeed);
+  mPosition += dir * (Real)(dt * mMovementSpeed);
 }
 //-----------------------------------------------------------------------------
 void GhostCameraManipulator::setCamera(Camera* camera) { mCamera = camera; }
@@ -136,19 +136,19 @@ void GhostCameraManipulator::enableEvent(bool enabled)
     if ( camera() == NULL )
       return;
 
-    setPosition( camera()->modelingMatrix().getT() );
-    real x, y;
-    camera()->modelingMatrix().getYXRotationAngles( y, x );
+    setPosition( camera()->inverseViewMatrix().getT() );
+    Real x, y;
+    camera()->inverseViewMatrix().getYXRotationAngles( y, x );
     setXDegrees(x);
     setYDegrees(y);
 
     if (openglContext())
       openglContext()->setMouseVisible(false);
 
-    if ( openglContext() && openglContext()->framebuffer() )
+    if ( openglContext() && openglContext()->renderTarget() )
     {
       int cx = (int)camera()->viewport()->center().x();
-      int cy = openglContext()->framebuffer()->height() - camera()->viewport()->height() / 2 - camera()->viewport()->y();
+      int cy = openglContext()->renderTarget()->height() - camera()->viewport()->height() / 2 - camera()->viewport()->y();
       openglContext()->ignoreNextMouseMoveEvent();
       openglContext()->setMousePosition(cx, cy);
     }

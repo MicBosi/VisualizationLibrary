@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -34,51 +34,19 @@
 
 #include <vlCore/checks.hpp>
 
-#if defined(VL_OPENGL_ES1)
+//-----------------------------------------------------------------------------
 
-  #include <GLES/khronos_gl.h>
-  #include <GLES/khronos_glext.h>
-  #include <GLES/gles_extra_defines.h> // defines used by VL but not present in GLES 1.x
-
-#elif defined(VL_OPENGL_ES2)
-
-  #include <GLES2/khronos_gl2.h>
-  #include <GLES2/khronos_gl2ext.h>
-  #include <GLES2/gles_extra_defines.h> // defines used by VL but not present in GLES 2.x
-
-#elif defined(VL_OPENGL)
-
-  #if defined(VL_PLATFORM_WINDOWS)
-
-    #include <GL/mesa_gl.h>
-    #include <GL/glu.h>
-    #include <GL/khronos_glext.h>
-    #include <GL/khronos_wglext.h>
-
-  #elif defined(VL_PLATFORM_LINUX)
-
-    #include <GL/mesa_gl.h>
-    #include <GL/glu.h>
-    #include <GL/khronos_glext.h>
-    extern "C" { extern void ( * glXGetProcAddress (const GLubyte *procName)) (void); }
-
-  #elif defined(VL_PLATFORM_MACOSX)
-
-    #include <GL/mesa_gl.h>
-    #include <OpenGL/glu.h>
-    #include <GL/khronos_glext.h>
-
-  #else
-
-    #error Unknown platform!
-
-  #endif
-
+#ifdef VL_STATIC_LINKING
+  #define GLEW_STATIC
 #endif
 
-/* Define NULL */
-#ifndef NULL
-  #define NULL 0
+#include "GL/glew.h"
+
+#ifdef _WIN32
+  #ifndef NOMINMAX
+    #define NOMINMAX
+  #endif
+  #include "GL/wglew.h"
 #endif
 
 #endif

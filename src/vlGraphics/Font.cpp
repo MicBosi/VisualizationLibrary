@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -163,7 +163,7 @@ void Font::loadFont(const String& path)
     if ( (int)mMemoryFile.size() == font_file->size() )
     {
       error = FT_New_Memory_Face( (FT_Library)mFontManager->freeTypeLibrary(),
-                                  (FT_Byte*)&mMemoryFile[0],
+                                  &mMemoryFile[0],
                                   (int)mMemoryFile.size(),
                                   0,
                                   &mFT_Face );
@@ -378,7 +378,9 @@ Glyph* Font::glyph(int character)
       img->allocate2D(w, h, 1, IF_RGBA, IT_UNSIGNED_BYTE);
 
       // init to all transparent white
-      for(unsigned char *px = img->pixels(), *end = px + img->requiredMemory(); px<end; px+=4)
+      unsigned char* px = img->pixels();
+      unsigned char* end = px + img->requiredMemory();
+      for(; px<end; px+=4)
       {
         px[0] = 0xFF;
         px[1] = 0xFF;
@@ -414,7 +416,7 @@ Glyph* Font::glyph(int character)
         }
       }
 
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->width(), img->height(), 0, img->format(), img->type(), img->pixels() ); VL_CHECK_OGL();
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, img->width(), img->height(), 0, img->format(), img->type(), img->pixels() );
 
       if ( smooth() )
       {
@@ -432,7 +434,7 @@ Glyph* Font::glyph(int character)
       }
 
       // sets anisotropy to the maximum supported
-      if (Has_GL_EXT_texture_filter_anisotropic)
+      if (GLEW_EXT_texture_filter_anisotropic)
       {
         float max_anisotropy;
         glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_anisotropy);

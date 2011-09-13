@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -39,13 +39,12 @@ namespace vl
   //------------------------------------------------------------------------------
   // PatchParameter
   //------------------------------------------------------------------------------
-  //! Wrapper of glPatchParameter(), specifies the parameters for patch primitives, used by vl::DrawCall::setPatchParameter().
-  //! See also http://www.opengl.org/sdk/docs/man4/xhtml/glPatchParameter.xml
+  //! Wrapper of glPatchParameter() - specifies the parameters for patch primitives, see also http://www.opengl.org/sdk/docs/man4/xhtml/glPatchParameter.xml
   class PatchParameter: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::PatchParameter, Object)
-
   public:
+    virtual const char* className() { return "vl::PatchParameter"; }
+
     //! Constructor
     PatchParameter(): mPatchVertices(0), mPatchDefaultOuterLevel(fvec4(4,4,4,4)), mPatchDefaultInnerLevel(fvec2(4,4)) 
     {
@@ -53,10 +52,10 @@ namespace vl
     }
 
     //! Applies the glPatchParameter values.
-    void apply() const
+    void apply() 
     {
-      VL_CHECK(Has_GL_ARB_tessellation_shader||Has_GL_Version_4_0);
-      if (Has_GL_ARB_tessellation_shader||Has_GL_Version_4_0)
+      VL_CHECK(GLEW_ARB_tessellation_shader||GLEW_VERSION_4_0);
+      if (GLEW_ARB_tessellation_shader)
       {
         glPatchParameteri(GL_PATCH_VERTICES, mPatchVertices); VL_CHECK_OGL();
         glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, mPatchDefaultOuterLevel.ptr()); VL_CHECK_OGL();

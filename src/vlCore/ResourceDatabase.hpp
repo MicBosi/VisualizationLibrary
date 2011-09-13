@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -45,15 +45,10 @@ namespace vl
    * The ResourceDatabase class contains and manipulates a set of resources. It works with 
    * any kind of resources derived from vl::Object, even user-customized ones.
   */
-  class VLCORE_EXPORT ResourceDatabase: public Object
+  class ResourceDatabase: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::ResourceDatabase, Object)
-
   public:
-    ResourceDatabase()
-    {
-      VL_DEBUG_SET_OBJECT_NAME()
-    }
+    virtual const char* className() { return "vl::ResourceDatabase"; }
 
     const std::vector< ref<Object> >& resources() const { return mResources; }
 
@@ -65,7 +60,7 @@ namespace vl
     {
       for(unsigned i=cur_pos; i<mResources.size(); ++i)
       {
-        ref<T> r = cast<T>(mResources[i].get());
+        ref<T> r = dynamic_cast<T*>(mResources[i].get());
         if (r)
         {
           cur_pos = i+1;
@@ -84,7 +79,7 @@ namespace vl
 
       for( unsigned i=0; i<mResources.size(); ++i )
       {
-        ref<T> r = cast<T>(mResources[i].get());
+        ref<T> r = dynamic_cast<T*>(mResources[i].get());
         if (r)
           resources.push_back(r);
       }
@@ -101,7 +96,7 @@ namespace vl
 
       for( unsigned i=mResources.size(); i--; )
       {
-        ref<T> r = cast<T>(mResources[i].get());
+        ref<T> r = dynamic_cast<T*>(mResources[i].get());
         if (r)
         {
           resources.push_back(r);
@@ -119,7 +114,7 @@ namespace vl
       size_t count=0;
       for(unsigned i=0; i<mResources.size(); ++i)
       {
-        const T* r = cast_const<T>(mResources[i].get());
+        ref<T> r = dynamic_cast<T*>(mResources[i].get());
         if (r)
           ++count;
       }
@@ -128,35 +123,16 @@ namespace vl
 
     //! Don't use inside loops! Returns the j-th object of the specified type (which is different from \p resources()[j]!).
     template<class T>
-    const T* get(int j) const
+    T* get(int j) const
     {
       int count=0;
       for(unsigned i=0; i<mResources.size(); ++i)
       {
-        const T* r = cast_const<T>(mResources[i].get());
+        ref<T> r = dynamic_cast<T*>(mResources[i].get());
         if (r)
         {
           if (count == j)
-            return r;
-          else
-            ++count;
-        }
-      }
-      return NULL;
-    }
-
-    //! Don't use inside loops! Returns the j-th object of the specified type (which is different from \p resources()[j]!).
-    template<class T>
-    T* get(int j)
-    {
-      int count=0;
-      for(unsigned i=0; i<mResources.size(); ++i)
-      {
-        T* r = cast<T>(mResources[i].get());
-        if (r)
-        {
-          if (count == j)
-            return r;
+            return r.get();
           else
             ++count;
         }
@@ -180,17 +156,11 @@ namespace vl
   //! Short version of defLoadWriterManager()->canWrite(file).
   VLCORE_EXPORT bool canWrite(VirtualFile* file);
 
-  //! Short version of defLoadWriterManager()->loadResource(path, quick).
+  //! Short version of defLoadWriterManager()->loadResource(path,quick).
   VLCORE_EXPORT ref<ResourceDatabase> loadResource(const String& path, bool quick=true);
 
-  //! Short version of defLoadWriterManager()->loadResource(file, quick).
+  //! Short version of defLoadWriterManager()->loadResource(file,quick).
   VLCORE_EXPORT ref<ResourceDatabase> loadResource(VirtualFile* file, bool quick=true);
-
-  //! Short version of defLoadWriterManager()->writeResource(path, resource).
-  VLCORE_EXPORT bool writeResource(const String& path, ResourceDatabase* resource);
-
-  //! Short version of defLoadWriterManager()->writeResource(file, resource).
-  VLCORE_EXPORT bool writeResource(VirtualFile* file, ResourceDatabase* resource);
 }
 
 #endif

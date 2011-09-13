@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,9 +43,8 @@ namespace vl
    */
   class ResourceLoadWriter: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::ResourceLoadWriter, Object)
-
   public:
+    virtual const char* className() { return "vl::ResourceLoadWriter"; }
     ResourceLoadWriter(const String& load_extensions, const String& write_extensions): mLoadExtensions(load_extensions), mWriteExtensions(write_extensions) {}
 
     virtual ref<ResourceDatabase> loadResource(const String& path) const = 0;

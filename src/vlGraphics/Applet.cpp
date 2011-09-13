@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -54,7 +54,7 @@ Applet::Applet()
 void Applet::initialize()
 {
   // if the user didn't provide one use the one installed by default
-  ref<Rendering> rend = rendering() && rendering()->as<Rendering>() ? rendering()->as<Rendering>() : new Rendering;
+  ref<Rendering> rend = rendering()->as<Rendering>() ? rendering()->as<Rendering>() : new Rendering;
   setRendering(rend.get());
 
   // installs a SceneManagerActorTree as the default scene manager
@@ -88,7 +88,7 @@ void Applet::updateEvent()
   updateScene();
 
   // set frame time for all the rendering
-  real now_time = Time::currentTime();
+  Real now_time = Time::currentTime();
   rendering()->setFrameClock( now_time );
 
   // execute rendering
@@ -133,7 +133,6 @@ void Applet::keyReleaseEvent(unsigned short, EKey key)
     String filename = Say( appletName() + " - %n%02n%02n%02n%02n.png") << time.year() << time.month() << time.dayOfMonth() << time.hour() << time.second();
     mReadPixels->setSavePath( filename );
     Log::print( Say("Saved screenshot: '%s'\n") << filename );
-    openglContext()->update();
   }
   else
   if (key == Key_U)
@@ -146,14 +145,14 @@ void Applet::keyReleaseEvent(unsigned short, EKey key)
 void Applet::resizeEvent(int w, int h)
 {
   // if a simple Rendering is attached as the rendering root than update viewport and projection matrix.
-  Rendering* rend = cast<Rendering>(rendering());
+  Rendering* rend = dynamic_cast<Rendering*>(rendering());
   if (rend)
   {
-    VL_CHECK( w == rend->renderer()->framebuffer()->width() );
-    VL_CHECK( h == rend->renderer()->framebuffer()->height() );
+    VL_CHECK( w == rend->renderer()->renderTarget()->width() );
+    VL_CHECK( h == rend->renderer()->renderTarget()->height() );
     rend->camera()->viewport()->setWidth( w );
     rend->camera()->viewport()->setHeight( h );
-    rend->camera()->setProjectionPerspective();
+    rend->camera()->setProjectionAsPerspective();
   }
 }
 //-----------------------------------------------------------------------------

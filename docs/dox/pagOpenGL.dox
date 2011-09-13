@@ -43,8 +43,8 @@
 				- vl::Texture::prepareTexture1DArray()
 				- vl::Texture::prepareTexture2DArray()
 				- vl::TexParameter and vl::Texture::getTexParameter()
-				- vl::TextureSampler
-				- vl::Shader::gocTextureSampler()
+				- vl::TextureUnit
+				- vl::Shader::gocTextureUnit()
 			</td>
 		</tr>
 *******************************************************************************
@@ -70,12 +70,11 @@
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glCompressedTexSubImage3D.xml>glCompressedTexSubImage3D()</a>
 			</td>
 			<td valign=top>
-				You can use them as usual:
+				Not mapped, you can use them like this:
 				<pre>
 vl::Texture* texture = ... init texture ...
 glBindTexture(GL_TEXTURE_2D, texture->handle());
 glTexSubImage2D(GL_TEXTURE_2D, ...);
-glBindTexture(GL_TEXTURE_2D, 0);
 				</pre>
 			</td>
 		</tr>
@@ -178,12 +177,11 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- vl::dmat4::getFrustum()
 				- vl::dmat4::getOrtho()
 				- vl::dmat4::getLookAt()
-				- vl::dmat4::getLookAtModeling()
-				- vl::Camera::setProjectionPerspective()
-				- vl::Camera::setProjectionFrustum()
-				- vl::Camera::setProjectionOrtho()
-				- vl::Camera::setProjectionOrtho()
-				- vl::Camera::setViewMatrixLookAt()
+				- vl::Camera::setProjectionAsPerspective()
+				- vl::Camera::setProjectionAsFrustum()
+				- vl::Camera::setProjectionAsOrtho()
+				- vl::Camera::setProjectionAsOrtho2D()
+				- vl::Camera::setViewMatrixAsLookAt()
 				- vl::Camera::project()
 				- vl::Camera::unproject()
 			</td>
@@ -216,7 +214,6 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glNormalPointer.xml>glNormalPointer()</a>
 			</td>
 			<td valign=top>
-				- vl::Geometry::setNormal()
 				- vl::Geometry::setNormalArray()
 			</td>
 		</tr>
@@ -227,7 +224,6 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glColorPointer.xml>glColorPointer()</a>
 			</td>
 			<td valign=top>
-				- vl::Geometry::setColor()
 				- vl::Geometry::setColorArray()
 			</td>
 		</tr>
@@ -238,7 +234,6 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glSecondaryColorPointer.xml>glSecondaryColorPointer()</a>
 			</td>
 			<td valign=top>
-				- vl::Geometry::setSecondaryColor()
 				- vl::Geometry::setSecondaryColorArray()
 			</td>
 		</tr>
@@ -305,7 +300,7 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glReadPixels.xml>glReadPixels()</a>
 			</td>
 			<td valign=top>
-				- vl::readPixels()
+				- vl::Image::readPixels()
 				- vl::ReadPixels
 			</td>
 		</tr>
@@ -323,29 +318,24 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glValidateProgram.xml>glValidateProgram()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glBindAttribLocation.xml>glBindAttribLocation()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glUniform.xml>glUniform()</a>
-				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml>glGetActiveAttrib()</a>
-				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml>glGetActiveUniform()</a>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man4/xhtml/glPatchParameter.xml>glPatchParameter()</a>
-				
 			</td>
 			<td valign=top>
 				- vl::GLSLVertexShader, vl::GLSLFragmentShader, vl::GLSLGeometryShader
 				- vl::GLSLProgram
-				- vl::GLSLProgram::linkProgram()
+				- vl::GLSLProgram::linkProgram() (done automatically)
 				- vl::GLSLProgram::attachShader()
 				- vl::GLSLProgram::detachShader()
-				- vl::GLSLShader::compile()
+				- (done automatically)
 				- vl::GLSLProgram::useProgram()
 				- vl::GLSLProgram::validateProgram()
 				- vl::GLSLProgram::bindAttribLocation()
 				- vl::Uniform, vl::GLSLProgram::setUniform(), vl::Actor::setUniform(), vl::Shader::setUniform()
-				- vl::GLSLProgram::activeAttribs()
-				- vl::GLSLProgram::activeUniforms()
-				- vl::PatchParameter, vl::DrawCall::setPatchParameter()
+				- vl::PatchParameter
 			</td>
 		</tr>
 *******************************************************************************
-		<tr> <th colspan=2 align=left> Vertex and pixel buffer objects (BufferObject, PBO) </th> </tr>
+		<tr> <th colspan=2 align=left> Vertex and pixel buffer objects (VBO, PBO) </th> </tr>
 		<tr>
 			<td valign=top>
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glGenBuffers.xml>glGenBuffers()</a>
@@ -356,22 +346,23 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- <a target=_blank href=http://www.opengl.org/sdk/docs/man/xhtml/glUnmapBuffer.xml>glUnmapBuffer()</a>
 			</td>
 			<td valign=top>
-				- vl::BufferObject
-				- vl::BufferObject::createBufferObject()
-				- vl::BufferObject::deleteBufferObject()
-				- vl::BufferObject::setBufferData()
-				- vl::BufferObject::setBufferSubData()
-				- vl::BufferObject::mapBufferObject()
-				- vl::BufferObject::unmapBufferObject()
-				- vl::Geometry::setBufferObjectEnabled()
+				- vl::GLBufferObject
+				- vl::GLBufferObject::createGLBufferObject()
+				- vl::GLBufferObject::deleteGLBufferObject()
+				- vl::GLBufferObject::setBufferData()
+				- vl::GLBufferObject::setBufferSubData()
+				- vl::GLBufferObject::mapGPUBuffer()
+				- vl::GLBufferObject::unmapGPUBuffer()
+				- vl::Geometry::setVBOEnabled()
 				- vl::Image::readPixels()
 				- vl::DrawPixels
 			</td>
 		</tr>
 *******************************************************************************
-		<tr><th colspan=2 align=left> Framebuffer object extension (see http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt) </th></tr>
+		<tr> <th colspan=2 align=left> Framebuffer object extension </th> </tr>
 		<tr>
 			<td valign=top>
+				See http://oss.sgi.com/projects/ogl-sample/registry/EXT/framebuffer_object.txt
 				- glFramebufferTexture1D()
 				- glFramebufferTexture2D()
 				- glFramebufferTexture()
@@ -392,14 +383,14 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- vl::FBOTextureAttachment
 				- vl::FBOTexture3DAttachment
 				- vl::FBOTextureLayerAttachment
-				- vl::FramebufferObject::checkFramebufferStatus()
+				- vl::FBORenderTarget::checkFramebufferStatus()
 				- vl::FBORenderbufferAttachment::create()
 				- vl::FBORenderbufferAttachment::destroy()
 				- automatically called inside vl::FBOAttachmentAbstract::bindAttachment()
 				- automatically called inside vl::FBOAttachmentAbstract::bindAttachment()
-				- vl::FramebufferObject::create()
-				- vl::FramebufferObject::destroy()
-				- vl::FramebufferObject::bindFrameBuffer() (initializes also the attachment points)
+				- vl::FBORenderTarget::create()
+				- vl::FBORenderTarget::destroy()
+				- vl::FBORenderTarget::bindFrameBuffer() (initializes also the attachment points)
 			</td>
 		</tr>
 *******************************************************************************
@@ -529,6 +520,7 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- GL_TEXTURE_3D
 				- GL_TEXTURE_CUBE_MAP
 				- GL_TEXTURE_GEN_Q/R/S/T
+				- GL_DITHER
 				- GL_INDEX_LOGIC_OP
 			</td>
 			<td valign=top>
@@ -552,7 +544,7 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- vl::EN_POLYGON_OFFSET_POINT
 				- vl::EN_RESCALE_NORMAL
 				- vl::EN_STENCIL_TEST
-				- vl::EN_PROGRAM_POINT_SIZE
+				- vl::EN_VERTEX_PROGRAM_POINT_SIZE
 				- vl::EN_VERTEX_PROGRAM_TWO_SIDE
 				- vl::EN_SAMPLE_ALPHA_TO_COVERAGE
 				- vl::EN_SAMPLE_ALPHA_TO_ONE
@@ -561,11 +553,12 @@ glBindTexture(GL_TEXTURE_2D, 0);
 				- automatically managed by vl::ClipPlane
 				- automatically manaded by vl::Scissor
 				- see vl::Material::setColorMaterial(), vl::Material::setColorMaterialEnabled()
-				- automatically managed, see vl::Texture, vl::TextureSampler, vl::TexParameter
-				- automatically managed, see vl::Texture, vl::TextureSampler, vl::TexParameter
-				- automatically managed, see vl::Texture, vl::TextureSampler, vl::TexParameter
-				- automatically managed, see vl::Texture, vl::TextureSampler, vl::TexParameter
+				- automatically managed, see vl::Texture, vl::TextureUnit, vl::TexParameter
+				- automatically managed, see vl::Texture, vl::TextureUnit, vl::TexParameter
+				- automatically managed, see vl::Texture, vl::TextureUnit, vl::TexParameter
+				- automatically managed, see vl::Texture, vl::TextureUnit, vl::TexParameter
 				- automatically managed by vl::TexGen
+				- deprecated functionality
 				- deprecated functionality
 				</td>
 		</tr>

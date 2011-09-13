@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -54,40 +54,40 @@ public:
 
     // LOD 0
     geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail, detail );
-    // geom->setColor(vl::royalblue);
+    geom->setColor(vl::royalblue);
     actor->setLod(0, geom.get());
 
-    geom->setBufferObjectEnabled(true);
-    if (vl::Has_GL_ARB_vertex_buffer_object)
+    geom->setVBOEnabled(true);
+    if (GLEW_ARB_vertex_buffer_object)
     {
-      geom->vertexArray()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
+      geom->vertexArray()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
     }
 
     // LOD 1
     geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail/2, detail/2 );
-    // geom->setColor(vl::green);
+    geom->setColor(vl::green);
     actor->setLod(1, geom.get());
 
-    geom->setBufferObjectEnabled(true);
-    if (vl::Has_GL_ARB_vertex_buffer_object)
+    geom->setVBOEnabled(true);
+    if (GLEW_ARB_vertex_buffer_object)
     {
-      geom->vertexArray()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
+      geom->vertexArray()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
     }
 
     // LOD 2
     geom = vl::makeGrid( vl::vec3(0,0,0), side, side, detail/4, detail/4 );
-    // geom->setColor(vl::yellow);
+    geom->setColor(vl::yellow);
     actor->setLod(2, geom.get());
 
-    geom->setBufferObjectEnabled(true);
-    if (vl::Has_GL_ARB_vertex_buffer_object)
+    geom->setVBOEnabled(true);
+    if (GLEW_ARB_vertex_buffer_object)
     {
-      geom->vertexArray()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
+      geom->vertexArray()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW,false);
     }
   }
 
   // respond to onActorRenderStarted() event by animating the wave
-  virtual void onActorRenderStarted(vl::Actor*, vl::real frame_clock, const vl::Camera*, vl::Renderable* renderable, const vl::Shader*, int pass)
+  virtual void onActorRenderStarted(vl::Actor*, vl::Real frame_clock, const vl::Camera*, vl::Renderable* renderable, const vl::Shader*, int pass)
   {
     /* the beauty of this function is that in a few lines of code we update 3 different LOD levels!  */
 
@@ -96,7 +96,7 @@ public:
       return;
 
     // clamp animation to 30 FPS
-    const vl::real fps = 30.0f;
+    const vl::Real fps = 30.0f;
 
     if ( frame_clock - mLastUpdate > 1.0f/fps || mLastUpdatedLod != renderable )
     {
@@ -104,8 +104,8 @@ public:
       mLastUpdatedLod = renderable;
 
       // note: this returns the current LOD geometry
-      vl::ref<vl::Geometry> geom = vl::cast<vl::Geometry>( renderable );
-      vl::ref<vl::ArrayFloat3> vecarr3 = vl::cast<vl::ArrayFloat3>( geom->vertexArray() );
+      vl::ref<vl::Geometry> geom = dynamic_cast<vl::Geometry*>( renderable );
+      vl::ref<vl::ArrayFloat3> vecarr3 = dynamic_cast<vl::ArrayFloat3*>( geom->vertexArray() );
       vl::fvec3* vec = vecarr3->begin();
       vl::vec3 center = renderable->boundingBox().center();
 
@@ -115,13 +115,13 @@ public:
       {
         // flatten to xz plane and compute distance
         vec[i].y() = 0;
-        vl::real d = (vl::vec3(vec[i])-center).length();
+        vl::Real d = (vl::vec3(vec[i])-center).length();
         vec[i].y() = (float)cos( -frame_clock * vl::fPi * theta + d * phi ) * 2.0f;
       }
 
-      if (vl::Has_GL_ARB_vertex_buffer_object)
+      if (GLEW_ARB_vertex_buffer_object)
       {
-        geom->vertexArray()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW, false);
+        geom->vertexArray()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW, false);
       }
 
       // when modifying the vertices of a geometry always remember to update the bounding volumes!
@@ -133,7 +133,7 @@ public:
   virtual void onActorDelete(vl::Actor*) { }
 
 protected:
-  vl::real mLastUpdate;
+  vl::Real mLastUpdate;
   vl::Renderable* mLastUpdatedLod;
 };
 
@@ -145,18 +145,18 @@ class App_GeomLODAnim: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     /* configure how many objects are there forming the ring */
     const int ring_obj_count = 20;
 
     /* define a LOD evaluator with 3 disance ranges: [0] --- 70 --- 150 --- [inf] */
     vl::ref<vl::DistanceLODEvaluator> lod_eval = new vl::DistanceLODEvaluator;
-    lod_eval->distanceRangeSet().push_back(70);
-    lod_eval->distanceRangeSet().push_back(150);
+    lod_eval->addDistanceRange(70);
+    lod_eval->addDistanceRange(150);
 
     /* to be used later */
-    vl::ref<vl::Light> light = new vl::Light;
+    vl::ref<vl::Light> light = new vl::Light(0);
     vl::ref<vl::Shader> wire_sh = new vl::Shader;
     vl::ref<vl::Shader> fill_sh = new vl::Shader;
     vl::ref<vl::Shader> wave_sh = new vl::Shader;
@@ -167,7 +167,7 @@ public:
     fill_sh->enable(vl::EN_LIGHTING);
     fill_sh->gocMaterial()->setFrontDiffuse( vl::white );
     fill_sh->gocPolygonMode()->set(vl::PM_FILL, vl::PM_FILL); // note this is default
-    fill_sh->setRenderState( light.get(), 0 );
+    fill_sh->setRenderState( light.get() );
 
     /* wire pass */
     wire_sh->enable(vl::EN_DEPTH_TEST);
@@ -179,7 +179,7 @@ public:
     wire_sh->gocMaterial()->setFlatColor( vl::royalblue );
     wire_sh->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
     wire_sh->gocPolygonOffset()->set(-1.0f, -1.0f);
-    wire_sh->setRenderState( light.get(), 0 );
+    wire_sh->setRenderState( light.get() );
 
     /* wave pass */
     wave_sh->enable(vl::EN_BLEND); // for line smoothing
@@ -224,7 +224,7 @@ public:
     {
       /* define actor position and add it to the scene */
       vl::ref<vl::Transform> tr = new vl::Transform;
-      vl::real t = 360.0f / ring_obj_count * i;
+      vl::Real t = 360.0f / ring_obj_count * i;
       vl::vec3 v = vl::mat4::getRotation(t,0,1,0) * vl::vec3(35,0,0);
       tr->setLocalMatrix( vl::mat4::getTranslation(v) );
 
@@ -246,14 +246,14 @@ public:
   {
     /* animate the camera to rotate around the scene and bounce near/far */
     float s = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 10.0f );
-    vl::real t = pow((s+1.0f)/2.0f,2);
-    vl::real x = t * 200 + 5;
+    vl::Real t = pow((s+1.0f)/2.0f,2);
+    vl::Real x = t * 200 + 5;
     vl::vec3 eye( x, 0, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 30.0f, 0, 1, 0 ) * eye;
     eye += vl::vec3(0,10+70*t,0);
     vl::mat4 m;
     m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    rendering()->as<vl::Rendering>()->camera()->setViewMatrix(m);
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };
 

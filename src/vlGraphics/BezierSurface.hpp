@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,22 +43,14 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT BezierPatch: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::BezierPatch, Object)
-
   public:
     //! The control points grid defining the bicubic Bézier patch(es).
     typedef std::vector< vec3 > Points;
+    virtual const char* className() { return "vl::BezierPatch"; }
     //! Constructor
-    BezierPatch(): mX(0), mY(0) 
-    {
-      VL_DEBUG_SET_OBJECT_NAME()
-    }
+    BezierPatch(): mX(0), mY(0) {}
     //! Constructor
-    BezierPatch(int x, int y): mX(0), mY(0) 
-    { 
-      VL_DEBUG_SET_OBJECT_NAME()
-      resize(x,y);
-    }
+    BezierPatch(int x, int y): mX(0), mY(0) { resize(x,y); }
     //! Defines the x and y dimensions of the control point grid defining the patch.
     //! The \p x and \p y parameters must be of the form 3*n+1 with \p n integer positive, i.e 4 (n=1), 7 (n=2), 10 (n=3) and so on.
     void resize(int x, int y);
@@ -93,14 +85,10 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT BezierSurface: public Geometry
   {
-    VL_INSTRUMENT_CLASS(vl::BezierSurface, Geometry)
-
   public:
+    virtual const char* className() { return "vl::BezierSurface"; }
     //! Constructor
-    BezierSurface(): mDetail(16) 
-    {
-      VL_DEBUG_SET_OBJECT_NAME()
-    }
+    BezierSurface(): mDetail(16) {}
 
     //! Returns the Bézier patches that are part of this Bézier surface.
     std::vector< ref<BezierPatch> >& patches() { return mPatches; }

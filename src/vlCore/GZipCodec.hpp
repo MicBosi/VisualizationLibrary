@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -42,8 +42,6 @@ namespace vl
    */
   class VLCORE_EXPORT GZipCodec: public VirtualFile
   {
-    VL_INSTRUMENT_CLASS(vl::GZipCodec, VirtualFile)
-
     // Lower this if you need to limit the amount of data allocated to the stack, for example to 16K.
     static const int CHUNK_SIZE = 128*1024;
 
@@ -56,6 +54,8 @@ namespace vl
 
     //! Destructor
     ~GZipCodec();
+
+    virtual const char* className() { return "vl::GZipCodec"; }
 
     //! Opens a compressed stream. 
     //! - If \p mode == \p OM_ReadOnly the stream will be decompressed during read operations. 

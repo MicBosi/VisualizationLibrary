@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -85,8 +85,8 @@ RaycastVolume::RaycastVolume()
   {
     0,1,2,3, 1,5,6,2, 5,4,7,6, 4,0,3,7, 3,2,6,7, 4,5,1,0
   };
-  de->indexBuffer()->resize( 4*6 );
-  memcpy( de->indexBuffer()->ptr(), de_indices, sizeof( de_indices ) );
+  de->indices()->resize( 4*6 );
+  memcpy( de->indices()->ptr(), de_indices, sizeof( de_indices ) );
 
   // generate default texture coordinates
   fvec3 texc[] = 
@@ -108,7 +108,7 @@ RaycastVolume::RaycastVolume()
  * - The \p "uniform vec3 eye_position" variable contains the camera position in object space, useful to compute 
  *   specular highlights, raycast direction etc. 
  * - The \p "uniform vec3 eye_look" variable contains the camera look vector in object space. */
-void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera* camera, vl::Renderable*, const vl::Shader* shader )
+void RaycastVolume::updateUniforms( vl::Actor*actor, vl::Real, const vl::Camera* camera, vl::Renderable*, const vl::Shader* shader )
 {
   const GLSLProgram* glsl = shader->getGLSLProgram();
   VL_CHECK( glsl );
@@ -134,11 +134,11 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
       {
         has_lights = true;
         // light position following transform
-        if ( light->boundTransform() )
-          light_position[i] = ( fmat4 )light->boundTransform()->worldMatrix() * light->position().xyz();
+        if ( light->followedTransform() )
+          light_position[i] = ( fmat4 )light->followedTransform()->worldMatrix() * light->position().xyz();
         // light position following camera
         else
-          light_position[i] = ( ( fmat4 )camera->modelingMatrix() * light->position() ).xyz();
+          light_position[i] = ( ( fmat4 )camera->inverseViewMatrix() * light->position() ).xyz();
 
         // light position in object space
         if ( actor->transform() )
@@ -155,7 +155,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
     // pass the eye position in object space
 
     // eye postion
-    fvec3 eye = ( fvec3 )camera->modelingMatrix().getT();
+    fvec3 eye = ( fvec3 )camera->inverseViewMatrix().getT();
     // world to object space
     if ( actor->transform() )
       eye = inv_mat * eye;
@@ -167,7 +167,7 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
     // pass the eye look direction in object space
 
     // eye postion
-    fvec3 look = -( fvec3 )camera->modelingMatrix().getZ();
+    fvec3 look = -( fvec3 )camera->inverseViewMatrix().getZ();
     // world to object space
     if ( actor->transform() )
     {
@@ -185,7 +185,7 @@ void RaycastVolume::bindActor( Actor* actor )
   actor->setLod( 0, mGeometry.get() );
 }
 //-----------------------------------------------------------------------------
-void RaycastVolume::onActorRenderStarted( Actor* actor, real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass )
+void RaycastVolume::onActorRenderStarted( Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass )
 {
   if ( pass>0 )
     return;

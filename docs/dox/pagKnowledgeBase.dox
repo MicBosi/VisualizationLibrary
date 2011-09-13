@@ -3,13 +3,13 @@
 
 	\par General Info
 	
-	- The officially released packages can be found here: http://www.visualizationlibrary.org/documentation/downloads.php
+	- The officially released packages can be found here: http://www.visualizationlibrary.com/downloads.php
 	
 	- The latest version of VL sources can be found here: http://code.google.com/p/visualizationlibrary/source/checkout
 	
-	- If you need support or want to keep up to date with the latest developments visit: http://www.visualizationlibrary.org/forum
+	- If you need support or want to keep up to date with the latest developments visit: http://www.visualizationlibrary.com/forum
 	
-	- You can also email me at: michele &lt;at&gt; visualizationlibrary &lt;dot&gt; org
+	- You can also email me at info@visualizationlibrary.com
 
 	\par Compiling And Installing VL
 	
@@ -39,7 +39,7 @@
 	- VL_DATA_PATH: the path where the application's data is looked for, default is \a "../data".
 	- VL_CHECK_GL_STATES: mainly for debugging. Possible values are "YES" and "NO". When enabled VL checks the consistency of the OpenGL environment upon rendering. Enabled by default in debug builds, disabled by default in release mode.
 	
-	Note that such environment variable merely modify the vl::GlobalSettings default values. You can access and modify them at runtime using the vl::globalSettings() method.
+	Note that such environment variable merely modify the vl::VLSettings default values. You can access and modify them at runtime using the vl::globalSettings() method.
 
 	\par Configuring Visualization Library (\a config.hpp)
 	

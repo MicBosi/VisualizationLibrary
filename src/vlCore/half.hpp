@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -41,15 +41,10 @@ namespace vl
   {
   public:
     half(): bits(0) {}
-    
     half(const half& hf): bits(hf.bits) {}
-    
     half(int i): bits(convertFloatToHalf((float)i).bits) {}
-    
     half(long long i): bits(convertFloatToHalf((float)i).bits) {}
-    
     half(float f): bits(convertFloatToHalf(f).bits) {}
-    
     half(double d): bits(convertFloatToHalf((float)d).bits) {}
 
     operator float() const

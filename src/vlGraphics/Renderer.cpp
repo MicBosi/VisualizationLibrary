@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -82,7 +82,7 @@ namespace
   };
 }
 //------------------------------------------------------------------------------
-const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur_camera, real frame_clock)
+const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur_camera, Real frame_clock)
 {
   VL_CHECK_OGL()
 
@@ -104,7 +104,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       // render-target activation.
       // note: an OpenGL context can have multiple rendering targets!
-      mRenderer->framebuffer()->activate();
+      mRenderer->renderTarget()->activate();
 
       // viewport setup.
       camera->viewport()->setClearFlags( mRenderer->clearFlags() );
@@ -133,7 +133,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
   std::map<const GLSLProgram*, GLSLProgState> glslprogram_map;
 
-  OpenGLContext* opengl_context = framebuffer()->openglContext();
+  OpenGLContext* opengl_context = renderTarget()->openglContext();
 
   // --------------- default scissor ---------------
 
@@ -143,11 +143,12 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
   const Scissor* cur_scissor = NULL;
 
   // scissor the viewport by default: needed for points and lines since they are not clipped against the viewport
-  // this is already setup by the Viewport
-  /*
-  glEnable(GL_SCISSOR_TEST);
-  glScissor(cur_camera->viewport()->x(), cur_camera->viewport()->y(), cur_camera->viewport()->width(), cur_camera->viewport()->height());
-  */
+  #if 1
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(cur_camera->viewport()->x(), cur_camera->viewport()->y(), cur_camera->viewport()->width(), cur_camera->viewport()->height());
+  #else
+    glDisable(GL_SCISSOR_TEST);
+  #endif
 
   // --------------- rendering ---------------
 
@@ -161,10 +162,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
     // --------------- Actor's scissor ---------------
 
-    // mic fixme:this kind of scissor management is not particularly elegant.
-    // It is required mainly for convenience for the vector graphics that allow the specification of a clipping rectangular area at any point in the rendering.
-    // We must also find a good general solution to support indexed scissoring and viewport.
-
     const Scissor* scissor = actor->scissor() ? actor->scissor() : tok->mShader->scissor();
     if (cur_scissor != scissor)
     {
@@ -175,9 +172,13 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
       }
       else
       {
-        // scissor the viewport by default: needed for points and lines with size > 1.0 as they are not clipped against the viewport.
-        VL_CHECK(glIsEnabled(GL_SCISSOR_TEST))
-        glScissor(cur_camera->viewport()->x(), cur_camera->viewport()->y(), cur_camera->viewport()->width(), cur_camera->viewport()->height());
+        #if 1
+          // scissor the viewport by default: needed for points and lines with size > 1.0 as they are not clipped against the viewport.
+          VL_CHECK(glIsEnabled(GL_SCISSOR_TEST))
+          glScissor(cur_camera->viewport()->x(), cur_camera->viewport()->y(), cur_camera->viewport()->width(), cur_camera->viewport()->height());
+        #else
+          glDisable(GL_SCISSOR_TEST);
+        #endif
       }
     }
 
@@ -203,7 +204,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       if ( cur_render_state_set != shader->getRenderStateSet() )
       {
-        opengl_context->applyRenderStates( shader->getRenderStateSet(), cur_camera );
+        opengl_context->applyRenderStates(cur_render_state_set, shader->getRenderStateSet(), cur_camera );
         cur_render_state_set = shader->getRenderStateSet();
       }
 
@@ -213,7 +214,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       if ( cur_enable_set != shader->getEnableSet() )
       {
-        opengl_context->applyEnables( shader->getEnableSet() );
+        opengl_context->applyEnables(cur_enable_set, shader->getEnableSet() );
         cur_enable_set = shader->getEnableSet();
       }
 
@@ -227,6 +228,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       // --------------- Actor pre-render callback ---------------
 
+      // (mic fixme: document this)
       // here the user has still the possibility to modify the Actor's uniforms
 
       actor->dispatchOnActorRenderStarted( frame_clock, cur_camera, tok->mRenderable, shader, ipass );
@@ -252,8 +254,8 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
         cur_glsl_program = shader->glslProgram();
 
         // consider them NULL if they are empty
-        if (cur_glsl_program->getUniformSet() && !cur_glsl_program->getUniformSet()->uniforms().empty())
-          cur_glsl_prog_uniform_set = cur_glsl_program->getUniformSet();
+        if (cur_glsl_program->uniformSet() && !cur_glsl_program->uniformSet()->uniforms().empty())
+          cur_glsl_prog_uniform_set = cur_glsl_program->uniformSet();
 
         if (shader->getUniformSet() && !shader->getUniformSet()->uniforms().empty())
           cur_shader_uniform_set = shader->getUniformSet();
@@ -313,7 +315,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
       VL_CHECK_OGL()
 
       if (update_cm || update_tr)
-        projViewTransfCallback()->updateMatrices( update_cm, update_tr, cur_glsl_program, cur_camera, cur_transform );
+        projViewTransfCallback()->updateMatrices( update_cm, update_tr, cur_glsl_program, cur_camera, cur_transform, opengl_context->isCompatible() );
 
       VL_CHECK_OGL()
 
@@ -358,7 +360,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       // --------------- Actor rendering ---------------
 
-      // also compiles display lists and updates BufferObjects if necessary
+      // also compiles display lists and updates VBOs if necessary
       tok->mRenderable->render( actor, shader, cur_camera, opengl_context );
 
       VL_CHECK_OGL()
@@ -370,22 +372,21 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
   }
 
   // clear enables
-  opengl_context->applyEnables( mDummyEnables.get() ); VL_CHECK_OGL();
+  opengl_context->applyEnables(cur_enable_set, mDummyEnables.get() ); VL_CHECK_OGL();
 
   // clear render states
-  opengl_context->applyRenderStates( mDummyStateSet.get(), cur_camera ); VL_CHECK_OGL();
+  opengl_context->applyRenderStates(cur_render_state_set, mDummyStateSet.get(), cur_camera ); VL_CHECK_OGL();
 
   // enabled texture unit #0
   VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
-  if (Has_Fixed_Function_Pipeline)
+  if (opengl_context->isCompatible())
     VL_glClientActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
 
   // disable scissor test
   glDisable(GL_SCISSOR_TEST); VL_CHECK_OGL();
 
-  // disable all vertex arrays, note this also calls "glBindBuffer(GL_ARRAY_BUFFER, 0)"
+  // disable all vertex arrays
   opengl_context->bindVAS(NULL, false, false); VL_CHECK_OGL();
-
   VL_CHECK( opengl_context->isCleanState(true) );
 
   return render_queue;

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -188,8 +188,8 @@ bool SDLWindow::initSDLWindow(const vl::String& title, const vl::OpenGLContextFo
     return false;
   }
 
-  mFramebuffer->setWidth(width);
-  mFramebuffer->setHeight(height);
+  mRenderTarget->setWidth(width);
+  mRenderTarget->setHeight(height);
   mSDLWindow = this;
 
   // init key translation map

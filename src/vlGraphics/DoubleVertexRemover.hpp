@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,9 +43,8 @@ namespace vl
   //! Generates a set of new vertices from the old one.
   class VLGRAPHICS_EXPORT VertexMapper: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::VertexMapper, Object)
-
   public:
+    virtual const char* className() { return "vl::VertexMapper"; }
     //! Regenerates a new Array based on the given mapping.
     //! \param data The array to be regenerated
     //! \param map_new_to_old Specifies the mapping from the old vetices to the new one. The \p i-th vertex of the new vertex array will use the \p map_new_to_old[i]-th vertex of the old array, 
@@ -62,13 +61,11 @@ namespace vl
   //! As a result also all the DrawArrays prensent in the Geometry are substituted with DrawElements.
   class VLGRAPHICS_EXPORT DoubleVertexRemover: public VertexMapper
   {
-    VL_INSTRUMENT_CLASS(vl::DoubleVertexRemover, VertexMapper)
-
   private:
-    class LessCompare
+    class CompareVertex
     {
     public:
-      LessCompare(const Geometry* geom)
+      CompareVertex(const Geometry* geom)
       {
         if (geom->vertexArray())
           mAttribs.push_back(geom->vertexArray());
@@ -89,6 +86,7 @@ namespace vl
 
       bool operator()(unsigned int a, unsigned int b) const 
       { 
+        // less(a,b); 
         for(unsigned i=0; i<mAttribs.size(); ++i)
         {
           int val = mAttribs[i]->compare(a,b);
@@ -98,34 +96,19 @@ namespace vl
         return false;
       }
 
-    protected:
-      std::vector< const ArrayAbstract* > mAttribs;
-    };
-
-    class EqualsCompare
-    {
-    public:
-      EqualsCompare(const Geometry* geom)
+      bool less(unsigned int a, unsigned int b) const
       {
-        if (geom->vertexArray())
-          mAttribs.push_back(geom->vertexArray());
-        if (geom->normalArray())
-          mAttribs.push_back(geom->normalArray());
-        if (geom->colorArray())
-          mAttribs.push_back(geom->colorArray());
-        if (geom->secondaryColorArray())
-          mAttribs.push_back(geom->secondaryColorArray());
-        if (geom->fogCoordArray())
-          mAttribs.push_back(geom->fogCoordArray());
-        for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
-          if (geom->texCoordArray(i))
-            mAttribs.push_back(geom->texCoordArray(i));
-        for(int i=0; i<geom->vertexAttribArrays()->size(); ++i)
-          mAttribs.push_back(geom->vertexAttribArrays()->at(i)->data());
+        for(unsigned i=0; i<mAttribs.size(); ++i)
+        {
+          int val = mAttribs[i]->compare(a,b);
+          if (val != 0)
+            return val < 0;
+        }
+        return false;
       }
 
-      bool operator()(unsigned int a, unsigned int b) const 
-      { 
+      bool equals(unsigned int a, unsigned int b) const
+      {
         for(unsigned i=0; i<mAttribs.size(); ++i)
         {
           if (mAttribs[i]->compare(a,b) != 0)
@@ -139,6 +122,7 @@ namespace vl
     };
 
   public:
+    virtual const char* className() { return "vl::DoubleVertexRemover"; }
     DoubleVertexRemover() {}
     void removeDoubles(Geometry* geom);
     const std::vector<size_t>& mapNewToOld() const { return mMapNewToOld; }

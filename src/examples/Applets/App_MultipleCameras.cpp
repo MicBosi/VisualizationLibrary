@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,11 +43,11 @@ class App_MultipleCameras: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     // save to be used later
     ref<Renderer> renderer = rendering()->as<Rendering>()->renderer();
-    ref<Framebuffer> framebuffer = rendering()->as<Rendering>()->renderer()->framebuffer();
+    ref<RenderTarget> render_target = rendering()->as<Rendering>()->renderer()->renderTarget();
     // install new rendering tree
     mRenderingTree = new RenderingTree;
     setRendering(mRenderingTree.get());
@@ -76,13 +76,13 @@ public:
         geom->computeNormals();
     }
 
-    ref<Light> light = new Light;
+    ref<Light> light = new Light(0);
     light->setAmbient( fvec4( .1f, .1f, .1f, 1.0f) );
     light->setSpecular( fvec4( .1f, .1f, .1f, 1.0f) );
 
     for(unsigned i=0, count=res_db->count<Actor>(); i<count; ++i)
     {
-      res_db->get<Actor>(i)->effect()->shader()->setRenderState( light.get(), 0 );
+      res_db->get<Actor>(i)->effect()->shader()->setRenderState( light.get() );
       res_db->get<Actor>(i)->effect()->shader()->enable(EN_LIGHTING);
       res_db->get<Actor>(i)->effect()->shader()->enable(EN_DEPTH_TEST);
     }
@@ -94,11 +94,9 @@ public:
     wirefx->shader()->enable( EN_LINE_SMOOTH );
     wirefx->shader()->enable( EN_BLEND );
     wirefx->shader()->gocLightModel()->setTwoSide(true);
-#if defined(VL_OPENGL)
     wirefx->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
-#endif
     wirefx->shader()->gocMaterial()->setDiffuse( white );
-    wirefx->shader()->setRenderState( light.get(), 0 );
+    wirefx->shader()->setRenderState( light.get() );
 
     std::vector< ref<Actor> > moneky_w;
 
@@ -111,7 +109,7 @@ public:
 
     for( int i=0; i<mRenderingTree->subRenderings()->size(); ++i )
     {
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->setFramebuffer( framebuffer.get() );
+      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->setRenderTarget( render_target.get() );
       mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setRenderer( renderer.get() );
       mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setCamera( new Camera );
       mRenderingTree->subRenderings()->at(i)->as<Rendering>()->setTransform( _tr1.get() );
@@ -153,7 +151,7 @@ public:
       case 2: m = mat4::getLookAt( vec3(3.5,1,0), vec3(0,0,0), vec3(0,1,0) ); break;
       case 3: m = mat4::getLookAt( vec3(0,3.5,0), vec3(0,0,0), vec3(0,0,-1) ); break;
       }
-      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->setViewMatrix(m);
+      mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->setInverseViewMatrix(m);
     }
   }
 
@@ -170,25 +168,25 @@ public:
     int hw = w/2;
     int hh = h/2;
 
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
+    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
     mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->viewport()->set(0,0,hw,hh);
-    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->setProjectionPerspective();
+    mRenderingTree->subRenderings()->at(2)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
+    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
     mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->viewport()->set(hw,hh,w-hw,h-hh);
-    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->setProjectionPerspective();
+    mRenderingTree->subRenderings()->at(1)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
+    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
     mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->viewport()->set(0,hh,hw,h-hh);
-    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->setProjectionPerspective();
+    mRenderingTree->subRenderings()->at(0)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->framebuffer()->setWidth(w);
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->framebuffer()->setHeight(h);
+    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->renderTarget()->setWidth(w);
+    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->renderer()->renderTarget()->setHeight(h);
     mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->viewport()->set(hw,0,w-hw,hh);
-    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->setProjectionPerspective();
+    mRenderingTree->subRenderings()->at(3)->as<Rendering>()->camera()->setProjectionAsPerspective();
 
     Rendering* rend = mRenderingTree->subRenderings()->at(0)->as<Rendering>();
     bindManipulators( rend->camera() );
@@ -198,7 +196,7 @@ public:
   {
     for( int i=0; i<mRenderingTree->subRenderings()->size(); ++i )
     {
-      int height = mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->framebuffer()->height();
+      int height = mRenderingTree->subRenderings()->at(i)->as<Rendering>()->renderer()->renderTarget()->height();
       if ( mRenderingTree->subRenderings()->at(i)->as<Rendering>()->camera()->viewport()->isPointInside(x,y,height) )
       {
         Rendering* rend = mRenderingTree->subRenderings()->at(i)->as<Rendering>();

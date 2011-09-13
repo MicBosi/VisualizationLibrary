@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -41,7 +41,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     /* bind Transform */
     mTransform_Left  = new vl::Transform;
@@ -54,7 +54,7 @@ public:
     /* enable depth test and lighting */
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     /* enable lighting and material properties */
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->gocMaterial()->setDiffuse( vl::fvec4(1.0f,1.0f,1.0f,0.5f) );
     effect->shader()->gocLightModel()->setTwoSide(true);
@@ -81,10 +81,10 @@ public:
 
      or
 
-     geom_sorted->setBufferObjectEnabled(true);
+     geom_sorted->setVBOEnabled(true);
 
-     but note that in this case the DepthSortCallback will schedule an update of the BufferObject or of the display list
-     at every frame! This will almost centainly make the use of BufferObjects or display lists useful if not harmful, performance-wise.
+     but note that in this case the DepthSortCallback will schedule an update of the VBO or of the display list
+     at every frame! This will almost centainly make the use of VBOs or display lists useful if not harmful, performance-wise.
     */
 
     /* add the two objects to the scene manager */
@@ -108,7 +108,7 @@ public:
 
   void updateTransforms()
   {
-    vl::real degrees = vl::Time::currentTime() * 45.0f;
+    vl::Real degrees = vl::Time::currentTime() * 45.0f;
     vl::mat4 matrix  = vl::mat4::getRotation( degrees, 0,1,0 );
     mTransform_Left->setLocalMatrix( vl::mat4::getTranslation(-mOffset,0,0) * matrix );
     mTransform_Right->setLocalMatrix(vl::mat4::getTranslation(+mOffset,0,0) * matrix );

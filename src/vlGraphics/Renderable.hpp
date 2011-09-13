@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -57,27 +57,27 @@ namespace vl
     * \sa Actor, Effect, Shader, Transform, Geometry */
   class VLGRAPHICS_EXPORT Renderable: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::Renderable, Object)
-
     Renderable(const Renderable& other): Object(other)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
   public:
+    virtual const char* className() { return "vl::Renderable"; }
+
     //! Constructor
     Renderable(): mBoundsUpdateTick(0), mDisplayList(0), mBoundsDirty(true), 
-                  mDisplayListEnabled(false), mDisplayListDirty(true), mBufferObjectEnabled(true), mBufferObjectDirty(true){}
+                  mDisplayListEnabled(false), mDisplayListDirty(true), mVBOEnabled(true), mVBODirty(true){}
     
     //! Destructor
     virtual ~Renderable() { deleteDisplayList(); }
 
-    //! Renders the Renderable and if necessary compiles the display list and updates the BufferObjects.
+    //! Renders the Renderable and if necessary compiles the display list and updates the VBOs.
     void render(const Actor* actor, const Shader* shader, const Camera* camera, OpenGLContext* gl_context)
     {
       VL_CHECK_OGL();
       
-      // display list have priority over BufferObjects
+      // display list have priority over VBOs
       if (isDisplayListEnabled())
       {
         if ( displayListDirty() )
@@ -100,12 +100,9 @@ namespace vl
       }
       else
       {
-        // update BufferObjects
-        if (isBufferObjectEnabled() && isBufferObjectDirty())
-        {
-          updateDirtyBufferObject(BUM_KeepRamBuffer);
-          setBufferObjectDirty(false);
-        }
+        // update VBOs
+        if (vboEnabled() && isVBODirty())
+          updateVBOs(false,false);
 
         // render
         render_Implementation( actor, shader, camera, gl_context ); VL_CHECK_OGL();
@@ -126,7 +123,7 @@ namespace vl
     bool boundsDirty() const { return mBoundsDirty; }
     
     //! Sets the bounding box of a Renderable.
-    void setBoundingBox( const AABB& aabb )
+    void setBoundingBox( const AABB& aabb ) 
     { 
       if (mAABB != aabb) 
       { 
@@ -197,25 +194,25 @@ namespace vl
     //! Whether the display list associated to a Renderable should be recompiled at the next rendering.
     void setDisplayListDirty(bool dirty) { mDisplayListDirty = dirty; }
 
-    //! Returns \p true if BufferObject (vertex buffer object) are enabled for a Renderable (enabled by default).
-    bool isBufferObjectEnabled() const { return mBufferObjectEnabled; }
+    //! Returns \p true if VBO (vertex buffer object) are enabled for a Renderable (enabled by default).
+    bool vboEnabled() const { return mVBOEnabled; }
 
-    //! Enable/disable BufferObject (vertex buffer object) (enabled by default).
-    void setBufferObjectEnabled(bool enabled) { mBufferObjectEnabled = enabled; }
+    //! Enable/disable VBO (vertex buffer object) (enabled by default).
+    void setVBOEnabled(bool enabled) { mVBOEnabled = enabled; }
 
-    //! Whether BufferObjects associated to a Renderable should be recomputed on the next rendering.
-    bool isBufferObjectDirty() const { return mBufferObjectDirty; }
+    //! Whether VBOs associated to a Renderable should be recomputed on the next rendering.
+    bool isVBODirty() const { return mVBODirty; }
 
-    //! Whether BufferObjects associated to a Renderable should be recomputed on the next rendering.
-    void setBufferObjectDirty(bool dirty=false) { mBufferObjectDirty = dirty; }
+    //! Whether VBOs associated to a Renderable should be recomputed on the next rendering.
+    void setVBODirty(bool dirty) { mVBODirty = dirty; }
 
     //! Uploads the data stored in the local buffers on the GPU memory.
     //! If 'discard_local_data' is set to \p true the memory used by the local buffers is released.
-    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode) = 0;
+    virtual void updateVBOs(bool discard_local_data, bool force_update) = 0;
 
-    //! Destroys the BufferObject (vertex buffer objects) associated to this a Renderable.
+    //! Destroys the VBO (vertex buffer objects) associated to this a Renderable.
     //! \note This function does not touch the local (non GPU) data stored in the buffers associated to the vertex attributes and DrawCall.
-    virtual void deleteBufferObject() = 0;
+    virtual void deleteVBOs() {}
 
     //! Deletes the display list currently associated to a Renderable.
     void deleteDisplayList() 
@@ -235,8 +232,8 @@ namespace vl
     bool mBoundsDirty;
     bool mDisplayListEnabled;
     bool mDisplayListDirty;
-    bool mBufferObjectEnabled;
-    bool mBufferObjectDirty;
+    bool mVBOEnabled;
+    bool mVBODirty;
     AABB mAABB;
     Sphere mSphere;
   };

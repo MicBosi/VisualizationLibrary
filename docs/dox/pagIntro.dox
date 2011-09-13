@@ -7,7 +7,9 @@ Welcome to Visualization Library!
 Visualization Library is a C++ middleware for high-performance 2D and 3D graphics applications based on the industry standard OpenGL 1.x-4.x, designed to develop portable 
 applications for the Windows, Linux and Mac OS X operating systems.
 
-Visualization Library is currently used by professionals, researchers and students to develop all sorts of 2D and 3D applications.
+Visualization Library is currently used by professionals, researchers and students to develop 2D and 3D applications in fields such as scientific visualization, 
+material sciences, geosciences, oil and gas exploration, health and medical training and visualization, civil and military simulation, virtual reality, 
+augmented reality, visual simulation, plotting, data mining and visualization, presentations, multimedia applications, special effects, 2D and 3D games and so on.
 	
 Visualization Libray has been designed to be a fine-grained platform upon which a wide variety of highly-specialized 3D graphics applications can be effectively developed. 
 Instead of abstracting the user from the underlying OpenGL API, Visualization Library stays as close as possible to it and defines a thin high-performance layer on top of it. 
@@ -15,19 +17,22 @@ The result is that many OpenGL functions and features have a 1 to 1 mapping to V
 
 You can think of Visualization Library as a toolkit that provides you with the power and flexibility of OpenGL within a light and user friendly C++ object oriented framework. 
 
-Visualization Library has been developed by Michele Bosi with the help of several contributors (see the \ref pagCredits page).
+Visualization Library has been developed by Michele Bosi with the help of several contributors (see the \ref pagCredits page). 
 
 Contacts:
 
-	- michele &lt;at&gt; visualizationlibrary &lt;dot&gt; org
+	- info@visualizationlibrary.com
 	- http://www.linkedin.com/in/michelebosi
 
 \par Community Resources
 
-- <a target=_blank href="http://www.visualizationlibrary.org/forum">Forums</a> - The right place to ask for help, ask feedback on your 
-projects and check for news regarding VL, such as releases, bug fixes etc. Also register to the forum if you would like to be
-notified via email about the latest VL developments.
-- <a href="http://twitter.com/VizLibrary">http://twitter.com/VizLibrary</a> - Quick info regarding the latest VL news.
+- <a href="http://www.visualizationlibrary.com/newsletter/?p=subscribe&id=1">Visualization Library Newsletter</a> - To be notified of the 
+latest developments, events and news regarding Visualization Library. Only major news are sent to this newsletter like new stable 
+releases or important bug fixes releases.
+- <a href="http://twitter.com/VizLibrary">http://twitter.com/VizLibrary</a> - Here you will find more frequently updated news regarding 
+VL releases and the current development.
+- <a target=_blank href="http://www.visualizationlibrary.com/forum">Forums</a> - The right place to ask for help, advertise your 
+projects and also to check for news regarding VL releases and the current development.
 	
 \par Visualization Library Design Key Features and Goals
 
@@ -62,19 +67,13 @@ notified via email about the latest VL developments.
 
 - Non direct multithreading support but multithreading-aware:
 
-	<i>Like OpenGL, Visualization Library does not provide any special multithreading commands/classes or a multithreading library. 
-	It is the user's responsibility to take care of the various aspects involved in the development of a multithreaded or distributed application. 
-	However, Visualization Library have been designed to minimize multithreading-related issues as much as possible. 
-	If you are interested in the topic you might want to use Visualization Library in conjunction with the following: <a target=_blank href="http://www.threadingbuildingblocks.org">Intel® Threading Building Blocks</a>, <a target=_blank href="http://www.vrjuggler.org">VR Juggler</a>, <a target=_blank href="http://chromium.sourceforge.net">Chromium</a>.</i>
+	<i>Like OpenGL, Visualization Library does not provide any special multithreading commands/classes or a multithreading library. It is the user's responsibility to take care of the various aspects involved in the development of a multithreaded or distributed application. However, Visualization Library have been designed to minimize multithreading-related issues as much as possible. If you are interested in the topic you might want to use Visualization Library in conjunction with the following: <a target=_blank href="http://www.threadingbuildingblocks.org">Intel® Threading Building Blocks</a>, <a target=_blank href="http://www.vrjuggler.org">VR Juggler</a>, <a target=_blank href="http://chromium.sourceforge.net">Chromium</a>.</i>
 
 \par Quick Feature Overview
 
-- Support OpenGL 1.x, 2.x, 3.x and 4.1.
-- Experimental support to OpenGL ES 1.1, OpenGL ES 2.0.
-- <b>3D file formats</b>: 3DS, OBJ, PLY (binary and ascii), STL (binary and ascii), AC3D, MD2, COLLADA, VLT and VLB proprietary formats.
+- <b>3D file formats</b>: 3DS, OBJ, PLY (binary and ascii), STL (binary and ascii), AC3D, MD2.
 - <b>2D Image file formats</b>: JPG, PNG, TGA, TIFF, BMP, DDS, DICOM, RAW.
-- <b>VLX serialization framework to load/save VL classes to/from VLT and VLB files.</b>
-- <b>GUI bindings</b>: Win32, MFC, Qt4, wxWidgets, SDL, GLUT.
+- <b>GUI bindings</b>: Win32, MFC, Qt4, wxWidgets, SDL, GLUT, Cocoa (under development).
 - <b>Volume rendering</b> facilities: direct volume rendering via \b screen \b aligned \b slices, \b ray \b casting (transfer functions, isosurface, MIP etc.) and \b marching \b cubes for isosurface extraction.
 - \b Virtual \b File \b System: read/write \b disk files and directories, read <b>.ZIP</b> files and directories, read/write \b memory files and directories, read/write <b>.GZ</b> files.
 - \b Texturing: almost all texture formats supported by OpenGL 1.x, 2.x, 3.x, 4.x plus several extensions: 1D, 2D, 3D textures, cubemaps, texture arrays, texture rectangles, multi-texturing, render to texture, texture coordinate generation, texture combiners, mipmapping and hw mipmaps generation, anisotropic filtering, compressed textures, depth textures, integer textures, float and half float texture formats, 2 components textures and more.

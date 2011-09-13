@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -33,7 +33,7 @@
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlGraphics/Effect.hpp>
 #include <vlCore/ZippedDirectory.hpp>
-#include <vlGraphics/Array.hpp>
+#include <vlCore/Array.hpp>
 #include <vlCore/DiskFile.hpp>
 #include <vlCore/GZipCodec.hpp>
 #include <vlCore/FileSystem.hpp>
@@ -131,7 +131,7 @@ namespace blind_tests
 
     // OBJ and material loading from zip file
 
-    vl::defFileSystem()->directories().push_back(zdir.get());
+    vl::defFileSystem()->directories()->push_back(zdir.get());
     vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/obj_test_mesh.obj");
 
     vl::Log::print( vl::Say("obj geometries = %n\n") << res_db->count<vl::Geometry>() );

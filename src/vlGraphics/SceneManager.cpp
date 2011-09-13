@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -65,12 +65,12 @@ void SceneManager::computeBounds()
 
   // better method
   Sphere sphere;
-  real radius = real(-1.0);
+  Real radius = Real(-1.0);
   for(int i=0; i<actors.size(); ++i)
   {
     if (actors.at(i)->boundingSphere().isNull())
       continue;
-    real r = (actors.at(i)->boundingSphere().center() - boundingBox().center()).length() + actors.at(i)->boundingSphere().radius();
+    Real r = (actors.at(i)->boundingSphere().center() - boundingBox().center()).length() + actors.at(i)->boundingSphere().radius();
     if (r > radius)
       radius = r;
   }

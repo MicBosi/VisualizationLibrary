@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -70,11 +70,6 @@ namespace vl
       e(0,0) = e(1,1) = e(2,2) = e(3,3) = n; 
     }
     //-----------------------------------------------------------------------------
-    explicit Matrix4(T_Scalar* val)
-    {
-      fillPtr(val);
-    }
-    //-----------------------------------------------------------------------------
     explicit Matrix4( T_Scalar e00, T_Scalar e01, T_Scalar e02, T_Scalar e03,
                       T_Scalar e10, T_Scalar e11, T_Scalar e12, T_Scalar e13,
                       T_Scalar e20, T_Scalar e21, T_Scalar e22, T_Scalar e23,
@@ -92,12 +87,6 @@ namespace vl
       e(0,1) = e(1,1) = e(2,1) = e(3,1) = 
       e(0,2) = e(1,2) = e(2,2) = e(3,2) = 
       e(0,3) = e(1,3) = e(2,3) = e(3,3) = val;
-      return *this;
-    }
-    //-----------------------------------------------------------------------------
-    Matrix4& fillPtr(T_Scalar* val)
-    {
-      memcpy(ptr(), val, sizeof(T_Scalar)*16);
       return *this;
     }
     //-----------------------------------------------------------------------------
@@ -454,13 +443,9 @@ namespace vl
     //-----------------------------------------------------------------------------
     static Matrix4 getOrtho2D(T_Scalar pleft, T_Scalar pright, T_Scalar pbottom, T_Scalar ptop);
     //-----------------------------------------------------------------------------
-    static Matrix4 getLookAtModeling(const Vector3<T_Scalar>& eye, const Vector3<T_Scalar>& at, const Vector3<T_Scalar>& up);
+    static Matrix4 getLookAt(const Vector3<T_Scalar>& eye, const Vector3<T_Scalar>& look, const Vector3<T_Scalar>& up);
     //-----------------------------------------------------------------------------
-    static Matrix4 getLookAt(const Vector3<T_Scalar>& eye, const Vector3<T_Scalar>& at, const Vector3<T_Scalar>& up);
-    //-----------------------------------------------------------------------------
-    void getAsLookAtModeling(Vector3<T_Scalar>& eye, Vector3<T_Scalar>& at, Vector3<T_Scalar>& up, Vector3<T_Scalar>& right) const;
-    //-----------------------------------------------------------------------------
-    void getAsLookAt(Vector3<T_Scalar>& eye, Vector3<T_Scalar>& at, Vector3<T_Scalar>& up, Vector3<T_Scalar>& right) const;
+    void getAsLookAt(Vector3<T_Scalar>& eye, Vector3<T_Scalar>& look, Vector3<T_Scalar>& up, Vector3<T_Scalar>& right) const;
     //-----------------------------------------------------------------------------
     void getYXRotationAngles(T_Scalar& degrees_y, T_Scalar& degrees_x) const;
     //-----------------------------------------------------------------------------
@@ -761,64 +746,36 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
   template<typename T_Scalar>
-  Matrix4<T_Scalar> Matrix4<T_Scalar>::getLookAtModeling(const Vector3<T_Scalar>& eye, const Vector3<T_Scalar>& at, const Vector3<T_Scalar>& up)
+  Matrix4<T_Scalar> Matrix4<T_Scalar>::getLookAt(const Vector3<T_Scalar>& eye, const Vector3<T_Scalar>& look, const Vector3<T_Scalar>& up)
   {
-    Vector3<T_Scalar> zaxis = (eye-at).normalize();
-    Vector3<T_Scalar> xaxis = cross(up, zaxis).normalize();
-    Vector3<T_Scalar> yaxis = cross(zaxis, xaxis);
+    Vector3<T_Scalar> y = Vector3<T_Scalar>(up).normalize();
+    Vector3<T_Scalar> z = (eye - look).normalize(); // == -(look-eye)
+    Vector3<T_Scalar> x = cross(y,z).normalize();
+    y = cross(z, x).normalize();
+    
+    Matrix4<T_Scalar> m;
 
-    // look at modeling
-    T_Scalar la_modeling[] =
-    {
-       xaxis.x()          , xaxis.y()          , xaxis.z()          , 0,
-       yaxis.x()          , yaxis.y()          , yaxis.z()          , 0,
-       zaxis.x()          , zaxis.y()          , zaxis.z()          , 0,
-       eye.x()            , eye.y()            , eye.z()            , 1
-    };
+    m.setT(eye);
+    m.setX(x);
+    m.setY(y);
+    m.setZ(z);
 
-    return Matrix4<T_Scalar>(la_modeling);
+    return m;
   }
   //-----------------------------------------------------------------------------
   template<typename T_Scalar>
-  Matrix4<T_Scalar> Matrix4<T_Scalar>::getLookAt(const Vector3<T_Scalar>& eye, const Vector3<T_Scalar>& at, const Vector3<T_Scalar>& up)
-  {
-    Vector3<T_Scalar> zaxis = (eye-at).normalize();
-    Vector3<T_Scalar> xaxis = cross(up, zaxis).normalize();
-    Vector3<T_Scalar> yaxis = cross(zaxis, xaxis);
-
-    // look at view
-    T_Scalar la_view[] =
-    {
-       xaxis.x()          , yaxis.x()          , zaxis.x()          , 0,
-       xaxis.y()          , yaxis.y()          , zaxis.y()          , 0,
-       xaxis.z()          , yaxis.z()          , zaxis.z()          , 0,
-       -dot(xaxis,eye), -dot(yaxis,eye), -dot(zaxis,eye), 1
-    };
-
-    return Matrix4<T_Scalar>(la_view);
-  }
-  //-----------------------------------------------------------------------------
-  template<typename T_Scalar>
-  void Matrix4<T_Scalar>::getAsLookAtModeling(Vector3<T_Scalar>& eye, Vector3<T_Scalar>& at, Vector3<T_Scalar>& up, Vector3<T_Scalar>& right) const
+  void Matrix4<T_Scalar>::getAsLookAt(Vector3<T_Scalar>& eye, Vector3<T_Scalar>& look, Vector3<T_Scalar>& up, Vector3<T_Scalar>& right) const
   {
     eye = getT();
 
-    at = -getZ();
-    // look.normalize();
+    look = -getZ();
+    look.normalize();
 
     up = getY();
-    // up.normalize();
+    up.normalize();
 
     right = getX();
-    // right.normalize();
-  }
-  //-----------------------------------------------------------------------------
-  template<typename T_Scalar>
-  void Matrix4<T_Scalar>::getAsLookAt(Vector3<T_Scalar>& eye, Vector3<T_Scalar>& at, Vector3<T_Scalar>& up, Vector3<T_Scalar>& right) const
-  {
-    Matrix4<T_Scalar> m = *this;
-    m.invert();
-    m.getAsLookAtModeling(eye, at, up, right);
+    right.normalize();
   }
   //-----------------------------------------------------------------------------
   template<typename T_Scalar>

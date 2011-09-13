@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -49,17 +49,12 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT UniformSet: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::UniformSet, Object)
-
   public:
+    virtual const char* className() { return "vl::UniformSet"; }
     UniformSet()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-
-    UniformSet& deepCopyFrom(const UniformSet& other);
-
-    UniformSet& shallowCopyFrom(const UniformSet& other) { *this = other; return *this; }
 
     // uniform getters and setters
 
@@ -69,17 +64,17 @@ namespace vl
 
     std::vector< ref<Uniform> >& uniforms() { return mUniforms; }
 
-    void eraseUniform(const char* name);
+    void eraseUniform(const std::string& name);
 
     void eraseUniform(const Uniform* uniform);
 
     void eraseAllUniforms() { mUniforms.clear(); }
 
-    Uniform* gocUniform(const char* name);
+    Uniform* gocUniform(const std::string& name);
 
-    Uniform* getUniform(const char* name);
+    Uniform* getUniform(const std::string& name);
 
-    const Uniform* getUniform(const char* name) const;
+    const Uniform* getUniform(const std::string& name) const;
 
   protected:
     std::vector< ref<Uniform> > mUniforms;

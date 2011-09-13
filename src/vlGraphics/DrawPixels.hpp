@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -59,8 +59,6 @@ namespace vl
   //-----------------------------------------------------------------------------
   class VLGRAPHICS_EXPORT DrawPixels: public Renderable
   {
-    VL_INSTRUMENT_CLASS(vl::DrawPixels, Renderable)
-
   public:
   //-----------------------------------------------------------------------------
   // Pixels
@@ -70,11 +68,11 @@ namespace vl
     */
     class VLGRAPHICS_EXPORT Pixels: public Object
     {
-      VL_INSTRUMENT_CLASS(vl::DrawPixels::Pixels, Object)
-
       friend class DrawPixels;
 
     public:
+      virtual const char* className() { return "vl::Pixels"; }
+
       Pixels();
       /** Constructor.
        * The parameters 'scrx' and 'scry' define the position of the viewport in pixels where the image has to be placed.
@@ -110,11 +108,11 @@ namespace vl
       void setAlign(int align) { mAlign = align; }
 
       /** Generates a pixel buffer object for the associated Image
-       * calling image()->bufferObject()->setBufferData(usage, discard_local_storage);
+       * calling image()->gpuBuffer()->setBufferData(usage, discard_local_storage);
        *
        * \note
        * All the Pixels object sharing the same Image will use the Image's PBO */
-      bool generatePixelBufferObject(EBufferObjectUsage usage, bool discard_local_storage);
+      bool generatePixelBufferObject(EGLBufferUsage usage, bool discard_local_storage);
 
       void deletePixelBufferObject();
 
@@ -130,6 +128,8 @@ namespace vl
   public:
 
     DrawPixels();
+
+    virtual const char* className() { return "vl::DrawPixels"; }
 
     void computeBounds_Implementation() { setBoundingBox(AABB()); setBoundingSphere(Sphere()); }
 
@@ -150,7 +150,7 @@ namespace vl
     void releaseImages();
 
     //! generates PBOs only for Pixels objects without a PBO handle
-    bool generatePixelBufferObjects(EBufferObjectUsage usage, bool discard_local_storage);
+    bool generatePixelBufferObjects(EGLBufferUsage usage, bool discard_local_storage);
 
     void setUsePixelBufferObject(bool use_pbo);
 
@@ -158,9 +158,7 @@ namespace vl
 
     // Renderable interface implementation.
 
-    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode) {}
-
-    virtual void deleteBufferObject() {}
+    void updateVBOs(bool,bool) {}
 
   protected:
     Collection<Pixels> mDraws;

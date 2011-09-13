@@ -1,7 +1,7 @@
 /*************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -67,33 +67,26 @@ public:
   virtual String appletInfo()
   {
     return BaseDemo::appletInfo() + 
-    "- Use the mouse wheel to change the bias used to render the volume.\n" +
-    "- Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
+    "Use the mouse wheel to change the bias used to render the volume.\n" +
+    "Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
     "\n";
   }
 
   /* initialize the applet with a default volume */
   virtual void initEvent()
   {
-    Log::notify(appletInfo());
-    
-    if (!Has_Texture_3D && !Has_GLSL)
-    {
-      Log::error("This test requires 3D texture or GLSL support!\n");
-      vl::Time::sleep(2000);
-      exit(1);
-    }
+    Log::print(appletInfo());
 
     // variable preconditions
-    USE_GLSL &= Has_GLSL;
+    USE_GLSL &= GLEW_Has_Shading_Language_20;
     DYNAMIC_LIGHTS &= USE_GLSL;
     COLORED_LIGHTS &= DYNAMIC_LIGHTS;
     PRECOMPUTE_GRADIENT &= USE_GLSL;
 
     // lights to be used later
-    mLight0 = new Light;
-    mLight1 = new Light;
-    mLight2 = new Light;
+    mLight0 = new Light(0);
+    mLight1 = new Light(1);
+    mLight2 = new Light(2);
 
     // you can color the lights!
     if (DYNAMIC_LIGHTS && COLORED_LIGHTS)
@@ -115,9 +108,9 @@ public:
       rendering()->as<Rendering>()->transform()->addChild( mLight0Tr.get() );
       rendering()->as<Rendering>()->transform()->addChild( mLight1Tr.get() );
       rendering()->as<Rendering>()->transform()->addChild( mLight2Tr.get() );
-      mLight0->bindTransform( mLight0Tr.get() );
-      mLight1->bindTransform( mLight1Tr.get() );
-      mLight2->bindTransform( mLight2Tr.get() );
+      mLight0->followTransform( mLight0Tr.get() );
+      mLight1->followTransform( mLight1Tr.get() );
+      mLight2->followTransform( mLight2Tr.get() );
 
       ref<Effect> fx_bulb = new Effect;
       fx_bulb->shader()->enable(EN_DEPTH_TEST);
@@ -130,12 +123,12 @@ public:
     ref<Effect> vol_fx = new Effect;
     vol_fx->shader()->enable(EN_DEPTH_TEST);
     vol_fx->shader()->enable(EN_BLEND);
-    vol_fx->shader()->setRenderState( mLight0.get(), 0 );
+    vol_fx->shader()->setRenderState( mLight0.get() );
     // add the other lights only if dynamic lights have to be displayed
     if (DYNAMIC_LIGHTS)
     {
-      vol_fx->shader()->setRenderState( mLight1.get(), 1 );
-      vol_fx->shader()->setRenderState( mLight2.get(), 2 );
+      vol_fx->shader()->setRenderState( mLight1.get() );
+      vol_fx->shader()->setRenderState( mLight2.get() );
     }
 
     // The GLSL program used to perform the actual rendering.
@@ -170,8 +163,8 @@ public:
     ref<Effect> fx_box = new Effect;
     fx_box->shader()->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx_box->shader()->enable(EN_DEPTH_TEST);
-    fx_box->shader()->gocColor()->setValue(vl::red);
     ref<Geometry> box_outline = vl::makeBox(volume_box);
+    box_outline->setColor(vl::red);
     sceneManager()->tree()->addActor( box_outline.get(), fx_box.get(), mVolumeTr.get() );
 
     // bias text
@@ -241,10 +234,10 @@ public:
     // remove GLSLProgram
     vol_fx->shader()->eraseRenderState(vl::RS_GLSLProgram);
     // keep texture unit #0
-    // vol_fx->shader()->eraseRenderState(RS_TextureSampler,0); 
+    // vol_fx->shader()->eraseRenderState(RS_TextureUnit0); 
     // remove texture unit #1 and #2
-    vol_fx->shader()->eraseRenderState(RS_TextureSampler, 1);
-    vol_fx->shader()->eraseRenderState(RS_TextureSampler, 2);
+    vol_fx->shader()->eraseRenderState(RS_TextureUnit1);
+    vol_fx->shader()->eraseRenderState(RS_TextureUnit2);
 
     if(img->format() == IF_LUMINANCE)
     {
@@ -257,7 +250,7 @@ public:
 
       if (USE_GLSL)
       {
-        Log::notify("IF_LUMINANCE image and GLSL supported: lighting and the transfer function will be computed in realtime.\n");
+        Log::info("IF_LUMINANCE image and GLSL supported: lighting and the transfer function will be computed in realtime.\n");
 
         ref<Image> trfunc;
         if (COLORED_LIGHTS)
@@ -267,18 +260,18 @@ public:
         // installs GLSLProgram
         vol_fx->shader()->setRenderState(mGLSL.get());
         // install volume image
-        vol_fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( img.get() ) );
+        vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
         vol_fx->shader()->gocUniform("volume_texunit")->setUniformI(0);
         mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
         // installs the transfer function as texture #1
-        vol_fx->shader()->gocTextureSampler(1)->setTexture( new Texture( trfunc.get() ) );  
+        vol_fx->shader()->gocTextureUnit(1)->setTexture( new Texture( trfunc.get() ) );  
         vol_fx->shader()->gocUniform("trfunc_texunit")->setUniformI(1);
         vol_fx->shader()->gocUniform("trfunc_delta")->setUniformF( 0.5f / trfunc->width() );    
         // pre-computed gradient texture
         if (PRECOMPUTE_GRADIENT)
         {
           vol_fx->shader()->gocUniform("precomputed_gradient")->setUniformI(1);
-          vol_fx->shader()->gocTextureSampler(2)->setTexture( new Texture( gradient.get(), TF_RGBA8, false, false ) );
+          vol_fx->shader()->gocTextureUnit(2)->setTexture( new Texture( gradient.get(), TF_RGBA8, false, false ) );
           vol_fx->shader()->gocUniform("gradient_texunit")->setUniformI(2);
         }
         else
@@ -293,13 +286,13 @@ public:
       }
       else // precompute transfer function and illumination
       {
-        Log::notify("IF_LUMINANCE image and GLSL not supported: transfer function and lighting will be precomputed.\n");
+        Log::info("IF_LUMINANCE image and GLSL not supported: transfer function and lighting will be precomputed.\n");
 
         // generate simple transfer function
         ref<Image> trfunc = vl::makeColorSpectrum(128, vl::black, vl::blue, vl::green, vl::yellow, vl::red);
         // precompute volume with transfer function and lighting
         ref<Image> volume = vl::genRGBAVolume(img.get(), trfunc.get(), fvec3(1.0f,1.0f,0.0f));
-        vol_fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( volume.get() ) );
+        vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( volume.get() ) );
         mSlicedVolume->generateTextureCoordinates( ivec3(volume->width(), volume->height(), volume->depth()) );
         vol_fx->shader()->enable(EN_ALPHA_TEST);
         vol_fx->shader()->gocAlphaFunc()->set(FU_GEQUAL, 0.3f);
@@ -307,9 +300,9 @@ public:
     }
     else // if it's a color texture just display it as it is
     {
-      Log::notify("Non IF_LUMINANCE image: not using GLSL.\n");
+      Log::info("Non IF_LUMINANCE image: not using GLSL.\n");
       // install volume texture
-      vol_fx->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( img.get() ) );
+      vol_fx->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
       mSlicedVolume->generateTextureCoordinates( ivec3(img->width(), img->height(), img->depth()) );
       // setup alpha test
       vol_fx->shader()->enable(EN_ALPHA_TEST);

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -40,7 +40,7 @@ namespace vl
   //-----------------------------------------------------------------------------
   // AABB
   //-----------------------------------------------------------------------------
-  /** The AABB class implements an axis-aligned bounding box using vl::real precision. */
+  /** The AABB class implements an axis-aligned bounding box using vl::Real precision. */
   class VLCORE_EXPORT AABB 
   {
   public:
@@ -48,10 +48,10 @@ namespace vl
     AABB();
 
     /** Constructs an AABB large enough to contain a sphere with the specified \p radius and \p center. */
-    AABB( const vec3& center, real radius );
+    AABB( const vec3& center, Real radius );
 
     /** Constructs an AABB large enough to contain the two specified points and enlarged by the amount specified by \p displace. */
-    AABB( const vec3& pt1, const vec3& pt2, real displace=0);
+    AABB( const vec3& pt1, const vec3& pt2, Real displace=0);
 
     /** Sets ths AABB as null, that is, empty. */
     void setNull() { mMin = 1; mMax = -1; }
@@ -64,7 +64,7 @@ namespace vl
 
     /** Enlarges the AABB in all directions by \p displace amount. 
         As a result every edge of the AABB will be \p displace*2 longer. */
-    void enlarge(real displace);
+    void enlarge(Real displace);
 
     /** Returns true if an AABB intersects with the given AABB. */
     bool intersects(const AABB & bb) const;
@@ -80,13 +80,13 @@ namespace vl
     bool isInside(const vec3& p) const;
 
     /** Returns the width of the AABB computed as max.x - min.x */
-    real width() const;
+    Real width() const;
 
     /** Returns the height of the AABB computed as max.y - min.y */
-    real height() const;
+    Real height() const;
 
     /** Returns the depth of the AABB computed as max.z - min.z */
-    real depth() const;
+    Real depth() const;
 
     /** Returns true if two AABB are identical. */
     bool operator==(const AABB& aabb) const
@@ -129,9 +129,9 @@ namespace vl
     vec3 center() const;
 
     /** Returns the longest dimension of the AABB. */
-    real longestSideLength() const
+    Real longestSideLength() const
     {
-      real side = width();
+      Real side = width();
       if (height() > side)
         side = height();
       if (depth() > side)
@@ -141,7 +141,7 @@ namespace vl
 
     /** Updates the AABB to contain the given point. 
         The point can represent a sphere if \p radius > 0. */
-    void addPoint(const vec3& p, real radius);
+    void addPoint(const vec3& p, Real radius);
 
     /** Updates the AABB to contain the given point. */
     void addPoint(const vec3& p) 
@@ -193,19 +193,19 @@ namespace vl
     const vec3& maxCorner() const { return mMax; }
 
     /** Sets the corner of the AABB with the minimum x y z coordinates. */
-    void setMinCorner(real x, real y, real z) { mMin.x() = x; mMin.y() = y; mMin.z() = z; }
+    void setMinCorner(Real x, Real y, Real z) { mMin.x() = x; mMin.y() = y; mMin.z() = z; }
 
     /** Sets the corner of the AABB with the minimum x y z coordinates. */
     void setMinCorner(const vec3& v) { mMin = v; }
 
     /** Sets the corner of the AABB with the maximum x y z coordinates. */
-    void setMaxCorner(real x, real y, real z) { mMax.x() = x; mMax.y() = y; mMax.z() = z; }
+    void setMaxCorner(Real x, Real y, Real z) { mMax.x() = x; mMax.y() = y; mMax.z() = z; }
 
     /** Sets the corner of the AABB with the maximum x y z coordinates. */
     void setMaxCorner(const vec3& v) { mMax = v; }
 
     /** Returns the volume of the AABB. */
-    real volume() const { return width() * height() * depth(); }
+    Real volume() const { return width() * height() * depth(); }
 
   protected:
     vec3 mMin;

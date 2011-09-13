@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -72,8 +72,6 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT EdgeExtractor: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::EdgeExtractor, Object)
-
   public:
     //! A single edge as extracted from the EdgeExtractor class.
     class Edge
@@ -133,6 +131,7 @@ namespace vl
     };
 
   public:
+    virtual const char* className() { return "vl::EdgeExtractor"; }
     EdgeExtractor(): mCreaseAngle(45.0f), mWarnNonManifold(false)
     {
       VL_DEBUG_SET_OBJECT_NAME()

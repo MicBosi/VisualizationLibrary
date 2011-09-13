@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -37,121 +37,6 @@
 #include <stdio.h>
 
 using namespace vl;
-
-bool vl::compress(const void* data, size_t size, std::vector<unsigned char>& out_data, int level)
-{
-  const size_t CHUNK_SIZE = 128*1024;
-  int ret, flush;
-  unsigned have;
-  z_stream strm;
-  const unsigned char* in = (const unsigned char*)data;
-  unsigned char out[CHUNK_SIZE];
-
-  strm.zalloc = Z_NULL;
-  strm.zfree = Z_NULL;
-  strm.opaque = Z_NULL;
-  ret = deflateInit(&strm, level);
-  if (ret != Z_OK)
-    return false;
-
-  size_t avail = size;
-
-  do
-  {
-    strm.avail_in = std::min(avail, CHUNK_SIZE);
-    avail -= strm.avail_in;
-    strm.next_in = (unsigned char*)in;
-    in += strm.avail_in;
-    flush = avail == 0 ? Z_FINISH : Z_NO_FLUSH;
-
-    do
-    {
-      strm.avail_out = CHUNK_SIZE;
-      strm.next_out = out;
-
-      ret = deflate(&strm, flush);
-      if(ret == Z_STREAM_ERROR)
-      {
-        deflateEnd(&strm);
-        return false;
-      }
-
-      have = CHUNK_SIZE - strm.avail_out;
-      out_data.insert( out_data.end(), out, out+have );
-    } while (strm.avail_out == 0);
-
-    VL_CHECK(strm.avail_in == 0);
-
-  } while (flush != Z_FINISH);
-
-  VL_CHECK(ret == Z_STREAM_END);
-
-  deflateEnd(&strm);
-  return true;
-}
-
-bool vl::decompress(const void* cdata, size_t csize, void* data_out)
-{
-  const size_t CHUNK_SIZE = 128*1024;
-  int ret;
-  unsigned have;
-  z_stream strm;
-  unsigned char* in = (unsigned char*)cdata;
-  unsigned char out[CHUNK_SIZE];
-  char* out_ptr = (char*)data_out;
-
-  strm.zalloc = Z_NULL;
-  strm.zfree = Z_NULL;
-  strm.opaque = Z_NULL;
-  strm.avail_in = 0;
-  strm.next_in = Z_NULL;
-  ret = inflateInit(&strm);
-  if (ret != Z_OK)
-      return false;
-
-  size_t avail = csize;
-
-  do
-  {
-    strm.avail_in = std::min(avail, CHUNK_SIZE);
-    if (strm.avail_in == 0)
-      break;
-    avail -= strm.avail_in;
-    strm.next_in = in;
-    in += strm.avail_in;
-
-    do
-    {
-      strm.avail_out = CHUNK_SIZE;
-      strm.next_out = out;
-
-      ret = inflate(&strm, Z_NO_FLUSH);
-      VL_CHECK(ret != Z_STREAM_ERROR);
-      switch (ret)
-      {
-      case Z_NEED_DICT:
-      case Z_DATA_ERROR:
-      case Z_MEM_ERROR:
-        inflateEnd(&strm);
-        return false;
-      }
-
-      have = CHUNK_SIZE - strm.avail_out;
-      // data_out.insert( data_out.end(), out, out + have );
-      memcpy(out_ptr, out, have);
-      out_ptr += have;
-    }
-    while (strm.avail_out == 0);
-
-    VL_CHECK(strm.avail_in == 0);
-
-  } while (ret != Z_STREAM_END);
-
-  inflateEnd(&strm);
-
-  /*VL_CHECK(ret == Z_STREAM_END)*/
-  return ret == Z_STREAM_END;
-}
 
 namespace
 {
@@ -351,9 +236,7 @@ ZippedFile::~ZippedFile()
   delete mZStream; mZStream = NULL;
 }
 //-----------------------------------------------------------------------------
-const ZippedFileInfo* ZippedFile::zippedFileInfo() const { return mZippedFileInfo.get(); }
-//-----------------------------------------------------------------------------
-ZippedFileInfo* ZippedFile::zippedFileInfo() { return mZippedFileInfo.get(); }
+ZippedFileInfo* ZippedFile::zippedFileInfo() const { return mZippedFileInfo.get(); }
 //-----------------------------------------------------------------------------
 void ZippedFile::setZippedFileInfo(ZippedFileInfo* info) { mZippedFileInfo = info; }
 //-----------------------------------------------------------------------------

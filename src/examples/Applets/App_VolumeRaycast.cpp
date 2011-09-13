@@ -1,7 +1,7 @@
 /*************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -97,12 +97,12 @@ public:
   virtual String appletInfo()
   {
     return BaseDemo::appletInfo() + 
-    "- Left/Right Arrow: change raycast technique.\n" +
-    "- Up/Down Arrow: changes SAMPLE_STEP.\n" +
-    "- L: toggles lights (useful only for isosurface).\n" +
-    "- Mouse Wheel: change the bias used to render the volume.\n" +
+    "Left/Right Arrow: change raycast technique.\n" +
+    "Up/Down Arrow: changes SAMPLE_STEP.\n" +
+    "L: toggles lights (useful only for isosurface).\n" +
+    "Mouse Wheel: change the bias used to render the volume.\n" +
     "\n" +
-    "- Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
+    "Drop inside the window a set of 2D files or a DDS or DAT volume to display it.\n" +
     "\n";
   }
 
@@ -118,18 +118,18 @@ public:
   /* initialize the applet with a default volume */
   virtual void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
-    if ( !Has_GLSL )
+    if ( !GLEW_Has_Shading_Language_20 )
     {
       vl::Log::error( "OpenGL Shading Language not supported.\n" );
-      vl::Time::sleep(2000);
-      exit(1);
+      vl::Time::sleep( 3000 );
+      exit( 1 );
     }
 
-    mLight0 = new Light;
-    mLight1 = new Light;
-    mLight2 = new Light;
+    mLight0 = new Light( 0 );
+    mLight1 = new Light( 1 );
+    mLight2 = new Light( 2 );
 
     mLight0Tr = new Transform;
     mLight1Tr = new Transform;
@@ -162,9 +162,9 @@ public:
     // scrap previous scene
     sceneManager()->tree()->eraseAllChildren();
     sceneManager()->tree()->actors()->clear();
-    mLight0->bindTransform( NULL );
-    mLight1->bindTransform( NULL );
-    mLight2->bindTransform( NULL );
+    mLight0->followTransform( NULL );
+    mLight1->followTransform( NULL );
+    mLight2->followTransform( NULL );
   
     ref<Effect> volume_fx = new Effect;
     // we don't necessarily need this:
@@ -181,7 +181,7 @@ public:
       volume_fx->shader()->gocCullFace()->set( vl::PF_FRONT );
     }
 
-    volume_fx->shader()->setRenderState( mLight0.get(), 0 );
+    volume_fx->shader()->setRenderState( mLight0.get() );
 
     // light bulbs
     if ( DYNAMIC_LIGHTS )
@@ -198,13 +198,13 @@ public:
       }
 
       // add the other two lights
-      volume_fx->shader()->setRenderState( mLight1.get(), 1 );
-      volume_fx->shader()->setRenderState( mLight2.get(), 2 );
+      volume_fx->shader()->setRenderState( mLight1.get() );
+      volume_fx->shader()->setRenderState( mLight2.get() );
 
       // animate the three lights
-      mLight0->bindTransform( mLight0Tr.get() );
-      mLight1->bindTransform( mLight1Tr.get() );
-      mLight2->bindTransform( mLight2Tr.get() );
+      mLight0->followTransform( mLight0Tr.get() );
+      mLight1->followTransform( mLight1Tr.get() );
+      mLight2->followTransform( mLight2Tr.get() );
 
       // add also a light bulb actor
       ref<Effect> fx_bulb = new Effect;
@@ -293,7 +293,7 @@ public:
     }
 
     // install volume image as textue #0
-    volume_fx->shader()->gocTextureSampler( 0 )->setTexture( new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false ) );
+    volume_fx->shader()->gocTextureUnit( 0 )->setTexture( new vl::Texture( mVolumeImage.get(), TF_LUMINANCE8, false, false ) );
     volume_fx->shader()->gocUniform( "volume_texunit" )->setUniformI( 0 );
     mRaycastVolume->generateTextureCoordinates( ivec3(mVolumeImage->width(), mVolumeImage->height(), mVolumeImage->depth()) );
 
@@ -305,7 +305,7 @@ public:
       trfunc = vl::makeColorSpectrum( 128, vl::blue, vl::royalblue, vl::green, vl::yellow, vl::crimson );
 
     // installs the transfer function as texture #1
-    volume_fx->shader()->gocTextureSampler( 1 )->setTexture( new Texture( trfunc.get() ) );
+    volume_fx->shader()->gocTextureUnit( 1 )->setTexture( new Texture( trfunc.get() ) );
     volume_fx->shader()->gocUniform( "trfunc_texunit" )->setUniformI( 1 );
     
     // gradient computation, only use for isosurface methods
@@ -314,7 +314,7 @@ public:
       if ( PRECOMPUTE_GRADIENT )
       {
         volume_fx->shader()->gocUniform( "precomputed_gradient" )->setUniformI( 1 /*true*/ );
-        volume_fx->shader()->gocTextureSampler( 2 )->setTexture( new Texture( gradient.get(), TF_RGBA, false, false ) );
+        volume_fx->shader()->gocTextureUnit( 2 )->setTexture( new Texture( gradient.get(), TF_RGBA, false, false ) );
         volume_fx->shader()->gocUniform( "gradient_texunit" )->setUniformI( 2 );
       }
       else

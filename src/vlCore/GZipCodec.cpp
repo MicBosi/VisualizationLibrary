@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -185,7 +185,7 @@ ref<VirtualFile> GZipCodec::clone() const
 GZipCodec& GZipCodec::operator=(const GZipCodec& other) 
 { 
   close(); 
-  super::operator=(other); 
+  VirtualFile::operator=(other); 
   mCompressionLevel = other.mCompressionLevel;
   if (other.mStream)
     mStream = other.mStream->clone();

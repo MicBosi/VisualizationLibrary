@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -40,12 +40,12 @@ namespace vl
 {
   class VLVOLUME_EXPORT RaycastVolume: public ActorEventCallback
   {
-    VL_INSTRUMENT_CLASS(vl::RaycastVolume, ActorEventCallback)
-
   public:
+    virtual const char* className() { return "vl::RaycastVolume"; }
+    
     RaycastVolume();
     
-    void onActorRenderStarted( Actor* actor, real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass );
+    void onActorRenderStarted( Actor* actor, Real frame_clock, const Camera* cam, Renderable* renderable, const Shader* shader, int pass );
 
     void onActorDelete( Actor* ) {}
 
@@ -53,7 +53,7 @@ namespace vl
     void bindActor( Actor* );
 
     //! Updates the uniforms used by the GLSLProgram to render the volume each time the onActorRenderStarted() method is called.
-    virtual void updateUniforms( Actor* actor, real clock, const Camera* camera, Renderable* rend, const Shader* shader );
+    virtual void updateUniforms( Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader );
     
     //! Returns the Geometry associated to a RaycastVolume and its bound Actor
     Geometry* geometry() { return mGeometry.get(); }

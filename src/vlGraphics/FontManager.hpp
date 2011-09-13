@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -44,9 +44,9 @@ namespace vl
    * - VectorGraphics */
   class VLGRAPHICS_EXPORT FontManager: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::FontManager, Object)
-
   public:
+    virtual const char* className() { return "vl::FontManager"; }
+
     //! Constructor: uses the given FT_Library handle otherwise will initialize and use its own FT_Library.
     FontManager(void* free_type_library=NULL);
 

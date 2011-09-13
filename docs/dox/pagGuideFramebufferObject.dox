@@ -7,7 +7,7 @@
 	
 	Visualization Library uses the following classes to implement framebuffer objects and framebuffer attachments:
 
-	- vl::FramebufferObject
+	- vl::FBORenderTarget
 	- vl::FBORenderbufferAttachment 
 	- vl::FBOColorBufferAttachment 
 	- vl::FBODepthBufferAttachment 

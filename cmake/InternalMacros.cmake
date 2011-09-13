@@ -8,27 +8,23 @@ include(CMakeDependentOption)
 # Macro to register extra dependencies for a project
 ################################################################################
 macro(VL_PROJECT_ADD projectName)
-	cmake_parse_arguments(EXTRA "" "" "SOURCES;DEFINITIONS;INCLUDE_DIRECTORIES;LINK_LIBRARIES;LINK_LIBRARIES_DEBUG;LINK_LIBRARIES_RELEASE" ${ARGN})
+	cmake_parse_arguments(EXTRA "" "" "SOURCES;DEFINITIONS;INCLUDE_DIRECTORIES;LINK_LIBRARIES" ${ARGN})
 	set(projectDir "${${projectName}_SOURCE_DIR}")
-	list(APPEND EXTRA_LINK_LIBRARIES_DEBUG ${EXTRA_LINK_LIBRARIES})
-	list(APPEND EXTRA_LINK_LIBRARIES_RELEASE ${EXTRA_LINK_LIBRARIES})
 	set_property(DIRECTORY ${projectDir} APPEND PROPERTY EXTRA_SOURCES "${EXTRA_SOURCES}")
 	set_property(DIRECTORY ${projectDir} APPEND PROPERTY EXTRA_DEFINITIONS "${EXTRA_DEFINITIONS}")
 	set_property(DIRECTORY ${projectDir} APPEND PROPERTY EXTRA_INCLUDE_DIRECTORIES "${EXTRA_INCLUDE_DIRECTORIES}")
-	set_property(DIRECTORY ${projectDir} APPEND PROPERTY EXTRA_LINK_LIBRARIES_DEBUG "${EXTRA_LINK_LIBRARIES_DEBUG}")
-	set_property(DIRECTORY ${projectDir} APPEND PROPERTY EXTRA_LINK_LIBRARIES_RELEASE "${EXTRA_LINK_LIBRARIES_RELEASE}")
+	set_property(DIRECTORY ${projectDir} APPEND PROPERTY EXTRA_LINK_LIBRARIES "${EXTRA_LINK_LIBRARIES}")
 endmacro(VL_PROJECT_ADD)
 
 ################################################################################
 # Macro to retrieve the extra dependencies of a project
 ################################################################################
-macro(VL_PROJECT_GET projectName sourcesVar definitionsVar includeDirsVar linkLibrariesDebugVar linkLibrariesReleaseVar )
+macro(VL_PROJECT_GET projectName sourcesVar definitionsVar includeDirsVar linkLibrariesVar )
 	set(projectDir "${${projectName}_SOURCE_DIR}")
 	get_property(${sourcesVar} DIRECTORY ${projectDir} PROPERTY EXTRA_SOURCES)
 	get_property(${definitionsVar} DIRECTORY ${projectDir} PROPERTY EXTRA_DEFINITIONS)
 	get_property(${includeDirsVar} DIRECTORY ${projectDir} PROPERTY EXTRA_INCLUDE_DIRECTORIES)
-	get_property(${linkLibrariesDebugVar} DIRECTORY ${projectDir} PROPERTY EXTRA_LINK_LIBRARIES_DEBUG)
-	get_property(${linkLibrariesReleaseVar} DIRECTORY ${projectDir} PROPERTY EXTRA_LINK_LIBRARIES_RELEASE)
+	get_property(${linkLibrariesVar} DIRECTORY ${projectDir} PROPERTY EXTRA_LINK_LIBRARIES)
 endmacro(VL_PROJECT_GET)
 
 ################################################################################
@@ -48,7 +44,7 @@ endmacro(VL_DEFAULT_TARGET_PROPERTIES)
 # Defines a CMake option for every plugin in a list, then adds the enabled
 # plugins to a specified project. For every enabled plugin, the project gets
 # a preprocessor definition based on a prefix and the plugin's name, as well as
-# an extra pair o sources (named "io${pluginName}.h/cpp" in the current dir).
+# an extra pair o sources (named "vl${pluginName}.h/cpp" in the current dir).
 #
 # Parameters:
 #    projectName    Name of the project the plugins should be added to.
@@ -59,7 +55,7 @@ endmacro(VL_DEFAULT_TARGET_PROPERTIES)
 # a special variable: set({PREFIX_}{PLUGINNAME}_OPTION "Description" value).
 # By default, all plugin options default to ON.
 #
-macro(VL_PROCESS_PROJECT_PLUGINS projectName prefix installDir)
+macro(VL_PROCESS_PROJECT_PLUGINS projectName prefix)
 	foreach(pluginName ${ARGN})
 		set(prefixedName ${prefix}${pluginName})
 		if(NOT DEFINED ${prefixedName}_OPTION)
@@ -70,10 +66,9 @@ macro(VL_PROCESS_PROJECT_PLUGINS projectName prefix installDir)
 			VL_PROJECT_ADD(${projectName}
 				DEFINITIONS "-D${prefixedName}"
 				SOURCES
-					"${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.hpp"
-					"${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.cpp"
+					"${CMAKE_CURRENT_SOURCE_DIR}/vl${pluginName}.hpp"
+					"${CMAKE_CURRENT_SOURCE_DIR}/vl${pluginName}.cpp"
 			)
-		install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/io${pluginName}.hpp" DESTINATION ${installDir})
 		endif()
 	endforeach()
 endmacro(VL_PROCESS_PROJECT_PLUGINS)

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -51,9 +51,9 @@ public:
     }
     if (mTestNumber == 4)
     {
-      static vl::real velocity[] = {
-        vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10,
-        vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10, vl::random(0,1)*10+10 };
+      static vl::Real velocity[] = {
+        vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10,
+        vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10, vl::randomMinMax(0,1)*10+10 };
 
       /* planets */
       for(int i=0; i<9; i++)
@@ -75,7 +75,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_BLEND);
@@ -477,7 +477,7 @@ public:
     else
     if (mTestNumber == 4)
     {
-      vl::ref<vl::Light> light = new vl::Light;
+      vl::ref<vl::Light> light = new vl::Light(0);
 
       vl::ref<vl::Geometry> planet = vl::makeIcosphere(vl::vec3(0,0,0), 1, 2 );
       planet->computeNormals();
@@ -486,21 +486,21 @@ public:
       moon->computeNormals();
 
       vl::ref<vl::Effect> sun_effect = new vl::Effect;
-      sun_effect->shader()->setRenderState( light.get(), 0 );
+      sun_effect->shader()->setRenderState( light.get() );
       sun_effect->shader()->enable(vl::EN_LIGHTING);
       sun_effect->shader()->enable(vl::EN_DEPTH_TEST);
       sun_effect->shader()->enable(vl::EN_CULL_FACE);
       sun_effect->shader()->gocMaterial()->setDiffuse(vl::gold);
 
       vl::ref<vl::Effect> planet_effect = new vl::Effect;
-      planet_effect->shader()->setRenderState( light.get(), 0 );
+      planet_effect->shader()->setRenderState( light.get() );
       planet_effect->shader()->enable(vl::EN_LIGHTING);
       planet_effect->shader()->enable(vl::EN_DEPTH_TEST);
       planet_effect->shader()->enable(vl::EN_CULL_FACE);
       planet_effect->shader()->gocMaterial()->setDiffuse(vl::gray);
 
       vl::ref<vl::Effect> earth_effect = new vl::Effect;
-      earth_effect->shader()->setRenderState( light.get(), 0 );
+      earth_effect->shader()->setRenderState( light.get() );
       earth_effect->shader()->enable(vl::EN_LIGHTING);
       earth_effect->shader()->enable(vl::EN_DEPTH_TEST);
       earth_effect->shader()->enable(vl::EN_CULL_FACE);
@@ -509,7 +509,7 @@ public:
       vl::ref<vl::Font> font = vl::defFontManager()->acquireFont("/font/bitstream-vera/Vera.ttf", 10);
 
       vl::ref<vl::Effect> name_effect = new vl::Effect;
-      name_effect->shader()->setRenderState( light.get(), 0 );
+      name_effect->shader()->setRenderState( light.get() );
       name_effect->shader()->enable(vl::EN_LIGHTING);
       name_effect->shader()->enable(vl::EN_DEPTH_TEST);
       name_effect->shader()->enable(vl::EN_CULL_FACE);
@@ -534,7 +534,7 @@ public:
       /* belts & planets */
 
       vl::ref<vl::Effect> belt_effect = new vl::Effect;
-      belt_effect->shader()->setRenderState( light.get(), 0 );
+      belt_effect->shader()->setRenderState( light.get() );
       belt_effect->shader()->enable(vl::EN_LIGHTING);
       belt_effect->shader()->enable(vl::EN_DEPTH_TEST);
       belt_effect->shader()->enable(vl::EN_CULL_FACE);

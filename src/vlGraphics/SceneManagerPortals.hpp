@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -52,11 +52,10 @@ namespace vl
   //! - \ref pagGuidePortals "Portal-Based Culling and Scene Management Tutorial"
   class VLGRAPHICS_EXPORT Portal: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Portal, Object)
-
     friend class SceneManagerPortals;
-
   public:
+    virtual const char* className() { return "vl::Portal"; }
+
     //! Constructor.
     Portal()
     {
@@ -108,9 +107,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Sector: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Sector, Object)
-
   public:
+    virtual const char* className() { return "vl::Sector"; }
+
     /** A callback object called each time a Sector becomes visible through a Portal.
      *  Note: a callback can be called multiple times with the same Sector argument if a Sector is discovered multiple times through different portals.
      *  Using callbacks can be very useful to perform special actions upon sector discovery, like enabling/disabling animations, enabling/disabling 
@@ -183,9 +182,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT SceneManagerPortals: public SceneManager
   {
-    VL_INSTRUMENT_CLASS(vl::SceneManagerPortals, SceneManager)
-
   public:
+    virtual const char* className() { return "vl::SceneManagerPortals"; }
+
     //! Constructor.
     SceneManagerPortals(): mExternalSector(new Sector), mVisitTick(1), mShowPortals(false) 
     {
@@ -223,8 +222,6 @@ namespace vl
     bool showPortals() const { return mShowPortals; }
     //! Whether portals should be shown in the rendering or not.
     void setShowPortals(bool show) { mShowPortals = show; }
-    //! Regenerates the portal actors next time their rendering is requested.
-    void invalidatePortalActors() { mPortalActorMap.clear(); }
 
     //! The stack of frustums active at a given point during sector discovery.
     const std::vector<Frustum>& frustumStack() const { return mFrustumStack; }

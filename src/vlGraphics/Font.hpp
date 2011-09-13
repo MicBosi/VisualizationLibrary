@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -54,8 +54,6 @@ namespace vl
   */
   class Glyph: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Glyph, Object)
-
   private:
     Glyph(const Glyph& other): Object(other)  
     {
@@ -67,6 +65,8 @@ namespace vl
     Glyph(): mFont(NULL), mS0(0), mT0(0), mS1(0), mT1(0), mGlyphIndex(0), mTextureHandle(0), mWidth(0), mHeight(0), mLeft(0), mTop(0) {}
 
     ~Glyph();
+
+    virtual const char* className() { return "vl::Glyph"; }
 
     unsigned int textureHandle() const { return mTextureHandle; }
     void setTextureHandle(unsigned int handle) { mTextureHandle = handle; }
@@ -126,9 +126,6 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Font: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Font, Object)
-
-    friend class CoreText;
     friend class Text;
     friend class FontManager;
     
@@ -139,12 +136,14 @@ namespace vl
     Font(const Font& other): Object(other) { VL_TRAP() } // should never get used
     
     //! Constructor.
-    Font(FontManager* fm = NULL);
+    Font(FontManager* fm);
     
     //! Constructor. The specified 'font_file' is immediately loaded.
     Font(FontManager* fm, const String& font_file, int size );
 
   public:
+    virtual const char* className() { return "vl::Font"; }
+
     //! Destructor.
     ~Font();
 
@@ -203,7 +202,7 @@ namespace vl
     String mFilePath;
     std::map< int, ref<Glyph> > mGlyphMap;
     FT_Face mFT_Face;
-    std::vector<char> mMemoryFile;
+    std::vector<unsigned char> mMemoryFile;
     int mSize;
     float mHeight;
     bool mSmooth;

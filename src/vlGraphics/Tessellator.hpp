@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -49,10 +49,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT Tessellator: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Tessellator, Object)
-
     typedef void (CALLBACK *callback_type)(void);
   public:
+    virtual const char* className() { return "vl::Tessellator"; }
 
     //! Constructor.
     Tessellator();

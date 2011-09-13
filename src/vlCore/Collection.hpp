@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -46,9 +46,9 @@ namespace vl
   template <typename T>
   class Collection: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Collection<T>, Object)
-
   public:
+    virtual const char* className() { return "vl::Collection"; }
+    
     Collection(const std::vector< ref<T> >& vector)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -153,7 +153,6 @@ namespace vl
         mVector.erase(it);
     
     }
-
     void eraseAt(int index) { mVector.erase(mVector.begin()+index); }
 
     const std::vector< ref<T> >& vector() const { return mVector; }

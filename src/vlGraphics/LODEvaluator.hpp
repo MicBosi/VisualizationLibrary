@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -49,14 +49,13 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT LODEvaluator: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::LODEvaluator, Object)
-
   public:
     LODEvaluator()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
     virtual int evaluate(Actor* actor, Camera* camera) = 0;
+    virtual const char* className() { return "vl::LODEvaluator"; }
   };
   //------------------------------------------------------------------------------
 }

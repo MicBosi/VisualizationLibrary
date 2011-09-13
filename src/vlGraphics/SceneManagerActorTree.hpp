@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -51,9 +51,9 @@ namespace vl
   */
   class SceneManagerActorTree: public SceneManagerBVH<ActorTree>
   {
-    VL_INSTRUMENT_CLASS(vl::SceneManagerActorTree, SceneManagerBVH<ActorTree>)
-
   public:
+    virtual const char* className() { return "vl::SceneManagerActorTree"; }
+
     SceneManagerActorTree()
     { 
       VL_DEBUG_SET_OBJECT_NAME()

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -45,9 +45,9 @@ namespace vl
   template<typename T>
   class CatmullRomInterpolator: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolator<typename T>, Object)
-
   public:
+    virtual const char* className() { return "vl::CatmullRomInterpolator"; }
+
     CatmullRomInterpolator() 
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -98,7 +98,7 @@ namespace vl
     {
       VL_CHECK(mCatmullRomSpline.size() >= 4)
       size_t size = mCatmullRomSpline.size()-2;
-      t = clamp(t, 0.0f, 1.0f);
+      t = vl::clamp(t, 0.0f, 1.0f);
       if (t == 0.0f)
         return mCatmullRomSpline[1];
       else
@@ -112,7 +112,7 @@ namespace vl
         int i2 = i+1;
         int i3 = i+2;
         VL_CHECK(i3<(int)mCatmullRomSpline.size())
-        float tt = (size-1)*t - int((size-1)*t); // frac generates rounding errors
+        float tt = (size-1)*t - int((size-1)*t); // vl::frac generates rounding errors
         T p0 = mCatmullRomSpline[i0];
         T p1 = mCatmullRomSpline[i1];
         T p2 = mCatmullRomSpline[i2];
@@ -142,60 +142,56 @@ namespace vl
   };
 
   typedef CatmullRomInterpolator<float>     CatmullRomInterpolatorFloat_T;
-  typedef CatmullRomInterpolator<fvec2> CatmullRomInterpolatorFVec2_T;
-  typedef CatmullRomInterpolator<fvec3> CatmullRomInterpolatorFVec3_T;
-  typedef CatmullRomInterpolator<fvec4> CatmullRomInterpolatorFVec4_T;
+  typedef CatmullRomInterpolator<vl::fvec2> CatmullRomInterpolatorFVec2_T;
+  typedef CatmullRomInterpolator<vl::fvec3> CatmullRomInterpolatorFVec3_T;
+  typedef CatmullRomInterpolator<vl::fvec4> CatmullRomInterpolatorFVec4_T;
   typedef CatmullRomInterpolator<double>    CatmullRomInterpolatorDouble_T;
-  typedef CatmullRomInterpolator<dvec2> CatmullRomInterpolatorDVec2_T;
-  typedef CatmullRomInterpolator<dvec3> CatmullRomInterpolatorDVec3_T;
-  typedef CatmullRomInterpolator<dvec4> CatmullRomInterpolatorDVec4_T;
+  typedef CatmullRomInterpolator<vl::dvec2> CatmullRomInterpolatorDVec2_T;
+  typedef CatmullRomInterpolator<vl::dvec3> CatmullRomInterpolatorDVec3_T;
+  typedef CatmullRomInterpolator<vl::dvec4> CatmullRomInterpolatorDVec4_T;
 
-  //! Interpolates fvec4 values using a CatmullRomInterpolator.
-  class CatmullRomInterpolatorFVec4: public InterpolatorFVec4
+  //! Interpolates vl::fvec4 values using a CatmullRomInterpolator.
+  class CatmullRomInterpolatorFVec4: public vl::InterpolatorFVec4
   {
-    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFVec4, InterpolatorFVec4)
   public:
     CatmullRomInterpolatorFVec4(): mInterpolator( new CatmullRomInterpolatorFVec4_T ) {}
-    CatmullRomInterpolatorFVec4(const std::vector<fvec4>& path): mInterpolator( new CatmullRomInterpolatorFVec4_T(path) ) {}
-    fvec4 computePoint(float t) const { return interpolator()->computePoint(t); }
+    CatmullRomInterpolatorFVec4(const std::vector<vl::fvec4>& path): mInterpolator( new CatmullRomInterpolatorFVec4_T(path) ) {}
+    vl::fvec4 computePoint(float t) const { return interpolator()->computePoint(t); }
     CatmullRomInterpolatorFVec4_T* interpolator() { return mInterpolator.get(); }
     const CatmullRomInterpolatorFVec4_T* interpolator() const { return mInterpolator.get(); }
     void setInterpolator(CatmullRomInterpolatorFVec4_T* interpolator) { mInterpolator = interpolator; }
   protected:
-    ref<CatmullRomInterpolatorFVec4_T> mInterpolator;
+    vl::ref<CatmullRomInterpolatorFVec4_T> mInterpolator;
   };
-  //! Interpolates fvec3 values using a CatmullRomInterpolator.
-  class CatmullRomInterpolatorFVec3: public InterpolatorFVec3
+  //! Interpolates vl::fvec3 values using a CatmullRomInterpolator.
+  class CatmullRomInterpolatorFVec3: public vl::InterpolatorFVec3
   {
-    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFVec3, InterpolatorFVec3)
   public:
     CatmullRomInterpolatorFVec3(): mInterpolator( new CatmullRomInterpolatorFVec3_T ) {}
-    CatmullRomInterpolatorFVec3(const std::vector<fvec3>& path): mInterpolator( new CatmullRomInterpolatorFVec3_T(path) ) {}
-    fvec3 computePoint(float t) const { return interpolator()->computePoint(t); }
+    CatmullRomInterpolatorFVec3(const std::vector<vl::fvec3>& path): mInterpolator( new CatmullRomInterpolatorFVec3_T(path) ) {}
+    vl::fvec3 computePoint(float t) const { return interpolator()->computePoint(t); }
     CatmullRomInterpolatorFVec3_T* interpolator() { return mInterpolator.get(); }
     const CatmullRomInterpolatorFVec3_T* interpolator() const { return mInterpolator.get(); }
     void setInterpolator(CatmullRomInterpolatorFVec3_T* interpolator) { mInterpolator = interpolator; }
   protected:
-    ref<CatmullRomInterpolatorFVec3_T> mInterpolator;
+    vl::ref<CatmullRomInterpolatorFVec3_T> mInterpolator;
   };
-  //! Interpolates fvec2 values using a CatmullRomInterpolator.
-  class CatmullRomInterpolatorFVec2: public InterpolatorFVec2
+  //! Interpolates vl::fvec2 values using a CatmullRomInterpolator.
+  class CatmullRomInterpolatorFVec2: public vl::InterpolatorFVec2
   {
-    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFVec2, InterpolatorFVec2)
   public:
     CatmullRomInterpolatorFVec2(): mInterpolator( new CatmullRomInterpolatorFVec2_T ) {}
-    CatmullRomInterpolatorFVec2(const std::vector<fvec2>& path): mInterpolator( new CatmullRomInterpolatorFVec2_T(path) ) {}
-    fvec2 computePoint(float t) const { return interpolator()->computePoint(t); }
+    CatmullRomInterpolatorFVec2(const std::vector<vl::fvec2>& path): mInterpolator( new CatmullRomInterpolatorFVec2_T(path) ) {}
+    vl::fvec2 computePoint(float t) const { return interpolator()->computePoint(t); }
     CatmullRomInterpolatorFVec2_T* interpolator() { return mInterpolator.get(); }
     const CatmullRomInterpolatorFVec2_T* interpolator() const { return mInterpolator.get(); }
     void setInterpolator(CatmullRomInterpolatorFVec2_T* interpolator) { mInterpolator = interpolator; }
   protected:
-    ref<CatmullRomInterpolatorFVec2_T> mInterpolator;
+    vl::ref<CatmullRomInterpolatorFVec2_T> mInterpolator;
   };
   //! Interpolates \p float values using a CatmullRomInterpolator.
-  class CatmullRomInterpolatorFloat: public InterpolatorFloat
+  class CatmullRomInterpolatorFloat: public vl::InterpolatorFloat
   {
-    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorFloat, InterpolatorFloat)
   public:
     CatmullRomInterpolatorFloat(): mInterpolator( new CatmullRomInterpolatorFloat_T ) {}
     CatmullRomInterpolatorFloat(const std::vector<float>& path): mInterpolator( new CatmullRomInterpolatorFloat_T(path) ) {}
@@ -204,54 +200,50 @@ namespace vl
     const CatmullRomInterpolatorFloat_T* interpolator() const { return mInterpolator.get(); }
     void setInterpolator(CatmullRomInterpolatorFloat_T* interpolator) { mInterpolator = interpolator; }
   protected:
-    ref<CatmullRomInterpolatorFloat_T> mInterpolator;
+    vl::ref<CatmullRomInterpolatorFloat_T> mInterpolator;
   };
-  //! Interpolates dvec4 values using a CatmullRomInterpolator.
-  class CatmullRomInterpolatorDVec4: public InterpolatorDVec4
+  //! Interpolates vl::dvec4 values using a CatmullRomInterpolator.
+  class CatmullRomInterpolatorDVec4: public vl::InterpolatorDVec4
   {
-    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDVec4, InterpolatorDVec4)
   public:
     CatmullRomInterpolatorDVec4(): mInterpolator( new CatmullRomInterpolatorDVec4_T ) {}
-    CatmullRomInterpolatorDVec4(const std::vector<dvec4>& path): mInterpolator( new CatmullRomInterpolatorDVec4_T(path) ) {}
-    dvec4 computePoint(float t) const { return interpolator()->computePoint(t); }
+    CatmullRomInterpolatorDVec4(const std::vector<vl::dvec4>& path): mInterpolator( new CatmullRomInterpolatorDVec4_T(path) ) {}
+    vl::dvec4 computePoint(float t) const { return interpolator()->computePoint(t); }
     CatmullRomInterpolatorDVec4_T* interpolator() { return mInterpolator.get(); }
     const CatmullRomInterpolatorDVec4_T* interpolator() const { return mInterpolator.get(); }
     void setInterpolator(CatmullRomInterpolatorDVec4_T* interpolator) { mInterpolator = interpolator; }
   protected:
-    ref<CatmullRomInterpolatorDVec4_T> mInterpolator;
+    vl::ref<CatmullRomInterpolatorDVec4_T> mInterpolator;
   };
-  //! Interpolates dvec3 values using a CatmullRomInterpolator.
-  class CatmullRomInterpolatorDVec3: public InterpolatorDVec3
+  //! Interpolates vl::dvec3 values using a CatmullRomInterpolator.
+  class CatmullRomInterpolatorDVec3: public vl::InterpolatorDVec3
   {
-    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDVec3, InterpolatorDVec3)
   public:
     CatmullRomInterpolatorDVec3(): mInterpolator( new CatmullRomInterpolatorDVec3_T ) {}
-    CatmullRomInterpolatorDVec3(const std::vector<dvec3>& path): mInterpolator( new CatmullRomInterpolatorDVec3_T(path) ) {}
-    dvec3 computePoint(float t) const { return interpolator()->computePoint(t); }
+    CatmullRomInterpolatorDVec3(const std::vector<vl::dvec3>& path): mInterpolator( new CatmullRomInterpolatorDVec3_T(path) ) {}
+    vl::dvec3 computePoint(float t) const { return interpolator()->computePoint(t); }
     CatmullRomInterpolatorDVec3_T* interpolator() { return mInterpolator.get(); }
     const CatmullRomInterpolatorDVec3_T* interpolator() const { return mInterpolator.get(); }
     void setInterpolator(CatmullRomInterpolatorDVec3_T* interpolator) { mInterpolator = interpolator; }
   protected:
-    ref<CatmullRomInterpolatorDVec3_T> mInterpolator;
+    vl::ref<CatmullRomInterpolatorDVec3_T> mInterpolator;
   };
-  //! Interpolates dvec2 values using a CatmullRomInterpolator.
-  class CatmullRomInterpolatorDVec2: public InterpolatorDVec2
+  //! Interpolates vl::dvec2 values using a CatmullRomInterpolator.
+  class CatmullRomInterpolatorDVec2: public vl::InterpolatorDVec2
   {
-    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDVec2, InterpolatorDVec2)
   public:
     CatmullRomInterpolatorDVec2(): mInterpolator( new CatmullRomInterpolatorDVec2_T ) {}
-    CatmullRomInterpolatorDVec2(const std::vector<dvec2>& path): mInterpolator( new CatmullRomInterpolatorDVec2_T(path) ) {}
-    dvec2 computePoint(float t) const { return interpolator()->computePoint(t); }
+    CatmullRomInterpolatorDVec2(const std::vector<vl::dvec2>& path): mInterpolator( new CatmullRomInterpolatorDVec2_T(path) ) {}
+    vl::dvec2 computePoint(float t) const { return interpolator()->computePoint(t); }
     CatmullRomInterpolatorDVec2_T* interpolator() { return mInterpolator.get(); }
     const CatmullRomInterpolatorDVec2_T* interpolator() const { return mInterpolator.get(); }
     void setInterpolator(CatmullRomInterpolatorDVec2_T* interpolator) { mInterpolator = interpolator; }
   protected:
-    ref<CatmullRomInterpolatorDVec2_T> mInterpolator;
+    vl::ref<CatmullRomInterpolatorDVec2_T> mInterpolator;
   };
   //! Interpolates \p double values using a CatmullRomInterpolator.
-  class CatmullRomInterpolatorDouble: public InterpolatorDouble
+  class CatmullRomInterpolatorDouble: public vl::InterpolatorDouble
   {
-    VL_INSTRUMENT_CLASS(vl::CatmullRomInterpolatorDouble, InterpolatorDouble)
   public:
     CatmullRomInterpolatorDouble(): mInterpolator( new CatmullRomInterpolatorDouble_T ) {}
     CatmullRomInterpolatorDouble(const std::vector<double>& path): mInterpolator( new CatmullRomInterpolatorDouble_T(path) ) {}
@@ -260,7 +252,7 @@ namespace vl
     const CatmullRomInterpolatorDouble_T* interpolator() const { return mInterpolator.get(); }
     void setInterpolator(CatmullRomInterpolatorDouble_T* interpolator) { mInterpolator = interpolator; }
   protected:
-    ref<CatmullRomInterpolatorDouble_T> mInterpolator;
+    vl::ref<CatmullRomInterpolatorDouble_T> mInterpolator;
   };
 }
 

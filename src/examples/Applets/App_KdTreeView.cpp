@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,7 +43,7 @@ class App_KdTreeView: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     mSceneKdTree = new vl::SceneManagerActorKdTree;
     rendering()->as<vl::Rendering>()->sceneManagers()->push_back(mSceneKdTree.get());
@@ -71,7 +71,7 @@ public:
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->enable(vl::EN_LIGHTING);
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
 
     vl::ref<vl::Geometry> ball = vl::makeUVSphere(vl::vec3(0,0,0),1,20,20);
     ball->computeNormals();
@@ -202,8 +202,8 @@ public:
         vl::ref<vl::Effect> effect = new vl::Effect;
         effect->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
         effect->shader()->enable(vl::EN_DEPTH_TEST);
-        effect->shader()->gocColor()->setValue(vl::gold);
         vl::ref<vl::Geometry> box = vl::makeBox(tree->aabb());
+        box->setColor(vl::gold);
         sceneManager()->tree()->addActor(box.get(), effect.get());
 
         if (mViewDepth != -1)

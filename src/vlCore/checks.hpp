@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -33,27 +33,14 @@
 #define CHECK_INCLUDED
 
 #include <vlCore/config.hpp>
-
-// Required for IsDebuggerPresent()
-#if defined(VL_PLATFORM_WINDOWS)
-  #ifndef WIN32_LEAN_AND_MEAN
-    #define WIN32_LEAN_AND_MEAN 1
-  #endif
-  #ifndef NOMINMAX
-    #define NOMINMAX
-  #endif
-  #include <windows.h>
-#endif
-
+#include <cassert>
 #if defined(__GNUG__) || defined(__MINGW32__) 
-  #include <cstdio>
+#include <cstdio>
 #endif
 
 namespace vl
 {
   VLCORE_EXPORT void log_failed_check(const char*, const char*, int);
-
-  VLCORE_EXPORT void abort_vl();
 
   // Compile-time check
   #define VL_COMPILE_TIME_CHECK( expr ) typedef char compile_time_assert[ (expr) ? 1 : -1 ];
@@ -62,12 +49,13 @@ namespace vl
 
     // Visual Studio
     #if defined(_MSC_VER) 
-      #define VL_TRAP() { if (IsDebuggerPresent()) { __debugbreak(); } else ::vl::abort_vl(); }
+      #define VL_TRAP() __debugbreak(); /*{ __asm {int 3} }*/
     // GNU GCC
     #elif defined(__GNUG__) || defined(__MINGW32__) 
       #define VL_TRAP() { fflush(stdout); fflush(stderr); asm("int $0x3"); }
+    // Others: fixme?
     #else 
-      #define VL_TRAP() { ::vl::abort_vl(); }
+      #define VL_TRAP() {}
     #endif
 
     #define VL_CHECK(expr) { if(!(expr)) { ::vl::log_failed_check(#expr,__FILE__,__LINE__); VL_TRAP() } }

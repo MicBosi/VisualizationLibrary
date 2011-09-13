@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -69,17 +69,17 @@ ref<DiskDirectory> DiskDirectory::diskSubDir(const String& subdir_name) const
     Log::error( "VirtualDirectory::path() must not be empty!\n" );
     return NULL;
   }
-
   std::vector<String> dir_list;
   String p = translatePath(subdir_name).right(-path().length()-1);
-  this->listSubDirs(dir_list);
+  ref<DiskDirectory> dir = const_cast<DiskDirectory*>(this);
+  dir->listSubDirs(dir_list);
   String cur_p = path();
   for(int i=0; i<(int)dir_list.size(); ++i)
   {
     dir_list[i] = dir_list[i].right(-cur_p.length()-1);
     if (p.startsWith(dir_list[i]+'/') || p == dir_list[i])
     {
-      ref<DiskDirectory> dir = new DiskDirectory(cur_p + '/' + dir_list[i]);
+      dir = new DiskDirectory(cur_p + '/' + dir_list[i]);
       if (!dir)
         return NULL;
       cur_p = cur_p + '/' + dir_list[i];
@@ -100,10 +100,10 @@ bool DiskDirectory::exists() const
     Log::error( "VirtualDirectory::path() must not be empty!\n" );
     return false;
   }
-  #if defined(VL_PLATFORM_WINDOWS)
+  #ifdef _WIN32
     WIN32_FIND_DATA FindFileData;
     memset( &FindFileData, 0, sizeof(FindFileData) );
-    String wild = path() + "*";
+    String wild = path() + "/*";
     HANDLE hFind = FindFirstFile( (wchar_t*)wild.ptr(), &FindFileData );
     if( hFind == INVALID_HANDLE_VALUE )
       return false;
@@ -135,10 +135,10 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
     Log::error( "VirtualDirectory::path() must not be empty!\n" );
     return;
   }
-  #if defined(VL_PLATFORM_WINDOWS)
+  #ifdef _WIN32
     WIN32_FIND_DATA FindFileData;
     memset( &FindFileData, 0, sizeof(FindFileData) );
-    String wild = path() + "*";
+    String wild = path() + "/*";
     HANDLE hFind = FindFirstFile( (wchar_t*)wild.ptr(), &FindFileData );
     if( hFind == INVALID_HANDLE_VALUE )
       Log::error( Say("Cannot open directory '%s' for directory listing.\n") << path() );
@@ -151,7 +151,7 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
           String name;
           name = FindFileData.cFileName;
           if (name != L"." && name != L"..")
-            dirs.push_back( path() + name + '/' );
+            dirs.push_back( path() + '/' + name );
         }
       } while( FindNextFile(hFind, &FindFileData) != 0 );
 
@@ -177,9 +177,8 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
         if (name == ".." || name == ".")
           continue;
 
-        name = path() + name + '/';
         // To discover the linked directories we try to open them instead of reading 'dirp.d_type'
-        name.toUTF8( utf8, false );
+        (path()+'/'+name).toUTF8( utf8, false );
         DIR* is_dir = opendir((char*)&utf8[0]);
         if (is_dir)
           closedir(is_dir);
@@ -189,7 +188,7 @@ void DiskDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
         // to discover directory links you can try to open them with opendir()
         // if (dirp.d_type == 4 )
         if (is_dir)
-          dirs.push_back( name );
+          dirs.push_back( path() + '/' + name );
       }
       closedir(dp);
     }
@@ -208,7 +207,7 @@ void DiskDirectory::listFiles(std::vector< ref<DiskFile> >& file_list, bool appe
   for(unsigned i=0; i<file_names.size(); ++i)
   {
     ref<DiskFile> file = new DiskFile;
-    // file->setPath( path() + file_names[i] );
+    // file->setPath( path() + '/' + file_names[i] );
     file->setPath( file_names[i] );
     file_list.push_back(file);
   }
@@ -223,7 +222,7 @@ void DiskDirectory::listFiles(std::vector<String>& files, bool append) const
     Log::error( "VirtualDirectory::path() must not be empty!\n" );
     return;
   }
-  #if defined(VL_PLATFORM_WINDOWS)
+  #ifdef _WIN32
     WIN32_FIND_DATA FindFileData;
     memset( &FindFileData, 0, sizeof(FindFileData) );
     String wild = path() + "/*";
@@ -241,7 +240,7 @@ void DiskDirectory::listFiles(std::vector<String>& files, bool append) const
           String name;
           name = FindFileData.cFileName;
           // the paths are relative
-          files.push_back( path() + name );
+          files.push_back( path() + '/' + name );
         }
       } while( FindNextFile(hFind, &FindFileData) != 0 );
 
@@ -267,9 +266,8 @@ void DiskDirectory::listFiles(std::vector<String>& files, bool append) const
         if (name == ".." || name == ".")
           continue;
 
-        name = path() + name;
         // whatever is not a directory is a file for us
-        name.toUTF8( utf8, false );
+        (path()+'/'+name).toUTF8( utf8, false );
         DIR* is_dir = opendir((char*)&utf8[0]);
         if (is_dir)
           closedir(is_dir);

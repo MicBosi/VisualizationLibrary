@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -32,7 +32,7 @@
 #ifndef TriangleIterator_INCLUDE_ONCE
 #define TriangleIterator_INCLUDE_ONCE
 
-#include <vlGraphics/Array.hpp>
+#include <vlCore/Array.hpp>
 #include <vlCore/vlnamespace.hpp>
 
 namespace vl
@@ -43,11 +43,11 @@ namespace vl
   /** For internal use only. See vl::TriangleIterator instead. */
   class TriangleIteratorAbstract: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::TriangleIteratorAbstract, Object)
-
   public:
+    virtual const char* className() { return "vl::TriangleIteratorAbstract"; }
+
     virtual bool next() = 0;
-    virtual bool hasNext() const = 0;
+    virtual bool isEnd() const = 0;
     virtual int a() const = 0;
     virtual int b() const = 0;
     virtual int c() const = 0;
@@ -59,26 +59,10 @@ namespace vl
   template<class TArray>
   class TriangleIteratorIndexed: public TriangleIteratorAbstract
   {
-    VL_INSTRUMENT_CLASS(vl::TriangleIteratorIndexed<TArray>, TriangleIteratorAbstract)
-
   public:
+    virtual const char* className() { return "vl::TriangleIteratorIndexed"; }
 
-    TriangleIteratorIndexed()
-    {
-      VL_DEBUG_SET_OBJECT_NAME()
-      mCurrentIndex = 0;
-      mEnd    = 0;
-      mA = mB = mC = -1;
-      mEven = true;
-      mIndex0 = 0;
-      mArray            = NULL;
-      mPrimRestartIndex = (unsigned int)-1;
-      mPrimRestartOn    = false;
-      mBaseVertex       = 0;
-      mPrimType         = PT_UNKNOWN;
-    }
-
-    TriangleIteratorIndexed(const TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, unsigned int prim_restart_idx)
+    TriangleIteratorIndexed(TArray* idx_array, EPrimitiveType prim_type, int base_vert, bool prim_restart_on, unsigned int prim_restart_idx)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mCurrentIndex = 0;
@@ -93,7 +77,7 @@ namespace vl
       mPrimType         = prim_type;
     }
 
-    bool hasNext() const { return mCurrentIndex != mEnd; }
+    bool isEnd() const { return mCurrentIndex == mEnd; }
 
     virtual int a() const { return mA; }
     virtual int b() const { return mB; }
@@ -314,7 +298,7 @@ namespace vl
     bool isPrimRestart(int i) const { return mPrimRestartOn && mArray->at(i) == mPrimRestartIndex; }
 
   private:
-    const TArray* mArray;
+    ref<TArray> mArray;
     EPrimitiveType mPrimType;
     int  mA, mB, mC;
     int  mCurrentIndex;
@@ -331,10 +315,10 @@ namespace vl
   /** For internal use only. See vl::TriangleIterator instead. */
   class TriangleIteratorDirect: public TriangleIteratorAbstract
   {
-    VL_INSTRUMENT_CLASS(vl::TriangleIteratorDirect, TriangleIteratorAbstract)
-
   public:
-    TriangleIteratorDirect(EPrimitiveType prim_type=PT_UNKNOWN)
+    virtual const char* className() { return "vl::TriangleIteratorDirect"; }
+
+    TriangleIteratorDirect(EPrimitiveType prim_type)
     {
       VL_DEBUG_SET_OBJECT_NAME()
       mCurrentIndex = mStart = mEnd = 0;
@@ -343,7 +327,7 @@ namespace vl
       mEven = true;
     }
 
-    bool hasNext() const { return mCurrentIndex != mEnd; }
+    bool isEnd() const { return mCurrentIndex == mEnd; }
 
     virtual int a() const { return mA; }
     virtual int b() const { return mB; }
@@ -511,10 +495,10 @@ namespace vl
   template<class TArray>
   class TriangleIteratorMulti: public TriangleIteratorIndexed<TArray>
   {
-    VL_INSTRUMENT_CLASS(vl::TriangleIteratorMulti<class TArray>, TriangleIteratorIndexed<TArray>)
-
   public:
-    TriangleIteratorMulti( const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_count_vector, const TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
+    virtual const char* className() { return "vl::TriangleIteratorMulti"; }
+
+    TriangleIteratorMulti( const std::vector<GLint>* p_base_vertices, const std::vector<GLsizei>* p_count_vector, TArray* idx_array, EPrimitiveType prim_type, bool prim_restart_on, int prim_restart_idx)
     :TriangleIteratorIndexed<TArray>( idx_array, prim_type, 0, prim_restart_on, prim_restart_idx)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -532,7 +516,7 @@ namespace vl
       int end = mStart + (*mpCountVector)[mCurPrim];
       TriangleIteratorIndexed<TArray>::initialize( mStart, end );
       // abort if could not initialize (primitive not supported)
-      if ( !TriangleIteratorIndexed<TArray>::hasNext() )
+      if ( TriangleIteratorIndexed<TArray>::isEnd() )
         mCurPrim = (int)(*mpCountVector).size()-1;
     }
 
@@ -552,12 +536,12 @@ namespace vl
         return false;
     }
 
-    bool hasNext() const
+    bool isEnd() const
     { 
-      if ( !TriangleIteratorIndexed<TArray>::hasNext() && mCurPrim == (int)(*mpCountVector).size()-1 )
-        return false;
-      else
+      if ( TriangleIteratorIndexed<TArray>::isEnd() && mCurPrim == (int)(*mpCountVector).size()-1 )
         return true;
+      else
+        return false;
     }
 
   protected:
@@ -580,10 +564,8 @@ namespace vl
     /** Requires the next triangle. Returns \p false the iterator reached the end of the triangle list. */
     bool next() { return mIterator->next(); }
 
-    bool operator++() { return next(); }
-
-    /** Returns false if the iterator has reached the end of the triangle list. In this case a(), b() and c() return -1. */
-    bool hasNext() { return mIterator->hasNext(); }
+    /** Returns true if the iterator reached the end of the triangle list. In this case a(), b() and c() return -1. */
+    bool isEnd() { return mIterator->isEnd(); }
 
     /** First index of the triangle. */
     int a() const { return mIterator->a(); }

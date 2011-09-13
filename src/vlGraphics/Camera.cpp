@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -48,13 +48,11 @@ Camera::Camera()
   VL_DEBUG_SET_OBJECT_NAME()
   mFrustum.planes().resize(6);
   mFOV = 60.0;
-  mNearPlane = (real)0.05;
-  mFarPlane  = (real)10000.0;
-  mLeft = mRight = mTop = mBottom = -1;
+  mNearPlane = (Real)0.05;
+  mFarPlane  = (Real)10000.0;
   mViewport = new Viewport;
 
   mProjectionMatrix  = mat4::getPerspective(fov(), 640.0f/480.0f, nearPlane(), farPlane());
-  mProjectionType = PMT_PerspectiveProjection;
 }
 //-----------------------------------------------------------------------------
 void Camera::applyModelViewMatrix(const mat4& model_matrix) const
@@ -102,68 +100,56 @@ void Camera::computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphe
   // near/far clipping planes optimization
   if (!scene_bounding_sphere.isNull())
   {
-    // transform the sphere in camera coordinates
+    // compute the sphere in camera coordinates
     Sphere camera_sphere;
     scene_bounding_sphere.transformed(camera_sphere, viewMatrix());
-
-    // visible objects are in the negative z, but we need a positive distance for the near and far clipping planes
-    mNearPlane = -(camera_sphere.center().z() + camera_sphere.radius());
-    mFarPlane  = -(camera_sphere.center().z() - camera_sphere.radius());
-
-    // clamp to positive epsilon: can't let near and far clipping planes go behind the camera!
-    real epsilon = camera_sphere.radius() / 1000.0f;
-    mFarPlane  = max(mFarPlane,  epsilon * 2); // alway more than the near
-    mNearPlane = max(mNearPlane, epsilon * 1);
-
-    switch(projectionMatrixType())
-    {
-    case PMT_OrthographicProjection: setProjectionOrtho(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane);
-      break;
-    case PMT_PerspectiveProjection:  setProjectionPerspective(); 
-      break;
-
-    // we cannot do this: if we change the near plane we have to recompute also left, right, bottom and top!
-    // case PMT_PerspectiveProjectionFrustum: setProjectionFrustum(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane); 
-    //   break;
-
-    default:
-      Log::bug("Camera::computeNearFarOptimizedProjMatrix() called on unsupported projection type.\n");
-    }
+    mNearPlane = -(camera_sphere.center().z() + camera_sphere.radius() * (Real)1.01);
+    mFarPlane  = -(camera_sphere.center().z() - camera_sphere.radius() * (Real)1.01);
+    #if 0
+      far  = max(far,  (Real)1.0e-5);
+      near = max(near, (Real)1.0e-6);
+    #else
+      // prevents z-thrashing when very large objects are zoomed a lot
+      Real ratio = camera_sphere.radius() * (Real)2.01 / (Real)2000.0;
+      mNearPlane = max(mNearPlane, ratio*1);
+      mFarPlane  = max(mFarPlane,  ratio*2);
+    #endif
+    // supports only perspective projection matrices
+    setProjectionAsPerspective();
   }
 }
 //-----------------------------------------------------------------------------
-void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real bias)
+void Camera::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias)
 {
   VL_CHECK(bias >= 0)
-  VL_CHECK(!aabb.isNull())
   if (bias < 0)
     vl::Log::bug("Camera::adjustView(): 'bias' must be >= 0.\n");
 
   vec3 center = aabb.center();
 
   Sphere sphere(aabb);
-  const vec3& C = modelingMatrix().getT();
-  const vec3& V = -modelingMatrix().getZ();
-  const real  R = sphere.radius();
+  const vec3& C = inverseViewMatrix().getT();
+  const vec3& V = -inverseViewMatrix().getZ();
+  const Real  R = sphere.radius();
 
   // extract the frustum planes based on the current view and projection matrices
   mat4 viewproj = projectionMatrix() * viewMatrix();
   Frustum frustum; frustum.planes().resize(6);
   extractPlanes( &frustum.planes()[0], viewproj );
   // iterate over left/right/top/bottom clipping planes. the planes are in world coords.
-  real max_t = 0;
+  Real max_t = 0;
   for(int i=0; i<4; ++i)
   {
     const vec3& O = frustum.plane(i).origin() * frustum.plane(i).normal();
     const vec3& N = frustum.plane(i).normal();
-    real t = - (R + dot(O,N) - dot(C,N)) / dot(N,V);
+    Real t = - (R + dot(O,N) - dot(C,N)) / dot(N,V);
     VL_CHECK(t>=0)
     if (t > max_t)
       max_t = t;
   }
-  real dist = max_t;
+  Real dist = max_t;
   mat4 m = mat4::getLookAt(center+dir*dist*bias,center,up);
-  setViewMatrix(m);
+  setInverseViewMatrix(m);
 }
 //-----------------------------------------------------------------------------
 void Camera::computeFrustumPlanes()
@@ -175,71 +161,57 @@ void Camera::computeFrustumPlanes()
   extractPlanes( &mFrustum.planes()[0], viewproj );
 }
 //-----------------------------------------------------------------------------
-void Camera::setProjectionFrustum(real left, real right, real bottom, real top, real near, real far)
+void Camera::setProjectionAsFrustum(Real left, Real right, Real bottom, Real top, Real near, Real far)
 {
-  // see http://www.opengl.org/resources/faq/technical/transformations.htm
-  setFOV( 2.0f*atan((top-bottom)*0.5f/near) );
+  setFOV(-1);
   setNearPlane(near);
   setFarPlane(far);
-  setProjectionMatrix(mat4::getFrustum(left, right, bottom, top, near, far), PMT_PerspectiveProjectionFrustum);
+  mProjectionMatrix = mat4::getFrustum(left, right, bottom, top, near, far);
 }
 //-----------------------------------------------------------------------------
-void Camera::setProjectionPerspective(real fov, real near, real far)
+void Camera::setProjectionAsPerspective(Real fov, Real near, Real far)
 {
   setFOV(fov);
   setNearPlane(near);
   setFarPlane(far);
-  setProjectionMatrix(mat4::getPerspective(fov, aspectRatio(), near, far), PMT_PerspectiveProjection);
+  mProjectionMatrix = mat4::getPerspective(fov, aspectRatio(), near, far);
 }
 //-----------------------------------------------------------------------------
-void Camera::setProjectionPerspective()
+void Camera::setProjectionAsPerspective()
 {
-  setProjectionMatrix(mat4::getPerspective(fov(), aspectRatio(), nearPlane(), farPlane()), PMT_PerspectiveProjection);
+  mProjectionMatrix = mat4::getPerspective(fov(), aspectRatio(), nearPlane(), farPlane());
 }
 //-----------------------------------------------------------------------------
-void Camera::setProjectionOrtho()
+void Camera::setProjectionAsOrtho(Real offset)
 {
-  mLeft   = 0;
-  mRight  = (real)mViewport->width();
-  mBottom = 0;
-  mTop    = (real)mViewport->height();
-  mFOV = -1;
-  setProjectionMatrix( mat4::getOrtho( mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane), PMT_OrthographicProjection );
+  setProjectionMatrix( 
+    mat4::getOrtho(
+      offset, (Real)mViewport->width()  + offset,
+      offset, (Real)mViewport->height() + offset,
+      nearPlane(), farPlane())
+  );
 }
 //-----------------------------------------------------------------------------
-void Camera::setProjectionOrtho(real left, real right, real bottom, real top, real znear, real zfar)
+void Camera::setProjectionAsOrtho2D(Real offset)
 {
-  mLeft   = left;
-  mRight  = right;
-  mBottom = bottom;
-  mTop    = top;
-  mFOV = -1;
-  mNearPlane = znear;
-  mFarPlane  = zfar;
-  setProjectionMatrix( mat4::getOrtho( mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane), PMT_OrthographicProjection );
+  setProjectionMatrix( 
+    mat4::getOrtho(
+      offset, (Real)mViewport->width()  + offset,
+      offset, (Real)mViewport->height() + offset,
+      -1, +1)
+  );
 }
 //-----------------------------------------------------------------------------
-void Camera::setProjectionOrtho(real offset)
+void Camera::setViewMatrixAsLookAt( const vec3& eye, const vec3& center, const vec3& up)
 {
-  mLeft   = offset;
-  mRight  = viewport()->width() + offset;
-  mBottom = offset;
-  mTop    = viewport()->height() + offset;
-  mFOV = -1;
-  mNearPlane = -1;
-  mFarPlane  = +1;
-  setProjectionMatrix( mat4::getOrtho( mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane), PMT_OrthographicProjection );
+  mat4 m = mat4::getLookAt(eye, center, up);
+  // this sets both the frame matrix and the view matrix
+  setInverseViewMatrix(m);
 }
 //-----------------------------------------------------------------------------
-void Camera::setViewMatrixLookAt( const vec3& eye, const vec3& at, const vec3& up)
+void Camera::getViewMatrixAsLookAt( vec3& eye, vec3& look, vec3& up, vec3& right) const
 {
-  // note: this sets both the local matrix and the view matrix
-  setViewMatrix( mat4::getLookAt(eye, at, up) );
-}
-//-----------------------------------------------------------------------------
-void Camera::getViewMatrixAsLookAt( vec3& eye, vec3& at, vec3& up, vec3& right) const
-{
-  mModelingMatrix.getAsLookAtModeling(eye, at, up, right);
+  mInverseViewMatrix.getAsLookAt(eye,look,up,right);
 }
 //-----------------------------------------------------------------------------
 bool Camera::project(const vec4& in, vec4& out) const
@@ -281,7 +253,7 @@ bool Camera::unproject(const vec3& win, vec4& out) const
     v.y() = v.y() * 2.0f - 1.0f;
     v.z() = v.z() * 2.0f - 1.0f;
 
-    real det=0;
+    Real det=0;
     mat4 inverse = (mProjectionMatrix * mViewMatrix).getInverse(&det);
     if (!det)
       return false;
@@ -296,7 +268,7 @@ bool Camera::unproject(const vec3& win, vec4& out) const
 //-----------------------------------------------------------------------------
 bool Camera::unproject(std::vector<vec3>& win) const
 {
-  real det=0;
+  Real det=0;
   mat4 inverse = (mProjectionMatrix * mViewMatrix).getInverse(&det);
   if (!det)
     return false;
@@ -332,13 +304,13 @@ bool Camera::unproject(std::vector<vec3>& win) const
 Ray Camera::computeRay(int winx, int winy)
 {
   vl::vec4 out;
-  if (!unproject( vl::vec3((real)winx,(real)winy,0), out ))
+  if (!unproject( vl::vec3((Real)winx,(Real)winy,0), out ))
     return Ray();
   else
   {
     vl::Ray ray;
     ray.setOrigin(out.xyz());
-    ray.setDirection( (out.xyz() - modelingMatrix().getT()).normalize() );
+    ray.setDirection( (out.xyz() - inverseViewMatrix().getT()).normalize() );
     return ray;
   }
 }
@@ -357,14 +329,14 @@ Frustum Camera::computeRayFrustum(int winx, int winy)
   // compute the frustum passing through the adjacent pixels
   vl::vec4 A1,B1,C1,D1;
   vl::vec4 A2,B2,C2,D2;
-  unproject( vl::vec3((real)winx-1,(real)winy-1,0),    A1 );
-  unproject( vl::vec3((real)winx+1,(real)winy-1,0),    B1 );
-  unproject( vl::vec3((real)winx+1,(real)winy+1,0),    C1 );
-  unproject( vl::vec3((real)winx-1,(real)winy+1,0),    D1 );
-  unproject( vl::vec3((real)winx-1,(real)winy-1,0.1f), A2 );
-  unproject( vl::vec3((real)winx+1,(real)winy-1,0.1f), B2 );
-  unproject( vl::vec3((real)winx+1,(real)winy+1,0.1f), C2 );
-  unproject( vl::vec3((real)winx-1,(real)winy+1,0.1f), D2 );
+  unproject( vl::vec3((Real)winx-1,(Real)winy-1,0),    A1 );
+  unproject( vl::vec3((Real)winx+1,(Real)winy-1,0),    B1 );
+  unproject( vl::vec3((Real)winx+1,(Real)winy+1,0),    C1 );
+  unproject( vl::vec3((Real)winx-1,(Real)winy+1,0),    D1 );
+  unproject( vl::vec3((Real)winx-1,(Real)winy-1,0.1f), A2 );
+  unproject( vl::vec3((Real)winx+1,(Real)winy-1,0.1f), B2 );
+  unproject( vl::vec3((Real)winx+1,(Real)winy+1,0.1f), C2 );
+  unproject( vl::vec3((Real)winx-1,(Real)winy+1,0.1f), D2 );
 
   vec3 n1 = -cross(A2.xyz()-A1.xyz(),B1.xyz()-A1.xyz());
   vec3 n2 = -cross(B2.xyz()-B1.xyz(),C1.xyz()-B1.xyz());

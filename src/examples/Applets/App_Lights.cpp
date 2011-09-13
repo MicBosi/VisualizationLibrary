@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -40,7 +40,7 @@ class App_Lights: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     mCameraLightType = Disable;
 
@@ -76,17 +76,17 @@ public:
 
     // In our example each object will be lit up to 5 lights at the same time.
 
-    mLight0 = new vl::Light;
-    mLight1 = new vl::Light;
-    mLight2 = new vl::Light;
-    mLight3 = new vl::Light;
-    mLight4 = new vl::Light;
+    mLight0 = new vl::Light(0);
+    mLight1 = new vl::Light(1);
+    mLight2 = new vl::Light(2);
+    mLight3 = new vl::Light(3);
+    mLight4 = new vl::Light(4);
 
     // Add the lights to the shader in order to use them (we save light #4 for the camera)
-    mLightFx->shader()->setRenderState( mLight0.get(), 0 );
-    mLightFx->shader()->setRenderState( mLight1.get(), 1 );
-    mLightFx->shader()->setRenderState( mLight2.get(), 2 );
-    mLightFx->shader()->setRenderState( mLight3.get(), 3 );
+    mLightFx->shader()->setRenderState( mLight0.get() );
+    mLightFx->shader()->setRenderState( mLight1.get() );
+    mLightFx->shader()->setRenderState( mLight2.get() );
+    mLightFx->shader()->setRenderState( mLight3.get() );
 
     // Define the light diffuse color. 
     // See the OpenGL Programmer's Guide for more details about the OpenGL lighting model and equations.
@@ -133,18 +133,17 @@ public:
     rendering()->as<vl::Rendering>()->transform()->addChild(mLight2_Transform.get());
     rendering()->as<vl::Rendering>()->transform()->addChild(mLight3_Transform.get());
     // light 0..3 follow the relative transform
-    mLight0->bindTransform(mLight0_Transform.get());
-    mLight1->bindTransform(mLight1_Transform.get());
-    mLight2->bindTransform(mLight2_Transform.get());
-    mLight3->bindTransform(mLight3_Transform.get());
+    mLight0->followTransform(mLight0_Transform.get());
+    mLight1->followTransform(mLight1_Transform.get());
+    mLight2->followTransform(mLight2_Transform.get());
+    mLight3->followTransform(mLight3_Transform.get());
     // light 4 follows the camera
-    mLight4->bindTransform(NULL);
+    mLight4->followTransform(NULL);
 
     // add a white sphere for each light to have a better visual feedback of the light animation.
     vl::ref<vl::Geometry> bulb = vl::makeUVSphere(vl::vec3(0,0,0), 0.5f);
     vl::ref<vl::Effect> bulb_fx = new vl::Effect;
     bulb_fx->shader()->enable(vl::EN_DEPTH_TEST);
-    bulb_fx->shader()->gocColor()->setValue(vl::white);
     sceneManager()->tree()->addActor(bulb.get(), bulb_fx.get(), mLight0_Transform.get());
     sceneManager()->tree()->addActor(bulb.get(), bulb_fx.get(), mLight1_Transform.get());
     sceneManager()->tree()->addActor(bulb.get(), bulb_fx.get(), mLight2_Transform.get());
@@ -185,7 +184,7 @@ public:
       {
       case Disable:
         // removes light #4 from the Shader
-        mLightFx->shader()->eraseRenderState(mLight4.get(), 4);
+        mLightFx->shader()->eraseRenderState(mLight4.get());
         // you can also do:
         // mLightFx->shader()->removeRenderState(vl::RS_Light4);
         // or even
@@ -193,7 +192,7 @@ public:
         break;
       case DirectionalLight:
         // add the light to the shader
-        mLightFx->shader()->setRenderState(mLight4.get(), 4);
+        mLightFx->shader()->setRenderState(mLight4.get());
         // since the fourth component is 0 OpenGL considers this a direction
         mLight4->setPosition(vl::fvec4(0,0,1,0));
         // disable spot light
@@ -201,7 +200,7 @@ public:
         break;
       case PositionalLight:
         // add the light to the shader (just for clarity)
-        mLightFx->shader()->setRenderState(mLight4.get(), 4);
+        mLightFx->shader()->setRenderState(mLight4.get());
         // since the fourth component is 1 OpenGL considers this a position
         mLight4->setPosition(vl::fvec4(0,0,0,1));
         // positional light attenuation
@@ -213,7 +212,7 @@ public:
         break;
       case SpotLight:
         // add the light to the shader (just for clarity)
-        mLightFx->shader()->setRenderState(mLight4.get(), 4);
+        mLightFx->shader()->setRenderState(mLight4.get());
         // since the fourth component is 1 OpenGL considers this a position
         mLight4->setPosition(vl::fvec4(0,0,0,1));
         // positional light attenuation
@@ -233,7 +232,7 @@ public:
   // Animate the lights
   virtual void updateScene()
   {
-    vl::real phase = 120.0f;
+    vl::Real phase = 120.0f;
     vl::mat4 m;
 
     m.translate(5,1,0);

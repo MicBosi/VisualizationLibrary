@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -37,7 +37,7 @@
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/RenderQueue.hpp>
 #include <vlGraphics/Renderer.hpp>
-#include <vlGraphics/Framebuffer.hpp>
+#include <vlGraphics/RenderTarget.hpp>
 #include <vlGraphics/Camera.hpp>
 #include <vlGraphics/SceneManager.hpp>
 #include <vlCore/Transform.hpp>
@@ -49,7 +49,7 @@ namespace vl
   The Rendering class performs the following steps:
   -# activates the appropriate OpenGLContext
   -# dispatches the onRenderingStarted() event (see RenderEventCallback class).
-  -# activates the Framebuffer's framebuffer and draw buffers
+  -# activates the RenderTarget's framebuffer and draw buffers
   -# recursively computes the world matrix of the installed Transform hierarchy
   -# setups the Camera transform and the Viewport
   -# extracts all the visible Actor[s] from the installed SceneManager[s]
@@ -68,9 +68,9 @@ namespace vl
   - Transform */
   class VLGRAPHICS_EXPORT Rendering: public RenderingAbstract
   {
-    VL_INSTRUMENT_CLASS(vl::Rendering, RenderingAbstract)
-
   public:
+    virtual const char* className() { return "vl::Rendering"; }
+    
     /** Constructor. */
     Rendering();
     
@@ -187,7 +187,7 @@ namespace vl
     /** Enabled/disables near/far planes optimization. When enabled, the automatic near/far clipping planes optimization
       * modifies the projection matrix of the current camera to minimize z-fighting artifacts. If later you disable
       * this feature you might want to recompute the original projection matrix of the camera using the method 
-      * vl::Camera::setProjectionPerspective(). */
+      * vl::Camera::setProjectionAsPerspective(). */
     void setNearFarClippingPlanesOptimized(bool enabled) { mNearFarClippingPlanesOptimized = enabled; }
 
     /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */

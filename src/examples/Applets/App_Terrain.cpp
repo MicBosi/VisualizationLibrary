@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -33,38 +33,35 @@
 #include <vlCore/Colors.hpp>
 #include <vlGraphics/Terrain.hpp>
 
-using namespace vl;
-
 class App_Terrain: public BaseDemo
 {
 public:
   virtual void initEvent()
   {
-    Log::notify(appletInfo());
-
-    if (!Has_Multitexture)
+    if (!GLEW_ARB_multitexture)
     {
-      Log::error("This test requres multi texturing.\n");
-      Time::sleep(2000);
-      exit(1);
+      vl::Log::error("GL_ARB_multitexture required.\n");
+      openglContext()->quitApplication();
+      return;
     }
+    vl::Log::print(appletInfo());
 
     ghostCameraManipulator()->setMovementSpeed(5);
     // allocate terrain scene manager
-    ref<Terrain> terrain = new Terrain;
+    vl::ref<vl::Terrain> terrain = new vl::Terrain;
     // use GLSL?
-    terrain->setUseGLSL( Has_GL_ARB_shading_language_100 ? true : false );
+    terrain->setUseGLSL( GLEW_ARB_shading_language_100 ? true : false );
     // dimensions of the terrain
     terrain->setWidth(100);
     terrain->setDepth(100);
     terrain->setHeight(5.0f);
     // heightmap texture size used by the GLSL program
-    if (Has_GL_ATI_texture_float || Has_GL_ARB_texture_float)
-      terrain->setHeightmapTextureFormat(TF_LUMINANCE16F);
+    if (GLEW_ATI_texture_float || GLEW_ARB_texture_float)
+      terrain->setHeightmapTextureFormat(vl::TF_LUMINANCE16F);
     else
-      terrain->setHeightmapTextureFormat(TF_LUMINANCE);
+      terrain->setHeightmapTextureFormat(vl::TF_LUMINANCE);
     // origin of the terrain
-    terrain->setOrigin(vec3(0,0,0));
+    terrain->setOrigin(vl::vec3(0,0,0));
     // define textures
     terrain->setHeightmapTexture("/images/ps_height_4k.jpg");
     terrain->setTerrainTexture("/images/ps_texture_4k.jpg");
@@ -76,21 +73,21 @@ public:
     // initialize the terrain
     terrain->init();
     // add the terrain scene manager to the rendering
-    rendering()->as<Rendering>()->sceneManagers()->push_back( terrain.get() );
+    rendering()->as<vl::Rendering>()->sceneManagers()->push_back( terrain.get() );
 
     // adds fog if we are not using GLSL but the fixed function pipeline
     if (!terrain->useGLSL())
     {
       // set sky to white
-      rendering()->as<Rendering>()->camera()->viewport()->setClearColor(white);
+      rendering()->as<vl::Rendering>()->camera()->viewport()->setClearColor(vl::white);
       // set fog render state
-      ref<Fog> fog = new Fog;
-      fog->setColor(white);
+      vl::ref<vl::Fog> fog = new vl::Fog;
+      fog->setColor(vl::white);
       fog->setDensity(0.045f);
-      fog->setMode(FM_EXP);
+      fog->setMode(vl::FM_EXP);
       // install and enable fog
-      terrain->shaderNode()->setRenderState(IN_Propagate, fog.get());
-      terrain->shaderNode()->setEnable(EN_FOG, true);
+      terrain->shaderNode()->setRenderState(fog.get());
+      terrain->shaderNode()->setEnable(vl::EN_FOG,true);
       terrain->shaderNode()->updateHierarchy();
     }
 

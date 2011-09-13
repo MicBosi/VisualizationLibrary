@@ -4,7 +4,7 @@
 #  All rights reserved.                                                        #
 #                                                                              #
 #  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.org                                         #
+#  http://www.visualizationlibrary.com                                         #
 #                                                                              #
 #  Released under the OSI approved Simplified BSD License                      #
 #  http://www.opensource.org/licenses/bsd-license.php                          #
@@ -30,9 +30,6 @@ add_subdirectory("vlMolecule")
 # VLVolume
 add_subdirectory("vlVolume")
 
-# tools
-add_subdirectory("tools")
-
 ################################################################################
 # GUI Modules (automatically enabled when their requirements are met)
 ################################################################################
@@ -53,17 +50,14 @@ if(VL_GUI_QT4_SUPPORT)
 	add_subdirectory("vlQt4")
 endif()
 
-if(VL_PLATFORM_WINDOWS)
-	option(VL_GUI_WIN32_SUPPORT "Build Win32 support" OFF)
-endif()
-
+# Win32 & MFC
 if(MSVC)
+	option(VL_GUI_WIN32_SUPPORT "Build Win32 support" ON)
 	option(VL_GUI_MFC_SUPPORT "Build MFC support" OFF)
 endif()
 
-# EGL bindings are available only under Windows right now
-if(VL_PLATFORM_WINDOWS AND (VL_OPENGL_ES1 OR VL_OPENGL_ES2))
-	option(VL_GUI_EGL_SUPPORT "Build EGL support" ON)
+if(MINGW)
+	option(VL_GUI_WIN32_SUPPORT "Build Win32 support" ON)
 endif()
 
 if(VL_GUI_MFC_SUPPORT)
@@ -72,10 +66,6 @@ endif()
 
 if(VL_GUI_WIN32_SUPPORT)
 	add_subdirectory("vlWin32")
-endif()
-
-if(VL_GUI_EGL_SUPPORT)
-	add_subdirectory("vlEGL")
 endif()
 
 # SDL
@@ -113,7 +103,6 @@ cmake_dependent_option(VL_GUI_MFC_EXAMPLES "Build MFC examples" ON "VL_GUI_MFC_S
 cmake_dependent_option(VL_GUI_WIN32_EXAMPLES "Build win32 examples" ON "VL_GUI_WIN32_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_SDL_EXAMPLES "Build SDL examples" ON "VL_GUI_SDL_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_WXWIDGETS_EXAMPLES "Build wxWidgets examples" ON "VL_GUI_WXWIDGETS_SUPPORT" OFF)
-cmake_dependent_option(VL_GLES_EXAMPLES "Build OpenGL ES examples" ON "VL_GUI_EGL_SUPPORT" OFF)
 #cmake_dependent_option(VL_GUI_COCOA_EXAMPLES "Build Cocoa examples" ON "VL_GUI_COCOA_SUPPORT" OFF)
 
 add_subdirectory("examples")

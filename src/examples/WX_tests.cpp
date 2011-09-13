@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -57,6 +57,12 @@ public:
   void runGUI(const vl::String& title, BaseDemo* program, vl::OpenGLContextFormat /*format*/, int x, int y, int width, int height, vl::fvec4 bk_color, vl::vec3 eye, vl::vec3 center)
   {
     program->setAppletName(title);
+
+    /* open a console so we can see the program's output on stdout */
+    vl::showWin32Console();
+
+    /* init Visualization Library */
+    vl::VisualizationLibrary::init();
 
     // WX_GL_RGBA:            Use true colour
     // WX_GL_BUFFER_SIZE:     Bits for buffer if not WX_GL_RGBA
@@ -132,19 +138,18 @@ bool MyApp::OnInit()
   int      argc = GetInstance()->argc;
   wxChar** argv = GetInstance()->argv;
 
-  // convert from wxChar to std::string
-  std::string arg1 = vl::String(argv[1]).toStdString();
   if (argc >= 2)
-    test = atoi(arg1.c_str());
+    test = vl::String(argv[1]).toInt();
 
   TestBatteryWX test_battery;
-  test_battery.run(test, arg1.c_str(), vl::OpenGLContextFormat()/*not used*/);
+  test_battery.run(test, vl::OpenGLContextFormat()/*not used*/);
 
   return true;
 }
 //-----------------------------------------------------------------------------
 int MyApp::OnExit()
 {
+  vl::VisualizationLibrary::shutdown();
   return 0;
 }
 //-----------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -144,14 +144,14 @@ public:
 
   void initEvent()
   {
-    if (!Has_GLSL)
+    if (!GLEW_Has_Shading_Language_20)
     {
       Log::error("OpenGL Shading Language not supported.\n");
-      Time::sleep(2000);
+      Time::sleep(3000);
       exit(1);
     }
 
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     mMode = NoMode;
     mHelpOn = true;
@@ -186,8 +186,9 @@ public:
     sceneManager()->tree()->addActor( geom.get(), effect.get() );
 
     // camera setup
-    rendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4::getIdentity(), vl::PMT_UserProjection );
-    rendering()->as<Rendering>()->camera()->setModelingMatrix( mat4::getIdentity() );
+    rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
+    rendering()->as<Rendering>()->camera()->setProjectionMatrix( mat4() );
+    rendering()->as<Rendering>()->camera()->setInverseViewMatrix( mat4() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
@@ -234,7 +235,7 @@ public:
     mTexture->prepareTexture1D( mSpectrum1.get(), TF_RGBA, false, false );
     mTexture->getTexParameter()->setMagFilter(TPF_NEAREST);
     mTexture->getTexParameter()->setMinFilter(TPF_NEAREST);
-    effect->shader()->gocTextureSampler(0)->setTexture( mTexture.get() );
+    effect->shader()->gocTextureUnit(0)->setTexture( mTexture.get() );
 
     mGLSLProgram = effect->shader()->gocGLSLProgram();
     mGLSLProgram->attachShader( new GLSLVertexShader("/glsl/mandelbrot.vs") );

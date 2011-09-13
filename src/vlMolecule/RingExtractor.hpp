@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -32,7 +32,7 @@
 #ifndef RingExtractor_INCLUDE_ONCE
 #define RingExtractor_INCLUDE_ONCE
 
-#include <vlCore/glsl_math.hpp>
+#include <vlCore/GLSLmath.hpp>
 #include <vector>
 #include <algorithm>
 #include <map>

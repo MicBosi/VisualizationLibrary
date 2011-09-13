@@ -4,7 +4,7 @@
 #  All rights reserved.                                                        #
 #                                                                              #
 #  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.org                                         #
+#  http://www.visualizationlibrary.com                                         #
 #                                                                              #
 #  Released under the OSI approved Simplified BSD License                      #
 #  http://www.opensource.org/licenses/bsd-license.php                          #
@@ -35,4 +35,4 @@ target_link_libraries(VLQt4 VLCore VLGraphics ${QT_LIBRARIES})
 VL_INSTALL_TARGET(VLQt4)
 
 # VLQt4 headers
-install(FILES ${VLQt4_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlQt4")
+install(FILES ${VLQt4_INC} DESTINATION "include/vlQt4")

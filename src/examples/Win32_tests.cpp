@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -46,6 +46,12 @@ public:
     /* used to display the application title next to FPS counter */
     applet->setAppletName(title);
 
+    /* open a console so we can see the applet's output on stdout */
+    showWin32Console();
+
+    /* init Visualization Library */
+    VisualizationLibrary::init();
+
     /* create a native Win32 window */
     ref<vlWin32::Win32Window> win32_window = new vlWin32::Win32Window;
 
@@ -56,17 +62,10 @@ public:
     int attribs[] =
     {
         WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
-        WGL_CONTEXT_MINOR_VERSION_ARB, 1,
-
-        // Includes removed & deprecated features.
-        // WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB, 
-
-        // Does not include previously removed features, but might include currently deprecated (not yet removed) ones.
-        // WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
-
-        // Does not include any (previously or currently) deprecated feature.
-        WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
-
+        WGL_CONTEXT_MINOR_VERSION_ARB, 0, 
+        WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+        // WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+        // WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
         0
     };
     win32_window->setContextAttribs(attribs, sizeof(attribs)/sizeof(attribs[0]));
@@ -83,13 +82,16 @@ public:
 
     /* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
     win32_window = NULL;
+
+    /* shutdown Visualization Library */
+    VisualizationLibrary::shutdown();
   }
 };
 //-----------------------------------------------------------------------------
 int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LPSTR lpszCmdLine, int /*nCmdShow*/)
 {
   /* parse command line arguments */
-  int test = 0;
+  int   test = 0;
   String cmd = lpszCmdLine;
   std::vector<String> parms;
   cmd.split(' ', parms);
@@ -107,7 +109,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   format.setMultisample(true);*/
 
   TestBatteryWin32 test_battery;
-  test_battery.run(test, parms[0].toStdString(), format);
+  test_battery.run(test, format);
 
   return 0;
 }

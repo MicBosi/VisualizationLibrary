@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,6 +43,7 @@ namespace vl
   class Rect
   {
   public:
+    virtual const char* className() { return "vl::Rect"; }
     Rect(const Rect& other)
     {
       mX = other.x();
@@ -163,6 +164,7 @@ namespace vl
   class RectI: public Rect<int>
   {
   public:
+    virtual const char* className() { return "vl::RectI"; }
     RectI() {}
     RectI(int x, int y, int width, int height) { mX=x; mY=y; mWidth=width; mHeight=height; }
     RectI(const Rect<int>& other) { *this = other; }
@@ -189,6 +191,7 @@ namespace vl
   class RectF: public Rect<float>
   {
   public:
+    virtual const char* className() { return "vl::RectF"; }
     RectF() {}
     RectF(float x, float y, float width, float height) { mX=x; mY=y; mWidth=width; mHeight=height; }
     RectF(const RectF& other): Rect<float>(other) { *this = other; }

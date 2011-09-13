@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -66,7 +66,7 @@ bool DiskFile::open(EOpenMode mode)
     return false;
   }
 
-#if defined(VL_PLATFORM_WINDOWS)
+#ifdef _WIN32
   mHandle = INVALID_HANDLE_VALUE;
   switch(mode)
   {
@@ -111,7 +111,7 @@ void DiskFile::close()
 {
   if (mHandle)
   {
-    #if defined(VL_PLATFORM_WINDOWS)
+    #ifdef _WIN32
       CloseHandle(mHandle);
     #elif defined(__GNUG__)
       fclose(mHandle);
@@ -122,7 +122,7 @@ void DiskFile::close()
 //-----------------------------------------------------------------------------
 long long DiskFile::size() const
 {
-  #if defined(VL_PLATFORM_WINDOWS)
+  #ifdef _WIN32
     // opens the file
     HANDLE hdl = CreateFile(
       (const wchar_t*)path().ptr(),
@@ -173,7 +173,7 @@ bool DiskFile::exists() const
 {
   if (path().empty())
     return false;
-  #if defined(VL_PLATFORM_WINDOWS)
+  #ifdef _WIN32
     /*VL_CHECK( sizeof(wchar_t) == sizeof(unsigned short) )*/
     // opens the file
     HANDLE hdl = CreateFile(
@@ -218,7 +218,7 @@ long long DiskFile::read_Implementation(void* buffer, long long byte_count)
   }
 
   long long count = 0;
-  #if defined(VL_PLATFORM_WINDOWS)
+  #ifdef _WIN32
 
     #if 0
       // avoid win xp problem: read fails if request to read much more bytes than the file size
@@ -262,7 +262,7 @@ long long DiskFile::write_Implementation(const void* buffer, long long byte_coun
   }
 
   long long count = 0;
-  #if defined(VL_PLATFORM_WINDOWS)
+  #ifdef _WIN32
     DWORD NumberOfBytesWritten = 0;
     WriteFile( mHandle, buffer, (DWORD)byte_count, &NumberOfBytesWritten, NULL );
     count = NumberOfBytesWritten;
@@ -282,7 +282,7 @@ long long DiskFile::position_Implementation() const
     return -1;
   }
 
-  #if defined(VL_PLATFORM_WINDOWS)
+  #if defined(_WIN32)
     LARGE_INTEGER position;
     position.QuadPart = 0;
     SetFilePointerEx(
@@ -304,7 +304,7 @@ bool DiskFile::seekSet_Implementation(long long offset)
     return false;
   }
 
-  #if defined(VL_PLATFORM_WINDOWS)
+  #if defined(_WIN32)
     LARGE_INTEGER position;
     position.QuadPart = offset;
     if (mHandle)

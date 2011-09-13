@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -49,20 +49,19 @@ namespace vl
   */
   class DistanceLODEvaluator: public LODEvaluator
   {
-    VL_INSTRUMENT_CLASS(vl::DistanceLODEvaluator, LODEvaluator)
-
   public:
     DistanceLODEvaluator() 
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
+    virtual const char* className() { return "vl::DistanceLODEvaluator"; }
     virtual int evaluate(Actor* actor, Camera* camera)
     {
       if (mDistanceRangeSet.empty())
         return 0;
 
       vec3 center = actor->transform() ? actor->transform()->worldMatrix() * actor->lod(0)->boundingBox().center() : actor->lod(0)->boundingBox().center();
-      double dist = (camera->modelingMatrix().getT() - center).length();
+      double dist = (camera->inverseViewMatrix().getT() - center).length();
 
       // we assume the distances are sorted in increasing order
       int i=0;
@@ -75,9 +74,14 @@ namespace vl
       return i; // == mDistanceRangeSet.size()
     }
 
-    const std::vector<double>& distanceRangeSet() const { return mDistanceRangeSet; }
+    const std::vector<double>& distanceRangeSet() { return mDistanceRangeSet; }
+    void clearDistanceRangeSet() { mDistanceRangeSet.clear(); }
+    int distanceRangeCount() const { return (int)mDistanceRangeSet.size(); }
+    double distanceRange(int index) const { return mDistanceRangeSet[index]; }
 
-    std::vector<double>& distanceRangeSet() { return mDistanceRangeSet; }
+    void setDistanceRangeSet(const std::vector<double>& distance_set) { mDistanceRangeSet = distance_set; std::sort(mDistanceRangeSet.begin(), mDistanceRangeSet.end()); }
+    void addDistanceRange(double distance) { mDistanceRangeSet.push_back(distance); std::sort(mDistanceRangeSet.begin(), mDistanceRangeSet.end()); }
+    void setDistanceRange(int index, double distance) { mDistanceRangeSet[index] = distance; std::sort(mDistanceRangeSet.begin(), mDistanceRangeSet.end()); }
 
   protected:
     std::vector<double> mDistanceRangeSet;

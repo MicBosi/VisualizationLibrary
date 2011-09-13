@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -39,8 +39,6 @@ class App_PointSplatting: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::notify(appletInfo());
-
     trackball()->setTransform(NULL);
 
     // setup texture
@@ -53,9 +51,8 @@ public:
     vl::ref<vl::Effect> fx = new vl::Effect;
 
     fx->shader()->enable(vl::EN_LIGHTING);
-    fx->shader()->setRenderState( new vl::Light, 0 );
+    fx->shader()->setRenderState( new vl::Light(0) );
     fx->shader()->gocLightModel()->setTwoSide(true);
-    // enable color material if you want to see per-point colors
     fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
     fx->shader()->enable( vl::EN_BLEND );
     fx->shader()->enable(vl::EN_POINT_SMOOTH);
@@ -145,7 +142,7 @@ protected:
 
     points->resize( point_count );
     norms->resize( point_count );
-    draw_elements->indexBuffer()->resize( point_count );
+    draw_elements->indices()->resize( point_count );
     color->resize( point_count );
 
     for(int index = 0, z=0; z<img->depth(); ++z)
@@ -192,7 +189,7 @@ protected:
             transfer_func(img->pixels()[x + y*img->pitch() + z*img->height()*img->pitch()], r,g,b,a);
             color->at(index) = vl::ubvec4(r,g,b,a);
 
-            draw_elements->indexBuffer()->at(index) = index;
+            draw_elements->indices()->at(index) = index;
 
             ++index;
           }
@@ -202,14 +199,14 @@ protected:
 
     actor->setLod(0, geometry.get());
     geometry->setDisplayListEnabled(false);
-    geometry->setBufferObjectEnabled(true);
+    geometry->setVBOEnabled(true);
 
-    if (vl::Has_GL_ARB_vertex_buffer_object)
+    if (GLEW_ARB_vertex_buffer_object)
     {
-      color->bufferObject()->setBufferData(vl::BU_STATIC_DRAW);
-      points->bufferObject()->setBufferData(vl::BU_STATIC_DRAW);
-      norms->bufferObject()->setBufferData(vl::BU_STATIC_DRAW);
-      draw_elements->indexBuffer()->bufferObject()->setBufferData(vl::BU_DYNAMIC_DRAW);
+      color->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
+      points->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
+      norms->gpuBuffer()->setBufferData(vl::BU_STATIC_DRAW);
+      draw_elements->indices()->gpuBuffer()->setBufferData(vl::BU_DYNAMIC_DRAW);
     }
 
     eye_space_points->resize( points->size() );

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -34,7 +34,7 @@
 
 #include <vlCore/Object.hpp>
 #include <vlCore/Vector3.hpp>
-#include <vlCore/glsl_math.hpp>
+#include <vlCore/GLSLmath.hpp>
 #include <vlGraphics/link_config.hpp>
 #include <vector>
 #include <algorithm>
@@ -51,8 +51,6 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT PolygonSimplifier: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::PolygonSimplifier, Object)
-
   public:
     class Vertex;
     //-----------------------------------------------------------------------------
@@ -320,18 +318,11 @@ namespace vl
   public:
     PolygonSimplifier(): mRemoveDoubles(false), mVerbose(true), mQuick(true) {}
 
-    void simplify();
-    void simplify(const std::vector<fvec3>& in_verts, const std::vector<int>& in_tris);
+    virtual const char* className() { return "vl::PolygonSimplifier"; }
 
-    void setIntput(Geometry* geom) { mInput = geom; }
-    Geometry* input() { return mInput.get(); }
-    const Geometry* input() const { return mInput.get(); }
-
-    std::vector< size_t >& targets() { return mTargets; }
-    const std::vector< size_t >& targets() const { return mTargets; }
-
-    std::vector< ref<Geometry> >& output() { return mOutput; }
-    const std::vector< ref<Geometry> >& output() const { return mOutput; }
+    void simplify(float simplification_ratio, Geometry* geom);
+    void simplify(int target_vertex_count, Geometry* geom);
+    void simplify(int target_vertex_count, std::vector<fvec3>& in_out_verts, std::vector<int>& in_out_tris);
 
     void setProtectedVertices(const std::vector<int>& protected_verts) { mProtectedVerts = protected_verts; }
 
@@ -353,14 +344,10 @@ namespace vl
     void setQuick(bool quick) { mQuick = quick; }
 
   protected:
-    void outputSimplifiedGeometry();
     inline void collapse(Vertex* v);
     inline void computeCollapseInfo(Vertex* v);
 
   protected:
-    ref<Geometry> mInput;
-    std::vector< ref<Geometry> > mOutput;
-    std::vector< size_t > mTargets;
     std::vector<Vertex*> mSimplifiedVertices;
     std::vector<Triangle*> mSimplifiedTriangles;
     std::vector<int> mProtectedVerts;

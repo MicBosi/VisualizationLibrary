@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -44,6 +44,7 @@ namespace vl
   class VLGRAPHICS_EXPORT TriangleStripGenerator
   {
   public:
+    virtual const char* className() { return "vl::TriangleStripGenerator"; }
     static void stripfy(Geometry* geom, int cache_size=22, bool merge_strips = true, bool remove_doubles = true, bool substitute_quads = true);
   };
 }

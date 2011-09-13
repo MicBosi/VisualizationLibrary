@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -57,7 +57,7 @@ MorphingCallback::~MorphingCallback()
 {
 }
 //-----------------------------------------------------------------------------
-void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Camera*, Renderable*, const Shader* shader, int pass)
+void MorphingCallback::onActorRenderStarted(Actor*, Real frame_clock, const Camera*, Renderable*, const Shader* shader, int pass)
 {
   // perform only on the first pass
   if (pass>0)
@@ -72,7 +72,7 @@ void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Came
   if ( do_update )
   {
     mLastUpdate = mElapsedTime;
-    real ft = mElapsedTime / mAnimationPeriod;
+    Real ft = mElapsedTime / mAnimationPeriod;
     ft = ft - (int)ft;
     int frame_count = mAnimationEnd - mAnimationStart + 1;
     mAnim_t  = (float)(ft * frame_count - (int)(ft * frame_count));
@@ -96,34 +96,26 @@ void MorphingCallback::onActorRenderStarted(Actor*, real frame_clock, const Came
 
   if ( glslVertexBlendEnabled() && glslprogram )
   {
-    // memo:
-    // Since every character is in a different stage of the animation they all have different vertex/normal/etc. arrays pointers,
-    // thus the lazy-vertex-array setup is forced to call glVertexAttribPointer/glVertexPointer/glBindBuffer continuously.
-    // We may be able to partially solve this by putting all the animations in a single ArrayFloat3 and let the draw_calls 
-    // switch the frame by using the base-vertex functionality.
-    // I modified the App_MorphAnimation test so that all the characters share the same animation (thus the same vertex arrays) and don't have
-    // transforms attached to eliminate the cost of glLoadMatrix/glMatrixMode. The resulting frame to frame time resulted only 1.2% reduced.
-
     // vertex/normals frame 1
     mGeometry->setVertexArray( mVertexFrames[mFrame1].get() );
     mGeometry->setNormalArray( mNormalFrames[mFrame1].get() );
 
-    if (!mVertexFrames[mFrame1]->bufferObject()->handle() || mVertexFrames[mFrame1]->isBufferObjectDirty())
-      mVertexFrames[mFrame1]->updateBufferObject(BUM_KeepRamBuffer);
+    if (!mVertexFrames[mFrame1]->gpuBuffer()->handle())
+      mVertexFrames[mFrame1]->updateVBO();
 
-    if (!mVertexFrames[mFrame2]->bufferObject()->handle() || mVertexFrames[mFrame2]->isBufferObjectDirty())
-      mVertexFrames[mFrame2]->updateBufferObject(BUM_KeepRamBuffer);
+    if (!mVertexFrames[mFrame2]->gpuBuffer()->handle())
+      mVertexFrames[mFrame2]->updateVBO();
 
-    if (!mNormalFrames[mFrame1]->bufferObject()->handle() || mNormalFrames[mFrame1]->isBufferObjectDirty())
-      mNormalFrames[mFrame1]->updateBufferObject(BUM_KeepRamBuffer);
+    if (!mNormalFrames[mFrame1]->gpuBuffer()->handle())
+      mNormalFrames[mFrame1]->updateVBO();
 
-    if (!mNormalFrames[mFrame2]->bufferObject()->handle() || mNormalFrames[mFrame2]->isBufferObjectDirty())
-      mNormalFrames[mFrame2]->updateBufferObject(BUM_KeepRamBuffer);
+    if (!mNormalFrames[mFrame2]->gpuBuffer()->handle())
+      mNormalFrames[mFrame2]->updateVBO();
 
-    VL_CHECK( mVertexFrames[mFrame1]->bufferObject()->handle() )
-    VL_CHECK( mVertexFrames[mFrame2]->bufferObject()->handle() )
-    VL_CHECK( mNormalFrames[mFrame1]->bufferObject()->handle() )
-    VL_CHECK( mNormalFrames[mFrame2]->bufferObject()->handle() )
+    VL_CHECK( mVertexFrames[mFrame1]->gpuBuffer()->handle() )
+    VL_CHECK( mVertexFrames[mFrame2]->gpuBuffer()->handle() )
+    VL_CHECK( mNormalFrames[mFrame1]->gpuBuffer()->handle() )
+    VL_CHECK( mNormalFrames[mFrame2]->gpuBuffer()->handle() )
 
     #if 1 // faster method:
 
@@ -177,7 +169,7 @@ void MorphingCallback::init(ResourceDatabase* res_db)
     return;
 
   Geometry* geometry = res_db->get<Geometry>(0);
-  mGeometry->shallowCopyFrom( *geometry );
+  geometry->shallowCopy( mGeometry.get() );
   mVertices = new ArrayFloat3;
   mNormals  = new ArrayFloat3;
 
@@ -187,7 +179,7 @@ void MorphingCallback::init(ResourceDatabase* res_db)
 
   for(unsigned i=0, count=res_db->count<ArrayAbstract>(); i<count; ++i)
   {
-    ArrayFloat3* buffer = cast<ArrayFloat3>(res_db->get<ArrayAbstract>(i));
+    ArrayFloat3* buffer = dynamic_cast<ArrayFloat3*>(res_db->get<ArrayAbstract>(i));
     if (buffer && buffer->objectName() == "vertex_frame")
     {
       mVertexFrames.push_back(buffer);
@@ -251,13 +243,10 @@ void MorphingCallback::blendFrames(int a, int b, float t)
     mNormals->at(i)  = mNormalFrames[ a ]->at(i)*Ha + mNormalFrames[ b ]->at(i)*Hb;
   }
 
-  if (mGeometry->isBufferObjectEnabled() && Has_BufferObject)
+  if (mGeometry->vboEnabled() && (GLEW_VERSION_1_5||GLEW_ARB_vertex_buffer_object))
   {
-    // mic fixme:
-    // Come si vede qui' sta nomenclatura non e' chiara: 
-    // sembra che stiamo semplicemente cambiano un po di flags invece stiamo updatando tutto il BufferObject!!!
-    mVertices->bufferObject()->setBufferData(BU_DYNAMIC_DRAW, false);
-    mNormals ->bufferObject()->setBufferData(BU_DYNAMIC_DRAW, false);
+    mVertices->gpuBuffer()->setBufferData(BU_DYNAMIC_DRAW, false);
+    mNormals ->gpuBuffer()->setBufferData(BU_DYNAMIC_DRAW, false);
   }
 }
 //-----------------------------------------------------------------------------
@@ -274,7 +263,7 @@ void MorphingCallback::setAnimation(int start, int end, float period)
   mAnimationStarted = false;
 }
 //-----------------------------------------------------------------------------
-void MorphingCallback::startAnimation(real start_time)
+void MorphingCallback::startAnimation(Real start_time)
 {
   mAnimationStarted = true;
   mFrame1 = -1;
@@ -307,7 +296,7 @@ void MorphingCallback::initFrom(MorphingCallback* morph_cb)
     mGeometry = morph_cb->mGeometry;
   #else
     // Geometry copy method
-    mGeometry->shallowCopyFrom( *morph_cb->mGeometry );
+    morph_cb->mGeometry->shallowCopy( mGeometry.get() );
 
     // compute AABB using the first frame
 

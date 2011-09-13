@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -31,7 +31,7 @@
 
 #include <vlGraphics/Extrusion.hpp>
 #include <vlGraphics/Tessellator.hpp>
-#include <vlCore/glsl_math.hpp>
+#include <vlCore/GLSLmath.hpp>
 
 using namespace vl;
 
@@ -141,15 +141,15 @@ ref<Geometry> Extrusion::extrude()
   int prof_count = silhouetteMode() == SilhouetteClosed ? (int)silhouette().size() : (int)silhouette().size()-1;
   ref<DrawElementsUInt> de = new DrawElementsUInt(PT_QUADS);
   geom->drawCalls()->push_back(de.get());
-  de->indexBuffer()->resize(4 * prof_count * (segments-1));
+  de->indices()->resize(4 * prof_count * (segments-1));
   for(size_t iseg=0; iseg<segments-1; ++iseg)
   {
     for(int iquad=0; iquad<prof_count; ++iquad)
     {
-      de->indexBuffer()->at(iquad*4+iseg*4*prof_count + 3) = (iseg + 0) * (GLuint)silhouette().size() + iquad;
-      de->indexBuffer()->at(iquad*4+iseg*4*prof_count + 2) = (iseg + 0) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size();
-      de->indexBuffer()->at(iquad*4+iseg*4*prof_count + 1) = (iseg + 1) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size();
-      de->indexBuffer()->at(iquad*4+iseg*4*prof_count + 0) = (iseg + 1) * (GLuint)silhouette().size() + iquad;
+      de->indices()->at(iquad*4+iseg*4*prof_count + 3) = (iseg + 0) * (GLuint)silhouette().size() + iquad;
+      de->indices()->at(iquad*4+iseg*4*prof_count + 2) = (iseg + 0) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size();
+      de->indices()->at(iquad*4+iseg*4*prof_count + 1) = (iseg + 1) * (GLuint)silhouette().size() + (iquad+1)%silhouette().size();
+      de->indices()->at(iquad*4+iseg*4*prof_count + 0) = (iseg + 1) * (GLuint)silhouette().size() + iquad;
     }
   }
 
@@ -191,7 +191,7 @@ ref<Geometry> Extrusion::extrude()
 
   ref<ArrayFloat3> vert_array = new ArrayFloat3;
   geom->setVertexArray( vert_array.get() );
-  vert_array->initFrom(verts);
+  *vert_array = verts;
 
   if (!colorPath().empty())
   {

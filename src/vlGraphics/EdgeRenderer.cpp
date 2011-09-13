@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -36,7 +36,7 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera, real frame_clock)
+const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera* camera, Real frame_clock)
 {
   // skip if renderer is disabled
 
@@ -56,7 +56,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
 
       // render-target activation.
       // note: an OpenGL context can have multiple rendering targets!
-      mRenderer->framebuffer()->activate();
+      mRenderer->renderTarget()->activate();
 
       // viewport setup.
       camera->viewport()->setClearFlags( mRenderer->clearFlags() );
@@ -122,31 +122,22 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   // back wireframe
   glDisable(GL_DEPTH_TEST);
   glLineWidth(mLineWidth > 2.0f ? mLineWidth / 2.0f : 1.0f);
-#if defined(VL_OPENGL)
   glLineStipple(1,0xF0F0);
   glEnable(GL_LINE_STIPPLE);
-#endif
-  if (showHiddenLines()) 
-    renderLines(camera);
+    if (showHiddenLines()) renderLines(camera);
   glDisable(GL_LINE_SMOOTH);
-#if defined(VL_OPENGL)
   glDisable(GL_LINE_STIPPLE);
-#endif
   glDisable(GL_BLEND);
   glLineWidth(1.0f);
 
-  // was enabled by viewport
-  glDisable(GL_SCISSOR_TEST);
-
   // disable all vertex arrays
-  framebuffer()->openglContext()->bindVAS(NULL, false, true);
-
-  VL_CHECK( framebuffer()->openglContext()->isCleanState(true) );
+  renderTarget()->openglContext()->bindVAS(NULL, false, true);
+  VL_CHECK( renderTarget()->openglContext()->isCleanState(true) );
 
   return render_queue;
 }
 //-----------------------------------------------------------------------------
-void EdgeRenderer::renderSolids(Camera* camera, real frame_clock)
+void EdgeRenderer::renderSolids(Camera* camera, Real frame_clock)
 {
   // transform
   const Transform* cur_transform = NULL;
@@ -156,10 +147,10 @@ void EdgeRenderer::renderSolids(Camera* camera, real frame_clock)
 
   for( std::map< ref<Actor>, ref<WFInfo> >::iterator it = mVisibleActors.begin(); it != mVisibleActors.end(); ++it)
   {
-    ref<Actor> actor = it->first;
+    Actor* actor = it->first.get();
     VL_CHECK(actor);
     VL_CHECK(actor->lod(0));
-    WFInfo* wfinfo = it->second.get();
+    const WFInfo* wfinfo = it->second.get();
     VL_CHECK(wfinfo);
 
     // --------------- transform ---------------
@@ -188,10 +179,9 @@ void EdgeRenderer::renderSolids(Camera* camera, real frame_clock)
       }
     }
 
-    // note: the color is not important here
     wfinfo->mEdgeCallback->setShowCreases(showCreases());
-    wfinfo->mEdgeCallback->onActorRenderStarted( actor.get(), frame_clock, camera, wfinfo->mGeometry.get(), NULL, 0 );
-    actor->lod(0)->render( actor.get(), NULL, camera, framebuffer()->openglContext() );
+    wfinfo->mEdgeCallback->onActorRenderStarted( actor, frame_clock, camera, wfinfo->mGeometry.get(), NULL, 0 );
+    actor->lod(0)->render( actor, NULL, camera, renderTarget()->openglContext() );
   }
 }
 //-----------------------------------------------------------------------------
@@ -205,8 +195,8 @@ void EdgeRenderer::renderLines(Camera* camera)
 
   for( std::map< ref<Actor>, ref<WFInfo> >::iterator it = mVisibleActors.begin(); it != mVisibleActors.end(); ++it)
   {
-    ref<Actor> actor = it->first;
-    WFInfo* wfinfo = it->second.get();
+    Actor* actor = it->first.get();
+    const WFInfo* wfinfo = it->second.get();
 
     // --------------- transform ---------------
 
@@ -235,8 +225,7 @@ void EdgeRenderer::renderLines(Camera* camera)
     }
 
     // note: no rendering callbacks here
-    glColor4fv( wfinfo->mColor.ptr() );
-    wfinfo->mGeometry->render( actor.get(), NULL, camera, framebuffer()->openglContext() );
+    wfinfo->mGeometry->render( actor, NULL, camera, renderTarget()->openglContext() );
   }
 }
 //-----------------------------------------------------------------------------
@@ -245,7 +234,7 @@ EdgeRenderer::WFInfo* EdgeRenderer::declareActor(Actor* act, const fvec4& color)
   std::map< ref<Actor>, ref<WFInfo> >::iterator it = mActorCache.find( act );
   if (it!=mActorCache.end())
   {
-    it->second->mColor = color;
+    it->second->mGeometry->setColor(color);
     return it->second.get();
   }
   else
@@ -259,7 +248,7 @@ EdgeRenderer::WFInfo* EdgeRenderer::declareActor(Actor* act, const fvec4& color)
       info->mEdgeCallback = new EdgeUpdateCallback(ee.edges());
       if (info->mGeometry)
       {
-        info->mColor = color;
+        info->mGeometry->setColor(color);
         mActorCache[act] = info;
         return info.get();
       }
@@ -284,7 +273,7 @@ EdgeRenderer::WFInfo* EdgeRenderer::declareActor(Actor* act)
       info->mEdgeCallback = new EdgeUpdateCallback(ee.edges());
       if (info->mGeometry)
       {
-        info->mColor = mDefaultLineColor;
+        info->mGeometry->setColor(mDefaultLineColor);
         mActorCache[act] = info;
         return info.get();
       }

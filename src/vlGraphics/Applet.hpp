@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -54,14 +54,14 @@ namespace vl
    * - Key_F: enables the GhostCameraManipulator (fly mode).
    * - Key_F1: toggles fullscreen mode if supported.
    * - Key_F5: saves a screenshot of the current OpenGL window. 
-   * - Key_C: toggles the continuous update of the OpenGL window (see also OpenGLContext::setContinuousUpdate()).
+   * - Key_C: toggles the continuous update fo the OpenGL window (see also OpenGLContext::setContinuousUpdate()).
    * - Key_U: updates the OpenGL window content by calling openglContext()->update(). 
    */
   class VLGRAPHICS_EXPORT Applet: public UIEventListener
   {
-    VL_INSTRUMENT_CLASS(vl::Applet, UIEventListener)
-
   public:
+    virtual const char* className() { return "vl::Applet"; }
+
     /** Constructor */
     Applet();
 

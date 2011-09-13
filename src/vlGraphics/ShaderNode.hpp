@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -44,10 +44,8 @@ namespace vl
    */
   class ShaderNode: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::ShaderNode, Object)
-
   public:
-    /** ShaderNode's representation of an enable. */
+    // --- --- ---
     struct EnableInfo
     {
       EnableInfo(EEnable en=EN_UnknownEnable, bool on=false, EInheritance inheritance=IN_Propagate): mEnable(en), mOn(on), mInheritance(inheritance) {}
@@ -56,16 +54,15 @@ namespace vl
       bool mOn;
       EInheritance mInheritance;
     };
-    /** ShaderNode's representation of a RenderState. */
+    // --- --- ---
     struct RenderStateInfo
     {
-      RenderStateInfo(EInheritance inheritance=IN_Propagate, RenderState* rs=NULL, int index=-1): mInheritance(inheritance), mRenderState(rs), mIndex(index) {}
+      RenderStateInfo(RenderState* rs=NULL, EInheritance inheritance=IN_Propagate): mRenderState(rs), mInheritance(inheritance) {}
 
-      EInheritance mInheritance;
       ref<RenderState> mRenderState;
-      int mIndex;
+      EInheritance mInheritance;
     };
-    /** ShaderNode's representation of a Uniform. */
+    // --- --- ---
     struct UniformInfo
     {
       UniformInfo(Uniform* unif=NULL, EInheritance inheritance=IN_Propagate): mUniform(unif), mInheritance(inheritance) {}
@@ -79,6 +76,8 @@ namespace vl
     typedef std::map< std::string, UniformInfo > UniformsMap;
 
   public:
+    virtual const char* className() { return "vl::ShaderNode"; }
+
     ShaderNode(): mParent(NULL) {}
 
     // shader-related functions
@@ -247,44 +246,30 @@ namespace vl
         // we can speed this up even more by removing the duplication check
 
         for(RenderStatesMap::const_iterator rs_it = mRenderStates_Final.begin(); rs_it != mRenderStates_Final.end(); ++rs_it)
-          mShader->setRenderState(rs_it->second.mRenderState.get_writable(), rs_it->second.mIndex);
+          mShader->setRenderState(rs_it->second.mRenderState.get());
         for(EnablesMap::const_iterator en_it = mEnables_Final.begin(); en_it != mEnables_Final.end(); ++en_it)
           mShader->enable(en_it->second.mEnable);
         for(UniformsMap::const_iterator rs_it = mUniforms_Final.begin(); rs_it != mUniforms_Final.end(); ++rs_it)
-          mShader->setUniform(rs_it->second.mUniform.get_writable());
+          mShader->setUniform(rs_it->second.mUniform.get());
       }
     }
 
     // states setters
 
-    void setRenderState(EInheritance inheritance, RenderStateNonIndexed* rs)
+    void setRenderState(RenderState* rs, EInheritance inheritance=IN_Propagate)
     {
-      RenderStateInfo info(inheritance, rs, -1);
-      mRenderStates[ rs->type() ] = info;
+      RenderStateInfo info(rs, inheritance);
+      mRenderStates[rs->type()] = info;
     }
 
-    void setRenderState(EInheritance inheritance, RenderState* rs, int index)
+    void eraseRenderState(RenderState* rs)
     {
-      RenderStateInfo info(inheritance, rs, index);
-      mRenderStates[ (ERenderState)(rs->type()+index) ] = info;
-    }
-
-    void eraseRenderState(RenderStateNonIndexed* rs)
-    {
-      mRenderStates.erase( rs->type() );
-    }
-
-    void eraseRenderState(RenderState* rs, int index)
-    {
-      VL_CHECK(index >= -1)
-      if (index == -1)
-        index = 0;
-      mRenderStates.erase( (ERenderState)(rs->type()+index) );
+      mRenderStates.erase(rs->type());
     }
 
     void setEnable(EEnable en, bool on, EInheritance inheritance=IN_Propagate) 
     {
-      EnableInfo info(en, on, inheritance);
+      EnableInfo info(en,on,inheritance);
       mEnables[en] = info;
     }
 

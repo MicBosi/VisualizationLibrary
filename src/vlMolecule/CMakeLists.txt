@@ -4,7 +4,7 @@
 #  All rights reserved.                                                        #
 #                                                                              #
 #  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.org                                         #
+#  http://www.visualizationlibrary.com                                         #
 #                                                                              #
 #  Released under the OSI approved Simplified BSD License                      #
 #  http://www.opensource.org/licenses/bsd-license.php                          #
@@ -33,4 +33,4 @@ target_link_libraries(VLMolecule VLCore VLGraphics ${OPENGL_glu_LIBRARY})
 VL_INSTALL_TARGET(VLMolecule)
 
 # VLMolecule headers
-install(FILES ${VLMOLECULE_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlMolecule")
+install(FILES ${VLMOLECULE_INC} DESTINATION "include/vlMolecule")

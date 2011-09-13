@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -57,9 +57,9 @@ namespace vl
   */
   class VLCORE_EXPORT ZippedDirectory: public VirtualDirectory
   {
-    VL_INSTRUMENT_CLASS(vl::ZippedDirectory, VirtualDirectory)
-
   public:
+    virtual const char* className() { return "vl::ZippedDirectory"; }
+
     ZippedDirectory();
 
     ZippedDirectory(const String& zip_file);
@@ -68,9 +68,7 @@ namespace vl
 
     bool setPath(const String& name);
 
-    const VirtualFile* sourceZipFile() const;
-
-    VirtualFile* sourceZipFile();
+    VirtualFile* sourceZipFile() const;
 
     void setSourceZipFile(VirtualFile* file);
 
@@ -86,9 +84,7 @@ namespace vl
 
     int zippedFileCount() const;
 
-    const ZippedFile* zippedFile(int index) const;
-
-    ZippedFile* zippedFile(int index);
+    ZippedFile* zippedFile(int index) const;
 
     void listSubDirs(std::vector<String>& dirs, bool append=false) const;
     ref<ZippedDirectory> zippedSubDir(const String& subdir_name) const;

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -46,6 +46,12 @@ public:
     /* used to display the application title next to FPS counter */
     applet->setAppletName(title);
 
+    /* open a console so we can see the applet's output on stdout */
+    showWin32Console();
+
+    /* init Visualization Library */
+    vl::VisualizationLibrary::init();
+
     /* create a SDL window */
     vl::ref<vlSDL::SDLWindow> sdl_window = new vlSDL::SDLWindow;
 
@@ -62,6 +68,9 @@ public:
 
     /* deallocate the window with all the OpenGL resources before shutting down Visualization Library */
     sdl_window = NULL;
+
+    /* shutdown Visualization Library */
+    vl::VisualizationLibrary::shutdown();
   }
 };
 //-----------------------------------------------------------------------------
@@ -70,7 +79,7 @@ int main(int argc, char* args[])
   /* parse command line arguments */
   int   test = 0;
   if (argc>=2)
-    test = atoi(args[1]);
+    test = String(args[1]).toInt();
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -83,7 +92,7 @@ int main(int argc, char* args[])
   //format.setMultisample(true);
 
   TestBatterySDL test_battery;
-  test_battery.run(test, args[1], format);
+  test_battery.run(test, format);
 
   return 0;
 }

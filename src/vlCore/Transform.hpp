@@ -71,8 +71,6 @@ namespace vl
     * \sa Actor, Rendering, Effect, Renderable, Geometry */
   class VLCORE_EXPORT Transform: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Transform, Object)
-
   public:
     /** Constructor. */
     Transform(): mWorldMatrixUpdateTick(0), mAssumeIdentityWorldMatrix(false), mParent(NULL)
@@ -108,7 +106,7 @@ namespace vl
 
     /** Utility function equivalent to \p setLocalMatrix( mat4::getTranslation(x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
-    void translate(real x, real y, real z);
+    void translate(Real x, Real y, Real z);
     
     /** Utility function equivalent to \p setLocalMatrix( mat4::getTranslation(t)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
@@ -116,11 +114,11 @@ namespace vl
     
     /** Utility function equivalent to \p setLocalMatrix( mat4::getScaling(x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
-    void scale(real x, real y, real z);
+    void scale(Real x, Real y, Real z);
     
     /** Utility function equivalent to \p setLocalMatrix( mat4::getRotation(degrees,x,y,z)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */
-    void rotate(real degrees, real x, real y, real z);
+    void rotate(Real degrees, Real x, Real y, Real z);
     
     /** Utility function equivalent to \p setLocalMatrix( mat4::getRotation(from,to)*localMatrix() ).
       * After calling this you might want to call computeWorldMatrix() or computeWorldMatrixRecursive(). */

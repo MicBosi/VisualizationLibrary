@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -44,24 +44,24 @@ public:
     if (!vl::defLoadWriterManager()->canLoad("md2"))
     {
       vl::Log::error("App_MorphAnimation requires VL_IO_2D_MD2.\n");
-      vl::Time::sleep(2000);
+      vl::Time::sleep(3000);
       exit(1);
     }
 
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     const int actor_count = 1000;
 
     ghostCameraManipulator()->setMovementSpeed(500.0f);
-    bool glsl_vertex_blend = vl::Has_GL_Version_2_0 ? true : false;
+    bool glsl_vertex_blend = GLEW_VERSION_2_0 ? true : false;
     const float area_unit  = 1500.0f*1500.0f/2000.0f;
     const float size = sqrt( actor_count * area_unit );
 
     // common effect settings
 
-    vl::ref<vl::Light> light = new vl::Light;
+    vl::ref<vl::Light> light = new vl::Light(0);
     vl::ref<vl::Effect> ground_fx = new vl::Effect;
-    ground_fx->shader()->setRenderState( light.get(), 0 );
+    ground_fx->shader()->setRenderState( light.get() );
     ground_fx->shader()->enable(vl::EN_LIGHTING);
     ground_fx->shader()->enable(vl::EN_DEPTH_TEST);
 
@@ -73,7 +73,6 @@ public:
     sceneManager()->tree()->addActor(ground.get(), ground_fx.get() );
 
     vl::ref<vl::ResourceDatabase> res_db = vl::loadResource("/3rdparty/pknight/tris.md2");
-    VL_CHECK(res_db && res_db->get<vl::Geometry>(0))
 
     vl::ref<vl::MorphingCallback> morph_cb1 = new vl::MorphingCallback;
     morph_cb1->init(res_db.get());
@@ -82,12 +81,12 @@ public:
     const char* texname[] = { "/3rdparty/pknight/evil.tif", "/3rdparty/pknight/knight.tif", "/3rdparty/pknight/ctf_r.tif", "/3rdparty/pknight/ctf_b.tif" };
     for(int i=0; i<4; ++i)
     {
-      effect[i]->shader()->setRenderState( light.get(), 0 );
+      effect[i]->shader()->setRenderState( light.get() );
       effect[i]->shader()->enable(vl::EN_LIGHTING);
       effect[i]->shader()->enable(vl::EN_DEPTH_TEST);
       vl::ref<vl::Texture> texture = new vl::Texture;
       texture->prepareTexture2D(texname[i], vl::TF_RGBA);
-      effect[i]->shader()->gocTextureSampler(0)->setTexture( texture.get() );
+      effect[i]->shader()->gocTextureUnit(0)->setTexture( texture.get() );
 
       if (glsl_vertex_blend)
       {

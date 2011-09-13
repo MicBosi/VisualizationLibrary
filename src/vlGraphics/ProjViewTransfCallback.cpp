@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -39,7 +39,7 @@ using namespace vl;
 //------------------------------------------------------------------------------
 // ProjViewTransfCallbackStandard
 //------------------------------------------------------------------------------
-void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_changed, const GLSLProgram* glsl_program, const Camera* camera, const Transform* transform)
+void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_changed, const GLSLProgram* glsl_program, const Camera* camera, const Transform* transform, bool is_gl_compatible)
 {
   // Once you opt-in for using VL substitutes for matrix variables you should not use the GL fixed-function ones such as:
   // gl_ModelViewMatrix, gl_ProjectionMatrix, gl_ModelViewProjectionMatrix and gl_NormalMatrix
@@ -47,7 +47,7 @@ void ProjViewTransfCallback::updateMatrices(bool cam_changed, bool transf_change
 
   // Also, don't use the fixed function pipeline if we don't have it!
 
-  bool use_fixed_function_matrices = Has_Fixed_Function_Pipeline;
+  bool use_fixed_function_matrices = is_gl_compatible;
 
   // projection matrix
   if ( cam_changed )

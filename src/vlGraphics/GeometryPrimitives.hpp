@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -41,7 +41,7 @@ namespace vl
   typedef enum { CC_FlatCap, CC_RoundedCap, CC_NoCap } ECapsuleCap;
 
   //! Creates a box
-  VLGRAPHICS_EXPORT ref<Geometry> makeBox( const vec3& origin, real xside=1, real yside=1, real zside=1, bool tex_coords=true );
+  VLGRAPHICS_EXPORT ref<Geometry> makeBox( const vec3& origin, Real xside=1, Real yside=1, Real zside=1, bool tex_coords=true );
 
   //! Creates a box
   VLGRAPHICS_EXPORT ref<Geometry> makeBox( const vec3& min, const vec3& max, bool tex_coords=true );
@@ -50,40 +50,40 @@ namespace vl
   VLGRAPHICS_EXPORT ref<Geometry> makeBox( const AABB& aabb, bool tex_coords=true );
 
   //! Creates a cone
-  VLGRAPHICS_EXPORT ref<Geometry> makeCone( const vec3& origin, real diameter=1, real height=1, int phi=20, bool bottom=true );
+  VLGRAPHICS_EXPORT ref<Geometry> makeCone( const vec3& origin, Real diameter=1, Real height=1, int phi=20, bool bottom=true );
 
   //! Creates a pyramid
-  VLGRAPHICS_EXPORT ref<Geometry> makePyramid( const vec3& origin, real side=1, real height=1 );
+  VLGRAPHICS_EXPORT ref<Geometry> makePyramid( const vec3& origin, Real side=1, Real height=1 );
 
   //! Creates an icosahedron
-  VLGRAPHICS_EXPORT ref<Geometry> makeIcosahedron( const vec3& origin, real diameter );
+  VLGRAPHICS_EXPORT ref<Geometry> makeIcosahedron( const vec3& origin, Real diameter );
 
   //! Creates a sphere by iteratively subdividing an icosahedron.
-  VLGRAPHICS_EXPORT ref<Geometry> makeIcosphere( const vec3& pos, real diameter=1, int detail=2, bool remove_doubles = true );
+  VLGRAPHICS_EXPORT ref<Geometry> makeIcosphere( const vec3& pos, Real diameter=1, int detail=2, bool remove_doubles = true );
 
   //! Creates a uv sphere
-  VLGRAPHICS_EXPORT ref<Geometry> makeUVSphere( const vec3& origin, real diameter=1, int phi=20, int theta=20 );
+  VLGRAPHICS_EXPORT ref<Geometry> makeUVSphere( const vec3& origin, Real diameter=1, int phi=20, int theta=20 );
 
   //! Creates a cylinder
-  VLGRAPHICS_EXPORT ref<Geometry> makeCylinder( const vec3& origin, real diameter=1, real height=1, int phi=20, int theta=2, bool top=true, bool bottom=true );
+  VLGRAPHICS_EXPORT ref<Geometry> makeCylinder( const vec3& origin, Real diameter=1, Real height=1, int phi=20, int theta=2, bool top=true, bool bottom=true );
 
   //! Creates torus. This function generates also appropriate normals.
-  VLGRAPHICS_EXPORT ref<Geometry> makeTorus( const vec3& origin, real diameter=1, real thickness=0.2, int phi=10, int theta=10, float tex_coords = 0.0f );
+  VLGRAPHICS_EXPORT ref<Geometry> makeTorus( const vec3& origin, Real diameter=1, Real thickness=0.2, int phi=10, int theta=10, float tex_coords = 0.0f );
 
   //! Creates a 3d capsule with rounded, flat or no caps
   VLGRAPHICS_EXPORT ref<Geometry> makeCapsule(float radius, float height, int segments, ECapsuleCap top_cap, ECapsuleCap bottom_cap, const fvec4& top_col, const fvec4& bottom_col);
 
   //! Creates a classic Newell's teapot
-  VLGRAPHICS_EXPORT ref<Geometry> makeTeapot( const vec3& origin, real diameter=1, int detail=8);
+  VLGRAPHICS_EXPORT ref<Geometry> makeTeapot( const vec3& origin, Real diameter=1, int detail=8);
 
   //! Creates a 2D grid
-  VLGRAPHICS_EXPORT ref<Geometry> makeGrid( const vec3& origin, real xside, real zside, int x, int z, bool gen_texcoords = false, fvec2 uv0=fvec2(0,0), fvec2 uv1=fvec2(1,1));
+  VLGRAPHICS_EXPORT ref<Geometry> makeGrid( const vec3& origin, Real xside, Real zside, int x, int z, bool gen_texcoords = false, fvec2 uv0=fvec2(0,0), fvec2 uv1=fvec2(1,1));
 
   //! Creates a set of points
   VLGRAPHICS_EXPORT ref<Geometry> makePoints( const std::vector< vec3 >& pos, const fvec4& color = white);
 
   //! Creates a 2D circle
-  VLGRAPHICS_EXPORT ref<Geometry> makeCircle( vec3 origin, real radius, int slices = 60 );
+  VLGRAPHICS_EXPORT ref<Geometry> makeCircle( vec3 origin, Real radius, int slices = 60 );
 }
 
 #endif

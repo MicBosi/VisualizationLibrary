@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -33,43 +33,13 @@
 #define GLSL_INCLUDE_ONCE
 
 #include <vlGraphics/UniformSet.hpp>
-#include <vlCore/glsl_math.hpp>
+#include <vlCore/GLSLmath.hpp>
 #include <vlGraphics/RenderState.hpp>
 #include <vlCore/String.hpp>
 
 namespace vl
 {
   class Uniform;
-
-  //------------------------------------------------------------------------------
-  // UniformInfo
-  //------------------------------------------------------------------------------
-  //! Structure containing all the info regarding an active Uniform, see also GLSLProgram::activeUniforms()
-  struct UniformInfo: public Object
-  {
-    UniformInfo(const char* name, EUniformType type, int size, int location)
-    :Name(name), Type(type), Size(size), Location(location) {}
-
-    std::string Name;  //!< The name of the uniform.
-    EUniformType Type; //!< The type of the uniform (float, vec4, mat2x3, sampler2D etc.)
-    int Size;          //!< The size of the uniform: 1 for non-arrays, >= 1 for arrays.
-    int Location;      //!< Location of the uniform as retuned by glGetUniformLocation().
-  };
-
-  //------------------------------------------------------------------------------
-  // AttribInfo
-  //------------------------------------------------------------------------------
-  //! Structure containing all the info regarding an active vertex attribute, see also GLSLProgram::activeAttribs()
-  struct AttribInfo: public Object
-  {
-    AttribInfo(const char* name, EAttributeType type, int size, int location)
-    :Name(name), Type(type), Size(size), Location(location) {}
-
-    std::string Name;    //!< Name of the active attribute.
-    EAttributeType Type; //!< Type as returned by http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
-    int Size;            //!< The size of the attribute, in units of the type returned in Type.
-    int Location;        //!< Location of the active attribute
-  };
 
   //------------------------------------------------------------------------------
   // GLSLShader
@@ -79,33 +49,20 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class VLGRAPHICS_EXPORT GLSLShader: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::GLSLShader, Object)
-
   public:
-    GLSLShader();
-
-    GLSLShader(EShaderType type, const String& source_or_path);
+    GLSLShader(EShaderType type, const String& source=String());
 
     ~GLSLShader();
 
-    void setType(EShaderType type) { mType = type; }
+    virtual const char* className() { return "vl::Unnamed GLSLShader"; }
 
     EShaderType type() const { return mType; }
 
-    //! Sets the sources for this shader and schedules a recompilation for it. If the string passed is a file path the source is loaded from it.
-    void setSource( const String& source_or_path );
-
+    //! Sets the sources for this shader and schedules a recompilation for it
+    void setSource( const String& source );
+    
     //! Returns the sources for this shader
     const std::string& source() const { return mSource; }
-
-    //! The path from which the shader was loaded
-    void setPath(const char* path) { mPath = path; }
-
-    //! The path from which the shader was loaded
-    const std::string& path() const { return mPath; }
-
-    //! Retrieves the shader source using glGetShaderSource()
-    std::string getShaderSource() const;
 
     //! Compiles the shader, see also http://www.opengl.org/sdk/docs/man/xhtml/glCompileShader.xml for more information.
     //! This function also create the shader if handle() == 0 using the OpenGL function glCreateShader(), see also http://www.opengl.org/sdk/docs/man/xhtml/glCreateShader.xml
@@ -130,7 +87,6 @@ namespace vl
   protected:
     EShaderType mType;
     std::string mSource;
-    std::string mPath;
     unsigned int mHandle;
     bool mCompiled;
   };
@@ -140,8 +96,6 @@ namespace vl
    * \sa GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLVertexShader: public GLSLShader
   {
-    VL_INSTRUMENT_CLASS(vl::GLSLVertexShader, GLSLShader)
-
   public:
     //! Constructor.
     //! \param source Vertex shader's source code or path to a text file containing the vertex shader's source code.
@@ -152,6 +106,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
+    virtual const char* className() { return "vl::GLSLVertexShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL fragment shader to be bound to a GLSLProgram: the shader this shader will run on the programmable fragment processor.
@@ -159,8 +114,6 @@ namespace vl
    * \sa GLSLVertexShader, GLSLGeometryShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLFragmentShader: public GLSLShader
   {
-    VL_INSTRUMENT_CLASS(vl::GLSLFragmentShader, GLSLShader)
-
   public:
     //! \param source Fragment shader's source code or path to a text file containing the fragment shader's source code.
     GLSLFragmentShader(const String& source=String()): GLSLShader(ST_FRAGMENT_SHADER, source)
@@ -170,6 +123,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
+    virtual const char* className() { return "vl::GLSLFragmentShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL geometry shader to be bound to a GLSLProgram: the shader this shader will run on the programmable geometry processor.
@@ -177,8 +131,6 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLTessControlShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLGeometryShader: public GLSLShader
   {
-    VL_INSTRUMENT_CLASS(vl::GLSLGeometryShader, GLSLShader)
-
   public:
     //! \param source Geometry shader's source code or path to a text file containing the geometry shader's source code.
     GLSLGeometryShader(const String& source=String()): GLSLShader(ST_GEOMETRY_SHADER, source)
@@ -188,6 +140,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
+    virtual const char* className() { return "vl::GLSLGeometryShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL tessellation control shader to be bound to a GLSLProgram: the shader this shader will run on the programmable tessellation processor in the control stage.
@@ -195,8 +148,6 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessEvaluationShader, GLSLProgram, Effect */
   class GLSLTessControlShader: public GLSLShader
   {
-    VL_INSTRUMENT_CLASS(vl::GLSLTessControlShader, GLSLShader)
-
   public:
     //! \param source Tessellation-control shader's source code or path to a text file containing the shader's source code.
     GLSLTessControlShader(const String& source=String()): GLSLShader(ST_TESS_CONTROL_SHADER, source)
@@ -206,6 +157,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
+    virtual const char* className() { return "vl::GLSLTessControlShader"; }
   };
   //------------------------------------------------------------------------------
   /** Wraps a GLSL tessellation evaluation shader to be bound to a GLSLProgram: this shader will run on the programmable tessellation processor in the evaluation stage.
@@ -213,8 +165,6 @@ namespace vl
    * \sa GLSLVertexShader, GLSLFragmentShader, GLSLGeometryShader, GLSLTessControlShader, GLSLProgram, Effect */
   class GLSLTessEvaluationShader: public GLSLShader
   {
-    VL_INSTRUMENT_CLASS(vl::GLSLTessEvaluationShader, GLSLShader)
-
   public:
     //! \param source Tessellation-evaluation shader's source code or path to a text file containing the shader's source code.
     GLSLTessEvaluationShader(const String& source=String()): GLSLShader(ST_TESS_EVALUATION_SHADER, source)
@@ -224,6 +174,7 @@ namespace vl
           mObjectName = className();
       #endif
     }
+    virtual const char* className() { return "vl::GLSLTessEvaluationShader"; }
   };
   //------------------------------------------------------------------------------
   // GLSLProgram
@@ -234,9 +185,9 @@ namespace vl
    * \par Uniforms
    * You have 5 ways to set the value of a uniform:
    * -# call useProgram() to activate the GLSLProgram and directly call glUniform* (see also getUniformLocation()).
-   * -# add a Uniform to the GLSLProgram UniformSet, see vl::GLSLProgram::getUniformSet().
-   * -# add a Uniform to the Actor's UniformSet, see vl::Actor::getUniformSet().
-   * -# add a Uniform to the Actor's Shader UniformSet, see vl::Shader::getUniformSet().
+   * -# add a Uniform to the GLSLProgram UniformSet, see vl::GLSLProgram::uniformSet().
+   * -# add a Uniform to the Actor's UniformSet, see vl::Actor::uniformSet().
+   * -# add a Uniform to the Actor's Shader UniformSet, see vl::Shader::uniformSet().
    * -# directly update the uniform value from ActorEventCallback::onActorRenderStarted() using the standard glUniform*() OpenGL functions.
    *    In this case you have to make sure that <i>all</i> the Actors using a given GLSLProgram/Shader write such uniform.
    *
@@ -261,10 +212,8 @@ namespace vl
    * - Effect
    * - Actor::renderEventCallbacks()
   */
-  class VLGRAPHICS_EXPORT GLSLProgram: public RenderStateNonIndexed
+  class VLGRAPHICS_EXPORT GLSLProgram: public RenderState
   {
-    VL_INSTRUMENT_CLASS(vl::GLSLProgram, RenderStateNonIndexed)
-
     // applyUniform
     friend class Renderer;
   public:
@@ -274,17 +223,10 @@ namespace vl
     //! Destructor. Calls deleteProgram().
     ~GLSLProgram();
 
+    virtual const char* className() { return "vl::GLSLProgram"; }
+
     //! \internal
     virtual ERenderState type() const { return RS_GLSLProgram; }
-
-    virtual ref<RenderState> clone() const
-    {
-      ref<GLSLProgram> rs = new GLSLProgram;
-      *rs = *this;
-      return rs;
-    }
-
-    GLSLProgram& operator=(const GLSLProgram& other);
 
     //! Calls glCreateProgram() in order to acquire a GLSL program handle, see also http://www.opengl.org/sdk/docs/man/xhtml/glCreateProgram.xml for more information.
     //! \note
@@ -306,7 +248,7 @@ namespace vl
     bool useProgram() const;
 
     //! Calls useProgram()
-    void apply(int index, const Camera*, OpenGLContext* ctx) const;
+    void apply(const Camera*, OpenGLContext* ctx) const;
 
     //! Links the GLSLProgram calling glLinkProgram(handle()) only if the program needs to be linked.
     //! \sa
@@ -348,12 +290,12 @@ namespace vl
       * and it will schedule a re-link since the new specified bindings take effect after linking the GLSL program.
       * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
       *     removeAutoAttribLocation(), addAutoAttribLocation() */
-    void bindAttribLocation(unsigned int index, const char* name);
+    void bindAttribLocation(unsigned int index, const std::string& name);
 
     /** Adds an attribute name / index pair to the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
     * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
     *     bindAttribLocation(), removeAutoAttribLocation() */
-    void addAutoAttribLocation(int attr_index, const char* attr_name) { mAutoAttribLocation[attr_name] = attr_index; mScheduleLink = true; }
+    void addAutoAttribLocation(const char* attr_name, int attr_index) { mAutoAttribLocation[attr_name] = attr_index; mScheduleLink = true; }
 
     /** Removes an attribute from the automatic attribute location binding list. Calling this function will schedule a re-linking of the GLSL program.
     * \sa setAutoAttribLocations(), autoAttribLocations(), clearAutoAttribLocations(), 
@@ -379,8 +321,8 @@ namespace vl
     //! \note The program must be linked before calling this function.
     int getAttribLocation(const char* name) const
     {
-      VL_CHECK( Has_GLSL )
-      if( !Has_GLSL )
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
         return -1;
       VL_CHECK(handle())
       VL_CHECK(linked())
@@ -388,27 +330,23 @@ namespace vl
       return location;
     }
 
+    //! Equivalent to glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &max )
+    static int maxVertexAttribs();
+
     //! Returns the number of GLSLShader objects bound to this GLSLProgram
     int shaderCount() const { return (int)mShaders.size(); }
-
     //! Returns the i-th GLSLShader objects bound to this GLSLProgram
     const GLSLShader* shader(int i) const { return mShaders[i].get(); }
-
     //! Returns the i-th GLSLShader objects bound to this GLSLProgram
     GLSLShader* shader(int i) { return mShaders[i].get(); }
-
     //! Removes all the previously linked shaders and schedules a relinking
     void detachAllShaders();
 
     // --------------- bind frag data location ---------------
 
-    void bindFragDataLocation(int color_number, const char* name);
-
-    void unbindFragDataLocation(const char* name);
-
-    int fragDataLocation(const char* name) const;
-
-    const std::map<std::string, int>& fragDataLocations() const { return mFragDataLocation; }
+    void bindFragDataLocation(int color_number, const std::string& name);
+    void unbindFragDataLocation(const std::string& name);
+    int fragDataLocationBinding(const std::string& name) const;
 
     // --------------- geometry shader ---------------
 
@@ -496,10 +434,24 @@ namespace vl
     /**
     * Returns the binding index of the given uniform.
     */
+    int getUniformLocation(const std::string& name) const
+    {
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
+        return -1;
+      VL_CHECK(linked())
+
+      int location = glGetUniformLocation(handle(), name.c_str());
+      return location;
+    }
+
+    /**
+    * Returns the binding index of the given uniform.
+    */
     int getUniformLocation(const char* name) const
     {
-      VL_CHECK( Has_GLSL )
-      if( !Has_GLSL )
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
         return -1;
       VL_CHECK(linked())
 
@@ -515,27 +467,27 @@ namespace vl
     //! Equivalent to glGetUniformfv(handle(), location, params)
     void getUniformfv(int location, float* params) const
     {
-      VL_CHECK( Has_GLSL )
-      if( !Has_GLSL )
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
       glGetUniformfv(handle(), location, params); VL_CHECK_OGL()
     }
     //! Equivalent to getUniformfv(getUniformLocation(name), params)
-    void getUniformfv(const char* name, float* params) const { getUniformfv(getUniformLocation(name), params); }
+    void getUniformfv(const std::string& name, float* params) const { getUniformfv(getUniformLocation(name), params); }
     //! Equivalent to glGetUniformiv(handle(), location, params)
     void getUniformiv(int location, int* params) const
     {
-      VL_CHECK( Has_GLSL )
-      if( !Has_GLSL )
+      VL_CHECK( GLEW_Has_Shading_Language_20 )
+      if( !GLEW_Has_Shading_Language_20 )
         return;
       VL_CHECK(linked())
       VL_CHECK(handle())
       glGetUniformiv(handle(), location, params); VL_CHECK_OGL()
     }
     //! Equivalent to getUniformiv(getUniformLocation(name)
-    void getUniformiv(const char* name, int* params) const { getUniformiv(getUniformLocation(name), params); }
+    void getUniformiv(const std::string& name, int* params) const { getUniformiv(getUniformLocation(name), params); }
 
     // utility functions for fvec2, fvec3, fvec4, ivec2, ivec3, ivec4, fmat2, fmat3, fmat4
 
@@ -548,64 +500,39 @@ namespace vl
     void getUniform(int location, ivec2& vec) const { getUniformiv(location, vec.ptr()); }
     void getUniform(int location, ivec3& vec) const { getUniformiv(location, vec.ptr()); }
     void getUniform(int location, ivec4& vec) const { getUniformiv(location, vec.ptr()); }
-    void getUniform(const char* name, fvec2& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const char* name, fvec3& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const char* name, fvec4& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const char* name, fmat2& mat) const { getUniform(getUniformLocation(name), mat); }
-    void getUniform(const char* name, fmat3& mat) const { getUniform(getUniformLocation(name), mat); }
-    void getUniform(const char* name, fmat4& mat) const { getUniform(getUniformLocation(name), mat); }
-    void getUniform(const char* name, ivec2& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const char* name, ivec3& vec) const { getUniform(getUniformLocation(name), vec); }
-    void getUniform(const char* name, ivec4& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const std::string& name, fvec2& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const std::string& name, fvec3& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const std::string& name, fvec4& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const std::string& name, fmat2& mat) const { getUniform(getUniformLocation(name), mat); }
+    void getUniform(const std::string& name, fmat3& mat) const { getUniform(getUniformLocation(name), mat); }
+    void getUniform(const std::string& name, fmat4& mat) const { getUniform(getUniformLocation(name), mat); }
+    void getUniform(const std::string& name, ivec2& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const std::string& name, ivec3& vec) const { getUniform(getUniformLocation(name), vec); }
+    void getUniform(const std::string& name, ivec4& vec) const { getUniform(getUniformLocation(name), vec); }
+
+    // mic fixme: documenta la differenza tra vari tipi di Uniforms, "see also" tutte le funzioni sotto, documenta il fatto che non devono esserci collisioni.
 
     //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
-    UniformSet* getUniformSet() { return mUniformSet.get(); }
+    UniformSet* uniformSet() { return mUniformSet.get(); }
     //! Returns a GLSLProgram's \p static UniformSet. \p Static uniforms are those uniforms whose value is constant across one rendering as opposed to Shader uniforms that change across Shaders and Actor uniforms that change across Actors.
-    const UniformSet* getUniformSet() const { return mUniformSet.get(); }
+    const UniformSet* uniformSet() const { return mUniformSet.get(); }
     //! Sets a GLSLProgram's \p static UniformSet.
     void setUniformSet(UniformSet* uniforms) { mUniformSet = uniforms; }
-    //! Utility function using getUniformSet(). Adds a Uniform to this program's \p static uniform set.
-    void setUniform(Uniform* uniform) { if (!getUniformSet()) setUniformSet(new UniformSet); getUniformSet()->setUniform(uniform); }
-    //! Utility function using getUniformSet(). Returns the specified Uniform. Returns NULL if there isn't such a Uniform
-    Uniform* getUniform(const char* name) { if (!getUniformSet()) return NULL; return getUniformSet()->getUniform(name); }
-    //! Utility function using getUniformSet(). Gets or creates the specified Uniform.
-    Uniform* gocUniform(const char* name) { if (!getUniformSet()) setUniformSet(new UniformSet); return getUniformSet()->gocUniform(name); }
-    //! Utility function using getUniformSet(). Erases the specified uniform.
-    void eraseUniform(const char* name) { if(getUniformSet()) getUniformSet()->eraseUniform(name); }
-    //! Utility function using getUniformSet(). Erases the specified uniform.
-    void eraseUniform(const Uniform* uniform) { if(getUniformSet()) getUniformSet()->eraseUniform(uniform); }
-    //! Utility function using getUniformSet(). Erases all the uniforms.
-    void eraseAllUniforms() { if(getUniformSet()) getUniformSet()->eraseAllUniforms(); }
+    //! Utility function using uniformSet(). Adds a Uniform to this program's \p static uniform set.
+    void setUniform(Uniform* uniform) { if (!uniformSet()) setUniformSet(new UniformSet); uniformSet()->setUniform(uniform); }
+    //! Utility function using uniformSet(). Returns the specified Uniform. Returns NULL if there isn't such a Uniform
+    Uniform* getUniform(const std::string& name) { if (!uniformSet()) return NULL; return uniformSet()->getUniform(name); }
+    //! Utility function using uniformSet(). Gets or creates the specified Uniform.
+    Uniform* gocUniform(const std::string& name) { if (!uniformSet()) setUniformSet(new UniformSet); return uniformSet()->gocUniform(name); }
+    //! Utility function using uniformSet(). Erases the specified uniform.
+    void eraseUniform(const std::string& name) { if(uniformSet()) uniformSet()->eraseUniform(name); }
+    //! Utility function using uniformSet(). Erases the specified uniform.
+    void eraseUniform(const Uniform* uniform) { if(uniformSet()) uniformSet()->eraseUniform(uniform); }
+    //! Utility function using uniformSet(). Erases all the uniforms.
+    void eraseAllUniforms() { if(uniformSet()) uniformSet()->eraseAllUniforms(); }
 
-    //! Returns a map containing name, type, size and location of all the uniforms that were active last time the GLSL program was linked.
-    //! - See also vl::GLSLProgram::activeUniformInfo(), vl::UniformInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
-    const std::map<std::string, ref<UniformInfo> >& activeUniforms() const { return mActiveUniforms; }
-
-    //! Returns the info (name, type, size and location) regarding the specified uniform or NULL if such uniform is not currently active since last time the GLSL program was linked.
-    //! - See also vl::GLSLProgram::activeUniforms(), vl::UniformInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
-    const UniformInfo* activeUniformInfo(const char* name) const 
-    { 
-      std::map<std::string, ref<UniformInfo> >::const_iterator it = mActiveUniforms.find(name);
-      if (it == mActiveUniforms.end())
-        return NULL;
-      else
-        return it->second.get();
-    }
-
-    //! Returns a map containing the info of all the attributes active since last time the GLSL program was linked.
-    //! - See also vl::GLSLProgram::activeAttribInfo(), vl::AttribInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
-    const std::map<std::string, ref<AttribInfo> >& activeAttribs() const { return mActiveAttribs; }
-
-    //! Returns the info regarding the specified attribute or NULL if such attribute is not currently active since last time the GLSL program was linked.
-    //! - See also vl::GLSLProgram::activeAttribs(), vl::AttribInfo, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
-    const AttribInfo* activeAttribInfo(const char* name) const 
-    { 
-      std::map<std::string, ref<AttribInfo> >::const_iterator it = mActiveAttribs.find(name);
-      if (it == mActiveAttribs.end())
-        return NULL;
-      else
-        return it->second.get();
-    }
+    //! Returns a map of the currently active uniforms and their relative location index.
+    const std::map<std::string, int>& activeUniformLocations() const { return mActiveUniformLocation; }
 
     //! Returns the binding location of the vl_ModelViewMatrix uniform variable or -1 if no such variable is used by the GLSLProgram
     int vl_ModelViewMatrix() const { return m_vl_ModelViewMatrix; }
@@ -626,20 +553,17 @@ namespace vl
   protected:
     std::vector< ref<GLSLShader> > mShaders;
     std::map<std::string, int> mFragDataLocation;
-    std::map<std::string, ref<UniformInfo> > mActiveUniforms;
-    std::map<std::string, ref<AttribInfo> > mActiveAttribs;
+    std::map<std::string, int> mActiveUniformLocation;
     std::map<std::string, int> mAutoAttribLocation;
     ref<UniformSet> mUniformSet;
     unsigned int mHandle;
     bool mScheduleLink;
-
     // glProgramParameter
     int mGeometryVerticesOut;
     EGeometryInputType mGeometryInputType;
     EGeometryOutputType mGeometryOutputType;
     bool mProgramBinaryRetrievableHint;
     bool mProgramSeparable;
-
     int m_vl_ModelViewMatrix;
     int m_vl_ProjectionMatrix;
     int m_vl_ModelViewProjectionMatrix;

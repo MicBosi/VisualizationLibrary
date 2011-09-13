@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -67,7 +67,7 @@ public:
     "- F:  enables the GhostCameraManipulator (use A/D S/W keys).\n" +
     "- F1: toggles fullscreen mode if supported.\n" +
     "- F5: saves a screenshot of the current OpenGL window.\n" +
-    "- C:  toggles the continuous update of the OpenGL window.\n" +
+    "- C:  toggles the continuous update fo the OpenGL window.\n" +
     "- U:  force update of the OpenGL window.\n" +
     "\n";
   }

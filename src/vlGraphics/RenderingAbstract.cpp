@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -47,7 +47,7 @@ RenderingAbstract::RenderingAbstract()
 //------------------------------------------------------------------------------
 RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
 {
-  super::operator=(other);
+  Object::operator=(other);
 
   mFrameClock          = other.mFrameClock;
   mEnableMask          = other.mEnableMask;
@@ -58,7 +58,7 @@ RenderingAbstract& RenderingAbstract::operator=(const RenderingAbstract& other)
 //------------------------------------------------------------------------------
 void RenderingAbstract::dispatchOnRenderingStarted()
 {
-  Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
+  const Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
   for(int i=0; i<cb.size(); ++i)
   {
     if ( cb[i]->isEnabled() && cb[i]->onRenderingStarted(this) && cb[i]->removeAfterCall() )
@@ -71,7 +71,7 @@ void RenderingAbstract::dispatchOnRenderingStarted()
 //------------------------------------------------------------------------------
 void RenderingAbstract::dispatchOnRenderingFinished()
 {
-  Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
+  const Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
   for(int i=0; i<cb.size(); ++i)
   {
     if ( cb[i]->isEnabled() && cb[i]->onRenderingFinished(this) && cb[i]->removeAfterCall() )

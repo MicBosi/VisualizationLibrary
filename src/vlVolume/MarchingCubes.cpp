@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -62,13 +62,7 @@ MarchingCubes::MarchingCubes()
   mVertsArray = new ArrayFloat3;
   mNormsArray = new ArrayFloat3;
   mColorArray = new ArrayFloat4;
-
-  // OpenGL ES does not support DrawElementsUInt
-#if defined(VL_OPENGL)
   mDrawElements = new DrawElementsUInt(PT_TRIANGLES);
-#else
-  mDrawElements = new DrawElementsUShort(PT_TRIANGLES);
-#endif
   mVolumeInfo.setAutomaticDelete(false);
   mHighQualityNormals = true;
 }
@@ -77,7 +71,7 @@ MarchingCubes::MarchingCubes()
 //------------------------------------------------------------------------------
 void MarchingCubes::computeEdges(Volume* vol, float threshold)
 {
-  // mEdges.clear();
+  mEdges.clear();
   mEdges.resize(vol->slices().x() * vol->slices().y() * vol->slices().z());
   mCubes.clear();
   mCubes.reserve(1024);
@@ -92,18 +86,15 @@ void MarchingCubes::computeEdges(Volume* vol, float threshold)
   const float dx = vol->cellSize().x() * 0.25f;
   const float dy = vol->cellSize().y() * 0.25f;
   const float dz = vol->cellSize().z() * 0.25f;
-  float v0, v1, v2, v3, t;
+  float v0,v1,v2,v3,t;
   int iedge = 0;
-  int w = vol->slices().x() -1;
-  int h = vol->slices().y() -1;
-  int d = vol->slices().z() -1;
   for(unsigned short z = 0; z < vol->slices().z(); ++z)
   {
     for(unsigned short y = 0; y < vol->slices().y(); ++y)
     {
       for(unsigned short x = 0; x < vol->slices().x(); ++x, ++iedge)
       {
-        if (x != w && y != h && z != d)
+        if (x != vol->slices().x()-1 && y != vol->slices().y()-1 && z != vol->slices().z()-1)
         {
           if (vol->cube(x,y,z).includes(threshold))
           {
@@ -124,15 +115,15 @@ void MarchingCubes::computeEdges(Volume* vol, float threshold)
         v0 = vol->value( x,y,z );
         fvec3 v0_coord = vol->coordinate(x, y, z);
 
-        if (x != w)
+        if (x != vol->slices().x()-1)
         {
           v1 = vol->value( x + 1, y, z );
           if (v1!=v0)
           {
+            t = (threshold-v0)/(v1-v0);
             //if (t>=0 && t<=1.0f)
             if ( (threshold>=v0 && threshold<=v1) || (threshold>=v1 && threshold<=v0) )
             {
-              t = (threshold-v0)/(v1-v0);
               VL_CHECK(t>=-0.001f && t<=1.001f)
               // emit vertex
               mEdges[iedge].mX = (int)mVerts.size();
@@ -147,15 +138,15 @@ void MarchingCubes::computeEdges(Volume* vol, float threshold)
             }
           }
         }
-        if (y != h)
+        if (y != vol->slices().y()-1)
         {
           v2 = vol->value( x, y + 1, z );
           if (v2!=v0)
           {
+            t = (threshold-v0)/(v2-v0);
             //if (t>=0 && t<=1.0f)
             if ( (threshold>=v0 && threshold<=v2) || (threshold>=v2 && threshold<=v0) )
             {
-              t = (threshold-v0)/(v2-v0);
               VL_CHECK(t>=-0.001f && t<=1.001f)
               // emit vertex
               mEdges[iedge].mY = (int)mVerts.size();
@@ -170,15 +161,15 @@ void MarchingCubes::computeEdges(Volume* vol, float threshold)
             }
           }
         }
-        if (z != d)
+        if (z != vol->slices().z()-1)
         {
           v3 = vol->value( x, y, z + 1 );
           if (v3!=v0)
           {
+            t = (threshold-v0)/(v3-v0);
             //if (t>=0 && t<=1.0f)
             if ( (threshold>=v0 && threshold<=v3) || (threshold>=v3 && threshold<=v0) )
             {
-              t = (threshold-v0)/(v3-v0);
               VL_CHECK(t>=-0.001f && t<=1.001f)
               // emit vertex
               mEdges[iedge].mZ = (int)mVerts.size();
@@ -226,18 +217,18 @@ void MarchingCubes::processCube(int x, int y, int z, Volume* vol, float threshol
   int cell6 = x     + (y+1) * vol->slices().x() + (z+1) * vol->slices().x()*vol->slices().y();
   */
 
-  int z0 = z * vol->slices().x()*vol->slices().y();
-  int z1 = (z+1) * vol->slices().x()*vol->slices().y();
-  int y0 = y * vol->slices().x();
-  int y1 = (y+1) * vol->slices().x();
+  int ia = z * vol->slices().x()*vol->slices().y();
+  int ib = (z+1) * vol->slices().x()*vol->slices().y();
+  int ic = y * vol->slices().x();
+  int id = (y+1) * vol->slices().x();
 
-  int cell0 = x     + y0 + z0;
-  int cell1 = (x+1) + y0 + z0;
-  int cell2 = (x+1) + y0 + z1;
-  int cell3 = x     + y0 + z1;
-  int cell4 = (x+1) + y1 + z0;
-  int cell5 = x     + y1 + z0;
-  int cell6 = x     + y1 + z1;
+  int cell0 = x     + ic + ia;
+  int cell1 = (x+1) + ic + ia;
+  int cell2 = (x+1) + ic + ib;
+  int cell3 = x     + ic + ib;
+  int cell4 = (x+1) + id + ia;
+  int cell5 = x     + id + ia;
+  int cell6 = x     + id + ib;
 
   int edge_ivert[12] =
   {
@@ -288,9 +279,9 @@ void MarchingCubes::processCube(int x, int y, int z, Volume* vol, float threshol
         continue;
     #endif
 
-    mIndices.push_back((IndexType)a);
-    mIndices.push_back((IndexType)b);
-    mIndices.push_back((IndexType)c);
+    mIndices.push_back(a);
+    mIndices.push_back(b);
+    mIndices.push_back(c);
   }
 }
 //------------------------------------------------------------------------------
@@ -299,7 +290,7 @@ void MarchingCubes::reset()
   mVertsArray->clear();
   mNormsArray->clear();
   mColorArray->clear();
-  mDrawElements->indexBuffer()->clear();
+  mDrawElements->indices()->clear();
   mIndices.clear();
   mVerts.clear();
   mNorms.clear();
@@ -325,7 +316,7 @@ void MarchingCubes::run(bool generate_colors)
   {
     Volume* vol     = mVolumeInfo.at(ivol)->volume();
     float threshold = mVolumeInfo.at(ivol)->threshold();
-    int start       = (int)mVerts.size();
+    int start = (int)mVerts.size();
 
     if (vol->dataIsDirty())
       vol->setupInternalData();
@@ -338,9 +329,8 @@ void MarchingCubes::run(bool generate_colors)
     //for(int z = 0; z < mVolume->slices().z()-1; ++z)
     //  for(int y = 0; y < mVolume->slices().y()-1; ++y)
     //    for(int x = 0; x < mVolume->slices().x()-1; ++x)
-    //      if(vol->cube(x,y,z).includes(threshold))
-    //        processCube(x, y, z, vol, threshold);
-
+    //      if(mVolume->cube(x,y,z).includes(threshold))
+    //        processCube(x, y, z);
     for(unsigned int i=0; i<mCubes.size(); ++i)
       processCube(mCubes[i].x(), mCubes[i].y(), mCubes[i].z(), vol, threshold);
 
@@ -358,29 +348,25 @@ void MarchingCubes::run(bool generate_colors)
   }
 
   mVertsArray->resize(mVerts.size());
-  mVertsArray->setBufferObjectDirty();
   if (mVerts.size())
     memcpy(mVertsArray->ptr(), &mVerts[0], sizeof(mVerts[0]) * mVerts.size());
 
   mNormsArray->resize(mNorms.size());
-  mNormsArray->setBufferObjectDirty();
   if (mNorms.size())
     memcpy(mNormsArray->ptr(), &mNorms[0], sizeof(mNorms[0]) * mNorms.size());
 
   if (generate_colors)
   {
     mColorArray->resize(mColors.size());
-    mColorArray->setBufferObjectDirty();
     if (mColors.size())
       memcpy(mColorArray->ptr(), &mColors[0], sizeof(mColors[0]) * mColors.size());
   }
   else
     mColorArray->clear();
 
-  mDrawElements->indexBuffer()->resize(mIndices.size());
-  mDrawElements->indexBuffer()->setBufferObjectDirty(true);
+  mDrawElements->indices()->resize(mIndices.size());
   if (mIndices.size())
-    memcpy(mDrawElements->indexBuffer()->ptr(), &mIndices[0], sizeof(mIndices[0]) * mIndices.size());
+    memcpy(mDrawElements->indices()->ptr(), &mIndices[0], sizeof(mIndices[0]) * mIndices.size());
 
   if (!mHighQualityNormals)
   {
@@ -390,8 +376,7 @@ void MarchingCubes::run(bool generate_colors)
 
     geom->computeNormals();
     mNormsArray->resize( geom->normalArray()->size() );
-    mNormsArray->setBufferObjectDirty();
-    memcpy(mNormsArray->ptr(), geom->normalArray()->ptr(), sizeof(mNormsArray->at(0)) * mNormsArray->size());
+    memcpy(mNormsArray->ptr(), geom->normalArray()->ptr(), sizeof(fvec3)*mNormsArray->size());
   }
 }
 //------------------------------------------------------------------------------

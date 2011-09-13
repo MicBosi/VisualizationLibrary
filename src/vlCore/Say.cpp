@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -943,7 +943,7 @@ String Say::pipeline(const String& in_str, int base, int field, int decimals, in
   }
 
   // fill left
-  str.insert(0, (wchar_t)fill, left);
+  str.insert(0, fill, left);
 
   // fill right
   str.append(fill, right);

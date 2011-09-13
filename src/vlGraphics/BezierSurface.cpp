@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -90,16 +90,15 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
   for(unsigned ipatch=0; ipatch<patches().size(); ++ipatch)
     patch_count += ((patches()[ipatch]->x()-1)/3)*((patches()[ipatch]->y()-1)/3);
 
-  ref<ArrayFloat3> vert_array = cast<ArrayFloat3>(vertexArray());
+  ref<ArrayFloat3> vert_array = dynamic_cast<ArrayFloat3*>(vertexArray());
   if (!vert_array)
   {
     vert_array = new ArrayFloat3;
     setVertexArray(vert_array.get());
   }
   vert_array->resize(detail()*detail()*patch_count);
-  vert_array->setBufferObjectDirty();
 
-  ref<ArrayFloat2> texc_array = cast<ArrayFloat2>(texCoordArray(0));
+  ref<ArrayFloat2> texc_array = dynamic_cast<ArrayFloat2*>(texCoordArray(0));
   if ( gen_tex_coords )
   {
     if (!texc_array)
@@ -108,18 +107,16 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
       setTexCoordArray(0,texc_array.get());
     }
     texc_array->resize(detail()*detail()*patch_count);
-    texc_array->setBufferObjectDirty();
   }
 
-  ref<DrawElementsUInt> de = drawCalls()->size() == 1 ? cast<DrawElementsUInt>(drawCalls()->at(0)) : NULL;
+  ref<DrawElementsUInt> de = drawCalls()->size() == 1 ? dynamic_cast<DrawElementsUInt*>(drawCalls()->at(0)) : NULL;
   if (!de)
   {
     drawCalls()->clear();
     de = new DrawElementsUInt(PT_QUADS);
     drawCalls()->push_back(de.get());
   }
-  de->indexBuffer()->resize((detail()-1)*(detail()-1)*4*patch_count);
-  de->indexBuffer()->setBufferObjectDirty();
+  de->indices()->resize((detail()-1)*(detail()-1)*4*patch_count);
 
   int ivert = 0;
   int iquad = 0;
@@ -140,22 +137,22 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
         // +---+---+---+
         // |   |   |   |
         // +---+---+---+
-        real v  = (real)y/(detail()-1);
-        real ty = 1.0f - v;
-        real ty1 = 1.0f - ty;
-        real k0 = ty*ty*ty;
-        real k1 = 3*ty*ty*ty1;
-        real k2 = 3*ty*ty1*ty1;
-        real k3 = ty1*ty1*ty1;
+        Real v  = (Real)y/(detail()-1);
+        Real ty = 1.0f - v;
+        Real ty1 = 1.0f - ty;
+        Real k0 = ty*ty*ty;
+        Real k1 = 3*ty*ty*ty1;
+        Real k2 = 3*ty*ty1*ty1;
+        Real k3 = ty1*ty1*ty1;
         vec3 A = p->at(ix+0,iy+0)*k0 + p->at(ix+0,iy+1)*k1 + p->at(ix+0,iy+2)*k2 + p->at(ix+0,iy+3)*k3;
         vec3 B = p->at(ix+1,iy+0)*k0 + p->at(ix+1,iy+1)*k1 + p->at(ix+1,iy+2)*k2 + p->at(ix+1,iy+3)*k3;
         vec3 C = p->at(ix+2,iy+0)*k0 + p->at(ix+2,iy+1)*k1 + p->at(ix+2,iy+2)*k2 + p->at(ix+2,iy+3)*k3;
         vec3 D = p->at(ix+3,iy+0)*k0 + p->at(ix+3,iy+1)*k1 + p->at(ix+3,iy+2)*k2 + p->at(ix+3,iy+3)*k3;
         for(unsigned x=0; x<detail(); ++x, ++ivert)
         {
-          real u  = (real)x/(detail()-1);
-          real tx = 1.0f - u;
-          real tx1 = 1.0f - tx;
+          Real u  = (Real)x/(detail()-1);
+          Real tx = 1.0f - u;
+          Real tx1 = 1.0f - tx;
           vert_array->at(ivert) = (fvec3)(A*tx*tx*tx + B*3*tx*tx*tx1 + C*3*tx*tx1*tx1 + D*tx1*tx1*tx1);
           if(gen_tex_coords)
           {
@@ -170,18 +167,14 @@ void BezierSurface::updateBezierSurface(bool gen_tex_coords)
       {
         for(unsigned x=0; x<detail()-1; ++x)
         {
-          de->indexBuffer()->at(iquad++) = istart + y    *detail() + x;
-          de->indexBuffer()->at(iquad++) = istart + y    *detail() + x+1;
-          de->indexBuffer()->at(iquad++) = istart + (y+1)*detail() + x+1;
-          de->indexBuffer()->at(iquad++) = istart + (y+1)*detail() + x;
+          de->indices()->at(iquad++) = istart + y    *detail() + x;
+          de->indices()->at(iquad++) = istart + y    *detail() + x+1;
+          de->indices()->at(iquad++) = istart + (y+1)*detail() + x+1;
+          de->indices()->at(iquad++) = istart + (y+1)*detail() + x;
         }
       }
       ++patch_num;
     }
   }
-
-#if defined(VL_OPENGL_ES1) || defined(VL_OPENGL_ES2)
-  this->makeGLESFriendly();
-#endif
 }
 //-----------------------------------------------------------------------------

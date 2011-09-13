@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -42,24 +42,23 @@ namespace vl
 {
   class Actor;
   //------------------------------------------------------------------------------
-  // ShaderPasses
+  // ShaderSequence
   //------------------------------------------------------------------------------
   /** A sequence of Shader objects each of which represent a rendering pass.
-   Each LOD (level of detail) in an Effect corresponts a ShaderPasses.
+   Each LOD (level of detail) in an Effect corresponts a ShaderSequence.
    \sa Shader, Effect, Actor
   */
-  class ShaderPasses: public Collection<Shader>
+  class ShaderSequence: public Collection<Shader>
   {
-    VL_INSTRUMENT_CLASS(vl::ShaderPasses, Collection<Shader>)
-
   public:
+    virtual const char* className() { return "vl::ShaderSequence"; }
     /** Constructor. 
     \param pass1 The Shader (if any) to be used for pass #1
     \param pass2 The Shader (if any) to be used for pass #2
     \param pass3 The Shader (if any) to be used for pass #3
     \param pass4 The Shader (if any) to be used for pass #4
     */
-    ShaderPasses(Shader* pass1=NULL, Shader* pass2=NULL, Shader* pass3=NULL, Shader* pass4=NULL )
+    ShaderSequence(Shader* pass1=NULL, Shader* pass2=NULL, Shader* pass3=NULL, Shader* pass4=NULL )
     {
       VL_DEBUG_SET_OBJECT_NAME()
       if (pass1)
@@ -86,17 +85,17 @@ namespace vl
    The LOD to be used during the rendering is defined at rendering time if a 
    LODEvaluator has been installed using the method setLODEvaluator(), otherwise 
    the LOD #0 is selected.
-   \sa Shader, Actor, LODEvaluator, ShaderPasses
+   \sa Shader, Actor, LODEvaluator, ShaderSequence
   */
   class VLGRAPHICS_EXPORT Effect: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Effect, Object)
-
-    // use deepCopy() and shallowCopy() instead
+    // mic fixme: define these?
     Effect(const Effect&): Object() {}
     Effect& operator=(const Effect&) { return *this; }
 
   public:
+    virtual const char* className() { return "vl::Effect"; }
+
     /** Constructor. */
     Effect() 
     { 
@@ -104,55 +103,7 @@ namespace vl
       mEnableMask = 0xFFFFFFFF;
       mRenderRank = 0;
       mActiveLod  = 0;
-      mLODShaders[0] = new ShaderPasses(new Shader);
-    }
-
-    ref<Effect> shallowCopy(EShaderCopyMode shader_copy) const
-    {
-      ref<Effect> fx = new Effect;
-      fx->shallowCopyFrom(*this, shader_copy);
-      return fx;
-    }
-
-    Effect& shallowCopyFrom(const Effect& other, EShaderCopyMode shader_copy)
-    {
-      for(int i=0; i<VL_MAX_EFFECT_LOD; ++i)
-        mLODShaders[i] = other.mLODShaders[i];
-
-      if (shader_copy == SCM_OwnShaders)
-      {
-        // create local shallow copies of all the Shaders
-        for(int lod=0; lod<VL_MAX_EFFECT_LOD; ++lod)
-          for(int pass=0; mLODShaders[lod] && pass<mLODShaders[lod]->size(); ++pass)
-            (*mLODShaders[lod])[pass] = (*mLODShaders[lod])[pass]->shallowCopy();
-      }
-
-      mLODEvaluator = other.mLODEvaluator;
-
-      mActiveLod = other.mActiveLod;
-      mRenderRank = other.mRenderRank;
-      mEnableMask = other.mEnableMask;
-
-      return *this;
-    }
-
-    ref<Effect> deepCopy() const
-    {
-      ref<Effect> fx = new Effect;
-      fx->deepCopyFrom(*this);
-      return fx;
-    }
-
-    Effect& deepCopyFrom(const Effect& other)
-    {
-      shallowCopyFrom(other, SCM_ShareShaders);
-
-      // create local clones of all the Shaders
-      for(int lod=0; lod<VL_MAX_EFFECT_LOD; ++lod)
-        for(int pass=0; mLODShaders[lod] && pass<mLODShaders[lod]->size(); ++pass)
-          (*mLODShaders[lod])[pass] = (*mLODShaders[lod])[pass]->deepCopy();
-
-      return *this;
+      mLODShaders[0] = new ShaderSequence(new Shader);
     }
 
     /** Modifies the rendering rank of an Actor.
@@ -166,13 +117,13 @@ namespace vl
     /** Returns the rendering rank of an Effect. */
     int renderRank() const { return mRenderRank; }
 
-    /** Returns the ShaderPasses representing the specified LOD level.
+    /** Returns the ShaderSequence representing the specified LOD level.
       * \note It must be: 0 <= \p lod_level < VL_MAX_EFFECT_LOD. */
-    const ref<ShaderPasses>& lod(int lod_level) const { return mLODShaders[lod_level]; }
+    const ref<ShaderSequence>& lod(int lod_level) const { return mLODShaders[lod_level]; }
     
-    /** Returns the ShaderPasses representing the specified LOD level.
+    /** Returns the ShaderSequence representing the specified LOD level.
       * \note It must be: 0 <= \p lod_level < VL_MAX_EFFECT_LOD. */
-    ref<ShaderPasses>& lod(int lod_level) { return mLODShaders[lod_level]; }
+    ref<ShaderSequence>& lod(int lod_level) { return mLODShaders[lod_level]; }
 
     /** Utility function, same as \p 'lod(lodi)->at(pass);' */
     Shader* shader(int lodi=0, int pass=0) { return lod(lodi)->at(pass); }
@@ -180,11 +131,11 @@ namespace vl
     /** Utility function, same as \p 'lod(lodi)->at(pass);' */
     const Shader* shader(int lodi=0, int pass=0) const { return lod(lodi)->at(pass); }
     
-    /** Utility function, same as \p 'lod(lodi) = new ShaderPasses(shader1,shader2,shader3,shader4);' */
+    /** Utility function, same as \p 'lod(lodi) = new ShaderSequence(shader1,shader2,shader3,shader4);' */
     void setLOD(int lodi, Shader* shader1, Shader* shader2=NULL, Shader* shader3=NULL, Shader* shader4=NULL) 
     { 
       VL_CHECK(lodi<VL_MAX_EFFECT_LOD)
-      lod(lodi) = new ShaderPasses(shader1,shader2,shader3,shader4);
+      lod(lodi) = new ShaderSequence(shader1,shader2,shader3,shader4);
     }
 
     /** Installs the LODEvaluator used to compute the current LOD at rendering time. */
@@ -217,7 +168,7 @@ namespace vl
     int activeLod() const { return mActiveLod; }
 
   protected:
-    ref<ShaderPasses> mLODShaders[VL_MAX_EFFECT_LOD];
+    ref<ShaderSequence> mLODShaders[VL_MAX_EFFECT_LOD];
     ref<LODEvaluator> mLODEvaluator;
     int mActiveLod;
     int mRenderRank;

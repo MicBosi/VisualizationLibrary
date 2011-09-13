@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -44,7 +44,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     mTransform1 = new Transform;
     mTransform2 = new Transform;
@@ -84,7 +84,7 @@ public:
     sphere->computeNormals();
     cone  ->computeNormals();
 
-    ref<Light> light = new Light;
+    ref<Light> light = new Light(0);
 
     if (mTestNumber == 0)
     {
@@ -98,7 +98,7 @@ public:
       red_fx->shader()->disable(EN_DEPTH_TEST);
       red_fx->shader()->enable(EN_CULL_FACE);
       red_fx->shader()->enable(EN_LIGHTING);
-      red_fx->shader()->setRenderState( light.get(), 0 );
+      red_fx->shader()->setRenderState( light.get() );
       red_fx->shader()->gocMaterial()->setDiffuse(red);
 
       sceneManager()->tree()->addActor( box.get(),    red_fx.get(), mTransform1.get() )->setRenderRank( 1 );
@@ -110,7 +110,7 @@ public:
       yellow_fx->shader()->disable(EN_DEPTH_TEST);
       yellow_fx->shader()->enable(EN_CULL_FACE);
       yellow_fx->shader()->enable(EN_LIGHTING);
-      yellow_fx->shader()->setRenderState( light.get(), 0 );
+      yellow_fx->shader()->setRenderState( light.get() );
       yellow_fx->shader()->gocMaterial()->setDiffuse(yellow);
 
       sceneManager()->tree()->addActor( box.get(),  yellow_fx.get(), mTransform2.get() )->setRenderRank( 1 );
@@ -125,7 +125,7 @@ public:
       transp_fx->shader()->enable(EN_DEPTH_TEST);
       transp_fx->shader()->enable(EN_CULL_FACE);
       transp_fx->shader()->enable(EN_LIGHTING);
-      transp_fx->shader()->setRenderState( light.get(), 0 );
+      transp_fx->shader()->setRenderState( light.get() );
       transp_fx->shader()->gocMaterial()->setDiffuse(blue);
       transp_fx->shader()->gocMaterial()->setTransparency(0.5f);
 
@@ -135,7 +135,7 @@ public:
       solid_fx->shader()->enable(EN_DEPTH_TEST);
       solid_fx->shader()->enable(EN_CULL_FACE);
       solid_fx->shader()->enable(EN_LIGHTING);
-      solid_fx->shader()->setRenderState( light.get(), 0 );
+      solid_fx->shader()->setRenderState( light.get() );
       solid_fx->shader()->gocMaterial()->setDiffuse(yellow);
 
       /* add to the scene in an intertwined way */

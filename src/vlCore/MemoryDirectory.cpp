@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -39,28 +39,23 @@ bool MemoryDirectory::setPath(const String& name)
   String root = name;
   root.trim();
   root.normalizeSlashes();
+  while(root.endsWith('/'))
+    root = root.left(-1);
+  root.trim();
   if (root.empty())
   {
-    Log::error("MemoryDirectory::setPath() given an empty path.\n");
+    vl::Log::error("Directory path must be a non null string and must not be '/'.\n");
     return false;
   }
-  if (!root.endsWith('/'))
-  {
-    // Log::warning( Say("MemoryDirectory::setPath() : path (%s) must end with a '/'.\n") << root );
-    root += '/';
-  }
-
   std::map< String, ref<MemoryFile> > file_map;
-  for( std::map< String, ref<MemoryFile> >::iterator it = mFiles.begin(); it != mFiles.end(); ++it )
+  for( std::map< String, ref<MemoryFile> >::const_iterator it = mFiles.begin(); it != mFiles.end(); ++it )
   {
     String p = it->first;
-    if ( !p.startsWith(path()) )
-    {
-      Log::warning( Say("MemoryDirectory::setPath() : invalid path file '%s'.\n") << p );
-      continue;
-    }
-    p = p.right(-path().length());
-    it->second->setPath(root + p);
+    if (path().length())
+      p = p.right(-path().length());
+    while(p.startsWith('/'))
+      p = p.right(-1);
+    it->second->setPath(root + '/' + p);
     file_map[it->second->path()] = it->second;
   }
   mFiles = file_map;
@@ -76,7 +71,7 @@ bool MemoryDirectory::addFile(MemoryFile* file)
     return false;
   }
 
-  if ( !file->path().startsWith(path()) )
+  if ( /*path().length() && */ !file->path().startsWith(path()+'/') )
   {
     Log::error( Say("File '%s' does not belong to MemoryDirectory '%s'\n") << file->path() << path() );
     return false;
@@ -126,7 +121,7 @@ void MemoryDirectory::listFilesRecursive( std::vector<String>& file_list ) const
   }
   for( std::map< String, ref<MemoryFile> >::const_iterator it = mFiles.begin(); it != mFiles.end();  ++it)
   {
-    if (!it->first.startsWith(path()))
+    if (!it->first.startsWith(path()+'/'))
       vl::Log::warning( Say("MemoryFile '%s' does not belong to MemoryDirectory '%s'.\n") << it->first << path() );
     file_list.push_back( it->first );
   }
@@ -144,7 +139,7 @@ void MemoryDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
   std::set<String> sub_dirs;
   for( std::map< String, ref<MemoryFile> >::const_iterator it = mFiles.begin(); it != mFiles.end(); ++it )
   {
-    VL_CHECK(it->first.startsWith(path()))
+    VL_CHECK(it->first.startsWith(path()+'/'))
     String p = it->first.extractPath();
     if (path().length())
       p = p.right(-path().length());
@@ -161,7 +156,7 @@ void MemoryDirectory::listSubDirs(std::vector<String>& dirs, bool append) const
     std::vector<String> tokens;
     p.split('/',tokens,true);
     if (tokens.size())
-      sub_dirs.insert(path() + tokens[0]);
+      sub_dirs.insert(path() + '/' + tokens[0]);
   }
   for(std::set<String>::const_iterator it = sub_dirs.begin(); it != sub_dirs.end(); ++it)
     dirs.push_back(*it);
@@ -180,7 +175,7 @@ ref<MemoryDirectory> MemoryDirectory::memorySubDir(const String& subdir_name) co
   {
     if (it->first.startsWith(p+'/'))
     {
-      ref<MemoryFile> mfile = static_cast<MemoryFile*>(it->second->clone().get());
+      ref<MemoryFile> mfile = dynamic_cast<MemoryFile*>(it->second->clone().get());
       VL_CHECK(mfile)
       dir->mFiles[mfile->path()] = mfile;
     }

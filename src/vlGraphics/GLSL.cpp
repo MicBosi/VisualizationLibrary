@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -31,7 +31,7 @@
 
 #include <vlGraphics/GLSL.hpp>
 #include <vlGraphics/OpenGL.hpp>
-#include <vlCore/GlobalSettings.hpp>
+#include <vlCore/VLSettings.hpp>
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
@@ -40,14 +40,6 @@ using namespace vl;
 
 //-----------------------------------------------------------------------------
 // GLSLShader
-//-----------------------------------------------------------------------------
-GLSLShader::GLSLShader()
-{
-  VL_DEBUG_SET_OBJECT_NAME()
-  mType = ST_VERTEX_SHADER;
-  mHandle = 0;
-  mCompiled = false;
-}
 //-----------------------------------------------------------------------------
 GLSLShader::GLSLShader(EShaderType type, const String& source)
 {
@@ -63,55 +55,29 @@ GLSLShader::~GLSLShader()
   deleteShader();
 }
 //-----------------------------------------------------------------------------
-std::string GLSLShader::getShaderSource() const
-{
-  if (handle())
-  {
-    GLint len = 0;
-    glGetShaderiv(handle(), GL_SHADER_SOURCE_LENGTH, &len);
-    if (len)
-    {
-      std::vector<char> src;
-      src.resize(len);
-      GLint len_written = 0;
-      glGetShaderSource(handle(), len, &len_written, &src[0]);
-      return &src[0];
-    }
-  }
-
-  return "";
-}
-//-----------------------------------------------------------------------------
-void GLSLShader::setSource( const String& source_or_path )
+void GLSLShader::setSource( const String& source )
 {
   std::string new_src = "ERROR";
 
-  if (source_or_path.empty())
+  if (vl::locateFile(source))
   {
-    mSource.clear();
-    return;
-  }
-  else
-  if (vl::locateFile(source_or_path))
-  {
-    new_src = vl::String::loadText(source_or_path).toStdString();
-    setObjectName( source_or_path.toStdString().c_str() );
-    setPath( source_or_path.toStdString().c_str() );
+    new_src = vl::String::loadText(source).toStdString();
+    setObjectName( source.toStdString() );
   }
   else
   {
-    int cn = source_or_path.count('\n');
-    int cr = source_or_path.count('\r');
-    int cf = source_or_path.count('\f');
+    int cn = source.count('\n');
+    int cr = source.count('\r');
+    int cf = source.count('\f');
     int line_count = vl::max( vl::max( cn, cr ), cf );
     if(line_count == 0)
     {
-      Log::error("GLSLShader::setSource('" + source_or_path + "') error: file not found!\n");
+      Log::error("GLSLShader::setSource('" + source + "') error: file not found!\n");
       mSource = "";
-      // VL_TRAP();
+      VL_TRAP();
     }
     else
-      new_src = source_or_path.toStdString();
+      new_src = source.toStdString();
   }
   
   // update only if the source is actually different
@@ -125,8 +91,8 @@ void GLSLShader::setSource( const String& source_or_path )
 bool GLSLShader::compile()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   if (mSource.empty())
@@ -148,7 +114,7 @@ bool GLSLShader::compile()
 
     // assign sources
 
-    const char* source[] = { mSource.c_str() };
+    const GLchar* source[] = { mSource.c_str() };
     glShaderSource(handle(), 1, source, NULL);
 
     // compile the shader
@@ -169,7 +135,7 @@ bool GLSLShader::compile()
       Log::bug( Say("\nGLSLShader::compile() failed! '%s':\n\n") << objectName().c_str() );
       // Log::bug( Say("Source:\n%s\n\n") << mSource.c_str() );
       Log::bug( Say("Info log:\n%s\n\n") << infoLog() );
-      // VL_TRAP()
+      VL_TRAP()
     }
   }
 
@@ -180,8 +146,8 @@ bool GLSLShader::compile()
 bool GLSLShader::compileStatus() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
   VL_CHECK(handle())
 
@@ -193,8 +159,8 @@ bool GLSLShader::compileStatus() const
 String GLSLShader::infoLog() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return "OpenGL Shading Language not supported.\n";
   VL_CHECK(handle())
 
@@ -202,7 +168,7 @@ String GLSLShader::infoLog() const
   glGetShaderiv(handle(), GL_INFO_LOG_LENGTH, &max_length); VL_CHECK_OGL();
   if (max_length != 0)
   {
-    std::vector<char> log_buffer;
+    std::vector<GLchar> log_buffer;
     log_buffer.resize(max_length);
     glGetShaderInfoLog(handle(), max_length, NULL, &log_buffer[0]); VL_CHECK_OGL();
     VL_CHECK_OGL();
@@ -215,8 +181,8 @@ String GLSLShader::infoLog() const
 void GLSLShader::createShader()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
   if (!handle())
   {
@@ -230,8 +196,8 @@ void GLSLShader::createShader()
 void GLSLShader::deleteShader()
 {
   // VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
   if (handle())
   {
@@ -265,51 +231,11 @@ GLSLProgram::~GLSLProgram()
     deleteProgram();
 }
 //-----------------------------------------------------------------------------
-GLSLProgram& GLSLProgram::operator=(const GLSLProgram& other)
-{
-  super::operator=(other);
-
-  // unsigned int mHandle;
-  // bool mScheduleLink;
-  deleteProgram();
-
-  // attach shader
-  mShaders.clear();
-  for(size_t i=0; i<other.mShaders.size(); ++i)
-    attachShader( other.mShaders[i].get_writable() );
-
-  mFragDataLocation = other.mFragDataLocation;
-  mActiveUniforms.clear();
-  mActiveAttribs.clear();
-  mAutoAttribLocation = other.mAutoAttribLocation;
-  if (other.mUniformSet)
-  {
-    if (mUniformSet.get() == NULL)
-      mUniformSet = new UniformSet;
-    *mUniformSet = *other.mUniformSet;
-  }
-  else
-    mUniformSet = NULL;
-
-  // glProgramParameter
-  mGeometryVerticesOut = other.mGeometryVerticesOut;
-  mGeometryInputType = other.mGeometryInputType;
-  mGeometryOutputType = other.mGeometryOutputType;
-  mProgramBinaryRetrievableHint = other.mProgramBinaryRetrievableHint;
-  mProgramSeparable = other.mProgramSeparable;
-
-  m_vl_ModelViewMatrix = -1;
-  m_vl_ProjectionMatrix = -1;
-  m_vl_ModelViewProjectionMatrix = -1;
-  m_vl_NormalMatrix = -1;
-
-  return *this;
-}
 void GLSLProgram::createProgram()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
 
   if (handle() == 0)
@@ -323,8 +249,8 @@ void GLSLProgram::createProgram()
 void GLSLProgram::deleteProgram()
 {
   // VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
   if(handle())
   {
@@ -337,8 +263,8 @@ void GLSLProgram::deleteProgram()
 bool GLSLProgram::attachShader(GLSLShader* shader)
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   scheduleRelinking();
@@ -380,8 +306,8 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
 {
   VL_CHECK_OGL();
 
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   if (!handle() || !shader->handle())
@@ -405,8 +331,8 @@ bool GLSLProgram::detachShader(GLSLShader* shader)
 void GLSLProgram::discardAllShaders()
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return;
 
   if (!handle())
@@ -427,8 +353,8 @@ void GLSLProgram::discardAllShaders()
 bool GLSLProgram::linkProgram(bool force_relink)
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   if (!linked() || force_relink)
@@ -479,7 +405,7 @@ void GLSLProgram::preLink()
   VL_CHECK_OGL();
   // fragment shader color number binding
 
-  if (Has_GL_EXT_gpu_shader4||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  if (GLEW_EXT_gpu_shader4||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
   {
     std::map<std::string, int>::iterator it = mFragDataLocation.begin();
     while(it != mFragDataLocation.end())
@@ -489,13 +415,13 @@ void GLSLProgram::preLink()
     }
   }
 
-  // Note that OpenGL 3.2 and 4 do not use glProgramParameter to define the layout of the 
+  // Note that OpenGL 3 and 4 do not use glProgramParameter to define the layout of the 
   // input/output geometry but something like this in the geometry shader:
   //
   // layout(triangles) in;
   // layout(triangle_strip, max_vertices = 3) out;
 
-  if (Has_Geometry_Shader && geometryVerticesOut() )
+  if (GLEW_Has_Geometry_Shader && geometryVerticesOut() )
   {
     // if there is at least one geometry shader applies the geometry shader parameters
     for(unsigned i=0; i<mShaders.size(); ++i)
@@ -512,12 +438,12 @@ void GLSLProgram::preLink()
 
   // OpenGL 4 program parameters
 
-  if(Has_GL_ARB_get_program_binary)
+  if(GLEW_ARB_get_program_binary)
   {
     VL_glProgramParameteri(handle(), GL_PROGRAM_BINARY_RETRIEVABLE_HINT, programBinaryRetrievableHint()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
 
-  if (Has_GL_ARB_separate_shader_objects)
+  if (GLEW_ARB_separate_shader_objects)
   {
     VL_glProgramParameteri(handle(), GL_PROGRAM_SEPARABLE, programSeparable()?GL_TRUE:GL_FALSE); VL_CHECK_OGL();
   }
@@ -536,49 +462,23 @@ void GLSLProgram::postLink()
 
   // populate uniform binding map
 
-  mActiveUniforms.clear();
+  mActiveUniformLocation.clear();
 
+  int uniform_count = 0;
+  glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count); VL_CHECK_OGL();
   int uniform_len = 0;
   glGetProgramiv(handle(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniform_len); VL_CHECK_OGL();
-  if (uniform_len)
-  {
-    std::vector<char> tmp_buf;
-    tmp_buf.resize(uniform_len);
-    char* name = &tmp_buf[0];
 
-    int uniform_count = 0;
-    glGetProgramiv(handle(), GL_ACTIVE_UNIFORMS, &uniform_count); VL_CHECK_OGL();
+  std::vector<char> name;
+  name.resize(uniform_len);
+  if (name.size())
+  {
     for(int i=0; i<uniform_count; ++i)
     {
       GLenum type;
       int size;
-      glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, name); VL_CHECK_OGL();
-      ref<UniformInfo> uinfo = new UniformInfo(name, (EUniformType)type, size, glGetUniformLocation(handle(), name));
-      mActiveUniforms[name] = uinfo;
-    }
-  }
-
-  // populate attribute binding map
-
-  mActiveAttribs.clear();
-
-  int attrib_len = 0;
-  glGetProgramiv(handle(), GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attrib_len); VL_CHECK_OGL();
-  if (attrib_len)
-  {
-    std::vector<char> tmp_buf;
-    tmp_buf.resize(attrib_len);
-    char* name = &tmp_buf[0];
-
-    int attrib_count = 0;
-    glGetProgramiv(handle(), GL_ACTIVE_ATTRIBUTES, &attrib_count); VL_CHECK_OGL();
-    for(int i=0; i<attrib_count; ++i)
-    {
-      GLenum type;
-      int size;
-      glGetActiveAttrib(handle(), i, attrib_len, NULL, &size, &type, name); VL_CHECK_OGL();
-      ref<AttribInfo> uinfo = new AttribInfo(name, (EAttributeType)type, size, glGetAttribLocation(handle(), name));
-      mActiveAttribs[name] = uinfo;
+      glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, &name[0]); VL_CHECK_OGL();
+      mActiveUniformLocation[&name[0]] = glGetUniformLocation(handle(), &name[0]);
     }
   }
 
@@ -593,8 +493,8 @@ void GLSLProgram::postLink()
 bool GLSLProgram::linkStatus() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
   
   VL_CHECK(handle())
@@ -610,8 +510,8 @@ bool GLSLProgram::linkStatus() const
 String GLSLProgram::infoLog() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return "OpenGL Shading Language not supported!\n";
   
   VL_CHECK(handle())
@@ -621,7 +521,7 @@ String GLSLProgram::infoLog() const
 
   int max_length = 0;
   glGetProgramiv(handle(), GL_INFO_LOG_LENGTH, &max_length); VL_CHECK_OGL();
-  std::vector<char> log_buffer;
+  std::vector<GLchar> log_buffer;
   log_buffer.resize(max_length+1);
   glGetProgramInfoLog(handle(), max_length, NULL, &log_buffer[0]); VL_CHECK_OGL();
   return &log_buffer[0];
@@ -630,8 +530,8 @@ String GLSLProgram::infoLog() const
 bool GLSLProgram::validateProgram() const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   VL_CHECK(handle())
@@ -645,21 +545,33 @@ bool GLSLProgram::validateProgram() const
   return status == GL_TRUE;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::bindAttribLocation(unsigned int index, const char* name)
+void GLSLProgram::bindAttribLocation(unsigned int index, const std::string& name)
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
 
   createProgram();
   scheduleRelinking();
-  glBindAttribLocation(handle(), index, name); VL_CHECK_OGL()
+  glBindAttribLocation(handle(), index, name.c_str()); VL_CHECK_OGL()
+}
+//-----------------------------------------------------------------------------
+int GLSLProgram::maxVertexAttribs()
+{
+  VL_CHECK_OGL();
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
+    return 0;
+
+  int max = 0;
+  glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &max ); VL_CHECK_OGL()
+  return max;
 }
 //-----------------------------------------------------------------------------
 bool GLSLProgram::useProgram() const
 {
   VL_CHECK_OGL()
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   if (!handle())
@@ -693,10 +605,10 @@ bool GLSLProgram::useProgram() const
   return true;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::apply(int /*index*/, const Camera*, OpenGLContext*) const
+void GLSLProgram::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL();
-  if(Has_GLSL)
+  if(GLEW_Has_Shading_Language_20)
   {
     if ( handle() )
       useProgram();
@@ -708,8 +620,8 @@ void GLSLProgram::apply(int /*index*/, const Camera*, OpenGLContext*) const
 bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 {
   VL_CHECK_OGL();
-  VL_CHECK( Has_GLSL )
-  if( !Has_GLSL )
+  VL_CHECK( GLEW_Has_Shading_Language_20 )
+  if( !GLEW_Has_Shading_Language_20 )
     return false;
 
   if(!uniforms)
@@ -729,12 +641,13 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
 
   for(size_t i=0, count=uniforms->uniforms().size(); i<count; ++i)
   {
-    const Uniform* uniform = uniforms->uniforms()[i].get();
+    Uniform* uniform = uniforms->uniforms()[i].get();
 
     #if 1
-      const UniformInfo* uinfo = activeUniformInfo(uniform->name().c_str());
-      int location = uinfo ? uinfo->Location : -1;
+      std::map<std::string, int>::const_iterator it = mActiveUniformLocation.find(uniform->name());
+      int location = it == mActiveUniformLocation.end() ? -1 : it->second;
     #else
+      // for benchmarking purposes
       int location = glGetUniformLocation(handle(), uniform->name().c_str());
     #endif
 
@@ -748,6 +661,9 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
         "GLSLProgram::applyUniformSet(): uniform '%s' not found!\n"
         "Is the uniform variable declared but not used in your GLSL program?\n"
         "Also double-check the spelling of the uniform variable name.\n") << uniform->name() );
+
+      // VL_TRAP();
+      // return false;
       continue;
     }
 
@@ -757,56 +673,51 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     VL_CHECK_OGL();
     switch(uniform->mType)
     {
-      case UT_INT:      glUniform1iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
-      case UT_INT_VEC2: glUniform2iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
-      case UT_INT_VEC3: glUniform3iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
-      case UT_INT_VEC4: glUniform4iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
+      case UT_Int:     glUniform1iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
+      case UT_Int2:    glUniform2iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
+      case UT_Int3:    glUniform3iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
+      case UT_Int4:    glUniform4iv(location, uniform->count(), uniform->intData()); VL_CHECK_OGL(); break;
 
-      case UT_UNSIGNED_INT:      VL_glUniform1uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
-      case UT_UNSIGNED_INT_VEC2: VL_glUniform2uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
-      case UT_UNSIGNED_INT_VEC3: VL_glUniform3uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
-      case UT_UNSIGNED_INT_VEC4: VL_glUniform4uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UInt:    VL_glUniform1uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UInt2:   VL_glUniform2uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UInt3:   VL_glUniform3uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
+      case UT_UInt4:   VL_glUniform4uiv(location, uniform->count(), uniform->uintData()); VL_CHECK_OGL(); break;
 
-      case UT_FLOAT:      glUniform1fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_VEC2: glUniform2fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_VEC3: glUniform3fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_VEC4: glUniform4fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Float:   glUniform1fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Float2:  glUniform2fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Float3:  glUniform3fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Float4:  glUniform4fv(location, uniform->count(), uniform->floatData()); VL_CHECK_OGL(); break;
 
-      case UT_FLOAT_MAT2: glUniformMatrix2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_MAT3: glUniformMatrix3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_MAT4: glUniformMatrix4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Mat2F:   glUniformMatrix2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Mat3F:   glUniformMatrix3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Mat4F:   glUniformMatrix4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
 
-      case UT_FLOAT_MAT2x3: glUniformMatrix2x3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_MAT3x2: glUniformMatrix3x2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_MAT2x4: glUniformMatrix2x4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_MAT4x2: glUniformMatrix4x2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_MAT3x4: glUniformMatrix3x4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
-      case UT_FLOAT_MAT4x3: glUniformMatrix4x3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Mat2x3F: glUniformMatrix2x3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Mat3x2F: glUniformMatrix3x2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Mat2x4F: glUniformMatrix2x4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Mat4x2F: glUniformMatrix4x2fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Mat3x4F: glUniformMatrix3x4fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
+      case UT_Mat4x3F: glUniformMatrix4x3fv(location, uniform->count(), GL_FALSE, uniform->floatData()); VL_CHECK_OGL(); break;
 
-      case UT_DOUBLE:      glUniform1dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_VEC2: glUniform2dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_VEC3: glUniform3dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_VEC4: glUniform4dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Double:  glUniform1dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Double2: glUniform2dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Double3: glUniform3dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Double4: glUniform4dv(location, uniform->count(), uniform->doubleData()); VL_CHECK_OGL(); break;
 
-      case UT_DOUBLE_MAT2: glUniformMatrix2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_MAT3: glUniformMatrix3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_MAT4: glUniformMatrix4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Mat2D:   glUniformMatrix2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Mat3D:   glUniformMatrix3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Mat4D:   glUniformMatrix4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
 
-      case UT_DOUBLE_MAT2x3: glUniformMatrix2x3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_MAT3x2: glUniformMatrix3x2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_MAT2x4: glUniformMatrix2x4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_MAT4x2: glUniformMatrix4x2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_MAT3x4: glUniformMatrix3x4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-      case UT_DOUBLE_MAT4x3: glUniformMatrix4x3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
-
-      case UT_NONE:
-        // Probably you added a uniform to a Shader or Actor but you forgot to assign a valueto it.
-        vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' does not contain any data! Did you forget to assign a value to it?\n") << uniform->name() );
-        VL_TRAP();
-        break;
+      case UT_Mat2x3D: glUniformMatrix2x3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Mat3x2D: glUniformMatrix3x2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Mat2x4D: glUniformMatrix2x4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Mat4x2D: glUniformMatrix4x2dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Mat3x4D: glUniformMatrix3x4dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
+      case UT_Mat4x3D: glUniformMatrix4x3dv(location, uniform->count(), GL_FALSE, uniform->doubleData()); VL_CHECK_OGL(); break;
 
       default:
-        vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): wrong uniform type for '%s'!\n") << uniform->name() );
+        // Probably you added a uniform to a Shader or Actor but you forgot to specify it's data!
+        vl::Log::bug( vl::Say("GLSLProgram::applyUniformSet(): uniform '%s' does not contain any data!\n") << uniform->name() );
         VL_TRAP();
         break;
     }
@@ -816,19 +727,19 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
   return true;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::bindFragDataLocation(int color_number, const char* name)
+void GLSLProgram::bindFragDataLocation(int color_number, const std::string& name)
 {
   scheduleRelinking();
   mFragDataLocation[name] = color_number;
 }
 //-----------------------------------------------------------------------------
-void GLSLProgram::unbindFragDataLocation(const char* name)
+void GLSLProgram::unbindFragDataLocation(const std::string& name)
 {
   scheduleRelinking();
   mFragDataLocation.erase(name);
 }
 //-----------------------------------------------------------------------------
-int GLSLProgram::fragDataLocation(const char* name) const
+int GLSLProgram::fragDataLocationBinding(const std::string& name) const
 {
   std::map<std::string, int>::const_iterator it = mFragDataLocation.find(name);
   if (it != mFragDataLocation.end())
@@ -840,8 +751,8 @@ int GLSLProgram::fragDataLocation(const char* name) const
 bool GLSLProgram::getProgramBinary(GLenum& binary_format, std::vector<unsigned char>& binary) const
 {
   VL_CHECK_OGL();
-  VL_CHECK(Has_GL_ARB_get_program_binary)
-  if (!Has_GL_ARB_get_program_binary)
+  VL_CHECK(GLEW_ARB_get_program_binary)
+  if (!GLEW_ARB_get_program_binary)
     return false;
 
   binary.clear();
@@ -858,7 +769,7 @@ bool GLSLProgram::getProgramBinary(GLenum& binary_format, std::vector<unsigned c
     if (length)
     {
       binary.resize(length);
-      VL_glGetProgramBinary(handle(), length, NULL, &binary_format, &binary[0]); VL_CHECK_OGL();
+      glGetProgramBinary(handle(), length, NULL, &binary_format, &binary[0]); VL_CHECK_OGL();
     }
     return true;
   }
@@ -872,8 +783,8 @@ bool GLSLProgram::getProgramBinary(GLenum& binary_format, std::vector<unsigned c
 bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int length)
 {
   VL_CHECK_OGL();
-  VL_CHECK(Has_GL_ARB_get_program_binary)
-  if (!Has_GL_ARB_get_program_binary)
+  VL_CHECK(GLEW_ARB_get_program_binary)
+  if (!GLEW_ARB_get_program_binary)
     return false;
 
   createProgram();
@@ -884,7 +795,7 @@ bool GLSLProgram::programBinary(GLenum binary_format, const void* binary, int le
     preLink();
     
     // load glsl program and link
-    VL_glProgramBinary(handle(), binary_format, binary, length); VL_CHECK_OGL();
+    glProgramBinary(handle(), binary_format, binary, length); VL_CHECK_OGL();
     mScheduleLink = !linkStatus();
     
     // log error

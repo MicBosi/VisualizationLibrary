@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -42,7 +42,7 @@ public:
   // initialization
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
     srand((unsigned int)time(NULL));
 
     generateTrees (100.0f, 500);
@@ -55,15 +55,13 @@ public:
   {
     // simple effect to render a tree billboard
     vl::ref<vl::Effect> effect = new vl::Effect;
-    // speedup tip: this allows VL to batch all the trees together greatly speeding up the rendering and avoiding switching textures back and forth with the stars.
-    effect->setRenderRank(2);
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->gocDepthMask()->set(false);
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->gocLight(0)->setLinearAttenuation(0.025f);
-    effect->shader()->gocTextureSampler(0)->setTexture( new vl::Texture("images/tree.png") );
+    effect->shader()->gocTextureUnit(0)->setTexture( new vl::Texture("images/tree.png") );
 
     vl::ref<vl::Geometry> tree = generateQuad();
     tree->transform( vl::mat4::getTranslation(0,+0.5f,0) );
@@ -80,9 +78,9 @@ public:
       // bind billboard to the transform tree
       rendering()->as<vl::Rendering>()->transform()->addChild(billboard.get());
       // generate a random position
-      vl::real x = vl::random(-side/2.0f,+side/2.0f);
-      vl::real y = 0;
-      vl::real z = vl::random(-side/2.0f,+side/2.0f);
+      vl::Real x = vl::randomMinMax(-side/2.0f,+side/2.0f);
+      vl::Real y = 0;
+      vl::Real z = vl::randomMinMax(-side/2.0f,+side/2.0f);
       billboard->setPosition( vl::vec3(x,y,z) );
       // add the tree actor
       sceneManager()->tree()->addActor(tree.get(), effect.get(), billboard.get());
@@ -93,11 +91,9 @@ public:
   {
     // simple effect to render a star billboard
     vl::ref<vl::Effect> effect = new vl::Effect;
-    // speedup tip: this allows VL to batch all the stars together greatly speeding up the rendering and avoiding switching textures back and forth with the trees.
-    effect->setRenderRank(1);
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
-    effect->shader()->gocTextureSampler(0)->setTexture( new vl::Texture("images/sun.png", vl::TF_RGBA, true) );
+    effect->shader()->gocTextureUnit(0)->setTexture( new vl::Texture("images/sun.png", vl::TF_RGBA, true) );
 
     vl::ref<vl::Geometry> star = generateQuad();
 
@@ -110,9 +106,9 @@ public:
       // add billboard to the transform tree
       rendering()->as<vl::Rendering>()->transform()->addChild(billboard.get());
       // compute a random point on the skydome
-      vl::real x = vl::random(-1.0f,+1.0f);
-      vl::real y = vl::random(0,2.0f);
-      vl::real z = vl::random(-1.0f,+1.0f);
+      vl::Real x = vl::randomMinMax(-1.0f,+1.0f);
+      vl::Real y = vl::randomMinMax(0,2.0f);
+      vl::Real z = vl::randomMinMax(-1.0f,+1.0f);
       vl::vec3 n(x,y,z);
       n.normalize();
       n = n * sqrt(side*side/2.0f);
@@ -129,7 +125,7 @@ public:
   {
     // orange effect using lighting
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->gocLight(0)->setLinearAttenuation(0.025f);
     effect->shader()->gocMaterial()->setDiffuse(vl::orange);
@@ -163,7 +159,7 @@ public:
     texc->at(2) = vl::fvec2( 1.0f, 1.0f );
     texc->at(3) = vl::fvec2( 0.0f, 1.0f );
     // quad primitive
-    quad->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLE_FAN, 0, 4) );
+    quad->drawCalls()->push_back( new vl::DrawArrays(vl::PT_QUADS,0,4) );
     return quad;
   }
 
@@ -172,7 +168,7 @@ public:
   void generateLunapark()
   {
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_BLEND);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->enable(vl::EN_LIGHTING);

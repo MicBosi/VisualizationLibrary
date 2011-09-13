@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -54,9 +54,8 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT ActorTreeAbstract: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::ActorTreeAbstract, Object)
-
   public:
+    virtual const char* className() { return "vl::ActorTreeAbstract"; }
     ActorTreeAbstract();
 
     //! Returns the number of child nodes of an ActorTreeAbstract node.
