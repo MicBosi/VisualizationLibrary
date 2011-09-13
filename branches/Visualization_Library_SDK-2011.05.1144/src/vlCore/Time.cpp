@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.com                                               */
+/*  http://www.visualizationlibrary.org                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -33,43 +33,14 @@
 #include <ctime>
 #include <cmath>
 
-// mingw and msvc
-#if defined(_WIN32)
+#if defined(_MSC_VER)
   #include <windows.h>
-// linux and mac
-#elif defined(__GNUG__)
+#else
   #include <sys/time.h> // gettimeofday()
-  #include <unistd.h> // usleep()
+  #include <unistd.h>   // usleep()
 #endif
 
 using namespace vl;
-
-namespace
-{
-  double init_start_time()
-  {
-    #if defined(_WIN32)
-      // Win32
-      LARGE_INTEGER Frequency;
-      LARGE_INTEGER PerformanceCount;
-      BOOL has_timer = QueryPerformanceFrequency( &Frequency );
-      if (has_timer)
-      {
-        QueryPerformanceCounter( &PerformanceCount );
-        return (double)PerformanceCount.QuadPart/Frequency.QuadPart;
-      }
-      else
-      {
-        return GetTickCount() / 1000.0;
-      }
-    #elif defined(__GNUG__)
-      struct timeval tv;
-      gettimeofday( &tv, NULL );
-      return tv.tv_sec + tv.tv_usec * 0.000001;
-    #endif
-  }
-  double mStartTime =  init_start_time();
-}
 
 //-----------------------------------------------------------------------------
 // Time
@@ -81,7 +52,7 @@ Time::Time()
   for(int i=0; i<VL_MAX_TIMERS; ++i)
     mStart[i] = -1;
 
-  #if defined(_WIN32)
+  #if defined(_MSC_VER)
     SYSTEMTIME local_time;
     GetLocalTime(&local_time);
     mYear = local_time.wYear;
@@ -111,34 +82,70 @@ Time::Time()
   #endif
 }
 //-----------------------------------------------------------------------------
+namespace vl
+{
+  unsigned long long gStartTime = 0;
+
+  void initStartTime()
+  {
+    #if defined(_MSC_VER)
+      LARGE_INTEGER Frequency;
+      LARGE_INTEGER PerformanceCount;
+      BOOL has_timer = QueryPerformanceFrequency( &Frequency );
+      if (has_timer)
+      {
+        // DWORD_PTR oldmask = ::SetThreadAffinityMask(::GetCurrentThread(), 1);
+        QueryPerformanceCounter( &PerformanceCount );
+        // ::SetThreadAffinityMask(::GetCurrentThread(), oldmask);
+        gStartTime = PerformanceCount.QuadPart;
+      }
+      else
+      {
+        gStartTime = GetTickCount();
+      }
+    #elif defined(__GNUG__)
+      struct timeval tv;
+      gettimeofday( &tv, NULL );
+      gStartTime = (unsigned long long)tv.tv_sec * 1000000 + (unsigned long long)tv.tv_usec;
+    #endif
+  }
+}
+//-----------------------------------------------------------------------------
 //! Seconds passed from an arbitrary origin
 //! QueryPerformanceFrequency should be called only once in the application lifetime
 Real Time::currentTime()
 {
-  #if defined(_WIN32)
+  if (gStartTime == 0)
+    initStartTime();
+
+  VL_CHECK(gStartTime);
+
+  #if defined(_MSC_VER)
     // Win32
     LARGE_INTEGER Frequency;
     LARGE_INTEGER PerformanceCount;
     BOOL has_timer = QueryPerformanceFrequency( &Frequency );
     if (has_timer)
     {
+      // DWORD_PTR oldmask = ::SetThreadAffinityMask(::GetCurrentThread(), 1);
       QueryPerformanceCounter( &PerformanceCount );
-      return (Real)PerformanceCount.QuadPart/Frequency.QuadPart  - mStartTime;
+      // ::SetThreadAffinityMask(::GetCurrentThread(), oldmask);
+      return (Real)(PerformanceCount.QuadPart-gStartTime)/Frequency.QuadPart;
     }
     else
     {
-      return (Real)(GetTickCount() / 1000.0 - mStartTime);
+      return (GetTickCount()-gStartTime) / 1000.0f;
     }
   #elif defined(__GNUG__)
     struct timeval tv;
     gettimeofday( &tv, NULL );
-    return (Real)(tv.tv_sec + tv.tv_usec * 0.000001 - mStartTime);
+    return ((unsigned long long)tv.tv_sec * 1000000 + (unsigned long long)tv.tv_usec - gStartTime) * 0.000001f;
   #endif
 }
 //-----------------------------------------------------------------------------
 void Time::sleep(unsigned int milliseconds)
 {
-  #if defined(_WIN32)
+  #if defined(_MSC_VER)
     Sleep(milliseconds);
   #elif defined(__GNUG__)
     usleep(milliseconds*1000);

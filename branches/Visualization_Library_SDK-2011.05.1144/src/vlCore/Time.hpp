@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.com                                               */
+/*  http://www.visualizationlibrary.org                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -49,24 +49,34 @@ namespace vl
   class VLCORE_EXPORT Time: public Object
   {
   public:
-    virtual const char* className() { return "vl::Time"; }
     Time();
 
     int year() const { return mYear; }
+    
     int month() const { return mMonth; }
+    
     int dayOfWeek() const { return mDayOfWeek; }
+    
     int dayOfMonth() const { return mDayOfMonth; }
+    
     int hour() const { return mHour; }
+    
     int minute() const { return mMinute; }
+    
     int second() const { return mSecond; }
+    
     int microsecond() const { return mMicrosecond; }
 
     static Real currentTime();
+    
     static void sleep(unsigned int milliseconds);
 
     void start(int index=0) { mStart[index] = currentTime(); }
+    
     void stop(int index=0)  { mStart[index] = -1.0; }
+    
     bool isStarted(int index=0) const { return mStart[index] != -1; }
+    
     Real elapsed(int index=0) const { return mStart[index] >= 0 ? currentTime() - mStart[index] : -1; }
 
   protected:
