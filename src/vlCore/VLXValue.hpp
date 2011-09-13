@@ -607,7 +607,7 @@ namespace vl
 
     const std::vector<Value>& value() const { return mKeyValue; }
 
-    // mic fixme: we can speed this guys up with multimaps
+    // mic fixme: we can speed this guys up with multimaps if we really want
     VLXValue* getValue(const char* key)
     {
       for(size_t i=0; i<mKeyValue.size(); ++i)

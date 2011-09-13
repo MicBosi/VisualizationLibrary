@@ -223,11 +223,10 @@ namespace vl
         // implements the camera's view-matrix look-at as specified by COLLADA
         if (arr->value().size() != 9)
         {
-          Log::error( Say("Line %n : <LookAt> must have 9 floats, 3 for 'eye', 3 for 'look' and 3 for 'up'.\n") << arr->lineNumber() << arr->tag() ); // mic fixme: test
+          Log::error( Say("Line %n : <LookAt> must have 9 floats, 3 for 'eye', 3 for 'look' and 3 for 'up'.\n") << arr->lineNumber() << arr->tag() );
         }
         else
         {
-          // mic fixme: test this
           vec3 eye, look, up;
           eye.x()  = (float)arr->value()[0];
           eye.y()  = (float)arr->value()[1];
@@ -244,7 +243,7 @@ namespace vl
       else
       if (arr->tag() == "<Skew>")
       {
-        Log::error("<Skew> tag not yet supported.\n"); // mic fixme: test these two
+        Log::error("<Skew> tag not yet supported.\n");
       }
       else
       {
