@@ -127,17 +127,17 @@ void ActorTreeAbstract::prepareActors(ActorCollection& actors)
 {
   // finds the root transforms
 
-  std::set< ITransform* > root_transforms;
+  std::set< Transform* > root_transforms;
   for(int i=0; i<(int)actors.size(); ++i)
   {
-    for( ITransform* root = actors[i]->transform(); root; root = root->parent() )
+    for( Transform* root = actors[i]->transform(); root; root = root->parent() )
       if ( !root->parent() )
         root_transforms.insert(root);
   }
 
   // setup the matrices
 
-  std::set< ITransform* >::iterator tra = root_transforms.begin();
+  std::set< Transform* >::iterator tra = root_transforms.begin();
   while( tra != root_transforms.end() )
   {
     (*tra)->computeWorldMatrixRecursive();

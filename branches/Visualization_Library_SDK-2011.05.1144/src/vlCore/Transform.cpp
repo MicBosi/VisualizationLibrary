@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.com                                               */
+/*  http://www.visualizationlibrary.org                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -41,6 +41,20 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // Transform
 //-----------------------------------------------------------------------------
+Transform::~Transform()
+{
+#if 0
+  if (!mChildren.empty())
+    Log::warning("Transform::~Transform(): a Transform with children is being destroyed! One or more Transforms will be orphaned.\n");
+#endif 
+
+  for(size_t i=0; i<mChildren.size(); ++i)
+  {
+    mChildren[i]->mParent = NULL;
+    mChildren[i]->setLocalMatrix( mChildren[i]->worldMatrix() );
+  }
+}
+//-----------------------------------------------------------------------------
 void Transform::translate(Real x, Real y, Real z)
 {
   setLocalMatrix( mat4::getTranslation(x,y,z)*localMatrix() );
@@ -64,5 +78,15 @@ void Transform::rotate(Real degrees, Real x, Real y, Real z)
 void Transform::rotate(const vec3& from, const vec3& to)
 {
   setLocalMatrix( mat4::getRotation(from,to)*localMatrix() );
+}
+//-----------------------------------------------------------------------------
+void Transform::preMultiply(const mat4& m)
+{
+  setLocalMatrix( m*localMatrix() );
+}
+//-----------------------------------------------------------------------------
+void Transform::postMultiply(const mat4& m)
+{
+  setLocalMatrix( localMatrix()*m );
 }
 //-----------------------------------------------------------------------------
