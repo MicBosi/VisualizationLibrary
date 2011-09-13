@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.com                                               */
+/*  http://www.visualizationlibrary.org                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -619,45 +619,40 @@ namespace vl
     else
     {
       const T_Scalar& a11 = e(0,0);
-      const T_Scalar& a12 = e(1,0);
-      const T_Scalar& a13 = e(2,0);
-      const T_Scalar& a21 = e(0,1);
+      const T_Scalar& a21 = e(1,0);
+      const T_Scalar& a31 = e(2,0);
+      const T_Scalar& a12 = e(0,1);
       const T_Scalar& a22 = e(1,1);
-      const T_Scalar& a23 = e(2,1);
-      const T_Scalar& a31 = e(0,2);
-      const T_Scalar& a32 = e(1,2);
+      const T_Scalar& a32 = e(2,1);
+      const T_Scalar& a13 = e(0,2);
+      const T_Scalar& a23 = e(1,2);
       const T_Scalar& a33 = e(2,2);
 
-      T_Scalar A = a33*a22-a32*a23;
-      T_Scalar B = a32*a13-a33*a12;
-      T_Scalar C = a23*a12-a22*a13;
+      T_Scalar A = a22*a33 - a32*a23;
+      T_Scalar B = a23*a31 - a33*a21;
+      T_Scalar C = a21*a32 - a31*a22;
 
-      T_Scalar det = a11*(A)+a21*(B)+a31*(C);
+      T_Scalar det = a11*A + a12*B + a13*C;
 
       if (det == 0)
-      {
         dest.fill(0);
-      }
       else
-      {
-        dest = Matrix3<T_Scalar>(A,               B,               C, 
-                                       a31*a23-a33*a21, a33*a11-a31*a13, a21*a13-a23*a11,
-                                       a32*a21-a31*a22, a31*a12-a32*a11, a22*a11-a21*a12) / det;
-      }
-
+        dest = Matrix3<T_Scalar>(A, a13*a32 - a33*a12, a12*a23 - a22*a13, 
+                                 B, a11*a33 - a31*a13, a13*a21 - a23*a11,
+                                 C, a12*a31 - a32*a11, a11*a22 - a21*a12) / det;
       return det;
     }
   }
   //-----------------------------------------------------------------------------
 
-  //! A 3x3 matrix using \p GLdouble precision.
-  typedef Matrix3<GLdouble> dmat3;
-  //! A 3x3 matrix using \p GLfloat precision.
-  typedef Matrix3<GLfloat>  fmat3;
-  //! A 3x3 matrix using \p GLint precision.
-  typedef Matrix3<GLint>    imat3;
-  //! A 3x3 matrix using \p GLuint precision.
-  typedef Matrix3<GLuint>  umat3;
+  //! A 3x3 matrix using \p double precision.
+  typedef Matrix3<double> dmat3;
+  //! A 3x3 matrix using \p float precision.
+  typedef Matrix3<float>  fmat3;
+  //! A 3x3 matrix using \p int precision.
+  typedef Matrix3<int>    imat3;
+  //! A 3x3 matrix using \p unsigned int precision.
+  typedef Matrix3<unsigned int>  umat3;
 
   #if VL_PIPELINE_PRECISION == 2
     //! Defined as: \p 'typedef \p dmat3 \p mat3'. See also \ref VL_PIPELINE_PRECISION.
