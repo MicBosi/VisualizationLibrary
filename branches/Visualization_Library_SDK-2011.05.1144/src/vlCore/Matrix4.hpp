@@ -965,117 +965,168 @@ namespace vl
   template<typename T_Scalar>
   T_Scalar Matrix4<T_Scalar>::getInverse(Matrix4<T_Scalar>& dest) const
   {
-    if (&dest == this)
-    {
-      Matrix4<T_Scalar> tmp;
-      T_Scalar det = getInverse(tmp);
-      dest = tmp;
+    const T_Scalar* in = ptr();
+    T_Scalar* out      = dest.ptr();
+
+    // | 0 | 4 | 8  | 12 |
+    // | 1 | 5 | 9  | 13 |
+    // | 2 | 6 | 10 | 14 |
+    // | 3 | 7 | 11 | 15 |
+
+    // | a | b | c | d |
+    // | e | f | g | h |
+    // | i | l | m | n |
+    // | o | p | q | r |
+
+    const T_Scalar a = in[0]; const T_Scalar b = in[4]; const T_Scalar c = in[ 8]; const T_Scalar d = in[12];
+    const T_Scalar e = in[1]; const T_Scalar f = in[5]; const T_Scalar g = in[ 9]; const T_Scalar h = in[13];
+    const T_Scalar i = in[2]; const T_Scalar l = in[6]; const T_Scalar m = in[10]; const T_Scalar n = in[14];
+    const T_Scalar o = in[3]; const T_Scalar p = in[7]; const T_Scalar q = in[11]; const T_Scalar r = in[15];
+
+    // 3x3 determinant:
+    //
+    //   [ a b c ]
+    //   [ d e f ] = aei - ahf + dhc - dbi + gbf - gec = (aei + dhc + gbf) - (ahf + dbi + gec)
+    //   [ g h i ]
+
+    const T_Scalar mr = m*r;
+    const T_Scalar gn = g*n;
+    const T_Scalar el = e*l;
+    const T_Scalar ip = i*p;
+    const T_Scalar mo = m*o;
+    const T_Scalar hl = h*l;
+    const T_Scalar mp = m*p;
+    const T_Scalar nq = n*q;
+    const T_Scalar gl = g*l;
+    const T_Scalar no = n*o;
+    const T_Scalar gi = g*i;
+    const T_Scalar np = n*p;
+    const T_Scalar fi = f*i;
+    const T_Scalar rc = r*c;
+    const T_Scalar be = b*e;
+    const T_Scalar af = a*f;
+    const T_Scalar de = d*e;
+    const T_Scalar df = d*f;
+    const T_Scalar ch = c*h;
+    const T_Scalar qh = q*h;
+
+    // | f | g | h |
+    // | l | m | n |
+    // | p | q | r |
+    T_Scalar Ca = +(( f*mr + gn*p + hl*q ) - ( h*mp + nq*f + r*gl ));
+
+    // | e | g | h |
+    // | i | m | n |
+    // | o | q | r |
+    T_Scalar Cb = -(( e*mr + gn*o + i*qh ) - ( h*mo + gi*r + nq*e ));
+
+    // | e | f | h |
+    // | i | l | n |
+    // | o | p | r |
+    T_Scalar Cc = +(( el*r + ip*h + f*no ) - ( hl*o + np*e + fi*r ));
+
+    // | e | f | g |
+    // | i | l | m |
+    // | o | p | q |
+    T_Scalar Cd = -(( el*q + f*mo + g*ip ) - ( gl*o + mp*e + q*fi ));
+
+    T_Scalar det = a*Ca + b*Cb + c*Cc + d*Cd;
+
+    // singular matrix
+    if (det == 0)
       return det;
-    }
-    else
-    {
-      int i,j,k;
-      int pvt_i[4], pvt_j[4];
-      T_Scalar pvt_val;
-      T_Scalar tmp;
-      T_Scalar det;
 
-      dest = *this; // memcpy(dest, mVec, sizeof(T_Scalar)*16);
+    // | b | c | d |
+    // | l | m | n |
+    // | p | q | r |
+    T_Scalar Ce = -(( b*mr + c*np + d*l*q ) - ( d*mp + nq*b + rc*l ));
 
-      det = ((T_Scalar)1);
-      for (k=0; k<4; k++)
-      {
-        pvt_val=dest[k][k];
-        pvt_i[k]=k;
-        pvt_j[k]=k;
-        for (i=k; i<4; ++i)
-        {
-          for (j=k; j<4; ++j)
-          {
-            if (fabs(dest[i][j]) > fabs(pvt_val))
-            {
-              pvt_i[k]=i;
-              pvt_j[k]=j;
-              pvt_val=dest[i][j];
-            }
-          }
-        }
+    // | a | c | d |
+    // | i | m | n |
+    // | o | q | r |
+    T_Scalar Cf = +(( a*mr + c*no + d*i*q ) - ( d*mo + nq*a + rc*i ));
 
-        det*=pvt_val;
-        if (det == 0) 
-        {
-          dest.fill(0);
-          return det;
-        }
+    // | a | b | d |
+    // | i | l | n |
+    // | o | p | r |
+    T_Scalar Cg = -(( a*l*r + b*no + d*ip ) - ( d*l*o + np*a + r*b*i ));
 
-        i=pvt_i[k];
-        if (i!=k) 
-        {
-          for (j=0; j<4; ++j) 
-          {
-            tmp=-dest[k][j];
-            dest[k][j]=dest[i][j];
-            dest[i][j]=tmp;
-          }
-        }
+    // | a | b | c |
+    // | i | l | m |
+    // | o | p | q |
+    T_Scalar Ch = +(( a*l*q + b*mo + c*ip ) - ( c*l*o + mp*a + q*b*i ));
 
-        j=pvt_j[k];
-        if (j!=k) 
-        {
-          for (i=0; i<4; ++i) 
-          {
-            tmp=-dest[i][k];
-            dest[i][k]=dest[i][j];
-            dest[i][j]=tmp;
-          }
-        }
 
-        for (i=0; i<4; ++i) {
-          if (i!=k) dest[i][k]/=(-pvt_val);
-        }
+    // | b | c | d |
+    // | f | g | h |
+    // | p | q | r |
+    T_Scalar Ci = +(( b*g*r + ch*p + df*q ) - ( d*g*p + q*h*b + rc*f ));
 
-        for (i=0; i<4; ++i) 
-        {
-          tmp = dest[i][k];
-          for (j=0; j<4; ++j) 
-          {
-            if (i!=k && j!=k) dest[i][j]+=tmp*dest[k][j];
-          }
-        }
+    // | a | c | d |
+    // | e | g | h |
+    // | o | q | r |
+    T_Scalar Cl = -(( a*g*r + ch*o + de*q ) - ( d*g*o  + qh*a + rc*e ));
 
-        for (j=0; j<4; ++j) 
-        {
-          if (j!=k) dest[k][j]/=pvt_val;
-        }
+    // | a | b | d |
+    // | e | f | h |
+    // | o | p | r |
+    T_Scalar Cm = +(( af*r + b*h*o + de*p ) - ( df*o + h*p*a + r*be ));
 
-        dest[k][k] = ((T_Scalar)1)/pvt_val;
-      }
+    // | a | b | c |
+    // | e | f | g |
+    // | o | p | q |
+    T_Scalar Cn = -(( af*q + b*g*o + c*e*p ) - ( c*f*o + g*p*a + q*be ));
 
-      for (k=4-2; k>=0; k--) 
-      {
-        i=pvt_j[k];
-        if (i!=k) 
-        {
-          for(j=0; j<4; ++j) 
-          {
-            tmp = dest[k][j];
-            dest[k][j]=-dest[i][j];
-            dest[i][j]=tmp;
-          }
-        }
 
-        j=pvt_i[k];
-        if (j!=k)
-        for (i=0; i<4; ++i) 
-        {
-          tmp=dest[i][k];
-          dest[i][k]=-dest[i][j];
-          dest[i][j]=tmp;
-        }
-      }
+    // | b | c | d |
+    // | f | g | h |
+    // | l | m | n |
+    T_Scalar Co = -(( b*gn + c*hl + df*m ) - ( d*gl + h*m*b + n*c*f ));
 
-      return det;
-    }
+    // | a | c | d |
+    // | e | g | h |
+    // | i | m | n |
+    T_Scalar Cp = +(( a*gn + ch*i + de*m ) - ( d*gi + h*m*a + n*c*e ));
+
+    // | a | b | d |
+    // | e | f | h |
+    // | i | l | n |
+    T_Scalar Cq = -(( af*n + b*h*i + d*el ) - ( d*fi + hl*a + n*be ));
+
+    // | a | b | c |
+    // | e | f | g |
+    // | i | l | m |
+    T_Scalar Cr = +(( af*m + b*gi + c*el ) - ( c*fi + gl*a + m*be ));
+
+#if 0
+    T_Scalar det2 = e*Ce + f*Cf + g*Cg + h*Ch;
+    T_Scalar det3 = i*Ci + l*Cl + m*Cm + n*Cn;
+    T_Scalar det4 = o*Co + p*Cp + q*Cq + r*Cr;
+    VL_CHECK( fabs(det - det1) < 0.0001 );
+    VL_CHECK( fabs(det - det3) < 0.0001 );
+    VL_CHECK( fabs(det - det4) < 0.0001 );
+#endif
+
+    T_Scalar inv_det = 1 / det;
+
+    out[0]  = inv_det * Ca;
+    out[1]  = inv_det * Cb;
+    out[2]  = inv_det * Cc;
+    out[3]  = inv_det * Cd;
+    out[4]  = inv_det * Ce;
+    out[5]  = inv_det * Cf;
+    out[6]  = inv_det * Cg;
+    out[7]  = inv_det * Ch;
+    out[8]  = inv_det * Ci;
+    out[9]  = inv_det * Cl;
+    out[10] = inv_det * Cm;
+    out[11] = inv_det * Cn;
+    out[12] = inv_det * Co;
+    out[13] = inv_det * Cp;
+    out[14] = inv_det * Cq;
+    out[15] = inv_det * Cr;
+
+    return det;
   }
   //-----------------------------------------------------------------------------
   template<typename T_Scalar>
@@ -1126,16 +1177,17 @@ namespace vl
     if (fabs(degrees_x) > (T_Scalar)90)
       degrees_y = -degrees_y;
   }
+
   //-----------------------------------------------------------------------------
 
-  //! A 4x4 matrix using \p GLdouble precision.
-  typedef Matrix4<GLdouble> dmat4;
-  //! A 4x4 matrix using \p GLfloat precision.
-  typedef Matrix4<GLfloat>  fmat4;
-  //! A 4x4 matrix using \p GLint precision.
-  typedef Matrix4<GLint>    imat4;
-  //! A 4x4 matrix using \p GLuint precision.
-  typedef Matrix4<GLuint>  umat4;
+  //! A 4x4 matrix using \p double precision.
+  typedef Matrix4<double> dmat4;
+  //! A 4x4 matrix using \p float precision.
+  typedef Matrix4<float>  fmat4;
+  //! A 4x4 matrix using \p int precision.
+  typedef Matrix4<int>    imat4;
+  //! A 4x4 matrix using \p unsigned int precision.
+  typedef Matrix4<unsigned int>  umat4;
 
   #if VL_PIPELINE_PRECISION == 2
     //! Defined as: \p 'typedef \p dmat4 \p mat4'. See also \ref VL_PIPELINE_PRECISION.
