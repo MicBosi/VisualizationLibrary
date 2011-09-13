@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -41,7 +41,7 @@ RenderingTree::RenderingTree()
 //------------------------------------------------------------------------------
 RenderingTree& RenderingTree::operator=(const RenderingTree& other)
 {
-  super::operator=(other);
+  RenderingAbstract::operator=(other);
   *mSubRendering = *other.mSubRendering;
   return *this;
 }

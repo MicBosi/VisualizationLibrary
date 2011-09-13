@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -41,9 +41,9 @@ namespace vl
   //! A set of key/value pairs usually used to associate generic information, tags, attributes etc. to another class.
   class VLCORE_EXPORT KeyValues: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::KeyValues, Object)
-
   public:
+    virtual const char* className() { return "vl::KeyValues"; }
+
     KeyValues();
     
     bool has(const String& key) const { return mKeyValues.find(key) != mKeyValues.end(); }

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -258,22 +258,22 @@ namespace vl
     return v * val;
   }
 
-  //! A 4 components vector with \p int precision.
-  typedef Vector4<int> ivec4;
-  //! A 4 components vector with \p unsigned int precision.
-  typedef Vector4<unsigned int> uvec4;
-  //! A 4 components vector with \p float precision.
-  typedef Vector4<float> fvec4;
-  //! A 4 components vector with \p double precision.
-  typedef Vector4<double> dvec4;
-  //! A 4 components vector with \p char precision.
-  typedef Vector4<char> bvec4;
-  //! A 4 components vector with \p unsigned char precision.
-  typedef Vector4<unsigned char> ubvec4;
-  //! A 4 components vector with \p short precision.
-  typedef Vector4<short> svec4;
-  //! A 4 components vector with \p unsigned short precision.
-  typedef Vector4<unsigned short> usvec4;
+  //! A 4 components vector with \p GLint precision.
+  typedef Vector4<GLint> ivec4;
+  //! A 4 components vector with \p GLuint precision.
+  typedef Vector4<GLuint> uvec4;
+  //! A 4 components vector with \p GLfloat precision.
+  typedef Vector4<GLfloat> fvec4;
+  //! A 4 components vector with \p GLdouble precision.
+  typedef Vector4<GLdouble> dvec4;
+  //! A 4 components vector with \p GLbyte precision.
+  typedef Vector4<GLbyte> bvec4;
+  //! A 4 components vector with \p GLubyte precision.
+  typedef Vector4<GLubyte> ubvec4;
+  //! A 4 components vector with \p GLshort precision.
+  typedef Vector4<GLshort> svec4;
+  //! A 4 components vector with \p GLushort precision.
+  typedef Vector4<GLushort> usvec4;
 
   #if VL_PIPELINE_PRECISION == 2
     //! Defined as: \p 'typedef \p dvec4 \p vec4'. See also \ref VL_PIPELINE_PRECISION.

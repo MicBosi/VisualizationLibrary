@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,7 +43,7 @@ public:
   void initEvent()
   {
     // Basic initialization
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     // Filled effect
     vl::ref<vl::Effect> filled_fx = new vl::Effect;
@@ -116,7 +116,7 @@ public:
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     tess_poly->setVertexArray(vert_array.get());
     // Fill the vertex array with the tessellated triangles
-    vert_array->initFrom(tess.tessellatedTris());
+    *vert_array = tess.tessellatedTris();
     // Add the primitive description
     tess_poly->drawCalls()->push_back( new vl::DrawArrays(vl::PT_TRIANGLES, 0, (int)vert_array->size()) );
 

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -32,8 +32,6 @@
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
-#include <vlCore/Time.hpp>
-#include <vlCore/GZipCodec.hpp>
 
 using namespace vl;
 
@@ -54,34 +52,9 @@ const ResourceLoadWriter* LoadWriterManager::findWriter(VirtualFile* file) const
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> LoadWriterManager::loadResource(const String& path, bool quick) const 
 {
-  struct TimerClass
-  {
-    TimerClass(const String* path): mPath(path)
-    {
-      mTimer.start();
-    }
-    ~TimerClass()
-    {
-      Log::debug( Say("loadResource('%s'): %ns\n") << *mPath << mTimer.elapsed() );
-    }
-    Time mTimer;
-    const String* mPath;
-  } timer(&path);
-
   ref<VirtualFile> file = locateFile(path);
-
   if (file)
-  {
-    if (path.endsWith(".gz") || path.endsWith(".GZ"))
-    {
-      ref<GZipCodec> gz = new GZipCodec;
-      gz->setStream(file.get());
-      // remove .gz suffix so that correct loader can be picked up
-      gz->setPath( file->path().left(-3) );
-      file = gz;
-    }
     return loadResource(file.get(), quick);
-  }
   else
     return NULL;
 }
@@ -106,8 +79,8 @@ ref<ResourceDatabase> LoadWriterManager::loadResource(VirtualFile* file, bool qu
     else
       db = loadwriter->loadResource(file);
     // load callbacks
-    for(size_t i=0; db && i<loadCallbacks().size(); ++i)
-      loadCallbacks()[i].get_writable()->operator()(db.get());
+    for(int i=0; db && i<loadCallbacks()->size(); ++i)
+      const_cast<LoadCallback*>(loadCallbacks()->at(i))->operator()(db.get());
     return db;
   }
   else
@@ -123,8 +96,8 @@ bool LoadWriterManager::writeResource(const String& path, ResourceDatabase* reso
   if (loadwriter)
   {
     // write callbacks
-    for(size_t i=0; i<writeCallbacks().size(); ++i)
-      writeCallbacks()[i].get_writable()->operator()(resource);
+    for(int i=0; i<writeCallbacks()->size(); ++i)
+      const_cast<WriteCallback*>(writeCallbacks()->at(i))->operator()(resource);
     // write resource
     return loadwriter->writeResource(path,resource);
   }
@@ -141,8 +114,8 @@ bool LoadWriterManager::writeResource(VirtualFile* file, ResourceDatabase* resou
   if (loadwriter)
   {
     // write callbacks
-    for(size_t i=0; i<writeCallbacks().size(); ++i)
-      writeCallbacks()[i].get_writable()->operator()(resource);
+    for(int i=0; i<writeCallbacks()->size(); ++i)
+      const_cast<WriteCallback*>(writeCallbacks()->at(i))->operator()(resource);
     // write resource
     return loadwriter->writeResource(file,resource);
   }
@@ -156,9 +129,9 @@ bool LoadWriterManager::writeResource(VirtualFile* file, ResourceDatabase* resou
 const ResourceLoadWriter* LoadWriterManager::findLoader(const String& path) const 
 {
   String ext = path.extractFileExtension(false).toLowerCase();
-  for(size_t i=0; i<loadWriters().size(); ++i)
-    if (loadWriters()[i]->canLoad(ext))
-      return loadWriters()[i].get();
+  for(int i=0; i<loadWriters()->size(); ++i)
+    if (loadWriters()->at(i)->canLoad(ext))
+      return loadWriters()->at(i);
 
   return NULL;
 }
@@ -166,9 +139,9 @@ const ResourceLoadWriter* LoadWriterManager::findLoader(const String& path) cons
 const ResourceLoadWriter* LoadWriterManager::findWriter(const String& path) const 
 {
   String ext = path.extractFileExtension(false).toLowerCase();
-  for(size_t i=0; i<loadWriters().size(); ++i)
-    if (loadWriters()[i]->canWrite(ext))
-      return loadWriters()[i].get();
+  for(int i=0; i<loadWriters()->size(); ++i)
+    if (loadWriters()->at(i)->canWrite(ext))
+      return loadWriters()->at(i);
 
   return NULL;
 }
@@ -176,12 +149,8 @@ const ResourceLoadWriter* LoadWriterManager::findWriter(const String& path) cons
 void LoadWriterManager::registerLoadWriter(ResourceLoadWriter* load_writer)
 {
   ref<ResourceLoadWriter> lowr = load_writer;
-  // remove load writer
-  std::vector< ref<ResourceLoadWriter> >::iterator it = std::find( loadWriters().begin(), loadWriters().end(), load_writer );
-  if( it != loadWriters().end() )
-    loadWriters().erase( it );
-  // insert load writer
-  loadWriters().push_back( load_writer );
+  LoadWriterManager::loadWriters()->erase( load_writer );
+  LoadWriterManager::loadWriters()->push_back( load_writer );
 }
 //-----------------------------------------------------------------------------
 bool vl::canLoad(const String& path)  { return defLoadWriterManager()->canLoad(path);  }
@@ -195,10 +164,6 @@ bool vl::canWrite(VirtualFile* file)  { return defLoadWriterManager()->canWrite(
 ref<ResourceDatabase> vl::loadResource(const String& path, bool quick) { return defLoadWriterManager()->loadResource(path,quick); }
 //-----------------------------------------------------------------------------
 ref<ResourceDatabase> vl::loadResource(VirtualFile* file, bool quick)  { return defLoadWriterManager()->loadResource(file,quick); }
-//-----------------------------------------------------------------------------
-bool vl::writeResource(const String& path, ResourceDatabase* resource) { return defLoadWriterManager()->writeResource(path, resource); }
-//-----------------------------------------------------------------------------
-bool vl::writeResource(VirtualFile* file, ResourceDatabase* resource) { return defLoadWriterManager()->writeResource(file, resource); }
 //-----------------------------------------------------------------------------
 
 

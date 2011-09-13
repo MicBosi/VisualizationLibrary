@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -54,12 +54,12 @@ namespace vl
   */
   class VLCORE_EXPORT DiskDirectory: public VirtualDirectory
   {
-    VL_INSTRUMENT_CLASS(vl::DiskDirectory, VirtualDirectory)
-
   public:
     DiskDirectory();
 
     DiskDirectory( const String& path );
+
+    virtual const char* className() { return "vl::DiskDirectory"; }
 
     //! Use carefully this function, since this search the whole given file system tree.
     void listFilesRecursive(std::vector<String>& file_list) const;

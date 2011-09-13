@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -49,19 +49,24 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT PixelLODEvaluator: public LODEvaluator
   {
-    VL_INSTRUMENT_CLASS(vl::PixelLODEvaluator, LODEvaluator)
-
   public:
     PixelLODEvaluator() 
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
+    virtual const char* className() { return "vl::PixelLODEvaluator"; }
+
     virtual int evaluate(Actor* actor, Camera* camera);
 
-    const std::vector<float>& pixelRangeSet() const { return mPixelRangeSet; }
+    const std::vector<float>& distanceRangeSet() { return mPixelRangeSet; }
+    void clearPixelRangeSet() { mPixelRangeSet.clear(); }
+    int distanceRangeCount() const { return (int)mPixelRangeSet.size(); }
+    float distanceRange(int index) const { return mPixelRangeSet[index]; }
 
-    std::vector<float>& pixelRangeSet() { return mPixelRangeSet; }
+    void setPixelRangeSet(const std::vector<float>& distance_set);
+    void addPixelRange(float distance);
+    void setPixelRange(int index, float distance);
 
   protected:
     std::vector<float> mPixelRangeSet;

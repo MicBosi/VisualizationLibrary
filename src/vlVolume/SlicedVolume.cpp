@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -98,7 +98,7 @@ SlicedVolume::SlicedVolume()
  * The updateUniforms() method also fills the \p "uniform vec3 eye_position" variable which contains the camera position in
  * object space, useful to compute specular highlights etc.
  */
-void SlicedVolume::updateUniforms(Actor*actor, real, const Camera* camera, Renderable*, const Shader* shader)
+void SlicedVolume::updateUniforms(Actor*actor, Real, const Camera* camera, Renderable*, const Shader* shader)
 {
   const GLSLProgram* glsl = shader->getGLSLProgram();
 
@@ -116,11 +116,11 @@ void SlicedVolume::updateUniforms(Actor*actor, real, const Camera* camera, Rende
       if (light)
       {
         // light position following transform
-        if (light->boundTransform())
-          light_position[i] = (fmat4)light->boundTransform()->worldMatrix() * light->position().xyz();
+        if (light->followedTransform())
+          light_position[i] = (fmat4)light->followedTransform()->worldMatrix() * light->position().xyz();
         // light position following camera
         else
-          light_position[i] = ((fmat4)camera->modelingMatrix() * light->position()).xyz();
+          light_position[i] = ((fmat4)camera->inverseViewMatrix() * light->position()).xyz();
 
         // light position in object space
         if (actor->transform())
@@ -137,7 +137,7 @@ void SlicedVolume::updateUniforms(Actor*actor, real, const Camera* camera, Rende
     // pass the eye position in object space
 
     // eye postion
-    fvec3 eye = (fvec3)camera->modelingMatrix().getT();
+    fvec3 eye = (fvec3)camera->inverseViewMatrix().getT();
     // world to object space
     if (actor->transform())
       eye = (fmat4)actor->transform()->worldMatrix().getInverse() * eye;
@@ -164,7 +164,7 @@ void SlicedVolume::bindActor(Actor* actor)
   actor->setLod(0, mGeometry.get());
 }
 //-----------------------------------------------------------------------------
-void SlicedVolume::onActorRenderStarted(Actor* actor, real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass)
+void SlicedVolume::onActorRenderStarted(Actor* actor, Real clock, const Camera* camera, Renderable* rend, const Shader* shader, int pass)
 {
   if (pass>0)
     return;
@@ -316,15 +316,15 @@ void SlicedVolume::onActorRenderStarted(Actor* actor, real clock, const Camera* 
   ref<ArrayFloat3> texcoo_array = new ArrayFloat3;
   vertex_array->resize(polygons.size());
   texcoo_array->resize(polygons_t.size());
-  VL_CHECK((size_t)vertex_array->bufferObject()->bytesUsed() == sizeof(polygons  [0])*polygons.  size());
-  VL_CHECK((size_t)texcoo_array->bufferObject()->bytesUsed() == sizeof(polygons_t[0])*polygons_t.size());
-  memcpy(vertex_array->ptr(), &polygons  [0], vertex_array->bufferObject()->bytesUsed());
-  memcpy(texcoo_array->ptr(), &polygons_t[0], texcoo_array->bufferObject()->bytesUsed());
+  VL_CHECK((size_t)vertex_array->gpuBuffer()->bytesUsed() == sizeof(polygons  [0])*polygons.  size());
+  VL_CHECK((size_t)texcoo_array->gpuBuffer()->bytesUsed() == sizeof(polygons_t[0])*polygons_t.size());
+  memcpy(vertex_array->ptr(), &polygons  [0], vertex_array->gpuBuffer()->bytesUsed());
+  memcpy(texcoo_array->ptr(), &polygons_t[0], texcoo_array->gpuBuffer()->bytesUsed());
   mGeometry->setVertexArray(vertex_array.get());
   mGeometry->setTexCoordArray(0,texcoo_array.get());
 
   mGeometry->setDisplayListDirty(true);
-  mGeometry->setBufferObjectDirty(true);
+  mGeometry->setVBODirty(true);
 
   // fixme: 
   // it seems we have some problems with camera clipping/culling when the camera is close to the volume: the slices disappear or degenerate.

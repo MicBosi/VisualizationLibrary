@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -31,7 +31,7 @@
 
 #include <vlVolume/VolumeUtils.hpp>
 #include <vlCore/Log.hpp>
-#include <vlCore/glsl_math.hpp>
+#include <vlCore/GLSLmath.hpp>
 
 using namespace vl;
 

@@ -4,7 +4,7 @@
 #  All rights reserved.                                                        #
 #                                                                              #
 #  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.org                                         #
+#  http://www.visualizationlibrary.com                                         #
 #                                                                              #
 #  Released under the OSI approved Simplified BSD License                      #
 #  http://www.opensource.org/licenses/bsd-license.php                          #
@@ -33,4 +33,4 @@ target_link_libraries(VLGLUT VLCore VLGraphics ${GLUT_LIBRARIES})
 VL_INSTALL_TARGET(VLGLUT)
 
 # VLGLUT headers
-install(FILES ${VLGLUT_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlGLUT")
+install(FILES ${VLGLUT_INC} DESTINATION "include/vlGLUT")

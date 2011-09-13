@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -34,7 +34,7 @@
 #include <vlGraphics/SceneManager.hpp>
 #include <vlGraphics/RenderQueue.hpp>
 #include <vlCore/Log.hpp>
-#include <vlGraphics/Array.hpp>
+#include <vlCore/Array.hpp>
 #include <vlGraphics/Geometry.hpp>
 
 using namespace vl;
@@ -67,7 +67,7 @@ void EdgeExtractor::addEdge(std::set<EdgeExtractor::Edge>& edges, const EdgeExtr
 //! The given geometry must have a vertex array of format ArrayFloat3.
 void EdgeExtractor::extractEdges(Geometry* geom)
 {
-  ArrayFloat3* verts = cast<ArrayFloat3>(geom->vertexArray());
+  ArrayFloat3* verts = dynamic_cast<ArrayFloat3*>(geom->vertexArray());
 
   // mic fixme:
   // here the bottle-neck seems to be the continuous allocation/deallocation and insertion/search time,
@@ -84,7 +84,7 @@ void EdgeExtractor::extractEdges(Geometry* geom)
   {
     DrawCall* prim = geom->drawCalls()->at(iprim);
     // iterate triangles (if present)
-    for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next())
+    for(TriangleIterator trit = prim->triangleIterator(); !trit.isEnd(); trit.next())
     {
       size_t a = trit.a();
       size_t b = trit.b();
@@ -127,7 +127,8 @@ void EdgeExtractor::extractEdges(Geometry* geom)
 ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
 {
   ref<Geometry> geom = new Geometry;
-  geom->setBufferObjectEnabled(false);
+  geom->setColor(vl::black);
+  geom->setVBOEnabled(false);
   ref<ArrayFloat3> vert_array = new ArrayFloat3;
   geom->setVertexArray(vert_array.get());
   #ifdef SHOW_NORMALS
@@ -162,7 +163,7 @@ ref<Geometry> EdgeExtractor::generateEdgeGeometry() const
 //-----------------------------------------------------------------------------
 bool EdgeExtractor::extractEdges(Actor* actor)
 {
-  Geometry* geom = cast<Geometry>(actor->lod(0));
+  Geometry* geom = dynamic_cast<Geometry*>(actor->lod(0).get());
   if (geom)
     extractEdges(geom);
   return geom != NULL;
@@ -172,7 +173,7 @@ void EdgeExtractor::extractEdges(ActorCollection* actors)
 {
   for(int i=0; i<actors->size(); ++i)
   {
-    Geometry* geom = cast<Geometry>(actors->at(i)->lod(0));
+    Geometry* geom = dynamic_cast<Geometry*>(actors->at(i)->lod(0).get());
     if (geom)
       extractEdges(geom);
   }

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -34,6 +34,7 @@
 
 #include <vlCore/VirtualDirectory.hpp>
 #include <vlCore/DiskFile.hpp>
+#include <vlCore/Collection.hpp>
 #include <vector>
 
 namespace vl
@@ -57,13 +58,10 @@ namespace vl
   */
   class VLCORE_EXPORT FileSystem: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::FileSystem, Object)
-
   public:
-    FileSystem() 
-    { 
-      VL_DEBUG_SET_OBJECT_NAME()
-    }
+    virtual const char* className() { return "vl::FileSystem"; }
+
+    FileSystem() { mDirectories.setAutomaticDelete(false); }
 
     /** Looks for a VirtualFile on the disk and in the currently active FileSystem. */
     virtual ref<VirtualFile> locateFile(const String& full_path, const String& alternate_path=String()) const;
@@ -81,13 +79,13 @@ namespace vl
     virtual void listFilesRecursive(std::vector<String>& file_list, const String& match) const;
 
     //! Returns the list of VirtualDirectory objects added to a FileSystem
-    std::vector< ref<VirtualDirectory> >& directories() { return mDirectories; }
+    Collection<VirtualDirectory>* directories() { return &mDirectories; }
     
     //! Returns the list of VirtualDirectory objects added to a FileSystem
-    const std::vector< ref<VirtualDirectory> >& directories() const { return mDirectories; }
+    const Collection<VirtualDirectory>* directories() const { return &mDirectories; }
 
   protected:
-    std::vector< ref<VirtualDirectory> > mDirectories;
+    Collection<VirtualDirectory> mDirectories;
   };
 
   //! Returns the default FileSystem used by VisualizationLibrary

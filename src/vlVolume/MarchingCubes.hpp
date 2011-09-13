@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -45,8 +45,6 @@ namespace vl
    */
   class VLVOLUME_EXPORT Volume: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Volume, Object)
-
     /**
      * A Volume cell.
      */
@@ -57,6 +55,8 @@ namespace vl
       bool includes(float v) const { return v >= mMin && v <= mMax; }
     };
   public:
+    virtual const char* className() { return "vl::Volume"; }
+
     Volume();
 
     //! Setup the volume data with the specified memory management.
@@ -161,14 +161,15 @@ namespace vl
    */
   class VolumeInfo: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::VolumeInfo, Object)
-
   public:
-    VolumeInfo()
+    virtual const char* className() { return "vl::VolumeInfo"; }
+
+    VolumeInfo(Volume* vol, float threshold, const fvec4& color)
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mThreshold = 0;
-      mVolume = NULL;
+      mColor = color;
+      mThreshold = threshold;
+      mVolume = vol;
       mVert0 = -1;
       mVertC = -1;
     }
@@ -182,16 +183,6 @@ namespace vl
       mVertC = -1;
     }
 
-    VolumeInfo(Volume* vol, float threshold, const fvec4& color)
-    {
-      VL_DEBUG_SET_OBJECT_NAME()
-      mColor = color;
-      mThreshold = threshold;
-      mVolume = vol;
-      mVert0 = -1;
-      mVertC = -1;
-    }
-
     void setColor(const fvec4& col) { mColor = col; }
     const fvec4& color() const { return mColor; }
 
@@ -199,8 +190,7 @@ namespace vl
     float threshold() const { return mThreshold; }
 
     void setVolume(Volume* vol) { mVolume = vol; }
-    const Volume* volume() const { return mVolume.get(); }
-    Volume* volume() { return mVolume.get(); }
+    Volume* volume() const { return mVolume.get(); }
 
     void setVert0(int index) { mVert0 = index; }
     int vert0() const { return mVert0; }
@@ -245,13 +235,7 @@ namespace vl
     ref<ArrayFloat3> mVertsArray;
     ref<ArrayFloat3> mNormsArray;
     ref<ArrayFloat4> mColorArray;
-    
-    // OpenGL ES does not support DrawElementsUInt
-#if defined(VL_OPENGL)
     ref<DrawElementsUInt> mDrawElements;
-#else
-    ref<DrawElementsUShort> mDrawElements;
-#endif
 
   protected:
     void computeEdges(Volume*, float threshold);
@@ -261,14 +245,7 @@ namespace vl
     std::vector<fvec3> mVerts;
     std::vector<fvec3> mNorms;
     std::vector<fvec4> mColors;
-    
-#if defined(VL_OPENGL)
-    typedef unsigned int IndexType;
-#else
-    typedef unsigned short IndexType;
-#endif
-    std::vector<IndexType> mIndices;
-
+    std::vector<unsigned int> mIndices;
     struct Edge
     {
       Edge(): mX(-1), mY(-1), mZ(-1) {}

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -42,14 +42,14 @@ class App_GLSL_Bumpmapping: public BaseDemo
 public:
   void initEvent()
   {
-    if (!vl::Has_GLSL)
+    if (!(GLEW_ARB_shading_language_100||GLEW_VERSION_3_0))
     {
       vl::Log::error("OpenGL Shading Language not supported.\n");
-      vl::Time::sleep(2000);
+      vl::Time::sleep(3000);
       exit(1);
     }
 
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     mTransform = new vl::Transform;
 
@@ -59,7 +59,7 @@ public:
 
     // setup effect
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->enable(vl::EN_CULL_FACE);
@@ -68,7 +68,7 @@ public:
     // setup texture
     vl::ref<vl::Texture> texture0 = new vl::Texture;
     texture0->prepareTexture2D("images/normalmap.jpg", vl::TF_RGBA);
-    effect->shader()->gocTextureSampler(0)->setTexture(texture0.get());
+    effect->shader()->gocTextureUnit(0)->setTexture(texture0.get());
     texture0->getTexParameter()->setAnisotropy(16.0);
     texture0->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
     texture0->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
@@ -161,7 +161,7 @@ public:
     vl::mat4 obj_mat = mTransform->worldMatrix().getInverse();
 
     // project camera position from world to object space
-    vl::vec3 camera_pos = rendering()->as<vl::Rendering>()->camera()->modelingMatrix().getT();
+    vl::vec3 camera_pos = rendering()->as<vl::Rendering>()->camera()->inverseViewMatrix().getT();
     vl::vec3 camera_pos_obj_space = obj_mat * camera_pos;
     mLightObjSpacePosition->setUniform( (vl::fvec3)camera_pos_obj_space );
   }

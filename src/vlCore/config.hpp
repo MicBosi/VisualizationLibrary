@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -41,7 +41,6 @@
 #ifndef VISUALIZATION_LIBRARY_CONFIG_INCLUDE_ONCE
 #define VISUALIZATION_LIBRARY_CONFIG_INCLUDE_ONCE
 
-#include <vlCore/platform.hpp>
 
 /**
  * Enable/disable memory leaks debugging.
@@ -81,7 +80,7 @@
  *
  * In double precision mode the classes \p vec4, \p vec3, \p vec2, \p mat4, \p mat3, \p mat2 will be defined as typedefs to their \p dvec4, \p dmat4 etc. counter parts.
  *
- * In single precision mode vl::real is defined as \p float, in double precision mode vl::real is defined as \p double.
+ * In single precision mode vl::Real is defined as \p float, in double precision mode vl::Real is defined as \p double.
  *
  * Other classes are affected as well, in particular vl::Transform, vl::quat, vl::AABB and vl::Sphere.
  */
@@ -219,14 +218,14 @@
 
 // Pipeline precision settings
 #if VL_PIPELINE_PRECISION == 2
-  namespace vl { /** Defined as \p 'typedef \p double \p real' */ typedef double real; }
+  namespace vl { /** Defined as \p 'typedef \p double \p Real' */ typedef double Real; }
   //! Defined as \p glLoadMatrixd, used internally.
   #define VL_glLoadMatrix glLoadMatrixd
   //! Defined as \p glMultMatrixd, used internally.
   #define VL_glMultMatrix glMultMatrixd 
 #else
-  namespace vl { /** Defined as \p 'typedef \p float \p real' */ typedef float real; }
-  namespace vl { typedef float real; }
+  namespace vl { /** Defined as \p 'typedef \p float \p Real' */ typedef float Real; }
+  namespace vl { typedef float Real; }
   //! Defined as \p glLoadMatrixf, used internally.
   #define VL_glLoadMatrix glLoadMatrixf
   //! Defined as \p glMultMatrixf, used internally.
@@ -247,7 +246,7 @@
 ///////////////////////////////////////////////////
 
 // VLCORE_EXPORT macro
-#if defined(VL_PLATFORM_WINDOWS) && !defined(VL_STATIC_LINKING)
+#if defined(_WIN32) && !defined(VL_STATIC_LINKING)
   #ifdef VLCore_EXPORTS
     #define VLCORE_EXPORT __declspec(dllexport)
   #else

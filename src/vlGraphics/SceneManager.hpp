@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -71,9 +71,8 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT SceneManager: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::SceneManager, Object)
-
   public:
+    virtual const char* className() { return "vl::SceneManager"; }
     //! Constructor.
     SceneManager();
 

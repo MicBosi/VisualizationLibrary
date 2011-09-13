@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -59,12 +59,12 @@ namespace vl
   */
   class VLCORE_EXPORT VirtualFile: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VirtualFile, Object)
-
   protected:
     VirtualFile(const VirtualFile& other): Object(other) {}
 
   public:
+    virtual const char* className() { return "vl::VirtualFile"; }
+
     //! Constructor.
     VirtualFile() {}
 
@@ -92,7 +92,7 @@ namespace vl
     //! Creates a clone of this class instance.
     virtual ref<VirtualFile> clone() const = 0;
 
-    VirtualFile& operator=(const VirtualFile& other) { super::operator=(other); mPath = other.mPath; return *this; }
+    VirtualFile& operator=(const VirtualFile& other) { Object::operator=(other); mPath = other.mPath; return *this; }
 
     //! Returns the \p path of the file.
     const String& path() const { return mPath; }
@@ -128,7 +128,7 @@ namespace vl
     //! Loads the entire file in the specified vector.
     //! Returns the number of bytes read.
     //! The file must be closed before calling this function.
-    long long load(std::vector<char>& data);
+    long long load(std::vector<unsigned char>& data);
 
     //! Loads the entire file in the specified buffer.
     //! Returns the number of bytes read.

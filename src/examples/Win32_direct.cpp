@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -71,7 +71,7 @@ public:
     // enable depth test and lighting 
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     // enable the standard OpenGL lighting 
     effect->shader()->enable(vl::EN_LIGHTING);
     // set the front and back material color of the teapot 
@@ -86,7 +86,7 @@ public:
     // --- render target, viewport, camera position ---
 
     // install the render target belonging to the opengl window
-    rendering()->renderer()->setFramebuffer( openglContext()->framebuffer() );
+    rendering()->renderer()->setRenderTarget( openglContext()->renderTarget() );
 
     // set clear color to white
     rendering()->camera()->viewport()->setClearColor( vl::white );
@@ -95,7 +95,7 @@ public:
     vl::vec3 eye    = vl::vec3(0,10,20); // camera position
     vl::vec3 center = vl::vec3(0,0,0);   // point the camera is looking at
     vl::vec3 up     = vl::vec3(0,1,0);   // up direction
-    vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up);
+    vl::mat4 view_mat = vl::mat4::getLookAt(eye, center, up).getInverse();
     rendering()->camera()->setViewMatrix( view_mat );
 
     // --- trackball manipulator ---
@@ -116,7 +116,7 @@ public:
     // --- scene update ---
 
     // rotates the teapot around the Y axis 15 degrees per second 
-    vl::real degrees = vl::Time::currentTime() * 15;
+    vl::Real degrees = vl::Time::currentTime() * 15;
     vl::mat4 matrix = vl::mat4::getRotation( degrees, 0,1,0 );
     mCubeTransform->setLocalMatrix( matrix );
 
@@ -140,11 +140,11 @@ public:
 
     // update the projection matrix
     vl::mat4 proj_matr = vl::mat4::getPerspective( 60 /*FOV*/, (float)w/h, 5/*near plane*/, 100/*far plane*/);
-    rendering()->camera()->setProjectionMatrix( proj_matr, vl::PMT_PerspectiveProjection );
+    rendering()->camera()->setProjectionMatrix( proj_matr );
 
     /* can also be done like this:
     (the camera already knows the viewport dimensions and aspect ratio) 
-    rendering()->camera()->setProjectionPerspective( 60, 5, 100 ); */
+    rendering()->camera()->setProjectionAsPerspective( 60, 5, 100 ); */
   }
 
   virtual void destroyEvent() {}

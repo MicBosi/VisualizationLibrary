@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -33,7 +33,7 @@
 #define Plane_INCLUDE_ONCE
 
 #include <vlCore/Object.hpp>
-#include <vlCore/glsl_math.hpp>
+#include <vlCore/GLSLmath.hpp>
 #include <vlCore/Transform.hpp>
 
 namespace vl
@@ -48,10 +48,10 @@ namespace vl
   */
   class VLCORE_EXPORT Plane: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Plane, Object)
-
   public:
-    Plane( real o=0.0f, vec3 n=vec3(0,0,0) ): mNormal(n), mOrigin(o) 
+    virtual const char* className() { return "vl::Plane"; }
+
+    Plane( Real o=0.0f, vec3 n=vec3(0,0,0) ): mNormal(n), mOrigin(o) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
@@ -63,7 +63,7 @@ namespace vl
       mOrigin = dot(o, n);
     }
 
-    real distance(const vec3 &v) const;
+    Real distance(const vec3 &v) const;
 
     //! returns 0 if the AABB intersects the plane, 1 if it's in the positive side, 
     //! -1 if it's in the negative side.
@@ -73,15 +73,15 @@ namespace vl
 
     const vec3& normal() const { return mNormal; }
 
-    real origin() const { return mOrigin; }
+    Real origin() const { return mOrigin; }
 
     void setNormal(const vec3& normal) { mNormal = normal; }
 
-    void setOrigin(real origin) { mOrigin = origin; }
+    void setOrigin(Real origin) { mOrigin = origin; }
 
   protected:
     vec3 mNormal;
-    real mOrigin;
+    Real mOrigin;
   };
 }
 

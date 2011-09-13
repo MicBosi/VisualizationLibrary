@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -41,23 +41,13 @@ namespace vl
   // DrawArrays
   //------------------------------------------------------------------------------
   /**
-   * Wraps the OpenGL function glDrawArrays(). See vl::DrawCall for an overview of the different draw call methods.
+   * Wraps the OpenGL function glDrawArrays(). See also http://www.opengl.org/sdk/docs/man/xhtml/glDrawArrays.xml for more information.
    *
-   * This class wraps the following OpenGL functions:
-   * - glDrawArrays (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawArrays.xml)
-   * - glDrawArraysInstanced (http://www.opengl.org/sdk/docs/man4/xhtml/glDrawArraysInstanced.xml)
+   * DrawElements, MultiDrawElements, DrawRangeElements, DrawArrays are used by Geometry to define a set of primitives to be rendered, see Geometry::drawCalls().
    *
-   * Supports:
-   * - <b>Multi instancing</b>: YES
-   * - <b>Base vertex</b>: N/A
-   * - <b>Primitive restart</b>: N/A
-   *
-   * DrawArrays, DrawElements, MultiDrawElements and DrawRangeElements are used by Geometry to define a set of primitives to be rendered.
-   * @sa Geometry::drawCalls(), DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
+   * \sa DrawCall, DrawElements, MultiDrawElements, DrawRangeElements, Geometry, Actor */
   class DrawArrays: public DrawCall
   {
-    VL_INSTRUMENT_CLASS(vl::DrawArrays, DrawCall)
-
   public:
     DrawArrays(): mStart(0), mCount(0) 
     { 
@@ -65,7 +55,6 @@ namespace vl
       mType      = PT_TRIANGLES;
       mInstances = 1;
     }
-
     DrawArrays(EPrimitiveType primitive, int start, int count, int instances=1)
       : mStart(start), mCount(count)
     { 
@@ -73,10 +62,11 @@ namespace vl
       mInstances = instances;
       mType = primitive;
     }
+    virtual const char* className() { return "vl::DrawArrays"; }
 
     DrawArrays& operator=(const DrawArrays& other)
     {
-      super::operator=(other);
+      DrawCall::operator=(other);
       mStart     = other.mStart;
       mCount     = other.mCount;
       mInstances = other.mInstances;
@@ -88,15 +78,16 @@ namespace vl
       return new DrawArrays( primitiveType(), (int)start(), (int)count(), (int)instances() ); 
     }
 
-    virtual void deleteBufferObject() {}
-    virtual void updateDirtyBufferObject(EBufferObjectUpdateMode) {}
+    virtual void deleteVBOs() {}
+    virtual void updateVBOs(bool,bool) {}
+    virtual unsigned int handle() const { return 0; }
 
     virtual void render(bool) const
     {
       // apply patch parameters if any and if using PT_PATCHES
       applyPatchParameters();
 
-      if ( instances() > 1 && (Has_GL_ARB_draw_instanced||Has_GL_EXT_draw_instanced) )
+      if ( instances() > 1 && (GLEW_ARB_draw_instanced||GLEW_EXT_draw_instanced) )
         VL_glDrawArraysInstanced( primitiveType(), (int)start(), (int)count(), (int)instances() );
       else
         glDrawArrays( primitiveType(), (int)start(), (int)count() );
@@ -105,10 +96,12 @@ namespace vl
         unsigned int glerr = glGetError();
         if (glerr != GL_NO_ERROR)
         {
-          String msg( getGLErrorString(glerr) );
+          String msg( (char*)gluErrorString(glerr) );
           Log::error( Say("glGetError() [%s:%n]: %s\n") << __FILE__ << __LINE__ << msg );
-          Log::warning( "- If you are using geometry instancing in conjunction with display lists you will have to disable one of them.\n" );
-          Log::warning( "- If you are using OpenGL ES you must NOT use GL_QUADS, GL_QUAD_STRIP and GL_POLYGON primitive types.\n" );
+          Log::print(
+            "OpenGL Geometry Instancing (GL_ARB_draw_instanced) does not support display lists."
+            "If you are using geometry instancing in conjunction with display lists you will have to disable one of them.\n"
+          );
           VL_TRAP()
         }
       #endif

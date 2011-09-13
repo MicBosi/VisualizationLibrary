@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -51,19 +51,24 @@ public:
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     mMode = NoMode;
 
     openglContext()->setContinuousUpdate(false);
 
     // camera setup
-    rendering()->as<vl::Rendering>()->camera()->setProjectionOrtho(-0.5f);
-    rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4::getIdentity() );
+    rendering()->as<vl::Rendering>()->setNearFarClippingPlanesOptimized(false);
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
+    rendering()->as<vl::Rendering>()->camera()->setViewMatrix( vl::mat4() );
 
     // disable trackball and ghost camera manipulator
     trackball()->setEnabled(false);
     ghostCameraManipulator()->setEnabled(false);
+
+    // dummy empty image
+    mImage = new vl::Image(8,8,0, 1, vl::IF_RGBA, vl::IT_UNSIGNED_BYTE);
+    memset(mImage->pixels(), 0xFF, mImage->requiredMemory());
 
     // texture setup
     mTexture = new vl::Texture;
@@ -71,18 +76,18 @@ public:
     mTexture->getTexParameter()->setWrapT(vl::TPW_CLAMP);
     mTexture->getTexParameter()->setMinFilter(vl::TPF_LINEAR);
     mTexture->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    mTextureMatrix = new vl::TextureMatrix;
+    mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
+    mTextureMatrix = new vl::TextureMatrix(0);
 
     vl::ref<vl::Effect> image_fx = new vl::Effect;
-    image_fx->shader()->gocTextureSampler(0)->setTexture(mTexture.get());
-    image_fx->shader()->setRenderState( mTextureMatrix.get(), 0 );
+    image_fx->shader()->gocTextureUnit(0)->setTexture(mTexture.get());
+    image_fx->shader()->setRenderState( mTextureMatrix.get() );
     image_fx->shader()->enable(vl::EN_BLEND);
-    image_fx->shader()->gocColor()->setValue(vl::white);
 
     mGrid = vl::makeGrid( vl::vec3(0,0,0), 1.0f, 1.0f, mSlices, mSlices, true, vl::fvec2(0,0), vl::fvec2(1,1) );
-    mGrid->setBufferObjectEnabled(false);
+    mGrid->setVBOEnabled(false);
     mGrid->transform(vl::mat4::getRotation(-90,1,0,0));
-    mPoints = vl::cast<vl::ArrayFloat3>(mGrid->vertexArray());
+    mPoints = dynamic_cast<vl::ArrayFloat3*>(mGrid->vertexArray());
 
     // save point coordinates for the animation keyframe
     mPointsRest = new vl::ArrayFloat3;
@@ -158,7 +163,9 @@ public:
     }
     else
     {
-      mText->setText("");
+      mText->setAlignment(vl::AlignHCenter | vl::AlignTop);
+      mText->setViewportAlignment(vl::AlignHCenter | vl::AlignTop);
+      mText->setText("http://www.VisualizationLibrary.com\n");
     }
   }
 
@@ -291,7 +298,7 @@ public:
     mBrushSize = vl::clamp(mBrushSize, 10, 1000);
 
     vl::mat4 m;
-    m.scale((vl::real)mBrushSize/2.0f, (vl::real)mBrushSize/2.0f, (vl::real)mBrushSize/2.0f);
+    m.scale((vl::Real)mBrushSize/2.0f, (vl::Real)mBrushSize/2.0f, (vl::Real)mBrushSize/2.0f);
     m.translate(mCursorTransform->localMatrix().getT());
     mCursorTransform->setLocalMatrix(m);
   }
@@ -306,11 +313,11 @@ public:
     mCursorActor->setEnableMask(0xFFFFFFFF);
 
     vl::mat4 m;
-    m.scale((vl::real)mBrushSize/2.0f, (vl::real)mBrushSize/2.0f, (vl::real)mBrushSize/2.0f);
+    m.scale((vl::Real)mBrushSize/2.0f, (vl::Real)mBrushSize/2.0f, (vl::Real)mBrushSize/2.0f);
     if (mMode == ScaleMode)
       m.translate(mCursorTransform->localMatrix().getT());
     else
-      m.translate((vl::real)x, (vl::real)rendering()->as<vl::Rendering>()->camera()->viewport()->height()-y, 0);
+      m.translate((vl::Real)x, (vl::Real)rendering()->as<vl::Rendering>()->camera()->viewport()->height()-y, 0);
 
     mCursorTransform->setLocalMatrix(m);
 
@@ -360,10 +367,10 @@ public:
       mImage->contrastHounsfieldAuto();
 
     mTexture->destroyTexture();
-    mTexture->prepareTexture2D(mImage.get(), vl::TF_UNKNOWN);
+    mTexture->prepareTexture2D(mImage.get(), vl::TF_RGBA);
 
     // perfectly center the texture texels (see GL_CLAMP documentation)
-    vl::fmat4 m;
+    vl::mat4 m;
     float x_texel = 1.0f/mImage->width();
     float y_texel = 1.0f/mImage->height();
     float x_scale = 1.0f - x_texel;
@@ -380,20 +387,18 @@ public:
   {
     rendering()->as<vl::Rendering>()->camera()->viewport()->setWidth(w);
     rendering()->as<vl::Rendering>()->camera()->viewport()->setHeight(h);
-    rendering()->as<vl::Rendering>()->camera()->setProjectionOrtho(-0.5f);
+    rendering()->as<vl::Rendering>()->camera()->setProjectionAsOrtho2D();
 
-    if (mImage)
-    {
-      vl::mat4 m;
-      m.translate(w/2.0f, h/2.0f, 0.0f);
+    vl::mat4 m;
+    m.translate(w/2.0f, h/2.0f, 0.0f);
 
-      float x_scaling = (float)w / mImage->width();
-      float y_scaling = (float)h / mImage->height();
-      float scaling   = x_scaling < y_scaling ? x_scaling : y_scaling;
+    float x_scaling = (float)w / mImage->width();
+    float y_scaling = (float)h / mImage->height();
+    float scaling   = x_scaling < y_scaling ? x_scaling : y_scaling;
 
-      m = m * vl::mat4::getScaling(scaling*mImage->width(), scaling*mImage->height(), scaling);
-      mTransform->setLocalMatrix(m);
-    }
+    m = m * vl::mat4::getScaling(scaling*mImage->width(), scaling*mImage->height(), scaling);
+    mTransform->setLocalMatrix(m);
+    // openglContext()->update();
   }
 
 protected:
@@ -419,7 +424,7 @@ protected:
   vl::ref<vl::Geometry> mGrid;
   vl::ref<vl::Text> mText;
   vl::ivec2 mMouseStart;
-  vl::real mStartTime;
+  vl::Real mStartTime;
   int mBrushSize;
   enum { NoMode, TranslateMode, ScaleMode, AnimateMode } mMode;
   bool mHelpOn;

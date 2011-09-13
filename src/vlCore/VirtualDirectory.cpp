@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -39,17 +39,14 @@ bool VirtualDirectory::setPath(const String& name)
   String root = name;
   root.trim();
   root.normalizeSlashes();
+  while(root.endsWith('/'))
+    root = root.left(-1);
+  root.trim();
   if (root.empty())
   {
-    Log::error("VirtualDirectory::setPath() given an empty path.\n");
+    vl::Log::error("Directory path must be a non null string and must not be '/'.\n");
     return false;
   }
-  if (!root.endsWith('/'))
-  {
-    // Log::warning( Say("VirtualDirectory::setPath() : path (%s) must end with a '/'.\n") << root );
-    root += '/';
-  }
-
   mPath = root;
   return true;
 }
@@ -58,17 +55,17 @@ String VirtualDirectory::translatePath(const String& p) const
 {
   // strip trailing '/'
   String t = p;
-  /*while(t.endsWith('/'))
-    t = t.left(-1);*/
+  while(t.endsWith('/'))
+    t = t.left(-1);
   while(t.startsWith('/'))
     t = t.right(-1);
 
   // make sure the full path is present
-  if (t.startsWith(path()))
+  if (t.startsWith(path()+'/'))
     return t.normalizeSlashes();
   else
   {
-    return (path() + t).normalizeSlashes();
+    return (path() + '/' + t).normalizeSlashes();
   }
 }
 //-----------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -58,31 +58,31 @@ Shader::~Shader()
 //------------------------------------------------------------------------------
 const GLSLProgram* Shader::getGLSLProgram() const 
 { 
-  return static_cast<const GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
+  return dynamic_cast<const GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
 }
 //------------------------------------------------------------------------------
 GLSLProgram* Shader::getGLSLProgram() 
 { 
-  return static_cast<GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
+  return dynamic_cast<GLSLProgram*>( getRenderStateSet()->renderState( RS_GLSLProgram ) ); 
 }
 //------------------------------------------------------------------------------
 // state getters
 //------------------------------------------------------------------------------
 #define GET_OR_CREATE(RS)\
-  RS* rs = static_cast<RS*>( gocRenderStateSet()->renderState( RS_##RS ) ); \
+  RS* rs = dynamic_cast<RS*>( gocRenderStateSet()->renderState( RS_##RS ) ); \
   if ( rs == NULL ) \
   { \
     rs = new RS; \
-    gocRenderStateSet()->setRenderState( rs, -1 ); \
+    gocRenderStateSet()->setRenderState( rs ); \
   } \
   return rs;
 //------------------------------------------------------------------------------
 #define GET_OR_CREATE_IDX(RS, index)\
-  RS* rs = static_cast<RS*>( gocRenderStateSet()->renderState( RS_##RS, index ) ); \
+  RS* rs = dynamic_cast<RS*>( gocRenderStateSet()->renderState( (ERenderState)(RS_##RS##0 + index) ) ); \
   if ( rs == NULL ) \
   { \
-    rs = new RS; \
-    gocRenderStateSet()->setRenderState( rs, index ); \
+    rs = new RS(index); \
+    gocRenderStateSet()->setRenderState( rs ); \
   } \
   return rs;
 //------------------------------------------------------------------------------
@@ -99,12 +99,6 @@ FrontFace* Shader::gocFrontFace() { GET_OR_CREATE(FrontFace) }
 DepthFunc* Shader::gocDepthFunc() { GET_OR_CREATE(DepthFunc) }
 //------------------------------------------------------------------------------
 DepthMask* Shader::gocDepthMask() { GET_OR_CREATE(DepthMask) }
-//------------------------------------------------------------------------------
-Color* Shader::gocColor() { GET_OR_CREATE(Color) }
-//------------------------------------------------------------------------------
-SecondaryColor* Shader::gocSecondaryColor() { GET_OR_CREATE(SecondaryColor) }
-//------------------------------------------------------------------------------
-Normal* Shader::gocNormal() { GET_OR_CREATE(Normal) }
 //------------------------------------------------------------------------------
 ColorMask* Shader::gocColorMask() { GET_OR_CREATE(ColorMask) }
 //------------------------------------------------------------------------------
@@ -150,25 +144,19 @@ BlendFunc* Shader::gocBlendFunc() { GET_OR_CREATE(BlendFunc) }
 //------------------------------------------------------------------------------
 SampleCoverage* Shader::gocSampleCoverage() { GET_OR_CREATE(SampleCoverage) }
 //------------------------------------------------------------------------------
-VertexAttrib* Shader::gocVertexAttrib(int attr_index) { GET_OR_CREATE_IDX(VertexAttrib, attr_index) }
-//------------------------------------------------------------------------------
-const VertexAttrib* Shader::getVertexAttrib(int attr_index) const { if (!getRenderStateSet()) return NULL; else return static_cast<const VertexAttrib*>( getRenderStateSet()->renderState( RS_VertexAttrib, attr_index ) ); }
-//------------------------------------------------------------------------------
-VertexAttrib* Shader::getVertexAttrib(int attr_index) { if (!getRenderStateSet()) return NULL; else return static_cast<VertexAttrib*>( getRenderStateSet()->renderState( RS_VertexAttrib, attr_index ) ); }
-//------------------------------------------------------------------------------
 Light* Shader::gocLight(int light_index) { GET_OR_CREATE_IDX(Light, light_index) }
 //------------------------------------------------------------------------------
-const Light* Shader::getLight(int light_index) const { if (!getRenderStateSet()) return NULL; else return static_cast<const Light*>( getRenderStateSet()->renderState( RS_Light, light_index ) ); }
+const Light* Shader::getLight(int light_index) const { return dynamic_cast<const Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
 //------------------------------------------------------------------------------
-Light* Shader::getLight(int light_index) { if (!getRenderStateSet()) return NULL; else return static_cast<Light*>( getRenderStateSet()->renderState( RS_Light, light_index ) ); }
+Light* Shader::getLight(int light_index) { return dynamic_cast<Light*>( getRenderStateSet()->renderState( (ERenderState)(RS_Light0+light_index) ) ); }
 //------------------------------------------------------------------------------
 ClipPlane* Shader::gocClipPlane(int plane_index) { GET_OR_CREATE_IDX(ClipPlane, plane_index) }
 //------------------------------------------------------------------------------
-const ClipPlane* Shader::getClipPlane(int plane_index) const { if (!getRenderStateSet()) return NULL; else return static_cast<const ClipPlane*>( getRenderStateSet()->renderState( RS_ClipPlane, plane_index) ); }
+const ClipPlane* Shader::getClipPlane(int plane_index) const { return dynamic_cast<const ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
 //------------------------------------------------------------------------------
-ClipPlane* Shader::getClipPlane(int plane_index) { if (!getRenderStateSet()) return NULL; else return static_cast<ClipPlane*>( getRenderStateSet()->renderState( RS_ClipPlane, plane_index) ); }
+ClipPlane* Shader::getClipPlane(int plane_index) { return dynamic_cast<ClipPlane*>( getRenderStateSet()->renderState( (ERenderState)(RS_ClipPlane0+plane_index) ) ); }
 //------------------------------------------------------------------------------
-TextureSampler* Shader::gocTextureSampler(int unit_index) { GET_OR_CREATE_IDX(TextureSampler, unit_index) }
+TextureUnit* Shader::gocTextureUnit(int unit_index) { GET_OR_CREATE_IDX(TextureUnit, unit_index) }
 //------------------------------------------------------------------------------
 TexGen* Shader::gocTexGen(int unit_index) { GET_OR_CREATE_IDX(TexGen, unit_index) }
 //------------------------------------------------------------------------------
@@ -178,7 +166,7 @@ TextureMatrix* Shader::gocTextureMatrix(int unit_index) { GET_OR_CREATE_IDX(Text
 //------------------------------------------------------------------------------
 // PixelTransfer
 //------------------------------------------------------------------------------
-void PixelTransfer::apply(int, const Camera*, OpenGLContext*) const
+void PixelTransfer::apply(const Camera*, OpenGLContext*) const
 {
   glPixelTransferi(GL_MAP_COLOR, mapColor() ? GL_TRUE : GL_FALSE);
   glPixelTransferi(GL_MAP_STENCIL, mapStencil() ? GL_TRUE : GL_FALSE);
@@ -195,7 +183,7 @@ void PixelTransfer::apply(int, const Camera*, OpenGLContext*) const
   glPixelTransferf(GL_ALPHA_BIAS, alphaBias() ); 
   glPixelTransferf(GL_DEPTH_BIAS, depthBias() );
   VL_CHECK_OGL()
-  if (Has_GL_ARB_imaging)
+  if (GLEW_ARB_imaging)
   {
     glPixelTransferf(GL_POST_COLOR_MATRIX_RED_SCALE, postColorMatrixRedScale() );
     glPixelTransferf(GL_POST_COLOR_MATRIX_GREEN_SCALE, postColorMatrixGreenScale() );
@@ -219,64 +207,59 @@ void PixelTransfer::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // Hint
 //------------------------------------------------------------------------------
-void Hint::apply(int, const Camera*, OpenGLContext*) const
+void Hint::apply(const Camera*, OpenGLContext* gl) const
 {
   VL_CHECK_OGL()
 
-  if( Has_Fixed_Function_Pipeline )
+  if( gl->isCompatible() )
   {
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, mPerspectiveCorrectionHint ); VL_CHECK_OGL()
     
     glHint( GL_FOG_HINT, mFogHint ); VL_CHECK_OGL()
 
-    if (Has_GL_GENERATE_MIPMAP)
+    if (GLEW_SGIS_generate_mipmap || GLEW_VERSION_1_4)
     {
       glHint( GL_GENERATE_MIPMAP_HINT, mGenerateMipmapHint ); VL_CHECK_OGL()
     }
   }
-
-  if ( !Has_GLES )
-  {
-    glHint( GL_POLYGON_SMOOTH_HINT, mPolygonSmoothHint ); VL_CHECK_OGL()
-  }
-  if ( !Has_GLES_Version_2_0 )
-  {
-    glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint ); VL_CHECK_OGL()
-    glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint ); VL_CHECK_OGL()
-  }  
+  
+  glHint( GL_POLYGON_SMOOTH_HINT, mPolygonSmoothHint ); VL_CHECK_OGL()
+  glHint( GL_LINE_SMOOTH_HINT, mLineSmoothHint ); VL_CHECK_OGL()
+  glHint( GL_POINT_SMOOTH_HINT, mPointSmoothHint ); VL_CHECK_OGL()
+  
 }
 //------------------------------------------------------------------------------
 // CullFace
 //------------------------------------------------------------------------------
-void CullFace::apply(int, const Camera*, OpenGLContext*) const
+void CullFace::apply(const Camera*, OpenGLContext*) const
 {
   glCullFace(mFaceMode); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // FrontFace
 //------------------------------------------------------------------------------
-void FrontFace::apply(int, const Camera*, OpenGLContext*) const
+void FrontFace::apply(const Camera*, OpenGLContext*) const
 {
   glFrontFace(mFrontFace); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // DepthFunc
 //------------------------------------------------------------------------------
-void DepthFunc::apply(int, const Camera*, OpenGLContext*) const
+void DepthFunc::apply(const Camera*, OpenGLContext*) const
 {
   glDepthFunc(mDepthFunc); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // DepthMask
 //------------------------------------------------------------------------------
-void DepthMask::apply(int, const Camera*, OpenGLContext*) const
+void DepthMask::apply(const Camera*, OpenGLContext*) const
 {
   glDepthMask(mDepthMask?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PolygonMode
 //------------------------------------------------------------------------------
-void PolygonMode::apply(int, const Camera*, OpenGLContext*) const
+void PolygonMode::apply(const Camera*, OpenGLContext*) const
 {
   // required by GL 3.1 CORE
   if ( mFrontFace == mBackFace )
@@ -292,30 +275,26 @@ void PolygonMode::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // ShadeModel
 //------------------------------------------------------------------------------
-void ShadeModel::apply(int, const Camera*, OpenGLContext*) const
+void ShadeModel::apply(const Camera*, OpenGLContext*) const
 {
   glShadeModel(mShadeModel); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // BlendFunc
 //------------------------------------------------------------------------------
-void BlendFunc::apply(int, const Camera*, OpenGLContext*) const
+void BlendFunc::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_EXT_blend_func_separate||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GL_OES_blend_func_separate||Has_GLES_Version_2_0)
-  { 
-    VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL()
-  }
+  if (GLEW_VERSION_1_4||GLEW_EXT_blend_func_separate)
+    { VL_glBlendFuncSeparate(mSrcRGB, mDstRGB, mSrcAlpha, mDstAlpha); VL_CHECK_OGL() }
   else
-  { 
-    glBlendFunc(mSrcRGB, mDstRGB); VL_CHECK_OGL() // modifies rgb and alpha
-  }
+    { glBlendFunc(mSrcRGB, mDstRGB); VL_CHECK_OGL() }// modifies rgb and alpha
 }
 //------------------------------------------------------------------------------
 // BlendEquation
 //------------------------------------------------------------------------------
-void BlendEquation::apply(int, const Camera*, OpenGLContext*) const
+void BlendEquation::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_Version_2_0||Has_GL_EXT_blend_equation_separate)
+  if (GLEW_VERSION_2_0||GLEW_EXT_blend_equation_separate)
     { VL_glBlendEquationSeparate(mModeRGB, mModeAlpha); VL_CHECK_OGL() }
   else
     { VL_glBlendEquation(mModeRGB); VL_CHECK_OGL() }
@@ -323,7 +302,7 @@ void BlendEquation::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // AlphaFunc
 //------------------------------------------------------------------------------
-void AlphaFunc::apply(int, const Camera*, OpenGLContext*) const
+void AlphaFunc::apply(const Camera*, OpenGLContext*) const
 {
   glAlphaFunc(mAlphaFunc, mRefValue); VL_CHECK_OGL()
 }
@@ -348,30 +327,6 @@ Material::Material()
   mColorMaterialEnabled = false;
   mColorMaterialFace = PF_FRONT_AND_BACK;
   mColorMaterial = CM_AMBIENT_AND_DIFFUSE;
-}
-//------------------------------------------------------------------------------
-float Material::getMinimumAlpha() const
-{
-  float min_alpha = std::min( mFrontAmbient.a(),  mBackAmbient.a() );
-  min_alpha = std::min( min_alpha, mFrontDiffuse.a() );
-  min_alpha = std::min( min_alpha, mBackDiffuse.a()  );
-  min_alpha = std::min( min_alpha, mFrontSpecular.a());
-  min_alpha = std::min( min_alpha, mBackSpecular.a() );
-  min_alpha = std::min( min_alpha, mFrontEmission.a());
-  min_alpha = std::min( min_alpha, mBackEmission.a() );
-  return min_alpha;
-}
-//------------------------------------------------------------------------------
-void Material::multiplyTransparency(float alpha)
-{
-  mFrontAmbient.a()  *= alpha;
-  mBackAmbient.a()   *= alpha;
-  mFrontDiffuse.a()  *= alpha;
-  mBackDiffuse.a()   *= alpha;
-  mFrontSpecular.a() *= alpha;
-  mBackSpecular.a()  *= alpha;
-  mFrontEmission.a() *= alpha;
-  mBackEmission.a()  *= alpha;
 }
 //------------------------------------------------------------------------------
 void Material::setTransparency(float alpha)
@@ -424,161 +379,83 @@ void Material::setFlatColor(const fvec4& color)
   setBackFlatColor(color);
 }
 //------------------------------------------------------------------------------
-void Material::apply(int, const Camera*, OpenGLContext*) const
+void Material::apply(const Camera*, OpenGLContext*) const
 {
-  VL_CHECK_OGL();
-
-#if defined(VL_OPENGL)
-
   if (mColorMaterialEnabled)
   {
-    glColorMaterial(colorMaterialFace(), colorMaterial()); VL_CHECK_OGL();
-    glEnable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
+    glColorMaterial(colorMaterialFace(), colorMaterial());
+    glEnable(GL_COLOR_MATERIAL);
   }
   else
-  {
-    glDisable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
-  }
+    glDisable(GL_COLOR_MATERIAL);
 
-  if ( mFrontAmbient == mBackAmbient )
-  {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr()); 
-  }
-  else
-  {
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mFrontAmbient.ptr()); 
-    glMaterialfv(GL_BACK, GL_AMBIENT, mBackAmbient.ptr());
-  }
+  glMaterialfv(GL_FRONT, GL_AMBIENT, mFrontAmbient.ptr()); 
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, mFrontDiffuse.ptr()); 
+  glMaterialfv(GL_FRONT, GL_SPECULAR, mFrontSpecular.ptr()); 
+  glMaterialfv(GL_FRONT, GL_EMISSION, mFrontEmission.ptr()); 
+  glMaterialf(GL_FRONT, GL_SHININESS, mFrontShininess); 
 
-  if ( mFrontDiffuse == mBackDiffuse )
-  {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr()); 
-  }
-  else
-  {
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mFrontDiffuse.ptr()); 
-    glMaterialfv(GL_BACK, GL_DIFFUSE, mBackDiffuse.ptr());
-  }
-
-  if ( mFrontSpecular == mBackSpecular )
-  {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr()); 
-  }
-  else
-  {
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mFrontSpecular.ptr()); 
-    glMaterialfv(GL_BACK, GL_SPECULAR, mBackSpecular.ptr());
-  }
-
-  if ( mFrontEmission == mBackEmission )
-  {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mFrontEmission.ptr()); 
-  }
-  else
-  {
-    glMaterialfv(GL_FRONT, GL_EMISSION, mFrontEmission.ptr()); 
-    glMaterialfv(GL_BACK, GL_EMISSION, mBackEmission.ptr());
-  }
-
-  if ( mFrontShininess == mBackShininess )
-  {
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, mFrontShininess); VL_CHECK_OGL();
-  }
-  else
-  {
-    glMaterialf(GL_FRONT, GL_SHININESS, mFrontShininess); VL_CHECK_OGL();
-    glMaterialf(GL_BACK, GL_SHININESS, mBackShininess); VL_CHECK_OGL();
-  }
-
-
-#else
-
-  if (mColorMaterialEnabled)
-  {
-    // OpenGL ES supports only this
-    if (colorMaterial() != CM_AMBIENT_AND_DIFFUSE)
-    {
-      Log::error("OpenGL ES 1.x supports only CM_AMBIENT_AND_DIFFUSE color material mode!\n");
-      VL_TRAP();
-    }
-    glEnable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
-  }
-  else
-  {
-    glDisable(GL_COLOR_MATERIAL); VL_CHECK_OGL();
-  }
-
-  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mFrontAmbient.ptr()); 
-  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mFrontDiffuse.ptr()); 
-  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mFrontSpecular.ptr()); 
-  glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mFrontEmission.ptr()); 
-  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, mFrontShininess); VL_CHECK_OGL();
-
-#endif
-
-  VL_CHECK_OGL();
+  glMaterialfv(GL_BACK, GL_AMBIENT, mBackAmbient.ptr());
+  glMaterialfv(GL_BACK, GL_DIFFUSE, mBackDiffuse.ptr());
+  glMaterialfv(GL_BACK, GL_SPECULAR, mBackSpecular.ptr());
+  glMaterialfv(GL_BACK, GL_EMISSION, mBackEmission.ptr());
+  glMaterialf(GL_BACK, GL_SHININESS, mBackShininess);
 }
 //------------------------------------------------------------------------------
 // LightModel
 //------------------------------------------------------------------------------
-void LightModel::apply(int, const Camera*, OpenGLContext*) const
+void LightModel::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_Version_1_2||Has_GL_EXT_separate_specular_color)
-  { 
-    glLightModelf(GL_LIGHT_MODEL_COLOR_CONTROL, (float)mColorControl); VL_CHECK_OGL() 
-  }
+  if (GLEW_VERSION_1_2||GLEW_EXT_separate_specular_color)
+    { glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, mColorControl); VL_CHECK_OGL() }
 
-  if (Has_GL_Version_1_1)
-    glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, mLocalViewer ? 1.0f : 0.0f ); VL_CHECK_OGL()
-
-  // Supported by GLES 1.x as well.
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, mAmbientColor.ptr()); VL_CHECK_OGL()
-  glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, mTwoSide ? 1.0f : 0.0f ); VL_CHECK_OGL()
+  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, mLocalViewer?1:0); VL_CHECK_OGL()
+  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, mTwoSide?1:0); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // Fog
 //------------------------------------------------------------------------------
-void Fog::apply(int, const Camera*, OpenGLContext*) const
+void Fog::apply(const Camera*, OpenGLContext*) const
 {
-  glFogf(GL_FOG_MODE, (float)mMode); VL_CHECK_OGL()
+  glFogi(GL_FOG_MODE, mMode); VL_CHECK_OGL()
+  glFogfv(GL_FOG_COLOR, mColor.ptr()); VL_CHECK_OGL()
   glFogf(GL_FOG_DENSITY, mDensity); VL_CHECK_OGL()
   glFogf(GL_FOG_START, mStart); VL_CHECK_OGL()
   glFogf(GL_FOG_END, mEnd); VL_CHECK_OGL()
-  glFogfv(GL_FOG_COLOR, mColor.ptr()); VL_CHECK_OGL()
 }
-
 //------------------------------------------------------------------------------
 // PolygonOffset
 //------------------------------------------------------------------------------
-void PolygonOffset::apply(int, const Camera*, OpenGLContext*) const
+void PolygonOffset::apply(const Camera*, OpenGLContext*) const
 {
   glPolygonOffset(mFactor, mUnits); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // LogicOp
 //------------------------------------------------------------------------------
-void LogicOp::apply(int, const Camera*, OpenGLContext*) const
+void LogicOp::apply(const Camera*, OpenGLContext*) const
 {
   glLogicOp(mLogicOp); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // DepthRange
 //------------------------------------------------------------------------------
-void DepthRange::apply(int, const Camera*, OpenGLContext*) const
+void DepthRange::apply(const Camera*, OpenGLContext*) const
 {
   glDepthRange(mZNear, mZFar); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // LineWidth
 //------------------------------------------------------------------------------
-void LineWidth::apply(int, const Camera*, OpenGLContext*) const
+void LineWidth::apply(const Camera*, OpenGLContext*) const
 {
   glLineWidth(mLineWidth); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PointSize
 //------------------------------------------------------------------------------
-void PointSize::apply(int, const Camera*, OpenGLContext*) const
+void PointSize::apply(const Camera*, OpenGLContext*) const
 {
   glPointSize(mPointSize); VL_CHECK_OGL()
 }
@@ -602,33 +479,33 @@ void PolygonStipple::set(const unsigned char* mask)
   memcpy(mMask, mask, sizeof(unsigned char)*32*32/8);
 }
 //------------------------------------------------------------------------------
-void PolygonStipple::apply(int, const Camera*, OpenGLContext*) const
+void PolygonStipple::apply(const Camera*, OpenGLContext*) const
 {
   glPolygonStipple(mask()); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // LineStipple
 //------------------------------------------------------------------------------
-void LineStipple::apply(int, const Camera*, OpenGLContext*) const
+void LineStipple::apply(const Camera*, OpenGLContext*) const
 {
   glLineStipple(mFactor, mPattern); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // PointParameter
 //------------------------------------------------------------------------------
-void PointParameter::apply(int, const Camera*, OpenGLContext*) const
+void PointParameter::apply(const Camera*, OpenGLContext*) const
 {
-  if (Has_GL_Version_1_4||Has_GLES_Version_1_1)
+  if (GLEW_VERSION_1_4)
   {
     VL_glPointParameterf(GL_POINT_SIZE_MIN, mSizeMin); VL_CHECK_OGL()
     VL_glPointParameterf(GL_POINT_SIZE_MAX, mSizeMax); VL_CHECK_OGL()
     VL_glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, (const float*)mDistanceAttenuation.ptr()); VL_CHECK_OGL()
   }
-  if (Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1)
+  if (GLEW_VERSION_1_4||GLEW_VERSION_3_0)
   {
     VL_glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, mFadeThresholdSize); VL_CHECK_OGL()
   }
-  if (Has_GL_Version_2_0||Has_GL_Version_3_0||Has_GL_Version_4_0)
+  if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
   {
     VL_glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, mPointSpriteCoordOrigin); VL_CHECK_OGL()
   }
@@ -636,9 +513,9 @@ void PointParameter::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // StencilFunc
 //------------------------------------------------------------------------------
-void StencilFunc::apply(int, const Camera*, OpenGLContext*) const
+void StencilFunc::apply(const Camera*, OpenGLContext*) const
 {
-  if(Has_GL_Version_2_0)
+  if(GLEW_VERSION_2_0)
   {
     VL_glStencilFuncSeparate(GL_FRONT, mFunction_Front, mRefValue_Front, mMask_Front); VL_CHECK_OGL()
     VL_glStencilFuncSeparate(GL_BACK,  mFunction_Back,  mRefValue_Back,  mMask_Back);  VL_CHECK_OGL()
@@ -651,9 +528,9 @@ void StencilFunc::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // StencilOp
 //------------------------------------------------------------------------------
-void StencilOp::apply(int, const Camera*, OpenGLContext*) const
+void StencilOp::apply(const Camera*, OpenGLContext*) const
 {
-  if(Has_GL_Version_2_0)
+  if(GLEW_VERSION_2_0)
   {
     VL_glStencilOpSeparate(GL_FRONT, mSFail_Front, mDpFail_Front, mDpPass_Front); VL_CHECK_OGL()
     VL_glStencilOpSeparate(GL_BACK,  mSFail_Back,  mDpFail_Back,  mDpPass_Back);  VL_CHECK_OGL()
@@ -666,9 +543,9 @@ void StencilOp::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // StencilMask
 //------------------------------------------------------------------------------
-void StencilMask::apply(int, const Camera*, OpenGLContext*) const
+void StencilMask::apply(const Camera*, OpenGLContext*) const
 {
-  if(Has_GL_Version_2_0)
+  if(GLEW_VERSION_2_0)
   {
     glStencilMaskSeparate(GL_FRONT, mMask_Front); VL_CHECK_OGL()
     glStencilMaskSeparate(GL_BACK,  mMask_Back);  VL_CHECK_OGL()
@@ -681,53 +558,21 @@ void StencilMask::apply(int, const Camera*, OpenGLContext*) const
 //------------------------------------------------------------------------------
 // BlendColor
 //------------------------------------------------------------------------------
-void BlendColor::apply(int, const Camera*, OpenGLContext*) const
+void BlendColor::apply(const Camera*, OpenGLContext*) const
 {
   VL_glBlendColor(mBlendColor.r(), mBlendColor.g(), mBlendColor.b(), mBlendColor.a()); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
-// VertexAttrib
-//------------------------------------------------------------------------------
-void VertexAttrib::apply(int index, const Camera*, OpenGLContext* ctx) const
-{
-  glVertexAttrib4fv( index, mValue.ptr() ); VL_CHECK_OGL()
-  ctx->mVertexAttribValue[index] = mValue;
-}
-//------------------------------------------------------------------------------
-// Color
-//------------------------------------------------------------------------------
-void Color::apply(int, const Camera*, OpenGLContext* ctx) const
-{
-  glColor4f( mColor.r(), mColor.g(), mColor.b(), mColor.a() ); VL_CHECK_OGL()
-  ctx->mColor = mColor;
-}
-//------------------------------------------------------------------------------
-// SecondaryColor
-//------------------------------------------------------------------------------
-void SecondaryColor::apply(int, const Camera*, OpenGLContext* ctx) const
-{
-  glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() ); VL_CHECK_OGL()
-  ctx->mSecondaryColor = mSecondaryColor;
-}
-//------------------------------------------------------------------------------
-// Normal
-//------------------------------------------------------------------------------
-void Normal::apply(int, const Camera*, OpenGLContext* ctx) const
-{
-  glNormal3f( mNormal.x(), mNormal.y(), mNormal.z() ); VL_CHECK_OGL()
-  ctx->mNormal = mNormal;
-}
-//------------------------------------------------------------------------------
 // ColorMask
 //------------------------------------------------------------------------------
-void ColorMask::apply(int, const Camera*, OpenGLContext*) const
+void ColorMask::apply(const Camera*, OpenGLContext*) const
 {
   glColorMask(mRed?GL_TRUE:GL_FALSE, mGreen?GL_TRUE:GL_FALSE, mBlue?GL_TRUE:GL_FALSE, mAlpha?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
 //------------------------------------------------------------------------------
 // SampleCoverage
 //------------------------------------------------------------------------------
-void SampleCoverage::apply(int, const Camera*, OpenGLContext*) const
+void SampleCoverage::apply(const Camera*, OpenGLContext*) const
 {
   VL_glSampleCoverage(mValue, mInvert?GL_TRUE:GL_FALSE); VL_CHECK_OGL()
 }
@@ -745,8 +590,8 @@ TexParameter::TexParameter()
   setBorderColor(fvec4(0,0,0,0));
   setAnisotropy(1.0f);
   setGenerateMipmap(false);
-  setCompareFunc(TCF_LEQUAL);
-  setCompareMode(TCM_NONE);
+  setTexCompareFunc(TCF_LEQUAL);
+  setTexCompareMode(TCM_NONE);
   setDepthTextureMode(DTM_LUMINANCE);
 }
 //------------------------------------------------------------------------------
@@ -772,7 +617,7 @@ void TexParameter::setMagFilter(ETexParamFilter magfilter)
   }
 }
 //------------------------------------------------------------------------------
-void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
+void TexParameter::apply(ETextureDimension dimension, OpenGLContext* gl) const
 {
   VL_CHECK_OGL()
 
@@ -784,32 +629,26 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
                (wrapR() != GL_CLAMP && wrapR() != GL_CLAMP_TO_EDGE && wrapR() != GL_CLAMP_TO_BORDER);
     if (err)
     {
-      Log::bug("ARB_texture_rectangle extension allows only the following wrapping modes: GL_CLAMP, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER.\n"); VL_TRAP()
+      Log::bug("ARB_texture_rectangle extension allows only the following wrapping modes: GL_CLAMP, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER.\n");
     }
   }
 
   if (wrapS() == GL_MIRRORED_REPEAT || wrapT() == GL_MIRRORED_REPEAT || wrapR() == GL_MIRRORED_REPEAT)
   {
-    if( !(Has_GL_IBM_texture_mirrored_repeat || Has_GL_ARB_texture_mirrored_repeat || Has_GL_Version_1_4 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_2_0) )
-    {
-      Log::bug("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n"); VL_TRAP()
-    }
+    if( !(GLEW_VERSION_1_4 || GLEW_ARB_texture_mirrored_repeat || GLEW_IBM_texture_mirrored_repeat) )
+      Log::bug("GL_MIRRORED_REPEAT not supported by your OpenGL implementation.\n");
   }
 
   if (wrapS() == GL_CLAMP_TO_EDGE || wrapT() == GL_CLAMP_TO_EDGE || wrapR() == GL_CLAMP_TO_EDGE)
   {
-    if( !(Has_GL_SGIS_texture_edge_clamp || Has_GL_Version_1_2 || Has_GL_Version_3_0 || Has_GL_Version_4_0 || Has_GLES_Version_1_1 || Has_GLES_Version_2_0) )
-    {
-      Log::bug("GL_CLAMP_TO_EDGE not supported by your OpenGL implementation.\n"); VL_TRAP()
-    }
+    if( !(GLEW_VERSION_1_2 || GLEW_EXT_texture_edge_clamp || GLEW_SGIS_texture_edge_clamp) )
+      Log::bug("GL_CLAMP_TO_EDGE not supported by your OpenGL implementation.\n");
   }
 
   if (wrapS() == GL_CLAMP_TO_BORDER || wrapT() == GL_CLAMP_TO_BORDER || wrapR() == GL_CLAMP_TO_BORDER)
   {
-    if( !(Has_GL_SGIS_texture_border_clamp || Has_GL_ARB_texture_border_clamp || Has_GL_Version_1_3 || Has_GL_Version_3_0 || Has_GL_Version_4_0) )
-    {
-      Log::bug("GL_CLAMP_TO_BORDER not supported by your OpenGL implementation.\n"); VL_TRAP()
-    }
+    if( !(GLEW_VERSION_1_3 || GLEW_ARB_texture_border_clamp || GLEW_SGIS_texture_border_clamp) )
+      Log::bug("GL_CLAMP_TO_BORDER not supported by your OpenGL implementation.\n");
   }
 #endif
 
@@ -817,27 +656,27 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
 
   if (dimension != TD_TEXTURE_BUFFER && dimension != TD_TEXTURE_2D_MULTISAMPLE && dimension != TD_TEXTURE_2D_MULTISAMPLE_ARRAY)
   {
-#if defined(VL_OPENGL)
     glTexParameterfv(dimension, GL_TEXTURE_BORDER_COLOR, borderColor().ptr()); VL_CHECK_OGL()
-#endif
     glTexParameteri(dimension, GL_TEXTURE_MIN_FILTER, minFilter()); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_MAG_FILTER, magFilter()); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_WRAP_S, wrapS()); VL_CHECK_OGL()
     glTexParameteri(dimension, GL_TEXTURE_WRAP_T, wrapT()); VL_CHECK_OGL()
-    if (Has_Texture_3D) 
+    if (GLEW_VERSION_1_2) 
       glTexParameteri(dimension, GL_TEXTURE_WRAP_R, wrapR()); VL_CHECK_OGL()
 
-    if (Has_GL_EXT_texture_filter_anisotropic)
+    if (GLEW_EXT_texture_filter_anisotropic)
       glTexParameterf( dimension, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy() ); VL_CHECK_OGL()
 
-    if (Has_GL_GENERATE_MIPMAP && dimension != TD_TEXTURE_RECTANGLE)
-      glTexParameteri(dimension, GL_GENERATE_MIPMAP, generateMipmap() ? GL_TRUE : GL_FALSE); VL_CHECK_OGL()
+    if (gl->isCompatible())
+      if (GLEW_VERSION_1_4||GLEW_SGIS_generate_mipmap)
+        if (dimension != TD_TEXTURE_RECTANGLE)
+          glTexParameteri(dimension, GL_GENERATE_MIPMAP, generateMipmap() ? GL_TRUE : GL_FALSE); VL_CHECK_OGL()
 
-    if (Has_GL_ARB_shadow||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0)
+    if (GLEW_VERSION_1_4||GLEW_ARB_shadow)
     {
       glTexParameteri(dimension, GL_TEXTURE_COMPARE_MODE, compareMode() ); VL_CHECK_OGL()
       glTexParameteri(dimension, GL_TEXTURE_COMPARE_FUNC, compareFunc() ); VL_CHECK_OGL()
-      if(Has_GL_Version_1_4)
+      if(gl->isCompatible())
         glTexParameteri(dimension, GL_DEPTH_TEXTURE_MODE, depthTextureMode() ); VL_CHECK_OGL()
     }
   }
@@ -848,23 +687,23 @@ void TexParameter::apply(ETextureDimension dimension, OpenGLContext* ) const
 }
 namespace
 {
-  bool checkTextureSampler(const char* str, int unit)
+  bool checkTextureUnit(const char* str, int unit)
   {
     int max_texture = 1, max_tmp = 0;
 
-    if (Has_GL_Version_1_3||Has_GL_ARB_multitexture||Has_GLES_Version_1_1)
+    if (GLEW_VERSION_1_3||GLEW_ARB_multitexture)
     {
-      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL(); // deprecated enum
+      glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_tmp); VL_CHECK_OGL();
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
     }
 
-    if (Has_GL_Version_2_0)
+    if (GLEW_VERSION_2_0)
     {
-      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL(); // also deprecated enum
+      glGetIntegerv(GL_MAX_TEXTURE_COORDS, &max_tmp); VL_CHECK_OGL();
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
     }
 
-    if (Has_GLSL)
+    if (GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
     {
       glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max_tmp); VL_CHECK_OGL();
       max_texture = max_tmp > max_texture ? max_tmp : max_texture;
@@ -882,10 +721,11 @@ namespace
 //------------------------------------------------------------------------------
 // TexEnv
 //------------------------------------------------------------------------------
-TexEnv::TexEnv()
+TexEnv::TexEnv(int texunit)
 {
   VL_DEBUG_SET_OBJECT_NAME()
 
+  mTextureUnit = texunit;
   mMode = TEM_MODULATE;
   mColor = fvec4(0,0,0,0);
 
@@ -912,14 +752,15 @@ TexEnv::TexEnv()
   mPointSpriteCoordReplace = false;
 }
 //------------------------------------------------------------------------------
-void TexEnv::apply(int index, const Camera*, OpenGLContext*) const
+void TexEnv::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL()
-  VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureSampler("TexEnv::apply", index));
+  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
+  VL_CHECK(checkTextureUnit("TexEnv::apply",textureUnit()));
 
+  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
-  VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL();
+  VL_CHECK_OGL();
 
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode()); VL_CHECK_OGL()
 
@@ -931,7 +772,7 @@ void TexEnv::apply(int index, const Camera*, OpenGLContext*) const
 
   // combiner settings
   // red book 1.4 p438
-  if (mode() == TEM_COMBINE && (Has_GL_EXT_texture_env_combine || Has_GL_Version_1_3))
+  if (mode() == TEM_COMBINE && (GLEW_EXT_texture_env_combine || GLEW_VERSION_1_3))
   {
     glTexEnvf(GL_TEXTURE_ENV, GL_RGB_SCALE, rgbScale()); VL_CHECK_OGL()
     glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, combineRGB()); VL_CHECK_OGL()
@@ -959,12 +800,12 @@ void TexEnv::apply(int index, const Camera*, OpenGLContext*) const
   }
 
   // no need to do it if point sprite is disabled but we cannot know it here
-  if (Has_Point_Sprite)
+  if (GLEW_VERSION_2_0||GLEW_ARB_point_sprite)
   {
     glTexEnvi( GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, mPointSpriteCoordReplace ? GL_TRUE : GL_FALSE ); VL_CHECK_OGL()
   }
 
-  if (Has_GL_Version_1_4||Has_GL_EXT_texture_lod_bias)
+  if (GLEW_VERSION_1_4||GLEW_EXT_texture_lod_bias)
   {
     glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, mLodBias); VL_CHECK_OGL()
   }
@@ -975,9 +816,10 @@ void TexEnv::apply(int index, const Camera*, OpenGLContext*) const
 //! The eye and object planes are not transformed by any matrix (unlike usually with OpenGL),
 //! which means that the object plane is specified in object coordinates and that,
 //! the eye plane is specified in camera coordinates.
-TexGen::TexGen()
+TexGen::TexGen(int texunit)
 {
   VL_DEBUG_SET_OBJECT_NAME()
+  mTextureUnit  = texunit;
   mEyePlaneS    = fvec4(1,0,0,0);
   mObjectPlaneS = fvec4(1,0,0,0);
   mEyePlaneT    = fvec4(0,1,0,0);
@@ -992,18 +834,16 @@ TexGen::TexGen()
   mGenModeQ = TGM_DISABLED;
 }
 //-----------------------------------------------------------------------------
-void TexGen::apply(int index, const Camera*, OpenGLContext*) const
+void TexGen::apply(const Camera*, OpenGLContext*) const
 {
   VL_CHECK_OGL();
 
-  VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureSampler("TexGen::apply", index));
+  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
+  VL_CHECK(checkTextureUnit("TexGen::apply",textureUnit()));
 
-  VL_glActiveTexture( GL_TEXTURE0 + index );
+  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_CHECK_OGL();
-
-#if defined(VL_OPENGL)
 
   if (genModeS() || genModeT() || genModeR() || genModeQ())
   {
@@ -1011,11 +851,12 @@ void TexGen::apply(int index, const Camera*, OpenGLContext*) const
     glPushMatrix();
     glLoadIdentity();
 
+    VL_CHECK_OGL();
+
     if (genModeS())
     {
       glEnable(GL_TEXTURE_GEN_S);
       glTexGeni( GL_S, GL_TEXTURE_GEN_MODE, genModeS());
-      // Note: these are not supported by OpenGL ES
       if (genModeS() == TGM_OBJECT_LINEAR) glTexGenfv(GL_S, GL_OBJECT_PLANE, objectPlaneS().ptr());
       if (genModeS() == TGM_EYE_LINEAR)    glTexGenfv(GL_S, GL_EYE_PLANE,       eyePlaneS().ptr());
     }
@@ -1026,7 +867,6 @@ void TexGen::apply(int index, const Camera*, OpenGLContext*) const
     {
       glEnable(GL_TEXTURE_GEN_T);
       glTexGeni( GL_T, GL_TEXTURE_GEN_MODE, genModeT());
-      // Note: these are not supported by OpenGL ES
       if (genModeT() == TGM_OBJECT_LINEAR) glTexGenfv(GL_T, GL_OBJECT_PLANE, objectPlaneT().ptr());
       if (genModeT() == TGM_EYE_LINEAR)    glTexGenfv(GL_T, GL_EYE_PLANE,       eyePlaneT().ptr());
     }
@@ -1037,7 +877,6 @@ void TexGen::apply(int index, const Camera*, OpenGLContext*) const
     {
       glEnable(GL_TEXTURE_GEN_R);
       glTexGeni( GL_R, GL_TEXTURE_GEN_MODE, genModeR());
-      // Note: these are not supported by OpenGL ES
       if (genModeR() == TGM_OBJECT_LINEAR) glTexGenfv(GL_R, GL_OBJECT_PLANE, objectPlaneR().ptr());
       if (genModeR() == TGM_EYE_LINEAR)    glTexGenfv(GL_R, GL_EYE_PLANE,       eyePlaneR().ptr());
     }
@@ -1048,9 +887,8 @@ void TexGen::apply(int index, const Camera*, OpenGLContext*) const
     {
       glEnable(GL_TEXTURE_GEN_Q);
       glTexGeni( GL_Q, GL_TEXTURE_GEN_MODE, genModeQ());
-      // Note: these are not supported by OpenGL ES
       if (genModeQ() == TGM_OBJECT_LINEAR) glTexGenfv(GL_Q, GL_OBJECT_PLANE, objectPlaneQ().ptr());
-      if (genModeQ() == TGM_EYE_LINEAR)    glTexGenfv(GL_Q, GL_EYE_PLANE,    eyePlaneQ().ptr());
+      if (genModeQ() == TGM_EYE_LINEAR)    glTexGenfv(GL_Q, GL_EYE_PLANE,       eyePlaneQ().ptr());
     }
 
     glPopMatrix();
@@ -1058,8 +896,6 @@ void TexGen::apply(int index, const Camera*, OpenGLContext*) const
 
   // these needs to be done here to apply a TexGen which has all components disabled
   // and to finish up the TexGen which mixed enabled/disabled components.
-
-  VL_CHECK_OGL();
 
   if (!genModeS())
     glDisable(GL_TEXTURE_GEN_S);
@@ -1073,90 +909,52 @@ void TexGen::apply(int index, const Camera*, OpenGLContext*) const
   if (!genModeQ())
     glDisable(GL_TEXTURE_GEN_Q);
 
-#elif defined(VL_OPENGL_ES1)
-
-  if ( genModeS() != TGM_DISABLED && genModeS() != TGM_REFLECTION_MAP && genModeS() != TGM_NORMAL_MAP )
-  {
-    Log::bug("OpenGL ES does not support GL_SPHERE_MAP, GL_EYE_LINEAR or GL_OBJECT_LINEAR texture coordinate generation!\n"); VL_TRAP();
-    return;
-  }
-
-  if ( genModeS() != genModeT() || genModeT() != genModeR() )
-  {
-    Log::bug("OpenGL ES requires the same texture coordinate generation mode for S, T and R!\n"); VL_TRAP();
-    return;
-  }
-
-  if(!Has_GL_OES_texture_cube_map)
-  {
-    Log::bug("Use of vl::TexGen under OpenGL ES requires GL_OES_texture_cube_map extension!\n"); VL_TRAP();
-    return;
-  }
-
-  if (genModeS() && genModeT() && genModeR())
-  {
-    glMatrixMode(GL_MODELVIEW); VL_CHECK_OGL();
-    glPushMatrix(); VL_CHECK_OGL();
-    glLoadIdentity(); VL_CHECK_OGL(); 
-
-    glEnable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
-    glTexGeni( GL_TEXTURE_GEN_STR_OES, GL_TEXTURE_GEN_MODE, genModeS() ); VL_CHECK_OGL();
-
-    glPopMatrix(); VL_CHECK_OGL();
-  }
-  else    
-  {
-    glTexGeni( GL_TEXTURE_GEN_STR_OES, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP_OES ); VL_CHECK_OGL();
-    glEnable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
-    glDisable(GL_TEXTURE_GEN_STR_OES); VL_CHECK_OGL();
-  }
-
-#endif
+  VL_CHECK_OGL();
 }
 //-----------------------------------------------------------------------------
 // TextureMatrix
 //-----------------------------------------------------------------------------
-void TextureMatrix::apply(int index, const Camera* camera, OpenGLContext*) const
+void TextureMatrix::apply(const Camera* camera, OpenGLContext*) const
 {
   VL_CHECK_OGL();
-  VL_CHECK(index < VL_MAX_TEXTURE_UNITS);
-  VL_CHECK(checkTextureSampler("TextureMatrix::apply",index));
+  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS);
+  VL_CHECK(checkTextureUnit("TextureMatrix::apply",textureUnit()));
 
-  VL_glActiveTexture( GL_TEXTURE0 + index );
+  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() );
   // if this fails probably you requested a texture unit index not supported by your OpenGL implementation.
   VL_CHECK_OGL();
   glMatrixMode(GL_TEXTURE);
   if (useCameraRotationInverse())
-    VL_glLoadMatrix( ((mat4)matrix()*camera->modelingMatrix().as3x3()).ptr() );
+    VL_glLoadMatrix( (matrix()*camera->inverseViewMatrix().as3x3()).ptr() );
   else
-    VL_glLoadMatrix( ((mat4)matrix()).ptr() );
+    VL_glLoadMatrix( matrix().ptr() );
 }
 //-----------------------------------------------------------------------------
-// TextureSampler
+// TextureUnit
 //-----------------------------------------------------------------------------
-bool TextureSampler::hasTexture() const 
+bool TextureUnit::hasTexture() const 
 { 
   return mTexture && mTexture->handle(); 
 }
 //------------------------------------------------------------------------------
-void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) const
+void TextureUnit::apply(const Camera* camera, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL();
-  VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
-  VL_CHECK(checkTextureSampler("TextureSampler::apply",index));
+  VL_CHECK(textureUnit() < VL_MAX_TEXTURE_UNITS)
+  VL_CHECK(checkTextureUnit("TextureUnit::apply",textureUnit()));
 
   // activate the appropriate texture unit
-  VL_glActiveTexture( GL_TEXTURE0 + index ); VL_CHECK_OGL()
+  VL_glActiveTexture( GL_TEXTURE0 + textureUnit() ); VL_CHECK_OGL()
 
   // disable and unbind previous active texture target on this texture unit.
-  vl::ETextureDimension prev_tex_target = ctx->texUnitBinding( index );
+  vl::ETextureDimension prev_tex_target = ctx->texUnitBinding( textureUnit() );
   if (prev_tex_target)
   {
     // this is not strictly necessary, it also avoids interaction witht FBOs etc.
     glBindTexture( prev_tex_target, 0 ); VL_CHECK_OGL()
 
     /* GL_TEXTURE_1D_ARRAY and GL_TEXTURE_2D_ARRAY are not supported by the OpenGL fixed function pipeline */
-    if (Has_Fixed_Function_Pipeline)
+    if (ctx->isCompatible())
     {
       switch(prev_tex_target)
       {
@@ -1176,7 +974,7 @@ void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) 
   {
     if( !hasTexture() )
     {
-      Log::bug( "TextureSampler::apply() error: null texture!\n" );
+      Log::bug( Say("TextureUnit::apply() error: null texture! (%s) \n") << texture()->objectName() );
       VL_TRAP();
       return;
     }
@@ -1185,11 +983,11 @@ void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) 
     glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
 
     // if we request mipmapped filtering then we must have a mip-mapped texture.
-#if !defined(NDEBUG) && defined(VL_OPENGL) // glGetTexLevelParameter* is not supported under OpenGL ES
-    if ( texture()->dimension() != TD_TEXTURE_BUFFER && (texture()->width() > 1 || texture()->height() > 1 || texture()->depth() > 1) )
+    #ifndef NDEBUG
+    if (texture()->dimension() != TD_TEXTURE_BUFFER)
     {
       GLint width = 0;
-      ETextureDimension tex_target = texture()->dimension() == vl::TD_TEXTURE_CUBE_MAP ? (ETextureDimension)GL_TEXTURE_CUBE_MAP_POSITIVE_X : texture()->dimension();
+      int tex_target = texture()->dimension() == vl::TD_TEXTURE_CUBE_MAP ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : texture()->dimension();
       glGetTexLevelParameteriv( tex_target, 1, GL_TEXTURE_WIDTH, &width );
       VL_CHECK_OGL()
       if ( !width )
@@ -1201,7 +999,7 @@ void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) 
           case TPF_NEAREST_MIPMAP_LINEAR:
           case TPF_NEAREST_MIPMAP_NEAREST:
           {
-            Log::bug( vl::Say("TextureSampler::apply() error: requested mipmapping texture filtering on a Texture with no mipmaps! (%s)\n") << texture()->objectName() );
+            Log::bug( vl::Say("TextureUnit::apply() error: requested mipmapping texture filtering on a Texture with no mipmaps! (%s)\n") << texture()->objectName() );
             VL_TRAP()
             break;
           }
@@ -1211,10 +1009,10 @@ void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) 
         }
       }
     }
-#endif
+    #endif
 
     // enable the texture
-    if (Has_Fixed_Function_Pipeline)
+    if (ctx->isCompatible())
     {
       /* GL_TEXTURE_1D_ARRAY and GL_TEXTURE_2D_ARRAY are not supported by the OpenGL fixed function pipeline */
       switch(texture()->dimension())
@@ -1231,23 +1029,9 @@ void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) 
     }
 
     // track currently used texture target
-    ctx->setTexUnitBinding( index, texture()->dimension() );
+    ctx->setTexUnitBinding( textureUnit(), texture()->dimension() );
 
     // texture parameters
-    // TexParameter overridden by the TextureSampler
-    if ( getTexParameter() )
-    {
-      if( texture()->getTexParameterOverride() != getTexParameter() )
-      {
-        // schedule restore of original TexParameter once no override is used.
-        texture()->getTexParameter()->setDirty(true);
-        // install the TexParameter override and apply it
-        texture()->mTexParameterOverride = getTexParameter();
-        getTexParameter()->apply( texture()->dimension(), ctx );
-      }
-    }
-    else
-    // Regular TexParameter
     if ( texture()->getTexParameter()->dirty() )
       texture()->getTexParameter()->apply( texture()->dimension(), ctx );
   }

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -46,7 +46,7 @@ class App_ShaderMultipassAlpha: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     /* effect to be applied to the sphere */
     vl::ref<vl::Effect> sphere_fx = new vl::Effect;
@@ -55,7 +55,7 @@ public:
     sphere_fx->shader()->enable(vl::EN_DEPTH_TEST);
     sphere_fx->shader()->enable(vl::EN_CULL_FACE);
     sphere_fx->shader()->enable(vl::EN_LIGHTING);
-    sphere_fx->shader()->setRenderState( new vl::Light, 0 );
+    sphere_fx->shader()->setRenderState( new vl::Light(0) );
     sphere_fx->shader()->enable(vl::EN_BLEND);
     sphere_fx->shader()->gocMaterial()->setFrontDiffuse( vl::fvec4(1.0f, 0.0f, 0.0f, 0.6f) );
 
@@ -68,7 +68,6 @@ public:
     wirepass->gocHint()->setLineSmoothHint(vl::HM_NICEST);
     wirepass->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
     wirepass->gocPolygonOffset()->set(-1.0f, -1.0f);
-    wirepass->gocColor()->setValue(vl::green);
 
     /* set wireframe shader as second pass */
     sphere_fx->lod(0)->push_back(wirepass.get());
@@ -76,13 +75,14 @@ public:
     /* create template sphere */
     vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0,0,0), 6, 10, 10);
     sphere->computeNormals();
+    sphere->setColor(vl::green);
 
     /* generate a ring of spheres */
     const int actor_count = 20;
     for(int i=0;i<actor_count; i++)
     {
       vl::ref<vl::Transform> tr = new vl::Transform;
-      vl::real t = 360.0f / actor_count * i;
+      vl::Real t = 360.0f / actor_count * i;
       vl::vec3 v = vl::mat4::getRotation(t, 0,1,0) * vl::vec3(30,0,0);
       tr->setLocalMatrix( vl::mat4::getTranslation(v) );
       rendering()->as<vl::Rendering>()->transform()->addChild(tr.get());
@@ -96,7 +96,7 @@ public:
     vl::vec3 eye( 40, 0, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 5.0f, 0, 1, 0 ) * eye;
     vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    rendering()->as<vl::Rendering>()->camera()->setViewMatrix(m);
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };
 

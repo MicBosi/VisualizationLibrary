@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -44,7 +44,7 @@ class App_EffectOverride: public BaseDemo
 {
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     // initialize solid & wire rendering with the default camera, transform root and scene manager.
     mSolidRendering = new Rendering;
@@ -68,7 +68,7 @@ class App_EffectOverride: public BaseDemo
     // don't clear color buffer otherwise we loose the results of the solid renderer
     wire_renderer->setClearFlags(CF_CLEAR_DEPTH);
     // target the same OpenGL window
-    wire_renderer->setFramebuffer( mSolidRendering->renderer()->framebuffer() );
+    wire_renderer->setRenderTarget( mSolidRendering->renderer()->renderTarget() );
     // install the renderer
     mWireRendering->setRenderer( wire_renderer.get() );
 
@@ -79,7 +79,7 @@ class App_EffectOverride: public BaseDemo
     mSolidRendering->transform()->addChild( mCubeTransform2.get() );
     mSolidRendering->transform()->addChild( mCubeTransform3.get() );
 
-    const real fsize = 8;
+    const Real fsize = 8;
     ref<Geometry> ball = makeUVSphere( vec3(0,0,0), fsize, 8, 8 );
     ball->computeNormals();
 
@@ -88,7 +88,7 @@ class App_EffectOverride: public BaseDemo
     ref<Effect> effect = new Effect;
     effect->shader()->enable(EN_BLEND);
     effect->shader()->enable(EN_DEPTH_TEST);
-    effect->shader()->setRenderState( new Light, 0 );
+    effect->shader()->setRenderState( new Light(0) );
     effect->shader()->enable(EN_LIGHTING);
     effect->shader()->enable(EN_CULL_FACE);
     effect->shader()->gocMaterial()->setDiffuse( gold );
@@ -138,7 +138,7 @@ class App_EffectOverride: public BaseDemo
 
   virtual void updateScene()
   {
-    real degrees = Time::currentTime() * 45.0f;
+    Real degrees = Time::currentTime() * 45.0f;
     mat4 matrix;
     
     matrix.rotate( degrees, 0,1,0 );
@@ -162,7 +162,7 @@ class App_EffectOverride: public BaseDemo
     Camera* camera = mSolidRendering->camera();
     camera->viewport()->setWidth ( w );
     camera->viewport()->setHeight( h );
-    camera->setProjectionPerspective();
+    camera->setProjectionAsPerspective();
   }
 
 protected:

@@ -4,18 +4,28 @@
 #  All rights reserved.                                                        #
 #                                                                              #
 #  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.org                                         #
+#  http://www.visualizationlibrary.com                                         #
 #                                                                              #
 #  Released under the OSI approved Simplified BSD License                      #
 #  http://www.opensource.org/licenses/bsd-license.php                          #
 #                                                                              #
 ################################################################################
 
+cmake_minimum_required(VERSION 2.6)
+
+################################################################################
+# Global VL Settings
+################################################################################
+
 # Current Version
 set(VLVERSION_MAJOR "2011")
-set(VLVERSION_MINOR "9")
-set(VLVERSION_PATCH "1157")
+set(VLVERSION_MINOR "05")
+set(VLVERSION_PATCH "1142")
 set(VLVERSION "${VLVERSION_MAJOR}.${VLVERSION_MINOR}")
+
+# Common Dirs
+set(VL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
+set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/3rdparty")
 
 ################################################################################
 # Initialization
@@ -23,41 +33,13 @@ set(VLVERSION "${VLVERSION_MAJOR}.${VLVERSION_MINOR}")
 
 project(Visualization_Library_SDK-${VLVERSION_MAJOR}.${VLVERSION_MINOR})
 
-# Must be called after project!
-cmake_minimum_required(VERSION 2.6)
+# Add our dir to the CMake modules path and include our InternalMacros file
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
+include( InternalMacros )
 
 ################################################################################
 # Global Build Settings
 ################################################################################
-
-# Platform detect, used to configure platform.hpp.in
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	set(VL_PLATFORM_MACOSX 1)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	set(VL_PLATFORM_LINUX 1)
-	option(VL_UNIX_INSTALL_MODE "Set to ON to install VL into default UNIX path structure." OFF)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(VL_PLATFORM_WINDOWS 1) 
-else()
-	message(FATAL_ERROR "Unable to detect platform!")
-endif()
-message(STATUS "System detected: \"${CMAKE_SYSTEM_NAME}\"")
-
-# OpenGL, OpenGL ES 1 or OpenGL ES 2 mode
-set(VL_OPENGL_MODE "OPENGL" CACHE STRING "Set it to OPENGL, OPENGL_ES1 or OPENGL_ES2 to build VL for OpenGL, OpenGL ES 1.x or OpenGL ES 2.x")
-# Setup variables used to configure platform.hpp.in
-if( VL_OPENGL_MODE STREQUAL  "OPENGL")
-	set(VL_OPENGL 1)
-	message(STATUS "Configuring for OpenGL 1.x/2.x/3.x/4.x")
-elseif( VL_OPENGL_MODE STREQUAL  "OPENGL_ES1")
-	set(VL_OPENGL_ES1 1)
-	message(STATUS "Configuring for OpenGL ES 1.x")
-elseif( VL_OPENGL_MODE STREQUAL  "OPENGL_ES2")
-	set(VL_OPENGL_ES2 1)
-	message(STATUS "Configuring for OpenGL ES 2.x")
-else()
-	message(FATAL_ERROR "Invalid VL_OPENGL_MODE! Valid modes are: OPENGL, OPENGL_ES1, OPENGL_ES2.")
-endif()
 
 # Dynamic vs Static Linking
 option(VL_DYNAMIC_LINKING "Set to ON to build VL for dynamic linking, or OFF for static." ON)
@@ -69,21 +51,6 @@ else()
 	set(VL_SHARED_OR_STATIC "STATIC")
 endif()
 
-# Common Dirs
-set(VL_DATA_DIR "${CMAKE_SOURCE_DIR}/data")
-set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/src/3rdparty")
-
-# Header Install Dir
-if(VL_UNIX_INSTALL_MODE)
-	set(VL_INCLUDE_INSTALL_DIR "include/vl")
-else()
-	set(VL_INCLUDE_INSTALL_DIR "include")
-endif()
-
-# Add our dir to the CMake modules path and include our InternalMacros file
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
-include( InternalMacros )
-
 # Debug postfix for all libraries.
 set(CMAKE_DEBUG_POSTFIX "-d")
 
@@ -93,7 +60,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
 
 # Shared include paths for all subprojects
-include_directories( "src" "${CMAKE_BINARY_DIR}/src" "${3RDPARTY_DIR}/Khronos" )
+include_directories( "src" "${CMAKE_BINARY_DIR}/src" "${3RDPARTY_DIR}/glew" )
 
 # High Warning Level
 if(MSVC10)
@@ -117,16 +84,7 @@ if(MSVC)
 endif()
 
 # Required Dependencies
-
-if( VL_OPENGL_MODE STREQUAL "OPENGL")
-	find_package(OpenGL REQUIRED)
-	set(VL_OPENGL_LIBRARIES ${OPENGL_LIBRARIES})
-endif()
-
-if( VL_OPENGL_ES1 OR VL_OPENGL_ES2 )
-	include( SetupGLES )
-	set(VL_OPENGL_LIBRARIES ${VL_GLES_LIBRARY} ${VL_EGL_LIBRARY})
-endif()
+find_package(OpenGL REQUIRED)
 
 ################################################################################
 # Packaging
@@ -158,10 +116,5 @@ add_subdirectory("src")
 # Install Rules
 ################################################################################
 
-if(VL_UNIX_INSTALL_MODE)
-	install(FILES "LICENSE.TXT" "README.TXT" DESTINATION "share/vl")
-	install(FILES "cmake/FindVL.cmake" DESTINATION "share/cmake/Modules")
-else()
-	install(FILES "LICENSE.TXT" "README.TXT" DESTINATION ".")
-	install(FILES "cmake/FindVL.cmake" DESTINATION "cmake")
-endif()
+install(FILES "LICENSE.TXT" "README.TXT" DESTINATION ".")
+install(FILES "cmake/FindVL.cmake" DESTINATION "cmake")

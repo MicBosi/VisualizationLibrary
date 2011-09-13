@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -55,7 +55,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
     rendering()->as<vl::Rendering>()->transform()->addChild(mTransform1.get());
     rendering()->as<vl::Rendering>()->transform()->addChild(mTransform2.get());
     showCatmullRomPentagonOpen();
@@ -197,7 +197,7 @@ public:
     vl::ref<vl::Effect> arrow_fx = new vl::Effect;
     arrow_fx->shader()->enable(vl::EN_DEPTH_TEST);
     arrow_fx->shader()->enable(vl::EN_LIGHTING);
-    arrow_fx->shader()->setRenderState(new vl::Light, 0);
+    arrow_fx->shader()->setRenderState(new vl::Light(0));
     sceneManager()->tree()->addActor( arrow.get(), arrow_fx.get(), mTransform1.get() );
     sceneManager()->tree()->addActor( arrow.get(), arrow_fx.get(), mTransform2.get() );
   }
@@ -209,13 +209,13 @@ public:
     vl::ref<vl::Effect> effect = new vl::Effect;
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     effect->shader()->gocPointSize()->set(4);
-    effect->shader()->gocColor()->setValue(color);
 
     // generates the line/points geometry
     vl::ref<vl::Geometry>   geom       = new vl::Geometry;
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     geom->setVertexArray( vert_array.get() );
-    vert_array->initFrom(ctrl_points);
+    *vert_array = ctrl_points;
+    geom->setColor(color);
     geom->drawCalls()->push_back(new vl::DrawArrays(loop ? vl::PT_LINE_LOOP : vl::PT_LINE_STRIP, 0, (int)vert_array->size()));
     if (points) 
       geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_POINTS, 0, (int)vert_array->size()));
@@ -236,10 +236,10 @@ public:
       float look = vl::fract(eye+delta); // we have to remain in the range 0..1
       vl::fmat4 m;
       // linear interpolation
-      m = vl::fmat4::getLookAtModeling(mLinearInterpolator->computePoint(eye),mLinearInterpolator->computePoint(look),up);
+      m = vl::fmat4::getLookAt(mLinearInterpolator->computePoint(eye),mLinearInterpolator->computePoint(look),up);
       mTransform1->setLocalMatrix((vl::mat4)m);
       // Catmull-Rom interpolation
-      m = vl::fmat4::getLookAtModeling(mCatmullRomInterpolator->computePoint(eye)*1.2f,mCatmullRomInterpolator->computePoint(look)*1.2f,up);
+      m = vl::fmat4::getLookAt(mCatmullRomInterpolator->computePoint(eye)*1.2f,mCatmullRomInterpolator->computePoint(look)*1.2f,up);
       mTransform2->setLocalMatrix((vl::mat4)m);
     }
   }

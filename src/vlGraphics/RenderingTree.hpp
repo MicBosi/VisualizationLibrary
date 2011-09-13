@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -40,9 +40,9 @@ namespace vl
   //! To enable the RenderingTree set the enableMask() to a value != 0, otherwise the RenderingTree will be disabled.
   class VLGRAPHICS_EXPORT RenderingTree: public RenderingAbstract
   {
-    VL_INSTRUMENT_CLASS(vl::RenderingTree, RenderingAbstract)
-
   public:
+    virtual const char* className() { return "vl::RenderingTree"; }
+
     //! Constructor.
     RenderingTree();
     

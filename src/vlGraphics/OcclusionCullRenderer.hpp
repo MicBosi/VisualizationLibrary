@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,14 +43,14 @@ namespace vl
     * For more information see \ref pagGuideOcclusionCulling */
   class VLGRAPHICS_EXPORT OcclusionCullRenderer: public Renderer
   {
-    VL_INSTRUMENT_CLASS(vl::OcclusionCullRenderer, Renderer)
-
   public:
+    virtual const char* className() { return "vl::OcclusionCullRenderer"; }
+
     /** Constructor. */
     OcclusionCullRenderer();
 
     /** Renders using the wrapped renderer but also performing occlusion culling. */
-    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock);
+    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock);
 
     /** The renderer to be wrapped by this occlusion culling renderer */
     void setWrappedRenderer(Renderer* renderer);
@@ -67,11 +67,11 @@ namespace vl
     /** The number of pixels visible for an actor to be considered occluded (default = 0) */
     int occlusionThreshold() const { return mOcclusionThreshold; }
 
-    /** Returns the wrapped Renderer's Framebuffer */
-    const Framebuffer* framebuffer() const;
+    /** Returns the wrapped Renderer's RenderTarget */
+    const RenderTarget* renderTarget() const;
 
-    /** Returns the wrapped Renderer's Framebuffer */
-    Framebuffer* framebuffer();
+    /** Returns the wrapped Renderer's RenderTarget */
+    RenderTarget* renderTarget();
 
     /** Returns the total number or objects candidate for rendering before occlusion culling. */
     int statsTotalObjects() const { return mStatsTotalObjects; }

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -46,16 +46,16 @@ namespace vl
     * \sa Rendering */
   class VLGRAPHICS_EXPORT Renderer: public RendererAbstract
   {
-    VL_INSTRUMENT_CLASS(vl::Renderer, RendererAbstract)
-
   public:
+    virtual const char* className() { return "vl::Renderer"; }
+    
     Renderer();
     
     virtual ~Renderer() {}
     
     /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
       * Renderer's implementation of this function always returns \p in_render_queue. */
-    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock);
+    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock);
 
     void setProjViewTransfCallback(ProjViewTransfCallback* callback) { mProjViewTransfCallback = callback; }
     
@@ -71,17 +71,17 @@ namespace vl
 
     bool isEnabled(unsigned int mask) { return (mask & mEnableMask) != 0; }
 
-    /** The Framebuffer on which the rendering is performed. */
-    void setFramebuffer(Framebuffer* framebuffer) { mFramebuffer = framebuffer; }
+    /** The RenderTarget on which the rendering is performed. */
+    void setRenderTarget(RenderTarget* render_target) { mRenderTarget = render_target; }
 
-    /** The Framebuffer on which the rendering is performed. */
-    const Framebuffer* framebuffer() const { return mFramebuffer.get(); }
+    /** The RenderTarget on which the rendering is performed. */
+    const RenderTarget* renderTarget() const { return mRenderTarget.get(); }
     
-    /** The Framebuffer on which the rendering is performed. */
-    Framebuffer* framebuffer() { return mFramebuffer.get(); }
+    /** The RenderTarget on which the rendering is performed. */
+    RenderTarget* renderTarget() { return mRenderTarget.get(); }
 
   protected:
-    ref<Framebuffer> mFramebuffer;
+    ref<RenderTarget> mRenderTarget;
 
     // used to reset the OpenGL states & enables at the end of the rendering.
     vl::ref<EnableSet> mDummyEnables;

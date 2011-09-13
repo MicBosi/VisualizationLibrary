@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -42,14 +42,7 @@ class App_OcclusionCulling: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
-
-    if(!vl::Has_Occlusion_Query)
-    {
-      vl::Log::error("No support to hardware occlusion culling found!\n");
-      vl::Time::sleep(2000);
-      exit(1);
-    }
+    vl::Log::print(appletInfo());
 
     // #######################################################################
     // # These 4 lines are the only code needed to enable occlusion culling, #
@@ -74,37 +67,25 @@ public:
   {
     /* the rest of the code simply generates a forest of thousands of trees */
 
-    /* setup a simple red effect */
-    vl::ref<vl::Effect> fx_red = new vl::Effect;
-    fx_red->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_red->shader()->enable(vl::EN_LIGHTING);
-    fx_red->shader()->gocLight(0)->setLinearAttenuation(0.0025f);
-    fx_red->shader()->gocMaterial()->setDiffuse( vl::red );
-
-    /* setup a simple green effect */
-    vl::ref<vl::Effect> fx_green = new vl::Effect;
-    fx_green->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_green->shader()->enable(vl::EN_LIGHTING);
-    fx_green->shader()->gocLight(0)->setLinearAttenuation(0.0025f);
-    fx_green->shader()->gocMaterial()->setDiffuse( vl::green );
-
-    /* setup a simple gold effect */
-    vl::ref<vl::Effect> fx_gold = new vl::Effect;
-    fx_gold->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_gold->shader()->enable(vl::EN_LIGHTING);
-    fx_gold->shader()->gocLight(0)->setLinearAttenuation(0.0025f);
-    fx_gold->shader()->gocMaterial()->setDiffuse( vl::gold );
+    /* setup a simple effect to use for all our objects */
+    vl::ref<vl::Effect> fx = new vl::Effect;
+    fx->shader()->enable(vl::EN_DEPTH_TEST);
+    fx->shader()->enable(vl::EN_LIGHTING);
+    fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
+    fx->shader()->gocLight(0)->setLinearAttenuation(0.0025f);
 
     /* the ground under the trees */
     float side = 400;
-    vl::ref<vl::Geometry> ground = vl::makeGrid(vl::vec3(0, -1.0f, 0), side*2.1f, side*2.1f, 100, 100);
+    vl::ref<vl::Geometry> ground = vl::makeGrid(vl::vec3(0, -1.0f, 0), side*2.1f, side*2.1f, (int)side, (int)side);
     ground->computeNormals();
-    sceneManager()->tree()->addActor(ground.get(), fx_green.get(), NULL);
+    ground->setColor(vl::green);
+    sceneManager()->tree()->addActor(ground.get(), fx.get(), NULL);
 
     /* the red wall in front of the camera */
     vl::ref<vl::Geometry> wall = vl::makeBox(vl::vec3(0,25,500), 50, 50 ,1);
     wall->computeNormals();
-    sceneManager()->tree()->addActor(wall.get(), fx_red.get(), NULL);
+    wall->setColor(vl::red);
+    sceneManager()->tree()->addActor(wall.get(), fx.get(), NULL);
 
     /* the trees */
     float trunk_h   = 20;
@@ -112,9 +93,11 @@ public:
     /* the tree's branches */
     vl::ref<vl::Geometry> branches = vl::makeIcosphere(vl::vec3(0,trunk_h/2.0f,0), 14, 2, false);
     branches->computeNormals();
+    branches->setColor( vl::green );
     /* the tree's trunk */
     vl::ref<vl::Geometry> trunk = vl::makeCylinder(vl::vec3(0,0,0),trunk_w,trunk_h, 50, 50);
     trunk->computeNormals();
+    trunk->setColor( vl::gold );
 
     /* fill our forest with trees! */
     int trunk_count = 20;
@@ -126,8 +109,8 @@ public:
 
       vl::ref<vl::Transform> tr = new vl::Transform( vl::mat4::getTranslation(x,trunk_h/2.0f+0.1f,z) );
       tr->computeWorldMatrix();
-      sceneManager()->tree()->addActor(trunk.get(), fx_gold.get(), tr.get());
-      sceneManager()->tree()->addActor(branches.get(), fx_green.get(), tr.get());
+      sceneManager()->tree()->addActor(trunk.get(), fx.get(), tr.get());
+      sceneManager()->tree()->addActor(branches.get(), fx.get(), tr.get());
     }
 
     /* text statistics */

@@ -4,7 +4,7 @@
 #  All rights reserved.                                                        #
 #                                                                              #
 #  This file is part of Visualization Library                                  #
-#  http://www.visualizationlibrary.org                                         #
+#  http://www.visualizationlibrary.com                                         #
 #                                                                              #
 #  Released under the OSI approved Simplified BSD License                      #
 #  http://www.opensource.org/licenses/bsd-license.php                          #
@@ -33,4 +33,4 @@ target_link_libraries(VLVolume VLCore VLGraphics)
 VL_INSTALL_TARGET(VLVolume)
 
 # VLVolume headers
-install(FILES ${VLVOLUME_INC} DESTINATION "${VL_INCLUDE_INSTALL_DIR}/vlVolume")
+install(FILES ${VLVOLUME_INC} DESTINATION "include/vlVolume")

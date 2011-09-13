@@ -4,14 +4,12 @@
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  This file is part of Visualization Library                                        */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Released under the OSI approved Simplified BSD License                            */
 /*  http://www.opensource.org/licenses/bsd-license.php                                */
 /*                                                                                    */
 /**************************************************************************************/
-
-#extension GL_EXT_gpu_shader4 : enable
 
 varying out vec4 FragDataOutputA;
 varying out vec4 FragDataOutputB;

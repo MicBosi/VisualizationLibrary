@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -162,7 +162,7 @@ ref<Geometry> Tessellator::tessellateGeometry(bool append_tessellated_tris)
   ref<Geometry> geom = new Geometry;
   ref<ArrayFloat3> vert_array = new ArrayFloat3;
   
-  vert_array->initFrom(mTessellatedTris);
+  *vert_array = mTessellatedTris;
 
   geom->setVertexArray(vert_array.get());
   geom->drawCalls()->push_back( new vl::DrawArrays(PT_TRIANGLES,0,vert_array->size()) );
@@ -215,10 +215,6 @@ void CALLBACK Tessellator::tessVertexData( dvec3* vec, Tessellator* tessellator 
 //-----------------------------------------------------------------------------
 void CALLBACK Tessellator::tessCombineData( GLdouble coords[3], dvec3* d[4], GLfloat w[4], dvec3 **dataOut, Tessellator* tessellator )
 {
-  // suppress 'unused variable' warning.
-  d = d;
-  w = w;
-
   dvec3 *vec = new dvec3;
   vec->x() = coords[0];
   vec->y() = coords[1];

@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -31,7 +31,7 @@
 
 #include <vlCore/Log.hpp>
 #include <vlCore/checks.hpp>
-#include <vlCore/GlobalSettings.hpp>
+#include <vlCore/VLSettings.hpp>
 #include <vlCore/Vector3.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/ScopedMutex.hpp>
@@ -44,7 +44,7 @@ using namespace vl;
 
 namespace
 {
-#if defined(VL_PLATFORM_WINDOWS)
+#ifdef _WIN32
   struct ScopedColor
   {
     CONSOLE_SCREEN_BUFFER_INFO screen_info;
@@ -68,8 +68,6 @@ namespace
   #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
   #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_INTENSITY);
   #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color(FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
-  #define SET_TEXT_COLOR_GREEN() ScopedColor set_scoped_color(FOREGROUND_GREEN|FOREGROUND_INTENSITY);
-  #define SET_TEXT_COLOR_BLUE() ScopedColor set_scoped_color(FOREGROUND_BLUE|FOREGROUND_INTENSITY);
 #else
   struct ScopedColor
   {
@@ -105,33 +103,22 @@ namespace
       // "\033[34mThis is blue.\033[0m"
       // "\033[45;37mGrey on purple.\033[0m"
 
-      printf("%s", color);
+      puts(color);
     }
     ~ScopedColor()
     {
       // restore normal color
-      printf("%s", "\033[0m");
+      puts("\033[0m");
     }
   };
   #define SET_TEXT_COLOR_YELLOW() ScopedColor set_scoped_color("\033[1;33m");
   #define SET_TEXT_COLOR_RED()    ScopedColor set_scoped_color("\033[31m");
   #define SET_TEXT_COLOR_PURPLE() ScopedColor set_scoped_color("\033[1;31m");
-  #define SET_TEXT_COLOR_GREEN()  ScopedColor set_scoped_color("\033[1;32m");
-  #define SET_TEXT_COLOR_BLUE()  ScopedColor set_scoped_color("\033[1;34m");
 #endif
 }
+
 //-----------------------------------------------------------------------------
 // Log
-//-----------------------------------------------------------------------------
-void Log::notify(const String& log) 
-{ 
-  //! Synchronize log across threads.
-  ScopedMutex mutex(Log::logMutex());
-
-  SET_TEXT_COLOR_GREEN()
-  if(defLogger() && globalSettings()->verbosityLevel() != vl::VEL_VERBOSITY_SILENT)
-    defLogger()->printImplementation(LL_LogNotify, log); 
-}
 //-----------------------------------------------------------------------------
 void Log::print(const String& log) 
 { 
@@ -139,7 +126,7 @@ void Log::print(const String& log)
   ScopedMutex mutex(Log::logMutex());
 
   if(defLogger() && globalSettings()->verbosityLevel() != vl::VEL_VERBOSITY_SILENT)
-    defLogger()->printImplementation(LL_LogPrint, log); 
+    defLogger()->printImplementation(LogNormal, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::debug(const String& log) 
@@ -147,9 +134,17 @@ void Log::debug(const String& log)
   //! Synchronize log across threads.
   ScopedMutex mutex(Log::logMutex());
 
-  SET_TEXT_COLOR_BLUE()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_DEBUG)
-    defLogger()->printImplementation(LL_LogDebug, log); 
+    defLogger()->printImplementation(LogDebug, log); 
+}
+//-----------------------------------------------------------------------------
+void Log::info(const String& log) 
+{ 
+  //! Synchronize log across threads.
+  ScopedMutex mutex(Log::logMutex());
+
+  if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_NORMAL)
+    defLogger()->printImplementation(LogInfo, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::warning(const String& log) 
@@ -159,7 +154,7 @@ void Log::warning(const String& log)
 
   SET_TEXT_COLOR_YELLOW()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LL_LogWarning, log); 
+    defLogger()->printImplementation(LogWarning, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::error(const String& log) 
@@ -169,7 +164,7 @@ void Log::error(const String& log)
 
   SET_TEXT_COLOR_RED()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LL_LogError, log); 
+    defLogger()->printImplementation(LogError, log); 
 }
 //-----------------------------------------------------------------------------
 void Log::bug(const String& log) 
@@ -179,7 +174,7 @@ void Log::bug(const String& log)
 
   SET_TEXT_COLOR_PURPLE()
   if(defLogger() && globalSettings()->verbosityLevel() >= vl::VEL_VERBOSITY_ERROR)
-    defLogger()->printImplementation(LL_LogBug, log); 
+    defLogger()->printImplementation(LogBug, log); 
 }
 //------------------------------------------------------------------------------
 void Log::logSystemInfo()
@@ -248,11 +243,11 @@ void Log::logSystemInfo()
 //------------------------------------------------------------------------------
 void vl::log_failed_check(const char* expr, const char* file, int line)
 {
-  VL_LOG_ERROR << "Condition '" << expr << "' failed at " << file << ":" << line << "\n";
+  Log::error( Say("Condition \"%s\" failed at %s:%n\n") << expr << file << line );
   fflush(stdout);
   fflush(stderr);
 
-  #if defined(VL_PLATFORM_WINDOWS) && VL_MESSAGEBOX_CHECK == 1
+  #if _WIN32 && VL_MESSAGEBOX_CHECK == 1
      String msg = Say("Condition \"%s\" failed.\n\n%s:%n\n") << expr << file << line;
      MessageBox(NULL, (wchar_t*)msg.ptr(), L"Visualization Library Debug", MB_OK | MB_ICONEXCLAMATION);
   #endif

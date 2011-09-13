@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -44,18 +44,19 @@ public:
   virtual String appletInfo()
   {
     return BaseDemo::appletInfo() + 
-    "- Up/Down Arrow = increase/decrease the Bezier surface tessellation detail.\n" +
-    "- Space         = toggle control points visibility.\n" +
+    "Up/Down Arrow = increase/decrease the Bezier surface tessellation detail.\n" +
+    "Space         = toggle control points visibility.\n" +
     "\n";
   }
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     /* 2 pass shader: 1 = solid, 2 = wireframe */
 
     ref<Effect> fx = new Effect;
+    fx->lod(0)->push_back( new Shader);
 
     fx->shader()->enable(EN_LIGHTING);
     fx->shader()->gocLightModel()->setTwoSide(true);
@@ -63,15 +64,11 @@ public:
     fx->shader()->gocLight(0)->setLinearAttenuation(0.025f);
     fx->shader()->gocMaterial()->setDiffuse(royalblue);
 
-#if defined(VL_OPENGL)
-    fx->lod(0)->push_back( new Shader);
     fx->shader(0,1)->enable(EN_DEPTH_TEST);
     fx->shader(0,1)->gocPolygonOffset()->set(-1.0f, -1.0f);
     fx->shader(0,1)->enable(EN_POLYGON_OFFSET_LINE);
     fx->shader(0,1)->gocPolygonMode()->set(PM_LINE, PM_LINE);
     fx->shader(0,1)->gocDepthMask()->set(false);
-    fx->shader(0,1)->gocColor()->setValue(gold);
-#endif
 
     /* Generate random Bézier patches
 
@@ -163,13 +160,14 @@ public:
     // Compute the normals as we have lighting activated
     mBezier->computeNormals();
     
+    // Used by the line rendering
+    mBezier->setColor(gold);
+    
     // Add the Bézier surface to our scene
     sceneManager()->tree()->addActor(mBezier.get(), fx.get(), NULL);
 
-#if defined(VL_OPENGL)
     // Show the control points
     showPatchControlPoints(mBezier.get());
-#endif
 
     // position the camera to nicely see the teapot in the scene
     trackball()->adjustView( sceneManager(), vec3(0,0,1)/*direction*/, vec3(0,1,0)/*up*/, 1.0f/*bias*/ );
@@ -189,7 +187,7 @@ public:
       mBezier->setDetail(mDetail);
       mBezier->updateBezierSurface(false);
       mBezier->computeNormals();
-      mBezier->setBufferObjectDirty(true);
+      mBezier->setVBODirty(true);
     }
     else
     if (key == Key_Down)
@@ -199,7 +197,7 @@ public:
       mBezier->setDetail(mDetail);
       mBezier->updateBezierSurface(false);
       mBezier->computeNormals();
-      mBezier->setBufferObjectDirty(true);
+      mBezier->setVBODirty(true);
     }
     else
     if(key == Key_Space)
@@ -251,13 +249,13 @@ public:
         verts.push_back((fvec3)p->at(ix+3,iy+2)); colos.push_back(white);
         verts.push_back((fvec3)p->at(ix+3,iy+3)); colos.push_back(red);
 
-        ref<DrawArrays> da = new DrawArrays(PT_POINTS, istart,16);
+        ref<DrawArrays> da = new DrawArrays(PT_POINTS,istart,16);
         ref<DrawElementsUInt> de = new DrawElementsUInt(PT_QUADS);
-        de->indexBuffer()->resize(4*9);
+        de->indices()->resize(4*9);
         unsigned int quads[] = { 0,1,5,4, 4,5,9,8, 8,9,13,12, 1,2,6,5, 5,6,10,9, 9,10,14,13, 2,3,7,6, 6,7,11,10, 10,11,15,14 };
         for(int q=0; q<4*9; ++q)
           quads[q] += istart;
-        memcpy(de->indexBuffer()->ptr(), quads, sizeof(quads));
+        memcpy(de->indices()->ptr(), quads, sizeof(quads));
         geom->drawCalls()->push_back(de.get());
         geom->drawCalls()->push_back(da.get());
       }
@@ -265,13 +263,11 @@ public:
 
     ref<ArrayFloat3> vert_array = new ArrayFloat3;
     geom->setVertexArray(vert_array.get());
-    vert_array->initFrom(verts);
+    *vert_array = verts;
 
     ref<ArrayFloat4> cols_array = new ArrayFloat4;
     geom->setColorArray(cols_array.get());
-    cols_array->initFrom(colos);
-
-    geom->makeGLESFriendly();
+    *cols_array = colos;
 
     mCtrlPoints_Actor = sceneManager()->tree()->addActor(geom.get(), fx.get(), NULL);
   }

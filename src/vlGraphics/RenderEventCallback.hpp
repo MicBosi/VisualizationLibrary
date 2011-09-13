@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -52,9 +52,8 @@ namespace vl
    * - vl::RendererAbstract, vl::Renderer */
   class RenderEventCallback: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::RenderEventCallback, Object)
-
   public:
+    virtual const char* className() { return "vl::RenderEventCallback"; }
     RenderEventCallback(): mRemoveAfterCall(false), mEnabled(true)
     {
       VL_DEBUG_SET_OBJECT_NAME()

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -33,9 +33,9 @@
 #define Camera_INCLUDE_ONCE
 
 #include <vlCore/checks.hpp>
-#include <vlCore/math_utils.hpp>
+#include <vlCore/math3D.hpp>
 #include <vlCore/Vector4.hpp>
-#include <vlGraphics/Framebuffer.hpp>
+#include <vlGraphics/RenderTarget.hpp>
 #include <vlGraphics/Viewport.hpp>
 #include <vlGraphics/Frustum.hpp>
 #include <vlCore/Ray.hpp>
@@ -49,9 +49,9 @@ namespace vl
   /** Represents a virtual camera defining, among other things, the point of view from which scenes can be rendered. */
   class VLGRAPHICS_EXPORT Camera: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Camera, Object)
-
   public:
+    virtual const char* className() { return "vl::Camera"; }
+
     /** Constructs a perspective projecting camera with FOV = 60.0, Near Plane = 0.05, Far Plane = 10000.0 */
     Camera();
 
@@ -61,7 +61,7 @@ namespace vl
     \note Optimizing the near and far clipping planes might slightly impact the rendering performances 
     if the scene contains a huge number of objects.
     \note At the moment the near and far clipping planes optimization is available only when using a 
-    projection matrix set up by setProjectionPerspective() or setProjectionOrtho*(). */
+    perspective projection matrix set up by setProjectionAsPerspective(). */
     void computeNearFarOptimizedProjMatrix(const Sphere& scene_bounding_sphere);
 
     /** Computes the Camera's frustum planes in world space.
@@ -80,50 +80,34 @@ namespace vl
 
     /** Returns the aspect ratio computed as viewport()->width()/viewport()->height(). 
     If viewport() == NULL the function returns 0. */
-    real aspectRatio() const 
+    Real aspectRatio() const 
     {
       if (viewport())
-        return (real)viewport()->width()/viewport()->height();
+        return (Real)viewport()->width()/viewport()->height();
       else
         return 0;
     }
 
     /** The field of view of the camera. 
-    \note This setting will not take effect until setProjectionPerspective() is called. */
-    void setFOV(real fov) { mFOV = fov; }
+    \note This setting will not take effect until setProjectionAsPerspective() is called. */
+    void setFOV(Real fov) { mFOV = fov; }
     
     /** The field of view of the camera. */
-    real fov() const { return mFOV; }
+    Real fov() const { return mFOV; }
 
     /** The near clipping plane.
-    \note This setting will not take effect until setProjectionPerspective() or setProjectionOrtho() is called. */
-    void setNearPlane(real nearplane) { mNearPlane = nearplane; }
+    \note This setting will not take effect until setProjectionAsPerspective() or setProjectionAsOrtho() is called. */
+    void setNearPlane(Real nearplane) { mNearPlane = nearplane; }
 
     /** The near clipping plane. */
-    real nearPlane() const { return mNearPlane; }
+    Real nearPlane() const { return mNearPlane; }
 
     /** The far clipping plane. 
-    \note This setting will not take effect until setProjectionPerspective() or setProjectionOrtho() is called. */
-    void setFarPlane(real farplane) { mFarPlane = farplane; }
+    \note This setting will not take effect until setProjectionAsPerspective() or setProjectionAsOrtho() is called. */
+    void setFarPlane(Real farplane) { mFarPlane = farplane; }
 
     /** The far clipping plane. */
-    real farPlane() const { return mFarPlane; }
-
-    /** 'left' parameter as passed to the last setProjectionFrustum() or setProjectionOrtho*() */
-    real left() const { return mLeft; }
-    void setLeft(real v) { mLeft = v; }
-
-    /** 'right' parameter as passed to the last setProjectionFrustum() or setProjectionOrtho*() */
-    real right() const { return mRight; }
-    void setRight(real v) { mRight = v; }
-
-    /** 'bottom' parameter as passed to the last setProjectionFrustum() or setProjectionOrtho*() */
-    real bottom() const { return mBottom; }
-    void setBottom(real v) { mBottom = v; }
-
-    /** 'top' parameter as passed to the last setProjectionFrustum() or setProjectionOrtho*() */
-    real top() const { return mTop; }
-    void setTop(real v) { mTop = v; }
+    Real farPlane() const { return mFarPlane; }
 
     /** The view frustum of the camera used to perform frustum culling. */
     void setFrustum(const Frustum& frustum) { mFrustum = frustum; }
@@ -144,97 +128,84 @@ namespace vl
     const Viewport* viewport() const { return mViewport.get(); }
 
     /** Bind the camera to a Transform. */
-    void bindTransform(Transform* transform) { mBoundTransform = transform; }
+    void followTransform(Transform* transform) { mFollowTransform = transform; }
 
     /** Returns the Transform bound to a camera. */
-    const Transform* boundTransform() const { return mBoundTransform.get(); }
+    const Transform* followedTransform() const { return mFollowTransform.get(); }
 
     /** Returns the Transform bound to a camera. */
-    Transform* boundTransform() { return mBoundTransform.get(); }
+    Transform* followedTransform() { return mFollowTransform.get(); }
 
-    /** Sets the Camera's view matrix (inverse of the modeling matrix). The modelingMatrix() is also set as the inverse of the viewMatrix().
-        @remarks The modelingMatrix() bring points from camera space to world space, where the viewMatrix() brings points from world space to camera space. */
-    void setViewMatrix(const mat4& mat) { mViewMatrix = mat; mViewMatrix.getInverse(mModelingMatrix); }
+    /** Sets the Camera's view matrix. */
+    void setViewMatrix(const mat4& mat) { mViewMatrix = mat; mInverseViewMatrix = mat; mInverseViewMatrix.invert(); }
 
-    /** Returns the Camera's view matrix (inverse of the modeling matrix). This is what you would pass to OpenGL with "glMatrixMode(GL_MODELVIEW); glLoadMatrix(camera.viewMatrix().ptr());"
-        @remarks The modelingMatrix() bring points from camera space to world space, where the viewMatrix() brings points from world space to camera space. */
+    /** The Camera's view matrix. This is what you would pass to OpenGL with "glMatrixMode(GL_MODELVIEW);glLoadMatrix(camera.viewMatrix().ptr());" */
     const mat4& viewMatrix() const { return mViewMatrix; }
 
-    /** Sets the Camera's modelingMatrix() (inverse of the view matrix). The view matrix is also set as the inverse of the modelingMatrix().
-        @remarks The modelingMatrix() bring points from camera space to world space, where the viewMatrix() brings points from world space to camera space. */
-    void setModelingMatrix(const mat4& mat) { mModelingMatrix = mat; mModelingMatrix.getInverse(mViewMatrix); }
+    /** The camera's reference frame matrix, the inverse of the view matrix. */
+    void setInverseViewMatrix(const mat4& mat) { mInverseViewMatrix = mat; mViewMatrix = mat; mViewMatrix.invert(); }
 
-    /** Returns the Camera's modelingMatrix() (inverse of the view matrix).
-        @remarks The modelingMatrix() bring points from camera space to world space, where the viewMatrix() brings points from world space to camera space. */
-    const mat4& modelingMatrix() const { return mModelingMatrix; }
+    /** The camera's reference frame matrix, the inverse of the view matrix. */
+    const mat4& inverseViewMatrix() const { return mInverseViewMatrix; }
 
-    /** The Camera's projection matrix. */
-    void setProjectionMatrix(const mat4& mat, EProjectionMatrixType proj_type) { mProjectionMatrix = mat; mProjectionType = proj_type; }
+    /** 
+     * The camera's projection matrix.
+     * \note This function sets the fov, near clipping plane and far clipping plane to -1.
+     */
+    void setProjectionMatrix(const mat4& mat) { mProjectionMatrix = mat;  mFOV = mNearPlane = mFarPlane  = -1; }
 
-    /** The Camera's projection matrix. */
+    /** The camera's projection matrix. */
     const mat4& projectionMatrix() const { return mProjectionMatrix; }
 
-    /** The Camera's projection matrix type. */
-    EProjectionMatrixType projectionMatrixType() const { return mProjectionType; }
+    /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings. 
+    See also http://www.opengl.org/sdk/docs/man/xhtml/gluPerspective.xml for more information. */
+    void setProjectionAsPerspective();
 
     /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings. 
     See also http://www.opengl.org/sdk/docs/man/xhtml/gluPerspective.xml for more information. */
-    void setProjectionPerspective();
+    void setProjectionAsPerspective(Real fov, Real near, Real far);
 
-    /** Builds a perspective projection matrix for the Camera based on the Camera's and Viewport's settings. 
-    See also http://www.opengl.org/sdk/docs/man/xhtml/gluPerspective.xml for more information. */
-    void setProjectionPerspective(real fov, real near, real far);
+    /** Builds a perspective projection matrix for the Camera based on the give frustum. See also http://www.opengl.org/sdk/docs/man/xhtml/glFrustum.xml for more information.
+    \note
+    This method sets fov() to -1. */
+    void setProjectionAsFrustum(Real left, Real right, Real bottom, Real top, Real near, Real far);
 
-    /** Produces a perspective projection matrix. 
-    The <left, bottom, zfar> and <right, top, znear> parameters specify the points on the near clipping plane that are mapped to the lower-left and upper-right corners of the viewport, 
-    respectively, assuming that the eye is located at (0,0,0). The zfar parameter specifies the location of the far clipping plane. Both znear and zfar must be positive.
-
-    This function is more general that setProjectionPerspective() as it's capable of generating off-axis projections, while setProjectionPerspective() only produces 
-    symmetrical (on-axis) projections. Since setProjectionFrustum() is more general than setProjectionPerspective(), you can use it in cases where setProjectionPerspective() 
-    can't be used. Some examples include shadows projection, tiled renderings, and stereo views.
-    \sa
-    - http://www.opengl.org/sdk/docs/man/xhtml/glFrustum.xml 
-    - http://www.opengl.org/resources/faq/technical/transformations.htm */
-    void setProjectionFrustum(real left, real right, real bottom, real top, real znear, real zfar);
-
-    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings. 
-    - See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml and http://www.opengl.org/sdk/docs/man/xhtml/glOrtho2D.xml for more information.
+    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings. See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml for more information.
     Equivalent to:
     \code
-    setProjectionMatrix( mat4::getOrtho(left, right, bottom, top, znear, zfar), PMT_OrthographicProjection );
+    setProjectionMatrix( 
+      mat4::getOrtho(
+        offset, (Real)mViewport->width()  + offset,
+        offset, (Real)mViewport->height() + offset,
+        nearPlane(), farPlane())
+    );
     \endcode */
-    void setProjectionOrtho(real left, real right, real bottom, real top, real znear, real zfar);
+    void setProjectionAsOrtho(Real offset=-0.5f);
 
-    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings. 
-    - See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml and http://www.opengl.org/sdk/docs/man/xhtml/glOrtho2D.xml for more information.
+    /** Builds an orthographic projection matrix for the Camera based on its Viewport's settings. See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho2D.xml for more information.
     Equivalent to:
     \code
-    setProjectionMatrix( mat4::getOrtho(0, viewport()->width(), 0, viewport()->height(), nearPlane(), farPlane()), PMT_OrthographicProjection );
+    setProjectionMatrix( 
+      mat4::getOrtho(
+        offset, viewport()->width()  + offset,
+        offset, viewport()->height() + offset,
+        -1, +1)
+    );
     \endcode */
-    void setProjectionOrtho();
-
-    /** Builds an orthographic projection matrix for the Camera based on the Camera's near/far planes and its Viewport's settings. 
-    This function is similar to glOrtho2D() with the difference that it can optionally add a translation offset on both x and y. For example with
-    an offset of -0.5 the center of the pixels will be exactly at integer coordinates 0, 1, 2, etc.
-    - See also http://www.opengl.org/sdk/docs/man/xhtml/glOrtho.xml and http://www.opengl.org/sdk/docs/man/xhtml/glOrtho2D.xml for more information.
-    Equivalent to:
-    \code
-    setProjectionMatrix( mat4::getOrtho(offset, viewport()->width() + offset, offset, viewport()->height() + offset, -1.0, +1.0), PMT_OrthographicProjection );
-    \endcode */
-    void setProjectionOrtho(real offset);
+    void setProjectionAsOrtho2D(Real offset=-0.5f);
 
     /** Setup the modelview transform of the camera based on look-at parameters. 
     \param eye The position of the camera.
     \param center The point the camera is looking at.
     \param up The vector defining the up direction. */
-    void setViewMatrixLookAt(const vec3& eye, const vec3& at, const vec3& up);
+    void setViewMatrixAsLookAt( const vec3& eye, const vec3& center, const vec3& up);
 
     /** Returns the look-at parameters of the modelview transform.
     \param eye The position of the camera.
     \param look The direction the camera is looking at.
     \param up The vector defining the Y positive direction of the camera.
     \param right The vector defining the X positive direction of the camera. */
-    void getViewMatrixAsLookAt(vec3& eye, vec3& at, vec3& up, vec3& right) const;
+    void getViewMatrixAsLookAt( vec3& eye, vec3& look, vec3& up, vec3& right) const;
 
     /** Projects a vector from world coordinates to viewport coordinates. */
     bool project(const vec4& in_world, vec4& out_viewp) const;
@@ -267,20 +238,18 @@ namespace vl
     \param dir The direction (in world coords) along which the camera should be displaced to view the given AABB.
     \param up The vector that defines the \p up direction (in world coords). Used to properly compute the new camera matrix.
     \param bias A bias factor used to adjust the computed camera distance from the given AABB. Values between 0 and 1 make the camera closer to the AABB center, values greater than 1 position the camera further away. */
-    void adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real bias=1.0f);
+    void adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias=1.0f);
 
   protected:
     mat4 mViewMatrix;
-    mat4 mModelingMatrix;
+    mat4 mInverseViewMatrix;
     mat4 mProjectionMatrix;
     ref<Viewport> mViewport;
     Frustum mFrustum;
-    ref<Transform> mBoundTransform;
-    real mFOV;
-    real mLeft, mRight, mBottom, mTop;
-    real mNearPlane;
-    real mFarPlane;
-    EProjectionMatrixType mProjectionType;
+    ref<Transform> mFollowTransform;
+    Real mFOV;
+    Real mNearPlane;
+    Real mFarPlane;
   };
 }
 

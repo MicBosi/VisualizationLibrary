@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -56,15 +56,12 @@ namespace vl
   */
   class VLCORE_EXPORT VirtualDirectory: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::VirtualDirectory, Object)
-
   public:
-    //! Constructor
-    VirtualDirectory(): mPath("/") {}
+    virtual const char* className() { return "vl::VirtualDirectory"; }
 
     //! Constructor
     //! \param path Defines the path name of the virtual dirctory, must be a non empty string.
-    VirtualDirectory( const String& path ): mPath(path) {}
+    VirtualDirectory( const String& path="/" ): mPath(path) {}
 
     //! Changes the \p path \p name of a VirtualDirectory. Must not be an empty string.
     virtual bool setPath(const String& path);

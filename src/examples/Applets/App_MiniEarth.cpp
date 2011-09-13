@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,11 +43,11 @@ class App_MiniEarth: public BaseDemo
 public:
   virtual void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     vl::ref<vl::Effect> fx = new vl::Effect;
     fx->shader()->enable(vl::EN_LIGHTING);
-    fx->shader()->setRenderState( new vl::Light, 0 );
+    fx->shader()->setRenderState( new vl::Light(0) );
     fx->shader()->enable(vl::EN_DEPTH_TEST);
 
     // vl::ref<vl::Texture> texture = new vl::Texture("/images/world.topo.bathy.200406.3x8192x4096.png");
@@ -55,7 +55,7 @@ public:
     // vl::ref<vl::Texture> texture = new vl::Texture("/images/land_lights_16384.tif");
     // vl::ref<vl::Texture> texture = new vl::Texture("/images/land_ocean_ice_cloud_8192.tif");
 
-    fx->shader()->gocTextureSampler(0)->setTexture(texture.get());
+    fx->shader()->gocTextureUnit(0)->setTexture(texture.get());
 
     //vl::ref<vl::Shader> wire = new vl::Shader;
     //wire->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
@@ -67,11 +67,12 @@ public:
     float dx = 0.5f / texture->width();
     float dy = 0.5f / texture->height();
     vl::ref<vl::Geometry> earth = vl::makeGrid( vl::vec3(0,0,0), vl::fPi*2.0f, vl::fPi, 40, 40, true, vl::fvec2(dx,dy), vl::fvec2(1-dx,1-dy) );
-    vl::ArrayFloat3* coord3 = vl::cast<vl::ArrayFloat3>( earth->vertexArray() );
+    earth->setColor(vl::white);
+    vl::ArrayFloat3* coord3 = dynamic_cast<vl::ArrayFloat3*>( earth->vertexArray() );
     vl::ref<vl::ArrayFloat3> norm3 = new vl::ArrayFloat3;
     earth->setNormalArray(norm3.get());
     norm3->resize(coord3->size());
-    for(size_t i=0; i<coord3->size(); ++i)
+    for(int i=0; i<coord3->size(); ++i)
     {
       float longitude = coord3->at(i).x();
       float latitude  = coord3->at(i).z();

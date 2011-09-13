@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -32,7 +32,7 @@
 #include <vlGraphics/DrawPixels.hpp>
 #include <vlGraphics/Actor.hpp>
 #include <vlGraphics/Camera.hpp>
-#include <vlGraphics/BufferObject.hpp>
+#include <vlGraphics/GLBufferObject.hpp>
 #include <vlCore/Log.hpp>
 #include <map>
 
@@ -88,15 +88,15 @@ DrawPixels::Pixels::~Pixels()
 //-----------------------------------------------------------------------------
 void DrawPixels::Pixels::deletePixelBufferObject()
 {
-  image()->pixelBufferObject()->deleteBufferObject();
+  image()->pixelBufferObject()->deleteGLBufferObject();
 }
 //-----------------------------------------------------------------------------
-bool DrawPixels::Pixels::generatePixelBufferObject(EBufferObjectUsage usage, bool discard_local_storage)
+bool DrawPixels::Pixels::generatePixelBufferObject(EGLBufferUsage usage, bool discard_local_storage)
 {
   VL_CHECK(image())
   if (!image())
     return false;
-  image()->pixelBufferObject()->setBufferData( (GLsizeiptr)image()->imageBuffer()->bytesUsed(), image()->imageBuffer()->ptr(), usage );
+  image()->pixelBufferObject()->setBufferData( image()->imageBuffer()->bytesUsed(), image()->imageBuffer()->ptr(), usage );
   if (discard_local_storage)
     image()->imageBuffer()->clear();
   return true;
@@ -129,7 +129,7 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  glOrtho( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1.0f, +1.0f ); VL_CHECK_OGL();
+  glOrtho( -0.5, viewport[2]-0.5, -0.5, viewport[3]-0.5, -1, +1 ); VL_CHECK_OGL();
 
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT); VL_CHECK_OGL();
 
@@ -140,7 +140,7 @@ void DrawPixels::render_Implementation(const Actor* actor, const Shader*, const 
     if (cmd->image() == 0)
       continue;
 
-    const BufferObject* glbuf = cmd->image()->pixelBufferObject();
+    const GLBufferObject* glbuf = cmd->image()->pixelBufferObject();
 
     VL_CHECK( cmd->image() )
     VL_CHECK( glbuf )
@@ -261,7 +261,7 @@ void DrawPixels::deletePixelBufferObjects()
   VL_CHECK_OGL()
   for(int i=0; i<(int)mDraws.size(); ++i)
   {
-    mDraws[i]->image()->pixelBufferObject()->deleteBufferObject();
+    mDraws[i]->image()->pixelBufferObject()->deleteGLBufferObject();
   }
   VL_CHECK_OGL()
 }
@@ -273,9 +273,9 @@ void DrawPixels::releaseImages()
 }
 //-----------------------------------------------------------------------------
 //! generates PBOs only for Pixels objects without a PBO handle
-bool DrawPixels::generatePixelBufferObjects(EBufferObjectUsage usage, bool discard_local_storage)
+bool DrawPixels::generatePixelBufferObjects(EGLBufferUsage usage, bool discard_local_storage)
 {
-  if ( !( Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object ) )
+  if ( !( GLEW_ARB_pixel_buffer_object||GLEW_EXT_pixel_buffer_object ) )
     return false;
 
   // generates PBOs if they have an attached Image
@@ -298,7 +298,7 @@ bool DrawPixels::generatePixelBufferObjects(EBufferObjectUsage usage, bool disca
 //-----------------------------------------------------------------------------
 void DrawPixels::setUsePixelBufferObject(bool use_pbo)
 {
-  if ( (Has_GL_ARB_pixel_buffer_object||Has_GL_EXT_pixel_buffer_object) )
+  if ( (GLEW_ARB_pixel_buffer_object||GLEW_EXT_pixel_buffer_object) )
     mUsePixelBufferObject = use_pbo;
   else
     mUsePixelBufferObject = false;

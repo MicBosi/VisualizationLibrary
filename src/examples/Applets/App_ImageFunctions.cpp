@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -32,8 +32,12 @@
 #include "BaseDemo.hpp"
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlGraphics/GeometryPrimitives.hpp>
-#include <vlCore/plugins/ioPNG.hpp>
-#include <vlCore/plugins/ioJPG.hpp>
+#if defined(VL_IO_2D_PNG)
+  #include <vlCore/vlPNG.hpp>
+#endif
+#if defined(VL_IO_2D_JPG)
+  #include <vlCore/vlJPG.hpp>
+#endif
 
 class App_ImageFunctions: public BaseDemo
 {
@@ -43,11 +47,12 @@ public:
     if ( !vl::canLoad("png") || !vl::canLoad("jpg") || !vl::canLoad("tga") || !vl::canLoad("tif") )
     {
       vl::Log::error("App_ImageFunctions test requires the following modules: VL_IO_2D_JPG, VL_IO_2D_PNG, VL_IO_2D_TIFF and VL_IO_2D_TGA.\n");
-      vl::Time::sleep(2000);
-      exit(1);
+      vl::Time::sleep(5000);
+      openglContext()->quitApplication();
+      return;
     }
 
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     bool use_mipmaps = true;
 
@@ -62,21 +67,23 @@ public:
     vl::ref<vl::Image> img_c;
     vl::ref<vl::Image> img_d;
 
-    vl::LoadWriterJPG* jpg_load_writer = vl::defLoadWriterManager()->loadWriter<vl::LoadWriterJPG>();
-    if (jpg_load_writer)
-    {
-      jpg_load_writer->setQuality(90);
-      vl::saveImage(img1.get(), "img_a.jpg");
-      img_a = vl::loadImage("img_a.jpg");
-    }
+	// remember that this returns NULL if JPG support is disabled
+#if defined(VL_IO_2D_PNG)
+	// TODO: review the way options are set for ResourceLoadWriters, that is, how we can 
+	// safely access to the actual object's interface implementing a generic plugin.
+    vl::defLoadWriterManager()->loadWriter<vl::LoadWriterJPG>()->setQuality(90);
+#endif
+    vl::saveImage(img1.get(), "img_a.jpg");
+    img_a = vl::loadImage("img_a.jpg");
 
-    vl::LoadWriterPNG* png_load_writer = vl::defLoadWriterManager()->loadWriter<vl::LoadWriterPNG>();
-    if (png_load_writer)
-    {
-      png_load_writer->setCompression(9);
-      vl::saveImage(img1.get(), "img_b.png");
-      img_b = vl::loadImage("img_b.png");
-    }
+    // remember that this returns NULL if PNG support is disabled
+#if defined(VL_IO_2D_JPG)
+	// TODO: review the way options are set for ResourceLoadWriters, that is, how we can 
+	// safely access to the actual object's interface implementing a generic plugin.
+    vl::defLoadWriterManager()->loadWriter<vl::LoadWriterPNG>()->setCompression(9);
+#endif
+    vl::saveImage(img1.get(), "img_b.png");
+    img_b = vl::loadImage("img_b.png");
 
     vl::saveImage(img1.get(), "img_c.tga");
     img_c = vl::loadImage("img_c.tga");
@@ -197,9 +204,9 @@ public:
     fx_1->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_1 = new vl::Texture( img1.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_1->shader()->gocTextureSampler(0)->setTexture( texture_1.get() );
-    fx_1->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_1->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_1->shader()->gocTextureUnit(0)->setTexture( texture_1.get() );
+    fx_1->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_1->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_1.get(), tr_1.get() );
 
@@ -213,9 +220,9 @@ public:
     fx_2->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_2 = new vl::Texture( img2.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_2->shader()->gocTextureSampler(0)->setTexture( texture_2.get() );
-    fx_2->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_2->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_2->shader()->gocTextureUnit(0)->setTexture( texture_2.get() );
+    fx_2->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_2->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_2.get(), tr_2.get() );
 
@@ -229,9 +236,9 @@ public:
     fx_x->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_x = new vl::Texture( img_x.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_x->shader()->gocTextureSampler(0)->setTexture( texture_x.get() );
-    fx_x->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_x->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_x->shader()->gocTextureUnit(0)->setTexture( texture_x.get() );
+    fx_x->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_x->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_x.get(), tr_x.get() );
 
@@ -245,9 +252,9 @@ public:
     fx_y->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_y = new vl::Texture( img_y.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_y->shader()->gocTextureSampler(0)->setTexture( texture_y.get() );
-    fx_y->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_y->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_y->shader()->gocTextureUnit(0)->setTexture( texture_y.get() );
+    fx_y->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_y->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_y.get(), tr_y.get() );
 
@@ -261,9 +268,9 @@ public:
     fx_z->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_z = new vl::Texture( img_z.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_z->shader()->gocTextureSampler(0)->setTexture( texture_z.get() );
-    fx_z->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_z->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_z->shader()->gocTextureUnit(0)->setTexture( texture_z.get() );
+    fx_z->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_z->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_z.get(), tr_z.get() );
 
@@ -277,9 +284,9 @@ public:
     fx_w->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_w = new vl::Texture( img_w.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_w->shader()->gocTextureSampler(0)->setTexture( texture_w.get() );
-    fx_w->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_w->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_w->shader()->gocTextureUnit(0)->setTexture( texture_w.get() );
+    fx_w->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_w->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_w.get(), tr_w.get() );
 
@@ -293,9 +300,9 @@ public:
     fx_a->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_a = new vl::Texture( img_a.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_a->shader()->gocTextureSampler(0)->setTexture( texture_a.get() );
-    fx_a->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_a->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_a->shader()->gocTextureUnit(0)->setTexture( texture_a.get() );
+    fx_a->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_a->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_a.get(), tr_a.get() );
 
@@ -309,9 +316,9 @@ public:
     fx_b->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_b = new vl::Texture( img_b.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_b->shader()->gocTextureSampler(0)->setTexture( texture_b.get() );
-    fx_b->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_b->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_b->shader()->gocTextureUnit(0)->setTexture( texture_b.get() );
+    fx_b->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_b->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_b.get(), tr_b.get() );
 
@@ -325,9 +332,9 @@ public:
     fx_c->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_c = new vl::Texture( img_c.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_c->shader()->gocTextureSampler(0)->setTexture( texture_c.get() );
-    fx_c->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_c->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_c->shader()->gocTextureUnit(0)->setTexture( texture_c.get() );
+    fx_c->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_c->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_c.get(), tr_c.get() );
 
@@ -341,9 +348,9 @@ public:
     fx_d->shader()->enable(vl::EN_BLEND);
     // setup texture
     vl::ref<vl::Texture> texture_d = new vl::Texture( img_d.get(), vl::TF_RGBA, use_mipmaps, false );
-    fx_d->shader()->gocTextureSampler(0)->setTexture( texture_d.get() );
-    fx_d->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    fx_d->shader()->gocTextureSampler(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
+    fx_d->shader()->gocTextureUnit(0)->setTexture( texture_d.get() );
+    fx_d->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
+    fx_d->shader()->gocTextureUnit(0)->texture()->getTexParameter()->setMinFilter(vl::TPF_LINEAR_MIPMAP_LINEAR);
     // add actor
     sceneManager()->tree()->addActor( quad.get(), fx_d.get(), tr_d.get() );
   }

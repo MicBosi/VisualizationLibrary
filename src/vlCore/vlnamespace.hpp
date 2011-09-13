@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -310,14 +310,14 @@ namespace vl
     IF_COMPRESSED_RGBA_S3TC_DXT5 = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,
 
     // GL 3.0 (EXT_texture_integer)
-    IF_RED_INTEGER   = GL_RED_INTEGER,
+    IF_RED_INTEGER = GL_RED_INTEGER,
     IF_GREEN_INTEGER = GL_GREEN_INTEGER,
-    IF_BLUE_INTEGER  = GL_BLUE_INTEGER,
+    IF_BLUE_INTEGER = GL_BLUE_INTEGER,
     IF_ALPHA_INTEGER = GL_ALPHA_INTEGER,
-    IF_RGB_INTEGER   = GL_RGB_INTEGER,
-    IF_RGBA_INTEGER  = GL_RGBA_INTEGER,
-    IF_BGR_INTEGER   = GL_BGR_INTEGER,
-    IF_BGRA_INTEGER  = GL_BGRA_INTEGER,
+    IF_RGB_INTEGER = GL_RGB_INTEGER,
+    IF_RGBA_INTEGER = GL_RGBA_INTEGER,
+    IF_BGR_INTEGER = GL_BGR_INTEGER,
+    IF_BGRA_INTEGER = GL_BGRA_INTEGER,
 
     // EXT_texture_integer
     IF_LUMINANCE_INTEGER = GL_LUMINANCE_INTEGER_EXT,
@@ -580,7 +580,7 @@ namespace vl
     FBB_FRAMEBUFFER      = GL_FRAMEBUFFER,
     FBB_DRAW_FRAMEBUFFER = GL_DRAW_FRAMEBUFFER,
     FBB_READ_FRAMEBUFFER = GL_READ_FRAMEBUFFER,
-  } EFramebufferBind;
+  } EFrameBufferBind;
 
   typedef enum
   {
@@ -618,7 +618,6 @@ namespace vl
     PT_POINTS         = GL_POINTS,
     PT_LINES          = GL_LINES,
     PT_LINE_LOOP      = GL_LINE_LOOP,
-
     PT_LINE_STRIP     = GL_LINE_STRIP,
     PT_TRIANGLES      = GL_TRIANGLES,
     PT_TRIANGLE_STRIP = GL_TRIANGLE_STRIP,
@@ -634,9 +633,7 @@ namespace vl
     PT_TRIANGLE_STRIP_ADJACENCY = GL_TRIANGLE_STRIP_ADJACENCY_EXT,
 
     // GL_ARB_tessellation_shader
-    PT_PATCHES = GL_PATCHES,
-
-    PT_UNKNOWN,
+    PT_PATCHES = GL_PATCHES
 
   } EPrimitiveType;
 
@@ -810,66 +807,49 @@ namespace vl
   typedef enum 
   {
     TGM_DISABLED = 0, 
-    TGM_EYE_LINEAR = GL_EYE_LINEAR,         //!< Not supported under OpenGL ES 1.x
-    TGM_OBJECT_LINEAR = GL_OBJECT_LINEAR,   //!< Not supported under OpenGL ES 1.x
-    TGM_SPHERE_MAP = GL_SPHERE_MAP,         //!< Not supported under OpenGL ES 1.x
-    TGM_REFLECTION_MAP = GL_REFLECTION_MAP,
-    TGM_NORMAL_MAP = GL_NORMAL_MAP           
+    TGM_EYE_LINEAR=GL_EYE_LINEAR, 
+    TGM_OBJECT_LINEAR=GL_OBJECT_LINEAR, 
+    TGM_SPHERE_MAP=GL_SPHERE_MAP, 
+    TGM_REFLECTION_MAP=GL_REFLECTION_MAP, 
+    TGM_NORMAL_MAP=GL_NORMAL_MAP
   } ETexGenMode;
 
   //! Constant that enable/disable a specific OpenGL feature, see also Shader, Shader::enable(), Shader::disable(), Shader::isEnabled()
   typedef enum 
   {
-    // Common ones
+    EN_ALPHA_TEST, //!< If enabled, performs alpha testing, see also AlphaFunc for more information.
     EN_BLEND, //!< If enabled, blend the incoming RGBA color values with the values in the color buffers, see also BlendFunc for more information.
+    EN_COLOR_LOGIC_OP, //!< If enabled, apply the currently selected logical operation to the incoming RGBA color and color buffer values, see also LogicOp.
+    EN_LIGHTING, //!< If enabled, use the current lighting parameters to compute the vertex color; Otherwise, simply associate the current color with each vertex, see also Material, LightModel, and Light.
+    EN_COLOR_SUM, //!< If enabled, add the secondary color value to the computed fragment color. 
     EN_CULL_FACE, //!< If enabled, cull polygons based on their winding in window coordinates, see also CullFace. 
     EN_DEPTH_TEST, //!< If enabled, do depth comparisons and update the depth buffer; Note that even if the depth buffer exists and the depth mask is non-zero, the depth buffer is not updated if the depth test is disabled, see also DepthFunc and DepthRange.
-    EN_STENCIL_TEST, //!< If enabled, do stencil testing and update the stencil buffer, see also StencilFunc and StencilOp.
-    EN_DITHER, //!< If enabled, dither color components or indices before they are written to the color buffer.
+    EN_FOG, //!< If enabled, blend a fog color into the post-texturing color, see also Fog.
+    EN_LINE_SMOOTH, //!< IIf enabled, draw lines with correct filtering; Otherwise, draw aliased lines, see also LineWidth.
+    EN_LINE_STIPPLE, //!< If enabled, use the current line stipple pattern when drawing lines, see also LineStipple.
+    EN_POLYGON_STIPPLE, //!< If enabled, use the current polygon stipple pattern when rendering polygons, see also PolygonStipple.
+    EN_NORMALIZE, //!< If enabled, normal vectors are scaled to unit length after transformation, see also vl::EN_RESCALE_NORMAL.
+    EN_POINT_SMOOTH, //!< If enabled, draw points with proper filtering; Otherwise, draw aliased points, see also PointSize.
+    EN_POINT_SPRITE, //!< If enabled, calculate texture coordinates for points based on texture environment and point parameter settings; Otherwise texture coordinates are constant across points.
+    EN_POLYGON_SMOOTH, //!< If enabled, draw polygons with proper filtering; Otherwise, draw aliased polygons; For correct antialiased polygons, an alpha buffer is needed and the polygons must be sorted front to back.
     EN_POLYGON_OFFSET_FILL, //!< If enabled, and if the polygon is rendered in GL_FILL mode, an offset is added to depth values of a polygon's fragments before the depth comparison is performed, see also PolygonOffset.
     EN_POLYGON_OFFSET_LINE, //!< If enabled, and if the polygon is rendered in GL_LINE mode, an offset is added to depth values of a polygon's fragments before the depth comparison is performed, see also PolygonOffset.
     EN_POLYGON_OFFSET_POINT, //!< If enabled, an offset is added to depth values of a polygon's fragments before the depth comparison is performed, if the polygon is rendered in GL_POINT mode, see also PolygonOffset.
-    EN_COLOR_LOGIC_OP, //!< If enabled, apply the currently selected logical operation to the incoming RGBA color and color buffer values, see also LogicOp.
-    EN_MULTISAMPLE, //!< If enabled, use multiple fragment samples in computing the final color of a pixel. See glSampleCoverage.
-
-    // Smoothing
-    EN_POINT_SMOOTH, //!< If enabled, draw points with proper filtering; Otherwise, draw aliased points, see also PointSize.
-    EN_LINE_SMOOTH, //!< IIf enabled, draw lines with correct filtering; Otherwise, draw aliased lines, see also LineWidth.
-    EN_POLYGON_SMOOTH, //!< If enabled, draw polygons with proper filtering; Otherwise, draw aliased polygons; For correct antialiased polygons, an alpha buffer is needed and the polygons must be sorted front to back.
-
-    // Stippling
-    EN_LINE_STIPPLE, //!< If enabled, use the current line stipple pattern when drawing lines, see also LineStipple.
-    EN_POLYGON_STIPPLE, //!< If enabled, use the current polygon stipple pattern when rendering polygons, see also PolygonStipple.
-
-    // Point sprites
-    EN_POINT_SPRITE, //!< If enabled, calculate texture coordinates for points based on texture environment and point parameter settings; Otherwise texture coordinates are constant across points.
-    EN_PROGRAM_POINT_SIZE, //!< [GL_VERTEX_PROGRAM_POINT_SIZE/GL_PROGRAM_POINT_SIZE] If enabled, and a vertex shader is active, then the derived point size is taken from the (potentially clipped) shader builtin \p gl_PointSize and clamped to the implementation-dependent point size range|
-
-    // Fixed function pipeline
-    EN_ALPHA_TEST, //!< If enabled, performs alpha testing, see also AlphaFunc for more information.
-    EN_LIGHTING, //!< If enabled, use the current lighting parameters to compute the vertex color; Otherwise, simply associate the current color with each vertex, see also Material, LightModel, and Light.
-    EN_COLOR_SUM, //!< If enabled, add the secondary color value to the computed fragment color. 
-    EN_FOG, //!< If enabled, blend a fog color into the post-texturing color, see also Fog.
-    EN_NORMALIZE, //!< If enabled, normal vectors are scaled to unit length after transformation, see also vl::EN_RESCALE_NORMAL.
     EN_RESCALE_NORMAL, //!< If enabled, normals are scaled by a scaling factor derived from the modelview matrix; vl::EN_RESCALE_NORMAL requires that the originally specified normals were of unit length, and that the modelview matrix contain only uniform scales for proper results, see also vl::EN_NORMALIZE.
-
-    // Available only under OpenGL 2.x
+    EN_STENCIL_TEST, //!< If enabled, do stencil testing and update the stencil buffer, see also StencilFunc and StencilOp.
+    EN_VERTEX_PROGRAM_POINT_SIZE, //!< If enabled, and a vertex shader is active, then the derived point size is taken from the (potentially clipped) shader builtin \p gl_PointSize and clamped to the implementation-dependent point size range|
     EN_VERTEX_PROGRAM_TWO_SIDE, //!< If enabled, and a vertex shader is active, it specifies that the GL will choose between front and back colors based on the polygon's face direction of which the vertex being shaded is a part; It has no effect on points or lines.
 
-    // OpenGL 3.2
-    EN_TEXTURE_CUBE_MAP_SEAMLESS, //!< If enabled, cubemap textures are sampled such that when linearly sampling from the border between two adjacent faces, texels from both faces are used to generate the final sample value. When disabled, texels from only a single face are used to construct the final sample value.
+    // OpenGL 3
+    EN_TEXTURE_CUBE_MAP_SEAMLESS,
+    EN_GL_CLIP_DISTANCE0,
+    EN_GL_CLIP_DISTANCE1,
+    EN_GL_CLIP_DISTANCE2,
+    EN_GL_CLIP_DISTANCE3,
+    EN_GL_CLIP_DISTANCE4,
+    EN_GL_CLIP_DISTANCE5,
 
-    // OpenGL 3.0
-    EN_CLIP_DISTANCE0, //!< If enabled, clip geometry against user-defined half space #0.
-    EN_CLIP_DISTANCE1, //!< If enabled, clip geometry against user-defined half space #1.
-    EN_CLIP_DISTANCE2, //!< If enabled, clip geometry against user-defined half space #2.
-    EN_CLIP_DISTANCE3, //!< If enabled, clip geometry against user-defined half space #3.
-    EN_CLIP_DISTANCE4, //!< If enabled, clip geometry against user-defined half space #4.
-    EN_CLIP_DISTANCE5, //!< If enabled, clip geometry against user-defined half space #5.
-    EN_CLIP_DISTANCE6, //!< If enabled, clip geometry against user-defined half space #6.
-    EN_CLIP_DISTANCE7, //!< If enabled, clip geometry against user-defined half space #7.
-
-    // Multisampling
+    // multisampling
     EN_SAMPLE_ALPHA_TO_COVERAGE, //!< If enabled, compute a temporary coverage value where each bit is determined by the alpha value at the corresponding sample location; The temporary coverage value is then ANDed with the fragment coverage value.
     EN_SAMPLE_ALPHA_TO_ONE, //!< If enabled, each sample alpha value is replaced by the maximum representable alpha value.
     EN_SAMPLE_COVERAGE, //!< If enabled, the fragment's coverage is ANDed with the temporary coverage value; If GL_SAMPLE_COVERAGE_INVERT is set to GL_TRUE, invert the coverage value, see also SampleCoverage.
@@ -891,14 +871,14 @@ namespace vl
     BU_DYNAMIC_DRAW = GL_DYNAMIC_DRAW, //!< Data is specified many times and used many times as the source of drawing and image specification commands.
     BU_DYNAMIC_READ = GL_DYNAMIC_READ, //!< Data is copied many times from an OpenGL buffer and is used many times by the application as data values.
     BU_DYNAMIC_COPY = GL_DYNAMIC_COPY  //!< Data is copied many times from an OpenGL buffer and is used many times as the source for drawing or image specification commands.
-  } EBufferObjectUsage;
+  } EGLBufferUsage;
 
   typedef enum
   {
-    BA_READ_ONLY  = GL_READ_ONLY,
-    BA_WRITE_ONLY = GL_WRITE_ONLY, 
-    BA_READ_WRITE = GL_READ_WRITE
-  } EBufferObjectAccess;
+    GBA_READ_ONLY  = GL_READ_ONLY,
+    GBA_WRITE_ONLY = GL_WRITE_ONLY, 
+    GBA_READ_WRITE = GL_READ_WRITE
+  } EGLBufferAccess;
 
   typedef enum
   {
@@ -952,27 +932,17 @@ namespace vl
   {
     ST_RenderStates = 1,
     ST_Enables      = 2,
-    ST_TextureSamplers = 4,
+    ST_TextureUnits = 4,
     ST_Lights       = 8,
     ST_ClipPlanes   = 16
   } EStateType;
 
   typedef enum
   {
-    RS_VertexAttrib/*0*/,
-    RS_VertexAttrib1,
-    RS_VertexAttrib2,
-    RS_VertexAttrib3,
-    RS_VertexAttrib4,
-    RS_VertexAttrib5,
-    RS_VertexAttrib6,
-    RS_VertexAttrib7,
-
     RS_AlphaFunc,
     RS_BlendColor,
     RS_BlendEquation,
     RS_BlendFunc,
-    RS_Color,
     RS_ColorMask,
     RS_CullFace,
     RS_DepthFunc,
@@ -987,21 +957,19 @@ namespace vl
     RS_LineWidth,
     RS_LogicOp,
     RS_Material,
-    RS_Normal,
     RS_PixelTransfer,
     RS_PointParameter,
     RS_PointSize,
     RS_PolygonOffset,
     RS_PolygonStipple,
     RS_SampleCoverage,
-    RS_SecondaryColor,
     RS_ShadeModel,
     RS_StencilFunc,
     RS_StencilMask,
     RS_StencilOp,
     RS_GLSLProgram,
 
-    RS_Light/*0*/,
+    RS_Light0,
     RS_Light1,
     RS_Light2,
     RS_Light3,
@@ -1010,87 +978,86 @@ namespace vl
     RS_Light6,
     RS_Light7,
 
-    RS_ClipPlane/*0*/,
+    RS_ClipPlane0,
     RS_ClipPlane1,
     RS_ClipPlane2,
     RS_ClipPlane3,
     RS_ClipPlane4,
     RS_ClipPlane5,
 
-    RS_TextureSampler/*0*/,
-    RS_TextureSampler1  = RS_TextureSampler + 1,
-    RS_TextureSampler2  = RS_TextureSampler + 2,
-    RS_TextureSampler3  = RS_TextureSampler + 3,
-    RS_TextureSampler4  = RS_TextureSampler + 4,
-    RS_TextureSampler5  = RS_TextureSampler + 5,
-    RS_TextureSampler6  = RS_TextureSampler + 6,
-    RS_TextureSampler7  = RS_TextureSampler + 7,
-    RS_TextureSampler8  = RS_TextureSampler + 8,
-    RS_TextureSampler9  = RS_TextureSampler + 9,
-    RS_TextureSampler10 = RS_TextureSampler + 10,
-    RS_TextureSampler11 = RS_TextureSampler + 11,
-    RS_TextureSampler12 = RS_TextureSampler + 12,
-    RS_TextureSampler13 = RS_TextureSampler + 13,
-    RS_TextureSampler14 = RS_TextureSampler + 14,
-    RS_TextureSampler15 = RS_TextureSampler + 15,
+    RS_TextureUnit0,
+    RS_TextureUnit1  = RS_TextureUnit0 + 1,
+    RS_TextureUnit2  = RS_TextureUnit0 + 2,
+    RS_TextureUnit3  = RS_TextureUnit0 + 3,
+    RS_TextureUnit4  = RS_TextureUnit0 + 4,
+    RS_TextureUnit5  = RS_TextureUnit0 + 5,
+    RS_TextureUnit6  = RS_TextureUnit0 + 6,
+    RS_TextureUnit7  = RS_TextureUnit0 + 7,
+    RS_TextureUnit8  = RS_TextureUnit0 + 8,
+    RS_TextureUnit9  = RS_TextureUnit0 + 9,
+    RS_TextureUnit10 = RS_TextureUnit0 + 10,
+    RS_TextureUnit11 = RS_TextureUnit0 + 11,
+    RS_TextureUnit12 = RS_TextureUnit0 + 12,
+    RS_TextureUnit13 = RS_TextureUnit0 + 13,
+    RS_TextureUnit14 = RS_TextureUnit0 + 14,
+    RS_TextureUnit15 = RS_TextureUnit0 + 15,
     /* ... */
 
-    RS_TexGen/*0*/  = RS_TextureSampler + VL_MAX_TEXTURE_UNITS,
-    RS_TexGen1  = RS_TexGen + 1,
-    RS_TexGen2  = RS_TexGen + 2,
-    RS_TexGen3  = RS_TexGen + 3,
-    RS_TexGen4  = RS_TexGen + 4,
-    RS_TexGen5  = RS_TexGen + 5,
-    RS_TexGen6  = RS_TexGen + 6,
-    RS_TexGen7  = RS_TexGen + 7,
-    RS_TexGen8  = RS_TexGen + 8,
-    RS_TexGen9  = RS_TexGen + 9,
-    RS_TexGen10 = RS_TexGen + 10,
-    RS_TexGen11 = RS_TexGen + 11,
-    RS_TexGen12 = RS_TexGen + 12,
-    RS_TexGen13 = RS_TexGen + 13,
-    RS_TexGen14 = RS_TexGen + 14,
-    RS_TexGen15 = RS_TexGen + 15,
+    RS_TexGen0  = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 1,
+    RS_TexGen1  = RS_TexGen0 + 1,
+    RS_TexGen2  = RS_TexGen0 + 2,
+    RS_TexGen3  = RS_TexGen0 + 3,
+    RS_TexGen4  = RS_TexGen0 + 4,
+    RS_TexGen5  = RS_TexGen0 + 5,
+    RS_TexGen6  = RS_TexGen0 + 6,
+    RS_TexGen7  = RS_TexGen0 + 7,
+    RS_TexGen8  = RS_TexGen0 + 8,
+    RS_TexGen9  = RS_TexGen0 + 9,
+    RS_TexGen10 = RS_TexGen0 + 10,
+    RS_TexGen11 = RS_TexGen0 + 11,
+    RS_TexGen12 = RS_TexGen0 + 12,
+    RS_TexGen13 = RS_TexGen0 + 13,
+    RS_TexGen14 = RS_TexGen0 + 14,
+    RS_TexGen15 = RS_TexGen0 + 15,
     /* ... */
 
-    RS_TexEnv/*0*/  = RS_TexGen + VL_MAX_TEXTURE_UNITS,
-    RS_TexEnv1  = RS_TexEnv + 1,
-    RS_TexEnv2  = RS_TexEnv + 2,
-    RS_TexEnv3  = RS_TexEnv + 3,
-    RS_TexEnv4  = RS_TexEnv + 4,
-    RS_TexEnv5  = RS_TexEnv + 5,
-    RS_TexEnv6  = RS_TexEnv + 6,
-    RS_TexEnv7  = RS_TexEnv + 7,
-    RS_TexEnv8  = RS_TexEnv + 8,
-    RS_TexEnv9  = RS_TexEnv + 9,
-    RS_TexEnv10 = RS_TexEnv + 10,
-    RS_TexEnv11 = RS_TexEnv + 11,
-    RS_TexEnv12 = RS_TexEnv + 12,
-    RS_TexEnv13 = RS_TexEnv + 13,
-    RS_TexEnv14 = RS_TexEnv + 14,
-    RS_TexEnv15 = RS_TexEnv + 15,
+    RS_TexEnv0  = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 2,
+    RS_TexEnv1  = RS_TexEnv0 + 1,
+    RS_TexEnv2  = RS_TexEnv0 + 2,
+    RS_TexEnv3  = RS_TexEnv0 + 3,
+    RS_TexEnv4  = RS_TexEnv0 + 4,
+    RS_TexEnv5  = RS_TexEnv0 + 5,
+    RS_TexEnv6  = RS_TexEnv0 + 6,
+    RS_TexEnv7  = RS_TexEnv0 + 7,
+    RS_TexEnv8  = RS_TexEnv0 + 8,
+    RS_TexEnv9  = RS_TexEnv0 + 9,
+    RS_TexEnv10 = RS_TexEnv0 + 10,
+    RS_TexEnv11 = RS_TexEnv0 + 11,
+    RS_TexEnv12 = RS_TexEnv0 + 12,
+    RS_TexEnv13 = RS_TexEnv0 + 13,
+    RS_TexEnv14 = RS_TexEnv0 + 14,
+    RS_TexEnv15 = RS_TexEnv0 + 15,
     /* ... */
 
-    RS_TextureMatrix/*0*/  = RS_TexEnv + VL_MAX_TEXTURE_UNITS,
-    RS_TextureMatrix1  = RS_TextureMatrix + 1,
-    RS_TextureMatrix2  = RS_TextureMatrix + 2,
-    RS_TextureMatrix3  = RS_TextureMatrix + 3,
-    RS_TextureMatrix4  = RS_TextureMatrix + 4,
-    RS_TextureMatrix5  = RS_TextureMatrix + 5,
-    RS_TextureMatrix6  = RS_TextureMatrix + 6,
-    RS_TextureMatrix7  = RS_TextureMatrix + 7,
-    RS_TextureMatrix8  = RS_TextureMatrix + 8,
-    RS_TextureMatrix9  = RS_TextureMatrix + 9,
-    RS_TextureMatrix10 = RS_TextureMatrix + 10,
-    RS_TextureMatrix11 = RS_TextureMatrix + 11,
-    RS_TextureMatrix12 = RS_TextureMatrix + 12,
-    RS_TextureMatrix13 = RS_TextureMatrix + 13,
-    RS_TextureMatrix14 = RS_TextureMatrix + 14,
-    RS_TextureMatrix15 = RS_TextureMatrix + 15,
+    RS_TextureMatrix0  = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 3,
+    RS_TextureMatrix1  = RS_TextureMatrix0 + 1,
+    RS_TextureMatrix2  = RS_TextureMatrix0 + 2,
+    RS_TextureMatrix3  = RS_TextureMatrix0 + 3,
+    RS_TextureMatrix4  = RS_TextureMatrix0 + 4,
+    RS_TextureMatrix5  = RS_TextureMatrix0 + 5,
+    RS_TextureMatrix6  = RS_TextureMatrix0 + 6,
+    RS_TextureMatrix7  = RS_TextureMatrix0 + 7,
+    RS_TextureMatrix8  = RS_TextureMatrix0 + 8,
+    RS_TextureMatrix9  = RS_TextureMatrix0 + 9,
+    RS_TextureMatrix10 = RS_TextureMatrix0 + 10,
+    RS_TextureMatrix11 = RS_TextureMatrix0 + 11,
+    RS_TextureMatrix12 = RS_TextureMatrix0 + 12,
+    RS_TextureMatrix13 = RS_TextureMatrix0 + 13,
+    RS_TextureMatrix14 = RS_TextureMatrix0 + 14,
+    RS_TextureMatrix15 = RS_TextureMatrix0 + 15,
     /* ... */
 
-    RS_RenderStateCount          = RS_TextureMatrix15 + 1,
-
+    RS_COUNT          = RS_TextureUnit0 + VL_MAX_TEXTURE_UNITS * 4,
     RS_NONE,
 
   } ERenderState;
@@ -1321,15 +1288,53 @@ namespace vl
     VEL_VERBOSITY_DEBUG   //!<< Outputs extra information messages useful for debugging, plus all normal and error messages.
   } EVerbosityLevel;
 
-  typedef enum 
-  { 
-    LL_LogNotify,
-    LL_LogPrint,
-    LL_LogBug,
-    LL_LogError,
-    LL_LogWarning,
-    LL_LogDebug,
-  } ELogLevel;
+  // uniform types
+  typedef enum
+  {
+    UT_NONE = 0x0,
+
+    UT_Float,  //!<< float scalar
+    UT_Float2, //!<< 2 components float vector
+    UT_Float3, //!<< 3 components float vector
+    UT_Float4, //!<< 4 components float vector
+
+    UT_Double,  //!<< double scalar
+    UT_Double2, //!<< 2 components double vector
+    UT_Double3, //!<< 3 components double vector
+    UT_Double4, //!<< 4 components double vector
+
+    UT_Int,  //!<< int scalar
+    UT_Int2, //!<< 2 components int vector
+    UT_Int3, //!<< 3 components int vector
+    UT_Int4, //!<< 4 components int vector
+
+    UT_UInt,  //!<< unsigned int scalar
+    UT_UInt2, //!<< 2 components unsigned int vector
+    UT_UInt3, //!<< 3 components unsigned int vector
+    UT_UInt4, //!<< 4 components unsigned int vector
+
+    UT_Mat2F,  //!<< 2x2 float matrix
+    UT_Mat3F,  //!<< 3x3 float matrix
+    UT_Mat4F,  //!<< 4x4 float matrix
+
+    UT_Mat2x3F, //!<< 2x3 float matrix
+    UT_Mat3x2F, //!<< 3x2 float matrix
+    UT_Mat2x4F, //!<< 2x4 float matrix
+    UT_Mat4x2F, //!<< 4x2 float matrix
+    UT_Mat3x4F, //!<< 3x4 float matrix
+    UT_Mat4x3F, //!<< 4x3 float matrix
+
+    UT_Mat2D,  //!<< 2x2 double matrix
+    UT_Mat3D,  //!<< 3x3 double matrix
+    UT_Mat4D,  //!<< 4x4 double matrix
+
+    UT_Mat2x3D, //!<< 2x3 double matrix
+    UT_Mat3x2D, //!<< 3x2 double matrix
+    UT_Mat2x4D, //!<< 2x4 double matrix
+    UT_Mat4x2D, //!<< 4x2 double matrix
+    UT_Mat3x4D, //!<< 3x4 double matrix
+    UT_Mat4x3D, //!<< 4x3 double matrix
+  } EUniformType;
 
   typedef enum
   {
@@ -1341,190 +1346,15 @@ namespace vl
   //! see also http://www.opengl.org/sdk/docs/man4/xhtml/glVertexAttribPointer.xml
   typedef enum
   {
-    VAI_NORMAL,  //!< Data will be sent using glVertexAttribPointer(), that is,
-                 //!< data will be converted to floating point precision and eventually normalized.
+    VAB_NORMAL,       //!< Data will be sent using glVertexAttribPointer(), that is,
+                      //!< data will be converted to floating point precision and eventually normalized.
 
-    VAI_INTEGER, //!< Data will be sent using glVertexAttribIPointer(), that is, 
-                 //!< values are always left as integer values, data format must be an \a integer type.
+    VAB_PURE_INTEGER, //!< Data will be sent using glVertexAttribIPointer(), that is, 
+                      //!< values are always left as integer values, data format must be an \a integer type.
 
-    VAI_DOUBLE,  //!< Data will be sent using glVertexAttribLPointer(), that is, it will be associated with a 
-                 //!< shader attribute variable declared with 64-bit double precision components, data format must be \a double.
-  } EVertexAttribInterpretation;
-
-  //! Default vertex attribute bindings
-  typedef enum
-  {
-    VA_Position  = 0,
-    VA_Normal    = 1,
-    VA_Color     = 2,
-    VA_TexCoord0 = 3,
-  } EVertexAttribBinding;
-
-  //! Uniform types, see also vl::UniformInfo, vl::GLSLProgram, vl::Uniform, http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveUniform.xml
-  typedef enum
-  {
-    UT_NONE = 0x0,
-
-    UT_FLOAT = GL_FLOAT, //!< float
-    UT_FLOAT_VEC2 = GL_FLOAT_VEC2, //!< vec2
-    UT_FLOAT_VEC3 = GL_FLOAT_VEC3, //!< vec3
-    UT_FLOAT_VEC4 = GL_FLOAT_VEC4, //!< vec4
-    UT_DOUBLE = GL_DOUBLE, //!< double
-    UT_DOUBLE_VEC2 = GL_DOUBLE_VEC2, //!< dvec2
-    UT_DOUBLE_VEC3 = GL_DOUBLE_VEC3, //!< dvec3
-    UT_DOUBLE_VEC4 = GL_DOUBLE_VEC4, //!< dvec4
-    UT_INT = GL_INT, //!< int
-    UT_INT_VEC2 = GL_INT_VEC2, //!< ivec2
-    UT_INT_VEC3 = GL_INT_VEC3, //!< ivec3
-    UT_INT_VEC4 = GL_INT_VEC4, //!< ivec4
-    UT_UNSIGNED_INT = GL_UNSIGNED_INT, //!< unsigned int
-    UT_UNSIGNED_INT_VEC2 = GL_UNSIGNED_INT_VEC2, //!< uvec2
-    UT_UNSIGNED_INT_VEC3 = GL_UNSIGNED_INT_VEC3, //!< uvec3
-    UT_UNSIGNED_INT_VEC4 = GL_UNSIGNED_INT_VEC4, //!< uvec4
-    UT_BOOL = GL_BOOL, //!< bool
-    UT_BOOL_VEC2 = GL_BOOL_VEC2, //!< bvec2
-    UT_BOOL_VEC3 = GL_BOOL_VEC3, //!< bvec3
-    UT_BOOL_VEC4 = GL_BOOL_VEC4, //!< bvec4
-    UT_FLOAT_MAT2 = GL_FLOAT_MAT2, //!< mat2
-    UT_FLOAT_MAT3 = GL_FLOAT_MAT3, //!< mat3
-    UT_FLOAT_MAT4 = GL_FLOAT_MAT4, //!< mat4
-    UT_FLOAT_MAT2x3 = GL_FLOAT_MAT2x3, //!< mat2x3
-    UT_FLOAT_MAT2x4 = GL_FLOAT_MAT2x4, //!< mat2x4
-    UT_FLOAT_MAT3x2 = GL_FLOAT_MAT3x2, //!< mat3x2
-    UT_FLOAT_MAT3x4 = GL_FLOAT_MAT3x4 , //!< mat3x4
-    UT_FLOAT_MAT4x2 = GL_FLOAT_MAT4x2 , //!< mat4x2
-    UT_FLOAT_MAT4x3 = GL_FLOAT_MAT4x3 , //!< mat4x3
-    UT_DOUBLE_MAT2 = GL_DOUBLE_MAT2 , //!< dmat2
-    UT_DOUBLE_MAT3 = GL_DOUBLE_MAT3 , //!< dmat3
-    UT_DOUBLE_MAT4 = GL_DOUBLE_MAT4 , //!< dmat4
-    UT_DOUBLE_MAT2x3 = GL_DOUBLE_MAT2x3 , //!< dmat2x3
-    UT_DOUBLE_MAT2x4 = GL_DOUBLE_MAT2x4 , //!< dmat2x4
-    UT_DOUBLE_MAT3x2 = GL_DOUBLE_MAT3x2 , //!< dmat3x2
-    UT_DOUBLE_MAT3x4 = GL_DOUBLE_MAT3x4 , //!< dmat3x4
-    UT_DOUBLE_MAT4x2 = GL_DOUBLE_MAT4x2 , //!< dmat4x2
-    UT_DOUBLE_MAT4x3 = GL_DOUBLE_MAT4x3 , //!< dmat4x3
-
-    UT_SAMPLER_1D = GL_SAMPLER_1D , //!< sampler1D
-    UT_SAMPLER_2D = GL_SAMPLER_2D , //!< sampler2D
-    UT_SAMPLER_3D = GL_SAMPLER_3D , //!< sampler3D
-    UT_SAMPLER_CUBE = GL_SAMPLER_CUBE , //!< samplerCube
-    UT_SAMPLER_1D_SHADOW = GL_SAMPLER_1D_SHADOW , //!< sampler1DShadow
-    UT_SAMPLER_2D_SHADOW = GL_SAMPLER_2D_SHADOW , //!< sampler2DShadow
-    UT_SAMPLER_1D_ARRAY = GL_SAMPLER_1D_ARRAY , //!< sampler1DArray
-    UT_SAMPLER_2D_ARRAY = GL_SAMPLER_2D_ARRAY , //!< sampler2DArray
-    UT_SAMPLER_1D_ARRAY_SHADOW = GL_SAMPLER_1D_ARRAY_SHADOW , //!< sampler1DArrayShadow
-    UT_SAMPLER_2D_ARRAY_SHADOW = GL_SAMPLER_2D_ARRAY_SHADOW , //!< sampler2DArrayShadow
-    UT_SAMPLER_2D_MULTISAMPLE = GL_SAMPLER_2D_MULTISAMPLE , //!< sampler2DMS
-    UT_SAMPLER_2D_MULTISAMPLE_ARRAY = GL_SAMPLER_2D_MULTISAMPLE_ARRAY , //!< sampler2DMSArray
-    UT_SAMPLER_CUBE_SHADOW = GL_SAMPLER_CUBE_SHADOW , //!< samplerCubeShadow
-    UT_SAMPLER_BUFFER = GL_SAMPLER_BUFFER , //!< samplerBuffer
-    UT_SAMPLER_2D_RECT = GL_SAMPLER_2D_RECT , //!< sampler2DRect
-    UT_SAMPLER_2D_RECT_SHADOW = GL_SAMPLER_2D_RECT_SHADOW , //!< sampler2DRectShadow
-    UT_INT_SAMPLER_1D = GL_INT_SAMPLER_1D , //!< isampler1D
-    UT_INT_SAMPLER_2D = GL_INT_SAMPLER_2D , //!< isampler2D
-    UT_INT_SAMPLER_3D = GL_INT_SAMPLER_3D , //!< isampler3D
-    UT_INT_SAMPLER_CUBE = GL_INT_SAMPLER_CUBE , //!< isamplerCube
-    UT_INT_SAMPLER_1D_ARRAY = GL_INT_SAMPLER_1D_ARRAY , //!< isampler1DArray
-    UT_INT_SAMPLER_2D_ARRAY = GL_INT_SAMPLER_2D_ARRAY , //!< isampler2DArray
-    UT_INT_SAMPLER_2D_MULTISAMPLE = GL_INT_SAMPLER_2D_MULTISAMPLE , //!< isampler2DMS
-    UT_INT_SAMPLER_2D_MULTISAMPLE_ARRAY = GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY , //!< isampler2DMSArray
-    UT_INT_SAMPLER_BUFFER = GL_INT_SAMPLER_BUFFER , //!< isamplerBuffer
-    UT_INT_SAMPLER_2D_RECT = GL_INT_SAMPLER_2D_RECT , //!< isampler2DRect
-    UT_UNSIGNED_INT_SAMPLER_1D = GL_UNSIGNED_INT_SAMPLER_1D , //!< usampler1D
-    UT_UNSIGNED_INT_SAMPLER_2D = GL_UNSIGNED_INT_SAMPLER_2D , //!< usampler2D
-    UT_UNSIGNED_INT_SAMPLER_3D = GL_UNSIGNED_INT_SAMPLER_3D , //!< usampler3D
-    UT_UNSIGNED_INT_SAMPLER_CUBE = GL_UNSIGNED_INT_SAMPLER_CUBE , //!< usamplerCube
-    UT_UNSIGNED_INT_SAMPLER_1D_ARRAY = GL_UNSIGNED_INT_SAMPLER_1D_ARRAY , //!< usampler2DArray
-    UT_UNSIGNED_INT_SAMPLER_2D_ARRAY = GL_UNSIGNED_INT_SAMPLER_2D_ARRAY , //!< usampler2DArray
-    UT_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE = GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE , //!< usampler2DMS
-    UT_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY = GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY , //!< usampler2DMSArray
-    UT_UNSIGNED_INT_SAMPLER_BUFFER = GL_UNSIGNED_INT_SAMPLER_BUFFER , //!< usamplerBuffer
-    UT_UNSIGNED_INT_SAMPLER_2D_RECT = GL_UNSIGNED_INT_SAMPLER_2D_RECT , //!< usampler2DRect
-
-    UT_UniformTypeCount
-
-  } EUniformType;
-
-  //! GLSLProgram attribute types, see also GLSLProgram::activeAttribs() and http://www.opengl.org/sdk/docs/man4/xhtml/glGetActiveAttrib.xml
-  typedef enum
-  {
-    AT_FLOAT = GL_FLOAT, //!< float
-    AT_FLOAT_VEC2 = GL_FLOAT_VEC2, //!< vec2
-    AT_FLOAT_VEC3 = GL_FLOAT_VEC3, //!< vec3
-    AT_FLOAT_VEC4 = GL_FLOAT_VEC4, //!< vec4
-    AT_FLOAT_MAT2 = GL_FLOAT_MAT2, //!< mat2
-    AT_FLOAT_MAT3 = GL_FLOAT_MAT3, //!< mat3
-    AT_FLOAT_MAT4 = GL_FLOAT_MAT4, //!< mat4
-    AT_FLOAT_MAT2x3 = GL_FLOAT_MAT2x3, //!< mat2x3
-    AT_FLOAT_MAT2x4 = GL_FLOAT_MAT2x4, //!< mat2x4
-    AT_FLOAT_MAT3x2 = GL_FLOAT_MAT3x2, //!< mat3x2
-    AT_FLOAT_MAT3x4 = GL_FLOAT_MAT3x4, //!< mat3x4
-    AT_FLOAT_MAT4x2 = GL_FLOAT_MAT4x2, //!< mat4x2
-    AT_FLOAT_MAT4x3 = GL_FLOAT_MAT4x3, //!< mat4x3
-    AT_INT = GL_INT, //!< int
-    AT_INT_VEC2 = GL_INT_VEC2, //!< ivec2
-    AT_INT_VEC3 = GL_INT_VEC3, //!< ivec3
-    AT_INT_VEC4 = GL_INT_VEC4, //!< ivec4
-    AT_UNSIGNED_INT = GL_UNSIGNED_INT, //!< unsigned int
-    AT_UNSIGNED_INT_VEC2 = GL_UNSIGNED_INT_VEC2, //!< vec2
-    AT_UNSIGNED_INT_VEC3 = GL_UNSIGNED_INT_VEC3, //!< vec3
-    AT_UNSIGNED_INT_VEC4 = GL_UNSIGNED_INT_VEC4, //!< vec4
-    AT_DOUBLE = GL_DOUBLE, //!< double
-    AT_DOUBLE_VEC2 = GL_DOUBLE_VEC2, //!< dvec2
-    AT_DOUBLE_VEC3 = GL_DOUBLE_VEC3, //!< dvec3
-    AT_DOUBLE_VEC4 = GL_DOUBLE_VEC4, //!< dvec4
-    AT_DOUBLE_MAT2 = GL_DOUBLE_MAT2, //!< dmat2
-    AT_DOUBLE_MAT3 = GL_DOUBLE_MAT3, //!< dmat3
-    AT_DOUBLE_MAT4 = GL_DOUBLE_MAT4, //!< dmat4
-    AT_DOUBLE_MAT2x3 = GL_DOUBLE_MAT2x3, //!< dmat2x3
-    AT_DOUBLE_MAT2x4 = GL_DOUBLE_MAT2x4, //!< dmat2x4
-    AT_DOUBLE_MAT3x2 = GL_DOUBLE_MAT3x2, //!< dmat3x2
-    AT_DOUBLE_MAT3x4 = GL_DOUBLE_MAT3x4, //!< dmat3x4
-    AT_DOUBLE_MAT4x2 = GL_DOUBLE_MAT4x2, //!< dmat4x2
-    AT_DOUBLE_MAT4x3 = GL_DOUBLE_MAT4x3, //!< dmat4x3
-
-  } EAttributeType;
-
-  typedef enum
-  {
-    PMT_UserProjection,              //!< Unknown or other projection type.
-    PMT_OrthographicProjection,      //!< Projection matrix generated by mat4::getOrtho() or similar. Any orthographic projection.
-    PMT_PerspectiveProjection,       //!< Projection matrix generated by mat4::getPerspective() or similar. Symmetrical (on-axis) perspective projection.
-    PMT_PerspectiveProjectionFrustum //!< Projection matrix generated by mat4::getFrustum() or similar. Possibly asymmetrical (off-axis) perspetive projection, like the ones used for tile-rendering.
-  } EProjectionMatrixType;
-
-  typedef enum
-  {
-    BUF_ForceUpdate   = 0x1,
-    BUF_DiscardRamBuffer = 0x2,
-  } EBufferObjectUpdateFlags;
-
-  typedef enum
-  {
-    //! Keeps the local buffer on RAM and updates the BufferObject only if it is marked as dirty. The BufferObject is marked as clean after the update.
-    BUM_KeepRamBuffer = 0x0,
-
-    //! Keeps the local buffer on RAM and updates the BufferObject always, even if it is not marked as dirty. The BufferObject is marked as clean after the update.
-    BUM_KeepRamBufferAndForceUpdate = BUF_ForceUpdate, 
-
-    //! Discards the local buffer on RAM and updates the BufferObject only if it is marked as dirty. The BufferObject is marked as clean after the update.
-    BUM_DiscardRamBuffer = BUF_DiscardRamBuffer,
-
-    //! Discards the local buffer on RAM and updates the BufferObject always, even if it is not marked as dirty. The BufferObject is marked as clean after the update.
-    BUM_DiscardRamBufferAndForceUpdate = BUF_DiscardRamBuffer | BUF_ForceUpdate
-  } EBufferObjectUpdateMode;
-
-  typedef enum
-  {
-    SCM_OwnShaders, //!< A local copy of the Shaders will be created but the contained render states will be shared.
-    SCM_ShareShaders //!< The Shader pointer will be copied as is.
-  } EShaderCopyMode;
-
-  typedef enum
-  {
-    RCS_RenderingStarted,
-    RCS_RenderingFinished
-  } EResetContextStates;
+    VAB_PURE_DOUBLE,  //!< Data will be sent using glVertexAttribLPointer(), that is, it will be associated with a 
+                      //!< shader attribute variable declared with 64-bit double precision components, data format must be \a double.
+  } EVertexAttribBehavior;
 }
 
 

@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -30,6 +30,8 @@
 /**************************************************************************************/
 
 #include <vlWin32/Win32Window.hpp>
+#include <vlCore/Log.hpp>
+#include <vlCore/Say.hpp>
 #include <vlCore/Time.hpp>
 #include <shellapi.h>
 
@@ -37,37 +39,8 @@ using namespace vl;
 using namespace vlWin32;
 
 //-----------------------------------------------------------------------------
-namespace vlWin32
+namespace
 {
-  const wchar_t* gWin32WindowClassName = L"VisualizationLibraryWindowClass";
-
-  bool registerClass()
-  {
-    static bool class_already_registered = false;
-    if (!class_already_registered)
-    {
-      WNDCLASS wc;
-      memset(&wc, 0, sizeof(wc));
-      /* only register the window class once. */
-      wc.style         = CS_OWNDC | CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
-      wc.lpfnWndProc   = (WNDPROC)Win32Window::WindowProc;
-      wc.cbClsExtra    = 0;
-      wc.cbWndExtra    = 0;
-      wc.hInstance     = GetModuleHandle(NULL);
-      wc.hIcon         = LoadIcon(NULL, IDI_WINLOGO);
-      wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-      wc.hbrBackground = NULL;
-      wc.lpszMenuName  = NULL;
-      wc.lpszClassName = gWin32WindowClassName;
-
-      if (!RegisterClass(&wc))
-        MessageBox(NULL, L"Class registration failed.", L"Visualization Library Error", MB_OK);
-      else
-        class_already_registered = true;
-    }
-    return class_already_registered;
-  }
-
   #if 0
     // used for debugging purposes
     void win32PrintError(LPTSTR lpszFunction) 
@@ -94,7 +67,36 @@ namespace vlWin32
         LocalFree(lpMsgBuf);
     }
   #endif
+
+  bool registerClass()
+  {
+    static bool class_already_registered = false;
+    if (!class_already_registered)
+    {
+      WNDCLASS wc;
+      memset(&wc, 0, sizeof(wc));
+      /* only register the window class once. */
+      wc.style         = CS_OWNDC | CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
+      wc.lpfnWndProc   = (WNDPROC)Win32Window::WindowProc;
+      wc.cbClsExtra    = 0;
+      wc.cbWndExtra    = 0;
+      wc.hInstance     = GetModuleHandle(NULL);
+      wc.hIcon         = LoadIcon(NULL, IDI_WINLOGO);
+      wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
+      wc.hbrBackground = NULL;
+      wc.lpszMenuName  = NULL;
+      wc.lpszClassName = Win32Window::Win32WindowClassName;
+
+      if (!RegisterClass(&wc))
+        MessageBox(NULL, L"Class registration failed.", L"Visualization Library Error", MB_OK);
+      else
+        class_already_registered = true;
+    }
+    return class_already_registered;
+  }
 }
+//-----------------------------------------------------------------------------
+const wchar_t* Win32Window::Win32WindowClassName = L"VisualizationLibraryWindowClass";
 //-----------------------------------------------------------------------------
 std::map< HWND, Win32Window* > Win32Window::mWinMap;
 //-----------------------------------------------------------------------------
@@ -117,8 +119,8 @@ LONG WINAPI Win32Window::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 
     case WM_SIZE:
     {
-      win->framebuffer()->setWidth( LOWORD(lParam) );
-      win->framebuffer()->setHeight( HIWORD(lParam) );
+      win->renderTarget()->setWidth( LOWORD(lParam) );
+      win->renderTarget()->setHeight( HIWORD(lParam) );
       win->dispatchResizeEvent( LOWORD(lParam), HIWORD(lParam) );
       break;
     }
@@ -256,7 +258,7 @@ Win32Window::Win32Window()
 
   mStyle   = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
   mExStyle = WS_EX_APPWINDOW | WS_EX_ACCEPTFILES;
-  mWindowClassName = gWin32WindowClassName;
+  mWindowClassName = Win32WindowClassName;
 }
 //-----------------------------------------------------------------------------
 Win32Window::~Win32Window()
@@ -572,5 +574,176 @@ void vlWin32::translateKeyEvent(WPARAM wParam, LPARAM lParam, unsigned short& un
       case L'`': key_out = Key_QuoteLeft; break;
     }
   }
+}
+//-----------------------------------------------------------------------------
+int vlWin32::choosePixelFormat(const vl::OpenGLContextFormat& fmt, bool verbose)
+{
+  if (!registerClass())
+    return false;
+
+  // this is true only under Win32
+  // VL_CHECK( sizeof(wchar_t) == sizeof(short int) )
+
+  HWND hWnd = CreateWindowEx(
+    WS_EX_APPWINDOW | WS_EX_ACCEPTFILES,
+    Win32Window::Win32WindowClassName,
+    L"Temp GL Window",
+    WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
+    NULL, NULL, GetModuleHandle(NULL), NULL);
+
+  if (!hWnd)
+  {
+    if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure: could not create window.", L"Visualization Library error", MB_OK);
+    return -1;
+  }
+
+  HDC hDC = GetDC(hWnd);
+  if (!hDC)
+  {
+    if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure: could not create HDC.", L"Visualization Library error", MB_OK);
+    DestroyWindow(hWnd);
+    return -1;
+  }
+
+  PIXELFORMATDESCRIPTOR pfd;
+  memset(&pfd, 0, sizeof(pfd));
+  pfd.nSize           = sizeof(pfd);
+  pfd.nVersion        = 1;
+  pfd.dwFlags         = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL;
+  pfd.dwFlags         |= fmt.doubleBuffer() ? PFD_DOUBLEBUFFER : 0;
+  pfd.dwFlags         |= fmt.stereo() ? PFD_STEREO : 0;
+  pfd.iPixelType      = PFD_TYPE_RGBA;
+  pfd.cColorBits      = 0;
+  pfd.cRedBits        = (BYTE)fmt.rgbaBits().r();
+  pfd.cGreenBits      = (BYTE)fmt.rgbaBits().g();
+  pfd.cBlueBits       = (BYTE)fmt.rgbaBits().b();
+  pfd.cAlphaBits      = (BYTE)fmt.rgbaBits().a();
+  pfd.cAccumRedBits   = (BYTE)fmt.accumRGBABits().r();
+  pfd.cAccumGreenBits = (BYTE)fmt.accumRGBABits().g();
+  pfd.cAccumBlueBits  = (BYTE)fmt.accumRGBABits().b();
+  pfd.cAccumAlphaBits = (BYTE)fmt.accumRGBABits().a();
+  pfd.cDepthBits      = (BYTE)fmt.depthBufferBits();
+  pfd.cStencilBits    = (BYTE)fmt.stencilBufferBits();
+  pfd.iLayerType      = PFD_MAIN_PLANE;
+
+  int pixel_format_index = ChoosePixelFormat(hDC, &pfd);
+
+  if (pixel_format_index == 0)
+  {
+    if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure: could not choose temporary format.", L"Visualization Library error", MB_OK);
+    DeleteDC(hDC);
+    DestroyWindow(hWnd);
+    return -1;
+  }
+
+  if (SetPixelFormat(hDC, pixel_format_index, &pfd) == FALSE)
+  {
+    if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure: could not set temporary format.", L"Visualization Library error", MB_OK);
+    DeleteDC(hDC);
+    DestroyWindow(hWnd);
+    return -1;
+  }
+
+  // OpenGL Rendering Context
+  HGLRC hGLRC = wglCreateContext(hDC);
+  if (!hGLRC)
+  {
+    if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure: could not create temporary OpenGL context.", L"Visualization Library error", MB_OK);
+    DeleteDC(hDC);
+    DestroyWindow(hWnd);
+    return -1;
+  }
+
+  wglMakeCurrent(hDC, hGLRC);
+
+  // init glew for each rendering context
+  GLenum err = glewInit();
+  if (GLEW_OK != err)
+  {
+    if (verbose) MessageBox(NULL, L"choosePixelFormat() critical failure during GLEW initialization.", L"Visualization Library error", MB_OK);
+    DeleteDC(hDC);
+    DestroyWindow(hWnd);
+    return -1;
+  }
+
+  // if this is not supported we use the current 'pixel_format_index' returned by ChoosePixelFormat above.
+
+  int samples = 0;
+  if(WGLEW_ARB_pixel_format && fmt.multisample())
+  {
+    float fAttributes[] = { 0, 0 };
+    int iAttributes[] =
+    {
+      // multi sampling
+	    WGL_SAMPLE_BUFFERS_ARB, GL_TRUE,
+      WGL_SAMPLES_ARB,        -1, // this is set below
+      // generic
+	    WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+	    WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+	    WGL_ACCELERATION_ARB,   WGL_FULL_ACCELERATION_ARB,
+      // color buffer
+      WGL_RED_BITS_ARB,         pfd.cRedBits,
+      WGL_GREEN_BITS_ARB,       pfd.cGreenBits,
+      WGL_BLUE_BITS_ARB,        pfd.cBlueBits,
+      WGL_ALPHA_BITS_ARB,       pfd.cAlphaBits,
+      // accumulation buffer
+      WGL_ACCUM_RED_BITS_ARB,   pfd.cAccumRedBits,
+      WGL_ACCUM_GREEN_BITS_ARB, pfd.cAccumGreenBits,
+      WGL_ACCUM_BLUE_BITS_ARB,  pfd.cAccumBlueBits,
+      WGL_ACCUM_ALPHA_BITS_ARB, pfd.cAccumAlphaBits,
+      // depth buffer
+      WGL_DEPTH_BITS_ARB,       pfd.cDepthBits,
+      WGL_DOUBLE_BUFFER_ARB,    fmt.doubleBuffer() ? GL_TRUE : GL_FALSE,
+      // stencil buffer
+      WGL_STENCIL_BITS_ARB,     pfd.cStencilBits,
+      // stereo
+      WGL_STEREO_ARB,           fmt.stereo() ? GL_TRUE : GL_FALSE,
+	    0,0
+    };
+
+    for(samples = fmt.multisampleSamples(); samples > 1; samples/=2)
+    {
+      // sets WGL_SAMPLES_ARB value
+      iAttributes[3] = samples;
+      pixel_format_index = -1;
+      UINT num_formats  = 0;
+      if ( wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixel_format_index,&num_formats) && num_formats >= 1 )
+        break;
+      else
+        pixel_format_index = -1;
+    }
+  }
+
+  // destroy temporary HWND, HDC, HGLRC
+  if ( wglDeleteContext(hGLRC) == FALSE )
+    if (verbose) MessageBox(NULL, L"Error deleting temporary OpenGL context, wglDeleteContext(hGLRC) failed.", L"Visualization Library error", MB_OK);
+  DeleteDC(hDC);
+  DestroyWindow(hWnd);
+
+  if (verbose)
+  {
+    if(pixel_format_index == -1)
+      vl::Log::error("No suitable pixel format found.\n");
+    else
+    {
+      // check the returned pixel format
+      #if defined(DEBUG) || !defined(NDEBUG)
+        DescribePixelFormat(hDC, pixel_format_index, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+        vl::Log::print(" --- vlWin32::choosePixelFormat() ---\n");
+        // This one returns "not supported" even when its supported...
+        // vl::Log::print( vl::Say("  OpenGL        = %s\n") << (pfd.dwFlags & PFD_SUPPORT_OPENGL ? "Supported" : "Not supported") );
+        vl::Log::print( vl::Say("RGBA Bits     = %n %n %n %n\n") << pfd.cRedBits << pfd.cGreenBits << pfd.cBlueBits << pfd.cAlphaBits);
+        vl::Log::print( vl::Say("Depth Bits    = %n\n")  << pfd.cDepthBits );
+        vl::Log::print( vl::Say("Stencil Bits  = %n \n") << pfd.cStencilBits);
+        vl::Log::print( vl::Say("Double Buffer = %s\n")  << (pfd.dwFlags & PFD_DOUBLEBUFFER ? "Yes" : "No") );
+        vl::Log::print( vl::Say("Stereo        = %s\n")  << (pfd.dwFlags & PFD_STEREO ? "Yes" : "No") );
+        vl::Log::print( vl::Say("Samples       = %n\n")  << samples );
+        vl::Log::print("\n");
+      #endif
+    }
+  }
+
+  return pixel_format_index;
 }
 //-----------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -276,8 +276,8 @@ void MFCWindow::OnSize (UINT nType, int cx, int cy)
   if (0 >= cx || 0 >= cy || nType == SIZE_MINIMIZED)
     return;
 
-  framebuffer()->setWidth(cx);
-  framebuffer()->setHeight(cy);
+  renderTarget()->setWidth(cx);
+  renderTarget()->setHeight(cy);
   dispatchResizeEvent(cx, cy);
 }
 //-----------------------------------------------------------------------------

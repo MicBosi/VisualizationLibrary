@@ -33,7 +33,9 @@
 #include <ctime>
 #include <cmath>
 
-#if defined(VL_PLATFORM_LINUX) || defined(VL_PLATFORM_MACOSX)
+#if defined(_MSC_VER)
+  #include <windows.h>
+#else
   #include <sys/time.h> // gettimeofday()
   #include <unistd.h>   // usleep()
 #endif
@@ -50,7 +52,7 @@ Time::Time()
   for(int i=0; i<VL_MAX_TIMERS; ++i)
     mStart[i] = -1;
 
-  #if defined(VL_PLATFORM_WINDOWS)
+  #if defined(_MSC_VER)
     SYSTEMTIME local_time;
     GetLocalTime(&local_time);
     mYear = local_time.wYear;
@@ -86,7 +88,7 @@ namespace vl
 
   void initStartTime()
   {
-    #if defined(VL_PLATFORM_WINDOWS)
+    #if defined(_MSC_VER)
       LARGE_INTEGER Frequency;
       LARGE_INTEGER PerformanceCount;
       BOOL has_timer = QueryPerformanceFrequency( &Frequency );
@@ -111,14 +113,14 @@ namespace vl
 //-----------------------------------------------------------------------------
 //! Seconds passed from an arbitrary origin
 //! QueryPerformanceFrequency should be called only once in the application lifetime
-real Time::currentTime()
+Real Time::currentTime()
 {
   if (gStartTime == 0)
     initStartTime();
 
   VL_CHECK(gStartTime);
 
-  #if defined(VL_PLATFORM_WINDOWS)
+  #if defined(_MSC_VER)
     // Win32
     LARGE_INTEGER Frequency;
     LARGE_INTEGER PerformanceCount;
@@ -128,7 +130,7 @@ real Time::currentTime()
       // DWORD_PTR oldmask = ::SetThreadAffinityMask(::GetCurrentThread(), 1);
       QueryPerformanceCounter( &PerformanceCount );
       // ::SetThreadAffinityMask(::GetCurrentThread(), oldmask);
-      return (real)(PerformanceCount.QuadPart-gStartTime)/Frequency.QuadPart;
+      return (Real)(PerformanceCount.QuadPart-gStartTime)/Frequency.QuadPart;
     }
     else
     {
@@ -143,7 +145,7 @@ real Time::currentTime()
 //-----------------------------------------------------------------------------
 void Time::sleep(unsigned int milliseconds)
 {
-  #if defined(VL_PLATFORM_WINDOWS)
+  #if defined(_MSC_VER)
     Sleep(milliseconds);
   #elif defined(__GNUG__)
     usleep(milliseconds*1000);

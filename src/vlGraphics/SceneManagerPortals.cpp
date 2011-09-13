@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -105,19 +105,20 @@ void SceneManagerPortals::renderPortal(Portal* portal)
     portal_fx->shader()->gocDepthFunc()->set(vl::FU_LEQUAL);*/
     portal_fx->shader()->enable(vl::EN_BLEND);
     portal_fx->shader()->gocLineWidth()->set(2.0f);
-    portal_fx->shader()->gocColor()->setValue(portal_color);
 
     vl::ref<vl::Geometry> portal_geom = new vl::Geometry;
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     portal_geom->setVertexArray(vert_array.get());
+    portal_geom->setColor(portal_color);
     vert_array->resize(portal->geometry().size());
     for(unsigned int i=0; i<portal->geometry().size(); ++i)
       vert_array->at(i) = portal->geometry()[i];
     portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, (int)vert_array->size()) );
-#if defined(VL_OPENGL)
+    portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, (int)vert_array->size()) );
+    portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_LINE_LOOP, 0, (int)vert_array->size()) );
     portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_POLYGON,   0, (int)vert_array->size()) );
-#endif
-    mPortalActorMap[portal] = new vl::Actor(portal_geom.get(), portal_fx.get(), NULL);
+    mTempActors.push_back( new vl::Actor(portal_geom.get(), portal_fx.get(), NULL) );
+    mPortalActorMap[portal] = mTempActors.back();
   }
 }
 //-----------------------------------------------------------------------------
@@ -139,20 +140,13 @@ void SceneManagerPortals::extractVisibleActors(ActorCollection& list, const Came
     {
       ++mVisitTick;
       mTempActors.clear();
+      mPortalActorMap.clear();
       mFrustumStack.clear();
 
       mFrustumStack.push_back(camera->frustum());
       start->executeCallbacks(camera,this,NULL);
-      visitSector(NULL, start, camera->modelingMatrix().getT(), camera);
+      visitSector(NULL, start, camera->inverseViewMatrix().getT(), camera);
 
-      // insert portal actors
-      if (showPortals())
-      {
-        for(std::map<Portal*, ref<Actor> >::const_iterator it = mPortalActorMap.begin(); it != mPortalActorMap.end(); ++it)
-          mTempActors.push_back(it->second);
-      }
-
-      // mic fixme: isn't quicker to use sets instead of sort()+unique()?
       // avoid reporting duplicates
       std::sort(mTempActors.begin(), mTempActors.end());
       std::vector< ref<Actor> >::iterator new_end = std::unique(mTempActors.begin(), mTempActors.end());
@@ -238,7 +232,7 @@ void SceneManagerPortals::computePortalNormals()
 //-----------------------------------------------------------------------------
 Sector* SceneManagerPortals::computeStartingSector(const Camera* camera)
 {
-  vec3 eye = camera->modelingMatrix().getT();
+  vec3 eye = camera->inverseViewMatrix().getT();
   for(unsigned i=0; i<mSectors.size(); ++i)
   {
     for(unsigned j=0; j<mSectors[i]->volumes().size(); ++j)

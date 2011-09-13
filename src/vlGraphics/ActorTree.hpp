@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -61,9 +61,8 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT ActorTree: public ActorTreeAbstract
   {
-    VL_INSTRUMENT_CLASS(vl::ActorTree, ActorTreeAbstract)
-
   public:
+    virtual const char* className() { return "vl::ActorTree"; }
     ActorTree()
     {
       VL_DEBUG_SET_OBJECT_NAME()

@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -65,7 +65,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   win32_window->addEventListener(applet.get());
   
   /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( win32_window->framebuffer() );
+  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( win32_window->renderTarget() );
   
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
@@ -74,7 +74,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   vec3 eye    = vec3(0,10,35); // camera position
   vec3 center = vec3(0,0,0);   // point the camera is looking at
   vec3 up     = vec3(0,1,0);   // up direction
-  mat4 view_mat = mat4::getLookAt(eye, center, up);
+  mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
   applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
   
   /* Initialize the OpenGL context and window properties */

@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -54,16 +54,16 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT ProjViewTransfCallback: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::ProjViewTransfCallback, Object)
-
   public:
+    virtual const char* className() { return "vl::ProjViewTransfCallback"; }
+
     ProjViewTransfCallback()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
     //! Update matrices of the current GLSLProgram, if glsl_program == NULL then fixed function pipeline is active.
-    virtual void updateMatrices(bool cam_changed, bool transf_changed, const GLSLProgram* glsl_program, const Camera* camera, const Transform* transform);
+    virtual void updateMatrices(bool cam_changed, bool transf_changed, const GLSLProgram* glsl_program, const Camera* camera, const Transform* transform, bool is_gl_compatible);
   };
 }
 

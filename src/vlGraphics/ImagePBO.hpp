@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -33,7 +33,7 @@
 #define ImagePBO_INCLUDE_ONCE
 
 #include <vlCore/Image.hpp>
-#include <vlGraphics/BufferObject.hpp>
+#include <vlGraphics/GLBufferObject.hpp>
 
 namespace vl
 {
@@ -43,41 +43,41 @@ namespace vl
   /** Represents a vl::Image with an associated Pixel Buffer Object. */
   class ImagePBO: public Image
   {
-    VL_INSTRUMENT_CLASS(vl::ImagePBO, Image)
-
   public:
+    virtual const char* className() { return "vl::ImagePBO"; }
+	
     //! Constructor.
     ImagePBO()
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mPBO = new BufferObject;
+      mPBO = new GLBufferObject;
     }
 	
 	  //! Constructors: loads an image from the specified path.
     ImagePBO(const String& path): Image(path) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mPBO = new BufferObject;
+      mPBO = new GLBufferObject;
     }
 	
 	  //! Constructor: initializes an image with the specified parameters.
     ImagePBO(int x, int y, int z, int bytealign, EImageFormat format, EImageType type): Image(x, y, z, bytealign, format, type) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      mPBO = new BufferObject;
+      mPBO = new GLBufferObject;
     }
 
 	  //! The associated OpenGL Buffer Object
-    const BufferObject* pixelBufferObject() const { return mPBO.get(); }
+    const GLBufferObject* pixelBufferObject() const { return mPBO.get(); }
     
 	  //! The associated OpenGL Buffer Object
-    BufferObject* pixelBufferObject() { return mPBO.get(); }
+    GLBufferObject* pixelBufferObject() { return mPBO.get(); }
     
 	  //! The associated OpenGL Buffer Object
-    void setPixelBufferObject(BufferObject* pbo) { mPBO = pbo; }
+    void setPixelBufferObject(GLBufferObject* pbo) { mPBO = pbo; }
 
   protected:
-    ref<BufferObject> mPBO;
+    ref<GLBufferObject> mPBO;
   };
   //-----------------------------------------------------------------------------
 }

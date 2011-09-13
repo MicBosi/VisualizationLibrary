@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -69,7 +69,6 @@ void Molecule::reset()
 Molecule& Molecule::operator=(const Molecule& other)
 {
   reset();
-  super::operator=(other);
 
   mMoleculeName  = other.mMoleculeName;
   *mTags         = *other.mTags;
@@ -81,7 +80,7 @@ Molecule& Molecule::operator=(const Molecule& other)
   mLineWidth    = other.mLineWidth;
   mSmoothLines  = other.mSmoothLines;
 
-  std::map<const Atom*, Atom*> atom_map;
+  std::map<Atom*, Atom*> atom_map;
   for(unsigned i=0; i<other.atoms().size(); ++i)
   {
     atoms().push_back( new Atom( *other.atom(i) ) );
@@ -105,9 +104,7 @@ Molecule& Molecule::operator=(const Molecule& other)
   return *this;
 }
 //-----------------------------------------------------------------------------
-const Atom* Molecule::atom(int index) const { return mAtoms[index].get(); }
-//-----------------------------------------------------------------------------
-Atom* Molecule::atom(int index) { return mAtoms[index].get(); }
+Atom* Molecule::atom(int index) const { return mAtoms[index].get(); }
 //-----------------------------------------------------------------------------
 void Molecule::addAtom(Atom* atom) 
 { 
@@ -157,17 +154,7 @@ Bond* Molecule::addBond(Atom* a1, Atom* a2)
   return bond.get();
 }
 //-----------------------------------------------------------------------------
-const Bond* Molecule::bond(int index) const { return mBonds[index].get(); }
-//-----------------------------------------------------------------------------
-Bond* Molecule::bond(int index) { return mBonds[index].get(); }
-//-----------------------------------------------------------------------------
-const Bond* Molecule::bond(Atom* a1, Atom* a2) const
-{
-  for(unsigned i=0; i<bonds().size(); ++i)
-    if ( (bond(i)->atom1() == a1 && bond(i)->atom2() == a2) || (bond(i)->atom1() == a2 && bond(i)->atom2() == a1) )
-      return bonds()[i].get();
-  return NULL;
-}
+Bond* Molecule::bond(int index) const { return mBonds[index].get(); }
 //-----------------------------------------------------------------------------
 Bond* Molecule::bond(Atom* a1, Atom* a2)
 {

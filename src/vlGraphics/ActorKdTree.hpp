@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -34,7 +34,7 @@
 
 #include <vlCore/AABB.hpp>
 #include <vlGraphics/Actor.hpp>
-#include <vlCore/math_utils.hpp>
+#include <vlCore/math3D.hpp>
 #include <vlCore/Plane.hpp>
 #include <vlCore/Collection.hpp>
 #include <vlGraphics/ActorTreeAbstract.hpp>
@@ -56,13 +56,13 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT ActorKdTree: public ActorTreeAbstract
   {
-    VL_INSTRUMENT_CLASS(vl::ActorKdTree, ActorTreeAbstract)
-
   public:
     ActorKdTree()
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
+    virtual const char* className() { return "vl::ActorKdTree"; }
+
     virtual int childrenCount() const;
     virtual ActorTreeAbstract* child(int i);
     virtual const ActorTreeAbstract* child(int i) const;

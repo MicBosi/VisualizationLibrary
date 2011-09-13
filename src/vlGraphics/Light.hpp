@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -48,16 +48,16 @@ namespace vl
    * See also the \ref pagGuideLights "Lights Tutorial" for a practical example of how to use OpenGL lights.
    * \sa Shader, Effect, Actor, vl::EN_LIGHTING
   */
-  class VLGRAPHICS_EXPORT Light: public RenderStateIndexed
+  class VLGRAPHICS_EXPORT Light: public RenderState
   {
-    VL_INSTRUMENT_CLASS(vl::Light, RenderStateIndexed)
-
   public:
-    Light();
+    Light(int light_index);
 
-    virtual ERenderState type() const { return RS_Light; }
+    virtual const char* className() { return "vl::Light"; }
 
-    virtual void apply(int index, const Camera*, OpenGLContext* ctx) const;
+    virtual ERenderState type() const { return (ERenderState)(RS_Light0 + lightIndex()); }
+
+    virtual void apply(const Camera*, OpenGLContext* ctx) const;
 
     void setAmbient(const fvec4& ambientcolor) { mAmbient = ambientcolor; }
     const fvec4& ambient() const { return mAmbient; }
@@ -107,20 +107,14 @@ namespace vl
     void setConstantAttenuation(float constantattenuation) { mConstantAttenuation = constantattenuation; }
     float constantAttenuation() const { return mConstantAttenuation; }
 
+    void setLightIndex(int light_index);
+    int lightIndex() const { return mLightIndex; }
+
     //! If NULL follows the camera otherwise the given transformation node
-    void bindTransform(Transform* transform);
-
-    Transform* boundTransform();
-
-    const Transform* boundTransform() const;
+    void followTransform(Transform* transform);
+    Transform* followedTransform();
+    const Transform* followedTransform() const;
     
-    virtual ref<RenderState> clone() const
-    {
-      ref<Light> rs = new Light;
-      *rs = *this;
-      return rs;
-    }
-
   protected:
     fvec4 mAmbient;
     fvec4 mDiffuse;
@@ -132,7 +126,8 @@ namespace vl
     float mConstantAttenuation;
     float mLinearAttenuation;
     float mQuadraticAttenuation;
-    ref<Transform> mBoundTransform;
+    ref<Transform> mFollowedTransform;
+    int mLightIndex;
   };
 }
 

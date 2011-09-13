@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -448,14 +448,14 @@ namespace vl
   }
   //-----------------------------------------------------------------------------
 
-  //! A 2x2 matrix using \p double precision.
-  typedef Matrix2<double> dmat2;
-  //! A 2x2 matrix using \p float precision.
-  typedef Matrix2<float>  fmat2;
-  //! A 2x2 matrix using \p int precision.
-  typedef Matrix2<int>    imat2;
-  //! A 2x2 matrix using \p unsigned int precision.
-  typedef Matrix2<unsigned int>  umat2;
+  //! A 2x2 matrix using \p GLdouble precision.
+  typedef Matrix2<GLdouble> dmat2;
+  //! A 2x2 matrix using \p GLfloat precision.
+  typedef Matrix2<GLfloat>  fmat2;
+  //! A 2x2 matrix using \p GLint precision.
+  typedef Matrix2<GLint>    imat2;
+  //! A 2x2 matrix using \p GLuint precision.
+  typedef Matrix2<GLuint>  umat2;
 
   #if VL_PIPELINE_PRECISION == 2
     //! Defined as: \p 'typedef \p dmat2 \p mat2'. See also \ref VL_PIPELINE_PRECISION.

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -34,7 +34,6 @@
 
 #include <vlCore/checks.hpp>
 #include <vlCore/IMutex.hpp>
-#include <vlCore/TypeInfo.hpp>
 #include <string>
 
 #if VL_DEBUG_LIVING_OBJECTS
@@ -54,9 +53,11 @@ namespace vl
   */
   class VLCORE_EXPORT Object
   {
-    VL_INSTRUMENT_BASE_CLASS(vl::Object)
-
   public:
+
+    //! Returns the name of the class.
+    virtual const char* className() { return "vl::Object"; }
+
     //! Constructor.
     Object()
     {
@@ -113,8 +114,8 @@ namespace vl
     //! The name of the object, by default set to the object's class name.
     const std::string& objectName() const { return mObjectName; }
 
-    //! The name of the object, by default set to the object's class name in debug builds.
-    void setObjectName(const char* name) { mObjectName = name; }
+    //! The name of the object, by default set to the object's class name.
+    void setObjectName(const std::string& name) { mObjectName = name; }
 
     //! The mutex used to protect the reference counting of an Object across multiple threads.
     void setRefCountMutex(IMutex* mutex) { mRefCountMutex = mutex; }
@@ -132,17 +133,17 @@ namespace vl
     }
 
     //! Increments the reference count of an object.
-    void incReference() const
+    void incReference()
     {
       // Lock mutex
       if (refCountMutex())
-        const_cast<IMutex*>(refCountMutex())->lock();
+        refCountMutex()->lock();
 
       ++mReferenceCount;
       
       // Unlock mutex
       if(refCountMutex())
-        const_cast<IMutex*>(refCountMutex())->unlock();
+        refCountMutex()->unlock();
     }
 
     //! Decrements the reference count of an object and deletes it if both automaticDelete() is \p true the count reaches 0.
@@ -173,11 +174,11 @@ namespace vl
 
     //! Casts an Object to the specified class.
     template<class T>
-    T* as() { return cast<T>(this); }
+    T* as() { return dynamic_cast<T*>(this); }
 
     //! Casts an Object to the specified class.
     template<class T>
-    const T* as() const { return cast<const T>(this); }
+    const T* as() const { return dynamic_cast<const T*>(this); }
 
 #if VL_OBJECT_USER_DATA
   public:
@@ -194,7 +195,7 @@ namespace vl
     std::string mObjectName;
 
     IMutex* mRefCountMutex;
-    mutable int mReferenceCount;
+    int mReferenceCount;
     bool mAutomaticDelete;
 
   // debugging facilities
@@ -216,92 +217,79 @@ namespace vl
   /**
    * The ref<> class is used to reference-count an Object.
    * When the last ref<> that points to an Object is deallocated also the pointed Object is deallocated.
-   * @note IMPORTANT: assigning to a ref<> 'washes aways' the constness of an object.
-   */
+  */
   template<class T>
   class ref
   {
   public:
-    // 'const' is required as the copy constructor must have this signature.
+    ref(T* object=NULL)
+    {
+      mObject = object;
+      if (mObject)
+        mObject->incReference();
+    }
     ref(const ref& other)
     {
       mObject = NULL;
       *this = other;
     }
-
-    ref(const T* object=NULL)
-    {
-      mObject = const_cast<T*>(object);
-      if (mObject)
-        mObject->incReference();
-    }
-
     template<class T2> ref(const ref<T2>& other)
     {
       mObject = NULL;
       *this = other;
     }
-
     ~ref() 
     {
       if (mObject)
         mObject->decReference();
       mObject = NULL;
     }
-
-    // 'const' is required because operator= must have this signature.
     ref& operator=(const ref& other)
     {
       if (other)
         other->incReference();
       if (mObject)
         mObject->decReference();
-      mObject = const_cast<T*>(other.get());
+      mObject = other.get();
       return *this;
     }
-
-    // 'const' is required because operator= must have this signature.
-    ref& operator=(const T* other)
-    {
-      if (other)
-        other->incReference();
-      if (mObject)
-        mObject->decReference();
-      mObject = const_cast<T*>(other);
-      return *this;
-    }
-
-    // 'const' is required because operator= must have this signature.
     template<class T2> ref& operator=(const ref<T2>& other)
     {
       if (other)
         other->incReference();
       if (mObject)
         mObject->decReference();
-      mObject = const_cast<T2*>(other.get());
+      mObject = other.get();
       return *this;
     }
-
+    ref& operator=(T* other)
+    {
+      if (other)
+        other->incReference();
+      if (mObject)
+        mObject->decReference();
+      mObject = other;
+      return *this;
+    }
+    template<class T2> ref& operator=(T2* other)
+    {
+      if (other)
+        other->incReference();
+      if (mObject)
+        mObject->decReference();
+      mObject = other;
+      return *this;
+    }
     void swap(ref& other)
     {
-      T* tmp = other.mObject;
+      T* tmp = other.get();
       other = mObject; 
       mObject = tmp;
     }
-
-    //! This is mainly useful when using ref<> with std::map, std::set, etc.
-    T* get_writable() const { return mObject; }
-
-    const T* get() const { return mObject; }
-    const T* operator->() const { VL_CHECK(mObject); return mObject; }
-    const T& operator*() const { VL_CHECK(mObject); return *mObject; }
-
-    T* get() { return mObject; }
-    T* operator->() { VL_CHECK(mObject); return mObject; }
-    T& operator*() { VL_CHECK(mObject); return *mObject; }
-
-    bool operator<(const ref& other) const { return mObject < other.mObject; }
-
+    T* get() const { return mObject; }
+    T* operator->() const { VL_CHECK(mObject); return mObject; }
+    T& operator*() const { VL_CHECK(mObject); return *mObject; }
+    bool operator<(const ref& other) const { return mObject < other.get(); }
     operator bool() const { return mObject != NULL; }
 
   protected:

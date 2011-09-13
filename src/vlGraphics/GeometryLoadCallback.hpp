@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -44,22 +44,20 @@ namespace vl
    */
   class GeometryLoadCallback: public LoadCallback
   {
-    VL_INSTRUMENT_CLASS(vl::GeometryLoadCallback, LoadCallback)
-
   public:
     GeometryLoadCallback()
     {
-      mMakeGLESFriendly    = false;
-      mComputeNormals    = true;
-      mUseBufferObjects           = true;
-      mUseDisplayLists   = false;
       mTransformGeometry = false;
       mDiscardOriginalNormals = false;
-      mRemoveDoubles          = false;
-      mSortVertices           = false;
-      mStripfy                = false;
-      mConvertToDrawArrays    = false;
+      mComputeNormals  = true;
+      mRemoveDoubles   = false;
+      mSortVertices    = false;
+      mStripfy         = false;
+      mConvertToDrawArrays = false;
+      mUseDisplayLists = false;
+      mUseVBOs         = true;
     }
+    virtual const char* className() { return "vl::GeometryLoadCallback"; }
 
     void operator()(ResourceDatabase* db)
     {
@@ -89,13 +87,10 @@ namespace vl
           geom[i]->convertDrawCallToDrawArrays();
 
         geom[i]->setDisplayListEnabled(useDisplayLists());
-        geom[i]->setBufferObjectEnabled(useBufferObjects());
+        geom[i]->setVBOEnabled(useVBOs());
 
         if (transformGeometry())
           geom[i]->transform(transformMatrix(),true);
-
-        if (makeGLESFriendly())
-          geom[i]->makeGLESFriendly();
       }
     }
 
@@ -129,15 +124,15 @@ namespace vl
     //! Converts the Geometry DrawCall into DrawArrays. Useful in conjuction with \p setStripfy(true).
     void setConvertToDrawArrays(bool on) { mConvertToDrawArrays = on; }
 
-    //! Enable display lists usage (overrides BufferObjects)
+    //! Enable display lists usage (overrides VBOs)
     void setUseDisplayLists(bool on) { mUseDisplayLists = on; }
-    //! Enable display lists usage (overrides BufferObjects)
+    //! Enable display lists usage (overrides VBOs)
     bool useDisplayLists() const { return mUseDisplayLists; }
 
-    //! Enable BufferObject usage if display lists are disabled
-    void setUseBufferObjects(bool on) { mUseBufferObjects = on; }
-    //! Enable BufferObject usage if display lists are disabled
-    bool useBufferObjects() const { return mUseBufferObjects; }
+    //! Enable VBO usage if display lists are disabled
+    void setUseVBOs(bool on) { mUseVBOs = on; }
+    //! Enable VBO usage if display lists are disabled
+    bool useVBOs() const { return mUseVBOs; }
 
     const mat4& transformMatrix() const { return mMatrix; }
     void setTransformMatrix(const mat4& m) { mMatrix = m; }
@@ -146,11 +141,6 @@ namespace vl
     bool transformGeometry() const { return mTransformGeometry; }
     //! Transforms the Geometries using transformMatrix().
     void setTransformGeometry(bool on) { mTransformGeometry = on; }
-
-    //! If true calls Geometry::makeGLESFriendly()
-    bool makeGLESFriendly() const { return mMakeGLESFriendly; }
-    //! If true calls Geometry::makeGLESFriendly()
-    void setMakeGLESFriendly(bool on) { mMakeGLESFriendly = on; }
 
   protected:
     mat4 mMatrix;
@@ -162,8 +152,7 @@ namespace vl
     bool mStripfy;
     bool mConvertToDrawArrays;
     bool mUseDisplayLists;
-    bool mUseBufferObjects;
-    bool mMakeGLESFriendly;
+    bool mUseVBOs;
   };
 }
 

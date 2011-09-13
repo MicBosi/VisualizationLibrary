@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -46,7 +46,12 @@ namespace vl
   class VLCORE_EXPORT MD5CheckSum
   {
   public:
-    MD5CheckSum() { memset(mMD5, 0, 16); }
+    MD5CheckSum()
+    {
+      memset(mMD5, 0, 16);
+    }
+    
+    virtual const char* className() { return "vl::MD5CheckSum"; }
     
     const unsigned char* md5() const { return mMD5; }
     

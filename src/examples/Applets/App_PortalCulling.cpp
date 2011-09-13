@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -41,12 +41,12 @@
 const int map_size = 7;
 const char* map[map_size] = 
 {
-  "       ", 
-  " XXXXX ", 
-  " XXXXX ", 
-  " XXXXX ", 
-  " XXXXX ", 
-  " XXXXX ", 
+  "       ",
+  " XXXXX ",
+  " XXXXX ",
+  " XXXXX ",
+  " XXXXX ",
+  " XXXXX ",
   "       "
 };
 const float room_h        = 5.0f;
@@ -57,19 +57,12 @@ const float room_size_in  = 18.0f;
 class App_PortalCulling: public BaseDemo
 {
 public:
-  virtual vl::String appletInfo()
-  {
-    return BaseDemo::appletInfo() + 
-    "- F6: toggles wireframe\n" +
-    "- F7: toggles show portals\n" +
-    "- F8: enable/disable portal-based culling\n" +
-    "\n";
-  }
+  App_PortalCulling() {}
 
   void initEvent()
   {
     // Basic initialization
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
     ghostCameraManipulator()->setMovementSpeed(5.0f);
 
     generateDungeon();
@@ -100,9 +93,9 @@ public:
   // simple method to keep the camera on the floor
   void updateScene()
   {
-    vl::mat4 im = trackball()->camera()->modelingMatrix();
+    vl::mat4 im = trackball()->camera()->inverseViewMatrix();
     vl::vec3 t = im.getT(); t.y() = 1.5f; im.setT(t); 
-    trackball()->camera()->setModelingMatrix(im);
+    trackball()->camera()->setInverseViewMatrix(im);
   }
 
   // procedurally generate the dungeon with sectors, geometry and portals
@@ -111,12 +104,12 @@ public:
     // Initialize the Sectors.
     vl::ref<vl::Sector> sectors[map_size][map_size] =
     {
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
-      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }, 
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
+      { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector },
       { new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector, new vl::Sector }
     };
 
@@ -140,8 +133,7 @@ public:
     floor_fx->shader()->gocLight(0);
     floor_fx->shader()->gocLightModel()->setTwoSide(true);
     floor_fx->shader()->gocMaterial()->setDiffuse(vl::crimson);
-    if (!vl::Has_GLES_Version_1_1)
-      floor_fx->shader()->setRenderState(mPolygonMode.get());
+    floor_fx->shader()->setRenderState(mPolygonMode.get());
 
     vl::ref<vl::Effect> ceiling_fx = new vl::Effect;
     ceiling_fx->shader()->enable(vl::EN_DEPTH_TEST);
@@ -149,8 +141,7 @@ public:
     ceiling_fx->shader()->gocLight(0);
     ceiling_fx->shader()->gocLightModel()->setTwoSide(true);
     ceiling_fx->shader()->gocMaterial()->setDiffuse(vl::gray);
-    if (!vl::Has_GLES_Version_1_1)
-      ceiling_fx->shader()->setRenderState(mPolygonMode.get());
+    ceiling_fx->shader()->setRenderState(mPolygonMode.get());
 
     vl::ref<vl::Effect> wall_fx = new vl::Effect;
     wall_fx->shader()->enable(vl::EN_DEPTH_TEST);
@@ -158,18 +149,17 @@ public:
     wall_fx->shader()->gocLight(0)->setLinearAttenuation(0.025f);
     wall_fx->shader()->gocLightModel()->setTwoSide(true);
     wall_fx->shader()->gocMaterial()->setDiffuse(vl::gold);
-    if (!vl::Has_GLES_Version_1_1)
-      wall_fx->shader()->setRenderState(mPolygonMode.get());
+    wall_fx->shader()->setRenderState(mPolygonMode.get());
 
     // boring code to generate the gometry of various kinds of walls, with out door, with door, with the passage and portal.
 
-    vl::ref<vl::Geometry> wall_1_a = vl::makeGrid(vl::vec3(room_h/2.0f, 0, 0), room_h, room_size_in, 20, 20);
+    vl::ref<vl::Geometry> wall_1_a = vl::makeGrid(vl::vec3(room_h/2.0f,0,0),room_h,room_size_in,20,20);
     wall_1_a->computeNormals();
-    wall_1_a->transform(vl::mat4::getRotation(90, 0, 0, 1));
+    wall_1_a->transform(vl::mat4::getRotation(90,0,0,1));
 
-    vl::ref<vl::Geometry> wall_2_a = vl::makeGrid(vl::vec3(0, 0, room_h/2.0f), room_size_in, room_h, 20, 20);
+    vl::ref<vl::Geometry> wall_2_a = vl::makeGrid(vl::vec3(0,0,room_h/2.0f),room_size_in,room_h,20,20);
     wall_2_a->computeNormals();
-    wall_2_a->transform(vl::mat4::getRotation(-90, 1, 0, 0));
+    wall_2_a->transform(vl::mat4::getRotation(-90,1,0,0));
 
     float w1 = room_size_in / 6.0f;
     float h1 = room_h       / 3.0f * 2.0f;
@@ -189,32 +179,32 @@ public:
     // |   |   |   |
     // 0---7   4---3
     vert_array->at(0) = vl::fvec3(0, 0, -w2);
-    vert_array->at(1) = vl::fvec3(0, +h2, -w2);
-    vert_array->at(2) = vl::fvec3(0, +h2, +w2);
+    vert_array->at(1) = vl::fvec3(0,+h2,-w2);
+    vert_array->at(2) = vl::fvec3(0,+h2,+w2);
     vert_array->at(3) = vl::fvec3(0, 0, +w2);
     vert_array->at(4) = vl::fvec3(0, 0, +w1);
-    vert_array->at(5) = vl::fvec3(0, h1, +w1);
-    vert_array->at(6) = vl::fvec3(0, h1, -w1);
+    vert_array->at(5) = vl::fvec3(0,h1, +w1);
+    vert_array->at(6) = vl::fvec3(0,h1, -w1);
     vert_array->at(7) = vl::fvec3(0, 0, -w1);
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_1_b->drawCalls()->push_back(de.get());
-    de->indexBuffer()->resize(12);
-    de->indexBuffer()->at(0) = 1; // a
-    de->indexBuffer()->at(1) = 0;
-    de->indexBuffer()->at(2) = 7;
-    de->indexBuffer()->at(3) = 6;
-    de->indexBuffer()->at(4) = 1; // b
-    de->indexBuffer()->at(5) = 6;
-    de->indexBuffer()->at(6) = 5;
-    de->indexBuffer()->at(7) = 2;
-    de->indexBuffer()->at(8)  = 5; // c
-    de->indexBuffer()->at(9)  = 4;
-    de->indexBuffer()->at(10) = 3;
-    de->indexBuffer()->at(11) = 2;
+    de->indices()->resize(12);
+    de->indices()->at(0) = 1; // a
+    de->indices()->at(1) = 0;
+    de->indices()->at(2) = 7;
+    de->indices()->at(3) = 6;
+    de->indices()->at(4) = 1; // b
+    de->indices()->at(5) = 6;
+    de->indices()->at(6) = 5;
+    de->indices()->at(7) = 2;
+    de->indices()->at(8)  = 5; // c
+    de->indices()->at(9)  = 4;
+    de->indices()->at(10) = 3;
+    de->indices()->at(11) = 2;
     wall_1_b->computeNormals();
 
     // wall_1_c
-    vl::fvec3 v1c(room_size_out-room_size_in, 0, 0);
+    vl::fvec3 v1c(room_size_out-room_size_in,0,0);
     vl::ref<vl::Geometry> wall_1_c = new vl::Geometry;
     vert_array = new vl::ArrayFloat3;
     wall_1_c->setVertexArray(vert_array.get());
@@ -225,32 +215,32 @@ public:
     // |   7---4   |
     // 0-----------3
     vert_array->at(0) = vl::fvec3(0, 0, -w1);
-    vert_array->at(1) = vl::fvec3(0, h1, -w1);
-    vert_array->at(2) = vl::fvec3(0, h1, +w1);
+    vert_array->at(1) = vl::fvec3(0,h1, -w1);
+    vert_array->at(2) = vl::fvec3(0,h1, +w1);
     vert_array->at(3) = vl::fvec3(0, 0, +w1);
     vert_array->at(4) = vl::fvec3(0, 0, +w1) + v1c;
-    vert_array->at(5) = vl::fvec3(0, h1, +w1) + v1c;
-    vert_array->at(6) = vl::fvec3(0, h1, -w1) + v1c;
+    vert_array->at(5) = vl::fvec3(0,h1, +w1) + v1c;
+    vert_array->at(6) = vl::fvec3(0,h1, -w1) + v1c;
     vert_array->at(7) = vl::fvec3(0, 0, -w1) + v1c;
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_1_c->drawCalls()->push_back(de.get());
-    de->indexBuffer()->resize(16);
-    de->indexBuffer()->at(0) = 1; // a
-    de->indexBuffer()->at(1) = 0;
-    de->indexBuffer()->at(2) = 7;
-    de->indexBuffer()->at(3) = 6;
-    de->indexBuffer()->at(4) = 1; // b
-    de->indexBuffer()->at(5) = 6;
-    de->indexBuffer()->at(6) = 5;
-    de->indexBuffer()->at(7) = 2;
-    de->indexBuffer()->at(8)  = 5; // c
-    de->indexBuffer()->at(9)  = 4;
-    de->indexBuffer()->at(10) = 3;
-    de->indexBuffer()->at(11) = 2;
-    de->indexBuffer()->at(12) = 0; // d
-    de->indexBuffer()->at(13) = 3;
-    de->indexBuffer()->at(14) = 4;
-    de->indexBuffer()->at(15) = 7;
+    de->indices()->resize(16);
+    de->indices()->at(0) = 1; // a
+    de->indices()->at(1) = 0;
+    de->indices()->at(2) = 7;
+    de->indices()->at(3) = 6;
+    de->indices()->at(4) = 1; // b
+    de->indices()->at(5) = 6;
+    de->indices()->at(6) = 5;
+    de->indices()->at(7) = 2;
+    de->indices()->at(8)  = 5; // c
+    de->indices()->at(9)  = 4;
+    de->indices()->at(10) = 3;
+    de->indices()->at(11) = 2;
+    de->indices()->at(12) = 0; // d
+    de->indices()->at(13) = 3;
+    de->indices()->at(14) = 4;
+    de->indices()->at(15) = 7;
     wall_1_c->computeNormals();
 
     // wall 2 b
@@ -264,32 +254,32 @@ public:
     // |   |   |   |
     // 0---7   4---3
     vert_array->at(0) = vl::fvec3(-w2, 0, 0);
-    vert_array->at(1) = vl::fvec3(-w2, +h2, 0);
-    vert_array->at(2) = vl::fvec3(+w2, +h2, 0);
+    vert_array->at(1) = vl::fvec3(-w2,+h2,0);
+    vert_array->at(2) = vl::fvec3(+w2,+h2,0);
     vert_array->at(3) = vl::fvec3(+w2, 0, 0);
     vert_array->at(4) = vl::fvec3(+w1, 0, 0);
-    vert_array->at(5) = vl::fvec3(+w1, h1, 0);
-    vert_array->at(6) = vl::fvec3(-w1, h1, 0);
+    vert_array->at(5) = vl::fvec3(+w1,h1, 0);
+    vert_array->at(6) = vl::fvec3(-w1,h1, 0);
     vert_array->at(7) = vl::fvec3(-w1, 0, 0);
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_2_b->drawCalls()->push_back(de.get());
-    de->indexBuffer()->resize(12);
-    de->indexBuffer()->at(0) = 1; // a
-    de->indexBuffer()->at(1) = 0;
-    de->indexBuffer()->at(2) = 7;
-    de->indexBuffer()->at(3) = 6;
-    de->indexBuffer()->at(4) = 1; // b
-    de->indexBuffer()->at(5) = 6;
-    de->indexBuffer()->at(6) = 5;
-    de->indexBuffer()->at(7) = 2;
-    de->indexBuffer()->at(8)  = 5; // c
-    de->indexBuffer()->at(9)  = 4;
-    de->indexBuffer()->at(10) = 3;
-    de->indexBuffer()->at(11) = 2;
+    de->indices()->resize(12);
+    de->indices()->at(0) = 1; // a
+    de->indices()->at(1) = 0;
+    de->indices()->at(2) = 7;
+    de->indices()->at(3) = 6;
+    de->indices()->at(4) = 1; // b
+    de->indices()->at(5) = 6;
+    de->indices()->at(6) = 5;
+    de->indices()->at(7) = 2;
+    de->indices()->at(8)  = 5; // c
+    de->indices()->at(9)  = 4;
+    de->indices()->at(10) = 3;
+    de->indices()->at(11) = 2;
     wall_2_b->computeNormals();
 
     // wall_2_c
-    vl::fvec3 v2c(0, 0, room_size_out-room_size_in);
+    vl::fvec3 v2c(0,0,room_size_out-room_size_in);
     vl::ref<vl::Geometry> wall_2_c = new vl::Geometry;
     vert_array = new vl::ArrayFloat3;
     wall_2_c->setVertexArray(vert_array.get());
@@ -300,43 +290,42 @@ public:
     // |   7---4   |
     // 0-----------3
     vert_array->at(0) = vl::fvec3(-w1, 0, 0);
-    vert_array->at(1) = vl::fvec3(-w1, h1, 0);
-    vert_array->at(2) = vl::fvec3(+w1, h1, 0);
+    vert_array->at(1) = vl::fvec3(-w1,h1, 0);
+    vert_array->at(2) = vl::fvec3(+w1,h1, 0);
     vert_array->at(3) = vl::fvec3(+w1, 0, 0);
     vert_array->at(4) = vl::fvec3(+w1, 0, 0) + v2c;
-    vert_array->at(5) = vl::fvec3(+w1, h1, 0) + v2c;
-    vert_array->at(6) = vl::fvec3(-w1, h1, 0) + v2c;
+    vert_array->at(5) = vl::fvec3(+w1,h1, 0) + v2c;
+    vert_array->at(6) = vl::fvec3(-w1,h1, 0) + v2c;
     vert_array->at(7) = vl::fvec3(-w1, 0, 0) + v2c;
     de = new vl::DrawElementsUInt(vl::PT_QUADS);
     wall_2_c->drawCalls()->push_back(de.get());
-    de->indexBuffer()->resize(16);
-    de->indexBuffer()->at(0) = 1; // a
-    de->indexBuffer()->at(1) = 0;
-    de->indexBuffer()->at(2) = 7;
-    de->indexBuffer()->at(3) = 6;
-    de->indexBuffer()->at(4) = 1; // b
-    de->indexBuffer()->at(5) = 6;
-    de->indexBuffer()->at(6) = 5;
-    de->indexBuffer()->at(7) = 2;
-    de->indexBuffer()->at(8)  = 5; // c
-    de->indexBuffer()->at(9)  = 4;
-    de->indexBuffer()->at(10) = 3;
-    de->indexBuffer()->at(11) = 2;
-    de->indexBuffer()->at(12) = 0; // d
-    de->indexBuffer()->at(13) = 3;
-    de->indexBuffer()->at(14) = 4;
-    de->indexBuffer()->at(15) = 7;
+    de->indices()->resize(16);
+    de->indices()->at(0) = 1; // a
+    de->indices()->at(1) = 0;
+    de->indices()->at(2) = 7;
+    de->indices()->at(3) = 6;
+    de->indices()->at(4) = 1; // b
+    de->indices()->at(5) = 6;
+    de->indices()->at(6) = 5;
+    de->indices()->at(7) = 2;
+    de->indices()->at(8)  = 5; // c
+    de->indices()->at(9)  = 4;
+    de->indices()->at(10) = 3;
+    de->indices()->at(11) = 2;
+    de->indices()->at(12) = 0; // d
+    de->indices()->at(13) = 3;
+    de->indices()->at(14) = 4;
+    de->indices()->at(15) = 7;
     wall_2_c->computeNormals();
 
     // very heavy spheres to be added to the sectors to outline more clearly the advantages of portal-based culling.
-    vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0, 3, 0), 1, 200, 200);
+    vl::ref<vl::Geometry> sphere = vl::makeUVSphere(vl::vec3(0,3,0),1,200,200);
     sphere->computeNormals();
     vl::ref<vl::Effect> ball_fx = new vl::Effect;
     ball_fx->shader()->enable(vl::EN_DEPTH_TEST);
     ball_fx->shader()->enable(vl::EN_LIGHTING);
     ball_fx->shader()->gocLight(0);
-    if (!vl::Has_GLES_Version_1_1)
-      ball_fx->shader()->setRenderState(mPolygonMode.get());
+    ball_fx->shader()->setRenderState(mPolygonMode.get());
 
     // for each cell of the dungeon
     for(int y=0; y<map_size; ++y)
@@ -368,14 +357,14 @@ public:
 
           if(map[y][x-1] == 'X') // west door: the two sectors comunicate
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f, 0, 0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f,0,0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             // add to the sector
             sector1->actors()->push_back( new vl::Actor(wall_1_b.get(), wall_fx.get(), tr.get()) );
           }
           else
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f, 0, 0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(-room_size_in/2.0f,0,0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             // add to the sector
             sector1->actors()->push_back( new vl::Actor(wall_1_a.get(), wall_fx.get(), tr.get()) );
@@ -383,7 +372,7 @@ public:
 
           if(map[y][x+1] == 'X') // east door: the two sectors comunicate
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f, 0, 0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f,0,0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             // add to the sector
             sector1->actors()->push_back( new vl::Actor(wall_1_b.get(), wall_fx.get(), tr.get()) );
@@ -407,39 +396,39 @@ public:
             sector2->portals().push_back(portal2.get()); portal2->setTargetSector( sector1 );
             // setup portal geometry - note: the portal geometry must be a planar, convex polygon, in world space coordinates.
             portal1->geometry().resize(4);
-            portal1->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(0, 0, +w1) + v1c);
-            portal1->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(0, h1, +w1) + v1c);
-            portal1->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(0, h1, -w1) + v1c);
-            portal1->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(0, 0, -w1) + v1c);
+            portal1->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(0, 0,+w1) + v1c);
+            portal1->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(0,h1,+w1) + v1c);
+            portal1->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(0,h1,-w1) + v1c);
+            portal1->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(0, 0,-w1) + v1c);
             portal2->geometry().resize(4);
-            portal2->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(0, 0, +w1) + v1c);
-            portal2->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(0, h1, +w1) + v1c);
-            portal2->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(0, h1, -w1) + v1c);
-            portal2->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(0, 0, -w1) + v1c);
+            portal2->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(0, 0,+w1) + v1c);
+            portal2->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(0,h1,+w1) + v1c);
+            portal2->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(0,h1,-w1) + v1c);
+            portal2->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(0, 0,-w1) + v1c);
           }
           else
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f, 0, 0));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(+room_size_in/2.0f,0,0));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_1_a.get(), wall_fx.get(), tr.get()) );
           }
 
           if(map[y-1][x] == 'X') // south door: the two sectors comunicate
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0, 0, -room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,-room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_b.get(), wall_fx.get(), tr.get()) );
           }
           else
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0, 0, -room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,-room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_a.get(), wall_fx.get(), tr.get()) );
           }
 
           if(map[y+1][x] == 'X') // north door: the two sectors comunicate
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0, 0, +room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,+room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_b.get(), wall_fx.get(), tr.get()) );
             sector1->actors()->push_back( new vl::Actor(wall_2_c.get(), wall_fx.get(), tr.get()) );
@@ -464,18 +453,18 @@ public:
             // setup portal geometry - note: the portal geometry must be a planar, convex polygon, in world space coordinates.
             portal1->geometry().resize(4);
             portal1->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(+w1, 0, 0) + v2c);
-            portal1->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(+w1, h1, 0) + v2c);
-            portal1->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(-w1, h1, 0) + v2c);
+            portal1->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(+w1,h1, 0) + v2c);
+            portal1->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(-w1,h1, 0) + v2c);
             portal1->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(-w1, 0, 0) + v2c);
             portal2->geometry().resize(4);
             portal2->geometry().at(0) = (vl::fmat4)m * (vl::fvec3(+w1, 0, 0) + v2c);
-            portal2->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(+w1, h1, 0) + v2c);
-            portal2->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(-w1, h1, 0) + v2c);
+            portal2->geometry().at(1) = (vl::fmat4)m * (vl::fvec3(+w1,h1, 0) + v2c);
+            portal2->geometry().at(2) = (vl::fmat4)m * (vl::fvec3(-w1,h1, 0) + v2c);
             portal2->geometry().at(3) = (vl::fmat4)m * (vl::fvec3(-w1, 0, 0) + v2c);
           }
           else
           {
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0, 0, +room_size_in/2.0f));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(0,0,+room_size_in/2.0f));
             tr = new vl::Transform; tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(wall_2_a.get(), wall_fx.get(), tr.get()) );
           }
@@ -486,7 +475,7 @@ public:
             vl::ref<vl::Transform> tr = new vl::Transform;
             float tx = (rand()%100) / 100.0f * room_size_in - room_size_in / 2.0f;
             float tz = (rand()%100) / 100.0f * room_size_in - room_size_in / 2.0f;
-            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(tx, 0, tz));
+            m = vl::mat4::getTranslation(vl::vec3(x*room_size_out, 0, y*room_size_out) + vl::vec3(tx,0,tz));
             tr->setLocalMatrix(m); tr->computeWorldMatrix();
             sector1->actors()->push_back( new vl::Actor(sphere.get(), ball_fx.get(), tr.get()) );
           }

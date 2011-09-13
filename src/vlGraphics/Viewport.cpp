@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -46,7 +46,7 @@ Viewport::Viewport()
   mY = 0;
   mWidth = 0;
   mHeight = 0;
-  mClearColor = fvec4(0,0,0,1);
+  mClearColor = fvec4(0.8f,0,0.1f,1);
   mClearDepth = 1.0f;
   mClearStencil = 0;
   mClearFlags = CF_CLEAR_COLOR_DEPTH;
@@ -86,7 +86,7 @@ void Viewport::activate() const
   if (mClearFlags)
   {
     #ifndef NDEBUG
-      if (!Has_GL_EXT_texture_integer)
+      if (!GLEW_EXT_texture_integer)
       {
         switch( clearColorMode() )
         {
@@ -105,9 +105,14 @@ void Viewport::activate() const
     glDepthMask(GL_TRUE);
     glStencilMask(GL_TRUE);
 
+    // save scissor settings
+    GLboolean scissor_on = glIsEnabled(GL_SCISSOR_TEST);
+    int scissor_box[4] = {0,0,-1,-1};
+    glGetIntegerv(GL_SCISSOR_BOX, scissor_box);
+
     // setup scissor
-    glEnable(GL_SCISSOR_TEST);
     glScissor(x, y, w, h);
+    glEnable(GL_SCISSOR_TEST);
 
     switch( clearColorMode() )
     {
@@ -121,15 +126,20 @@ void Viewport::activate() const
 
     glClear(mClearFlags);
 
+    // restore scissor settings
+    if (!scissor_on)
+      glDisable(GL_SCISSOR_TEST);
+    glScissor(scissor_box[0], scissor_box[1], scissor_box[2], scissor_box[3]); VL_CHECK_OGL()
+
     VL_CHECK_OGL()
   }
 }
 //-----------------------------------------------------------------------------
-bool Viewport::isPointInside(int x, int y, int framebuffer_height) const
+bool Viewport::isPointInside(int x, int y, int render_target_height) const
 {
   // set x/y relative to the viewport
   x -= this->x();
-  y -= framebuffer_height - 1 - (this->y() + height() -1);
+  y -= render_target_height - 1 - (this->y() + height() -1);
 
   // check that the click is in the viewport
 

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -43,14 +43,12 @@ namespace vl
   //! \sa EdgeExtractor
   class EdgeUpdateCallback: public ActorEventCallback
   {
-    VL_INSTRUMENT_CLASS(vl::EdgeUpdateCallback, ActorEventCallback)
-
   public:
+    virtual const char* className() { return "vl::EdgeUpdateCallback"; }
     EdgeUpdateCallback(): mShowCreases(true) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
-
     EdgeUpdateCallback(const std::vector<EdgeExtractor::Edge>& edge): mEdges(edge), mShowCreases(false) 
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -63,7 +61,7 @@ namespace vl
 
     virtual void onActorDelete(Actor*) {}
 
-    virtual void onActorRenderStarted(Actor* act, real /*frame_clock*/, const Camera* cam, Renderable* renderable, const Shader*, int pass)
+    virtual void onActorRenderStarted(Actor* act, Real /*frame_clock*/, const Camera* cam, Renderable* renderable, const Shader*, int pass)
     {
       if (pass != 0)
         return;
@@ -74,8 +72,8 @@ namespace vl
       fmat4 nmat = vmat.as3x3();
       nmat = nmat.getInverse().transpose();
 
-      ref<Geometry> geom = cast<Geometry>(renderable);
-      ref<ArrayFloat3> vert_array = cast<ArrayFloat3>(geom->vertexArray());
+      ref<Geometry>         geom = dynamic_cast<Geometry*>(renderable);
+      ref<ArrayFloat3> vert_array = dynamic_cast<ArrayFloat3*>(geom->vertexArray());
       // VL_CHECK(vert_array->size() == edges().size()*2);
       for(unsigned i=0; i<edges().size(); ++i)
       {

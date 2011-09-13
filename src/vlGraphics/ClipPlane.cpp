@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -34,29 +34,31 @@
 using namespace vl;
 
 //-----------------------------------------------------------------------------
-ClipPlane::ClipPlane(real o, vec3 n)
+ClipPlane::ClipPlane(int plane_index, Real o, vec3 n)
 { 
   VL_DEBUG_SET_OBJECT_NAME()
+  mPlaneIndex = plane_index;
   mPlane.setNormal(n); 
   mPlane.setOrigin(o); 
 }
 //-----------------------------------------------------------------------------
-ClipPlane::ClipPlane(const vec3& o, const vec3& n)
+ClipPlane::ClipPlane(int plane_index, const vec3& o, const vec3& n)
 {
   VL_DEBUG_SET_OBJECT_NAME()
+  mPlaneIndex = plane_index;
   mPlane.setNormal(n); 
   mPlane.setOrigin(dot(o, n)); 
 }
 //-----------------------------------------------------------------------------
-void ClipPlane::apply(int index, const Camera* camera, OpenGLContext*) const
+void ClipPlane::apply(const Camera* camera, OpenGLContext*) const
 {
-  VL_CHECK(index>=0 && index<6);
+  VL_CHECK(planeIndex()>=0 && planeIndex()<6);
   
   // we do our own transformations
 
   if (camera)
   {
-    glEnable(GL_CLIP_PLANE0 + index);
+    glEnable(GL_CLIP_PLANE0 + planeIndex());
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -64,8 +66,8 @@ void ClipPlane::apply(int index, const Camera* camera, OpenGLContext*) const
     glLoadIdentity();
 
     mat4 mat;
-    if ( boundTransform() )
-      mat = camera->viewMatrix() * boundTransform()->worldMatrix();
+    if ( followedTransform() )
+      mat = camera->viewMatrix() * followedTransform()->worldMatrix();
 
     vec3 pt1 = mPlane.normal() * mPlane.origin();
     vec3 pt2 = mPlane.normal() * mPlane.origin() + mPlane.normal();
@@ -74,21 +76,23 @@ void ClipPlane::apply(int index, const Camera* camera, OpenGLContext*) const
     pt2 = mat * pt2;
 
     vec3 n = pt2 - pt1;
-    real orig = dot(n, pt1);
+    Real orig = dot(n, pt1);
 
-#if defined(VL_OPENGL_ES1)
-    float equation[] = { n.x(), n.y(), n.z(), -orig };
-    glClipPlanef(GL_CLIP_PLANE0 + index, equation);
-#else
-    double equation[] = { n.x(), n.y(), n.z(), -orig };
-    glClipPlane(GL_CLIP_PLANE0 + index, equation);
-#endif
+    double equation[] = 
+    {
+      (double)n.x(),
+      (double)n.y(),
+      (double)n.z(),
+      -(double)orig
+    };
+
+    glClipPlane(GL_CLIP_PLANE0 + planeIndex(), equation);
 
     glPopMatrix();
   }
   else
   {
-    glDisable(GL_CLIP_PLANE0 + index);
+    glDisable(GL_CLIP_PLANE0 + planeIndex());
   }
 }
 //-----------------------------------------------------------------------------

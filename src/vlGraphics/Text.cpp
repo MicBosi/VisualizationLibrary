@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -52,35 +52,36 @@ void Text::render_Implementation(const Actor* actor, const Shader*, const Camera
   if ( text().empty() )
     return;
 
-  // Lighting can be enabled or disabled.
-  // glDisable(GL_LIGHTING);
+  bool light_enabled = glIsEnabled(GL_LIGHTING) == GL_TRUE;
+  glDisable(GL_LIGHTING);
 
-  // Blending must be enabled explicity by the vl::Shader, also to perform z-sort.
-  // glEnable(GL_BLEND);
-
-  // Trucchetto che usiamo per evitare z-fighting:
-  // Pass #1 - fill color and stencil
-  // - disable depth write mask
-  // - depth test can be enabled or not by the user
-  // - depth func can be choosen by the user
-  // - render in the order: background, border, shadow, outline, text
-  // Pass #2 - fill z-buffer
-  // - enable depth write mask
-  // - disable color mask
-  // - disable stencil
-  // - drawing background and border
-
-  // Pass #1
+  // we need blend to be enabled explicity to perform z-sort
+  //bool blend_enabled  = glIsEnabled(GL_BLEND) == GL_TRUE;
+  //glEnable(GL_BLEND);
 
   // disable z-writing
   GLboolean depth_mask=0;
   glGetBooleanv(GL_DEPTH_WRITEMASK, &depth_mask);
   glDepthMask(GL_FALSE);
 
+  int depth_func=0;
+  glGetIntegerv(GL_DEPTH_FUNC, &depth_func);
+  if (mode() == Text2D)
+    glDepthFunc(GL_LEQUAL);
+
+  GLboolean color_mask[4];
+  glGetBooleanv(GL_COLOR_WRITEMASK, color_mask);
+
+  // stencil writing is not disabled now
+  int stencil_front_mask=0;
+  glGetIntegerv(GL_STENCIL_WRITEMASK, &stencil_front_mask);
+  int stencil_back_mask=0;
+  if (GLEW_VERSION_2_0)
+    glGetIntegerv(GL_STENCIL_BACK_WRITEMASK, &stencil_back_mask);
+
   // background
   if (backgroundEnabled())
     renderBackground( actor, camera );
-
   // border
   if (borderEnabled())
     renderBorder( actor, camera );
@@ -101,45 +102,35 @@ void Text::render_Implementation(const Actor* actor, const Shader*, const Camera
   // text render
   renderText( actor, camera, color(), fvec2(0,0) );
 
-  // Pass #2
+  // fixme?
   // fills the z-buffer (not the stencil buffer): approximated to the text bbox
 
-  // restores depth mask
+  // restores depth & stencil writing
   glDepthMask(depth_mask);
+  // don't write on the stencil buffer
+  glStencilMask(0);
 
-  if (depth_mask)
-  {
-    // disables writing to the color buffer
-    GLboolean color_mask[4];
-    glGetBooleanv(GL_COLOR_WRITEMASK, color_mask);
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+  // disables writing to the color buffer
+  glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 
-    // disable writing to the stencil buffer
-    int stencil_front_mask=0;
-    glGetIntegerv(GL_STENCIL_WRITEMASK, &stencil_front_mask);
-    int stencil_back_mask=0;
-    if (Has_GL_Version_2_0)
-      glGetIntegerv(GL_STENCIL_BACK_WRITEMASK, &stencil_back_mask);
-    glStencilMask(0);
+  // background
+  renderBackground( actor, camera );
+  // border
+  renderBorder( actor, camera );
 
-    // background
-    renderBackground( actor, camera );
+  // restores color writing
+  glColorMask(color_mask[0],color_mask[1],color_mask[2],color_mask[3]);
 
-    // border
-    renderBorder( actor, camera );
+  // restore the stencil masks
+  glStencilMask(stencil_front_mask);
+  if (GLEW_VERSION_2_0)
+    glStencilMaskSeparate(GL_BACK, stencil_back_mask);
 
-    // restores color writing
-    glColorMask(color_mask[0],color_mask[1],color_mask[2],color_mask[3]);
-
-    // restore the stencil masks
-    glStencilMask(stencil_front_mask);
-    if (Has_GL_Version_2_0)
-      glStencilMaskSeparate(GL_BACK, stencil_back_mask);
-  }
-  
-  // restore the right color and normal since we changed them
-  glColor4fv( gl_context->color().ptr() );
-  glNormal3fv( gl_context->normal().ptr() );
+  if(light_enabled)
+    glEnable(GL_LIGHTING);
+  //if (!blend_enabled)
+  //  glDisable(GL_BLEND);
+  glDepthFunc(depth_func);
 }
 //-----------------------------------------------------------------------------
 void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& color, const fvec2& offset) const
@@ -176,16 +167,16 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
     glPushMatrix();
     // glLoadIdentity();
     // gluOrtho2D( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f );
-
     // clever trick part #1
-    fmat4 mat = fmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
-    mat.e(2,2) = 1.0f; // preserve the z value from the incoming vertex.
+    dmat4 mat = dmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
+    mat.e(2,2) = 1.0f;
     mat.e(2,3) = 0.0f;
-    glLoadMatrixf(mat.ptr());
+    glLoadMatrixd(mat.ptr());
 
     VL_CHECK_OGL();
   }
 
+#if (1)
   AABB rbbox = rawboundingRect( text() ); // for text alignment
   VL_CHECK(rbbox.maxCorner().z() == 0)
   VL_CHECK(rbbox.minCorner().z() == 0)
@@ -199,69 +190,27 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
 
   fvec2 pen(0,0);
 
-  float texc[] = { 0,0, 0,0, 0,0, 0,0 };
+  float texc[] = { 0,0,0,0,0,0,0,0 };
   VL_glActiveTexture( GL_TEXTURE0 );
-  glEnable(GL_TEXTURE_2D);
   VL_glClientActiveTexture( GL_TEXTURE0 );
+  glEnable(GL_TEXTURE_2D);
   glEnableClientState( GL_TEXTURE_COORD_ARRAY );
   glTexCoordPointer(2, GL_FLOAT, 0, texc);
 
-  // Constant color
-  glColor4f( color.r(), color.g(), color.b(), color.a() );
+  fvec4 cols[] = { color, color, color, color};
+  glEnableClientState( GL_COLOR_ARRAY );
+  glColorPointer(4, GL_FLOAT, 0, cols);
 
-  // Constant normal
-  glNormal3f( 0, 0, 1 );
+  fvec3 norms[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
+  glEnableClientState( GL_NORMAL_ARRAY );
+  glNormalPointer(GL_FLOAT, 0, norms);
 
   fvec3 vect[4];
   glEnableClientState( GL_VERTEX_ARRAY );
   glVertexPointer(3, GL_FLOAT, 0, vect[0].ptr());
 
-  FT_Long has_kerning = FT_HAS_KERNING( font()->mFT_Face );
+  FT_Long use_kerning = FT_HAS_KERNING( font()->mFT_Face );
   FT_UInt previous = 0;
-
-  // viewport alignment
-  fmat4 m = mMatrix;
-
-  int w = camera->viewport()->width();
-  int h = camera->viewport()->height();
-
-  if (w < 1) w = 1;
-  if (h < 1) h = 1;
-
-  if ( !(actor && actor->transform()) && mode() == Text2D )
-  {
-    if (viewportAlignment() & AlignHCenter)
-    {
-      VL_CHECK( !(viewportAlignment() & AlignRight) )
-      VL_CHECK( !(viewportAlignment() & AlignLeft) )
-      // vect[i].x() += int((viewport[2]-1.0f) / 2.0f);
-      m.translate( (float)int((w-1.0f) / 2.0f), 0, 0);
-    }
-
-    if (viewportAlignment() & AlignRight)
-    {
-      VL_CHECK( !(viewportAlignment() & AlignHCenter) )
-      VL_CHECK( !(viewportAlignment() & AlignLeft) )
-      // vect[i].x() += int(viewport[2]-1.0f);
-      m.translate( (float)int(w-1.0f), 0, 0);
-    }
-
-    if (viewportAlignment() & AlignTop)
-    {
-      VL_CHECK( !(viewportAlignment() & AlignBottom) )
-      VL_CHECK( !(viewportAlignment() & AlignVCenter) )
-      // vect[i].y() += int(viewport[3]-1.0f);
-      m.translate( 0, (float)int(h-1.0f), 0);
-    }
-
-    if (viewportAlignment() & AlignVCenter)
-    {
-      VL_CHECK( !(viewportAlignment() & AlignTop) )
-      VL_CHECK( !(viewportAlignment() & AlignBottom) )
-      // vect[i].y() += int((viewport[3]-1.0f) / 2.0f);
-      m.translate( 0, (float)int((h-1.0f) / 2.0f), 0);
-    }
-  }
 
   // split the text in different lines
 
@@ -341,12 +290,12 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
         pen.x()  = 0;
       }
 
-      const Glyph* glyph = mFont->glyph( lines[iline][c] );
+      const ref<Glyph>& glyph = mFont->glyph( lines[iline][c] );
 
       if (!glyph)
         continue;
 
-      if ( kerningEnabled() && has_kerning && previous && glyph->glyphIndex() )
+      if ( kerningEnabled() && use_kerning && previous && glyph->glyphIndex() )
       {
         FT_Vector delta; delta.y = 0;
         if (layout() == LeftToRightText)
@@ -370,19 +319,14 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
 
         texc[0] = glyph->s0();
         texc[1] = glyph->t1();
-        
         texc[2] = glyph->s1();
         texc[3] = glyph->t1();
-
         texc[4] = glyph->s1();
         texc[5] = glyph->t0();
-        
         texc[6] = glyph->s0();
         texc[7] = glyph->t0();
 
         int left = layout() == RightToLeftText ? -glyph->left() : +glyph->left();
-
-        // triangle strip layout
 
         vect[0].x() = pen.x() + glyph->width()*0 + left -1;
         vect[0].y() = pen.y() + glyph->height()*0 + glyph->top() - glyph->height() -1;
@@ -473,6 +417,46 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
           }
         }
 
+        // viewport alignment
+        fmat4 m = mMatrix;
+
+#if(1)
+        if ( !actor->transform() )
+        {
+          if (viewportAlignment() & AlignHCenter)
+          {
+            VL_CHECK( !(viewportAlignment() & AlignRight) )
+            VL_CHECK( !(viewportAlignment() & AlignLeft) )
+            // vect[i].x() += int((viewport[2]-1.0f) / 2.0f);
+            m.translate( (float)int((viewport[2]-1.0f) / 2.0f), 0, 0);
+          }
+
+          if (viewportAlignment() & AlignRight)
+          {
+            VL_CHECK( !(viewportAlignment() & AlignHCenter) )
+            VL_CHECK( !(viewportAlignment() & AlignLeft) )
+            // vect[i].x() += int(viewport[2]-1.0f);
+            m.translate( (float)int(viewport[2]-1.0f), 0, 0);
+          }
+
+          if (viewportAlignment() & AlignTop)
+          {
+            VL_CHECK( !(viewportAlignment() & AlignBottom) )
+            VL_CHECK( !(viewportAlignment() & AlignVCenter) )
+            // vect[i].y() += int(viewport[3]-1.0f);
+            m.translate( 0, (float)int(viewport[3]-1.0f), 0);
+          }
+
+          if (viewportAlignment() & AlignVCenter)
+          {
+            VL_CHECK( !(viewportAlignment() & AlignTop) )
+            VL_CHECK( !(viewportAlignment() & AlignBottom) )
+            // vect[i].y() += int((viewport[3]-1.0f) / 2.0f);
+            m.translate( 0, (float)int((viewport[3]-1.0f) / 2.0f), 0);
+          }
+        }
+#endif
+
         // apply text transform
         vect[0] = m * vect[0];
         vect[1] = m * vect[1];
@@ -504,19 +488,20 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
           vect[3].y() += (float)v.y();
 
           // clever trick part #2
-          vect[0].z() = 
-          vect[1].z() = 
-          vect[2].z() = 
-          vect[3].z() = float((v.z() - 0.5f) / 0.5f);
+          vect[0].z() = float((v.z()- 0.5) / 0.5);
+          vect[1].z() = float((v.z()- 0.5) / 0.5);
+          vect[2].z() = float((v.z()- 0.5) / 0.5);
+          vect[3].z() = float((v.z()- 0.5) / 0.5);
         }
 
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4); VL_CHECK_OGL();
+        glDrawArrays(GL_QUADS, 0, 4);
 
         #if (0)
+          vec4 red[] = { vec4(1,0,0,1), vec4(1,0,0,1), vec4(1,0,0,1), vec4(1,0,0,1) };
           glDisable(GL_TEXTURE_2D);
-          glColor3fv(vec3(1,0,0).ptr());
+          glColorPointer(4, GL_FLOAT, 0, red);
           glDrawArrays(GL_LINE_LOOP, 0, 4);
-          glColor4fv(color.ptr());
+          glColorPointer(4, GL_FLOAT, 0, cols);
           glEnable(GL_TEXTURE_2D);
         #endif
       }
@@ -538,6 +523,7 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
           just_remained_space--;
       }
 
+
       if (layout() == LeftToRightText)
       {
         pen.x() += glyph->advance().x();
@@ -553,8 +539,11 @@ void Text::renderText(const Actor* actor, const Camera* camera, const fvec4& col
     }
   }
 
-  glDisableClientState( GL_VERTEX_ARRAY ); VL_CHECK_OGL();
-  glDisableClientState( GL_TEXTURE_COORD_ARRAY ); VL_CHECK_OGL();
+  glDisableClientState( GL_VERTEX_ARRAY );
+  glDisableClientState( GL_NORMAL_ARRAY );
+  glDisableClientState( GL_COLOR_ARRAY );
+  glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+#endif
 
   VL_CHECK_OGL();
 
@@ -593,7 +582,7 @@ AABB Text::rawboundingRect(const String& text) const
   fvec2 pen(0,0);
   fvec3 vect[4];
 
-  FT_Long has_kerning = FT_HAS_KERNING( font()->mFT_Face );
+  FT_Long use_kerning = FT_HAS_KERNING( font()->mFT_Face );
   FT_UInt previous = 0;
 
   for(int c=0; c<(int)text.length(); c++)
@@ -611,7 +600,7 @@ AABB Text::rawboundingRect(const String& text) const
     if (glyph.get() == NULL)
       continue;
 
-    if ( kerningEnabled() && has_kerning && previous && glyph->glyphIndex())
+    if ( kerningEnabled() && use_kerning && previous && glyph->glyphIndex())
     {
       FT_Vector delta; delta.y = 0;
       if (layout() == LeftToRightText)
@@ -719,20 +708,21 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
     glPushMatrix();
     //glLoadIdentity();
     //gluOrtho2D( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f );
-
     // clever trick part #1
-    fmat4 mat = fmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
+    dmat4 mat = dmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
     mat.e(2,2) = 1.0f;
     mat.e(2,3) = 0.0f;
-    glLoadMatrixf(mat.ptr());
+    glLoadMatrixd(mat.ptr());
     VL_CHECK_OGL();
   }
 
-  // Constant color
-  glColor4f(mBackgroundColor.r(),mBackgroundColor.g(), mBackgroundColor.b(), mBackgroundColor.a());
+  fvec4 cols[] = { mBackgroundColor, mBackgroundColor, mBackgroundColor, mBackgroundColor };
+  glEnableClientState( GL_COLOR_ARRAY );
+  glColorPointer(4, GL_FLOAT, 0, cols);
 
-  // Constant normal
-  glNormal3f(0, 0, 1);
+  fvec3 norms[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
+  glEnableClientState( GL_NORMAL_ARRAY );
+  glNormalPointer(GL_FLOAT, 0, norms);
 
   vec3 a,b,c,d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
@@ -740,9 +730,11 @@ void Text::renderBackground(const Actor* actor, const Camera* camera) const
   glEnableClientState( GL_VERTEX_ARRAY );
   glVertexPointer(3, GL_FLOAT, 0, vect);
 
-  glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+  glDrawArrays(GL_QUADS,0,4);
 
   glDisableClientState( GL_VERTEX_ARRAY );
+  glDisableClientState( GL_NORMAL_ARRAY );
+  glDisableClientState( GL_COLOR_ARRAY );
 
   if (mode() == Text2D)
   {
@@ -772,20 +764,21 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
     glPushMatrix();
     //glLoadIdentity();
     //gluOrtho2D( -0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f );
-
     // clever trick part #1
-    fmat4 mat = fmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
+    dmat4 mat = dmat4::getOrtho(-0.5f, viewport[2]-0.5f, -0.5f, viewport[3]-0.5f, -1, +1);
     mat.e(2,2) = 1.0f;
     mat.e(2,3) = 0.0f;
-    glLoadMatrixf(mat.ptr());
+    glLoadMatrixd(mat.ptr());
     VL_CHECK_OGL();
   }
 
-  // Constant color
-  glColor4f(mBorderColor.r(), mBorderColor.g(), mBorderColor.b(), mBorderColor.a());
+  fvec4 cols[] = { mBorderColor, mBorderColor, mBorderColor, mBorderColor };
+  glEnableClientState( GL_COLOR_ARRAY );
+  glColorPointer(4, GL_FLOAT, 0, cols);
 
-  // Constant normal
-  glNormal3f( 0, 0, 1 );
+  fvec3 norms[] = { fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1), fvec3(0,0,1) };
+  glEnableClientState( GL_NORMAL_ARRAY );
+  glNormalPointer(GL_FLOAT, 0, norms);
 
   vec3 a,b,c,d;
   boundingRectTransformed( a, b, c, d, camera, mode() == Text2D ? actor : NULL );
@@ -793,9 +786,11 @@ void Text::renderBorder(const Actor* actor, const Camera* camera) const
   glEnableClientState( GL_VERTEX_ARRAY );
   glVertexPointer(3, GL_FLOAT, 0, vect);
 
-  glDrawArrays(GL_LINE_LOOP, 0, 4);
+  glDrawArrays(GL_LINE_LOOP,0,4);
 
   glDisableClientState( GL_VERTEX_ARRAY );
+  glDisableClientState( GL_NORMAL_ARRAY );
+  glDisableClientState( GL_COLOR_ARRAY );
 
   if (mode() == Text2D)
   {
@@ -907,13 +902,14 @@ AABB Text::boundingRectTransformed(vec3& a, vec3& b, vec3& c, vec3& d, const Cam
   // viewport alignment
   fmat4 m = mMatrix;
 
+#if (1)
   int w = camera->viewport()->width();
   int h = camera->viewport()->height();
 
   if (w < 1) w = 1;
   if (h < 1) h = 1;
 
-  if ( !(actor && actor->transform()) && mode() == Text2D )
+  if(!actor || !actor->transform())
   {
     if (viewportAlignment() & AlignHCenter)
     {
@@ -947,8 +943,8 @@ AABB Text::boundingRectTransformed(vec3& a, vec3& b, vec3& c, vec3& d, const Cam
       m.translate( 0, (float)int((h-1.0f) / 2.0f), 0);
     }
   }
+#endif
 
-  // ??? mix fixme: remove all these castings!
   // apply matrix transform
   a = (mat4)m * a;
   b = (mat4)m * b;
@@ -989,10 +985,10 @@ AABB Text::boundingRectTransformed(vec3& a, vec3& b, vec3& c, vec3& d, const Cam
       d += v.xyz();
 
       // clever trick part #2
-      a.z() = 
-      b.z() = 
-      c.z() = 
-      d.z() = (v.z() - 0.5f) / 0.5f;
+      a.z() = (v.z()- 0.5f) / 0.5f;
+      b.z() = (v.z()- 0.5f) / 0.5f;
+      c.z() = (v.z()- 0.5f) / 0.5f;
+      d.z() = (v.z()- 0.5f) / 0.5f;
     }
   }
 

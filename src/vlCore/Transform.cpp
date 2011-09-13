@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vlCore/Transform.hpp>
-#include <vlCore/GlobalSettings.hpp>
+#include <vlCore/VLSettings.hpp>
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/Log.hpp>
 #include <algorithm>
@@ -55,7 +55,7 @@ Transform::~Transform()
   }
 }
 //-----------------------------------------------------------------------------
-void Transform::translate(real x, real y, real z)
+void Transform::translate(Real x, Real y, Real z)
 {
   setLocalMatrix( mat4::getTranslation(x,y,z)*localMatrix() );
 }
@@ -65,12 +65,12 @@ void Transform::translate(const vec3& t)
   setLocalMatrix( mat4::getTranslation(t)*localMatrix() );
 }
 //-----------------------------------------------------------------------------
-void Transform::scale(real x, real y, real z)
+void Transform::scale(Real x, Real y, Real z)
 {
   setLocalMatrix( mat4::getScaling(x,y,z)*localMatrix() );
 }
 //-----------------------------------------------------------------------------
-void Transform::rotate(real degrees, real x, real y, real z)
+void Transform::rotate(Real degrees, Real x, Real y, Real z)
 {
   setLocalMatrix( mat4::getRotation(degrees,x,y,z)*localMatrix() );
 }

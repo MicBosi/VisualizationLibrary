@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -40,7 +40,7 @@ namespace vl
 {
   class Camera;
   class RenderQueue;
-  class Framebuffer;
+  class RenderTarget;
 
   //-----------------------------------------------------------------------------
   // RendererAbstract
@@ -50,9 +50,9 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT RendererAbstract: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::RendererAbstract, Object)
-
   public:
+    virtual const char* className() { return "vl::RendererAbstract"; }
+
     RendererAbstract()
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -77,18 +77,18 @@ namespace vl
 
     /** Takes as input the render queue to render and returns a possibly filtered render queue for further processing. 
       * Renderer's implementation of this function always returns \p in_render_queue. */
-    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock) = 0;
+    virtual const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock) = 0;
 
-    /** The Framebuffer on which the rendering is performed. */
-    virtual const Framebuffer* framebuffer() const = 0;
+    /** The RenderTarget on which the rendering is performed. */
+    virtual const RenderTarget* renderTarget() const = 0;
 
-    /** The Framebuffer on which the rendering is performed. */
-    virtual Framebuffer* framebuffer() = 0;
+    /** The RenderTarget on which the rendering is performed. */
+    virtual RenderTarget* renderTarget() = 0;
 
     /** Dispatches the onRendererStarted() event to the registered RenderEventCallback objects. */
     void dispatchOnRendererStarted()
     {
-      Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
+      const Collection<RenderEventCallback>& cb = *mOnStartedCallbacks;
       for(int i=0; i<cb.size(); ++i)
       {
         if ( cb[i]->isEnabled() && cb[i]->onRendererStarted(this) && cb[i]->removeAfterCall() )
@@ -102,7 +102,7 @@ namespace vl
     /** Dispatches the onRendererFinished() event to the registered RenderEventCallback objects. */
     void dispatchOnRendererFinished()
     {
-      Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
+      const Collection<RenderEventCallback>& cb = *mOnFinishedCallbacks;
       for(int i=0; i<cb.size(); ++i)
       {
         if ( cb[i]->isEnabled() && cb[i]->onRendererFinished(this) && cb[i]->removeAfterCall() )
@@ -144,10 +144,10 @@ namespace vl
     unsigned int enableMask() const { return mEnableMask; }
 
     /** The current rendring frame time. vl::Renderer passes this value to ActorEventCallback::onActorRenderStarted() */
-    void setFrameClock(real t) { mFrameClock = t; }
+    void setFrameClock(Real t) { mFrameClock = t; }
 
     /** The current rendring frame time. vl::Renderer passes this value to ActorEventCallback::onActorRenderStarted() */
-    real frameClock() const { return mFrameClock; }
+    Real frameClock() const { return mFrameClock; }
 
   protected:
     ref< Collection<RenderEventCallback> > mOnFinishedCallbacks;
@@ -155,7 +155,7 @@ namespace vl
     unsigned long mRenderTick;
     unsigned int mEnableMask;
     EClearFlags mClearFlags;
-    real mFrameClock;
+    Real mFrameClock;
   };
   //------------------------------------------------------------------------------
 }

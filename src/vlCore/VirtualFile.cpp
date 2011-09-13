@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -128,7 +128,7 @@ bool VirtualFile::seekEnd(long long offset)
   return seekSet( size() + offset );
 }
 //-----------------------------------------------------------------------------
-long long VirtualFile::load(std::vector<char>& data)
+long long VirtualFile::load(std::vector<unsigned char>& data)
 {
   data.resize( (size_t)size() );
   if (data.size())

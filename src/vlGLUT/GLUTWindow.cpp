@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -718,8 +718,8 @@ void GLUTWindow::glut_reshape_func(int w, int h)
   GLUTWindow* win = mWinMap[cur_win];
   VL_CHECK(win);
 
-  win->framebuffer()->setWidth(w);
-  win->framebuffer()->setHeight(h);
+  win->renderTarget()->setWidth(w);
+  win->renderTarget()->setHeight(h);
 
   if (win->mInited == false)
   {

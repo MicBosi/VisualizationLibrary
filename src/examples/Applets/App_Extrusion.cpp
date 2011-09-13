@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -78,7 +78,7 @@ public:
 
     // Setup a simple white effect.
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
 
@@ -151,7 +151,7 @@ public:
 
     // Setup a simple white effect.
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
 
@@ -217,7 +217,7 @@ public:
 
     // Simple white effect.
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     // Enable color material to visualize the generated vertex colors.
@@ -286,7 +286,7 @@ public:
 
     // Simple effect
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->setRenderState( new vl::Light, 0 );
+    effect->shader()->setRenderState( new vl::Light(0) );
     effect->shader()->enable(vl::EN_LIGHTING);
     effect->shader()->enable(vl::EN_DEPTH_TEST);
     // Enable color material in order to see the generated vertex colors.
@@ -304,13 +304,13 @@ public:
     vl::ref<vl::Geometry>   geom       = new vl::Geometry;
     vl::ref<vl::ArrayFloat3> vert_array = new vl::ArrayFloat3;
     geom->setVertexArray( vert_array.get() );
-    vert_array->initFrom(ctrl_points);
+    *vert_array = ctrl_points;
+    geom->setColor(color);
     geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_LINE_STRIP, 0, (int)vert_array->size())); // lines
     geom->drawCalls()->push_back(new vl::DrawArrays(vl::PT_POINTS,     0, (int)vert_array->size())); // points
 
     // setup simple effect
     vl::ref<vl::Effect> effect = new vl::Effect;
-    effect->shader()->gocColor()->setValue(color);
     effect->shader()->enable(vl::EN_LINE_STIPPLE);
     effect->shader()->gocPointSize()->set(3);
     effect->shader()->gocLineStipple()->setPattern(0x3333);
@@ -361,7 +361,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
     showSimplePipe();
     showText();
   }

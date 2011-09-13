@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -87,7 +87,7 @@ VolumePlot::VolumePlot()
 
   // defaults
 
-  mIsosurfaceEffect->shader()->setRenderState( new Light, 0 );
+  mIsosurfaceEffect->shader()->setRenderState( new Light(0) );
   mIsosurfaceEffect->shader()->gocMaterial()->setFrontDiffuse(red);
   mIsosurfaceEffect->shader()->gocMaterial()->setBackDiffuse(green);
   mIsosurfaceEffect->shader()->enable(EN_LIGHTING);
@@ -111,6 +111,7 @@ void VolumePlot::compute(const Function& func, float threshold)
 
   // volume_box outline
   ref<Geometry> box_outline = makeBox(AABB((vec3)minCorner(),(vec3)maxCorner()));
+  box_outline->setColor(white);
 
   // setup isosurface and actors
 
@@ -178,7 +179,7 @@ void VolumePlot::setupLabels(const String& format, const fvec3& min_corner, cons
   {
     ref<Text> text = new Text;
     text->setDisplayListEnabled(false);
-    text->setBufferObjectEnabled(false);
+    text->setVBOEnabled(false);
     text->setFont( font );
     text->setAlignment(AlignHCenter| AlignVCenter);
     text->setText(coord_label[i]);

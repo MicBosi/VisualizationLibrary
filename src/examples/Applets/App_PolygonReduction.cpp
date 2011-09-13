@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -40,9 +40,8 @@
 
 using namespace vl;
 
-static const float golden = (1.0f + sqrt(5.0f)) / 2.0f; // sezione aurea
-static const float ratios[] = { 1.0f, 1.0f / pow(golden, 1), 1.0f / pow(golden, 2), 1.0f / pow(golden, 3), 1.0f / pow(golden, 4), 1.0f / pow(golden, 5) };
-static const int stages = sizeof(ratios) / sizeof(ratios[0]);
+static const int stages = 5;
+static const float ratios[] = { 1.0f, 0.5f, 0.20f, 0.05f, 0.01f };
 
 class App_PolygonReduction: public BaseDemo
 {
@@ -51,7 +50,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     /* Transform */
     mTransform = new Transform;
@@ -61,7 +60,7 @@ public:
     mEffect = new Effect;
 
     /* solid shader */
-    mEffect->shader(0,0)->setRenderState( new Light, 0 );
+    mEffect->shader(0,0)->setRenderState( new Light(0) );
     mEffect->shader(0,0)->enable(EN_LIGHTING);
     mEffect->shader(0,0)->gocLightModel()->setTwoSide(true);
     mEffect->shader(0,0)->gocMaterial()->setDiffuse(vl::royalblue);
@@ -70,9 +69,8 @@ public:
     mEffect->shader(0,0)->enable(EN_DEPTH_TEST);
 
     /* wireframe shader */
-#if defined(VL_OPENGL)
     mEffect->lod(0)->push_back( new Shader );
-    mEffect->shader(0,1)->setRenderState( new Light, 0 );
+    mEffect->shader(0,1)->setRenderState( new Light(0) );
     mEffect->shader(0,1)->enable(EN_LIGHTING);
     mEffect->shader(0,1)->gocLightModel()->setTwoSide(true);
     mEffect->shader(0,1)->gocMaterial()->setDiffuse(vl::lightgreen);
@@ -80,7 +78,6 @@ public:
     mEffect->shader(0,1)->gocPolygonOffset()->set(-0.5f, 0);
     mEffect->shader(0,1)->enable(vl::EN_POLYGON_OFFSET_LINE);
     mEffect->shader(0,1)->enable(EN_DEPTH_TEST);
-#endif
 
     /* load model */
     ref<ResourceDatabase> res_db;
@@ -104,21 +101,20 @@ public:
 
   void loadSimplifyGeometry(Geometry* geom)
   {
+    mGeom[0] = geom;
+    for(int i=1; i<stages; ++i)
+      mGeom[i] = mGeom[0]->deepCopy();
+
     // -------------- simplification -------------------
 
     PolygonSimplifier simplifier;
     simplifier.setQuick(false);
     simplifier.setVerbose(true);
-
-    simplifier.setIntput( geom );
-
-    for(int i=0; i<stages; ++i)
-      simplifier.targets().push_back( size_t(geom->vertexArray()->size() * ratios[i]) );
-
-    simplifier.simplify();
-
-    for(int i=0; i<stages; ++i)
-      mGeom[i] = simplifier.output()[i];
+    for(int i=1; i<stages; ++i)
+    {
+      simplifier.simplify( ratios[i], mGeom[i].get() );
+      Log::print("\n");
+    }
 
     // -------------- simplification end -------------------
 
@@ -144,8 +140,8 @@ public:
     sceneManager()->tree()->addActor( mActors[mActiveActor].get() );
     sceneManager()->tree()->addActor( mTextActor.get() );
     /* update label */
-    float percent = 100.0f * mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indexBuffer()->size() / mGeom[0]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indexBuffer()->size();
-    mText->setText( Say("Triangle Count: %n (%.1n%%)") << mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indexBuffer()->size() / 3 << percent );
+    float percent = 100.0f * mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indices()->size() / mGeom[0]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indices()->size();
+    mText->setText( Say("Triangle Count: %n (%.1n%%)") << mGeom[mActiveActor]->drawCalls()->at(0)->as<vl::DrawElementsUInt>()->indices()->size() / 3 << percent );
   }
 
   void fileDroppedEvent(const std::vector<vl::String>& files)
@@ -160,7 +156,7 @@ protected:
   ref<Transform> mTransform;
   String mFileName;
   ref<Effect> mEffect;
-  ref<Actor> mActors[stages];
+  ref<Actor> mActors[5];
   int mActiveActor;
   ref<Actor> mTextActor; 
   ref<Text> mText;

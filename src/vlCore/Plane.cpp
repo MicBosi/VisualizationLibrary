@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -37,7 +37,7 @@ using namespace vl;
 //-----------------------------------------------------------------------------
 // Plane
 //-----------------------------------------------------------------------------
-real Plane::distance(const vec3 &v) const 
+Real Plane::distance(const vec3 &v) const 
 {
   return dot(v, mNormal) - mOrigin;
 }
@@ -67,8 +67,8 @@ int Plane::classify(const AABB& aabb) const
 
   int left  = 0;
   int right = 0;
-  real const NEPS = -0.0001f;
-  real const PEPS = +0.0001f;
+  Real const NEPS = -0.0001f;
+  Real const PEPS = +0.0001f;
 
   for(int i=0;i<8; ++i)
   {

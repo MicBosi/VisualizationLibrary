@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -40,7 +40,7 @@
 class BlinkShaderAnimator: public vl::ShaderAnimator
 {
 public:
-  void updateShader(vl::Shader* shader, vl::Camera*, vl::real cur_time)
+  void updateShader(vl::Shader* shader, vl::Camera*, vl::Real cur_time)
   {
     int c = (int)( cur_time * 15.0 ) % 2;
     vl::fvec4 color;
@@ -56,12 +56,12 @@ public:
 class TexRotScaleShaderAnimator: public vl::ShaderAnimator
 {
 public:
-  void updateShader(vl::Shader* shader, vl::Camera*, vl::real cur_time)
+  void updateShader(vl::Shader* shader, vl::Camera*, vl::Real cur_time)
   {
-    vl::fmat4 mat;
+    vl::mat4 mat;
     mat.translate(-0.5,-0.5,0.0f);
     mat.rotate( cur_time * 90, 0, 0, 1 );
-    float s = 0.5f + (float)sin( cur_time * vl::fPi * 2.0f )*0.5f + 0.5f;
+    float s = 0.5f + (float)sin( cur_time * vl::fPi * 2.0f )*0.5 + 0.5f;
     mat.scale( s, s, s );
     mat.translate(+0.5,+0.5,0.0f);
     shader->gocTextureMatrix(1)->setMatrix( mat );
@@ -72,7 +72,7 @@ public:
 class MyShaderAnimator1: public vl::ShaderAnimator
 {
 public:
-  void updateShader(vl::Shader* shader, vl::Camera* , vl::real cur_time)
+  void updateShader(vl::Shader* shader, vl::Camera* , vl::Real cur_time)
   {
     float t = (float)sin( cur_time*vl::fPi*2.0f )*0.5f + 0.5f;
     vl::fvec4 col = vl::red*t + vl::blue*(1-t);
@@ -88,30 +88,30 @@ class App_ShaderMultiPassLODAnim: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     // to be used later
-    vl::ref<vl::Light> light = new vl::Light;
+    vl::ref<vl::Light> light = new vl::Light(0);
     vl::ref<vl::Texture> texture;
 
     // define LOD evaluator with 3 distance ranges: [0] --- 70 --- 100 --- [inf]
     vl::ref<vl::DistanceLODEvaluator> lod_eval = new vl::DistanceLODEvaluator;
-    lod_eval->distanceRangeSet().push_back(70);
-    lod_eval->distanceRangeSet().push_back(100);
+    lod_eval->addDistanceRange(70);
+    lod_eval->addDistanceRange(100);
 
     // texture roto-scaling effect
     vl::ref<vl::Shader> tex_rot_scale_sh = new vl::Shader;
     tex_rot_scale_sh->enable(vl::EN_DEPTH_TEST);
     tex_rot_scale_sh->enable(vl::EN_CULL_FACE);
     tex_rot_scale_sh->enable(vl::EN_LIGHTING);
-    tex_rot_scale_sh->setRenderState( light.get(), 0 );
+    tex_rot_scale_sh->setRenderState( light.get() );
     texture = new vl::Texture("/images/holebox.tif", vl::TF_RGBA);
-    tex_rot_scale_sh->gocTextureSampler(0)->setTexture( texture.get() );
+    tex_rot_scale_sh->gocTextureUnit(0)->setTexture( texture.get() );
     // on this unit we'll apply the roto-scale effect
     texture = new vl::Texture("/images/star2.tif", vl::TF_RGBA);
-    tex_rot_scale_sh->gocTextureSampler(1)->setTexture( texture.get() );
-    tex_rot_scale_sh->gocTextureSampler(1)->texture()->getTexParameter()->setWrapS(vl::TPW_REPEAT);
-    tex_rot_scale_sh->gocTextureSampler(1)->texture()->getTexParameter()->setWrapT(vl::TPW_REPEAT);
+    tex_rot_scale_sh->gocTextureUnit(1)->setTexture( texture.get() );
+    tex_rot_scale_sh->gocTextureUnit(1)->texture()->getTexParameter()->setWrapS(vl::TPW_REPEAT);
+    tex_rot_scale_sh->gocTextureUnit(1)->texture()->getTexParameter()->setWrapT(vl::TPW_REPEAT);
     // install shader animator
     tex_rot_scale_sh->setShaderAnimator( new TexRotScaleShaderAnimator );
 
@@ -120,16 +120,16 @@ public:
     tex_sh->enable(vl::EN_DEPTH_TEST);
     tex_sh->enable(vl::EN_CULL_FACE);
     tex_sh->enable(vl::EN_LIGHTING);
-    tex_sh->setRenderState( light.get(), 0 );
+    tex_sh->setRenderState( light.get() );
     texture = new vl::Texture("/images/holebox.tif", vl::TF_RGBA);
-    tex_sh->gocTextureSampler(0)->setTexture( texture.get() );
+    tex_sh->gocTextureUnit(0)->setTexture( texture.get() );
 
     // wireframe outline blinking shader
     vl::ref<vl::Shader> blink_sh = new vl::Shader;
     blink_sh->enable(vl::EN_DEPTH_TEST);
     blink_sh->enable(vl::EN_CULL_FACE);
     blink_sh->enable(vl::EN_LIGHTING);
-    blink_sh->setRenderState( light.get(), 0 );
+    blink_sh->setRenderState( light.get() );
     blink_sh->gocPolygonMode()->set(vl::PM_LINE,vl::PM_LINE);
     blink_sh->gocFrontFace()->set(vl::FF_CW);
     blink_sh->gocLineWidth()->set(3.0f);
@@ -170,11 +170,11 @@ public:
   // animate the scene
   void updateScene()
   {
-    vl::real t = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 8.0f ) * 0.5f + 0.5f;
+    vl::Real t = sin( vl::Time::currentTime() * vl::fPi * 2.0f / 8.0f ) * 0.5f + 0.5f;
     vl::vec3 eye( 130*t+5, t*20+5, 0 );
     eye = vl::mat4::getRotation( vl::Time::currentTime() * 15.0f, 0, 1, 0 ) * eye;
     vl::mat4 m = vl::mat4::getLookAt( eye, vl::vec3(0,0,0), vl::vec3(0,1,0) );
-    rendering()->as<vl::Rendering>()->camera()->setViewMatrix(m);
+    rendering()->as<vl::Rendering>()->camera()->setInverseViewMatrix(m);
   }
 };
 

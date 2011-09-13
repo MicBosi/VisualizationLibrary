@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -59,59 +59,22 @@ public:
 
   virtual void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     /* basic render states */
 
-    vl::ref<vl::Light> light = new vl::Light;
-
-    // simple red material
-    vl::ref<vl::Effect> fx_red = new vl::Effect;
-    fx_red->shader()->setRenderState( light.get(), 0 );
-    fx_red->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_red->shader()->enable(vl::EN_LIGHTING);
-    fx_red->shader()->gocMaterial()->setDiffuse( vl::red );
-
-    // simple gray material
-    vl::ref<vl::Effect> fx_gray = new vl::Effect;
-    fx_gray->shader()->setRenderState( light.get(), 0 );
-    fx_gray->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_gray->shader()->enable(vl::EN_LIGHTING);
-    fx_gray->shader()->gocMaterial()->setDiffuse( vl::gray );
-
-    // simple crimson material
-    vl::ref<vl::Effect> fx_crimson = new vl::Effect;
-    fx_crimson->shader()->setRenderState( light.get(), 0 );
-    fx_crimson->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_crimson->shader()->enable(vl::EN_LIGHTING);
-    fx_crimson->shader()->gocMaterial()->setDiffuse( vl::crimson );
-
-    // simple orange material
-    vl::ref<vl::Effect> fx_orange = new vl::Effect;
-    fx_orange->shader()->setRenderState( light.get(), 0 );
-    fx_orange->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_orange->shader()->enable(vl::EN_LIGHTING);
-    fx_orange->shader()->gocMaterial()->setDiffuse( vl::orange );
-
-    // simple green material
-    vl::ref<vl::Effect> fx_green = new vl::Effect;
-    fx_green->shader()->setRenderState( light.get(), 0 );
-    fx_green->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_green->shader()->enable(vl::EN_LIGHTING);
-    fx_green->shader()->gocMaterial()->setDiffuse( vl::green );
-
-    // simple blue material
-    vl::ref<vl::Effect> fx_blue = new vl::Effect;
-    fx_blue->shader()->setRenderState( light.get(), 0 );
-    fx_blue->shader()->enable(vl::EN_DEPTH_TEST);
-    fx_blue->shader()->enable(vl::EN_LIGHTING);
-    fx_blue->shader()->gocMaterial()->setDiffuse( vl::blue );
+    vl::ref<vl::Effect> effect = new vl::Effect;
+    effect->shader()->setRenderState( new vl::Light(0) );
+    effect->shader()->enable(vl::EN_LIGHTING);
+    effect->shader()->enable(vl::EN_DEPTH_TEST);
+    effect->shader()->gocMaterial()->setColorMaterialEnabled(true);
 
     /* working desk */
 
     vl::ref<vl::Geometry> plane = vl::makeGrid(vl::vec3(0,0,0), 50,50, 2,2);
     plane->computeNormals();
-    sceneManager()->tree()->addActor(plane.get(), fx_gray.get());
+    plane->setColor(vl::gray);
+    sceneManager()->tree()->addActor(plane.get(), effect.get());
 
     /* buttons */
 
@@ -127,71 +90,79 @@ public:
     vl::ref<vl::Transform> tr;
 
     vl::ref<vl::Geometry> button = vl::makeCylinder(vl::vec3(0,0.5,0), 1.5, 1);
+    button->setColor(vl::orange);
     button->computeNormals();
 
     tr = new vl::Transform( vl::mat4::getTranslation(-6,0,10) );
     tr->computeWorldMatrix(NULL);
-    sceneManager()->tree()->addActor(button.get(), fx_orange.get(), tr.get());
+    sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
     tr = new vl::Transform( vl::mat4::getTranslation(-4,0,10) );
     tr->computeWorldMatrix(NULL);
-    sceneManager()->tree()->addActor(button.get(), fx_orange.get(), tr.get());
+    sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
     tr = new vl::Transform( vl::mat4::getTranslation(-2,0,10) );
     tr->computeWorldMatrix(NULL);
-    sceneManager()->tree()->addActor(button.get(), fx_orange.get(), tr.get());
+    sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
     tr = new vl::Transform( vl::mat4::getTranslation(+2,0,10) );
     tr->computeWorldMatrix(NULL);
-    sceneManager()->tree()->addActor(button.get(), fx_orange.get(), tr.get());
+    sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
     tr = new vl::Transform( vl::mat4::getTranslation(+4,0,10) );
     tr->computeWorldMatrix(NULL);
-    sceneManager()->tree()->addActor(button.get(), fx_orange.get(), tr.get());
+    sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
     tr = new vl::Transform( vl::mat4::getTranslation(+6,0,10) );
     tr->computeWorldMatrix(NULL);
-    sceneManager()->tree()->addActor(button.get(), fx_orange.get(), tr.get());
+    sceneManager()->tree()->addActor(button.get(), effect.get(), tr.get());
 
     /* robot base */
 
     vl::ref<vl::Geometry>  arm_base = vl::makeBox(vl::vec3(0,0.5,0), 12, 1, 12);
     arm_base ->computeNormals();
-    sceneManager()->tree()->addActor(arm_base.get(), fx_blue.get());
+    arm_base ->setColor(vl::blue);
+    sceneManager()->tree()->addActor(arm_base.get(), effect.get());
 
     /* robot arms */
 
     vl::ref<vl::Geometry>  arm0    = vl::makeBox(vl::vec3(0,5,0), 2, 10, 2);
     arm0->computeNormals();
+    arm0->setColor(vl::red);
     mTransfArm0 = new vl::Transform;
-    sceneManager()->tree()->addActor(arm0.get(), fx_red.get(), mTransfArm0.get());
+    sceneManager()->tree()->addActor(arm0.get(), effect.get(), mTransfArm0.get());
 
     vl::ref<vl::Geometry>  arm1    = vl::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm1->computeNormals();
+    arm1->setColor(vl::green);
     mTransfArm1 = new vl::Transform;
-    sceneManager()->tree()->addActor(arm1.get(), fx_green.get(), mTransfArm1.get());
+    sceneManager()->tree()->addActor(arm1.get(), effect.get(), mTransfArm1.get());
 
     vl::ref<vl::Geometry>  arm2    = vl::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm2->computeNormals();
+    arm2->setColor(vl::green);
     mTransfArm2 = new vl::Transform;
-    sceneManager()->tree()->addActor(arm2.get(), fx_green.get(), mTransfArm2.get());
+    sceneManager()->tree()->addActor(arm2.get(), effect.get(), mTransfArm2.get());
 
     vl::ref<vl::Geometry>  arm3    = vl::makeCylinder(vl::vec3(0,5,0), 2, 10);
     arm3->computeNormals();
+    arm3->setColor(vl::green);
     mTransfArm3 = new vl::Transform;
-    sceneManager()->tree()->addActor(arm3.get(), fx_green.get(), mTransfArm3.get());
+    sceneManager()->tree()->addActor(arm3.get(), effect.get(), mTransfArm3.get());
 
     /* robot fingers */
 
     vl::ref<vl::Geometry>  finger1   = vl::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
     finger1->computeNormals();
+    finger1->setColor(vl::crimson);
     mTransfHand1 = new vl::Transform;
-    sceneManager()->tree()->addActor(finger1.get(), fx_crimson.get(), mTransfHand1.get());
+    sceneManager()->tree()->addActor(finger1.get(), effect.get(), mTransfHand1.get());
 
     vl::ref<vl::Geometry>  finger2   = vl::makeBox(vl::vec3(0,2,0), 2, 4, 0.5f);
     finger2->computeNormals();
+    finger2->setColor(vl::crimson);
     mTransfHand2 = new vl::Transform;
-    sceneManager()->tree()->addActor(finger2.get(), fx_crimson.get(), mTransfHand2.get());
+    sceneManager()->tree()->addActor(finger2.get(), effect.get(), mTransfHand2.get());
 
     /* concatenate the transforms */
 

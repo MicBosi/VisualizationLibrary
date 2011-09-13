@@ -190,7 +190,7 @@ vl::Actor, vl::Effect, vl::Shader
 
 <div class="featuretitle">OpenGL Shading Language Based C++ Math Library</div>
 
-Visualization Library features a complete vector and matrix math library designed to replicate as closely as possible in C++ the OpenGL Shading Language types and functons. VL's math library provides the developer with 2, 3, and 4 components vector (\p float, \p double, \p int, \p unsigned \p int etc.), 2x2, 3x3, 4x4 \p float and \p double matrices, vector/vector, vector/matrix and matrix/matrix operations, a quaternion class to conveniently represent and manipulate rotations and orientations and much more. The glsl_math.hpp module also provides C++ implementations of the most important OpenGL Shading Language scalar and vector functions.
+Visualization Library features a complete vector and matrix math library designed to replicate as closely as possible in C++ the OpenGL Shading Language types and functons. VL's math library provides the developer with 2, 3, and 4 components vector (\p float, \p double, \p int, \p unsigned \p int etc.), 2x2, 3x3, 4x4 \p float and \p double matrices, vector/vector, vector/matrix and matrix/matrix operations, a quaternion class to conveniently represent and manipulate rotations and orientations and much more. The GLSLmath.hpp module also provides C++ implementations of the most important OpenGL Shading Language scalar and vector functions.
 
 \par Classes
 
@@ -216,7 +216,7 @@ Modern OpenGL applications make heavy use of framebuffer objects (\p EXT_framebu
 
 \par Classes
 
-vl::FramebufferObject, vl::FBOAttachmentAbstract, vl::FBORenderbufferAttachment, vl::FBOColorBufferAttachment, vl::FBODepthBufferAttachment, vl::FBODepthStencilBufferAttachment, vl::FBOStencilBufferAttachment, vl::FBOTexture1DAttachment, vl::FBOTexture2DAttachment, vl::FBOTexture3DAttachment, vl::FBOTextureAttachment, vl::FBOTextureLayerAttachment, vl::BlitFramebuffer
+vl::FBORenderTarget, vl::FBOAttachmentAbstract, vl::FBORenderbufferAttachment, vl::FBOColorBufferAttachment, vl::FBODepthBufferAttachment, vl::FBODepthStencilBufferAttachment, vl::FBOStencilBufferAttachment, vl::FBOTexture1DAttachment, vl::FBOTexture2DAttachment, vl::FBOTexture3DAttachment, vl::FBOTextureAttachment, vl::FBOTextureLayerAttachment, vl::BlitFramebuffer
 
 \par Related Pages
 
@@ -225,19 +225,7 @@ vl::FramebufferObject, vl::FBOAttachmentAbstract, vl::FBORenderbufferAttachment,
 <div class="featuretitle">Automatic Progressive OpenGL Extension Management</div>
 
 The extension mechanism provided by OpenGL has proved to be one of the key factors for the success and longevity of this elegant API.
-However, exploiting effectively all the possible hardware configurations and all the available extensions can easily become an overwhelming task. For this reason Visualization Library tackles this task for you, querying the available extensions in an automatic manner and selecting and using the most appropriate ones to deliver maximum performance and stability. We refer to this intelligent selection mechanism as "Progressive OpenGL Extension Management". The principle is very simple, wherever an OpenGL feature is requested not only Visualization Library looks for \a an extension to support it but looks for the \a best implementation of that functionality, checking first among the functions which are directly supported by the current OpenGL implementation, then looking among the \a ARB extensions, then looking among the \a EXT extensions, then among the vendor specific extensions if necessary.
-
-<div class="featuretitle">VLX Serialization Framework</div>
-
-VL provides its own serialization framework called VLX. VLX is actually more than a serialization framework. VLX comes in two forms: VLT (text) and VLB (binary). A VLT file is something like XML or JSON but much less verbose and more efficient in terms of parsing and data extraction. A VLT file can typically contain GLSL shader code as is (impossible with XML and JSON), when loaded can automatically resolve object references, even cyclical ones, can recognize automatically large block of numerical data and present them as an std::vector<> of \a double or \a long '\a long. VLT files can also be linked together and refer to objects defined in other VLT or VLB files. A VLB file is simply a compact binary encoding of a VLT file. VLT have been designed to store data efficiently yet to be easily editable by humans, while a VLB has been designed to retain all the information contained in a VLT file but storing them for quick input/output.
-
-VLT and VLB files can currently contain geometries, actors, transform, materials, lights, textures, cameras and all the most common VL classes. More will be added in the future and more can be added by the user either by subclassing existing ones or creating new serialized classes from scratch.
-
-The VLX framework allows the user also to modify the VLX hierachy before it is serialized into a VLT or VLB much like a COLLADA user would moanipulate the XML DOM tree to add custom fields.
-
-\par Classes
-
-vl::VLXSerializer, vl::VLXParserVLT, vl::VLXParserVLB, vl::VLXValue, vl::LoadWriterVLX, vl::loadVLT(), vl::saveVLT(), vl::loadVLB(), vl::saveVLB()
+However, exploiting effectively all the possible hardware configurations and all the available extensions can easily become an overwhelming task. For this reason Visualization Library tackles this task for you, querying the available extensions in an automatic manner (via GLEW) and selecting and using the most appropriate ones to deliver maximum performance and stability. We refer to this intelligent selection mechanism as "Progressive OpenGL Extension Management". The principle is very simple, wherever an OpenGL feature is requested not only Visualization Library looks for \a an extension to support it but looks for the \a best implementation of that functionality, checking first among the functions which are directly supported by the current OpenGL implementation, then looking among the \a ARB extensions, then looking among the \a EXT extensions, then among the vendor specific extensions if necessary.
 
 <div class="featuretitle">Advanced Texturing</div>
 
@@ -246,7 +234,7 @@ The vl::Texture class provides out of the box and transparent support for all th
 
 \par Classes
 
-vl::Image, vl::Texture, vl::TexParameter, vl::TexEnv, vl::TexGen, vl::TextureMatrix, vl::TextureSampler, vl::CopyTexSubImage1D, vl::CopyTexSubImage2D, vl::CopyTexSubImage3D, vl::Shader
+vl::Image, vl::Texture, vl::TexParameter, vl::TexEnv, vl::TexGen, vl::TextureMatrix, vl::TextureUnit, vl::CopyTexSubImage1D, vl::CopyTexSubImage2D, vl::CopyTexSubImage3D, vl::Shader
 
 \par Related Pages
 

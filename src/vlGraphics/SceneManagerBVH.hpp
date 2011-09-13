@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -54,9 +54,9 @@ namespace vl
   template<class T>
   class VLGRAPHICS_EXPORT SceneManagerBVH: public SceneManager
   {
-    VL_INSTRUMENT_CLASS(vl::SceneManagerBVH<T>, SceneManager)
-
   public:
+    virtual const char* className() { return "vl::SceneManagerBVH"; }
+
     //! Sets the tree to be used by the scene manager.
     void setTree(T* bbh) { mBoundingVolumeTree = bbh; }
     //! Returns the tree used by the scene manager.

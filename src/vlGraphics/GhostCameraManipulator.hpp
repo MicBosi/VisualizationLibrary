@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -54,9 +54,9 @@ namespace vl
    */
   class VLGRAPHICS_EXPORT GhostCameraManipulator: public UIEventListener
   {
-    VL_INSTRUMENT_CLASS(vl::GhostCameraManipulator, UIEventListener)
-
   public:
+    virtual const char* className() { return "vl::GhostCameraManipulator"; }
+
     /** Constructor. */
     GhostCameraManipulator();
 
@@ -122,38 +122,38 @@ namespace vl
     void setKeysDown(EKey key, EKey modifier = Key_None)     { mKeysDown[0] = key; mKeysDown[1] = modifier; };
 
     /** The camera rotation speed (default = 0.5). */
-    void setRotationSpeed(real speed) { mRotationSpeed = speed; }
+    void setRotationSpeed(Real speed) { mRotationSpeed = speed; }
     
     /** The camera rotation speed (default = 0.5). */
-    real rotationSpeed() const { return mRotationSpeed; }
+    Real rotationSpeed() const { return mRotationSpeed; }
     
     /** The camera translation speed (default = 50). */
-    void setMovementSpeed(real speed) { mMovementSpeed = speed; }
+    void setMovementSpeed(Real speed) { mMovementSpeed = speed; }
 
     /** The camera translation speed (default = 50). */
-    real movementSpeed() const { return mMovementSpeed; }
+    Real movementSpeed() const { return mMovementSpeed; }
 
   protected:
     void setPosition(vec3 position) { mPosition = position; }
 
     const vec3& position() const { return mPosition; }
 
-    void setXDegrees(real degree) { mXDegrees = degree; }
+    void setXDegrees(Real degree) { mXDegrees = degree; }
 
-    real xDegrees() { return mXDegrees; }
+    Real xDegrees() { return mXDegrees; }
 
-    void setYDegrees(real degree) { mYDegrees = degree; }
+    void setYDegrees(Real degree) { mYDegrees = degree; }
 
-    real yDegrees() { return mYDegrees; }
+    Real yDegrees() { return mYDegrees; }
 
   protected:
     ref<Camera> mCamera;
     vec3 mPosition;
-    real mLastTime;
-    real mRotationSpeed;
-    real mMovementSpeed;
-    real mXDegrees;
-    real mYDegrees;
+    Real mLastTime;
+    Real mRotationSpeed;
+    Real mMovementSpeed;
+    Real mXDegrees;
+    Real mYDegrees;
     EKey mKeysForward[2];
     EKey mKeysBackward[2];
     EKey mKeysUp[2];

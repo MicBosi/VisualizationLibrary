@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -61,9 +61,9 @@ namespace vl
    */
   class Bond: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Bond, Object)
-
   public:
+    virtual const char* className() { return "vl::Atom"; }
+
     Bond(): mColor( 1.0f,1.0f,1.0f,1.0f ), mRadius(0.10f), mAtom1(NULL), mAtom2(NULL), mType(BT_Single), mId(0), mVisible(true), mUseAtomColors(true) 
     {
       VL_DEBUG_SET_OBJECT_NAME()

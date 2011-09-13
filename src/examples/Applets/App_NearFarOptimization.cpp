@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -32,6 +32,7 @@
 #include "BaseDemo.hpp"
 #include <vlGraphics/GeometryPrimitives.hpp>
 #include <vlGraphics/Light.hpp>
+#include <vlGraphics/GeometryLoadCallback.hpp>
 
 using namespace vl;
 
@@ -41,6 +42,9 @@ public:
   // called once after the OpenGL window has been opened 
   void initEvent()
   {
+    ref<GeometryLoadCallback> glc = new GeometryLoadCallback;
+    defLoadWriterManager()->loadCallbacks()->push_back(glc.get());
+
     // allocate the Transform 
     mCubeTransform = new Transform;
     // bind the Transform with the transform tree of the rendring pipeline 
@@ -58,7 +62,7 @@ public:
     // enable depth test and lighting 
     effect1->shader()->enable(EN_DEPTH_TEST);
     // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
-    effect1->shader()->setRenderState( new Light, 0 );
+    effect1->shader()->setRenderState( new Light(0) );
     // enable the standard OpenGL lighting 
     effect1->shader()->enable(EN_LIGHTING);
     // set the front and back material color of the cube 
@@ -70,7 +74,7 @@ public:
     // enable depth test and lighting 
     effect2->shader()->enable(EN_DEPTH_TEST);
     // add a Light to the scene, since no Transform is associated to the Light it will follow the camera 
-    effect2->shader()->setRenderState( new Light, 0 );
+    effect2->shader()->setRenderState( new Light(0) );
     // enable the standard OpenGL lighting 
     effect2->shader()->enable(EN_LIGHTING);
     // set the front and back material color of the cube 
@@ -89,7 +93,7 @@ public:
   virtual void updateScene()
   {
     // rotates the cube around the Y axis 45 degrees per second 
-    real degrees = Time::currentTime() * 45.0f;
+    Real degrees = Time::currentTime() * 45.0f;
     mat4 matrix = mat4::getRotation( degrees, 0,1,0 );
     mCubeTransform->setLocalMatrix( matrix );
 
@@ -100,7 +104,7 @@ public:
     {
       rendering()->as<Rendering>()->setNearFarClippingPlanesOptimized(false);
       // restore default perspective near/far values
-      rendering()->as<Rendering>()->camera()->setProjectionPerspective(60.0f, 0.5f, 10000.0f);
+      rendering()->as<Rendering>()->camera()->setProjectionAsPerspective(60.0f, 0.5f, 10000.0f);
     }
   }
 

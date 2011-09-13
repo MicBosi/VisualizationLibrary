@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -36,63 +36,49 @@
 using namespace vl;
 
 //------------------------------------------------------------------------------
-RenderStateSet& RenderStateSet::deepCopyFrom(const RenderStateSet& other)
-{
-  mRenderStates = other.mRenderStates;
-  for(size_t i=0; i<mRenderStates.size(); ++i)
-    mRenderStates[i].mRS = mRenderStates[i].mRS->clone();
-  return *this;
-}
-//------------------------------------------------------------------------------
-void RenderStateSet::setRenderState(RenderState* renderstate, int index)
+void RenderStateSet::setRenderState(RenderState* renderstate)
 {
   if (renderstate)
   {
     if (renderstate->type() == RS_GLSLProgram)
-      mGLSLProgram = static_cast<GLSLProgram*>(renderstate);
+      mGLSLProgram = dynamic_cast<GLSLProgram*>(renderstate);
     for(unsigned i=0; i<mRenderStates.size(); ++i)
     {
-      if (mRenderStates[i].mRS->type() == renderstate->type() && mRenderStates[i].mIndex == index)
+      if (mRenderStates[i]->type() == renderstate->type())
       {
-        mRenderStates[i].mRS = renderstate;
-        // mRenderStates[i].mIndex = index;
+        mRenderStates[i] = renderstate;
         return;
       }
     }
-    mRenderStates.push_back( RenderStateSlot(renderstate, index) );
+    mRenderStates.push_back( renderstate );
   }
 }
 //------------------------------------------------------------------------------
-RenderState* RenderStateSet::renderState( ERenderState type, int index )
+RenderState* RenderStateSet::renderState( ERenderState type )
 {
   for(unsigned i=0; i<mRenderStates.size(); ++i)
-    if (mRenderStates[i].mRS->type() == type && mRenderStates[i].mIndex == index)
-      return mRenderStates[i].mRS.get();
+    if ( mRenderStates[i]->type() == type )
+      return mRenderStates[i].get();
   return NULL;
 }
 //------------------------------------------------------------------------------
-const RenderState* RenderStateSet::renderState( ERenderState type, int index ) const
+const RenderState* RenderStateSet::renderState( ERenderState type ) const
 {
   for(unsigned i=0; i<mRenderStates.size(); ++i)
-    if (mRenderStates[i].mRS->type() == type && mRenderStates[i].mIndex == index)
-      return mRenderStates[i].mRS.get();
+    if ( mRenderStates[i]->type() == type )
+      return mRenderStates[i].get();
   return NULL;
 }
 //------------------------------------------------------------------------------
-void RenderStateSet::eraseRenderState(ERenderState type, int index)
+void RenderStateSet::eraseRenderState(ERenderState type)
 {
   if (type == RS_GLSLProgram)
     mGLSLProgram = NULL;
   for(unsigned i=0; i<mRenderStates.size(); ++i)
-  {
-    if (mRenderStates[i].mRS->type() == type && (index == mRenderStates[i].mIndex || index == -1))
+    if (mRenderStates[i]->type() == type)
     {
       mRenderStates.erase(mRenderStates.begin() + i);
-      if (index == -1)
-        continue; // just for clarity
-      else
-        return;
+      return;
     }
-  }
 }
 //------------------------------------------------------------------------------

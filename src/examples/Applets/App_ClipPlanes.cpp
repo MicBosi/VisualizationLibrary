@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -41,7 +41,7 @@ class App_ClipPlanes: public BaseDemo
 public:
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     // load model
     vl::ref<vl::Geometry> model = vl::loadResource("/models/3ds/monkey.3ds")->get<vl::Geometry>(0);
@@ -52,7 +52,7 @@ public:
     rendering()->as<vl::Rendering>()->transform()->addChild(mClipTr.get());
 
     // to be used later
-    vl::ref<vl::Light> light = new vl::Light;
+    vl::ref<vl::Light> light = new vl::Light(0);
 
     // demonstrates multipassing clipping
 
@@ -60,23 +60,23 @@ public:
     vl::ref<vl::Shader> clip1_sh = new vl::Shader; 
     vl::ref<vl::Shader> clip2_sh = new vl::Shader;
     // setup clipping pass 1
-    clip1_sh->setRenderState( light.get(), 0 );
+    clip1_sh->setRenderState( light.get() );
     clip1_sh->enable(vl::EN_LIGHTING);
     clip1_sh->enable(vl::EN_DEPTH_TEST);
     clip1_sh->gocMaterial()->setBackDiffuse(vl::yellow);
     clip1_sh->gocLightModel()->setTwoSide(true);
     // clipping plane 1 setup
     clip1_sh->gocClipPlane(0)->setPlane( vl::Plane(0.2f, vl::vec3(0,+1,0)) );
-    clip1_sh->gocClipPlane(0)->bindTransform( mClipTr.get() );
+    clip1_sh->gocClipPlane(0)->followTransform( mClipTr.get() );
     // setup clipping pass 2
-    clip2_sh->setRenderState( light.get(), 0 );
+    clip2_sh->setRenderState( light.get() );
     clip2_sh->enable(vl::EN_LIGHTING);
     clip2_sh->enable(vl::EN_DEPTH_TEST);
     clip2_sh->gocMaterial()->setBackDiffuse(vl::green);
     clip2_sh->gocLightModel()->setTwoSide(true);
     // clipping plane 2 setup
     clip2_sh->gocClipPlane(0)->setPlane( vl::Plane(0.2f, vl::vec3(0,-1,0)) );
-    clip2_sh->gocClipPlane(0)->bindTransform( mClipTr.get() );
+    clip2_sh->gocClipPlane(0)->followTransform( mClipTr.get() );
     // install the two passes for LOD 0
     clip_fx->setLOD(0, clip1_sh.get(), clip2_sh.get());
     // add model to the scene
@@ -89,17 +89,18 @@ public:
     plane_fx->setRenderRank(1); // draw after the clipped model
     plane_fx->shader()->enable(vl::EN_DEPTH_TEST);
     plane_fx->shader()->enable(vl::EN_BLEND);
+    plane_fx->shader()->gocMaterial()->setColorMaterialEnabled(true);
     plane_fx->shader()->gocLightModel()->setTwoSide(true);
-    plane_fx->shader()->gocColor()->setValue(vl::fvec4(1,0,0,0.3f)); // transparent red
     // add plane actor
     vl::ref<vl::Geometry> plane = vl::makeGrid( vl::vec3(0,0,0), 4,4, 2,2 );
+    plane->setColor(vl::fvec4(1,0,0,0.3f)); // transparent red
     sceneManager()->tree()->addActor( plane.get(), plane_fx.get(), mClipTr.get() );
   }
 
   virtual void updateScene()
   {
     // animate the clipping planes and the rendered plane
-    vl::real t = (vl::real)vl::Time::currentTime();
+    vl::Real t = (vl::Real)vl::Time::currentTime();
     mClipTr->setLocalMatrix( vl::mat4::getRotation(t*90.0f, sin(t*(vl::fPi-3.0f)),1,cos(t)) );
   }
 

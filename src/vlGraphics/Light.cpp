@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -40,9 +40,13 @@ using namespace vl;
 //------------------------------------------------------------------------------
 // Light
 //------------------------------------------------------------------------------
-Light::Light()
+Light::Light(int light_index)
 {
   VL_DEBUG_SET_OBJECT_NAME()
+  if (light_index<0 && light_index>7)
+    Log::error( Say("Light index %n out of range. The light index must be between 0 and 7.\n") << light_index );
+  VL_CHECK(light_index>=0 && light_index<8) 
+  mLightIndex = light_index;
   mAmbient = fvec4(0,0,0,1);
   mDiffuse = fvec4(1,1,1,1);
   mSpecular = fvec4(1,1,1,1);
@@ -50,26 +54,32 @@ Light::Light()
   mSpotDirection = fvec3(0,0,-1);
   mSpotExponent = 0;
   mSpotCutoff = 180.0f;
-  mConstantAttenuation  = 1.0f;
+  mConstantAttenuation   = 1.0f;
   mLinearAttenuation    = 0.0f;
   mQuadraticAttenuation = 0.0f;
-  mBoundTransform = NULL;
+  mFollowedTransform = NULL;
 }
 //------------------------------------------------------------------------------
-void Light::apply(int index, const Camera* camera, OpenGLContext*) const
+void Light::setLightIndex(int light_index)
+{ 
+  if (light_index<0 && light_index>7)
+    Log::error( Say("Light index %n out of range. The light index must be between 0 and 7.\n") << light_index );
+  VL_CHECK(light_index>=0 && light_index<8) 
+  mLightIndex = light_index; 
+}
+//------------------------------------------------------------------------------
+void Light::apply(const Camera* camera, OpenGLContext* ctx) const
 {
-  VL_CHECK_OGL()
-
   if (camera)
   {
-    glEnable (GL_LIGHT0 + index); VL_CHECK_OGL()
+    glEnable (GL_LIGHT0 + lightIndex());
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
 
     // follows the given node
-    if ( boundTransform() )
-      camera->applyModelViewMatrix( boundTransform()->worldMatrix() );
+    if ( followedTransform() )
+      camera->applyModelViewMatrix( followedTransform()->worldMatrix() );
     else
     {
       // follows the camera
@@ -77,28 +87,28 @@ void Light::apply(int index, const Camera* camera, OpenGLContext*) const
       glLoadIdentity();
     }
 
-    glLightfv(GL_LIGHT0+index, GL_AMBIENT,  mAmbient.ptr());
-    glLightfv(GL_LIGHT0+index, GL_DIFFUSE,  mDiffuse.ptr());
-    glLightfv(GL_LIGHT0+index, GL_SPECULAR, mSpecular.ptr());
-    glLightfv(GL_LIGHT0+index, GL_POSITION, mPosition.ptr());
+    glLightfv(GL_LIGHT0+lightIndex(), GL_AMBIENT,  mAmbient.ptr());
+    glLightfv(GL_LIGHT0+lightIndex(), GL_DIFFUSE,  mDiffuse.ptr());
+    glLightfv(GL_LIGHT0+lightIndex(), GL_SPECULAR, mSpecular.ptr());
+    glLightfv(GL_LIGHT0+lightIndex(), GL_POSITION, mPosition.ptr());
 
-    glLightf(GL_LIGHT0+index, GL_SPOT_CUTOFF, mSpotCutoff);
+    glLightf(GL_LIGHT0+lightIndex(), GL_SPOT_CUTOFF, mSpotCutoff);
 
     // if its a spot light
     if (mSpotCutoff != 180.0f) 
     {
       VL_CHECK(mSpotCutoff>=0.0f && mSpotCutoff<=90.0f);
-      glLightfv(GL_LIGHT0+index, GL_SPOT_DIRECTION, mSpotDirection.ptr());
-      glLightf(GL_LIGHT0+index, GL_SPOT_EXPONENT, mSpotExponent);
+      glLightfv(GL_LIGHT0+lightIndex(), GL_SPOT_DIRECTION, mSpotDirection.ptr());
+      glLightf(GL_LIGHT0+lightIndex(), GL_SPOT_EXPONENT, mSpotExponent);
     }
 
     // if positional or spot light compute the attenuation factors, that is
     // attenuation is useless of directional lights.
     if (mSpotCutoff != 180.0f || mPosition.w() != 0)
     {
-      glLightf(GL_LIGHT0+index, GL_CONSTANT_ATTENUATION, mConstantAttenuation);
-      glLightf(GL_LIGHT0+index, GL_LINEAR_ATTENUATION, mLinearAttenuation);
-      glLightf(GL_LIGHT0+index, GL_QUADRATIC_ATTENUATION, mQuadraticAttenuation);
+      glLightf(GL_LIGHT0+lightIndex(), GL_CONSTANT_ATTENUATION, mConstantAttenuation);
+      glLightf(GL_LIGHT0+lightIndex(), GL_LINEAR_ATTENUATION, mLinearAttenuation);
+      glLightf(GL_LIGHT0+lightIndex(), GL_QUADRATIC_ATTENUATION, mQuadraticAttenuation);
     }
 
     /*glMatrixMode(GL_MODELVIEW);*/
@@ -106,22 +116,22 @@ void Light::apply(int index, const Camera* camera, OpenGLContext*) const
   }
   else
   {
-    glDisable(GL_LIGHT0 + index);
+    glDisable(GL_LIGHT0 + lightIndex());
   }
 }
 //------------------------------------------------------------------------------
-void Light::bindTransform(Transform* transform) 
+void Light::followTransform(Transform* transform) 
 { 
-  mBoundTransform = transform; 
+  mFollowedTransform = transform; 
 }
 //------------------------------------------------------------------------------
-Transform* Light::boundTransform()
+Transform* Light::followedTransform()
 { 
-  return mBoundTransform.get(); 
+  return mFollowedTransform.get(); 
 }
 //------------------------------------------------------------------------------
-const Transform* Light::boundTransform() const
+const Transform* Light::followedTransform() const
 { 
-  return mBoundTransform.get(); 
+  return mFollowedTransform.get(); 
 }
 //------------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
-/*  Copyright (c) 2005-2011, Michele Bosi                                             */
+/*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
 /*                                                                                    */
 /*  Redistribution and use in source and binary forms, with or without modification,  */
@@ -34,7 +34,7 @@
 
 #include <vlCore/Object.hpp>
 #include <vlGraphics/UIEventListener.hpp>
-#include <vlGraphics/FramebufferObject.hpp> // Framebuffer and FramebufferObject
+#include <vlGraphics/FramebufferObject.hpp> // RenderTarget and FBORenderTarget
 #include <vlGraphics/RenderState.hpp>
 #include <vector>
 #include <set>
@@ -64,8 +64,9 @@ namespace vl
       mMultisampleSamples(16),
       mStereo(false),
       mFullscreen(false),
-      mVSync(false),
-      mContextClientVersion(1) {}
+      mVSync(false) 
+    {}
+    virtual const char* className() { return "vl::OpenGLContextFormat"; }
 
     void setRGBABits(int r, int g, int b, int a) { mRGBABits = ivec4(r,g,b,a); }
     void setAccumRGBABits(int r, int g, int b, int a) { mAccumRGBABits = ivec4(r,g,b,a); }
@@ -77,8 +78,6 @@ namespace vl
     void setStereo(bool stereo_on) { mStereo = stereo_on; }
     void setFullscreen(bool fullscreent) { mFullscreen = fullscreent; }
     void setVSync(bool vsync_on) { mVSync = vsync_on; }
-    //! Used by EGLWindow to initialize either GLES 1.x or GLES 2.x contexts.
-    void setContextClientVersion(int version) { mContextClientVersion = version; }
 
     const ivec4& rgbaBits() const { return mRGBABits; }
     const ivec4& accumRGBABits() const { return mAccumRGBABits; }
@@ -90,8 +89,6 @@ namespace vl
     bool stereo() const { return mStereo; }
     bool fullscreen() const { return mFullscreen; }
     bool vSync() const { return mVSync; }
-    //! Used by EGLWindow to initialize either GLES 1.x or GLES 2.x contexts.
-    int contextClientVersion() const { return mContextClientVersion; }
 
     //! Returns rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a()
     int bitsPerPixel() const { return rgbaBits().r() + rgbaBits().g() + rgbaBits().b() + rgbaBits().a(); }
@@ -107,7 +104,6 @@ namespace vl
     bool mStereo;
     bool mFullscreen;
     bool mVSync;
-    int mContextClientVersion;
   };
   //-----------------------------------------------------------------------------
   // OpenGLContext
@@ -125,13 +121,9 @@ namespace vl
   //!   the EventListeners can safely add/remove themselves or other EventListeners to the OpenGLContext itself. */
   class VLGRAPHICS_EXPORT OpenGLContext: public Object
   {
-    VL_INSTRUMENT_ABSTRACT_CLASS(vl::OpenGLContext, Object)
-    friend class VertexAttrib;
-    friend class Color;
-    friend class SecondaryColor;
-    friend class Normal;
-
   public:
+    virtual const char* className() { return "vl::OpenGLContext"; }
+
     //! Constructor.
     OpenGLContext(int w=0, int h=0);
 
@@ -145,14 +137,11 @@ namespace vl
     virtual void makeCurrent() = 0;
 
     //! Initializes the supported OpenGL extensions.
-    bool initGLContext(bool log=true);
+    void initGLContext(bool log=true);
 
     //! Logs some information about the OpenGL context
     void logOpenGLInfo();
 
-    //! Returns the list of OpenGL extensions supported separated by '|' characters.
-    const std::string& extensions() const { return mExtensions; }
-    
     //! Returns true if the given extension is supported.
     //! \note This is a relatively slow function, don't use it inside loops and similar.
     bool isExtensionSupported(const char* ext_name);
@@ -161,25 +150,25 @@ namespace vl
     void* getProcAddress(const char* function_name);
 
     //! The render target representing this OpenGL context.
-    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    Framebuffer* framebuffer() { return mFramebuffer.get(); }
+    //! The returned RenderTarget's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    RenderTarget* renderTarget() { return mRenderTarget.get(); }
 
     //! The render target representing this OpenGL context.
-    //! The returned Framebuffer's dimensions will be automatically updated to the OpenGLContext's dimensions.
-    const Framebuffer* framebuffer() const { return mFramebuffer.get(); }
+    //! The returned RenderTarget's dimensions will be automatically updated to the OpenGLContext's dimensions.
+    const RenderTarget* renderTarget() const { return mRenderTarget.get(); }
 
-    //! Equivalent to \p "createFramebufferObject(0,0);".
-    ref<FramebufferObject> createFramebufferObject() { return createFramebufferObject(0,0); }
+    //! Equivalent to \p "createFBORenderTarget(0,0);".
+    ref<FBORenderTarget> createFBORenderTarget() { return createFBORenderTarget(0,0); }
 
-    //! Creates a new FramebufferObject (framebuffer object Framebuffer).
+    //! Creates a new FBORenderTarget (framebuffer object RenderTarget).
     //! \note A framebuffer object always belongs to an OpenGL context and in order to render on it the appropriate OpenGL context must be active.
-    ref<FramebufferObject> createFramebufferObject(int width, int height);
+    ref<FBORenderTarget> createFBORenderTarget(int width, int height);
 
-    //! Destroys the specified FramebufferObject.
-    void destroyFramebufferObject(FramebufferObject* fbort);
+    //! Destroys the specified FBORenderTarget.
+    void destroyFBORenderTarget(FBORenderTarget* fbort);
 
-    //! Removes all FramebufferObjects belonging to an OpenGLContext.
-    void destroyAllFramebufferObjects();
+    //! Removes all FBORenderTargets belonging to an OpenGLContext.
+    void destroyAllFBORenderTargets();
 
     //! Asks to the windowing system that is managing the OpenGLContext to quit the application.
     virtual void quitApplication() {}
@@ -212,10 +201,10 @@ namespace vl
     virtual void setSize(int /*w*/, int /*h*/) {}
 
     //! Returns the width in pixels of an OpenGLContext.
-    int width() const { return mFramebuffer->width(); }
+    int width() const { return mRenderTarget->width(); }
     
     //! Returns the height in pixels of an OpenGLContext.
-    int height() const { return mFramebuffer->height(); }
+    int height() const { return mRenderTarget->height(); }
 
     //! If the OpenGL context is a widget this function sets whether the mouse is visible over it or not.
     virtual void setMouseVisible(bool) { mMouseVisible=false; }
@@ -256,10 +245,7 @@ namespace vl
     const std::vector< ref<UIEventListener> >& eventListeners() const { return mEventListeners; }
     
     //! Returns the \p i-th UIEventListener registered to an OpenGLContext.
-    const UIEventListener* eventListener(int i) const { return mEventListeners[i].get(); }
-    
-    //! Returns the \p i-th UIEventListener registered to an OpenGLContext.
-    UIEventListener* eventListener(int i) { return mEventListeners[i].get(); }
+    UIEventListener* eventListener(int i) const { return mEventListeners[i].get(); }
     
     //! Returns the number of UIEventListener registered to an OpenGLContext.
     int eventListenerCount() const { return (int)mEventListeners.size(); }
@@ -278,8 +264,8 @@ namespace vl
     void dispatchResizeEvent(int w, int h) 
     {
       makeCurrent();
-      mFramebuffer->setWidth(w);
-      mFramebuffer->setHeight(h);
+      mRenderTarget->setWidth(w);
+      mRenderTarget->setHeight(h);
 
       std::vector< ref<UIEventListener> > temp_clients = eventListeners();
       for( unsigned i=0; i<temp_clients.size(); ++i )
@@ -355,7 +341,7 @@ namespace vl
     }
 
     //! Dispatches the UIEventListener::destroyEvent() notification to the subscribed UIEventListener(s), 
-    //! calls destroyAllFramebufferObjects() and eraseAllEventListeners()
+    //! calls destroyAllFBORenderTargets() and eraseAllEventListeners()
     //! This event must be issued just before the actual GL context is destroyed.
     void dispatchDestroyEvent()
     {
@@ -364,7 +350,7 @@ namespace vl
       for( unsigned i=0; i<temp_clients.size(); ++i )
         if ( temp_clients[i]->isEnabled() )
           temp_clients[i]->destroyEvent();
-      destroyAllFramebufferObjects();
+      destroyAllFBORenderTargets();
       eraseAllEventListeners();
     }
 
@@ -428,10 +414,19 @@ namespace vl
     bool isInitialized() const { return mIsInitialized; }
 
     //! The number (clamped to VL_MAX_TEXTURE_UNITS) of texture units supported by the current hardware.
-    int textureUnitCount() const { return mTextureSamplerCount; }
+    int textureUnitCount() const { return mTextureUnitCount; }
 
     //! Returns \p true if an OpenGLContext supports double buffering.
     bool hasDoubleBuffer() const { return mHasDoubleBuffer; }
+    
+    //! Returns \p true if an OpenGLContext provides backwards compatibility to previous OpenGL API versions.
+    bool isCompatible() const { return mIsCompatible; }
+
+    //! Returns the OpenGL's driver version's major number.
+    int openglVersionMajorNumber() const { return mMajorVersion; }
+
+    //! Returns the OpenGL's driver version's minor number.
+    int openglVersionMinorNumber() const { return mMinorVersion; }
 
     // --- render states management ---
 
@@ -442,11 +437,11 @@ namespace vl
     //! \param force Binds \p vas even if it was the last to be activated (this is also valid for NULL).
     void bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool force);
 
-    //! Applies an EnableSet to an OpenGLContext - Typically for internal use only.
-    void applyEnables( const EnableSet* cur );
+    //! Applies an EnableSet to an OpenGLContext - For internal use only.
+    void applyEnables( const EnableSet* prev, const EnableSet* cur );
 
-    //! Applies a RenderStateSet to an OpenGLContext - Typically for internal use only.
-    void applyRenderStates( const RenderStateSet* cur, const Camera* camera );
+    //! Applies a RenderStateSet to an OpenGLContext - For internal use only.
+    void applyRenderStates( const RenderStateSet* prev, const RenderStateSet* cur, const Camera* camera );
 
     //! Resets all the interanal enable-tables - For internal use only.
     void resetEnables();
@@ -455,7 +450,7 @@ namespace vl
     void resetRenderStates();
 
     //! Resets the OpenGL states necessary to begin and finish a rendering. - For internal use only.
-    void resetContextStates(EResetContextStates start_or_finish);
+    void resetContextStates();
 
     //! Declares that texture unit \p unit_i is currently bound to the specified texture target. - For internal use only.
     void setTexUnitBinding(int unit_i, ETextureDimension target) 
@@ -477,7 +472,7 @@ namespace vl
     //! Checks whether the OpenGL state is clean or not.
     //! \par Clean state conditions:
     //! - All functionalities must be disabled, no GL_LIGHTING, GL_DEPTH_TEST, GL_LIGHTn, GL_CLIP_PLANEn etc. enabled, 
-    //!   with the sole exception of GL_MULTISAMPLE and GL_DITHER.
+    //!   with the sole exception of GL_MULTISAMPLE.
     //! - All buffer objects targets such as GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER etc. must be bound to buffer object #0.
     //! - Current texture unit and client texture unit must be #0.
     //! - All texture matrices must be set to identity.
@@ -494,43 +489,33 @@ namespace vl
     //! - <i>In general all OpenGL render states should be set to their default values.</i>
     bool isCleanState(bool verbose);
 
-  public:
-    // constant color
-    const fvec3& normal() const { return mNormal; }
-    const fvec4& color() const { return mColor; }
-    const fvec3& secondaryColor() const { return mSecondaryColor; }
-    const fvec4& vertexAttribValue(int i) const { VL_CHECK(i<VL_MAX_GENERIC_VERTEX_ATTRIB); return mVertexAttribValue[i]; }
-
   protected:
-    ref<Framebuffer> mFramebuffer;
-    std::vector< ref<FramebufferObject> > mFramebufferObject;
+    ref<RenderTarget> mRenderTarget;
+    std::vector< ref<FBORenderTarget> > mFBORenderTarget;
     std::vector< ref<UIEventListener> > mEventListeners;
     std::set<EKey> mKeyboard;
     OpenGLContextFormat mGLContextInfo;
     int mMaxVertexAttrib;
-    int mTextureSamplerCount;
+    int mTextureUnitCount;
+    int mMajorVersion;
+    int mMinorVersion;
     bool mMouseVisible;
     bool mContinuousUpdate;
     bool mIgnoreNextMouseMoveEvent;
     bool mFullscreen;
     bool mHasDoubleBuffer;
     bool mIsInitialized;
-    std::string mExtensions;
+    bool mIsCompatible;
 
     // --- Render States ---
     // state table
     int mEnableTable[EN_EnableCount];
-    int mRenderStateTable[RS_RenderStateCount];
+    int mRenderStateTable[RS_COUNT];
     // current state
     bool mCurrentEnable[EN_EnableCount];
-    const RenderState* mCurrentRenderState[RS_RenderStateCount];
-    // previous state
-    EEnable mPrevEnables[EN_EnableCount];
-    int mPrevEnablesCount;
-    ERenderState mPrevRenderStates[RS_RenderStateCount];
-    int mPrevRenderStatesCount;
+    const RenderState* mCurrentRenderState[RS_COUNT];
     // default render states
-    RenderStateSlot mDefaultRenderStates[RS_RenderStateCount];
+    ref<RenderState> mDefaultRenderStates[RS_COUNT];
 
     // for each texture unit tells which target has been bound last.
     ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];
@@ -538,13 +523,12 @@ namespace vl
   private:
     struct VertexArrayInfo
     {
-      VertexArrayInfo(): mBufferObject(0), mPtr(0), mState(0), mEnabled(false) {}
-      int   mBufferObject;
+      VertexArrayInfo(): mVBO(0), mPtr(0), mState(0), mEnabled(false) {}
+      int   mVBO;
       const unsigned char* mPtr;
       int mState;
       bool mEnabled;
     };
-
   protected:
     // --- VertexAttribSet Management ---
     const IVertexAttribSet* mCurVAS;
@@ -555,12 +539,6 @@ namespace vl
     VertexArrayInfo mFogArray;
     VertexArrayInfo mTexCoordArray[VL_MAX_TEXTURE_UNITS];
     VertexArrayInfo mVertexAttrib[VL_MAX_GENERIC_VERTEX_ATTRIB];
-
-    // save and restore constant attributes
-    fvec3 mNormal;
-    fvec4 mColor;
-    fvec3 mSecondaryColor;
-    fvec4 mVertexAttribValue[VL_MAX_GENERIC_VERTEX_ATTRIB];
 
   private:
     void setupDefaultRenderStates();

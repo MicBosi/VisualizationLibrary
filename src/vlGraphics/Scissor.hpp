@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -46,10 +46,8 @@ namespace vl
    */
   class Scissor: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Scissor, Object)
-
   public:
-    Scissor() {}
+    virtual const char* className() { return "vl::Scissor"; }
 
     Scissor(int x, int y, int width, int height)
     {

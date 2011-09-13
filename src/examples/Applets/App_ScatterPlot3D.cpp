@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -48,7 +48,7 @@ public:
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    vl::Log::print(appletInfo());
 
     vl::ref<vl::Effect> effect = new vl::Effect;
 
@@ -66,30 +66,30 @@ public:
     {
       effect->shader()->gocPointSize()->set(10.0f);
 
-      if (vl::Has_Point_Sprite)
+      if (GLEW_ARB_point_sprite)
       {
         vl::ref<vl::Image> img = vl::loadImage("/images/particle.tif");
-        effect->shader()->gocTextureSampler(0)->setTexture( new vl::Texture( img.get() ) );
+        effect->shader()->gocTextureUnit(0)->setTexture( new vl::Texture( img.get() ) );
         effect->shader()->gocTexEnv(0)->setPointSpriteCoordReplace(true);
-        effect->shader()->enable(vl::EN_POINT_SPRITE); 
+        effect->shader()->enable(vl::EN_POINT_SPRITE);
       }
       else
-        vl::Log::error("Point sprites not supported.\n");
+        vl::Log::error("GL_ARB_point_sprite not supported.\n");
 
-       effect->shader()->enable(vl::EN_DEPTH_TEST);
-       effect->shader()->enable(vl::EN_CULL_FACE);
-       effect->shader()->enable(vl::EN_ALPHA_TEST);
-       effect->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 1.0f - 0.02f);
-       effect->shader()->enable(vl::EN_BLEND);
+      effect->shader()->enable(vl::EN_DEPTH_TEST);
+      effect->shader()->enable(vl::EN_CULL_FACE);
+      effect->shader()->enable(vl::EN_ALPHA_TEST);
+      effect->shader()->gocAlphaFunc()->set(vl::FU_GEQUAL, 1.0f - 0.02f);
+      effect->shader()->enable(vl::EN_BLEND);
     }
 
     std::vector< vl::vec3 > pointset;
     for(int i=0; i<100000; i++)
     {
       vl::vec3 v;
-      v.x() = vl::random(-1,+1)*320;
-      v.y() = vl::random(-1,+1)*320;
-      v.z() = vl::random(-1,+1)*320;
+      v.x() = vl::randomMinMax(-1,+1)*320;
+      v.y() = vl::randomMinMax(-1,+1)*320;
+      v.z() = vl::randomMinMax(-1,+1)*320;
       pointset.push_back(v);
     }
 
@@ -102,7 +102,7 @@ public:
     ax_effect->shader()->enable(vl::EN_LIGHTING);
     ax_effect->shader()->enable(vl::EN_DEPTH_TEST);
     ax_effect->shader()->enable(vl::EN_CULL_FACE);
-    ax_effect->shader()->setRenderState( new vl::Light, 0 );
+    ax_effect->shader()->setRenderState( new vl::Light(0) );
     ax_effect->shader()->gocMaterial()->setDiffuse(vl::red);
 
     vl::ref<vl::Geometry> axis1 = vl::makeCylinder( vl::vec3(-360,0,-360), 10, 360*2 );

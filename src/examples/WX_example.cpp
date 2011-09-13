@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -107,7 +107,7 @@ bool MyApp::OnInit()
   applet->initialize();
 
   /* target the window so we can render on it */
-  applet->rendering()->as<Rendering>()->renderer()->setFramebuffer( vl_gl_canvas->framebuffer() );
+  applet->rendering()->as<Rendering>()->renderer()->setRenderTarget( vl_gl_canvas->renderTarget() );
   
   /* black background */
   applet->rendering()->as<Rendering>()->camera()->viewport()->setClearColor( black );
@@ -116,7 +116,7 @@ bool MyApp::OnInit()
   vec3 eye    = vec3(0,10,35); // camera position
   vec3 center = vec3(0,0,0);   // point the camera is looking at
   vec3 up     = vec3(0,1,0);   // up direction
-  mat4 view_mat = mat4::getLookAt(eye, center, up);
+  mat4 view_mat = mat4::getLookAt(eye, center, up).getInverse();
   applet->rendering()->as<Rendering>()->camera()->setViewMatrix( view_mat );
   
   /* show the window */

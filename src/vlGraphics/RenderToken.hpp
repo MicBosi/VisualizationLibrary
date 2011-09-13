@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -46,9 +46,8 @@ namespace vl
   //! Internally used by the rendering engine
   class RenderToken: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::RenderToken, Object)
-
   public:
+    virtual const char* className() { return "vl::RenderToken"; }
     RenderToken(): mNextPass(NULL), mActor(NULL), mShader(NULL), mEffectRenderRank(0), mCameraDistance(0.0)
     {
       VL_DEBUG_SET_OBJECT_NAME()
@@ -60,7 +59,7 @@ namespace vl
     const Shader* mShader;
     int mEffectRenderRank;
     // Z distance from the camera. Used for object Z-sorting.
-    real mCameraDistance;
+    Real mCameraDistance;
   };
   //------------------------------------------------------------------------------
 }

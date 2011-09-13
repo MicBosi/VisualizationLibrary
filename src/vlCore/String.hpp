@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -37,7 +37,7 @@
 #include <vector>
 #include <string.h>
 
-#if defined(VL_PLATFORM_WINDOWS)
+#if defined(_WIN32)
   #define VL_PLATFORM_DEFAULT_ENCODING SE_LATIN1
 #else
   #define VL_PLATFORM_DEFAULT_ENCODING SE_UTF8
@@ -92,7 +92,7 @@ namespace vl
     //! Returns '\' under windows and '/' under Linux and Mac.
     static wchar_t platformSlash()
     {
-      #if defined(VL_PLATFORM_WINDOWS)
+      #ifdef _WIN32
         return '\\';
       #else
         return '/';
@@ -284,9 +284,6 @@ namespace vl
 
     // transcoding routines
 
-    //! Creates a string representing the given pointer
-    static String fromPointer(const void* value);
-
     //! Creates a string representing the given integer value
     static String fromInt(int value);
 
@@ -303,8 +300,8 @@ namespace vl
     //! The value of 'decimals' can be between 0 and 20.
     static String fromDouble(double value, int decimals=6);
 
-    //! Initializes the string from a std::string using fromUTF() if \a utf8 == true (default) otherwise uses fromAscii().
-    static String fromStdString(const std::string& str, bool utf8=true);
+    //! Initializes the string from a std::string using the fromAscii() function.
+    static String fromStdString(const std::string& str);
 
     //! Initializes the string from a std::string using the fromAscii() function.
     static String fromStdWString(const std::wstring& str);
@@ -340,9 +337,6 @@ namespace vl
 
     //! Returns the float number represented by the string. The conversion is done using the standard atof() function.
     float toFloat() const { return (float)toDouble(); }
-
-    //! Returns a formatted string using the legacy printf syntax. The resulting string can be maximum 1024 + strlen(fmt) characters long.
-    static String printf(const char* fmt, ...);
 
     //! Returns a UTF8 encoded std::string.
     std::string toStdString() const;

@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -50,59 +50,34 @@ namespace vl
 
   inline bool isValidColor( const fvec4& color ) { return color.a() >= 0; }
 
-  static const fvec4 invalid_color = fvec4(0, 0, 0, -1);
-  
-  static const fvec4 black = makeColor(0x000000FF);
-  
-  static const fvec4 white = makeColor(0xFFFFFFFF);
-  
-  static const fvec4 red = makeColor(0xFF0000FF);
-  
-  static const fvec4 crimson = makeColor(0xDC143CFF);
-  
-  static const fvec4 violet = makeColor(0x9400D3FF);
-  
-  static const fvec4 orange = makeColor(0xFFA000FF);
-  
-  static const fvec4 yellow = makeColor(0xFFFF00FF);
-  
-  static const fvec4 gold = makeColor(0xFFD700FF);
-  
-  static const fvec4 green = makeColor(0x00FF00FF);
-  
-  static const fvec4 lightgreen = makeColor(0x90FF90FF);
-  
-  static const fvec4 darkgreen = makeColor(0x006400FF);
-  
-  static const fvec4 olivegreen = makeColor(0x556B2FFF);
-  
-  static const fvec4 blue = makeColor(0x0000FFFF);
-  
-  static const fvec4 darkblue = makeColor(0x00008BFF);
-  
-  static const fvec4 royalblue = makeColor(0x4169E1FF);
-  
-  static const fvec4 skyblue = makeColor(0x5555FFFF);  
-  
-  static const fvec4 midnightblue = makeColor(0x191970FF);
-  
-  static const fvec4 fuchsia = makeColor(0xFF00FFFF);
-  
-  static const fvec4 aqua = makeColor(0x00FFFFFF);
-  
-  static const fvec4 pink = makeColor(0xffb6c1FF);
-  
-  static const fvec4 salmonpink = makeColor(0xFF91A4FF);
-  
-  static const fvec4 turquoise = makeColor(0x30D5C8FF); 
-  
-  static const fvec4 darkturquoise = makeColor(0x008080FF);
-  
-  static const fvec4 gray = makeColor(0xA9A9A9FF);
-  
-  static const fvec4 lightgray = makeColor(0xD3D3D3FF);
-  
-  static const fvec4 darkgray = makeColor(0x808080FF);
+  static fvec4 invalid_color = fvec4(0, 0, 0, -1);
+  static fvec4 black = makeColor(0x000000FF);
+  static fvec4 white = makeColor(0xFFFFFFFF);
+  static fvec4 red = makeColor(0xFF0000FF);
+  static fvec4 crimson = makeColor(0xDC143CFF);
+  static fvec4 violet = makeColor(0x9400D3FF);
+  static fvec4 orange = makeColor(0xFFA000FF);
+  static fvec4 yellow = makeColor(0xFFFF00FF);
+  static fvec4 gold = makeColor(0xFFD700FF);
+  static fvec4 green = makeColor(0x00FF00FF);
+  static fvec4 lightgreen = makeColor(0x90FF90FF);
+  static fvec4 darkgreen = makeColor(0x006400FF);
+  static fvec4 olivegreen = makeColor(0x556B2FFF);
+  static fvec4 blue = makeColor(0x0000FFFF);
+  static fvec4 darkblue = makeColor(0x00008BFF);
+  static fvec4 royalblue = makeColor(0x4169E1FF);
+  static fvec4 skyblue = makeColor(0x5555FFFF);  
+  static fvec4 midnightblue = makeColor(0x191970FF);
+  static fvec4 fuchsia = makeColor(0xFF00FFFF);
+  static fvec4 aqua = makeColor(0x00FFFFFF);
+  static fvec4 pink = makeColor(0xffb6c1FF);
+  static fvec4 salmonpink = makeColor(0xFF91A4FF);
+  static fvec4 turquoise = makeColor(0x30D5C8FF); 
+  static fvec4 darkturquoise = makeColor(0x008080FF);
+  static fvec4 gray = makeColor(0xA9A9A9FF);
+  static fvec4 lightgray = makeColor(0xD3D3D3FF);
+  static fvec4 darkgray = makeColor(0x808080FF);
+
 }
 
 #endif

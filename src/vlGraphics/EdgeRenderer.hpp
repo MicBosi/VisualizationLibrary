@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -54,24 +54,21 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT EdgeRenderer: public Renderer
   {
-    VL_INSTRUMENT_CLASS(vl::EdgeRenderer, Renderer)
-
     class WFInfo: public Object
     {
     public:
-      WFInfo(): mColor( vl::black ) {}
-      fvec4 mColor;
       ref<Geometry> mGeometry;
       ref<EdgeUpdateCallback> mEdgeCallback;
     };
 
   public:
+    virtual const char* className() { return "vl::EdgeRenderer"; }
     EdgeRenderer(): mLineWidth(1.0f), mPolygonOffsetFactor(1.0f), mPolygonOffsetUnits(1.0f), mCreaseAngle(44.0f), mShowHiddenLines(true), mShowCreases(true), mSmoothLines(true)
     {
       VL_DEBUG_SET_OBJECT_NAME()
     }
 
-    const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, real frame_clock);
+    const RenderQueue* render(const RenderQueue* in_render_queue, Camera* camera, Real frame_clock);
 
     //! Generates and caches all the information needed to render the edges of the given Actor using the specified color.
     WFInfo* declareActor(Actor* act, const fvec4& color);
@@ -128,7 +125,7 @@ namespace vl
     float polygonOffsetUnits() const  { return mPolygonOffsetUnits;  }
 
   protected:
-    void renderSolids(Camera* camera, real frame_clock);
+    void renderSolids(Camera* camera, Real frame_clock);
     void renderLines(Camera* camera);
 
   protected:

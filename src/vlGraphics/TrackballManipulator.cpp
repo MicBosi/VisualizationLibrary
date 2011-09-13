@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -57,11 +57,11 @@ void TrackballManipulator::mouseDownEvent(EMouseButton btn, int x, int y)
   if (btn == zoomButton())
     mMode = ZoomMode;
 
-  VL_CHECK(openglContext()->framebuffer())
+  VL_CHECK(openglContext()->renderTarget())
 
   // set x/y relative to the viewport
   x -= camera()->viewport()->x();
-  y -= openglContext()->framebuffer()->height() - 1 - (camera()->viewport()->y() + camera()->viewport()->height() -1);
+  y -= openglContext()->renderTarget()->height() - 1 - (camera()->viewport()->y() + camera()->viewport()->height() -1);
 
   // check that the click is in the viewport
   int w = camera()->viewport()->width();
@@ -79,9 +79,9 @@ void TrackballManipulator::mouseDownEvent(EMouseButton btn, int x, int y)
     mPivot = mStartMatrix.getT();
   }
   else
-    mStartMatrix = camera()->modelingMatrix();
+    mStartMatrix = camera()->inverseViewMatrix();
 
-  mStartCameraPos = camera()->modelingMatrix().getT();
+  mStartCameraPos = camera()->inverseViewMatrix().getT();
   mStartPivot = mPivot;
 }
 //-----------------------------------------------------------------------------
@@ -114,10 +114,10 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
   if (mode() == NoMode)
     return;
 
-  VL_CHECK(openglContext()->framebuffer())
+  VL_CHECK(openglContext()->renderTarget())
   // set x/y relative to the top/left cornder of the viewport
   x -= camera()->viewport()->x();
-  y -= openglContext()->framebuffer()->height() - 1 - (camera()->viewport()->y() + camera()->viewport()->height() -1);
+  y -= openglContext()->renderTarget()->height() - 1 - (camera()->viewport()->y() + camera()->viewport()->height() -1);
 
   if (mode() == RotationMode)
   {
@@ -129,8 +129,8 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
     }
     else
     {
-      camera()->setModelingMatrix( mat4::getTranslation(mPivot) * trackballRotation(x,y) * mat4::getTranslation(-mPivot) * mStartMatrix );
-      mStartMatrix = camera()->modelingMatrix();
+      camera()->setInverseViewMatrix( mat4::getTranslation(mPivot) * trackballRotation(x,y) * mat4::getTranslation(-mPivot) * mStartMatrix );
+      mStartMatrix = camera()->inverseViewMatrix();
     }
 
     mMouseStart.x() = x;
@@ -141,11 +141,11 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
   {
     float t = (y-mMouseStart.y()) / 200.0f;
     t *= zoomSpeed();
-    real distance = (mStartCameraPos - mPivot).length();
-    vec3 camera_pos = mStartCameraPos - camera()->modelingMatrix().getZ()*t*distance;
-    mat4 m = camera()->modelingMatrix();
+    Real distance = (mStartCameraPos - mPivot).length();
+    vec3 camera_pos = mStartCameraPos - camera()->inverseViewMatrix().getZ()*t*distance;
+    mat4 m = camera()->inverseViewMatrix();
     m.setT(camera_pos);
-    camera()->setModelingMatrix(m);
+    camera()->setInverseViewMatrix(m);
   }
   else
   if (mode() == TranslationMode)
@@ -154,12 +154,12 @@ void TrackballManipulator::mouseMoveEvent(int x, int y)
     float ty = -(mMouseStart.y() - y) / 400.0f;
     tx *= translationSpeed();
     ty *= translationSpeed();
-    real distance = (mStartCameraPos - mPivot).length();
-    vec3 up    = camera()->modelingMatrix().getY();
-    vec3 right = camera()->modelingMatrix().getX();
-    mat4 m = camera()->modelingMatrix();
+    Real distance = (mStartCameraPos - mPivot).length();
+    vec3 up    = camera()->inverseViewMatrix().getY();
+    vec3 right = camera()->inverseViewMatrix().getX();
+    mat4 m = camera()->inverseViewMatrix();
     m.setT(mStartCameraPos + up*distance*ty + right*distance*tx);
-    camera()->setModelingMatrix(m);
+    camera()->setInverseViewMatrix(m);
     mPivot = mStartPivot + up*distance*ty + right*distance*tx;
   }
 
@@ -179,15 +179,15 @@ mat4 TrackballManipulator::trackballRotation(int x, int y)
   n.normalize();
   a.normalize();
   b.normalize();
-  real dot_a_b = dot(a,b);
-  dot_a_b = clamp(dot_a_b,(real)-1.0,(real)+1.0);
-  real alpha = acos(dot_a_b) * (mTransform ? 1 : -1);
+  Real dot_a_b = dot(a,b);
+  dot_a_b = clamp(dot_a_b,(Real)-1.0,(Real)+1.0);
+  Real alpha = acos(dot_a_b) * (mTransform ? 1 : -1);
   alpha = alpha * rotationSpeed();
-  vec3 nc =  camera()->modelingMatrix().get3x3() * n;
+  vec3 nc =  camera()->inverseViewMatrix().get3x3() * n;
   if (mTransform && mTransform->parent())
     nc = mTransform->parent()->getComputedWorldMatrix().getInverse() * nc;
   nc.normalize();
-  return mat4::getRotation(alpha*(real)dRAD_TO_DEG, nc);
+  return mat4::getRotation(alpha*(Real)dRAD_TO_DEG, nc);
 }
 //-----------------------------------------------------------------------------
 vec3 TrackballManipulator::computeVector(int x, int y)
@@ -198,7 +198,7 @@ vec3 TrackballManipulator::computeVector(int x, int y)
   float sphere_y = camera()->viewport()->height() * 0.5f;
 
   VL_CHECK(camera())
-  vec3 v((real)x,(real)y,0);
+  vec3 v((Real)x,(Real)y,0);
   v -= c;
   v.x() /= sphere_x;
   v.y() /= sphere_y;
@@ -206,7 +206,7 @@ vec3 TrackballManipulator::computeVector(int x, int y)
   //if (v.length() > 1.0f)
   //  v.normalize();
 
-  real z2 = 1.0f - v.x()*v.x() - v.y()*v.y();
+  Real z2 = 1.0f - v.x()*v.x() - v.y()*v.y();
   if (z2 < 0) 
     z2 = 0;
   v.z() = sqrt( z2 );
@@ -214,39 +214,35 @@ vec3 TrackballManipulator::computeVector(int x, int y)
   return v;
 }
 //-----------------------------------------------------------------------------
-void TrackballManipulator::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, real bias)
+void TrackballManipulator::adjustView(const AABB& aabb, const vec3& dir, const vec3& up, Real bias)
 {
   VL_CHECK(camera())
-  VL_CHECK(!aabb.isNull())
   /*setTransform(NULL);*/
   setPivot( aabb.center() );
   camera()->adjustView(aabb, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
-void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, real bias)
+void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, Real bias)
 {
   AABB aabb;
   for(int i=0; i<actors.size(); ++i)
   {
     if (actors.at(i)->transform())
-    {
-      mat4 m = actors.at(i)->transform()->worldMatrix();
       actors.at(i)->transform()->computeWorldMatrix();
-    }
     actors.at(i)->computeBounds();
     aabb += actors.at(i)->boundingBox();
   }
   adjustView(aabb, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
-void TrackballManipulator::adjustView(SceneManager* scene, const vec3& dir, const vec3& up, real bias)
+void TrackballManipulator::adjustView(SceneManager* scene, const vec3& dir, const vec3& up, Real bias)
 {
   ActorCollection actors;
   scene->extractActors(actors);
   adjustView(actors, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
-void TrackballManipulator::adjustView(Rendering* rendering, const vec3& dir, const vec3& up, real bias)
+void TrackballManipulator::adjustView(Rendering* rendering, const vec3& dir, const vec3& up, Real bias)
 {
   ActorCollection actors;
   for(int i=0; i<rendering->sceneManagers()->size(); ++i)

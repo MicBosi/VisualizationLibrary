@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -48,15 +48,14 @@ namespace vl
   template<class Element_Type, int Chunk_Size>
   class BufferedStream: public Object
   {
-    VL_INSTRUMENT_CLASS(VL_GROUP(vl::BufferedStream<Element_Type, Chunk_Size>), Object)
-
   public:
+    virtual const char* className() { return "vl::BufferedStream"; }
+
     BufferedStream()
     {
       mSize = 0;
       mPtr  = 0;
       mBuffer.resize(Chunk_Size);
-      mIsEndOfFile = true;
     }
 
     void seek(long long pos)
@@ -77,50 +76,15 @@ namespace vl
       }
 
       if (bufferEmpty())
-      {
         fillBuffer();
-      }
-
       if (bufferEmpty())
-      {
-        mIsEndOfFile = true;
         return false;
-      }
       else
       {
         *token = mBuffer[mPtr];
         mPtr++;
         return true;
       }
-    }
-
-    bool readTextChar(Element_Type& ch)
-    {
-      if (!readToken(&ch))
-        return false;
-
-      Element_Type ch2 = 0;
-      switch(ch)
-      {
-      case 10:
-        ch = '\n';
-        if (readToken(&ch2) && ch2 != 13)
-          ungetToken(ch2);
-        break;
-
-      case 13:
-        ch = '\n';
-        if (readToken(&ch2) && ch2 != 10)
-          ungetToken(ch2);
-        break;
-      }
-
-      return true;
-    }
-
-    void ungetToken(const Element_Type& token)
-    {
-      mUngetBuffer.push_back(token);
     }
 
     bool bufferEmpty()
@@ -146,17 +110,20 @@ namespace vl
       }
     }
 
-    bool isEndOfFile() const { return mIsEndOfFile; }
-
     void setInputFile(VirtualFile* file)
     {
       mInputFile = file;
-      mIsEndOfFile = false;
     }
 
-    VirtualFile* inputFile() { return mInputFile.get(); }
+    VirtualFile* inputFile() const
+    {
+      return mInputFile.get();
+    }
 
-    const VirtualFile* inputFile() const { return mInputFile.get(); }
+    void ungetToken(const Element_Type& token)
+    {
+      mUngetBuffer.push_back(token);
+    }
 
   protected:
     ref<VirtualFile> mInputFile;
@@ -164,7 +131,6 @@ namespace vl
     std::vector<Element_Type> mBuffer;
     int mPtr;
     int mSize;
-    bool mIsEndOfFile;
   };
 }
 

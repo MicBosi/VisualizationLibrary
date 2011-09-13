@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -50,9 +50,8 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Viewport: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Viewport, Object)
-
   public:
+    virtual const char* className() { return "vl::Viewport"; }
     Viewport();
     Viewport(int x, int y, int w, int h);
 
@@ -91,8 +90,8 @@ namespace vl
     void setClearStencil(int stencil) { mClearStencil = stencil; }
     int clearStencil() const { return mClearStencil; }
 
-    void setClearDepth(real depth) { mClearDepth = depth; }
-    real clearDepth() const { return mClearDepth; }
+    void setClearDepth(Real depth) { mClearDepth = depth; }
+    Real clearDepth() const { return mClearDepth; }
 
     void setClearFlags(EClearFlags clear_flags) { mClearFlags = clear_flags; }
     EClearFlags clearFlags() const { return mClearFlags; }
@@ -103,14 +102,14 @@ namespace vl
     /**
      * Returns true if the given point is inside the Viewport
     */
-    bool isPointInside(int x, int y, int framebuffer_height) const;
+    bool isPointInside(int x, int y, int render_target_height) const;
 
   protected:
     fvec4 mClearColor;
     ivec4 mClearColorInt;
     uvec4 mClearColorUInt;
 
-    real mClearDepth;
+    Real mClearDepth;
     int mClearStencil;
     EClearFlags mClearFlags;
     EClearColorMode mClearColorMode;

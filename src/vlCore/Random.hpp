@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -36,34 +36,36 @@
 
 namespace vl
 {
-  //! Cryptographic random number generator.
-  //! For non-ryptographic fast and high quality random number generation use vl::MersenneTwister.
+  //! Random number generator.
   class VLCORE_EXPORT Random: public Object
   {
-    VL_INSTRUMENT_CLASS(vl::Random, Object)
-
   public:
+    virtual const char* className() { return "vl::Random"; }
+
     //! Constructor.
     Random();
 
     //! Destructor.
     virtual ~Random();
 
-    //! Fills the specified buffer with random data generated using the best quality random number generation facilities available.
+    //! Fills the specified buffer with random data generated using the best quality random number 
+    //! generation facilities provided by the operating system. 
     //! Under Windows (including MinGW) \p CryptGenRandom is used, while under Unix-like operating systems \p /dev/urandom is used.
-    //! If no special random number generation facility is detected the function falls back to use a MersenneTwister.
-    //! \return This method returns \p false if the function had to fallback to MersenneTwister otherwise returns \p true.
+    //! If no special random number generation facility is detected the function falls back to standardFillRandom().
+    //! \return This method returns \p false if the function had to fallback to standardFillRandom() otherwise returns \p true.
     virtual bool fillRandom(void* ptr, size_t bytes) const;
 
-    //! Fills the specified buffer with random data generated using a defMersienneTwister(). 
-    //! MersienneTwister produces high quality random number and can be much faster than fillRandom().
-    void fillRandomMersenneTwister(void* ptr, size_t bytes) const;
+    //! Fills the specified buffer with random data generated using the standard rand() function.
+    //! The method fillRandom() falls back to this function if no other high quality random number generation mechanism is detected.
+    static void standardFillRandom(void* ptr, size_t bytes);
+
+    //! Initializes the standard rand() random number generator using srand() with a reasonably unprobable value,
+    //! based on the current time stamp and memory state.
+    static void standardRandomize();
 
   private:
 #if defined(_MSC_VER) || defined(__MINGW32__)
     void* hCryptProv;
-#elif defined(__GNUG__) && !defined(__MINGW32__)
-  FILE* mDefURandom;
 #endif
   };
 }

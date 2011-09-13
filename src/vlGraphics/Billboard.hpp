@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -45,14 +45,13 @@ namespace vl
   */
   class VLGRAPHICS_EXPORT Billboard: public Transform
   {
-    VL_INSTRUMENT_CLASS(vl::Billboard, Transform)
-
   public:
     Billboard();
+    virtual const char* className() { return "vl::Billboard"; }
     //! The billboard position and rotation center
     void setPosition(const vec3& pos);
     //! The billboard position and rotation center
-    void setPosition(real x, real y, real z) { setPosition( vec3(x,y,z) ); }
+    void setPosition(Real x, Real y, Real z) { setPosition( vec3(x,y,z) ); }
     //! The billboard position and rotation center
     vec3 position();
     //! The rotation axis in world coordinates. Used only for axis aligned billboards.

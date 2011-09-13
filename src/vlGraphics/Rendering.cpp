@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://www.visualizationlibrary.com                                               */
 /*                                                                                    */
 /*  Copyright (c) 2005-2010, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -60,7 +60,7 @@ Rendering::Rendering():
 //------------------------------------------------------------------------------
 Rendering& Rendering::operator=(const Rendering& other)
 {
-  super::operator=(other);
+  RenderingAbstract::operator=(other);
 
   mEnableMask               = other.mEnableMask;
   mAutomaticResourceInit    = other.mAutomaticResourceInit;
@@ -101,18 +101,18 @@ void Rendering::render()
     InOutContract(Rendering* rendering): mRendering(rendering)
     {
       VL_CHECK(mRendering->renderers().size());
-      VL_CHECK(mRendering->renderers()[0]->framebuffer());
-      VL_CHECK(mRendering->renderers()[0]->framebuffer()->openglContext());
+      VL_CHECK(mRendering->renderers()[0]->renderTarget());
+      VL_CHECK(mRendering->renderers()[0]->renderTarget()->openglContext());
 
       // as stated in the documentation all the renderers must target the same OpenGLContext
-      mOpenGLContext = mRendering->renderers()[0]->framebuffer()->openglContext();
+      mOpenGLContext = mRendering->renderers()[0]->renderTarget()->openglContext();
 
       // activate OpenGL context
       mOpenGLContext->makeCurrent();
       VL_CHECK_OGL(); // the first check must be done when the context is active!
 
       // render states ]shield[
-      mOpenGLContext->resetContextStates(RCS_RenderingStarted);
+      mOpenGLContext->resetContextStates(); 
 
       // pre rendering callback
       mRendering->dispatchOnRenderingStarted(); 
@@ -133,7 +133,7 @@ void Rendering::render()
       VL_CHECK_OGL()
 
       // render states ]shield[
-      mOpenGLContext->resetContextStates(RCS_RenderingFinished); 
+      mOpenGLContext->resetContextStates(); 
     }
   } contract(this);
 
@@ -146,16 +146,16 @@ void Rendering::render()
     return;
   }
 
-  if (!renderers()[0]->framebuffer())
+  if (!renderers()[0]->renderTarget())
   {
     vl::Log::error("Rendering::render(): no RendererTarget specified for Renderer #0!\n");
     VL_TRAP();
     return;
   }
 
-  if (!renderers()[0]->framebuffer()->openglContext())
+  if (!renderers()[0]->renderTarget()->openglContext())
   {
-    vl::Log::error("Rendering::render(): invalid Framebuffer for Renderer #0, OpenGLContext is NULL!\n");
+    vl::Log::error("Rendering::render(): invalid RenderTarget for Renderer #0, OpenGLContext is NULL!\n");
     VL_TRAP();
     return;
   }
@@ -176,8 +176,8 @@ void Rendering::render()
 
   // camera transform update (can be redundant)
 
-  if (camera()->boundTransform())
-    camera()->setModelingMatrix( camera()->boundTransform()->worldMatrix() );
+  if (camera()->followedTransform())
+    camera()->setInverseViewMatrix( camera()->followedTransform()->worldMatrix() );
 
   VL_CHECK_OGL()
 
@@ -190,8 +190,8 @@ void Rendering::render()
   {
     // perform only near culling with plane at distance 0
     camera()->frustum().planes().resize(5);
-    camera()->frustum().planes()[4] = Plane( camera()->modelingMatrix().getT(), 
-                                             camera()->modelingMatrix().getZ());
+    camera()->frustum().planes()[4] = Plane( camera()->inverseViewMatrix().getT(), 
+                                             camera()->inverseViewMatrix().getZ());
   }
 
   actorQueue()->clear();
@@ -231,6 +231,7 @@ void Rendering::render()
   // render queue filling
 
   renderQueue()->clear();
+
   fillRenderQueue( actorQueue() );
 
   // sort the rendering queue according to this renderer sorting algorithm
@@ -245,20 +246,18 @@ void Rendering::render()
   {
     if (renderers()[i])
     {
-      if (renderers()[i]->framebuffer() == NULL)
+      if (renderers()[i]->renderTarget() == NULL)
       {
         vl::Log::error( Say("Rendering::render(): no RendererTarget specified for Renderer #%n!\n") << i );
         VL_TRAP();
         continue;
       }
-      
-      if (renderers()[i]->framebuffer()->openglContext() == NULL)
+      if (renderers()[i]->renderTarget()->openglContext() == NULL)
       {
-        vl::Log::error( Say("Rendering::render(): invalid Framebuffer for Renderer #%n, OpenGLContext is NULL!\n") << i );
+        vl::Log::error( Say("Rendering::render(): invalid RenderTarget for Renderer #%n, OpenGLContext is NULL!\n") << i );
         VL_TRAP();
         continue;
       }
-
       // loop the rendering
       render_queue = renderers()[i]->render( render_queue, camera(), frameClock() );
     }
@@ -303,7 +302,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
 
     // effect override
     
-    for( std::map< unsigned int, ref<Effect> >::iterator eom_it = mEffectOverrideMask.begin(); 
+    for( std::map< unsigned int, ref<Effect> >::const_iterator eom_it = mEffectOverrideMask.begin(); 
          eom_it != mEffectOverrideMask.end(); 
          ++eom_it )
     {
@@ -344,7 +343,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
       tok->mNextPass = NULL;
       // track the current state
       tok->mActor = actor;
-      tok->mRenderable = actor->lod(geometry_lod);
+      tok->mRenderable = actor->lod(geometry_lod).get();
       // set the shader used (multipassing shader or effect->shader())
       tok->mShader = shader;
 
@@ -370,7 +369,7 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
         shader_set.insert(shader);
 
         // link GLSLProgram
-        if (shader->glslProgram() && !shader->glslProgram()->linked())
+        if (shader->glslProgram())
         {
           shader->glslProgram()->linkProgram();
           VL_CHECK( shader->glslProgram()->linked() );
@@ -379,13 +378,12 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
         // lazy texture creation
         if ( shader->gocRenderStateSet() )
         {
-          size_t count = shader->gocRenderStateSet()->renderStatesCount();
-          RenderStateSlot* states = shader->gocRenderStateSet()->renderStates();
-          for( size_t i=0; i<count; ++i )
+          const std::vector< ref<RenderState> >& states = shader->gocRenderStateSet()->renderStates();
+          for( size_t i=0; i<states.size(); ++i )
           {
-            if (states[i].mRS->type() == RS_TextureSampler)
+            if (states[i]->type() >= RS_TextureUnit0 && states[i]->type() < RS_TextureUnit0+VL_MAX_TEXTURE_UNITS)
             {
-              TextureSampler* tex_unit = static_cast<TextureSampler*>( states[i].mRS.get() );
+              TextureUnit* tex_unit = dynamic_cast<TextureUnit*>( states[i].get() );
               VL_CHECK(tex_unit);
               if (tex_unit)
               {
