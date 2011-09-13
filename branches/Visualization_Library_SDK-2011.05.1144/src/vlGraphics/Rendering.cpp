@@ -126,6 +126,9 @@ void Rendering::render()
       // post rendering callback
       mRendering->dispatchOnRenderingFinished();
 
+      // release rendered Actors
+      mRendering->actorQueue()->resize(0);
+
       // check user-generated errors.
       VL_CHECK_OGL()
 
