@@ -169,7 +169,6 @@ public:
     fx->shader()->setRenderState( new ClipPlane(10, vec3(1,2,3)), 0 );
     fx->shader()->setRenderState( new ClipPlane(10, vec3(1,2,3)), 1 );
 
-    // mic fixme: check unsupported renderstate
     fx->shader()->gocBlendEquation();
 
     fx->shader()->gocColor()->setValue( vl::crimson );

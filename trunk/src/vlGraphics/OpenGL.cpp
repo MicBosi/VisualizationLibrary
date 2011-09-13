@@ -540,8 +540,7 @@ bool vl::initializeOpenGL()
   Is_Enable_Supported[EN_SAMPLE_ALPHA_TO_ONE]      = Has_GL_Version_1_3||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_1_1;
   Is_Enable_Supported[EN_SAMPLE_COVERAGE]          = Has_GL_Version_1_3||!Has_Fixed_Function_Pipeline||Has_GLES;
 
-  // mic fixme: comment out on next stable release
-#if 1
+#ifndef NDEBUG
   // Enables management debug code
   VL_CHECK_OGL();
   bool got_error = false;

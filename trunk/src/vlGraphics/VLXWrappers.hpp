@@ -3225,7 +3225,7 @@ namespace vl
     {
       ref<ActorEventCallback> obj = NULL;
 
-      if (vlx->tag() == "<vl::DepthSortCallback>") // mic fixme: support more stuff
+      if (vlx->tag() == "<vl::DepthSortCallback>")
         obj = new DepthSortCallback;
       else
       {
