@@ -375,7 +375,7 @@ void OpenGLContext::logOpenGLInfo()
       glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_val);
     Log::print( Say("Texture image units: %n\n") << max_val);
     max_val = 0;
-    if (GLEW_ARB_multitexture||GLEW_VERSION_1_3)
+    if (GLEW_EXT_texture_filter_anisotropic)
       glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_val);
     Log::print( Say("Anisotropic texture filter: %s, ") << (GLEW_EXT_texture_filter_anisotropic? "YES" : "NO") );
     GLEW_EXT_texture_filter_anisotropic ? Log::print( Say("%nX\n") << max_val) : Log::print("\n");
@@ -385,7 +385,7 @@ void OpenGLContext::logOpenGLInfo()
     Log::print( Say("Framebuffer Object: %s\n") << (GLEW_EXT_framebuffer_object ? "YES" : "NO"));
     max_val = 0;
     if(GLEW_VERSION_2_0||GLEW_VERSION_3_0||GLEW_VERSION_4_0)
-      glGetIntegerv(GL_MAX_VERTEX_ATTRIBS , &max_val);
+      glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &max_val);
     Log::print( Say("Max vertex attributes: %n\n")<<max_val);
     VL_CHECK_OGL();
     max_val = 0;
