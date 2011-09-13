@@ -2,7 +2,7 @@
 
    \page pagChangelog Changelog
 
-	<div class="featuretitle">Visualization Library 2011.04.1144</div>
+	<div class="featuretitle">Visualization Library 2011.05.1144</div>
 
 	- Bug: fixed FontManager::acquireFont() always returning entry #0.
 	- Bug: fixed Matrix3::getInverse() returning the transpose of the inverse.
@@ -14,12 +14,12 @@
 	- actorQueue() cleared after rendering to potentially release rendered objects.
 	- Matrix4::getInverse() implemented using cofactors method give 3.5X speedup.
 	
-	<div class="featuretitle">Visualization Library 2011.04.1142</div>
+	<div class="featuretitle">Visualization Library 2011.05.1142</div>
 	
 	- Fixed compilation error when VL_PIPELINE_PRECISION == 2
 	- Define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES for MSVC compilers.
 
-	<div class="featuretitle">Visualization Library 2011.04.1140</div>
+	<div class="featuretitle">Visualization Library 2011.05.1140</div>
 
 	- Added pagGuideThreads.dox file "Multi-Threading with VL".
 	- Documentation updates: mainpage.dox, pagDesign.dox, pagKnowledgeBase.dox, pagLearning.dox, pagMainClasses.dox, pagOpenGL.dox, pagCredits.dox, pagInstall.dox.
@@ -30,7 +30,7 @@
 	- Disabled vl::Object/vl::ref<> automatic delete for MFC windows.
 	- Fixed warning in App_Framebuffer_Object.
 
-	<div class="featuretitle">Visualization Library 2011.04.1140 RC4</div>
+	<div class="featuretitle">Visualization Library 2011.05.1140 RC4</div>
 
 	- GLSLProgram: log warning on GLSLProgram linkage in debug mode.
 	- GLSLProgram: methods *AutomaticAttribLocation() renamed *AutoAttribLocation()
@@ -46,21 +46,21 @@
 	- Fixed VL_ACTOR_USER_DATA incorrectly placed inside Object.hpp
 	- VertexAttribInfo construction parameters order changed and added defaults.
 
-	<div class="featuretitle">Visualization Library 2011.04.1140 RC3</div>
+	<div class="featuretitle">Visualization Library 2011.05.1140 RC3</div>
 
 	- BlitFrameBuffer::setReadFramebuffer/setDrawFramebuffer() renamed setReadRenderTarget()/setDrawRenderTarget()
 	- Added RenderTarget::setReadBuffer() to specify the read-buffer to be used with a RenderTarget.
 	- Read-buffer and draw-buffer binding moved after render-target binding but before fbo completeness check.
 	- Added VL_INSTALL_DATA option during CMake configuration.
 
-	<div class="featuretitle">Visualization Library 2011.04.1140 RC2</div>
+	<div class="featuretitle">Visualization Library 2011.05.1140 RC2</div>
 
 	- Fixed version.hpp configuration error in CMake
 	- Fixed Linux compilation error
 	- Fixed vlQt4 install directory
 	- gDebugger-friendly texture creation
 
-	<div class="featuretitle">Visualization Library 2011.04.1140 RC1</div>
+	<div class="featuretitle">Visualization Library 2011.05.1140 RC1</div>
 
 	- Added ScopedMutex class and IMutex interface class.
 	- Synchronized log functions for multithreaded usage of VL.
