@@ -2,6 +2,30 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.09.1157</div>
+
+	- Added new tool: vlxtool.exe: convert data to vlt/vlb format.
+	- Added several GLSL shader examples in test "glsl": procedural bump mapping, wood shader, various marble shaders, hatching shader, cloud shader, ribbon shader, the classic toy-ball shader etc. Shown also in the gallery.
+	- <b>Matrix4::getLookAt() changed semantic</b>: now returns the view-look-at-matrix rather than the modeling-look-at-matrix to comply with OpenGL and COLLADA conventions. See also vl::Matrix4::getLookAtModeling().
+	- Matrix4::getInverse() uses co-factor method: 3.5X quicker and slightly more precise.
+	- More efficient setup of vertex arrays and buffer object usage.
+	- More efficient vl::Material setup.
+	- Added MurmurHash3 quick and reliable hash functions to use with hash tables (not for cryptographic uses).
+	- Added vl::MersenneTwister for high quality and fast random number generation.
+	- LoadWriterManager automatically and transparently loads .gz-ipped files.
+	- Tests can be called by name (besides their number).
+	- App_ModelProfiler.cpp allow drag and drop of GLSL shaders.
+	- Shader::get* return NULL when RenderStateSet is NULL.
+	- Improvements to OBJ loader, correctly handle alpha blending and mask maps.
+	- API:
+		- Removed 'As' from the vl::Camera projection setters, 'As' should be used only for the getters of both matrices and camera.
+		- Camera 'local' matrix renamed to more correct 'modeling' matrix.
+		- blendingEnabled() renamed isBlendingEnabled().
+	- BUGS:
+		- Fixed TypeInfo problems with DLLs and vl namespace.
+		- Fixed FontManager::acquireFont() always returning entry #0.
+		- ShaderNode render state indices made coherent with their usage in Shader.
+
 	<div class="featuretitle">Visualization Library 2011.09.1155</div>
 
 	- <b>New VLX framework</b>:
