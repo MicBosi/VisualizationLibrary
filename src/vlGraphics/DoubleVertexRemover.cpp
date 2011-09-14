@@ -295,6 +295,6 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
       de->indexBuffer()->at(i) = mMapOldToNew[it.index()];
   }
 
-  Log::debug( Say("DoubleVertexRemover : time=%.2ns, verts=%n/%n, saved=%n, shrink=%.2n\n") << timer.elapsed() << mMapNewToOld.size() << verti.size() << verti.size() - mMapNewToOld.size() << (float)mMapNewToOld.size()/verti.size() );
+  Log::debug( Say("DoubleVertexRemover : time=%.2ns, verts=%n/%n, saved=%n, ratio=%.2n\n") << timer.elapsed() << mMapNewToOld.size() << verti.size() << verti.size() - mMapNewToOld.size() << (float)mMapNewToOld.size()/verti.size() );
 }
 //-----------------------------------------------------------------------------
