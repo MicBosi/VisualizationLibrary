@@ -162,6 +162,8 @@ namespace vl
       mIndexBuffer             = new arr_type;
       mPrimitiveRestartEnabled = false;
       mBaseVertex              = 0;
+      mCount                   = -1; // till the end of the indexBuffer()
+      mOffset                  = 0; // from the beginning of the indexBuffer()
     }
 
     DrawRangeElements& operator=(const DrawRangeElements& other)
@@ -172,6 +174,8 @@ namespace vl
       mRangeEnd                = other.mRangeEnd;
       mPrimitiveRestartEnabled = other.mPrimitiveRestartEnabled;
       mBaseVertex              = other.mBaseVertex;
+      mCount                   = other.mCount;
+      mOffset                  = other.mOffset;
       return *this;
     }
 
@@ -182,10 +186,25 @@ namespace vl
       return de;
     }
 
+    //! The number of indices to render, default is -1 which means 'till the end of the indexBuffer() from offset()'.
+    void setCount(i32 count) { mCount = count; }
+
+    //! The number of indices to render, default is -1 which means 'till the end of the indexBuffer() from offset()'.
+    i32 count() const { return mCount; }
+
+    //! The offset in bytes from which the index buffer will be read.
+    void setOffset(u32 offset) { mOffset = offset; }
+
+    //! The offset in bytes from which the index buffer will be read.
+    u32 offset() const { return mOffset; }
+
+    //! The BufferObject containing the indices used to render
     void setIndexBuffer(arr_type* index_buffer) { mIndexBuffer = index_buffer; }
 
+    //! The BufferObject containing the indices used to render
     arr_type* indexBuffer() { return mIndexBuffer.get(); }
 
+    //! The BufferObject containing the indices used to render
     const arr_type* indexBuffer() const { return mIndexBuffer.get(); }
 
     virtual void updateDirtyBufferObject(EBufferObjectUpdateMode mode)
@@ -199,12 +218,12 @@ namespace vl
       indexBuffer()->bufferObject()->deleteBufferObject();
     }
 
-    virtual void render(bool use_vbo) const
+    virtual void render(bool use_bo) const
     {
       VL_CHECK_OGL()
-      VL_CHECK(!use_vbo || (use_vbo && Has_BufferObject))
-      use_vbo &= Has_BufferObject; // && indexBuffer()->bufferObject()->handle() && indexBuffer()->sizeBufferObject();
-      if ( !use_vbo && !indexBuffer()->size() )
+      VL_CHECK(!use_bo || (use_bo && Has_BufferObject))
+      use_bo &= Has_BufferObject; // && indexBuffer()->bufferObject()->handle() && indexBuffer()->sizeBufferObject();
+      if ( !use_bo && !indexBuffer()->size() )
         return;
 
       // apply patch parameters if any and if using PT_PATCHES
@@ -218,26 +237,50 @@ namespace vl
         glPrimitiveRestartIndex(primitive_restart_index); VL_CHECK_OGL();
       }
 
-      const GLvoid* ptr = indexBuffer()->bufferObject()->ptr();
+      // compute base pointer
 
-      if (use_vbo && indexBuffer()->bufferObject()->handle())
+      const GLvoid* ptr = indexBuffer()->bufferObject()->ptr();
+      if (use_bo && indexBuffer()->bufferObject()->handle())
       {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
         ptr = 0;
       }
       else
-        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+      {
+        VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); VL_CHECK_OGL()
+      }
 
-      GLsizei count = (GLsizei)(use_vbo ? indexBuffer()->sizeBufferObject() : indexBuffer()->size());
-      GLenum type = indexBuffer()->glType();
+      // compute final pointer and count
+
+      const char*ptr_end = NULL;
+      if(mCount < 0)
+      {
+        // compute the end of the index buffer
+        ptr_end = (char*)ptr + sizeof(index_type)*(use_bo ? indexBuffer()->sizeBufferObject() : indexBuffer()->size());
+
+        // offset in the index buffer
+        ptr = (char*)ptr + mOffset;
+      }
+      else
+      {
+        // offset in the index buffer
+        ptr = (char*)ptr + mOffset;
+
+        // compute the end of the indices
+        ptr_end = (char*)ptr + sizeof(index_type)*mCount;
+      }
+
+      // compute the remaining indices
+      const GLsizei count = (GLsizei)((index_type*)ptr_end - (index_type*)ptr);
+
       if (mBaseVertex == 0)
       {
-        glDrawRangeElements( primitiveType(), mRangeStart, mRangeEnd, count, type, ptr ); VL_CHECK_OGL()
+        glDrawRangeElements( primitiveType(), mRangeStart, mRangeEnd, count, arr_type::gl_type, ptr ); VL_CHECK_OGL()
       }
       else
       {
         VL_CHECK(Has_Base_Vertex)
-        VL_glDrawRangeElementsBaseVertex( primitiveType(), mRangeStart, mRangeEnd, count, type, ptr, mBaseVertex ); VL_CHECK_OGL()
+        VL_glDrawRangeElementsBaseVertex( primitiveType(), mRangeStart, mRangeEnd, count, arr_type::gl_type, ptr, mBaseVertex ); VL_CHECK_OGL()
       }
 
       // primitive restart disable
@@ -288,6 +331,8 @@ namespace vl
 
   protected:
     ref< arr_type > mIndexBuffer;
+    i32 mCount;
+    u32 mOffset;
   };
   //------------------------------------------------------------------------------
   // typedefs
