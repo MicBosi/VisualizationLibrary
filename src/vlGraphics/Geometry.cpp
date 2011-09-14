@@ -278,7 +278,7 @@ bool Geometry::flipNormals()
     ArrayFloat3* norm3f = cast<ArrayFloat3>(normalArray());
     if (norm3f)
     {
-      for(size_t i=0; i<norm3f->size(); ++i)
+      for(u32 i=0; i<norm3f->size(); ++i)
       {
         norm3f->at(i) = -norm3f->at(i);
       }
@@ -362,7 +362,7 @@ void Geometry::computeNormals(bool verbose)
     setVertexAttribArray(VA_Normal, norm3f.get());
 
   // zero the normals
-  for(size_t i=0; i<norm3f->size(); ++i)
+  for(u32 i=0; i<norm3f->size(); ++i)
     (*norm3f)[i] = 0;
 
   // iterate all draw calls
@@ -371,9 +371,9 @@ void Geometry::computeNormals(bool verbose)
     // iterate all triangles, if present
     for(TriangleIterator trit = mDrawCalls[prim]->triangleIterator(); trit.hasNext(); trit.next())
     {
-      size_t a = trit.a();
-      size_t b = trit.b();
-      size_t c = trit.c();
+      u32 a = trit.a();
+      u32 b = trit.b();
+      u32 c = trit.c();
 
       if (verbose)
       if (a == b || b == c || c == a)
@@ -555,7 +555,7 @@ VertexAttribInfo* Geometry::vertexAttribArray(unsigned int attrib_location)
 DrawCall* Geometry::mergeTriangleStrips()
 {
   std::vector< ref<DrawElementsBase> > de_vector;
-  std::vector<size_t> indices;
+  std::vector<u32> indices;
 
   // collect DrawElementsUInt
   for(int i=drawCalls()->size(); i--; )
@@ -573,9 +573,9 @@ DrawCall* Geometry::mergeTriangleStrips()
 
   // generate new strip
   indices.reserve( vertexArray()->size()*2 );
-  for(size_t i=0; i<de_vector.size(); ++i)
+  for(u32 i=0; i<de_vector.size(); ++i)
   {
-    size_t index_count = 0;
+    u32 index_count = 0;
     for(IndexIterator it=de_vector[i]->indexIterator(); it.hasNext(); it.next(), ++index_count)
       indices.push_back(it.index());
 
@@ -619,9 +619,9 @@ DrawCall* Geometry::mergeTriangleStrips()
 //-----------------------------------------------------------------------------
 void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
 {
-  size_t total_index_count = 0;
+  u32 total_index_count = 0;
   std::vector< ref<DrawCall> > mergendo_calls;
-  for( size_t i=drawCalls()->size(); i--; )
+  for( u32 i=drawCalls()->size(); i--; )
   {
     if (drawCalls()->at(i)->primitiveType() == primitive_type)
     {
@@ -646,7 +646,7 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
   de_prim_restart->indexBuffer()->resize(total_index_count + mergendo_calls.size()-1);
   GLuint* index = de_prim_restart->indexBuffer()->begin();
   // merge draw calls using primitive restart!
-  for( size_t i=0; i<mergendo_calls.size(); ++i )
+  for( u32 i=0; i<mergendo_calls.size(); ++i )
   {
     for( IndexIterator it = mergendo_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
     {
@@ -669,10 +669,10 @@ void Geometry::mergeDrawCallsWithPrimitiveRestart(EPrimitiveType primitive_type)
 //-----------------------------------------------------------------------------
 void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type)
 {
-  size_t total_index_count = 0;
+  u32 total_index_count = 0;
   std::vector< ref<DrawCall> > mergendo_calls;
   std::vector<GLsizei> count_vector;
-  for( size_t i=drawCalls()->size(); i--; )
+  for( u32 i=drawCalls()->size(); i--; )
   {
     if (drawCalls()->at(i)->primitiveType() == primitive_type)
     {
@@ -698,7 +698,7 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
   de_multi->indexBuffer()->resize(total_index_count);
   GLuint* index = de_multi->indexBuffer()->begin();
   // merge draw calls using primitive restart!
-  for( size_t i=0; i<mergendo_calls.size(); ++i )
+  for( u32 i=0; i<mergendo_calls.size(); ++i )
   {
     for( IndexIterator it = mergendo_calls[i]->indexIterator(); it.hasNext(); it.next(), ++index )
     {
@@ -716,9 +716,9 @@ void Geometry::mergeDrawCallsWithMultiDrawElements(EPrimitiveType primitive_type
 //-----------------------------------------------------------------------------
 void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
 {
-  size_t triangle_count = 0;
+  u32 triangle_count = 0;
   std::vector< ref<DrawCall> > mergendo_calls;
-  for( size_t i=drawCalls()->size(); i--; )
+  for( u32 i=drawCalls()->size(); i--; )
   {
     const DrawCall& dc = *drawCalls()->at(i);
 
@@ -760,11 +760,11 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
   ref<DrawElementsUInt> de = new DrawElementsUInt;
   ArrayUInt1& index_buffer = *de->indexBuffer();
   index_buffer.resize( triangle_count * 3 );
-  size_t idx = 0;
+  u32 idx = 0;
 #ifndef NDEBUG
   int max_idx = (int)vertexArray()->size();
 #endif
-  for(size_t i=0; i<mergendo_calls.size(); ++i)
+  for(u32 i=0; i<mergendo_calls.size(); ++i)
   {
     for(TriangleIterator it = mergendo_calls[i]->triangleIterator(); it.hasNext(); it.next(), idx+=3)
     {
@@ -789,9 +789,9 @@ void Geometry::fixTriangleWinding()
   if ( normalArray() == NULL )
     return;
 
-  size_t triangle_count = 0;
+  u32 triangle_count = 0;
   std::vector< ref<DrawCall> > mergendo_calls;
-  for( size_t i=drawCalls()->size(); i--; )
+  for( u32 i=drawCalls()->size(); i--; )
   {
     const DrawCall& dc = *drawCalls()->at(i);
 
@@ -820,11 +820,11 @@ void Geometry::fixTriangleWinding()
   ref<DrawElementsUInt> de = new DrawElementsUInt;
   ArrayUInt1& index_buffer = *de->indexBuffer();
   index_buffer.resize( triangle_count * 3 );
-  size_t idx = 0;
+  u32 idx = 0;
 #ifndef NDEBUG
   int max_idx = (int)vertexArray()->size();
 #endif
-  for(size_t i=0; i<mergendo_calls.size(); ++i)
+  for(u32 i=0; i<mergendo_calls.size(); ++i)
   {
     for(TriangleIterator it = mergendo_calls[i]->triangleIterator(); it.hasNext(); it.next(), idx+=3)
     {
@@ -864,7 +864,7 @@ void Geometry::fixTriangleWinding()
   drawCalls()->push_back(de.get());
 }
 //-----------------------------------------------------------------------------
-void Geometry::regenerateVertices(const std::vector<size_t>& map_new_to_old)
+void Geometry::regenerateVertices(const std::vector<u32>& map_new_to_old)
 {
   VertexMapper mapper;
 
@@ -894,7 +894,7 @@ void Geometry::regenerateVertices(const std::vector<size_t>& map_new_to_old)
 void Geometry::convertDrawCallToDrawArrays()
 {
   // generate mapping 
-  std::vector<size_t> map_new_to_old;
+  std::vector<u32> map_new_to_old;
   map_new_to_old.reserve( vertexArray()->size() * 3 );
 
   for(int i=drawCalls()->size(); i--; )
@@ -929,7 +929,7 @@ void Geometry::triangulateDrawCalls()
       continue;
     }
 
-    size_t tri_count = dc->countTriangles();
+    u32 tri_count = dc->countTriangles();
 
     ref<DrawElementsUInt> triangles = new DrawElementsUInt(PT_TRIANGLES, dc->instances());
     triangles->indexBuffer()->resize( tri_count*3 );
@@ -979,7 +979,7 @@ void Geometry::shrinkDrawCalls()
         de->setBaseVertex( dc->as<DrawElementsBase>()->baseVertex() );
         // regenerate indices
         de->indexBuffer()->resize( idx_count );
-        size_t i=0;
+        u32 i=0;
         for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
         {
           // skip primitive restart indices
@@ -1008,7 +1008,7 @@ void Geometry::shrinkDrawCalls()
         de->setRangeEnd( dc->as<DrawRangeElementsBase>()->rangeEnd() );
         // regenerate indices
         de->indexBuffer()->resize( idx_count );
-        size_t i=0;
+        u32 i=0;
         for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
         {
           // skip primitive restart indices
@@ -1027,7 +1027,7 @@ void Geometry::shrinkDrawCalls()
         ref<MultiDrawElementsUByte> de = new MultiDrawElementsUByte( dc->primitiveType() );
         // regenerate indices
         de->indexBuffer()->resize( idx_count );
-        size_t i=0;
+        u32 i=0;
         for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
         {
           // skip primitive restart indices
@@ -1060,7 +1060,7 @@ void Geometry::shrinkDrawCalls()
         de->setBaseVertex( dc->as<DrawElementsBase>()->baseVertex() );
         // regenerate indices
         de->indexBuffer()->resize( idx_count );
-        size_t i=0;
+        u32 i=0;
         for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
         {
           // skip primitive restart indices
@@ -1089,7 +1089,7 @@ void Geometry::shrinkDrawCalls()
         de->setRangeEnd( dc->as<DrawRangeElementsBase>()->rangeEnd() );
         // regenerate indices
         de->indexBuffer()->resize( idx_count );
-        size_t i=0;
+        u32 i=0;
         for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
         {
           // skip primitive restart indices
@@ -1108,7 +1108,7 @@ void Geometry::shrinkDrawCalls()
         ref<MultiDrawElementsUShort> de = new MultiDrawElementsUShort( dc->primitiveType() );
         // regenerate indices
         de->indexBuffer()->resize( idx_count );
-        size_t i=0;
+        u32 i=0;
         for( vl::IndexIterator it = dc->indexIterator(); it.hasNext(); ++it, ++i )
         {
           // skip primitive restart indices
@@ -1236,24 +1236,24 @@ bool Geometry::sortVertices()
   drawCalls()->clear();
 
   // reset tables
-  std::vector<size_t> map_new_to_old;
+  std::vector<u32> map_new_to_old;
   map_new_to_old.resize( vertexArray()->size() );
   memset(&map_new_to_old[0], 0xFF, map_new_to_old.size()*sizeof(map_new_to_old[0])); // fill with 0xFF for debugging
 
-  std::vector<size_t> map_old_to_new;
+  std::vector<u32> map_old_to_new;
   map_old_to_new.resize( vertexArray()->size() );
   memset(&map_old_to_new[0], 0xFF, map_old_to_new.size()*sizeof(map_old_to_new[0])); // fill with 0xFF for debugging
 
-  std::vector<size_t> used;
+  std::vector<u32> used;
   used.resize( vertexArray()->size() );
   memset(&used[0], 0, used.size()*sizeof(used[0]));
 
   // assign new vertex indices in order of appearence
-  size_t new_idx = 0;
-  for(size_t i=0; i<de_u32_set.size(); ++i)
+  u32 new_idx = 0;
+  for(u32 i=0; i<de_u32_set.size(); ++i)
   {
     ArrayUInt1* index_buffer = de_u32_set[i]->indexBuffer();
-    for(size_t idx=0; idx<index_buffer->size(); ++idx)
+    for(u32 idx=0; idx<index_buffer->size(); ++idx)
     {
       if (!used[index_buffer->at(idx)])
       {
@@ -1270,11 +1270,11 @@ bool Geometry::sortVertices()
   regenerateVertices(map_new_to_old);
 
   // regenerate draw calls
-  for(size_t i=0; i<de_u32_set.size(); ++i)
+  for(u32 i=0; i<de_u32_set.size(); ++i)
   {
     drawCalls()->push_back(de_u32_set[i].get());
     ArrayUInt1* index_buffer = de_u32_set[i]->indexBuffer();
-    for(size_t j=0; j<index_buffer->size(); ++j)
+    for(u32 j=0; j<index_buffer->size(); ++j)
     {
       index_buffer->at(j) = map_old_to_new[index_buffer->at(j)];
     }
@@ -1303,7 +1303,7 @@ void Geometry::colorizePrimitives()
 }
 //-----------------------------------------------------------------------------
 void Geometry::computeTangentSpace(
-  size_t vert_count, 
+  u32 vert_count, 
   const fvec3 *vertex, 
   const fvec3* normal,
   const fvec2 *texcoord, 
@@ -1357,7 +1357,7 @@ void Geometry::computeTangentSpace(
     tan2[tri[2]] += tdir;
   }
 
-  for ( size_t a = 0; a < vert_count; a++)
+  for ( u32 a = 0; a < vert_count; a++)
   {
     const fvec3& n = normal[a];
     const fvec3& t = tan1[a];
