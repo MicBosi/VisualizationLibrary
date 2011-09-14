@@ -200,13 +200,13 @@ namespace vl
       indexBuffer()->bufferObject()->deleteBufferObject();
     }
 
-    virtual void render(bool use_vbo) const
+    virtual void render(bool use_bo) const
     {
       VL_CHECK_OGL()
       VL_CHECK(Has_GL_EXT_multi_draw_arrays||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0);
-      VL_CHECK(!use_vbo || (use_vbo && Has_BufferObject))
-      use_vbo &= Has_BufferObject; // && indexBuffer()->bufferObject()->handle() && indexBuffer()->sizeBufferObject();
-      if ( !use_vbo && !indexBuffer()->size() )
+      VL_CHECK(!use_bo || (use_bo && Has_BufferObject))
+      use_bo &= Has_BufferObject; // && indexBuffer()->bufferObject()->handle() && indexBuffer()->sizeBufferObject();
+      if ( !use_bo && !indexBuffer()->size() )
         return;
 
       // apply patch parameters if any and if using PT_PATCHES
@@ -221,7 +221,7 @@ namespace vl
       }
 
       const GLvoid **indices_ptr = NULL;
-      if (use_vbo && indexBuffer()->bufferObject()->handle())
+      if (use_bo && indexBuffer()->bufferObject()->handle())
       {
         VL_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer()->bufferObject()->handle()); VL_CHECK_OGL()
         VL_CHECK(!mBufferObjectPointerVector.empty())
@@ -273,17 +273,17 @@ namespace vl
     }
 
     /** The pointer vector used as 'indices' parameter of glMultiDrawElements when NOT using BufferObjects. 
-     * Automatically computed when calling setCountVector(). If you need to modify this manually then you also have to modify the vboPointerVector. */
+     * Automatically computed when calling setCountVector(). If you need to modify this manually then you also have to modify the bufferObjectPointerVector. */
     const std::vector<const index_type*>& pointerVector() const { return mPointerVector; }
 
     /** The pointer vector used as 'indices' parameter of glMultiDrawElements when NOT using BufferObjects. */
     std::vector<const index_type*>& pointerVector() { return mPointerVector; }
 
     /** The pointer vector used as 'indices' parameter of glMultiDrawElements when using BufferObjects. */
-    const std::vector<const index_type*>& vboPointerVector() const { return mBufferObjectPointerVector; }
+    const std::vector<const index_type*>& bufferObjectPointerVector() const { return mBufferObjectPointerVector; }
 
     /** The pointer vector used as 'indices' parameter of glMultiDrawElements when using BufferObjects. */
-    std::vector<const index_type*>& vboPointerVector() { return mBufferObjectPointerVector; }
+    std::vector<const index_type*>& bufferObjectPointerVector() { return mBufferObjectPointerVector; }
 
     /** Computes pointerVector() based on the values contained on countVector(). */
     void computePointerVector()
@@ -298,7 +298,7 @@ namespace vl
       }
     }
 
-    //! Computes vboPointerVector() based on the values contained in pointerVector().
+    //! Computes bufferObjectPointerVector() based on the values contained in pointerVector().
     void computeBufferObjectPointerVector()
     {
       VL_CHECK( indexBuffer() && indexBuffer()->size() )
