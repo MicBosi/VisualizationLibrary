@@ -110,7 +110,7 @@ namespace vl
     EPrimitiveType primitiveType() const { return mType; }
 
     /** Executes the draw call. */
-    virtual void render(bool use_vbo = true) const = 0;
+    virtual void render(bool use_bo = true) const = 0;
 
     /** Returns a clone of the draw call. */
     virtual ref<DrawCall> clone() const = 0;
@@ -139,18 +139,18 @@ namespace vl
     virtual IndexIterator indexIterator() const = 0;
 
     /** Counts the number of virtual indices of a DrawCall., i.e. the number of indices you would retrieve by iterating over the iterator returned by indexIterator(). */
-    size_t countIndices() const
+    u32 countIndices() const
     {
-      size_t count = 0;
+      u32 count = 0;
       for( IndexIterator it = indexIterator(); it.hasNext(); it.next() )
         ++count;
       return count;
     }
 
     /** Counts the number of virtual triangles of a DrawCall., i.e. the number of triangles you would retrieve by iterating over the iterator returned by triangleIterator(). */
-    size_t countTriangles() const
+    u32 countTriangles() const
     {
-      size_t count = 0;
+      u32 count = 0;
       for( TriangleIterator it = triangleIterator(); it.hasNext(); it.next() )
         ++count;
       return count;

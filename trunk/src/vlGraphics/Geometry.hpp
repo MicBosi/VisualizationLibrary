@@ -119,11 +119,11 @@ namespace vl
     //! Fills the color array with the given color
     void setColorArray(const fvec4& color)
     {
-      size_t vert_count = vertexArray() ? vertexArray()->size() : vertexAttribArray(VA_Position) ? vertexAttribArray(VA_Position)->data()->size() : 0;
+      u32 vert_count = (u32)(vertexArray() ? vertexArray()->size() : vertexAttribArray(VA_Position) ? vertexAttribArray(VA_Position)->data()->size() : 0);
       VL_CHECK( vert_count )
       ref<ArrayFloat4> color_array = new ArrayFloat4;
       color_array->resize(vert_count);
-      for(size_t i=0; i<color_array->size(); ++i)
+      for(u32 i=0; i<color_array->size(); ++i)
         color_array->at(i) = color;
       #if defined(VL_OPENGL_ES2)
         setVertexAttribArray(VA_Color, color_array.get());
@@ -234,7 +234,7 @@ namespace vl
 
     //! Regenerates the vertex position and attributes using the given new-to-old map.
     //! Where 'map_new_to_old[i] == j' means that the i-th new vertex attribute should take it's value from the old j-th vertex attribute.
-    void regenerateVertices(const std::vector<size_t>& map_new_to_old);
+    void regenerateVertices(const std::vector<u32>& map_new_to_old);
 
     //! Assigns a random color to each vertex of each DrawCall object. If a vertex is shared among more than one DrawCall object its color is undefined.
     void colorizePrimitives();
@@ -251,7 +251,7 @@ namespace vl
     // Lengyel, Eric. “Computing Tangent Space Basis Vectors for an Arbitrary Mesh”. Terathon Software 3D Graphics Library, 2001. 
     // http://www.terathon.com/code/tangent.html
     static void computeTangentSpace(
-      size_t vert_count, 
+      u32 vert_count, 
       const vl::fvec3 *vertex, 
       const vl::fvec3* normal,
       const vl::fvec2 *texcoord, 

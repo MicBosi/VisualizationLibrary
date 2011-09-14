@@ -1426,7 +1426,7 @@ void OpenGLContext::resetContextStates(EResetContextStates start_or_finish)
   }
 }
 //-----------------------------------------------------------------------------
-void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool force)
+void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_bo, bool force)
 {
   VL_CHECK_OGL();
 
@@ -1529,7 +1529,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if (enabled)
           {
-            if ( use_vbo && vas->vertexArray()->bufferObject()->handle() )
+            if ( use_bo && vas->vertexArray()->bufferObject()->handle() )
             {
               buf_obj = vas->vertexArray()->bufferObject()->handle();
               ptr = 0;
@@ -1571,7 +1571,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if (enabled)
           {
-            if ( use_vbo && vas->normalArray()->bufferObject()->handle() )
+            if ( use_bo && vas->normalArray()->bufferObject()->handle() )
             {
               buf_obj = vas->normalArray()->bufferObject()->handle();
               ptr = 0;
@@ -1613,7 +1613,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if (enabled)
           {
-            if ( use_vbo && vas->colorArray()->bufferObject()->handle() )
+            if ( use_bo && vas->colorArray()->bufferObject()->handle() )
             {
               buf_obj = vas->colorArray()->bufferObject()->handle();
               ptr = 0;
@@ -1655,7 +1655,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if (enabled)
           {
-            if ( use_vbo && vas->secondaryColorArray()->bufferObject()->handle() )
+            if ( use_bo && vas->secondaryColorArray()->bufferObject()->handle() )
             {
               buf_obj = vas->secondaryColorArray()->bufferObject()->handle();
               ptr = 0;
@@ -1697,7 +1697,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         {
           if (enabled)
           {
-            if ( use_vbo && vas->fogCoordArray()->bufferObject()->handle() )
+            if ( use_bo && vas->fogCoordArray()->bufferObject()->handle() )
             {
               buf_obj = vas->fogCoordArray()->bufferObject()->handle();
               ptr = 0;
@@ -1742,7 +1742,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
           mTexCoordArray[tex_unit].mState += 1; // 0 -> 1; 1 -> 2;
           VL_CHECK( mTexCoordArray[tex_unit].mState == 1 || mTexCoordArray[tex_unit].mState == 2 );
 
-          if ( use_vbo && texarr->bufferObject()->handle() )
+          if ( use_bo && texarr->bufferObject()->handle() )
           {
             buf_obj = texarr->bufferObject()->handle();
             ptr = 0;
@@ -1817,7 +1817,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_vbo, bool forc
         mVertexAttrib[idx].mState += 1; // 0 -> 1; 1 -> 2;
         VL_CHECK( mVertexAttrib[idx].mState == 1 || mVertexAttrib[idx].mState == 2 );
 
-        if ( use_vbo && info->data()->bufferObject()->handle() )
+        if ( use_bo && info->data()->bufferObject()->handle() )
         {
           buf_obj = info->data()->bufferObject()->handle();
           ptr = 0;

@@ -50,10 +50,10 @@ namespace vl
     //! \param data The array to be regenerated
     //! \param map_new_to_old Specifies the mapping from the old vetices to the new one. The \p i-th vertex of the new vertex array will use the \p map_new_to_old[i]-th vertex of the old array, 
     //! that is, \p map_new_to_old[i] specifies the \a old vertex to be used to generate the \a new \p i-th vertex.
-    ref<ArrayAbstract> regenerate(ArrayAbstract* data, const std::vector<size_t>& map_new_to_old) const;
+    ref<ArrayAbstract> regenerate(ArrayAbstract* data, const std::vector<u32>& map_new_to_old) const;
   private:
     template<class T>
-    ref<ArrayAbstract> regenerateT(ArrayAbstract* data, const std::vector<size_t>& map_new_to_old) const;
+    ref<ArrayAbstract> regenerateT(ArrayAbstract* data, const std::vector<u32>& map_new_to_old) const;
   };
   //-----------------------------------------------------------------------------
   // DoubleVertexRemover
@@ -87,7 +87,7 @@ namespace vl
           mAttribs.push_back(geom->vertexAttribArrays()->at(i)->data());
       }
 
-      bool operator()(unsigned int a, unsigned int b) const 
+      bool operator()(u32 a, u32 b) const 
       { 
         for(unsigned i=0; i<mAttribs.size(); ++i)
         {
@@ -124,7 +124,7 @@ namespace vl
           mAttribs.push_back(geom->vertexAttribArrays()->at(i)->data());
       }
 
-      bool operator()(unsigned int a, unsigned int b) const 
+      bool operator()(u32 a, u32 b) const 
       { 
         for(unsigned i=0; i<mAttribs.size(); ++i)
         {
@@ -141,12 +141,12 @@ namespace vl
   public:
     DoubleVertexRemover() {}
     void removeDoubles(Geometry* geom);
-    const std::vector<size_t>& mapNewToOld() const { return mMapNewToOld; }
-    const std::vector<size_t>& mapOldToNew() const { return mMapOldToNew; }
+    const std::vector<u32>& mapNewToOld() const { return mMapNewToOld; }
+    const std::vector<u32>& mapOldToNew() const { return mMapOldToNew; }
 
   protected:
-    std::vector<size_t> mMapNewToOld;
-    std::vector<size_t> mMapOldToNew;
+    std::vector<u32> mMapNewToOld;
+    std::vector<u32> mMapOldToNew;
   };
 }
 
