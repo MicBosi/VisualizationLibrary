@@ -33,18 +33,18 @@ using namespace vl;
 
 #define	FORCE_INLINE __attribute__((always_inline))
 
-inline u32 rotl32 ( u32 x, int8_t r )
+inline u32 rotl32 ( u32 x, i8 r )
 {
   return (x << r) | (x >> (32 - r));
 }
 
-inline u64 rotl64 ( u64 x, int8_t r )
+inline u64 rotl64 ( u64 x, i8 r )
 {
   return (x << r) | (x >> (64 - r));
 }
 
-#define	ROTL32(x,y)	rotl32(x,y)
-#define ROTL64(x,y)	rotl64(x,y)
+#define	ROTL32(x,y) rotl32(x,y)
+#define ROTL64(x,y) rotl64(x,y)
 
 #define BIG_CONSTANT(x) (x##LLU)
 
