@@ -2,6 +2,10 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.09.1160 RC1</div>
+
+   - Allow DrawElements and DrawRangeElements to use an arbitrary window of the index buffer.
+
 	<div class="featuretitle">Visualization Library 2011.05.1144 (maintenance release of VL 2011.05.1142)</div>
 
 	- Bug: fixed FontManager::acquireFont() always returning entry #0.
