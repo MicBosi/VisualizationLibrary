@@ -31,7 +31,8 @@ using namespace vl;
 
 #else	// defined(_MSC_VER)
 
-#define	FORCE_INLINE __attribute__((always_inline))
+// #define	FORCE_INLINE __attribute__((always_inline))
+#define	FORCE_INLINE inline
 
 inline u32 rotl32 ( u32 x, i8 r )
 {
