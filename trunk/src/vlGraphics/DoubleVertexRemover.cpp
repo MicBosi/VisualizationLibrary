@@ -34,6 +34,82 @@
 
 using namespace vl;
 
+namespace
+{
+  class LessCompare
+  {
+  public:
+    LessCompare(const Geometry* geom)
+    {
+      if (geom->vertexArray())
+        mAttribs.push_back(geom->vertexArray());
+      if (geom->normalArray())
+        mAttribs.push_back(geom->normalArray());
+      if (geom->colorArray())
+        mAttribs.push_back(geom->colorArray());
+      if (geom->secondaryColorArray())
+        mAttribs.push_back(geom->secondaryColorArray());
+      if (geom->fogCoordArray())
+        mAttribs.push_back(geom->fogCoordArray());
+      for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+        if (geom->texCoordArray(i))
+          mAttribs.push_back(geom->texCoordArray(i));
+      for(int i=0; i<geom->vertexAttribArrays()->size(); ++i)
+        mAttribs.push_back(geom->vertexAttribArrays()->at(i)->data());
+    }
+
+    bool operator()(u32 a, u32 b) const 
+    { 
+      for(unsigned i=0; i<mAttribs.size(); ++i)
+      {
+        int val = mAttribs[i]->compare(a,b);
+        if (val != 0)
+          return val < 0;
+      }
+      return false;
+    }
+
+  protected:
+    std::vector< const ArrayAbstract* > mAttribs;
+  };
+
+  class EqualsCompare
+  {
+  public:
+    EqualsCompare(const Geometry* geom)
+    {
+      if (geom->vertexArray())
+        mAttribs.push_back(geom->vertexArray());
+      if (geom->normalArray())
+        mAttribs.push_back(geom->normalArray());
+      if (geom->colorArray())
+        mAttribs.push_back(geom->colorArray());
+      if (geom->secondaryColorArray())
+        mAttribs.push_back(geom->secondaryColorArray());
+      if (geom->fogCoordArray())
+        mAttribs.push_back(geom->fogCoordArray());
+      for(int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
+        if (geom->texCoordArray(i))
+          mAttribs.push_back(geom->texCoordArray(i));
+      for(int i=0; i<geom->vertexAttribArrays()->size(); ++i)
+        mAttribs.push_back(geom->vertexAttribArrays()->at(i)->data());
+    }
+
+    bool operator()(u32 a, u32 b) const 
+    { 
+      for(unsigned i=0; i<mAttribs.size(); ++i)
+      {
+        if (mAttribs[i]->compare(a,b) != 0)
+          return false;
+      }
+      return true;
+    }
+
+  protected:
+    std::vector< const ArrayAbstract* > mAttribs;
+  };
+}
+
 //-----------------------------------------------------------------------------
 template<class T>
 ref<ArrayAbstract> VertexMapper::regenerateT(ArrayAbstract* data, const std::vector<u32>& map_new_to_old) const
@@ -155,6 +231,9 @@ ref<ArrayAbstract> VertexMapper::regenerate(ArrayAbstract* data, const std::vect
 //-----------------------------------------------------------------------------
 void DoubleVertexRemover::removeDoubles(Geometry* geom)
 {
+  Time timer;
+  timer.start();
+
   mMapNewToOld.clear();
   mMapOldToNew.clear();
 
@@ -216,8 +295,6 @@ void DoubleVertexRemover::removeDoubles(Geometry* geom)
       de->indexBuffer()->at(i) = mMapOldToNew[it.index()];
   }
 
-  #if 0
-    printf("DoubleVertexRemover = %d/%d, saved = %d, shrink=%.2f\n", (int)mMapNewToOld.size(), (int)verti.size(), (int)verti.size()-(int)mMapNewToOld.size(), (float)mMapNewToOld.size()/verti.size() );
-  #endif
+  Log::debug( Say("DoubleVertexRemover : time=%.2ns, verts=%n/%n, saved=%n, shrink=%.2n\n") << timer.elapsed() << mMapNewToOld.size() << verti.size() << verti.size() - mMapNewToOld.size() << (float)mMapNewToOld.size()/verti.size() );
 }
 //-----------------------------------------------------------------------------
