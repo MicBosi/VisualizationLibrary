@@ -2,6 +2,10 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.05.1146</div>
+
+	- Bug: fixed RayIntersectionGeometry::triangle() return value.
+
 	<div class="featuretitle">Visualization Library 2011.05.1144</div>
 
 	- Bug: fixed FontManager::acquireFont() always returning entry #0.
