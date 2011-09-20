@@ -76,23 +76,26 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
       int itri = 0;
       for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next(), ++itri)
       {
-        fvec3 a = posarr->getAsVec3(trit.a());
-        fvec3 b = posarr->getAsVec3(trit.b());
-        fvec3 c = posarr->getAsVec3(trit.c());
+        int ia = trit.a();
+        int ib = trit.b();
+        int ic = trit.c();
+        fvec3 a = posarr->getAsVec3(ia);
+        fvec3 b = posarr->getAsVec3(ib);
+        fvec3 c = posarr->getAsVec3(ic);
         if (act->transform())
         {
           a = matrix * a;
           b = matrix * b;
           c = matrix * c;
         }
-        intersectTriangle(a, b, c, act, geom, prim, itri);
+        intersectTriangle(a, b, c, ia, ib, ic, act, geom, prim, itri);
       }
     }
   }
 }
 //-----------------------------------------------------------------------------
 template<class T>
-void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, Actor* act, Geometry* geom, DrawCall* prim, int tri_idx)
+void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, int ia, int ib, int ic, Actor* act, Geometry* geom, DrawCall* prim, int tri_idx)
 {
   T v1 = b-a;
   T v2 = c-a;
@@ -115,6 +118,7 @@ void RayIntersector::intersectTriangle(const T& a, const T& b, const T& c, Actor
   ref<RayIntersectionGeometry> record = new vl::RayIntersectionGeometry;
   record->setIntersectionPoint( rp );
   record->setTriangleIndex(tri_idx);
+  record->setTriangle(ia, ib, ic);
   record->setActor(act);
   record->setGeometry(geom);
   record->setPrimitives(prim);
