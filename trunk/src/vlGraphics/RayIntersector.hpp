@@ -70,14 +70,14 @@ namespace vl
     void setIntersectionPoint(const vec3& v) { mIntersectionPoint = v; }
 
     //! The intersection distance
-    float distance() const { return mDistance; }
+    real distance() const { return mDistance; }
     //! The intersection distance
-    void setDistance(float dist) { mDistance = dist; }
+    void setDistance(real dist) { mDistance = dist; }
 
   protected:
     vec3 mIntersectionPoint;
     Actor* mActor;
-    float mDistance;
+    real mDistance;
   };
   //-----------------------------------------------------------------------------
   // RayIntersectionGeometry
