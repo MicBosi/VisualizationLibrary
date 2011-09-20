@@ -136,6 +136,11 @@ namespace vl
 
   //-----------------------------------------------------------------------------
 
+  inline void glVertexAttrib4fv (GLuint, const GLfloat*)
+  {
+    VL_UNSUPPORTED_FUNC()
+  }
+
   inline void VL_glVertexAttribPointer( GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer)
   {
     VL_UNSUPPORTED_FUNC()
@@ -761,6 +766,11 @@ namespace vl
   }
 
   inline void glLinkProgram (GLuint program)
+  {
+    VL_UNSUPPORTED_FUNC()
+  }
+
+  inline void glGetShaderSource (GLuint shader, GLsizei bufsize, GLsizei* length, GLchar* source)
   {
     VL_UNSUPPORTED_FUNC()
   }

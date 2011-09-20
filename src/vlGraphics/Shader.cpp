@@ -706,7 +706,7 @@ void Color::apply(int, const Camera*, OpenGLContext* ctx) const
 //------------------------------------------------------------------------------
 void SecondaryColor::apply(int, const Camera*, OpenGLContext* ctx) const
 {
-  glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() ); VL_CHECK_OGL()
+  VL_glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() ); VL_CHECK_OGL()
   ctx->mSecondaryColor = mSecondaryColor;
 }
 //------------------------------------------------------------------------------

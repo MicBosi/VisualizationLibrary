@@ -109,9 +109,7 @@ namespace vl
 
   inline void VL_glSecondaryColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
   {
-  {
     VL_UNSUPPORTED_FUNC();
-  }
   }
   
   //-----------------------------------------------------------------------------
