@@ -80,7 +80,7 @@ void PolygonSimplifier::simplify()
     bool problem = mInput->normalArray() != NULL || mInput->colorArray() != NULL || mInput->secondaryColorArray() != NULL || mInput->fogCoordArray() != NULL;
     for( int i=0; i<VL_MAX_TEXTURE_UNITS; ++i)
       problem |= mInput->texCoordArray(i) != NULL;
-    problem |= mInput->vertexAttribArrays()->size() != 0;
+    problem |= mInput->vertexAttribArrays()->size() > 0 && !(!mInput->vertexArray() && mInput->vertexAttribArray(VA_Position) && mInput->vertexAttribArrays()->size() == 1);
     if (problem)
       Log::warning("PolygonSimplifier::simplify() simplifies only the position array of a Geometry, the other attibutes will be discarded.\n");
   #endif
@@ -117,10 +117,18 @@ void PolygonSimplifier::simplify()
     return;
   }
 
+  ArrayAbstract* posarr = mInput->vertexArray() ? mInput->vertexArray() : mInput->vertexAttribArray(vl::VA_Position) ? mInput->vertexAttribArray(vl::VA_Position)->data() : NULL;
+
+  if (!posarr)
+  {
+    Log::warning("PolygonSimplifier::simplify() : no vertices found in input Geometry.\n");
+    return;
+  }
+
   // fill vertices
-  verts.resize( mInput->vertexArray()->size() );
-  for( size_t i=0; i< mInput->vertexArray()->size(); ++i )
-    verts[i] = (fvec3)mInput->vertexArray()->getAsVec3(i);
+  verts.resize( posarr->size() );
+  for( size_t i=0; i< posarr->size(); ++i )
+    verts[i] = (fvec3)posarr->getAsVec3(i);
 
   if (verts.empty())
   {
@@ -284,7 +292,7 @@ void PolygonSimplifier::simplify(const std::vector<fvec3>& in_verts, const std::
     {
       std::set<VertexPtrWrapper>::iterator it = vertex_set.begin();
       PolygonSimplifier::Vertex* v = it->mVertex;
-      v->mRemoveOrder = remove_order;
+      v->mRemoveOrder = (int)remove_order;
       vertex_set.erase(it);
 
       // remove the adjacent vertices to v and v->collapseVert()
@@ -342,7 +350,7 @@ void PolygonSimplifier::simplify(const std::vector<fvec3>& in_verts, const std::
   {
     float elapsed = (float)timer.elapsed();
     int polys_after = output().back()->drawCalls()->at(0)->countTriangles();
-    int verts_after = output().back()->vertexArray()->size();
+    int verts_after = output().back()->vertexArray() ? (int)output().back()->vertexArray()->size() : (int)output().back()->vertexAttribArray(VA_Position)->data()->size();
     Log::print(Say("POLYS: %n -> %n, %.2n%%, %.1nT/s\n") << polys_before << polys_after << 100.0f*verts_after/verts_before << (polys_before - polys_after)/elapsed );
     Log::print(Say("VERTS: %n -> %n, %.2n%%, %.1nV/s\n") << verts_before << verts_after << 100.0f*verts_after/verts_before << (verts_before - verts_after)/elapsed );
   }
@@ -369,7 +377,7 @@ void PolygonSimplifier::outputSimplifiedGeometry()
 
   // count indices required
   size_t index_count = 0;
-  for(int i=0; i<(int)mSimplifiedTriangles.size(); ++i)
+  for(size_t i=0; i<mSimplifiedTriangles.size(); ++i)
     index_count += mSimplifiedTriangles[i]->mRemoved ? 0 : 3;
 
   // regenerate index buffer
@@ -394,7 +402,10 @@ void PolygonSimplifier::outputSimplifiedGeometry()
 
   // output geometry
   mOutput.push_back( new Geometry );
-  mOutput.back()->setVertexArray( arr_f3.get() );
+  if (mInput->vertexArray())
+    mOutput.back()->setVertexArray( arr_f3.get() );
+  else
+    mOutput.back()->setVertexAttribArray( vl::VA_Position, arr_f3.get() );
   mOutput.back()->drawCalls()->push_back( de.get() );
 }
 //-----------------------------------------------------------------------------

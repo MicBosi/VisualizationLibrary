@@ -64,20 +64,20 @@ void EdgeExtractor::addEdge(std::set<EdgeExtractor::Edge>& edges, const EdgeExtr
 }
 //-----------------------------------------------------------------------------
 //! Extracts the edges from the given Geometry and appends them to edges().
-//! The given geometry must have a vertex array of format ArrayFloat3.
 void EdgeExtractor::extractEdges(Geometry* geom)
 {
-  ArrayFloat3* verts = cast<ArrayFloat3>(geom->vertexArray());
+  ArrayAbstract* verts = geom->vertexArray() ? geom->vertexArray() : geom->vertexAttribArray(vl::VA_Position) ? geom->vertexAttribArray(vl::VA_Position)->data() : NULL;
 
   // mic fixme:
   // here the bottle-neck seems to be the continuous allocation/deallocation and insertion/search time,
   // maybe a memory-pool-managed hash table would help?
-  std::set<Edge> edges;
   if (!verts)
   {
     vl::Log::error("EdgeExtractor::extractEdges(geom): 'geom' must have a vertex array of type ArrayFloat3.\n");
     return;
   }
+
+  std::set<Edge> edges;
 
   // iterate all primitives
   for(int iprim=0; iprim<geom->drawCalls()->size(); ++iprim)
@@ -92,15 +92,15 @@ void EdgeExtractor::extractEdges(Geometry* geom)
       if (a == b || b == c || c == a)
         continue;
       // compute normal
-      fvec3 v0 = verts->at(a);
-      fvec3 v1 = verts->at(b) - v0;
-      fvec3 v2 = verts->at(c) - v0;
+      fvec3 v0 = (fvec3)verts->getAsVec3(a);
+      fvec3 v1 = (fvec3)verts->getAsVec3(b) - v0;
+      fvec3 v2 = (fvec3)verts->getAsVec3(c) - v0;
       fvec3 n = cross(v1,v2).normalize();
       if (n.isNull())
         continue;
-      addEdge(edges, Edge( verts->at(a), verts->at(b) ), n );
-      addEdge(edges, Edge( verts->at(b), verts->at(c) ), n );
-      addEdge(edges, Edge( verts->at(c), verts->at(a) ), n );
+      addEdge(edges, Edge( (fvec3)verts->getAsVec3(a), (fvec3)verts->getAsVec3(b) ), n );
+      addEdge(edges, Edge( (fvec3)verts->getAsVec3(b), (fvec3)verts->getAsVec3(c) ), n );
+      addEdge(edges, Edge( (fvec3)verts->getAsVec3(c), (fvec3)verts->getAsVec3(a) ), n );
     }
   }
 
