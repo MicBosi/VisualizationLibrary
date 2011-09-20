@@ -2,6 +2,14 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.09.1160 RC3</div>
+
+   - Various fixes for broader support to generic vertex attributes.
+
+	<div class="featuretitle">Visualization Library 2011.09.1160 RC2</div>
+
+   - Fixed MinGW and MSYS compilation errors.
+
 	<div class="featuretitle">Visualization Library 2011.09.1160 RC1</div>
 
    - Allow DrawElements and DrawRangeElements to use an arbitrary window of the index buffer.
