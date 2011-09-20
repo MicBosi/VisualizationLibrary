@@ -790,7 +790,7 @@ void Geometry::mergeDrawCallsWithTriangles(EPrimitiveType primitive_type)
       index_buffer[idx+2] = it.c();
 
       // some sanity checks since we are here...
-      VL_CHECK( it.a() < posarr->size() && it.b() < posarr->size() && it.c() < posarr->size() );
+      VL_CHECK( it.a() < (int)posarr->size() && it.b() < (int)posarr->size() && it.c() < (int)posarr->size() );
       VL_CHECK( it.a() >= 0 && it.b() >= 0 && it.c() >= 0 );
     }
   }
@@ -872,7 +872,7 @@ void Geometry::fixTriangleWinding()
       }
 
       // some sanity checks since we are here...
-      VL_CHECK( it.a() < posarr->size() && it.b() < posarr->size() && it.c() < posarr->size() );
+      VL_CHECK( it.a() < (int)posarr->size() && it.b() < (int)posarr->size() && it.c() < (int)posarr->size() );
       VL_CHECK( it.a() >= 0 && it.b() >= 0 && it.c() >= 0 );
     }
   }
