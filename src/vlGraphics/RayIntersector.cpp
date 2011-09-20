@@ -79,9 +79,9 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
         int ia = trit.a();
         int ib = trit.b();
         int ic = trit.c();
-        fvec3 a = posarr->getAsVec3(ia);
-        fvec3 b = posarr->getAsVec3(ib);
-        fvec3 c = posarr->getAsVec3(ic);
+        fvec3 a = (fvec3)posarr->getAsVec3(ia);
+        fvec3 b = (fvec3)posarr->getAsVec3(ib);
+        fvec3 c = (fvec3)posarr->getAsVec3(ic);
         if (act->transform())
         {
           a = matrix * a;
