@@ -327,8 +327,8 @@ namespace vl
     Geometry* input() { return mInput.get(); }
     const Geometry* input() const { return mInput.get(); }
 
-    std::vector< size_t >& targets() { return mTargets; }
-    const std::vector< size_t >& targets() const { return mTargets; }
+    std::vector< u32 >& targets() { return mTargets; }
+    const std::vector< u32 >& targets() const { return mTargets; }
 
     std::vector< ref<Geometry> >& output() { return mOutput; }
     const std::vector< ref<Geometry> >& output() const { return mOutput; }
@@ -360,7 +360,7 @@ namespace vl
   protected:
     ref<Geometry> mInput;
     std::vector< ref<Geometry> > mOutput;
-    std::vector< size_t > mTargets;
+    std::vector< u32 > mTargets;
     std::vector<Vertex*> mSimplifiedVertices;
     std::vector<Triangle*> mSimplifiedTriangles;
     std::vector<int> mProtectedVerts;

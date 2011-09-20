@@ -289,7 +289,7 @@ void Terrain::init()
         terr_tile->setTexCoordArray(0, tmap_uv.get());
         terr_tile->setTexCoordArray(1, dmap_uv.get());
 
-        ref<ArrayFloat3> verts = cast<ArrayFloat3>(terr_tile->vertexArray()); VL_CHECK(verts.get());
+        ref<ArrayFloat3> verts = terr_tile->vertexArray()->as<ArrayFloat3>(); VL_CHECK(verts.get());
         for(int z=0; z<zsize; ++z)
         {
           for(int x=0; x<xsize; ++x)
