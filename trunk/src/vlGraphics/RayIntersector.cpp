@@ -66,8 +66,8 @@ void RayIntersector::intersect(Actor* act)
 //-----------------------------------------------------------------------------
 void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
 {
-  ArrayAbstract* vertices = geom->vertexArray();
-  if (vertices)
+  ArrayAbstract* posarr = geom->vertexArray() ? geom->vertexArray() : geom->vertexAttribArray(vl::VA_Position) ? geom->vertexAttribArray(vl::VA_Position)->data() : NULL;
+  if (posarr)
   {
     fmat4 matrix = act->transform() ? (fmat4)act->transform()->worldMatrix() : fmat4();
     for(int i=0; i<geom->drawCalls()->size(); ++i)
@@ -76,9 +76,9 @@ void RayIntersector::intersectGeometry(Actor* act, Geometry* geom)
       int itri = 0;
       for(TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next(), ++itri)
       {
-        fvec3 a = vertices->getAsVec3(trit.a());
-        fvec3 b = vertices->getAsVec3(trit.b());
-        fvec3 c = vertices->getAsVec3(trit.c());
+        fvec3 a = posarr->getAsVec3(trit.a());
+        fvec3 b = posarr->getAsVec3(trit.b());
+        fvec3 c = posarr->getAsVec3(trit.c());
         if (act->transform())
         {
           a = matrix * a;

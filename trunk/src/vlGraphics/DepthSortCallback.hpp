@@ -61,7 +61,8 @@ namespace vl
    *
    * \remarks
    *
-   * - The sorting is based on the position of the vertices as specified by Geometry::vertexArray() and for obvious
+   * - The sorting is based on the position of the vertices as specified by Geometry::vertexArray() or 
+   *   vertexAttribArray(vl::VA_Position) and for obvious
    *   reasons cannot take into consideration transformations made in the vertex shader or in the geometry shader.
    * - The sorting is performed on a per DrawCall basis. For example, if a Geometry has 2 DrawCall A and B bound to it, 
    *   then the polygons, lines or points of A will always be rendered before the ones specified by B. If you need the
@@ -163,10 +164,10 @@ namespace vl
       if (!geometry)
         return;
 
-      if (!geometry->vertexArray())
-        return;
+      const ArrayAbstract* verts = geometry->vertexArray() ? geometry->vertexArray() : geometry->vertexAttribArray(vl::VA_Position) ? geometry->vertexAttribArray(vl::VA_Position)->data() : NULL;
 
-      const ArrayAbstract* verts = geometry->vertexArray();
+      if (!verts)
+        return;
 
       // computes eye-space vertex positions
       mat4 m;
