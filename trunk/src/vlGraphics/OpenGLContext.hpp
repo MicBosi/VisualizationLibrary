@@ -526,9 +526,9 @@ namespace vl
     const RenderState* mCurrentRenderState[RS_RenderStateCount];
     // previous state
     EEnable mPrevEnables[EN_EnableCount];
-    int mPrevEnablesCount;
+    size_t mPrevEnablesCount;
     ERenderState mPrevRenderStates[RS_RenderStateCount];
-    int mPrevRenderStatesCount;
+    size_t mPrevRenderStatesCount;
     // default render states
     RenderStateSlot mDefaultRenderStates[RS_RenderStateCount];
 

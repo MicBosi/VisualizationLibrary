@@ -313,14 +313,14 @@ bool EGLWindow::initEGLWindow(HWND parent, const vl::String& title, const vl::Op
   }
 
   // Initialize EGL
-  int maj_version=0, min_version=0;
+  EGLint maj_version=0, min_version=0;
   if ( !eglInitialize(mEGL_Display, &maj_version, &min_version) )
   {
     return false;
   }
 
   // Get configs
-  int num_configs = 0;
+  EGLint num_configs = 0;
   if ( !eglGetConfigs(mEGL_Display, NULL, 0, &num_configs) )
   {
     return false;
