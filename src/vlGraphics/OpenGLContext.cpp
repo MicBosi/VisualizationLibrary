@@ -1682,7 +1682,7 @@ void OpenGLContext::bindVAS(const IVertexAttribSet* vas, bool use_bo, bool force
             glDisableClientState(GL_SECONDARY_COLOR_ARRAY); VL_CHECK_OGL();
 
             // restore constant secondary color
-            glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() );
+            VL_glSecondaryColor3f( mSecondaryColor.r(), mSecondaryColor.g(), mSecondaryColor.b() );
 
             mSecondaryColorArray.mPtr = 0;
             mSecondaryColorArray.mBufferObject = 0;
