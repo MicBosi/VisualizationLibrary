@@ -106,7 +106,7 @@ namespace vl
     //! The starting index of the intersected primitive inside drawCalls()
     int triangleIndex() const { return mTriangleIndex; }
     //! An int[3] representing the indices of the intersected triangle.
-    int* triangle() const;
+    const int* triangle() const { return mTriangle; }
 
     //! The intersected Geometry
     void setGeometry(Geometry* g) { mGeometry = g; }
@@ -115,7 +115,7 @@ namespace vl
     //! The starting index of the intersected primitive inside drawCalls()
     void setTriangleIndex(int t_idx) { mTriangleIndex = t_idx; }
     //! An int[3] representing the indices of the intersected triangle.
-    void setTriangle(int a, int b, int c) { mTriangle[0] = a; mTriangle[0] = b; mTriangle[0] = c; }
+    void setTriangle(int a, int b, int c) { mTriangle[0] = a; mTriangle[1] = b; mTriangle[2] = c; }
 
   protected:
     vec3 mIntersectionPoint;
@@ -184,7 +184,7 @@ namespace vl
 
     // T should be either fvec3-4 or dvec3-4
     template<class T>
-    void intersectTriangle(const T& a, const T& b, const T& c, Actor*, Geometry* geom, DrawCall* prim, int prim_idx);
+    void intersectTriangle(const T& a, const T& b, const T& c, int ia, int ib, int ic, Actor*, Geometry* geom, DrawCall* prim, int prim_idx);
 
   protected:
     Frustum mFrustum;
