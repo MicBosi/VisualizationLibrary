@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 2.6)
 # Current Version
 set(VLVERSION_MAJOR "2011")
 set(VLVERSION_MINOR "05")
-set(VLVERSION_PATCH "1142")
+set(VLVERSION_PATCH "1144")
 set(VLVERSION "${VLVERSION_MAJOR}.${VLVERSION_MINOR}")
 
 # Common Dirs
