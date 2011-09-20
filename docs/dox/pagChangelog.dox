@@ -2,6 +2,12 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.09.1160 RC4</div>
+
+   - Fixed double precision pipeline compilation.
+   - Fixed some GLES1 compilation errors.
+   - Fixed RayIntersectionGeometry::triangle() now returns correctly the picked triangle's vertex indices.
+
 	<div class="featuretitle">Visualization Library 2011.09.1160 RC3</div>
 
    - Various fixes for broader support to generic vertex attributes.
