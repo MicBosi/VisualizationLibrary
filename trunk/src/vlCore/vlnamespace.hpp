@@ -834,7 +834,7 @@ namespace vl
 
     // Smoothing
     EN_POINT_SMOOTH, //!< If enabled, draw points with proper filtering; Otherwise, draw aliased points, see also PointSize.
-    EN_LINE_SMOOTH, //!< IIf enabled, draw lines with correct filtering; Otherwise, draw aliased lines, see also LineWidth.
+    EN_LINE_SMOOTH, //!< If enabled, draw lines with correct filtering; Otherwise, draw aliased lines, see also LineWidth.
     EN_POLYGON_SMOOTH, //!< If enabled, draw polygons with proper filtering; Otherwise, draw aliased polygons; For correct antialiased polygons, an alpha buffer is needed and the polygons must be sorted front to back.
 
     // Stippling
