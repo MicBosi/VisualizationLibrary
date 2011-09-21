@@ -210,6 +210,7 @@
 	- vl::ActorKdTree
 	
 	\par Geometry Tools
+
 	- vl::Geometry::convertToVertexAttribs()
 	- vl::Geometry::computeNormals()
 	- vl::Geometry::flipNormals()
@@ -242,8 +243,7 @@
 	- vl::DrawElements
 	- vl::VertexAttribInfo
 	- vl::ArrayAbstract
-	- vl::ArrayFloat3, vl::ArrayFloat4 etc.
-	- vl::ArrayHFloat3, vl::ArrayHFloat4 etc.
+	- vl::ArrayFloat3, vl::ArrayHFloat3, vl::ArrayUByte4 etc.
 	- vl::ArrayAbstract::computeBoundingSphere()
 	- vl::ArrayAbstract::computeBoundingBox()
 	- vl::ArrayAbstract::transform()
@@ -319,7 +319,7 @@
 	- vlWin32::Win32Window
 	- vlWin32::Win32Context
 	- vlMFC::MFCWindow
-	- vlWX::vlWXGLCanvas
+	- vlWX::WXGLCanvas
 	- vlQt4::Qt4Widget
 	- vlSDL::SDLWindow
 	- vlGLUT::GLUTWindow
@@ -331,12 +331,17 @@
 	- vl::Buffer
 	- vl::BufferObject
 	- vl::ArrayAbstract
-	- vl::Array
+	- vl::Array, vl::ArrayFloat3, vl::ArrayUByte4 etc.
 
 	\par Shader render states
 	
 	- vl::Shader
-	- vl::ShaderNode
+	- vl::Shader::enable()
+	- vl::Shader::disable()
+	- vl::GLSLProgram, see also http://www.opengl.org/sdk/docs/man4/xhtml/glUseProgram.xml and related functions.
+	- vl::Color, see also http://www.opengl.org/sdk/docs/man/xhtml/glColor.xml
+	- vl::Normal, see also http://www.opengl.org/sdk/docs/man/xhtml/glNormal.xml
+	- vl::SecondaryColor, see also http://www.opengl.org/sdk/docs/man/xhtml/glSecondaryColor.xml
 	- vl::AlphaFunc, see also http://www.opengl.org/sdk/docs/man/xhtml/glAlphaFunc.xml
 	- vl::BlendColor, see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendColor.xml
 	- vl::BlendEquation, see also http://www.opengl.org/sdk/docs/man/xhtml/glBlendEquation.xml
@@ -349,7 +354,6 @@
 	- vl::DepthRange, see also http://www.opengl.org/sdk/docs/man/xhtml/glDepthRange.xml
 	- vl::Fog, see also http://www.opengl.org/sdk/docs/man/xhtml/glFog.xml
 	- vl::FrontFace, see also http://www.opengl.org/sdk/docs/man/xhtml/glFrontFace.xml
-	- vl::GLSLProgram
 	- vl::Hint, see also http://www.opengl.org/sdk/docs/man/xhtml/glHint.xml
 	- vl::Light, see also http://www.opengl.org/sdk/docs/man/xhtml/glLight.xml
 	- vl::LightModel, see also http://www.opengl.org/sdk/docs/man/xhtml/glLightModel.xml
@@ -372,5 +376,6 @@
 	- vl::TexGen, see also http://www.opengl.org/sdk/docs/man/xhtml/glTexGen.xml
 	- vl::TextureMatrix
 	- vl::TextureSampler
+	- vl::ShaderNode
 	
 */
