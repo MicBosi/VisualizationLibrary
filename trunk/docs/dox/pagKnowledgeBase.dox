@@ -19,14 +19,14 @@
 	
 	Once you have succesfully compiled and installed VL, if you compiled any of the examples you will find them in \a "<VL_INSTALL_DIR>/bin". For example under windows by default the following executables are created:
 	
-	- \a Win32_tests.exe: contains Visualization Library test-demos. Calling it without arguments will show the list of available demo-tests. Calling it with a number as argument will run the corresponding demo-test.
-	- \a Win32_example.exe: displays a simple rotating cube implemented using the utility vl::Applet class.
-	- \a Win32_direct.exe: shows all the steps required to manually setup a simple rendering pipeline (no vl::Applet here).
+	- \a vlWin32_tests.exe: contains Visualization Library test-demos. Calling it without arguments will show the list of available demo-tests. Calling it with a number or name of the test as argument will run the corresponding demo-test.
+	- \a vlWin32_example.exe: displays a simple rotating cube implemented using the utility vl::Applet class.
+	- \a vlWin32_direct.exe: shows all the steps required to manually setup a simple rendering pipeline without using vl::Applet.
 	
 	Note that by default VL applications look for their data in the \a "../data" subdirectory. If you run the demos make sure you also installed the data by selecting the \a VL_INSTALL_DATA option from CMake. 
-	You can also specify a custom directory using the \a VL_DATA_PATH environment variable.
+	You can also specify a custom directory using the \a VL_DATA_PATH environment variable, which is the preferred way usually.
 	
-	The code for all the examples are located in the \a "<VL_SDK_DIR>/src/examples" directory. There you will find examples showing how to use VL under all the supported GUI libraries. In the \a "Applets" subdirectory you will find the source code for all the demo-tests. That is the best source of information to discover how VL is used.
+	The code for all the examples is located in the \a "<VL_SDK_DIR>/src/examples" directory. There you will find examples showing how to use VL under all the supported GUI libraries. In the \a "Applets" subdirectory you will find the source code for all the demo-tests. That is the best source of information to discover how VL is used.
 	
 	\par Environment Variables
 
@@ -45,7 +45,7 @@
 	
 	Before compiling VL you have a chance to tune it for your particular purposes by modifing some defines located in the config.hpp file (see the file content for all the details).
 	
-	Popular macros:
+	Notable macros:
 	
 	- VL_PIPELINE_PRECISION = defines whether VL's default math classes should use single precision (\p float) or double precision (\p double). Default is 1 (single precision).
 	- VL_OBJECT_USER_DATA, VL_ACTOR_USER_DATA, VL_TRANSFORM_USER_DATA, VL_SHADER_USER_DATA = allows the user to bind a void* to any vl::Object, vl::Actor, vl::Transform and vl::Shader respectively. 
@@ -65,7 +65,7 @@
 		
 	- Use of the forum:
 		- When signing up in the forum choose a human readable, non-dumb name, otherwise your subscription will be most probably discarded as spam. Avoid names such as Iuuuseeassiiwa, abc123 etc. or SupremeKingOfTheDragons etc. Names such as Nike, Mike, John80 or your real name are much better choices.
-		- If your user name falls under the "not-so-decent" category then it helps a lot to sign your posts with your real name or decent nickname to keep the interaction in the forum more pleasant and human. I hate starting a post reply with "Hi KingOfDoom, ..." or similar user names, I'd rather not reply, so keep this into consideration... If you would like to change your user name just let me know, I will be happy to do it for you.
+		- If your user name falls under the "not-so-decent" category then it helps a lot to sign your posts with your real name or decent nickname to keep the interaction in the forum more pleasant and human. I hate starting a post reply with "Hi KingOfDoom, ..." or similar user names, so keep this into consideration... If you would like to change your user name just let me know, I will be happy to do it for you.
 
 	\par Learning VL
 	
