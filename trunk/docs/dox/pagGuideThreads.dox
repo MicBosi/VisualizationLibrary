@@ -6,8 +6,8 @@
 	make it possible to be used in multi-threaded applications, but not to make multi-threaded applications development dumb-proof!
 	So you will have to follow certain guide lines and use a few precautions common to all multi-threaded applications.
 	
-	Also VL does not provide an OS-independent threading library, just a few abstract classes required to interoperate with your
-	favourite threading api, such as vl::IMutex and vl::ScopedMutex.
+	Also VL does not provide an OS-independent threading library, just a few abstract classes, such as vl::IMutex and vl::ScopedMutex, required to interoperate with your
+	favourite threading api.
 	
 	\par Does VL use multi-threading?
 	
