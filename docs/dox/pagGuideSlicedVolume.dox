@@ -32,12 +32,12 @@
 
 	[From \p volume_luminance_light.vs]
 	\dontinclude volume_luminance_light.vs
-	\skip //
+	\skip /*
 	\until // Have fun!
 
 	[From \p volume_luminance_light.fs]
 	\dontinclude volume_luminance_light.fs
-	\skip //
+	\skip /*
 	\until // Have fun!
 
 */
