@@ -305,6 +305,7 @@ void VisualizationLibrary::init(bool log_info)
 //------------------------------------------------------------------------------
 void VisualizationLibrary::shutdown()
 {
+  Log::debug("VisualizationLibrary::shutdown()\n");
   shutdownGraphics();
   shutdownCore();
 }
