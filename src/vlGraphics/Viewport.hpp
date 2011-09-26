@@ -94,6 +94,7 @@ namespace vl
     void setClearDepth(real depth) { mClearDepth = depth; }
     real clearDepth() const { return mClearDepth; }
 
+    /** Usually you want to use rather RendererAbstract::setClearFlags() */
     void setClearFlags(EClearFlags clear_flags) { mClearFlags = clear_flags; }
     EClearFlags clearFlags() const { return mClearFlags; }
 
