@@ -130,7 +130,7 @@ public:
     vl::vec3 center;
   };
 
-  void run(int test, const std::string& test_name, const vl::OpenGLContextFormat& format)
+  void run(int test, const std::string& test_name, const vl::OpenGLContextFormat& format, bool shut_down_after_run=true)
   {
     TestEntry tests[] = 
     {
@@ -235,7 +235,8 @@ public:
       runGUI(tests[itest].title, tests[itest].applet.get(), format, tests[itest].x, tests[itest].y, tests[itest].width, tests[itest].height, tests[itest].bk_color, tests[itest].eye, tests[itest].center );
 
       /* shutdown Visualization Library */
-      vl::VisualizationLibrary::shutdown();
+      if(shut_down_after_run)
+        vl::VisualizationLibrary::shutdown();
     }
     else
     {

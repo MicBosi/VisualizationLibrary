@@ -93,8 +93,12 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   String cmd = lpszCmdLine;
   std::vector<String> parms;
   cmd.split(' ', parms);
+  std::string test_str;
   if (parms.size()>=1)
+  {
     test = parms[0].toInt();
+    test_str = parms[0].toStdString();
+  }
 
   /* setup the OpenGL context format */
   OpenGLContextFormat format;
@@ -107,7 +111,7 @@ int APIENTRY WinMain(HINSTANCE /*hCurrentInst*/, HINSTANCE /*hPreviousInst*/, LP
   format.setMultisample(true);*/
 
   TestBatteryWin32 test_battery;
-  test_battery.run(test, parms[0].toStdString(), format);
+  test_battery.run(test, test_str, format);
 
   return 0;
 }

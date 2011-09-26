@@ -109,8 +109,12 @@ BOOL MFC_Test::InitInstance()
   int test  = 0;
   std::vector<String> parms;
   cmd.split(' ', parms);
+  std::string test_str;
   if (parms.size()>=1)
+  {
     test = parms[0].toInt();
+    test_str = parms[0].toStdString();
+  }
 
   /* setup the OpenGL context format */
   vl::OpenGLContextFormat format;
@@ -123,7 +127,7 @@ BOOL MFC_Test::InitInstance()
   format.setMultisample(true);*/
 
   TestBatteryMFC test_battery(mVLCWin.get());
-  test_battery.run(test, parms[0].toStdString(), format);
+  test_battery.run(test, test_str, format, false);
 
   /* MFC specific stuff */
   if (mVLCWin->m_hWnd)
