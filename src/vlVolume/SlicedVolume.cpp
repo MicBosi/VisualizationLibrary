@@ -352,8 +352,8 @@ void SlicedVolume::generateTextureCoordinates(const ivec3& img_size)
 
   fvec3 texc[] = 
   {
-    fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1),
     fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
+    fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1),
   };
   memcpy(mTexCoord, texc, sizeof(texc));
 }

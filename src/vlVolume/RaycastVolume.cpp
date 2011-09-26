@@ -217,8 +217,8 @@ void RaycastVolume::generateTextureCoordinates( const ivec3& size )
 
   fvec3 texc[] = 
   {
-    fvec3( x0,y0,z1 ), fvec3( x1,y0,z1 ), fvec3( x1,y1,z1 ), fvec3( x0,y1,z1 ),
-    fvec3( x0,y0,z0 ), fvec3( x1,y0,z0 ), fvec3( x1,y1,z0 ), fvec3( x0,y1,z0 ),
+    fvec3( x0,y0,z1 ), fvec3( x1,y0,z1 ), fvec3( x1,y1,z1 ), fvec3( x0,y1,z1 ), // mic fixme: i don't remember why we need z1 here and z0 below...
+    fvec3( x0,y0,z0 ), fvec3( x1,y0,z0 ), fvec3( x1,y1,z0 ), fvec3( x0,y1,z0 ), 
   };
   memcpy( mTexCoord->ptr(), texc, sizeof( texc ) );
 }
@@ -244,8 +244,8 @@ void RaycastVolume::generateTextureCoordinates(const ivec3& img_size, const ivec
 
     fvec3 texc[] = 
     {
-        fvec3(x0,y0,z0), fvec3(x1,y0,z0), fvec3(x1,y1,z0), fvec3(x0,y1,z0),
-        fvec3(x0,y0,z1), fvec3(x1,y0,z1), fvec3(x1,y1,z1), fvec3(x0,y1,z1)
+      fvec3( x0,y0,z1 ), fvec3( x1,y0,z1 ), fvec3( x1,y1,z1 ), fvec3( x0,y1,z1 ), 
+      fvec3( x0,y0,z0 ), fvec3( x1,y0,z0 ), fvec3( x1,y1,z0 ), fvec3( x0,y1,z0 ), 
     };
     memcpy( mTexCoord->ptr(), texc, sizeof(texc) );
 }
