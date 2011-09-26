@@ -2,6 +2,12 @@
 
    \page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.09.1160 RC5</div>
+
+   - Bug: fixed crashes when running Win32 and MFC tests with no arguments.
+   - Bug: fixed Z axis reversed in SlicedVolume.cpp.
+   - Various documentation updates.
+   
 	<div class="featuretitle">Visualization Library 2011.09.1160 RC4</div>
 
    - Fixed double precision pipeline compilation.
