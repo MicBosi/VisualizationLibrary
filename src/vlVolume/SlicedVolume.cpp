@@ -81,6 +81,7 @@ SlicedVolume::SlicedVolume()
   VL_DEBUG_SET_OBJECT_NAME()
   mSliceCount = 1024;
   mGeometry = new Geometry;
+  mGeometry->setObjectName("vl::SlicedVolume");
   
   fvec3 texc[] = 
   {
