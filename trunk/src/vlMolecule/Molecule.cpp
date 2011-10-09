@@ -64,6 +64,13 @@ void Molecule::reset()
   mLineWidth= 1.0f;
   mSmoothLines = false;
   mShowAtomNames = false;
+  // molecule / actor maps
+  mMoleculeToActorMapEnabled = false;
+  mActorToMoleculeMapEnabled = false;
+  mAtomToActorMap.clear();
+  mActorToAtomMap.clear();
+  mBondToActorMap.clear();
+  mActorToBondMap.clear();
 }
 //-----------------------------------------------------------------------------
 Molecule& Molecule::operator=(const Molecule& other)

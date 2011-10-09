@@ -200,6 +200,34 @@ namespace vl
     //! The Effect used to render the atom labels
     Effect* atomLabelEffect() { return mAtomLabelEffect.get(); }
 
+    //! If enabled the atomToActorMap() and bondToActorMap() maps will be compiled next time the molecule's geometry is regenerated (except for wireframe style).
+    void setMoleculeToActorMapEnabled(bool enabled) { mMoleculeToActorMapEnabled = enabled; }
+    //! If enabled the atomToActorMap() and bondToActorMap() maps will be compiled next time the molecule's geometry is regenerated (except for wireframe style).
+    bool isMoleculeToActorMapEnabled() const { return mMoleculeToActorMapEnabled; }
+
+    //! If enabled the actorToAtomMap() and actorToBondMap() maps will be compiled next time the molecule's geometry is regenerated (except for wireframe style).
+    void setActorToMoleculeMapEnabled(bool enabled) { mActorToMoleculeMapEnabled = enabled; }
+    //! If enabled the actorToAtomMap() and actorToBondMap() maps will be compiled next time the molecule's geometry is regenerated (except for wireframe style).
+    bool isActorToMoleculeMapEnabled() const { return mActorToMoleculeMapEnabled; }
+
+    //! Maps an Atom to it's corresponding Actor
+    const std::map< ref<Atom>, ref<Actor> >& atomToActorMap() const { return mAtomToActorMap; }
+    //! Maps an Actor to it's corresponding Atom
+    const std::map< ref<Actor>, ref<Atom> >& actorToAtomMap() const { return mActorToAtomMap; }
+    //! Maps a Bond to it's corresponding Actor
+    const std::map< ref<Bond>, ref<Actor> >& bondToActorMap() const { return mBondToActorMap; }
+    //! Maps an Actor to it's corresponding Bond
+    const std::map< ref<Actor>, ref<Bond> >& actorToBondMap() const { return mActorToBondMap; }
+
+    //! Maps an Atom to it's corresponding Actor
+    std::map< ref<Atom>, ref<Actor> >& atomToActorMap() { return mAtomToActorMap; }
+    //! Maps an Actor to it's corresponding Atom
+    std::map< ref<Actor>, ref<Atom> >& actorToAtomMap() { return mActorToAtomMap; }
+    //! Maps a Bond to it's corresponding Actor
+    std::map< ref<Bond>, ref<Actor> >& bondToActorMap() { return mBondToActorMap; }
+    //! Maps an Actor to it's corresponding Bond
+    std::map< ref<Actor>, ref<Bond> >& actorToBondMap() { return mActorToBondMap; }
+
   protected:
     void prepareAtomInsert(int bonus=100)
     {
@@ -226,6 +254,10 @@ namespace vl
     std::vector< ref<Atom> > mAtoms;
     std::vector< ref<Bond> > mBonds;
     std::vector< std::vector< ref<Atom> > > mCycles; 
+    std::map< ref<Atom>, ref<Actor> > mAtomToActorMap;
+    std::map< ref<Actor>, ref<Atom> > mActorToAtomMap;
+    std::map< ref<Bond>, ref<Actor> > mBondToActorMap;
+    std::map< ref<Actor>, ref<Bond> > mActorToBondMap;
     String mMoleculeName;
     ref<KeyValues> mTags;
     ref<Text> mAtomLabelTemplate;
@@ -238,6 +270,8 @@ namespace vl
     float mLineWidth;
     bool mSmoothLines;
     bool mShowAtomNames;
+    bool mMoleculeToActorMapEnabled;
+    bool mActorToMoleculeMapEnabled;
   };
 
   //! Loads a Tripos MOL2 file.
