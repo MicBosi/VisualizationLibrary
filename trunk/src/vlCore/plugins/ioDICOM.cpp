@@ -29,13 +29,13 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef vlDICOM_INCLUDE_ONCE
-#define vlDICOM_INCLUDE_ONCE
+#ifndef ioDICOM_INCLUDE_ONCE
+#define ioDICOM_INCLUDE_ONCE
 
-#include "vlDICOM.hpp"
+#include "ioDICOM.hpp"
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/FileSystem.hpp>
-#include <vlCore/GLSLmath.hpp>
+#include <vlCore/glsl_math.hpp>
 
 #include <gdcmReader.h>
 #include <gdcmWriter.h>
@@ -227,7 +227,7 @@ ref<Image> vl::loadDICOM(VirtualFile* vfile)
   h = h * d;
 
   ref<Image> img = new Image;
-  img->setObjectName( vfile->path().toStdString() );
+  img->setObjectName( vfile->path().toStdString().c_str() );
   if (pf.GetSamplesPerPixel() == 1 && pi == gdcm::PhotometricInterpretation::PALETTE_COLOR)
   {
     if (pf.GetBitsStored() <= 8)
