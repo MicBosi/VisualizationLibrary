@@ -543,7 +543,7 @@ void GLSLProgram::postLink()
   if (uniform_len)
   {
     std::vector<char> tmp_buf;
-    tmp_buf.resize(uniform_len);
+    tmp_buf.resize(uniform_len+1); // +1 seems to be required to work around buggy drivers.
     char* name = &tmp_buf[0];
 
     int uniform_count = 0;
@@ -552,7 +552,9 @@ void GLSLProgram::postLink()
     {
       GLenum type;
       int size;
-      glGetActiveUniform(handle(), i, uniform_len, NULL, &size, &type, name); VL_CHECK_OGL();
+      std::fill(tmp_buf.begin(), tmp_buf.end(), 0); // reset string to all zeros to work around buggy drivers.
+      glGetActiveUniform(handle(), i, tmp_buf.size(), NULL, &size, &type, name); VL_CHECK_OGL();
+      // Log::print( Say("[%n] uniform = %s\n") << i << name);
       ref<UniformInfo> uinfo = new UniformInfo(name, (EUniformType)type, size, glGetUniformLocation(handle(), name));
       mActiveUniforms[name] = uinfo;
     }
