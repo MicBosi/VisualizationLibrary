@@ -244,6 +244,12 @@ void Molecule::generateAtomLabels()
 //-----------------------------------------------------------------------------
 void Molecule::wireframeStyle()
 {
+  // no maps are generated for this style.
+  mAtomToActorMap.clear();
+  mActorToAtomMap.clear();
+  mBondToActorMap.clear();
+  mActorToBondMap.clear();
+
   ref<Geometry> geom = new Geometry;
   ref<ArrayFloat3> points = new ArrayFloat3;
   geom->setVertexArray(points.get());
@@ -303,6 +309,11 @@ void Molecule::wireframeStyle()
 //-----------------------------------------------------------------------------
 void Molecule::atomsStyle()
 {
+  mAtomToActorMap.clear();
+  mActorToAtomMap.clear();
+  mBondToActorMap.clear();
+  mActorToBondMap.clear();
+
   EffectCache fx_cache;
   AtomGeometryCache atom_geom_cache;
   atom_geom_cache.setDetail(atomDetail());
@@ -317,12 +328,24 @@ void Molecule::atomsStyle()
       atom_act->transform()->setLocalMatrix( mat4::getTranslation( (vec3)atom(iatom)->coordinates()) );
       transformTree()->addChild(atom_act->transform());
       actorTree()->actors()->push_back( atom_act.get() );
+
+      // actor -> atom map
+      if (isActorToMoleculeMapEnabled())
+        mActorToAtomMap.insert( std::pair< ref<Actor>, ref<Atom> >(atom_act, atom(iatom)) );
+      // atom -> actor map
+      if (isMoleculeToActorMapEnabled())
+        mAtomToActorMap.insert( std::pair< ref<Atom>, ref<Actor> >(atom(iatom), atom_act) );
     }
   }
 }
 //-----------------------------------------------------------------------------
 void Molecule::ballAndStickStyle()
 {
+  mAtomToActorMap.clear();
+  mActorToAtomMap.clear();
+  mBondToActorMap.clear();
+  mActorToBondMap.clear();
+
   EffectCache fx_cache;
   AtomGeometryCache atom_geom_cache;
   atom_geom_cache.setDetail(atomDetail());
@@ -333,10 +356,21 @@ void Molecule::ballAndStickStyle()
       Effect* fx = fx_cache.acquireEffect(atom(iatom)->color());
       float r = atom(iatom)->radius();
       ref<Geometry> ball = atom_geom_cache.acquireAtomGeometry(r);
+      
+      // mic fixme:
+      // it would be nice to have a pool to accelerate Actor and Transform allocation
+
       ref<Actor> atom_act = new Actor( ball.get(), fx, new Transform );
       atom_act->transform()->setLocalMatrix( mat4::getTranslation( (vec3)atom(iatom)->coordinates()) );
       transformTree()->addChild(atom_act->transform());
       actorTree()->actors()->push_back( atom_act.get() );
+
+      // actor -> atom map
+      if (isActorToMoleculeMapEnabled())
+        mActorToAtomMap.insert( std::pair< ref<Actor>, ref<Atom> >(atom_act, atom(iatom)) );
+      // atom -> actor map
+      if (isMoleculeToActorMapEnabled())
+        mAtomToActorMap.insert( std::pair< ref<Atom>, ref<Actor> >(atom(iatom), atom_act) );
     }
   }
 
@@ -374,12 +408,24 @@ void Molecule::ballAndStickStyle()
       fmat4 mat = fmat4::getTranslation(center) * fmat4::getRotation(fvec3(0,1,0), direction);
       bond_act->transform()->setLocalMatrix( (mat4)mat );
       actorTree()->actors()->push_back( bond_act.get() );
+
+      // actor -> bond map
+      if (isActorToMoleculeMapEnabled())
+        mActorToBondMap.insert( std::pair< ref<Actor>, ref<Bond> >(bond_act, bond(ibond)) );
+      // bond -> actor map
+      if (isMoleculeToActorMapEnabled())
+        mBondToActorMap.insert( std::pair< ref<Bond>, ref<Actor> >(bond(ibond), bond_act) );
     }
   }
 }
 //-----------------------------------------------------------------------------
 void Molecule::sticksStyle()
 {
+  mAtomToActorMap.clear();
+  mActorToAtomMap.clear();
+  mBondToActorMap.clear();
+  mActorToBondMap.clear();
+
   ref<Effect> fx = new Effect;
   fx->shader()->enable(EN_DEPTH_TEST);
   fx->shader()->enable(EN_CULL_FACE);
@@ -414,6 +460,13 @@ void Molecule::sticksStyle()
       fmat4 mat = fmat4::getTranslation(center) * fmat4::getRotation(fvec3(0,1,0), direction);
       bond_act->transform()->setLocalMatrix( (mat4)mat );
       actorTree()->actors()->push_back( bond_act.get() );
+
+      // actor -> bond map
+      if (isActorToMoleculeMapEnabled())
+        mActorToBondMap.insert( std::pair< ref<Actor>, ref<Bond> >(bond_act, bond(ibond)) );
+      // bond -> actor map
+      if (isMoleculeToActorMapEnabled())
+        mBondToActorMap.insert( std::pair< ref<Bond>, ref<Actor> >(bond(ibond), bond_act) );
     }
   }
 }
