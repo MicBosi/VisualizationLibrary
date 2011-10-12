@@ -553,7 +553,7 @@ void GLSLProgram::postLink()
       GLenum type;
       int size;
       std::fill(tmp_buf.begin(), tmp_buf.end(), 0); // reset string to all zeros to work around buggy drivers.
-      glGetActiveUniform(handle(), i, tmp_buf.size(), NULL, &size, &type, name); VL_CHECK_OGL();
+      glGetActiveUniform(handle(), i, (GLsizei)tmp_buf.size(), NULL, &size, &type, name); VL_CHECK_OGL();
       // Log::print( Say("[%n] uniform = %s\n") << i << name);
       ref<UniformInfo> uinfo = new UniformInfo(name, (EUniformType)type, size, glGetUniformLocation(handle(), name));
       mActiveUniforms[name] = uinfo;
@@ -736,6 +736,17 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
     #if 1
       const UniformInfo* uinfo = activeUniformInfo(uniform->name().c_str());
       int location = uinfo ? uinfo->Location : -1;
+
+      #ifndef NDEBUG
+      if (location == -1)
+      {
+        std::map<std::string, ref<UniformInfo> >::const_iterator it = activeUniforms().begin();
+        Log::warning("Active uniforms:\n");
+        for( ; it != activeUniforms().end(); ++it )
+          Log::warning( Say("\t%s\n") << it->first.c_str() );
+      }
+      #endif
+
     #else
       int location = glGetUniformLocation(handle(), uniform->name().c_str());
     #endif
