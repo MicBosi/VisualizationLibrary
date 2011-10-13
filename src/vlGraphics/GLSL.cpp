@@ -543,7 +543,7 @@ void GLSLProgram::postLink()
   if (uniform_len)
   {
     std::vector<char> tmp_buf;
-    tmp_buf.resize(uniform_len+1); // +1 seems to be required to work around buggy drivers.
+    tmp_buf.resize(uniform_len+1); // +1: just for safety in case of buggy drivers.
     char* name = &tmp_buf[0];
 
     int uniform_count = 0;
@@ -552,9 +552,20 @@ void GLSLProgram::postLink()
     {
       GLenum type;
       int size;
-      std::fill(tmp_buf.begin(), tmp_buf.end(), 0); // reset string to all zeros to work around buggy drivers.
+      std::fill(tmp_buf.begin(), tmp_buf.end(), 0); // reset string to all zeros: just for safety in case of buggy drivers.
       glGetActiveUniform(handle(), i, (GLsizei)tmp_buf.size(), NULL, &size, &type, name); VL_CHECK_OGL();
       // Log::print( Say("[%n] uniform = %s\n") << i << name);
+
+      // mic fixme: might go in debug only release later...
+      // >>> CHECK UNIFORM NAMES (only for non OpenGL built-in uniforms!)
+      if (strstr(name, "gl_") != name)
+      {
+        GLint location = glGetUniformLocation(handle(), name);
+        if(location == -1)
+          Log::bug( Say("OpenGL driver bug: uniform '%s' not found! Please update your drivers or report the issue to your driver vendor.\n") << name);
+      }
+      // <<<
+
       ref<UniformInfo> uinfo = new UniformInfo(name, (EUniformType)type, size, glGetUniformLocation(handle(), name));
       mActiveUniforms[name] = uinfo;
     }
@@ -738,8 +749,12 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
       int location = uinfo ? uinfo->Location : -1;
 
       #ifndef NDEBUG
-      if (location == -1)
+      // show the error only once.
+      static bool shown_already = false;
+      if (location == -1 && !shown_already)
       {
+        shown_already = true;
+
         std::map<std::string, ref<UniformInfo> >::const_iterator it = activeUniforms().begin();
         Log::warning("Active uniforms:\n");
         for( ; it != activeUniforms().end(); ++it )
