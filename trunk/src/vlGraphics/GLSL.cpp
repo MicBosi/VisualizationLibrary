@@ -749,14 +749,10 @@ bool GLSLProgram::applyUniformSet(const UniformSet* uniforms) const
       int location = uinfo ? uinfo->Location : -1;
 
       #ifndef NDEBUG
-      // show the error only once.
-      static bool shown_already = false;
-      if (location == -1 && !shown_already)
+      if (location == -1)
       {
-        shown_already = true;
-
         std::map<std::string, ref<UniformInfo> >::const_iterator it = activeUniforms().begin();
-        Log::warning("Active uniforms:\n");
+        Log::warning("\nActive uniforms:\n");
         for( ; it != activeUniforms().end(); ++it )
           Log::warning( Say("\t%s\n") << it->first.c_str() );
       }
