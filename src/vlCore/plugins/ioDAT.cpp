@@ -80,23 +80,23 @@ ref<Image> vl::loadDAT(VirtualFile* file)
   // safe way, get a line first then sscanf the string
   stream->readLine(line);
   if ( sscanf(line.c_str(), "%s %s", buffer, filename) != 2 )
-    return false;
+    return NULL;
   // make sure it is zero terminated
   filename[BUFFER_SIZE-1] = 0;
   stream->readLine(line);
   if ( sscanf(line.c_str(), "%s %d %d %d", buffer, &width, &height, &depth) != 4 )
-    return false;
+    return NULL;
   stream->readLine(line);
   if ( sscanf(line.c_str(), "%s %f %f %f", buffer, &a,&b,&c) != 4 )
-    return false;
+    return NULL;
   stream->readLine(line);
   if ( sscanf(line.c_str(), "%s %s", buffer, typ) != 2 )
-    return false;
+    return NULL;
   // make sure it is zero terminated
   typ[BUFFER_SIZE-1] = 0;
   stream->readLine(line);
   if ( sscanf(line.c_str(), "%s %s", buffer, fmt) != 2 )
-    return false;
+    return NULL;
   // make sure it is zero terminated
   fmt[BUFFER_SIZE-1] = 0;
   file->close();
