@@ -42,13 +42,10 @@ FlatManipulator::FlatManipulator(): mMode(NoMode),
     }
 
 //-----------------------------------------------------------------------------
-void
-FlatManipulator::setCamera(Camera* camera)
+void FlatManipulator::setCamera(Camera* camera)
 {
     mCamera = camera;
 }
-
-
 //-----------------------------------------------------------------------------
 void FlatManipulator::mouseDownEvent(EMouseButton btn, int x, int y)
 {
@@ -82,7 +79,7 @@ void FlatManipulator::mouseDownEvent(EMouseButton btn, int x, int y)
         mMode = ZoomMode;
     }
 
-    VL_CHECK(openglContext()->renderTarget())
+    VL_CHECK(openglContext()->framebuffer())
 
 }
 //-----------------------------------------------------------------------------
@@ -95,7 +92,7 @@ void FlatManipulator::mouseMoveEvent(int x, int y)
     if (mode() == NoMode)
         return;
 
-    VL_CHECK(openglContext()->renderTarget())
+    VL_CHECK(openglContext()->framebuffer())
 
     if (mode() == ZoomMode)
     {
@@ -118,7 +115,6 @@ void FlatManipulator::mouseMoveEvent(int x, int y)
     // update the view
     openglContext()->update();
 }
-
 //-----------------------------------------------------------------------------
 void FlatManipulator::mouseUpEvent(EMouseButton btn, int /*x*/, int /*y*/)
 {
@@ -136,8 +132,6 @@ void FlatManipulator::mouseUpEvent(EMouseButton btn, int /*x*/, int /*y*/)
   if (btn == zoomButton() && mMode == ZoomMode)
     mMode = NoMode;
 }
-
-
 //-----------------------------------------------------------------------------
 void FlatManipulator::enableEvent(bool enabled)
 {
@@ -151,11 +145,8 @@ void FlatManipulator::enableEvent(bool enabled)
     }
   }
 }
-
-
-//====================================================================
-bool
-FlatManipulator::mouseInViewport(int mx, int my, int& vx, int& vy)
+//-----------------------------------------------------------------------------
+bool FlatManipulator::mouseInViewport(int mx, int my, int& vx, int& vy)
 {
     vx = mx - camera()->viewport()->x();
     vy = openglContext()->height() - my - camera()->viewport()->y();
@@ -169,18 +160,8 @@ FlatManipulator::mouseInViewport(int mx, int my, int& vx, int& vy)
     }
     return true;
 }
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-
-vl::ref<vl::Geometry>
-makeScales(bool X,bool Y,bool Z,
-           int numArmTicks,
-           float mmStep,
-           float mmTickSize,
-           vl::fvec4 color)
+//-----------------------------------------------------------------------------
+vl::ref<vl::Geometry> makeScales(bool X, bool Y, bool Z, int numArmTicks, float mmStep, float mmTickSize)
 {
     vl::ref<vl::Geometry> scales = new vl::Geometry();
     int numRulers = (X?1:0)+(Y?1:0)+(Z?1:0);
@@ -256,12 +237,8 @@ makeScales(bool X,bool Y,bool Z,
             scalesPoints->at(i) = points->at(p);
         }
     }
-    scales->setColor(color);
     scales->setVertexArray(scalesPoints.get());
     //every consecutive pair of points make a line
-    scales->drawCalls()->push_back(new vl::DrawArrays(vl::PT_LINES,
-                                                      0,
-                                                      numRulers*points->size()));
+    scales->drawCalls()->push_back( new vl::DrawArrays( vl::PT_LINES, 0, numRulers*points->size() ) );
     return scales;
-
 }
