@@ -486,7 +486,7 @@ void OpenGLContext::applyEnables( const EnableSet* cur )
 
   /* iterate on prev: reset to default only the unused ones */
 
-  for( int i=0; i<mPrevEnablesCount; ++i )
+  for( size_t i=0; i<mPrevEnablesCount; ++i )
   {
     const EEnable& prev_en = mPrevEnables[i];
     VL_CHECK(mEnableTable[prev_en] == 1 || mEnableTable[prev_en] == 2 || mEnableTable[prev_en] == 3);
@@ -555,7 +555,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* cur, const Camera* 
 
   /* iterate on prev: reset to default only the unused ones */
 
-  for( int i=0; i<mPrevRenderStatesCount; ++i )
+  for( size_t i=0; i<mPrevRenderStatesCount; ++i )
   {
     const ERenderState& prev_rs = mPrevRenderStates[i];
     VL_CHECK(mRenderStateTable[prev_rs] == 1 || mRenderStateTable[prev_rs] == 2 || mRenderStateTable[prev_rs] == 3);
