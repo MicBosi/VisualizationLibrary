@@ -97,6 +97,9 @@ public:
         if (!act)
           continue;
 
+        if (act->effect() == NULL)
+          act->setEffect(fx_lit.get());
+
         Geometry* geom = act->lod(0)->as<Geometry>();
         geom->computeNormals();
 
