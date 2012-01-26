@@ -29,9 +29,6 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef ioDICOM_INCLUDE_ONCE
-#define ioDICOM_INCLUDE_ONCE
-
 #include "ioDICOM.hpp"
 #include <vlCore/LoadWriterManager.hpp>
 #include <vlCore/FileSystem.hpp>
@@ -485,5 +482,3 @@ bool vl::saveDICOM(const Image* src, VirtualFile* fout)
   
   return true;
 }
-
-#endif
