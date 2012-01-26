@@ -2,7 +2,15 @@
 
    \page pagChangelog Changelog
 
-	<div class="featuretitle">Visualization Library 2011.09.1160 RC5</div>
+	<div class="featuretitle">Visualization Library 2011.09.1162</div>
+
+   - Fixed compilation of vlGLUT under windows.
+   - Fixed SDLWindow compilation under Windows.
+   - Fixed "return NULL" in vl::loadDAT(VirtualFile* file)
+   - FlatManipulator compilation fixes.
+   - Removed bogus include in ioDICOM.cpp
+
+   <div class="featuretitle">Visualization Library 2011.09.1160</div>
 
    - Bug: fixed crashes when running Win32 and MFC tests with no arguments.
    - Bug: fixed Z axis reversed in SlicedVolume.cpp.
