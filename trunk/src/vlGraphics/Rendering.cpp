@@ -301,14 +301,17 @@ void Rendering::fillRenderQueue( ActorCollection* actor_list )
     Effect* effect = actor->effect();
     VL_CHECK(effect)
 
-    // effect override
+    // effect override: select the first that matches
     
     for( std::map< unsigned int, ref<Effect> >::iterator eom_it = mEffectOverrideMask.begin(); 
          eom_it != mEffectOverrideMask.end(); 
          ++eom_it )
     {
       if (eom_it->first & actor->enableMask())
+      {
         effect = eom_it->second.get();
+        break;
+      }
     }
 
     if ( !isEnabled(effect->enableMask()) )
