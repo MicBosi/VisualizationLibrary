@@ -261,11 +261,13 @@ namespace vl
     int evaluateLOD(Camera* camera);
 
     /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not 
-      * depending on the Rendering::enableMask() but it can also be used for user-specific tasks. */
+      * depending on the Rendering::enableMask() but it can also be used for user-specific tasks (set to 0xFFFFFFFF by default).
+      * See also vl::Rendering::effectOverrideMask() and vl::Renderer::shaderOverrideMask(). */
     void setEnableMask(unsigned int mask) { mEnableMask = mask; }
 
     /** The enable mask of an Actor is usually used to defines whether the actor should be rendered or not 
-      * depending on the Rendering::enableMask() but it can also be used for user-specific tasks. */
+      * depending on the Rendering::enableMask() but it can also be used for user-specific tasks (set to 0xFFFFFFFF by default).
+      * See also vl::Rendering::effectOverrideMask() and vl::Renderer::shaderOverrideMask(). */
     unsigned int enableMask() const { return mEnableMask; }
 
     // uniforms methods
