@@ -190,13 +190,17 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
 
       const Shader* shader = tok->mShader;
 
-      // shader override
+      // shader override: select the first that matches
 
       for( std::map< unsigned int, ref<Shader> >::const_iterator eom_it = mShaderOverrideMask.begin(); 
-           eom_it != mShaderOverrideMask.end(); ++eom_it )
+           eom_it != mShaderOverrideMask.end(); 
+           ++eom_it )
       {
         if ( eom_it->first & actor->enableMask() )
+        {
           shader = eom_it->second.get();
+          break;
+        }
       }
 
       // shader's render states
