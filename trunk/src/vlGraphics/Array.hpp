@@ -72,8 +72,13 @@ namespace vl
     //! Copies only the local data and not the BufferObject related fields
     ArrayAbstract(const ArrayAbstract& other): Object(other) 
     {
+      VL_DEBUG_SET_OBJECT_NAME()
+      mBufferObject = new BufferObject;
+      mBufferObjectDirty = true;
+      mBufferObjectUsage = vl::BU_STATIC_DRAW;
       operator=(other);
     }
+
     //! Copies only the local data and not the BufferObject related fields
     void operator=(const ArrayAbstract& other) 
     {
