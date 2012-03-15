@@ -190,16 +190,26 @@ namespace vl
       * vl::Camera::setProjectionPerspective(). */
     void setNearFarClippingPlanesOptimized(bool enabled) { mNearFarClippingPlanesOptimized = enabled; }
 
-    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
+    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: 
+       (Actors::enableMask() & bitmask) != 0. Useful when you want to override the Effect of a whole set of Actors.
+        If multiple mask/effect pairs match an Actor's enable mask then the effect with the corresponding lowest mask will be used.
+        See also vl::Actor::enableMask() and vl::Renderer::shaderOverrideMask(). */
     const std::map<unsigned int, ref<Effect> >& effectOverrideMask() const { return mEffectOverrideMask; }
 
-    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: (Actors::enableMask() & bitmask) != 0. */
+    /** A bitmask/Effect map used to everride the Effect of those Actors whose enable mask satisfy the following condition: 
+       (Actors::enableMask() & bitmask) != 0. Useful when you want to override the Effect of a whole set of Actors.
+        If multiple mask/effect pairs match an Actor's enable mask then the effect with the corresponding lowest mask will be used.
+        See also vl::Actor::enableMask() and vl::Renderer::shaderOverrideMask(). */
     std::map<unsigned int, ref<Effect> >& effectOverrideMask() { return mEffectOverrideMask; }
 
   protected:
+    // mic fixme: it would be nice to have a mechanism to request the visible actors at will and to 
+    // compile and save the render-queue for later renderings to be reused without recomputing the culling.
+    // The user could be able to install actor-list or render-queue and use the flags READ|WRITE|TERMINATE
+    // to define wether the list should be used for reading, filled, cleaned up after rendering.
     void fillRenderQueue( ActorCollection* actor_list );
-    ActorCollection* actorQueue() { return mActorQueue.get(); }
     RenderQueue* renderQueue() { return mRenderQueue.get(); }
+    ActorCollection* actorQueue() { return mActorQueue.get(); }
 
   protected:
     ref<RenderQueueSorter> mRenderQueueSorter;
