@@ -133,6 +133,12 @@ namespace vl
     };
 
   protected:
+    // mic fixme: would be nice not to allocate these dinamically. 
+    // Necessary because:
+    // 1- RenderToken.mNextPass: the pointer should be stable across std::vector reallocations. 
+    //    Maybe we can use indices?
+    // 2- The sorting sorts only pointers instead of whole structures.
+    // Note: we need two lists because the sorting must still respect the multipassing order.
     std::vector< ref<RenderToken> > mList;
     std::vector< ref<RenderToken> > mListMP;
     int mSize;
