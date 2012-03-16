@@ -554,17 +554,19 @@ void GLSLProgram::postLink()
       int size;
       std::fill(tmp_buf.begin(), tmp_buf.end(), 0); // reset string to all zeros: just for safety in case of buggy drivers.
       glGetActiveUniform(handle(), i, (GLsizei)tmp_buf.size(), NULL, &size, &type, name); VL_CHECK_OGL();
-      // Log::print( Say("[%n] uniform = %s\n") << i << name);
 
-      // mic fixme: might go in debug only release later...
-      // >>> CHECK UNIFORM NAMES (only for non OpenGL built-in uniforms!)
-      if (strstr(name, "gl_") != name)
+      // workaround for NVIDIA drivers bug: remove the trailing [] after the uniform name.
+      // See also: http://www.visualizationlibrary.org/forum/viewtopic.php?f=3&t=307
+      char* bracket = strchr(name, '[');
+      if (bracket)
       {
-        GLint location = glGetUniformLocation(handle(), name);
-        if(location == -1)
-          Log::bug( Say("OpenGL driver bug: uniform '%s' not found! Please update your drivers or report the issue to your driver vendor.\n") << name);
+        Log::error( Say("Driver bug: glGetActiveUniform() returned a uniform name '%s' containing square brackets!\n"
+                        "VL will continue trimming them from the uniform's name.\n"
+                        "Please update your drivers and report the issue to your driver vendor.\n"
+                        "Driver info: vendor: %s, renderer: %s, OpenGL version: %s"
+                        ) << name << glGetString(GL_VENDOR) << glGetString(GL_RENDERER) << glGetString(GL_VERSION) );
+        *bracket = 0;
       }
-      // <<<
 
       ref<UniformInfo> uinfo = new UniformInfo(name, (EUniformType)type, size, glGetUniformLocation(handle(), name));
       mActiveUniforms[name] = uinfo;
