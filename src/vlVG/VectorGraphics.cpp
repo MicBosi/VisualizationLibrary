@@ -583,8 +583,8 @@ void VectorGraphics::generateQuadsTexCoords(Geometry* geom, const std::vector<dv
       for(unsigned i=0; i<points.size(); ++i)
       {
         vec4 v = geom->vertexArray()->getAsVec4(i);
-        double s = (geom->vertexArray()->getAsVec4(i).s()-aabb.minCorner().s()) / (mState.mImage->width() );
-        double t = (geom->vertexArray()->getAsVec4(i).t()-aabb.minCorner().t()) / (mState.mImage->height());
+        double s = (v.s()-aabb.minCorner().s()) / (mState.mImage->width() );
+        double t = (v.t()-aabb.minCorner().t()) / (mState.mImage->height());
         tex_array->at(i).s() = (float)s;
         tex_array->at(i).t() = (float)t;
       }
@@ -623,8 +623,8 @@ void VectorGraphics::generatePlanarTexCoords(Geometry* geom, const std::vector<d
       for(unsigned i=0; i<points.size(); ++i)
       {
         vec4 v = geom->vertexArray()->getAsVec4(i);
-        double s = (geom->vertexArray()->getAsVec4(i).s()-aabb.minCorner().s()) / mState.mImage->width();
-        double t = (geom->vertexArray()->getAsVec4(i).t()-aabb.minCorner().t()) / mState.mImage->height();
+        double s = (v.s()-aabb.minCorner().s()) / mState.mImage->width();
+        double t = (v.t()-aabb.minCorner().t()) / mState.mImage->height();
         tex_array->at(i).s() = (float)s;
         tex_array->at(i).t() = (float)t;
       }
