@@ -124,7 +124,6 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
 
     int light_enable[4] = { 0,0,0,0 };
     fvec3 light_position[4];
-    bool has_lights = false;
 
     for( int i=0; i<4; ++i )
     {
@@ -132,7 +131,6 @@ void RaycastVolume::updateUniforms( vl::Actor*actor, vl::real, const vl::Camera*
       light_enable[i] = light != NULL;
       if ( light )
       {
-        has_lights = true;
         // light position following transform
         if ( light->boundTransform() )
           light_position[i] = ( fmat4 )light->boundTransform()->worldMatrix() * light->position().xyz();
