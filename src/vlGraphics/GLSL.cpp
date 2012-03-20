@@ -563,7 +563,7 @@ void GLSLProgram::postLink()
         char* bracket = strrchr(name, '[');
         if (bracket)
         {
-          Log::error( Say("Driver bug: glGetActiveUniform() returned a uniform name '%s' containing square brackets!\n"
+          Log::warning( Say("Driver bug: glGetActiveUniform() returned a uniform name '%s' containing square brackets!\n"
                           "VL will continue trimming them from the uniform's name.\n"
                           "Please update your drivers and report the issue to your driver vendor.\n"
                           "Driver info: vendor: %s, renderer: %s, OpenGL version: %s\n"
