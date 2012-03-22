@@ -29,6 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+#include <vlCore/GlobalSettings.hpp>
 #include <vlGraphics/EdgeRenderer.hpp>
 #include <vlGraphics/RenderQueue.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
@@ -141,7 +142,7 @@ const RenderQueue* EdgeRenderer::render(const RenderQueue* render_queue, Camera*
   // disable all vertex arrays
   framebuffer()->openglContext()->bindVAS(NULL, false, true);
 
-  VL_CHECK( framebuffer()->openglContext()->isCleanState(true) );
+  VL_CHECK( !globalSettings()->checkOpenGLStates() || framebuffer()->openglContext()->isCleanState(true) );
 
   return render_queue;
 }

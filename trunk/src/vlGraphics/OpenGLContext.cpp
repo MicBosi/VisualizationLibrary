@@ -733,35 +733,8 @@ void OpenGLContext::resetEnables()
 //------------------------------------------------------------------------------
 bool OpenGLContext::isCleanState(bool verbose)
 {
+  VL_CHECK_OGL();
   String error_msg;
-  struct contract 
-  {
-    contract(const String& error_msg, bool verbose):
-
-    mErrorMsg(error_msg), mVerbose(verbose)
-    { 
-      VL_CHECK_OGL(); 
-    }
-
-    ~contract() 
-    { 
-      if (!mErrorMsg.empty() && mVerbose)
-      {
-        Log::error("OpenGL context state is dirty:\n");
-        Log::error(mErrorMsg);
-        Log::error("You can disable this check using globalSettings()->setCheckOpenGLStates(false);\n");
-        Log::error( Say("Driver info: vendor: %s, renderer: %s, OpenGL version: %s\n") 
-                    << glGetString(GL_VENDOR) << glGetString(GL_RENDERER) << glGetString(GL_VERSION) );
-      }
-      VL_CHECK_OGL(); 
-    }
-
-    // avoid warning "assignment operator could not be generated"
-    contract& operator=(const contract&) { return *this; }
-
-    const String& mErrorMsg;
-    bool mVerbose;
-  } contract_instance(error_msg, verbose);
 
   // everything must be disabled except GL_DITHER and GL_MULTISAMPLE
   for( unsigned i=0; i<EN_EnableCount; ++i )
@@ -776,7 +749,8 @@ bool OpenGLContext::isCleanState(bool verbose)
 
     if (enabled)
     {
-		  error_msg += Say("Capability %s was enabled!\n") << Translate_Enable_String[i];
+      error_msg += Say("Capability %s was enabled!\n") << Translate_Enable_String[i];
+      glDisable(Translate_Enable[i]);
     }
   }
 
@@ -790,6 +764,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       if (glIsEnabled(GL_LIGHT0+i))
       {
         error_msg += Say("GL_LIGHT%n was enabled!\n") << i;
+        glDisable(GL_LIGHT0+i);
       }
     }
 
@@ -802,6 +777,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       if (glIsEnabled(GL_CLIP_PLANE0+i))
       {
         error_msg += Say("GL_CLIP_PLANE%n was enabled!\n") << i;
+        glDisable(GL_CLIP_PLANE0+i);
       }
     }
   }
@@ -809,6 +785,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (Has_Primitive_Restart && glIsEnabled(GL_PRIMITIVE_RESTART))
   {
     error_msg += "GL_PRIMITIVE_RESTART was enabled!\n";
+    glDisable(GL_PRIMITIVE_RESTART);
   }
 
   if(Has_Multitexture)
@@ -820,9 +797,8 @@ bool OpenGLContext::isCleanState(bool verbose)
     active_tex -= GL_TEXTURE0;
     if (active_tex != 0)
     {
-      
-        error_msg += Say("Active texture unit is #%n instead of #0!\n") << active_tex;
-      
+        error_msg += Say("Active texture unit is GL_TEXTURE%n instead of GL_TEXTURE0!\n") << active_tex;
+        glActiveTexture(GL_TEXTURE0);
     }
 #endif
 
@@ -833,7 +809,8 @@ bool OpenGLContext::isCleanState(bool verbose)
       active_tex -= GL_TEXTURE0;
       if (active_tex != 0)
       {
-        error_msg += Say("Active client texture unit is #%n instead of #0!\n") << active_tex;
+        error_msg += Say("Active client texture unit is GL_TEXTURE%n instead of GL_TEXTURE0!\n") << active_tex;
+        glClientActiveTexture(GL_TEXTURE0);
       }
     }
   }
@@ -883,7 +860,7 @@ bool OpenGLContext::isCleanState(bool verbose)
 	    glMatrixMode(GL_TEXTURE); VL_CHECK_OGL()
 	    glLoadIdentity(); VL_CHECK_OGL()
 	    glGetFloatv(GL_TEXTURE_MATRIX, imatrix); VL_CHECK_OGL()
-	    glLoadMatrixf(matrix); VL_CHECK_OGL()
+	    // glLoadMatrixf(matrix); VL_CHECK_OGL() // we keep the identity
 	    if (memcmp(matrix,imatrix,sizeof(matrix)) != 0)
 	    {
 	      error_msg += Say("Texture matrix was not set to identity on texture unit %n!\n") << coord_count;
@@ -891,7 +868,8 @@ bool OpenGLContext::isCleanState(bool verbose)
 	
 	    if (glIsEnabled(GL_TEXTURE_COORD_ARRAY))
 	    {
-	      error_msg += Say("GL_TEXTURE_COORD_ARRAY was enabled on texture unit %n!\n") << coord_count;
+          error_msg += Say("GL_TEXTURE_COORD_ARRAY was enabled on texture unit %n!\n") << coord_count;
+          glDisable(GL_TEXTURE_COORD_ARRAY);
 	    }
 	
 	    // check that all texture targets are disabled and bound to texture #0
@@ -900,20 +878,22 @@ bool OpenGLContext::isCleanState(bool verbose)
       {
 	      if (glIsEnabled(GL_TEXTURE_1D))
 	      {
-	        error_msg += Say("GL_TEXTURE_1D was enabled on texture unit #%n!\n") << coord_count;
+	        error_msg += Say("GL_TEXTURE_1D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+          glDisable(GL_TEXTURE_1D);
 	      }
 	
         GLint bound_tex = 0;
 	      glGetIntegerv(GL_TEXTURE_BINDING_1D, &bound_tex); VL_CHECK_OGL()
 	      if (bound_tex != 0)
 	      {
-	        error_msg += Say("GL_TEXTURE_BINDING_1D != 0 on texture unit #%n!\n") << coord_count;
+	        error_msg += Say("GL_TEXTURE_BINDING_1D != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
 	      }
       }
 	
 	    if (glIsEnabled(GL_TEXTURE_2D))
 	    {
-	      error_msg += Say("GL_TEXTURE_2D was enabled on texture unit #%n!\n") << coord_count;
+	      error_msg += Say("GL_TEXTURE_2D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_2D);
 	    }
     }
 
@@ -921,21 +901,22 @@ bool OpenGLContext::isCleanState(bool verbose)
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_tex); VL_CHECK_OGL()
     if (bound_tex != 0)
     {
-      error_msg += Say("GL_TEXTURE_BINDING_2D != 0 on texture unit #%n!\n") << coord_count;
+      error_msg += Say("GL_TEXTURE_BINDING_2D != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
     }
 
     if (Has_Texture_Rectangle)
     {
       if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_TEXTURE_RECTANGLE))
       {
-        error_msg += Say("GL_TEXTURE_RECTANGLE was enabled on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_RECTANGLE was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_RECTANGLE);
       }
 
       bound_tex = 0;
       glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE, &bound_tex); VL_CHECK_OGL()
       if (bound_tex != 0)
       {
-        error_msg += Say("GL_TEXTURE_BINDING_RECTANGLE != 0 on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_BINDING_RECTANGLE != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
     }
 
@@ -943,14 +924,15 @@ bool OpenGLContext::isCleanState(bool verbose)
     {
       if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_TEXTURE_3D))
       {
-        error_msg += Say("GL_TEXTURE_3D was enabled on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_3D was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_3D);
       }
 
       bound_tex = 0;
       glGetIntegerv(GL_TEXTURE_BINDING_3D, &bound_tex); VL_CHECK_OGL()
       if (bound_tex != 0)
       {
-        error_msg += Say("GL_TEXTURE_BINDING_3D != 0 on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_BINDING_3D != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
     }
 
@@ -958,14 +940,15 @@ bool OpenGLContext::isCleanState(bool verbose)
     {
       if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_TEXTURE_CUBE_MAP))
       {
-        error_msg += Say("GL_TEXTURE_CUBE_MAP was enabled on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_CUBE_MAP was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_CUBE_MAP);
       }
 
       bound_tex = 0;
       glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &bound_tex); VL_CHECK_OGL()
       if (bound_tex != 0)
       {
-        error_msg += Say("GL_TEXTURE_BINDING_CUBE_MAP != 0 on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_BINDING_CUBE_MAP != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
     }
 
@@ -975,14 +958,14 @@ bool OpenGLContext::isCleanState(bool verbose)
       glGetIntegerv(GL_TEXTURE_BINDING_1D_ARRAY, &bound_tex);
       if (bound_tex != 0)
       {
-        error_msg += Say("GL_TEXTURE_BINDING_1D_ARRAY != 0 on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_BINDING_1D_ARRAY != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
 
       bound_tex = 0;
       glGetIntegerv(GL_TEXTURE_BINDING_2D_ARRAY, &bound_tex);
       if (bound_tex != 0)
       {
-        error_msg += Say("GL_TEXTURE_BINDING_2D_ARRAY != 0 on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_BINDING_2D_ARRAY != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
     }
 
@@ -992,14 +975,14 @@ bool OpenGLContext::isCleanState(bool verbose)
       glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE, &bound_tex);
       if (bound_tex != 0)
       {
-        error_msg += Say("GL_TEXTURE_BINDING_2D_MULTISAMPLE != 0 on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_BINDING_2D_MULTISAMPLE != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
 
       bound_tex = 0;
       glGetIntegerv(GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY, &bound_tex);
       if (bound_tex != 0)
       {
-        error_msg += Say("GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY != 0 on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
     }
 
@@ -1009,7 +992,7 @@ bool OpenGLContext::isCleanState(bool verbose)
       glGetIntegerv(GL_TEXTURE_BINDING_BUFFER, &bound_tex);
       if (bound_tex != 0)
       {
-        error_msg += Say("GL_TEXTURE_BINDING_BUFFER != 0 on texture unit #%n!\n") << coord_count;
+        error_msg += Say("GL_TEXTURE_BINDING_BUFFER != 0 on texture unit GL_TEXTURE%n.\n") << coord_count;
       }
     }
 
@@ -1018,27 +1001,32 @@ bool OpenGLContext::isCleanState(bool verbose)
 #if defined(VL_OPENGL)
 	    if (glIsEnabled(GL_TEXTURE_GEN_S))
 	    {
-	      error_msg += "GL_TEXTURE_GEN_S was enabled!\n";
+	      error_msg += Say("GL_TEXTURE_GEN_S was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_GEN_S);
 	    }
 	
 	    if (glIsEnabled(GL_TEXTURE_GEN_T))
 	    {
-	      error_msg += "GL_TEXTURE_GEN_T was enabled!\n";
+	      error_msg += Say("GL_TEXTURE_GEN_T was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_GEN_T);
 	    }
 	
 	    if (glIsEnabled(GL_TEXTURE_GEN_R))
 	    {
-	      error_msg += "GL_TEXTURE_GEN_R was enabled!\n";
+	      error_msg += Say("GL_TEXTURE_GEN_R was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_GEN_R);
 	    }
 	
 	    if (glIsEnabled(GL_TEXTURE_GEN_Q))
 	    {
-	      error_msg += "GL_TEXTURE_GEN_Q was enabled!\n";
+	      error_msg += Say("GL_TEXTURE_GEN_Q was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_GEN_Q);
 	    }
 #elif defined(VL_OPENGL_ES1)
 	    if (Has_GL_OES_texture_cube_map && glIsEnabled(GL_TEXTURE_GEN_STR_OES))
 	    {
-	      error_msg += "GL_TEXTURE_GEN_STR_OES was enabled!\n";
+	      error_msg += Say("GL_TEXTURE_GEN_STR_OES was enabled on texture unit GL_TEXTURE%n.\n") << coord_count;
+        glDisable(GL_TEXTURE_GEN_STR_OES);
 	    }
 #endif
     }
@@ -1047,6 +1035,7 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (Has_GL_Version_1_1 && glIsEnabled(GL_COLOR_MATERIAL)) // excludes also GLES
   {
     error_msg += "GL_COLOR_MATERIAL was enabled!\n";
+    glDisable(GL_COLOR_MATERIAL);
   }
 
   if (Has_GL_Version_1_4 || Has_GL_EXT_fog_coord) // excludes also GLES 1.x
@@ -1054,6 +1043,7 @@ bool OpenGLContext::isCleanState(bool verbose)
     if (glIsEnabled(GL_FOG_COORD_ARRAY))
     {
       error_msg += "GL_FOG_COORD_ARRAY was enabled!\n";
+      glDisable(GL_FOG_COORD_ARRAY);
     }
   }
 
@@ -1062,37 +1052,44 @@ bool OpenGLContext::isCleanState(bool verbose)
     if (glIsEnabled(GL_SECONDARY_COLOR_ARRAY))
     {
       error_msg += "GL_SECONDARY_COLOR_ARRAY was enabled!\n";
+      glDisable(GL_SECONDARY_COLOR_ARRAY);
     }
   }
 
   if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_COLOR_ARRAY)) // includes GLES 1.x
   {
     error_msg += "GL_COLOR_ARRAY was enabled!\n";
+    glDisable(GL_COLOR_ARRAY);
   }
 
   if (Has_GL_Version_1_1 && glIsEnabled(GL_EDGE_FLAG_ARRAY)) // excludes GLES 
   {
     error_msg += "GL_EDGE_FLAG_ARRAY was enabled!\n";
+    glDisable(GL_EDGE_FLAG_ARRAY);
   }
 
   if (Has_GL_Version_1_1 && glIsEnabled(GL_INDEX_ARRAY)) // excludes GLES
   {
     error_msg += "GL_INDEX_ARRAY was enabled!\n";
+    glDisable(GL_INDEX_ARRAY);
   }
 
   if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_NORMAL_ARRAY)) // includes GLES 1.x
   {
     error_msg += "GL_NORMAL_ARRAY was enabled!\n";
+    glDisable(GL_NORMAL_ARRAY);
   }
 
   if (Has_Fixed_Function_Pipeline && glIsEnabled(GL_VERTEX_ARRAY)) // includes GLES 1.x
   {
     error_msg += "GL_VERTEX_ARRAY was enabled!\n";
+    glDisable(GL_VERTEX_ARRAY);
   }
 
   if (glIsEnabled(GL_SCISSOR_TEST))
   {
     error_msg += "GL_SCISSOR_TEST was enabled!\n";
+    glDisable(GL_SCISSOR_TEST);
   }
 
   GLint max_vert_attribs = 0;
@@ -1113,11 +1110,13 @@ bool OpenGLContext::isCleanState(bool verbose)
     if (glIsEnabled(GL_HISTOGRAM))
     {
       error_msg += "GL_HISTOGRAM was enabled!\n";
+      glDisable(GL_HISTOGRAM);
     }
 
     if (glIsEnabled(GL_MINMAX))
     {
       error_msg += "GL_MINMAX was enabled!\n";
+      glDisable(GL_MINMAX);
     }
   }
 
@@ -1130,10 +1129,12 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (blend_src != GL_SRC_ALPHA)
   {
     error_msg += "GL_BLEND_SRC is not GL_SRC_ALPHA!\n";
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   if (blend_dst != GL_ONE_MINUS_SRC_ALPHA)
   {
     error_msg += "GL_BLEND_DST is not GL_ONE_MINUS_SRC_ALPHA!\n";
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 #else
   GLint blend_src = 0;
@@ -1143,10 +1144,12 @@ bool OpenGLContext::isCleanState(bool verbose)
   if (blend_src != GL_SRC_ALPHA)
   {
     error_msg += "GL_BLEND_SRC is not GL_SRC_ALPHA!\n";
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   if (blend_dst != GL_ONE_MINUS_SRC_ALPHA)
   {
     error_msg += "GL_BLEND_DST is not GL_ONE_MINUS_SRC_ALPHA!\n";
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 #endif
 
@@ -1217,12 +1220,14 @@ bool OpenGLContext::isCleanState(bool verbose)
   if( !write_mask[0] || !write_mask[1] || !write_mask[2] || !write_mask[3] )
   {
     error_msg += "Color write-mask should be glColorMask(GL_TRUE ,GL_TRUE, GL_TRUE, GL_TRUE)!\n";
+    glColorMask(GL_TRUE ,GL_TRUE, GL_TRUE, GL_TRUE);
   }
 
   glGetBooleanv(GL_DEPTH_WRITEMASK, write_mask); VL_CHECK_OGL();
   if ( !write_mask[0] )
   {
     error_msg += "Depth write-mask should be glDepthMask(GL_TRUE)!\n";
+    glDepthMask(GL_TRUE);
   }
 
 #if defined(VL_OPENGL)
@@ -1231,8 +1236,20 @@ bool OpenGLContext::isCleanState(bool verbose)
   if ( poly_mode[0] != GL_FILL || poly_mode[1] != GL_FILL )
   {
     error_msg += "Polygon mode should be glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)!\n";
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 #endif
+
+  if (!error_msg.empty() && verbose)
+  {
+    Log::error("OpenGL context state is dirty:\n");
+    Log::error(error_msg);
+    Log::error("To disable this check use globalSettings()->setCheckOpenGLStates(false);\n");
+    Log::error( Say("Driver info: %s, %s, OpenGL %s\n") 
+                << glGetString(GL_VENDOR) << glGetString(GL_RENDERER) << glGetString(GL_VERSION) );
+  }
+
+  VL_CHECK_OGL(); 
 
   return error_msg.empty();
 }
@@ -1267,11 +1284,8 @@ void OpenGLContext::resetContextStates(EResetContextStates start_or_finish)
   VL_CHECK_OGL();
 
   // perform extra OpenGL environment sanity check
-  if (globalSettings()->checkOpenGLStates() && !isCleanState(true))
-  {
-    VL_TRAP();
-    return;
-  }
+  if (globalSettings()->checkOpenGLStates())
+    isCleanState(true);
 
   VL_glBindFramebuffer(GL_FRAMEBUFFER, 0); VL_CHECK_OGL();
 
