@@ -29,6 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
+#include <vlCore/GlobalSettings.hpp>
 #include <vlGraphics/Renderer.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 #include <vlGraphics/GLSL.hpp>
@@ -390,7 +391,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cur
   // disable all vertex arrays, note this also calls "glBindBuffer(GL_ARRAY_BUFFER, 0)"
   opengl_context->bindVAS(NULL, false, false); VL_CHECK_OGL();
 
-  VL_CHECK( opengl_context->isCleanState(true) );
+  VL_CHECK( !globalSettings()->checkOpenGLStates() || framebuffer()->openglContext()->isCleanState(true) );
 
   return render_queue;
 }
