@@ -76,7 +76,6 @@ namespace vl
       {
         T a = mCatmullRomSpline[0];
         T b = mCatmullRomSpline[1];
-        T c = mCatmullRomSpline[mCatmullRomSpline.size()-2];
         T d = mCatmullRomSpline[mCatmullRomSpline.size()-1];
 
         mCatmullRomSpline.insert(mCatmullRomSpline.begin(),d);

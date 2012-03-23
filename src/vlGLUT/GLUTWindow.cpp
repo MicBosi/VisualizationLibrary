@@ -34,6 +34,7 @@
 #include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
+#include <vlCore/Time.hpp>
 
 using namespace vlGLUT;
 
@@ -775,12 +776,10 @@ void GLUTWindow::glut_idle_func()
       sleep = false;
     }
   }
-  #ifdef WIN32
-    if (sleep)
-    {
-      Sleep(10);
-    }
-  #endif
+  if (sleep)
+  {
+    vl::Time::sleep(10);
+  }
 }
 //-----------------------------------------------------------------------------
 void vlGLUT::atexit_visualization_library_shutdown()
