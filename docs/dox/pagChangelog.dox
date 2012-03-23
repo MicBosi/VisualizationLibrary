@@ -1,38 +1,51 @@
 ﻿/**
 
-   \page pagChangelog Changelog
+	\page pagChangelog Changelog
+
+	<div class="featuretitle">Visualization Library 2011.09.1164</div>
+
+	- OpenGLContext now exposes both leftFramebuffer() and rightFramebuffer() to more easily allow stereo rendering.
+	- Framebuffer can now be publicly constructed if really really needed.
+	- Added Qt4Widget::setRefreshRate() to adjust the FPS frequency when continuous update is active.
+	- More informative OpenGL environment sanity checks: OpenGLContext::isCleanState() does not stop execution on failure, tries to fix some common errors and goes on, prints a full report of the errors found also including GL driver info.
+	- Updated comments regarding effect and shader override in Actor, Rendering and Renderer.
+	- Various minor code and documentation enhancements.
+	- Bug: workaround for annoying NVIDIA driver bug where glGetActiveUniform() returns uniform array names with []. We simply strip the [] from the uniform name, issue a warning and continue.
+	- Bug: renderer and Rendering now stop at the first effect and shader override they find.
+	- Bug: fixed ArrayAbstract copy constructor crash.
+	- Bug: fixed issue with GL_MAX_VARYING_VECTORS check at startup with OpenGL 3.2.
 
 	<div class="featuretitle">Visualization Library 2011.09.1162</div>
 
-   - Fixed compilation of vlGLUT under windows.
-   - Fixed SDLWindow compilation under Windows.
-   - Fixed "return NULL" in vl::loadDAT(VirtualFile* file)
-   - FlatManipulator compilation fixes.
-   - Removed bogus include in ioDICOM.cpp
+	- Bug: fixed compilation of vlGLUT under windows.
+	- Bug: fixed SDLWindow compilation under Windows.
+	- Bug: fixed "return NULL" in vl::loadDAT(VirtualFile* file)
+	- Bug: FlatManipulator compilation fixes.
+	- Bug: removed bogus include in ioDICOM.cpp
 
-   <div class="featuretitle">Visualization Library 2011.09.1160</div>
+	<div class="featuretitle">Visualization Library 2011.09.1160</div>
 
-   - Bug: fixed crashes when running Win32 and MFC tests with no arguments.
-   - Bug: fixed Z axis reversed in SlicedVolume.cpp.
-   - Various documentation updates.
-   
+	- Bug: fixed crashes when running Win32 and MFC tests with no arguments.
+	- Bug: fixed Z axis reversed in SlicedVolume.cpp.
+	- Various documentation updates.
+
 	<div class="featuretitle">Visualization Library 2011.09.1160 RC4</div>
 
-   - Fixed double precision pipeline compilation.
-   - Fixed some GLES1 compilation errors.
-   - Fixed RayIntersectionGeometry::triangle() now returns correctly the picked triangle's vertex indices.
+	- Fixed double precision pipeline compilation.
+	- Fixed some GLES1 compilation errors.
+	- Fixed RayIntersectionGeometry::triangle() now returns correctly the picked triangle's vertex indices.
 
 	<div class="featuretitle">Visualization Library 2011.09.1160 RC3</div>
 
-   - Various fixes for broader support to generic vertex attributes.
+	- Various fixes for broader support to generic vertex attributes.
 
 	<div class="featuretitle">Visualization Library 2011.09.1160 RC2</div>
 
-   - Fixed MinGW and MSYS compilation errors.
+	- Fixed MinGW and MSYS compilation errors.
 
 	<div class="featuretitle">Visualization Library 2011.09.1160 RC1</div>
 
-   - Allow DrawElements and DrawRangeElements to use an arbitrary window of the index buffer.
+	- Allow DrawElements and DrawRangeElements to use an arbitrary window of the index buffer.
 
 	<div class="featuretitle">Visualization Library 2011.05.1144 (maintenance release of VL 2011.05.1142)</div>
 
@@ -45,7 +58,7 @@
 	- Bug: fixed partial GLSLProgState sorting in Renderer.cpp.
 	- actorQueue() cleared after rendering to potentially release rendered objects.
 	- Matrix4::getInverse() implemented using cofactors method give 3.5X speedup.
-	
+
 	<div class="featuretitle">Visualization Library 2011.09.1157</div>
 
 	- Added new tool: vlxtool.exe: convert data to vlt/vlb format.
