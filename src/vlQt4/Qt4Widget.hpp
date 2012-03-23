@@ -59,7 +59,8 @@ namespace vlQt4
     using QObject::setObjectName;
   
     Qt4Widget(QWidget* parent=NULL, const QGLWidget* shareWidget=NULL, Qt::WindowFlags f=0)
-    :QGLWidget(parent,shareWidget,f)
+      :QGLWidget(parent,shareWidget,f),
+      mRefresh(10) // 100 fps
     {
       setContinuousUpdate(true);
       setMouseTracking(true);
@@ -213,6 +214,7 @@ namespace vlQt4
         disconnect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateGL()));
         connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateGL()));
         mUpdateTimer.setSingleShot(false);
+        mUpdateTimer.setInterval(mRefresh);
         mUpdateTimer.start(0);
       }
       else
@@ -220,6 +222,17 @@ namespace vlQt4
         disconnect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateGL()));
         mUpdateTimer.stop();
       }
+    }
+
+    void setRefreshRate( int msec )
+    {
+      mRefresh = msec;
+      mUpdateTimer.setInterval(mRefresh);
+    }
+
+    int refreshRate()
+    {
+      return mRefresh;
     }
 
     void initializeGL()
@@ -386,6 +399,7 @@ namespace vlQt4
     void translateKeyEvent(QKeyEvent* ev, unsigned short& unicode_out, vl::EKey& key_out);
 
   protected:
+    int    mRefresh;
     QTimer mUpdateTimer;
   };
   //-----------------------------------------------------------------------------
