@@ -54,7 +54,8 @@ OpenGLContext* UIEventListener::openglContext() { return mOpenGLContext; }
 OpenGLContext::OpenGLContext(int w, int h)
 {
   VL_DEBUG_SET_OBJECT_NAME()
-  mFramebuffer = new Framebuffer(this, w, h);
+  mLeftFramebuffer  = new Framebuffer(this, w, h, RDB_BACK_LEFT, RDB_BACK_LEFT);
+  mRightFramebuffer = new Framebuffer(this, w, h, RDB_BACK_RIGHT, RDB_BACK_RIGHT);
 
   // set to unknown texture target
   memset( mTexUnitBinding, 0, sizeof(mTexUnitBinding) );
@@ -93,8 +94,9 @@ OpenGLContext::~OpenGLContext()
   if (mFramebufferObject.size() || mEventListeners.size())
     Log::warning("~OpenGLContext(): you should have called dispatchDestroyEvent() before destroying the OpenGLContext!\nNow it's too late to cleanup things!\n");
 
-  // invalidate the render target
-  mFramebuffer->mOpenGLContext = NULL;
+  // invalidate the left and right framebuffers
+  mLeftFramebuffer->mOpenGLContext = NULL;
+  mRightFramebuffer->mOpenGLContext = NULL;
 
   // invalidate FBOs
   for(unsigned i=0; i<mFramebufferObject.size(); ++i)
@@ -108,10 +110,10 @@ OpenGLContext::~OpenGLContext()
   eraseAllEventListeners();
 }
 //-----------------------------------------------------------------------------
-ref<FramebufferObject> OpenGLContext::createFramebufferObject(int width, int height)
+ref<FramebufferObject> OpenGLContext::createFramebufferObject(int width, int height, EReadDrawBuffer draw_buffer, EReadDrawBuffer read_buffer)
 {
   makeCurrent();
-  mFramebufferObject.push_back(new FramebufferObject(this, width, height));
+  mFramebufferObject.push_back(new FramebufferObject(this, width, height, draw_buffer, read_buffer));
   mFramebufferObject.back()->createFBO();
   return mFramebufferObject.back();
 }
