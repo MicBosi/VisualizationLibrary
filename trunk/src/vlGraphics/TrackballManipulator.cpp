@@ -230,7 +230,6 @@ void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, 
   {
     if (actors.at(i)->transform())
     {
-      mat4 m = actors.at(i)->transform()->worldMatrix();
       actors.at(i)->transform()->computeWorldMatrix();
     }
     actors.at(i)->computeBounds();
