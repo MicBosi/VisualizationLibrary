@@ -546,18 +546,18 @@ namespace vl
     
     void operator=( const FramebufferObject& ) {}
     
-    FramebufferObject(): Framebuffer( NULL, 0, 0 ), mHandle( 0 )
+    FramebufferObject(): 
+    Framebuffer( NULL, 0, 0, RDB_COLOR_ATTACHMENT0, RDB_COLOR_ATTACHMENT0 ), mHandle( 0 )
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      setDrawBuffer( RDB_COLOR_ATTACHMENT0 );
-      setReadBuffer( RDB_COLOR_ATTACHMENT0 );
     }
 
-    FramebufferObject( OpenGLContext* ctx, int w, int h ): Framebuffer( ctx, w, h ), mHandle( 0 )
+    FramebufferObject( OpenGLContext* ctx, int w, int h, 
+        EReadDrawBuffer draw_buffer=RDB_COLOR_ATTACHMENT0, 
+        EReadDrawBuffer read_buffer=RDB_COLOR_ATTACHMENT0 ):
+    Framebuffer( ctx, w, h, draw_buffer, read_buffer ), mHandle( 0 )
     {
       VL_DEBUG_SET_OBJECT_NAME()
-      setDrawBuffer( RDB_COLOR_ATTACHMENT0 );
-      setReadBuffer( RDB_COLOR_ATTACHMENT0 );
     }
 
   public:
