@@ -52,24 +52,16 @@ namespace vl
 
     friend class OpenGLContext;
 
-  protected:
-    /** Constructor. */
-    Framebuffer(): mWidth(0), mHeight(0), mOpenGLContext(NULL)
-    {
-      VL_DEBUG_SET_OBJECT_NAME()
-      setDrawBuffer(RDB_BACK_LEFT);
-      setReadBuffer(RDB_BACK_LEFT);
-    }
-
-    /** Constructor. */
-    Framebuffer(OpenGLContext* ctx, int w, int h): mWidth(w), mHeight(h), mOpenGLContext(ctx)
-    {
-      VL_DEBUG_SET_OBJECT_NAME()
-      setDrawBuffer(RDB_BACK_LEFT);
-      setReadBuffer(RDB_BACK_LEFT);
-    }
-
   public:
+    /** Constructor, see also OpenGLContext::framebuffer(). */
+    Framebuffer(OpenGLContext* ctx, int w, int h, EReadDrawBuffer draw_buffer, EReadDrawBuffer read_buffer):
+    mOpenGLContext(ctx), mWidth(w), mHeight(h)
+    {
+      VL_DEBUG_SET_OBJECT_NAME()
+      setDrawBuffer(draw_buffer);
+      setReadBuffer(read_buffer);
+    }
+
     /** The OpenGLContext bound to a render target. */
     OpenGLContext* openglContext() { return mOpenGLContext; }
     
@@ -177,9 +169,9 @@ namespace vl
   private:
     std::vector< EReadDrawBuffer > mDrawBuffers;
     EReadDrawBuffer mReadBuffer;
+    OpenGLContext* mOpenGLContext;
     int mWidth;
     int mHeight;
-    OpenGLContext* mOpenGLContext;
   };
   //------------------------------------------------------------------------------
 }
