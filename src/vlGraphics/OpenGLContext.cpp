@@ -41,6 +41,7 @@
 #include <vlCore/Say.hpp>
 #include <algorithm>
 #include <sstream>
+#include <vlGraphics/NaryQuickSet.hpp>
 
 using namespace vl;
 
@@ -60,16 +61,11 @@ OpenGLContext::OpenGLContext(int w, int h)
   // set to unknown texture target
   memset( mTexUnitBinding, 0, sizeof(mTexUnitBinding) );
 
-  // just for debugging purposes
-  memset( mCurrentRenderState, 0xFF, sizeof(mCurrentRenderState) );
-  memset( mRenderStateTable,   0xFF, sizeof(mRenderStateTable) );
-  memset( mCurrentEnable,      0xFF, sizeof(mCurrentEnable) );
-  memset( mEnableTable,        0xFF, sizeof(mEnableTable) );
-  memset( mPrevRenderStates,   0xFF, sizeof(mPrevRenderStates) );
-  memset( mPrevEnables,        0xFF, sizeof(mPrevEnables) );
+  mCurrentEnableSet = new NaryQuickSet<EEnable, EEnable, EN_EnableCount>;
+  mNewEnableSet = new NaryQuickSet<EEnable, EEnable, EN_EnableCount>;
 
-  mPrevRenderStatesCount = 0;
-  mPrevEnablesCount = 0;
+  mCurrentRenderStateSet = new NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount>;
+  mNewRenderStateSet = new NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount>;
 
   mIsInitialized = false;
   mHasDoubleBuffer = false;
@@ -477,140 +473,77 @@ void OpenGLContext::logOpenGLInfo()
   VL_CHECK_OGL();
 }
 //------------------------------------------------------------------------------
-void OpenGLContext::applyEnables( const EnableSet* cur )
+void OpenGLContext::applyEnables( const EnableSet* new_enables )
 {
   VL_CHECK_OGL()
 
-  /* mark current */
+  mNewEnableSet->clear();
 
-  if (cur)
-    for( size_t i=0; i<cur->enables().size(); ++i )
-      mEnableTable[ cur->enables()[i] ] |= 2; // 0 -> 2; 1 -> 3;
-
-  // 0 = should not happen
-  // 1 = previously used but no more used, can be disabled
-  // 2 = new one, must be enabled
-  // 3 = previously used and used also by current one, keep enabled
-
-  /* iterate on prev: reset to default only the unused ones */
-
-  for( size_t i=0; i<mPrevEnablesCount; ++i )
+  if (new_enables)
   {
-    const EEnable& prev_en = mPrevEnables[i];
-    VL_CHECK(mEnableTable[prev_en] == 1 || mEnableTable[prev_en] == 2 || mEnableTable[prev_en] == 3);
-    if ( mEnableTable[prev_en] == 1 )
+    for( size_t i=0; i<new_enables->enables().size(); ++i )
     {
-      mEnableTable[prev_en] = 0; // 1 -> 0
-      VL_CHECK( mCurrentEnable[prev_en] == true )
-      mCurrentEnable[prev_en] = false;
-      glDisable( Translate_Enable[prev_en] ); VL_CHECK_OGL()
-      #ifndef NDEBUG
-        if (glGetError() != GL_NO_ERROR)
-        {
-          Log::error( Say("An unsupported enum has been disabled: %s.\n") << Translate_Enable_String[prev_en]);
-          VL_TRAP()
-        }
-      #endif
-    }
-  }
-
-  /* enable currently used ones */
-
-  if (cur)
-  {
-    mPrevEnablesCount = cur->enables().size();
-    for( size_t i=0; i<cur->enables().size(); ++i )
-    {
-      const EEnable& cur_en = cur->enables()[i];
-      mPrevEnables[i] = cur_en;
-      mEnableTable[cur_en] >>= 1; /* 2 -> 1; 3 -> 1 */ VL_CHECK( mEnableTable[cur_en] == 1 );
-
-      if ( !mCurrentEnable[cur_en] )
+      const EEnable& capability = new_enables->enables()[i];
+      mNewEnableSet->append(capability);
+      if(!mCurrentEnableSet->has(capability))
       {
-        glEnable( Translate_Enable[cur_en] );
-        mCurrentEnable[ cur_en ] = true;
-  #ifndef NDEBUG
-        if (glGetError() != GL_NO_ERROR)
-        {
-          Log::error( Say("An unsupported function has been enabled: %s.\n") << Translate_Enable_String[cur_en]);
-          VL_TRAP()
-        }
-  #endif
+        glEnable( Translate_Enable[capability] );
+        #ifndef NDEBUG
+          if (glGetError() != GL_NO_ERROR)
+          {
+            Log::error( Say("An unsupported capability has been enabled: %s.\n") << Translate_Enable_String[capability]);
+          }
+        #endif
       }
     }
   }
-  else
+
+  for(EEnable* capability = mCurrentEnableSet->begin(); capability != mCurrentEnableSet->end(); ++capability)
   {
-    mPrevEnablesCount = 0;
+    if (!mNewEnableSet->has(*capability))
+    {
+        glDisable( Translate_Enable[*capability] );
+        #ifndef NDEBUG
+          if (glGetError() != GL_NO_ERROR)
+          {
+            Log::error( Say("An unsupported capability has been disabled: %s.\n") << Translate_Enable_String[*capability]);
+          }
+        #endif
+    }
   }
 
+  std::swap(mNewEnableSet, mCurrentEnableSet);
 }
 //------------------------------------------------------------------------------
-void OpenGLContext::applyRenderStates( const RenderStateSet* cur, const Camera* camera )
+void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camera* camera )
 {
   VL_CHECK_OGL()
 
-  /* mark currently used ones */
+  mNewRenderStateSet->clear();
 
-  if (cur)
-    for( size_t i=0; i<cur->renderStatesCount(); ++i )
-      mRenderStateTable[ cur->renderStates()[i].type() ] |= 2; // 0 -> 2; 1 -> 3;
-
-  // 0 = should not happen
-  // 1 = previously used but no more used, must be reset to default
-  // 2 = new one, must be setup
-  // 3 = previously used and used also by current one, must be setup to overwrite previous state
-
-  /* iterate on prev: reset to default only the unused ones */
-
-  for( size_t i=0; i<mPrevRenderStatesCount; ++i )
+  if (new_rs)
   {
-    const ERenderState& prev_rs = mPrevRenderStates[i];
-    VL_CHECK(mRenderStateTable[prev_rs] == 1 || mRenderStateTable[prev_rs] == 2 || mRenderStateTable[prev_rs] == 3);
-    if ( mRenderStateTable[prev_rs] == 1 )
+    for( size_t i=0; i<new_rs->renderStatesCount(); ++i )
     {
-      mRenderStateTable[prev_rs] = 0; // 1 -> 0
-      VL_CHECK( mCurrentRenderState[prev_rs] != mDefaultRenderStates[prev_rs].mRS.get() );
-      mCurrentRenderState[prev_rs] = mDefaultRenderStates[prev_rs].mRS.get();
-
-      #ifndef NDEBUG
-      if (!mDefaultRenderStates[prev_rs].mRS)
+      const RenderStateSlot& rs = new_rs->renderStates()[i];
+      mNewRenderStateSet->append(rs.type(), rs);
+      if (!mCurrentRenderStateSet->has(rs.type()) || rs.mRS.get() != mCurrentRenderStateSet->get(rs.type()).mRS.get())
       {
-        // mic fixme: output string instead of type number.
-        vl::Log::error( Say("Render state type '%n' not supported by the current OpenGL implementation! (version=%s, vendor=%s)\n") << prev_rs << glGetString(GL_VERSION) << glGetString(GL_VENDOR) );
-        VL_TRAP()
-      }
-      #endif
-
-      // if this fails you are using a render state that is not supported by the current OpenGL implementation (too old or Core profile)
-      mDefaultRenderStates[prev_rs].apply(NULL, this); VL_CHECK_OGL()
-    }
-  }
-
-  /* setup current render states */
-
-  if (cur)
-  {
-    mPrevRenderStatesCount = cur->renderStatesCount();
-    for( size_t i=0; i<cur->renderStatesCount(); ++i )
-    {
-      const RenderStateSlot& cur_rs = cur->renderStates()[i];
-      mPrevRenderStates[i] = cur_rs.type();
-      mRenderStateTable[cur_rs.type()] >>= 1; /* 2 -> 1; 3 -> 1 */ VL_CHECK(mRenderStateTable[cur_rs.type()] == 1)
-
-      if ( mCurrentRenderState[cur_rs.type()] != cur_rs.mRS.get() )
-      {
-        mCurrentRenderState[cur_rs.type()] = cur_rs.mRS.get();
-        VL_CHECK(cur_rs.mRS.get());
-        cur_rs.apply(camera, this); VL_CHECK_OGL()
+        VL_CHECK(rs.mRS.get());
+        rs.apply(camera, this); VL_CHECK_OGL()
       }
     }
   }
-  else
+
+  for( RenderStateSlot* rs = mCurrentRenderStateSet->begin(); rs != mCurrentRenderStateSet->end(); ++rs)
   {
-    mPrevRenderStatesCount = 0;
+    if (!mNewRenderStateSet->has(rs->type()))
+    {
+      mDefaultRenderStates[rs->type()].apply(NULL, this); VL_CHECK_OGL()
+    }
   }
 
+  std::swap(mNewRenderStateSet, mCurrentRenderStateSet);
 }
 //------------------------------------------------------------------------------
 void OpenGLContext::setupDefaultRenderStates()
@@ -718,19 +651,13 @@ void OpenGLContext::setupDefaultRenderStates()
 //-----------------------------------------------------------------------------
 void OpenGLContext::resetRenderStates()
 {
-  memset( mCurrentRenderState, 0, sizeof(mCurrentRenderState) );
-  memset( mRenderStateTable,   0, sizeof(mRenderStateTable)   );
+  mCurrentRenderStateSet->clear();
   memset( mTexUnitBinding,     0, sizeof( mTexUnitBinding )   ); // set to unknown texture target
-  memset( mPrevRenderStates,   0xFF, sizeof(mPrevRenderStates) ); // just for debugging
-  mPrevRenderStatesCount = 0;
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::resetEnables()
 {
-  memset( mCurrentEnable, 0, sizeof(mCurrentEnable) );
-  memset( mEnableTable,   0, sizeof(mEnableTable)   );
-  memset( mPrevEnables,   0xFF, sizeof(mPrevEnables) ); // just for debugging
-  mPrevEnablesCount = 0;
+  mCurrentEnableSet->clear();
 }
 //------------------------------------------------------------------------------
 bool OpenGLContext::isCleanState(bool verbose)

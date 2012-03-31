@@ -36,6 +36,7 @@
 #include <vlGraphics/UIEventListener.hpp>
 #include <vlGraphics/FramebufferObject.hpp> // Framebuffer and FramebufferObject
 #include <vlGraphics/RenderState.hpp>
+#include <vlGraphics/NaryQuickSet.hpp>
 #include <vector>
 #include <set>
 
@@ -543,19 +544,17 @@ namespace vl
     std::string mExtensions;
 
     // --- Render States ---
-    // state table
-    int mEnableTable[EN_EnableCount];
-    int mRenderStateTable[RS_RenderStateCount];
-    // current state
-    bool mCurrentEnable[EN_EnableCount];
-    const RenderState* mCurrentRenderState[RS_RenderStateCount];
-    // previous state
-    EEnable mPrevEnables[EN_EnableCount];
-    size_t mPrevEnablesCount;
-    ERenderState mPrevRenderStates[RS_RenderStateCount];
-    size_t mPrevRenderStatesCount;
+  
     // default render states
     RenderStateSlot mDefaultRenderStates[RS_RenderStateCount];
+
+    // applyEnables()
+    ref< NaryQuickSet<EEnable, EEnable, EN_EnableCount> > mCurrentEnableSet;
+    ref< NaryQuickSet<EEnable, EEnable, EN_EnableCount> > mNewEnableSet;
+
+    // applyRenderStates()
+    ref< NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount> > mCurrentRenderStateSet;
+    ref< NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount> > mNewRenderStateSet;
 
     // for each texture unit tells which target has been bound last.
     ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];
