@@ -81,7 +81,7 @@ public:
     vl::ref<vl::Texture> texture = new vl::Texture(mFBO_Size, mFBO_Size, vl::TF_RGBA);
     vl::ref<vl::FBOTexture2DAttachment> fbo_tex_attachm = new vl::FBOTexture2DAttachment(texture.get(), 0, vl::T2DT_TEXTURE_2D);
     framebuffer_object->addTextureAttachment( vl::AP_COLOR_ATTACHMENT0, fbo_tex_attachm.get() );
-    mRTT_Rendering->renderer()->framebuffer()->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
+    framebuffer_object->setDrawBuffer( vl::RDB_COLOR_ATTACHMENT0 );
   
     // Main rendering
 
