@@ -89,6 +89,7 @@ BaseDemo* Create_App_ShaderOverride();
 BaseDemo* Create_App_Primitives();
 BaseDemo* Create_App_DrawCalls();
 BaseDemo* Create_App_VLX();
+BaseDemo* Create_App_Stereo();
 
 // win32 console for sdtout output
 #if defined(WIN32) && !defined(NDEBUG)
@@ -196,6 +197,7 @@ public:
       { "bezier_patch", Create_App_BezierSurfaces(), 10,10, 512, 512, vl::black, vl::vec3(4.5f,5,13), vl::vec3(4.5f,0,0) },
       { "picking", Create_App_Picking(), 10,10, 512, 512, vl::black, vl::vec3(0,0,10), vl::vec3(0,0,0) },
       { "tessellation_shader", Create_App_TessellationShader(), 10,10, 512, 512, vl::skyblue, vl::vec3(300,40,0), vl::vec3(1000,0,0) },
+      { "stereo", Create_App_Stereo(), 10,10, 512, 512, vl::lightgray, vl::vec3(0,0,20), vl::vec3(0,0,0) },
       // { "mini_earth", Create_App_MiniEarth(), 10,10, 512, 512, vl::black, vl::vec3(0,0,4), vl::vec3(0,0,0) },
     };
 
