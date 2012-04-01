@@ -121,6 +121,10 @@ namespace vl
       return rs;
     }
 
+    void setEnabled(bool enabled) { mEnabled = enabled; }
+    
+    bool enabled() const { return mEnabled; }
+
   protected:
     fvec4 mAmbient;
     fvec4 mDiffuse;
@@ -133,6 +137,7 @@ namespace vl
     float mLinearAttenuation;
     float mQuadraticAttenuation;
     ref<Transform> mBoundTransform;
+    bool mEnabled;
   };
 }
 

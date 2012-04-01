@@ -89,9 +89,14 @@ namespace vl
       return rs;
     }
 
+    void setEnabled(bool enabled) { mEnabled = enabled; }
+    
+    bool enabled() const { return mEnabled; }
+
   protected:
     ref<Transform> mBoundTransform;
     Plane mPlane;
+    bool mEnabled;
   };
   //-----------------------------------------------------------------------------
 }
