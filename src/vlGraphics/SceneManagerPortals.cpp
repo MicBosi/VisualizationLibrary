@@ -97,7 +97,8 @@ void SceneManagerPortals::initialize()
 //-----------------------------------------------------------------------------
 void SceneManagerPortals::renderPortal(Portal* portal)
 {
-  if (mPortalActorMap.find(portal) == mPortalActorMap.end())
+  std::map<Portal*, ref<Actor> >::iterator it = mPortalActorMap.find(portal);
+  if (it == mPortalActorMap.end())
   {
     const fvec4 portal_color = fvec4(1,0,0,0.25f);
     vl::ref<vl::Effect> portal_fx = new vl::Effect;
@@ -117,8 +118,12 @@ void SceneManagerPortals::renderPortal(Portal* portal)
 #if defined(VL_OPENGL)
     portal_geom->drawCalls()->push_back( new vl::DrawArrays(vl::PT_POLYGON,   0, (int)vert_array->size()) );
 #endif
-    mPortalActorMap[portal] = new vl::Actor(portal_geom.get(), portal_fx.get(), NULL);
+    ref<Actor> actor = new vl::Actor(portal_geom.get(), portal_fx.get(), NULL);
+    mPortalActorMap[portal] = actor;
+    mTempActors.push_back(actor);
   }
+  else
+    mTempActors.push_back(it->second);
 }
 //-----------------------------------------------------------------------------
 void SceneManagerPortals::extractActors(ActorCollection& list)
@@ -145,15 +150,7 @@ void SceneManagerPortals::extractVisibleActors(ActorCollection& list, const Came
       start->executeCallbacks(camera,this,NULL);
       visitSector(NULL, start, camera->modelingMatrix().getT(), camera);
 
-      // insert portal actors
-      if (showPortals())
-      {
-        for(std::map<Portal*, ref<Actor> >::const_iterator it = mPortalActorMap.begin(); it != mPortalActorMap.end(); ++it)
-          mTempActors.push_back(it->second);
-      }
-
-      // mic fixme: isn't quicker to use sets instead of sort()+unique()?
-      // avoid reporting duplicates
+      // remove duplicates
       std::sort(mTempActors.begin(), mTempActors.end());
       std::vector< ref<Actor> >::iterator new_end = std::unique(mTempActors.begin(), mTempActors.end());
       for(std::vector< ref<Actor> >::iterator it = mTempActors.begin(); it != new_end; ++it)
