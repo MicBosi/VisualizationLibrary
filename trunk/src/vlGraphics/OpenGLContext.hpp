@@ -470,14 +470,30 @@ namespace vl
     //! Applies an EnableSet to an OpenGLContext - Typically for internal use only.
     void applyEnables( const EnableSet* cur );
 
+    #if 0 // mic fixme: delta pipeline
+    void applyEnablesDifference( const EnableSet* cur );
+    ... void applyRenderStatesDifference( const RenderStateSet* cur, const Camera* camera );
+    #endif
+
     //! Applies a RenderStateSet to an OpenGLContext - Typically for internal use only.
     void applyRenderStates( const RenderStateSet* cur, const Camera* camera );
+
+    #if 0 // mic fixme: delta pipeline
+    //! Actually executes the changes made with applyEnables() and applyRenderStates()
+    void commitChanges(const Camera* camera);
+    #endif
 
     //! Resets all the interanal enable-tables - For internal use only.
     void resetEnables();
 
     //! Resets all the interanal render-states-tables - For internal use only.
     void resetRenderStates();
+
+    //! Returns the default render state used by VL when a specific render state type is left undefined.
+    RenderState* defaultRenderState(ERenderState rs) { return mDefaultRenderStates[rs].mRS.get(); }
+
+    //! Returns the default render state used by VL when a specific render state type is left undefined.
+    const RenderState* defaultRenderState(ERenderState rs) const { return mDefaultRenderStates[rs].mRS.get(); }
 
     //! Resets the OpenGL states necessary to begin and finish a rendering. - For internal use only.
     void resetContextStates(EResetContextStates start_or_finish);
@@ -551,10 +567,14 @@ namespace vl
     // applyEnables()
     ref< NaryQuickSet<EEnable, EEnable, EN_EnableCount> > mCurrentEnableSet;
     ref< NaryQuickSet<EEnable, EEnable, EN_EnableCount> > mNewEnableSet;
+    // mic fixme: delta pipeline
+    // ref< NaryQuickSet<EEnable, bool, EN_EnableCount> > mChangedEnableSet;
 
     // applyRenderStates()
     ref< NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount> > mCurrentRenderStateSet;
     ref< NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount> > mNewRenderStateSet;
+    // mic fixme: delta pipeline
+    // ref< NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount> > mChangedRenderStateSet;
 
     // for each texture unit tells which target has been bound last.
     ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];

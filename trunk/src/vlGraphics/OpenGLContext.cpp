@@ -63,9 +63,13 @@ OpenGLContext::OpenGLContext(int w, int h)
 
   mCurrentEnableSet = new NaryQuickSet<EEnable, EEnable, EN_EnableCount>;
   mNewEnableSet = new NaryQuickSet<EEnable, EEnable, EN_EnableCount>;
+  // mic fixme: delta pipeline
+  // mChangedEnableSet = new NaryQuickSet<EEnable, bool, EN_EnableCount>;
 
   mCurrentRenderStateSet = new NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount>;
   mNewRenderStateSet = new NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount>;
+  // mic fixme: delta pipeline
+  // mChangedRenderStateSet = new NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount>;
 
   mIsInitialized = false;
   mHasDoubleBuffer = false;
@@ -473,6 +477,46 @@ void OpenGLContext::logOpenGLInfo()
   VL_CHECK_OGL();
 }
 //------------------------------------------------------------------------------
+#if 0 // mic fixme: delta pipeline
+void OpenGLContext::applyEnablesDifference( const EnableSet* new_enables )
+{
+  if (new_enables)
+  {
+    for( size_t i=0; i<new_enables->enables().size(); ++i )
+    {
+      const EEnable& capability = new_enables->enables()[i];
+      if(!mCurrentEnableSet->has(capability))
+      {
+        mCurrentEnableSet->insert(capability);
+        glEnable( Translate_Enable[capability] );
+        #ifndef NDEBUG
+          if (glGetError() != GL_NO_ERROR)
+          {
+            Log::error( Say("An unsupported capability has been enabled: %s.\n") << Translate_Enable_String[capability]);
+          }
+        #endif
+      }
+    }
+
+    for( size_t i=0; i<new_enables->disables().size(); ++i )
+    {
+      const EEnable& capability = new_enables->enables()[i];
+      if(mCurrentEnableSet->has(capability))
+      {
+        mCurrentEnableSet->erase(capability);
+        glDisable( Translate_Enable[capability] );
+        #ifndef NDEBUG
+          if (glGetError() != GL_NO_ERROR)
+          {
+            Log::error( Say("An unsupported capability has been disabled: %s.\n") << Translate_Enable_String[capability]);
+          }
+        #endif
+      }
+    }
+  }
+}
+#endif
+//------------------------------------------------------------------------------
 void OpenGLContext::applyEnables( const EnableSet* new_enables )
 {
   VL_CHECK_OGL()
@@ -487,12 +531,16 @@ void OpenGLContext::applyEnables( const EnableSet* new_enables )
       mNewEnableSet->append(capability);
       if(!mCurrentEnableSet->has(capability))
       {
+        #if 1
         glEnable( Translate_Enable[capability] );
         #ifndef NDEBUG
           if (glGetError() != GL_NO_ERROR)
           {
             Log::error( Say("An unsupported capability has been enabled: %s.\n") << Translate_Enable_String[capability]);
           }
+        #endif
+        #else // mic fixme: delta pipeline
+        mChangedEnableSet->insert(capability, true);
         #endif
       }
     }
@@ -502,20 +550,24 @@ void OpenGLContext::applyEnables( const EnableSet* new_enables )
   {
     if (!mNewEnableSet->has(*capability))
     {
-        glDisable( Translate_Enable[*capability] );
-        #ifndef NDEBUG
-          if (glGetError() != GL_NO_ERROR)
-          {
-            Log::error( Say("An unsupported capability has been disabled: %s.\n") << Translate_Enable_String[*capability]);
-          }
-        #endif
+      #if 1
+      glDisable( Translate_Enable[*capability] );
+      #ifndef NDEBUG
+        if (glGetError() != GL_NO_ERROR)
+        {
+          Log::error( Say("An unsupported capability has been disabled: %s.\n") << Translate_Enable_String[*capability]);
+        }
+      #endif
+      #else // mic fixme: delta pipeline
+      mChangedEnableSet->insert(*capability, false);
+      #endif
     }
   }
 
   std::swap(mNewEnableSet, mCurrentEnableSet);
 }
 //------------------------------------------------------------------------------
-void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camera* camera )
+void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camera* camera) // mic fixme: this camera can also be taken away
 {
   VL_CHECK_OGL()
 
@@ -529,8 +581,12 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camer
       mNewRenderStateSet->append(rs.type(), rs);
       if (!mCurrentRenderStateSet->has(rs.type()) || rs.mRS.get() != mCurrentRenderStateSet->get(rs.type()).mRS.get())
       {
+        #if 1
         VL_CHECK(rs.mRS.get());
         rs.apply(camera, this); VL_CHECK_OGL()
+        #else // mic fixme: delta pipeline
+        mChangedRenderStateSet->insert(rs.type(), rs);
+        #endif
       }
     }
   }
@@ -539,12 +595,40 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camer
   {
     if (!mNewRenderStateSet->has(rs->type()))
     {
+      #if 1
       mDefaultRenderStates[rs->type()].apply(NULL, this); VL_CHECK_OGL()
+      #else // mic fixme: delta pipeline
+      mChangedRenderStateSet->insert(rs->type(), mDefaultRenderStates[rs->type()]);
+      #endif
     }
   }
 
   std::swap(mNewRenderStateSet, mCurrentRenderStateSet);
 }
+//------------------------------------------------------------------------------
+#if 0 // mic fixme: delta pipeline
+void OpenGLContext::commitChanges(const Camera* camera)
+{
+  // apply render states
+  for( RenderStateSlot* rs = mChangedRenderStateSet->begin(); rs != mChangedRenderStateSet->end(); ++rs)
+  {
+    rs->apply(camera, this); VL_CHECK_OGL()
+  }
+  mChangedRenderStateSet->clear();
+
+  // apply enables
+  for(int i=0; i < mChangedEnableSet->size(); ++i)
+  {
+    const EEnable& capability = mChangedEnableSet->key(i);
+    const bool& on = mChangedEnableSet->value(i);
+    if (on)
+      glEnable( Translate_Enable[capability] );
+    else
+      glDisable( Translate_Enable[capability] );
+  }
+  mChangedEnableSet->clear();
+}
+#endif
 //------------------------------------------------------------------------------
 void OpenGLContext::setupDefaultRenderStates()
 {
@@ -566,21 +650,21 @@ void OpenGLContext::setupDefaultRenderStates()
       mDefaultRenderStates[RS_PolygonStipple] = RenderStateSlot(new PolygonStipple, 0);
     }
 
-    mDefaultRenderStates[RS_Light ] = RenderStateSlot(new Light, 0);
-    mDefaultRenderStates[RS_Light1] = RenderStateSlot(new Light, 1);
-    mDefaultRenderStates[RS_Light2] = RenderStateSlot(new Light, 2);
-    mDefaultRenderStates[RS_Light3] = RenderStateSlot(new Light, 3);
-    mDefaultRenderStates[RS_Light4] = RenderStateSlot(new Light, 4);
-    mDefaultRenderStates[RS_Light5] = RenderStateSlot(new Light, 5);
-    mDefaultRenderStates[RS_Light6] = RenderStateSlot(new Light, 6);
-    mDefaultRenderStates[RS_Light7] = RenderStateSlot(new Light, 7);
+    mDefaultRenderStates[RS_Light0] = RenderStateSlot(new Light, 0); mDefaultRenderStates[RS_Light0].mRS->as<Light>()->setEnabled(false);
+    mDefaultRenderStates[RS_Light1] = RenderStateSlot(new Light, 1); mDefaultRenderStates[RS_Light1].mRS->as<Light>()->setEnabled(false);
+    mDefaultRenderStates[RS_Light2] = RenderStateSlot(new Light, 2); mDefaultRenderStates[RS_Light2].mRS->as<Light>()->setEnabled(false);
+    mDefaultRenderStates[RS_Light3] = RenderStateSlot(new Light, 3); mDefaultRenderStates[RS_Light3].mRS->as<Light>()->setEnabled(false);
+    mDefaultRenderStates[RS_Light4] = RenderStateSlot(new Light, 4); mDefaultRenderStates[RS_Light4].mRS->as<Light>()->setEnabled(false);
+    mDefaultRenderStates[RS_Light5] = RenderStateSlot(new Light, 5); mDefaultRenderStates[RS_Light5].mRS->as<Light>()->setEnabled(false);
+    mDefaultRenderStates[RS_Light6] = RenderStateSlot(new Light, 6); mDefaultRenderStates[RS_Light6].mRS->as<Light>()->setEnabled(false);
+    mDefaultRenderStates[RS_Light7] = RenderStateSlot(new Light, 7); mDefaultRenderStates[RS_Light7].mRS->as<Light>()->setEnabled(false);
 
-    mDefaultRenderStates[RS_ClipPlane ] = RenderStateSlot(new ClipPlane, 0);
-    mDefaultRenderStates[RS_ClipPlane1] = RenderStateSlot(new ClipPlane, 1);
-    mDefaultRenderStates[RS_ClipPlane2] = RenderStateSlot(new ClipPlane, 2);
-    mDefaultRenderStates[RS_ClipPlane3] = RenderStateSlot(new ClipPlane, 3);
-    mDefaultRenderStates[RS_ClipPlane4] = RenderStateSlot(new ClipPlane, 4);
-    mDefaultRenderStates[RS_ClipPlane5] = RenderStateSlot(new ClipPlane, 5);
+    mDefaultRenderStates[RS_ClipPlane0] = RenderStateSlot(new ClipPlane, 0); mDefaultRenderStates[RS_ClipPlane0].mRS->as<ClipPlane>()->setEnabled(false);
+    mDefaultRenderStates[RS_ClipPlane1] = RenderStateSlot(new ClipPlane, 1); mDefaultRenderStates[RS_ClipPlane1].mRS->as<ClipPlane>()->setEnabled(false);
+    mDefaultRenderStates[RS_ClipPlane2] = RenderStateSlot(new ClipPlane, 2); mDefaultRenderStates[RS_ClipPlane2].mRS->as<ClipPlane>()->setEnabled(false);
+    mDefaultRenderStates[RS_ClipPlane3] = RenderStateSlot(new ClipPlane, 3); mDefaultRenderStates[RS_ClipPlane3].mRS->as<ClipPlane>()->setEnabled(false);
+    mDefaultRenderStates[RS_ClipPlane4] = RenderStateSlot(new ClipPlane, 4); mDefaultRenderStates[RS_ClipPlane4].mRS->as<ClipPlane>()->setEnabled(false);
+    mDefaultRenderStates[RS_ClipPlane5] = RenderStateSlot(new ClipPlane, 5); mDefaultRenderStates[RS_ClipPlane5].mRS->as<ClipPlane>()->setEnabled(false);
   }
 
   if (Has_GL_EXT_blend_color||Has_GL_Version_1_4||Has_GL_Version_3_0||Has_GL_Version_4_0||Has_GLES_Version_2_0)
@@ -652,12 +736,16 @@ void OpenGLContext::setupDefaultRenderStates()
 void OpenGLContext::resetRenderStates()
 {
   mCurrentRenderStateSet->clear();
-  memset( mTexUnitBinding,     0, sizeof( mTexUnitBinding )   ); // set to unknown texture target
+  // mic fixme: delta pipeline
+  // mChangedRenderStateSet->clear();
+  memset( mTexUnitBinding, 0, sizeof( mTexUnitBinding ) ); // set to unknown texture target
 }
 //-----------------------------------------------------------------------------
 void OpenGLContext::resetEnables()
 {
   mCurrentEnableSet->clear();
+  // mic fixme: delta pipeline
+  // mChangedEnableSet->clear();
 }
 //------------------------------------------------------------------------------
 bool OpenGLContext::isCleanState(bool verbose)
