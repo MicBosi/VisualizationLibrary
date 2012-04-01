@@ -39,6 +39,7 @@ ClipPlane::ClipPlane(real o, vec3 n)
   VL_DEBUG_SET_OBJECT_NAME()
   mPlane.setNormal(n); 
   mPlane.setOrigin(o); 
+  mEnabled = true;
 }
 //-----------------------------------------------------------------------------
 ClipPlane::ClipPlane(const vec3& o, const vec3& n)
@@ -46,6 +47,7 @@ ClipPlane::ClipPlane(const vec3& o, const vec3& n)
   VL_DEBUG_SET_OBJECT_NAME()
   mPlane.setNormal(n); 
   mPlane.setOrigin(dot(o, n)); 
+  mEnabled = true;
 }
 //-----------------------------------------------------------------------------
 void ClipPlane::apply(int index, const Camera* camera, OpenGLContext*) const
@@ -54,7 +56,7 @@ void ClipPlane::apply(int index, const Camera* camera, OpenGLContext*) const
   
   // we do our own transformations
 
-  if (camera)
+  if (enabled())
   {
     glEnable(GL_CLIP_PLANE0 + index);
 

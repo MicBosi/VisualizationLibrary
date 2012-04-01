@@ -54,13 +54,14 @@ Light::Light()
   mLinearAttenuation    = 0.0f;
   mQuadraticAttenuation = 0.0f;
   mBoundTransform = NULL;
+  mEnabled = true;
 }
 //------------------------------------------------------------------------------
 void Light::apply(int index, const Camera* camera, OpenGLContext*) const
 {
   VL_CHECK_OGL()
 
-  if (camera)
+  if (enabled())
   {
     glEnable (GL_LIGHT0 + index); VL_CHECK_OGL()
 
