@@ -41,7 +41,7 @@
 #include <vlCore/Say.hpp>
 #include <algorithm>
 #include <sstream>
-#include <vlGraphics/NaryQuickSet.hpp>
+#include <vlGraphics/NaryQuickMap.hpp>
 
 using namespace vl;
 
@@ -61,15 +61,15 @@ OpenGLContext::OpenGLContext(int w, int h)
   // set to unknown texture target
   memset( mTexUnitBinding, 0, sizeof(mTexUnitBinding) );
 
-  mCurrentEnableSet = new NaryQuickSet<EEnable, EEnable, EN_EnableCount>;
-  mNewEnableSet = new NaryQuickSet<EEnable, EEnable, EN_EnableCount>;
+  mCurrentEnableSet = new NaryQuickMap<EEnable, EEnable, EN_EnableCount>;
+  mNewEnableSet = new NaryQuickMap<EEnable, EEnable, EN_EnableCount>;
   // mic fixme: delta pipeline
-  // mChangedEnableSet = new NaryQuickSet<EEnable, bool, EN_EnableCount>;
+  // mChangedEnableSet = new NaryQuickMap<EEnable, bool, EN_EnableCount>;
 
-  mCurrentRenderStateSet = new NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount>;
-  mNewRenderStateSet = new NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount>;
+  mCurrentRenderStateSet = new NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount>;
+  mNewRenderStateSet = new NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount>;
   // mic fixme: delta pipeline
-  // mChangedRenderStateSet = new NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount>;
+  // mChangedRenderStateSet = new NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount>;
 
   mIsInitialized = false;
   mHasDoubleBuffer = false;
@@ -485,7 +485,7 @@ void OpenGLContext::applyEnablesDifference( const EnableSet* new_enables )
     for( size_t i=0; i<new_enables->enables().size(); ++i )
     {
       const EEnable& capability = new_enables->enables()[i];
-      if(!mCurrentEnableSet->has(capability))
+      if(!mCurrentEnableSet->hasKey(capability))
       {
         mCurrentEnableSet->insert(capability);
         glEnable( Translate_Enable[capability] );
@@ -501,7 +501,7 @@ void OpenGLContext::applyEnablesDifference( const EnableSet* new_enables )
     for( size_t i=0; i<new_enables->disables().size(); ++i )
     {
       const EEnable& capability = new_enables->enables()[i];
-      if(mCurrentEnableSet->has(capability))
+      if(mCurrentEnableSet->hasKey(capability))
       {
         mCurrentEnableSet->erase(capability);
         glDisable( Translate_Enable[capability] );
@@ -529,7 +529,7 @@ void OpenGLContext::applyEnables( const EnableSet* new_enables )
     {
       const EEnable& capability = new_enables->enables()[i];
       mNewEnableSet->append(capability);
-      if(!mCurrentEnableSet->has(capability))
+      if(!mCurrentEnableSet->hasKey(capability))
       {
         #if 1
         glEnable( Translate_Enable[capability] );
@@ -548,7 +548,7 @@ void OpenGLContext::applyEnables( const EnableSet* new_enables )
 
   for(EEnable* capability = mCurrentEnableSet->begin(); capability != mCurrentEnableSet->end(); ++capability)
   {
-    if (!mNewEnableSet->has(*capability))
+    if (!mNewEnableSet->hasKey(*capability))
     {
       #if 1
       glDisable( Translate_Enable[*capability] );
@@ -579,7 +579,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camer
     {
       const RenderStateSlot& rs = new_rs->renderStates()[i];
       mNewRenderStateSet->append(rs.type(), rs);
-      if (!mCurrentRenderStateSet->has(rs.type()) || rs.mRS.get() != mCurrentRenderStateSet->get(rs.type()).mRS.get())
+      if (!mCurrentRenderStateSet->hasKey(rs.type()) || rs.mRS.get() != mCurrentRenderStateSet->valueFromKey(rs.type()).mRS.get())
       {
         #if 1
         VL_CHECK(rs.mRS.get());
@@ -593,7 +593,7 @@ void OpenGLContext::applyRenderStates( const RenderStateSet* new_rs, const Camer
 
   for( RenderStateSlot* rs = mCurrentRenderStateSet->begin(); rs != mCurrentRenderStateSet->end(); ++rs)
   {
-    if (!mNewRenderStateSet->has(rs->type()))
+    if (!mNewRenderStateSet->hasKey(rs->type()))
     {
       #if 1
       mDefaultRenderStates[rs->type()].apply(NULL, this); VL_CHECK_OGL()
@@ -619,8 +619,8 @@ void OpenGLContext::commitChanges(const Camera* camera)
   // apply enables
   for(int i=0; i < mChangedEnableSet->size(); ++i)
   {
-    const EEnable& capability = mChangedEnableSet->key(i);
-    const bool& on = mChangedEnableSet->value(i);
+    const EEnable& capability = mChangedEnableSet->keyFromIndex(i);
+    const bool& on = mChangedEnableSet->valueFromIndex(i);
     if (on)
       glEnable( Translate_Enable[capability] );
     else
