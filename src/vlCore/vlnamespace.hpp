@@ -959,7 +959,8 @@ namespace vl
 
   typedef enum
   {
-    RS_VertexAttrib/*0*/,
+    RS_VertexAttrib,
+    RS_VertexAttrib0 = RS_VertexAttrib,
     RS_VertexAttrib1,
     RS_VertexAttrib2,
     RS_VertexAttrib3,
@@ -1001,7 +1002,8 @@ namespace vl
     RS_StencilOp,
     RS_GLSLProgram,
 
-    RS_Light/*0*/,
+    RS_Light,
+    RS_Light0 = RS_Light,
     RS_Light1,
     RS_Light2,
     RS_Light3,
@@ -1010,14 +1012,16 @@ namespace vl
     RS_Light6,
     RS_Light7,
 
-    RS_ClipPlane/*0*/,
+    RS_ClipPlane,
+    RS_ClipPlane0 = RS_ClipPlane,
     RS_ClipPlane1,
     RS_ClipPlane2,
     RS_ClipPlane3,
     RS_ClipPlane4,
     RS_ClipPlane5,
 
-    RS_TextureSampler/*0*/,
+    RS_TextureSampler,
+    RS_TextureSampler0  = RS_TextureSampler + 0,
     RS_TextureSampler1  = RS_TextureSampler + 1,
     RS_TextureSampler2  = RS_TextureSampler + 2,
     RS_TextureSampler3  = RS_TextureSampler + 3,
@@ -1035,7 +1039,8 @@ namespace vl
     RS_TextureSampler15 = RS_TextureSampler + 15,
     /* ... */
 
-    RS_TexGen/*0*/  = RS_TextureSampler + VL_MAX_TEXTURE_UNITS,
+    RS_TexGen   = RS_TextureSampler + VL_MAX_TEXTURE_UNITS,
+    RS_TexGen0  = RS_TexGen + 0,
     RS_TexGen1  = RS_TexGen + 1,
     RS_TexGen2  = RS_TexGen + 2,
     RS_TexGen3  = RS_TexGen + 3,
@@ -1053,7 +1058,8 @@ namespace vl
     RS_TexGen15 = RS_TexGen + 15,
     /* ... */
 
-    RS_TexEnv/*0*/  = RS_TexGen + VL_MAX_TEXTURE_UNITS,
+    RS_TexEnv   = RS_TexGen + VL_MAX_TEXTURE_UNITS,
+    RS_TexEnv0  = RS_TexEnv + 0,
     RS_TexEnv1  = RS_TexEnv + 1,
     RS_TexEnv2  = RS_TexEnv + 2,
     RS_TexEnv3  = RS_TexEnv + 3,
@@ -1071,7 +1077,8 @@ namespace vl
     RS_TexEnv15 = RS_TexEnv + 15,
     /* ... */
 
-    RS_TextureMatrix/*0*/  = RS_TexEnv + VL_MAX_TEXTURE_UNITS,
+    RS_TextureMatrix   = RS_TexEnv + VL_MAX_TEXTURE_UNITS,
+    RS_TextureMatrix0  = RS_TextureMatrix + 0,
     RS_TextureMatrix1  = RS_TextureMatrix + 1,
     RS_TextureMatrix2  = RS_TextureMatrix + 2,
     RS_TextureMatrix3  = RS_TextureMatrix + 3,
@@ -1089,7 +1096,7 @@ namespace vl
     RS_TextureMatrix15 = RS_TextureMatrix + 15,
     /* ... */
 
-    RS_RenderStateCount          = RS_TextureMatrix15 + 1,
+    RS_RenderStateCount = RS_TextureMatrix15 + 1,
 
     RS_NONE,
 
