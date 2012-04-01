@@ -36,103 +36,103 @@
 
 namespace vl
 {
-  /** Data structure designed to quickly (O(1)) add and remove and iterate elements in a set. 
-      Internally used by VL to efficiently deal with enables and render stats. */
-  template<typename NameType, typename DataType, int MaxSetSize>
-  class NaryQuickSet: public Object
+  /** Simple map used to add, remove, iterate, clear elements efficiently (all O(1)).
+      To be used only when the number of keys is well defined and not too big.
+      Internally used by VL to deal with enables and render states. */
+  template<typename KeyType, typename ValueType, int MaxMapType>
+  class NaryQuickMap: public Object
   {
   public:
-    NaryQuickSet()
+    NaryQuickMap()
     {
       reset();
     }
 
     void reset()
     {
-      mSetSize = 0;
-      memset(mEnumToSet, 0, sizeof(mEnumToSet));
-      memset(mSetToEnum, 0, sizeof(mSetToEnum));
+      mMapSize = 0;
+      memset(mKeyToValue, 0, sizeof(mKeyToValue));
+      memset(mValueToKey, 0, sizeof(mValueToKey));
     }
 
     void clear()
     {
       // no need to touch anything else.. you clever VL!
-      mSetSize = 0;
+      mMapSize = 0;
     }
 
-    int size() const { return mSetSize; }
+    int size() const { return mMapSize; }
 
-    DataType* begin() { return mSet; }
-    DataType* end() { return mSet + mSetSize; }
-    const DataType* begin() const { return mSet; }
-    const DataType* end() const { return mSet + mSetSize; }
+    ValueType* begin() { return mValues; }
+    ValueType* end() { return mValues + mMapSize; }
+    const ValueType* begin() const { return mValues; }
+    const ValueType* end() const { return mValues + mMapSize; }
 
-    void append(NameType name)
+    void append(KeyType key)
     {
-      append(name, name);
+      append(key, key);
     }
 
-    // use this when you know that 'name' is not already in the set.
-    void append(NameType name, DataType data)
+    // use this when you know that 'key' is not already in the set.
+    void append(KeyType key, ValueType value)
     {
-      // sovrascrivi 'name' in ogni caso
-      int pos = mSetSize++;
-      mEnumToSet[name] = pos;
-      mSetToEnum[pos] = name;
-      mSet[pos] = data;
+      // sovrascrivi 'key' in ogni caso
+      int pos = mMapSize++;
+      mKeyToValue[key] = pos;
+      mValueToKey[pos] = key;
+      mValues[pos] = value;
     }
 
-    void insert(NameType name)
+    void insert(KeyType key)
     {
-      insert(name, name);
+      insert(key, key);
     }
 
-    void insert(NameType name, DataType data)
+    void insert(KeyType key, const ValueType& value)
     {
-      VL_CHECK(name < MaxSetSize)
-      // sovrascrivi 'name' in ogni caso
-      int pos = find(name);
+      VL_CHECK(key < MaxMapType)
+      int pos = find(key);
       if (pos == -1)
       {
-        pos = mSetSize++;
-        VL_CHECK(pos < MaxSetSize)
-        mEnumToSet[name] = pos;
-        mSetToEnum[pos] = name;
+        pos = mMapSize++;
+        VL_CHECK(pos < MaxMapType)
+        mKeyToValue[key] = pos;
+        mValueToKey[pos] = key;
       }
-      mSet[pos] = data;
+      mValues[pos] = value;
     }
 
-    void erase(NameType name)
+    void erase(KeyType key)
     {
-      int pos = find(name);
+      int pos = find(key);
       if (pos != -1)
       {
         // move the last object to the one being erased
-        if (mSetSize>1)
+        if (mMapSize>1)
         {
-          // move data
-          mSet[pos] = mSet[mSetSize-1];
+          // move value
+          mValues[pos] = mValues[mMapSize-1];
           // move Enum
-          mSetToEnum[pos] = mSetToEnum[mSetSize-1];
-          // mark moved NameType to point to the new pos
-          mEnumToSet[mSetToEnum[pos]] = pos;
+          mValueToKey[pos] = mValueToKey[mMapSize-1];
+          // mark moved KeyType to point to the new pos
+          mKeyToValue[mValueToKey[pos]] = pos;
         }
-        mSetSize--;
-        VL_CHECK(mSetSize >= 0)
+        mMapSize--;
+        VL_CHECK(mMapSize >= 0)
       }
     }
 
-    int find(NameType name) const
+    int find(KeyType key) const
     {
-      int pos = mEnumToSet[name];
+      int pos = mKeyToValue[key];
       VL_CHECK(pos >= 0)
-      VL_CHECK(pos < MaxSetSize)
-      if (pos < mSetSize)
+      VL_CHECK(pos < MaxMapType)
+      if (pos < mMapSize)
       {
-        NameType e = mSetToEnum[pos];
+        KeyType e = mValueToKey[pos];
         VL_CHECK(e >= 0)
-        VL_CHECK(e < MaxSetSize)
-        if (e == name)
+        VL_CHECK(e < MaxMapType)
+        if (e == key)
           return pos;
         else
           return -1;
@@ -141,31 +141,42 @@ namespace vl
         return -1;
     }
 
-    bool has(NameType name) const
+    bool hasKey(KeyType key) const
     {
-      return find(name) != -1;
+      return find(key) != -1;
     }
 
-    const DataType& get(NameType name) const
+    const ValueType& valueFromKey(KeyType key) const
     {
-        VL_CHECK(name >= 0)
-        VL_CHECK(name < MaxSetSize)
-        VL_CHECK(mEnumToSet[name] >= 0)
-        VL_CHECK(mEnumToSet[name] < MaxSetSize)
-        return mSet[mEnumToSet[name]];
+        VL_CHECK(key >= 0)
+        VL_CHECK(key < MaxMapType)
+        VL_CHECK(mKeyToValue[key] >= 0)
+        VL_CHECK(mKeyToValue[key] < MaxMapType)
+        return mValues[mKeyToValue[key]];
+    }
+
+    const ValueType& valueFromIndex(int i) const
+    {
+      return mValues[i];
+    }
+
+    KeyType key(int i) const
+    {
+      return mValueToKey[i];
     }
 
   protected:
-    // the actual data
-    // --> in the case of EEnable we don't really need this but 
-    // --> we keep it to have one single implementation of this class
-    DataType mSet[MaxSetSize]; 
-    // the number of elements in mSet and mSetToEnum
-    int mSetSize;
-    // given an index (< mSetSize) of a data returns it's NameType (== index in mEnumToSet)
-    NameType mSetToEnum[MaxSetSize];
-    // given a NameType gives where in mSet and mSetToEnum the data is.
-    int mEnumToSet[MaxSetSize]; 
+    // Note:
+    // In the case of EEnable we don't really need this 
+    // (we would need only a set, not a map) but 
+    // for the moment we use this for simplicity.
+    ValueType mValues[MaxMapType]; 
+    // given an index (< mMapSize) of a value returns it's KeyType (== index in mKeyToValue)
+    KeyType mValueToKey[MaxMapType];
+    // the number of elements in mValues and mValueToKey
+    int mMapSize;
+    // given a KeyType gives where in mValues and mValueToKey the value is.
+    int mKeyToValue[MaxMapType]; 
   };
 
 }

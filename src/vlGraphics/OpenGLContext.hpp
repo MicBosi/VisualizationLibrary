@@ -36,7 +36,7 @@
 #include <vlGraphics/UIEventListener.hpp>
 #include <vlGraphics/FramebufferObject.hpp> // Framebuffer and FramebufferObject
 #include <vlGraphics/RenderState.hpp>
-#include <vlGraphics/NaryQuickSet.hpp>
+#include <vlGraphics/NaryQuickMap.hpp>
 #include <vector>
 #include <set>
 
@@ -565,16 +565,16 @@ namespace vl
     RenderStateSlot mDefaultRenderStates[RS_RenderStateCount];
 
     // applyEnables()
-    ref< NaryQuickSet<EEnable, EEnable, EN_EnableCount> > mCurrentEnableSet;
-    ref< NaryQuickSet<EEnable, EEnable, EN_EnableCount> > mNewEnableSet;
+    ref< NaryQuickMap<EEnable, EEnable, EN_EnableCount> > mCurrentEnableSet;
+    ref< NaryQuickMap<EEnable, EEnable, EN_EnableCount> > mNewEnableSet;
     // mic fixme: delta pipeline
-    // ref< NaryQuickSet<EEnable, bool, EN_EnableCount> > mChangedEnableSet;
+    // ref< NaryQuickMap<EEnable, bool, EN_EnableCount> > mChangedEnableSet;
 
     // applyRenderStates()
-    ref< NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount> > mCurrentRenderStateSet;
-    ref< NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount> > mNewRenderStateSet;
+    ref< NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount> > mCurrentRenderStateSet;
+    ref< NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount> > mNewRenderStateSet;
     // mic fixme: delta pipeline
-    // ref< NaryQuickSet<ERenderState, RenderStateSlot, RS_RenderStateCount> > mChangedRenderStateSet;
+    // ref< NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount> > mChangedRenderStateSet;
 
     // for each texture unit tells which target has been bound last.
     ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];
