@@ -1139,7 +1139,7 @@ bool TextureSampler::hasTexture() const
   return mTexture && mTexture->handle(); 
 }
 //------------------------------------------------------------------------------
-void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) const
+void TextureSampler::apply(int index, const Camera*, OpenGLContext* ctx) const
 {
   VL_CHECK_OGL();
   VL_CHECK(index < VL_MAX_TEXTURE_UNITS)
@@ -1172,15 +1172,8 @@ void TextureSampler::apply(int index, const Camera* camera, OpenGLContext* ctx) 
     }
   }
 
-  if (camera)
+  if (hasTexture())
   {
-    if( !hasTexture() )
-    {
-      Log::bug( "TextureSampler::apply() error: null texture!\n" );
-      VL_TRAP();
-      return;
-    }
-
     // bind the texture
     glBindTexture( texture()->dimension(), texture()->handle() ); VL_CHECK_OGL()
 
