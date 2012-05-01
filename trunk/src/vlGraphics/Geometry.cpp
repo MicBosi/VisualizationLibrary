@@ -258,6 +258,7 @@ void Geometry::setTexCoordArray(int tex_unit, ArrayAbstract* data)
 //-----------------------------------------------------------------------------
 void Geometry::clearArrays(bool clear_draw_calls)
 {
+  setBufferObjectDirty(true);
   mVertexArray = NULL;
   mNormalArray = NULL;
   mColorArray = NULL;
