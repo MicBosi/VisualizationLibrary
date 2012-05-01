@@ -667,13 +667,10 @@ namespace vl
       return createTexture();
     }
 
-    /** Returns \p true if the current texture configuration seems valid. */
-    bool isValid() const;
-
-    /** OpenGL texture handle as returned by glGenTextures(). */
-    unsigned int handle() const { return mHandle; }
     /** OpenGL texture handle as returned by glGenTextures(). */
     void setHandle(unsigned int id) { mHandle = id; }
+    /** OpenGL texture handle as returned by glGenTextures(). */
+    unsigned int handle() const { return mHandle; }
 
     /** The texture type (1d, 2d, cubemap etc.) as specified by the \p target parameter of glTexImage*(). */
     void setDimension(ETextureDimension dimension) { mDimension = dimension; }
@@ -705,11 +702,18 @@ namespace vl
     /** Whether the texture has a 1 pixel texture border or not. */
     bool border() const { return mBorder; }
 
-    /** Returns the number of samples of a multisample texture. */
+    /** The number of samples of a multisample texture. */
+    int setSamples(int samples) { mSamples = samples; }
+    /** The number of samples of a multisample texture. */
     int samples() const { return mSamples; }
 
-    /** Returns whether the samples location is fixed for a a multisample texture. */
+    /** Whether the samples location is fixed for a a multisample texture. */
+    bool setFixedSamplesLocation(bool fixed) { mFixedSamplesLocation = fixed; }
+    /** Whether the samples location is fixed for a a multisample texture. */
     bool fixedSamplesLocation() const { return mFixedSamplesLocation; }
+
+    /** See SetupParams */
+    void setSetupParams(SetupParams* setup_params) { mSetupParams = setup_params; }
 
     /** See SetupParams */
     const SetupParams* setupParams() const { return mSetupParams.get(); }
@@ -717,14 +721,8 @@ namespace vl
     /** See SetupParams */
     SetupParams* setupParams() { return mSetupParams.get(); }
 
-    /** See SetupParams */
-    void setSetupParams(SetupParams* setup_params) { mSetupParams = setup_params; }
-
-    /** Checks whether the specified texture type, format and dimension combination is supported by the current OpenGL driver. */
-    static bool supports(ETextureDimension tex_dimension, ETextureFormat tex_format, int mip_level, EImageDimension img_dimension, int w, int h, int d, bool border, int samples, bool fixedsamplelocations, bool verbose);
-
-    /** Returns \p true if the specified format is compressed. */
-    static bool isCompressedFormat(int format);
+    /** Returns \p true if the current texture configuration seems valid. */
+    bool isValid() const;
 
     /** Returns true if the texture is a depth or depth/stencil textre. */
     bool isDepthTexture() const;
@@ -732,6 +730,12 @@ namespace vl
     /** Copies all the texture parameters form the specified texture, including the OpenGL texture handle.
         Mainly useful when you want to use the same texture object with different texture parameters. */
     void clone(const Texture& other);
+
+    /** Checks whether the specified texture type, format and dimension combination is supported by the current OpenGL driver. */
+    static bool supports(ETextureDimension tex_dimension, ETextureFormat tex_format, int mip_level, EImageDimension img_dimension, int w, int h, int d, bool border, int samples, bool fixedsamplelocations, bool verbose);
+
+    /** Returns \p true if the specified format is compressed. */
+    static bool isCompressedFormat(int format);
 
   private:
     Texture(const Texture& other): Object(other) {}

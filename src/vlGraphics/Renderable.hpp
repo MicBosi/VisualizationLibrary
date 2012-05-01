@@ -207,7 +207,7 @@ namespace vl
     bool isBufferObjectDirty() const { return mBufferObjectDirty; }
 
     //! Whether BufferObjects associated to a Renderable should be recomputed on the next rendering.
-    void setBufferObjectDirty(bool dirty=false) { mBufferObjectDirty = dirty; }
+    void setBufferObjectDirty(bool dirty) { mBufferObjectDirty = dirty; }
 
     //! Uploads the data stored in the local buffers on the GPU memory.
     //! If 'discard_local_data' is set to \p true the memory used by the local buffers is released.
