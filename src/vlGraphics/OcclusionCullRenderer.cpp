@@ -241,8 +241,6 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
   opengl_context->resetEnables();
   opengl_context->applyRenderStates( mOcclusionShader->getRenderStateSet(), camera );
   opengl_context->applyEnables( mOcclusionShader->getEnableSet() );
-  // mic fixme: delta pipeline
-  // opengl_context->commitChanges( camera );
   projViewTransfCallback()->updateMatrices( true, true, glsl_program, camera, cur_transform );
 
   // camera/eye position for later usage
@@ -334,10 +332,6 @@ void OcclusionCullRenderer::render_pass2(const RenderQueue* non_occluded_render_
 
   // clear render states
   opengl_context->applyRenderStates( mDummyStateSet.get(), camera );
-
-  // mic fixme: delta pipeline
-  // commit the changes above
-  // opengl_context->commitChanges(camera);
 
   glDisable(GL_SCISSOR_TEST);
 }

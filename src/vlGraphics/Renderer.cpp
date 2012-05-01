@@ -263,7 +263,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
         if (shader->getUniformSet() && !shader->getUniformSet()->uniforms().empty())
           cur_shader_uniform_set = shader->getUniformSet();
         
-        if (actor->getUniformSet() && !actor->getUniformSet() ->uniforms().empty())
+        if (actor->getUniformSet() && !actor->getUniformSet()->uniforms().empty())
           cur_actor_uniform_set = actor->getUniformSet();
       } 
 
@@ -332,7 +332,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       VL_CHECK_OGL()
 
       // glsl program uniform set
-      if (update_pu)
+      if ( update_pu )
       {
         VL_CHECK( cur_glsl_prog_uniform_set && cur_glsl_prog_uniform_set->uniforms().size() );
         VL_CHECK( shader->getRenderStateSet()->glslProgram() && shader->getRenderStateSet()->glslProgram()->handle() )
@@ -361,12 +361,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
       VL_CHECK_OGL()
 
-      // mic fixme: delta pipeline
-      #if 0
-      // --------------- OpenGL render state change apply ---------------
-      opengl_context->commitChanges(camera);
-      #endif
-
       // --------------- Actor rendering ---------------
 
       // also compiles display lists and updates BufferObjects if necessary
@@ -385,12 +379,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
   // clear render states
   opengl_context->applyRenderStates( mDummyStateSet.get(), NULL ); VL_CHECK_OGL();
-
-  // mic fixme: delta pipeline
-  #if 0
-  // commit the changes above
-  opengl_context->commitChanges( camera );
-  #endif
 
   // enabled texture unit #0
   VL_glActiveTexture( GL_TEXTURE0 ); VL_CHECK_OGL();
