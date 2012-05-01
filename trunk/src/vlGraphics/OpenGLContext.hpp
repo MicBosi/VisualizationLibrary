@@ -470,18 +470,8 @@ namespace vl
     //! Applies an EnableSet to an OpenGLContext - Typically for internal use only.
     void applyEnables( const EnableSet* cur );
 
-    #if 0 // mic fixme: delta pipeline
-    void applyEnablesDifference( const EnableSet* cur );
-    ... void applyRenderStatesDifference( const RenderStateSet* cur, const Camera* camera );
-    #endif
-
     //! Applies a RenderStateSet to an OpenGLContext - Typically for internal use only.
     void applyRenderStates( const RenderStateSet* cur, const Camera* camera );
-
-    #if 0 // mic fixme: delta pipeline
-    //! Actually executes the changes made with applyEnables() and applyRenderStates()
-    void commitChanges(const Camera* camera);
-    #endif
 
     //! Resets all the interanal enable-tables - For internal use only.
     void resetEnables();
@@ -567,14 +557,10 @@ namespace vl
     // applyEnables()
     ref< NaryQuickMap<EEnable, EEnable, EN_EnableCount> > mCurrentEnableSet;
     ref< NaryQuickMap<EEnable, EEnable, EN_EnableCount> > mNewEnableSet;
-    // mic fixme: delta pipeline
-    // ref< NaryQuickMap<EEnable, bool, EN_EnableCount> > mChangedEnableSet;
 
     // applyRenderStates()
     ref< NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount> > mCurrentRenderStateSet;
     ref< NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount> > mNewRenderStateSet;
-    // mic fixme: delta pipeline
-    // ref< NaryQuickMap<ERenderState, RenderStateSlot, RS_RenderStateCount> > mChangedRenderStateSet;
 
     // for each texture unit tells which target has been bound last.
     ETextureDimension mTexUnitBinding[VL_MAX_TEXTURE_UNITS];
