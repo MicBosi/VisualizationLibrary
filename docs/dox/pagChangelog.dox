@@ -2,6 +2,12 @@
 
 	\page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.09.1166</div>
+
+	- Geometry::clearArrays() now calls setBufferObjectDirty(true)
+	- removed (wrong) default value from Renderable::setBufferObjectDirty(bool dirty=false)
+	- added missing Texture::setFixedSamplesLocation() and Texture::setSamples()
+
 	<div class="featuretitle">Visualization Library 2011.09.1164</div>
 
 	- OpenGLContext now exposes both leftFramebuffer() and rightFramebuffer() to more easily allow stereo rendering.
