@@ -77,140 +77,140 @@ namespace vl
 #define VL_GROUP(...) __VA_ARGS__
 #define VL_TO_STR(...) #__VA_ARGS__
 //---------------------------------------------------------------------------------------------------------------------
-#define VL_INSTRUMENT_BASE_CLASS(ClassName)                                                                           \
-public:                                                                                                               \
-  /* static functions */                                                                                              \
-  /** Returns the name of the class. */                                                                               \
-  static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
-  /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
-                                                                                                                      \
-  /* virtual functions */                                                                                             \
-  /** Returns the name of the object's class. */                                                                      \
-  virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
-  /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo& classType() const { return Type(); }                                                        \
-  /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo& type) const                                                                   \
-  {                                                                                                                   \
-    return type == Type();                                                                                            \
-  }                                                                                                                   \
-  /* virtual Object* createThisType() const { return new ClassName; }                                              */ \
+#define VL_INSTRUMENT_BASE_CLASS(ClassName)                                                                                \
+public:                                                                                                                    \
+  /* static functions */                                                                                                   \
+  /** Returns the name of the class. */                                                                                    \
+  static const char* Name() { return VL_TO_STR(ClassName); }                                                               \
+  /** Returns the TypeInfo of the class. */                                                                                \
+  static const ::vl::TypeInfo& Type() { static const ::vl::TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; } \
+                                                                                                                           \
+  /* virtual functions */                                                                                                  \
+  /** Returns the name of the object's class. */                                                                           \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                                   \
+  /** Returns the TypeInfo of the object's class. */                                                                       \
+  virtual const ::vl::TypeInfo& classType() const { return Type(); }                                                       \
+  /** Returns \a true if \a type matches the object's class type. */                                                       \
+  virtual bool isOfType(const ::vl::TypeInfo& type) const                                                                  \
+  {                                                                                                                        \
+    return type == Type();                                                                                                 \
+  }                                                                                                                        \
+  /* virtual Object* createThisType() const { return new ClassName; }                                              */      \
 private:
 //---------------------------------------------------------------------------------------------------------------------
-#define VL_INSTRUMENT_ABSTRACT_BASE_CLASS(ClassName)                                                                  \
-public:                                                                                                               \
-  /* static functions */                                                                                              \
-  /** Returns the name of the class. */                                                                               \
-  static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
-  /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
-                                                                                                                      \
-  /* virtual functions */                                                                                             \
-  /** Returns the name of the object's class. */                                                                      \
-  virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
-  /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo& classType() const { return Type(); }                                                        \
-  /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo& type) const                                                                   \
-  {                                                                                                                   \
-    return type == Type();                                                                                            \
-  }                                                                                                                   \
-  /* virtual Object* createThisType() const = 0;                                                                   */ \
+#define VL_INSTRUMENT_ABSTRACT_BASE_CLASS(ClassName)                                                                       \
+public:                                                                                                                    \
+  /* static functions */                                                                                                   \
+  /** Returns the name of the class. */                                                                                    \
+  static const char* Name() { return VL_TO_STR(ClassName); }                                                               \
+  /** Returns the TypeInfo of the class. */                                                                                \
+  static const ::vl::TypeInfo& Type() { static const ::vl::TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; } \
+                                                                                                                           \
+  /* virtual functions */                                                                                                  \
+  /** Returns the name of the object's class. */                                                                           \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                                   \
+  /** Returns the TypeInfo of the object's class. */                                                                       \
+  virtual const ::vl::TypeInfo& classType() const { return Type(); }                                                       \
+  /** Returns \a true if \a type matches the object's class type. */                                                       \
+  virtual bool isOfType(const ::vl::TypeInfo& type) const                                                                  \
+  {                                                                                                                        \
+    return type == Type();                                                                                                 \
+  }                                                                                                                        \
+  /* virtual Object* createThisType() const = 0;                                                                   */      \
 private:
 //---------------------------------------------------------------------------------------------------------------------
-#define VL_INSTRUMENT_CLASS(ClassName, BaseClass)                                                                     \
-private:                                                                                                              \
-  typedef BaseClass super;                                                                                            \
-public:                                                                                                               \
-  /* static functions */                                                                                              \
-  /** Returns the name of the class. */                                                                               \
-  static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
-  /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
-                                                                                                                      \
-  /* virtual functions */                                                                                             \
-  /** Returns the name of the object's class. */                                                                      \
-  virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
-  /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo& classType() const { return Type(); }                                                        \
-  /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo& type) const                                                                   \
-  {                                                                                                                   \
-    return type == Type() || super::isOfType(type);                                                                   \
-  }                                                                                                                   \
-  /* virtual Object* createThisType() const { return new ClassName; }                                              */ \
+#define VL_INSTRUMENT_CLASS(ClassName, BaseClass)                                                                          \
+private:                                                                                                                   \
+  typedef BaseClass super;                                                                                                 \
+public:                                                                                                                    \
+  /* static functions */                                                                                                   \
+  /** Returns the name of the class. */                                                                                    \
+  static const char* Name() { return VL_TO_STR(ClassName); }                                                               \
+  /** Returns the TypeInfo of the class. */                                                                                \
+  static const ::vl::TypeInfo& Type() { static const ::vl::TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; } \
+                                                                                                                           \
+  /* virtual functions */                                                                                                  \
+  /** Returns the name of the object's class. */                                                                           \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                                   \
+  /** Returns the TypeInfo of the object's class. */                                                                       \
+  virtual const ::vl::TypeInfo& classType() const { return Type(); }                                                       \
+  /** Returns \a true if \a type matches the object's class type. */                                                       \
+  virtual bool isOfType(const ::vl::TypeInfo& type) const                                                                  \
+  {                                                                                                                        \
+    return type == Type() || super::isOfType(type);                                                                        \
+  }                                                                                                                        \
+  /* virtual Object* createThisType() const { return new ClassName; }                                              */      \
 private:
 //---------------------------------------------------------------------------------------------------------------------
-#define VL_INSTRUMENT_ABSTRACT_CLASS(ClassName, BaseClass)                                                            \
-private:                                                                                                              \
-  typedef BaseClass super;                                                                                            \
-public:                                                                                                               \
-  /* static functions */                                                                                              \
-  /** Returns the name of the class. */                                                                               \
-  static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
-  /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
-                                                                                                                      \
-  /* virtual functions */                                                                                             \
-  /** Returns the name of the object's class. */                                                                      \
-  virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
-  /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo& classType() const { return Type(); }                                                        \
-  /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo& type) const                                                                   \
-  {                                                                                                                   \
-    return type == Type() || super::isOfType(type);                                                                   \
-  }                                                                                                                   \
-  /* virtual Object* createThisType() const = 0;                                                                   */ \
+#define VL_INSTRUMENT_ABSTRACT_CLASS(ClassName, BaseClass)                                                                 \
+private:                                                                                                                   \
+  typedef BaseClass super;                                                                                                 \
+public:                                                                                                                    \
+  /* static functions */                                                                                                   \
+  /** Returns the name of the class. */                                                                                    \
+  static const char* Name() { return VL_TO_STR(ClassName); }                                                               \
+  /** Returns the TypeInfo of the class. */                                                                                \
+  static const ::vl::TypeInfo& Type() { static const ::vl::TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; } \
+                                                                                                                           \
+  /* virtual functions */                                                                                                  \
+  /** Returns the name of the object's class. */                                                                           \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                                   \
+  /** Returns the TypeInfo of the object's class. */                                                                       \
+  virtual const ::vl::TypeInfo& classType() const { return Type(); }                                                       \
+  /** Returns \a true if \a type matches the object's class type. */                                                       \
+  virtual bool isOfType(const ::vl::TypeInfo& type) const                                                                  \
+  {                                                                                                                        \
+    return type == Type() || super::isOfType(type);                                                                        \
+  }                                                                                                                        \
+  /* virtual Object* createThisType() const = 0;                                                                   */      \
 private:
 //---------------------------------------------------------------------------------------------------------------------
-#define VL_INSTRUMENT_CLASS_2(ClassName, BaseClass1, BaseClass2)                                                      \
-private:                                                                                                              \
-  typedef BaseClass1 super1;                                                                                          \
-  typedef BaseClass2 super2;                                                                                          \
-public:                                                                                                               \
-  /* static functions */                                                                                              \
-  /** Returns the name of the class. */                                                                               \
-  static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
-  /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
-                                                                                                                      \
-  /* virtual functions */                                                                                             \
-  /** Returns the name of the object's class. */                                                                      \
-  virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
-  /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo& classType() const { return Type(); }                                                        \
-  /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo& type) const                                                                   \
-  {                                                                                                                   \
-    return type == Type() || super1::isOfType(type) || super2::isOfType(type);                                        \
-  }                                                                                                                   \
-  /* virtual Object* createThisType() const { return new ClassName; }                                              */ \
+#define VL_INSTRUMENT_CLASS_2(ClassName, BaseClass1, BaseClass2)                                                           \
+private:                                                                                                                   \
+  typedef BaseClass1 super1;                                                                                               \
+  typedef BaseClass2 super2;                                                                                               \
+public:                                                                                                                    \
+  /* static functions */                                                                                                   \
+  /** Returns the name of the class. */                                                                                    \
+  static const char* Name() { return VL_TO_STR(ClassName); }                                                               \
+  /** Returns the TypeInfo of the class. */                                                                                \
+  static const ::vl::TypeInfo& Type() { static const ::vl::TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; } \
+                                                                                                                           \
+  /* virtual functions */                                                                                                  \
+  /** Returns the name of the object's class. */                                                                           \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                                   \
+  /** Returns the TypeInfo of the object's class. */                                                                       \
+  virtual const ::vl::TypeInfo& classType() const { return Type(); }                                                       \
+  /** Returns \a true if \a type matches the object's class type. */                                                       \
+  virtual bool isOfType(const ::vl::TypeInfo& type) const                                                                  \
+  {                                                                                                                        \
+    return type == Type() || super1::isOfType(type) || super2::isOfType(type);                                             \
+  }                                                                                                                        \
+  /* virtual Object* createThisType() const { return new ClassName; }                                              */      \
 private:
 //---------------------------------------------------------------------------------------------------------------------
-#define VL_INSTRUMENT_ABSTRACT_CLASS_2(ClassName, BaseClass1, BaseClass2)                                             \
-private:                                                                                                              \
-  typedef BaseClass1 super1;                                                                                          \
-  typedef BaseClass2 super2;                                                                                          \
-public:                                                                                                               \
-  /* static functions */                                                                                              \
-  /** Returns the name of the class. */                                                                               \
-  static const char* Name() { return VL_TO_STR(ClassName); }                                                          \
-  /** Returns the TypeInfo of the class. */                                                                           \
-  static const TypeInfo& Type() { static const TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; }        \
-                                                                                                                      \
-  /* virtual functions */                                                                                             \
-  /** Returns the name of the object's class. */                                                                      \
-  virtual const char* className() const { return VL_TO_STR(ClassName); }                                              \
-  /** Returns the TypeInfo of the object's class. */                                                                  \
-  virtual const TypeInfo& classType() const { return Type(); }                                                        \
-  /** Returns \a true if \a type matches the object's class type. */                                                  \
-  virtual bool isOfType(const TypeInfo& type) const                                                                   \
-  {                                                                                                                   \
-    return type == Type() || super1::isOfType(type) || super2::isOfType(type);                                        \
-  }                                                                                                                   \
-  /* virtual Object* createThisType() const = 0;                                                                   */ \
+#define VL_INSTRUMENT_ABSTRACT_CLASS_2(ClassName, BaseClass1, BaseClass2)                                                  \
+private:                                                                                                                   \
+  typedef BaseClass1 super1;                                                                                               \
+  typedef BaseClass2 super2;                                                                                               \
+public:                                                                                                                    \
+  /* static functions */                                                                                                   \
+  /** Returns the name of the class. */                                                                                    \
+  static const char* Name() { return VL_TO_STR(ClassName); }                                                               \
+  /** Returns the TypeInfo of the class. */                                                                                \
+  static const ::vl::TypeInfo& Type() { static const ::vl::TypeInfo class_type(VL_TO_STR(ClassName)); return class_type; } \
+                                                                                                                           \
+  /* virtual functions */                                                                                                  \
+  /** Returns the name of the object's class. */                                                                           \
+  virtual const char* className() const { return VL_TO_STR(ClassName); }                                                   \
+  /** Returns the TypeInfo of the object's class. */                                                                       \
+  virtual const ::vl::TypeInfo& classType() const { return Type(); }                                                       \
+  /** Returns \a true if \a type matches the object's class type. */                                                       \
+  virtual bool isOfType(const ::vl::TypeInfo& type) const                                                                  \
+  {                                                                                                                        \
+    return type == Type() || super1::isOfType(type) || super2::isOfType(type);                                             \
+  }                                                                                                                        \
+  /* virtual Object* createThisType() const = 0;                                                                   */      \
 private:
 //---------------------------------------------------------------------------------------------------------------------
 namespace vl
