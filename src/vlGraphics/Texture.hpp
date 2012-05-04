@@ -61,6 +61,7 @@ namespace vl
    * - Actor */
   class VLGRAPHICS_EXPORT TexParameter: public Object
   {
+    VL_INSTRUMENT_CLASS(vl::TexParameter, Object)
     friend class Texture;
 
   public:
