@@ -34,7 +34,7 @@
 #include <vlGraphics/Light.hpp>
 #include <vlGraphics/RenderingTree.hpp>
 #include <vlGraphics/Rendering.hpp>
-#include <vlGraphics/GLSL.hpp>
+#include <vlGraphics/StereoCamera.hpp>
 
 using namespace vl;
 
@@ -46,159 +46,49 @@ public:
     return BaseDemo::appletInfo();
   }
 
-  void updateCameras()
-  {
-    // viewports: no need to update them as they are shared
-
-    //mMonoCamera->setFOV(45);
-    //mMonoCamera->setNearPlane(.75);
-
-    //mMonoCamera->setProjectionPerspective();
-    //mLeftCamera->setProjectionPerspective();
-    //mRightCamera->setProjectionPerspective();
-
-    float aspect_ratio = (float)mMonoCamera->viewport()->width()/mMonoCamera->viewport()->height();
-    float fov = mMonoCamera->fov()*fDEG_TO_RAD;
-    float near_clip = mMonoCamera->nearPlane();
-    float far_clip =  mMonoCamera->farPlane();
-    float convergence = 20;
-    float eye_separation = 1;
-
-    float top, bottom, left, right, a, b, c;
-
-    //top = near_clip * tan(fov/2);
-    //bottom = -top;
-    //a = aspect_ratio * tan(fov/2) * convergence;
-    //b = a - eye_separation/2;
-    //c = a + eye_separation/2;
-    
-    float radians = fov/2;
-    float wd2 = near_clip * tan(radians);
-    float ndfl = near_clip / convergence;
-    top    =   wd2;
-    bottom = - wd2;
-    left  = - aspect_ratio * wd2 - 0.5 * eye_separation * ndfl;
-    right =   aspect_ratio * wd2 - 0.5 * eye_separation * ndfl;
-
-    // mic fixme
-    printf("%f %f %f %f\n", left, right, bottom, top);
-
-    // left
-    //left = -b * near_clip/convergence;
-    //right = c * near_clip/convergence;
-    mLeftCamera->setProjectionFrustum(left, right, bottom, top, near_clip, far_clip);
-    mLeftCamera->setViewMatrix( mMonoCamera->viewMatrix()*mat4::getTranslation(-eye_separation/2, 0, 0) );
-
-    left  = - aspect_ratio * wd2 + 0.5 * eye_separation * ndfl;
-    right =   aspect_ratio * wd2 + 0.5 * eye_separation * ndfl;
-
-    // right
-    //left = -c * near_clip/convergence;
-    //right = b * near_clip/convergence;
-    mRightCamera->setProjectionFrustum(left, right, bottom, top, near_clip, far_clip);
-    mRightCamera->setViewMatrix( mMonoCamera->viewMatrix()*mat4::getTranslation(+eye_separation/2, 0, 0) );
-  }
-
   void updateScene()
   {
-    updateCameras();
+    mStereoCamera->updateLeftRightCameras();
+    mRootTransform->setLocalMatrix( mat4::getRotation( Time::currentTime() * 45, 0,1,0 ) );
+    mRootTransform->computeWorldMatrixRecursive();
   }
 
   void initEvent()
   {
-    vl::Log::notify(appletInfo());
+    Log::notify(appletInfo());
 
-    // save opengl context
+    // save for later
     OpenGLContext* gl_context = rendering()->as<Rendering>()->renderer()->framebuffer()->openglContext();
+
     // main camera used to generate the two left and right cameras
     mMonoCamera = rendering()->as<Rendering>()->camera();
+    mStereoCamera = new StereoCamera;
+    mStereoCamera->setMonoCamera(mMonoCamera.get());
 
-    mMainRendering = new vl::RenderingTree;
-    mLeftRendering = new vl::Rendering;
-    mRightRendering = new vl::Rendering;
+    mMainRendering = new RenderingTree;
+    mLeftRendering = new Rendering;
+    mRightRendering = new Rendering;
     mMainRendering ->subRenderings()->push_back(mLeftRendering.get());
     mMainRendering ->subRenderings()->push_back(mRightRendering.get());
     setRendering(mMainRendering.get());
 
-    // set left/right scene manager
+    // let the left and right scene managers share the same scene
     mLeftRendering->sceneManagers()->push_back(sceneManager());
     mRightRendering->sceneManagers()->push_back(sceneManager());
     
-    // save left/right cameras for later
-    mLeftCamera = mLeftRendering->camera();
-    mRightCamera = mRightRendering->camera();
+    // set left/right cameras. Viewport will be automatically taken from the mono camera.
+    mStereoCamera->setLeftCamera(mLeftRendering->camera());
+    mStereoCamera->setRightCamera(mRightRendering->camera());
 
-    // share the same viewport so we have to update it only once
-    mLeftCamera->setViewport( mMonoCamera->viewport() );
-    mRightCamera->setViewport( mMonoCamera->viewport() );
+    // setup for red (left) / cyan (right) glasses
 
-    // create left and right FBOs
-    ref<FramebufferObject> left_fbo = gl_context->createFramebufferObject(gl_context->width(), gl_context->height());
-    ref<FramebufferObject> right_fbo = gl_context->createFramebufferObject(gl_context->width(), gl_context->height());
+    mLeftRendering->renderer()->setFramebuffer(gl_context->framebuffer());
+    mLeftRendering->renderer()->overriddenDefaultRenderStates().push_back(RenderStateSlot(new ColorMask(false, true, true),-1));
 
-    vl::ref<vl::FBODepthBufferAttachment> fbo_depth_attach = new vl::FBODepthBufferAttachment(vl::DBF_DEPTH_COMPONENT);
-    // mic fixme:
-    // fbo_depth_attach->setWidth(gl_context->width());
-    // fbo_depth_attach->setHeight(gl_context->height());
-    left_fbo->addDepthAttachment( fbo_depth_attach.get() );
-    right_fbo->addDepthAttachment( fbo_depth_attach.get() );
+    mRightRendering->renderer()->setFramebuffer(gl_context->framebuffer());
+    mRightRendering->renderer()->overriddenDefaultRenderStates().push_back(RenderStateSlot(new ColorMask(true, false, false),-1));
+    mRightRendering->renderer()->setClearFlags(CF_CLEAR_DEPTH);
 
-    ref<Texture> left_texture = new Texture(gl_context->width(), gl_context->height(), TF_RGBA, false);
-    left_texture->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    left_texture->getTexParameter()->setMinFilter(vl::TPF_LINEAR); // mic fixme: must be TPF_NEAREST
-    ref<FBOTexture2DAttachment> left_texture_attach = new FBOTexture2DAttachment(left_texture .get(), 0, vl::T2DT_TEXTURE_2D);
-    left_fbo->addTextureAttachment(vl::AP_COLOR_ATTACHMENT0, left_texture_attach.get() );
-    left_fbo->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
-
-    ref<Texture> right_texture = new Texture(gl_context->width(), gl_context->height(), TF_RGBA, false);
-    right_texture->getTexParameter()->setMagFilter(vl::TPF_LINEAR);
-    right_texture->getTexParameter()->setMinFilter(vl::TPF_LINEAR); // mic fixme: must be TPF_NEAREST
-    ref<FBOTexture2DAttachment> right_texture_attach = new FBOTexture2DAttachment(right_texture .get(), 0, vl::T2DT_TEXTURE_2D);
-    right_fbo->addTextureAttachment(vl::AP_COLOR_ATTACHMENT0, right_texture_attach.get() );
-    right_fbo->setDrawBuffer(vl::RDB_COLOR_ATTACHMENT0);
-
-    // set left/right framebuffer
-    mLeftRendering->renderer()->setFramebuffer(left_fbo.get());
-    mRightRendering->renderer()->setFramebuffer(right_fbo.get());
-
-    // mic fixme: 
-    // - fai versione senza FBO? con rightFramebuffer()?
-    // - fai una versione che usa direttament glColorMask()
-
-    // setup compositing rendering
-    mCompositingRendering = new Rendering;
-    mCompositingRendering->renderer()->setFramebuffer(gl_context->framebuffer());
-    mCompositingRendering->camera()->setModelingMatrix( mat4::getIdentity() );
-    mCompositingRendering->camera()->viewport()->set(0, 0, gl_context->width(), gl_context->height());
-    mCompositingRendering->camera()->viewport()->setClearColor(vl::royalblue);
-    mCompositingRendering->camera()->setProjectionOrtho(0, 1, 0, 1, -1, +1);
-    mMainRendering->subRenderings()->push_back(mCompositingRendering.get());
-    // setup simple texture quad
-    ref<Geometry> quad = new Geometry;
-    ref<ArrayFloat3> verts = new ArrayFloat3;
-    quad->setVertexArray(verts.get());
-    verts->resize(4);
-    verts->at(0) = fvec3(0, 0, 0);
-    verts->at(1) = fvec3(1, 0, 0);
-    verts->at(2) = fvec3(1, 1, 0);
-    verts->at(3) = fvec3(0, 1, 0);
-    ref<DrawArrays> da = new DrawArrays(PT_QUADS, 0, 4);
-    quad->drawCalls()->push_back(da.get());
-    // apply texture to quad
-    ref<Effect> fx = new Effect;
-    fx->shader()->gocTextureSampler(0)->setTexture(left_texture.get());
-    fx->shader()->gocTextureSampler(1)->setTexture(right_texture.get());
-    fx->shader()->gocGLSLProgram()->attachShader( new GLSLVertexShader("/glsl/stereo.vs") );
-    fx->shader()->gocGLSLProgram()->attachShader( new GLSLFragmentShader("/glsl/stereo.fs") );
-    fx->shader()->gocGLSLProgram()->gocUniform("left_channel")->setUniformI(0);
-    fx->shader()->gocGLSLProgram()->gocUniform("right_channel")->setUniformI(1);
-    // add the quad to the compositing rendering
-    ref<SceneManagerActorTree> quad_scene_manager = new SceneManagerActorTree;
-    quad_scene_manager->tree()->addActor(quad.get(), fx.get(), NULL);
-    mCompositingRendering->sceneManagers()->push_back(quad_scene_manager.get());
-
-    // ...
-  
     // let the trackball rotate the mono camera
     trackball()->setCamera(mMonoCamera.get());
     trackball()->setTransform(NULL); // just for clarity
@@ -210,67 +100,39 @@ public:
   // populates the scene
   void setupScene()
   {
-    // setup common states
     ref<Light> camera_light = new Light;
     ref<EnableSet> enables = new EnableSet;
     enables->enable(EN_DEPTH_TEST);
     enables->enable(EN_LIGHTING);
 
-    // red material fx
-    ref<Effect> red_fx = new Effect;
-    red_fx->shader()->setEnableSet(enables.get());
-    red_fx->shader()->gocMaterial()->setDiffuse(gray);
-    red_fx->shader()->setRenderState(camera_light.get(), 0);
+    ref<Effect> sphere_fx = new Effect;
+    sphere_fx->shader()->setEnableSet(enables.get());
+    sphere_fx->shader()->gocMaterial()->setDiffuse(gray);
+    sphere_fx->shader()->setRenderState(camera_light.get(), 0);
 
-    // green material fx
-    ref<Effect> green_fx = new Effect;
-    green_fx->shader()->setEnableSet(enables.get());
-    green_fx->shader()->gocMaterial()->setDiffuse(gray);
-    green_fx->shader()->setRenderState(camera_light.get(), 0);
+    ref<Effect> fx = new Effect;
+    fx->shader()->setEnableSet(enables.get());
+    fx->shader()->gocMaterial()->setDiffuse(gray);
+    fx->shader()->setRenderState(camera_light.get(), 0);
+    // fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
 
-    // blue material fx
-    ref<Effect> yellow_fx = new Effect;
-    yellow_fx->shader()->setEnableSet(enables.get());
-    yellow_fx->shader()->gocMaterial()->setDiffuse(gray);
-    yellow_fx->shader()->setRenderState(camera_light.get(), 0);
+    mRootTransform = new Transform;
 
-    // add box, cylinder, cone actors to the scene
-    //ref<Geometry> geom1 = makeBox     (vec3(-7,0,0),5,5,5);
-    //ref<Geometry> geom2 = makeCylinder(vec3(0,0,0), 5,5, 10,2, true, true);
-    //ref<Geometry> geom3 = makeCone    (vec3(+7,0,0),5,5, 20, true);
-
-    ref<Geometry> geom1 = makeCylinder(vec3(-7,0,0), 3,10, 10,2, true, true);
-    ref<Geometry> geom2 = makeCylinder(vec3(0, 0,0), 3,10, 10,2, true, true);
-    ref<Geometry> geom3 = makeCylinder(vec3(+7,0,0), 3,10, 10,2, true, true);
-
-    // needed since we enabled the lighting
-    geom1->computeNormals();
-    geom2->computeNormals();
-    geom3->computeNormals();
-
-    // add the actors to the scene
-    sceneManager()->tree()->addActor( geom1.get(), red_fx.get(),    NULL);
-    sceneManager()->tree()->addActor( geom2.get(), green_fx.get(),  NULL);
-    sceneManager()->tree()->addActor( geom3.get(), yellow_fx.get(), NULL);
-  }
-
-  void keyPressEvent(unsigned short ch, EKey key)
-  {
-    // toggle left/right rendering
-    if (key == vl::Key_1)
+    // central sphere
+    ref<Geometry> sphere = makeUVSphere(vec3(0,0,0), 4);
+    sphere->computeNormals();
+    sceneManager()->tree()->addActor( sphere.get(), sphere_fx.get(), mRootTransform.get());
+    
+    // rotating spheres
+    float count = 10;
+    for(size_t i=0; i<count; ++i)
     {
-      mLeftRendering->setEnableMask(0xFFFFFFFF);
-      mRightRendering->setEnableMask(0);
-    }
-    if (key == vl::Key_2)
-    {
-      mLeftRendering->setEnableMask(0);
-      mRightRendering->setEnableMask(0xFFFFFFFF);
-    }
-    if (key == vl::Key_3)
-    {
-      mLeftRendering->setEnableMask(0xFFFFFFFF);
-      mRightRendering->setEnableMask(0xFFFFFFFF);
+      ref<Geometry> satellite = makeUVSphere(vec3(7,0,0), 2.5);
+      satellite->computeNormals();
+      ref<Transform> child_transform = new Transform;
+      mRootTransform->addChild(child_transform.get());
+      child_transform->setLocalMatrix( mat4::getRotation(360.0f * (i/count), 0,1,0) );
+      sceneManager()->tree()->addActor( satellite.get(), fx.get(), child_transform.get());
     }
   }
 
@@ -278,7 +140,7 @@ public:
   {
     mMonoCamera->viewport()->setWidth ( w );
     mMonoCamera->viewport()->setHeight( h );
-    updateCameras();
+    mStereoCamera->updateLeftRightCameras();
   }
 
   void loadModel(const std::vector<String>& files)
@@ -324,8 +186,8 @@ protected:
   ref<Rendering> mRightRendering;
   ref<Rendering> mCompositingRendering;
   ref<Camera> mMonoCamera;
-  ref<Camera> mLeftCamera;
-  ref<Camera> mRightCamera;
+  ref<StereoCamera> mStereoCamera;
+  ref<Transform> mRootTransform;
 };
 
 // Have fun!
