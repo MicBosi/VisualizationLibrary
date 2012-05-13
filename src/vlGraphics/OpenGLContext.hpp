@@ -479,11 +479,19 @@ namespace vl
     //! Resets all the interanal render-states-tables - For internal use only.
     void resetRenderStates();
 
-    //! Returns the default render state used by VL when a specific render state type is left undefined.
-    RenderState* defaultRenderState(ERenderState rs) { return mDefaultRenderStates[rs].mRS.get(); }
+    //! Defines the default render state slot to be used by the opengl context.
+    void setDefaultRenderState(const RenderStateSlot& rs_slot) 
+    { 
+      mDefaultRenderStates[rs_slot.type()] = rs_slot; 
+      // if we are in the default render state then apply it immediately
+      if (!mCurrentRenderStateSet->hasKey(rs_slot.type()))
+      {
+        mDefaultRenderStates[rs_slot.type()].apply(NULL, this); VL_CHECK_OGL();
+      }
+    }
 
-    //! Returns the default render state used by VL when a specific render state type is left undefined.
-    const RenderState* defaultRenderState(ERenderState rs) const { return mDefaultRenderStates[rs].mRS.get(); }
+    //! Returns the default render state slot used by VL when a specific render state type is left undefined.
+    const RenderStateSlot& defaultRenderState(ERenderState rs) { return mDefaultRenderStates[rs]; }
 
     //! Resets the OpenGL states necessary to begin and finish a rendering. - For internal use only.
     void resetContextStates(EResetContextStates start_or_finish);
