@@ -97,6 +97,7 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
   class InOutContract 
   {
     Renderer* mRenderer;
+    std::vector<RenderStateSlot> mOriginalDefaultRS;
   public:
     InOutContract(Renderer* renderer, Camera* camera): mRenderer(renderer)
     {
@@ -111,6 +112,18 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
       camera->viewport()->setClearFlags( mRenderer->clearFlags() );
       camera->viewport()->activate();
 
+      OpenGLContext* gl_context = renderer->framebuffer()->openglContext();
+
+      // default render states override
+      for(size_t i=0; i<renderer->overriddenDefaultRenderStates().size(); ++i)
+      {
+        // save overridden default render state to be restored later
+        ERenderState type = renderer->overriddenDefaultRenderStates()[i].type();
+        mOriginalDefaultRS.push_back(gl_context->defaultRenderState(type));
+        // set new default render state
+        gl_context->setDefaultRenderState(renderer->overriddenDefaultRenderStates()[i]);
+      }
+
       // dispatch the renderer-started event.
       mRenderer->dispatchOnRendererStarted();
 
@@ -122,6 +135,16 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
     {
       // dispatch the renderer-finished event
       mRenderer->dispatchOnRendererFinished();
+
+      OpenGLContext* gl_context = mRenderer->framebuffer()->openglContext();
+
+      // restore default render states
+      for(size_t i=0; i<mOriginalDefaultRS.size(); ++i)
+      {
+        gl_context->setDefaultRenderState(mOriginalDefaultRS[i]);
+      }
+
+      VL_CHECK( !globalSettings()->checkOpenGLStates() || mRenderer->framebuffer()->openglContext()->isCleanState(true) );
 
       // check user-generated errors.
       VL_CHECK_OGL()
@@ -390,8 +413,6 @@ const RenderQueue* Renderer::render(const RenderQueue* render_queue, Camera* cam
 
   // disable all vertex arrays, note this also calls "glBindBuffer(GL_ARRAY_BUFFER, 0)"
   opengl_context->bindVAS(NULL, false, false); VL_CHECK_OGL();
-
-  VL_CHECK( !globalSettings()->checkOpenGLStates() || framebuffer()->openglContext()->isCleanState(true) );
 
   return render_queue;
 }
