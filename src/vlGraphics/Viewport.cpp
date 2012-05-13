@@ -100,8 +100,18 @@ void Viewport::activate() const
       }
     #endif
 
-    // this are deliberately all initialized to true
-    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+    // save writemask status to be restored later
+    GLboolean color_write_mask[4] = {0,0,0,0};
+    glGetBooleanv(GL_COLOR_WRITEMASK, color_write_mask);
+
+    GLboolean depth_write_mask = 0;
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &depth_write_mask );
+
+    GLboolean stencil_write_mask = 0;
+    glGetBooleanv(GL_STENCIL_WRITEMASK, &stencil_write_mask );
+
+    // make sure we clear everything
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glDepthMask(GL_TRUE);
     glStencilMask(GL_TRUE);
 
@@ -117,9 +127,15 @@ void Viewport::activate() const
     }
 
     glClearDepth( mClearDepth );
+
     glClearStencil( mClearStencil );
 
     glClear(mClearFlags);
+
+    // restore writemasks
+    glColorMask(color_write_mask[0], color_write_mask[1], color_write_mask[2], color_write_mask[3]);
+    glDepthMask(depth_write_mask);
+    glStencilMask(stencil_write_mask);
 
     VL_CHECK_OGL()
   }
