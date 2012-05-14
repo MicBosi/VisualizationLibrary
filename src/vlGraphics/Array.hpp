@@ -238,7 +238,7 @@ namespace vl
 
     virtual ref<ArrayAbstract> clone() const
     {
-      ref<Array> arr = createArray()->as<Array>(); VL_CHECK(arr);
+      ref<Array> arr = createArray()->template as<Array>(); VL_CHECK(arr);
       if (size())
       {
         arr->resize(size());

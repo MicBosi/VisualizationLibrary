@@ -29,7 +29,7 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#include <vlGraphics/FlatManipulator.h>
+#include <vlGraphics/FlatManipulator.hpp>
 #include <vlGraphics/OpenGLContext.hpp>
 
 using namespace vl;

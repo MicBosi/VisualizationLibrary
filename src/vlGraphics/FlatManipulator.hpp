@@ -38,6 +38,8 @@
 #include <vlGraphics/Camera.hpp>
 #include <vlGraphics/Geometry.hpp>
 
+// mic fixme: clean up this mess
+
 namespace vl
 {
 
@@ -54,11 +56,10 @@ namespace vl
 
 class FlatManipulator: public UIEventListener
 {
-  public:
-    typedef enum { NoMode, TranslationMode, ZoomMode } EManipMode;
+  VL_INSTRUMENT_CLASS(vl::FlatManipulator, UIEventListener)
 
   public:
-    virtual const char* className() { return "vl::FlatManipulator"; }
+    typedef enum { NoMode, TranslationMode, ZoomMode } EManipMode;
 
     //! Constructor.
     FlatManipulator();
@@ -160,4 +161,4 @@ vl::ref<vl::Geometry> makeScales(bool X = true,
                                  vl::fvec4 color = vl::fvec4(1,1,1,1));
 }
 
-#endif // FlatManipulator_INCLUDE_ONCE
+#endif
