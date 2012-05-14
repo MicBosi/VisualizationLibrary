@@ -188,7 +188,6 @@ namespace blind_tests
       // compute md5 from the compressed files
       vl::MD5CheckSum md5_b = gzip_codec->md5();
 
-      vl::MD5CheckSum md5_c = gzip_codec->md5();
       printf("md5 == %s\n", md5_a.toStdString().c_str());
       printf("md5 == %s\n", md5_b.toStdString().c_str());
       CONDITION( md5_a == md5_b )

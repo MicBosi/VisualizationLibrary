@@ -1359,11 +1359,11 @@ void Geometry::computeTangentSpace(
   
   for ( TriangleIterator trit = prim->triangleIterator(); trit.hasNext(); trit.next() )
   {
-    unsigned int tri[] = { trit.a(), trit.b(), trit.c() };
+    int tri[] = { trit.a(), trit.b(), trit.c() };
 
-    VL_CHECK(tri[0] < vert_count );
-    VL_CHECK(tri[1] < vert_count );
-    VL_CHECK(tri[2] < vert_count );
+    VL_CHECK(tri[0] < (int)vert_count );
+    VL_CHECK(tri[1] < (int)vert_count );
+    VL_CHECK(tri[2] < (int)vert_count );
     
     const fvec3& v1 = vertex[tri[0]];
     const fvec3& v2 = vertex[tri[1]];
