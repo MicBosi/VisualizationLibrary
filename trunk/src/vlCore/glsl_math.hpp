@@ -718,8 +718,21 @@ namespace vl
                        ::floor(a.w()) );
   }
 
-  // --------------- trunc ---------------
+  // --------------- fract ---------------
 
+  template<typename T>
+  T fract(T a) { return a - floor(a); }
+
+  template<typename T>
+  Vector2<T> fract(const Vector2<T>& a) { return a - floor(a); }
+
+  template<typename T>
+  Vector3<T> fract(const Vector3<T>& a) { return a - floor(a); }
+
+  template<typename T>
+  Vector4<T> fract(const Vector4<T>& a) { return a - floor(a); }
+
+  // --------------- trunc ---------------
 
   template<typename T>
   T trunc(T a) { return a - fract(a); }
@@ -909,20 +922,6 @@ namespace vl
                        ::ceil(a.z()),
                        ::ceil(a.w()) );
   }
-
-  // --------------- fract ---------------
-
-  template<typename T>
-  T fract(T a) { return a - floor(a); }
-
-  template<typename T>
-  Vector2<T> fract(const Vector2<T>& a) { return a - floor(a); }
-
-  template<typename T>
-  Vector3<T> fract(const Vector3<T>& a) { return a - floor(a); }
-
-  template<typename T>
-  Vector4<T> fract(const Vector4<T>& a) { return a - floor(a); }
 
   // --------------- mod ---------------
 

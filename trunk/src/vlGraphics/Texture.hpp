@@ -704,12 +704,12 @@ namespace vl
     bool border() const { return mBorder; }
 
     /** The number of samples of a multisample texture. */
-    int setSamples(int samples) { mSamples = samples; }
+    void setSamples(int samples) { mSamples = samples; }
     /** The number of samples of a multisample texture. */
     int samples() const { return mSamples; }
 
     /** Whether the samples location is fixed for a a multisample texture. */
-    bool setFixedSamplesLocation(bool fixed) { mFixedSamplesLocation = fixed; }
+    void setFixedSamplesLocation(bool fixed) { mFixedSamplesLocation = fixed; }
     /** Whether the samples location is fixed for a a multisample texture. */
     bool fixedSamplesLocation() const { return mFixedSamplesLocation; }
 
