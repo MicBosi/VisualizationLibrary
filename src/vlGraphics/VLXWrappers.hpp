@@ -3205,11 +3205,11 @@ namespace vl
     {
       if (obj->isOfType(DepthSortCallback::Type()))
       {
-        ESortMode sm = SM_SortBackToFront;
         const VLXValue* vlx_sm = vlx->getValue("SortMode");
         VLX_IMPORT_CHECK_RETURN( vlx_sm->type() == VLXValue::Identifier, *vlx_sm )
         if (vlx_sm)
         {
+          ESortMode sm = SM_SortBackToFront;
           if ( vlx_sm->getIdentifier() == "SM_SortBackToFront" )
             sm = SM_SortBackToFront;
           else
@@ -3217,6 +3217,7 @@ namespace vl
             sm = SM_SortFrontToBack;
           else
             s.signalImportError( Say("Line %n : unknown sort mode '%s'.\n") << vlx_sm->lineNumber() << vlx_sm->getIdentifier() );
+          obj->as<DepthSortCallback>()->setSortMode(sm);
         }
       }
     }
