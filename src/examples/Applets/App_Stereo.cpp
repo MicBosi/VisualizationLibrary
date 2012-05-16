@@ -48,7 +48,10 @@ public:
 
   void updateScene()
   {
+    /* update the left and right cameras to reflect the movement of the mono camera */
     mStereoCamera->updateLeftRightCameras();
+
+    /* animate the rotating spheres */
     mRootTransform->setLocalMatrix( mat4::getRotation( Time::currentTime() * 45, 0,1,0 ) );
     mRootTransform->computeWorldMatrixRecursive();
   }
@@ -57,43 +60,50 @@ public:
   {
     Log::notify(appletInfo());
 
-    // save for later
+    /* save for later */
     OpenGLContext* gl_context = rendering()->as<Rendering>()->renderer()->framebuffer()->openglContext();
 
-    // main camera used to generate the two left and right cameras
+    /* let the two left and right cameras follow the mono camera */
     mMonoCamera = rendering()->as<Rendering>()->camera();
     mStereoCamera = new StereoCamera;
     mStereoCamera->setMonoCamera(mMonoCamera.get());
 
-    mMainRendering = new RenderingTree;
-    mLeftRendering = new Rendering;
+    /* install two renderings, one for the left eye and one for the right */
+    mLeftRendering  = new Rendering;
     mRightRendering = new Rendering;
-    mMainRendering ->subRenderings()->push_back(mLeftRendering.get());
-    mMainRendering ->subRenderings()->push_back(mRightRendering.get());
+    mMainRendering  = new RenderingTree;
+    mMainRendering->subRenderings()->push_back(mLeftRendering.get());
+    mMainRendering->subRenderings()->push_back(mRightRendering.get());
     setRendering(mMainRendering.get());
 
-    // let the left and right scene managers share the same scene
+    /* let the left and right scene managers share the same scene */
     mLeftRendering->sceneManagers()->push_back(sceneManager());
     mRightRendering->sceneManagers()->push_back(sceneManager());
     
-    // set left/right cameras. Viewport will be automatically taken from the mono camera.
+    /* let the left and right rendering write on the same framebuffer */
+    mLeftRendering->renderer()->setFramebuffer(gl_context->framebuffer());
+    mRightRendering->renderer()->setFramebuffer(gl_context->framebuffer());
+
+    /* set left/right cameras to the cameras of the left and right rendering,
+       the viewport will be automatically taken from the mono camera. */
     mStereoCamera->setLeftCamera(mLeftRendering->camera());
     mStereoCamera->setRightCamera(mRightRendering->camera());
 
-    // setup for red (left) / cyan (right) glasses
+    /* set adequate eye separation and convergence */
+    mStereoCamera->setConvergence(20);
+    mStereoCamera->setEyeSeparation(1);
 
-    mLeftRendering->renderer()->setFramebuffer(gl_context->framebuffer());
+    /* setup color masks for red (left) / cyan (right) glasses */
     mLeftRendering->renderer()->overriddenDefaultRenderStates().push_back(RenderStateSlot(new ColorMask(false, true, true),-1));
-
-    mRightRendering->renderer()->setFramebuffer(gl_context->framebuffer());
+    /* for the right we set the clear flags to clear only the depth buffer, not the color buffer */
     mRightRendering->renderer()->overriddenDefaultRenderStates().push_back(RenderStateSlot(new ColorMask(true, false, false),-1));
     mRightRendering->renderer()->setClearFlags(CF_CLEAR_DEPTH);
 
-    // let the trackball rotate the mono camera
+    /* let the trackball rotate the mono camera */
     trackball()->setCamera(mMonoCamera.get());
-    trackball()->setTransform(NULL); // just for clarity
+    trackball()->setTransform(NULL); 
 
-    // populates the scene
+    /* populate the scene */
     setupScene();
   }
 
@@ -109,12 +119,12 @@ public:
     sphere_fx->shader()->setEnableSet(enables.get());
     sphere_fx->shader()->gocMaterial()->setDiffuse(gray);
     sphere_fx->shader()->setRenderState(camera_light.get(), 0);
+    sphere_fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
 
     ref<Effect> fx = new Effect;
     fx->shader()->setEnableSet(enables.get());
     fx->shader()->gocMaterial()->setDiffuse(gray);
     fx->shader()->setRenderState(camera_light.get(), 0);
-    // fx->shader()->gocPolygonMode()->set(vl::PM_LINE, vl::PM_LINE);
 
     mRootTransform = new Transform;
 
@@ -138,8 +148,10 @@ public:
 
   void resizeEvent(int w, int h)
   {
+    /* update the viewport of the main camera */
     mMonoCamera->viewport()->setWidth ( w );
     mMonoCamera->viewport()->setHeight( h );
+    /* update the left and right cameras since the viewport has changed */
     mStereoCamera->updateLeftRightCameras();
   }
 
@@ -175,6 +187,15 @@ public:
 
     // position the camera to nicely see the objects in the scene
     trackball()->adjustView( sceneManager(), vec3(0,0,1)/*direction*/, vec3(0,1,0)/*up*/, 1.0f/*bias*/ );
+
+    /* try to adjust the convergence and eye separation to reasonable values */
+    sceneManager()->computeBounds();
+    real convergence = sceneManager()->boundingSphere().radius() / 2;
+    real eye_separation = convergence/20;
+    mStereoCamera->setConvergence(convergence);
+    mStereoCamera->setEyeSeparation(eye_separation);
+    Log::notify(Say("Convergence = %n\n") << convergence);
+    Log::notify(Say("Eye separation = %n\n") << eye_separation);
   }
 
   // laod the files dropped in the window
