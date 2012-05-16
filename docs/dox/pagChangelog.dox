@@ -2,6 +2,17 @@
 
 	\page pagChangelog Changelog
 
+	<div class="featuretitle">Visualization Library 2011.09.1168</div>
+
+	- Added StereoCamera utility class to easily setup stereo renderings.
+	- Allow Renderer to override default render states used by OpenGLContext.
+	- Finalized App_Stereo demo: simple example of how to setup a stereo rendering using anaglyphs.
+	- Updated Khronos OpenGL header files to latest versions.
+	- Bug: fixed instrumentation classes when used outside vl:: namespace.
+	- Bug: fixed Viewport::activate(): restore the original color, depth and stencil masks after utilization.
+	- Bug: fixed DepthSortCallback VLX importer. 
+	- Bug: fixed other compilation warnings and errors.
+	
 	<div class="featuretitle">Visualization Library 2011.09.1166</div>
 
 	- Geometry::clearArrays() now calls setBufferObjectDirty(true)
