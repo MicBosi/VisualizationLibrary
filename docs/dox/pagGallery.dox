@@ -48,6 +48,39 @@
 
 	<!-- ----------------------------------------------------------------------------------------------------------------------------- -->
 
+	<h2 style="font-size: 20px">Stereo Rendering</h2>
+	
+	<p>
+	Creating stereo rendering is easy with VL. 
+    Below you can see two examples of stereo rendering using the anaglyphs technique.
+	</p>
+	
+	<p>
+	\endhtmlonly
+	<b>See also:</b>
+	- \ref pagGuideStereo page.
+
+	\htmlonly
+	</p>
+
+	<table border=0 cellspacing=0 cellpadding=5 width=1%>
+	<tr>
+		<td>
+			<a href="pics/pagGuideStereo_1.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/pagGuideStereo_1.jpg" alt="Stereo Anaglyphs" title="" />
+			</a>
+		</td>
+		<td>
+			<a href="pics/pagGuideStereo_2.jpg" class="highslide" onclick="return hs.expand(this)"> 
+				<img src="gallery_small/pagGuideStereo_2.jpg" alt="Stereo Anaglyphs" title="" />
+			</a>
+		</td>
+	</tr>
+	</table>
+	
+
+	<!-- ----------------------------------------------------------------------------------------------------------------------------- -->
+
 	<h2 style="font-size: 20px">GLSL Shaders</h2>
 	
 	<p>
