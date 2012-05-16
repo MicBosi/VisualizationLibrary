@@ -130,7 +130,7 @@
 	<table border=0 cellspacing=1 width=100% class="lightborder">
 	<tr>
 		<td width=100 align=left>
-			<img src="pics/pagGuideDefault_s.jpg">
+			<img src="pics/pagGuideDefault_s.png">
 		</td>
 		<td align=left>
 			\subpage pagGuideStereo "Stereo Rendering With Anaglyphs" (code and comments)
