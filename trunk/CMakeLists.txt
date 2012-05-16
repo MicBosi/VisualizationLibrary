@@ -14,7 +14,7 @@
 # Current Version
 set(VLVERSION_MAJOR "2011")
 set(VLVERSION_MINOR "9")
-set(VLVERSION_PATCH "1166")
+set(VLVERSION_PATCH "1168")
 set(VLVERSION "${VLVERSION_MAJOR}.${VLVERSION_MINOR}")
 
 ################################################################################
