@@ -1,7 +1,7 @@
 
 # Visualization Library v2.0
 
-Visualization Library is released under the OSI approved Simplified BSD License (see LICENSE.TXT).
+Visualization Library is released under the OSI approved Simplified BSD License ([LICENSE.TXT](LICENSE.TXT)).
 
 Visualization Library is a C++ middleware for high-performance 2D and 3D graphics applications based on the industry standard OpenGL 1.x-4.x, designed to develop portable applications for the Windows, Linux and Mac OS X operating systems.
 
