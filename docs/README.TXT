@@ -1,3 +1,3 @@
-This directory contains the data required to build the official Visualization Library reference documentation.
+At the moment the documentation can be built only under Linux.
 
-You can build the documentation by enabling the appropriate option during CMake's source configuration.
+To build the documentation simply run the 'gendocs.sh' script.
