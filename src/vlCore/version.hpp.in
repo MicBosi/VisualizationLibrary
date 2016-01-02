@@ -29,6 +29,6 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#define VL_Major ${VLVERSION_MAJOR}
-#define VL_Minor ${VLVERSION_MINOR}
-#define VL_Build ${VLVERSION_PATCH}
+#define VL_Major ${VL_VERSION_MAJOR}
+#define VL_Minor ${VL_VERSION_MINOR}
+#define VL_Build ${VL_VERSION_PATCH}

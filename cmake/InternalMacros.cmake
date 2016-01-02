@@ -36,8 +36,8 @@ endmacro(VL_PROJECT_GET)
 ################################################################################
 macro(VL_DEFAULT_TARGET_PROPERTIES targetName)
 	set_target_properties(${targetName} PROPERTIES
-		SOVERSION "${VLVERSION}"
-		VERSION   "${VLVERSION}"
+		SOVERSION "${VL_VERSION}"
+		VERSION   "${VL_VERSION}"
 	)
 endmacro(VL_DEFAULT_TARGET_PROPERTIES)
 

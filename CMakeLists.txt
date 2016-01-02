@@ -12,16 +12,16 @@
 ################################################################################
 
 # Current Version
-set(VLVERSION_MAJOR "2011")
-set(VLVERSION_MINOR "9")
-set(VLVERSION_PATCH "1168")
-set(VLVERSION "${VLVERSION_MAJOR}.${VLVERSION_MINOR}")
+set(VL_VERSION_MAJOR "1")
+set(VL_VERSION_MINOR "0")
+set(VL_VERSION_PATCH "0")
+set(VL_VERSION "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}")
 
 ################################################################################
 # Initialization
 ################################################################################
 
-project(Visualization_Library_SDK-${VLVERSION_MAJOR}.${VLVERSION_MINOR})
+project(Visualization_Library_SDK-${VL_VERSION_MAJOR}.${VL_VERSION_MINOR})
 
 # Must be called after project!
 cmake_minimum_required(VERSION 2.6)
@@ -133,9 +133,9 @@ endif()
 ################################################################################
 
 set(CPACK_PACKAGE_NAME					"${CMAKE_PROJECT_NAME}")
-set(CPACK_PACKAGE_VERSION_MAJOR			"${VLVERSION_MAJOR}")
-set(CPACK_PACKAGE_VERSION_MINOR			"${VLVERSION_MINOR}")
-set(CPACK_PACKAGE_VERSION_PATCH			"${VLVERSION_PATCH}")
+set(CPACK_PACKAGE_VERSION_MAJOR			"${VL_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR			"${VL_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH			"${VL_VERSION_PATCH}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY	"A lightweight C++ OpenGL middleware for 2D and 3D graphics.")
 
 if(WIN32)

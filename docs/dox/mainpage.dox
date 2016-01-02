@@ -1,7 +1,10 @@
 /**
 	\mainpage Visualization Library Reference Documentation
 
-	<center><a href="http://www.visualizationlibrary.org">www.visualizationlibrary.org</a></center>
+	<center>
+        <a href="http://www.visualizationlibrary.org">visualizationlibrary.org</a><br>
+        $(VL_VERSION)
+    </center>
 	
 	<table width=1000 border=0 style="border: 0px solid #EEEEEE"><tr><td>
 
