@@ -1,11 +1,6 @@
 /**
 	\mainpage Visualization Library Reference Documentation
 
-	<center>
-        <a href="http://visualizationlibrary.org">visualizationlibrary.org</a><br>
-        $(VL_VERSION)
-    </center>
-	
 	<table width=1000 border=0 style="border: 0px solid #EEEEEE"><tr><td>
 
 	<div class="featuretitle">Basic Information</div>
@@ -17,7 +12,7 @@
 	<div class="featuretitle">Downloads</div>
 
 	- \subpage pagChangelog "Changelog"
-	- <a target=_blank href="http://visualizationlibrary.org/documentation/downloads.html">Download page</a>
+	- <a target=_blank href="downloads.html">Download page</a>
  
 	<div class="featuretitle">Getting Started</div>
 

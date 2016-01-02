@@ -1,4 +1,4 @@
-# Doxyfile 1.5.4
+# IMPORTANT: DOXYGEN 1.7.2 REQUIRED TO BUILD VL DOCS
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
@@ -734,7 +734,7 @@ HTML_ALIGN_MEMBERS     = YES
 # Microsoft HTML help workshop to generate a compressed HTML help file (.chm)
 # of the generated HTML documentation.
 
-GENERATE_HTMLHELP      = YES
+GENERATE_HTMLHELP      = NO
 
 # If the HTML_DYNAMIC_SECTIONS tag is set to YES then the generated HTML
 # documentation will contain sections that can be hidden and shown after the
@@ -749,7 +749,7 @@ HTML_DYNAMIC_SECTIONS  = NO
 # can add a path in front of the file if the result should not be
 # written to the html output directory.
 
-CHM_FILE               = ../VL_SDK_DOCS.chm
+CHM_FILE               = 
 
 # If the GENERATE_HTMLHELP tag is set to YES, the HHC_LOCATION tag can
 # be used to specify the location (absolute path including file name) of
