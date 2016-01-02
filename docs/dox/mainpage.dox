@@ -2,7 +2,7 @@
 	\mainpage Visualization Library Reference Documentation
 
 	<center>
-        <a href="http://www.visualizationlibrary.org">visualizationlibrary.org</a><br>
+        <a href="http://visualizationlibrary.org">visualizationlibrary.org</a><br>
         $(VL_VERSION)
     </center>
 	
@@ -17,7 +17,7 @@
 	<div class="featuretitle">Downloads</div>
 
 	- \subpage pagChangelog "Changelog"
-	- <a target=_blank href="http://www.visualizationlibrary.org/documentation/downloads.html">Download page</a>
+	- <a target=_blank href="http://visualizationlibrary.org/documentation/downloads.html">Download page</a>
  
 	<div class="featuretitle">Getting Started</div>
 
@@ -37,7 +37,7 @@
 
 	<div class="featuretitle">Community</div>
 
-	- <a target=_blank href="http://www.visualizationlibrary.org/forum">Forums</a>
+	- <a target=_blank href="http://visualizationlibrary.org/forum">Forums</a>
 	- <a target=_blank href="http://www.twitter.com/VizLibrary">Twitter</a>
 	- \subpage pagContributing "Contributing"
 	
