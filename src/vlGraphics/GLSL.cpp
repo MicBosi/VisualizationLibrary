@@ -1,7 +1,7 @@
 /**************************************************************************************/
 /*                                                                                    */
 /*  Visualization Library                                                             */
-/*  http://www.visualizationlibrary.org                                               */
+/*  http://visualizationlibrary.org                                                   */
 /*                                                                                    */
 /*  Copyright (c) 2005-2011, Michele Bosi                                             */
 /*  All rights reserved.                                                              */
@@ -557,7 +557,7 @@ void GLSLProgram::postLink()
       glGetActiveUniform(handle(), i, (GLsizei)tmp_buf.size(), &length, &size, &type, name); VL_CHECK_OGL();
 
       // workaround for NVIDIA drivers bug: remove the trailing [] after the uniform name.
-      // See also: http://www.visualizationlibrary.org/forum/viewtopic.php?f=3&t=307
+      // See also: http://visualizationlibrary.org/forum/viewtopic.php?f=3&t=307
       if (name[length-1] == ']')
       {
         char* bracket = strrchr(name, '[');
