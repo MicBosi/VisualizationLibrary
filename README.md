@@ -39,7 +39,7 @@ This marks the official come back of Visualization Library in maintenance mode. 
 
 * Contacts: 
     * michele *at* visualizationlibrary *dot* org
-    [twitter.com/VizLibrary](https://twitter.com/VizLibrary)
-    [michelebosi.com](https://michelebosi.com)
+    * [twitter.com/VizLibrary](https://twitter.com/VizLibrary)
+    * [michelebosi.com](https://michelebosi.com)
 
 Happy coding :)
