@@ -7,7 +7,7 @@ Visualization Library is a C++ middleware for high-performance 2D and 3D graphic
 
 ## About v2.0
 
-This marks the official come back of Visualization Library in maintenance mode. This means that ([I](https://michelebosi.com)) will do my best to more actively maintain the website, accept patches, fix bugs, improve OpenGL support among other things. No new big features are planned at the moment.
+This marks the official come back of Visualization Library in maintenance mode. This means that [I](https://michelebosi.com) will do my best to more actively maintain the website, accept patches, fix bugs, improve OpenGL support among other things. No new big features are planned at the moment.
 
 * Objectives for v2.0:
     * Keep Visualization Library completely free for open source as well as commercial applications.
