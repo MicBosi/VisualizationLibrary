@@ -1,8 +1,10 @@
 ﻿/**
 
-\page pagDownloads Downloads
+\page pagDownload Download
 
-\par GENERAL INFO
+\par General Info
+
+You can review the \subpage pagChangelog "changelog here".
 
 Remember to set the <code>VL_DATA_PATH</code> environment variable to the directory containing the sample data in order to run the demos and tests included in VL.
 
