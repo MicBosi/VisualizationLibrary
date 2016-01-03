@@ -160,9 +160,9 @@ add_subdirectory("src")
 ################################################################################
 
 if(VL_UNIX_INSTALL_MODE)
-	install(FILES "LICENSE.TXT" "README.TXT" DESTINATION "share/vl")
+	install(FILES "LICENSE.TXT" "README.md" DESTINATION "share/vl")
 	install(FILES "cmake/FindVL.cmake" DESTINATION "share/cmake/Modules")
 else()
-	install(FILES "LICENSE.TXT" "README.TXT" DESTINATION ".")
+	install(FILES "LICENSE.TXT" "README.md" DESTINATION ".")
 	install(FILES "cmake/FindVL.cmake" DESTINATION "cmake")
 endif()
