@@ -13,9 +13,9 @@
 <script type="text/javascript">
 //<![CDATA[
 hs.registerOverlay({
-	html: '<div class="closebutton" onclick="return hs.close(this)" title="Close"></div>',
-	position: 'top right',
-	fade: 2 // fading the semi-transparent overlay looks bad in IE
+    html: '<div class="closebutton" onclick="return hs.close(this)" title="Close"></div>',
+    position: 'top right',
+    fade: 2 // fading the semi-transparent overlay looks bad in IE
 });
 
 hs.graphicsDir = 'highslide/graphics/';
@@ -28,16 +28,16 @@ hs.dimmingOpacity = 0.66;
 
 // Add the controlbar
 hs.addSlideshow({
-	//slideshowGroup: 'group1',
-	interval: 3000,
-	repeat: false,
-	useControls: true,
-	fixedControls: 'fit',
-	overlayOptions: {
-		opacity: .75,
-		position: 'bottom center',
-		hideOnMouseOut: true
-	}
+    //slideshowGroup: 'group1',
+    interval: 3000,
+    repeat: false,
+    useControls: true,
+    fixedControls: 'fit',
+    overlayOptions: {
+        opacity: .75,
+        position: 'bottom center',
+        hideOnMouseOut: true
+    }
 });
 
 //]]>
@@ -52,22 +52,21 @@ hs.addSlideshow({
 </head>
 <body>
 
-
-<table border="0" style="margin: 0px; margin-bottom: 25px; padding: 0px; border: 0px;" width="100%">
-<tr>
-	<td align="left" valign="top" style="text-align: left; margin: 20px; font-family: Verdana; font-size: 10px;">
-		<h1 style="text-align: left; font-size: 32px; font-family: Arial; border: 0px; margin: 0px; margin-bottom: 10px; margin-top: 10px;">
-			<a href="http://visualizationlibrary.org">Visualization Library</a>
-		</h1>
-		<span style="color: gray;">A lightweight C++ OpenGL middleware for 2D/3D graphics</span>
-	</td>
-	<td align="right" valign="top">
-		<small>
-			<a href="index.html">[Home]</a>
-			<a href="pag_guides.html">[Tutorials]</a>
-			<a href="annotated.html">[All Classes]</a>
-			<a href="pag_main_classes.html">[Grouped Classes]</a>
-		</small>
-	</td>
-</tr>
-</table>
+<div style="padding: 1em;">
+    <table border="0" style="margin: 0px; margin-bottom: 25px; padding: 0px; border: 0px;" width="100%">
+    <tr>
+        <td align="left" valign="top" style="text-align: left; margin: 20px;">
+            <h1 style="text-align: left; font-size: 32px; font-family: Arial; border: 0px; margin: 0px; margin-bottom: 10px; margin-top: 10px;">
+                <a href="http://visualizationlibrary.org">Visualization Library</a>
+            </h1>
+            <span style="color: gray;">A lightweight C++ OpenGL middleware for 2D/3D graphics</span>
+        </td>
+        <td align="right" valign="top">
+            <a href="index.html">[Home]</a>
+            <a href="pag_guides.html">[Tutorials]</a>
+            <a href="annotated.html">[All Classes]</a>
+            <a href="pag_main_classes.html">[Grouped Classes]</a>
+        </td>
+    </tr>
+    </table>
+</div>

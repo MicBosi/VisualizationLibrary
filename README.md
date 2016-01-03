@@ -18,7 +18,7 @@ This marks the official come back of Visualization Library in maintenance mode. 
         * Encourage collaboration and patch submission via GitHub.
     * Introduce the new [Visualization Library Google Group](https://groups.google.com/forum/#!forum/visualization-library) which replaces the [legacy forums](http://visualizationlibrary.org/forum).
     * Support Qt5.
-    * Improve documentation: how to compile VL, low level VL usage, improved VL architecture and building blocks documentation, new download page based on GitHub API.
+    * Improve documentation: how to compile VL, low level VL usage, improved VL architecture and building blocks documentation.
     * Fix compatibility issues and tests.
     * Making VL more accessible to computer graphics beginners.
 
@@ -26,10 +26,10 @@ This marks the official come back of Visualization Library in maintenance mode. 
 
 * Official website and documentation [visualizationlibrary.org](http://visualizationlibrary.org)
   
-* Support and bug tracking:
-    * [Visualization Library Google Group](https://groups.google.com/forum/#!forum/visualization-library).
-    * [GitHub issue tracker](https://github.com/MicBosi/visualizationlibrary/issues).
-    * You can contact Michele via email at michele *at* visualizationlibrary *dot* org as well as from [his website](https://michelebosi.com).
+* Support and contribution:
+    * [Visualization Library Google group](https://groups.google.com/forum/#!forum/visualization-library).
+    * [Issue tracker on GitHub](https://github.com/MicBosi/visualizationlibrary/issues).
+    * Send your patches via [GitHub pull request](https://help.github.com/articles/using-pull-requests/) or via email directly to michele *at* visualizationlibrary *dot* org.
 
 * Releases: [github.com/MicBosi/visualizationlibrary/releases](https://github.com/MicBosi/visualizationlibrary/releases)
 
@@ -37,6 +37,9 @@ This marks the official come back of Visualization Library in maintenance mode. 
 
 * Download page: [http://visualizationlibrary.org/downloads.php](http://visualizationlibrary.org/downloads.php)
 
-* Michele: michele *at* visualizationlibrary *dot* org
+* Contacts: 
+    * michele *at* visualizationlibrary *dot* org
+    [twitter.com/VizLibrary](https://twitter.com/VizLibrary)
+    [michelebosi.com](https://michelebosi.com)
 
 Happy coding :)
