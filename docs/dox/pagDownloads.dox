@@ -1,0 +1,40 @@
+﻿/**
+
+\page pagDownloads Downloads
+
+\par GENERAL INFO
+
+Remember to set the <code>VL_DATA_PATH</code> environment variable to the directory containing the sample data in order to run the demos and tests included in VL.
+
+\par Source Code
+
+The official repository is hosted on GitHub:
+
+<a href="https://github.com/MicBosi/visualizationlibrary">github.com/MicBosi/visualizationlibrary</a>
+
+You can grab the source code via <code>git</code>:
+
+<code>git clone https://github.com/MicBosi/visualizationlibrary.git</code>
+
+Or you can download the zipped version of the master branch:
+
+<a href="https://github.com/MicBosi/visualizationlibrary/archive/master.zip">github.com/MicBosi/visualizationlibrary/archive/master.zip</a>
+
+\par Releases (Source + Data)
+
+You can find all VisualizationLibrary releases at:
+
+<a href="https://github.com/MicBosi/visualizationlibrary/releases">github.com/MicBosi/visualizationlibrary/releases</a>
+
+\par Compiling Visualization Library
+
+Visualization Library uses CMake as its building system and can target several environments and compilers. At the moment we officially support the following platforms:
+
+- Windows: Visual Studio (all versions supported by CMake)
+- Windows: MinGW
+- Linux: GNU make/GCC
+- Mac OS X: Xcode
+
+More information at \subpage pagInstall "Compiling and Installing VL".
+
+*/
