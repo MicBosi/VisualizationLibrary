@@ -1,8 +1,7 @@
 /**
 	\page pagContributing Contributing to Visualization Library
 
-	If you would like to develop a new feture or fix or extend existing ones please send your patches on the 
-	<a target=_blank href="http://visualizationlibrary.org/forum">forum</a> or directly at: michele &lt;at&gt; visualizationlibrary &lt;dot&gt; org.
-	
-	If you would also like to be credited please send me your name and I will be more than happy to insert it in the \ref pagCredits page.
+    Let your voice be heard at <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library">Visualization Library Google Group</a>.
+
+    Send your changes via <a target="_blank" href="https://help.github.com/articles/using-pull-requests/">GitHub pull request</a> or your patches via email to \i michele [at] this domain. 
 */
