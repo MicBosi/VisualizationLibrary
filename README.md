@@ -13,7 +13,7 @@ This marks the official come back of Visualization Library in maintenance mode. 
     * Keep Visualization Library completely free for open source as well as commercial applications.
     * Fully embrace GitHub as VL official repository.
         * Releses and downloads will be based on GitHub tools.
-        * Only source releases will be done, no binaries, no precompiled docs.
+        * Only source releases will be done, no binaries, no precompiled html or chm documentation.
         * [GitHub issue tracker](https://github.com/MicBosi/visualizationlibrary/issues) will be the official place where to report bugs, issues and request features.
         * Encourage collaboration and patch submission via GitHub.
     * Introduce the new [Visualization Library Google Group](https://groups.google.com/forum/#!forum/visualization-library) which replaces the [legacy forums](http://visualizationlibrary.org/forum).
