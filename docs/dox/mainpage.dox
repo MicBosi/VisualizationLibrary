@@ -9,10 +9,10 @@
     - \subpage pagKeyFeatures "Features Overview"
     - \subpage pagGallery "Gallery"
 
-    <div class="featuretitle">Downloads</div>
+    <div class="featuretitle">Download</div>
 
     - \subpage pagChangelog
-    - \subpage pagDownloads
+    - \subpage pagDownload
 
     <div class="featuretitle">Getting Started</div>
 
