@@ -2,6 +2,16 @@
 
 \page pagChangelog Changelog
 
+<div class="featuretitle">Visualization Library 2.0.0</div>
+
+- ... work in progress ...
+- Standardized documentation building process
+- Updated documentation regarding new VL home and support resources
+
+<div class="featuretitle">Visualization Library 1.0.0</div>
+
+- Alias of 2011.09.1168
+
 <div class="featuretitle">Visualization Library 2011.09.1168</div>
 
 - Added StereoCamera utility class to easily setup stereo renderings.
