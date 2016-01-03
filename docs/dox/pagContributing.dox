@@ -1,7 +1,11 @@
 /**
 	\page pagContributing Contributing to Visualization Library
 
-    Let your voice be heard at <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library">Visualization Library Google Group</a>.
+    - Let your voice be heard at <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library">Visualization Library Google Group</a>.
 
-    Send your changes via <a target="_blank" href="https://help.github.com/articles/using-pull-requests/">GitHub pull request</a> or your patches via email to \i michele [at] this domain. 
+    - Report issues using <a target=_blank href="https://github.com/MicBosi/visualizationlibrary/issues">Visualization Library Issue Tracker</a>.
+
+    - Send your changes via <a target="_blank" href="https://help.github.com/articles/using-pull-requests/">GitHub pull request</a>.
+
+    - Send your patches via email to \i michele [at] this domain.
 */
