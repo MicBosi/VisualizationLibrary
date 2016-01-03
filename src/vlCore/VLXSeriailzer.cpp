@@ -231,7 +231,7 @@ bool VLXSerializer::saveVLT(VirtualFile* file, const Object* obj, bool start_fre
 
   // add VL metadata
 
-  String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
+  String auth = Say("Visualization Library %n.%n.%s") << VL_Major << VL_Minor << VL_Patch;
   *meta << "Authoring_Tool" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
 
   time_t rawtime;
@@ -302,7 +302,7 @@ bool VLXSerializer::saveVLB(VirtualFile* file, const Object* obj, bool start_fre
 
   // add VL metadata
 
-  String auth = Say("Visualization Library %n.%n.%n") << VL_Major << VL_Minor << VL_Build;
+  String auth = Say("Visualization Library %n.%n.%s") << VL_Major << VL_Minor << VL_Patch;
   *meta << "Authoring_Tool" << VLXValue( auth.toStdString().c_str(), VLXValue::String );
 
   time_t rawtime;

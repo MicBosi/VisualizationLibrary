@@ -93,7 +93,7 @@ VL_COMPILE_TIME_CHECK( sizeof(Sphere)    == sizeof(real)*4 )
 //------------------------------------------------------------------------------
 namespace
 {
-  std::string gVersionString = String( Say("%n.%n.%n") << VL_Major << VL_Minor << VL_Build ).toStdString();
+  std::string gVersionString = String( Say("%n.%n.%s") << VL_Major << VL_Minor << VL_Patch ).toStdString();
   bool gInitializedCore = false;
 };
 //------------------------------------------------------------------------------

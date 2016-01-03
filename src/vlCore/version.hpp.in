@@ -31,4 +31,4 @@
 
 #define VL_Major ${VL_VERSION_MAJOR}
 #define VL_Minor ${VL_VERSION_MINOR}
-#define VL_Build ${VL_VERSION_PATCH}
+#define VL_Patch "${VL_VERSION_PATCH}"
