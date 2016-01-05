@@ -3,11 +3,11 @@
 
 	\par General Info
 	
-	- The officially released packages can be \subpage pagDownload "found here". 
+	- VL can be downloaded from the \subpage pagDownload "download page". 
 	
-	- The latest version of VL sources can be found here: http://code.google.com/p/visualizationlibrary/source/checkout
+	- VL sources can be found here: https://github.com/MicBosi/visualizationlibrary
 	
-	- If you need support or want to keep up to date with the latest developments visit: http://visualizationlibrary.org/forum
+	- For support, bug reports and latest news see: https://groups.google.com/forum/#!forum/visualization-library
 	
 	- You can also email me at: michele &lt;at&gt; visualizationlibrary &lt;dot&gt; org
 
@@ -57,15 +57,12 @@
 	
 	\par Requesting Help And Reporting Issues
 	
-	The right way of asking for help and reporting issues is via the forum or contacting me at the above mentioned email. <i>Please do not write on the issue tracker on google code or on github.com, just use the forums!</i>
+	The best way to ask for help and reporting issues is first via the <a target=_blank href="https://groups.google.com/forum/#!forum/visualization-library">Google Group</a> and then the <a target=_blank href="https://github.com/MicBosi/visualizationlibrary/issues">issue tracker on GitHub</a>.
 	
-	- Important: 
-		- Make sure you checked the log.txt file when you have a problem with VL, most of the time the solution to your problem is written right in there or can be easily deducted. 
-		- When posting on the forum always include the exact error reported in the log.txt file (or even better attach the whole file), your operating system, and VL version at least!
-		
-	- Use of the forum:
-		- When signing up in the forum choose a human readable, non-dumb name, otherwise your subscription will be most probably discarded as spam. Avoid names such as Iuuuseeassiiwa, abc123 etc. or SupremeKingOfTheDragons etc. Names such as Nike, Mike, John80 or your real name are much better choices.
-		- If your user name falls under the "not-so-decent" category then it helps a lot to sign your posts with your real name or decent nickname to keep the interaction in the forum more pleasant and human. I hate starting a post reply with "Hi KingOfDoom, ..." or similar user names, so keep this into consideration... If you would like to change your user name just let me know, I will be happy to do it for you.
+	Important: 
+
+    	- Make sure you checked the log.txt file when you have a problem with VL, most of the time the solution to your problem is written right in there or can be easily deducted. 
+		- When posting on the group always include the exact error reported in the log.txt file (or even better attach the whole file), your operating system, and VL version at least!
 
 	\par Learning VL
 	
