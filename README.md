@@ -35,7 +35,7 @@ This marks the official come back of Visualization Library in maintenance mode. 
 
 * Sources: [github.com/MicBosi/visualizationlibrary](https://github.com/MicBosi/visualizationlibrary)
 
-* Download page: [http://visualizationlibrary.org/downloads.php](http://visualizationlibrary.org/downloads.php)
+* Download page: [visualizationlibrary.org/documentation/pag_download.html](http://www.visualizationlibrary.org/documentation/pag_download.html)
 
 * Contacts: 
     * michele *at* visualizationlibrary *dot* org
