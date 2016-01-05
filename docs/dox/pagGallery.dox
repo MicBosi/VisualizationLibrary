@@ -84,11 +84,11 @@
 	<h2 style="font-size: 20px">GLSL Shaders</h2>
 	
 	<p>
-	Using GLSL it is possible to create a variety of effects. The source code used to generate images below can be found <a href="http://code.google.com/p/visualizationlibrary/source/browse/#svn%2Ftrunk%2Fdata%2Fglsl%2Fexamples">here</a>.
+	Using GLSL it is possible to create a variety of effects. The source code used to generate images below can be found <a href="https://github.com/MicBosi/visualizationlibrary/tree/master/data/glsl/examples">here</a>.
 	</p>
 	
 	<p>
-	For more info on how to use GLSL shaders with Visualization Library see vl::GLSLProgram, <a href="http://code.google.com/p/visualizationlibrary/source/browse/trunk/src/vlGraphics/GLSL.hpp">GLSL.h</a> and <a href="http://code.google.com/p/visualizationlibrary/source/browse/trunk/src/examples/Applets/App_GLSL.cpp">App_GLSL.cpp</a>.
+	For more info on how to use GLSL shaders with Visualization Library see vl::GLSLProgram, <a href="https://github.com/MicBosi/visualizationlibrary/blob/master/src/vlGraphics/GLSL.hpp">GLSL.hpp</a> and <a href="https://github.com/MicBosi/visualizationlibrary/blob/master/src/examples/Applets/App_GLSL.cpp">App_GLSL.cpp</a>.
 	</p>
 	
 	<table border=0 cellspacing=0 cellpadding=5 width=1%>
