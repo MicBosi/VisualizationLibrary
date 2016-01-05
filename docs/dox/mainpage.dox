@@ -23,13 +23,6 @@
     - \subpage pagOpenGL "OpenGL to VL Mapping"
     - \subpage pagGuides "Tutorials"
 
-    <div class="featuretitle">API Documentation</div>
-
-    - \subpage pagMainClasses "Grouped Classes and Functions"
-    - <a href="annotated.html">Annotated Class List</a>
-    - <a href="classes.html">  Alphabetical Class List</a>
-    - <a href="hierarchy.html">Class Hierarchy</a>
-
     <div class="featuretitle">Community</div>
 
     - <a target=_blank href="https://github.com/MicBosi/visualizationlibrary">Visualization Library on GitHub</a>
@@ -38,6 +31,13 @@
     - <a target=_blank href="http://visualizationlibrary.org/forum">Forums</a> (legacy)
     - \subpage pagContributing "Contributing"
     - <a target=_blank href="http://www.twitter.com/VizLibrary">Twitter</a>
+
+    <div class="featuretitle">API Documentation</div>
+
+    - \subpage pagMainClasses "Grouped Classes and Functions"
+    - <a href="annotated.html">Annotated Class List</a>
+    - <a href="classes.html">  Alphabetical Class List</a>
+    - <a href="hierarchy.html">Class Hierarchy</a>
 
     <div class="featuretitle">Licensing, Credits and Contacts</div>
 
