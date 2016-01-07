@@ -11,8 +11,9 @@
 
     <div class="featuretitle">Download</div>
 
+    - <a href="pag_download.html"><b>Download Page</b></a>
+    - <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=M925YZK6ARN82" title="Become a Visualization Library Angel">Donate</a>
     - \subpage pagChangelog
-    - \subpage pagDownload
 
     <div class="featuretitle">Getting Started</div>
 
