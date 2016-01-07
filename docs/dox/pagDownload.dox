@@ -24,9 +24,15 @@ You can review the \subpage pagChangelog "changelog here".
 
 Remember to set the <code>VL_DATA_PATH</code> environment variable to the directory containing the sample data in order to run the demos and tests included in VL.
 
-<div class="featuretitle">Latest Releases</div>
+<div class="featuretitle">Releases</div>
 
-Download all prepackaged Visualization Library releases here:
+<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/tarball/v1.0.0">Visualization Library v1.0.0 (.tgz)</a>
+
+<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/zipball/v1.0.0">Visualization Library v1.0.0 (.zip)</a>
+
+<!-- https://api.github.com/repos/MicBosi/visualizationlibrary/releases -->
+
+All releases:
 
 <a href="https://github.com/MicBosi/visualizationlibrary/releases">github.com/MicBosi/visualizationlibrary/releases</a>
 
