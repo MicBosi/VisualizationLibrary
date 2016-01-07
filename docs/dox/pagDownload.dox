@@ -2,13 +2,15 @@
 
 \page pagDownload Download
 
-<div class="featuretitle">Support Visualization Library</div>
-
 \htmlonly
-<p><mark>VL is completely free for both commercial and non-commercial projects and with your help I would like to keep it that way.</mark></p>
+<div class="featuretitle">Support Visualization Library <big>&hearts;</big></div>
+
+<p><a href="https://blog.michelebosi.com/estimating-the-value-of-your-code/">According to the Basic COCOMO model Visualization Library effort is estimated in 22.64 Person-Years, worth <b>$5,158,265</b>.</a></p>
+
+<p>However, Visualization Library is completely free (and ad-free) for both commercial and non-commercial projects and with your help I would like to keep it that way.</p>
 \endhtmlonly
 
-If you like Visualization Library please consider a small donation to the project, it will be used to cover the running costs of hosting, ensure code maintenance and to buy the occasional Caffè Latte at Starbucks. Thank you for your support!
+If you like Visualization Library please consider a small donation to the project. It will be used to cover the running costs of hosting, user support, code maintenance and to buy the occasional caffè latte :) Thank you for your generosity!
 
 \htmlonly
 <div style="margin-bottom: 2em;">
