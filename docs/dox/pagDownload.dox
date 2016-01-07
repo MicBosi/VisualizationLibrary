@@ -2,45 +2,45 @@
 
 \page pagDownload Download
 
-\par Support Visualization Library
+<div class="featuretitle">Support Visualization Library</div>
 
 \htmlonly
-<mark>VL is free for both commercial and non-commercial projects and will always be.</mark>
+<p><mark>VL is completely free for both commercial and non-commercial projects and with your help I would like to keep it that way.</mark></p>
 \endhtmlonly
 
-Please show your support to Visualization Library with a small donation. You donation will be used to buy coffee and to cover the running costs of hosting and maintenance.
+If you like Visualization Library please consider a small donation to the project, it will be used to cover the running costs of hosting, ensure code maintenance and to buy the occasional Caffè Latte at Starbucks. Thank you for your support!
 
 \htmlonly
-<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=M925YZK6ARN82"><img src="paypal-donate-button.jpg"></a>
+<div style="margin-bottom: 2em;">
+    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=M925YZK6ARN82" title="Become a Visualization Library Angel"><img src="paypal-donate-button.jpg"></a>
+</div>
 \endhtmlonly
 
-\par General Info
+<div class="featuretitle">General Info</div>
 
 You can review the \subpage pagChangelog "changelog here".
 
 Remember to set the <code>VL_DATA_PATH</code> environment variable to the directory containing the sample data in order to run the demos and tests included in VL.
 
-\par Source Code
+<div class="featuretitle">Latest Releases</div>
 
-The official repository is hosted on GitHub:
-
-<a href="https://github.com/MicBosi/visualizationlibrary">github.com/MicBosi/visualizationlibrary</a>
-
-You can grab the source code via <code>git</code>:
-
-<code>git clone https://github.com/MicBosi/visualizationlibrary.git</code>
-
-Or you can download the zipped version of the master branch:
-
-<a href="https://github.com/MicBosi/visualizationlibrary/archive/master.zip">github.com/MicBosi/visualizationlibrary/archive/master.zip</a>
-
-\par Releases (Source + Data)
-
-You can find all VisualizationLibrary releases at:
+Download all prepackaged Visualization Library releases here:
 
 <a href="https://github.com/MicBosi/visualizationlibrary/releases">github.com/MicBosi/visualizationlibrary/releases</a>
 
-\par Compiling Visualization Library
+<div class="featuretitle">GitHub Repository</div>
+
+VL official repo is <a href="https://github.com/MicBosi/visualizationlibrary">github.com/MicBosi/visualizationlibrary</a>
+
+Clone VL repo:
+
+<code>git clone https://github.com/MicBosi/visualizationlibrary.git</code>
+
+Download VL master branch source as a zip file here:
+
+<a href="https://github.com/MicBosi/visualizationlibrary/archive/master.zip">github.com/MicBosi/visualizationlibrary/archive/master.zip</a>
+
+<div class="featuretitle">Compiling Visualization Library</div>
 
 Visualization Library uses CMake as its building system and can target several environments and compilers. At the moment we officially support the following platforms:
 
