@@ -2,7 +2,7 @@
 
 body, table, div, p, dl {
 	font-family: Lucida Grande, Verdana, Geneva, Arial, sans-serif;
-	font-size: 12px;
+	/*font-size: 12px;*/
 }
 
 /* @group Heading Levels */
@@ -120,8 +120,6 @@ a.qindexHL {
 
 a.el {
 	font-weight: normal;
-	#font-family: Arial;
-	#font-size: 14px;
 }
 
 a.elRef {
