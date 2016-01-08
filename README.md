@@ -11,16 +11,22 @@ This marks the official come back of Visualization Library in maintenance mode. 
 
 * Objectives for v2.0:
     * Keep Visualization Library completely free for open source as well as commercial applications.
+    * Focus on improving upon VL current strenghts.
     * Fully embrace GitHub as VL official repository.
         * Releses and downloads will be based on GitHub tools.
         * Only source releases will be done, no binaries, no precompiled html or chm documentation.
         * [GitHub issue tracker](https://github.com/MicBosi/visualizationlibrary/issues) will be the official place where to report bugs, issues and request features.
         * Encourage collaboration and patch submission via GitHub.
     * Introduce the new [Visualization Library Google Group](https://groups.google.com/forum/#!forum/visualization-library) which replaces the [legacy forums](http://visualizationlibrary.org/forum).
-    * Support Qt5.
+    * Qt5: full support as first class citizen.
+    * GUI backends update: support latest stable version, Qt 4, SDL and wxWidgets in primis.
+    * Third party libs update: support latest stable version of FreeType, zlib, libjpeg, libpng, libtiff, GDCM.
+    * Low level VL: improve VL usefulness as a low level "drop in" replacement for raw OpenGL with examples and necessary fixes.
+    * Review support to latest OpenGL 4.x version: support new features/definitions that are easy to implement.
     * Improve documentation: how to compile VL, low level VL usage, improved VL architecture and building blocks documentation.
     * Fix compatibility issues and tests.
     * Making VL more accessible to computer graphics beginners.
+    * Investigate JavaScript and Python bindings.
 
 ## References
 
