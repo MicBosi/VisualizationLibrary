@@ -42,9 +42,9 @@
 
     <div class="featuretitle">Licensing, Credits and Contacts</div>
 
-    - \subpage pagLicensing
-    - \subpage pagCredits
-    - \subpage pagContacts
+    - \subpage pagLicensing "Licensing"
+    - \subpage pagCredits "Credits"
+    - \subpage pagContacts "Contacts"
 
     </td></tr></table>
     </center>
