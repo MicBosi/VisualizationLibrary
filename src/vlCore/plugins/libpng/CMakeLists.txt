@@ -15,7 +15,7 @@
 # PNG Library
 ################################################################################
 
-set(PNG_DIR "${3RDPARTY_DIR}/libpng")
+set(PNG_DIR "${3RDPARTY_DIR}/libpng-1.2.56")
 
 include_directories("${3RDPARTY_DIR}/zlib")
 

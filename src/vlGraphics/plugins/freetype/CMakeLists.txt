@@ -15,7 +15,7 @@
 # FreeType Library
 ################################################################################
 
-set(FT2_DIR "${3RDPARTY_DIR}/freetype")
+set(FT2_DIR "${3RDPARTY_DIR}/freetype-2.4.12")
 set(FT2_SRC "${FT2_DIR}/src")
 
 include_directories("${FT2_DIR}/include")
