@@ -209,23 +209,10 @@ bool vl::isDAT(VirtualFile* file)
   String raw_file = file->path().extractPath() + filename;
 
   // check type
-  if (String(typ) == "UCHAR")
-    type = IT_UNSIGNED_BYTE;
-  else
+  if (String(typ) != "UCHAR") 
     return false;
 
-  if (String(fmt) == "LUMINANCE")
-    format = IF_LUMINANCE;
-  else
-  if (String(fmt) == "LUMINANCE_ALPHA")
-    format = IF_LUMINANCE_ALPHA;
-  else
-  if (String(fmt) == "RGB")
-    format = IF_RGB;
-  else
-  if (String(fmt) == "RGBA")
-    format = IF_RGBA;
-  else
+  if (String(fmt) != "LUMINANCE" && String(fmt) != "LUMINANCE_ALPHA" && String(fmt) != "RGB" && String(fmt) != "RGBA")
     return false;
 
   if (defFileSystem()->locateFile(raw_file))
