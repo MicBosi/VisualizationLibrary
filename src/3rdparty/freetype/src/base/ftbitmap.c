@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    FreeType utility functions for bitmaps (body).                       */
 /*                                                                         */
-/*  Copyright 2004, 2005, 2006, 2007, 2008, 2009 by                        */
+/*  Copyright 2004-2009, 2011, 2013 by                                     */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -17,6 +17,8 @@
 
 
 #include <ft2build.h>
+#include FT_INTERNAL_DEBUG_H
+
 #include FT_BITMAP_H
 #include FT_IMAGE_H
 #include FT_INTERNAL_OBJECTS_H
@@ -105,7 +107,7 @@
     int             new_pitch;
     FT_UInt         bpp;
     FT_Int          i, width, height;
-    unsigned char*  buffer;
+    unsigned char*  buffer = NULL;
 
 
     width  = bitmap->width;
@@ -135,7 +137,7 @@
       new_pitch = ( width + xpixels );
       break;
     default:
-      return FT_Err_Invalid_Glyph_Format;
+      return FT_THROW( Invalid_Glyph_Format );
     }
 
     /* if no need to allocate memory */
@@ -223,22 +225,22 @@
 
 
     if ( !library )
-      return FT_Err_Invalid_Library_Handle;
+      return FT_THROW( Invalid_Library_Handle );
 
     if ( !bitmap || !bitmap->buffer )
-      return FT_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
     if ( ( ( FT_PIX_ROUND( xStrength ) >> 6 ) > FT_INT_MAX ) ||
          ( ( FT_PIX_ROUND( yStrength ) >> 6 ) > FT_INT_MAX ) )
-      return FT_Err_Invalid_Argument;
-       
+      return FT_THROW( Invalid_Argument );
+
     xstr = (FT_Int)FT_PIX_ROUND( xStrength ) >> 6;
     ystr = (FT_Int)FT_PIX_ROUND( yStrength ) >> 6;
 
     if ( xstr == 0 && ystr == 0 )
       return FT_Err_Ok;
     else if ( xstr < 0 || ystr < 0 )
-      return FT_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
     switch ( bitmap->pixel_mode )
     {
@@ -382,7 +384,7 @@
 
 
     if ( !library )
-      return FT_Err_Invalid_Library_Handle;
+      return FT_THROW( Invalid_Library_Handle );
 
     memory = library->memory;
 
@@ -417,6 +419,10 @@
 
         target->pitch = source->width + pad;
 
+        if ( target->pitch > 0                                     &&
+             (FT_ULong)target->rows > FT_ULONG_MAX / target->pitch )
+          return FT_THROW( Invalid_Argument );
+
         if ( target->rows * target->pitch > old_size             &&
              FT_QREALLOC( target->buffer,
                           old_size, target->rows * target->pitch ) )
@@ -425,7 +431,7 @@
       break;
 
     default:
-      error = FT_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
     }
 
     switch ( source->pixel_mode )
@@ -646,10 +652,10 @@
 
 
     if ( !library )
-      return FT_Err_Invalid_Library_Handle;
+      return FT_THROW( Invalid_Library_Handle );
 
     if ( !bitmap )
-      return FT_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
     memory = library->memory;
 
