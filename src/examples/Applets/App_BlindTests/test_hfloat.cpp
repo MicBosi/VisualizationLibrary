@@ -131,7 +131,7 @@ namespace blind_tests
     v1 = v2 / v3;
     half l1 = v1.length();
     half l2 = v1.lengthSquared();
-    v2 = v1 + (hvec3)fvec3(1,1,1);
+    v2 = v1 + (hvec3)fvec3(1,1,1) + l1*l2*0;
     // hmat4 m = fmat4::getRotation( 90, 0, 1, 0 );
     hmat4 m;
     m.translate(1,1,1);

@@ -167,8 +167,8 @@ bool vl::isDAT(VirtualFile* file)
   char fmt[BUFFER_SIZE];
   float a=0,b=0,c=0;
   int width=0, height=0, depth=0;
-  EImageFormat format;
-  EImageType type;
+  // EImageFormat format;
+  // EImageType type;
 
   // safe way, get a line first then sscanf the string
   stream->readLine(line);
