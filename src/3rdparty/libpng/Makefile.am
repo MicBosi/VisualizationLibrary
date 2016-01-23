@@ -2,9 +2,9 @@
 #   Source file for Makefile.in (and hence Makefile)
 #
 # Makefile.am need only be changed on a major version number
-# change (e.g. libpng12 --> libpng13).  In that case seach
+# change (e.g. libpng12 --> libpng14).  In that case seach
 # this file for every instance of the old base name (libpng12)
-# and change to the new one (libpng13), then change the
+# and change to the new one (libpng14), then change the
 # -version-number settings below so that the new values have
 # the correct major part (first field).
 
@@ -18,13 +18,13 @@ check_PROGRAMS= pngtest
 pngtest_SOURCES = pngtest.c
 pngtest_LDADD = libpng12.la
 TESTS = test-pngtest.sh
-TESTS_ENVIRONMENT= srcdir=$(srcdir) 
+TESTS_ENVIRONMENT= srcdir=$(srcdir)
 
 # man pages
 dist_man_MANS= libpng.3 libpngpf.3 png.5
 
 # generate the -config scripts if required
-binconfigs= libpng12-config 
+binconfigs= libpng12-config
 EXTRA_SCRIPTS= libpng-config libpng12-config
 bin_SCRIPTS= @binconfigs@
 
@@ -74,19 +74,22 @@ pkgconfig_DATA = libpng12.pc
 EXTRA_DIST= \
 	ANNOUNCE CHANGES INSTALL KNOWNBUG LICENSE README TODO Y2KINFO \
 	pngtest.png pngbar.png pngnow.png pngbar.jpg autogen.sh \
+        CMakeLists.txt \
 	${srcdir}/projects/cbuilder5/* \
 	${srcdir}/projects/beos/* \
 	${srcdir}/projects/visualc6/* \
 	${srcdir}/projects/visualc71/* \
 	${srcdir}/projects/wince.txt \
 	${srcdir}/projects/netware.txt \
+	${srcdir}/projects/xcode/* \
 	${srcdir}/scripts/* \
 	${srcdir}/contrib/gregbook/* \
+	${srcdir}/contrib/pngminim/* \
 	${srcdir}/contrib/pngminus/* \
 	${srcdir}/contrib/pngsuite/* \
 	${srcdir}/contrib/visupng/* \
 	$(TESTS) \
-	example.c libpng-1.2.35.txt pngvcrd.c 
+	example.c libpng-1.2.56.txt pnggccrd.c pngvcrd.c
 
 CLEANFILES= pngout.png libpng12.pc libpng12-config libpng.vers \
 libpng.sym

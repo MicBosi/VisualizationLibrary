@@ -4,12 +4,15 @@
 # Copyright (C) 2002, 2006 Glenn Randers-Pehrson
 # Copyright (C) 1998 Greg Roelofs
 # Copyright (C) 1996, 1997 Andreas Dilger
-# For conditions of distribution and use, see copyright notice in png.h
+#
+# This code is released under the libpng license.
+# For conditions of distribution and use, see the disclaimer
+# and license in png.h
 
 # Library name:
 LIBNAME = libpng12
 PNGMAJ = 0
-PNGMIN = 1.2.35
+PNGMIN = 1.2.56
 PNGVER = $(PNGMAJ).$(PNGMIN)
 
 # Shared library names:
@@ -41,7 +44,7 @@ ZLIBINC=../zlib
 CFLAGS= -dy -belf -I$(ZLIBINC) -O3 -DPNG_NO_MMX_CODE
 LDFLAGS=-L. -L$(ZLIBLIB) -lpng12 -lz -lm
 
-INCPATH=$(prefix)/include/libpng
+INCPATH=$(prefix)/include
 LIBPATH=$(exec_prefix)/lib
 MANPATH=$(prefix)/man
 BINPATH=$(exec_prefix)/bin
