@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    The FreeType basic cache interface (body).                           */
 /*                                                                         */
-/*  Copyright 2003, 2004, 2005, 2006, 2007, 2009, 2010 by                  */
+/*  Copyright 2003-2007, 2009-2011, 2013 by                                */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -17,6 +17,7 @@
 
 
 #include <ft2build.h>
+#include FT_INTERNAL_OBJECTS_H
 #include FT_INTERNAL_DEBUG_H
 #include FT_CACHE_H
 #include "ftcglyph.h"
@@ -225,7 +226,7 @@
           }
         }
         else
-          error = FTC_Err_Invalid_Argument;
+          error = FT_THROW( Invalid_Argument );
       }
     }
 
@@ -237,7 +238,8 @@
   FT_CALLBACK_DEF( FT_Bool )
   ftc_basic_gnode_compare_faceid( FTC_Node    ftcgnode,
                                   FT_Pointer  ftcface_id,
-                                  FTC_Cache   cache )
+                                  FTC_Cache   cache,
+                                  FT_Bool*    list_changed )
   {
     FTC_GNode        gnode   = (FTC_GNode)ftcgnode;
     FTC_FaceID       face_id = (FTC_FaceID)ftcface_id;
@@ -245,6 +247,8 @@
     FT_Bool          result;
 
 
+    if ( list_changed )
+      *list_changed = FALSE;
     result = FT_BOOL( family->attrs.scaler.face_id == face_id );
     if ( result )
     {
@@ -324,7 +328,7 @@
     /* some argument checks are delayed to FTC_Cache_Lookup */
     if ( !aglyph )
     {
-      error = FTC_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
       goto Exit;
     }
 
@@ -420,7 +424,7 @@
     /* some argument checks are delayed to FTC_Cache_Lookup */
     if ( !aglyph || !scaler )
     {
-      error = FTC_Err_Invalid_Argument;
+      error = FT_THROW( Invalid_Argument );
       goto Exit;
     }
 
@@ -463,7 +467,7 @@
   }
 
 
-  
+
 #ifdef FT_CONFIG_OPTION_OLD_INTERNALS
 
   /* yet another backwards-legacy structure */
@@ -579,7 +583,7 @@
 
 
     if ( !desc )
-      return FTC_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
     ftc_image_type_from_old_desc( &type0, desc );
 
@@ -604,7 +608,7 @@
   const FTC_SFamilyClassRec  ftc_basic_sbit_family_class =
   {
     {
-      sizeof( FTC_BasicFamilyRec ),
+      sizeof ( FTC_BasicFamilyRec ),
       ftc_basic_family_compare,
       ftc_basic_family_init,
       0,                            /* FTC_MruNode_ResetFunc */
@@ -664,7 +668,7 @@
 
     /* other argument checks delayed to FTC_Cache_Lookup */
     if ( !ansbit )
-      return FTC_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
     *ansbit = NULL;
 
@@ -761,7 +765,7 @@
 
     /* other argument checks delayed to FTC_Cache_Lookup */
     if ( !ansbit || !scaler )
-        return FTC_Err_Invalid_Argument;
+        return FT_THROW( Invalid_Argument );
 
     *ansbit = NULL;
 
@@ -834,7 +838,7 @@
 
 
     if ( !desc )
-      return FTC_Err_Invalid_Argument;
+      return FT_THROW( Invalid_Argument );
 
     ftc_image_type_from_old_desc( &type0, desc );
 

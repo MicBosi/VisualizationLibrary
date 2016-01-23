@@ -5,7 +5,7 @@
 /*    Basic SFNT/TrueType type definitions and interface (specification    */
 /*    only).                                                               */
 /*                                                                         */
-/*  Copyright 1996-2001, 2002, 2004, 2005, 2006, 2007, 2008 by             */
+/*  Copyright 1996-2002, 2004-2008, 2012-2013 by                           */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1401,7 +1401,7 @@ FT_BEGIN_HEADER
     FT_Byte*              vert_metrics;
     FT_ULong              vert_metrics_size;
 
-    FT_ULong              num_locations; /* in broken TTF, gid > 0xFFFF */ 
+    FT_ULong              num_locations; /* in broken TTF, gid > 0xFFFF */
     FT_Byte*              glyph_locations;
 
     FT_Byte*              hdmx_table;
@@ -1428,6 +1428,13 @@ FT_BEGIN_HEADER
     FT_ULong              horz_metrics_offset;
     FT_ULong              vert_metrics_offset;
 
+#ifdef TT_CONFIG_OPTION_SUBPIXEL_HINTING
+    /* since 2.4.12 */
+    FT_ULong              sph_found_func_flags; /* special functions found */
+                                                /* for this face           */
+    FT_Bool               sph_compatibility_mode;
+#endif /* TT_CONFIG_OPTION_SUBPIXEL_HINTING */
+
   } TT_FaceRec;
 
 
@@ -1443,7 +1450,7 @@ FT_BEGIN_HEADER
   /*  <Fields>                                                             */
   /*     memory       :: A handle to the memory manager.                   */
   /*                                                                       */
-  /*     max_points   :: The maximal size in points of the zone.           */
+  /*     max_points   :: The maximum size in points of the zone.           */
   /*                                                                       */
   /*     max_contours :: Max size in links contours of the zone.           */
   /*                                                                       */
