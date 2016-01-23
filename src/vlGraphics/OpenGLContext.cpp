@@ -193,6 +193,11 @@ void OpenGLContext::setVSyncEnabled(bool enable)
     wglSwapIntervalEXT(enable?1:0);
 #else
   // Mac and Linux?
+  /*
+  makeCurrent();
+  if (Has_GLX_EXT_swap_control)
+    glXSwapIntervalEXT(enable);
+  */
 #endif
 }
 //-----------------------------------------------------------------------------
