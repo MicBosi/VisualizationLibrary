@@ -35,7 +35,7 @@
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/Image.hpp>
-#include <png.h>
+#include "png.h"
 
 using namespace vl;
 

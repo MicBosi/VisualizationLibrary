@@ -15,7 +15,7 @@
 # ZLib Library - required by VLCore and libtiff
 ################################################################################
 
-set(ZLIB_DIR "${3RDPARTY_DIR}/zlib-1.2.8")
+set(ZLIB_DIR "${3RDPARTY_DIR}/zlib")
 
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 

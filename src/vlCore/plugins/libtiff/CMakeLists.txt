@@ -15,7 +15,7 @@
 # TIFF Library
 ################################################################################
 
-set(TIFF_DIR "${3RDPARTY_DIR}/libtiff-3.8.2")
+set(TIFF_DIR "${3RDPARTY_DIR}/libtiff")
 
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 

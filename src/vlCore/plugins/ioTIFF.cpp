@@ -35,7 +35,7 @@
 #include <vlCore/FileSystem.hpp>
 #include <vlCore/VirtualFile.hpp>
 #include <vlCore/Image.hpp>
-#include <tiffio.h>
+#include "tiffio.h"
 
 // mic fixme: read and write 16 bits images.
 

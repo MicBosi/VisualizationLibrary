@@ -38,10 +38,10 @@
 
 extern "C"
 {
-  #include <jpeglib.h>
-  #include <jconfig.h>
-  #include <jerror.h>
-  #include <jmorecfg.h>
+  #include "jpeglib.h"
+  #include "jconfig.h"
+  #include "jerror.h"
+  #include "jmorecfg.h"
 }
 #include <setjmp.h>
 #include <cstdio>
