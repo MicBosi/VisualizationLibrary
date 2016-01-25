@@ -8,6 +8,12 @@
 - Standardized documentation building process
 - Updated documentation regarding new VL home and support resources
 
+<div class="featuretitle">Visualization Library 1.0.1</div>
+
+- Fixed Visual Studio 2015 compile error and warnings.
+- Fixed IO plugin compilation to include VL's third party libs.
+- Updated third party libraries.
+
 <div class="featuretitle">Visualization Library 1.0.0</div>
 
 - Alias of 2011.09.1168
