@@ -35,7 +35,7 @@
 #include <vlCore/config.hpp>
 
 // VLSDL_EXPORT macro
-#if defined(_WIN32) && defined(VL_DYNAMIC_LINKING)
+#if defined(_WIN32) && !defined(VL_STATIC_LINKING)
   #ifdef VLSDL_EXPORTS
     #define VLSDL_EXPORT __declspec(dllexport)
   #else

@@ -35,7 +35,7 @@
 #include <vlCore/config.hpp>
 
 // VLGRAPHICS_EXPORT macro
-#if defined(_WIN32) && defined(VL_DYNAMIC_LINKING)
+#if defined(_WIN32) && !defined(VL_STATIC_LINKING)
   #ifdef VLGraphics_EXPORTS
     #define VLGRAPHICS_EXPORT __declspec(dllexport)
   #else

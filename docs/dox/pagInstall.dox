@@ -71,10 +71,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
 
 # for static linking do this
 # find_package(VL COMPONENTS VLCore VLGraphics VLVG VLVolume VLMolecule VLWin32 FreeType JPG PNG TIFF ZLib REQUIRED)
+# add_definitions(-DVL_STATIC_LINKING)
 
 # for dynamic linking do this
 # find_package(VL COMPONENTS VLCore VLGraphics VLVG VLVolume VLMolecule VLWin32 REQUIRED)
-# add_definitions(-DVL_DYNAMIC_LINKING)
 
 # NOTE:
 # - FreeType, JPG, PNG, TIFF, ZLib, are not required with dynamic linking because they have been linked already in VLCore and VLGraphics.

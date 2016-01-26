@@ -35,7 +35,7 @@
 #include <vlCore/config.hpp>
 
 // VLGLUT_EXPORT macro
-#if defined(_WIN32) && defined(VL_DYNAMIC_LINKING)
+#if defined(_WIN32) && !defined(VL_STATIC_LINKING)
   #ifdef VLGLUT_EXPORTS
     #define VLGLUT_EXPORT __declspec(dllexport)
   #else
