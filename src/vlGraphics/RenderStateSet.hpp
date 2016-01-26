@@ -32,9 +32,9 @@
 #ifndef RenderStateSet_INCLUDE_ONCE
 #define RenderStateSet_INCLUDE_ONCE
 
+#include <vlGraphics/link_config.hpp>
 #include <vlCore/Object.hpp>
 #include <vlCore/vlnamespace.hpp>
-#include <vlGraphics/link_config.hpp>
 #include <vlGraphics/RenderState.hpp>
 #include <vector>
 

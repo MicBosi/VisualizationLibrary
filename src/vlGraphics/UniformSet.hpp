@@ -32,8 +32,8 @@
 #ifndef UniformSet_INCLUDE_ONCE
 #define UniformSet_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
 #include <vlGraphics/link_config.hpp>
+#include <vlCore/Object.hpp>
 #include <vlGraphics/Uniform.hpp>
 
 namespace vl

@@ -35,7 +35,7 @@
 #include <vlCore/config.hpp>
 
 // VLQT4_EXPORT macro
-#if defined(_WIN32) && !defined(VL_STATIC_LINKING)
+#if defined(_WIN32) && defined(VL_DYNAMIC_LINKING)
   #ifdef VLQt4_EXPORTS
     #define VLQT4_EXPORT __declspec(dllexport)
   #else

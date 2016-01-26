@@ -32,8 +32,8 @@
 #ifndef OpenGL_INCLUDE_ONCE
 #define OpenGL_INCLUDE_ONCE
 
-#include <vlCore/OpenGLDefs.hpp>
 #include <vlGraphics/link_config.hpp>
+#include <vlCore/OpenGLDefs.hpp>
 #include <vlCore/Log.hpp>
 
 namespace vl

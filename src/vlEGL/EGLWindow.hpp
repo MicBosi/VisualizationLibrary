@@ -32,8 +32,8 @@
 #ifndef EGL_Window_INCLUDE_ONCE
 #define EGL_Window_INCLUDE_ONCE
 
-#include <vlGraphics/OpenGLContext.hpp>
 #include <vlEGL/link_config.hpp>
+#include <vlGraphics/OpenGLContext.hpp>
 #include <EGL/egl.h>
 #include <map>
 

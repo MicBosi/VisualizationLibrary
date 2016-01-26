@@ -32,9 +32,9 @@
 #ifndef Shader_INCLUDE_ONCE
 #define Shader_INCLUDE_ONCE
 
+#include <vlGraphics/link_config.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/Matrix4.hpp>
-#include <vlGraphics/link_config.hpp>
 #include <vlGraphics/RenderState.hpp>
 #include <vlGraphics/RenderStateSet.hpp>
 #include <vlGraphics/EnableSet.hpp>

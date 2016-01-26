@@ -29,20 +29,20 @@
 /*                                                                                    */
 /**************************************************************************************/
 
-#ifndef VLVG_CONFIG_INCLUDE_ONCE
-#define VLVG_CONFIG_INCLUDE_ONCE
+#ifndef VLCORE_CONFIG_INCLUDE_ONCE
+#define VLCORE_CONFIG_INCLUDE_ONCE
 
 #include <vlCore/config.hpp>
 
-// VLVG_EXPORT macro
+// VLCORE_EXPORT macro
 #if defined(_WIN32) && defined(VL_DYNAMIC_LINKING)
-  #ifdef VLVG_EXPORTS
-    #define VLVG_EXPORT __declspec(dllexport)
+  #ifdef VLCore_EXPORTS
+    #define VLCORE_EXPORT __declspec(dllexport)
   #else
-    #define VLVG_EXPORT __declspec(dllimport)
+    #define VLCORE_EXPORT __declspec(dllimport)
   #endif
 #else
-  #define VLVG_EXPORT
+  #define VLCORE_EXPORT
 #endif
 
-#endif // VLVG_CONFIG_INCLUDE_ONCE
+#endif // VLCORE_CONFIG_INCLUDE_ONCE
