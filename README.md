@@ -1,5 +1,7 @@
 
-# Visualization Library v2.0
+# Visualization Library v2.0 (alpha)
+
+**WARNING: this is a development version lacking many of the improvements made in v1.0.0 onward, please use the [latest release](https://github.com/MicBosi/visualizationlibrary/releases/).**
 
 Visualization Library is released under the OSI approved Simplified BSD License ([LICENSE.TXT](LICENSE.TXT)).
 
