@@ -728,7 +728,7 @@ ref<Geometry> vl::makeCone( const vec3& origin, real diameter, real height, int 
 }
 //-----------------------------------------------------------------------------
 //! \note if tex_coord_scale_u and tex_coord_scale_v are both == 0 no texture coordinate is generated
-ref<Geometry> vl::makeGrid( const vec3& origin, real xside, real zside, int x, int z, bool gen_texcoords, fvec2 uv0, fvec2 uv1)
+ref<Geometry> vl::makeGrid( const vec3& origin, real xside, real zside, int x, int z, bool gen_texcoords, fvec2 uv0, fvec2 uv1, bool center)
 {
   ref<Geometry> geom = new Geometry;
   geom->setObjectName("Grid");
@@ -741,8 +741,10 @@ ref<Geometry> vl::makeGrid( const vec3& origin, real xside, real zside, int x, i
   VL_CHECK(z>=2)
   real dx = xside / (x-1);
   real dz = zside / (z-1);
-  xside /= 2.0f;
-  zside /= 2.0f;
+  if (center) {
+    xside /= 2.0f;
+    zside /= 2.0f;
+  }
 
   vert3->resize( x * z );
   if (gen_texcoords)

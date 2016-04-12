@@ -77,7 +77,7 @@ namespace vl
   VLGRAPHICS_EXPORT ref<Geometry> makeTeapot( const vec3& origin, real diameter=1, int detail=8);
 
   //! Creates a 2D grid
-  VLGRAPHICS_EXPORT ref<Geometry> makeGrid( const vec3& origin, real xside, real zside, int x, int z, bool gen_texcoords = false, fvec2 uv0=fvec2(0,0), fvec2 uv1=fvec2(1,1));
+  VLGRAPHICS_EXPORT ref<Geometry> makeGrid( const vec3& origin, real xside, real zside, int x, int z, bool gen_texcoords = false, fvec2 uv0=fvec2(0,0), fvec2 uv1=fvec2(1,1), bool center=true);
 
   //! Creates a set of points
   VLGRAPHICS_EXPORT ref<Geometry> makePoints( const std::vector< vec3 >& pos, const fvec4& color = white);
