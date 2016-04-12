@@ -102,10 +102,14 @@ namespace vl
 
 #if defined(VL_OPENGL)
       // bind draw buffers
-      bindDrawBuffers();
+      if (target == FBB_FRAMEBUFFER || target == FBB_DRAW_FRAMEBUFFER) {
+        bindDrawBuffers();
+      }
 
       // bind read buffer
-      bindReadBuffer();
+      if (target == FBB_FRAMEBUFFER || target == FBB_READ_FRAMEBUFFER) {
+        bindReadBuffer();
+      }
 #endif
       
       VL_CHECK_OGL()
