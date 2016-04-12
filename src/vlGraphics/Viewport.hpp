@@ -106,6 +106,12 @@ namespace vl
     */
     bool isPointInside(int x, int y, int framebuffer_height) const;
 
+    /**
+     * If scissor setup is enabled (by default it is), then glScissor is called
+     * during activate().
+     */
+    void enableScissorSetup(bool enable);
+
   protected:
     fvec4 mClearColor;
     ivec4 mClearColorInt;
@@ -119,6 +125,8 @@ namespace vl
     int mY;
     int mWidth;
     int mHeight;
+
+    bool mSetupScissor;
   };
 }
 
