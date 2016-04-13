@@ -2,15 +2,12 @@
 set -o nounset # error if unset variables
 set -o errexit # exit if error
 
-if  [[ `uname` == MINGW* ]] ;
-  : ${PATH_TO_DOXYGEN:='doxygen'}
-then
-  : ${PATH_TO_DOXYGEN:='/c/Doxygen-1.7.2/doxygen.exe'}
-fi
+: ${PATH_TO_DOXYGEN:='doxygen'}
 
 DOXYVER=`${PATH_TO_DOXYGEN} --version`
 if [ "$DOXYVER" != "1.7.2" ]; then
     echo 'Doxygen version 1.7.2 required but found version' `doxygen --version`
+    echo 'You can also use PATH_TO_DOXYGEN environment variable to point to the rigth version.'
     exit 1
 fi
 
