@@ -2,11 +2,13 @@
 
 \page pagChangelog Changelog
 
-<div class="featuretitle">Visualization Library 2.0.0</div>
+<div class="featuretitle">Visualization Library 1.0.2</div>
 
-- ... work in progress ...
-- Standardized documentation building process
-- Updated documentation regarding new VL home and support resources
+- vl::makeGrid() new "center=true" option to optionally disable centering of geometry.
+- TrackballManipulator::adjustView() do nothing if ActorCollection is empty instead of crashing.
+- Make scissor test optional.
+- Only bind draw buffer and read buffer when appropriate.
+- Fixed VL version string in log.
 
 <div class="featuretitle">Visualization Library 1.0.1</div>
 
