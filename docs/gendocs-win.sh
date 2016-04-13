@@ -2,6 +2,8 @@
 set -o nounset # error if unset variables
 set -o errexit # exit if error
 
+: ${PATH_TO_DOXYGEN:='/c/Doxygen-1.7.2/doxygen.exe'}
+
 DOXYVER=`${PATH_TO_DOXYGEN} --version`
 if [ "$DOXYVER" != "1.7.2" ]; then
     echo 'Doxygen version 1.7.2 required but found version' `doxygen --version`
