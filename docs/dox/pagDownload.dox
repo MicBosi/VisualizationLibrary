@@ -2,24 +2,6 @@
 
 \page pagDownload Download
 
-\htmlonly
-<div class="featuretitle">Support Visualization Library <big>&hearts;</big></div>
-
-<p><a href="https://blog.michelebosi.com/estimating-the-value-of-your-code/">According to the Basic COCOMO model Visualization Library effort is estimated in 22.64 Person-Years, worth $5,158,265.</a></p>
-
-<p>However, Visualization Library is completely free (and ad-free) for both commercial and non-commercial projects and with your help I would like to keep it that way.</p>
-\endhtmlonly
-
-If you like Visualization Library please consider a small donation to the project. It will be used to cover the running costs of hosting, equipment and the occasional coffee. Thanks for your generosity.
-
-\htmlonly
-<div>
-    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=M925YZK6ARN82" title="Become a Visualization Library Angel"><img src="paypal-donate-button.jpg"></a>
-</div>
-\endhtmlonly
-
-<div class="featuretitle">General Info</div>
-
 You can review the \subpage pagChangelog "changelog here".
 
 Remember to set the <code>VL_DATA_PATH</code> environment variable to the directory containing the sample data in order to run the demos and tests included in VL.
