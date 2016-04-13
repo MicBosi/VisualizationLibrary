@@ -2,6 +2,9 @@
 set -o nounset # error if unset variables
 set -o errexit # exit if error
 
+# For Windows you want to do this under Git Bash:
+# export PATH_TO_DOXYGEN='/c/Doxygen-1.7.2/doxygen.exe'
+
 : ${PATH_TO_DOXYGEN:='doxygen'}
 
 DOXYVER=`${PATH_TO_DOXYGEN} --version`
