@@ -2,10 +2,10 @@
 set -o nounset # error if unset variables
 set -o errexit # exit if error
 
-if  [[ `uname` == MINIGW* ]] ;
-  : ${PATH_TO_DOXYGEN:='/c/Doxygen-1.7.2/doxygen.exe'}
-then
+if  [[ `uname` == MINGW* ]] ;
   : ${PATH_TO_DOXYGEN:='doxygen'}
+then
+  : ${PATH_TO_DOXYGEN:='/c/Doxygen-1.7.2/doxygen.exe'}
 fi
 
 DOXYVER=`${PATH_TO_DOXYGEN} --version`
