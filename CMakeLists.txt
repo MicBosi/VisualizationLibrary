@@ -25,7 +25,7 @@ set(VL_VERSION "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}")
 project(Visualization_Library_SDK-${VL_VERSION_MAJOR}.${VL_VERSION_MINOR})
 
 # Must be called after project!
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 ################################################################################
 # Global Build Settings
