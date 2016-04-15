@@ -24,13 +24,9 @@ add_subdirectory("plugins")
 file(GLOB VLCORE_SRC "*.cpp")
 file(GLOB VLCORE_INC "*.hpp")
 
-# Generate the 'vlCore/version.hpp' file
-configure_file("version.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.hpp")
-list(APPEND VLCORE_INC "${CMAKE_CURRENT_BINARY_DIR}/version.hpp")
-
-# Generate the 'vlCore/platform.hpp' file
-configure_file("platform.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/platform.hpp")
-list(APPEND VLCORE_INC "${CMAKE_CURRENT_BINARY_DIR}/platform.hpp")
+# Generate the 'vlCore/config.hpp' file
+configure_file("config.hpp.in" "${CMAKE_CURRENT_BINARY_DIR}/config.hpp")
+list(APPEND VLCORE_INC "${CMAKE_CURRENT_BINARY_DIR}/config.hpp")
 
 # Handle extras added by plugins
 VL_PROJECT_GET(VLCORE _SOURCES _DEFINITIONS _INCLUDE_DIRS _EXTRA_LIBS_D _EXTRA_LIBS_R)

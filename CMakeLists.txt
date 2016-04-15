@@ -28,10 +28,14 @@ project(Visualization_Library_SDK)
 cmake_minimum_required(VERSION 3.0)
 
 ################################################################################
-# Global Build Settings
+# Global Build Settings (config.hpp.in)
 ################################################################################
 
-# Platform detect, used to configure platform.hpp.in
+set(VL_USER_DATA_OBJECT 0 CACHE BOOL "Enable vl::Object user data.")
+set(VL_USER_DATA_ACTOR 0 CACHE BOOL "Enable vl::Object user data.")
+set(VL_USER_DATA_TRANSFORM 0 CACHE BOOL "Enable vl::Object user data.")
+set(VL_USER_DATA_SHADER 0 CACHE BOOL "Enable vl::Object user data.")
+
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set(VL_PLATFORM_MACOSX 1)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -46,8 +50,7 @@ message(STATUS "System detected: \"${CMAKE_SYSTEM_NAME}\"")
 
 # OpenGL, OpenGL ES 1 or OpenGL ES 2 mode
 set(VL_OPENGL_MODE "OPENGL" CACHE STRING "Set it to OPENGL, OPENGL_ES1 or OPENGL_ES2 to build VL for OpenGL, OpenGL ES 1.x or OpenGL ES 2.x")
-# Setup variables used to configure platform.hpp.in
-if( VL_OPENGL_MODE STREQUAL  "OPENGL")
+if( VL_OPENGL_MODE STREQUAL "OPENGL")
 	set(VL_OPENGL 1)
 	message(STATUS "Configuring for OpenGL 1.x/2.x/3.x/4.x")
 elseif( VL_OPENGL_MODE STREQUAL  "OPENGL_ES1")
@@ -59,6 +62,8 @@ elseif( VL_OPENGL_MODE STREQUAL  "OPENGL_ES2")
 else()
 	message(FATAL_ERROR "Invalid VL_OPENGL_MODE! Valid modes are: OPENGL, OPENGL_ES1, OPENGL_ES2.")
 endif()
+
+################################################################################
 
 # Dynamic vs Static Linking
 option(VL_DYNAMIC_LINKING "Set to ON to build VL for dynamic linking, or OFF for static." ON)

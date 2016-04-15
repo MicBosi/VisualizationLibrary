@@ -79,7 +79,7 @@ namespace vl
     {
       VL_DEBUG_SET_OBJECT_NAME()
 
-      #if VL_TRANSFORM_USER_DATA 
+      #ifdef VL_USER_DATA_TRANSFORM 
         mTransformUserData = NULL;
       #endif
     }
@@ -89,7 +89,7 @@ namespace vl
     { 
       VL_DEBUG_SET_OBJECT_NAME()
 
-      #if VL_TRANSFORM_USER_DATA 
+      #ifdef VL_USER_DATA_TRANSFORM 
         mTransformUserData = NULL;
       #endif
 
@@ -407,7 +407,7 @@ namespace vl
       return tr_set.size() != mChildren.size();
     }
 
-#if VL_TRANSFORM_USER_DATA 
+#ifdef VL_USER_DATA_TRANSFORM 
   public:
     const Object* transformUserData() const { return mTransformUserData.get(); }
     Object* transformUserData() { return mTransformUserData.get(); }

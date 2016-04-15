@@ -48,7 +48,7 @@
 	Notable macros:
 	
 	- VL_PIPELINE_PRECISION = defines whether VL's default math classes should use single precision (\p float) or double precision (\p double). Default is 1 (single precision).
-	- VL_OBJECT_USER_DATA, VL_ACTOR_USER_DATA, VL_TRANSFORM_USER_DATA, VL_SHADER_USER_DATA = allows the user to bind a void* to any vl::Object, vl::Actor, vl::Transform and vl::Shader respectively. 
+	- VL_USER_DATA_OBJECT, VL_USER_DATA_ACTOR, VL_USER_DATA_TRANSFORM, VL_USER_DATA_SHADER = allows the user to bind a void* to any vl::Object, vl::Actor, vl::Transform and vl::Shader respectively. 
       Very helpful to glue the user's application's logic to VL main classes. Default is 0 (disabled).
 	- VL_MAX_TEXTURE_UNITS = the maximum number of texture units your application is going to use. Allows VL to keep track of a minimum number of texture units. Default is 8.
 	- VL_MAX_GENERIC_VERTEX_ATTRIB = the maximum number of vertex attributes that can be used in a vl::Geometry. Allows VL to keep track of a minimum number of vertex attributes. Default is 8.

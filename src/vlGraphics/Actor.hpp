@@ -148,7 +148,7 @@ namespace vl
       mActorEventCallbacks.setAutomaticDelete(false);
       setLod(0,renderable);
       // actor user data
-      #if VL_ACTOR_USER_DATA
+      #ifdef VL_USER_DATA_ACTOR
         mActorUserData = NULL;
       #endif
     }
@@ -438,7 +438,7 @@ namespace vl
     /** For internal use only. */
     unsigned occlusionQueryTick() const { return mOcclusionQueryTick; }
 
-#if VL_ACTOR_USER_DATA
+#ifdef VL_USER_DATA_ACTOR
   public:
     const Object* actorUserData() const { return mActorUserData.get(); }
     Object* actorUserData() { return mActorUserData.get(); }

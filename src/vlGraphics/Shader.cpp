@@ -47,7 +47,7 @@ Shader::Shader()
   VL_DEBUG_SET_OBJECT_NAME()
   mLastUpdateTime = 0;
   // shader user data
-  #if VL_SHADER_USER_DATA
+  #ifdef VL_USER_DATA_SHADER
     mShaderUserData = NULL;
   #endif
 }

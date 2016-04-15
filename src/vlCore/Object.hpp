@@ -168,7 +168,7 @@ namespace vl
       mReferenceCount = 0;
       mAutomaticDelete = true;
       // user data
-      #if VL_OBJECT_USER_DATA
+      #ifdef VL_USER_DATA_OBJECT
         mUserData = NULL;
       #endif
       #if VL_DEBUG_LIVING_OBJECTS
@@ -183,7 +183,7 @@ namespace vl
       // copy the name, the ref count mutex and the user data.
       mObjectName = other.mObjectName;
       mRefCountMutex = other.mRefCountMutex;
-      #if VL_OBJECT_USER_DATA
+      #ifdef VL_USER_DATA_OBJECT
         mUserData = other.mUserData;
       #endif
 
@@ -203,7 +203,7 @@ namespace vl
       // copy the name, the ref count mutex and the user data.
       mObjectName = other.mObjectName;
       mRefCountMutex = other.mRefCountMutex;
-      #if VL_OBJECT_USER_DATA
+      #ifdef VL_USER_DATA_OBJECT
         mUserData = other.mUserData;
       #endif
 
@@ -282,7 +282,7 @@ namespace vl
     template<class T>
     const T* as() const { return cast<const T>(this); }
 
-#if VL_OBJECT_USER_DATA
+#ifdef VL_USER_DATA_OBJECT
   public:
     const Object* userData() const { return mUserData.get(); }
     Object* userData() { return mUserData.get(); }

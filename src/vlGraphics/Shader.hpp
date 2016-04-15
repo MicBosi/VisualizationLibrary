@@ -1898,7 +1898,7 @@ namespace vl
 
       mShaderAnimator = other.mShaderAnimator;
           
-      #if VL_SHADER_USER_DATA
+      #ifdef VL_USER_DATA_SHADER
         mShaderUserData = other.mShaderUserData;
       #endif
 
@@ -1953,7 +1953,7 @@ namespace vl
       // note: this is shallow copied
       mShaderAnimator = other.mShaderAnimator;
           
-      #if VL_SHADER_USER_DATA
+      #ifdef VL_USER_DATA_SHADER
         mShaderUserData = other.mShaderUserData;
       #endif
 
@@ -2340,7 +2340,7 @@ namespace vl
     //! Used internally.
     void setLastUpdateTime(real time) { mLastUpdateTime = time; }
 
-#if VL_SHADER_USER_DATA
+#ifdef VL_USER_DATA_SHADER
   public:
     const Object* shaderUserData() const { return mShaderUserData.get(); }
     Object* shaderUserData() { return mShaderUserData.get(); }
