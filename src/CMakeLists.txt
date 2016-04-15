@@ -53,6 +53,16 @@ if(VL_GUI_QT4_SUPPORT)
 	add_subdirectory("vlQt4")
 endif()
 
+# Qt5
+option(VL_GUI_QT5_SUPPORT "Build Qt5 support" OFF)
+if(VL_GUI_QT5_SUPPORT)
+	# Instruct CMake to run moc automatically when needed.
+	set(CMAKE_AUTOMOC ON)
+	find_package(Qt5Widgets)
+	find_package(Qt5OpenGL)
+	add_subdirectory("vlQt5")
+endif()
+
 if(VL_PLATFORM_WINDOWS)
 	option(VL_GUI_WIN32_SUPPORT "Build Win32 support" OFF)
 endif()
@@ -109,6 +119,7 @@ endif()
 
 cmake_dependent_option(VL_GUI_GLUT_EXAMPLES "Build GLUT examples" ON "VL_GUI_GLUT_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_QT4_EXAMPLES "Build Qt4 examples" ON "VL_GUI_QT4_SUPPORT" OFF)
+cmake_dependent_option(VL_GUI_QT5_EXAMPLES "Build Qt5 examples" ON "VL_GUI_QT5_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_MFC_EXAMPLES "Build MFC examples" ON "VL_GUI_MFC_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_WIN32_EXAMPLES "Build win32 examples" ON "VL_GUI_WIN32_SUPPORT" OFF)
 cmake_dependent_option(VL_GUI_SDL_EXAMPLES "Build SDL examples" ON "VL_GUI_SDL_SUPPORT" OFF)
