@@ -22,7 +22,7 @@ set(VL_VERSION "${VL_VERSION_MAJOR}.${VL_VERSION_MINOR}")
 # Initialization
 ################################################################################
 
-project(Visualization_Library_SDK-${VL_VERSION_MAJOR}.${VL_VERSION_MINOR})
+project(Visualization_Library_SDK)
 
 # Must be called after project!
 cmake_minimum_required(VERSION 3.0)
