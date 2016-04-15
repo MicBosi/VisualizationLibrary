@@ -440,12 +440,12 @@ namespace vl
 
 #if VL_ACTOR_USER_DATA
   public:
-    void* actorUserData() { return mActorUserData; }
-    const void* actorUserData() const { return mActorUserData; }
-    void setActorUserData(void* user_data) { mActorUserData = user_data; }
+    const Object* actorUserData() const { return mActorUserData.get(); }
+    Object* actorUserData() { return mActorUserData.get(); }
+    void setActorUserData(Object* user_data) { mActorUserData = user_data; }
 
   private:
-    void* mActorUserData;
+    ref<Object> mActorUserData;
 #endif
 
   protected:

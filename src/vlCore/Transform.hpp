@@ -409,12 +409,12 @@ namespace vl
 
 #if VL_TRANSFORM_USER_DATA 
   public:
-    void setTransformUserData(void* data) { mTransformUserData = data; }
-    const void* transformUserData() const { return mTransformUserData; }
-    void* transformUserData() { return mTransformUserData; }
+    const Object* transformUserData() const { return mTransformUserData.get(); }
+    Object* transformUserData() { return mTransformUserData.get(); }
+    void setTransformUserData(Object* data) { mTransformUserData = data; }
 
   private:
-    void* mTransformUserData;
+    ref<Object> mTransformUserData;
 #endif
 
   protected:

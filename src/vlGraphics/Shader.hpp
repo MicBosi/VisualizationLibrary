@@ -2342,12 +2342,12 @@ namespace vl
 
 #if VL_SHADER_USER_DATA
   public:
-    void* shaderUserData() { return mShaderUserData; }
-    const void* shaderUserData() const { return mShaderUserData; }
-    void setShaderUserData(void* user_data) { mShaderUserData = user_data; }
+    const Object* shaderUserData() const { return mShaderUserData.get(); }
+    Object* shaderUserData() { return mShaderUserData.get(); }
+    void setShaderUserData(Object* user_data) { mShaderUserData = user_data; }
 
   private:
-    void* mShaderUserData;
+    ref<Object> mShaderUserData;
 #endif
 
   protected:
