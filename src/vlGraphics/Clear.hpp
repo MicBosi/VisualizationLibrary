@@ -32,8 +32,8 @@
 #ifndef Clear_INCLUDE_ONCE
 #define Clear_INCLUDE_ONCE
 
-#include <vlCore/Vector4.hpp>
 #include <vlGraphics/link_config.hpp>
+#include <vlCore/Vector4.hpp>
 #include <vlGraphics/Renderable.hpp>
 
 namespace vl

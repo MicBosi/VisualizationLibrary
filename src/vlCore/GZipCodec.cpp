@@ -33,7 +33,7 @@
 #include <vlCore/GZipCodec.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
-#include <zlib.h>
+#include "zlib.h"
 
 using namespace vl;
 

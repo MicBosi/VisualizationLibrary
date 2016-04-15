@@ -32,10 +32,10 @@
 #ifndef Font_INCLUDE_ONCE
 #define Font_INCLUDE_ONCE
 
+#include <vlGraphics/link_config.hpp>
 #include <vlCore/Object.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/String.hpp>
-#include <vlGraphics/link_config.hpp>
 #include <map>
 
 //-----------------------------------------------------------------------------

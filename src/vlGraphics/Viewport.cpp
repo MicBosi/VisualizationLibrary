@@ -51,6 +51,7 @@ Viewport::Viewport()
   mClearStencil = 0;
   mClearFlags = CF_CLEAR_COLOR_DEPTH;
   mClearColorMode = CCM_Float;
+  mSetupScissor = true;
 }
 //-----------------------------------------------------------------------------
 Viewport::Viewport(int x, int y, int w, int h)
@@ -65,6 +66,7 @@ Viewport::Viewport(int x, int y, int w, int h)
   mClearStencil = 0;
   mClearFlags = CF_CLEAR_COLOR_DEPTH;
   mClearColorMode = CCM_Float;
+  mSetupScissor = true;
 }
 //-----------------------------------------------------------------------------
 void Viewport::activate() const
@@ -116,8 +118,14 @@ void Viewport::activate() const
     glStencilMask(GL_TRUE);
 
     // setup scissor
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(x, y, w, h);
+    if (mSetupScissor)
+    {
+      glEnable(GL_SCISSOR_TEST);
+      glScissor(x, y, w, h);
+    }
+    else {
+      glDisable(GL_SCISSOR_TEST);
+    }
 
     switch( clearColorMode() )
     {
@@ -155,3 +163,9 @@ bool Viewport::isPointInside(int x, int y, int framebuffer_height) const
     return true;
 }
 //-----------------------------------------------------------------------------
+void Viewport::enableScissorSetup(bool enable)
+{
+  mSetupScissor = enable;
+}
+//-----------------------------------------------------------------------------
+

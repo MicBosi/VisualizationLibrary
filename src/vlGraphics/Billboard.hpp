@@ -32,8 +32,8 @@
 #ifndef Billboard_INCLUDE_ONCE
 #define Billboard_INCLUDE_ONCE
 
-#include <vlCore/Transform.hpp>
 #include <vlGraphics/link_config.hpp>
+#include <vlCore/Transform.hpp>
 
 namespace vl
 {

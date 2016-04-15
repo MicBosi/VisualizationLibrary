@@ -32,11 +32,11 @@
 #ifndef Actor_INCLUDE_ONCE
 #define Actor_INCLUDE_ONCE
 
+#include <vlGraphics/link_config.hpp>
 #include <vlCore/Collection.hpp>
 #include <vlCore/Sphere.hpp>
 #include <vlCore/AABB.hpp>
 #include <vlCore/Transform.hpp>
-#include <vlGraphics/link_config.hpp>
 #include <vlGraphics/Effect.hpp>
 #include <vlGraphics/Renderable.hpp>
 #include <vlGraphics/LODEvaluator.hpp>

@@ -2,33 +2,17 @@
 
 \page pagDownload Download
 
-\htmlonly
-<div class="featuretitle">Support Visualization Library <big>&hearts;</big></div>
-
-<p><a href="https://blog.michelebosi.com/estimating-the-value-of-your-code/">According to the Basic COCOMO model Visualization Library effort is estimated in 22.64 Person-Years, worth <b>$5,158,265</b>.</a></p>
-
-<p>However, Visualization Library is completely free (and ad-free) for both commercial and non-commercial projects and with your help I would like to keep it that way.</p>
-\endhtmlonly
-
-If you like Visualization Library please consider a small donation to the project. It will be used to cover the running costs of hosting, user support, code maintenance and to buy the occasional caffè latte :) Thank you for your generosity!
-
-\htmlonly
-<div style="margin-bottom: 2em;">
-    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=M925YZK6ARN82" title="Become a Visualization Library Angel"><img src="paypal-donate-button.jpg"></a>
-</div>
-\endhtmlonly
-
-<div class="featuretitle">General Info</div>
-
 You can review the \subpage pagChangelog "changelog here".
 
 Remember to set the <code>VL_DATA_PATH</code> environment variable to the directory containing the sample data in order to run the demos and tests included in VL.
 
+Run the tests using any supported backend plus the test number as the first argument. The list of tests can be printed using <i>0</i>, ex: <code>vlWin32_tests 0</code>.
+
 <div class="featuretitle">Releases</div>
 
-<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/tarball/v1.0.0">Visualization Library v1.0.0 (.tgz)</a>
+<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/tarball/v1.0.2">Visualization Library v1.0.2 (.tgz)</a>
 
-<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/zipball/v1.0.0">Visualization Library v1.0.0 (.zip)</a>
+<a href="https://api.github.com/repos/MicBosi/visualizationlibrary/zipball/v1.0.2">Visualization Library v1.0.2 (.zip)</a>
 
 <!-- https://api.github.com/repos/MicBosi/visualizationlibrary/releases -->
 

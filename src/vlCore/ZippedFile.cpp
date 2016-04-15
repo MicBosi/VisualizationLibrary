@@ -33,8 +33,9 @@
 #include <vlCore/CRC32CheckSum.hpp>
 #include <vlCore/Log.hpp>
 #include <vlCore/Say.hpp>
-#include <zlib.h>
 #include <stdio.h>
+#include <algorithm>
+#include "zlib.h"
 
 using namespace vl;
 

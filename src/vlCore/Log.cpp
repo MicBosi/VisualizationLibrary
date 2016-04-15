@@ -30,7 +30,7 @@
 /**************************************************************************************/
 
 #include <vlCore/Log.hpp>
-#include <vlCore/checks.hpp>
+#include <vlCore/VisualizationLibrary.hpp>
 #include <vlCore/GlobalSettings.hpp>
 #include <vlCore/Vector3.hpp>
 #include <vlCore/Say.hpp>
@@ -198,8 +198,8 @@ void Log::logSystemInfo()
     const char* build_type = "RELEASE";
   #endif
 
-  print( Say("Visualization Library v%n.%n.%n [%s]\n%s - %s - %s compiler [%s] [%s]\n") 
-    << VL_Major << VL_Minor << VL_Patch 
+  print( Say("Visualization Library v%s [%s]\n%s - %s - %s compiler [%s] [%s]\n") 
+	<< VisualizationLibrary::versionString()
     << (sizeof(vec3) == sizeof(fvec3) ? "f32" : "f64")
     << __DATE__ << __TIME__ << compiler << build_type 
     << (sizeof(void*) == 4 ? "x32" : "x64") );

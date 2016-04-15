@@ -246,15 +246,4 @@
 
 ///////////////////////////////////////////////////
 
-// VLCORE_EXPORT macro
-#if defined(VL_PLATFORM_WINDOWS) && !defined(VL_STATIC_LINKING)
-  #ifdef VLCore_EXPORTS
-    #define VLCORE_EXPORT __declspec(dllexport)
-  #else
-    #define VLCORE_EXPORT __declspec(dllimport)
-  #endif
-#else
-  #define VLCORE_EXPORT
-#endif
-
 #endif // VISUALIZATION_LIBRARY_CONFIG_INCLUDE_ONCE

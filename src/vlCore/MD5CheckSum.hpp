@@ -32,7 +32,7 @@
 #ifndef MD5CheckSum_INCLUDE_ONCE
 #define MD5CheckSum_INCLUDE_ONCE
 
-#include <vlCore/config.hpp>
+#include <vlCore/link_config.hpp>
 #include <string>
 #include <string.h>
 

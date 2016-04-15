@@ -41,7 +41,7 @@
 using namespace vl;
 
 static const float golden = (1.0f + sqrt(5.0f)) / 2.0f; // sezione aurea
-static const float ratios[] = { 1.0f, 1.0f / pow(golden, 1), 1.0f / pow(golden, 2), 1.0f / pow(golden, 3), 1.0f / pow(golden, 4), 1.0f / pow(golden, 5) };
+static const float ratios[] = { 1.0f, 1.0f / (float)pow(golden, 1), 1.0f / (float)pow(golden, 2), 1.0f / (float)pow(golden, 3), 1.0f / (float)pow(golden, 4), 1.0f / (float)pow(golden, 5) };
 static const int stages = sizeof(ratios) / sizeof(ratios[0]);
 
 class App_PolygonReduction: public BaseDemo

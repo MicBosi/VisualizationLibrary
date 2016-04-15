@@ -32,9 +32,9 @@
 #ifndef RenderingAbstract_INCLUDE_ONCE
 #define RenderingAbstract_INCLUDE_ONCE
 
+#include <vlGraphics/link_config.hpp>
 #include <vlCore/Collection.hpp>
 #include <vlCore/vlnamespace.hpp>
-#include <vlGraphics/link_config.hpp>
 
 namespace vl
 {

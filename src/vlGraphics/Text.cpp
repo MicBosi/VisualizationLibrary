@@ -34,7 +34,7 @@
 #include <vlGraphics/Actor.hpp>
 #include <vlCore/Log.hpp>
 
-#include <ft2build.h>
+#include "ft2build.h"
 #include FT_FREETYPE_H
 
 using namespace vl;

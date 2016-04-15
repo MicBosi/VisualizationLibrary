@@ -32,8 +32,8 @@
 #ifndef ProjViewTransfCallback_INCLUDE_ONCE
 #define ProjViewTransfCallback_INCLUDE_ONCE
 
-#include <vlCore/Object.hpp>
 #include <vlGraphics/link_config.hpp>
+#include <vlCore/Object.hpp>
 
 namespace vl
 {

@@ -32,9 +32,9 @@
 #ifndef Light_INCLUDE_ONCE
 #define Light_INCLUDE_ONCE
 
+#include <vlGraphics/link_config.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/Transform.hpp>
-#include <vlGraphics/link_config.hpp>
 #include <vlGraphics/RenderState.hpp>
 
 namespace vl

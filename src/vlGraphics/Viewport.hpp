@@ -32,11 +32,11 @@
 #ifndef Viewport_INCLUDE_ONCE
 #define Viewport_INCLUDE_ONCE
 
+#include <vlGraphics/link_config.hpp>
 #include <vlCore/Object.hpp>
 #include <vlCore/Rect.hpp>
 #include <vlCore/Vector4.hpp>
 #include <vlCore/vlnamespace.hpp>
-#include <vlGraphics/link_config.hpp>
 
 namespace vl
 {
@@ -106,6 +106,12 @@ namespace vl
     */
     bool isPointInside(int x, int y, int framebuffer_height) const;
 
+    /**
+     * If scissor setup is enabled (by default it is), then glScissor is called
+     * during activate().
+     */
+    void enableScissorSetup(bool enable);
+
   protected:
     fvec4 mClearColor;
     ivec4 mClearColorInt;
@@ -119,6 +125,8 @@ namespace vl
     int mY;
     int mWidth;
     int mHeight;
+
+    bool mSetupScissor;
   };
 }
 

@@ -32,7 +32,7 @@
 #ifndef CHECK_INCLUDED
 #define CHECK_INCLUDED
 
-#include <vlCore/config.hpp>
+#include <vlCore/link_config.hpp>
 
 // Required for IsDebuggerPresent()
 #if defined(VL_PLATFORM_WINDOWS)

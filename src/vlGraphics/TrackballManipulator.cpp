@@ -225,17 +225,19 @@ void TrackballManipulator::adjustView(const AABB& aabb, const vec3& dir, const v
 //-----------------------------------------------------------------------------
 void TrackballManipulator::adjustView(ActorCollection& actors, const vec3& dir, const vec3& up, real bias)
 {
-  AABB aabb;
-  for(int i=0; i<actors.size(); ++i)
-  {
-    if (actors.at(i)->transform())
+  if ( ! actors.empty() ) {
+    AABB aabb;
+    for(int i=0; i<actors.size(); ++i)
     {
-      actors.at(i)->transform()->computeWorldMatrix();
+      if (actors.at(i)->transform())
+      {
+        actors.at(i)->transform()->computeWorldMatrix();
+      }
+      actors.at(i)->computeBounds();
+      aabb += actors.at(i)->boundingBox();
     }
-    actors.at(i)->computeBounds();
-    aabb += actors.at(i)->boundingBox();
+    adjustView(aabb, dir, up, bias);
   }
-  adjustView(aabb, dir, up, bias);
 }
 //-----------------------------------------------------------------------------
 void TrackballManipulator::adjustView(SceneManager* scene, const vec3& dir, const vec3& up, real bias)
