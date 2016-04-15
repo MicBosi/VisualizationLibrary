@@ -1,4 +1,4 @@
-# Visualization Library v1.0
+# Visualization Library
 
 ## About
 
