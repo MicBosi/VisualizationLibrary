@@ -37,7 +37,6 @@
 #include <vlCore/VLXVisitorExportToVLT.hpp>
 #include <vlCore/VLXVisitorExportToVLB.hpp>
 #include <vlCore/DiskFile.hpp>
-#include <vlCore/version.hpp>
 #include <ctime>
 
 using namespace vl;

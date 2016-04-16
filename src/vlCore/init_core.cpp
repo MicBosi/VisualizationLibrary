@@ -40,7 +40,6 @@
 #include <vlCore/Quaternion.hpp>
 #include <vlCore/AABB.hpp>
 #include <vlCore/Sphere.hpp>
-#include <vlCore/version.hpp>
 #include <vlCore/MersenneTwister.hpp>
 #include <cassert>
 

@@ -35,7 +35,6 @@
 #include <vlCore/Vector3.hpp>
 #include <vlCore/Say.hpp>
 #include <vlCore/ScopedMutex.hpp>
-#include <vlCore/version.hpp>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
